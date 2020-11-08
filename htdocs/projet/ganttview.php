@@ -96,130 +96,130 @@ if (($id > 0 && is_numeric($id)) || !empty($ref))
 	//$userDelete = $object->restrictedProjectArea($user,'delete');
 	//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
-    $tab = 'tasks';
+	$tab = 'tasks';
 
-    $head = project_prepare_head($object);
-    print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
+	$head = project_prepare_head($object);
+	print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
 
-    $param = ($mode == 'mine' ? '&mode=mine' : '');
-
-
-
-    // Project card
-
-    $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-
-    $morehtmlref = '<div class="refidno">';
-    // Title
-    $morehtmlref .= $object->title;
-    // Thirdparty
-    if ($object->thirdparty->id > 0)
-    {
-        $morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
-    }
-    $morehtmlref .= '</div>';
-
-    // Define a complementary filter for search of next/prev ref.
-    if (!$user->rights->projet->all->lire)
-    {
-        $objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-        $object->next_prev_filter = " rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
-    }
-
-    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	$param = ($mode == 'mine' ? '&mode=mine' : '');
 
 
-    print '<div class="fichecenter">';
-    print '<div class="fichehalfleft">';
-    print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border tableforfield centpercent">';
+	// Project card
 
-    // Usage
-    print '<tr><td class="tdtop">';
-    print $langs->trans("Usage");
-    print '</td>';
-    print '<td>';
-    if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-    {
-    	print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
-    	$htmltext = $langs->trans("ProjectFollowOpportunity");
-    	print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
-    	print '<br>';
-    }
-    if (empty($conf->global->PROJECT_HIDE_TASKS))
-    {
-    	print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
-    	$htmltext = $langs->trans("ProjectFollowTasks");
-    	print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
-    	print '<br>';
-    }
-    if (!empty($conf->global->PROJECT_BILL_TIME_SPENT))
-    {
-    	print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
-    	$htmltext = $langs->trans("ProjectBillTimeDescription");
-    	print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
-    	print '<br>';
-    }
-    print '</td></tr>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    // Visibility
-    print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
-    if ($object->public) print $langs->trans('SharedProject');
-    else print $langs->trans('PrivateProject');
-    print '</td></tr>';
+	$morehtmlref = '<div class="refidno">';
+	// Title
+	$morehtmlref .= $object->title;
+	// Thirdparty
+	if ($object->thirdparty->id > 0)
+	{
+		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
+	}
+	$morehtmlref .= '</div>';
 
-    // Date start - end
-    print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+	// Define a complementary filter for search of next/prev ref.
+	if (!$user->rights->projet->all->lire)
+	{
+		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
+		$object->next_prev_filter = " rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+	}
+
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+
+
+	print '<div class="fichecenter">';
+	print '<div class="fichehalfleft">';
+	print '<div class="underbanner clearboth"></div>';
+
+	print '<table class="border tableforfield centpercent">';
+
+	// Usage
+	print '<tr><td class="tdtop">';
+	print $langs->trans("Usage");
+	print '</td>';
+	print '<td>';
+	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+	{
+		print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+		$htmltext = $langs->trans("ProjectFollowOpportunity");
+		print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+		print '<br>';
+	}
+	if (empty($conf->global->PROJECT_HIDE_TASKS))
+	{
+		print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
+		$htmltext = $langs->trans("ProjectFollowTasks");
+		print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+		print '<br>';
+	}
+	if (!empty($conf->global->PROJECT_BILL_TIME_SPENT))
+	{
+		print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+		$htmltext = $langs->trans("ProjectBillTimeDescription");
+		print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+		print '<br>';
+	}
+	print '</td></tr>';
+
+	// Visibility
+	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
+	if ($object->public) print $langs->trans('SharedProject');
+	else print $langs->trans('PrivateProject');
+	print '</td></tr>';
+
+	// Date start - end
+	print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
 	$start = dol_print_date($object->date_start, 'day');
 	print ($start ? $start : '?');
 	$end = dol_print_date($object->date_end, 'day');
 	print ' - ';
 	print ($end ? $end : '?');
 	if ($object->hasDelay()) print img_warning("Late");
-    print '</td></tr>';
+	print '</td></tr>';
 
-    // Budget
-    print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-    if (strcmp($object->budget_amount, '')) print price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
-    print '</td></tr>';
+	// Budget
+	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+	if (strcmp($object->budget_amount, '')) print price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+	print '</td></tr>';
 
-    // Other attributes
-    $cols = 2;
-    include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+	// Other attributes
+	$cols = 2;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
-    print '</table>';
+	print '</table>';
 
-    print '</div>';
-    print '<div class="fichehalfright">';
-    print '<div class="ficheaddleft">';
-    print '<div class="underbanner clearboth"></div>';
+	print '</div>';
+	print '<div class="fichehalfright">';
+	print '<div class="ficheaddleft">';
+	print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border tableforfield centpercent">';
+	print '<table class="border tableforfield centpercent">';
 
-    // Description
-    print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-    print nl2br($object->description);
-    print '</td></tr>';
+	// Description
+	print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
+	print nl2br($object->description);
+	print '</td></tr>';
 
-    // Categories
-    if ($conf->categorie->enabled) {
-        print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
-        print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
-        print "</td></tr>";
-    }
+	// Categories
+	if ($conf->categorie->enabled) {
+		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
+		print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
+		print "</td></tr>";
+	}
 
-    print '</table>';
+	print '</table>';
 
-    print '</div>';
-    print '</div>';
-    print '</div>';
+	print '</div>';
+	print '</div>';
+	print '</div>';
 
-    print '<div class="clearboth"></div>';
+	print '<div class="clearboth"></div>';
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 
-    print '<br>';
+	print '<br>';
 }
 
 // Link to create task
@@ -227,9 +227,9 @@ $linktocreatetaskParam = array();
 $linktocreatetaskUserRight = false;
 if ($user->rights->projet->all->creer || $user->rights->projet->creer) {
 	if ($object->public || $userWrite > 0) {
-        $linktocreatetaskUserRight = true;
+		$linktocreatetaskUserRight = true;
 	} else {
-        $linktocreatetaskParam['attr']['title'] = $langs->trans("NotOwnerOfProject");
+		$linktocreatetaskParam['attr']['title'] = $langs->trans("NotOwnerOfProject");
 	}
 }
 
@@ -274,20 +274,20 @@ if (count($tasksarray) > 0)
 		$tasks[$taskcursor]['task_parent'] = $idparent;
 
 		$tasks[$taskcursor]['task_is_group'] = 0;
-        $tasks[$taskcursor]['task_css'] = 'gtaskblue';
-        $tasks[$taskcursor]['task_position'] = $val->rang;
-        $tasks[$taskcursor]['task_planned_workload'] = $val->planned_workload;
+		$tasks[$taskcursor]['task_css'] = 'gtaskblue';
+		$tasks[$taskcursor]['task_position'] = $val->rang;
+		$tasks[$taskcursor]['task_planned_workload'] = $val->planned_workload;
 
-        if ($val->fk_parent != 0 && $task->hasChildren() > 0) {
-            $tasks[$taskcursor]['task_is_group'] = 1;
-        	$tasks[$taskcursor]['task_css'] = 'ggroupblack';
-            //$tasks[$taskcursor]['task_css'] = 'gtaskblue';
-        } elseif ($task->hasChildren() > 0) {
-            $tasks[$taskcursor]['task_is_group'] = 1;
-        	//$tasks[$taskcursor]['task_is_group'] = 0;
-            $tasks[$taskcursor]['task_css'] = 'ggroupblack';
-            //$tasks[$taskcursor]['task_css'] = 'gtaskblue';
-        }
+		if ($val->fk_parent != 0 && $task->hasChildren() > 0) {
+			$tasks[$taskcursor]['task_is_group'] = 1;
+			$tasks[$taskcursor]['task_css'] = 'ggroupblack';
+			//$tasks[$taskcursor]['task_css'] = 'gtaskblue';
+		} elseif ($task->hasChildren() > 0) {
+			$tasks[$taskcursor]['task_is_group'] = 1;
+			//$tasks[$taskcursor]['task_is_group'] = 0;
+			$tasks[$taskcursor]['task_css'] = 'ggroupblack';
+			//$tasks[$taskcursor]['task_css'] = 'gtaskblue';
+		}
 		$tasks[$taskcursor]['task_milestone'] = '0';
 		$tasks[$taskcursor]['task_percent_complete'] = $val->progress;
 		//$tasks[$taskcursor]['task_name']=$task->getNomUrl(1);
@@ -337,9 +337,9 @@ if (count($tasksarray) > 0)
 		//if ($s) $tasks[$taskcursor]['task_resources']='<a href="'.DOL_URL_ROOT.'/projet/tasks/contact.php?id='.$val->id.'&withproject=1" title="'.dol_escape_htmltag($s).'">'.$langs->trans("List").'</a>';
 		/* For JSGanttImproved */
 		//if ($s) $tasks[$taskcursor]['task_resources']=implode(',',$idofusers);
-        $tasks[$taskcursor]['task_resources'] = $s;
+		$tasks[$taskcursor]['task_resources'] = $s;
 		//print "xxx".$val->id.$tasks[$taskcursor]['task_resources'];
-        $tasks[$taskcursor]['note'] = $task->note_public;
+		$tasks[$taskcursor]['note'] = $task->note_public;
 		$taskcursor++;
 	}
 
@@ -361,30 +361,30 @@ if (count($tasksarray) > 0)
 
  	if (!empty($conf->use_javascript_ajax))
 	{
-	    //var_dump($_SESSION);
+		//var_dump($_SESSION);
 
 		// How the date for data are formated (format used bu jsgantt)
-	    $dateformatinput = 'yyyy-mm-dd';
-	    // How the date for data are formated (format used by dol_print_date)
-	    $dateformatinput2 = 'standard';
-	    //var_dump($dateformatinput);
+		$dateformatinput = 'yyyy-mm-dd';
+		// How the date for data are formated (format used by dol_print_date)
+		$dateformatinput2 = 'standard';
+		//var_dump($dateformatinput);
   		//var_dump($dateformatinput2);
 
-	    $moreforfilter = '<div class="liste_titre liste_titre_bydiv centpercent">';
+		$moreforfilter = '<div class="liste_titre liste_titre_bydiv centpercent">';
 
-	    $moreforfilter .= '<div class="divsearchfield">';
-	    //$moreforfilter .= $langs->trans("TasksAssignedTo").': ';
-	    //$moreforfilter .= $form->select_dolusers($tmpuser->id > 0 ? $tmpuser->id : '', 'search_user_id', 1);
-	    $moreforfilter .= '&nbsp;';
-	    $moreforfilter .= '</div>';
+		$moreforfilter .= '<div class="divsearchfield">';
+		//$moreforfilter .= $langs->trans("TasksAssignedTo").': ';
+		//$moreforfilter .= $form->select_dolusers($tmpuser->id > 0 ? $tmpuser->id : '', 'search_user_id', 1);
+		$moreforfilter .= '&nbsp;';
+		$moreforfilter .= '</div>';
 
-	    $moreforfilter .= '</div>';
+		$moreforfilter .= '</div>';
 
 		print $moreforfilter;
 
-	    print '<div class="div-table-responsive">';
+		print '<div class="div-table-responsive">';
 
-	    print '<div id="tabs" class="gantt" style="width: 80vw;">'."\n";
+		print '<div id="tabs" class="gantt" style="width: 80vw;">'."\n";
 		include_once DOL_DOCUMENT_ROOT.'/projet/ganttchart.inc.php';
 		print '</div>'."\n";
 

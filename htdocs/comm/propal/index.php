@@ -154,7 +154,7 @@ if ($resql)
 		}
 	}
 
-	if ($conf->use_javascript_ajax)	{
+	if ($conf->use_javascript_ajax) {
 		print '<tr>';
 		print '<td align="center" colspan="2">';
 

@@ -41,8 +41,8 @@ if (!empty($conf->expedition_bon->enabled))
 if (!empty($conf->stock->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 if (!empty($conf->projet->enabled)) {
-    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
 // Load translation files required by the page
@@ -74,6 +74,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('deliverycard', 'globalcard'));
 
+$error = 0;
+
 
 /*
  * Actions
@@ -86,19 +88,17 @@ if ($action == 'add')
 {
 	$db->begin();
 
-	$object->date_livraison   = time();
-	$object->note             = GETPOST("note", 'restricthtml');
-	$object->note_private     = GETPOST("note", 'restricthtml');
-	$object->commande_id      = GETPOST("commande_id", 'int');
+	$object->date_delivery = dol_now();
+	$object->note          = GETPOST("note", 'restricthtml');
+	$object->note_private  = GETPOST("note", 'restricthtml');
+	$object->commande_id   = GETPOST("commande_id", 'int');
 	$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 
-	if (!$conf->expedition_bon->enabled && !empty($conf->stock->enabled))
-	{
+	if (!$conf->expedition_bon->enabled && !empty($conf->stock->enabled)) {
 		$expedition->entrepot_id = GETPOST('entrepot_id');
 	}
 
-	// On boucle sur chaque ligne de commande pour completer objet livraison
-	// avec qte a livrer
+	// We loop on each line of order to complete object delivery with qty to delivery
 	$commande = new Commande($db);
 	$commande->fetch($object->commande_id);
 	$commande->fetch_lines();
@@ -107,15 +107,15 @@ if ($action == 'add')
 	{
 		$qty = "qtyl".$i;
 		$idl = "idl".$i;
-		if ($_POST[$qty] > 0)
+		$qtytouse = price2num(GETPOST($qty));
+		if ($qtytouse > 0)
 		{
-			$object->addline($_POST[$idl], $_POST[$qty]);
+			$object->addline(GETPOST($idl), price2num($qtytouse));
 		}
 	}
 
 	$ret = $object->create($user);
-	if ($ret > 0)
-	{
+	if ($ret > 0) {
 		$db->commit();
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
@@ -123,12 +123,11 @@ if ($action == 'add')
 		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 
-		$_GET["commande_id"] = $_POST["commande_id"];
 		$action = 'create';
 	}
 } elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
-    ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery->creer))
-    || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery_advance->validate)))
+	((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery->creer))
+	|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery_advance->validate)))
 )
 {
 	$result = $object->valid($user);
@@ -168,20 +167,20 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expeditio
 	}
 }
 
-if ($action == 'setdate_livraison' && $user->rights->expedition->delivery->creer)
+if ($action == 'setdate_delivery' && $user->rights->expedition->delivery->creer)
 {
-    $datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
-    $result = $object->setDeliveryDate($user, $datedelivery);
-    if ($result < 0)
-    {
-        $mesg = '<div class="error">'.$object->error.'</div>';
-    }
+	$datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
+	$result = $object->setDeliveryDate($user, $datedelivery);
+	if ($result < 0)
+	{
+		$mesg = '<div class="error">'.$object->error.'</div>';
+	}
 }
 
 // Set incoterm
 elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
 {
-	$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+	$result = $object->setIncoterms((int) GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 }
 
 // Update extrafields
@@ -311,13 +310,13 @@ if ($action == 'create')    // Create. Seems to no be used
 
 			if ($typeobject == 'commande' && $expedition->origin_id > 0 && !empty($conf->commande->enabled))
 			{
-			    $objectsrc = new Commande($db);
-			    $objectsrc->fetch($expedition->origin_id);
+				$objectsrc = new Commande($db);
+				$objectsrc->fetch($expedition->origin_id);
 			}
 			if ($typeobject == 'propal' && $expedition->origin_id > 0 && !empty($conf->propal->enabled))
 			{
-			    $objectsrc = new Propal($db);
-			    $objectsrc->fetch($expedition->origin_id);
+				$objectsrc = new Propal($db);
+				$objectsrc->fetch($expedition->origin_id);
 			}
 
 			// Shipment card
@@ -332,35 +331,35 @@ if ($action == 'create')    // Create. Seems to no be used
 			$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$expedition->thirdparty->getNomUrl(1);
 			// Project
 			if (!empty($conf->projet->enabled)) {
-			    $langs->load("projects");
-			    $morehtmlref .= '<br>'.$langs->trans('Project').' ';
-			    if (0) {    // Do not change on shipment
-			        if ($action != 'classify') {
-			            $morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$expedition->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
-			        }
-			        if ($action == 'classify') {
-			            // $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $expedition->id, $expedition->socid, $expedition->fk_project, 'projectid', 0, 0, 1, 1);
-			            $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$expedition->id.'">';
-			            $morehtmlref .= '<input type="hidden" name="action" value="classin">';
-			            $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-			            $morehtmlref .= $formproject->select_projects($expedition->socid, $expedition->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-			            $morehtmlref .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-			            $morehtmlref .= '</form>';
-			        } else {
-			            $morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$expedition->id, $expedition->socid, $expedition->fk_project, 'none', 0, 0, 0, 1);
-			        }
-			    } else {
-			        $morehtmlref .= ' : ';
-			        if (!empty($objectsrc->fk_project)) {
-			            $proj = new Project($db);
-			            $proj->fetch($objectsrc->fk_project);
-			            $morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$objectsrc->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-			            $morehtmlref .= $proj->ref;
-			            $morehtmlref .= '</a>';
-			        } else {
-			            $morehtmlref .= '';
-			        }
-			    }
+				$langs->load("projects");
+				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
+				if (0) {    // Do not change on shipment
+					if ($action != 'classify') {
+						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$expedition->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+					}
+					if ($action == 'classify') {
+						// $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $expedition->id, $expedition->socid, $expedition->fk_project, 'projectid', 0, 0, 1, 1);
+						$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$expedition->id.'">';
+						$morehtmlref .= '<input type="hidden" name="action" value="classin">';
+						$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+						$morehtmlref .= $formproject->select_projects($expedition->socid, $expedition->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+						$morehtmlref .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+						$morehtmlref .= '</form>';
+					} else {
+						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$expedition->id, $expedition->socid, $expedition->fk_project, 'none', 0, 0, 0, 1);
+					}
+				} else {
+					$morehtmlref .= ' : ';
+					if (!empty($objectsrc->fk_project)) {
+						$proj = new Project($db);
+						$proj->fetch($objectsrc->fk_project);
+						$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$objectsrc->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+						$morehtmlref .= $proj->ref;
+						$morehtmlref .= '</a>';
+					} else {
+						$morehtmlref .= '';
+					}
+				}
 			}
 			$morehtmlref .= '</div>';
 
@@ -372,7 +371,7 @@ if ($action == 'create')    // Create. Seems to no be used
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
 
-		    print '<table class="border tableforfield" width="100%">';
+			print '<table class="border tableforfield" width="100%">';
 
 			// Shipment
 			/*
@@ -434,15 +433,15 @@ if ($action == 'create')    // Create. Seems to no be used
 			print $langs->trans('DateReceived');
 			print '</td>';
 
-			if ($action != 'editdate_livraison') print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
+			if ($action != 'editdate_delivery') print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_delivery&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
-			if ($action == 'editdate_livraison')
+			if ($action == 'editdate_delivery')
 			{
-				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+				print '<form name="setdate_delivery" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
-				print '<input type="hidden" name="action" value="setdate_livraison">';
-				print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 1);
+				print '<input type="hidden" name="action" value="setdate_delivery">';
+				print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_delivery", 1, 1);
 				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			} else {
@@ -455,21 +454,21 @@ if ($action == 'create')    // Create. Seems to no be used
 			if (!empty($conf->incoterm->enabled))
 			{
 				print '<tr><td>';
-		        print '<table width="100%" class="nobordernopadding"><tr><td>';
-		        print $langs->trans('IncotermLabel');
-		        print '<td><td class="right">';
-		        if ($user->rights->expedition->delivery->creer) print '<a class="editfielda" href="'.DOL_URL_ROOT.'/delivery/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
-		        else print '&nbsp;';
-		        print '</td></tr></table>';
-		        print '</td>';
-		        print '<td colspan="3">';
+				print '<table width="100%" class="nobordernopadding"><tr><td>';
+				print $langs->trans('IncotermLabel');
+				print '<td><td class="right">';
+				if ($user->rights->expedition->delivery->creer) print '<a class="editfielda" href="'.DOL_URL_ROOT.'/delivery/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+				else print '&nbsp;';
+				print '</td></tr></table>';
+				print '</td>';
+				print '<td colspan="3">';
 				if ($action != 'editincoterm')
 				{
 					print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 				} else {
 					print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''), $_SERVER['PHP_SELF'].'?id='.$object->id);
 				}
-		        print '</td></tr>';
+				print '</td></tr>';
 			}
 
 			/* A delivery note should be just more properties of a shipment, so notes are on shipment
@@ -629,7 +628,7 @@ if ($action == 'create')    // Create. Seems to no be used
 
 			print "</table>\n";
 
-            dol_fiche_end();
+			print dol_get_fiche_end();
 
 			//if ($object->statut == 0)	// only if draft
 			//	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
@@ -691,9 +690,9 @@ if ($action == 'create')    // Create. Seems to no be used
 				$shipment = new Expedition($db);
 				$shipment->fetch($object->origin_id);
 
-    			// Show links to link elements
-    			//$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
-    			$somethingshown = $form->showLinkedObjectBlock($object, '');
+				// Show links to link elements
+				//$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
+				$somethingshown = $form->showLinkedObjectBlock($object, '');
 			}
 
 

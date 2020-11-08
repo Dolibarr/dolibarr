@@ -113,13 +113,13 @@ print '<table class="border centpercent">';
 // Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
 if (!empty($conf->mutlicompany->enabled))
 {
-    print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
-    print '<td class="valeur">'.$object->name;
-    if (!$object->entity)
-    {
-    	print img_picto($langs->trans("GlobalGroup"), 'redstar');
-    }
-    print "</td></tr>\n";
+	print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
+	print '<td class="valeur">'.$object->name;
+	if (!$object->entity)
+	{
+		print img_picto($langs->trans("GlobalGroup"), 'redstar');
+	}
+	print "</td></tr>\n";
 }
 
 // Note
@@ -144,7 +144,7 @@ print "</table>\n";
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 /*
@@ -188,7 +188,7 @@ if ($result > 0)
 	//var_dump($records);
 
 	// Show tree
-    if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0))
+	if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0))
 	{
 		if (!is_array($records))
 		{

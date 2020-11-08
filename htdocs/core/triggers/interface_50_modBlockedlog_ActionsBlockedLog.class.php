@@ -30,22 +30,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceActionsBlockedLog extends DolibarrTriggers
 {
-    /**
-     * Constructor
-     *
-     * @param DoliDB $db Database handler
-     */
-    public function __construct($db)
-    {
-        $this->db = $db;
+	/**
+	 * Constructor
+	 *
+	 * @param DoliDB $db Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
 
-        $this->name = preg_replace('/^Interface/i', '', get_class($this));
-        $this->family = "system";
-        $this->description = "Triggers of this module add action for BlockedLog module (Module of unalterable logs).";
-        // 'development', 'experimental', 'dolibarr' or version
-        $this->version = self::VERSION_DOLIBARR;
-        $this->picto = 'technic';
-    }
+		$this->name = preg_replace('/^Interface/i', '', get_class($this));
+		$this->family = "system";
+		$this->description = "Triggers of this module add action for BlockedLog module (Module of unalterable logs).";
+		// 'development', 'experimental', 'dolibarr' or version
+		$this->version = self::VERSION_DOLIBARR;
+		$this->picto = 'technic';
+	}
 
 	/**
 	 * Function called on Dolibarr payment or invoice event.
@@ -79,12 +79,12 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		$qualified = 0;
 		$amounts = 0;
 		if ($action === 'BILL_VALIDATE' || (($action === 'BILL_DELETE' || $action === 'BILL_SENTBYMAIL') && $object->statut != 0)
-		    || $action === 'BILL_SUPPLIER_VALIDATE' || (($action === 'BILL_SUPPLIER_DELETE' || $action === 'BILL_SUPPLIER_SENTBYMAIL') && $object->statut != 0)
-		    || $action === 'MEMBER_SUBSCRIPTION_CREATE' || $action === 'MEMBER_SUBSCRIPTION_MODIFY' || $action === 'MEMBER_SUBSCRIPTION_DELETE'
-		    || $action === 'DON_VALIDATE' || (($action === 'DON_MODIFY' || $action === 'DON_DELETE') && $object->statut != 0)
-		    || $action === 'CASHCONTROL_VALIDATE'
-		    || (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_DOWNLOAD' && $object->statut != 0)
-		    || (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_PREVIEW' && $object->statut != 0)
+			|| $action === 'BILL_SUPPLIER_VALIDATE' || (($action === 'BILL_SUPPLIER_DELETE' || $action === 'BILL_SUPPLIER_SENTBYMAIL') && $object->statut != 0)
+			|| $action === 'MEMBER_SUBSCRIPTION_CREATE' || $action === 'MEMBER_SUBSCRIPTION_MODIFY' || $action === 'MEMBER_SUBSCRIPTION_DELETE'
+			|| $action === 'DON_VALIDATE' || (($action === 'DON_MODIFY' || $action === 'DON_DELETE') && $object->statut != 0)
+			|| $action === 'CASHCONTROL_VALIDATE'
+			|| (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_DOWNLOAD' && $object->statut != 0)
+			|| (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_PREVIEW' && $object->statut != 0)
 			|| (!empty($conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED) && in_array($action, explode(',', $conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED)))
 		) {
 			$qualified++;
@@ -139,5 +139,5 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		} else {
 			return 1;
 		}
-    }
+	}
 }

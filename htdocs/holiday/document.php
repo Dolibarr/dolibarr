@@ -119,114 +119,114 @@ if ($object->id)
 
 	print '<table class="border tableforfield centpercent">';
 
-    print '<tr>';
-    print '<td class="titlefield">'.$langs->trans("User").'</td>';
+	print '<tr>';
+	print '<td class="titlefield">'.$langs->trans("User").'</td>';
 	print '<td>';
 	print $userRequest->getNomUrl(-1, 'leave');
 	print '</td></tr>';
 
-    // Type
-    print '<tr>';
-    print '<td>'.$langs->trans("Type").'</td>';
-    print '<td>';
-    $typeleaves = $object->getTypes(1, -1);
-    $labeltoshow = (($typeleaves[$object->fk_type]['code'] && $langs->trans($typeleaves[$object->fk_type]['code']) != $typeleaves[$object->fk_type]['code']) ? $langs->trans($typeleaves[$object->fk_type]['code']) : $typeleaves[$object->fk_type]['label']);
-    print empty($labeltoshow) ? $langs->trans("TypeWasDisabledOrRemoved", $object->fk_type) : $labeltoshow;
-    print '</td>';
-    print '</tr>';
+	// Type
+	print '<tr>';
+	print '<td>'.$langs->trans("Type").'</td>';
+	print '<td>';
+	$typeleaves = $object->getTypes(1, -1);
+	$labeltoshow = (($typeleaves[$object->fk_type]['code'] && $langs->trans($typeleaves[$object->fk_type]['code']) != $typeleaves[$object->fk_type]['code']) ? $langs->trans($typeleaves[$object->fk_type]['code']) : $typeleaves[$object->fk_type]['label']);
+	print empty($labeltoshow) ? $langs->trans("TypeWasDisabledOrRemoved", $object->fk_type) : $labeltoshow;
+	print '</td>';
+	print '</tr>';
 
-    $starthalfday = ($object->halfday == -1 || $object->halfday == 2) ? 'afternoon' : 'morning';
-    $endhalfday = ($object->halfday == 1 || $object->halfday == 2) ? 'morning' : 'afternoon';
+	$starthalfday = ($object->halfday == -1 || $object->halfday == 2) ? 'afternoon' : 'morning';
+	$endhalfday = ($object->halfday == 1 || $object->halfday == 2) ? 'morning' : 'afternoon';
 
-    if (!$edit)
-    {
-        print '<tr>';
-        print '<td>';
-        print $form->textwithpicto($langs->trans('DateDebCP'), $langs->trans("FirstDayOfHoliday"));
-        print '</td>';
-        print '<td>'.dol_print_date($object->date_debut, 'day');
-        print ' &nbsp; &nbsp; ';
-        print '<span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
-        print '</td>';
-        print '</tr>';
-    } else {
-        print '<tr>';
-        print '<td>';
-        print $form->textwithpicto($langs->trans('DateDebCP'), $langs->trans("FirstDayOfHoliday"));
-        print '</td>';
-        print '<td>';
-        print $form->selectDate($object->date_debut, 'date_debut_');
-        print ' &nbsp; &nbsp; ';
+	if (!$edit)
+	{
+		print '<tr>';
+		print '<td>';
+		print $form->textwithpicto($langs->trans('DateDebCP'), $langs->trans("FirstDayOfHoliday"));
+		print '</td>';
+		print '<td>'.dol_print_date($object->date_debut, 'day');
+		print ' &nbsp; &nbsp; ';
+		print '<span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
+		print '</td>';
+		print '</tr>';
+	} else {
+		print '<tr>';
+		print '<td>';
+		print $form->textwithpicto($langs->trans('DateDebCP'), $langs->trans("FirstDayOfHoliday"));
+		print '</td>';
+		print '<td>';
+		print $form->selectDate($object->date_debut, 'date_debut_');
+		print ' &nbsp; &nbsp; ';
 		print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday') ?GETPOST('starthalfday') : $starthalfday));
-        print '</td>';
-        print '</tr>';
-    }
+		print '</td>';
+		print '</tr>';
+	}
 
-    if (!$edit)
-    {
-        print '<tr>';
-        print '<td>';
-        print $form->textwithpicto($langs->trans('DateFinCP'), $langs->trans("LastDayOfHoliday"));
-        print '</td>';
-        print '<td>'.dol_print_date($object->date_fin, 'day');
-        print ' &nbsp; &nbsp; ';
-        print '<span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
-        print '</td>';
-        print '</tr>';
-    } else {
-        print '<tr>';
-        print '<td>';
-        print $form->textwithpicto($langs->trans('DateFinCP'), $langs->trans("LastDayOfHoliday"));
-        print '</td>';
-        print '<td>';
-        print $form->selectDate($object->date_fin, 'date_fin_');
-        print ' &nbsp; &nbsp; ';
-        print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday') ?GETPOST('endhalfday') : $endhalfday));
-        print '</td>';
-        print '</tr>';
-    }
+	if (!$edit)
+	{
+		print '<tr>';
+		print '<td>';
+		print $form->textwithpicto($langs->trans('DateFinCP'), $langs->trans("LastDayOfHoliday"));
+		print '</td>';
+		print '<td>'.dol_print_date($object->date_fin, 'day');
+		print ' &nbsp; &nbsp; ';
+		print '<span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
+		print '</td>';
+		print '</tr>';
+	} else {
+		print '<tr>';
+		print '<td>';
+		print $form->textwithpicto($langs->trans('DateFinCP'), $langs->trans("LastDayOfHoliday"));
+		print '</td>';
+		print '<td>';
+		print $form->selectDate($object->date_fin, 'date_fin_');
+		print ' &nbsp; &nbsp; ';
+		print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday') ?GETPOST('endhalfday') : $endhalfday));
+		print '</td>';
+		print '</tr>';
+	}
 
-    // Nb days consumed
-    print '<tr>';
-    print '<td>';
-    $htmlhelp = $langs->trans('NbUseDaysCPHelp');
-    $includesaturday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY : 1);
-    $includesunday   = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY : 1);
-    if ($includesaturday) $htmlhelp .= '<br>'.$langs->trans("DayIsANonWorkingDay", $langs->trans("Saturday"));
-    if ($includesunday) $htmlhelp .= '<br>'.$langs->trans("DayIsANonWorkingDay", $langs->trans("Sunday"));
-    print $form->textwithpicto($langs->trans('NbUseDaysCP'), $htmlhelp);
-    print '</td>';
-    print '<td>'.num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday).'</td>';
-    print '</tr>';
+	// Nb days consumed
+	print '<tr>';
+	print '<td>';
+	$htmlhelp = $langs->trans('NbUseDaysCPHelp');
+	$includesaturday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY : 1);
+	$includesunday   = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY : 1);
+	if ($includesaturday) $htmlhelp .= '<br>'.$langs->trans("DayIsANonWorkingDay", $langs->trans("Saturday"));
+	if ($includesunday) $htmlhelp .= '<br>'.$langs->trans("DayIsANonWorkingDay", $langs->trans("Sunday"));
+	print $form->textwithpicto($langs->trans('NbUseDaysCP'), $htmlhelp);
+	print '</td>';
+	print '<td>'.num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday).'</td>';
+	print '</tr>';
 
-    if ($object->statut == 5)
-    {
-    	print '<tr>';
-    	print '<td>'.$langs->trans('DetailRefusCP').'</td>';
-    	print '<td>'.$object->detail_refuse.'</td>';
-    	print '</tr>';
-    }
+	if ($object->statut == 5)
+	{
+		print '<tr>';
+		print '<td>'.$langs->trans('DetailRefusCP').'</td>';
+		print '<td>'.$object->detail_refuse.'</td>';
+		print '</tr>';
+	}
 
-    // Description
-    if (!$edit)
-    {
-        print '<tr>';
-        print '<td>'.$langs->trans('DescCP').'</td>';
-        print '<td>'.nl2br($object->description).'</td>';
-        print '</tr>';
-    } else {
-        print '<tr>';
-        print '<td>'.$langs->trans('DescCP').'</td>';
-        print '<td><textarea name="description" class="flat" rows="'.ROWS_3.'" cols="70">'.$object->description.'</textarea></td>';
-        print '</tr>';
-    }
+	// Description
+	if (!$edit)
+	{
+		print '<tr>';
+		print '<td>'.$langs->trans('DescCP').'</td>';
+		print '<td>'.nl2br($object->description).'</td>';
+		print '</tr>';
+	} else {
+		print '<tr>';
+		print '<td>'.$langs->trans('DescCP').'</td>';
+		print '<td><textarea name="description" class="flat" rows="'.ROWS_3.'" cols="70">'.$object->description.'</textarea></td>';
+		print '</tr>';
+	}
 
-    print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
+	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
 
-    print '</tbody>';
-    print '</table>'."\n";
-    /*
+	print '</tbody>';
+	print '</table>'."\n";
+	/*
     print '</div>';
     print '<div class="fichehalfright">';
     print '<div class="ficheaddleft">';
@@ -288,19 +288,19 @@ if ($object->id)
 
     print '</div>';
     print '</div>'; */
-    print '</div>';
+	print '</div>';
 
-    print '<div class="clearboth"></div>';
+	print '<div class="clearboth"></div>';
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 
-    $modulepart = 'holiday';
-    $permission = $user->rights->holiday->write;
-    $permtoedit = $user->rights->holiday->write;
-    $param = '&id='.$object->id;
-    include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	$modulepart = 'holiday';
+	$permission = $user->rights->holiday->write;
+	$permtoedit = $user->rights->holiday->write;
+	$param = '&id='.$object->id;
+	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	print $langs->trans("ErrorUnknown");
 }

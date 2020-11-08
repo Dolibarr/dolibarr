@@ -174,8 +174,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_thirdparty = '';
 	$search_declared_progress = '';
 
-    $search_array_options_project = array();
-    $search_array_options_task = array();
+	$search_array_options_project = array();
+	$search_array_options_task = array();
 
 	// We redefine $usertoprocess
 	$usertoprocess = $user;
@@ -347,18 +347,18 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 			$param .= ($search_task_ref ? '&search_task_ref='.urlencode($search_task_ref) : '');
 			$param .= ($search_task_label ? '&search_task_label='.urlencode($search_task_label) : '');
 
-            /*$search_array_options=$search_array_options_project;
+			/*$search_array_options=$search_array_options_project;
             $search_options_pattern='search_options_';
             include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
             */
 
-            $search_array_options = $search_array_options_task;
-            $search_options_pattern = 'search_task_options_';
-            include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+			$search_array_options = $search_array_options_task;
+			$search_options_pattern = 'search_task_options_';
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-	   	    // Redirect to avoid submit twice on back
-	       	header('Location: '.$_SERVER["PHP_SELF"].'?'.$param);
-	       	exit;
+	   		// Redirect to avoid submit twice on back
+		   	header('Location: '.$_SERVER["PHP_SELF"].'?'.$param);
+		   	exit;
 	   	}
 	}
 }
@@ -486,7 +486,7 @@ if ($mine || ($usertoprocess->id == $user->id))
 }
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="floatright right'.($conf->dol_optimize_smallscreen ? ' centpercent' : '').'">'.$nav.'</div>'; // We move this before the assign to components so, the default submit button is not the assign to.
 
@@ -592,7 +592,7 @@ if (!empty($arrayfields['t.planned_workload']['checked'])) $addcolspan++;
 if (!empty($arrayfields['t.progress']['checked'])) $addcolspan++;
 foreach ($arrayfields as $key => $val)
 {
-    if ($val['checked'] && substr($key, 0, 5) == 'efpt.') $addcolspan++;
+	if ($val['checked'] && substr($key, 0, 5) == 'efpt.') $addcolspan++;
 }
 
 print '<div class="div-table-responsive">';
@@ -610,11 +610,11 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 print '<td class="liste_titre"></td>';
 if (!empty($arrayfields['t.planned_workload']['checked']))
 {
-    print '<td class="liste_titre right"><input type="text" size="4" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
+	print '<td class="liste_titre right"><input type="text" size="4" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
 }
 if (!empty($arrayfields['t.progress']['checked']))
 {
-    print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"></td>';
 }
 print '<td class="liste_titre"></td>';
 for ($idw = 0; $idw < 7; $idw++)
@@ -638,11 +638,11 @@ $extrafieldsobjectprefix = 'efpt.';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 if (!empty($arrayfields['t.planned_workload']['checked']))
 {
-    print '<th class="leftborder plannedworkload maxwidth75 right">'.$langs->trans("PlannedWorkload").'</th>';
+	print '<th class="leftborder plannedworkload maxwidth75 right">'.$langs->trans("PlannedWorkload").'</th>';
 }
 if (!empty($arrayfields['t.progress']['checked']))
 {
-    print '<th class="maxwidth75 right">'.$langs->trans("ProgressDeclared").'</th>';
+	print '<th class="maxwidth75 right">'.$langs->trans("ProgressDeclared").'</th>';
 }
 /*print '<td class="maxwidth75 right">'.$langs->trans("TimeSpent").'</td>';
  if ($usertoprocess->id == $user->id) print '<td class="maxwidth75 right">'.$langs->trans("TimeSpentByYou").'</td>';
@@ -681,7 +681,7 @@ $colspan = 3 + (empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT) 
 if ($conf->use_javascript_ajax)
 {
 	print '<tr class="liste_total">';
-    print '<td class="liste_total" colspan="'.($colspan + $addcolspan).'">';
+	print '<td class="liste_total" colspan="'.($colspan + $addcolspan).'">';
 	print $langs->trans("Total");
 	print '<span class="opacitymediumbycolor">  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong></span>';
 	print '</td>';
@@ -769,7 +769,7 @@ if (count($tasksarray) > 0)
 	if ($isdiff)
 	{
 		print '<tr class="oddeven othertaskwithtime">';
-        print '<td colspan="'.($colspan + $addcolspan).'" class="opacitymedium">';
+		print '<td colspan="'.($colspan + $addcolspan).'" class="opacitymedium">';
 		print $langs->trans("OtherFilteredTasks");
 		print '</td>';
 		for ($idw = 0; $idw < 7; $idw++)
@@ -791,8 +791,8 @@ if (count($tasksarray) > 0)
 			}
 			print '</td>';
 		}
-        print ' <td class="liste_total"></td>';
-    	print '</tr>';
+		print ' <td class="liste_total"></td>';
+		print '</tr>';
 	}
 
 	if ($conf->use_javascript_ajax)
@@ -820,7 +820,7 @@ if (count($tasksarray) > 0)
 
 			print '<td class="liste_total hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'" align="center"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
 		}
-                print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>
+				print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>
     	</tr>';
 	}
 } else {

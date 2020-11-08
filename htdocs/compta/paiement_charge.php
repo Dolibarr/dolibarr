@@ -65,20 +65,20 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode")), null, 'errors');
 		$error++;
-        $action = 'create';
+		$action = 'create';
 	}
 	if ($datepaye == '')
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$error++;
-        $action = 'create';
+		$action = 'create';
 	}
-    if (!empty($conf->banque->enabled) && !($_POST["accountid"] > 0))
-    {
-        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
-        $error++;
-        $action = 'create';
-    }
+	if (!empty($conf->banque->enabled) && !($_POST["accountid"] > 0))
+	{
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
+		$error++;
+		$action = 'create';
+	}
 
 	if (!$error)
 	{
@@ -94,59 +94,59 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 			}
 		}
 
-        if (count($amounts) <= 0)
-        {
-            $error++;
-            setEventMessages($langs->trans("ErrorNoPaymentDefined"), null, 'errors');
-            $action = 'create';
-        }
+		if (count($amounts) <= 0)
+		{
+			$error++;
+			setEventMessages($langs->trans("ErrorNoPaymentDefined"), null, 'errors');
+			$action = 'create';
+		}
 
-        if (!$error)
-        {
-    		$db->begin();
+		if (!$error)
+		{
+			$db->begin();
 
-    		// Create a line of payments
-    		$paiement = new PaymentSocialContribution($db);
-    		$paiement->chid         = $chid;
-    		$paiement->datepaye     = $datepaye;
-    		$paiement->amounts      = $amounts; // Amount list
-    		$paiement->paiementtype = GETPOST("paiementtype", 'alphanohtml');
-    		$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
-    		$paiement->note         = GETPOST("note", 'restricthtml');
-    		$paiement->note_private = GETPOST("note", 'restricthtml');
+			// Create a line of payments
+			$paiement = new PaymentSocialContribution($db);
+			$paiement->chid         = $chid;
+			$paiement->datepaye     = $datepaye;
+			$paiement->amounts      = $amounts; // Amount list
+			$paiement->paiementtype = GETPOST("paiementtype", 'alphanohtml');
+			$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
+			$paiement->note         = GETPOST("note", 'restricthtml');
+			$paiement->note_private = GETPOST("note", 'restricthtml');
 
-    		if (!$error)
-    		{
-    		    $paymentid = $paiement->create($user, (GETPOST('closepaidcontrib') == 'on' ? 1 : 0));
-                if ($paymentid < 0)
-                {
-                	$error++;
-                	setEventMessages($paiement->error, null, 'errors');
-                	$action = 'create';
-                }
-    		}
+			if (!$error)
+			{
+				$paymentid = $paiement->create($user, (GETPOST('closepaidcontrib') == 'on' ? 1 : 0));
+				if ($paymentid < 0)
+				{
+					$error++;
+					setEventMessages($paiement->error, null, 'errors');
+					$action = 'create';
+				}
+			}
 
-            if (!$error)
-            {
-                $result = $paiement->addPaymentToBank($user, 'payment_sc', '(SocialContributionPayment)', GETPOST('accountid', 'int'), '', '');
-                if (!($result > 0))
-                {
-                	$error++;
-                	setEventMessages($paiement->error, null, 'errors');
-                	$action = 'create';
-                }
-            }
+			if (!$error)
+			{
+				$result = $paiement->addPaymentToBank($user, 'payment_sc', '(SocialContributionPayment)', GETPOST('accountid', 'int'), '', '');
+				if (!($result > 0))
+				{
+					$error++;
+					setEventMessages($paiement->error, null, 'errors');
+					$action = 'create';
+				}
+			}
 
-    	    if (!$error)
-            {
-                $db->commit();
-                $loc = DOL_URL_ROOT.'/compta/sociales/card.php?id='.$chid;
-                header('Location: '.$loc);
-                exit;
-            } else {
-                $db->rollback();
-            }
-        }
+			if (!$error)
+			{
+				$db->commit();
+				$loc = DOL_URL_ROOT.'/compta/sociales/card.php?id='.$chid;
+				header('Location: '.$loc);
+				exit;
+			} else {
+				$db->rollback();
+			}
+		}
 	}
 }
 
@@ -164,8 +164,8 @@ $form = new Form($db);
 if ($action == 'create')
 {
 	$charge->fetch($chid);
-    $charge->accountid = $charge->fk_account ? $charge->fk_account : $charge->accountid;
-    $charge->paiementtype = $charge->mode_reglement_id ? $charge->mode_reglement_id : $charge->paiementtype;
+	$charge->accountid = $charge->fk_account ? $charge->fk_account : $charge->accountid;
+	$charge->paiementtype = $charge->mode_reglement_id ? $charge->mode_reglement_id : $charge->paiementtype;
 
 	$total = $charge->amount;
 	if (!empty($conf->use_javascript_ajax))
@@ -252,7 +252,7 @@ if ($action == 'create')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	/*
  	 * Other unpaid charges

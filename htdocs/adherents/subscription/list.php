@@ -110,22 +110,22 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
-    // Selection of new fields
-    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+	// Selection of new fields
+	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-    // Purge search criteria
-    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+	// Purge search criteria
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$search_type = "";
-	    $search_ref = "";
-	    $search_lastname = "";
-	    $search_firstname = "";
-	    $search_login = "";
-	    $search_note = "";
-	    $search_amount = "";
-	    $search_account = "";
-	    $toselect = '';
-	    $search_array_options = array();
-    }
+		$search_ref = "";
+		$search_lastname = "";
+		$search_firstname = "";
+		$search_login = "";
+		$search_note = "";
+		$search_amount = "";
+		$search_account = "";
+		$toselect = '';
+		$search_array_options = array();
+	}
 }
 
 
@@ -153,8 +153,8 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_extrafields as ef on (d.rowid = e
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank=b.rowid";
 $sql .= " WHERE d.entity IN (".getEntity('adherent').")";
 if (isset($date_select) && $date_select != '') {
-    $sql .= " AND c.dateadh >= '".((int) $date_select)."-01-01 00:00:00'";
-    $sql .= " AND c.dateadh < '".((int) $date_select + 1)."-01-01 00:00:00'";
+	$sql .= " AND c.dateadh >= '".((int) $date_select)."-01-01 00:00:00'";
+	$sql .= " AND c.dateadh < '".((int) $date_select + 1)."-01-01 00:00:00'";
 }
 if ($search_ref) {
 	if (is_numeric($search_ref)) $sql .= " AND (c.rowid = ".$db->escape($search_ref).")";
@@ -181,13 +181,13 @@ $sql .= $db->order($sortfield, $sortorder);
 // Count total nb of records with no order and no limits
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-    $resql = $db->query($sql);
-    if ($resql) $nbtotalofrecords = $db->num_rows($resql);
-    else dol_print_error($db);
-    if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	$resql = $db->query($sql);
+	if ($resql) $nbtotalofrecords = $db->num_rows($resql);
+	else dol_print_error($db);
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
-    	$offset = 0;
-    }
+		$offset = 0;
+	}
 }
 // Add limit
 $sql .= $db->plimit($limit + 1, $offset);
@@ -241,7 +241,7 @@ $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $newcardbutton = '';
 if ($user->rights->adherent->cotisation->creer) {
-    $newcardbutton .= dolGetButtonTitle($langs->trans('NewSubscription'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/list.php?status=-1,1');
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewSubscription'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/list.php?status=-1,1');
 }
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -409,8 +409,8 @@ while ($i < min($num, $limit)) {
 	$adherent->typeid = $obj->type;
 
 	$typeid = ($obj->fk_type > 0 ? $obj->fk_type : $adherent->typeid);
-    $adht = new AdherentType($db);
-    $adht->fetch($typeid);
+	$adht = new AdherentType($db);
+	$adht->fetch($typeid);
 
 	print '<tr class="oddeven">';
 
@@ -419,14 +419,14 @@ while ($i < min($num, $limit)) {
 		print '<td>'.$subscription->getNomUrl(1).'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
-    // Type
-    if (!empty($arrayfields['d.fk_type']['checked'])) {
-        print '<td class="nowraponall">';
-        if ($typeid > 0) {
-        	print $adht->getNomUrl(1);
-        }
-        print '</td>';
-        if (!$i) $totalarray['nbfield']++;
+	// Type
+	if (!empty($arrayfields['d.fk_type']['checked'])) {
+		print '<td class="nowraponall">';
+		if ($typeid > 0) {
+			print $adht->getNomUrl(1);
+		}
+		print '</td>';
+		if (!$i) $totalarray['nbfield']++;
 	}
 
 	// Lastname

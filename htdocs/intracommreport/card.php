@@ -22,9 +22,9 @@
  *	\brief      Page to manage intracomm report export
  */
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/intracommreport/class/intracommreport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/intracommreport/class/intracommreport.class.php';
 
 $langs->loadLangs(array("intracommreport"));
 
@@ -37,7 +37,7 @@ $formother = new FormOther($db);
 $year = GETPOST('year');
 $month = GETPOST('month');
 $type_declaration = GETPOST('type');
-$backtopage=GETPOST('backtopage', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 /*
  * 	Actions
@@ -45,67 +45,67 @@ $backtopage=GETPOST('backtopage', 'alpha');
 
 if ($user->rights->intracommreport->delete && $action == 'confirm_delete' && $confirm == 'yes')
 {
-    $result=$object->delete($id, $user);
-    if ($result > 0)
-    {
-        if (! empty($backtopage))
-        {
-            header("Location: ".$backtopage);
-            exit;
-        }
-        else {
-            header("Location: list.php");
-            exit;
-        }
-    }
-    else {
-        $errmesg=$object->error;
-    }
+	$result = $object->delete($id, $user);
+	if ($result > 0)
+	{
+		if (!empty($backtopage))
+		{
+			header("Location: ".$backtopage);
+			exit;
+		}
+		else {
+			header("Location: list.php");
+			exit;
+		}
+	}
+	else {
+		$errmesg = $object->error;
+	}
 }
 
 if ($action == 'add' && $user->rights->intracommreport->write) {
-    $object->label			    = trim($label);
-    $object->type               = trim($type);
-    $object->type_declaration   = (int) $statut;
-    $object->subscription       = (int) $subscription;
+	$object->label = trim($label);
+	$object->type               = trim($type);
+	$object->type_declaration   = (int) $statut;
+	$object->subscription       = (int) $subscription;
 
-    // Fill array 'array_options' with data from add form
-    $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-    if ($ret < 0) $error++;
+	// Fill array 'array_options' with data from add form
+	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	if ($ret < 0) $error++;
 
-    if (empty($object->label)) {
-        $error++;
-        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
-    }
-    else {
-        $sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."adherent_type WHERE libelle='".$db->escape($object->label)."'";
-        $result = $db->query($sql);
-        if ($result) {
-            $num = $db->num_rows($result);
-        }
-        if ($num) {
-            $error++;
-            $langs->load("errors");
-            setEventMessages($langs->trans("ErrorLabelAlreadyExists", $login), null, 'errors');
-        }
-    }
+	if (empty($object->label)) {
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
+	}
+	else {
+		$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."adherent_type WHERE libelle='".$db->escape($object->label)."'";
+		$result = $db->query($sql);
+		if ($result) {
+			$num = $db->num_rows($result);
+		}
+		if ($num) {
+			$error++;
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorLabelAlreadyExists", $login), null, 'errors');
+		}
+	}
 
-    if (! $error)
-    {
-        $id=$object->create($user);
-        if ($id > 0)
-        {
-            header("Location: ".$_SERVER["PHP_SELF"]);
-            exit;
-        }
-        else {
-            setEventMessages($object->error, $object->errors, 'errors');
-            $action = 'create';
-        }
-    }
-    else {
-        $action = 'create';
-    }
+	if (!$error)
+	{
+		$id = $object->create($user);
+		if ($id > 0)
+		{
+			header("Location: ".$_SERVER["PHP_SELF"]);
+			exit;
+		}
+		else {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'create';
+		}
+	}
+	else {
+		$action = 'create';
+	}
 }
 
 /*
@@ -115,120 +115,120 @@ if ($action == 'add' && $user->rights->intracommreport->write) {
 // Creation mode
 if ($action == 'create')
 {
-    $title = $langs->trans("IntracommReportTitle");
-    llxHeader("", $title);
-    print load_fiche_titre($langs->trans("IntracommReportTitle"));
+	$title = $langs->trans("IntracommReportTitle");
+	llxHeader("", $title);
+	print load_fiche_titre($langs->trans("IntracommReportTitle"));
 
-    print '<form name="charge" method="post" action="'.$_SERVER["PHP_SELF"].'">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
-    print '<input type="hidden" name="action" value="export" />';
+	print '<form name="charge" method="post" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="export" />';
 
-    print dol_get_fiche_head();
+	print dol_get_fiche_head();
 
-    print '<table class="border" width="100%">';
+	print '<table class="border" width="100%">';
 
-    // Label
-    print '<tr><td class="titlefieldcreate">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth200" name="label" autofocus="autofocus"></td></tr>';
+	// Label
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth200" name="label" autofocus="autofocus"></td></tr>';
 
-    // Declaration
-    $declaration["deb"] = $langs->trans("DEB");
-    $declaration["des"] = $langs->trans("DES");
-    print '<tr><td class="fieldrequired">'.$langs->trans("Declaration")."</td><td>\n";
-    print $form->selectarray("declaration", $declaration, GETPOST('declaration', 'alpha')?GETPOST('declaration', 'alpha'):$object->declaration, 0);
-    print "</td>\n";
+	// Declaration
+	$declaration["deb"] = $langs->trans("DEB");
+	$declaration["des"] = $langs->trans("DES");
+	print '<tr><td class="fieldrequired">'.$langs->trans("Declaration")."</td><td>\n";
+	print $form->selectarray("declaration", $declaration, GETPOST('declaration', 'alpha') ?GETPOST('declaration', 'alpha') : $object->declaration, 0);
+	print "</td>\n";
 
-    // Analysis period
-    print '<tr>';
-    print '<td class="titlefieldcreate fieldrequired">';
-    print $langs->trans("AnalysisPeriod");
-    print '</td>';
-    print '<td>';
-    print $formother->select_month($month ? date('M') : $month, 'month', 0, 1, 'widthauto valignmiddle ');
-    print $formother->select_year($year ? date('Y') : $year, 'year', 0, 3, 3);
-    print '</td>';
-    print '</tr>';
+	// Analysis period
+	print '<tr>';
+	print '<td class="titlefieldcreate fieldrequired">';
+	print $langs->trans("AnalysisPeriod");
+	print '</td>';
+	print '<td>';
+	print $formother->select_month($month ? date('M') : $month, 'month', 0, 1, 'widthauto valignmiddle ');
+	print $formother->select_year($year ? date('Y') : $year, 'year', 0, 3, 3);
+	print '</td>';
+	print '</tr>';
 
-    // Type of declaration
-    $typeOfDeclaration["introduction"] = $langs->trans("Introduction");
-    $typeOfDeclaration["expedition"] = $langs->trans("Expedition");
-    print '<tr><td class="fieldrequired">'.$langs->trans("TypeOfDeclaration")."</td><td>\n";
-    print $form->selectarray("type_declaration", $typeOfDeclaration, GETPOST('type_declaration', 'alpha')?GETPOST('type_declaration', 'alpha'):$object->type_declaration, 0);
-    print "</td>\n";
+	// Type of declaration
+	$typeOfDeclaration["introduction"] = $langs->trans("Introduction");
+	$typeOfDeclaration["expedition"] = $langs->trans("Expedition");
+	print '<tr><td class="fieldrequired">'.$langs->trans("TypeOfDeclaration")."</td><td>\n";
+	print $form->selectarray("type_declaration", $typeOfDeclaration, GETPOST('type_declaration', 'alpha') ?GETPOST('type_declaration', 'alpha') : $object->type_declaration, 0);
+	print "</td>\n";
 
-    print '</table>';
+	print '</table>';
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 
-    print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
-    print '</div>';
+	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+	print '</div>';
 
-    print '</form>';
+	print '</form>';
 }
 
 if ($id > 0 && $action != 'edit') {
-    /* ************************************************************************** */
-    /*                                                                            */
-    /* View mode                                                                  */
-    /*                                                                            */
-    /* ************************************************************************** */
-    $res = $object->fetch($id);
-    if ($res < 0) {
-        dol_print_error($db, $object->error);
-        exit;
-    }
+	/* ************************************************************************** */
+	/*                                                                            */
+	/* View mode                                                                  */
+	/*                                                                            */
+	/* ************************************************************************** */
+	$res = $object->fetch($id);
+	if ($res < 0) {
+		dol_print_error($db, $object->error);
+		exit;
+	}
 
-    /*
+	/*
      * Show tabs
      */
-    $head = intracommreport_prepare_head($object);
+	$head = intracommreport_prepare_head($object);
 
-    print dol_get_fiche_head($head, 'general', $langs->trans("IntracommReport"), -1, 'user');
+	print dol_get_fiche_head($head, 'general', $langs->trans("IntracommReport"), -1, 'user');
 
-    // Confirm remove report
-    if ($action == 'delete') {
-        $formquestion = array();
-        if ($backtopage) {
-            $formquestion[] = array(
-                'type' => 'hidden',
-                'name' => 'backtopage',
-                'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"])
-            );
-        }
-        print $form->formconfirm("card.php?rowid=" . $id, $langs->trans("DeleteReport"),
-            $langs->trans("ConfirmDeleteReport"), "confirm_delete", $formquestion, 'no', 1);
-    }
+	// Confirm remove report
+	if ($action == 'delete') {
+		$formquestion = array();
+		if ($backtopage) {
+			$formquestion[] = array(
+				'type' => 'hidden',
+				'name' => 'backtopage',
+				'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"])
+			);
+		}
+		print $form->formconfirm("card.php?rowid=".$id, $langs->trans("DeleteReport"),
+			$langs->trans("ConfirmDeleteReport"), "confirm_delete", $formquestion, 'no', 1);
+	}
 
-    $linkback = '<a href="' . DOL_URL_ROOT . '/intracommreport/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/intracommreport/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object, 'rowid', $linkback);
+	dol_banner_tab($object, 'rowid', $linkback);
 
-    print '<div class="fichecenter">';
-    print '<div class="fichehalfleft">';
+	print '<div class="fichecenter">';
+	print '<div class="fichehalfleft">';
 
-    print '<div class="underbanner clearboth"></div>';
-    print '<table class="border tableforfield centpercent">';
+	print '<div class="underbanner clearboth"></div>';
+	print '<table class="border tableforfield centpercent">';
 
-    // Type
-    print '<tr><td class="titlefield">' . $langs->trans("Type") . '</td><td class="valeur">' . $object->declaration . "</td></tr>\n";
+	// Type
+	print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td class="valeur">'.$object->declaration."</td></tr>\n";
 
-    // Analysis Period
-    print '<tr><td>' . $langs->trans("AnalysisPeriod") . '</td><td class="valeur">' . $object->period . '</td>';
-    print '</tr>';
+	// Analysis Period
+	print '<tr><td>'.$langs->trans("AnalysisPeriod").'</td><td class="valeur">'.$object->period.'</td>';
+	print '</tr>';
 
-    // Type of Declaration
-    print '<tr><td>' . $langs->trans("TypeOfDeclaration") . '</td><td class="valeur">' . $object->type_declaration . '</td>';
-    print '</tr>';
+	// Type of Declaration
+	print '<tr><td>'.$langs->trans("TypeOfDeclaration").'</td><td class="valeur">'.$object->type_declaration.'</td>';
+	print '</tr>';
 
-    print "</table>\n";
+	print "</table>\n";
 
-    print "</div></div></div>\n";
-    print '<div style="clear:both"></div>';
+	print "</div></div></div>\n";
+	print '<div style="clear:both"></div>';
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
-    /*
+	/*
     switch($action) {
         case 'generateXML':
             $obj = new TDebProdouane($PDOdb);

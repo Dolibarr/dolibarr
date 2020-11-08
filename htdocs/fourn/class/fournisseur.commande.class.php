@@ -388,7 +388,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->note_private = $obj->note_private;
 			$this->note_public = $obj->note_public;
 			$this->model_pdf = $obj->model_pdf;
-			$this->modelpdf = $obj->model_pdf;	// deprecated
+			$this->modelpdf = $obj->model_pdf; // deprecated
 
 			//Incoterms
 			$this->fk_incoterms = $obj->fk_incoterms;
@@ -763,17 +763,25 @@ class CommandeFournisseur extends CommonOrder
 		global $langs, $conf, $user;
 
 		$result = '';
-		$label = '<u>'.$langs->trans("PurchaseOrder").'</u>';
-		if (!empty($this->ref))
-			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		if (!empty($this->ref_supplier))
-			$label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
-		if (!empty($this->total_ht))
-			$label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
-		if (!empty($this->total_tva))
-			$label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
-		if (!empty($this->total_ttc))
-			$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+
+		$label = '';
+
+		if ($user->rights->fournisseur->commande->lire) {
+			$label = '<u class="paddingrightonly">'.$langs->trans("SupplierOrder").'</u>';
+			if (isset($this->statut)) {
+				$label .= ' '.$this->getLibStatut(5);
+			}
+			if (!empty($this->ref))
+				$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+			if (!empty($this->ref_supplier))
+				$label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
+			if (!empty($this->total_ht))
+				$label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
+			if (!empty($this->total_tva))
+				$label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+			if (!empty($this->total_ttc))
+				$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+		}
 
 		$picto = 'order';
 		$url = DOL_URL_ROOT.'/fourn/commande/card.php?id='.$this->id;
@@ -2020,8 +2028,8 @@ class CommandeFournisseur extends CommonOrder
 
 		if (!$error)
 		{
-        	// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
-        	$this->deleteEcmFiles();
+			// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
+			$this->deleteEcmFiles();
 
 			// We remove directory
 			$ref = dol_sanitizeFileName($this->ref);
@@ -2210,9 +2218,9 @@ class CommandeFournisseur extends CommonOrder
 
 			// TODO LDR01 Add a control test to accept only if ALL predefined products are received (same qty).
 
-            if (empty($error))
-            {
-                $this->db->begin();
+			if (empty($error))
+			{
+				$this->db->begin();
 
 				$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
 				$sql .= " SET fk_statut = ".$statut;
@@ -2228,10 +2236,10 @@ class CommandeFournisseur extends CommonOrder
 					$this->statut = $statut;
 					$this->actionmsg2 = $comment;
 
-                    // Call trigger
-                    $result_trigger = $this->call_trigger('ORDER_SUPPLIER_RECEIVE', $user);
-                    if ($result_trigger < 0) $error++;
-                    // End call triggers
+					// Call trigger
+					$result_trigger = $this->call_trigger('ORDER_SUPPLIER_RECEIVE', $user);
+					if ($result_trigger < 0) $error++;
+					// End call triggers
 
 					if (empty($error))
 					{

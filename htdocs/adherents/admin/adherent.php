@@ -50,27 +50,27 @@ $action = GETPOST('action', 'aZ09');
 
 //
 if ($action == 'updateall') {
-    $db->begin();
-    $res1 = $res2 = $res3 = $res4 = $res5 = $res6 = 0;
-    $res1 = dolibarr_set_const($db, 'ADHERENT_LOGIN_NOT_REQUIRED', GETPOST('ADHERENT_LOGIN_NOT_REQUIRED', 'alpha') ? 0 : 1, 'chaine', 0, '', $conf->entity);
-    $res2 = dolibarr_set_const($db, 'ADHERENT_MAIL_REQUIRED', GETPOST('ADHERENT_MAIL_REQUIRED', 'alpha'), 'chaine', 0, '', $conf->entity);
-    $res3 = dolibarr_set_const($db, 'ADHERENT_DEFAULT_SENDINFOBYMAIL', GETPOST('ADHERENT_DEFAULT_SENDINFOBYMAIL', 'alpha'), 'chaine', 0, '', $conf->entity);
-    $res4 = dolibarr_set_const($db, 'ADHERENT_BANK_USE', GETPOST('ADHERENT_BANK_USE', 'alpha'), 'chaine', 0, '', $conf->entity);
-    // Use vat for invoice creation
-    if ($conf->facture->enabled) {
-        $res4 = dolibarr_set_const($db, 'ADHERENT_VAT_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_VAT_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
-        $res5 = dolibarr_set_const($db, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
-        if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
-            $res6 = dolibarr_set_const($db, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
-        }
-    }
-    if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0 || $res6 < 0) {
-        setEventMessages('ErrorFailedToSaveDate', null, 'errors');
-        $db->rollback();
-    } else {
-        setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
-        $db->commit();
-    }
+	$db->begin();
+	$res1 = $res2 = $res3 = $res4 = $res5 = $res6 = 0;
+	$res1 = dolibarr_set_const($db, 'ADHERENT_LOGIN_NOT_REQUIRED', GETPOST('ADHERENT_LOGIN_NOT_REQUIRED', 'alpha') ? 0 : 1, 'chaine', 0, '', $conf->entity);
+	$res2 = dolibarr_set_const($db, 'ADHERENT_MAIL_REQUIRED', GETPOST('ADHERENT_MAIL_REQUIRED', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res3 = dolibarr_set_const($db, 'ADHERENT_DEFAULT_SENDINFOBYMAIL', GETPOST('ADHERENT_DEFAULT_SENDINFOBYMAIL', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res4 = dolibarr_set_const($db, 'ADHERENT_BANK_USE', GETPOST('ADHERENT_BANK_USE', 'alpha'), 'chaine', 0, '', $conf->entity);
+	// Use vat for invoice creation
+	if ($conf->facture->enabled) {
+		$res4 = dolibarr_set_const($db, 'ADHERENT_VAT_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_VAT_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
+		$res5 = dolibarr_set_const($db, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
+		if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+			$res6 = dolibarr_set_const($db, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
+		}
+	}
+	if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0 || $res6 < 0) {
+		setEventMessages('ErrorFailedToSaveDate', null, 'errors');
+		$db->rollback();
+	} else {
+		setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
+		$db->commit();
+	}
 }
 
 // Action to update or add a constant
@@ -99,18 +99,18 @@ if ($action == 'update' || $action == 'add') {
 
 // Action to enable of a submodule of the adherent module
 if ($action == 'set') {
-    $result = dolibarr_set_const($db, GETPOST('name', 'alpha'), GETPOST('value'), '', 0, '', $conf->entity);
-    if ($result < 0) {
-        print $db->error();
-    }
+	$result = dolibarr_set_const($db, GETPOST('name', 'alpha'), GETPOST('value'), '', 0, '', $conf->entity);
+	if ($result < 0) {
+		print $db->error();
+	}
 }
 
 // Action to disable a submodule of the adherent module
 if ($action == 'unset') {
-    $result = dolibarr_del_const($db, GETPOST('name', 'alpha'), $conf->entity);
-    if ($result < 0) {
-        print $db->error();
-    }
+	$result = dolibarr_del_const($db, GETPOST('name', 'alpha'), $conf->entity);
+	if ($result < 0) {
+		print $db->error();
+	}
 }
 
 
@@ -169,7 +169,7 @@ if (!empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty(
 print '<td>';
 print $form->selectarray('ADHERENT_BANK_USE', $arraychoices, $conf->global->ADHERENT_BANK_USE, 0);
 if ($conf->global->ADHERENT_BANK_USE == 'bankdirect' || $conf->global->ADHERENT_BANK_USE == 'bankviainvoice') {
-    print '<br><div style="padding-top: 5px;"><span class="opacitymedium">'.$langs->trans("ABankAccountMustBeDefinedOnPaymentModeSetup").'</span></div>';
+	print '<br><div style="padding-top: 5px;"><span class="opacitymedium">'.$langs->trans("ABankAccountMustBeDefinedOnPaymentModeSetup").'</span></div>';
 }
 print '</td>';
 print "</tr>\n";
@@ -246,7 +246,7 @@ $helptext .= '__YEAR__, __MONTH__, __DAY__';
 
 form_constantes($constantes, 0, $helptext);
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

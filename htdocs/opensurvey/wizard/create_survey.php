@@ -161,7 +161,7 @@ print $form->selectDate($champdatefin ? $champdatefin : -1, 'champdatefin', '', 
 print '</tr>'."\n";
 print '</table>'."\n";
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 //focus javascript sur le premier champ
 print '<script type="text/javascript">'."\n";

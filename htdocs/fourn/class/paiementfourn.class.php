@@ -123,7 +123,7 @@ class PaiementFourn extends Paiement
 				$this->bank_account   = $obj->fk_account;
 				$this->fk_account     = $obj->fk_account;
 				$this->bank_line      = $obj->fk_bank;
-				$this->montant        = $obj->amount;		// deprecated
+				$this->montant        = $obj->amount; // deprecated
 				$this->amount         = $obj->amount;
 				$this->multicurrency_amount = $obj->multicurrency_amount;
 				$this->note           = $obj->note;
@@ -176,7 +176,7 @@ class PaiementFourn extends Paiement
 
 		foreach ($amounts as $key => $value)
 		{
-			$value_converted = Multicurrency::getAmountConversionFromInvoiceRate($key, $value? $value : 0, $way, 'facture_fourn');
+			$value_converted = Multicurrency::getAmountConversionFromInvoiceRate($key, $value ? $value : 0, $way, 'facture_fourn');
 			$totalamount_converted += $value_converted;
 			$amounts_to_update[$key] = price2num($value_converted, 'MT');
 
@@ -191,7 +191,7 @@ class PaiementFourn extends Paiement
 
 		if ($totalamount <> 0) // On accepte les montants negatifs
 		{
-		    $ref = $this->getNextNumRef(is_object($thirdparty) ? $thirdparty : '');
+			$ref = $this->getNextNumRef(is_object($thirdparty) ? $thirdparty : '');
 			$now = dol_now();
 
 			if ($way == 'dolibarr')
@@ -247,8 +247,8 @@ class PaiementFourn extends Paiement
 							// Regenerate documents of invoices
 							if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 							{
-							    $newlang = '';
-							    $outputlangs = $langs;
+								$newlang = '';
+								$outputlangs = $langs;
 								if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $invoice->thirdparty->default_lang;
 								if (!empty($newlang)) {
 									$outputlangs = new Translate("", $conf);
@@ -491,7 +491,7 @@ class PaiementFourn extends Paiement
 		return $this->LibStatut($this->statut, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Renvoi le libelle d'un statut donne
 	 *
@@ -501,7 +501,7 @@ class PaiementFourn extends Paiement
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 
 		$langs->load('compta');
@@ -550,7 +550,7 @@ class PaiementFourn extends Paiement
 	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param		string	$option			Sur quoi pointe le lien
 	 *  @param		string  $mode           'withlistofinvoices'=Include list of invoices into tooltip
-     *  @param		int  	$notooltip		1=Disable tooltip
+	 *  @param		int  	$notooltip		1=Disable tooltip
 	 *	@return		string					Chaine avec URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $mode = 'withlistofinvoices', $notooltip = 0)
@@ -695,7 +695,7 @@ class PaiementFourn extends Paiement
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
-         *  @param   null|array  $moreparams     Array to provide more information
+	 *  @param   null|array  $moreparams     Array to provide more information
 	 *  @return     int         				<0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
@@ -753,7 +753,7 @@ class PaiementFourn extends Paiement
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Load the third party of object, from id into this->thirdparty
 	 *
@@ -762,7 +762,7 @@ class PaiementFourn extends Paiement
 	 */
 	public function fetch_thirdparty($force_thirdparty_id = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
 		if (empty($force_thirdparty_id))

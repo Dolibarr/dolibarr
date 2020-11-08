@@ -34,42 +34,42 @@ class ActionsCardCompany extends ActionsCardCommon
 	/**
 	 *    Constructor
 	 *
-     *    @param	DoliDB	$db				Handler acces base de donnees
-     *    @param	string	$dirmodule		Name of directory of module
-     *    @param	string	$targetmodule	Name of directory of module where canvas is stored
-     *    @param	string	$canvas			Name of canvas
-     *    @param	string	$card			Name of tab (sub-canvas)
+	 *    @param	DoliDB	$db				Handler acces base de donnees
+	 *    @param	string	$dirmodule		Name of directory of module
+	 *    @param	string	$targetmodule	Name of directory of module where canvas is stored
+	 *    @param	string	$canvas			Name of canvas
+	 *    @param	string	$card			Name of tab (sub-canvas)
 	 */
-    public function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
+	public function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
 	{
-        $this->db = $db;
-        $this->dirmodule = $dirmodule;
-        $this->targetmodule = $targetmodule;
-        $this->canvas = $canvas;
-        $this->card = $card;
+		$this->db = $db;
+		$this->dirmodule = $dirmodule;
+		$this->targetmodule = $targetmodule;
+		$this->canvas = $canvas;
+		$this->card = $card;
 	}
 
-    /**
-     *  Return the title of card
-     *
-     *  @param	string	$action		Action code
-     *  @return	string				Title
-     */
-    private function getTitle($action)
-    {
-        global $langs;
+	/**
+	 *  Return the title of card
+	 *
+	 *  @param	string	$action		Action code
+	 *  @return	string				Title
+	 */
+	private function getTitle($action)
+	{
+		global $langs;
 
-        $out = '';
+		$out = '';
 
-        if ($action == 'view')      $out .= $langs->trans("ThirdParty");
-        if ($action == 'edit')      $out .= $langs->trans("EditCompany");
-        if ($action == 'create')    $out .= $langs->trans("NewCompany");
+		if ($action == 'view')      $out .= $langs->trans("ThirdParty");
+		if ($action == 'edit')      $out .= $langs->trans("EditCompany");
+		if ($action == 'create')    $out .= $langs->trans("NewCompany");
 
-        return $out;
-    }
+		return $out;
+	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
@@ -78,9 +78,9 @@ class ActionsCardCompany extends ActionsCardCommon
 	 *    @param	string	$ref		Ref of object
 	 *    @return	void
 	 */
-    public function assign_values(&$action, $id = 0, $ref = '')
+	public function assign_values(&$action, $id = 0, $ref = '')
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $langs, $user, $mysoc;
 		global $form, $formadmin, $formcompany;
 
@@ -88,9 +88,9 @@ class ActionsCardCompany extends ActionsCardCommon
 
 		parent::assign_values($action);
 
-        $this->tpl['title'] = load_fiche_titre($this->getTitle($action));
+		$this->tpl['title'] = load_fiche_titre($this->getTitle($action));
 
-        $this->tpl['profid1'] = $this->object->idprof1;
+		$this->tpl['profid1'] = $this->object->idprof1;
 		$this->tpl['profid2'] 	= $this->object->idprof2;
 		$this->tpl['profid3'] 	= $this->object->idprof3;
 		$this->tpl['profid4'] 	= $this->object->idprof4;
@@ -98,12 +98,12 @@ class ActionsCardCompany extends ActionsCardCommon
 		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_DISABLEVATCHECK))
 		{
 			$js = "\n";
-	        $js .= '<script language="JavaScript" type="text/javascript">';
-	        $js .= "function CheckVAT(a) {\n";
-	        $js .= "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,230);\n";
-	        $js .= "}\n";
-	        $js .= '</script>';
-	        $js .= "\n";
+			$js .= '<script language="JavaScript" type="text/javascript">';
+			$js .= "function CheckVAT(a) {\n";
+			$js .= "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,230);\n";
+			$js .= "}\n";
+			$js .= '</script>';
+			$js .= "\n";
 			$this->tpl['js_checkVatPopup'] = $js;
 		}
 
@@ -188,7 +188,7 @@ class ActionsCardCompany extends ActionsCardCommon
 				$this->tpl['parent_company'] = $langs->trans("NoParentCompany");
 			}
 		}
-    }
+	}
 
 	/**
 	 * 	Check permissions of a user to show a page and an object. Check read permission
@@ -203,8 +203,8 @@ class ActionsCardCompany extends ActionsCardCommon
 	 *  @param      string	$dbt_select		Field name for select if not rowid. (optional)
 	 *  @return		int						1
 	 */
-    public function restrictedArea($user, $features = 'societe', $objectid = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid')
-    {
-        return restrictedArea($user, $features, $objectid, $dbtablename, $feature2, $dbt_keyfield, $dbt_select);
-    }
+	public function restrictedArea($user, $features = 'societe', $objectid = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid')
+	{
+		return restrictedArea($user, $features, $objectid, $dbtablename, $feature2, $dbt_keyfield, $dbt_select);
+	}
 }

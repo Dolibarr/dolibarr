@@ -119,12 +119,12 @@ if (empty($reshook))
 	if ($action == 'add' && $user->rights->projet->creer)
 	{
 		$error = 0;
-		if (! GETPOST('ref'))
+		if (!GETPOST('ref'))
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 			$error++;
 		}
-		if (! GETPOST('title'))
+		if (!GETPOST('title'))
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 			$error++;
@@ -677,7 +677,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("CreateDraft").'">';
@@ -900,18 +900,18 @@ if ($action == 'create' && $user->rights->projet->creer)
 			print '</td>';
 			print '</tr>';
 
-		    // Opportunity probability
-		    print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityProbability").'</td>';
-		    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : (strcmp($object->opp_percent, '') ?vatrate($object->opp_percent) : '')).'"> %';
-            print '<span id="oldopppercent"></span>';
-		    print '</td>';
-		    print '</tr>';
+			// Opportunity probability
+			print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityProbability").'</td>';
+			print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : (strcmp($object->opp_percent, '') ?vatrate($object->opp_percent) : '')).'"> %';
+			print '<span id="oldopppercent"></span>';
+			print '</td>';
+			print '</tr>';
 
-		    // Opportunity amount
-		    print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityAmount").'</td>';
-		    print '<td><input size="5" type="text" name="opp_amount" value="'.(GETPOSTISSET('opp_amount') ? GETPOST('opp_amount') : (strcmp($object->opp_amount, '') ? price2num($object->opp_amount) : '')).'"></td>';
-		    print '</tr>';
-	    }
+			// Opportunity amount
+			print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityAmount").'</td>';
+			print '<td><input size="5" type="text" name="opp_amount" value="'.(GETPOSTISSET('opp_amount') ? GETPOST('opp_amount') : (strcmp($object->opp_amount, '') ? price2num($object->opp_amount) : '')).'"></td>';
+			print '</tr>';
+		}
 
 		// Date start
 		print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
@@ -1052,10 +1052,10 @@ if ($action == 'create' && $user->rights->projet->creer)
 			if (strcmp($object->opp_amount, '')) print price($object->opp_amount, 0, $langs, 1, 0, -1, $conf->currency);
 			print '</td></tr>';
 
-            // Opportunity Weighted Amount
-            print '<tr><td>'.$langs->trans('OpportunityWeightedAmount').'</td><td>';
-            if (strcmp($object->opp_amount, '') && strcmp($object->opp_percent, '')) print price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency);
-            print '</td></tr>';
+			// Opportunity Weighted Amount
+			print '<tr><td>'.$langs->trans('OpportunityWeightedAmount').'</td><td>';
+			if (strcmp($object->opp_amount, '') && strcmp($object->opp_percent, '')) print price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency);
+			print '</td></tr>';
 		}
 
 		// Date start - end
@@ -1107,7 +1107,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 		print '<div class="clearboth"></div>';
 	}
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	if ($action == 'edit' && $userWrite > 0)
 	{

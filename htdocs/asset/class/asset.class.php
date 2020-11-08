@@ -113,44 +113,44 @@ class Asset extends CommonObject
 	 */
 	public $entity;
 
-    /**
-     * @var string Asset label
-     */
-    public $label;
+	/**
+	 * @var string Asset label
+	 */
+	public $label;
 
 	public $amount;
 
 	/**
 	 * @var int Thirdparty ID
 	 */
-    public $fk_soc;
+	public $fk_soc;
 
 	/**
 	 * @var string description
 	 */
 	public $description;
 
-	public $note_public;
-	public $note_private;
-
 	/**
-     * @var integer|string date_creation
-     */
+	 * @var integer|string date_creation
+	 */
 	public $date_creation;
 
 
 	public $tms;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_creat;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_modif;
 
+	/**
+	 * @var string import key
+	 */
 	public $import_key;
 
 	/**
@@ -381,7 +381,7 @@ class Asset extends CommonObject
 		return $this->LibStatut($this->status, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -391,14 +391,14 @@ class Asset extends CommonObject
 	 */
 	public static function LibStatut($status, $mode = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 
 		$langs->load("contracts");
-        $labelStatus = array();
+		$labelStatus = array();
 		$labelStatus[self::STATUS_DRAFT] = $langs->trans('Disabled');
 		$labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
-        $labelStatusShort = array();
+		$labelStatusShort = array();
 		$labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Disabled');
 		$labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Enabled');
 

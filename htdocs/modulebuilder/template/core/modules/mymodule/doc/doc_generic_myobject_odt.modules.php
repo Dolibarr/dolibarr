@@ -47,9 +47,9 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 	public $emetteur;
 
 	/**
-     * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.6 = array(5, 6)
-     */
+	 * @var array Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 */
 	public $phpmin = array(5, 6);
 
 	/**
@@ -316,7 +316,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 					'__FROM_EMAIL__' => $this->emetteur->email,
 					'__TOTAL_TTC__' => $object->total_ttc,
 					'__TOTAL_HT__' => $object->total_ht,
-					'__TOTAL_VAT__' => $object->total_vat
+					'__TOTAL_VAT__' => $object->total_tva
 				);
 				complete_substitutions_array($substitutionarray, $langs, $object);
 				// Call the ODTSubstitution hook

@@ -96,17 +96,17 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
-    print '<br>';
+	print '<br>';
 
 	$solde = $object->solde(0);
 	if ($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)$colspan = 6;
 	else $colspan = 5;
 
 	// Show next coming entries
-    print '<div class="div-table-responsive">';
-    print '<table class="noborder centpercent">';
+	print '<div class="div-table-responsive">';
+	print '<table class="noborder centpercent">';
 
 	// Ligne de titre tableau des ecritures
 	print '<tr class="liste_titre">';
@@ -277,13 +277,13 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 			// We discard lines with a remainder to pay to 0
 			if (price2num($total_ttc) != 0)
 			{
-    			// Show line
-    			print '<tr class="oddeven">';
-    			print '<td>';
-    			if ($obj->dlr) print dol_print_date($db->jdate($obj->dlr), "day");
-    			else print $langs->trans("NotDefined");
-    			print "</td>";
-    			print "<td>".$ref."</td>";
+				// Show line
+				print '<tr class="oddeven">';
+				print '<td>';
+				if ($obj->dlr) print dol_print_date($db->jdate($obj->dlr), "day");
+				else print $langs->trans("NotDefined");
+				print "</td>";
+				print "<td>".$ref."</td>";
 				if ($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED) {
 					if ($obj->family == 'invoice') {
 						$mc->getInfo($obj->entity);
@@ -292,11 +292,11 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 						print "<td></td>";
 					}
 				}
-    			print "<td>".$refcomp."</td>";
-    			if ($obj->total_ttc < 0) { print '<td class="nowrap right">'.price(abs($total_ttc))."</td><td>&nbsp;</td>"; };
-    			if ($obj->total_ttc >= 0) { print '<td>&nbsp;</td><td class="nowrap right">'.price($total_ttc)."</td>"; };
-    			print '<td class="nowrap right">'.price($solde).'</td>';
-    			print "</tr>";
+				print "<td>".$refcomp."</td>";
+				if ($obj->total_ttc < 0) { print '<td class="nowrap right">'.price(abs($total_ttc))."</td><td>&nbsp;</td>"; };
+				if ($obj->total_ttc >= 0) { print '<td>&nbsp;</td><td class="nowrap right">'.price($total_ttc)."</td>"; };
+				print '<td class="nowrap right">'.price($solde).'</td>';
+				print "</tr>";
 			}
 
 			$i++;
@@ -310,7 +310,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		print $hookmanager->resPrint;
-        $solde = isset($hookmanager->resArray['solde']) ? $hookmanager->resArray['solde'] : $solde;
+		$solde = isset($hookmanager->resArray['solde']) ? $hookmanager->resArray['solde'] : $solde;
 	}
 
 	// solde
@@ -320,7 +320,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	print '</tr>';
 
 	print "</table>";
-    print "</div>";
+	print "</div>";
 } else {
 	print $langs->trans("ErrorBankAccountNotFound");
 }

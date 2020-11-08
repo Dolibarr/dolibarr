@@ -60,7 +60,7 @@ complete_substitutions_array($substitutionarrayfortest, $langs);
 
 if ($action == 'update' && empty($_POST["cancel"]))
 {
-    // Send mode parameters
+	// Send mode parameters
 	dolibarr_set_const($db, "MAIN_MAIL_SENDMODE_EMAILING", GETPOST("MAIN_MAIL_SENDMODE_EMAILING"), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT_EMAILING", GETPOST("MAIN_MAIL_SMTP_PORT_EMAILING"), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_SMTP_SERVER_EMAILING", GETPOST("MAIN_MAIL_SMTP_SERVER_EMAILING"), 'chaine', 0, '', $conf->entity);
@@ -382,22 +382,22 @@ if ($action == 'edit')
 	} else print yn(0).' ('.$langs->trans("NotSupported").')';
 	print '</td></tr>';
 
-    print '</table>';
+	print '</table>';
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 
-    print '<br><div class="center">';
-    print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
-    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-    print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
-    print '</div>';
+	print '<br><div class="center">';
+	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
 	print '</form>';
 } else {
-    print dol_get_fiche_head($head, 'common_emailing', '', -1);
+	print dol_get_fiche_head($head, 'common_emailing', '', -1);
 
-    print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
-    print "<br>\n";
+	print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
+	print "<br>\n";
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
@@ -475,13 +475,13 @@ if ($action == 'edit')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
-    if ($conf->global->MAIN_MAIL_SENDMODE_EMAILING == 'mail' && empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA))
-    {
-        print '<br>';
-        /*
+	if ($conf->global->MAIN_MAIL_SENDMODE_EMAILING == 'mail' && empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA))
+	{
+		print '<br>';
+		/*
 	    // Warning 1
     	if ($linuxlike)
     	{
@@ -491,12 +491,12 @@ if ($action == 'edit')
     			print info_admin($langs->trans("SendmailOptionNotComplete"));
     		}
     	}*/
-    	// Warning 2
-   	    print info_admin($langs->trans("SendmailOptionMayHurtBuggedMTA"));
-    }
+		// Warning 2
+   		print info_admin($langs->trans("SendmailOptionMayHurtBuggedMTA"));
+	}
 
 
-    // Buttons for actions
+	// Buttons for actions
 
 	print '<div class="tabsAction">';
 
@@ -527,8 +527,8 @@ if ($action == 'edit')
 
 	if ($conf->global->MAIN_MAIL_SENDMODE_EMAILING == 'mail' && !in_array($action, array('testconnect', 'test', 'testhtml')))
 	{
-        $text = $langs->trans("WarningPHPMail");
-	    print info_admin($text);
+		$text = $langs->trans("WarningPHPMail");
+		print info_admin($text);
 	}
 
 	// Run the test to connect
@@ -556,7 +556,7 @@ if ($action == 'edit')
 	// Show email send test form
 	if ($action == 'test' || $action == 'testhtml')
 	{
-	    print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
+		print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
 		print load_fiche_titre($action == 'testhtml' ? $langs->trans("DoTestSendHTML") : $langs->trans("DoTestSend"));
 
 		print dol_get_fiche_head('');
@@ -592,14 +592,14 @@ if ($action == 'edit')
 		$formmail->param["returnurl"] = $_SERVER["PHP_SELF"];
 
 		// Init list of files
-        if (GETPOST("mode") == 'init')
+		if (GETPOST("mode") == 'init')
 		{
 			$formmail->clear_attached_files();
 		}
 
 		print $formmail->get_form('addfile', 'removefile');
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 	}
 }
 

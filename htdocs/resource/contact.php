@@ -147,7 +147,7 @@ if ($id > 0 || !empty($ref))
 	print '</table>';
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<br>';
 

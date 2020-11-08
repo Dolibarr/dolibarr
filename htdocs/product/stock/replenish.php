@@ -39,7 +39,7 @@ $langs->loadLangs(array('products', 'stocks', 'orders'));
 
 // Security check
 if ($user->socid) {
-    $socid = $user->socid;
+	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'produit|service');
 
@@ -73,11 +73,11 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
 if (!$sortfield) {
-    $sortfield = 'p.ref';
+	$sortfield = 'p.ref';
 }
 
 if (!$sortorder) {
-    $sortorder = 'ASC';
+	$sortorder = 'ASC';
 }
 
 // Define virtualdiffersfromphysical
@@ -89,7 +89,7 @@ if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)
 	|| !empty($conf->mrp->enabled))
 {
-    $virtualdiffersfromphysical = 1; // According to increase/decrease stock options, virtual and physical stock may differs.
+	$virtualdiffersfromphysical = 1; // According to increase/decrease stock options, virtual and physical stock may differs.
 }
 
 $usevirtualstock = !empty($conf->global->STOCK_USE_VIRTUAL_STOCK);
@@ -107,11 +107,11 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha') || isset($_POST['valid'])) // Both test are required to be compatible with all browsers
 {
-    $search_ref = '';
-    $search_label = '';
-    $sall = '';
-    $salert = '';
-    $includeproductswithoutdesiredqty = '';
+	$search_ref = '';
+	$search_label = '';
+	$sall = '';
+	$salert = '';
+	$includeproductswithoutdesiredqty = '';
 	$draftorder = '';
 }
 if ($draftorder == 'on') $draftchecked = "checked";
@@ -119,43 +119,43 @@ if ($draftorder == 'on') $draftchecked = "checked";
 // Create orders
 if ($action == 'order' && isset($_POST['valid']))
 {
-    $linecount = GETPOST('linecount', 'int');
-    $box = 0;
+	$linecount = GETPOST('linecount', 'int');
+	$box = 0;
 	$errorQty = 0;
-    unset($_POST['linecount']);
-    if ($linecount > 0)
-    {
-    	$db->begin();
+	unset($_POST['linecount']);
+	if ($linecount > 0)
+	{
+		$db->begin();
 
-        $suppliers = array();
+		$suppliers = array();
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 		$productsupplier = new ProductFournisseur($db);
-        for ($i = 0; $i < $linecount; $i++)
-        {
-            if (GETPOST('choose'.$i, 'alpha') === 'on' && GETPOST('fourn'.$i, 'int') > 0)
-            {
-            	//one line
-                $box = $i;
-                $supplierpriceid = GETPOST('fourn'.$i, 'int');
-                //get all the parameters needed to create a line
-                $qty = GETPOST('tobuy'.$i, 'int');
+		for ($i = 0; $i < $linecount; $i++)
+		{
+			if (GETPOST('choose'.$i, 'alpha') === 'on' && GETPOST('fourn'.$i, 'int') > 0)
+			{
+				//one line
+				$box = $i;
+				$supplierpriceid = GETPOST('fourn'.$i, 'int');
+				//get all the parameters needed to create a line
+				$qty = GETPOST('tobuy'.$i, 'int');
 				$idprod = $productsupplier->get_buyprice($supplierpriceid, $qty);
 				$res = $productsupplier->fetch($idprod);
-                if ($res && $idprod > 0)
-                {
-                	if ($qty)
-                	{
-	                    //might need some value checks
-	                    $line = new CommandeFournisseurLigne($db);
-	                    $line->qty = $qty;
-	                    $line->fk_product = $idprod;
+				if ($res && $idprod > 0)
+				{
+					if ($qty)
+					{
+						//might need some value checks
+						$line = new CommandeFournisseurLigne($db);
+						$line->qty = $qty;
+						$line->fk_product = $idprod;
 
-	                    //$product = new Product($db);
-	                    //$product->fetch($obj->fk_product);
-	                    if (!empty($conf->global->MAIN_MULTILANGS))
-	                    {
-	                        $productsupplier->getMultiLangs();
-	                    }
+						//$product = new Product($db);
+						//$product->fetch($obj->fk_product);
+						if (!empty($conf->global->MAIN_MULTILANGS))
+						{
+							$productsupplier->getMultiLangs();
+						}
 
 						// if we use supplier description of the products
 						if (!empty($productsupplier->desc_supplier) && !empty($conf->global->PRODUIT_FOURN_TEXTS)) {
@@ -163,124 +163,124 @@ if ($action == 'order' && isset($_POST['valid']))
 						} else {
 							$desc = $productsupplier->description;
 						}
-	                    $line->desc = $desc;
-                        if (!empty($conf->global->MAIN_MULTILANGS))
-                        {
-                            // TODO Get desc in language of thirdparty
-                        }
+						$line->desc = $desc;
+						if (!empty($conf->global->MAIN_MULTILANGS))
+						{
+							// TODO Get desc in language of thirdparty
+						}
 
-	                    $line->tva_tx = $productsupplier->vatrate_supplier;
-	                    $line->subprice = $productsupplier->fourn_pu;
-	                    $line->total_ht = $productsupplier->fourn_pu * $qty;
-	                    $tva = $line->tva_tx / 100;
-	                    $line->total_tva = $line->total_ht * $tva;
-	                    $line->total_ttc = $line->total_ht + $line->total_tva;
+						$line->tva_tx = $productsupplier->vatrate_supplier;
+						$line->subprice = $productsupplier->fourn_pu;
+						$line->total_ht = $productsupplier->fourn_pu * $qty;
+						$tva = $line->tva_tx / 100;
+						$line->total_tva = $line->total_ht * $tva;
+						$line->total_ttc = $line->total_ht + $line->total_tva;
 						$line->remise_percent = $productsupplier->remise_percent;
-	                    $line->ref_fourn = $productsupplier->ref_supplier;
+						$line->ref_fourn = $productsupplier->ref_supplier;
 						$line->type = $productsupplier->type;
 						$line->fk_unit = $productsupplier->fk_unit;
-	                    $suppliers[$productsupplier->fourn_socid]['lines'][] = $line;
-                	}
-                } elseif ($idprod == -1)
+						$suppliers[$productsupplier->fourn_socid]['lines'][] = $line;
+					}
+				} elseif ($idprod == -1)
 				{
 					$errorQty++;
 				} else {
-                    $error = $db->lasterror();
-                    dol_print_error($db);
-                }
+					$error = $db->lasterror();
+					dol_print_error($db);
+				}
 
-                unset($_POST['fourn'.$i]);
-            }
-            unset($_POST[$i]);
-        }
+				unset($_POST['fourn'.$i]);
+			}
+			unset($_POST[$i]);
+		}
 
-        //we now know how many orders we need and what lines they have
-        $i = 0;
-        $fail = 0;
-        $orders = array();
-        $suppliersid = array_keys($suppliers);
-        foreach ($suppliers as $supplier)
-        {
-            $order = new CommandeFournisseur($db);
-            // Check if an order for the supplier exists
-            $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande_fournisseur";
-            $sql .= " WHERE fk_soc = ".$suppliersid[$i];
-            $sql .= " AND source = 42 AND fk_statut = 0";
-            $sql .= " AND entity IN (".getEntity('commande_fournisseur').")";
-            $sql .= " ORDER BY date_creation DESC";
-            $resql = $db->query($sql);
-            if ($resql && $db->num_rows($resql) > 0) {
-                $obj = $db->fetch_object($resql);
-                $order->fetch($obj->rowid);
-                foreach ($supplier['lines'] as $line) {
-                    $result = $order->addline(
-                        $line->desc,
-                        $line->subprice,
-                        $line->qty,
-                        $line->tva_tx,
-                        $line->localtax1_tx,
-                        $line->localtax2_tx,
-                        $line->fk_product,
-                        0,
-                        $line->ref_fourn,
-                        $line->remise_percent,
-                        'HT',
-                        0,
-                        $line->type,
-                        0,
+		//we now know how many orders we need and what lines they have
+		$i = 0;
+		$fail = 0;
+		$orders = array();
+		$suppliersid = array_keys($suppliers);
+		foreach ($suppliers as $supplier)
+		{
+			$order = new CommandeFournisseur($db);
+			// Check if an order for the supplier exists
+			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande_fournisseur";
+			$sql .= " WHERE fk_soc = ".$suppliersid[$i];
+			$sql .= " AND source = 42 AND fk_statut = 0";
+			$sql .= " AND entity IN (".getEntity('commande_fournisseur').")";
+			$sql .= " ORDER BY date_creation DESC";
+			$resql = $db->query($sql);
+			if ($resql && $db->num_rows($resql) > 0) {
+				$obj = $db->fetch_object($resql);
+				$order->fetch($obj->rowid);
+				foreach ($supplier['lines'] as $line) {
+					$result = $order->addline(
+						$line->desc,
+						$line->subprice,
+						$line->qty,
+						$line->tva_tx,
+						$line->localtax1_tx,
+						$line->localtax2_tx,
+						$line->fk_product,
+						0,
+						$line->ref_fourn,
+						$line->remise_percent,
+						'HT',
+						0,
+						$line->type,
+						0,
 						false,
 						null,
 						null,
 						0,
 						$line->fk_unit
-                    );
-                }
-                if ($result < 0) {
-                    $fail++;
-                    $msg = $langs->trans('OrderFail')."&nbsp;:&nbsp;";
-                    $msg .= $order->error;
-                    setEventMessages($msg, null, 'errors');
-                } else {
-                    $id = $result;
-                }
-            } else {
-                $order->socid = $suppliersid[$i];
-                $order->fetch_thirdparty();
-                //trick to know which orders have been generated this way
-                $order->source = 42;
-                foreach ($supplier['lines'] as $line) {
-                    $order->lines[] = $line;
-                }
-                $order->cond_reglement_id = $order->thirdparty->cond_reglement_supplier_id;
-                $order->mode_reglement_id = $order->thirdparty->mode_reglement_supplier_id;
-                $id = $order->create($user);
-                if ($id < 0) {
-                    $fail++;
-                    $msg = $langs->trans('OrderFail')."&nbsp;:&nbsp;";
-                    $msg .= $order->error;
-                    setEventMessages($msg, null, 'errors');
-                }
-                $i++;
-            }
-        }
+					);
+				}
+				if ($result < 0) {
+					$fail++;
+					$msg = $langs->trans('OrderFail')."&nbsp;:&nbsp;";
+					$msg .= $order->error;
+					setEventMessages($msg, null, 'errors');
+				} else {
+					$id = $result;
+				}
+			} else {
+				$order->socid = $suppliersid[$i];
+				$order->fetch_thirdparty();
+				//trick to know which orders have been generated this way
+				$order->source = 42;
+				foreach ($supplier['lines'] as $line) {
+					$order->lines[] = $line;
+				}
+				$order->cond_reglement_id = $order->thirdparty->cond_reglement_supplier_id;
+				$order->mode_reglement_id = $order->thirdparty->mode_reglement_supplier_id;
+				$id = $order->create($user);
+				if ($id < 0) {
+					$fail++;
+					$msg = $langs->trans('OrderFail')."&nbsp;:&nbsp;";
+					$msg .= $order->error;
+					setEventMessages($msg, null, 'errors');
+				}
+				$i++;
+			}
+		}
 
 		if ($errorQty) setEventMessages($langs->trans('ErrorOrdersNotCreatedQtyTooLow'), null, 'warnings');
 
-        if (!$fail && $id)
-        {
-        	$db->commit();
+		if (!$fail && $id)
+		{
+			$db->commit();
 
-            setEventMessages($langs->trans('OrderCreated'), null, 'mesgs');
-            header('Location: replenishorders.php');
-            exit;
-        } else {
-        	$db->rollback();
-        }
-    }
-    if ($box == 0)
-    {
-        setEventMessages($langs->trans('SelectProductWithNotNullQty'), null, 'warnings');
-    }
+			setEventMessages($langs->trans('OrderCreated'), null, 'mesgs');
+			header('Location: replenishorders.php');
+			exit;
+		} else {
+			$db->rollback();
+		}
+	}
+	if ($box == 0)
+	{
+		setEventMessages($langs->trans('SelectProductWithNotNullQty'), null, 'warnings');
+	}
 }
 
 
@@ -340,11 +340,11 @@ $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 if ($sall) $sql .= natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $sall);
 // if the type is not 1, we show all products (type = 0,2,3)
 if (dol_strlen($type)) {
-    if ($type == 1) {
-        $sql .= ' AND p.fk_product_type = 1';
-    } else {
-        $sql .= ' AND p.fk_product_type <> 1';
-    }
+	if ($type == 1) {
+		$sql .= ' AND p.fk_product_type = 1';
+	} else {
+		$sql .= ' AND p.fk_product_type <> 1';
+	}
 }
 if ($search_ref) $sql .= natural_search('p.ref', $search_ref);
 if ($search_label) $sql .= natural_search('p.label', $search_label);
@@ -377,11 +377,11 @@ if ($usevirtualstock)
 		$sqlExpeditionsCli = "(SELECT ".$db->ifsql("SUM(ed2.qty) IS NULL", "0", "SUM(ed2.qty)")." as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
 		$sqlExpeditionsCli .= " FROM ".MAIN_DB_PREFIX."expedition as e2,";
 		$sqlExpeditionsCli .= " ".MAIN_DB_PREFIX."expeditiondet as ed2,";
-                $sqlExpeditionsCli .= " ".MAIN_DB_PREFIX."commande as c2,";
+				$sqlExpeditionsCli .= " ".MAIN_DB_PREFIX."commande as c2,";
 		$sqlExpeditionsCli .= " ".MAIN_DB_PREFIX."commandedet as cd2";
 		$sqlExpeditionsCli .= " WHERE ed2.fk_expedition = e2.rowid AND cd2.rowid = ed2.fk_origin_line AND e2.entity IN (".getEntity(!empty($conf->global->STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE) ? 'stock' : 'expedition').")";
-                $sqlExpeditionsCli .= " AND cd2.fk_commande = c2.rowid";
-                $sqlExpeditionsCli .= " AND c2.fk_statut IN (1,2)";
+				$sqlExpeditionsCli .= " AND cd2.fk_commande = c2.rowid";
+				$sqlExpeditionsCli .= " AND c2.fk_statut IN (1,2)";
 		$sqlExpeditionsCli .= " AND cd2.fk_product = p.rowid";
 		$sqlExpeditionsCli .= " AND e2.fk_statut IN (1,2))";
 	} else {
@@ -443,7 +443,7 @@ if ($usevirtualstock)
 
 	if ($salert == 'on')	// Option to see when stock is lower than alert
 	{
-            $sql .= ' AND ((';
+			$sql .= ' AND ((';
 		if ($includeproductswithoutdesiredqty == 'on') {
 			$sql .= $sqlalertstock.' >= 0 OR '.$sqlalertstock.' IS NULL) AND ('.$db->ifsql("$sqlalertstock IS NULL", "0", $sqlalertstock).' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
 		} else {
@@ -474,7 +474,7 @@ if ($usevirtualstock)
 
 $includeproductswithoutdesiredqtychecked = '';
 if ($includeproductswithoutdesiredqty == 'on') {
-    $includeproductswithoutdesiredqtychecked = 'checked';
+	$includeproductswithoutdesiredqtychecked = 'checked';
 }
 
 // Add where from hooks
@@ -484,12 +484,12 @@ $sql .= $hookmanager->resPrint;
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-    $result = $db->query($sql);
-    $nbtotalofrecords = $db->num_rows($result);
-    if (($page * $limit) > $nbtotalofrecords) {
-        $page = 0;
-        $offset = 0;
-    }
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords) {
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql .= $db->order($sortfield, $sortorder);
@@ -499,8 +499,8 @@ $sql .= $db->plimit($limit + 1, $offset);
 $resql = $db->query($sql);
 if (empty($resql))
 {
-    dol_print_error($db);
-    exit;
+	dol_print_error($db);
+	exit;
 }
 
 $num = $db->num_rows($resql);
@@ -556,7 +556,7 @@ print '<input type="hidden" name="includeproductswithoutdesiredqty" value="'.$in
 print '<input type="hidden" name="draftorder" value="'.$draftorder.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 if ($limit > 0 && $limit != $conf->liste_limit) {
-    print '<input type="hidden" name="limit" value="'.$limit.'">';
+	print '<input type="hidden" name="limit" value="'.$limit.'">';
 }
 if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE))
 {
@@ -630,7 +630,7 @@ if ($search_ref || $search_label || $sall || $salert || $draftorder || GETPOST('
 }
 
 if ($limit > 0 && $limit != $conf->liste_limit) {
-    $filters .= '&limit='.urlencode($limit);
+	$filters .= '&limit='.urlencode($limit);
 }
 
 $param = (isset($type) ? '&type='.$type : '');
@@ -654,35 +654,35 @@ $texte = $langs->trans('Replenishment');
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 
 if (!empty($conf->global->REPLENISH_ALLOW_VARIABLESIZELIST)) {
-    print_barre_liste(
-        $texte,
-        $page,
-        'replenish.php',
-        $filters,
-        $sortfield,
-        $sortorder,
-        '',
-        $num,
-        $nbtotalofrecords,
-        'object_stock.png',
-        0,
-        '',
-        '',
-        $limit
-    );
+	print_barre_liste(
+		$texte,
+		$page,
+		'replenish.php',
+		$filters,
+		$sortfield,
+		$sortorder,
+		'',
+		$num,
+		$nbtotalofrecords,
+		'object_stock.png',
+		0,
+		'',
+		'',
+		$limit
+	);
 } else {
-    print_barre_liste(
-        $texte,
-        $page,
-        'replenish.php',
-        $filters,
-        $sortfield,
-        $sortorder,
-        '',
-        $num,
-        $nbtotalofrecords,
-        'object_stock.png'
-    );
+	print_barre_liste(
+		$texte,
+		$page,
+		'replenish.php',
+		$filters,
+		$sortfield,
+		$sortorder,
+		'',
+		$num,
+		$nbtotalofrecords,
+		'object_stock.png'
+	);
 }
 
 print '<table class="liste centpercent">';
@@ -881,8 +881,8 @@ while ($i < ($limit ? min($num, $limit) : $num))
 
 			// Supplier
 			print '<td class="right">';
-	        print $form->select_product_fourn_price($prod->id, 'fourn'.$i, $fk_supplier);
-	        print '</td>';
+			print $form->select_product_fourn_price($prod->id, 'fourn'.$i, $fk_supplier);
+			print '</td>';
 
 			// Fields from hook
 			$parameters = array('objp'=>$objp);
@@ -904,7 +904,7 @@ print '</div>';
 
 $db->free($resql);
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 $value = $langs->trans("CreateOrders");

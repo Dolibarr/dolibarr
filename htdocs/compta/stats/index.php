@@ -157,7 +157,7 @@ report_header($name, $namelink, $period, $periodlink, $description, $builddate, 
 
 if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
-    print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 
 
@@ -271,9 +271,9 @@ for ($annee = $year_start; $annee <= $year_end; $annee++)
 	else print '<td align="center" width="10%" colspan="2" class="borderrightlight">';
 	if ($modecompta != 'BOOKKEEPING') print '<a href="casoc.php?year='.$annee.'">';
 	print $annee;
-    if ($conf->global->SOCIETE_FISCAL_MONTH_START > 1) print '-'.($annee + 1);
-    if ($modecompta != 'BOOKKEEPING') print '</a>';
-    print '</td>';
+	if ($conf->global->SOCIETE_FISCAL_MONTH_START > 1) print '-'.($annee + 1);
+	if ($modecompta != 'BOOKKEEPING') print '</a>';
+	print '</td>';
 	if ($annee != $year_end) print '<td width="15">&nbsp;</td>';
 }
 print '</tr>';

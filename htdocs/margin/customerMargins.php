@@ -125,8 +125,8 @@ if (!$sortfield)
 		$sortfield = "f.datef";
 		$sortorder = "DESC";
 	} else {
-	    $sortfield = "s.nom";
-	    $sortorder = "ASC";
+		$sortfield = "s.nom";
+		$sortorder = "ASC";
 	}
 }
 
@@ -193,7 +193,7 @@ if (!empty($conf->global->DISPLAY_MARK_RATES)) {
 
 print "</table>";
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '</form>';
 
@@ -251,9 +251,9 @@ if ($result)
 	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, $num, '', 0, '', '', 0, 1);
 
 	if ($conf->global->MARGIN_TYPE == "1")
-	    $labelcostprice = 'BuyingPrice';
+		$labelcostprice = 'BuyingPrice';
 	else // value is 'costprice' or 'pmp'
-	    $labelcostprice = 'CostPrice';
+		$labelcostprice = 'CostPrice';
 
 	$moreforfilter = '';
 
@@ -299,7 +299,7 @@ if ($result)
 
 			print '<tr class="oddeven">';
 			if ($client) {
-		        print '<td>';
+				print '<td>';
 				$invoicestatic->id = $objp->facid;
 				$invoicestatic->ref = $objp->ref;
 				print $invoicestatic->getNomUrl(1);
@@ -344,7 +344,7 @@ if ($result)
 
 	print '<tr class="liste_total">';
 	if ($client)
-	    print '<td colspan=2>';
+		print '<td colspan=2>';
   	else print '<td>';
   	print $langs->trans('TotalMargin')."</td>";
 	print "<td class=\"right\">".price($cumul_vente, null, null, null, null, $rounding)."</td>\n";

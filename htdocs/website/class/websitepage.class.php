@@ -171,8 +171,8 @@ class WebsitePage extends CommonObject
 		'fk_user_modif'  =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'import_key'     =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'index'=>1, 'position'=>1000, 'notnull'=>-1),
-		'object_type' => array('type' => 'varchar(255)','label' => 'ObjectType', 'enabled'=>1, 'visible'=>0, 'position'=>46, 'searchall'=>0, 'help'=>''),
-		'fk_object' => array('type' => 'varchar(255)','label' => 'ObjectId', 'enabled'=>1, 'visible'=>0, 'position'=>47, 'searchall'=>0, 'help'=>'')
+		'object_type' => array('type' => 'varchar(255)', 'label' => 'ObjectType', 'enabled'=>1, 'visible'=>0, 'position'=>46, 'searchall'=>0, 'help'=>''),
+		'fk_object' => array('type' => 'varchar(255)', 'label' => 'ObjectId', 'enabled'=>1, 'visible'=>0, 'position'=>47, 'searchall'=>0, 'help'=>'')
 	);
 	// END MODULEBUILDER PROPERTIES
 

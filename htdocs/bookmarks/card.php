@@ -32,7 +32,7 @@ $langs->loadLangs(array('bookmarks', 'other'));
 
 // Security check
 if (!$user->rights->bookmark->lire) {
-    restrictedArea($user, 'bookmarks');
+	restrictedArea($user, 'bookmarks');
 }
 
 $id = GETPOST("id", 'int');
@@ -177,7 +177,7 @@ if ($action == 'create')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div align="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("CreateBookmark").'" name="create"> &nbsp; ';
@@ -219,11 +219,11 @@ if ($id > 0 && !preg_match('/^add/i', $action))
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/bookmarks/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', '', 0);
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', '', 0);
 
-    print '<div class="fichecenter">';
+	print '<div class="fichecenter">';
 
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
 	print '<tr><td class="titlefield">';
@@ -295,7 +295,7 @@ if ($id > 0 && !preg_match('/^add/i', $action))
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	if ($action == 'edit')
 	{

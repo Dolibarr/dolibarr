@@ -12,7 +12,7 @@
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
  * Copyright (C) 2017-2019 Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2017      Rui Strecht		    <rui.strecht@aliartalentos.com>
- * Copyright (C) 2018-2019 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -296,11 +296,11 @@ abstract class CommonObject
 	 */
 	public $cond_reglement_id;
 
-    /**
-     * @var int Transport mode ID (For module intracomm report)
-     * @see setTransportMode()
-     */
-    public $transport_mode_id;
+	/**
+	 * @var int Transport mode ID (For module intracomm report)
+	 * @see setTransportMode()
+	 */
+	public $transport_mode_id;
 
 	/**
 	 * @var int Payment terms ID
@@ -333,6 +333,13 @@ abstract class CommonObject
 	 * Contains relative path of last generated main file
 	 */
 	public $last_main_doc;
+
+	/**
+	 * @var int Bank account ID
+	 * @deprecated
+	 * @see $fk_account
+	 */
+	public $fk_bank;
 
 	/**
 	 * @var int Bank account ID
@@ -436,6 +443,11 @@ abstract class CommonObject
 	public $date_modification; // Date last change (tms field)
 
 	public $next_prev_filter;
+
+	/**
+	 * @var int 1 if object is specimen
+	 */
+	public $specimen = 0;
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
@@ -567,6 +579,28 @@ abstract class CommonObject
 		$ret .= dolGetFirstLastname($firstname, $lastname, $nameorder);
 
 		return dol_trunc($ret, $maxlen);
+	}
+
+	/**
+	 * Set to upper or ucwords/lower if needed
+	 *
+	 * @return void;
+	 */
+	public function setUpperOrLowerCase()
+	{
+		global $conf;
+		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) {
+			$this->lastname = dol_ucwords(dol_strtolower($this->lastname));
+			$this->firstname = dol_ucwords(dol_strtolower($this->firstname));
+			$this->name = dol_ucwords(dol_strtolower($this->name));
+		}
+		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) {
+			$this->lastname = dol_strtoupper($this->lastname);
+			$this->name = dol_strtoupper($this->name);
+		}
+		if (!empty($conf->global->MAIN_ALL_TOWN_TO_UPPER)) {
+			$this->town = dol_strtoupper($this->town);
+		}
 	}
 
 	/**
@@ -2196,42 +2230,42 @@ abstract class CommonObject
 		}
 	}
 
-    /**
-     *  Change the transport mode methods
-     *
-     *  @param		int		$id		Id of new payment method
-     *  @return		int				>0 if OK, <0 if KO
-     */
-    public function setTransportMode($id)
-    {
-        dol_syslog(get_class($this).'::setTransportMode('.$id.')');
-        if ($this->statut >= 0 || $this->element == 'societe')
-        {
-            $fieldname = 'fk_transport_mode';
-            if ($this->element == 'societe') $fieldname = 'transport_mode';
-            if (get_class($this) == 'Fournisseur') $fieldname = 'transport_mode_supplier';
+	/**
+	 *  Change the transport mode methods
+	 *
+	 *  @param		int		$id		Id of new payment method
+	 *  @return		int				>0 if OK, <0 if KO
+	 */
+	public function setTransportMode($id)
+	{
+		dol_syslog(get_class($this).'::setTransportMode('.$id.')');
+		if ($this->statut >= 0 || $this->element == 'societe')
+		{
+			$fieldname = 'fk_transport_mode';
+			if ($this->element == 'societe') $fieldname = 'transport_mode';
+			if (get_class($this) == 'Fournisseur') $fieldname = 'transport_mode_supplier';
 
-            $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql .= ' SET '.$fieldname.' = '.(($id > 0 || $id == '0') ? $id : 'NULL');
-            $sql .= ' WHERE rowid='.$this->id;
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+			$sql .= ' SET '.$fieldname.' = '.(($id > 0 || $id == '0') ? $id : 'NULL');
+			$sql .= ' WHERE rowid='.$this->id;
 
-            if ($this->db->query($sql))
-            {
-                $this->transport_mode_id = $id;
-                // for supplier
-                if (get_class($this) == 'Fournisseur') $this->transport_mode_supplier_id = $id;
-                return 1;
-            } else {
-                dol_syslog(get_class($this).'::setTransportMode Error '.$sql.' - '.$this->db->error());
-                $this->error=$this->db->error();
-                return -1;
-            }
-        } else {
-            dol_syslog(get_class($this).'::setTransportMode, status of the object is incompatible');
-            $this->error='Status of the object is incompatible '.$this->statut;
-            return -2;
-        }
-    }
+			if ($this->db->query($sql))
+			{
+				$this->transport_mode_id = $id;
+				// for supplier
+				if (get_class($this) == 'Fournisseur') $this->transport_mode_supplier_id = $id;
+				return 1;
+			} else {
+				dol_syslog(get_class($this).'::setTransportMode Error '.$sql.' - '.$this->db->error());
+				$this->error = $this->db->error();
+				return -1;
+			}
+		} else {
+			dol_syslog(get_class($this).'::setTransportMode, status of the object is incompatible');
+			$this->error = 'Status of the object is incompatible '.$this->statut;
+			return -2;
+		}
+	}
 
 	/**
 	 *  Change the retained warranty payments terms
@@ -2785,8 +2819,8 @@ abstract class CommonObject
 	 */
 	public function line_max($fk_parent_line = 0)
 	{
-        // phpcs:enable
-        $positionfield = 'rang';
+		// phpcs:enable
+		$positionfield = 'rang';
 		if ($this->table_element == 'bom_bom') $positionfield = 'position';
 
 		// Search the last rang with fk_parent_line
@@ -4975,7 +5009,7 @@ abstract class CommonObject
 			{
 				$value_arr = GETPOST($postfieldkey, 'array'); // check if an array
 				if (!empty($value_arr)) {
-					$value_key = implode($value_arr, ',');
+					$value_key = implode(',', $value_arr);
 				} else {
 					$value_key = '';
 				}
@@ -5328,8 +5362,8 @@ abstract class CommonObject
 								$new_array_options[$key] = '';
 							} elseif ($value) {
 								$object = new $InfoFieldList[0]($this->db);
-								if (is_numeric($value)) $res = $object->fetch($value);	// Common case
-								else $res = $object->fetch('', $value);					// For compatibility
+								if (is_numeric($value)) $res = $object->fetch($value); // Common case
+								else $res = $object->fetch('', $value); // For compatibility
 
 								if ($res > 0) $new_array_options[$key] = $object->id;
 								else {
@@ -5767,7 +5801,7 @@ abstract class CommonObject
 	 *
 	 * @param  array   		$val	       Array of properties for field to show (used only if ->fields not defined)
 	 * @param  string  		$key           Key of attribute
-	 * @param  string  		$value         Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
+	 * @param  string|array	$value         Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value, for array type must be array)
 	 * @param  string  		$moreparam     To add more parameters on html input tag
 	 * @param  string  		$keysuffix     Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string  		$keyprefix     Suffix string to add into name and id of field (can be used to avoid duplicate names)
@@ -6284,7 +6318,8 @@ abstract class CommonObject
 			$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath[:AddCreateButtonOrNot[:Filter]]'
 			$param_list_array = explode(':', $param_list[0]);
 			$showempty = (($required && $default != '') ? 0 : 1);
-			if (!empty($param_list_array[2])) {		// If the entry into $fields is set to add a create button
+
+			if (!preg_match('/search_/', $keyprefix) && !empty($param_list_array[2])) {		// If the entry into $fields is set to add a create button
 				$morecss .= ' widthcentpercentminusx';
 			}
 
@@ -6388,7 +6423,7 @@ abstract class CommonObject
 			$type = 'varchar'; // convert varchar(xx) int varchar
 			$size = $reg[1];
 		} elseif (preg_match('/varchar/', $type)) $type = 'varchar'; // convert varchar(xx) int varchar
-		if (is_array($val['arrayofkeyval'])) $type = 'select';
+		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) $type = 'select';
 		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) $type = 'link';
 
 		$default = $val['default'];
@@ -6398,7 +6433,7 @@ abstract class CommonObject
 		$param = array();
 		$param['options'] = array();
 
-		if (is_array($val['arrayofkeyval'])) $param['options'] = $val['arrayofkeyval'];
+		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) $param['options'] = $val['arrayofkeyval'];
 		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg))
 		{
 			$type = 'link';
@@ -6787,7 +6822,7 @@ abstract class CommonObject
 
 					switch ($mode) {
 						case "view":
-							$value = $this->array_options["options_".$key.$keysuffix];	// Value may be clean or formated later
+							$value = $this->array_options["options_".$key.$keysuffix]; // Value may be clean or formated later
 							break;
 						case "create":
 						case "edit":
@@ -6862,7 +6897,7 @@ abstract class CommonObject
 							{
 								$datenotinstring = $this->db->jdate($datenotinstring);
 							}
-							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) ? dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min", 'int', 3), 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year", 'int', 3)) : $datenotinstring;
+							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)) ? dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min", 'int', 3), 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year", 'int', 3)) : $datenotinstring;
 						}
 						// Convert float submited string into real php numeric (value in memory must be a php numeric)
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('price', 'double')))
@@ -8213,8 +8248,11 @@ abstract class CommonObject
 
 		$this->db->begin();
 
+		$statusfield = 'status';
+		if ($this->element == 'don' || $this->element == 'donation') $statusfield = 'fk_statut';
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " SET status = ".$status;
+		$sql .= " SET ".$statusfield." = ".((int) $status);
 		$sql .= " WHERE rowid = ".$this->id;
 
 		if ($this->db->query($sql))
@@ -8250,22 +8288,31 @@ abstract class CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimenCommon()
 	{
 		global $user;
 
 		$this->id = 0;
-		if (array_key_exists('label', $this->fields)) $this->label = 'This is label';
-		if (array_key_exists('note_public', $this->fields)) $this->note_public = 'Public note';
-		if (array_key_exists('note_private', $this->fields)) $this->note_private = 'Private note';
-		if (array_key_exists('date_creation', $this->fields)) $this->date_creation = (dol_now() - 3600 * 24);
-		if (array_key_exists('date_modification', $this->fields)) $this->date_modification = (dol_now() - 3600 * 24);
-		if (array_key_exists('fk_user_creat', $this->fields)) $this->fk_user_creat = $user->id;
-		if (array_key_exists('fk_user_modif', $this->fields)) $this->fk_user_modif = $user->id;
-		if (array_key_exists('date', $this->fields)) $this->date = dol_now();
-		// ...
+		$this->specimen = 1;
+		$fields = array(
+			'label' => 'This is label',
+			'ref' => 'ABCD1234',
+			'description' => 'This is a description',
+			'qty' => 123.12,
+			'note_public' => 'Public note',
+			'note_private' => 'Private note',
+			'date_creation' => (dol_now() - 3600 * 48),
+			'date_modification' => (dol_now() - 3600 * 24),
+			'fk_user_creat' => $user->id,
+			'fk_user_modif' => $user->id,
+			'date' => dol_now(),
+		);
+		foreach ($fields as $key => $value) {
+			if (array_key_exists($key, $this->fields)) $this->{$key} = $value;
+		}
+		return 1;
 	}
 
 
@@ -8440,7 +8487,7 @@ abstract class CommonObject
 
 		$this->db->begin();
 
-		switch ($this->element){
+		switch ($this->element) {
 			case 'propal':
 				$element = 'propale';
 				break;
@@ -8448,10 +8495,10 @@ abstract class CommonObject
 				$element = 'produit';
 				break;
 			case 'order_supplier':
-				$element ='fournisseur/commande';
+				$element = 'fournisseur/commande';
 				break;
 			case 'invoice_supplier':
-				$element = 'fournisseur/facture/' . get_exdir($this->id, 2, 0, 1, $this, 'invoice_supplier');
+				$element = 'fournisseur/facture/'.get_exdir($this->id, 2, 0, 1, $this, 'invoice_supplier');
 				break;
 			case 'shipping':
 				$element = 'expedition/sending';
@@ -8461,8 +8508,8 @@ abstract class CommonObject
 		}
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."ecm_files";
-		$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
-		$sql.= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".$conf->entity;
+		$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
+		$sql .= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".$conf->entity;
 
 		if (!$this->db->query($sql)) {
 			$this->error = $this->db->lasterror();

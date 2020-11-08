@@ -49,7 +49,7 @@ print dol_get_fiche_head($head, 'info', $langs->trans("SupplierPayment"), 0, 'pa
 
 dol_banner_tab($object, 'id', $linkback, -1, 'rowid', 'ref');
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<table width="100%"><tr><td>';
 dol_print_object_info($object);

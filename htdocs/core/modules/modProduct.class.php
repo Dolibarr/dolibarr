@@ -661,7 +661,7 @@ class modProduct extends DolibarrModules
 			}
 
 			if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-				$this->import_fields_array[$r]=array_merge($this->import_fields_array[$r], array('sp.packaging' => 'PackagingForThisProduct'));
+				$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('sp.packaging' => 'PackagingForThisProduct'));
 			}
 
 			$this->import_convertvalue_array[$r] = array(

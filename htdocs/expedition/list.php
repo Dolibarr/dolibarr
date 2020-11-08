@@ -175,7 +175,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_state = "";
 	$search_type = '';
 	$search_country = '';
-	$search_tracking='';
+	$search_tracking = '';
 	$search_type_thirdparty = '';
 	$search_billed = '';
 	$search_datedelivery_start = '';
@@ -183,7 +183,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_datereceipt_start = '';
 	$search_datereceipt_end = '';
 	$search_status = '';
-    $toselect = '';
+	$toselect = '';
 	$search_array_options = array();
 	$search_categ_cus = 0;
 }
@@ -277,7 +277,7 @@ if ($search_town)  $sql .= natural_search('s.town', $search_town);
 if ($search_zip)   $sql .= natural_search("s.zip", $search_zip);
 if ($search_state) $sql .= natural_search("state.nom", $search_state);
 if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
-if ($search_tracking)   $sql.= natural_search("e.tracking_number", $search_tracking);
+if ($search_tracking)   $sql .= natural_search("e.tracking_number", $search_tracking);
 if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 if ($search_sale > 0)                        $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$search_sale;
 if ($search_ref_exp) $sql .= natural_search('e.ref', $search_ref_exp);
@@ -335,7 +335,7 @@ if ($resql)
 	if ($search_user > 0) 			$param .= '&search_user='.urlencode($search_user);
 	if ($search_sale > 0) 			$param .= '&search_sale='.urlencode($search_sale);
 	if ($search_company)   $param .= "&amp;search_company=".urlencode($search_company);
-	if ($search_tracking)   $param.= "&amp;search_tracking=".urlencode($search_tracking);
+	if ($search_tracking)   $param .= "&amp;search_tracking=".urlencode($search_tracking);
 	if ($search_town)      $param .= '&search_town='.urlencode($search_town);
 	if ($search_zip)       $param .= '&search_zip='.urlencode($search_zip);
 
@@ -514,7 +514,7 @@ if ($resql)
 		print '</td>';
 	}
 	// Tracking number
-	if (! empty($arrayfields['e.tracking_number']['checked']))
+	if (!empty($arrayfields['e.tracking_number']['checked']))
 	{
 		print '<td class="liste_titre center">';
 		print '<input class="flat" size="6" type="text" name="search_tracking" value="'.dol_escape_htmltag($search_tracking).'">';
@@ -592,7 +592,7 @@ if ($resql)
 	if (!empty($arrayfields['typent.code']['checked']))      print_liste_field_titre($arrayfields['typent.code']['label'], $_SERVER["PHP_SELF"], "typent.code", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['e.weight']['checked']))         print_liste_field_titre($arrayfields['e.weight']['label'], $_SERVER["PHP_SELF"], "e.weight", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['e.date_delivery']['checked']))  print_liste_field_titre($arrayfields['e.date_delivery']['label'], $_SERVER["PHP_SELF"], "e.date_delivery", "", $param, '', $sortfield, $sortorder, 'center ');
-	if (! empty($arrayfields['e.tracking_number']['checked']))  print_liste_field_titre($arrayfields['e.tracking_number']['label'], $_SERVER["PHP_SELF"], "e.tracking_number", "", $param, '', $sortfield, $sortorder, 'center ');
+	if (!empty($arrayfields['e.tracking_number']['checked']))  print_liste_field_titre($arrayfields['e.tracking_number']['label'], $_SERVER["PHP_SELF"], "e.tracking_number", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['l.ref']['checked']))            print_liste_field_titre($arrayfields['l.ref']['label'], $_SERVER["PHP_SELF"], "l.ref", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['l.date_delivery']['checked']))  print_liste_field_titre($arrayfields['l.date_delivery']['label'], $_SERVER["PHP_SELF"], "l.date_delivery", "", $param, '', $sortfield, $sortorder, 'center ');
 	// Extra fields
@@ -719,10 +719,10 @@ if ($resql)
 			print "</td>\n";
 		}
 		// Tracking number
-		if (! empty($arrayfields['e.tracking_number']['checked']))
+		if (!empty($arrayfields['e.tracking_number']['checked']))
 		{
 			print '<td class="center">'.$obj->tracking_number."</td>\n";
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		if (!empty($arrayfields['l.ref']['checked']) || !empty($arrayfields['l.date_delivery']['checked']))

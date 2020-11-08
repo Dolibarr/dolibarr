@@ -101,18 +101,18 @@ $isdraft = (($object->statut == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture', 'fk_soc', 'rowid', $isdraft);
 
 // Common permissions
-$usercanread		= $user->rights->fournisseur->facture->lire;
+$usercanread = $user->rights->fournisseur->facture->lire;
 $usercancreate		= $user->rights->fournisseur->facture->creer;
 $usercandelete		= $user->rights->fournisseur->facture->supprimer;
 
 // Advanced permissions
-$usercanvalidate	= ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_invoice_advance->validate)));
-$usercansend		= (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->fournisseur->supplier_invoice_advance->send);
+$usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_invoice_advance->validate)));
+$usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->fournisseur->supplier_invoice_advance->send);
 
 // Permissions for includes
 $permissionnote		= $usercancreate; // Used by the include of actions_setnotes.inc.php
-$permissiondellink	= $usercancreate; // Used by the include of actions_dellink.inc.php
-$permissiontoedit	= $usercancreate; // Used by the include of actions_lineupdown.inc.php
+$permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
+$permissiontoedit = $usercancreate; // Used by the include of actions_lineupdown.inc.php
 $permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 
@@ -227,7 +227,7 @@ if (empty($reshook))
 
 		$isErasable = $object->is_erasable();
 
-		if (($usercandelete && $isErasable > 0)	|| ($usercancreate && $isErasable == 1))
+		if (($usercandelete && $isErasable > 0) || ($usercancreate && $isErasable == 1))
 		{
 			$result = $object->delete($user);
 			if ($result > 0)
@@ -317,39 +317,39 @@ if (empty($reshook))
 	// payments conditions
 	if ($action == 'setconditions' && $usercancreate)
 	{
-	    $object->fetch($id);
-	    $object->cond_reglement_code = 0; // To clean property
-	    $object->cond_reglement_id = 0; // To clean property
+		$object->fetch($id);
+		$object->cond_reglement_code = 0; // To clean property
+		$object->cond_reglement_id = 0; // To clean property
 
-	    $error = 0;
+		$error = 0;
 
-	    $db->begin();
+		$db->begin();
 
-	    if (! $error) {
-		    $result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
-		    if ($result < 0) {
-	    		$error++;
-	        	setEventMessages($object->error, $object->errors, 'errors');
-	    	}
-	    }
+		if (!$error) {
+			$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
+			if ($result < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
 
-	    if (! $error) {
-		    $old_date_echeance = $object->date_echeance;
-	    	$new_date_echeance = $object->calculate_date_lim_reglement();
-	    	if ($new_date_echeance > $old_date_echeance) $object->date_echeance = $new_date_echeance;
-	    	if ($object->date_echeance < $object->date) $object->date_echeance = $object->date;
-	    	$result = $object->update($user);
-	    	if ($result < 0) {
-	    		$error++;
-	    		setEventMessages($object->error, $object->errors, 'errors');
-	    	}
-	    }
+		if (!$error) {
+			$old_date_echeance = $object->date_echeance;
+			$new_date_echeance = $object->calculate_date_lim_reglement();
+			if ($new_date_echeance > $old_date_echeance) $object->date_echeance = $new_date_echeance;
+			if ($object->date_echeance < $object->date) $object->date_echeance = $object->date;
+			$result = $object->update($user);
+			if ($result < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
 
-	    if ($error) {
-	    	$db->rollback();
-	    } else {
-	    	$db->commit();
-	    }
+		if ($error) {
+			$db->rollback();
+		} else {
+			$db->commit();
+		}
 	}
 
 	// Set incoterm
@@ -379,11 +379,11 @@ if (empty($reshook))
 		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
 	}
 
-    // transport mode
-    if ($action == 'settransportmode' && $user->rights->fournisseur->facture->creer)
-    {
-        $result=$object->setTransportMode(GETPOST('transport_mode_id', 'int'));
-    }
+	// transport mode
+	if ($action == 'settransportmode' && $user->rights->fournisseur->facture->creer)
+	{
+		$result = $object->setTransportMode(GETPOST('transport_mode_id', 'int'));
+	}
 
 	// Set label
 	elseif ($action == 'setlabel' && $usercancreate)
@@ -698,7 +698,7 @@ if (empty($reshook))
 				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms	= GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code	= GETPOST('multicurrency_code', 'alpha');
-				$object->multicurrency_tx	= GETPOST('originmulticurrency_tx', 'int');
+				$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
 				$object->transport_mode_id	= GETPOST('transport_mode_id', 'int');
 
 				// Proprietes particulieres a facture de remplacement
@@ -764,7 +764,7 @@ if (empty($reshook))
 				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms	= GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code	= GETPOST('multicurrency_code', 'alpha');
-				$object->multicurrency_tx	= GETPOST('originmulticurrency_tx', 'int');
+				$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
 				$object->transport_mode_id	= GETPOST('transport_mode_id', 'int');
 
 				// Proprietes particulieres a facture avoir
@@ -878,7 +878,7 @@ if (empty($reshook))
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 				$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
-				$object->transport_mode_id	= GETPOST('transport_mode_id');
+				$object->transport_mode_id = GETPOST('transport_mode_id');
 
 				// Auto calculation of date due if not filled by user
 				if (empty($object->date_echeance)) $object->date_echeance = $object->calculate_date_lim_reglement();
@@ -1728,7 +1728,7 @@ if ($action == 'create')
 		$remise_percent 	= (!empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (!empty($soc->remise_supplier_percent) ? $soc->remise_supplier_percent : 0));
 		$remise_absolue 	= (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
 		$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '';
-		$transport_mode_id  = (!empty($objectsrc->transport_mode_id) ? $objectsrc->transport_mode_id : (!empty($soc->transport_mode_id) ? $soc->transport_mode_id : 0));
+		$transport_mode_id = (!empty($objectsrc->transport_mode_id) ? $objectsrc->transport_mode_id : (!empty($soc->transport_mode_id) ? $soc->transport_mode_id : 0));
 
 		if (!empty($conf->multicurrency->enabled))
 		{
@@ -1747,7 +1747,7 @@ if ($action == 'create')
 	} else {
 		$cond_reglement_id 	= $societe->cond_reglement_supplier_id;
 		$mode_reglement_id 	= $societe->mode_reglement_supplier_id;
-		$transport_mode_id	= $societe->transport_mode_supplier_id;
+		$transport_mode_id = $societe->transport_mode_supplier_id;
 		$fk_account         = $societe->fk_account;
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 		$dateinvoice = ($datetmp == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datetmp);
@@ -1767,8 +1767,8 @@ if ($action == 'create')
 		$mode_reglement_id = GETPOST("mode_reglement_id");
 	}
 
-	$note_public = $object->getDefaultCreateValueFor('note_public', ((! empty($origin) && ! empty($originid) && is_object($objectsrc) && !empty($conf->global->FACTUREFOURN_REUSE_NOTES_ON_CREATE_FROM))?$objectsrc->note_public:null));
-	$note_private = $object->getDefaultCreateValueFor('note_private', ((! empty($origin) && ! empty($originid) && is_object($objectsrc) && !empty($conf->global->FACTUREFOURN_REUSE_NOTES_ON_CREATE_FROM))?$objectsrc->note_private:null));
+	$note_public = $object->getDefaultCreateValueFor('note_public', ((!empty($origin) && !empty($originid) && is_object($objectsrc) && !empty($conf->global->FACTUREFOURN_REUSE_NOTES_ON_CREATE_FROM)) ? $objectsrc->note_public : null));
+	$note_private = $object->getDefaultCreateValueFor('note_private', ((!empty($origin) && !empty($originid) && is_object($objectsrc) && !empty($conf->global->FACTUREFOURN_REUSE_NOTES_ON_CREATE_FROM)) ? $objectsrc->note_private : null));
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -2096,14 +2096,14 @@ if ($action == 'create')
 		print '</td></tr>';
 	}
 
-    // Intracomm report
-    if (!empty($conf->intracommreport->enabled))
-    {
-        $langs->loadLangs(array("intracommreport"));
-        print '<tr><td>' . $langs->trans('IntracommReportTransportMode') . '</td><td>';
-        $form->selectModeTransport(isset($_POST['transport_mode_id']) ? $_POST['transport_mode_id'] : $transport_mode_id, 'transport_mode_id');
-        print '</td></tr>';
-    }
+	// Intracomm report
+	if (!empty($conf->intracommreport->enabled))
+	{
+		$langs->loadLangs(array("intracommreport"));
+		print '<tr><td>'.$langs->trans('IntracommReportTransportMode').'</td><td>';
+		$form->selectModeTransport(isset($_POST['transport_mode_id']) ? $_POST['transport_mode_id'] : $transport_mode_id, 'transport_mode_id');
+		print '</td></tr>';
+	}
 
 	// Public note
 	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
@@ -2191,7 +2191,7 @@ if ($action == 'create')
 	// Bouton "Create Draft"
 	print "</table>\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'">';
@@ -2305,7 +2305,7 @@ if ($action == 'create')
 		{
 			// We check if number is temporary number
 			if (preg_match('/^[\(]?PROV/i', $object->ref) || empty($object->ref)) {
-                // empty should not happened, but when it occurs, the test save life
+				// empty should not happened, but when it occurs, the test save life
 				$numref = $object->getNextNumRef($societe);
 			} else {
 				$numref = $object->ref;
@@ -2688,26 +2688,26 @@ if ($action == 'create')
 
 		// Intracomm report
 		if (!empty($conf->intracommreport->enabled)) {
-	        $langs->loadLangs(array("intracommreport"));
-	        print '<tr><td class="nowrap">';
-	        print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-	        print $langs->trans('IntracommReportTransportMode');
-	        print '</td>';
-	        if ($action != 'editmode' && $user->rights->fournisseur->facture->creer) {
-	            print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
-	        }
-	        print '</tr></table>';
-	        print '</td>';
+			$langs->loadLangs(array("intracommreport"));
+			print '<tr><td class="nowrap">';
+			print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+			print $langs->trans('IntracommReportTransportMode');
+			print '</td>';
+			if ($action != 'editmode' && $user->rights->fournisseur->facture->creer) {
+				print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+			}
+			print '</tr></table>';
+			print '</td>';
 
-	        print '<td>';
-	        if ($action == 'editmode')
-	        {
-	            $form->formSelectTransportMode($_SERVER['PHP_SELF'].'?id='.$object->id, $object->transport_mode_id, 'transport_mode_id', 1, 1);
-	        }
-	        else {
-	            $form->formSelectTransportMode($_SERVER['PHP_SELF'].'?id='.$object->id, $object->transport_mode_id, 'none');
-	        }
-	        print '</td></tr>';
+			print '<td>';
+			if ($action == 'editmode')
+			{
+				$form->formSelectTransportMode($_SERVER['PHP_SELF'].'?id='.$object->id, $object->transport_mode_id, 'transport_mode_id', 1, 1);
+			}
+			else {
+				$form->formSelectTransportMode($_SERVER['PHP_SELF'].'?id='.$object->id, $object->transport_mode_id, 'none');
+			}
+			print '</td></tr>';
 		}
 
 		// Other attributes
@@ -3095,7 +3095,7 @@ if ($action == 'create')
 		print '</div>';
 		print '</form>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 
 		if ($action != 'presend')

@@ -873,7 +873,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 			print "</table>";
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
 			print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
@@ -1237,7 +1237,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 			print '</table>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
 			print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
@@ -1249,14 +1249,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		}
 	}
 
-    // Select mail models is same action as presend
-    if (GETPOST('modelselected', 'alpha')) {
-        $action = 'presend';
-    }
+	// Select mail models is same action as presend
+	if (GETPOST('modelselected', 'alpha')) {
+		$action = 'presend';
+	}
 
-    if (!empty($id) && $action != 'edit' && $action != 'create')
-    {
-        $objsoc = new Societe($db);
+	if (!empty($id) && $action != 'edit' && $action != 'create')
+	{
+		$objsoc = new Societe($db);
 
 		// View mode
 
@@ -1482,7 +1482,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '</div></div></div>';
 		print '<div style="clear:both"></div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		// Barre d'actions
 		print '<div class="tabsAction">';

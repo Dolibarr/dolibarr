@@ -50,25 +50,25 @@ if (empty($user->rights->takepos->run)) {
  */
 
 if ($action == 'getProducts') {
-    $object = new Categorie($db);
+	$object = new Categorie($db);
 	if ($category == "supplements") $category = $conf->global->TAKEPOS_SUPPLEMENTS_CATEGORY;
-    $result = $object->fetch($category);
-    if ($result > 0)
-    {
-	    $prods = $object->getObjectsInCateg("product", 0, 0, 0, $conf->global->TAKEPOS_SORTPRODUCTFIELD, 'ASC');
-	    // Removed properties we don't need
-	    if (is_array($prods) && count($prods) > 0)
-	    {
-	    	foreach ($prods as $prod)
-	    	{
-	    		unset($prod->fields);
-	    		unset($prod->db);
-	    	}
-	    }
-    	echo json_encode($prods);
-    } else {
-    	echo 'Failed to load category with id='.$category;
-    }
+	$result = $object->fetch($category);
+	if ($result > 0)
+	{
+		$prods = $object->getObjectsInCateg("product", 0, 0, 0, $conf->global->TAKEPOS_SORTPRODUCTFIELD, 'ASC');
+		// Removed properties we don't need
+		if (is_array($prods) && count($prods) > 0)
+		{
+			foreach ($prods as $prod)
+			{
+				unset($prod->fields);
+				unset($prod->db);
+			}
+		}
+		echo json_encode($prods);
+	} else {
+		echo 'Failed to load category with id='.$category;
+	}
 } elseif ($action == 'search' && $term != '') {
 	// Change thirdparty with barcode
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -76,14 +76,14 @@ if ($action == 'getProducts') {
 	$thirdparty = new Societe($db);
 	$result = $thirdparty->fetch('', '', '', $term);
 
-	if ( $result && $thirdparty->id > 0) {
-	    $rows = array();
-	    	$rows[] = array(
-	    		'rowid' => $thirdparty->id,
-	    		'name' => $thirdparty->name,
-	    		'barcode' => $thirdparty->barcode,
-          'object' => 'thirdparty'
-	    	);
+	if ($result && $thirdparty->id > 0) {
+		$rows = array();
+			$rows[] = array(
+				'rowid' => $thirdparty->id,
+				'name' => $thirdparty->name,
+				'barcode' => $thirdparty->barcode,
+		  'object' => 'thirdparty'
+			);
 			echo json_encode($rows);
 			exit;
 	}
@@ -102,54 +102,54 @@ if ($action == 'getProducts') {
 		}
 	}
 
-    $sql = 'SELECT rowid, ref, label, tosell, tobuy, barcode, price FROM '.MAIN_DB_PREFIX.'product as p';
-    $sql .= ' WHERE entity IN ('.getEntity('product').')';
-    if ($filteroncategids) {
-    	$sql .= ' AND EXISTS (SELECT cp.fk_product FROM '.MAIN_DB_PREFIX.'categorie_product as cp WHERE cp.fk_product = p.rowid AND cp.fk_categorie IN ('.$filteroncategids.'))';
-    }
-    $sql .= ' AND tosell = 1';
-    $sql .= natural_search(array('ref', 'label', 'barcode'), $term);
-    $resql = $db->query($sql);
+	$sql = 'SELECT rowid, ref, label, tosell, tobuy, barcode, price FROM '.MAIN_DB_PREFIX.'product as p';
+	$sql .= ' WHERE entity IN ('.getEntity('product').')';
+	if ($filteroncategids) {
+		$sql .= ' AND EXISTS (SELECT cp.fk_product FROM '.MAIN_DB_PREFIX.'categorie_product as cp WHERE cp.fk_product = p.rowid AND cp.fk_categorie IN ('.$filteroncategids.'))';
+	}
+	$sql .= ' AND tosell = 1';
+	$sql .= natural_search(array('ref', 'label', 'barcode'), $term);
+	$resql = $db->query($sql);
 	if ($resql)
 	{
-	    $rows = array();
-	    while ($obj = $db->fetch_object($resql)) {
-	    	$rows[] = array(
-	    		'rowid' => $obj->rowid,
-	    		'ref' => $obj->ref,
-	    		'label' => $obj->label,
-	    		'tosell' => $obj->tosell,
-	    		'tobuy' => $obj->tobuy,
-	    		'barcode' => $obj->barcode,
-	    		'price' => $obj->price,
+		$rows = array();
+		while ($obj = $db->fetch_object($resql)) {
+			$rows[] = array(
+				'rowid' => $obj->rowid,
+				'ref' => $obj->ref,
+				'label' => $obj->label,
+				'tosell' => $obj->tosell,
+				'tobuy' => $obj->tobuy,
+				'barcode' => $obj->barcode,
+				'price' => $obj->price,
 			'object' => 'product'
-	    		//'price_formated' => price(price2num($obj->price, 'MU'), 1, $langs, 1, -1, -1, $conf->currency)
-	    	);
-	    }
-	    echo json_encode($rows);
+				//'price_formated' => price(price2num($obj->price, 'MU'), 1, $langs, 1, -1, -1, $conf->currency)
+			);
+		}
+		echo json_encode($rows);
 	} else {
 		echo 'Failed to search product : '.$db->lasterror();
 	}
 } elseif ($action == "opendrawer" && $term != '') {
-    require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
-    $printer = new dolReceiptPrinter($db);
-    // check printer for terminal
-    if ($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term} > 0) {
-        $printer->initPrinter($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term});
-        // open cashdrawer
-        $printer->pulse();
-        $printer->close();
-    }
+	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
+	$printer = new dolReceiptPrinter($db);
+	// check printer for terminal
+	if ($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term} > 0) {
+		$printer->initPrinter($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term});
+		// open cashdrawer
+		$printer->pulse();
+		$printer->close();
+	}
 } elseif ($action == "printinvoiceticket" && $term != '' && $id > 0 && !empty($user->rights->facture->lire)) {
-    require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
-    require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-    $printer = new dolReceiptPrinter($db);
-    // check printer for terminal
-    if (($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term} > 0 || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") && $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term} > 0) {
-        $object = new Facture($db);
-        $object->fetch($id);
-        $ret = $printer->sendToPrinter($object, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term}, $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term});
-    }
+	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+	$printer = new dolReceiptPrinter($db);
+	// check printer for terminal
+	if (($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term} > 0 || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") && $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term} > 0) {
+		$object = new Facture($db);
+		$object->fetch($id);
+		$ret = $printer->sendToPrinter($object, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term}, $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term});
+	}
 } elseif ($action == 'getInvoice') {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
@@ -163,6 +163,6 @@ if ($action == 'getProducts') {
 	$place = GETPOST('place', 'alpha');
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
-    $printer = new dolReceiptPrinter($db);
-    $printer->sendToPrinter($object, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term}, $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term});
+	$printer = new dolReceiptPrinter($db);
+	$printer->sendToPrinter($object, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term}, $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term});
 }

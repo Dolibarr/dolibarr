@@ -97,22 +97,22 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Common permissions
-$usercanread		= $user->rights->supplier_proposal->lire;
+$usercanread = $user->rights->supplier_proposal->lire;
 $usercancreate		= $user->rights->supplier_proposal->creer;
 $usercandelete		= $user->rights->supplier_proposal->supprimer;
 
 // Advanced permissions
-$usercanvalidate	= ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->supplier_proposal->validate_advance)));
-$usercansend		= (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->supplier_proposal->send_advance);
+$usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->supplier_proposal->validate_advance)));
+$usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->supplier_proposal->send_advance);
 
 // Additional area permissions
-$usercanclose		= $user->rights->supplier_proposal->cloturer;
-$usercancreateorder	= $user->rights->fournisseur->commande->creer;
+$usercanclose = $user->rights->supplier_proposal->cloturer;
+$usercancreateorder = $user->rights->fournisseur->commande->creer;
 
 // Permissions for includes
-$permissionnote		= $usercancreate; // Used by the include of actions_setnotes.inc.php
-$permissiondellink	= $usercancreate; // Used by the include of actions_dellink.inc.php
-$permissiontoedit	= $usercancreate; // Used by the include of actions_lineupdown.inc.php
+$permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
+$permissiontoedit = $usercancreate; // Used by the include of actions_lineupdown.inc.php
 
 
 /*
@@ -636,7 +636,7 @@ if (empty($reshook))
 
 					// if we use supplier description of the products
 					if (!empty($productsupplier->desc_supplier) && !empty($conf->global->PRODUIT_FOURN_TEXTS)) {
-					    $desc = $productsupplier->desc_supplier;
+						$desc = $productsupplier->desc_supplier;
 					} else $desc = $productsupplier->description;
 
 					if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
@@ -686,7 +686,7 @@ if (empty($reshook))
 						$productsupplier->fourn_multicurrency_unitprice,
 						$date_start,
 						$date_end
-                    );
+					);
 
 					//var_dump($tva_tx);var_dump($productsupplier->fourn_pu);var_dump($price_base_type);exit;
 					if ($result < 0)
@@ -1350,7 +1350,7 @@ if ($action == 'create')
 
 	if (!empty($conf->global->SUPPLIER_PROPOSAL_CLONE_ON_CREATE_PAGE)) print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("CreateDraft").'">';
@@ -1804,7 +1804,7 @@ if ($action == 'create')
 	print '</div>';
 	print "</form>\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	if ($action == 'statut')
 	{

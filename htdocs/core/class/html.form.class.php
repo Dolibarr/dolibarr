@@ -509,7 +509,6 @@ class Form
 	 *  @param	int			$forcenowrap		Force no wrap between text and picto (works with notabs=2 only)
 	 *	@return	string							Code html du tooltip (texte+picto)
 	 *	@see	textwithpicto() Use thisfunction if you can.
-	 *  TODO Move this as static as soon as everybody use textwithpicto or @Form::textwithtooltip
 	 */
 	public function textwithtooltip($text, $htmltext, $tooltipon = 1, $direction = 0, $img = '', $extracss = '', $notabs = 3, $incbefore = '', $noencodehtmltext = 0, $tooltiptrigger = '', $forcenowrap = 0)
 	{
@@ -1188,12 +1187,12 @@ class Form
 
 		// We search companies
 		$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
-		if (! empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
+		if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
 			$sql .= ", s.address, s.zip, s.town";
 			$sql .= ", dictp.code as country_code";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-		if (! empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
+		if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as dictp ON dictp.rowid = s.fk_pays";
 		}
 		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -1284,7 +1283,7 @@ class Form
 						if ($obj->client || $obj->fournisseur) $label .= ')';
 					}
 
-					if (! empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
+					if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
 						$label .= ($obj->address ? ' - '.$obj->address : '').($obj->zip ? ' - '.$obj->zip : '').($obj->town ? ' '.$obj->town : '');
 						if (!empty($obj->country_code)) {
 							$label .= ', '.$langs->trans('Country'.$obj->country_code);
@@ -3567,106 +3566,106 @@ class Form
 		return $return;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *      Load in cache list of transport mode
-     *
-     *      @return     int                 Nb of lines loaded, <0 if KO
-     */
-    public function load_cache_transport_mode()
-    {
-        // phpcs:enable
-        global $langs;
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *      Load in cache list of transport mode
+	 *
+	 *      @return     int                 Nb of lines loaded, <0 if KO
+	 */
+	public function load_cache_transport_mode()
+	{
+		// phpcs:enable
+		global $langs;
 
-        $num=count($this->cache_transport_mode);
-        if ($num > 0) return $num;    // Cache already loaded
+		$num = count($this->cache_transport_mode);
+		if ($num > 0) return $num; // Cache already loaded
 
-        dol_syslog(__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
-        $this->cache_transport_mode = array();
+		$this->cache_transport_mode = array();
 
-        $sql = "SELECT rowid, code, label, active";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_transport_mode";
-        $sql.= " WHERE entity IN (".getEntity('c_transport_mode').")";
-        //if ($active >= 0) $sql.= " AND active = ".$active;
+		$sql = "SELECT rowid, code, label, active";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_transport_mode";
+		$sql .= " WHERE entity IN (".getEntity('c_transport_mode').")";
+		//if ($active >= 0) $sql.= " AND active = ".$active;
 
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            $num = $this->db->num_rows($resql);
-            $i = 0;
-            while ($i < $num)
-            {
-                $obj = $this->db->fetch_object($resql);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($resql);
 
-                // If traduction exist, we use it else we take the default label
-                $label=($langs->transnoentitiesnoconv("PaymentTypeShort".$obj->code)!=("PaymentTypeShort".$obj->code)?$langs->transnoentitiesnoconv("PaymentTypeShort".$obj->code):($obj->label!='-'?$obj->label:''));
-                $this->cache_transport_mode[$obj->rowid]['rowid'] = $obj->rowid;
-                $this->cache_transport_mode[$obj->rowid]['code'] = $obj->code;
-                $this->cache_transport_mode[$obj->rowid]['label']= $label;
-                $this->cache_transport_mode[$obj->rowid]['active'] = $obj->active;
-                $i++;
-            }
+				// If traduction exist, we use it else we take the default label
+				$label = ($langs->transnoentitiesnoconv("PaymentTypeShort".$obj->code) != ("PaymentTypeShort".$obj->code) ? $langs->transnoentitiesnoconv("PaymentTypeShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
+				$this->cache_transport_mode[$obj->rowid]['rowid'] = $obj->rowid;
+				$this->cache_transport_mode[$obj->rowid]['code'] = $obj->code;
+				$this->cache_transport_mode[$obj->rowid]['label'] = $label;
+				$this->cache_transport_mode[$obj->rowid]['active'] = $obj->active;
+				$i++;
+			}
 
-            $this->cache_transport_mode = dol_sort_array($this->cache_transport_mode, 'label', 'asc', 0, 0, 1);
+			$this->cache_transport_mode = dol_sort_array($this->cache_transport_mode, 'label', 'asc', 0, 0, 1);
 
-            return $num;
-        }
-        else {
-            dol_print_error($this->db);
-            return -1;
-        }
-    }
+			return $num;
+		}
+		else {
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
 
-    /**
-     *      Return list of transport mode for intracomm report
-     *
-     *      @param	string	$selected       Id of the transport mode pre-selected
-     *      @param  string	$htmlname       Name of the select field
-     *      @param  int		$format         0=id+label, 1=code+code, 2=code+label, 3=id+code
-     *      @param  int		$empty			1=can be empty, 0 else
-     *      @param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
-     *      @param  int		$maxlength      Max length of label
-     *      @param  int     $active         Active or not, -1 = all
-     *      @param  string  $morecss        Add more CSS on select tag
-     * 		@return	void
-     */
-    public function selectTransportMode($selected = '', $htmlname = 'transportmode', $format = 0, $empty = 1, $noadmininfo = 0, $maxlength = 0, $active = 1, $morecss = '')
-    {
-        global $langs,$user;
+	/**
+	 *      Return list of transport mode for intracomm report
+	 *
+	 *      @param	string	$selected       Id of the transport mode pre-selected
+	 *      @param  string	$htmlname       Name of the select field
+	 *      @param  int		$format         0=id+label, 1=code+code, 2=code+label, 3=id+code
+	 *      @param  int		$empty			1=can be empty, 0 else
+	 *      @param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
+	 *      @param  int		$maxlength      Max length of label
+	 *      @param  int     $active         Active or not, -1 = all
+	 *      @param  string  $morecss        Add more CSS on select tag
+	 * 		@return	void
+	 */
+	public function selectTransportMode($selected = '', $htmlname = 'transportmode', $format = 0, $empty = 1, $noadmininfo = 0, $maxlength = 0, $active = 1, $morecss = '')
+	{
+		global $langs, $user;
 
-        dol_syslog(__METHOD__." ".$selected.", ".$htmlname.", ".$format, LOG_DEBUG);
+		dol_syslog(__METHOD__." ".$selected.", ".$htmlname.", ".$format, LOG_DEBUG);
 
-        $this->load_cache_transport_mode();
+		$this->load_cache_transport_mode();
 
-        print '<select id="select'.$htmlname.'" class="flat selectmodetransport'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'">';
-        if ($empty) print '<option value="">&nbsp;</option>';
-        foreach ($this->cache_transport_mode as $id => $arraytypes)
-        {
-            // If not good status
-            if ($active >= 0 && $arraytypes['active'] != $active) continue;
+		print '<select id="select'.$htmlname.'" class="flat selectmodetransport'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
+		if ($empty) print '<option value="">&nbsp;</option>';
+		foreach ($this->cache_transport_mode as $id => $arraytypes)
+		{
+			// If not good status
+			if ($active >= 0 && $arraytypes['active'] != $active) continue;
 
-            // We discard empty line if showempty is on because an empty line has already been output.
-            if ($empty && empty($arraytypes['code'])) continue;
+			// We discard empty line if showempty is on because an empty line has already been output.
+			if ($empty && empty($arraytypes['code'])) continue;
 
-            if ($format == 0) print '<option value="'.$id.'"';
-            elseif ($format == 1) print '<option value="'.$arraytypes['code'].'"';
-            elseif ($format == 2) print '<option value="'.$arraytypes['code'].'"';
-            elseif ($format == 3) print '<option value="'.$id.'"';
-            // If text is selected, we compare with code, else with id
-            if (preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) print ' selected';
-            elseif ($selected == $id) print ' selected';
-            print '>';
-            if ($format == 0) $value=($maxlength?dol_trunc($arraytypes['label'], $maxlength):$arraytypes['label']);
-            elseif ($format == 1) $value=$arraytypes['code'];
-            elseif ($format == 2) $value=($maxlength?dol_trunc($arraytypes['label'], $maxlength):$arraytypes['label']);
-            elseif ($format == 3) $value=$arraytypes['code'];
-            print $value?$value:'&nbsp;';
-            print '</option>';
-        }
-        print '</select>';
-        if ($user->admin && ! $noadmininfo) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-    }
+			if ($format == 0) print '<option value="'.$id.'"';
+			elseif ($format == 1) print '<option value="'.$arraytypes['code'].'"';
+			elseif ($format == 2) print '<option value="'.$arraytypes['code'].'"';
+			elseif ($format == 3) print '<option value="'.$id.'"';
+			// If text is selected, we compare with code, else with id
+			if (preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) print ' selected';
+			elseif ($selected == $id) print ' selected';
+			print '>';
+			if ($format == 0) $value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
+			elseif ($format == 1) $value = $arraytypes['code'];
+			elseif ($format == 2) $value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
+			elseif ($format == 3) $value = $arraytypes['code'];
+			print $value ? $value : '&nbsp;';
+			print '</option>';
+		}
+		print '</select>';
+		if ($user->admin && !$noadmininfo) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+	}
 
 	/**
 	 *  Return a HTML select list of shipping mode
@@ -4705,40 +4704,40 @@ class Form
 		}
 	}
 
-    /**
-     *    Show form with transport mode
-     *
-     *    @param	string	$page        	Page
-     *    @param    int		$selected    	Id mode pre-select
-     *    @param    string	$htmlname    	Name of select html field
-     *    @param    int     $active         Active or not, -1 = all
-     *    @param    int     $addempty       1=Add empty entry
-     *    @return	void
-     */
-    public function formSelectTransportMode($page, $selected = '', $htmlname = 'transport_mode_id', $active = 1, $addempty = 0)
-    {
-        global $langs;
-        if ($htmlname != "none")
-        {
-            print '<form method="POST" action="'.$page.'">';
-            print '<input type="hidden" name="action" value="setmode">';
-            print '<input type="hidden" name="token" value="'.newToken().'">';
-            $this->selectTransportMode($selected, $htmlname, 2, $addempty, 0, 0, $active);
-            print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-            print '</form>';
-        }
-        else {
-            if ($selected)
-            {
-                $this->load_cache_transport_mode();
-                print $this->cache_transport_mode[$selected]['label'];
-            } else {
-                print "&nbsp;";
-            }
-        }
-    }
+	/**
+	 *    Show form with transport mode
+	 *
+	 *    @param	string	$page        	Page
+	 *    @param    int		$selected    	Id mode pre-select
+	 *    @param    string	$htmlname    	Name of select html field
+	 *    @param    int     $active         Active or not, -1 = all
+	 *    @param    int     $addempty       1=Add empty entry
+	 *    @return	void
+	 */
+	public function formSelectTransportMode($page, $selected = '', $htmlname = 'transport_mode_id', $active = 1, $addempty = 0)
+	{
+		global $langs;
+		if ($htmlname != "none")
+		{
+			print '<form method="POST" action="'.$page.'">';
+			print '<input type="hidden" name="action" value="setmode">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			$this->selectTransportMode($selected, $htmlname, 2, $addempty, 0, 0, $active);
+			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+			print '</form>';
+		}
+		else {
+			if ($selected)
+			{
+				$this->load_cache_transport_mode();
+				print $this->cache_transport_mode[$selected]['label'];
+			} else {
+				print "&nbsp;";
+			}
+		}
+	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Show form with multicurrency code
 	 *
@@ -5049,9 +5048,11 @@ class Form
 	 *  @param	string	$selected    preselected currency code
 	 *  @param  string	$htmlname    name of HTML select list
 	 *  @param  integer	$useempty    1=Add empty line
+	 *  @param string $filter Optional filters criteras (example: 'code <> x', ' in (1,3)')
+	 *  @param bool $excludeConfCurrency false  = If company current currency not in table, we add it into list. Should always be available.  true = we are in currency_rate update , we don't want to see conf->currency in select
 	 * 	@return	string
 	 */
-	public function selectMultiCurrency($selected = '', $htmlname = 'multicurrency_code', $useempty = 0)
+	public function selectMultiCurrency($selected = '', $htmlname = 'multicurrency_code', $useempty = 0, $filter = '', $excludeConfCurrency = false)
 	{
 		global $db, $conf, $langs, $user;
 
@@ -5061,6 +5062,7 @@ class Form
 
 		$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'multicurrency';
 		$sql .= " WHERE entity IN ('".getEntity('mutlicurrency')."')";
+		if ($filter) $sql .= " AND ".$filter;
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -5071,7 +5073,7 @@ class Form
 		$out .= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
 		if ($useempty) $out .= '<option value="">&nbsp;</option>';
 		// If company current currency not in table, we add it into list. Should always be available.
-		if (!in_array($conf->currency, $TCurrency))
+		if (!in_array($conf->currency, $TCurrency) && !$excludeConfCurrency)
 		{
 			$TCurrency[$conf->currency] = $conf->currency;
 		}
@@ -5648,7 +5650,7 @@ class Form
 
 		if ($d && $h) {
 			$retstring .= ($h == 2 ? '<br>' : ' ');
-			$retstring.='<span class="nowraponall">';
+			$retstring .= '<span class="nowraponall">';
 		}
 
 		if ($h)
@@ -6620,7 +6622,7 @@ class Form
 							 	templateSelection: formatSelection		/* For 4.0 */
 							});
 						});'."\n";
-			} elseif ($addjscombo == 2 && ! defined('DISABLE_MULTISELECT'))
+			} elseif ($addjscombo == 2 && !defined('DISABLE_MULTISELECT'))
 			{
 				// Add other js lib
 				// TODO external lib multiselect/jquery.multi-select.js must have been loaded to use this multiselect plugin
@@ -7721,7 +7723,7 @@ class Form
             $(document).ready(function() {
                 $("#' . $cssclass.'s").click(function() {
                     if($(this).is(\':checked\')){
-                        console.log("We check all '.$cssclass.'");
+                        console.log("We check all '.$cssclass.' and trigger the change method");
                 		$(".'.$cssclass.'").prop(\'checked\', true).trigger(\'change\');
                     }
                     else

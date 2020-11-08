@@ -43,26 +43,26 @@ $action = GETPOST('action', 'aZ09');
  */
 if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 {
-    $code = $reg[1];
-    if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
-    {
-        header("Location: ".$_SERVER["PHP_SELF"]);
-        exit;
-    } else {
-        dol_print_error($db);
-    }
+	$code = $reg[1];
+	if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
+	{
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	} else {
+		dol_print_error($db);
+	}
 }
 
 if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 {
-    $code = $reg[1];
-    if (dolibarr_del_const($db, $code, $conf->entity) > 0)
-    {
-        header("Location: ".$_SERVER["PHP_SELF"]);
-        exit;
-    } else {
-        dol_print_error($db);
-    }
+	$code = $reg[1];
+	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
+	{
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	} else {
+		dol_print_error($db);
+	}
 }
 
 
@@ -96,19 +96,19 @@ print '<br>';
 $arrayofsocialnetworks = array('jabber'=>'Jabber', 'skype'=>'Skype', 'twitter'=>'Twitter', 'facebook'=>'Facebook', 'linkedin'=>'LinkedIn');
 
 foreach ($arrayofsocialnetworks as $snkey => $snlabel) {
-    $consttocheck = 'SOCIALNETWORKS_'.strtoupper($snkey);
-    if ($conf->use_javascript_ajax) {
-        $link = ajax_constantonoff($consttocheck);
-    } else {
-        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-        $link = $form->selectarray($consttocheck, $arrval, $conf->global->$consttocheck);
-    }
+	$consttocheck = 'SOCIALNETWORKS_'.strtoupper($snkey);
+	if ($conf->use_javascript_ajax) {
+		$link = ajax_constantonoff($consttocheck);
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		$link = $form->selectarray($consttocheck, $arrval, $conf->global->$consttocheck);
+	}
 
-    print $langs->trans('EnableFeatureFor', $snlabel).' '.$link.'<br><br>';
+	print $langs->trans('EnableFeatureFor', $snlabel).' '.$link.'<br><br>';
 }
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '</form>';
 

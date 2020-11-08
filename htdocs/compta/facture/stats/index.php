@@ -54,14 +54,14 @@ $custcats = GETPOST('custcats', 'array');
 // Security check
 if ($user->socid > 0)
 {
-    $action = '';
-    $socid = $user->socid;
+	$action = '';
+	$socid = $user->socid;
 }
 
 $nowyear = strftime("%Y", dol_now());
 $year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
-if (!empty($conf->global->INVOICE_STATS_GRAPHS_SHOW_2_YEARS)) $startyear=$year-2;
-else $startyear=$year-1;
+if (!empty($conf->global->INVOICE_STATS_GRAPHS_SHOW_2_YEARS)) $startyear = $year - 2;
+else $startyear = $year - 1;
 $endyear = $year;
 
 
@@ -95,10 +95,10 @@ $stats = new FactureStats($db, $socid, $mode, ($userid > 0 ? $userid : 0), ($typ
 if ($mode == 'customer')
 {
 	if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND f.fk_statut IN ('.$db->sanitize($db->escape($object_status)).')';
-    if (is_array($custcats) && !empty($custcats)) {
-        $stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cat ON (f.fk_soc = cat.fk_soc)';
-        $stats->where .= ' AND cat.fk_categorie IN ('.implode(',', $custcats).')';
-    }
+	if (is_array($custcats) && !empty($custcats)) {
+		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cat ON (f.fk_soc = cat.fk_soc)';
+		$stats->where .= ' AND cat.fk_categorie IN ('.implode(',', $custcats).')';
+	}
 }
 if ($mode == 'supplier')
 {
@@ -177,38 +177,38 @@ $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
 if (!$user->rights->societe->client->voir || $user->socid)
 {
-    $filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$user->id.'-'.$year.'.png';
+	$filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
+	if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
+	if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$user->id.'-'.$year.'.png';
 } else {
-    $filename_avg = $dir.'/ordersaverage-'.$year.'.png';
-    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$year.'.png';
-    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$year.'.png';
+	$filename_avg = $dir.'/ordersaverage-'.$year.'.png';
+	if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$year.'.png';
+	if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$year.'.png';
 }
 
 $px3 = new DolGraph();
 $mesg = $px3->isGraphKo();
 if (!$mesg)
 {
-    $px3->SetData($data);
-    $i = $startyear; $legend = array();
-    while ($i <= $endyear)
-    {
-        $legend[] = $i;
-        $i++;
-    }
-    $px3->SetLegend($legend);
-    $px3->SetYLabel($langs->trans("AmountAverage"));
-    $px3->SetMaxValue($px3->GetCeilMaxValue());
-    $px3->SetMinValue($px3->GetFloorMinValue());
-    $px3->SetWidth($WIDTH);
-    $px3->SetHeight($HEIGHT);
-    $px3->SetShading(3);
-    $px3->SetHorizTickIncrement(1);
-    $px3->mode = 'depth';
-    $px3->SetTitle($langs->trans("AmountAverage"));
+	$px3->SetData($data);
+	$i = $startyear; $legend = array();
+	while ($i <= $endyear)
+	{
+		$legend[] = $i;
+		$i++;
+	}
+	$px3->SetLegend($legend);
+	$px3->SetYLabel($langs->trans("AmountAverage"));
+	$px3->SetMaxValue($px3->GetCeilMaxValue());
+	$px3->SetMinValue($px3->GetFloorMinValue());
+	$px3->SetWidth($WIDTH);
+	$px3->SetHeight($HEIGHT);
+	$px3->SetShading(3);
+	$px3->SetHorizTickIncrement(1);
+	$px3->mode = 'depth';
+	$px3->SetTitle($langs->trans("AmountAverage"));
 
-    $px3->draw($filename_avg, $fileurl_avg);
+	$px3->draw($filename_avg, $fileurl_avg);
 }
 
 
@@ -216,7 +216,7 @@ if (!$mesg)
 $data = $stats->getAllByYear();
 $arrayyears = array();
 foreach ($data as $val) {
-    $arrayyears[$val['year']] = $val['year'];
+	$arrayyears[$val['year']] = $val['year'];
 }
 if (!count($arrayyears)) $arrayyears[$nowyear] = $nowyear;
 
@@ -269,16 +269,16 @@ if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisL
 print '</td></tr>';
 
 // Category
-if (! empty($conf->category->enabled)) {
+if (!empty($conf->category->enabled)) {
 	if ($mode == 'customer')
 	{
-	    $cat_type = Categorie::TYPE_CUSTOMER;
-	    $cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Customer"));
+		$cat_type = Categorie::TYPE_CUSTOMER;
+		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Customer"));
 	}
 	if ($mode == 'supplier')
 	{
-	    $cat_type = Categorie::TYPE_SUPPLIER;
-	    $cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Supplier"));
+		$cat_type = Categorie::TYPE_SUPPLIER;
+		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Supplier"));
 	}
 	print '<tr><td>'.$cat_label.'</td><td>';
 	$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
@@ -295,13 +295,13 @@ print '</td></tr>';
 print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
 if ($mode == 'customer')
 {
-    $liststatus = array('0'=>$langs->trans("BillStatusDraft"), '1'=>$langs->trans("BillStatusNotPaid"), '2'=>$langs->trans("BillStatusPaid"), '1,2'=>$langs->trans("BillStatusNotPaid").' / '.$langs->trans("BillStatusPaid"), '3'=>$langs->trans("BillStatusCanceled"));
-    print $form->selectarray('object_status', $liststatus, $object_status, 1);
+	$liststatus = array('0'=>$langs->trans("BillStatusDraft"), '1'=>$langs->trans("BillStatusNotPaid"), '2'=>$langs->trans("BillStatusPaid"), '1,2'=>$langs->trans("BillStatusNotPaid").' / '.$langs->trans("BillStatusPaid"), '3'=>$langs->trans("BillStatusCanceled"));
+	print $form->selectarray('object_status', $liststatus, $object_status, 1);
 }
 if ($mode == 'supplier')
 {
-    $liststatus = array('0'=>$langs->trans("BillStatusDraft"), '1'=>$langs->trans("BillStatusNotPaid"), '2'=>$langs->trans("BillStatusPaid"));
-    print $form->selectarray('object_status', $liststatus, $object_status, 1);
+	$liststatus = array('0'=>$langs->trans("BillStatusDraft"), '1'=>$langs->trans("BillStatusNotPaid"), '2'=>$langs->trans("BillStatusPaid"));
+	print $form->selectarray('object_status', $liststatus, $object_status, 1);
 }
 print '</td></tr>';
 // Year
@@ -371,8 +371,8 @@ if ($mesg) { print $mesg; } else {
 	print $px1->show();
 	print "<br>\n";
 	print $px2->show();
-    print "<br>\n";
-    print $px3->show();
+	print "<br>\n";
+	print $px3->show();
 }
 print '</td></tr></table>';
 
@@ -381,7 +381,7 @@ print '</div></div></div>';
 print '<div style="clear:both"></div>';
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

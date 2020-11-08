@@ -29,55 +29,55 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class IntracommReport extends CommonObject
 {
-    /**
-     * @var string ID to identify managed object
-     */
-    public $element='intracommreport';
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element = 'intracommreport';
 
-    /**
-     * @var string Name of table without prefix where object is stored
-     */
-    public $table_element='intracommreport';
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'intracommreport';
 
-    /**
-     * @var int Field with ID of parent key if this field has a parent
-     */
-    public $fk_element='fk_intracommreport';
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
+	public $fk_element = 'fk_intracommreport';
 
 	/**
 	 * @var string declaration number
 	 */
 	public $declaration_number;
 
-    /**
-     * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-     * @var int
-     */
-    public $ismultientitymanaged = 1;
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
 
-    /**
-     * DEB - Product
-     */
-    const TYPE_DEB = 0;
+	/**
+	 * DEB - Product
+	 */
+	const TYPE_DEB = 0;
 
-    /**
-     * DES - Service
-     */
-    const TYPE_DES = 1;
+	/**
+	 * DES - Service
+	 */
+	const TYPE_DES = 1;
 
 	static $type = array(
-	    'introduction'=>'Introduction'
+		'introduction'=>'Introduction'
 		,'expedition'=>'Expédition'
-    );
+	);
 
-    /**
-     * Constructor
-     *
-     * @param DoliDB $db Database handle
-     */
-    public function __construct(DoliDB $db)
-    {
-        $this->db = $db;
+	/**
+	 * Constructor
+	 *
+	 * @param DoliDB $db Database handle
+	 */
+	public function __construct(DoliDB $db)
+	{
+		$this->db = $db;
 		$this->exporttype = 'deb';
 	}
 
@@ -180,14 +180,14 @@ class IntracommReport extends CommonObject
 	{
 		global $conf;
 
-		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 		$sql = $this->getSQLFactLines($type, $period_reference, $exporttype);
 
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
-			$i=1;
+			$i = 1;
 
 			if (empty($resql->num_rows)) {
 				$this->errors[] = 'No data for this period';
@@ -238,7 +238,7 @@ class IntracommReport extends CommonObject
 	{
 		global $mysoc, $conf;
 
-		if ($type=='expedition' || $exporttype=='des') {
+		if ($type == 'expedition' || $exporttype == 'des') {
 			$sql = 'SELECT f.facnumber, f.total as total_ht';
 			$table = 'facture';
 			$table_extraf = 'facture_extrafields';
@@ -252,7 +252,7 @@ class IntracommReport extends CommonObject
 			$tabledet = 'facture_fourn_det';
 			$field_link = 'fk_facture_fourn';
 		}
-		$sql.= ', l.fk_product, l.qty
+		$sql .= ', l.fk_product, l.qty
 				, p.weight, p.rowid as id_prod, p.customcode
 				, s.rowid as id_client, s.nom, s.zip, s.fk_pays, s.tva_intra
 				, c.code
@@ -334,7 +334,7 @@ class IntracommReport extends CommonObject
 
 		global $conf;
 
-		if ($type=='expedition') {
+		if ($type == 'expedition') {
 			$table = 'facture';
 			$tabledet = 'facturedet';
 			$field_link = 'fk_facture';
@@ -417,13 +417,13 @@ class IntracommReport extends CommonObject
 		fclose($f);
 
 		header('Content-Description: File Transfer');
-	    header('Content-Type: application/xml');
-	    header('Content-Disposition: attachment; filename="'.$name.'"');
-	    header('Expires: 0');
-	    header('Cache-Control: must-revalidate');
-	    header('Pragma: public');
-	    header('Content-Length: ' . filesize($fname));
-	    readfile($fname);
+		header('Content-Type: application/xml');
+		header('Content-Disposition: attachment; filename="'.$name.'"');
+		header('Expires: 0');
+		header('Cache-Control: must-revalidate');
+		header('Pragma: public');
+		header('Content-Length: '.filesize($fname));
+		readfile($fname);
 		exit;
 	}
 }

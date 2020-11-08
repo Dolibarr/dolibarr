@@ -55,14 +55,14 @@ $px = new DolGraph();
 $mesg = $px->isGraphKo();
 if (!$mesg)
 {
-    $px->SetData($data);
-    $px->SetMaxValue($px->GetCeilMaxValue());
-    $px->SetWidth($WIDTH);
-    $px->SetHeight($HEIGHT);
-    $px->SetYLabel($langs->trans("NbOfOrders"));
-    $px->SetShading(3);
+	$px->SetData($data);
+	$px->SetMaxValue($px->GetCeilMaxValue());
+	$px->SetWidth($WIDTH);
+	$px->SetHeight($HEIGHT);
+	$px->SetYLabel($langs->trans("NbOfOrders"));
+	$px->SetShading(3);
 	$px->SetHorizTickIncrement(1);
-    $px->draw($filename, $fileurl);
+	$px->draw($filename, $fileurl);
 }
 
 print '<table class="border centpercent">';

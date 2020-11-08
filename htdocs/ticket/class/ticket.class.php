@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2018 Jean-François Ferry <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
- * Copyright (C) 2019      Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2020 Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -108,8 +108,13 @@ class Ticket extends CommonObject
 
 	/**
 	 * @var int  Ticket statut
+ 	 * @deprecated
 	 */
-	public $fk_statut; // deprecated
+	public $fk_statut;
+
+	/**
+	 * @var int  Ticket status
+	 */
 	public $status;
 
 	/**
@@ -142,28 +147,28 @@ class Ticket extends CommonObject
 	 */
 	public $severity_code;
 
-    /**
-     * Type label
-     */
-    public $type_label;
-
-    /**
-     * Category label
-     */
-    public $category_label;
-
-    /**
-     * Severity label
-     */
-    public $severity_label;
-
-        /**
-     * Email from user
-     */
-    public $email_from;
+	/**
+	 * Type label
+	 */
+	public $type_label;
 
 	/**
-	 * @var int Création date
+	 * Category label
+	 */
+	public $category_label;
+
+	/**
+	 * Severity label
+	 */
+	public $severity_label;
+
+	/**
+	 * Email from user
+	 */
+	public $email_from;
+
+	/**
+	 * @var int Creation date
 	 */
 	public $datec = '';
 
@@ -188,7 +193,7 @@ class Ticket extends CommonObject
 	public $cache_category_tickets;
 
 	/**
-	 * @var int Notify tiers at create
+	 * @var int Notify thirdparty at create
 	 */
 	public $notify_tiers_at_create;
 
@@ -279,8 +284,26 @@ class Ticket extends CommonObject
 	{
 		$this->db = $db;
 
-		$this->statuts_short = array(self::STATUS_NOT_READ => 'Unread', self::STATUS_READ => 'Read', self::STATUS_ASSIGNED => 'Assigned', self::STATUS_IN_PROGRESS => 'InProgress', self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation', self::STATUS_WAITING => 'Suspended', self::STATUS_CLOSED => 'Closed', self::STATUS_CANCELED => 'Canceled');
-		$this->statuts       = array(self::STATUS_NOT_READ => 'Unread', self::STATUS_READ => 'Read', self::STATUS_ASSIGNED => 'Assigned', self::STATUS_IN_PROGRESS => 'InProgress', self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation', self::STATUS_WAITING => 'Suspended', self::STATUS_CLOSED => 'Closed', self::STATUS_CANCELED => 'Canceled');
+		$this->statuts_short = array(
+			self::STATUS_NOT_READ => 'Unread',
+			self::STATUS_READ => 'Read',
+			self::STATUS_ASSIGNED => 'Assigned',
+			self::STATUS_IN_PROGRESS => 'InProgress',
+			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation',
+			self::STATUS_WAITING => 'Suspended',
+			self::STATUS_CLOSED => 'Closed',
+			self::STATUS_CANCELED => 'Canceled'
+		);
+		$this->statuts = array(
+			self::STATUS_NOT_READ => 'Unread',
+			self::STATUS_READ => 'Read',
+			self::STATUS_ASSIGNED => 'Assigned',
+			self::STATUS_IN_PROGRESS => 'InProgress',
+			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation',
+			self::STATUS_WAITING => 'Suspended',
+			self::STATUS_CLOSED => 'Closed',
+			self::STATUS_CANCELED => 'Canceled'
+		);
 	}
 
 	/**
@@ -1058,7 +1081,7 @@ class Ticket extends CommonObject
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-
+		$this->entity = 1;
 		$this->ref = 'TI0501-001';
 		$this->track_id = 'XXXXaaaa';
 		$this->origin_email = 'email@email.com';
@@ -1067,7 +1090,7 @@ class Ticket extends CommonObject
 		$this->fk_user_assign = 1;
 		$this->subject = 'Subject of ticket';
 		$this->message = 'Message of ticket';
-		$this->fk_statut = 0;
+		$this->status = 0;
 		$this->resolution = '1';
 		$this->progress = '10';
 		$this->timing = '30';
@@ -1289,7 +1312,8 @@ class Ticket extends CommonObject
 
 		$result = '';
 
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Ticket").'</u>';
+		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Ticket").'</u>';
+		$label .= ' '.$this->getLibStatut(4);
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref.'<br>';
 		$label .= '<b>'.$langs->trans('TicketTrackId').':</b> '.$this->track_id.'<br>';
@@ -1487,7 +1511,7 @@ class Ticket extends CommonObject
 				$message .= $langs->transnoentities('TicketNotificationRecipient').' : '.$recipient."\n";
 				$message .= "\n";
 				$message .= '* '.$langs->transnoentities('TicketNotificationLogMessage').' *'."\n";
-				$message .= dol_html_entity_decode($log_message, ENT_QUOTES|ENT_HTML5)."\n";
+				$message .= dol_html_entity_decode($log_message, ENT_QUOTES | ENT_HTML5)."\n";
 
 				if ($info_sendto['source'] == 'internal') {
 					$url_internal_ticket = dol_buildpath('/ticket/card.php', 2).'?track_id='.$this->track_id;
@@ -1515,8 +1539,8 @@ class Ticket extends CommonObject
 					$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 				}
 				include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-                $sendtocc = '';
-                $deliveryreceipt = 0;
+				$sendtocc = '';
+				$deliveryreceipt = 0;
 				$mailfile = new CMailFile($subject, $info_sendto['email'], $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, 0);
 				if ($mailfile->error || $mailfile->errors) {
 					setEventMessages($mailfile->error, $mailfile->errors, 'errors');

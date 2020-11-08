@@ -476,7 +476,7 @@ print '</td></tr>'."\n";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("HideClosedServiceByDefault").'</td>';
 print '<td width="60" class="right">';
-print $form->selectyesno("activate_hideClosedServiceByDefault", (! empty($conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT)?$conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT:0), 1);
+print $form->selectyesno("activate_hideClosedServiceByDefault", (!empty($conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT) ? $conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT : 0), 1);
 print '</td>';
 print '</tr>';
 
@@ -488,7 +488,7 @@ print '</div>';
 
 print '</form>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

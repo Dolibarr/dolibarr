@@ -11,7 +11,7 @@
  * Copyright (C) 2011-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,7 +139,15 @@ if (empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES))
 
 
 $tabhelp = array();
-$tabhelp[25] = array('topic'=>$helpsubstit, 'joinfiles'=>$langs->trans('AttachMainDocByDefault'), 'content'=>$helpsubstit, 'content_lines'=>$helpsubstitforlines, 'type_template'=>$langs->trans("TemplateForElement"), 'private'=>$langs->trans("TemplateIsVisibleByOwnerOnly"), 'position'=>$langs->trans("PositionIntoComboList"));
+$tabhelp[25] = array(
+	'topic'=>$helpsubstit,
+	'joinfiles'=>$langs->trans('AttachMainDocByDefault'),
+	'content'=>$helpsubstit,
+	'content_lines'=>$helpsubstitforlines,
+	'type_template'=>$langs->trans("TemplateForElement"),
+	'private'=>$langs->trans("TemplateIsVisibleByOwnerOnly"),
+	'position'=>$langs->trans("PositionIntoComboList")
+);
 
 // List of check for fields (NOT USED YET)
 $tabfieldcheck = array();
@@ -154,22 +162,54 @@ $elementList = array();
 $elementList['all'] = '-- '.dol_escape_htmltag($langs->trans("All")).' --';
 $elementList['none'] = '-- '.dol_escape_htmltag($langs->trans("None")).' --';
 $elementList['user'] = img_picto('', 'user', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToUser'));
-if ($conf->adherent->enabled && $user->rights->adherent->lire)          $elementList['member'] = img_picto('', 'object_member', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToMember'));
-if ($conf->recruitment->enabled && $user->rights->recruitment->recruitmentjobposition->read)            $elementList['recruitmentcandidature_send'] = img_picto('', 'recruitmentcandidature', 'class="paddingright"').dol_escape_htmltag($langs->trans('RecruitmentCandidatures'));
-if ($conf->societe->enabled && $user->rights->societe->lire)           $elementList['thirdparty'] = img_picto('', 'company', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToThirdparty'));
-if ($conf->projet->enabled)            $elementList['project'] = img_picto('', 'project', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToProject'));
-if ($conf->propal->enabled && $user->rights->propal->lire)     $elementList['propal_send'] = dol_escape_htmltag($langs->trans('MailToSendProposal'));
-if ($conf->commande->enabled && $user->rights->commande->lire) $elementList['order_send'] = dol_escape_htmltag($langs->trans('MailToSendOrder'));
-if ($conf->facture->enabled && $user->rights->facture->lire)   $elementList['facture_send'] = dol_escape_htmltag($langs->trans('MailToSendInvoice'));
-if ($conf->expedition->enabled)        $elementList['shipping_send'] = dol_escape_htmltag($langs->trans('MailToSendShipment'));
-if ($conf->reception->enabled) 		   $elementList['reception_send'] = dol_escape_htmltag($langs->trans('MailToSendReception'));
-if ($conf->ficheinter->enabled)        $elementList['fichinter_send'] = dol_escape_htmltag($langs->trans('MailToSendIntervention'));
-if ($conf->supplier_proposal->enabled) $elementList['supplier_proposal_send'] = dol_escape_htmltag($langs->trans('MailToSendSupplierRequestForQuotation'));
-if (($conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || ($conf->supplier_order->enabled && $user->rights->supplier_order->lire))	$elementList['order_supplier_send'] = dol_escape_htmltag($langs->trans('MailToSendSupplierOrder'));
-if (($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || ($conf->supplier_invoice->enabled && $user->rights->supplier_invoice->lire))	$elementList['invoice_supplier_send'] = dol_escape_htmltag($langs->trans('MailToSendSupplierInvoice'));
-if ($conf->contrat->enabled && $user->rights->contrat->lire)           $elementList['contract'] = img_picto('', 'contract', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendContract'));
-if ($conf->ticket->enabled && $user->rights->ticket->read)            $elementList['ticket_send'] = img_picto('', 'ticket', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToTicket'));
-if ($conf->agenda->enabled)            $elementList['actioncomm_send'] = img_picto('', 'action', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendEventPush'));
+if ($conf->adherent->enabled && $user->rights->adherent->lire) {
+	$elementList['member'] = img_picto('', 'object_member', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToMember'));
+}
+if ($conf->recruitment->enabled && $user->rights->recruitment->recruitmentjobposition->read) {
+	$elementList['recruitmentcandidature_send'] = img_picto('', 'recruitmentcandidature', 'class="paddingright"').dol_escape_htmltag($langs->trans('RecruitmentCandidatures'));
+}
+if ($conf->societe->enabled && $user->rights->societe->lire) {
+	$elementList['thirdparty'] = img_picto('', 'company', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToThirdparty'));
+}
+if ($conf->projet->enabled) {
+	$elementList['project'] = img_picto('', 'project', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToProject'));
+}
+if ($conf->propal->enabled && $user->rights->propal->lire) {
+	$elementList['propal_send'] = img_picto('', 'propal', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendProposal'));
+}
+if ($conf->commande->enabled && $user->rights->commande->lire) {
+	$elementList['order_send'] = img_picto('', 'order', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendOrder'));
+}
+if ($conf->facture->enabled && $user->rights->facture->lire) {
+	$elementList['facture_send'] = img_picto('', 'bill', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendInvoice'));
+}
+if ($conf->expedition->enabled) {
+	$elementList['shipping_send'] = img_picto('', 'dolly', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendShipment'));
+}
+if ($conf->reception->enabled) {
+	$elementList['reception_send'] = img_picto('', 'dolly', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendReception'));
+}
+if ($conf->ficheinter->enabled) {
+	$elementList['fichinter_send'] = img_picto('', 'intervention', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendIntervention'));
+}
+if ($conf->supplier_proposal->enabled) {
+	$elementList['supplier_proposal_send'] = img_picto('', 'propal', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendSupplierRequestForQuotation'));
+}
+if (($conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || ($conf->supplier_order->enabled && $user->rights->supplier_order->lire)) {
+	$elementList['order_supplier_send'] = img_picto('', 'order', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendSupplierOrder'));
+}
+if (($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || ($conf->supplier_invoice->enabled && $user->rights->supplier_invoice->lire)) {
+	$elementList['invoice_supplier_send'] = img_picto('', 'bill', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendSupplierInvoice'));
+}
+if ($conf->contrat->enabled && $user->rights->contrat->lire) {
+	$elementList['contract'] = img_picto('', 'contract', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendContract'));
+}
+if ($conf->ticket->enabled && $user->rights->ticket->read) {
+	$elementList['ticket_send'] = img_picto('', 'ticket', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToTicket'));
+}
+if ($conf->agenda->enabled) {
+	$elementList['actioncomm_send'] = img_picto('', 'action', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendEventPush'));
+}
 
 $parameters = array('elementList'=>$elementList);
 $reshook = $hookmanager->executeHooks('emailElementlist', $parameters); // Note that $action and $object may have been modified by some hooks
@@ -188,18 +228,22 @@ $id = 25;
  * Actions
  */
 
-if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
+if (GETPOST('cancel', 'alpha')) {
+	$action = 'list';
+	$massaction = '';
+}
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction = ''; }
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if (empty($reshook))
-{
+if (empty($reshook)) {
 	// Purge search criteria
-	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
-	{
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+		// All tests are required to be compatible with all browsers
 		$search_label = '';
 		$search_type_template = '';
 		$search_lang = '';
@@ -210,8 +254,7 @@ if (empty($reshook))
 	}
 
 	// Actions add or modify an entry into a dictionary
-	if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
-	{
+	if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		$listfield = explode(',', str_replace(' ', '', $tabfield[$id]));
 		$listfieldinsert = explode(',', $tabfieldinsert[$id]);
 		$listfieldmodify = explode(',', $tabfieldinsert[$id]);
@@ -219,8 +262,7 @@ if (empty($reshook))
 
 		// Check that all fields are filled
 		$ok = 1;
-		foreach ($listfield as $f => $value)
-		{
+		foreach ($listfield as $f => $value) {
 			// Not mandatory fields
 			if ($value == 'joinfiles') continue;
 			if ($value == 'content') continue;
@@ -274,7 +316,7 @@ if (empty($reshook))
 				if (GETPOST($keycode) == '' && $keycode != 'langcode')      $sql .= "null"; // langcode must be '' if not defined so the unique key that include lang will work
 				elseif (GETPOST($keycode) == '0' && $keycode == 'langcode') $sql .= "''"; // langcode must be '' if not defined so the unique key that include lang will work
 				elseif ($keycode == 'fk_user') {
-					if (! $user->admin) {	// A non admin user can only edit its own template
+					if (!$user->admin) {	// A non admin user can only edit its own template
 						$sql .= " ".((int) $user->id);
 					} else {
 						$sql .= " ".((int) GETPOST($keycode, 'fk_user'));
@@ -333,7 +375,7 @@ if (empty($reshook))
 				if (GETPOST($keycode) == '' || ($keycode != 'langcode' && $keycode != 'position' && $keycode != 'private' && !GETPOST($keycode))) $sql .= "null"; // langcode,... must be '' if not defined so the unique key that include lang will work
 				elseif (GETPOST($keycode) == '0' && $keycode == 'langcode') $sql .= "''"; // langcode must be '' if not defined so the unique key that include lang will work
 				elseif ($keycode == 'fk_user') {
-					if (! $user->admin) {	// A non admin user can only edit its own template
+					if (!$user->admin) {	// A non admin user can only edit its own template
 						$sql .= " ".((int) $user->id);
 					} else {
 						$sql .= " ".((int) GETPOST($keycode, 'fk_user'));
@@ -350,7 +392,7 @@ if (empty($reshook))
 			}
 
 			$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
-			if (! $user->admin) {	// A non admin user can only edit its own template
+			if (!$user->admin) {	// A non admin user can only edit its own template
 				$sql .= " AND fk_user  = ".$user->id;
 			}
 			//print $sql;exit;
@@ -371,7 +413,7 @@ if (empty($reshook))
 		$rowidcol = "rowid";
 
 		$sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol."=".((int) $rowid);
-		if (! $user->admin) {	// A non admin user can only edit its own template
+		if (!$user->admin) {	// A non admin user can only edit its own template
 			$sql .= " AND fk_user  = ".$user->id;
 		}
 		dol_syslog("delete", LOG_DEBUG);
@@ -493,7 +535,7 @@ if ($action == 'view') {
 		if ($fieldlist[$field] == 'type') { $valuetoshow = $langs->trans("Type"); }
 		if ($fieldlist[$field] == 'code') { $valuetoshow = $langs->trans("Code"); }
 		if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') { $valuetoshow = $langs->trans("Code"); }
-		if ($fieldlist[$field] == 'type_template') { $valuetoshow = $langs->trans("TypeOfTemplate"); $align="center"; }
+		if ($fieldlist[$field] == 'type_template') { $valuetoshow = $langs->trans("TypeOfTemplate"); $align = "center"; }
 		if ($fieldlist[$field] == 'private') { $align = 'center'; }
 		if ($fieldlist[$field] == 'position') { $align = 'center'; }
 
@@ -662,7 +704,7 @@ if ($resql)
 			print '<td class="liste_titre"><input type="text" name="search_topic" value="'.dol_escape_htmltag($search_topic).'"></td>';
 		} elseif ($value == 'type_template') {
 			print '<td class="liste_titre center">';
-			print $form->selectarray('search_type_template', $elementList, $search_type_template, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth150', 1, '', 0, 1);
+			print $form->selectarray('search_type_template', $elementList, $search_type_template, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth200', 1, '', 0, 1);
 			print '</td>';
 		} elseif (!in_array($value, array('content', 'content_lines'))) {
 			print '<td class="liste_titre"></td>';
@@ -795,13 +837,13 @@ if ($resql)
 
 				print "</tr>\n";
 			} else {
-			    if ($obj->module) {
-			        $tempmodulekey = $obj->module;
-			        if (empty($conf->$tempmodulekey) || empty($conf->$tempmodulekey->enabled)) {
-			            $i++;
-			            continue;
-			        }
-			    }
+				if ($obj->module) {
+					$tempmodulekey = $obj->module;
+					if (empty($conf->$tempmodulekey) || empty($conf->$tempmodulekey->enabled)) {
+						$i++;
+						continue;
+					}
+				}
 				$keyforobj = 'type_template';
 				if (!in_array($obj->$keyforobj, array_keys($elementList)))
 				{
@@ -953,7 +995,7 @@ print '</div>';
 print '</form>';
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();
@@ -1033,7 +1075,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 				print '<input type="hidden" name="type_template" value="'.$obj->{$fieldlist[$field]}.'">';
 				print $obj->{$fieldlist[$field]};
 			} else {
-				print $form->selectarray('type_template', $elementList, (!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]}:''), 1, 0, 0, '', 0, 0, 0, '', 'maxwidth150', 1, '', 0, 1);
+				print $form->selectarray('type_template', $elementList, (!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]}:''), 1, 0, 0, '', 0, 0, 0, '', 'maxwidth200', 1, '', 0, 1);
 			}
 			print '</td>';
 		} elseif ($context == 'add' && in_array($fieldlist[$field], array('topic', 'joinfiles', 'content', 'content_lines'))) continue;

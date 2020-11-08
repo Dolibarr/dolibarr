@@ -395,7 +395,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
     	global $conf;
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-    	$url = 'ftp://aaaa';
+    	$url = 'ftp://mydomain.com';
     	$tmp = getURLContent($url);
     	print __METHOD__." url=".$url."\n";
     	$this->assertGreaterThan(0, strpos($tmp['curl_error_msg'], 'not supported'));	// Test error if return does not contains 'not supported'
@@ -408,8 +408,33 @@ class SecurityTest extends PHPUnit\Framework\TestCase
     	$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
     	$tmp = getURLContent($url);		// We DO follow
     	print __METHOD__." url=".$url."\n";
-    	//var_dump($tmp);
     	$this->assertEquals(200, $tmp['http_code'], 'GET url 301 with following -> 200');	// Test error if return does not contains 'not supported'
+
+    	$url = 'http://localhost';
+    	$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+    	print __METHOD__." url=".$url."\n";
+    	$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that resolves to a local URL');	// Test we receive an error because localtest.me is not an external URL
+
+    	$url = 'http://127.0.0.1';
+    	$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+    	print __METHOD__." url=".$url."\n";
+    	$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because localtest.me is not an external URL
+
+    	$url = 'https://169.254.0.1';
+    	$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+    	print __METHOD__." url=".$url."\n";
+    	$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because localtest.me is not an external URL
+
+    	$url = 'http://[::1]';
+    	$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+    	print __METHOD__." url=".$url."\n";
+    	$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because localtest.me is not an external URL
+
+    	/*$url = 'localtest.me';
+    	$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+    	print __METHOD__." url=".$url."\n";
+    	$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that resolves to a local URL');	// Test we receive an error because localtest.me is not an external URL
+		*/
 
     	return 0;
     }

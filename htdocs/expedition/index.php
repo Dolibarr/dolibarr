@@ -56,14 +56,14 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
-    print '<form method="post" action="list.php">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
-    print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder nohover centpercent">';
-    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    print '<tr class="oddeven"><td>';
-    print $langs->trans("Shipment").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-    print "</table></div></form><br>\n";
+	print '<form method="post" action="list.php">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder nohover centpercent">';
+	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("Shipment").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+	print "</table></div></form><br>\n";
 }
 
 /*
@@ -250,13 +250,13 @@ if ($resql)
 		{
 			$obj = $db->fetch_object($resql);
 
-		    $orderstatic->id = $obj->rowid;
+			$orderstatic->id = $obj->rowid;
 			$orderstatic->ref = $obj->ref;
 			$orderstatic->ref_customer = $obj->ref_customer;
 			$orderstatic->statut = $obj->status;
-            $orderstatic->billed = $obj->billed;
+			$orderstatic->billed = $obj->billed;
 
-            $companystatic->name = $obj->name;
+			$companystatic->name = $obj->name;
 			$companystatic->id = $obj->socid;
 
 			print '<tr class="oddeven"><td>';
@@ -265,10 +265,10 @@ if ($resql)
 			print '<td>';
 			print $companystatic->getNomUrl(1, 'customer', 32);
 			print '</td>';
-            print '<td class="right">';
-            print $orderstatic->getLibStatut(3);
-            print '</td>';
-            print '</tr>';
+			print '<td class="right">';
+			print $orderstatic->getLibStatut(3);
+			print '</td>';
+			print '</tr>';
 			$i++;
 		}
 

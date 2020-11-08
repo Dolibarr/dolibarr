@@ -180,10 +180,10 @@ $picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 $cnt_trans = 0;
 if (!empty($object->multilangs))
 {
-    foreach ($object->multilangs as $key => $value)
-    {
-        $cnt_trans++;
-    }
+	foreach ($object->multilangs as $key => $value)
+	{
+		$cnt_trans++;
+	}
 }
 
 
@@ -196,7 +196,7 @@ if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULE
 
 dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', '', '', '', 0, '', '', 1);
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 
@@ -210,11 +210,11 @@ print "\n<div class=\"tabsAction\">\n";
 
 if ($action == '')
 {
-    if ($user->rights->produit->creer || $user->rights->service->creer)
-    {
-        print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/traduction.php?action=add&id='.$object->id.'">'.$langs->trans("Add").'</a>';
-        if ($cnt_trans > 0) print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/traduction.php?action=edit&id='.$object->id.'">'.$langs->trans("Update").'</a>';
-    }
+	if ($user->rights->produit->creer || $user->rights->service->creer)
+	{
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/traduction.php?action=add&id='.$object->id.'">'.$langs->trans("Add").'</a>';
+		if ($cnt_trans > 0) print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/traduction.php?action=edit&id='.$object->id.'">'.$langs->trans("Update").'</a>';
+	}
 }
 
 print "\n</div>\n";
@@ -247,9 +247,9 @@ if ($action == 'edit')
 			print '</td></tr>';
 			if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION))
 			{
-                print '<tr><td class="tdtop">'.$langs->trans('Other').' ('.$langs->trans("NotUsed").')</td><td>';
-                $doleditor = new DolEditor("other-$key", $object->multilangs[$key]["other"], '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
-                $doleditor->Create();
+				print '<tr><td class="tdtop">'.$langs->trans('Other').' ('.$langs->trans("NotUsed").')</td><td>';
+				$doleditor = new DolEditor("other-$key", $object->multilangs[$key]["other"], '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
+				$doleditor->Create();
 			}
 			print '</td></tr>';
 			print '</table>';
@@ -281,7 +281,7 @@ if ($action == 'edit')
 			print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>'.$object->multilangs[$key]["description"].'</td></tr>';
 			if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION))
 			{
-                print '<tr><td>'.$langs->trans('Other').' ('.$langs->trans("NotUsed").')</td><td>'.$object->multilangs[$key]["other"].'</td></tr>';
+				print '<tr><td>'.$langs->trans('Other').' ('.$langs->trans("NotUsed").')</td><td>'.$object->multilangs[$key]["other"].'</td></tr>';
 			}
 			print '</table>';
 			print '</div>';
@@ -311,24 +311,24 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 
 	print '<table class="border centpercent">';
 	print '<tr><td class="tdtop titlefieldcreate fieldrequired">'.$langs->trans('Language').'</td><td>';
-    print $formadmin->select_language('', 'forcelangprod', 0, $object->multilangs, 1);
+	print $formadmin->select_language('', 'forcelangprod', 0, $object->multilangs, 1);
 	print '</td></tr>';
 	print '<tr><td class="tdtop fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle" size="40"></td></tr>';
 	print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
 	$doleditor = new DolEditor('desc', '', '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
-    // Other field (not used)
-    if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION))
-    {
-        print '<tr><td class="tdtop">'.$langs->trans('Other').' ('.$langs->trans("NotUsed").'</td><td>';
-    	$doleditor = new DolEditor('other', '', '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
-    	$doleditor->Create();
-    	print '</td></tr>';
-    }
+	// Other field (not used)
+	if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION))
+	{
+		print '<tr><td class="tdtop">'.$langs->trans('Other').' ('.$langs->trans("NotUsed").'</td><td>';
+		$doleditor = new DolEditor('other', '', '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
+		$doleditor->Create();
+		print '</td></tr>';
+	}
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';

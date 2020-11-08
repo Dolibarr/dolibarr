@@ -153,7 +153,7 @@ if (empty($reshook))
 				setEventMessages($langs->trans("NotEnoughPermission"), null, 'errors');
 			} else {
 				if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)) {
-					if (! in_array($fuserid, $childids)) {
+					if (!in_array($fuserid, $childids)) {
 						$error++;
 						setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
 						$action = 'create';
@@ -204,7 +204,7 @@ if (empty($reshook))
 			$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
 			if ($nbopenedday < 0.5)
 			{
-				setEventMessages($langs->trans("ErrorDureeCP"), null, 'errors');		// No working day
+				setEventMessages($langs->trans("ErrorDureeCP"), null, 'errors'); // No working day
 				$error++;
 				$action = 'create';
 			}
@@ -979,7 +979,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 			print $langs->trans('SoldeCPUser', round($nb_holiday, 5)).'<br>';
 			print $out;
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 		} elseif (!is_numeric($conf->global->HOLIDAY_HIDE_BALANCE))
 		{
 			print $langs->trans($conf->global->HOLIDAY_HIDE_BALANCE).'<br>';
@@ -1094,7 +1094,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 		print '</tbody>';
 		print '</table>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" value="'.$langs->trans("SendRequestCP").'" name="bouton" class="button">';
@@ -1394,7 +1394,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 
 				print '<div class="clearboth"></div>';
 
-				dol_fiche_end();
+				print dol_get_fiche_end();
 
 
 				// Confirmation messages

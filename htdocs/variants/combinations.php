@@ -122,7 +122,7 @@ if ($_POST) {
 				$level_price_impact = array_map('price2num', $level_price_impact);
 			}
 			else {
-				$level_price_impact = array(1 => $weight_impact);
+				$level_price_impact = array(1 => $price_impact);
 				$level_price_impact_percent = array(1 => $price_impact_percent);
 			}
 
@@ -245,7 +245,7 @@ if ($_POST) {
 			$prodcomb->variation_price_percentage = (bool) $level_price_impact_percent[1];
 		}
 		else {
-			$level_price_impact = array(1 => $weight_impact);
+			$level_price_impact = array(1 => $price_impact);
 			$level_price_impact_percent = array(1 => $price_impact_percent);
 
 			$prodcomb->variation_price = $price_impact;
@@ -406,7 +406,7 @@ if (!empty($id) || !empty($ref))
 	print '</div>';
 	print '<div style="clear:both"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	$listofvariantselected = '';
 
@@ -434,7 +434,7 @@ if (!empty($id) || !empty($ref))
 				}
 			}
 			$listofvariantselected .= '</div>';
-			//dol_fiche_end();
+			//print dol_get_fiche_end();
 		} else {
 			$title = $langs->trans('EditProductCombination');
 		}
@@ -699,7 +699,7 @@ if (!empty($id) || !empty($ref))
 			<?php
 		}
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 		?>
 
 		<div style="text-align: center">

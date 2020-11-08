@@ -67,18 +67,18 @@ complete_substitutions_array($substitutionarrayfortest, $langs);
 
 if ($action == 'update' && !$cancel)
 {
-	if (! $error && ! GETPOST("MAIN_MAIL_EMAIL_FROM", 'alphanohtml')) {
+	if (!$error && !GETPOST("MAIN_MAIL_EMAIL_FROM", 'alphanohtml')) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("MAIN_MAIL_EMAIL_FROM")), null, 'errors');
 		$action = 'edit';
 	}
-	if (! $error && ! isValidEmail(GETPOST("MAIN_MAIL_EMAIL_FROM", 'alphanohtml'))) {
+	if (!$error && !isValidEmail(GETPOST("MAIN_MAIL_EMAIL_FROM", 'alphanohtml'))) {
 		$error++;
 		setEventMessages($langs->trans("ErrorBadEMail", GETPOST("MAIN_MAIL_EMAIL_FROM", 'alphanohtml')), null, 'errors');
 		$action = 'edit';
 	}
 
-	if (! $error) {
+	if (!$error) {
 		dolibarr_set_const($db, "MAIN_DISABLE_ALL_MAILS", GETPOST("MAIN_DISABLE_ALL_MAILS", 'int'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_MAIL_FORCE_SENDTO", GETPOST("MAIN_MAIL_FORCE_SENDTO", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_MAIL_ENABLED_USER_DEST_SELECT", GETPOST("MAIN_MAIL_ENABLED_USER_DEST_SELECT", 'int'), 'chaine', 0, '', $conf->entity);
@@ -188,13 +188,13 @@ if ($action == 'edit')
                             jQuery("#smtp_server_mess").show();
                             jQuery("#smtp_port_mess").show();';
 		} else {
-            print '
+			print '
                             jQuery("#MAIN_MAIL_SMTP_SERVER").prop("disabled", true);
                             jQuery("#MAIN_MAIL_SMTP_PORT").prop("disabled", true);
                             jQuery("#smtp_server_mess").hide();
                             jQuery("#smtp_port_mess").hide();';
-        }
-        print '
+		}
+		print '
                         }
                         if (jQuery("#MAIN_MAIL_SENDMODE").val()==\'smtps\')
                         {
@@ -266,7 +266,7 @@ if ($action == 'edit')
 							jQuery("#MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED").val(0);
                     });
                })';
-        print '</script>'."\n";
+		print '</script>'."\n";
 	}
 
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
@@ -409,8 +409,8 @@ if ($action == 'edit')
 		print '</td></tr>';
 	}
 
-    // TLS
-    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
+	// TLS
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
 	if (!empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer'))))
 	{
 		if (function_exists('openssl_open'))
@@ -453,20 +453,20 @@ if ($action == 'edit')
 	} else print yn(0).' ('.$langs->trans("NotSupported").')';
 	print '</td></tr>';
 
-    // DKIM Domain
-    print '<tr class="oddeven dkim"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_DOMAIN").'</td>';
-    print '<td><input class="flat" id="MAIN_MAIL_EMAIL_DKIM_DOMAIN" name="MAIN_MAIL_EMAIL_DKIM_DOMAIN" size="32" value="'.(!empty($conf->global->MAIN_MAIL_EMAIL_DKIM_DOMAIN) ? $conf->global->MAIN_MAIL_EMAIL_DKIM_DOMAIN : '');
-    print '"></td></tr>';
+	// DKIM Domain
+	print '<tr class="oddeven dkim"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_DOMAIN").'</td>';
+	print '<td><input class="flat" id="MAIN_MAIL_EMAIL_DKIM_DOMAIN" name="MAIN_MAIL_EMAIL_DKIM_DOMAIN" size="32" value="'.(!empty($conf->global->MAIN_MAIL_EMAIL_DKIM_DOMAIN) ? $conf->global->MAIN_MAIL_EMAIL_DKIM_DOMAIN : '');
+	print '"></td></tr>';
 
-    // DKIM Selector
-    print '<tr class="oddeven dkim"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_SELECTOR").'</td>';
-    print '<td><input class="flat" id="MAIN_MAIL_EMAIL_DKIM_SELECTOR" name="MAIN_MAIL_EMAIL_DKIM_SELECTOR" size="32" value="'.(!empty($conf->global->MAIN_MAIL_EMAIL_DKIM_SELECTOR) ? $conf->global->MAIN_MAIL_EMAIL_DKIM_SELECTOR : '');
-    print '"></td></tr>';
+	// DKIM Selector
+	print '<tr class="oddeven dkim"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_SELECTOR").'</td>';
+	print '<td><input class="flat" id="MAIN_MAIL_EMAIL_DKIM_SELECTOR" name="MAIN_MAIL_EMAIL_DKIM_SELECTOR" size="32" value="'.(!empty($conf->global->MAIN_MAIL_EMAIL_DKIM_SELECTOR) ? $conf->global->MAIN_MAIL_EMAIL_DKIM_SELECTOR : '');
+	print '"></td></tr>';
 
-    // DKIM PRIVATE KEY
-    print '<tr class="oddeven dkim"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY").'</td>';
-    print '<td><textarea id="MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY" name="MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY" rows="15" cols="100">'.(!empty($conf->global->MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY) ? $conf->global->MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY : '').'</textarea>';
-    print '</td></tr>';
+	// DKIM PRIVATE KEY
+	print '<tr class="oddeven dkim"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY").'</td>';
+	print '<td><textarea id="MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY" name="MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY" rows="15" cols="100">'.(!empty($conf->global->MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY) ? $conf->global->MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY : '').'</textarea>';
+	print '</td></tr>';
 
 	print '</table>';
 
@@ -506,7 +506,7 @@ if ($action == 'edit')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<br><div class="center">';
 	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
@@ -635,20 +635,20 @@ if ($action == 'edit')
 			} else print yn(0).' ('.$langs->trans("NotSupported").')';
 			print '</td></tr>';
 
-		    // Domain
-		    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_DOMAIN").'</td>';
-		    print '<td>'.$conf->global->MAIN_MAIL_EMAIL_DKIM_DOMAIN;
-		    print '</td></tr>';
+			// Domain
+			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_DOMAIN").'</td>';
+			print '<td>'.$conf->global->MAIN_MAIL_EMAIL_DKIM_DOMAIN;
+			print '</td></tr>';
 
-		    // Selector
-		    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_SELECTOR").'</td>';
-		    print '<td>'.$conf->global->MAIN_MAIL_EMAIL_DKIM_SELECTOR;
-		    print '</td></tr>';
+			// Selector
+			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_SELECTOR").'</td>';
+			print '<td>'.$conf->global->MAIN_MAIL_EMAIL_DKIM_SELECTOR;
+			print '</td></tr>';
 
-		    // PRIVATE KEY
-		    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY").'</td>';
-		    print '<td>'.$conf->global->MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY;
-		    print '</td></tr>';
+			// PRIVATE KEY
+			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY").'</td>';
+			print '<td>'.$conf->global->MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY;
+			print '</td></tr>';
 		}
 
 		print '</table>';
@@ -737,7 +737,7 @@ if ($action == 'edit')
 		print '</table>';
 	}
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	// Actions button
@@ -892,7 +892,7 @@ if ($action == 'edit')
 
 		print $formmail->get_form('addfile', 'removefile');
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		// References
 		print '<span class="opacitymedium">'.$langs->trans("EMailsWillHaveMessageID").': ';

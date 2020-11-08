@@ -94,43 +94,43 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
-    // Search customer invoices
-    if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
-    {
-    	$listofsearchfields['search_invoice'] = array('text'=>'CustomerInvoice');
-    }
-    // Search supplier invoices
-    if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->lire)
-    {
-    	$listofsearchfields['search_supplier_invoice'] = array('text'=>'SupplierInvoice');
-    }
-    if (!empty($conf->don->enabled) && $user->rights->don->lire)
-    {
-    	$langs->load("donations");
-    	$listofsearchfields['search_donation'] = array('text'=>'Donation');
-    }
+	// Search customer invoices
+	if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
+	{
+		$listofsearchfields['search_invoice'] = array('text'=>'CustomerInvoice');
+	}
+	// Search supplier invoices
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->lire)
+	{
+		$listofsearchfields['search_supplier_invoice'] = array('text'=>'SupplierInvoice');
+	}
+	if (!empty($conf->don->enabled) && $user->rights->don->lire)
+	{
+		$langs->load("donations");
+		$listofsearchfields['search_donation'] = array('text'=>'Donation');
+	}
 
-    if (count($listofsearchfields))
-    {
-    	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-    	print '<input type="hidden" name="token" value="'.newToken().'">';
+	if (count($listofsearchfields))
+	{
+		print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<div class="div-table-responsive-no-min">';
-    	print '<table class="noborder nohover centpercent">';
-    	$i = 0;
-    	foreach ($listofsearchfields as $key => $value)
-    	{
-    		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    		print '<tr '.$bc[false].'>';
-    		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'"></td>';
-    		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-    		print '</tr>';
-    		$i++;
-    	}
-    	print '</table>';
-        print '</div>';
-    	print '</form>';
-    	print '<br>';
-    }
+		print '<table class="noborder nohover centpercent">';
+		$i = 0;
+		foreach ($listofsearchfields as $key => $value)
+		{
+			if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+			print '<tr '.$bc[false].'>';
+			print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'"></td>';
+			if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+			print '</tr>';
+			$i++;
+		}
+		print '</table>';
+		print '</div>';
+		print '</form>';
+		print '<br>';
+	}
 }
 
 
@@ -139,12 +139,12 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useles
  */
 if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
-    $sql = "SELECT f.rowid, f.ref, f.datef as date, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.ref_client";
-    $sql .= ", f.type";
-    $sql .= ", s.nom as name";
-    $sql .= ", s.rowid as socid, s.email";
-    $sql .= ", s.code_client, s.code_compta, s.code_fournisseur, s.code_compta_fournisseur";
-    $sql .= ", cc.rowid as country_id, cc.code as country_code";
+	$sql = "SELECT f.rowid, f.ref, f.datef as date, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.ref_client";
+	$sql .= ", f.type";
+	$sql .= ", s.nom as name";
+	$sql .= ", s.rowid as socid, s.email";
+	$sql .= ", s.code_client, s.code_compta, s.code_fournisseur, s.code_compta_fournisseur";
+	$sql .= ", cc.rowid as country_id, cc.code as country_code";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -163,7 +163,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 
 	$sql .= " GROUP BY f.rowid, f.ref, f.datef, f.total, f.tva, f.total_ttc, f.ref_client, f.type, ";
 	$sql .= "s.email, s.nom, s.rowid, s.code_client, s.code_compta, s.code_fournisseur, s.code_compta_fournisseur";
-    $sql .= ", cc.rowid, cc.code";
+	$sql .= ", cc.rowid, cc.code";
 
 	// Add Group from hooks
 	$parameters = array();
@@ -250,10 +250,10 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 {
 	$sql = "SELECT f.ref, f.rowid, f.total_ht, f.total_tva, f.total_ttc, f.type, f.ref_supplier";
 	$sql .= ", s.nom as name";
-    $sql .= ", s.rowid as socid, s.email";
-    $sql .= ", s.code_fournisseur, s.code_compta_fournisseur";
-    $sql .= ", cc.rowid as country_id, cc.code as country_code";
-    $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays";
+	$sql .= ", s.rowid as socid, s.email";
+	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur";
+	$sql .= ", cc.rowid as country_id, cc.code as country_code";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE s.rowid = f.fk_soc AND f.fk_statut = ".FactureFournisseur::STATUS_DRAFT;
 	$sql .= " AND f.entity IN (".getEntity('invoice').')';
@@ -348,10 +348,10 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$sql = "SELECT f.rowid, f.ref, f.fk_statut, f.type, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.paye, f.tms";
 	$sql .= ", f.date_lim_reglement as datelimite";
 	$sql .= ", s.nom as name";
-    $sql .= ", s.rowid as socid";
-    $sql .= ", s.code_client, s.code_compta, s.email";
-    $sql .= ", cc.rowid as country_id, cc.code as country_code";
-    $sql .= ", sum(pf.amount) as am";
+	$sql .= ", s.rowid as socid";
+	$sql .= ", s.code_client, s.code_compta, s.email";
+	$sql .= ", cc.rowid as country_id, cc.code as country_code";
+	$sql .= ", sum(pf.amount) as am";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays, ".MAIN_DB_PREFIX."facture as f";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -377,7 +377,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 		$i = 0;
 		$othernb = 0;
 
-        print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BoxTitleLastCustomerBills", $max).'</th>';
 		if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th class="right">'.$langs->trans("AmountHT").'</th>';
@@ -442,7 +442,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 
 				print '</td>';
 				print '<td class="left">';
-                print $thirdpartystatic->getNomUrl(1, 'customer', 44);
+				print $thirdpartystatic->getNomUrl(1, 'customer', 44);
 				print '</td>';
 				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="nowrap right">'.price($obj->total_ht).'</td>';
 				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
@@ -486,8 +486,8 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 
 	$sql = "SELECT ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_tva, ff.total_ttc, ff.tms, ff.paye";
 	$sql .= ", s.nom as name";
-    $sql .= ", s.rowid as socid";
-    $sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.email";
+	$sql .= ", s.rowid as socid";
+	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.email";
 	$sql .= ", SUM(pf.amount) as am";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf on ff.rowid=pf.fk_facturefourn";
@@ -511,7 +511,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 	{
 		$num = $db->num_rows($resql);
 
-        print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BoxTitleLastSupplierBills", $max).'</th>';
 		if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th class="right">'.$langs->trans("AmountHT").'</th>';
@@ -598,7 +598,7 @@ if (!empty($conf->don->enabled) && $user->rights->don->lire)
 	include_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 	$langs->load("boxes");
-    $donationstatic = new Don($db);
+	$donationstatic = new Don($db);
 
 	$sql = "SELECT d.rowid, d.lastname, d.firstname, d.societe, d.datedon as date, d.tms as dm, d.amount, d.fk_statut";
 	$sql .= " FROM ".MAIN_DB_PREFIX."don as d";
@@ -619,14 +619,14 @@ if (!empty($conf->don->enabled) && $user->rights->don->lire)
 		$i = 0;
 		$othernb = 0;
 
-        print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th>'.$langs->trans("BoxTitleLastModifiedDonations", $max).'</th>';
-        print '<th></th>';
-        print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
-        print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
-        print '<th width="16">&nbsp;</th>';
+		print '<th></th>';
+		print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
+		print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
+		print '<th width="16">&nbsp;</th>';
 		print '</tr>';
 		if ($num)
 		{
@@ -657,7 +657,7 @@ if (!empty($conf->don->enabled) && $user->rights->don->lire)
 				print '<td>'.$label.'</td>';
 				print '<td class="nowrap right">'.price($objp->amount).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($objp->dm), 'day').'</td>';
-                print '<td>'.$donationstatic->LibStatut($objp->fk_statut, 3).'</td>';
+				print '<td>'.$donationstatic->LibStatut($objp->fk_statut, 3).'</td>';
 				print '</tr>';
 
 				$i++;
@@ -706,7 +706,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		{
 			$num = $db->num_rows($resql);
 
-            print '<div class="div-table-responsive-no-min">';
+			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
 			print '<th>'.$langs->trans("ContributionsToPay").($num ? ' <a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?status=0"><span class="badge">'.$num.'</span></a>' : '').'</th>';
@@ -784,8 +784,8 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 
 	$sql = "SELECT sum(f.total) as tot_fht, sum(f.total_ttc) as tot_fttc";
 	$sql .= ", s.nom as name, s.email";
-    $sql .= ", s.rowid as socid";
-    $sql .= ", s.code_client, s.code_compta";
+	$sql .= ", s.rowid as socid";
+	$sql .= ", s.code_client, s.code_compta";
 	$sql .= ", c.rowid, c.ref, c.facture, c.fk_statut, c.total_ht, c.tva as total_tva, c.total_ttc,";
 	$sql .= " cc.rowid as country_id, cc.code as country_code";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays";
@@ -816,7 +816,7 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 			$i = 0;
 			$othernb = 0;
 
-            print '<div class="div-table-responsive-no-min">';
+			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
 
 			print "<tr class=\"liste_titre\">";
@@ -881,7 +881,7 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 				print '</td>';
 
 				print '<td class="nowrap tdoverflowmax100">';
-                print $societestatic->getNomUrl(1, 'customer');
+				print $societestatic->getNomUrl(1, 'customer');
 				print '</td>';
 				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($obj->total_ht).'</td>';
 				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
@@ -927,10 +927,10 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$sql = "SELECT f.rowid, f.ref, f.fk_statut, f.datef, f.type, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.paye, f.tms";
 	$sql .= ", f.date_lim_reglement as datelimite";
 	$sql .= ", s.nom as name";
-    $sql .= ", s.rowid as socid, s.email";
-    $sql .= ", s.code_client, s.code_compta";
-    $sql .= ", cc.rowid as country_id, cc.code as country_code";
-    $sql .= ", sum(pf.amount) as am";
+	$sql .= ", s.rowid as socid, s.email";
+	$sql .= ", s.code_client, s.code_compta";
+	$sql .= ", cc.rowid as country_id, cc.code as country_code";
+	$sql .= ", sum(pf.amount) as am";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays,".MAIN_DB_PREFIX."facture as f";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -1083,9 +1083,9 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 	$sql = "SELECT ff.rowid, ff.ref, ff.fk_statut, ff.type, ff.libelle as label, ff.total_ht, ff.total_tva, ff.total_ttc, ff.paye";
 	$sql .= ", ff.date_lim_reglement";
 	$sql .= ", s.nom as name";
-    $sql .= ", s.rowid as socid, s.email";
-    $sql .= ", s.code_client, s.code_compta";
-    $sql .= ", s.code_fournisseur, s.code_compta_fournisseur";
+	$sql .= ", s.rowid as socid, s.email";
+	$sql .= ", s.code_client, s.code_compta";
+	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur";
 	$sql .= ", sum(pf.amount) as am";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf on ff.rowid=pf.fk_facturefourn";
@@ -1214,7 +1214,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 $resql = 0;
 if ($resql)
 {
-    print '<div class="div-table-responsive-no-min">';
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><thcolspan="2">'.$langs->trans("TasksToDo").'</th>';
 	print "</tr>\n";

@@ -140,7 +140,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_value
 
 dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom', '', '', 0, '', '', 'arearefnobottom');
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 $sql = "SELECT bk.rowid, bk.doc_date, bk.doc_type, bk.doc_ref, ";
 $sql .= " bk.subledger_account, bk.numero_compte , bk.label_compte, bk.debit, ";
@@ -193,17 +193,17 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-    $param = "&socid=".$socid;
+	$param = "&socid=".$socid;
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="POST">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="socid" value="'.$object->id.'">';
 
-    $letteringbutton = '<a class="divButAction"><span class="valignmiddle"><input class="butAction" type="submit" value="lettering" name="lettering" id="lettering"></span></a>';
+	$letteringbutton = '<a class="divButAction"><span class="valignmiddle"><input class="butAction" type="submit" value="lettering" name="lettering" id="lettering"></span></a>';
 
-    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies', 0, $letteringbutton, '', $limit);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies', 0, $letteringbutton, '', $limit);
 
-    print '<div class="div-table-responsive-no-min">';
-    print '<table class="liste centpercent">'."\n";
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="liste centpercent">'."\n";
 
 	/*
     print '<tr class="liste_titre">';
@@ -242,7 +242,7 @@ if ($resql) {
 	print_liste_field_titre("Balancing", $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Codejournal", $_SERVER["PHP_SELF"], "bk.code_journal", "", $param, "", $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("LetteringCode", $_SERVER["PHP_SELF"], "bk.lettering_code", "", $param, "", $sortfield, $sortorder, 'center ');
-    print_liste_field_titre("", "", "", '', '', "", $sortfield, $sortorder, 'maxwidthsearch center ');
+	print_liste_field_titre("", "", "", '', '', "", $sortfield, $sortorder, 'maxwidthsearch center ');
 	print "</tr>\n";
 
 	$solde = 0;
@@ -261,21 +261,21 @@ if ($resql) {
 		print '<td class="nowrap right">'.price($obj->credit).'</td>';
 		print '<td class="nowrap right">'.price(round($solde, 2)).'</td>';
 
-        // Journal
-        $accountingjournal = new AccountingJournal($db);
-        $result = $accountingjournal->fetch('', $obj->code_journal);
-        $journaltoshow = (($result > 0) ? $accountingjournal->getNomUrl(0, 0, 0, '', 0) : $obj->code_journal);
-        print '<td class="center">'.$journaltoshow.'</td>';
+		// Journal
+		$accountingjournal = new AccountingJournal($db);
+		$result = $accountingjournal->fetch('', $obj->code_journal);
+		$journaltoshow = (($result > 0) ? $accountingjournal->getNomUrl(0, 0, 0, '', 0) : $obj->code_journal);
+		print '<td class="center">'.$journaltoshow.'</td>';
 
 		if (empty($obj->lettering_code) && empty($obj->date_validated)) {
 			print '<td class="nowrap center"><input type="checkbox" class="flat checkforselect" name="toselect[]" id="toselect[]" value="'.$obj->rowid.'" /></td>';
-		    print '<td><a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num='.$obj->piece_num.'">';
-		    print img_edit();
-            print '</a></td>'."\n";
+			print '<td><a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num='.$obj->piece_num.'">';
+			print img_edit();
+			print '</a></td>'."\n";
 		} else {
-            print '<td class="center">'.$obj->lettering_code.'</td>';
-            print '<td></td>';
-        }
+			print '<td class="center">'.$obj->lettering_code.'</td>';
+			print '<td></td>';
+		}
 
 		print "</tr>\n";
 	}
@@ -296,9 +296,9 @@ if ($resql) {
 
 	print "</table>";
 
-    print '<div class="tabsAction tabsActionNoBottom">'."\n";
+	print '<div class="tabsAction tabsActionNoBottom">'."\n";
 	print $letteringbutton;
-    print '</div>';
+	print '</div>';
 
 	print "</form>";
 	$db->free($resql);

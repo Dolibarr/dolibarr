@@ -66,7 +66,7 @@ function jsUnEscape($source)
 			$pos++;
 		}
 	}
-	return dol_html_entity_decode($decodedStr, ENT_COMPAT|ENT_HTML5);
+	return dol_html_entity_decode($decodedStr, ENT_COMPAT | ENT_HTML5);
 }
 
 
@@ -492,7 +492,7 @@ function dolAddEmailTrackId($email, $trackingid)
 function isValidMailDomain($mail)
 {
 	list($user, $domain) = explode("@", $mail, 2);
-	return ($domain ? isValidMXRecord($domain, "MX") : 0);
+	return ($domain ? isValidMXRecord($domain) : 0);
 }
 
 /**
@@ -1641,7 +1641,7 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 						$liste[$obj->id.':'.$key] = ($obj->label ? $obj->label : $obj->doc_template_name).' '.$val['name'];
 					}
 				} else {
-                    // Common usage
+					// Common usage
 					$liste[$obj->id] = $obj->label ? $obj->label : $obj->doc_template_name;
 				}
 			}
@@ -1688,10 +1688,23 @@ function is_ip($ip)
  */
 function dol_buildlogin($lastname, $firstname)
 {
-	$login = strtolower(dol_string_unaccent($firstname));
-	$login .= ($login ? '.' : '');
-	$login .= strtolower(dol_string_unaccent($lastname));
-	$login = dol_string_nospecial($login, ''); // For special names
+	global $conf;
+
+	//$conf->global->MAIN_BUILD_LOGIN_RULE = 'f.lastname';
+	if (!empty($conf->global->MAIN_BUILD_LOGIN_RULE) && $conf->global->MAIN_BUILD_LOGIN_RULE == 'f.lastname') {	// f.lastname
+		$login = strtolower(dol_string_unaccent(dol_trunc($firstname, 1, 'right', 'UTF-8', 1)));
+		$login .= ($login ? '.' : '');
+		$login .= strtolower(dol_string_unaccent($lastname));
+		$login = dol_string_nospecial($login, ''); // For special names
+	} else {	// firstname.lastname
+		$login = strtolower(dol_string_unaccent($firstname));
+		$login .= ($login ? '.' : '');
+		$login .= strtolower(dol_string_unaccent($lastname));
+		$login = dol_string_nospecial($login, ''); // For special names
+	}
+
+	// TODO Add a hook to allow external modules to suggest new rules
+
 	return $login;
 }
 
@@ -2404,9 +2417,9 @@ function phpSyntaxError($code)
 	if (!defined("LF")) define("LF", "\n");
 	if (!defined("CRLF")) define("CRLF", "\r\n");
 
-	$braces=0;
-	$inString=0;
-	foreach (token_get_all('<?php ' . $code) as $token) {
+	$braces = 0;
+	$inString = 0;
+	foreach (token_get_all('<?php '.$code) as $token) {
 		if (is_array($token)) {
 			switch ($token[0]) {
 				case T_CURLY_OPEN:
@@ -2455,7 +2468,7 @@ function phpSyntaxError($code)
 			$code[2] = (int) $code[2];
 			$code = $code[2] <= $braces
 			? array($code[1], $code[2])
-			: array('unexpected $end' . substr($code[1], 14), $braces);
+			: array('unexpected $end'.substr($code[1], 14), $braces);
 		} else $code = array('syntax error', 0);
 	} else {
 		ob_end_clean();

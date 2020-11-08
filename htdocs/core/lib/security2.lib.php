@@ -34,10 +34,10 @@
  */
 function dol_getwebuser($mode)
 {
-    $t = '?';
-    if ($mode == 'user')  $t = getenv('APACHE_RUN_USER'); // $_ENV['APACHE_RUN_USER'] is empty
-    if ($mode == 'group') $t = getenv('APACHE_RUN_GROUP');
-    return $t;
+	$t = '?';
+	if ($mode == 'user')  $t = getenv('APACHE_RUN_USER'); // $_ENV['APACHE_RUN_USER'] is empty
+	if ($mode == 'group') $t = getenv('APACHE_RUN_GROUP');
+	return $t;
 }
 
 /**
@@ -53,64 +53,64 @@ function dol_getwebuser($mode)
 function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode, $context = '')
 {
 	global $conf, $langs;
-    //global $dolauthmode;    // To return authentication finally used
+	//global $dolauthmode;    // To return authentication finally used
 
 	// Check parameters
 	if ($entitytotest == '') $entitytotest = 1;
 
-    dol_syslog("checkLoginPassEntity usertotest=".$usertotest." entitytotest=".$entitytotest." authmode=".join(',', $authmode));
+	dol_syslog("checkLoginPassEntity usertotest=".$usertotest." entitytotest=".$entitytotest." authmode=".join(',', $authmode));
 	$login = '';
 
 	// Validation of login/pass/entity with standard modules
 	if (empty($login))
 	{
-	    $test = true;
-    	foreach ($authmode as $mode)
-    	{
-    		if ($test && $mode && !$login)
-    		{
-    		    // Validation of login/pass/entity for mode $mode
-    		    $mode = trim($mode);
-        		$authfile = 'functions_'.$mode.'.php';
-        		$fullauthfile = '';
+		$test = true;
+		foreach ($authmode as $mode)
+		{
+			if ($test && $mode && !$login)
+			{
+				// Validation of login/pass/entity for mode $mode
+				$mode = trim($mode);
+				$authfile = 'functions_'.$mode.'.php';
+				$fullauthfile = '';
 
-    		    $dirlogin = array_merge(array("/core/login"), (array) $conf->modules_parts['login']);
-    		    foreach ($dirlogin as $reldir)
-    		    {
-    		        $dir = dol_buildpath($reldir, 0);
-    		        $newdir = dol_osencode($dir);
+				$dirlogin = array_merge(array("/core/login"), (array) $conf->modules_parts['login']);
+				foreach ($dirlogin as $reldir)
+				{
+					$dir = dol_buildpath($reldir, 0);
+					$newdir = dol_osencode($dir);
 
-    		        // Check if file found (do not use dol_is_file to avoid loading files.lib.php)
-    		        $tmpnewauthfile = $newdir.(preg_match('/\/$/', $newdir) ? '' : '/').$authfile;
-    		        if (is_file($tmpnewauthfile)) $fullauthfile = $tmpnewauthfile;
-    		    }
+					// Check if file found (do not use dol_is_file to avoid loading files.lib.php)
+					$tmpnewauthfile = $newdir.(preg_match('/\/$/', $newdir) ? '' : '/').$authfile;
+					if (is_file($tmpnewauthfile)) $fullauthfile = $tmpnewauthfile;
+				}
 
-    		    $result = false;
-    		    if ($fullauthfile) $result = include_once $fullauthfile;
-    			if ($fullauthfile && $result)
-    			{
-    				// Call function to check user/password
-    				$function = 'check_user_password_'.$mode;
-    				$login = call_user_func($function, $usertotest, $passwordtotest, $entitytotest, $context);
-    				if ($login && $login != '--bad-login-validity--')	// Login is successfull
-    				{
-    					$test = false; // To stop once at first login success
-    					$conf->authmode = $mode; // This properties is defined only when logged to say what mode was successfully used
-    					$dol_tz = GETPOST('tz');
-    					$dol_dst = GETPOST('dst');
-    					$dol_screenwidth = GETPOST('screenwidth');
-    					$dol_screenheight = GETPOST('screenheight');
-    				}
-    			} else {
-    				dol_syslog("Authentication KO - failed to load file '".$authfile."'", LOG_ERR);
-    				sleep(1);
-    				// Load translation files required by the page
-                    $langs->loadLangs(array('other', 'main', 'errors'));
+				$result = false;
+				if ($fullauthfile) $result = include_once $fullauthfile;
+				if ($fullauthfile && $result)
+				{
+					// Call function to check user/password
+					$function = 'check_user_password_'.$mode;
+					$login = call_user_func($function, $usertotest, $passwordtotest, $entitytotest, $context);
+					if ($login && $login != '--bad-login-validity--')	// Login is successfull
+					{
+						$test = false; // To stop once at first login success
+						$conf->authmode = $mode; // This properties is defined only when logged to say what mode was successfully used
+						$dol_tz = GETPOST('tz');
+						$dol_dst = GETPOST('dst');
+						$dol_screenwidth = GETPOST('screenwidth');
+						$dol_screenheight = GETPOST('screenheight');
+					}
+				} else {
+					dol_syslog("Authentication KO - failed to load file '".$authfile."'", LOG_ERR);
+					sleep(1);
+					// Load translation files required by the page
+					$langs->loadLangs(array('other', 'main', 'errors'));
 
-    				$_SESSION["dol_loginmesg"] = $langs->trans("ErrorFailedToLoadLoginFileForMode", $mode);
-    			}
-    		}
-    	}
+					$_SESSION["dol_loginmesg"] = $langs->trans("ErrorFailedToLoadLoginFileForMode", $mode);
+				}
+			}
+		}
 	}
 
 	return $login;
@@ -119,16 +119,16 @@ function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $auth
 
 if (!function_exists('dol_loginfunction'))
 {
-    /**
-     * Show Dolibarr default login page.
-     * Part of this code is also duplicated into main.inc.php::top_htmlhead
-     *
-     * @param       Translate   $langs      Lang object (must be initialized by a new).
-     * @param       Conf        $conf       Conf object
-     * @param       Societe     $mysoc      Company object
-     * @return      void
-     */
-    function dol_loginfunction($langs, $conf, $mysoc)
+	/**
+	 * Show Dolibarr default login page.
+	 * Part of this code is also duplicated into main.inc.php::top_htmlhead
+	 *
+	 * @param       Translate   $langs      Lang object (must be initialized by a new).
+	 * @param       Conf        $conf       Conf object
+	 * @param       Societe     $mysoc      Company object
+	 * @return      void
+	 */
+	function dol_loginfunction($langs, $conf, $mysoc)
 	{
 		global $dolibarr_main_demo, $dolibarr_main_force_https;
 		global $db, $hookmanager;
@@ -260,9 +260,9 @@ if (!function_exists('dol_loginfunction'))
 		$main_home = '';
 		if (!empty($conf->global->MAIN_HOME))
 		{
-		    $substitutionarray = getCommonSubstitutionArray($langs);
-		    complete_substitutions_array($substitutionarray, $langs);
-		    $texttoshow = make_substitutions($conf->global->MAIN_HOME, $substitutionarray, $langs);
+			$substitutionarray = getCommonSubstitutionArray($langs);
+			complete_substitutions_array($substitutionarray, $langs);
+			$texttoshow = make_substitutions($conf->global->MAIN_HOME, $substitutionarray, $langs);
 
 			$main_home = dol_htmlcleanlastbr($texttoshow);
 		}
@@ -450,15 +450,18 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 		{
 			$max = strlen($lowercase) - 1;
 			for ($x = 0; $x < $nbofchar; $x++) {
-				$randomCode .= $lowercase[random_int(0, $max)];
+				$tmp = random_int(0, $max);
+				$randomCode .= $lowercase[$tmp];
 			}
 			$max = strlen($uppercase) - 1;
 			for ($x = 0; $x < $nbofchar; $x++) {
-				$randomCode .= $uppercase[random_int(0, $max)];
+				$tmp = random_int(0, $max);
+				$randomCode .= $uppercase[$tmp];
 			}
 			$max = strlen($numbers) - 1;
 			for ($x = 0; $x < $nbofcharlast; $x++) {
-				$randomCode .= $numbers[random_int(0, $max)];
+				$tmp = random_int(0, $max);
+				$randomCode .= $numbers[$tmp];
 			}
 
 			$generated_password = str_shuffle($randomCode);
@@ -466,15 +469,18 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 		{
 			$max = strlen($lowercase) - 1;
 			for ($x = 0; $x < $nbofchar; $x++) {
-				$randomCode .= $lowercase[mt_rand(0, $max)];
+				$tmp = mt_rand(0, $max);
+				$randomCode .= $lowercase[$tmp];
 			}
 			$max = strlen($uppercase) - 1;
 			for ($x = 0; $x < $nbofchar; $x++) {
-				$randomCode .= $uppercase[mt_rand(0, $max)];
+				$tmp = mt_rand(0, $max);
+				$randomCode .= $uppercase[$tmp];
 			}
 			$max = strlen($numbers) - 1;
 			for ($x = 0; $x < $nbofcharlast; $x++) {
-				$randomCode .= $numbers[mt_rand(0, $max)];
+				$tmp = mt_rand(0, $max);
+				$randomCode .= $numbers[$tmp];
 			}
 
 			$generated_password = str_shuffle($randomCode);
@@ -495,11 +501,12 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 	{
 		$numbers = "ABCDEF";
 		$max = strlen($numbers) - 1;
-		if (function_exists('random_int'))	// Cryptographic random
-		{
-			$generated_password = str_replace($replaceambiguouschars, $numbers[random_int(0, $max)], $generated_password);
+		if (function_exists('random_int')) {	// Cryptographic random
+			$tmp = random_int(0, $max);
+			$generated_password = str_replace($replaceambiguouschars, $numbers[$tmp], $generated_password);
 		} else {
-			$generated_password = str_replace($replaceambiguouschars, $numbers[mt_rand(0, $max)], $generated_password);
+			$tmp = mt_rand(0, $max);
+			$generated_password = str_replace($replaceambiguouschars, $numbers[$tmp], $generated_password);
 		}
 	}
 

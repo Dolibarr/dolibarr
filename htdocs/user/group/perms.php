@@ -374,7 +374,7 @@ if ($object->id > 0)
 	$reshook = $hookmanager->executeHooks('insertExtraFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

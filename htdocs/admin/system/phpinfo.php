@@ -275,7 +275,7 @@ function getActivatedExtensions()
 
 	// For compatibility with LF (Line Feed)
 	if (empty($configLines) || count($configLines) < 2) {
-	    $configLines = explode("\n", $content);
+		$configLines = explode("\n", $content);
 	}
 
 	$extensions = array();
@@ -428,5 +428,5 @@ function getResultColumn($name, array $activated, array $loaded, array $function
 	$html .= $result ? $langs->trans("PHPSupport".$name) : $langs->trans("ErrorPHPDoesNotSupport".$name);
 	$html .= "</td>";
 
-    return $html;
+	return $html;
 }

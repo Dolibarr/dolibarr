@@ -160,7 +160,7 @@ if ($massaction == 'presend')
 		print $formmail->get_form();
 	}
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 // Allow Pre-Mass-Action hook (eg for confirmation dialog)
 $parameters = array(
@@ -170,7 +170,7 @@ $parameters = array(
 
 $reshook = $hookmanager->executeHooks('doPreMassActions', $parameters, $object, $action);
 if ($reshook < 0) {
-    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 } else {
-    print $hookmanager->resPrint;
+	print $hookmanager->resPrint;
 }

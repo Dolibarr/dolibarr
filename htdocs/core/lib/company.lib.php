@@ -50,10 +50,8 @@ function societe_prepare_head(Societe $object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if (empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES))
-	{
-		if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->societe->contact->lire)
-		{
+	if (empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) {
+		if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->societe->contact->lire) {
 			//$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
 			$nbContact = 0; // TODO
 
@@ -61,8 +59,7 @@ function societe_prepare_head(Societe $object)
 			$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
 			$sql .= " WHERE p.fk_soc = ".$object->id;
 			$resql = $db->query($sql);
-			if ($resql)
-			{
+			if ($resql) {
 				$obj = $db->fetch_object($resql);
 				if ($obj) $nbContact = $obj->nb;
 			}
@@ -82,8 +79,7 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
-	if ($object->client == 1 || $object->client == 2 || $object->client == 3)
-	{
+	if ($object->client == 1 || $object->client == 2 || $object->client == 3) {
 		$head[$h][0] = DOL_URL_ROOT.'/comm/card.php?socid='.$object->id;
 		$head[$h][1] = '';
 		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && ($object->client == 2 || $object->client == 3)) $head[$h][1] .= $langs->trans("Prospect");
@@ -92,8 +88,7 @@ function societe_prepare_head(Societe $object)
 		$head[$h][2] = 'customer';
 		$h++;
 
-		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
-		{
+		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			$langs->load("products");
 			// price
 			$head[$h][0] = DOL_URL_ROOT.'/societe/price.php?socid='.$object->id;
@@ -104,16 +99,14 @@ function societe_prepare_head(Societe $object)
 	}
 	$supplier_module_enabled = 0;
 	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_proposal->enabled) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) $supplier_module_enabled = 1;
-	if ($supplier_module_enabled == 1 && $object->fournisseur && !empty($user->rights->fournisseur->lire))
-	{
+	if ($supplier_module_enabled == 1 && $object->fournisseur && !empty($user->rights->fournisseur->lire)) {
 		$head[$h][0] = DOL_URL_ROOT.'/fourn/card.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Supplier");
 		$head[$h][2] = 'supplier';
 		$h++;
 	}
 
-	if (!empty($conf->projet->enabled) && (!empty($user->rights->projet->lire)))
-	{
+	if (!empty($conf->projet->enabled) && (!empty($user->rights->projet->lire))) {
 		$head[$h][0] = DOL_URL_ROOT.'/societe/project.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Projects");
 		$nbNote = 0;
@@ -122,12 +115,10 @@ function societe_prepare_head(Societe $object)
 		$sql .= " WHERE fk_soc = ".$object->id;
 		$sql .= " AND entity IN (".getEntity('project').")";
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $db->num_rows($resql);
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 				$nbNote = $obj->nb;
 				$i++;
@@ -141,19 +132,16 @@ function societe_prepare_head(Societe $object)
 	}
 
 	// Tab to link resources
-	if (!empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_ON_THIRDPARTIES))
-	{
+	if (!empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_ON_THIRDPARTIES)) {
 		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=societe&element_id='.$object->id;
 		$head[$h][1] = $langs->trans("Resources");
 		$head[$h][2] = 'resources';
 		$h++;
 	}
 
-	if (!empty($conf->global->ACCOUNTING_ENABLE_LETTERING))
-	{
+	if (!empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
 		// Tab to accountancy
-		if (!empty($conf->accounting->enabled) && $object->client > 0)
-		{
+		if (!empty($conf->accounting->enabled) && $object->client > 0) {
 			$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/thirdparty_lettering_customer.php?socid='.$object->id;
 			$head[$h][1] = $langs->trans("TabLetteringCustomer");
 			$head[$h][2] = 'lettering_customer';
@@ -161,8 +149,7 @@ function societe_prepare_head(Societe $object)
 		}
 
 		// Tab to accountancy
-		if (!empty($conf->accounting->enabled) && $object->fournisseur > 0)
-		{
+		if (!empty($conf->accounting->enabled) && $object->fournisseur > 0) {
 			$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/thirdparty_lettering_supplier.php?socid='.$object->id;
 			$head[$h][1] = $langs->trans("TabLetteringSupplier");
 			$head[$h][2] = 'lettering_supplier';
@@ -172,8 +159,7 @@ function societe_prepare_head(Societe $object)
 
 	// Related items
 	if ((!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || !empty($conf->facture->enabled) || !empty($conf->ficheinter->enabled) || !empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
-		&& empty($conf->global->THIRPARTIES_DISABLE_RELATED_OBJECT_TAB))
-	{
+		&& empty($conf->global->THIRPARTIES_DISABLE_RELATED_OBJECT_TAB)) {
 		$head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Referers");
 		$head[$h][2] = 'consumption';
@@ -181,8 +167,7 @@ function societe_prepare_head(Societe $object)
 	}
 
 	// Bank accounts
-	if (empty($conf->global->SOCIETE_DISABLE_BANKACCOUNT))
-	{
+	if (empty($conf->global->SOCIETE_DISABLE_BANKACCOUNT)) {
 		$nbBankAccount = 0;
 		$foundonexternalonlinesystem = 0;
 		$langs->load("banks");
@@ -190,8 +175,7 @@ function societe_prepare_head(Societe $object)
 		//$title = $langs->trans("BankAccounts");
 		$title = $langs->trans("PaymentInformation");
 
-		if (!empty($conf->stripe->enabled))
-		{
+		if (!empty($conf->stripe->enabled)) {
 			//$langs->load("stripe");
 			//$title = $langs->trans("BankAccountsAndGateways");
 
@@ -214,12 +198,10 @@ function societe_prepare_head(Societe $object)
 		}
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $db->num_rows($resql);
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 				$nbBankAccount = $obj->nb;
 				$i++;
@@ -238,8 +220,7 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
-	if (!empty($conf->website->enabled) && (!empty($conf->global->WEBSITE_USE_WEBSITE_ACCOUNTS)) && (!empty($user->rights->societe->lire)))
-	{
+	if (!empty($conf->website->enabled) && (!empty($conf->global->WEBSITE_USE_WEBSITE_ACCOUNTS)) && (!empty($user->rights->societe->lire))) {
 		$head[$h][0] = DOL_URL_ROOT.'/societe/website.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("WebSiteAccounts");
 		$nbNote = 0;
@@ -247,12 +228,10 @@ function societe_prepare_head(Societe $object)
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_account as n";
 		$sql .= " WHERE fk_soc = ".$object->id.' AND fk_website > 0';
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $db->num_rows($resql);
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 				$nbNote = $obj->nb;
 				$i++;
@@ -271,22 +250,18 @@ function societe_prepare_head(Societe $object)
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'thirdparty');
 
-	if ($user->socid == 0)
-	{
+	if ($user->socid == 0) {
 		// Notifications
-		if (!empty($conf->notification->enabled))
-		{
+		if (!empty($conf->notification->enabled)) {
 			$nbNote = 0;
 			$sql = "SELECT COUNT(n.rowid) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."notify_def as n";
 			$sql .= " WHERE fk_soc = ".$object->id;
 			$resql = $db->query($sql);
-			if ($resql)
-			{
+			if ($resql) {
 				$num = $db->num_rows($resql);
 				$i = 0;
-				while ($i < $num)
-				{
+				while ($i < $num) {
 					$obj = $db->fetch_object($resql);
 					$nbNote = $obj->nb;
 					$i++;
@@ -328,8 +303,7 @@ function societe_prepare_head(Societe $object)
 
 	$head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
 	$head[$h][1] .= $langs->trans("Events");
-	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read)))
-	{
+	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
 	}
@@ -437,8 +411,7 @@ function getCountry($searchkey, $withcode = '', $dbtouse = 0, $outputlangs = '',
 	$result = '';
 
 	// Check parameters
-	if (empty($searchkey) && empty($searchlabel))
-	{
+	if (empty($searchkey) && empty($searchlabel)) {
 		if ($withcode === 'all') return array('id'=>'', 'code'=>'', 'label'=>'');
 		else return '';
 	}
@@ -451,14 +424,11 @@ function getCountry($searchkey, $withcode = '', $dbtouse = 0, $outputlangs = '',
 	else $sql .= " WHERE label='".$db->escape($searchlabel)."'";
 
 	$resql = $dbtouse->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$obj = $dbtouse->fetch_object($resql);
-		if ($obj)
-		{
+		if ($obj) {
 			$label = ((!empty($obj->label) && $obj->label != '-') ? $obj->label : '');
-			if (is_object($outputlangs))
-			{
+			if (is_object($outputlangs)) {
 				$outputlangs->load("dict");
 				if ($entconv) $label = ($obj->code && ($outputlangs->trans("Country".$obj->code) != "Country".$obj->code)) ? $outputlangs->trans("Country".$obj->code) : $label;
 				else $label = ($obj->code && ($outputlangs->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code)) ? $outputlangs->transnoentitiesnoconv("Country".$obj->code) : $label;
@@ -506,14 +476,11 @@ function getState($id, $withcode = '', $dbtouse = 0, $withregion = 0, $outputlan
 
 	dol_syslog("Company.lib::getState", LOG_DEBUG);
 	$resql = $dbtouse->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$obj = $dbtouse->fetch_object($resql);
-		if ($obj)
-		{
+		if ($obj) {
 			$label = ((!empty($obj->name) && $obj->name != '-') ? $obj->name : '');
-			if (is_object($outputlangs))
-			{
+			if (is_object($outputlangs)) {
 				$outputlangs->load("dict");
 				if ($entconv) $label = ($obj->code && ($outputlangs->trans("State".$obj->code) != "State".$obj->code)) ? $outputlangs->trans("State".$obj->code) : $label;
 				else $label = ($obj->code && ($outputlangs->transnoentitiesnoconv("State".$obj->code) != "State".$obj->code)) ? $outputlangs->transnoentitiesnoconv("State".$obj->code) : $label;
@@ -567,8 +534,7 @@ function currency_name($code_iso, $withcode = '', $outputlangs = null)
 	$outputlangs->load("dict");
 
 	// If there is a translation, we can send immediatly the label
-	if ($outputlangs->trans("Currency".$code_iso) != "Currency".$code_iso)
-	{
+	if ($outputlangs->trans("Currency".$code_iso) != "Currency".$code_iso) {
 		return ($withcode ? $code_iso.' - ' : '').$outputlangs->trans("Currency".$code_iso);
 	}
 
@@ -577,12 +543,10 @@ function currency_name($code_iso, $withcode = '', $outputlangs = null)
 	$sql .= " WHERE code_iso='".$db->escape($code_iso)."'";
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
 
-		if ($num)
-		{
+		if ($num) {
 			$obj = $db->fetch_object($resql);
 			$label = ($obj->label != '-' ? $obj->label : '');
 			if ($withcode) return ($label == $code_iso) ? "$code_iso" : "$code_iso - $label";
@@ -611,12 +575,10 @@ function getFormeJuridiqueLabel($code)
 
 	dol_syslog("Company.lib::getFormeJuridiqueLabel", LOG_DEBUG);
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
 
-		if ($num)
-		{
+		if ($num) {
 			$obj = $db->fetch_object($resql);
 			$label = ($obj->libelle != '-' ? $obj->libelle : '');
 			return $label;
@@ -675,8 +637,7 @@ function getCountriesInEEC()
 		//'CH',	// Switzerland - No. Swizerland in not in EEC
 	);
 
-	if (!empty($conf->global->MAIN_COUNTRIES_IN_EEC))
-	{
+	if (!empty($conf->global->MAIN_COUNTRIES_IN_EEC)) {
 		// For example MAIN_COUNTRIES_IN_EEC = 'AT,BE,BG,CY,CZ,DE,DK,EE,ES,FI,FR,GB,GR,HR,NL,HU,IE,IM,IT,LT,LU,LV,MC,MT,PL,PT,RO,SE,SK,SI,UK'
 		$country_code_in_EEC = explode(',', $conf->global->MAIN_COUNTRIES_IN_EEC);
 	}
@@ -719,13 +680,11 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 
 	$i = -1;
 
-	if (!empty($conf->projet->enabled) && $user->rights->projet->lire)
-	{
+	if (!empty($conf->projet->enabled) && $user->rights->projet->lire) {
 		$langs->load("projects");
 
 		$newcardbutton = '';
-		if (!empty($conf->projet->enabled) && $user->rights->projet->creer && empty($nocreatelink))
-		{
+		if (!empty($conf->projet->enabled) && $user->rights->projet->creer && empty($nocreatelink)) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AddProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
 		}
 
@@ -743,8 +702,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 		$sql .= " ORDER BY p.dateo DESC";
 
 		$result = $db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$num = $db->num_rows($result);
 
 			print '<tr class="liste_titre">';
@@ -758,24 +716,21 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 			print '<td class="right">'.$langs->trans("Status").'</td>';
 			print '</tr>';
 
-			if ($num > 0)
-			{
+			if ($num > 0) {
 				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 				$projecttmp = new Project($db);
 
 				$i = 0;
 
-				while ($i < $num)
-				{
+				while ($i < $num) {
 					$obj = $db->fetch_object($result);
 					$projecttmp->fetch($obj->id);
 
 					// To verify role of users
 					$userAccess = $projecttmp->restrictedProjectArea($user);
 
-					if ($user->rights->projet->lire && $userAccess > 0)
-					{
+					if ($user->rights->projet->lire && $userAccess > 0) {
 						print '<tr class="oddeven">';
 
 						// Ref
@@ -791,8 +746,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 						print '<td class="center">'.dol_print_date($db->jdate($obj->de), "day").'</td>';
 						// Opp amount
 						print '<td class="right">';
-						if ($obj->opp_status_code)
-						{
+						if ($obj->opp_status_code) {
 							print price($obj->opp_amount, 1, '', 1, -1, -1, '');
 						}
 						print '</td>';
@@ -889,8 +843,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 	if (!$sortorder) $sortorder = "ASC";
 	if (!$sortfield) $sortfield = "t.lastname";
 
-	if (!empty($conf->clicktodial->enabled))
-	{
+	if (!empty($conf->clicktodial->enabled)) {
 		$user->fetch_clicktodial(); // lecture des infos de clicktodial du user
 	}
 
@@ -917,10 +870,8 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 		't.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>50, 'class'=>'center'),
 	);
 	// Extra fields
-	if (is_array($extrafields->attributes[$contactstatic->table_element]['label']) && count($extrafields->attributes[$contactstatic->table_element]['label']))
-	{
-		foreach ($extrafields->attributes[$contactstatic->table_element]['label'] as $key => $val)
-		{
+	if (is_array($extrafields->attributes[$contactstatic->table_element]['label']) && count($extrafields->attributes[$contactstatic->table_element]['label'])) {
+		foreach ($extrafields->attributes[$contactstatic->table_element]['label'] as $key => $val) {
 			if (!empty($extrafields->attributes[$contactstatic->table_element]['list'][$key])) {
 				$arrayfields["ef.".$key] = array(
 					'label'=>$extrafields->attributes[$contactstatic->table_element]['label'][$key],
@@ -933,8 +884,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 
 	// Initialize array of search criterias
 	$search = array();
-	foreach ($arrayfields as $key => $val)
-	{
+	foreach ($arrayfields as $key => $val) {
 		$queryName = 'search_'.substr($key, 2);
 		if (GETPOST($queryName, 'alpha')) {
 			$search[substr($key, 2)] = GETPOST($queryName, 'alpha');
@@ -943,8 +893,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 	$search_array_options = $extrafields->getOptionalsFromPost($contactstatic->table_element, '', 'search_');
 
 	// Purge search criteria
-	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
-	{
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$search_status = '';
 		$search_name         = '';
 		$search_roles        = array();
@@ -953,8 +902,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 		$search = array();
 		$search_array_options = array();
 
-		foreach ($contactstatic->fields as $key => $val)
-   		{
+		foreach ($contactstatic->fields as $key => $val) {
    			$search[$key] = '';
    		}
 	}
@@ -963,8 +911,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 	$arrayfields = dol_sort_array($arrayfields, 'position');
 
 	$newcardbutton = '';
-	if ($user->rights->societe->contact->creer)
-	{
+	if ($user->rights->societe->contact->creer) {
 		$addcontact = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
 		$newcardbutton .= dolGetButtonTitle($addcontact, '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
 	}
@@ -1030,14 +977,12 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 	// Fields title search
 	// --------------------------------------------------------------------
 	print '<tr class="liste_titre">';
-	foreach ($contactstatic->fields as $key => $val)
-	{
+	foreach ($contactstatic->fields as $key => $val) {
 		$align = '';
 		if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) $align .= ($align ? ' ' : '').'center';
 		if (in_array($val['type'], array('timestamp'))) $align .= ($align ? ' ' : '').'nowrap';
 		if ($key == 'status' || $key == 'statut') $align .= ($align ? ' ' : '').'center';
-		if (!empty($arrayfields['t.'.$key]['checked']) || !empty($arrayfields['sc.'.$key]['checked']))
-		{
+		if (!empty($arrayfields['t.'.$key]['checked']) || !empty($arrayfields['sc.'.$key]['checked'])) {
 			print '<td class="liste_titre'.($align ? ' '.$align : '').'">';
 			if (in_array($key, array('statut'))) {
 				print $form->selectarray('search_status', array('-1'=>'', '0'=>$contactstatic->LibStatut(0, 1), '1'=>$contactstatic->LibStatut(1, 1)), $search_status);
@@ -1067,8 +1012,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 	// Fields title label
 	// --------------------------------------------------------------------
 	print '<tr class="liste_titre">';
-	foreach ($contactstatic->fields as $key => $val)
-	{
+	foreach ($contactstatic->fields as $key => $val) {
 		$align = '';
 		if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) $align .= ($align ? ' ' : '').'center';
 		if (in_array($val['type'], array('timestamp'))) $align .= ($align ? ' ' : '').'nowrap';
@@ -1091,12 +1035,10 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 
 	$i = -1;
 
-	if ($num || (GETPOST('button_search') || GETPOST('button_search.x') || GETPOST('button_search_x')))
-	{
+	if ($num || (GETPOST('button_search') || GETPOST('button_search.x') || GETPOST('button_search_x'))) {
 		$i = 0;
 
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$obj = $db->fetch_object($result);
 
 			$contactstatic->id = $obj->rowid;
@@ -1129,10 +1071,8 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 				setEventMessages(null, $contactstatic->errors, 'errors');
 			}
 
-			if (is_array($contactstatic->array_options))
-			{
-				foreach ($contactstatic->array_options as $key => $val)
-				{
+			if (is_array($contactstatic->array_options)) {
+				foreach ($contactstatic->array_options as $key => $val) {
 					$obj->$key = $val;
 				}
 			}
@@ -1140,16 +1080,14 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 			print '<tr class="oddeven">';
 
 			// ID
-			if (!empty($arrayfields['t.rowid']['checked']))
-			{
+			if (!empty($arrayfields['t.rowid']['checked'])) {
 				print '<td>';
 				print $contactstatic->id;
 				print '</td>';
 			}
 
 			// Photo - Name
-			if (!empty($arrayfields['t.name']['checked']))
-			{
+			if (!empty($arrayfields['t.name']['checked'])) {
 				print '<td>';
 				print $form->showphoto('contact', $contactstatic, 0, 0, 0, 'photorefnoborder valignmiddle marginrightonly', 'small', 1, 0, 1);
 				print $contactstatic->getNomUrl(0, '', 0, '&backtopage='.urlencode($backtopage));
@@ -1157,32 +1095,28 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 			}
 
 			// Job position
-			if (!empty($arrayfields['t.poste']['checked']))
-			{
+			if (!empty($arrayfields['t.poste']['checked'])) {
 				print '<td>';
 				if ($obj->poste) print $obj->poste;
 				print '</td>';
 			}
 
 			// Address - Phone - Email
-			if (!empty($arrayfields['t.address']['checked']))
-			{
+			if (!empty($arrayfields['t.address']['checked'])) {
 				print '<td>';
 				print $contactstatic->getBannerAddress('contact', $object);
 				print '</td>';
 			}
 
 			// Role
-			if (!empty($arrayfields['sc.role']['checked']))
-			{
+			if (!empty($arrayfields['sc.role']['checked'])) {
 				print '<td>';
 				print $formcompany->showRoles("roles", $contactstatic, 'view');
 				print '</td>';
 			}
 
 			// Status
-			if (!empty($arrayfields['t.statut']['checked']))
-			{
+			if (!empty($arrayfields['t.statut']['checked'])) {
 				print '<td class="center">'.$contactstatic->getLibStatut(5).'</td>';
 			}
 
@@ -1194,16 +1128,14 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 			print '<td align="right">';
 
 			// Add to agenda
-			if (!empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
-			{
+			if (!empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create) {
 				print '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&actioncode=&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
 				print img_object($langs->trans("Event"), "action");
 				print '</a> &nbsp; ';
 			}
 
 			// Edit
-			if ($user->rights->societe->contact->creer)
-			{
+			if ($user->rights->societe->contact->creer) {
 				print '<a class="editfielda paddingleft" href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
 				print img_edit();
 				print '</a>';
@@ -1288,8 +1220,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$search_end = $end_year.'-'.$end_month.'-'.$end_day.' 23:59:59';
 		$tms_end = strtotime($search_end);
 	}
-	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
-	{
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All test are required to be compatible with all browsers
 		$search_start = '';
 		$tms_start = '';
 		$search_end = '';
@@ -1316,8 +1247,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 
 	$sql = '';
 
-	if (!empty($conf->agenda->enabled))
-	{
+	if (!empty($conf->agenda->enabled)) {
 		// Recherche histo sur actioncomm
 		if (is_object($objcon) && $objcon->id > 0) {
 			$sql = "SELECT DISTINCT a.id, a.label as label,";
@@ -1370,32 +1300,25 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')) && $filterobj->id) $sql .= " AND a.fk_soc = ".$filterobj->id;
 			elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') { /* Nothing */ }
 			elseif (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) $sql .= " AND a.fk_project = ".$filterobj->id;
-			elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent')
-			{
+			elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') {
 				$sql .= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
 				if ($filterobj->id) $sql .= " AND a.fk_element = ".$filterobj->id;
-			} elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur')
-			{
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
 				if ($filterobj->id) $sql .= " AND a.fk_element = ".$filterobj->id;
-			} elseif (is_object($filterobj) && get_class($filterobj) == 'Product')
-			{
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'Product') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'product'";
 				if ($filterobj->id) $sql .= " AND a.fk_element = ".$filterobj->id;
-			} elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket')
-			{
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'ticket'";
 				if ($filterobj->id) $sql .= " AND a.fk_element = ".$filterobj->id;
-			} elseif (is_object($filterobj) && get_class($filterobj) == 'BOM')
-			{
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'BOM') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'bom'";
 				if ($filterobj->id) $sql .= " AND a.fk_element = ".$filterobj->id;
-			} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat')
-			{
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'contract'";
 				if ($filterobj->id) $sql .= " AND a.fk_element = ".$filterobj->id;
-			} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && is_array($filterobj->fields['ref']) && $filterobj->table_element && $filterobj->element)
-			{
+			} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && is_array($filterobj->fields['ref']) && $filterobj->table_element && $filterobj->element) {
 				// Generic case
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '".$db->escape($filterobj->element).($module ? '@'.$module : '')."'";
 				if ($filterobj->id) $sql .= " AND a.fk_element = ".$filterobj->id;
@@ -1445,18 +1368,15 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 	}
 
 	//TODO Add limit in nb of results
-	if ($sql)
-	{
+	if ($sql) {
 		$sql .= $db->order($sortfield_new, $sortorder);
 		dol_syslog("company.lib::show_actions_done", LOG_DEBUG);
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$i = 0;
 			$num = $db->num_rows($resql);
 
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 
 				if ($obj->type == 'action') {
@@ -1527,8 +1447,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		}
 	}
 
-	if (!empty($conf->agenda->enabled) || (!empty($conf->mailing->enabled) && !empty($objcon->email)))
-	{
+	if (!empty($conf->agenda->enabled) || (!empty($conf->mailing->enabled) && !empty($objcon->email))) {
 		$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -1540,13 +1459,14 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 
 		$actionstatic = new ActionComm($db);
 		$userstatic = new User($db);
+		$userlinkcache = array();
 		$contactstatic = new Contact($db);
+		$elementlinkcache = array();
 
 		$out .= '<form name="listactionsfilter" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 		if ($objcon && get_class($objcon) == 'Contact' &&
-			(is_null($filterobj) || get_class($filterobj) == 'Societe'))
-		{
+			(is_null($filterobj) || get_class($filterobj) == 'Societe')) {
 			$out .= '<input type="hidden" name="id" value="'.$objcon->id.'" />';
 		} else {
 			$out .= '<input type="hidden" name="id" value="'.$filterobj->id.'" />';
@@ -1559,8 +1479,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$out .= '<table class="noborder centpercent">';
 
 		$out .= '<tr class="liste_titre">';
-		if ($donetodo)
-		{
+		if ($donetodo) {
 			$out .= '<td class="liste_titre"></td>';
 		}
 		$out .= '<td class="liste_titre"></td>';
@@ -1581,8 +1500,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$out .= '</tr>';
 
 		$out .= '<tr class="liste_titre">';
-		if ($donetodo)
-		{
+		if ($donetodo) {
 			$tmp = '';
 			if (get_class($filterobj) == 'Societe') $tmp .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&socid='.$filterobj->id.'&status=done">';
 			$tmp .= ($donetodo != 'done' ? $langs->trans("ActionsToDoShort") : '');
@@ -1607,8 +1525,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$caction = new CActionComm($db);
 		$arraylist = $caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : 0), '', 1);
 
-		foreach ($histo as $key => $value)
-		{
+		foreach ($histo as $key => $value) {
 			$actionstatic->fetch($histo[$key]['id']); // TODO Do we need this, we already have a lot of data of line into $histo
 
 			$actionstatic->type_picto = $histo[$key]['apicto'];
@@ -1617,8 +1534,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$out .= '<tr class="oddeven">';
 
 			// Done or todo
-			if ($donetodo)
-			{
+			if ($donetodo) {
 				$out .= '<td class="nowrap">';
 				$out .= '</td>';
 			}
@@ -1639,10 +1555,15 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			//$userstatic->id=$histo[$key]['userid'];
 			//$userstatic->login=$histo[$key]['login'];
 			//$out.=$userstatic->getLoginUrl(1);
-			if ($histo[$key]['userid'] > 0)
-			{
-				$userstatic->fetch($histo[$key]['userid']); // TODO Introduce a cache on users fetched
-				$out .= $userstatic->getNomUrl(-1, '', 0, 0, 16, 0, 'firstelselast', '');
+			if ($histo[$key]['userid'] > 0) {
+				if (isset($userlinkcache[$histo[$key]['userid']])) {
+					$link = $userlinkcache[$histo[$key]['userid']];
+				} else {
+					$userstatic->fetch($histo[$key]['userid']);
+					$link = $userstatic->getNomUrl(-1, '', 0, 0, 16, 0, 'firstelselast', '');
+					$userlinkcache[$histo[$key]['userid']] = $link;
+				}
+				$out .= $link;
 			}
 			$out .= '</td>';
 
@@ -1650,8 +1571,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$out .= '<td>';
 			// TODO Code common with code into showactions
 			$imgpicto = '';
-			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
-			{
+			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
 				if ($actionstatic->type_picto) {
 					$imgpicto .= img_picto('', $actionstatic->type_picto);
 				}
@@ -1679,8 +1599,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 
 			// Title
 			$out .= '<td>';
-			if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'action')
-			{
+			if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'action') {
 				$transcode = $langs->trans("Action".$histo[$key]['acode']);
 				$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : $histo[$key]['alabel']);
 				//$actionstatic->libelle=$libelle;
@@ -1688,8 +1607,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 				$actionstatic->id = $histo[$key]['id'];
 				$out .= dol_trunc($libelle, 120);
 			}
-			if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'mailing')
-			{
+			if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'mailing') {
 				$out .= '<a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"), "email").' ';
 				$transcode = $langs->trans("Action".$histo[$key]['acode']);
 				$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : 'Send mass mailing');
@@ -1700,8 +1618,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			// Date
 			$out .= '<td class="center nowrap">';
 			$out .= dol_print_date($histo[$key]['datestart'], 'dayhour', 'tzuserrel');
-			if ($histo[$key]['dateend'] && $histo[$key]['dateend'] != $histo[$key]['datestart'])
-			{
+			if ($histo[$key]['dateend'] && $histo[$key]['dateend'] != $histo[$key]['datestart']) {
 				$tmpa = dol_getdate($histo[$key]['datestart'], true);
 				$tmpb = dol_getdate($histo[$key]['dateend'], true);
 				if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) $out .= '-'.dol_print_date($histo[$key]['dateend'], 'hour', 'tzuserrel');
@@ -1720,15 +1637,24 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 
 			// Linked object
 			$out .= '<td class="nowraponall">';
-			if (isset($histo[$key]['elementtype']) && !empty($histo[$key]['fk_element']))
-			{
-				$out .= dolGetElementUrl($histo[$key]['fk_element'], $histo[$key]['elementtype'], 1);
-			} else $out .= '&nbsp;';
+			if (isset($histo[$key]['elementtype']) && !empty($histo[$key]['fk_element'])) {
+				if (isset($elementlinkcache[$histo[$key]['elementtype']]) && isset($elementlinkcache[$histo[$key]['elementtype']][$histo[$key]['fk_element']])) {
+					$link = $elementlinkcache[$histo[$key]['elementtype']][$histo[$key]['fk_element']];
+				} else {
+					if (!isset($elementlinkcache[$histo[$key]['elementtype']])) {
+						$elementlinkcache[$histo[$key]['elementtype']] = array();
+					}
+					$link = dolGetElementUrl($histo[$key]['fk_element'], $histo[$key]['elementtype'], 1);
+					$elementlinkcache[$histo[$key]['elementtype']][$histo[$key]['fk_element']] = $link;
+				}
+				$out .= $link;
+			} else {
+				$out .= '&nbsp;';
+			}
 			$out .= '</td>';
 
 			// Contact(s) for action
-			if (empty($objcon->id) && isset($histo[$key]['contact_id']) && $histo[$key]['contact_id'] > 0)
-			{
+			if (empty($objcon->id) && isset($histo[$key]['contact_id']) && $histo[$key]['contact_id'] > 0) {
 				$contactstatic->lastname = $histo[$key]['lastname'];
 				$contactstatic->firstname = $histo[$key]['firstname'];
 				$contactstatic->id = $histo[$key]['contact_id'];
@@ -1799,8 +1725,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);
 
-	if ($num)
-	{
+	if ($num) {
 		$socstatic = new Societe($db);
 
 		print load_fiche_titre($langs->trans("Subsidiaries"), '', '');
@@ -1814,8 +1739,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
 
 		$i = 0;
 
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$obj = $db->fetch_object($result);
 
 			$socstatic->id = $obj->rowid;
@@ -1873,8 +1797,7 @@ function addEventTypeSQL(&$sql, $actioncode, $donetodo, $now, $filters, $sqlANDO
 	global $conf, $db;
 	// Condition on actioncode
 
-	if (empty($conf->global->AGENDA_USE_EVENT_TYPE))
-		{
+	if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
 		if ($actioncode == 'AC_NON_AUTO') $sql .= " $sqlANDOR c.type != 'systemauto'";
 		elseif ($actioncode == 'AC_ALL_AUTO') $sql .= " $sqlANDOR c.type = 'systemauto'";
 		else {
@@ -1896,12 +1819,12 @@ function addEventTypeSQL(&$sql, $actioncode, $donetodo, $now, $filters, $sqlANDO
 }
 
 /**
- * 		Add Mailing Event Type SQL
+ *  Add Mailing Event Type SQL
  *
- * 		@param	string	    $actioncode		Action code
- * 		@param	string		$objcon		    objcon
- * 		@param	Object		$filterobj      filterobj
- * 		@return	string
+ *  @param	string	    $actioncode		Action code
+ *  @param	Object		$objcon		    objcon
+ *  @param	Object		$filterobj      filterobj
+ *  @return	string
  */
 function addMailingEventTypeSQL($actioncode, $objcon, $filterobj)
 {

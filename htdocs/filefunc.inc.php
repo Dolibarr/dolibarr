@@ -75,34 +75,34 @@ $result = @include_once $conffile; // Keep @ because with some error reporting t
 
 if (!$result && !empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not done and we are in a web session
 {
-    if (!empty($_SERVER["CONTEXT_PREFIX"]))    // CONTEXT_PREFIX and CONTEXT_DOCUMENT_ROOT are not defined on all apache versions
-    {
-        $path = $_SERVER["CONTEXT_PREFIX"]; // example '/dolibarr/' when using an apache alias.
-        if (!preg_match('/\/$/', $path)) $path .= '/';
-    }
-    elseif (preg_match('/index\.php/', $_SERVER['PHP_SELF']))
-    {
-        // When we ask index.php, we MUST BE SURE that $path is '' at the end. This is required to make install process
-        // when using apache alias like '/dolibarr/' that point to htdocs.
-    	// Note: If calling page was an index.php not into htdocs (ie comm/index.php, ...), then this redirect will fails,
-    	// but we don't want to change this because when URL is correct, we must be sure the redirect to install/index.php will be correct.
-        $path = '';
-    } else {
-        // If what we look is not index.php, we can try to guess location of root. May not work all the time.
-    	// There is no real solution, because the only way to know the apache url relative path is to have it into conf file.
-    	// If it fails to find correct $path, then only solution is to ask user to enter the correct URL to index.php or install/index.php
-        $TDir = explode('/', $_SERVER['PHP_SELF']);
-    	$path = '';
-    	$i = count($TDir);
-    	while ($i--)
-    	{
-    		if (empty($TDir[$i]) || $TDir[$i] == 'htdocs') break;
-            if ($TDir[$i] == 'dolibarr') break;
-            if (substr($TDir[$i], -4, 4) == '.php') continue;
+	if (!empty($_SERVER["CONTEXT_PREFIX"]))    // CONTEXT_PREFIX and CONTEXT_DOCUMENT_ROOT are not defined on all apache versions
+	{
+		$path = $_SERVER["CONTEXT_PREFIX"]; // example '/dolibarr/' when using an apache alias.
+		if (!preg_match('/\/$/', $path)) $path .= '/';
+	}
+	elseif (preg_match('/index\.php/', $_SERVER['PHP_SELF']))
+	{
+		// When we ask index.php, we MUST BE SURE that $path is '' at the end. This is required to make install process
+		// when using apache alias like '/dolibarr/' that point to htdocs.
+		// Note: If calling page was an index.php not into htdocs (ie comm/index.php, ...), then this redirect will fails,
+		// but we don't want to change this because when URL is correct, we must be sure the redirect to install/index.php will be correct.
+		$path = '';
+	} else {
+		// If what we look is not index.php, we can try to guess location of root. May not work all the time.
+		// There is no real solution, because the only way to know the apache url relative path is to have it into conf file.
+		// If it fails to find correct $path, then only solution is to ask user to enter the correct URL to index.php or install/index.php
+		$TDir = explode('/', $_SERVER['PHP_SELF']);
+		$path = '';
+		$i = count($TDir);
+		while ($i--)
+		{
+			if (empty($TDir[$i]) || $TDir[$i] == 'htdocs') break;
+			if ($TDir[$i] == 'dolibarr') break;
+			if (substr($TDir[$i], -4, 4) == '.php') continue;
 
-    		$path .= '../';
-    	}
-    }
+			$path .= '../';
+		}
+	}
 
 	header("Location: ".$path."install/index.php");
 	exit;
@@ -149,24 +149,24 @@ if (empty($dolibarr_strict_mode)) $dolibarr_strict_mode = 0; // For debug in php
 if (!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck))
 {
 	if (!empty($_SERVER['REQUEST_METHOD']) && !in_array($_SERVER['REQUEST_METHOD'], array('GET', 'HEAD')) && !empty($_SERVER['HTTP_HOST']))
-    {
-    	$csrfattack = false;
-    	if (empty($_SERVER['HTTP_REFERER'])) $csrfattack = true; // An evil browser was used
-    	else {
-    		$tmpa = parse_url($_SERVER['HTTP_HOST']);
-    		$tmpb = parse_url($_SERVER['HTTP_REFERER']);
-    		if ((empty($tmpa['host']) ? $tmpa['path'] : $tmpa['host']) != (empty($tmpb['host']) ? $tmpb['path'] : $tmpb['host'])) $csrfattack = true;
-    	}
-    	if ($csrfattack)
-    	{
-    		//print 'NOCSRFCHECK='.defined('NOCSRFCHECK').' REQUEST_METHOD='.$_SERVER['REQUEST_METHOD'].' HTTP_HOST='.$_SERVER['HTTP_HOST'].' HTTP_REFERER='.$_SERVER['HTTP_REFERER'];
-    		// Note: We can't use dol_escape_htmltag here to escape output because lib functions.lib.ph is not yet loaded.
-    		print "Access refused by CSRF protection in main.inc.php. Referer of form (".htmlentities($_SERVER['HTTP_REFERER'], ENT_COMPAT, 'UTF-8').") is outside the server that serve this page (with method = ".htmlentities($_SERVER['REQUEST_METHOD'], ENT_COMPAT, 'UTF-8').").\n";
-        	print "If you access your server behind a proxy using url rewriting, you might check that all HTTP headers are propagated (or add the line \$dolibarr_nocsrfcheck=1 into your conf.php file to remove this security check).\n";
-    		die;
-    	}
-    }
-    // Another test is done later on token if option MAIN_SECURITY_CSRF_WITH_TOKEN is on.
+	{
+		$csrfattack = false;
+		if (empty($_SERVER['HTTP_REFERER'])) $csrfattack = true; // An evil browser was used
+		else {
+			$tmpa = parse_url($_SERVER['HTTP_HOST']);
+			$tmpb = parse_url($_SERVER['HTTP_REFERER']);
+			if ((empty($tmpa['host']) ? $tmpa['path'] : $tmpa['host']) != (empty($tmpb['host']) ? $tmpb['path'] : $tmpb['host'])) $csrfattack = true;
+		}
+		if ($csrfattack)
+		{
+			//print 'NOCSRFCHECK='.defined('NOCSRFCHECK').' REQUEST_METHOD='.$_SERVER['REQUEST_METHOD'].' HTTP_HOST='.$_SERVER['HTTP_HOST'].' HTTP_REFERER='.$_SERVER['HTTP_REFERER'];
+			// Note: We can't use dol_escape_htmltag here to escape output because lib functions.lib.ph is not yet loaded.
+			print "Access refused by CSRF protection in main.inc.php. Referer of form (".htmlentities($_SERVER['HTTP_REFERER'], ENT_COMPAT, 'UTF-8').") is outside the server that serve this page (with method = ".htmlentities($_SERVER['REQUEST_METHOD'], ENT_COMPAT, 'UTF-8').").\n";
+			print "If you access your server behind a proxy using url rewriting, you might check that all HTTP headers are propagated (or add the line \$dolibarr_nocsrfcheck=1 into your conf.php file to remove this security check).\n";
+			die;
+		}
+	}
+	// Another test is done later on token if option MAIN_SECURITY_CSRF_WITH_TOKEN is on.
 }
 if (empty($dolibarr_main_db_host))
 {
@@ -197,27 +197,27 @@ $tmp = '';
 $found = 0;
 $real_dolibarr_main_document_root = str_replace('\\', '/', realpath($dolibarr_main_document_root)); // A) Value found into config file, to say where are store htdocs files. Ex: C:/xxx/dolibarr, C:/xxx/dolibarr/htdocs
 if (!empty($_SERVER["DOCUMENT_ROOT"])) {
-    $pathroot = $_SERVER["DOCUMENT_ROOT"]; // B) Value reported by web server setup (not defined on CLI mode), to say where is root of web server instance. Ex: C:/xxx/dolibarr, C:/xxx/dolibarr/htdocs
+	$pathroot = $_SERVER["DOCUMENT_ROOT"]; // B) Value reported by web server setup (not defined on CLI mode), to say where is root of web server instance. Ex: C:/xxx/dolibarr, C:/xxx/dolibarr/htdocs
 } else {
-    $pathroot = 'NOTDEFINED';
+	$pathroot = 'NOTDEFINED';
 }
 $paths = explode('/', str_replace('\\', '/', $_SERVER["SCRIPT_NAME"])); // C) Value reported by web server, to say full path on filesystem of a file. Ex: /dolibarr/htdocs/admin/system/phpinfo.php
 // Try to detect if $_SERVER["DOCUMENT_ROOT"]+start of $_SERVER["SCRIPT_NAME"] is $dolibarr_main_document_root. If yes, relative url to add before dol files is this start part.
 $concatpath = '';
 foreach ($paths as $tmppath)	// We check to find (B+start of C)=A
 {
-    if (empty($tmppath)) continue;
-    $concatpath .= '/'.$tmppath;
-    //if ($tmppath) $concatpath.='/'.$tmppath;
-    //print $_SERVER["SCRIPT_NAME"].'-'.$pathroot.'-'.$concatpath.'-'.$real_dolibarr_main_document_root.'-'.realpath($pathroot.$concatpath).'<br>';
-    if ($real_dolibarr_main_document_root == @realpath($pathroot.$concatpath))    // @ avoid warning when safe_mode is on.
-    {
-        //print "Found relative url = ".$concatpath;
-    	$tmp3 = $concatpath;
-        $found = 1;
-        break;
-    }
-    //else print "Not found yet for concatpath=".$concatpath."<br>\n";
+	if (empty($tmppath)) continue;
+	$concatpath .= '/'.$tmppath;
+	//if ($tmppath) $concatpath.='/'.$tmppath;
+	//print $_SERVER["SCRIPT_NAME"].'-'.$pathroot.'-'.$concatpath.'-'.$real_dolibarr_main_document_root.'-'.realpath($pathroot.$concatpath).'<br>';
+	if ($real_dolibarr_main_document_root == @realpath($pathroot.$concatpath))    // @ avoid warning when safe_mode is on.
+	{
+		//print "Found relative url = ".$concatpath;
+		$tmp3 = $concatpath;
+		$found = 1;
+		break;
+	}
+	//else print "Not found yet for concatpath=".$concatpath."<br>\n";
 }
 //print "found=".$found." dolibarr_main_url_root=".$dolibarr_main_url_root."\n";
 if (!$found) $tmp = $dolibarr_main_url_root; // If autodetect fails (Ie: when using apache alias that point outside default DOCUMENT_ROOT).

@@ -54,9 +54,9 @@ $colorlist = array('BECEDD', 'DDBECE', 'BFDDBE', 'F598B4', 'F68654', 'CBF654', '
 
 if ($actionsave)
 {
-    $db->begin();
+	$db->begin();
 
-    $disableext = GETPOST('AGENDA_DISABLE_EXT', 'alpha');
+	$disableext = GETPOST('AGENDA_DISABLE_EXT', 'alpha');
 	$res = dolibarr_set_const($db, 'AGENDA_DISABLE_EXT', $disableext, 'chaine', 0, '', $conf->entity);
 
 	$i = 1; $errorsaved = 0;
@@ -103,14 +103,14 @@ if ($actionsave)
 		$MAXAGENDA = empty($conf->global->AGENDA_EXT_NB) ? 5 : $conf->global->AGENDA_EXT_NB;
 	}
 
-    if (!$error)
-    {
-        $db->commit();
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-        $db->rollback();
-        if (empty($errorsaved))	setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	if (!$error)
+	{
+		$db->commit();
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		$db->rollback();
+		if (empty($errorsaved))	setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 /*
@@ -224,7 +224,7 @@ while ($i <= $MAXAGENDA)
 
 print '</table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center">';
 print '<input type="submit" id="save" name="save" class="button hideifnotset" value="'.$langs->trans("Save").'">';

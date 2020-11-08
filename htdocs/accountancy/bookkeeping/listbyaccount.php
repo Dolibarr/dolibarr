@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("accountancy"));
+$langs->loadLangs(array("accountancy", "compta"));
 
 $action = GETPOST('action', 'aZ09');
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
@@ -138,7 +138,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-	include DOL_DOCUMENT_ROOT . '/core/actions_changeselectedfields.inc.php';
+	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 	{
@@ -172,55 +172,55 @@ if (empty($reshook))
 
 	if (!empty($search_date_start)) {
 		$filter['t.doc_date>='] = $search_date_start;
-		$param .= '&search_date_startmonth=' . GETPOST('search_date_startmonth', 'int') . '&search_date_startday=' . GETPOST('search_date_startday', 'int') . '&search_date_startyear=' . GETPOST('search_date_startyear', 'int');
+		$param .= '&search_date_startmonth='.GETPOST('search_date_startmonth', 'int').'&search_date_startday='.GETPOST('search_date_startday', 'int').'&search_date_startyear='.GETPOST('search_date_startyear', 'int');
 	}
 	if (!empty($search_date_end)) {
 		$filter['t.doc_date<='] = $search_date_end;
-		$param .= '&search_date_endmonth=' . GETPOST('search_date_endmonth', 'int') . '&search_date_endday=' . GETPOST('search_date_endday', 'int') . '&search_date_endyear=' . GETPOST('search_date_endyear', 'int');
+		$param .= '&search_date_endmonth='.GETPOST('search_date_endmonth', 'int').'&search_date_endday='.GETPOST('search_date_endday', 'int').'&search_date_endyear='.GETPOST('search_date_endyear', 'int');
 	}
 	if (!empty($search_doc_date)) {
 		$filter['t.doc_date'] = $search_doc_date;
-		$param .= '&doc_datemonth=' . GETPOST('doc_datemonth', 'int') . '&doc_dateday=' . GETPOST('doc_dateday', 'int') . '&doc_dateyear=' . GETPOST('doc_dateyear', 'int');
+		$param .= '&doc_datemonth='.GETPOST('doc_datemonth', 'int').'&doc_dateday='.GETPOST('doc_dateday', 'int').'&doc_dateyear='.GETPOST('doc_dateyear', 'int');
 	}
 	if (!empty($search_accountancy_code_start)) {
 		$filter['t.numero_compte>='] = $search_accountancy_code_start;
-		$param .= '&search_accountancy_code_start=' . urlencode($search_accountancy_code_start);
+		$param .= '&search_accountancy_code_start='.urlencode($search_accountancy_code_start);
 	}
 	if (!empty($search_accountancy_code_end)) {
 		$filter['t.numero_compte<='] = $search_accountancy_code_end;
-		$param .= '&search_accountancy_code_end=' . urlencode($search_accountancy_code_end);
+		$param .= '&search_accountancy_code_end='.urlencode($search_accountancy_code_end);
 	}
 	if (!empty($search_label_account)) {
 		$filter['t.label_compte'] = $search_label_account;
-		$param .= '&search_label_compte=' . urlencode($search_label_account);
+		$param .= '&search_label_compte='.urlencode($search_label_account);
 	}
 	if (!empty($search_mvt_num)) {
 		$filter['t.piece_num'] = $search_mvt_num;
-		$param .= '&search_mvt_num=' . urlencode($search_mvt_num);
+		$param .= '&search_mvt_num='.urlencode($search_mvt_num);
 	}
 	if (!empty($search_doc_ref)) {
 		$filter['t.doc_ref'] = $search_doc_ref;
-		$param .= '&search_doc_ref=' . urlencode($search_doc_ref);
+		$param .= '&search_doc_ref='.urlencode($search_doc_ref);
 	}
 	if (!empty($search_label_operation)) {
 		$filter['t.label_operation'] = $search_label_operation;
-		$param .= '&search_label_operation=' . urlencode($search_label_operation);
+		$param .= '&search_label_operation='.urlencode($search_label_operation);
 	}
 	if (!empty($search_direction)) {
 		$filter['t.sens'] = $search_direction;
-		$param .= '&search_direction=' . urlencode($search_direction);
+		$param .= '&search_direction='.urlencode($search_direction);
 	}
 	if (!empty($search_ledger_code)) {
 		$filter['t.code_journal'] = $search_ledger_code;
-		$param .= '&search_ledger_code=' . urlencode($search_ledger_code);
+		$param .= '&search_ledger_code='.urlencode($search_ledger_code);
 	}
 	if (!empty($search_debit)) {
 		$filter['t.debit'] = $search_debit;
-		$param .= '&search_debit=' . urlencode($search_debit);
+		$param .= '&search_debit='.urlencode($search_debit);
 	}
 	if (!empty($search_credit)) {
 		$filter['t.credit'] = $search_credit;
-		$param .= '&search_credit=' . urlencode($search_credit);
+		$param .= '&search_credit='.urlencode($search_credit);
 	}
 	if (!empty($search_lettering_code)) {
 		$filter['t.lettering_code'] = $search_lettering_code;
@@ -376,18 +376,17 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param);
 $newcardbutton .= dolGetButtonTitle($langs->trans('VueByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param, '', 1, array('morecss'=>'marginleftonly btnTitleSelected'));
 
 $newcardbutton .= ' &nbsp; ';
 
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', './card.php?action=create');
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=create');
 
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 
-print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $result, $nbtotalofrecords, 'title_accountancy', 0, $viewflat.$newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $result, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
@@ -427,7 +426,7 @@ print '<tr class="liste_titre_filter">';
 
 // Code journal
 if (!empty($arrayfields['t.code_journal']['checked'])) {
-	print '<td class="liste_titre center"><input type="text" name="search_ledger_code" size="3" value="' . dol_escape_htmltag($search_ledger_code) . '"></td>';
+	print '<td class="liste_titre center"><input type="text" name="search_ledger_code" size="3" value="'.dol_escape_htmltag($search_ledger_code).'"></td>';
 }
 // Date document
 if (!empty($arrayfields['t.doc_date']['checked'])) {
@@ -447,19 +446,19 @@ if (!empty($arrayfields['t.piece_num']['checked']))
 }
 // Ref document
 if (!empty($arrayfields['t.doc_ref']['checked'])) {
-	print '<td class="liste_titre"><input type="text" size="7" class="flat" name="search_doc_ref" value="' . dol_escape_htmltag($search_doc_ref) . '"/></td>';
+	print '<td class="liste_titre"><input type="text" size="7" class="flat" name="search_doc_ref" value="'.dol_escape_htmltag($search_doc_ref).'"/></td>';
 }
 // Label operation
 if (!empty($arrayfields['t.label_operation']['checked'])) {
-	print '<td class="liste_titre"><input type="text" size="7" class="flat" name="search_label_operation" value="' . dol_escape_htmltag($search_label_operation) . '"/></td>';
+	print '<td class="liste_titre"><input type="text" size="7" class="flat" name="search_label_operation" value="'.dol_escape_htmltag($search_label_operation).'"/></td>';
 }
 // Debit
 if (!empty($arrayfields['t.debit']['checked'])) {
-	print '<td class="liste_titre right"><input type="text" class="flat" name="search_debit" size="4" value="' . dol_escape_htmltag($search_debit) . '"></td>';
+	print '<td class="liste_titre right"><input type="text" class="flat" name="search_debit" size="4" value="'.dol_escape_htmltag($search_debit).'"></td>';
 }
 // Credit
 if (!empty($arrayfields['t.credit']['checked'])) {
-	print '<td class="liste_titre right"><input type="text" class="flat" name="search_credit" size="4" value="' . dol_escape_htmltag($search_credit) . '"></td>';
+	print '<td class="liste_titre right"><input type="text" class="flat" name="search_credit" size="4" value="'.dol_escape_htmltag($search_credit).'"></td>';
 }
 // Lettering code
 if (!empty($arrayfields['t.lettering_code']['checked']))
@@ -535,7 +534,7 @@ while ($i < min($num, $limit))
 			$balance = $sous_total_debit - $sous_total_credit;
 			print '<tr class="liste_total">';
 			print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("Balance").':</td>';
-			if ($balance > 0 )
+			if ($balance > 0)
 			{
 				print '<td class="nowraponall right">';
 				print price($sous_total_debit - $sous_total_credit);
@@ -666,7 +665,7 @@ while ($i < min($num, $limit))
 	if (!empty($arrayfields['t.label_operation']['checked'])) {
 		// Affiche un lien vers la facture client/fournisseur
 		$doc_ref = preg_replace('/\(.*\)/', '', $line->doc_ref);
-		print strlen(length_accounta($line->subledger_account)) == 0 ? '<td>' . $line->label_operation . '</td>' : '<td>' . $line->label_operation . '<br><span style="font-size:0.8em">(' . length_accounta($line->subledger_account) . ')</span></td>';
+		print strlen(length_accounta($line->subledger_account)) == 0 ? '<td>'.$line->label_operation.'</td>' : '<td>'.$line->label_operation.'<br><span style="font-size:0.8em">('.length_accounta($line->subledger_account).')</span></td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 
@@ -681,7 +680,7 @@ while ($i < min($num, $limit))
 
 	// Amount credit
 	if (!empty($arrayfields['t.credit']['checked'])) {
-		print '<td class="nowrap right">' . ($line->credit ? price($line->credit) : '') . '</td>';
+		print '<td class="nowrap right">'.($line->credit ? price($line->credit) : '').'</td>';
 		if (!$i) $totalarray['nbfield']++;
 		if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'totalcredit';
 		$totalarray['val']['totalcredit'] += $line->credit;
@@ -734,7 +733,7 @@ print '</tr>';
 $balance = $sous_total_debit - $sous_total_credit;
 print '<tr class="liste_total">';
 print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("Balance").':</td>';
-if ($balance > 0 )
+if ($balance > 0)
 {
 	print '<td class="nowraponall right">';
 	print price($sous_total_debit - $sous_total_credit);

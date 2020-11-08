@@ -122,15 +122,15 @@ if ($object->id > 0)
 		// Thirdparty
 		if ($projectstatic->thirdparty->id > 0)
 		{
-		    $morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$projectstatic->thirdparty->getNomUrl(1, 'project');
+			$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$projectstatic->thirdparty->getNomUrl(1, 'project');
 		}
 		$morehtmlref .= '</div>';
 
 		// Define a complementary filter for search of next/prev ref.
 		if (!$user->rights->projet->all->lire)
 		{
-		    $objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
-		    $projectstatic->next_prev_filter = " rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+			$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
+			$projectstatic->next_prev_filter = " rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 		}
 
 		dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -210,9 +210,9 @@ if ($object->id > 0)
 
 		// Categories
 		if ($conf->categorie->enabled) {
-		    print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
-		    print $form->showCategories($projectstatic->id, 'project', 1);
-		    print "</td></tr>";
+			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
+			print $form->showCategories($projectstatic->id, 'project', 1);
+			print "</td></tr>";
 		}
 
 		print '</table>';
@@ -223,7 +223,7 @@ if ($object->id > 0)
 
 		print '<div class="clearboth"></div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<br>';
 	}
@@ -237,8 +237,8 @@ if ($object->id > 0)
 
 	if (!GETPOST('withproject') || empty($projectstatic->id))
 	{
-	    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
-	    $object->next_prev_filter = " fk_projet in (".$projectsListId.")";
+		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
+		$object->next_prev_filter = " fk_projet in (".$projectsListId.")";
 	} else $object->next_prev_filter = " fk_projet = ".$projectstatic->id;
 
 	$morehtmlref = '';
@@ -246,30 +246,30 @@ if ($object->id > 0)
 	// Project
 	if (empty($withproject))
 	{
-	    $morehtmlref .= '<div class="refidno">';
-	    $morehtmlref .= $langs->trans("Project").': ';
-	    $morehtmlref .= $projectstatic->getNomUrl(1);
-	    $morehtmlref .= '<br>';
+		$morehtmlref .= '<div class="refidno">';
+		$morehtmlref .= $langs->trans("Project").': ';
+		$morehtmlref .= $projectstatic->getNomUrl(1);
+		$morehtmlref .= '<br>';
 
-	    // Third party
-	    $morehtmlref .= $langs->trans("ThirdParty").': ';
-	    $morehtmlref .= $projectstatic->thirdparty->getNomUrl(1);
-	    $morehtmlref .= '</div>';
+		// Third party
+		$morehtmlref .= $langs->trans("ThirdParty").': ';
+		$morehtmlref .= $projectstatic->thirdparty->getNomUrl(1);
+		$morehtmlref .= '</div>';
 	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
 
 	print '<div class="fichecenter">';
 
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="underbanner clearboth"></div>';
 
 	$cssclass = 'titlefield';
-    $moreparam = $param;
+	$moreparam = $param;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

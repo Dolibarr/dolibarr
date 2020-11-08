@@ -96,14 +96,14 @@ $formactions = new FormActions($db);
 
 // Load object
 if ($id > 0 && $action != 'add') {
-    $ret = $object->fetch($id);
-    if ($ret > 0) {
-        $ret = $object->fetch_optionals();
-        $ret1 = $object->fetch_userassigned();
-    }
-    if ($ret < 0 || $ret1 < 0) {
-        dol_print_error('', $object->error);
-    }
+	$ret = $object->fetch($id);
+	if ($ret > 0) {
+		$ret = $object->fetch_optionals();
+		$ret1 = $object->fetch_userassigned();
+	}
+	if ($ret < 0 || $ret1 < 0) {
+		dol_print_error('', $object->error);
+	}
 }
 
 // fetch optionals attributes and labels
@@ -172,10 +172,10 @@ if (empty($reshook) && (GETPOST('addassignedtouser') || GETPOST('updateassignedt
 
 // Link to a project
 if (empty($reshook) && $action == 'classin' && ($user->rights->agenda->allactions->create ||
-    (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create)))
+	(($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create)))
 {
-    //$object->fetch($id);
-    $object->setProject(GETPOST('projectid', 'int'));
+	//$object->fetch($id);
+	$object->setProject(GETPOST('projectid', 'int'));
 }
 
 // Action clone object
@@ -187,10 +187,10 @@ if (empty($reshook) && $action == 'confirm_clone' && $confirm == 'yes')
 	} else {
 		if ($id > 0) {
 			//$object->fetch($id);
-            if (!empty($object->socpeopleassigned)) {
-                reset($object->socpeopleassigned);
-                $object->contact_id = key($object->socpeopleassigned);
-            }
+			if (!empty($object->socpeopleassigned)) {
+				reset($object->socpeopleassigned);
+				$object->contact_id = key($object->socpeopleassigned);
+			}
 			$result = $object->createFromClone($user, GETPOST('socid', 'int'));
 			if ($result > 0) {
 				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -208,13 +208,13 @@ if (empty($reshook) && $action == 'add')
 {
 	$error = 0;
 
-    if (empty($backtopage))
-    {
-        if ($socid > 0) $backtopage = DOL_URL_ROOT.'/societe/agenda.php?socid='.$socid;
-        else $backtopage = DOL_URL_ROOT.'/comm/action/index.php';
-    }
+	if (empty($backtopage))
+	{
+		if ($socid > 0) $backtopage = DOL_URL_ROOT.'/societe/agenda.php?socid='.$socid;
+		else $backtopage = DOL_URL_ROOT.'/comm/action/index.php';
+	}
 
-    if (!empty($socpeopleassigned[0]))
+	if (!empty($socpeopleassigned[0]))
 	{
 		$result = $contact->fetch($socpeopleassigned[0]);
 	}
@@ -225,9 +225,9 @@ if (empty($reshook) && $action == 'add')
 		exit;
 	}
 
-    $percentage = in_array(GETPOST('status'), array(-1, 100)) ?GETPOST('status') : (in_array(GETPOST('complete'), array(-1, 100)) ?GETPOST('complete') : GETPOST("percentage")); // If status is -1 or 100, percentage is not defined and we must use status
+	$percentage = in_array(GETPOST('status'), array(-1, 100)) ?GETPOST('status') : (in_array(GETPOST('complete'), array(-1, 100)) ?GETPOST('complete') : GETPOST("percentage")); // If status is -1 or 100, percentage is not defined and we must use status
 
-    // Clean parameters
+	// Clean parameters
 	$datep = dol_mktime($fulldayevent ? '00' : GETPOST("aphour", 'int'), $fulldayevent ? '00' : GETPOST("apmin", 'int'), $fulldayevent ? '00' : GETPOST("apsec", 'int'), GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'));
 	$datef = dol_mktime($fulldayevent ? '23' : GETPOST("p2hour", 'int'), $fulldayevent ? '59' : GETPOST("p2min", 'int'), $fulldayevent ? '59' : GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'));
 
@@ -284,13 +284,13 @@ if (empty($reshook) && $action == 'add')
 
 		$taskid = GETPOST('taskid', 'int');
 		if (!empty($taskid)) {
-		    $taskProject = new Task($db);
-		    if ($taskProject->fetch($taskid) > 0) {
-		        $object->fk_project = $taskProject->fk_project;
-		    }
+			$taskProject = new Task($db);
+			if ($taskProject->fetch($taskid) > 0) {
+				$object->fk_project = $taskProject->fk_project;
+			}
 
-		    $object->fk_element = $taskid;
-		    $object->elementtype = 'task';
+			$object->fk_element = $taskid;
+			$object->elementtype = 'task';
 		}
 
 		$object->datep = $datep;
@@ -390,26 +390,26 @@ if (empty($reshook) && $action == 'add')
 				if ($user->id != $object->userownerid) $moreparam = "filtert=-1"; // We force to remove filter so created record is visible when going back to per user view.
 
 				// Create reminders
-                if ($addreminder == 'on'){
-                    $actionCommReminder = new ActionCommReminder($db);
+				if ($addreminder == 'on') {
+					$actionCommReminder = new ActionCommReminder($db);
 
-                    $dateremind = dol_time_plus_duree($datep, -$offsetvalue, $offsetunit);
+					$dateremind = dol_time_plus_duree($datep, -$offsetvalue, $offsetunit);
 
-                    $actionCommReminder->dateremind = $dateremind;
-                    $actionCommReminder->typeremind = $remindertype;
-                    $actionCommReminder->offsetunit = $offsetunit;
-                    $actionCommReminder->offsetvalue = $offsetvalue;
-                    $actionCommReminder->status = $actionCommReminder::STATUS_TODO;
-                    $actionCommReminder->fk_actioncomm = $object->id;
-                    if ($remindertype == 'email') $actionCommReminder->fk_email_template = $modelmail;
+					$actionCommReminder->dateremind = $dateremind;
+					$actionCommReminder->typeremind = $remindertype;
+					$actionCommReminder->offsetunit = $offsetunit;
+					$actionCommReminder->offsetvalue = $offsetvalue;
+					$actionCommReminder->status = $actionCommReminder::STATUS_TODO;
+					$actionCommReminder->fk_actioncomm = $object->id;
+					if ($remindertype == 'email') $actionCommReminder->fk_email_template = $modelmail;
 
-                    // the notification must be created for every user assigned to the event
+					// the notification must be created for every user assigned to the event
 					foreach ($object->userassigned as $userassigned)
 					{
 						$actionCommReminder->fk_user = $userassigned['id'];
 						$res = $actionCommReminder->create($user);
 
-						if ($res <= 0){
+						if ($res <= 0) {
 							// If error
 							$db->rollback();
 							$langs->load("errors");
@@ -419,13 +419,13 @@ if (empty($reshook) && $action == 'add')
 							break;
 						}
 					}
-                }
+				}
 
-                if ($error) {
-                	$db->rollback();
-                } else {
+				if ($error) {
+					$db->rollback();
+				} else {
 					$db->commit();
-                }
+				}
 
 				if (!empty($backtopage))
 				{
@@ -461,14 +461,14 @@ if (empty($reshook) && $action == 'update')
 {
 	if (empty($cancel))
 	{
-        $fulldayevent = GETPOST('fullday');
-        $aphour = GETPOST('aphour');
-        $apmin = GETPOST('apmin');
-        $p2hour = GETPOST('p2hour');
-        $p2min = GETPOST('p2min');
+		$fulldayevent = GETPOST('fullday');
+		$aphour = GETPOST('aphour');
+		$apmin = GETPOST('apmin');
+		$p2hour = GETPOST('p2hour');
+		$p2min = GETPOST('p2min');
 		$percentage = in_array(GETPOST('status'), array(-1, 100)) ?GETPOST('status') : (in_array(GETPOST('complete'), array(-1, 100)) ?GETPOST('complete') : GETPOST("percentage")); // If status is -1 or 100, percentage is not defined and we must use status
 
-	    // Clean parameters
+		// Clean parameters
 		if ($aphour == -1) $aphour = '0';
 		if ($apmin == -1) $apmin = '0';
 		if ($p2hour == -1) $p2hour = '0';
@@ -488,17 +488,17 @@ if (empty($reshook) && $action == 'update')
 		$object->datef       = $datef;
 		$object->percentage  = $percentage;
 		$object->priority    = GETPOST("priority", "int");
-        $object->fulldayevent = GETPOST("fullday") ? 1 : 0;
-        $object->location    = GETPOST('location', "alphanohtml");
+		$object->fulldayevent = GETPOST("fullday") ? 1 : 0;
+		$object->location    = GETPOST('location', "alphanohtml");
 		$object->socid       = GETPOST("socid", "int");
 		$socpeopleassigned   = GETPOST("socpeopleassigned", 'array');
 		$object->socpeopleassigned = array();
 		foreach ($socpeopleassigned as $cid) $object->socpeopleassigned[$cid] = array('id' => $cid);
-		$object->contact_id   = GETPOST("contactid", 'int');
-        if (empty($object->contact_id) && !empty($object->socpeopleassigned)) {
-            reset($object->socpeopleassigned);
-            $object->contact_id = key($object->socpeopleassigned);
-        }
+		$object->contact_id = GETPOST("contactid", 'int');
+		if (empty($object->contact_id) && !empty($object->socpeopleassigned)) {
+			reset($object->socpeopleassigned);
+			$object->contact_id = key($object->socpeopleassigned);
+		}
 		$object->fk_project  = GETPOST("projectid", 'int');
 		$object->note_private = trim(GETPOST("note", "restricthtml"));
 		$object->fk_element	 = GETPOST("fk_element", "int");
@@ -564,64 +564,64 @@ if (empty($reshook) && $action == 'update')
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) $error++;
 
-        if (!$error) {
-            // check if an event resource is already in use
-            if (!empty($conf->global->RESOURCE_USED_IN_EVENT_CHECK) && $object->element == 'action') {
-                $eventDateStart = $object->datep;
-                $eventDateEnd = $object->datef;
+		if (!$error) {
+			// check if an event resource is already in use
+			if (!empty($conf->global->RESOURCE_USED_IN_EVENT_CHECK) && $object->element == 'action') {
+				$eventDateStart = $object->datep;
+				$eventDateEnd = $object->datef;
 
-                $sql  = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
-                $sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
-                $sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = 'dolresource'";
-                $sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$db->escape($object->element)."'";
-                $sql .= " WHERE ac.id != ".$object->id;
-                $sql .= " AND er.resource_id IN (";
-                $sql .= " SELECT resource_id FROM ".MAIN_DB_PREFIX."element_resources";
-                $sql .= " WHERE element_id = ".$object->id;
-                $sql .= " AND element_type = '".$db->escape($object->element)."'";
-                $sql .= " AND busy = 1";
-                $sql .= ")";
-                $sql .= " AND er.busy = 1";
-                $sql .= " AND (";
+				$sql  = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
+				$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = 'dolresource'";
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$db->escape($object->element)."'";
+				$sql .= " WHERE ac.id != ".$object->id;
+				$sql .= " AND er.resource_id IN (";
+				$sql .= " SELECT resource_id FROM ".MAIN_DB_PREFIX."element_resources";
+				$sql .= " WHERE element_id = ".$object->id;
+				$sql .= " AND element_type = '".$db->escape($object->element)."'";
+				$sql .= " AND busy = 1";
+				$sql .= ")";
+				$sql .= " AND er.busy = 1";
+				$sql .= " AND (";
 
-                // event date start between ac.datep and ac.datep2 (if datep2 is null we consider there is no end)
-                $sql .= " (ac.datep <= '".$db->idate($eventDateStart)."' AND (ac.datep2 IS NULL OR ac.datep2 >= '".$db->idate($eventDateStart)."'))";
-                // event date end between ac.datep and ac.datep2
-                if (!empty($eventDateEnd)) {
-                    $sql .= " OR (ac.datep <= '".$db->idate($eventDateEnd)."' AND (ac.datep2 >= '".$db->idate($eventDateEnd)."'))";
-                }
-                // event date start before ac.datep and event date end after ac.datep2
-                $sql .= " OR (";
-                $sql .= "ac.datep >= '".$db->idate($eventDateStart)."'";
-                if (!empty($eventDateEnd)) {
-                    $sql .= " AND (ac.datep2 IS NOT NULL AND ac.datep2 <= '".$db->idate($eventDateEnd)."')";
-                }
-                $sql .= ")";
+				// event date start between ac.datep and ac.datep2 (if datep2 is null we consider there is no end)
+				$sql .= " (ac.datep <= '".$db->idate($eventDateStart)."' AND (ac.datep2 IS NULL OR ac.datep2 >= '".$db->idate($eventDateStart)."'))";
+				// event date end between ac.datep and ac.datep2
+				if (!empty($eventDateEnd)) {
+					$sql .= " OR (ac.datep <= '".$db->idate($eventDateEnd)."' AND (ac.datep2 >= '".$db->idate($eventDateEnd)."'))";
+				}
+				// event date start before ac.datep and event date end after ac.datep2
+				$sql .= " OR (";
+				$sql .= "ac.datep >= '".$db->idate($eventDateStart)."'";
+				if (!empty($eventDateEnd)) {
+					$sql .= " AND (ac.datep2 IS NOT NULL AND ac.datep2 <= '".$db->idate($eventDateEnd)."')";
+				}
+				$sql .= ")";
 
-                $sql .= ")";
-                $resql = $db->query($sql);
-                if (!$resql) {
-                    $error++;
-                    $object->error = $db->lasterror();
-                    $object->errors[] = $object->error;
-                } else {
-                    if ($db->num_rows($resql) > 0) {
-                        // already in use
-                        $error++;
-                        $object->error = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
-                        while ($obj = $db->fetch_object($resql)) {
-                            $object->error .= '<br> - '.$langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label.' ['.$obj->ac_id.']');
-                        }
-                        $object->errors[] = $object->error;
-                    }
-                    $db->free($resql);
-                }
+				$sql .= ")";
+				$resql = $db->query($sql);
+				if (!$resql) {
+					$error++;
+					$object->error = $db->lasterror();
+					$object->errors[] = $object->error;
+				} else {
+					if ($db->num_rows($resql) > 0) {
+						// already in use
+						$error++;
+						$object->error = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
+						while ($obj = $db->fetch_object($resql)) {
+							$object->error .= '<br> - '.$langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label.' ['.$obj->ac_id.']');
+						}
+						$object->errors[] = $object->error;
+					}
+					$db->free($resql);
+				}
 
-                if ($error) {
-                    setEventMessages($object->error, $object->errors, 'errors');
-                }
-            }
-        }
+				if ($error) {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			}
+		}
 
 		if (!$error)
 		{
@@ -646,7 +646,7 @@ if (empty($reshook) && $action == 'update')
 				}
 
 				//Create reminders
-				if ($addreminder == 'on' && $object->datep > dol_now()){
+				if ($addreminder == 'on' && $object->datep > dol_now()) {
 					$actionCommReminder = new ActionCommReminder($db);
 
 					$dateremind = dol_time_plus_duree($datep, -$offsetvalue, $offsetunit);
@@ -665,7 +665,7 @@ if (empty($reshook) && $action == 'update')
 						$actionCommReminder->fk_user = $userassigned['id'];
 						$res = $actionCommReminder->create($user);
 
-						if ($res <= 0){
+						if ($res <= 0) {
 							// If error
 							$langs->load("errors");
 							$error = $langs->trans('ErrorReminderActionCommCreation');
@@ -689,12 +689,12 @@ if (empty($reshook) && $action == 'update')
 
 	if (!$error)
 	{
-        if (!empty($backtopage))
-        {
-        	unset($_SESSION['assignedtouser']);
-            header("Location: ".$backtopage);
-            exit;
-        }
+		if (!empty($backtopage))
+		{
+			unset($_SESSION['assignedtouser']);
+			header("Location: ".$backtopage);
+			exit;
+		}
 	}
 }
 
@@ -704,9 +704,9 @@ if (empty($reshook) && $action == 'update')
 if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes')
 {
 	$object->fetch($id);
-    $object->fetch_optionals();
-    $object->fetch_userassigned();
-    $object->oldcopy = clone $object;
+	$object->fetch_optionals();
+	$object->fetch_userassigned();
+	$object->oldcopy = clone $object;
 
 	if ($user->rights->agenda->myactions->delete
 		|| $user->rights->agenda->allactions->delete)
@@ -729,112 +729,112 @@ if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes
  */
 if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate')
 {
-    $error = 0;
+	$error = 0;
 
-    $shour = dol_print_date($object->datep, "%H");
-    $smin = dol_print_date($object->datep, "%M");
+	$shour = dol_print_date($object->datep, "%H");
+	$smin = dol_print_date($object->datep, "%M");
 
-    $newdate = GETPOST('newdate', 'alpha');
-    if (empty($newdate) || strpos($newdate, 'dayevent_') != 0)
-    {
-        header("Location: ".$backtopage);
-        exit;
-    }
+	$newdate = GETPOST('newdate', 'alpha');
+	if (empty($newdate) || strpos($newdate, 'dayevent_') != 0)
+	{
+		header("Location: ".$backtopage);
+		exit;
+	}
 
-    $datep = dol_mktime($shour, $smin, 0, substr($newdate, 13, 2), substr($newdate, 15, 2), substr($newdate, 9, 4));
-    if ($datep != $object->datep)
-    {
-        if (!empty($object->datef))
-        {
-            $object->datef += $datep - $object->datep;
-        }
-        $object->datep = $datep;
+	$datep = dol_mktime($shour, $smin, 0, substr($newdate, 13, 2), substr($newdate, 15, 2), substr($newdate, 9, 4));
+	if ($datep != $object->datep)
+	{
+		if (!empty($object->datef))
+		{
+			$object->datef += $datep - $object->datep;
+		}
+		$object->datep = $datep;
 
-        if (!$error) {
-            // check if an event resource is already in use
-            if (!empty($conf->global->RESOURCE_USED_IN_EVENT_CHECK) && $object->element == 'action') {
-                $eventDateStart = $object->datep;
-                $eventDateEnd = $object->datef;
+		if (!$error) {
+			// check if an event resource is already in use
+			if (!empty($conf->global->RESOURCE_USED_IN_EVENT_CHECK) && $object->element == 'action') {
+				$eventDateStart = $object->datep;
+				$eventDateEnd = $object->datef;
 
-                $sql  = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
-                $sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
-                $sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = 'dolresource'";
-                $sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$db->escape($object->element)."'";
-                $sql .= " WHERE ac.id != ".$object->id;
-                $sql .= " AND er.resource_id IN (";
-                $sql .= " SELECT resource_id FROM ".MAIN_DB_PREFIX."element_resources";
-                $sql .= " WHERE element_id = ".$object->id;
-                $sql .= " AND element_type = '".$db->escape($object->element)."'";
-                $sql .= " AND busy = 1";
-                $sql .= ")";
-                $sql .= " AND er.busy = 1";
-                $sql .= " AND (";
+				$sql  = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
+				$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = 'dolresource'";
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$db->escape($object->element)."'";
+				$sql .= " WHERE ac.id != ".$object->id;
+				$sql .= " AND er.resource_id IN (";
+				$sql .= " SELECT resource_id FROM ".MAIN_DB_PREFIX."element_resources";
+				$sql .= " WHERE element_id = ".$object->id;
+				$sql .= " AND element_type = '".$db->escape($object->element)."'";
+				$sql .= " AND busy = 1";
+				$sql .= ")";
+				$sql .= " AND er.busy = 1";
+				$sql .= " AND (";
 
-                // event date start between ac.datep and ac.datep2 (if datep2 is null we consider there is no end)
-                $sql .= " (ac.datep <= '".$db->idate($eventDateStart)."' AND (ac.datep2 IS NULL OR ac.datep2 >= '".$db->idate($eventDateStart)."'))";
-                // event date end between ac.datep and ac.datep2
-                if (!empty($eventDateEnd)) {
-                    $sql .= " OR (ac.datep <= '".$db->idate($eventDateEnd)."' AND (ac.datep2 >= '".$db->idate($eventDateEnd)."'))";
-                }
-                // event date start before ac.datep and event date end after ac.datep2
-                $sql .= " OR (";
-                $sql .= "ac.datep >= '".$db->idate($eventDateStart)."'";
-                if (!empty($eventDateEnd)) {
-                    $sql .= " AND (ac.datep2 IS NOT NULL AND ac.datep2 <= '".$db->idate($eventDateEnd)."')";
-                }
-                $sql .= ")";
+				// event date start between ac.datep and ac.datep2 (if datep2 is null we consider there is no end)
+				$sql .= " (ac.datep <= '".$db->idate($eventDateStart)."' AND (ac.datep2 IS NULL OR ac.datep2 >= '".$db->idate($eventDateStart)."'))";
+				// event date end between ac.datep and ac.datep2
+				if (!empty($eventDateEnd)) {
+					$sql .= " OR (ac.datep <= '".$db->idate($eventDateEnd)."' AND (ac.datep2 >= '".$db->idate($eventDateEnd)."'))";
+				}
+				// event date start before ac.datep and event date end after ac.datep2
+				$sql .= " OR (";
+				$sql .= "ac.datep >= '".$db->idate($eventDateStart)."'";
+				if (!empty($eventDateEnd)) {
+					$sql .= " AND (ac.datep2 IS NOT NULL AND ac.datep2 <= '".$db->idate($eventDateEnd)."')";
+				}
+				$sql .= ")";
 
-                $sql .= ")";
-                $resql = $db->query($sql);
-                if (!$resql) {
-                    $error++;
-                    $object->error = $db->lasterror();
-                    $object->errors[] = $object->error;
-                } else {
-                    if ($db->num_rows($resql) > 0) {
-                        // already in use
-                        $error++;
-                        $object->error = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
-                        while ($obj = $db->fetch_object($resql)) {
-                            $object->error .= '<br> - '.$langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label.' ['.$obj->ac_id.']');
-                        }
-                        $object->errors[] = $object->error;
-                    }
-                    $db->free($resql);
-                }
+				$sql .= ")";
+				$resql = $db->query($sql);
+				if (!$resql) {
+					$error++;
+					$object->error = $db->lasterror();
+					$object->errors[] = $object->error;
+				} else {
+					if ($db->num_rows($resql) > 0) {
+						// already in use
+						$error++;
+						$object->error = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
+						while ($obj = $db->fetch_object($resql)) {
+							$object->error .= '<br> - '.$langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label.' ['.$obj->ac_id.']');
+						}
+						$object->errors[] = $object->error;
+					}
+					$db->free($resql);
+				}
 
-                if ($error) {
-                    setEventMessages($object->error, $object->errors, 'errors');
-                }
-            }
-        }
+				if ($error) {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			}
+		}
 
-        if (!$error) {
-            $db->begin();
-            $result = $object->update($user);
-            if ($result < 0) {
-                $error++;
-                setEventMessages($object->error, $object->errors, 'errors');
-                $db->rollback();
-            } else {
-                $db->commit();
-            }
-        }
-    }
-    if (!empty($backtopage))
-    {
-        header("Location: ".$backtopage);
-        exit;
-    } else {
-        $action = '';
-    }
+		if (!$error) {
+			$db->begin();
+			$result = $object->update($user);
+			if ($result < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+				$db->rollback();
+			} else {
+				$db->commit();
+			}
+		}
+	}
+	if (!empty($backtopage))
+	{
+		header("Location: ".$backtopage);
+		exit;
+	} else {
+		$action = '';
+	}
 }
 
 // Actions to delete doc
 $upload_dir = $conf->agenda->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $permissiontoadd = ($user->rights->agenda->allactions->create || (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->read));
 if (empty($reshook)) {
-    include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
 
@@ -869,10 +869,10 @@ if ($action == 'create')
 
 	dol_set_focus("#label");
 
-    if (!empty($conf->use_javascript_ajax))
-    {
-        print "\n".'<script type="text/javascript">';
-        print '$(document).ready(function () {
+	if (!empty($conf->use_javascript_ajax))
+	{
+		print "\n".'<script type="text/javascript">';
+		print '$(document).ready(function () {
         			function setdatefields()
 	            	{
 	            		if ($("#fullday:checked").val() == null) {
@@ -922,8 +922,8 @@ if ($action == 'create')
                     else $("#dateend").removeClass("fieldrequired");
                     setdatefields();
                })';
-        print '</script>'."\n";
-    }
+		print '</script>'."\n";
+	}
 
 	print '<form name="formaction" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -951,39 +951,39 @@ if ($action == 'create')
 	// Title
 	print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE) ? ' class="fieldrequired titlefieldcreate"' : '').'>'.$langs->trans("Label").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
 
-    // Full day
-    print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday') ? ' checked' : '').'></td></tr>';
+	// Full day
+	print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday') ? ' checked' : '').'></td></tr>';
 
-    $datep = ($datep ? $datep : $object->datep);
-    if (GETPOST('datep', 'int', 1)) $datep = dol_stringtotime(GETPOST('datep', 'int', 1), 0);
-    $datef = ($datef ? $datef : $object->datef);
-    if (GETPOST('datef', 'int', 1)) $datef = dol_stringtotime(GETPOST('datef', 'int', 1), 0);
-    if (empty($datef) && !empty($datep))
-    {
-    	if (GETPOST("actioncode", 'aZ09') == 'AC_RDV' || empty($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT)) {
-    		$datef = dol_time_plus_duree($datep, (empty($conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS) ? 1 : $conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS), 'h');
-    	}
-    }
+	$datep = ($datep ? $datep : $object->datep);
+	if (GETPOST('datep', 'int', 1)) $datep = dol_stringtotime(GETPOST('datep', 'int', 1), 0);
+	$datef = ($datef ? $datef : $object->datef);
+	if (GETPOST('datef', 'int', 1)) $datef = dol_stringtotime(GETPOST('datef', 'int', 1), 0);
+	if (empty($datef) && !empty($datep))
+	{
+		if (GETPOST("actioncode", 'aZ09') == 'AC_RDV' || empty($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT)) {
+			$datef = dol_time_plus_duree($datep, (empty($conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS) ? 1 : $conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS), 'h');
+		}
+	}
 
-    // Date start
+	// Date start
 	print '<tr><td class="nowrap">';
 	print '<span class="fieldrequired">'.$langs->trans("DateActionStart").'</span>';
 	print ' - ';
 	print '<span id="dateend"'.(GETPOST("actioncode", 'aZ09') == 'AC_RDV' ? ' class="fieldrequired"' : '').'>'.$langs->trans("DateActionEnd").'</span>';
 	print '</td><td>';
 	if (GETPOST("afaire") == 1) {
-        print $form->selectDate($datep, 'ap', 1, 1, 0, "action", 1, 2, 0, 'fulldaystart');	// Empty value not allowed for start date and hours if "todo"
-    } else {
-        print $form->selectDate($datep, 'ap', 1, 1, 1, "action", 1, 2, 0, 'fulldaystart');
-    }
-    print ' <span class="hideonsmartphone">&nbsp; &nbsp; - &nbsp; &nbsp;</span> ';
+		print $form->selectDate($datep, 'ap', 1, 1, 0, "action", 1, 2, 0, 'fulldaystart'); // Empty value not allowed for start date and hours if "todo"
+	} else {
+		print $form->selectDate($datep, 'ap', 1, 1, 1, "action", 1, 2, 0, 'fulldaystart');
+	}
+	print ' <span class="hideonsmartphone">&nbsp; &nbsp; - &nbsp; &nbsp;</span> ';
 	//print ' - ';
-    if (GETPOST("afaire") == 1) {
-    	print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend');
-    } else {
-    	print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend');
-    }
-    print '</td></tr>';
+	if (GETPOST("afaire") == 1) {
+		print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend');
+	} else {
+		print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend');
+	}
+	print '</td></tr>';
 
 	// Date end
 	/*print '<tr><td>';
@@ -997,7 +997,7 @@ if ($action == 'create')
     }
 	print '</td></tr>';*/
 
-    // Dev in progress
+	// Dev in progress
 	$userepeatevent = ($conf->global->MAIN_FEATURES_LEVEL == 2 ? 1 : 0);
 	if ($userepeatevent)
 	{
@@ -1061,11 +1061,11 @@ if ($action == 'create')
 	$formactions->form_select_status_action('formaction', $percent, 1, 'complete', 0, 0, 'maxwidth200');
 	print '</td></tr>';
 
-    // Location
-    if (empty($conf->global->AGENDA_DISABLE_LOCATION))
-    {
+	// Location
+	if (empty($conf->global->AGENDA_DISABLE_LOCATION))
+	{
 		print '<tr><td>'.$langs->trans("Location").'</td><td><input type="text" name="location" class="minwidth300 maxwidth150onsmartphone" value="'.(GETPOST('location') ? GETPOST('location') : $object->location).'"></td></tr>';
-    }
+	}
 
 	// Assigned to
 	print '<tr><td class="tdtop nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
@@ -1206,24 +1206,24 @@ if ($action == 'create')
 	}
 
 	// Priority
-	if (! empty($conf->global->AGENDA_SUPPORT_PRIORITY_IN_EVENTS)) {
+	if (!empty($conf->global->AGENDA_SUPPORT_PRIORITY_IN_EVENTS)) {
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Priority").'</td><td colspan="3">';
 		print '<input type="text" name="priority" value="'.(GETPOSTISSET('priority') ? GETPOST('priority', 'int') : ($object->priority ? $object->priority : '')).'" size="5">';
 		print '</td></tr>';
 	}
 
-    // Description
-    print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
-    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor = new DolEditor('note', (GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : $object->note_private), '', 120, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_4, '90%');
-    $doleditor->Create();
-    print '</td></tr>';
+	// Description
+	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor = new DolEditor('note', (GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : $object->note_private), '', 120, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_4, '90%');
+	$doleditor->Create();
+	print '</td></tr>';
 
-    // Other attributes
-    $parameters = array();
-    $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
-    if (empty($reshook))
+	// Other attributes
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	if (empty($reshook))
 	{
 		print $object->showOptionals($extrafields, 'edit', $parameters);
 	}
@@ -1231,46 +1231,46 @@ if ($action == 'create')
 	print '</table>';
 
 
-    if ($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER)
-    {
-        //checkbox create reminder
-        print '<hr>';
-    	print '<br>';
-        print '<label for="addreminder">'.$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder"><br><br>';
+	if ($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER)
+	{
+		//checkbox create reminder
+		print '<hr>';
+		print '<br>';
+		print '<label for="addreminder">'.$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder"><br><br>';
 
-        print '<div class="reminderparameters" style="display: none;">';
+		print '<div class="reminderparameters" style="display: none;">';
 
-        //print '<hr>';
-        //print load_fiche_titre($langs->trans("AddReminder"), '', '');
+		//print '<hr>';
+		//print load_fiche_titre($langs->trans("AddReminder"), '', '');
 
-        print '<table class="border centpercent">';
+		print '<table class="border centpercent">';
 
-        //Reminder
-        print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
-        print '<input type="number" name="offsetvalue" value="10" size="5">';
-        print '</td></tr>';
+		//Reminder
+		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
+		print '<input type="number" name="offsetvalue" value="10" size="5">';
+		print '</td></tr>';
 
-        //Time Type
-        print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("TimeType").'</td><td colspan="3">';
-        print $form->selectTypeDuration('offsetunit', 'i');
-        print '</td></tr>';
+		//Time Type
+		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("TimeType").'</td><td colspan="3">';
+		print $form->selectTypeDuration('offsetunit', 'i');
+		print '</td></tr>';
 
-        //Reminder Type
-        print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderType").'</td><td colspan="3">';
-        print $form->selectarray('selectremindertype', $TRemindTypes);
-        print '</td></tr>';
+		//Reminder Type
+		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderType").'</td><td colspan="3">';
+		print $form->selectarray('selectremindertype', $TRemindTypes);
+		print '</td></tr>';
 
-        //Mail Model
-        print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
-        print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1);
-        print '</td></tr>';
+		//Mail Model
+		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
+		print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1);
+		print '</td></tr>';
 
 
-        print '</table>';
-        print '</div>';
+		print '</table>';
+		print '</div>';
 
-        print "\n".'<script type="text/javascript">';
-        print '$(document).ready(function () {
+		print "\n".'<script type="text/javascript">';
+		print '$(document).ready(function () {
 	            		$("#addreminder").click(function(){
 	            		    if (this.checked) {
 	            		      $(".reminderparameters").show();
@@ -1288,10 +1288,10 @@ if ($action == 'create')
 	            		    };
 	            		});
                    })';
-        print '</script>'."\n";
-    }
+		print '</script>'."\n";
+	}
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Add").'">';
@@ -1327,7 +1327,7 @@ if ($id > 0)
 
 	if ($listUserAssignedUpdated || $donotclearsession)
 	{
-        $percentage = in_array(GETPOST('status'), array(-1, 100)) ?GETPOST('status') : (in_array(GETPOST('complete'), array(-1, 100)) ?GETPOST('complete') : GETPOST("percentage")); // If status is -1 or 100, percentage is not defined and we must use status
+		$percentage = in_array(GETPOST('status'), array(-1, 100)) ?GETPOST('status') : (in_array(GETPOST('complete'), array(-1, 100)) ?GETPOST('complete') : GETPOST("percentage")); // If status is -1 or 100, percentage is not defined and we must use status
 
 		$datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
 		$datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
@@ -1338,7 +1338,7 @@ if ($id > 0)
 		$object->datef       = $datef;
 		$object->percentage  = $percentage;
 		$object->priority    = GETPOST("priority", "alphanohtml");
-        $object->fulldayevent = GETPOST("fullday") ? 1 : 0;
+		$object->fulldayevent = GETPOST("fullday") ? 1 : 0;
 		$object->location    = GETPOST('location', "alpanohtml");
 		$object->socid       = GETPOST("socid", "int");
 		$socpeopleassigned   = GETPOST("socpeopleassigned", 'array');
@@ -1376,10 +1376,10 @@ if ($id > 0)
 
 	if ($action == 'edit')
 	{
-	    if (!empty($conf->use_javascript_ajax))
-        {
-            print "\n".'<script type="text/javascript">';
-            print '$(document).ready(function () {
+		if (!empty($conf->use_javascript_ajax))
+		{
+			print "\n".'<script type="text/javascript">';
+			print '$(document).ready(function () {
 	            		function setdatefields()
 	            		{
 	            			if ($("#fullday:checked").val() == null) {
@@ -1399,8 +1399,8 @@ if ($id > 0)
 	            			setdatefields();
 	            		});
                    })';
-            print '</script>'."\n";
-        }
+			print '</script>'."\n";
+		}
 
 		print '<form name="formaction" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1420,42 +1420,42 @@ if ($id > 0)
 		// Type of event
 		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
 		{
-		    print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td colspan="3">';
-		    if ($object->type_code != 'AC_OTH_AUTO')
-		    {
-		    	$formactions->select_type_actions(GETPOST("actioncode", 'aZ09') ?GETPOST("actioncode", 'aZ09') : $object->type_code, "actioncode", "systemauto");
-		    } else {
-                print '<input type="hidden" name="actioncode" value="'.$object->type_code.'">'.$langs->trans("Action".$object->type_code);
-		    }
+			print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td colspan="3">';
+			if ($object->type_code != 'AC_OTH_AUTO')
+			{
+				$formactions->select_type_actions(GETPOST("actioncode", 'aZ09') ?GETPOST("actioncode", 'aZ09') : $object->type_code, "actioncode", "systemauto");
+			} else {
+				print '<input type="hidden" name="actioncode" value="'.$object->type_code.'">'.$langs->trans("Action".$object->type_code);
+			}
 			print '</td></tr>';
 		}
 
 		// Title
 		print '<tr><td class="fieldrequired">'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" class="soixantepercent" value="'.$object->label.'"></td></tr>';
 
-        // Full day event
-        print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent ? ' checked' : '').'></td></tr>';
+		// Full day event
+		print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent ? ' checked' : '').'></td></tr>';
 
 		// Date start
 		print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").' - '.$langs->trans("DateActionEnd").'</span></td><td colspan="3">';
 		if (GETPOST("afaire") == 1) {
-            print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 0, "action", 1, 1, 0, 'fulldaystart');
-        } elseif (GETPOST("afaire") == 2) {
-            print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart');
-        } else {
-            print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart');
-        }
-        print ' - ';
+			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 0, "action", 1, 1, 0, 'fulldaystart');
+		} elseif (GETPOST("afaire") == 2) {
+			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart');
+		} else {
+			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart');
+		}
+		print ' - ';
 		if (GETPOST("afaire") == 1) {
-            print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
-        } elseif (GETPOST("afaire") == 2) {
-            print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
-        } else {
-            print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
-        }
+			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
+		} elseif (GETPOST("afaire") == 2) {
+			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
+		} else {
+			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
+		}
 		print '</td></tr>';
 
-        // Dev in progress
+		// Dev in progress
 		$userepeatevent = ($conf->global->MAIN_FEATURES_LEVEL == 2 ? 1 : 0);
 		if ($userepeatevent)
 		{
@@ -1512,50 +1512,50 @@ if ($id > 0)
 		$formactions->form_select_status_action('formaction', $percent, 1, 'complete', 0, 0, 'maxwidth200');
 		print '</td></tr>';
 
-        // Location
-	    if (empty($conf->global->AGENDA_DISABLE_LOCATION))
-	    {
+		// Location
+		if (empty($conf->global->AGENDA_DISABLE_LOCATION))
+		{
 			print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" class="soixantepercent" value="'.$object->location.'"></td></tr>';
-	    }
+		}
 
 		// Assigned to
-	    $listofuserid = array(); // User assigned
-	    if (empty($donotclearsession))
-	    {
-	    	if ($object->userownerid > 0)
-	    	{
-	    		$listofuserid[$object->userownerid] = array(
-	    			'id'=>$object->userownerid,
-	    			'type'=>'user',
-	    			//'transparency'=>$object->userassigned[$user->id]['transparency'],
-	    			'transparency'=>$object->transparency, // Force transparency on ownerfrom event
-	    			'answer_status'=>$object->userassigned[$object->userownerid]['answer_status'],
-	    			'mandatory'=>$object->userassigned[$object->userownerid]['mandatory']
-	    		);
-	    	}
-	    	if (!empty($object->userassigned))	// Now concat assigned users
-	    	{
-	    		// Restore array with key with same value than param 'id'
-	    		$tmplist1 = $object->userassigned;
-	    		foreach ($tmplist1 as $key => $val)
-	    		{
-	    			if ($val['id'] && $val['id'] != $object->userownerid)
-	    			{
-	    				$listofuserid[$val['id']] = $val;
-	    			}
-	    		}
-	    	}
-	    	$_SESSION['assignedtouser'] = json_encode($listofuserid);
-	    } else {
-	    	if (!empty($_SESSION['assignedtouser']))
-	    	{
-	    		$listofuserid = json_decode($_SESSION['assignedtouser'], true);
-	    	}
-	    }
-	    $listofcontactid = $object->socpeopleassigned; // Contact assigned
-	    $listofotherid = $object->otherassigned; // Other undefined email (not used yet)
+		$listofuserid = array(); // User assigned
+		if (empty($donotclearsession))
+		{
+			if ($object->userownerid > 0)
+			{
+				$listofuserid[$object->userownerid] = array(
+					'id'=>$object->userownerid,
+					'type'=>'user',
+					//'transparency'=>$object->userassigned[$user->id]['transparency'],
+					'transparency'=>$object->transparency, // Force transparency on ownerfrom event
+					'answer_status'=>$object->userassigned[$object->userownerid]['answer_status'],
+					'mandatory'=>$object->userassigned[$object->userownerid]['mandatory']
+				);
+			}
+			if (!empty($object->userassigned))	// Now concat assigned users
+			{
+				// Restore array with key with same value than param 'id'
+				$tmplist1 = $object->userassigned;
+				foreach ($tmplist1 as $key => $val)
+				{
+					if ($val['id'] && $val['id'] != $object->userownerid)
+					{
+						$listofuserid[$val['id']] = $val;
+					}
+				}
+			}
+			$_SESSION['assignedtouser'] = json_encode($listofuserid);
+		} else {
+			if (!empty($_SESSION['assignedtouser']))
+			{
+				$listofuserid = json_decode($_SESSION['assignedtouser'], true);
+			}
+		}
+		$listofcontactid = $object->socpeopleassigned; // Contact assigned
+		$listofotherid = $object->otherassigned; // Other undefined email (not used yet)
 
-	    print '<tr><td class="tdtop nowrap fieldrequired">'.$langs->trans("ActionAssignedTo").'</td><td colspan="3">';
+		print '<tr><td class="tdtop nowrap fieldrequired">'.$langs->trans("ActionAssignedTo").'</td><td colspan="3">';
 		print '<div class="assignedtouser">';
 		print $form->select_dolusers_forevent(($action == 'create' ? 'add' : 'update'), 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, 'AND u.statut != 0', 1, $listofuserid, $listofcontactid, $listofotherid);
 		print '</div>';
@@ -1575,7 +1575,7 @@ if ($id > 0)
 			print '</td></tr>';
 		}
 		// Tags-Categories
-        if ($conf->categorie->enabled) {
+		if ($conf->categorie->enabled) {
 			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 1);
 			$c = new Categorie($db);
@@ -1635,7 +1635,7 @@ if ($id > 0)
 		}
 
 		// Priority
-		if (! empty($conf->global->AGENDA_SUPPORT_PRIORITY_IN_EVENTS)) {
+		if (!empty($conf->global->AGENDA_SUPPORT_PRIORITY_IN_EVENTS)) {
 			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Priority").'</td><td>';
 			print '<input type="text" name="priority" value="'.($object->priority ? $object->priority : '').'" size="5">';
 			print '</td></tr>';
@@ -1645,19 +1645,19 @@ if ($id > 0)
 		if (!empty($object->fk_element) && !empty($object->elementtype))
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-            print '<tr>';
+			print '<tr>';
 			print '<td>'.$langs->trans("LinkedObject").'</td>';
 
 			if ($object->elementtype == 'task' && !empty($conf->projet->enabled))
 			{
-			    print '<td id="project-task-input-container" >';
+				print '<td id="project-task-input-container" >';
 
 				$urloption = '?action=create&donotclearsession=1'; // we use create not edit for more flexibility
-			    $url = DOL_URL_ROOT.'/comm/action/card.php'.$urloption;
+				$url = DOL_URL_ROOT.'/comm/action/card.php'.$urloption;
 
-			    // update task list
-			    print "\n".'<script type="text/javascript" >';
-			    print '$(document).ready(function () {
+				// update task list
+				print "\n".'<script type="text/javascript" >';
+				print '$(document).ready(function () {
 	               $("#projectid").change(function () {
                         var url = "'.$url.'&projectid="+$("#projectid").val();
                         $.get(url, function(data) {
@@ -1666,36 +1666,36 @@ if ($id > 0)
                         })
                   });
                })';
-			    print '</script>'."\n";
+				print '</script>'."\n";
 
-			    $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $object->fk_element, 'fk_element', 24, 0, 0, 1, 0, 0, 'maxwidth500', $object->fk_project);
-			    print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
+				$formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $object->fk_element, 'fk_element', 24, 0, 0, 1, 0, 0, 'maxwidth500', $object->fk_project);
+				print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
 
-			    print '</td>';
+				print '</td>';
 			} else {
-			    print '<td>';
-			    print dolGetElementUrl($object->fk_element, $object->elementtype, 1);
-			    print '<input type="hidden" name="fk_element" value="'.$object->fk_element.'">';
-			    print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
-			    print '</td>';
+				print '<td>';
+				print dolGetElementUrl($object->fk_element, $object->elementtype, 1);
+				print '<input type="hidden" name="fk_element" value="'.$object->fk_element.'">';
+				print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
+				print '</td>';
 			}
 
 			print '</tr>';
 		}
 
-        // Description
-        print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
-        // Editeur wysiwyg
-        require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-        $doleditor = new DolEditor('note', $object->note_private, '', 200, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_5, '90%');
-        $doleditor->Create();
-        print '</td></tr>';
+		// Description
+		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
+		// Editeur wysiwyg
+		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+		$doleditor = new DolEditor('note', $object->note_private, '', 200, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_5, '90%');
+		$doleditor->Create();
+		print '</td></tr>';
 
-        // Other attributes
-        $parameters = array();
-        $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
-        if (empty($reshook))
+		// Other attributes
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+		if (empty($reshook))
 		{
 			print $object->showOptionals($extrafields, 'edit', $parameters);
 		}
@@ -1782,7 +1782,7 @@ if ($id > 0)
 			print '</script>'."\n";
 		}
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" class="button" name="edit" value="'.$langs->trans("Save").'">';
@@ -1832,46 +1832,46 @@ if ($id > 0)
 		// Project
 		if (!empty($conf->projet->enabled))
 		{
-		    $langs->load("projects");
-		    //$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-		    $morehtmlref .= $langs->trans('Project').' ';
-    		if ($user->rights->agenda->allactions->create ||
-	       	    (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create))
-		    {
-		        if ($action != 'classify') {
+			$langs->load("projects");
+			//$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+			$morehtmlref .= $langs->trans('Project').' ';
+			if ($user->rights->agenda->allactions->create ||
+		   		(($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create))
+			{
+				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
-                }
-                if ($action == 'classify') {
-                    //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-                    $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-                    $morehtmlref .= '<input type="hidden" name="action" value="classin">';
-                    $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-                    $morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-                    $morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-                    $morehtmlref .= '</form>';
-                } else {
-                    $morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-                }
-		    } else {
-		        if (!empty($object->fk_project)) {
-		            $proj = new Project($db);
-		            $proj->fetch($object->fk_project);
-		            $morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-		            $morehtmlref .= $proj->ref;
-		            $morehtmlref .= '</a>';
-		            if ($proj->title) $morehtmlref .= ' - '.$proj->title;
-		        } else {
-		            $morehtmlref .= '';
-		        }
-		    }
+				}
+				if ($action == 'classify') {
+					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
+					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+					$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+					$morehtmlref .= '</form>';
+				} else {
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+				}
+			} else {
+				if (!empty($object->fk_project)) {
+					$proj = new Project($db);
+					$proj->fetch($object->fk_project);
+					$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+					$morehtmlref .= $proj->ref;
+					$morehtmlref .= '</a>';
+					if ($proj->title) $morehtmlref .= ' - '.$proj->title;
+				} else {
+					$morehtmlref .= '';
+				}
+			}
 		}
 		$morehtmlref .= '</div>';
 
 
 		dol_banner_tab($object, 'id', $linkback, ($user->socid ? 0 : 1), 'id', 'ref', $morehtmlref);
 
-	    print '<div class="fichecenter">';
-	    print '<div class="fichehalfleft">';
+		print '<div class="fichecenter">';
+		print '<div class="fichehalfleft">';
 
 		print '<div class="underbanner clearboth"></div>';
 
@@ -1884,8 +1884,8 @@ if ($id > 0)
 			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>'.$langs->trans($object->type).'</td></tr>';
 		}
 
-        // Full day event
-        print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td>'.yn($object->fulldayevent, 3).'</td></tr>';
+		// Full day event
+		print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td>'.yn($object->fulldayevent, 3).'</td></tr>';
 
 		$rowspan = 4;
 		if (empty($conf->global->AGENDA_DISABLE_LOCATION)) $rowspan++;
@@ -1900,19 +1900,19 @@ if ($id > 0)
 
 		// Date end
 		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td>';
-        if (!$object->fulldayevent) print dol_print_date($object->datef, 'dayhour');
+		if (!$object->fulldayevent) print dol_print_date($object->datef, 'dayhour');
 		else print dol_print_date($object->datef, 'day');
 		if ($object->percentage > 0 && $object->percentage < 100 && $object->datef && $object->datef < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
 		print '</td></tr>';
 
-        // Location
-	    if (empty($conf->global->AGENDA_DISABLE_LOCATION))
-    	{
+		// Location
+		if (empty($conf->global->AGENDA_DISABLE_LOCATION))
+		{
 			print '<tr><td>'.$langs->trans("Location").'</td><td>'.$object->location.'</td></tr>';
-    	}
+		}
 
 		// Assigned to
-    	print '<tr><td class="nowrap">'.$langs->trans("ActionAssignedTo").'</td><td>';
+		print '<tr><td class="nowrap">'.$langs->trans("ActionAssignedTo").'</td><td>';
 		$listofuserid = array();
 		if (empty($donotclearsession))
 		{
@@ -1988,8 +1988,8 @@ if ($id > 0)
 
 		if ($conf->societe->enabled)
 		{
-		    // Related company
-		    print '<tr><td class="titlefield">'.$langs->trans("ActionOnCompany").'</td><td>'.($object->thirdparty->id ? $object->thirdparty->getNomUrl(1) : ('<span class="opacitymedium">'.$langs->trans("None").'</span>'));
+			// Related company
+			print '<tr><td class="titlefield">'.$langs->trans("ActionOnCompany").'</td><td>'.($object->thirdparty->id ? $object->thirdparty->getNomUrl(1) : ('<span class="opacitymedium">'.$langs->trans("None").'</span>'));
 			if (is_object($object->thirdparty) && $object->thirdparty->id > 0 && $object->type_code == 'AC_TEL')
 			{
 				if ($object->thirdparty->fetch($object->thirdparty->id))
@@ -2051,43 +2051,43 @@ if ($id > 0)
 		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_private));
 		print '</td></tr>';
 
-        // Other attributes
-        include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+		// Other attributes
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
-        // Reminders
-        if ($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER)
-        {
-        	$filtreuserid = $user->id;
-        	if ($user->rights->agenda->allactions->read) $filtreuserid = 0;
-        	$object->loadReminders('', $filteruserid, false);
+		// Reminders
+		if ($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER)
+		{
+			$filtreuserid = $user->id;
+			if ($user->rights->agenda->allactions->read) $filtreuserid = 0;
+			$object->loadReminders('', $filteruserid, false);
 
-        	print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Reminders").'</td><td>';
+			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Reminders").'</td><td>';
 
-        	if (count($object->reminders) > 0) {
-        		$tmpuserstatic = new User($db);
+			if (count($object->reminders) > 0) {
+				$tmpuserstatic = new User($db);
 
-        		foreach ($object->reminders as $actioncommreminderid => $actioncommreminder) {
-        			print $TRemindTypes[$actioncommreminder->typeremind];
-        			if ($actioncommreminder->fk_user > 0) {
-        				$tmpuserstatic->fetch($actioncommreminder->fk_user);
-        				print ' ('.$tmpuserstatic->getNomUrl(0, '', 0, 0, 16).')';
-        			}
-        			print ' - '.$actioncommreminder->offsetvalue.' '.$TDurationTypes[$actioncommreminder->offsetunit];
-        			if ($actioncommreminder->status == $actioncommreminder::STATUS_TODO) {
-        				print ' - <span class="opacitymedium">';
-        				print $langs->trans("NotSent");
-        				print ' </span>';
-        			} elseif ($actioncommreminder->status == $actioncommreminder::STATUS_DONE) {
-        				print ' - <span class="opacitymedium">';
-        				print $langs->trans("Done");
-        				print ' </span>';
-        			}
-        			print '<br>';
-        		}
-        	}
+				foreach ($object->reminders as $actioncommreminderid => $actioncommreminder) {
+					print $TRemindTypes[$actioncommreminder->typeremind];
+					if ($actioncommreminder->fk_user > 0) {
+						$tmpuserstatic->fetch($actioncommreminder->fk_user);
+						print ' ('.$tmpuserstatic->getNomUrl(0, '', 0, 0, 16).')';
+					}
+					print ' - '.$actioncommreminder->offsetvalue.' '.$TDurationTypes[$actioncommreminder->offsetunit];
+					if ($actioncommreminder->status == $actioncommreminder::STATUS_TODO) {
+						print ' - <span class="opacitymedium">';
+						print $langs->trans("NotSent");
+						print ' </span>';
+					} elseif ($actioncommreminder->status == $actioncommreminder::STATUS_DONE) {
+						print ' - <span class="opacitymedium">';
+						print $langs->trans("Done");
+						print ' </span>';
+					}
+					print '<br>';
+				}
+			}
 
-        	print '</td></tr>';
-        }
+			print '</td></tr>';
+		}
 
 		print '</table>';
 
@@ -2095,7 +2095,7 @@ if ($id > 0)
 		print '</div>';
 		print '<div class="clearboth"></div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 	}
 
 
@@ -2144,26 +2144,26 @@ if ($id > 0)
 		if (empty($conf->global->AGENDA_DISABLE_BUILDDOC))
 		{
 			print '<div style="clear:both;"></div><div class="fichecenter"><div class="fichehalfleft">';
-            print '<a name="builddoc"></a>'; // ancre
+			print '<a name="builddoc"></a>'; // ancre
 
-            /*
+			/*
              * Documents generes
              */
 
-            $filedir = $conf->agenda->multidir_output[$conf->entity].'/'.$object->id;
-            $urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
+			$filedir = $conf->agenda->multidir_output[$conf->entity].'/'.$object->id;
+			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 
-            $genallowed = $user->rights->agenda->myactions->read;
-	        $delallowed = $user->rights->agenda->myactions->create;
+			$genallowed = $user->rights->agenda->myactions->read;
+			$delallowed = $user->rights->agenda->myactions->create;
 
 
-            print $formfile->showdocuments('actions', $object->id, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 0, 0, '', '', '', $object->default_lang);
+			print $formfile->showdocuments('actions', $object->id, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 0, 0, '', '', '', $object->default_lang);
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 
 			print '</div></div></div>';
-	    }
+		}
 	}
 }
 

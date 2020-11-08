@@ -81,7 +81,7 @@ if ($object->fetch($id) >= 0)
 	//print '</td></tr></table>';
 
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

@@ -128,10 +128,10 @@ $arrayfields['t.progress'] = array('label'=>'ProgressDeclared', 'checked'=>1, 'e
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-    {
-    	if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-    		$arrayfields["efpt.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-    }
+	{
+		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["efpt.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+	}
 }
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -159,8 +159,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_thirdparty = '';
 	$search_declared_progress = '';
 
-    $search_array_options_project = array();
-    $search_array_options_task = array();
+	$search_array_options_project = array();
+	$search_array_options_task = array();
 
 	// We redefine $usertoprocess
 	$usertoprocess = $user;
@@ -263,7 +263,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 		{
 			if (intval($time) > 0)
 			{
-			    $matches = array();
+				$matches = array();
 				// Hours or minutes of duration
 				if (preg_match("/([0-9]+)duration(hour|min)/", $key, $matches))
 				{
@@ -468,7 +468,7 @@ if ($mine || ($usertoprocess->id == $user->id))
 }
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 print '<div class="floatright right'.($conf->dol_optimize_smallscreen ? ' centpercent' : '').'">'.$nav.'</div>'; // We move this before the assign to components so, the default submit button is not the assign to.
@@ -539,7 +539,7 @@ if (!empty($arrayfields['t.planned_workload']['checked'])) $addcolspan++;
 if (!empty($arrayfields['t.progress']['checked'])) $addcolspan++;
 foreach ($arrayfields as $key => $val)
 {
-    if ($val['checked'] && substr($key, 0, 5) == 'efpt.') $addcolspan++;
+	if ($val['checked'] && substr($key, 0, 5) == 'efpt.') $addcolspan++;
 }
 
 print '<div class="div-table-responsive">';
@@ -557,11 +557,11 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 print '<td class="liste_titre"></td>';
 if (!empty($arrayfields['t.planned_workload']['checked']))
 {
-    print '<td class="liste_titre right"><input type="text" size="4" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
+	print '<td class="liste_titre right"><input type="text" size="4" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
 }
 if (!empty($arrayfields['t.progress']['checked']))
 {
-    print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"></td>';
 }
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
@@ -584,11 +584,11 @@ $extrafieldsobjectprefix = 'efpt.';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 if (!empty($arrayfields['t.planned_workload']['checked']))
 {
-    print '<th class="right leftborder plannedworkload maxwidth100">'.$langs->trans("PlannedWorkload").'</th>';
+	print '<th class="right leftborder plannedworkload maxwidth100">'.$langs->trans("PlannedWorkload").'</th>';
 }
 if (!empty($arrayfields['t.progress']['checked']))
 {
-    print '<th class="right maxwidth100">'.$langs->trans("ProgressDeclared").'</th>';
+	print '<th class="right maxwidth100">'.$langs->trans("ProgressDeclared").'</th>';
 }
 /*print '<td class="right maxwidth100">'.$langs->trans("TimeSpent").'</td>';
 if ($usertoprocess->id == $user->id) print '<td class="right maxwidth100">'.$langs->trans("TimeSpentByYou").'</td>';
@@ -668,8 +668,8 @@ if ($conf->use_javascript_ajax)
 	print '<td class="liste_total center'.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'"><div class="totalDay0">&nbsp;</div></td>';
 
 	print '<td class="liste_total"></td>';
-    print '<td class="liste_total"></td>';
-    print '</tr>';
+	print '<td class="liste_total"></td>';
+	print '</tr>';
 }
 
 

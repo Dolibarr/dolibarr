@@ -273,7 +273,7 @@ if (GETPOST('optionsitefiles')) $algo .= 'sitefiles';
 
 if (empty($sortfield)) {
 	if ($action == 'file_manager') {
-		$sortfield='name'; $sortorder = 'ASC';
+		$sortfield = 'name'; $sortorder = 'ASC';
 	} else {
 		$sortfield = 'pageurl'; $sortorder = 'ASC';
 	}
@@ -1206,7 +1206,7 @@ if (GETPOSTISSET('pageid') && $action == 'delete' && $permissiontodelete) {
 	}
 }
 // Delete page (from menu search)
-if (! GETPOSTISSET('pageid')) {
+if (!GETPOSTISSET('pageid')) {
 	$objectclass = 'WebsitePage';
 
 	// Add part of code from actions_massactions.inc.php
@@ -2322,7 +2322,7 @@ if (!GETPOST('hide_websitemenu'))
 		$out = '';
 		$out .= '<select name="website" class="minwidth100 width200 maxwidth150onsmartphone" id="website">';
 		if (empty($object->records)) $out .= '<option value="-1">&nbsp;</option>';
-		if (! empty($conf->use_javascript_ajax)) {
+		if (!empty($conf->use_javascript_ajax)) {
 			$valueoption = '<span class="classlink">'.img_picto('', 'add', 'class="paddingrightonly"').$langs->trans("AddWebsite").'</span>';
 			$out .= '<option value="-2" data-html="'.dol_escape_htmltag($valueoption).'">'.$valueoption.'</option>';
 		}
@@ -2337,7 +2337,7 @@ if (!GETPOST('hide_websitemenu'))
 			$out .= '<option value="'.$valwebsite->ref.'"';
 			if ($websitekey == $valwebsite->ref) $out .= ' selected'; // To preselect a value
 			//$outoption = $valwebsite->getLibStatut(3).' '.$valwebsite->ref.' ';
-			$outoption = (($valwebsite->status == $valwebsite::STATUS_DRAFT)?'<span class="opacitymedium">':'').$valwebsite->ref.(($valwebsite->status == $valwebsite::STATUS_DRAFT)?'</span>':'');
+			$outoption = (($valwebsite->status == $valwebsite::STATUS_DRAFT) ? '<span class="opacitymedium">' : '').$valwebsite->ref.(($valwebsite->status == $valwebsite::STATUS_DRAFT) ? '</span>' : '');
 			$out .= ' data-html="'.dol_escape_htmltag($outoption).'"';
 			$out .= '>';
 			$out .= $valwebsite->ref;
@@ -2375,7 +2375,7 @@ if (!GETPOST('hide_websitemenu'))
 
 			$importlabel = $langs->trans("ImportSite");
 			$exportlabel = $langs->trans("ExportSite");
-			if (! empty($conf->dol_optimize_smallscreen)) {
+			if (!empty($conf->dol_optimize_smallscreen)) {
 				$importlabel = $langs->trans("Import");
 				$exportlabel = $langs->trans("Export");
 			}
@@ -2406,9 +2406,10 @@ if (!GETPOST('hide_websitemenu'))
 		if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite'))
 		{
 			print '<span class="websiteselection">';
-			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=file_manager&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("MediaFiles")).'"><span class="fa fa-image"><span></a>';
+			//print '<a href="'.$_SERVER["PHP_SELF"].'?action=file_manager&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("MediaFiles")).'"><span class="fa fa-image"><span></a>';
+			print dolButtonToOpenUrlInDialogPopup('file_manager', $langs->transnoentitiesnoconv("MediaFiles"), '<span class="fa fa-image"><span>', '/website/index.php?action=file_manager&website='.$website->ref, $disabled);
 
-			if (! empty($conf->categorie->enabled)) {
+			if (!empty($conf->categorie->enabled)) {
 				//print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=website&dol_hide_leftmenu=1&nosearch=1&type=website_page&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("Categories")).'"><span class="fa fa-tags"><span></a>';
 				print dolButtonToOpenUrlInDialogPopup('categories', $langs->transnoentitiesnoconv("Categories"), '<span class="fa fa-tags"><span>', '/categories/index.php?leftmenu=website&nosearch=1&type=website_page&website='.$website->ref, $disabled);
 			}
@@ -2624,10 +2625,10 @@ if (!GETPOST('hide_websitemenu'))
 				// Confirmation to clone
 				if ($action == 'createpagefromclone') {
 					// Create an array for form
-					$preselectedlanguage = GETPOST('newlang', 'aZ09') ? GETPOST('newlang', 'aZ09') : '';	// Dy default, we do not force any language on pages
+					$preselectedlanguage = GETPOST('newlang', 'aZ09') ? GETPOST('newlang', 'aZ09') : ''; // Dy default, we do not force any language on pages
 					$onlylang = array();
 					if ($website->otherlang) {
-						if (! empty($website->lang)) {
+						if (!empty($website->lang)) {
 							$onlylang[$website->lang] = $website->lang;
 						}
 						foreach (explode(',', $website->otherlang) as $langkey) {
@@ -3150,7 +3151,7 @@ if ($action == 'editcss')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '</div>';
 
@@ -3240,7 +3241,7 @@ if ($action == 'createsite')
 
 	//print '</div>';
 
-	//dol_fiche_end();
+	//print dol_get_fiche_end();
 
 	print '</div>';
 
@@ -3271,7 +3272,7 @@ if ($action == 'importsite')
 
 	showWebsiteTemplates($website);
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '</div>';
 
@@ -3546,7 +3547,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	{
 		$langs->load('categories');
 
-		if (! GETPOSTISSET('categories')) {
+		if (!GETPOSTISSET('categories')) {
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, '', null, null, null, 1);
 			$c = new Categorie($db);
 			$cats = $c->containing($objectpage->id, Categorie::TYPE_WEBSITE_PAGE);
@@ -3684,7 +3685,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	}
 	//print '</div>';
 
-	//dol_fiche_end();
+	//print dol_get_fiche_end();
 
 	print '</div>';
 

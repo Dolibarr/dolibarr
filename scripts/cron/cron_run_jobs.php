@@ -165,7 +165,7 @@ $nbofjobslaunchedok = 0;
 $nbofjobslaunchedko = 0;
 
 if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
-    $savconf = dol_clone($conf);
+	$savconf = dol_clone($conf);
 
 	// Loop over job
 	foreach ($qualifiedjobs as $line) {
@@ -178,34 +178,34 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 			dol_syslog("cron_run_jobs.php we work on another entity conf than ".$conf->entity." so we reload mysoc, langs, user and conf", LOG_DEBUG);
 			echo " -> we change entity so we reload mysoc, langs, user and conf";
 
-		    $conf->entity = (empty($line->entity) ? 1 : $line->entity);
-		    $conf->setValues($db); // This make also the $mc->setValues($conf); that reload $mc->sharings
-		    $mysoc->setMysoc($conf);
+			$conf->entity = (empty($line->entity) ? 1 : $line->entity);
+			$conf->setValues($db); // This make also the $mc->setValues($conf); that reload $mc->sharings
+			$mysoc->setMysoc($conf);
 
-		    // Force recheck that user is ok for the entity to process and reload permission for entity
-		    if ($conf->entity != $user->entity && $user->entity != 0)
-		    {
-    		    $result = $user->fetch('', $userlogin, '', 0, $conf->entity);
-    		    if ($result < 0)
-    		    {
-    		        echo "\nUser Error: ".$user->error."\n";
-    		        dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
-    		        exit(-1);
-    		    } else {
-    		        if ($result == 0)
-    		        {
-    		            echo "\nUser login: ".$userlogin." does not exists for entity ".$conf->entity."\n";
-    		            dol_syslog("User login:".$userlogin." does not exists", LOG_ERR);
-    		            exit(-1);
-    		        }
-    		    }
-    		    $user->getrights();
-		    }
+			// Force recheck that user is ok for the entity to process and reload permission for entity
+			if ($conf->entity != $user->entity && $user->entity != 0)
+			{
+				$result = $user->fetch('', $userlogin, '', 0, $conf->entity);
+				if ($result < 0)
+				{
+					echo "\nUser Error: ".$user->error."\n";
+					dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
+					exit(-1);
+				} else {
+					if ($result == 0)
+					{
+						echo "\nUser login: ".$userlogin." does not exists for entity ".$conf->entity."\n";
+						dol_syslog("User login:".$userlogin." does not exists", LOG_ERR);
+						exit(-1);
+					}
+				}
+				$user->getrights();
+			}
 
-		    // Reload langs
-		    $langcode = (empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT);
-		    if (! empty($user->conf->MAIN_LANG_DEFAULT)) $langcode = $user->conf->MAIN_LANG_DEFAULT;
-		    if ($langs->getDefaultLang() != $langcode) $langs->setDefaultLang($langcode);
+			// Reload langs
+			$langcode = (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT);
+			if (!empty($user->conf->MAIN_LANG_DEFAULT)) $langcode = $user->conf->MAIN_LANG_DEFAULT;
+			if ($langs->getDefaultLang() != $langcode) $langs->setDefaultLang($langcode);
 		}
 
 		//If date_next_jobs is less of current date, execute the program, and store the execution time of the next execution in database

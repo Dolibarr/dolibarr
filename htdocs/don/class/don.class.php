@@ -98,9 +98,9 @@ class Don extends CommonObject
 	 */
 	public $email;
 
-    /**
-     * @var int 0 or 1
-     */
+	/**
+	 * @var int 0 or 1
+	 */
 	public $public;
 
 	/**
@@ -116,10 +116,10 @@ class Don extends CommonObject
 	public $num_payment;
 	public $date_valid;
 
-    /**
-     * @var int payment mode id
-     */
-    public $modepaymentid = 0;
+	/**
+	 * @var int payment mode id
+	 */
+	public $modepaymentid = 0;
 
 	/**
 	 * @var array Array of status label
@@ -247,8 +247,8 @@ class Don extends CommonObject
 		$this->note_private = 'Private note';
 		$this->note_public = 'Public note';
 		$this->email = 'email@email.com';
-        $this->phone = '0123456789';
-        $this->phone_mobile = '0606060606';
+		$this->phone = '0123456789';
+		$this->phone_mobile = '0606060606';
 		$this->statut = 1;
 	}
 
@@ -685,7 +685,7 @@ class Don extends CommonObject
 				$this->note_private	      = $obj->note_private;
 				$this->note_public = $obj->note_public;
 				$this->model_pdf          = $obj->model_pdf;
-				$this->modelpdf           = $obj->model_pdf;	// deprecated
+				$this->modelpdf           = $obj->model_pdf; // deprecated
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
@@ -818,6 +818,31 @@ class Don extends CommonObject
 		}
 	}
 
+	/**
+	 *	Set cancel status
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 */
+	public function reopen($user, $notrigger = 0)
+	{
+		// Protection
+		if ($this->statut != self::STATUS_CANCELED)
+		{
+			return 0;
+		}
+
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+		 {
+		 $this->error='Permission denied';
+		 return -1;
+		 }*/
+
+		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'DON_REOPEN');
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Sum of donations
@@ -900,6 +925,7 @@ class Don extends CommonObject
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Donation").'</u>';
 		if (!empty($this->id)) {
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->id;
+			$label .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->date, 'day');
 		}
 		if ($moretitle) $label .= ' - '.$moretitle;
 

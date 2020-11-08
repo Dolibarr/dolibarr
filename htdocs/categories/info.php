@@ -44,8 +44,8 @@ $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
 if (!$object->fetch($id) > 0) {
-    dol_print_error($db);
-    exit;
+	dol_print_error($db);
+	exit;
 }
 $type = $object->type;
 if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
@@ -72,7 +72,7 @@ $object->ref = $object->label;
 $morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 $ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
 foreach ($ways as $way) {
-    $morehtmlref .= $way."<br>\n";
+	$morehtmlref .= $way."<br>\n";
 }
 $morehtmlref .= '</div>';
 
@@ -95,7 +95,7 @@ print '</table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

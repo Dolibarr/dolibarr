@@ -424,17 +424,17 @@ class Categorie extends CommonObject
 		$sql .= " fk_user_creat";
 		$sql .= ") VALUES (";
 		$sql .= (int) $this->fk_parent.",";
-		$sql .= "'".$this->db->escape($this->label)."',";
-		$sql .= "'".$this->db->escape($this->description)."',";
-		$sql .= "'".$this->db->escape($this->color)."',";
+		$sql .= "'".$this->db->escape($this->label)."', ";
+		$sql .= "'".$this->db->escape($this->description)."', ";
+		$sql .= "'".$this->db->escape($this->color)."', ";
 		if (!empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)) {
-			$sql .= ($this->socid != -1 ? $this->socid : 'null').",";
+			$sql .= ($this->socid > 0 ? $this->socid : 'null').", ";
 		}
-		$sql .= "'".$this->db->escape($this->visible)."',";
-		$sql .= $this->db->escape($type).",";
-		$sql .= (!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : 'null').",";
-		$sql .= (!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : 'null').",";
-		$sql .= (int) $conf->entity.",";
+		$sql .= "'".$this->db->escape($this->visible)."', ";
+		$sql .= $this->db->escape($type).", ";
+		$sql .= (!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : 'null').", ";
+		$sql .= (!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : 'null').", ";
+		$sql .= (int) $conf->entity.", ";
 		$sql .= "'".$this->db->idate($now)."', ";
 		$sql .= (int) $user->id;
 		$sql .= ")";
@@ -516,7 +516,7 @@ class Categorie extends CommonObject
 		$sql .= " ref_ext = '".$this->db->escape($this->ref_ext)."',";
 		$sql .= " color = '".$this->db->escape($this->color)."'";
 		if (!empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)) {
-			$sql .= ", fk_soc = ".($this->socid != -1 ? $this->socid : 'null');
+			$sql .= ", fk_soc = ".($this->socid > 0 ? $this->socid : 'null');
 		}
 		$sql .= ", visible = ".(int) $this->visible;
 		$sql .= ", fk_parent = ".(int) $this->fk_parent;
@@ -1415,11 +1415,12 @@ class Categorie extends CommonObject
 
 		if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type];
 
-		if ($type === Categorie::TYPE_BANK_LINE) {   // TODO Remove this with standard category code
-			// Load bank groups
+		if ($type === Categorie::TYPE_BANK_LINE) {   // TODO Remove this with standard category code after migration of llx_bank_categ into llx_categorie
+			// Load bank categories
 			$sql = "SELECT c.label, c.rowid";
 			$sql .= " FROM ".MAIN_DB_PREFIX."bank_class as a, ".MAIN_DB_PREFIX."bank_categ as c";
 			$sql .= " WHERE a.lineid=".$id." AND a.fk_categ = c.rowid";
+			$sql .= " AND c.entity IN (".getEntity('category').")";
 			$sql .= " ORDER BY c.label";
 
 			$res = $this->db->query($sql);
@@ -1550,7 +1551,7 @@ class Categorie extends CommonObject
 			if (colorIsLight($this->color)) $forced_color = 'categtextblack';
 		}
 
-		$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.$moreparam.'&backtopage='.urlencode($_SERVER['PHP_SELF'].($moreparam?'?'.$moreparam:'')).'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip '.$forced_color.'">';
+		$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.$moreparam.'&backtopage='.urlencode($_SERVER['PHP_SELF'].($moreparam ? '?'.$moreparam : '')).'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip '.$forced_color.'">';
 		$linkend = '</a>';
 
 		$picto = 'category';

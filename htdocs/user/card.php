@@ -1262,7 +1262,7 @@ if ($action == 'create' || $action == 'adduserldap')
 
 	print "</table>\n";
 
- 	dol_fiche_end();
+ 	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input class="button" value="'.$langs->trans("CreateUser").'" name="create" type="submit">';
@@ -1762,7 +1762,7 @@ if ($action == 'create' || $action == 'adduserldap')
 				{
 					$societe = new Societe($db);
 					$societe->fetch($object->socid);
-					if ($societe->id > 0){
+					if ($societe->id > 0) {
 						$s .= $societe->getNomUrl(1, '');
 					}
 				} else {
@@ -1823,7 +1823,7 @@ if ($action == 'create' || $action == 'adduserldap')
 			print '<div style="clear:both"></div>';
 
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 
 			/*
@@ -2221,16 +2221,16 @@ if ($action == 'create' || $action == 'adduserldap')
 				$type = 0;
 				if ($object->contact_id) $type = $object->contact_id;
 
-				if ($object->socid > 0 && ! ($object->contact_id > 0)) {	// external user but no link to a contact
+				if ($object->socid > 0 && !($object->contact_id > 0)) {	// external user but no link to a contact
 					print img_picto('', 'company').$form->select_company($object->socid, 'socid', '', '&nbsp;');
 					print img_picto('', 'contact').$form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, '', false, 1);
 					if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
 				} elseif ($object->socid > 0 && $object->contact_id > 0) {	// external user with a link to a contact
-					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;');	// We keep thirdparty empty, contact is already set
+					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;'); // We keep thirdparty empty, contact is already set
 					print img_picto('', 'contact').$form->selectcontacts(0, $object->contact_id, 'contactid', 1, '', '', 1, '', false, 1);
 			   		if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
 				} else {	// $object->socid is not > 0 here
-					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;');	// We keep thirdparty empty, contact is already set
+					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;'); // We keep thirdparty empty, contact is already set
 					print img_picto('', 'contact').$form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, '', false, 1);
 				}
 			}
@@ -2753,7 +2753,7 @@ if ($action == 'create' || $action == 'adduserldap')
 
 			print '</table>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
 			print '<input value="'.$langs->trans("Save").'" class="button" type="submit" name="save">';

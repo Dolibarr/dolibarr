@@ -130,20 +130,20 @@ $help_url = 'FR:DocumentationModuleTicket';
 llxHeader('', $title, $help_url);
 
 if ($socid > 0) {
-    $object->fetch_thirdparty();
-    $head = societe_prepare_head($object->thirdparty);
+	$object->fetch_thirdparty();
+	$head = societe_prepare_head($object->thirdparty);
 
-    print dol_get_fiche_head($head, 'ticket', $langs->trans("ThirdParty"), 0, 'company');
+	print dol_get_fiche_head($head, 'ticket', $langs->trans("ThirdParty"), 0, 'company');
 
-    dol_banner_tab($object->thirdparty, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
+	dol_banner_tab($object->thirdparty, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 if (!$user->socid && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) {
-    $object->next_prev_filter = "te.fk_user_assign = '".$user->id."'";
+	$object->next_prev_filter = "te.fk_user_assign = '".$user->id."'";
 } elseif ($user->socid > 0) {
-    $object->next_prev_filter = "te.fk_soc = '".$user->socid."'";
+	$object->next_prev_filter = "te.fk_soc = '".$user->socid."'";
 }
 $head = ticket_prepare_head($object);
 
@@ -219,7 +219,7 @@ $linkback = '<a href="'.dol_buildpath('/ticket/list.php', 1).'"><strong>'.$langs
 
 dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<br>';
 
@@ -230,10 +230,10 @@ if (!empty($object->id))
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 
-    $morehtmlright = '';
+	$morehtmlright = '';
 
-    $messagingUrl = DOL_URL_ROOT.'/ticket/messaging.php?track_id='.$object->track_id;
-    $morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1, array('morecss'=>'btnTitleSelected'));
+	$messagingUrl = DOL_URL_ROOT.'/ticket/messaging.php?track_id='.$object->track_id;
+	$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1, array('morecss'=>'btnTitleSelected'));
 	$messagingUrl = DOL_URL_ROOT.'/ticket/agenda.php?track_id='.$object->track_id;
 	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-list-alt imgforviewmode', $messagingUrl, '', 1);
 
@@ -254,7 +254,7 @@ if (!empty($object->id))
 	// List of all actions
 	$filters = array();
 	$filters['search_agenda_label'] = $search_agenda_label;
-    show_ticket_messaging($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
+	show_ticket_messaging($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
 }
 
 // End of page

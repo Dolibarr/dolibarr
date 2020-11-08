@@ -50,23 +50,23 @@ function product_prepare_head($object)
 
 	if (!empty($object->status))
 	{
-    	$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$object->id;
-    	$head[$h][1] = $langs->trans("SellingPrices");
-    	$head[$h][2] = 'price';
-    	$h++;
+		$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$object->id;
+		$head[$h][1] = $langs->trans("SellingPrices");
+		$head[$h][2] = 'price';
+		$h++;
 	}
 
 	if (!empty($object->status_buy) || (!empty($conf->margin->enabled) && !empty($object->status)))   // If margin is on and product on sell, we may need the cost price even if product os not on purchase
 	{
-    	if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->lire)
-    	|| (!empty($conf->margin->enabled) && $user->rights->margin->liretous)
-    	)
-    	{
-    		$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$object->id;
-    		$head[$h][1] = $langs->trans("BuyingPrices");
-    		$head[$h][2] = 'suppliers';
-    		$h++;
-    	}
+		if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->lire)
+		|| (!empty($conf->margin->enabled) && $user->rights->margin->liretous)
+		)
+		{
+			$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$object->id;
+			$head[$h][1] = $langs->trans("BuyingPrices");
+			$head[$h][2] = 'suppliers';
+			$h++;
+		}
 	}
 
 	// Multilangs
@@ -107,97 +107,97 @@ function product_prepare_head($object)
 
 		$prodcomb = new ProductCombination($db);
 
-		if ($prodcomb->fetchByFkProductChild($object->id) == -1)
+		if ($prodcomb->fetchByFkProductChild($object->id) <= 0)
 		{
 			$head[$h][0] = DOL_URL_ROOT."/variants/combinations.php?id=".$object->id;
 			$head[$h][1] = $langs->trans('ProductCombinations');
 			$head[$h][2] = 'combinations';
 			$nbVariant = $prodcomb->countNbOfCombinationForFkProductParent($object->id);
-            if ($nbVariant > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbVariant.'</span>';
+			if ($nbVariant > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbVariant.'</span>';
 		}
 
 		$h++;
 	}
 
-    if ($object->isProduct() || ($object->isService() && !empty($conf->global->STOCK_SUPPORTS_SERVICES)))    // If physical product we can stock (or service with option)
-    {
-        if (!empty($conf->stock->enabled) && $user->rights->stock->lire)
-        {
-            $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$object->id;
-            $head[$h][1] = $langs->trans("Stock");
-            $head[$h][2] = 'stock';
-            $h++;
-        }
-    }
+	if ($object->isProduct() || ($object->isService() && !empty($conf->global->STOCK_SUPPORTS_SERVICES)))    // If physical product we can stock (or service with option)
+	{
+		if (!empty($conf->stock->enabled) && $user->rights->stock->lire)
+		{
+			$head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$object->id;
+			$head[$h][1] = $langs->trans("Stock");
+			$head[$h][2] = 'stock';
+			$h++;
+		}
+	}
 
-    // Tab to link resources
-    if (!empty($conf->resource->enabled))
-    {
-        if ($object->isProduct() && !empty($conf->global->RESOURCE_ON_PRODUCTS))
-        {
-            $head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=product&ref='.$object->ref;
-            $head[$h][1] = $langs->trans("Resources");
-            $head[$h][2] = 'resources';
-            $h++;
-        }
-        if ($object->isService() && !empty($conf->global->RESOURCE_ON_SERVICES))
-        {
-            $head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=service&ref='.$object->ref;
-            $head[$h][1] = $langs->trans("Resources");
-            $head[$h][2] = 'resources';
-            $h++;
-        }
-    }
+	// Tab to link resources
+	if (!empty($conf->resource->enabled))
+	{
+		if ($object->isProduct() && !empty($conf->global->RESOURCE_ON_PRODUCTS))
+		{
+			$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=product&ref='.$object->ref;
+			$head[$h][1] = $langs->trans("Resources");
+			$head[$h][2] = 'resources';
+			$h++;
+		}
+		if ($object->isService() && !empty($conf->global->RESOURCE_ON_SERVICES))
+		{
+			$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=service&ref='.$object->ref;
+			$head[$h][1] = $langs->trans("Resources");
+			$head[$h][2] = 'resources';
+			$h++;
+		}
+	}
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'product');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'product');
 
-    // Notes
-    if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
-    {
-        $nbNote = 0;
-        if (!empty($object->note_private)) $nbNote++;
-        if (!empty($object->note_public)) $nbNote++;
-        $head[$h][0] = DOL_URL_ROOT.'/product/note.php?id='.$object->id;
-        $head[$h][1] = $langs->trans('Notes');
-        if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
-        $head[$h][2] = 'note';
-        $h++;
-    }
+	// Notes
+	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+	{
+		$nbNote = 0;
+		if (!empty($object->note_private)) $nbNote++;
+		if (!empty($object->note_public)) $nbNote++;
+		$head[$h][0] = DOL_URL_ROOT.'/product/note.php?id='.$object->id;
+		$head[$h][1] = $langs->trans('Notes');
+		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		$head[$h][2] = 'note';
+		$h++;
+	}
 
-    // Attachments
+	// Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-    if (!empty($conf->product->enabled) && ($object->type == Product::TYPE_PRODUCT)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
-    if (!empty($conf->service->enabled) && ($object->type == Product::TYPE_SERVICE)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
-    $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-    if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
-        if (!empty($conf->product->enabled) && ($object->type == Product::TYPE_PRODUCT)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
-        if (!empty($conf->service->enabled) && ($object->type == Product::TYPE_SERVICE)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
-        $nbFiles += count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-    }
-    $nbLinks = Link::count($db, $object->element, $object->id);
+	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	if (!empty($conf->product->enabled) && ($object->type == Product::TYPE_PRODUCT)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+	if (!empty($conf->service->enabled) && ($object->type == Product::TYPE_SERVICE)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+	if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
+		if (!empty($conf->product->enabled) && ($object->type == Product::TYPE_PRODUCT)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
+		if (!empty($conf->service->enabled) && ($object->type == Product::TYPE_SERVICE)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
+		$nbFiles += count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+	}
+	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
 	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'product', 'remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'product', 'remove');
 
-    // Log
-    $head[$h][0] = DOL_URL_ROOT.'/product/agenda.php?id='.$object->id;
-    $head[$h][1] = $langs->trans("Events");
-    if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read)))
-    {
-    	$head[$h][1] .= '/';
-    	$head[$h][1] .= $langs->trans("Agenda");
-    }
-    $head[$h][2] = 'agenda';
-    $h++;
+	// Log
+	$head[$h][0] = DOL_URL_ROOT.'/product/agenda.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Events");
+	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read)))
+	{
+		$head[$h][1] .= '/';
+		$head[$h][1] .= $langs->trans("Agenda");
+	}
+	$head[$h][2] = 'agenda';
+	$h++;
 
 	return $head;
 }
@@ -210,48 +210,48 @@ function product_prepare_head($object)
  */
 function productlot_prepare_head($object)
 {
-    global $db, $langs, $conf, $user;
+	global $db, $langs, $conf, $user;
 
-    // Load translation files required by the page
-    $langs->loadLangs(array("products", "productbatch"));
+	// Load translation files required by the page
+	$langs->loadLangs(array("products", "productbatch"));
 
-    $h = 0;
-    $head = array();
+	$h = 0;
+	$head = array();
 
-    $head[$h][0] = DOL_URL_ROOT."/product/stock/productlot_card.php?id=".$object->id;
-    $head[$h][1] = $langs->trans("Lot");
-    $head[$h][2] = 'card';
+	$head[$h][0] = DOL_URL_ROOT."/product/stock/productlot_card.php?id=".$object->id;
+	$head[$h][1] = $langs->trans("Lot");
+	$head[$h][2] = 'card';
 	$h++;
 
 	// Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-    $upload_dir = $conf->productbatch->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
-    $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-    $nbLinks = Link::count($db, $object->element, $object->id);
+	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	$upload_dir = $conf->productbatch->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT."/product/stock/productlot_document.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("Documents");
 	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
-    $head[$h][2] = 'documents';
+	$head[$h][2] = 'documents';
 	$h++;
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'productlot');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'productlot');
 
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'productlot', 'remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'productlot', 'remove');
 
-    // Log
-    /*
+	// Log
+	/*
     $head[$h][0] = DOL_URL_ROOT.'/product/info.php?id='.$object->id;
     $head[$h][1] = $langs->trans("Info");
     $head[$h][2] = 'info';
     $h++;
     */
 
-    return $head;
+	return $head;
 }
 
 
@@ -285,8 +285,8 @@ function product_admin_prepare_head()
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'product_admin');
 
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_extrafields.php';
@@ -313,25 +313,25 @@ function product_admin_prepare_head()
  */
 function product_lot_admin_prepare_head()
 {
-    global $langs, $conf, $user;
+	global $langs, $conf, $user;
 
-    $h = 0;
-    $head = array();
+	$h = 0;
+	$head = array();
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf, $langs, null, $head, $h, 'product_lot_admin');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'product_lot_admin');
 
-    $head[$h][0] = DOL_URL_ROOT.'/product/admin/product_lot_extrafields.php';
-    $head[$h][1] = $langs->trans("ExtraFields");
-    $head[$h][2] = 'attributes';
-    $h++;
+	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_lot_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFields");
+	$head[$h][2] = 'attributes';
+	$h++;
 
-    complete_head_from_modules($conf, $langs, null, $head, $h, 'product_lot_admin', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'product_lot_admin', 'remove');
 
-    return $head;
+	return $head;
 }
 
 

@@ -54,22 +54,22 @@ if ($action == 'update') {
 	$payonline = GETPOST('MEMBER_NEWFORM_PAYONLINE');
 	$forcetype = GETPOST('MEMBER_NEWFORM_FORCETYPE');
 
-    $res = dolibarr_set_const($db, "MEMBER_ENABLE_PUBLIC", $public, 'chaine', 0, '', $conf->entity);
-    $res = dolibarr_set_const($db, "MEMBER_NEWFORM_AMOUNT", $amount, 'chaine', 0, '', $conf->entity);
-    $res = dolibarr_set_const($db, "MEMBER_NEWFORM_EDITAMOUNT", $editamount, 'chaine', 0, '', $conf->entity);
-    $res = dolibarr_set_const($db, "MEMBER_NEWFORM_PAYONLINE", $payonline, 'chaine', 0, '', $conf->entity);
-    if ($forcetype < 0) $res = dolibarr_del_const($db, "MEMBER_NEWFORM_FORCETYPE", $conf->entity);
-    else {
-        $res = dolibarr_set_const($db, "MEMBER_NEWFORM_FORCETYPE", $forcetype, 'chaine', 0, '', $conf->entity);
-    }
+	$res = dolibarr_set_const($db, "MEMBER_ENABLE_PUBLIC", $public, 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_AMOUNT", $amount, 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_EDITAMOUNT", $editamount, 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_PAYONLINE", $payonline, 'chaine', 0, '', $conf->entity);
+	if ($forcetype < 0) $res = dolibarr_del_const($db, "MEMBER_NEWFORM_FORCETYPE", $conf->entity);
+	else {
+		$res = dolibarr_set_const($db, "MEMBER_NEWFORM_FORCETYPE", $forcetype, 'chaine', 0, '', $conf->entity);
+	}
 
-    if (!$res > 0) $error++;
+	if (!$res > 0) $error++;
 
  	if (!$error) {
-	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-	    setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 
@@ -97,8 +97,8 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print dol_get_fiche_head($head, 'website', $langs->trans("Members"), -1, 'user');
 
 if ($conf->use_javascript_ajax) {
-    print "\n".'<script type="text/javascript" language="javascript">';
-    print 'jQuery(document).ready(function () {
+	print "\n".'<script type="text/javascript" language="javascript">';
+	print 'jQuery(document).ready(function () {
                 function initemail()
                 {
                     if (jQuery("#MEMBER_NEWFORM_PAYONLINE").val()==\'-1\')
@@ -127,7 +127,7 @@ if ($conf->use_javascript_ajax) {
                 jQuery("#MEMBER_ENABLE_PUBLIC").change(function() { initfields(); });
                 jQuery("#MEMBER_NEWFORM_PAYONLINE").change(function() { initemail(); });
 			})';
-    print '</script>'."\n";
+	print '</script>'."\n";
 }
 
 
@@ -208,7 +208,7 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 }
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '</form>';
 

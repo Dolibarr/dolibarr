@@ -32,18 +32,18 @@ include_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
  */
 class AdherentStats extends Stats
 {
-    /**
-     * @var string Name of table without prefix where object is stored
-     */
-    public $table_element;
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element;
 
-    public $memberid;
-    public $socid;
-    public $userid;
+	public $memberid;
+	public $socid;
+	public $userid;
 
-    public $from;
-    public $field;
-    public $where;
+	public $from;
+	public $field;
+	public $where;
 
 
 	/**
@@ -51,15 +51,15 @@ class AdherentStats extends Stats
 	 *
 	 *	@param 		DoliDB		$db			Database handler
 	 * 	@param 		int			$socid	   	Id third party
-     * 	@param   	int			$userid    	Id user for filter
+	 * 	@param   	int			$userid    	Id user for filter
 	 */
 	public function __construct($db, $socid = 0, $userid = 0)
 	{
 		global $user, $conf;
 
 		$this->db = $db;
-        $this->socid = $socid;
-        $this->userid = $userid;
+		$this->socid = $socid;
+		$this->userid = $userid;
 
 		$object = new Subscription($this->db);
 
@@ -74,16 +74,16 @@ class AdherentStats extends Stats
 		if ($this->memberid) {
 			$this->where .= " AND m.rowid = ".$this->memberid;
 		}
-        //if ($this->userid > 0) $this->where.=' AND fk_user_author = '.$this->userid;
+		//if ($this->userid > 0) $this->where.=' AND fk_user_author = '.$this->userid;
 	}
 
 
 	/**
 	 * Return the number of proposition by month for a given year
 	 *
-     * @param   int		$year       Year
-     *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-     * @return	array				Array of nb each month
+	 * @param   int		$year       Year
+	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 * @return	array				Array of nb each month
 	 */
 	public function getNbByMonth($year, $format = 0)
 	{
@@ -95,7 +95,7 @@ class AdherentStats extends Stats
 		$sql .= " WHERE date_format(p.dateadh,'%Y') = ".((int) $year);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
-        $sql .= $this->db->order('dm', 'DESC');
+		$sql .= $this->db->order('dm', 'DESC');
 
 		return $this->_getNbByMonth($year, $sql, $format);
 	}
@@ -103,7 +103,7 @@ class AdherentStats extends Stats
 	/**
 	 * Return the number of subscriptions by year
 	 *
-     * @return	array				Array of nb each year
+	 * @return	array				Array of nb each year
 	 */
 	public function getNbByYear()
 	{
@@ -114,7 +114,7 @@ class AdherentStats extends Stats
 		//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY dm";
-        $sql .= $this->db->order('dm', 'DESC');
+		$sql .= $this->db->order('dm', 'DESC');
 
 		return $this->_getNbByYear($sql);
 	}
@@ -122,9 +122,9 @@ class AdherentStats extends Stats
 	/**
 	 * Return the number of subscriptions by month for a given year
 	 *
-     * @param   int		$year       Year
-     * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-     * @return	array				Array of amount each month
+	 * @param   int		$year       Year
+	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 * @return	array				Array of amount each month
 	 */
 	public function getAmountByMonth($year, $format = 0)
 	{
@@ -136,7 +136,7 @@ class AdherentStats extends Stats
 		$sql .= " WHERE date_format(p.dateadh,'%Y') = ".((int) $year);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
-        $sql .= $this->db->order('dm', 'DESC');
+		$sql .= $this->db->order('dm', 'DESC');
 
 		return $this->_getAmountByMonth($year, $sql, $format);
 	}
@@ -144,8 +144,8 @@ class AdherentStats extends Stats
 	/**
 	 * Return average amount each month
 	 *
-     * @param   int		$year       Year
-     * @return	array				Array of average each month
+	 * @param   int		$year       Year
+	 * @return	array				Array of average each month
 	 */
 	public function getAverageByMonth($year)
 	{
@@ -157,7 +157,7 @@ class AdherentStats extends Stats
 		$sql .= " WHERE date_format(p.dateadh,'%Y') = ".((int) $year);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
-        $sql .= $this->db->order('dm', 'DESC');
+		$sql .= $this->db->order('dm', 'DESC');
 
 		return $this->_getAverageByMonth($year, $sql);
 	}
@@ -177,7 +177,7 @@ class AdherentStats extends Stats
 		//if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY year";
-        $sql .= $this->db->order('year', 'DESC');
+		$sql .= $this->db->order('year', 'DESC');
 
 		return $this->_getAllByYear($sql);
 	}

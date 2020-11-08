@@ -47,23 +47,23 @@ if (empty($conf->global->PAYMENT_ADDON)) $conf->global->PAYMENT_ADDON = 'mod_pay
 
 if ($action == 'updateMask')
 {
-    $maskconstpayment = GETPOST('maskconstpayment', 'alpha');
-    $maskpayment = GETPOST('maskpayment', 'alpha');
-    if ($maskconstpayment) $res = dolibarr_set_const($db, $maskconstpayment, $maskpayment, 'chaine', 0, '', $conf->entity);
+	$maskconstpayment = GETPOST('maskconstpayment', 'alpha');
+	$maskpayment = GETPOST('maskpayment', 'alpha');
+	if ($maskconstpayment) $res = dolibarr_set_const($db, $maskconstpayment, $maskpayment, 'chaine', 0, '', $conf->entity);
 
-    if (!$res > 0) $error++;
+	if (!$res > 0) $error++;
 
-    if (!$error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	if (!$error)
+	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 if ($action == 'setmod')
 {
-    dolibarr_set_const($db, "PAYMENT_ADDON", $value, 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "PAYMENT_ADDON", $value, 'chaine', 0, '', $conf->entity);
 }
 
 if ($action == 'setparams')
@@ -72,8 +72,8 @@ if ($action == 'setparams')
 	$res = dolibarr_set_const($db, "FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS", $freetext, 'chaine', 0, '', $conf->entity);
 	if (!$res > 0) $error++;
 
-    $res = dolibarr_set_const($db, "PAYMENTS_REPORT_GROUP_BY_MOD", GETPOST('PAYMENTS_REPORT_GROUP_BY_MOD', 'int'), 'chaine', 0, '', $conf->entity);
-    if (!$res > 0) $error++;
+	$res = dolibarr_set_const($db, "PAYMENTS_REPORT_GROUP_BY_MOD", GETPOST('PAYMENTS_REPORT_GROUP_BY_MOD', 'int'), 'chaine', 0, '', $conf->entity);
+	if (!$res > 0) $error++;
 
 	if ($error)
 	{
@@ -81,7 +81,7 @@ if ($action == 'setparams')
 	}
 	if (!$error)
 	{
-	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 }
 
@@ -123,105 +123,105 @@ clearstatcache();
 
 foreach ($dirmodels as $reldir)
 {
-    $dir = dol_buildpath($reldir."core/modules/payment/");
-    if (is_dir($dir))
-    {
-        $handle = opendir($dir);
-        if (is_resource($handle))
-        {
-            while (($file = readdir($handle)) !== false)
-            {
-                if (!is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS'))
-                {
-                    $filebis = $file;
-                    $classname = preg_replace('/\.php$/', '', $file);
-                    // For compatibility
-                    if (!is_file($dir.$filebis))
-                    {
-                        $filebis = $file."/".$file.".modules.php";
-                        $classname = "mod_payment_".$file;
-                    }
-                    // Check if there is a filter on country
-                    preg_match('/\-(.*)_(.*)$/', $classname, $reg);
-                    if (!empty($reg[2]) && $reg[2] != strtoupper($mysoc->country_code)) continue;
+	$dir = dol_buildpath($reldir."core/modules/payment/");
+	if (is_dir($dir))
+	{
+		$handle = opendir($dir);
+		if (is_resource($handle))
+		{
+			while (($file = readdir($handle)) !== false)
+			{
+				if (!is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS'))
+				{
+					$filebis = $file;
+					$classname = preg_replace('/\.php$/', '', $file);
+					// For compatibility
+					if (!is_file($dir.$filebis))
+					{
+						$filebis = $file."/".$file.".modules.php";
+						$classname = "mod_payment_".$file;
+					}
+					// Check if there is a filter on country
+					preg_match('/\-(.*)_(.*)$/', $classname, $reg);
+					if (!empty($reg[2]) && $reg[2] != strtoupper($mysoc->country_code)) continue;
 
-                    $classname = preg_replace('/\-.*$/', '', $classname);
-                    if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && substr($filebis, dol_strlen($filebis) - 3, 3) == 'php')
-                    {
-                        // Charging the numbering class
-                        require_once $dir.$filebis;
+					$classname = preg_replace('/\-.*$/', '', $classname);
+					if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && substr($filebis, dol_strlen($filebis) - 3, 3) == 'php')
+					{
+						// Charging the numbering class
+						require_once $dir.$filebis;
 
-                        $module = new $classname($db);
+						$module = new $classname($db);
 
-                        // Show modules according to features level
-                        if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-                        if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+						// Show modules according to features level
+						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-                        if ($module->isEnabled())
-                        {
-                            $var = !$var;
-                            print '<tr class="oddeven"><td width="100">';
-                            echo preg_replace('/\-.*$/', '', preg_replace('/mod_payment_/', '', preg_replace('/\.php$/', '', $file)));
-                            print "</td><td>\n";
+						if ($module->isEnabled())
+						{
+							$var = !$var;
+							print '<tr class="oddeven"><td width="100">';
+							echo preg_replace('/\-.*$/', '', preg_replace('/mod_payment_/', '', preg_replace('/\.php$/', '', $file)));
+							print "</td><td>\n";
 
-                            print $module->info();
+							print $module->info();
 
-                            print '</td>';
+							print '</td>';
 
-                            // Show example of numbering module
-                            print '<td class="nowrap">';
-                            $tmp = $module->getExample();
-                            if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
-                            elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
-                            else print $tmp;
-                            print '</td>'."\n";
+							// Show example of numbering module
+							print '<td class="nowrap">';
+							$tmp = $module->getExample();
+							if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
+							elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
+							else print $tmp;
+							print '</td>'."\n";
 
-                            print '<td class="center">';
-                            //print "> ".$conf->global->PAYMENT_ADDON." - ".$file;
-                            if ($conf->global->PAYMENT_ADDON == $file || $conf->global->PAYMENT_ADDON.'.php' == $file)
-                            {
-                                print img_picto($langs->trans("Activated"), 'switch_on');
-                            } else {
-                                print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmo&token='.newToken().'&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-                            }
-                            print '</td>';
+							print '<td class="center">';
+							//print "> ".$conf->global->PAYMENT_ADDON." - ".$file;
+							if ($conf->global->PAYMENT_ADDON == $file || $conf->global->PAYMENT_ADDON.'.php' == $file)
+							{
+								print img_picto($langs->trans("Activated"), 'switch_on');
+							} else {
+								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmo&token='.newToken().'&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+							}
+							print '</td>';
 
-                            $payment = new Paiement($db);
-                            $payment->initAsSpecimen();
+							$payment = new Paiement($db);
+							$payment->initAsSpecimen();
 
-                            // Example
-                            $htmltooltip = '';
-                            $htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-                            $nextval = $module->getNextValue($mysoc, $payment);
-                            if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-                                    $htmltooltip .= $langs->trans("NextValue").': ';
-                                if ($nextval) {
-                                    if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
-                                        $nextval = $langs->trans($nextval);
-                                    $htmltooltip .= $nextval.'<br>';
-                                } else {
-                                    $htmltooltip .= $langs->trans($module->error).'<br>';
-                                }
-                            }
+							// Example
+							$htmltooltip = '';
+							$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+							$nextval = $module->getNextValue($mysoc, $payment);
+							if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+									$htmltooltip .= $langs->trans("NextValue").': ';
+								if ($nextval) {
+									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
+										$nextval = $langs->trans($nextval);
+									$htmltooltip .= $nextval.'<br>';
+								} else {
+									$htmltooltip .= $langs->trans($module->error).'<br>';
+								}
+							}
 
-                            print '<td class="center">';
-                            print $form->textwithpicto('', $htmltooltip, 1, 0);
+							print '<td class="center">';
+							print $form->textwithpicto('', $htmltooltip, 1, 0);
 
-                            if ($conf->global->PAYMENT_ADDON.'.php' == $file)  // If module is the one used, we show existing errors
-                            {
-                                if (!empty($module->error)) dol_htmloutput_mesg($module->error, '', 'error', 1);
-                            }
+							if ($conf->global->PAYMENT_ADDON.'.php' == $file)  // If module is the one used, we show existing errors
+							{
+								if (!empty($module->error)) dol_htmloutput_mesg($module->error, '', 'error', 1);
+							}
 
-                            print '</td>';
+							print '</td>';
 
-                            print "</tr>\n";
-                        }
-                    }
-                }
-            }
-            closedir($handle);
-        }
-    }
+							print "</tr>\n";
+						}
+					}
+				}
+			}
+			closedir($handle);
+		}
+	}
 }
 
 print '</table>';
@@ -262,7 +262,7 @@ print "</td></tr>\n";
 print '</table>';
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<br>';
 print '<div class="center">';

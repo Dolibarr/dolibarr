@@ -5,6 +5,7 @@
  * Copyright (C) 2007		Patrick Raguin		<patrick.raguin@gmail.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2020       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,26 +36,24 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $langs->load("categories");
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = (int) GETPOST('socid', 'int');
 if (!$user->rights->categorie->lire) accessforbidden();
 
 $action		= GETPOST('action', 'alpha');
 $cancel		= GETPOST('cancel', 'alpha');
 $origin		= GETPOST('origin', 'alpha');
-$catorigin = GETPOST('catorigin', 'int');
-$type = GETPOST('type', 'alpha');
+$catorigin  = (int) GETPOST('catorigin', 'int');
+$type       = GETPOST('type', 'aZ09');
 $urlfrom	= GETPOST('urlfrom', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$socid = GETPOST('socid', 'int');
-$label = GETPOST('label');
-$description = GETPOST('description');
-$color = GETPOST('color');
-$visible = GETPOST('visible');
-$parent = GETPOST('parent');
+$label = (string) GETPOST('label', 'alphanohtml');
+$description = (string) GETPOST('description', 'restricthtml');
+$color = preg_replace('/[^0-9a-f#]/i', '', (string) GETPOST('color', 'alphanohtml'));
+$visible = (int) GETPOST('visible', 'int');
+$parent = (int) GETPOST('parent', 'int');
 
-if ($origin)
-{
+if ($origin) {
 	if ($type == Categorie::TYPE_PRODUCT)     $idProdOrigin     = $origin;
 	if ($type == Categorie::TYPE_SUPPLIER)    $idSupplierOrigin = $origin;
 	if ($type == Categorie::TYPE_CUSTOMER)    $idCompanyOrigin  = $origin;
@@ -73,6 +72,8 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categorycard'));
 
+$error = 0;
+
 
 /*
  *	Actions
@@ -88,32 +89,25 @@ if ($action == 'add' && $user->rights->categorie->creer)
 		{
 			header("Location: ".$urlfrom);
 			exit;
-		} elseif ($backtopage)
-		{
+		} elseif ($backtopage) {
 			header("Location: ".$backtopage);
 			exit;
-		} elseif ($idProdOrigin)
-		{
+		} elseif ($idProdOrigin) {
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProdOrigin.'&type='.$type);
 			exit;
-		} elseif ($idCompanyOrigin)
-		{
+		} elseif ($idCompanyOrigin) {
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCompanyOrigin.'&type='.$type);
 			exit;
-		} elseif ($idSupplierOrigin)
-		{
+		} elseif ($idSupplierOrigin) {
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idSupplierOrigin.'&type='.$type);
 			exit;
-		} elseif ($idMemberOrigin)
-		{
+		} elseif ($idMemberOrigin) {
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idMemberOrigin.'&type='.$type);
 			exit;
-		} elseif ($idContactOrigin)
-		{
+		} elseif ($idContactOrigin) {
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idContactOrigin.'&type='.$type);
 			exit;
-		} elseif ($idProjectOrigin)
-		{
+		} elseif ($idProjectOrigin) {
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProjectOrigin.'&type='.$type);
 			exit;
 		} else {
@@ -127,7 +121,7 @@ if ($action == 'add' && $user->rights->categorie->creer)
 	$object->label			= $label;
 	$object->color			= $color;
 	$object->description = dol_htmlcleanlastbr($description);
-	$object->socid			= ($socid ? $socid : 'null');
+	$object->socid			= ($socid > 0 ? $socid : 0);
 	$object->visible = $visible;
 	$object->type = $type;
 
@@ -262,7 +256,7 @@ if ($user->rights->categorie->creer)
 
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
+		print $hookmanager->resPrint;
 		if (empty($reshook))
 		{
 			print $object->showOptionals($extrafields, 'edit', $parameters);
@@ -270,7 +264,7 @@ if ($user->rights->categorie->creer)
 
 		print '</table>';
 
-		dol_fiche_end('');
+		print dol_get_fiche_end('');
 
 		print '<div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateThisCat").'" name="creation" />';

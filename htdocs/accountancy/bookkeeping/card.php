@@ -114,12 +114,12 @@ if ($action == "confirm_update") {
 			$object->credit = $credit;
 
 			if (floatval($debit) != 0.0) {
-				$object->montant = $debit;	// deprecated
+				$object->montant = $debit; // deprecated
 				$object->amount = $debit;
 				$object->sens = 'D';
 			}
 			if (floatval($credit) != 0.0) {
-				$object->montant = $credit;	// deprecated
+				$object->montant = $credit; // deprecated
 				$object->amount = $credit;
 				$object->sens = 'C';
 			}
@@ -175,13 +175,13 @@ if ($action == "confirm_update") {
 		$object->fk_docdet = (int) GETPOST('fk_docdet', 'int');
 
 		if (floatval($debit) != 0.0) {
-			$object->montant = $debit;	// deprecated
+			$object->montant = $debit; // deprecated
 			$object->amount = $debit;
 			$object->sens = 'D';
 		}
 
 		if (floatval($credit) != 0.0) {
-			$object->montant = $credit;	// deprecated
+			$object->montant = $credit; // deprecated
 			$object->amount = $credit;
 			$object->sens = 'C';
 		}
@@ -245,7 +245,7 @@ if ($action == "confirm_update") {
 		$object->journal_label = $journal_label;
 		$object->fk_doc = 0;
 		$object->fk_docdet = 0;
-		$object->montant = 0;	// deprecated
+		$object->montant = 0; // deprecated
 		$object->amount = 0;
 
 		$result = $object->createStd($user, 0, $mode);
@@ -386,7 +386,7 @@ if ($action == 'create')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
@@ -573,7 +573,7 @@ if ($action == 'create')
 
 		print '</div></div><!-ee-->';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div style="clear:both"></div>';
 
@@ -719,7 +719,7 @@ if ($action == 'create')
 	}
 }
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

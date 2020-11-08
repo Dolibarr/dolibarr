@@ -271,7 +271,7 @@ if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS))
 	$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
 }
 //$sql .= " AND pfd.amount > 0";
-$sql .= " AND f.total_ttc > 0";		// Avoid credit notes
+$sql .= " AND f.total_ttc > 0"; // Avoid credit notes
 $sql .= " AND pfd.traite = 0";
 $sql .= " AND pfd.ext_payment_id IS NULL";
 if ($type == 'bank-transfer') {

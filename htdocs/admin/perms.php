@@ -44,18 +44,18 @@ $entity = $conf->entity;
 
 if ($action == 'add')
 {
-    $sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=1";
-    $sql .= " WHERE id = ".GETPOST("pid", 'int');
-    $sql .= " AND entity = ".$conf->entity;
-    $db->query($sql);
+	$sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=1";
+	$sql .= " WHERE id = ".GETPOST("pid", 'int');
+	$sql .= " AND entity = ".$conf->entity;
+	$db->query($sql);
 }
 
 if ($action == 'remove')
 {
-    $sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=0";
-    $sql .= " WHERE id = ".GETPOST('pid', 'int');
-    $sql .= " AND entity = ".$conf->entity;
-    $db->query($sql);
+	$sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=0";
+	$sql .= " WHERE id = ".GETPOST('pid', 'int');
+	$sql .= " AND entity = ".$conf->entity;
+	$db->query($sql);
 }
 
 
@@ -145,81 +145,81 @@ $sql .= " ORDER BY r.family_position, r.module_position, r.module, r.id";
 $result = $db->query($sql);
 if ($result)
 {
-    $num = $db->num_rows($result);
-    $i = 0;
-    $oldmod = '';
+	$num = $db->num_rows($result);
+	$i = 0;
+	$oldmod = '';
 
-    while ($i < $num)
-    {
-        $obj = $db->fetch_object($result);
+	while ($i < $num)
+	{
+		$obj = $db->fetch_object($result);
 
-        // If line is for a module that doe snot existe anymore (absent of includes/module), we ignore it
-        if (empty($modules[$obj->module]))
-        {
-            $i++;
-            continue;
-        }
+		// If line is for a module that doe snot existe anymore (absent of includes/module), we ignore it
+		if (empty($modules[$obj->module]))
+		{
+			$i++;
+			continue;
+		}
 
-        // Save field module_position in database if value is still zero
-        if (empty($obj->module_position))
-        {
-        	if (is_object($modules[$obj->module]) && ($modules[$obj->module]->module_position > 0))
-        	{
-        		// TODO Define familyposition
-        		$family = $modules[$obj->module]->family_position;
-        		$familyposition = 0;
-        		$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."rights_def SET module_position = ".$modules[$obj->module]->module_position.",";
-        		$sqlupdate .= " family_position = ".$familyposition;
-        		$sqlupdate .= " WHERE module_position = 0 AND module = '".$db->escape($obj->module)."'";
-        		$db->query($sqlupdate);
-        	}
-        }
+		// Save field module_position in database if value is still zero
+		if (empty($obj->module_position))
+		{
+			if (is_object($modules[$obj->module]) && ($modules[$obj->module]->module_position > 0))
+			{
+				// TODO Define familyposition
+				$family = $modules[$obj->module]->family_position;
+				$familyposition = 0;
+				$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."rights_def SET module_position = ".$modules[$obj->module]->module_position.",";
+				$sqlupdate .= " family_position = ".$familyposition;
+				$sqlupdate .= " WHERE module_position = 0 AND module = '".$db->escape($obj->module)."'";
+				$db->query($sqlupdate);
+			}
+		}
 
-        // Check if permission we found is inside a module definition. If not, we discard it.
-        $found = false;
-        foreach ($modules[$obj->module]->rights as $key => $val)
-        {
-        	if ($val[4] == $obj->perms && (empty($val[5]) || $val[5] == $obj->subperms))
-        	{
-        		$found = true;
-        		break;
-        	}
-        }
+		// Check if permission we found is inside a module definition. If not, we discard it.
+		$found = false;
+		foreach ($modules[$obj->module]->rights as $key => $val)
+		{
+			if ($val[4] == $obj->perms && (empty($val[5]) || $val[5] == $obj->subperms))
+			{
+				$found = true;
+				break;
+			}
+		}
 		if (!$found)
 		{
 			$i++;
 			continue;
 		}
 
-        // Break found, it's a new module to catch
+		// Break found, it's a new module to catch
 		if (isset($obj->module) && ($oldmod <> $obj->module))
-        {
-        	$oldmod = $obj->module;
+		{
+			$oldmod = $obj->module;
 
-        	// Break detected, we get objMod
-            $objMod = $modules[$obj->module];
-            $picto = ($objMod->picto ? $objMod->picto : 'generic');
+			// Break detected, we get objMod
+			$objMod = $modules[$obj->module];
+			$picto = ($objMod->picto ? $objMod->picto : 'generic');
 
-            // Show break line
-            print '<tr class="oddeven trforbreak">';
-            print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
-            print img_object('', $picto, 'class="pictoobjectwidth paddingright"').' '.$objMod->getName();
-            print '<a name="'.$objMod->getName().'"></a>';
-            print '</td>';
-           	print '<td>&nbsp;</td>';
-            print '<td>&nbsp;</td>';
-            print '<td>&nbsp;</td>';
-            // Permission id
-            if ($user->admin) print '<td class="right"></td>';
-            print '</tr>'."\n";
-        }
+			// Show break line
+			print '<tr class="oddeven trforbreak">';
+			print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
+			print img_object('', $picto, 'class="pictoobjectwidth paddingright"').' '.$objMod->getName();
+			print '<a name="'.$objMod->getName().'"></a>';
+			print '</td>';
+		   	print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			// Permission id
+			if ($user->admin) print '<td class="right"></td>';
+			print '</tr>'."\n";
+		}
 
-        $perm_libelle = ($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id) != ("PermissionAdvanced".$obj->id)) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != ("Permission".$obj->id)) ? $langs->trans("Permission".$obj->id) : $obj->label));
+		$perm_libelle = ($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id) != ("PermissionAdvanced".$obj->id)) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != ("Permission".$obj->id)) ? $langs->trans("Permission".$obj->id) : $obj->label));
 
-        print '<tr class="oddeven">';
+		print '<tr class="oddeven">';
 
-        // Picto and label of module
-        print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
+		// Picto and label of module
+		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
 		print '</td>';
 
 		// Tick
@@ -247,20 +247,20 @@ if ($result)
 		}
 
 		// Permission and tick
-        print '<td>'.$perm_libelle.'</td>';
+		print '<td>'.$perm_libelle.'</td>';
 
-        // Permission id
-        if ($user->admin) print '<td class="right"><span class="opacitymedium">'.$obj->id.'</span></td>';
+		// Permission id
+		if ($user->admin) print '<td class="right"><span class="opacitymedium">'.$obj->id.'</span></td>';
 
-        print '</tr>'."\n";
+		print '</tr>'."\n";
 
-        $i++;
-    }
+		$i++;
+	}
 } else dol_print_error($db);
 print '</table>';
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

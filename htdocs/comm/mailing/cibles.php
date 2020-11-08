@@ -78,13 +78,13 @@ if ($action == 'add')
 
 	foreach ($modulesdir as $dir)
 	{
-	    // Load modules attributes in arrays (name, numero, orders) from dir directory
-	    //print $dir."\n<br>";
-	    dol_syslog("Scan directory ".$dir." for modules");
+		// Load modules attributes in arrays (name, numero, orders) from dir directory
+		//print $dir."\n<br>";
+		dol_syslog("Scan directory ".$dir." for modules");
 
-	    // Loading Class
-	    $file = $dir."/".$module.".modules.php";
-	    $classname = "mailing_".$module;
+		// Loading Class
+		$file = $dir."/".$module.".modules.php";
+		$classname = "mailing_".$module;
 
 		if (file_exists($file))
 		{
@@ -305,7 +305,7 @@ if ($object->fetch($id) >= 0)
 
 	print "</div>";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<br>';
 
@@ -337,12 +337,12 @@ if ($object->fetch($id) >= 0)
 
 		foreach ($modulesdir as $dir)
 		{
-		    $modulenames = array();
+			$modulenames = array();
 
-		    // Load modules attributes in arrays (name, numero, orders) from dir directory
-		    //print $dir."\n<br>";
-		    dol_syslog("Scan directory ".$dir." for modules");
-		    $handle = @opendir($dir);
+			// Load modules attributes in arrays (name, numero, orders) from dir directory
+			//print $dir."\n<br>";
+			dol_syslog("Scan directory ".$dir." for modules");
+			$handle = @opendir($dir);
 			if (is_resource($handle))
 			{
 				while (($file = readdir($handle)) !== false)
@@ -396,7 +396,7 @@ if ($object->fetch($id) >= 0)
 						print '<form '.$bctag[$var].' name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
 						print '<input type="hidden" name="token" value="'.newToken().'">';
 					} else {
-					    print '<div '.$bctag[$var].'>';
+						print '<div '.$bctag[$var].'>';
 					}
 
 					print '<div class="tagtd">';
@@ -425,14 +425,14 @@ if ($object->fetch($id) >= 0)
 					print '<div class="tagtd left">';
 					if ($allowaddtarget)
 					{
-    					try {
-    						$filter = $obj->formFilter();
-    					} catch (Exception $e)
-    					{
-    						dol_syslog($e->getMessage(), LOG_ERR);
-    					}
-    					if ($filter) print $filter;
-    					else print $langs->trans("None");
+						try {
+							$filter = $obj->formFilter();
+						} catch (Exception $e)
+						{
+							dol_syslog($e->getMessage(), LOG_ERR);
+						}
+						if ($filter) print $filter;
+						else print $langs->trans("None");
 					}
 					print '</div>';
 
@@ -441,7 +441,7 @@ if ($object->fetch($id) >= 0)
 					{
 						print '<input type="submit" class="button" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
 					} else {
-					    print '<input type="submit" class="button disabled" disabled="disabled" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
+						print '<input type="submit" class="button disabled" disabled="disabled" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
 						//print $langs->trans("MailNoChangePossible");
 						print "&nbsp;";
 					}
@@ -474,13 +474,13 @@ if ($object->fetch($id) >= 0)
 	$nbtotalofrecords = '';
 	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	{
-	    $result = $db->query($sql);
-	    $nbtotalofrecords = $db->num_rows($result);
-	    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-	    {
-	    	$page = 0;
-	    	$offset = 0;
-	    }
+		$result = $db->query($sql);
+		$nbtotalofrecords = $db->num_rows($result);
+		if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+		{
+			$page = 0;
+			$offset = 0;
+		}
 	}
 
 	//$nbtotalofrecords=$object->nbemail;     // nbemail is a denormalized field storing nb of targets
@@ -503,7 +503,7 @@ if ($object->fetch($id) >= 0)
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-        print '<input type="hidden" name="page" value="'.$page.'">';
+		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
 		$morehtmlcenter = '';
@@ -521,7 +521,7 @@ if ($object->fetch($id) >= 0)
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-        print '<input type="hidden" name="page" value="'.$page.'">';
+		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 		print '<input type="hidden" name="limit" value="'.$limit.'">';
 
@@ -611,30 +611,30 @@ if ($object->fetch($id) >= 0)
 				print '<td>'.$obj->firstname.'</td>';
 				print '<td>'.$obj->other.'</td>';
 				print '<td class="center">';
-                if (empty($obj->source_id) || empty($obj->source_type))
-                {
-                    print empty($obj->source_url) ? '' : $obj->source_url; // For backward compatibility
-                } else {
-                    if ($obj->source_type == 'member')
-                    {
+				if (empty($obj->source_id) || empty($obj->source_type))
+				{
+					print empty($obj->source_url) ? '' : $obj->source_url; // For backward compatibility
+				} else {
+					if ($obj->source_type == 'member')
+					{
 						$objectstaticmember->fetch($obj->source_id);
-                        print $objectstaticmember->getNomUrl(1);
-                    } elseif ($obj->source_type == 'user')
-                    {
+						print $objectstaticmember->getNomUrl(1);
+					} elseif ($obj->source_type == 'user')
+					{
 						$objectstaticuser->fetch($obj->source_id);
-                        print $objectstaticuser->getNomUrl(1);
-                    } elseif ($obj->source_type == 'thirdparty')
-                    {
+						print $objectstaticuser->getNomUrl(1);
+					} elseif ($obj->source_type == 'thirdparty')
+					{
 						$objectstaticcompany->fetch($obj->source_id);
-                        print $objectstaticcompany->getNomUrl(1);
-                    } elseif ($obj->source_type == 'contact')
-                    {
-                    	$objectstaticcontact->fetch($obj->source_id);
-                    	print $objectstaticcontact->getNomUrl(1);
-                    } else {
-                        print $obj->source_url;
-                    }
-                }
+						print $objectstaticcompany->getNomUrl(1);
+					} elseif ($obj->source_type == 'contact')
+					{
+						$objectstaticcontact->fetch($obj->source_id);
+						print $objectstaticcontact->getNomUrl(1);
+					} else {
+						print $obj->source_url;
+					}
+				}
 				print '</td>';
 
 				// Date last update
@@ -680,9 +680,9 @@ if ($object->fetch($id) >= 0)
 		} else {
 			if ($object->statut < 2)
 			{
-			    print '<tr><td colspan="9" class="opacitymedium">';
-    			print $langs->trans("NoTargetYet");
-    			print '</td></tr>';
+				print '<tr><td colspan="9" class="opacitymedium">';
+				print $langs->trans("NoTargetYet");
+				print '</td></tr>';
 			}
 		}
 		print "</table><br>";

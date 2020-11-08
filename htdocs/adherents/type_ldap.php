@@ -114,7 +114,7 @@ print '</table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 /*
  * Action bar
@@ -123,7 +123,7 @@ dol_fiche_end();
 print '<div class="tabsAction">';
 
 if ($conf->global->LDAP_MEMBER_TYPE_ACTIVE == 1) {
-    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
 }
 
 print "</div>\n";
@@ -146,27 +146,27 @@ print '</tr>';
 $ldap = new Ldap();
 $result = $ldap->connect_bind();
 if ($result > 0) {
-    $info = $object->_load_ldap_info();
-    $dn = $object->_load_ldap_dn($info, 1);
-    $search = "(".$object->_load_ldap_dn($info, 2).")";
+	$info = $object->_load_ldap_info();
+	$dn = $object->_load_ldap_dn($info, 1);
+	$search = "(".$object->_load_ldap_dn($info, 2).")";
 
-    $records = $ldap->getAttribute($dn, $search);
+	$records = $ldap->getAttribute($dn, $search);
 
-    //print_r($records);
+	//print_r($records);
 
-    // Show tree
-    if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0)) {
-        if (!is_array($records)) {
-            print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
-        } else {
-            $result = show_ldap_content($records, 0, $records['count'], true);
-        }
-    } else {
-        print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
-    }
+	// Show tree
+	if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0)) {
+		if (!is_array($records)) {
+			print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
+		} else {
+			$result = show_ldap_content($records, 0, $records['count'], true);
+		}
+	} else {
+		print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
+	}
 
-    $ldap->unbind();
-    $ldap->close();
+	$ldap->unbind();
+	$ldap->close();
 } else {
 	setEventMessages($ldap->error, $ldap->errors, 'errors');
 }

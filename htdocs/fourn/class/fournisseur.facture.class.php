@@ -2219,37 +2219,37 @@ class FactureFournisseur extends CommonInvoice
 		if ($user->socid) $sql .= ' AND ff.fk_soc = '.$user->socid;
 		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND ff.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
 
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-	        $langs->load("bills");
-	        $now = dol_now();
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$langs->load("bills");
+			$now = dol_now();
 
-	        $response = new WorkboardResponse();
-	        $response->warning_delay = $conf->facture->fournisseur->warning_delay / 60 / 60 / 24;
-	        $response->label = $langs->trans("SupplierBillsToPay");
-	        $response->labelShort = $langs->trans("StatusToPay");
+			$response = new WorkboardResponse();
+			$response->warning_delay = $conf->facture->fournisseur->warning_delay / 60 / 60 / 24;
+			$response->label = $langs->trans("SupplierBillsToPay");
+			$response->labelShort = $langs->trans("StatusToPay");
 
-	        $response->url = DOL_URL_ROOT.'/fourn/facture/list.php?search_status=1&amp;mainmenu=billing&amp;leftmenu=suppliers_bills';
-	        $response->img = img_object($langs->trans("Bills"), "bill");
+			$response->url = DOL_URL_ROOT.'/fourn/facture/list.php?search_status=1&amp;mainmenu=billing&amp;leftmenu=suppliers_bills';
+			$response->img = img_object($langs->trans("Bills"), "bill");
 
-            $facturestatic = new FactureFournisseur($this->db);
+			$facturestatic = new FactureFournisseur($this->db);
 
-            while ($obj = $this->db->fetch_object($resql))
-            {
-                $response->nbtodo++;
+			while ($obj = $this->db->fetch_object($resql))
+			{
+				$response->nbtodo++;
 
-                $facturestatic->date_echeance = $this->db->jdate($obj->datefin);
-                $facturestatic->statut = $obj->fk_statut;
+				$facturestatic->date_echeance = $this->db->jdate($obj->datefin);
+				$facturestatic->statut = $obj->fk_statut;
 
-                if ($facturestatic->hasDelay()) {
-	                $response->nbtodolate++;
+				if ($facturestatic->hasDelay()) {
+					$response->nbtodolate++;
 					$response->url_late = DOL_URL_ROOT.'/fourn/facture/list.php?option=late&mainmenu=billing&leftmenu=suppliers_bills';
-                }
-            }
-            $this->db->free($resql);
-            return $response;
-        } else {
+				}
+			}
+			$this->db->free($resql);
+			return $response;
+		} else {
 			dol_print_error($this->db);
 			$this->error = $this->db->error();
 			return -1;
@@ -2295,10 +2295,10 @@ class FactureFournisseur extends CommonInvoice
 		if ($this->type == self::TYPE_CREDIT_NOTE) $picto .= 'a'; // Credit note
 		if ($this->type == self::TYPE_DEPOSIT)     $picto .= 'd'; // Deposit invoice
 
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("SupplierInvoice").'</u>';
-		if ($this->type == self::TYPE_REPLACEMENT) $label = '<u>'.$langs->transnoentitiesnoconv("InvoiceReplace").'</u>';
-		elseif ($this->type == self::TYPE_CREDIT_NOTE) $label = '<u>'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
-		elseif ($this->type == self::TYPE_DEPOSIT)     $label = '<u>'.$langs->transnoentitiesnoconv("Deposit").'</u>';
+		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("SupplierInvoice").'</u>';
+		if ($this->type == self::TYPE_REPLACEMENT) $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("InvoiceReplace").'</u>';
+		elseif ($this->type == self::TYPE_CREDIT_NOTE) $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
+		elseif ($this->type == self::TYPE_DEPOSIT)     $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("Deposit").'</u>';
 		if (!empty($this->ref))
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (!empty($this->ref_supplier))

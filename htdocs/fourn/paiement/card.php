@@ -292,7 +292,7 @@ if ($result > 0)
 				$facturestatic->total_tva = $objp->total_tva;
 				$facturestatic->total_ttc = $objp->total_ttc;
 				$facturestatic->statut = $objp->status;
-				$facturestatic->alreadypaid = -1;	// unknown
+				$facturestatic->alreadypaid = -1; // unknown
 
 				print '<tr class="oddeven">';
 				// Ref
@@ -396,7 +396,7 @@ if ($result > 0)
 	print $langs->trans("ErrorRecordNotFound");
 }
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

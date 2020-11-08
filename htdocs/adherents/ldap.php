@@ -38,7 +38,7 @@ $action = GETPOST('action', 'aZ09');
 // Protection
 $socid = 0;
 if ($user->socid > 0) {
-    $socid = $user->socid;
+	$socid = $user->socid;
 }
 
 $object = new Adherent($db);
@@ -128,7 +128,7 @@ print '</table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 /*
  * Barre d'actions
@@ -165,24 +165,24 @@ if ($result > 0) {
 	$search = "(".$object->_load_ldap_dn($info, 2).")";
 
 	if (empty($dn)) {
-	    $langs->load("errors");
-	    print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Member")).'</font></td></tr>';
+		$langs->load("errors");
+		print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Member")).'</font></td></tr>';
 	} else {
-    	$records = $ldap->getAttribute($dn, $search);
+		$records = $ldap->getAttribute($dn, $search);
 
-    	//print_r($records);
+		//print_r($records);
 
-    	// Show tree
-    	if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0)) {
-    		if (!is_array($records)) {
-    			print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
-    		} else {
-    			$result = show_ldap_content($records, 0, $records['count'], true);
-    		}
-    	} else {
-    		print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
-    	}
-    }
+		// Show tree
+		if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0)) {
+			if (!is_array($records)) {
+				print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
+			} else {
+				$result = show_ldap_content($records, 0, $records['count'], true);
+			}
+		} else {
+			print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
+		}
+	}
 
 	$ldap->unbind();
 	$ldap->close();

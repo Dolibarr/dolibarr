@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 
 if (!$user->admin)
-    accessforbidden();
+	accessforbidden();
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'other', 'agenda'));
@@ -86,9 +86,9 @@ if (GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') |
 
 if ($action == "save" && empty($cancel))
 {
-    $i = 0;
+	$i = 0;
 
-    $db->begin();
+	$db->begin();
 
 	foreach ($triggers as $trigger)
 	{
@@ -102,13 +102,13 @@ if ($action == "save" && empty($cancel))
 	}
 
  	if (!$error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-        $db->commit();
-    } else {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-        $db->rollback();
-    }
+	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		$db->commit();
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+		$db->rollback();
+	}
 }
 
 
@@ -197,7 +197,7 @@ if (!empty($triggers))
 print '</table>';
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center">';
 print '<input type="submit" name="save" class="button" value="'.$langs->trans("Save").'">';

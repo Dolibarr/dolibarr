@@ -40,7 +40,7 @@ class ModelePDFCards
 	public $error = '';
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return list of active generation modules
 	 *
@@ -50,7 +50,7 @@ class ModelePDFCards
 	 */
 	public function liste_modeles($db, $maxfilenamelength = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		$type = 'member';
@@ -78,7 +78,7 @@ class ModelePDFCards
  */
 function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $outputdir = '', $template = 'standard')
 {
-    // phpcs:enable
+	// phpcs:enable
 	global $conf, $langs;
 	$langs->load("members");
 

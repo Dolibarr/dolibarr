@@ -95,6 +95,9 @@ class Facture extends CommonInvoice
 	 */
 	protected $table_ref_field = 'ref';
 
+	/**
+	 * @var int thirdparty ID
+	 */
 	public $socid;
 
 	public $author;
@@ -111,6 +114,10 @@ class Facture extends CommonInvoice
 
 	public $date; // Date invoice
 	public $datem;
+
+	/**
+	 * @var string customer ref
+	 */
 	public $ref_client;
 
 	/**
@@ -169,7 +176,6 @@ class Facture extends CommonInvoice
 
 	public $line;
 	public $extraparams = array();
-	public $specimen;
 
 	public $fac_rec;
 
@@ -1411,11 +1417,14 @@ class Facture extends CommonInvoice
 		$label = '';
 
 		if ($user->rights->facture->lire) {
-			$label = img_picto('', $this->picto).' <u>'.$langs->trans("Invoice").'</u>';
-			if ($this->type == self::TYPE_REPLACEMENT) $label = '<u>'.$langs->transnoentitiesnoconv("ReplacementInvoice").'</u>';
-			if ($this->type == self::TYPE_CREDIT_NOTE) $label = '<u>'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
-			if ($this->type == self::TYPE_DEPOSIT)     $label = '<u>'.$langs->transnoentitiesnoconv("Deposit").'</u>';
-			if ($this->type == self::TYPE_SITUATION)   $label = '<u>'.$langs->transnoentitiesnoconv("InvoiceSituation").'</u>';
+			$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Invoice").'</u>';
+			if ($this->type == self::TYPE_REPLACEMENT) $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("ReplacementInvoice").'</u>';
+			if ($this->type == self::TYPE_CREDIT_NOTE) $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
+			if ($this->type == self::TYPE_DEPOSIT)     $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("Deposit").'</u>';
+			if ($this->type == self::TYPE_SITUATION)   $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("InvoiceSituation").'</u>';
+			if (isset($this->statut) && isset($this->alreadypaid)) {
+				$label .= ' '.$this->getLibStatut(5, $this->alreadypaid);
+			}
 			if (!empty($this->ref))
 				$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 			if (!empty($this->ref_client))
@@ -1433,9 +1442,6 @@ class Facture extends CommonInvoice
 			if (!empty($this->total_ttc))
 				$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
 			if ($moretitle) $label .= ' - '.$moretitle;
-			if (isset($this->statut) && isset($this->alreadypaid)) {
-				$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5, $this->alreadypaid);
-			}
 		}
 
 		$linkclose = ($target ? ' target="'.$target.'"' : '');
@@ -1547,7 +1553,6 @@ class Facture extends CommonInvoice
 				$this->ref = $obj->ref;
 				$this->ref_client = $obj->ref_client;
 				$this->ref_ext				= $obj->ref_ext;
-				$this->ref_int				= $obj->ref_int;
 				$this->type					= $obj->type;
 				$this->date					= $this->db->jdate($obj->df);
 				$this->date_pointoftax		= $this->db->jdate($obj->date_pointoftax);
@@ -1591,7 +1596,7 @@ class Facture extends CommonInvoice
 				$this->user_author			= $obj->fk_user_author;
 				$this->user_valid = $obj->fk_user_valid;
 				$this->model_pdf = $obj->model_pdf;
-				$this->modelpdf = $obj->model_pdf;				// deprecated
+				$this->modelpdf = $obj->model_pdf; // deprecated
 				$this->last_main_doc = $obj->last_main_doc;
 				$this->situation_cycle_ref  = $obj->situation_cycle_ref;
 				$this->situation_counter    = $obj->situation_counter;
@@ -2481,7 +2486,7 @@ class Facture extends CommonInvoice
 		$this->db->begin();
 
 		// Check parameters
-		if ($this->type == self::TYPE_REPLACEMENT)		// si facture de remplacement
+		if ($this->type == self::TYPE_REPLACEMENT)		// if this is a replacement invoice
 		{
 			// Controle que facture source connue
 			if ($this->fk_facture_source <= 0)
@@ -2491,7 +2496,7 @@ class Facture extends CommonInvoice
 				return -10;
 			}
 
-			// Charge la facture source a remplacer
+			// Load source invoice that has been replaced
 			$facreplaced = new Facture($this->db);
 			$result = $facreplaced->fetch($this->fk_facture_source);
 			if ($result <= 0)
@@ -2501,7 +2506,7 @@ class Facture extends CommonInvoice
 				return -11;
 			}
 
-			// Controle que facture source non deja remplacee par une autre
+			// Check that source invoice not already replaced by another one.
 			$idreplacement = $facreplaced->getIdReplacingInvoice('validated');
 			if ($idreplacement && $idreplacement != $this->id)
 			{
@@ -4313,15 +4318,14 @@ class Facture extends CommonInvoice
 	 *  @param  int			$hidedetails    Hide details of lines
 	 *  @param  int			$hidedesc       Hide description
 	 *  @param  int			$hideref        Hide ref
-	 *  @param   null|array  $moreparams     Array to provide more information
+	 *  @param  null|array  $moreparams     Array to provide more information
 	 *	@return int        					<0 if KO, >0 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
 		global $conf, $langs;
 
-		$langs->load("bills");
-		$outputlangs->load("products");
+		$outputlangs->loadLangs(array("bills", "products"));
 
 		if (!dol_strlen($modele))
 		{
@@ -4854,11 +4858,11 @@ class FactureLigne extends CommonInvoiceLine
 
 			$this->ref = $objp->product_ref; // deprecated
 
-			$this->product_ref          = $objp->product_ref;
+			$this->product_ref = $objp->product_ref;
 			$this->product_label		= $objp->product_label;
 			$this->product_desc			= $objp->product_desc;
 
-			$this->fk_unit				= $objp->fk_unit;
+			$this->fk_unit = $objp->fk_unit;
 			$this->fk_user_modif		= $objp->fk_user_modif;
 			$this->fk_user_author = $objp->fk_user_author;
 

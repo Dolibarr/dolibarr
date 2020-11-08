@@ -34,8 +34,8 @@ if ($_GET['id'] == 'NOUV')
 // Recuperation, s'il existe, de l'objet contenant les infos de la vente en cours ...
 if (isset($_SESSION['serObjFacturation']))
 {
-    $obj_facturation = unserialize($_SESSION['serObjFacturation']);
-    unset($_SESSION['serObjFacturation']);
+	$obj_facturation = unserialize($_SESSION['serObjFacturation']);
+	unset($_SESSION['serObjFacturation']);
 } else {
 	// ... sinon, c'est une nouvelle vente
 	$obj_facturation = new Facturation();

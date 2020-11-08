@@ -120,7 +120,7 @@ class DolGraph
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Utiliser SetNumTicks ou SetHorizTickIncrement mais pas les 2
 	 *
@@ -129,12 +129,12 @@ class DolGraph
 	 */
 	public function SetHorizTickIncrement($xi)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$this->horizTickIncrement = $xi;
 		return true;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Utiliser SetNumTicks ou SetHorizTickIncrement mais pas les 2
 	 *
@@ -143,12 +143,12 @@ class DolGraph
 	 */
 	public function SetNumXTicks($xt)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$this->SetNumXTicks = $xt;
 		return true;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set label interval to reduce number of labels
 	 *
@@ -157,12 +157,12 @@ class DolGraph
 	 */
 	public function SetLabelInterval($x)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$this->labelInterval = $x;
 		return true;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Hide X grid
 	 *
@@ -171,12 +171,12 @@ class DolGraph
 	 */
 	public function SetHideXGrid($bool)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$this->hideXGrid = $bool;
 		return true;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Hide Y grid
 	 *
@@ -185,12 +185,12 @@ class DolGraph
 	 */
 	public function SetHideYGrid($bool)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$this->hideYGrid = $bool;
 		return true;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set y label
 	 *
@@ -199,11 +199,11 @@ class DolGraph
 	 */
 	public function SetYLabel($label)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$this->YLabel = $label;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set width
 	 *
@@ -212,11 +212,11 @@ class DolGraph
 	 */
 	public function SetWidth($w)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$this->width = $w;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set title
 	 *
@@ -225,11 +225,11 @@ class DolGraph
 	 */
 	public function SetTitle($title)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$this->title = $title;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set data
 	 *
@@ -239,11 +239,11 @@ class DolGraph
 	 */
 	public function SetData($data)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$this->data = $data;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set data
 	 *
@@ -252,11 +252,11 @@ class DolGraph
 	 */
 	public function SetDataColor($datacolor)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$this->datacolor = $datacolor;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set type
 	 *
@@ -266,11 +266,11 @@ class DolGraph
 	 */
 	public function SetType($type)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$this->type = $type;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set legend
 	 *
@@ -279,11 +279,11 @@ class DolGraph
 	 */
 	public function SetLegend($legend)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$this->Legend = $legend;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set min width
 	 *
@@ -292,120 +292,120 @@ class DolGraph
 	 */
 	public function SetLegendWidthMin($legendwidthmin)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$this->LegendWidthMin = $legendwidthmin;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set max value
 	 *
 	 * @param 	int		$max			Max value
 	 * @return	void
 	 */
-    public function SetMaxValue($max)
+	public function SetMaxValue($max)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$this->MaxValue = $max;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Get max value
 	 *
 	 * @return	int		Max value
 	 */
-    public function GetMaxValue()
+	public function GetMaxValue()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		return $this->MaxValue;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set min value
 	 *
 	 * @param 	int		$min			Min value
 	 * @return	void
 	 */
-    public function SetMinValue($min)
+	public function SetMinValue($min)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$this->MinValue = $min;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Get min value
 	 *
 	 * @return	int		Max value
 	 */
-    public function GetMinValue()
+	public function GetMinValue()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		return $this->MinValue;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set height
 	 *
 	 * @param 	int		$h				Height
 	 * @return	void
 	 */
-    public function SetHeight($h)
+	public function SetHeight($h)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$this->height = $h;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set shading
 	 *
 	 * @param 	string	$s				Shading
 	 * @return	void
 	 */
-    public function SetShading($s)
+	public function SetShading($s)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$this->SetShading = $s;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set shading
 	 *
 	 * @param 	string	$s				Shading
 	 * @return	void
 	 */
-    public function SetCssPrefix($s)
+	public function SetCssPrefix($s)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$this->cssprefix = $s;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Reset bg color
 	 *
 	 * @return	void
 	 */
-    public function ResetBgColor()
+	public function ResetBgColor()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		unset($this->bgcolor);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Reset bgcolorgrid
 	 *
 	 * @return	void
 	 */
-    public function ResetBgColorGrid()
+	public function ResetBgColorGrid()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		unset($this->bgcolorgrid);
 	}
 
@@ -414,7 +414,7 @@ class DolGraph
 	 *
 	 * @return	string		Error
 	 */
-    public function isGraphKo()
+	public function isGraphKo()
 	{
 		return $this->error;
 	}
@@ -425,7 +425,7 @@ class DolGraph
 	 * @param	int		$showlegend		1=Show legend (default), 0=Hide legend, 2=Show legend on right
 	 * @return	void
 	 */
-    public function setShowLegend($showlegend)
+	public function setShowLegend($showlegend)
 	{
 		$this->showlegend = $showlegend;
 	}
@@ -436,7 +436,7 @@ class DolGraph
 	 * @param	int		$showpointvalue		1=Show value for each point, as tooltip or inline (default), 0=Hide value
 	 * @return	void
 	 */
-    public function setShowPointValue($showpointvalue)
+	public function setShowPointValue($showpointvalue)
 	{
 		$this->showpointvalue = $showpointvalue;
 	}
@@ -447,23 +447,23 @@ class DolGraph
 	 * @param	int		$showpercent		1=Show percent for each point, as tooltip or inline, 0=Hide percent (default)
 	 * @return	void
 	 */
-    public function setShowPercent($showpercent)
+	public function setShowPercent($showpercent)
 	{
 		$this->showpercent = $showpercent;
 	}
 
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Define background color of complete image
 	 *
 	 * @param	array	$bg_color		array(R,G,B) ou 'onglet' ou 'default'
 	 * @return	void
 	 */
-    public function SetBgColor($bg_color = array(255, 255, 255))
+	public function SetBgColor($bg_color = array(255, 255, 255))
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $theme_bgcolor, $theme_bgcoloronglet;
 
 		if (!is_array($bg_color))
@@ -480,16 +480,16 @@ class DolGraph
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Define background color of grid
 	 *
 	 * @param	array	$bg_colorgrid		array(R,G,B) ou 'onglet' ou 'default'
 	 * @return	void
 	 */
-    public function SetBgColorGrid($bg_colorgrid = array(255, 255, 255))
+	public function SetBgColorGrid($bg_colorgrid = array(255, 255, 255))
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $theme_bgcolor, $theme_bgcoloronglet;
 
 		if (!is_array($bg_colorgrid))
@@ -506,27 +506,27 @@ class DolGraph
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Reset data color
 	 *
 	 * @return	void
 	 */
-    public function ResetDataColor()
-    {
-        // phpcs:enable
-        unset($this->datacolor);
-    }
+	public function ResetDataColor()
+	{
+		// phpcs:enable
+		unset($this->datacolor);
+	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
 	 * Get max value
 	 *
 	 * @return	int		Max value
 	 */
-    public function GetMaxValueInData()
+	public function GetMaxValueInData()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		if (!is_array($this->data)) return 0;
 
 		$k = 0;
@@ -547,15 +547,15 @@ class DolGraph
 		return $vals[0];
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return min value of all data
 	 *
 	 * @return	int		Min value of all data
 	 */
-    public function GetMinValueInData()
+	public function GetMinValueInData()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		if (!is_array($this->data)) return 0;
 
 		$k = 0;
@@ -576,15 +576,15 @@ class DolGraph
 		return $vals[0];
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return max value of all data
 	 *
 	 * @return 	int		Max value of all data
 	 */
-    public function GetCeilMaxValue()
+	public function GetCeilMaxValue()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$max = $this->GetMaxValueInData();
 		if ($max != 0) $max++;
 		$size = dol_strlen(abs(ceil($max)));
@@ -601,15 +601,15 @@ class DolGraph
 		return $res;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return min value of all data
 	 *
 	 * @return 	double		Max value of all data
 	 */
-    public function GetFloorMinValue()
+	public function GetFloorMinValue()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$min = $this->GetMinValueInData();
 		if ($min == '') $min = 0;
 		if ($min != 0) $min--;
@@ -633,7 +633,7 @@ class DolGraph
 	 * @param	string	$fileurl	Url path to show image if saved onto disk
 	 * @return	integer|null
 	 */
-    public function draw($file, $fileurl = '')
+	public function draw($file, $fileurl = '')
 	{
 		if (empty($file))
 		{
@@ -656,7 +656,7 @@ class DolGraph
 		call_user_func_array(array($this, $call), array($file, $fileurl));
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Build a graph using JFlot library. Input when calling this method should be:
 	 *	$this->data  = array(array(0=>'labelxA',1=>yA),  array('labelxB',yB));
@@ -675,7 +675,7 @@ class DolGraph
 	 */
 	private function draw_jflot($file, $fileurl)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $langs;
 
 		dol_syslog(get_class($this)."::draw_jflot this->type=".join(',', $this->type)." this->MaxValue=".$this->MaxValue);
@@ -732,9 +732,9 @@ class DolGraph
 		if (!empty($this->title)) $this->stringtoshow .= '<div class="center dolgraphtitle'.(empty($this->cssprefix) ? '' : ' dolgraphtitle'.$this->cssprefix).'">'.$this->title.'</div>';
 		if (!empty($this->shownographyet))
 		{
-		    $this->stringtoshow .= '<div style="width:'.$this->width.'px;height:'.$this->height.'px;" class="nographyet"></div>';
-		    $this->stringtoshow .= '<div class="nographyettext margintoponly">'.$langs->trans("NotEnoughDataYet").'...</div>';
-		    return;
+			$this->stringtoshow .= '<div style="width:'.$this->width.'px;height:'.$this->height.'px;" class="nographyet"></div>';
+			$this->stringtoshow .= '<div class="nographyettext margintoponly">'.$langs->trans("NotEnoughDataYet").'...</div>';
+			return;
 		}
 
 		// Start the div that will contains all the graph
@@ -825,7 +825,7 @@ class DolGraph
 		// Other cases, graph of type 'bars', 'lines'
 		else {
 			// Add code to support tooltips
-		    // TODO: remove js css and use graph-tooltip-inner class instead by adding css in each themes
+			// TODO: remove js css and use graph-tooltip-inner class instead by adding css in each themes
 			$this->stringtoshow .= '
 			function showTooltip_'.$tag.'(x, y, contents) {
 				$(\'<div class="graph-tooltip-inner" id="tooltip_'.$tag.'">\' + contents + \'</div>\').css({
@@ -881,14 +881,14 @@ class DolGraph
 				if ($i > $firstlot) $this->stringtoshow .= ', '."\n";
 				$color = sprintf("%02x%02x%02x", $this->datacolor[$i][0], $this->datacolor[$i][1], $this->datacolor[$i][2]);
 				$this->stringtoshow .= '{ ';
-				if (! isset($this->type[$i]) || $this->type[$i] == 'bars') {
-                    if ($nblot == 3) {
-                        if ($i == $firstlot) $align = 'right';
-                        elseif ($i == $firstlot + 1) $align = 'center';
-                        else $align = 'left';
-                        $this->stringtoshow .= 'bars: { lineWidth: 1, show: true, align: "'.$align.'", barWidth: 0.45 }, ';
-                    } else $this->stringtoshow.='bars: { lineWidth: 1, show: true, align: "'.($i==$firstlot?'center':'left').'", barWidth: 0.5 }, ';
-                }
+				if (!isset($this->type[$i]) || $this->type[$i] == 'bars') {
+					if ($nblot == 3) {
+						if ($i == $firstlot) $align = 'right';
+						elseif ($i == $firstlot + 1) $align = 'center';
+						else $align = 'left';
+						$this->stringtoshow .= 'bars: { lineWidth: 1, show: true, align: "'.$align.'", barWidth: 0.45 }, ';
+					} else $this->stringtoshow .= 'bars: { lineWidth: 1, show: true, align: "'.($i == $firstlot ? 'center' : 'left').'", barWidth: 0.5 }, ';
+				}
 				if (isset($this->type[$i]) && ($this->type[$i] == 'lines' || $this->type[$i] == 'linesnopoint')) $this->stringtoshow .= 'lines: { show: true, fill: false }, points: { show: '.($this->type[$i] == 'linesnopoint' ? 'false' : 'true').' }, ';
 				$this->stringtoshow .= 'color: "#'.$color.'", label: "'.(isset($this->Legend[$i]) ? dol_escape_js($this->Legend[$i]) : '').'", data: d'.$i.' }';
 				$i++;
@@ -1280,7 +1280,7 @@ class DolGraph
 	 *
 	 * @return	string							HTML string to total value
 	 */
-    public function total()
+	public function total()
 	{
 		$value = 0;
 		foreach ($this->data as $valarray)	// Loop on each x
@@ -1296,7 +1296,7 @@ class DolGraph
 	 * @param	int|string		$shownographyet    Show graph to say there is not enough data or the message in $shownographyet if it is a string.
 	 * @return	string							   HTML string to show graph
 	 */
-    public function show($shownographyet = 0)
+	public function show($shownographyet = 0)
 	{
 		global $langs;
 
@@ -1305,9 +1305,9 @@ class DolGraph
 			$s = '<div class="nographyet" style="width:'.(preg_match('/%/', $this->width) ? $this->width : $this->width.'px').'; height:'.(preg_match('/%/', $this->height) ? $this->height : $this->height.'px').';"></div>';
 			$s .= '<div class="nographyettext margintoponly">';
 			if (is_numeric($shownographyet)) {
-                $s .= $langs->trans("NotEnoughDataYet").'...';
+				$s .= $langs->trans("NotEnoughDataYet").'...';
 			} else {
-			    $s .= $shownographyet.'...';
+				$s .= $shownographyet.'...';
 			}
 			$s .= '</div>';
 			return $s;

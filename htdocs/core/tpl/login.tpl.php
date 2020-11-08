@@ -24,8 +24,8 @@ if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', 1);
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
-    print "Error, template page can't be called as URL";
-    exit;
+	print "Error, template page can't be called as URL";
+	exit;
 }
 
 
@@ -59,7 +59,7 @@ if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
 } else {
 	$titleofloginpage = $langs->trans('Login');
 }
-$titleofloginpage.= ' @ '.$titletruedolibarrversion; // $titletruedolibarrversion is defined by dol_loginfunction in security2.lib.php. We must keep the @, some tools use it to know it is login page and find true dolibarr version.
+$titleofloginpage .= ' @ '.$titletruedolibarrversion; // $titletruedolibarrversion is defined by dol_loginfunction in security2.lib.php. We must keep the @, some tools use it to know it is login page and find true dolibarr version.
 
 $disablenofollow = 1;
 if (!preg_match('/'.constant('DOL_APPLICATION_TITLE').'/', $title)) $disablenofollow = 0;
@@ -295,18 +295,18 @@ if (!empty($_SESSION['dol_loginmesg']))
 
 // Add commit strip
 if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
-    include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 	if (substr($langs->defaultlang, 0, 2) == 'fr') {
-		$resgetcommitstrip = getURLContent("http://www.commitstrip.com/fr/feed/");
+		$resgetcommitstrip = getURLContent("https://www.commitstrip.com/fr/feed/");
 	} else {
-		$resgetcommitstrip = getURLContent("http://www.commitstrip.com/en/feed/");
+		$resgetcommitstrip = getURLContent("https://www.commitstrip.com/en/feed/");
 	}
-    if ($resgetcommitstrip && $resgetcommitstrip['http_code'] == '200')
-    {
-        $xml = simplexml_load_string($resgetcommitstrip['content']);
-        $little = $xml->channel->item[0]->children('content', true);
-        print preg_replace('/width="650" height="658"/', '', $little->encoded);
-    }
+	if ($resgetcommitstrip && $resgetcommitstrip['http_code'] == '200')
+	{
+		$xml = simplexml_load_string($resgetcommitstrip['content']);
+		$little = $xml->channel->item[0]->children('content', true);
+		print preg_replace('/width="650" height="658"/', '', $little->encoded);
+	}
 }
 
 ?>

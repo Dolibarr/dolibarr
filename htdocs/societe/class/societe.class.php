@@ -63,9 +63,9 @@ class Societe extends CommonObject
 	 */
 	public $fk_element = 'fk_soc';
 
-    /**
-     * @var string Fields for combobox
-     */
+	/**
+	 * @var string Fields for combobox
+	 */
 	public $fieldsforcombobox = 'nom,name_alias';
 
 	/**
@@ -245,9 +245,9 @@ class Societe extends CommonObject
 	 */
 	public $name_alias;
 
-    /**
-     * @var int Physical thirdparty not a company
-     */
+	/**
+	 * @var int Physical thirdparty not a company
+	 */
 	public $particulier;
 
 	/**
@@ -255,14 +255,14 @@ class Societe extends CommonObject
 	 */
 	public $address;
 
-    /**
-     * @var string Zip code of thirdparty
-     */
+	/**
+	 * @var string Zip code of thirdparty
+	 */
 	public $zip;
 
-    /**
-     * @var string Town of thirdparty
-     */
+	/**
+	 * @var string Town of thirdparty
+	 */
 	public $town;
 
 	/**
@@ -277,14 +277,14 @@ class Societe extends CommonObject
 	 */
 	public $state_id;
 
-    /**
-     * @var string State code
-     */
+	/**
+	 * @var string State code
+	 */
 	public $state_code;
 
-    /**
-     * @var string State name
-     */
+	/**
+	 * @var string State name
+	 */
 	public $state;
 
 	/**
@@ -293,9 +293,9 @@ class Societe extends CommonObject
 	 */
 	public $region_code;
 
-    /**
-     * @var string Region name
-     */
+	/**
+	 * @var string Region name
+	 */
 	public $region;
 
 	/**
@@ -335,10 +335,10 @@ class Societe extends CommonObject
 	 */
 	public $email;
 
-    /**
-     * @var array array of socialnetworks
-     */
-    public $socialnetworks;
+	/**
+	 * @var array array of socialnetworks
+	 */
+	public $socialnetworks;
 
 	/**
 	 * Skype username
@@ -361,11 +361,11 @@ class Societe extends CommonObject
 	 */
 	public $facebook;
 
-    /**
-     * LinkedIn username
-     * @var string
+	/**
+	 * LinkedIn username
+	 * @var string
 	 * @deprecated
-     */
+	 */
 	public $linkedin;
 
 	/**
@@ -418,9 +418,9 @@ class Societe extends CommonObject
 	 */
 	public $idprof6;
 
-    /**
-     * @var string Prefix comm
-     */
+	/**
+	 * @var string Prefix comm
+	 */
 	public $prefix_comm;
 
 	/**
@@ -440,14 +440,14 @@ class Societe extends CommonObject
 	public $localtax2_assuj;
 	public $localtax2_value;
 
-    /**
-     * @var string Manager
-     */
+	/**
+	 * @var string Manager
+	 */
 	public $managers;
 
-    /**
-     * @var float Capital
-     */
+	/**
+	 * @var float Capital
+	 */
 	public $capital;
 
 	/**
@@ -464,11 +464,11 @@ class Societe extends CommonObject
 	public $remise_supplier_percent;
 	public $mode_reglement_supplier_id;
 	public $cond_reglement_supplier_id;
-    public $transport_mode_supplier_id;
+	public $transport_mode_supplier_id;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_prospectlevel;
 
 	/**
@@ -500,9 +500,6 @@ class Societe extends CommonObject
 	 * @var User
 	 */
 	public $user_creation;
-
-
-	public $specimen;
 
 	/**
 	 * 0=no customer, 1=customer, 2=prospect, 3=customer and prospect
@@ -540,11 +537,11 @@ class Societe extends CommonObject
 	 */
 	public $code_compta;
 
-    /**
-     * Accounting code for client
-     * @var string
-     */
-    public $code_compta_client;
+	/**
+	 * Accounting code for client
+	 * @var string
+	 */
+	public $code_compta_client;
 
 	/**
 	 * Accounting code for suppliers
@@ -605,9 +602,9 @@ class Societe extends CommonObject
 	 */
 	public $order_min_amount;
 
-    /**
-     * @var string Supplier min order amount
-     */
+	/**
+	 * @var string Supplier min order amount
+	 */
 	public $supplier_order_min_amount;
 
 	/**
@@ -666,46 +663,46 @@ class Societe extends CommonObject
 	 */
 	public $webservices_key;
 
-    /**
-     * @var string Logo
-     */
+	/**
+	 * @var string Logo
+	 */
 	public $logo;
 
-    /**
-     * @var string logo small
-     */
+	/**
+	 * @var string logo small
+	 */
 	public $logo_small;
 
-    /**
-     * @var string Logo mini
-     */
+	/**
+	 * @var string Logo mini
+	 */
 	public $logo_mini;
 
-    /**
-     * @var string Logo squarred
-     */
+	/**
+	 * @var string Logo squarred
+	 */
 	public $logo_squarred;
 
-    /**
-     * @var string Logo squarred small
-     */
+	/**
+	 * @var string Logo squarred small
+	 */
 	public $logo_squarred_small;
 
-    /**
-     * @var string Logo squarred mini
-     */
+	/**
+	 * @var string Logo squarred mini
+	 */
 	public $logo_squarred_mini;
 
 
 	// Multicurrency
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_multicurrency;
 
-    /**
-     * @var string Multicurrency code
-     */
+	/**
+	 * @var string Multicurrency code
+	 */
 	public $multicurrency_code;
 
 
@@ -764,7 +761,7 @@ class Societe extends CommonObject
 		$this->tva_assuj = 1;
 		$this->status = 1;
 
-		if (! empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
+		if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
 			$this->fields['address']['showoncombobox'] = $conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST;
 			$this->fields['zip']['showoncombobox'] = $conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST;
 			$this->fields['town']['showoncombobox'] = $conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST;
@@ -780,7 +777,7 @@ class Societe extends CommonObject
 	 *    @param	User	$user       Object of user that ask creation
 	 *    @return   int         		>=0 if OK, <0 if KO
 	 */
-    public function create(User $user)
+	public function create(User $user)
 	{
 		global $langs, $conf, $mysoc;
 
@@ -789,8 +786,7 @@ class Societe extends CommonObject
 		// Clean parameters
 		if (empty($this->status)) $this->status = 0;
 		$this->name = $this->name ?trim($this->name) : trim($this->nom);
-		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->name = ucwords($this->name);
-		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->name = strtoupper($this->name);
+		$this->setUpperOrLowerCase();
 		$this->nom = $this->name; // For backward compatibility
 		if (empty($this->client))      $this->client = 0;
 		if (empty($this->fournisseur)) $this->fournisseur = 0;
@@ -891,16 +887,16 @@ class Societe extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Create a contact/address from thirdparty
 	 *
 	 * @param 	User	$user		Object user
 	 * @return 	int					<0 if KO, >0 if OK
 	 */
-    public function create_individual(User $user)
+	public function create_individual(User $user)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 		$contact = new Contact($this->db);
 
@@ -936,7 +932,7 @@ class Societe extends CommonObject
 	 *
 	 *    @return     int		0 if OK, <0 if KO
 	 */
-    public function verify()
+	public function verify()
 	{
 		global $conf, $langs, $mysoc;
 
@@ -1080,7 +1076,7 @@ class Societe extends CommonObject
 	 *		@param	int		$nosyncmember				Do not synchronize info of linked member
 	 *      @return int  			           			<0 if KO, >=0 if OK
 	 */
-    public function update($id, $user = '', $call_trigger = 1, $allowmodcodeclient = 0, $allowmodcodefournisseur = 0, $action = 'update', $nosyncmember = 1)
+	public function update($id, $user = '', $call_trigger = 1, $allowmodcodeclient = 0, $allowmodcodefournisseur = 0, $action = 'update', $nosyncmember = 1)
 	{
 		global $langs, $conf, $hookmanager;
 
@@ -1094,8 +1090,6 @@ class Societe extends CommonObject
 
 		$now = dol_now();
 
-		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->name = ucwords($this->name);
-		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->name = strtoupper($this->name);
 		// Clean parameters
 		$this->id = $id;
 		$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
@@ -1105,7 +1099,8 @@ class Societe extends CommonObject
 		$this->ref_ext		= trim($this->ref_ext);
 		$this->address		= $this->address ?trim($this->address) : trim($this->address);
 		$this->zip = $this->zip ?trim($this->zip) : trim($this->zip);
-		$this->town			= $this->town ?trim($this->town) : trim($this->town);
+		$this->town = $this->town ?trim($this->town) : trim($this->town);
+		$this->setUpperOrLowerCase();
 		$this->state_id = trim($this->state_id);
 		$this->country_id = ($this->country_id > 0) ? $this->country_id : 0;
 		$this->phone		= trim($this->phone);
@@ -1254,8 +1249,8 @@ class Societe extends CommonObject
 
 			$sql .= ",phone = ".(!empty($this->phone) ? "'".$this->db->escape($this->phone)."'" : "null");
 			$sql .= ",fax = ".(!empty($this->fax) ? "'".$this->db->escape($this->fax)."'" : "null");
-            $sql .= ",email = ".(!empty($this->email) ? "'".$this->db->escape($this->email)."'" : "null");
-            $sql .= ", socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
+			$sql .= ",email = ".(!empty($this->email) ? "'".$this->db->escape($this->email)."'" : "null");
+			$sql .= ", socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
 			$sql .= ",url = ".(!empty($this->url) ? "'".$this->db->escape($this->url)."'" : "null");
 
 			$sql .= ",parent = ".($this->parent > 0 ? $this->parent : "null");
@@ -1308,10 +1303,10 @@ class Societe extends CommonObject
 
 			$sql .= ",mode_reglement = ".(!empty($this->mode_reglement_id) ? "'".$this->db->escape($this->mode_reglement_id)."'" : "null");
 			$sql .= ",cond_reglement = ".(!empty($this->cond_reglement_id) ? "'".$this->db->escape($this->cond_reglement_id)."'" : "null");
-			$sql .= ",transport_mode = ".(! empty($this->transport_mode_id) ? "'".$this->db->escape($this->transport_mode_id)."'" : "null");
-            $sql .= ",mode_reglement_supplier = ".(!empty($this->mode_reglement_supplier_id) ? "'".$this->db->escape($this->mode_reglement_supplier_id)."'" : "null");
+			$sql .= ",transport_mode = ".(!empty($this->transport_mode_id) ? "'".$this->db->escape($this->transport_mode_id)."'" : "null");
+			$sql .= ",mode_reglement_supplier = ".(!empty($this->mode_reglement_supplier_id) ? "'".$this->db->escape($this->mode_reglement_supplier_id)."'" : "null");
 			$sql .= ",cond_reglement_supplier = ".(!empty($this->cond_reglement_supplier_id) ? "'".$this->db->escape($this->cond_reglement_supplier_id)."'" : "null");
-			$sql .= ",transport_mode_supplier = ".(! empty($this->transport_mode_supplier_id)? "'".$this->db->escape($this->transport_mode_supplier_id)."'" : "null");
+			$sql .= ",transport_mode_supplier = ".(!empty($this->transport_mode_supplier_id) ? "'".$this->db->escape($this->transport_mode_supplier_id)."'" : "null");
 			$sql .= ",fk_shipping_method = ".(!empty($this->shipping_method_id) ? "'".$this->db->escape($this->shipping_method_id)."'" : "null");
 
 			$sql .= ",client = ".(!empty($this->client) ? $this->client : 0);
@@ -1511,8 +1506,10 @@ class Societe extends CommonObject
 		$sql .= ', s.fk_forme_juridique as forme_juridique_code';
 		$sql .= ', s.webservices_url, s.webservices_key';
 		$sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
-		$sql .= ', s.fk_departement as state_id, s.fk_pays as country_id, s.fk_stcomm, s.remise_supplier, s.mode_reglement, s.cond_reglement, s.fk_account, s.tva_assuj';
-		$sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo, s.logo_squarred';
+		$sql .= ', s.fk_departement as state_id, s.fk_pays as country_id, s.fk_stcomm, s.remise_supplier, s.mode_reglement, s.cond_reglement, s.transport_mode';
+		$sql .= ', s.fk_account, s.tva_assuj';
+		$sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.transport_mode_supplier';
+		$sql .= ', s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo, s.logo_squarred';
 		$sql .= ', s.fk_shipping_method';
 		$sql .= ', s.outstanding_limit, s.import_key, s.canvas, s.fk_incoterms, s.location_incoterms';
 		$sql .= ', s.order_min_amount, s.supplier_order_min_amount';
@@ -1593,9 +1590,9 @@ class Societe extends CommonObject
 				$label = ($transcode != 'StatusProspect'.$obj->fk_stcomm ? $transcode : $obj->stcomm);
 				$this->stcomm_id = $obj->fk_stcomm; // id status prospect
 				$this->status_prospect_label = $label; // label status prospect
-				$this->stcomm_picto = $obj->stcomm_picto;     // picto statut commercial
+				$this->stcomm_picto = $obj->stcomm_picto; // picto statut commercial
 
-                $this->email = $obj->email;
+				$this->email = $obj->email;
 				$this->socialnetworks = (array) json_decode($obj->socialnetworks, true);
 
 				$this->url = $obj->url;
@@ -1652,12 +1649,12 @@ class Societe extends CommonObject
 				$this->transport_mode_id 	= $obj->transport_mode;
 				$this->mode_reglement_supplier_id 	= $obj->mode_reglement_supplier;
 				$this->cond_reglement_supplier_id 	= $obj->cond_reglement_supplier;
-				$this->transport_mode_supplier_id	= $obj->transport_mode_supplier;
-				$this->shipping_method_id			= ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
-				$this->fk_account	= $obj->fk_account;
+				$this->transport_mode_supplier_id = $obj->transport_mode_supplier;
+				$this->shipping_method_id = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
+				$this->fk_account = $obj->fk_account;
 
-				$this->client		= $obj->client;
-				$this->fournisseur	= $obj->fournisseur;
+				$this->client = $obj->client;
+				$this->fournisseur = $obj->fournisseur;
 
 				$this->note = $obj->note_private; // TODO Deprecated for backward comtability
 				$this->note_private = $obj->note_private;
@@ -1718,7 +1715,7 @@ class Societe extends CommonObject
 	 *    @param    int		$call_trigger   0=No, 1=yes
 	 *    @return	int						<0 if KO, 0 if nothing done, >0 if OK
 	 */
-    public function delete($id, User $fuser = null, $call_trigger = 1)
+	public function delete($id, User $fuser = null, $call_trigger = 1)
 	{
 		global $langs, $conf, $user;
 
@@ -1776,11 +1773,11 @@ class Societe extends CommonObject
 			{
 				foreach ($this->childtablesoncascade as $tabletodelete)
 				{
-					$deleteFromObject=explode(':', $tabletodelete);
-					if (count($deleteFromObject)>=2) {
-						$className=str_replace('@', '', $deleteFromObject[0]);
-						$filepath=$deleteFromObject[1];
-						$columnName=$deleteFromObject[2];
+					$deleteFromObject = explode(':', $tabletodelete);
+					if (count($deleteFromObject) >= 2) {
+						$className = str_replace('@', '', $deleteFromObject[0]);
+						$filepath = $deleteFromObject[1];
+						$columnName = $deleteFromObject[2];
 						if (dol_include_once($filepath)) {
 							$child_object = new $className($this->db);
 							$result = $child_object->deleteByParentField($id, $columnName);
@@ -1791,12 +1788,12 @@ class Societe extends CommonObject
 							}
 						} else {
 							$error++;
-							$this->errors[] = 'Cannot include child class file ' .$filepath;
+							$this->errors[] = 'Cannot include child class file '.$filepath;
 							break;
 						}
 					} else {
-						$sql = "DELETE FROM " . MAIN_DB_PREFIX . $tabletodelete;
-						$sql .= " WHERE fk_soc = " . $id;
+						$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete;
+						$sql .= " WHERE fk_soc = ".$id;
 						if (!$this->db->query($sql)) {
 							$error++;
 							$this->errors[] = $this->db->lasterror();
@@ -1866,15 +1863,15 @@ class Societe extends CommonObject
 		return 0;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Define third party as a customer
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
-    public function set_as_client()
+	public function set_as_client()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		if ($this->id)
 		{
 			$newclient = 1;
@@ -1902,9 +1899,9 @@ class Societe extends CommonObject
 	 *  @param  User	$user		User who sets the discount
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-    public function set_remise_client($remise, $note, User $user)
+	public function set_remise_client($remise, $note, User $user)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $langs;
 
 		// Parameter cleaning
@@ -1965,9 +1962,9 @@ class Societe extends CommonObject
 	 *  @param  User	$user		User who sets the discount
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-    public function set_remise_supplier($remise, $note, User $user)
+	public function set_remise_supplier($remise, $note, User $user)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $langs;
 
 		// Parameter cleaning
@@ -2019,7 +2016,7 @@ class Societe extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    	Add a discount for third party
 	 *
@@ -2030,9 +2027,9 @@ class Societe extends CommonObject
 	 *      @param	int		$discount_type	0 => customer discount, 1 => supplier discount
 	 *		@return	int						<0 if KO, id of discount record if OK
 	 */
-    public function set_remise_except($remise, User $user, $desc, $vatrate = '', $discount_type = 0)
+	public function set_remise_except($remise, User $user, $desc, $vatrate = '', $discount_type = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 
 		// Clean parameters
@@ -2098,7 +2095,7 @@ class Societe extends CommonObject
 	 * 	@param	int		$discount_type	0 => customer discount, 1 => supplier discount
 	 *	@return	int					<0 if KO, Credit note amount otherwise
 	 */
-    public function getAvailableDiscounts($user = '', $filter = '', $maxvalue = 0, $discount_type = 0)
+	public function getAvailableDiscounts($user = '', $filter = '', $maxvalue = 0, $discount_type = 0)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
@@ -2122,7 +2119,7 @@ class Societe extends CommonObject
 	 *  @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC';
 	 *  @return array       				Array of sales representatives of third party
 	 */
-    public function getSalesRepresentatives(User $user, $mode = 0, $sortfield = null, $sortorder = null)
+	public function getSalesRepresentatives(User $user, $mode = 0, $sortfield = null, $sortorder = null)
 	{
 		global $conf;
 
@@ -2179,7 +2176,7 @@ class Societe extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set the price level
 	 *
@@ -2187,9 +2184,9 @@ class Societe extends CommonObject
 	 * @param 	User	$user			Use making change
 	 * @return	int						<0 if KO, >0 if OK
 	 */
-    public function set_price_level($price_level, User $user)
+	public function set_price_level($price_level, User $user)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		if ($this->id)
 		{
 			$now = dol_now();
@@ -2218,7 +2215,7 @@ class Societe extends CommonObject
 		return -1;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Add link to sales representative
 	 *
@@ -2226,67 +2223,67 @@ class Societe extends CommonObject
 	 *	@param	int		$commid		Id of user
 	 *	@return	int					<=0 if KO, >0 if OK
 	 */
-    public function add_commercial(User $user, $commid)
+	public function add_commercial(User $user, $commid)
 	{
 		// phpcs:enable
 		$error = 0;
 
 		if ($this->id > 0 && $commid > 0)
 		{
-		    $this->db->begin();
+			$this->db->begin();
 
-		    if (!$error)
-		    {
-    			$sql = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux";
-    			$sql .= " WHERE fk_soc = ".$this->id." AND fk_user =".$commid;
+			if (!$error)
+			{
+				$sql = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux";
+				$sql .= " WHERE fk_soc = ".$this->id." AND fk_user =".$commid;
 
-    			$resql = $this->db->query($sql);
-    			if (!$resql)
-    			{
-    			    dol_syslog(get_class($this)."::add_commercial Error ".$this->db->lasterror());
-    			    $error++;
-    			}
-		    }
+				$resql = $this->db->query($sql);
+				if (!$resql)
+				{
+					dol_syslog(get_class($this)."::add_commercial Error ".$this->db->lasterror());
+					$error++;
+				}
+			}
 
-		    if (!$error)
-    		{
-    			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_commerciaux";
-    			$sql .= " (fk_soc, fk_user)";
-    			$sql .= " VALUES (".$this->id.", ".$commid.")";
+			if (!$error)
+			{
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_commerciaux";
+				$sql .= " (fk_soc, fk_user)";
+				$sql .= " VALUES (".$this->id.", ".$commid.")";
 
-    			$resql = $this->db->query($sql);
-    			if (!$resql)
-    			{
-    				dol_syslog(get_class($this)."::add_commercial Error ".$this->db->lasterror());
-                    $error++;
-    			}
-    		}
+				$resql = $this->db->query($sql);
+				if (!$resql)
+				{
+					dol_syslog(get_class($this)."::add_commercial Error ".$this->db->lasterror());
+					$error++;
+				}
+			}
 
 			if (!$error)
 			{
 				$this->context = array('commercial_modified'=>$commid);
 
 				$result = $this->call_trigger('COMPANY_LINK_SALE_REPRESENTATIVE', $user);
-                if ($result < 0)
-                {
-                    $error++;
-                }
+				if ($result < 0)
+				{
+					$error++;
+				}
 			}
 
 			if (!$error)
 			{
-                $this->db->commit();
-                return 1;
+				$this->db->commit();
+				return 1;
 			} else {
-			    $this->db->rollback();
-			    return -1;
+				$this->db->rollback();
+				return -1;
 			}
 		}
 
 		return 0;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Add link to sales representative
 	 *
@@ -2294,14 +2291,14 @@ class Societe extends CommonObject
 	 *	@param	int		$commid		Id of user
 	 *	@return	void
 	 */
-    public function del_commercial(User $user, $commid)
+	public function del_commercial(User $user, $commid)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$error = 0;
 		$this->context = array('commercial_modified'=>$commid);
 
 		$result = $this->call_trigger('COMPANY_UNLINK_SALE_REPRESENTATIVE', $user);
-        if ($result < 0) $error++;
+		if ($result < 0) $error++;
 
 		if ($this->id > 0 && $commid > 0)
 		{
@@ -2326,7 +2323,7 @@ class Societe extends CommonObject
 	 *      @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *		@return	string					          String with URL
 	 */
-    public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1)
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -2334,27 +2331,19 @@ class Societe extends CommonObject
 
 		$name = $this->name ? $this->name : $this->nom;
 
-        if (!empty($conf->global->SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD)) {
-            if (empty($option) && $this->client > 0) $option = 'customer';
-            if (empty($option) && $this->fournisseur > 0) $option = 'supplier';
-        }
+		if (!empty($conf->global->SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD)) {
+			if (empty($option) && $this->client > 0) $option = 'customer';
+			if (empty($option) && $this->fournisseur > 0) $option = 'supplier';
+		}
 
 		if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto)))
 		{
 			$code = '';
-			if (($this->client) && (!empty($this->code_client))
-				&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1 || $conf->global->SOCIETE_ADD_REF_IN_LIST == 2
-				)
-			)
-			{
+			if (($this->client) && (!empty($this->code_client)) && ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1 || $conf->global->SOCIETE_ADD_REF_IN_LIST == 2)) {
 				$code = $this->code_client.' - ';
 			}
 
-			if (($this->fournisseur) && (!empty($this->code_fournisseur))
-				&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1 || $conf->global->SOCIETE_ADD_REF_IN_LIST == 3
-				)
-			)
-			{
+			if (($this->fournisseur) && (!empty($this->code_fournisseur)) && ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1 || $conf->global->SOCIETE_ADD_REF_IN_LIST == 3)) {
 				$code .= $this->code_fournisseur.' - ';
 			}
 
@@ -2388,43 +2377,46 @@ class Societe extends CommonObject
 
 		if ($option == 'customer' || $option == 'compta' || $option == 'category')
 		{
-			$label .= img_picto('', $this->picto).' <u>'.$langs->trans("Customer").'</u>';
-		    $linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
+			$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Customer").'</u>';
+			$linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
 		} elseif ($option == 'prospect' && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
 		{
-			$label .= img_picto('', $this->picto).' <u>'.$langs->trans("Prospect").'</u>';
+			$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Prospect").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
 		} elseif ($option == 'supplier' || $option == 'category_supplier')
 		{
-			$label .= img_picto('', $this->picto).' <u>'.$langs->trans("Supplier").'</u>';
+			$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Supplier").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id;
 		} elseif ($option == 'agenda')
 		{
-			$label .= img_picto('', $this->picto).' <u>'.$langs->trans("ThirdParty").'</u>';
+			$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/agenda.php?socid='.$this->id;
 		} elseif ($option == 'project')
 		{
-			$label .= img_picto('', $this->picto).' <u>'.$langs->trans("ThirdParty").'</u>';
+			$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/project.php?socid='.$this->id;
 		} elseif ($option == 'margin')
 		{
-			$label .= img_picto('', $this->picto).' <u>'.$langs->trans("ThirdParty").'</u>';
+			$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/margin/tabs/thirdpartyMargins.php?socid='.$this->id.'&type=1';
 		} elseif ($option == 'contact')
 		{
-			$label .= img_picto('', $this->picto).' <u>'.$langs->trans("ThirdParty").'</u>';
+			$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/contact.php?socid='.$this->id;
 		} elseif ($option == 'ban')
 		{
-			$label .= img_picto('', $this->picto).' <u>'.$langs->trans("ThirdParty").'</u>';
+			$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$this->id;
 		}
 
 		// By default
 		if (empty($linkstart))
 		{
-			$label .= img_picto('', $this->picto).' <u>'.$langs->trans("ThirdParty").'</u>';
+			$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$this->id;
+		}
+		if (isset($this->status)) {
+			$label .= ' '.$this->getLibStatut(5);
 		}
 
 		if (!empty($this->name))
@@ -2454,9 +2446,6 @@ class Societe extends CommonObject
 			$label .= '<br><b>'.$langs->trans('CustomerAccountancyCode').':</b> '.($this->code_compta ? $this->code_compta : $this->code_compta_client);
 		if (!empty($conf->accounting->enabled) && $this->fournisseur)
 			$label .= '<br><b>'.$langs->trans('SupplierAccountancyCode').':</b> '.$this->code_compta_fournisseur;
-		if (isset($this->status)) {
-			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
-		}
 		$label .= '</div>';
 
 		// Add type of canvas
@@ -2524,7 +2513,7 @@ class Societe extends CommonObject
 	 *    @param  	int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *    @return   string     	   		Label of status
 	 */
-    public function getLibStatut($mode = 0)
+	public function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->status, $mode);
 	}
@@ -2537,9 +2526,9 @@ class Societe extends CommonObject
 	 *  @param	int		$mode           0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string          		Status label
 	 */
-    public function LibStatut($status, $mode = 0)
+	public function LibStatut($status, $mode = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 		$langs->load('companies');
 
@@ -2555,18 +2544,18 @@ class Societe extends CommonObject
 		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
-    }
+	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Return list of contacts emails existing for third party
 	 *
 	 *	  @param	  int		$addthirdparty		1=Add also a record for thirdparty email
 	 *    @return     array       					Array of contacts emails
 	 */
-    public function thirdparty_and_contact_email_array($addthirdparty = 0)
+	public function thirdparty_and_contact_email_array($addthirdparty = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 
 		$contact_emails = $this->contact_property_array('email', 1);
@@ -2579,15 +2568,15 @@ class Societe extends CommonObject
 		return $contact_emails;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Return list of contacts mobile phone existing for third party
 	 *
 	 *    @return     array       Array of contacts emails
 	 */
-    public function thirdparty_and_contact_phone_array()
+	public function thirdparty_and_contact_phone_array()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 
 		$contact_phone = $this->contact_property_array('mobile');
@@ -2601,7 +2590,7 @@ class Societe extends CommonObject
 		return $contact_phone;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of contacts emails or mobile existing for third party
 	 *
@@ -2609,9 +2598,9 @@ class Societe extends CommonObject
 	 * 	@param	int		$hidedisabled		1=Hide contact if disabled
 	 *  @return array       				Array of contacts emails or mobile. Example: array(id=>'Name <email>')
 	 */
-    public function contact_property_array($mode = 'email', $hidedisabled = 0)
+	public function contact_property_array($mode = 'email', $hidedisabled = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 
 		$contact_property = array();
@@ -2674,9 +2663,9 @@ class Societe extends CommonObject
 	 *
 	 *    @return     array      array of contacts
 	 */
-    public function contact_array()
+	public function contact_array()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$contacts = array();
 
 		$sql = "SELECT rowid, lastname, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".$this->id;
@@ -2706,9 +2695,9 @@ class Societe extends CommonObject
 	 *
 	 *    @return    array    $contacts    array of contacts
 	 */
-    public function contact_array_objects()
+	public function contact_array_objects()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 		$contacts = array();
 
@@ -2735,7 +2724,7 @@ class Societe extends CommonObject
 		return $contacts;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return property of contact from its id
 	 *
@@ -2743,9 +2732,9 @@ class Societe extends CommonObject
 	 *  @param  string	$mode       'email' or 'mobile'
 	 *  @return string  			Email of contact with format: "Full name <email>"
 	 */
-    public function contact_get_property($rowid, $mode)
+	public function contact_get_property($rowid, $mode)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$contact_property = '';
 
 		if (empty($rowid)) return '';
@@ -2773,16 +2762,16 @@ class Societe extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return bank number property of thirdparty (label or rum)
 	 *
 	 *	@param	string	$mode	'label' or 'rum' or 'format'
 	 *  @return	string			Bank label or RUM or '' if no bank account found
 	 */
-    public function display_rib($mode = 'label')
+	public function display_rib($mode = 'label')
 	{
-        // phpcs:enable
+		// phpcs:enable
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 
 		$bac = new CompanyBankAccount($this->db);
@@ -2809,15 +2798,15 @@ class Societe extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return Array of RIB
 	 *
 	 * @return     array|int        0 if KO, Array of CompanyBanckAccount if OK
 	 */
-    public function get_all_rib()
+	public function get_all_rib()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib WHERE type='ban' AND fk_soc = ".$this->id;
 		$result = $this->db->query($sql);
@@ -2848,9 +2837,9 @@ class Societe extends CommonObject
 	 *	@param	int			$type		Should be 0 to say customer
 	 *  @return void
 	 */
-    public function get_codeclient($objsoc = 0, $type = 0)
+	public function get_codeclient($objsoc = 0, $type = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 		if (!empty($conf->global->SOCIETE_CODECLIENT_ADDON))
 		{
@@ -2880,9 +2869,9 @@ class Societe extends CommonObject
 	 *	@param	int			$type		Should be 1 to say supplier
 	 *  @return void
 	 */
-    public function get_codefournisseur($objsoc = 0, $type = 1)
+	public function get_codefournisseur($objsoc = 0, $type = 1)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 		if (!empty($conf->global->SOCIETE_CODECLIENT_ADDON))
 		{
@@ -2909,9 +2898,9 @@ class Societe extends CommonObject
 	 *
 	 *    @return     int		0=No, 1=Yes
 	 */
-    public function codeclient_modifiable()
+	public function codeclient_modifiable()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 		if (!empty($conf->global->SOCIETE_CODECLIENT_ADDON))
 		{
@@ -2943,9 +2932,9 @@ class Societe extends CommonObject
 	 *
 	 *    @return     int		0=No, 1=Yes
 	 */
-    public function codefournisseur_modifiable()
+	public function codefournisseur_modifiable()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 		if (!empty($conf->global->SOCIETE_CODECLIENT_ADDON))
 		{
@@ -2971,7 +2960,7 @@ class Societe extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Check customer code
 	 *
@@ -2981,9 +2970,9 @@ class Societe extends CommonObject
 	 * 								-3 ErrorCustomerCodeAlreadyUsed
 	 * 								-4 ErrorPrefixRequired
 	 */
-    public function check_codeclient()
+	public function check_codeclient()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 		if (!empty($conf->global->SOCIETE_CODECLIENT_ADDON))
 		{
@@ -3010,7 +2999,7 @@ class Societe extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Check supplier code
 	 *
@@ -3020,9 +3009,9 @@ class Societe extends CommonObject
 	 * 							-3 ErrorCustomerCodeAlreadyUsed
 	 * 							-4 ErrorPrefixRequired
 	 */
-    public function check_codefournisseur()
+	public function check_codefournisseur()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 		if (!empty($conf->global->SOCIETE_CODECLIENT_ADDON))
 		{
@@ -3058,9 +3047,9 @@ class Societe extends CommonObject
 	 *    	@param	string	$type		Type of thirdparty ('customer' or 'supplier')
 	 *		@return	int					0 if OK, <0 if $type is not valid
 	 */
-    public function get_codecompta($type)
+	public function get_codecompta($type)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		if (!empty($conf->global->SOCIETE_CODECOMPTA_ADDON))
@@ -3097,16 +3086,16 @@ class Societe extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Define parent commany of current company
 	 *
 	 *    @param	int		$id     Id of thirdparty to set or '' to remove
 	 *    @return	int     		<0 if KO, >0 if OK
 	 */
-    public function set_parent($id)
+	public function set_parent($id)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		if ($this->id)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
@@ -3124,16 +3113,16 @@ class Societe extends CommonObject
 		} else return -1;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Returns if a profid sould be verified
 	 *
 	 *  @param	int		$idprof		1,2,3,4,5,6 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm,5=idprof5,6=idprof6)
 	 *  @return boolean         	true , false
 	 */
-    public function id_prof_verifiable($idprof)
+	public function id_prof_verifiable($idprof)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 	 	switch ($idprof)
@@ -3163,7 +3152,7 @@ class Societe extends CommonObject
 		return $ret;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Verify if a profid exists into database for others thirds
 	 *
@@ -3172,9 +3161,9 @@ class Societe extends CommonObject
 	 *    @param	int		$socid		Id of thirdparty to exclude (if update)
 	 *    @return   boolean				True if exists, False if not
 	 */
-    public function id_prof_exists($idprof, $value, $socid = 0)
+	public function id_prof_exists($idprof, $value, $socid = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$field = $idprof;
 
 	 	switch ($idprof)	// For backward compatibility
@@ -3230,9 +3219,9 @@ class Societe extends CommonObject
 	 *  @return int             			<=0 if KO, >0 if OK
 	 *  TODO better to have this in a lib than into a business class
 	 */
-    public function id_prof_check($idprof, $soc)
+	public function id_prof_check($idprof, $soc)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		$ok = 1;
@@ -3369,7 +3358,7 @@ class Societe extends CommonObject
 		return $ok;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *   Return an url to check online a professional id or empty string
 	 *
@@ -3378,9 +3367,9 @@ class Societe extends CommonObject
 	 *   @return	string          		Url or empty string if no URL known
 	 *   TODO better in a lib than into business class
 	 */
-    public function id_prof_url($idprof, $thirdparty)
+	public function id_prof_url($idprof, $thirdparty)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $langs, $hookmanager;
 
 		$url = '';
@@ -3395,7 +3384,7 @@ class Societe extends CommonObject
 			}
 
 			// TODO Move links to validate professional ID into a dictionary table "country" + "link"
-            $strippedIdProf1 = str_replace(' ', '', $thirdparty->idprof1);
+			$strippedIdProf1 = str_replace(' ', '', $thirdparty->idprof1);
 			if ($idprof == 1 && $thirdparty->country_code == 'FR') {
 				$url = 'http://www.societe.com/cgi-bin/search?champs='.$strippedIdProf1; // See also http://avis-situation-sirene.insee.fr/
 			}
@@ -3428,9 +3417,9 @@ class Societe extends CommonObject
 	 *
 	 *   @return     bool	   true if the company has projects, false otherwise
 	 */
-    public function has_projects()
+	public function has_projects()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$sql = 'SELECT COUNT(*) as numproj FROM '.MAIN_DB_PREFIX.'projet WHERE fk_soc = '.$this->id;
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -3452,7 +3441,7 @@ class Societe extends CommonObject
 	 *  @param  int		$id     Id of thirdparty to load
 	 *  @return	void
 	 */
-    public function info($id)
+	public function info($id)
 	{
 		$sql = "SELECT s.rowid, s.nom as name, s.datec as date_creation, tms as date_modification,";
 		$sql .= " fk_user_creat, fk_user_modif";
@@ -3496,7 +3485,7 @@ class Societe extends CommonObject
 	 *
 	 *  @return    boolean     true=is a company, false=a and user
 	 */
-    public function isACompany()
+	public function isACompany()
 	{
 		global $conf;
 
@@ -3521,7 +3510,7 @@ class Societe extends CommonObject
 	 *
 	 *  @return     boolean		true = country inside EEC, false = country outside EEC
 	 */
-    public function isInEEC()
+	public function isInEEC()
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 		return isInEEC($this);
@@ -3533,9 +3522,9 @@ class Societe extends CommonObject
 	 *
 	 *  @return    int      0 if success, <> 0 if error
 	 */
-    public function LoadSupplierCateg()
+	public function LoadSupplierCateg()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$this->SupplierCategories = array();
 		$sql = "SELECT rowid, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
@@ -3554,16 +3543,16 @@ class Societe extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Insert link supplier - category
 	 *
 	 *	@param	int		$categorie_id		Id of category
 	 *  @return int      					0 if success, <> 0 if error
 	 */
-    public function AddFournisseurInCategory($categorie_id)
+	public function AddFournisseurInCategory($categorie_id)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		if ($categorie_id > 0 && $this->id > 0)
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_fournisseur (fk_categorie, fk_soc) ";
@@ -3577,7 +3566,7 @@ class Societe extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Create a third party into database from a member object
 	 *
@@ -3587,9 +3576,9 @@ class Societe extends CommonObject
 	 *  @param	string		$customercode	Customer code
 	 *  @return int							<0 if KO, id of created account if OK
 	 */
-    public function create_from_member(Adherent $member, $socname = '', $socalias = '', $customercode = '')
+	public function create_from_member(Adherent $member, $socname = '', $socalias = '', $customercode = '')
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $user, $langs;
 
 		dol_syslog(get_class($this)."::create_from_member", LOG_DEBUG);
@@ -3610,7 +3599,7 @@ class Societe extends CommonObject
 		$this->country_id = $member->country_id;
 		$this->phone = $member->phone; // Prof phone
 		$this->email = $member->email;
-        $this->socialnetworks = $member->socialnetworks;
+		$this->socialnetworks = $member->socialnetworks;
 		$this->entity = $member->entity;
 
 		$this->client = 1; // A member is a customer by default
@@ -3653,7 +3642,7 @@ class Societe extends CommonObject
 	 * 	@param	Conf	$conf		Conf object (possibility to use another entity)
 	 * 	@return	void
 	 */
-    public function setMysoc(Conf $conf)
+	public function setMysoc(Conf $conf)
 	{
 		global $langs;
 
@@ -3728,12 +3717,12 @@ class Societe extends CommonObject
 		$this->youtube_url = empty($conf->global->MAIN_INFO_SOCIETE_YOUTUBE_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_YOUTUBE_URL;
 		$this->github_url = empty($conf->global->MAIN_INFO_SOCIETE_GITHUB_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_GITHUB_URL;
 		$this->socialnetworks = array();
-		if (! empty($this->facebook_url)) $this->socialnetworks['facebook'] = $this->facebook_url;
-		if (! empty($this->twitter_url)) $this->socialnetworks['twitter'] = $this->twitter_url;
-		if (! empty($this->linkedin_url)) $this->socialnetworks['linkedin'] = $this->linkedin_url;
-		if (! empty($this->instagram_url)) $this->socialnetworks['instagram'] = $this->instagram_url;
-		if (! empty($this->youtube_url)) $this->socialnetworks['youtube'] = $this->youtube_url;
-		if (! empty($this->github_url)) $this->socialnetworks['github'] = $this->github_url;
+		if (!empty($this->facebook_url)) $this->socialnetworks['facebook'] = $this->facebook_url;
+		if (!empty($this->twitter_url)) $this->socialnetworks['twitter'] = $this->twitter_url;
+		if (!empty($this->linkedin_url)) $this->socialnetworks['linkedin'] = $this->linkedin_url;
+		if (!empty($this->instagram_url)) $this->socialnetworks['instagram'] = $this->instagram_url;
+		if (!empty($this->youtube_url)) $this->socialnetworks['youtube'] = $this->youtube_url;
+		if (!empty($this->github_url)) $this->socialnetworks['github'] = $this->github_url;
 
 		// Id prof generiques
 		$this->idprof1 = empty($conf->global->MAIN_INFO_SIREN) ? '' : $conf->global->MAIN_INFO_SIREN;
@@ -3770,7 +3759,7 @@ class Societe extends CommonObject
 	 *
 	 *  @return	int >0 if ok
 	 */
-    public function initAsSpecimen()
+	public function initAsSpecimen()
 	{
 		$now = dol_now();
 
@@ -3826,7 +3815,7 @@ class Societe extends CommonObject
 	 *	@param		int		$localTaxNum	To get info for only localtax1 or localtax2
 	 *  @return		boolean					true or false
 	 */
-    public function useLocalTax($localTaxNum = 0)
+	public function useLocalTax($localTaxNum = 0)
 	{
 		$sql  = "SELECT t.localtax1, t.localtax2";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
@@ -3848,7 +3837,7 @@ class Societe extends CommonObject
 	 *
 	 *  @return		boolean					true or false
 	 */
-    public function useNPR()
+	public function useNPR()
 	{
 		$sql  = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
@@ -3869,7 +3858,7 @@ class Societe extends CommonObject
 	 *
 	 *  @return		boolean			true or false
 	 */
-    public function useRevenueStamp()
+	public function useRevenueStamp()
 	{
 		$sql  = "SELECT COUNT(*) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_revenuestamp as r, ".MAIN_DB_PREFIX."c_country as c";
@@ -3893,21 +3882,21 @@ class Societe extends CommonObject
 	 *
 	 *  @return     string        Libelle
 	 */
-    public function getLibProspLevel()
+	public function getLibProspLevel()
 	{
 		return $this->LibProspLevel($this->fk_prospectlevel);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return label of prospect level
 	 *
 	 *  @param	int		$fk_prospectlevel   	Prospect level
 	 *  @return string        					label of level
 	 */
-    public function LibProspLevel($fk_prospectlevel)
+	public function LibProspLevel($fk_prospectlevel)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 
 		$lib = $langs->trans("ProspectLevel".$fk_prospectlevel);
@@ -3928,9 +3917,9 @@ class Societe extends CommonObject
 	 *	@return	int					<0 if KO, >0 if OK
 	 * @deprecated Use update function instead
 	 */
-    public function set_prospect_level(User $user)
+	public function set_prospect_level(User $user)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		return $this->update($this->id, $user);
 	}
 
@@ -3941,12 +3930,12 @@ class Societe extends CommonObject
 	 *  @param	string	$label		Label to use for status for added status
 	 *  @return string        		Libelle
 	 */
-    public function getLibProspCommStatut($mode = 0, $label = '')
+	public function getLibProspCommStatut($mode = 0, $label = '')
 	{
 		return $this->LibProspCommStatut($this->stcomm_id, $mode, $label, $this->stcomm_picto);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return label of a given status
 	 *
@@ -3960,9 +3949,9 @@ class Societe extends CommonObject
 	 *                                      Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
 	 *  @return string       	 			Label of prospection status
 	 */
-    public function LibProspCommStatut($status, $mode = 0, $label = '', $picto = '')
+	public function LibProspCommStatut($status, $mode = 0, $label = '', $picto = '')
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 		$langs->load('customers');
 
@@ -3998,7 +3987,7 @@ class Societe extends CommonObject
 		return "Error, mode/status not found";
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Set outstanding value
 	 *
@@ -4006,9 +3995,9 @@ class Societe extends CommonObject
 	 *	@return	int					<0 if KO, >0 if OK
 	 * @deprecated Use update function instead
 	 */
-    public function set_OutstandingBill(User $user)
+	public function set_OutstandingBill(User $user)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		return $this->update($this->id, $user);
 	}
 
@@ -4018,7 +4007,7 @@ class Societe extends CommonObject
 	 *  @param     string      $mode    'customer' or 'supplier'
 	 *  @return    array				array('opened'=>Amount, 'total'=>Total amount)
 	 */
-    public function getOutstandingProposals($mode = 'customer')
+	public function getOutstandingProposals($mode = 'customer')
 	{
 		$table = 'propal';
 		if ($mode == 'supplier') $table = 'supplier_proposal';
@@ -4056,7 +4045,7 @@ class Societe extends CommonObject
 	 *  @param     string      $mode    'customer' or 'supplier'
 	 *  @return		array				array('opened'=>Amount, 'total'=>Total amount)
 	 */
-    public function getOutstandingOrders($mode = 'customer')
+	public function getOutstandingOrders($mode = 'customer')
 	{
 		$table = 'commande';
 		if ($mode == 'supplier') $table = 'commande_fournisseur';
@@ -4095,7 +4084,7 @@ class Societe extends CommonObject
 	 *  @param     int      $late    	0 => all invoice, 1=> only late
 	 *  @return		array				array('opened'=>Amount, 'total'=>Total amount)
 	 */
-    public function getOutstandingBills($mode = 'customer', $late = 0)
+	public function getOutstandingBills($mode = 'customer', $late = 0)
 	{
 		$table = 'facture';
 		if ($mode == 'supplier') $table = 'facture_fourn';
@@ -4135,10 +4124,10 @@ class Societe extends CommonObject
 				$tmpobject = new Facture($this->db);
 			}
 			while ($obj = $this->db->fetch_object($resql)) {
-                $tmpobject->id = $obj->rowid;
+				$tmpobject->id = $obj->rowid;
 
-                if ($obj->status != $tmpobject::STATUS_DRAFT                                           // Not a draft
-                	&& !($obj->status == $tmpobject::STATUS_ABANDONED && $obj->close_code == 'replaced')  // Not a replaced invoice
+				if ($obj->status != $tmpobject::STATUS_DRAFT                                           // Not a draft
+					&& !($obj->status == $tmpobject::STATUS_ABANDONED && $obj->close_code == 'replaced')  // Not a replaced invoice
 					)
 				{
 					$outstandingTotal += $obj->total_ht;
@@ -4157,12 +4146,12 @@ class Societe extends CommonObject
 					$outstandingOpened += $obj->total_ttc - $paiement - $creditnotes - $deposits;
 				}
 
-                //if credit note is converted but not used
-                // TODO Do this also for customer ?
-                if ($mode == 'supplier' && $obj->type == FactureFournisseur::TYPE_CREDIT_NOTE && $tmpobject->isCreditNoteUsed())
-                {
-                	$outstandingOpened -= $tmpobject->getSumFromThisCreditNotesNotUsed();
-                }
+				//if credit note is converted but not used
+				// TODO Do this also for customer ?
+				if ($mode == 'supplier' && $obj->type == FactureFournisseur::TYPE_CREDIT_NOTE && $tmpobject->isCreditNoteUsed())
+				{
+					$outstandingOpened -= $tmpobject->getSumFromThisCreditNotesNotUsed();
+				}
 			}
 			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax); // 'opened' is 'incl taxes'
 		} else {
@@ -4175,21 +4164,21 @@ class Societe extends CommonObject
 	 *
 	 * @return   string        	Label
 	 */
-    public function getLibCustProspStatut()
+	public function getLibCustProspStatut()
 	{
 		return $this->LibCustProspStatut($this->client);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the label of the customer/prospect status
 	 *
 	 *  @param	int		$status         Id of prospection status
 	 *  @return	string          		Label of prospection status
 	 */
-    public function LibCustProspStatut($status)
+	public function LibCustProspStatut($status)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 		$langs->load('companies');
 
@@ -4237,7 +4226,7 @@ class Societe extends CommonObject
 				}
 			}
 
-			if (! isset($this->bank_account)) {
+			if (!isset($this->bank_account)) {
 				require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 				$bac = new CompanyBankAccount($this->db);
 				$result = $bac->fetch(0, $this->id);

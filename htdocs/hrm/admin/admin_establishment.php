@@ -131,7 +131,7 @@ if ($result)
 	dol_print_error($db);
 }
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // Buttons
 print '<div class="tabsAction">';
