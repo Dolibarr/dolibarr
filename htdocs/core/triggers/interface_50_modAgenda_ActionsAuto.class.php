@@ -740,7 +740,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		// Add entry in event table
 		$now = dol_now();
 
-		print 'trackid = '.$object->trackid;
+		print 'trackid = '.$action.'-'.get_class($object);
 		if (isset($_SESSION['listofnames-'.$object->trackid])) {
 			$attachs = $_SESSION['listofnames-'.$object->trackid];
 			if ($attachs && strpos($action, 'SENTBYMAIL')) {
