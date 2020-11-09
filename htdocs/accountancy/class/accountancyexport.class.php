@@ -351,7 +351,7 @@ class AccountancyExport
 			print price($line->debit) . $separator;
 			print price($line->credit) . $separator;
 			print 'E' . $separator;
-			print length_accountg($line->subledger_account) . $separator;
+			print length_accounta($line->subledger_account) . $separator;
 			print $end_line;
 		}
 	}
