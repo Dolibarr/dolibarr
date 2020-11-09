@@ -2252,7 +2252,7 @@ else
             print '<tr>';
             print '<td>'.$form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0).'</td>';
             print '<td colspan="3" class="maxwidthonsmartphone">';
-            $userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, '', 0, '', '', 0, 1);
+            $userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'AND u.statut = 1', 0, '', '', 0, 1);
             $arrayselected = GETPOST('commercial', 'array');
             if (empty($arrayselected)) $arrayselected = $object->getSalesRepresentatives($user, 1);
             print $form->multiselectarray('commercial', $userlist, $arrayselected, null, null, null, null, "90%");
