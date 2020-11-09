@@ -814,14 +814,14 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->authorid    = $user->id; // User saving action
 		$actioncomm->userownerid = $user->id; // Owner of action
 		// Fields defined when action is an email (content should be into object->actionmsg to be added into note, subject into object->actionms2 to be added into label)
-		$actioncomm->email_msgid   = $object->email_msgid;
-		$actioncomm->email_from    = $object->email_from;
-		$actioncomm->email_sender  = $object->email_sender;
-		$actioncomm->email_to      = $object->email_to;
-		$actioncomm->email_tocc    = $object->email_tocc;
-		$actioncomm->email_tobcc   = $object->email_tobcc;
-		$actioncomm->email_subject = $object->email_subject;
-		$actioncomm->errors_to     = $object->errors_to;
+		$actioncomm->email_msgid   = empty($object->email_msgid) ? null : $object->email_msgid;
+		$actioncomm->email_from    = empty($object->email_from) ? null : $object->email_from;
+		$actioncomm->email_sender  = empty($object->email_sender) ? null : $object->email_sender;
+		$actioncomm->email_to      = empty($object->email_to) ? null : $object->email_to;
+		$actioncomm->email_tocc    = empty($object->email_tocc) ? null : $object->email_tocc;
+		$actioncomm->email_tobcc   = empty($object->email_tobcc) ? null : $object->email_tobcc;
+		$actioncomm->email_subject = empty($object->email_subject) ? null : $object->email_subject;
+		$actioncomm->errors_to     = empty($object->errors_to) ? null : $object->errors_to;
 
 		// Object linked (if link is for thirdparty, contact, project it is a recording error. We should not have links in link table
 		// for such objects because there is already a dedicated field into table llx_actioncomm or llx_actioncomm_resources.
