@@ -510,7 +510,7 @@ class Notify
                                 $mesg = $outputlangs->transnoentitiesnoconv("EMailTextHolidayApproved", $link);
                                 break;
                             case 'ACTION_CREATE':
-                                $link = '<a href="'.$urlwithroot.'/actioncomm/card.php?id='.$object->id.'">'.$newref.'</a>';
+                                $link = '<a href="'.$urlwithroot.'/comm/action/card.php?id='.$object->id.'">'.$newref.'</a>';
                                 $dir_output = $conf->agenda->dir_output;
                                 $object_type = 'action';
                                 $mesg = $outputlangs->transnoentitiesnoconv("EMailTextActionAdded", $link);
@@ -726,7 +726,7 @@ class Notify
 						$mesg = $langs->transnoentitiesnoconv("EMailTextHolidayApproved", $link);
 						break;
                     case 'ACTION_CREATE':
-                        $link = '<a href="'.$urlwithroot.'/actioncomm/card.php?id='.$object->id.'">'.$newref.'</a>';
+                        $link = '<a href="'.$urlwithroot.'/comm/action/card.php?id='.$object->id.'">'.$newref.'</a>';
                         $dir_output = $conf->agenda->dir_output;
                         $object_type = 'action';
                         $mesg = $langs->transnoentitiesnoconv("EMailTextActionAdded", $link);
