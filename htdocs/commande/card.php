@@ -1273,15 +1273,6 @@ if (empty($reshook))
 		if ($error) $action = 'edit_extras';
 	}
 
-	if ($action == 'set_thirdparty' && $usercancreate)
-	{
-		$object->fetch($id);
-		$object->setValueFrom('fk_soc', $socid, '', '', 'date', '', $user, 'ORDER_MODIFY');
-
-		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
-		exit();
-	}
-
 	// add lines from objectlinked
 	if ($action == 'import_lines_from_object'
 		&& $usercancreate
@@ -2024,7 +2015,6 @@ if ($action == 'create' && $usercancreate)
 		// Order card
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/commande/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
-
 
 		$morehtmlref = '<div class="refidno">';
 		// Ref customer
