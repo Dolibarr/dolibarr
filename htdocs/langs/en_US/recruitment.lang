@@ -71,3 +71,5 @@ YourCandidature=Your application
 YourCandidatureAnswerMessage=Thanks you for your application.<br>...
 JobClosedTextCandidateFound=The job position is closed. The position has been filled.
 JobClosedTextCanceled=The job position is closed.
+ExtrafieldsJobPosition=Complementary attributes (job positions)
+ExtrafieldsCandidatures=Complementary attributes (job applications)
