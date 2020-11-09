@@ -1006,12 +1006,11 @@ class RecruitmentCandidature extends CommonObject
 		$langs->load("recruitment@recruitment");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'standard_recruitmentcandidature';
-
-			if (!empty($this->modelpdf)) {
-				$modele = $this->modelpdf;
-			} elseif (!empty($conf->global->RECRUITMENTCANDIDATURE_ADDON_PDF)) {
+			if (!empty($conf->global->RECRUITMENTCANDIDATURE_ADDON_PDF))
+			{
 				$modele = $conf->global->RECRUITMENTCANDIDATURE_ADDON_PDF;
+			} else {
+				$modele = ''; // No default value. For job application, we allow to disable all PDF generation
 			}
 		}
 

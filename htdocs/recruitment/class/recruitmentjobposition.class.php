@@ -1092,12 +1092,11 @@ class RecruitmentJobPosition extends CommonObject
 		$langs->load("recruitment");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'standard_recruitmentjobposition';
-
-			if ($this->model_pdf) {
-				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->RECRUITMENTJOBPOSITION_ADDON_PDF)) {
+			if (!empty($conf->global->RECRUITMENTJOBPOSITION_ADDON_PDF))
+			{
 				$modele = $conf->global->RECRUITMENTJOBPOSITION_ADDON_PDF;
+			} else {
+				$modele = ''; // No default value. For job position, we allow to disable all PDF generation
 			}
 		}
 
