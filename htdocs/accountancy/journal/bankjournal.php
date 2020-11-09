@@ -1133,7 +1133,7 @@ if (empty($action) || $action == 'view') {
 					if ($tabtype[$key] == 'payment_vat')			$account_ledger = $conf->global->ACCOUNTING_VAT_PAY_ACCOUNT;
 					if ($tabtype[$key] == 'member')					$account_ledger = $conf->global->ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT;
 					if ($tabtype[$key] == 'payment_various')	    $account_ledger = $tabpay[$key]["account_various"];
-					$accounttoshow = length_accounta($account_ledger);
+					$accounttoshow = length_accountg($account_ledger);
 					if (empty($accounttoshow) || $accounttoshow == 'NotDefined')
 					{
 						if ($tabtype[$key] == 'unknown')
