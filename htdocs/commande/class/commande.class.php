@@ -4012,7 +4012,6 @@ class OrderLine extends CommonOrderLine
 	 */
 	public $commande_id;
 
-	// From llx_commandedet
 	public $fk_parent_line;
 	public $fk_facture;
 
