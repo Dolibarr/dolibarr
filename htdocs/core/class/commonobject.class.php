@@ -7512,8 +7512,7 @@ abstract class CommonObject
 			// Depending on field type ('datetime', ...)
 			if ($this->isDate($info))
 			{
-				if (empty($this->{$field}))
-				{
+				if (empty($this->{$field})) {
 					$queryarray[$field] = null;
 				} else {
 					$queryarray[$field] = $this->db->idate($this->{$field});
@@ -7928,6 +7927,7 @@ abstract class CommonObject
 		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into update.
 		if (array_key_exists('ref', $fieldvalues)) $fieldvalues['ref'] = dol_string_nospecial($fieldvalues['ref']); // If field is a ref, we sanitize data
 
+		// Add quotes and escape on fields with type string
 		$keys = array();
 		$values = array();
 		$tmp = array();
@@ -7938,7 +7938,7 @@ abstract class CommonObject
 			$tmp[] = $k.'='.$this->quote($v, $this->fields[$k]);
 		}
 
-		// Clean and check mandatory
+		// Clean and check mandatory fields
 		foreach ($keys as $key)
 		{
 			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && $values[$key] == '-1') $values[$key] = ''; // This is an implicit foreign key field
