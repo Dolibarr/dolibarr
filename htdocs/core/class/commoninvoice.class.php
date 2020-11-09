@@ -933,6 +933,9 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	 */
 	public $total_ttc;
 
+	public $date_start_fill;	// If set to 1, when invoice is created from a template invoice, it will also auto set the field date_start at creation
+	public $date_end_fill;		// If set to 1, when invoice is created from a template invoice, it will also auto set the field date_end at creation
+
 	/**
 	 * List of cumulative options:
 	 * Bit 0:	0 si TVA normal - 1 si TVA NPR
@@ -941,17 +944,7 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	 */
 	public $info_bits = 0;
 
-	public $date_start_fill;	// If set to 1, when invoice is created from a template invoice, it will also auto set the field date_start at creation
-	public $date_end_fill;		// If set to 1, when invoice is created from a template invoice, it will also auto set the field date_end at creation
+	public $special_code = 0;
 
-
-	/**
-	 *  Constructor
-	 *
-	 *  @param	DoliDB		$db		Database handler
-	 */
-	public function __construct(DoliDB $db)
-	{
-		$this->db = $db;
-	}
+	public $fk_multicurrency;
 }

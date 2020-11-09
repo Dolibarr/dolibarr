@@ -157,4 +157,6 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $info_bits = 0;
 
 	public $special_code = 0;
+
+	public $fk_multicurrency;
 }
