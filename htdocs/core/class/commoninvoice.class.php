@@ -933,8 +933,8 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	 */
 	public $total_ttc;
 
-	public $date_start_fill;	// If set to 1, when invoice is created from a template invoice, it will also auto set the field date_start at creation
-	public $date_end_fill;		// If set to 1, when invoice is created from a template invoice, it will also auto set the field date_end at creation
+	public $date_start_fill; // If set to 1, when invoice is created from a template invoice, it will also auto set the field date_start at creation
+	public $date_end_fill; // If set to 1, when invoice is created from a template invoice, it will also auto set the field date_end at creation
 
 	/**
 	 * List of cumulative options:
