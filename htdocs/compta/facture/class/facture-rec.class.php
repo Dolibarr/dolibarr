@@ -562,7 +562,7 @@ class FactureRec extends CommonInvoice
 				$this->note_private           = $obj->note_private;
 				$this->note_public            = $obj->note_public;
 				$this->user_author            = $obj->fk_user_author;
-				$this->modelpdf               = $obj->model_pdf;		// deprecatd
+				$this->modelpdf               = $obj->model_pdf; // deprecatd
 				$this->model_pdf              = $obj->model_pdf;
 				$this->rang = $obj->rang;
 				$this->special_code = $obj->special_code;

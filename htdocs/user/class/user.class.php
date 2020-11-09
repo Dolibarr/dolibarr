@@ -949,15 +949,15 @@ class User extends CommonObject
 					$perms = $obj->perms;
 					$subperms = $obj->subperms;
 
-					if (! empty($perms)) {
+					if (!empty($perms)) {
 						if (!isset($this->rights) || !is_object($this->rights)) {
 							$this->rights = new stdClass(); // For avoid error
 						}
-						if (! empty($module)) {
+						if (!empty($module)) {
 							if (!isset($this->rights->$module) || !is_object($this->rights->$module)) {
 								$this->rights->$module = new stdClass();
 							}
-							if (! empty($subperms)) {
+							if (!empty($subperms)) {
 								if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) {
 									$this->rights->$module->$perms = new stdClass();
 								}
@@ -1015,15 +1015,15 @@ class User extends CommonObject
 					$perms = $obj->perms;
 					$subperms = $obj->subperms;
 
-					if (! empty($perms)) {
+					if (!empty($perms)) {
 						if (!isset($this->rights) || !is_object($this->rights)) {
 							$this->rights = new stdClass(); // For avoid error
 						}
-						if (! empty($module)) {
+						if (!empty($module)) {
 							if (!isset($this->rights->$module) || !is_object($this->rights->$module)) {
 								$this->rights->$module = new stdClass();
 							}
-							if (! empty($subperms)) {
+							if (!empty($subperms)) {
 								if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) {
 									$this->rights->$module->$perms = new stdClass();
 								}
