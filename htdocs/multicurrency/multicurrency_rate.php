@@ -63,7 +63,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortfield) $sortfield = "cr.date_sync";
-if (!$sortorder) $sortorder = "ASC";
+if (!$sortorder) $sortorder = "DESC";
 
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
