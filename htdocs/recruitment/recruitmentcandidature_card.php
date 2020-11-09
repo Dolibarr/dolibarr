@@ -60,8 +60,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-dol_include_once('/recruitment/class/recruitmentcandidature.class.php');
-dol_include_once('/recruitment/lib/recruitment_recruitmentcandidature.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.php';
+require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentcandidature.class.php';
+require_once DOL_DOCUMENT_ROOT.'/recruitment/lib/recruitment_recruitmentcandidature.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("recruitment", "other", "users"));
@@ -233,6 +234,9 @@ if (empty($reshook))
 	// Create user from a member
 	if ($action == 'confirm_create_user' && $confirm == 'yes' && $user->rights->user->user->creer) {
 		if ($result > 0) {
+			$jobposition = new RecruitmentJobPosition($db);
+			$jobposition->fetch($object->fk_recruitmentjobposition);
+
 			// Creation user
 			$nuser = new User($db);
 			$nuser->login = GETPOST('login', 'alphanohtml');
@@ -243,6 +247,7 @@ if (empty($reshook))
 			$nuser->personal_mobile = $object->phone;
 			$nuser->birth = $object->date_birth;
 			$nuser->salary = $object->remuneration_proposed;
+			$nuser->fk_user = $jobposition->fk_user_supervisor;	// Supervisor
 
 			$result = $nuser->create($user);
 
