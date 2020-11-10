@@ -1077,8 +1077,7 @@ class ExtraFields
 				$out = '<div ' . ($moreparam ? $moreparam : '') . '><div class="nowrap">'
 					. $langs->trans('From') . ' '
 					. $form->selectDate($prefill['start'], $keyprefix . $key . $keysuffix . '_start', 0, 0, 1)
-					. '</div>'
-					. '<div class="nowrap">'
+					. '</div><div class="nowrap">'
 					. $langs->trans('to') . ' '
 					. $form->selectDate($prefill['end'], $keyprefix . $key . $keysuffix . '_end', 0, 0, 1)
 					. '</div></div>';
