@@ -27,8 +27,8 @@
 create table llx_adherent
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  ref						   varchar(30) NOT NULL,	      -- member reference number
-  entity           integer DEFAULT 1 NOT NULL,	-- multi company id
+  ref              varchar(30) NOT NULL,        -- member reference number
+  entity           integer DEFAULT 1 NOT NULL,  -- multi company id
   ref_ext          varchar(128),                -- reference into an external system (not used by dolibarr)
 
   gender           varchar(10),
@@ -77,6 +77,6 @@ create table llx_adherent
   fk_user_author   integer,                     -- can be null because member can be create by a guest
   fk_user_mod      integer,
   fk_user_valid    integer,
-  canvas		       varchar(32),			            -- type of canvas if used (null by default)
+  canvas           varchar(32),                 -- type of canvas if used (null by default)
   import_key       varchar(14)                  -- Import key
 )ENGINE=innodb;

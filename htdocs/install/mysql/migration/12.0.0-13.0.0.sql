@@ -61,6 +61,7 @@ ALTER TABLE llx_mrp_mo_extrafields ADD INDEX idx_mrp_mo_fk_object(fk_object);
 -- members
 ALTER TABLE llx_adherent ADD COLUMN ref varchar(30) NOT NULL AFTER rowid;
 UPDATE llx_adherent SET ref=rowid;
+ALTER TABLE llx_adherent ADD UNIQUE INDEX uk_adherent_ref (ref, entity);
 
 ALTER TABLE llx_bom_bom ADD COLUMN bomtype integer DEFAULT 0;
 
