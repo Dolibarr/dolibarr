@@ -950,7 +950,7 @@ class ExtraFields
 	 *
 	 * @param  string        $key            		Key of attribute
 	 * @param  string|array  $value 			    Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value); for dates in filter mode, a range array('start'=><timestamp>, 'end'=><timestamp>) should be provided
-	 * @param  string        $moreparam      		To add more parametes on html input tag
+	 * @param  string        $moreparam      		To add more parameters on html input tag
 	 * @param  string        $keysuffix      		Prefix string to add after name and id of field (can be used to avoid duplicate names)
 	 * @param  string        $keyprefix      		Suffix string to add before name and id of field (can be used to avoid duplicate names)
 	 * @param  string        $morecss        		More css (to defined size of field. Old behaviour: may also be a numeric)
@@ -1074,18 +1074,18 @@ class ExtraFields
 				$prefill = array(
 					'start' => isset($value['start']) ? $value['start'] : '',
 					'end'   => isset($value['end'])   ? $value['end']   : '');
-				$out = '<div class="nowrap">'
+				$out = '<div ' . ($moreparam ? $moreparam : '') . '><div class="nowrap">'
 					. $langs->trans('From') . ' '
 					. $form->selectDate($prefill['start'], $keyprefix . $key . $keysuffix . '_start', 0, 0, 1)
 					. '</div>'
 					. '<div class="nowrap">'
 					. $langs->trans('to') . ' '
 					. $form->selectDate($prefill['end'], $keyprefix . $key . $keysuffix . '_end', 0, 0, 1)
-					. '</div>';
+					. '</div></div>';
 			} else {
+				// TODO Must also support $moreparam
 				$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1);
 			}
-			// TODO Must also support $moreparam
 		}
 		elseif (in_array($type, array('int', 'integer')))
 		{
