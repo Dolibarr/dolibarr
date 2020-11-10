@@ -2925,6 +2925,9 @@ class User extends CommonObject
 			$sql .= " WHERE entity = 0";
 		} else {
 			$sql .= " WHERE entity IN (".getEntity('user', 0).")";
+			if ($limitTo == 'active') {
+				$sql .= " AND statut = 1";
+			}
 		}
 		if ($admin >= 0) {
 			$sql .= " AND admin = ".(int) $admin;
