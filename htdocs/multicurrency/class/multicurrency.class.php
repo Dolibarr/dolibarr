@@ -628,46 +628,48 @@ class MultiCurrency extends CommonObject
 	{
 		global $conf, $db, $langs;
 
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+
 		$urlendpoint = 'http://apilayer.net/api/live?access_key='.$key;
 		//$urlendpoint.='&format=1';
 		$urlendpoint .= (empty($conf->global->MULTICURRENCY_APP_SOURCE) ? '' : '&source='.$conf->global->MULTICURRENCY_APP_SOURCE);
 
 		dol_syslog("Call url endpoint ".$urlendpoint);
 
-		// FIXME Use getURLContent() function instead.
-		$ch = curl_init($urlendpoint);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		$response = curl_exec($ch);
-		curl_close($ch);
-		$response = json_decode($response);
+		$resget = getURLContent($urlendpoint, 'GET', '', 1, array(), array('http', 'https'), 1);
 
-		if ($response->success)
-		{
-			$TRate = $response->quotes;
-			$timestamp = $response->timestamp;
+		if ($resget['content']) {
+			$response = $resget['content'];
+			$response = json_decode($response);
 
-			if (self::recalculRates($TRate) >= 0)
+			if ($response->success)
 			{
-				foreach ($TRate as $currency_code => $rate)
+				$TRate = $response->quotes;
+				$timestamp = $response->timestamp;
+
+				if (self::recalculRates($TRate) >= 0)
 				{
-					$code = substr($currency_code, 3, 3);
-					$obj = new MultiCurrency($db);
-					if ($obj->fetch(null, $code) > 0)
+					foreach ($TRate as $currency_code => $rate)
 					{
-						$obj->updateRate($rate);
-					} elseif ($addifnotfound)
-					{
-						self::addRateFromDolibarr($code, $rate);
+						$code = substr($currency_code, 3, 3);
+						$obj = new MultiCurrency($db);
+						if ($obj->fetch(null, $code) > 0)
+						{
+							$obj->updateRate($rate);
+						} elseif ($addifnotfound)
+						{
+							self::addRateFromDolibarr($code, $rate);
+						}
 					}
 				}
+
+				return 1;
+			} else {
+				dol_syslog("Failed to call endpoint ".$response->error->info, LOG_WARNING);
+				setEventMessages($langs->trans('multicurrency_syncronize_error', $response->error->info), null, 'errors');
+
+				return -1;
 			}
-
-			return 1;
-		} else {
-			dol_syslog("Failed to call endpoint ".$response->error->info, LOG_WARNING);
-			setEventMessages($langs->trans('multicurrency_syncronize_error', $response->error->info), null, 'errors');
-
-			return -1;
 		}
 	}
 

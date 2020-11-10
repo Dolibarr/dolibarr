@@ -518,14 +518,16 @@ abstract class CommonInvoice extends CommonObject
 	 *	@param      int		$status        	Id status
 	 *	@param      int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
 	 *	@param		integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, -1 otherwise)
-	 *	@param		int		$type			Type invoice
+	 *	@param		int		$type			Type invoice. If -1, we use $this->type
 	 *	@return     string        			Label of status
 	 */
-	public function LibStatut($paye, $status, $mode = 0, $alreadypaid = -1, $type = 0)
+	public function LibStatut($paye, $status, $mode = 0, $alreadypaid = -1, $type = -1)
 	{
 		// phpcs:enable
 		global $langs;
 		$langs->load('bills');
+
+		if ($type == -1) $type = $this->type;
 
 		$statusType = 'status0';
 		$prefix = 'Short';
@@ -931,6 +933,9 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	 */
 	public $total_ttc;
 
+	public $date_start_fill; // If set to 1, when invoice is created from a template invoice, it will also auto set the field date_start at creation
+	public $date_end_fill; // If set to 1, when invoice is created from a template invoice, it will also auto set the field date_end at creation
+
 	/**
 	 * List of cumulative options:
 	 * Bit 0:	0 si TVA normal - 1 si TVA NPR
@@ -939,13 +944,7 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	 */
 	public $info_bits = 0;
 
-	/**
-	 *  Constructor
-	 *
-	 *  @param	DoliDB		$db		Database handler
-	 */
-	public function __construct(DoliDB $db)
-	{
-		$this->db = $db;
-	}
+	public $special_code = 0;
+
+	public $fk_multicurrency;
 }

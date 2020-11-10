@@ -200,7 +200,7 @@ class UserTest extends PHPUnit\Framework\TestCase
         $newlocalobject=new User($this->savdb);
         $newlocalobject->initAsSpecimen();
         $this->changeProperties($newlocalobject);
-        $this->assertEquals($this->objCompare($localobject, $newlocalobject, true, array('id','socid','societe_id','specimen','note','ref','pass','pass_indatabase','pass_indatabase_crypted','datec','datem','datelastlogin','datepreviouslogin')), array());    // Actual, Expected
+        $this->assertEquals($this->objCompare($localobject, $newlocalobject, true, array('id','socid','societe_id','specimen','note','ref','pass','pass_indatabase','pass_indatabase_crypted','pass_temp','datec','datem','datelastlogin','datepreviouslogin','trackid')), array());    // Actual, Expected
 
         return $localobject;
     }
@@ -340,12 +340,11 @@ class UserTest extends PHPUnit\Framework\TestCase
             $oVarsB=get_object_vars($oB);
             $aKeys=array_keys($oVarsA);
             foreach ($aKeys as $sKey) {
-                if (in_array($sKey, $fieldstoignorearray))
-                    continue;
-                if (! $ignoretype && $oVarsA[$sKey] !== $oVarsB[$sKey]) {
+                if (in_array($sKey, $fieldstoignorearray)) continue;
+                if (! $ignoretype && ($oVarsA[$sKey] !== $oVarsB[$sKey])) {
                     $retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey])?get_class($oVarsA[$sKey]):$oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey])?get_class($oVarsB[$sKey]):$oVarsB[$sKey]);
                 }
-                if ($ignoretype && $oVarsA[$sKey] != $oVarsB[$sKey]) {
+                if ($ignoretype && ($oVarsA[$sKey] != $oVarsB[$sKey])) {
                     $retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey])?get_class($oVarsA[$sKey]):$oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey])?get_class($oVarsB[$sKey]):$oVarsB[$sKey]);
                 }
             }

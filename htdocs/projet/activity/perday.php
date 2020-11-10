@@ -48,8 +48,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'per
 $mine = 0;
 if ($mode == 'mine') $mine = 1;
 
-$projectid = '';
-$projectid = isset($_GET["id"]) ? $_GET["id"] : $_POST["projectid"];
+$projectid = isset($_GET["id"]) ? GETPOST("id", "int", 1) : GETPOST("projectid", "int");
 
 $hookmanager->initHooks(array('timesheetperdaycard'));
 
@@ -612,20 +611,24 @@ if (!empty($conf->global->MAIN_DEFAULT_WORKING_DAYS))
 	}
 }
 
-$statusofholidaytocheck = '3';
+$statusofholidaytocheck = Holiday::STATUS_APPROVED;
 $isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $daytoparse, $statusofholidaytocheck); // $daytoparse is a date with hours = 0
 $isavailable[$daytoparse] = $isavailablefordayanduser; // in projectLinesPerWeek later, we are using $firstdaytoshow and dol_time_plus_duree to loop on each day
 
-$tmparray = dol_getdate($daytoparse, true); // detail of current day
-$idw = $tmparray['wday'];
+$test = num_public_holiday($daytoparse, $daytoparse + 86400, $mysoc->country_code);
+if ($test) $isavailable[$daytoparse] = array('morning'=>false, 'afternoon'=>false, 'morning_reason'=>'public_holiday', 'afternoon_reason'=>'public_holiday');
 
+$tmparray = dol_getdate($daytoparse, true); // detail of current day
+// For monday, must be 0 for monday if MAIN_START_WEEK = 1, must be 1 for monday if MAIN_START_WEEK = 0
+$idw = ($tmparray['wday'] - (empty($conf->global->MAIN_START_WEEK)?0:1));
+// numstartworkingday and numendworkingday are default start and end date of working days (1 means sunday if MAIN_START_WEEK is 0, 1 means monday if MAIN_START_WEEK is 1)
 $cssweekend = '';
-if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+if ((($idw + 1) < $numstartworkingday) || (($idw + 1) > $numendworkingday))	// This is a day is not inside the setup of working days, so we use a week-end css.
 {
 	$cssweekend = 'weekend';
 }
 
-$tmpday = dol_time_plus_duree($firstdaytoshow, $idw, 'd');
+$tmpday = dol_time_plus_duree($daytoparse, $idw, 'd');
 
 $cssonholiday = '';
 if (!$isavailable[$daytoparse]['morning'] && !$isavailable[$daytoparse]['afternoon'])   $cssonholiday .= 'onholidayallday ';
@@ -650,20 +653,6 @@ if ($conf->use_javascript_ajax)
 	print '<td class="liste_total leftborder">';
 	//print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
 	print '</td>';
-
-	$tmparray = dol_getdate($daytoparse, true); // detail of current day
-	$idw = $tmparray['wday'];
-
-	$cssweekend = '';
-	if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
-	{
-		$cssweekend = 'weekend';
-	}
-
-	$cssonholiday = '';
-	if (!$isavailable[$daytoparse]['morning'] && !$isavailable[$daytoparse]['afternoon'])   $cssonholiday .= 'onholidayallday ';
-	elseif (!$isavailable[$daytoparse]['morning'])   $cssonholiday .= 'onholidaymorning ';
-	elseif (!$isavailable[$daytoparse]['afternoon']) $cssonholiday .= 'onholidayafternoon ';
 
 	print '<td class="liste_total center'.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'"><div class="totalDay0">&nbsp;</div></td>';
 
@@ -751,20 +740,6 @@ if (count($tasksarray) > 0)
 		print '<td class="liste_total leftborder">';
 		//print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
 		print '</td>';
-
-		$tmparray = dol_getdate($daytoparse, true); // detail of current day
-		$idw = $tmparray['wday'];
-
-		$cssweekend = '';
-		if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
-		{
-			$cssweekend = 'weekend';
-		}
-
-		$cssonholiday = '';
-		if (!$isavailable[$daytoparse]['morning'] && !$isavailable[$daytoparse]['afternoon'])   $cssonholiday .= 'onholidayallday ';
-		elseif (!$isavailable[$daytoparse]['morning'])   $cssonholiday .= 'onholidaymorning ';
-		elseif (!$isavailable[$daytoparse]['afternoon']) $cssonholiday .= 'onholidayafternoon ';
 
 		print '<td class="liste_total center'.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'"><div class="totalDay0">&nbsp;</div></td>';
 

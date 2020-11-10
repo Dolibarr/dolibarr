@@ -46,8 +46,7 @@ $taskid = GETPOST('taskid', 'int');
 $mine = 0;
 if ($mode == 'mine') $mine = 1;
 
-$projectid = '';
-$projectid = isset($_GET["id"]) ? $_GET["id"] : $_POST["projectid"];
+$projectid = isset($_GET["id"]) ? GETPOST("id", "int", 1) : GETPOST("projectid", "int");
 
 // Security check
 $socid = 0;
@@ -502,7 +501,10 @@ $colspan = 5;
 // By default, we can edit only tasks we are assigned to
 $restrictviewformytask = (empty($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED) ? 1 : 0);
 
+// Get if user is available or not for each day
 $isavailable = array();
+// TODO See code into perweek.php to initialize isavailable array
+
 
 if (count($tasksarray) > 0)
 {

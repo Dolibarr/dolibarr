@@ -174,7 +174,7 @@ class InterfaceLogevents extends DolibarrTriggers
 		$event->dateevent = $date;
 		$event->label = $text;
 		$event->description = $desc;
-		$event->user_agent = $_SERVER["HTTP_USER_AGENT"];
+		$event->user_agent = (empty($_SERVER["HTTP_USER_AGENT"])?'':$_SERVER["HTTP_USER_AGENT"]);
 
 		$result = $event->create($user);
 		if ($result > 0) {

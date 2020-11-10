@@ -628,7 +628,7 @@ class modProduct extends DolibarrModules
 			$this->import_label[$r] = "SuppliersPricesOfProductsOrServices"; // Translation key
 			$this->import_icon[$r] = $this->picto;
 			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
-			$this->import_tables_array[$r] = array('sp'=>MAIN_DB_PREFIX.'product_fournisseur_price');
+			$this->import_tables_array[$r] = array('sp'=>MAIN_DB_PREFIX.'product_fournisseur_price', 'extra'=>MAIN_DB_PREFIX.'product_fournisseur_price_extrafields');
 			$this->import_tables_creator_array[$r] = array('sp'=>'fk_user');
 			$this->import_fields_array[$r] = array(//field order as per structure of table llx_product_fournisseur_price, without optional fields
 				'sp.fk_product'=>"ProductOrService*",
@@ -663,6 +663,23 @@ class modProduct extends DolibarrModules
 			if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
 				$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('sp.packaging' => 'PackagingForThisProduct'));
 			}
+
+			// Add extra fields
+			$import_extrafield_sample = array();
+			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'product_fournisseur_price' AND entity IN (0, ".$conf->entity.")";
+			$resql = $this->db->query($sql);
+			if ($resql)    // This can fail when class is used on old database (during migration for example)
+			{
+				while ($obj = $this->db->fetch_object($resql))
+				{
+					$fieldname = 'extra.'.$obj->name;
+					$fieldlabel = ucfirst($obj->label);
+					$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+					$import_extrafield_sample[$fieldname] = $fieldlabel;
+				}
+			}
+			// End add extra fields
+			$this->import_fieldshidden_array[$r] = array('extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'product_fournisseur_price'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 
 			$this->import_convertvalue_array[$r] = array(
 					'sp.fk_soc'=>array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty'),

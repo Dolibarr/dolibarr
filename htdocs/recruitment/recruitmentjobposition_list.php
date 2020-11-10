@@ -388,7 +388,7 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 $topicmail = "SendRecruitmentJobPositionRef";
 $modelmail = "recruitmentjobposition";
 $objecttmp = new RecruitmentJobPosition($db);
-$trackid = 'xxxx'.$object->id;
+$trackid = 'recruitmentjobposition'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($search_all)

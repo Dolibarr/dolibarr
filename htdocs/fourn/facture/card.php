@@ -1548,7 +1548,7 @@ if (empty($reshook))
 	$triggersendname = 'BILL_SUPPLIER_SENTBYMAIL';
 	$paramname = 'id';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO';
-	$trackid = 'sin'.$object->id;
+	$trackid = 'sinv'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	// Actions to build doc
@@ -3308,7 +3308,7 @@ if ($action == 'create')
 		$defaulttopic = 'SendBillRef';
 		$diroutput = $conf->fournisseur->facture->dir_output;
 		$autocopy = 'MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO';
-		$trackid = 'sin'.$object->id;
+		$trackid = 'sinv'.$object->id;
 
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	}

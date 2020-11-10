@@ -1660,7 +1660,7 @@ class Societe extends CommonObject
 				$this->note_private = $obj->note_private;
 				$this->note_public = $obj->note_public;
 				$this->model_pdf = $obj->model_pdf;
-				$this->modelpdf = $obj->model_pdf;
+				$this->modelpdf = $obj->model_pdf; // deprecated
 				$this->default_lang = $obj->default_lang;
 				$this->logo = $obj->logo;
 				$this->logo_squarred = $obj->logo_squarred;
@@ -3765,6 +3765,7 @@ class Societe extends CommonObject
 
 		// Initialize parameters
 		$this->id = 0;
+		$this->entity = 1;
 		$this->name = 'THIRDPARTY SPECIMEN '.dol_print_date($now, 'dayhourlog');
 		$this->nom = $this->name; // For backward compatibility
 		$this->ref_ext = 'Ref ext';

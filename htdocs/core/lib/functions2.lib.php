@@ -944,9 +944,8 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	//print "masktri=".$masktri." maskcounter=".$maskcounter." maskraz=".$maskraz." maskoffset=".$maskoffset."<br>\n";
 
 	// Define $sqlstring
-	if (function_exists('mb_strrpos'))
-		{
-		$posnumstart = mb_strrpos($maskwithnocode, $maskcounter, 'UTF-8');
+	if (function_exists('mb_strrpos')) {
+		$posnumstart = mb_strrpos($maskwithnocode, $maskcounter, 0, 'UTF-8');
 	} else {
 		$posnumstart = strrpos($maskwithnocode, $maskcounter);
 	}	// Pos of counter in final string (from 0 to ...)

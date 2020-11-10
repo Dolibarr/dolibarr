@@ -63,7 +63,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortfield) $sortfield = "cr.date_sync";
-if (!$sortorder) $sortorder = "ASC";
+if (!$sortorder) $sortorder = "DESC";
 
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
@@ -233,7 +233,7 @@ print dol_get_fiche_head($head, 'ratelist', $langs->trans("ModuleSetup"), -1, "m
 
 // ACTION
 
-if ($action != "updateRate" && $action != "deleteRate") {
+if ($action != "updateRate") {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("FormCreateRate").'</td>'."\n";
@@ -252,7 +252,7 @@ if ($action != "updateRate" && $action != "deleteRate") {
 	print '<td>'.$form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code', 'alpha') : $multicurrency_code), 'multicurrency_code', 0, " code != '".$conf->currency."'", true).'</td>';
 
 	print ' <td>'.$langs->trans('Rate').'</td>';
-	print ' <td><input type="number" min ="0" step="any" class="minwidth200" name="rateinput" value="'.dol_escape_htmltag($rateinput).'"></td>';
+	print ' <td><input type="number" min="0" step="any" class="maxwidth75" name="rateinput" value="'.dol_escape_htmltag($rateinput).'"></td>';
 
 	print '<td>';
 	print '<input type="hidden" name="action" value="create">';
@@ -521,9 +521,9 @@ if ($resql)
 		{
 			$selected = 0;
 			if (in_array($obj->rowid, $arrayofselected)) $selected = 1;
-			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=updateRate&amp;id_rate='.$obj->rowid.'" class="like-link " style="margin-right:15px;important">'.img_picto('edit', 'edit').'</a>';
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=deleteRate&amp;id_rate='.$obj->rowid.'" class="like-link" style="margin-right:45px;important">'.img_picto('delete', 'delete').'</a>';
-			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=updateRate&amp;id_rate='.$obj->rowid.'">'.img_picto('edit', 'edit').'</a>';
+			print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=deleteRate&amp;id_rate='.$obj->rowid.'">'.img_picto('delete', 'delete').'</a>';
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		print '</td>';
 		if (!$i) $totalarray['nbfield']++;

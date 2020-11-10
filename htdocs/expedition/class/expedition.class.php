@@ -2495,7 +2495,7 @@ class Expedition extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'rouget';
 
-			if ($this->modelpdf) {
+			if (!empty($this->modelpdf)) {
 				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->EXPEDITION_ADDON_PDF)) {
 				$modele = $conf->global->EXPEDITION_ADDON_PDF;

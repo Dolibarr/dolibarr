@@ -1342,6 +1342,15 @@ class EmailCollector extends CommonObject
 							$trackid = $reg[1].$reg[2];
 
 							$objectid = $reg[2];
+							// See also list into interface_50_modAgenda_ActionsAuto
+							if ($reg[1] == 'thi')
+							{
+								$objectemail = new Societe($this->db);
+							}
+							if ($reg[1] == 'ctc')
+							{
+								$objectemail = new Contact($this->db);
+							}
 							if ($reg[1] == 'inv')
 							{
 								$objectemail = new Facture($this->db);
@@ -1350,13 +1359,13 @@ class EmailCollector extends CommonObject
 							{
 								$objectemail = new Project($this->db);
 							}
+							if ($reg[1] == 'tas')
+							{
+								$objectemail = new Task($this->db);
+							}
 							if ($reg[1] == 'con')
 							{
 								$objectemail = new Contact($this->db);
-							}
-							if ($reg[1] == 'thi')
-							{
-								$objectemail = new Societe($this->db);
 							}
 							if ($reg[1] == 'use')
 							{
@@ -1369,6 +1378,10 @@ class EmailCollector extends CommonObject
 							if ($reg[1] == 'recruitmentcandidature')
 							{
 								$objectemail = new RecruitmentCandidature($this->db);
+							}
+							if ($reg[1] == 'mem')
+							{
+								$objectemail = new Adherent($this->db);
 							}
 						} elseif (preg_match('/<(.*@.*)>/', $reference, $reg)) {
 							// This is an external reference, we check if we have it in our database

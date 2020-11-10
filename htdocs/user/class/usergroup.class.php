@@ -307,33 +307,33 @@ class UserGroup extends CommonObject
 
 		if (!empty($rid))
 		{
+			$module = $perms = $subperms = '';
+
 			// Si on a demande ajout d'un droit en particulier, on recupere
 			// les caracteristiques (module, perms et subperms) de ce droit.
 			$sql = "SELECT module, perms, subperms";
 			$sql .= " FROM ".MAIN_DB_PREFIX."rights_def";
-			$sql .= " WHERE id = '".$this->db->escape($rid)."'";
-			$sql .= " AND entity = ".$entity;
+			$sql .= " WHERE id = ".((int) $rid);
+			$sql .= " AND entity = ".((int) $entity);
 
 			$result = $this->db->query($sql);
 			if ($result) {
 				$obj = $this->db->fetch_object($result);
-				$module = $obj->module;
-				$perms = $obj->perms;
-				$subperms = $obj->subperms;
+				if ($obj) {
+					$module = $obj->module;
+					$perms = $obj->perms;
+					$subperms = $obj->subperms;
+				}
 			} else {
 				$error++;
 				dol_print_error($this->db);
 			}
 
 			// Where pour la liste des droits a ajouter
-			$whereforadd = "id=".$this->db->escape($rid);
-			// Ajout des droits induits
-			if ($subperms)   $whereforadd .= " OR (module='$module' AND perms='$perms' AND (subperms='lire' OR subperms='read'))";
-			elseif ($perms) $whereforadd .= " OR (module='$module' AND (perms='lire' OR perms='read') AND subperms IS NULL)";
-
-			// Pour compatibilite, si lowid = 0, on est en mode ajout de tout
-			// TODO A virer quand sera gere par l'appelant
-			//if (substr($rid,-1,1) == 0) $whereforadd="module='$module'";
+			$whereforadd = "id=".((int) $rid);
+			// Find also rights that are herited to add them too
+			if ($subperms)   $whereforadd .= " OR (module='".$this->db->escape($module)."' AND perms='".$this->db->escape($perms)."' AND (subperms='lire' OR subperms='read'))";
+			elseif ($perms) $whereforadd .= " OR (module='".$this->db->escape($module)."' AND (perms='lire' OR perms='read') AND subperms IS NULL)";
 		} else {
 			// Where pour la liste des droits a ajouter
 			if (!empty($allmodule))
@@ -348,7 +348,7 @@ class UserGroup extends CommonObject
 			}
 		}
 
-		// Ajout des droits de la liste whereforadd
+		// Add permission of the list $whereforadd
 		if (!empty($whereforadd))
 		{
 			//print "$module-$perms-$subperms";
@@ -425,6 +425,8 @@ class UserGroup extends CommonObject
 
 		if (!empty($rid))
 		{
+			$module = $perms = $subperms = '';
+
 			// Si on a demande supression d'un droit en particulier, on recupere
 			// les caracteristiques module, perms et subperms de ce droit.
 			$sql = "SELECT module, perms, subperms";
@@ -435,9 +437,11 @@ class UserGroup extends CommonObject
 			$result = $this->db->query($sql);
 			if ($result) {
 				$obj = $this->db->fetch_object($result);
-				$module = $obj->module;
-				$perms = $obj->perms;
-				$subperms = $obj->subperms;
+				if ($obj) {
+					$module = $obj->module;
+					$perms = $obj->perms;
+					$subperms = $obj->subperms;
+				}
 			} else {
 				$error++;
 				dol_print_error($this->db);
@@ -446,14 +450,14 @@ class UserGroup extends CommonObject
 			// Where pour la liste des droits a supprimer
 			$wherefordel = "id=".$this->db->escape($rid);
 			// Suppression des droits induits
-			if ($subperms == 'lire' || $subperms == 'read') $wherefordel .= " OR (module='$module' AND perms='$perms' AND subperms IS NOT NULL)";
-			if ($perms == 'lire' || $perms == 'read')    $wherefordel .= " OR (module='$module')";
+			if ($subperms == 'lire' || $subperms == 'read') $wherefordel .= " OR (module='".$this->db->escape($module)."' AND perms='".$this->db->escape($perms)."' AND subperms IS NOT NULL)";
+			if ($perms == 'lire' || $perms == 'read') $wherefordel .= " OR (module='".$this->db->escape($module)."')";
 
 			// Pour compatibilite, si lowid = 0, on est en mode suppression de tout
 			// TODO A virer quand sera gere par l'appelant
 			//if (substr($rid,-1,1) == 0) $wherefordel="module='$module'";
 		} else {
-			// Where pour la liste des droits a supprimer
+			// Add permission of the list $wherefordel
 			if (!empty($allmodule))
 			{
 				if ($allmodule == 'allmodules')
@@ -461,7 +465,7 @@ class UserGroup extends CommonObject
 					$wherefordel = 'allmodules';
 				} else {
 					$wherefordel = "module='".$this->db->escape($allmodule)."'";
-					if (!empty($allperms))  $whereforadd .= " AND perms='".$this->db->escape($allperms)."'";
+					if (!empty($allperms)) $wherefordel .= " AND perms='".$this->db->escape($allperms)."'";
 				}
 			}
 		}
@@ -484,8 +488,12 @@ class UserGroup extends CommonObject
 				$i = 0;
 				while ($i < $num)
 				{
+					$nid = 0;
+
 					$obj = $this->db->fetch_object($result);
-					$nid = $obj->id;
+					if ($obj) {
+						$nid = $obj->id;
+					}
 
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights";
 					$sql .= " WHERE fk_usergroup = $this->id AND fk_id=".$nid;
@@ -565,22 +573,24 @@ class UserGroup extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$module = $obj->module;
-				$perms = $obj->perms;
-				$subperms = $obj->subperms;
+				if ($obj) {
+					$module = $obj->module;
+					$perms = $obj->perms;
+					$subperms = $obj->subperms;
 
-				if ($perms)
-				{
-					if (!isset($this->rights)) $this->rights = new stdClass(); // For avoid error
-					if (!isset($this->rights->$module) || !is_object($this->rights->$module)) $this->rights->$module = new stdClass();
-					if ($subperms)
+					if ($perms)
 					{
-						if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = new stdClass();
-						if (empty($this->rights->$module->$perms->$subperms)) $this->nb_rights++;
-						$this->rights->$module->$perms->$subperms = 1;
-					} else {
-						if (empty($this->rights->$module->$perms)) $this->nb_rights++;
-						$this->rights->$module->$perms = 1;
+						if (!isset($this->rights)) $this->rights = new stdClass(); // For avoid error
+						if (!isset($this->rights->$module) || !is_object($this->rights->$module)) $this->rights->$module = new stdClass();
+						if ($subperms)
+						{
+							if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = new stdClass();
+							if (empty($this->rights->$module->$perms->$subperms)) $this->nb_rights++;
+							$this->rights->$module->$perms->$subperms = 1;
+						} else {
+							if (empty($this->rights->$module->$perms)) $this->nb_rights++;
+							$this->rights->$module->$perms = 1;
+						}
 					}
 				}
 

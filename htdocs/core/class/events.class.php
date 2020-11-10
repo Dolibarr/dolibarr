@@ -141,7 +141,7 @@ class Events // extends CommonObject
 
 		// Clean parameters
 		$this->description = trim($this->description);
-		if (empty($this->user_agent) && !empty($_SERVER['HTTP_USER_AGENT'])) $this->user_agent = $_SERVER['HTTP_USER_AGENT'];
+		if (empty($this->user_agent)) $this->user_agent = (empty($_SERVER['HTTP_USER_AGENT'])?'':$_SERVER['HTTP_USER_AGENT']);
 
 		// Check parameters
 		if (empty($this->description)) { $this->error = 'ErrorBadValueForParameterCreateEventDesc'; return -1; }

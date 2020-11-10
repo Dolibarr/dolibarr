@@ -272,7 +272,7 @@ print "\n";
 
 print '<div class="demoban demobackground">';
 print '<div class="right" style="padding-right: 30px; padding-top: 30px;">';
-print '<a alt="Official portal of your ERP CRM application" targe="_blank" href="https://www.dolibarr.org"><img class="demologo" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" alt="Dolibarr logo"></a>';
+print '<a alt="Official portal of your ERP CRM application" targe="_blank" href="https://www.dolibarr.org?utm_medium=website&utm_source=demo"><img class="demologo" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" alt="Dolibarr logo"></a>';
 print '</div>';
 print '</div>';
 
@@ -447,11 +447,9 @@ $db->close();
  */
 function llxHeaderVierge($title, $head = "")
 {
-	global $user, $conf, $langs;
-
 	top_httphead();
 
-	top_htmlhead($head, $title, 0, 0, array(), array('public/demo/demo.css'));
+	top_htmlhead($head, $title, 0, 0, array(), array('public/demo/demo.css'), 0, 1);
 
 	print '<body class="demobody"><div class="demobackgrounddiv">'."\n";
 }

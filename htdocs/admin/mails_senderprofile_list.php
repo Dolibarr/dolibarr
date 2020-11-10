@@ -427,7 +427,7 @@ print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorde
 $topicmail = "Information";
 //$modelmail="subscription";
 $objecttmp = new EmailSenderProfile($db);
-//$trackid='sub'.$object->id;
+//$trackid = (($action == 'testhtml') ? "testhtml" : "test");
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($search_all)

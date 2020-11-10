@@ -274,6 +274,13 @@ if ($action == 'create')
 	print $form->selectDate((empty($datev) ?-1 : $datev), "datev", '', '', '', 'add', 1, 1);
 	print '</td></tr>';
 
+	// Employee
+	print '<tr><td>';
+	print $form->editfieldkey('Employee', 'fk_user', '', $object, 0, 'string', '', 1).'</td><td>';
+	$noactive = 0; // We keep active and unactive users
+	print $form->select_dolusers(GETPOST('fk_user', 'int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'AND employee=1', 0, '', 'maxwidth300', $noactive);
+	print '</td></tr>';
+
 	// Label
 	print '<tr><td>';
 	print $form->editfieldkey('Label', 'label', '', $object, 0, 'string', '', 1).'</td><td>';
@@ -290,13 +297,6 @@ if ($action == 'create')
 	print '<tr><td>';
 	print $form->editfieldkey('DateEndPeriod', 'dateep', '', $object, 0, 'string', '', 1).'</td><td>';
 	print $form->selectDate($dateep, "dateep", '', '', '', 'add');
-	print '</td></tr>';
-
-	// Employee
-	print '<tr><td>';
-	print $form->editfieldkey('Employee', 'fk_user', '', $object, 0, 'string', '', 1).'</td><td>';
-	$noactive = 0; // We keep active and unactive users
-	print $form->select_dolusers(GETPOST('fk_user', 'int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'AND employee=1', 0, '', 'maxwidth300', $noactive);
 	print '</td></tr>';
 
 	// Amount

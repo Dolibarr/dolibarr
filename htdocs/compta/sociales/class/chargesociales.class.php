@@ -538,10 +538,12 @@ class ChargeSociales extends CommonObject
 			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
 		}
 
-
 		if (empty($this->ref)) $this->ref = $this->label;
 
-		$label = '<u>'.$langs->trans("SocialContribution").'</u>';
+		$label = img_picto('', 'tax').'<u class="paddingrightonly">'.$langs->trans("SocialContribution").'</u>';
+		if (isset($this->paye)) {
+			$label .= ' '.$this->getLibStatut(5);
+		}
 		if (!empty($this->ref))
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (!empty($this->label))

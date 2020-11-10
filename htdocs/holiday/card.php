@@ -55,8 +55,8 @@ $now = dol_now();
 
 $childids = $user->getAllChildIds(1);
 
-$morefilter = 'AND employee = 1';
-if (!empty($conf->global->HOLIDAY_FOR_NON_SALARIES_TOO)) $morefilter = '';
+$morefilter = '';
+if (!empty($conf->global->HOLIDAY_HIDE_FOR_NON_SALARIES)) $morefilter = 'AND employee = 1';
 
 $error = 0;
 

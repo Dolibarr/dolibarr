@@ -498,7 +498,7 @@ class FactureRec extends CommonInvoice
 		$sql .= ', f.remise_percent, f.remise_absolue, f.remise';
 		$sql .= ', f.date_lim_reglement as dlr';
 		$sql .= ', f.note_private, f.note_public, f.fk_user_author';
-		$sql .= ', f.modelpdf';
+		$sql .= ', f.modelpdf as model_pdf';
 		$sql .= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet as fk_project';
 		$sql .= ', f.fk_account';
 		$sql .= ', f.frequency, f.unit_frequency, f.date_when, f.date_last_gen, f.nb_gen_done, f.nb_gen_max, f.usenewprice, f.auto_validate';
@@ -562,7 +562,8 @@ class FactureRec extends CommonInvoice
 				$this->note_private           = $obj->note_private;
 				$this->note_public            = $obj->note_public;
 				$this->user_author            = $obj->fk_user_author;
-				$this->modelpdf               = $obj->modelpdf;
+				$this->modelpdf               = $obj->model_pdf; // deprecatd
+				$this->model_pdf              = $obj->model_pdf;
 				$this->rang = $obj->rang;
 				$this->special_code = $obj->special_code;
 				$this->frequency			  = $obj->frequency;
@@ -1894,8 +1895,6 @@ class FactureLigneRec extends CommonInvoiceLine
 	 */
 	public $table_element = 'facturedet_rec';
 
-	public $date_start_fill;
-	public $date_end_fill;
 
 
 	/**

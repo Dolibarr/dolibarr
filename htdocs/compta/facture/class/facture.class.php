@@ -144,8 +144,12 @@ class Facture extends CommonInvoice
 	public $close_code;
 	//! Commentaire si mis a paye sans paiement complet
 	public $close_note;
-	//! 1 if invoice paid COMPLETELY, 0 otherwise (do not use it anymore, use statut and close_code)
+
+	/**
+	 * 1 if invoice paid COMPLETELY, 0 otherwise (do not use it anymore, use statut and close_code)
+	 */
 	public $paye;
+
 	//! key of module source when invoice generated from a dedicated module ('cashdesk', 'takepos', ...)
 	public $module_source;
 	//! key of pos source ('0', '1', ...)
@@ -623,7 +627,7 @@ class Facture extends CommonInvoice
 		$sql .= ", ".($this->remise_absolue > 0 ? $this->remise_absolue : 'NULL');
 		$sql .= ", ".($this->remise_percent > 0 ? $this->remise_percent : 'NULL');
 		$sql .= ", '".$this->db->idate($this->date)."'";
-		$sql .= ", ".(strval($this->date_pointoftax) != '' ? "'".$this->db->idate($this->date_pointoftax)."'" : 'null');
+		$sql .= ", ".(empty($this->date_pointoftax) ? "null" : "'".$this->db->idate($this->date_pointoftax)."'");
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= ", ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
@@ -637,7 +641,8 @@ class Facture extends CommonInvoice
 		$sql .= ", ".($this->fk_project ? $this->fk_project : "null");
 		$sql .= ", ".$this->cond_reglement_id;
 		$sql .= ", ".$this->mode_reglement_id;
-		$sql .= ", '".$this->db->idate($this->date_lim_reglement)."', '".$this->db->escape($this->modelpdf)."'";
+		$sql .= ", '".$this->db->idate($this->date_lim_reglement)."'";
+		$sql .= ", ".(isset($this->modelpdf) ? "'".$this->db->escape($this->modelpdf)."'" : "null");
 		$sql .= ", ".($this->situation_cycle_ref ? "'".$this->db->escape($this->situation_cycle_ref)."'" : "null");
 		$sql .= ", ".($this->situation_counter ? "'".$this->db->escape($this->situation_counter)."'" : "null");
 		$sql .= ", ".($this->situation_final ? $this->situation_final : 0);
@@ -751,7 +756,7 @@ class Facture extends CommonInvoice
 					$newinvoiceline->origin_id = $this->lines[$i]->id;
 
 					// Auto set date of service ?
-					if ($this->lines[$i]->date_start_fill == 1 && $originaldatewhen)			// $originaldatewhen is defined when generating from recurring invoice only
+					if ($this->lines[$i]->date_start_fill == 1 && $originaldatewhen)		// $originaldatewhen is defined when generating from recurring invoice only
 					{
 						$newinvoiceline->date_start = $originaldatewhen;
 					}
@@ -1052,7 +1057,8 @@ class Facture extends CommonInvoice
 		$facture->note_public       = $this->note_public;
 		$facture->note_private      = $this->note_private;
 		$facture->ref_client        = $this->ref_client;
-		$facture->modelpdf          = $this->modelpdf;
+		$facture->modelpdf          = $this->modelpdf; // deprecated
+		$facture->model_pdf         = $this->modelpdf;
 		$facture->fk_project        = $this->fk_project;
 		$facture->cond_reglement_id = $this->cond_reglement_id;
 		$facture->mode_reglement_id = $this->mode_reglement_id;
@@ -2436,14 +2442,14 @@ class Facture extends CommonInvoice
 	 * @param   string	$force_number	Reference to force on invoice
 	 * @param	int		$idwarehouse	Id of warehouse to use for stock decrease if option to decreasenon stock is on (0=no decrease)
 	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 * @param	int		$batch_rule		0=do not decrement batch, else batch rule to use
-	 *                                 	1=take in batches ordered by sellby and eatby dates
+	 * @param	int		$batch_rule		0=do not decrement batch, else batch rule to use, 1=take in batches ordered by sellby and eatby dates
 	 * @return	int						<0 if KO, 0=Nothing done because invoice is not a draft, >0 if OK
 	 */
 	public function validate($user, $force_number = '', $idwarehouse = 0, $notrigger = 0, $batch_rule = 0)
 	{
 		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
 		$productStatic = null;
 		$warehouseStatic = null;
 		if ($batch_rule > 0) {
@@ -2488,7 +2494,7 @@ class Facture extends CommonInvoice
 		// Check parameters
 		if ($this->type == self::TYPE_REPLACEMENT)		// if this is a replacement invoice
 		{
-			// Controle que facture source connue
+			// Check that source invoice is known
 			if ($this->fk_facture_source <= 0)
 			{
 				$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InvoiceReplacement"));
@@ -4332,7 +4338,7 @@ class Facture extends CommonInvoice
 			$modele = 'crabe';
 			$thisTypeConfName = 'FACTURE_ADDON_PDF_'.$this->type;
 
-			if ($this->modelpdf) {
+			if (!empty($this->modelpdf)) {
 				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->$thisTypeConfName)) {
 				$modele = $conf->global->$thisTypeConfName;

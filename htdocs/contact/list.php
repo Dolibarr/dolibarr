@@ -891,7 +891,7 @@ while ($i < min($num, $limit))
 	if (!empty($arrayfields['p.lastname']['checked']))
 	{
 		print '<td class="middle tdoverflowmax200">';
-		print $contactstatic->getNomUrl(1, '', 0);
+		print $contactstatic->getNomUrl(1);
 		print '</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}

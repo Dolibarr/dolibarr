@@ -222,7 +222,7 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('add', 'alpha')) {
 				$message .= $langs->transnoentities('TicketNewEmailBodyInfosTicket').'<br>';
 
 				$url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE.'/' : dol_buildpath('/public/ticket/view.php', 2)).'?track_id='.$object->track_id;
-				$infos_new_ticket = $langs->transnoentities('TicketNewEmailBodyInfosTrackId', '<a href="'.$url_public_ticket.'">'.$object->track_id.'</a>').'<br>';
+				$infos_new_ticket = $langs->transnoentities('TicketNewEmailBodyInfosTrackId', '<a href="'.$url_public_ticket.'" rel="nofollow noopener">'.$object->track_id.'</a>').'<br>';
 				$infos_new_ticket .= $langs->transnoentities('TicketNewEmailBodyInfosTrackUrl').'<br><br>';
 
 				$message .= $infos_new_ticket;
@@ -272,7 +272,7 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('add', 'alpha')) {
 
 					$message_admin .= '</ul>';
 					$message_admin .= '<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
-					$message_admin .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
+					$message_admin .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'" rel="nofollow noopener">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
 
 					$from = $conf->global->MAIN_INFO_SOCIETE_NOM.' <'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
 					$replyto = $from;
