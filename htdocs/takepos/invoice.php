@@ -419,9 +419,10 @@ if ($action == 'creditnote')
 	}
 }
 
-if ($action == 'history')
+if ($action == 'history' || $action=='creditnote')
 {
-	$placeid = (int) GETPOST('placeid', 'int');
+	if ($action=='creditnote') $placeid = $creditnote->id;
+	else $placeid = (int) GETPOST('placeid', 'int');
 	$invoice = new Facture($db);
 	$invoice->fetch($placeid);
 }
@@ -769,7 +770,7 @@ if ($action == "order" and $placeid != 0)
 }
 
 $sectionwithinvoicelink = '';
-if ($action == "valid" || $action == "history")
+if ($action == "valid" || $action == "history" || $action == 'creditnote')
 {
 	$sectionwithinvoicelink .= '<!-- Section with invoice link -->'."\n";
 	$sectionwithinvoicelink .= '<span style="font-size:120%;" class="center">';
@@ -1315,7 +1316,7 @@ if ($placeid > 0)
 
 print '</table>';
 
-if ($action == "valid" || $action == "history") {
+if (($action == "valid" || $action == "history") && $invoice->type != Facture::TYPE_CREDIT_NOTE) {
 	print '<button id="buttonprint" type="button" onclick="ModalBox(\'ModalCreditNote\')">'.$langs->trans('CreateCreditNote').'</button>';
 }
 
