@@ -36,8 +36,8 @@ if (!empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_e
                 }
                 elseif (in_array($typeofextrafield, array('datetime', 'timestamp')))
                 {
-                	// TODO
-                	// Use showInputField in a particular manner to have input with a comparison operator, not input for a specific value date-hour-minutes
+                    $morecss = '';
+                    echo $extrafields->showInputField($key, $search_array_options[$search_options_pattern.$tmpkey], '', '', $search_options_pattern, $morecss, 0, $extrafieldsobjectkey, 1);
                 }
                 else
                 {

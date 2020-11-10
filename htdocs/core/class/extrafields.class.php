@@ -948,15 +948,15 @@ class ExtraFields
 	 * Return HTML string to put an input field into a page
 	 * Code very similar with showInputField of common object
 	 *
-	 * @param  string  $key            			Key of attribute
-	 * @param  string  $value          			Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
-	 * @param  string  $moreparam      			To add more parametes on html input tag
-	 * @param  string  $keysuffix      			Prefix string to add after name and id of field (can be used to avoid duplicate names)
-	 * @param  string  $keyprefix      			Suffix string to add before name and id of field (can be used to avoid duplicate names)
-	 * @param  string  $morecss        			More css (to defined size of field. Old behaviour: may also be a numeric)
-	 * @param  int     $objectid       			Current object id
-	 * @param  string  $extrafieldsobjectkey	If defined (for example $object->table_element), use the new method to get extrafields data
-	 * @param  string  $mode                    1=Used for search filters
+	 * @param  string        $key            		Key of attribute
+	 * @param  string|array  $value 			    Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value); for dates in filter mode, a range array('start'=><timestamp>, 'end'=><timestamp>) should be provided
+	 * @param  string        $moreparam      		To add more parametes on html input tag
+	 * @param  string        $keysuffix      		Prefix string to add after name and id of field (can be used to avoid duplicate names)
+	 * @param  string        $keyprefix      		Suffix string to add before name and id of field (can be used to avoid duplicate names)
+	 * @param  string        $morecss        		More css (to defined size of field. Old behaviour: may also be a numeric)
+	 * @param  int           $objectid       		Current object id
+	 * @param  string        $extrafieldsobjectkey	If defined (for example $object->table_element), use the new method to get extrafields data
+	 * @param  string        $mode                  1=Used for search filters
 	 * @return string
 	 */
 	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $objectid = 0, $extrafieldsobjectkey = '', $mode = 0)
@@ -1069,8 +1069,23 @@ class ExtraFields
 			// Do not show current date when field not required (see selectDate() method)
 			if (!$required && $value == '') $value = '-1';
 
+			if ($mode == 1) {
+				// search filter on a date extrafield shows two inputs to select a date range
+				$prefill = array(
+					'start' => isset($value['start']) ? $value['start'] : '',
+					'end'   => isset($value['end'])   ? $value['end']   : '');
+				$out = '<div class="nowrap">'
+					. $langs->trans('From') . ' '
+					. $form->selectDate($prefill['start'], $keyprefix . $key . $keysuffix . '_start', 0, 0, 1)
+					. '</div>'
+					. '<div class="nowrap">'
+					. $langs->trans('to') . ' '
+					. $form->selectDate($prefill['end'], $keyprefix . $key . $keysuffix . '_end', 0, 0, 1)
+					. '</div>';
+			} else {
+				$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1);
+			}
 			// TODO Must also support $moreparam
-			$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1);
 		}
 		elseif (in_array($type, array('int', 'integer')))
 		{
@@ -2162,9 +2177,28 @@ class ExtraFields
 
 				if (in_array($key_type, array('date', 'datetime')))
 				{
-					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix."year")) continue; // Value was not provided, we should not set it.
-					// Clean parameters
-					$value_key = dol_mktime(GETPOST($keysuffix."options_".$key.$keyprefix."hour", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."min", 'int'), 0, GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'));
+					$dateparamname_start = $keysuffix . 'options_' . $key . $keyprefix . '_start';
+					$dateparamname_end   = $keysuffix . 'options_' . $key . $keyprefix . '_end';
+					if (GETPOSTISSET($dateparamname_start . 'year') && GETPOSTISSET($dateparamname_end . 'year')) {
+						// values provided as a date pair (start date + end date), each date being broken down as year, month, day, etc.
+						$value_key = array(
+							'start' => mktime(
+								0, 0, 0,
+								GETPOST($dateparamname_start . 'month', 'int'),
+								GETPOST($dateparamname_start . 'day', 'int'),
+								GETPOST($dateparamname_start . 'year', 'int')),
+							'end' => mktime(
+								23, 59, 59,
+								GETPOST($dateparamname_end . 'month', 'int'),
+								GETPOST($dateparamname_end . 'day', 'int'),
+								GETPOST($dateparamname_end . 'year', 'int'))
+						);
+					} elseif (GETPOSTISSET($keysuffix."options_".$key.$keyprefix."year")) {
+						// Clean parameters
+						$value_key = dol_mktime(GETPOST($keysuffix."options_".$key.$keyprefix."hour", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."min", 'int'), 0, GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'));
+					} else {
+						continue; // Value was not provided, we should not set it.
+					}
 				}
 				elseif (in_array($key_type, array('checkbox', 'chkbxlst')))
 				{
