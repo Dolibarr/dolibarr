@@ -291,7 +291,7 @@ $thirdparty = new Societe($db);
 
 $sql = "SELECT";
 if ($search_all || $search_product_category > 0) $sql = 'SELECT DISTINCT';
-$sql .= " f.rowid as facid, f.ref, f.ref_supplier, f.type, f.datef, f.date_lim_reglement as datelimite, f.fk_mode_reglement,";
+$sql .= " f.rowid as facid, f.ref, f.ref_supplier, f.type, f.datef, f.date_lim_reglement as datelimite, f.fk_mode_reglement, f.fk_cond_reglement,";
 $sql .= " f.total_ht, f.total_ttc, f.total_tva as total_vat, f.paye as paye, f.fk_statut as fk_statut, f.libelle as label, f.datec as date_creation, f.tms as date_update,";
 $sql .= " f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,";
 $sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva as multicurrency_total_vat, f.multicurrency_total_ttc,';
