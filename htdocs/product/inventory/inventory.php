@@ -120,7 +120,7 @@ if (empty($reshook))
 	// Actions to send emails
 	/*$triggersendname = 'MYOBJECT_SENTBYMAIL';
 	$autocopy='MAIN_MAIL_AUTOCOPY_MYOBJECT_TO';
-	$trackid='myobject'.$object->id;
+	$trackid='stockinv'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';*/
 
 	if (GETPOST('addline', 'alpha')) {

@@ -348,6 +348,11 @@ abstract class CommonObject
 	public $fk_account;
 
 	/**
+	 * @var string	Open ID
+	 */
+	public $openid;
+
+	/**
 	 * @var string Public note
 	 * @see update_note()
 	 */
@@ -7507,8 +7512,7 @@ abstract class CommonObject
 			// Depending on field type ('datetime', ...)
 			if ($this->isDate($info))
 			{
-				if (empty($this->{$field}))
-				{
+				if (empty($this->{$field})) {
 					$queryarray[$field] = null;
 				} else {
 					$queryarray[$field] = $this->db->idate($this->{$field});
@@ -7526,16 +7530,27 @@ abstract class CommonObject
 			} elseif ($this->isDuration($info))
 			{
 				// $this->{$field} may be null, '', 0, '0', 123, '123'
-				if ($this->{$field} != '' || !empty($info['notnull'])) $queryarray[$field] = (int) $this->{$field};		// If '0', it may be set to null later if $info['notnull'] == -1
+				if ((isset($this->{$field}) && $this->{$field} != '') || !empty($info['notnull'])) {
+					if (!isset($this->{$field})) {
+						$queryarray[$field] = 0;
+					} else {
+						$queryarray[$field] = (int) $this->{$field};		// If '0', it may be set to null later if $info['notnull'] == -1
+					}
+				}
 				else $queryarray[$field] = null;
 			} elseif ($this->isInt($info) || $this->isFloat($info))
 			{
 				if ($field == 'entity' && is_null($this->{$field})) $queryarray[$field] = $conf->entity;
 				else {
 					// $this->{$field} may be null, '', 0, '0', 123, '123'
-					if ($this->{$field} != '' || !empty($info['notnull'])) {
-						if ($this->isInt($info)) $queryarray[$field] = (int) $this->{$field};	// If '0', it may be set to null later if $info['notnull'] == -1
-						if ($this->isFloat($info)) $queryarray[$field] = (double) $this->{$field};	// If '0', it may be set to null later if $info['notnull'] == -1
+					if ((isset($this->{$field}) && $this->{$field} != '') || !empty($info['notnull'])) {
+						if (!isset($this->{$field})) {
+							$queryarray[$field] = 0;
+						} elseif ($this->isInt($info)) {
+							$queryarray[$field] = (int) $this->{$field};	// If '0', it may be set to null later if $info['notnull'] == -1
+						} elseif ($this->isFloat($info)) {
+							$queryarray[$field] = (double) $this->{$field};	// If '0', it may be set to null later if $info['notnull'] == -1
+						}
 					} else $queryarray[$field] = null;
 				}
 			} else {
@@ -7912,6 +7927,7 @@ abstract class CommonObject
 		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into update.
 		if (array_key_exists('ref', $fieldvalues)) $fieldvalues['ref'] = dol_string_nospecial($fieldvalues['ref']); // If field is a ref, we sanitize data
 
+		// Add quotes and escape on fields with type string
 		$keys = array();
 		$values = array();
 		$tmp = array();
@@ -7922,7 +7938,7 @@ abstract class CommonObject
 			$tmp[] = $k.'='.$this->quote($v, $this->fields[$k]);
 		}
 
-		// Clean and check mandatory
+		// Clean and check mandatory fields
 		foreach ($keys as $key)
 		{
 			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && $values[$key] == '-1') $values[$key] = ''; // This is an implicit foreign key field

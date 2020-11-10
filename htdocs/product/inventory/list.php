@@ -324,7 +324,7 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 $topicmail = "Information";
 $modelmail = "inventory";
 $objecttmp = new Inventory($db);
-$trackid = 'inve'.$object->id;
+$trackid = 'stockinv'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($search_all)

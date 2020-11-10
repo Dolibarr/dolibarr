@@ -76,6 +76,8 @@ if (!$bankid)
 }
 if (empty($account->userid)) $account->userid = $object->id;
 
+$permissiontoaddbankaccount = (!empty($user->rights->salaries->write) || !empty($user->rights->hrm->employee->write) || !empty($user->rights->user->creer));
+
 
 /*
  *	Actions
@@ -172,8 +174,7 @@ if ($action == 'update' && !$cancel)
 
 	$result = $account->update($user);
 
-	if (!$result)
-	{
+	if (!$result) {
 		setEventMessages($account->error, $account->errors, 'errors');
 		$action = 'edit'; // Force chargement page edition
 	} else {
@@ -183,32 +184,28 @@ if ($action == 'update' && !$cancel)
 }
 
 // update personal email
-if ($action == 'setpersonal_email')
-{
-	$object->personal_email = GETPOST('personal_email');
+if ($action == 'setpersonal_email') {
+	$object->personal_email = (string) GETPOST('personal_email', 'alphanohtml');
 	$result = $object->update($user);
 	if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 }
 
 // update personal mobile
-if ($action == 'setpersonal_mobile')
-{
-	$object->personal_mobile = GETPOST('personal_mobile');
+if ($action == 'setpersonal_mobile') {
+	$object->personal_mobile = (string) GETPOST('personal_mobile', 'alphanohtml');
 	$result = $object->update($user);
 	if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 }
 
 // update default_c_exp_tax_cat
-if ($action == 'setdefault_c_exp_tax_cat')
-{
+if ($action == 'setdefault_c_exp_tax_cat') {
 	$object->default_c_exp_tax_cat = GETPOST('default_c_exp_tax_cat', 'int');
 	$result = $object->update($user);
 	if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 }
 
 // update default range
-if ($action == 'setdefault_range')
-{
+if ($action == 'setdefault_range') {
 	$object->default_range = GETPOST('default_range', 'int');
 	$result = $object->update($user);
 	if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
@@ -505,7 +502,13 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 
 	$morehtmlright = '';
 	if ($account->id == 0) {
-		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create');
+		if ($permissiontoaddbankaccount) {
+			$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create');
+		} else {
+			$morehtmlright = dolGetButtonTitle($langs->trans('Add'), 'NotEnoughPermission', 'fa fa-plus-circle', '', '', -2);
+		}
+	} else {
+		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), 'AlreadyOneBankAccount', 'fa fa-plus-circle', '', '', -2);
 	}
 
 	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, 'bank_account');
@@ -571,8 +574,8 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 
 		// Edit/Delete
 		print '<td class="right nowraponall">';
-		if ($user->rights->hrm->employee->write || $user->rights->user->creer) {
-			print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&bankid='.$account->id.'&action=edit">';
+		if ($permissiontoaddbankaccount) {
+			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&bankid='.$account->id.'&action=edit">';
 			print img_picto($langs->trans("Modify"), 'edit');
 			print '</a>';
 		}

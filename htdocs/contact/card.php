@@ -8,7 +8,7 @@
  * Copyright (C) 2013-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2020       Open-Dsi     			<support@open-dsi.fr>
  *
@@ -55,7 +55,7 @@ $action = (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $id = GETPOST('id', 'int');
-$socid		= GETPOST('socid', 'int');
+$socid = GETPOST('socid', 'int');
 
 $object = new Contact($db);
 $extrafields = new ExtraFields($db);
@@ -178,15 +178,15 @@ if (empty($reshook))
 
 		$object->entity = (GETPOSTISSET('entity') ?GETPOST('entity', 'int') : $conf->entity);
 		$object->socid = GETPOST("socid", 'int');
-		$object->lastname = GETPOST("lastname", 'alpha');
-		$object->firstname = GETPOST("firstname", 'alpha');
-		$object->civility_code = GETPOST("civility_code", 'alpha');
-		$object->poste			= GETPOST("poste", 'alpha');
-		$object->address = GETPOST("address", 'alpha');
-		$object->zip = GETPOST("zipcode", 'alpha');
-		$object->town = GETPOST("town", 'alpha');
-		$object->country_id = GETPOST("country_id", 'int');
-		$object->state_id = GETPOST("state_id", 'int');
+		$object->lastname = (string) GETPOST("lastname", 'alpha');
+		$object->firstname = (string) GETPOST("firstname", 'alpha');
+		$object->civility_code = (string) GETPOST("civility_code", 'alpha');
+		$object->poste = (string) GETPOST("poste", 'alpha');
+		$object->address = (string) GETPOST("address", 'alpha');
+		$object->zip = (string) GETPOST("zipcode", 'alpha');
+		$object->town = (string) GETPOST("town", 'alpha');
+		$object->country_id = (int) GETPOST("country_id", 'int');
+		$object->state_id = (int) GETPOST("state_id", 'int');
 		//$object->jabberid		= GETPOST("jabberid", 'alpha');
 		//$object->skype		= GETPOST("skype", 'alpha');
 		//$object->twitter		= GETPOST("twitter", 'alpha');
@@ -196,22 +196,22 @@ if (empty($reshook))
 		if (!empty($conf->socialnetworks->enabled)) {
 			foreach ($socialnetworks as $key => $value) {
 				if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml') != '') {
-					$object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
+					$object->socialnetworks[$key] = (string) GETPOST($key, 'alphanohtml');
 				}
 			}
 		}
-		$object->email = GETPOST("email", 'alpha');
+		$object->email = (string) GETPOST("email", 'alpha');
 		$object->no_email = GETPOST("no_email", "int");
-		$object->phone_pro = GETPOST("phone_pro", 'alpha');
-		$object->phone_perso = GETPOST("phone_perso", 'alpha');
-		$object->phone_mobile = GETPOST("phone_mobile", 'alpha');
-		$object->fax = GETPOST("fax", 'alpha');
+		$object->phone_pro = (string) GETPOST("phone_pro", 'alpha');
+		$object->phone_perso = (string) GETPOST("phone_perso", 'alpha');
+		$object->phone_mobile = (string) GETPOST("phone_mobile", 'alpha');
+		$object->fax = (string) GETPOST("fax", 'alpha');
 		$object->priv = GETPOST("priv", 'int');
-		$object->note_public = GETPOST("note_public", 'restricthtml');
-		$object->note_private = GETPOST("note_private", 'restricthtml');
+		$object->note_public = (string) GETPOST("note_public", 'restricthtml');
+		$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 		$object->roles = GETPOST("roles", 'array');
 
-		$object->statut			= 1; //Defult status to Actif
+		$object->statut = 1; //Default status to Actif
 
 		// Note: Correct date should be completed with location to have exact GM time of birth.
 		$object->birthday = dol_mktime(0, 0, 0, GETPOST("birthdaymonth", 'int'), GETPOST("birthdayday", 'int'), GETPOST("birthdayyear", 'int'));
@@ -225,9 +225,9 @@ if (empty($reshook))
 			$action = 'create';
 		}
 
-		if (!GETPOST("lastname"))
-		{
-			$error++; $errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Lastname").' / '.$langs->transnoentities("Label"));
+		if (!GETPOST("lastname")) {
+			$error++;
+			$errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Lastname").' / '.$langs->transnoentities("Label"));
 			$action = 'create';
 		}
 
@@ -236,7 +236,8 @@ if (empty($reshook))
 			$id = $object->create($user);
 			if ($id <= 0)
 			{
-				$error++; $errors = array_merge($errors, ($object->error ? array($object->error) : $object->errors));
+				$error++;
+				$errors = array_merge($errors, ($object->error ? array($object->error) : $object->errors));
 				$action = 'create';
 			} else {
 				// Categories association
@@ -278,14 +279,12 @@ if (empty($reshook))
 		$result = $object->fetch($id);
 		$object->oldcopy = clone $object;
 
-		$object->old_lastname = GETPOST("old_lastname");
-		$object->old_firstname = GETPOST("old_firstname");
+		$object->old_lastname = (string) GETPOST("old_lastname", 'alpha');
+		$object->old_firstname = (string) GETPOST("old_firstname", 'alpha');
 
 		$result = $object->delete();
-		if ($result > 0)
-		{
-			if ($backtopage)
-			{
+		if ($result > 0) {
+			if ($backtopage) {
 				header("Location: ".$backtopage);
 				exit;
 			} else {
@@ -360,22 +359,22 @@ if (empty($reshook))
 
 			$object->oldcopy = clone $object;
 
-			$object->old_lastname = GETPOST("old_lastname", 'alpha');
-			$object->old_firstname = GETPOST("old_firstname", 'alpha');
+			$object->old_lastname = (string) GETPOST("old_lastname", 'alpha');
+			$object->old_firstname = (string) GETPOST("old_firstname", 'alpha');
 
 			$object->socid = GETPOST("socid", 'int');
-			$object->lastname = GETPOST("lastname", 'alpha');
-			$object->firstname = GETPOST("firstname", 'alpha');
-			$object->civility_code = GETPOST("civility_code", 'alpha');
-			$object->poste = GETPOST("poste", 'alpha');
+			$object->lastname = (string) GETPOST("lastname", 'alpha');
+			$object->firstname = (string) GETPOST("firstname", 'alpha');
+			$object->civility_code = (string) GETPOST("civility_code", 'alpha');
+			$object->poste = (string) GETPOST("poste", 'alpha');
 
-			$object->address = GETPOST("address", 'alpha');
-			$object->zip = GETPOST("zipcode", 'alpha');
-			$object->town = GETPOST("town", 'alpha');
-			$object->state_id   	= GETPOST("state_id", 'int');
-			$object->country_id		= GETPOST("country_id", 'int');
+			$object->address = (string) GETPOST("address", 'alpha');
+			$object->zip = (string) GETPOST("zipcode", 'alpha');
+			$object->town = (string) GETPOST("town", 'alpha');
+			$object->state_id = GETPOST("state_id", 'int');
+			$object->country_id = GETPOST("country_id", 'int');
 
-			$object->email = GETPOST("email", 'alpha');
+			$object->email = (string) GETPOST("email", 'alpha');
 			$object->no_email = GETPOST("no_email", "int");
 			//$object->jabberid		= GETPOST("jabberid", 'alpha');
 			//$object->skype		= GETPOST("skype", 'alpha');
@@ -386,17 +385,17 @@ if (empty($reshook))
 			if (!empty($conf->socialnetworks->enabled)) {
 				foreach ($socialnetworks as $key => $value) {
 					if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml') != '') {
-						$object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
+						$object->socialnetworks[$key] = (string) GETPOST($key, 'alphanohtml');
 					}
 				}
 			}
-			$object->phone_pro = GETPOST("phone_pro", 'alpha');
-			$object->phone_perso = GETPOST("phone_perso", 'alpha');
-			$object->phone_mobile = GETPOST("phone_mobile", 'alpha');
-			$object->fax = GETPOST("fax", 'alpha');
-			$object->priv = GETPOST("priv", 'int');
-			$object->note_public = GETPOST("note_public", 'restricthtml');
-			$object->note_private = GETPOST("note_private", 'restricthtml');
+			$object->phone_pro = (string) GETPOST("phone_pro", 'alpha');
+			$object->phone_perso = (string) GETPOST("phone_perso", 'alpha');
+			$object->phone_mobile = (string) GETPOST("phone_mobile", 'alpha');
+			$object->fax = (string) GETPOST("fax", 'alpha');
+			$object->priv = (string) GETPOST("priv", 'int');
+			$object->note_public = (string) GETPOST("note_public", 'restricthtml');
+			$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 			$object->roles = GETPOST("roles", 'array');
 
 			// Fill array 'array_options' with data from add form
@@ -1559,7 +1558,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		$modelmail = 'contact';
 		$defaulttopic = 'Information';
 		$diroutput = $conf->contact->dir_output;
-		$trackid = 'con'.$object->id;
+		$trackid = 'ctc'.$object->id;
 
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	}

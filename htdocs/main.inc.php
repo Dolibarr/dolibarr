@@ -1092,14 +1092,15 @@ if (!function_exists("llxHeader"))
 	 * @param	string	$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
 	 * @param   string  $morecssonbody      More CSS on body tag.
 	 * @param	string	$replacemainareaby	Replace call to main_area() by a print of this string
+	 * @param	int		$disablenofollow	Disable the "nofollow" on page
 	 * @return	void
 	 */
-	function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '')
+	function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0)
 	{
 		global $conf;
 
 		// html header
-		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, $disablenofollow);
 
 		$tmpcsstouse = 'sidebar-collapse'.($morecssonbody ? ' '.$morecssonbody : '');
 		// If theme MD and classic layer, we open the menulayer by default.
@@ -1557,7 +1558,8 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 	// For backward compatibility with old modules
 	if (empty($conf->headerdone))
 	{
-		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+		$disablenofollow = 0;
+		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, $disablenofollow);
 		print '<body id="mainbody">';
 	}
 

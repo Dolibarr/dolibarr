@@ -300,9 +300,9 @@ if (empty($reshook))
 					$multicurrency_price = price2num(GETPOST("multicurrency_price", 'alpha'));
 					$multicurrency_code = GETPOST("multicurrency_code", 'alpha');
 
-					$ret = $object->update_buyprice($quantity, $newprice, $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', $multicurrency_price, $_POST["multicurrency_price_base_type"], $multicurrency_tx, $multicurrency_code, $supplier_description, $barcode, $fk_barcode_type);
+					$ret = $object->update_buyprice($quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOST("oselDispo"), $ref_fourn, $tva_tx, GETPOST("charges"), $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', $multicurrency_price, GETPOST("multicurrency_price_base_type"), $multicurrency_tx, $multicurrency_code, $supplier_description, $barcode, $fk_barcode_type);
 				} else {
-					$ret = $object->update_buyprice($quantity, $newprice, $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', 0, 'HT', 1, '', $supplier_description, $barcode, $fk_barcode_type);
+					$ret = $object->update_buyprice($quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOST("oselDispo"), $ref_fourn, $tva_tx, GETPOST("charges"), $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', 0, 'HT', 1, '', $supplier_description, $barcode, $fk_barcode_type);
 				}
 				if ($ret < 0)
 				{
@@ -655,7 +655,7 @@ if ($id > 0 || $ref)
 					}
 					$currencies = json_encode($currencies);
 
-					print <<<SCRIPT
+					print <<<END
     <script type="text/javascript">
         function update_price_from_multicurrency() {
             var multicurrency_price = $('input[name="multicurrency_price"]').val();
@@ -695,7 +695,7 @@ if ($id > 0 || $ref)
             });
         });
     </script>
-SCRIPT;
+END;
 				} else {
 					// Price qty min
 					print '<tr><td class="fieldrequired">'.$langs->trans("PriceQtyMin").'</td>';

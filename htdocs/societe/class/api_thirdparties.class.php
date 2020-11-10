@@ -2,6 +2,7 @@
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018   Pierre Chéné            <pierre.chene44@gmail.com>
  * Copyright (C) 2019   Cedric Ancelin          <icedo.anc@gmail.com>
+ * Copyright (C) 2020       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +69,7 @@ class Thirdparties extends DolibarrApi
 	 * Return an array with thirdparty informations
 	 *
 	 * @param 	int 	$id Id of third party to load
-	 * @return 	array|mixed data without useless information
+	 * @return 	Object Cleaned Societe object
 	 *
 	 * @throws 	RestException
 	 */
@@ -83,7 +84,7 @@ class Thirdparties extends DolibarrApi
 	 * Return an array with thirdparty informations
 	 *
 	 * @param string    $email  Email of third party to load
-	 * @return array|mixed data without useless information
+	 * @return Object Cleaned Societe object
 	 *
 	 * @url     GET email/{email}
 	 *
@@ -100,7 +101,7 @@ class Thirdparties extends DolibarrApi
 	 * Return an array with thirdparty informations
 	 *
 	 * @param string    $barcode  Barcode of third party to load
-	 * @return array|mixed data without useless information
+	 * @return Object Cleaned Societe object
 	 *
 	 * @url     GET barcode/{barcode}
 	 *
@@ -154,9 +155,9 @@ class Thirdparties extends DolibarrApi
 		$sql .= " AND t.fk_stcomm = st.id";
 
 		if ($mode == 1) $sql .= " AND t.client IN (1, 3)";
-		if ($mode == 2) $sql .= " AND t.client IN (2, 3)";
-		if ($mode == 3) $sql .= " AND t.client IN (0)";
-		if ($mode == 4) $sql .= " AND t.fournisseur IN (1)";
+		elseif ($mode == 2) $sql .= " AND t.client IN (2, 3)";
+		elseif ($mode == 3) $sql .= " AND t.client IN (0)";
+		elseif ($mode == 4) $sql .= " AND t.fournisseur IN (1)";
 
 		// Select thirdparties of given category
 		if ($category > 0) {
@@ -188,8 +189,7 @@ class Thirdparties extends DolibarrApi
 		$sql .= $this->db->order($sortfield, $sortorder);
 
 		if ($limit) {
-			if ($page < 0)
-			{
+			if ($page < 0) {
 				$page = 0;
 			}
 			$offset = $limit * $page;
@@ -249,7 +249,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @param int   $id             Id of thirdparty to update
 	 * @param array $request_data   Datas
-	 * @return int
+	 * @return Object|boolean
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -271,8 +271,9 @@ class Thirdparties extends DolibarrApi
 			$this->company->$field = $value;
 		}
 
-		if ($this->company->update($id, DolibarrApiAccess::$user, 1, '', '', 'update'))
+		if ($this->company->update($id, DolibarrApiAccess::$user, 1, '', '', 'update')) {
 			return $this->get($id);
+		}
 
 		return false;
 	}
@@ -1840,7 +1841,7 @@ class Thirdparties extends DolibarrApi
 	 * @param    string	$idprof6		Prof id 6 of third party (Warning, this can return several records)
 	 * @param    string	$email   		Email of third party (Warning, this can return several records)
 	 * @param    string	$ref_alias  Name_alias of third party (Warning, this can return several records)
-	 * @return array|mixed data without useless information
+	 * @return Object cleaned Societe object
 	 *
 	 * @throws RestException
 	 */
@@ -1850,8 +1851,11 @@ class Thirdparties extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->societe->lire) {
 			throw new RestException(401);
 		}
-
-		$result = $this->company->fetch($rowid, $ref, $ref_ext, $barcode, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email, $ref_alias);
+		if ($rowid == 0) {
+			$result = $this->company->initAsSpecimen();
+		} else {
+			$result = $this->company->fetch($rowid, $ref, $ref_ext, $barcode, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email, $ref_alias);
+		}
 		if (!$result) {
 			throw new RestException(404, 'Thirdparty not found');
 		}

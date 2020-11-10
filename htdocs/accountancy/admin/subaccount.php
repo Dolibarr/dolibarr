@@ -105,7 +105,7 @@ $title = $langs->trans('ChartOfIndividualAccountsOfSubsidiaryLedger');
 llxHeader('', $title);
 
 // Customer
-$sql = "SELECT sa.rowid, sa.nom as label, sa.code_compta as subaccount, '0' as type, sa.entity";
+$sql = "SELECT sa.rowid, sa.nom as label, sa.code_compta as subaccount, '1' as type, sa.entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe sa";
 $sql .= " WHERE sa.entity IN (".getEntity('societe').")";
 $sql .= " AND sa.code_compta <> ''";
@@ -148,7 +148,7 @@ if (!empty($search_type) && $search_type >= 0)	$sql .= " HAVING type LIKE '".$db
 
 // Supplier
 $sql .= " UNION ";
-$sql .= " SELECT sa.rowid, sa.nom as label, sa.code_compta_fournisseur as subaccount, '1' as type, sa.entity FROM ".MAIN_DB_PREFIX."societe sa";
+$sql .= " SELECT sa.rowid, sa.nom as label, sa.code_compta_fournisseur as subaccount, '2' as type, sa.entity FROM ".MAIN_DB_PREFIX."societe sa";
 $sql .= " WHERE sa.entity IN (".getEntity('societe').")";
 $sql .= " AND sa.code_compta_fournisseur <> ''";
 //print $sql;
@@ -190,7 +190,7 @@ if (!empty($search_type) && $search_type >= 0)	$sql .= " HAVING type LIKE '".$db
 
 // User
 $sql .= " UNION ";
-$sql .= " SELECT u.rowid, u.lastname as label, u.accountancy_code as subaccount, '2' as type, u.entity FROM ".MAIN_DB_PREFIX."user u";
+$sql .= " SELECT u.rowid, u.lastname as label, u.accountancy_code as subaccount, '3' as type, u.entity FROM ".MAIN_DB_PREFIX."user u";
 $sql .= " WHERE u.entity IN (".getEntity('user').")";
 $sql .= " AND u.accountancy_code <> ''";
 //print $sql;
@@ -287,7 +287,7 @@ if ($resql)
 	print '<tr class="liste_titre_filter">';
 	if (!empty($arrayfields['subaccount']['checked']))	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_subaccount" value="'.$search_subaccount.'"></td>';
 	if (!empty($arrayfields['label']['checked']))		print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="'.$search_label.'"></td>';
-	if (!empty($arrayfields['type']['checked']))		print '<td class="liste_titre center">'.$form->selectarray('search_type', array('0'=>$langs->trans('Customer'), '1'=>$langs->trans('Supplier'), '2'=>$langs->trans('Employee')), $search_type, 1).'</td>';
+	if (!empty($arrayfields['type']['checked']))		print '<td class="liste_titre center">'.$form->selectarray('search_type', array('1'=>$langs->trans('Customer'), '2'=>$langs->trans('Supplier'), '3'=>$langs->trans('Employee')), $search_type, 1).'</td>';
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { if (!empty($arrayfields['reconcilable']['checked']))   print '<td class="liste_titre">&nbsp;</td>'; }
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
@@ -335,17 +335,17 @@ if ($resql)
 			print '<td class="center">';
 			$s = '';
 			// Customer
-			if ($obj->type == 0)
+			if ($obj->type == 1)
 			{
 				$s .= '<a class="customer-back" style="padding-left: 6px; padding-right: 6px" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->rowid.'">'.$langs->trans("Customer").'</a>';
 			}
 			// Supplier
-			elseif ($obj->type == 1)
+			elseif ($obj->type == 2)
 			{
 				$s .= '<a class="vendor-back" style="padding-left: 6px; padding-right: 6px" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->rowid.'">'.$langs->trans("Supplier").'</a>';
 			}
 			// User
-			elseif ($obj->type == 2)
+			elseif ($obj->type == 3)
 			{
 				$s .= '<a class="user-back" style="padding-left: 6px; padding-right: 6px" title="'.$langs->trans("Employee").'" href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->id.'">'.$langs->trans("Employee").'</a>';
 			}
@@ -378,17 +378,17 @@ if ($resql)
 		print '<td class="center">';
 			$e = '';
 			// Customer
-		if ($obj->type == 0)
+		if ($obj->type == 1)
 			{
 			$e .= '<a class="editfielda" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/societe/card.php?action=edit&socid='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit().'</a>';
 		}
 			// Supplier
-		elseif ($obj->type == 1)
+		elseif ($obj->type == 2)
 			{
 			$e .= '<a class="editfielda" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/societe/card.php?action=edit&socid='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit().'</a>';
 		}
 			// User
-		elseif ($obj->type == 2)
+		elseif ($obj->type == 3)
 			{
 			$e .= '<a class="editfielda" title="'.$langs->trans("Employee").'" href="'.DOL_URL_ROOT.'/user/card.php?action=edit&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit().'</a>';
 		}

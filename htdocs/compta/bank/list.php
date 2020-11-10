@@ -262,7 +262,7 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 $topicmail = "Information";
 //$modelmail="subscription";
 $objecttmp = new Account($db);
-//$trackid='sub'.$object->id;
+$trackid = 'bank'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($sall)

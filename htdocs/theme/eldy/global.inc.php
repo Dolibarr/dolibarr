@@ -331,14 +331,14 @@ span.timesheetalreadyrecorded input {
     border-bottom: solid 1px rgba(0,0,0,0.4);
     margin-right: 1px !important;
 }
-td.weekend {
-	background-color: #eee;
-}
 td.onholidaymorning, td.onholidayafternoon {
 	background-color: #fdf6f2;
 }
 td.onholidayallday {
 	background-color: #f4eede;
+}
+td.weekend {	/* must be after td.onholidayallday */
+	background-color: #eee;
 }
 /*
 td.leftborder, td.hide0 {
@@ -1272,11 +1272,11 @@ table[summary="list_of_modules"] .fa-cog {
     .minwidth500imp { min-width: 250px !important; }
 }
 
-.widthcentpercentminusx {
-	width: calc(100% - 50px) !important;
+select.widthcentpercentminusx, input.widthcentpercentminusx {
+	width: calc(100% - 52px) !important;
 	display: inline-block;
 }
-.widthcentpercentminusxx {
+select.widthcentpercentminusxx, input.widthcentpercentminusxx {
 	width: calc(100% - 70px) !important;
 	display: inline-block;
 }

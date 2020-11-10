@@ -495,7 +495,7 @@ if (empty($reshook))
 	// Actions to send emails
 	$triggersendname = 'PROPOSAL_SUPPLIER_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO';
-	$trackid = 'spr'.$object->id;
+	$trackid = 'spro'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	// Actions to build doc
@@ -1952,7 +1952,7 @@ if ($action == 'create')
 	$defaulttopic = 'SendAskRef';
 	$diroutput = $conf->supplier_proposal->dir_output;
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO';
-	$trackid = 'spr'.$object->id;
+	$trackid = 'spro'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }

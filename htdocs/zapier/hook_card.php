@@ -101,12 +101,6 @@ if (empty($reshook)) {
 
 	// Actions when printing a doc from card
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
-
-	// Actions to send emails
-	$triggersendname = 'MYOBJECT_SENTBYMAIL';
-	$autocopy = 'MAIN_MAIL_AUTOCOPY_MYOBJECT_TO';
-	$trackid = 'myobject'.$object->id;
-	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
 
@@ -391,19 +385,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print '</div></div></div>';
 	}
-
-	//Select mail models is same action as presend
-	/*
-	 if (GETPOST('modelselected')) $action = 'presend';
-
-	 // Presend form
-	 $modelmail='inventory';
-	 $defaulttopic='InformationMessage';
-	 $diroutput = $conf->product->dir_output.'/inventory';
-	 $trackid = 'stockinv'.$object->id;
-
-	 include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
-	 */
 }
 
 // End of page

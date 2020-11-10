@@ -727,7 +727,7 @@ class Contrat extends CommonObject
 					$this->note_private = $obj->note_private;
 					$this->note_public = $obj->note_public;
 					$this->model_pdf = $obj->model_pdf;
-					$this->modelpdf = $obj->model_pdf;
+					$this->modelpdf = $obj->model_pdf; // deprecated
 
 					$this->fk_projet = $obj->fk_project; // deprecated
 					$this->fk_project = $obj->fk_project;
@@ -2419,7 +2419,7 @@ class Contrat extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'strato';
 
-			if ($this->modelpdf) {
+			if (!empty($this->modelpdf)) {
 				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->CONTRACT_ADDON_PDF)) {
 				$modele = $conf->global->CONTRACT_ADDON_PDF;

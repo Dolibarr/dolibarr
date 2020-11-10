@@ -241,7 +241,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
 				'ref','statut','paye','specimen','ref','actiontypecode','actionmsg2','actionmsg','mode_reglement','cond_reglement',
 				'cond_reglement_doc','situation_cycle_ref','situation_counter','situation_final','multicurrency_total_ht','multicurrency_total_tva',
 				'multicurrency_total_ttc','fk_multicurrency','multicurrency_code','multicurrency_tx',
-                'retained_warranty' ,'retained_warranty_date_limit', 'retained_warranty_fk_cond_reglement', 'specimen'
+                'retained_warranty' ,'retained_warranty_date_limit', 'retained_warranty_fk_cond_reglement', 'specimen', 'trackid'
 			)
 		);
         $this->assertEquals($arraywithdiff, array());    // Actual, Expected
@@ -362,22 +362,18 @@ class FactureTest extends PHPUnit\Framework\TestCase
     {
         $retAr=array();
 
-        if (get_class($oA) !== get_class($oB))
-        {
+        if (get_class($oA) !== get_class($oB)) {
             $retAr[]="Supplied objects are not of same class.";
         } else {
             $oVarsA=get_object_vars($oA);
             $oVarsB=get_object_vars($oB);
             $aKeys=array_keys($oVarsA);
-            foreach ($aKeys as $sKey)
-            {
+            foreach ($aKeys as $sKey) {
                 if (in_array($sKey, $fieldstoignorearray)) continue;
-                if (! $ignoretype && $oVarsA[$sKey] !== $oVarsB[$sKey])
-                {
+                if (! $ignoretype && ($oVarsA[$sKey] !== $oVarsB[$sKey])) {
                     $retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey])?get_class($oVarsA[$sKey]):$oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey])?get_class($oVarsB[$sKey]):$oVarsB[$sKey]);
                 }
-                if ($ignoretype && $oVarsA[$sKey] != $oVarsB[$sKey])
-                {
+                if ($ignoretype && ($oVarsA[$sKey] != $oVarsB[$sKey])) {
                     $retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey])?get_class($oVarsA[$sKey]):$oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey])?get_class($oVarsB[$sKey]):$oVarsB[$sKey]);
                 }
             }

@@ -48,8 +48,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'per
 $mine = 0;
 if ($mode == 'mine') $mine = 1;
 
-$projectid = '';
-$projectid = isset($_GET["id"]) ? $_GET["id"] : $_POST["projectid"];
+$projectid = isset($_GET["id"]) ? GETPOST("id", "int", 1) : GETPOST("projectid", "int");
 
 $hookmanager->initHooks(array('timesheetperweekcard'));
 
@@ -364,7 +363,6 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 }
 
 
-
 /*
  * View
  */
@@ -530,11 +528,16 @@ for ($idw = 0; $idw < 7; $idw++)
 	//print dol_print_date($dayinloopwithouthours, 'dayhour').' ';
 	//print dol_print_date($dayinloopfromfirstdaytoshow, 'dayhour').'<br>';
 
-	$statusofholidaytocheck = '3';
+	$statusofholidaytocheck = Holiday::STATUS_APPROVED;
 
 	$isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $dayinloopfromfirstdaytoshow, $statusofholidaytocheck);
 	$isavailable[$dayinloopfromfirstdaytoshow] = $isavailablefordayanduser; // in projectLinesPerWeek later, we are using $firstdaytoshow and dol_time_plus_duree to loop on each day
+
+	$test = num_public_holiday($dayinloopfromfirstdaytoshow, $dayinloopfromfirstdaytoshow + 86400, $mysoc->country_code);
+	if ($test) $isavailable[$dayinloopfromfirstdaytoshow] = array('morning'=>false, 'afternoon'=>false, 'morning_reason'=>'public_holiday', 'afternoon_reason'=>'public_holiday');
 }
+//var_dump($isavailable);
+
 
 
 $moreforfilter = '';
@@ -656,7 +659,7 @@ for ($idw = 0; $idw < 7; $idw++)
 	$dayinloop = dol_time_plus_duree($startday, $idw, 'd');
 
 	$cssweekend = '';
-	if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+	if ((($idw + 1) < $numstartworkingday) || (($idw + 1) > $numendworkingday))	// This is a day is not inside the setup of working days, so we use a week-end css.
 	{
 		$cssweekend = 'weekend';
 	}
@@ -689,7 +692,7 @@ if ($conf->use_javascript_ajax)
 	for ($idw = 0; $idw < 7; $idw++)
 	{
 		$cssweekend = '';
-		if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+		if ((($idw + 1) < $numstartworkingday) || (($idw + 1) > $numendworkingday))	// This is a day is not inside the setup of working days, so we use a week-end css.
 		{
 			$cssweekend = 'weekend';
 		}
@@ -700,7 +703,6 @@ if ($conf->use_javascript_ajax)
 		if (!$isavailable[$tmpday]['morning'] && !$isavailable[$tmpday]['afternoon'])   $cssonholiday .= 'onholidayallday ';
 		elseif (!$isavailable[$tmpday]['morning'])   $cssonholiday .= 'onholidaymorning ';
 		elseif (!$isavailable[$tmpday]['afternoon']) $cssonholiday .= 'onholidayafternoon ';
-
 		print '<td class="liste_total hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'" align="center"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
 	}
 	print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>';
@@ -775,7 +777,7 @@ if (count($tasksarray) > 0)
 		for ($idw = 0; $idw < 7; $idw++)
 		{
 			$cssweekend = '';
-			if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+			if ((($idw + 1) < $numstartworkingday) || (($idw + 1) > $numendworkingday))	// This is a day is not inside the setup of working days, so we use a week-end css.
 			{
 				$cssweekend = 'weekend';
 			}
@@ -803,10 +805,9 @@ if (count($tasksarray) > 0)
 				print '<span class="opacitymediumbycolor">  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong></span>';
 				print '</td>';
 
-		for ($idw = 0; $idw < 7; $idw++)
-				{
+		for ($idw = 0; $idw < 7; $idw++) {
 			$cssweekend = '';
-			if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+			if ((($idw + 1) < $numstartworkingday) || (($idw + 1) > $numendworkingday))	// This is a day is not inside the setup of working days, so we use a week-end css.
 			{
 				$cssweekend = 'weekend';
 			}

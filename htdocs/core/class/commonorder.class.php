@@ -122,6 +122,12 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $remise_percent;
 
 	/**
+	 * VAT code
+	 * @var string
+	 */
+	public $vat_src_code;
+
+	/**
 	 * VAT %
 	 * @var float
 	 */
@@ -151,4 +157,6 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $info_bits = 0;
 
 	public $special_code = 0;
+
+	public $fk_multicurrency;
 }

@@ -1900,7 +1900,7 @@ class Task extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'nodefault';
 
-			if ($this->modelpdf) {
+			if (!empty($this->modelpdf)) {
 				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->PROJECT_TASK_ADDON_PDF)) {
 				$modele = $conf->global->PROJECT_TASK_ADDON_PDF;

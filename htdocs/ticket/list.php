@@ -584,7 +584,7 @@ if ($mode == 'mine') {
 $topicmail = "SendTicketRef";
 $modelmail = "ticket";
 $objecttmp = new Ticket($db);
-$trackid = 'tick'.$object->id;
+$trackid = 'tic'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($search_all)

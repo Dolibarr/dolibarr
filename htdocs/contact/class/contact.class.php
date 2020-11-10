@@ -131,11 +131,18 @@ class Contact extends CommonObject
 	public $civility;
 
 	/**
-	 * Address
-	 * @var string
+	 * @var string Address
 	 */
 	public $address;
+
+	/**
+	 * @var string zip code
+	 */
 	public $zip;
+
+	/**
+	 * @var string Town
+	 */
 	public $town;
 
 	public $state_id; // Id of department
@@ -201,10 +208,29 @@ class Contact extends CommonObject
 	 */
 	public $jabberid;
 
+	/**
+	 * @var string filename for photo
+	 */
 	public $photo;
+
+	/**
+	 * @var string phone pro
+	 */
 	public $phone_pro;
+
+	/**
+	 * @var string phone perso
+	 */
 	public $phone_perso;
+
+	/**
+	 * @var string phone mobile
+	 */
 	public $phone_mobile;
+
+	/**
+	 * @var string fax
+	 */
 	public $fax;
 
 	/**
@@ -253,9 +279,12 @@ class Contact extends CommonObject
 		$this->db = $db;
 		$this->statut = 1; // By default, status is enabled
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID))		$this->fields['rowid']['visible'] = 0;
-		if (empty($conf->mailing->enabled))						$this->fields['no_email']['enabled'] = 0;
-
+		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
+			$this->fields['rowid']['visible'] = 0;
+		}
+		if (empty($conf->mailing->enabled)) {
+			$this->fields['no_email']['enabled'] = 0;
+		}
 		// typical ['s.nom'] is used for third-parties
 		if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 			$this->fields['fk_soc']['enabled'] = 0;
@@ -268,10 +297,8 @@ class Contact extends CommonObject
 		}
 
 		// Unset fields that are disabled
-		foreach ($this->fields as $key => $val)
-		{
-			if (isset($val['enabled']) && empty($val['enabled']))
-			{
+		foreach ($this->fields as $key => $val) {
+			if (isset($val['enabled']) && empty($val['enabled'])) {
 				unset($this->fields[$key]);
 			}
 		}
@@ -1308,7 +1335,8 @@ class Contact extends CommonObject
 			$label .= '</div><div style="clear: both;"></div>';
 		}
 
-		$label .= img_picto('', $this->picto).' <u>'.$langs->trans("Contact").'</u>';
+		$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Contact").'</u>';
+		$label .= ' '.$this->getLibStatut(4);
 		$label .= '<br><b>'.$langs->trans("Name").':</b> '.$this->getFullName($langs);
 		//if ($this->civility_id) $label.= '<br><b>' . $langs->trans("Civility") . ':</b> '.$this->civility_id;		// TODO Translate cibilty_id code
 		if (!empty($this->poste)) $label .= '<br><b>'.$langs->trans("Poste").':</b> '.$this->poste;
@@ -1474,6 +1502,7 @@ class Contact extends CommonObject
 
 		// Initialise parameters
 		$this->id = 0;
+		$this->entity = 1;
 		$this->specimen = 1;
 		$this->lastname = 'DOLIBARR';
 		$this->firstname = 'SPECIMEN';

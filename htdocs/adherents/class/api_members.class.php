@@ -67,12 +67,16 @@ class Members extends DolibarrApi
 		}
 
 		$member = new Adherent($this->db);
-		$result = $member->fetch($id);
+		if ($id == 0) {
+			$result = $member->initAsSpecimen();
+		} else {
+			$result = $member->fetch($id);
+		}
 		if (!$result) {
 			throw new RestException(404, 'member not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
+		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id) && $id > 0) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 

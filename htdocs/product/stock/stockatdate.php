@@ -345,7 +345,7 @@ print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly margin
 $form->select_produits($productid, 'productid', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'maxwidth300');
 
 print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddinrightonly">&nbsp;</span> '.$langs->trans('Warehouse').'</span> ';
-print $formproduct->selectWarehouses($fk_warehouse, 'fk_warehouse', '', 1);
+print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? $fk_warehouse : 'ifone'), 'fk_warehouse', '', 1);
 print '</div>';
 
 $parameters = array();

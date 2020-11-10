@@ -7,7 +7,7 @@
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2014-2015  Francis Appels          <francis.appels@yahoo.com>
+ * Copyright (C) 2014-2020  Francis Appels          <francis.appels@yahoo.com>
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018		Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
@@ -223,7 +223,6 @@ class Reception extends CommonObject
 		$sql .= "ref";
 		$sql .= ", entity";
 		$sql .= ", ref_supplier";
-		$sql .= ", ref_int";
 		$sql .= ", date_creation";
 		$sql .= ", fk_user_author";
 		$sql .= ", date_reception";
@@ -246,7 +245,6 @@ class Reception extends CommonObject
 		$sql .= "'(PROV)'";
 		$sql .= ", ".$conf->entity;
 		$sql .= ", ".($this->ref_supplier ? "'".$this->db->escape($this->ref_supplier)."'" : "null");
-		$sql .= ", ".($this->ref_int ? "'".$this->db->escape($this->ref_int)."'" : "null");
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", ".$user->id;
 		$sql .= ", ".($this->date_reception > 0 ? "'".$this->db->idate($this->date_reception)."'" : "null");
@@ -364,7 +362,7 @@ class Reception extends CommonObject
 		// Check parameters
 		if (empty($id) && empty($ref) && empty($ref_ext)) return -1;
 
-		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_supplier, e.ref_ext, e.ref_int, e.fk_user_author, e.fk_statut";
+		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_supplier, e.ref_ext, e.fk_user_author, e.fk_statut";
 		$sql .= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql .= ", e.date_reception as date_reception, e.model_pdf,  e.date_delivery";
 		$sql .= ", e.fk_shipping_method, e.tracking_number";
@@ -394,7 +392,6 @@ class Reception extends CommonObject
 				$this->socid                = $obj->socid;
 				$this->ref_supplier = $obj->ref_supplier;
 				$this->ref_ext				= $obj->ref_ext;
-				$this->ref_int				= $obj->ref_int;
 				$this->statut               = $obj->fk_statut;
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
@@ -402,7 +399,6 @@ class Reception extends CommonObject
 				$this->date_reception = $this->db->jdate($obj->date_reception); // TODO deprecated
 				$this->date_reception = $this->db->jdate($obj->date_reception); // Date real
 				$this->date_delivery        = $this->db->jdate($obj->date_delivery); // Date planed
-				$this->fk_delivery_address  = $obj->fk_address;
 				$this->model_pdf            = $obj->model_pdf;
 				$this->modelpdf             = $obj->model_pdf; // deprecated
 				$this->shipping_method_id = $obj->fk_shipping_method;
@@ -777,7 +773,6 @@ class Reception extends CommonObject
 		if (isset($this->socid)) $this->socid = trim($this->socid);
 		if (isset($this->fk_user_author)) $this->fk_user_author = trim($this->fk_user_author);
 		if (isset($this->fk_user_valid)) $this->fk_user_valid = trim($this->fk_user_valid);
-		if (isset($this->fk_delivery_address)) $this->fk_delivery_address = trim($this->fk_delivery_address);
 		if (isset($this->shipping_method_id)) $this->shipping_method_id = trim($this->shipping_method_id);
 		if (isset($this->tracking_number)) $this->tracking_number = trim($this->tracking_number);
 		if (isset($this->statut)) $this->statut = (int) $this->statut;
@@ -787,8 +782,8 @@ class Reception extends CommonObject
 		if (isset($this->size_units)) $this->size_units = trim($this->size_units);
 		if (isset($this->weight_units)) $this->weight_units = trim($this->weight_units);
 		if (isset($this->trueWeight)) $this->weight = trim($this->trueWeight);
-		if (isset($this->note_private)) $this->note = trim($this->note_private);
-		if (isset($this->note_public)) $this->note = trim($this->note_public);
+		if (isset($this->note_private)) $this->note_private = trim($this->note_private);
+		if (isset($this->note_public)) $this->note_public = trim($this->note_public);
 		if (isset($this->model_pdf)) $this->model_pdf = trim($this->model_pdf);
 
 
@@ -798,7 +793,6 @@ class Reception extends CommonObject
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."reception SET";
 
-		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
 		$sql .= " ref_supplier=".(isset($this->ref_supplier) ? "'".$this->db->escape($this->ref_supplier)."'" : "null").",";
 		$sql .= " fk_soc=".(isset($this->socid) ? $this->socid : "null").",";
@@ -1193,7 +1187,6 @@ class Reception extends CommonObject
 		$this->date_reception = $now + 24 * 3600;
 
 		$this->entrepot_id          = 0;
-		$this->fk_delivery_address  = 0;
 		$this->socid                = 1;
 
 		$this->commande_id          = 0;

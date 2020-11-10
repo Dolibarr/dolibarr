@@ -619,7 +619,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 	$specialdayrule = array();
 
 	// Check to ensure we use correct parameters
-	if ((($timestampEnd - $timestampStart) % 86400) != 0) return 'ErrorDates must use same hours and must be GMT dates';
+	if ((($timestampEnd - $timestampStart) % 86400) != 0) return 'Error Dates must use same hours and must be GMT dates';
 
 	if (empty($country_code)) $country_code = $mysoc->country_code;
 

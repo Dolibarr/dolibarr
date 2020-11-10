@@ -206,7 +206,7 @@ class FormProduct
 	/**
 	 *  Return list of warehouses
 	 *
-	 *  @param  string|int  $selected           Id of preselected warehouse ('' for no value, 'ifone'=select value if one value otherwise no value)
+	 *  @param  string|int  $selected           Id of preselected warehouse ('' or '-1' for no value, 'ifone'=select value if one value otherwise no value, '-2' to use the default value from setup)
 	 *  @param  string      $htmlname           Name of html select html
 	 *  @param  string      $filterstatus       warehouse status filter, following comma separated filter options can be used
 	 *                                          'warehouseopen' = select products from open warehouses,
@@ -250,10 +250,10 @@ class FormProduct
 
 		if (strpos($htmlname, 'search_') !== 0) {
 			if (empty($user->fk_warehouse) || $user->fk_warehouse == -1) {
-				if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) $selected = $conf->global->MAIN_DEFAULT_WAREHOUSE;
+				if (($selected == '-2' || $selected == 'ifone') && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) $selected = $conf->global->MAIN_DEFAULT_WAREHOUSE;
 			}
 			else {
-				if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) $selected = $user->fk_warehouse;
+				if (($selected == '-2' || $selected == 'ifone') && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) $selected = $user->fk_warehouse;
 			}
 		}
 
