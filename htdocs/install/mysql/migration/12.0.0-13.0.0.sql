@@ -60,7 +60,7 @@ ALTER TABLE llx_mrp_mo_extrafields ADD INDEX idx_mrp_mo_fk_object(fk_object);
 -- For v13
 -- members
 ALTER TABLE llx_adherent ADD COLUMN ref varchar(30) NOT NULL AFTER rowid;
-UPDATE llx_adherent SET ref=rowid;
+UPDATE llx_adherent SET ref=rowid WHERE ref = '';
 ALTER TABLE llx_adherent ADD UNIQUE INDEX uk_adherent_ref (ref, entity);
 
 ALTER TABLE llx_bom_bom ADD COLUMN bomtype integer DEFAULT 0;
@@ -408,7 +408,7 @@ ALTER TABLE llx_projet_task_time MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIM
 ALTER TABLE llx_projet_task_time MODIFY COLUMN datec datetime;
 
 
-DELETE FROM llx_user_rights WHERE fk_id IN (SELECT id FROM llx_rights_def where module = 'holiday' and perms = 'lire_tous'); 
+DELETE FROM llx_user_rights WHERE fk_id IN (SELECT id FROM llx_rights_def where module = 'holiday' and perms = 'lire_tous');
 DELETE FROM llx_rights_def where module = 'holiday' and perms = 'lire_tous';
 
 CREATE TABLE llx_c_product_nature (
