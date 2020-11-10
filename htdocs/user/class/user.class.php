@@ -74,6 +74,10 @@ class User extends CommonObject
 	public $ldap_sid;
 	public $search_sid;
 	public $employee;
+
+	/**
+	 * @var string gender
+	 */
 	public $gender;
 	public $birth;
 
@@ -307,6 +311,9 @@ class User extends CommonObject
 	public $default_c_exp_tax_cat;
 	public $default_range;
 
+	/**
+	 *@var int id of warehouse
+	 */
 	public $fk_warehouse;
 
 	public $fields = array(
@@ -2916,23 +2923,17 @@ class User extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."user";
 		if ($option == 'superadmin') {
 			$sql .= " WHERE entity = 0";
-			if ($admin >= 0) {
-				$sql .= " AND admin = ".$admin;
-			}
 		} else {
 			$sql .= " WHERE entity IN (".getEntity('user', 0).")";
-			if ($limitTo == 'active') {
-				$sql .= " AND statut = 1";
-			}
-			if ($admin >= 0) {
-				$sql .= " AND admin = ".$admin;
-			}
+		}
+		if ($admin >= 0) {
+			$sql .= " AND admin = ".(int) $admin;
 		}
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			$nb = $obj->nb;
+			$nb = (int) $obj->nb;
 
 			$this->db->free($resql);
 			return $nb;
