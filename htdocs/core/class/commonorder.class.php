@@ -160,4 +160,8 @@ abstract class CommonOrderLine extends CommonObjectLine
 
 	public $fk_multicurrency;
 	public $multicurrency_code;
+	public $multicurrency_subprice;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
 }
