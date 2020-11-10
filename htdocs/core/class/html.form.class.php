@@ -1726,6 +1726,7 @@ class Form
 						$fullNameMode = 1; //Firstname+lastname
 					}
 					$labeltoshow .= $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength);
+					if (empty($obj->firstname) && empty($obj->lastname)) $labeltoshow .= $obj->login;
 
 					// Complete name with more info
 					$moreinfo = '';

@@ -7,7 +7,7 @@
  * Copyright (C) 2015 	   Claudio Aschieri     <c.aschieri@19.coop>
  * Copyright (C) 2018 	   Ferran Marcet	    <fmarcet@2byte.es>
  * Copyright (C) 2019 	   Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2020		Tobias Sean			<tobias.sekan@startmail.com>
+ * Copyright (C) 2020	   Tobias Sean			<tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -505,7 +505,8 @@ if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire)
 // If the user can view user other than himself
 $moreforfilter .= '<div class="divsearchfield">';
 $moreforfilter .= $langs->trans('ProjectsWithThisUserAsContact').': ';
-$includeonly = 'hierarchyme';
+//$includeonly = 'hierarchyme';
+$includeonly = '';
 if (empty($user->rights->user->user->lire)) $includeonly = array($user->id);
 $moreforfilter .= $form->select_dolusers($search_project_user ? $search_project_user : '', 'search_project_user', 1, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth200');
 $moreforfilter .= '</div>';
