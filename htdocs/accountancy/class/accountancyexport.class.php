@@ -386,6 +386,7 @@ class AccountancyExport
 
 		foreach ($objectLines as $line) {
 			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
+
 			print $date.$separator;
 			print $line->code_journal.$separator;
 			print length_accountg($line->numero_compte).$separator;
@@ -394,7 +395,7 @@ class AccountancyExport
 			print price($line->debit).$separator;
 			print price($line->credit).$separator;
 			print 'E'.$separator;
-			print length_accountg($line->subledger_account).$separator;
+			print length_accounta($line->subledger_account).$separator;
 			print $end_line;
 		}
 	}

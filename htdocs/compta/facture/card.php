@@ -333,14 +333,9 @@ if (empty($reshook))
 				}
 			}
 		}
-	} elseif ($action == 'set_thirdparty' && $usercancreate)
-	{
-		$object->fetch($id);
-		$object->setValueFrom('fk_soc', $socid, '', null, 'int', '', $user, 'BILL_MODIFY');
+	}
 
-		header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
-		exit();
-	} elseif ($action == 'classin' && $usercancreate)
+	elseif ($action == 'classin' && $usercancreate)
 	{
 		$object->fetch($id);
 		$object->setProject($_POST['projectid']);

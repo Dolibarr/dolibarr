@@ -854,7 +854,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 				print '"'.$date.'"'.$sep;
 				print '"'.$val["type_payment"].'"'.$sep;
 				print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
-				print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
+				print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
 				print "  ".$sep;
 				print '"'.$reflabel.'"'.$sep;
 				print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
@@ -882,7 +882,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 					print '"'.$key.'"'.$sep;
 					print '"'.$date.'"'.$sep;
 					print '"'.$val["type_payment"].'"'.$sep;
-					print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
+					print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 					if ($tabtype[$key] == 'payment_supplier') {
 						print '"'.$conf->global->ACCOUNTING_ACCOUNT_SUPPLIER.'"'.$sep;
 					} elseif ($tabtype[$key] == 'payment') {
@@ -892,7 +892,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 					} elseif ($tabtype[$key] == 'payment_salary') {
 						print '"'.$conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT.'"'.$sep;
 					} else {
-						print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
+						print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 					}
 					print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
 					print '"'.$reflabel.'"'.$sep;
@@ -915,7 +915,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 					print '"'.$date.'"'.$sep;
 					print '"'.$val["type_payment"].'"'.$sep;
 					print '"'.length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE).'"'.$sep;
-					print '"'.length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE).'"'.$sep;
+					print '"'.length_accounta($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE).'"'.$sep;
 					print "".$sep;
 					print '"'.$reflabel.'"'.$sep;
 					print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
@@ -1115,7 +1115,7 @@ if (empty($action) || $action == 'view') {
 					if ($tabtype[$key] == 'payment_vat')			$account_ledger = $conf->global->ACCOUNTING_VAT_PAY_ACCOUNT;
 					if ($tabtype[$key] == 'member')					$account_ledger = $conf->global->ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT;
 					if ($tabtype[$key] == 'payment_various')	    $account_ledger = $tabpay[$key]["account_various"];
-					$accounttoshow = length_accounta($account_ledger);
+					$accounttoshow = length_accountg($account_ledger);
 					if (empty($accounttoshow) || $accounttoshow == 'NotDefined')
 					{
 						if ($tabtype[$key] == 'unknown')

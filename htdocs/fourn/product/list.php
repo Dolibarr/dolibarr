@@ -35,10 +35,10 @@ $langs->loadLangs(array("products", "suppliers"));
 
 if (!$user->rights->produit->lire && !$user->rights->service->lire) accessforbidden();
 
-$sref = GETPOST('sref');
+$sref = GETPOST('sref', 'alphanohtml');
 $sRefSupplier = GETPOST('srefsupplier');
-$snom = GETPOST('snom');
-$type = GETPOST('type');
+$snom = GETPOST('snom', 'alphanohtml');
+$type = GETPOST('type', 'alphanohtml');
 $optioncss = GETPOST('optioncss', 'alpha');
 
 // Load variable for pagination
@@ -127,7 +127,7 @@ if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = 
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 
-$sql = "SELECT p.rowid, p.label, p.ref, p.fk_product_type, p.entity, tosell, tobuy,";
+$sql = "SELECT p.rowid, p.label, p.ref, p.fk_product_type, p.entity, p.tosell, p.tobuy, p.barcode, p.fk_barcode_type,";
 $sql .= " ppf.fk_soc, ppf.ref_fourn, ppf.price as price, ppf.quantity as qty, ppf.unitprice,";
 $sql .= " s.rowid as socid, s.nom as name";
 // Add fields to SELECT from hooks
@@ -208,11 +208,9 @@ if ($resql)
 
 	llxHeader("", "", $texte);
 
-
-	$param = "&tobuy=".$tobuy."&sref=".$sref."&snom=".$snom."&fourn_id=".$fourn_id.(isset($type) ? "&amp;type=".$type : "").(empty($sRefSupplier) ? "" : "&amp;srefsupplier=".$sRefSupplier);
+	$param = "&sref=".$sref."&snom=".$snom."&fourn_id=".$fourn_id.(isset($type) ? "&amp;type=".$type : "").(empty($sRefSupplier) ? "" : "&amp;srefsupplier=".$sRefSupplier);
 	if ($optioncss != '') $param .= '&optioncss='.$optioncss;
 	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
-
 
 	if (!empty($catid))
 	{
@@ -243,13 +241,13 @@ if ($resql)
 	// Fields title search
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
-	print '<input class="flat" type="text" name="sref" value="'.$sref.'" size="12">';
+	print '<input class="flat maxwidth100" type="text" name="sref" value="'.$sref.'">';
 	print '</td>';
 	print '<td class="liste_titre">';
-	print '<input class="flat" type="text" name="srefsupplier" value="'.$sRefSupplier.'" size="12">';
+	print '<input class="flat maxwidth100" type="text" name="srefsupplier" value="'.$sRefSupplier.'">';
 	print '</td>';
 	print '<td class="liste_titre">';
-	print '<input class="flat" type="text" name="snom" value="'.$snom.'">';
+	print '<input class="flat maxwidth100" type="text" name="snom" value="'.$snom.'">';
 	print '</td>';
 	print '<td></td>';
 	print '<td></td>';
@@ -283,21 +281,22 @@ if ($resql)
 	print_liste_field_titre('', $_SERVER["PHP_SELF"]);
 	print "</tr>\n";
 
-	$oldid = '';
-
 	while ($i < min($num, $limit))
 	{
 		$objp = $db->fetch_object($resql);
 
-		print '<tr class="oddeven">';
-
-		print '<td>';
 		$productstatic->id = $objp->rowid;
 		$productstatic->ref = $objp->ref;
 		$productstatic->type = $objp->fk_product_type;
 		$productstatic->entity = $objp->entity;
 		$productstatic->status = $objp->tosell;
 		$productstatic->status_buy = $objp->tobuy;
+		$productstatic->barcode = $objp->barcode;
+		$productstatic->barcode_type = $objp->fk_barcode_type;
+
+		print '<tr class="oddeven">';
+
+		print '<td>';
 		print $productstatic->getNomUrl(1, 'supplier');
 		print '</td>';
 
