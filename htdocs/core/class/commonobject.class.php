@@ -297,6 +297,11 @@ abstract class CommonObject
 	public $cond_reglement_id;
 
 	/**
+	 * @var int Demand reason ID
+	 */
+	public $demand_reason_id;
+
+	/**
 	 * @var int Transport mode ID (For module intracomm report)
 	 * @see setTransportMode()
 	 */

@@ -184,6 +184,7 @@ if (empty($reshook))
 						if ($difference != 0)
 						{
 							$object->date_livraison = $date_delivery;
+							$object->delivery_date = $date_delivery;
 							foreach ($object->lines as $line)
 							{
 								if (isset($line->date_start)) $line->date_start = $line->date_start + $difference;

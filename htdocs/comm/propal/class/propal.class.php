@@ -152,9 +152,15 @@ class Propal extends CommonObject
 	public $datep;
 
 	/**
-	 * @var integer|string $delivery_date;
+	 * @var int	Date expected for delivery
+	 * @deprecated
 	 */
-	public $delivery_date;
+	public $date_livraison;	// deprecated; Use delivery_date instead.
+
+	/**
+	 * @var integer|string 	$delivery_date;
+	 */
+	public $delivery_date; // Date expected of shipment (date starting shipment, not the reception that occurs some days after)
 
 
 	public $fin_validite;
@@ -1518,6 +1524,7 @@ class Propal extends CommonObject
 				$this->datep                = $this->db->jdate($obj->dp); // deprecated
 				$this->fin_validite         = $this->db->jdate($obj->dfv);
 				$this->date_livraison       = $this->db->jdate($obj->date_livraison);
+				$this->delivery_date        = $this->db->jdate($obj->date_livraison);
 				$this->shipping_method_id   = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
 				$this->availability_id      = $obj->fk_availability;
 				$this->availability_code    = $obj->availability_code;
@@ -2104,6 +2111,7 @@ class Propal extends CommonObject
 			{
 				$this->oldcopy = clone $this;
 				$this->date_livraison = $delivery_date;
+				$this->date_delivery = $delivery_date;
 			}
 
 			if (!$notrigger && empty($error))

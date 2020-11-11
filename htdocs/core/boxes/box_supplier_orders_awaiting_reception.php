@@ -86,7 +86,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 			$sql = "SELECT s.nom as name, s.rowid as socid,";
 			$sql .= " s.code_client, s.code_fournisseur, s.email,";
 			$sql .= " s.logo,";
-			$sql .= " c.rowid, c.ref, c.tms, c.date_commande, c.date_livraison, ";
+			$sql .= " c.rowid, c.ref, c.tms, c.date_commande, c.date_livraison as delivery_date, ";
 			$sql .= " c.total_ht,";
 			$sql .= " c.tva as total_tva,";
 			$sql .= " c.total_ttc,";
@@ -112,10 +112,11 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 				while ($line < $num) {
 					$objp = $this->db->fetch_object($result);
 					$date = $this->db->jdate($objp->date_commande);
-					$delivery_date = $this->db->jdate($objp->date_livraison);
+					$delivery_date = $this->db->jdate($objp->delivery_date);
 					$datem = $this->db->jdate($objp->tms);
 
 					$supplierorderstatic->date_livraison = $delivery_date;
+					$supplierorderstatic->delivery_date = $delivery_date;
 					$supplierorderstatic->statut = $objp->fk_statut;
 
 					$supplierorderstatic->id = $objp->rowid;
