@@ -5083,7 +5083,7 @@ abstract class CommonObject
 		global $conf, $extrafields;
 
 		if (empty($rowid)) $rowid = $this->id;
-		if (empty($rowid)) $rowid = $this->rowid;
+		if (empty($rowid) && isset($this->rowid)) $rowid = $this->rowid;	// deprecated
 
 		// To avoid SQL errors. Probably not the better solution though
 		if (!$this->table_element) {
