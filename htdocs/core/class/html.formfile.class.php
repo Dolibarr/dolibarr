@@ -1035,10 +1035,9 @@ class FormFile
 	public function list_of_documents($filearray, $object, $modulepart, $param = '', $forcedownload = 0, $relativepath = '', $permonobject = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $title = '', $url = '', $showrelpart = 0, $permtoeditline = -1, $upload_dir = '', $sortfield = '', $sortorder = 'ASC', $disablemove = 1, $addfilterfields = 0, $disablecrop = -1)
 	{
 		// phpcs:enable
-		global $user, $conf, $langs, $hookmanager;
+		global $user, $conf, $langs, $hookmanager, $form;
 		global $sortfield, $sortorder, $maxheightmini;
 		global $dolibarr_main_url_root;
-		global $form;
 
 		if ($disablecrop == -1)
 		{
@@ -1407,9 +1406,9 @@ class FormFile
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Show list of documents in a directory
+	 *	Show list of documents in a directory of ECM module.
 	 *
-	 *  @param	string	$upload_dir         Directory that was scanned
+	 *  @param	string	$upload_dir         Directory that was scanned. This directory will contains files into subdirs REF/files
 	 *  @param  array	$filearray          Array of files loaded by dol_dir_list function before calling this function
 	 *  @param  string	$modulepart         Value for modulepart used by download wrapper
 	 *  @param  string	$param              Parameters on sort links
@@ -1427,9 +1426,10 @@ class FormFile
 	public function list_of_autoecmfiles($upload_dir, $filearray, $modulepart, $param, $forcedownload = 0, $relativepath = '', $permissiontodelete = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $url = '', $addfilterfields = 0)
 	{
 		// phpcs:enable
-		global $user, $conf, $langs, $form;
+		global $user, $conf, $langs, $hookmanager, $form;
 		global $sortfield, $sortorder;
 		global $search_doc_ref;
+		global $dolibarr_main_url_root;
 
 		dol_syslog(get_class($this).'::list_of_autoecmfiles upload_dir='.$upload_dir.' modulepart='.$modulepart);
 
@@ -1547,6 +1547,23 @@ class FormFile
 			$object_instance = new Mo($this->db);
 		}
 
+		//var_dump($filearray);
+
+		// Get list of files stored into database for same relative directory
+		$relativepathfromroot = preg_replace('/'.preg_quote(DOL_DATA_ROOT.'/', '/').'/', '', $upload_dir);
+		if ($relativepathfromroot)
+		{
+			completeFileArrayWithDatabaseInfo($filearray, $relativepathfromroot.'/%');
+
+			//var_dump($sortfield.' - '.$sortorder);
+			if ($sortfield && $sortorder)	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
+			{
+				$filearray = dol_sort_array($filearray, $sortfield, $sortorder);
+			}
+		}
+
+		//var_dump($filearray);
+
 		foreach ($filearray as $key => $file)
 		{
 			if (!is_dir($file['name'])
@@ -1558,7 +1575,7 @@ class FormFile
 				// Define relative path used to store the file
 				$relativefile = preg_replace('/'.preg_quote($upload_dir.'/', '/').'/', '', $file['fullname']);
 
-				$id = 0; $ref = ''; $label = '';
+				$id = 0; $ref = '';
 
 				// To show ref or specific information according to view to show (defined by $module)
 				$reg = array();
@@ -1590,7 +1607,7 @@ class FormFile
 				{
 					$found = 1;
 				} else {
-					//print 'Fetch '.$id." - ".$ref.'<br>';
+					//print 'Fetch '.$id." - ".$ref.' class='.get_class($object_instance).'<br>';
 
 					if ($id) {
 						$result = $object_instance->fetch($id);
@@ -1619,13 +1636,12 @@ class FormFile
 				else print $langs->trans("ObjectDeleted", ($id ? $id : $ref));
 
 				//$modulesubdir=dol_sanitizeFileName($ref);
-				$modulesubdir = dirname($relativefile);
+				//$modulesubdir = dirname($relativefile);
 
 				//$filedir=$conf->$modulepart->dir_output . '/' . dol_sanitizeFileName($obj->ref);
-				$filedir = $file['path'];
+				//$filedir = $file['path'];
 				//$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 				//print $formfile->getDocumentsLink($modulepart, $filename, $filedir);
-
 				print '</td>';
 
 				// File
@@ -1639,12 +1655,30 @@ class FormFile
 				print '</a>';
 
 				//print $this->getDocumentsLink($modulepart, $modulesubdir, $filedir, '^'.preg_quote($file['name'],'/').'$');
+
 				print $this->showPreview($file, $modulepart, $file['relativename']);
 
 				print "</td>\n";
 				print '<td class="right">'.dol_print_size($file['size'], 1, 1).'</td>';
 				print '<td class="center">'.dol_print_date($file['date'], "dayhour").'</td>';
 				print '<td class="right">';
+				if ($file['share']) {
+					// Define $urlwithroot
+					$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+					$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+					//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+					//print '<span class="opacitymedium">'.$langs->trans("Hash").' : '.$file['share'].'</span>';
+					$forcedownload = 0;
+					$paramlink = '';
+					if (!empty($file['share'])) $paramlink .= ($paramlink ? '&' : '').'hashp='.$file['share']; // Hash for public share
+					if ($forcedownload) $paramlink .= ($paramlink ? '&' : '').'attachment=1';
+
+					$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
+
+					print img_picto($langs->trans("FileSharedViaALink"), 'globe').' ';
+					print '<input type="text" class="quatrevingtpercent width100" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
+				}
 				//if (! empty($useinecm) && $useinecm != 6)  print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
 				//if ($forcedownload) print '&attachment=1';
 				//print '&file='.urlencode($relativefile).'">';
