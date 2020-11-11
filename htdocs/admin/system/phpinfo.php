@@ -231,7 +231,7 @@ foreach ($phparray as $key => $value)
 			print '<td>'.$keyparam.'</td>';
 			$valtoshow = $keyvalue;
 			if ($keyparam == 'X-ChromePhp-Data') $valtoshow = dol_trunc($keyvalue, 80);
-			print '<td colspan="2">';
+			print '<td colspan="2" class="wordbreak">';
 			if ($keyparam == 'Path') $valtoshow = implode('; ', explode(';', trim($valtoshow)));
 			if ($keyparam == 'PATH') $valtoshow = implode('; ', explode(';', trim($valtoshow)));
 			if ($keyparam == '_SERVER["PATH"]') $valtoshow = implode('; ', explode(';', trim($valtoshow)));
