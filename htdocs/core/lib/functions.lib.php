@@ -4120,7 +4120,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 	} else {
 		// This should not happen, except if there is a bug somewhere. Enabled and check log in such case.
 		print 'This website or feature is currently temporarly not available or failed after a technical error.<br><br>This may be due to a maintenance operation. Current status of operation are on next line...<br><br>'."\n";
-		$langs->load("errors");
+		$langs->loadLangs(array("main", "errors"));
 		print $langs->trans("DolibarrHasDetectedError").'. ';
 		print $langs->trans("YouCanSetOptionDolibarrMainProdToZero");
 		define("MAIN_CORE_ERROR", 1);
