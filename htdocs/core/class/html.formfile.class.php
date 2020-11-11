@@ -79,9 +79,10 @@ class FormFile
 	 *	@param	string		$sectiondir		If upload must be done inside a particular directory (if sectiondir defined, sectionid must not be)
 	 *  @param  int         $usewithoutform 0=Default, 1=Disable <form> and style to use in existing area
 	 *  @param	int			$capture		1=Add tag capture="capture" to force use of micro or video recording to generate file. When setting this to 1, you must also provide a value for $accept.
+	 *  @param	int			$disablemulti	0=Default, 1=Disable multiple file upload
 	 * 	@return	int							<0 if KO, >0 if OK
 	 */
-	public function form_attach_new_file($url, $title = '', $addcancel = 0, $sectionid = 0, $perm = 1, $size = 50, $object = '', $options = '', $useajax = 1, $savingdocmask = '', $linkfiles = 1, $htmlname = 'formuserfile', $accept = '', $sectiondir = '', $usewithoutform = 0, $capture = 0)
+	public function form_attach_new_file($url, $title = '', $addcancel = 0, $sectionid = 0, $perm = 1, $size = 50, $object = '', $options = '', $useajax = 1, $savingdocmask = '', $linkfiles = 1, $htmlname = 'formuserfile', $accept = '', $sectiondir = '', $usewithoutform = 0, $capture = 0, $disablemulti = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs, $hookmanager;
@@ -170,7 +171,7 @@ class FormFile
 
 			$out .= '<input class="flat minwidth400 maxwidth200onsmartphone" type="file"';
 			//$out .= ((!empty($conf->global->MAIN_DISABLE_MULTIPLE_FILEUPLOAD) || $conf->browser->layout != 'classic') ? ' name="userfile"' : ' name="userfile[]" multiple');
-			$out .= ((!empty($conf->global->MAIN_DISABLE_MULTIPLE_FILEUPLOAD)) ? ' name="userfile"' : ' name="userfile[]" multiple');
+			$out .= ((!empty($conf->global->MAIN_DISABLE_MULTIPLE_FILEUPLOAD) || $disablemulti) ? ' name="userfile"' : ' name="userfile[]" multiple');
 			$out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm) ? ' disabled' : '');
 			$out .= (!empty($accept) ? ' accept="'.$accept.'"' : ' accept=""');
 			$out .= (!empty($capture) ? ' capture="capture"' : '');
@@ -366,7 +367,7 @@ class FormFile
 		}
 
 		$printer = 0;
-		if (in_array($modulepart, array('facture', 'supplier_proposal', 'propal', 'proposal', 'order', 'commande', 'expedition', 'commande_fournisseur', 'expensereport', 'livraison', 'ticket')))	// The direct print feature is implemented only for such elements
+		if (in_array($modulepart, array('facture', 'supplier_proposal', 'propal', 'proposal', 'order', 'commande', 'expedition', 'commande_fournisseur', 'expensereport', 'delivery', 'ticket')))	// The direct print feature is implemented only for such elements
 		{
 			$printer = (!empty($user->rights->printing->read) && !empty($conf->printing->enabled)) ?true:false;
 		}
@@ -466,11 +467,11 @@ class FormFile
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
 					$modellist = ModelePdfReception::liste_modeles($this->db);
 				}
-			} elseif ($modulepart == 'livraison')
+			} elseif ($modulepart == 'delivery')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
 				else {
-					include_once DOL_DOCUMENT_ROOT.'/core/modules/livraison/modules_livraison.php';
+					include_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/modules_delivery.php';
 					$modellist = ModelePDFDeliveryOrder::liste_modeles($this->db);
 				}
 			} elseif ($modulepart == 'ficheinter')
@@ -1203,7 +1204,7 @@ class FormFile
 					{
 						print '</a>';
 						$section_dir = dirname(GETPOST('urlfile', 'alpha'));
-						if (! preg_match('/\/$/', $section_dir)) $section_dir.='/';
+						if (!preg_match('/\/$/', $section_dir)) $section_dir .= '/';
 						print '<input type="hidden" name="section_dir" value="'.$section_dir.'">';
 						print '<input type="hidden" name="renamefilefrom" value="'.dol_escape_htmltag($file['name']).'">';
 						print '<input type="text" name="renamefileto" class="quatrevingtpercent" value="'.dol_escape_htmltag($file['name']).'">';
@@ -1303,7 +1304,7 @@ class FormFile
 						if ($useinecm == 1 || $useinecm == 5)	// ECM manual tree only
 						{
 							// $section is inside $param
-							$newparam.=preg_replace('/&file=.*$/', '', $param);		// We don't need param file=
+							$newparam .= preg_replace('/&file=.*$/', '', $param); // We don't need param file=
 							$backtopage = DOL_URL_ROOT.'/ecm/index.php?&section_dir='.urlencode($relativepath).$newparam;
 							print '<a class="editfielda" href="'.DOL_URL_ROOT.'/ecm/file_card.php?urlfile='.urlencode($file['name']).$param.'&backtopage='.urlencode($backtopage).'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
 						}

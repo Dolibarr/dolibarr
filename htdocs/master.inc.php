@@ -49,7 +49,7 @@ $conf->db->host							= $dolibarr_main_db_host;
 $conf->db->port							= $dolibarr_main_db_port;
 $conf->db->name							= $dolibarr_main_db_name;
 $conf->db->user							= $dolibarr_main_db_user;
-$conf->db->pass							= empty($dolibarr_main_db_pass)?'':$dolibarr_main_db_pass;
+$conf->db->pass							= empty($dolibarr_main_db_pass) ? '' : $dolibarr_main_db_pass;
 $conf->db->type							= $dolibarr_main_db_type;
 $conf->db->prefix = $dolibarr_main_db_prefix;
 $conf->db->character_set = $dolibarr_main_db_character_set;
@@ -117,7 +117,7 @@ if (!defined('NOREQUIRETRAN'))
  */
 if (!defined('NOREQUIREDB'))
 {
-    $db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
+	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
 
 	if ($db->error)
 	{
@@ -192,15 +192,15 @@ if (!empty($conf->file->mailing_limit_sendbyweb))
 }
 if (empty($conf->global->MAILING_LIMIT_SENDBYWEB))
 {
-    $conf->global->MAILING_LIMIT_SENDBYWEB = 25;
+	$conf->global->MAILING_LIMIT_SENDBYWEB = 25;
 }
 if (!empty($conf->file->mailing_limit_sendbycli))
 {
-    $conf->global->MAILING_LIMIT_SENDBYCLI = $conf->file->mailing_limit_sendbycli;
+	$conf->global->MAILING_LIMIT_SENDBYCLI = $conf->file->mailing_limit_sendbycli;
 }
 if (empty($conf->global->MAILING_LIMIT_SENDBYCLI))
 {
-    $conf->global->MAILING_LIMIT_SENDBYCLI = 0;
+	$conf->global->MAILING_LIMIT_SENDBYCLI = 0;
 }
 
 // If software has been locked. Only login $conf->global->MAIN_ONLY_LOGIN_ALLOWED is allowed.
@@ -245,9 +245,9 @@ if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC'))
 // Set default language (must be after the setValues setting global $conf->global->MAIN_LANG_DEFAULT. Page main.inc.php will overwrite langs->defaultlang with user value later)
 if (!defined('NOREQUIRETRAN'))
 {
-    $langcode = (GETPOST('lang', 'aZ09') ?GETPOST('lang', 'aZ09', 1) : (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
-    if (defined('MAIN_LANG_DEFAULT')) $langcode = constant('MAIN_LANG_DEFAULT');
-    $langs->setDefaultLang($langcode);
+	$langcode = (GETPOST('lang', 'aZ09') ?GETPOST('lang', 'aZ09', 1) : (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
+	if (defined('MAIN_LANG_DEFAULT')) $langcode = constant('MAIN_LANG_DEFAULT');
+	$langs->setDefaultLang($langcode);
 }
 
 

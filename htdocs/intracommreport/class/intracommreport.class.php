@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015       ATM Consulting          <support@atm-consulting.fr>
  * Copyright (C) 2019-2020  Open-DSI                <support@open-dsi.fr>
+ * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,50 +29,55 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class IntracommReport extends CommonObject
 {
-    /**
-     * @var string ID to identify managed object
-     */
-    public $element='intracommreport';
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element = 'intracommreport';
 
-    /**
-     * @var string Name of table without prefix where object is stored
-     */
-    public $table_element='intracommreport';
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'intracommreport';
 
-    /**
-     * @var int Field with ID of parent key if this field has a parent
-     */
-    public $fk_element='fk_intracommreport';
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
+	public $fk_element = 'fk_intracommreport';
 
-    /**
-     * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-     * @var int
-     */
-    public $ismultientitymanaged = 1;
+	/**
+	 * @var string declaration number
+	 */
+	public $declaration_number;
 
-    /**
-     * DEB - Product
-     */
-    const TYPE_DEB = 0;
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
 
-    /**
-     * DES - Service
-     */
-    const TYPE_DES = 1;
+	/**
+	 * DEB - Product
+	 */
+	const TYPE_DEB = 0;
+
+	/**
+	 * DES - Service
+	 */
+	const TYPE_DES = 1;
 
 	static $type = array(
-	    'introduction'=>'Introduction'
+		'introduction'=>'Introduction'
 		,'expedition'=>'Expédition'
-    );
+	);
 
-    /**
-     * Constructor
-     *
-     * @param DoliDB $db Database handle
-     */
-    public function __construct(DoliDB $db)
-    {
-        $this->db = $db;
+	/**
+	 * Constructor
+	 *
+	 * @param DoliDB $db Database handle
+	 */
+	public function __construct(DoliDB $db)
+	{
+		$this->db = $db;
 		$this->exporttype = 'deb';
 	}
 
@@ -91,7 +97,7 @@ class IntracommReport extends CommonObject
 		/**************Construction de quelques variables********************/
 		$party_id = substr(strtr($mysoc->tva_intra, array(' '=>'')), 0, 4).$mysoc->idprof2;
 		$declarant = substr($mysoc->managers, 0, 14);
-		$id_declaration = self::getNumeroDeclaration($this->numero_declaration);
+		$id_declaration = self::getDeclarationNumber($this->numero_declaration);
 		/********************************************************************/
 
 		/**************Construction du fichier XML***************************/
@@ -152,7 +158,7 @@ class IntracommReport extends CommonObject
 		$declaration_des->addChild('an_des', $period_year);
 
 		/**************Ajout des lignes de factures**************************/
-		$res = self::addItemsFact($declaration_des, $type_declaration, $period_year.'-'.$period_month, 'des');
+		$res = $this->addItemsFact($declaration_des, $type_declaration, $period_year.'-'.$period_month, 'des');
 		/********************************************************************/
 
 		$this->errors = array_unique($this->errors);
@@ -174,14 +180,14 @@ class IntracommReport extends CommonObject
 	{
 		global $conf;
 
-		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 		$sql = $this->getSQLFactLines($type, $period_reference, $exporttype);
 
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
-			$i=1;
+			$i = 1;
 
 			if (empty($resql->num_rows)) {
 				$this->errors[] = 'No data for this period';
@@ -189,7 +195,7 @@ class IntracommReport extends CommonObject
 			}
 
 			if ($exporttype == 'deb' && $conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT > 0) {
-				$categ_fraisdeport = new Categorie();
+				$categ_fraisdeport = new Categorie($this->db);
 				$categ_fraisdeport->fetch($conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT);
 				$TLinesFraisDePort = array();
 			}
@@ -232,7 +238,7 @@ class IntracommReport extends CommonObject
 	{
 		global $mysoc, $conf;
 
-		if ($type=='expedition' || $exporttype=='des') {
+		if ($type == 'expedition' || $exporttype == 'des') {
 			$sql = 'SELECT f.facnumber, f.total as total_ht';
 			$table = 'facture';
 			$table_extraf = 'facture_extrafields';
@@ -246,7 +252,7 @@ class IntracommReport extends CommonObject
 			$tabledet = 'facture_fourn_det';
 			$field_link = 'fk_facture_fourn';
 		}
-		$sql.= ', l.fk_product, l.qty
+		$sql .= ', l.fk_product, l.qty
 				, p.weight, p.rowid as id_prod, p.customcode
 				, s.rowid as id_client, s.nom, s.zip, s.fk_pays, s.tva_intra
 				, c.code
@@ -316,11 +322,11 @@ class IntracommReport extends CommonObject
 	/**
 	 *	This function adds an item by retrieving the customs code of the product with the highest amount in the invoice
 	 *
-	 * 	@param      int		$declaration		Reference declaration
-	 * 	@param      int		$TLinesFraisDePort	Data of shipping costs line
-	 *  @param      string	$type				Declaration type by default - introduction or expedition (always 'expedition' for Des)
-	 *  @param      int		$categ_fraisdeport	Id of category of shipping costs
-	 *  @param      int		$i					Line Id
+	 * 	@param      int		    $declaration		Reference declaration
+	 * 	@param      int		    $TLinesFraisDePort	Data of shipping costs line
+	 *  @param      string	    $type				Declaration type by default - introduction or expedition (always 'expedition' for Des)
+	 *  @param      Categorie	$categ_fraisdeport	category of shipping costs
+	 *  @param      int		    $i					Line Id
 	 *  @return     void
 	 */
 	public function addItemFraisDePort(&$declaration, &$TLinesFraisDePort, $type, &$categ_fraisdeport, $i)
@@ -328,7 +334,7 @@ class IntracommReport extends CommonObject
 
 		global $conf;
 
-		if ($type=='expedition') {
+		if ($type == 'expedition') {
 			$table = 'facture';
 			$tabledet = 'facturedet';
 			$field_link = 'fk_facture';
@@ -379,17 +385,17 @@ class IntracommReport extends CommonObject
 	 */
 	public function getNextDeclarationNumber()
 	{
-		$resql = $this->db->query('SELECT MAX(numero_declaration) as max_numero_declaration FROM '.$this->get_table().' WHERE exporttype="'.$this->exporttype.'"');
+		$resql = $this->db->query('SELECT MAX(numero_declaration) as max_declaration_number FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE exporttype="'.$this->exporttype.'"');
 		if ($resql) $res = $this->db->fetch_object($resql);
 
-		return ($res->max_numero_declaration + 1);
+		return ($res->max_declaration_number + 1);
 	}
 
 	/**
 	 *	Verify declaration number. Positive integer of a maximum of 6 characters recommended by the documentation
 	 *
-	 *	@param     	int		$number		Number to verify / convert
-	 *	@return		int 				Number
+	 *	@param     	string		$number		Number to verify / convert
+	 *	@return		string 				Number
 	 */
 	public static function getDeclarationNumber($number)
 	{
@@ -411,13 +417,13 @@ class IntracommReport extends CommonObject
 		fclose($f);
 
 		header('Content-Description: File Transfer');
-	    header('Content-Type: application/xml');
-	    header('Content-Disposition: attachment; filename="'.$name.'"');
-	    header('Expires: 0');
-	    header('Cache-Control: must-revalidate');
-	    header('Pragma: public');
-	    header('Content-Length: ' . filesize($fname));
-	    readfile($fname);
+		header('Content-Type: application/xml');
+		header('Content-Disposition: attachment; filename="'.$name.'"');
+		header('Expires: 0');
+		header('Cache-Control: must-revalidate');
+		header('Pragma: public');
+		header('Content-Length: '.filesize($fname));
+		readfile($fname);
 		exit;
 	}
 }

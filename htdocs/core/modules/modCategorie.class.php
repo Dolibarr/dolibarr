@@ -39,7 +39,7 @@ class modCategorie extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-	    global $conf;
+		global $conf;
 
 		$this->db = $db;
 		$this->numero = 1780;
@@ -153,7 +153,7 @@ class modCategorie extends DolibarrModules
 		$this->export_code[$r] = 'category_'.$r;
 		$this->export_label[$r] = 'CatCusList';
 		$this->export_icon[$r] = 'category';
-        $this->export_enabled[$r] = '$conf->societe->enabled';
+		$this->export_enabled[$r] = '$conf->societe->enabled';
 		$this->export_permission[$r] = array(array("categorie", "lire"), array("societe", "lire"));
 		$this->export_fields_array[$r] = array(
 			'u.rowid'=>"CategId", 'u.label'=>"Label", 'u.description'=>"Description", 's.rowid'=>'IdThirdParty', 's.nom'=>'Name', 's.prefix_comm'=>"Prefix",
@@ -184,43 +184,43 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_end[$r] .= ' AND u.entity IN ('.getEntity('category').')';
 		$this->export_sql_end[$r] .= ' AND u.type = 2'; // Customer/Prospect categories
 
-        // Add extra fields
-        $sql = "SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'societe' AND entity IN (0, ".$conf->entity.")";
-        $resql = $this->db->query($sql);
-        if ($resql)    // This can fail when class is used on old database (during migration for example)
-        {
-            while ($obj = $this->db->fetch_object($resql))
-            {
-                $fieldname = 'extra.'.$obj->name;
-                $fieldlabel = ucfirst($obj->label);
-                $typeFilter = "Text";
-                switch ($obj->type)
-                {
-                    case 'int':
-                    case 'double':
-                    case 'price':
-                        $typeFilter = "Numeric";
-                        break;
-                    case 'date':
-                    case 'datetime':
-                        $typeFilter = "Date";
-                        break;
-                    case 'boolean':
-                        $typeFilter = "Boolean";
-                        break;
-                    case 'sellist':
-                        $typeFilter = "List:".$obj->param;
-                        break;
-                    case 'select':
-                        $typeFilter = "Select:".$obj->param;
-                        break;
-                }
-                $this->export_fields_array[$r][$fieldname] = $fieldlabel;
-                $this->export_TypeFields_array[$r][$fieldname] = $typeFilter;
-                $this->export_entities_array[$r][$fieldname] = 'company';
-            }
-        }
-        // End add axtra fields
+		// Add extra fields
+		$sql = "SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'societe' AND entity IN (0, ".$conf->entity.")";
+		$resql = $this->db->query($sql);
+		if ($resql)    // This can fail when class is used on old database (during migration for example)
+		{
+			while ($obj = $this->db->fetch_object($resql))
+			{
+				$fieldname = 'extra.'.$obj->name;
+				$fieldlabel = ucfirst($obj->label);
+				$typeFilter = "Text";
+				switch ($obj->type)
+				{
+					case 'int':
+					case 'double':
+					case 'price':
+						$typeFilter = "Numeric";
+						break;
+					case 'date':
+					case 'datetime':
+						$typeFilter = "Date";
+						break;
+					case 'boolean':
+						$typeFilter = "Boolean";
+						break;
+					case 'sellist':
+						$typeFilter = "List:".$obj->param;
+						break;
+					case 'select':
+						$typeFilter = "Select:".$obj->param;
+						break;
+				}
+				$this->export_fields_array[$r][$fieldname] = $fieldlabel;
+				$this->export_TypeFields_array[$r][$fieldname] = $typeFilter;
+				$this->export_entities_array[$r][$fieldname] = 'company';
+			}
+		}
+		// End add axtra fields
 
 
 
@@ -230,7 +230,7 @@ class modCategorie extends DolibarrModules
 		$this->export_code[$r] = 'category_'.$r;
 		$this->export_label[$r] = 'CatProdList';
 		$this->export_icon[$r] = 'category';
-        $this->export_enabled[$r] = '$conf->product->enabled || $conf->service->enabled';
+		$this->export_enabled[$r] = '$conf->product->enabled || $conf->service->enabled';
 		$this->export_permission[$r] = array(array("categorie", "lire"), array("produit", "lire"));
 		$this->export_fields_array[$r] = array('u.rowid'=>"CategId", 'u.label'=>"Label", 'u.description'=>"Description", 'p.rowid'=>'ProductId', 'p.ref'=>'Ref');
 		$this->export_TypeFields_array[$r] = array('u.label'=>"Text", 'u.description'=>"Text", 'p.ref'=>'Text');
@@ -245,7 +245,7 @@ class modCategorie extends DolibarrModules
 		$this->export_code[$r] = 'category_'.$r;
 		$this->export_label[$r] = 'CatMemberList';
 		$this->export_icon[$r] = 'category';
-        $this->export_enabled[$r] = '$conf->adherent->enabled';
+		$this->export_enabled[$r] = '$conf->adherent->enabled';
 		$this->export_permission[$r] = array(array("categorie", "lire"), array("adherent", "lire"));
 		$this->export_fields_array[$r] = array('u.rowid'=>"CategId", 'u.label'=>"Label", 'u.description'=>"Description", 'p.rowid'=>'MemberId', 'p.lastname'=>'LastName', 'p.firstname'=>'Firstname');
 		$this->export_TypeFields_array[$r] = array('u.label'=>"Text", 'u.description'=>"Text", 'p.lastname'=>'Text', 'p.firstname'=>'Text');
@@ -284,7 +284,7 @@ class modCategorie extends DolibarrModules
 			'p.email' => 'Email',
 			'p.note_private' => 'NotePrivate',
 			'p.note_public' => 'NotePublic',
-            'p.statut' => 'Status',
+			'p.statut' => 'Status',
 			's.nom'=>"Name",
 			's.client'=>"Customer",
 			's.fournisseur'=>"Supplier",
@@ -302,7 +302,7 @@ class modCategorie extends DolibarrModules
 			'u.description' => "Text",
 			'p.lastname' => 'Text',
 			'p.firstname' => 'Text',
-            'p.statut'=>"Numeric",
+			'p.statut'=>"Numeric",
 			's.nom'=>"Text",
 			's.status'=>"Text",
 			's.address'=>"Text",
@@ -335,7 +335,7 @@ class modCategorie extends DolibarrModules
 			'p.email' => 'contact',
 			'p.note_private' => 'contact',
 			'p.note_public' => 'contact',
-            'p.statut' => 'contact',
+			'p.statut' => 'contact',
 			's.nom'=>"company",
 			's.client'=>"company",
 			's.fournisseur'=>"company",
@@ -349,49 +349,49 @@ class modCategorie extends DolibarrModules
 			's.email'=>"company"
 		); // We define here only fields that use another picto
 
-        // Add extra fields
-        $sql = "SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'socpeople' AND entity IN (0, ".$conf->entity.")";
-        $resql = $this->db->query($sql);
-        if ($resql)    // This can fail when class is used on old database (during migration for example)
-        {
-        	while ($obj = $this->db->fetch_object($resql))
-        	{
-        		$fieldname = 'extra.'.$obj->name;
-        		$fieldlabel = ucfirst($obj->label);
-        		$typeFilter = "Text";
-        		switch ($obj->type)
-        		{
-        			case 'int':
-        			case 'double':
-        			case 'price':
-        				$typeFilter = "Numeric";
-        				break;
-        			case 'date':
-        			case 'datetime':
-        				$typeFilter = "Date";
-        				break;
-        			case 'boolean':
-        				$typeFilter = "Boolean";
-        				break;
-        			case 'sellist':
-        				$typeFilter = "List:".$obj->param;
-        				break;
+		// Add extra fields
+		$sql = "SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'socpeople' AND entity IN (0, ".$conf->entity.")";
+		$resql = $this->db->query($sql);
+		if ($resql)    // This can fail when class is used on old database (during migration for example)
+		{
+			while ($obj = $this->db->fetch_object($resql))
+			{
+				$fieldname = 'extra.'.$obj->name;
+				$fieldlabel = ucfirst($obj->label);
+				$typeFilter = "Text";
+				switch ($obj->type)
+				{
+					case 'int':
+					case 'double':
+					case 'price':
+						$typeFilter = "Numeric";
+						break;
+					case 'date':
+					case 'datetime':
+						$typeFilter = "Date";
+						break;
+					case 'boolean':
+						$typeFilter = "Boolean";
+						break;
+					case 'sellist':
+						$typeFilter = "List:".$obj->param;
+						break;
 					case 'select':
 						$typeFilter = "Select:".$obj->param;
 						break;
-        		}
-        		$this->export_fields_array[$r][$fieldname] = $fieldlabel;
-        		$this->export_TypeFields_array[$r][$fieldname] = $typeFilter;
-        		$this->export_entities_array[$r][$fieldname] = 'contact';
-        	}
-        }
-        // End add axtra fields
+				}
+				$this->export_fields_array[$r][$fieldname] = $fieldlabel;
+				$this->export_TypeFields_array[$r][$fieldname] = $typeFilter;
+				$this->export_entities_array[$r][$fieldname] = 'contact';
+			}
+		}
+		// End add axtra fields
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_contact as cp, '.MAIN_DB_PREFIX.'socpeople as p';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as country ON p.fk_pays = country.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = p.fk_soc';
-        $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra ON extra.fk_object = p.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra ON extra.fk_object = p.rowid';
 		$this->export_sql_end[$r] .= ' WHERE u.rowid = cp.fk_categorie AND cp.fk_socpeople = p.rowid AND u.entity IN ('.getEntity('category').')';
 		$this->export_sql_end[$r] .= ' AND u.type = 4'; // contact categories
 
@@ -406,30 +406,30 @@ class modCategorie extends DolibarrModules
 		$this->import_icon[$r] = $this->picto;
 		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r] = array('ca'=>MAIN_DB_PREFIX.'categorie');
-        $this->import_fields_array[$r] = array(
-            'ca.label'=>"Label*", 'ca.type'=>"Type*", 'ca.description'=>"Description",
-            'ca.fk_parent' => 'Parent'
-        );
+		$this->import_fields_array[$r] = array(
+			'ca.label'=>"Label*", 'ca.type'=>"Type*", 'ca.description'=>"Description",
+			'ca.fk_parent' => 'Parent'
+		);
 		$this->import_regex_array[$r] = array('ca.type'=>'^[0|1|2|3]');
-        $this->import_convertvalue_array[$r] = array(
-            'ca.fk_parent' => array(
-                'rule'          => 'fetchidfromcodeandlabel',
-                'classfile'     => '/categories/class/categorie.class.php',
-                'class'         => 'Categorie',
-                'method'        => 'fetch',
-                'element'       => 'category',
-                'codefromfield' => 'ca.type'
-            )
-        );
+		$this->import_convertvalue_array[$r] = array(
+			'ca.fk_parent' => array(
+				'rule'          => 'fetchidfromcodeandlabel',
+				'classfile'     => '/categories/class/categorie.class.php',
+				'class'         => 'Categorie',
+				'method'        => 'fetch',
+				'element'       => 'category',
+				'codefromfield' => 'ca.type'
+			)
+		);
 		$typeexample = "";
 		if ($conf->product->enabled) { $typeexample .= ($typeexample ? "/" : "")."0=Product"; }
 		if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) { $typeexample .= ($typeexample ? "/" : "")."1=Supplier"; }
 		if ($conf->societe->enabled) { $typeexample .= ($typeexample ? "/" : "")."2=Customer-Prospect"; }
 		if ($conf->adherent->enabled) { $typeexample .= ($typeexample ? "/" : "")."3=Member"; }
-        $this->import_examplevalues_array[$r] = array(
-            'ca.label'=>"Supplier Category", 'ca.type'=>$typeexample, 'ca.description'=>"My Category description",
-            'ca.fk_parent' => '0'
-        );
+		$this->import_examplevalues_array[$r] = array(
+			'ca.label'=>"Supplier Category", 'ca.type'=>$typeexample, 'ca.description'=>"My Category description",
+			'ca.fk_parent' => '0'
+		);
 
 		if (!empty($conf->product->enabled))
 		{
@@ -515,14 +515,14 @@ class modCategorie extends DolibarrModules
 	}
 
 
-    /**
+	/**
 	 *		Function called when module is enabled.
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
-     */
+	 */
 	public function init($options = '')
 	{
 		// Permissions

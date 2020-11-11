@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2005	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
@@ -122,7 +122,7 @@ if ($action == 'update')
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTTITLE', $conf->entity);
 	else dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLE', $val, 'chaine', 0, '', $conf->entity);
 
-	$val=(implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLELINK'), array()))));
+	$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLELINK'), array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTTITLELINK', $conf->entity);
 	else dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLELINK', $val, 'chaine', 0, '', $conf->entity);
 

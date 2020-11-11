@@ -101,12 +101,6 @@ if (empty($reshook)) {
 
 	// Actions when printing a doc from card
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
-
-	// Actions to send emails
-	$triggersendname = 'MYOBJECT_SENTBYMAIL';
-	$autocopy = 'MAIN_MAIL_AUTOCOPY_MYOBJECT_TO';
-	$trackid = 'myobject'.$object->id;
-	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
 
@@ -148,7 +142,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	dol_fiche_head(array(), '');
+	print dol_get_fiche_head(array(), '');
 
 	print '<table class="border centpercent">'."\n";
 
@@ -160,7 +154,7 @@ if ($action == 'create') {
 
 	print '</table>'."\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
@@ -181,7 +175,7 @@ if (($id || $ref) && $action == 'edit') {
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">'."\n";
 
@@ -193,7 +187,7 @@ if (($id || $ref) && $action == 'edit') {
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 	print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -207,7 +201,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_optionals();
 
 	$head = myobjectPrepareHead($object);
-	dol_fiche_head($head, 'card', $langs->trans("MyObject"), -1, 'myobject@mymodule');
+	print dol_get_fiche_head($head, 'card', $langs->trans("MyObject"), -1, 'myobject@mymodule');
 
 	$formconfirm = '';
 
@@ -315,7 +309,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '<div class="clearboth"></div><br>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	// Buttons for actions
@@ -391,19 +385,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print '</div></div></div>';
 	}
-
-	//Select mail models is same action as presend
-	/*
-	 if (GETPOST('modelselected')) $action = 'presend';
-
-	 // Presend form
-	 $modelmail='inventory';
-	 $defaulttopic='InformationMessage';
-	 $diroutput = $conf->product->dir_output.'/inventory';
-	 $trackid = 'stockinv'.$object->id;
-
-	 include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
-	 */
 }
 
 // End of page

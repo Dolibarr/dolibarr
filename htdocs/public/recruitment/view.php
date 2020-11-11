@@ -24,6 +24,7 @@
 if (!defined('NOLOGIN'))		define("NOLOGIN", 1); // This means this output page does not require to be logged.
 if (!defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
 if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.php';
@@ -139,7 +140,7 @@ if ($action == "view" || $action == "presend" || $action == "close" || $action =
 $triggersendname = 'CANDIDATURE_SENTBYMAIL';
 $paramname = 'id';
 $autocopy = 'MAIN_MAIL_AUTOCOPY_CANDIDATURE_TO'; // used to know the automatic BCC to add
-$trackid = 'can'.$object->id;
+$trackid = 'recruitmentcandidature'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
@@ -164,7 +165,7 @@ $arrayofjs = array();
 $arrayofcss = array();
 
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
-llxHeader($head, $langs->trans("PositionToBeFilled"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
+llxHeader($head, $langs->trans("PositionToBeFilled"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1);
 
 
 print '<span id="dolpaymentspan"></span>'."\n";
@@ -210,7 +211,7 @@ if ($urllogo)
 	print '>';
 	print '</div>';
 	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
-		print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+		print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 	}
 	print '</div>';
 }

@@ -111,9 +111,9 @@ if ($action == 'add' && empty($cancel))
 	$fuser->fetch(GETPOST("fk_user", "int"));
 	$object->salary = $fuser->salary;
 
-    // Fill array 'array_options' with data from add form
-    $ret = $extrafields->setOptionalsFromPost(null, $object);
-    if ($ret < 0) $error++;
+	// Fill array 'array_options' with data from add form
+	$ret = $extrafields->setOptionalsFromPost(null, $object);
+	if ($ret < 0) $error++;
 
 	if (empty($datep) || empty($datev) || empty($datesp) || empty($dateep))
 	{
@@ -258,7 +258,7 @@ if ($action == 'create')
 
 	print load_fiche_titre($langs->trans("NewSalaryPayment"), '', 'object_payment');
 
-	dol_fiche_head('', '');
+	print dol_get_fiche_head('', '');
 
 	print '<table class="border centpercent">';
 
@@ -272,6 +272,13 @@ if ($action == 'create')
 	print '<tr><td>';
 	print $form->editfieldkey('DateValue', 'datev', '', $object, 0).'</td><td>';
 	print $form->selectDate((empty($datev) ?-1 : $datev), "datev", '', '', '', 'add', 1, 1);
+	print '</td></tr>';
+
+	// Employee
+	print '<tr><td>';
+	print $form->editfieldkey('Employee', 'fk_user', '', $object, 0, 'string', '', 1).'</td><td>';
+	$noactive = 0; // We keep active and unactive users
+	print $form->select_dolusers(GETPOST('fk_user', 'int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'AND employee=1', 0, '', 'maxwidth300', $noactive);
 	print '</td></tr>';
 
 	// Label
@@ -290,13 +297,6 @@ if ($action == 'create')
 	print '<tr><td>';
 	print $form->editfieldkey('DateEndPeriod', 'dateep', '', $object, 0, 'string', '', 1).'</td><td>';
 	print $form->selectDate($dateep, "dateep", '', '', '', 'add');
-	print '</td></tr>';
-
-	// Employee
-	print '<tr><td>';
-	print $form->editfieldkey('Employee', 'fk_user', '', $object, 0, 'string', '', 1).'</td><td>';
-	$noactive = 0; // We keep active and unactive users
-	print $form->select_dolusers(GETPOST('fk_user', 'int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'AND employee=1', 0, '', 'maxwidth300', $noactive);
 	print '</td></tr>';
 
 	// Amount
@@ -340,18 +340,18 @@ if ($action == 'create')
 		print '<td><input name="num_payment" id="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
 	}
 
-    // Other attributes
-    $parameters = array();
-    $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
-    if (empty($reshook))
-    {
-        print $object->showOptionals($extrafields, 'edit');
-    }
+	// Other attributes
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	if (empty($reshook))
+	{
+		print $object->showOptionals($extrafields, 'edit');
+	}
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
@@ -375,7 +375,7 @@ if ($id)
 {
 	$head = salaries_prepare_head($object);
 
-	dol_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'payment');
+	print dol_get_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'payment');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/salaries/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
@@ -466,14 +466,14 @@ if ($id)
 		}
 	}
 
-    // Other attributes
-    include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+	// Other attributes
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	/*

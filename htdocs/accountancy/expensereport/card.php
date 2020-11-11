@@ -121,7 +121,7 @@ if (!empty($id)) {
 
 			print load_fiche_titre($langs->trans('ExpenseReportsVentilation'), '', 'title_accountancy');
 
-			dol_fiche_head();
+			print dol_get_fiche_head();
 
 			print '<table class="border centpercent">';
 
@@ -146,7 +146,7 @@ if (!empty($id)) {
 			print '</td></tr>';
 			print '</table>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
 			print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';

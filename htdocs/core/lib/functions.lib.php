@@ -185,6 +185,7 @@ function getBrowserInfo($user_agent)
 	if (preg_match('/linux/i', $user_agent)) { $os = 'linux'; } elseif (preg_match('/macintosh/i', $user_agent)) { $os = 'macintosh'; } elseif (preg_match('/windows/i', $user_agent)) { $os = 'windows'; }
 
 	// Name
+	$reg = array();
 	if (preg_match('/firefox(\/|\s)([\d\.]*)/i', $user_agent, $reg)) { $name = 'firefox'; $version = $reg[2]; } elseif (preg_match('/edge(\/|\s)([\d\.]*)/i', $user_agent, $reg)) { $name = 'edge'; $version = $reg[2]; } elseif (preg_match('/chrome(\/|\s)([\d\.]+)/i', $user_agent, $reg)) { $name = 'chrome'; $version = $reg[2]; } // we can have 'chrome (Mozilla...) chrome x.y' in one string
 	elseif (preg_match('/chrome/i', $user_agent, $reg)) { $name = 'chrome'; } elseif (preg_match('/iceweasel/i', $user_agent)) { $name = 'iceweasel'; } elseif (preg_match('/epiphany/i', $user_agent)) { $name = 'epiphany'; } elseif (preg_match('/safari(\/|\s)([\d\.]*)/i', $user_agent, $reg)) { $name = 'safari'; $version = $reg[2]; } // Safari is often present in string for mobile but its not.
 	elseif (preg_match('/opera(\/|\s)([\d\.]*)/i', $user_agent, $reg)) { $name = 'opera'; $version = $reg[2]; } elseif (preg_match('/(MSIE\s([0-9]+\.[0-9]))|.*(Trident\/[0-9]+.[0-9];.*rv:([0-9]+\.[0-9]+))/i', $user_agent, $reg)) { $name = 'ie'; $version = end($reg); } // MS products at end
@@ -361,7 +362,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			{
 				$out = $_SESSION['lastsearch_limit_'.$relativepathstring];
 			}
-		} // Else, retreive default values if we are not doing a sort
+		} // Else, retrieve default values if we are not doing a sort
 		elseif (!isset($_GET['sortfield']))	// If we did a click on a field to sort, we do no apply default values. Same if option MAIN_ENABLE_DEFAULT_VALUES is not set
 		{
 			if (!empty($_GET['action']) && $_GET['action'] == 'create' && !isset($_GET[$paramname]) && !isset($_POST[$paramname]))
@@ -629,6 +630,9 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 		case 'san_alpha':
 			$out = filter_var($out, FILTER_SANITIZE_STRING);
 			break;
+		case 'email':
+			$out = filter_var($out, FILTER_SANITIZE_EMAIL);
+			break;
 		case 'aZ':
 			if (!is_array($out))
 			{
@@ -655,17 +659,16 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 			break;
 		case 'alpha':		// No html and no " and no ../
 		case 'alphanohtml':	// Recommended for most scalar parameters and search parameters
-			if (!is_array($out))
-			{
+			if (!is_array($out)) {
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
 				$out = str_replace(array('&quot;', '"', '../'), '', trim($out));
+				// keep lines feed
 				$out = dol_string_nohtmltag($out, 0);
 			}
 			break;
 		case 'restricthtml':		// Recommended for most html textarea
-			$out = dol_string_onlythesehtmltags($out, 0);
-			// TODO We can also remove all javascripts reference
+			$out = dol_string_onlythesehtmltags($out, 0, 1, 1);
 			break;
 		case 'custom':
 			if (empty($filter)) return 'BadFourthParameterForGETPOST';
@@ -733,7 +736,7 @@ if (!function_exists('dol_getprefix'))
  */
 function dol_include_once($relpath, $classname = '')
 {
-	global $conf, $langs, $user, $mysoc; // Do not remove this. They must be defined for files we include. Other globals var must be retreived with $GLOBALS['var']
+	global $conf, $langs, $user, $mysoc; // Do not remove this. They must be defined for files we include. Other globals var must be retrieved with $GLOBALS['var']
 
 	$fullpath = dol_buildpath($relpath);
 
@@ -866,7 +869,7 @@ function dol_clone($object, $native = 0)
 	{
 		$myclone = unserialize(serialize($object));
 	} else {
-		$myclone = clone $object; // PHP clone is a shallow copy only, not a real clone, so properties of references will keep references (refer to the same target/variable)
+		$myclone = clone $object; // PHP clone is a shallow copy only, not a real clone, so properties of references will keep the reference (refering to the same target/variable)
 	}
 
 	return $myclone;
@@ -1001,17 +1004,25 @@ function dol_string_nospecial($str, $newstr = '_', $badcharstoreplace = '')
 
 
 /**
- *	Clean a string from all non printable ascii chars (0x00-0x1F and 0x7F). It removes also CR-LF
+ *	Clean a string from all non printable ASCII chars (0x00-0x1F and 0x7F). It can also removes also Tab-CR-LF. UTF8 chars remains.
  *  This can be used to sanitize a string and view its real content. Some hacks try to obfuscate attacks by inserting non printable chars.
- *
+ *  Note, for information: UTF8 on 1 byte are: \x00-\7F
+ *                                 2 bytes are: byte 1 \xc0-\xdf, byte 2 = \x80-\xbf
+ *                                 3 bytes are: byte 1 \xe0-\xef, byte 2 = \x80-\xbf, byte 3 = \x80-\xbf
+ *                                 4 bytes are: byte 1 \xf0-\xf7, byte 2 = \x80-\xbf, byte 3 = \x80-\xbf, byte 4 = \x80-\xbf
  *	@param	string	$str            	String to clean
+ *  @param	int		$removetabcrlf		Remove also CR-LF
  * 	@return string          			Cleaned string
  *
  * 	@see    		dol_sanitizeFilename(), dol_string_unaccent(), dol_string_nospecial()
  */
-function dol_string_nounprintableascii($str)
+function dol_string_nounprintableascii($str, $removetabcrlf = 1)
 {
-	return preg_replace('/[\x00-\x1F\x7F]/u', '', $str);
+	if ($removetabcrlf) {
+		return preg_replace('/[\x00-\x1F\x7F]/u', '', $str); // /u operator makes UTF8 valid characters being ignored so are not included into the replace
+	} else {
+		return preg_replace('/[\x00-\x08\x11-\x12\x14-\x1F\x7F]/u', '', $str); // /u operator should make UTF8 valid characters being ignored so are not included into the replace
+	}
 }
 
 
@@ -1076,29 +1087,69 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $keepmoreta
 	}
 }
 
-
 /**
  * Convert a string to lower. Never use strtolower because it does not works with UTF8 strings.
  *
- * @param 	string		$utf8_string		String to encode
+ * @param 	string		$string		        String to encode
+ * @param   string      $encoding           Character set encoding
  * @return 	string							String converted
  */
-function dol_strtolower($utf8_string)
+function dol_strtolower($string, $encoding = "UTF-8")
 {
-	return mb_strtolower($utf8_string, "UTF-8");
+	if (function_exists('mb_strtolower')) {
+		return mb_strtolower($string, $encoding);
+	} else {
+		return strtolower($string);
+	}
 }
 
 /**
  * Convert a string to upper. Never use strtolower because it does not works with UTF8 strings.
  *
- * @param 	string		$utf8_string		String to encode
+ * @param 	string		$string		        String to encode
+ * @param   string      $encoding           Character set encoding
  * @return 	string							String converted
  */
-function dol_strtoupper($utf8_string)
+function dol_strtoupper($string, $encoding = "UTF-8")
 {
-	return mb_strtoupper($utf8_string, "UTF-8");
+	if (function_exists('mb_strtoupper')) {
+		return mb_strtoupper($string, $encoding);
+	} else {
+		return strtoupper($string);
+	}
 }
 
+/**
+ * Convert first character of the first word of a string to upper. Never use ucfirst because it does not works with UTF8 strings.
+ *
+ * @param   string      $string         String to encode
+ * @param   string      $encoding       Character set encodign
+ * @return  string                      String converted
+ */
+function dol_ucfirst($string, $encoding = "UTF-8")
+{
+	if (function_exists('mb_substr')) {
+		return mb_strtoupper(mb_substr($string, 0, 1, $encoding), $encoding).mb_substr($string, 1, null, $encoding);
+	} else {
+		return ucfirst($string);
+	}
+}
+
+/**
+ * Convert first character of all the words of a string to upper. Never use ucfirst because it does not works with UTF8 strings.
+ *
+ * @param   string      $string         String to encode
+ * @param   string      $encoding       Character set encodign
+ * @return  string                      String converted
+ */
+function dol_ucwords($string, $encoding = "UTF-8")
+{
+	if (function_exists('mb_convert_case')) {
+		return mb_convert_case($string, MB_CASE_TITLE, $encoding);
+	} else {
+		return ucwords($string);
+	}
+}
 
 /**
  *	Write log message into outputs. Possible outputs can be:
@@ -1248,7 +1299,7 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
  *	@param	array	$links				Array of tabs. Currently initialized by calling a function xxx_admin_prepare_head
  *	@param	string	$active     		Active tab name (document', 'info', 'ldap', ....)
  *	@param  string	$title      		Title
- *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header (if you set this to 1, using dol_fiche_end() to close tab is not required), -2=Add tab header with no seaparation under tab (to start a tab just after)
+ *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header (if you set this to 1, using print dol_get_fiche_end() to close tab is not required), -2=Add tab header with no seaparation under tab (to start a tab just after)
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
  *  @param	string	$morehtmlright		Add more html content on right of tabs title
@@ -1269,7 +1320,7 @@ function dol_fiche_head($links = array(), $active = '0', $title = '', $notab = 0
  *	@param	array	$links				Array of tabs
  *	@param	string	$active     		Active tab name
  *	@param  string	$title      		Title
- *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header (if you set this to 1, using dol_fiche_end() to close tab is not required), -2=Add tab header with no seaparation under tab (to start a tab just after)
+ *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header (if you set this to 1, using print dol_get_fiche_end() to close tab is not required), -2=Add tab header with no seaparation under tab (to start a tab just after)
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
  *  @param	string	$morehtmlright		Add more html content on right of tabs title
@@ -1446,6 +1497,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
  *
  *  @param	int		$notab       -1 or 0=Add tab footer, 1=no tab footer
  *  @return	void
+ *  @deprecated Use print dol_get_fiche_end() instead
  */
 function dol_fiche_end($notab = 0)
 {
@@ -1522,8 +1574,9 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		$showimage = $object->is_photo_available($conf->product->multidir_output[$entity]);
 		$maxvisiblephotos = (isset($conf->global->PRODUCT_MAX_VISIBLE_PHOTO) ? $conf->global->PRODUCT_MAX_VISIBLE_PHOTO : 5);
 		if ($conf->browser->layout == 'phone') $maxvisiblephotos = 1;
-		if ($showimage) $morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos('product', $conf->product->multidir_output[$entity], 'small', $maxvisiblephotos, 0, 0, 0, $width, 0).'</div>';
-		else {
+		if ($showimage) {
+			$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos('product', $conf->product->multidir_output[$entity], 'small', $maxvisiblephotos, 0, 0, 0, $width, 0).'</div>';
+		} else {
 			if (!empty($conf->global->PRODUCT_NODISPLAYIFNOPHOTO)) {
 				$nophoto = '';
 				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"></div>';
@@ -1610,9 +1663,9 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 						// If the preview file is found
 						if (file_exists($fileimage))
 						{
-							$phototoshow = '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
+							$phototoshow = '<div class="photoref">';
 							$phototoshow .= '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
-							$phototoshow .= '</div></div>';
+							$phototoshow .= '</div>';
 						}
 					}
 				} elseif (!$phototoshow)
@@ -2044,15 +2097,13 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
 
 /**
  *  Return an array with locale date info.
- *  PHP getdate is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
- *  WARNING: This function always use PHP server timezone to return locale informations !!!
- *  Usage must be avoid.
- *  FIXME: Replace this with PHP date function and a parameter $gm
+ *  WARNING: This function use PHP server timezone by default to return locale informations.
+ *  Be aware to add the third parameter to "UTC" if you need to work on UTC.
  *
  *	@param	int			$timestamp      Timestamp
- *	@param	boolean		$fast           Fast mode
+ *	@param	boolean		$fast           Fast mode. deprecated.
+ *  @param	string		$forcetimezone	'' to use the PHP server timezone. Or use a form like 'Europe/Paris' or '+0200' to force timezone.
  *	@return	array						Array of informations
- *										If no fast mode:
  *										'seconds' => $secs,
  *										'minutes' => $min,
  *										'hours' => $hour,
@@ -2060,34 +2111,42 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
  *										'wday' => $dow,		0=sunday, 6=saturday
  *										'mon' => $month,
  *										'year' => $year,
- *										'yday' => floor($secsInYear/$_day_power),
- *										'weekday' => gmdate('l',$_day_power*(3+$dow)),
- *										'month' => gmdate('F',mktime(0,0,0,$month,2,1971)),
- *										If fast mode:
- *										'seconds' => $secs,
- *										'minutes' => $min,
- *										'hours' => $hour,
- *										'mday' => $day,
- *										'mon' => $month,
- *										'year' => $year,
- *										'yday' => floor($secsInYear/$_day_power),
- *										'leap' => $leaf,
- *										'ndays' => $ndays
+ *										'yday' => floor($secsInYear/$_day_power)
+ *										'0' => original timestamp
  * 	@see 								dol_print_date(), dol_stringtotime(), dol_mktime()
  */
-function dol_getdate($timestamp, $fast = false)
+function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
 {
 	global $conf;
 
-	$usealternatemethod = false;
-	if ($timestamp <= 0) $usealternatemethod = true; // <= 1970
-	if ($timestamp >= 2145913200) $usealternatemethod = true; // >= 2038
-
-	if ($usealternatemethod)
-	{
-		$arrayinfo = adodb_getdate($timestamp, $fast);
+	if (empty($conf->global->MAIN_USE_OLD_FUNCTIONS_FOR_GETDATE)) {
+		//$datetimeobj = new DateTime('@'.$timestamp);
+		$datetimeobj = new DateTime();
+		$datetimeobj->setTimestamp($timestamp); // Use local PHP server timezone
+		if ($forcetimezone) $datetimeobj->setTimezone(new DateTimeZone($forcetimezone)); //  (add timezone relative to the date entered)
+		$arrayinfo = array(
+			'year'=>((int) date_format($datetimeobj, 'Y')),
+			'mon'=>((int) date_format($datetimeobj, 'm')),
+			'mday'=>((int) date_format($datetimeobj, 'd')),
+			'wday'=>((int) date_format($datetimeobj, 'w')),
+			'yday'=>((int) date_format($datetimeobj, 'z')),
+			'hours'=>((int) date_format($datetimeobj, 'H')),
+			'minutes'=>((int) date_format($datetimeobj, 'i')),
+			'seconds'=>((int) date_format($datetimeobj, 's')),
+			'0'=>$timestamp
+		);
 	} else {
-		$arrayinfo = getdate($timestamp);
+		// PHP getdate is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
+		$usealternatemethod = false;
+		if ($timestamp <= 0) $usealternatemethod = true; // <= 1970
+		if ($timestamp >= 2145913200) $usealternatemethod = true; // >= 2038
+
+		if ($usealternatemethod)
+		{
+			$arrayinfo = adodb_getdate($timestamp, $fast);
+		} else {
+			$arrayinfo = getdate($timestamp);
+		}
 	}
 
 	return $arrayinfo;
@@ -2270,7 +2329,7 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0)
 }
 
 /**
- * Show EMail link
+ * Show EMail link formatted for HTML output.
  *
  * @param	string		$email			EMail to show (only email, without 'Name of recipient' before)
  * @param 	int			$cid 			Id of contact if known
@@ -2285,7 +2344,7 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 {
 	global $conf, $user, $langs, $hookmanager;
 
-	$newemail = $email;
+	$newemail = dol_escape_htmltag($email);
 
 	if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpicto) $withpicto = 0;
 
@@ -2431,7 +2490,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 	// Clean phone parameter
 	$phone = preg_replace("/[\s.-]/", "", trim($phone));
 	if (empty($phone)) { return ''; }
-	if ($conf->global->MAIN_PHONE_SEPAR) $separ = $conf->global->MAIN_PHONE_SEPAR;
+	if (!empty($conf->global->MAIN_PHONE_SEPAR)) $separ = $conf->global->MAIN_PHONE_SEPAR;
 	if (empty($countrycode)) $countrycode = $mysoc->country_code;
 
 	// Short format for small screens
@@ -2922,11 +2981,12 @@ function dol_print_address($address, $htmlid, $element, $id, $noprint = 0, $char
 
 
 /**
- *	Return true if email syntax is ok
+ *	Return true if email syntax is ok.
  *
  *	@param	    string		$address    			email (Ex: "toto@examle.com", "John Do <johndo@example.com>")
  *  @param		int			$acceptsupervisorkey	If 1, the special string '__SUPERVISOREMAIL__' is also accepted as valid
  *	@return     boolean     						true if email syntax is OK, false if KO or empty string
+ *  @see isValidMXRecord()
  */
 function isValidEmail($address, $acceptsupervisorkey = 0)
 {
@@ -2942,6 +3002,7 @@ function isValidEmail($address, $acceptsupervisorkey = 0)
  *
  *	@param	    string		$domain	    			Domain name (Ex: "yahoo.com", "yhaoo.com", "dolibarr.fr")
  *	@return     int     							-1 if error (function not available), 0=Not valid, 1=Valid
+ *  @see isValidEmail()
  */
 function isValidMXRecord($domain)
 {
@@ -3129,11 +3190,11 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 				'accountancy', 'account', 'accountline', 'action', 'add', 'address', 'bank_account', 'barcode', 'bank', 'bill', 'bookmark', 'bom', 'building',
 				'cash-register', 'category', 'check', 'clock', 'close_title', 'company', 'contact', 'contract', 'cubes',
-				'delete', 'dolly', 'dollyrevert', 'edit', 'ellipsis-h', 'email', 'external-link-alt', 'external-link-square-alt',
-				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'globe', 'globe-americas', 'grip', 'grip_title',
+				'delete', 'dolly', 'dollyrevert', 'donation', 'edit', 'ellipsis-h', 'email', 'external-link-alt', 'external-link-square-alt',
+				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'globe', 'globe-americas', 'grip', 'grip_title', 'group',
 				'help', 'holiday',
 				'intervention', 'label', 'language', 'list', 'listlight', 'lot',
-				'map-marker-alt', 'money-bill-alt', 'mrp', 'note', 'next',
+				'map-marker-alt', 'member', 'money-bill-alt', 'mrp', 'note', 'next',
 				'object_accounting', 'object_account', 'object_accountline', 'object_action', 'object_barcode', 'object_bill', 'object_billa', 'object_billd', 'object_bom',
 				'object_category', 'object_conversation', 'object_bookmark', 'object_bug', 'object_dolly', 'object_dollyrevert', 'object_generic', 'object_folder',
 				'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
@@ -3185,7 +3246,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'trip'=>'wallet', 'group'=>'users',
 				'sign-out'=>'sign-out-alt',
 				'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star', 'bookmark'=>'star',
-				'bank'=>'university', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil-alt', 'filter'=>'filter',
+				'bank'=>'university', 'close_title'=>'times', 'delete'=>'trash', 'edit'=>'pencil-alt', 'filter'=>'filter',
 				'list-alt'=>'list-alt', 'calendar'=>'calendar-alt', 'calendarweek'=>'calendar-week', 'calendarmonth'=>'calendar-alt', 'calendarday'=>'calendar-day', 'calendarperuser'=>'table',
 				'intervention'=>'ambulance', 'invoice'=>'file-invoice-dollar', 'multicurrency'=>'dollar-sign', 'order'=>'file-invoice',
 				'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
@@ -3284,22 +3345,23 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 			// This snippet only needed since function img_edit accepts only one additional parameter: no separate one for css only.
 			// class/style need to be extracted to avoid duplicate class/style validation errors when $moreatt is added to the end of the attributes.
+			$morestyle = '';
 			$reg = array();
 			if (preg_match('/class="([^"]+)"/', $moreatt, $reg)) {
 				$morecss .= ($morecss ? ' ' : '').$reg[1];
 				$moreatt = str_replace('class="'.$reg[1].'"', '', $moreatt);
 			}
 			if (preg_match('/style="([^"]+)"/', $moreatt, $reg)) {
-				$morestyle = ' '.$reg[1];
+				$morestyle = $reg[1];
 				$moreatt = str_replace('style="'.$reg[1].'"', '', $moreatt);
 			}
 			$moreatt = trim($moreatt);
 
 			$enabledisablehtml = '<span class="'.$fa.' '.$fakey.($marginleftonlyshort ? ($marginleftonlyshort == 1 ? ' marginleftonlyshort' : ' marginleftonly') : '');
 			$enabledisablehtml .= ($morecss ? ' '.$morecss : '').'" style="'.($fasize ? ('font-size: '.$fasize.';') : '').($facolor ? (' color: '.$facolor.';') : '').($morestyle ? ' '.$morestyle : '').'"'.(($notitle || empty($titlealt)) ? '' : ' title="'.dol_escape_htmltag($titlealt).'"').($moreatt ? ' '.$moreatt : '').'>';
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			/*if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$enabledisablehtml .= $titlealt;
-			}
+			}*/
 			$enabledisablehtml .= '</span>';
 
 			return $enabledisablehtml;
@@ -3932,9 +3994,9 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
  *  This function must be called when a blocking technical error is encountered.
  *  However, one must try to call it only within php pages, classes must return their error through their property "error".
  *
- *	@param	 	DoliDB	$db      	Database handler
- *	@param  	mixed	$error		String or array of errors strings to show
- *  @param		array	$errors		Array of errors
+ *	@param	 	DoliDB          $db      	Database handler
+ *	@param  	string|string[] $error		String or array of errors strings to show
+ *  @param		array           $errors		Array of errors
  *	@return 	void
  *  @see    	dol_htmloutput_errors()
  */
@@ -4056,9 +4118,10 @@ function dol_print_error($db = '', $error = '', $errors = null)
 	if (empty($dolibarr_main_prod)) {
 		print $out;
 	} else {
+		if (empty($langs->defaultlang)) $langs->setDefaultLang();
+		$langs->loadLangs(array("main", "errors"));		// Reload main because language may have been set only on previous line so we have to reload files we need.
 		// This should not happen, except if there is a bug somewhere. Enabled and check log in such case.
 		print 'This website or feature is currently temporarly not available or failed after a technical error.<br><br>This may be due to a maintenance operation. Current status of operation are on next line...<br><br>'."\n";
-		$langs->load("errors");
 		print $langs->trans("DolibarrHasDetectedError").'. ';
 		print $langs->trans("YouCanSetOptionDolibarrMainProdToZero");
 		define("MAIN_CORE_ERROR", 1);
@@ -4376,7 +4439,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 	// Right
 	print '<td class="nobordernopadding valignmiddle right">';
-	print '<input type="hidden" name="pageplusoneold" value="'.($page+1).'">';
+	print '<input type="hidden" name="pageplusoneold" value="'.((int) $page + 1).'">';
 	if ($sortfield) $options .= "&sortfield=".urlencode($sortfield);
 	if ($sortorder) $options .= "&sortorder=".urlencode($sortorder);
 	// Show navigation bar
@@ -5600,17 +5663,18 @@ function picto_required()
  *	@param	integer	$removelinefeed		1=Replace all new lines by 1 space, 0=Only ending new lines are removed others are replaced with \n, 2=Ending new lines are removed but others are kept with a same number of \n than nb of <br> when there is both "...<br>\n..."
  *  @param  string	$pagecodeto      	Encoding of input/output string
  *  @param	integer	$strip_tags			0=Use internal strip, 1=Use strip_tags() php function (bugged when text contains a < char that is not for a html tag)
+ *  @param	integer	$removedoublespaces	Replace double space into one space
  *	@return string	    				String cleaned
  *
  * 	@see	dol_escape_htmltag() strip_tags() dol_string_onlythesehtmltags() dol_string_neverthesehtmltags(), dolStripPhpCode()
  */
-function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto = 'UTF-8', $strip_tags = 0)
+function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto = 'UTF-8', $strip_tags = 0, $removedoublespaces = 1)
 {
 	if ($removelinefeed == 2) $stringtoclean = preg_replace('/<br[^>]*>(\n|\r)+/ims', '<br>', $stringtoclean);
 	$temp = preg_replace('/<br[^>]*>/i', "\n", $stringtoclean);
 
 	// We remove entities BEFORE stripping (in case of a separator char is encoded and not the other, the strip will fails)
-	$temp = dol_html_entity_decode($temp, ENT_COMPAT, $pagecodeto);
+	$temp = dol_html_entity_decode($temp, ENT_COMPAT | ENT_HTML5, $pagecodeto);
 
 	if ($strip_tags) {
 		$temp = strip_tags($temp);
@@ -5623,13 +5687,16 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 		// $temp after pass 2: 0000-021
 	}
 
-	// Remove also CR LF
+	$temp = dol_html_entity_decode($temp, ENT_COMPAT, $pagecodeto);
+
+	// Remove also carriage returns
 	if ($removelinefeed == 1) $temp = str_replace(array("\r\n", "\r", "\n"), " ", $temp);
 
-	// and double spaces
-	while (strpos($temp, "  "))
-	{
-		$temp = str_replace("  ", " ", $temp);
+	// And double quotes
+	if ($removedoublespaces) {
+		while (strpos($temp, "  ")) {
+			$temp = str_replace("  ", " ", $temp);
+		}
 	}
 
 	return trim($temp);
@@ -5639,13 +5706,14 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
  *	Clean a string to keep only desirable HTML tags.
  *
  *	@param	string	$stringtoclean			String to clean
- *  @param	boolean	$cleanalsosomestyles	Remove absolute/fixed positioning from inline styles
- *  @param	boolean	$removeclassattribute	Remove the class attribute from tags
+ *  @param	int		$cleanalsosomestyles	Remove absolute/fixed positioning from inline styles
+ *  @param	int		$removeclassattribute	Remove the class attribute from tags
+ *  @param	int		$cleanalsojavascript	Remove also occurence of (javascript:'
  *	@return string	    					String cleaned
  *
  * 	@see	dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_neverthesehtmltags()
  */
-function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1)
+function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1, $cleanalsojavascript = 0)
 {
 	$allowed_tags = array(
 		"html", "head", "meta", "body", "article", "a", "abbr", "b", "blockquote", "br", "cite", "div", "dl", "dd", "dt", "em", "font", "img", "ins", "hr", "i", "li", "link",
@@ -5655,22 +5723,29 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	$allowed_tags_string = join("><", $allowed_tags);
 	$allowed_tags_string = '<'.$allowed_tags_string.'>';
 
-	if ($cleanalsosomestyles) {
-		$stringtoclean = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/i', '', $stringtoclean); // Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
-	}
-	if ($removeclassattribute) {
-		$stringtoclean = preg_replace('/(<[^>]+)\s+class=((["\']).*?\\3|\\w*)/i', '\\1', $stringtoclean);
-	}
-	// TODO Remove '/href=("|\'|)javascript/' string ?
+	$stringtoclean = dol_string_nounprintableascii($stringtoclean, 0);
+	$stringtoclean = preg_replace('/&colon;/i', ':', $stringtoclean);
 
 	$temp = strip_tags($stringtoclean, $allowed_tags_string);
+
+	if ($cleanalsosomestyles) {	// Clean for remaining html tags
+		$stringtoclean = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/i', '', $temp); // Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
+	}
+	if ($removeclassattribute) {	// Clean for remaining html tags
+		$stringtoclean = preg_replace('/(<[^>]+)\s+class=((["\']).*?\\3|\\w*)/i', '\\1', $temp);
+	}
+
+	// Remove 'javascript:' that we should not find into a text with
+	if ($cleanalsojavascript) {
+		$temp = preg_replace('/javascript\s*:/i', '', $temp);
+	}
 
 	return $temp;
 }
 
 /**
  *	Clean a string from some undesirable HTML tags.
- *  Note. Not enough secured as dol_string_onlythesehtmltags().
+ *  Note. Not as secured as dol_string_onlythesehtmltags().
  *
  *	@param	string	$stringtoclean			String to clean
  *  @param	array	$disallowed_tags		Array of tags not allowed
@@ -5814,7 +5889,7 @@ function dol_htmlentitiesbr($stringtoencode, $nl2brmode = 0, $pagecodefrom = 'UT
  */
 function dol_htmlentitiesbr_decode($stringtodecode, $pagecodeto = 'UTF-8')
 {
-	$ret = dol_html_entity_decode($stringtodecode, ENT_COMPAT, $pagecodeto);
+	$ret = dol_html_entity_decode($stringtodecode, ENT_COMPAT | ENT_HTML5, $pagecodeto);
 	$ret = preg_replace('/'."\r\n".'<br(\s[\sa-zA-Z_="]*)?\/?>/i', "<br>", $ret);
 	$ret = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>'."\r\n".'/i', "\r\n", $ret);
 	$ret = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>'."\n".'/i', "\n", $ret);
@@ -5838,7 +5913,7 @@ function dol_htmlcleanlastbr($stringtodecode)
  * Replace html_entity_decode functions to manage errors
  *
  * @param   string	$a					Operand a
- * @param   string	$b					Operand b (ENT_QUOTES=convert simple and double quotes)
+ * @param   string	$b					Operand b (ENT_QUOTES|ENT_HTML5=convert simple, double quotes, colon, e accent, ...)
  * @param   string	$c					Operand c
  * @param	string	$keepsomeentities	Entities but &, <, >, " are not converted.
  * @return  string						String decoded
@@ -6161,8 +6236,13 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 			if (!empty($conf->expedition->enabled) && (!is_object($object) || $object->element == 'shipping'))
 			{
-				$substitutionarray['__SHIPPINGTRACKNUM__'] = 'Shipping tacking number';
+				$substitutionarray['__SHIPPINGTRACKNUM__'] = 'Shipping tracking number';
 				$substitutionarray['__SHIPPINGTRACKNUMURL__'] = 'Shipping tracking url';
+			}
+			if (!empty($conf->reception->enabled) && (!is_object($object) || $object->element == 'reception'))
+			{
+				$substitutionarray['__RECEPTIONTRACKNUM__'] = 'Shippin tracking number of shipment';
+				$substitutionarray['__RECEPTIONTRACKNUMURL__'] = 'Shipping tracking url';
 			}
 		} else {
 			$substitutionarray['__ID__'] = $object->id;
@@ -6284,6 +6364,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			{
 				$substitutionarray['__SHIPPINGTRACKNUM__'] = $object->tracking_number;
 				$substitutionarray['__SHIPPINGTRACKNUMURL__'] = $object->tracking_url;
+			}
+			if (is_object($object) && $object->element == 'reception')
+			{
+				$substitutionarray['__RECEPTIONTRACKNUM__'] = $object->tracking_number;
+				$substitutionarray['__RECEPTIONTRACKNUMURL__'] = $object->tracking_url;
 			}
 
 			if (is_object($object) && $object->element == 'contrat' && $object->id > 0 && is_array($object->lines))
@@ -6416,11 +6501,13 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$tmp4 = dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']);
 		$tmp5 = dol_get_next_month($tmp['mon'], $tmp['year']);
 
+		$daytext = $outputlangs->trans('Day'.$tmp['wday']);
+
 		$substitutionarray = array_merge($substitutionarray, array(
 			'__DAY__' => (string) $tmp['mday'],
-			'__DAY_TEXT__' => $outputlangs->trans('Day'.$tmp['wday']), // Monday
-			'__DAY_TEXT_SHORT__' => $outputlangs->trans($tmp['weekday'].'Min'), // Mon
-			'__DAY_TEXT_MIN__' => $outputlangs->trans('Short'.$tmp['weekday']), // M
+			'__DAY_TEXT__' => $daytext, // Monday
+			'__DAY_TEXT_SHORT__' => dol_trunc($daytext, 3, 'right', 'UTF-8', 1), // Mon
+			'__DAY_TEXT_MIN__' => dol_trunc($daytext, 1, 'right', 'UTF-8', 1), // M
 			'__MONTH__' => (string) $tmp['mon'],
 			'__MONTH_TEXT__' => $outputlangs->trans('Month'.sprintf("%02d", $tmp['mon'])),
 			'__MONTH_TEXT_SHORT__' => $outputlangs->trans('MonthShort'.sprintf("%02d", $tmp['mon'])),
@@ -6664,19 +6751,19 @@ function dolGetFirstLastname($firstname, $lastname, $nameorder = -1)
  *  Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function.
  *  Note: Prefer to use setEventMessages instead.
  *
- *	@param	mixed	$mesgs			Message string or array
- *  @param  string	$style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
+ *	@param	string|string[] $mesgs			Message string or array
+ *  @param  string          $style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
  *  @return	void
  *  @see	dol_htmloutput_events()
  */
 function setEventMessage($mesgs, $style = 'mesgs')
 {
 	//dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);		This is not deprecated, it is used by setEventMessages function
-	if (!is_array($mesgs))		// If mesgs is a string
-	{
+	if (!is_array($mesgs)) {
+		// If mesgs is a string
 		if ($mesgs) $_SESSION['dol_events'][$style][] = $mesgs;
-	} else // If mesgs is an array
-	{
+	} else {
+		// If mesgs is an array
 		foreach ($mesgs as $mesg)
 		{
 			if ($mesg) $_SESSION['dol_events'][$style][] = $mesg;
@@ -7130,8 +7217,7 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1)
 	global $soc; // For backward compatibility
 
 	//print $s."<br>\n";
-	if ($returnvalue)
-	{
+	if ($returnvalue) {
 		if ($hideerrors) return @eval('return '.$s.';');
 		else return eval('return '.$s.';');
 	} else {
@@ -7534,7 +7620,7 @@ function printCommonFooter($zone = 'private')
 
 	// A div to store page_y POST parameter so we can read it using javascript
 	print "\n<!-- A div to store page_y POST parameter -->\n";
-	print '<div id="page_y" style="display: none;">'.$_POST['page_y'].'</div>'."\n";
+	print '<div id="page_y" style="display: none;">'.(empty($_POST['page_y']) ? '' : $_POST['page_y']).'</div>'."\n";
 
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printCommonFooter', $parameters); // Note that $action and $object may have been modified by some hooks
@@ -8696,9 +8782,9 @@ function getElementProperties($element_type)
 		$module = 'expedition_bon';
 	}
 	if ($element_type == 'delivery') {
-		$classpath = 'livraison/class';
-		$subelement = 'livraison';
-		$module = 'livraison_bon';
+		$classpath = 'delivery/class';
+		$subelement = 'delivery';
+		$module = 'delivery_note';
 	}
 	if ($element_type == 'contract') {
 		$classpath = 'contrat/class';
@@ -8967,8 +9053,7 @@ function addSummaryTableLine($tableColumnCount, $num, $nbofloop = 0, $total = 0,
 }
 
 /**
- *	Return a file on output using a lo memory.
- *  It can return very large files with no need of memory.
+ *  Return a file on output using a low memory. It can return very large files with no need of memory.
  *  WARNING: This close output buffers.
  *
  *  @param	string	$fullpath_original_file_osencoded		Full path of file to return.

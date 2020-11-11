@@ -40,70 +40,70 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 class pdf_soleil extends ModelePDFFicheinter
 {
 	 /**
-     * @var DoliDb Database handler
-     */
-    public $db;
+	  * @var DoliDb Database handler
+	  */
+	public $db;
 
 	/**
-     * @var string model name
-     */
-    public $name;
+	 * @var string model name
+	 */
+	public $name;
 
 	/**
-     * @var string model description (short text)
-     */
-    public $description;
+	 * @var string model description (short text)
+	 */
+	public $description;
 
 	/**
-     * @var string document type
-     */
-    public $type;
+	 * @var string document type
+	 */
+	public $type;
 
-    /**
-     * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.6 = array(5, 6)
-     */
+	/**
+	 * @var array Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 */
 	public $phpmin = array(5, 6);
 
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr';
 
 	/**
-     * @var int page_largeur
-     */
-    public $page_largeur;
+	 * @var int page_largeur
+	 */
+	public $page_largeur;
 
 	/**
-     * @var int page_hauteur
-     */
-    public $page_hauteur;
+	 * @var int page_hauteur
+	 */
+	public $page_hauteur;
 
 	/**
-     * @var array format
-     */
-    public $format;
+	 * @var array format
+	 */
+	public $format;
 
 	/**
-     * @var int marge_gauche
-     */
+	 * @var int marge_gauche
+	 */
 	public $marge_gauche;
 
 	/**
-     * @var int marge_droite
-     */
+	 * @var int marge_droite
+	 */
 	public $marge_droite;
 
 	/**
-     * @var int marge_haute
-     */
+	 * @var int marge_haute
+	 */
 	public $marge_haute;
 
 	/**
-     * @var int marge_basse
-     */
+	 * @var int marge_basse
+	 */
 	public $marge_basse;
 
 	/**
@@ -152,7 +152,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		$this->posxdesc = $this->marge_gauche + 1;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Function to build pdf onto disk
 	 *
@@ -166,7 +166,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $db, $hookmanager;
 
 		if (!is_object($outputlangs)) $outputlangs = $langs;
@@ -180,7 +180,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		{
 			$object->fetch_thirdparty();
 
-		    // Definition of $dir and $file
+			// Definition of $dir and $file
 			if ($object->specimen)
 			{
 				$dir = $conf->ficheinter->dir_output;
@@ -304,8 +304,8 @@ class pdf_soleil extends ModelePDFFicheinter
 				$text = $object->description;
 				if ($object->duration > 0)
 				{
-				    $totaltime = convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
-				    $text .= ($text ? ' - ' : '').$langs->trans("Total").": ".$totaltime;
+					$totaltime = convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
+					$text .= ($text ? ' - ' : '').$langs->trans("Total").": ".$totaltime;
 				}
 				$desc = dol_htmlentitiesbr($text, 1);
 				//print $outputlangs->convToOutputCharset($desc); exit;
@@ -336,12 +336,12 @@ class pdf_soleil extends ModelePDFFicheinter
 						// Description of product line
 						$curX = $this->posxdesc - 1;
 
-                        // Description of product line
-                        if (empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)) {
-                            $txt = $outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei, 'dayhour', false, $outputlangs, true);
-                        } else {
-                            $txt = $outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei, 'day', false, $outputlangs, true);
-                        }
+						// Description of product line
+						if (empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)) {
+							$txt = $outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei, 'dayhour', false, $outputlangs, true);
+						} else {
+							$txt = $outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei, 'day', false, $outputlangs, true);
+						}
 
 						if ($objectligne->duration > 0)
 						{
@@ -448,8 +448,8 @@ class pdf_soleil extends ModelePDFFicheinter
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0)
 				{
-				    $this->error = $hookmanager->error;
-				    $this->errors = $hookmanager->errors;
+					$this->error = $hookmanager->error;
+					$this->errors = $hookmanager->errors;
 				}
 
 				if (!empty($conf->global->MAIN_UMASK))
@@ -487,7 +487,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
-        /*
+		/*
 		$pdf->SetXY($this->marge_gauche, $tab_top);
 		$pdf->MultiCell(190,8,$outputlangs->transnoentities("Description"),0,'L',0);
 		$pdf->line($this->marge_gauche, $tab_top + 8, $this->page_largeur-$this->marge_droite, $tab_top + 8);
@@ -573,8 +573,8 @@ class pdf_soleil extends ModelePDFFicheinter
 		{
 			if (is_readable($logo))
 			{
-			    $height = pdf_getHeightForLogo($logo);
-			    $pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
+				$height = pdf_getHeightForLogo($logo);
+				$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
 			} else {
 				$pdf->SetTextColor(200, 0, 0);
 				$pdf->SetFont('', 'B', $default_font_size - 2);

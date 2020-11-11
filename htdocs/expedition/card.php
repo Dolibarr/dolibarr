@@ -102,7 +102,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('expeditioncard', 'globalcard'));
 
-$permissiondellink = $user->rights->expedition->livraison->creer; // Used by the include of actions_dellink.inc.php
+$permissiondellink = $user->rights->expedition->delivery->creer; // Used by the include of actions_dellink.inc.php
 //var_dump($object->lines[0]->detail_batch);
 
 
@@ -399,12 +399,12 @@ if (empty($reshook))
 	/*
 	 * Build a receiving receipt
 	 */
-	elseif ($action == 'create_delivery' && $conf->livraison_bon->enabled && $user->rights->expedition->livraison->creer)
+	elseif ($action == 'create_delivery' && $conf->delivery_note->enabled && $user->rights->expedition->delivery->creer)
 	{
 		$result = $object->create_delivery($user);
 		if ($result > 0)
 		{
-			header("Location: ".DOL_URL_ROOT.'/livraison/card.php?action=create_delivery&id='.$result);
+			header("Location: ".DOL_URL_ROOT.'/delivery/card.php?action=create_delivery&id='.$result);
 			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -479,7 +479,7 @@ if (empty($reshook))
 		$datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
 		$object->fetch($id);
-		$result = $object->set_date_livraison($user, $datedelivery);
+		$result = $object->setDeliveryDate($user, $datedelivery);
 		if ($result < 0)
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -882,7 +882,7 @@ if ($action == 'create')
 				print '<input type="hidden" name="entrepot_id" value="'.GETPOST('entrepot_id', 'int').'">';
 			}
 
-			dol_fiche_head('');
+			print dol_get_fiche_head('');
 
 			print '<table class="border centpercent">';
 
@@ -890,13 +890,15 @@ if ($action == 'create')
 			print '<tr><td class="titlefieldcreate fieldrequired">';
 			if ($origin == 'commande' && !empty($conf->commande->enabled))
 			{
-				print $langs->trans("RefOrder").'</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/commande/card.php?id='.$object->id.'">'.img_object($langs->trans("ShowOrder"), 'order').' '.$object->ref;
+				print $langs->trans("RefOrder");
 			}
 			if ($origin == 'propal' && !empty($conf->propal->enabled))
 			{
-				print $langs->trans("RefProposal").'</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/comm/card.php?id='.$object->id.'">'.img_object($langs->trans("ShowProposal"), 'propal').' '.$object->ref;
+				print $langs->trans("RefProposal");
 			}
-			print '</a></td>';
+			print '</td><td colspan="3">';
+			print $object->getNomUrl(1);
+			print '</td>';
 			print "</tr>\n";
 
 			// Ref client
@@ -1028,7 +1030,7 @@ if ($action == 'create')
 
 			print "</table>";
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 
 			// Shipment lines
@@ -1584,7 +1586,7 @@ if ($action == 'create')
 		$res = $object->fetch_optionals();
 
 		$head = shipping_prepare_head($object);
-		dol_fiche_head($head, 'shipping', $langs->trans("Shipment"), -1, 'sending');
+		print dol_get_fiche_head($head, 'shipping', $langs->trans("Shipment"), -1, 'sending');
 
 		$formconfirm = '';
 
@@ -2046,13 +2048,13 @@ if ($action == 'create')
 			$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end";
 			$sql .= ", ed.rowid as shipmentline_id, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_origin_line, ed.fk_entrepot";
 			$sql .= ", e.rowid as shipment_id, e.ref as shipment_ref, e.date_creation, e.date_valid, e.date_delivery, e.date_expedition";
-			//if ($conf->livraison_bon->enabled) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received";
+			//if ($conf->delivery_note->enabled) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received";
 			$sql .= ', p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.tobatch as product_tobatch';
 			$sql .= ', p.description as product_desc';
 			$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
 			$sql .= ", ".MAIN_DB_PREFIX."expedition as e";
 			$sql .= ", ".MAIN_DB_PREFIX.$origin."det as obj";
-			//if ($conf->livraison_bon->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.fk_expedition = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."livraisondet as ld ON ld.fk_livraison = l.rowid  AND obj.rowid = ld.fk_origin_line";
+			//if ($conf->delivery_note->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.fk_expedition = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."deliverydet as ld ON ld.fk_delivery = l.rowid  AND obj.rowid = ld.fk_origin_line";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
 			$sql .= " WHERE e.entity IN (".getEntity('expedition').")";
 			$sql .= " AND obj.fk_".$origin." = ".$origin_id;
@@ -2401,7 +2403,7 @@ if ($action == 'create')
 	}
 
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	$object->fetchObjectLinked($object->id, $object->element);
@@ -2467,7 +2469,7 @@ if ($action == 'create')
 
 			// This is just to generate a delivery receipt
 			//var_dump($object->linkedObjectsIds['delivery']);
-			if ($conf->livraison_bon->enabled && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED) && $user->rights->expedition->livraison->creer && empty($object->linkedObjectsIds['delivery']))
+			if ($conf->delivery_note->enabled && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED) && $user->rights->expedition->delivery->creer && empty($object->linkedObjectsIds['delivery']))
 			{
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create_delivery">'.$langs->trans("CreateDeliveryOrder").'</a>';
 			}

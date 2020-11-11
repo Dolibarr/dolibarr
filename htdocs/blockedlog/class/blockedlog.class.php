@@ -101,8 +101,8 @@ class BlockedLog
 	public $fk_user = 0;
 
 	/**
-     * @var integer|string date_creation
-     */
+	 * @var integer|string date_creation
+	 */
 	public $date_creation;
 
 	/**
@@ -196,7 +196,7 @@ class BlockedLog
 
 	/**
 	 *  Try to retrieve source object (it it still exists)
-     * @return string
+	 * @return string
 	 */
 	public function getObjectLink()
 	{
@@ -301,7 +301,7 @@ class BlockedLog
 
 	/**
 	 *      try to retrieve user author
-     * @return string
+	 * @return string
 	 */
 	public function getUser()
 	{
@@ -377,20 +377,20 @@ class BlockedLog
 		$arrayoffieldstoexclude = array(
 			'table_element', 'fields', 'ref_previous', 'ref_next', 'origin', 'origin_id', 'oldcopy', 'picto', 'error', 'errors', 'model_pdf', 'modelpdf', 'last_main_doc', 'civility_id', 'contact', 'contact_id',
 			'table_element_line', 'ismultientitymanaged', 'isextrafieldmanaged',
-            'linkedObjectsIds',
-            'linkedObjects',
-            'fk_delivery_address',
+			'linkedObjectsIds',
+			'linkedObjects',
+			'fk_delivery_address',
 			'context',
-		    'projet'          // There is already ->fk_project
+			'projet'          // There is already ->fk_project
 		);
 		// Add more fields to exclude depending on object type
 		if ($this->element == 'cashcontrol') {
-            $arrayoffieldstoexclude = array_merge($arrayoffieldstoexclude, array(
-		        'name', 'lastname', 'firstname', 'region', 'region_id', 'region_code', 'state', 'state_id', 'state_code', 'country', 'country_id', 'country_code',
-		        'total_ht', 'total_tva', 'total_ttc', 'total_localtax1', 'total_localtax2',
-		        'barcode_type', 'barcode_type_code', 'barcode_type_label', 'barcode_type_coder', 'mode_reglement_id', 'cond_reglement_id', 'mode_reglement', 'cond_reglement', 'shipping_method_id',
-		        'fk_incoterms', 'label_incoterms', 'location_incoterms', 'lines')
-		    );
+			$arrayoffieldstoexclude = array_merge($arrayoffieldstoexclude, array(
+				'name', 'lastname', 'firstname', 'region', 'region_id', 'region_code', 'state', 'state_id', 'state_code', 'country', 'country_id', 'country_code',
+				'total_ht', 'total_tva', 'total_ttc', 'total_localtax1', 'total_localtax2',
+				'barcode_type', 'barcode_type_code', 'barcode_type_label', 'barcode_type_coder', 'mode_reglement_id', 'cond_reglement_id', 'mode_reglement', 'cond_reglement', 'shipping_method_id',
+				'fk_incoterms', 'label_incoterms', 'location_incoterms', 'lines')
+			);
 		}
 
 		// Add thirdparty info
@@ -559,7 +559,7 @@ class BlockedLog
 					foreach ($tmpobject->thirdparty as $key=>$value)
 					{
 						if (in_array($key, $arrayoffieldstoexclude)) continue; // Discard some properties
-                        if (!in_array($key, array(
+						if (!in_array($key, array(
 						'name', 'name_alias', 'ref_ext', 'address', 'zip', 'town', 'state_code', 'country_code', 'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6', 'phone', 'fax', 'email', 'barcode',
 						'tva_intra', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
 						))) continue; // Discard if not into a dedicated list
@@ -576,7 +576,7 @@ class BlockedLog
 					foreach ($tmpobject as $key=>$value)
 					{
 						if (in_array($key, $arrayoffieldstoexclude)) continue; // Discard some properties
-                        if (!in_array($key, array(
+						if (!in_array($key, array(
 						'ref', 'ref_client', 'ref_supplier', 'date', 'datef', 'type', 'total_ht', 'total_tva', 'total_ttc', 'localtax1', 'localtax2', 'revenuestamp', 'datepointoftax', 'note_public'
 						))) continue; // Discard if not into a dedicated list
 						if (!is_object($value))
@@ -632,8 +632,8 @@ class BlockedLog
 	 *	@param      int		$id       	Id of object to load
 	 *	@return     int         			>0 if OK, <0 if KO, 0 if not found
 	 */
-    public function fetch($id)
-    {
+	public function fetch($id)
+	{
 
 		global $langs;
 
@@ -722,8 +722,8 @@ class BlockedLog
 	 *
 	 *	@return	boolean
 	 */
-    public function setCertified()
-    {
+	public function setCertified()
+	{
 
 		$res = $this->db->query("UPDATE ".MAIN_DB_PREFIX."blockedlog SET certified=1 WHERE rowid=".$this->id);
 		if ($res === false) return false;
@@ -738,8 +738,8 @@ class BlockedLog
 	 *  @param	int		$forcesignature		Force signature (for example '0000000000' when we disabled the module)
 	 *	@return	int							<0 if KO, >0 if OK
 	 */
-    public function create($user, $forcesignature = '')
-    {
+	public function create($user, $forcesignature = '')
+	{
 
 		global $conf, $langs, $hookmanager;
 
@@ -1034,14 +1034,14 @@ class BlockedLog
 	}
 
 
-    /**
-     * Check if module was already used or not for at least one recording.
-     *
-     * @param   int     $ignoresystem       Ignore system events for the test
-     * @return  bool
-     */
-    public function alreadyUsed($ignoresystem = 0)
-    {
+	/**
+	 * Check if module was already used or not for at least one recording.
+	 *
+	 * @param   int     $ignoresystem       Ignore system events for the test
+	 * @return  bool
+	 */
+	public function alreadyUsed($ignoresystem = 0)
+	{
 		global $conf;
 
 		$result = false;
@@ -1061,5 +1061,5 @@ class BlockedLog
 		dol_syslog("Module Blockedlog alreadyUsed with ignoresystem=".$ignoresystem." is ".$result);
 
 		return $result;
-    }
+	}
 }

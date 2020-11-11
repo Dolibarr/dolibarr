@@ -40,7 +40,7 @@ $cancel					= GETPOST('cancel', 'alpha');
 $ref					= GETPOST('ref', 'alpha');
 $description			= GETPOST('description', 'restricthtml');
 $confirm				= GETPOST('confirm', 'aZ09');
-$fk_code_type_resource  = GETPOST('fk_code_type_resource', 'alpha');
+$fk_code_type_resource = GETPOST('fk_code_type_resource', 'alpha');
 $country_id				= GETPOST('country_id', 'int');
 
 // Protection if external user
@@ -212,10 +212,10 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0)
 	if ($action == 'create')
 	{
 		print load_fiche_titre($title, '', 'object_resource');
-		dol_fiche_head('');
+		print dol_get_fiche_head('');
 	} else {
 		$head = resource_prepare_head($object);
-		dol_fiche_head($head, 'resource', $title, -1, 'resource');
+		print dol_get_fiche_head($head, 'resource', $title, -1, 'resource');
 	}
 
 	if ($action == 'create' || $action == 'edit')
@@ -265,7 +265,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0)
 
 		print '</table>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" class="button" name="save" value="'.$langs->trans($action == "create" ? "Create" : "Modify").'">';
@@ -340,7 +340,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0)
 
 		print '<div class="clearboth"></div><br>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 	}
 
 

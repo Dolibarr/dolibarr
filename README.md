@@ -2,6 +2,8 @@
 
 ![Downloads per day](https://img.shields.io/sourceforge/dw/dolibarr.svg)
 ![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/develop.svg)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg?style=flat-square)](https://php.net/)
+[![GitHub release](https://img.shields.io/github/v/release/Dolibarr/dolibarr)](https://github.com/Dolibarr/dolibarr)
 
 Dolibarr ERP & CRM is a modern software package that helps manage your organization's activity (contacts, suppliers, invoices, orders, stocks, agenda…).
 
@@ -13,7 +15,7 @@ You can use it as a standalone application or as a web application to access it 
 
 Dolibarr has a large community ready to help you, free forums and [oficially preferred partners ready to offer commercial support should you need it](https://partners.dolibarr.org)
 
-![ScreenShot](https://www.dolibarr.org/images/dolibarr_screenshot1_1920x1080.jpg)
+![ScreenShot](https://www.dolibarr.org/medias/dolibarr_screenshot1_1920x1080.jpg)
 
 ## LICENSE
 

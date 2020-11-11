@@ -33,7 +33,7 @@ $statutarray = array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOn
 <?php
 $head = product_prepare_head($object);
 $titre = $langs->trans("CardProduct".$object->type);
-dol_fiche_head($head, 'card', $titre, 0, 'service');
+print dol_get_fiche_head($head, 'card', $titre, 0, 'service');
 
 dol_htmloutput_errors($object->error, $object->errors);
 ?>

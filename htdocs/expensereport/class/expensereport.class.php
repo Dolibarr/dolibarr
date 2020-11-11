@@ -4,7 +4,7 @@
  * Copyright (C) 2015 		Alexandre Spangaro  	<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (c) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2016-2018 	Ferran Marcet       	<fmarcet@2byte.es>
+ * Copyright (C) 2016-2020 	Ferran Marcet       	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -601,7 +601,7 @@ class ExpenseReport extends CommonObject
 					$this->user_valid_infos = dolGetFirstLastname($user_valid->firstname, $user_valid->lastname);
 				}
 
-				$this->lines = array();
+				$this->fetch_optionals();
 
 				$result = $this->fetch_lines();
 
@@ -1083,28 +1083,49 @@ class ExpenseReport extends CommonObject
 	{
 		global $user, $langs, $conf;
 
-		if (!$rowid) $rowid = $this->id;
+		$rowid = $this->id;
 
+		$error = 0;
+
+		// Delete lines
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element_line.' WHERE '.$this->fk_element.' = '.$rowid;
-		if ($this->db->query($sql))
+		if (!$error && !$this->db->query($sql))
 		{
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE rowid = '.$rowid;
-			$resql = $this->db->query($sql);
-			if ($resql)
-			{
-				$this->db->commit();
-				return 1;
-			} else {
-				$this->error = $this->db->error()." sql=".$sql;
-				dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
-				$this->db->rollback();
-				return -6;
-			}
-		} else {
 			$this->error = $this->db->error()." sql=".$sql;
 			dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
+			$error++;
+		}
+
+		// Delete llx_ecm_files
+		if (!$error) {
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."ecm_files WHERE src_object_type = '".$this->db->escape($this->table_element.(empty($this->module) ? '' : '@'.$this->module))."' AND src_object_id = ".$this->id;
+			$resql = $this->db->query($sql);
+			if (!$resql)
+			{
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+				$error++;
+			}
+		}
+
+		// Delete main record
+		if (!$error) {
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE rowid = '.$rowid;
+			$resql = $this->db->query($sql);
+			if (!$resql)
+			{
+				$this->error = $this->db->error()." sql=".$sql;
+				dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
+			}
+		}
+
+		// Commit or rollback
+		if ($error) {
 			$this->db->rollback();
-			return -4;
+			return -1;
+		} else {
+			$this->db->commit();
+			return 1;
 		}
 	}
 
@@ -1573,7 +1594,10 @@ class ExpenseReport extends CommonObject
 
 		if ($short) return $url;
 
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("ExpenseReport").'</u>';
+		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ExpenseReport").'</u>';
+		if (isset($this->status)) {
+			$label .= ' '.$this->getLibStatut(5);
+		}
 		if (!empty($this->ref))
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (!empty($this->total_ht))
@@ -1582,9 +1606,6 @@ class ExpenseReport extends CommonObject
 			$label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
 		if (!empty($this->total_ttc))
 			$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
-		if (isset($this->status)) {
-				$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
-		}
 		if ($moretitle) $label .= ' - '.$moretitle;
 
 		//if ($option != 'nolink')
@@ -2186,18 +2207,20 @@ class ExpenseReport extends CommonObject
 		$langs->load("trips");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'standard';
-
-			if ($this->modelpdf) {
+			if (!empty($this->modelpdf)) {
 				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->EXPENSEREPORT_ADDON_PDF)) {
 				$modele = $conf->global->EXPENSEREPORT_ADDON_PDF;
 			}
 		}
 
-		$modelpath = "core/modules/expensereport/doc/";
+		if (!empty($modele)) {
+			$modelpath = "core/modules/expensereport/doc/";
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+			return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		} else {
+			return 0;
+		}
 	}
 
 	/**

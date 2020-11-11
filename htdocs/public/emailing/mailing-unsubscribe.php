@@ -27,9 +27,11 @@
  *                  https://myserver/public/emailing/mailing-unsubscribe.php?unsuscrib=1&securitykey=securitykey&tag=abcdefghijklmn
  */
 
-if (!defined('NOLOGIN'))        define("NOLOGIN", 1); // This means this output page does not require to be logged.
-if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1'); // Do not check anti CSRF attack test
+if (!defined('NOLOGIN'))        define('NOLOGIN', '1');
+if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
 if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
+if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 
 /**
  * Header empty

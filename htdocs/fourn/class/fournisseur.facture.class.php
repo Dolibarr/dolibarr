@@ -98,12 +98,18 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public $ref;
 
-	public $label;
-	public $libelle; // @deprecated
-
-	public $product_ref;
+	/**
+	 * @var string Ref supplier
+	 */
 	public $ref_supplier;
+
+	/**
+	 * @var string Label of invoice
+	 */
+	public $label;
+
 	public $socid;
+
 	//Check constants for types
 	public $type = self::TYPE_STANDARD;
 
@@ -117,7 +123,6 @@ class FactureFournisseur extends CommonInvoice
 	/**
 	 * Set to 1 if the invoice is completely paid, otherwise is 0
 	 * @var int
-	 * @deprecated Use statuses stored in self::statut
 	 */
 	public $paye;
 
@@ -726,7 +731,7 @@ class FactureFournisseur extends CommonInvoice
 				$this->socid  = $obj->socid;
 				$this->socnom = $obj->socnom;
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
@@ -2289,10 +2294,10 @@ class FactureFournisseur extends CommonInvoice
 		if ($this->type == self::TYPE_CREDIT_NOTE) $picto .= 'a'; // Credit note
 		if ($this->type == self::TYPE_DEPOSIT)     $picto .= 'd'; // Deposit invoice
 
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("SupplierInvoice").'</u>';
-		if ($this->type == self::TYPE_REPLACEMENT) $label = '<u>'.$langs->transnoentitiesnoconv("InvoiceReplace").'</u>';
-		elseif ($this->type == self::TYPE_CREDIT_NOTE) $label = '<u>'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
-		elseif ($this->type == self::TYPE_DEPOSIT)     $label = '<u>'.$langs->transnoentitiesnoconv("Deposit").'</u>';
+		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("SupplierInvoice").'</u>';
+		if ($this->type == self::TYPE_REPLACEMENT) $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("InvoiceReplace").'</u>';
+		elseif ($this->type == self::TYPE_CREDIT_NOTE) $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
+		elseif ($this->type == self::TYPE_DEPOSIT)     $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("Deposit").'</u>';
 		if (!empty($this->ref))
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (!empty($this->ref_supplier))
@@ -2400,7 +2405,7 @@ class FactureFournisseur extends CommonInvoice
 			return $numref;
 		} else {
 			$this->error = $obj->error;
-			return false;
+			return -1;
 		}
 	}
 

@@ -92,7 +92,7 @@ create table llx_product
   lifo                          double(24,8),                       -- To store valuation of stock calculated using lifo method, for this product. TODO Not used, should be replaced by stock value stored into movement table.
   fk_default_warehouse          integer      DEFAULT NULL,
   canvas                        varchar(32)  DEFAULT NULL,
-  finished                      tinyint      DEFAULT NULL,          -- 1=manufactured product, 0=matiere premiere
+  finished                      tinyint      DEFAULT NULL,          -- see dictionnary c_product_nature
   hidden                        tinyint      DEFAULT 0,             -- Not used. Deprecated.
   import_key                    varchar(14),                        -- Import key
   model_pdf                     varchar(255),                       -- model save dodument used

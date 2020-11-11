@@ -93,7 +93,6 @@ $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 
 $status = GETPOST('statut', 'alpha');
-$search_status = GETPOST('search_status');
 
 // Security check
 $orderid = GETPOST('orderid', 'int');
@@ -977,7 +976,7 @@ if ($resql)
 	if (!empty($arrayfields['cf.billed']['checked']))
 	{
 		print '<td class="liste_titre center">';
-		print $form->selectyesno('search_billed', $search_billed, 1, 0, 1);
+		print $form->selectyesno('search_billed', $search_billed, 1, 0, 1, 1);
 		print '</td>';
 	}
 	// Action column

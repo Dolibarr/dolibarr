@@ -187,7 +187,7 @@ if (!empty($object->multilangs))
 	}
 }
 
-dol_fiche_head($head, 'translation', $langs->trans($title), -1, 'category');
+print dol_get_fiche_head($head, 'translation', $langs->trans($title), -1, 'category');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("BackToList").'</a>';
 $object->next_prev_filter = ' type = '.$object->type;
@@ -223,7 +223,7 @@ print '</td></tr>';
 print '</table>';
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 

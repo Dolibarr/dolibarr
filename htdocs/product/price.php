@@ -162,7 +162,7 @@ if (empty($reshook))
 		if ($error)
 		{
 			//$localtaxarray=array('0'=>$localtax1_type,'1'=>$localtax1,'2'=>$localtax2_type,'3'=>$localtax2);
-			$localtaxarray = array(); // We do not store localtaxes into product, we will use instead the "vat code" to retreive them.
+			$localtaxarray = array(); // We do not store localtaxes into product, we will use instead the "vat code" to retrieve them.
 			$object->updatePrice(0, $object->price_base_type, $user, $tva_tx, '', 0, $npr, 0, 0, $localtaxarray, $vatratecode);
 		}
 
@@ -470,7 +470,7 @@ if (empty($reshook))
 
 			$result = $db->query($sql);
 		} else {
-			setEventMessages(('delete_price_by_qty'.$langs->transnoentities(MissingIds)), null, 'errors');
+			setEventMessages(('delete_price_by_qty'.$langs->transnoentities('MissingIds')), null, 'errors');
 		}
 	}
 
@@ -703,7 +703,7 @@ $head = product_prepare_head($object);
 $titre = $langs->trans("CardProduct".$object->type);
 $picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 
-dol_fiche_head($head, 'price', $titre, -1, $picto);
+print dol_get_fiche_head($head, 'price', $titre, -1, $picto);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 $object->next_prev_filter = " fk_product_type = ".$object->type;
@@ -1087,7 +1087,7 @@ print '</div>';
 print '<div style="clear:both"></div>';
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 
@@ -1148,7 +1148,7 @@ if ($action == 'edit_vat' && ($user->rights->produit->creer || $user->rights->se
 	print '<input type="hidden" name="action" value="update_vat">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-	dol_fiche_head('');
+	print dol_get_fiche_head('');
 
 	print '<table class="border centpercent">';
 
@@ -1159,7 +1159,7 @@ if ($action == 'edit_vat' && ($user->rights->produit->creer || $user->rights->se
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
@@ -1182,7 +1182,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		print '<input type="hidden" name="action" value="update_price">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-		dol_fiche_head('');
+		print dol_get_fiche_head('');
 
 		print '<table class="border centpercent">';
 
@@ -1272,7 +1272,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 
 		print '</table>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
@@ -1312,7 +1312,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		print '<input type="hidden" name="action" value="update_price">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-		//dol_fiche_head('', '', '', -1);
+		//print dol_get_fiche_head('', '', '', -1);
 
 		if ((!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) && !empty($conf->global->PRODUIT_MULTIPRICES_ALLOW_AUTOCALC_PRICELEVEL)) {
 			print $langs->trans('UseMultipriceRules').' <input type="checkbox" id="usePriceRules" name="usePriceRules" '.($object->price_autogen ? 'checked' : '').'><br><br>';
@@ -1392,7 +1392,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 
 		print '</table>';
 
-		//dol_fiche_end();
+		//print dol_get_fiche_end();
 
 		print '<div style="text-align: center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
@@ -1443,16 +1443,13 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
 			$num = $db->num_rows($result);
 		}
 
-		if ($num > 0)
-		{
+		if ($num > 0) {
 			// Default prices or
 			// Log of previous customer prices
-			$backbutton = '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">'.$langs->trans("Back").'</a>';
+			$backbutton = '<a class="justalink" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">'.$langs->trans("Back").'</a>';
 
-			if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) print_barre_liste($langs->trans("DefaultPrice"), 0, $_SERVER["PHP_SELF"], '', '', '', $backbutton, 0, $num, 'title_accountancy.png');
+			if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) print_barre_liste($langs->trans("DefaultPriceLog"), 0, $_SERVER["PHP_SELF"], '', '', '', $backbutton, 0, $num, 'title_accountancy.png');
 			else print_barre_liste($langs->trans("PriceByCustomerLog"), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, $num, 'title_accountancy.png');
-			//if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) print_barre_liste($langs->trans("DefaultPrice"),'','','','','',$backbutton, 0, 0, 'title_accountancy.png');
-			//else print_barre_liste($langs->trans("PriceByCustomerLog"),'','','','','','', 0, 0, 'title_accountancy.png');
 
 			print '<div class="div-table-responsive">';
 			print '<table class="noborder centpercent">';
@@ -1652,7 +1649,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '<input type="hidden" name="action" value="add_customer_price_confirm">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-		dol_fiche_head();
+		print dol_get_fiche_head();
 
 		print '<table class="border centpercent">';
 		print '<tr>';
@@ -1705,7 +1702,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		print '</table>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 
@@ -1738,7 +1735,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '<input type="hidden" name="action" value="update_customer_price_confirm">';
 		print '<input type="hidden" name="lineid" value="'.$prodcustprice->id.'">';
 
-		dol_fiche_head();
+		print dol_get_fiche_head();
 
 		print '<table class="border centpercent">';
 		print '<tr>';
@@ -1800,7 +1797,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		print '</table>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<div class="marginbottomonly">';
@@ -2062,7 +2059,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 			print img_info($langs->trans('PriceByCustomerLog'));
 			print '</a>';
 			print ' ';
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=edit_price&amp;id='.$object->id.'">';
+			print '<a class="marginleftonly editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_price&amp;id='.$object->id.'">';
 			print img_edit('default', 0, 'style="vertical-align: middle;"');
 			print '</a>';
 			print ' &nbsp; ';
@@ -2144,11 +2141,11 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 					print img_info($langs->trans('PriceByCustomerLog'));
 					print '</a>';
 					print ' ';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=edit_customer_price&amp;id='.$object->id.'&amp;lineid='.$line->id.'">';
+					print '<a class="marginleftonly editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_customer_price&amp;id='.$object->id.'&amp;lineid='.$line->id.'">';
 					print img_edit('default', 0, 'style="vertical-align: middle;"');
 					print '</a>';
 					print ' ';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_customer_price&amp;token='.newToken().'&amp;id='.$object->id.'&amp;lineid='.$line->id.'">';
+					print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?action=delete_customer_price&amp;token='.newToken().'&amp;id='.$object->id.'&amp;lineid='.$line->id.'">';
 					print img_delete('default', 'style="vertical-align: middle;"');
 					print '</a>';
 					print '</td>';

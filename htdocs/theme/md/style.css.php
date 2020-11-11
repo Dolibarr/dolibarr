@@ -1269,6 +1269,15 @@ table[summary="list_of_modules"] .fa-cog {
     .minwidth500imp { min-width: 250px !important; }
 }
 
+.widthcentpercentminusx {
+	width: calc(100% - 50px) !important;
+	display: inline-block;
+}
+.widthcentpercentminusxx {
+	width: calc(100% - 70px) !important;
+	display: inline-block;
+}
+
 /* Force values for small screen 767 */
 @media only screen and (max-width: 767px)
 {
@@ -1279,7 +1288,9 @@ table[summary="list_of_modules"] .fa-cog {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize).'px' : $fontsize; ?> !important;
 	}
 
-	.clearbothonsmartphone { clear: both; display: block; }
+	div.divphotoref {
+	    padding-right: 10px !important;
+	}
 }
 
 /* Force values for small screen 570 */
@@ -1288,12 +1299,24 @@ table[summary="list_of_modules"] .fa-cog {
 	body {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize).'px' : $fontsize; ?>;
 	}
+
 	div.refidno {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize).'px' : $fontsize; ?> !important;
 	}
 
 	.login_vertical_align {
     	padding-left: 0;
+    }
+    .login_table input#username, .login_table input#password, .login_table input#securitycode {
+		margin-left: 5px !important;    
+    }
+	div#login_left, div#login_right {
+	    min-width: 150px !important;
+	    padding-left: 5px !important;
+	    padding-right: 5px !important;
+    }
+    .login_table div#login_right .tdinputlogin, .login_table div#login_right .tdinputlogin input {
+	    min-width: 150px !important;
     }
 
 	.divmainbodylarge { margin-left: 20px; margin-right: 20px; }
@@ -2205,30 +2228,30 @@ div.mainmenu.website {
 		$found = 0; $url = '';
 		foreach ($conf->file->dol_document_root as $dirroot)
 		{
-		    if (file_exists($dirroot."/".$val."/img/".$val.".png"))
+			if (file_exists($dirroot."/".$val."/img/".$val.".png"))
 			{
-			    $url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
-			    $found = 1;
-			    break;
+				$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
+				$found = 1;
+				break;
 			}
 		}
 		// Img file not found
 		if (!$found)
 		{
-		    if (!defined('DISABLE_FONT_AWSOME')) {
-		        print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
-		        print 'div.mainmenu.'.$val.'::before {
+			if (!defined('DISABLE_FONT_AWSOME')) {
+				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+				print 'div.mainmenu.'.$val.'::before {
 	                    content: "\f249";
 	                }';
-		    } else {
-		    	print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
-		    	print "/* Overwrite this definition in your own css with a different content to use your own font awesome icon. */\n";
-		        $url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
-		        print "div.mainmenu.".$val." {\n";
-		        print "	background-image: url(".$url.");\n";
-		        print "}\n";
-	    	}
-	    	$generic++;
+			} else {
+				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
+				print "/* Overwrite this definition in your own css with a different content to use your own font awesome icon. */\n";
+				$url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
+				print "div.mainmenu.".$val." {\n";
+				print "	background-image: url(".$url.");\n";
+				print "}\n";
+			}
+			$generic++;
 		} else {
 			print "div.mainmenu.".$val." {\n";
 			print "	background-image: url(".$url.");\n";
@@ -2324,9 +2347,11 @@ form#login {
 }
 .login_table .tdinputlogin {
     background-color: #fff;
-    border: 2px solid #ccc;
     min-width: 220px;
     border-radius: 2px;
+}
+.login_table .tdinputlogin {
+	border-bottom: 1px solid #ccc; 
 }
 .login_table .tdinputlogin .fa {
 	padding-left: 10px;
@@ -3690,6 +3715,15 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 }
 @media only screen and (max-width: 767px)
 {
+	.tabBar .arearef .pagination.paginationref {
+	    max-width: calc(50%);
+	}
+
+	.clearbothonsmartphone {
+	    clear: both;
+	    display: block !important;
+	}
+
 	div.tabs {
 		padding-left: 0 !important;
 		margin-left: 0 !important;

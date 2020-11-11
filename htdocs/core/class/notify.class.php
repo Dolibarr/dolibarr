@@ -37,9 +37,9 @@ class Notify
 	public $id;
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
 	/**
 	 * @var string Error code (or message)
@@ -58,9 +58,9 @@ class Notify
 	public $note;
 
 	/**
-     * @var int Project ID
-     */
-    public $fk_project;
+	 * @var int Project ID
+	 */
+	public $fk_project;
 
 	// Les codes actions sont definis dans la table llx_notify_def
 
@@ -335,7 +335,7 @@ class Notify
 		$object_type = '';
 		$link = '';
 		$num = 0;
-        $error = 0;
+		$error = 0;
 
 		$oldref = (empty($object->oldref) ? $object->ref : $object->oldref);
 		$newref = (empty($object->newref) ? $object->ref : $object->newref);
@@ -413,31 +413,31 @@ class Notify
 
 						switch ($notifcode) {
 							case 'BILL_VALIDATE':
-								$link = '<a href="' . $urlwithroot . '/compta/facture/card.php?facid=' . $object->id . '">' . $newref . '</a>';
+								$link = '<a href="'.$urlwithroot.'/compta/facture/card.php?facid='.$object->id.'">'.$newref.'</a>';
 								$dir_output = $conf->facture->dir_output;
 								$object_type = 'facture';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInvoiceValidated", $link);
 								break;
 							case 'BILL_PAYED':
-								$link ='<a href="' . $urlwithroot . '/compta/facture/card.php?facid='.$object->id . '">' . $newref . '</a>';
+								$link = '<a href="'.$urlwithroot.'/compta/facture/card.php?facid='.$object->id.'">'.$newref.'</a>';
 								$dir_output = $conf->facture->dir_output;
 								$object_type = 'facture';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInvoicePayed", $link);
 								break;
 							case 'ORDER_VALIDATE':
-								$link = '<a href="' . $urlwithroot . '/commande/card.php?id='.$object->id . '">' . $newref . '</a>';
+								$link = '<a href="'.$urlwithroot.'/commande/card.php?id='.$object->id.'">'.$newref.'</a>';
 								$dir_output = $conf->commande->dir_output;
 								$object_type = 'order';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextOrderValidated", $link);
 								break;
 							case 'PROPAL_VALIDATE':
-								$link = '<a href="' . $urlwithroot . '/comm/propal/card.php?id='.$object->id . '">' . $newref . '</a>';
+								$link = '<a href="'.$urlwithroot.'/comm/propal/card.php?id='.$object->id.'">'.$newref.'</a>';
 								$dir_output = $conf->propal->multidir_output[$object->entity];
 								$object_type = 'propal';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalValidated", $link);
 								break;
 							case 'PROPAL_CLOSE_SIGNED':
-								$link = '<a href="' . $urlwithroot . '/comm/propal/card.php?id='.$object->id . '">' . $newref . '</a>';
+								$link = '<a href="'.$urlwithroot.'/comm/propal/card.php?id='.$object->id.'">'.$newref.'</a>';
 								$dir_output = $conf->propal->multidir_output[$object->entity];
 								$object_type = 'propal';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalClosedSigned", $link);
@@ -471,7 +471,7 @@ class Notify
 								$mesg .= "\n\n".$outputlangs->transnoentitiesnoconv("Sincerely").".\n\n";
 								break;
 							case 'ORDER_SUPPLIER_REFUSE':
-								$link = '<a href="' . $urlwithroot . '/fourn/commande/card.php?id='.$object->id . '">' . $newref . '</a>';
+								$link = '<a href="'.$urlwithroot.'/fourn/commande/card.php?id='.$object->id.'">'.$newref.'</a>';
 								$dir_output = $conf->fournisseur->commande->dir_output;
 								$object_type = 'order_supplier';
 								$mesg = $outputlangs->transnoentitiesnoconv("Hello").",\n\n";
@@ -534,7 +534,7 @@ class Notify
 							if (!empty($hookmanager->resArray['message'])) $message .= $hookmanager->resArray['message'];
 						}
 
-                        $mailfile = new CMailFile(
+						$mailfile = new CMailFile(
 							$subject,
 							$sendto,
 							$replyto,
@@ -546,12 +546,12 @@ class Notify
 							'',
 							0,
 							-1,
-                            '',
-                            '',
-                            $trackid,
-                            '',
-                            'notification'
-                        );
+							'',
+							'',
+							$trackid,
+							'',
+							'notification'
+						);
 
 						if ($mailfile->sendfile())
 						{
@@ -761,7 +761,7 @@ class Notify
 						if (!empty($hookmanager->resArray['subject'])) $subject .= $hookmanager->resArray['subject'];
 						if (!empty($hookmanager->resArray['message'])) $message .= $hookmanager->resArray['message'];
 					}
-                    $mailfile = new CMailFile(
+					$mailfile = new CMailFile(
 						$subject,
 						$sendto,
 						$replyto,
@@ -773,11 +773,11 @@ class Notify
 						'',
 						0,
 						1,
-                        '',
-                        $trackid,
-                        '',
-                        '',
-                        'notification'
+						'',
+						$trackid,
+						'',
+						'',
+						'notification'
 					);
 
 					if ($mailfile->sendfile())

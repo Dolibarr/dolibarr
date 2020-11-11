@@ -125,7 +125,7 @@ if (!empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('TaxSetup'), $linkback, 'title_setup');
 
-//dol_fiche_head(null, '', '', -1);
+//print dol_get_fiche_head(null, '', '', -1);
 
 if (empty($mysoc->tva_assuj))
 {

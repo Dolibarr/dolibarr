@@ -264,6 +264,7 @@ class Form
 				elseif (preg_match('/^(amount|numeric)/', $typeofdata)) $ret .= ($value != '' ? price($value, '', $langs, 0, -1, -1, $conf->currency) : '');
 				elseif (preg_match('/^text/', $typeofdata) || preg_match('/^note/', $typeofdata))  $ret .= dol_htmlentitiesbr($value);
 				elseif (preg_match('/^safehtmlstring/', $typeofdata)) $ret .= dol_string_onlythesehtmltags($value);
+				elseif (preg_match('/^restricthtml/', $typeofdata)) $ret .= dol_string_onlythesehtmltags($value);
 				elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') $ret .= dol_print_date($value, 'day');
 				elseif ($typeofdata == 'dayhour' || $typeofdata == 'datehourpicker') $ret .= dol_print_date($value, 'dayhour');
 				elseif (preg_match('/^select;/', $typeofdata))
@@ -508,7 +509,6 @@ class Form
 	 *  @param	int			$forcenowrap		Force no wrap between text and picto (works with notabs=2 only)
 	 *	@return	string							Code html du tooltip (texte+picto)
 	 *	@see	textwithpicto() Use thisfunction if you can.
-	 *  TODO Move this as static as soon as everybody use textwithpicto or @Form::textwithtooltip
 	 */
 	public function textwithtooltip($text, $htmltext, $tooltipon = 1, $direction = 0, $img = '', $extracss = '', $notabs = 3, $incbefore = '', $noencodehtmltext = 0, $tooltiptrigger = '', $forcenowrap = 0)
 	{
@@ -810,7 +810,7 @@ class Form
 					$out .= '<option value="special_eec"'.($selected == 'special_eec' ? ' selected' : '').'>'.$langs->trans("CountriesInEEC").'</option>';
 					if ($mysoc->isInEEC()) $out .= '<option value="special_eecnotme"'.($selected == 'special_eecnotme' ? ' selected' : '').'>'.$langs->trans("CountriesInEECExceptMe", $langs->transnoentitiesnoconv("Country".$mysoc->country_code)).'</option>';
 					$out .= '<option value="special_noteec"'.($selected == 'special_noteec' ? ' selected' : '').'>'.$langs->trans("CountriesNotInEEC").'</option>';
-					$out .= '<option value="" disabled class="selectoptiondisabledwhite">--------------</option>';
+					$out .= '<option value="" disabled class="selectoptiondisabledwhite">------------</option>';
 				}
 
 				foreach ($countryArray as $row)
@@ -823,7 +823,7 @@ class Form
 					if (empty($row['favorite']) && $atleastonefavorite)
 					{
 						$atleastonefavorite = 0;
-						$out .= '<option value="" disabled class="selectoptiondisabledwhite">--------------</option>';
+						$out .= '<option value="" disabled class="selectoptiondisabledwhite">------------</option>';
 					}
 					if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['code_iso3'] || $selected == $row['label']))
 					{
@@ -1185,19 +1185,17 @@ class Form
 			}
 		}
 
-		// On recherche les societes
+		// We search companies
 		$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
-
-		if ($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST) {
+		if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
 			$sql .= ", s.address, s.zip, s.town";
 			$sql .= ", dictp.code as country_code";
 		}
-
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		if ($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST) {
-			$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."c_country as dictp ON dictp.rowid=s.fk_pays";
+		if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as dictp ON dictp.rowid = s.fk_pays";
 		}
+		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql .= " WHERE s.entity IN (".getEntity('societe').")";
 		if (!empty($user->socid)) $sql .= " AND s.rowid = ".$user->socid;
 		if ($filter) $sql .= " AND (".$filter.")";
@@ -1250,7 +1248,7 @@ class Form
 				if ($showempty && !is_numeric($showempty)) $textifempty = $langs->trans($showempty);
 				else $textifempty .= $langs->trans("All");
 			}
-			if ($showempty) $out .= '<option value="-1">'.$textifempty.'</option>'."\n";
+			if ($showempty) $out .= '<option value="-1" data-html="'.dol_escape_htmltag('<span class="opacitymedium">'.$textifempty.'</span>').'">'.$textifempty.'</option>'."\n";
 
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -1285,10 +1283,10 @@ class Form
 						if ($obj->client || $obj->fournisseur) $label .= ')';
 					}
 
-					if ($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST) {
-						$label .= '-'.$obj->address.'-'.$obj->zip.' '.$obj->town;
+					if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
+						$label .= ($obj->address ? ' - '.$obj->address : '').($obj->zip ? ' - '.$obj->zip : '').($obj->town ? ' '.$obj->town : '');
 						if (!empty($obj->country_code)) {
-							$label .= ' '.$langs->trans('Country'.$obj->country_code);
+							$label .= ', '.$langs->trans('Country'.$obj->country_code);
 						}
 					}
 
@@ -1647,7 +1645,7 @@ class Form
 		$outarray = array();
 
 		// Forge request to select users
-		$sql = "SELECT DISTINCT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
+		$sql = "SELECT DISTINCT u.rowid, u.lastname as lastname, u.firstname, u.statut as status, u.login, u.admin, u.entity, u.photo";
 		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity)
 		{
 			$sql .= ", e.label";
@@ -1711,6 +1709,10 @@ class Form
 					$userstatic->id = $obj->rowid;
 					$userstatic->lastname = $obj->lastname;
 					$userstatic->firstname = $obj->firstname;
+					$userstatic->photo = $obj->photo;
+					$userstatic->statut = $obj->status;
+					$userstatic->entity = $obj->entity;
+					$userstatic->admin = $obj->admin;
 
 					$disableline = '';
 					if (is_array($enableonly) && count($enableonly) && !in_array($obj->rowid, $enableonly)) $disableline = ($enableonlytext ? $enableonlytext : '1');
@@ -1724,6 +1726,7 @@ class Form
 						$fullNameMode = 1; //Firstname+lastname
 					}
 					$labeltoshow .= $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength);
+					if (empty($obj->firstname) && empty($obj->lastname)) $labeltoshow .= $obj->login;
 
 					// Complete name with more info
 					$moreinfo = '';
@@ -1733,11 +1736,11 @@ class Form
 					}
 					if ($showstatus >= 0)
 					{
-						if ($obj->statut == 1 && $showstatus == 1)
+						if ($obj->status == 1 && $showstatus == 1)
 						{
 							$moreinfo .= ($moreinfo ? ' - ' : ' (').$langs->trans('Enabled');
 						}
-						if ($obj->statut == 0 && $showstatus == 1)
+						if ($obj->status == 0 && $showstatus == 1)
 						{
 							$moreinfo .= ($moreinfo ? ' - ' : ' (').$langs->trans('Disabled');
 						}
@@ -1763,10 +1766,17 @@ class Form
 					if ((is_object($selected) && $selected->id == $obj->rowid) || (!is_object($selected) && in_array($obj->rowid, $selected))) {
 						$out .= ' selected';
 					}
-					if ($showstatus >= 0 && $obj->statut == 0) {
-						$out .= ' data-html="'.dol_escape_htmltag('<strike class="opacitymediumxxx">'.$labeltoshow.'</strike>').'"';
+					$out .= ' data-html="';
+					$outhtml = '';
+					if (!empty($obj->photo))
+					{
+						$outhtml .= $userstatic->getNomUrl(-3, '', 0, 1, 24, 1, 'login', '', 1).' ';
 					}
-					$out .= '>';
+					if ($showstatus >= 0 && $obj->status == 0) $outhtml .= '<strike class="opacitymediumxxx">';
+					$outhtml .= $labeltoshow;
+					if ($showstatus >= 0 && $obj->status == 0) $outhtml .= '</strike>';
+					$out .= dol_escape_htmltag($outhtml);
+					$out .= '">';
 					$out .= $labeltoshow;
 					$out .= '</option>';
 
@@ -1848,7 +1858,7 @@ class Form
 				if ($ownerid == $value['id'] && is_array($listofuserid) && count($listofuserid) && in_array($ownerid, array_keys($listofuserid)))
 				{
 					$out .= '<div class="myavailability inline-block">';
-					$out .= '&nbsp;-&nbsp;<span class="opacitymedium">'.$langs->trans("Availability").':</span>  <input id="transparency" class="marginleftonly marginrightonly" '.($action == 'view' ? 'disabled' : '').' type="checkbox" name="transparency"'.($listofuserid[$ownerid]['transparency'] ? ' checked' : '').'>'.$langs->trans("Busy");
+					$out .= '<span class="hideonsmartphone">&nbsp;-&nbsp;<span class="opacitymedium">'.$langs->trans("Availability").':</span>  </span><input id="transparency" class="paddingrightonly" '.($action == 'view' ? 'disabled' : '').' type="checkbox" name="transparency"'.($listofuserid[$ownerid]['transparency'] ? ' checked' : '').'><label for="transparency">'.$langs->trans("Busy").'</label>';
 					$out .= '</div>';
 				}
 			}
@@ -1864,9 +1874,15 @@ class Form
 		if ($action != 'view')
 		{
 			$out .= '<input type="hidden" class="removedassignedhidden" name="removedassigned" value="">';
-			$out .= '<script type="text/javascript" language="javascript">jQuery(document).ready(function () {    jQuery(".removedassigned").click(function() {        jQuery(".removedassignedhidden").val(jQuery(this).val());    });})</script>';
+			$out .= '<script type="text/javascript" language="javascript">jQuery(document).ready(function () {';
+			$out .= 'jQuery(".removedassigned").click(function() { jQuery(".removedassignedhidden").val(jQuery(this).val()); });';
+			$out .= 'jQuery(".assignedtouser").change(function() { console.log(jQuery(".assignedtouser option:selected").val());';
+			$out .= ' if (jQuery(".assignedtouser option:selected").val() > 0) { jQuery("#'.$action.'assignedtouser").attr("disabled", false); }';
+			$out .= ' else { jQuery("#'.$action.'assignedtouser").attr("disabled", true); }';
+			$out .= '});';
+			$out .= '})</script>';
 			$out .= $this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
-			$out .= ' <input type="submit" class="button valignmiddle" name="'.$action.'assignedtouser" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
+			$out .= ' <input type="submit" disabled class="button valignmiddle" id="'.$action.'assignedtouser" name="'.$action.'assignedtouser" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
 			$out .= '<br>';
 		}
 
@@ -3264,6 +3280,7 @@ class Form
 		}
 		print '</select>';
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		print ajax_combobox($htmlname);
 	}
 
 	/**
@@ -3347,6 +3364,7 @@ class Form
 		}
 		print '</select>';
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		print ajax_combobox('select_'.$htmlname);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -3549,106 +3567,106 @@ class Form
 		return $return;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *      Load in cache list of transport mode
-     *
-     *      @return     int                 Nb of lines loaded, <0 if KO
-     */
-    public function load_cache_transport_mode()
-    {
-        // phpcs:enable
-        global $langs;
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *      Load in cache list of transport mode
+	 *
+	 *      @return     int                 Nb of lines loaded, <0 if KO
+	 */
+	public function load_cache_transport_mode()
+	{
+		// phpcs:enable
+		global $langs;
 
-        $num=count($this->cache_transport_mode);
-        if ($num > 0) return $num;    // Cache already loaded
+		$num = count($this->cache_transport_mode);
+		if ($num > 0) return $num; // Cache already loaded
 
-        dol_syslog(__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
-        $this->cache_transport_mode = array();
+		$this->cache_transport_mode = array();
 
-        $sql = "SELECT rowid, code, label, active";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_transport_mode";
-        $sql.= " WHERE entity IN (".getEntity('c_transport_mode').")";
-        //if ($active >= 0) $sql.= " AND active = ".$active;
+		$sql = "SELECT rowid, code, label, active";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_transport_mode";
+		$sql .= " WHERE entity IN (".getEntity('c_transport_mode').")";
+		//if ($active >= 0) $sql.= " AND active = ".$active;
 
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            $num = $this->db->num_rows($resql);
-            $i = 0;
-            while ($i < $num)
-            {
-                $obj = $this->db->fetch_object($resql);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($resql);
 
-                // If traduction exist, we use it else we take the default label
-                $label=($langs->transnoentitiesnoconv("PaymentTypeShort".$obj->code)!=("PaymentTypeShort".$obj->code)?$langs->transnoentitiesnoconv("PaymentTypeShort".$obj->code):($obj->label!='-'?$obj->label:''));
-                $this->cache_transport_mode[$obj->rowid]['rowid'] = $obj->rowid;
-                $this->cache_transport_mode[$obj->rowid]['code'] = $obj->code;
-                $this->cache_transport_mode[$obj->rowid]['label']= $label;
-                $this->cache_transport_mode[$obj->rowid]['active'] = $obj->active;
-                $i++;
-            }
+				// If traduction exist, we use it else we take the default label
+				$label = ($langs->transnoentitiesnoconv("PaymentTypeShort".$obj->code) != ("PaymentTypeShort".$obj->code) ? $langs->transnoentitiesnoconv("PaymentTypeShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
+				$this->cache_transport_mode[$obj->rowid]['rowid'] = $obj->rowid;
+				$this->cache_transport_mode[$obj->rowid]['code'] = $obj->code;
+				$this->cache_transport_mode[$obj->rowid]['label'] = $label;
+				$this->cache_transport_mode[$obj->rowid]['active'] = $obj->active;
+				$i++;
+			}
 
-            $this->cache_transport_mode = dol_sort_array($this->cache_transport_mode, 'label', 'asc', 0, 0, 1);
+			$this->cache_transport_mode = dol_sort_array($this->cache_transport_mode, 'label', 'asc', 0, 0, 1);
 
-            return $num;
-        }
-        else {
-            dol_print_error($this->db);
-            return -1;
-        }
-    }
+			return $num;
+		}
+		else {
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
 
-    /**
-     *      Return list of transport mode for intracomm report
-     *
-     *      @param	string	$selected       Id of the transport mode pre-selected
-     *      @param  string	$htmlname       Name of the select field
-     *      @param  int		$format         0=id+label, 1=code+code, 2=code+label, 3=id+code
-     *      @param  int		$empty			1=can be empty, 0 else
-     *      @param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
-     *      @param  int		$maxlength      Max length of label
-     *      @param  int     $active         Active or not, -1 = all
-     *      @param  string  $morecss        Add more CSS on select tag
-     * 		@return	void
-     */
-    public function selectTransportMode($selected = '', $htmlname = 'transportmode', $format = 0, $empty = 1, $noadmininfo = 0, $maxlength = 0, $active = 1, $morecss = '')
-    {
-        global $langs,$user;
+	/**
+	 *      Return list of transport mode for intracomm report
+	 *
+	 *      @param	string	$selected       Id of the transport mode pre-selected
+	 *      @param  string	$htmlname       Name of the select field
+	 *      @param  int		$format         0=id+label, 1=code+code, 2=code+label, 3=id+code
+	 *      @param  int		$empty			1=can be empty, 0 else
+	 *      @param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
+	 *      @param  int		$maxlength      Max length of label
+	 *      @param  int     $active         Active or not, -1 = all
+	 *      @param  string  $morecss        Add more CSS on select tag
+	 * 		@return	void
+	 */
+	public function selectTransportMode($selected = '', $htmlname = 'transportmode', $format = 0, $empty = 1, $noadmininfo = 0, $maxlength = 0, $active = 1, $morecss = '')
+	{
+		global $langs, $user;
 
-        dol_syslog(__METHOD__." ".$selected.", ".$htmlname.", ".$format, LOG_DEBUG);
+		dol_syslog(__METHOD__." ".$selected.", ".$htmlname.", ".$format, LOG_DEBUG);
 
-        $this->load_cache_transport_mode();
+		$this->load_cache_transport_mode();
 
-        print '<select id="select'.$htmlname.'" class="flat selectmodetransport'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'">';
-        if ($empty) print '<option value="">&nbsp;</option>';
-        foreach ($this->cache_transport_mode as $id => $arraytypes)
-        {
-            // If not good status
-            if ($active >= 0 && $arraytypes['active'] != $active) continue;
+		print '<select id="select'.$htmlname.'" class="flat selectmodetransport'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
+		if ($empty) print '<option value="">&nbsp;</option>';
+		foreach ($this->cache_transport_mode as $id => $arraytypes)
+		{
+			// If not good status
+			if ($active >= 0 && $arraytypes['active'] != $active) continue;
 
-            // We discard empty line if showempty is on because an empty line has already been output.
-            if ($empty && empty($arraytypes['code'])) continue;
+			// We discard empty line if showempty is on because an empty line has already been output.
+			if ($empty && empty($arraytypes['code'])) continue;
 
-            if ($format == 0) print '<option value="'.$id.'"';
-            elseif ($format == 1) print '<option value="'.$arraytypes['code'].'"';
-            elseif ($format == 2) print '<option value="'.$arraytypes['code'].'"';
-            elseif ($format == 3) print '<option value="'.$id.'"';
-            // If text is selected, we compare with code, else with id
-            if (preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) print ' selected';
-            elseif ($selected == $id) print ' selected';
-            print '>';
-            if ($format == 0) $value=($maxlength?dol_trunc($arraytypes['label'], $maxlength):$arraytypes['label']);
-            elseif ($format == 1) $value=$arraytypes['code'];
-            elseif ($format == 2) $value=($maxlength?dol_trunc($arraytypes['label'], $maxlength):$arraytypes['label']);
-            elseif ($format == 3) $value=$arraytypes['code'];
-            print $value?$value:'&nbsp;';
-            print '</option>';
-        }
-        print '</select>';
-        if ($user->admin && ! $noadmininfo) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-    }
+			if ($format == 0) print '<option value="'.$id.'"';
+			elseif ($format == 1) print '<option value="'.$arraytypes['code'].'"';
+			elseif ($format == 2) print '<option value="'.$arraytypes['code'].'"';
+			elseif ($format == 3) print '<option value="'.$id.'"';
+			// If text is selected, we compare with code, else with id
+			if (preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) print ' selected';
+			elseif ($selected == $id) print ' selected';
+			print '>';
+			if ($format == 0) $value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
+			elseif ($format == 1) $value = $arraytypes['code'];
+			elseif ($format == 2) $value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
+			elseif ($format == 3) $value = $arraytypes['code'];
+			print $value ? $value : '&nbsp;';
+			print '</option>';
+		}
+		print '</select>';
+		if ($user->admin && !$noadmininfo) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+	}
 
 	/**
 	 *  Return a HTML select list of shipping mode
@@ -3696,6 +3714,8 @@ class Form
 				}
 				print "</select>";
 				if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+
+				print ajax_combobox('select'.$htmlname);
 			} else {
 				print $langs->trans("NoShippingMethodDefined");
 			}
@@ -3881,7 +3901,7 @@ class Form
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($result);
-					if ($selected == $obj->rowid)
+					if ($selected == $obj->rowid || ($useempty == 2 && $num == 1 && empty($selected)))
 					{
 						print '<option value="'.$obj->rowid.'" selected>';
 					} else {
@@ -3894,6 +3914,7 @@ class Form
 					$i++;
 				}
 				print "</select>";
+				print ajax_combobox('select'.$htmlname);
 			} else {
 				if ($status == 0) print '<span class="opacitymedium">'.$langs->trans("NoActiveBankAccountDefined").'</span>';
 				else print '<span class="opacitymedium">'.$langs->trans("NoBankAccountFound").'</span>';
@@ -4213,10 +4234,11 @@ class Form
 							$more .= '<div class="tagtr">';
 							if ($i == 0) $more .= '<div class="tagtd'.(empty($input['tdclass']) ? ' tdtop' : (' tdtop '.$input['tdclass'])).'">'.$input['label'].'</div>';
 							else $more .= '<div clas="tagtd'.(empty($input['tdclass']) ? '' : (' "'.$input['tdclass'])).'">&nbsp;</div>';
-							$more .= '<div class="tagtd"><input type="radio" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"'.$moreattr;
+							$more .= '<div class="tagtd'.($i == 0 ? ' tdtop' : '').'"><input type="radio" class="flat'.$morecss.'" id="'.$input['name'].$selkey.'" name="'.$input['name'].'" value="'.$selkey.'"'.$moreattr;
 							if ($input['disabled']) $more .= ' disabled';
+							if (isset($input['default']) && $input['default'] === $selkey) $more .= ' checked="checked"';
 							$more .= ' /> ';
-							$more .= $selval;
+							$more .= '<label for="'.$input['name'].$selkey.'">'.$selval.'</label>';
 							$more .= '</div></div>'."\n";
 							$i++;
 						}
@@ -4683,40 +4705,40 @@ class Form
 		}
 	}
 
-    /**
-     *    Show form with transport mode
-     *
-     *    @param	string	$page        	Page
-     *    @param    int		$selected    	Id mode pre-select
-     *    @param    string	$htmlname    	Name of select html field
-     *    @param    int     $active         Active or not, -1 = all
-     *    @param    int     $addempty       1=Add empty entry
-     *    @return	void
-     */
-    public function formSelectTransportMode($page, $selected = '', $htmlname = 'transport_mode_id', $active = 1, $addempty = 0)
-    {
-        global $langs;
-        if ($htmlname != "none")
-        {
-            print '<form method="POST" action="'.$page.'">';
-            print '<input type="hidden" name="action" value="setmode">';
-            print '<input type="hidden" name="token" value="'.newToken().'">';
-            $this->selectTransportMode($selected, $htmlname, 2, $addempty, 0, 0, $active);
-            print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-            print '</form>';
-        }
-        else {
-            if ($selected)
-            {
-                $this->load_cache_transport_mode();
-                print $this->cache_transport_mode[$selected]['label'];
-            } else {
-                print "&nbsp;";
-            }
-        }
-    }
+	/**
+	 *    Show form with transport mode
+	 *
+	 *    @param	string	$page        	Page
+	 *    @param    int		$selected    	Id mode pre-select
+	 *    @param    string	$htmlname    	Name of select html field
+	 *    @param    int     $active         Active or not, -1 = all
+	 *    @param    int     $addempty       1=Add empty entry
+	 *    @return	void
+	 */
+	public function formSelectTransportMode($page, $selected = '', $htmlname = 'transport_mode_id', $active = 1, $addempty = 0)
+	{
+		global $langs;
+		if ($htmlname != "none")
+		{
+			print '<form method="POST" action="'.$page.'">';
+			print '<input type="hidden" name="action" value="setmode">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			$this->selectTransportMode($selected, $htmlname, 2, $addempty, 0, 0, $active);
+			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+			print '</form>';
+		}
+		else {
+			if ($selected)
+			{
+				$this->load_cache_transport_mode();
+				print $this->cache_transport_mode[$selected]['label'];
+			} else {
+				print "&nbsp;";
+			}
+		}
+	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Show form with multicurrency code
 	 *
@@ -5027,9 +5049,11 @@ class Form
 	 *  @param	string	$selected    preselected currency code
 	 *  @param  string	$htmlname    name of HTML select list
 	 *  @param  integer	$useempty    1=Add empty line
+	 *  @param string $filter Optional filters criteras (example: 'code <> x', ' in (1,3)')
+	 *  @param bool $excludeConfCurrency false  = If company current currency not in table, we add it into list. Should always be available.  true = we are in currency_rate update , we don't want to see conf->currency in select
 	 * 	@return	string
 	 */
-	public function selectMultiCurrency($selected = '', $htmlname = 'multicurrency_code', $useempty = 0)
+	public function selectMultiCurrency($selected = '', $htmlname = 'multicurrency_code', $useempty = 0, $filter = '', $excludeConfCurrency = false)
 	{
 		global $db, $conf, $langs, $user;
 
@@ -5039,6 +5063,7 @@ class Form
 
 		$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'multicurrency';
 		$sql .= " WHERE entity IN ('".getEntity('mutlicurrency')."')";
+		if ($filter) $sql .= " AND ".$filter;
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -5049,7 +5074,7 @@ class Form
 		$out .= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
 		if ($useempty) $out .= '<option value="">&nbsp;</option>';
 		// If company current currency not in table, we add it into list. Should always be available.
-		if (!in_array($conf->currency, $TCurrency))
+		if (!in_array($conf->currency, $TCurrency) && !$excludeConfCurrency)
 		{
 			$TCurrency[$conf->currency] = $conf->currency;
 		}
@@ -5578,7 +5603,6 @@ class Form
 			}
 			// Show date with combo selects
 			else {
-				//$retstring.='<div class="inline-block">';
 				// Day
 				$retstring .= '<select'.($disabled ? ' disabled' : '').' class="flat valignmiddle maxwidth50imp" id="'.$prefix.'day" name="'.$prefix.'day">';
 
@@ -5622,11 +5646,13 @@ class Form
 					}
 					$retstring .= "</select>\n";
 				}
-				//$retstring.='</div>';
 			}
 		}
 
-		if ($d && $h) $retstring .= ($h == 2 ? '<br>' : ' ');
+		if ($d && $h) {
+			$retstring .= ($h == 2 ? '<br>' : ' ');
+			$retstring .= '<span class="nowraponall">';
+		}
 
 		if ($h)
 		{
@@ -5644,10 +5670,13 @@ class Form
 			for ($hour = $hourstart; $hour < $hourend; $hour++)
 			{
 				if (strlen($hour) < 2) $hour = "0".$hour;
-				$retstring .= '<option value="'.$hour.'"'.(($hour == $shour) ? ' selected' : '').'>'.$hour.(empty($conf->dol_optimize_smallscreen) ? '' : 'H').'</option>';
+				$retstring .= '<option value="'.$hour.'"'.(($hour == $shour) ? ' selected' : '').'>'.$hour;
+				//$retstring .= (empty($conf->dol_optimize_smallscreen) ? '' : 'H');
+				$retstring .= '</option>';
 			}
 			$retstring .= '</select>';
-			if ($m && empty($conf->dol_optimize_smallscreen)) $retstring .= ":";
+			//if ($m && empty($conf->dol_optimize_smallscreen)) $retstring .= ":";
+			if ($m) $retstring .= ":";
 		}
 
 		if ($m)
@@ -5663,6 +5692,10 @@ class Form
 			$retstring .= '</select>';
 
 			$retstring .= '<input type="hidden" name="'.$prefix.'sec" value="'.$ssec.'">';
+		}
+
+		if ($d && $h) {
+			$retstring .= '</span>';
 		}
 
 		// Add a "Now" link
@@ -6415,7 +6448,7 @@ class Form
 	 *  Note: Do not apply langs->trans function on returned content of Ajax service, content may be entity encoded twice.
 	 *
 	 *  @param  string	$htmlname               Name of html select area
-	 *	@param	string	$array					Array (key=>array('text'=>'A text', 'url'=>'An url'), ...)
+	 *	@param	array	$array					Array (key=>array('text'=>'A text', 'url'=>'An url'), ...)
 	 *	@param	string	$id             		Preselected key
 	 *	@param  string	$moreparam      		Add more parameters onto the select tag
 	 *	@param	int		$disableFiltering		If set to 1, results are not filtered with searched string
@@ -6590,7 +6623,7 @@ class Form
 							 	templateSelection: formatSelection		/* For 4.0 */
 							});
 						});'."\n";
-			} elseif ($addjscombo == 2 && ! defined('DISABLE_MULTISELECT'))
+			} elseif ($addjscombo == 2 && !defined('DISABLE_MULTISELECT'))
 			{
 				// Add other js lib
 				// TODO external lib multiselect/jquery.multi-select.js must have been loaded to use this multiselect plugin
@@ -6868,7 +6901,7 @@ class Form
 					$tplpath = 'reception';
 					if (empty($conf->reception->enabled)) continue; // Do not show if module disabled
 				} elseif ($objecttype == 'delivery') {
-					$tplpath = 'livraison';
+					$tplpath = 'delivery';
 					if (empty($conf->expedition->enabled)) continue; // Do not show if module disabled
 				} elseif ($objecttype == 'invoice_supplier') {
 					$tplpath = 'fourn/facture';
@@ -7101,9 +7134,10 @@ class Form
 	 *	@param	int			$option			0 return yes/no, 1 return 1/0
 	 *	@param	bool		$disabled		true or false
 	 *  @param	int      	$useempty		1=Add empty line
+	 *  @param	int			$addjscombo		1=Add js beautifier on combo box
 	 *	@return	string						See option
 	 */
-	public function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0)
+	public function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0, $addjscombo = 0)
 	{
 		global $langs;
 
@@ -7128,6 +7162,11 @@ class Form
 			$resultyesno .= '<option value="'.$no.'"'.$selected.'>'.$langs->trans("No").'</option>'."\n";
 		}
 		$resultyesno .= '</select>'."\n";
+
+		if ($addjscombo) {
+			$resultyesno .= ajax_combobox($htmlname);
+		}
+
 		return $resultyesno;
 	}
 
@@ -7257,7 +7296,7 @@ class Form
 		}
 		if ($morehtml)
 		{
-			$ret .= '<li class="noborder litext">'.$morehtml.'</li>';
+			$ret .= '<li class="noborder litext'.(($shownav && $previous_ref && $next_ref) ? ' clearbothonsmartphone' : '').'">'.$morehtml.'</li>';
 		}
 		if ($shownav && ($previous_ref || $next_ref))
 		{
@@ -7685,7 +7724,7 @@ class Form
             $(document).ready(function() {
                 $("#' . $cssclass.'s").click(function() {
                     if($(this).is(\':checked\')){
-                        console.log("We check all '.$cssclass.'");
+                        console.log("We check all '.$cssclass.' and trigger the change method");
                 		$(".'.$cssclass.'").prop(\'checked\', true).trigger(\'change\');
                     }
                     else

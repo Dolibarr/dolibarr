@@ -112,9 +112,9 @@ if ($_POST)
 			{
 				$res = $combination->createProductCombination($user, $product, $currcomb, $sanitized_values, $price_var_percent);
 				if ($res < 0) {
-				    $error++;
-				    setEventMessages($combination->error, $combination->errors, 'errors');
-				    break;
+					$error++;
+					setEventMessages($combination->error, $combination->errors, 'errors');
+					break;
 				}
 			}
 
@@ -154,14 +154,14 @@ if (!empty($id) || !empty($ref)) {
 		$head = product_prepare_head($object);
 		$titre = $langs->trans("CardProduct".$object->type);
 		$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
-		dol_fiche_head($head, 'combinations', $titre, 0, $picto);
+		print dol_get_fiche_head($head, 'combinations', $titre, 0, $picto);
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 		$object->next_prev_filter = " fk_product_type = ".$object->type;
 
 		dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', '', '', '', 0, '', '', 1);
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 	}
 
 	print load_fiche_titre($langs->trans('ProductCombinationGenerator'));
@@ -378,8 +378,8 @@ if (!empty($id) || !empty($ref)) {
 
 	<?php
 
-    // End of page
-    llxFooter();
+	// End of page
+	llxFooter();
 }
 
 $db->close();

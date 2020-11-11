@@ -40,9 +40,9 @@ class modProductBatch extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-        global $langs, $conf;
+		global $langs, $conf;
 
-        $this->db = $db;
+		$this->db = $db;
 		$this->numero = 39000;
 
 		$this->family = "products";
@@ -79,18 +79,18 @@ class modProductBatch extends DolibarrModules
 		// Constants
 		$this->const = array();
 
-        $this->tabs = array();
+		$this->tabs = array();
 
-        // Dictionaries
-	    if (!isset($conf->productbatch->enabled))
-        {
-        	$conf->productbatch = new stdClass();
-        	$conf->productbatch->enabled = 0;
-        }
+		// Dictionaries
+		if (!isset($conf->productbatch->enabled))
+		{
+			$conf->productbatch = new stdClass();
+			$conf->productbatch->enabled = 0;
+		}
 		$this->dictionaries = array();
 
-        // Boxes
-        $this->boxes = array(); // List of boxes
+		// Boxes
+		$this->boxes = array(); // List of boxes
 
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
@@ -111,20 +111,20 @@ class modProductBatch extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')
 	{
-	    global $db, $conf;
+		global $db, $conf;
 
 		$sql = array();
 
 		if (!empty($conf->cashdesk->enabled)) {
-    		if (empty($conf->global->CASHDESK_NO_DECREASE_STOCK)) {
-    		    include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-    		    $res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK", 1, 'chaine', 0, '', $conf->entity);
-    		}
+			if (empty($conf->global->CASHDESK_NO_DECREASE_STOCK)) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+				$res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK", 1, 'chaine', 0, '', $conf->entity);
+			}
 		}
 
 		return $this->_init($sql, $options);

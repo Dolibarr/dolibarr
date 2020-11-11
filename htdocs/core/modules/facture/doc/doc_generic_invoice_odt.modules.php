@@ -46,15 +46,15 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	public $emetteur;
 
 	/**
-     * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.6 = array(5, 6)
-     */
+	 * @var array Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 */
 	public $phpmin = array(5, 6);
 
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr';
 
 
@@ -63,12 +63,12 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-    public function __construct($db)
-    {
+	public function __construct($db)
+	{
 		global $conf, $langs, $mysoc;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array("main", "companies"));
+		$langs->loadLangs(array("main", "companies"));
 
 		$this->db = $db;
 		$this->name = "ODT/ODS templates";
@@ -99,7 +99,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		// Recupere emetteur
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) $this->emetteur->country_code = substr($langs->defaultlang, -2); // Par defaut, si n'etait pas defini
-    }
+	}
 
 
 	/**
@@ -108,12 +108,12 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	 * @param	Translate	$langs      Lang object to use for output
 	 * @return	string      			Description
 	 */
-    public function info($langs)
-    {
+	public function info($langs)
+	{
 		global $conf, $langs;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array("errors", "companies"));
+		$langs->loadLangs(array("errors", "companies"));
 
 		$form = new Form($this->db);
 
@@ -171,15 +171,15 @@ class doc_generic_invoice_odt extends ModelePDFFactures
    			$texte .= '<div id="div_'.get_class($this).'" class="hidden">';
    			foreach ($listoffiles as $file)
    			{
-                $texte .= $file['name'].'<br>';
+				$texte .= $file['name'].'<br>';
    			}
    			$texte .= '</div>';
 		}
-        // Add input to upload a new template file.
-        $texte .= '<div>'.$langs->trans("UploadNewTemplate").' <input type="file" name="uploadfile">';
-        $texte .= '<input type="hidden" value="FACTURE_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
-        $texte .= '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
-        $texte .= '</div>';
+		// Add input to upload a new template file.
+		$texte .= '<div>'.$langs->trans("UploadNewTemplate").' <input type="file" name="uploadfile">';
+		$texte .= '<input type="hidden" value="FACTURE_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
+		$texte .= '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+		$texte .= '</div>';
 		$texte .= '</td>';
 
 		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
@@ -191,9 +191,9 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$texte .= '</form>';
 
 		return $texte;
-    }
+	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Function to build a document on disk using the generic odt module.
 	 *
@@ -205,9 +205,9 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	 *  @param		int			$hideref			Do not show ref
 	 *	@return		int         					1 if OK, <=0 if KO
 	 */
-    public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
-    {
-        // phpcs:enable
+	public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	{
+		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;
 
 		if (empty($srctemplatepath))
@@ -247,6 +247,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				}
 			}
 
+			$object->fetch_thirdparty();
+
 			$dir = $conf->facture->dir_output;
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) $dir .= "/".$objectref;
@@ -275,8 +277,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
 				if (!empty($conf->global->MAIN_DOC_USE_TIMING))
 				{
-				    $format = $conf->global->MAIN_DOC_USE_TIMING;
-				    if ($format == '1') $format = '%Y%m%d%H%M%S';
+					$format = $conf->global->MAIN_DOC_USE_TIMING;
+					if ($format == '1') $format = '%Y%m%d%H%M%S';
 					$filename = $newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
 				} else {
 					$filename = $newfiletmp.'.'.$newfileformat;
@@ -345,7 +347,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-                    $odfHandler = new odf(
+					$odfHandler = new odf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->facture->dir_temp,
@@ -410,7 +412,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 						}
 					} catch (OdfException $e)
 					{
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 				// Replace tags of lines
@@ -466,7 +468,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 						$odfHandler->setVars($key, $value, true, 'UTF-8');
 					} catch (OdfException $e)
 					{
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 
@@ -480,7 +482,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 						$odfHandler->exportAsAttachedPDF($file);
 					} catch (Exception $e) {
 						$this->error = $e->getMessage();
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				} else {
@@ -488,7 +490,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 						$odfHandler->saveToDisk($file);
 					} catch (Exception $e) {
 						$this->error = $e->getMessage();
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}
@@ -510,5 +512,5 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		}
 
 		return -1;
-    }
+	}
 }

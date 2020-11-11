@@ -91,20 +91,20 @@ class modBarcode extends DolibarrModules
 		$this->rights[2][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[2][4] = 'creer_advance';
 
-        // Main menu entries
-        $r = 0;
-        $this->menu[$r] = array('fk_menu'=>'fk_mainmenu=tools', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-						        'mainmenu'=>'tools',
-        						'leftmenu'=>'barcodeprint',
-        						'type'=>'left', // This is a Left menu entry
-						        'titre'=>'BarCodePrintsheet',
-						        'url'=>'/barcode/printsheet.php?mainmenu=tools&leftmenu=barcodeprint',
-						        'langs'=>'products', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-						        'position'=>200,
-						        'enabled'=>'$conf->barcode->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-        				        'perms'=>'($conf->global->MAIN_USE_ADVANCED_PERMS && $user->rights->barcode->lire_advance) || (! $conf->global->MAIN_USE_ADVANCED_PERMS)', // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-						        'target'=>'',
-						        'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
+		// Main menu entries
+		$r = 0;
+		$this->menu[$r] = array('fk_menu'=>'fk_mainmenu=tools', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+								'mainmenu'=>'tools',
+								'leftmenu'=>'barcodeprint',
+								'type'=>'left', // This is a Left menu entry
+								'titre'=>'BarCodePrintsheet',
+								'url'=>'/barcode/printsheet.php?mainmenu=tools&leftmenu=barcodeprint',
+								'langs'=>'products', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+								'position'=>200,
+								'enabled'=>'$conf->barcode->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+								'perms'=>'($conf->global->MAIN_USE_ADVANCED_PERMS && $user->rights->barcode->lire_advance) || (! $conf->global->MAIN_USE_ADVANCED_PERMS)', // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+								'target'=>'',
+								'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 
 		$this->menu[$r] = array('fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
@@ -121,12 +121,12 @@ class modBarcode extends DolibarrModules
 	}
 
 
-    /**
-     *      Function called when module is enabled.
-     *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-     *      It also creates data directories.
-     *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	/**
+	 *      Function called when module is enabled.
+	 *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *      It also creates data directories.
+	 *
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')

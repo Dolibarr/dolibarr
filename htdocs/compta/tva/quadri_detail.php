@@ -159,16 +159,16 @@ $prevyear = $year_start; $prevquarter = $q;
 if ($prevquarter > 1) {
 	$prevquarter--;
 } else {
-    $prevquarter = 4;
-    $prevyear--;
+	$prevquarter = 4;
+	$prevyear--;
 }
 $nextyear = $year_start;
 $nextquarter = $q;
 if ($nextquarter < 4) {
 	$nextquarter++;
 } else {
-    $nextquarter = 1;
-    $nextyear++;
+	$nextquarter = 1;
+	$nextyear++;
 }
 $description .= $fsearch;
 $builddate = dol_now();

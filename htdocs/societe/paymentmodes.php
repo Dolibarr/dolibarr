@@ -611,7 +611,7 @@ if (empty($reshook))
 					$tokenstring['stripe_user_id'] = $stripesup->id;
 					$tokenstring['type'] = $stripesup->type;
 					$sql = "UPDATE ".MAIN_DB_PREFIX."oauth_token";
-					$sql .= " SET tokenstring = '".dol_json_encode($tokenstring)."'";
+					$sql .= " SET tokenstring = '".$db->escape(json_encode($tokenstring))."'";
 					$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$db->escape($site_account)."') AND fk_soc = ".$object->id." AND service = '".$db->escape($service)."' AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
 					// TODO Add site and site_account on oauth_token table
 					$sql .= " WHERE fk_soc = ".$object->id." AND service = '".$db->escape($service)."' AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
@@ -630,7 +630,7 @@ if (empty($reshook))
 					$tokenstring['stripe_user_id'] = $stripesup->id;
 					$tokenstring['type'] = $stripesup->type;
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, fk_soc, entity, tokenstring)";
-					$sql .= " VALUES ('".$db->escape($service)."', ".$object->id.", ".$conf->entity.", '".dol_json_encode($tokenstring)."')";
+					$sql .= " VALUES ('".$db->escape($service)."', ".$object->id.", ".$conf->entity.", '".$db->escape(json_encode($tokenstring))."')";
 					// TODO Add site and site_account on oauth_token table
 				} catch (Exception $e) {
 					$error++;
@@ -773,7 +773,7 @@ if ($socid && ($action == 'create' || $action == 'createcard') && $user->rights-
 // View
 if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' && $action != 'createcard')
 {
-	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), -1, 'company');
+	print dol_get_fiche_head($head, 'rib', $langs->trans("ThirdParty"), -1, 'company');
 
 	// Confirm delete ban
 	if ($action == 'delete')
@@ -912,7 +912,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	print '</table>';
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<br>';
 
@@ -1581,7 +1581,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 // Edit BAN
 if ($socid && $action == 'edit' && $user->rights->societe->creer)
 {
-	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
+	print dol_get_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -1686,7 +1686,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 	}
 
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input class="button" value="'.$langs->trans("Modify").'" type="submit">';
@@ -1698,7 +1698,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 // Edit Card
 if ($socid && $action == 'editcard' && $user->rights->societe->creer)
 {
-	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
+	print dol_get_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -1733,7 +1733,7 @@ if ($socid && $action == 'editcard' && $user->rights->societe->creer)
 	print '</table>';
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input class="button" value="'.$langs->trans("Modify").'" type="submit">';
@@ -1746,7 +1746,7 @@ if ($socid && $action == 'editcard' && $user->rights->societe->creer)
 // Create BAN
 if ($socid && $action == 'create' && $user->rights->societe->creer)
 {
-	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
+	print dol_get_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -1847,7 +1847,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	dol_set_focus('#label');
 
@@ -1861,7 +1861,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 // Create Card
 if ($socid && $action == 'createcard' && $user->rights->societe->creer)
 {
-	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
+	print dol_get_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -1897,7 +1897,7 @@ if ($socid && $action == 'createcard' && $user->rights->societe->creer)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	dol_set_focus('#label');
 

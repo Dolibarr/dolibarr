@@ -235,7 +235,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
 $head = translation_prepare_head();
 
-dol_fiche_head($head, $mode, '', -1, '');
+print dol_get_fiche_head($head, $mode, '', -1, '');
 
 if ($mode == 'overwrite')
 {
@@ -547,7 +547,7 @@ if ($mode == 'searchkey')
 	print '</div>';
 }
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print "</form>\n";
 

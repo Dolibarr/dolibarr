@@ -33,23 +33,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceContactRoles extends DolibarrTriggers
 {
-
-	public $family = 'agenda';
-
-	public $description = "Triggers of this module auto link contact to company.";
-
 	/**
-	 * Version of the trigger
+	 * Constructor
 	 *
-	 * @var string
+	 * @param DoliDB $db Database handler
 	 */
-	public $version = self::VERSION_DOLIBARR;
+	public function __construct($db)
+	{
+		$this->db = $db;
 
-	/**
-	 *
-	 * @var string Image of the trigger
-	 */
-	public $picto = 'action';
+		$this->name = preg_replace('/^Interface/i', '', get_class($this));
+		$this->family = "agenda";
+		$this->description = "Triggers of this module auto link contact to company.";
+		// 'development', 'experimental', 'dolibarr' or version
+		$this->version = self::VERSION_DOLIBARR;
+		$this->picto = 'action';
+	}
 
 	/**
 	 * Function called when a Dolibarrr business event is done.

@@ -1506,9 +1506,10 @@ function dol_init_file_process($pathtoscan = '', $trackid = '')
  * @param	string	$link					Link to add (to add a link instead of a file)
  * @param   string  $trackid                Track id (used to prefix name of session vars to avoid conflict)
  * @param	int		$generatethumbs			1=Generate also thumbs for uploaded image files
+ * @param   Object  $object                 Object used to set 'src_object_*' fields
  * @return	int                             <=0 if KO, >0 if OK
  */
-function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesession = 0, $varfiles = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1)
+function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesession = 0, $varfiles = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1, $object = null)
 {
 	global $db, $user, $conf, $langs;
 
@@ -1561,7 +1562,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 				$destfile = dol_sanitizeFileName($info['filename'].($info['extension'] != '' ? ('.'.strtolower($info['extension'])) : ''));
 
 				// We apply dol_string_nohtmltag also to clean file names (this remove duplicate spaces) because
-				// this function is also applied when we make try to download file (by the GETPOST(filename, 'alphanohtml') call).
+				// this function is also applied when we rename and when we make try to download file (by the GETPOST(filename, 'alphanohtml') call).
 				$destfile = dol_string_nohtmltag($destfile);
 				$destfull = dol_string_nohtmltag($destfull);
 
@@ -1602,7 +1603,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 					// Update index table of files (llx_ecm_files)
 					if ($donotupdatesession == 1)
 					{
-						$result = addFileIntoDatabaseIndex($upload_dir, basename($destfile).($resupload == 2 ? '.noexe' : ''), $TFile['name'][$i], 'uploaded', 0);
+						$result = addFileIntoDatabaseIndex($upload_dir, basename($destfile).($resupload == 2 ? '.noexe' : ''), $TFile['name'][$i], 'uploaded', 0, $object);
 						if ($result < 0)
 						{
 							if ($allowoverwrite) {
@@ -1718,9 +1719,10 @@ function dol_remove_file_process($filenb, $donotupdatesession = 0, $donotdeletef
  *  @param		string	$fullpathorig	Full path of origin for file (can be '')
  *  @param		string	$mode			How file was created ('uploaded', 'generated', ...)
  *  @param		int		$setsharekey	Set also the share key
+ *  @param      Object  $object         Object used to set 'src_object_*' fields
  *	@return		int						<0 if KO, 0 if nothing done, >0 if OK
  */
-function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uploaded', $setsharekey = 0)
+function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uploaded', $setsharekey = 0, $object = null)
 {
 	global $db, $user;
 
@@ -1743,6 +1745,12 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 		$ecmfile->gen_or_uploaded = $mode;
 		$ecmfile->description = ''; // indexed content
 		$ecmfile->keyword = ''; // keyword content
+
+		if (is_object($object) && $object->id > 0) {
+			$ecmfile->src_object_id = $object->id;
+			$ecmfile->src_object_type = $object->table_element;
+		}
+
 		if ($setsharekey)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
@@ -2636,10 +2644,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->expedition->dir_output."/sending/".$original_file;
-	} // Wrapping pour les bons de livraison
-	elseif ($modulepart == 'livraison' && !empty($conf->expedition->dir_output))
+	} // Delivery Note Wrapping
+	elseif ($modulepart == 'delivery' && !empty($conf->expedition->dir_output))
 	{
-		if ($fuser->rights->expedition->livraison->{$lire} || preg_match('/^specimen/i', $original_file))
+		if ($fuser->rights->expedition->delivery->{$lire} || preg_match('/^specimen/i', $original_file))
 		{
 			$accessallowed = 1;
 		}
@@ -2844,9 +2852,11 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 
 			// Check fuser->rights->modulepart->myobject->read and fuser->rights->modulepart->read
 			$partsofdirinoriginalfile = explode('/', $original_file);
-			$partofdirinoriginalfile = $partsofdirinoriginalfile[0];
-			if ($partofdirinoriginalfile && ($fuser->rights->$modulepart->$partofdirinoriginalfile->{$lire} || $fuser->rights->$modulepart->$partofdirinoriginalfile->{$read})) $accessallowed = 1;
-			if ($fuser->rights->$modulepart->{$lire} || $fuser->rights->$modulepart->{$read}) $accessallowed = 1;
+			if (!empty($partsofdirinoriginalfile[1])) {	// If original_file is xxx/filename (xxx is a part we will use)
+				$partofdirinoriginalfile = $partsofdirinoriginalfile[0];
+				if ($partofdirinoriginalfile && !empty($fuser->rights->$modulepart->$partofdirinoriginalfile) && ($fuser->rights->$modulepart->$partofdirinoriginalfile->{$lire} || $fuser->rights->$modulepart->$partofdirinoriginalfile->{$read})) $accessallowed = 1;
+			}
+			if (!empty($fuser->rights->$modulepart->{$lire}) || !empty($fuser->rights->$modulepart->{$read})) $accessallowed = 1;
 
 			if (is_array($conf->$modulepart->multidir_output) && !empty($conf->$modulepart->multidir_output[$entity])) {
 				$original_file = $conf->$modulepart->multidir_output[$entity].'/'.$original_file;

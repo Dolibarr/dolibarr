@@ -47,7 +47,7 @@ if (GETPOST('action', 'alpha') == 'set')
 	$res = dolibarr_set_const($db, "TAKEPOS_RECEIPT_NAME", GETPOST('TAKEPOS_RECEIPT_NAME', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_SHOW_CUSTOMER", GETPOST('TAKEPOS_SHOW_CUSTOMER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_AUTO_PRINT_TICKETS", GETPOST('TAKEPOS_AUTO_PRINT_TICKETS', 'int'), 'int', 0, '', $conf->entity);
-    $res = dolibarr_set_const($db, "TAKEPOS_PRINT_SERVER", GETPOST('TAKEPOS_PRINT_SERVER', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_PRINT_SERVER", GETPOST('TAKEPOS_PRINT_SERVER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_PRINT_PAYMENT_METHOD", GETPOST('TAKEPOS_PRINT_PAYMENT_METHOD', 'alpha'), 'chaine', 0, '', $conf->entity);
 
 	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
@@ -55,16 +55,16 @@ if (GETPOST('action', 'alpha') == 'set')
 	if (!$res > 0) $error++;
 
  	if (!$error)
-    {
-        $db->commit();
-	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-        $db->rollback();
-	    setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	{
+		$db->commit();
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		$db->rollback();
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 } elseif (GETPOST('action', 'alpha') == 'setmethod')
 {
-    dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", GETPOST('value', 'alpha'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", GETPOST('value', 'alpha'), 'chaine', 0, '', $conf->entity);
 }
 
 
@@ -80,7 +80,7 @@ llxHeader('', $langs->trans("CashDeskSetup"));
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
 $head = takepos_admin_prepare_head();
-dol_fiche_head($head, 'receipt', 'TakePOS', -1, 'cash-register');
+print dol_get_fiche_head($head, 'receipt', 'TakePOS', -1, 'cash-register');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'?terminal='.(empty($terminal) ? 1 : $terminal).'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -102,9 +102,9 @@ print $langs->trans('BrowserMethodDescription');
 print '</td><td class="right">';
 if ($conf->global->TAKEPOS_PRINT_METHOD == "browser")
 {
-    print img_picto($langs->trans("Activated"), 'switch_on');
+	print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
-    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&token='.newToken().'&value=browser">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&token='.newToken().'&value=browser">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 }
 print "</td></tr>\n";
 
@@ -139,9 +139,9 @@ print $langs->trans('TakeposConnectorMethodDescription');
 print '</td><td class="right">';
 if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector")
 {
-    print img_picto($langs->trans("Activated"), 'switch_on');
+	print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
-    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&token='.newToken().'&value=takeposconnector">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&token='.newToken().'&value=takeposconnector">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 }
 print "</td></tr>\n";
 print '</table>';

@@ -110,7 +110,7 @@ if ($id > 0 || !empty($ref))
 }
 
 // Common permissions
-$usercanread			= $user->rights->fournisseur->commande->lire;
+$usercanread = $user->rights->fournisseur->commande->lire;
 $usercancreate			= $user->rights->fournisseur->commande->creer;
 $usercandelete			= $user->rights->fournisseur->commande->supprimer;
 
@@ -119,14 +119,14 @@ $usercanvalidate		= ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($u
 
 // Additional area permissions
 $usercanapprove			= $user->rights->fournisseur->commande->approuver;
-$usercanapprovesecond	= $user->rights->fournisseur->commande->approve2;
-$usercanorder			= $user->rights->fournisseur->commande->commander;
+$usercanapprovesecond = $user->rights->fournisseur->commande->approve2;
+$usercanorder = $user->rights->fournisseur->commande->commander;
 $usercanreceived		= $user->rights->fournisseur->commande->receptionner;
 
 // Permissions for includes
 $permissionnote			= $usercancreate; // Used by the include of actions_setnotes.inc.php
-$permissiondellink		= $usercancreate; // Used by the include of actions_dellink.inc.php
-$permissiontoedit		= $usercancreate; // Used by the include of actions_lineupdown.inc.php
+$permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
+$permissiontoedit = $usercancreate; // Used by the include of actions_lineupdown.inc.php
 $permissiontoadd		= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
 
 
@@ -203,7 +203,7 @@ if (empty($reshook))
 	// date of delivery
 	if ($action == 'setdate_livraison' && $usercancreate)
 	{
-		$result = $object->set_date_livraison($user, $datelivraison);
+		$result = $object->setDeliveryDate($user, $datelivraison);
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
@@ -872,7 +872,7 @@ if (empty($reshook))
 			$action = 'confirm_approve'; // can make standard or first level approval also if permission is set
 		}
 
-		if (! $error) {
+		if (!$error) {
 			$db->commit();
 		} else {
 			$db->rollback();
@@ -1059,7 +1059,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Delivery")), null, 'errors');
 		}
 
-		if (! $error) {
+		if (!$error) {
 			$db->commit();
 		} else {
 			$db->rollback();
@@ -1084,7 +1084,7 @@ if (empty($reshook))
 	// Actions to send emails
 	$triggersendname = 'ORDER_SUPPLIER_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO';
-	$trackid = 'sor'.$object->id;
+	$trackid = 'sord'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	// Actions to build doc
@@ -1146,6 +1146,7 @@ if (empty($reshook))
 			$object->note_private	= GETPOST('note_private', 'restricthtml');
 			$object->note_public   	= GETPOST('note_public', 'restricthtml');
 			$object->date_livraison = $datelivraison;
+			$object->delivery_date = $datelivraison;
 			$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
@@ -1199,7 +1200,7 @@ if (empty($reshook))
 						$result = $srcobject->fetch($object->origin_id);
 						if ($result > 0)
 						{
-							$object->set_date_livraison($user, $srcobject->date_livraison);
+							$object->setDeliveryDate($user, $srcobject->date_livraison);
 							$object->set_id_projet($user, $srcobject->fk_project);
 
 							$lines = $srcobject->lines;
@@ -1587,7 +1588,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="originid" value="'.$originid.'">';
 	if (!empty($currency_tx)) print '<input type="hidden" name="originmulticurrency_tx" value="'.$currency_tx.'">';
 
-	dol_fiche_head('');
+	print dol_get_fiche_head('');
 
 	print '<table class="border centpercent">';
 
@@ -1684,10 +1685,12 @@ if ($action == 'create')
 	// Incoterms
 	if (!empty($conf->incoterm->enabled))
 	{
+		$fkincoterms = (!empty($object->fk_incoterms) ? $object->fk_incoterms : ($socid > 0 ? $societe->fk_incoterms : ''));
+		$locincoterms = (!empty($object->location_incoterms) ? $object->location_incoterms : ($socid > 0 ? $societe->location_incoterms : ''));
 		print '<tr>';
 		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $object->label_incoterms, 1).'</label></td>';
 		print '<td class="maxwidthonsmartphone">';
-		print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''));
+		print $form->select_incoterms($fkincoterms, $locincoterms);
 		print '</td></tr>';
 	}
 
@@ -1763,7 +1766,7 @@ if ($action == 'create')
 	// Bouton "Create Draft"
 	print "</table>\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'">';
@@ -1802,7 +1805,7 @@ if ($action == 'create')
 	$head = ordersupplier_prepare_head($object);
 
 	$title = $langs->trans("SupplierOrder");
-	dol_fiche_head($head, 'card', $title, -1, 'order');
+	print dol_get_fiche_head($head, 'card', $title, -1, 'order');
 
 
 	$formconfirm = '';
@@ -2337,7 +2340,7 @@ if ($action == 'create')
 	print '</div>';
 	print '</form>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	/**
 	 * Boutons actions
@@ -2873,7 +2876,7 @@ if ($action == 'create')
 		$defaulttopic = 'SendOrderRef';
 		$diroutput = $conf->fournisseur->commande->dir_output;
 		$autocopy = 'MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO';
-		$trackid = 'sor'.$object->id;
+		$trackid = 'sord'.$object->id;
 
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	}

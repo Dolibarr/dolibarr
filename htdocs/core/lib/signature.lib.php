@@ -29,7 +29,7 @@ function showOnlineSignatureUrl($type, $ref)
 	global $conf, $langs;
 
 	// Load translation files required by the page
-    $langs->loadLangs(array("payment", "paybox"));
+	$langs->loadLangs(array("payment", "paybox"));
 
 	$servicename = 'Online';
 

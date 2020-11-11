@@ -5,6 +5,7 @@ NoErrorCommitIsDone=No error, we commit
 # Errors
 ErrorButCommitIsDone=Errors found but we validate despite this
 ErrorBadEMail=Email %s is wrong
+ErrorBadMXDomain=Email %s seems wrong (domain has no valid MX record)
 ErrorBadUrl=Url %s is wrong
 ErrorBadValueForParamNotAString=Bad value for your parameter. It appends generally when translation is missing.
 ErrorLoginAlreadyExists=Login %s already exists.
