@@ -530,7 +530,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 						if (isset($imglinesize['width']) && isset($imglinesize['height'])
 							&& ($curY + $imglinesize['height']) > ($this->page_hauteur-($heightforfooter+$heightforfreetext)))	// If photo too high, we moved completely on new page
 						{
-							$pdf->AddPage('','',true);
+							$pdf->AddPage('', '', true);
 							if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 							$pdf->setPage($pageposbefore+1);
 
