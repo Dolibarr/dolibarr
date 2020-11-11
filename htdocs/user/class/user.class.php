@@ -97,6 +97,30 @@ class User extends CommonObject
 	public $socialnetworks;
 
 	/**
+	 * @var string skype account
+	 * @deprecated
+	 */
+	public $skype;
+
+	/**
+	 * @var string twitter account
+	 * @deprecated
+	 */
+	public $twitter;
+
+	/**
+	 * @var string facebook account
+	 * @deprecated
+	 */
+	public $facebook;
+
+	/**
+	 * @var string linkedin account
+	 * @deprecated
+	 */
+	public $linkedin;
+
+	/**
 	 * @var string job position
 	 */
 	public $job;
