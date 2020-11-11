@@ -2325,6 +2325,7 @@ class Adherent extends CommonObject
 
 		// Initialise parametres
 		$this->id = 0;
+		$this->ref = 'ABC001';
 		$this->entity = 1;
 		$this->specimen = 1;
 		$this->civility_id = 0;
