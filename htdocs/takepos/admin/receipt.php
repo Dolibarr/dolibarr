@@ -65,6 +65,8 @@ if (GETPOST('action', 'alpha') == 'set')
 } elseif (GETPOST('action', 'alpha') == 'setmethod')
 {
 	dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", GETPOST('value', 'alpha'), 'chaine', 0, '', $conf->entity);
+	// TakePOS connector require ReceiptPrinter module
+	if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector" && !$conf->receiptprinter->enabled) activateModule("modReceiptPrinter");
 }
 
 
@@ -109,7 +111,7 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "browser")
 print "</td></tr>\n";
 
 // Receipt printer module
-if ($conf->global->MAIN_FEATURES_LEVEL >= 1) {
+if ($conf->receiptprinter->enabled) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans('DolibarrReceiptPrinter');
 	print '<td>';
@@ -117,16 +119,10 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 1) {
 	print '<br>';
 	print '<a href="'.DOL_URL_ROOT.'/admin/receiptprinter.php">'.$langs->trans("Setup").'</a>';
 	print '</td><td class="right">';
-	if ($conf->receiptprinter->enabled) {
-		if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
-			print img_picto($langs->trans("Activated"), 'switch_on');
-		} else {
-			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&token='.newToken().'&value=receiptprinter">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-		}
+	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
+		print img_picto($langs->trans("Activated"), 'switch_on');
 	} else {
-		print '<span class="opacitymedium">';
-		print $langs->trans("ModuleReceiptPrinterMustBeEnabled");
-		print '</span>';
+		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&token='.newToken().'&value=receiptprinter">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 	}
 	print "</td></tr>\n";
 }
