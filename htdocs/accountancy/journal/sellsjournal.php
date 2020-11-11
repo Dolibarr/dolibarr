@@ -107,6 +107,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = fd.
 $sql .= " JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 $sql .= " JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 $sql .= " WHERE fd.fk_code_ventilation > 0";
+$sql .= " AND fd.total_ht <> 0";
 $sql .= " AND f.entity IN (".getEntity('invoice', 0).')'; // We don't share object for accountancy, we use source object sharing
 $sql .= " AND f.fk_statut > 0";
 if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {	// Non common setup
@@ -150,7 +151,7 @@ if ($result) {
 	$num = $db->num_rows($result);
 
 	// Variables
-	$cptcli = (($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER != "")) ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : 'NotDefined';
+	$cptcli = (!empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER)) ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : 'NotDefined';
 	$cpttva = (!empty($conf->global->ACCOUNTING_VAT_SOLD_ACCOUNT)) ? $conf->global->ACCOUNTING_VAT_SOLD_ACCOUNT : 'NotDefined';
 
 	$i = 0;

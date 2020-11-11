@@ -104,6 +104,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = fd.
 $sql .= " JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON f.rowid = fd.fk_facture_fourn";
 $sql .= " JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 $sql .= " WHERE f.fk_statut > 0";
+$sql .= " AND fd.total_ht <> 0";
 $sql .= " AND fd.fk_code_ventilation > 0";
 $sql .= " AND f.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
 if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
@@ -152,7 +153,7 @@ if ($result) {
 		$obj = $db->fetch_object($result);
 
 		// Controls
-		$compta_soc = ($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : $cptfour;
+		$compta_soc = (!empty($obj->code_compta_fournisseur)) ? $obj->code_compta_fournisseur : $cptfour;
 
 		$compta_prod = $obj->compte;
 		if (empty($compta_prod)) {

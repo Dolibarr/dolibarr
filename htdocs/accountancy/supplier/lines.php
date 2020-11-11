@@ -191,6 +191,7 @@ $sql .= " INNER JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON f.rowid = l.fk_fact
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = s.fk_pays ";
 $sql .= " WHERE f.rowid = l.fk_facture_fourn and f.fk_statut >= 1 AND l.fk_code_ventilation <> 0 ";
+$sql .= " AND l.total_ht <> 0";
 // Add search filter like
 if ($search_societe) {
 	$sql .= natural_search('s.nom', $search_societe);
