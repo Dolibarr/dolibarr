@@ -276,9 +276,9 @@ class pdf_crabe extends ModelePDFFactures
 		{
 			$object->fetch_thirdparty();
 
-			$deja_regle = $object->getSommePaiement(($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? 1 : 0);
-			$amount_credit_notes_included = $object->getSumCreditNotesUsed(($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? 1 : 0);
-			$amount_deposits_included = $object->getSumDepositsUsed(($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? 1 : 0);
+			$deja_regle = $object->getSommePaiement((!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? 1 : 0);
+			$amount_credit_notes_included = $object->getSumCreditNotesUsed((!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? 1 : 0);
+			$amount_deposits_included = $object->getSumDepositsUsed((!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? 1 : 0);
 
 			// Definition of $dir and $file
 			if ($object->specimen)
