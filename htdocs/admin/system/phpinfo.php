@@ -122,24 +122,6 @@ if (!function_exists("utf8_encode"))
 }
 print '</td></tr>';
 
-print '<tr><td>MBString support</td><td>';
-if (!function_exists("mb_check_encoding"))
-{
-	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupport", "mbstring");
-} else {
-	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupport", "mbstring");
-}
-print '</td></tr>';
-
-print '<tr><td>JSon support</td><td>';
-if (!function_exists("json_decode"))
-{
-	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupport", "json");
-} else {
-	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupport", "json");
-}
-print '</td></tr>';
-
 print '</table>';
 
 print '<br>';
@@ -155,6 +137,28 @@ print '<td align="center">'.$langs->trans("Loaded").'</td>';
 print '<td align="center">'.$langs->trans("FunctionTest").'</td>';
 print '<td>'.$langs->trans("Result").'</td>';
 print '</tr>';
+
+$functions = ["mb_check_encoding"];
+$name      = "MBString";
+
+print "<tr>";
+print "<td>".$name."</td>";
+//print getTableColumn($name, $activatedExtensions);
+print getTableColumn($name, $loadedExtensions);
+print getTableColumnFunction($functions);
+print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
+print "</tr>";
+
+$functions = ["json_decode"];
+$name      = "JSON";
+
+print "<tr>";
+print "<td>".$name."</td>";
+//print getTableColumn($name, $activatedExtensions);
+print getTableColumn($name, $loadedExtensions);
+print getTableColumnFunction($functions);
+print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
+print "</tr>";
 
 $functions = ["imagecreate"];
 $name      = "GD";
@@ -189,7 +193,6 @@ if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@loc
 	print getTableColumn($name, $loadedExtensions);
 	print getTableColumnFunction($functions);
 	print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
-
 	print "</tr>";
 }
 
@@ -428,7 +431,7 @@ function getResultColumn($name, array $activated, array $loaded, array $function
 	}
 
 	$html = "<td>";
-	$html .= $result ? $langs->trans("PHPSupport".$name) : $langs->trans("ErrorPHPDoesNotSupport".$name);
+	$html .= $result ? $langs->trans("PHPSupport", $name) : $langs->trans("ErrorPHPDoesNotSupport".$name);
 	$html .= "</td>";
 
 	return $html;
