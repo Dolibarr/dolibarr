@@ -3000,7 +3000,7 @@ class User extends CommonObject
 		$this->office_fax = $ldapuser->{$conf->global->LDAP_FIELD_FAX};
 		$this->email = $ldapuser->{$conf->global->LDAP_FIELD_MAIL};
 		foreach ($socialnetworks as $key => $value) {
-			$this->socialnetworks[$value['label']] = $info[$conf->global->{'LDAP_FIELD_'.strtoupper($value['label'])}];
+			$this->socialnetworks[$value['label']] = $ldapuser{$conf->global->{'LDAP_FIELD_'.strtoupper($value['label'])}};
 		}
 		$this->ldap_sid = $ldapuser->{$conf->global->LDAP_FIELD_SID};
 
