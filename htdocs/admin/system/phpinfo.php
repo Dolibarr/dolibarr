@@ -105,36 +105,39 @@ if (!isset($_GET["testget"]) && !isset($_POST["testpost"]) && !isset($_GET["main
 
 print '</td></tr>';
 print '<tr><td>Sessions support</td><td>';
-
 if (!function_exists("session_id"))
 {
 	print '<img src="'.$ErrorPicturePath.'" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportSessions");
 } else {
 	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportSessions");
 }
-
 print '</td></tr>';
 
 print '<tr><td>UTF-8 support</td><td>';
-
 if (!function_exists("utf8_encode"))
 {
 	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupport", "UTF8");
 } else {
 	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupport", "UTF8");
 }
-
 print '</td></tr>';
 
 print '<tr><td>MBString support</td><td>';
-
 if (!function_exists("mb_check_encoding"))
 {
 	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupport", "mbstring");
 } else {
 	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupport", "mbstring");
 }
+print '</td></tr>';
 
+print '<tr><td>JSon support</td><td>';
+if (!function_exists("json_decode"))
+{
+	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupport", "json");
+} else {
+	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupport", "json");
+}
 print '</td></tr>';
 
 print '</table>';

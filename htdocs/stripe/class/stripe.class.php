@@ -110,7 +110,7 @@ class Stripe extends CommonObject
 				$obj = $this->db->fetch_object($result);
 				$tokenstring = $obj->tokenstring;
 
-				$tmparray = dol_json_decode($tokenstring);
+				$tmparray = json_decode($tokenstring);
 				$key = $tmparray->stripe_user_id;
 			} else {
 				$tokenstring = '';
