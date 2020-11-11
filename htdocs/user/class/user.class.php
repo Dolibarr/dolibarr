@@ -2653,6 +2653,9 @@ class User extends CommonObject
 		global $conf, $langs;
 
 		$info = array();
+
+		$socialnetworks = getArrayOfSocialNetworks();
+
 		$keymodified = false;
 
 		// Object classes
@@ -2672,10 +2675,6 @@ class User extends CommonObject
 			'LDAP_FIELD_FAX'		=> 'office_fax',
 			'LDAP_FIELD_MAIL'		=> 'email',
 			'LDAP_FIELD_SID'		=> 'ldap_sid',
-			'LDAP_FIELD_SKYPE'		=> 'skype',
-			'LDAP_FIELD_TWITTER'	=> 'twitter',
-			'LDAP_FIELD_FACEBOOK'	=> 'facebook',
-			'LDAP_FIELD_LINKEDIN'	=> 'linkedin'
 		);
 
 		// Champs
@@ -2689,6 +2688,11 @@ class User extends CommonObject
 						$keymodified = true; // For check if LDAP key has been modified
 					}
 				}
+			}
+		}
+		foreach ($socialnetworks as $key => $value) {
+			if ($this->socialnetworks[$value['label']] && !empty($conf->global->{'LDAP_FIELD_'.strtoupper($value['label'])})) {
+				$info[$conf->global->{'LDAP_FIELD_'.strtoupper($value['label'])}] = $this->socialnetworks[$value['label']];
 			}
 		}
 		if ($this->address && !empty($conf->global->LDAP_FIELD_ADDRESS)) {
@@ -2959,6 +2963,8 @@ class User extends CommonObject
 		// TODO: Voir pourquoi le update met à jour avec toutes les valeurs vide (global $user écrase ?)
 		global $user, $conf;
 
+		$socialnetworks = getArrayOfSocialNetworks();
+
 		$this->firstname = $ldapuser->{$conf->global->LDAP_FIELD_FIRSTNAME};
 		$this->lastname = $ldapuser->{$conf->global->LDAP_FIELD_NAME};
 		$this->login = $ldapuser->{$conf->global->LDAP_FIELD_LOGIN};
@@ -2969,10 +2975,9 @@ class User extends CommonObject
 		$this->user_mobile = $ldapuser->{$conf->global->LDAP_FIELD_MOBILE};
 		$this->office_fax = $ldapuser->{$conf->global->LDAP_FIELD_FAX};
 		$this->email = $ldapuser->{$conf->global->LDAP_FIELD_MAIL};
-		$this->skype = $ldapuser->{$conf->global->LDAP_FIELD_SKYPE};
-		$this->twitter = $ldapuser->{$conf->global->LDAP_FIELD_TWITTER};
-		$this->facebook = $ldapuser->{$conf->global->LDAP_FIELD_FACEBOOK};
-		$this->linkedin = $ldapuser->{$conf->global->LDAP_FIELD_LINKEDIN};
+		foreach ($socialnetworks as $key => $value) {
+			$this->socialnetworks[$value['label']] = $info[$conf->global->{'LDAP_FIELD_'.strtoupper($value['label'])}];
+		}
 		$this->ldap_sid = $ldapuser->{$conf->global->LDAP_FIELD_SID};
 
 		$this->job = $ldapuser->{$conf->global->LDAP_FIELD_TITLE};
