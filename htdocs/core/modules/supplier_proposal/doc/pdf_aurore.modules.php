@@ -412,7 +412,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 					if (!empty($realpatharray[$i])) $imglinesize = pdf_getSizeForImage($realpatharray[$i]);
 
 					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext); // The only function to edit the bottom margin of current page to set it.
 					$pageposbefore = $pdf->getPage();
 
 					$showpricebeforepagebreak = 1;
@@ -420,7 +420,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 					$posYAfterDescription = 0;
 
 					// We start with Photo of product line
-					if (!empty($imglinesize['width']) && !empty($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot)))	// If photo too high, we moved completely on new page
+					if (!empty($imglinesize['width']) && !empty($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur - ($heightforfooter + $heightforfreetext)))	// If photo too high, we moved completely on new page
 					{
 						$pdf->AddPage('', '', true);
 						if (!empty($tplidx)) $pdf->useTemplate($tplidx);

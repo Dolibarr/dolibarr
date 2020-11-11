@@ -208,6 +208,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 		// Loop on each lines to detect if there is at least one image to show
 		$realpatharray = array();
+		$this->atleastonephoto = false;
 		if (!empty($conf->global->MAIN_GENERATE_SUPPLIER_ORDER_WITH_PICTURE))
 		{
 			for ($i = 0; $i < $nblines; $i++)
@@ -234,6 +235,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					$filename = $obj['photo'];
 					//if ($obj['photo_vignette']) $filename='thumbs/'.$obj['photo_vignette'];
 					$realpath = $dir.$filename;
+					$this->atleastonephoto = true;
 					break;
 				}
 
@@ -515,37 +517,34 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					if (!empty($realpatharray[$i])) $imglinesize = pdf_getSizeForImage($realpatharray[$i]);
 
 					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext); // The only function to edit the bottom margin of current page to set it.
 					$pageposbefore = $pdf->getPage();
 
 					$showpricebeforepagebreak = 1;
 					$posYAfterImage = 0;
 					$posYAfterDescription = 0;
 
-					// We start with Photo of product line
-					if (!empty($imglinesize['width']) && !empty($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot)))	// If photo too high, we moved completely on new page
+					if($this->getColumnStatus('photo'))
 					{
-						$pdf->AddPage('', '', true);
-						if (!empty($tplidx)) $pdf->useTemplate($tplidx);
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
-						$pdf->setPage($pageposbefore + 1);
+						// We start with Photo of product line
+						if (isset($imglinesize['width']) && isset($imglinesize['height'])
+							&& ($curY + $imglinesize['height']) > ($this->page_hauteur-($heightforfooter+$heightforfreetext)))	// If photo too high, we moved completely on new page
+						{
+							$pdf->AddPage('','',true);
+							if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+							$pdf->setPage($pageposbefore+1);
 
-						$curY = $tab_top_newpage;
+							$curY = $tab_top_newpage;
+							$showpricebeforepagebreak=0;
+						}
 
-						// Allows data in the first page if description is long enough to break in multiples pages
-						if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
-							$showpricebeforepagebreak = 1;
-						else
-							$showpricebeforepagebreak = 0;
+						if (!empty($this->cols['photo']) && isset($imglinesize['width']) && isset($imglinesize['height']))
+						{
+							$pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY+0.5, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300);	// Use 300 dpi
+							$posYAfterImage=$curY+$imglinesize['height']; // $pdf->Image does not increase value return by getY, so we save it manually
+						}
 					}
 
-					if (!empty($imglinesize['width']) && !empty($imglinesize['height']))
-					{
-						$curX = $this->posxpicture - 1;
-						$pdf->Image($realpatharray[$i], $curX + (($this->posxtva - $this->posxpicture - $imglinesize['width']) / 2), $curY, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300); // Use 300 dpi
-						// $pdf->Image does not increase value return by getY, so we save it manually
-						$posYAfterImage = $curY + $imglinesize['height'];
-					}
 					// Description of product line
 					$curX = $this->posxdesc - 1;
 					$showpricebeforepagebreak = 1;
