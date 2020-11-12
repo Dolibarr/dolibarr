@@ -95,8 +95,8 @@ if ($action == 'add')
 	$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
 	$object->owner_address   = trim(GETPOST("owner_address", 'nohtml'));
 	
-	$object->ics             = trim($_POST["ics"]);
-	$object->ics_transfer    = trim($_POST["ics_transfer"]);
+	$object->ics             = trim(GETPOST("ics", 'alpha');
+	$object->ics_transfer    = trim(GETPOST("ics_transfer", 'alpha');
 
 	$account_number = GETPOST('account_number', 'alphanohtml');
 	if (empty($account_number) || $account_number == '-1')
@@ -199,8 +199,8 @@ if ($action == 'update')
 	$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
 	$object->owner_address   = trim(GETPOST("owner_address", 'nohtml'));
 	
-	$object->ics             = trim($_POST["ics"]);
-	$object->ics_transfer    = trim($_POST["ics_transfer"]);
+	$object->ics             = trim(GETPOST("ics", 'alpha');
+	$object->ics_transfer    = trim(GETPOST("ics_transfer", 'alpha');
 
 	$account_number = GETPOST('account_number', 'alpha');
 	if (empty($account_number) || $account_number == '-1')

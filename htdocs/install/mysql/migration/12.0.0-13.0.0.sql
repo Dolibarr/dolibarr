@@ -372,6 +372,9 @@ ALTER TABLE llx_bank ADD COLUMN origin_id integer;
 ALTER TABLE llx_bank ADD COLUMN origin_type varchar(64) NULL;
 ALTER TABLE llx_bank ADD COLUMN import_key varchar(14);
 
+ALTER TABLE llx_bank_account ADD COLUMN ics varchar(32) NULL;
+ALTER TABLE llx_bank_account ADD COLUMN ics_transfer varchar(32) NULL;
+
 ALTER TABLE llx_menu MODIFY COLUMN enabled text;
 
 CREATE TABLE llx_ecm_files_extrafields
