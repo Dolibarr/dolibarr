@@ -23,6 +23,7 @@
  */
 
 if (!defined('NOSESSION')) define('NOSESSION', '1');
+if (!defined('MAXEMAILS')) define('MAXEMAILS',100);
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
@@ -67,37 +68,57 @@ if (!empty($login))
 
 $db->begin();
 
+$myfile = fopen($id,"r") or die("Unable to open file\n");
+$groupofemails=array();
+for ($i=0; $i < MAXEMAILS; $i++)
+{
+	$tmp =fgets($myfile);
+	if($tmp == null)
+	{
+		break;
+	}
+	$groupofemails[$i] = trim($tmp,"\n");
+}
 
-// TODO Loop on the entry file to get the 100 first entries
+// For each groupofemail, we update tables to set email field to empty
 
-$groupofemails = array();
-
-
-	// For each groupofemail, we update tables to set email field to empty
+$sql_base = "UPDATE ".MAIN_DB_PREFIX;
+foreach($groupofemails as $email)
+{
 	if ($type == 'all' || $type == 'thirdparty')
 	{
 		// Loop on each record and update the email to null if email into $groupofemails
-		// TODO
+		
+		$sql=$sql_base."societe as s SET s.email = NULL WHERE s.email = '".$email."';";
+		$db->query($sql);
 	}
 
 	if ($type == 'all' || $type == 'contact')
 	{
 		// Loop on each record and update the email to null if email into $groupofemails
-		// TODO
+
+		$sql=$sql_base."socpeople as s SET s.email = NULL WHERE s.email = '".$email."';";
+		$db->query($sql);
+
 	}
 
 	if ($type == 'all' || $type == 'user')
 	{
 		// Loop on each record and update the email to null if email into $groupofemails
-		// TODO
+
+		$sql=$sql_base."user as u SET u.email = NULL WHERE u.email = '".$email."';";
+		$db->query($sql);
+
 	}
 
 	if ($type == 'all' || $type == 'member')
 	{
 		// Loop on each record and update the email to null if email into $groupofemails
-		// TODO
-	}
 
+		$sql=$sql_base."adherent as a SET a.email = NULL WHERE a.email = '".$email."';";
+		$resql=$db->query($sql);
+	}
+}
 
 if (!$error) {
 	$db->commit();
