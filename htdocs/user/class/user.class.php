@@ -1643,7 +1643,7 @@ class User extends CommonObject
 		$this->datestartvalidity = empty($this->datestartvalidity) ? '' : $this->datestartvalidity;
 		$this->dateendvalidity = empty($this->dateendvalidity) ? '' : $this->dateendvalidity;
 		$this->birth        = trim($this->birth);
-		$this->fk_warehouse = trim(empty($this->fk_warehouse) ? '' : $this->fk_warehouse);
+		$this->fk_warehouse = (int) $this->fk_warehouse;
 
 		// Check parameters
 		if (!empty($conf->global->USER_MAIL_REQUIRED) && !isValidEMail($this->email)) {
@@ -1714,7 +1714,7 @@ class User extends CommonObject
 		$sql .= ", entity = '".$this->db->escape($this->entity)."'";
 		$sql .= ", default_range = ".($this->default_range > 0 ? $this->default_range : 'null');
 		$sql .= ", default_c_exp_tax_cat = ".($this->default_c_exp_tax_cat > 0 ? $this->default_c_exp_tax_cat : 'null');
-		$sql .= ", fk_warehouse = ".($this->fk_warehouse ? "'".$this->db->escape($this->fk_warehouse)."'" : "null");
+		$sql .= ", fk_warehouse = ".($this->fk_warehouse > 0 ? $this->fk_warehouse : "null");
 		$sql .= ", lang = ".($this->lang ? "'".$this->db->escape($this->lang)."'" : "null");
 		$sql .= " WHERE rowid = ".$this->id;
 
