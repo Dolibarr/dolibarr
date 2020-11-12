@@ -104,7 +104,7 @@ class modSalaries extends DolibarrModules
 		$this->rights[$r][1] = 'Read payments of employee salaries';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'read';
+		$this->rights[$r][4] = 'readAll';
 		$this->rights[$r][5] = '';
 
 		$r++;
@@ -129,6 +129,14 @@ class modSalaries extends DolibarrModules
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'export';
+		$this->rights[$r][5] = '';
+
+		$r++;
+		$this->rights[$r][0] = 510;
+		$this->rights[$r][1] = 'Read own payments of employee salaries';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'read';
 		$this->rights[$r][5] = '';
 
 

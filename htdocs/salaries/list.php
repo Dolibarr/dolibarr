@@ -113,6 +113,9 @@ $sql .= " ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = s.fk_user";
 $sql .= " AND s.entity = ".$conf->entity;
 
+// By default user can only read its own salaries expect if he as perm "readAll" He can read All employees salaries
+if (!$user->rights->salaries->readAll) $sql .= " AND s.fk_user = ".$user->id;
+
 // Search criteria
 if ($search_ref)			$sql .= " AND s.rowid=".$search_ref;
 if ($search_user)			$sql .= natural_search(array('u.login', 'u.lastname', 'u.firstname', 'u.email'), $search_user);
