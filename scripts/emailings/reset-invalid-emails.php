@@ -67,24 +67,36 @@ if (!empty($login))
 
 $db->begin();
 
-// Loop on the entry file to get the 100 first entries
+
+// TODO Loop on the entry file to get the 100 first entries
 
 $groupofemails = array();
 
 
 	// For each groupofemail, we update tables to set email field to empty
-	if (empty($type) || $type == 'thirdparty')
+	if ($type == 'all' || $type == 'thirdparty')
 	{
-		// Loop on each thirdparty and update the email to null if email into $groupofemails
+		// Loop on each record and update the email to null if email into $groupofemails
 		// TODO
 	}
 
-	if (empty($type) || $type == 'contact')
+	if ($type == 'all' || $type == 'contact')
 	{
-		// Loop on each thirdparty and update the email to null if email into $groupofemails
+		// Loop on each record and update the email to null if email into $groupofemails
 		// TODO
 	}
 
+	if ($type == 'all' || $type == 'user')
+	{
+		// Loop on each record and update the email to null if email into $groupofemails
+		// TODO
+	}
+
+	if ($type == 'all' || $type == 'member')
+	{
+		// Loop on each record and update the email to null if email into $groupofemails
+		// TODO
+	}
 
 
 if (!$error) {
