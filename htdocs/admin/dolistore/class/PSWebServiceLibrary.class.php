@@ -221,7 +221,9 @@ class PrestaShopWebservice
 	 * Load XML from string. Can throw exception
 	 *
 	 * @param 	string 				$response 	String from a CURL response
-	 * @return 	SimpleXMLElement 				status_code, response
+	 * @return 	SimpleXMLElement|boolean		status_code, response
+	 *
+	 * @throw PrestaShopWebserviceException
 	 */
 	protected function parseXML($response)
 	{
@@ -251,6 +253,8 @@ class PrestaShopWebservice
 	 *
 	 * @param 	array 				$options	Options
 	 * @return 	SimpleXMLElement 				status_code, response
+	 *
+	 * @throw PrestaShopWebserviceException
 	 */
 	public function add($options)
 	{
@@ -300,7 +304,9 @@ class PrestaShopWebservice
 	 * ?>
 	 * </code>
 	 * @param 	array 			$options 	Array representing resource to get.
-	 * @return 	SimpleXMLElement 			status_code, response
+	 * @return 	SimpleXMLElement|boolean	status_code, response
+	 *
+	 * @throw PrestaShopWebserviceException
 	 */
 	public function get($options)
 	{
@@ -336,6 +342,8 @@ class PrestaShopWebservice
 	 *
 	 * @param 	array 				$options 	Array representing resource for head request.
 	 * @return 	SimpleXMLElement 				status_code, response
+	 *
+	 * @throw PrestaShopWebserviceException
 	 */
 	public function head($options)
 	{
@@ -372,6 +380,8 @@ class PrestaShopWebservice
 	 *
 	 * @param 	array 				$options 	Array representing resource to edit.
 	 * @return	SimpleXMLElement 				status_code, response
+	 *
+	 * @throw PrestaShopWebserviceException
 	 */
 	public function edit($options)
 	{
