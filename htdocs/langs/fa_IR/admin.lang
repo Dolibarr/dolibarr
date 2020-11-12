@@ -825,6 +825,7 @@ Permission402=ساخت/ویرایش تخفیف‌ها
 Permission403=اعتباردهی تخفیف‌ها
 Permission404=حذف تخفیف‌ها
 Permission430=استفاده از نوار اشکال‌یابی
+Permission510=Read payments of salary
 Permission511=ملاحظۀ پرداخت حقوق‌ها
 Permission512=ساخت/ویرایش پرداخت حقوق
 Permission514=حذف پرداخت حقوق

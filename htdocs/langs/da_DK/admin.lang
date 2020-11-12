@@ -825,6 +825,7 @@ Permission402=Opret/rediger rabatter
 Permission403=Bekræft rabatter
 Permission404=Slet rabatter
 Permission430=Brug Debug Bar
+Permission510=Read payments of salary
 Permission511=Læs lønudbetalinger
 Permission512=Opret / modificer lønudbetalinger
 Permission514=Slet betaling af lønninger

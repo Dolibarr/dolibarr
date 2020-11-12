@@ -825,6 +825,7 @@ Permission402=Creare/modificare sconti
 Permission403=Convalidare sconti
 Permission404=Eliminare sconti
 Permission430=Usa la barra di debug
+Permission510=Read payments of salary
 Permission511=Read payments of salaries
 Permission512=Create/modify payments of salaries
 Permission514=Delete payments of salaries

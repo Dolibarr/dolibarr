@@ -825,6 +825,7 @@ Permission402=建立/修改折扣
 Permission403=驗證折扣
 Permission404=刪除折扣
 Permission430=使用除錯欄
+Permission510=Read payments of salary
 Permission511=讀取薪水支付
 Permission512=建立/修改薪水支付
 Permission514=刪除薪水支付

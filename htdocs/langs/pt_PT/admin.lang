@@ -825,6 +825,7 @@ Permission402=Criar/modificar descontos
 Permission403=Validar descontos
 Permission404=Eliminar descontos
 Permission430=Use Debug Bar
+Permission510=Read payments of salary
 Permission511=Leia pagamentos de salários
 Permission512=Criar / modificar pagamentos de salários
 Permission514=Excluir pagamentos de salários

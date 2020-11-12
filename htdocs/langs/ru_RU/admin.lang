@@ -825,6 +825,7 @@ Permission402=Создать / изменить скидки
 Permission403=Проверить скидки
 Permission404=Удалить скидки
 Permission430=Использовать панель отладки
+Permission510=Read payments of salary
 Permission511=Просмотр выплаты зарплат
 Permission512=Создание/изменение выплат зарплат
 Permission514=Удалить выплаты зарплаты

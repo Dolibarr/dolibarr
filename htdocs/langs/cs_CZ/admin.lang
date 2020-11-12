@@ -825,6 +825,7 @@ Permission402=Vytvářejte/upravujte slevy
 Permission403=Ověřte slevy
 Permission404=Smazat slevy
 Permission430=Použijte ladicí panel
+Permission510=Read payments of salary
 Permission511=Přečtěte si platby mezd
 Permission512=Vytvářejte/upravujte platby mezd
 Permission514=Odstranit platby mezd

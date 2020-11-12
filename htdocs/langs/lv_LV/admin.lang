@@ -825,6 +825,7 @@ Permission402=Izveidot/mainīt atlaides
 Permission403=Apstiprināt atlaides
 Permission404=Dzēst atlaides
 Permission430=Izmantot Debug Bar
+Permission510=Read payments of salary
 Permission511=Lasīt algu maksājumus
 Permission512=Izveidojiet / modificējiet algu maksājumus
 Permission514=Dzēst algu maksājumus

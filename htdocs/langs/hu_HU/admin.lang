@@ -825,6 +825,7 @@ Permission402=Létrehozza / módosítja kedvezmények
 Permission403=Kedvezmények érvényesítése
 Permission404=Törlés kedvezmények
 Permission430=Használja a Hibakeresősávot
+Permission510=Read payments of salary
 Permission511=Read payments of salaries
 Permission512=Create/modify payments of salaries
 Permission514=Delete payments of salaries

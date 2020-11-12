@@ -825,6 +825,7 @@ Permission402=Crear/modificar havers
 Permission403=Validar havers
 Permission404=Eliminar havers
 Permission430=Utilitzeu la barra de depuració
+Permission510=Read payments of salary
 Permission511=Consulta el pagament dels salaris
 Permission512=Crea/modifica el pagament dels salaris
 Permission514=Elimina pagament de salaris

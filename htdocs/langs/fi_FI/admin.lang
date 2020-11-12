@@ -825,6 +825,7 @@ Permission402=Luoda / muuttaa alennukset
 Permission403=Validate alennukset
 Permission404=Poista alennukset
 Permission430=Use Debug Bar
+Permission510=Read payments of salary
 Permission511=Lue palkanmaksut
 Permission512=Luo/Muokkaa palkanmaksuja
 Permission514=Poista palkanmaksuja

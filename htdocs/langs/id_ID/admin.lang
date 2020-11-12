@@ -825,6 +825,7 @@ Permission402=Buat / ubah diskon
 Permission403=Validasi diskon
 Permission404=Hapus diskon
 Permission430=Gunakan Debug Bar
+Permission510=Read payments of salary
 Permission511=Baca pembayaran gaji
 Permission512=Buat / ubah pembayaran gaji
 Permission514=Hapus pembayaran gaji

@@ -825,6 +825,7 @@ Permission402=Búa til / breyta afsláttur
 Permission403=Staðfesta afsláttur
 Permission404=Eyða afsláttur
 Permission430=Use Debug Bar
+Permission510=Read payments of salary
 Permission511=Read payments of salaries
 Permission512=Create/modify payments of salaries
 Permission514=Delete payments of salaries

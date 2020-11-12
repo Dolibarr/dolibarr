@@ -825,6 +825,7 @@ Permission402=İndirim oluştur/değiştir
 Permission403=İndirim doğrula
 Permission404=İndirim sil
 Permission430=Use Debug Bar
+Permission510=Read payments of salary
 Permission511=Maaş ödemelerini okuyun
 Permission512=Maaş ödemeleri oluşturun/değiştirin
 Permission514=Maaş ödemelerini silin

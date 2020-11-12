@@ -825,6 +825,7 @@ Permission402=Skapa / ändra rabatter
 Permission403=Bekräfta rabatter
 Permission404=Ta bort rabatter
 Permission430=Use Debug Bar
+Permission510=Read payments of salary
 Permission511=Läs lönesättning
 Permission512=Skapa / ändra lönesättning
 Permission514=Radera löner

@@ -825,6 +825,7 @@ Permission402=Crear/modificar haberes
 Permission403=Validar haberes
 Permission404=Eliminar haberes
 Permission430=Usa barra de debug
+Permission510=Read payments of salary
 Permission511=Consultar pagos de salarios
 Permission512=Crear/modificar pagos de salarios
 Permission514=Eliminar pagos de salarios

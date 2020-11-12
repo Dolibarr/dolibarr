@@ -501,6 +501,7 @@ Permission401=Leer descuentos
 Permission402=Crear / modificar descuentos.
 Permission403=Validar descuentos
 Permission404=Eliminar descuentos
+Permission510=Read payments of salary
 Permission511=Leer pagos de salarios
 Permission512=Crear / modificar pagos de salarios.
 Permission514=Eliminar pagos de salarios.

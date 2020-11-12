@@ -825,6 +825,7 @@ Permission402=Rabatte erstellen/bearbeiten
 Permission403=Rabatte freigeben
 Permission404=Rabatte löschen
 Permission430=Debug Bar nutzen
+Permission510=Read payments of salary
 Permission511=Lohn-/Gehaltszahlungen anzeigen
 Permission512=Lohnzahlungen anlegen / ändern
 Permission514=Lohn-/Gehaltszahlungen löschen

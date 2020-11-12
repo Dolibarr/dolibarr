@@ -825,6 +825,7 @@ Permission402=Tạo/chỉnh sửa giảm giá
 Permission403=Xác nhận giảm giá
 Permission404=Xóa giảm giá
 Permission430=Sử dụng thanh gỡ lỗi
+Permission510=Read payments of salary
 Permission511=Xem thanh toán tiền lương
 Permission512=Tạo / sửa đổi các khoản thanh toán tiền lương
 Permission514=Xóa các khoản thanh toán tiền lương

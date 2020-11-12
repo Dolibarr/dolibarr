@@ -356,6 +356,7 @@ Permission331=Lesezeichen einsehen
 Permission332=Lesezeichen erstellen/bearbeiten
 Permission401=Rabatte einsehen
 Permission430=PHP Debug Bar verwenden
+Permission510=Read payments of salary
 Permission511=Lohnzahlungen einsehen
 Permission512=Lohnzahlungen erstellen und bearbeiten
 Permission514=Lohnzahlungen löschen

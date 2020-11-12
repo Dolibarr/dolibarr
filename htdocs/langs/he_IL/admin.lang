@@ -825,6 +825,7 @@ Permission402=יצירה / שינוי הנחות
 Permission403=אמת הנחות
 Permission404=מחק את הנחות
 Permission430=Use Debug Bar
+Permission510=Read payments of salary
 Permission511=Read payments of salaries
 Permission512=Create/modify payments of salaries
 Permission514=Delete payments of salaries

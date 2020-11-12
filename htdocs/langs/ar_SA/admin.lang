@@ -825,6 +825,7 @@ Permission402=إنشاء / تعديل الخصومات
 Permission403=تحقق من الخصومات
 Permission404=حذف خصومات
 Permission430=Use Debug Bar
+Permission510=Read payments of salary
 Permission511=Read payments of salaries
 Permission512=Create/modify payments of salaries
 Permission514=Delete payments of salaries

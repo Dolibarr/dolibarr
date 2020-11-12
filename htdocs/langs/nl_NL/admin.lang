@@ -825,6 +825,7 @@ Permission402=Creëren / wijzigen kortingen
 Permission403=Kortingen valideren
 Permission404=Kortingen verwijderen
 Permission430=Gebruik foutopsporingsbalk
+Permission510=Read payments of salary
 Permission511=Lees betalingen van salarissen
 Permission512=Creëer / wijzig betalingen van salarissen
 Permission514=Betalingen van salarissen verwijderen
