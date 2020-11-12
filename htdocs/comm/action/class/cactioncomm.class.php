@@ -43,16 +43,36 @@ class CActionComm
 	 */
 	public $id;
 
+	/**
+	 * @var string code
+	 */
 	public $code;
+
+	/**
+	 * @var string type
+	 */
 	public $type;
-	public $libelle; // deprecated
+
+	/**
+	 * @var string label
+	 * @deprecated
+	 * @see $label
+	 */
+	public $libelle;
 
 	/**
 	 * @var string Type of agenda event label
 	 */
 	public $label;
 
+	/**
+	 * @var int active
+	 */
 	public $active;
+
+	/**
+	 * @var string color hex
+	 */
 	public $color;
 
 	/**
@@ -60,6 +80,9 @@ class CActionComm
 	 */
 	public $picto;
 
+	/**
+	 * @var array array of type_actions
+	 */
 	public $type_actions = array();
 
 
@@ -76,14 +99,14 @@ class CActionComm
 	/**
 	 *  Load action type from database
 	 *
-	 *  @param  int     $id     id or code of action type to read
-	 *  @return int             1=ok, 0=not found, -1=error
+	 *  @param  int|string	$id     id or code of action type to read
+	 *  @return int             	1=ok, 0=not found, -1=error
 	 */
 	public function fetch($id)
 	{
 		$sql = "SELECT id, code, type, libelle as label, color, active, picto";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
-		if (is_numeric($id)) $sql .= " WHERE id=".$id;
+		if (is_numeric($id)) $sql .= " WHERE id=".(int) $id;
 		else $sql .= " WHERE code='".$this->db->escape($id)."'";
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -138,7 +161,9 @@ class CActionComm
 		$sql = "SELECT id, code, libelle as label, module, type, color, picto";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
 		$sql .= " WHERE 1=1";
-		if ($active != '') $sql .= " AND active=".$active;
+		if ($active != '') {
+			$sql .= " AND active=".(int) $active;
+		}
 		if (!empty($excludetype)) $sql .= " AND type <> '".$this->db->escape($excludetype)."'";
 		if ($morefilter) $sql .= " AND ".$morefilter;
 		$sql .= " ORDER BY module, position, type";
