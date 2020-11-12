@@ -6976,34 +6976,37 @@ abstract class CommonObject
 				if (!empty($conf->use_javascript_ajax)) {
 					$out .= '
 					<script>
-					    jQuery(document).ready(function() {
-					    	function showOptions(child_list, parent_list)
-					    	{
-					    		var val = $("select[name=\""+parent_list+"\"]").val();
-					    		var parentVal = parent_list + ":" + val;
-								if(val > 0) {
-						    		$("select[name=\""+child_list+"\"] option[parent]").hide();
-						    		$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
-								} else {
-									$("select[name=\""+child_list+"\"] option").show();
-								}
-					    	}
-							function setListDependencies() {
-						    	jQuery("select option[parent]").parent().each(function() {
-						    		var child_list = $(this).attr("name");
-									var parent = $(this).find("option[parent]:first").attr("parent");
-									var infos = parent.split(":");
-									var parent_list = infos[0];
-									showOptions(child_list, parent_list);
-
-									$("select[name=\""+parent_list+"\"]").change(function() {
-										showOptions(child_list, parent_list);
-									});
-						    	});
+					jQuery(document).ready(function() {
+						function showOptions(child_list, parent_list, orig_select)
+						{
+							var val = $("select[name=\""+parent_list+"\"]").val();
+							var parentVal = parent_list + ":" + val;
+							if(val > 0) {
+								var options = orig_select.find("option[parent=\""+parentVal+"\"]").clone();
+								$("select[name=\""+child_list+"\"] option[parent]").remove();
+								$("select[name=\""+child_list+"\"]").append(options);
+							} else {
+								var options = orig_select.find("option[parent]").clone();
+								$("select[name=\""+child_list+"\"] option[parent]").remove();
+								$("select[name=\""+child_list+"\"]").append(options);
 							}
+						}
+						function setListDependencies() {
+							jQuery("select option[parent]").parent().each(function() {
+								var orig_select = {};
+								var child_list = $(this).attr("name");
+								orig_select [child_list] = $(this).clone();
+								var parent = $(this).find("option[parent]:first").attr("parent");
+								var infos = parent.split(":");
+								var parent_list = infos[0];
+								$("select[name=\""+parent_list+"\"]").change(function() {
+									showOptions(child_list, parent_list, orig_select [child_list]);
+								});
+							});
+						}
 
-							setListDependencies();
-					    });
+						setListDependencies();
+					});
 					</script>'."\n";
 				}
 
