@@ -77,15 +77,16 @@ class InterfaceActionsAuto extends DolibarrTriggers
 	{
 		if (empty($conf->agenda->enabled)) return 0; // Module not active, we do nothing
 
+		// Do not log events when trigger is for creating event (infinite loop)
+		if (preg_match('/^ACTION_/', $action)) {
+			return 0;
+		}
+
 		$key = 'MAIN_AGENDA_ACTIONAUTO_'.$action;
 		//var_dump($action.' - '.$conf->global->$key);exit;
 
 		// Do not log events not enabled for this action
 		if (empty($conf->global->$key)) {
-			return 0;
-		}
-		// Do not log events when trigger is for creating event (infinite loop)
-		if (preg_match('/^ACTION_/', $action)) {
 			return 0;
 		}
 
