@@ -859,7 +859,7 @@ if ($action == "order" and $order_receipt_printer1 != "") {
 		});
 		<?php
 	}
-	else{
+	else {
 		?>
 		$.ajax({
 			type: "POST",
@@ -881,7 +881,7 @@ if ($action == "order" and $order_receipt_printer2 != "") {
 		});
 		<?php
 	}
-	else{
+	else {
 		?>
 		$.ajax({
 			type: "POST",
@@ -889,7 +889,7 @@ if ($action == "order" and $order_receipt_printer2 != "") {
 			data: '<?php
 			print $headerorder.$order_receipt_printer2.$footerorder; ?>'
 		});
-    <?php
+    	<?php
 	}
 }
 
