@@ -41,7 +41,7 @@ if (!empty($_REQUEST['CASHDESK_ID_THIRDPARTY'.$terminal.'_id']))
 // Security check
 if (!$user->admin) accessforbidden();
 
-$langs->loadLangs(array("admin", "cashdesk", "printing"));
+$langs->loadLangs(array("admin", "cashdesk", "printing", "receiptprinter"));
 
 global $db;
 
@@ -255,7 +255,7 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" || $conf->global->TA
 	foreach ($printer->listprinterstemplates as $key => $value) {
 		$templates[$value['rowid']] = $value['name'];
 	}
-	print '<tr class="oddeven"><td>'.$langs->trans("MainTemplateToUse").'</td>';
+	print '<tr class="oddeven"><td>'.$langs->trans("MainTemplateToUse").' (<a href="'.DOL_URL_ROOT.'/admin/receiptprinter.php?mode=template">'.$langs->trans("SetupReceiptTemplate").'</a>)</td>';
 	print '<td>';
 	print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal, $templates, (empty($conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal}), 1);
 	print '</td></tr>';
