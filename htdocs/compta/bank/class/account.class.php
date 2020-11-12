@@ -216,10 +216,15 @@ class Account extends CommonObject
 	public $date_solde;
 	
 	/**
-	 * Creditor Identifier CI and Transfer ICS. Some banks use different ICS for direct debit and bank tranfer
+	 * Creditor Identifier CI. Some banks use different ICS for direct debit and bank tranfer
 	 * @var string
 	 */
 	public $ics;
+	
+	/**
+	 * Creditor Identifier for Bank Transfer.
+	 * @var string
+	 */
 	public $ics_transfer;
 	
 
