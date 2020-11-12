@@ -84,6 +84,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		if (empty($conf->global->$key)) {
 			return 0;
 		}
+		// Do not log events when trigger is for creating event (infinite loop)
+		if (preg_match('/^ACTION_/', $action)) {
+			return 0;
+		}
 
 		$langs->load("agenda");
 
