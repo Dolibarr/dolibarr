@@ -6995,12 +6995,12 @@ abstract class CommonObject
 							jQuery("select option[parent]").parent().each(function() {
 								var orig_select = {};
 								var child_list = $(this).attr("name");
-								orig_select [child_list] = $(this).clone();
+								orig_select[child_list] = $(this).clone();
 								var parent = $(this).find("option[parent]:first").attr("parent");
 								var infos = parent.split(":");
 								var parent_list = infos[0];
 								$("select[name=\""+parent_list+"\"]").change(function() {
-									showOptions(child_list, parent_list, orig_select [child_list]);
+									showOptions(child_list, parent_list, orig_select[child_list]);
 								});
 							});
 						}
