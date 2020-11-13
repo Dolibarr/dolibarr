@@ -13,5 +13,5 @@ jobs:
     - name: Exakat
       uses: docker://exakat/exakat-ga
       with:
-        ignore_rules: 'Classes/UseInstanceof,Performances/PrePostIncrement,Functions/WrongNumberOfArguments,Variables/UndefinedVariable,Classes/DontUnsetProperties,Classes/NonPpp,Classes/StaticMethodsCalledFromObject,Classes/UseClassOperator,Functions/UsesDefaultArguments,Php/NoClassInGlobal,Php/ShouldUseCoalesce,Structures/MergeIfThen,Structures/ElseIfElseif,Structures/RepeatedPrint,Structures/UselessParenthesis,Structures/SwitchWithoutDefault,Structures/ShouldMakeTernary,Structures/UseConstant' 
-        ignore_dirs: '/htdocs/includes,/htdocs/build,/htdocs/dev,/htdocs/doc,/htdocs/scripts,/htdocs/test'        
+        ignore_rules: 'Classes/UseInstanceof,Performances/PrePostIncrement,Functions/UndefinedFunctions,Functions/WrongNumberOfArguments,Functions/WrongTypeWithCall,Variables/UndefinedVariable,Classes/DontUnsetProperties,Classes/NonPpp,Classes/StaticMethodsCalledFromObject,Classes/UseClassOperator,Functions/UsesDefaultArguments,Php/NoClassInGlobal,Php/ShouldUseCoalesce,Php/WrongTypeForNativeFunction,Structures/MergeIfThen,Structures/ElseIfElseif,Structures/RepeatedPrint,Structures/SameConditions,Structures/SwitchWithoutDefault,Structures/ShouldMakeTernary,Structures/UselessParenthesis,Structures/UseConstant' 
+        ignore_dirs: '/htdocs/includes,/build,/dev,/doc,/scripts,/test'        

@@ -2116,7 +2116,7 @@ class Holiday extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as h";
 		$sql .= " WHERE h.statut > 1";
 		$sql .= " AND h.entity IN (".getEntity('holiday').")";
-		if (empty($user->rights->expensereport->read_all))
+		if (empty($user->rights->expensereport->readall))
 		{
 			$userchildids = $user->getAllChildIds(1);
 			$sql .= " AND (h.fk_user IN (".join(',', $userchildids).")";
