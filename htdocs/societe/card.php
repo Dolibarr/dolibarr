@@ -13,6 +13,7 @@
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018       Ferran Marcet		    <fmarcet@2byte.es.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020       Udo Tamm                <dev@dolibit.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -154,7 +155,7 @@ if (empty($reshook))
 				$listofproperties = array(
 					'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'twitter', 'facebook', 'linkedin', 'socialnetworks', 'url', 'barcode',
 					'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
-					'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'remise_supplier_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
+					'tva_intra', 'eori', 'effectif_id', 'forme_juridique', 'remise_percent', 'remise_supplier_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
 					'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
 					'code_client', 'code_fournisseur', 'code_compta', 'code_compta_fournisseur',
 					'model_pdf', 'fk_projet'
@@ -438,7 +439,8 @@ if (empty($reshook))
 			$object->code_fournisseur = GETPOSTISSET('supplier_code') ?GETPOST('supplier_code', 'alpha') : GETPOST('code_fournisseur', 'alpha');
 			$object->capital				= GETPOST('capital', 'alphanohtml');
 			$object->barcode				= GETPOST('barcode', 'alphanohtml');
-
+            
+			$object->eori     				= GETPOST('eori', 'alphanohtml');
 			$object->tva_intra				= GETPOST('tva_intra', 'alphanohtml');
 			$object->tva_assuj				= GETPOST('assujtva_value', 'alpha');
 			$object->status = GETPOST('status', 'alpha');
@@ -622,7 +624,7 @@ if (empty($reshook))
 								break;
 						}
 					}
-					// Gestion du logo de la société
+					// Management of company logo
 				} else {
 					if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') // TODO Sometime errors on duplicate on profid and not on code, so we must manage this case
 					{
@@ -1002,6 +1004,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		$object->idprof4			= GETPOST('idprof4', 'alphanohtml');
 		$object->idprof5			= GETPOST('idprof5', 'alphanohtml');
 		$object->idprof6			= GETPOST('idprof6', 'alphanohtml');
+		$object->eori    			= GETPOST('eori', 'alphanohtml');
 		$object->typent_id = GETPOST('typent_id', 'int');
 		$object->effectif_id		= GETPOST('effectif_id', 'int');
 		$object->civility_id		= GETPOST('civility_id', 'alpha');
