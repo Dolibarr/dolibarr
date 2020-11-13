@@ -73,7 +73,7 @@ if (($id > 0) || $ref)
 
 	// Check current user can read this leave request
 	$canread = 0;
-	if (!empty($user->rights->holiday->read_all)) $canread = 1;
+	if (!empty($user->rights->holiday->readall)) $canread = 1;
 	if (!empty($user->rights->holiday->read) && in_array($object->fk_user, $childids)) $canread = 1;
 	if (!$canread)
 	{

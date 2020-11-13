@@ -31,11 +31,6 @@ if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/account
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "salaries", "bills", "hrm"));
 
-// Security check
-$socid = GETPOST("socid", "int");
-if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'salaries', '', '', '');
-
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $search_ref = GETPOST('search_ref', 'int');
 $search_user = GETPOST('search_user', 'alpha');
@@ -70,6 +65,13 @@ if (!GETPOST('typeid', 'int'))
 } else {
 	$typeid = GETPOST('typeid', 'int');
 }
+
+$childids = $user->getAllChildIds(1);
+
+// Security check
+$socid = GETPOST("socid", "int");
+if ($user->socid) $socid = $user->socid;
+$result = restrictedArea($user, 'salaries', '', '', '');
 
 
 
@@ -112,6 +114,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.ro
 $sql .= " ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = s.fk_user";
 $sql .= " AND s.entity = ".$conf->entity;
+if (empty($user->rights->salaries->readall)) $sql .= " AND s.fk_user IN (".join(',', $childids).")";
 
 // Search criteria
 if ($search_ref)			$sql .= " AND s.rowid=".$search_ref;

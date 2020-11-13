@@ -410,6 +410,7 @@ ALTER TABLE llx_projet_task_time MODIFY COLUMN datec datetime;
 
 DELETE FROM llx_user_rights WHERE fk_id IN (SELECT id FROM llx_rights_def where module = 'holiday' and perms = 'lire_tous'); 
 DELETE FROM llx_rights_def where module = 'holiday' and perms = 'lire_tous';
+UPDATE llx_rights_def set perms = 'readall' WHERE perms = 'read_all' and module = 'holiday';
 
 CREATE TABLE llx_c_product_nature (
       rowid integer AUTO_INCREMENT PRIMARY KEY,

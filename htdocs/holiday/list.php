@@ -70,7 +70,7 @@ if ($id > 0)
 {
 	$canread = 0;
 	if ($id == $user->id) $canread = 1;
-	if (!empty($user->rights->holiday->read_all)) $canread = 1;
+	if (!empty($user->rights->holiday->readall)) $canread = 1;
 	if (!empty($user->rights->holiday->read) && in_array($id, $childids)) $canread = 1;
 	if (!$canread)
 	{
@@ -318,7 +318,7 @@ if (!empty($search_status) && $search_status != -1) {
 	$sql .= " AND cp.statut = '".$db->escape($search_status)."'\n";
 }
 
-if (empty($user->rights->holiday->read_all)) $sql .= ' AND cp.fk_user IN ('.join(',', $childids).')';
+if (empty($user->rights->holiday->readall)) $sql .= ' AND cp.fk_user IN ('.join(',', $childids).')';
 if ($id > 0) $sql .= " AND cp.fk_user IN (".$id.")";
 
 // Add where from extra fields
@@ -469,7 +469,7 @@ if ($resql)
 
 
 	$include = '';
-	if (empty($user->rights->holiday->read_all)) $include = 'hierarchyme'; // Can see only its hierarchyl
+	if (empty($user->rights->holiday->readall)) $include = 'hierarchyme'; // Can see only its hierarchyl
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
@@ -507,7 +507,7 @@ if ($resql)
 	// Approver
 	if (!empty($arrayfields['cp.fk_validator']['checked']))
 	{
-		if ($user->rights->holiday->read_all)
+		if ($user->rights->holiday->readall)
 		{
 			print '<td class="liste_titre maxwidthonsmartphone left">';
 			$validator = new UserGroup($db);
@@ -631,7 +631,7 @@ if ($resql)
 
 
 	// If we ask a dedicated card and not allow to see it, we force on user.
-	if ($id && empty($user->rights->holiday->read_all) && !in_array($id, $childids)) {
+	if ($id && empty($user->rights->holiday->readall) && !in_array($id, $childids)) {
 		$langs->load("errors");
 		print '<tr class="oddeven opacitymediuem"><td colspan="10">'.$langs->trans("NotEnoughPermissions").'</td></tr>';
 		$result = 0;
