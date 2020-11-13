@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García	    <marcosgdf@gmail.com>
+ * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +61,14 @@ class Opensurveysondage extends CommonObject
 	 */
 	public $description;
 
+	/**
+	 * @var string email admin
+	 */
 	public $mail_admin;
+
+	/**
+	 * @var admin name
+	 */
 	public $nom_admin;
 
 	/**
@@ -75,10 +83,21 @@ class Opensurveysondage extends CommonObject
 	public $title;
 
 	public $date_fin = '';
+
+	/**
+	 * @var int status
+	 */
 	public $status = 1;
 	public $format;
+
+	/**
+	 * @var int mailsonde
+	 */
 	public $mailsonde;
 
+	/**
+	 * @var string subject
+	 */
 	public $sujet;
 
 	/**
@@ -133,8 +152,7 @@ class Opensurveysondage extends CommonObject
 		$this->cleanParameters();
 
 		// Check parameters
-		if (!$this->date_fin > 0)
-		{
+		if (!$this->date_fin > 0) {
 			$this->error = 'BadValueForEndDate';
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
@@ -156,10 +174,10 @@ class Opensurveysondage extends CommonObject
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->escape($this->id_sondage)."',";
 		$sql .= " ".(empty($this->description) ? 'NULL' : "'".$this->db->escape($this->description)."'").",";
-		$sql .= " ".$user->id.",";
+		$sql .= " ".(int) $user->id.",";
 		$sql .= " '".$this->db->escape($this->title)."',";
 		$sql .= " '".$this->db->idate($this->date_fin)."',";
-		$sql .= " ".$this->status.",";
+		$sql .= " ".(int) $this->status.",";
 		$sql .= " '".$this->db->escape($this->format)."',";
 		$sql .= " ".$this->db->escape($this->mailsonde).",";
 		$sql .= " ".$this->db->escape($this->allow_comments).",";
@@ -173,17 +191,13 @@ class Opensurveysondage extends CommonObject
 		$resql = $this->db->query($sql);
 		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-		if (!$error)
-		{
-			if (!$notrigger)
-			{
-				global $langs, $conf;
+		if (!$error && !$notrigger)
+			global $langs, $conf;
 
-				// Call trigger
-				$result = $this->call_trigger('OPENSURVEY_CREATE', $user);
-				if ($result < 0) $error++;
-				// End call triggers
-			}
+			// Call trigger
+			$result = $this->call_trigger('OPENSURVEY_CREATE', $user);
+			if ($result < 0) $error++;
+			// End call triggers
 		}
 
 		// Commit or rollback
@@ -310,10 +324,12 @@ class Opensurveysondage extends CommonObject
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
 
-		if (!$error && !$notrigger)
-		{
+		if (!$error && !$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('OPENSURVEY_MODIFY', $user);
 			if ($result < 0) $error++;
@@ -356,15 +372,11 @@ class Opensurveysondage extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error)
-		{
-			if (!$notrigger)
-			{
-				// Call trigger
-				$result = $this->call_trigger('OPENSURVEY_DELETE', $user);
-				if ($result < 0) $error++;
-				// End call triggers
-			}
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('OPENSURVEY_DELETE', $user);
+			if ($result < 0) $error++;
+			// End call triggers
 		}
 
 		if (!$error)
@@ -441,7 +453,9 @@ class Opensurveysondage extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		}
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -591,7 +605,7 @@ class Opensurveysondage extends CommonObject
 		$this->mail_admin = trim($this->mail_admin);
 		$this->nom_admin = trim($this->nom_admin);
 		$this->title = trim($this->title);
-		$this->status = trim($this->status);
+		$this->status = (int) $this->status;
 		$this->format = trim($this->format);
 		$this->mailsonde = ($this->mailsonde ? 1 : 0);
 		$this->allow_comments = ($this->allow_comments ? 1 : 0);
