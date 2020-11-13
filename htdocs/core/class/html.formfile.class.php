@@ -1221,7 +1221,6 @@ class FormFile
 					// Size
 					$sizetoshow = dol_print_size($file['size'], 1, 1);
 					$sizetoshowbytes = dol_print_size($file['size'], 0, 1);
-
 					print '<td class="right nowraponall">';
 					if ($sizetoshow == $sizetoshowbytes) print $sizetoshow;
 					else {
@@ -1659,8 +1658,21 @@ class FormFile
 				print $this->showPreview($file, $modulepart, $file['relativename']);
 
 				print "</td>\n";
-				print '<td class="right">'.dol_print_size($file['size'], 1, 1).'</td>';
+
+				// Size
+				$sizetoshow = dol_print_size($file['size'], 1, 1);
+				$sizetoshowbytes = dol_print_size($file['size'], 0, 1);
+				print '<td class="right nowraponall">';
+				if ($sizetoshow == $sizetoshowbytes) print $sizetoshow;
+				else {
+					print $form->textwithpicto($sizetoshow, $sizetoshowbytes, -1);
+				}
+				print '</td>';
+
+				// Date
 				print '<td class="center">'.dol_print_date($file['date'], "dayhour").'</td>';
+
+				// Share link
 				print '<td class="right">';
 				if ($file['share']) {
 					// Define $urlwithroot

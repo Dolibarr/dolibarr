@@ -25,6 +25,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("install", "other", "admin"));
@@ -52,7 +53,7 @@ print load_fiche_titre($langs->trans("Security"), '', 'title_setup');
 print '<span class="opacitymedium">'.$langs->trans("YouMayFindSecurityAdviceHere", 'hhttps://wiki.dolibarr.org/index.php/Security_information').'</span> (<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Reload").'</a>)<br>';
 print '<br>';
 
-print load_fiche_titre($langs->trans("PHPSetup"), '', '');
+print load_fiche_titre($langs->trans("PHPSetup"), '', 'folder');
 
 // Get version of PHP
 $phpversion = version_php();
@@ -77,7 +78,7 @@ else {
 print '<br>';
 
 print '<br>';
-print load_fiche_titre($langs->trans("ConfigFile"), '', '');
+print load_fiche_titre($langs->trans("ConfigFile"), '', 'folder');
 
 print '<strong>'.$langs->trans("dolibarr_main_prod").'</strong>: '.$dolibarr_main_prod;
 if (empty($dolibarr_main_prod)) {
@@ -94,7 +95,7 @@ print '<br>';
 
 print '<br>';
 print '<br>';
-print load_fiche_titre($langs->trans("Permissions"), '', '');
+print load_fiche_titre($langs->trans("Permissions"), '', 'folder');
 
 print '<strong>'.$langs->trans("PermissionsOnFilesInWebRoot").'</strong>: ';
 // TODO Check permission are read only except for custom dir
@@ -109,7 +110,7 @@ print '<br>';
 print '<br>';
 
 print '<br>';
-print load_fiche_titre($langs->trans("DolibarrModules"), '', '');
+print load_fiche_titre($langs->trans("Modules"), '', 'folder');
 
 // Module log
 print '<strong>'.$langs->trans("Syslog").'</strong>: ';
@@ -133,10 +134,12 @@ print '<br>';
 
 print '<br>';
 print '<br>';
-print load_fiche_titre($langs->trans("Menu").' '.$langs->trans("SecuritySetup"), '', '');
+print load_fiche_titre($langs->trans("Menu").' '.$langs->trans("SecuritySetup"), '', 'folder');
 
 //print '<strong>'.$langs->trans("PasswordEncryption").'</strong>: ';
-print '<strong>MAIN_SECURITY_HASH_ALGO</strong> = '.$conf->global->MAIN_SECURITY_HASH_ALGO." &nbsp; (Recommanded value: 'password_hash')<br>";
+print '<strong>MAIN_SECURITY_HASH_ALGO</strong> = '.(empty($conf->global->MAIN_SECURITY_HASH_ALGO) ? 'unset' : '')." &nbsp; ";
+print '<span class="opacitymedium"> &nbsp; If unset: \'md5\'</span> ';
+print '<span class="opacitymedium"> - Recommanded value: \'password_hash\'</span><br>';
 print '<strong>MAIN_SECURITY_SALT</strong> = '.$conf->global->MAIN_SECURITY_SALT.'<br>';
 print '<br>';
 // TODO
@@ -153,10 +156,20 @@ print '<br>';
 
 print '<br>';
 
-print '<strong>'.$langs->trans("SecurityAudit").'</strong>: ';
-// TODO Disabled or enabled ?
-print '<br>';
+$securityevent = new Events($db);
+$eventstolog = $securityevent->eventstolog;
 
+print '<strong>'.$langs->trans("LogEvents").'</strong>: ';
+// Loop on each event type
+foreach ($eventstolog as $key => $arr)
+{
+	if ($arr['id'])
+	{
+		$key = 'MAIN_LOGEVENTS_'.$arr['id'];
+		$value = empty($conf->global->$key) ? '' : $conf->global->$key;
+		if ($value) print $key.', ';
+	}
+}
 
 
 

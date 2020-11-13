@@ -206,7 +206,7 @@ $filters = '';
 
 // Filter on array of ids of all childs
 $userchilds = array();
-if (empty($user->rights->holiday->read_all))
+if (empty($user->rights->holiday->readall))
 {
 	$userchilds = $user->getAllChildIds(1);
 	$filters .= ' AND u.rowid IN ('.join(', ', $userchilds).')';
@@ -293,7 +293,7 @@ if (count($typeleaves) == 0)
 	foreach ($listUsers as $users)
 	{
 		// If user has not permission to edit/read all, we must see only subordinates
-		if (empty($user->rights->holiday->read_all))
+		if (empty($user->rights->holiday->readall))
 		{
 			if (($users['rowid'] != $user->id) && (!in_array($users['rowid'], $userchilds))) continue; // This user is not into hierarchy of current user, we hide it.
 		}
