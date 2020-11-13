@@ -73,6 +73,7 @@ create table llx_societe
   idprof5                  varchar(128),                         		-- IDProf5: depends on country (example: nu for france, ...)
   idprof6                  varchar(128),                         		-- IDProf6: depends on country (example: nu for france, ...
   tva_intra                varchar(20),                         		-- vat numero
+  eori                     varchar(20),                             -- EORI Number
   capital                  double(24,8)   DEFAULT NULL,        			-- capital of company
   fk_stcomm                integer        DEFAULT 0 NOT NULL,      		-- commercial status
   note_private             text,                                		--
