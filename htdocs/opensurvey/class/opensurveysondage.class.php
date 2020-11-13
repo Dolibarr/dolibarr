@@ -50,7 +50,6 @@ class Opensurveysondage extends CommonObject
 	 */
 	public $picto = 'poll';
 
-
 	/**
 	 * @var string	ID survey
 	 */
@@ -88,6 +87,10 @@ class Opensurveysondage extends CommonObject
 	 * @var int status
 	 */
 	public $status = 1;
+
+	/**
+	 * @var string format of survey
+	 */
 	public $format;
 
 	/**
@@ -201,10 +204,8 @@ class Opensurveysondage extends CommonObject
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
