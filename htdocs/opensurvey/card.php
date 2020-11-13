@@ -111,13 +111,13 @@ if (empty($reshook))
 
 		if (!$error)
 		{
-			$object->title = (string) GETPOST('nouveautitre', 'nohtml');
+			$object->title = (string) GETPOST('nouveautitre', 'alphanohtml');
 			$object->description = (string) GETPOST('nouveauxcommentaires', 'restricthtml');
 			$object->mail_admin = (string) GETPOST('nouvelleadresse', 'alpha');
 			$object->date_fin = $expiredate;
-			$object->allow_comments = GETPOST('cancomment', 'alpha') == 'on' ? 1 : 0;
-			$object->allow_spy = GETPOST('canseeothersvote', 'alpha') == 'on' ? 1 : 0;
-			$object->mailsonde = GETPOST('mailsonde', 'alpha') == 'on' ? true : false;
+			$object->allow_comments = GETPOST('cancomment', 'aZ09') == 'on' ? 1 : 0;
+			$object->allow_spy = GETPOST('canseeothersvote', 'aZ09') == 'on' ? 1 : 0;
+			$object->mailsonde = GETPOST('mailsonde', 'aZ09') == 'on' ? true : false;
 
 			$res = $object->update($user);
 			if ($res < 0) {
