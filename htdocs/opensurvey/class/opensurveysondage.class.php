@@ -194,7 +194,7 @@ class Opensurveysondage extends CommonObject
 		$resql = $this->db->query($sql);
 		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-		if (!$error && !$notrigger)
+		if (!$error && !$notrigger) {
 			global $langs, $conf;
 
 			// Call trigger
