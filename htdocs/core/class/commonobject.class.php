@@ -4570,13 +4570,17 @@ abstract class CommonObject
 			{
 				foreach (array('doc', 'pdf') as $prefix)
 				{
-					if (in_array(get_class($this), array('Adherent'))) $file = $prefix."_".$modele.".class.php"; // Member module use prefix_module.class.php
-					else $file = $prefix."_".$modele.".modules.php";
+					if (in_array(get_class($this), array('Adherent'))) {
+						// Member module use prefix_modele.class.php
+						$file = $prefix."_".$modele.".class.php";
+					} else {
+						// Other module use prefix_modele.modules.php
+						$file = $prefix."_".$modele.".modules.php";
+					}
 
 					// On verifie l'emplacement du modele
 					$file = dol_buildpath($reldir.$modelspath.$file, 0);
-					if (file_exists($file))
-					{
+					if (file_exists($file)) {
 						$filefound = $file;
 						$classname = $prefix.'_'.$modele;
 						break;
