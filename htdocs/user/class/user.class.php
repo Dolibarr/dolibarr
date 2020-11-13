@@ -3006,7 +3006,7 @@ class User extends CommonObject
 		$this->ldap_sid = $ldapuser->{$conf->global->LDAP_FIELD_SID};
 
 		$this->job = $ldapuser->{$conf->global->LDAP_FIELD_TITLE};
-		$this->note = $ldapuser->{$conf->global->LDAP_FIELD_DESCRIPTION};
+		$this->note_public = $ldapuser->{$conf->global->LDAP_FIELD_DESCRIPTION};
 
 		$result = $this->update($user);
 
