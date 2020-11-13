@@ -39,26 +39,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 class pdf_baleine extends ModelePDFProjects
 {
 	/**
-	 * @var DoliDb Database handler
-	 */
-	public $db;
-
-	/**
-	 * @var string model name
-	 */
-	public $name;
-
-	/**
-	 * @var string model description (short text)
-	 */
-	public $description;
-
-	/**
-	 * @var string document type
-	 */
-	public $type;
-
-	/**
 	 * @var array Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 5.6 = array(5, 6)
 	 */
@@ -71,43 +51,8 @@ class pdf_baleine extends ModelePDFProjects
 	public $version = 'dolibarr';
 
 	/**
-	 * @var int page_largeur
-	 */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
-	/**
 	 * Issuer
-	 * @var Societe object that emits
+	 * @var Societe Object that emits
 	 */
 	public $emetteur;
 
@@ -149,10 +94,10 @@ class pdf_baleine extends ModelePDFProjects
 		// Define position of columns
 		$this->posxref = $this->marge_gauche + 1;
 		$this->posxlabel = $this->marge_gauche + 25;
-		$this->posxworkload = $this->marge_gauche + 120;
-		$this->posxprogress = $this->marge_gauche + 140;
-		$this->posxdatestart = $this->marge_gauche + 152;
-		$this->posxdateend = $this->marge_gauche + 170;
+		$this->posxworkload = $this->marge_gauche + 117;
+		$this->posxprogress = $this->marge_gauche + 137;
+		$this->posxdatestart = $this->marge_gauche + 147;
+		$this->posxdateend = $this->marge_gauche + 169;
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
 			$this->posxref -= 20;
@@ -420,7 +365,8 @@ class pdf_baleine extends ModelePDFProjects
 					// Progress
 					$pdf->SetXY($this->posxprogress, $curY);
 					$pdf->MultiCell($this->posxdatestart - $this->posxprogress, 3, $progress, 0, 'R');
-					// Date
+
+					// Date start and end
 					$pdf->SetXY($this->posxdatestart, $curY);
 					$pdf->MultiCell($this->posxdateend - $this->posxdatestart, 3, $datestart, 0, 'C');
 					$pdf->SetXY($this->posxdateend, $curY);
@@ -538,7 +484,7 @@ class pdf_baleine extends ModelePDFProjects
 		// Draw rect of all tab (title + lines). Rect takes a length in 3rd parameter
 		$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height);
 
-		// line takes a position y in 3rd parameter
+		// Line takes a position y in 3rd parameter
 		$pdf->line($this->marge_gauche, $tab_top + $heightoftitleline, $this->page_largeur - $this->marge_droite, $tab_top + $heightoftitleline);
 
 		$pdf->SetTextColor(0, 0, 0);
@@ -556,11 +502,13 @@ class pdf_baleine extends ModelePDFProjects
 		$pdf->SetXY($this->posxprogress, $tab_top + 1);
 		$pdf->MultiCell($this->posxdatestart - $this->posxprogress, 3, '%', 0, 'R');
 
+		// Date start
 		$pdf->SetXY($this->posxdatestart, $tab_top + 1);
-		$pdf->MultiCell($this->posxdateend - $this->posxdatestart, 3, '', 0, 'C');
+		$pdf->MultiCell($this->posxdateend - $this->posxdatestart, 3, $outputlangs->trans("Start"), 0, 'C');
 
+		// Date end
 		$pdf->SetXY($this->posxdateend, $tab_top + 1);
-		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxdatestart, 3, '', 0, 'C');
+		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxdateend, 3, $outputlangs->trans("End"), 0, 'C');
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
