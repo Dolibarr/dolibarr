@@ -387,7 +387,7 @@ if ($result) {
 			$i++;
 		}
 
-		$db->free();
+		$db->free($result);
 	} else {
 		print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans('NoUnreadTicketsFound').'</td></tr>';
 	}
