@@ -80,7 +80,6 @@ if (!$sortorder) {
 	$sortorder = 'ASC';
 }
 
-// Define virtualdiffersfromphysical
 $virtualdiffersfromphysical = 0;
 if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 	|| !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
@@ -92,7 +91,11 @@ if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 	$virtualdiffersfromphysical = 1; // According to increase/decrease stock options, virtual and physical stock may differs.
 }
 
-$usevirtualstock = !empty($conf->global->STOCK_USE_VIRTUAL_STOCK);
+if ($virtualdiffersfromphysical) {
+	$usevirtualstock = empty($conf->global->STOCK_USE_REAL_STOCK_BY_DEFAULT_FOR_REPLENISHMENT) ? 1 : 0;
+} else {
+	$usevirtualstock = 0;
+}
 if ($mode == 'physical') $usevirtualstock = 0;
 if ($mode == 'virtual') $usevirtualstock = 1;
 
@@ -526,22 +529,23 @@ print load_fiche_titre($langs->trans('Replenishment'), '', 'stock');
 
 print dol_get_fiche_head($head, 'replenish', '', -1, '');
 
-print '<span class="opacitymedium">'.$langs->trans("ReplenishmentStatusDesc").'</span><br>'."\n";
+print '<span class="opacitymedium">'.$langs->trans("ReplenishmentStatusDesc").'</span>'."\n";
 if (empty($fk_warhouse) && !empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
 	print '<span class="opacitymedium">'.$langs->trans("ReplenishmentStatusDescPerWarehouse").'</span>'."<br>\n";
 }
+print '<br>';
 if ($usevirtualstock == 1)
 {
 	print $langs->trans("CurentSelectionMode").': ';
-	print $langs->trans("CurentlyUsingVirtualStock");
-	print ' (<a href="'.$_SERVER["PHP_SELF"].'?mode=physical&fk_supplier='.$fk_supplier.'&fk_entrepot='.$fk_entrepot.'">'.$langs->trans("UsePhysicalStock").'</a>)';
+	print '<span class="a-mesure">'.$langs->trans("UseVirtualStock").'</span>';
+	print ' <a class="a-mesure-disabled" href="'.$_SERVER["PHP_SELF"].'?mode=physical&fk_supplier='.$fk_supplier.'&fk_entrepot='.$fk_entrepot.'">'.$langs->trans("UsePhysicalStock").'</a>';
 	print '<br>';
 }
 if ($usevirtualstock == 0)
 {
 	print $langs->trans("CurentSelectionMode").': ';
-	print $langs->trans("CurentlyUsingPhysicalStock");
-	print ' (<a href="'.$_SERVER["PHP_SELF"].'?mode=virtual&fk_supplier='.$fk_supplier.'&fk_entrepot='.$fk_entrepot.'">'.$langs->trans("UseVirtualStock").'</a>)';
+	print '<a class="a-mesure-disabled" href="'.$_SERVER["PHP_SELF"].'?mode=virtual&fk_supplier='.$fk_supplier.'&fk_entrepot='.$fk_entrepot.'">'.$langs->trans("UseVirtualStock").'</a>';
+	print ' <span class="a-mesure">'.$langs->trans("UsePhysicalStock").'</span>';
 	print '<br>';
 }
 print '<br>'."\n";
@@ -591,54 +595,33 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 
 if ($search_ref || $search_label || $sall || $salert || $draftorder || GETPOST('search', 'alpha')) {
-	$filters = '&search_ref='.$search_ref.'&search_label='.$search_label;
-	$filters .= '&sall='.$sall;
-	$filters .= '&salert='.$salert;
-	$filters .= '&draftorder='.$draftorder;
-	$filters .= '&mode='.$mode;
-	$filters .= '&fk_supplier='.$fk_supplier;
-	$filters .= '&fk_entrepot='.$fk_entrepot;
-	print_barre_liste(
-		$texte,
-		$page,
-		'replenish.php',
-		$filters,
-		$sortfield,
-		$sortorder,
-		'',
-		$num
-	);
+	$filters = '&search_ref='.urlencode($search_ref).'&search_label='.urlencode($search_label);
+	$filters .= '&sall='.urlencode($sall);
+	$filters .= '&salert='.urlencode($salert);
+	$filters .= '&draftorder='.urlencode($draftorder);
+	$filters .= '&mode='.urlencode($mode);
+	$filters .= '&fk_supplier='.urlencode($fk_supplier);
+	$filters .= '&fk_entrepot='.urlencode($fk_entrepot);
 } else {
-	$filters = '&search_ref='.$search_ref.'&search_label='.$search_label;
-	$filters .= '&fourn_id='.$fourn_id;
-	$filters .= (isset($type) ? '&type='.$type : '');
-	$filters .= '&='.$salert;
-	$filters .= '&draftorder='.$draftorder;
-	$filters .= '&mode='.$mode;
-	$filters .= '&fk_supplier='.$fk_supplier;
-	$filters .= '&fk_entrepot='.$fk_entrepot;
-	print_barre_liste(
-		$texte,
-		$page,
-		'replenish.php',
-		$filters,
-		$sortfield,
-		$sortorder,
-		'',
-		$num
-	);
+	$filters = '&search_ref='.urlencode($search_ref).'&search_label='.urlencode($search_label);
+	$filters .= '&fourn_id='.urlencode($fourn_id);
+	$filters .= (isset($type) ? '&type='.urlencode($type) : '');
+	$filters .= '&='.urlencode($salert);
+	$filters .= '&draftorder='.urlencode($draftorder);
+	$filters .= '&mode='.urlencode($mode);
+	$filters .= '&fk_supplier='.urlencode($fk_supplier);
+	$filters .= '&fk_entrepot='.urlencode($fk_entrepot);
 }
-
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$filters .= '&limit='.urlencode($limit);
 }
 
-$param = (isset($type) ? '&type='.$type : '');
-$param .= '&fourn_id='.$fourn_id.'&search_label='.$search_label.'&includeproductswithoutdesiredqty='.$includeproductswithoutdesiredqty.'&salert='.$salert.'&draftorder='.$draftorder;
-$param .= '&search_ref='.$search_ref;
-$param .= '&mode='.$mode;
-$param .= '&fk_supplier='.$fk_supplier;
-$param .= '&fk_entrepot='.$fk_entrepot;
+$param = (isset($type) ? '&type='.urlencode($type) : '');
+$param .= '&fourn_id='.urlencode($fourn_id).'&search_label='.urlencode($search_label).'&includeproductswithoutdesiredqty='.urlencode($includeproductswithoutdesiredqty).'&salert='.urlencode($salert).'&draftorder='.urlencode($draftorder);
+$param .= '&search_ref='.urlencode($search_ref);
+$param .= '&mode='.urlencode($mode);
+$param .= '&fk_supplier='.urlencode($fk_supplier);
+$param .= '&fk_entrepot='.urlencode($fk_entrepot);
 
 $stocklabel = $langs->trans('Stock');
 $stocklabelbis = $langs->trans('Stock');
@@ -650,6 +633,8 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entre
 	$stocklabel .= ' ('.$langs->trans("AllWarehouses").')';
 }
 $texte = $langs->trans('Replenishment');
+
+print '<br>';
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 
@@ -664,7 +649,7 @@ if (!empty($conf->global->REPLENISH_ALLOW_VARIABLESIZELIST)) {
 		'',
 		$num,
 		$nbtotalofrecords,
-		'object_stock.png',
+		'',
 		0,
 		'',
 		'',
@@ -681,7 +666,7 @@ if (!empty($conf->global->REPLENISH_ALLOW_VARIABLESIZELIST)) {
 		'',
 		$num,
 		$nbtotalofrecords,
-		'object_stock.png'
+		''
 	);
 }
 
