@@ -56,8 +56,8 @@ ALTER TABLE llx_mrp_mo_extrafields DROP INDEX idx_fk_object;
 
 ALTER TABLE llx_mrp_mo_extrafields ADD INDEX idx_mrp_mo_fk_object(fk_object);
 
-
 -- For v13
+ALTER TABLE llx_bom_bom ADD COLUMN default_version integer DEFAULT 0 after fk_user_valid ;
 
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (111,11,     '0','0','No Sales Tax',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (112,11,     '4','0','Sales Tax 4%',1);
