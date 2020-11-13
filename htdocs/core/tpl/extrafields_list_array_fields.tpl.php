@@ -1,6 +1,6 @@
 <?php
 
-// print '<!-- extrafields_list_array_fields.tpl.php -->'."\n";
+print '<!-- extrafields_list_array_fields.tpl.php -->'."\n";
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf))
