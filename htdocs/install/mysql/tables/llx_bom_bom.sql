@@ -35,6 +35,7 @@ CREATE TABLE llx_bom_bom(
 	fk_user_creat integer NOT NULL,
 	fk_user_modif integer, 
 	fk_user_valid integer, 
+	default_version integer,			-- 1 for default BOM, 0 for other version 
 	import_key varchar(14),
 	model_pdf varchar(255), 
 	status integer NOT NULL 
