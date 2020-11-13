@@ -483,13 +483,15 @@ if ($virtualdiffersfromphysical)
 	print '</tr>'."\n";
 
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("UseVirtualStockByDefault").'</td>';
+	print '<td>';
+	print $form->textwithpicto($langs->trans("UseRealStockByDefault"), $langs->trans("ReplenishmentCalculation"));
+	print '</td>';
 	print '<td class="right">';
 	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('STOCK_USE_VIRTUAL_STOCK');
+		print ajax_constantonoff('STOCK_USE_REAL_STOCK_BY_DEFAULT_FOR_REPLENISHMENT');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STOCK_USE_VIRTUAL_STOCK", $arrval, $conf->global->STOCK_USE_VIRTUAL_STOCK);
+		print $form->selectarray("STOCK_USE_REAL_STOCK_BY_DEFAULT_FOR_REPLENISHMENT", $arrval, $conf->global->STOCK_USE_REAL_STOCK_BY_DEFAULT_FOR_REPLENISHMENT);
 	}
 	print "</td>\n";
 	print "</tr>\n";
