@@ -252,7 +252,7 @@ class PrestaShopWebservice
 	 * Examples are given in the tutorial</p>
 	 *
 	 * @param 	array 				$options	Options
-	 * @return 	SimpleXMLElement 				status_code, response
+	 * @return 	SimpleXMLElement|boolean 		status_code, response
 	 *
 	 * @throw PrestaShopWebserviceException
 	 */
@@ -379,7 +379,7 @@ class PrestaShopWebservice
 	 * Examples are given in the tutorial</p>
 	 *
 	 * @param 	array 				$options 	Array representing resource to edit.
-	 * @return	SimpleXMLElement 				status_code, response
+	 * @return	SimpleXMLElement|boolean 		status_code, response
 	 *
 	 * @throw PrestaShopWebserviceException
 	 */
