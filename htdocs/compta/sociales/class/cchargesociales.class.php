@@ -44,6 +44,9 @@ class Cchargesociales
 	 */
 	public $table_element = 'c_chargesociales';
 
+	/**
+	 * @var string libelle
+	 */
 	public $libelle;
 	public $deductible;
 	public $active;
@@ -54,6 +57,9 @@ class Cchargesociales
 	 */
 	public $fk_pays;
 
+	/**
+	 * @var string module
+	 */
 	public $module;
 	public $accountancy_code;
 
@@ -79,8 +85,6 @@ class Cchargesociales
 	public function create(User $user, $notrigger = false)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		$error = 0;
 
 		// Clean parameters
 		$this->trimParameters(
@@ -109,7 +113,6 @@ class Cchargesociales
 		$sql .= 'module';
 		$sql .= 'accountancy_code';
 
-
 		$sql .= ') VALUES (';
 
 		$sql .= ' '.(!isset($this->libelle) ? 'NULL' : "'".$this->db->escape($this->libelle)."'").',';
@@ -120,40 +123,19 @@ class Cchargesociales
 		$sql .= ' '.(!isset($this->module) ? 'NULL' : "'".$this->db->escape($this->module)."'").',';
 		$sql .= ' '.(!isset($this->accountancy_code) ? 'NULL' : "'".$this->db->escape($this->accountancy_code)."'");
 
-
 		$sql .= ')';
 
 		$this->db->begin();
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++;
 			$this->errors[] = 'Error '.$this->db->lasterror();
 			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
-		}
-
-		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
-
-			//if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action to call a trigger.
-
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-				//if ($result < 0) $error++;
-				//// End call triggers
-			//}
-		}
-
-		// Commit or rollback
-		if ($error) {
 			$this->db->rollback();
-
 			return -1 * $error;
 		} else {
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 			$this->db->commit();
-
 			return $this->id;
 		}
 	}
@@ -227,12 +209,9 @@ class Cchargesociales
 	 */
 	public function update(User $user, $notrigger = false)
 	{
-		$error = 0;
-
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		// Clean parameters
-
 		$this->trimParameters(
 			array(
 				'libelle',
@@ -264,29 +243,12 @@ class Cchargesociales
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++;
 			$this->errors[] = 'Error '.$this->db->lasterror();
 			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
-		}
-
-		//if (!$error && !$notrigger) {
-			// Uncomment this and change MYOBJECT to your own tag if you
-			// want this action calls a trigger.
-
-			//// Call triggers
-			//$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-			//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-			//// End call triggers
-		//}
-
-		// Commit or rollback
-		if ($error) {
 			$this->db->rollback();
-
 			return -1 * $error;
 		} else {
 			$this->db->commit();
-
 			return 1;
 		}
 	}
@@ -303,42 +265,19 @@ class Cchargesociales
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$error = 0;
-
 		$this->db->begin();
 
-		//if (!$error) {
-			//if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
+		$sql .= ' WHERE id='.$this->id;
 
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
-			//}
-		//}
-
-		if (!$error) {
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' WHERE id='.$this->id;
-
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$error++;
-				$this->errors[] = 'Error '.$this->db->lasterror();
-				dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
-			}
-		}
-
-		// Commit or rollback
-		if ($error) {
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
 			$this->db->rollback();
-
 			return -1 * $error;
 		} else {
 			$this->db->commit();
-
 			return 1;
 		}
 	}
@@ -422,8 +361,7 @@ class Cchargesociales
 		$link .= '>';
 		$linkend = '</a>';
 
-		if ($withpicto)
-		{
+		if ($withpicto) {
 			$result .= ($link.img_object(($notooltip ? '' : $label), 'label', ($notooltip ? '' : 'class="classfortooltip"'), 0, 0, $notooltip ? 0 : 1).$linkend);
 			if ($withpicto != 2) $result .= ' ';
 		}
@@ -510,7 +448,6 @@ class Cchargesociales
 	 */
 	private function trimParameters($parameters)
 	{
-		if (!is_array($parameters)) return;
 		foreach ($parameters as $parameter) {
 			if (isset($this->$parameter)) {
 				$this->$parameter = trim($this->$parameter);
