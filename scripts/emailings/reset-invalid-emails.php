@@ -73,30 +73,30 @@ $db->begin();
 $groupofemails = array();
 
 
-	// For each groupofemail, we update tables to set email field to empty
-	if ($type == 'all' || $type == 'thirdparty')
-	{
-		// Loop on each record and update the email to null if email into $groupofemails
-		// TODO
-	}
+// For each groupofemail, we update tables to set email field to empty
+if ($type == 'all' || $type == 'thirdparty')
+{
+	// Loop on each record and update the email to null if email into $groupofemails
+	// TODO
+}
 
-	if ($type == 'all' || $type == 'contact')
-	{
-		// Loop on each record and update the email to null if email into $groupofemails
-		// TODO
-	}
+if ($type == 'all' || $type == 'contact')
+{
+	// Loop on each record and update the email to null if email into $groupofemails
+	// TODO
+}
 
-	if ($type == 'all' || $type == 'user')
-	{
-		// Loop on each record and update the email to null if email into $groupofemails
-		// TODO
-	}
+if ($type == 'all' || $type == 'user')
+{
+	// Loop on each record and update the email to null if email into $groupofemails
+	// TODO
+}
 
-	if ($type == 'all' || $type == 'member')
-	{
-		// Loop on each record and update the email to null if email into $groupofemails
-		// TODO
-	}
+if ($type == 'all' || $type == 'member')
+{
+	// Loop on each record and update the email to null if email into $groupofemails
+	// TODO
+}
 
 
 if (!$error) {
