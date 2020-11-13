@@ -1471,7 +1471,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 					print '</a>';
 
 					print '&nbsp;';
-					print '<a class="reposition paddingleft" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&amp;action=deletelin&amp;token='.newToken().'&amp;lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
+					print '<a class="reposition paddingleft" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&amp;action=deleteline&amp;token='.newToken().'&amp;lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
 					print img_delete('default', 'class="pictodelete paddingleft"');
 					print '</a>';
 
