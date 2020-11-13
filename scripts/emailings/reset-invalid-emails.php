@@ -88,7 +88,7 @@ if (!$myfile)
 }
 
 $tmp = 1;
-while($tmp!=null)
+while ($tmp!=null)
 {
 	$groupofemails=array();
 	for ($i=0; $i < MAXEMAILS; $i++)

@@ -807,7 +807,7 @@ if ($mode == 'standard')
 
 	// For year
 	$prevyear = $year - 1; $nextyear = $year + 1;
-	$link = "<a href='".$_SERVER["PHP_SELF"]."?account="."&year=".($prevyear)."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account."&year=".($nextyear)."'>".img_next('', 'class="valignbottom"')."</a>";
+	$link = "<a href='".$_SERVER["PHP_SELF"]."?account=".$account."&year=".($prevyear)."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account."&year=".($nextyear)."'>".img_next('', 'class="valignbottom"')."</a>";
 
 	print '<div class="right clearboth margintoponly">'.$link.'</div>';
 
