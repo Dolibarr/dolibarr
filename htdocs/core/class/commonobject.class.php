@@ -8377,8 +8377,8 @@ abstract class CommonObject
 
 	/**
 	 * Trim object parameters
-	 * @param string[] $parameters array of parameters to trim
 	 *
+	 * @param string[] $parameters array of parameters to trim
 	 * @return void
 	 */
 	public function trimParameters($parameters)
