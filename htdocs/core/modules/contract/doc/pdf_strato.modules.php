@@ -6,7 +6,7 @@
  * Copyright (C) 2011		Fabrice CHERRIER
  * Copyright (C) 2013-2020  Philippe Grand	            <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France             <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -164,8 +164,8 @@ class pdf_strato extends ModelePDFContract
 	/**
 	 *  Function to build pdf onto disk
 	 *
-	 *  @param		CommonObject	$object				Id of object to generate
-	 *  @param		object			$outputlangs		Lang output object
+	 *  @param		Contrat			$object				Object to generate
+	 *  @param		Translate		$outputlangs		Lang output object
 	 *  @param		string			$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int				$hidedetails		Do not show line details
 	 *  @param		int				$hidedesc			Do not show desc
@@ -580,7 +580,7 @@ class pdf_strato extends ModelePDFContract
 	 *  Show top header of page.
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  CommonObject	$object     	Object to show
+	 *  @param  Contrat		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
@@ -756,7 +756,7 @@ class pdf_strato extends ModelePDFContract
 	 *   	Show footer of page. Need this->emetteur object
 	 *
 	 *   	@param	PDF			$pdf     			PDF
-	 * 		@param	CommonObject		$object				Object to show
+	 * 		@param	Contrat		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	integer
