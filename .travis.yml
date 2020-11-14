@@ -110,7 +110,8 @@ install:
   rm $TRAVIS_BUILD_DIR/composer.lock
   composer self-update
   # To have composer making parallel downloads
-  composer global require hirak/prestissimo
+  # This plugin is for Composer1; Composer2 is very fast on its own. Uninstall this plugin and update the Composer itself.
+  # composer global require hirak/prestissimo
   composer -n init
   composer -n config vendor-dir htdocs/includes
   echo
