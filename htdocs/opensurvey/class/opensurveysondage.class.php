@@ -66,7 +66,7 @@ class Opensurveysondage extends CommonObject
 	public $mail_admin;
 
 	/**
-	 * @var admin name
+	 * @var string admin name
 	 */
 	public $nom_admin;
 
@@ -514,15 +514,15 @@ class Opensurveysondage extends CommonObject
 	{
 		$this->id = 0;
 
-		$this->id_sondage = '';
+		$this->id_sondage = 'a12d5g';
 		$this->description = 'Description of the specimen survey';
-		$this->mail_admin = '';
-		$this->nom_admin = '';
+		$this->mail_admin = 'email@email.com';
+		$this->nom_admin = 'surveyadmin';
 		$this->title = 'This is a specimen survey';
 		$this->date_fin = dol_now() + 3600 * 24 * 10;
 		$this->status = 1;
 		$this->format = 'classic';
-		$this->mailsonde = '';
+		$this->mailsonde = 0;
 	}
 
 	/**
