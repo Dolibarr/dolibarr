@@ -120,7 +120,11 @@ abstract class CommonDocGenerator
 	{
 		global $conf, $extrafields;
 
-		$logotouse = $conf->adherent->dir_output.'/'.$member->id.'/photos/'.$member->photo;
+		if ($member->photo) {
+			$logotouse = $conf->adherent->dir_output.'/'.$member->id.'/photos/'.$member->photo;
+		} else {
+			$logotouse = DOL_DOCUMENT_ROOT . '/public/theme/common/nophoto.png';
+		}
 
 		$array_member = array(
 			'mymember_lastname' => $member->lastname,
