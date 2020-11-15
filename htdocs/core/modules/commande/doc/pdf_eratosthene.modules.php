@@ -1074,8 +1074,8 @@ class pdf_eratosthene extends ModelePDFCommandes
 	/**
 	 *	Show total to pay
 	 *
-	 *	@param	TCPDF		$pdf           Object PDF
-	 *	@param  Commande	$object         Object invoice
+	 *	@param	TCPDF		$pdf            Object PDF
+	 *	@param  Commande	$object         Object to show
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
 	 *	@param	Translate	$outputlangs	Objet langs
