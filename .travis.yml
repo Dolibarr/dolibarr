@@ -303,7 +303,7 @@ script:
   echo
 
 - |
-  echo "Checking coding style (excluding Pull Requests builds to not overload travis, excluding also for some jobs to avoid duplicate tests)"
+  echo "Checking coding style (excluding Pull Requests builds to not overload travis, excluding also some jobs to avoid duplicate tests)"
   # Ensure we catch errors
   set -e
   # Exclusions are defined in the ruleset.xml file
