@@ -115,6 +115,7 @@ install:
   composer global require hirak/prestissimo
   composer -n init
   composer -n config vendor-dir htdocs/includes
+  composer -n config -g vendor-dir htdocs/includes
   echo
 
 - |
