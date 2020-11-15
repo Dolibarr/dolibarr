@@ -96,7 +96,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
             if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
             $sql .= " WHERE c.fk_soc = s.rowid";
             $sql .= " AND c.entity IN (".getEntity('supplier_order').")";
-            $sql .= " AND c.fk_statut = ".CommandeFournisseur::STATUS_ORDERSENT;
+            $sql .= " AND c.fk_statut IN (".CommandeFournisseur::STATUS_ORDERSENT.", ".CommandeFournisseur::STATUS_RECEIVED_PARTIALLY.")";
             if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
             if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
             if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql .= " ORDER BY c.date_commande DESC, c.ref DESC ";
