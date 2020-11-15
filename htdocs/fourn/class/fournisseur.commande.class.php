@@ -2987,7 +2987,7 @@ class CommandeFournisseur extends CommonOrder
         }
         $sql .= $clause." c.entity = ".$conf->entity;
         if ($mode === 'awaiting') {
-            $sql .= " AND c.fk_statut = ".self::STATUS_ORDERSENT;
+            $sql .= " AND c.fk_statut IN (".self::STATUS_ORDERSENT.", ".self::STATUS_RECEIVED_PARTIALLY.")";
         }
         else {
             $sql .= " AND c.fk_statut IN (".self::STATUS_VALIDATED.", ".self::STATUS_ACCEPTED.")";
@@ -3009,7 +3009,7 @@ class CommandeFournisseur extends CommonOrder
             if ($mode === 'awaiting') {
                 $response->label = $langs->trans("SuppliersOrdersAwaitingReception");
                 $response->labelShort = $langs->trans("AwaitingReception");
-                $response->url = DOL_URL_ROOT.'/fourn/commande/list.php?statut=3&mainmenu=commercial&leftmenu=orders_suppliers';
+                $response->url = DOL_URL_ROOT.'/fourn/commande/list.php?statut=3,4&mainmenu=commercial&leftmenu=orders_suppliers';
             }
 
             while ($obj = $this->db->fetch_object($resql))
@@ -3175,9 +3175,9 @@ class CommandeFournisseur extends CommonOrder
         if (empty($this->date_delivery) && !empty($this->date_livraison)) $this->date_delivery = $this->date_livraison; // For backward compatibility
 
         $now = dol_now();
-        $date_to_test = empty($this->date_delivery) ? $this->date_commande : $this->date_delivery;
+        $date_to_test = empty($this->date_livraison) ? $this->date_commande : $this->date_livraison;
 
-        return ($this->statut > 0 && $this->statut < 4) && $date_to_test && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
+        return ($this->statut > 0 && $this->statut < 5) && $date_to_test && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
     }
 
     /**
