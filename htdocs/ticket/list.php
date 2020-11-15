@@ -229,7 +229,7 @@ if ($socid > 0)
 
 foreach ($search as $key => $val)
 {
-    if ($key == 'fk_statut')
+    if ($key == 'fk_statut' && !empty($search['fk_statut']))
 	{
 	    $tmpstatus = '';
 	    if ($search['fk_statut'] == 'openall' || in_array('openall', $search['fk_statut'])) $tmpstatus .= ($tmpstatus ? ',' : '')."'".Ticket::STATUS_NOT_READ."', '".Ticket::STATUS_READ."', '".Ticket::STATUS_ASSIGNED."', '".Ticket::STATUS_IN_PROGRESS."', '".Ticket::STATUS_NEED_MORE_INFO."', '".Ticket::STATUS_WAITING."'";
@@ -238,7 +238,7 @@ foreach ($search as $key => $val)
 	    elseif (is_array($search[$key]) && count($search[$key])) $sql .= natural_search($key, join(',', $search[$key]), 2);
 	    continue;
 	}
-	if ($key == 'fk_user_assign')
+	if ($key == 'fk_user_assign' || $key == 'fk_user_create')
 	{
 	    if ($search[$key] > 0) $sql .= natural_search($key, $search[$key], 2);
 	    continue;
@@ -536,7 +536,7 @@ foreach ($object->fields as $key => $val)
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
 			$formTicket->selectSeveritiesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css'] ? $val['css'] : 'maxwidth150'));
 			print '</td>';
-		} elseif ($key == 'fk_user_assign') {
+		} elseif ($key == 'fk_user_assign' || $key == 'fk_user_create') {
 		    print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
 		    print $form->select_dolusers($search[$key], 'search_'.$key, 1, null, 0, '', '', '0', 0, 0, '', 0, '', ($val['css'] ? $val['css'] : 'maxwidth150'));
 		    print '</td>';
