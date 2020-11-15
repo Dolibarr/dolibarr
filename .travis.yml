@@ -108,10 +108,8 @@ install:
   echo "Updating Composer"
   rm $TRAVIS_BUILD_DIR/composer.json
   rm $TRAVIS_BUILD_DIR/composer.lock
+  composer -V
   composer self-update
-  # To have composer making parallel downloads
-  # This plugin is for Composer1; Composer2 is very fast on its own. Uninstall this plugin and update the Composer itself.
-  # composer global require hirak/prestissimo
   composer -n init
   composer -n config vendor-dir htdocs/includes
   echo
@@ -147,7 +145,9 @@ install:
 
 - |
   echo "Adding path of binaries tools installed by composer to the PATH"
-  export PATH="$TRAVIS_BUILD_DIR/htdocs/includes/bin:$PATH"
+  export PATH="$TRAVIS_BUILD_DIR/htdocs/includes/bin:$TRAVIS_BUILD_DIR/htdocs/includes:$PATH"
+  echo $PATH
+  ls $TRAVIS_BUILD_DIR/htdocs/includes/bin
   echo
 
 
@@ -178,7 +178,7 @@ before_script:
     # Check PHP
     echo "PHP version"
     php -i | head -
-    # Check Parallel-lin version
+    # Check Parallel-lint version
     echo "Parallel-lint version"
     which parallel-lint
     parallel-lint -V
