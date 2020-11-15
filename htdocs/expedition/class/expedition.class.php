@@ -1060,13 +1060,13 @@ class Expedition extends CommonObject
 		// Clean parameters
 
 		if (isset($this->ref)) $this->ref = trim($this->ref);
-		if (isset($this->entity)) $this->entity = trim($this->entity);
+		if (isset($this->entity)) $this->entity = (int) $this->entity;
 		if (isset($this->ref_customer)) $this->ref_customer = trim($this->ref_customer);
-		if (isset($this->socid)) $this->socid = trim($this->socid);
-		if (isset($this->fk_user_author)) $this->fk_user_author = trim($this->fk_user_author);
-		if (isset($this->fk_user_valid)) $this->fk_user_valid = trim($this->fk_user_valid);
-		if (isset($this->fk_delivery_address)) $this->fk_delivery_address = trim($this->fk_delivery_address);
-		if (isset($this->shipping_method_id)) $this->shipping_method_id = trim($this->shipping_method_id);
+		if (isset($this->socid)) $this->socid = (int) $this->socid;
+		if (isset($this->fk_user_author)) $this->fk_user_author = (int) $this->fk_user_author;
+		if (isset($this->fk_user_valid)) $this->fk_user_valid = (int) $this->fk_user_valid;
+		if (isset($this->fk_delivery_address)) $this->fk_delivery_address = (int) $this->fk_delivery_address;
+		if (isset($this->shipping_method_id)) $this->shipping_method_id = (int) $this->shipping_method_id;
 		if (isset($this->tracking_number)) $this->tracking_number = trim($this->tracking_number);
 		if (isset($this->statut)) $this->statut = (int) $this->statut;
 		if (isset($this->trueDepth)) $this->trueDepth = trim($this->trueDepth);
@@ -1122,15 +1122,11 @@ class Expedition extends CommonObject
 		$resql = $this->db->query($sql);
 		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-		if (!$error)
-		{
-			if (!$notrigger)
-			{
-				// Call trigger
-				$result = $this->call_trigger('SHIPPING_MODIFY', $user);
-				if ($result < 0) { $error++; }
-				// End call triggers
-			}
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('SHIPPING_MODIFY', $user);
+			if ($result < 0) { $error++; }
+			// End call triggers
 		}
 
 		// Commit or rollback
@@ -1171,21 +1167,16 @@ class Expedition extends CommonObject
 
 		// Add a protection to refuse deleting if shipment has at least one delivery
 		$this->fetchObjectLinked($this->id, 'shipping', 0, 'delivery'); // Get deliveries linked to this shipment
-		if (count($this->linkedObjectsIds) > 0)
-		{
+		if (count($this->linkedObjectsIds) > 0) {
 			$this->error = 'ErrorThereIsSomeDeliveries';
 			$error++;
 		}
 
-		if (!$error)
-		{
-			if (!$notrigger)
-			{
-				// Call trigger
-				$result = $this->call_trigger('SHIPPING_CANCEL', $user);
-				if ($result < 0) { $error++; }
-				// End call triggers
-			}
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('SHIPPING_CANCEL', $user);
+			if ($result < 0) { $error++; }
+			// End call triggers
 		}
 
 		// Stock control
@@ -1383,15 +1374,11 @@ class Expedition extends CommonObject
 			$error++;
 		}
 
-		if (!$error)
-		{
-			if (!$notrigger)
-			{
-				// Call trigger
-				$result = $this->call_trigger('SHIPPING_DELETE', $user);
-				if ($result < 0) { $error++; }
-				// End call triggers
-			}
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('SHIPPING_DELETE', $user);
+			if ($result < 0) { $error++; }
+			// End call triggers
 		}
 
 		// Stock control

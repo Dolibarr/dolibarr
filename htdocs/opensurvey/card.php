@@ -117,7 +117,7 @@ if (empty($reshook))
 			$object->date_fin = $expiredate;
 			$object->allow_comments = GETPOST('cancomment', 'aZ09') == 'on' ? 1 : 0;
 			$object->allow_spy = GETPOST('canseeothersvote', 'aZ09') == 'on' ? 1 : 0;
-			$object->mailsonde = GETPOST('mailsonde', 'aZ09') == 'on' ? true : false;
+			$object->mailsonde = GETPOST('mailsonde', 'aZ09') == 'on' ? 1 : 0;
 
 			$res = $object->update($user);
 			if ($res < 0) {
@@ -132,21 +132,18 @@ if (empty($reshook))
 	{
 		$error = 0;
 
-		if (!GETPOST('comment'))
-		{
+		if (!GETPOST('comment')) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Comment")), null, 'errors');
 		}
-		if (!GETPOST('commentuser'))
-		{
+		if (!GETPOST('commentuser')) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("User")), null, 'errors');
 		}
 
-		if (!$error)
-		{
-			$comment = GETPOST("comment");
-			$comment_user = GETPOST('commentuser');
+		if (!$error) {
+			$comment = (string) GETPOST("comment", "restricthtml");
+			$comment_user = (string) GETPOST('commentuser', "restricthtml");
 
 			$resql = $object->addComment($comment, $comment_user);
 
