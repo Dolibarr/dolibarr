@@ -92,7 +92,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	/**
 	 *  Function to create pdf of company bank account sepa mandate
 	 *
-	 *	@param	CompanyBankAccount	$object   		    Object project a generer
+	 *	@param	CompanyBankAccount	$object   		    Object bank account to generate document for
 	 *	@param	Translate			$outputlangs	    Lang output object
 	 *  @param	string				$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param	int					$hidedetails		Do not show line details (not used for this template)
