@@ -150,9 +150,6 @@ install:
   echo $PATH
   ls $TRAVIS_BUILD_DIR/vendor
   ls $TRAVIS_BUILD_DIR/htdocs/includes/bin
-  ls $TRAVIS_BUILD_DIR/htdocs/includes/php-parallel-lint
-  ls $TRAVIS_BUILD_DIR/htdocs/includes/phpunit
-  ls $TRAVIS_BUILD_DIR/htdocs/includes/squizlabs/php_codesniffer/bin
   echo
 
 
