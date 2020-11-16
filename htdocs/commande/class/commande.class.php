@@ -2014,7 +2014,7 @@ class Commande extends CommonOrder
 		$sql .= ' l.total_ht, l.total_ttc, l.total_tva, l.total_localtax1, l.total_localtax2, l.date_start, l.date_end,';
 		$sql .= ' l.fk_unit,';
 		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
-		$sql .= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label, p.tobatch as product_tobatch,';
+		$sql .= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label, p.tosell as product_tosell, p.tobuy as product_tobuy, p.tobatch as product_tobatch,';
 		$sql .= ' p.weight, p.weight_units, p.volume, p.volume_units';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
@@ -2077,6 +2077,8 @@ class Commande extends CommonOrder
 				$line->libelle = $objp->product_label;
 				$line->product_label = $objp->product_label;
 				$line->product_desc     = $objp->product_desc;
+				$line->product_tosell   = $objp->product_tosell;
+				$line->product_tobuy    = $objp->product_tobuy;
 				$line->product_tobatch  = $objp->product_tobatch;
 				$line->fk_product_type  = $objp->fk_product_type; // Produit ou service
 				$line->fk_unit          = $objp->fk_unit;

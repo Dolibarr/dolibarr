@@ -63,6 +63,11 @@ abstract class CommonObject
 	public $error;
 
 	/**
+	 * @var string 		Error string that is hidden but can be used to store complementatry technical code.
+	 */
+	public $errorhidden;
+
+	/**
 	 * @var string[]	Array of error strings
 	 */
 	public $errors = array();
