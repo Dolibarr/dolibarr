@@ -121,7 +121,7 @@ class CommandeFournisseur extends CommonOrder
 	public $date_livraison;
 
 	/**
-	 * Delivery date
+	 *  @var int Date expected for delivery
 	 */
 	public $delivery_date;
 
@@ -131,16 +131,6 @@ class CommandeFournisseur extends CommonOrder
 	public $total_localtax2; // Total Local tax 2
 	public $total_ttc;
 	public $source;
-
-	/**
-	 * @deprecated
-	 * @see $note_private, $note_public
-	 */
-	public $note;
-
-	public $note_private;
-	public $note_public;
-	public $model_pdf;
 
 	/**
 	 * @var int ID
