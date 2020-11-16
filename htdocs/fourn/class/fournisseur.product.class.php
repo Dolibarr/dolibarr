@@ -105,14 +105,9 @@ class ProductFournisseur extends Product
 	public $fourn_multicurrency_unitprice;
 
 	/**
-	 * @var string $supplier_barcode - Supplier barcode
+	 * @var string $fk_barcode_type - Supplier barcode type
 	 */
-	public $supplier_barcode;
-
-	/**
-	 * @var string $supplier_fk_barcode_type - Supplier barcode type
-	 */
-	public $supplier_fk_barcode_type;
+	public $fk_barcode_type;
 
 	/**
 	 *	Constructor
@@ -547,8 +542,8 @@ class ProductFournisseur extends Product
 				$this->fourn_multicurrency_id          = $obj->fk_multicurrency;
 				$this->fourn_multicurrency_code        = $obj->multicurrency_code;
 				if ($conf->barcode->enabled) {
-					$this->supplier_barcode = $obj->barcode;
-					$this->supplier_fk_barcode_type = $obj->fk_barcode_type;
+					$this->barcode = $obj->barcode;
+					$this->fk_barcode_type = $obj->fk_barcode_type;
 				}
 
 				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
@@ -661,8 +656,8 @@ class ProductFournisseur extends Product
 				}
 
 				if ($conf->barcode->enabled) {
-					$prodfourn->supplier_barcode = $record["barcode"];
-					$prodfourn->supplier_fk_barcode_type = $record["fk_barcode_type"];
+					$prodfourn->barcode = $record["barcode"];
+					$prodfourn->fk_barcode_type = $record["fk_barcode_type"];
 				}
 
 				if (!empty($conf->dynamicprices->enabled) && !empty($prodfourn->fk_supplier_price_expression)) {

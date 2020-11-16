@@ -725,7 +725,7 @@ END;
 					// Option to define a transport cost on supplier price
 					print '<tr>';
 					print '<td>'.$langs->trans('BarcodeValue').'</td>';
-					print '<td><input class="flat" name="barcode"  value="'.($rowid ? $object->supplier_barcode : '').'"></td>';
+					print '<td><input class="flat" name="barcode"  value="'.($rowid ? $object->barcode : '').'"></td>';
 					print '</tr>';
 					$formbarcode = new FormBarCode($db);
 
@@ -733,7 +733,7 @@ END;
 					print '<tr>';
 					print '<td>'.$langs->trans('BarcodeType').'</td>';
 					print '<td>';
-					print $formbarcode->selectBarcodeType(($rowid ? $object->supplier_fk_barcode_type : $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE), 'fk_barcode_type', 1);
+					print $formbarcode->selectBarcodeType(($rowid ? $object->fk_barcode_type : $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE), 'fk_barcode_type', 1);
 					print '</td>';
 					print '</tr>';
 				}
@@ -1071,16 +1071,16 @@ END;
 						// Barcode
 						if (!empty($arrayfields['pfp.barcode']['checked'])) {
 							print '<td align="right">';
-							print $productfourn->supplier_barcode;
+							print $productfourn->barcode;
 							print '</td>';
 						}
 
 						// Barcode type
 						if (!empty($arrayfields['pfp.fk_barcode_type']['checked'])) {
 							print '<td class="center">';
-							$productfourn->barcode_type = !empty($productfourn->supplier_fk_barcode_type) ? $productfourn->supplier_fk_barcode_type : 0;
+							$productfourn->barcode_type = !empty($productfourn->fk_barcode_type) ? $productfourn->fk_barcode_type : 0;
 							$productfourn->fetch_barcode();
-							print $productfourn->barcode_type_label ? $productfourn->barcode_type_label : ($productfourn->supplier_barcode ? '<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>' : '');
+							print $productfourn->barcode_type_label ? $productfourn->barcode_type_label : ($productfourn->barcode ? '<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>' : '');
 							print '</td>';
 						}
 
