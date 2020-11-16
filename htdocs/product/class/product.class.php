@@ -4208,29 +4208,36 @@ class Product extends CommonObject
     }
 
     /**
-     *  Return all parent products for current product (first level only)
+     * Count all parent and children products for current product (first level only)
      *
-     * @return int            Nb of father + child
+     * @param	int		$mode	0=Both parent and child, -1=Parents only, 1=Children only
+     * @return 	int            	Nb of father + child
+     * @see getFather(), get_sousproduits_arbo()
      */
-    public function hasFatherOrChild()
+    public function hasFatherOrChild($mode = 0)
     {
-        $nb = 0;
+    	$nb = 0;
 
-        $sql = "SELECT COUNT(pa.rowid) as nb";
-        $sql .= " FROM ".MAIN_DB_PREFIX."product_association as pa";
-        $sql .= " WHERE pa.fk_product_fils = ".$this->id." OR pa.fk_product_pere = ".$this->id;
-        $resql = $this->db->query($sql);
-        if ($resql) {
-            $obj = $this->db->fetch_object($resql);
-            if ($obj) { $nb = $obj->nb;
-            }
-        }
-        else
-        {
-            return -1;
-        }
+    	$sql = "SELECT COUNT(pa.rowid) as nb";
+    	$sql .= " FROM ".MAIN_DB_PREFIX."product_association as pa";
+    	if ($mode == 0) {
+    		$sql .= " WHERE pa.fk_product_fils = ".$this->id." OR pa.fk_product_pere = ".$this->id;
+    	} elseif ($mode == -1) {
+    		$sql .= " WHERE pa.fk_product_fils = ".$this->id;	// We are a child, so we found lines that link to parents (can have several parents)
+    	} elseif ($mode == 1) {
+    		$sql .= " WHERE pa.fk_product_pere = ".$this->id;	// We are a parent, so we found lines that link to children (can have several children)
+    	}
 
-        return $nb;
+    	$resql = $this->db->query($sql);
+    	if ($resql) {
+    		$obj = $this->db->fetch_object($resql);
+    		if ($obj) { $nb = $obj->nb;
+    		}
+    	} else {
+    		return -1;
+    	}
+
+    	return $nb;
     }
 
     /**
