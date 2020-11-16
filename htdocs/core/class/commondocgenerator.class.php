@@ -1296,7 +1296,7 @@ abstract class CommonDocGenerator
 		$html = '';
 		$fields = array();
 
-		if (is_array($extrafields->attributes[$object->table_element]) && is_array($extrafields->attributes[$object->table_element]['label'])) {
+		if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label'])) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
 			{
 				// Enable extrafield ?
