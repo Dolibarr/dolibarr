@@ -991,6 +991,9 @@ class Propal extends CommonObject
 			$this->multicurrency_tx = 1;
 		}
 
+		// Set tmp vars
+		$delivery_date = empty($this->delivery_date) ? $this->date_livraison : $this->delivery_date;
+
 		dol_syslog(get_class($this)."::create");
 
 		// Check parameters
@@ -1078,7 +1081,7 @@ class Propal extends CommonObject
 		$sql .= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : 'NULL');
 		$sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
 		$sql .= ", '".$this->db->escape($this->ref_client)."'";
-		$sql .= ", ".($this->date_livraison != '' ? "'".$this->db->idate($this->date_livraison)."'" : "NULL");
+		$sql .= ", ".(empty($delivery_date) ? "NULL" : "'".$this->db->idate($delivery_date)."'");
 		$sql .= ", ".($this->shipping_method_id > 0 ? $this->shipping_method_id : 'NULL');
 		$sql .= ", ".$this->availability_id;
 		$sql .= ", ".$this->demand_reason_id;
@@ -1441,7 +1444,7 @@ class Propal extends CommonObject
 		$sql .= ", p.date_valid as datev";
 		$sql .= ", p.datep as dp";
 		$sql .= ", p.fin_validite as dfv";
-		$sql .= ", p.date_livraison as date_livraison";
+		$sql .= ", p.date_livraison as delivery_date";
 		$sql .= ", p.model_pdf, p.last_main_doc, p.ref_client, p.extraparams";
 		$sql .= ", p.note_private, p.note_public";
 		$sql .= ", p.fk_projet as fk_project, p.fk_statut";
@@ -1523,8 +1526,8 @@ class Propal extends CommonObject
 				$this->date                 = $this->db->jdate($obj->dp); // Proposal date
 				$this->datep                = $this->db->jdate($obj->dp); // deprecated
 				$this->fin_validite         = $this->db->jdate($obj->dfv);
-				$this->date_livraison       = $this->db->jdate($obj->date_livraison);
-				$this->delivery_date        = $this->db->jdate($obj->date_livraison);
+				$this->date_livraison       = $this->db->jdate($obj->delivery_date);	// deprecated
+				$this->delivery_date        = $this->db->jdate($obj->delivery_date);
 				$this->shipping_method_id   = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
 				$this->availability_id      = $obj->fk_availability;
 				$this->availability_code    = $obj->availability_code;
@@ -2111,7 +2114,7 @@ class Propal extends CommonObject
 			{
 				$this->oldcopy = clone $this;
 				$this->date_livraison = $delivery_date;
-				$this->date_delivery = $delivery_date;
+				$this->delivery_date = $delivery_date;
 			}
 
 			if (!$notrigger && empty($error))
@@ -3574,16 +3577,24 @@ class Propal extends CommonObject
 			if (isset($this->statut)) {
 				$label .= ' '.$this->getLibStatut(5);
 			}
-			if (!empty($this->ref))
+			if (!empty($this->ref)) {
 				$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-			if (!empty($this->ref_client))
+			}
+			if (!empty($this->ref_client)) {
 				$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.$this->ref_client;
-			if (!empty($this->total_ht))
+			}
+			if (!empty($this->total_ht)) {
 				$label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
-			if (!empty($this->total_tva))
+			}
+			if (!empty($this->total_tva)) {
 				$label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
-			if (!empty($this->total_ttc))
+			}
+			if (!empty($this->total_ttc)) {
 				$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+			}
+			if (!empty($this->delivery_date)) {
+					$label .= '<br><b>'.$langs->trans('DeliveryDate').':</b> '.dol_print_date($this->delivery_date, 'dayhour');
+			}
 
 			if ($option == '') {
 				$url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$this->id.$get_params;

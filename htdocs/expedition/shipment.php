@@ -354,7 +354,7 @@ if ($id > 0 || !empty($ref))
 		print '<tr><td>'.$langs->trans('Date').'</td>';
 		print '<td colspan="2">';
 		print dol_print_date($object->date, 'day');
-		if ($object->hasDelay() && empty($object->date_livraison)) {
+		if ($object->hasDelay() && empty($object->delivery_date)) {
 			print ' '.img_picto($langs->trans("Late").' : '.$object->showDelay(), "warning");
 		}
 		print '</td>';
@@ -374,12 +374,12 @@ if ($id > 0 || !empty($ref))
 			print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdatedelivery">';
-			print $form->selectDate($object->date_livraison ? $object->date_livraison : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
+			print $form->selectDate($object->delivery_date ? $object->delivery_date : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
 			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
-			print dol_print_date($object->date_livraison, 'dayhour');
-			if ($object->hasDelay() && !empty($object->date_livraison)) {
+			print dol_print_date($object->delivery_date, 'dayhour');
+			if ($object->hasDelay() && !empty($object->delivery_date)) {
 				print ' '.img_picto($langs->trans("Late").' : '.$object->showDelay(), "warning");
 			}
 		}

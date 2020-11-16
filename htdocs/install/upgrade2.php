@@ -2068,8 +2068,8 @@ function migrate_commande_livraison($db, $langs, $conf)
 
 		$db->begin();
 
-		$sql = "SELECT l.rowid, l.fk_commande";
-		$sql .= ", c.ref_client, c.date_livraison";
+		$sql = "SELECT l.rowid, l.fk_commande,";
+		$sql .= " c.ref_client, c.date_livraison as delivery_date";
 		$sql .= " FROM ".MAIN_DB_PREFIX."livraison as l, ".MAIN_DB_PREFIX."commande as c";
 		$sql .= " WHERE c.rowid = l.fk_commande";
 		$resql = $db->query($sql);
@@ -2090,7 +2090,7 @@ function migrate_commande_livraison($db, $langs, $conf)
 
 					if ($resql2)
 					{
-						$delivery_date = $db->jdate($obj->date_livraison);
+						$delivery_date = $db->jdate($obj->delivery_date);
 
 						$sqlu = "UPDATE ".MAIN_DB_PREFIX."livraison SET";
 						$sqlu .= " ref_client='".$db->escape($obj->ref_client)."'";
@@ -3007,7 +3007,7 @@ function migrate_customerorder_shipping($db, $langs, $conf)
 
 		if ($db->query($sqlAdd1) && $db->query($sqlAdd2))
 		{
-			$sqlSelect = "SELECT e.rowid as shipping_id, c.ref_client, c.date_livraison";
+			$sqlSelect = "SELECT e.rowid as shipping_id, c.ref_client, c.date_livraison as delivery_date";
 			$sqlSelect .= " FROM ".MAIN_DB_PREFIX."expedition as e";
 			$sqlSelect .= ", ".MAIN_DB_PREFIX."element_element as el";
 			$sqlSelect .= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON c.rowid = el.fk_source AND el.sourcetype = 'commande'";
@@ -3028,7 +3028,7 @@ function migrate_customerorder_shipping($db, $langs, $conf)
 
 						$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."expedition SET";
 						$sqlUpdate .= " ref_customer = '".$db->escape($obj->ref_client)."'";
-						$sqlUpdate .= ", date_delivery = '".$db->escape($obj->date_livraison ? $obj->date_livraison : 'null')."'";
+						$sqlUpdate .= ", date_delivery = '".$db->escape($obj->delivery_date ? $obj->delivery_date : 'null')."'";
 						$sqlUpdate .= " WHERE rowid = ".$obj->shipping_id;
 
 						$result = $db->query($sqlUpdate);
