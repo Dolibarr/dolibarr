@@ -85,7 +85,7 @@ if ($id > 0 || !empty($ref))
 
 	$head = asset_prepare_head($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("Asset"), -1, 'generic');
+	print dol_get_fiche_head($head, 'note', $langs->trans("Asset"), -1, 'generic');
 
 	// Object card
 	// ------------------------------------------------------------
@@ -146,7 +146,7 @@ if ($id > 0 || !empty($ref))
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

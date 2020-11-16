@@ -348,7 +348,7 @@ if ($id > 0 || !empty($ref))
 	$tab = GETPOST('tab') ?GETPOST('tab') : 'tasks';
 
 	$head = project_prepare_head($object);
-	dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
+	print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
 
 	$param = '&id='.$object->id;
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
@@ -482,7 +482,7 @@ if ($id > 0 || !empty($ref))
 	print '<div class="clearboth"></div>';
 
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 
@@ -512,7 +512,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		if (!empty($object->id)) print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-		dol_fiche_head('');
+		print dol_get_fiche_head('');
 
 		print '<table class="border centpercent">';
 
@@ -595,7 +595,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 		print '</table>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
@@ -649,6 +649,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	// We need all tasks (even not limited to a user because a task to user can have a parent that is not affected to him).
 	$filteronthirdpartyid = $socid;
 	$tasksarray = $taskstatic->getTasksArray(0, 0, $object->id, $filteronthirdpartyid, 0, '', -1, $morewherefilter, 0, 0, $extrafields, 1, $search_array_options);
+
 	// We load also tasks limited to a particular user
 	$tmpuser = new User($db);
 	if ($search_user_id > 0) $tmpuser->fetch($search_user_id);

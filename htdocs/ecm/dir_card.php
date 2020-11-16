@@ -300,7 +300,7 @@ foreach ($filearray as $key => $file)
 
 
 $head = ecm_prepare_head($ecmdir, $module, $section);
-dol_fiche_head($head, 'card', $langs->trans("ECMSectionManual"), -1, 'dir');
+print dol_get_fiche_head($head, 'card', $langs->trans("ECMSectionManual"), -1, 'dir');
 
 
 if ($action == 'edit')
@@ -448,7 +448,7 @@ if ($action == 'edit')
 	print '</form>';
 }
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 

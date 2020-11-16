@@ -644,13 +644,13 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
  */
 function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $showonlymessage = 0, $params = null)
 {
-    global $conf, $db, $user, $langs, $hookmanager;
-    if (!is_object($langs))
-    {
-        include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
-        $langs = new Translate('', $conf);
-        $langs->setDefaultLang();
-    }
+	global $conf, $db, $user, $langs, $hookmanager;
+	if (!is_object($langs))
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
+		$langs = new Translate('', $conf);
+		$langs->setDefaultLang();
+	}
 
 	$langs->load("errors");
 

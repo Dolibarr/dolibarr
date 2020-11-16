@@ -331,7 +331,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="clos" value="0">';
 
-	dol_fiche_head('');
+	print dol_get_fiche_head('');
 
 	print '<table class="border centpercent">';
 
@@ -544,7 +544,7 @@ if ($action == 'create')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("CreateAccount").'">';
@@ -574,7 +574,7 @@ if ($action == 'create')
 
 		// Show tabs
 		$head = bank_prepare_head($object);
-		dol_fiche_head($head, 'bankname', $langs->trans("FinancialAccount"), -1, 'account');
+		print dol_get_fiche_head($head, 'bankname', $langs->trans("FinancialAccount"), -1, 'account');
 
 		$formconfirm = '';
 
@@ -752,7 +752,7 @@ if ($action == 'create')
 
 		print '<div class="clearboth"></div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		/*
 		 * Barre d'actions
@@ -810,7 +810,7 @@ if ($action == 'create')
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.$_REQUEST["id"].'">'."\n\n";
 
-		dol_fiche_head(array(), 0, '', 0);
+		print dol_get_fiche_head(array(), 0, '', 0);
 
 		//print '<div class="underbanner clearboth"></div>';
 
@@ -1028,7 +1028,7 @@ if ($action == 'create')
 			print '</table>';
 		}
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input value="'.$langs->trans("Modify").'" type="submit" class="button">';

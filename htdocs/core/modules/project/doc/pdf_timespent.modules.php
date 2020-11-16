@@ -38,8 +38,20 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 class pdf_timespent extends ModelePDFProjects
 {
 	/**
+	 * @var array Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 */
+	public $phpmin = array(5, 6);
+
+	/**
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
+	public $version = 'dolibarr';
+
+	/**
 	 * Issuer
-	 * @var Societe
+	 * @var Societe	Object that emits
 	 */
 	public $emetteur;
 
@@ -81,25 +93,26 @@ class pdf_timespent extends ModelePDFProjects
 		// Define position of columns
 		$this->posxref = $this->marge_gauche + 1;
 		$this->posxlabel = $this->marge_gauche + 25;
+		$this->posxworkload = $this->marge_gauche + 100;
 		$this->posxtimespent = $this->marge_gauche + 120;
 		//$this->posxprogress=$this->marge_gauche+140;
-		$this->posxdatestart = $this->marge_gauche + 152;
-		$this->posxdateend = $this->marge_gauche + 170;
+		$this->posxuser = $this->marge_gauche + 147;
+		//$this->posxdateend = $this->marge_gauche + 169;
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
 			$this->posxref -= 20;
 			$this->posxlabel -= 20;
 			$this->posxtimespent -= 20;
 			//$this->posxprogress-=20;
-			$this->posxdatestart -= 20;
-			$this->posxdateend -= 20;
+			$this->posxuser -= 20;
+			//$this->posxdateend -= 20;
 		}
 	}
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Fonction generant le projet sur le disque
+	 *	Function to build pdf project onto disk
 	 *
 	 *	@param	Project		$object   		Object project a generer
 	 *	@param	Translate	$outputlangs	Lang output object
@@ -156,6 +169,7 @@ class pdf_timespent extends ModelePDFProjects
 				$heightforinfotot = 40; // Height reserved to output the info and total part
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
+				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) $heightforfooter += 6;
 
 				if (class_exists('TCPDF'))
 				{
@@ -227,7 +241,7 @@ class pdf_timespent extends ModelePDFProjects
 
 					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
-					$pdf->Rect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 1);
+					$pdf->Rect($this->marge_gauche, $tab_top - 2, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 2);
 
 					$tab_height = $tab_height - $height_note;
 					$tab_top = $nexY + 6;
@@ -239,6 +253,10 @@ class pdf_timespent extends ModelePDFProjects
 				$iniY = $tab_top + $heightoftitleline + 1;
 				$curY = $tab_top + $heightoftitleline + 1;
 				$nexY = $tab_top + $heightoftitleline + 1;
+
+				$tmpuser = new User($this->db);
+
+				// TODO We should loop on record of times spent grouped by user instead of lines of tasks
 
 				// Loop on each lines
 				for ($i = 0; $i < $nblines; $i++)
@@ -340,22 +358,24 @@ class pdf_timespent extends ModelePDFProjects
 						$pdf->setPage($pageposafter); $curY = $tab_top_newpage + $heightoftitleline + 1;
 					}
 
-					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
+					$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
 
 					// Ref of task
 					$pdf->SetXY($this->posxref, $curY);
 					$pdf->MultiCell($this->posxlabel - $this->posxref, 3, $outputlangs->convToOutputCharset($ref), 0, 'L');
 					// timespent
 					$pdf->SetXY($this->posxtimespent, $curY);
-					$pdf->MultiCell($this->posxdatestart - $this->posxtimespent, 3, $duration ? $duration : '', 0, 'R');
+					$pdf->MultiCell($this->posxuser - $this->posxtimespent, 3, $duration ? $duration : '', 0, 'R');
 					// Progress
 					//$pdf->SetXY($this->posxprogress, $curY);
-					//$pdf->MultiCell($this->posxdatestart-$this->posxprogress, 3, $progress, 0, 'R');
-					// Date
-					$pdf->SetXY($this->posxdatestart, $curY);
-					$pdf->MultiCell($this->posxdateend - $this->posxdatestart, 3, $datestart, 0, 'C');
-					$pdf->SetXY($this->posxdateend, $curY);
-					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxdateend, 3, $dateend, 0, 'C');
+					//$pdf->MultiCell($this->posxuser-$this->posxprogress, 3, $progress, 0, 'R');
+
+					// User spending time
+					/*var_dump($object->lines[$i]);exit;
+					$tmpuser->fetch($object->lines[$i]->fk_user);
+					$pdf->SetXY($this->posxuser, $curY);
+					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxuser, 3, $tmpuser->getFullName($outputlangs, 0, -1, 20), 0, 'C');
+					*/
 
 					// Add line
 					if (!empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
@@ -408,7 +428,7 @@ class pdf_timespent extends ModelePDFProjects
 				else $this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0);
 				$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 
-				// Pied de page
+				// Footer of the page
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
 
@@ -469,7 +489,7 @@ class pdf_timespent extends ModelePDFProjects
 		// Draw rect of all tab (title + lines). Rect takes a length in 3rd parameter
 		$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height);
 
-		// line prend une position y en 3eme param
+		// Line takes a position y in 3rd parameter
 		$pdf->line($this->marge_gauche, $tab_top + $heightoftitleline, $this->page_largeur - $this->marge_droite, $tab_top + $heightoftitleline);
 
 		$pdf->SetTextColor(0, 0, 0);
@@ -482,16 +502,13 @@ class pdf_timespent extends ModelePDFProjects
 		$pdf->MultiCell($this->posxtimespent - $this->posxlabel, 3, $outputlangs->transnoentities("Description"), 0, 'L');
 
 		$pdf->SetXY($this->posxtimespent, $tab_top + 1);
-		$pdf->MultiCell($this->posxdatestart - $this->posxtimespent, 3, $outputlangs->transnoentities("TimeSpent"), 0, 'R');
+		$pdf->MultiCell($this->posxuser - $this->posxtimespent, 3, $outputlangs->transnoentities("TimeSpent"), 0, 'R');
 
 		//$pdf->SetXY($this->posxprogress, $tab_top+1);
-		//$pdf->MultiCell($this->posxdatestart-$this->posxprogress, 3, '%', 0, 'R');
+		//$pdf->MultiCell($this->posxuser - $this->posxprogress, 3, '%', 0, 'R');
 
-		$pdf->SetXY($this->posxdatestart, $tab_top + 1);
-		$pdf->MultiCell($this->posxdateend - $this->posxdatestart, 3, $outputlangs->transnoentities("Date"), 0, 'C');
-
-		$pdf->SetXY($this->posxdateend, $tab_top + 1);
-		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxdatestart, 3, '', 0, 'C');
+		$pdf->SetXY($this->posxuser, $tab_top + 1);
+		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxuser, 3, '', 0, 'C');
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -598,7 +615,7 @@ class pdf_timespent extends ModelePDFProjects
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
-		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf, $outputlangs, 'PROJECT_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 }

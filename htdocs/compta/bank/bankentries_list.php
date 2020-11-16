@@ -42,11 +42,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
@@ -369,12 +371,14 @@ $userstatic = new User($db);
 $chargestatic = new ChargeSociales($db);
 $loanstatic = new Loan($db);
 $memberstatic = new Adherent($db);
+$donstatic = new Don($db);
 $paymentstatic = new Paiement($db);
 $paymentsupplierstatic = new PaiementFourn($db);
+$paymentscstatic = new PaymentSocialContribution($db);
 $paymentvatstatic = new TVA($db);
 $paymentsalstatic = new PaymentSalary($db);
+$paymentdonationstatic = new PaymentDonation($db);
 $paymentvariousstatic = new PaymentVarious($db);
-$donstatic = new Don($db);
 $paymentexpensereportstatic = new PaymentExpenseReport($db);
 $bankstatic = new Account($db);
 $banklinestatic = new AccountLine($db);
@@ -430,13 +434,13 @@ if ($id > 0 || !empty($ref))
 
 	// Bank card
 	$head = bank_prepare_head($object);
-	dol_fiche_head($head, 'journal', $langs->trans("FinancialAccount"), 0, 'account');
+	print dol_get_fiche_head($head, 'journal', $langs->trans("FinancialAccount"), 0, 'account');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	/*
@@ -774,7 +778,7 @@ if ($resql)
 	{
 		if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT))
 		{
-			if (empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT))	// If direct entries is done using miscellaneous payments
+			if (empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT))	// Default is to record miscellaneous direct entries using miscellaneous payments
 			{
 				$newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.$search_account.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.urlencode($search_account)), '', $user->rights->banque->modifier);
 			} else // If direct entries is not done using miscellaneous payments
@@ -839,7 +843,7 @@ if ($resql)
 			$moreforfilter .= '<div class="divsearchfield">';
 			$moreforfilter .= $langs->trans('RubriquesTransactions').' : ';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_BANK_LINE, $search_bid, 'parent', null, null, 1);
-			$moreforfilter .= $form->selectarray('search_bid', $cate_arbo, $search_bid, 1);
+			$moreforfilter .= $form->selectarray('search_bid', $cate_arbo, $search_bid, 1, 0, 0, '', 0, 0, 0, '', '', 1);
 			$moreforfilter .= '</div>';
 		}
 	}
@@ -940,7 +944,7 @@ if ($resql)
 	if (!empty($arrayfields['b.conciliated']['checked']))
 	{
 		print '<td class="liste_titre" align="center">';
-		print $form->selectyesno('search_conciliated', $search_conciliated, 1, false, 1);
+		print $form->selectyesno('search_conciliated', $search_conciliated, 1, false, 1, 1);
 		print '</td>';
 	}
 	print '<td class="liste_titre" align="middle">';
@@ -1199,10 +1203,10 @@ if ($resql)
 					print ' '.$paymentsupplierstatic->getNomUrl(2);
 				} elseif ($links[$key]['type'] == 'payment_sc')
 				{
-					print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$links[$key]['url_id'].'">';
-					print ' '.img_object($langs->trans('ShowPayment'), 'payment').' ';
-					//print $langs->trans("SocialContributionPayment");
-					print '</a>';
+					$paymentscstatic->id = $links[$key]['url_id'];
+					$paymentscstatic->ref = $links[$key]['url_id'];
+					$paymentscstatic->label = $links[$key]['label'];
+					print ' '.$paymentscstatic->getNomUrl(2);
 				} elseif ($links[$key]['type'] == 'payment_vat')
 				{
 					$paymentvatstatic->id = $links[$key]['url_id'];
@@ -1212,6 +1216,7 @@ if ($resql)
 				{
 					$paymentsalstatic->id = $links[$key]['url_id'];
 					$paymentsalstatic->ref = $links[$key]['url_id'];
+					$paymentsalstatic->label = $links[$key]['label'];
 					print ' '.$paymentsalstatic->getNomUrl(2);
 				} elseif ($links[$key]['type'] == 'payment_loan')
 				{
@@ -1220,9 +1225,9 @@ if ($resql)
 					print '</a>';
 				} elseif ($links[$key]['type'] == 'payment_donation')
 				{
-					print '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?id='.$links[$key]['url_id'].'">';
-					print ' '.img_object($langs->trans('ShowPayment'), 'payment').' ';
-					print '</a>';
+					$paymentdonationstatic->id = $links[$key]['url_id'];
+					$paymentdonationstatic->ref = $links[$key]['url_id'];
+					print ' '.$paymentdonationstatic->getNomUrl(2);
 				} elseif ($links[$key]['type'] == 'payment_expensereport')
 				{
 					$paymentexpensereportstatic->id = $links[$key]['url_id'];

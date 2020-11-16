@@ -271,9 +271,158 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	}
 }
 
-if ($action == 'history')
+if ($action == 'creditnote')
 {
-	$placeid = (int) GETPOST('placeid', 'int');
+	$creditnote = new Facture($db);
+	$creditnote->socid = $invoice->socid;
+	$creditnote->date = dol_now();
+	$creditnote->type = Facture::TYPE_CREDIT_NOTE;
+	$creditnote->fk_facture_source = $placeid;
+	$creditnote->remise_absolue = $invoice->remise_absolue;
+	$creditnote->remise_percent = $invoice->remise_percent;
+	$creditnote->create($user);
+
+	foreach ($invoice->lines as $line)
+	{
+		// Extrafields
+		if (method_exists($line, 'fetch_optionals')) {
+			// load extrafields
+			$line->fetch_optionals();
+		}
+		// Reset fk_parent_line for no child products and special product
+		if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
+			$fk_parent_line = 0;
+		}
+		if ($invoice->type == Facture::TYPE_SITUATION)
+		{
+			$source_fk_prev_id = $line->fk_prev_id; // temporary storing situation invoice fk_prev_id
+			$line->fk_prev_id  = $line->id; // The new line of the new credit note we are creating must be linked to the situation invoice line it is created from
+			if (!empty($invoice->tab_previous_situation_invoice))
+			{
+				// search the last standard invoice in cycle and the possible credit note between this last and invoice
+				// TODO Move this out of loop of $invoice->lines
+				$tab_jumped_credit_notes = array();
+				$lineIndex = count($invoice->tab_previous_situation_invoice) - 1;
+				$searchPreviousInvoice = true;
+				while ($searchPreviousInvoice)
+				{
+					if ($invoice->tab_previous_situation_invoice[$lineIndex]->type == Facture::TYPE_SITUATION || $lineIndex < 1)
+					{
+						$searchPreviousInvoice = false; // find, exit;
+						break;
+					} else {
+						if ($invoice->tab_previous_situation_invoice[$lineIndex]->type == Facture::TYPE_CREDIT_NOTE) {
+							$tab_jumped_credit_notes[$lineIndex] = $invoice->tab_previous_situation_invoice[$lineIndex]->id;
+						}
+						$lineIndex--; // go to previous invoice in cycle
+					}
+				}
+
+				$maxPrevSituationPercent = 0;
+				foreach ($invoice->tab_previous_situation_invoice[$lineIndex]->lines as $prevLine)
+				{
+					if ($prevLine->id == $source_fk_prev_id)
+					{
+						$maxPrevSituationPercent = max($maxPrevSituationPercent, $prevLine->situation_percent);
+
+						//$line->subprice  = $line->subprice - $prevLine->subprice;
+						$line->total_ht  = $line->total_ht - $prevLine->total_ht;
+						$line->total_tva = $line->total_tva - $prevLine->total_tva;
+						$line->total_ttc = $line->total_ttc - $prevLine->total_ttc;
+						$line->total_localtax1 = $line->total_localtax1 - $prevLine->total_localtax1;
+						$line->total_localtax2 = $line->total_localtax2 - $prevLine->total_localtax2;
+
+						$line->multicurrency_subprice  = $line->multicurrency_subprice - $prevLine->multicurrency_subprice;
+						$line->multicurrency_total_ht  = $line->multicurrency_total_ht - $prevLine->multicurrency_total_ht;
+						$line->multicurrency_total_tva = $line->multicurrency_total_tva - $prevLine->multicurrency_total_tva;
+						$line->multicurrency_total_ttc = $line->multicurrency_total_ttc - $prevLine->multicurrency_total_ttc;
+					}
+				}
+
+				// prorata
+				$line->situation_percent = $maxPrevSituationPercent - $line->situation_percent;
+
+				//print 'New line based on invoice id '.$invoice->tab_previous_situation_invoice[$lineIndex]->id.' fk_prev_id='.$source_fk_prev_id.' will be fk_prev_id='.$line->fk_prev_id.' '.$line->total_ht.' '.$line->situation_percent.'<br>';
+
+				// If there is some credit note between last situation invoice and invoice used for credit note generation (note: credit notes are stored as delta)
+				$maxPrevSituationPercent = 0;
+				foreach ($tab_jumped_credit_notes as $index => $creditnoteid) {
+					foreach ($invoice->tab_previous_situation_invoice[$index]->lines as $prevLine)
+					{
+						if ($prevLine->fk_prev_id == $source_fk_prev_id)
+						{
+							$maxPrevSituationPercent = $prevLine->situation_percent;
+
+							$line->total_ht  -= $prevLine->total_ht;
+							$line->total_tva -= $prevLine->total_tva;
+							$line->total_ttc -= $prevLine->total_ttc;
+							$line->total_localtax1 -= $prevLine->total_localtax1;
+							$line->total_localtax2 -= $prevLine->total_localtax2;
+
+							$line->multicurrency_subprice  -= $prevLine->multicurrency_subprice;
+							$line->multicurrency_total_ht  -= $prevLine->multicurrency_total_ht;
+							$line->multicurrency_total_tva -= $prevLine->multicurrency_total_tva;
+							$line->multicurrency_total_ttc -= $prevLine->multicurrency_total_ttc;
+						}
+					}
+				}
+
+				// prorata
+				$line->situation_percent += $maxPrevSituationPercent;
+
+				//print 'New line based on invoice id '.$invoice->tab_previous_situation_invoice[$lineIndex]->id.' fk_prev_id='.$source_fk_prev_id.' will be fk_prev_id='.$line->fk_prev_id.' '.$line->total_ht.' '.$line->situation_percent.'<br>';
+			}
+		}
+
+		$line->fk_facture = $creditnote->id;
+		$line->fk_parent_line = $fk_parent_line;
+
+		$line->subprice = -$line->subprice; // invert price for object
+		$line->pa_ht = $line->pa_ht; // we choosed to have buy/cost price always positive, so no revert of sign here
+		$line->total_ht = -$line->total_ht;
+		$line->total_tva = -$line->total_tva;
+		$line->total_ttc = -$line->total_ttc;
+		$line->total_localtax1 = -$line->total_localtax1;
+		$line->total_localtax2 = -$line->total_localtax2;
+
+		$line->multicurrency_subprice = -$line->multicurrency_subprice;
+		$line->multicurrency_total_ht = -$line->multicurrency_total_ht;
+		$line->multicurrency_total_tva = -$line->multicurrency_total_tva;
+		$line->multicurrency_total_ttc = -$line->multicurrency_total_ttc;
+
+		$result = $line->insert(0, 1); // When creating credit note with same lines than source, we must ignore error if discount alreayd linked
+
+		$creditnote->lines[] = $line; // insert new line in current object
+
+		// Defined the new fk_parent_line
+		if ($result > 0 && $line->product_type == 9) {
+			$fk_parent_line = $result;
+		}
+	}
+	$creditnote->update_price(1);
+
+	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
+	if (!empty($conf->stock->enabled) && $conf->global->$constantforkey != "1") {
+		$savconst = $conf->global->STOCK_CALCULATE_ON_BILL;
+		$conf->global->STOCK_CALCULATE_ON_BILL = 1;
+		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
+		dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".$conf->global->$constantforkey);
+		$batch_rule = 0;
+		if (!empty($conf->productbatch->enabled) && !empty($conf->global->CASHDESK_FORCE_DECREASE_STOCK)) {
+			require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
+			$batch_rule = Productbatch::BATCH_RULE_SELLBY_EATBY_DATES_FIRST;
+		}
+		$res = $creditnote->validate($user, '', $conf->global->$constantforkey, 0, $batch_rule);
+		$conf->global->STOCK_CALCULATE_ON_BILL = $savconst;
+	} else {
+		$res = $creditnote->validate($user);
+	}
+}
+
+if ($action == 'history' || $action=='creditnote')
+{
+	if ($action=='creditnote') $placeid = $creditnote->id;
+	else $placeid = (int) GETPOST('placeid', 'int');
 	$invoice = new Facture($db);
 	$invoice->fetch($placeid);
 }
@@ -288,7 +437,7 @@ if (($action == "addline" || $action == "freezone") && $placeid == 0)
 	$invoice->date = dol_now();
 	$invoice->module_source = 'takepos';
 	$invoice->pos_source = $_SESSION["takeposterminal"];
-	$invoice->entity = !empty($_SESSION["takeposinvoiceentity"])?$_SESSION["takeposinvoiceentity"]:$conf->entity;
+	$invoice->entity = !empty($_SESSION["takeposinvoiceentity"]) ? $_SESSION["takeposinvoiceentity"] : $conf->entity;
 
 	if ($invoice->socid <= 0)
 	{
@@ -523,7 +672,7 @@ if ($action == "updatereduction")
 if ($action == "order" and $placeid != 0)
 {
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
+	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 		$printer = new dolReceiptPrinter($db);
 	}
@@ -554,10 +703,13 @@ if ($action == "order" and $placeid != 0)
 			$order_receipt_printer1 .= '</td></tr>';
 		}
 	}
-	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" && $linestoprint > 0) {
+	if (($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") && $linestoprint > 0) {
 		$invoice->fetch($placeid); //Reload object before send to printer
 		$printer->orderprinter = 1;
+		echo "<script>";
+		echo "var orderprinter1esc='";
 		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_ORDER_PRINTER1_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 1
+		echo "';</script>";
 	}
 	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='1' and fk_facture=".$invoice->id; // Set as printed
 	$db->query($sql);
@@ -582,10 +734,13 @@ if ($action == "order" and $placeid != 0)
 			$order_receipt_printer2 .= '</td></tr>';
 		}
 	}
-	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" && $linestoprint > 0) {
+	if (($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") && $linestoprint > 0) {
 		$invoice->fetch($placeid); //Reload object before send to printer
 		$printer->orderprinter = 2;
+		echo "<script>";
+		echo "var orderprinter2esc='";
 		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_ORDER_PRINTER2_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 2
+		echo "';</script>";
 	}
 	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='2' and fk_facture=".$invoice->id; // Set as printed
 	$db->query($sql);
@@ -610,10 +765,13 @@ if ($action == "order" and $placeid != 0)
 			$order_receipt_printer3 .= '</td></tr>';
 		}
 	}
-	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" && $linestoprint > 0) {
+	if (($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") && $linestoprint > 0) {
 		$invoice->fetch($placeid); //Reload object before send to printer
 		$printer->orderprinter = 3;
+		echo "<script>";
+		echo "var orderprinter3esc='";
 		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_ORDER_PRINTER3_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 3
+		echo "';</script>";
 	}
 	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='3' and fk_facture=".$invoice->id; // Set as printed
 	$db->query($sql);
@@ -621,7 +779,7 @@ if ($action == "order" and $placeid != 0)
 }
 
 $sectionwithinvoicelink = '';
-if ($action == "valid" || $action == "history")
+if ($action == "valid" || $action == "history" || $action == 'creditnote')
 {
 	$sectionwithinvoicelink .= '<!-- Section with invoice link -->'."\n";
 	$sectionwithinvoicelink .= '<span style="font-size:120%;" class="center">';
@@ -692,25 +850,59 @@ $(document).ready(function() {
 <?php
 
 if ($action == "order" and $order_receipt_printer1 != "") {
-	?>
-    $.ajax({
-        type: "POST",
-        url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print',
-        data: '<?php
-		print $headerorder.$order_receipt_printer1.$footerorder; ?>'
-    });
-    <?php
+	if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true){
+		?>
+		$.ajax({
+			type: "POST",
+			url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/printer/index.php',
+			data: 'invoice='+orderprinter1esc
+		});
+		<?php
+	}
+	else {
+		?>
+		$.ajax({
+			type: "POST",
+			url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print',
+			data: '<?php
+			print $headerorder.$order_receipt_printer1.$footerorder; ?>'
+		});
+		<?php
+	}
 }
 
 if ($action == "order" and $order_receipt_printer2 != "") {
-	?>
-    $.ajax({
-        type: "POST",
-        url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print2',
-        data: '<?php
-		print $headerorder.$order_receipt_printer2.$footerorder; ?>'
-    });
-    <?php
+	if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true){
+		?>
+		$.ajax({
+			type: "POST",
+			url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/printer/index.php?printer=2',
+			data: 'invoice='+orderprinter2esc
+		});
+		<?php
+	}
+	else {
+		?>
+		$.ajax({
+			type: "POST",
+			url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print2',
+			data: '<?php
+			print $headerorder.$order_receipt_printer2.$footerorder; ?>'
+		});
+    	<?php
+	}
+}
+
+if ($action == "order" and $order_receipt_printer3 != "") {
+	if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true){
+		?>
+		$.ajax({
+			type: "POST",
+			url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/printer/index.php?printer=3',
+			data: 'invoice='+orderprinter3esc
+		});
+		<?php
+	}
 }
 
 // Set focus to search field
@@ -783,6 +975,11 @@ function DolibarrTakeposPrinting(id) {
         type: "GET",
         url: "<?php print dol_buildpath('/takepos/ajax/ajax.php', 1).'?action=printinvoiceticket&term='.$_SESSION["takeposterminal"].'&id='; ?>" + id,
     });
+}
+
+function CreditNote() {
+	$("#poslines").load("invoice.php?action=creditnote&invoiceid="+placeid, function() {
+	});
 }
 
 
@@ -1110,7 +1307,7 @@ if ($placeid > 0)
 				$moreinfo .= '<br>'.$langs->transcountry("TotalLT2", $mysoc->country_code).': '.price($line->total_localtax2);
 				$moreinfo .= '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).': '.price($line->total_ttc);
 				//$moreinfo .= $langs->trans("TotalHT").': '.$line->total_ht;
-
+				if ($line->date_start || $line->date_end) $htmlforlines .= '<br><div class="clearboth nowraponall">'.get_date_range($line->date_start, $line->date_end, $format).'</div>';
 				$htmlforlines .= '</td>';
 				$htmlforlines .= '<td class="right">'.vatrate($line->remise_percent, true).'</td>';
 				$htmlforlines .= '<td class="right">';
@@ -1161,6 +1358,10 @@ if ($placeid > 0)
 }
 
 print '</table>';
+
+if (($action == "valid" || $action == "history") && $invoice->type != Facture::TYPE_CREDIT_NOTE) {
+	print '<button id="buttonprint" type="button" onclick="ModalBox(\'ModalCreditNote\')">'.$langs->trans('CreateCreditNote').'</button>';
+}
 
 
 if ($action == "search")

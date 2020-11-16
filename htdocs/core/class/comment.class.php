@@ -44,27 +44,27 @@ class Comment extends CommonObject
 	public $description;
 
 	/**
-     * Date modification record (tms)
-     *
-     * @var integer
-     */
+	 * Date modification record (tms)
+	 *
+	 * @var integer
+	 */
 	public $tms;
 
 	/**
-     * Date creation record (datec)
-     *
-     * @var integer
-     */
-    public $datec;
+	 * Date creation record (datec)
+	 *
+	 * @var integer
+	 */
+	public $datec;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_author;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_modif;
 
 	/**

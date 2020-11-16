@@ -102,7 +102,7 @@ print '<input type="hidden" name="action" value="save">';
 
 $head = security_prepare_head();
 
-dol_fiche_head($head, 'audit', '', -1);
+print dol_get_fiche_head($head, 'audit', '', -1);
 
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
@@ -118,14 +118,14 @@ foreach ($eventstolog as $key => $arr)
 		print '<td>'.$arr['id'].'</td>';
 		print '<td class="center">';
 		$key = 'MAIN_LOGEVENTS_'.$arr['id'];
-		$value = $conf->global->$key;
+		$value = empty($conf->global->$key) ? '' : $conf->global->$key;
 		print '<input class="oddeven checkforselect" type="checkbox" name="'.$key.'" value="1"'.($value ? ' checked' : '').'>';
 		print '</td></tr>'."\n";
 	}
 }
 print '</table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center">';
 print "<input type=\"submit\" name=\"save\" class=\"button\" value=\"".$langs->trans("Save")."\">";

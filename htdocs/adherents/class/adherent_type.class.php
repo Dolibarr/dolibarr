@@ -85,7 +85,6 @@ class AdherentType extends CommonObject
 
 	/**
 	 * @var int Subsription required (0 or 1)
-	 * @since 5.0
 	 */
 	public $subscription;
 
@@ -95,8 +94,14 @@ class AdherentType extends CommonObject
 	/** @var integer	Can vote */
 	public $vote;
 
-	/** @var string Email sent during validation */
+	/** @var string Email sent during validation of member */
 	public $mail_valid;
+
+	/** @var string Email sent after recording a new subscription */
+	public $mail_subscription = '';
+
+	/** @var string Email sent after resiliation */
+	public $mail_resiliate = '';
 
 	/** @var array Array of members */
 	public $members = array();
@@ -116,7 +121,7 @@ class AdherentType extends CommonObject
 	}
 
 	/**
-	 *    Load array this->multilangs
+	 * Load array this->multilangs
 	 *
 	 * @return int        <0 if KO, >0 if OK
 	 */
@@ -151,7 +156,7 @@ class AdherentType extends CommonObject
 	}
 
 	/**
-	 *    Update or add a translation for a product
+	 * Update or add a translation for this member type
 	 *
 	 * @param  User $user Object user making update
 	 * @return int        <0 if KO, >0 if OK
@@ -236,12 +241,11 @@ class AdherentType extends CommonObject
 	}
 
 	   /**
-	    *    Delete a language for this product
+	    * Delete a language for this member type
 	    *
-	    * @param string $langtodelete Language code to delete
-	    * @param User   $user         Object user making delete
-	    *
-	    * @return int                            <0 if KO, >0 if OK
+	    * @param string $langtodelete 	Language code to delete
+	    * @param User   $user         	Object user making delete
+	    * @return int                   <0 if KO, >0 if OK
 	    */
 	public function delMultiLangs($langtodelete, $user)
 	{
@@ -268,9 +272,9 @@ class AdherentType extends CommonObject
 	}
 
 	/**
-	 *  Fonction qui permet de creer le status de l'adherent
+	 *  Function to create the member type
 	 *
-	 *  @param	User		$user			User making creation
+	 *  @param	User	$user			User making creation
 	 *  @param	int		$notrigger		1=do not execute triggers, 0 otherwise
 	 *  @return	int						>0 if OK, < 0 if KO
 	 */
@@ -574,7 +578,7 @@ class AdherentType extends CommonObject
 	public function getmorphylib($morphy = '')
 	{
 		global $langs;
-		if ($morphy == 'phy') { return $langs->trans("Physical"); } elseif ($morphy == 'mor') { return $langs->trans("Moral"); } else return $langs->trans("MorPhy");
+		if ($morphy == 'phy') { return $langs->trans("Physical"); } elseif ($morphy == 'mor') { return $langs->trans("Moral"); } else return $langs->trans("MorAndPhy");
 		//return $morphy;
 	}
 
@@ -591,7 +595,15 @@ class AdherentType extends CommonObject
 		global $langs;
 
 		$result = '';
-		$label = $langs->trans("ShowTypeCard", $this->label);
+
+		$label = '';
+
+		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("MemberType").'</u>';
+		$label .= ' '.$this->getLibStatut(4);
+		$label .= '<br>'.$langs->trans("Label").': '.$this->label;
+		if (isset($this->subscription)) {
+			$label .= '<br>'.$langs->trans("SubscriptionRequired").': '.yn($this->subscription);
+		}
 
 		$linkstart = '<a href="'.DOL_URL_ROOT.'/adherents/type.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';
@@ -707,7 +719,7 @@ class AdherentType extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		global $conf, $user, $langs;
+		global $user;
 
 		// Initialise parametres
 		$this->id = 0;
@@ -735,8 +747,6 @@ class AdherentType extends CommonObject
 	 */
 	public function getMailOnValid()
 	{
-		global $conf;
-
 		if (!empty($this->mail_valid) && trim(dol_htmlentitiesbr_decode($this->mail_valid))) {
 			return $this->mail_valid;
 		}
@@ -751,8 +761,6 @@ class AdherentType extends CommonObject
 	 */
 	public function getMailOnSubscription()
 	{
-		global $conf;
-
 		// mail_subscription not  defined so never used
 		if (!empty($this->mail_subscription) && trim(dol_htmlentitiesbr_decode($this->mail_subscription))) {  // Property not yet defined
 			return $this->mail_subscription;
@@ -768,8 +776,6 @@ class AdherentType extends CommonObject
 	 */
 	public function getMailOnResiliate()
 	{
-		global $conf;
-
 		// NOTE mail_resiliate not defined so never used
 		if (!empty($this->mail_resiliate) && trim(dol_htmlentitiesbr_decode($this->mail_resiliate))) {  // Property not yet defined
 			return $this->mail_resiliate;

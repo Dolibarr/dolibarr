@@ -30,7 +30,7 @@ print "<!-- BEGIN PHP TEMPLATE CARD_VIEW.TPL.PHP INDIVIDUAL -->\n";
 
 $head = societe_prepare_head($object);
 
-dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
+print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
 if ($this->control->tpl['error']) echo $this->control->tpl['error'];
 if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delete']; ?>
@@ -178,7 +178,7 @@ if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delet
 
 </table>
 
-<?php dol_fiche_end(); ?>
+<?php print dol_get_fiche_end(); ?>
 
 <div class="tabsAction">
 <?php if ($user->rights->societe->creer) { ?>

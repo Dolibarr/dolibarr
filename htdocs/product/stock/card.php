@@ -247,7 +247,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -258,7 +258,7 @@ if ($action == 'create')
 
 	// Parent entrepot
 	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
-	print $formproduct->selectWarehouses('ifone', 'fk_parent', '', 1);
+	print img_picto('', 'stock').$formproduct->selectWarehouses((GETPOSTISSET('fk_parent') ? GETPOST('fk_parent', 'int') : 'ifone'), 'fk_parent', '', 1);
 	print '</td></tr>';
 
 	// Description
@@ -324,7 +324,7 @@ if ($action == 'create')
 	}
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
@@ -352,7 +352,7 @@ if ($action == 'create')
 		{
 			$head = stock_prepare_head($object);
 
-			dol_fiche_head($head, 'card', $langs->trans("Warehouse"), -1, 'stock');
+			print dol_get_fiche_head($head, 'card', $langs->trans("Warehouse"), -1, 'stock');
 
 			$formconfirm = '';
 
@@ -468,7 +468,7 @@ if ($action == 'create')
 
 			print '<div class="clearboth"></div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 
 			/* ************************************************************************** */
@@ -683,14 +683,14 @@ if ($action == 'create')
 
 			$head = stock_prepare_head($object);
 
-			dol_fiche_head($head, 'card', $langs->trans("Warehouse"), 0, 'stock');
+			print dol_get_fiche_head($head, 'card', $langs->trans("Warehouse"), 0, 'stock');
 
 			print '<table class="border centpercent">';
 
 			// Ref
 			print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input name="libelle" size="20" value="'.$object->label.'"></td></tr>';
 
-			print '<tr><td>'.$langs->trans("LocationSummary").'</td><td><input name="lieu" size="40" value="'.$object->lieu.'"></td></tr>';
+			print '<tr><td>'.$langs->trans("LocationSummary").'</td><td><input name="lieu" class="minwidth300" value="'.$object->lieu.'"></td></tr>';
 
 			// Parent entrepot
 			print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
@@ -773,7 +773,7 @@ if ($action == 'create')
 
 			print '</table>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
 			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';

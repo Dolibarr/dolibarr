@@ -136,7 +136,7 @@ print load_fiche_titre($langs->trans("CreatePoll").' (1 / 2)');
 print '<form name="formulaire" action="" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
-dol_fiche_head();
+print dol_get_fiche_head();
 
 // Affichage des différents champs textes a remplir
 print '<table class="border centpercent">'."\n";
@@ -161,7 +161,7 @@ print $form->selectDate($champdatefin ? $champdatefin : -1, 'champdatefin', '', 
 print '</tr>'."\n";
 print '</table>'."\n";
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 //focus javascript sur le premier champ
 print '<script type="text/javascript">'."\n";

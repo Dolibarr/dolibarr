@@ -75,7 +75,7 @@ $head[$h][1] = $langs->trans("Miscellaneous");
 $head[$h][2] = 'misc';
 $h++;
 
-dol_fiche_head($head, 'misc', '', -1);
+print dol_get_fiche_head($head, 'misc', '', -1);
 
 
 // Other Options

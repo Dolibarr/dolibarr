@@ -55,8 +55,8 @@ $now = dol_now();
 
 $childids = $user->getAllChildIds(1);
 
-$morefilter = 'AND employee = 1';
-if (!empty($conf->global->HOLIDAY_FOR_NON_SALARIES_TOO)) $morefilter = '';
+$morefilter = '';
+if (!empty($conf->global->HOLIDAY_HIDE_FOR_NON_SALARIES)) $morefilter = 'AND employee = 1';
 
 $error = 0;
 
@@ -73,7 +73,7 @@ if (($id > 0) || $ref)
 
 	// Check current user can read this leave request
 	$canread = 0;
-	if (!empty($user->rights->holiday->read_all)) $canread = 1;
+	if (!empty($user->rights->holiday->readall)) $canread = 1;
 	if (!empty($user->rights->holiday->read) && in_array($object->fk_user, $childids)) $canread = 1;
 	if (!$canread)
 	{
@@ -153,7 +153,7 @@ if (empty($reshook))
 				setEventMessages($langs->trans("NotEnoughPermission"), null, 'errors');
 			} else {
 				if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)) {
-					if (! in_array($fuserid, $childids)) {
+					if (!in_array($fuserid, $childids)) {
 						$error++;
 						setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
 						$action = 'create';
@@ -204,7 +204,7 @@ if (empty($reshook))
 			$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
 			if ($nbopenedday < 0.5)
 			{
-				setEventMessages($langs->trans("ErrorDureeCP"), null, 'errors');		// No working day
+				setEventMessages($langs->trans("ErrorDureeCP"), null, 'errors'); // No working day
 				$error++;
 				$action = 'create';
 			}
@@ -964,7 +964,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 
 		if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
 		{
-			dol_fiche_head('', '', '', -1);
+			print dol_get_fiche_head('', '', '', -1);
 
 			$out = '';
 			$typeleaves = $object->getTypes(1, 1);
@@ -979,13 +979,13 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 			print $langs->trans('SoldeCPUser', round($nb_holiday, 5)).'<br>';
 			print $out;
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 		} elseif (!is_numeric($conf->global->HOLIDAY_HIDE_BALANCE))
 		{
 			print $langs->trans($conf->global->HOLIDAY_HIDE_BALANCE).'<br>';
 		}
 
-		dol_fiche_head();
+		print dol_get_fiche_head();
 
 		//print '<span>'.$langs->trans('DelayToRequestCP',$object->getConfCP('delayForRequest')).'</span><br><br>';
 
@@ -1094,7 +1094,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 		print '</tbody>';
 		print '</table>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" value="'.$langs->trans("SendRequestCP").'" name="bouton" class="button">';
@@ -1177,7 +1177,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 					print '<input type="hidden" name="id" value="'.$object->id.'" />'."\n";
 				}
 
-				dol_fiche_head($head, 'card', $langs->trans("CPTitreMenu"), -1, 'holiday');
+				print dol_get_fiche_head($head, 'card', $langs->trans("CPTitreMenu"), -1, 'holiday');
 
 				$linkback = '<a href="'.DOL_URL_ROOT.'/holiday/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -1394,7 +1394,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 
 				print '<div class="clearboth"></div>';
 
-				dol_fiche_end();
+				print dol_get_fiche_end();
 
 
 				// Confirmation messages

@@ -43,7 +43,7 @@ $printername = GETPOST('printername', 'alpha');
 $printerid = GETPOST('printerid', 'int');
 $parameter = GETPOST('parameter', 'alpha');
 
-$template = GETPOST('template', 'alpha');
+$template = GETPOST('template', 'nohtml');
 $templatename = GETPOST('templatename', 'alpha');
 $templateid = GETPOST('templateid', 'int');
 
@@ -282,7 +282,7 @@ if ($mode == 'config' && $user->admin) {
 	}
 
 
-	dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
+	print dol_get_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
 
 	print '<span class="opacitymedium">'.$langs->trans("ReceiptPrinterDesc")."</span><br><br>\n";
 
@@ -354,7 +354,7 @@ if ($mode == 'config' && $user->admin) {
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '</form>';
 
@@ -387,7 +387,7 @@ if ($mode == 'config' && $user->admin) {
 
 // mode = template
 if ($mode == 'template' && $user->admin) {
-	dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
+	print dol_get_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
 
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=template" autocomplete="off">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -460,7 +460,7 @@ if ($mode == 'template' && $user->admin) {
 	}
 	print '</form>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<br>';
 
@@ -473,7 +473,7 @@ if ($mode == 'template' && $user->admin) {
 	$langs->loadLangs(array("bills", "companies"));
 	foreach ($printer->tags as $key => $val) {
 		print '<tr class="oddeven">';
-		print '<td>&lt;'.$key.'&gt;</td><td>'.$langs->trans($val).'</td>';
+		print '<td>{'.$key.'}</td><td>'.$langs->trans($val).'</td>';
 		print '</tr>';
 	}
 	print '</table>';

@@ -47,9 +47,9 @@ class modGeneratePassPerso extends ModeleGenPassword
 	public $WithoutAmbi;
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
 	public $conf;
 	public $lang;
@@ -145,22 +145,22 @@ class modGeneratePassPerso extends ModeleGenPassword
 	{
 		$pass = "";
 		for ($i = 0; $i < $this->NbMaj; $i++) {
-            // Y
+			// Y
 			$pass .= $this->Maj[mt_rand(0, strlen($this->Maj) - 1)];
 		}
 
 		for ($i = 0; $i < $this->NbNum; $i++) {
-            // X
+			// X
 			$pass .= $this->Nb[mt_rand(0, strlen($this->Nb) - 1)];
 		}
 
 		for ($i = 0; $i < $this->NbSpe; $i++) {
-            // @
+			// @
 			$pass .= $this->Spe[mt_rand(0, strlen($this->Spe) - 1)];
 		}
 
 		for ($i = strlen($pass); $i < $this->length2; $i++) {
-            // y
+			// y
 			$pass .= $this->All[mt_rand(0, strlen($this->All) - 1)];
 		}
 
@@ -211,8 +211,8 @@ class modGeneratePassPerso extends ModeleGenPassword
 	 *  @param		string	$password	Password to check
 	 *  @return     bool
 	 */
-    private function consecutiveInterationSameCharacter($password)
-    {
+	private function consecutiveInterationSameCharacter($password)
+	{
 		$last = "";
 
 		if (empty($this->NbRepeat)) return 1;
@@ -228,7 +228,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 				continue;
 			}
 
-            $count++;
+			$count++;
 			if ($count > $this->NbRepeat) {
 				return false;
 			}

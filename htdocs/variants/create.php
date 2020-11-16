@@ -65,7 +65,7 @@ llxHeader('', $title);
 
 print load_fiche_titre($title);
 
-dol_fiche_head();
+print dol_get_fiche_head();
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -89,7 +89,7 @@ print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	</table>
 
 <?php
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
 

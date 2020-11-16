@@ -67,7 +67,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortfield) $sortfield = "v.datep,v.rowid";
-if (!$sortorder) $sortorder = "DESC";
+if (!$sortorder) $sortorder = "DESC,DESC";
 
 $filtre = GETPOST("filtre", 'alpha');
 

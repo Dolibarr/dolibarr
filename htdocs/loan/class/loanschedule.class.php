@@ -40,56 +40,56 @@ class LoanSchedule extends CommonObject
 	 */
 	public $table_element = 'loan_schedule';
 
-    /**
-     * @var int Loan ID
-     */
-    public $fk_loan;
+	/**
+	 * @var int Loan ID
+	 */
+	public $fk_loan;
 
-    /**
-     * @var string Create date
-     */
-    public $datec;
+	/**
+	 * @var string Create date
+	 */
+	public $datec;
 	public $tms;
 
-    /**
-     * @var string Payment date
-     */
-    public $datep;
+	/**
+	 * @var string Payment date
+	 */
+	public $datep;
 
-    public $amounts = array(); // Array of amounts
-    public $amount_capital; // Total amount of payment
+	public $amounts = array(); // Array of amounts
+	public $amount_capital; // Total amount of payment
 	public $amount_insurance;
 	public $amount_interest;
 
-    /**
-     * @var int Payment Type ID
-     */
-    public $fk_typepayment;
+	/**
+	 * @var int Payment Type ID
+	 */
+	public $fk_typepayment;
 
-    /**
-     * @var int Payment ID
-     */
-    public $num_payment;
+	/**
+	 * @var int Payment ID
+	 */
+	public $num_payment;
 
-    /**
-     * @var int Bank ID
-     */
-    public $fk_bank;
+	/**
+	 * @var int Bank ID
+	 */
+	public $fk_bank;
 
-    /**
-     * @var int Loan Payment ID
-     */
-    public $fk_payment_loan;
+	/**
+	 * @var int Loan Payment ID
+	 */
+	public $fk_payment_loan;
 
-    /**
-     * @var int Bank ID
-     */
-    public $fk_user_creat;
+	/**
+	 * @var int Bank ID
+	 */
+	public $fk_user_creat;
 
-    /**
-     * @var int User ID
-     */
-    public $fk_user_modif;
+	/**
+	 * @var int User ID
+	 */
+	public $fk_user_modif;
 
 	public $lines = array();
 
@@ -115,8 +115,8 @@ class LoanSchedule extends CommonObject
 
 	/**
 	 *  Create payment of loan into database.
-     *  Use this->amounts to have list of lines for the payment
-     *
+	 *  Use this->amounts to have list of lines for the payment
+	 *
 	 *  @param      User		$user   User making payment
 	 *  @return     int     			<0 if KO, id of payment if OK
 	 */
@@ -126,9 +126,9 @@ class LoanSchedule extends CommonObject
 
 		$error = 0;
 
-        $now = dol_now();
+		$now = dol_now();
 
-        // Validate parameters
+		// Validate parameters
 		if (!$this->datep)
 		{
 			$this->error = 'ErrorBadValueForParameter';
@@ -145,14 +145,14 @@ class LoanSchedule extends CommonObject
 		if (isset($this->fk_user_creat)) $this->fk_user_creat = (int) $this->fk_user_creat;
 		if (isset($this->fk_user_modif)) $this->fk_user_modif = (int) $this->fk_user_modif;
 
-        $totalamount = $this->amount_capital + $this->amount_insurance + $this->amount_interest;
-        $totalamount = price2num($totalamount);
+		$totalamount = $this->amount_capital + $this->amount_insurance + $this->amount_interest;
+		$totalamount = price2num($totalamount);
 
-        // Check parameters
-        if ($totalamount == 0) {
-        	$this->errors[] = 'step1';
-        	return -1; // Negative amounts are accepted for reject prelevement but not null
-        }
+		// Check parameters
+		if ($totalamount == 0) {
+			$this->errors[] = 'step1';
+			return -1; // Negative amounts are accepted for reject prelevement but not null
+		}
 
 
 		$this->db->begin();
@@ -176,15 +176,15 @@ class LoanSchedule extends CommonObject
 			{
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_loan");
 			} else {
-                $this->error = $this->db->lasterror();
+				$this->error = $this->db->lasterror();
 				$error++;
 			}
 		}
 
 		if ($totalamount != 0 && !$error)
 		{
-		    $this->amount_capital = $totalamount;
-		    $this->db->commit();
+			$this->amount_capital = $totalamount;
+			$this->db->commit();
 			return $this->id;
 		} else {
 			$this->errors[] = $this->db->lasterror();
@@ -203,61 +203,61 @@ class LoanSchedule extends CommonObject
 	{
 		global $langs;
 		$sql = "SELECT";
-		$sql.= " t.rowid,";
-		$sql.= " t.fk_loan,";
-		$sql.= " t.datec,";
-		$sql.= " t.tms,";
-		$sql.= " t.datep,";
-		$sql.= " t.amount_capital,";
-		$sql.= " t.amount_insurance,";
-		$sql.= " t.amount_interest,";
-		$sql.= " t.fk_typepayment,";
-		$sql.= " t.num_payment,";
-        $sql.= " t.note_private,";
-        $sql.= " t.note_public,";
-		$sql.= " t.fk_bank,";
-		$sql.= " t.fk_payment_loan,";
-		$sql.= " t.fk_user_creat,";
-		$sql.= " t.fk_user_modif,";
-		$sql.= " pt.code as type_code, pt.libelle as type_label,";
-		$sql.= ' b.fk_account';
-		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id";
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
-		$sql.= " WHERE t.rowid = ".$id;
+		$sql .= " t.rowid,";
+		$sql .= " t.fk_loan,";
+		$sql .= " t.datec,";
+		$sql .= " t.tms,";
+		$sql .= " t.datep,";
+		$sql .= " t.amount_capital,";
+		$sql .= " t.amount_insurance,";
+		$sql .= " t.amount_interest,";
+		$sql .= " t.fk_typepayment,";
+		$sql .= " t.num_payment,";
+		$sql .= " t.note_private,";
+		$sql .= " t.note_public,";
+		$sql .= " t.fk_bank,";
+		$sql .= " t.fk_payment_loan,";
+		$sql .= " t.fk_user_creat,";
+		$sql .= " t.fk_user_modif,";
+		$sql .= " pt.code as type_code, pt.libelle as type_label,";
+		$sql .= ' b.fk_account';
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id";
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
+		$sql .= " WHERE t.rowid = ".$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-            if ($this->db->num_rows($resql)) {
-                $obj = $this->db->fetch_object($resql);
+			if ($this->db->num_rows($resql)) {
+				$obj = $this->db->fetch_object($resql);
 
-                $this->id = $obj->rowid;
-                $this->ref = $obj->rowid;
+				$this->id = $obj->rowid;
+				$this->ref = $obj->rowid;
 
-                $this->fk_loan = $obj->fk_loan;
-                $this->datec = $this->db->jdate($obj->datec);
-                $this->tms = $this->db->jdate($obj->tms);
-                $this->datep = $this->db->jdate($obj->datep);
-                $this->amount_capital = $obj->amount_capital;
-                $this->amount_insurance = $obj->amount_insurance;
-                $this->amount_interest = $obj->amount_interest;
-                $this->fk_typepayment = $obj->fk_typepayment;
-                $this->num_payment = $obj->num_payment;
-                $this->note_private = $obj->note_private;
-                $this->note_public = $obj->note_public;
-                $this->fk_bank = $obj->fk_bank;
+				$this->fk_loan = $obj->fk_loan;
+				$this->datec = $this->db->jdate($obj->datec);
+				$this->tms = $this->db->jdate($obj->tms);
+				$this->datep = $this->db->jdate($obj->datep);
+				$this->amount_capital = $obj->amount_capital;
+				$this->amount_insurance = $obj->amount_insurance;
+				$this->amount_interest = $obj->amount_interest;
+				$this->fk_typepayment = $obj->fk_typepayment;
+				$this->num_payment = $obj->num_payment;
+				$this->note_private = $obj->note_private;
+				$this->note_public = $obj->note_public;
+				$this->fk_bank = $obj->fk_bank;
 				$this->fk_payment_loan = $obj->fk_payment_loan;
-                $this->fk_user_creat = $obj->fk_user_creat;
-                $this->fk_user_modif = $obj->fk_user_modif;
+				$this->fk_user_creat = $obj->fk_user_creat;
+				$this->fk_user_modif = $obj->fk_user_modif;
 
-                $this->type_code = $obj->type_code;
-                $this->type_label = $obj->type_label;
+				$this->type_code = $obj->type_code;
+				$this->type_label = $obj->type_label;
 
-                $this->bank_account = $obj->fk_account;
-                $this->bank_line = $obj->fk_bank;
-            }
-            $this->db->free($resql);
+				$this->bank_account = $obj->fk_account;
+				$this->bank_line = $obj->fk_bank;
+			}
+			$this->db->free($resql);
 
 			return 1;
 		} else {
@@ -280,13 +280,13 @@ class LoanSchedule extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		if (isset($this->amount_capital)) $this->amount_capital=trim($this->amount_capital);
-		if (isset($this->amount_insurance)) $this->amount_insurance=trim($this->amount_insurance);
-		if (isset($this->amount_interest)) $this->amount_interest=trim($this->amount_interest);
-		if (isset($this->num_payment)) $this->num_payment=trim($this->num_payment);
-		if (isset($this->note_private)) $this->note_private=trim($this->note_private);
-		if (isset($this->note_public)) $this->note_public=trim($this->note_public);
-		if (isset($this->fk_bank)) $this->fk_bank=trim($this->fk_bank);
+		if (isset($this->amount_capital)) $this->amount_capital = trim($this->amount_capital);
+		if (isset($this->amount_insurance)) $this->amount_insurance = trim($this->amount_insurance);
+		if (isset($this->amount_interest)) $this->amount_interest = trim($this->amount_interest);
+		if (isset($this->num_payment)) $this->num_payment = trim($this->num_payment);
+		if (isset($this->note_private)) $this->note_private = trim($this->note_private);
+		if (isset($this->note_public)) $this->note_public = trim($this->note_public);
+		if (isset($this->fk_bank)) $this->fk_bank = trim($this->fk_bank);
 		if (isset($this->fk_payment_loan)) $this->fk_payment_loan = (int) $this->fk_payment_loan;
 
 		// Check parameters
@@ -338,21 +338,21 @@ class LoanSchedule extends CommonObject
 	 *  @param  int		$notrigger		0=launch triggers after, 1=disable triggers
 	 *  @return int						<0 if KO, >0 if OK
 	 */
-    public function delete($user, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error = 0;
 
 		$this->db->begin();
 
-        if (!$error) {
+		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " WHERE rowid=".$this->id;
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
-        }
+		}
 
 		// Commit or rollback
 		if ($error)
@@ -368,7 +368,7 @@ class LoanSchedule extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-    }
+	}
 
 	/**
 	 * Calculate Monthly Payments

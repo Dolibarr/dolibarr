@@ -206,11 +206,11 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire)
 				print img_object($langs->trans("ShowPropal"), "propal").' '.$obj->ref.'</a></td>';
 
 				print "<td>";
-                $companystatic->id = $obj->socid;
-                $companystatic->name = $obj->name;
-                $companystatic->client = $obj->client;
-                $companystatic->canvas = $obj->canvas;
-                print $companystatic->getNomUrl(1, '', 44);
+				$companystatic->id = $obj->socid;
+				$companystatic->name = $obj->name;
+				$companystatic->client = $obj->client;
+				$companystatic->canvas = $obj->canvas;
+				print $companystatic->getNomUrl(1, '', 44);
 				print "</td>\n";
 				print "<td align=\"right\">";
 				print dol_print_date($db->jdate($obj->dp), 'day')."</td>\n";
@@ -257,11 +257,11 @@ if ($resql)
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven"><td width="12%">';
-            $companystatic->id = $obj->socid;
-            $companystatic->name = $obj->name;
-            $companystatic->client = $obj->client;
-            $companystatic->canvas = $obj->canvas;
-            print $companystatic->getNomUrl(1, 'prospect', 44);
+			$companystatic->id = $obj->socid;
+			$companystatic->name = $obj->name;
+			$companystatic->client = $obj->client;
+			$companystatic->canvas = $obj->canvas;
+			print $companystatic->getNomUrl(1, 'prospect', 44);
 			print '</td></tr>';
 			$i++;
 		}

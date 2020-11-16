@@ -28,12 +28,12 @@
 class Utils
 {
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $output; // Used by Cron method to return message
-    public $result; // Used by Cron method to return data
+	public $output; // Used by Cron method to return message
+	public $result; // Used by Cron method to return data
 
 	/**
 	 *	Constructor
@@ -72,14 +72,14 @@ class Utils
 			// Delete temporary files
 			if ($dolibarr_main_data_root)
 			{
-			    $filesarray = dol_dir_list($dolibarr_main_data_root, "directories", 1, '^temp$', '', 'name', SORT_ASC, 2, 0, '', 1); // Do not follow symlinks
+				$filesarray = dol_dir_list($dolibarr_main_data_root, "directories", 1, '^temp$', '', 'name', SORT_ASC, 2, 0, '', 1); // Do not follow symlinks
 
-			    if ($choice == 'tempfilesold')
+				if ($choice == 'tempfilesold')
 				{
 					$now = dol_now();
 					foreach ($filesarray as $key => $val)
 					{
-					    if ($val['date'] > ($now - ($nbsecondsold))) unset($filesarray[$key]); // Discard temp dir not older than $nbsecondsold
+						if ($val['date'] > ($now - ($nbsecondsold))) unset($filesarray[$key]); // Discard temp dir not older than $nbsecondsold
 					}
 				}
 			}
@@ -122,10 +122,10 @@ class Utils
 		$counterror = 0;
 		if (count($filesarray))
 		{
-		    foreach ($filesarray as $key => $value)
+			foreach ($filesarray as $key => $value)
 			{
 				//print "x ".$filesarray[$key]['fullname']."-".$filesarray[$key]['type']."<br>\n";
-			    if ($filesarray[$key]['type'] == 'dir')
+				if ($filesarray[$key]['type'] == 'dir')
 				{
 					$startcount = 0;
 					$tmpcountdeleted = 0;
@@ -168,7 +168,7 @@ class Utils
 		// Recreate temp dir that are not automatically recreated by core code for performance purpose, we need them
 		if (!empty($conf->api->enabled))
 		{
-		    dol_mkdir($conf->api->dir_temp);
+			dol_mkdir($conf->api->dir_temp);
 		}
 		dol_mkdir($conf->user->dir_temp);
 
@@ -631,8 +631,8 @@ class Utils
 
 				if (empty($conf->global->MODULEBUILDER_ASCIIDOCTOR) && empty($conf->global->MODULEBUILDER_ASCIIDOCTORPDF))
 				{
-				    $this->error = 'Setup of module ModuleBuilder not complete';
-				    return -1;
+					$this->error = 'Setup of module ModuleBuilder not complete';
+					return -1;
 				}
 
 				// Copy some files into temp directory, so instruction include::ChangeLog.md[] will works inside the asciidoc file.
@@ -687,36 +687,36 @@ class Utils
 
 					//var_dump($phpfileval['fullname']);
 					$arrayreplacement = array(
-					    'mymodule'=>strtolower($module),
-					    'MyModule'=>$module,
-					    'MYMODULE'=>strtoupper($module),
-					    'My module'=>$module,
-					    'my module'=>$module,
-					    'Mon module'=>$module,
-					    'mon module'=>$module,
-					    'htdocs/modulebuilder/template'=>strtolower($module),
-					    '__MYCOMPANY_NAME__'=>$mysoc->name,
-					    '__KEYWORDS__'=>$module,
-					    '__USER_FULLNAME__'=>$user->getFullName($langs),
-					    '__USER_EMAIL__'=>$user->email,
-					    '__YYYY-MM-DD__'=>dol_print_date($now, 'dayrfc'),
-					    '---Put here your own copyright and developer email---'=>dol_print_date($now, 'dayrfc').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : ''),
-					    '__DATA_SPECIFICATION__'=>'Not yet available',
-					    '__README__'=>dolMd2Asciidoc($contentreadme),
-					    '__CHANGELOG__'=>dolMd2Asciidoc($contentchangelog),
+						'mymodule'=>strtolower($module),
+						'MyModule'=>$module,
+						'MYMODULE'=>strtoupper($module),
+						'My module'=>$module,
+						'my module'=>$module,
+						'Mon module'=>$module,
+						'mon module'=>$module,
+						'htdocs/modulebuilder/template'=>strtolower($module),
+						'__MYCOMPANY_NAME__'=>$mysoc->name,
+						'__KEYWORDS__'=>$module,
+						'__USER_FULLNAME__'=>$user->getFullName($langs),
+						'__USER_EMAIL__'=>$user->email,
+						'__YYYY-MM-DD__'=>dol_print_date($now, 'dayrfc'),
+						'---Put here your own copyright and developer email---'=>dol_print_date($now, 'dayrfc').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : ''),
+						'__DATA_SPECIFICATION__'=>'Not yet available',
+						'__README__'=>dolMd2Asciidoc($contentreadme),
+						'__CHANGELOG__'=>dolMd2Asciidoc($contentchangelog),
 					);
 
 					dolReplaceInFile($destfile, $arrayreplacement);
 				}
 
 				// Launch doc generation
-                $currentdir = getcwd();
-                chdir($dirofmodule);
+				$currentdir = getcwd();
+				chdir($dirofmodule);
 
-                require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
-                $utils = new Utils($this->db);
+				require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+				$utils = new Utils($this->db);
 
-                // Build HTML doc
+				// Build HTML doc
 				$command = $conf->global->MODULEBUILDER_ASCIIDOCTOR.' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOC;
 				$outfile = $dirofmoduletmp.'/out.tmp';
 
@@ -733,7 +733,7 @@ class Utils
 				$resarray = $utils->executeCLI($command, $outfile);
 				if ($resarray['result'] != '0')
 				{
-				    $this->error = $resarray['error'].' '.$resarray['output'];
+					$this->error = $resarray['error'].' '.$resarray['output'];
 				}
 				$result = ($resarray['result'] == 0) ? 1 : 0;
 
@@ -766,8 +766,8 @@ class Utils
 	 *
 	 * @return	int						0 if OK, < 0 if KO
 	 */
-    public function compressSyslogs()
-    {
+	public function compressSyslogs()
+	{
 		global $conf;
 
 		if (empty($conf->loghandlers['mod_syslog_file'])) { // File Syslog disabled
@@ -871,7 +871,7 @@ class Utils
 
 		$this->output = 'Archive log files (keeping last SYSLOG_FILE_SAVES='.$nbSaves.' files) done.';
 		return 0;
-    }
+	}
 
 	/**	Backup the db OR just a table without mysqldump binary, with PHP only (does not require any exec permission)
 	 *	Author: David Walsh (http://davidwalsh.name/backup-mysql-database-php)

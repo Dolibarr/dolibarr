@@ -21,10 +21,13 @@
  */
 
 /**
- * \file scripts/emailings/mailing-send.php
+ * \file 	scripts/emailings/mailing-send.php
  * \ingroup mailing
- * \brief Script d'envoi d'un mailing prepare et valide
+ * \brief 	Script to send a prepared and validated emaling from command line
  */
+
+if (!defined('NOSESSION')) define('NOSESSION', '1');
+
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = __DIR__.'/';

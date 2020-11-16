@@ -22,7 +22,7 @@
  * \brief   PHPUnit test for MyObject class.
  */
 
-global $conf,$user,$langs,$db;
+global $conf, $user, $langs, $db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -33,7 +33,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 $langs->load("main");
 
@@ -60,11 +60,11 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 		parent::__construct();
 
 		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
+		global $conf, $user, $langs, $db;
+		$this->savconf = $conf;
+		$this->savuser = $user;
+		$this->savlangs = $langs;
+		$this->savdb = $db;
 
 		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
 		//print " - db ".$db->db;
@@ -77,7 +77,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	 */
 	public static function setUpBeforeClass()
 	{
-		global $conf,$user,$langs,$db;
+		global $conf, $user, $langs, $db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
 		print __METHOD__."\n";
@@ -89,11 +89,11 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	 */
 	protected function setUp()
 	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		print __METHOD__."\n";
 	}
@@ -113,7 +113,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	 */
 	public static function tearDownAfterClass()
 	{
-		global $conf,$user,$langs,$db;
+		global $conf, $user, $langs, $db;
 		$db->rollback();
 
 		print __METHOD__."\n";
@@ -126,11 +126,11 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSomething()
 	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$result = true;
 

@@ -83,10 +83,10 @@ if ($modulepart == 'ecm')
 // On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
 if (preg_match('/\.\./', $fullpathselecteddir) || preg_match('/[<>|]/', $fullpathselecteddir))
 {
-    dol_syslog("Refused to deliver file ".$original_file);
-    // Do no show plain path in shown error message
-    dol_print_error(0, $langs->trans("ErrorFileNameInvalid", GETPOST("file")));
-    exit;
+	dol_syslog("Refused to deliver file ".$original_file);
+	// Do no show plain path in shown error message
+	dol_print_error(0, $langs->trans("ErrorFileNameInvalid", GETPOST("file")));
+	exit;
 }
 
 // Check permissions
@@ -120,11 +120,11 @@ if (empty($sqltree)) $sqltree = $ecmdirstatic->get_full_arbo(0);
 $current_ecmdir_id = -1;
 foreach ($sqltree as $keycursor => $val)
 {
-    //print $val['fullrelativename']." == ".$selecteddir;
-    if ($val['fullrelativename'] == $selecteddir)
-    {
-        $current_ecmdir_id = $keycursor;
-    }
+	//print $val['fullrelativename']." == ".$selecteddir;
+	if ($val['fullrelativename'] == $selecteddir)
+	{
+		$current_ecmdir_id = $keycursor;
+	}
 }
 
 if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))

@@ -454,7 +454,7 @@ p.description_content{
 div.description_content {
 	display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: <?php echo $conf->global->TAKEPOS_LINES_TO_SHOW;?>;
+    -webkit-line-clamp: <?php echo $conf->global->TAKEPOS_LINES_TO_SHOW; ?>;
     overflow: hidden;
     padding-left: 2px;
     padding-right: 2px;
@@ -479,8 +479,7 @@ div.description_content {
 	width: unset;
 }
 .topnav{
-	background: rgb(<?php echo $colorbackhmenu1 ?>);
-	background-image: linear-gradient(-45deg, <?php echo colorAdjustBrightness(colorArrayToHex(colorStringToArray($colorbackhmenu1)), '5'); ?>, rgb(<?php echo $colorbackhmenu1 ?>));
+	background: var(--colorbackhmenu1);
 	overflow: hidden;
 	height: 100%;
 }

@@ -30,7 +30,7 @@ print "<!-- BEGIN PHP TEMPLATE CARD_VIEW.TPL.PHP COMPANY -->\n";
 
 $head = societe_prepare_head($soc);
 
-dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
+print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
 ?>
 
@@ -235,7 +235,7 @@ for ($i = 1; $i <= 4; $i++) {
 
 </table>
 
-<?php dol_fiche_end(); ?>
+<?php print dol_get_fiche_end(); ?>
 
 <div class="tabsAction">
 <?php if ($user->rights->societe->creer) { ?>

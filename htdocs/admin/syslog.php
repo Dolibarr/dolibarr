@@ -109,8 +109,8 @@ if ($action == 'set')
 
 	$activeModules = $newActiveModules;
 
-    dolibarr_del_const($db, 'SYSLOG_HANDLERS', -1); // To be sure ther is not a setup into another entity
-    dolibarr_set_const($db, 'SYSLOG_HANDLERS', json_encode($activeModules), 'chaine', 0, '', 0);
+	dolibarr_del_const($db, 'SYSLOG_HANDLERS', -1); // To be sure ther is not a setup into another entity
+	dolibarr_set_const($db, 'SYSLOG_HANDLERS', json_encode($activeModules), 'chaine', 0, '', 0);
 
 	// Check configuration
 	foreach ($activeModules as $modulename) {
@@ -213,7 +213,7 @@ foreach ($syslogModules as $moduleName)
 	print '<input class="oddeven" type="checkbox" name="SYSLOG_HANDLERS[]" value="'.$moduleName.'" '.(in_array($moduleName, $activeModules) ? 'checked' : '').($moduleactive <= 0 ? 'disabled' : '').'> ';
 	print $module->getName();
 	if ($moduleName == 'mod_syslog_syslog') {
-		if (! $module->isActive()) {
+		if (!$module->isActive()) {
 			$langs->load("errors");
 			print $form->textwithpicto('', $langs->trans("ErrorPHPNeedModule", 'SysLog'));
 		}
@@ -226,22 +226,22 @@ foreach ($syslogModules as $moduleName)
 	{
 		foreach ($setuparray as $option)
 		{
-		    $tmpoption = $option['constant'];
-		    if (!empty($tmpoption))
-		    {
-    			if (isset($_POST[$tmpoption])) $value = $_POST[$tmpoption];
-    			elseif (!empty($conf->global->$tmpoption)) $value = $conf->global->$tmpoption;
-		    } else $value = (isset($option['default']) ? $option['default'] : '');
+			$tmpoption = $option['constant'];
+			if (!empty($tmpoption))
+			{
+				if (isset($_POST[$tmpoption])) $value = $_POST[$tmpoption];
+				elseif (!empty($conf->global->$tmpoption)) $value = $conf->global->$tmpoption;
+			} else $value = (isset($option['default']) ? $option['default'] : '');
 
 			print $option['name'].': <input type="text" class="flat" name="'.$option['constant'].'" value="'.$value.'"'.(isset($option['attr']) ? ' '.$option['attr'] : '').'>';
 			if (!empty($option['example'])) print '<br>'.$langs->trans("Example").': '.$option['example'];
 
 			if ($option['constant'] == 'SYSLOG_FILE' && preg_match('/^DOL_DATA_ROOT\/[^\/]*$/', $value))
 			{
-    			$filelogparam = ' (<a href="'.DOL_URL_ROOT.'/document.php?modulepart=logs&file='.basename($value).'">';
-    			$filelogparam .= $langs->trans('Download');
-    			$filelogparam .= $filelog.'</a>)';
-    			print $filelogparam;
+				$filelogparam = ' (<a href="'.DOL_URL_ROOT.'/document.php?modulepart=logs&file='.basename($value).'">';
+				$filelogparam .= $langs->trans('Download');
+				$filelogparam .= $filelog.'</a>)';
+				print $filelogparam;
 			}
 		}
 	}

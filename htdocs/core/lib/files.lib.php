@@ -228,8 +228,12 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 	$sql .= " date_c, tms as date_m, fk_user_c, fk_user_m, acl, position, share";
 	if ($mode) $sql .= ", description";
 	$sql .= " FROM ".MAIN_DB_PREFIX."ecm_files";
-	$sql .= " WHERE filepath = '".$db->escape($path)."'";
-	$sql .= " AND entity = ".$conf->entity;
+	$sql .= " WHERE entity = ".$conf->entity;
+	if (preg_match('/%$/', $path)) {
+		$sql .= " AND filepath LIKE '".$db->escape($path)."'";
+	} else {
+		$sql .= " AND filepath = '".$db->escape($path)."'";
+	}
 
 	$resql = $db->query($sql);
 	if ($resql)
@@ -242,6 +246,7 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 			$obj = $db->fetch_object($resql);
 			if ($obj)
 			{
+				$reg = array();
 				preg_match('/([^\/]+)\/[^\/]+$/', DOL_DATA_ROOT.'/'.$obj->filepath.'/'.$obj->filename, $reg);
 				$level1name = (isset($reg[1]) ? $reg[1] : '');
 				$file_list[] = array(
@@ -289,7 +294,7 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
  * Complete $filearray with data from database.
  * This will call doldir_list_indatabase to complate filearray.
  *
- * @param	array	$filearray			Array of files get using dol_dir_list
+ * @param	array	$filearray			Array of files obtained using dol_dir_list
  * @param	string	$relativedir		Relative dir from DOL_DATA_ROOT
  * @return	void
  */
@@ -315,19 +320,19 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 		}
 	}
 
-	//var_dump($filearray);
-	//var_dump($filearrayindatabase);
+	/*var_dump($relativedir);
+	var_dump($filearray);
+	var_dump($filearrayindatabase);*/
 
 	// Complete filearray with properties found into $filearrayindatabase
 	foreach ($filearray as $key => $val)
 	{
 		$tmpfilename = preg_replace('/\.noexe$/', '', $filearray[$key]['name']);
-
 		$found = 0;
 		// Search if it exists into $filearrayindatabase
 		foreach ($filearrayindatabase as $key2 => $val2)
 		{
-			if ($filearrayindatabase[$key2]['name'] == $tmpfilename)
+			if (($filearrayindatabase[$key2]['path'] == $filearray[$key]['path']) && ($filearrayindatabase[$key2]['name'] == $tmpfilename))
 			{
 				$filearray[$key]['position_name'] = ($filearrayindatabase[$key2]['position'] ? $filearrayindatabase[$key2]['position'] : '0').'_'.$filearrayindatabase[$key2]['name'];
 				$filearray[$key]['position'] = $filearrayindatabase[$key2]['position'];
@@ -348,6 +353,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 			$filearray[$key]['acl'] = '';
 
 			$rel_filename = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filearray[$key]['fullname']);
+
 			if (!preg_match('/([\\/]temp[\\/]|[\\/]thumbs|\.meta$)/', $rel_filename))     // If not a tmp file
 			{
 				dol_syslog("list_of_documents We found a file called '".$filearray[$key]['name']."' not indexed into database. We add it");
@@ -379,8 +385,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 			}
 		}
 	}
-
-	/*var_dump($filearray);*/
+	//var_dump($filearray); var_dump($relativedir.' - tmpfilename='.$tmpfilename.' - found='.$found);
 }
 
 
@@ -1562,7 +1567,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 				$destfile = dol_sanitizeFileName($info['filename'].($info['extension'] != '' ? ('.'.strtolower($info['extension'])) : ''));
 
 				// We apply dol_string_nohtmltag also to clean file names (this remove duplicate spaces) because
-				// this function is also applied when we make try to download file (by the GETPOST(filename, 'alphanohtml') call).
+				// this function is also applied when we rename and when we make try to download file (by the GETPOST(filename, 'alphanohtml') call).
 				$destfile = dol_string_nohtmltag($destfile);
 				$destfull = dol_string_nohtmltag($destfull);
 
@@ -1746,10 +1751,10 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 		$ecmfile->description = ''; // indexed content
 		$ecmfile->keyword = ''; // keyword content
 
-        if (is_object($object) && $object->id > 0) {
-            $ecmfile->src_object_id = $object->id;
-            $ecmfile->src_object_type = $object->element;
-        }
+		if (is_object($object) && $object->id > 0) {
+			$ecmfile->src_object_id = $object->id;
+			$ecmfile->src_object_type = $object->table_element;
+		}
 
 		if ($setsharekey)
 		{
@@ -2644,10 +2649,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->expedition->dir_output."/sending/".$original_file;
-	} // Wrapping pour les bons de livraison
-	elseif ($modulepart == 'livraison' && !empty($conf->expedition->dir_output))
+	} // Delivery Note Wrapping
+	elseif ($modulepart == 'delivery' && !empty($conf->expedition->dir_output))
 	{
-		if ($fuser->rights->expedition->livraison->{$lire} || preg_match('/^specimen/i', $original_file))
+		if ($fuser->rights->expedition->delivery->{$lire} || preg_match('/^specimen/i', $original_file))
 		{
 			$accessallowed = 1;
 		}
@@ -2852,9 +2857,11 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 
 			// Check fuser->rights->modulepart->myobject->read and fuser->rights->modulepart->read
 			$partsofdirinoriginalfile = explode('/', $original_file);
-			$partofdirinoriginalfile = $partsofdirinoriginalfile[0];
-			if ($partofdirinoriginalfile && ($fuser->rights->$modulepart->$partofdirinoriginalfile->{$lire} || $fuser->rights->$modulepart->$partofdirinoriginalfile->{$read})) $accessallowed = 1;
-			if ($fuser->rights->$modulepart->{$lire} || $fuser->rights->$modulepart->{$read}) $accessallowed = 1;
+			if (!empty($partsofdirinoriginalfile[1])) {	// If original_file is xxx/filename (xxx is a part we will use)
+				$partofdirinoriginalfile = $partsofdirinoriginalfile[0];
+				if ($partofdirinoriginalfile && !empty($fuser->rights->$modulepart->$partofdirinoriginalfile) && ($fuser->rights->$modulepart->$partofdirinoriginalfile->{$lire} || $fuser->rights->$modulepart->$partofdirinoriginalfile->{$read})) $accessallowed = 1;
+			}
+			if (!empty($fuser->rights->$modulepart->{$lire}) || !empty($fuser->rights->$modulepart->{$read})) $accessallowed = 1;
 
 			if (is_array($conf->$modulepart->multidir_output) && !empty($conf->$modulepart->multidir_output[$entity])) {
 				$original_file = $conf->$modulepart->multidir_output[$entity].'/'.$original_file;

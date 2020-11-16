@@ -7,7 +7,7 @@
  * Copyright (C) 2015 	   Claudio Aschieri     <c.aschieri@19.coop>
  * Copyright (C) 2018 	   Ferran Marcet	    <fmarcet@2byte.es>
  * Copyright (C) 2019 	   Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2020		Tobias Sean			<tobias.sekan@startmail.com>
+ * Copyright (C) 2020	   Tobias Sean			<tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,7 +109,7 @@ if ($search_status == '') $search_status = -1; // -1 or 1
 
 if (!empty($conf->categorie->enabled))
 {
-	$search_category_array = GETPOST("search_category_".Categorie::TYPE_PROJECT."_array", "array");
+	$search_category_array = GETPOST("search_category_".Categorie::TYPE_PROJECT."_list", "array");
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -240,7 +240,7 @@ if (empty($reshook))
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0)
 			{
-				$userWrite  = $object->restrictedProjectArea($user, 'write');
+				$userWrite = $object->restrictedProjectArea($user, 'write');
 				if ($userWrite > 0 && $objecttmp->statut == 1) {
 					$result = $objecttmp->setClose($user);
 					if ($result <= 0) {
@@ -484,7 +484,7 @@ print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_
 $topicmail = "Information";
 $modelmail = "project";
 $objecttmp = new Project($db);
-$trackid = 'prj'.$object->id;
+$trackid = 'proj'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($search_all)
@@ -505,7 +505,8 @@ if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire)
 // If the user can view user other than himself
 $moreforfilter .= '<div class="divsearchfield">';
 $moreforfilter .= $langs->trans('ProjectsWithThisUserAsContact').': ';
-$includeonly = 'hierarchyme';
+//$includeonly = 'hierarchyme';
+$includeonly = '';
 if (empty($user->rights->user->user->lire)) $includeonly = array($user->id);
 $moreforfilter .= $form->select_dolusers($search_project_user ? $search_project_user : '', 'search_project_user', 1, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth200');
 $moreforfilter .= '</div>';

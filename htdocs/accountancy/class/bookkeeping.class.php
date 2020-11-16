@@ -768,10 +768,11 @@ class BookKeeping extends CommonObject
 	 * @param int $offset offset limit
 	 * @param array $filter filter array
 	 * @param string $filtermode filter mode (AND or OR)
+	 * @param int $option option (0: general account or 1: subaccount)
 	 *
 	 * @return int <0 if KO, >=0 if OK
 	 */
-	public function fetchAllByAccount($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAllByAccount($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND', $option = 0)
 	{
 		global $conf;
 
@@ -836,7 +837,13 @@ class BookKeeping extends CommonObject
 			$sql .= ' AND '.implode(' '.$filtermode.' ', $sqlwhere);
 		}
 		// Affichage par compte comptable
-		$sql .= ' ORDER BY t.numero_compte ASC';
+		if (!empty($option)) {
+			$sql .= ' AND t.subledger_account IS NOT NULL';
+			$sql .= ' ORDER BY t.subledger_account ASC';
+		} else {
+			$sql .= ' ORDER BY t.numero_compte ASC';
+		}
+
 		if (!empty($sortfield)) {
 			$sql .= ', '.$sortfield.' '.$sortorder;
 		}
@@ -1530,14 +1537,14 @@ class BookKeeping extends CommonObject
 		$this->label_compte = 'Customer';
 		$this->label_operation = 'Sales of pea';
 		$this->debit = 99.9;
-		$this->credit = '';
-		$this->montant = '';
+		$this->credit = 0.0;
+		$this->amount = 0.0;
 		$this->sens = 'D';
 		$this->fk_user_author = $user->id;
-		$this->import_key = '';
+		$this->import_key = '20201027';
 		$this->code_journal = 'VT';
 		$this->journal_label = 'Journal de vente';
-		$this->piece_num = '';
+		$this->piece_num = 1234;
 		$this->date_creation = $now;
 	}
 

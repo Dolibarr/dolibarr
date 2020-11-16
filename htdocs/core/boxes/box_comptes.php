@@ -33,28 +33,28 @@ include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
  */
 class box_comptes extends ModeleBoxes
 {
-    public $boxcode = "currentaccounts";
-    public $boximg = "object_bill";
-    public $boxlabel = "BoxCurrentAccounts";
-    public $depends = array("banque"); // Box active if module banque active
+	public $boxcode = "currentaccounts";
+	public $boximg = "object_bill";
+	public $boxlabel = "BoxCurrentAccounts";
+	public $depends = array("banque"); // Box active if module banque active
 
-    /**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $param;
-    public $enabled = 1;
+	public $param;
+	public $enabled = 1;
 
-    public $info_box_head = array();
-    public $info_box_contents = array();
+	public $info_box_head = array();
+	public $info_box_contents = array();
 
 
 	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB	$db      	Database handler
-     *  @param	string	$param		More parameters
+	 *  @param	string	$param		More parameters
 	 */
 	public function __construct($db, $param = '')
 	{
@@ -73,7 +73,7 @@ class box_comptes extends ModeleBoxes
 	 *  Load data into info_box_contents array to show array later.
 	 *
 	 *  @param	int		$max        Maximum number of records to load
-     *  @return	void
+	 *  @return	void
 	 */
 	public function loadBox($max = 5)
 	{
@@ -83,109 +83,109 @@ class box_comptes extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleCurrentAccounts"));
 
-        if ($user->rights->banque->lire) {
+		if ($user->rights->banque->lire) {
 			$sql = "SELECT b.rowid, b.ref, b.label, b.bank,b.number, b.courant, b.clos, b.rappro, b.url";
 			$sql .= ", b.code_banque, b.code_guichet, b.cle_rib, b.bic, b.iban_prefix as iban";
 			$sql .= ", b.domiciliation, b.proprio, b.owner_address";
 			$sql .= ", b.account_number, b.currency_code";
 			$sql .= ", b.min_allowed, b.min_desired, comment";
-            $sql .= ', b.fk_accountancy_journal';
-            $sql .= ', aj.code as accountancy_journal';
-            $sql .= " FROM ".MAIN_DB_PREFIX."bank_account as b";
-            $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'accounting_journal as aj ON aj.rowid=b.fk_accountancy_journal';
-            $sql .= " WHERE b.entity = ".$conf->entity;
+			$sql .= ', b.fk_accountancy_journal';
+			$sql .= ', aj.code as accountancy_journal';
+			$sql .= " FROM ".MAIN_DB_PREFIX."bank_account as b";
+			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'accounting_journal as aj ON aj.rowid=b.fk_accountancy_journal';
+			$sql .= " WHERE b.entity = ".$conf->entity;
 			$sql .= " AND clos = 0";
 			//$sql.= " AND courant = 1";
 			$sql .= " ORDER BY label";
 			$sql .= $this->db->plimit($max, 0);
 
-            dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
-            $result = $this->db->query($sql);
-            if ($result) {
-                $num = $this->db->num_rows($result);
+			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
+			$result = $this->db->query($sql);
+			if ($result) {
+				$num = $this->db->num_rows($result);
 
-                $line = 0;
-                $solde_total = array();
+				$line = 0;
+				$solde_total = array();
 
-                $account_static = new Account($this->db);
-                while ($line < $num) {
-                    $objp = $this->db->fetch_object($result);
+				$account_static = new Account($this->db);
+				while ($line < $num) {
+					$objp = $this->db->fetch_object($result);
 
-                    $account_static->id = $objp->rowid;
+					$account_static->id = $objp->rowid;
 					$account_static->ref = $objp->ref;
-                    $account_static->label = $objp->label;
-                    $account_static->number = $objp->number;
-                    $account_static->account_number = $objp->account_number;
-                    $account_static->currency_code = $objp->currency_code;
-                    $account_static->accountancy_journal = $objp->accountancy_journal;
-                    $solde = $account_static->solde(0);
+					$account_static->label = $objp->label;
+					$account_static->number = $objp->number;
+					$account_static->account_number = $objp->account_number;
+					$account_static->currency_code = $objp->currency_code;
+					$account_static->accountancy_journal = $objp->accountancy_journal;
+					$solde = $account_static->solde(0);
 
-                    $solde_total[$objp->currency_code] += $solde;
+					$solde_total[$objp->currency_code] += $solde;
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => '',
-                        'text' => $account_static->getNomUrl(1),
-                        'asis' => 1,
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => '',
+						'text' => $account_static->getNomUrl(1),
+						'asis' => 1,
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => '',
-                        'text' => $objp->number,
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => '',
+						'text' => $objp->number,
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right nowraponall"',
-                        'text' => price($solde, 0, $langs, 0, -1, -1, $objp->currency_code)
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right nowraponall"',
+						'text' => price($solde, 0, $langs, 0, -1, -1, $objp->currency_code)
+					);
 
-                    $line++;
-                }
+					$line++;
+				}
 
-                // Total
-                foreach ($solde_total as $key=>$solde) {
-                    $this->info_box_contents[$line][] = array(
-                        'tr' => 'class="liste_total"',
-                        'td' => 'class="liste_total left"',
-                        'text' => $langs->trans('Total').' '.$key,
-                    );
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="liste_total right"',
-                        'text' => '&nbsp;'
-                    );
+				// Total
+				foreach ($solde_total as $key=>$solde) {
+					$this->info_box_contents[$line][] = array(
+						'tr' => 'class="liste_total"',
+						'td' => 'class="liste_total left"',
+						'text' => $langs->trans('Total').' '.$key,
+					);
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="liste_total right"',
+						'text' => '&nbsp;'
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="liste_total right nowraponall"',
-                        'text' => price($solde, 0, $langs, 0, -1, -1, $key)
-                    );
-                    $line++;
-                }
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="liste_total right nowraponall"',
+						'text' => price($solde, 0, $langs, 0, -1, -1, $key)
+					);
+					$line++;
+				}
 
-                $this->db->free($result);
-            } else {
-                $this->info_box_contents[0][0] = array(
-                    'td' => '',
-                    'maxlength'=>500,
-                    'text' => ($this->db->error().' sql='.$sql),
-                );
-            }
-        } else {
-            $this->info_box_contents[0][0] = array(
-                'td' => 'class="nohover opacitymedium left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed")
-            );
-        }
+				$this->db->free($result);
+			} else {
+				$this->info_box_contents[0][0] = array(
+					'td' => '',
+					'maxlength'=>500,
+					'text' => ($this->db->error().' sql='.$sql),
+				);
+			}
+		} else {
+			$this->info_box_contents[0][0] = array(
+				'td' => 'class="nohover opacitymedium left"',
+				'text' => $langs->trans("ReadPermissionNotAllowed")
+			);
+		}
 	}
 
-    /**
-     *  Method to show box
-     *
-     *  @param  array   $head       Array with properties of box title
-     *  @param  array   $contents   Array with properties of box lines
-     *  @param  int     $nooutput   No print, only return string
-     *  @return string
-     */
-    public function showBox($head = null, $contents = null, $nooutput = 0)
-    {
-        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
-    }
+	/**
+	 *  Method to show box
+	 *
+	 *  @param  array   $head       Array with properties of box title
+	 *  @param  array   $contents   Array with properties of box lines
+	 *  @param  int     $nooutput   No print, only return string
+	 *  @return string
+	 */
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+	}
 }

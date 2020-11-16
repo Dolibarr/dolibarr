@@ -59,6 +59,10 @@ ALTER TABLE llx_mrp_mo_extrafields ADD INDEX idx_mrp_mo_fk_object(fk_object);
 
 -- For v13
 
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (111,11,     '0','0','No Sales Tax',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (112,11,     '4','0','Sales Tax 4%',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (113,11,     '6','0','Sales Tax 6%',1);
+
 ALTER TABLE llx_bom_bom ADD COLUMN bomtype integer DEFAULT 0;
 
 UPDATE llx_emailcollector_emailcollector SET ref = 'Collect_Ticket_Requests' WHERE ref = 'Collect_Ticket_Requets';
@@ -134,12 +138,12 @@ CREATE TABLE llx_intracommreport
   ref				varchar(30)        NOT NULL,			-- report reference number
   entity			integer  DEFAULT 1 NOT NULL,			-- multi company id
   type_declaration	varchar(32),
-  period			varchar(32),
+  periods			varchar(32),
   mode				varchar(32),
   content_xml		text,
   type_export		varchar(10),
   datec             datetime,
-  tms               timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  tms               timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )ENGINE=innodb;
 
 ALTER TABLE llx_c_incoterms ADD COLUMN label varchar(100) NULL;
@@ -362,6 +366,8 @@ ALTER TABLE llx_facturedet ADD COLUMN ref_ext varchar(255) AFTER multicurrency_t
 ALTER TABLE llx_c_ticket_category ADD COLUMN fk_parent integer DEFAULT 0 NOT NULL;
 ALTER TABLE llx_c_ticket_category ADD COLUMN force_severity varchar(32) NULL;
 
+ALTER TABLE llx_c_ticket_severity CHANGE color color VARCHAR(10) NULL; 
+
 ALTER TABLE llx_expensereport ADD COLUMN fk_user_creat integer NULL;
 
 ALTER TABLE llx_expensereport_ik ADD COLUMN ikoffset double DEFAULT 0 NOT NULL;
@@ -403,6 +409,116 @@ ALTER TABLE llx_projet_task_time MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIM
 
 ALTER TABLE llx_projet_task_time MODIFY COLUMN datec datetime;
 
+
 DELETE FROM llx_user_rights WHERE fk_id IN (SELECT id FROM llx_rights_def where module = 'holiday' and perms = 'lire_tous'); 
 DELETE FROM llx_rights_def where module = 'holiday' and perms = 'lire_tous';
+UPDATE llx_rights_def set perms = 'readall' WHERE perms = 'read_all' and module = 'holiday';
+
+CREATE TABLE llx_c_product_nature (
+      rowid integer AUTO_INCREMENT PRIMARY KEY,
+      code tinyint NOT NULL,
+      label varchar(100),
+      active tinyint DEFAULT 1  NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_c_product_nature ADD UNIQUE INDEX uk_c_product_nature(code, active);
+
+INSERT INTO llx_c_product_nature (code, label, active) VALUES (0, 'RowMaterial', 1);
+INSERT INTO llx_c_product_nature (code, label, active) VALUES (1, 'Finished', 1);
+
+ALTER TABLE llx_product MODIFY COLUMN finished tinyint DEFAULT NULL;
+ALTER TABLE llx_product ADD CONSTRAINT fk_product_finished FOREIGN KEY (finished) REFERENCES llx_c_product_nature (code);
+
+
+-- MIGRATION TO DO AFTER RENAMING AN OBJECT
+
+-- drop constraint
+ALTER TABLE llx_livraison DROP FOREIGN KEY  fk_livraison_fk_soc;
+ALTER TABLE llx_livraison DROP FOREIGN KEY  fk_livraison_fk_user_author;
+ALTER TABLE llx_livraison DROP FOREIGN KEY  fk_livraison_fk_user_valid;
+
+-- rename Table
+ALTER TABLE llx_livraison RENAME TO llx_delivery;
+ALTER TABLE llx_livraison_extrafields RENAME TO llx_delivery_extrafields;
+ALTER TABLE llx_livraisondet RENAME TO llx_deliverydet;
+ALTER TABLE llx_livraisondet_extrafields RENAME TO llx_deliverydet_extrafields;
+
+-- rename index
+ALTER TABLE llx_delivery DROP INDEX idx_livraison_uk_ref;
+ALTER TABLE llx_delivery ADD UNIQUE INDEX idx_delivery_uk_ref (ref, entity);
+ALTER TABLE llx_delivery DROP INDEX idx_livraison_fk_soc;
+ALTER TABLE llx_delivery ADD INDEX idx_delivery_fk_soc (fk_soc);
+ALTER TABLE llx_delivery DROP INDEX idx_livraison_fk_user_author;
+ALTER TABLE llx_delivery ADD INDEX idx_delivery_fk_user_author (fk_user_author);
+ALTER TABLE llx_delivery DROP INDEX idx_livraison_fk_user_valid;
+ALTER TABLE llx_delivery ADD INDEX idx_delivery_fk_user_valid (fk_user_valid);
+
+-- drop constraint
+ALTER TABLE llx_delivery DROP FOREIGN KEY  fk_livraison_fk_soc;
+ALTER TABLE llx_delivery DROP FOREIGN KEY  fk_livraison_fk_user_author;
+ALTER TABLE llx_delivery DROP FOREIGN KEY  fk_livraison_fk_user_valid;
+
+-- add constraint
+ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_soc			FOREIGN KEY (fk_soc)			REFERENCES llx_societe (rowid);
+ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_user_author	FOREIGN KEY (fk_user_author)	REFERENCES llx_user (rowid);
+ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_user_valid	FOREIGN KEY (fk_user_valid)	REFERENCES llx_user (rowid);
+
+ALTER TABLE llx_deliverydet DROP FOREIGN KEY  fk_livraisondet_fk_livraison;
+ALTER TABLE llx_deliverydet DROP INDEX idx_livraisondet_fk_expedition;
+ALTER TABLE llx_deliverydet CHANGE COLUMN fk_livraison fk_delivery integer;
+ALTER TABLE llx_deliverydet ADD INDEX idx_deliverydet_fk_delivery (fk_delivery);
+ALTER TABLE llx_deliverydet ADD CONSTRAINT fk_deliverydet_fk_delivery FOREIGN KEY (fk_delivery) REFERENCES llx_delivery (rowid);
+
+UPDATE llx_extrafields SET elementtype = 'delivery' WHERE elementtype = 'livraison';
+UPDATE llx_extrafields SET elementtype = 'deliverydet' WHERE elementtype = 'livraisondet';
+
+-- update llx_ecm_files
+UPDATE llx_ecm_files SET src_object_type = 'delivery' WHERE src_object_type = 'livraison';
+
+-- update llx_links
+UPDATE llx_links SET objecttype = 'delivery' WHERE objecttype = 'livraison';
+
+-- update llx_document_model
+UPDATE llx_document_model SET type = 'delivery' WHERE type = 'livraison';
+
+-- update llx_object_lang
+UPDATE llx_object_lang SET type_object = 'delivery' WHERE type_object = 'livraison';
+
+-- update llx_c_type_contact
+UPDATE llx_c_type_contact SET element = 'delivery' WHERE element = 'livraison';
+
+-- update llx_c_email_template
+UPDATE llx_c_email_template SET type_template = 'delivery' WHERE type_template = 'livraison';
+
+-- update llx_element_element
+UPDATE llx_element_element SET sourcetype = 'delivery' WHERE sourcetype = 'livraison';
+UPDATE llx_element_element SET targettype = 'delivery' WHERE targettype = 'livraison';
+
+-- update llx_actioncomm
+UPDATE llx_actioncomm SET element_type = 'delivery' WHERE element_type = 'livraison';
+
+-- update llx_const
+UPDATE llx_const set name = 'DELIVERY_ADDON_NUMBER' WHERE name = 'LIVRAISON_ADDON_NUMBER';
+UPDATE llx_const set value = 'mod_delivery_jade' WHERE value = 'mod_livraison_jade' AND name = 'DELIVERY_ADDON_NUMBER';
+UPDATE llx_const set value = 'mod_delivery_saphir' WHERE value = 'mod_livraison_saphir' AND name = 'DELIVERY_ADDON_NUMBER';
+
+-- update llx_rights_def
+UPDATE llx_rights_def set perms = 'delivery' WHERE perms = 'livraison' and module = 'expedition';
+UPDATE llx_rights_def set perms = 'delivery_advance' WHERE perms = 'livraison_advance' and module = 'expedition';
+
+
+
+CREATE TABLE llx_zapier_hook(
+    rowid integer AUTO_INCREMENT PRIMARY KEY,
+    entity integer DEFAULT 1 NOT NULL,
+    url varchar(255),
+    event varchar(255),
+    module varchar(128),
+    action varchar(128),
+    status integer,
+    date_creation datetime NOT NULL,
+    fk_user integer NOT NULL,
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    import_key varchar(14)
+) ENGINE=innodb;
 

@@ -82,7 +82,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisse
 	}
 }
 
-if ($action == 'confirm_valide' && $confirm == 'yes' &&
+if ($action == 'confirm_validate' && $confirm == 'yes' &&
 	((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->facture->creer))
 	|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
 )
@@ -90,7 +90,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' &&
 	$db->begin();
 
 	$object->fetch($id);
-	if ($object->valide() >= 0)
+	if ($object->validate() >= 0)
 	{
 		$db->commit();
 		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
@@ -146,7 +146,7 @@ $formfile = new FormFile($db);
 
 $head = payment_supplier_prepare_head($object);
 
-dol_fiche_head($head, 'payment', $langs->trans('SupplierPayment'), -1, 'payment');
+print dol_get_fiche_head($head, 'payment', $langs->trans('SupplierPayment'), -1, 'payment');
 
 if ($result > 0)
 {
@@ -161,9 +161,9 @@ if ($result > 0)
 	/*
 	 * Confirmation of payment's validation
 	 */
-	if ($action == 'valide')
+	if ($action == 'validate')
 	{
-		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
+		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_validate');
 	}
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
@@ -292,7 +292,7 @@ if ($result > 0)
 				$facturestatic->total_tva = $objp->total_tva;
 				$facturestatic->total_ttc = $objp->total_ttc;
 				$facturestatic->statut = $objp->status;
-				$facturestatic->alreadypaid = -1;	// unknown
+				$facturestatic->alreadypaid = -1; // unknown
 
 				print '<tr class="oddeven">';
 				// Ref
@@ -343,7 +343,7 @@ if ($result > 0)
 			if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->facture->creer))
 		   	|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
 			{
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=validate">'.$langs->trans('Valid').'</a>';
 			}
 		}
 	}
@@ -396,7 +396,7 @@ if ($result > 0)
 	print $langs->trans("ErrorRecordNotFound");
 }
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

@@ -141,7 +141,7 @@ $head[$h][2] = 'payment';
 $hselected = 'payment';
 $h++;
 
-dol_fiche_head($head, $hselected, $langs->trans("StandingOrders"), 0, 'payment');
+print dol_get_fiche_head($head, $hselected, $langs->trans("StandingOrders"), 0, 'payment');
 */
 
 $title = $langs->trans("NewStandingOrder");
@@ -151,7 +151,7 @@ if ($type == 'bank-transfer') {
 
 print load_fiche_titre($title);
 
-dol_fiche_head();
+print dol_get_fiche_head();
 
 $nb = $bprev->nbOfInvoiceToPay($type);
 $pricetowithdraw = $bprev->SommeAPrelever($type);
@@ -271,7 +271,7 @@ if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS))
 	$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
 }
 //$sql .= " AND pfd.amount > 0";
-$sql .= " AND f.total_ttc > 0";		// Avoid credit notes
+$sql .= " AND f.total_ttc > 0"; // Avoid credit notes
 $sql .= " AND pfd.traite = 0";
 $sql .= " AND pfd.ext_payment_id IS NULL";
 if ($type == 'bank-transfer') {

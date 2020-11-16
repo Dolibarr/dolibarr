@@ -93,13 +93,13 @@ if ($action == 'update' && !$_POST["cancel"] && $user->rights->projet->creer)
 		if (empty($task_parent)) $task_parent = 0; // If task_parent is ''
 
 		$object->ref = $taskref ? $taskref : GETPOST("ref", 'alpha', 2);
-		$object->label = $_POST["label"];
-		$object->description = $_POST['description'];
+		$object->label = GETPOST("label", "alphanohtml");
+		$object->description = GETPOST('description', "alphanohtml");
 		$object->fk_task_parent = $task_parent;
 		$object->planned_workload = $planned_workload;
-		$object->date_start = dol_mktime($_POST['dateohour'], $_POST['dateomin'], 0, $_POST['dateomonth'], $_POST['dateoday'], $_POST['dateoyear']);
-		$object->date_end = dol_mktime($_POST['dateehour'], $_POST['dateemin'], 0, $_POST['dateemonth'], $_POST['dateeday'], $_POST['dateeyear']);
-		$object->progress = $_POST['progress'];
+		$object->date_start = dol_mktime(GETPOST('dateohour', 'int'), GETPOST('dateomin', 'int'), 0, GETPOST('dateomonth', 'int'), GETPOST('dateoday', 'int'), GETPOST('dateoyear', 'int'));
+		$object->date_end = dol_mktime(GETPOST('dateehour', 'int'), GETPOST('dateemin', 'int'), 0, GETPOST('dateemonth', 'int'), GETPOST('dateeday', 'int'), GETPOST('dateeyear', 'int'));
+		$object->progress = price2num(GETPOST('progress', 'alphanohtml'));
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -136,7 +136,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->s
 	}
 }
 
-// Retreive First Task ID of Project if withprojet is on to allow project prev next to work
+// Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
 if (!empty($project_ref) && !empty($withproject))
 {
 	if ($projectstatic->fetch('', $project_ref) > 0)
@@ -182,7 +182,7 @@ if ($action == 'remove_file' && $user->rights->projet->creer)
 	{
 		$langs->load("other");
 		$upload_dir = $conf->projet->dir_output;
-		$file = $upload_dir.'/'.GETPOST('file');
+		$file = $upload_dir.'/'.dol_sanitizeFileName(GETPOST('file'));
 
 		$ret = dol_delete_file($file);
 		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
@@ -190,10 +190,10 @@ if ($action == 'remove_file' && $user->rights->projet->creer)
 	}
 }
 
+
 /*
  * View
  */
-
 
 llxHeader('', $langs->trans("Task"));
 
@@ -214,14 +214,14 @@ if ($id > 0 || !empty($ref))
 
 		$object->project = clone $projectstatic;
 
-		$userWrite = $projectstatic->restrictedProjectArea($user, 'write');
+		//$userWrite = $projectstatic->restrictedProjectArea($user, 'write');
 
 		if (!empty($withproject))
 		{
 			// Tabs for project
 			$tab = 'tasks';
 			$head = project_prepare_head($projectstatic);
-			dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'), 0, '', '');
+			print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'), 0, '', '');
 
 			$param = ($mode == 'mine' ? '&mode=mine' : '');
 
@@ -337,7 +337,7 @@ if ($id > 0 || !empty($ref))
 
 			print '<div class="clearboth"></div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<br>';
 		}
@@ -380,7 +380,7 @@ if ($id > 0 || !empty($ref))
 			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-			dol_fiche_head($head, 'task_task', $langs->trans("Task"), 0, 'projecttask', 0, '', '');
+			print dol_get_fiche_head($head, 'task_task', $langs->trans("Task"), 0, 'projecttask', 0, '', '');
 
 			print '<table class="border centpercent">';
 
@@ -448,7 +448,7 @@ if ($id > 0 || !empty($ref))
 
 			print '</table>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
 			print '<input type="submit" class="button" name="update" value="'.$langs->trans("Modify").'"> &nbsp; ';
@@ -463,7 +463,7 @@ if ($id > 0 || !empty($ref))
 			$param = ($withproject ? '&withproject=1' : '');
 			$linkback = $withproject ? '<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'&restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>' : '';
 
-			dol_fiche_head($head, 'task_task', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
+			print dol_get_fiche_head($head, 'task_task', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
 
 			if ($action == 'delete')
 			{
@@ -574,7 +574,7 @@ if ($id > 0 || !empty($ref))
 			print '</div>';
 			print '<div class="clearboth"></div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 		}
 
 
