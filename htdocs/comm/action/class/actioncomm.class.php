@@ -983,7 +983,7 @@ class ActionComm extends CommonObject
 
         // Clean parameters
         $this->label = trim($this->label);
-        $this->note_private = dol_htmlcleanlastbr(trim(empty($this->note_private) ? $this->note : $this->note_private));
+        $this->note_private = dol_htmlcleanlastbr(trim(!isset($this->note_private) ? $this->note : $this->note_private));
         if (empty($this->percentage))    $this->percentage = 0;
         if (empty($this->priority) || !is_numeric($this->priority)) $this->priority = 0;
         if (empty($this->transparency))  $this->transparency = 0;
