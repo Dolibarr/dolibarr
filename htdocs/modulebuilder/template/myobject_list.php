@@ -251,7 +251,7 @@ if ($object->ismultientitymanaged == 1) $sql .= " WHERE t.entity IN (".getEntity
 else $sql .= " WHERE 1 = 1";
 foreach ($search as $key => $val)
 {
-	if (in_array($key,$object->fields)) {
+	if (in_array($key, $object->fields)) {
 		if ($key == 'status' && $search[$key] == -1) continue;
 		$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
 		if (strpos($object->fields[$key]['type'], 'integer:') === 0) {
@@ -260,7 +260,7 @@ foreach ($search as $key => $val)
 		}
 		if ($search[$key] != '') $sql .= natural_search($key, $search[$key], (($key == 'status') ? 2 : $mode_search));
 	} else {
-		if(preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
+		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
 			$columnName=preg_replace('/(_dtstart|_dtend)$/', '', $key);
 			if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
 				if (preg_match('/_dtstart$/', $key)) {
