@@ -4384,7 +4384,7 @@ class Form
             </script>';
 			$formconfirm .= "<!-- end ajax formconfirm -->\n";
 		} else {
-			$formconfirm .= "\n<!-- begin formconfirm page=".$page." -->\n";
+			$formconfirm .= "\n<!-- begin formconfirm page=".dol_escape_htmltag($page)." -->\n";
 
 			if (empty($disableformtag)) $formconfirm .= '<form method="POST" action="'.$page.'" class="notoptoleftroright">'."\n";
 
@@ -4415,13 +4415,30 @@ class Form
 			$formconfirm .= '<td class="valid">';
 			$formconfirm .= $this->selectyesno("confirm", $newselectedchoice);
 			$formconfirm .= '</td>';
-			$formconfirm .= '<td class="valid center"><input class="button valignmiddle" type="submit" value="'.$langs->trans("Validate").'"></td>';
+			$formconfirm .= '<td class="valid center"><input class="button valignmiddle confirmvalidatebutton" type="submit" value="'.$langs->trans("Validate").'"></td>';
 			$formconfirm .= '</tr>'."\n";
 
 			$formconfirm .= '</table>'."\n";
 
 			if (empty($disableformtag)) $formconfirm .= "</form>\n";
 			$formconfirm .= '<br>';
+
+			if (empty($conf->use_javascript_ajax)) {
+				$formconfirm .= '<!-- code to disable button to avoid double clic -->';
+				$formconfirm .= '<script type="text/javascript">'."\n";
+				$formconfirm .= '
+				$(document).ready(function () {
+					$(".confirmvalidatebutton").on("click", function() {
+						console.log("We click on button");
+						$(this).attr("disabled", "disabled");
+						setTimeout(\'$(".confirmvalidatebutton").removeAttr("disabled")\', 3000);
+						//console.log($(this).closest("form"));
+						$(this).closest("form").submit();
+					});
+				});
+				';
+				$formconfirm .= '</script>'."\n";
+			}
 
 			$formconfirm .= "<!-- end formconfirm -->\n";
 		}
