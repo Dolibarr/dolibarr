@@ -207,7 +207,8 @@ if ($action == 'valid' && $user->rights->facture->creer)
 			dol_htmloutput_errors($langs->trans("InvoiceIsAlreadyValidated", "TakePos"), null, 1);
 		}
 	} elseif (count($invoice->lines) == 0) {
-		dol_syslog("Sale without lines");
+		$error++;
+		dol_syslog('Sale without lines', LOG_ERR);
 		dol_htmloutput_errors($langs->trans("NoLinesToBill", "TakePos"), null, 1);
 	} elseif (!empty($conf->stock->enabled) && $conf->global->$constantforkey != "1") {
 		$savconst = $conf->global->STOCK_CALCULATE_ON_BILL;
