@@ -364,12 +364,6 @@ class doc_generic_user_odt extends ModelePDFUser
 
 				$tmparray = array_merge($array_user, $array_soc, $array_thirdparty, $array_other, $array_thirdparty_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
-				// to list all tags in odt template
-				$tags = '';
-				foreach ($tmparray as $key => $value) {
-					$tags .= '{' . $key . '} => ' . $value ."\n";
-				}
-				$tmparray = array_merge($tmparray, array('__ALL_TAGS__' => $tags));
 				$object->fetch_optionals();
 				// Call the ODTSubstitution hook
 				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
