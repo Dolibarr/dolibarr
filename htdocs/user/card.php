@@ -13,7 +13,7 @@
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2015-2018 Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2016      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2018       David Beniamine     <David.Beniamine@Tetras-Libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1781,7 +1781,7 @@ if ($action == 'create' || $action == 'adduserldap')
 					$adh = new Adherent($db);
 					$adh->fetch($object->fk_member);
 					$adh->ref = $adh->getFullname($langs); // Force to show login instead of id
-					print $adh->getNomUrl(1);
+					print $adh->getNomUrl(-1);
 				} else {
 					print $langs->trans("UserNotLinkedToMember");
 				}

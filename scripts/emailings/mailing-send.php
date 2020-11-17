@@ -21,9 +21,9 @@
  */
 
 /**
- * \file scripts/emailings/mailing-send.php
+ * \file 	scripts/emailings/mailing-send.php
  * \ingroup mailing
- * \brief Script d'envoi d'un mailing prepare et valide
+ * \brief 	Script to send a prepared and validated emaling from command line
  */
 
 if (!defined('NOSESSION')) define('NOSESSION', '1');

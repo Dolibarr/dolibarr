@@ -180,6 +180,12 @@ class Commande extends CommonOrder
 	 */
 	public $date_commande;
 
+	/**
+	 * @var int	Date expected for delivery
+	 * @deprecated
+	 */
+	public $date_livraison;	// deprecated; Use delivery_date instead.
+
 	public $delivery_date; // Date expected of shipment (date starting shipment, not the reception that occurs some days after)
 
 	/**
@@ -880,8 +886,9 @@ class Commande extends CommonOrder
 		// Clean parameters
 		$this->brouillon = 1; // set command as draft
 
-		// $date_commande is deprecated
+		// Set tmp vars
 		$date = ($this->date_commande ? $this->date_commande : $this->date);
+		$delivery_date = empty($this->delivery_date) ? $this->date_livraison : $this->delivery_date;
 
 		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
 		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $date);
@@ -954,7 +961,7 @@ class Commande extends CommonOrder
 		$sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
 		$sql .= ", ".($this->availability_id > 0 ? $this->availability_id : "null");
 		$sql .= ", ".($this->demand_reason_id > 0 ? $this->demand_reason_id : "null");
-		$sql .= ", ".($this->date_livraison ? "'".$this->db->idate($this->date_livraison)."'" : "null");
+		$sql .= ", ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : "null");
 		$sql .= ", ".($this->fk_delivery_address > 0 ? $this->fk_delivery_address : 'NULL');
 		$sql .= ", ".($this->shipping_method_id > 0 ? $this->shipping_method_id : 'NULL');
 		$sql .= ", ".($this->warehouse_id > 0 ? $this->warehouse_id : 'NULL');
@@ -1353,7 +1360,8 @@ class Commande extends CommonOrder
 		$this->fk_account           = $object->fk_account;
 		$this->availability_id      = $object->availability_id;
 		$this->demand_reason_id     = $object->demand_reason_id;
-		$this->date_livraison       = $object->date_livraison;
+		$this->date_livraison       = $object->date_livraison;	// deprecated
+		$this->delivery_date        = $object->date_livraison;
 		$this->shipping_method_id   = $object->shipping_method_id;
 		$this->warehouse_id         = $object->warehouse_id;
 		$this->fk_delivery_address  = $object->fk_delivery_address;
@@ -1777,7 +1785,7 @@ class Commande extends CommonOrder
 		$sql .= ', c.amount_ht, c.total_ht, c.total_ttc, c.tva as total_tva, c.localtax1 as total_localtax1, c.localtax2 as total_localtax2, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_availability, c.fk_input_reason';
 		$sql .= ', c.fk_account';
 		$sql .= ', c.date_commande, c.date_valid, c.tms';
-		$sql .= ', c.date_livraison';
+		$sql .= ', c.date_livraison as delivery_date';
 		$sql .= ', c.fk_shipping_method';
 		$sql .= ', c.fk_warehouse';
 		$sql .= ', c.fk_projet as fk_project, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as billed';
@@ -1863,7 +1871,8 @@ class Commande extends CommonOrder
 				$this->availability	    	= $obj->availability_label;
 				$this->demand_reason_id		= $obj->fk_input_reason;
 				$this->demand_reason_code = $obj->demand_reason_code;
-				$this->date_livraison = $this->db->jdate($obj->date_livraison);
+				$this->date_livraison = $this->db->jdate($obj->delivery_date);	// deprecated
+				$this->delivery_date = $this->db->jdate($obj->delivery_date);
 				$this->shipping_method_id   = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
 				$this->warehouse_id         = ($obj->fk_warehouse > 0) ? $obj->fk_warehouse : null;
 				$this->fk_delivery_address = $obj->fk_delivery_address;
@@ -2005,7 +2014,7 @@ class Commande extends CommonOrder
 		$sql .= ' l.total_ht, l.total_ttc, l.total_tva, l.total_localtax1, l.total_localtax2, l.date_start, l.date_end,';
 		$sql .= ' l.fk_unit,';
 		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
-		$sql .= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label, p.tobatch as product_tobatch,';
+		$sql .= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label, p.tosell as product_tosell, p.tobuy as product_tobuy, p.tobatch as product_tobatch,';
 		$sql .= ' p.weight, p.weight_units, p.volume, p.volume_units';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
@@ -2068,6 +2077,8 @@ class Commande extends CommonOrder
 				$line->libelle = $objp->product_label;
 				$line->product_label = $objp->product_label;
 				$line->product_desc     = $objp->product_desc;
+				$line->product_tosell   = $objp->product_tosell;
+				$line->product_tobuy    = $objp->product_tobuy;
 				$line->product_tobatch  = $objp->product_tobatch;
 				$line->fk_product_type  = $objp->fk_product_type; // Produit ou service
 				$line->fk_unit          = $objp->fk_unit;
@@ -2595,6 +2606,7 @@ class Commande extends CommonOrder
 			{
 				$this->oldcopy = clone $this;
 				$this->date_livraison = $delivery_date;
+				$this->delivery_date = $delivery_date;
 			}
 
 			if (!$notrigger && empty($error))
@@ -3495,7 +3507,9 @@ class Commande extends CommonOrder
 
 				$generic_commande->statut = $obj->fk_statut;
 				$generic_commande->date_commande = $this->db->jdate($obj->date_commande);
+				$generic_commande->date = $this->db->jdate($obj->date_commande);
 				$generic_commande->date_livraison = $this->db->jdate($obj->delivery_date);
+				$generic_commande->delivery_date = $this->db->jdate($obj->delivery_date);
 
 				if ($generic_commande->hasDelay()) {
 					$response->nbtodolate++;
@@ -3648,6 +3662,9 @@ class Commande extends CommonOrder
 			}
 			if (!empty($this->total_ttc)) {
 				$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+			}
+			if (!empty($this->delivery_date)) {
+				$label .= '<br><b>'.$langs->trans('DeliveryDate').':</b> '.dol_print_date($this->delivery_date, 'dayhour');
 			}
 		}
 

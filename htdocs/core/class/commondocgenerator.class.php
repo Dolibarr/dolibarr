@@ -77,11 +77,11 @@ abstract class CommonDocGenerator
 	public function get_substitutionarray_user($user, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf;
+		global $conf, $extrafields;
 
 		$logotouse = $conf->user->dir_output.'/'.get_exdir($user->id, 2, 0, 1, $user, 'user').'/'.$user->photo;
 
-		return array(
+		$array_user = array(
 			'myuser_lastname'=>$user->lastname,
 			'myuser_firstname'=>$user->firstname,
 			'myuser_fullname'=>$user->getFullName($outputlangs, 1),
@@ -101,6 +101,53 @@ abstract class CommonDocGenerator
 			'myuser_job'=>$user->job,
 			'myuser_web'=>''	// url not exist in $user object
 		);
+		// Retrieve extrafields
+		if (is_array($user->array_options) && count($user->array_options)) {
+			$array_user = $this->fill_substitutionarray_with_extrafields($user, $array_user, $extrafields, 'myuser', $outputlangs);
+		}
+		return $array_user;
+	}
+
+
+	/**
+	 * Define array with couple substitution key => substitution value
+	 *
+	 * @param   Adherent	$member         Member
+	 * @param   Translate	$outputlangs    Language object for output
+	 * @return	array						Array of substitution key->code
+	 */
+	public function getSubstitutionarrayMember($member, $outputlangs)
+	{
+		global $conf, $extrafields;
+
+		$logotouse = $conf->adherent->dir_output.'/'.get_exdir($member->id, 2, 0, 1, $member, 'user').'/'.$member->photo;
+
+		$array_member = array(
+			'mymember_lastname' => $member->lastname,
+			'mymember_firstname' => $member->firstname,
+			'mymember_fullname' => $member->getFullName($outputlangs, 1),
+			'mymember_login' => $member->login,
+			'mymember_address' => $member->address,
+			'mymember_zip' => $member->zip,
+			'mymember_town' => $member->town,
+			'mymember_country_code' => $member->country_code,
+			'mymember_country' => $member->country,
+			'mymember_state_code' => $member->state_code,
+			'mymember_state' => $member->state,
+			'mymember_phone_perso' => $member->phone_perso,
+			'mymember_phone_pro' => $member->phone,
+			'mymember_phone_mobile' => $member->phone_mobile,
+			'mymember_email' => $member->email,
+			'mymember_logo' => $logotouse,
+			'mymember_gender' => $member->gender,
+			'mymember_birth_locale' => dol_print_date($member->birth, 'day', 'tzuser', $outputlangs),
+			'mymember_birth' => dol_print_date($member->birth, 'day', 'tzuser'),
+		);
+		// Retrieve extrafields
+		if (is_array($member->array_options) && count($member->array_options)) {
+			$array_member = $this->fill_substitutionarray_with_extrafields($member, $array_member, $extrafields, 'mymember', $outputlangs);
+		}
+		return $array_member;
 	}
 
 
@@ -1249,7 +1296,7 @@ abstract class CommonDocGenerator
 		$html = '';
 		$fields = array();
 
-		if (is_array($extrafields->attributes[$object->table_element]['label'])) {
+		if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label'])) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
 			{
 				// Enable extrafield ?

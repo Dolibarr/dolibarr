@@ -32,7 +32,7 @@ $conf_db_base = $dolibarr_main_db_name;
 $conf_fksoc = (!empty($_SESSION["CASHDESK_ID_THIRDPARTY"])) ? $_SESSION["CASHDESK_ID_THIRDPARTY"] : ($conf->global->CASHDESK_ID_THIRDPARTY > 0 ? $conf->global->CASHDESK_ID_THIRDPARTY : 0);
 // Identifiant unique correspondant a l'entrepot a utiliser
 $conf_fkentrepot = (!empty($_SESSION["CASHDESK_ID_WAREHOUSE"])) ? $_SESSION["CASHDESK_ID_WAREHOUSE"] : ($conf->global->CASHDESK_ID_WAREHOUSE > 0 ? $conf->global->CASHDESK_ID_WAREHOUSE : 0);
-if (!empty($conf->global->CASHDESK_NO_DECREASE_STOCK)) $conf_fkentrepot = 0; // If option to disable stock decrease is on, we set warehouse id to 0.
+if (!empty($conf->global->CASHDESK_NO_DECREASE_STOCK)) $conf_fkentrepot = 0; // If option to disable the stock decrease is on, we set warehouse id to 0.
 
 // Identifiant unique correspondant au compte caisse / liquide
 $conf_fkaccount_cash = (!empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CASH"])) ? $_SESSION["CASHDESK_ID_BANKACCOUNT_CASH"] : ($conf->global->CASHDESK_ID_BANKACCOUNT_CASH > 0 ? $conf->global->CASHDESK_ID_BANKACCOUNT_CASH : 0);
@@ -46,6 +46,3 @@ $conf_fkaccount_cb = (!empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CB"])) ? $_SESSI
 // View parameters
 $conf_taille_listes = (empty($conf->global->PRODUIT_LIMIT_SIZE) ? 1000 : $conf->global->PRODUIT_LIMIT_SIZE); // Number max of lines to show in lists
 $conf_nbr_car_listes = 60; // Nombre max de caracteres par ligne dans les listes
-
-// Add hidden option to force decrease of stock whatever is user setup
-if (!empty($conf->global->CASHDESK_FORCE_STOCK_ON_BILL)) $conf->global->STOCK_CALCULATE_ON_BILL = 1;

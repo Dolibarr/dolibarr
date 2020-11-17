@@ -101,7 +101,7 @@ class SimpleOpenID
 	/**
 	 * SetRequiredFields
 	 *
-	 * @param	string	$a		Server
+	 * @param	string|array	$a		Server
 	 * @return	void
 	 */
 	public function SetRequiredFields($a)
@@ -118,7 +118,7 @@ class SimpleOpenID
 	/**
 	 * SetOptionalFields
 	 *
-	 * @param	string	$a		Server
+	 * @param	string|array	$a		Server
 	 * @return	void
 	 */
 	public function SetOptionalFields($a)

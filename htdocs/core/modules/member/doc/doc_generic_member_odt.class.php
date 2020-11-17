@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,12 +19,12 @@
 */
 
 /**
- *	\file       htdocs/core/modules/user/doc/doc_generic_user_odt.modules.php
+ *	\file       htdocs/core/modules/member/doc/doc_generic_member_odt.modules.php
  *	\ingroup    societe
- *	\brief      File of class to build ODT documents for third parties
+ *	\brief      File of class to build ODT documents for members
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/user/modules_user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/member/modules_member.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
 /**
  *	Class to build documents using ODF templates generator
  */
-class doc_generic_user_odt extends ModelePDFUser
+class doc_generic_member_odt extends ModelePDFMember
 {
 	/**
 	 * @var Societe Issuer
@@ -69,7 +69,7 @@ class doc_generic_user_odt extends ModelePDFUser
 		$this->db = $db;
 		$this->name = "ODT templates";
 		$this->description = $langs->trans("DocumentModelOdt");
-		$this->scandir = 'USER_ADDON_PDF_ODT_PATH'; // Name of constant that is used to save list of directories to scan
+		$this->scandir = 'MEMBER_ADDON_PDF_ODT_PATH'; // Name of constant that is used to save list of directories to scan
 
 		// Page size for A4 format
 		$this->type = 'odt';
@@ -82,7 +82,7 @@ class doc_generic_user_odt extends ModelePDFUser
 		$this->marge_basse = 0;
 
 		$this->option_logo = 1; // Affiche logo
-		$this->option_tva = 0; // Gere option tva USER_TVAOPTION
+		$this->option_tva = 0; // Gere option tva MEMBER_TVAOPTION
 		$this->option_modereg = 0; // Affiche mode reglement
 		$this->option_condreg = 0; // Affiche conditions reglement
 		$this->option_codeproduitservice = 0; // Affiche code produit-service
@@ -117,19 +117,13 @@ class doc_generic_user_odt extends ModelePDFUser
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
-		$texte .= '<input type="hidden" name="param1" value="USER_ADDON_PDF_ODT_PATH">';
-		if ($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT > 0)
-		{
-			$texte .= '<input type="hidden" name="param2" value="USER_ADDON_PDF_ODT_DEFAULT">';
-			$texte .= '<input type="hidden" name="param3" value="USER_ADDON_PDF_ODT_TOBILL">';
-			$texte .= '<input type="hidden" name="param4" value="USER_ADDON_PDF_ODT_CLOSED">';
-		}
+		$texte .= '<input type="hidden" name="param1" value="MEMBER_ADDON_PDF_ODT_PATH">';
 		$texte .= '<table class="nobordernopadding" width="100%">';
 
 		// List of directories area
 		$texte .= '<tr><td>';
 		$texttitle = $langs->trans("ListOfDirectories");
-		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim($conf->global->USER_ADDON_PDF_ODT_PATH)));
+		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim($conf->global->MEMBER_ADDON_PDF_ODT_PATH)));
 		$listoffiles = array();
 		foreach ($listofdir as $key=>$tmpdir)
 		{
@@ -152,7 +146,7 @@ class doc_generic_user_odt extends ModelePDFUser
 		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1);
 		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 		$texte .= '<textarea class="flat" cols="60" name="value1">';
-		$texte .= $conf->global->USER_ADDON_PDF_ODT_PATH;
+		$texte .= $conf->global->MEMBER_ADDON_PDF_ODT_PATH;
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
 		$texte .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button">';
@@ -162,31 +156,6 @@ class doc_generic_user_odt extends ModelePDFUser
 		if (count($listofdir))
 		{
 			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
-
-			if ($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT > 0)
-			{
-				// Model for creation
-				$liste = ModelePDFUser::liste_modeles($this->db);
-				$texte .= '<table width="50%;">';
-				$texte .= '<tr>';
-				$texte .= '<td width="60%;">'.$langs->trans("DefaultModelPropalCreate").'</td>';
-				$texte .= '<td colspan="">';
-				$texte .= $form->selectarray('value2', $liste, $conf->global->USER_ADDON_PDF_ODT_DEFAULT);
-				$texte .= "</td></tr>";
-
-				$texte .= '<tr>';
-				$texte .= '<td width="60%;">'.$langs->trans("DefaultModelPropalToBill").'</td>';
-				$texte .= '<td colspan="">';
-				$texte .= $form->selectarray('value3', $liste, $conf->global->USER_ADDON_PDF_ODT_TOBILL);
-				$texte .= "</td></tr>";
-				$texte .= '<tr>';
-
-				$texte .= '<td width="60%;">'.$langs->trans("DefaultModelPropalClosed").'</td>';
-				$texte .= '<td colspan="">';
-				$texte .= $form->selectarray('value4', $liste, $conf->global->USER_ADDON_PDF_ODT_CLOSED);
-				$texte .= "</td></tr>";
-				$texte .= '</table>';
-			}
 			$texte .= '<div id="div_'.get_class($this).'" class="hidden">';
 			foreach ($listoffiles as $file) {
 				$texte .= $file['name'].'<br>';
@@ -195,10 +164,9 @@ class doc_generic_user_odt extends ModelePDFUser
 		}
 		// Add input to upload a new template file.
 		$texte .= '<div>'.$langs->trans("UploadNewTemplate").' <input type="file" name="uploadfile">';
-		$texte .= '<input type="hidden" value="USER_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
+		$texte .= '<input type="hidden" value="MEMBER_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
 		$texte .= '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
 		$texte .= '</div>';
-
 		$texte .= '</td>';
 
 		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
@@ -216,21 +184,19 @@ class doc_generic_user_odt extends ModelePDFUser
 	/**
 	 *  Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param		User		$object				Object source to build document
-	 *	@param		Translate	$outputlangs		Lang output object
-	 * 	@param		string		$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param		int			$hidedetails		Do not show line details
-	 *  @param		int			$hidedesc			Do not show desc
-	 *  @param		int			$hideref			Do not show ref
-	 *	@return		int         					1 if OK, <=0 if KO
+	 *	@param	Adherent	$object				Object source to build document
+	 *	@param	Translate	$outputlangs		Lang output object
+	 * 	@param	string		$srctemplatepath	Full path of source filename for generator using a template file
+	 *	@param	string		$mode				Tell if doc module is called for 'member', ...
+	 *  @param  int         $nooutput           1=Generate only file on disk and do not return it on response
+	 *	@return	int         					1 if OK, <=0 if KO
 	 */
-	public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs, $srctemplatepath, $mode = 'member', $nooutput = 0)
 	{
 		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;
 
-		if (empty($srctemplatepath))
-		{
+		if (empty($srctemplatepath)) {
 			dol_syslog("doc_generic_odt::write_file parameter srctemplatepath empty", LOG_WARNING);
 			return -1;
 		}
@@ -251,16 +217,13 @@ class doc_generic_user_odt extends ModelePDFUser
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "companies", "bills", "dict"));
 
-		if ($conf->user->dir_output)
-		{
+		if ($conf->adherent->dir_output) {
 			// If $object is id instead of object
-			if (!is_object($object))
-			{
+			if (!is_object($object)) {
 				$id = $object;
 				$object = new User($this->db);
 				$result = $object->fetch($id);
-				if ($result < 0)
-				{
+				if ($result < 0) {
 					dol_print_error($this->db, $object->error);
 					return -1;
 				}
@@ -268,22 +231,19 @@ class doc_generic_user_odt extends ModelePDFUser
 
 			$object->fetch_thirdparty();
 
-			$dir = $conf->user->dir_output;
+			$dir = $conf->adherent->dir_output;
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) $dir .= "/".$objectref;
 			$file = $dir."/".$objectref.".odt";
 
-			if (!file_exists($dir))
-			{
-				if (dol_mkdir($dir) < 0)
-				{
+			if (!file_exists($dir)) {
+				if (dol_mkdir($dir) < 0) {
 					$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
 					return -1;
 				}
 			}
 
-			if (file_exists($dir))
-			{
+			if (file_exists($dir)) {
 				//print "srctemplatepath=".$srctemplatepath;	// Src filename
 				$newfile = basename($srctemplatepath);
 				$newfiletmp = preg_replace('/\.od(t|s)/i', '', $newfile);
@@ -294,8 +254,7 @@ class doc_generic_user_odt extends ModelePDFUser
 
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
-				if (!empty($conf->global->MAIN_DOC_USE_TIMING))
-				{
+				if (!empty($conf->global->MAIN_DOC_USE_TIMING)) {
 					$format = $conf->global->MAIN_DOC_USE_TIMING;
 					if ($format == '1') $format = '%Y%m%d%H%M%S';
 					$filename = $newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
@@ -306,26 +265,25 @@ class doc_generic_user_odt extends ModelePDFUser
 				//print "newdir=".$dir;
 				//print "newfile=".$newfile;
 				//print "file=".$file;
-				//print "conf->user->dir_temp=".$conf->user->dir_temp;
+				//print "conf->adherent->dir_temp=".$conf->adherent->dir_temp;
 
-				dol_mkdir($conf->user->dir_temp);
+				dol_mkdir($conf->adherent->dir_temp);
 
 
-				// If CUSTOMER contact defined on user, we use it
+				// If CUSTOMER contact defined on member, we use it
 				$usecontact = false;
 				$arrayidcontact = $object->getIdContact('external', 'CUSTOMER');
-				if (count($arrayidcontact) > 0)
-				{
+				if (count($arrayidcontact) > 0) {
 					$usecontact = true;
 					$result = $object->fetch_contact($arrayidcontact[0]);
 				}
 
 				// Recipient name
-				if (!empty($usecontact))
-				{
+				if (!empty($usecontact)) {
 					// On peut utiliser le nom de la societe du contact
-					if (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socobject = $object->contact;
-					else {
+					if (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
+						$socobject = $object->contact;
+					} else {
 						$socobject = $object->thirdparty;
 						// if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
 						$contactobject = $object->contact;
@@ -340,7 +298,7 @@ class doc_generic_user_odt extends ModelePDFUser
 					$odfHandler = new odf(
 						$srctemplatepath,
 						array(
-							'PATH_TO_TMP'	  => $conf->user->dir_temp,
+							'PATH_TO_TMP'	  => $conf->adherent->dir_temp,
 							'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 							'DELIMITER_LEFT'  => '{',
 							'DELIMITER_RIGHT' => '}'
@@ -354,7 +312,7 @@ class doc_generic_user_odt extends ModelePDFUser
 				}
 
 				// Make substitutions into odt
-				$array_user = $this->get_substitutionarray_user($object, $outputlangs);
+				$array_member = $this->getSubstitutionarrayMember($object, $outputlangs);
 				$array_soc = $this->get_substitutionarray_mysoc($mysoc, $outputlangs);
 				$array_thirdparty = $this->get_substitutionarray_thirdparty($socobject, $outputlangs);
 				$array_other = $this->get_substitutionarray_other($outputlangs);
@@ -362,25 +320,32 @@ class doc_generic_user_odt extends ModelePDFUser
 				$array_thirdparty_contact = array();
 				if ($usecontact && is_object($contactobject)) $array_thirdparty_contact = $this->get_substitutionarray_contact($contactobject, $outputlangs, 'contact');
 
-				$tmparray = array_merge($array_user, $array_soc, $array_thirdparty, $array_other, $array_thirdparty_contact);
+				$tmparray = array_merge($array_member, $array_soc, $array_thirdparty, $array_other, $array_thirdparty_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
-				$object->fetch_optionals();
+				$tags = '';
+				foreach ($tmparray as $key => $value) {
+					$tags .= '{' . $key . '} => ' . $value ."\n";
+				}
+				$tmparray = array_merge($tmparray, array('__ALL_TAGS__' => $tags));
 				// Call the ODTSubstitution hook
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
+				$parameters = array(
+					'file'=>$file,
+					'object'=>$object,
+					'outputlangs'=>$outputlangs,
+					'substitutionarray'=>&$tmparray
+				);
 				$reshook = $hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-				foreach ($tmparray as $key=>$value)
-				{
+				foreach ($tmparray as $key=>$value) {
 					try {
-						if (preg_match('/logo$/', $key)) // Image
-						{
+						if (preg_match('/logo$/', $key)) {
+							// Image
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
 							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
-						} else // Text
-						{
+						} else {
+							// Text
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
-					} catch (OdfException $e)
-					{
+					} catch (OdfException $e) {
 						dol_syslog($e->getMessage(), LOG_WARNING);
 					}
 				}
@@ -443,7 +408,7 @@ class doc_generic_user_odt extends ModelePDFUser
 	/**
 	 * get substitution array for object
 	 *
-	 * @param User          $object         user
+	 * @param Adherent      $object         member
 	 * @param Translate     $outputlangs    translation object
 	 * @param string        $array_key      key for array
 	 * @return array                        array of substitutions

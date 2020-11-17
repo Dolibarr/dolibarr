@@ -115,6 +115,12 @@ class CommandeFournisseur extends CommonOrder
 	public $date_commande;
 
 	/**
+	 * @var int	Date expected for delivery
+	 * @deprecated		See delivery_date
+	 */
+	public $date_livraison;
+
+	/**
 	 * Delivery date
 	 */
 	public $delivery_date;
@@ -313,7 +319,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " c.localtax1, c.localtax2, ";
 		$sql .= " c.date_creation, c.date_valid, c.date_approve, c.date_approve2,";
 		$sql .= " c.fk_user_author, c.fk_user_valid, c.fk_user_approve, c.fk_user_approve2,";
-		$sql .= " c.date_commande as date_commande, c.date_livraison as date_livraison, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_input_method,";
+		$sql .= " c.date_commande as date_commande, c.date_livraison as delivery_date, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_input_method,";
 		$sql .= " c.fk_account,";
 		$sql .= " c.note_private, c.note_public, c.model_pdf, c.extraparams, c.billed,";
 		$sql .= " c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva, c.multicurrency_total_ttc,";
@@ -369,7 +375,8 @@ class CommandeFournisseur extends CommonOrder
 			$this->date_approve			= $this->db->jdate($obj->date_approve);
 			$this->date_approve2		= $this->db->jdate($obj->date_approve2);
 			$this->date_commande		= $this->db->jdate($obj->date_commande); // date we make the order to supplier
-			$this->date_livraison = $this->db->jdate($obj->date_livraison);
+			$this->date_livraison = $this->db->jdate($obj->delivery_date);	// deprecated
+			$this->delivery_date = $this->db->jdate($obj->delivery_date);
 			$this->remise_percent = $obj->remise_percent;
 			$this->methode_commande_id = $obj->fk_input_method;
 			$this->methode_commande = $obj->methode_commande;
@@ -771,16 +778,24 @@ class CommandeFournisseur extends CommonOrder
 			if (isset($this->statut)) {
 				$label .= ' '.$this->getLibStatut(5);
 			}
-			if (!empty($this->ref))
+			if (!empty($this->ref)) {
 				$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-			if (!empty($this->ref_supplier))
+			}
+			if (!empty($this->ref_supplier)) {
 				$label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
-			if (!empty($this->total_ht))
+			}
+			if (!empty($this->total_ht)) {
 				$label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
-			if (!empty($this->total_tva))
+			}
+			if (!empty($this->total_tva)) {
 				$label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
-			if (!empty($this->total_ttc))
+			}
+			if (!empty($this->total_ttc)) {
 				$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+			}
+			if (!empty($this->delivery_date)) {
+				$label .= '<br><b>'.$langs->trans('DeliveryDate').':</b> '.dol_print_date($this->delivery_date, 'dayhour');
+			}
 		}
 
 		$picto = 'order';
@@ -1250,9 +1265,10 @@ class CommandeFournisseur extends CommonOrder
 		$error = 0;
 		$now = dol_now();
 
-		// $date_commande is deprecated
+		// set tmp vars
 		$date = ($this->date_commande ? $this->date_commande : $this->date); // in case of date is set
 		if (empty($date)) $date = $now;
+		$delivery_date = empty($this->delivery_date) ? $this->date_livraison : $this->delivery_date;
 
 		// Clean parameters
 		if (empty($this->source)) $this->source = 0;
@@ -1301,7 +1317,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= ", ".$this->socid;
 		$sql .= ", ".($this->fk_project > 0 ? $this->fk_project : "null");
 		$sql .= ", '".$this->db->idate($date)."'";
-		$sql .= ", ".($this->date_livraison ? "'".$this->db->idate($this->date_livraison)."'" : "null");
+		$sql .= ", ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : "null");
 		$sql .= ", ".$user->id;
 		$sql .= ", ".self::STATUS_DRAFT;
 		$sql .= ", ".$this->db->escape($this->source);
@@ -2313,6 +2329,7 @@ class CommandeFournisseur extends CommonOrder
 			{
 				$this->oldcopy = clone $this;
 				$this->date_livraison = $delivery_date;
+				$this->delivery_date = $delivery_date;
 			}
 
 			if (!$notrigger && empty($error))
@@ -2889,7 +2906,7 @@ class CommandeFournisseur extends CommonOrder
 		}
 		$sql .= $clause." c.entity = ".$conf->entity;
 		if ($mode === 'awaiting') {
-			$sql .= " AND c.fk_statut = ".self::STATUS_ORDERSENT;
+			$sql .= " AND c.fk_statut IN (".self::STATUS_ORDERSENT.", ".self::STATUS_RECEIVED_PARTIALLY.")";
 		} else {
 			$sql .= " AND c.fk_statut IN (".self::STATUS_VALIDATED.", ".self::STATUS_ACCEPTED.")";
 		}
@@ -2910,14 +2927,15 @@ class CommandeFournisseur extends CommonOrder
 			if ($mode === 'awaiting') {
 				$response->label = $langs->trans("SuppliersOrdersAwaitingReception");
 				$response->labelShort = $langs->trans("AwaitingReception");
-				$response->url = DOL_URL_ROOT.'/fourn/commande/list.php?statut=3&mainmenu=commercial&leftmenu=orders_suppliers';
+				$response->url = DOL_URL_ROOT.'/fourn/commande/list.php?statut=3,4&mainmenu=commercial&leftmenu=orders_suppliers';
 			}
 
 			while ($obj = $this->db->fetch_object($resql))
 			{
 				$response->nbtodo++;
 
-				$commandestatic->date_livraison = $this->db->jdate($obj->delivery_date);
+				$commandestatic->date_livraison = $this->db->jdate($obj->delivery_date);	// deprecated
+				$commandestatic->delivery_date = $this->db->jdate($obj->delivery_date);
 				$commandestatic->date_commande = $this->db->jdate($obj->date_commande);
 				$commandestatic->statut = $obj->fk_statut;
 
@@ -3070,12 +3088,12 @@ class CommandeFournisseur extends CommonOrder
 	{
 		global $conf;
 
-		if (empty($this->date_delivery) && !empty($this->date_livraison)) $this->date_delivery = $this->date_livraison; // For backward compatibility
+		if (empty($this->delivery_date) && !empty($this->date_livraison)) $this->delivery_date = $this->date_livraison; // For backward compatibility
 
 		$now = dol_now();
-		$date_to_test = empty($this->date_delivery) ? $this->date_commande : $this->date_delivery;
+		$date_to_test = empty($this->delivery_date) ? $this->date_commande : $this->delivery_date;
 
-		return ($this->statut > 0 && $this->statut < 4) && $date_to_test && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
+		return ($this->statut > 0 && $this->statut < 5) && $date_to_test && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
 	}
 
 	/**
@@ -3087,9 +3105,9 @@ class CommandeFournisseur extends CommonOrder
 	{
 		global $conf, $langs;
 
-		if (empty($this->date_delivery) && !empty($this->date_livraison)) $this->date_delivery = $this->date_livraison; // For backward compatibility
+		if (empty($this->delivery_date) && !empty($this->date_livraison)) $this->delivery_date = $this->date_livraison; // For backward compatibility
 
-		if (empty($this->date_delivery)) $text = $langs->trans("OrderDate").' '.dol_print_date($this->date_commande, 'day');
+		if (empty($this->delivery_date)) $text = $langs->trans("OrderDate").' '.dol_print_date($this->date_commande, 'day');
 		else $text = $text = $langs->trans("DeliveryDate").' '.dol_print_date($this->date_delivery, 'day');
 		$text .= ' '.($conf->commande->fournisseur->warning_delay > 0 ? '+' : '-').' '.round(abs($conf->commande->fournisseur->warning_delay) / 3600 / 24, 1).' '.$langs->trans("days").' < '.$langs->trans("Today");
 

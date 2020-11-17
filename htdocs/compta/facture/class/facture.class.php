@@ -116,6 +116,14 @@ class Facture extends CommonInvoice
 	public $datem;
 
 	/**
+	 * @var int	Date expected for delivery
+	 * @deprecated
+	 */
+	public $date_livraison;	// deprecated; Use delivery_date instead.
+
+	public $delivery_date; // Date expected of shipment (date starting shipment, not the reception that occurs some days after)
+
+	/**
 	 * @var string customer ref
 	 */
 	public $ref_client;
@@ -1330,7 +1338,8 @@ class Facture extends CommonInvoice
 		$this->mode_reglement_id    = $object->mode_reglement_id;
 		$this->availability_id      = $object->availability_id;
 		$this->demand_reason_id     = $object->demand_reason_id;
-		$this->date_livraison       = $object->date_livraison;
+		$this->delivery_date        = (empty($object->delivery_date) ? $object->date_livraison : $object->delivery_date);
+		$this->date_livraison       = $object->delivery_date;	// deprecated
 		$this->fk_delivery_address  = $object->fk_delivery_address; // deprecated
 		$this->contact_id           = $object->contact_id;
 		$this->ref_client           = $object->ref_client;

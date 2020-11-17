@@ -2183,7 +2183,7 @@ if (!empty($conf->margin->enabled) && $action == 'editline')
 $(document).ready(function() {
   var idprod = $("input[name='idprod']").val();
   var fournprice = $("input[name='fournprice']").val();
-  var token = '<?php echo $_SESSION["token"]; ?>';		// For AJAX Call we use old 'token' and not 'newtoken'
+  var token = '<?php echo currentToken(); ?>';		// For AJAX Call we use old 'token' and not 'newtoken'
   if (idprod > 0) {
 	  $.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {
 		  'idprod': idprod,

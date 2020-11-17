@@ -111,6 +111,12 @@ class SupplierProposal extends CommonObject
 
 	/**
 	 * @var integer|string date_livraison
+	 * @deprecated
+	 */
+	public $date_livraison;
+
+	/**
+	 * @var integer|string date_livraison
 	 */
 	public $delivery_date;
 
@@ -855,8 +861,6 @@ class SupplierProposal extends CommonObject
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -3;
 		}
-
-		// Check parameters
 		if (!empty($this->ref))	// We check that ref is not already used
 		{
 			$result = self::isExistingObject($this->element, 0, $this->ref); // Check ref is not yet used
@@ -868,6 +872,9 @@ class SupplierProposal extends CommonObject
 				return -1;
 			}
 		}
+
+		// Set tmp vars
+		$delivery_date = empty($this->delivery_date) ? $this->date_livraison : $this->delivery_date;
 
 		// Multicurrency
 		if (!empty($this->multicurrency_code)) list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $now);
@@ -923,7 +930,7 @@ class SupplierProposal extends CommonObject
 		$sql .= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : 'NULL');
 		$sql .= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : 'NULL');
 		$sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
-		$sql .= ", ".($this->date_livraison != '' ? "'".$this->db->idate($this->date_livraison)."'" : "null");
+		$sql .= ", ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : "null");
 		$sql .= ", ".($this->shipping_method_id > 0 ? $this->shipping_method_id : 'NULL');
 		$sql .= ", ".($this->fk_project ? $this->fk_project : "null");
 		$sql .= ", ".$conf->entity;
@@ -1201,7 +1208,7 @@ class SupplierProposal extends CommonObject
 		$sql .= ", p.total, p.tva, p.localtax1, p.localtax2, p.total_ht";
 		$sql .= ", p.datec";
 		$sql .= ", p.date_valid as datev";
-		$sql .= ", p.date_livraison as date_livraison";
+		$sql .= ", p.date_livraison as delivery_date";
 		$sql .= ", p.model_pdf, p.extraparams";
 		$sql .= ", p.note_private, p.note_public";
 		$sql .= ", p.fk_projet as fk_project, p.fk_statut";
@@ -1256,7 +1263,8 @@ class SupplierProposal extends CommonObject
 				$this->datev                = $this->db->jdate($obj->datev); // TODO deprecated
 				$this->date_creation = $this->db->jdate($obj->datec); //Creation date
 				$this->date_validation = $this->db->jdate($obj->datev); //Validation date
-				$this->date_livraison       = $this->db->jdate($obj->date_livraison);
+				$this->date_livraison       = $this->db->jdate($obj->delivery_date);	// deprecated
+				$this->delivery_date        = $this->db->jdate($obj->delivery_date);
 				$this->shipping_method_id   = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
 
 				$this->mode_reglement_id    = $obj->fk_mode_reglement;
@@ -1537,6 +1545,7 @@ class SupplierProposal extends CommonObject
 			if ($this->db->query($sql))
 			{
 				$this->date_livraison = $delivery_date;
+				$this->delivery_date = $delivery_date;
 				return 1;
 			} else {
 				$this->error = $this->db->error();

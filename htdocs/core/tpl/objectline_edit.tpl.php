@@ -434,7 +434,8 @@ jQuery(document).ready(function()
 		});
 
 		/* Init field buying_price and fournprice */
-		$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': <?php echo $line->fk_product ? $line->fk_product : 0; ?>, 'token': '<?php echo newToken(); ?>'}, function(data) {
+		var token = '<?php echo currentToken(); ?>';		// For AJAX Call we use old 'token' and not 'newtoken'
+		$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': <?php echo $line->fk_product ? $line->fk_product : 0; ?>, 'token': token }, function(data) {
           if (data && data.length > 0) {
 			var options = '';
 			var trouve=false;

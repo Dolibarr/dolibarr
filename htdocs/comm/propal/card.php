@@ -171,19 +171,21 @@ if (empty($reshook))
 						GETPOST('date_deliveryday', 'int'),
 						GETPOST('date_deliveryyear', 'int')
 					);
-					if (!empty($object->date_livraison) && !empty($date_delivery))
+					$date_delivery_old = (empty($object->delivery_date) ? $object->date_livraison : $object->delivery_date);
+					if (!empty($date_delivery_old) && !empty($date_delivery))
 					{
 						//Attempt to get the date without possible hour rounding errors
 						$old_date_delivery = dol_mktime(12, 0, 0,
-							dol_print_date($object->date_livraison, '%m'),
-							dol_print_date($object->date_livraison, '%d'),
-							dol_print_date($object->date_livraison, '%Y')
+							dol_print_date($date_delivery_old, '%m'),
+							dol_print_date($date_delivery_old, '%d'),
+							dol_print_date($date_delivery_old, '%Y')
 						);
 						//Calculate the difference and apply if necessary
 						$difference = $date_delivery - $old_date_delivery;
 						if ($difference != 0)
 						{
 							$object->date_livraison = $date_delivery;
+							$object->delivery_date = $date_delivery;
 							foreach ($object->lines as $line)
 							{
 								if (isset($line->date_start)) $line->date_start = $line->date_start + $difference;
@@ -340,7 +342,9 @@ if (empty($reshook))
 				if ($object->fetch(GETPOST('copie_propal', 'int')) > 0) {
 					$object->ref = GETPOST('ref');
 					$object->datep = $datep;
-					$object->date_livraison = $date_delivery;
+					$object->date = $datep;
+					$object->date_livraison = $date_delivery;	// deprecated
+					$object->delivery_date = $date_delivery;
 					$object->availability_id = GETPOST('availability_id');
 					$object->demand_reason_id = GETPOST('demand_reason_id');
 					$object->fk_delivery_address = GETPOST('fk_address', 'int');
@@ -354,8 +358,9 @@ if (empty($reshook))
 					$object->socid = GETPOST('socid', 'int');
 					$object->contact_id = GETPOST('contactid', 'int');
 					$object->fk_project = GETPOST('projectid', 'int');
-					$object->model_pdf = GETPOST('model');
+					$object->model_pdf = GETPOST('model', 'alphanohtml');
 					$object->author = $user->id; // deprecated
+					$object->user_author_id = $user->id;
 					$object->note_private = GETPOST('note_private', 'restricthtml');
 					$object->note_public = GETPOST('note_public', 'restricthtml');
 					$object->statut = Propal::STATUS_DRAFT;
@@ -371,7 +376,9 @@ if (empty($reshook))
 				$object->ref = GETPOST('ref');
 				$object->ref_client = GETPOST('ref_client');
 				$object->datep = $datep;
+				$object->date = $datep;
 				$object->date_livraison = $date_delivery;
+				$object->delivery_date = $date_delivery;
 				$object->availability_id = GETPOST('availability_id', 'int');
 				$object->demand_reason_id = GETPOST('demand_reason_id', 'int');
 				$object->fk_delivery_address = GETPOST('fk_address', 'int');
@@ -1822,8 +1829,8 @@ if ($action == 'create')
 			// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
 			array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=2 OR s.client=3)'))
 		);
-		if (!empty($conf->global->PROPAL_CLONE_DATE_DELIVERY) && !empty($object->date_livraison)) {
-			$formquestion[] = array('type' => 'date', 'name' => 'date_delivery', 'label' => $langs->trans("DeliveryDate"), 'value' => $object->date_livraison);
+		if (!empty($conf->global->PROPAL_CLONE_DATE_DELIVERY) && !empty($object->delivery_date)) {
+			$formquestion[] = array('type' => 'date', 'name' => 'date_delivery', 'label' => $langs->trans("DeliveryDate"), 'value' => $object->delivery_date);
 		}
 		// Incomplete payment. We ask if reason = discount or other
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmClonePropal', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
@@ -2047,9 +2054,9 @@ if ($action == 'create')
 	// Delivery date
 	$langs->load('deliveries');
 	print '<tr><td>';
-	print $form->editfieldkey($langs->trans('DeliveryDate'), 'date_livraison', $object->date_livraison, $object, $usercancreate, 'datepicker');
+	print $form->editfieldkey($langs->trans('DeliveryDate'), 'date_livraison', $object->delivery_date, $object, $usercancreate, 'datepicker');
 	print '</td><td>';
-	print $form->editfieldval($langs->trans('DeliveryDate'), 'date_livraison', $object->date_livraison, $object, $usercancreate, 'datepicker');
+	print $form->editfieldval($langs->trans('DeliveryDate'), 'date_livraison', $object->delivery_date, $object, $usercancreate, 'datepicker');
 	print '</td>';
 	print '</tr>';
 

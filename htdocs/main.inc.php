@@ -988,7 +988,7 @@ if (!defined('NOLOGIN'))
 	$user->getrights();
 }
 
-dol_syslog("--- Access to ".$_SERVER["REQUEST_METHOD"].' '.$_SERVER["PHP_SELF"].' - action='.GETPOST('action', 'aZ09').', massaction='.GETPOST('massaction', 'aZ09'));
+dol_syslog("--- Access to ".$_SERVER["REQUEST_METHOD"].' '.$_SERVER["PHP_SELF"].' - action='.GETPOST('action', 'aZ09').', massaction='.GETPOST('massaction', 'aZ09').' NOTOKENRENEWAL='.constant('NOTOKENRENEWAL'));
 //Another call for easy debugg
 //dol_syslog("Access to ".$_SERVER["PHP_SELF"].' GET='.join(',',array_keys($_GET)).'->'.join(',',$_GET).' POST:'.join(',',array_keys($_POST)).'->'.join(',',$_POST));
 
