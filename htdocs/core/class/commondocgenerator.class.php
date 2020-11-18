@@ -121,7 +121,7 @@ abstract class CommonDocGenerator
 		global $conf, $extrafields;
 
 		if ($member->photo) {
-			$logotouse = $conf->adherent->dir_output.'/'.$member->id.'/photos/'.$member->photo;
+			$logotouse = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $member, 'user').'/photos/'.$member->photo;
 		} else {
 			$logotouse = DOL_DOCUMENT_ROOT . '/public/theme/common/nophoto.png';
 		}
