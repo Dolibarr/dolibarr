@@ -208,7 +208,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		}
 	} elseif (count($invoice->lines) == 0) {
 		$error++;
-		dol_syslog('Sale without lines', LOG_ERR);
+		dol_syslog('Sale without lines');
 		dol_htmloutput_errors($langs->trans("NoLinesToBill", "TakePos"), null, 1);
 	} elseif (!empty($conf->stock->enabled) && $conf->global->$constantforkey != "1") {
 		$savconst = $conf->global->STOCK_CALCULATE_ON_BILL;
