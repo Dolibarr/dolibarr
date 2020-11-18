@@ -126,6 +126,7 @@ class ProductFournisseur extends Product
 	 */
 	public $supplier_fk_barcode_type;
 
+  
 	/**
 	 *	Constructor
 	 *
@@ -139,8 +140,6 @@ class ProductFournisseur extends Product
 		$langs->load("suppliers");
 		$this->reputations = array('-1'=>'', 'FAVORITE'=>$langs->trans('Favorite'), 'NOTTHGOOD'=>$langs->trans('NotTheGoodQualitySupplier'), 'DONOTORDER'=>$langs->trans('DoNotOrderThisProductToThisSupplier'));
 	}
-
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -675,8 +674,8 @@ class ProductFournisseur extends Product
 				}
 
 				if ($conf->barcode->enabled) {
-					$prodfourn->supplier_barcode = $record["barcode"];
-					$prodfourn->supplier_fk_barcode_type = $record["fk_barcode_type"];
+					$prodfourn->barcode = $record["barcode"];
+					$prodfourn->fk_barcode_type = $record["fk_barcode_type"];
 				}
 
 				if (!empty($conf->dynamicprices->enabled) && !empty($prodfourn->fk_supplier_price_expression)) {

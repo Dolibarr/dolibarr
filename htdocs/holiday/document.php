@@ -64,7 +64,7 @@ if (!$sortfield) $sortfield = "position_name";
 $object = new Holiday($db);
 $object->fetch($id, $ref);
 
-$upload_dir = $conf->holiday->dir_output.'/'.get_exdir($object->id, 0, 0, 0, $object, 'holiday').dol_sanitizeFileName($object->ref);
+$upload_dir = $conf->holiday->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, '');
 $modulepart = 'holiday';
 
 

@@ -619,10 +619,8 @@ class Expedition extends CommonObject
 				// Tracking url
 				$this->getUrlTrackingStatus($obj->tracking_number);
 
-				/*
-				 * Thirdparty
-				 */
-				$result = $this->fetch_thirdparty();
+				// Thirdparty
+				$result = $this->fetch_thirdparty();	// TODO Remove this
 
 				// Retrieve extrafields
 				$this->fetch_optionals();
@@ -919,6 +917,7 @@ class Expedition extends CommonObject
 
 		$line->entrepot_id = $entrepot_id;
 		$line->origin_line_id = $id;
+		$line->fk_origin_line = $id;
 		$line->qty = $qty;
 
 		$orderline = new OrderLine($this->db);
@@ -931,31 +930,37 @@ class Expedition extends CommonObject
 		{
 			$fk_product = $orderline->fk_product;
 
-			if (!($entrepot_id > 0) && empty($conf->global->STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS))
-			{
+			if (!($entrepot_id > 0) && empty($conf->global->STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS)) {
 				$langs->load("errors");
 				$this->error = $langs->trans("ErrorWarehouseRequiredIntoShipmentLine");
 				return -1;
 			}
 
-			if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT)
-			{
-				// Check must be done for stock of product into warehouse if $entrepot_id defined
+			if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT) {
 				$product = new Product($this->db);
-				$result = $product->fetch($fk_product);
+				$product->fetch($fk_product);
 
+				// Check must be done for stock of product into warehouse if $entrepot_id defined
 				if ($entrepot_id > 0) {
 					$product->load_stock('warehouseopen');
 					$product_stock = $product->stock_warehouse[$entrepot_id]->real;
-				} else $product_stock = $product->stock_reel;
+				} else {
+					$product_stock = $product->stock_reel;
+				}
 
 				$product_type = $product->type;
-				if ($product_type == 0 && $product_stock < $qty)
-				{
-					$langs->load("errors");
-					$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnShipment', $product->ref);
-					$this->db->rollback();
-					return -3;
+				if ($product_type == 0 || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+					$isavirtualproduct = ($product->hasFatherOrChild(1) > 0);
+					// The product is qualified for a check of quantity (must be enough in stock to be added into shipment).
+					if (!$isavirtualproduct || empty($conf->global->PRODUIT_SOUSPRODUITS) || ($isavirtualproduct && empty($conf->global->STOCK_EXCLUDE_VIRTUAL_PRODUCTS))) {  // If STOCK_EXCLUDE_VIRTUAL_PRODUCTS is set, we do not manage stock for kits/virtual products.
+						if ($product_stock < $qty) {
+							$langs->load("errors");
+							$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnShipment', $product->ref);
+							$this->errorhidden = 'ErrorStockIsNotEnoughToAddProductOnShipment';
+							$this->db->rollback();
+							return -3;
+						}
+					}
 				}
 			}
 		}
@@ -1576,7 +1581,7 @@ class Expedition extends CommonObject
 		$sql .= ", cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc, cd.rang";
 		$sql .= ", ed.rowid as line_id, ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
 		$sql .= ", p.ref as product_ref, p.label as product_label, p.fk_product_type";
-		$sql .= ", p.weight, p.weight_units, p.length, p.length_units, p.surface, p.surface_units, p.volume, p.volume_units, p.tobatch as product_tobatch";
+		$sql .= ", p.weight, p.weight_units, p.length, p.length_units, p.surface, p.surface_units, p.volume, p.volume_units, p.tosell as product_tosell, p.tobuy as product_tobuy, p.tobatch as product_tobatch";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";
 		$sql .= " WHERE ed.fk_expedition = ".$this->id;
@@ -1638,6 +1643,8 @@ class Expedition extends CommonObject
 				$line->product_ref = $obj->product_ref;
 				$line->product_label = $obj->product_label;
 				$line->libelle        	= $obj->product_label; // TODO deprecated
+				$line->product_tosell = $obj->product_tosell;
+				$line->product_tobuy = $obj->product_tobuy;
 				$line->product_tobatch = $obj->product_tobatch;
 				$line->label = $obj->custom_label;
 				$line->description    	= $obj->description;

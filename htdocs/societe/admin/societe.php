@@ -198,6 +198,18 @@ if ($action == "setaddadressinlist") {
 	}
 }
 
+//Activate Set email phone town in contact list
+if ($action == "setaddemailphonetownincontactlist") {
+	$val = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST", $val, 'yesno', 0, '', $conf->entity);
+	if (!$res > 0) $error++;
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
 //Activate Ask For Preferred Shipping Method
 if ($action == "setaskforshippingmet") {
 	$setaskforshippingmet = GETPOST('value', 'int');
@@ -383,7 +395,7 @@ foreach ($arrayofmodules as $file => $modCodeTiers)
 	} else {
 		$disabled = (!empty($conf->multicompany->enabled) && (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity) ? true : false);
 		print '<td class="center">';
-		if (!$disabled) print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&amp;token='.newToken().'&amp;value='.$file.'">';
+		if (!$disabled) print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
 		print img_picto($langs->trans("Disabled"), 'switch_off');
 		if (!$disabled) print '</a>';
 		print '</td>';
@@ -559,7 +571,7 @@ foreach ($dirsociete as $dirroot)
 						print "<td class=\"center\">\n";
 						//if ($conf->global->COMPANY_ADDON_PDF != "$name")
 						//{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'&token='.newToken().'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">';
 							print img_picto($langs->trans("Enabled"), 'switch_on');
 							print '</a>';
 						//}
@@ -571,12 +583,12 @@ foreach ($dirsociete as $dirroot)
 					} else {
 						if (versioncompare($module->phpmin, versionphparray()) > 0)
 						{
-							print "<td class=\"center\">\n";
+							print '<td class="center">'."\n";
 							print img_picto(dol_escape_htmltag($langs->trans("ErrorModuleRequirePHPVersion", join('.', $module->phpmin))), 'switch_off');
 							print "</td>";
 						} else {
-							print "<td class=\"center\">\n";
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+							print '<td class="center">'."\n";
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&token='.newToken().'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 							print "</td>";
 						}
 					}
@@ -599,7 +611,7 @@ foreach ($dirsociete as $dirroot)
 					print '<td class="center nowrap">';
 					if ($module->type == 'pdf')
 					{
-						$linkspec = '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
+						$linkspec = '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&token='.newToken().'&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
 					} else {
 						$linkspec = img_object($langs->trans("PreviewNotAvailable"), 'generic');
 					}
@@ -795,6 +807,20 @@ if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST))
 	print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
 	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddadressinlist&token='.newToken().'&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+}
+print '</a></td>';
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td width="80%">' . $langs->trans("AddEmailPhoneTownInContactList") . '</td>';
+print '<td>&nbsp</td>';
+print '<td class="center">';
+if (!empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) {
+	print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setaddemailphonetownincontactlist&token='.newToken().'&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+} else {
+	print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setaddemailphonetownincontactlist&token='.newToken().'&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 }
 print '</a></td>';

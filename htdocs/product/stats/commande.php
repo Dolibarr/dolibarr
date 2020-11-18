@@ -170,6 +170,7 @@ if ($id > 0 || !empty($ref))
 				if (!empty($search_year)) $option .= '&search_year='.urlencode($search_year);
 
 				print '<form method="post" action="'.$_SERVER ['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				if (!empty($sortfield))
 					print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
 				if (!empty($sortorder))

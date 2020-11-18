@@ -1047,7 +1047,7 @@ if ($action == 'create')
 				$i++;
 			}
 			print '});
-	            jQuery("#autoreset").click(function() {';
+	            jQuery("#autoreset").click(function() { console.log("Reset values to 0"); ';
 			$i = 0;
 			while ($i < $numAsked)
 			{
@@ -1075,12 +1075,12 @@ if ($action == 'create')
 				print '<td class="center">'.$langs->trans("QtyToShip");
 				if (empty($conf->productbatch->enabled))
 				{
-					print '<br><a href="#" id="autofill">'.$langs->trans("Fill").'</a>';
+					print '<br><a href="#" id="autofill" class="opacitymedium link cursor cursorpointer">'.$langs->trans("Fill").'</a>';
 					print ' / ';
 				} else {
 					print '<br>';
 				}
-				print '<a href="#" id="autoreset">'.$langs->trans("Reset").'</a>';
+				print '<span id="autoreset" class="opacitymedium link cursor cursorpointer">'.img_picto($langs->trans("Reset"), 'eraser').'</span>';
 				print '</td>';
 				if (!empty($conf->stock->enabled))
 				{
@@ -1114,7 +1114,7 @@ if ($action == 'create')
 					if (!empty($line->date_start)) $type = 1;
 					if (!empty($line->date_end)) $type = 1;
 
-					print '<!-- line '.$line->rowid.' for product -->'."\n";
+					print '<!-- line '.$line->id.' for product -->'."\n";
 					print '<tr class="oddeven">'."\n";
 
 					// Product label
@@ -1125,13 +1125,16 @@ if ($action == 'create')
 						//var_dump($product->stock_warehouse[1]);
 
 						print '<td>';
-						print '<a name="'.$line->rowid.'"></a>'; // ancre pour retourner sur la ligne
+						print '<a name="'.$line->id.'"></a>'; // ancre pour retourner sur la ligne
 
 						// Show product and description
 						$product_static->type = $line->fk_product_type;
 						$product_static->id = $line->fk_product;
 						$product_static->ref = $line->ref;
+						$product_static->status = $line->product_tosell;
+						$product_static->status_buy = $line->product_tobuy;
 						$product_static->status_batch = $line->product_tobatch;
+
 						$text = $product_static->getNomUrl(1);
 						$text .= ' - '.(!empty($line->label) ? $line->label : $line->product_label);
 						$description = ($conf->global->PRODUIT_DESC_IN_FORM ? '' : dol_htmlentitiesbr($line->desc));
@@ -2048,7 +2051,7 @@ if ($action == 'create')
 			$sql .= ", ed.rowid as shipmentline_id, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_origin_line, ed.fk_entrepot";
 			$sql .= ", e.rowid as shipment_id, e.ref as shipment_ref, e.date_creation, e.date_valid, e.date_delivery, e.date_expedition";
 			//if ($conf->delivery_note->enabled) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received";
-			$sql .= ', p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.tobatch as product_tobatch';
+			$sql .= ', p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.tosell as product_tosell, p.tobuy as product_tobuy, p.tobatch as product_tobatch';
 			$sql .= ', p.description as product_desc';
 			$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
 			$sql .= ", ".MAIN_DB_PREFIX."expedition as e";
@@ -2075,7 +2078,10 @@ if ($action == 'create')
 					if ($obj)
 					{
 						// $obj->rowid is rowid in $origin."det" table
-						$alreadysent[$obj->rowid][$obj->shipmentline_id] = array('shipment_ref'=>$obj->shipment_ref, 'shipment_id'=>$obj->shipment_id, 'warehouse'=>$obj->fk_entrepot, 'qty_shipped'=>$obj->qty_shipped, 'date_valid'=>$db->jdate($obj->date_valid), 'date_delivery'=>$db->jdate($obj->date_delivery));
+						$alreadysent[$obj->rowid][$obj->shipmentline_id] = array(
+							'shipment_ref'=>$obj->shipment_ref, 'shipment_id'=>$obj->shipment_id, 'warehouse'=>$obj->fk_entrepot, 'qty_shipped'=>$obj->qty_shipped,
+							'product_tosell'=>$obj->product_tosell, 'product_tobuy'=>$obj->product_tobuy, 'product_tobatch'=>$obj->product_tobatch,
+							'date_valid'=>$db->jdate($obj->date_valid), 'date_delivery'=>$db->jdate($obj->date_delivery));
 					}
 					$i++;
 				}
@@ -2084,6 +2090,7 @@ if ($action == 'create')
 		}
 
 		print '<tbody>';
+
 		// Loop on each product to send/sent
 		for ($i = 0; $i < $num_prod; $i++)
 		{
@@ -2119,6 +2126,8 @@ if ($action == 'create')
 					$product_static->type = $lines[$i]->fk_product_type;
 					$product_static->id = $lines[$i]->fk_product;
 					$product_static->ref = $lines[$i]->ref;
+					$product_static->status = $lines[$i]->product_tosell;
+					$product_static->status_buy = $lines[$i]->product_tobuy;
 					$product_static->status_batch = $lines[$i]->product_tobatch;
 
 					$product_static->weight = $lines[$i]->weight;

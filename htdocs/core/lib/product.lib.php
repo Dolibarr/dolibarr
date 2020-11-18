@@ -90,16 +90,6 @@ function product_prepare_head($object)
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT."/product/stats/card.php?id=".$object->id;
-	$head[$h][1] = $langs->trans('Statistics');
-	$head[$h][2] = 'stats';
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?showmessage=1&id=".$object->id;
-	$head[$h][1] = $langs->trans('Referers');
-	$head[$h][2] = 'referers';
-	$h++;
-
 	if (!empty($conf->variants->enabled) && ($object->isProduct() || $object->isService())) {
 		global $db;
 
@@ -148,6 +138,16 @@ function product_prepare_head($object)
 			$h++;
 		}
 	}
+
+	$head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?showmessage=1&id=".$object->id;
+	$head[$h][1] = $langs->trans('Referers');
+	$head[$h][2] = 'referers';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/product/stats/card.php?id=".$object->id;
+	$head[$h][1] = $langs->trans('Statistics');
+	$head[$h][2] = 'stats';
+	$h++;
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
