@@ -115,7 +115,6 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 					$delivery_date = $this->db->jdate($objp->delivery_date);
 					$datem = $this->db->jdate($objp->tms);
 
-					$supplierorderstatic->date_livraison = $delivery_date;
 					$supplierorderstatic->delivery_date = $delivery_date;
 					$supplierorderstatic->statut = $objp->fk_statut;
 

@@ -205,7 +205,8 @@ $typewecanchangeinto = array(
 	'mail'=>array('varchar', 'phone', 'mail', 'url', 'select'),
 	'url'=>array('varchar', 'phone', 'mail', 'url', 'select'),
 	'phone'=>array('varchar', 'phone', 'mail', 'url', 'select'),
-	'select'=>array('varchar', 'phone', 'mail', 'url', 'select')
+	'select'=>array('varchar', 'phone', 'mail', 'url', 'select'),
+	'date'=>array('date', 'datetime')
 );
 /* Disabled because text is text on several lines, when varchar is text on 1 line, we should not be able to convert
 if ($size <= 255 && in_array($type, array('text', 'html'))) {
@@ -224,6 +225,7 @@ if (in_array($type, array_keys($typewecanchangeinto)))
 		else print '<option value="'.$key.'" disabled="disabled"'.$selected.'>'.$val.'</option>';
 	}
 	print '</select>';
+	print ajax_combobox('type');
 } else {
 	print $type2label[$type];
 	print '<input type="hidden" name="type" id="type" value="'.$type.'">';

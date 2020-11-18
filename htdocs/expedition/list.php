@@ -212,7 +212,7 @@ llxHeader('', $langs->trans('ListOfSendings'), $helpurl);
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
-$sql .= " e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.weight, e.weight_units, e.date_delivery as date_livraison, l.date_delivery as date_reception, e.fk_statut, e.billed, e.tracking_number,";
+$sql .= " e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.weight, e.weight_units, e.date_delivery as delivery_date, l.date_delivery as date_reception, e.fk_statut, e.billed, e.tracking_number,";
 $sql .= " s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ";
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
@@ -618,6 +618,7 @@ if ($resql)
 
 		$object = new Expedition($db);
 		$object->fetch($obj->rowid);
+
 		print '<tr class="oddeven">';
 
 		// Ref
@@ -705,7 +706,7 @@ if ($resql)
 		if (!empty($arrayfields['e.date_delivery']['checked']))
 		{
 			print '<td class="center">';
-			print dol_print_date($db->jdate($obj->date_livraison), "dayhour");
+			print dol_print_date($db->jdate($obj->delivery_date), "dayhour");
 			/*$now = time();
     		if ( ($now - $db->jdate($obj->date_expedition)) > $conf->warnings->lim && $obj->statutid == 1 )
     		{
