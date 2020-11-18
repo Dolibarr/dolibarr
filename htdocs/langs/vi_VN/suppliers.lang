@@ -38,6 +38,7 @@ MenuOrdersSupplierToBill=Đơn đặt hàng mua để xuất hóa đơn
 NbDaysToDelivery=Giao hàng chậm (ngày)
 DescNbDaysToDelivery=Giao hàng trễ nhất của các sản phẩm từ đơn đặt hàng này
 SupplierReputation=Uy tín nhà cung cấp
+ReferenceReputation=Reference reputation
 DoNotOrderThisProductToThisSupplier=Không đặt hàng
 NotTheGoodQualitySupplier=Chất lượng thấp
 ReputationForThisProduct=Uy tín
