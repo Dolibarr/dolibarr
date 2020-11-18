@@ -3100,7 +3100,7 @@ class CommandeFournisseur extends CommonOrder
 		if (empty($this->delivery_date)) {
 			$text = $langs->trans("OrderDate").' '.dol_print_date($this->date_commande, 'day');
 		} else {
-			$text = $text = $langs->trans("DeliveryDate").' '.dol_print_date($this->delivery_date, 'day');
+			$text = $langs->trans("DeliveryDate").' '.dol_print_date($this->delivery_date, 'day');
 		}
 		$text .= ' '.($conf->commande->fournisseur->warning_delay > 0 ? '+' : '-').' '.round(abs($conf->commande->fournisseur->warning_delay) / 3600 / 24, 1).' '.$langs->trans("days").' < '.$langs->trans("Today");
 
