@@ -5525,22 +5525,24 @@ function yn($yesno, $case = 1, $color = 0)
 
 /**
  *	Return a path to have a the directory according to object where files are stored.
- *  New usage:       $conf->module->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, $modulepart)
- *         or:       $conf->module->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, $modulepart)     if multidir_output not defined.
+ *  New usage:       $conf->module->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, '')
+ *         or:       $conf->module->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, '')     if multidir_output not defined.
  *  Example our with new usage:       $object is invoice -> 'INYYMM-ABCD'
  *  Example our with old usage:       '015' with level 3->"0/1/5/", '015' with level 1->"5/", 'ABC-1' with level 3 ->"0/0/1/"
  *
- *	@param	string	$num            Id of object (deprecated, $object will be used in future)
- *	@param  int		$level		    Level of subdirs to return (1, 2 or 3 levels). (deprecated, global option will be used in future)
- * 	@param	int		$alpha		    0=Keep number only to forge path, 1=Use alpha part afer the - (By default, use 0). (deprecated, global option will be used in future)
- *  @param  int		$withoutslash   0=With slash at end (except if '/', we return ''), 1=without slash at end
- *  @param	Object	$object			Object
- *  @param	string	$modulepart		Type of object ('invoice_supplier, 'donation', 'invoice', ...')
- *  @return	string					Dir to use ending. Example '' or '1/' or '1/2/'
+ *	@param	string|int	$num            Id of object (deprecated, $object will be used in future)
+ *	@param  int			$level		    Level of subdirs to return (1, 2 or 3 levels). (deprecated, global option will be used in future)
+ * 	@param	int			$alpha		    0=Keep number only to forge path, 1=Use alpha part afer the - (By default, use 0). (deprecated, global option will be used in future)
+ *  @param  int			$withoutslash   0=With slash at end (except if '/', we return ''), 1=without slash at end
+ *  @param	Object		$object			Object to use to get ref to forge the path.
+ *  @param	string		$modulepart		Type of object ('invoice_supplier, 'donation', 'invoice', ...'). Use '' for autodetect from $object.
+ *  @return	string						Dir to use ending. Example '' or '1/' or '1/2/'
  */
-function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
+function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '')
 {
 	global $conf;
+
+	if (empty($modulepart) && !empty($object->module)) $modulepart = $object->module;
 
 	$path = '';
 
@@ -5556,14 +5558,12 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 		if ($level == 2) $path = substr($num, 1, 1).'/'.substr($num, 0, 1);
 		if ($level == 3) $path = substr($num, 2, 1).'/'.substr($num, 1, 1).'/'.substr($num, 0, 1);
 	} else {
-		// TODO
-		// We will enhance here a common way of forging path for document storage
-		// Here, object->id, object->ref and modulepart are required.
+		// We will enhance here a common way of forging path for document storage.
+		// In a future, we may distribut directories on several levels depending on setup and object.
+		// Here, $object->id, $object->ref and $modulepart are required.
 		//var_dump($modulepart);
-		if (in_array($modulepart, array('thirdparty', 'contact', 'member', 'propal', 'proposal', 'commande', 'order', 'facture', 'invoice',
-			'supplier_order', 'supplier_proposal', 'shipment', 'contract', 'expensereport', 'ficheinter')))
-		{
-			$path = ($object->ref ? $object->ref : $object->id);
+		if (! in_array($modulepart, array('product'))) {	// Test to remove
+			$path = dol_sanitizeFileName(empty($object->ref) ? $object->id : $object->ref);
 		}
 	}
 
