@@ -199,16 +199,13 @@ if ($action == "setaddadressinlist") {
 }
 
 //Activate Set email phone town in contact list
-if ($action=="setaddemailphonetownincontactlist") {
+if ($action == "setaddemailphonetownincontactlist") {
 	$val = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST", $val, 'yesno', 0, '', $conf->entity);
-	if (! $res > 0) $error++;
-	if (! $error)
-	{
+	if (!$res > 0) $error++;
+	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
@@ -816,17 +813,14 @@ print '</a></td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td width="80%">'.$langs->trans("AddEmailPhoneTownInContactList").'</td>';
+print '<td width="80%">' . $langs->trans("AddEmailPhoneTownInContactList") . '</td>';
 print '<td>&nbsp</td>';
 print '<td class="center">';
-if (!empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST))
-{
-	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddemailphonetownincontactlist&value=0">';
+if (!empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) {
+	print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setaddemailphonetownincontactlist&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
-}
-else
-{
-	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddemailphonetownincontactlist&value=1">';
+} else {
+	print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setaddemailphonetownincontactlist&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 }
 print '</a></td>';
