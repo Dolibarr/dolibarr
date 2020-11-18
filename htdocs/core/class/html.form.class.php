@@ -1464,9 +1464,10 @@ class Form
 
 		// We search third parties
 		$sql = "SELECT sp.rowid, sp.lastname, sp.statut, sp.firstname, sp.poste";
+		if (!empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) $sql.= ", sp.email, sp.phone, sp.phone_perso, sp.phone_mobile, sp.town AS contact_town, s.town AS company_town";
 		if ($showsoc > 0) $sql .= " , s.nom as company";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
-		if ($showsoc > 0) $sql .= " LEFT OUTER JOIN  ".MAIN_DB_PREFIX."societe as s ON s.rowid=sp.fk_soc";
+		if ($showsoc > 0 || !empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) $sql .= " LEFT OUTER JOIN  ".MAIN_DB_PREFIX."societe as s ON s.rowid=sp.fk_soc";
 		$sql .= " WHERE sp.entity IN (".getEntity('socpeople').")";
 		if ($socid > 0 || $socid == -1) $sql .= " AND sp.fk_soc=".$socid;
 		if (!empty($conf->global->CONTACT_HIDE_INACTIVE_IN_COMBOBOX)) $sql .= " AND sp.statut <> 0";
@@ -1499,6 +1500,28 @@ class Form
 				{
 					$obj = $this->db->fetch_object($resql);
 
+					// Set email (or phones) and town extended infos
+					$extendedInfos = '';
+					if (!empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) {
+						$extendedInfos = array();
+						$email = trim($obj->email);
+						if (!empty($email)) $extendedInfos[] = $email;
+						else {
+							$phone = trim($obj->phone);
+							$phone_perso = trim($obj->phone_perso);
+							$phone_mobile = trim($obj->phone_mobile);
+							if (!empty($phone)) $extendedInfos[] = $phone;
+							if (!empty($phone_perso)) $extendedInfos[] = $phone_perso;
+							if (!empty($phone_mobile)) $extendedInfos[] = $phone_mobile;
+						}
+						$contact_town = trim($obj->contact_town);
+						$company_town = trim($obj->company_town);
+						if (!empty($contact_town)) $extendedInfos[] = $contact_town;
+						elseif (!empty($company_town)) $extendedInfos[] = $company_town;
+						$extendedInfos = implode(' - ', $extendedInfos);
+						if (!empty($extendedInfos)) $extendedInfos = ' - ' . $extendedInfos;
+					}
+
 					$contactstatic->id = $obj->rowid;
 					$contactstatic->lastname = $obj->lastname;
 					$contactstatic->firstname = $obj->firstname;
@@ -1513,7 +1536,7 @@ class Form
 								$out .= '<option value="'.$obj->rowid.'"';
 								if ($disabled) $out .= ' disabled';
 								$out .= ' selected>';
-								$out .= $contactstatic->getFullName($langs);
+								$out .= $contactstatic->getFullName($langs) . $extendedInfos;
 								if ($showfunction && $obj->poste) $out .= ' ('.$obj->poste.')';
 								if (($showsoc > 0) && $obj->company) $out .= ' - ('.$obj->company.')';
 								$out .= '</option>';
@@ -1521,7 +1544,7 @@ class Form
 								$out .= '<option value="'.$obj->rowid.'"';
 								if ($disabled) $out .= ' disabled';
 								$out .= '>';
-								$out .= $contactstatic->getFullName($langs);
+								$out .= $contactstatic->getFullName($langs) . $extendedInfos;
 								if ($showfunction && $obj->poste) $out .= ' ('.$obj->poste.')';
 								if (($showsoc > 0) && $obj->company) $out .= ' - ('.$obj->company.')';
 								$out .= '</option>';
@@ -1529,7 +1552,7 @@ class Form
 						} else {
 							if (in_array($obj->rowid, $selected))
 							{
-								$out .= $contactstatic->getFullName($langs);
+								$out .= $contactstatic->getFullName($langs) . $extendedInfos;
 								if ($showfunction && $obj->poste) $out .= ' ('.$obj->poste.')';
 								if (($showsoc > 0) && $obj->company) $out .= ' - ('.$obj->company.')';
 							}
