@@ -1093,7 +1093,7 @@ if ($resql)
 				}
 
 				print '<td class="center">';
-				print '<input type="checkbox" id="selectAll" />';
+				print '<input type="checkbox" id="selectAll" title="'.dol_escape_htmltag($langs->trans("SelectAll")).'" />';
 				print ' <script type="text/javascript">
 						$("input#selectAll").change(function() {
 							$("input[type=checkbox][name^=rowid]").prop("checked", $(this).is(":checked"));

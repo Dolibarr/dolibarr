@@ -93,7 +93,7 @@ class pdf_ban extends ModeleBankAccountDoc
 	/**
 	 *	Fonction generant le projet sur le disque
 	 *
-	 *	@param	Project		$object   		Object project a generer
+	 *	@param	Account		$object   		Object Account to generate
 	 *	@param	Translate	$outputlangs	Lang output object
 	 *	@return	int         				1 if OK, <=0 if KO
 	 */
@@ -114,8 +114,7 @@ class pdf_ban extends ModeleBankAccountDoc
 			//$nblines = count($object->lines);  // This is set later with array of tasks
 
 			// Definition of $dir and $file
-			if ($object->specimen)
-			{
+			if ($object->specimen) {
 				$dir = $conf->bank->dir_output;
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
@@ -293,7 +292,7 @@ class pdf_ban extends ModeleBankAccountDoc
 	 *  Show top header of page.
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  Project		$object     	Object to show
+	 *  @param  Account		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
@@ -378,7 +377,7 @@ class pdf_ban extends ModeleBankAccountDoc
 	 *   	Show footer of page. Need this->emetteur object
 	 *
 	 *   	@param	TCPDF		$pdf     			PDF
-	 * 		@param	Project		$object				Object to show
+	 * 		@param	Account		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	integer

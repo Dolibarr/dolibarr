@@ -108,11 +108,11 @@ install:
   echo "Updating Composer"
   rm $TRAVIS_BUILD_DIR/composer.json
   rm $TRAVIS_BUILD_DIR/composer.lock
+  composer -V
   composer self-update
-  # To have composer making parallel downloads
-  composer global require hirak/prestissimo
   composer -n init
   composer -n config vendor-dir htdocs/includes
+  composer -n config -g vendor-dir htdocs/includes
   echo
 
 - |
@@ -146,7 +146,10 @@ install:
 
 - |
   echo "Adding path of binaries tools installed by composer to the PATH"
-  export PATH="$TRAVIS_BUILD_DIR/htdocs/includes/bin:$PATH"
+  export PATH="$TRAVIS_BUILD_DIR/htdocs/includes/bin:$TRAVIS_BUILD_DIR/vendor/bin:$TRAVIS_BUILD_DIR/htdocs/includes:$PATH"
+  echo $PATH
+  ls $TRAVIS_BUILD_DIR/vendor
+  ls $TRAVIS_BUILD_DIR/htdocs/includes/bin
   echo
 
 
@@ -177,7 +180,7 @@ before_script:
     # Check PHP
     echo "PHP version"
     php -i | head -
-    # Check Parallel-lin version
+    # Check Parallel-lint version
     echo "Parallel-lint version"
     which parallel-lint
     parallel-lint -V
@@ -300,7 +303,7 @@ script:
   echo
 
 - |
-  echo "Checking coding style (excluding Pull Requests builds to not overload travis, excluding also for some jobs to avoid duplicate tests)"
+  echo "Checking coding style (excluding Pull Requests builds to not overload travis, excluding also some jobs to avoid duplicate tests)"
   # Ensure we catch errors
   set -e
   # Exclusions are defined in the ruleset.xml file

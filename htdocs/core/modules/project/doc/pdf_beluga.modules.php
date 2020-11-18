@@ -111,14 +111,14 @@ class pdf_beluga extends ModelePDFProjects
 		if ($this->orientation == 'L' || $this->orientation == 'Landscape') {
 			$this->posxref = $this->marge_gauche + 1;
 			$this->posxdate = $this->marge_gauche + 105;
-			$this->posxsociety = $this->marge_gauche + 125;
+			$this->posxsociety = $this->marge_gauche + 126;
 			$this->posxamountht = $this->marge_gauche + 190;
 			$this->posxamountttc = $this->marge_gauche + 215;
 			$this->posxstatut = $this->marge_gauche + 245;
 		} else {
 			$this->posxref = $this->marge_gauche + 1;
 			$this->posxdate = $this->marge_gauche + 25;
-			$this->posxsociety = $this->marge_gauche + 45;
+			$this->posxsociety = $this->marge_gauche + 46;
 			$this->posxamountht = $this->marge_gauche + 110;
 			$this->posxamountttc = $this->marge_gauche + 135;
 			$this->posxstatut = $this->marge_gauche + 165;

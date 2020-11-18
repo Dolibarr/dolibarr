@@ -409,7 +409,7 @@ $formfile = new FormFile($db);
 $helpurl = 'EN:Module_Receptions|FR:Module_Receptions|ES:M&oacute;dulo_Receptiones';
 llxHeader('', $langs->trans('ListOfReceptions'), $helpurl);
 
-$sql = "SELECT e.rowid, e.ref, e.ref_supplier, e.date_reception as date_reception, e.date_delivery as date_livraison, l.date_delivery as date_reception, e.fk_statut, e.billed,";
+$sql = "SELECT e.rowid, e.ref, e.ref_supplier, e.date_reception as date_reception, e.date_delivery as delivery_date, l.date_delivery as date_reception2, e.fk_statut, e.billed,";
 $sql .= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
@@ -499,21 +499,21 @@ if ($resql)
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
 	$param = '';
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
-	if ($sall) $param .= "&amp;sall=".$sall;
-	if ($search_ref_rcp) $param .= "&amp;search_ref_rcp=".$search_ref_rcp;
-	if ($search_ref_liv) $param .= "&amp;search_ref_liv=".$search_ref_liv;
-	if ($search_company) $param .= "&amp;search_company=".$search_company;
-	if ($optioncss != '') $param .= '&amp;optioncss='.$optioncss;
-	if ($search_billed != '' && $search_billed >= 0)$param .= "&amp;search_billed=".$search_billed;
-	if ($search_town)  $param .= "&amp;search_town=".$search_town;
-	if ($search_zip)  $param .= "&amp;search_zip=".$search_zip;
-	if ($search_state) $param .= "&amp;search_state=".$search_state;
-	if ($search_status) $param .= "&amp;search_status=".$search_status;
-	if ($search_country) $param .= "&amp;search_country=".$search_country;
-	if ($search_type_thirdparty) $param .= "&amp;search_type_thirdparty=".$search_type_thirdparty;
-	if ($search_ref_supplier) $param .= "&amp;search_ref_supplier=".$search_ref_supplier;
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+	if ($sall) $param .= "&amp;sall=".urlencode($sall);
+	if ($search_ref_rcp) $param .= "&amp;search_ref_rcp=".urlencode($search_ref_rcp);
+	if ($search_ref_liv) $param .= "&amp;search_ref_liv=".urlencode($search_ref_liv);
+	if ($search_company) $param .= "&amp;search_company=".urlencode($search_company);
+	if ($optioncss != '') $param .= '&amp;optioncss='.urlencode($optioncss);
+	if ($search_billed != '' && $search_billed >= 0) $param .= "&amp;search_billed=".urlencode($search_billed);
+	if ($search_town)  $param .= "&amp;search_town=".urlencode($search_town);
+	if ($search_zip)  $param .= "&amp;search_zip=".urlencode($search_zip);
+	if ($search_state) $param .= "&amp;search_state=".urlencode($search_state);
+	if ($search_status) $param .= "&amp;search_status=".urlencode($search_status);
+	if ($search_country) $param .= "&amp;search_country=".urlencode($search_country);
+	if ($search_type_thirdparty) $param .= "&amp;search_type_thirdparty=".urlencode($search_type_thirdparty);
+	if ($search_ref_supplier) $param .= "&amp;search_ref_supplier=".urlencode($search_ref_supplier);
 	// Add $param from extra fields
 	foreach ($search_array_options as $key => $val)
 	{
@@ -838,7 +838,7 @@ if ($resql)
 		if (!empty($arrayfields['e.date_delivery']['checked']))
 		{
 			print '<td class="center">';
-			print dol_print_date($db->jdate($obj->date_livraison), "day");
+			print dol_print_date($db->jdate($obj->delivery_date), "day");
 			/*$now = time();
     		if ( ($now - $db->jdate($obj->date_reception)) > $conf->warnings->lim && $obj->statutid == 1 )
     		{

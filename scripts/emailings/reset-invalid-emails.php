@@ -68,17 +68,6 @@ if (!empty($login))
 
 $db->begin();
 
-$myfile = fopen($id, "r") or die("Unable to open file\n");
-$groupofemails=array();
-for ($i=0; $i < MAXEMAILS; $i++)
-{
-	$tmp =fgets($myfile);
-	if ($tmp == null)
-	{
-		break;
-	}
-	$groupofemails[$i] = trim($tmp, "\n");
-}
 
 $myfile = fopen($fileofinvalidemail, "r");
 if (!$myfile)
@@ -140,6 +129,7 @@ while ($tmp!=null)
 		echo $email;
 	}
 }
+
 if (!$error) {
 	$db->commit();
 } else {

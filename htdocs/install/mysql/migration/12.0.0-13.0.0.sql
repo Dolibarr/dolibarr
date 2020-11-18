@@ -107,6 +107,11 @@ ALTER TABLE llx_user DROP COLUMN whatsapp;
 ALTER TABLE llx_user ADD COLUMN datestartvalidity datetime;
 ALTER TABLE llx_user ADD COLUMN dateendvalidity   datetime;
 
+ALTER TABLE llx_user ADD COLUMN idpers1 varchar(128);
+ALTER TABLE llx_user ADD COLUMN idpers2	varchar(128);
+ALTER TABLE llx_user ADD COLUMN idpers3	varchar(128);
+
+
 -- Intracomm Report
 CREATE TABLE llx_c_transport_mode (
   rowid     integer AUTO_INCREMENT PRIMARY KEY,

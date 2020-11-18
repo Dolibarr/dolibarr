@@ -25,6 +25,8 @@ create table llx_user
   ref_ext			varchar(50),				-- reference into an external system (not used by dolibarr)
   ref_int			varchar(50),				-- reference into an internal system (deprecated)
 
+  admin             smallint DEFAULT 0,			-- user has admin profile
+
   employee          tinyint        DEFAULT 1,	-- 1 if user is an employee
   fk_establishment  integer        DEFAULT 0,
 
@@ -55,21 +57,23 @@ create table llx_user
   personal_mobile   varchar(20),
   email             varchar(255),
   personal_email    varchar(255),
+  signature         text DEFAULT NULL,
 
   socialnetworks    text DEFAULT NULL,       -- json with socialnetworks
 
-  signature         text DEFAULT NULL,
-  admin             smallint DEFAULT 0,
+  --module_comm       smallint DEFAULT 1,
+  --module_compta     smallint DEFAULT 1,
   
-  module_comm       smallint DEFAULT 1,
-  module_compta     smallint DEFAULT 1,
-  
-  fk_soc			integer,
-  fk_socpeople      integer,
-  fk_member         integer,
-  fk_user           integer,					-- Hierarchic parent
+  fk_soc			integer,					-- id thirdparty if user linked to a company (external user)
+  fk_socpeople      integer,					-- id contact origin if user linked to a contact
+  fk_member         integer,					-- if member if suer linked to a member
+  fk_user           integer,					-- Supervisor, hierarchic parent
   fk_user_expense_validator           integer,
   fk_user_holiday_validator           integer,
+  
+  idpers1			varchar(128),
+  idpers2			varchar(128),
+  idpers3			varchar(128),
   
   note_public		text,
   note              text DEFAULT NULL,
@@ -103,5 +107,5 @@ create table llx_user
   import_key        varchar(14),				-- import key
   default_range     integer,
   default_c_exp_tax_cat     integer,
-  fk_warehouse     integer
+  fk_warehouse      integer						-- default warehouse os user
 )ENGINE=innodb;

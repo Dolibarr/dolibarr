@@ -175,7 +175,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	/**
 	 *  Function to build pdf onto disk
 	 *
-	 *  @param      Object		$object				Object to generate
+	 *  @param      Delivery	$object				Object to generate
 	 *  @param      Translate	$outputlangs		Lang output object
 	 *  @param      string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param      int			$hidedetails		Do not show line details
@@ -318,7 +318,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 				// Incoterm
 				$height_incoterms = 0;
-				if ($conf->incoterm->enabled)
+				if (!empty($conf->incoterm->enabled))
 				{
 					$desc_incoterms = $object->getIncotermsForPDF();
 					if ($desc_incoterms)
@@ -628,7 +628,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		Object		$object			Object to show
+	 *   @param		Delivery	$object			Object to show
 	 *   @param		int			$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	void
@@ -723,7 +723,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 *  Show top header of page.
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  Object		$object     	Object to show
+	 *  @param  Delivery	$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
@@ -897,7 +897,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 *  Show footer of page. Need this->emetteur object
 	 *
 	 *  @param	TCPDF		$pdf     			PDF
-	 *  @param	Object		$object				Object to show
+	 *  @param	Delivery	$object				Object to show
 	 *  @param	Translate	$outputlangs		Object lang for output
 	 *  @param	int			$hidefreetext		1=Hide free text
 	 *  @return	int								Return height of bottom margin including footer text
