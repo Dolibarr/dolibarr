@@ -105,9 +105,21 @@ class ProductFournisseur extends Product
 	public $fourn_multicurrency_unitprice;
 
 	/**
+	 * @deprecated
+	 * @see $supplier_barcode
+	 */
+	public $fourn_barcode;
+
+	/**
 	 * @var string $supplier_barcode - Supplier barcode
 	 */
 	public $supplier_barcode;
+
+	/**
+	 * @deprecated
+	 * @see $supplier_fk_barcode_type
+	 */
+	public $fourn_fk_barcode_type;
 
 	/**
 	 * @var string $supplier_fk_barcode_type - Supplier barcode type
@@ -547,6 +559,8 @@ class ProductFournisseur extends Product
 				$this->fourn_multicurrency_id          = $obj->fk_multicurrency;
 				$this->fourn_multicurrency_code        = $obj->multicurrency_code;
 				if ($conf->barcode->enabled) {
+					$this->fourn_barcode = $obj->barcode; // deprecated
+					$this->fourn_fk_barcode_type = $obj->barcode; // deprecated
 					$this->supplier_barcode = $obj->barcode;
 					$this->supplier_fk_barcode_type = $obj->fk_barcode_type;
 				}
