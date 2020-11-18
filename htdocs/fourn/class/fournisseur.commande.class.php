@@ -9,7 +9,7 @@
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Ferran Marcet         	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -121,7 +121,7 @@ class CommandeFournisseur extends CommonOrder
 	public $date_livraison;
 
 	/**
-	 * Delivery date
+	 *  @var int Date expected for delivery
 	 */
 	public $delivery_date;
 
@@ -131,16 +131,6 @@ class CommandeFournisseur extends CommonOrder
 	public $total_localtax2; // Total Local tax 2
 	public $total_ttc;
 	public $source;
-
-	/**
-	 * @deprecated
-	 * @see $note_private, $note_public
-	 */
-	public $note;
-
-	public $note_private;
-	public $note_public;
-	public $model_pdf;
 
 	/**
 	 * @var int ID
@@ -3107,8 +3097,11 @@ class CommandeFournisseur extends CommonOrder
 
 		if (empty($this->delivery_date) && !empty($this->date_livraison)) $this->delivery_date = $this->date_livraison; // For backward compatibility
 
-		if (empty($this->delivery_date)) $text = $langs->trans("OrderDate").' '.dol_print_date($this->date_commande, 'day');
-		else $text = $text = $langs->trans("DeliveryDate").' '.dol_print_date($this->date_delivery, 'day');
+		if (empty($this->delivery_date)) {
+			$text = $langs->trans("OrderDate").' '.dol_print_date($this->date_commande, 'day');
+		} else {
+			$text = $langs->trans("DeliveryDate").' '.dol_print_date($this->delivery_date, 'day');
+		}
 		$text .= ' '.($conf->commande->fournisseur->warning_delay > 0 ? '+' : '-').' '.round(abs($conf->commande->fournisseur->warning_delay) / 3600 / 24, 1).' '.$langs->trans("days").' < '.$langs->trans("Today");
 
 		return $text;
