@@ -126,7 +126,7 @@ class ProductFournisseur extends Product
 	 */
 	public $supplier_fk_barcode_type;
 
-  
+
 	/**
 	 *	Constructor
 	 *
