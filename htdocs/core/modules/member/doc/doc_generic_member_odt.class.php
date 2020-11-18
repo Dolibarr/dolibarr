@@ -322,11 +322,6 @@ class doc_generic_member_odt extends ModelePDFMember
 
 				$tmparray = array_merge($array_member, $array_soc, $array_thirdparty, $array_other, $array_thirdparty_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
-				$tags = '';
-				foreach ($tmparray as $key => $value) {
-					$tags .= '{' . $key . '} => ' . $value ."\n";
-				}
-				$tmparray = array_merge($tmparray, array('__ALL_TAGS__' => $tags));
 				// Call the ODTSubstitution hook
 				$parameters = array(
 					'file'=>$file,
@@ -352,12 +347,10 @@ class doc_generic_member_odt extends ModelePDFMember
 
 				// Replace labels translated
 				$tmparray = $outputlangs->get_translations_for_substitutions();
-				foreach ($tmparray as $key=>$value)
-				{
+				foreach ($tmparray as $key=>$value) {
 					try {
 						$odfHandler->setVars($key, $value, true, 'UTF-8');
-					} catch (OdfException $e)
-					{
+					} catch (OdfException $e) {
 						dol_syslog($e->getMessage(), LOG_WARNING);
 					}
 				}
