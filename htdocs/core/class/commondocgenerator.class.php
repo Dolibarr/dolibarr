@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012	Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016       Charlie Benke           <charlie@patas-monkey.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -120,7 +120,11 @@ abstract class CommonDocGenerator
 	{
 		global $conf, $extrafields;
 
-		$logotouse = $conf->adherent->dir_output.'/'.get_exdir($member->id, 2, 0, 1, $member, 'user').'/'.$member->photo;
+		if ($member->photo) {
+			$logotouse = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $member, 'user').'/photos/'.$member->photo;
+		} else {
+			$logotouse = DOL_DOCUMENT_ROOT . '/public/theme/common/nophoto.png';
+		}
 
 		$array_member = array(
 			'mymember_lastname' => $member->lastname,
