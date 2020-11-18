@@ -3047,9 +3047,8 @@ div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border
 }
 div .tdtop {
     vertical-align: top !important;
-	padding-top: 10px !important;
-	padding-bottom: 2px !important;
-	padding-bottom: 0px;
+	/*padding-top: 10px !important;
+	padding-bottom: 2px !important; */
 }
 
 table.border td, table.bordernooddeven td, div.border div div.tagtd {
