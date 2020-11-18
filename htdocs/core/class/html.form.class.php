@@ -1463,9 +1463,8 @@ class Form
 		}
 
 		// We search third parties
-		$sql = "SELECT sp.rowid, sp.lastname, sp.statut, sp.firstname, sp.poste";
-		if (!empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) $sql.= ", sp.email, sp.phone, sp.phone_perso, sp.phone_mobile, sp.town AS contact_town, s.town AS company_town";
-		if ($showsoc > 0) $sql .= " , s.nom as company";
+		$sql = "SELECT sp.rowid, sp.lastname, sp.statut, sp.firstname, sp.poste, sp.email, sp.phone, sp.phone_perso, sp.phone_mobile, sp.town AS contact_town";
+		if ($showsoc > 0 || !empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) $sql .= ", s.nom as company, s.town AS company_town";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
 		if ($showsoc > 0 || !empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) $sql .= " LEFT OUTER JOIN  ".MAIN_DB_PREFIX."societe as s ON s.rowid=sp.fk_soc";
 		$sql .= " WHERE sp.entity IN (".getEntity('socpeople').")";
