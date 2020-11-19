@@ -957,13 +957,13 @@ if ($resql)
 		if (!empty($arrayfields['c.ref']['checked']))
 		{
 			print '<td class="nowraponall">';
-			if(!empty($show_shippable_command)) {
+			if (!empty($show_shippable_command)) {
 				$generic_commande->getLinesArray(); // This set ->lines
 			}
 
 			print $generic_commande->getNomUrl(1, ($search_status != 2 ? 0 : $obj->fk_statut), 0, 0, 0, 1, 1);
 
-			if(!empty($show_shippable_command)) {
+			if (!empty($show_shippable_command)) {
 				// Show shippable Icon (create subloop, so may be slow)
 				if ($conf->stock->enabled) {
 					if (($obj->fk_statut > 0) && ($obj->fk_statut < 3)) {
