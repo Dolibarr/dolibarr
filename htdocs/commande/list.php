@@ -114,6 +114,8 @@ $pagenext = $page + 1;
 if (!$sortfield) $sortfield = 'c.ref';
 if (!$sortorder) $sortorder = 'DESC';
 
+$show_shippable_command = GETPOST('show_shippable_command', 'aZ09');
+
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Commande($db);
 $hookmanager->initHooks(array('orderlist'));
@@ -569,6 +571,11 @@ if ($resql)
 
 	$moreforfilter = '';
 
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= $langs->trans('ShowShippableCommand').': ';
+	$moreforfilter .= '<input type="checkbox" name="show_shippable_command" value="show_shippable_command"'.($show_shippable_command == 'show_shippable_command' ? ' checked' : '').'>';
+	$moreforfilter.='</div>';
+
  	// If the user can view prospects other than his'
  	if ($user->rights->societe->client->voir || $socid)
  	{
@@ -950,108 +957,104 @@ if ($resql)
 		if (!empty($arrayfields['c.ref']['checked']))
 		{
 			print '<td class="nowraponall">';
-
-			$generic_commande->getLinesArray(); // This set ->lines
+			if(!empty($show_shippable_command)) {
+				$generic_commande->getLinesArray(); // This set ->lines
+			}
 
 			print $generic_commande->getNomUrl(1, ($search_status != 2 ? 0 : $obj->fk_statut), 0, 0, 0, 1, 1);
 
-			// Show shippable Icon (create subloop, so may be slow)
-			if ($conf->stock->enabled)
-			{
-				if (($obj->fk_statut > 0) && ($obj->fk_statut < 3))
-				{
-					$numlines = count($generic_commande->lines); // Loop on each line of order
-					for ($lig = 0; $lig < $numlines; $lig++)
-					{
-						if ($generic_commande->lines[$lig]->product_type == 0 && $generic_commande->lines[$lig]->fk_product > 0)  // If line is a product and not a service
-						{
-							$nbprod++; // order contains real products
-							$generic_product->id = $generic_commande->lines[$lig]->fk_product;
-
-							// Get local and virtual stock and store it into cache
-							if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product])) {
-								$generic_product->load_stock('nobatch');
-								//$generic_product->load_virtual_stock();   Already included into load_stock
-								$productstat_cache[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_reel;
-								$productstat_cachevirtual[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_theorique;
-							} else {
-								$generic_product->stock_reel = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stock_reel'];
-								$generic_product->stock_theorique = $productstat_cachevirtual[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_theorique;
-							}
-
-							if (empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST))  // Default code. Default is when this option is not set, setting it create strange result
+			if(!empty($show_shippable_command)) {
+				// Show shippable Icon (create subloop, so may be slow)
+				if ($conf->stock->enabled) {
+					if (($obj->fk_statut > 0) && ($obj->fk_statut < 3)) {
+						$numlines = count($generic_commande->lines); // Loop on each line of order
+						for ($lig = 0; $lig < $numlines; $lig++) {
+							if ($generic_commande->lines[$lig]->product_type == 0 && $generic_commande->lines[$lig]->fk_product > 0)  // If line is a product and not a service
 							{
-								$text_info .= $generic_commande->lines[$lig]->qty.' X '.$generic_commande->lines[$lig]->product_ref.'&nbsp;'.dol_trunc($generic_commande->lines[$lig]->product_label, 25);
-								$text_info .= ' - '.$langs->trans("Stock").': <span class="'.($generic_product->stock_reel > 0 ? 'ok' : 'error').'">'.$generic_product->stock_reel.'</span>';
-								$text_info .= ' - '.$langs->trans("VirtualStock").': <span class="'.($generic_product->stock_theorique > 0 ? 'ok' : 'error').'">'.$generic_product->stock_theorique.'</span>';
-								$text_info .= '<br>';
+								$nbprod++; // order contains real products
+								$generic_product->id = $generic_commande->lines[$lig]->fk_product;
 
-								if ($generic_commande->lines[$lig]->qty > $generic_product->stock_reel)
-								{
-									$notshippable++;
-								}
-							} else {  // Detailed virtual stock, looks bugged, uncomplete and need heavy load.
-								// stock order and stock order_supplier
-								$stock_order = 0;
-								$stock_order_supplier = 0;
-								if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE))    // What about other options ?
-								{
-									if (!empty($conf->commande->enabled))
-									{
-										if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'])) {
-											$generic_product->load_stats_commande(0, '1,2');
-											$productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'] = $generic_product->stats_commande['qty'];
-										} else {
-											$generic_product->stats_commande['qty'] = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'];
-										}
-										$stock_order = $generic_product->stats_commande['qty'];
-									}
-									if (!empty($conf->fournisseur->enabled))
-									{
-										if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'])) {
-											$generic_product->load_stats_commande_fournisseur(0, '3');
-											$productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'] = $generic_product->stats_commande_fournisseur['qty'];
-										} else {
-											$generic_product->stats_commande_fournisseur['qty'] = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'];
-										}
-										$stock_order_supplier = $generic_product->stats_commande_fournisseur['qty'];
-									}
-								}
-								$text_info .= $generic_commande->lines[$lig]->qty.' X '.$generic_commande->lines[$lig]->ref.'&nbsp;'.dol_trunc($generic_commande->lines[$lig]->product_label, 25);
-								$text_stock_reel = $generic_product->stock_reel.'/'.$stock_order;
-								if ($stock_order > $generic_product->stock_reel && !($generic_product->stock_reel < $generic_commande->lines[$lig]->qty)) {
-									$warning++;
-									$text_warning .= '<span class="warning">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$text_stock_reel.'</span>';
-								}
-								if ($generic_product->stock_reel < $generic_commande->lines[$lig]->qty) {
-									$notshippable++;
-									$text_info .= '<span class="warning">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$text_stock_reel.'</span>';
+								// Get local and virtual stock and store it into cache
+								if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product])) {
+									$generic_product->load_stock('nobatch');
+									//$generic_product->load_virtual_stock();   Already included into load_stock
+									$productstat_cache[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_reel;
+									$productstat_cachevirtual[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_theorique;
 								} else {
-									$text_info .= '<span class="ok">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$text_stock_reel.'</span>';
+									$generic_product->stock_reel = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stock_reel'];
+									$generic_product->stock_theorique = $productstat_cachevirtual[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_theorique;
 								}
-								if (!empty($conf->fournisseur->enabled)) {
-									$text_info .= '&nbsp;'.$langs->trans('SupplierOrder').'&nbsp;:&nbsp;'.$stock_order_supplier.'<br>';
-								} else {
+
+								if (empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST))  // Default code. Default is when this option is not set, setting it create strange result
+								{
+									$text_info .= $generic_commande->lines[$lig]->qty . ' X ' . $generic_commande->lines[$lig]->product_ref . '&nbsp;' . dol_trunc($generic_commande->lines[$lig]->product_label, 25);
+									$text_info .= ' - ' . $langs->trans("Stock") . ': <span class="' . ($generic_product->stock_reel > 0 ? 'ok' : 'error') . '">' . $generic_product->stock_reel . '</span>';
+									$text_info .= ' - ' . $langs->trans("VirtualStock") . ': <span class="' . ($generic_product->stock_theorique > 0 ? 'ok' : 'error') . '">' . $generic_product->stock_theorique . '</span>';
 									$text_info .= '<br>';
+
+									if ($generic_commande->lines[$lig]->qty > $generic_product->stock_reel) {
+										$notshippable++;
+									}
+								} else {  // Detailed virtual stock, looks bugged, uncomplete and need heavy load.
+									// stock order and stock order_supplier
+									$stock_order = 0;
+									$stock_order_supplier = 0;
+									if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE))    // What about other options ?
+									{
+										if (!empty($conf->commande->enabled)) {
+											if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'])) {
+												$generic_product->load_stats_commande(0, '1,2');
+												$productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'] = $generic_product->stats_commande['qty'];
+											} else {
+												$generic_product->stats_commande['qty'] = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'];
+											}
+											$stock_order = $generic_product->stats_commande['qty'];
+										}
+										if (!empty($conf->fournisseur->enabled)) {
+											if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'])) {
+												$generic_product->load_stats_commande_fournisseur(0, '3');
+												$productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'] = $generic_product->stats_commande_fournisseur['qty'];
+											} else {
+												$generic_product->stats_commande_fournisseur['qty'] = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'];
+											}
+											$stock_order_supplier = $generic_product->stats_commande_fournisseur['qty'];
+										}
+									}
+									$text_info .= $generic_commande->lines[$lig]->qty . ' X ' . $generic_commande->lines[$lig]->ref . '&nbsp;' . dol_trunc($generic_commande->lines[$lig]->product_label, 25);
+									$text_stock_reel = $generic_product->stock_reel . '/' . $stock_order;
+									if ($stock_order > $generic_product->stock_reel && !($generic_product->stock_reel < $generic_commande->lines[$lig]->qty)) {
+										$warning++;
+										$text_warning .= '<span class="warning">' . $langs->trans('Available') . '&nbsp;:&nbsp;' . $text_stock_reel . '</span>';
+									}
+									if ($generic_product->stock_reel < $generic_commande->lines[$lig]->qty) {
+										$notshippable++;
+										$text_info .= '<span class="warning">' . $langs->trans('Available') . '&nbsp;:&nbsp;' . $text_stock_reel . '</span>';
+									} else {
+										$text_info .= '<span class="ok">' . $langs->trans('Available') . '&nbsp;:&nbsp;' . $text_stock_reel . '</span>';
+									}
+									if (!empty($conf->fournisseur->enabled)) {
+										$text_info .= '&nbsp;' . $langs->trans('SupplierOrder') . '&nbsp;:&nbsp;' . $stock_order_supplier . '<br>';
+									} else {
+										$text_info .= '<br>';
+									}
 								}
 							}
 						}
+						if ($notshippable == 0) {
+							$text_icon = img_picto('', 'dolly', '', false, 0, 0, '', 'green paddingleft');
+							$text_info = $langs->trans('Shippable') . '<br>' . $text_info;
+						} else {
+							$text_icon = img_picto('', 'dolly', '', false, 0, 0, '', 'error paddingleft');
+							$text_info = $langs->trans('NonShippable') . '<br>' . $text_info;
+						}
 					}
-					if ($notshippable == 0) {
-						$text_icon = img_picto('', 'dolly', '', false, 0, 0, '', 'green paddingleft');
-						$text_info = $langs->trans('Shippable').'<br>'.$text_info;
-					} else {
-						$text_icon = img_picto('', 'dolly', '', false, 0, 0, '', 'error paddingleft');
-						$text_info = $langs->trans('NonShippable').'<br>'.$text_info;
-					}
-				}
 
-				if ($nbprod)
-				{
-					print $form->textwithtooltip('', $text_info, 2, 1, $text_icon, '', 2);
-				}
-				if ($warning) {     // Always false in default mode
-					print $form->textwithtooltip('', $langs->trans('NotEnoughForAllOrders').'<br>'.$text_warning, 2, 1, img_picto('', 'error'), '', 2);
+					if ($nbprod) {
+						print $form->textwithtooltip('', $text_info, 2, 1, $text_icon, '', 2);
+					}
+					if ($warning) {     // Always false in default mode
+						print $form->textwithtooltip('', $langs->trans('NotEnoughForAllOrders') . '<br>' . $text_warning, 2, 1, img_picto('', 'error'), '', 2);
+					}
 				}
 			}
 
