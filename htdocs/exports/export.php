@@ -1054,7 +1054,7 @@ if ($step == 4 && $datatoexport)
 
 		print '<tr class="oddeven">';
 		print '<td><input name="export_name" size="32" value=""></td><td class="right">';
-		print '<input type="submit" class="button reposition" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button reposition button-save" value="'.$langs->trans("Save").'">';
 		print '</td></tr>';
 
 		// List of existing export profils

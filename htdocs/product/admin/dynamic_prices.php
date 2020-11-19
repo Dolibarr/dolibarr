@@ -229,7 +229,7 @@ if ($action == 'create_variable' || $action == 'edit_variable') {
 
 	//Form Buttons
 	print '<br><div class="center">';
-	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp;';
+	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'"> &nbsp;';
 	print '<input type="submit" class="button" name="cancel" id="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 	print '</form>';
@@ -351,7 +351,7 @@ if ($action == 'create_updater' || $action == 'edit_updater') {
 
 	//Form Buttons
 	print '<br><div class="center">';
-	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp;';
+	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'"> &nbsp;';
 	print '<input type="submit" class="button" name="cancel" id="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 	print '</form>';

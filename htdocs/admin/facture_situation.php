@@ -155,7 +155,7 @@ function _updateBtn()
 {
 	global $langs;
 	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 	print '</div>';
 }
 
