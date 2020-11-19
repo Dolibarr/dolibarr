@@ -1513,7 +1513,6 @@ class Contact extends CommonObject
 		$this->country_code = 'FR';
 		$this->country = 'France';
 		$this->email = 'specimen@specimen.com';
-		$this->skype = 'tom.hanson';
 		$this->socialnetworks = array(
 			'skype' => 'tom.hanson',
 		);
