@@ -1191,7 +1191,8 @@ function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $pos
 		$labelproductservice = preg_replace('/(<img[^>]*src=")([^"]*)(&amp;)([^"]*")/', '\1\2&\4', $labelproductservice, -1, $nbrep);
 
 		//var_dump($labelproductservice);exit;
-
+		$up =  pdf_getlineupexcltax($object, $i, $outputlangs);
+		if(strlen($up) >= 10) $labelproductservice .= "<br/>"; //For price higher to 100 000 or having too much decimals (depending of currency)
 		// Description
 		$pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1, false, true, 'J', true);
 		$result.=$labelproductservice;
