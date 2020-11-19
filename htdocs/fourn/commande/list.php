@@ -93,7 +93,6 @@ $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 
 $status = GETPOST('statut', 'alpha');
-$search_status = GETPOST('search_status');
 
 // Security check
 $orderid = GETPOST('orderid', 'int');
@@ -1051,6 +1050,7 @@ if ($resql)
 		$objectstatic->total_ht = $obj->total_ht;
 		$objectstatic->total_tva = $obj->total_tva;
 		$objectstatic->total_ttc = $obj->total_ttc;
+		$objectstatic->date_commande = $db->jdate($obj->date_commande);
 		$objectstatic->date_delivery = $db->jdate($obj->date_delivery);
 		$objectstatic->note_public = $obj->note_public;
 		$objectstatic->note_private = $obj->note_private;
@@ -1160,8 +1160,10 @@ if ($resql)
 		if (!empty($arrayfields['cf.date_commande']['checked']))
 		{
 			print '<td class="center">';
-			if ($obj->date_commande) print dol_print_date($db->jdate($obj->date_commande), 'day');
-			else print '';
+			print dol_print_date($db->jdate($obj->date_commande), 'day');
+			if ($objectstatic->hasDelay() && !empty($objectstatic->date_delivery)) {
+				print ' '.img_picto($langs->trans("Late").' : '.$objectstatic->showDelay(), "warning");
+			}
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}

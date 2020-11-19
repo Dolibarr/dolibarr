@@ -37,7 +37,7 @@ function shipping_prepare_head($object)
 	global $db, $langs, $conf, $user;
 
 	// Load translation files required by the page
-    $langs->loadLangs(array("sendings", "deliveries"));
+	$langs->loadLangs(array("sendings", "deliveries"));
 
 	$h = 0;
 	$head = array();
@@ -53,8 +53,8 @@ function shipping_prepare_head($object)
 		$object->fetchObjectLinked($object->id, $object->element);
 		if (is_array($object->linkedObjectsIds['delivery']) && count($object->linkedObjectsIds['delivery']) > 0)        // If there is a delivery
 		{
-		    // Take first one element of array
-		    $tmp = reset($object->linkedObjectsIds['delivery']);
+			// Take first one element of array
+			$tmp = reset($object->linkedObjectsIds['delivery']);
 
 			$head[$h][0] = DOL_URL_ROOT."/delivery/card.php?id=".$tmp;
 			$head[$h][1] = $langs->trans("DeliveryCard");
@@ -65,34 +65,34 @@ function shipping_prepare_head($object)
 
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
-	    $objectsrc = $object;
-	    if ($object->origin == 'commande' && $object->origin_id > 0)
-	    {
-	        $objectsrc = new Commande($db);
-	        $objectsrc->fetch($object->origin_id);
-	    }
-	    $nbContact = count($objectsrc->liste_contact(-1, 'internal')) + count($objectsrc->liste_contact(-1, 'external'));
-	    $head[$h][0] = DOL_URL_ROOT."/expedition/contact.php?id=".$object->id;
-    	$head[$h][1] = $langs->trans("ContactsAddresses");
+		$objectsrc = $object;
+		if ($object->origin == 'commande' && $object->origin_id > 0)
+		{
+			$objectsrc = new Commande($db);
+			$objectsrc->fetch($object->origin_id);
+		}
+		$nbContact = count($objectsrc->liste_contact(-1, 'internal')) + count($objectsrc->liste_contact(-1, 'external'));
+		$head[$h][0] = DOL_URL_ROOT."/expedition/contact.php?id=".$object->id;
+		$head[$h][1] = $langs->trans("ContactsAddresses");
 		if ($nbContact > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
-    	$head[$h][2] = 'contact';
-    	$h++;
+		$head[$h][2] = 'contact';
+		$h++;
 	}
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->commande->dir_output."/".dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-    $nbLinks = Link::count($db, $object->element, $object->id);
+	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/expedition/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
 	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
-    $nbNote = 0;
-    if (!empty($object->note_private)) $nbNote++;
-    if (!empty($object->note_public)) $nbNote++;
+	$nbNote = 0;
+	if (!empty($object->note_private)) $nbNote++;
+	if (!empty($object->note_public)) $nbNote++;
 	$head[$h][0] = DOL_URL_ROOT."/expedition/note.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("Notes");
 	if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -101,8 +101,8 @@ function shipping_prepare_head($object)
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'delivery');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'delivery', 'remove');
@@ -122,7 +122,7 @@ function delivery_prepare_head($object)
 	global $langs, $db, $conf, $user;
 
 	// Load translation files required by the page
-    $langs->loadLangs(array("sendings", "deliveries"));
+	$langs->loadLangs(array("sendings", "deliveries"));
 
 	$h = 0;
 	$head = array();
@@ -195,7 +195,7 @@ function delivery_prepare_head($object)
 
 	$object->id = $tmpobject->id;
 
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'delivery');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'delivery');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'delivery', 'remove');
 
@@ -262,7 +262,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 			print '<td class="center">'.$langs->trans("QtyPreparedOrShipped").'</td>';
 			if (!empty($conf->stock->enabled))
 			{
-                print '<td>'.$langs->trans("Warehouse").'</td>';
+				print '<td>'.$langs->trans("Warehouse").'</td>';
 			}
 			/*TODO Add link to expeditiondet_batch
 			if (! empty($conf->productbatch->enabled))
@@ -371,13 +371,13 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 				// Warehouse
 				if (!empty($conf->stock->enabled))
 				{
-				    print '<td>';
-    				if ($objp->warehouse_id > 0)
-    				{
-        				$warehousestatic->fetch($objp->warehouse_id);
-        				print $warehousestatic->getNomUrl(1);
-    				}
-    				print '</td>';
+					print '<td>';
+					if ($objp->warehouse_id > 0)
+					{
+						$warehousestatic->fetch($objp->warehouse_id);
+						print $warehousestatic->getNomUrl(1);
+					}
+					print '</td>';
 				}
 
 				// Batch number managment

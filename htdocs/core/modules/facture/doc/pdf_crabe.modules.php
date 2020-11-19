@@ -220,7 +220,7 @@ class pdf_crabe extends ModelePDFFactures
 	/**
 	 *  Function to build pdf onto disk
 	 *
-	 *  @param		Object		$object				Object to generate
+	 *  @param		Facture		$object				Object to generate
 	 *  @param		Translate	$outputlangs		Lang output object
 	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int			$hidedetails		Do not show line details
@@ -276,9 +276,9 @@ class pdf_crabe extends ModelePDFFactures
 		{
 			$object->fetch_thirdparty();
 
-			$deja_regle = $object->getSommePaiement(($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? 1 : 0);
-			$amount_credit_notes_included = $object->getSumCreditNotesUsed(($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? 1 : 0);
-			$amount_deposits_included = $object->getSumDepositsUsed(($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? 1 : 0);
+			$deja_regle = $object->getSommePaiement((!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? 1 : 0);
+			$amount_credit_notes_included = $object->getSumCreditNotesUsed((!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? 1 : 0);
+			$amount_deposits_included = $object->getSumDepositsUsed((!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? 1 : 0);
 
 			// Definition of $dir and $file
 			if ($object->specimen)
@@ -322,9 +322,10 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->SetAutoPageBreak(1, 0);
 
 				$heightforinfotot = 50 + (4 * $nbpayments); // Height reserved to output the info and total part and payment part
+				if ($heightforinfotot > 220) $heightforinfotot = 220;
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-				if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS > 0) $heightforfooter += 6;
+				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) $heightforfooter += 6;
 
 				if (class_exists('TCPDF'))
 				{
@@ -419,7 +420,7 @@ class pdf_crabe extends ModelePDFFactures
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 + $top_shift : 10);
 
 				// Incoterm
-				if ($conf->incoterm->enabled)
+				if (! empty($conf->incoterm->enabled))
 				{
 					$desc_incoterms = $object->getIncotermsForPDF();
 					if ($desc_incoterms)
@@ -781,7 +782,7 @@ class pdf_crabe extends ModelePDFFactures
 	 *  Show payments table
 	 *
 	 *  @param	TCPDF		$pdf            Object PDF
-	 *  @param  Object		$object         Object invoice
+	 *  @param  Facture		$object         Object invoice
 	 *  @param  int			$posy           Position y in PDF
 	 *  @param  Translate	$outputlangs    Object langs for output
 	 *  @param  int			$heightforfooter height for footer
@@ -966,7 +967,7 @@ class pdf_crabe extends ModelePDFFactures
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		Object		$object			Object to show
+	 *   @param		Facture		$object			Object to show
 	 *   @param		int			$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	void
@@ -1587,7 +1588,7 @@ class pdf_crabe extends ModelePDFFactures
 	 *  Show top header of page.
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  Object		$object     	Object to show
+	 *  @param  Facture		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
@@ -1890,7 +1891,7 @@ class pdf_crabe extends ModelePDFFactures
 	 *   	Show footer of page. Need this->emetteur object
 	 *
 	 *   	@param	TCPDF		$pdf     			PDF
-	 * 		@param	Object		$object				Object to show
+	 * 		@param	Facture		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
@@ -1898,7 +1899,7 @@ class pdf_crabe extends ModelePDFFactures
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
-		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf, $outputlangs, 'INVOICE_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 }

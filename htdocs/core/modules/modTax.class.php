@@ -147,14 +147,14 @@ class modTax extends DolibarrModules
 		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r] = array('t'=>MAIN_DB_PREFIX.'chargesociales');
 		$this->import_fields_array[$r] = array('t.libelle'=>"Label*", 't.fk_type'=>"Type",
-		    't.amount'=>"Amount*", 't.date_ech'=>"DateDue*", 't.periode'=>"PeriodEndDate*"
+			't.amount'=>"Amount*", 't.date_ech'=>"DateDue*", 't.periode'=>"PeriodEndDate*"
 		);
 
 		$this->import_convertvalue_array[$r] = array(
-		    't.fk_type'=>array('rule'=>'fetchidfromref', 'classfile'=>'/compta/sociales/class/cchargesociales.class.php', 'class'=>'Cchargesociales', 'method'=>'fetch', 'element'=>'Cchargesociales')
+			't.fk_type'=>array('rule'=>'fetchidfromref', 'classfile'=>'/compta/sociales/class/cchargesociales.class.php', 'class'=>'Cchargesociales', 'method'=>'fetch', 'element'=>'Cchargesociales')
 		);
 		$this->import_examplevalues_array[$r] = array('t.libelle'=>"Social/fiscal contribution", 't.fk_type'=>"TAXPRO (must be id or code found into dictionary)",
-		    't.date_ech'=>"2016-01-01", 't.periode'=>"2016-01-01"
+			't.date_ech'=>"2016-01-01", 't.periode'=>"2016-01-01"
 		);
 
 		// Import Taxes
@@ -165,14 +165,14 @@ class modTax extends DolibarrModules
 		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r] = array('t'=>MAIN_DB_PREFIX.'tva');
 		$this->import_fields_array[$r] = array('t.datep'=>"DatePayment*", 't.datev'=>"DateValue*", 't.label'=>"Label*", 't.fk_typepayment'=>"PaymentMode*",
-		    't.amount'=>"Amount*", 't.num_payment'=>'Numero'
+			't.amount'=>"Amount*", 't.num_payment'=>'Numero'
 		);
 
 		$this->import_convertvalue_array[$r] = array(
-		    't.fk_typepayment'=>array('rule'=>'fetchidfromref', 'classfile'=>'/compta/paiement/class/cpaiement.class.php', 'class'=>'Cpaiement', 'method'=>'fetch', 'element'=>'Cpaiement')
+			't.fk_typepayment'=>array('rule'=>'fetchidfromref', 'classfile'=>'/compta/paiement/class/cpaiement.class.php', 'class'=>'Cpaiement', 'method'=>'fetch', 'element'=>'Cpaiement')
 		);
 		$this->import_examplevalues_array[$r] = array('t.label'=>"VAT Payment 1st quarter 2016", 't.fk_typepayment'=>"CHQ (must be id or code found into dictionary)",
-		    't.datep'=>"2016-04-02", 't.datev'=>"2016-03-31", 't.amount'=>1000, 't.num_payment'=>'123456'
+			't.datep'=>"2016-04-02", 't.datev'=>"2016-03-31", 't.amount'=>1000, 't.num_payment'=>'123456'
 		);
 	}
 
@@ -182,7 +182,7 @@ class modTax extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')

@@ -57,17 +57,17 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
     		var list = jQuery("#list");
             var totalizable = jQuery("#totalizable");
     		<?php
-    		if ((GETPOST('type', 'alpha') != "select") && (GETPOST('type', 'alpha') != "sellist"))
-    		{
-    			print 'jQuery("#value_choice").hide();';
-    		}
+			if ((GETPOST('type', 'alpha') != "select") && (GETPOST('type', 'alpha') != "sellist"))
+			{
+				print 'jQuery("#value_choice").hide();';
+			}
 
-    		if (GETPOST('type', 'alpha') == "separate")
-    		{
+			if (GETPOST('type', 'alpha') == "separate")
+			{
 				print "jQuery('#size, #default_value, #langfile').val('').prop('disabled', true);";
-    			print 'jQuery("#value_choice").hide();';
-    		}
-    		?>
+				print 'jQuery("#value_choice").hide();';
+			}
+			?>
 
     		// Case of computed field
     		if (type == '' || type == 'varchar' || type == 'int' || type == 'double' || type == 'price') {
@@ -153,7 +153,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 <tr><td class="fieldrequired"><?php echo $langs->trans("AttributeCode"); ?></td><td class="valeur"><input type="text" name="attrname" id="attrname"  size="10" value="<?php echo GETPOST('attrname', 'alpha'); ?>"> <span class="opacitymedium">(<?php echo $langs->trans("AlphaNumOnlyLowerCharsAndNoSpace"); ?>)</span></td></tr>
 <!-- Type -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Type"); ?></td><td class="valeur">
-<?php print $form->selectarray('type', $type2label, GETPOST('type', 'alpha')); ?>
+<?php print $form->selectarray('type', $type2label, GETPOST('type', 'alpha'), 0, 0, 0, '', 0, 0, 0, '', '', 1); ?>
 </td></tr>
 <!-- Size -->
 <tr class="extra_size"><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td class="valeur"><input id="size" type="text" name="size" size="5" value="<?php echo (GETPOST('size', 'alpha') ?GETPOST('size', 'alpha') : ''); ?>"></td></tr>

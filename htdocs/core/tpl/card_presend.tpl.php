@@ -75,7 +75,7 @@ if ($action == 'presend')
 		$outputlangs = new Translate('', $conf);
 		$outputlangs->setDefaultLang($newlang);
 		// Load traductions files required by page
-		$outputlangs->loadLangs(array('commercial', 'bills', 'orders', 'contracts', 'members', 'propal', 'products', 'supplier_proposal', 'interventions'));
+		$outputlangs->loadLangs(array('commercial', 'bills', 'orders', 'contracts', 'members', 'propal', 'products', 'supplier_proposal', 'interventions', 'receptions'));
 	}
 
 	$topicmail = '';
@@ -144,7 +144,7 @@ if ($action == 'presend')
 		$formmail->fromtype = 'special';
 	}
 
-	$formmail->trackid=$trackid;
+	$formmail->trackid = $trackid;
 	if (!empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
 	{
 		include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';

@@ -60,13 +60,13 @@ top_httphead('text/html');
 
 if ($place > 0)
 {
-    $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
-    $resql = $db->query($sql);
-    $obj = $db->fetch_object($resql);
-    if ($obj)
-    {
-        $facid = $obj->rowid;
-    }
+	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+	$resql = $db->query($sql);
+	$obj = $db->fetch_object($resql);
+	if ($obj)
+	{
+		$facid = $obj->rowid;
+	}
 }
 $object = new Facture($db);
 $object->fetch($facid);
@@ -75,7 +75,7 @@ $object->fetch($facid);
 $hookmanager->initHooks(array('takeposfrontend'), $facid);
 $reshook = $hookmanager->executeHooks('TakeposReceipt', $parameters, $object);
 if (!empty($hookmanager->resPrint)) {
-    print $hookmanager->resPrint;
+	print $hookmanager->resPrint;
 	exit;
 }
 
@@ -144,21 +144,21 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER)
     </thead>
     <tbody>
     <?php
-    foreach ($object->lines as $line)
-    {
-        ?>
+	foreach ($object->lines as $line)
+	{
+		?>
     <tr>
         <td>
 		<?php if (!empty($line->product_label)) echo $line->product_label;
-        else echo $line->description; ?>
+		else echo $line->description; ?>
         </td>
         <td class="right"><?php echo $line->qty; ?></td>
         <td class="right"><?php if ($gift != 1) echo price(price2num($line->total_ttc / $line->qty, 'MT'), 1); ?></td>
         <td class="right"><?php if ($gift != 1) echo price($line->total_ttc, 1); ?></td>
     </tr>
         <?php
-    }
-    ?>
+	}
+	?>
     </tbody>
 </table>
 <br>
@@ -177,7 +177,7 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER)
 		$vat_groups[$line->tva_tx] += $line->total_tva;
 	}
 	foreach ($vat_groups as $key => $val) {
-	    ?>
+		?>
 	<tr>
 		<th align="right"><?php if ($gift != 1) echo $langs->trans("VAT").' '.vatrate($key, 1); ?></th>
 		<td align="right"><?php if ($gift != 1) echo price($val, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>

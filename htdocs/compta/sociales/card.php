@@ -30,8 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-if (!empty($conf->projet->enabled))
-{
+if (!empty($conf->projet->enabled)) {
 	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -124,8 +123,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 {
 	$object->fetch($id);
 	$result = $object->delete($user);
-	if ($result > 0)
-	{
+	if ($result > 0) {
 		header("Location: list.php");
 		exit;
 	} else {
@@ -137,7 +135,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 // Add social contribution
 if ($action == 'add' && $user->rights->tax->charges->creer)
 {
-	$amount = price2num(GETPOST('amount'));
+	$amount = price2num(GETPOST('amount'), 'MT');
 
 	if (!$dateech)
 	{
@@ -155,23 +153,21 @@ if ($action == 'add' && $user->rights->tax->charges->creer)
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
 		$action = 'create';
-	} elseif (!is_numeric($amount))
-	{
+	} elseif (!is_numeric($amount)) {
 		setEventMessages($langs->trans("ErrorFieldMustBeANumeric", $langs->transnoentities("Amount")), null, 'errors');
 		$action = 'create';
 	} else {
 		$object->type = $actioncode;
 		$object->label = GETPOST('label', 'alpha');
 		$object->date_ech = $dateech;
-		$object->periode			= $dateperiod;
-		$object->amount				= $amount;
-		$object->mode_reglement_id = GETPOST('mode_reglement_id');
-		$object->fk_account			= GETPOST('fk_account', 'int');
-		$object->fk_project			= GETPOST('fk_project');
+		$object->periode = $dateperiod;
+		$object->amount = $amount;
+		$object->mode_reglement_id = (int) GETPOST('mode_reglement_id', 'int');
+		$object->fk_account = (int) GETPOST('fk_account', 'int');
+		$object->fk_project = (int) GETPOST('fk_project', 'int');
 
 		$id = $object->create($user);
-		if ($id <= 0)
-		{
+		if ($id <= 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'create';
 		}
@@ -181,7 +177,7 @@ if ($action == 'add' && $user->rights->tax->charges->creer)
 
 if ($action == 'update' && !$_POST["cancel"] && $user->rights->tax->charges->creer)
 {
-	$amount = price2num(GETPOST('amount'));
+	$amount = price2num(GETPOST('amount'), 'MT');
 
 	if (!$dateech)
 	{
@@ -203,12 +199,11 @@ if ($action == 'update' && !$_POST["cancel"] && $user->rights->tax->charges->cre
 		$result = $object->fetch($id);
 
 		$object->date_ech = $dateech;
-		$object->periode	= $dateperiod;
-		$object->amount		= price2num($amount);
+		$object->periode = $dateperiod;
+		$object->amount = $amount;
 
 		$result = $object->update($user);
-		if ($result <= 0)
-		{
+		if ($result <= 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -585,8 +580,8 @@ if ($id > 0)
 		$sql .= " c.code as type_code,c.libelle as paiement_type,";
 		$sql .= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.currency_code as bacurrency_code, ba.fk_accountancy_journal';
 		$sql .= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
-    	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
-    	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepaiement = c.id";
 		$sql .= ", ".MAIN_DB_PREFIX."chargesociales as cs";
 		$sql .= " WHERE p.fk_charge = ".$id;
@@ -609,9 +604,9 @@ if ($id > 0)
 			print '<td>'.$langs->trans("RefPayment").'</td>';
 			print '<td>'.$langs->trans("Date").'</td>';
 			print '<td>'.$langs->trans("Type").'</td>';
-		    if (!empty($conf->banque->enabled)) {
-        		print '<td class="liste_titre right">'.$langs->trans('BankAccount').'</td>';
-    		}
+			if (!empty($conf->banque->enabled)) {
+				print '<td class="liste_titre right">'.$langs->trans('BankAccount').'</td>';
+			}
 			print '<td class="right">'.$langs->trans("Amount").'</td>';
 			print '</tr>';
 

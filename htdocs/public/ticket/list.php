@@ -563,7 +563,7 @@ if ($action == "view_ticketlist")
 					// Subject
 					if (!empty($arrayfields['t.subject']['checked'])) {
 						print '<td>';
-						print '<a href="javascript:viewticket(\''.$obj->track_id.'\',\''.$_SESSION['email_customer'].'\');">'.$obj->subject.'</a>';
+						print '<a rel="nofollow" href="javascript:viewticket(\''.$obj->track_id.'\',\''.$_SESSION['email_customer'].'\');">'.$obj->subject.'</a>';
 						print '</td>';
 					}
 

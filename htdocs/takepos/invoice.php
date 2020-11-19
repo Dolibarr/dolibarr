@@ -207,7 +207,8 @@ if ($action == 'valid' && $user->rights->facture->creer)
 			dol_htmloutput_errors($langs->trans("InvoiceIsAlreadyValidated", "TakePos"), null, 1);
 		}
 	} elseif (count($invoice->lines) == 0) {
-		dol_syslog("Sale without lines");
+		$error++;
+		dol_syslog('Sale without lines');
 		dol_htmloutput_errors($langs->trans("NoLinesToBill", "TakePos"), null, 1);
 	} elseif (!empty($conf->stock->enabled) && $conf->global->$constantforkey != "1") {
 		$savconst = $conf->global->STOCK_CALCULATE_ON_BILL;
@@ -419,9 +420,10 @@ if ($action == 'creditnote')
 	}
 }
 
-if ($action == 'history')
+if ($action == 'history' || $action=='creditnote')
 {
-	$placeid = (int) GETPOST('placeid', 'int');
+	if ($action=='creditnote') $placeid = $creditnote->id;
+	else $placeid = (int) GETPOST('placeid', 'int');
 	$invoice = new Facture($db);
 	$invoice->fetch($placeid);
 }
@@ -436,7 +438,7 @@ if (($action == "addline" || $action == "freezone") && $placeid == 0)
 	$invoice->date = dol_now();
 	$invoice->module_source = 'takepos';
 	$invoice->pos_source = $_SESSION["takeposterminal"];
-	$invoice->entity = !empty($_SESSION["takeposinvoiceentity"])?$_SESSION["takeposinvoiceentity"]:$conf->entity;
+	$invoice->entity = !empty($_SESSION["takeposinvoiceentity"]) ? $_SESSION["takeposinvoiceentity"] : $conf->entity;
 
 	if ($invoice->socid <= 0)
 	{
@@ -671,7 +673,7 @@ if ($action == "updatereduction")
 if ($action == "order" and $placeid != 0)
 {
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
+	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 		$printer = new dolReceiptPrinter($db);
 	}
@@ -702,10 +704,13 @@ if ($action == "order" and $placeid != 0)
 			$order_receipt_printer1 .= '</td></tr>';
 		}
 	}
-	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" && $linestoprint > 0) {
+	if (($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") && $linestoprint > 0) {
 		$invoice->fetch($placeid); //Reload object before send to printer
 		$printer->orderprinter = 1;
+		echo "<script>";
+		echo "var orderprinter1esc='";
 		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_ORDER_PRINTER1_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 1
+		echo "';</script>";
 	}
 	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='1' and fk_facture=".$invoice->id; // Set as printed
 	$db->query($sql);
@@ -730,10 +735,13 @@ if ($action == "order" and $placeid != 0)
 			$order_receipt_printer2 .= '</td></tr>';
 		}
 	}
-	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" && $linestoprint > 0) {
+	if (($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") && $linestoprint > 0) {
 		$invoice->fetch($placeid); //Reload object before send to printer
 		$printer->orderprinter = 2;
+		echo "<script>";
+		echo "var orderprinter2esc='";
 		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_ORDER_PRINTER2_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 2
+		echo "';</script>";
 	}
 	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='2' and fk_facture=".$invoice->id; // Set as printed
 	$db->query($sql);
@@ -758,10 +766,13 @@ if ($action == "order" and $placeid != 0)
 			$order_receipt_printer3 .= '</td></tr>';
 		}
 	}
-	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" && $linestoprint > 0) {
+	if (($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") && $linestoprint > 0) {
 		$invoice->fetch($placeid); //Reload object before send to printer
 		$printer->orderprinter = 3;
+		echo "<script>";
+		echo "var orderprinter3esc='";
 		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_ORDER_PRINTER3_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 3
+		echo "';</script>";
 	}
 	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='3' and fk_facture=".$invoice->id; // Set as printed
 	$db->query($sql);
@@ -769,7 +780,7 @@ if ($action == "order" and $placeid != 0)
 }
 
 $sectionwithinvoicelink = '';
-if ($action == "valid" || $action == "history")
+if ($action == "valid" || $action == "history" || $action == 'creditnote')
 {
 	$sectionwithinvoicelink .= '<!-- Section with invoice link -->'."\n";
 	$sectionwithinvoicelink .= '<span style="font-size:120%;" class="center">';
@@ -840,25 +851,59 @@ $(document).ready(function() {
 <?php
 
 if ($action == "order" and $order_receipt_printer1 != "") {
-	?>
-    $.ajax({
-        type: "POST",
-        url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print',
-        data: '<?php
-		print $headerorder.$order_receipt_printer1.$footerorder; ?>'
-    });
-    <?php
+	if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true){
+		?>
+		$.ajax({
+			type: "POST",
+			url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/printer/index.php',
+			data: 'invoice='+orderprinter1esc
+		});
+		<?php
+	}
+	else {
+		?>
+		$.ajax({
+			type: "POST",
+			url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print',
+			data: '<?php
+			print $headerorder.$order_receipt_printer1.$footerorder; ?>'
+		});
+		<?php
+	}
 }
 
 if ($action == "order" and $order_receipt_printer2 != "") {
-	?>
-    $.ajax({
-        type: "POST",
-        url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print2',
-        data: '<?php
-		print $headerorder.$order_receipt_printer2.$footerorder; ?>'
-    });
-    <?php
+	if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true){
+		?>
+		$.ajax({
+			type: "POST",
+			url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/printer/index.php?printer=2',
+			data: 'invoice='+orderprinter2esc
+		});
+		<?php
+	}
+	else {
+		?>
+		$.ajax({
+			type: "POST",
+			url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print2',
+			data: '<?php
+			print $headerorder.$order_receipt_printer2.$footerorder; ?>'
+		});
+    	<?php
+	}
+}
+
+if ($action == "order" and $order_receipt_printer3 != "") {
+	if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true){
+		?>
+		$.ajax({
+			type: "POST",
+			url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/printer/index.php?printer=3',
+			data: 'invoice='+orderprinter3esc
+		});
+		<?php
+	}
 }
 
 // Set focus to search field
@@ -1315,7 +1360,7 @@ if ($placeid > 0)
 
 print '</table>';
 
-if ($action == "valid" || $action == "history"){
+if (($action == "valid" || $action == "history") && $invoice->type != Facture::TYPE_CREDIT_NOTE) {
 	print '<button id="buttonprint" type="button" onclick="ModalBox(\'ModalCreditNote\')">'.$langs->trans('CreateCreditNote').'</button>';
 }
 

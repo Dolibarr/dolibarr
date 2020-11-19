@@ -55,8 +55,8 @@ $now = dol_now();
 
 $childids = $user->getAllChildIds(1);
 
-$morefilter = 'AND employee = 1';
-if (!empty($conf->global->HOLIDAY_FOR_NON_SALARIES_TOO)) $morefilter = '';
+$morefilter = '';
+if (!empty($conf->global->HOLIDAY_HIDE_FOR_NON_SALARIES)) $morefilter = 'AND employee = 1';
 
 $error = 0;
 
@@ -73,7 +73,7 @@ if (($id > 0) || $ref)
 
 	// Check current user can read this leave request
 	$canread = 0;
-	if (!empty($user->rights->holiday->read_all)) $canread = 1;
+	if (!empty($user->rights->holiday->readall)) $canread = 1;
 	if (!empty($user->rights->holiday->read) && in_array($object->fk_user, $childids)) $canread = 1;
 	if (!$canread)
 	{
@@ -153,7 +153,7 @@ if (empty($reshook))
 				setEventMessages($langs->trans("NotEnoughPermission"), null, 'errors');
 			} else {
 				if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)) {
-					if (! in_array($fuserid, $childids)) {
+					if (!in_array($fuserid, $childids)) {
 						$error++;
 						setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
 						$action = 'create';
@@ -204,7 +204,7 @@ if (empty($reshook))
 			$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
 			if ($nbopenedday < 0.5)
 			{
-				setEventMessages($langs->trans("ErrorDureeCP"), null, 'errors');		// No working day
+				setEventMessages($langs->trans("ErrorDureeCP"), null, 'errors'); // No working day
 				$error++;
 				$action = 'create';
 			}

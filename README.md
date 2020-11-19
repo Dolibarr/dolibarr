@@ -15,7 +15,7 @@ You can use it as a standalone application or as a web application to access it 
 
 Dolibarr has a large community ready to help you, free forums and [oficially preferred partners ready to offer commercial support should you need it](https://partners.dolibarr.org)
 
-![ScreenShot](https://www.dolibarr.org/images/dolibarr_screenshot1_1920x1080.jpg)
+![ScreenShot](https://www.dolibarr.org/medias/dolibarr_screenshot1_1920x1080.jpg)
 
 ## LICENSE
 

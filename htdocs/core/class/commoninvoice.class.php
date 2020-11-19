@@ -297,7 +297,7 @@ abstract class CommonInvoice extends CommonObject
 		$table2 = 'paiement';
 		$field = 'fk_facture';
 		$field2 = 'fk_paiement';
-		$field3=', p.ref_ext';
+		$field3 = ', p.ref_ext';
 		$sharedentity = 'facture';
 		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
 		{
@@ -305,7 +305,7 @@ abstract class CommonInvoice extends CommonObject
 			$table2 = 'paiementfourn';
 			$field = 'fk_facturefourn';
 			$field2 = 'fk_paiementfourn';
-			$field3='';
+			$field3 = '';
 			$sharedentity = 'facture_fourn';
 		}
 
@@ -327,11 +327,11 @@ abstract class CommonInvoice extends CommonObject
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($resql);
-				$tmp = array('amount'=>$obj->amount,'type'=>$obj->code, 'date'=>$obj->datep, 'num'=>$obj->num, 'ref'=>$obj->ref);
+				$tmp = array('amount'=>$obj->amount, 'type'=>$obj->code, 'date'=>$obj->datep, 'num'=>$obj->num, 'ref'=>$obj->ref);
 				if (!empty($field3)) {
 					$tmp['ref_ext'] = $obj->ref_ext;
 				}
-				$retarray[]=$tmp;
+				$retarray[] = $tmp;
 				$i++;
 			}
 			$this->db->free($resql);
@@ -518,14 +518,16 @@ abstract class CommonInvoice extends CommonObject
 	 *	@param      int		$status        	Id status
 	 *	@param      int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
 	 *	@param		integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, -1 otherwise)
-	 *	@param		int		$type			Type invoice
+	 *	@param		int		$type			Type invoice. If -1, we use $this->type
 	 *	@return     string        			Label of status
 	 */
-	public function LibStatut($paye, $status, $mode = 0, $alreadypaid = -1, $type = 0)
+	public function LibStatut($paye, $status, $mode = 0, $alreadypaid = -1, $type = -1)
 	{
 		// phpcs:enable
 		global $langs;
 		$langs->load('bills');
+
+		if ($type == -1) $type = $this->type;
 
 		$statusType = 'status0';
 		$prefix = 'Short';
@@ -694,7 +696,7 @@ abstract class CommonInvoice extends CommonObject
 			} else {
 				$sql .= ' WHERE fk_facture = '.$this->id;
 			}
-			$sql .= ' AND ext_payment_id IS NULL';			// To exclude record done for some online payments
+			$sql .= ' AND ext_payment_id IS NULL'; // To exclude record done for some online payments
 			$sql .= ' AND traite = 0';
 
 			dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
@@ -753,7 +755,7 @@ abstract class CommonInvoice extends CommonObject
 
 					if (!$error) {
 						// Force payment mode of invoice to withdraw
-						$payment_mode_id = dol_getIdFromCode($this->db, 'PRE', 'c_paiement', 'code', 'id', 1);
+						$payment_mode_id = dol_getIdFromCode($this->db, ($type == 'bank-transfer' ? 'VIR' : 'PRE'), 'c_paiement', 'code', 'id', 1);
 						if ($payment_mode_id > 0) {
 							$result = $this->setPaymentMethods($payment_mode_id);
 						}
@@ -931,21 +933,23 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	 */
 	public $total_ttc;
 
+	public $date_start_fill; // If set to 1, when invoice is created from a template invoice, it will also auto set the field date_start at creation
+	public $date_end_fill; // If set to 1, when invoice is created from a template invoice, it will also auto set the field date_end at creation
+
 	/**
 	 * List of cumulative options:
-	 * Bit 0:	0 si TVA normal - 1 si TVA NPR
+	 * Bit 0:	0 for common VAT - 1 if VAT french NPR
 	 * Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)
 	 * @var int
 	 */
 	public $info_bits = 0;
 
-	/**
-	 *  Constructor
-	 *
-	 *  @param	DoliDB		$db		Database handler
-	 */
-	public function __construct(DoliDB $db)
-	{
-		$this->db = $db;
-	}
+	public $special_code = 0;
+
+	public $fk_multicurrency;
+	public $multicurrency_code;
+	public $multicurrency_subprice;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
 }

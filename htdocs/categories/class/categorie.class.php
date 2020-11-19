@@ -1415,11 +1415,12 @@ class Categorie extends CommonObject
 
 		if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type];
 
-		if ($type === Categorie::TYPE_BANK_LINE) {   // TODO Remove this with standard category code
-			// Load bank groups
+		if ($type === Categorie::TYPE_BANK_LINE) {   // TODO Remove this with standard category code after migration of llx_bank_categ into llx_categorie
+			// Load bank categories
 			$sql = "SELECT c.label, c.rowid";
 			$sql .= " FROM ".MAIN_DB_PREFIX."bank_class as a, ".MAIN_DB_PREFIX."bank_categ as c";
 			$sql .= " WHERE a.lineid=".$id." AND a.fk_categ = c.rowid";
+			$sql .= " AND c.entity IN (".getEntity('category').")";
 			$sql .= " ORDER BY c.label";
 
 			$res = $this->db->query($sql);
@@ -1550,7 +1551,7 @@ class Categorie extends CommonObject
 			if (colorIsLight($this->color)) $forced_color = 'categtextblack';
 		}
 
-		$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.$moreparam.'&backtopage='.urlencode($_SERVER['PHP_SELF'].($moreparam?'?'.$moreparam:'')).'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip '.$forced_color.'">';
+		$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.$moreparam.'&backtopage='.urlencode($_SERVER['PHP_SELF'].($moreparam ? '?'.$moreparam : '')).'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip '.$forced_color.'">';
 		$linkend = '</a>';
 
 		$picto = 'category';

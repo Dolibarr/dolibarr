@@ -139,6 +139,7 @@ if (empty($reshook))
 			else $backtopage = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
 		}
 	}
+
 	$triggermodname = 'MYMODULE_MYOBJECT_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
@@ -546,11 +547,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Documents
 		if ($includedocgeneration) {
 			$objref = dol_sanitizeFileName($object->ref);
-			$relativepath = $objref . '/' . $objref . '.pdf';
+			$relativepath = $objref.'/'.$objref.'.pdf';
 			$filedir = $conf->mymodule->dir_output.'/'.$object->element.'/'.$objref;
-			$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-			$genallowed = $user->rights->mymodule->myobject->read;	// If you can read, you can build the PDF to read content
-			$delallowed = $user->rights->mymodule->myobject->write;	// If you can create/edit, you can remove a file on card
+			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
+			$genallowed = $user->rights->mymodule->myobject->read; // If you can read, you can build the PDF to read content
+			$delallowed = $user->rights->mymodule->myobject->write; // If you can create/edit, you can remove a file on card
 			print $formfile->showdocuments('mymodule:MyObject', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 		}
 

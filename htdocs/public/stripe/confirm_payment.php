@@ -53,7 +53,7 @@ if (isset($_GET['connect']))
 	} else {
 		$endpoint_secret = $conf->global->STRIPE_LIVE_WEBHOOK_CONNECT_KEY;
 		$service = 'StripeLive';
-        $servicestatus = 1;
+		$servicestatus = 1;
 	}
 } else {
 	if (isset($_GET['test']))
@@ -102,28 +102,28 @@ $json_obj = json_decode($json_str);
 
 $intent = null;
 try {
-    if (isset($json_obj->payment_method_id)) {
-        // Create the PaymentIntent
-        $intent = \Stripe\PaymentIntent::create(array(
-            'payment_method' => $json_obj->payment_method_id,
-            'amount' => 1099,
-            'currency' => 'eur',
-            'confirmation_method' => 'manual',
-            'confirm' => true,
-        ));
-    }
-    if (isset($json_obj->payment_intent_id)) {
-        $intent = \Stripe\PaymentIntent::retrieve(
-            $json_obj->payment_intent_id
-            );
-        $intent->confirm();
-    }
-    generatePaymentResponse($intent);
+	if (isset($json_obj->payment_method_id)) {
+		// Create the PaymentIntent
+		$intent = \Stripe\PaymentIntent::create(array(
+			'payment_method' => $json_obj->payment_method_id,
+			'amount' => 1099,
+			'currency' => 'eur',
+			'confirmation_method' => 'manual',
+			'confirm' => true,
+		));
+	}
+	if (isset($json_obj->payment_intent_id)) {
+		$intent = \Stripe\PaymentIntent::retrieve(
+			$json_obj->payment_intent_id
+			);
+		$intent->confirm();
+	}
+	generatePaymentResponse($intent);
 } catch (\Stripe\Error\Base $e) {
-    // Display error on client
-    echo json_encode(array(
-        'error' => $e->getMessage()
-    ));
+	// Display error on client
+	echo json_encode(array(
+		'error' => $e->getMessage()
+	));
 }
 
 /**
@@ -134,25 +134,25 @@ try {
  */
 function generatePaymentResponse($intent)
 {
-    if ($intent->status == 'requires_source_action' &&
-        $intent->next_action->type == 'use_stripe_sdk') {
-        // Tell the client to handle the action
-        echo json_encode(array(
-            'requires_action' => true,
-            'payment_intent_client_secret' => $intent->client_secret
-        ));
-    } elseif ($intent->status == 'succeeded') {
-        // The payment didn’t need any additional actions and completed!
-        // Handle post-payment fulfillment
+	if ($intent->status == 'requires_source_action' &&
+		$intent->next_action->type == 'use_stripe_sdk') {
+		// Tell the client to handle the action
+		echo json_encode(array(
+			'requires_action' => true,
+			'payment_intent_client_secret' => $intent->client_secret
+		));
+	} elseif ($intent->status == 'succeeded') {
+		// The payment didn’t need any additional actions and completed!
+		// Handle post-payment fulfillment
 
-        // TODO
+		// TODO
 
-        echo json_encode(array(
-            "success" => true
-        ));
-    } else {
-        // Invalid status
-        http_response_code(500);
-        echo json_encode(array('error' => 'Invalid PaymentIntent status'));
-    }
+		echo json_encode(array(
+			"success" => true
+		));
+	} else {
+		// Invalid status
+		http_response_code(500);
+		echo json_encode(array('error' => 'Invalid PaymentIntent status'));
+	}
 }

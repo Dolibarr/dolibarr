@@ -56,29 +56,29 @@ class AccountingJournal extends CommonObject
 	 */
 	public $rowid;
 
-    /**
-     * @var string Accounting journal code
-     */
+	/**
+	 * @var string Accounting journal code
+	 */
 	public $code;
 
 	/**
-     * @var string Accounting Journal label
-     */
-    public $label;
+	 * @var string Accounting Journal label
+	 */
+	public $label;
 
-    /**
-     * @var int 1:various operations, 2:sale, 3:purchase, 4:bank, 5:expense-report, 8:inventory, 9: has-new
-     */
-    public $nature;
+	/**
+	 * @var int 1:various operations, 2:sale, 3:purchase, 4:bank, 5:expense-report, 8:inventory, 9: has-new
+	 */
+	public $nature;
 
-    /**
-     * @var int is active or not
-     */
+	/**
+	 * @var int is active or not
+	 */
 	public $active;
 
-    /**
-     * @var array array of lines
-     */
+	/**
+	 * @var array array of lines
+	 */
 	public $lines;
 
 	/**
@@ -86,10 +86,10 @@ class AccountingJournal extends CommonObject
 	 *
 	 * @param DoliDB $db Database handle
 	 */
-    public function __construct($db)
-    {
-        $this->db = $db;
-    }
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
 
 	/**
 	 * Load an object from database
@@ -155,8 +155,8 @@ class AccountingJournal extends CommonObject
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-    public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
-    {
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	{
 		$sql = "SELECT rowid, code, label, nature, active";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		// Manage filter
@@ -284,7 +284,7 @@ class AccountingJournal extends CommonObject
 		return $this->LibType($this->nature, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return type of an accounting journal
 	 *
@@ -294,7 +294,7 @@ class AccountingJournal extends CommonObject
 	 */
 	public function LibType($nature, $mode = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 
 		$langs->loadLangs(array("accountancy"));

@@ -62,12 +62,12 @@ class modExpedition extends DolibarrModules
 		// Data directories to create when module is enabled
 		$this->dirs = array("/expedition/temp",
 							"/expedition/sending",
-		                    "/expedition/sending/temp",
-		                    "/expedition/receipt",
-		                    "/expedition/receipt/temp",
+							"/expedition/sending/temp",
+							"/expedition/receipt",
+							"/expedition/receipt/temp",
 							"/doctemplates/shipments",
 							"/doctemplates/deliveries"
-		                    );
+							);
 
 		// Config pages
 		$this->config_page_url = array("confexped.php");
@@ -169,7 +169,7 @@ class modExpedition extends DolibarrModules
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'shipping_advance';
-        $this->rights[$r][5] = 'send';
+		$this->rights[$r][5] = 'send';
 
 		$r++;
 		$this->rights[$r][0] = 106;
@@ -277,8 +277,8 @@ class modExpedition extends DolibarrModules
 		$this->export_dependencies_array[$r] = array('shipment_line'=>'ed.rowid', 'product'=>'ed.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 		if ($idcontacts && !empty($conf->global->SHIPMENT_ADD_CONTACTS_IN_EXPORT))
 		{
-		    $keyforselect = 'socpeople'; $keyforelement = 'contact'; $keyforaliasextra = 'extra3';
-		    include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+			$keyforselect = 'socpeople'; $keyforelement = 'contact'; $keyforaliasextra = 'extra3';
+			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		}
 		$keyforselect = 'expedition'; $keyforelement = 'shipment'; $keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
@@ -300,9 +300,9 @@ class modExpedition extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on cd.fk_product = p.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extraprod ON p.rowid = extraprod.fk_object';
 		if ($idcontacts && !empty($conf->global->SHIPMENT_ADD_CONTACTS_IN_EXPORT)) {
-		    $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'element_contact as ee ON ee.element_id = cd.fk_commande AND ee.fk_c_type_contact IN ('.$idcontacts.')';
-		    $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople as sp ON sp.rowid = ee.fk_socpeople';
-		    $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra3 ON sp.rowid = extra3.fk_object';
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'element_contact as ee ON ee.element_id = cd.fk_commande AND ee.fk_c_type_contact IN ('.$idcontacts.')';
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople as sp ON sp.rowid = ee.fk_socpeople';
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra3 ON sp.rowid = extra3.fk_object';
 		}
 		$this->export_sql_end[$r] .= ' WHERE c.fk_soc = s.rowid AND c.rowid = ed.fk_expedition AND ed.fk_origin_line = cd.rowid';
 		$this->export_sql_end[$r] .= ' AND c.entity IN ('.getEntity('expedition').')';
@@ -315,7 +315,7 @@ class modExpedition extends DolibarrModules
 	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *  It also creates data directories
 	 *
-     *  @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *  @return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')

@@ -35,20 +35,20 @@ include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
  */
 class box_contacts extends ModeleBoxes
 {
-    public $boxcode = "lastcontacts";
-    public $boximg = "object_contact";
-    public $boxlabel = "BoxLastContacts";
-    public $depends = array("societe");
+	public $boxcode = "lastcontacts";
+	public $boximg = "object_contact";
+	public $boxlabel = "BoxLastContacts";
+	public $depends = array("societe");
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $param;
+	public $param;
 
-    public $info_box_head = array();
-    public $info_box_contents = array();
+	public $info_box_head = array();
+	public $info_box_contents = array();
 
 
 	/**
@@ -59,18 +59,18 @@ class box_contacts extends ModeleBoxes
 	 */
 	public function __construct($db, $param)
 	{
-	    global $user;
+		global $user;
 
-	    $this->db = $db;
+		$this->db = $db;
 
-	    $this->hidden = !($user->rights->societe->lire && $user->rights->societe->contact->lire);
+		$this->hidden = !($user->rights->societe->lire && $user->rights->societe->contact->lire);
 	}
 
 	/**
 	 *  Load data into info_box_contents array to show array later.
 	 *
 	 *  @param	int		$max        Maximum number of records to load
-     *  @return	void
+	 *  @return	void
 	 */
 	public function loadBox($max = 5)
 	{
@@ -121,7 +121,7 @@ class box_contacts extends ModeleBoxes
 					$contactstatic->phone_pro = $objp->phone;
 					$contactstatic->phone_perso = $objp->phone_perso;
 					$contactstatic->phone_mobile = $objp->phone_mobile;
-                    $contactstatic->email = $objp->spemail;
+					$contactstatic->email = $objp->spemail;
 					$contactstatic->address = $objp->address;
 					$contactstatic->zip = $objp->zip;
 					$contactstatic->town = $objp->town;
@@ -130,7 +130,7 @@ class box_contacts extends ModeleBoxes
 
 					$societestatic->id = $objp->fk_soc;
 					$societestatic->name = $objp->socname;
-                    $societestatic->email = $objp->semail;
+					$societestatic->email = $objp->semail;
 					$societestatic->name_alias = $objp->name_alias;
 					$societestatic->code_client = $objp->code_client;
 					$societestatic->code_fournisseur = $objp->code_fournisseur;

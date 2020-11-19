@@ -32,20 +32,20 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_services_contracts extends ModeleBoxes
 {
-    public $boxcode = "lastproductsincontract";
-    public $boximg = "object_product";
-    public $boxlabel = "BoxLastProductsInContract";
-    public $depends = array("service", "contrat");
+	public $boxcode = "lastproductsincontract";
+	public $boximg = "object_product";
+	public $boxlabel = "BoxLastProductsInContract";
+	public $depends = array("service", "contrat");
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $param;
+	public $param;
 
-    public $info_box_head = array();
-    public $info_box_contents = array();
+	public $info_box_head = array();
+	public $info_box_contents = array();
 
 
 	/**
@@ -56,18 +56,18 @@ class box_services_contracts extends ModeleBoxes
 	 */
 	public function __construct($db, $param)
 	{
-	    global $user;
+		global $user;
 
-	    $this->db = $db;
+		$this->db = $db;
 
-	    $this->hidden = !($user->rights->service->lire && $user->rights->contrat->lire);
+		$this->hidden = !($user->rights->service->lire && $user->rights->contrat->lire);
 	}
 
 	/**
 	 *  Load data into info_box_contents array to show array later.
 	 *
 	 *  @param	int		$max        Maximum number of records to load
-     *  @return	void
+	 *  @return	void
 	 */
 	public function loadBox($max = 5)
 	{
@@ -83,10 +83,10 @@ class box_services_contracts extends ModeleBoxes
 
 		if ($user->rights->service->lire && $user->rights->contrat->lire)
 		{
-		    $contractstatic = new Contrat($this->db);
-		    $contractlinestatic = new ContratLigne($this->db);
-		    $thirdpartytmp = new Societe($this->db);
-		    $productstatic = new Product($this->db);
+			$contractstatic = new Contrat($this->db);
+			$contractlinestatic = new ContratLigne($this->db);
+			$thirdpartytmp = new Societe($this->db);
+			$productstatic = new Product($this->db);
 
 			$sql = "SELECT s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
 			$sql .= " c.rowid, c.ref, c.statut as contract_status, c.ref_customer, c.ref_supplier,";
@@ -182,31 +182,31 @@ class box_services_contracts extends ModeleBoxes
 
 
 					$this->info_box_contents[$i][] = array(
-                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-                        'text' => $s,
-                        'asis' => 1
-                    );
+						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+						'text' => $s,
+						'asis' => 1
+					);
 
 					$this->info_box_contents[$i][] = array(
-                        'td' => 'class="nowraponall"',
-                        'text' => $contractstatic->getNomUrl(1),
-                        'asis' => 1
-                    );
+						'td' => 'class="nowraponall"',
+						'text' => $contractstatic->getNomUrl(1),
+						'asis' => 1
+					);
 
 					$this->info_box_contents[$i][] = array(
-                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-                        'text' => $thirdpartytmp->getNomUrl(1),
-                        'asis' => 1
-                    );
+						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+						'text' => $thirdpartytmp->getNomUrl(1),
+						'asis' => 1
+					);
 
 					$this->info_box_contents[$i][] = array(
-                        'td' => '',
-                        'text' => dol_print_date($datem, 'day'),
+						'td' => '',
+						'text' => dol_print_date($datem, 'day'),
 						'text2'=> $late,
-                    );
+					);
 
 					$this->info_box_contents[$i][] = array(
-                        'td' => 'class="right" width="18"',
+						'td' => 'class="right" width="18"',
 						'text' => $contractlinestatic->getLibStatut(3)
 					);
 
@@ -220,15 +220,15 @@ class box_services_contracts extends ModeleBoxes
 				$this->db->free($result);
 			} else {
 				$this->info_box_contents[0][0] = array(
-                    'td' => '',
-                    'maxlength' => 500,
-                    'text' => ($this->db->error().' sql='.$sql),
-                );
+					'td' => '',
+					'maxlength' => 500,
+					'text' => ($this->db->error().' sql='.$sql),
+				);
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-			    'td' => 'class="nohover opacitymedium left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover opacitymedium left"',
+				'text' => $langs->trans("ReadPermissionNotAllowed")
 			);
 		}
 	}
@@ -241,8 +241,8 @@ class box_services_contracts extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    public function showBox($head = null, $contents = null, $nooutput = 0)
-    {
-        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
-    }
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+	}
 }

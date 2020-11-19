@@ -130,9 +130,6 @@ class Asset extends CommonObject
 	 */
 	public $description;
 
-	public $note_public;
-	public $note_private;
-
 	/**
 	 * @var integer|string date_creation
 	 */
@@ -151,6 +148,9 @@ class Asset extends CommonObject
 	 */
 	public $fk_user_modif;
 
+	/**
+	 * @var string import key
+	 */
 	public $import_key;
 
 	/**

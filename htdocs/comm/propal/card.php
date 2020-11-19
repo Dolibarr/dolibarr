@@ -166,24 +166,26 @@ if (empty($reshook))
 			if ($object->id > 0) {
 				if (!empty($conf->global->PROPAL_CLONE_DATE_DELIVERY)) {
 					//Get difference between old and new delivery date and change lines according to difference
-                    $date_delivery = dol_mktime(12, 0, 0,
+					$date_delivery = dol_mktime(12, 0, 0,
 						GETPOST('date_deliverymonth', 'int'),
 						GETPOST('date_deliveryday', 'int'),
 						GETPOST('date_deliveryyear', 'int')
 					);
-					if (!empty($object->date_livraison) && !empty($date_delivery))
+					$date_delivery_old = (empty($object->delivery_date) ? $object->date_livraison : $object->delivery_date);
+					if (!empty($date_delivery_old) && !empty($date_delivery))
 					{
 						//Attempt to get the date without possible hour rounding errors
-                        $old_date_delivery = dol_mktime(12, 0, 0,
-							dol_print_date($object->date_livraison, '%m'),
-							dol_print_date($object->date_livraison, '%d'),
-							dol_print_date($object->date_livraison, '%Y')
+						$old_date_delivery = dol_mktime(12, 0, 0,
+							dol_print_date($date_delivery_old, '%m'),
+							dol_print_date($date_delivery_old, '%d'),
+							dol_print_date($date_delivery_old, '%Y')
 						);
 						//Calculate the difference and apply if necessary
 						$difference = $date_delivery - $old_date_delivery;
 						if ($difference != 0)
 						{
 							$object->date_livraison = $date_delivery;
+							$object->delivery_date = $date_delivery;
 							foreach ($object->lines as $line)
 							{
 								if (isset($line->date_start)) $line->date_start = $line->date_start + $difference;
@@ -340,7 +342,9 @@ if (empty($reshook))
 				if ($object->fetch(GETPOST('copie_propal', 'int')) > 0) {
 					$object->ref = GETPOST('ref');
 					$object->datep = $datep;
-					$object->date_livraison = $date_delivery;
+					$object->date = $datep;
+					$object->date_livraison = $date_delivery;	// deprecated
+					$object->delivery_date = $date_delivery;
 					$object->availability_id = GETPOST('availability_id');
 					$object->demand_reason_id = GETPOST('demand_reason_id');
 					$object->fk_delivery_address = GETPOST('fk_address', 'int');
@@ -354,8 +358,9 @@ if (empty($reshook))
 					$object->socid = GETPOST('socid', 'int');
 					$object->contact_id = GETPOST('contactid', 'int');
 					$object->fk_project = GETPOST('projectid', 'int');
-					$object->model_pdf = GETPOST('model');
+					$object->model_pdf = GETPOST('model', 'alphanohtml');
 					$object->author = $user->id; // deprecated
+					$object->user_author_id = $user->id;
 					$object->note_private = GETPOST('note_private', 'restricthtml');
 					$object->note_public = GETPOST('note_public', 'restricthtml');
 					$object->statut = Propal::STATUS_DRAFT;
@@ -371,7 +376,9 @@ if (empty($reshook))
 				$object->ref = GETPOST('ref');
 				$object->ref_client = GETPOST('ref_client');
 				$object->datep = $datep;
+				$object->date = $datep;
 				$object->date_livraison = $date_delivery;
+				$object->delivery_date = $date_delivery;
 				$object->availability_id = GETPOST('availability_id', 'int');
 				$object->demand_reason_id = GETPOST('demand_reason_id', 'int');
 				$object->fk_delivery_address = GETPOST('fk_address', 'int');
@@ -666,82 +673,82 @@ if (empty($reshook))
 		}
 	} // add lines from objectlinked
 	elseif ($action == 'import_lines_from_object'
-	    && $user->rights->propal->creer
-	    && $object->statut == Propal::STATUS_DRAFT
-	    )
+		&& $user->rights->propal->creer
+		&& $object->statut == Propal::STATUS_DRAFT
+		)
 	{
-	    $fromElement = GETPOST('fromelement');
-	    $fromElementid = GETPOST('fromelementid');
-	    $importLines = GETPOST('line_checkbox');
+		$fromElement = GETPOST('fromelement');
+		$fromElementid = GETPOST('fromelementid');
+		$importLines = GETPOST('line_checkbox');
 
-	    if (!empty($importLines) && is_array($importLines) && !empty($fromElement) && ctype_alpha($fromElement) && !empty($fromElementid))
-	    {
-	        if ($fromElement == 'commande')
-	        {
-	            dol_include_once('/'.$fromElement.'/class/'.$fromElement.'.class.php');
-	            $lineClassName = 'OrderLine';
-	        } elseif ($fromElement == 'propal')
-	        {
-	            dol_include_once('/comm/'.$fromElement.'/class/'.$fromElement.'.class.php');
-	            $lineClassName = 'PropaleLigne';
-	        }
-	        $nextRang = count($object->lines) + 1;
-	        $importCount = 0;
-	        $error = 0;
-	        foreach ($importLines as $lineId)
-	        {
-	            $lineId = intval($lineId);
-	            $originLine = new $lineClassName($db);
-	            if (intval($fromElementid) > 0 && $originLine->fetch($lineId) > 0)
-	            {
-	                $originLine->fetch_optionals();
-	                $desc = $originLine->desc;
-	                $pu_ht = $originLine->subprice;
-	                $qty = $originLine->qty;
-	                $txtva = $originLine->tva_tx;
-	                $txlocaltax1 = $originLine->localtax1_tx;
-	                $txlocaltax2 = $originLine->localtax2_tx;
-	                $fk_product = $originLine->fk_product;
-	                $remise_percent = $originLine->remise_percent;
-	                $date_start = $originLine->date_start;
-	                $date_end = $originLine->date_end;
-	                $ventil = 0;
-	                $info_bits = $originLine->info_bits;
-	                $fk_remise_except = $originLine->fk_remise_except;
-	                $price_base_type = 'HT';
-	                $pu_ttc = 0;
-	                $type = $originLine->product_type;
-	                $rang = $nextRang++;
-	                $special_code = $originLine->special_code;
-	                $origin = $originLine->element;
-	                $origin_id = $originLine->id;
-	                $fk_parent_line = 0;
-	                $fk_fournprice = $originLine->fk_fournprice;
-	                $pa_ht = $originLine->pa_ht;
-	                $label = $originLine->label;
-	                $array_options = $originLine->array_options;
-	                $situation_percent = 100;
-	                $fk_prev_id = '';
-	                $fk_unit = $originLine->fk_unit;
-	                $pu_ht_devise = $originLine->multicurrency_subprice;
+		if (!empty($importLines) && is_array($importLines) && !empty($fromElement) && ctype_alpha($fromElement) && !empty($fromElementid))
+		{
+			if ($fromElement == 'commande')
+			{
+				dol_include_once('/'.$fromElement.'/class/'.$fromElement.'.class.php');
+				$lineClassName = 'OrderLine';
+			} elseif ($fromElement == 'propal')
+			{
+				dol_include_once('/comm/'.$fromElement.'/class/'.$fromElement.'.class.php');
+				$lineClassName = 'PropaleLigne';
+			}
+			$nextRang = count($object->lines) + 1;
+			$importCount = 0;
+			$error = 0;
+			foreach ($importLines as $lineId)
+			{
+				$lineId = intval($lineId);
+				$originLine = new $lineClassName($db);
+				if (intval($fromElementid) > 0 && $originLine->fetch($lineId) > 0)
+				{
+					$originLine->fetch_optionals();
+					$desc = $originLine->desc;
+					$pu_ht = $originLine->subprice;
+					$qty = $originLine->qty;
+					$txtva = $originLine->tva_tx;
+					$txlocaltax1 = $originLine->localtax1_tx;
+					$txlocaltax2 = $originLine->localtax2_tx;
+					$fk_product = $originLine->fk_product;
+					$remise_percent = $originLine->remise_percent;
+					$date_start = $originLine->date_start;
+					$date_end = $originLine->date_end;
+					$ventil = 0;
+					$info_bits = $originLine->info_bits;
+					$fk_remise_except = $originLine->fk_remise_except;
+					$price_base_type = 'HT';
+					$pu_ttc = 0;
+					$type = $originLine->product_type;
+					$rang = $nextRang++;
+					$special_code = $originLine->special_code;
+					$origin = $originLine->element;
+					$origin_id = $originLine->id;
+					$fk_parent_line = 0;
+					$fk_fournprice = $originLine->fk_fournprice;
+					$pa_ht = $originLine->pa_ht;
+					$label = $originLine->label;
+					$array_options = $originLine->array_options;
+					$situation_percent = 100;
+					$fk_prev_id = '';
+					$fk_unit = $originLine->fk_unit;
+					$pu_ht_devise = $originLine->multicurrency_subprice;
 
-	                $res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $price_base_type, $pu_ttc, $info_bits, $type, $rang, $special_code, $fk_parent_line, $fk_fournprice, $pa_ht, $label, $date_start, $date_end, $array_options, $fk_unit, $origin, $origin_id, $pu_ht_devise, $fk_remise_except);
+					$res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $price_base_type, $pu_ttc, $info_bits, $type, $rang, $special_code, $fk_parent_line, $fk_fournprice, $pa_ht, $label, $date_start, $date_end, $array_options, $fk_unit, $origin, $origin_id, $pu_ht_devise, $fk_remise_except);
 
-	                if ($res > 0) {
-	                    $importCount++;
-	                } else {
-	                    $error++;
-	                }
-	            } else {
-	                $error++;
-	            }
-	        }
+					if ($res > 0) {
+						$importCount++;
+					} else {
+						$error++;
+					}
+				} else {
+					$error++;
+				}
+			}
 
-	        if ($error)
-	        {
-	            setEventMessages($langs->trans('ErrorsOnXLines', $error), null, 'errors');
-	        }
-	    }
+			if ($error)
+			{
+				setEventMessages($langs->trans('ErrorsOnXLines', $error), null, 'errors');
+			}
+		}
 	}
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
@@ -890,8 +897,8 @@ if (empty($reshook))
 					$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
 					if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
 					{
-					    if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) $tva_tx = $prod->multiprices_tva_tx[$object->thirdparty->price_level];
-					    if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) $tva_npr = $prod->multiprices_recuperableonly[$object->thirdparty->price_level];
+						if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) $tva_tx = $prod->multiprices_tva_tx[$object->thirdparty->price_level];
+						if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) $tva_npr = $prod->multiprices_recuperableonly[$object->thirdparty->price_level];
 					}
 				} // If price per customer
 				elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
@@ -1291,8 +1298,8 @@ if (empty($reshook))
 		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
 	} elseif ($action == 'classin' && $usercancreate) {
-        // Set project
-        $object->setProject(GETPOST('projectid', 'int'));
+		// Set project
+		$object->setProject(GETPOST('projectid', 'int'));
 	} // Delivery time
 	elseif ($action == 'setavailability' && $usercancreate) {
 		$result = $object->set_availability($user, GETPOST('availability_id', 'int'));
@@ -1516,11 +1523,12 @@ if ($action == 'create')
 		print '<td>';
 		print $form->select_company('', 'socid', '(s.client = 1 OR s.client = 2 OR s.client = 3) AND status=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 maxwidth500');
 		// reload page to retrieve customer informations
-		if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE))
+		if (empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED))
 		{
 			print '<script type="text/javascript">
 			$(document).ready(function() {
 				$("#socid").change(function() {
+					console.log("We have changed the company - Reload page");
 					var socid = $(this).val();
 					// reload page
 					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&ref_client="+$("input[name=ref_client]").val();
@@ -1535,7 +1543,7 @@ if ($action == 'create')
 
 	if ($socid > 0)
 	{
-        // Contacts (ask contact only if thirdparty already defined).
+		// Contacts (ask contact only if thirdparty already defined).
 		print "<tr><td>".$langs->trans("DefaultContact").'</td><td>';
 		$form->select_contacts($soc->id, $contactid, 'contactid', 1, $srccontactslist);
 		print '</td></tr>';
@@ -1723,9 +1731,9 @@ if ($action == 'create')
 
 		if (!empty($conf->multicurrency->enabled))
 		{
-		    print '<tr><td>'.$langs->trans('MulticurrencyAmountHT').'</td><td>'.price($objectsrc->multicurrency_total_ht).'</td></tr>';
-		    print '<tr><td>'.$langs->trans('MulticurrencyAmountVAT').'</td><td>'.price($objectsrc->multicurrency_total_tva)."</td></tr>";
-		    print '<tr><td>'.$langs->trans('MulticurrencyAmountTTC').'</td><td>'.price($objectsrc->multicurrency_total_ttc)."</td></tr>";
+			print '<tr><td>'.$langs->trans('MulticurrencyAmountHT').'</td><td>'.price($objectsrc->multicurrency_total_ht).'</td></tr>';
+			print '<tr><td>'.$langs->trans('MulticurrencyAmountVAT').'</td><td>'.price($objectsrc->multicurrency_total_tva)."</td></tr>";
+			print '<tr><td>'.$langs->trans('MulticurrencyAmountTTC').'</td><td>'.price($objectsrc->multicurrency_total_ttc)."</td></tr>";
 		}
 	}
 
@@ -1826,8 +1834,8 @@ if ($action == 'create')
 			// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
 			array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=2 OR s.client=3)'))
 		);
-		if (!empty($conf->global->PROPAL_CLONE_DATE_DELIVERY) && !empty($object->date_livraison)) {
-			$formquestion[] = array('type' => 'date', 'name' => 'date_delivery', 'label' => $langs->trans("DeliveryDate"), 'value' => $object->date_livraison);
+		if (!empty($conf->global->PROPAL_CLONE_DATE_DELIVERY) && !empty($object->delivery_date)) {
+			$formquestion[] = array('type' => 'date', 'name' => 'date_delivery', 'label' => $langs->trans("DeliveryDate"), 'value' => $object->delivery_date);
 		}
 		// Incomplete payment. We ask if reason = discount or other
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmClonePropal', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
@@ -1837,7 +1845,7 @@ if ($action == 'create')
 	{
 		//Form to close proposal (signed or not)
 		$formquestion = array(
-			array('type' => 'select', 'name' => 'statut', 'label' => '<span class="fieldrequired">'.$langs->trans("CloseAs").'</span>', 'values' => array(2=>$object->LibStatut($object::STATUS_SIGNED), 3=>$object->LibStatut($object::STATUS_NOTSIGNED))),
+			array('type' => 'select', 'name' => 'statut', 'label' => '<span class="fieldrequired">'.$langs->trans("CloseAs").'</span>', 'values' => array($object::STATUS_SIGNED => $object->LibStatut($object::STATUS_SIGNED), $object::STATUS_NOTSIGNED => $object->LibStatut($object::STATUS_NOTSIGNED))),
 			array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"), 'value' => '')				// Field to complete private note (not replace)
 		);
 
@@ -2051,9 +2059,9 @@ if ($action == 'create')
 	// Delivery date
 	$langs->load('deliveries');
 	print '<tr><td>';
-	print $form->editfieldkey($langs->trans('DeliveryDate'), 'date_livraison', $object->date_livraison, $object, $usercancreate, 'datepicker');
+	print $form->editfieldkey($langs->trans('DeliveryDate'), 'date_livraison', $object->delivery_date, $object, $usercancreate, 'datepicker');
 	print '</td><td>';
-	print $form->editfieldval($langs->trans('DeliveryDate'), 'date_livraison', $object->date_livraison, $object, $usercancreate, 'datepicker');
+	print $form->editfieldval($langs->trans('DeliveryDate'), 'date_livraison', $object->delivery_date, $object, $usercancreate, 'datepicker');
 	print '</td>';
 	print '</tr>';
 
@@ -2213,21 +2221,21 @@ if ($action == 'create')
 		print '</tr>';
 	}
 
-    $tmparray = $object->getTotalWeightVolume();
-    $totalWeight = $tmparray['weight'];
-    $totalVolume = $tmparray['volume'];
-    if ($totalWeight) {
-        print '<tr><td>'.$langs->trans("CalculatedWeight").'</td>';
-        print '<td>';
-        print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND) ? $conf->global->MAIN_WEIGHT_DEFAULT_ROUND : -1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? $conf->global->MAIN_WEIGHT_DEFAULT_UNIT : 'no');
-        print '</td></tr>';
-    }
-    if ($totalVolume) {
-        print '<tr><td>'.$langs->trans("CalculatedVolume").'</td>';
-        print '<td>';
-        print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND) ? $conf->global->MAIN_VOLUME_DEFAULT_ROUND : -1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT) ? $conf->global->MAIN_VOLUME_DEFAULT_UNIT : 'no');
-        print '</td></tr>';
-    }
+	$tmparray = $object->getTotalWeightVolume();
+	$totalWeight = $tmparray['weight'];
+	$totalVolume = $tmparray['volume'];
+	if ($totalWeight) {
+		print '<tr><td>'.$langs->trans("CalculatedWeight").'</td>';
+		print '<td>';
+		print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND) ? $conf->global->MAIN_WEIGHT_DEFAULT_ROUND : -1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? $conf->global->MAIN_WEIGHT_DEFAULT_UNIT : 'no');
+		print '</td></tr>';
+	}
+	if ($totalVolume) {
+		print '<tr><td>'.$langs->trans("CalculatedVolume").'</td>';
+		print '<td>';
+		print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND) ? $conf->global->MAIN_VOLUME_DEFAULT_ROUND : -1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT) ? $conf->global->MAIN_VOLUME_DEFAULT_UNIT : 'no');
+		print '</td></tr>';
+	}
 
 	// Incoterms
 	if (!empty($conf->incoterm->enabled))
@@ -2359,7 +2367,7 @@ if ($action == 'create')
 	print '<div class="div-table-responsive-no-min">';
 	if (!empty($object->lines) || ($object->statut == Propal::STATUS_DRAFT && $usercancreate && $action != 'selectlines' && $action != 'editline'))
 	{
-	    print '<table id="tablelines" class="noborder noshadow" width="100%">';
+		print '<table id="tablelines" class="noborder noshadow" width="100%">';
 	}
 
 	if (!empty($object->lines))
@@ -2384,7 +2392,7 @@ if ($action == 'create')
 
 	if (!empty($object->lines) || ($object->statut == Propal::STATUS_DRAFT && $usercancreate && $action != 'selectlines' && $action != 'editline'))
 	{
-	    print '</table>';
+		print '</table>';
 	}
 	print '</div>';
 
@@ -2540,7 +2548,7 @@ if ($action == 'create')
 		$compatibleImportElementsList = false;
 		if ($user->rights->propal->creer && $object->statut == Propal::STATUS_DRAFT)
 		{
-		    $compatibleImportElementsList = array('commande', 'propal'); // import from linked elements
+			$compatibleImportElementsList = array('commande', 'propal'); // import from linked elements
 		}
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, $compatibleImportElementsList);
 

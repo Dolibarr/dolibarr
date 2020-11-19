@@ -140,7 +140,7 @@ if ($action == "view" || $action == "presend" || $action == "close" || $action =
 $triggersendname = 'CANDIDATURE_SENTBYMAIL';
 $paramname = 'id';
 $autocopy = 'MAIN_MAIL_AUTOCOPY_CANDIDATURE_TO'; // used to know the automatic BCC to add
-$trackid = 'can'.$object->id;
+$trackid = 'recruitmentcandidature'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
@@ -165,7 +165,7 @@ $arrayofjs = array();
 $arrayofcss = array();
 
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
-llxHeader($head, $langs->trans("PositionToBeFilled"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
+llxHeader($head, $langs->trans("PositionToBeFilled"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1);
 
 
 print '<span id="dolpaymentspan"></span>'."\n";
@@ -211,7 +211,7 @@ if ($urllogo)
 	print '>';
 	print '</div>';
 	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
-		print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 	}
 	print '</div>';
 }
@@ -278,7 +278,7 @@ if (empty($emailforcontact)) {
 		$emailforcontact = $mysoc->email;
 	}
 }
-print '<b>';
+print '<b class="wordbreak">';
 print $tmpuser->getFullName(-1);
 print ' - '.dol_print_email($emailforcontact, 0, 0, 1, 0, 0, 1);
 print '</b>';

@@ -390,7 +390,7 @@ if ($action == 'dopayment')
 
 // Called when choosing Stripe mode.
 // When using the Charge API architecture, this code is called after clicking the 'dopayment' with the Charge API architecture.
-// When using the PaymentIntent API architecture, the Stripe customer is already created when creating PaymentItent when showing payment page and the payment is already ok.
+// When using the PaymentIntent API architecture, the Stripe customer is already created when creating PaymentIntent when showing payment page and the payment is already ok.
 if ($action == 'charge' && !empty($conf->stripe->enabled))
 {
 	$amountstripe = $amount;
@@ -400,6 +400,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled))
 	$arrayzerounitcurrency = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
 	if (!in_array($currency, $arrayzerounitcurrency)) $amountstripe = $amountstripe * 100;
 
+	dol_syslog("--- newpayment.php Execute action = ".$action, LOG_DEBUG, 0, '_stripe');
 	dol_syslog("POST keys  : ".join(',', array_keys($_POST)), LOG_DEBUG, 0, '_stripe');
 	dol_syslog("POST values: ".join(',', $_POST), LOG_DEBUG, 0, '_stripe');
 
@@ -419,7 +420,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled))
 	$error = 0;
 	$errormessage = '';
 
-	// When using the Charge API architecture
+	// When using the old Charge API architecture
 	if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
 	{
 		try {
@@ -695,7 +696,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled))
 	dol_syslog("onlinetoken=".$_SESSION["onlinetoken"]." FinalPaymentAmt=".$_SESSION["FinalPaymentAmt"]." currencyCodeType=".$_SESSION["currencyCodeType"]." payerID=".$_SESSION['payerID']." TRANSACTIONID=".$_SESSION['TRANSACTIONID'], LOG_DEBUG, 0, '_stripe');
 	dol_syslog("FULLTAG=".$FULLTAG, LOG_DEBUG, 0, '_stripe');
 	dol_syslog("error=".$error." errormessage=".$errormessage, LOG_DEBUG, 0, '_stripe');
-	dol_syslog("Now call the redirect to paymentok or paymentko", LOG_DEBUG, 0, '_stripe');
+	dol_syslog("Now call the redirect to paymentok or paymentko, URL = ".($error ? $urlko : $urlok), LOG_DEBUG, 0, '_stripe');
 
 	if ($error)
 	{
@@ -787,7 +788,7 @@ if ($urllogo)
 	print '>';
 	print '</div>';
 	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
-		print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 	}
 	print '</div>';
 }
@@ -948,7 +949,7 @@ if ($source == 'order')
 	$directdownloadlink = $order->getLastMainDocLink('commande');
 	if ($directdownloadlink)
 	{
-		print '<br><a href="'.$directdownloadlink.'">';
+		print '<br><a href="'.$directdownloadlink.'" rel="nofollow noopener">';
 		print img_mime($order->last_main_doc, '');
 		print $langs->trans("DownloadDocument").'</a>';
 	}
@@ -1677,11 +1678,11 @@ if ($action != 'dopayment')
 
 			// Buttons for all payments registration methods
 
-		    // This hook is used to add Button to newpayment.php for external payment modules (ie Payzen, ...)
-            $parameters = [
-            	'paymentmethod' => $paymentmethod
-            ];
-            $reshook = $hookmanager->executeHooks('doAddButton', $parameters, $object, $action);
+			// This hook is used to add Button to newpayment.php for external payment modules (ie Payzen, ...)
+			$parameters = [
+				'paymentmethod' => $paymentmethod
+			];
+			$reshook = $hookmanager->executeHooks('doAddButton', $parameters, $object, $action);
 			if ((empty($paymentmethod) || $paymentmethod == 'paybox') && !empty($conf->paybox->enabled))
 			{
 				print '<div class="button buttonpayment" id="div_dopayment_paybox"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_paybox" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
@@ -2271,13 +2272,13 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 		}
 	}
 	// This hook is used to show the embedded form to make payments with external payment modules (ie Payzen, ...)
-    $parameters = [
-    	'paymentmethod' => $paymentmethod,
-    	'amount' => price2num(GETPOST("newamount"), 'MT'),
-    	'tag' => GETPOST("tag", 'alpha'),
-    	'dopayment' => GETPOST('dopayment', 'alpha')
-    ];
-    $reshook = $hookmanager->executeHooks('doPayment', $parameters, $object, $action);
+	$parameters = [
+		'paymentmethod' => $paymentmethod,
+		'amount' => price2num(GETPOST("newamount"), 'MT'),
+		'tag' => GETPOST("tag", 'alpha'),
+		'dopayment' => GETPOST('dopayment', 'alpha')
+	];
+	$reshook = $hookmanager->executeHooks('doPayment', $parameters, $object, $action);
 }
 
 

@@ -353,7 +353,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "accountancy") ? 0 : 1),
 
-		'loadLangs' => array("compta", "accountancy", "assets","intracommreport"),
+		'loadLangs' => array("compta", "accountancy", "assets", "intracommreport"),
 		'submenus' => array(),
 	);
 
@@ -763,9 +763,11 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$newmenu->add('/admin/system/os.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoOS'), 1);
 				$newmenu->add('/admin/system/web.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoWebServer'), 1);
 				$newmenu->add('/admin/system/phpinfo.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoPHP'), 1);
-				//if (function_exists('xdebug_is_enabled')) $newmenu->add('/admin/system/xdebug.php', $langs->trans('XDebug'),1);
 				$newmenu->add('/admin/system/database.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoDatabase'), 1);
-				//$newmenu->add("/admin/system/perf.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("InfoPerf"),1);
+				if (!empty($conf->global->MAIN_FEATURES_LEVEL)) {
+					$newmenu->add("/admin/system/perf.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("InfoPerf"), 1);
+					$newmenu->add("/admin/system/security.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("InfoSecurity"), 1);
+				}
 				$newmenu->add("/admin/tools/dolibarr_export.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Backup"), 1);
 				$newmenu->add("/admin/tools/dolibarr_import.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Restore"), 1);
 				$newmenu->add("/admin/tools/update.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("MenuUpgrade"), 1);
@@ -1096,7 +1098,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_social/i', $leftmenu)) {
 					$newmenu->add("/compta/sociales/card.php?leftmenu=tax_social&action=create", $langs->trans("MenuNewSocialContribution"), 2, $user->rights->tax->charges->creer);
 					$newmenu->add("/compta/sociales/list.php?leftmenu=tax_social", $langs->trans("List"), 2, $user->rights->tax->charges->lire);
-					$newmenu->add("/compta/sociales/payments.php?leftmenu=tax_social&amp;mainmenu=billing&amp;mode=sconly", $langs->trans("Payments"), 2, $user->rights->tax->charges->lire);
+					$newmenu->add("/compta/sociales/payments.php?leftmenu=tax_social&amp;mainmenu=billing", $langs->trans("Payments"), 2, $user->rights->tax->charges->lire);
 				}
 				// VAT
 				if (empty($conf->global->TAX_DISABLE_VAT_MENUS))
@@ -1439,16 +1441,16 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				//if ($leftmenu=="ca") $newmenu->add("/compta/journaux/index.php?leftmenu=ca",$langs->trans("Journals"),1,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
 			}
 
-            // Intracomm report
-            if (! empty($conf->intracommreport->enabled))
-            {
-                $newmenu->add("/intracommreport/list.php?leftmenu=intracommreport", $langs->trans("MenuIntracommReport"), 0, $user->rights->intracommreport->read, '', $mainmenu, 'intracommreport', 1);
-                if ($usemenuhider || empty($leftmenu) || preg_match('/intracommreport/', $leftmenu)) {
-                    // DEB / DES
-                    $newmenu->add("/intracommreport/card.php?action=create&leftmenu=intracommreport", $langs->trans("MenuIntracommReportNew"), 1, $user->rights->intracommreport->write, '', $mainmenu, 'intracommreport', 1);
-                    $newmenu->add("/intracommreport/list.php?leftmenu=intracommreport", $langs->trans("MenuIntracommReportList"), 1, $user->rights->intracommreport->read, '', $mainmenu, 'intracommreport', 1);
-                }
-            }
+			// Intracomm report
+			if (!empty($conf->intracommreport->enabled))
+			{
+				$newmenu->add("/intracommreport/list.php?leftmenu=intracommreport", $langs->trans("MenuIntracommReport"), 0, $user->rights->intracommreport->read, '', $mainmenu, 'intracommreport', 1);
+				if ($usemenuhider || empty($leftmenu) || preg_match('/intracommreport/', $leftmenu)) {
+					// DEB / DES
+					$newmenu->add("/intracommreport/card.php?action=create&leftmenu=intracommreport", $langs->trans("MenuIntracommReportNew"), 1, $user->rights->intracommreport->write, '', $mainmenu, 'intracommreport', 1);
+					$newmenu->add("/intracommreport/list.php?leftmenu=intracommreport", $langs->trans("MenuIntracommReportList"), 1, $user->rights->intracommreport->read, '', $mainmenu, 'intracommreport', 1);
+				}
+			}
 
 			// Assets
 			if (!empty($conf->asset->enabled))
@@ -1798,7 +1800,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					$newmenu->add("/holiday/list.php?search_statut=5&mainmenu=hrm&leftmenu=hrm", $langs->trans("RefuseCP"), 2, $user->rights->holiday->read);
 				}
 				$newmenu->add("/holiday/define_holiday.php?mainmenu=hrm&action=request", $langs->trans("MenuConfCP"), 1, $user->rights->holiday->read);
-				$newmenu->add("/holiday/month_report.php?mainmenu=hrm&leftmenu=holiday", $langs->trans("MenuReportMonth"), 1, $user->rights->holiday->read_all);
+				$newmenu->add("/holiday/month_report.php?mainmenu=hrm&leftmenu=holiday", $langs->trans("MenuReportMonth"), 1, $user->rights->holiday->readall);
 				$newmenu->add("/holiday/view_log.php?mainmenu=hrm&leftmenu=holiday&action=request", $langs->trans("MenuLogCP"), 1, $user->rights->holiday->define_holiday);
 			}
 

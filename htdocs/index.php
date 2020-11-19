@@ -68,7 +68,7 @@ if (GETPOST('addbox'))	// Add box (when submit is done from a form when ajax dis
  * View
  */
 
-if (!is_object($form)) $form = new Form($db);
+if (!isset($form) || !is_object($form)) $form = new Form($db);
 
 // Title
 $title = $langs->trans("HomeArea").' - Dolibarr '.DOL_VERSION;
@@ -295,7 +295,7 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 				$class = $classes[$val];
 				// Search in cache if load_state_board is already realized
 				$classkeyforcache = $class;
-				if ($classkeyforcache == 'ProductService') $classkeyforcache = 'Product';	// ProductService use same load_state_board than Product
+				if ($classkeyforcache == 'ProductService') $classkeyforcache = 'Product'; // ProductService use same load_state_board than Product
 
 				if (!isset($boardloaded[$classkeyforcache]) || !is_object($boardloaded[$classkeyforcache]))
 				{

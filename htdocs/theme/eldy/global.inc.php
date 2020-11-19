@@ -111,6 +111,7 @@ body {
     <?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
 
+/* Style used to protect html content in output to avoid attack by replacing full page with js content */
 .sensiblehtmlcontent * {
 	position: static !important;
 }
@@ -317,6 +318,7 @@ input.buttonpaymentstripe {
 }
 .logopublicpayment #dolpaymentlogo {
 	max-height: 100px;
+	max-width: 320px;
 }
 
 a.buttonticket {
@@ -331,14 +333,14 @@ span.timesheetalreadyrecorded input {
     border-bottom: solid 1px rgba(0,0,0,0.4);
     margin-right: 1px !important;
 }
-td.weekend {
-	background-color: #eee;
-}
 td.onholidaymorning, td.onholidayafternoon {
 	background-color: #fdf6f2;
 }
 td.onholidayallday {
 	background-color: #f4eede;
+}
+td.weekend {	/* must be after td.onholidayallday */
+	background-color: #eee;
 }
 /*
 td.leftborder, td.hide0 {
@@ -1272,11 +1274,11 @@ table[summary="list_of_modules"] .fa-cog {
     .minwidth500imp { min-width: 250px !important; }
 }
 
-.widthcentpercentminusx {
-	width: calc(100% - 50px) !important;
+select.widthcentpercentminusx, input.widthcentpercentminusx {
+	width: calc(100% - 52px) !important;
 	display: inline-block;
 }
-.widthcentpercentminusxx {
+select.widthcentpercentminusxx, input.widthcentpercentminusxx {
 	width: calc(100% - 70px) !important;
 	display: inline-block;
 }
@@ -1311,6 +1313,25 @@ table[summary="list_of_modules"] .fa-cog {
 		width: calc(100% - 40px) !important;
 		display: inline-block;
 	}
+
+	.logopublicpayment #dolpaymentlogo {
+		max-width: 260px;
+	}
+	#tablepublicpayment {
+		width:	auto !important;
+	}
+	.poweredbypublicpayment {
+    	float: unset !important;
+		top: unset !important;
+    	bottom: 8px;
+    	position: relative !important;
+    }
+    .poweredbyimg {
+    	width: 48px;
+    }
+    input.buttonpayment, button.buttonpayment, div.buttonpayment {
+    	min-width: 270px;
+    }
 }
 
 /* Force values for small screen 570 */
@@ -1492,7 +1513,7 @@ td.showDragHandle {
 #id-left {
 	padding-top: 20px;
 	padding-bottom: 5px;
-	<?php if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN) && ! empty($conf->global->MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN)) { ?>
+	<?php if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN) && !empty($conf->global->MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN)) { ?>
 	padding-top: 8px;
 	<?php } ?>
 }
@@ -2178,70 +2199,70 @@ a.tmenuimage:hover{
     <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
 
     <?php
-    // Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
+	// Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
 
-    $moduletomainmenu = array(
-        'user'=>'', 'syslog'=>'', 'societe'=>'companies', 'projet'=>'project', 'propale'=>'commercial', 'commande'=>'commercial',
-        'produit'=>'products', 'service'=>'products', 'stock'=>'products',
-        'don'=>'accountancy', 'tax'=>'accountancy', 'banque'=>'accountancy', 'facture'=>'accountancy', 'compta'=>'accountancy', 'accounting'=>'accountancy', 'adherent'=>'members', 'import'=>'tools', 'export'=>'tools', 'mailing'=>'tools',
-        'contrat'=>'commercial', 'ficheinter'=>'commercial', 'ticket'=>'ticket', 'deplacement'=>'commercial',
-        'fournisseur'=>'companies',
-        'barcode'=>'', 'fckeditor'=>'', 'categorie'=>'',
-    );
-    $mainmenuused = 'home';
-    foreach ($conf->modules as $val)
-    {
-        $mainmenuused .= ','.(isset($moduletomainmenu[$val]) ? $moduletomainmenu[$val] : $val);
-    }
-    $mainmenuusedarray = array_unique(explode(',', $mainmenuused));
+	$moduletomainmenu = array(
+		'user'=>'', 'syslog'=>'', 'societe'=>'companies', 'projet'=>'project', 'propale'=>'commercial', 'commande'=>'commercial',
+		'produit'=>'products', 'service'=>'products', 'stock'=>'products',
+		'don'=>'accountancy', 'tax'=>'accountancy', 'banque'=>'accountancy', 'facture'=>'accountancy', 'compta'=>'accountancy', 'accounting'=>'accountancy', 'adherent'=>'members', 'import'=>'tools', 'export'=>'tools', 'mailing'=>'tools',
+		'contrat'=>'commercial', 'ficheinter'=>'commercial', 'ticket'=>'ticket', 'deplacement'=>'commercial',
+		'fournisseur'=>'companies',
+		'barcode'=>'', 'fckeditor'=>'', 'categorie'=>'',
+	);
+	$mainmenuused = 'home';
+	foreach ($conf->modules as $val)
+	{
+		$mainmenuused .= ','.(isset($moduletomainmenu[$val]) ? $moduletomainmenu[$val] : $val);
+	}
+	$mainmenuusedarray = array_unique(explode(',', $mainmenuused));
 
-    $generic = 1;
-    // Put here list of menu entries when the div.mainmenu.menuentry was previously defined
-    $divalreadydefined = array('home', 'companies', 'products', 'mrp', 'commercial', 'externalsite', 'accountancy', 'project', 'tools', 'members', 'agenda', 'ftp', 'holiday', 'hrm', 'bookmark', 'cashdesk', 'takepos', 'ecm', 'geoipmaxmind', 'gravatar', 'clicktodial', 'paypal', 'stripe', 'webservices', 'website');
-    // Put here list of menu entries we are sure we don't want
-    $divnotrequired = array('multicurrency', 'salaries', 'ticket', 'margin', 'opensurvey', 'paybox', 'expensereport', 'incoterm', 'prelevement', 'propal', 'workflow', 'notification', 'supplier_proposal', 'cron', 'product', 'productbatch', 'expedition');
-    foreach ($mainmenuusedarray as $val)
-    {
-        if (empty($val) || in_array($val, $divalreadydefined)) continue;
-        if (in_array($val, $divnotrequired)) continue;
-        //print "XXX".$val;
+	$generic = 1;
+	// Put here list of menu entries when the div.mainmenu.menuentry was previously defined
+	$divalreadydefined = array('home', 'companies', 'products', 'mrp', 'commercial', 'externalsite', 'accountancy', 'project', 'tools', 'members', 'agenda', 'ftp', 'holiday', 'hrm', 'bookmark', 'cashdesk', 'takepos', 'ecm', 'geoipmaxmind', 'gravatar', 'clicktodial', 'paypal', 'stripe', 'webservices', 'website');
+	// Put here list of menu entries we are sure we don't want
+	$divnotrequired = array('multicurrency', 'salaries', 'ticket', 'margin', 'opensurvey', 'paybox', 'expensereport', 'incoterm', 'prelevement', 'propal', 'workflow', 'notification', 'supplier_proposal', 'cron', 'product', 'productbatch', 'expedition');
+	foreach ($mainmenuusedarray as $val)
+	{
+		if (empty($val) || in_array($val, $divalreadydefined)) continue;
+		if (in_array($val, $divnotrequired)) continue;
+		//print "XXX".$val;
 
-        // Search img file in module dir
-        $found = 0; $url = '';
-        foreach ($conf->file->dol_document_root as $dirroot)
-        {
-    		if (file_exists($dirroot."/".$val."/img/".$val.".png"))
-    		{
-    			$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
-    			$found = 1;
-    			break;
-    		}
-        }
-        // Img file not found
-        if (!$found)
-        {
-            if (!defined('DISABLE_FONT_AWSOME')) {
-                print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
+		// Search img file in module dir
+		$found = 0; $url = '';
+		foreach ($conf->file->dol_document_root as $dirroot)
+		{
+			if (file_exists($dirroot."/".$val."/img/".$val.".png"))
+			{
+				$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
+				$found = 1;
+				break;
+			}
+		}
+		// Img file not found
+		if (!$found)
+		{
+			if (!defined('DISABLE_FONT_AWSOME')) {
+				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
  				print "/* Overwrite this definition in your own css with a different content to use your own font awesome icon. */\n";
-                print 'div.mainmenu.'.$val.'::before {
+				print 'div.mainmenu.'.$val.'::before {
                     content: "\f249";
                 }'."\n";
-            } else {
-                print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
-                $url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
-                print "div.mainmenu.".$val." {\n";
-                print "	background-image: url(".$url.");\n";
-                print "}\n";
-            }
-            $generic++;
-        } else {
-            print "div.mainmenu.".$val." {\n";
-            print "	background-image: url(".$url.");\n";
-            print "}\n";
-        }
-    }
-    // End of part to add more div class css
-    ?>
+			} else {
+				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+				$url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
+				print "div.mainmenu.".$val." {\n";
+				print "	background-image: url(".$url.");\n";
+				print "}\n";
+			}
+			$generic++;
+		} else {
+			print "div.mainmenu.".$val." {\n";
+			print "	background-image: url(".$url.");\n";
+			print "}\n";
+		}
+	}
+	// End of part to add more div class css
+	?>
 <?php } // End test if $dol_hide_topmenu ?>
 
 .tmenuimage {
@@ -3027,9 +3048,8 @@ div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border
 }
 div .tdtop {
     vertical-align: top !important;
-	padding-top: 10px !important;
-	padding-bottom: 2px !important;
-	padding-bottom: 0px;
+	/*padding-top: 10px !important;
+	padding-bottom: 2px !important; */
 }
 
 table.border td, table.bordernooddeven td, div.border div div.tagtd {
@@ -4156,7 +4176,7 @@ div.backgreypublicpayment { background-color: #f0f0f0; padding: 20px; border-bot
     color: #222;
     opacity: 0.3;
 }
-#dolpaymenttable { min-width: 320px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
+#dolpaymenttable { min-width: 290px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
 #tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }

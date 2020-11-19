@@ -482,7 +482,7 @@ for ($i = 0; $i < $nbrejourmois + $premierjourmois; $i++) {
 			if (($numerojour >= $jourAJ && $_SESSION["mois"] == $moisAJ && $_SESSION["annee"] == $anneeAJ) || ($_SESSION["mois"] > $moisAJ && $_SESSION["annee"] == $anneeAJ) || $_SESSION["annee"] > $anneeAJ) {
 				print '<td align="center" class="libre"><input type="submit" class="bouton ON" name="choixjourajout[]" value="'.$numerojour.'"></td>'."\n";
 			} else {
-                // grey button
+				// grey button
 				print '<td align="center" class="avant">'.$numerojour.'</td>'."\n";
 			}
 		}

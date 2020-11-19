@@ -48,13 +48,13 @@ class EcmDirectory extends CommonObject
 	public $id;
 
 	/**
-     * @var string ECM directories label
-     */
-    public $label;
+	 * @var string ECM directories label
+	 */
+	public $label;
 
-    /**
-     * @var int ID
-     */
+	/**
+	 * @var int ID
+	 */
 	public $fk_parent;
 
 	/**
@@ -67,13 +67,13 @@ class EcmDirectory extends CommonObject
 	public $date_m;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_m;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_c;
 
 	/**
@@ -196,10 +196,10 @@ class EcmDirectory extends CommonObject
 				$result = dol_mkdir($dir);
 				if ($result < 0) { $error++; $this->error = "ErrorFailedToCreateDir"; }
 
-                // Call trigger
-                $result = $this->call_trigger('MYECMDIR_CREATE', $user);
-                if ($result < 0) { $error++; }
-                // End call triggers
+				// Call trigger
+				$result = $this->call_trigger('MYECMDIR_CREATE', $user);
+				if ($result < 0) { $error++; }
+				// End call triggers
 
 				if (!$error)
 				{
@@ -257,10 +257,10 @@ class EcmDirectory extends CommonObject
 
 		if (!$error && !$notrigger)
 		{
-            // Call trigger
-            $result = $this->call_trigger('MYECMDIR_MODIFY', $user);
-            if ($result < 0) { $error++; }
-            // End call triggers
+			// Call trigger
+			$result = $this->call_trigger('MYECMDIR_MODIFY', $user);
+			if ($result < 0) { $error++; }
+			// End call triggers
 		}
 
 		if (!$error)
@@ -295,9 +295,9 @@ class EcmDirectory extends CommonObject
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		} else {
-		    if (preg_match('/[0-9]+/', $value)) $this->cachenbofdoc = (int) $value;
-		    elseif ($value == '+') $this->cachenbofdoc++;
-		    elseif ($value == '-') $this->cachenbofdoc--;
+			if (preg_match('/[0-9]+/', $value)) $this->cachenbofdoc = (int) $value;
+			elseif ($value == '+') $this->cachenbofdoc++;
+			elseif ($value == '-') $this->cachenbofdoc--;
 		}
 
 		return 1;
@@ -370,7 +370,7 @@ class EcmDirectory extends CommonObject
 	public function delete($user, $mode = 'all', $deletedirrecursive = 0)
 	{
 		global $conf, $langs;
-        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error = 0;
 
@@ -391,14 +391,14 @@ class EcmDirectory extends CommonObject
 			$this->error = "Error ".$this->db->lasterror();
 			return -2;
 		} else {
-            // Call trigger
-            $result = $this->call_trigger('MYECMDIR_DELETE', $user);
-            if ($result < 0)
-            {
-            	$this->db->rollback();
-            	return -2;
-            }
-            // End call triggers
+			// Call trigger
+			$result = $this->call_trigger('MYECMDIR_DELETE', $user);
+			if ($result < 0)
+			{
+				$this->db->rollback();
+				return -2;
+			}
+			// End call triggers
 		}
 
 		if ($mode != 'databaseonly')
@@ -428,11 +428,11 @@ class EcmDirectory extends CommonObject
 
 
 	/**
-     *  Initialise an instance with random values.
-     *  Used to build previews or test instances.
-     *	id must be 0 if object instance is a specimen.
-     *
-     *  @return	void
+	 *  Initialise an instance with random values.
+	 *  Used to build previews or test instances.
+	 *	id must be 0 if object instance is a specimen.
+	 *
+	 *  @return	void
 	 */
 	public function initAsSpecimen()
 	{
@@ -451,7 +451,7 @@ class EcmDirectory extends CommonObject
 	 *  @param	string	$option			Sur quoi pointe le lien
 	 *  @param	int		$max			Max length
 	 *  @param	string	$more			Add more param on a link
-     *  @param	int		$notooltip		1=Disable tooltip
+	 *  @param	int		$notooltip		1=Disable tooltip
 	 *  @return	string					Chaine avec URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $more = '', $notooltip = 0)
@@ -459,16 +459,16 @@ class EcmDirectory extends CommonObject
 		global $langs;
 
 		$result = '';
-        //$newref=str_replace('_',' ',$this->ref);
-        $newref = $this->ref;
-        $label = $langs->trans("ShowECMSection").': '.$newref;
-        $linkclose = '"'.($more ? ' '.$more : '').' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		//$newref=str_replace('_',' ',$this->ref);
+		$newref = $this->ref;
+		$label = $langs->trans("ShowECMSection").': '.$newref;
+		$linkclose = '"'.($more ? ' '.$more : '').' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
-        $linkstart = '<a href="'.DOL_URL_ROOT.'/ecm/dir_card.php?section='.$this->id.$linkclose;
-        if ($option == 'index') $linkstart = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true'.$linkclose;
-        if ($option == 'indexexpanded') $linkstart = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=false'.$linkclose;
-        if ($option == 'indexnotexpanded') $linkstart = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true'.$linkclose;
-        $linkend = '</a>';
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/ecm/dir_card.php?section='.$this->id.$linkclose;
+		if ($option == 'index') $linkstart = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true'.$linkclose;
+		if ($option == 'indexexpanded') $linkstart = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=false'.$linkclose;
+		if ($option == 'indexnotexpanded') $linkstart = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true'.$linkclose;
+		$linkend = '</a>';
 
 		//$picto=DOL_URL_ROOT.'/theme/common/treemenu/folder.gif';
 		$picto = 'dir';
@@ -520,7 +520,7 @@ class EcmDirectory extends CommonObject
 		return $ret;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Load this->motherof that is array(id_son=>id_parent, ...)
 	 *
@@ -528,7 +528,7 @@ class EcmDirectory extends CommonObject
 	 */
 	public function load_motherof()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		$this->motherof = array();
@@ -567,7 +567,7 @@ class EcmDirectory extends CommonObject
 		return $this->LibStatut($this->status, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -577,13 +577,13 @@ class EcmDirectory extends CommonObject
 	 */
 	public static function LibStatut($status, $mode = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 		return '';
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Reconstruit l'arborescence des categories sous la forme d'un tableau à partir de la base de donnée
 	 *	Renvoi un tableau de tableau('id','id_mere',...) trie selon arbre et avec:
@@ -596,7 +596,7 @@ class EcmDirectory extends CommonObject
 	 * 				fk_user_c           User creation
 	 *  			login_c             Login creation
 	 * 				fullpath	        Full path of id (Added by build_path_from_id_categ call)
-     *              fullrelativename    Full path name (Added by build_path_from_id_categ call)
+	 *              fullrelativename    Full path name (Added by build_path_from_id_categ call)
 	 * 				fulllabel	        Full label (Added by build_path_from_id_categ call)
 	 * 				level		        Level of line (Added by build_path_from_id_categ call)
 	 *
@@ -605,7 +605,7 @@ class EcmDirectory extends CommonObject
 	 */
 	public function get_full_arbo($force = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		if (empty($force) && !empty($this->full_arbo_loaded))
@@ -680,7 +680,7 @@ class EcmDirectory extends CommonObject
 		return $this->cats;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Define properties fullpath, fullrelativename, fulllabel of a directory of array this->cats and all its childs.
 	 *  Separator between directories is always '/', whatever is OS.
@@ -691,19 +691,19 @@ class EcmDirectory extends CommonObject
 	 */
 	public function build_path_from_id_categ($id_categ, $protection = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		// Define fullpath
 		if (!empty($this->cats[$id_categ]['id_mere']))
 		{
 			$this->cats[$id_categ]['fullpath'] = $this->cats[$this->cats[$id_categ]['id_mere']]['fullpath'];
 			$this->cats[$id_categ]['fullpath'] .= '_'.$id_categ;
-            $this->cats[$id_categ]['fullrelativename'] = $this->cats[$this->cats[$id_categ]['id_mere']]['fullrelativename'];
-            $this->cats[$id_categ]['fullrelativename'] .= '/'.$this->cats[$id_categ]['label'];
+			$this->cats[$id_categ]['fullrelativename'] = $this->cats[$this->cats[$id_categ]['id_mere']]['fullrelativename'];
+			$this->cats[$id_categ]['fullrelativename'] .= '/'.$this->cats[$id_categ]['label'];
 			$this->cats[$id_categ]['fulllabel'] = $this->cats[$this->cats[$id_categ]['id_mere']]['fulllabel'];
 			$this->cats[$id_categ]['fulllabel'] .= ' >> '.$this->cats[$id_categ]['label'];
 		} else {
 			$this->cats[$id_categ]['fullpath'] = '_'.$id_categ;
-            $this->cats[$id_categ]['fullrelativename'] = $this->cats[$id_categ]['label'];
+			$this->cats[$id_categ]['fullrelativename'] = $this->cats[$id_categ]['label'];
 			$this->cats[$id_categ]['fulllabel'] = $this->cats[$id_categ]['label'];
 		}
 		// We count number of _ to have level (we use strlen that is faster than dol_strlen)
@@ -760,35 +760,35 @@ class EcmDirectory extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-     * Call trigger based on this instance.
-     * We implement it here because this class doe not extend CommonObject.
-     *
-     * NB1: Error from trigger are stacked in errors
-     * NB2: if trigger fail, action should be canceled.
-     * NB3: Should be deleted if EcmDirectory extend CommonObject
-     *
-     * @param   string    $triggerName   trigger's name to execute
-     * @param   User      $user           Object user
-     * @return  int                       Result of run_triggers
-     */
-    public function call_trigger($triggerName, $user)
-    {
-        // phpcs:enable
-        global $langs, $conf;
+	 * Call trigger based on this instance.
+	 * We implement it here because this class doe not extend CommonObject.
+	 *
+	 * NB1: Error from trigger are stacked in errors
+	 * NB2: if trigger fail, action should be canceled.
+	 * NB3: Should be deleted if EcmDirectory extend CommonObject
+	 *
+	 * @param   string    $triggerName   trigger's name to execute
+	 * @param   User      $user           Object user
+	 * @return  int                       Result of run_triggers
+	 */
+	public function call_trigger($triggerName, $user)
+	{
+		// phpcs:enable
+		global $langs, $conf;
 
-        include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-        $interface = new Interfaces($this->db);
-        $result = $interface->run_triggers($triggerName, $this, $user, $langs, $conf);
-        if ($result < 0) {
-            if (!empty($this->errors))
-            {
-                $this->errors = array_merge($this->errors, $interface->errors);
-            } else {
-                $this->errors = $interface->errors;
-            }
-        }
-        return $result;
-    }
+		include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
+		$interface = new Interfaces($this->db);
+		$result = $interface->run_triggers($triggerName, $this, $user, $langs, $conf);
+		if ($result < 0) {
+			if (!empty($this->errors))
+			{
+				$this->errors = array_merge($this->errors, $interface->errors);
+			} else {
+				$this->errors = $interface->errors;
+			}
+		}
+		return $result;
+	}
 }

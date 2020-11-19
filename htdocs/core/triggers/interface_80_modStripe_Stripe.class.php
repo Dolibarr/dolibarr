@@ -35,21 +35,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceStripe extends DolibarrTriggers
 {
-    /**
-     *   Constructor
-     *
-     *   @param DoliDB $db Database handler
-     */
-    public function __construct($db)
-    {
-        $this->db = $db;
+	/**
+	 *   Constructor
+	 *
+	 *   @param DoliDB $db Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
 
-        $this->name = preg_replace('/^Interface/i', '', get_class($this));
-	    $this->family = 'stripe';
-        $this->description = "Triggers of the module Stripe";
-        $this->version = self::VERSION_DOLIBARR; // 'development', 'experimental', 'dolibarr' or version
-        $this->picto = 'stripe';
-    }
+		$this->name = preg_replace('/^Interface/i', '', get_class($this));
+		$this->family = 'stripe';
+		$this->description = "Triggers of the module Stripe";
+		$this->version = self::VERSION_DOLIBARR; // 'development', 'experimental', 'dolibarr' or version
+		$this->picto = 'stripe';
+	}
 
 	/**
 	 * Function called when a Dolibarrr business event is done.
@@ -157,7 +157,7 @@ class InterfaceStripe extends DolibarrTriggers
 							// Update Customer on Stripe
 							$customer->save();
 						} catch (Exception $e) {
-						    //var_dump(\Stripe\Stripe::getApiVersion());
+							//var_dump(\Stripe\Stripe::getApiVersion());
 							$this->errors[] = $e->getMessage();
 							$ok = -1;
 						}
@@ -168,7 +168,7 @@ class InterfaceStripe extends DolibarrTriggers
 		if ($action == 'COMPANY_DELETE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			if (! empty($conf->global->STRIPE_DELETE_STRIPE_ACCOUNT_WHEN_DELETING_THIRPARTY)) {
+			if (!empty($conf->global->STRIPE_DELETE_STRIPE_ACCOUNT_WHEN_DELETING_THIRPARTY)) {
 				// By default, we do not delete the stripe account. We may need to reuse it with its payment_intent, for example if delete is for a merge of thirdparties.
 				$stripeacc = $stripe->getStripeAccount($service); // No need of network access for this. May return '' if no Oauth defined.
 

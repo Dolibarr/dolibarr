@@ -19,7 +19,7 @@
 /**
  *	\file       htdocs/core/class/commonobjectline.class.php
  *  \ingroup    core
- *  \brief      File of the superclass of classes of lines of business objects (invoice, contract, PROPAL, commands, etc. ...)
+ *  \brief      File of the superclass of classes of lines of business objects (invoice, contract, proposal, orders, etc. ...)
  */
 
 

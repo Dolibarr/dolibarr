@@ -252,7 +252,7 @@ if ($action == 'edit')
 
 $moduledir = 'mymodule';
 $myTmpObjects = array();
-$myTmpObjects['MyObject']=array('includerefgeneration'=>0, 'includedocgeneration'=>0);
+$myTmpObjects['MyObject'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
 
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {

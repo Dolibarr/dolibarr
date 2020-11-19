@@ -153,7 +153,7 @@ if (ini_get('safe_mode') && !empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
 		dol_syslog("safe_mode is on, basedir is ".$basedir.", safe_mode_exec_dir is ".ini_get('safe_mode_exec_dir'), LOG_WARNING);
 	}
 }
-print '<input type="text" name="MAIN_ANTIVIRUS_COMMAND" class="minwidth500imp" value="'.(!empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ?dol_escape_htmltag($conf->global->MAIN_ANTIVIRUS_COMMAND) : '').'">';
+print '<input type="text" '.(defined('MAIN_ANTIVIRUS_COMMAND') ? 'disabled' : '').' name="MAIN_ANTIVIRUS_COMMAND" class="minwidth500imp" value="'.(!empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ?dol_escape_htmltag($conf->global->MAIN_ANTIVIRUS_COMMAND) : '').'">';
 if (defined('MAIN_ANTIVIRUS_COMMAND')) {
 	print '<br><span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
 }

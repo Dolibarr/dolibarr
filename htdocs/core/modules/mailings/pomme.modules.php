@@ -42,9 +42,9 @@ class mailing_pomme extends MailingTargets
 	public $picto = 'user';
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
 
 	/**
@@ -52,13 +52,13 @@ class mailing_pomme extends MailingTargets
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-    public function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
 
 
-    /**
+	/**
 	 *	On the main mailing area, there is a box with statistics.
 	 *	If you want to add a line in this report you must provide an
 	 *	array of SQL request that returns two field:
@@ -66,7 +66,7 @@ class mailing_pomme extends MailingTargets
 	 *
 	 *	@return		string[]		Array with SQL requests
 	 */
-    public function getSqlArrayForStats()
+	public function getSqlArrayForStats()
 	{
 		global $conf, $langs;
 
@@ -84,15 +84,15 @@ class mailing_pomme extends MailingTargets
 	}
 
 
-    /**
-     *	Return here number of distinct emails returned by your selector.
-     *	For example if this selector is used to extract 500 different
-     *	emails from a text file, this function must return 500.
-     *
-     *	@param	string	$sql		SQL request to use to count
-     *	@return	int					Number of recipients
-     */
-    public function getNbOfRecipients($sql = '')
+	/**
+	 *	Return here number of distinct emails returned by your selector.
+	 *	For example if this selector is used to extract 500 different
+	 *	emails from a text file, this function must return 500.
+	 *
+	 *	@param	string	$sql		SQL request to use to count
+	 *	@return	int					Number of recipients
+	 */
+	public function getNbOfRecipients($sql = '')
 	{
 		global $conf;
 
@@ -112,7 +112,7 @@ class mailing_pomme extends MailingTargets
 	 *
 	 *  @return     string      Retourne zone select
 	 */
-    public function formFilter()
+	public function formFilter()
 	{
 		global $langs;
 
@@ -141,26 +141,26 @@ class mailing_pomme extends MailingTargets
 	/**
 	 *  Renvoie url lien vers fiche de la source du destinataire du mailing
 	 *
-     *  @param	int		$id		ID
+	 *  @param	int		$id		ID
 	 *  @return     string      Url lien
 	 */
-    public function url($id)
+	public function url($id)
 	{
 		return '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$id.'">'.img_object('', "user").'</a>';
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Ajoute destinataires dans table des cibles
 	 *
 	 *  @param	int		$mailing_id    	Id of emailing
 	 *  @return int           			< 0 si erreur, nb ajout si ok
 	 */
-    public function add_to_target($mailing_id)
+	public function add_to_target($mailing_id)
 	{
-        // phpcs:enable
-	    global $conf, $langs;
+		// phpcs:enable
+		global $conf, $langs;
 		$langs->load("companies");
 
 		$cibles = array();
@@ -195,17 +195,17 @@ class mailing_pomme extends MailingTargets
 				if ($old <> $obj->email)
 				{
 					$cibles[$j] = array(
-                    	'email' => $obj->email,
-                    	'fk_contact' => $obj->fk_contact,
-                    	'lastname' => $obj->lastname,
-                    	'firstname' => $obj->firstname,
-                    	'other' =>
-					        ($langs->transnoentities("Login").'='.$obj->login).';'.
-                            ($langs->transnoentities("UserTitle").'='.$obj->civility_id).';'.
-					        ($langs->transnoentities("PhonePro").'='.$obj->office_phone),
-                        'source_url' => $this->url($obj->id),
-                        'source_id' => $obj->id,
-                        'source_type' => 'user'
+						'email' => $obj->email,
+						'fk_contact' => $obj->fk_contact,
+						'lastname' => $obj->lastname,
+						'firstname' => $obj->firstname,
+						'other' =>
+							($langs->transnoentities("Login").'='.$obj->login).';'.
+							($langs->transnoentities("UserTitle").'='.$obj->civility_id).';'.
+							($langs->transnoentities("PhonePro").'='.$obj->office_phone),
+						'source_url' => $this->url($obj->id),
+						'source_id' => $obj->id,
+						'source_type' => 'user'
 					);
 					$old = $obj->email;
 					$j++;
@@ -220,5 +220,5 @@ class mailing_pomme extends MailingTargets
 		}
 
 		return parent::addTargetsToDatabase($mailing_id, $cibles);
-    }
+	}
 }

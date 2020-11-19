@@ -204,30 +204,30 @@ if (empty($reshook)) {
 
 	// Close
 	if ($massaction == 'close' && $user->rights->adherent->creer) {
-	    $tmpmember = new Adherent($db);
-	    $error = 0;
-	    $nbclose = 0;
+		$tmpmember = new Adherent($db);
+		$error = 0;
+		$nbclose = 0;
 
-	    $db->begin();
+		$db->begin();
 
-        foreach ($toselect as $idtoclose) {
-            $tmpmember->fetch($idtoclose);
-            $result = $tmpmember->resiliate($user);
+		foreach ($toselect as $idtoclose) {
+			$tmpmember->fetch($idtoclose);
+			$result = $tmpmember->resiliate($user);
 
-            if ($result < 0 && !count($tmpmember->errors)) {
-    	        setEventMessages($tmpmember->error, $tmpmember->errors, 'errors');
-    	    } else {
-    	        if ($result > 0) $nbclose++;
-    	    }
-        }
+			if ($result < 0 && !count($tmpmember->errors)) {
+				setEventMessages($tmpmember->error, $tmpmember->errors, 'errors');
+			} else {
+				if ($result > 0) $nbclose++;
+			}
+		}
 
-        if (!$error) {
-            setEventMessages($langs->trans("XMembersClosed", $nbclose), null, 'mesgs');
+		if (!$error) {
+			setEventMessages($langs->trans("XMembersClosed", $nbclose), null, 'mesgs');
 
-            $db->commit();
-        } else {
-            $db->rollback();
-        }
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
 	}
 
 	// Mass actions
@@ -409,7 +409,7 @@ $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $newcardbutton = '';
 if ($user->rights->adherent->creer) {
-    $newcardbutton .= dolGetButtonTitle($langs->trans('NewMember'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/card.php?action=create');
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewMember'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/card.php?action=create');
 }
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -560,7 +560,7 @@ if (!empty($arrayfields['d.email']['checked'])) {
 // End of subscription date
 if (!empty($arrayfields['d.datefin']['checked'])) {
 	print '<td class="liste_titre left">';
-	$selectarray=array('-1'=>'', 'withoutsubscription'=>$langs->trans("WithoutSubscription"), 'uptodate'=>$langs->trans("UpToDate"), 'outofdate'=>$langs->trans("OutOfDate"));
+	$selectarray = array('-1'=>'', 'withoutsubscription'=>$langs->trans("WithoutSubscription"), 'uptodate'=>$langs->trans("UpToDate"), 'outofdate'=>$langs->trans("OutOfDate"));
 	print $form->selectarray('search_filter', $selectarray, $search_filter);
 	print '</td>';
 }

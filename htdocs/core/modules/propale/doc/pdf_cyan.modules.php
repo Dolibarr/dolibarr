@@ -187,7 +187,7 @@ class pdf_cyan extends ModelePDFPropales
 	/**
 	 *  Function to build pdf onto disk
 	 *
-	 *  @param		Object		$object				Object to generate
+	 *  @param		Propal		$object				Object to generate
 	 *  @param		Translate	$outputlangs		Lang output object
 	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int			$hidedetails		Do not show line details
@@ -384,7 +384,7 @@ class pdf_cyan extends ModelePDFPropales
 
 				// Incoterm
 				$height_incoterms = 0;
-				if ($conf->incoterm->enabled)
+				if (!empty($conf->incoterm->enabled))
 				{
 					$desc_incoterms = $object->getIncotermsForPDF();
 					if ($desc_incoterms)
@@ -967,8 +967,8 @@ class pdf_cyan extends ModelePDFPropales
 	/**
 	 *  Show payments table
 	 *
-	 *  @param	TCPDF		$pdf           Object PDF
-	 *  @param  Object		$object         Object proposal
+	 *  @param	TCPDF		$pdf            Object PDF
+	 *  @param  Propal		$object         Object proposal
 	 *  @param  int			$posy           Position y in PDF
 	 *  @param  Translate	$outputlangs    Object langs for output
 	 *  @return int             			<0 if KO, >0 if OK
@@ -981,7 +981,7 @@ class pdf_cyan extends ModelePDFPropales
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		Object		$object			Object to show
+	 *   @param		Propal		$object			Object to show
 	 *   @param		int			$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	int							Pos y
@@ -1006,7 +1006,7 @@ class pdf_cyan extends ModelePDFPropales
 		$posxval = 52;
 
 		// Show shipping date
-		if (!empty($object->date_livraison))
+		if (!empty($object->delivery_date))
 		{
 			$outputlangs->load("sendings");
 			$pdf->SetFont('', 'B', $default_font_size - 2);
@@ -1015,7 +1015,7 @@ class pdf_cyan extends ModelePDFPropales
 			$pdf->MultiCell(80, 4, $titre, 0, 'L');
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posxval, $posy);
-			$dlp = dol_print_date($object->date_livraison, "daytext", false, $outputlangs, true);
+			$dlp = dol_print_date($object->delivery_date, "daytext", false, $outputlangs, true);
 			$pdf->MultiCell(80, 4, $dlp, 0, 'L');
 
 			$posy = $pdf->GetY() + 1;
@@ -1158,8 +1158,8 @@ class pdf_cyan extends ModelePDFPropales
 	/**
 	 *	Show total to pay
 	 *
-	 *	@param	TCPDF		$pdf           Object PDF
-	 *	@param  Facture		$object         Object invoice
+	 *	@param	TCPDF		$pdf            Object PDF
+	 *	@param  Propal		$object         Object proposal
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
 	 *	@param	Translate	$outputlangs	Objet langs
@@ -1507,7 +1507,7 @@ class pdf_cyan extends ModelePDFPropales
 	 *  Show top header of page.
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  Object		$object     	Object to show
+	 *  @param  Propal		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
@@ -1553,8 +1553,7 @@ class pdf_cyan extends ModelePDFPropales
 				} else {
 					$logo = $logodir.'/logos/'.$this->emetteur->logo;
 				}
-				if (is_readable($logo))
-				{
+				if (is_readable($logo)) {
 					$height = pdf_getHeightForLogo($logo);
 					$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
 				} else {
@@ -1762,7 +1761,7 @@ class pdf_cyan extends ModelePDFPropales
 	 *   	Show footer of page. Need this->emetteur object
 	 *
 	 *   	@param	TCPDF		$pdf     			PDF
-	 * 		@param	Object		$object				Object to show
+	 * 		@param	Propal		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
@@ -1770,15 +1769,15 @@ class pdf_cyan extends ModelePDFPropales
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
-		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf, $outputlangs, 'PROPOSAL_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 
 	/**
 	 *	Show area for the customer to sign
 	 *
-	 *	@param	TCPDF		$pdf           Object PDF
-	 *	@param  Facture		$object         Object invoice
+	 *	@param	TCPDF		$pdf            Object PDF
+	 *	@param  Propal		$object         Object proposal
 	 *	@param	int			$posy			Position depart
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
@@ -1813,7 +1812,7 @@ class pdf_cyan extends ModelePDFPropales
 	/**
 	 *   	Define Array Column Field
 	 *
-	 *   	@param	object			$object			common object
+	 *   	@param	Propal			$object			object proposal
 	 *   	@param	Translate		$outputlangs	langs
 	 *      @param	int				$hidedetails	Do not show line details
 	 *      @param	int				$hidedesc		Do not show desc

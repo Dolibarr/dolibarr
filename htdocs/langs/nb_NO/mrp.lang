@@ -1,5 +1,5 @@
 Mrp=Produksjonsordrer
-MOs=Manufacturing orders
+MOs=Produksjonsordrer
 ManufacturingOrder=Produksjonsordre
 MRPDescription=Modul for å administrere produksjons- og produksjonsordrer (PO).
 MRPArea=MRP-område
@@ -75,5 +75,5 @@ ProductsToConsume=Vare å konsumere
 ProductsToProduce=Varer å produsere
 UnitCost=Enhetskostnad
 TotalCost=Totalkostnad
-BOMTotalCost=The cost to produce this BOM based on cost of each quantity and product to consume (use Cost price if defined, else Average Weighted Price if defined, else the Best purchase price)
-GoOnTabProductionToProduceFirst=You must first have started the production to close a Manufacturing Order (See tab '%s'). But you can Cancel it.
+BOMTotalCost=Kostnaden for å produsere denne stykklisten basert på kostnadene for hver mengde og vare som skal konsumeres (bruk kostpris hvis definert, ellers gjennomsnittlig vektet pris hvis definert, ellers den beste kjøpesummen)
+GoOnTabProductionToProduceFirst=Du må først ha startet produksjonen for å lukke en produksjonsordre (se fanen '%s'). Men du kan kansellere den.

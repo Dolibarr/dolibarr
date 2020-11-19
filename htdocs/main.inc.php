@@ -255,6 +255,7 @@ if (!empty($conf->debugbar->enabled) && !GETPOST('dol_use_jmobile') && empty($_S
 	include_once DOL_DOCUMENT_ROOT.'/debugbar/class/DebugBar.php';
 	$debugbar = new DolibarrDebugBar();
 	$renderer = $debugbar->getRenderer();
+	if (empty($conf->global->MAIN_HTML_HEADER)) $conf->global->MAIN_HTML_HEADER = '';
 	$conf->global->MAIN_HTML_HEADER .= $renderer->renderHead();
 
 	$debugbar['time']->startMeasure('pageaftermaster', 'Page generation (after environment init)');
@@ -925,7 +926,7 @@ if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && !empty($user->conf->MAI
 }
 
 // set MAIN_OPTIMIZEFORCOLORBLIND for user
-$conf->global->MAIN_OPTIMIZEFORCOLORBLIND = $user->conf->MAIN_OPTIMIZEFORCOLORBLIND;
+$conf->global->MAIN_OPTIMIZEFORCOLORBLIND = empty($user->conf->MAIN_OPTIMIZEFORCOLORBLIND) ? '' : $user->conf->MAIN_OPTIMIZEFORCOLORBLIND;
 
 // Set terminal output option according to conf->browser.
 if (GETPOST('dol_hide_leftmenu', 'int') || !empty($_SESSION['dol_hide_leftmenu']))               $conf->dol_hide_leftmenu = 1;
@@ -987,7 +988,7 @@ if (!defined('NOLOGIN'))
 	$user->getrights();
 }
 
-dol_syslog("--- Access to ".$_SERVER["REQUEST_METHOD"].' '.$_SERVER["PHP_SELF"].' - action='.GETPOST('action', 'aZ09').', massaction='.GETPOST('massaction', 'aZ09'));
+dol_syslog("--- Access to ".$_SERVER["REQUEST_METHOD"].' '.$_SERVER["PHP_SELF"].' - action='.GETPOST('action', 'aZ09').', massaction='.GETPOST('massaction', 'aZ09').' NOTOKENRENEWAL='.constant('NOTOKENRENEWAL'));
 //Another call for easy debugg
 //dol_syslog("Access to ".$_SERVER["PHP_SELF"].' GET='.join(',',array_keys($_GET)).'->'.join(',',$_GET).' POST:'.join(',',array_keys($_POST)).'->'.join(',',$_POST));
 
@@ -1091,14 +1092,15 @@ if (!function_exists("llxHeader"))
 	 * @param	string	$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
 	 * @param   string  $morecssonbody      More CSS on body tag.
 	 * @param	string	$replacemainareaby	Replace call to main_area() by a print of this string
+	 * @param	int		$disablenofollow	Disable the "nofollow" on page
 	 * @return	void
 	 */
-	function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '')
+	function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0)
 	{
 		global $conf;
 
 		// html header
-		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, $disablenofollow);
 
 		$tmpcsstouse = 'sidebar-collapse'.($morecssonbody ? ' '.$morecssonbody : '');
 		// If theme MD and classic layer, we open the menulayer by default.
@@ -1162,8 +1164,8 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 		//	// A default security policy that keep usage of js external component like ckeditor, stripe, google, working
 		//	$contentsecuritypolicy = "font-src *; img-src *; style-src * 'unsafe-inline' 'unsafe-eval'; default-src 'self' *.stripe.com 'unsafe-inline' 'unsafe-eval'; script-src 'self' *.stripe.com 'unsafe-inline' 'unsafe-eval'; frame-src 'self' *.stripe.com; connect-src 'self';";
 		//}
-		//else $contentsecuritypolicy = $conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY;
-		$contentsecuritypolicy = $conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY;
+		//else
+		$contentsecuritypolicy = empty($conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY) ? '' : $conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY;
 
 		if (!is_object($hookmanager)) $hookmanager = new HookManager($db);
 		$hookmanager->initHooks(array("main"));
@@ -1428,9 +1430,9 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				$tmpplugin = empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) ?constant('REQUIRE_JQUERY_MULTISELECT') : $conf->global->MAIN_USE_JQUERY_MULTISELECT;
 				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/dist/js/'.$tmpplugin.'.full.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n"; // We include full because we need the support of containerCssClass
 			}
-			if (! defined('DISABLE_MULTISELECT'))     // jQuery plugin "mutiselect" to select with checkboxes. Can be removed once we have an enhanced search tool
+			if (!defined('DISABLE_MULTISELECT'))     // jQuery plugin "mutiselect" to select with checkboxes. Can be removed once we have an enhanced search tool
 			{
-				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/multiselect/jquery.multi-select.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/multiselect/jquery.multi-select.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
 		}
 
@@ -1556,7 +1558,8 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 	// For backward compatibility with old modules
 	if (empty($conf->headerdone))
 	{
-		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+		$disablenofollow = 0;
+		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, $disablenofollow);
 		print '<body id="mainbody">';
 	}
 
@@ -1565,6 +1568,11 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
      */
 	if ((empty($conf->dol_hide_topmenu) || GETPOST('dol_invisible_topmenu', 'int')) && (!defined('NOREQUIREMENU') || !constant('NOREQUIREMENU')))
 	{
+		if (!isset($form) || !is_object($form)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+			$form = new Form($db);
+		}
+
 		print "\n".'<!-- Start top horizontal -->'."\n";
 
 		print '<div class="side-nav-vert'.(GETPOST('dol_invisible_topmenu', 'int') ? ' hidden' : '').'"><div id="id-top">'; // dol_invisible_topmenu differs from dol_hide_topmenu: dol_invisible_topmenu means we output menu but we make it invisible.
@@ -1631,7 +1639,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			//$text.= img_picto(":".$langs->trans("ModuleBuilder"), 'printer_top.png', 'class="printer"');
 			$text .= '<span class="fa fa-bug atoplogin valignmiddle"></span>';
 			$text .= '</a>';
-			$toprightmenu .= @Form::textwithtooltip('', $langs->trans("ModuleBuilder"), 2, 1, $text, 'login_block_elem', 2);
+			$toprightmenu .= $form->textwithtooltip('', $langs->trans("ModuleBuilder"), 2, 1, $text, 'login_block_elem', 2);
 		}
 
 		// Link to print main content area
@@ -1650,7 +1658,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			//$text.= img_picto(":".$langs->trans("PrintContentArea"), 'printer_top.png', 'class="printer"');
 			$text .= '<span class="fa fa-print atoplogin valignmiddle"></span>';
 			$text .= '</a>';
-			$toprightmenu .= @Form::textwithtooltip('', $langs->trans("PrintContentArea"), 2, 1, $text, 'login_block_elem', 2);
+			$toprightmenu .= $form->textwithtooltip('', $langs->trans("PrintContentArea"), 2, 1, $text, 'login_block_elem', 2);
 		}
 
 		// Link to Dolibarr wiki pages
@@ -1687,7 +1695,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				$text .= '">';
 				$text .= '<span class="fa fa-question-circle atoplogin valignmiddle'.($helppresent ? ' '.$helppresent : '').'"></span>';
 				$text .= '</a>';
-				$toprightmenu .= @Form::textwithtooltip('', $title, 2, 1, $text, 'login_block_elem', 2);
+				$toprightmenu .= $form->textwithtooltip('', $title, 2, 1, $text, 'login_block_elem', 2);
 			}
 
 			// Version
@@ -1699,11 +1707,11 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 
 		if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			$text = '<span href="#" class="aversion"><span class="hideonsmartphone small">'.DOL_VERSION.'</span></span>';
-			$toprightmenu .= @Form::textwithtooltip('', $appli, 2, 1, $text, 'login_block_elem', 2);
+			$toprightmenu .= $form->textwithtooltip('', $appli, 2, 1, $text, 'login_block_elem', 2);
 		}
 
 		// Logout link
-		$toprightmenu .= @Form::textwithtooltip('', $logouthtmltext, 2, 1, $logouttext, 'login_block_elem logout-btn', 2);
+		$toprightmenu .= $form->textwithtooltip('', $logouthtmltext, 2, 1, $logouttext, 'login_block_elem logout-btn', 2);
 
 		$toprightmenu .= '</div>'; // end div class="login_block_other"
 
@@ -1746,7 +1754,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		print "<!-- End top horizontal menu -->\n\n";
 	}
 
-	if (empty($conf->dol_hide_leftmenu) && empty($conf->dol_use_jmobile)) print '<!-- Begin div id-container --><div id="id-container" class="id-container'.($morecss ? ' '.$morecss : '').'">';
+	if (empty($conf->dol_hide_leftmenu) && empty($conf->dol_use_jmobile)) print '<!-- Begin div id-container --><div id="id-container" class="id-container">';
 }
 
 
@@ -2698,6 +2706,7 @@ if (!function_exists("llxFooter"))
 		global $conf, $db, $langs, $user, $mysoc, $object;
 		global $delayedhtmlcontent;
 		global $contextpage, $page, $limit;
+		global $dolibarr_distrib;
 
 		$ext = 'layout='.$conf->browser->layout.'&version='.urlencode(DOL_VERSION);
 
@@ -2858,35 +2867,35 @@ if (!function_exists("llxFooter"))
 			    					  timeout: 500,     // timeout milliseconds
 			    					  cache: false,
 			    					  data: {
-				    					  hash_algo: "md5",
-				    					  hash_unique_id: "<?php echo dol_escape_js($hash_unique_id); ?>",
-				    					  action: "dolibarrping",
-				    					  version: "<?php echo (float) DOL_VERSION; ?>",
-				    					  entity: "<?php echo (int) $conf->entity; ?>",
-				    					  dbtype: "<?php echo dol_escape_js($db->type); ?>",
-				    					  country_code: "<?php echo dol_escape_js($mysoc->country_code); ?>",
-				    					  php_version: "<?php echo phpversion(); ?>",
-				    					  os_version: "<?php echo version_os('smr'); ?>",
-				    					  distrib: "<?php echo $distrib ? $distrib : 'unknown'; ?>"
+				    					  hash_algo: 'md5',
+				    					  hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>',
+				    					  action: 'dolibarrping',
+				    					  version: '<?php echo (float) DOL_VERSION; ?>',
+				    					  entity: '<?php echo (int) $conf->entity; ?>',
+				    					  dbtype: '<?php echo dol_escape_js($db->type); ?>',
+				    					  country_code: '<?php echo $mysoc->country_code ? dol_escape_js($mysoc->country_code) : 'unknown'; ?>',
+				    					  php_version: '<?php echo dol_escape_js(phpversion()); ?>',
+				    					  os_version: '<?php echo dol_escape_js(version_os('smr')); ?>',
+				    					  distrib: '<?php echo $distrib ? dol_escape_js($distrib) : 'unknown'; ?>'
 				    				  },
 			    					  success: function (data, status, xhr) {   // success callback function (data contains body of response)
 			      					    	console.log("Ping ok");
 			        	    				$.ajax({
-			      	    					  method: "GET",
-			      	    					  url: "<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>",
+			      	    					  method: 'GET',
+			      	    					  url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
 			      	    					  timeout: 500,     // timeout milliseconds
 			      	    					  cache: false,
-			      	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo dol_escape_js($hash_unique_id); ?>", action: "firstpingok" },	// to update
+			      	        				  data: { hash_algo: 'md5', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingok' },	// for update
 			    					  		});
 			    					  },
 			    					  error: function (data,status,xhr) {   // error callback function
 			        					    console.log("Ping ko: " + data);
 			        	    				$.ajax({
-			        	    					  method: "GET",
-			        	    					  url: "<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>",
+			        	    					  method: 'GET',
+			        	    					  url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
 			        	    					  timeout: 500,     // timeout milliseconds
 			        	    					  cache: false,
-			        	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo dol_escape_js($hash_unique_id); ?>", action: "firstpingko" },
+			        	        				  data: { hash_algo: 'md5', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingko' },
 			      					  		});
 			    					  }
 			    				});

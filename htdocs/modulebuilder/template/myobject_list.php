@@ -141,22 +141,8 @@ foreach ($object->fields as $key => $val)
 	}
 }
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key])) {
-			$arrayfields["ef.".$key] = array(
-				'label'=>$extrafields->attributes[$object->table_element]['label'][$key],
-				'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1),
-				'position'=>$extrafields->attributes[$object->table_element]['pos'][$key],
-				'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]),
-				'langfile'=>$extrafields->attributes[$object->table_element]['langfile'][$key],
-				'help'=>$extrafields->attributes[$object->table_element]['help'][$key]
-			);
-		}
-	}
-}
+include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -445,9 +431,9 @@ foreach ($object->fields as $key => $val)
 	if (!empty($arrayfields['t.'.$key]['checked']))
 	{
 		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-		if (is_array($val['arrayofkeyval'])) print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
+		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
 		elseif (strpos($val['type'], 'integer:') === 0) {
-			print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth150', 1);
+			print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth125', 1);
 		} elseif (!preg_match('/^(date|timestamp)/', $val['type'])) print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
 		print '</td>';
 	}
@@ -472,7 +458,7 @@ print '</tr>'."\n";
 print '<tr class="liste_titre">';
 foreach ($object->fields as $key => $val)
 {
-	$cssforfield = (empty($val['css']) ? '' : $val['css']);
+	$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 	if ($key == 'status') $cssforfield .= ($cssforfield ? ' ' : '').'center';
 	elseif (in_array($val['type'], array('date', 'datetime', 'timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'center';
 	elseif (in_array($val['type'], array('timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';

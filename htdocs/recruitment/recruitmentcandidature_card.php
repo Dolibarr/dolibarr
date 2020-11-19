@@ -59,11 +59,13 @@ if (!$res) die("Include of main fails");
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-dol_include_once('/recruitment/class/recruitmentcandidature.class.php');
-dol_include_once('/recruitment/lib/recruitment_recruitmentcandidature.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.php';
+require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentcandidature.class.php';
+require_once DOL_DOCUMENT_ROOT.'/recruitment/lib/recruitment_recruitmentcandidature.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("recruitment", "other"));
+$langs->loadLangs(array("recruitment", "other", "users"));
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -162,6 +164,104 @@ if (empty($reshook))
 		$result = $object->setStatut($object::STATUS_REFUSED, null, '', $triggermodname);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
+	if ($action == 'confirm_makeofferordecline' && $permissiontoadd && !GETPOST('cancel', 'alpha')) {
+		if (!(GETPOST('status', 'int') > 0)) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CloseAs")), null, 'errors');
+			$action = 'makeofferordecline';
+		} else {
+			// prevent browser refresh from closing proposal several times
+			if ($object->status == $object::STATUS_VALIDATED)
+			{
+				$db->begin();
+
+				if (GETPOST('status', 'int') == $object::STATUS_REFUSED) {
+					$result = $object->setStatut($object::STATUS_REFUSED, null, '', $triggermodname);
+					if ($result < 0) {
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+				} else {
+					$result = $object->setStatut($object::STATUS_CONTRACT_PROPOSED, null, '', $triggermodname);
+					if ($result < 0) {
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+				}
+
+				if (!$error)
+				{
+					$db->commit();
+				} else {
+					$db->rollback();
+				}
+			}
+		}
+	}
+
+	if ($action == 'confirm_closeas' && $permissiontoadd && !GETPOST('cancel', 'alpha')) {
+		if (!(GETPOST('status', 'int') > 0)) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CloseAs")), null, 'errors');
+			$action = 'makeofferordecline';
+		} else {
+			// prevent browser refresh from closing proposal several times
+			if ($object->status == $object::STATUS_CONTRACT_PROPOSED)
+			{
+				$db->begin();
+
+				if (GETPOST('status', 'int') == $object::STATUS_CONTRACT_REFUSED) {
+					$result = $object->setStatut($object::STATUS_CONTRACT_REFUSED, null, '', $triggermodname);
+					if ($result < 0) {
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+				} else {
+					$result = $object->setStatut($object::STATUS_CONTRACT_SIGNED, null, '', $triggermodname);
+					if ($result < 0) {
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+				}
+
+				if (!$error)
+				{
+					$db->commit();
+				} else {
+					$db->rollback();
+				}
+			}
+		}
+	}
+
+	// Create user from a member
+	if ($action == 'confirm_create_user' && $confirm == 'yes' && $user->rights->user->user->creer) {
+		if ($result > 0) {
+			$jobposition = new RecruitmentJobPosition($db);
+			$jobposition->fetch($object->fk_recruitmentjobposition);
+
+			// Creation user
+			$nuser = new User($db);
+			$nuser->login = GETPOST('login', 'alphanohtml');
+			$nuser->fk_soc = 0;
+			$nuser->employee = 1;
+			$nuser->firstname = $object->firstname;
+			$nuser->lastname = $object->lastname;
+			$nuser->personal_mobile = $object->phone;
+			$nuser->birth = $object->date_birth;
+			$nuser->salary = $object->remuneration_proposed;
+			$nuser->fk_user = $jobposition->fk_user_supervisor;	// Supervisor
+
+			$result = $nuser->create($user);
+
+			if ($result < 0) {
+				$langs->load("errors");
+				setEventMessages($langs->trans($nuser->error), null, 'errors');
+				$action = 'create_user';
+			} else {
+				setEventMessages($langs->trans("NewUserCreated", $nuser->login), null, 'mesgs');
+				$action = '';
+			}
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'create_user';
 		}
 	}
 
@@ -302,21 +402,61 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
-	// Confirmation of action xxxx
-	if ($action == 'xxx')
+	if ($action == 'makeofferordecline')
 	{
-		$formquestion = array();
-		/*
-		$forcecombo=0;
-		if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
+		$langs->load("propal");
+
+		//Form to close proposal (signed or not)
 		$formquestion = array(
-			// 'text' => $langs->trans("ConfirmClone"),
-			// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
-			// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-			// array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
+			array('type' => 'select', 'name' => 'status', 'label' => '<span class="fieldrequired">'.$langs->trans("CloseAs").'</span>', 'values' => array($object::STATUS_CONTRACT_PROPOSED => $object->LibStatut($object::STATUS_CONTRACT_PROPOSED), $object::STATUS_REFUSED => $object->LibStatut($object::STATUS_REFUSED))),
+			array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"), 'value' => '')				// Field to complete private note (not replace)
 		);
-		*/
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
+
+		$text = '';
+
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SetAcceptedRefused'), $text, 'confirm_makeofferordecline', $formquestion, '', 1, 250);
+	}
+
+	if ($action == 'closeas')
+	{
+		$langs->load("propal");
+
+		//Form to close proposal (signed or not)
+		$formquestion = array(
+			array('type' => 'select', 'name' => 'status', 'label' => '<span class="fieldrequired">'.$langs->trans("CloseAs").'</span>', 'values' => array($object::STATUS_CONTRACT_SIGNED => $object->LibStatut($object::STATUS_CONTRACT_PROPOSED), $object::STATUS_CONTRACT_REFUSED => $object->LibStatut($object::STATUS_CONTRACT_REFUSED))),
+			array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"), 'value' => '')				// Field to complete private note (not replace)
+		);
+
+		$text = '';
+
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SetAcceptedRefused'), $text, 'confirm_closeas', $formquestion, '', 1, 250);
+	}
+
+	// Confirm create user
+	if ($action == 'create_user') {
+		$login = (GETPOSTISSET('login') ? GETPOST('login', 'alphanohtml') : $object->login);
+		if (empty($login)) {
+			// Full firstname and name separated with a dot : firstname.name
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$login = dol_buildlogin($object->lastname, $object->firstname);
+		}
+		if (empty($login)) $login = strtolower(substr($object->firstname, 0, 4)).strtolower(substr($object->lastname, 0, 4));
+
+		// Create a form array
+		$formquestion = array(
+			array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login)
+		);
+		/*
+		if (!empty($conf->societe->enabled) && $object->socid > 0) {
+			$object->fetch_thirdparty();
+			$formquestion[] = array('label' => $langs->trans("UserWillBe"), 'type' => 'radio', 'name' => 'internalorexternal', 'default'=>'external', 'values' => array('external'=>$langs->trans("External").' - '.$langs->trans("LinkedToDolibarrThirdParty").' '.$object->thirdparty->getNomUrl(1, '', 0, 1), 'internal'=>$langs->trans("Internal")));
+		}
+		$text = '';
+		if (!empty($conf->societe->enabled) && $object->socid <= 0) {
+			$text .= $langs->trans("UserWillBeInternalUser").'<br>';
+		} */
+		$text .= $langs->trans("ConfirmCreateLogin");
+		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("CreateDolibarrLogin"), $text, "confirm_create_user", $formquestion, 'yes');
 	}
 
 	// Call Hook formConfirm
@@ -500,12 +640,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 			}
 
-			// Refuse - Decline
-			if ($object->status >= $object::STATUS_VALIDATED && $object->status < $object::STATUS_REFUSED)
+			// Make offer - Refuse - Decline
+			if ($object->status >= $object::STATUS_VALIDATED && $object->status < $object::STATUS_CONTRACT_PROPOSED)
 			{
 				if ($permissiontoadd)
 				{
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_decline&confirm=yes">'.$langs->trans("Decline").'</a>';
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=makeofferordecline">'.$langs->trans("MakeOffer").' / '.$langs->trans("Decline").'</a>';
+				}
+			}
+
+			// Contract refused / accepted
+			if ($object->status == $object::STATUS_CONTRACT_PROPOSED)
+			{
+				if ($permissiontoadd)
+				{
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=closeas">'.$langs->trans("Accept").' / '.$langs->trans("Decline").'</a>';
 				}
 			}
 
@@ -515,30 +664,34 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&object=recruitmentcandidature">'.$langs->trans("ToClone").'</a>'."\n";
 			}
 
-			/*
-			if ($permissiontoadd)
+			// Button to convert into a user
+			if ($object->status == $object::STATUS_CONTRACT_SIGNED)
 			{
-				if ($object->status == $object::STATUS_ENABLED)
-				{
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=disable">'.$langs->trans("Disable").'</a>'."\n";
-				}
-				else
-				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=enable">'.$langs->trans("Enable").'</a>'."\n";
+				if ($user->rights->user->user->creer) {
+					// TODO Check if a user already exists
+					$useralreadyexists = 0;
+					if (empty($useralreadyexists)) {
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a></div>';
+					} else {
+						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans("CreateDolibarrLogin").'</a></div>';
+					}
+				} else {
+					print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("CreateDolibarrLogin")."</font></div>";
 				}
 			}
+
+			// Cancel
 			if ($permissiontoadd)
 			{
 				if ($object->status == $object::STATUS_VALIDATED)
 				{
 					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close">'.$langs->trans("Cancel").'</a>'."\n";
 				}
-				else
+				elseif ($object->status == $object::STATUS_REFUSED || $object->status == $object::STATUS_CANCELED || $object->status == $object::STATUS_CONTRACT_REFUSED)
 				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen">'.$langs->trans("Re-Open").'</a>'."\n";
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_reopen&confirm=yes&token='.newToken().'">'.$langs->trans("Re-Open").'</a>'."\n";
 				}
 			}
-			*/
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
 			if ($permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd))

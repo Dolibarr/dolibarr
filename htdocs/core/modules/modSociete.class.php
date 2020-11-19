@@ -295,7 +295,7 @@ class modSociete extends DolibarrModules
 			's.rowid'=>"Numeric", 's.nom'=>"Text", 's.name_alias'=>"Text", 'ps.nom'=>"Text",
 			's.status'=>"Numeric", 's.client'=>"Numeric", 's.fournisseur'=>"Boolean", 's.datec'=>"Date", 's.tms'=>"Date",
 			's.code_client'=>"Text", 's.code_fournisseur'=>"Text", 's.code_compta'=>"Text", 's.code_compta_fournisseur'=>"Text",
-			's.address'=>"Text", 's.zip'=>"Text",'s.town'=>"Text",
+			's.address'=>"Text", 's.zip'=>"Text", 's.town'=>"Text",
 			'd.nom'=>'Text', 'r.nom'=>'Text', 'c.label'=>"List:c_country:label:label", 'c.code'=>"Text",
 			's.phone'=>"Text", 's.fax'=>"Text",
 			's.url'=>"Text", 's.email'=>"Text", 's.default_lang'=>"Text", 's.canvas' => "Canvas",

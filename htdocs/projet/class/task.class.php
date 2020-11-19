@@ -1675,7 +1675,7 @@ class Task extends CommonObject
 				$clone_task->note_public = '';
 			} else {
 				$this->db->begin();
-				$res = $clone_task->update_note(dol_html_entity_decode($clone_task->note_public, ENT_QUOTES|ENT_HTML5), '_public');
+				$res = $clone_task->update_note(dol_html_entity_decode($clone_task->note_public, ENT_QUOTES | ENT_HTML5), '_public');
 				if ($res < 0)
 				{
 					$this->error .= $clone_task->error;
@@ -1686,7 +1686,7 @@ class Task extends CommonObject
 				}
 
 				$this->db->begin();
-				$res = $clone_task->update_note(dol_html_entity_decode($clone_task->note_private, ENT_QUOTES|ENT_HTML5), '_private');
+				$res = $clone_task->update_note(dol_html_entity_decode($clone_task->note_private, ENT_QUOTES | ENT_HTML5), '_private');
 				if ($res < 0)
 				{
 					$this->error .= $clone_task->error;
@@ -1900,7 +1900,7 @@ class Task extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'nodefault';
 
-			if ($this->modelpdf) {
+			if (!empty($this->modelpdf)) {
 				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->PROJECT_TASK_ADDON_PDF)) {
 				$modele = $conf->global->PROJECT_TASK_ADDON_PDF;

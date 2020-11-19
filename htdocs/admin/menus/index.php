@@ -38,8 +38,8 @@ $dirsmartphone = array();
 $dirmenus = array_merge(array("/core/menus/"), (array) $conf->modules_parts['menus']);
 foreach ($dirmenus as $dirmenu)
 {
-    $dirstandard[] = $dirmenu.'standard';
-    $dirsmartphone[] = $dirmenu.'smartphone';
+	$dirstandard[] = $dirmenu.'standard';
+	$dirsmartphone[] = $dirmenu.'smartphone';
 }
 
 $action = GETPOST('action', 'aZ09');
@@ -244,13 +244,13 @@ if ($action == 'delete')
 	$result = $db->query($sql);
 	$obj = $db->fetch_object($result);
 
-    print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOST('menuId', 'int'), $langs->trans("DeleteMenu"), $langs->trans("ConfirmDeleteMenu", $obj->title), "confirm_delete");
+	print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOST('menuId', 'int'), $langs->trans("DeleteMenu"), $langs->trans("ConfirmDeleteMenu", $obj->title), "confirm_delete");
 }
 
 $newcardbutton = '';
 if ($user->admin)
 {
-    $newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/admin/menus/edit.php?menuId=0&action=create&menu_handler='.urlencode($menu_handler).'&backtopage='.urlencode($_SERVER['PHP_SELF']));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/admin/menus/edit.php?menuId=0&action=create&menu_handler='.urlencode($menu_handler).'&backtopage='.urlencode($_SERVER['PHP_SELF']));
 }
 
 print '<form name="newmenu" class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'">';
@@ -297,7 +297,7 @@ if ($conf->use_javascript_ajax)
 
 	//il faut d'abord declarer un element racine de l'arbre
 
-    $data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
+	$data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
 
 	//puis tous les elements enfants
 
@@ -337,16 +337,16 @@ if ($conf->use_javascript_ajax)
 
 			$data[] = array(
 				'rowid'=>$menu['rowid'],
-			    'module'=>$menu['module'],
+				'module'=>$menu['module'],
 				'fk_menu'=>$menu['fk_menu'],
 				'title'=>$titre,
-			    'mainmenu'=>$menu['mainmenu'],
+				'mainmenu'=>$menu['mainmenu'],
 				'leftmenu'=>$menu['leftmenu'],
 				'fk_mainmenu'=>$menu['fk_mainmenu'],
 				'fk_leftmenu'=>$menu['fk_leftmenu'],
-			    'position'=>$menu['position'],
+				'position'=>$menu['position'],
 				'entry'=>$entry,
-			    'buttons'=>$buttons
+				'buttons'=>$buttons
 			);
 			$i++;
 		}
@@ -369,36 +369,36 @@ if ($conf->use_javascript_ajax)
 
 
 	// Process remaining records (records that are not linked to root by any path)
-    $remainingdata = array();
+	$remainingdata = array();
 	foreach ($data as $datar)
 	{
-	    if (empty($datar['rowid']) || $tree_recur_alreadyadded[$datar['rowid']]) continue;
-	    $remainingdata[] = $datar;
+		if (empty($datar['rowid']) || $tree_recur_alreadyadded[$datar['rowid']]) continue;
+		$remainingdata[] = $datar;
 	}
 
 	if (count($remainingdata))
 	{
-    	print '<table class="noborder centpercent">';
+		print '<table class="noborder centpercent">';
 
-    	print '<tr class="liste_titre">';
-    	print '<td>'.$langs->trans("NotTopTreeMenuPersonalized").'</td>';
-    	print '<td class="right"></td>';
-    	print '</tr>';
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans("NotTopTreeMenuPersonalized").'</td>';
+		print '<td class="right"></td>';
+		print '</tr>';
 
-    	print '<tr>';
-    	print '<td colspan="2">';
-    	foreach ($remainingdata as $datar)
-    	{
-            $father = array('rowid'=>$datar['rowid'], 'title'=>"???", 'mainmenu'=>$datar['fk_mainmenu'], 'leftmenu'=>$datar['fk_leftmenu'], 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
-    	    //print 'Start with rowid='.$datar['rowid'].' mainmenu='.$father ['mainmenu'].' leftmenu='.$father ['leftmenu'].'<br>'."\n";
-    	    tree_recur($data, $father, 0, 'iddivjstree'.$datar['rowid'], 1, 1);
-    	}
+		print '<tr>';
+		print '<td colspan="2">';
+		foreach ($remainingdata as $datar)
+		{
+			$father = array('rowid'=>$datar['rowid'], 'title'=>"???", 'mainmenu'=>$datar['fk_mainmenu'], 'leftmenu'=>$datar['fk_leftmenu'], 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
+			//print 'Start with rowid='.$datar['rowid'].' mainmenu='.$father ['mainmenu'].' leftmenu='.$father ['leftmenu'].'<br>'."\n";
+			tree_recur($data, $father, 0, 'iddivjstree'.$datar['rowid'], 1, 1);
+		}
 
-    	print '</td>';
+		print '</td>';
 
-    	print '</tr>';
+		print '</tr>';
 
-    	print '</table>';
+		print '</table>';
 	}
 
 	print '</div>';

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,14 +41,13 @@ $cancel = GETPOST('cancel', 'alpha');
 $numsondage = '';
 
 if (GETPOST('id')) {
-	$numsondage = GETPOST('id', 'alpha');
+	$numsondage = (string) GETPOST('id', 'alpha');
 }
 
 $object = new Opensurveysondage($db);
 
 $result = $object->fetch(0, $numsondage);
-if ($result <= 0)
-{
+if ($result <= 0) {
 	dol_print_error($db, $object->error);
 	exit;
 }
@@ -112,17 +111,16 @@ if (empty($reshook))
 
 		if (!$error)
 		{
-			$object->title = GETPOST('nouveautitre', 'nohtml');
-			$object->description = GETPOST('nouveauxcommentaires', 'restricthtml');
-			$object->mail_admin = GETPOST('nouvelleadresse', 'alpha');
+			$object->title = (string) GETPOST('nouveautitre', 'alphanohtml');
+			$object->description = (string) GETPOST('nouveauxcommentaires', 'restricthtml');
+			$object->mail_admin = (string) GETPOST('nouvelleadresse', 'alpha');
 			$object->date_fin = $expiredate;
-			$object->allow_comments = GETPOST('cancomment', 'alpha') == 'on' ? 1 : 0;
-			$object->allow_spy = GETPOST('canseeothersvote', 'alpha') == 'on' ? 1 : 0;
-			$object->mailsonde = GETPOST('mailsonde', 'alpha') == 'on' ? true : false;
+			$object->allow_comments = GETPOST('cancomment', 'aZ09') == 'on' ? 1 : 0;
+			$object->allow_spy = GETPOST('canseeothersvote', 'aZ09') == 'on' ? 1 : 0;
+			$object->mailsonde = GETPOST('mailsonde', 'aZ09') == 'on' ? 1 : 0;
 
 			$res = $object->update($user);
-			if ($res < 0)
-			{
+			if ($res < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$action = 'edit';
 			}
@@ -134,21 +132,18 @@ if (empty($reshook))
 	{
 		$error = 0;
 
-		if (!GETPOST('comment'))
-		{
+		if (!GETPOST('comment')) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Comment")), null, 'errors');
 		}
-		if (!GETPOST('commentuser'))
-		{
+		if (!GETPOST('commentuser')) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("User")), null, 'errors');
 		}
 
-		if (!$error)
-		{
-			$comment = GETPOST("comment");
-			$comment_user = GETPOST('commentuser');
+		if (!$error) {
+			$comment = (string) GETPOST("comment", "restricthtml");
+			$comment_user = (string) GETPOST('commentuser', "restricthtml");
 
 			$resql = $object->addComment($comment, $comment_user);
 

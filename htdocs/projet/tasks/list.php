@@ -129,9 +129,9 @@ $arrayfields = array(
 	't.progress_calculated'=>array('label'=>$langs->trans("ProgressCalculated"), 'checked'=>1, 'position'=>104),
 	't.progress'=>array('label'=>$langs->trans("ProgressDeclared"), 'checked'=>1, 'position'=>105),
 	't.progress_summary'=>array('label'=>$langs->trans("TaskProgressSummary"), 'checked'=>1, 'position'=>106),
-    't.tobill'=>array('label'=>$langs->trans("TimeToBill"), 'checked'=>0, 'position'=>110),
-    't.billed'=>array('label'=>$langs->trans("TimeBilled"), 'checked'=>0, 'position'=>111),
-    't.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+	't.tobill'=>array('label'=>$langs->trans("TimeToBill"), 'checked'=>0, 'position'=>110),
+	't.billed'=>array('label'=>$langs->trans("TimeBilled"), 'checked'=>0, 'position'=>111),
+	't.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	't.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 	//'t.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
@@ -276,7 +276,7 @@ if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_project";
 // Add sum fields
 if (!empty($arrayfields['t.tobill']['checked']) || !empty($arrayfields['t.billed']['checked']))
 {
-    $sql .= " , SUM(tt.task_duration * ".$db->ifsql("invoice_id IS NULL", "1", "0").") as tobill, SUM(tt.task_duration * ".$db->ifsql("invoice_id IS NULL", "0", "1").") as billed";
+	$sql .= " , SUM(tt.task_duration * ".$db->ifsql("invoice_id IS NULL", "1", "0").") as tobill, SUM(tt.task_duration * ".$db->ifsql("invoice_id IS NULL", "0", "1").") as billed";
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -293,7 +293,7 @@ if (!empty($search_categ)) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_proje
 $sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
 if (!empty($arrayfields['t.tobill']['checked']) || !empty($arrayfields['t.billed']['checked']))
 {
-    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time as tt ON tt.fk_task = t.rowid";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time as tt ON tt.fk_task = t.rowid";
 }
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 if ($search_project_user > 0)  $sql .= ", ".MAIN_DB_PREFIX."element_contact as ecp";
@@ -333,15 +333,15 @@ $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // No
 $sql .= $hookmanager->resPrint;
 if (!empty($arrayfields['t.tobill']['checked']) || !empty($arrayfields['t.billed']['checked']))
 {
-    $sql .= " GROUP BY p.rowid, p.ref, p.title, p.fk_statut, p.datee, p.fk_opp_status, p.public, p.fk_user_creat,";
-    $sql .= " s.nom, s.rowid,";
-    $sql .= " t.datec, t.dateo, t.datee, t.tms,";
-    $sql .= " t.rowid, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress, t.fk_statut";
-    if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_project";
-    // Add fields from extrafields
-    if (!empty($extrafields->attributes[$object->table_element]['label'])) {
-    	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key : '');
-    }
+	$sql .= " GROUP BY p.rowid, p.ref, p.title, p.fk_statut, p.datee, p.fk_opp_status, p.public, p.fk_user_creat,";
+	$sql .= " s.nom, s.rowid,";
+	$sql .= " t.datec, t.dateo, t.datee, t.tms,";
+	$sql .= " t.rowid, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress, t.fk_statut";
+	if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_project";
+	// Add fields from extrafields
+	if (!empty($extrafields->attributes[$object->table_element]['label'])) {
+		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key : '');
+	}
 }
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -437,8 +437,8 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 $texthelp = '';
 if ($search_task_user == $user->id) $texthelp .= $langs->trans("MyTasksDesc");
 else {
-    if ($user->rights->projet->all->lire && !$socid) $texthelp .= $langs->trans("TasksOnProjectsDesc");
-    else $texthelp .= $langs->trans("TasksOnProjectsPublicDesc");
+	if ($user->rights->projet->all->lire && !$socid) $texthelp .= $langs->trans("TasksOnProjectsDesc");
+	else $texthelp .= $langs->trans("TasksOnProjectsPublicDesc");
 }
 
 print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'projecttask', 0, $newcardbutton, '', $limit, 0, 0, 1);
@@ -656,9 +656,9 @@ while ($i < min($num, $limit))
 	$object->progress = $obj->progress;
 	$object->datee = $db->jdate($obj->date_end); // deprecated
 	$object->date_end = $db->jdate($obj->date_end);
-    $object->planned_workload = $obj->planned_workload;
-    $object->duration_effective = $obj->duration_effective;
-    $object->fk_task_parent = $obj->fk_task_parent;
+	$object->planned_workload = $obj->planned_workload;
+	$object->duration_effective = $obj->duration_effective;
+	$object->fk_task_parent = $obj->fk_task_parent;
 
 
 	$projectstatic->id = $obj->projectid;
@@ -843,8 +843,8 @@ while ($i < min($num, $limit))
 		{
 			print '<td class="center">';
 			if ($obj->progress != '' && $obj->duration_effective) {
-                print getTaskProgressView($object, false, false);
-            }
+				print getTaskProgressView($object, false, false);
+			}
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 			if (!$i) $totalarray['totalprogress_summary'] = $totalarray['nbfield'];
@@ -852,36 +852,36 @@ while ($i < min($num, $limit))
 		// Time not billed
 		if (!empty($arrayfields['t.tobill']['checked']))
 		{
-		    print '<td class="center">';
-		    if ($obj->usage_bill_time)
-		    {
-		        print convertSecondToTime($obj->tobill, 'allhourmin');
-		        $totalarray['val']['t.tobill'] += $obj->tobill;
-		        $totalarray['totaltobill'] += $obj->tobill;
-		    } else {
-		        print '<span class="opacitymedium">'.$langs->trans("NA").'</span>';
-		    }
-		    print '</td>';
-		    if (!$i) $totalarray['nbfield']++;
-		    if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 't.tobill';
-		    if (!$i) $totalarray['totaltobillfield'] = $totalarray['nbfield'];
+			print '<td class="center">';
+			if ($obj->usage_bill_time)
+			{
+				print convertSecondToTime($obj->tobill, 'allhourmin');
+				$totalarray['val']['t.tobill'] += $obj->tobill;
+				$totalarray['totaltobill'] += $obj->tobill;
+			} else {
+				print '<span class="opacitymedium">'.$langs->trans("NA").'</span>';
+			}
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 't.tobill';
+			if (!$i) $totalarray['totaltobillfield'] = $totalarray['nbfield'];
 		}
 		// Time billed
 		if (!empty($arrayfields['t.billed']['checked']))
 		{
-		    print '<td class="center">';
-		    if ($obj->usage_bill_time)
-		    {
-		        print convertSecondToTime($obj->billed, 'allhourmin');
-		        $totalarray['val']['t.billed'] += $obj->billed;
-		        $totalarray['totalbilled'] += $obj->billed;
-		    } else {
-		        print '<span class="opacitymedium">'.$langs->trans("NA").'</span>';
-		    }
-		    print '</td>';
-		    if (!$i) $totalarray['nbfield']++;
-		    if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 't.billed';
-		    if (!$i) $totalarray['totalbilledfield'] = $totalarray['nbfield'];
+			print '<td class="center">';
+			if ($obj->usage_bill_time)
+			{
+				print convertSecondToTime($obj->billed, 'allhourmin');
+				$totalarray['val']['t.billed'] += $obj->billed;
+				$totalarray['totalbilled'] += $obj->billed;
+			} else {
+				print '<span class="opacitymedium">'.$langs->trans("NA").'</span>';
+			}
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 't.billed';
+			if (!$i) $totalarray['totalbilledfield'] = $totalarray['nbfield'];
 		}
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';

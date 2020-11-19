@@ -140,11 +140,17 @@ abstract class ModeleThirdPartyCode
 		global $langs;
 		$langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
-		return $langs->trans("NotAvailable");
+		if ($this->version == 'development') {
+			return $langs->trans("VersionDevelopment");
+		} elseif ($this->version == 'experimental') {
+			return $langs->trans("VersionExperimental");
+		} elseif ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		} elseif ($this->version) {
+			return $this->version;
+		} else {
+			return $langs->trans("NotAvailable");
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -153,7 +159,7 @@ abstract class ModeleThirdPartyCode
 	 *
 	 *  @param	DoliDB	$db     			Database handler
 	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array						List of numbers
+	 *  @return	array|int					List of numbers
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
@@ -193,31 +199,32 @@ abstract class ModeleThirdPartyCode
 		$langs->load("admin");
 
 		$s = '';
-		if ($type == -1) $s .= $langs->trans("Name").': <b>'.$this->getNom($langs).'</b><br>';
-		if ($type == -1) $s .= $langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
-		if ($type == 0)  $s .= $langs->trans("CustomerCodeDesc").'<br>';
-		if ($type == 1)  $s .= $langs->trans("SupplierCodeDesc").'<br>';
-		if ($type != -1) $s .= $langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';
+		if ($type == -1) {
+			$s .= $langs->trans("Name").': <b>'.$this->getNom($langs).'</b><br>';
+		} elseif ($type == -1) {
+			$s .= $langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
+		} elseif ($type == 0) {
+			$s .= $langs->trans("CustomerCodeDesc").'<br>';
+		} elseif ($type == 1) {
+			$s .= $langs->trans("SupplierCodeDesc").'<br>';
+		} elseif ($type != -1) {
+			$s .= $langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';
+		}
 		$s .= '<br>';
 		$s .= '<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
-		if ($type == 0)
-		{
+		if ($type == 0) {
 			$s .= $langs->trans("RequiredIfCustomer").': ';
 			if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) $s .= '<strike>';
 			$s .= yn(!$this->code_null, 1, 2);
 			if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) $s .= '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
 			$s .= '<br>';
-		}
-		if ($type == 1)
-		{
+		} elseif ($type == 1) {
 			$s .= $langs->trans("RequiredIfSupplier").': ';
 			if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) $s .= '<strike>';
 			$s .= yn(!$this->code_null, 1, 2);
 			if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) $s .= '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
 			$s .= '<br>';
-		}
-		if ($type == -1)
-		{
+		} elseif ($type == -1) {
 			$s .= $langs->trans("Required").': ';
 			if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) $s .= '<strike>';
 			$s .= yn(!$this->code_null, 1, 2);
@@ -230,14 +237,12 @@ abstract class ModeleThirdPartyCode
 		$s .= $langs->trans("CanBeModifiedIfKo").': '.yn($this->code_modifiable_invalide, 1, 2).'<br>';
 		$s .= $langs->trans("AutomaticCode").': '.yn($this->code_auto, 1, 2).'<br>';
 		$s .= '<br>';
-		if ($type == 0 || $type == -1)
-		{
+		if ($type == 0 || $type == -1) {
 			$nextval = $this->getNextValue($soc, 0);
 			if (empty($nextval)) $nextval = $langs->trans("Undefined");
 			$s .= $langs->trans("NextValue").($type == -1 ? ' ('.$langs->trans("Customer").')' : '').': <b>'.$nextval.'</b><br>';
 		}
-		if ($type == 1 || $type == -1)
-		{
+		if ($type == 1 || $type == -1) {
 			$nextval = $this->getNextValue($soc, 1);
 			if (empty($nextval)) $nextval = $langs->trans("Undefined");
 			$s .= $langs->trans("NextValue").($type == -1 ? ' ('.$langs->trans("Supplier").')' : '').': <b>'.$nextval.'</b>';
@@ -317,11 +322,17 @@ abstract class ModeleAccountancyCode
 		global $langs;
 		$langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
-		return $langs->trans("NotAvailable");
+		if ($this->version == 'development') {
+			return $langs->trans("VersionDevelopment");
+		} elseif ($this->version == 'experimental') {
+			return $langs->trans("VersionExperimental");
+		} elseif ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		} elseif ($this->version) {
+			return $this->version;
+		} else {
+			return $langs->trans("NotAvailable");
+		}
 	}
 
 	/**
@@ -339,20 +350,20 @@ abstract class ModeleAccountancyCode
 		$langs->load("admin");
 
 		$s = '';
-		if ($type == -1) $s .= $langs->trans("Name").': <b>'.$this->name.'</b><br>';
-		if ($type == -1) $s .= $langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
+		if ($type == -1) {
+			$s .= $langs->trans("Name").': <b>'.$this->name.'</b><br>';
+			$s .= $langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
+		}
 		//$s.='<br>';
 		//$s.='<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
 		$s .= '<br>';
-		if ($type == 0 || $type == -1)
-		{
+		if ($type == 0 || $type == -1) {
 			$result = $this->get_code($db, $soc, 'customer');
 			$nextval = $this->code;
 			if (empty($nextval)) $nextval = $langs->trans("Undefined");
 			$s .= $langs->trans("NextValue").($type == -1 ? ' ('.$langs->trans("Customer").')' : '').': <b>'.$nextval.'</b><br>';
 		}
-		if ($type == 1 || $type == -1)
-		{
+		if ($type == 1 || $type == -1) {
 			$result = $this->get_code($db, $soc, 'supplier');
 			$nextval = $this->code;
 			if (empty($nextval)) $nextval = $langs->trans("Undefined");

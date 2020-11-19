@@ -42,11 +42,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
@@ -369,12 +371,14 @@ $userstatic = new User($db);
 $chargestatic = new ChargeSociales($db);
 $loanstatic = new Loan($db);
 $memberstatic = new Adherent($db);
+$donstatic = new Don($db);
 $paymentstatic = new Paiement($db);
 $paymentsupplierstatic = new PaiementFourn($db);
+$paymentscstatic = new PaymentSocialContribution($db);
 $paymentvatstatic = new TVA($db);
 $paymentsalstatic = new PaymentSalary($db);
+$paymentdonationstatic = new PaymentDonation($db);
 $paymentvariousstatic = new PaymentVarious($db);
-$donstatic = new Don($db);
 $paymentexpensereportstatic = new PaymentExpenseReport($db);
 $bankstatic = new Account($db);
 $banklinestatic = new AccountLine($db);
@@ -1089,7 +1093,7 @@ if ($resql)
 				}
 
 				print '<td class="center">';
-				print '<input type="checkbox" id="selectAll" />';
+				print '<input type="checkbox" id="selectAll" title="'.dol_escape_htmltag($langs->trans("SelectAll")).'" />';
 				print ' <script type="text/javascript">
 						$("input#selectAll").change(function() {
 							$("input[type=checkbox][name^=rowid]").prop("checked", $(this).is(":checked"));
@@ -1199,10 +1203,10 @@ if ($resql)
 					print ' '.$paymentsupplierstatic->getNomUrl(2);
 				} elseif ($links[$key]['type'] == 'payment_sc')
 				{
-					print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$links[$key]['url_id'].'">';
-					print ' '.img_object($langs->trans('ShowPayment'), 'payment').' ';
-					//print $langs->trans("SocialContributionPayment");
-					print '</a>';
+					$paymentscstatic->id = $links[$key]['url_id'];
+					$paymentscstatic->ref = $links[$key]['url_id'];
+					$paymentscstatic->label = $links[$key]['label'];
+					print ' '.$paymentscstatic->getNomUrl(2);
 				} elseif ($links[$key]['type'] == 'payment_vat')
 				{
 					$paymentvatstatic->id = $links[$key]['url_id'];
@@ -1212,6 +1216,7 @@ if ($resql)
 				{
 					$paymentsalstatic->id = $links[$key]['url_id'];
 					$paymentsalstatic->ref = $links[$key]['url_id'];
+					$paymentsalstatic->label = $links[$key]['label'];
 					print ' '.$paymentsalstatic->getNomUrl(2);
 				} elseif ($links[$key]['type'] == 'payment_loan')
 				{
@@ -1220,9 +1225,9 @@ if ($resql)
 					print '</a>';
 				} elseif ($links[$key]['type'] == 'payment_donation')
 				{
-					print '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?id='.$links[$key]['url_id'].'">';
-					print ' '.img_object($langs->trans('ShowPayment'), 'payment').' ';
-					print '</a>';
+					$paymentdonationstatic->id = $links[$key]['url_id'];
+					$paymentdonationstatic->ref = $links[$key]['url_id'];
+					print ' '.$paymentdonationstatic->getNomUrl(2);
 				} elseif ($links[$key]['type'] == 'payment_expensereport')
 				{
 					$paymentexpensereportstatic->id = $links[$key]['url_id'];

@@ -136,7 +136,7 @@ class MouvementStock extends CommonObject
 	 *										0=input (stock increase by a stock transfer), 1=output (stock decrease by a stock transfer),
 	 *										2=output (stock decrease), 3=input (stock increase)
 	 *                                      Note that qty should be > 0 with 0 or 3, < 0 with 1 or 2.
-	 *	@param		int		$price			Unit price HT of product, used to calculate average weighted price (PMP in french). If 0, average weighted price is not changed.
+	 *	@param		int		$price			Unit price HT of product, used to calculate average weighted price (AWP or PMP in french). If 0, average weighted price is not changed.
 	 *	@param		string	$label			Label of stock movement
 	 *	@param		string	$inventorycode	Inventory code
 	 *	@param		string	$datem			Force date of movement
@@ -159,6 +159,7 @@ class MouvementStock extends CommonObject
 		dol_syslog(get_class($this)."::_create start userid=$user->id, fk_product=$fk_product, warehouse_id=$entrepot_id, qty=$qty, type=$type, price=$price, label=$label, inventorycode=$inventorycode, datem=".$datem.", eatby=".$eatby.", sellby=".$sellby.", batch=".$batch.", skip_batch=".$skip_batch);
 
 		// Clean parameters
+		$price = price2num($price, 'MU');	// Clean value for the casse we receive a float zero value, to have it a real zero value.
 		if (empty($price)) $price = 0;
 		$now = (!empty($datem) ? $datem : dol_now());
 
@@ -181,7 +182,7 @@ class MouvementStock extends CommonObject
 		$this->warehouse_id = $entrepot_id;
 		$this->qty = $qty;
 		$this->type = $type;
-		$this->price = $price;
+		$this->price = price2num($price);
 		$this->label = $label;
 		$this->inventorycode = $inventorycode;
 		$this->datem = $now;
@@ -471,7 +472,7 @@ class MouvementStock extends CommonObject
 				}
 			}
 
-			// Calculate new PMP.
+			// Calculate new AWP (PMP)
 			$newpmp = 0;
 			if (!$error)
 			{
@@ -480,7 +481,7 @@ class MouvementStock extends CommonObject
 					// After a stock increase
 					// Note: PMP is calculated on stock input only (type of movement = 0 or 3). If type == 0 or 3, qty should be > 0.
 					// Note: Price should always be >0 or 0. PMP should be always >0 (calculated on input)
-					if ($price > 0 || (! empty($conf->global->STOCK_UPDATE_AWP_EVEN_WHEN_ENTRY_PRICE_IS_NULL) && $price ==0)) {
+					if ($price > 0 || (!empty($conf->global->STOCK_UPDATE_AWP_EVEN_WHEN_ENTRY_PRICE_IS_NULL) && $price == 0)) {
 						$oldqtytouse = ($oldqty >= 0 ? $oldqty : 0);
 						// We make a test on oldpmp>0 to avoid to use normal rule on old data with no pmp field defined
 						if ($oldpmp > 0) {
@@ -905,7 +906,7 @@ class MouvementStock extends CommonObject
 		if ($result >= 0)
 		{
 			// No error
-			if ($pdluo->id > 0)	{	// product_batch record found
+			if ($pdluo->id > 0) {	// product_batch record found
 				//print "Avant ".$pdluo->qty." Apres ".($pdluo->qty + $qty)."<br>";
 				$pdluo->qty += $qty;
 				if ($pdluo->qty == 0) {

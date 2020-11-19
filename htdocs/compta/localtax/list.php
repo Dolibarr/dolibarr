@@ -56,45 +56,45 @@ $sql .= " ORDER BY datev DESC";
 $result = $db->query($sql);
 if ($result)
 {
-    $num = $db->num_rows($result);
-    $i = 0;
-    $total = 0;
+	$num = $db->num_rows($result);
+	$i = 0;
+	$total = 0;
 
-    print '<table class="noborder centpercent">';
-    print '<tr class="liste_titre">';
-    print '<td class="nowrap" align="left">'.$langs->trans("Ref").'</td>';
-    print "<td>".$langs->trans("Label")."</td>";
-    print "<td>".$langs->trans("PeriodEndDate")."</td>";
-    print '<td class="nowrap" align="left">'.$langs->trans("DatePayment").'</td>';
-    print "<td align=\"right\">".$langs->trans("PayedByThisPayment")."</td>";
-    print "</tr>\n";
-    $var = 1;
-    while ($i < $num)
-    {
-        $obj = $db->fetch_object($result);
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td class="nowrap" align="left">'.$langs->trans("Ref").'</td>';
+	print "<td>".$langs->trans("Label")."</td>";
+	print "<td>".$langs->trans("PeriodEndDate")."</td>";
+	print '<td class="nowrap" align="left">'.$langs->trans("DatePayment").'</td>';
+	print "<td align=\"right\">".$langs->trans("PayedByThisPayment")."</td>";
+	print "</tr>\n";
+	$var = 1;
+	while ($i < $num)
+	{
+		$obj = $db->fetch_object($result);
 
-        print '<tr class="oddeven">';
+		print '<tr class="oddeven">';
 
 		$localtax_static->id = $obj->rowid;
 		$localtax_static->ref = $obj->rowid;
 		print "<td>".$localtax_static->getNomUrl(1)."</td>\n";
-        print "<td>".dol_trunc($obj->label, 40)."</td>\n";
-        print '<td class="left">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>\n";
-        print '<td class="left">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
-        $total = $total + $obj->amount;
+		print "<td>".dol_trunc($obj->label, 40)."</td>\n";
+		print '<td class="left">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>\n";
+		print '<td class="left">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
+		$total = $total + $obj->amount;
 
-        print "<td align=\"right\">".price($obj->amount)."</td>";
-        print "</tr>\n";
+		print "<td align=\"right\">".price($obj->amount)."</td>";
+		print "</tr>\n";
 
-        $i++;
-    }
-    print '<tr class="liste_total"><td colspan="4">'.$langs->trans("Total").'</td>';
-    print '<td class="right">'.price($total).'</td></tr>';
+		$i++;
+	}
+	print '<tr class="liste_total"><td colspan="4">'.$langs->trans("Total").'</td>';
+	print '<td class="right">'.price($total).'</td></tr>';
 
-    print "</table>";
-    $db->free($result);
+	print "</table>";
+	$db->free($result);
 } else {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 // End of page

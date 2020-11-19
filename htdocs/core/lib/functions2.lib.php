@@ -66,7 +66,7 @@ function jsUnEscape($source)
 			$pos++;
 		}
 	}
-	return dol_html_entity_decode($decodedStr, ENT_COMPAT|ENT_HTML5);
+	return dol_html_entity_decode($decodedStr, ENT_COMPAT | ENT_HTML5);
 }
 
 
@@ -944,9 +944,8 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	//print "masktri=".$masktri." maskcounter=".$maskcounter." maskraz=".$maskraz." maskoffset=".$maskoffset."<br>\n";
 
 	// Define $sqlstring
-	if (function_exists('mb_strrpos'))
-		{
-		$posnumstart = mb_strrpos($maskwithnocode, $maskcounter, 'UTF-8');
+	if (function_exists('mb_strrpos')) {
+		$posnumstart = mb_strrpos($maskwithnocode, $maskcounter, 0, 'UTF-8');
 	} else {
 		$posnumstart = strrpos($maskwithnocode, $maskcounter);
 	}	// Pos of counter in final string (from 0 to ...)
@@ -1688,10 +1687,23 @@ function is_ip($ip)
  */
 function dol_buildlogin($lastname, $firstname)
 {
-	$login = strtolower(dol_string_unaccent($firstname));
-	$login .= ($login ? '.' : '');
-	$login .= strtolower(dol_string_unaccent($lastname));
-	$login = dol_string_nospecial($login, ''); // For special names
+	global $conf;
+
+	//$conf->global->MAIN_BUILD_LOGIN_RULE = 'f.lastname';
+	if (!empty($conf->global->MAIN_BUILD_LOGIN_RULE) && $conf->global->MAIN_BUILD_LOGIN_RULE == 'f.lastname') {	// f.lastname
+		$login = strtolower(dol_string_unaccent(dol_trunc($firstname, 1, 'right', 'UTF-8', 1)));
+		$login .= ($login ? '.' : '');
+		$login .= strtolower(dol_string_unaccent($lastname));
+		$login = dol_string_nospecial($login, ''); // For special names
+	} else {	// firstname.lastname
+		$login = strtolower(dol_string_unaccent($firstname));
+		$login .= ($login ? '.' : '');
+		$login .= strtolower(dol_string_unaccent($lastname));
+		$login = dol_string_nospecial($login, ''); // For special names
+	}
+
+	// TODO Add a hook to allow external modules to suggest new rules
+
 	return $login;
 }
 
@@ -2404,9 +2416,9 @@ function phpSyntaxError($code)
 	if (!defined("LF")) define("LF", "\n");
 	if (!defined("CRLF")) define("CRLF", "\r\n");
 
-	$braces=0;
-	$inString=0;
-	foreach (token_get_all('<?php ' . $code) as $token) {
+	$braces = 0;
+	$inString = 0;
+	foreach (token_get_all('<?php '.$code) as $token) {
 		if (is_array($token)) {
 			switch ($token[0]) {
 				case T_CURLY_OPEN:
@@ -2455,7 +2467,7 @@ function phpSyntaxError($code)
 			$code[2] = (int) $code[2];
 			$code = $code[2] <= $braces
 			? array($code[1], $code[2])
-			: array('unexpected $end' . substr($code[1], 14), $braces);
+			: array('unexpected $end'.substr($code[1], 14), $braces);
 		} else $code = array('syntax error', 0);
 	} else {
 		ob_end_clean();

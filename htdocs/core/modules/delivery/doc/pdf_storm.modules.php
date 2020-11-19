@@ -219,32 +219,32 @@ class pdf_storm extends ModelePDFDeliveryOrder
 
 
 				// Loop on each lines to detect if there is at least one image to show
-				$realpatharray=array();
+				$realpatharray = array();
 				$this->atleastonephoto = false;
-				if (! empty($conf->global->MAIN_GENERATE_DELIVERY_WITH_PICTURE))
+				if (!empty($conf->global->MAIN_GENERATE_DELIVERY_WITH_PICTURE))
 				{
 					$objphoto = new Product($this->db);
 
-					for ($i = 0 ; $i < $nblines ; $i++)
+					for ($i = 0; $i < $nblines; $i++)
 					{
 						if (empty($object->lines[$i]->fk_product)) continue;
 
 						$objphoto->fetch($object->lines[$i]->fk_product);
 
-						if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
+						if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
 						{
-							$pdir[0] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product') . $objphoto->id ."/photos/";
-							$pdir[1] = get_exdir(0, 0, 0, 0, $objphoto, 'product') . dol_sanitizeFileName($objphoto->ref).'/';
+							$pdir[0] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product').$objphoto->id."/photos/";
+							$pdir[1] = get_exdir(0, 0, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/';
 						}
 						else {
-							$pdir[0] = get_exdir(0, 0, 0, 0, $objphoto, 'product') . dol_sanitizeFileName($objphoto->ref).'/';				// default
-							$pdir[1] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product') . $objphoto->id ."/photos/";	// alternative
+							$pdir[0] = get_exdir(0, 0, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/'; // default
+							$pdir[1] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product').$objphoto->id."/photos/"; // alternative
 						}
 
 						$arephoto = false;
 						foreach ($pdir as $midir)
 						{
-							if (! $arephoto)
+							if (!$arephoto)
 							{
 								$dir = $conf->product->dir_output.'/'.$midir;
 
@@ -254,14 +254,14 @@ class pdf_storm extends ModelePDFDeliveryOrder
 									{
 										if ($obj['photo_vignette'])
 										{
-											$filename= $obj['photo_vignette'];
+											$filename = $obj['photo_vignette'];
 										}
 										else {
-											$filename=$obj['photo'];
+											$filename = $obj['photo'];
 										}
 									}
 									else {
-										$filename=$obj['photo'];
+										$filename = $obj['photo'];
 									}
 
 									$realpath = $dir.$filename;
@@ -271,7 +271,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 							}
 						}
 
-						if ($realpath && $arephoto) $realpatharray[$i]=$realpath;
+						if ($realpath && $arephoto) $realpatharray[$i] = $realpath;
 					}
 				}
 
@@ -285,7 +285,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 				$heightforinfotot = 30; // Height reserved to output the info and total part
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-				if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS > 0) $heightforfooter += 6;
+				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) $heightforfooter += 6;
 				$pdf->SetAutoPageBreak(1, 0);
 
 				if (class_exists('TCPDF'))
@@ -346,7 +346,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 
 				// Incoterm
 				$height_incoterms = 0;
-				if ($conf->incoterm->enabled)
+				if (!empty($conf->incoterm->enabled))
 				{
 					$desc_incoterms = $object->getIncotermsForPDF();
 					if ($desc_incoterms)
@@ -413,7 +413,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 				for ($i = 0; $i < $nblines; $i++)
 				{
 					// Fetch optionals
-					if (empty($object->lines[$i]->array_options)){
+					if (empty($object->lines[$i]->array_options)) {
 						$object->lines[$i]->fetch_optionals();
 					}
 
@@ -422,8 +422,8 @@ class pdf_storm extends ModelePDFDeliveryOrder
 					$pdf->SetTextColor(0, 0, 0);
 
 					// Define size of image if we need it
-	                $imglinesize=array();
-	                if (! empty($realpatharray[$i])) $imglinesize=pdf_getSizeForImage($realpatharray[$i]);
+					$imglinesize = array();
+					if (!empty($realpatharray[$i])) $imglinesize = pdf_getSizeForImage($realpatharray[$i]);
 
 
 					$pdf->setTopMargin($tab_top_newpage);
@@ -435,17 +435,17 @@ class pdf_storm extends ModelePDFDeliveryOrder
 
 					$showpricebeforepagebreak = 1;
 
-					$posYAfterImage=0;
-					$posYAfterDescription=0;
+					$posYAfterImage = 0;
+					$posYAfterDescription = 0;
 					if ($this->getColumnStatus('photo'))
 					{
 						// We start with Photo of product line
-						if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur-($heightforfooter+$heightforfreetext+$heightforinfotot)))	// If photo too high, we moved completely on new page
+						if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot)))	// If photo too high, we moved completely on new page
 						{
 							$pdf->AddPage('', '', true);
-							if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+							if (!empty($tplidx)) $pdf->useTemplate($tplidx);
 							//if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
-							$pdf->setPage($pageposbefore+1);
+							$pdf->setPage($pageposbefore + 1);
 
 							$curY = $tab_top_newpage;
 
@@ -458,9 +458,9 @@ class pdf_storm extends ModelePDFDeliveryOrder
 
 						if (!empty($this->cols['photo']) && isset($imglinesize['width']) && isset($imglinesize['height']))
 						{
-							$pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300);	// Use 300 dpi
+							$pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300); // Use 300 dpi
 							// $pdf->Image does not increase value return by getY, so we save it manually
-							$posYAfterImage=$curY+$imglinesize['height'];
+							$posYAfterImage = $curY + $imglinesize['height'];
 						}
 					}
 
@@ -499,7 +499,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 							$pdf->commitTransaction();
 						}
 
-						$posYAfterDescription=$pdf->GetY();
+						$posYAfterDescription = $pdf->GetY();
 					}
 
 					$nexY = $pdf->GetY();
@@ -652,7 +652,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		Object		$object			Object to show
+	 *   @param		Delivery	$object			Object to show
 	 *   @param		int			$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	void
@@ -708,20 +708,20 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		if (empty($hidetop))
 		{
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
-			if (! empty($conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR)) $pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_droite-$this->marge_gauche, 5, 'F', null, explode(',', $conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
+			if (!empty($conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR)) $pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, 'F', null, explode(',', $conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
 		}
 
 		$pdf->SetDrawColor(128, 128, 128);
 		$pdf->SetFont('', '', $default_font_size - 1);
 
 		// Output Rect
-		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect takes a length in 3rd parameter and 4th parameter
+		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $hidetop, $hidebottom); // Rect takes a length in 3rd parameter and 4th parameter
 
 
 		$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
 
-		if (empty($hidetop)){
-			$pdf->line($this->marge_gauche, $tab_top+$this->tabTitleHeight, $this->page_largeur-$this->marge_droite, $tab_top+$this->tabTitleHeight);	// line takes a position y in 2nd parameter and 4th parameter
+		if (empty($hidetop)) {
+			$pdf->line($this->marge_gauche, $tab_top + $this->tabTitleHeight, $this->page_largeur - $this->marge_droite, $tab_top + $this->tabTitleHeight); // line takes a position y in 2nd parameter and 4th parameter
 		}
 	}
 
@@ -730,7 +730,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	 *  Show top header of page.
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  Object		$object     	Object to show
+	 *  @param  Delivery	$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
@@ -906,8 +906,8 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	/**
 	 *  Show footer of page. Need this->emetteur object
 	 *
-	 *  @param	TCPDF			$pdf     			PDF
-	 *  @param	Object		$object				Object to show
+	 *  @param	TCPDF		$pdf     			PDF
+	 *  @param	Delivery	$object				Object to show
 	 *  @param	Translate	$outputlangs		Object lang for output
 	 *  @param	int			$hidefreetext		1=Hide free text
 	 *  @return	int								Return height of bottom margin including footer text
@@ -915,7 +915,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
-		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf, $outputlangs, 'DELIVERY_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 
@@ -924,7 +924,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	/**
 	 *   	Define Array Column Field
 	 *
-	 *   	@param	object		   $object    	    common object
+	 *   	@param	Delivery	   $object    	    common object
 	 *   	@param	Translate	   $outputlangs     langs
 	 *      @param	int			   $hidedetails		Do not show line details
 	 *      @param	int			   $hidedesc		Do not show desc

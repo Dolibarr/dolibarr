@@ -24,6 +24,7 @@ $force_install_databaserootpass='__SUPERUSERPASSWORD__';
 $force_install_dolibarrlogin='admin';
 $force_install_nophpinfo='1';
 $force_install_lockinstall='444';
+$force_install_distrib='debian';
 
 // Value to overwrite path to use shared libraries/fonts instead of embedded one.
 // If during install, we enable/disable declaration to use non embedded libraries, we must also check they are 

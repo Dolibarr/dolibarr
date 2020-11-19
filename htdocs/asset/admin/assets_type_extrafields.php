@@ -91,7 +91,7 @@ if ($action == 'create')
 	print "<br>";
 	print load_fiche_titre($langs->trans('NewAttribute'));
 
-    require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
+	require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
 }
 
 /* ************************************************************************** */
@@ -104,7 +104,7 @@ if ($action == 'edit' && !empty($attrname))
 	print "<br>";
 	print load_fiche_titre($langs->trans("FieldEdition", $attrname));
 
-    require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
+	require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }
 
 // End of page

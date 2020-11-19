@@ -42,8 +42,8 @@ if (!GETPOST('transkey', 'alphanohtml') && !GETPOST('transphrase', 'alphanohtml'
 	print 'Sorry, it seems your internet connexion is off.<br>';
 	print 'You need to be connected to network to use this software.<br>';
 } else {
-    $langs->loadLangs(array("error", "other"));
+	$langs->loadLangs(array("error", "other"));
 
-    if (GETPOST('transphrase', 'alphanohtml')) print dol_escape_htmltag(GETPOST('transphrase', 'alphanohtml'));
-    elseif (GETPOST('transkey', 'alphanohtml')) print dol_escape_htmltag($langs->trans(GETPOST('transkey', 'alphanohtml')));
+	if (GETPOST('transphrase', 'alphanohtml')) print dol_escape_htmltag(GETPOST('transphrase', 'alphanohtml'));
+	elseif (GETPOST('transkey', 'alphanohtml')) print dol_escape_htmltag($langs->trans(GETPOST('transkey', 'alphanohtml')));
 }

@@ -215,7 +215,7 @@ $arrayfields = array(
 	'p.tobatch'=>array('label'=>$langs->trans("ManageLotSerial"), 'checked'=>0, 'enabled'=>(!empty($conf->productbatch->enabled)), 'position'=>60),
 	'p.fk_country'=>array('label'=>$langs->trans("Country"), 'checked'=>0, 'position'=>100),
 	'p.fk_state'=>array('label'=>$langs->trans("State"), 'checked'=>0, 'position'=>101),
-    'p.accountancy_code_sell'=>array('label'=>$langs->trans("ProductAccountancySellCode"), 'checked'=>0, 'position'=>400),
+	'p.accountancy_code_sell'=>array('label'=>$langs->trans("ProductAccountancySellCode"), 'checked'=>0, 'position'=>400),
 	'p.accountancy_code_sell_intra'=>array('label'=>$langs->trans("ProductAccountancySellIntraCode"), 'checked'=>0, 'enabled'=>$isInEEC, 'position'=>401),
 	'p.accountancy_code_sell_export'=>array('label'=>$langs->trans("ProductAccountancySellExportCode"), 'checked'=>0, 'position'=>402),
 	'p.accountancy_code_buy'=>array('label'=>$langs->trans("ProductAccountancyBuyCode"), 'checked'=>0, 'position'=>403),
@@ -244,14 +244,8 @@ if ($conf->global->PRODUIT_MULTIPRICES) {
 
 //var_dump($arraypricelevel);
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']))
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-	}
-}
+include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -413,7 +407,7 @@ if ($fourn_id > 0)  $sql .= " AND pfp.fk_soc = ".$fourn_id;
 if ($search_tobatch != '' && $search_tobatch >= 0)   $sql .= " AND p.tobatch = ".$db->escape($search_tobatch);
 if ($search_country)     $sql .= " AND p.fk_country = ".$search_country;
 if ($search_state)     $sql .= " AND p.fk_state = ".$search_state;
-if ($search_finished>=0 && $search_finished!=='') $sql .= " AND p.finished = ".$search_finished;
+if ($search_finished >= 0 && $search_finished !== '') $sql .= " AND p.finished = ".$search_finished;
 if ($search_accountancy_code_sell)        $sql .= natural_search('p.accountancy_code_sell', $search_accountancy_code_sell);
 if ($search_accountancy_code_sell_intra)  $sql .= natural_search('p.accountancy_code_sell_intra', $search_accountancy_code_sell_intra);
 if ($search_accountancy_code_sell_export) $sql .= natural_search('p.accountancy_code_sell_export', $search_accountancy_code_sell_export);
@@ -1103,7 +1097,7 @@ if ($resql)
 		// Label
 		if (!empty($arrayfields['p.label']['checked']))
 		{
-			print '<td class="tdoverflowmax200">'.dol_trunc($obj->label, 80).'</td>';
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->label).'">'.$obj->label.'</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
 

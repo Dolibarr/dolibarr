@@ -59,6 +59,10 @@ ALTER TABLE llx_mrp_mo_extrafields ADD INDEX idx_mrp_mo_fk_object(fk_object);
 
 -- For v13
 
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (111,11,     '0','0','No Sales Tax',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (112,11,     '4','0','Sales Tax 4%',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (113,11,     '6','0','Sales Tax 6%',1);
+
 ALTER TABLE llx_bom_bom ADD COLUMN bomtype integer DEFAULT 0;
 
 UPDATE llx_emailcollector_emailcollector SET ref = 'Collect_Ticket_Requests' WHERE ref = 'Collect_Ticket_Requets';
@@ -102,6 +106,11 @@ ALTER TABLE llx_user DROP COLUMN whatsapp;
 
 ALTER TABLE llx_user ADD COLUMN datestartvalidity datetime;
 ALTER TABLE llx_user ADD COLUMN dateendvalidity   datetime;
+
+ALTER TABLE llx_user ADD COLUMN idpers1 varchar(128);
+ALTER TABLE llx_user ADD COLUMN idpers2	varchar(128);
+ALTER TABLE llx_user ADD COLUMN idpers3	varchar(128);
+
 
 -- Intracomm Report
 CREATE TABLE llx_c_transport_mode (
@@ -362,6 +371,8 @@ ALTER TABLE llx_facturedet ADD COLUMN ref_ext varchar(255) AFTER multicurrency_t
 ALTER TABLE llx_c_ticket_category ADD COLUMN fk_parent integer DEFAULT 0 NOT NULL;
 ALTER TABLE llx_c_ticket_category ADD COLUMN force_severity varchar(32) NULL;
 
+ALTER TABLE llx_c_ticket_severity CHANGE color color VARCHAR(10) NULL; 
+
 ALTER TABLE llx_expensereport ADD COLUMN fk_user_creat integer NULL;
 
 ALTER TABLE llx_expensereport_ik ADD COLUMN ikoffset double DEFAULT 0 NOT NULL;
@@ -406,6 +417,7 @@ ALTER TABLE llx_projet_task_time MODIFY COLUMN datec datetime;
 
 DELETE FROM llx_user_rights WHERE fk_id IN (SELECT id FROM llx_rights_def where module = 'holiday' and perms = 'lire_tous'); 
 DELETE FROM llx_rights_def where module = 'holiday' and perms = 'lire_tous';
+UPDATE llx_rights_def set perms = 'readall' WHERE perms = 'read_all' and module = 'holiday';
 
 CREATE TABLE llx_c_product_nature (
       rowid integer AUTO_INCREMENT PRIMARY KEY,
@@ -498,4 +510,20 @@ UPDATE llx_const set value = 'mod_delivery_saphir' WHERE value = 'mod_livraison_
 -- update llx_rights_def
 UPDATE llx_rights_def set perms = 'delivery' WHERE perms = 'livraison' and module = 'expedition';
 UPDATE llx_rights_def set perms = 'delivery_advance' WHERE perms = 'livraison_advance' and module = 'expedition';
+
+
+
+CREATE TABLE llx_zapier_hook(
+    rowid integer AUTO_INCREMENT PRIMARY KEY,
+    entity integer DEFAULT 1 NOT NULL,
+    url varchar(255),
+    event varchar(255),
+    module varchar(128),
+    action varchar(128),
+    status integer,
+    date_creation datetime NOT NULL,
+    fk_user integer NOT NULL,
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    import_key varchar(14)
+) ENGINE=innodb;
 

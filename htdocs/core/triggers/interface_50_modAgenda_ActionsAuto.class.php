@@ -34,22 +34,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceActionsAuto extends DolibarrTriggers
 {
-    /**
-     * Constructor
-     *
-     * @param DoliDB $db Database handler
-     */
-    public function __construct($db)
-    {
-        $this->db = $db;
+	/**
+	 * Constructor
+	 *
+	 * @param DoliDB $db Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
 
-        $this->name = preg_replace('/^Interface/i', '', get_class($this));
-        $this->family = "agenda";
-        $this->description = "Triggers of this module add actions in agenda according to setup made in agenda setup.";
-        // 'development', 'experimental', 'dolibarr' or version
-        $this->version = self::VERSION_DOLIBARR;
-        $this->picto = 'action';
-    }
+		$this->name = preg_replace('/^Interface/i', '', get_class($this));
+		$this->family = "agenda";
+		$this->description = "Triggers of this module add actions in agenda according to setup made in agenda setup.";
+		// 'development', 'experimental', 'dolibarr' or version
+		$this->version = self::VERSION_DOLIBARR;
+		$this->picto = 'action';
+	}
 
 	/**
 	 * Function called when a Dolibarrr business event is done.
@@ -76,6 +76,11 @@ class InterfaceActionsAuto extends DolibarrTriggers
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
 		if (empty($conf->agenda->enabled)) return 0; // Module not active, we do nothing
+
+		// Do not log events when trigger is for creating event (infinite loop)
+		if (preg_match('/^ACTION_/', $action)) {
+			return 0;
+		}
 
 		$key = 'MAIN_AGENDA_ACTIONAUTO_'.$action;
 		//var_dump($action.' - '.$conf->global->$key);exit;
@@ -554,9 +559,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			$member = $this->context['member'];
 			if (!is_object($member)) {	// This should not happen
+				dol_syslog("Execute a trigger MEMBER_SUBSCRIPTION_CREATE with context key 'member' not an object");
 				include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 				$member = new Adherent($this->db);
-				$member->fetch($this->fk_adherent);
+				$member->fetch($object->fk_adherent);
 			}
 
 			if (empty($object->actionmsg2)) $object->actionmsg2 = $langs->transnoentities("MemberSubscriptionAddedInDolibarr", $object->id, $member->getFullName($langs));
@@ -733,6 +739,29 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 		}
 
+		// If trackid is not defined, we set it
+		if (empty($object->trackid)) {
+			// See also similar list into emailcollector.class.php
+			if (preg_match('/^COMPANY_/', $action)) { $object->trackid = 'thi'.$object->id; }
+			elseif (preg_match('/^CONTACT_/', $action)) { $object->trackid = 'ctc'.$object->id; }
+			elseif (preg_match('/^CONTRACT_/', $action)) { $object->trackid = 'con'.$object->id; }
+			elseif (preg_match('/^PROPAL_/', $action)) { $object->trackid = 'pro'.$object->id; }
+			elseif (preg_match('/^ORDER_/', $action)) { $object->trackid = 'ord'.$object->id; }
+			elseif (preg_match('/^BILL_/', $action)) { $object->trackid = 'inv'.$object->id; }
+			elseif (preg_match('/^FICHINTER_/', $action)) { $object->trackid = 'int'.$object->id; }
+			elseif (preg_match('/^SHIPPING_/', $action)) { $object->trackid = 'shi'.$object->id; }
+			elseif (preg_match('/^RECEPTION_/', $action)) { $object->trackid = 'rec'.$object->id; }
+			elseif (preg_match('/^PROPOSAL_SUPPLIER/', $action)) { $object->trackid = 'spr'.$object->id; }
+			elseif (preg_match('/^ORDER_SUPPLIER_/', $action)) { $object->trackid = 'sor'.$object->id; }
+			elseif (preg_match('/^BILL_SUPPLIER_/', $action)) { $object->trackid = 'sin'.$object->id; }
+			elseif (preg_match('/^MEMBER_SUBSCRIPTION_/', $action)) { $object->trackid = 'sub'.$object->id; }
+			elseif (preg_match('/^MEMBER_/', $action)) { $object->trackid = 'mem'.$object->id; }
+			elseif (preg_match('/^PROJECT_/', $action)) { $object->trackid = 'proj'.$object->id; }
+			elseif (preg_match('/^TASK_/', $action)) { $object->trackid = 'tas'.$object->id; }
+			elseif (preg_match('/^TICKET_/', $action)) { $object->trackid = 'tic'.$object->id; }
+			else $object->trackid = '';
+		}
+
 		$object->actionmsg = dol_concatdesc($langs->transnoentities("Author").': '.$user->login, $object->actionmsg);
 
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
@@ -766,7 +795,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 		$elementid = $object->id; // id of object
 		$elementtype = $object->element;
-		$elementmodule = $object->module;
+		$elementmodule = (empty($object->module) ? '' : $object->module);
 		if ($object->element == 'subscription') {
 			$elementid = $object->fk_adherent;
 			$elementtype = 'member';
@@ -790,14 +819,14 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->authorid    = $user->id; // User saving action
 		$actioncomm->userownerid = $user->id; // Owner of action
 		// Fields defined when action is an email (content should be into object->actionmsg to be added into note, subject into object->actionms2 to be added into label)
-		$actioncomm->email_msgid   = $object->email_msgid;
-		$actioncomm->email_from    = $object->email_from;
-		$actioncomm->email_sender  = $object->email_sender;
-		$actioncomm->email_to      = $object->email_to;
-		$actioncomm->email_tocc    = $object->email_tocc;
-		$actioncomm->email_tobcc   = $object->email_tobcc;
-		$actioncomm->email_subject = $object->email_subject;
-		$actioncomm->errors_to     = $object->errors_to;
+		$actioncomm->email_msgid   = empty($object->email_msgid) ? null : $object->email_msgid;
+		$actioncomm->email_from    = empty($object->email_from) ? null : $object->email_from;
+		$actioncomm->email_sender  = empty($object->email_sender) ? null : $object->email_sender;
+		$actioncomm->email_to      = empty($object->email_to) ? null : $object->email_to;
+		$actioncomm->email_tocc    = empty($object->email_tocc) ? null : $object->email_tocc;
+		$actioncomm->email_tobcc   = empty($object->email_tobcc) ? null : $object->email_tobcc;
+		$actioncomm->email_subject = empty($object->email_subject) ? null : $object->email_subject;
+		$actioncomm->errors_to     = empty($object->errors_to) ? null : $object->errors_to;
 
 		// Object linked (if link is for thirdparty, contact, project it is a recording error. We should not have links in link table
 		// for such objects because there is already a dedicated field into table llx_actioncomm or llx_actioncomm_resources.
@@ -820,7 +849,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 		$ret = $actioncomm->create($user); // User creating action
 
-		if ($ret > 0 && $conf->global->MAIN_COPY_FILE_IN_EVENT_AUTO) {
+		if ($ret > 0 && !empty($conf->global->MAIN_COPY_FILE_IN_EVENT_AUTO)) {
 			if (is_array($object->attachedfiles) && array_key_exists('paths', $object->attachedfiles) && count($object->attachedfiles['paths']) > 0) {
 				foreach ($object->attachedfiles['paths'] as $key=>$filespath) {
 					$srcfile = $filespath;
