@@ -27,5 +27,6 @@ Recipient=Destinataire
 ErrorStockIsNotEnough=Le stock est insuffisant
 Shippable=Expédiable
 NonShippable=Non expédiable
+ShowShippableCommand=Afficher statut expédiabilité
 ShowReceiving=Afficher le bon de réception
 NonExistentOrder=Commande inexistante

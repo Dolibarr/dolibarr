@@ -27,5 +27,6 @@ Recipient=Recipient
 ErrorStockIsNotEnough=There's not enough stock
 Shippable=Shippable
 NonShippable=Not Shippable
+ShowShippableCommand=Show shippable command
 ShowReceiving=Show delivery receipt
 NonExistentOrder=Nonexistent order
