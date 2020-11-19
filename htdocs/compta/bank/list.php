@@ -92,14 +92,14 @@ $fieldstosearchall = array(
 
 $checkedtypetiers = 0;
 $arrayfields = array(
-	'b.ref'=>array('label'=>$langs->trans("BankAccounts"), 'checked'=>1),
-	'accountype'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
-	'b.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
-	'b.number'=>array('label'=>$langs->trans("AccountIdShort"), 'checked'=>1),
-	'b.account_number'=>array('label'=>$langs->trans("AccountAccounting"), 'checked'=>(!empty($conf->accounting->enabled) || !empty($conf->accounting->enabled))),
-	'b.fk_accountancy_journal'=>array('label'=>$langs->trans("AccountancyJournal"), 'checked'=>(!empty($conf->accounting->enabled) || !empty($conf->accounting->enabled))),
-	'toreconcile'=>array('label'=>$langs->trans("TransactionsToConciliate"), 'checked'=>1),
-	'b.currency_code'=>array('label'=>$langs->trans("Currency"), 'checked'=>0),
+	'b.ref'=>array('label'=>$langs->trans("BankAccounts"), 'checked'=>1, 'position'=>10),
+	'b.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1, 'position'=>12),
+	'accountype'=>array('label'=>$langs->trans("Type"), 'checked'=>1, 'position'=>14),
+	'b.number'=>array('label'=>$langs->trans("AccountIdShort"), 'checked'=>1, 'position'=>16),
+	'b.account_number'=>array('label'=>$langs->trans("AccountAccounting"), 'checked'=>(!empty($conf->accounting->enabled) || !empty($conf->accounting->enabled)), 'position'=>18),
+	'b.fk_accountancy_journal'=>array('label'=>$langs->trans("AccountancyJournal"), 'checked'=>(!empty($conf->accounting->enabled) || !empty($conf->accounting->enabled)), 'position'=>20),
+	'toreconcile'=>array('label'=>$langs->trans("TransactionsToConciliate"), 'checked'=>1, 'position'=>50),
+	'b.currency_code'=>array('label'=>$langs->trans("Currency"), 'checked'=>0, 'position'=>22),
 	'b.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'b.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 	'b.clos'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
@@ -525,7 +525,7 @@ foreach ($accounts as $key=>$type)
 			if ($result < 0) {
 				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 			} else {
-				print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$objecttmp->id.'&search_conciliated=0">';
+				print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&id='.$objecttmp->id.'&search_account='.$objecttmp->id.'&search_conciliated=0&contextpage=banktransactionlist">';
 				print '<span class="badge badge-info classfortooltip" title="'.dol_htmlentities($langs->trans("TransactionsToConciliate")).'">';
 				print $result->nbtodo;
 				print '</span>';

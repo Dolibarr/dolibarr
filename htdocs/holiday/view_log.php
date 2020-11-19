@@ -69,7 +69,7 @@ if (!$sortfield) $sortfield = "cpl.rowid";
 if (!$sortorder) $sortorder = "DESC";
 
 // Si l'utilisateur n'a pas le droit de lire cette page
-if (!$user->rights->holiday->read_all) accessforbidden();
+if (!$user->rights->holiday->readall) accessforbidden();
 
 // Load translation files required by the page
 $langs->load('users');

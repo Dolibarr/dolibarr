@@ -1175,10 +1175,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			// State
 			if (empty($conf->global->PRODUCT_DISABLE_STATE))
 			{
-					if ($conf->browser->layout == 'phone') print '</tr><tr>';
+				if ($conf->browser->layout == 'phone') print '</tr><tr>';
 				if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
 				{
-					print '<td>'.$form->editfieldkey('Region-StateOrigine', 'state_id', '', $object, 0).'</td><td colspan="3">';
+					print '<td>'.$form->editfieldkey('RegionStateOrigin', 'state_id', '', $object, 0).'</td><td colspan="3">';
 				} else {
 					print '<td>'.$form->editfieldkey('StateOrigin', 'state_id', '', $object, 0).'</td><td colspan="3">';
 				}
@@ -1186,7 +1186,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				print $formcompany->select_state($object->state_id, $object->country_code);
 				print '</tr>';
 			}
-				print '</tr>';
+
+			print '</tr>';
 		}
 
 		// Other attributes
@@ -1634,7 +1635,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 					if ($conf->browser->layout == 'phone') print '</tr><tr>';
 					if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
 					{
-						print '<td>'.$form->editfieldkey('Region-StateOrigine', 'state_id', '', $object, 0).'</td><td colspan="3">';
+						print '<td>'.$form->editfieldkey('RegionStateOrigin', 'state_id', '', $object, 0).'</td><td colspan="3">';
 					} else {
 						print '<td>'.$form->editfieldkey('StateOrigin', 'state_id', '', $object, 0).'</td><td colspan="3">';
 					}

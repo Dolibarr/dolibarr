@@ -120,6 +120,8 @@ if (!empty($conf->expedition->enabled) && !empty($conf->global->WAREHOUSE_ASK_WA
 
 $error = 0;
 
+$date_delivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
+
 
 /*
  * Actions
@@ -274,7 +276,7 @@ if (empty($reshook))
 			$object->fk_account = GETPOST('fk_account', 'int');
 			$object->availability_id = GETPOST('availability_id');
 			$object->demand_reason_id = GETPOST('demand_reason_id');
-			$object->date_livraison = $datelivraison;
+			$object->date_livraison = $datelivraison;	// deprecated
 			$object->delivery_date = $datelivraison;
 			$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
 			$object->warehouse_id = GETPOST('warehouse_id', 'int');
@@ -539,10 +541,10 @@ if (empty($reshook))
 		}
 	} elseif ($action == 'setdate_livraison' && $usercancreate) {
 		// print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
-		$datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
+		$date_delivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
 		$object->fetch($id);
-		$result = $object->setDeliveryDate($user, $datedelivery);
+		$result = $object->setDeliveryDate($user, $date_delivery);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -1507,7 +1509,8 @@ if ($action == 'create' && $usercancreate)
 			$remise_absolue		= (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
 			$dateorder = empty($conf->global->MAIN_AUTOFILL_DATE_ORDER) ?-1 : '';
 
-			$datedelivery = (!empty($objectsrc->date_livraison) ? $objectsrc->date_livraison : '');
+			$date_delivery = (!empty($objectsrc->delivery_date) ? $objectsrc->delivery_date : '');
+			if (empty($date_delivery)) $date_delivery = (!empty($objectsrc->date_livraison) ? $objectsrc->date_livraison : '');
 
 			if (!empty($conf->multicurrency->enabled))
 			{
@@ -1620,8 +1623,7 @@ if ($action == 'create' && $usercancreate)
 	// Date delivery planned
 	print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
 	print '<td colspan="3">';
-	//print dol_print_date($object->date_livraison, "day");	// date_livraison come from order and will be stored into date_delivery planed.
-	$date_delivery = ($date_delivery ? $date_delivery : $object->date_livraison); // $date_delivery comes from GETPOST
+	$date_delivery = ($date_delivery ? $date_delivery : $object->date_delivery);
 	print $form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
 	print "</td>\n";
 	print '</tr>';
@@ -2138,12 +2140,12 @@ if ($action == 'create' && $usercancreate)
 			print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate_livraison">';
-			print $form->selectDate($object->date_livraison ? $object->date_livraison : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
+			print $form->selectDate($object->delivery_date ? $object->delivery_date : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
 			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
-			print $object->date_livraison ? dol_print_date($object->date_livraison, 'dayhour') : '&nbsp;';
-			if ($object->hasDelay() && !empty($object->date_livraison)) {
+			print $object->delivery_date ? dol_print_date($object->delivery_date, 'dayhour') : '&nbsp;';
+			if ($object->hasDelay() && !empty($object->delivery_date)) {
 				print ' '.img_picto($langs->trans("Late").' : '.$object->showDelay(), "warning");
 			}
 		}

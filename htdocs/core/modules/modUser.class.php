@@ -255,13 +255,16 @@ class modUser extends DolibarrModules
 			'u.admin'=>"user", 'u.statut'=>'user', 'u.datelastlogin'=>'user', 'u.datepreviouslogin'=>'user',
 			'u.fk_socpeople'=>"contact", 'u.fk_soc'=>"company", 'u.fk_member'=>"member"
 		);
+		$keyforselect = 'user'; $keyforelement = 'user'; $keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		if (empty($conf->adherent->enabled))
-		{
-			unset($this->export_fields_array[$r]['u.fk_member']);
-			unset($this->export_entities_array[$r]['u.fk_member']);
-		}
+        {
+            unset($this->export_fields_array[$r]['u.fk_member']);
+            unset($this->export_entities_array[$r]['u.fk_member']);
+        }
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'user as u';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user_extrafields as extra ON u.rowid = extra.fk_object';
 		$this->export_sql_end[$r] .= ' WHERE u.entity IN ('.getEntity('user').')';
 
 		// Imports

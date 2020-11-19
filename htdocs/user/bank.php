@@ -388,7 +388,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	 * Last holidays
 	 */
 	if (!empty($conf->holiday->enabled) &&
-		($user->rights->holiday->read_all || ($user->rights->holiday->read && $object->id == $user->id))
+		($user->rights->holiday->readall || ($user->rights->holiday->read && $object->id == $user->id))
 		)
 	{
 		$holiday = new Holiday($db);
@@ -396,7 +396,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 		$sql = "SELECT h.rowid, h.statut as status, h.fk_type, h.date_debut, h.date_fin, h.halfday";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as h";
 		$sql .= " WHERE h.fk_user = ".$object->id;
-		$sql .= " AND h.entity = ".$conf->entity;
+		$sql .= " AND h.entity IN (".getEntity('holiday').")";
 		$sql .= " ORDER BY h.date_debut DESC";
 
 		$resql = $db->query($sql);

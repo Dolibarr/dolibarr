@@ -111,6 +111,8 @@ $hookmanager->initHooks(array('receptioncard', 'globalcard'));
 $permissiondellink = $user->rights->reception->creer; // Used by the include of actions_dellink.inc.php
 //var_dump($object->lines[0]->detail_batch);
 
+$date_delivery = dol_mktime(GETPOST('date_deliveryhour', 'int'), GETPOST('date_deliverymin', 'int'), 0, GETPOST('date_deliverymonth', 'int'), GETPOST('date_deliveryday', 'int'), GETPOST('date_deliveryyear', 'int'));
+
 
 /*
  * Actions
@@ -225,8 +227,6 @@ if (empty($reshook))
 		$object->sizeS = GETPOST('sizeS', 'int') == '' ? "NULL" : GETPOST('sizeS', 'int');
 		$object->size_units = GETPOST('size_units', 'int');
 		$object->weight_units = GETPOST('weight_units', 'int');
-
-		$date_delivery = dol_mktime(GETPOST('date_deliveryhour', 'int'), GETPOST('date_deliverymin', 'int'), 0, GETPOST('date_deliverymonth', 'int'), GETPOST('date_deliveryday', 'int'), GETPOST('date_deliveryyear', 'int'));
 
 		// On va boucler sur chaque ligne du document d'origine pour completer objet reception
 		// avec info diverses + qte a livrer
@@ -777,8 +777,7 @@ if ($action == 'create')
 			// Date delivery planned
 			print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
 			print '<td colspan="3">';
-			//print dol_print_date($object->date_livraison,"day");	// date_livraison come from order and will be stored into date_delivery planed.
-			$date_delivery = ($date_delivery ? $date_delivery : $object->date_livraison); // $date_delivery comes from GETPOST
+			$date_delivery = ($date_delivery ? $date_delivery : $object->delivery_date); // $date_delivery comes from GETPOST
 			print $form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
 			print "</td>\n";
 			print '</tr>';

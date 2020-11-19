@@ -693,7 +693,8 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 			$("#buying_price").val("").show();
 
 			/* Call post to load content of combo list fournprice_predef */
-			$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php?bestpricefirst=1', { 'idprod': $(this).val(), 'token': '<?php echo newToken(); ?>' }, function(data) {
+			var token = '<?php echo currentToken(); ?>';		// For AJAX Call we use old 'token' and not 'newtoken'
+			$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php?bestpricefirst=1', { 'idprod': $(this).val(), 'token': token }, function(data) {
 				if (data && data.length > 0)
 				{
 					var options = ''; var defaultkey = ''; var defaultprice = ''; var bestpricefound = 0;

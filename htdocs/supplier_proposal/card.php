@@ -257,7 +257,7 @@ if (empty($reshook))
 			{
 				if ($object->fetch(GETPOST('copie_supplier_proposal')) > 0) {
 					$object->ref = GETPOST('ref');
-					$object->date_livraison = $date_delivery;
+					$object->date_livraison = $date_delivery;	// deprecated
 					$object->delivery_date = $date_delivery;
 					$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
 					$object->cond_reglement_id = GETPOST('cond_reglement_id');
@@ -1565,11 +1565,11 @@ if ($action == 'create')
 		print '<form name="editdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post" class="formconsumeproduce">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setdate_livraison">';
-		print $form->selectDate($object->date_livraison, 'liv_', '', '', '', "editdate_livraison");
+		print $form->selectDate($object->delivery_date, 'liv_', '', '', '', "editdate_livraison");
 		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	} else {
-		print dol_print_date($object->date_livraison, 'daytext');
+		print dol_print_date($object->delivery_date, 'daytext');
 	}
 	print '</td>';
 	print '</tr>';

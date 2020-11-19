@@ -275,7 +275,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$heightforinfotot = 50 + (4 * $nbpayments); // Height reserved to output the info and total part and payment part
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-				if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS > 0) $heightforfooter += 6;
+				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) $heightforfooter += 6;
 
 				if (class_exists('TCPDF'))
 				{
@@ -336,7 +336,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 + $top_shift : 10);
 
 				// Incoterm
-				if ($conf->incoterm->enabled)
+				if (!empty($conf->incoterm->enabled))
 				{
 					$desc_incoterms = $object->getIncotermsForPDF();
 					if ($desc_incoterms)
@@ -1263,7 +1263,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
-		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf, $outputlangs, 'SUPPLIER_INVOICE_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 }

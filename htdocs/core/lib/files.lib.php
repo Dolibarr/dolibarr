@@ -228,8 +228,12 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 	$sql .= " date_c, tms as date_m, fk_user_c, fk_user_m, acl, position, share";
 	if ($mode) $sql .= ", description";
 	$sql .= " FROM ".MAIN_DB_PREFIX."ecm_files";
-	$sql .= " WHERE filepath = '".$db->escape($path)."'";
-	$sql .= " AND entity = ".$conf->entity;
+	$sql .= " WHERE entity = ".$conf->entity;
+	if (preg_match('/%$/', $path)) {
+		$sql .= " AND filepath LIKE '".$db->escape($path)."'";
+	} else {
+		$sql .= " AND filepath = '".$db->escape($path)."'";
+	}
 
 	$resql = $db->query($sql);
 	if ($resql)
@@ -242,6 +246,7 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 			$obj = $db->fetch_object($resql);
 			if ($obj)
 			{
+				$reg = array();
 				preg_match('/([^\/]+)\/[^\/]+$/', DOL_DATA_ROOT.'/'.$obj->filepath.'/'.$obj->filename, $reg);
 				$level1name = (isset($reg[1]) ? $reg[1] : '');
 				$file_list[] = array(
@@ -289,7 +294,7 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
  * Complete $filearray with data from database.
  * This will call doldir_list_indatabase to complate filearray.
  *
- * @param	array	$filearray			Array of files get using dol_dir_list
+ * @param	array	$filearray			Array of files obtained using dol_dir_list
  * @param	string	$relativedir		Relative dir from DOL_DATA_ROOT
  * @return	void
  */
@@ -315,19 +320,19 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 		}
 	}
 
-	//var_dump($filearray);
-	//var_dump($filearrayindatabase);
+	/*var_dump($relativedir);
+	var_dump($filearray);
+	var_dump($filearrayindatabase);*/
 
 	// Complete filearray with properties found into $filearrayindatabase
 	foreach ($filearray as $key => $val)
 	{
 		$tmpfilename = preg_replace('/\.noexe$/', '', $filearray[$key]['name']);
-
 		$found = 0;
 		// Search if it exists into $filearrayindatabase
 		foreach ($filearrayindatabase as $key2 => $val2)
 		{
-			if ($filearrayindatabase[$key2]['name'] == $tmpfilename)
+			if (($filearrayindatabase[$key2]['path'] == $filearray[$key]['path']) && ($filearrayindatabase[$key2]['name'] == $tmpfilename))
 			{
 				$filearray[$key]['position_name'] = ($filearrayindatabase[$key2]['position'] ? $filearrayindatabase[$key2]['position'] : '0').'_'.$filearrayindatabase[$key2]['name'];
 				$filearray[$key]['position'] = $filearrayindatabase[$key2]['position'];
@@ -348,6 +353,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 			$filearray[$key]['acl'] = '';
 
 			$rel_filename = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filearray[$key]['fullname']);
+
 			if (!preg_match('/([\\/]temp[\\/]|[\\/]thumbs|\.meta$)/', $rel_filename))     // If not a tmp file
 			{
 				dol_syslog("list_of_documents We found a file called '".$filearray[$key]['name']."' not indexed into database. We add it");
@@ -379,8 +385,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 			}
 		}
 	}
-
-	/*var_dump($filearray);*/
+	//var_dump($filearray); var_dump($relativedir.' - tmpfilename='.$tmpfilename.' - found='.$found);
 }
 
 

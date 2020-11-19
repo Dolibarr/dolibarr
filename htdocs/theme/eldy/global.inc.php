@@ -111,6 +111,7 @@ body {
     <?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
 
+/* Style used to protect html content in output to avoid attack by replacing full page with js content */
 .sensiblehtmlcontent * {
 	position: static !important;
 }
@@ -317,6 +318,7 @@ input.buttonpaymentstripe {
 }
 .logopublicpayment #dolpaymentlogo {
 	max-height: 100px;
+	max-width: 320px;
 }
 
 a.buttonticket {
@@ -1311,6 +1313,25 @@ select.widthcentpercentminusxx, input.widthcentpercentminusxx {
 		width: calc(100% - 40px) !important;
 		display: inline-block;
 	}
+
+	.logopublicpayment #dolpaymentlogo {
+		max-width: 260px;
+	}
+	#tablepublicpayment {
+		width:	auto !important;
+	}
+	.poweredbypublicpayment {
+    	float: unset !important;
+		top: unset !important;
+    	bottom: 8px;
+    	position: relative !important;
+    }
+    .poweredbyimg {
+    	width: 48px;
+    }
+    input.buttonpayment, button.buttonpayment, div.buttonpayment {
+    	min-width: 270px;
+    }
 }
 
 /* Force values for small screen 570 */
@@ -3027,9 +3048,8 @@ div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border
 }
 div .tdtop {
     vertical-align: top !important;
-	padding-top: 10px !important;
-	padding-bottom: 2px !important;
-	padding-bottom: 0px;
+	/*padding-top: 10px !important;
+	padding-bottom: 2px !important; */
 }
 
 table.border td, table.bordernooddeven td, div.border div div.tagtd {
@@ -4156,7 +4176,7 @@ div.backgreypublicpayment { background-color: #f0f0f0; padding: 20px; border-bot
     color: #222;
     opacity: 0.3;
 }
-#dolpaymenttable { min-width: 320px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
+#dolpaymenttable { min-width: 290px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
 #tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }

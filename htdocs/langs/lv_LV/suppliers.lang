@@ -38,6 +38,7 @@ MenuOrdersSupplierToBill=Pirkuma pasūtījumi rēķinam
 NbDaysToDelivery=Piegādes termiņš (dienas)
 DescNbDaysToDelivery=Šī pasūtījuma produktu ilgākais piegādes termiņš
 SupplierReputation=Pārdevēja reputācija
+ReferenceReputation=Reference reputation
 DoNotOrderThisProductToThisSupplier=Nepasūtīt
 NotTheGoodQualitySupplier=Zemas kvalitātes
 ReputationForThisProduct=Reputācija

@@ -215,6 +215,8 @@ if ($nbofentries > 0)
 	print '</table></td>';
 	print '</tr>';
 }
+print "</table>";
+print '<input type="submit" value="'.$langs->trans("Save").'"></form>';
 
 //Printer3
 print '<table class="liste nohover" width="100%">';

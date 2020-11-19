@@ -1,0 +1,40 @@
+Module68000Name = Intracomm rapport
+Module68000Desc = Intracomm rapportadministrasjon (støtte for fransk DEB / DES-format)
+IntracommReportSetup = Oppsett av iIntracommrapport
+IntracommReportAbout = Om intracommreport
+
+# Setup
+INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
+INTRACOMMREPORT_TYPE_ACTEUR=Aktørtype
+INTRACOMMREPORT_ROLE_ACTEUR=Aktørrolle
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
+
+INTRACOMMREPORT_NUM_DECLARATION=Deklarantnummer
+
+# Menu
+MenuIntracommReport=Intracomm rapport
+MenuIntracommReportNew=Ny deklarasjon
+MenuIntracommReportList=Liste
+
+# View
+NewDeclaration=Ny deklarasjon
+Declaration=Deklarasjon
+AnalysisPeriod=Analyseperiode
+TypeOfDeclaration=Type deklarasjon
+DEB=Goods exchange declaration (DEB)
+DES=Services exchange declaration (DES)
+
+# Export page
+IntracommReportTitle=Klargjøring av en XML-fil i ProDouane-format
+
+# List
+IntracommReportList=Liste over genererte deklarasjoner
+IntracommReportNumber=Numero of declaration
+IntracommReportPeriod=Analyseperiode
+IntracommReportTypeDeclaration=Type deklarasjon
+IntracommReportDownload=last ned XML-fil
+
+# Invoice
+IntracommReportTransportMode=Transportmodus
