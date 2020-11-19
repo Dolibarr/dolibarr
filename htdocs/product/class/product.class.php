@@ -4898,7 +4898,7 @@ class Product extends CommonObject
 			$this->db->free($result);
 
 			if (!preg_match('/novirtual/', $option)) {
-				$this->load_virtual_stock($includedraftpoforvirtual); // This also load stats_commande_fournisseur, ...
+				$this->load_virtual_stock($includedraftpoforvirtual); // This also load all arrays stats_xxx...
 			}
 
 			return 1;
