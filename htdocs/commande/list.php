@@ -94,6 +94,8 @@ $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_project = GETPOST('search_project', 'alpha');
+$search_shippable = GETPOST('search_shippable', 'aZ09');
+
 
 // Security check
 $id = (GETPOST('orderid') ?GETPOST('orderid', 'int') : GETPOST('id', 'int'));
@@ -167,7 +169,8 @@ $arrayfields = array(
 	'c.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'position'=>510, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES))),
 	'c.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'position'=>511, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES))),
 	'c.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
-	'c.facture'=>array('label'=>"Billed", 'checked'=>1, 'position'=>1000, 'enabled'=>(empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)))
+	'c.facture'=>array('label'=>"Billed", 'checked'=>1, 'position'=>1000, 'enabled'=>(empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))),
+	'shippable'=>array('label'=>"Shippable", 'checked'=>1, 'position'=>1000, 'enabled'=>(!empty($conf->expedition->enabled)))
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -571,11 +574,6 @@ if ($resql)
 
 	$moreforfilter = '';
 
-	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('ShowShippableCommand').': ';
-	$moreforfilter .= '<input type="checkbox" name="show_shippable_command" value="show_shippable_command"'.($show_shippable_command == 'show_shippable_command' ? ' checked' : '').'>';
-	$moreforfilter.='</div>';
-
  	// If the user can view prospects other than his'
  	if ($user->rights->societe->client->voir || $socid)
  	{
@@ -848,6 +846,19 @@ if ($resql)
 		print $form->selectarray('search_status', $liststatus, $search_status, -4, 0, 0, '', 0, 0, 0, '', 'maxwidth100', 1);
 		print '</td>';
 	}
+	// Shippable
+	if (!empty($arrayfields['shippable']['checked']))
+	{
+		print '<td class="liste_titre maxwidthonsmartphone" align="center">';
+		//print $form->selectyesno('search_shippable', $search_shippable, 1, 0, 1, 1);
+		if (! empty($conf->global->ORDER_SHIPABLE_STATUS_DISABLED_BY_DEFAULT)) {
+			print '<input type="checkbox" name="show_shippable_command" value="1"'.($show_shippable_command ? ' checked' : '').'>';
+			print $langs->trans('ShowShippableStatus');
+		} else {
+			$show_shippable_command = 1;
+		}
+		print '</td>';
+	}
 	// Status billed
 	if (!empty($arrayfields['c.facture']['checked']))
 	{
@@ -899,6 +910,7 @@ if ($resql)
 	if (!empty($arrayfields['c.note_public']['checked'])) print_liste_field_titre($arrayfields['c.note_public']['label'], $_SERVER["PHP_SELF"], "c.note_public", "", $param, '', $sortfield, $sortorder, 'right ');
 	if (!empty($arrayfields['c.note_private']['checked'])) print_liste_field_titre($arrayfields['c.note_private']['label'], $_SERVER["PHP_SELF"], "c.note_private", "", $param, '', $sortfield, $sortorder, 'right ');
 	if (!empty($arrayfields['c.fk_statut']['checked'])) print_liste_field_titre($arrayfields['c.fk_statut']['label'], $_SERVER["PHP_SELF"], "c.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
+	if (!empty($arrayfields['shippable']['checked']))   print_liste_field_titre($arrayfields['shippable']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['c.facture']['checked']))   print_liste_field_titre($arrayfields['c.facture']['label'], $_SERVER["PHP_SELF"], 'c.facture', '', $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	print '</tr>'."\n";
@@ -957,106 +969,7 @@ if ($resql)
 		if (!empty($arrayfields['c.ref']['checked']))
 		{
 			print '<td class="nowraponall">';
-			if (!empty($show_shippable_command)) {
-				$generic_commande->getLinesArray(); // This set ->lines
-			}
-
 			print $generic_commande->getNomUrl(1, ($search_status != 2 ? 0 : $obj->fk_statut), 0, 0, 0, 1, 1);
-
-			if (!empty($show_shippable_command)) {
-				// Show shippable Icon (create subloop, so may be slow)
-				if (! empty($conf->stock->enabled)) {
-					if (($obj->fk_statut > $generic_commande::STATUS_DRAFT) && ($obj->fk_statut < $generic_commande::STATUS_CLOSED)) {
-						$numlines = count($generic_commande->lines); // Loop on each line of order
-						for ($lig = 0; $lig < $numlines; $lig++) {
-							if ($generic_commande->lines[$lig]->product_type == 0 && $generic_commande->lines[$lig]->fk_product > 0)  // If line is a product and not a service
-							{
-								$nbprod++; // order contains real products
-								$generic_product->id = $generic_commande->lines[$lig]->fk_product;
-
-								// Get local and virtual stock and store it into cache
-								if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product])) {
-									$generic_product->load_stock('nobatch');
-									//$generic_product->load_virtual_stock();   Already included into load_stock
-									$productstat_cache[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_reel;
-									$productstat_cachevirtual[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_theorique;
-								} else {
-									$generic_product->stock_reel = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stock_reel'];
-									$generic_product->stock_theorique = $productstat_cachevirtual[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_theorique;
-								}
-
-								if (empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST))  // Default code. Default is when this option is not set, setting it create strange result
-								{
-									$text_info .= $generic_commande->lines[$lig]->qty . ' X ' . $generic_commande->lines[$lig]->product_ref . '&nbsp;' . dol_trunc($generic_commande->lines[$lig]->product_label, 25);
-									$text_info .= ' - ' . $langs->trans("Stock") . ': <span class="' . ($generic_product->stock_reel > 0 ? 'ok' : 'error') . '">' . $generic_product->stock_reel . '</span>';
-									$text_info .= ' - ' . $langs->trans("VirtualStock") . ': <span class="' . ($generic_product->stock_theorique > 0 ? 'ok' : 'error') . '">' . $generic_product->stock_theorique . '</span>';
-									$text_info .= '<br>';
-
-									if ($generic_commande->lines[$lig]->qty > $generic_product->stock_reel) {
-										$notshippable++;
-									}
-								} else {  // Detailed virtual stock, looks bugged, uncomplete and need heavy load.
-									// stock order and stock order_supplier
-									$stock_order = 0;
-									$stock_order_supplier = 0;
-									if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE))    // What about other options ?
-									{
-										if (!empty($conf->commande->enabled)) {
-											if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'])) {
-												$generic_product->load_stats_commande(0, '1,2');
-												$productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'] = $generic_product->stats_commande['qty'];
-											} else {
-												$generic_product->stats_commande['qty'] = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'];
-											}
-											$stock_order = $generic_product->stats_commande['qty'];
-										}
-										if (!empty($conf->fournisseur->enabled)) {
-											if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'])) {
-												$generic_product->load_stats_commande_fournisseur(0, '3');
-												$productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'] = $generic_product->stats_commande_fournisseur['qty'];
-											} else {
-												$generic_product->stats_commande_fournisseur['qty'] = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'];
-											}
-											$stock_order_supplier = $generic_product->stats_commande_fournisseur['qty'];
-										}
-									}
-									$text_info .= $generic_commande->lines[$lig]->qty . ' X ' . $generic_commande->lines[$lig]->ref . '&nbsp;' . dol_trunc($generic_commande->lines[$lig]->product_label, 25);
-									$text_stock_reel = $generic_product->stock_reel . '/' . $stock_order;
-									if ($stock_order > $generic_product->stock_reel && !($generic_product->stock_reel < $generic_commande->lines[$lig]->qty)) {
-										$warning++;
-										$text_warning .= '<span class="warning">' . $langs->trans('Available') . '&nbsp;:&nbsp;' . $text_stock_reel . '</span>';
-									}
-									if ($generic_product->stock_reel < $generic_commande->lines[$lig]->qty) {
-										$notshippable++;
-										$text_info .= '<span class="warning">' . $langs->trans('Available') . '&nbsp;:&nbsp;' . $text_stock_reel . '</span>';
-									} else {
-										$text_info .= '<span class="ok">' . $langs->trans('Available') . '&nbsp;:&nbsp;' . $text_stock_reel . '</span>';
-									}
-									if (!empty($conf->fournisseur->enabled)) {
-										$text_info .= '&nbsp;' . $langs->trans('SupplierOrder') . '&nbsp;:&nbsp;' . $stock_order_supplier . '<br>';
-									} else {
-										$text_info .= '<br>';
-									}
-								}
-							}
-						}
-						if ($notshippable == 0) {
-							$text_icon = img_picto('', 'dolly', '', false, 0, 0, '', 'green paddingleft');
-							$text_info = $langs->trans('Shippable') . '<br>' . $text_info;
-						} else {
-							$text_icon = img_picto('', 'dolly', '', false, 0, 0, '', 'error paddingleft');
-							$text_info = $langs->trans('NonShippable') . '<br>' . $text_info;
-						}
-					}
-
-					if ($nbprod) {
-						print $form->textwithtooltip('', $text_info, 2, 1, $text_icon, '', 2);
-					}
-					if ($warning) {     // Always false in default mode
-						print $form->textwithtooltip('', $langs->trans('NotEnoughForAllOrders') . '<br>' . $text_warning, 2, 1, img_picto('', 'error'), '', 2);
-					}
-				}
-			}
 
 			// Warning late icon and note
 			if ($generic_commande->hasDelay()) {
@@ -1259,6 +1172,7 @@ if ($resql)
 		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
+
 		// Date creation
 		if (!empty($arrayfields['c.datec']['checked']))
 		{
@@ -1267,6 +1181,7 @@ if ($resql)
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
+
 		// Date modification
 		if (!empty($arrayfields['c.tms']['checked']))
 		{
@@ -1275,6 +1190,7 @@ if ($resql)
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
+
 		// Date cloture
 		if (!empty($arrayfields['c.date_cloture']['checked']))
 		{
@@ -1283,6 +1199,7 @@ if ($resql)
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
+
 		// Note public
 		if (!empty($arrayfields['c.note_public']['checked']))
 		{
@@ -1291,6 +1208,7 @@ if ($resql)
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
+
 		// Note private
 		if (!empty($arrayfields['c.note_private']['checked']))
 		{
@@ -1299,12 +1217,116 @@ if ($resql)
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
+
 		// Status
 		if (!empty($arrayfields['c.fk_statut']['checked']))
 		{
 			print '<td class="nowrap right">'.$generic_commande->LibStatut($obj->fk_statut, $obj->billed, 5, 1).'</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
+
+		// Show shippable Icon (this creates subloops, so may be slow)
+		if (!empty($arrayfields['shippable']['checked']))
+		{
+			print '<td class="center">';
+			if (!empty($show_shippable_command) && !empty($conf->stock->enabled)) {
+				if (($obj->fk_statut > $generic_commande::STATUS_DRAFT) && ($obj->fk_statut < $generic_commande::STATUS_CLOSED)) {
+					$generic_commande->getLinesArray(); // This set ->lines
+
+					$numlines = count($generic_commande->lines); // Loop on each line of order
+					for ($lig = 0; $lig < $numlines; $lig++) {
+						if ($generic_commande->lines[$lig]->product_type == 0 && $generic_commande->lines[$lig]->fk_product > 0)  // If line is a product and not a service
+						{
+							$nbprod++; // order contains real products
+							$generic_product->id = $generic_commande->lines[$lig]->fk_product;
+
+							// Get local and virtual stock and store it into cache
+							if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product])) {
+								$generic_product->load_stock('nobatch');	// ->load_virtual_stock() is already included into load_stock()
+								$productstat_cache[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_reel;
+								$productstat_cachevirtual[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_theorique;
+							} else {
+								$generic_product->stock_reel = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stock_reel'];
+								$generic_product->stock_theorique = $productstat_cachevirtual[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_theorique;
+							}
+
+							if (empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST))  // Default code. Default should be this case.
+							{
+								$text_info .= $generic_commande->lines[$lig]->qty . ' X ' . $generic_commande->lines[$lig]->product_ref . '&nbsp;' . dol_trunc($generic_commande->lines[$lig]->product_label, 25);
+								$text_info .= ' - ' . $langs->trans("Stock") . ': <span class="' . ($generic_product->stock_reel > 0 ? 'ok' : 'error') . '">' . $generic_product->stock_reel . '</span>';
+								$text_info .= ' - ' . $langs->trans("VirtualStock") . ': <span class="' . ($generic_product->stock_theorique > 0 ? 'ok' : 'error') . '">' . $generic_product->stock_theorique . '</span>';
+								$text_info .= '<br>';
+
+								if ($generic_commande->lines[$lig]->qty > $generic_product->stock_reel) {
+									$notshippable++;
+								}
+							} else {  // BUGGED CODE.
+								// DOES NOT TAKE INTO ACCOUNT MANUFACTURING. THIS CODE SHOULD BE USELESS. PREVIOUS CODE SEEMS COMPLETE.
+								// COUNT STOCK WHEN WE SHOULD ALREADY HAVE VALUE
+								// Detailed virtual stock, looks bugged, uncomplete and need heavy load.
+								// stock order and stock order_supplier
+								$stock_order = 0;
+								$stock_order_supplier = 0;
+								if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE))    // What about other options ?
+								{
+									if (!empty($conf->commande->enabled)) {
+										if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'])) {
+											$generic_product->load_stats_commande(0, '1,2');
+											$productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'] = $generic_product->stats_commande['qty'];
+										} else {
+											$generic_product->stats_commande['qty'] = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'];
+										}
+										$stock_order = $generic_product->stats_commande['qty'];
+									}
+									if (!empty($conf->fournisseur->enabled)) {
+										if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'])) {
+											$generic_product->load_stats_commande_fournisseur(0, '3');
+											$productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'] = $generic_product->stats_commande_fournisseur['qty'];
+										} else {
+											$generic_product->stats_commande_fournisseur['qty'] = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'];
+										}
+										$stock_order_supplier = $generic_product->stats_commande_fournisseur['qty'];
+									}
+								}
+								$text_info .= $generic_commande->lines[$lig]->qty . ' X ' . $generic_commande->lines[$lig]->ref . '&nbsp;' . dol_trunc($generic_commande->lines[$lig]->product_label, 25);
+								$text_stock_reel = $generic_product->stock_reel . '/' . $stock_order;
+								if ($stock_order > $generic_product->stock_reel && !($generic_product->stock_reel < $generic_commande->lines[$lig]->qty)) {
+									$warning++;
+									$text_warning .= '<span class="warning">' . $langs->trans('Available') . '&nbsp;:&nbsp;' . $text_stock_reel . '</span>';
+								}
+								if ($generic_product->stock_reel < $generic_commande->lines[$lig]->qty) {
+									$notshippable++;
+									$text_info .= '<span class="warning">' . $langs->trans('Available') . '&nbsp;:&nbsp;' . $text_stock_reel . '</span>';
+								} else {
+									$text_info .= '<span class="ok">' . $langs->trans('Available') . '&nbsp;:&nbsp;' . $text_stock_reel . '</span>';
+								}
+								if (!empty($conf->fournisseur->enabled)) {
+									$text_info .= '&nbsp;' . $langs->trans('SupplierOrder') . '&nbsp;:&nbsp;' . $stock_order_supplier . '<br>';
+								} else {
+									$text_info .= '<br>';
+								}
+							}
+						}
+					}
+					if ($notshippable == 0) {
+						$text_icon = img_picto('', 'dolly', '', false, 0, 0, '', 'green paddingleft');
+						$text_info = $langs->trans('Shippable') . '<br>' . $text_info;
+					} else {
+						$text_icon = img_picto('', 'dolly', '', false, 0, 0, '', 'error paddingleft');
+						$text_info = $langs->trans('NonShippable') . '<br>' . $text_info;
+					}
+				}
+
+				if ($nbprod) {
+					print $form->textwithtooltip('', $text_info, 2, 1, $text_icon, '', 2);
+				}
+				if ($warning) {     // Always false in default mode
+					print $form->textwithtooltip('', $langs->trans('NotEnoughForAllOrders') . '<br>' . $text_warning, 2, 1, img_picto('', 'error'), '', 2);
+				}
+			}
+			print '</td>';
+		}
+
 		// Billed
 		if (!empty($arrayfields['c.facture']['checked']))
 		{
