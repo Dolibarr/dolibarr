@@ -105,6 +105,29 @@ class ProductFournisseur extends Product
 	public $fourn_multicurrency_unitprice;
 
 	/**
+	 * @deprecated
+	 * @see $supplier_barcode
+	 */
+	public $fourn_barcode;
+
+	/**
+	 * @var string $supplier_barcode - Supplier barcode
+	 */
+	public $supplier_barcode;
+
+	/**
+	 * @deprecated
+	 * @see $supplier_fk_barcode_type
+	 */
+	public $fourn_fk_barcode_type;
+
+	/**
+	 * @var string $supplier_fk_barcode_type - Supplier barcode type
+	 */
+	public $supplier_fk_barcode_type;
+
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
@@ -117,8 +140,6 @@ class ProductFournisseur extends Product
 		$langs->load("suppliers");
 		$this->reputations = array('-1'=>'', 'FAVORITE'=>$langs->trans('Favorite'), 'NOTTHGOOD'=>$langs->trans('NotTheGoodQualitySupplier'), 'DONOTORDER'=>$langs->trans('DoNotOrderThisProductToThisSupplier'));
 	}
-
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -537,8 +558,10 @@ class ProductFournisseur extends Product
 				$this->fourn_multicurrency_id          = $obj->fk_multicurrency;
 				$this->fourn_multicurrency_code        = $obj->multicurrency_code;
 				if ($conf->barcode->enabled) {
-					$this->fourn_barcode = $obj->barcode;
-					$this->fourn_fk_barcode_type = $obj->fk_barcode_type;
+					$this->fourn_barcode = $obj->barcode; // deprecated
+					$this->fourn_fk_barcode_type = $obj->barcode; // deprecated
+					$this->supplier_barcode = $obj->barcode;
+					$this->supplier_fk_barcode_type = $obj->fk_barcode_type;
 				}
 
 				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {

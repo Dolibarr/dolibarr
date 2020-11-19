@@ -109,10 +109,12 @@ if ($id)
 	// Login
 	print '<tr><td class="titlefield">'.$langs->trans("Login").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
 
+	$editenabled = (($action == 'edit') && !empty($user->rights->user->user->creer));
+
 	// Note
 	print '<tr><td class="tdtop">'.$langs->trans("Note").'</td>';
-	print '<td class="sensiblehtmlcontent">';
-	if ($action == 'edit' && $user->rights->user->user->creer)
+	print '<td class="'.($editenabled ? '' : 'sensiblehtmlcontent').'">';
+	if ($editenabled)
 	{
 		print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 		print "<input type=\"hidden\" name=\"id\" value=\"".$object->id."\">";

@@ -188,7 +188,8 @@ class Form
 		{
 			$ret .= $this->editInPlace($object, $value, $htmlname, $perm, $typeofdata, $editvalue, $extObject, $custommsg);
 		} else {
-			if (GETPOST('action', 'aZ09') == 'edit'.$htmlname)
+			$editmode = (GETPOST('action', 'aZ09') == 'edit'.$htmlname);
+			if ($editmode)
 			{
 				$ret .= "\n";
 				$ret .= '<form method="post" action="'.$_SERVER["PHP_SELF"].($moreparam ? '?'.$moreparam : '').'">';
