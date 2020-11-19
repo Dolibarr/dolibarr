@@ -965,8 +965,8 @@ if ($resql)
 
 			if (!empty($show_shippable_command)) {
 				// Show shippable Icon (create subloop, so may be slow)
-				if ($conf->stock->enabled) {
-					if (($obj->fk_statut > 0) && ($obj->fk_statut < 3)) {
+				if (! empty($conf->stock->enabled)) {
+					if (($obj->fk_statut > $generic_commande::STATUS_DRAFT) && ($obj->fk_statut < $generic_commande::STATUS_CLOSED)) {
 						$numlines = count($generic_commande->lines); // Loop on each line of order
 						for ($lig = 0; $lig < $numlines; $lig++) {
 							if ($generic_commande->lines[$lig]->product_type == 0 && $generic_commande->lines[$lig]->fk_product > 0)  // If line is a product and not a service
