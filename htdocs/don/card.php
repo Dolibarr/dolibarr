@@ -141,28 +141,27 @@ if ($action == 'update')
 	{
 		$object->fetch($id);
 
-		$object->firstname = GETPOST("firstname", 'alpha');
-		$object->lastname = GETPOST("lastname", 'alpha');
-		$object->societe = GETPOST("societe", 'alpha');
-		$object->address = GETPOST("address", 'alpha');
+		$object->firstname = (string) GETPOST("firstname", 'alpha');
+		$object->lastname = (string) GETPOST("lastname", 'alpha');
+		$object->societe = (string) GETPOST("societe", 'alpha');
+		$object->address = (string) GETPOST("address", 'alpha');
 		$object->amount = price2num(GETPOST("amount", 'alpha'));
-		$object->town = GETPOST("town", 'alpha');
-		$object->zip = GETPOST("zipcode", 'alpha');
-		$object->country_id = GETPOST('country_id', 'int');
-		$object->email = GETPOST("email", 'alpha');
+		$object->town = (string) GETPOST("town", 'alpha');
+		$object->zip = (string) GETPOST("zipcode", 'alpha');
+		$object->country_id = (int GETPOST('country_id', 'int');
+		$object->email = (string) GETPOST("email", 'alpha');
 		$object->date = $donation_date;
-		$object->public = GETPOST("public", 'alpha');
+		$object->public = (string) GETPOST("public", 'alpha');
 		$object->fk_project = GETPOST("fk_project", 'alpha');
-		$object->note_private = GETPOST("note_private", 'restricthtml');
-		$object->note_public = GETPOST("note_public", 'restricthtml');
-		$object->modepaymentid = GETPOST('modepayment', 'int');
+		$object->note_private = (string) GETPOST("note_private", 'restricthtml');
+		$object->note_public = (string) GETPOST("note_public", 'restricthtml');
+		$object->modepaymentid = (int) GETPOST('modepayment', 'int');
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) $error++;
 
-		if ($object->update($user) > 0)
-		{
+		if ($object->update($user) > 0) {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
 		}
@@ -195,30 +194,29 @@ if ($action == 'add')
 
 	if (!$error)
 	{
-		$object->socid = GETPOST("socid", 'int');
-		$object->firstname = GETPOST("firstname", 'alpha');
-		$object->lastname = GETPOST("lastname", 'alpha');
-		$object->societe = GETPOST("societe", 'alpha');
-		$object->address = GETPOST("address", 'alpha');
+		$object->socid = (int) GETPOST("socid", 'int');
+		$object->firstname = (string) GETPOST("firstname", 'alpha');
+		$object->lastname = (string) GETPOST("lastname", 'alpha');
+		$object->societe = (string) GETPOST("societe", 'alpha');
+		$object->address = (string) GETPOST("address", 'alpha');
 		$object->amount = price2num(GETPOST("amount", 'alpha'));
-		$object->zip = GETPOST("zipcode", 'alpha');
-		$object->town = GETPOST("town", 'alpha');
-		$object->country_id = GETPOST('country_id', 'int');
-		$object->email = GETPOST('email', 'alpha');
+		$object->zip = (string) GETPOST("zipcode", 'alpha');
+		$object->town = (string) GETPOST("town", 'alpha');
+		$object->country_id = (int) GETPOST('country_id', 'int');
+		$object->email = (string) GETPOST('email', 'alpha');
 		$object->date = $donation_date;
-		$object->note_private = GETPOST("note_private", 'restricthtml');
-		$object->note_public = GETPOST("note_public", 'restricthtml');
-		$object->public = GETPOST("public", 'alpha');
-		$object->fk_project = GETPOST("fk_project", 'alpha');
-		$object->modepaymentid = GETPOST('modepayment', 'int');
+		$object->note_private = (string) GETPOST("note_private", 'restricthtml');
+		$object->note_public = (string) GETPOST("note_public", 'restricthtml');
+		$object->public = (string) GETPOST("public", 'alpha');
+		$object->fk_project = (string) GETPOST("fk_project", 'alpha');
+		$object->modepaymentid = (int) GETPOST('modepayment', 'int');
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) $error++;
 
 		$res = $object->create($user);
-		if ($res > 0)
-		{
+		if ($res > 0) {
 			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$res);
 			exit;
 		} else {
@@ -230,8 +228,7 @@ if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights-
 {
 	$object->fetch($id);
 	$result = $object->delete($user);
-	if ($result > 0)
-	{
+	if ($result > 0) {
 		header("Location: index.php");
 		exit;
 	} else {
@@ -546,8 +543,7 @@ if (!empty($id) && $action == 'edit')
 	print '</td>';
 
 	// Amount
-	if ($object->statut == 0)
-	{
+	if ($object->statut == 0) {
 		print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10" value="'.price($object->amount).'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	} else {
 		print '<tr><td>'.$langs->trans("Amount").'</td><td>';
