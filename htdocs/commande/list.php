@@ -448,8 +448,8 @@ if ($resql)
 	if ($search_status != '')		$param .= '&search_status='.urlencode($search_status);
 	if ($search_datecloture_start)  $param .= '&search_datecloture_start='.urlencode($search_datecloture_start);
 	if ($search_datecloture_end)    $param .= '&search_datecloture_end='.urlencode($search_datecloture_end);
-	if ($search_datedelivery_start) $param .= '&search_dateorder_start_day=' . dol_print_date($search_dateorder_start, '%d') . '&search_dateorder_start_month=' . dol_print_date($search_dateorder_start, '%m') . '&search_dateorder_start_year=' . dol_print_date($search_dateorder_start, '%Y');
-	if ($search_datedelivery_end) 	$param .= '&search_dateorder_end_day=' . dol_print_date($search_dateorder_end, '%d') . '&search_dateorder_end_month=' . dol_print_date($search_dateorder_end, '%m') . '&search_dateorder_end_year=' . dol_print_date($search_dateorder_end, '%Y');
+	if ($search_dateorder_start) 	$param .= '&search_dateorder_start_day=' . dol_print_date($search_dateorder_start, '%d') . '&search_dateorder_start_month=' . dol_print_date($search_dateorder_start, '%m') . '&search_dateorder_start_year=' . dol_print_date($search_dateorder_start, '%Y');
+	if ($search_dateorder_end) 		$param .= '&search_dateorder_end_day=' . dol_print_date($search_dateorder_end, '%d') . '&search_dateorder_end_month=' . dol_print_date($search_dateorder_end, '%m') . '&search_dateorder_end_year=' . dol_print_date($search_dateorder_end, '%Y');
 	if ($search_datedelivery_start) $param .= '&search_datedelivery_start_day=' . dol_print_date($search_datedelivery_start, '%d') . '&search_datedelivery_start_month=' . dol_print_date($search_datedelivery_start, '%m') . '&search_datedelivery_start_year=' . dol_print_date($search_datedelivery_start, '%Y');
 	if ($search_datedelivery_end) 	$param .= '&search_datedelivery_end_day=' . dol_print_date($search_datedelivery_end, '%d') . '&search_datedelivery_end_month=' . dol_print_date($search_datedelivery_end, '%m') . '&search_datedelivery_end_year=' . dol_print_date($search_datedelivery_end, '%Y');
 	if ($search_ref)      			$param .= '&search_ref='.urlencode($search_ref);
