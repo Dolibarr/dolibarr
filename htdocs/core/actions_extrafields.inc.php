@@ -338,7 +338,7 @@ if ($action == 'update')
 					GETPOST('computed_value', 'alpha'),
 					(GETPOST('entitycurrentorall', 'alpha') ? 0 : ''),
 					GETPOST('langfile'),
-					1,
+				    GETPOST('enabled', 'alpha'),
 					(GETPOST('totalizable', 'alpha') ? 1 : 0),
 					GETPOST('printable', 'alpha')
 				);
