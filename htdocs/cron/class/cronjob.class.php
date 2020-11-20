@@ -1116,7 +1116,7 @@ class Cronjob extends CommonObject
 			}
 
 			dol_syslog(get_class($this)."::run_jobs ".$this->libname."::".$this->methodename."(".$this->params.");", LOG_DEBUG);
-				$params_arr = explode(", ", $this->params);
+			$params_arr = explode(", ", $this->params);
 			if (!is_array($params_arr))
 			{
 				$result = call_user_func($this->methodename, $this->params);
