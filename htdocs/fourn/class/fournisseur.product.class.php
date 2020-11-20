@@ -674,8 +674,8 @@ class ProductFournisseur extends Product
 				}
 
 				if ($conf->barcode->enabled) {
-					$prodfourn->barcode = $record["barcode"];
-					$prodfourn->fk_barcode_type = $record["fk_barcode_type"];
+					$prodfourn->supplier_barcode = $record["barcode"];
+					$prodfourn->supplier_fk_barcode_type = $record["fk_barcode_type"];
 				}
 
 				if (!empty($conf->dynamicprices->enabled) && !empty($prodfourn->fk_supplier_price_expression)) {
