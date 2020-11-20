@@ -11,7 +11,7 @@
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018		Nicolas ZABOURI			<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,9 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'bills', 'companies', 'other'));
 
-$mesg = ''; $error = 0; $errors = array();
+$mesg = '';
+$error = 0;
+$errors = array();
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -474,8 +476,7 @@ if (empty($reshook))
 		}
 	}
 
-	if ($action == 'delete_all_price_by_qty')
-	{
+	if ($action == 'delete_all_price_by_qty') {
 		$priceid = GETPOST('priceid', 'int');
 		if (!empty($rowid)) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price_by_qty";
@@ -483,7 +484,7 @@ if (empty($reshook))
 
 			$result = $db->query($sql);
 		} else {
-			setEventMessages(('delete_price_by_qty'.$langs->transnoentities(MissingIds)), null, 'errors');
+			setEventMessages(('delete_price_by_qty'.$langs->transnoentities('MissingIds')), null, 'errors');
 		}
 	}
 
