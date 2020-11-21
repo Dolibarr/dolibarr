@@ -559,7 +559,7 @@ class ProductFournisseur extends Product
 				$this->fourn_multicurrency_code        = $obj->multicurrency_code;
 				if ($conf->barcode->enabled) {
 					$this->fourn_barcode = $obj->barcode; // deprecated
-					$this->fourn_fk_barcode_type = $obj->barcode; // deprecated
+					$this->fourn_fk_barcode_type = $obj->fk_barcode_type; // deprecated
 					$this->supplier_barcode = $obj->barcode;
 					$this->supplier_fk_barcode_type = $obj->fk_barcode_type;
 				}
