@@ -211,7 +211,7 @@ if (empty($conf->use_javascript_ajax))
 		print $conf->global->FCKEDITOR_TEST;
 		print '</div>';
 	}
-	print '<br><div class="center"><input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"></div>'."\n";
+	print '<br><div class="center"><input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'"></div>'."\n";
 	print '<div id="divforlog"></div>';
 	print '</form>'."\n";
 

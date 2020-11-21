@@ -1163,7 +1163,7 @@ if ($action == 'edit_vat' && ($user->rights->produit->creer || $user->rights->se
 	print dol_get_fiche_end();
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
@@ -1276,7 +1276,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		print dol_get_fiche_end();
 
 		print '<div class="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
@@ -1396,7 +1396,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		//print dol_get_fiche_end();
 
 		print '<div style="text-align: center">';
-		print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
 		print '</form>';
@@ -1713,7 +1713,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print $langs->trans('ForceUpdateChildPriceSoc');
 		print '</div>';
 
-		print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
@@ -1806,7 +1806,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print $langs->trans('ForceUpdateChildPriceSoc');
 		print "</div>";
 
-		print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';

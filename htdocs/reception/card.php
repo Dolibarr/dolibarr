@@ -1902,7 +1902,7 @@ if ($action == 'create')
 			if ($action == 'editline' && $lines[$i]->id == $line_id)
 			{
 				print '<td class="center" colspan="2" valign="middle">';
-				print '<input type="submit" class="button" id="savelinebutton marginbottomonly" name="save" value="'.$langs->trans("Save").'"><br>';
+				print '<input type="submit" class="button button-save" id="savelinebutton marginbottomonly" name="save" value="'.$langs->trans("Save").'"><br>';
 				print '<input type="submit" class="button" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'"><br>';
 			} elseif ($object->statut == Reception::STATUS_DRAFT)
 			{

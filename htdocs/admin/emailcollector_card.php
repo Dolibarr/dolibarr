@@ -297,7 +297,7 @@ if (($id || $ref) && $action == 'edit')
 
 	print dol_get_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+	print '<div class="center"><input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 	print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
@@ -614,7 +614,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		{
 			print '<input type="text" class="quatrevingtquinzepercent" name="operationparam2" value="'.$ruleaction['actionparam'].'"><br>';
 			print '<input type="hidden" name="rowidoperation2" value="'.$ruleaction['id'].'"><br>';
-			print '<input type="submit" class="button" name="saveoperation2" value="'.$langs->trans("Save").'"> <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" class="button button-save" name="saveoperation2" value="'.$langs->trans("Save").'">';
+			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 		} else {
 			print $ruleaction['actionparam'];
 		}

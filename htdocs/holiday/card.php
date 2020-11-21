@@ -1356,7 +1356,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 					}
 					if ($action == 'editvalidator')
 					{
-						print '<input type="submit" class="button" name="savevalidator" value="'.$langs->trans("Save").'">';
+						print '<input type="submit" class="button button-save" name="savevalidator" value="'.$langs->trans("Save").'">';
 						print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 					}
 					print '</td>';
@@ -1444,7 +1444,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 						print '<div class="center">';
 						if ($cancreate && $object->statut == Holiday::STATUS_DRAFT)
 						{
-							print '<input type="submit" value="'.$langs->trans("Save").'" class="button">';
+							print '<input type="submit" value="'.$langs->trans("Save").'" class="button button-save">';
 						}
 						print '</div>';
 					}

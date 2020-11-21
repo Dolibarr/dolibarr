@@ -432,7 +432,7 @@ if ($conf->global->MAIN_DISABLE_METEO != 1) {
 
 
 if ($action == 'edit') {
-	print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
+	print '<br><div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
 	print '<br></form>';
 } else {
 	print '<br><div class="tabsAction">';

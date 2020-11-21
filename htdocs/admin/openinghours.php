@@ -130,7 +130,7 @@ if (empty($action) || $action == 'edit' || $action == 'updateedit')
 	print '</table>';
 
 	print '<br><div class="center">';
-	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 	print '</div>';
 	print '<br>';
 

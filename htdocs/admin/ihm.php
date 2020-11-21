@@ -249,7 +249,7 @@ print '</tr>';
 // Default language
 print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DefaultLanguage").'</td><td>';
 print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'MAIN_LANG_DEFAULT', 1, null, '', 0, 0, 'minwidth300', 2);
-print '<input class="button" type="submit" name="submit" value="'.$langs->trans("Save").'">';
+print '<input class="button button-save" type="submit" name="submit" value="'.$langs->trans("Save").'">';
 print '</td>';
 print '<td width="20">&nbsp;</td>';
 print '</tr>';
@@ -443,7 +443,7 @@ print '</div>';
 
 print '<br>';
 print '<div class="center">';
-print '<input class="button" type="submit" name="submit" value="'.$langs->trans("Save").'">';
+print '<input class="button button-save" type="submit" name="submit" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';

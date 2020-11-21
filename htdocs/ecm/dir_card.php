@@ -436,7 +436,7 @@ print '</table>';
 if ($action == 'edit')
 {
 	print '<br><div align="center">';
-	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("Save").'">';
+	print '<input type="submit" class="button button-save" name="submit" value="'.$langs->trans("Save").'">';
 	print ' &nbsp; &nbsp; ';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
