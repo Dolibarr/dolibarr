@@ -207,9 +207,22 @@ if (empty($conf->global->AGENDA_REMINDER_BROWSER)) {
 	print '</td></tr>'."\n";
 }
 
+$job = new Cronjob($db);
+$job->fetch(0, 'ActionComm', 'sendEmailsReminder');
+
 // AGENDA REMINDER EMAIL
 print '<tr class="oddeven">'."\n";
-print '<td>'.$langs->trans('AGENDA_REMINDER_EMAIL', $langs->transnoentities("Module2300Name")).'</td>'."\n";
+print '<td>'.$langs->trans('AGENDA_REMINDER_EMAIL', $langs->transnoentities("Module2300Name"));
+if (!empty($conf->cron->enabled)) {
+	if (!empty($conf->global->AGENDA_REMINDER_EMAIL)) {
+		if ($job->id > 0) {
+			if ($job->status == $job::STATUS_ENABLED) {
+				print '<br><span class="opacitymedium">'.$langs->trans("AGENDA_REMINDER_EMAIL_NOTE", $langs->transnoentitiesnoconv("sendEmailsReminder")).'</span>';
+			}
+		}
+	}
+}
+print '</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right">'."\n";
 
@@ -220,15 +233,11 @@ if (empty($conf->cron->enabled)) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_EMAIL&amp;token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
 	} else {
 		// Get the max frequency of reminder
-		// TODO Read frequency of the job sendEmailsReminder and if job is enabled
-		$job = new Cronjob($db);
-		$job->fetch(0, 'ActionComm', 'sendEmailsReminder');
 		if ($job->id > 0) {
 			if ($job->status != $job::STATUS_ENABLED) {
 				print '<span class="opacitymedium warning">'.$langs->trans("JobXMustBeEnabled", $langs->transnoentitiesnoconv("sendEmailsReminder")).'</span>';
 			} else {
 				print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_EMAIL&amp;token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
-				print '<br><span class="opacitymedium">'.$langs->trans("AGENDA_REMINDER_EMAIL_NOTE", $langs->transnoentitiesnoconv("sendEmailsReminder")).'</span>';
 			}
 		}
 	}
