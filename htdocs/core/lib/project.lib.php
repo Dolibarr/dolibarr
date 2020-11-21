@@ -678,10 +678,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print $hookmanager->resPrint;
 
 				// Tick to drag and drop
-				if ($addordertick)
-				{
-					print '<td class="tdlineupdown hideonsmartphone center">&nbsp;</td>';
-				}
+				print '<td class="tdlineupdown center"></td>';
 
 				print "</tr>\n";
 
@@ -796,7 +793,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		{
 			print '<td></td>';
 		}
-		if ($addordertick) print '<td class="hideonsmartphone"></td>';
+		print '<td class=""></td>';
 		print '</tr>';
 	}
 
