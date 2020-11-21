@@ -1206,16 +1206,17 @@ class ActionComm extends CommonObject
 	 * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 * @param	User	$user   			Objet user
-	 * @param	int		$load_state_board	Charge indicateurs this->nb de tableau de bord
-	 * @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
+	 * @param	int		$load_state_board	Load indicator array this->nb
+	 * @return WorkboardResponse|int 		<0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $load_state_board = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs;
 
-		if (empty($load_state_board)) $sql = "SELECT a.id, a.datep as dp";
-		else {
+		if (empty($load_state_board)) {
+			$sql = "SELECT a.id, a.datep as dp";
+		} else {
 			$this->nb = array();
 			$sql = "SELECT count(a.id) as nb";
 		}
@@ -1243,13 +1244,14 @@ class ActionComm extends CommonObject
 				$response->img = img_object('', "action", 'class="inline-block valigntextmiddle"');
 			}
 			// This assignment in condition is not a bug. It allows walking the results.
-			while ($obj = $this->db->fetch_object($resql))
-			{
+			while ($obj = $this->db->fetch_object($resql)) {
 				if (empty($load_state_board)) {
 					$response->nbtodo++;
 					$agenda_static->datep = $this->db->jdate($obj->dp);
 					if ($agenda_static->hasDelay()) $response->nbtodolate++;
-				} else $this->nb["actionscomm"] = $obj->nb;
+				} else {
+					$this->nb["actionscomm"] = $obj->nb;
+				}
 			}
 
 			$this->db->free($resql);
