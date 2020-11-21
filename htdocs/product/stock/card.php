@@ -93,18 +93,18 @@ if (empty($reshook))
 	// Ajout entrepot
 	if ($action == 'add' && $user->rights->stock->creer)
 	{
-		$object->ref         = GETPOST("ref");
-		$object->fk_parent   = GETPOST("fk_parent");
-		$object->label = GETPOST("libelle");
-		$object->description = GETPOST("desc");
+		$object->ref = (string) GETPOST("ref", "alpha");
+		$object->fk_parent = (int) GETPOST("fk_parent", "int");
+		$object->label = (string) GETPOST("libelle", "alpha");
+		$object->description = (string) GETPOST("desc", "alpha");
 		$object->statut      = GETPOST("statut");
-		$object->lieu        = GETPOST("lieu");
-		$object->address     = GETPOST("address");
-		$object->zip         = GETPOST("zipcode");
-		$object->town        = GETPOST("town");
+		$object->lieu = (string) GETPOST("lieu", "alpha");
+		$object->address = (string) GETPOST("address", "alpha");
+		$object->zip = (string) GETPOST("zipcode", "alpha");
+		$object->town = (string) GETPOST("town", "alpha");
 		$object->country_id  = GETPOST("country_id");
-		$object->phone = GETPOST("phone");
-		$object->fax = GETPOST("fax");
+		$object->phone = (string) GETPOST("phone", "alpha");
+		$object->fax = (string) GETPOST("fax", "alpha");
 
 		if (!empty($object->label)) {
 			// Fill array 'array_options' with data from add form
