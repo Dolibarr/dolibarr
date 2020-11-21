@@ -25,6 +25,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+require_once DOL_DOCUMENT_ROOT.'/cron/class/cronjob.class.php';
 
 if (!$user->admin)
 	accessforbidden();
@@ -218,10 +219,18 @@ if (empty($conf->cron->enabled)) {
 	if (empty($conf->global->AGENDA_REMINDER_EMAIL)) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_EMAIL&amp;token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
 	} else {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_EMAIL&amp;token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
 		// Get the max frequency of reminder
-
-		print '<br><span class="opacitymedium">'.$langs->trans("AGENDA_REMINDER_EMAIL_NOTE", $langs->transnoentitiesnoconv("Module2300Name")).'</span>';
+		// TODO Read frequency of the job sendEmailsReminder and if job is enabled
+		$job = new Cronjob($db);
+		$job->fetch(0, 'ActionComm', 'sendEmailsReminder');
+		if ($job->id > 0) {
+			if ($job->status != $job::STATUS_ENABLED) {
+				print '<span class="opacitymedium warning">'.$langs->trans("JobXMustBeEnabled", $langs->transnoentitiesnoconv("sendEmailsReminder")).'</span>';
+			} else {
+				print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_EMAIL&amp;token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
+				print '<br><span class="opacitymedium">'.$langs->trans("AGENDA_REMINDER_EMAIL_NOTE", $langs->transnoentitiesnoconv("sendEmailsReminder")).'</span>';
+			}
+		}
 	}
 }
 print '</td></tr>'."\n";

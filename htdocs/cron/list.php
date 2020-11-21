@@ -602,11 +602,6 @@ if ($mode == 'modulesetup') {
 }
 
 
-print '<br><br>';
-
-
-dol_print_cron_urls();
-
 llxFooter();
 
 $db->close();
