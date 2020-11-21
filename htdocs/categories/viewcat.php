@@ -104,6 +104,14 @@ if ($objecttype != $type) {
  *	Actions
  */
 
+if ($confirm == 'no')
+{
+	if ($backtopage) {
+		header("Location: ".$backtopage);
+		exit;
+	}
+}
+
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 // Remove element from category
@@ -164,8 +172,13 @@ if ($user->rights->categorie->supprimer && $action == 'confirm_delete' && $confi
 {
 	if ($object->delete($user) >= 0)
 	{
-		header("Location: ".DOL_URL_ROOT.'/categories/index.php?type='.$type);
-		exit;
+		if ($backtopage) {
+			header("Location: ".$backtopage);
+			exit;
+		} else {
+			header("Location: ".DOL_URL_ROOT.'/categories/index.php?type='.$type);
+			exit;
+		}
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -250,7 +263,11 @@ dol_banner_tab($object, 'label', $linkback, ($user->socid ? 0 : 1), 'label', 'la
 
 if ($action == 'delete')
 {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;type='.$type, $langs->trans('DeleteCategory'), $langs->trans('ConfirmDeleteCategory'), 'confirm_delete', '', '', 1);
+	if ($backtopage) {
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.$type.'&backtopage='.urlencode($backtopage), $langs->trans('DeleteCategory'), $langs->trans('ConfirmDeleteCategory'), 'confirm_delete', '', '', 2);
+	} else {
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.$type, $langs->trans('DeleteCategory'), $langs->trans('ConfirmDeleteCategory'), 'confirm_delete', '', '', 1);
+	}
 }
 
 print '<br>';
@@ -294,7 +311,7 @@ if ($user->rights->categorie->creer)
 
 if ($user->rights->categorie->supprimer)
 {
-	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'&type='.$type.'">'.$langs->trans("Delete").'</a>';
+	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'&type='.$type.'&backtolist='.urlencode($backtolist).'">'.$langs->trans("Delete").'</a>';
 }
 
 print "</div>";
@@ -376,8 +393,7 @@ if ($cats < 0)
 		$categstatic->type = $type;
 		$desc = dol_htmlcleanlastbr($val['description']);
 
-		$counter = 0;
-
+		$counter = '';
 		if ($conf->global->CATEGORY_SHOW_COUNTS)
 		{
 			// we need only a count of the elements, so it is enough to consume only the id's from the database
@@ -385,22 +401,29 @@ if ($cats < 0)
 				? $categstatic->getObjectsInCateg("account", 1)			// Categorie::TYPE_ACCOUNT is "bank_account" instead of "account"
 				: $categstatic->getObjectsInCateg($type, 1);
 
-			$counter = is_countable($elements) ? count($elements) : 0;
+			$counter = "<td class='left' width='40px;'>".(is_countable($elements) ? count($elements) : '0')."</td>";
 		}
 
-		$color = $categstatic->color ? ' style="background: #'.$categstatic->color.';"' : ' style="background: #aaa"';
+		$color = $categstatic->color ? ' style="background: #'.sprintf("%06s", $categstatic->color).';"' : ' style="background: #bbb"';
+		$li = $categstatic->getNomUrl(1, '', 60, '&backtolist='.urlencode($_SERVER["PHP_SELF"].'?id='.$id.'&type='.$type));
 
 		$entry = '<table class="nobordernopadding centpercent">';
 		$entry .= '<tr>';
 
 		$entry .= '<td>';
-		$entry .= '<span class="noborderoncategories" '.$color.'>'.$categstatic->getNomUrl(1, '', 60).'</span>';
+		$entry .= '<span class="noborderoncategories" '.$color.'>'.$li.'</span>';
 		$entry .= '</td>';
 
-		$entry .= '<td class="left" width="40px;">'.$counter.'</td>';
+		$entry .= $counter;
 
 		$entry .= '<td class="right" width="20px;">';
-		$entry .= '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a>';
+		$entry .= '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'&backtolist='.urlencode($_SERVER["PHP_SELF"].'?id='.$id.'&type='.$type).'">'.img_view().'</a>';
+		$entry .= '</td>';
+		$entry .= '<td class="right" width="20px;">';
+		$entry .= '<a class="editfielda" href="'.DOL_URL_ROOT.'/categories/edit.php?id='.$val['id'].'&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id.'&type='.$type).'">'.img_edit().'</a>';
+		$entry .= '</td>';
+		$entry .= '<td class="right" width="20px;">';
+		$entry .= '<a class="deletefilelink" href="'.DOL_URL_ROOT.'/categories/viewcat.php?action=delete&token='.newToken().'&id='.$val['id'].'&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id.'&type='.$type).'&backtolist='.urlencode($_SERVER["PHP_SELF"].'?id='.$id.'&type='.$type).'">'.img_delete().'</a>';
 		$entry .= '</td>';
 
 		$entry .= '</tr>';
@@ -409,7 +432,8 @@ if ($cats < 0)
 		$data[] = array('rowid' => $val['rowid'], 'fk_menu' => $val['fk_parent'], 'entry' => $entry);
 	}
 
-	if ((count($data) - 1))
+	$nbofentries = (count($data) - 1);
+	if ($nbofentries > 0)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 		print '<tr class="pair">';
