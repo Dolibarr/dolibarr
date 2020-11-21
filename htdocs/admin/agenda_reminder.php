@@ -179,53 +179,52 @@ print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right">'.$langs->trans("Value").'</td>'."\n";
 print '</tr>'."\n";
 
+// AGENDA REMINDER BROWSER
+print '<tr class="oddeven">'."\n";
+print '<td>'.$langs->trans('AGENDA_REMINDER_BROWSER').'</td>'."\n";
+print '<td class="center">&nbsp;</td>'."\n";
+print '<td class="right">'."\n";
+
+if (empty($conf->global->AGENDA_REMINDER_BROWSER)) {
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER&amp;token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
+	print '</td></tr>'."\n";
+} else {
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER&amp;token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
+	print '</td></tr>'."\n";
+
+	print '<tr class="oddeven">'."\n";
+	print '<td>'.$langs->trans('AGENDA_REMINDER_BROWSER_SOUND').'</td>'."\n";
+	print '<td class="center">&nbsp;</td>'."\n";
+	print '<td class="right">'."\n";
+
+	if (empty($conf->global->AGENDA_REMINDER_BROWSER_SOUND)) {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER_SOUND&amp;token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
+	} else {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER_SOUND&amp;token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
+	}
+
+	print '</td></tr>'."\n";
+}
 
 // AGENDA REMINDER EMAIL
-if ($conf->global->MAIN_FEATURES_LEVEL == 2)
-{
-	print '<tr class="oddeven">'."\n";
-	print '<td>'.$langs->trans('AGENDA_REMINDER_EMAIL', $langs->transnoentities("Module2300Name")).'</td>'."\n";
-	print '<td class="center">&nbsp;</td>'."\n";
-	print '<td class="right">'."\n";
+print '<tr class="oddeven">'."\n";
+print '<td>'.$langs->trans('AGENDA_REMINDER_EMAIL', $langs->transnoentities("Module2300Name")).'</td>'."\n";
+print '<td class="center">&nbsp;</td>'."\n";
+print '<td class="right">'."\n";
 
+if (empty($conf->cron->enabled)) {
+	print '<span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("Module2300Name")).'</span>';
+} else {
 	if (empty($conf->global->AGENDA_REMINDER_EMAIL)) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_EMAIL&amp;token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
-		print '</td></tr>'."\n";
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_EMAIL&amp;token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
-		print '</td></tr>'."\n";
+		// Get the max frequency of reminder
+
+		print '<br><span class="opacitymedium">'.$langs->trans("AGENDA_REMINDER_EMAIL_NOTE", $langs->transnoentitiesnoconv("Module2300Name")).'</span>';
 	}
 }
-
-// AGENDA REMINDER BROWSER
-if ($conf->global->MAIN_FEATURES_LEVEL == 2)
-{
-	print '<tr class="oddeven">'."\n";
-	print '<td>'.$langs->trans('AGENDA_REMINDER_BROWSER').'</td>'."\n";
-	print '<td class="center">&nbsp;</td>'."\n";
-	print '<td class="right">'."\n";
-
-	if (empty($conf->global->AGENDA_REMINDER_BROWSER)) {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER&amp;token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
-		print '</td></tr>'."\n";
-	} else {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER&amp;token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
-		print '</td></tr>'."\n";
-
-		print '<tr class="oddeven">'."\n";
-		print '<td>'.$langs->trans('AGENDA_REMINDER_BROWSER_SOUND').'</td>'."\n";
-		print '<td class="center">&nbsp;</td>'."\n";
-		print '<td class="right">'."\n";
-
-		if (empty($conf->global->AGENDA_REMINDER_BROWSER_SOUND)) {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER_SOUND&amp;token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
-		} else {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER_SOUND&amp;token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
-		}
-
-		print '</td></tr>'."\n";
-	}
-}
+print '</td></tr>'."\n";
 
 print '</table>';
 

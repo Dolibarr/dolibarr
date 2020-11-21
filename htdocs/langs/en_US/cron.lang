@@ -7,8 +7,8 @@ Permission23103 = Delete Scheduled job
 Permission23104 = Execute Scheduled job
 # Admin
 CronSetup=Scheduled job management setup
-URLToLaunchCronJobs=URL to check and launch qualified cron jobs
-OrToLaunchASpecificJob=Or to check and launch a specific job
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs from a browser
+OrToLaunchASpecificJob=Or to check and launch a specific job from a browser
 KeyForCronAccess=Security key for URL to launch cron jobs
 FileToLaunchCronJobs=Command line to check and launch qualified cron jobs
 CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes

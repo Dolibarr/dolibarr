@@ -6259,7 +6259,7 @@ class Form
 	 *  Note: Do not apply langs->trans function on returned content, content may be entity encoded twice.
 	 *
 	 *	@param	string			$htmlname			Name of html select area. Must start with "multi" if this is a multiselect
-	 *	@param	array			$array				Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>...))
+	 *	@param	array			$array				Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
 	 *	@param	string|string[]	$id					Preselected key or preselected keys for multiselect
 	 *	@param	int|string		$show_empty			0 no empty value allowed, 1 or string to add an empty value into list (key is -1 and value is '' or '&nbsp;' if 1, key is -1 and value is text if string), <0 to add an empty value with key that is this value.
 	 *	@param	int				$key_in_label		1 to show key into label with format "[key] value"
@@ -6331,10 +6331,14 @@ class Form
 
 			foreach ($array as $key => $tmpvalue)
 			{
-				if (is_array($tmpvalue)) $value = $tmpvalue['label'];
-				else $value = $tmpvalue;
-
-				$disabled = ''; $style = '';
+				if (is_array($tmpvalue)) {
+					$value = $tmpvalue['label'];
+					$disabled = empty($tmpvalue['disabled']) ? '' : ' disabled';
+					$style = empty($tmpvalue['css']) ? ' class="'.$tmpvalue['css'].'"' : '';
+				} else {
+					$value = $tmpvalue;
+					$disabled = ''; $style = '';
+				}
 				if (!empty($disablebademail))
 				{
 					if (($disablebademail == 1 && !preg_match('/&lt;.+@.+&gt;/', $value))

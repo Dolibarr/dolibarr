@@ -39,6 +39,11 @@ function cronadmin_prepare_head()
 	$head[$h][2] = 'setup';
 	$h++;
 
+	$head[$h][0] = dol_buildpath('/cron/list.php?mode=modulesetup', 1);
+	$head[$h][1] = $langs->trans("Module2300Name");
+	$head[$h][2] = 'jobs';
+	$h++;
+
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'cronadmin');
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'cronadmin', 'remove');
