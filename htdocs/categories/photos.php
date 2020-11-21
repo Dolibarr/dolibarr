@@ -38,7 +38,6 @@ $langs->loadlangs(array('categories', 'bills'));
 
 $id      = GETPOST('id', 'int');
 $label   = GETPOST('label', 'alpha');
-$type    = GETPOST('type');
 $action  = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
 
@@ -52,7 +51,7 @@ if ($id == '' && $label == '')
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
-$result = $object->fetch($id, $label, $type);
+$result = $object->fetch($id, $label);
 if ($result <= 0) {
 	dol_print_error($db, $object->error); exit;
 }
@@ -60,9 +59,11 @@ $object->fetch_optionals();
 if ($result <= 0) {
 	dol_print_error($db, $object->error); exit;
 }
-$upload_dir = $conf->categorie->multidir_output[$object->entity];
 
+$type = $object->type;
 if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
+
+$upload_dir = $conf->categorie->multidir_output[$object->entity];
 
 /*
  * Actions
