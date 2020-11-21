@@ -2087,6 +2087,7 @@ class ActionComm extends CommonObject
 					if ($res > 0)
 					{
 						// PREPARE EMAIL
+						$errormesg = '';
 
 						// Make substitution in email content
 						$substitutionarray = getCommonSubstitutionArray($langs, 0, '', $this);
@@ -2102,43 +2103,65 @@ class ActionComm extends CommonObject
 						// Recipient
 						$recipient = new User($this->db);
 						$res = $recipient->fetch($actionCommReminder->fk_user);
-						if ($res > 0 && !empty($recipient->email)) $to = $recipient->email;
-						else {
-							$errorsMsg[] = "Failed to load recipient";
+						if ($res > 0) {
+							if (!empty($recipient->email)) {
+								$to = $recipient->email;
+							} else {
+								$errormesg = "Failed to send remind to user id=".$actionCommReminder->fk_user.". No email defined for user.";
+								$error++;
+							}
+						} else {
+							$errormesg = "Failed to load recipient with user id=".$actionCommReminder->fk_user;
 							$error++;
 						}
 
 						// Sender
 						$from = $conf->global->MAIN_MAIL_EMAIL_FROM;
 						if (empty($from)) {
-							$errorsMsg[] = "Failed to load recipient";
+							$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
 							$error++;
 						}
 
-						// Errors Recipient
-						$errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;
+						if (!$error) {
+							// Errors Recipient
+							$errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;
 
-						// Mail Creation
-						$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', '', '', '', '');
+							// Mail Creation
+							$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', '', '', '', '');
 
-						// Sending Mail
-						if ($cMailFile->sendfile())
-						{
+							// Sending Mail
+							if ($cMailFile->sendfile()) {
+								$nbMailSend++;
+							} else {
+								$errormesg = $cMailFile->error.' : '.$to;
+								$error++;
+							}
+						}
+
+						if (!$error) {
 							$actionCommReminder->status = $actionCommReminder::STATUS_DONE;
+
 							$res = $actionCommReminder->update($user);
-							if ($res < 0)
-							{
-								$errorsMsg[] = "Failed to update status of ActionComm Reminder";
+							if ($res < 0) {
+								$errorsMsg[] = "Failed to update status to done of ActionComm Reminder";
+								$error++;
+								break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
+							}
+						} else {
+							$actionCommReminder->status = $actionCommReminder::STATUS_ERROR;
+							$actionCommReminder->lasterror = dol_trunc($errormesg, 128, 'right', 'UTF-8', 1);
+
+							$res = $actionCommReminder->update($user);
+							if ($res < 0) {
+								$errorsMsg[] = "Failed to update status to error of ActionComm Reminder";
 								$error++;
 								break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
 							} else {
-								$nbMailSend++;
+								$errorsMsg[] = $errormesg;
 							}
-						} else {
-							$errorsMsg[] = $cMailFile->error.' : '.$to;
-							$error++;
 						}
 					} else {
+						$errorsMsg[] = 'Failed to fetch record actioncomm with ID = '.$actionCommReminder->fk_actioncomm;
 						$error++;
 					}
 				}
@@ -2152,6 +2175,7 @@ class ActionComm extends CommonObject
 			// Delete also very old past events (we do not keep more than 1 month record in past)
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
 			$sql .= " WHERE dateremind < '".$this->db->idate($now - (3600 * 24 * 32))."'";
+			$sql .= " AND status = ".$actionCommReminder::STATUS_DONE;
 			$resql = $this->db->query($sql);
 
 			if (!$resql) {
@@ -2166,7 +2190,7 @@ class ActionComm extends CommonObject
 			return 0;
 		}
 		else {
-			$this->db->rollback();
+			$this->db->commit();	// We commit also on error, to have the error message recorded.
 			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? join(', ', $errorsMsg) : $error;
 			return $error;
 		}
