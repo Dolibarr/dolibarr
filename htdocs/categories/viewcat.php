@@ -76,10 +76,6 @@ $result = $object->fetch($id, $label);
 if ($result <= 0) {
 	dol_print_error($db, $object->error); exit;
 }
-$object->fetch_optionals();
-if ($result <= 0) {
-	dol_print_error($db, $object->error); exit;
-}
 
 $type = $object->type;
 if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
@@ -216,9 +212,8 @@ llxHeader("", $langs->trans("Categories"), $helpurl, '', 0, 0, $arrayofjs, $arra
 $title = Categorie::$MAP_TYPE_TITLE_AREA[$type];
 
 $head = categories_prepare_head($object, $type);
-
-
 print dol_get_fiche_head($head, 'card', $langs->trans($title), -1, 'category');
+
 $backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type);
 $linkback = '<a href="'.$backtolist.'">'.$langs->trans("BackToList").'</a>';
 $object->next_prev_filter = ' type = '.$object->type;

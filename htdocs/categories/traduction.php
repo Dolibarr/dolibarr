@@ -54,10 +54,6 @@ $result = $object->fetch($id, $label);
 if ($result <= 0) {
 	dol_print_error($db, $object->error); exit;
 }
-$object->fetch_optionals();
-if ($result <= 0) {
-	dol_print_error($db, $object->error); exit;
-}
 
 $type = $object->type;
 if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
