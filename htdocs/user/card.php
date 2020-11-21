@@ -2743,7 +2743,7 @@ if ($action == 'create' || $action == 'adduserldap')
 			print dol_get_fiche_end();
 
 			print '<div class="center">';
-			print '<input value="'.$langs->trans("Save").'" class="button" type="submit" name="save">';
+			print '<input value="'.$langs->trans("Save").'" class="button button-save" type="submit" name="save">';
 			print '&nbsp; &nbsp; &nbsp;';
 			print '<input value="'.$langs->trans("Cancel").'" class="button" type="submit" name="cancel">';
 			print '</div>';

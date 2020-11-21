@@ -313,7 +313,7 @@ if ($object->id > 0)
 
 		print '<div class="center">';
 		print '<span class="opacitymedium">'.$langs->trans("InventoryDesc").'</span><br>';
-		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 		print ' &nbsp; ';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
@@ -528,7 +528,7 @@ if ($object->id > 0)
 	// Save
 	if ($object->status == $object::STATUS_VALIDATED) {
 		print '<div class="center">';
-		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 		print '</div>';
 	}
 

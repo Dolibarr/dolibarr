@@ -113,7 +113,7 @@ print "</table>";
 
 
 print '<br><div class="center">';
-print '<input type="submit" name="save" class="button" value="'.$langs->trans("Save").'">';
+print '<input type="submit" name="save" class="button button-save" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print "</form>\n";

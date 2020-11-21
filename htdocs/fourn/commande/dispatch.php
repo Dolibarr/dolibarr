@@ -1306,7 +1306,7 @@ if ($id > 0 || !empty($ref)) {
 				}
 				else {
 					print '<td class="center valignmiddle">';
-					print '<input type="submit" class="button" id="savelinebutton" name="save" value="'.$langs->trans("Save").'" />';
+					print '<input type="submit" class="button button-save" id="savelinebutton" name="save" value="'.$langs->trans("Save").'" />';
 					print '</td>';
 					print '<td class="center valignmiddle">';
 					print '<input type="submit" class="button" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'" />';

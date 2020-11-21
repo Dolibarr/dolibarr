@@ -607,7 +607,7 @@ print '<input type="hidden" id="numberOfLines" name="numberOfLines" value="'.cou
 print '<input type="hidden" id="numberOfFirstLine" name="numberOfFirstLine" value="'.(reset($TWeek)).'"/>'."\n";
 
 print '<div class="center">';
-print '<input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+print '<input type="submit" class="button button-save" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 print '</div>';
 
 print '</form>'."\n\n";

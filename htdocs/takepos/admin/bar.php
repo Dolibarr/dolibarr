@@ -183,7 +183,7 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT) {
 
 	print '<br>';
 
-	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
+	print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
 }
 
 if ($conf->global->TAKEPOS_BAR_RESTAURANT) {

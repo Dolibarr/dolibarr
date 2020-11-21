@@ -209,7 +209,7 @@ print '</table>';
 print dol_get_fiche_end();
 
 print '<div class="center">';
-print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
+print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';
