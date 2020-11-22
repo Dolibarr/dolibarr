@@ -46,7 +46,7 @@ $mode = $dolibarr_main_authentication;
 if (!$mode) $mode = 'http';
 
 $username = htmlentities(trim(GETPOST('username', 'alpha')), ENT_QUOTES, "utf-8");
-$passwordhash = trim(GETPOST('passwordhash', 'alpha'));
+$passwordhash = GETPOST('passwordhash', 'alpha');
 $conf->entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : 1);
 
 // Instantiate hooks of thirdparty module only if not already define
