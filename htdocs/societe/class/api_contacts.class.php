@@ -78,6 +78,7 @@ class Contacts extends DolibarrApi
 			$result = $this->contact->initAsSpecimen();
 		} else {
 			$result = $this->contact->fetch($id);
+			$this->contact->fetchRoles();
 		}
 
 		if (!$result)
@@ -120,6 +121,7 @@ class Contacts extends DolibarrApi
 			$result = $this->contact->initAsSpecimen();
 		} else {
 			$result = $this->contact->fetch('', '', '', $email);
+			$this->contact->fetchRoles();
 		}
 
 		if (!$result)
@@ -241,6 +243,7 @@ class Contacts extends DolibarrApi
 				$contact_static = new Contact($this->db);
 				if ($contact_static->fetch($obj->rowid))
 				{
+					$contact_static->fetchRoles();
 					if ($includecount)
 					{
 						$contact_static->load_ref_elements();
