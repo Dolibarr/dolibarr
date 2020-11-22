@@ -5,7 +5,7 @@
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2019  Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -224,8 +224,7 @@ if ($action == 'add')
 		}
 	}
 }
-if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights->don->supprimer)
-{
+if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights->don->supprimer) {
 	$object->fetch($id);
 	$result = $object->delete($user);
 	if ($result > 0) {
@@ -236,42 +235,31 @@ if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights-
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
-if ($action == 'valid_promesse')
-{
+if ($action == 'valid_promesse') {
 	$object->fetch($id);
-	if ($object->valid_promesse($id, $user->id) >= 0)
-	{
+	if ($object->valid_promesse($id, $user->id) >= 0) {
 		setEventMessages($langs->trans("DonationValidated", $object->ref), null);
-
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
-		exit;
+		$action = '';
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
-if ($action == 'set_cancel')
-{
+if ($action == 'set_cancel') {
 	$object->fetch($id);
-	if ($object->set_cancel($id) >= 0)
-	{
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
-		exit;
+	if ($object->set_cancel($id) >= 0) {
+		$action = '';
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
-if ($action == 'set_paid')
-{
+if ($action == 'set_paid') {
 	$object->fetch($id);
-	if ($object->set_paid($id, $modepayment) >= 0)
-	{
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
-		exit;
+	if ($object->set_paid($id, $modepayment) >= 0) {
+		$action = '';
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-} elseif ($action == 'classin' && $user->rights->don->creer)
-{
+} elseif ($action == 'classin' && $user->rights->don->creer) {
 	$object->fetch($id);
 	$object->setProject($projectid);
 }
