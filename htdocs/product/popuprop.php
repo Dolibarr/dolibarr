@@ -105,7 +105,7 @@ $head[$h][2] = 'popularity';
 $h++;
 
 
-dol_fiche_head($head, 'popularity', $langs->trans("Statistics"), -1);
+print dol_get_fiche_head($head, 'popularity', $langs->trans("Statistics"), -1);
 
 
 // Array of liens to show
@@ -132,7 +132,7 @@ if ($type !== '') {
 }
 $sql .= " GROUP BY p.rowid, p.label, p.ref, p.fk_product_type";
 
-if (! empty($mode) && $mode != '-1') {
+if (!empty($mode) && $mode != '-1') {
 	$result = $db->query($sql);
 	if ($result)
 	{
@@ -203,7 +203,7 @@ if ($mode && $mode != '-1') {
 			$sql = "SELECT label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 			$sql .= " WHERE fk_product=".$prodid;
-			$sql .= " AND lang='".$langs->getDefaultLang()."'";
+			$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
 			$sql .= " LIMIT 1";
 
 			$resultp = $db->query($sql);
@@ -236,7 +236,7 @@ print "</table>";
 
 print '</form>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

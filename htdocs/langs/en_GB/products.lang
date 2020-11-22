@@ -1,2 +1,3 @@
 # Dolibarr language file - Source file is en_US - products
+CustomCode=Customs / Commodity / HS code
 PrintsheetForOneBarCode=Print several labels for one barcode

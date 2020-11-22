@@ -195,7 +195,7 @@ if (GETPOST('reset'))
  * View
  */
 
-if (!isset($_SESSION['commentaires']) && !isset($_SESSION['mail']))
+if (!isset($_SESSION['description']) && !isset($_SESSION['mail']))
 {
 	dol_print_error('', $langs->trans('ErrorOpenSurveyFillFirstSection'));
 	exit;
@@ -347,7 +347,7 @@ print '</td></tr>'."\n";
 print '</table>'."\n";
 print '</div>'."\n";
 
-print '<div class="center">'."\n";
+print '<div class="center calendrier">'."\n";
 print '<table align="center">'."\n"; // The div class=center has no effect on table, so we must keep the align=center for table
 print '<tr>'."\n";
 
@@ -482,7 +482,7 @@ for ($i = 0; $i < $nbrejourmois + $premierjourmois; $i++) {
 			if (($numerojour >= $jourAJ && $_SESSION["mois"] == $moisAJ && $_SESSION["annee"] == $anneeAJ) || ($_SESSION["mois"] > $moisAJ && $_SESSION["annee"] == $anneeAJ) || $_SESSION["annee"] > $anneeAJ) {
 				print '<td align="center" class="libre"><input type="submit" class="bouton ON" name="choixjourajout[]" value="'.$numerojour.'"></td>'."\n";
 			} else {
-                // grey button
+				// grey button
 				print '<td align="center" class="avant">'.$numerojour.'</td>'."\n";
 			}
 		}

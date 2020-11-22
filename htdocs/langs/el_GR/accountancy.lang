@@ -149,6 +149,7 @@ ACCOUNTING_MANAGE_ZERO=Να επιτρέπεται η διαχείριση δι�
 BANK_DISABLE_DIRECT_INPUT=Απενεργοποιήστε την απευθείας εγγραφή συναλλαγής σε τραπεζικό λογαριασμό
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Ενεργοποιήστε το σχέδιο εξαγωγής στο περιοδικό
 ACCOUNTANCY_COMBO_FOR_AUX=Ενεργοποίηση σύνθετης λίστας για επικουρικό λογαριασμό (μπορεί να είναι αργή αν έχετε πολλούς τρίτους)
+ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 
 ACCOUNTING_SELL_JOURNAL=Ημερολόγιο πωλήσεων
 ACCOUNTING_PURCHASE_JOURNAL=Ημερολόγιο αγορών
@@ -284,6 +285,7 @@ ShowTutorial=Εμφάνιση εκπαιδευτικού προγράμματο�
 NotReconciled=Δεν ταιριάζουν
 
 ## Admin
+BindingOptions=Binding options
 ApplyMassCategories=Εφαρμογή κατηγοριών μάζας
 AddAccountFromBookKeepingWithNoCategories=Διαθέσιμος λογαριασμός που δεν έχει ακόμα εγγραφεί στην εξατομικευμένη ομάδα
 CategoryDeleted=Η κατηγορία για τον λογαριασμό λογιστηρίου έχει καταργηθεί

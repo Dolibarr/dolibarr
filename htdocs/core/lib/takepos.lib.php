@@ -26,7 +26,7 @@
  *
  * @return 	array				Array of tabs
  */
-function takepos_prepare_head()
+function takepos_admin_prepare_head()
 {
 	global $langs, $conf;
 
@@ -67,7 +67,9 @@ function takepos_prepare_head()
 	$head[$h][2] = 'other';
 	$h++;
 
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'takepos');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'takepos_admin');
 
-    return $head;
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'takepos_admin', 'remove');
+
+	return $head;
 }

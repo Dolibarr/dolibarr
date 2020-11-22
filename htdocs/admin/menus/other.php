@@ -29,7 +29,7 @@ $langs->loadLangs(array("user", "other", "admin"));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 /*
@@ -75,7 +75,7 @@ $head[$h][1] = $langs->trans("Miscellaneous");
 $head[$h][2] = 'misc';
 $h++;
 
-dol_fiche_head($head, 'misc', '', -1);
+print dol_get_fiche_head($head, 'misc', '', -1);
 
 
 // Other Options

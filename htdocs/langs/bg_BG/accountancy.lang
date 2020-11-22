@@ -149,6 +149,7 @@ ACCOUNTING_MANAGE_ZERO=Разрешава управление на различ
 BANK_DISABLE_DIRECT_INPUT=Деактивиране на директно добавяне на транзакция в банкова сметка
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Активиране на експортиране на журнали в състояние на чернова
 ACCOUNTANCY_COMBO_FOR_AUX=Активиране на комбиниран списък за дъщерна сметка (може да създаде забавяне, ако имате много контрагенти)
+ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 
 ACCOUNTING_SELL_JOURNAL=Журнал за продажби
 ACCOUNTING_PURCHASE_JOURNAL=Журнал за покупки
@@ -284,6 +285,7 @@ ShowTutorial=Показване на урок
 NotReconciled=Не е съгласувано
 
 ## Admin
+BindingOptions=Binding options
 ApplyMassCategories=Прилагане на масови категории
 AddAccountFromBookKeepingWithNoCategories=Наличната сметка не е част от персонализирана група
 CategoryDeleted=Категорията за счетоводната сметка е премахната

@@ -189,6 +189,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/datapolicy
 %_datadir/dolibarr/htdocs/dav
 %_datadir/dolibarr/htdocs/debugbar
+%_datadir/dolibarr/htdocs/delivery
 %_datadir/dolibarr/htdocs/don
 %_datadir/dolibarr/htdocs/ecm
 %_datadir/dolibarr/htdocs/emailcollector
@@ -204,8 +205,8 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/imports
 %_datadir/dolibarr/htdocs/includes
 %_datadir/dolibarr/htdocs/install
+%_datadir/dolibarr/htdocs/intracommreport
 %_datadir/dolibarr/htdocs/langs/HOWTO-Translation.txt
-%_datadir/dolibarr/htdocs/livraison
 %_datadir/dolibarr/htdocs/loan
 %_datadir/dolibarr/htdocs/mailmanspip
 %_datadir/dolibarr/htdocs/margin

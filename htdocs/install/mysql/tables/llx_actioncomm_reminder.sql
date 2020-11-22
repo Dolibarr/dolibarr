@@ -22,6 +22,11 @@ CREATE TABLE llx_actioncomm_reminder(
 	fk_user integer NOT NULL, 
 	offsetvalue integer NOT NULL, 
 	offsetunit varchar(1) NOT NULL,
-	status integer NOT NULL DEFAULT 0
+	status integer NOT NULL DEFAULT 0,
+	lasterror varchar(128) NULL,
+	entity integer NOT NULL DEFAULT 1,
+	fk_actioncomm integer NOT NULL,
+	fk_email_template integer
+
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

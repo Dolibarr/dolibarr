@@ -125,8 +125,8 @@ class Inventory extends CommonObject
 	public $entity;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_warehouse;
 
 	/**
@@ -156,18 +156,18 @@ class Inventory extends CommonObject
 	public $tms;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_creat;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_modif;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_valid;
 
 	public $import_key;
@@ -289,7 +289,7 @@ class Inventory extends CommonObject
 					$inventoryline->fk_warehouse = $obj->fk_warehouse;
 					$inventoryline->fk_product = $obj->fk_product;
 					$inventoryline->batch = $obj->batch;
-					$inventoryline->qty_stock = ($obj->batch ? $obj->qty : $obj->reel);		// If there is batch detail, we take qty for batch, else global qty
+					$inventoryline->qty_stock = ($obj->batch ? $obj->qty : $obj->reel); // If there is batch detail, we take qty for batch, else global qty
 					$inventoryline->datec = dol_now();
 
 					$resultline = $inventoryline->create($user);
@@ -475,39 +475,39 @@ class Inventory extends CommonObject
 	 *
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *	@param	string	$option						On what the link point to
-     *  @param	int  	$notooltip					1=Disable tooltip
-     *  @param  string  $morecss            		Add more css on link
-     *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param	int  	$notooltip					1=Disable tooltip
+	 *  @param  string  $morecss            		Add more css on link
+	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								String with URL
 	 */
-    public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $db, $conf, $langs;
-        global $dolibarr_main_authentication, $dolibarr_main_demo;
-        global $menumanager;
+		global $dolibarr_main_authentication, $dolibarr_main_demo;
+		global $menumanager;
 
-        if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
+		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
-        $result = '';
-        $companylink = '';
+		$result = '';
+		$companylink = '';
 
-        $label = '<u>'.$langs->trans("Inventory").'</u>';
-        $label .= '<br>';
-        $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$label = '<u>'.$langs->trans("Inventory").'</u>';
+		$label .= '<br>';
+		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
-        $url = dol_buildpath('/product/inventory/card.php', 1).'?id='.$this->id;
+		$url = dol_buildpath('/product/inventory/card.php', 1).'?id='.$this->id;
 
-        $linkclose = '';
-        if (empty($notooltip))
-        {
-            if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-            {
-                $label = $langs->trans("ShowInventory");
-                $linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
-            }
-            $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-            $linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-        } else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		$linkclose = '';
+		if (empty($notooltip))
+		{
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			{
+				$label = $langs->trans("ShowInventory");
+				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -528,12 +528,12 @@ class Inventory extends CommonObject
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status
 	 */
-    public function getLibStatut($mode = 0)
+	public function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->status, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -543,7 +543,7 @@ class Inventory extends CommonObject
 	 */
 	public static function LibStatut($status, $mode = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 
 		$labelStatus = array();
@@ -563,7 +563,7 @@ class Inventory extends CommonObject
 	 *	@param  int		$id       Id of order
 	 *	@return	void
 	 */
-    public function info($id)
+	public function info($id)
 	{
 		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
 		$sql .= ' fk_user_creat, fk_user_modif';
@@ -625,92 +625,92 @@ class Inventory extends CommonObject
  */
 class InventoryLine extends CommonObjectLine
 {
-    /**
-     * @var string ID to identify managed object
-     */
-    public $element = 'inventoryline';
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element = 'inventoryline';
 
-    /**
-     * @var string Name of table without prefix where object is stored
-     */
-    public $table_element = 'inventorydet';
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'inventorydet';
 
-    /**
-     * @var array  Does inventory support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-     */
-    public $ismultientitymanaged = 0;
+	/**
+	 * @var array  Does inventory support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 */
+	public $ismultientitymanaged = 0;
 
-    /**
-     * @var int  Does object support extrafields ? 0=No, 1=Yes
-     */
-    public $isextrafieldmanaged = 0;
+	/**
+	 * @var int  Does object support extrafields ? 0=No, 1=Yes
+	 */
+	public $isextrafieldmanaged = 0;
 
-    /**
-     * @var string String with name of icon for inventory
-     */
-    public $picto = 'stock';
+	/**
+	 * @var string String with name of icon for inventory
+	 */
+	public $picto = 'stock';
 
-    /**
-     *  'type' if the field format.
-     *  'label' the translation key.
-     *  'enabled' is a condition when the field must be managed.
-     *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only. Using a negative value means field is not shown by default on list but can be selected for viewing)
-     *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
-     *  'index' if we want an index in database.
-     *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
-     *  'position' is the sort order of field.
-     *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
-     *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
-     *  'help' is a string visible as a tooltip on field
-     *  'comment' is not used. You can store here any text of your choice. It is not used by application.
-     *  'default' is a default value for creation (can still be replaced by the global setup of default values)
-     *  'showoncombobox' if field must be shown into the label of combobox
-     */
+	/**
+	 *  'type' if the field format.
+	 *  'label' the translation key.
+	 *  'enabled' is a condition when the field must be managed.
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only. Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+	 *  'index' if we want an index in database.
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'position' is the sort order of field.
+	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
+	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
+	 *  'help' is a string visible as a tooltip on field
+	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
+	 *  'default' is a default value for creation (can still be replaced by the global setup of default values)
+	 *  'showoncombobox' if field must be shown into the label of combobox
+	 */
 
-    // BEGIN MODULEBUILDER PROPERTIES
-    /**
-     * @var array  Array with all fields and their property
-     */
-    public $fields = array(
-        'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-1, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>'Id',),
-        'fk_inventory'  => array('type'=>'integer:Inventory:product/inventory/class/inventory.class.php', 'label'=>'Inventory', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'index'=>1, 'help'=>'LinkToInventory'),
-        'fk_warehouse'  => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Warehouse', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'index'=>1, 'help'=>'LinkToThirparty'),
-        'fk_product'    => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'visible'=>1, 'enabled'=>1, 'position'=>32, 'index'=>1, 'help'=>'LinkToProduct'),
-        'batch'         => array('type'=>'string', 'label'=>'Batch', 'visible'=>1, 'enabled'=>1, 'position'=>32, 'index'=>1, 'help'=>'LinkToProduct'),
-        'datec'         => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>500),
-        'tms'           => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>501),
-        'qty_stock'     => array('type'=>'double', 'label'=>'QtyFound', 'visible'=>1, 'enabled'=>1, 'position'=>32, 'index'=>1, 'help'=>'Qty we found/want (to define during draft edition)'),
-        'qty_view'      => array('type'=>'double', 'label'=>'QtyBefore', 'visible'=>1, 'enabled'=>1, 'position'=>33, 'index'=>1, 'help'=>'Qty before (filled once movements are validated)'),
-        'qty_regulated' => array('type'=>'double', 'label'=>'QtyDelta', 'visible'=>1, 'enabled'=>1, 'position'=>34, 'index'=>1, 'help'=>'Qty aadded or removed (filled once movements are validated)'),
-    );
+	// BEGIN MODULEBUILDER PROPERTIES
+	/**
+	 * @var array  Array with all fields and their property
+	 */
+	public $fields = array(
+		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-1, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>'Id',),
+		'fk_inventory'  => array('type'=>'integer:Inventory:product/inventory/class/inventory.class.php', 'label'=>'Inventory', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'index'=>1, 'help'=>'LinkToInventory'),
+		'fk_warehouse'  => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Warehouse', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'index'=>1, 'help'=>'LinkToThirparty'),
+		'fk_product'    => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'visible'=>1, 'enabled'=>1, 'position'=>32, 'index'=>1, 'help'=>'LinkToProduct'),
+		'batch'         => array('type'=>'string', 'label'=>'Batch', 'visible'=>1, 'enabled'=>1, 'position'=>32, 'index'=>1, 'help'=>'LinkToProduct'),
+		'datec'         => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>500),
+		'tms'           => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>501),
+		'qty_stock'     => array('type'=>'double', 'label'=>'QtyFound', 'visible'=>1, 'enabled'=>1, 'position'=>32, 'index'=>1, 'help'=>'Qty we found/want (to define during draft edition)'),
+		'qty_view'      => array('type'=>'double', 'label'=>'QtyBefore', 'visible'=>1, 'enabled'=>1, 'position'=>33, 'index'=>1, 'help'=>'Qty before (filled once movements are validated)'),
+		'qty_regulated' => array('type'=>'double', 'label'=>'QtyDelta', 'visible'=>1, 'enabled'=>1, 'position'=>34, 'index'=>1, 'help'=>'Qty aadded or removed (filled once movements are validated)'),
+	);
 
-    /**
-     * @var int ID
-     */
-    public $rowid;
+	/**
+	 * @var int ID
+	 */
+	public $rowid;
 
-    public $fk_inventory;
-    public $fk_warehouse;
-    public $fk_product;
-    public $batch;
-    public $datec;
-    public $tms;
-    public $qty_stock;
-    public $qty_view;
-    public $qty_regulated;
+	public $fk_inventory;
+	public $fk_warehouse;
+	public $fk_product;
+	public $batch;
+	public $datec;
+	public $tms;
+	public $qty_stock;
+	public $qty_view;
+	public $qty_regulated;
 
 
-    /**
-     * Create object in database
-     *
-     * @param User $user       User that creates
-     * @param bool $notrigger  false=launch triggers after, true=disable triggers
-     * @return int             <0 if KO, >0 if OK
-     */
-    public function create(User $user, $notrigger = false)
-    {
-    	return $this->createCommon($user, $notrigger);
-    }
+	/**
+	 * Create object in database
+	 *
+	 * @param User $user       User that creates
+	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, >0 if OK
+	 */
+	public function create(User $user, $notrigger = false)
+	{
+		return $this->createCommon($user, $notrigger);
+	}
 
 	/**
 	 * Load object in memory from the database
@@ -721,9 +721,9 @@ class InventoryLine extends CommonObjectLine
 	 */
 	public function fetch($id, $ref = null)
 	{
-	    $result = $this->fetchCommon($id, $ref);
-	    //if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
-	    return $result;
+		$result = $this->fetchCommon($id, $ref);
+		//if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
+		return $result;
 	}
 
 	/**
@@ -735,7 +735,7 @@ class InventoryLine extends CommonObjectLine
 	 */
 	public function update(User $user, $notrigger = false)
 	{
-	    return $this->updateCommon($user, $notrigger);
+		return $this->updateCommon($user, $notrigger);
 	}
 
 	/**
@@ -747,7 +747,7 @@ class InventoryLine extends CommonObjectLine
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
-	    return $this->deleteCommon($user, $notrigger);
-	    //return $this->deleteCommon($user, $notrigger, 1);
+		return $this->deleteCommon($user, $notrigger);
+		//return $this->deleteCommon($user, $notrigger, 1);
 	}
 }

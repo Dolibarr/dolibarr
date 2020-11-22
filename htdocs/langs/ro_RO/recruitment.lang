@@ -1,0 +1,75 @@
+# Copyright (C) 2020 Laurent Destailleur
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+# Module label 'ModuleRecruitmentName'
+ModuleRecruitmentName = Recrutare personal
+# Module description 'ModuleRecruitmentDesc'
+ModuleRecruitmentDesc =  Gestionează și urmărește campaniile de recrutare pentru joburile noi 
+
+#
+# Admin page
+#
+RecruitmentSetup = Configurare modul Recrutare
+Settings = Configurări
+RecruitmentSetupPage = Introdu aici setările pentru opţiunile principale ale modulului Recrutare personal
+RecruitmentArea=Recrutare personal
+PublicInterfaceRecruitmentDesc=Paginile publice de locuri de muncă sunt adrese URL publice pentru a afișa și răspunde la joburile deschise. Există o legătură diferită pentru fiecare job deschis, găsit pe fiecare fișă de job.
+EnablePublicRecruitmentPages=Activați paginile publice cu joburile disponibile
+
+#
+# About page
+#
+About = Despre
+RecruitmentAbout = Despre modulul Recrutare personal
+RecruitmentAboutPage = Despre modulul Recrutări personal
+NbOfEmployeesExpected=Necesar număr angajaţi
+JobLabel=Denumire job
+WorkPlace=Loc de muncă
+DateExpected=Data aşteptată
+FutureManager=Manager alocat
+ResponsibleOfRecruitement=Responsabil cu recrutarea
+IfJobIsLocatedAtAPartner=Dacă jobul este în locaţia unui partener
+PositionToBeFilled=Funcţie
+PositionsToBeFilled=Joburi disponibile
+ListOfPositionsToBeFilled=Lista posturilor disponibile
+NewPositionToBeFilled=Posturi disponibile noi
+
+JobOfferToBeFilled=Posturi rămase neocupate
+ThisIsInformationOnJobPosition=Informaţii despre oferta job
+ContactForRecruitment=Contact pentru recrutare
+EmailRecruiter=Email recrutor
+ToUseAGenericEmail=Utilizare email generic. Dacă nu este definit, se va utiliza emailul responsabilului de recrutare
+NewCandidature=Aplicare nouă
+ListOfCandidatures=Lista aplicărilor la job
+RequestedRemuneration=Remunerație solicitată
+ProposedRemuneration=Remuneraţie propusă
+ContractProposed=Contract propus
+ContractSigned=Contract semnat
+ContractRefused=Contract refuzat
+RecruitmentCandidature=Aplicare la job
+JobPositions=Joburi disponibile
+RecruitmentCandidatures=Aplicări la job
+InterviewToDo=Interviu de făcut
+AnswerCandidature=Răspuns aplicare
+YourCandidature=Aplicarea ta
+YourCandidatureAnswerMessage=Îţi mulţumim pentru aplicarea ta la job.<br>...
+JobClosedTextCandidateFound=Oferta de job este închisă. Postul a fost ocupat.
+JobClosedTextCanceled=Oferta de job este închisă.
+ExtrafieldsJobPosition=Atribute complementare (oferte job)
+ExtrafieldsCandidatures=Atribute complementare (aplicări job)

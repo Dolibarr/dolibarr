@@ -85,3 +85,7 @@ ProposalCustomerSignature=Văn bản chấp nhận, dấu công ty, ngày và ch
 ProposalsStatisticsSuppliers=Thống kê đề xuất nhà cung cấp
 CaseFollowedBy=Theo bởi trường hợp
 SignedOnly=Signed only
+IdProposal=ID đề xuất
+IdProduct=ID sản phẩm
+PrParentLine=Dòng mẹ đề xuất
+LineBuyPriceHT=Giá mua Số lượng ròng của thuế cho dòng

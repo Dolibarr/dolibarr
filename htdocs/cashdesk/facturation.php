@@ -42,7 +42,7 @@ if (GETPOST('filtre', 'alpha')) {
 	$sql = "SELECT p.rowid, p.ref, p.label, p.tva_tx, p.fk_product_type";
 	if (!empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql .= ", ps.reel";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-	if (!empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '".$conf_fkentrepot."'";
+	if (!empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '".$db->escape($conf_fkentrepot)."'";
 	$sql .= " WHERE p.entity IN (".getEntity('product').")";
 	$sql .= " AND p.tosell = 1";
 	if (!$conf->global->CASHDESK_SERVICES) $sql .= " AND p.fk_product_type = 0";
@@ -92,7 +92,7 @@ if (GETPOST('filtre', 'alpha')) {
 	$sql = "SELECT p.rowid, ref, label, tva_tx, p.fk_product_type";
 	if (!empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql .= ", ps.reel";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-	if (!empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '".$conf_fkentrepot."'";
+	if (!empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '".$db->escape($conf_fkentrepot)."'";
 	$sql .= " WHERE p.entity IN (".getEntity('product').")";
 	$sql .= " AND p.tosell = 1";
 	if (!$conf->global->CASHDESK_SERVICES) $sql .= " AND p.fk_product_type = 0";

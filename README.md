@@ -2,6 +2,8 @@
 
 ![Downloads per day](https://img.shields.io/sourceforge/dw/dolibarr.svg)
 ![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/develop.svg)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg?style=flat-square)](https://php.net/)
+[![GitHub release](https://img.shields.io/github/v/release/Dolibarr/dolibarr)](https://github.com/Dolibarr/dolibarr)
 
 Dolibarr ERP & CRM is a modern software package that helps manage your organization's activity (contacts, suppliers, invoices, orders, stocks, agenda…).
 
@@ -11,9 +13,9 @@ You can freely use, study, modify or distribute it according to its licence.
 
 You can use it as a standalone application or as a web application to access it from the Internet or a LAN.
 
-Dolibarr has a large community ready to help you, free forums and [oficially preferred partners ready to offer commercial support should you need it](https://partners.dolibarr.org)
+Dolibarr has a large community ready to help you, free forums and [officially preferred partners ready to offer commercial support should you need it](https://partners.dolibarr.org)
 
-![ScreenShot](https://www.dolibarr.org/images/dolibarr_screenshot1_1920x1080.jpg)
+![ScreenShot](https://www.dolibarr.org/medias/dolibarr_screenshot1_1920x1080.jpg)
 
 ## LICENSE
 
@@ -29,8 +31,8 @@ Other licenses apply for some included dependencies. See [COPYRIGHT](https://git
 
 If you have low technical skills and you're looking to install Dolibarr ERP/CRM in just a few clicks, you can use one of the packaged versions:
 
-- [DoliWamp for Windows](https://wiki.dolibarr.org/index.php/Dolibarr_for_Windows_(DoliWamp)
-- [DoliDeb for Debian](https://wiki.dolibarr.org/index.php/Dolibarr_for_Ubuntu_or_Debian
+- [DoliWamp for Windows](https://wiki.dolibarr.org/index.php/Dolibarr_for_Windows_DoliWamp)
+- [DoliDeb for Debian](https://wiki.dolibarr.org/index.php/Dolibarr_for_Ubuntu_or_Debian)
 - DoliRpm for Redhat, Fedora, OpenSuse, Mandriva or Mageia
 
 Releases can be downloaded from [official website](https://www.dolibarr.org/).
@@ -43,7 +45,7 @@ On GNU/Linux, first check if your distribution has already packaged Dolibarr.
 
 #### Generic install steps:
 
-- Check that your installed PHP version is supported [see PHP support](https://wiki.dolibarr.org/index.php/Versions).
+- Check that your installed PHP version is supported [see PHP support](https://wiki.dolibarr.org/index.php/Releases).
 
 - Uncompress the downloaded .zip archive to copy the "dolibarr/htdocs" directory and all its files inside your web server root or get the files directly from GitHub (recommanded if you know git as it makes it easier if you want to upgrade later):
 
@@ -77,8 +79,8 @@ If you don't have time to install it yourself, you can try some commercial 'read
 ## UPGRADING
 
 Dolibarr supports upgrading usually wihtout the need for any (commercial) support (depending on if you use any commercial extensions) and supports upgrading all the way from any version after 2.8 without breakage. This is unique in the ERP ecosystem and a benefit our users highly appreciate!
-
-- At first make a backup of your Dolibarr files & than see https://wiki.dolibarr.org/index.php/Installation_-_Upgrade#Upgrade_Dolibarr
+ 
+- At first make a backup of your Dolibarr files & than [see](https://wiki.dolibarr.org/index.php/Installation_-_Upgrade#Upgrade_Dolibarr)
 - Check that your installed PHP version is supported by the new version [see PHP support](./doc/phpmatrix.md).
 - Overwrite all old files from 'dolibarr' directory with files provided into the new version's package.
 - At first next access, Dolibarr will redirect you to the "install/" page to follow the upgrade process.
@@ -87,6 +89,7 @@ Dolibarr supports upgrading usually wihtout the need for any (commercial) suppor
 ## WHAT'S NEW
 
 See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog) file.
+
 
 ## FEATURES
 
@@ -160,8 +163,8 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 
 ### System Environment / Requirements
 
-- Works with PHP 5.5+ and MariaDB 5.0.3+, MySQL 5.0.3+ or PostgreSQL 8.1.4+ (See requirements on the [Wiki](https://wiki.dolibarr.org/index.php/Prerequisite))
-- Compatible with all Cloud solutions that match MySQL, PHP or PostgreSQL prerequisites.
+- Works with PHP 5.6+ and MariaDB 5.0.3+, MySQL 5.0.3+ or PostgreSQL 8.1.4+ (See requirements on the [Wiki](https://wiki.dolibarr.org/index.php/Prerequisite))
+- Compatible with all Cloud solutions that match PHP & MySQL or PostgreSQL prerequisites.
 
 ### Extending
 

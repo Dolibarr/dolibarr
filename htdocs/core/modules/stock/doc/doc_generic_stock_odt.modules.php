@@ -44,14 +44,14 @@ class doc_generic_stock_odt extends ModelePDFStock
 	public $emetteur;
 
 	/**
-     * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.6 = array(5, 6)
-     */
+	 * @var array Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 */
 	public $phpmin = array(5, 6);
 
 	/**
-     * @var string Dolibarr version of the loaded document
-     */
+	 * @var string Dolibarr version of the loaded document
+	 */
 	public $version = 'dolibarr';
 
 
@@ -65,7 +65,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 		global $conf, $langs, $mysoc;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array("main", "companies"));
+		$langs->loadLangs(array("main", "companies"));
 
 		$this->db = $db;
 		$this->name = "ODT templates";
@@ -110,7 +110,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 		global $conf, $langs;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array("errors", "companies"));
+		$langs->loadLangs(array("errors", "companies"));
 
 		$form = new Form($this->db);
 
@@ -163,7 +163,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 			//$texte.=$nbofiles?'</a>':'';
 			$texte .= '</b>';
 		}
-		
+
 		if ($nbofiles)
 		{
 			$texte .= '<div id="div_'.get_class($this).'" class="hidden">';
@@ -192,7 +192,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 		return $texte;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
@@ -206,7 +206,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $stock, $langs, $conf, $mysoc, $hookmanager, $user;
 
 		if (empty($srctemplatepath))
@@ -278,8 +278,8 @@ class doc_generic_stock_odt extends ModelePDFStock
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
 				if (!empty($conf->global->MAIN_DOC_USE_TIMING))
 				{
-				    $format = $conf->global->MAIN_DOC_USE_TIMING;
-				    if ($format == '1') $format = '%Y%m%d%H%M%S';
+					$format = $conf->global->MAIN_DOC_USE_TIMING;
+					if ($format == '1') $format = '%Y%m%d%H%M%S';
 					$filename = $newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
 				} else {
 					$filename = $newfiletmp.'.'.$newfileformat;
@@ -308,12 +308,12 @@ class doc_generic_stock_odt extends ModelePDFStock
 				{
 					// On peut utiliser le nom de la societe du contact
 					if (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
-                        $socobject = $object->contact;
-                    } else {
-                        $socobject = $object->thirdparty;
-                        // if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
-                        $contactobject = $object->contact;
-                    }
+						$socobject = $object->contact;
+					} else {
+						$socobject = $object->thirdparty;
+						// if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
+						$contactobject = $object->contact;
+					}
 				} else {
 					$socobject = $object->thirdparty;
 				}
@@ -323,7 +323,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 				'__FROM_EMAIL__' => $this->emetteur->email,
 				'__TOTAL_TTC__' => $object->total_ttc,
 				'__TOTAL_HT__' => $object->total_ht,
-				'__TOTAL_VAT__' => $object->total_vat
+				'__TOTAL_VAT__' => $object->total_tva
 				);
 				complete_substitutions_array($substitutionarray, $langs, $object);
 				// Call the ODTSubstitution hook
@@ -341,13 +341,13 @@ class doc_generic_stock_odt extends ModelePDFStock
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-                    $odfHandler = new odf(
-                        $srctemplatepath,
-					    array(
-						    'PATH_TO_TMP'	  => $conf->product->dir_temp,
-						    'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
-						    'DELIMITER_LEFT'  => '{',
-						    'DELIMITER_RIGHT' => '}'
+					$odfHandler = new odf(
+						$srctemplatepath,
+						array(
+							'PATH_TO_TMP'	  => $conf->product->dir_temp,
+							'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+							'DELIMITER_LEFT'  => '{',
+							'DELIMITER_RIGHT' => '}'
 						)
 					);
 				} catch (Exception $e)
@@ -404,7 +404,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 						}
 					} catch (OdfException $e)
 					{
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 				// Replace tags of lines
@@ -449,7 +449,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 						$odfHandler->setVars($key, $value, true, 'UTF-8');
 					} catch (OdfException $e)
 					{
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 
@@ -463,15 +463,15 @@ class doc_generic_stock_odt extends ModelePDFStock
 						$odfHandler->exportAsAttachedPDF($file);
 					} catch (Exception $e) {
 						$this->error = $e->getMessage();
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				} else {
 					try {
-					    $odfHandler->saveToDisk($file);
+						$odfHandler->saveToDisk($file);
 					} catch (Exception $e) {
 						$this->error = $e->getMessage();
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}

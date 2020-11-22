@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 if (!$user->admin) accessforbidden();
 
@@ -54,7 +54,7 @@ $version = '0.0';
 
 if ($action == 'getlastversion')
 {
-	$result = getURLContent('http://sourceforge.net/projects/dolibarr/rss');
+	$result = getURLContent('https://sourceforge.net/projects/dolibarr/rss');
 	//var_dump($result['content']);
 	$sfurl = simplexml_load_string($result['content']);
 }

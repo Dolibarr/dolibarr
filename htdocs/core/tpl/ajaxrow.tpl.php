@@ -44,7 +44,8 @@ $forcereloadpage = empty($conf->global->MAIN_FORCE_RELOAD_PAGE) ? 0 : 1;
 $tagidfortablednd = (empty($tagidfortablednd) ? 'tablelines' : $tagidfortablednd);
 $filepath = (empty($filepath) ? '' : $filepath);
 
-if (GETPOST('action', 'aZ09') != 'editline' && $nboflines > 1) { ?>
+
+if (GETPOST('action', 'aZ09') != 'editline' && $nboflines > 1 && $conf->browser->layout != 'phone') { ?>
 <script>
 $(document).ready(function(){
 	$(".imgupforline").hide();
@@ -80,7 +81,12 @@ $(document).ready(function(){
 						console.log("tableDND end of ajax call");
 						if (reloadpage == 1) {
 							//console.log('<?php echo $urltorefreshaftermove.' - '.$_SERVER['PHP_SELF'].' - '.dol_escape_js($_SERVER['QUERY_STRING']); ?>');
-							location.href = '<?php echo dol_escape_js(empty($urltorefreshaftermove) ? ($_SERVER['PHP_SELF'].'?'.dol_escape_js($_SERVER['QUERY_STRING'])) : $urltorefreshaftermove); ?>';
+							<?php
+							$redirectURL = empty($urltorefreshaftermove) ? ($_SERVER['PHP_SELF'].'?'.dol_escape_js($_SERVER['QUERY_STRING'])) : $urltorefreshaftermove;
+							// remove action parameter from URL
+							$redirectURL = preg_replace('/(&|\?)action=[^&#]*/', '', $redirectURL);
+							?>
+							location.href = '<?php echo dol_escape_js($redirectURL); ?>';
 						} else {
 							$("#<?php echo $tagidfortablednd; ?> .drag").each(
 									function( intIndex ) {

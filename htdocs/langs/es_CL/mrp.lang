@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - mrp
 Mrp=Ordenes de Fabricación
-MO=Orden de Fabricación
+ManufacturingOrder=Orden de Fabricación
 MrpSetupPage=Configuración del módulo de MRP
 MenuBOM=Facturas de material
 LatestBOMModified=Últimas %s Cuentas de materiales modificadas

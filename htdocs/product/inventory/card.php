@@ -37,7 +37,7 @@ $ref        = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'myobjectcard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'inventorycard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
@@ -59,11 +59,11 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Initialize array of search criterias
-$search_all = trim(GETPOST("search_all", 'alpha'));
+$search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val)
 {
-    if (GETPOST('search_'.$key, 'alpha')) $search[$key] = GETPOST('search_'.$key, 'alpha');
+	if (GETPOST('search_'.$key, 'alpha')) $search[$key] = GETPOST('search_'.$key, 'alpha');
 }
 
 if (empty($action) && empty($id) && empty($ref)) $action = 'view';
@@ -142,8 +142,8 @@ if (empty($reshook))
 
 	// Actions to send emails
 	$triggersendname = 'INVENTORY_SENTBYMAIL';
-	$autocopy='MAIN_MAIL_AUTOCOPY_INVENTORY_TO';
-	$trackid='stockinv'.$object->id;
+	$autocopy = 'MAIN_MAIL_AUTOCOPY_INVENTORY_TO';
+	$trackid = 'stockinv'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
@@ -189,7 +189,7 @@ if ($action == 'create')
 	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 
-	dol_fiche_head(array(), '');
+	print dol_get_fiche_head(array(), '');
 
 	// Set some default values
 	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
@@ -204,7 +204,7 @@ if ($action == 'create')
 
 	print '</table>'."\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
@@ -229,7 +229,7 @@ if (($id || $ref) && $action == 'edit')
 	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent tableforfieldedit">'."\n";
 
@@ -241,9 +241,9 @@ if (($id || $ref) && $action == 'edit')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+	print '<div class="center"><input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 	print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
@@ -253,16 +253,16 @@ if (($id || $ref) && $action == 'edit')
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
-    $res = $object->fetch_optionals();
+	$res = $object->fetch_optionals();
 
-    $head = inventoryPrepareHead($object);
-	dol_fiche_head($head, 'card', $langs->trans("Inventory"), -1, 'stock');
+	$head = inventoryPrepareHead($object);
+	print dol_get_fiche_head($head, 'card', $langs->trans("Inventory"), -1, 'stock');
 
 	$formconfirm = '';
 
 	// Confirmation to delete
 	if ($action == 'delete') {
-	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteInventory'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteInventory'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 1);
 	}
 	// Confirmation to delete line
 	if ($action == 'deleteline') {
@@ -370,110 +370,110 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '<div class="clearboth"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	// Buttons for actions
 	if ($action != 'presend' && $action != 'editline') {
-    	print '<div class="tabsAction">'."\n";
-    	$parameters = array();
-    	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-    	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		print '<div class="tabsAction">'."\n";
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-    	if (empty($reshook))
-    	{
-    	    // Send
-    		if (empty($user->socid)) {
-    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
-    		}
+		if (empty($reshook))
+		{
+			// Send
+			if (empty($user->socid)) {
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
+			}
 
-    		// Back to draft
-    		if ($object->status == $object::STATUS_VALIDATED)
-    		{
-    			if ($permissiontoadd)
-	    		{
-	    			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes">'.$langs->trans("SetToDraft").'</a>';
-	    		}
-    		}
+			// Back to draft
+			if ($object->status == $object::STATUS_VALIDATED)
+			{
+				if ($permissiontoadd)
+				{
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes">'.$langs->trans("SetToDraft").'</a>';
+				}
+			}
 
-    		// Modify
-    		if ($object->status == $object::STATUS_DRAFT)
-    		{
-    			if ($permissiontoadd)
-	    		{
-	    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit">'.$langs->trans("Modify").'</a>'."\n";
-	    		} else {
-	    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
-	    		}
-    		}
+			// Modify
+			if ($object->status == $object::STATUS_DRAFT)
+			{
+				if ($permissiontoadd)
+				{
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit">'.$langs->trans("Modify").'</a>'."\n";
+				} else {
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
+				}
+			}
 
-    		// Validate
-    		if ($object->status == $object::STATUS_DRAFT)
-    		{
-    			if ($permissiontoadd)
-	    		{
-    				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes">'.$langs->trans("Validate").' ('.$langs->trans("Start").')</a>';
-	    		}
-    		}
+			// Validate
+			if ($object->status == $object::STATUS_DRAFT)
+			{
+				if ($permissiontoadd)
+				{
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes">'.$langs->trans("Validate").' ('.$langs->trans("Start").')</a>';
+				}
+			}
 
-    		// Clone
-    		/*if ($permissiontoadd)
+			// Clone
+			/*if ($permissiontoadd)
     		{
     			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&object=myobject">'.$langs->trans("ToClone").'</a>'."\n";
     		}*/
 
-    		// Delete (need delete permission, or if draft, just need create/modify permission)
-    		if ($permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd))
-    		{
-    			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>'."\n";
-    		} else {
-    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Delete').'</a>'."\n";
-    		}
-    	}
-    	print '</div>'."\n";
+			// Delete (need delete permission, or if draft, just need create/modify permission)
+			if ($permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd))
+			{
+				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>'."\n";
+			} else {
+				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Delete').'</a>'."\n";
+			}
+		}
+		print '</div>'."\n";
 	}
 
 
 	// Select mail models is same action as presend
 	if (GETPOST('modelselected')) {
-	    $action = 'presend';
+		$action = 'presend';
 	}
 
 	if ($action != 'presend')
 	{
-	    print '<div class="fichecenter"><div class="fichehalfleft">';
-	    print '<a name="builddoc"></a>'; // ancre
+		print '<div class="fichecenter"><div class="fichehalfleft">';
+		print '<a name="builddoc"></a>'; // ancre
 
-	    // Documents
-	    if ($includedocgeneration) {
-	    	$objref = dol_sanitizeFileName($object->ref);
-	    	$relativepath = $objref . '/' . $objref . '.pdf';
-	    	$filedir = $conf->mymodule->dir_output.'/'.$object->element.'/'.$objref;
-	    	$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-	    	$genallowed = $user->rights->mymodule->myobject->read;	// If you can read, you can build the PDF to read content
-	    	$delallowed = $user->rights->mymodule->myobject->write;	// If you can create/edit, you can remove a file on card
-	    	print $formfile->showdocuments('mymodule:MyObject', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
-	    }
+		// Documents
+		if ($includedocgeneration) {
+			$objref = dol_sanitizeFileName($object->ref);
+			$relativepath = $objref.'/'.$objref.'.pdf';
+			$filedir = $conf->mymodule->dir_output.'/'.$object->element.'/'.$objref;
+			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
+			$genallowed = $user->rights->mymodule->myobject->read; // If you can read, you can build the PDF to read content
+			$delallowed = $user->rights->mymodule->myobject->write; // If you can create/edit, you can remove a file on card
+			print $formfile->showdocuments('mymodule:MyObject', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
+		}
 
-	    // Show links to link elements
-	    $linktoelem = $form->showLinkToObjectBlock($object, null, array('inventory'));
-	    $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+		// Show links to link elements
+		$linktoelem = $form->showLinkToObjectBlock($object, null, array('inventory'));
+		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
-	    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
-	    $MAXEVENT = 10;
+		$MAXEVENT = 10;
 
-	    $morehtmlright = '<a href="'.dol_buildpath('/product/inventory/inventory_info.php', 1).'?id='.$object->id.'">';
-	    $morehtmlright .= $langs->trans("SeeAll");
-	    $morehtmlright .= '</a>';
+		$morehtmlright = '<a href="'.dol_buildpath('/product/inventory/inventory_info.php', 1).'?id='.$object->id.'">';
+		$morehtmlright .= $langs->trans("SeeAll");
+		$morehtmlright .= '</a>';
 
-	    // List of actions on element
-	    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-	    $formactions = new FormActions($db);
-	    $somethingshown = $formactions->showactions($object, 'inventory', $socid, 1, '', $MAXEVENT, '', $morehtmlright);
+		// List of actions on element
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+		$formactions = new FormActions($db);
+		$somethingshown = $formactions->showactions($object, 'inventory', $socid, 1, '', $MAXEVENT, '', $morehtmlright);
 
-	    print '</div></div></div>';
+		print '</div></div></div>';
 	}
 
 
@@ -481,8 +481,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (GETPOST('modelselected')) $action = 'presend';
 
 	// Presend form
-	$modelmail='inventory';
-	$defaulttopic='InformationMessage';
+	$modelmail = 'inventory';
+	$defaulttopic = 'InformationMessage';
 	$diroutput = $conf->product->dir_output.'/inventory';
 	$trackid = 'stockinv'.$object->id;
 

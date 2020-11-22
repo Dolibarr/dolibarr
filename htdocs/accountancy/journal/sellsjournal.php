@@ -78,16 +78,18 @@ $accountingjournalstatic->fetch($id_journal);
 $journal = $accountingjournalstatic->code;
 $journal_label = $accountingjournalstatic->label;
 
-$year_current = strftime("%Y", dol_now());
-$pastmonth = strftime("%m", dol_now()) - 1;
-$pastmonthyear = $year_current;
-if ($pastmonth == 0) {
-	$pastmonth = 12;
-	$pastmonthyear--;
-}
-
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
+
+if (empty($date_startmonth) || empty($date_endmonth))
+{
+	// Period by default on transfer
+	$dates = getDefaultDatesForTransfer();
+	$date_start = $dates['date_start'];
+	$date_end = $dates['date_end'];
+	$pastmonthyear = $dates['pastmonthyear'];
+	$pastmonth = $dates['pastmonth'];
+}
 
 if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))) // We define date_start and date_end, only if we did not submit the form
 {
@@ -128,7 +130,7 @@ if ($in_bookkeeping == 'already')
 if ($in_bookkeeping == 'notyet')
 {
 	$sql .= " AND f.rowid NOT IN (SELECT fk_doc FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";
-    // $sql .= " AND fd.rowid NOT IN (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";		// Useless, we save one line for all products with same account
+	// $sql .= " AND fd.rowid NOT IN (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";		// Useless, we save one line for all products with same account
 }
 $sql .= " ORDER BY f.datef";
 //print $sql;
@@ -619,18 +621,18 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 
 			foreach ($arrayofvat[$key] as $k => $mt) {
 				if ($mt) {
-					print '"'.$key.'"'.$sep;
-					print '"'.$date.'"'.$sep;
-					print '"'.$val["ref"].'"'.$sep;
-					print '"'.utf8_decode(dol_trunc($companystatic->name, 32)).'"'.$sep;
-					print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
-					print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
-					print '""'.$sep;
-					print '"'.$langs->trans("VAT").' - '.$def_tva[$key].' %"'.$sep;
-					print '"'.utf8_decode(dol_trunc($companystatic->name, 16)).' - '.$invoicestatic->ref.' - '.$langs->trans("VAT").join(', ', $def_tva[$key][$k]).' %'.($numtax ? ' - Localtax '.$numtax : '').'"'.$sep;
-					print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
-					print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
-					print '"'.$journal.'"';
+					print '"' . $key . '"' . $sep;
+					print '"' . $date . '"' . $sep;
+					print '"' . $val["ref"] . '"' . $sep;
+					print '"' . utf8_decode(dol_trunc($companystatic->name, 32)) . '"' . $sep;
+					print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
+					print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
+					print '""' . $sep;
+					print '"' . $langs->trans("VAT") . ' - ' . join(', ', $def_tva[$key][$k]) . ' %"' . $sep;
+					print '"' . utf8_decode(dol_trunc($companystatic->name, 16)) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("VAT") . join(', ', $def_tva[$key][$k]) . ' %' . ($numtax ? ' - Localtax ' . $numtax : '') . '"' . $sep;
+					print '"' . ($mt < 0 ? price(-$mt) : '') . '"' . $sep;
+					print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
+					print '"' . $journal . '"';
 					print "\n";
 				}
 			}
@@ -656,8 +658,8 @@ if (empty($action) || $action == 'view') {
 	}
 
 	$listofchoices = array('notyet'=>$langs->trans("NotYetInGeneralLedger"), 'already'=>$langs->trans("AlreadyInGeneralLedger"));
-    $period = $form->selectDate($date_start ? $date_start : -1, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end ? $date_end : -1, 'date_end', 0, 0, 0, '', 1, 0);
-    $period .= ' -  '.$langs->trans("JournalizationInLedgerStatus").' '.$form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
+	$period = $form->selectDate($date_start ? $date_start : -1, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end ? $date_end : -1, 'date_end', 0, 0, 0, '', 1, 0);
+	$period .= ' -  '.$langs->trans("JournalizationInLedgerStatus").' '.$form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
 
 	$varlink = 'id_journal='.$id_journal;
 

@@ -17,13 +17,14 @@
 CREATE TABLE llx_recruitment_recruitmentcandidature(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	fk_recruitmentjobposition INTEGER NOT NULL,
+	entity integer NOT NULL DEFAULT 1,
 	ref varchar(128) DEFAULT '(PROV)' NOT NULL,
+	fk_recruitmentjobposition INTEGER NULL,
 	description text, 
 	note_public text, 
 	note_private text, 
-	date_creation datetime NOT NULL, 
-	tms timestamp, 
+	date_creation datetime NOT NULL,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
 	import_key varchar(14), 
@@ -31,8 +32,12 @@ CREATE TABLE llx_recruitment_recruitmentcandidature(
 	status smallint NOT NULL, 
 	firstname varchar(128), 
 	lastname varchar(128), 
+	email varchar(255),
+	phone varchar(64), 
+	date_birth date,
 	remuneration_requested integer, 
 	remuneration_proposed integer,
+	email_msgid varchar(255),
 	fk_recruitment_origin INTEGER NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

@@ -4,9 +4,9 @@
  * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2012-2018  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2012-2020  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "bills", "members", "users", "other", "paypal"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
@@ -82,7 +82,7 @@ if (!empty($canvas)) {
 }
 
 // Security check
-$result = restrictedArea($user, 'adherent', $id, '', '', 'socid', 'rowid', $objcanvas);
+$result = restrictedArea($user, 'adherent', $id, '', '', 'socid', 'rowid', 0);
 
 if ($id > 0) {
 	// Load member
@@ -152,7 +152,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			if ($socid != $object->socid) {	// If link differs from currently in database
 				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
-				$sql .= " WHERE socid = '".$socid."'";
+				$sql .= " WHERE socid = ".((int) $socid);
 				$sql .= " AND entity = ".$conf->entity;
 				$resql = $db->query($sql);
 				if ($resql) {
@@ -181,11 +181,19 @@ if (empty($reshook)) {
 		if ($result > 0) {
 			// Creation user
 			$nuser = new User($db);
-			$result = $nuser->create_from_member($object, GETPOST('login', 'alphanohtml'));
+			$tmpuser = dol_clone($object);
+			if (GETPOST('internalorexternal', 'aZ09') == 'internal') {
+				$tmpuser->fk_soc = 0;
+			}
+
+			$result = $nuser->create_from_member($tmpuser, GETPOST('login', 'alphanohtml'));
 
 			if ($result < 0) {
 				$langs->load("errors");
 				setEventMessages($langs->trans($nuser->error), null, 'errors');
+			} else {
+				setEventMessages($langs->trans("NewUserCreated", $nuser->login), null, 'mesgs');
+				$action = '';
 			}
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -213,7 +221,7 @@ if (empty($reshook)) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$birthdate = '';
-		if (GETPOST("birthday", 'int')	&& GETPOST("birthmonth", 'int') && GETPOST("birthyear", 'int'))
+		if (GETPOST("birthday", 'int') && GETPOST("birthmonth", 'int') && GETPOST("birthyear", 'int'))
 		{
 			$birthdate = dol_mktime(12, 0, 0, GETPOST("birthmonth", 'int'), GETPOST("birthday", 'int'), GETPOST("birthyear", 'int'));
 		}
@@ -254,7 +262,7 @@ if (empty($reshook)) {
 			$object->firstname   = trim(GETPOST("firstname", 'alphanohtml'));
 			$object->lastname    = trim(GETPOST("lastname", 'alphanohtml'));
 			$object->gender      = trim(GETPOST("gender", 'alphanohtml'));
-			$object->login       = trim(GETPOST("login", 'alpha'));
+			$object->login       = trim(GETPOST("login", 'alphanohtml'));
 			$object->pass        = trim(GETPOST("pass", 'alpha'));
 
 			$object->societe     = trim(GETPOST("societe", 'alphanohtml')); // deprecated
@@ -335,8 +343,8 @@ if (empty($reshook)) {
 							if (!dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']) > 0) {
 								setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
 							} else {
-							    // Create thumbs
-							    $object->addThumbs($newfile);
+								// Create thumbs
+								$object->addThumbs($newfile);
 							}
 						}
 					} else {
@@ -354,8 +362,8 @@ if (empty($reshook)) {
 					}
 				}
 
-	            $rowid = $object->id;
-	            $id = $object->id;
+				$rowid = $object->id;
+				$id = $object->id;
 				$action = '';
 
 				if (!empty($backtopage)) {
@@ -402,12 +410,11 @@ if (empty($reshook)) {
 		// $skype=GETPOST("member_skype", 'alpha');
 		// $twitter=GETPOST("member_twitter", 'alpha');
 		// $facebook=GETPOST("member_facebook", 'alpha');
-        // $linkedin=GETPOST("member_linkedin", 'alpha');
+		// $linkedin=GETPOST("member_linkedin", 'alpha');
 		$email = preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
-		$login = GETPOST("member_login", 'alpha');
+		$login = GETPOST("member_login", 'alphanohtml');
 		$pass = GETPOST("password", 'alpha');
 		$photo = GETPOST("photo", 'alpha');
-		//$comment=GETPOST("comment",'none');
 		$morphy = GETPOST("morphy", 'alphanohtml');
 		$public = GETPOST("public", 'alphanohtml');
 
@@ -755,7 +762,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if ($result <= 0) dol_print_error('', $object->error);
 	}
    	$objcanvas->assign_values($action, $object->id, $object->ref); // Set value for templates
-    $objcanvas->display_canvas($action); // Show template
+	$objcanvas->display_canvas($action); // Show template
 } else {
 	// -----------------------------------------
 	// When used in standard mode
@@ -778,16 +785,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$object->country = $tmparray['label'];
 		}
 
-        if (!empty($socid)) {
-            $object = new Societe($db);
-            if ($socid > 0) $object->fetch($socid);
+		if (!empty($socid)) {
+			$object = new Societe($db);
+			if ($socid > 0) $object->fetch($socid);
 
-            if (!($object->id > 0)) {
-                $langs->load("errors");
-                print($langs->trans('ErrorRecordNotFound'));
-                exit;
-            }
-        }
+			if (!($object->id > 0)) {
+				$langs->load("errors");
+				print($langs->trans('ErrorRecordNotFound'));
+				exit;
+			}
+		}
 
 		$adht = new AdherentType($db);
 
@@ -829,14 +836,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<input type="hidden" name="socid" value="'.$socid.'">';
 		if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 
-        dol_fiche_head('');
+		print dol_get_fiche_head('');
 
 		print '<table class="border centpercent">';
 		print '<tbody>';
 
 		// Login
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-			print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td><input type="text" name="member_login" class="minwidth300" maxlength="50" value="'.(isset($_POST["member_login"]) ?GETPOST("member_login", 'alpha', 2) : $object->login).'" autofocus="autofocus"></td></tr>';
+			print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td><input type="text" name="member_login" class="minwidth300" maxlength="50" value="'.(GETPOSTISSET("member_login") ? GETPOST("member_login", 'alphanohtml', 2) : $object->login).'" autofocus="autofocus"></td></tr>';
 		}
 
 		// Password
@@ -884,7 +891,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Gender
 		print '<tr><td>'.$langs->trans("Gender").'</td>';
 		print '<td>';
-		$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"));
+		$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"), 'other'=>$langs->trans("Genderother"));
 		print $form->selectarray('gender', $arraygender, GETPOST('gender', 'alphanohtml'), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 		print '</td></tr>';
 
@@ -934,15 +941,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tr><td>'.$langs->trans("PhoneMobile").'</td>';
 		print '<td>'.img_picto('', 'object_phoning_mobile').' <input type="text" name="phone_mobile" size="20" value="'.(GETPOSTISSET('phone_mobile') ? GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'"></td></tr>';
 
-	    if (!empty($conf->socialnetworks->enabled)) {
+		if (!empty($conf->socialnetworks->enabled)) {
 			foreach ($socialnetworks as $key => $value) {
-                if (!$value['active']) break;
+				if (!$value['active']) break;
 				print '<tr><td>'.$langs->trans($value['label']).'</td><td><input type="text" name="member_'.$key.'" size="40" value="'.(GETPOSTISSET('member_'.$key) ? GETPOST('member_'.$key, 'alpha') : $object->socialnetworks[$key]).'"></td></tr>';
 			}
 		}
 
-	    // Birth Date
-		print "<tr><td>".$langs->trans("DateToBirth")."</td><td>\n";
+		// Birth Date
+		print "<tr><td>".$langs->trans("DateOfBirth")."</td><td>\n";
 		print $form->selectDate(($object->birth ? $object->birth : -1), 'birth', '', '', 1, 'formsoc');
 		print "</td></tr>\n";
 
@@ -965,7 +972,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tbody>';
 		print "</table>\n";
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" name="button" class="button" value="'.$langs->trans("AddMember").'">';
@@ -1054,7 +1061,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<input type="hidden" name="statut" value="'.$object->statut.'" />';
 		if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 
-		dol_fiche_head($head, 'general', $langs->trans("Member"), 0, 'user');
+		print dol_get_fiche_head($head, 'general', $langs->trans("Member"), 0, 'user');
 
 		print '<table class="border centpercent">';
 
@@ -1063,7 +1070,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Login
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-			print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td><input type="text" name="login" class="minwidth300" maxlength="50" value="'.(isset($_POST["login"]) ?GETPOST("login", 'alpha', 2) : $object->login).'"></td></tr>';
+			print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td><input type="text" name="login" class="minwidth300" maxlength="50" value="'.(GETPOSTISSET("login") ? GETPOST("login", 'alphanohtml', 2) : $object->login).'"></td></tr>';
 		}
 
 		// Password
@@ -1107,7 +1114,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Gender
 		print '<tr><td>'.$langs->trans("Gender").'</td>';
 		print '<td>';
-		$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"));
+		$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"), 'other'=>$langs->trans("Genderother"));
 		print $form->selectarray('gender', $arraygender, GETPOSTISSET('gender') ? GETPOST('gender', 'alphanohtml') : $object->gender, 1, 0, 0, '', 0, 0, 0, '', '', 1);
 		print '</td></tr>';
 
@@ -1167,15 +1174,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tr><td>'.$langs->trans("PhoneMobile").'</td>';
 		print '<td>'.img_picto('', 'object_phoning_mobile').' <input type="text" name="phone_mobile" value="'.(GETPOSTISSET("phone_mobile") ? GETPOST("phone_mobile") : $object->phone_mobile).'"></td></tr>';
 
-        if (!empty($conf->socialnetworks->enabled)) {
+		if (!empty($conf->socialnetworks->enabled)) {
 			foreach ($socialnetworks as $key => $value) {
-                if (!$value['active']) break;
+				if (!$value['active']) break;
 				print '<tr><td>'.$langs->trans($value['label']).'</td><td><input type="text" name="'.$key.'" class="minwidth100" value="'.(GETPOSTISSET($key) ? GETPOST($key, 'alphanohtml') : $object->socialnetworks[$key]).'"></td></tr>';
 			}
 		}
 
-	    // Birth Date
-		print "<tr><td>".$langs->trans("DateToBirth")."</td><td>\n";
+		// Birth Date
+		print "<tr><td>".$langs->trans("DateOfBirth")."</td><td>\n";
 		print $form->selectDate(($object->birth ? $object->birth : -1), 'birth', '', '', 1, 'formsoc');
 		print "</td></tr>\n";
 
@@ -1225,10 +1232,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
 		print '</table>';
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
-		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
@@ -1264,11 +1271,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		 */
 		$head = member_prepare_head($object);
 
-		dol_fiche_head($head, 'general', $langs->trans("Member"), -1, 'user');
+		print dol_get_fiche_head($head, 'general', $langs->trans("Member"), -1, 'user');
 
 		// Confirm create user
 		if ($action == 'create_user') {
-			$login = $object->login;
+			$login = (GETPOSTISSET('login') ? GETPOST('login', 'alphanohtml') : $object->login);
 			if (empty($login)) {
 				// Full firstname and name separated with a dot : firstname.name
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -1280,11 +1287,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$formquestion = array(
 					array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login)
 			);
-			$text = $langs->trans("ConfirmCreateLogin").'<br>';
-			if (!empty($conf->societe->enabled)) {
-				if ($object->socid > 0) $text .= $langs->trans("UserWillBeExternalUser");
-				else $text .= $langs->trans("UserWillBeInternalUser");
+			if (!empty($conf->societe->enabled) && $object->socid > 0) {
+				$object->fetch_thirdparty();
+				$formquestion[] = array('label' => $langs->trans("UserWillBe"), 'type' => 'radio', 'name' => 'internalorexternal', 'default'=>'external', 'values' => array('external'=>$langs->trans("External").' - '.$langs->trans("LinkedToDolibarrThirdParty").' '.$object->thirdparty->getNomUrl(1, '', 0, 1), 'internal'=>$langs->trans("Internal")));
 			}
+			$text = '';
+			if (!empty($conf->societe->enabled) && $object->socid <= 0) {
+				$text .= $langs->trans("UserWillBeInternalUser").'<br>';
+			}
+			$text .= $langs->trans("ConfirmCreateLogin");
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id, $langs->trans("CreateDolibarrLogin"), $text, "confirm_create_user", $formquestion, 'yes');
 		}
 
@@ -1447,15 +1458,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		dol_banner_tab($object, 'rowid', $linkback);
 
-        print '<div class="fichecenter">';
-        print '<div class="fichehalfleft">';
+		print '<div class="fichecenter">';
+		print '<div class="fichehalfleft">';
 
-        print '<div class="underbanner clearboth"></div>';
+		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border tableforfield centpercent">';
 
 		// Login
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-			print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.dol_escape_htmltag($object->login).'</td></tr>';
 		}
 
 		// Type
@@ -1472,10 +1483,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// Company
-		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->company.'</td></tr>';
+		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.dol_escape_htmltag($object->company).'</td></tr>';
 
 		// Civility
-		print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
+		print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'</td>';
 		print '</tr>';
 
 		// Password
@@ -1483,13 +1494,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td>'.$langs->trans("Password").'</td><td>'.preg_replace('/./i', '*', $object->pass);
 			if ($object->pass) print preg_replace('/./i', '*', $object->pass);
 			else {
-			    if ($user->admin) print $langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
-			    else print $langs->trans("Hidden");
+				if ($user->admin) print $langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
+				else print $langs->trans("Hidden");
 			}
 			if ((!empty($object->pass) || !empty($object->pass_crypted)) && empty($object->user_id)) {
-			    $langs->load("errors");
-			    $htmltext = $langs->trans("WarningPasswordSetWithNoAccount");
-			    print ' '.$form->textwithpicto('', $htmltext, 1, 'warning');
+				$langs->load("errors");
+				$htmltext = $langs->trans("WarningPasswordSetWithNoAccount");
+				print ' '.$form->textwithpicto('', $htmltext, 1, 'warning');
 			}
 			print '</td></tr>';
 		}
@@ -1503,8 +1514,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 		} else {
 			if ($object->need_subscription == 0) {
-                print $langs->trans("SubscriptionNotNeeded");
-            } elseif (!$adht->subscription) {
+				print $langs->trans("SubscriptionNotNeeded");
+			} elseif (!$adht->subscription) {
 				print $langs->trans("SubscriptionNotRecorded");
 				if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
 			} else {
@@ -1553,24 +1564,26 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'userid', '');
 		} else {
 			if ($object->user_id) {
-				$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'none');
+				$linkeduser = new User($db);
+				$linkeduser->fetch($object->user_id);
+				print $linkeduser->getNomUrl(-1);
 			} else {
 				print $langs->trans("NoDolibarrAccess");
 			}
 		}
 		print '</td></tr>';
 
-        print '</table>';
+		print '</table>';
 
-        print '</div>';
+		print '</div>';
 
-        print '<div class="fichehalfright"><div class="ficheaddleft">';
-        print '<div class="underbanner clearboth"></div>';
+		print '<div class="fichehalfright"><div class="ficheaddleft">';
+		print '<div class="underbanner clearboth"></div>';
 
-        print '<table class="border tableforfield tableforfield" width="100%">';
+		print '<table class="border tableforfield tableforfield" width="100%">';
 
 		// Birth Date
-		print '<tr><td class="titlefield">'.$langs->trans("DateToBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
+		print '<tr><td class="titlefield">'.$langs->trans("DateOfBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
 
 		// Public
 		print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
@@ -1585,12 +1598,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		//VCard
 		print '<tr><td>';
-        print $langs->trans("VCard").'</td><td colspan="3">';
+		print $langs->trans("VCard").'</td><td colspan="3">';
 		print '<a href="'.DOL_URL_ROOT.'/adherents/vcard.php?id='.$object->id.'">';
 		print img_picto($langs->trans("Download"), 'vcard.png', 'class="paddingrightonly"');
 		print $langs->trans("Download");
 		print '</a>';
-        print '</td></tr>';
+		print '</td></tr>';
 
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
@@ -1598,9 +1611,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print "</table>\n";
 
 		print "</div></div></div>\n";
-        print '<div style="clear:both"></div>';
+		print '<div style="clear:both"></div>';
 
-        dol_fiche_end();
+		print dol_get_fiche_end();
 
 
 		/*
@@ -1693,13 +1706,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					}
 				}
 
-				// Delete
-				if ($user->rights->adherent->supprimer) {
-					print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$object->id.'&action=delete">'.$langs->trans("Delete")."</a></div>\n";
-				} else {
-					print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Delete")."</font></div>";
-				}
-
 				// Action SPIP
 				if (!empty($conf->mailmanspip->enabled) && !empty($conf->global->ADHERENT_USE_SPIP)) {
 					$isinspip = $mailmanspip->is_in_spip($object);
@@ -1710,6 +1716,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					if ($isinspip == 0) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$object->id.'&action=add_spip">'.$langs->trans("AddIntoSpip")."</a></div>\n";
 					}
+				}
+
+				// Delete
+				if ($user->rights->adherent->supprimer) {
+					print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete")."</a></div>\n";
+				} else {
+					print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Delete")."</font></div>";
 				}
 			}
 		}
@@ -1738,7 +1751,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$genallowed = $user->rights->adherent->lire;
 			$delallowed = $user->rights->adherent->creer;
 
-			print $formfile->showdocuments('member', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $object->default_lang, '', $object);
+			print $formfile->showdocuments('member', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $object->default_lang, '', $object);
 			$somethingshown = $formfile->numoffiles;
 
 			// Show links to link elements
@@ -1769,7 +1782,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$morehtmlright .= '</a>';
 
 			// List of actions on element
-	        include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, 'member', $socid, 1, 'listactions', $MAX, '', $morehtmlright);
 

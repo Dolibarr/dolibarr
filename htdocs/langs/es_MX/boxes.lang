@@ -9,5 +9,6 @@ BoxOldestUnpaidSupplierBills=Facturas de proveedores sin pagar más antiguas
 BoxLastProposals=Últimas propuestas comerciales
 BoxLastCustomerOrders=Últimos pedidos de venta
 BoxCurrentAccounts=Saldo de cuentas abiertas
+BoxSuppliersOrdersPerMonth=Órdenes a proveedor por mes
 BoxTitleLastModifiedPropals=Últimas %s cotizaciones modificadas
 ForProposals=Propuestas

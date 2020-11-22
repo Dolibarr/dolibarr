@@ -191,9 +191,13 @@ class LangTest extends PHPUnit\Framework\TestCase
 				print 'Check lang file '.$file."\n";
 				$filecontent=file_get_contents(DOL_DOCUMENT_ROOT.'/langs/'.$code.'/'.$file);
 
-				$result=strpos($filecontent, '％');
-				print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
-				$this->assertTrue($result===false, 'Found a bad percent char ％ instead of % into file '.$code.'/'.$file);
+				$result=preg_match('/=--$/m', $filecontent);	// A special % char we don't want. We want the common one.
+				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
+				$this->assertTrue($result == 0, 'Found a translation KEY=-- into file '.$code.'/'.$file.'. We probably want Key=- instead.');
+
+				$result=strpos($filecontent, '％');	// A special % char we don't want. We want the common one.
+				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
+				$this->assertTrue($result === false, 'Found a bad percent char ％ instead of % into file '.$code.'/'.$file);
 			}
 		}
 
