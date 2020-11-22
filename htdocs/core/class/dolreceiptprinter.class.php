@@ -793,7 +793,7 @@ class dolReceiptPrinter extends Printer
 								$row = $this->db->fetch_object($resql);
 								$spacestoadd = $nbcharactbyline - strlen($langs->transnoentitiesnoconv("PaymentTypeShort".$row->code)) - 12;
 								$spaces = str_repeat(' ', $spacestoadd);
-								$amount_payment = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
+								$amount_payment = (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
 								if ($row->code == "LIQ") $amount_payment = $amount_payment + $row->pos_change; // Show amount with excess received if is cash payment
 								$this->printer->text($spaces.$langs->transnoentitiesnoconv("PaymentTypeShort".$row->code).' '.str_pad(price($amount_payment), 10, ' ', STR_PAD_LEFT)."\n");
 								if ($row->code == "LIQ" && $row->pos_change > 0) // Print change only in cash payments
