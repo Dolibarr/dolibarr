@@ -738,7 +738,7 @@ class Translate
 	 */
 	public function transcountrynoentities($str, $countrycode)
 	{
-		if ($this->tab_translate["$str$countrycode"]) return $this->transnoentities("$str$countrycode");
+		if (! empty($this->tab_translate["$str$countrycode"])) return $this->transnoentities("$str$countrycode");
 		else return $this->transnoentities($str);
 	}
 
