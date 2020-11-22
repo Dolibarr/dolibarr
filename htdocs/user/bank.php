@@ -335,9 +335,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	// Nbre max d'elements des petites listes
 	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
-	/*
-	 * Latest salary payments
-	 */
+	// Latest payments of salaries
 	if (!empty($conf->salaries->enabled) &&
 		$user->rights->salaries->read && (in_array($object->id, $childids) || $object->id == $user->id)
 		)
@@ -368,14 +366,17 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 				$objp = $db->fetch_object($resql);
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
+				print '<td class="nowraponall">';
 				$salary->id = $objp->rowid;
 				$salary->ref = $objp->rowid;
-
 				print $salary->getNomUrl(1);
-				print '</td><td class="right" width="80px">'.dol_print_date($db->jdate($objp->datesp), 'day')."</td>\n";
+				print '</td>';
+
+				print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->datesp), 'day')."</td>\n";
 				print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->dateep), 'day')."</td>\n";
-				print '<td class="right" style="min-width: 60px">'.price($objp->amount).'</td></tr>';
+				print '<td class="right" style="min-width: 60px">'.price($objp->amount).'</td>';
+
+				print '</tr>';
 				$i++;
 			}
 			$db->free($resql);
