@@ -5,7 +5,7 @@
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2019  Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,6 +54,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT');
 $donation_date = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
+$public_donation = (int) GETPOST("public", 'int');
 
 $object = new Don($db);
 $extrafields = new ExtraFields($db);
@@ -151,8 +152,8 @@ if ($action == 'update')
 		$object->country_id = (int) GETPOST('country_id', 'int');
 		$object->email = (string) GETPOST("email", 'alpha');
 		$object->date = $donation_date;
-		$object->public = (string) GETPOST("public", 'alpha');
-		$object->fk_project = GETPOST("fk_project", 'alpha');
+		$object->public = $public_donation;
+		$object->fk_project = (int) GETPOST("fk_project", 'int');
 		$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 		$object->note_public = (string) GETPOST("note_public", 'restricthtml');
 		$object->modepaymentid = (int) GETPOST('modepayment', 'int');
@@ -207,8 +208,8 @@ if ($action == 'add')
 		$object->date = $donation_date;
 		$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 		$object->note_public = (string) GETPOST("note_public", 'restricthtml');
-		$object->public = (string) GETPOST("public", 'alpha');
-		$object->fk_project = (string) GETPOST("fk_project", 'alpha');
+		$object->public = $public_donation;
+		$object->fk_project = (int) GETPOST("fk_project", 'int');
 		$object->modepaymentid = (int) GETPOST('modepayment', 'int');
 
 		// Fill array 'array_options' with data from add form
@@ -416,7 +417,7 @@ if ($action == 'create')
 
 	// Public donation
 	print '<tr><td class="fieldrequired">'.$langs->trans("PublicDonation")."</td><td>";
-	print $form->selectyesno("public", isset($_POST["public"]) ? $_POST["public"] : 1, 1);
+	print $form->selectyesno("public", $public_donation, 1);
 	print "</td></tr>\n";
 
 	if (empty($conf->societe->enabled) || empty($conf->global->DONATION_USE_THIRDPARTIES))
@@ -552,7 +553,7 @@ if (!empty($id) && $action == 'edit')
 	}
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PublicDonation")."</td><td>";
-	print $form->selectyesno("public", 1, 1);
+	print $form->selectyesno("public", $object->public, 1);
 	print "</td>";
 	print "</tr>\n";
 
@@ -597,8 +598,7 @@ if (!empty($id) && $action == 'edit')
 	print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
 	// Project
-	if (!empty($conf->projet->enabled))
-	{
+	if (!empty($conf->projet->enabled)) {
 		$formproject = new FormProjets($db);
 
 		$langs->load('projects');
