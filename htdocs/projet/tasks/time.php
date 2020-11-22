@@ -897,6 +897,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 		if ($id) $param .= '&id='.urlencode($id);
 		if ($projectid) $param .= '&projectid='.urlencode($projectid);
 		if ($withproject) $param .= '&withproject='.urlencode($withproject);
+		if ($page) $param .= '&page='.urlencode($page);
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -1431,8 +1432,6 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 				}
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
-				if (!$i) $totalarray['totalvaluebilledfield'] = $totalarray['nbfield'];
-				$totalarray['totalvaluebilled'] += $valuebilled;
 			}
 
 			/*
