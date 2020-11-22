@@ -1,0 +1,75 @@
+# Copyright (C) 2020 Laurent Destailleur
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+# Module label 'ModuleRecruitmentName'
+ModuleRecruitmentName = Darbā pieņemšana
+# Module description 'ModuleRecruitmentDesc'
+ModuleRecruitmentDesc = Pārvaldiet un sekojiet personāla atlases kampaņām jaunām darba vietām
+
+#
+# Admin page
+#
+RecruitmentSetup = Personāla atlases iestatīšana
+Settings = Iestatījumi
+RecruitmentSetupPage = Šeit ievadiet personāla atlases moduļa galveno opciju iestatīšanu
+RecruitmentArea=Darbā pieņemšanas sadaļa
+PublicInterfaceRecruitmentDesc=Darba publiskās lapas ir publiski vietrāži URL, lai parādītu atvērtās darba vietas un atbildētu uz tām. Katram atklātajam darbam ir viena atšķirīga saite, kas atrodama katrā darba ierakstā.
+EnablePublicRecruitmentPages=Iespējojiet atvērto darbu publiskās lapas
+
+#
+# About page
+#
+About = Par
+RecruitmentAbout = Par darbā pieņemšanu
+RecruitmentAboutPage = Darbā pieņemšana par lapu
+NbOfEmployeesExpected=Paredzamais darbinieku skaits
+JobLabel=Amats
+WorkPlace=Darba vieta
+DateExpected=Paredzamais datums
+FutureManager=Topošais vadītājs
+ResponsibleOfRecruitement=Atbildīgais par darbā pieņemšanu
+IfJobIsLocatedAtAPartner=Ja darbs atrodas partnera vietā
+PositionToBeFilled=Ieņemamais amats
+PositionsToBeFilled=Job positions
+ListOfPositionsToBeFilled=List of job positions
+NewPositionToBeFilled=New job positions
+
+JobOfferToBeFilled=Job position to be filled
+ThisIsInformationOnJobPosition=Informācija par aizpildāmo darba vietu
+ContactForRecruitment=Kontaktpersona personāla atlasei
+EmailRecruiter=E-pasta vervētājs
+ToUseAGenericEmail=Lai izmantotu vispārīgu e-pastu. Ja tas nav noteikts, tiks izmantots e-pasts, kas atbildīgs par personāla atlasi
+NewCandidature=New application
+ListOfCandidatures=List of applications
+RequestedRemuneration=Pieprasītā atlīdzība
+ProposedRemuneration=Piedāvātā atlīdzība
+ContractProposed=Piedāvātais līgums
+ContractSigned=Parakstīts līgums
+ContractRefused=Contract refused
+RecruitmentCandidature=Application
+JobPositions=Darba pozīcijas
+RecruitmentCandidatures=Applications
+InterviewToDo=Intervija, kas jādara
+AnswerCandidature=Application answer
+YourCandidature=Your application
+YourCandidatureAnswerMessage=Thanks you for your application.<br>...
+JobClosedTextCandidateFound=The job position is closed. The position has been filled.
+JobClosedTextCanceled=The job position is closed.
+ExtrafieldsJobPosition=Complementary attributes (job positions)
+ExtrafieldsCandidatures=Complementary attributes (job applications)

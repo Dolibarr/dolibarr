@@ -102,7 +102,7 @@ print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="display">';
 
-dol_fiche_head();
+print dol_get_fiche_head();
 
 print '<table class="border centpercent">';
 
@@ -146,7 +146,7 @@ if (!empty($cat_id))
 
 print '</table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '</form>';
 
@@ -170,9 +170,9 @@ if ($action == 'display' || $action == 'delete') {
 				print '<td>'.length_accountg($cpt->account_number).'</td>';
 				print '<td>'.$cpt->label.'</td>';
 				print '<td class="right">';
-				print "<a href= '".$_SERVER['PHP_SELF']."?action=delete&account_category=".$cat_id."&cptid=".$cpt->rowid."'>";
+				print '<a href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&account_category='.$cat_id.'&cptid='.$cpt->rowid.'">';
 				print $langs->trans("DeleteFromCat");
-				print img_picto($langs->trans("DeleteFromCat"), 'unlink');
+				print img_picto($langs->trans("DeleteFromCat"), 'unlink', 'class="paddingleft"');
 				print "</a>";
 				print "</td>";
 				print "</tr>\n";

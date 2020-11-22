@@ -58,7 +58,7 @@ $error = 0;
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $origin = GETPOST('origin', 'alpha');
 $originid = GETPOST('originid', 'int');
 $confirm = GETPOST('confirm', 'alpha');
@@ -97,22 +97,22 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Common permissions
-$usercanread		= $user->rights->supplier_proposal->lire;
+$usercanread = $user->rights->supplier_proposal->lire;
 $usercancreate		= $user->rights->supplier_proposal->creer;
 $usercandelete		= $user->rights->supplier_proposal->supprimer;
 
 // Advanced permissions
-$usercanvalidate	= ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->supplier_proposal->validate_advance)));
-$usercansend		= (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->supplier_proposal->send_advance);
+$usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->supplier_proposal->validate_advance)));
+$usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->supplier_proposal->send_advance);
 
 // Additional area permissions
-$usercanclose		= $user->rights->supplier_proposal->cloturer;
-$usercancreateorder	= $user->rights->fournisseur->commande->creer;
+$usercanclose = $user->rights->supplier_proposal->cloturer;
+$usercancreateorder = $user->rights->fournisseur->commande->creer;
 
 // Permissions for includes
-$permissionnote		= $usercancreate; // Used by the include of actions_setnotes.inc.php
-$permissiondellink	= $usercancreate; // Used by the include of actions_dellink.inc.php
-$permissiontoedit	= $usercancreate; // Used by the include of actions_lineupdown.inc.php
+$permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
+$permissiontoedit = $usercancreate; // Used by the include of actions_lineupdown.inc.php
 
 
 /*
@@ -191,7 +191,7 @@ if (empty($reshook))
 				$outputlangs->setDefaultLang($newlang);
 			}
 			$ret = $object->fetch($id); // Reload to get new records
-			$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
 
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -217,7 +217,7 @@ if (empty($reshook))
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
 					}
-					$model = $object->modelpdf;
+					$model = $object->model_pdf;
 					$ret = $object->fetch($id); // Reload to get new records
 
 					$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -229,7 +229,7 @@ if (empty($reshook))
 			else setEventMessages($langs->trans($object->error), null, 'errors');
 		}
 	} elseif ($action == 'setdate_livraison' && $usercancreate) {
-		$result = $object->set_date_livraison($user, dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
+		$result = $object->setDeliveryDate($user, dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
 		if ($result < 0)
 			dol_print_error($db, $object->error);
 	}
@@ -257,7 +257,8 @@ if (empty($reshook))
 			{
 				if ($object->fetch(GETPOST('copie_supplier_proposal')) > 0) {
 					$object->ref = GETPOST('ref');
-					$object->date_livraison = $date_delivery;
+					$object->date_livraison = $date_delivery;	// deprecated
+					$object->delivery_date = $date_delivery;
 					$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
 					$object->cond_reglement_id = GETPOST('cond_reglement_id');
 					$object->mode_reglement_id = GETPOST('mode_reglement_id');
@@ -266,9 +267,10 @@ if (empty($reshook))
 					$object->remise_absolue = GETPOST('remise_absolue');
 					$object->socid = GETPOST('socid');
 					$object->fk_project = GETPOST('projectid', 'int');
-					$object->modelpdf = GETPOST('model');
+					$object->model_pdf = GETPOST('model');
 					$object->author = $user->id; // deprecated
-					$object->note = GETPOST('note', 'none');
+					$object->note = GETPOST('note', 'restricthtml');
+					$object->note_private = GETPOST('note', 'restricthtml');
 					$object->statut = SupplierProposal::STATUS_DRAFT;
 
 					$id = $object->create_from($user);
@@ -278,15 +280,17 @@ if (empty($reshook))
 			} else {
 				$object->ref = GETPOST('ref');
 				$object->date_livraison = $date_delivery;
+				$object->delivery_date = $date_delivery;
 				$object->demand_reason_id = GETPOST('demand_reason_id');
 				$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
 				$object->cond_reglement_id = GETPOST('cond_reglement_id');
 				$object->mode_reglement_id = GETPOST('mode_reglement_id');
 				$object->fk_account = GETPOST('fk_account', 'int');
 				$object->fk_project = GETPOST('projectid', 'int');
-				$object->modelpdf = GETPOST('model');
+				$object->model_pdf = GETPOST('model');
 				$object->author = $user->id; // deprecated
-				$object->note = GETPOST('note', 'none');
+				$object->note = GETPOST('note', 'restricthtml');
+				$object->note_private = GETPOST('note', 'restricthtml');
 
 				$object->origin = GETPOST('origin');
 				$object->origin_id = GETPOST('originid');
@@ -436,7 +440,7 @@ if (empty($reshook))
 								$outputlangs = new Translate("", $conf);
 								$outputlangs->setDefaultLang($newlang);
 							}
-							$model = $object->modelpdf;
+							$model = $object->model_pdf;
 
 							$ret = $object->fetch($id); // Reload to get new records
 							$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -482,7 +486,7 @@ if (empty($reshook))
 		} else {
 			// prevent browser refresh from closing proposal several times
 			if ($object->statut == SupplierProposal::STATUS_VALIDATED) {
-				$object->cloture($user, GETPOST('statut'), GETPOST('note', 'none'));
+				$object->cloture($user, GETPOST('statut'), GETPOST('note', 'restricthtml'));
 			}
 		}
 	}
@@ -493,7 +497,7 @@ if (empty($reshook))
 	// Actions to send emails
 	$triggersendname = 'PROPOSAL_SUPPLIER_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO';
-	$trackid = 'spr'.$object->id;
+	$trackid = 'spro'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	// Actions to build doc
@@ -517,7 +521,7 @@ if (empty($reshook))
 				$outputlangs->setDefaultLang($newlang);
 			}
 			$ret = $object->fetch($id); // Reload to get new records
-			$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
 	}	elseif ($action == "setabsolutediscount" && $usercancreate) {
 		if ($_POST["remise_id"]) {
@@ -634,7 +638,7 @@ if (empty($reshook))
 
 					// if we use supplier description of the products
 					if (!empty($productsupplier->desc_supplier) && !empty($conf->global->PRODUIT_FOURN_TEXTS)) {
-					    $desc = $productsupplier->desc_supplier;
+						$desc = $productsupplier->desc_supplier;
 					} else $desc = $productsupplier->description;
 
 					if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
@@ -684,7 +688,7 @@ if (empty($reshook))
 						$productsupplier->fourn_multicurrency_unitprice,
 						$date_start,
 						$date_end
-                    );
+					);
 
 					//var_dump($tva_tx);var_dump($productsupplier->fourn_pu);var_dump($price_base_type);exit;
 					if ($result < 0)
@@ -780,7 +784,7 @@ if (empty($reshook))
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
 					}
-					$model = $object->modelpdf;
+					$model = $object->model_pdf;
 					$ret = $object->fetch($id); // Reload to get new records
 
 					$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -841,7 +845,7 @@ if (empty($reshook))
 			$info_bits |= 0x01;
 
 		// Clean parameters
-		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'none'));
+		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'restricthtml'));
 
 		// Define vat_rate
 		$vat_rate = str_replace('*', '', $vat_rate);
@@ -963,7 +967,7 @@ if (empty($reshook))
 						$outputlangs->setDefaultLang($newlang);
 					}
 					$ret = $object->fetch($id); // Reload to get new records
-					$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 
 				unset($_POST['qty']);
@@ -1039,7 +1043,7 @@ if (empty($reshook))
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
 		if ($ret < 0) $error++;
 
 		if (!$error)
@@ -1133,7 +1137,7 @@ if ($action == 'create')
 		print '<input type="hidden" name="originid" value="'.$originid.'">';
 	}
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -1348,7 +1352,7 @@ if ($action == 'create')
 
 	if (!empty($conf->global->SUPPLIER_PROPOSAL_CLONE_ON_CREATE_PAGE)) print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("CreateDraft").'">';
@@ -1381,7 +1385,7 @@ if ($action == 'create')
 	$soc->fetch($object->socid);
 
 	$head = supplier_proposal_prepare_head($object);
-	dol_fiche_head($head, 'comm', $langs->trans('CommRequest'), -1, 'supplier_proposal');
+	print dol_get_fiche_head($head, 'comm', $langs->trans('CommRequest'), -1, 'supplier_proposal');
 
 	$formconfirm = '';
 
@@ -1561,11 +1565,11 @@ if ($action == 'create')
 		print '<form name="editdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post" class="formconsumeproduce">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setdate_livraison">';
-		print $form->selectDate($object->date_livraison, 'liv_', '', '', '', "editdate_livraison");
+		print $form->selectDate($object->delivery_date, 'liv_', '', '', '', "editdate_livraison");
 		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	} else {
-		print dol_print_date($object->date_livraison, 'daytext');
+		print dol_print_date($object->delivery_date, 'daytext');
 	}
 	print '</td>';
 	print '</tr>';
@@ -1802,7 +1806,7 @@ if ($action == 'create')
 	print '</div>';
 	print "</form>\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	if ($action == 'statut')
 	{
@@ -1900,7 +1904,7 @@ if ($action == 'create')
 
 				// Delete
 				if (($object->statut == SupplierProposal::STATUS_DRAFT && $usercancreate) || $usercandelete) {
-					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete"';
+					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'"';
 					print '>'.$langs->trans('Delete').'</a></div>';
 				}
 			}
@@ -1922,7 +1926,7 @@ if ($action == 'create')
 		$genallowed = $usercanread;
 		$delallowed = $usercancreate;
 
-		print $formfile->showdocuments('supplier_proposal', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+		print $formfile->showdocuments('supplier_proposal', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
 
 		// Show links to link elements
@@ -1950,7 +1954,7 @@ if ($action == 'create')
 	$defaulttopic = 'SendAskRef';
 	$diroutput = $conf->supplier_proposal->dir_output;
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO';
-	$trackid = 'spr'.$object->id;
+	$trackid = 'spro'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }

@@ -55,6 +55,10 @@ class Asset extends CommonObject
 	public $picto = 'asset';
 
 
+	const STATUS_DRAFT = 0;
+	const STATUS_VALIDATED = 1;
+
+
 	/**
 	 *  'type' if the field format.
 	 *  'label' the translation key.
@@ -109,44 +113,44 @@ class Asset extends CommonObject
 	 */
 	public $entity;
 
-    /**
-     * @var string Asset label
-     */
-    public $label;
+	/**
+	 * @var string Asset label
+	 */
+	public $label;
 
 	public $amount;
 
 	/**
 	 * @var int Thirdparty ID
 	 */
-    public $fk_soc;
+	public $fk_soc;
 
 	/**
 	 * @var string description
 	 */
 	public $description;
 
-	public $note_public;
-	public $note_private;
-
 	/**
-     * @var integer|string date_creation
-     */
+	 * @var integer|string date_creation
+	 */
 	public $date_creation;
 
 
 	public $tms;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_creat;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_modif;
 
+	/**
+	 * @var string import key
+	 */
 	public $import_key;
 
 	/**
@@ -331,7 +335,7 @@ class Asset extends CommonObject
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
-		$url = dol_buildpath('/assets/card.php', 1).'?id='.$this->id;
+		$url = dol_buildpath('/asset/card.php', 1).'?id='.$this->id;
 
 		if ($option != 'nolink')
 		{
@@ -377,7 +381,7 @@ class Asset extends CommonObject
 		return $this->LibStatut($this->status, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -387,38 +391,25 @@ class Asset extends CommonObject
 	 */
 	public static function LibStatut($status, $mode = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 
-		if ($mode == 0 || $mode == 1)
-		{
-			if ($status == 1) return $langs->trans('Enabled');
-			elseif ($status == 0) return $langs->trans('Disabled');
-		} elseif ($mode == 2)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-		} elseif ($mode == 3)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
-		} elseif ($mode == 4)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-		} elseif ($mode == 5)
-		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
-		} elseif ($mode == 6)
-		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
-		}
+		$langs->load("contracts");
+		$labelStatus = array();
+		$labelStatus[self::STATUS_DRAFT] = $langs->trans('Disabled');
+		$labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+		$labelStatusShort = array();
+		$labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Disabled');
+		$labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+
+		$statusType = 'status0';
+		if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
+
+		return dolGetStatus($labelStatus[$status], $labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 	/**
-	 *	Charge les informations d'ordre info dans l'objet commande
+	 *	Load info into asset object
 	 *
 	 *	@param  int		$id       Id of order
 	 *	@return	void

@@ -35,7 +35,7 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 
 
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtourl = GETPOST('backtourl', 'alpha');
 
 
@@ -80,7 +80,6 @@ if (GETPOST('state')) $requestedpermissionsarray = explode(',', GETPOST('state')
 //var_dump($requestedpermissionsarray);exit;
 
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
-/** @var $apiService Service */
 //$apiService = $serviceFactory->createService('StripeTest', $credentials, $storage, $requestedpermissionsarray);
 
 $sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token set service='StripeTest', entity=".$conf->entity;
@@ -118,7 +117,7 @@ if (!empty($_GET['code']))     // We are coming from oauth provider page
 	//$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 	//print load_fiche_titre($langs->trans("OAuthSetup"),$linkback,'title_setup');
 
-	//dol_fiche_head();
+	//print dol_get_fiche_head();
 	// retrieve the CSRF state parameter
 	$state = isset($_GET['state']) ? $_GET['state'] : null;
 	//print '<table>';

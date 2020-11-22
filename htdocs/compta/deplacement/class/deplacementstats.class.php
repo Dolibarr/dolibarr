@@ -30,24 +30,24 @@ include_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php'
  */
 class DeplacementStats extends Stats
 {
-    /**
-     * @var string Name of table without prefix where object is stored
-     */
-    public $table_element;
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element;
 
-    public $socid;
-    public $userid;
+	public $socid;
+	public $userid;
 
-    public $from;
-    public $field;
-    public $where;
+	public $from;
+	public $field;
+	public $where;
 
 	/**
 	 * Constructor
 	 *
 	 * @param 	DoliDB		$db		   Database handler
 	 * @param 	int			$socid	   Id third party
-     * @param   mixed		$userid    Id user for filter or array of user ids
+	 * @param   mixed		$userid    Id user for filter or array of user ids
 	 * @return 	void
 	 */
 	public function __construct($db, $socid = 0, $userid = 0)
@@ -55,8 +55,8 @@ class DeplacementStats extends Stats
 		global $conf;
 
 		$this->db = $db;
-        $this->socid = $socid;
-        $this->userid = $userid;
+		$this->socid = $socid;
+		$this->userid = $userid;
 
 		$object = new Deplacement($this->db);
 		$this->from = MAIN_DB_PREFIX.$object->table_element;
@@ -69,7 +69,7 @@ class DeplacementStats extends Stats
 			$this->where .= " AND fk_soc = ".$this->socid;
 		}
 		if (is_array($this->userid) && count($this->userid) > 0) $this->where .= ' AND fk_user IN ('.join(',', $this->userid).')';
-        elseif ($this->userid > 0) $this->where .= ' AND fk_user = '.$this->userid;
+		elseif ($this->userid > 0) $this->where .= ' AND fk_user = '.$this->userid;
 	}
 
 
@@ -93,7 +93,7 @@ class DeplacementStats extends Stats
 	 * 	Renvoie le nombre de facture par mois pour une annee donnee
 	 *
 	 *	@param	string	$year	Year to scan
-     *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 *	@return	array			Array of values
 	 */
 	public function getNbByMonth($year, $format = 0)
@@ -103,7 +103,7 @@ class DeplacementStats extends Stats
 		$sql .= " WHERE YEAR(dated) = ".$year;
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
-        $sql .= $this->db->order('dm', 'DESC');
+		$sql .= $this->db->order('dm', 'DESC');
 
 		$res = $this->_getNbByMonth($year, $sql, $format);
 		//var_dump($res);print '<br>';
@@ -115,14 +115,14 @@ class DeplacementStats extends Stats
 	 * 	Renvoie le montant de facture par mois pour une annee donnee
 	 *
 	 *	@param	int		$year		Year to scan
-     *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 *	@return	array				Array of values
 	 */
 	public function getAmountByMonth($year, $format = 0)
 	{
 		$sql = "SELECT date_format(dated,'%m') as dm, sum(".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE date_format(dated,'%Y') = '".$year."'";
+		$sql .= " WHERE date_format(dated,'%Y') = '".$this->db->escape($year)."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
@@ -142,10 +142,10 @@ class DeplacementStats extends Stats
 	{
 		$sql = "SELECT date_format(dated,'%m') as dm, avg(".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE date_format(dated,'%Y') = '".$year."'";
+		$sql .= " WHERE date_format(dated,'%Y') = '".$this->db->escape($year)."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
-        $sql .= $this->db->order('dm', 'DESC');
+		$sql .= $this->db->order('dm', 'DESC');
 
 		return $this->_getAverageByMonth($year, $sql);
 	}
@@ -155,14 +155,14 @@ class DeplacementStats extends Stats
 	 *
 	 *	@return	array				Array of values
 	 */
-    public function getAllByYear()
-    {
-        $sql = "SELECT date_format(dated,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
-        $sql .= " FROM ".$this->from;
-        $sql .= " WHERE ".$this->where;
-        $sql .= " GROUP BY year";
-        $sql .= $this->db->order('year', 'DESC');
+	public function getAllByYear()
+	{
+		$sql = "SELECT date_format(dated,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
+		$sql .= " FROM ".$this->from;
+		$sql .= " WHERE ".$this->where;
+		$sql .= " GROUP BY year";
+		$sql .= $this->db->order('year', 'DESC');
 
-        return $this->_getAllByYear($sql);
-    }
+		return $this->_getAllByYear($sql);
+	}
 }

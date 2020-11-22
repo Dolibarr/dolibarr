@@ -214,7 +214,7 @@ if ($resql)
 	print '<td class="right">%</td><td class="right">'.$langs->trans("Amount").'</td><td class="right">%</td></tr>';
 
 	require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class.php';
-	$Rejet = new RejetPrelevement($db, $user);
+	$Rejet = new RejetPrelevement($db, $user, $type);
 
 	while ($i < $num)
 	{

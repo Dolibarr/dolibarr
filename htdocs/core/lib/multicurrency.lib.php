@@ -30,19 +30,26 @@
  */
 function multicurrencyAdminPrepareHead()
 {
-    global $langs, $conf;
+	global $langs, $conf;
 
-    $h = 0;
-    $head = array();
+	$h = 0;
+	$head = array();
 
-    $head[$h][0] = dol_buildpath("/admin/multicurrency.php", 1);
-    $head[$h][1] = $langs->trans("Parameters");
-    $head[$h][2] = 'settings';
-    $h++;
+	$head[$h][0] = dol_buildpath("/admin/multicurrency.php", 1);
+	$head[$h][1] = $langs->trans("Parameters");
+	$head[$h][2] = 'settings';
+	$h++;
 
-    complete_head_from_modules($conf, $langs, null, $head, $h, 'multicurrency');
+	$head[$h][0] = dol_buildpath("/multicurrency/multicurrency_rate.php", 1);
+	$head[$h][1] = $langs->trans("TabTitleMulticurrencyRate");
+	$head[$h][2] = 'ratelist';
+	$h++;
 
-    return $head;
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'multicurrency');
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'multicurrency', 'remove');
+
+	return $head;
 }
 
 /**

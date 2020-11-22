@@ -46,7 +46,7 @@ function donation_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/don/admin/donation_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
-    $head[$h][2] = 'attributes';
+	$head[$h][2] = 'attributes';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'donation_admin', 'remove');
@@ -79,10 +79,10 @@ function donation_prepare_head($object)
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'donation');
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->don->dir_output.'/'.dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-    $nbLinks = Link::count($db, $object->element, $object->id);
+	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/don/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
 	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';

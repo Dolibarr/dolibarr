@@ -118,7 +118,7 @@ for ($i = 0; $i < $nbtoshow; $i++)
 					$buyer = new Societe($db);
 					if ($_SESSION["CASHDESK_ID_THIRDPARTY"] > 0) $buyer->fetch($_SESSION["CASHDESK_ID_THIRDPARTY"]);
 					echo $form->load_tva('selTva', (GETPOSTISSET("selTva") ? GETPOST("selTva", 'alpha', 2) : $vatrate), $mysoc, $buyer, 0, 0, '', false, -1);
-			    ?>
+				?>
                 </td>
 				<td></td>
 			</tr>
@@ -141,7 +141,7 @@ for ($i = 0; $i < $nbtoshow; $i++)
 </fieldset>
 
 <!-- ========================= Cadre "Amount" ============================= -->
-<form id="frmDifference"  class="formulaire1" method="post" onsubmit="javascript: return verifReglement()" action="validation_verif.php?action=valide_achat">
+<form id="frmDifference"  class="formulaire1" method="post" onsubmit="javascript: return verifReglement()" action="validation_verif.php?action=validate_sell">
 	<input type="hidden" name="hdnChoix" value="" />
 	<input type="hidden" name="token" value="<?php echo newToken(); ?>" />
 <fieldset class="cadre_facturation"><legend class="titre1"><?php echo $langs->trans("Amount"); ?></legend>

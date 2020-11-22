@@ -72,7 +72,6 @@ Deleted=Raderade
 
 # Dict
 Type=Typ
-Category=Analytisk kod
 Severity=Allvarlighet
 
 # Email templates
@@ -128,7 +127,6 @@ TicketsAutoAssignTicket=Tilldela automatiskt användaren som skapade biljetten
 TicketsAutoAssignTicketHelp=När du skapar en biljett kan användaren automatiskt tilldelas biljetten.
 TicketNumberingModules=Biljettnummermodul
 TicketNotifyTiersAtCreation=Meddela tredje part vid skapandet
-TicketGroup=Grupp
 TicketsDisableCustomerEmail=Avaktivera alltid e-postmeddelanden när en biljett skapas från det offentliga gränssnittet
 TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
@@ -162,7 +160,7 @@ CreatedBy=Skapad av
 NewTicket=Ny biljett
 SubjectAnswerToTicket=Biljettsvar
 TicketTypeRequest=Förfrågan typ
-TicketCategory=Analytisk kod
+TicketCategory=Grupp
 SeeTicket=Se biljett
 TicketMarkedAsRead=Biljett har markerats som läst
 TicketReadOn=Läs vidare

@@ -280,7 +280,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 			else $sql .= "'".$db->escape($_POST[$listfieldvalue[$i]])."'";
 			$i++;
 		}
-		$sql .= " WHERE ".$rowidcol." = '".$rowid."'";
+		$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
 
 		dol_syslog("actionmodify", LOG_DEBUG);
 		//print $sql;
@@ -302,7 +302,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 {
 	if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; } else { $rowidcol = "rowid"; }
 
-	$sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol."='".$rowid."'";
+	$sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol." = ".((int) $rowid);
 
 	dol_syslog("delete", LOG_DEBUG);
 	$result = $db->query($sql);
@@ -323,9 +323,9 @@ if ($action == $acts[0])
 	if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; } else { $rowidcol = "rowid"; }
 
 	if ($rowid) {
-		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol."='".$rowid."'";
+		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol." = ".((int) $rowid);
 	} elseif ($code) {
-		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".$code."'";
+		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".$db->escape($code)."'";
 	}
 
 	$result = $db->query($sql);
@@ -341,9 +341,9 @@ if ($action == $acts[1])
 	if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; } else { $rowidcol = "rowid"; }
 
 	if ($rowid) {
-		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol."='".$rowid."'";
+		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol." = ".((int) $rowid);
 	} elseif ($code) {
-		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".$code."'";
+		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".$db->escape($code)."'";
 	}
 
 	$result = $db->query($sql);
@@ -359,9 +359,9 @@ if ($action == 'activate_favorite')
 	if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; } else { $rowidcol = "rowid"; }
 
 	if ($rowid) {
-		$sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE ".$rowidcol."='".$rowid."'";
+		$sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE ".$rowidcol." = ".((int) $rowid);
 	} elseif ($code) {
-		$sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE code='".$code."'";
+		$sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE code='".$db->escape($code)."'";
 	}
 
 	$result = $db->query($sql);
@@ -377,9 +377,9 @@ if ($action == 'disable_favorite')
 	if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; } else { $rowidcol = "rowid"; }
 
 	if ($rowid) {
-		$sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE ".$rowidcol."='".$rowid."'";
+		$sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE ".$rowidcol." = ".((int) $rowid);
 	} elseif ($code) {
-		$sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE code='".$code."'";
+		$sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE code='".$db->escape($code)."'";
 	}
 
 	$result = $db->query($sql);
@@ -472,13 +472,13 @@ if ($id)
 
 			if ($valuetoshow != '') {
 				print '<td class="'.$class.'">';
-                if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
-                    print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
-                } elseif (!empty($tabhelp[$id][$value])) {
-                    print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
-                } else {
-                    print $valuetoshow;
-                }
+				if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
+					print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+				} elseif (!empty($tabhelp[$id][$value])) {
+					print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
+				} else {
+					print $valuetoshow;
+				}
 				print '</td>';
 			}
 			if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') $alabelisused = 1;
@@ -669,11 +669,11 @@ if ($id)
 					print "</td>";
 
 					// Modify link
-					if ($canbemodified) print '<td class="center"><a class="reposition editfielda" href="'.$url.'action=edit">'.img_edit().'</a></td>';
+					if ($canbemodified) print '<td class="center"><a class="reposition editfielda" href="'.$url.'action=edit&token='.newToken().'">'.img_edit().'</a></td>';
 					else print '<td>&nbsp;</td>';
 
 					// Delete link
-					if ($iserasable) print '<td class="center"><a href="'.$url.'action=delete">'.img_delete().'</a></td>';
+					if ($iserasable) print '<td class="center"><a href="'.$url.'action=delete&token='.newToken().'">'.img_delete().'</a></td>';
 					else print '<td>&nbsp;</td>';
 
 					print "</tr>\n";

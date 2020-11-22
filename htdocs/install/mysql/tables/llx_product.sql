@@ -30,7 +30,7 @@ create table llx_product
   ref_ext                       varchar(128),                       -- reference into an external system (not used by dolibarr)
 
   datec                         datetime,
-  tms                           timestamp,
+  tms                           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_parent                     integer	  DEFAULT 0,                -- Not used. Used by external modules. Virtual product id
 
   label                         varchar(255) NOT NULL,
@@ -39,6 +39,7 @@ create table llx_product
   note                          text,
   customcode                    varchar(32),                        -- Optionnal custom code
   fk_country                    integer DEFAULT NULL,               -- Optionnal id of original country
+  fk_state                      integer DEFAULT NULL,               -- Optionnal id of original state/province
   price                         double(24,8) DEFAULT 0,
   price_ttc                     double(24,8) DEFAULT 0,
   price_min                     double(24,8) DEFAULT 0,
@@ -91,7 +92,7 @@ create table llx_product
   lifo                          double(24,8),                       -- To store valuation of stock calculated using lifo method, for this product. TODO Not used, should be replaced by stock value stored into movement table.
   fk_default_warehouse          integer      DEFAULT NULL,
   canvas                        varchar(32)  DEFAULT NULL,
-  finished                      tinyint      DEFAULT NULL,          -- 1=manufactured product, 0=matiere premiere
+  finished                      tinyint      DEFAULT NULL,          -- see dictionnary c_product_nature
   hidden                        tinyint      DEFAULT 0,             -- Not used. Deprecated.
   import_key                    varchar(14),                        -- Import key
   model_pdf                     varchar(255),                       -- model save dodument used

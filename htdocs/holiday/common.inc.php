@@ -33,10 +33,10 @@ $langs->loadLangs(array('user', 'other', 'holiday'));
 
 if (empty($conf->holiday->enabled))
 {
-    llxHeader('', $langs->trans('CPTitreMenu'));
-    print '<div class="tabBar">';
-    print '<span style="color: #FF0000;">'.$langs->trans('NotActiveModCP').'</span>';
-    print '</div>';
-    llxFooter();
-    exit();
+	llxHeader('', $langs->trans('CPTitreMenu'));
+	print '<div class="tabBar">';
+	print '<span style="color: #FF0000;">'.$langs->trans('NotActiveModCP').'</span>';
+	print '</div>';
+	llxFooter();
+	exit();
 }

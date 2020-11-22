@@ -136,11 +136,14 @@ class Tickets extends DolibarrApi
         }
 
         // Check parameters
-        if (!$id && !$track_id && !$ref) {
+        if (($id < 0) && !$track_id && !$ref) {
             throw new RestException(401, 'Wrong parameters');
         }
-
-        $result = $this->ticket->fetch($id, $ref, $track_id);
+		if ($id == 0) {
+			$result = $this->ticket->initAsSpecimen();
+		} else {
+			$result = $this->ticket->fetch($id, $ref, $track_id);
+		}
         if (!$result) {
             throw new RestException(404, 'Ticket not found');
         }
@@ -204,7 +207,6 @@ class Tickets extends DolibarrApi
             }
             $this->ticket->history = $history;
         }
-
 
         if (!DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
@@ -276,7 +278,7 @@ class Tickets extends DolibarrApi
             $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
-        $sql .= $db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
 
         if ($limit) {
             if ($page < 0) {
@@ -287,13 +289,13 @@ class Tickets extends DolibarrApi
             $sql .= $this->db->plimit($limit, $offset);
         }
 
-        $result = $db->query($sql);
+        $result = $this->db->query($sql);
         if ($result) {
-            $num = $db->num_rows($result);
+        	$num = $this->db->num_rows($result);
             $i = 0;
             while ($i < $num) {
-                $obj = $db->fetch_object($result);
-                $ticket_static = new Ticket($db);
+            	$obj = $this->db->fetch_object($result);
+            	$ticket_static = new Ticket($this->db);
                 if ($ticket_static->fetch($obj->rowid)) {
                     if ($ticket_static->fk_user_assign > 0) {
                         $userStatic = new User($this->db);
@@ -487,8 +489,8 @@ class Tickets extends DolibarrApi
     /**
      * Clean sensible object datas
      *
-     * @param   object  $object	Object to clean
-     * @return	array	Array of cleaned object properties
+     * @param   Object  $object     Object to clean
+     * @return  Object              Object with cleaned properties
      *
      * @todo use an array for properties to clean
      *

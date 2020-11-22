@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2020  Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  */
 
 /**
- * \file        class/recruitmentjobposition.class.php
+ * \file        htdocs/recruitment/class/recruitmentjobposition.class.php
  * \ingroup     recruitment
  * \brief       This file is a CRUD class file for RecruitmentJobPosition (Create/Read/Update/Delete)
  */
@@ -31,6 +31,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class RecruitmentJobPosition extends CommonObject
 {
+	/**
+	 * @var string ID of module.
+	 */
+	public $module = 'recruitment';
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -78,7 +83,7 @@ class RecruitmentJobPosition extends CommonObject
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
-	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
+	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'maxwidth200', 'wordbreak', 'tdoverflowmax200'
 	 *  'help' is a string visible as a tooltip on field
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
@@ -93,14 +98,14 @@ class RecruitmentJobPosition extends CommonObject
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	public $fields = array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'position'=>5, 'notnull'=>1, 'default'=>'1', 'index'=>1),
-		'label' => array('type'=>'varchar(255)', 'label'=>'JobLabel', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth500', 'showoncombobox'=>'1', 'autofocusoncreate'=>1),
+		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
+		'label' => array('type'=>'varchar(255)', 'label'=>'JobLabel', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth500', 'csslist'=>'tdoverflowmax300', 'showoncombobox'=>'1', 'autofocusoncreate'=>1),
 		'qty' => array('type'=>'integer', 'label'=>'NbOfEmployeesExpected', 'enabled'=>'1', 'position'=>45, 'notnull'=>1, 'visible'=>1, 'default'=>'1', 'isameasure'=>'1', 'css'=>'maxwidth75imp',),
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>'1', 'position'=>52, 'notnull'=>-1, 'visible'=>-1, 'index'=>1,),
-		'fk_user_recruiter' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'ResponsibleOfRecruitement', 'enabled'=>'1', 'position'=>54, 'notnull'=>1, 'visible'=>1, 'foreignkey'=>'user.rowid',),
+		'fk_user_recruiter' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'ResponsibleOfRecruitement', 'enabled'=>'1', 'position'=>54, 'notnull'=>1, 'visible'=>1, 'foreignkey'=>'user.rowid', 'csslist'=>'tdoverflowmax150'),
 		'email_recruiter' => array('type'=>'varchar(255)', 'label'=>'EmailRecruiter', 'enabled'=>'1', 'position'=>54, 'notnull'=>0, 'visible'=>-1, 'help'=>'ToUseAGenericEmail'),
 		'fk_user_supervisor' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'FutureManager', 'enabled'=>'1', 'position'=>55, 'notnull'=>0, 'visible'=>-1, 'foreignkey'=>'user.rowid',),
 		'fk_establishment' => array('type'=>'integer:Establishment:hrm/class/establishment.class.php', 'label'=>'Establishment', 'enabled'=>'$conf->hrm->enabled', 'position'=>56, 'notnull'=>0, 'visible'=>-1, 'foreignkey'=>'establishment.rowid',),
@@ -110,24 +115,42 @@ class RecruitmentJobPosition extends CommonObject
 		'description' => array('type'=>'html', 'label'=>'Description', 'enabled'=>'1', 'position'=>65, 'notnull'=>0, 'visible'=>3,),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>101, 'notnull'=>0, 'visible'=>0,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>102, 'notnull'=>0, 'visible'=>0,),
-		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
+		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-4,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
 		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>'1', 'position'=>900, 'notnull'=>0, 'visible'=>0,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
-		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>1, 'default'=>'0', 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '3'=>'Recruited', '9'=>'Canceled'),),
+		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>5, 'default'=>'0', 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '3'=>'Recruited', '9'=>'Canceled'),),
 	);
 	public $rowid;
+
+	/**
+	 * @var string ref
+	 */
 	public $ref;
 	public $entity;
+
+	/**
+	 * @var string label
+	 */
 	public $label;
 	public $qty;
 	public $fk_soc;
 	public $fk_project;
 	public $fk_user_recruiter;
+
+	/**
+	 * @var string recruiter email
+	 */
 	public $email_recruiter;
+
+	/**
+	 * @var string suggested remuneration
+	 */
+	public $remuneration_suggested;
+
 	public $fk_user_supervisor;
 	public $fk_establishment;
 	public $date_planned;
@@ -213,7 +236,7 @@ class RecruitmentJobPosition extends CommonObject
 		{
 			foreach ($this->fields as $key => $val)
 			{
-				if (is_array($val['arrayofkeyval']))
+				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval']))
 				{
 					foreach ($val['arrayofkeyval'] as $key2 => $val2)
 					{
@@ -267,11 +290,12 @@ class RecruitmentJobPosition extends CommonObject
 		unset($object->fk_user_creat);
 		unset($object->import_key);
 
-
 		// Clear fields
-		$object->ref = empty($this->fields['ref']['default']) ? "copy_of_".$object->ref : $this->fields['ref']['default'];
-		$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
-		$object->status = self::STATUS_DRAFT;
+		if (property_exists($object, 'ref')) $object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
+		if (property_exists($object, 'label')) $object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
+		if (property_exists($object, 'status')) { $object->status = self::STATUS_DRAFT; }
+		if (property_exists($object, 'date_creation')) { $object->date_creation = dol_now(); }
+		if (property_exists($object, 'date_modification')) { $object->date_modification = null; }
 		// ...
 		// Clear extrafields that are unique
 		if (is_array($object->array_options) && count($object->array_options) > 0)
@@ -386,10 +410,12 @@ class RecruitmentJobPosition extends CommonObject
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
 					$sqlwhere[] = $key.'='.$value;
-				} elseif (strpos($key, 'date') !== false) {
+				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
+				} elseif (strpos($value, '%') === false) {
+					$sqlwhere[] = $key.' IN ('.$this->db->sanitize($this->db->escape($value)).')';
 				} else {
 					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
@@ -656,6 +682,99 @@ class RecruitmentJobPosition extends CommonObject
 	}
 
 	/**
+	 *	Close the commercial proposal
+	 *
+	 *	@param      User	$user		Object user that close
+	 *	@param      int		$status		Statut
+	 *	@param      string	$note		Complete private note with this note
+	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
+	 *	@return     int         		<0 if KO, >0 if OK
+	 */
+	public function cloture($user, $status, $note = "", $notrigger = 0)
+	{
+		global $langs, $conf;
+
+		$error = 0;
+		$now = dol_now();
+
+		$this->db->begin();
+
+		$newprivatenote = dol_concatdesc($this->note_private, $note);
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " SET status = ".$status.", note_private = '".$this->db->escape($newprivatenote)."'";
+		//$sql .= ", date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
+		$sql .= " WHERE rowid = ".$this->id;
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$modelpdf = $this->model_pdf;
+			$triggerName = 'RECRUITMENTJOB_CLOSE_REFUSED';
+
+			if ($status == self::STATUS_RECRUITED)
+			{
+				$triggerName = 'RECRUITMENTJOB_CLOSE_RECRUITED';
+				$modelpdf = $this->model_pdf;
+
+				if ($result < 0)
+				{
+					$this->error = $this->db->lasterror();
+					$this->db->rollback();
+					return -2;
+				}
+			}
+
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+			{
+				// Define output language
+				$outputlangs = $langs;
+				if (!empty($conf->global->MAIN_MULTILANGS))
+				{
+					$outputlangs = new Translate("", $conf);
+					$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $this->thirdparty->default_lang);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				//$ret=$object->fetch($id);    // Reload to get new records
+				$this->generateDocument($modelpdf, $outputlangs);
+			}
+
+			if (!$error)
+			{
+				$this->oldcopy = clone $this;
+				$this->status = $status;
+				$this->date_cloture = $now;
+				$this->note_private = $newprivatenote;
+			}
+
+			if (!$notrigger && empty($error))
+			{
+				// Call trigger
+				$result = $this->call_trigger($triggerName, $user);
+				if ($result < 0) { $error++; }
+				// End call triggers
+			}
+
+			if (!$error)
+			{
+				$this->db->commit();
+				return 1;
+			} else {
+				$this->status = $this->oldcopy->status;
+				$this->date_cloture = $this->oldcopy->date_cloture;
+				$this->note_private = $this->oldcopy->note_private;
+
+				$this->db->rollback();
+				return -1;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+	/**
 	 *	Set back to validated status
 	 *
 	 *	@param	User	$user			Object user that modify
@@ -698,12 +817,13 @@ class RecruitmentJobPosition extends CommonObject
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("PositionToBeFilled").'</u>';
+		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("PositionToBeFilled").'</u>';
+		if (isset($this->status)) {
+			$label .= ' '.$this->getLibStatut(5);
+		}
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		if (isset($this->status)) {
-			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
-		}
+		$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
 
 		$url = dol_buildpath('/recruitment/recruitmentjobposition_card.php', 1).'?id='.$this->id;
 
@@ -812,8 +932,9 @@ class RecruitmentJobPosition extends CommonObject
 		}
 
 		$statusType = 'status'.$status;
-		//if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
-		if ($status == self::STATUS_CANCELED) $statusType = 'status6';
+		if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
+		if ($status == self::STATUS_RECRUITED) $statusType = 'status6';
+		if ($status == self::STATUS_CANCELED) $statusType = 'status9';
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
@@ -972,12 +1093,11 @@ class RecruitmentJobPosition extends CommonObject
 		$langs->load("recruitment");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'standard_recruitmentjobposition';
-
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
-			} elseif (!empty($conf->global->RECRUITMENTJOBPOSITION_ADDON_PDF)) {
+			if (!empty($conf->global->RECRUITMENTJOBPOSITION_ADDON_PDF))
+			{
 				$modele = $conf->global->RECRUITMENTJOBPOSITION_ADDON_PDF;
+			} else {
+				$modele = ''; // No default value. For job position, we allow to disable all PDF generation
 			}
 		}
 

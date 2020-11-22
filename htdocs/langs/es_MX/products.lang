@@ -10,6 +10,7 @@ NoMatchFound=No se encontraron coincidencias
 DeleteProduct=Eliminar un producto / servicio
 ExportDataset_produit_1=Productos
 ImportDataset_produit_1=productos
+CustomCode=Customs / Commodity / HS code
 BarCodePrintsheet=Imprimir código de barras
 GlobalVariableUpdaterType0=Datos JSON
 GlobalVariableUpdaterHelp0=Analiza los datos JSON de la URL especificada, VALUE especifica la ubicación del valor relevante,

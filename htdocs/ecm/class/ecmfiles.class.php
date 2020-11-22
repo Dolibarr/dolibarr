@@ -67,7 +67,7 @@ class EcmFiles extends CommonObject
 	 */
 	public $entity;
 
-	public $filename;			// Note: Into ecm database record, the entry $filename never ends with .noexe
+	public $filename; // Note: Into ecm database record, the entry $filename never ends with .noexe
 	public $filepath;
 	public $fullpath_orig;
 
@@ -235,14 +235,14 @@ class EcmFiles extends CommonObject
 		$sql .= 'gen_or_uploaded,';
 		$sql .= 'extraparams,';
 		$sql .= 'date_c,';
-		$sql .= 'date_m,';
+		$sql .= 'tms,';
 		$sql .= 'fk_user_c,';
 		$sql .= 'fk_user_m,';
 		$sql .= 'acl,';
 		$sql .= 'src_object_type,';
 		$sql .= 'src_object_id';
 		$sql .= ') VALUES (';
-		$sql .= " '".$ref."', ";
+		$sql .= " '".$this->db->escape($ref)."', ";
 		$sql .= ' '.(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").',';
 		$sql .= ' '.(!isset($this->share) ? 'NULL' : "'".$this->db->escape($this->share)."'").',';
 		$sql .= ' '.$this->entity.',';
@@ -307,7 +307,7 @@ class EcmFiles extends CommonObject
 	 * @param  string $relativepath    	Relative path of file from document directory. Example: 'path/path2/file' or 'path/path2/*'
 	 * @param  string $hashoffile      	Hash of file content. Take the first one found if same file is at different places. This hash will also change if file content is changed.
 	 * @param  string $hashforshare    	Hash of file sharing.
-	 * @param  string $src_object_type 	src_object_type to search
+	 * @param  string $src_object_type 	src_object_type to search (value of object->table_element)
 	 * @param  string $src_object_id 	src_object_id to search
 	 * @return int                 	   	<0 if KO, 0 if not found, >0 if OK
 	 */
@@ -333,7 +333,7 @@ class EcmFiles extends CommonObject
 		$sql .= " t.gen_or_uploaded,";
 		$sql .= " t.extraparams,";
 		$sql .= " t.date_c,";
-		$sql .= " t.date_m,";
+		$sql .= " t.tms as date_m,";
 		$sql .= " t.fk_user_c,";
 		$sql .= " t.fk_user_m,";
 		$sql .= " t.acl,";
@@ -346,7 +346,7 @@ class EcmFiles extends CommonObject
 		 $sql .= " AND entity IN (" . getEntity('ecmfiles') . ")";
 		 }*/
 		if ($relativepath) {
-			$relativepathwithnoexe = preg_replace('/\.noexe$/', '', $relativepath);		// We must never have the .noexe into the database
+			$relativepathwithnoexe = preg_replace('/\.noexe$/', '', $relativepath); // We must never have the .noexe into the database
 			$sql .= " AND t.filepath = '".$this->db->escape(dirname($relativepath))."'";
 			$filename = basename($relativepathwithnoexe);
 			if ($filename != '*') {
@@ -403,9 +403,9 @@ class EcmFiles extends CommonObject
 				$this->src_object_id = $obj->src_object_id;
 			}
 
-			// Retrieve all extrafields for invoice
+			// Retrieve all extrafields for ecm_files
 			// fetch optionals attributes and labels
-			// $this->fetch_optionals();
+			$this->fetch_optionals();
 
 			// $this->fetch_lines();
 
@@ -455,7 +455,7 @@ class EcmFiles extends CommonObject
 		$sql .= " t.gen_or_uploaded,";
 		$sql .= " t.extraparams,";
 		$sql .= " t.date_c,";
-		$sql .= " t.date_m,";
+		$sql .= " t.tms as date_m,";
 		$sql .= " t.fk_user_c,";
 		$sql .= " t.fk_user_m,";
 		$sql .= " t.acl,";
@@ -563,7 +563,7 @@ class EcmFiles extends CommonObject
 		}
 		if (isset($this->filepath)) {
 			$this->filepath = trim($this->filepath);
-			$this->filepath = preg_replace('/[\\/]+$/', '', $this->filepath);		// Remove last /
+			$this->filepath = preg_replace('/[\\/]+$/', '', $this->filepath); // Remove last /
 		}
 		if (isset($this->fullpath_orig)) {
 			$this->fullpath_orig = trim($this->fullpath_orig);
@@ -612,7 +612,7 @@ class EcmFiles extends CommonObject
 		$sql .= ' gen_or_uploaded = '.(isset($this->gen_or_uploaded) ? "'".$this->db->escape($this->gen_or_uploaded)."'" : "null").',';
 		$sql .= ' extraparams = '.(isset($this->extraparams) ? "'".$this->db->escape($this->extraparams)."'" : "null").',';
 		$sql .= ' date_c = '.(!isset($this->date_c) || dol_strlen($this->date_c) != 0 ? "'".$this->db->idate($this->date_c)."'" : 'null').',';
-		//$sql .= ' date_m = '.(! isset($this->date_m) || dol_strlen($this->date_m) != 0 ? "'".$this->db->idate($this->date_m)."'" : 'null').','; // Field automatically updated
+		//$sql .= ' tms = '.(! isset($this->date_m) || dol_strlen($this->date_m) != 0 ? "'".$this->db->idate($this->date_m)."'" : 'null').','; // Field automatically updated
 		$sql .= ' fk_user_m = '.($this->fk_user_m > 0 ? $this->fk_user_m : $user->id).',';
 		$sql .= ' acl = '.(isset($this->acl) ? "'".$this->db->escape($this->acl)."'" : "null").',';
 		$sql .= ' src_object_id = '.($this->src_object_id > 0 ? $this->src_object_id : "null").',';

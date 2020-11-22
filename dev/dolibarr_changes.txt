@@ -28,19 +28,6 @@ With
 
 
 
-DEBUGBAR:
----------
-
-Move
-    this.options = {
-                bodyMarginBottom: true,
-                bodyMarginBottomHeight: parseInt($('body').css('margin-bottom')),
-    };
-few line lower in the  
-	initialize: function() {
-
-
-
 ESCPOS:
 -------
 Replace
