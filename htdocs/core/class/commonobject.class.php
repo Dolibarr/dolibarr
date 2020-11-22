@@ -7907,7 +7907,7 @@ abstract class CommonObject
 			}*/
 		}
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET '.implode(',', $tmp).' WHERE rowid='.$this->id;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET '.implode(', ', $tmp).' WHERE rowid='.$this->id;
 
 		$this->db->begin();
 		if (!$error)

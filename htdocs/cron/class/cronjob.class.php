@@ -289,10 +289,12 @@ class Cronjob extends CommonObject
 	/**
 	 *  Load object in memory from the database
 	 *
-	 *  @param	int		$id    Id object
-	 *  @return int          	<0 if KO, >0 if OK
+	 *  @param	int		$id    			Id object
+	 *  @param	string	$objectname		Object name
+	 *  @param	string	$methodname		Method name
+	 *  @return int          			<0 if KO, >0 if OK
 	 */
-	public function fetch($id)
+	public function fetch($id, $objectname = '', $methodname = '')
 	{
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
@@ -328,7 +330,13 @@ class Cronjob extends CommonObject
 		$sql .= " t.libname,";
 		$sql .= " t.test";
 		$sql .= " FROM ".MAIN_DB_PREFIX."cronjob as t";
-		$sql .= " WHERE t.rowid = ".$id;
+		if ($id > 0) {
+			$sql .= " WHERE t.rowid = ".$id;
+		} else {
+			$sql .= " WHERE t.entity IN(0, ".getEntity('cron').")";
+			$sql .= " AND t.objectname = '".$this->db->escape($objectname)."'";
+			$sql .= " AND t.methodename = '".$this->db->escape($methodname)."'";
+		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1044,7 +1052,10 @@ class Cronjob extends CommonObject
 				$object = new $this->objectname($this->db);
 				if ($this->entity > 0) $object->entity = $this->entity; // We work on a dedicated entity
 
-				$params_arr = array_map('trim', explode(",", $this->params));
+				$params_arr = array();
+				if (!empty($this->params) || $this->params === '0') {
+					$params_arr = array_map('trim', explode(",", $this->params));
+				}
 
 				if (!is_array($params_arr))
 				{
@@ -1233,7 +1244,7 @@ class Cronjob extends CommonObject
 			if (($this->maxrun > 0 && ($this->nbrun >= $this->maxrun))
 				|| ($this->dateend && ($this->datenextrun > $this->dateend)))
 			{
-				$this->status = 2;
+				$this->status = self::STATUS_ARCHIVED;
 				dol_syslog(get_class($this)."::reprogram_jobs Job will be set to archived", LOG_ERR);
 			}
 		}

@@ -79,7 +79,7 @@ dol_htmloutput_errors($object->error, $object->errors);
 
 <br>
 
-<div align="center"><input type="submit" class="button" value="<?php echo $langs->trans("Save"); ?>"> &nbsp; &nbsp;
+<div align="center"><input type="submit" class="button button-save" value="<?php echo $langs->trans("Save"); ?>"> &nbsp; &nbsp;
 <input type="submit" class="button" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>"></div>
 
 </form>

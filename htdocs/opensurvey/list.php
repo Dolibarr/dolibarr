@@ -349,7 +349,7 @@ while ($i < min($num, $limit))
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) break; // Should not happen
 
-	$sql2 = 'select COUNT(*) as nb from '.MAIN_DB_PREFIX."opensurvey_user_studs where id_sondage='".$db->escape($obj->id_sondage)."'";
+	$sql2 = 'select COUNT(*) as nb from '.MAIN_DB_PREFIX."opensurvey_user_studs where id_sondage='".$db->escape($obj->rowid)."'";
 	$resql2 = $db->query($sql2);
 	if ($resql2)
 	{

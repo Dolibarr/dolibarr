@@ -1625,7 +1625,7 @@ function pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails = 0)
 	{
 		if (empty($hidedetails) || $hidedetails > 1)
 		{
-			$subprice = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_subprice : $object->lines[$i]->subprice);
+			$subprice = (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_subprice : $object->lines[$i]->subprice);
 			$result .= price($sign * $subprice, 0, $outputlangs);
 		}
 	}
@@ -1966,7 +1966,7 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
 		}
 		elseif (empty($hidedetails) || $hidedetails > 1)
 		{
-			$total_ht = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ht : $object->lines[$i]->total_ht);
+			$total_ht = (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ht : $object->lines[$i]->total_ht);
 			if ($object->lines[$i]->situation_percent > 0)
 			{
 				// TODO Remove this. The total should be saved correctly in database instead of being modified here.
@@ -2023,7 +2023,7 @@ function pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails = 0)
 		}
 		elseif (empty($hidedetails) || $hidedetails > 1)
 		{
-			$total_ttc = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ttc : $object->lines[$i]->total_ttc);
+			$total_ttc = (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ttc : $object->lines[$i]->total_ttc);
 			if ($object->lines[$i]->situation_percent > 0)
 			{
 				// TODO Remove this. The total should be saved correctly in database instead of being modified here.

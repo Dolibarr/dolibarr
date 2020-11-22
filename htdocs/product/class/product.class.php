@@ -4245,8 +4245,7 @@ class Product extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			if ($obj) { $nb = $obj->nb;
-			}
+			if ($obj) { $nb = $obj->nb;	}
 		} else {
 			return -1;
 		}

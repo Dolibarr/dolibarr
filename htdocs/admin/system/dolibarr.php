@@ -225,7 +225,7 @@ print '<tr class="oddeven"><td>'.$langs->trans("CurrentTimeZone").'</td><td>'; /
 $a = getServerTimeZoneInt('now');
 $b = getServerTimeZoneInt('winter');
 $c = getServerTimeZoneInt('summer');
-$daylight = (is_numeric($c) && is_numeric($b)) ?round($c - $b) : 'unknown';
+$daylight = round($c - $b);
 //print $a." ".$b." ".$c." ".$daylight;
 $val = ($a >= 0 ? '+' : '').$a;
 $val .= ' ('.($a == 'unknown' ? 'unknown' : ($a >= 0 ? '+' : '').($a * 3600)).')';
