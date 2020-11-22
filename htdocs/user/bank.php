@@ -40,6 +40,7 @@ if (!empty($conf->salaries->enabled)) require_once DOL_DOCUMENT_ROOT.'/salaries/
 $langs->loadLangs(array('companies', 'commercial', 'banks', 'bills', 'trips', 'holiday', 'salaries'));
 
 $id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alphanohtml');
 $bankid = GETPOST('bankid', 'int');
 $action = GETPOST("action", 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
@@ -216,6 +217,8 @@ if ($action == 'setdefault_range') {
 /*
  *	View
  */
+
+$form = new Form($db);
 
 $childids = $user->getAllChildIds(1);
 

@@ -1668,13 +1668,11 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 							$phototoshow .= '</div>';
 						}
 					}
-				} elseif (!$phototoshow)
-				{
+				} elseif (!$phototoshow) {
 					$phototoshow .= $form->showphoto($modulepart, $object, 0, 0, 0, 'photoref', 'small', 1, 0, $maxvisiblephotos);
 				}
 
-				if ($phototoshow)
-				{
+				if ($phototoshow) {
 					$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">';
 					$morehtmlleft .= $phototoshow;
 					$morehtmlleft .= '</div>';
