@@ -272,7 +272,7 @@ class ProductFournisseur extends Product
 		}
 
 		// Multicurrency
-		if ($conf->multicurrency->enabled) {
+		if (!empty($conf->multicurrency->enabled)) {
 			if (empty($multicurrency_tx)) $multicurrency_tx = 1;
 			if (empty($multicurrency_buyprice)) $multicurrency_buyprice = 0;
 

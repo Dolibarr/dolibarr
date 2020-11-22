@@ -613,7 +613,7 @@ if (!empty($date_start) && !empty($date_stop))
 	print '<td class="center">'.$langs->trans("Code").'</td>';
 	print '<td class="center">'.$langs->trans("Country").'</td>';
 	print '<td class="center">'.$langs->trans("VATIntra").'</td>';
-	if ($conf->multicurrency->enabled) print '<td class="center">'.$langs->trans("Currency").'</td>';
+	if (!empty($conf->multicurrency->enabled)) print '<td class="center">'.$langs->trans("Currency").'</td>';
 	print '</tr>';
 	if ($result)
 	{

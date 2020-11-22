@@ -212,7 +212,7 @@ if (empty($reshook))
 				$_POST["price"] = 0;
 			}
 		}
-		if ($conf->multicurrency->enabled) {
+		if (!empty($conf->multicurrency->enabled)) {
 			if (empty($_POST["multicurrency_code"])) {
 				$error++;
 				$langs->load("errors");
@@ -294,7 +294,7 @@ if (empty($reshook))
 				if ($packaging < $quantity) $packaging = $quantity;
 				$object->packaging = $packaging;
 
-				if ($conf->multicurrency->enabled)
+				if (!empty($conf->multicurrency->enabled))
 				{
 					$multicurrency_tx = price2num(GETPOST("multicurrency_tx", 'alpha'));
 					$multicurrency_price = price2num(GETPOST("multicurrency_price", 'alpha'));
@@ -610,7 +610,7 @@ if ($id > 0 || $ref)
 					</script>';
 				}
 
-                if ($conf->multicurrency->enabled) {
+                if (!empty($conf->multicurrency->enabled)) {
                     // Currency
                     print '<tr><td class="fieldrequired">'.$langs->trans("Currency").'</td>';
                     print '<td>';
@@ -927,10 +927,10 @@ END;
 				if (!empty($arrayfields['pfp.quantity']['checked']))				print_liste_field_titre("QtyMin", $_SERVER["PHP_SELF"], "pfp.quantity", "", $param, '', $sortfield, $sortorder, 'right ');
 				print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 				print_liste_field_titre("PriceQtyMinHT", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
-				if ($conf->multicurrency->enabled)									print_liste_field_titre("PriceQtyMinHTCurrency", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+				if (!empty($conf->multicurrency->enabled))									print_liste_field_titre("PriceQtyMinHTCurrency", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 				if (!empty($arrayfields['pfp.unitprice']['checked']))				print_liste_field_titre("UnitPriceHT", $_SERVER["PHP_SELF"], "pfp.unitprice", "", $param, '', $sortfield, $sortorder, 'right ');
 				if (!empty($arrayfields['pfp.multicurrency_unitprice']['checked']))	print_liste_field_titre("UnitPriceHTCurrency", $_SERVER["PHP_SELF"], "pfp.multicurrency_unitprice", "", $param, '', $sortfield, $sortorder, 'right ');
-				if ($conf->multicurrency->enabled)									print_liste_field_titre("Currency", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
+				if (!empty($conf->multicurrency->enabled))									print_liste_field_titre("Currency", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
 				print_liste_field_titre("DiscountQtyMin", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 				if (!empty($arrayfields['pfp.delivery_time_days']['checked']))		print_liste_field_titre("NbDaysToDelivery", $_SERVER["PHP_SELF"], "pfp.delivery_time_days", "", $param, '', $sortfield, $sortorder, 'right ');
 				if (!empty($arrayfields['pfp.supplier_reputation']['checked']))		print_liste_field_titre("ReputationForThisProduct", $_SERVER["PHP_SELF"], "pfp.supplier_reputation", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -1019,7 +1019,7 @@ END;
 						print $productfourn->fourn_price ?price($productfourn->fourn_price) : "";
 						print '</td>';
 
-						if ($conf->multicurrency->enabled) {
+						if (!empty($conf->multicurrency->enabled)) {
 							// Price for the quantity in currency
 							print '<td class="right">';
 							print $productfourn->fourn_multicurrency_price ? price($productfourn->fourn_multicurrency_price) : "";
@@ -1041,7 +1041,7 @@ END;
 							print '</td>'; }
 
 						// Currency
-						if ($conf->multicurrency->enabled) {
+						if (!empty($conf->multicurrency->enabled)) {
 							print '<td class="right">';
 							print $productfourn->fourn_multicurrency_code ? currency_name($productfourn->fourn_multicurrency_code) : '';
 							print '</td>';

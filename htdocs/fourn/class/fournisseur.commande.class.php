@@ -1686,7 +1686,7 @@ class CommandeFournisseur extends CommonOrder
 				$product_type = $type;
 			}
 
-			if ($conf->multicurrency->enabled && $pu_ht_devise > 0) {
+			if (!empty($conf->multicurrency->enabled) && $pu_ht_devise > 0) {
 				$pu = 0;
 			}
 
