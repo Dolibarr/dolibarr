@@ -957,6 +957,7 @@ class Expedition extends CommonObject
 							$langs->load("errors");
 							$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnShipment', $product->ref);
 							$this->errorhidden = 'ErrorStockIsNotEnoughToAddProductOnShipment';
+
 							$this->db->rollback();
 							return -3;
 						}
