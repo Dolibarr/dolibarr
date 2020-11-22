@@ -507,12 +507,12 @@ class modSociete extends DolibarrModules
 				'dict' => 'DictionaryCompanyType'
 			),
 			's.capital' => array('rule' => 'numeric'),
-			's.fk_stcomm' => array('rule' => 'zeroifnull'),
+			's.fk_stcomm' => array('rule' => 'zeroifnull'),	// TODO fetchidfromcodeid
 			's.parent' => array(
-				'rule' => 'fetchidfromref',
-				'file' => '/societe/class/societe.class.php',
+				'rule' => 'fetchidfromreforcode',
+				'classfile' => '/societe/class/societe.class.php',
 				'class' => 'Societe',
-				'method' => 'fetch',
+				'method' => 'fetchbycode',
 				'element' => 'ThirdParty'
 			),
 			's.outstanding_limit' => array('rule' => 'numeric'),
@@ -552,7 +552,7 @@ class modSociete extends DolibarrModules
 		$this->import_examplevalues_array[$r] = array(//field order as per structure of table llx_societe
 			's.nom' => "TPBigCompany",
 			's.name_alias' => "Alias for TPBigCompany",
-			's.parent' => "TPMotherCompany",
+			's.parent' => "TPMotherCompany, name or customer/supplier code",
 			's.status' => "0 (closed) / 1 (active)",
 			's.code_client' => 'eg. CU01-0001 / empty / "auto"',
 			's.code_fournisseur' => 'eg. SU01-0001 / empty / "auto"',
@@ -659,10 +659,10 @@ class modSociete extends DolibarrModules
 		); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_convertvalue_array[$r] = array(
 			's.fk_soc' => array(
-				'rule' => 'fetchidfromref',
-				'file' => '/societe/class/societe.class.php',
+				'rule' => 'fetchidfromreforcode',
+				'classfile' => '/societe/class/societe.class.php',
 				'class' => 'Societe',
-				'method' => 'fetch',
+				'method' => 'fetchbycode',
 				'element' => 'ThirdParty'
 			),
 			's.fk_departement' => array(
@@ -688,7 +688,7 @@ class modSociete extends DolibarrModules
 		$this->import_examplevalues_array[$r] = array(//field order as per structure of table llx_socpeople
 			's.rowid' => '1',
 			's.datec' => 'formatted as '.dol_print_date(dol_now(), '%Y-%m-%d'),
-			's.fk_soc' => 'Third Party name eg. TPBigCompany',
+			's.fk_soc' => 'Third Party name or customer/supplier code',
 			's.civility' => 'Title of civility eg: MR...matches field "code" in table "'.MAIN_DB_PREFIX.'c_civility"',
 			's.lastname' => "lastname or label",
 			's.firstname' => 'John',
@@ -740,18 +740,17 @@ class modSociete extends DolibarrModules
 
 		$this->import_convertvalue_array[$r] = array(
 			'sr.fk_soc' => array(
-				'rule' => 'fetchidfromref',
+				'rule' => 'fetchidfromreforcode',
 				'classfile' => '/societe/class/societe.class.php',
 				'class' => 'Societe',
-				'method' => 'fetch',
+				'method' => 'fetchbycode',
 				'element' => 'ThirdParty'
-			)
+			),
 		);
 		$this->import_examplevalues_array[$r] = array(//field order as per structure of table llx_societe_rib
 			'sr.label' => 'eg. "account1"',
-			'sr.fk_soc' => 'eg. "TPBigCompany"',
-			'sr.datec' => 'date used for creating direct debit UMR formatted as '.dol_print_date(dol_now(),
-					'%Y-%m-%d'),
+			'sr.fk_soc' => 'Third Party name or customer/supplier code',
+			'sr.datec' => 'date used for creating direct debit UMR formatted as '.dol_print_date(dol_now(), '%Y-%m-%d'),
 			'sr.bank' => 'bank name eg: "ING-Direct"',
 			'sr.code_banque' => 'account sort code (GB)/Routing number (US) eg. "8456"',
 			'sr.code_guichet' => "bank code for office/branch",
@@ -777,10 +776,26 @@ class modSociete extends DolibarrModules
 		$this->import_fields_array[$r] = array('sr.fk_soc'=>"ThirdPartyName*", 'sr.fk_user'=>"User*");
 
 		$this->import_convertvalue_array[$r] = array(
-				'sr.fk_soc'=>array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty'),
-				'sr.fk_user'=>array('rule'=>'fetchidfromref', 'classfile'=>'/user/class/user.class.php', 'class'=>'User', 'method'=>'fetch', 'element'=>'User')
+			'sr.fk_soc' => array(
+				'rule' => 'fetchidfromreforcode',
+				'classfile' => '/societe/class/societe.class.php',
+				'class' => 'Societe',
+				'method' => 'fetchbycode',
+				'element' => 'ThirdParty'
+			),
+			'sr.fk_user' => array(
+				'rule' => 'fetchidfromref',
+				'classfile' => '/user/class/user.class.php',
+				'class' => 'User',
+				'method' => 'fetch',
+				'element' => 'User'
+			),
 		);
-		$this->import_examplevalues_array[$r] = array('sr.fk_soc'=>"MyBigCompany", 'sr.fk_user'=>"login");
+
+		$this->import_examplevalues_array[$r] = array(
+			'sr.fk_soc' => 'Third Party name or customer/supplier code',
+			'sr.fk_user'=>"login"
+		);
 	}
 
 

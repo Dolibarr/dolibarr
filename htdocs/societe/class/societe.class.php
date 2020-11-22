@@ -1483,14 +1483,15 @@ class Societe extends CommonObject
 	 *    @param    string	$idprof6		Prof id 6 of third party (Warning, this can return several records)
 	 *    @param    string	$email   		Email of third party (Warning, this can return several records)
 	 *    @param    string	$ref_alias 		Name_alias of third party (Warning, this can return several records)
+	 *    @param    string	$ref_code      	Customer or Supplier code (Should be unique)
 	 *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
 	 */
-	public function fetch($rowid, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '')
+	public function fetch($rowid, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '', $ref_code = '')
 	{
 		global $langs;
 		global $conf;
 
-		if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($barcode) && empty($idprof1) && empty($idprof2) && empty($idprof3) && empty($idprof4) && empty($idprof5) && empty($idprof6) && empty($email)) return -1;
+		if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($barcode) && empty($idprof1) && empty($idprof2) && empty($idprof3) && empty($idprof4) && empty($idprof5) && empty($idprof6) && empty($email) && empty($ref_alias) && empty($ref_code)) return -1;
 
 		$sql = 'SELECT s.rowid, s.nom as name, s.name_alias, s.entity, s.ref_ext, s.address, s.datec as date_creation, s.prefix_comm';
 		$sql .= ', s.status';
@@ -1537,6 +1538,7 @@ class Societe extends CommonObject
 		if ($ref)       $sql .= " AND s.nom = '".$this->db->escape($ref)."'";
 		if ($ref_alias) $sql .= " AND s.name_alias = '".$this->db->escape($ref_alias)."'";
 		if ($ref_ext)   $sql .= " AND s.ref_ext = '".$this->db->escape($ref_ext)."'";
+		if ($ref_code)  $sql .= " AND (s.code_client = '".$this->db->escape($ref_code)."' OR s.code_fournisseur = '".$this->db->escape($ref_code)."')";
 		if ($barcode)   $sql .= " AND s.barcode = '".$this->db->escape($barcode)."'";
 		if ($idprof1)   $sql .= " AND s.siren = '".$this->db->escape($idprof1)."'";
 		if ($idprof2)   $sql .= " AND s.siret = '".$this->db->escape($idprof2)."'";
@@ -1704,6 +1706,20 @@ class Societe extends CommonObject
 		// Use first price level if level not defined for third party
 		if ((!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) && empty($this->price_level)) $this->price_level = 1;
 
+		return $result;
+	}
+
+	/**
+	 *    Load a third party from database into memory from name or code (for imports)
+	 *
+	 *    @param	int		$rowid			Id of third party to load
+	 *    @param    string	$ref			Reference of third party, name (Warning, this can return several records)
+	 *    @param    string	$ref_code      	Customer or Supplier code (Should be unique)
+	 *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
+	 */
+	public function fetchbycode($rowid, $ref = '', $ref_code = '')
+	{
+		$result = $this->fetch($rowid, $ref, '', '', '', '', '', '', '', '', '', '', $ref_code);
 		return $result;
 	}
 
