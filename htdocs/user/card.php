@@ -1753,7 +1753,7 @@ if ($action == 'create' || $action == 'adduserldap')
 						$s .= $societe->getNomUrl(1, '');
 					}
 				} else {
-					$s .= $langs->trans("ThisUserIsNot");
+					$s .= '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ThisUserIsNot").'</span>';
 				}
 				if (!empty($object->contact_id))
 				{
@@ -1783,7 +1783,7 @@ if ($action == 'create' || $action == 'adduserldap')
 					$adh->ref = $adh->getFullname($langs); // Force to show login instead of id
 					print $adh->getNomUrl(-1);
 				} else {
-					print $langs->trans("UserNotLinkedToMember");
+					print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("UserNotLinkedToMember").'</span>';
 				}
 				print '</td>';
 				print '</tr>'."\n";
@@ -2531,9 +2531,9 @@ if ($action == 'create' || $action == 'adduserldap')
 						print ' / <a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$object->contact_id.'">'.img_object($langs->trans("ShowContact"), 'contact').' '.dol_trunc($contact->getFullName($langs), 32).'</a>';
 					}
 				} else {
-					print $langs->trans("ThisUserIsNot");
+					print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ThisUserIsNot").'</span>';
 				}
-				print ' ('.$langs->trans("UseTypeFieldToChange").')';
+				print ' <span class="opacitymedium hideonsmartphone">('.$langs->trans("UseTypeFieldToChange").')</span>';
 				print '</td>';
 				print "</tr>\n";
 			}
@@ -2551,7 +2551,7 @@ if ($action == 'create' || $action == 'adduserldap')
 					$adh->ref = $adh->login; // Force to show login instead of id
 					print $adh->getNomUrl(1);
 				} else {
-					print $langs->trans("UserNotLinkedToMember");
+					print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("UserNotLinkedToMember").'</span>';
 				}
 				print '</td>';
 				print "</tr>\n";
