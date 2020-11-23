@@ -209,12 +209,9 @@ if (empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
 
 print load_fiche_titre($langs->trans("Translation"), $enabledisablehtml, 'title_setup');
 
-//print '<span class="opacitymedium">'.$langs->trans("TranslationDesc")."</span><br>\n";
-//print "<br>\n";
-
 $current_language_code = $langs->defaultlang;
 $s = picto_from_langcode($current_language_code);
-print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("CurrentUserLanguage").': <strong>'.$s.' '.$current_language_code.'</strong>', $langs->trans("TranslationDesc")).'</span><br>';
+print $form->textwithpicto('<span class="opacitymedium">'.$langs->trans("CurrentUserLanguage").':</span> <strong>'.$s.' '.$current_language_code.'</strong>', $langs->trans("TranslationDesc")).'</span><br>';
 
 print '<br>';
 

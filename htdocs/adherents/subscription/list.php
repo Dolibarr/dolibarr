@@ -395,6 +395,8 @@ while ($i < min($num, $limit)) {
 
 	$subscription->ref = $obj->crowid;
 	$subscription->id = $obj->crowid;
+	$subscription->dateh = $db->jdate($obj->dateadh);
+	$subscription->datef = $db->jdate($obj->datef);
 
 	$adherent->lastname = $obj->lastname;
 	$adherent->firstname = $obj->firstname;

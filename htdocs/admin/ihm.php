@@ -243,7 +243,6 @@ clearstatcache();
 print '<br>';
 print '<table summary="edit" class="noborder centpercent editmode">';
 print '<tr class="liste_titre"><th>'.$langs->trans("Language").'</th><th></th>';
-print '<th width="20">&nbsp;</td>';
 print '</tr>';
 
 // Default language
@@ -251,14 +250,12 @@ print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DefaultLangua
 print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'MAIN_LANG_DEFAULT', 1, null, '', 0, 0, 'minwidth300', 2);
 print '<input class="button button-save" type="submit" name="submit" value="'.$langs->trans("Save").'">';
 print '</td>';
-print '<td width="20">&nbsp;</td>';
 print '</tr>';
 
 // Multilingual GUI
 print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("EnableMultilangInterface").'</td><td>';
 print ajax_constantonoff("MAIN_MULTILANGS", array(), $conf->entity, 0, 0, 1, 0);
 print '</td>';
-print '<td width="20">&nbsp;</td>';
 print '</tr>';
 
 print '</table><br>'."\n";

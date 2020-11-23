@@ -21,8 +21,8 @@
 	--colorbackbody: rgb(<?php print $colorbackbody; ?>);
 	--colortexttitlenotab: rgb(<?php print $colortexttitlenotab; ?>);
 	--colortexttitlenotab2: rgb(<?php print $colortexttitlenotab2; ?>);
-	--colortexttitle: rgb(<?php print $colortexttitle; ?>);
-	--colortexttitlelink: rgb(<?php print $colortexttitlelink; ?>);
+	--colortexttitle: rgba(<?php print $colortexttitle; ?>, 0.9);
+	--colortexttitlelink: rgba(<?php print $colortexttitlelink; ?>, 0.9);
 	--colortext: rgb(<?php print $colortext; ?>);
 	--colortextlink: rgb(<?php print $colortextlink; ?>);
 	--colortextbackhmenu: #<?php echo $colortextbackhmenu; ?>;
@@ -2610,7 +2610,18 @@ font.vsmenudisabledmargin { margin: 1px 1px 1px 6px; }
 li a.vsmenudisabled, li.vsmenudisabled { color: #aaa !important; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { text-align: <?php print $left; ?>; color: #aaa; text-decoration: none; }
-.helppresent, .helppresent:hover { color: #f3e4ac !important; }
+.helppresent, .helppresent:hover {
+	/* color: #f3e4ac !important; */
+}
+.helppresentcircle {
+    color: var(--butactionbg);
+    margin-left: -7px;
+    display: inline-block;
+    margin-top: -10px;
+    font-size: x-small;
+    vertical-align: super;
+    opacity: 0.95;
+}
 
 .vmenu div.blockvmenufirst, .vmenu div.blockvmenulogo, .vmenu div.blockvmenusearchphone, .vmenu div.blockvmenubookmarks
 {
