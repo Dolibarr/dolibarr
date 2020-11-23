@@ -133,6 +133,8 @@ class box_produits extends ModeleBoxes
                     $productstatic->type = $objp->fk_product_type;
                     $productstatic->label = $objp->label;
 					$productstatic->entity = $objp->entity;
+					$productstatic->status = $objp->tosell;
+					$productstatic->status_buy = $objp->tobuy;
 
 					$this->info_box_contents[$line][] = array(
                         'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
