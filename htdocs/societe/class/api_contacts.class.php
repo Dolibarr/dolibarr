@@ -90,7 +90,7 @@ class Contacts extends DolibarrApi
 		{
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-		
+
 		if ($includeroles)
 		{
 			$this->contact->fetchRoles();
@@ -139,7 +139,7 @@ class Contacts extends DolibarrApi
 		{
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-		
+
 		if ($includeroles)
 		{
 			$this->contact->fetchRoles();
