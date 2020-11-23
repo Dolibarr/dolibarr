@@ -38,8 +38,8 @@ $action = GETPOST('action', 'aZ09');
 $socid = 0;
 if ($user->socid > 0)
 {
-    $action = '';
-    $socid = $user->socid;
+	$action = '';
+	$socid = $user->socid;
 }
 
 $dir = $conf->facture->dir_output.'/payments';
@@ -55,27 +55,27 @@ if (!$year) { $year = date("Y"); }
 
 if ($action == 'builddoc')
 {
-    $rap = new pdf_paiement($db);
+	$rap = new pdf_paiement($db);
 
-    $outputlangs = $langs;
-    if (GETPOST('lang_id', 'aZ09'))
-    {
-        $outputlangs = new Translate("", $conf);
-        $outputlangs->setDefaultLang(GETPOST('lang_id', 'aZ09'));
-    }
+	$outputlangs = $langs;
+	if (GETPOST('lang_id', 'aZ09'))
+	{
+		$outputlangs = new Translate("", $conf);
+		$outputlangs->setDefaultLang(GETPOST('lang_id', 'aZ09'));
+	}
 
-    // We save charset_output to restore it because write_file can change it if needed for
-    // output format that does not support UTF8.
-    $sav_charset_output = $outputlangs->charset_output;
-    if ($rap->write_file($dir, $_POST["remonth"], $_POST["reyear"], $outputlangs) > 0)
-    {
-        $outputlangs->charset_output = $sav_charset_output;
-    } else {
-        $outputlangs->charset_output = $sav_charset_output;
-        dol_print_error($db, $obj->error);
-    }
+	// We save charset_output to restore it because write_file can change it if needed for
+	// output format that does not support UTF8.
+	$sav_charset_output = $outputlangs->charset_output;
+	if ($rap->write_file($dir, $_POST["remonth"], $_POST["reyear"], $outputlangs) > 0)
+	{
+		$outputlangs->charset_output = $sav_charset_output;
+	} else {
+		$outputlangs->charset_output = $sav_charset_output;
+		dol_print_error($db, $obj->error);
+	}
 
-    $year = $_POST["reyear"];
+	$year = $_POST["reyear"];
 }
 
 
@@ -113,59 +113,59 @@ $linkforyear = array();
 $found = 0;
 if (is_dir($dir))
 {
-    $handle = opendir($dir);
-    if (is_resource($handle))
-    {
-        while (($file = readdir($handle)) !== false)
-        {
-            if (is_dir($dir.'/'.$file) && !preg_match('/^\./', $file) && is_numeric($file))
-            {
-                $found = 1;
-                $linkforyear[] = $file;
-            }
-        }
-    }
+	$handle = opendir($dir);
+	if (is_resource($handle))
+	{
+		while (($file = readdir($handle)) !== false)
+		{
+			if (is_dir($dir.'/'.$file) && !preg_match('/^\./', $file) && is_numeric($file))
+			{
+				$found = 1;
+				$linkforyear[] = $file;
+			}
+		}
+	}
 }
 asort($linkforyear);
 foreach ($linkforyear as $cursoryear)
 {
-    print '<a href="'.$_SERVER["PHP_SELF"].'?year='.$cursoryear.'">'.$cursoryear.'</a> &nbsp;';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?year='.$cursoryear.'">'.$cursoryear.'</a> &nbsp;';
 }
 
 if ($year)
 {
-    if (is_dir($dir.'/'.$year))
-    {
-        $handle = opendir($dir.'/'.$year);
+	if (is_dir($dir.'/'.$year))
+	{
+		$handle = opendir($dir.'/'.$year);
 
-        if ($found) print '<br>';
-        print '<br>';
-        print '<table width="100%" class="noborder">';
-        print '<tr class="liste_titre">';
-        print '<td>'.$langs->trans("Reporting").'</td>';
-        print '<td class="right">'.$langs->trans("Size").'</td>';
-        print '<td class="right">'.$langs->trans("Date").'</td>';
-        print '</tr>';
+		if ($found) print '<br>';
+		print '<br>';
+		print '<table width="100%" class="noborder">';
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans("Reporting").'</td>';
+		print '<td class="right">'.$langs->trans("Size").'</td>';
+		print '<td class="right">'.$langs->trans("Date").'</td>';
+		print '</tr>';
 
-        if (is_resource($handle))
-        {
-            while (($file = readdir($handle)) !== false)
-            {
-                if (preg_match('/^payment/i', $file))
-                {
-                    $tfile = $dir.'/'.$year.'/'.$file;
-                    $relativepath = $year.'/'.$file;
-                    print '<tr class="oddeven">';
-                    print '<td><a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a>'.$formfile->showPreview($file, 'facture_paiement', $relativepath, 0).'</td>';
-                    print '<td class="right">'.dol_print_size(dol_filesize($tfile)).'</td>';
-                    print '<td class="right">'.dol_print_date(dol_filemtime($tfile), "dayhour").'</td>';
-                    print '</tr>';
-                }
-            }
-            closedir($handle);
-        }
-        print '</table>';
-    }
+		if (is_resource($handle))
+		{
+			while (($file = readdir($handle)) !== false)
+			{
+				if (preg_match('/^payment/i', $file))
+				{
+					$tfile = $dir.'/'.$year.'/'.$file;
+					$relativepath = $year.'/'.$file;
+					print '<tr class="oddeven">';
+					print '<td><a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a>'.$formfile->showPreview($file, 'facture_paiement', $relativepath, 0).'</td>';
+					print '<td class="right">'.dol_print_size(dol_filesize($tfile)).'</td>';
+					print '<td class="right">'.dol_print_date(dol_filemtime($tfile), "dayhour").'</td>';
+					print '</tr>';
+				}
+			}
+			closedir($handle);
+		}
+		print '</table>';
+	}
 }
 
 // End of page

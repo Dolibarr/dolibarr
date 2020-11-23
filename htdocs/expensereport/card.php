@@ -214,6 +214,8 @@ if (empty($reshook))
 
 	if ($action == 'add' && $user->rights->expensereport->creer)
 	{
+		$error = 0;
+
 		$object = new ExpenseReport($db);
 
 		$object->date_debut = $date_start;
@@ -221,6 +223,19 @@ if (empty($reshook))
 
 		$object->fk_user_author = GETPOST('fk_user_author', 'int');
 		if (!($object->fk_user_author > 0)) $object->fk_user_author = $user->id;
+
+		// Check that expense report is for a user inside the hierarchy or advanced permission for all is set
+		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->creer)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->writeall_advance))) {
+			$error++;
+			setEventMessages($langs->trans("NotEnoughPermission"), null, 'errors');
+		} else {
+			if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)) {
+				if (!in_array($object->fk_user_author, $childids)) {
+					$error++;
+					setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
+				}
+			}
+		}
 
 		$fuser = new User($db);
 		$fuser->fetch($object->fk_user_author);
@@ -1354,6 +1369,7 @@ if (empty($reshook))
 
 $title = $langs->trans("ExpenseReport")." - ".$langs->trans("Card");
 $helpurl = "EN:Module_Expense_Reports";
+
 llxHeader("", $title, $helpurl);
 
 $form = new Form($db);
@@ -1374,7 +1390,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	dol_fiche_head('');
+	print dol_get_fiche_head('');
 
 	print '<table class="border centpercent">';
 	print '<tbody>';
@@ -1467,7 +1483,7 @@ if ($action == 'create')
 	print '<tbody>';
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" value="'.$langs->trans("AddTrip").'" name="bouton" class="button" />';
@@ -1511,7 +1527,7 @@ if ($action == 'create')
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="id" value="'.$id.'">';
 
-				dol_fiche_head($head, 'card', $langs->trans("ExpenseReport"), 0, 'trip');
+				print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), 0, 'trip');
 
 				if ($object->status == 99)
 				{
@@ -1600,7 +1616,7 @@ if ($action == 'create')
 
 				print '</table>';
 
-				dol_fiche_end();
+				print dol_get_fiche_end();
 
 				print '<div class="center">';
 				print '<input type="submit" value="'.$langs->trans("Modify").'" name="bouton" class="button">';
@@ -1609,7 +1625,7 @@ if ($action == 'create')
 
 				print '</form>';
 			} else {
-				dol_fiche_head($head, 'card', $langs->trans("ExpenseReport"), -1, 'trip');
+				print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), -1, 'trip');
 
 				// Clone confirmation
 				if ($action == 'clone') {
@@ -2527,7 +2543,7 @@ if ($action == 'create')
 
 				print '</form>';
 
-				dol_fiche_end();
+				print dol_get_fiche_end();
 			} // end edit or not edit
 		}	// end of if result
 		else {

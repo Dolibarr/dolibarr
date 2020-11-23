@@ -4,9 +4,9 @@
  * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2012-2018  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2012-2020  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -181,11 +181,19 @@ if (empty($reshook)) {
 		if ($result > 0) {
 			// Creation user
 			$nuser = new User($db);
-			$result = $nuser->create_from_member($object, GETPOST('login', 'alphanohtml'));
+			$tmpuser = dol_clone($object);
+			if (GETPOST('internalorexternal', 'aZ09') == 'internal') {
+				$tmpuser->fk_soc = 0;
+			}
+
+			$result = $nuser->create_from_member($tmpuser, GETPOST('login', 'alphanohtml'));
 
 			if ($result < 0) {
 				$langs->load("errors");
 				setEventMessages($langs->trans($nuser->error), null, 'errors');
+			} else {
+				setEventMessages($langs->trans("NewUserCreated", $nuser->login), null, 'mesgs');
+				$action = '';
 			}
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -213,7 +221,7 @@ if (empty($reshook)) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$birthdate = '';
-		if (GETPOST("birthday", 'int')	&& GETPOST("birthmonth", 'int') && GETPOST("birthyear", 'int'))
+		if (GETPOST("birthday", 'int') && GETPOST("birthmonth", 'int') && GETPOST("birthyear", 'int'))
 		{
 			$birthdate = dol_mktime(12, 0, 0, GETPOST("birthmonth", 'int'), GETPOST("birthday", 'int'), GETPOST("birthyear", 'int'));
 		}
@@ -828,7 +836,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<input type="hidden" name="socid" value="'.$socid.'">';
 		if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 
-		dol_fiche_head('');
+		print dol_get_fiche_head('');
 
 		print '<table class="border centpercent">';
 		print '<tbody>';
@@ -964,7 +972,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tbody>';
 		print "</table>\n";
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" name="button" class="button" value="'.$langs->trans("AddMember").'">';
@@ -1053,7 +1061,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<input type="hidden" name="statut" value="'.$object->statut.'" />';
 		if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 
-		dol_fiche_head($head, 'general', $langs->trans("Member"), 0, 'user');
+		print dol_get_fiche_head($head, 'general', $langs->trans("Member"), 0, 'user');
 
 		print '<table class="border centpercent">';
 
@@ -1224,10 +1232,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
 		print '</table>';
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
-		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
@@ -1263,11 +1271,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		 */
 		$head = member_prepare_head($object);
 
-		dol_fiche_head($head, 'general', $langs->trans("Member"), -1, 'user');
+		print dol_get_fiche_head($head, 'general', $langs->trans("Member"), -1, 'user');
 
 		// Confirm create user
 		if ($action == 'create_user') {
-			$login = $object->login;
+			$login = (GETPOSTISSET('login') ? GETPOST('login', 'alphanohtml') : $object->login);
 			if (empty($login)) {
 				// Full firstname and name separated with a dot : firstname.name
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -1279,11 +1287,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$formquestion = array(
 					array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login)
 			);
-			$text = $langs->trans("ConfirmCreateLogin").'<br>';
-			if (!empty($conf->societe->enabled)) {
-				if ($object->socid > 0) $text .= $langs->trans("UserWillBeExternalUser");
-				else $text .= $langs->trans("UserWillBeInternalUser");
+			if (!empty($conf->societe->enabled) && $object->socid > 0) {
+				$object->fetch_thirdparty();
+				$formquestion[] = array('label' => $langs->trans("UserWillBe"), 'type' => 'radio', 'name' => 'internalorexternal', 'default'=>'external', 'values' => array('external'=>$langs->trans("External").' - '.$langs->trans("LinkedToDolibarrThirdParty").' '.$object->thirdparty->getNomUrl(1, '', 0, 1), 'internal'=>$langs->trans("Internal")));
 			}
+			$text = '';
+			if (!empty($conf->societe->enabled) && $object->socid <= 0) {
+				$text .= $langs->trans("UserWillBeInternalUser").'<br>';
+			}
+			$text .= $langs->trans("ConfirmCreateLogin");
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id, $langs->trans("CreateDolibarrLogin"), $text, "confirm_create_user", $formquestion, 'yes');
 		}
 
@@ -1552,7 +1564,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'userid', '');
 		} else {
 			if ($object->user_id) {
-				$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'none');
+				$linkeduser = new User($db);
+				$linkeduser->fetch($object->user_id);
+				print $linkeduser->getNomUrl(-1);
 			} else {
 				print $langs->trans("NoDolibarrAccess");
 			}
@@ -1599,7 +1613,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print "</div></div></div>\n";
 		print '<div style="clear:both"></div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 
 		/*
@@ -1692,13 +1706,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					}
 				}
 
-				// Delete
-				if ($user->rights->adherent->supprimer) {
-					print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete")."</a></div>\n";
-				} else {
-					print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Delete")."</font></div>";
-				}
-
 				// Action SPIP
 				if (!empty($conf->mailmanspip->enabled) && !empty($conf->global->ADHERENT_USE_SPIP)) {
 					$isinspip = $mailmanspip->is_in_spip($object);
@@ -1709,6 +1716,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					if ($isinspip == 0) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$object->id.'&action=add_spip">'.$langs->trans("AddIntoSpip")."</a></div>\n";
 					}
+				}
+
+				// Delete
+				if ($user->rights->adherent->supprimer) {
+					print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete")."</a></div>\n";
+				} else {
+					print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Delete")."</font></div>";
 				}
 			}
 		}

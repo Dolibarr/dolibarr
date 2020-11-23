@@ -220,7 +220,7 @@ if (empty($reshook))
 		$search_date_creation = "";
 		$search_date_update = "";
 		$search_array_options = array();
-        $search_categ = 0;
+		$search_categ = 0;
 	}
 
 	// Mass actions
@@ -311,7 +311,7 @@ $sql .= " u2.rowid as id2, u2.login as login2, u2.firstname as firstname2, u2.la
 $sql .= " s.nom as name, s.canvas";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key.', ' : '');
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
 }
 // Add fields from hooks
 $parameters = array();
@@ -463,11 +463,11 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if (!empty($catid))
 {
-    print "<div id='ways'>";
-    $c = new Categorie($db);
-    $ways = $c->print_all_ways(' &gt; ', 'user/list.php');
-    print " &gt; ".$ways[0]."<br>\n";
-    print "</div><br>";
+	print "<div id='ways'>";
+	$c = new Categorie($db);
+	$ways = $c->print_all_ways(' &gt; ', 'user/list.php');
+	print " &gt; ".$ways[0]."<br>\n";
+	print "</div><br>";
 }
 
 if ($search_all)
@@ -482,12 +482,12 @@ $moreforfilter = '';
  $moreforfilter.= '</div>';*/
 
 // Filter on categories
-if (!empty($conf->categorie->enabled))
+if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire)
 {
-    $moreforfilter .= '<div class="divsearchfield">';
-    $moreforfilter .= $langs->trans('Categories').': ';
-    $moreforfilter .= $formother->select_categories(Categorie::TYPE_USER, $search_categ, 'search_categ', 1);
-    $moreforfilter .= '</div>';
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= $langs->trans('Categories').': ';
+	$moreforfilter .= $formother->select_categories(Categorie::TYPE_USER, $search_categ, 'search_categ', 1);
+	$moreforfilter .= '</div>';
 }
 
 $parameters = array();
@@ -497,9 +497,9 @@ else $moreforfilter = $hookmanager->resPrint;
 
 if (!empty($moreforfilter))
 {
-    print '<div class="liste_titre liste_titre_bydiv centpercent">';
-    print $moreforfilter;
-    print '</div>';
+	print '<div class="liste_titre liste_titre_bydiv centpercent">';
+	print $moreforfilter;
+	print '</div>';
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
@@ -648,6 +648,7 @@ if (is_array($extrafields->attributes[$object->table_element]['computed']) && co
 // --------------------------------------------------------------------
 $i = 0;
 $totalarray = array();
+$arrayofselected = array();
 while ($i < ($limit ? min($num, $limit) : $num))
 {
 	$obj = $db->fetch_object($resql);
@@ -693,29 +694,29 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	}
 	if (!empty($arrayfields['u.firstname']['checked']))
 	{
-	    print '<td class="tdoverflowmax150">'.$obj->firstname.'</td>';
+		print '<td class="tdoverflowmax150">'.$obj->firstname.'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['u.gender']['checked']))
 	{
-	    print '<td>';
-	    if ($obj->gender) print $langs->trans("Gender".$obj->gender);
-	    print '</td>';
+		print '<td>';
+		if ($obj->gender) print $langs->trans("Gender".$obj->gender);
+		print '</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['u.employee']['checked']))
 	{
-	    print '<td>'.yn($obj->employee).'</td>';
+		print '<td>'.yn($obj->employee).'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['u.accountancy_code']['checked']))
 	{
-	    print '<td>'.$obj->accountancy_code.'</td>';
+		print '<td>'.$obj->accountancy_code.'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['u.email']['checked']))
 	{
-	    print '<td>'.$obj->email.'</td>';
+		print '<td>'.$obj->email.'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['u.api_key']['checked']))
@@ -774,7 +775,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 			$user2->admin = $obj->admin2;
 			$user2->email = $obj->email2;
 			$user2->socid = $obj->fk_soc2;
-            $user2->statut = $obj->statut2;
+			$user2->statut = $obj->statut2;
 			print $user2->getNomUrl(-1, '', 0, 0, 24, 0, '', '', 1);
 			if (!empty($conf->multicompany->enabled) && $obj->admin2 && !$obj->entity2)
 			{
@@ -826,9 +827,9 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	// Status
 	if (!empty($arrayfields['u.statut']['checked']))
 	{
-	    $userstatic->statut = $obj->statut;
-	    print '<td class="center">'.$userstatic->getLibStatut(5).'</td>';
-	    if (!$i) $totalarray['nbfield']++;
+		$userstatic->statut = $obj->statut;
+		print '<td class="center">'.$userstatic->getLibStatut(5).'</td>';
+		if (!$i) $totalarray['nbfield']++;
 	}
 	// Action column
 	print '<td class="nowrap center">';

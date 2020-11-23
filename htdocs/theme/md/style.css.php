@@ -632,7 +632,7 @@ form {
     padding:0px;
     margin:0px;
 }
-div.float
+div.float, span.floatleft
 {
     float:<?php print $left; ?>;
 }
@@ -795,7 +795,7 @@ textarea.centpercent {
 .longmessagecut {
     max-height: 250px;
     max-width: 100%;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .text-warning{
@@ -1007,6 +1007,12 @@ select.flat.selectlimit {
 }
 .tdoverflowmax100imp {			/* For tdoverflow, the max-midth become a minimum ! */
     max-width: 100px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.tdoverflowmax125 {			/* For tdoverflow, the max-midth become a minimum ! */
+    max-width: 125px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1269,6 +1275,15 @@ table[summary="list_of_modules"] .fa-cog {
     .minwidth500imp { min-width: 250px !important; }
 }
 
+.widthcentpercentminusx {
+	width: calc(100% - 50px) !important;
+	display: inline-block;
+}
+.widthcentpercentminusxx {
+	width: calc(100% - 70px) !important;
+	display: inline-block;
+}
+
 /* Force values for small screen 767 */
 @media only screen and (max-width: 767px)
 {
@@ -1279,7 +1294,9 @@ table[summary="list_of_modules"] .fa-cog {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize).'px' : $fontsize; ?> !important;
 	}
 
-	.clearbothonsmartphone { clear: both; display: block; }
+	div.divphotoref {
+	    padding-right: 10px !important;
+	}
 }
 
 /* Force values for small screen 570 */
@@ -1288,12 +1305,24 @@ table[summary="list_of_modules"] .fa-cog {
 	body {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize).'px' : $fontsize; ?>;
 	}
+
 	div.refidno {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize).'px' : $fontsize; ?> !important;
 	}
 
 	.login_vertical_align {
     	padding-left: 0;
+    }
+    .login_table input#username, .login_table input#password, .login_table input#securitycode {
+		margin-left: 5px !important;    
+    }
+	div#login_left, div#login_right {
+	    min-width: 150px !important;
+	    padding-left: 5px !important;
+	    padding-right: 5px !important;
+    }
+    .login_table div#login_right .tdinputlogin, .login_table div#login_right .tdinputlogin input {
+	    min-width: 150px !important;
     }
 
 	.divmainbodylarge { margin-left: 20px; margin-right: 20px; }
@@ -2205,30 +2234,30 @@ div.mainmenu.website {
 		$found = 0; $url = '';
 		foreach ($conf->file->dol_document_root as $dirroot)
 		{
-		    if (file_exists($dirroot."/".$val."/img/".$val.".png"))
+			if (file_exists($dirroot."/".$val."/img/".$val.".png"))
 			{
-			    $url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
-			    $found = 1;
-			    break;
+				$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
+				$found = 1;
+				break;
 			}
 		}
 		// Img file not found
 		if (!$found)
 		{
-		    if (!defined('DISABLE_FONT_AWSOME')) {
-		        print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
-		        print 'div.mainmenu.'.$val.'::before {
+			if (!defined('DISABLE_FONT_AWSOME')) {
+				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+				print 'div.mainmenu.'.$val.'::before {
 	                    content: "\f249";
 	                }';
-		    } else {
-		    	print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
-		    	print "/* Overwrite this definition in your own css with a different content to use your own font awesome icon. */\n";
-		        $url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
-		        print "div.mainmenu.".$val." {\n";
-		        print "	background-image: url(".$url.");\n";
-		        print "}\n";
-	    	}
-	    	$generic++;
+			} else {
+				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
+				print "/* Overwrite this definition in your own css with a different content to use your own font awesome icon. */\n";
+				$url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
+				print "div.mainmenu.".$val." {\n";
+				print "	background-image: url(".$url.");\n";
+				print "}\n";
+			}
+			$generic++;
 		} else {
 			print "div.mainmenu.".$val." {\n";
 			print "	background-image: url(".$url.");\n";
@@ -2324,9 +2353,11 @@ form#login {
 }
 .login_table .tdinputlogin {
     background-color: #fff;
-    border: 2px solid #ccc;
     min-width: 220px;
     border-radius: 2px;
+}
+.login_table .tdinputlogin {
+	border-bottom: 1px solid #ccc; 
 }
 .login_table .tdinputlogin .fa {
 	padding-left: 10px;
@@ -3690,6 +3721,15 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 }
 @media only screen and (max-width: 767px)
 {
+	.tabBar .arearef .pagination.paginationref {
+	    max-width: calc(50%);
+	}
+
+	.clearbothonsmartphone {
+	    clear: both;
+	    display: block !important;
+	}
+
 	div.tabs {
 		padding-left: 0 !important;
 		margin-left: 0 !important;
@@ -3847,7 +3887,7 @@ img.boxhandle, img.boxclose {
 .ok      { color: #114466; }
 .warning { color: #887711 !important; }
 .error   { color: #550000 !important; font-weight: bold; }
-.green   { color: #118822; }
+.green   { color: #118822 !important; }
 
 div.ok {
   color: #114466;
@@ -4885,9 +4925,14 @@ div.scroll2 {
 	width: <?php print isset($_SESSION['dol_screenwidth']) ?max($_SESSION['dol_screenwidth'] - 830, 450) : '450'; ?>px !important;
 }
 
-.gtaskname div, .gtaskname {
+div#GanttChartDIVglisthead, div#GanttChartDIVgcharthead {
+    line-height: 2;
+}
+
+.gtaskname div, .gtaskname, .gstartdate div, .gstartdate, .genddate div, .genddate {
 	font-size: unset !important;
 }
+
 div.gantt, .gtaskheading, .gmajorheading, .gminorheading, .gminorheadingwkend {
 	font-size: unset !important;
 	font-weight: normal !important;
@@ -5326,6 +5371,9 @@ a span.select2-chosen
 }
 .select2-results {
 	max-height:	400px;
+}
+.select2-results__option {
+	word-break: break-word;
 }
 .select2-container.select2-container-disabled .select2-choice, .select2-container-multi.select2-container-disabled .select2-choices {
 	background-color: #FFFFFF;
@@ -6451,11 +6499,11 @@ if (is_object($db)) $db->close();
 ::-webkit-scrollbar {
 	width: 12px;
 }
-::-webkit-scrollbar-button {
-	background: #aaa;
-}
+/*::-webkit-scrollbar-button {
+	background: #bbb;
+}*/
 ::-webkit-scrollbar-track-piece {
-	background: #fff;
+	background: #f4f4f4;
 }
 ::-webkit-scrollbar-thumb {
 	background: #ddd;

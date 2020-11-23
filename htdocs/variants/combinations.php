@@ -122,7 +122,7 @@ if ($_POST) {
 				$level_price_impact = array_map('price2num', $level_price_impact);
 			}
 			else {
-				$level_price_impact = array(1 => $weight_impact);
+				$level_price_impact = array(1 => $price_impact);
 				$level_price_impact_percent = array(1 => $price_impact_percent);
 			}
 
@@ -245,7 +245,7 @@ if ($_POST) {
 			$prodcomb->variation_price_percentage = (bool) $level_price_impact_percent[1];
 		}
 		else {
-			$level_price_impact = array(1 => $weight_impact);
+			$level_price_impact = array(1 => $price_impact);
 			$level_price_impact_percent = array(1 => $price_impact_percent);
 
 			$prodcomb->variation_price = $price_impact;
@@ -341,7 +341,7 @@ if (!empty($id) || !empty($ref))
 	$titre = $langs->trans("CardProduct".$object->type);
 	$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 
-	dol_fiche_head($head, 'combinations', $titre, -1, $picto);
+	print dol_get_fiche_head($head, 'combinations', $titre, -1, $picto);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 	$object->next_prev_filter = " fk_product_type = ".$object->type;
@@ -406,7 +406,7 @@ if (!empty($id) || !empty($ref))
 	print '</div>';
 	print '<div style="clear:both"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	$listofvariantselected = '';
 
@@ -414,7 +414,7 @@ if (!empty($id) || !empty($ref))
 	if ($action == 'add' || ($action == 'edit')) {
 		if ($action == 'add') {
 			$title = $langs->trans('NewProductCombination');
-			// dol_fiche_head();
+			// print dol_get_fiche_head();
 			$features = $_SESSION['addvariant_'.$object->id];
 			//First, sanitize
 			$listofvariantselected = '<div id="parttoaddvariant">';
@@ -434,7 +434,7 @@ if (!empty($id) || !empty($ref))
 				}
 			}
 			$listofvariantselected .= '</div>';
-			//dol_fiche_end();
+			//print dol_get_fiche_end();
 		} else {
 			$title = $langs->trans('EditProductCombination');
 		}
@@ -539,7 +539,7 @@ if (!empty($id) || !empty($ref))
 			print '<input type="hidden" name="valueid" value="'.$valueid.'">'."\n";
 		}
 
-		dol_fiche_head();
+		print dol_get_fiche_head();
 
 
 		if ($action == 'add') {
@@ -699,7 +699,7 @@ if (!empty($id) || !empty($ref))
 			<?php
 		}
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 		?>
 
 		<div style="text-align: center">

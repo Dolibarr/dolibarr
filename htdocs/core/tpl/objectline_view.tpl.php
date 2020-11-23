@@ -78,7 +78,7 @@ $coldisplay = 0;
 	<td class="linecoldescription minwidth300imp"><?php $coldisplay++; ?><div id="line_<?php print $line->id; ?>"></div>
 <?php
 if (($line->info_bits & 2) == 2) {
-    print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$this->socid.'">';
+	print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$this->socid.'">';
 	$txt = '';
 	print img_object($langs->trans("ShowReduc"), 'reduc').' ';
 	if ($line->description == '(DEPOSIT)') $txt = $langs->trans("Deposit");
@@ -101,7 +101,7 @@ if (($line->info_bits & 2) == 2) {
 			print ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromDeposit", $discount->getNomUrl(0));
 			// Add date of deposit
 			if (!empty($conf->global->INVOICE_ADD_DEPOSIT_DATE))
-			    print ' ('.dol_print_date($discount->datec).')';
+				print ' ('.dol_print_date($discount->datec).')';
 		} elseif ($line->description == '(EXCESS RECEIVED)' && $objp->fk_remise_except > 0)
 		{
 			$discount = new DiscountAbsolute($this->db);
@@ -119,7 +119,7 @@ if (($line->info_bits & 2) == 2) {
 } else {
 	$format = $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE ? 'dayhour' : 'day';
 
-    if ($line->fk_product > 0)
+	if ($line->fk_product > 0)
 	{
 		print $form->textwithtooltip($text, $description, 3, '', '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
 	} else {
@@ -162,7 +162,7 @@ if (($line->info_bits & 2) == 2) {
 
 if ($user->rights->fournisseur->lire && $line->fk_fournprice > 0)
 {
-    require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 	$productfourn = new ProductFournisseur($this->db);
 	$productfourn->fetch_product_fournisseur_price($line->fk_fournprice);
 	print '<div class="clearboth"></div>';
@@ -246,7 +246,7 @@ if (!empty($line->remise_percent) && $line->special_code != 3) {
 // Fields for situation invoices
 if ($this->situation_cycle_ref)
 {
-    include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 	$coldisplay++;
 	print '<td class="linecolcycleref nowrap right">'.$line->situation_percent.'%</td>';
 	$coldisplay++;
@@ -263,7 +263,7 @@ if ($usemargins && !empty($conf->margin->enabled) && empty($user->socid))
 	if (!empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) { ?>
 		<td class="linecolmargin2 nowrap margininfos right"><?php $coldisplay++; ?><?php print (($line->pa_ht == 0) ? 'n/a' : price(price2num($line->marge_tx, 'MT')).'%'); ?></td>
 	<?php }
-    if (!empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {?>
+	if (!empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {?>
   	  <td class="linecolmargin2 nowrap margininfos right"><?php $coldisplay++; ?><?php print price(price2num($line->marque_tx, 'MT')).'%'; ?></td>
     <?php }
 }
@@ -300,7 +300,7 @@ if ($line->special_code == 3) { ?>
 	print price($sign * $line->total_ht);
 	if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 	{
-	    print '</span>';
+		print '</span>';
 	}
 	print '</td>';
 	if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
@@ -346,7 +346,7 @@ if ($this->statut == 0 && ($object_rights->creer) && $action != 'selectlines') {
 			</a>
 		<?php }
 		print '</td>';
-    } else {
+	} else {
 		print '<td '.(($conf->browser->layout != 'phone' && empty($disablemove)) ? ' class="linecolmove tdlineupdown center"' : ' class="linecolmove center"').'></td>';
 		$coldisplay++;
 	}

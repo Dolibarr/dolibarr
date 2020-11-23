@@ -300,7 +300,7 @@ foreach ($filearray as $key => $file)
 
 
 $head = ecm_prepare_head($ecmdir, $module, $section);
-dol_fiche_head($head, 'card', $langs->trans("ECMSectionManual"), -1, 'dir');
+print dol_get_fiche_head($head, 'card', $langs->trans("ECMSectionManual"), -1, 'dir');
 
 
 if ($action == 'edit')
@@ -436,7 +436,7 @@ print '</table>';
 if ($action == 'edit')
 {
 	print '<br><div align="center">';
-	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("Save").'">';
+	print '<input type="submit" class="button button-save" name="submit" value="'.$langs->trans("Save").'">';
 	print ' &nbsp; &nbsp; ';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
@@ -448,7 +448,7 @@ if ($action == 'edit')
 	print '</form>';
 }
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 

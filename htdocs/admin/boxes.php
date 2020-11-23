@@ -474,7 +474,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL == 2 || !empty($conf->global->MAIN_ACTIVA
 print '</table>';
 
 print '<br>';
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'" name="Button"></div>';
+print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'" name="Button"></div>';
 print '<br>';
 
 print '</form>';

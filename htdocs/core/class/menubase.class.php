@@ -173,6 +173,7 @@ class Menubase
 		global $conf, $langs;
 
 		// Clean parameters
+		if (!isset($this->enabled)) $this->enabled = '1';
 		$this->menu_handler = trim($this->menu_handler);
 		$this->module = trim($this->module);
 		$this->type = trim($this->type);

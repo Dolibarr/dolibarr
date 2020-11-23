@@ -44,23 +44,23 @@ class mailing_contacts1 extends MailingTargets
 	public $picto = 'contact';
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
 
-    /**
-     *  Constructor
-     *
-     *  @param      DoliDB      $db      Database handler
-     */
-    public function __construct($db)
-    {
-        $this->db = $db;
-    }
+	/**
+	 *  Constructor
+	 *
+	 *  @param      DoliDB      $db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
 
 
-    /**
+	/**
 	 *	On the main mailing area, there is a box with statistics.
 	 *	If you want to add a line in this report you must provide an
 	 *	array of SQL request that returns two field:
@@ -68,8 +68,8 @@ class mailing_contacts1 extends MailingTargets
 	 *
 	 *	@return		string[]		Array with SQL requests
 	 */
-    public function getSqlArrayForStats()
-    {
+	public function getSqlArrayForStats()
+	{
 		global $conf, $langs;
 
 		$langs->load("commercial");
@@ -84,7 +84,7 @@ class mailing_contacts1 extends MailingTargets
 		$statssql[0] .= " AND c.statut = 1";
 
 		return $statssql;
-    }
+	}
 
 
 	/**
@@ -95,13 +95,13 @@ class mailing_contacts1 extends MailingTargets
 	 *  @param		string	$sql		Requete sql de comptage
 	 *	@return		int
 	 */
-    public function getNbOfRecipients($sql = '')
-    {
+	public function getNbOfRecipients($sql = '')
+	{
 		global $conf;
 
 		$sql = "SELECT count(distinct(c.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-    	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc";
 		$sql .= " WHERE c.entity IN (".getEntity('socpeople').")";
 		$sql .= " AND c.email != ''"; // Note that null != '' is false
 		$sql .= " AND c.no_email = 0";
@@ -111,7 +111,7 @@ class mailing_contacts1 extends MailingTargets
 
 		// The request must return a field called "nb" to be understandable by parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
-    }
+	}
 
 
 	/**
@@ -119,12 +119,12 @@ class mailing_contacts1 extends MailingTargets
 	 *
 	 *   @return     string      Retourne zone select
 	 */
-    public function formFilter()
-    {
+	public function formFilter()
+	{
 		global $langs;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array("commercial", "companies", "suppliers", "categories"));
+		$langs->loadLangs(array("commercial", "companies", "suppliers", "categories"));
 
 		$s = '';
 
@@ -306,31 +306,31 @@ class mailing_contacts1 extends MailingTargets
 		$s .= '</select>';
 
 		return $s;
-    }
+	}
 
 
 	/**
 	 *  Renvoie url lien vers fiche de la source du destinataire du mailing
 	 *
-     *  @param	int		$id		ID
+	 *  @param	int		$id		ID
 	 *  @return string      	Url lien
 	 */
-    public function url($id)
-    {
-        return '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$id.'">'.img_object('', "contact").'</a>';
-    }
+	public function url($id)
+	{
+		return '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$id.'">'.img_object('', "contact").'</a>';
+	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Ajoute destinataires dans table des cibles
 	 *
 	 *  @param  int		$mailing_id    	Id of emailing
 	 *  @return int           			<0 si erreur, nb ajout si ok
 	 */
-    public function add_to_target($mailing_id)
-    {
-        // phpcs:enable
+	public function add_to_target($mailing_id)
+	{
+		// phpcs:enable
 		global $conf, $langs;
 
 		$filter = GETPOST('filter', 'alpha');
@@ -364,14 +364,14 @@ class mailing_contacts1 extends MailingTargets
 		$sql = "SELECT sp.rowid as id, sp.email as email, sp.rowid as fk_contact, sp.lastname, sp.firstname, sp.civility as civility_id, sp.poste as jobposition,";
 		$sql .= " s.nom as companyname";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
-    	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = sp.fk_soc";
-    	if ($filter_category <> 'all') $sql .= ", ".MAIN_DB_PREFIX."categorie as c";
-    	if ($filter_category <> 'all') $sql .= ", ".MAIN_DB_PREFIX."categorie_contact as cs";
-    	if ($filter_category_customer <> 'all') $sql .= ", ".MAIN_DB_PREFIX."categorie as c2";
-    	if ($filter_category_customer <> 'all') $sql .= ", ".MAIN_DB_PREFIX."categorie_societe as c2s";
-    	if ($filter_category_supplier <> 'all') $sql .= ", ".MAIN_DB_PREFIX."categorie as c3";
-    	if ($filter_category_supplier <> 'all') $sql .= ", ".MAIN_DB_PREFIX."categorie_fournisseur as c3s";
-    	$sql .= " WHERE sp.entity IN (".getEntity('socpeople').")";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = sp.fk_soc";
+		if ($filter_category <> 'all') $sql .= ", ".MAIN_DB_PREFIX."categorie as c";
+		if ($filter_category <> 'all') $sql .= ", ".MAIN_DB_PREFIX."categorie_contact as cs";
+		if ($filter_category_customer <> 'all') $sql .= ", ".MAIN_DB_PREFIX."categorie as c2";
+		if ($filter_category_customer <> 'all') $sql .= ", ".MAIN_DB_PREFIX."categorie_societe as c2s";
+		if ($filter_category_supplier <> 'all') $sql .= ", ".MAIN_DB_PREFIX."categorie as c3";
+		if ($filter_category_supplier <> 'all') $sql .= ", ".MAIN_DB_PREFIX."categorie_fournisseur as c3s";
+		$sql .= " WHERE sp.entity IN (".getEntity('socpeople').")";
 		$sql .= " AND sp.email <> ''";
 		$sql .= " AND sp.no_email = 0";
 		$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = sp.email) = 0";
@@ -380,12 +380,12 @@ class mailing_contacts1 extends MailingTargets
 		$sql .= " AND sp.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
 		// Filter on category
 		if ($filter_category <> 'all') $sql .= " AND cs.fk_categorie = c.rowid AND cs.fk_socpeople = sp.rowid";
-    	if ($filter_category <> 'all') $sql .= " AND c.label = '".$this->db->escape($filter_category)."'";
+		if ($filter_category <> 'all') $sql .= " AND c.label = '".$this->db->escape($filter_category)."'";
 		if ($filter_category_customer <> 'all') $sql .= " AND c2s.fk_categorie = c2.rowid AND c2s.fk_soc = sp.fk_soc";
-    	if ($filter_category_customer <> 'all') $sql .= " AND c2.label = '".$this->db->escape($filter_category_customer)."'";
+		if ($filter_category_customer <> 'all') $sql .= " AND c2.label = '".$this->db->escape($filter_category_customer)."'";
 		if ($filter_category_supplier <> 'all') $sql .= " AND c3s.fk_categorie = c3.rowid AND c3s.fk_soc = sp.fk_soc";
-    	if ($filter_category_supplier <> 'all') $sql .= " AND c3.label = '".$this->db->escape($filter_category_supplier)."'";
-    	// Filter on nature
+		if ($filter_category_supplier <> 'all') $sql .= " AND c3.label = '".$this->db->escape($filter_category_supplier)."'";
+		// Filter on nature
 		$key = $filter;
 		{
 			//print "xx".$key;
@@ -417,17 +417,17 @@ class mailing_contacts1 extends MailingTargets
 				if ($old <> $obj->email)
 				{
 					$cibles[$j] = array(
-                    		'email' => $obj->email,
-                    		'fk_contact' => $obj->fk_contact,
-                    		'lastname' => $obj->lastname,
-                    		'firstname' => $obj->firstname,
-                    		'other' =>
-                                ($langs->transnoentities("ThirdParty").'='.$obj->companyname).';'.
-                                ($langs->transnoentities("UserTitle").'='.($obj->civility_id ? $langs->transnoentities("Civility".$obj->civility_id) : '')).';'.
-                                ($langs->transnoentities("JobPosition").'='.$obj->jobposition),
+							'email' => $obj->email,
+							'fk_contact' => $obj->fk_contact,
+							'lastname' => $obj->lastname,
+							'firstname' => $obj->firstname,
+							'other' =>
+								($langs->transnoentities("ThirdParty").'='.$obj->companyname).';'.
+								($langs->transnoentities("UserTitle").'='.($obj->civility_id ? $langs->transnoentities("Civility".$obj->civility_id) : '')).';'.
+								($langs->transnoentities("JobPosition").'='.$obj->jobposition),
 							'source_url' => $this->url($obj->id),
-                            'source_id' => $obj->id,
-                            'source_type' => 'contact'
+							'source_id' => $obj->id,
+							'source_type' => 'contact'
 					);
 					$old = $obj->email;
 					$j++;
@@ -442,5 +442,5 @@ class mailing_contacts1 extends MailingTargets
 		}
 
 		return parent::addTargetsToDatabase($mailing_id, $cibles);
-    }
+	}
 }

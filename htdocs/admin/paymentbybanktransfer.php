@@ -192,7 +192,7 @@ print '</td></tr>';
 print '</table>';
 print '<br>';
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
+print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
 
 print '</form>';
 
@@ -361,7 +361,7 @@ foreach ($dirmodels as $reldir)
 */
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<br>';
 

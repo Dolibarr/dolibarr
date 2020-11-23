@@ -184,7 +184,7 @@ print load_fiche_titre($langs->trans("SendingsSetup"), $linkback, 'title_setup')
 print '<br>';
 $head = expedition_admin_prepare_head();
 
-dol_fiche_head($head, 'shipment', $langs->trans("Sendings"), -1, 'shipment');
+print dol_get_fiche_head($head, 'shipment', $langs->trans("Sendings"), -1, 'shipment');
 
 // Shipment numbering model
 
@@ -212,8 +212,7 @@ foreach ($dirmodels as $reldir)
 		{
 			while (($file = readdir($handle)) !== false)
 			{
-				if (substr($file, 0, 15) == 'mod_expedition_' && substr($file, dol_strlen($file) - 3, 3) == 'php')
-				{
+				if (preg_match('/^mod_expedition_([a-z0-9_]*)\.php$/', $file)) {
 					$file = substr($file, 0, dol_strlen($file) - 4);
 
 					require_once $dir.$file.'.php';
@@ -226,7 +225,7 @@ foreach ($dirmodels as $reldir)
 						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
 						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-						print '<tr><td>'.$module->nom."</td>\n";
+						print '<tr><td>'.$module->name."</td>\n";
 						print '<td>';
 						print $module->info();
 						print '</td>';

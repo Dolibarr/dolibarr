@@ -2038,7 +2038,7 @@ class ExtraFields
 					$value_arr = GETPOST("options_".$key, 'alpha');
 					$value_key = price2num($value_arr);
 				} elseif (in_array($key_type, array('html'))) {
-					$value_key = GETPOST("options_".$key, 'alpha');
+					$value_key = GETPOST("options_".$key, 'restricthtml');
 				} elseif (in_array($key_type, array('text'))) {
 					$value_key = GETPOST("options_".$key, 'alphanohtml');
 				} else {

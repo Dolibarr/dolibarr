@@ -21,7 +21,7 @@ CREATE TABLE llx_inventorydet
 ( 
 	rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY, 
 	datec datetime DEFAULT NULL,
-	tms timestamp, 
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 	fk_inventory integer DEFAULT 0, 
 	fk_warehouse integer DEFAULT 0,
 	fk_product integer DEFAULT 0,  

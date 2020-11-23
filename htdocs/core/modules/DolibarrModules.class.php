@@ -1679,13 +1679,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$r_id       = $this->rights[$key][0];
 					$r_desc     = $this->rights[$key][1];
 					$r_type     = isset($this->rights[$key][2]) ? $this->rights[$key][2] : '';
-					$r_def      = $this->rights[$key][3];
+					$r_def      = empty($this->rights[$key][3]) ? 0 : $this->rights[$key][3];
 					$r_perms    = $this->rights[$key][4];
 					$r_subperms = isset($this->rights[$key][5]) ? $this->rights[$key][5] : '';
 					$r_modul = empty($this->rights_class) ?strtolower($this->name) : $this->rights_class;
 
 					if (empty($r_type)) { $r_type = 'w'; }
-					if (empty($r_def)) { $r_def = 0; }
 
 					// Search if perm already present
 					$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."rights_def";

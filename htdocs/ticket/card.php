@@ -59,10 +59,10 @@ $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 
 if (GETPOST('actioncode', 'array')) {
-    $actioncode = GETPOST('actioncode', 'array', 3);
-    if (!count($actioncode)) $actioncode = '0';
+	$actioncode = GETPOST('actioncode', 'array', 3);
+	if (!count($actioncode)) $actioncode = '0';
 } else {
-    $actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
 $search_agenda_label = GETPOST('search_agenda_label');
 
@@ -170,8 +170,12 @@ if (empty($reshook)) {
 			$object->message = GETPOST("message", 'restricthtml');
 
 			$object->type_code = GETPOST("type_code", 'alpha');
+			$object->type_label = $langs->trans($langs->getLabelFromKey($db, $object->type_code, 'c_ticket_type', 'code', 'label'));
 			$object->category_code = GETPOST("category_code", 'alpha');
+			$object->category_label = $langs->trans($langs->getLabelFromKey($db, $object->category_code, 'c_ticket_category', 'code', 'label'));
 			$object->severity_code = GETPOST("severity_code", 'alpha');
+			$object->severity_label = $langs->trans($langs->getLabelFromKey($db, $object->severity_code, 'c_ticket_severity', 'code', 'label'));
+			$object->email_from = $user->email;
 			$notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
 			$object->notify_tiers_at_create = empty($notifyTiers) ? 0 : 1;
 
@@ -478,15 +482,18 @@ if (empty($reshook)) {
 			}
 
 			if ($action == 'setsubject' && empty($object->subject)) {
-				$mesg .= ($mesg ? '<br>' : '').$langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject"));
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")), null, 'errors');
 			}
 
-			if (!$mesg) {
+			if (!$error) {
 				if ($object->update($user) >= 0) {
 					header("Location: ".$_SERVER['PHP_SELF']."?track_id=".$object->track_id);
 					exit;
+				} else {
+					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
-				$mesg = $object->error;
 			}
 		}
 	}
@@ -503,6 +510,9 @@ if (empty($reshook)) {
 					$url = 'card.php?action=view&track_id='.$object->track_id;
 					header("Location: ".$url);
 					exit();
+				} else {
+					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
 		}
@@ -539,6 +549,9 @@ if (empty($reshook)) {
 				$log_action .= Diff::toString(Diff::compare(strip_tags($oldvalue_message), strip_tags($object->message)));
 
 				setEventMessages($langs->trans('TicketMessageSuccesfullyUpdated'), null, 'mesgs');
+			} else {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 
@@ -556,6 +569,9 @@ if (empty($reshook)) {
 				$url = 'card.php?action=view&track_id='.$object->track_id;
 				header("Location: ".$url);
 				exit();
+			} else {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 	}
@@ -593,6 +609,9 @@ if (empty($reshook)) {
 			$log_action = $langs->trans('TicketLogPropertyChanged', $oldvalue_label, $newvalue_label);
 
 			setEventMessages($langs->trans('TicketUpdated'), null, 'mesgs');
+		} else {
+			$error++;
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 		$action = 'view';
 	}
@@ -662,7 +681,7 @@ if ($action == 'create' || $action == 'presend')
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="tack_id" value="'.$object->track_id.'">';
 
-	dol_fiche_head($head, 'card', $langs->trans('Ticket'), 0, 'ticket');
+	print dol_get_fiche_head($head, 'card', $langs->trans('Ticket'), 0, 'ticket');
 
 	print '<div class="fichecenter2">';
 	print '<table class="border" width="100%">';
@@ -698,7 +717,7 @@ if ($action == 'create' || $action == 'presend')
 	print '</table>';
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
@@ -753,7 +772,7 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 				//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
 				$head = project_prepare_head($projectstat);
-				dol_fiche_head($head, 'ticket', $langs->trans("Project"), 0, ($projectstat->public ? 'projectpub' : 'project'));
+				print dol_get_fiche_head($head, 'ticket', $langs->trans("Project"), 0, ($projectstat->public ? 'projectpub' : 'project'));
 
 				/*
                  *   Projet synthese pour rappel
@@ -809,11 +828,11 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 			$object->fetch_thirdparty();
 			$head = societe_prepare_head($object->thirdparty);
 
-			dol_fiche_head($head, 'ticket', $langs->trans("ThirdParty"), 0, 'company');
+			print dol_get_fiche_head($head, 'ticket', $langs->trans("ThirdParty"), 0, 'company');
 
 			dol_banner_tab($object->thirdparty, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 		}
 
 		if (!$user->socid && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) {
@@ -824,7 +843,7 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 
 		$head = ticket_prepare_head($object);
 
-		dol_fiche_head($head, 'tabTicket', $langs->trans("Ticket"), -1, 'ticket');
+		print dol_get_fiche_head($head, 'tabTicket', $langs->trans("Ticket"), -1, 'ticket');
 
 		$morehtmlref = '<div class="refidno">';
 		$morehtmlref .= $object->subject;
@@ -1223,7 +1242,7 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 		print '</div></div></div>';
 		print '<div style="clear:both"></div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 
 		// Buttons for actions

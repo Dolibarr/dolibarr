@@ -95,7 +95,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_valu
 print load_fiche_titre($langs->trans("ExpenseReportsSetup"), $linkback, 'title_setup');
 
 $head = expensereport_admin_prepare_head();
-dol_fiche_head($head, 'expenseik', $langs->trans("ExpenseReportsIk"), -1, 'trip');
+print dol_get_fiche_head($head, 'expenseik', $langs->trans("ExpenseReportsIk"), -1, 'trip');
 
 echo '<span class="opacitymedium">'.$langs->trans('ExpenseReportIkDesc').'</span>';
 print '<br><br>';
@@ -180,7 +180,7 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 echo '</table>';
 echo '</form>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

@@ -21,7 +21,8 @@
 	--colorbackbody: rgb(<?php print $colorbackbody; ?>);
 	--colortexttitlenotab: rgb(<?php print $colortexttitlenotab; ?>);
 	--colortexttitlenotab2: rgb(<?php print $colortexttitlenotab2; ?>);
-	--colortexttitle: rgb(<?php print $colortexttitle; ?>);
+	--colortexttitle: rgba(<?php print $colortexttitle; ?>, 0.9);
+	--colortexttitlelink: rgba(<?php print $colortexttitlelink; ?>, 0.9);
 	--colortext: rgb(<?php print $colortext; ?>);
 	--colortextlink: rgb(<?php print $colortextlink; ?>);
 	--colortextbackhmenu: #<?php echo $colortextbackhmenu; ?>;
@@ -110,6 +111,7 @@ body {
     <?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
 
+/* Style used to protect html content in output to avoid attack by replacing full page with js content */
 .sensiblehtmlcontent * {
 	position: static !important;
 }
@@ -143,7 +145,7 @@ table.liste th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), table.liste td.
 .liste_titre input[name=search_smonth], .liste_titre input[name=search_month], .liste_titre input[name=search_emonth], .liste_titre input[name=smonth], .liste_titre input[name=month], .liste_titre select[name=month],
 .liste_titre input[name=month_lim], .liste_titre input[name=month_start], .liste_titre input[name=month_end], .liste_titre input[name=month_create],
 .liste_titre input[name=search_month_lim], .liste_titre input[name=search_month_start], .liste_titre input[name=search_month_end], .liste_titre input[name=search_month_create],
-.liste_titre input[name=search_month_create], .liste_titre input[name=search_month_start], .liste_titre input[name=search_month_end],
+.liste_titre input[name=search_month_update], .liste_titre input[name=search_month_start], .liste_titre input[name=search_month_end],
 .liste_titre input[name=day_date_when], .liste_titre input[name=dayvalid], .liste_titre input[name=search_orderday], .liste_titre input[name=search_deliveryday],
 .liste_titre input[name=search_sday], .liste_titre input[name=search_day], .liste_titre input[name=search_eday], .liste_titre input[name=sday], .liste_titre input[name=day], .liste_titre select[name=day],
 .liste_titre input[name=day_lim], .liste_titre input[name=day_start], .liste_titre input[name=day_end], .liste_titre input[name=day_create],
@@ -316,6 +318,7 @@ input.buttonpaymentstripe {
 }
 .logopublicpayment #dolpaymentlogo {
 	max-height: 100px;
+	max-width: 320px;
 }
 
 a.buttonticket {
@@ -330,14 +333,14 @@ span.timesheetalreadyrecorded input {
     border-bottom: solid 1px rgba(0,0,0,0.4);
     margin-right: 1px !important;
 }
-td.weekend {
-	background-color: #eee;
-}
 td.onholidaymorning, td.onholidayafternoon {
 	background-color: #fdf6f2;
 }
 td.onholidayallday {
 	background-color: #f4eede;
+}
+td.weekend {	/* must be after td.onholidayallday */
+	background-color: #eee;
 }
 /*
 td.leftborder, td.hide0 {
@@ -510,7 +513,7 @@ form {
 form#addproduct {
     padding-top: 10px;
 }
-div.float
+div.float, span.floatleft
 {
     float:<?php print $left; ?>;
 }
@@ -713,7 +716,7 @@ textarea.centpercent {
 .longmessagecut {
     max-height: 250px;
     max-width: 100%;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 body[class*="colorblind-"] .text-warning{
@@ -979,6 +982,12 @@ select.flat.selectlimit {
 }
 .tdoverflowmax100imp {			/* For tdoverflow, the max-midth become a minimum ! */
     max-width: 100px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.tdoverflowmax125 {			/* For tdoverflow, the max-midth become a minimum ! */
+    max-width: 125px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1271,8 +1280,12 @@ table[summary="list_of_modules"] .fa-cog {
     .minwidth500imp { min-width: 250px !important; }
 }
 
-.widthcentpercentminusx {
-	width: calc(100% - 50px) !important;
+select.widthcentpercentminusx, input.widthcentpercentminusx {
+	width: calc(100% - 52px) !important;
+	display: inline-block;
+}
+select.widthcentpercentminusxx, input.widthcentpercentminusxx {
+	width: calc(100% - 70px) !important;
 	display: inline-block;
 }
 
@@ -1287,6 +1300,10 @@ table[summary="list_of_modules"] .fa-cog {
     	padding-right: 5px;
     }
 
+	div.divphotoref {
+	    padding-right: 10px !important;
+	}
+
     .hideonsmartphone { display: none; }
     .hideonsmartphoneimp { display: none !important; }
 
@@ -1298,15 +1315,29 @@ table[summary="list_of_modules"] .fa-cog {
 		margin-bottom: 15px !important;
 	}
 
-	select.minwidth100imp, select.minwidth100, select.minwidth200, select.minwidth300 {
-		width: calc(100% - 50px) !important;
+	select.minwidth100imp, select.minwidth100, select.minwidth200, select.minwidth200imp, select.minwidth300 {
+		width: calc(100% - 40px) !important;
 		display: inline-block;
 	}
 
-	.clearbothonsmartphone { clear: both; display: block; }
-	/*img.photoref, div.photoref {
-		box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2);
-	}*/
+	.logopublicpayment #dolpaymentlogo {
+		max-width: 260px;
+	}
+	#tablepublicpayment {
+		width:	auto !important;
+	}
+	.poweredbypublicpayment {
+    	float: unset !important;
+		top: unset !important;
+    	bottom: 8px;
+    	position: relative !important;
+    }
+    .poweredbyimg {
+    	width: 48px;
+    }
+    input.buttonpayment, button.buttonpayment, div.buttonpayment {
+    	min-width: 270px;
+    }
 }
 
 /* Force values for small screen 570 */
@@ -1488,7 +1519,7 @@ td.showDragHandle {
 #id-left {
 	padding-top: 20px;
 	padding-bottom: 5px;
-	<?php if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN) && ! empty($conf->global->MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN)) { ?>
+	<?php if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN) && !empty($conf->global->MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN)) { ?>
 	padding-top: 8px;
 	<?php } ?>
 }
@@ -1811,8 +1842,8 @@ td.nobordernopadding.widthpictotitle.col-picto {
     color: #999;
 }
 
+/*
 span.widthpictotitle.pictotitle {
-	/* background: rgba(70, 3, 62, 0.5); */
     background: var(--colortexttitlenotab);
     opacity: 0.8;
     color: #fff !important;
@@ -1821,10 +1852,12 @@ span.widthpictotitle.pictotitle {
     min-width: 30px;
     text-align: center;
 }
+*/
 .pictotitle {
 	margin-<?php echo $right; ?>: 8px;
 	/* margin-bottom: 4px; */
 }
+
 .pictoobjectwidth {
 	width: 14px;
 }
@@ -2172,70 +2205,70 @@ a.tmenuimage:hover{
     <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
 
     <?php
-    // Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
+	// Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
 
-    $moduletomainmenu = array(
-        'user'=>'', 'syslog'=>'', 'societe'=>'companies', 'projet'=>'project', 'propale'=>'commercial', 'commande'=>'commercial',
-        'produit'=>'products', 'service'=>'products', 'stock'=>'products',
-        'don'=>'accountancy', 'tax'=>'accountancy', 'banque'=>'accountancy', 'facture'=>'accountancy', 'compta'=>'accountancy', 'accounting'=>'accountancy', 'adherent'=>'members', 'import'=>'tools', 'export'=>'tools', 'mailing'=>'tools',
-        'contrat'=>'commercial', 'ficheinter'=>'commercial', 'ticket'=>'ticket', 'deplacement'=>'commercial',
-        'fournisseur'=>'companies',
-        'barcode'=>'', 'fckeditor'=>'', 'categorie'=>'',
-    );
-    $mainmenuused = 'home';
-    foreach ($conf->modules as $val)
-    {
-        $mainmenuused .= ','.(isset($moduletomainmenu[$val]) ? $moduletomainmenu[$val] : $val);
-    }
-    $mainmenuusedarray = array_unique(explode(',', $mainmenuused));
+	$moduletomainmenu = array(
+		'user'=>'', 'syslog'=>'', 'societe'=>'companies', 'projet'=>'project', 'propale'=>'commercial', 'commande'=>'commercial',
+		'produit'=>'products', 'service'=>'products', 'stock'=>'products',
+		'don'=>'accountancy', 'tax'=>'accountancy', 'banque'=>'accountancy', 'facture'=>'accountancy', 'compta'=>'accountancy', 'accounting'=>'accountancy', 'adherent'=>'members', 'import'=>'tools', 'export'=>'tools', 'mailing'=>'tools',
+		'contrat'=>'commercial', 'ficheinter'=>'commercial', 'ticket'=>'ticket', 'deplacement'=>'commercial',
+		'fournisseur'=>'companies',
+		'barcode'=>'', 'fckeditor'=>'', 'categorie'=>'',
+	);
+	$mainmenuused = 'home';
+	foreach ($conf->modules as $val)
+	{
+		$mainmenuused .= ','.(isset($moduletomainmenu[$val]) ? $moduletomainmenu[$val] : $val);
+	}
+	$mainmenuusedarray = array_unique(explode(',', $mainmenuused));
 
-    $generic = 1;
-    // Put here list of menu entries when the div.mainmenu.menuentry was previously defined
-    $divalreadydefined = array('home', 'companies', 'products', 'mrp', 'commercial', 'externalsite', 'accountancy', 'project', 'tools', 'members', 'agenda', 'ftp', 'holiday', 'hrm', 'bookmark', 'cashdesk', 'takepos', 'ecm', 'geoipmaxmind', 'gravatar', 'clicktodial', 'paypal', 'stripe', 'webservices', 'website');
-    // Put here list of menu entries we are sure we don't want
-    $divnotrequired = array('multicurrency', 'salaries', 'ticket', 'margin', 'opensurvey', 'paybox', 'expensereport', 'incoterm', 'prelevement', 'propal', 'workflow', 'notification', 'supplier_proposal', 'cron', 'product', 'productbatch', 'expedition');
-    foreach ($mainmenuusedarray as $val)
-    {
-        if (empty($val) || in_array($val, $divalreadydefined)) continue;
-        if (in_array($val, $divnotrequired)) continue;
-        //print "XXX".$val;
+	$generic = 1;
+	// Put here list of menu entries when the div.mainmenu.menuentry was previously defined
+	$divalreadydefined = array('home', 'companies', 'products', 'mrp', 'commercial', 'externalsite', 'accountancy', 'project', 'tools', 'members', 'agenda', 'ftp', 'holiday', 'hrm', 'bookmark', 'cashdesk', 'takepos', 'ecm', 'geoipmaxmind', 'gravatar', 'clicktodial', 'paypal', 'stripe', 'webservices', 'website');
+	// Put here list of menu entries we are sure we don't want
+	$divnotrequired = array('multicurrency', 'salaries', 'ticket', 'margin', 'opensurvey', 'paybox', 'expensereport', 'incoterm', 'prelevement', 'propal', 'workflow', 'notification', 'supplier_proposal', 'cron', 'product', 'productbatch', 'expedition');
+	foreach ($mainmenuusedarray as $val)
+	{
+		if (empty($val) || in_array($val, $divalreadydefined)) continue;
+		if (in_array($val, $divnotrequired)) continue;
+		//print "XXX".$val;
 
-        // Search img file in module dir
-        $found = 0; $url = '';
-        foreach ($conf->file->dol_document_root as $dirroot)
-        {
-    		if (file_exists($dirroot."/".$val."/img/".$val.".png"))
-    		{
-    			$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
-    			$found = 1;
-    			break;
-    		}
-        }
-        // Img file not found
-        if (!$found)
-        {
-            if (!defined('DISABLE_FONT_AWSOME')) {
-                print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
+		// Search img file in module dir
+		$found = 0; $url = '';
+		foreach ($conf->file->dol_document_root as $dirroot)
+		{
+			if (file_exists($dirroot."/".$val."/img/".$val.".png"))
+			{
+				$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
+				$found = 1;
+				break;
+			}
+		}
+		// Img file not found
+		if (!$found)
+		{
+			if (!defined('DISABLE_FONT_AWSOME')) {
+				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
  				print "/* Overwrite this definition in your own css with a different content to use your own font awesome icon. */\n";
-                print 'div.mainmenu.'.$val.'::before {
+				print 'div.mainmenu.'.$val.'::before {
                     content: "\f249";
                 }'."\n";
-            } else {
-                print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
-                $url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
-                print "div.mainmenu.".$val." {\n";
-                print "	background-image: url(".$url.");\n";
-                print "}\n";
-            }
-            $generic++;
-        } else {
-            print "div.mainmenu.".$val." {\n";
-            print "	background-image: url(".$url.");\n";
-            print "}\n";
-        }
-    }
-    // End of part to add more div class css
-    ?>
+			} else {
+				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+				$url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
+				print "div.mainmenu.".$val." {\n";
+				print "	background-image: url(".$url.");\n";
+				print "}\n";
+			}
+			$generic++;
+		} else {
+			print "div.mainmenu.".$val." {\n";
+			print "	background-image: url(".$url.");\n";
+			print "}\n";
+		}
+	}
+	// End of part to add more div class css
+	?>
 <?php } // End test if $dol_hide_topmenu ?>
 
 .tmenuimage {
@@ -2402,7 +2435,8 @@ div.login_block a {
 	display: inline-block;
 }
 div.login_block span.aversion {
-	color: <?php echo colorAgressiveness($colortextbackhmenu, -40); ?>;
+	color: var(--colortextbackhmenu);
+	filter: contrast(0.7);
 }
 div.login_block table {
 	display: inline;
@@ -2448,7 +2482,7 @@ div.login_block_other {
 	height: 25px;
 }
 .atoplogin, .atoplogin:hover {
-	color: #<?php echo $colortextbackhmenu; ?> !important;
+	color: var(--colortextbackhmenu) !important;
 }
 .login_block_getinfo {
 	text-align: center;
@@ -2576,6 +2610,18 @@ font.vsmenudisabledmargin { margin: 1px 1px 1px 6px; }
 li a.vsmenudisabled, li.vsmenudisabled { color: #aaa !important; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { text-align: <?php print $left; ?>; color: #aaa; text-decoration: none; }
+.helppresent, .helppresent:hover {
+	/* color: #f3e4ac !important; */
+}
+.helppresentcircle {
+    color: var(--butactionbg);
+    margin-left: -7px;
+    display: inline-block;
+    margin-top: -10px;
+    font-size: x-small;
+    vertical-align: super;
+    opacity: 0.95;
+}
 
 .vmenu div.blockvmenufirst, .vmenu div.blockvmenulogo, .vmenu div.blockvmenusearchphone, .vmenu div.blockvmenubookmarks
 {
@@ -2881,7 +2927,6 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 
 	border-right: 1px solid #CCC !important;
 	border-left: 1px solid #CCC !important;
-	/* border-top: <?php echo 2; ?>px solid rgb(<?php echo $colortopbordertitle1; ?>) !important; */
 	border-top: <?php echo 2; ?>px solid var(--colorbackhmenu1) !important;
 }
 a.tab:hover
@@ -3020,9 +3065,8 @@ div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border
 }
 div .tdtop {
     vertical-align: top !important;
-	padding-top: 10px !important;
-	padding-bottom: 2px !important;
-	padding-bottom: 0px;
+	/*padding-top: 10px !important;
+	padding-bottom: 2px !important; */
 }
 
 table.border td, table.bordernooddeven td, div.border div div.tagtd {
@@ -3529,7 +3573,7 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste
 }
 tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, form.liste_titre div a, div.liste_titre a {
 	text-shadow: none !important;
-	color: rgb(<?php echo $colortexttitlelink ?>);
+	color: var(--colortexttitlelink);
 }
 tr.liste_titre_topborder td {
 	border-top-width: <?php echo $borderwidth; ?>px;
@@ -3599,9 +3643,6 @@ table.tableforservicepart1 tr td {
 }
 
 .paymenttable, .margintable {
-	/*border-top-width: <?php echo $borderwidth ?>px !important;
-	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>) !important;
-	border-top-style: solid !important;*/
 	border-top: none !important;
 	margin: 0px 0px 0px 0px !important;
 }
@@ -3755,6 +3796,15 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 
 @media only screen and (max-width: 767px)
 {
+	.tabBar .arearef .pagination.paginationref {
+	    max-width: calc(50%);
+	}
+
+	.clearbothonsmartphone {
+	    clear: both;
+	    display: block !important;
+	}
+
 	div.tabs {
 		padding-left: 0 !important;
 		padding-right: 0!important;
@@ -3950,7 +4000,7 @@ img.boxhandle, img.boxclose {
 .ok      { color: #114466; }
 .warning { color: #887711 !important; }
 .error   { color: #660000 !important; font-weight: bold; }
-.green   { color: #118822; }
+.green   { color: #118822 !important; }
 
 div.ok {
   color: #114466;
@@ -4143,7 +4193,7 @@ div.backgreypublicpayment { background-color: #f0f0f0; padding: 20px; border-bot
     color: #222;
     opacity: 0.3;
 }
-#dolpaymenttable { min-width: 320px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
+#dolpaymenttable { min-width: 290px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
 #tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
@@ -4985,9 +5035,14 @@ div.scroll2 {
 	width: <?php print isset($_SESSION['dol_screenwidth']) ?max($_SESSION['dol_screenwidth'] - 830, 450) : '450'; ?>px !important;
 }
 
-.gtaskname div, .gtaskname {
+div#GanttChartDIVglisthead, div#GanttChartDIVgcharthead {
+    line-height: 2;
+}
+
+.gtaskname div, .gtaskname, .gstartdate div, .gstartdate, .genddate div, .genddate {
 	font-size: unset !important;
 }
+
 div.gantt, .gtaskheading, .gmajorheading, .gminorheading, .gminorheadingwkend {
 	font-size: unset !important;
 	font-weight: normal !important;
@@ -5106,6 +5161,12 @@ div.ecmjqft {
 	float: right;
 	right:4px;
 	clear: both;
+}
+#ecm-layout-north {
+	min-height: 40px;
+}
+#ecm-layout-north div.attachareaformuserfileecm {
+    padding-bottom: 0px;
 }
 div#ecm-layout-west {
     width: 380px;
@@ -5267,7 +5328,7 @@ span#select2-taskid-container[title^='--'] {
 
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
     background-color: rgb(<?php echo $colorbackhmenu1 ?>);
-    color: #<?php echo $colortextbackhmenu; ?>;
+    color: var(--colortextbackhmenu);
 }
 .select2-container--default .select2-results__option--highlighted[aria-selected] span {
     color: #fff !important;
@@ -5305,6 +5366,9 @@ input.select2-input {
 .blockvmenubookmarks .select2-container--default .select2-selection--single
 {
     background-color: var(--colorbackvmenu1);
+}
+#blockvmenusearch .select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: var(--colortextbackvmenu);
 }
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     color: var(--colortext);
@@ -5467,6 +5531,9 @@ a span.select2-chosen
 }
 .select2-results {
 	max-height:	400px;
+}
+.select2-results__option {
+	word-break: break-word;
 }
 .select2-container.select2-container-disabled .select2-choice, .select2-container-multi.select2-container-disabled .select2-choices {
 	background-color: var(--colorbackvmenu1);
@@ -6361,6 +6428,9 @@ div.tabsElem a.tab {
 /* CSS style for debugbar                                                         */
 /* ============================================================================== */
 
+div.phpdebugbar * {
+	font-weight: unset;
+}
 span.phpdebugbar-tooltip.phpdebugbar-tooltip-extra-wide, span.phpdebugbar-tooltip.phpdebugbar-tooltip-wide {
     width: 250px !important;
 }
@@ -6370,7 +6440,15 @@ span.phpdebugbar-tooltip.phpdebugbar-tooltip-extra-wide, span.phpdebugbar-toolti
 a.phpdebugbar-tab.phpdebugbar-active {
 	background-image: unset !important;
 }
-.phpdebugbar-indicator .fa {
+.phpdebugbar-fa-tags:before {
+    content: "\f121";
+    font-weight: 600 !important;
+}
+.phpdebugbar-fa-tasks:before {
+    content: "\f550";
+    font-weight: 600 !important;
+}
+.phpdebugbar-fa-tags, .phpdebugbar-fa-tasks, .phpdebugbar-indicator .fa {
 	font-family: "Font Awesome 5 Free";
 	font-weight: 600;
 }

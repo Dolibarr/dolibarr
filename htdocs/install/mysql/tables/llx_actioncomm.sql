@@ -33,7 +33,7 @@ create table llx_actioncomm
   code				varchar(50) NULL,				-- code of action for automatic action ('AC_OTH_AUTO' for automatic actions, 'AC_EMAILIN_AUTO' for email input, 'AC_xxx' for manual action...) 
   
   datec				datetime,						-- date creation
-  tms				timestamp,						-- date modification
+  tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,						-- last modification date
   fk_user_author	integer,						-- user id of user that has created record
   fk_user_mod		integer,						-- user id of user that has modified record
 

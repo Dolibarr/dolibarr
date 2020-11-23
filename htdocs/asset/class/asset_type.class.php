@@ -87,7 +87,7 @@ class AssetType extends CommonObject
 	 *
 	 *	@param 		DoliDB		$db		Database handler
 	 */
-    public function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -100,8 +100,8 @@ class AssetType extends CommonObject
 	 *  @param	int			$notrigger		1=do not execute triggers, 0 otherwise
 	 *  @return	int							>0 if OK, < 0 if KO
 	 */
-    public function create($user, $notrigger = 0)
-    {
+	public function create($user, $notrigger = 0)
+	{
 		global $conf;
 
 		$error = 0;
@@ -164,7 +164,7 @@ class AssetType extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-    }
+	}
 
 	/**
 	 *  Met a jour en base donnees du type
@@ -173,7 +173,7 @@ class AssetType extends CommonObject
 	 *  @param	int			$notrigger		1=do not execute triggers, 0 otherwise
 	 *  @return	int							>0 if OK, < 0 if KO
 	 */
-    public function update($user, $notrigger = 0)
+	public function update($user, $notrigger = 0)
 	{
 		global $conf, $hookmanager;
 
@@ -299,7 +299,7 @@ class AssetType extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of asset's type
 	 *
@@ -307,7 +307,7 @@ class AssetType extends CommonObject
 	 */
 	public function liste_array()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $langs;
 
 		$assettypes = array();
@@ -424,8 +424,8 @@ class AssetType extends CommonObject
 	 *
 	 *  @return	void
 	 */
-    public function initAsSpecimen()
-    {
+	public function initAsSpecimen()
+	{
 		global $conf, $user, $langs;
 
 		// Initialize parameters
@@ -440,15 +440,15 @@ class AssetType extends CommonObject
 		$this->asset = array(
 			$user->id => $user
 		);
-    }
+	}
 
-    /**
-     *     getLibStatut
-     *
-     *     @return string     Return status of a type of asset
-     */
-    public function getLibStatut()
-    {
-        return '';
-    }
+	/**
+	 *     getLibStatut
+	 *
+	 *     @return string     Return status of a type of asset
+	 */
+	public function getLibStatut()
+	{
+		return '';
+	}
 }

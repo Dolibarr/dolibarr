@@ -26,7 +26,7 @@
  *		\brief		Page to set permission of a user record
  */
 
-if (! defined('CSRFCHECK_WITH_TOKEN')) define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
+if (!defined('CSRFCHECK_WITH_TOKEN')) define('CSRFCHECK_WITH_TOKEN', '1'); // Force use of CSRF protection with tokens even for GET
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
@@ -142,7 +142,7 @@ llxHeader('', $langs->trans("Permissions"));
 $head = user_prepare_head($object);
 
 $title = $langs->trans("User");
-dol_fiche_head($head, 'rights', $title, -1, 'user');
+print dol_get_fiche_head($head, 'rights', $title, -1, 'user');
 
 
 $db->begin();
@@ -458,7 +458,7 @@ $reshook = $hookmanager->executeHooks('insertExtraFooter', $parameters, $object,
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

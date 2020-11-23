@@ -93,7 +93,6 @@ $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 
 $status = GETPOST('statut', 'alpha');
-$search_status = GETPOST('search_status');
 
 // Security check
 $orderid = GETPOST('orderid', 'int');
@@ -364,30 +363,30 @@ if (empty($reshook))
 							{
 								$fk_parent_line = 0;
 							}
-                            $result = $objecttmp->addline(
+							$result = $objecttmp->addline(
 								$desc,
 								$lines[$i]->subprice,
 								$lines[$i]->tva_tx,
 								$lines[$i]->localtax1_tx,
 								$lines[$i]->localtax2_tx,
-                            	$lines[$i]->qty,
-                            	$lines[$i]->fk_product,
+								$lines[$i]->qty,
+								$lines[$i]->fk_product,
 								$lines[$i]->remise_percent,
 								$date_start,
 								$date_end,
 								0,
 								$lines[$i]->info_bits,
-                            	'HT',
-                            	$product_type,
-                            	$lines[$i]->rang,
-                            	false,
-                            	$lines[$i]->array_options,
-                            	$lines[$i]->fk_unit,
-                            	$objecttmp->origin_id,
-                            	$lines[$i]->pa_ht,
-                            	$lines[$i]->ref_supplier,
-                            	$lines[$i]->special_code,
-                            	$fk_parent_line
+								'HT',
+								$product_type,
+								$lines[$i]->rang,
+								false,
+								$lines[$i]->array_options,
+								$lines[$i]->fk_unit,
+								$objecttmp->origin_id,
+								$lines[$i]->pa_ht,
+								$lines[$i]->ref_supplier,
+								$lines[$i]->special_code,
+								$fk_parent_line
 							);
 							if ($result > 0)
 							{
@@ -686,7 +685,7 @@ if ($resql)
 	$arrayofmassactions = array(
 		'generate_doc'=>$langs->trans("ReGeneratePDF"),
 		'builddoc'=>$langs->trans("PDFMerge"),
-	    'presend'=>$langs->trans("SendByMail"),
+		'presend'=>$langs->trans("SendByMail"),
 	);
 	if ($user->rights->fournisseur->facture->creer) $arrayofmassactions['createbills'] = $langs->trans("CreateInvoiceForThisSupplier");
 	if ($user->rights->fournisseur->commande->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
@@ -782,7 +781,7 @@ if ($resql)
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view prospects other than his'
-	if ($conf->categorie->enabled && ($user->rights->produit->lire || $user->rights->service->lire))
+	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire && ($user->rights->produit->lire || $user->rights->service->lire))
 	{
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
@@ -977,7 +976,7 @@ if ($resql)
 	if (!empty($arrayfields['cf.billed']['checked']))
 	{
 		print '<td class="liste_titre center">';
-		print $form->selectyesno('search_billed', $search_billed, 1, 0, 1);
+		print $form->selectyesno('search_billed', $search_billed, 1, 0, 1, 1);
 		print '</td>';
 	}
 	// Action column
@@ -1051,6 +1050,7 @@ if ($resql)
 		$objectstatic->total_ht = $obj->total_ht;
 		$objectstatic->total_tva = $obj->total_tva;
 		$objectstatic->total_ttc = $obj->total_ttc;
+		$objectstatic->date_commande = $db->jdate($obj->date_commande);
 		$objectstatic->date_delivery = $db->jdate($obj->date_delivery);
 		$objectstatic->note_public = $obj->note_public;
 		$objectstatic->note_private = $obj->note_private;
@@ -1160,8 +1160,10 @@ if ($resql)
 		if (!empty($arrayfields['cf.date_commande']['checked']))
 		{
 			print '<td class="center">';
-			if ($obj->date_commande) print dol_print_date($db->jdate($obj->date_commande), 'day');
-			else print '';
+			print dol_print_date($db->jdate($obj->date_commande), 'day');
+			if ($objectstatic->hasDelay() && !empty($objectstatic->date_delivery)) {
+				print ' '.img_picto($langs->trans("Late").' : '.$objectstatic->showDelay(), "warning");
+			}
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
@@ -1293,14 +1295,14 @@ if ($resql)
 
 	$db->free($resql);
 
-    $parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
-    $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
+	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
-    print '</table>'."\n";
-    print '</div>';
+	print '</table>'."\n";
+	print '</div>';
 
-    print '</form>'."\n";
+	print '</form>'."\n";
 
 	$hidegeneratedfilelistifempty = 1;
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty = 0;

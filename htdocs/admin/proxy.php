@@ -94,7 +94,7 @@ print '<input type="hidden" name="action" value="set_proxy">';
 
 $head = security_prepare_head();
 
-dol_fiche_head($head, 'proxy', '', -1);
+print dol_get_fiche_head($head, 'proxy', '', -1);
 
 
 if ($conf->use_javascript_ajax)
@@ -197,7 +197,7 @@ print '</tr>';
 
 print '</table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center">';
 print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';

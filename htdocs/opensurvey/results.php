@@ -417,7 +417,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $head = opensurvey_prepare_head($object);
 
-dol_fiche_head($head, 'preview', $langs->trans("Survey"), -1, 'poll');
+print dol_get_fiche_head($head, 'preview', $langs->trans("Survey"), -1, 'poll');
 
 $morehtmlref = '';
 
@@ -494,7 +494,7 @@ print '</table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '</form>'."\n";
 
@@ -913,7 +913,7 @@ while ($compteur < $num)
 			{
 				print '<td class="casevide">';
 				print '<input type="hidden" name="idtomodify'.$compteur.'" value="'.$obj->id_users.'">';
-				print '<input type="submit" class="button" name="validermodifier'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '<input type="submit" class="button button-save" name="validermodifier'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 				print '</td>'."\n";
 			}
 		}
@@ -1048,7 +1048,7 @@ for ($i = 0; $i < $nbcolonnes; $i++)
 		if ($object->format == "D") {
 			$meilleursujetexport = $toutsujet[$i];
 			//var_dump($toutsujet);
-            if (strpos($toutsujet[$i], '@') !== false) {
+			if (strpos($toutsujet[$i], '@') !== false) {
 				$toutsujetdate = explode("@", $toutsujet[$i]);
 				$meilleursujet .= dol_print_date($toutsujetdate[0], 'daytext').($toutsujetdate[0] ? ' ('.dol_print_date($toutsujetdate[0], '%A').')' : '').' - '.$toutsujetdate[1];
 			} else {

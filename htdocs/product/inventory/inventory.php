@@ -120,7 +120,7 @@ if (empty($reshook))
 	// Actions to send emails
 	/*$triggersendname = 'MYOBJECT_SENTBYMAIL';
 	$autocopy='MAIN_MAIL_AUTOCOPY_MYOBJECT_TO';
-	$trackid='myobject'.$object->id;
+	$trackid='stockinv'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';*/
 
 	if (GETPOST('addline', 'alpha')) {
@@ -202,7 +202,7 @@ if ($object->id > 0)
 	$res = $object->fetch_optionals();
 
 	$head = inventoryPrepareHead($object);
-	dol_fiche_head($head, 'inventory', $langs->trans("Inventory"), -1, 'stock');
+	print dol_get_fiche_head($head, 'inventory', $langs->trans("Inventory"), -1, 'stock');
 
 	$formconfirm = '';
 
@@ -300,7 +300,7 @@ if ($object->id > 0)
 
 	print '<div class="clearboth"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	// Buttons for actions
@@ -313,7 +313,7 @@ if ($object->id > 0)
 
 		print '<div class="center">';
 		print '<span class="opacitymedium">'.$langs->trans("InventoryDesc").'</span><br>';
-		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 		print ' &nbsp; ';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
@@ -528,7 +528,7 @@ if ($object->id > 0)
 	// Save
 	if ($object->status == $object::STATUS_VALIDATED) {
 		print '<div class="center">';
-		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 		print '</div>';
 	}
 

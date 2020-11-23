@@ -87,12 +87,12 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 }
 .info-box-sm .info-box-icon {
     height: 80px;
-    width: 80px;
+    width: 78px;
     font-size: 25px;
     line-height: 92px;
 }
 .opened-dash-board-wrap .info-box-sm .info-box-icon {
-    border-radius: 0 20px 0 20px;
+    border-radius: 0 0 0 20px;
 }
 .opened-dash-board-wrap .info-box-sm .info-box-icon {
     line-height: 80px;
@@ -214,6 +214,8 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	text-transform: uppercase;
 	font-weight: bold;
 	margin-bottom: 3px;	/* not too much space so we can add another lines */
+	opacity: 0.6;
+	/* color: var(--colortexttitlenotab); */
 }
 .info-box-text{
 	font-size: 0.92em;
@@ -268,6 +270,13 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	margin: 2px;
 	border-radius: 3px;
 }
+.user-back {
+	background-color: #79633f !important;
+	color: #FFF !important;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
+}
 
 
 
@@ -308,14 +317,14 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 .infobox-action{
 	color: #b06080 !important;
 }
-.infobox-propal,
-.infobox-facture,
-.infobox-commande{
+.infobox-propal:not(.pictotitle),
+.infobox-facture:not(.pictotitle),
+.infobox-commande:not(.pictotitle) {
 	color: #65955d !important;
 }
-.infobox-supplier_proposal,
-.infobox-invoice_supplier,
-.infobox-order_supplier{
+.infobox-supplier_proposal:not(.pictotitle),
+.infobox-invoice_supplier:not(.pictotitle),
+.infobox-order_supplier:not(.pictotitle){
 	color: #599caf !important;
 }
 .infobox-contrat, .infobox-ticket{
@@ -428,18 +437,19 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	min-width: 350px;
     max-width: 350px;
 }
+
 @media only screen and (max-width: 1740px) {
 	.info-box-module {
 	    min-width: 315px;
 	    max-width: 315px;
 	}
 }
+
 @media only screen and (max-width: 767px) {
 	.info-box-module {
 		min-width: 260px;
 	}
 }
-
 
 .info-box-module .info-box-content {
 	height: 98px;
@@ -456,9 +466,18 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	    margin: 0 0 0 0px !important;
 	    width: 100% !important;
 	}
-
 	.info-box-module {
 		width: 100%;
 		max-width: unset;
 	}
+	.info-box-sm .info-box-icon {
+		width: 60px;
+	}
+	.info-box-sm .info-box-content {
+		margin-left: 60px;
+	}
+	.info-box {
+		border: 1px solid #e0e0e0;
+	}
+}
 }

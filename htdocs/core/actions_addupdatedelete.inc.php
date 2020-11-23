@@ -60,7 +60,10 @@ if ($action == 'add' && !empty($permissiontoadd))
 			if (!GETPOSTISSET($key)) continue; // The field was not submited to be edited
 		}
 		// Ignore special fields
-		if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
+		if (in_array($key, array('rowid', 'entity', 'import_key'))) continue;
+		if (in_array($key, array('date_creation', 'tms', 'fk_user_creat', 'fk_user_modif'))) {
+			if (!in_array(abs($val['visible']), array(1, 3))) continue;	// Only 1 and 3 that are case to create
+		}
 
 		// Set value to insert
 		if (in_array($object->fields[$key]['type'], array('text', 'html'))) {
@@ -74,7 +77,10 @@ if ($action == 'add' && !empty($permissiontoadd))
 		} elseif (preg_match('/^(integer|price|real|double)/', $object->fields[$key]['type'])) {
 			$value = price2num(GETPOST($key, 'alphanohtml')); // To fix decimal separator according to lang setup
 		} elseif ($object->fields[$key]['type'] == 'boolean') {
-			$value = (GETPOST($key) == 'on' ? 1 : 0);
+			$value = ((GETPOST($key) == '1' || GETPOST($key) == 'on') ? 1 : 0);
+		} elseif ($object->fields[$key]['type'] == 'reference') {
+			$tmparraykey = array_keys($object->param_list);
+			$value = $tmparraykey[GETPOST($key)].','.GETPOST($key.'2');
 		} else {
 			$value = GETPOST($key, 'alphanohtml');
 		}
@@ -138,7 +144,10 @@ if ($action == 'update' && !empty($permissiontoadd))
 			if (!GETPOSTISSET($key)) continue; // The field was not submited to be edited
 		}
 		// Ignore special fields
-		if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
+		if (in_array($key, array('rowid', 'entity', 'import_key'))) continue;
+		if (in_array($key, array('date_creation', 'tms', 'fk_user_creat', 'fk_user_modif'))) {
+			if (!in_array(abs($val['visible']), array(1, 3, 4))) continue;	// Only 1 and 3 and 4 that are case to update
+		}
 
 		// Set value to update
 		if (preg_match('/^(text|html)/', $object->fields[$key]['type'])) {
@@ -162,6 +171,8 @@ if ($action == 'update' && !empty($permissiontoadd))
 			$value = price2num(GETPOST($key, 'alphanohtml')); // To fix decimal separator according to lang setup
 		} elseif ($object->fields[$key]['type'] == 'boolean') {
 			$value = ((GETPOST($key, 'aZ09') == 'on' || GETPOST($key, 'aZ09') == '1') ? 1 : 0);
+		} elseif ($object->fields[$key]['type'] == 'reference') {
+			$value = array_keys($object->param_list)[GETPOST($key)].','.GETPOST($key.'2');
 		} else {
 			$value = GETPOST($key, 'alpha');
 		}
@@ -305,6 +316,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd)
 					$outputlangs->setDefaultLang($newlang);
 				}
 				$model = $object->model_pdf;
+
 				$ret = $object->fetch($id); // Reload to get new records
 
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);

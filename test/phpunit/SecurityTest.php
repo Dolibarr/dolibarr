@@ -295,6 +295,46 @@ class SecurityTest extends PHPUnit\Framework\TestCase
     }
 
     /**
+     * testDolStringOnlyTheseHtmlTags
+     *
+     * @return number
+     */
+    public function testDolHTMLEntityDecode()
+    {
+    	$stringtotest = 'a &colon; b &quot; c &#039; d &apos; e &eacute;';
+    	$decodedstring = dol_html_entity_decode($stringtotest, ENT_QUOTES);
+    	$this->assertEquals('a &colon; b " c \' d &apos; e é', $decodedstring, 'Function did not sanitize correclty');
+
+    	$stringtotest = 'a &colon; b &quot; c &#039; d &apos; e &eacute;';
+    	$decodedstring = dol_html_entity_decode($stringtotest, ENT_QUOTES|ENT_HTML5);
+    	$this->assertEquals('a : b " c \' d \' e é', $decodedstring, 'Function did not sanitize correclty');
+
+    	return 0;
+    }
+
+    /**
+     * testDolStringOnlyTheseHtmlTags
+     *
+     * @return number
+     */
+    public function testDolStringOnlyTheseHtmlTags()
+    {
+    	$stringtotest = '<a href="javascript:aaa">bbbڴ';
+    	$decodedstring = dol_string_onlythesehtmltags($stringtotest, 1, 1, 1);
+        $this->assertEquals('<a href="aaa">bbbڴ', $decodedstring, 'Function did not sanitize correclty with test 1');
+
+        $stringtotest = '<a href="java'.chr(0).'script:aaa">bbbڴ';
+        $decodedstring = dol_string_onlythesehtmltags($stringtotest, 1, 1, 1);
+        $this->assertEquals('<a href="aaa">bbbڴ', $decodedstring, 'Function did not sanitize correclty with test 2');
+
+        $stringtotest = '<a href="javascript&colon;aaa">bbbڴ';
+        $decodedstring = dol_string_onlythesehtmltags($stringtotest, 1, 1, 1);
+        $this->assertEquals('<a href="aaa">bbbڴ', $decodedstring, 'Function did not sanitize correclty with test 3');
+
+        return 0;
+    }
+
+    /**
      * testGetRandomPassword
      *
      * @return number
@@ -342,5 +382,60 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$result=restrictedArea($user, 'societe');
 		$this->assertEquals(1, $result);
+    }
+
+
+    /**
+     * testGetRandomPassword
+     *
+     * @return number
+     */
+    public function testGetURLContent()
+    {
+    	global $conf;
+    	include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+
+    	$url = 'ftp://mydomain.com';
+    	$tmp = getURLContent($url);
+    	print __METHOD__." url=".$url."\n";
+    	$this->assertGreaterThan(0, strpos($tmp['curl_error_msg'], 'not supported'));	// Test error if return does not contains 'not supported'
+
+    	$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
+    	$tmp = getURLContent($url, 'GET', '', 0);	// We do NOT follow
+    	print __METHOD__." url=".$url."\n";
+    	$this->assertEquals(301, $tmp['http_code'], 'GET url 301 without following -> 301');
+
+    	$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
+    	$tmp = getURLContent($url);		// We DO follow
+    	print __METHOD__." url=".$url."\n";
+    	$this->assertEquals(200, $tmp['http_code'], 'GET url 301 with following -> 200');	// Test error if return does not contains 'not supported'
+
+    	$url = 'http://localhost';
+    	$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+    	print __METHOD__." url=".$url."\n";
+    	$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that resolves to a local URL');	// Test we receive an error because localtest.me is not an external URL
+
+    	$url = 'http://127.0.0.1';
+    	$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+    	print __METHOD__." url=".$url."\n";
+    	$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because localtest.me is not an external URL
+
+    	$url = 'https://169.254.0.1';
+    	$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+    	print __METHOD__." url=".$url."\n";
+    	$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because localtest.me is not an external URL
+
+    	$url = 'http://[::1]';
+    	$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+    	print __METHOD__." url=".$url."\n";
+    	$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because localtest.me is not an external URL
+
+    	/*$url = 'localtest.me';
+    	$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+    	print __METHOD__." url=".$url."\n";
+    	$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that resolves to a local URL');	// Test we receive an error because localtest.me is not an external URL
+		*/
+
+    	return 0;
     }
 }

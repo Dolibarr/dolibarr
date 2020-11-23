@@ -38,6 +38,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
+if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+
 /**
  *	Class to manage suppliers invoices
  */
@@ -95,12 +98,18 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public $ref;
 
-	public $label;
-	public $libelle; // @deprecated
-
-	public $product_ref;
+	/**
+	 * @var string Ref supplier
+	 */
 	public $ref_supplier;
+
+	/**
+	 * @var string Label of invoice
+	 */
+	public $label;
+
 	public $socid;
+
 	//Check constants for types
 	public $type = self::TYPE_STANDARD;
 
@@ -114,7 +123,6 @@ class FactureFournisseur extends CommonInvoice
 	/**
 	 * Set to 1 if the invoice is completely paid, otherwise is 0
 	 * @var int
-	 * @deprecated Use statuses stored in self::statut
 	 */
 	public $paye;
 
@@ -702,7 +710,7 @@ class FactureFournisseur extends CommonInvoice
 				$this->note_private			= $obj->note_private;
 				$this->note_public = $obj->note_public;
 				$this->model_pdf = $obj->model_pdf;
-				$this->modelpdf = $obj->model_pdf;	// deprecated
+				$this->modelpdf = $obj->model_pdf; // deprecated
 				$this->import_key = $obj->import_key;
 
 				//Incoterms
@@ -723,7 +731,7 @@ class FactureFournisseur extends CommonInvoice
 				$this->socid  = $obj->socid;
 				$this->socnom = $obj->socnom;
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
@@ -765,7 +773,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= ', f.localtax1_tx, f.localtax2_tx, f.localtax1_type, f.localtax2_type, f.total_localtax1, f.total_localtax2, f.fk_facture_fourn ';
 		$sql .= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
 		$sql .= ', p.rowid as product_id, p.ref as product_ref, p.label as label, p.description as product_desc';
-		$sql .= ', fk_code_ventilation, f.fk_multicurrency, f.multicurrency_code, f.multicurrency_subprice, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc';
+		$sql .= ', f.fk_code_ventilation, f.fk_multicurrency, f.multicurrency_code, f.multicurrency_subprice, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det as f';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON f.fk_product = p.rowid';
 		$sql .= ' WHERE fk_facture_fourn='.$this->id;
@@ -827,7 +835,7 @@ class FactureFournisseur extends CommonInvoice
 
 					// Accountancy
 					$line->code_ventilation = $obj->fk_code_ventilation;
-					$line->fk_accounting_account	= $obj->fk_code_ventilation;
+					$line->fk_accounting_account = $obj->fk_code_ventilation;
 
 					// Multicurrency
 					$line->fk_multicurrency = $obj->fk_multicurrency;
@@ -1699,7 +1707,7 @@ class FactureFournisseur extends CommonInvoice
 				$product_type = $type;
 			}
 
-			if ($conf->multicurrency->enabled && $pu_ht_devise > 0) {
+			if (!empty($conf->multicurrency->enabled) && $pu_ht_devise > 0) {
 				$pu = 0;
 			}
 
@@ -2286,10 +2294,10 @@ class FactureFournisseur extends CommonInvoice
 		if ($this->type == self::TYPE_CREDIT_NOTE) $picto .= 'a'; // Credit note
 		if ($this->type == self::TYPE_DEPOSIT)     $picto .= 'd'; // Deposit invoice
 
-		$label = '<u>'.$langs->trans("SupplierInvoice").'</u>';
-		if ($this->type == self::TYPE_REPLACEMENT) $label = '<u>'.$langs->transnoentitiesnoconv("InvoiceReplace").'</u>';
-		elseif ($this->type == self::TYPE_CREDIT_NOTE) $label = '<u>'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
-		elseif ($this->type == self::TYPE_DEPOSIT)     $label = '<u>'.$langs->transnoentitiesnoconv("Deposit").'</u>';
+		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("SupplierInvoice").'</u>';
+		if ($this->type == self::TYPE_REPLACEMENT) $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("InvoiceReplace").'</u>';
+		elseif ($this->type == self::TYPE_CREDIT_NOTE) $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
+		elseif ($this->type == self::TYPE_DEPOSIT)     $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("Deposit").'</u>';
 		if (!empty($this->ref))
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (!empty($this->ref_supplier))
@@ -2301,7 +2309,7 @@ class FactureFournisseur extends CommonInvoice
 		if (!empty($this->total_ht))
 			$label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
 		if (!empty($this->total_tva))
-			$label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+			$label .= '<br><b>'.$langs->trans('AmountVAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
 		if (!empty($this->total_ttc))
 			$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
 		if ($moretitle) $label .= ' - '.$moretitle;
@@ -2397,7 +2405,7 @@ class FactureFournisseur extends CommonInvoice
 			return $numref;
 		} else {
 			$this->error = $obj->error;
-			return false;
+			return -1;
 		}
 	}
 

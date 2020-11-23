@@ -32,7 +32,7 @@ create table llx_propal
   fk_soc				integer,
   fk_projet				integer     DEFAULT NULL,		-- projet auquel est rattache la propale
 
-  tms					timestamp,
+  tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datec					datetime,						-- date de creation 
   datep					date,							-- date de la propal
   fin_validite			datetime,						-- date de fin de validite

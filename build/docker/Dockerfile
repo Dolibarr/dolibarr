@@ -20,6 +20,9 @@ RUN apt-get update -y \
         unzip \
         curl \
         apt-utils \
+        msmtp \
+        msmtp-mta \
+        mailutils \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
@@ -44,7 +47,17 @@ RUN echo 'xdebug.remote_port=9000' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.remote_connect_back=1' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.profiler_enable=0' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.remote_log="/tmp/xdebug.log"' >> ${PHP_INI_DIR}/php.ini
-#RUN echo '172.17.0.1 docker.host' >> /etc/hosts
+#RUN echo 'localhost docker.host' >> /etc/hosts
+
+# set up sendmail config, to use maildev
+RUN echo "account default" > /etc/msmtprc
+RUN echo "auth off" >> /etc/msmtprc
+RUN echo "port 25" >> /etc/msmtprc
+RUN echo "host mail" >> /etc/msmtprc
+RUN echo "from local@localdomain.com" >> /etc/msmtprc
+RUN echo "domain localhost.localdomain" >> /etc/msmtprc
+RUN echo "sendmail_path=/usr/bin/msmtp -t" >> /usr/local/etc/php/conf.d/php-sendmail.ini
+RUN echo "localhost localhost.localdomain" >> /etc/hosts
 
 EXPOSE 80
 

@@ -55,7 +55,7 @@ print load_fiche_titre($langs->trans("StockTransfer"), '', 'generic');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">'."\n";
 
-dol_fiche_head();
+print dol_get_fiche_head();
 
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="transfert_stock">';
@@ -132,7 +132,7 @@ print '</tr>';
 
 print '</table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center">';
 print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Save')).'">';

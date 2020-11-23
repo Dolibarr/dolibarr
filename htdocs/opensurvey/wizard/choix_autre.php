@@ -97,7 +97,7 @@ if (GETPOSTISSET("confirmecreation"))
 	}
 }
 
-var_dump($_SESSION);exit;
+var_dump($_SESSION); exit;
 
 
 /*

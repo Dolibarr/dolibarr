@@ -160,7 +160,7 @@ print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;tab='.$tab.'&amp;ei
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value='.($eid == 0 ? 'add' : 'update').'>';
 
-dol_fiche_head();
+print dol_get_fiche_head();
 
 print '<table class="border centpercent">';
 
@@ -196,11 +196,11 @@ $doleditor->Create();
 print '</td></tr>';
 print '</table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 //Buttons
 print '<div class="center">';
-print '<input type="submit" class="butAction" value="'.$langs->trans("Save").'">';
+print '<input type="submit" class="butAction button-save" value="'.$langs->trans("Save").'">';
 print '<span id="back" class="butAction">'.$langs->trans("Back").'</span>';
 if ($eid == 0)
 {

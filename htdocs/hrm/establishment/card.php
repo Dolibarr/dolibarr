@@ -167,7 +167,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -241,10 +241,10 @@ if ($action == 'create')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
-	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+	print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
@@ -262,7 +262,7 @@ if (($id || $ref) && $action == 'edit')
 
 		if ($action == 'edit')
 		{
-			dol_fiche_head($head, 'card', $langs->trans("Establishment"), 0, 'building');
+			print dol_get_fiche_head($head, 'card', $langs->trans("Establishment"), 0, 'building');
 
 			print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 			print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -324,10 +324,10 @@ if (($id || $ref) && $action == 'edit')
 
 			print '</table>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
-			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+			print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 			print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
@@ -342,7 +342,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_optionals();
 
 	$head = establishment_prepare_head($object);
-	dol_fiche_head($head, 'card', $langs->trans("Establishment"), -1, 'building');
+	print dol_get_fiche_head($head, 'card', $langs->trans("Establishment"), -1, 'building');
 
 	// Confirmation to delete
 	if ($action == 'delete')
@@ -418,7 +418,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '<div class="clearboth"></div><br>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	/*
      * Barre d'actions

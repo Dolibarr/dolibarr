@@ -13,7 +13,7 @@
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2015-2018 Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2016      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2018       David Beniamine     <David.Beniamine@Tetras-Libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -690,12 +690,6 @@ llxHeader('', $langs->trans("UserCard"));
 
 if ($action == 'create' || $action == 'adduserldap')
 {
-	/* ************************************************************************** */
-	/*                                                                            */
-	/* Affichage fiche en mode creation                                           */
-	/*                                                                            */
-	/* ************************************************************************** */
-
 	print load_fiche_titre($langs->trans("NewUser"), '', 'user');
 
 	print '<span class="opacitymedium">'.$langs->trans("CreateInternalUserDesc")."</span><br>\n";
@@ -704,11 +698,7 @@ if ($action == 'create' || $action == 'adduserldap')
 
 	if (!empty($conf->ldap->enabled) && (isset($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr'))
 	{
-		/*
-         * Affiche formulaire d'ajout d'un compte depuis LDAP
-         * si on est en synchro LDAP vers Dolibarr
-         */
-
+		// Show form to add an account from LDAP if sync LDAP -> Dolibarr is set
 		$ldap = new Ldap();
 		$result = $ldap->connect_bind();
 		if ($result >= 0)
@@ -793,7 +783,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	if (!empty($ldap_sid)) print '<input type="hidden" name="ldap_sid" value="'.dol_escape_htmltag($ldap_sid).'">';
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 
-	dol_fiche_head('', '', '', 0, '');
+	print dol_get_fiche_head('', '', '', 0, '');
 
 	print dol_set_focus('#lastname');
 
@@ -1262,7 +1252,7 @@ if ($action == 'create' || $action == 'adduserldap')
 
 	print "</table>\n";
 
- 	dol_fiche_end();
+ 	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input class="button" value="'.$langs->trans("CreateUser").'" name="create" type="submit">';
@@ -1272,12 +1262,7 @@ if ($action == 'create' || $action == 'adduserldap')
 
 	print "</form>";
 } else {
-	/* ************************************************************************** */
-	/*                                                                            */
-	/* View and edition                                                            */
-	/*                                                                            */
-	/* ************************************************************************** */
-
+	// View and edit mode
 	if ($id > 0)
 	{
 		$object->fetch($id, '', '', 1);
@@ -1395,7 +1380,7 @@ if ($action == 'create' || $action == 'adduserldap')
          */
 		if ($action != 'edit')
 		{
-			dol_fiche_head($head, 'user', $title, -1, 'user');
+			print dol_get_fiche_head($head, 'user', $title, -1, 'user');
 
 			dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
@@ -1446,8 +1431,10 @@ if ($action == 'create' || $action == 'adduserldap')
 			}
 			if (preg_match('/dolibarr/', $dolibarr_main_authentication))
 			{
-				if ($object->pass) $valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').preg_replace('/./i', '*', $object->pass);
-				else {
+				if ($object->pass) {
+					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '');
+					$valuetoshow .= '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
+				} else {
 					if ($user->admin && $user->id == $object->id) {
 						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '');
 						//$valuetoshow .= '<span class="opacitymedium">'.$langs->trans("Crypted").' - </span>';
@@ -1574,10 +1561,12 @@ if ($action == 'create' || $action == 'adduserldap')
 			if (!empty($conf->stock->enabled) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER))
 			{
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-				$warehousestatic = new Entrepot($db);
-				$warehousestatic->fetch($object->fk_warehouse);
 				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
-				print $warehousestatic->getNomUrl(1);
+				if ($object->fk_warehouse > 0) {
+					$warehousestatic = new Entrepot($db);
+					$warehousestatic->fetch($object->fk_warehouse);
+					print $warehousestatic->getNomUrl(1);
+				}
 				print '</td></tr>';
 			}
 
@@ -1755,22 +1744,28 @@ if ($action == 'create' || $action == 'adduserldap')
 			{
 				print '<tr><td>'.$langs->trans("LinkToCompanyContact").'</td>';
 				print '<td>';
+				$s = '';
 				if (isset($object->socid) && $object->socid > 0)
 				{
 					$societe = new Societe($db);
 					$societe->fetch($object->socid);
-					print $societe->getNomUrl(1, '');
+					if ($societe->id > 0) {
+						$s .= $societe->getNomUrl(1, '');
+					}
 				} else {
-					print $langs->trans("ThisUserIsNot");
+					$s .= '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ThisUserIsNot").'</span>';
 				}
 				if (!empty($object->contact_id))
 				{
 					$contact = new Contact($db);
 					$contact->fetch($object->contact_id);
-					if ($object->socid > 0) print ' / ';
-					else print '<br>';
-					print $contact->getNomUrl(1, '');
+					if ($contact->id > 0) {
+						if ($object->socid > 0 && $s) $s .= ' / ';
+						else $s .= '<br>';
+						$s .= $contact->getNomUrl(1, '');
+					}
 				}
+				print $s;
 				print '</td>';
 				print '</tr>'."\n";
 			}
@@ -1786,9 +1781,9 @@ if ($action == 'create' || $action == 'adduserldap')
 					$adh = new Adherent($db);
 					$adh->fetch($object->fk_member);
 					$adh->ref = $adh->getFullname($langs); // Force to show login instead of id
-					print $adh->getNomUrl(1);
+					print $adh->getNomUrl(-1);
 				} else {
-					print $langs->trans("UserNotLinkedToMember");
+					print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("UserNotLinkedToMember").'</span>';
 				}
 				print '</td>';
 				print '</tr>'."\n";
@@ -1815,7 +1810,7 @@ if ($action == 'create' || $action == 'adduserldap')
 			print '<div style="clear:both"></div>';
 
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 
 			/*
@@ -2024,7 +2019,7 @@ if ($action == 'create' || $action == 'adduserldap')
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="entity" value="'.$object->entity.'">';
 
-			dol_fiche_head($head, 'user', $title, 0, 'user');
+			print dol_get_fiche_head($head, 'user', $title, 0, 'user');
 
 			print '<table class="border centpercent">';
 
@@ -2213,16 +2208,16 @@ if ($action == 'create' || $action == 'adduserldap')
 				$type = 0;
 				if ($object->contact_id) $type = $object->contact_id;
 
-				if ($object->socid > 0 && ! ($object->contact_id > 0)) {	// external user but no link to a contact
+				if ($object->socid > 0 && !($object->contact_id > 0)) {	// external user but no link to a contact
 					print img_picto('', 'company').$form->select_company($object->socid, 'socid', '', '&nbsp;');
 					print img_picto('', 'contact').$form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, '', false, 1);
 					if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
 				} elseif ($object->socid > 0 && $object->contact_id > 0) {	// external user with a link to a contact
-					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;');	// We keep thirdparty empty, contact is already set
+					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;'); // We keep thirdparty empty, contact is already set
 					print img_picto('', 'contact').$form->selectcontacts(0, $object->contact_id, 'contactid', 1, '', '', 1, '', false, 1);
 			   		if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
 				} else {	// $object->socid is not > 0 here
-					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;');	// We keep thirdparty empty, contact is already set
+					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;'); // We keep thirdparty empty, contact is already set
 					print img_picto('', 'contact').$form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, '', false, 1);
 				}
 			}
@@ -2480,7 +2475,7 @@ if ($action == 'create' || $action == 'adduserldap')
 			print '<tr>';
 			print '<td>'.$langs->trans("Photo").'</td>';
 			print '<td>';
-			print $form->showphoto('userphoto', $object, 60, 0, $caneditfield, 'photowithmargin', 'small');
+			print $form->showphoto('userphoto', $object, 60, 0, $caneditfield, 'photowithmargin', 'small', 1, 0, 'user', 1);
 			print '</td>';
 			print '</tr>';
 
@@ -2536,9 +2531,9 @@ if ($action == 'create' || $action == 'adduserldap')
 						print ' / <a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$object->contact_id.'">'.img_object($langs->trans("ShowContact"), 'contact').' '.dol_trunc($contact->getFullName($langs), 32).'</a>';
 					}
 				} else {
-					print $langs->trans("ThisUserIsNot");
+					print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ThisUserIsNot").'</span>';
 				}
-				print ' ('.$langs->trans("UseTypeFieldToChange").')';
+				print ' <span class="opacitymedium hideonsmartphone">('.$langs->trans("UseTypeFieldToChange").')</span>';
 				print '</td>';
 				print "</tr>\n";
 			}
@@ -2556,7 +2551,7 @@ if ($action == 'create' || $action == 'adduserldap')
 					$adh->ref = $adh->login; // Force to show login instead of id
 					print $adh->getNomUrl(1);
 				} else {
-					print $langs->trans("UserNotLinkedToMember");
+					print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("UserNotLinkedToMember").'</span>';
 				}
 				print '</td>';
 				print "</tr>\n";
@@ -2745,10 +2740,10 @@ if ($action == 'create' || $action == 'adduserldap')
 
 			print '</table>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
-			print '<input value="'.$langs->trans("Save").'" class="button" type="submit" name="save">';
+			print '<input value="'.$langs->trans("Save").'" class="button button-save" type="submit" name="save">';
 			print '&nbsp; &nbsp; &nbsp;';
 			print '<input value="'.$langs->trans("Cancel").'" class="button" type="submit" name="cancel">';
 			print '</div>';

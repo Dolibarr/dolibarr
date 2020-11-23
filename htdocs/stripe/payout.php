@@ -78,8 +78,8 @@ $stripeacc = $stripe->getStripeAccount($service);
 if (!$rowid) {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') {
-        print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    }
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
@@ -101,7 +101,7 @@ if (!$rowid) {
 	//print_liste_field_titre("CustomerId", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 	//print_liste_field_titre("Origin", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'center ');
-    print_liste_field_titre("DateOperation", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("DateOperation", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'left ');
 	print_liste_field_titre("Paid", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", '', '', '', 'right ');
@@ -157,14 +157,14 @@ if (!$rowid) {
 			print '<tr class="oddeven">';
 
 			// Ref
-	        if (!empty($stripeacc)) $connect = $stripeacc.'/';
+			if (!empty($stripeacc)) $connect = $stripeacc.'/';
 
 			$url = 'https://dashboard.stripe.com/'.$connect.'test/payouts/'.$payout->id;
 			if ($servicestatus) {
 				$url = 'https://dashboard.stripe.com/'.$connect.'payouts/'.$payout->id;
 			}
 
-	        print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." ".$payout->id."</a></td>\n";
+			print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." ".$payout->id."</a></td>\n";
 
 
 			// Stripe customer
@@ -194,7 +194,7 @@ if (!$rowid) {
 			//print "</td>\n";
 			// Date payment
 			print '<td class="center">'.dol_print_date($payout->created, '%d/%m/%Y %H:%M')."</td>\n";
-	        // Date payment
+			// Date payment
 			print '<td class="center">'.dol_print_date($payout->arrival_date, '%d/%m/%Y %H:%M')."</td>\n";
 			// Type
 			print '<td>'.$payout->description.'</td>';
@@ -203,16 +203,16 @@ if (!$rowid) {
 			// Status
 			print "<td class='right'>";
 			if ($payout->status == 'paid') {
-	            print img_picto($langs->trans("".$payout->status.""), 'statut4');
-	        } elseif ($payout->status == 'pending') {
-	            print img_picto($langs->trans("".$payout->status.""), 'statut7');
-	        } elseif ($payout->status == 'in_transit') {
-	            print img_picto($langs->trans("".$payout->status.""), 'statut7');
-	        } elseif ($payout->status == 'failed') {
-	            print img_picto($langs->trans("".$payout->status.""), 'statut7');
-	        } elseif ($payout->status == 'canceled') {
-	            print img_picto($langs->trans("".$payout->status.""), 'statut8');
-	        }
+				print img_picto($langs->trans("".$payout->status.""), 'statut4');
+			} elseif ($payout->status == 'pending') {
+				print img_picto($langs->trans("".$payout->status.""), 'statut7');
+			} elseif ($payout->status == 'in_transit') {
+				print img_picto($langs->trans("".$payout->status.""), 'statut7');
+			} elseif ($payout->status == 'failed') {
+				print img_picto($langs->trans("".$payout->status.""), 'statut7');
+			} elseif ($payout->status == 'canceled') {
+				print img_picto($langs->trans("".$payout->status.""), 'statut8');
+			}
 			print '</td>';
 			print "</tr>\n";
 		}

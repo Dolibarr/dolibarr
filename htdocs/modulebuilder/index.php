@@ -173,7 +173,7 @@ foreach ($dirsrootforscan as $dirread)
 	$textforlistofdirs .= '<strong class="wordbreakimp">'.$dirread.'</strong>';
 	if ($dirread == DOL_DOCUMENT_ROOT) {
 		if ($conf->global->MAIN_FEATURES_LEVEL >= 2) $textforlistofdirs .= $form->textwithpicto('', $langs->trans("ConstantIsOn", "MAIN_FEATURES_LEVEL"));
-		if (! empty($conf->global->MODULEBUILDER_ADD_DOCUMENT_ROOT)) $textforlistofdirs .= $form->textwithpicto('', $langs->trans("ConstantIsOn", "MODULEBUILDER_ADD_DOCUMENT_ROOT"));
+		if (!empty($conf->global->MODULEBUILDER_ADD_DOCUMENT_ROOT)) $textforlistofdirs .= $form->textwithpicto('', $langs->trans("ConstantIsOn", "MODULEBUILDER_ADD_DOCUMENT_ROOT"));
 	}
 	$i++;
 }
@@ -709,7 +709,7 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module))
 		$dirtodelete  = $dirins.'/'.$dirnametodelete;
 
 		$result = dol_delete_file($filetodelete);
-		if (! $result) {
+		if (!$result) {
 			setEventMessages($langs->trans("ErrorFailToDeleteFile", basename($filetodelete)), null, 'errors');
 		} else {
 			if (dol_is_dir_empty($dirtodelete)) dol_delete_dir($dirtodelete);
@@ -783,9 +783,9 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 			$fieldname = $obj->Field;
 			// type
 			$type = $obj->Type;
-			if ($type == 'int(11)') $type='integer';
-			if ($type == 'float') $type='real';
-			if (strstr($type, 'tinyint')) $type='integer';
+			if ($type == 'int(11)') $type = 'integer';
+			if ($type == 'float') $type = 'real';
+			if (strstr($type, 'tinyint')) $type = 'integer';
 			if ($obj->Field == 'fk_soc') $type = 'integer:Societe:societe/class/societe.class.php';
 			if (preg_match('/^fk_proj/', $obj->Field)) $type = 'integer:Project:projet/class/project.class.php:1:fk_statut=1';
 			if (preg_match('/^fk_prod/', $obj->Field)) $type = 'integer:Product:product/class/product.class.php:1';
@@ -1200,7 +1200,7 @@ if ($dirins && $action == 'addproperty' && !empty($module) && !empty($tabobj))
 
 			if (!empty($addfieldentry['arrayofkeyval']) && !is_array($addfieldentry['arrayofkeyval']))
 			{
-				$addfieldentry['arrayofkeyval'] = dol_json_decode($addfieldentry['arrayofkeyval'], true);
+				$addfieldentry['arrayofkeyval'] = json_decode($addfieldentry['arrayofkeyval'], true);
 			}
 		}
 	}
@@ -1628,7 +1628,7 @@ if (!empty($module) && $module != 'initmodule' && $module != 'deletemodule')
 
 		$class = 'mod'.$module;
 	} catch (Throwable $e) {		// This is called in PHP 7 only. Never called with PHP 5.6
-		$loadclasserrormessage = $e->getMessage()."<br>\n";;
+		$loadclasserrormessage = $e->getMessage()."<br>\n";
 		$loadclasserrormessage .= 'File: '.$e->getFile()."<br>\n";
 		$loadclasserrormessage .= 'Line: '.$e->getLine()."<br>\n";
 	}
@@ -1637,8 +1637,7 @@ if (!empty($module) && $module != 'initmodule' && $module != 'deletemodule')
 	{
 		try {
 			$moduleobj = new $class($db);
-		} catch (Exception $e)
-		{
+		} catch (Exception $e) {
 			$error++;
 			print $e->getMessage();
 		}
@@ -1745,7 +1744,7 @@ $head[$h][1] = $langs->trans("DangerZone");
 $head[$h][2] = 'deletemodule';
 $h++;
 
-dol_fiche_head($head, $module, '', -1, '', 0, $infomodulesfound, '', 8); // Modules
+print dol_get_fiche_head($head, $module, '', -1, '', 0, $infomodulesfound, '', 8); // Modules
 
 if ($module == 'initmodule')
 {
@@ -1875,7 +1874,7 @@ if ($module == 'initmodule')
 
 			if ($action != 'editfile' || empty($file))
 			{
-				dol_fiche_head($head2, $tab, '', -1, '', 0, '', '', 0, 'formodulesuffix'); // Description - level 2
+				print dol_get_fiche_head($head2, $tab, '', -1, '', 0, '', '', 0, 'formodulesuffix'); // Description - level 2
 
 				print '<span class="opacitymedium">'.$langs->trans("ModuleBuilderDesc".$tab).'</span>';
 				$infoonmodulepath = '';
@@ -1989,7 +1988,7 @@ if ($module == 'initmodule')
 					else print '<span class="opacitymedium">'.$langs->trans("ErrorFileNotFound", $pathtochangelog).'</span>';
 				}
 
-				dol_fiche_end();
+				print dol_get_fiche_end();
 			} else {	// Edit text file
 				$fullpathoffile = dol_buildpath($file, 0, 1); // Description - level 2
 
@@ -2006,15 +2005,15 @@ if ($module == 'initmodule')
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
-				dol_fiche_head($head2, $tab, '', -1, '', 0, '', '', 0, 'formodulesuffix');
+				print dol_get_fiche_head($head2, $tab, '', -1, '', 0, '', '', 0, 'formodulesuffix');
 
 				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%', '');
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
 
-				dol_fiche_end();
+				print dol_get_fiche_end();
 
 				print '<center>';
-				print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 				print ' &nbsp; ';
 				print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 				print '</center>';
@@ -2022,7 +2021,7 @@ if ($module == 'initmodule')
 				print '</form>';
 			}
 		} else {
-			dol_fiche_head($head2, $tab, '', -1, '', 0, '', '', 0, 'formodulesuffix'); // Level 2
+			print dol_get_fiche_head($head2, $tab, '', -1, '', 0, '', '', 0, 'formodulesuffix'); // Level 2
 		}
 
 		if ($tab == 'languages')
@@ -2079,7 +2078,7 @@ if ($module == 'initmodule')
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'text'));
 				print '<br>';
 				print '<center>';
-				print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 				print ' &nbsp; ';
 				print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 				print '</center>';
@@ -2212,7 +2211,7 @@ if ($module == 'initmodule')
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
-				print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 				print ' &nbsp; ';
 				print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 				print '</center>';
@@ -2269,7 +2268,7 @@ if ($module == 'initmodule')
 				else $tabobj = 'newobject';
 			}
 
-			dol_fiche_head($head3, $tabobj, '', -1, ''); // Level 3
+			print dol_get_fiche_head($head3, $tabobj, '', -1, ''); // Level 3
 
 			if ($tabobj == 'newobject')
 			{
@@ -2759,7 +2758,7 @@ if ($module == 'initmodule')
 										print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
 										print '<br>';
 										print '<center>';
-										print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+										print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 										print ' &nbsp; ';
 										print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 										print '</center>';
@@ -2803,7 +2802,7 @@ if ($module == 'initmodule')
 					print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
 					print '<br>';
 					print '<center>';
-					print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+					print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 					print ' &nbsp; ';
 					print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 					print '</center>';
@@ -2812,7 +2811,7 @@ if ($module == 'initmodule')
 				}
 			}
 
-			dol_fiche_end(); // Level 3
+			print dol_get_fiche_end(); // Level 3
 		}
 
 		if ($tab == 'menus')
@@ -2942,7 +2941,7 @@ if ($module == 'initmodule')
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
-				print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 				print ' &nbsp; ';
 				print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 				print '</center>';
@@ -3038,7 +3037,7 @@ if ($module == 'initmodule')
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
-				print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 				print ' &nbsp; ';
 				print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 				print '</center>';
@@ -3095,7 +3094,7 @@ if ($module == 'initmodule')
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
-				print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 				print ' &nbsp; ';
 				print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 				print '</center>';
@@ -3163,7 +3162,7 @@ if ($module == 'initmodule')
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
-				print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 				print ' &nbsp; ';
 				print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 				print '</center>';
@@ -3211,7 +3210,7 @@ if ($module == 'initmodule')
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
-				print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 				print ' &nbsp; ';
 				print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 				print '</center>';
@@ -3259,7 +3258,7 @@ if ($module == 'initmodule')
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
-				print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 				print ' &nbsp; ';
 				print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 				print '</center>';
@@ -3314,7 +3313,7 @@ if ($module == 'initmodule')
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
-				print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 				print ' &nbsp; ';
 				print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 				print '</center>';
@@ -3396,7 +3395,7 @@ if ($module == 'initmodule')
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
-				print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 				print ' &nbsp; ';
 				print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 				print '</center>';
@@ -3513,7 +3512,7 @@ if ($module == 'initmodule')
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
-				print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 				print ' &nbsp; ';
 				print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 				print '</center>';
@@ -3573,7 +3572,7 @@ if ($module == 'initmodule')
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
-				print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 				print ' &nbsp; ';
 				print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 				print '</center>';
@@ -3696,12 +3695,12 @@ if ($module == 'initmodule')
 
 		if ($tab != 'description')
 		{
-			dol_fiche_end();
+			print dol_get_fiche_end();
 		}
 	}
 }
 
-dol_fiche_end(); // End modules
+print dol_get_fiche_end(); // End modules
 
 // End of page
 llxFooter();

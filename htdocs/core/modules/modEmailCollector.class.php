@@ -38,9 +38,9 @@ class modEmailCollector extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-        global $langs, $conf;
+		global $langs, $conf;
 
-        $this->db = $db;
+		$this->db = $db;
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
@@ -116,13 +116,13 @@ class modEmailCollector extends DolibarrModules
 
 
 		// Array to add new pages in new tabs
-        $this->tabs = array();
+		$this->tabs = array();
 		// Example:
 		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@dav:$user->rights->dav->read:/dav/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
-        // $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@dav:$user->rights->othermodule->read:/dav/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
-        // $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
-        //
-        // Where objecttype can be
+		// $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@dav:$user->rights->othermodule->read:/dav/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
+		// $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
+		//
+		// Where objecttype can be
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
 		// 'contact'          to add a tab in contact view
 		// 'contract'         to add a tab in contract view
@@ -144,9 +144,9 @@ class modEmailCollector extends DolibarrModules
 		// 'user'             to add a tab in user view
 
 
-        // Dictionaries
+		// Dictionaries
 		$this->dictionaries = array();
-        /* Example:
+		/* Example:
         $this->dictionaries=array(
             'langs'=>'mylangfile@dav',
             'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
@@ -162,13 +162,13 @@ class modEmailCollector extends DolibarrModules
         */
 
 
-        // Boxes/Widgets
+		// Boxes/Widgets
 		// Add here list of php file(s) stored in dav/core/boxes that contains class to show a widget.
-        $this->boxes = array(
-        	//0=>array('file'=>'davwidget1.php@dav','note'=>'Widget provided by dav','enabledbydefaulton'=>'Home'),
-        	//1=>array('file'=>'davwidget2.php@dav','note'=>'Widget provided by dav'),
-        	//2=>array('file'=>'davwidget3.php@dav','note'=>'Widget provided by dav')
-        );
+		$this->boxes = array(
+			//0=>array('file'=>'davwidget1.php@dav','note'=>'Widget provided by dav','enabledbydefaulton'=>'Home'),
+			//1=>array('file'=>'davwidget2.php@dav','note'=>'Widget provided by dav'),
+			//2=>array('file'=>'davwidget3.php@dav','note'=>'Widget provided by dav')
+		);
 
 
 		// Cronjobs (List of cron jobs entries to add when module is enabled)
@@ -259,7 +259,7 @@ class modEmailCollector extends DolibarrModules
 	 *	The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *	It also creates data directories
 	 *
-     *	@param      string	$options    Options when enabling module ('', 'noboxes')
+	 *	@param      string	$options    Options when enabling module ('', 'noboxes')
 	 *	@return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')
