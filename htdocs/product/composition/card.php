@@ -446,7 +446,7 @@ if ($id > 0 || !empty($ref))
 			print '<td class="right" colspan="2">';
 			if ($user->rights->produit->creer || $user->rights->service->creer)
 			{
-				print '<input type="submit" class="button" value="'.$langs->trans('Save').'">';
+				print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 			}
 			print '</td>';
 			print '</tr>'."\n";
@@ -462,7 +462,7 @@ if ($id > 0 || !empty($ref))
 		print '</table>';
 
 		/*if($user->rights->produit->creer || $user->rights->service->creer) {
-			print '<input type="submit" class="button" value="'.$langs->trans('Save').'">';
+			print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 		}*/
 
 		print '</form>';
@@ -623,7 +623,7 @@ if ($id > 0 || !empty($ref))
 				print '<br><div class="center">';
 				print '<input type="submit" class="button" name="save" value="'.$langs->trans("Add").'/'.$langs->trans("Update").'">';
 				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-				print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+				print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</div>';
 			}
 

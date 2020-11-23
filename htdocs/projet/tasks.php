@@ -600,7 +600,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		print '<div class="center">';
 		print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
 		print ' &nbsp; &nbsp; ';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		print '</form>';

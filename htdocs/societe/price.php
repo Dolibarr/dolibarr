@@ -136,7 +136,7 @@ if (empty($reshook))
 			if ($result < 0) {
 				setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 			} else {
-				setEventMessages($langs->trans('Save'), null, 'mesgs');
+				setEventMessages($langs->trans("Save"), null, 'mesgs');
 			}
 
 			$action = '';
@@ -172,7 +172,7 @@ if (empty($reshook))
 		if ($result < 0) {
 			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 		} else {
-			setEventMessages($langs->trans('Save'), null, 'mesgs');
+			setEventMessages($langs->trans("Save"), null, 'mesgs');
 		}
 
 		$action = '';
@@ -345,7 +345,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<br><div class="center">';
 		print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		print '<br></form>';
@@ -424,7 +424,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<br><div class="center">';
 		print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		print '<br></form>';

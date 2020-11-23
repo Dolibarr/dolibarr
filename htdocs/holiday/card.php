@@ -1099,7 +1099,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 		print '<div class="center">';
 		print '<input type="submit" value="'.$langs->trans("SendRequestCP").'" name="bouton" class="button">';
 		print '&nbsp; &nbsp; ';
-		print '<input type="button" value="'.$langs->trans("Cancel").'" class="button" onclick="history.go(-1)">';
+		print '<input type="button" value="'.$langs->trans("Cancel").'" class="button button-cancel" onclick="history.go(-1)">';
 		print '</div>';
 
 		print '</from>'."\n";
@@ -1357,7 +1357,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 					if ($action == 'editvalidator')
 					{
 						print '<input type="submit" class="button button-save" name="savevalidator" value="'.$langs->trans("Save").'">';
-						print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+						print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 					}
 					print '</td>';
 					print '</tr>';

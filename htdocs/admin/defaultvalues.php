@@ -385,7 +385,7 @@ if ($result)
 			print '<input type="hidden" name="rowid" value="'.$id.'">';
 			print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : 'none').'"></div>';
 			print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
-			print '<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 		}
 		print '</td>';
 

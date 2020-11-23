@@ -288,7 +288,7 @@ if ($action == 'create')
 	print '<div class="center">';
 	print '<input class="button" name="add" value="'.$langs->trans("CreateGroup").'" type="submit">';
 	print ' &nbsp; ';
-	print '<input class="button" value="'.$langs->trans("Cancel").'" name="cancel" type="submit">';
+	print '<input class="button button-cancel" value="'.$langs->trans("Cancel").'" name="cancel" type="submit">';
 	print '</div>';
 
 	print "</form>";
@@ -549,7 +549,7 @@ else {
 			print dol_get_fiche_end();
 
 			print '<div class="center"><input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-			print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print ' &nbsp; <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 
 			print '</form>';

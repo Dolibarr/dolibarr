@@ -68,7 +68,7 @@ if (isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
 }
 print '<td class="right"><input size="3" type="text" class="flat" name="PRODUIT_ATTRIBUTES_SEPARATOR" value="'.$separator.'"></td></tr>';
 print '</table>';
-print '<br><div class="center"><input type="submit" value="'.$langs->trans('Save').'" class="button"></div>';
+print '<br><div class="center"><input type="submit" value="'.$langs->trans("Save").'" class="button button-save"></div>';
 print '</form>';
 
 // End of page

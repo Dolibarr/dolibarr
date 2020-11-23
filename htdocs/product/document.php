@@ -327,7 +327,7 @@ if ($object->id)
 			}
 
 			print  '<tr><td>';
-			print  '<input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
+			print  '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 			print  '</td></tr>';
 
 			print  '</table>';

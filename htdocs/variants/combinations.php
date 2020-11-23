@@ -703,9 +703,9 @@ if (!empty($id) || !empty($ref))
 		?>
 
 		<div style="text-align: center">
-		<input type="submit" name="create" <?php if (!is_array($productCombination2ValuePairs1)) print ' disabled="disabled"'; ?> value="<?php echo $action == 'add' ? $langs->trans('Create') : $langs->trans('Save') ?>" class="button">
+		<input type="submit" name="create" <?php if (!is_array($productCombination2ValuePairs1)) print ' disabled="disabled"'; ?> value="<?php echo $action == 'add' ? $langs->trans('Create') : $langs->trans("Save") ?>" class="button button-save">
 		&nbsp;
-		<input type="submit" name="cancel" value="<?php echo $langs->trans('Cancel'); ?>" class="button">
+		<input type="submit" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>" class="button button-cancel">
 		</div>
 
 		<?php

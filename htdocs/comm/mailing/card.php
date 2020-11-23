@@ -1294,7 +1294,7 @@ if ($action == 'create')
 			print '<div class="center">';
 			print '<input type="submit" class="button buttonforacesave button-save" value="'.$langs->trans("Save").'" name="save">';
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			print '<input type="submit" class="button" value="'.$langs->trans("Cancel").'" name="cancel">';
+			print '<input type="submit" class="button button-cancel" value="'.$langs->trans("Cancel").'" name="cancel">';
 			print '</div>';
 
 			print '</form>';
