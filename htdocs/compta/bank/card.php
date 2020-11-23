@@ -549,7 +549,7 @@ if ($action == 'create')
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("CreateAccount").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 	print '</div>';
 
 	print '</form>';
@@ -1033,7 +1033,7 @@ if ($action == 'create')
 		print '<div class="center">';
 		print '<input value="'.$langs->trans("Modify").'" type="submit" class="button">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input name="cancel" value="'.$langs->trans("Cancel").'" type="submit" class="button">';
+		print '<input name="cancel" value="'.$langs->trans("Cancel").'" type="submit" class="button button-cancel">';
 		print '</div>';
 
 		print '</form>';

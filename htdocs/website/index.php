@@ -2489,7 +2489,7 @@ if (!GETPOST('hide_websitemenu'))
 		if ($action == 'editcss') print '<input type="submit" id="savefilean stay" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
 		if (preg_match('/^create/', $action) && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') print '<input type="submit" id="savefile" class="button buttonforacesave button-save" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 		if (preg_match('/^edit/', $action) && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') print '<input type="submit" id="savefile" class="button buttonforacesave button-save" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
-		if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="cancel">';
+		if ($action != 'preview') print '<input type="submit" class="button button-cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="cancel">';
 	}
 
 	print '</span>';
@@ -2805,7 +2805,7 @@ if (!GETPOST('hide_websitemenu'))
 			if ($action == 'editsource' || $action == 'editmeta') print '<input type="submit" id="savefilean stay" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
 			if (preg_match('/^create/', $action)) print '<input type="submit" id="savefile" class="button buttonforacesave button-save" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 			if (preg_match('/^edit/', $action)) print '<input type="submit" id="savefile" class="button buttonforacesave button-save" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
-			if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="cancel">';
+			if ($action != 'preview') print '<input type="submit" class="button button-cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="cancel">';
 		}
 
 		print '</span>'; // end websitetools
@@ -3233,7 +3233,7 @@ if ($action == 'createsite')
 		print '<div class="center">';
 
 		print '<input class="button" type="submit" name="addcontainer" value="'.$langs->trans("Create").'">';
-		print '<input class="button" type="submit" name="preview" value="'.$langs->trans("Cancel").'">';
+		print '<input class="button button-cancel" type="submit" name="preview" value="'.$langs->trans("Cancel").'">';
 
 		print '</div>';
 	}
@@ -3263,7 +3263,7 @@ if ($action == 'importsite')
 	print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 	print '<input class="flat minwidth400" type="file" name="userfile[]" accept=".zip">';
 	print '<input type="submit" class="button" name="buttonsubmitimportfile" value="'.dol_escape_htmltag($langs->trans("Upload")).'">';
-	print '<input type="submit" class="button" name="preview" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+	print '<input type="submit" class="button button-cancel" name="preview" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 
 	print '<br><br><br>';
 
@@ -3641,7 +3641,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		print '<div class="center tablecheckboxcreatemanually'.$hiddenmanuallyafterload.'">';
 
 		print '<input class="button" type="submit" name="addcontainer" value="'.$langs->trans("Create").'">';
-		print '<input class="button" type="submit" name="preview" value="'.$langs->trans("Cancel").'">';
+		print '<input class="button button-cancel" type="submit" name="preview" value="'.$langs->trans("Cancel").'">';
 
 		print '</div>';
 	}

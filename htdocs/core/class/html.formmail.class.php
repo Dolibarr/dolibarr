@@ -1022,7 +1022,7 @@ class FormMail extends Form
 				if ($this->withcancel)
 				{
 					$out .= ' &nbsp; &nbsp; ';
-					$out .= '<input class="button" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'" />';
+					$out .= '<input class="button button-cancel" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'" />';
 				}
 				$out .= '</div>'."\n";
 			}

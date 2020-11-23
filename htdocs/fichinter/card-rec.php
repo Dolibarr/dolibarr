@@ -421,7 +421,7 @@ if ($action == 'create') {
 
 		print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+		print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 		print '</div>';
 		print "</form>\n";
 	} else {

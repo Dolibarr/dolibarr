@@ -342,7 +342,7 @@ function limitChars(textarea, limit, infodiv)
 			if ($this->withcancel)
 			{
 				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-				print '<input class="button" type="submit" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+				print '<input class="button button-cancel" type="submit" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 			}
 			print '</div>';
 

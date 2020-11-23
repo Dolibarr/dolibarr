@@ -296,7 +296,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 			$ret .= '<input type="hidden" name="id" value="'.$object->id.'">';
 			$ret .= $form->selectExpenseCategories($object->default_c_exp_tax_cat, 'default_c_exp_tax_cat', 1);
 			$ret .= '<input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'"> ';
-			$ret .= '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			$ret .= '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			$ret .= '</form>';
 			print $ret;
 		} else {
@@ -318,7 +318,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 			$maxRangeNum = ExpenseReportIk::getMaxRangeNumber($object->default_c_exp_tax_cat);
 			$ret .= $form->selectarray('default_range', range(0, $maxRangeNum), $object->default_range);
 			$ret .= '<input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'"> ';
-			$ret .= '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			$ret .= '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			$ret .= '</form>';
 			print $ret;
 		} else {
@@ -675,7 +675,7 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->rights->user->us
 	print '<div class="center">';
 	print '<input class="button" value="'.$langs->trans("Modify").'" type="submit">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
+	print '<input class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 	print '</div>';
 }
 

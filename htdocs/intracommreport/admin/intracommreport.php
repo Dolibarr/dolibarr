@@ -195,7 +195,7 @@ print '</table>';
 
 print '<div class="tabsAction">';
 print '<div class="inline-block divButAction">';
-print '<input type="submit" name="bt_save" class="butAction" value="'.$langs->trans('Save').'" />';
+print '<input type="submit" name="bt_save" class="butAction button-save" value="'.$langs->trans("Save").'" />';
 print '</div>';
 print '</div>';
 

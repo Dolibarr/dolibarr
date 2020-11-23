@@ -1202,7 +1202,7 @@ if ($action == 'create')
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 	print '</div>';
 
 	if (is_object($objectsrc))
@@ -1700,7 +1700,7 @@ if ($action == 'create')
 					}
 					print '<td class="center">';
 					print '<input type="submit" class="button margintoponly marginbottomonly" name="save" value="'.$langs->trans("Modify").'">';
-					print '<br><input type="submit" class="button margintoponly marginbottomonly" name="cancel" value="'.$langs->trans("Cancel").'">';
+					print '<br><input type="submit" class="button margintoponly marginbottomonly button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 					print '</td>';
 					print '</tr>';
 
@@ -1910,7 +1910,7 @@ if ($action == 'create')
 				print '<td class="nohover">'.$langs->trans("Comment").'</td><td colspan="3" class="nohover" colspan="'.($conf->margin->enabled ? 4 : 3).'"><input type="text" class="minwidth300" name="comment" value="'.GETPOST("comment", 'alphanohtml').'"></td>';
 				print '<td class="nohover right">';
 				print '<input type="submit" class="button" name="activate" value="'.$langs->trans("Activate").'"> &nbsp; ';
-				print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+				print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</td>';
 				print '</tr>';
 
@@ -1968,7 +1968,7 @@ if ($action == 'create')
 				print '<td class="nohover">'.$langs->trans("Comment").'</td><td class="nohover"><input size="70" type="text" class="flat" name="comment" value="'.dol_escape_htmltag(GETPOST('comment', 'alpha')).'"></td>';
 				print '<td class="nohover right">';
 				print '<input type="submit" class="button" name="close" value="'.$langs->trans("Disable").'"> &nbsp; ';
-				print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+				print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</td>';
 				print '</tr>';
 

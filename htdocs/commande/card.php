@@ -1120,7 +1120,7 @@ if (empty($reshook))
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	} elseif ($action == 'updateline' && $usercancreate && GETPOST('cancel', 'alpha') == $langs->trans('Cancel')) {
+	} elseif ($action == 'updateline' && $usercancreate && GETPOST('cancel', 'alpha') == $langs->trans("Cancel")) {
 		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
 	} elseif ($action == 'confirm_validate' && $confirm == 'yes' && $usercanvalidate)
@@ -1829,7 +1829,7 @@ if ($action == 'create' && $usercancreate)
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button" name="cancel" value="'.$langs->trans("Cancel").'" onclick="javascript:history.go(-1)">';
+	print '<input type="button" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'" onclick="javascript:history.go(-1)">';
 	print '</div>';
 
 	// Show origin lines
@@ -1986,7 +1986,7 @@ if ($action == 'create' && $usercancreate)
 				);
 			}
 
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Cancel'), $text, 'confirm_cancel', $formquestion, 0, 1);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("Cancel"), $text, 'confirm_cancel', $formquestion, 0, 1);
 		}
 
 		// Confirmation to delete line
@@ -2590,7 +2590,7 @@ if ($action == 'create' && $usercancreate)
 				// Cancel order
 				if ($object->statut == Commande::STATUS_VALIDATED && (!empty($usercanclose) || !empty($usercancancel)))
 				{
-					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=cancel">'.$langs->trans('Cancel').'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=cancel">'.$langs->trans("Cancel").'</a></div>';
 				}
 
 				// Delete order
