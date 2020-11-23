@@ -226,6 +226,7 @@ if (empty($reshook))
 
 				$tva_tx = $tva_tx_txt;
 				$vatratecode = '';
+				$reg = array();
 				if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg))
 				{
 					$vat_src_code = $reg[1];
@@ -261,8 +262,8 @@ if (empty($reshook))
         	    }
 
 				$pricestoupdate[$i] = array(
-					'price' => $newprice[$i],
-					'price_min' => $newprice_min[$i],
+					'price' => price2num($newprice[$i]),
+					'price_min' => price2num($newprice_min[$i]),
 					'price_base_type' => $newpricebase[$i],
 				    'default_vat_code' => $vatratecode,
 					'vat_tx' => $tva_tx, // default_vat_code should be used in priority in a future
@@ -278,10 +279,15 @@ if (empty($reshook))
 		}
 		elseif (!$error)
 		{
+			$newprice = price2num(GETPOST('price', 'alpha'));
+			$newprice_min = price2num(GETPOST('price_min', 'alpha'));
+			$newpricebase = GETPOST('price_base_type', 'alpha');
+
 			$tva_tx_txt = GETPOST('tva_tx', 'alpha'); // tva_tx can be '8.5'  or  '8.5*'  or  '8.5 (XXX)' or '8.5* (XXX)'
 
 			$tva_tx = $tva_tx_txt;
 			$vatratecode = '';
+			$reg = array();
 			if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg))
 			{
 				$vat_src_code = $reg[1];
@@ -321,9 +327,9 @@ if (empty($reshook))
 		        }
 		    }
 			$pricestoupdate[0] = array(
-				'price' => $_POST["price"],
-				'price_min' => $_POST["price_min"],
-				'price_base_type' => $_POST["price_base_type"],
+				'price' => $newprice,
+				'price_min' => $newprice_min,
+				'price_base_type' => $newpricebase,
 			    'default_vat_code' => $vatratecode,
 				'vat_tx' => $tva_tx, // default_vat_code should be used in priority in a future
 				'npr' => $npr, // default_vat_code should be used in priority in a future
