@@ -63,12 +63,13 @@ class Contacts extends DolibarrApi
 	 * Return an array with contact informations
 	 *
 	 * @param 	int    $id                  ID of contact
+	 * @param   int    $includeroles        Includes roles of the contact
 	 * @param   int    $includecount        Count and return also number of elements the contact is used as a link for
 	 * @return 	array|mixed data without useless information
 	 *
 	 * @throws 	RestException
 	 */
-	public function get($id, $includecount = 0)
+	public function get($id, $includeroles = 0, $includecount = 0)
 	{
 		if (!DolibarrApiAccess::$user->rights->societe->contact->lire)
 		{
@@ -78,7 +79,6 @@ class Contacts extends DolibarrApi
 			$result = $this->contact->initAsSpecimen();
 		} else {
 			$result = $this->contact->fetch($id);
-			$this->contact->fetchRoles();
 		}
 
 		if (!$result)
@@ -89,6 +89,11 @@ class Contacts extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id, 'socpeople&societe'))
 		{
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		
+		if ($includeroles)
+		{
+			$this->contact->fetchRoles();
 		}
 
 		if ($includecount)
@@ -103,6 +108,7 @@ class Contacts extends DolibarrApi
 	 * Get properties of a contact object by Email
 	 *
 	 * @param 	string 	$email 					Email of contact
+	 * @param   int    $includeroles        Includes roles of the contact
 	 * @param   int    $includecount        Count and return also number of elements the contact is used as a link for
 	 * @return 	array|mixed data without useless information
 	 *
@@ -111,7 +117,7 @@ class Contacts extends DolibarrApi
 	 * @throws RestException 401     Insufficient rights
 	 * @throws RestException 404     User or group not found
 	 */
-	public function getByEmail($email, $includecount = 0)
+	public function getByEmail($email, $includeroles = 0, $includecount = 0)
 	{
 		if (!DolibarrApiAccess::$user->rights->societe->contact->lire)
 		{
@@ -133,6 +139,11 @@ class Contacts extends DolibarrApi
 		{
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+		
+		if ($includeroles)
+		{
+			$this->contact->fetchRoles();
+		}
 
 		if ($includecount)
 		{
@@ -152,14 +163,15 @@ class Contacts extends DolibarrApi
 	 * @param int		$limit		        Limit for list
 	 * @param int		$page		        Page number
 	 * @param string   	$thirdparty_ids	    Thirdparty ids to filter contacts of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param  int    	$category   Use this param to filter list by category
+	 * @param int    	$category   Use this param to filter list by category
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param int    	$includeroles        Includes roles of the contact
 	 * @param int       $includecount       Count and return also number of elements the contact is used as a link for
 	 * @return array                        Array of contact objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $includecount = 0)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $includeroles = 0, $includecount = 0)
 	{
 		global $db, $conf;
 
@@ -244,6 +256,10 @@ class Contacts extends DolibarrApi
 				if ($contact_static->fetch($obj->rowid))
 				{
 					$contact_static->fetchRoles();
+					if ($includeroles)
+					{
+						$contact_static->fetchRoles();
+					}
 					if ($includecount)
 					{
 						$contact_static->load_ref_elements();
