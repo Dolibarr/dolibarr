@@ -2530,6 +2530,9 @@ img.userphotosmall {			/* size for user photo in lists */
     background-size: contain;
     vertical-align: middle;
 }
+img.userphoto[alt="Gravatar avatar"] {
+    background: #fff;
+}
 .span-icon-user {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png', 1); ?>);
 	background-repeat: no-repeat;
