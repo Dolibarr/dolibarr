@@ -516,22 +516,56 @@ class modSociete extends DolibarrModules
 				'element' => 'ThirdParty'
 			),
 			's.outstanding_limit' => array('rule' => 'numeric'),
+			/* TODO
+			'c.cond_reglement' => [
+				'rule' => 'fetchidfromcodeid',
+				'file' => '/core/class/cpaymentterm.class.php',
+				'class' => 'Cpaymentterm',
+				'method' => 'fetch',
+				'element' => 'cpaymentterm'
+			],
+			*/
+			'c.mode_reglement' => array(
+				'rule' => 'fetchidfromcodeid',
+				'file' => '/compta/paiement/class/cpaiement.class.php',
+				'class' => 'Cpaiement',
+				'method' => 'fetch',
+				'element' => 'cpayment'
+			),
+			/* TODO
+			'c.cond_reglement_supplier' => [
+				'rule' => 'fetchidfromcodeid',
+				'file' => '/core/class/cpaymentterm.class.php',
+				'class' => 'Cpaymentterm',
+				'method' => 'fetch',
+				'element' => 'cpaymentterm'
+			],
+			*/
+			'c.mode_reglement_supplier' => array(
+				'rule' => 'fetchidfromcodeid',
+				'file' => '/compta/paiement/class/cpaiement.class.php',
+				'class' => 'Cpaiement',
+				'method' => 'fetch',
+				'element' => 'cpayment'
+			),
 			's.fk_account' => array(
 				'rule' => 'fetchidfromcodeid',
 				'classfile' => '/compta/bank/class/account.class.php',
 				'class' => 'Account',
 				'method' => 'fetch',
 				'element' => 'BankAccount'
-		//          ),
-		//          TODO
-		//          's.fk_incoterms' => array(
-		//              'rule' => 'fetchidfromcodeid',
-		//              'classfile' => '/core/class/cincoterm.class.php',
-		//              'class' => 'Cincoterm',
-		//              'method' => 'fetch',
-		//              'dict' => 'IncotermLabel'
-			)
+			),
+			/* TODO
+			's.fk_incoterms' => array(
+				'rule' => 'fetchidfromcodeid',
+		        'file' => '/core/class/cincoterm.class.php',
+		        'class' => 'Cincoterm',
+		        'method' => 'fetch',
+		        'dict' => 'IncotermLabel'
+			),
+			*/
 		);
+
 		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
 		$this->import_regex_array[$r] = array(//field order as per structure of table llx_societe
 			's.status' => '^[0|1]',
@@ -585,9 +619,9 @@ class modSociete extends DolibarrModules
 			's.client' => '0 (no customer no prospect) / 1 (customer) / 2 (prospect)/ 3 (customer and prospect)',
 			's.fournisseur' => '0 (not supplier) / 1 (supplier)',
 			's.fk_prospectlevel' => 'eg. "PL_MEDIUM" matches field "code" in table "'.MAIN_DB_PREFIX.'c_prospectlevel"',
-			's.mode_reglement' => '1/2/3...matches field "id" in table "'.MAIN_DB_PREFIX.'c_paiement"',
+			's.mode_reglement' => 'id or code in table "'.MAIN_DB_PREFIX.'c_paiement"',
 			's.cond_reglement' => '1/2/3...matches field "rowid" in table "'.MAIN_DB_PREFIX.'c_payment_term"',
-			's.mode_reglement_supplier' => '1/2/3...matches field "id" in table "'.MAIN_DB_PREFIX.'c_paiement"',
+			's.mode_reglement_supplier' => 'id or code in table "'.MAIN_DB_PREFIX.'c_paiement"',
 			's.cond_reglement_supplier' => '1/2/3...matches field "rowid" in table "'.MAIN_DB_PREFIX.'c_payment_term"',
 			's.outstanding_limit' => "5000",
 			's.fk_account' => "rowid or ref",

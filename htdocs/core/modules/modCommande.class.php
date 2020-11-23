@@ -263,14 +263,15 @@ class modCommande extends DolibarrModules
 		$this->export_sql_end[$r] .= ' WHERE c.fk_soc = s.rowid AND c.rowid = cd.fk_commande';
 		$this->export_sql_end[$r] .= ' AND c.entity IN ('.getEntity('commande').')';
 		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
+
 		// Imports
 		//--------
 		$r = 0;
-		//Import Order Header
 
+		//Import Order Header
 		$r++;
 		$this->import_code[$r] = 'commande_'.$r;
-		$this->import_label[$r] = 'Sales Orders';
+		$this->import_label[$r] = 'CustomerOrder';
 		$this->import_icon[$r] = $this->picto;
 		$this->import_entities_array[$r] = [];
 		$this->import_tables_array[$r] = ['c' => MAIN_DB_PREFIX.'commande', 'extra' => MAIN_DB_PREFIX.'commande_extrafields'];
@@ -294,8 +295,8 @@ class modCommande extends DolibarrModules
 			'c.note_public'       => 'Note',
 			'c.facture'           => 'Invoice(1/0)',
 			'c.date_livraison'    => 'DeliveryDate',
-			'c.fk_cond_reglement' => 'Payment Condition',
-			'c.fk_mode_reglement' => 'Payment Mode',
+			'c.fk_cond_reglement' => 'PaymentTermsCustomer',
+			'c.fk_mode_reglement' => 'PaymentTypeCustomer',
 			'c.model_pdf'         => 'Model'
 		];
 
@@ -331,10 +332,10 @@ class modCommande extends DolibarrModules
 		$this->import_updatekeys_array[$r] = ['c.ref' => 'Ref'];
 		$this->import_convertvalue_array[$r] = [
 			'c.fk_soc' => [
-				'rule'    => 'fetchidfromref',
+				'rule'    => 'fetchidfromreforcode',
 				'file'    => '/societe/class/societe.class.php',
 				'class'   => 'Societe',
-				'method'  => 'fetch',
+				'method'  => 'fetchbycustomercode',
 				'element' => 'ThirdParty'
 			],
 			'c.fk_user_valid' => [
@@ -344,8 +345,17 @@ class modCommande extends DolibarrModules
 				'method'  => 'fetch',
 				'element' => 'user'
 			],
+			/* TODO
+			'c.fk_cond_reglement' => [
+				'rule' => 'fetchidfromcodeid',
+				'file' => '/core/class/cpaymentterm.class.php',
+				'class' => 'Cpaymentterm',
+				'method' => 'fetch',
+				'element' => 'cpaymentterm'
+			],
+			*/
 			'c.fk_mode_reglement' => [
-				'rule' => 'fetchidfromcodeorlabel',
+				'rule' => 'fetchidfromcodeid',
 				'file' => '/compta/paiement/class/cpaiement.class.php',
 				'class' => 'Cpaiement',
 				'method' => 'fetch',
@@ -356,7 +366,7 @@ class modCommande extends DolibarrModules
 		//Import CPV Lines
 		$r++;
 		$this->import_code[$r] = 'commande_lines_'.$r;
-		$this->import_label[$r] = 'Order Details';
+		$this->import_label[$r] = 'OrderLine';
 		$this->import_icon[$r] = $this->picto;
 		$this->import_entities_array[$r] = [];
 		$this->import_tables_array[$r] = ['cd' => MAIN_DB_PREFIX.'commandedet', 'extra' => MAIN_DB_PREFIX.'commandedet_extrafields'];

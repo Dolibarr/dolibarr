@@ -385,6 +385,7 @@ class modCategorie extends DolibarrModules
 				'codefromfield' => 'ca.type'
 			)
 		);
+
 		$typeexample = "";
 		if (!empty($conf->product->enabled)) { $typeexample .= ($typeexample ? "/" : "")."0=Product"; }
 		if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) { $typeexample .= ($typeexample ? "/" : "")."1=Supplier"; }
@@ -431,7 +432,7 @@ class modCategorie extends DolibarrModules
 
 			$this->import_convertvalue_array[$r] = array(
 					'cs.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
-					'cs.fk_soc'=>array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty')
+					'cs.fk_soc'=>array('rule'=>'fetchidfromreforcode', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetchbycustomercode', 'element'=>'ThirdParty')
 			);
 			$this->import_examplevalues_array[$r] = array('cs.fk_categorie'=>"Imported category", 'cs.fk_soc'=>"MyBigCompany");
 
@@ -472,7 +473,7 @@ class modCategorie extends DolibarrModules
 
 			$this->import_convertvalue_array[$r] = array(
 					'cs.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
-					'cs.fk_soc'=>array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty')
+					'cs.fk_soc'=>array('rule'=>'fetchidfromreforcode', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetchbysuppliercode', 'element'=>'ThirdParty')
 			);
 			$this->import_examplevalues_array[$r] = array('cs.fk_categorie'=>"Imported category", 'cs.fk_soc'=>"MyBigCompany");
 		}
