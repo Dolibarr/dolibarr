@@ -2054,6 +2054,7 @@ class ActionComm extends CommonObject
 		}
 
 		$now = dol_now();
+		$actionCommReminder = new ActionCommReminder($this->db);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -2068,7 +2069,6 @@ class ActionComm extends CommonObject
 
 		if ($resql) {
 			$formmail = new FormMail($this->db);
-			$actionCommReminder = new ActionCommReminder($this->db);
 
 			while ($obj = $this->db->fetch_object($resql)) {
 				$res = $actionCommReminder->fetch($obj->id);
@@ -2077,15 +2077,13 @@ class ActionComm extends CommonObject
 					$errorsMsg[] = "Failed to load invoice ActionComm Reminder";
 				}
 
-				if (!$error)
-				{
+				if (!$error) {
 					//Select email template
 					$arraymessage = $formmail->getEMailTemplate($this->db, 'actioncomm_send', $user, $langs, (!empty($actionCommReminder->fk_email_template)) ? $actionCommReminder->fk_email_template : -1, 1);
 
 					// Load event
 					$res = $this->fetch($actionCommReminder->fk_actioncomm);
-					if ($res > 0)
-					{
+					if ($res > 0) {
 						// PREPARE EMAIL
 						$errormesg = '';
 
@@ -2170,8 +2168,7 @@ class ActionComm extends CommonObject
 			$error++;
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			// Delete also very old past events (we do not keep more than 1 month record in past)
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
 			$sql .= " WHERE dateremind < '".$this->db->idate($now - (3600 * 24 * 32))."'";
@@ -2188,8 +2185,7 @@ class ActionComm extends CommonObject
 			$this->output = 'Nb of emails sent : '.$nbMailSend;
 			$this->db->commit();
 			return 0;
-		}
-		else {
+		} else {
 			$this->db->commit();	// We commit also on error, to have the error message recorded.
 			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? join(', ', $errorsMsg) : $error;
 			return $error;
