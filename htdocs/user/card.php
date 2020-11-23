@@ -1257,7 +1257,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '<div class="center">';
 	print '<input class="button" value="'.$langs->trans("CreateUser").'" name="create" type="submit">';
 	//print '&nbsp; &nbsp; &nbsp;';
-	//print '<input value="'.$langs->trans("Cancel").'" class="button" type="submit" name="cancel">';
+	//print '<input value="'.$langs->trans("Cancel").'" class="button button-cancel" type="submit" name="cancel">';
 	print '</div>';
 
 	print "</form>";
@@ -2745,7 +2745,7 @@ if ($action == 'create' || $action == 'adduserldap')
 			print '<div class="center">';
 			print '<input value="'.$langs->trans("Save").'" class="button button-save" type="submit" name="save">';
 			print '&nbsp; &nbsp; &nbsp;';
-			print '<input value="'.$langs->trans("Cancel").'" class="button" type="submit" name="cancel">';
+			print '<input value="'.$langs->trans("Cancel").'" class="button button-cancel" type="submit" name="cancel">';
 			print '</div>';
 
 			print '</form>';

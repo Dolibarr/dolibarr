@@ -791,7 +791,7 @@ if ($resql)
 				print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 				print '<input type="submit" class="button buttongen" name="actionmodify" value="'.$langs->trans("Modify").'">';
 				print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
-				print '<input type="submit" class="button buttongen" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+				print '<input type="submit" class="button buttongen button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 				print '</td>';
 
 				$fieldsforcontent = array('topic', 'joinfiles', 'content');

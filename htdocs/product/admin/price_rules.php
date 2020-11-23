@@ -191,7 +191,7 @@ $genPriceOptions = function ($level) use ($price_options) {
 print dol_get_fiche_end();
 
 print '<div style="text-align: center">
-		<input type="submit" value="'.$langs->trans('Save').'" class="button">
+		<input type="submit" value="'.$langs->trans("Save").'" class="button button-save">
 	</div>';
 
 print '</form>';

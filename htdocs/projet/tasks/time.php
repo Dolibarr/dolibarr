@@ -979,13 +979,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 				print '<br>';
 				print '<div class="center">';
 				print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('GenerateBill').'">  ';
-				print '<input type="submit" class="button" id="cancel" name="cancel" value="'.$langs->trans('Cancel').'">';
+				print '<input type="submit" class="button button-cancel" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</div>';
 				print '<br>';
 			} else {
 				print '<div class="warning">'.$langs->trans("ThirdPartyRequiredToGenerateInvoice").'</div>';
 				print '<div class="center">';
-				print '<input type="submit" class="button" id="cancel" name="cancel" value="'.$langs->trans('Cancel').'">';
+				print '<input type="submit" class="button button-cancel" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</div>';
 				$massaction = '';
 			}
@@ -1164,7 +1164,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 
 			print '<td class="center">';
 			print '<input type="submit" name="save" class="button buttongen marginleftonly margintoponlyshort marginbottomonlyshort" value="'.$langs->trans("Add").'">';
-			print '<input type="submit" name="cancel" class="button buttongen marginleftonly margintoponlyshort marginbottomonlyshort" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" name="cancel" class="button buttongen marginleftonly margintoponlyshort marginbottomonlyshort button-cancel" value="'.$langs->trans("Cancel").'">';
 			print '</td></tr>';
 
 			print '</table>';
@@ -1451,7 +1451,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 				print '<input type="hidden" name="lineid" value="'.$_GET['lineid'].'">';
 				print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort button-save" name="save" value="'.$langs->trans("Save").'">';
 				print '<br>';
-				print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort" name="cancel" value="'.$langs->trans('Cancel').'">';
+				print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			} elseif ($user->rights->projet->lire || $user->rights->projet->all->creer)	 // Read project and enter time consumed on assigned tasks
 			{
 				if ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids) || $user->rights->projet->all->creer)

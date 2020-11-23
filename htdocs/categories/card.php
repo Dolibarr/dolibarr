@@ -269,7 +269,7 @@ if ($user->rights->categorie->creer)
 		print '<div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateThisCat").'" name="creation" />';
 		print '&nbsp; &nbsp; &nbsp;';
-		print '<input type="submit" class="button" value="'.$langs->trans("Cancel").'" name="cancel" />';
+		print '<input type="submit" class="button button-cancel" value="'.$langs->trans("Cancel").'" name="cancel" />';
 		print '</div>';
 
 		print '</form>';

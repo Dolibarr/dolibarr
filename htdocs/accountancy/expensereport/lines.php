@@ -123,7 +123,7 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
 		}
 		if (!$error) {
 			$db->commit();
-			setEventMessages($langs->trans('Save'), null, 'mesgs');
+			setEventMessages($langs->trans("Save"), null, 'mesgs');
 		} else {
 			$db->rollback();
 			setEventMessages($db->lasterror(), null, 'errors');

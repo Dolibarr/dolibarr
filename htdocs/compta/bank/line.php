@@ -629,7 +629,7 @@ if ($result)
 			if ($backtopage)
 			{
 				print ' &nbsp; ';
-				print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+				print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
 			}
 			print '</div>';
 

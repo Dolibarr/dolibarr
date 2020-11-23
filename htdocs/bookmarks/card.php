@@ -181,7 +181,7 @@ if ($action == 'create')
 
 	print '<div align="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("CreateBookmark").'" name="create"> &nbsp; ';
-	print '<input type="submit" class="button" value="'.$langs->trans("Cancel").'" name="cancel">';
+	print '<input type="submit" class="button button-cancel" value="'.$langs->trans("Cancel").'" name="cancel">';
 	print '</div>';
 
 	print '</form>';
@@ -299,7 +299,7 @@ if ($id > 0 && !preg_match('/^add/i', $action))
 
 	if ($action == 'edit')
 	{
-		print '<div align="center"><input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+		print '<div align="center"><input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
 		print '</form>';
 	}
 

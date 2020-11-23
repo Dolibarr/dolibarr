@@ -517,7 +517,7 @@ if (($action == "create") || ($action == "edit"))
 	print '<div align="center">';
 	print '<input type="submit" name="save" class="button button-save" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+	print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
 	print "</div>";
 
 	print "</form>\n";
