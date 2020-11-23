@@ -85,3 +85,7 @@ ProposalCustomerSignature=书面接受,公司盖章,日期和签名
 ProposalsStatisticsSuppliers=Vendor proposals statistics
 CaseFollowedBy=Case followed by
 SignedOnly=Signed only
+IdProposal=提案编号
+IdProduct=产品编号
+PrParentLine=提案父行
+LineBuyPriceHT=购买价格扣除税额

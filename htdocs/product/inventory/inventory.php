@@ -37,7 +37,7 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'myobjectcard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'inventorycard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $fk_warehouse = GETPOST('fk_warehouse', 'int');
@@ -120,7 +120,7 @@ if (empty($reshook))
 	// Actions to send emails
 	/*$triggersendname = 'MYOBJECT_SENTBYMAIL';
 	$autocopy='MAIN_MAIL_AUTOCOPY_MYOBJECT_TO';
-	$trackid='myobject'.$object->id;
+	$trackid='stockinv'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';*/
 
 	if (GETPOST('addline', 'alpha')) {
@@ -133,7 +133,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 		}
 
-		if (! $error && ! empty($conf->productbatch->enabled)) {
+		if (!$error && !empty($conf->productbatch->enabled)) {
 			$tmpproduct = new Product($db);
 			$result = $tmpproduct->fetch($fk_product);
 
@@ -202,7 +202,7 @@ if ($object->id > 0)
 	$res = $object->fetch_optionals();
 
 	$head = inventoryPrepareHead($object);
-	dol_fiche_head($head, 'inventory', $langs->trans("Inventory"), -1, 'stock');
+	print dol_get_fiche_head($head, 'inventory', $langs->trans("Inventory"), -1, 'stock');
 
 	$formconfirm = '';
 
@@ -300,7 +300,7 @@ if ($object->id > 0)
 
 	print '<div class="clearboth"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	// Buttons for actions
@@ -313,60 +313,60 @@ if ($object->id > 0)
 
 		print '<div class="center">';
 		print '<span class="opacitymedium">'.$langs->trans("InventoryDesc").'</span><br>';
-		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 		print ' &nbsp; ';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 		print '<br>';
 		print '</form>';
 	} else {
-    	print '<div class="tabsAction">'."\n";
-    	$parameters = array();
-    	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-    	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		print '<div class="tabsAction">'."\n";
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-    	if (empty($reshook))
-    	{
-    		if ($object->status == Inventory::STATUS_DRAFT)
-    		{
-    			if ($permissiontoadd)
-    			{
-    				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_validate&confirm=yes">'.$langs->trans("Validate").' ('.$langs->trans("Start").')</a>'."\n";
-    			} else {
-    				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Validate').' ('.$langs->trans("Start").')</a>'."\n";
-    			}
-    		}
+		if (empty($reshook))
+		{
+			if ($object->status == Inventory::STATUS_DRAFT)
+			{
+				if ($permissiontoadd)
+				{
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_validate&confirm=yes">'.$langs->trans("Validate").' ('.$langs->trans("Start").')</a>'."\n";
+				} else {
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Validate').' ('.$langs->trans("Start").')</a>'."\n";
+				}
+			}
 
-    		if ($object->status == Inventory::STATUS_VALIDATED)
-    		{
-    			if ($permissiontoadd)
-    			{
-    				/*
+			if ($object->status == Inventory::STATUS_VALIDATED)
+			{
+				if ($permissiontoadd)
+				{
+					/*
     				if ($conf->barcode->enabled) {
     					print '<a href="#" class="butAction">'.$langs->trans("UpdateByScaningProductBarcode").'</a>';
     				}
     				if ($conf->productbatch->enabled) {
     					print '<a href="#" class="butAction">'.$langs->trans('UpdateByScaningLot').'</a>';
     				}*/
-    				if ($conf->barcode->enabled || $conf->productbatch->enabled) {
-    					print '<a href="#" class="butAction">'.$langs->trans("UpdateByScaning").'</a>';
-    				}
-    			} else {
-    				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Save').'</a>'."\n";
-    			}
-    		}
+					if ($conf->barcode->enabled || $conf->productbatch->enabled) {
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning" class="butAction">'.$langs->trans("UpdateByScaning").'</a>';
+					}
+				} else {
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Save').'</a>'."\n";
+				}
+			}
 
-    		if ($object->status == Inventory::STATUS_VALIDATED)
-    		{
-	        	if ($permissiontoadd)
-	    		{
-	    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=record">'.$langs->trans("Finish").'</a>'."\n";
-	    		} else {
-	    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Finish').'</a>'."\n";
-	    		}
-    		}
+			if ($object->status == Inventory::STATUS_VALIDATED)
+			{
+				if ($permissiontoadd)
+				{
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=record">'.$langs->trans("Finish").'</a>'."\n";
+				} else {
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Finish').'</a>'."\n";
+				}
+			}
 
-    		/*if ($object->status == Inventory::STATUS_VALIDATED)
+			/*if ($object->status == Inventory::STATUS_VALIDATED)
     		{
 	    		if ($permissiontoadd)
 	    		{
@@ -380,6 +380,15 @@ if ($object->id > 0)
 		}
 		print '</div>'."\n";
 	}
+
+	if ($action == 'updatebyscaning') {
+		print '<div class="div-for-modal">';
+
+		print 'TODO';
+
+		print '</div>';
+	}
+
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -503,7 +512,7 @@ if ($object->id > 0)
 			print '<input type="text" class="maxwidth75" name="id_'.$obj->rowid.' value="'.GETPOST("id_".$obj->rowid).'">';
 			print '</td>';
 			print '<td class="right">';
-			print '<a class="reposition" href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&lineid='.$obj->rowid.'&action=deleteline">'.img_delete().'</a>';
+			print '<a class="reposition" href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&lineid='.$obj->rowid.'&action=deleteline&token='.newToken().'">'.img_delete().'</a>';
 			print '</td>';
 
 			print '</tr>';
@@ -519,7 +528,7 @@ if ($object->id > 0)
 	// Save
 	if ($object->status == $object::STATUS_VALIDATED) {
 		print '<div class="center">';
-		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 		print '</div>';
 	}
 

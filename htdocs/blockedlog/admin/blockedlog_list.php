@@ -35,7 +35,7 @@ $langs->loadLangs(array("admin", "other", "blockedlog", "bills"));
 
 if ((!$user->admin && !$user->rights->blockedlog->read) || empty($conf->blockedlog->enabled)) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'blockedloglist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
@@ -56,8 +56,8 @@ if (($search_start == -1 || empty($search_start)) && !GETPOSTISSET('search_start
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -286,7 +286,7 @@ print load_fiche_titre($title, $linkback);
 if (GETPOST('withtab', 'alpha'))
 {
 	$head = blockedlogadmin_prepare_head();
-	dol_fiche_head($head, 'fingerprints', '', -1);
+	print dol_get_fiche_head($head, 'fingerprints', '', -1);
 }
 
 print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("FingerprintsDesc")."<br></span>\n";
@@ -311,6 +311,7 @@ if (GETPOST('withtab', 'alpha')) $param .= '&withtab='.urlencode(GETPOST('withta
 //include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<div class="right">';
 print $langs->trans("RestrictYearToExport").': ';
@@ -558,7 +559,7 @@ jQuery(document).ready(function () {
 
 if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->global->BLOCKEDLOG_AUTHORITY_URL))
 {
-    ?>
+	?>
 		<script type="text/javascript">
 
 			$.ajax({
@@ -581,7 +582,7 @@ if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->glob
 
 if (GETPOST('withtab', 'alpha'))
 {
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 print '<br><br>';

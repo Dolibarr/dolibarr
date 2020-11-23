@@ -1,6 +1,6 @@
 Mrp=Поръчки за производство
-MO=Поръчка за производство
 MOs=Manufacturing orders
+ManufacturingOrder=Поръчка за производство
 MRPDescription=Модул за управление на поръчки за производство (ПП)
 MRPArea=Секция за планиране на материални изисквания
 MrpSetupPage=Настройка на модул за планиране на материални изисквания
@@ -76,3 +76,4 @@ ProductsToProduce=Продукти за производство
 UnitCost=Единична цена
 TotalCost=Обща цена
 BOMTotalCost=Разходите за производство на този списък с материали въз основа на разходите за всяко количество и продукт, които ще се използват (използвайте себестойност, ако е дефинирана, иначе средно претеглена цена, ако е определена, или най-добра покупна цена).
+GoOnTabProductionToProduceFirst=You must first have started the production to close a Manufacturing Order (See tab '%s'). But you can Cancel it.

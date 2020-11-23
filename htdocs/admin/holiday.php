@@ -35,7 +35,7 @@ $langs->loadLangs(array("admin", "errors", "holiday"));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
@@ -145,7 +145,7 @@ elseif ($action == 'setdoc')
 	dolibarr_set_const($db, "HOLIDAY_ADDON", $value, 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'set_other')
 {
-	$freetext = GETPOST('HOLIDAY_FREE_TEXT', 'none'); // No alpha here, we want exact string
+	$freetext = GETPOST('HOLIDAY_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
 	$res1 = dolibarr_set_const($db, "HOLIDAY_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 
 	$draft = GETPOST('HOLIDAY_DRAFT_WATERMARK', 'alpha');
@@ -177,7 +177,7 @@ print load_fiche_titre($langs->trans("HolidaySetup"), $linkback, 'title_setup');
 
 $head = holiday_admin_prepare_head();
 
-dol_fiche_head($head, 'holiday', $langs->trans("Holidays"), -1, 'holiday');
+print dol_get_fiche_head($head, 'holiday', $langs->trans("Holidays"), -1, 'holiday');
 
 /*
  * Holiday Numbering model
@@ -238,7 +238,7 @@ foreach ($dirmodels as $reldir)
 						{
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
 						}
@@ -282,7 +282,7 @@ print '<br>';
 
 
 if ($conf->global->MAIN_FEATURES_LEVEL < 2) {
-	dol_fiche_end();
+	print dol_get_fiche_end();
 	// End of page
 	llxFooter();
 	$db->close();
@@ -299,7 +299,7 @@ print load_fiche_titre($langs->trans("TemplatePDFHolidays"), '', '');
 $def = array();
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql .= " WHERE type = '".$type."'";
+$sql .= " WHERE type = '".$db->escape($type)."'";
 $sql .= " AND entity = ".$conf->entity;
 $resql = $db->query($sql);
 if ($resql)
@@ -384,7 +384,7 @@ foreach ($dirmodels as $reldir)
 									print '</td>';
 								} else {
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 									print "</td>";
 								}
 
@@ -394,7 +394,7 @@ foreach ($dirmodels as $reldir)
 								{
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 								}
 								print '</td>';
 
@@ -494,14 +494,14 @@ print '</div>';
 
 
 print '<div class="center">';
-print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';
 
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

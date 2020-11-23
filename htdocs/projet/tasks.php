@@ -36,7 +36,7 @@ if ($conf->categorie->enabled) { require_once DOL_DOCUMENT_ROOT.'/categories/cla
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'users', 'companies'));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
@@ -95,7 +95,7 @@ $hookmanager->initHooks(array('projecttaskscard', 'globalcard'));
 
 $progress = GETPOST('progress', 'int');
 $label = GETPOST('label', 'alpha');
-$description = GETPOST('description', 'none');
+$description = GETPOST('description', 'restricthtml');
 $planned_workloadhour = (GETPOST('planned_workloadhour', 'int') ?GETPOST('planned_workloadhour', 'int') : 0);
 $planned_workloadmin = (GETPOST('planned_workloadmin', 'int') ?GETPOST('planned_workloadmin', 'int') : 0);
 $planned_workload = $planned_workloadhour * 3600 + $planned_workloadmin * 60;
@@ -348,7 +348,7 @@ if ($id > 0 || !empty($ref))
 	$tab = GETPOST('tab') ?GETPOST('tab') : 'tasks';
 
 	$head = project_prepare_head($object);
-	dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
+	print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
 
 	$param = '&id='.$object->id;
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
@@ -482,7 +482,7 @@ if ($id > 0 || !empty($ref))
 	print '<div class="clearboth"></div>';
 
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 
@@ -492,20 +492,27 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	print load_fiche_titre($langs->trans("NewTask"), '', 'projecttask');
 
-	if ($object->statut == Project::STATUS_CLOSED)
-	{
+	if ($object->statut == Project::STATUS_CLOSED) {
 		print '<div class="warning">';
 		$langs->load("errors");
 		print $langs->trans("WarningProjectClosed");
 		print '</div>';
 	} else {
+		if ($object->statut == Project::STATUS_DRAFT)
+		{
+			print '<div class="warning">';
+			$langs->load("errors");
+			print $langs->trans("WarningProjectDraft");
+			print '</div>';
+		}
+
 		print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="createtask">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		if (!empty($object->id)) print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-		dol_fiche_head('');
+		print dol_get_fiche_head('');
 
 		print '<table class="border centpercent">';
 
@@ -532,7 +539,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		print '</td></tr>';
 
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td>';
-		print '<input type="text" name="label" autofocus class="minwidth500" value="'.$label.'">';
+		print '<input type="text" name="label" autofocus class="minwidth500 maxwidthonsmartphone" value="'.$label.'">';
 		print '</td></tr>';
 
 		// List of projects
@@ -588,7 +595,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 		print '</table>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
@@ -632,16 +639,17 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 	$title = $langs->trans("ListOfTasks");
-	$linktotasks = dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id, '', 1, array('morecss'=>'reposition btnTitleSelected'));
-	$linktotasks .= dolGetButtonTitle($langs->trans('ViewGantt'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1', '', 1, array('morecss'=>'reposition marginleftonly'));
+	$linktotasks = dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id, '', 1, array('morecss'=>'reposition btnTitleSelected'));
+	$linktotasks .= dolGetButtonTitle($langs->trans('ViewGantt'), '', 'fa fa-stream imgforviewmode', DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1', '', 1, array('morecss'=>'reposition marginleftonly'));
 
 	//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'generic', 0, '', '', 0, 1);
-	print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'generic');
+	print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'projecttask');
 
 	// Get list of tasks in tasksarray and taskarrayfiltered
 	// We need all tasks (even not limited to a user because a task to user can have a parent that is not affected to him).
 	$filteronthirdpartyid = $socid;
 	$tasksarray = $taskstatic->getTasksArray(0, 0, $object->id, $filteronthirdpartyid, 0, '', -1, $morewherefilter, 0, 0, $extrafields, 1, $search_array_options);
+
 	// We load also tasks limited to a particular user
 	$tmpuser = new User($db);
 	if ($search_user_id > 0) $tmpuser->fetch($search_user_id);
@@ -697,16 +705,16 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	if (!empty($arrayfields['t.dateo']['checked'])) {
 		print '<td class="liste_titre center">';
-		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_dtstartday" value="'.$search_dtstartday.'">';
-		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_dtstartmonth" value="'.$search_dtstartmonth.'">';
+		print '<span class="nowraponall"><input class="flat valignmiddle width20" type="text" maxlength="2" name="search_dtstartday" value="'.$search_dtstartday.'">';
+		print '<input class="flat valignmiddle width20" type="text" maxlength="2" name="search_dtstartmonth" value="'.$search_dtstartmonth.'"></span>';
 		$formother->select_year($search_dtstartyear ? $search_dtstartyear : -1, 'search_dtstartyear', 1, 20, 5);
 		print '</td>';
 	}
 
 	if (!empty($arrayfields['t.datee']['checked'])) {
 		print '<td class="liste_titre center">';
-		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_dtendday" value="'.$search_dtendday.'">';
-		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_dtendmonth" value="'.$search_dtendmonth.'">';
+		print '<span class="nowraponall"><input class="flat valignmiddle width20" type="text" maxlength="2" name="search_dtendday" value="'.$search_dtendday.'">';
+		print '<input class="flat valignmiddle width20" type="text" maxlength="2" name="search_dtendmonth" value="'.$search_dtendmonth.'"></span>';
 		$formother->select_year($search_dtendyear ? $search_dtendyear : -1, 'search_dtendyear', 1, 20, 5);
 		print '</td>';
 	}

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2005	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
@@ -122,7 +122,7 @@ if ($action == 'update')
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTTITLE', $conf->entity);
 	else dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLE', $val, 'chaine', 0, '', $conf->entity);
 
-	$val=(implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLELINK'), array()))));
+	$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLELINK'), array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTTITLELINK', $conf->entity);
 	else dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLELINK', $val, 'chaine', 0, '', $conf->entity);
 
@@ -164,8 +164,8 @@ if ($action == 'update')
 
 	dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION", GETPOST("MAIN_FIRSTNAME_NAME_POSITION", 'aZ09'), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_MOTD", dol_htmlcleanlastbr(GETPOST("main_motd", 'none')), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_HOME", dol_htmlcleanlastbr(GETPOST("main_home", 'none')), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_MOTD", dol_htmlcleanlastbr(GETPOST("main_motd", 'restricthtml')), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_HOME", dol_htmlcleanlastbr(GETPOST("main_home", 'restricthtml')), 'chaine', 0, '', $conf->entity);
 	//dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK", GETPOST('MAIN_BUGTRACK_ENABLELINK', 'aZ09'), 'chaine', 0, '', $conf->entity);
 	//dolibarr_set_const($db, "MAIN_HELP_DISABLELINK", GETPOST("MAIN_HELP_DISABLELINK", 'aZ09'), 'chaine', 0, '', 0); // Param for all entities
 
@@ -243,22 +243,19 @@ clearstatcache();
 print '<br>';
 print '<table summary="edit" class="noborder centpercent editmode">';
 print '<tr class="liste_titre"><th>'.$langs->trans("Language").'</th><th></th>';
-print '<th width="20">&nbsp;</td>';
 print '</tr>';
 
 // Default language
 print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DefaultLanguage").'</td><td>';
 print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'MAIN_LANG_DEFAULT', 1, null, '', 0, 0, 'minwidth300', 2);
-print '<input class="button" type="submit" name="submit" value="'.$langs->trans("Save").'">';
+print '<input class="button button-save" type="submit" name="submit" value="'.$langs->trans("Save").'">';
 print '</td>';
-print '<td width="20">&nbsp;</td>';
 print '</tr>';
 
 // Multilingual GUI
 print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("EnableMultilangInterface").'</td><td>';
 print ajax_constantonoff("MAIN_MULTILANGS", array(), $conf->entity, 0, 0, 1, 0);
 print '</td>';
-print '<td width="20">&nbsp;</td>';
 print '</tr>';
 
 print '</table><br>'."\n";
@@ -443,7 +440,7 @@ print '</div>';
 
 print '<br>';
 print '<div class="center">';
-print '<input class="button" type="submit" name="submit" value="'.$langs->trans("Save").'">';
+print '<input class="button button-save" type="submit" name="submit" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';

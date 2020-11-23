@@ -40,7 +40,7 @@ if (!empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/clas
 $langs->loadLangs(array('companies', 'commercial', 'other', 'bills'));
 
 $id = GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
@@ -120,7 +120,7 @@ if ($object->id > 0)
 	$now = dol_now();
 	$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
 
-	dol_fiche_head($head, 'documents', $langs->trans("Action"), -1, 'action');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("Action"), -1, 'action');
 
 	$linkback = img_picto($langs->trans("BackToList"), 'object_list', 'class="hideonsmartphone pictoactionview"');
 	$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list">'.$langs->trans("BackToList").'</a>';
@@ -254,7 +254,7 @@ if ($object->id > 0)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	$modulepart = 'actions';

@@ -39,13 +39,13 @@ $hookmanager->initHooks(array('massstockmove'));
 
 // Security check
 if ($user->socid) {
-    $socid = $user->socid;
+	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'produit|service');
 
 //checks if a product has been ordered
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $id_product = GETPOST('productid', 'int');
 $id_sw = GETPOST('id_sw', 'int');
 $id_tw = GETPOST('id_tw', 'int');
@@ -53,17 +53,17 @@ $batch = GETPOST('batch');
 $qty = GETPOST('qty');
 $idline = GETPOST('idline');
 
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 
 if (!$sortfield) {
-    $sortfield = 'p.ref';
+	$sortfield = 'p.ref';
 }
 
 if (!$sortorder) {
-    $sortorder = 'ASC';
+	$sortorder = 'ASC';
 }
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
@@ -102,7 +102,7 @@ if ($action == 'addline')
 	if (!$qty)
 	{
 		$error++;
-	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
 	}
 
 	// Check a batch number is provided if product need it
@@ -198,12 +198,12 @@ if ($action == 'createmovements')
 				{
 					// Remove stock
 					$result1 = $product->correct_stock(
-		    			$user,
-		    			$id_sw,
-		    			$qty,
-		    			1,
-		    			GETPOST("label"),
-		    			$pricesrc,
+						$user,
+						$id_sw,
+						$qty,
+						1,
+						GETPOST("label"),
+						$pricesrc,
 						GETPOST("codemove")
 					);
 					if ($result1 < 0)
@@ -214,12 +214,12 @@ if ($action == 'createmovements')
 
 					// Add stock
 					$result2 = $product->correct_stock(
-		    			$user,
-		    			$id_tw,
-		    			$qty,
-		    			0,
-		    			GETPOST("label"),
-		    			$pricedest,
+						$user,
+						$id_tw,
+						$qty,
+						0,
+						GETPOST("label"),
+						$pricedest,
 						GETPOST("codemove")
 					);
 					if ($result2 < 0)
@@ -242,12 +242,12 @@ if ($action == 'createmovements')
 
 					// Remove stock
 					$result1 = $product->correct_stock_batch(
-		    			$user,
-		    			$id_sw,
-		    			$qty,
-		    			1,
-		    			GETPOST("label"),
-		    			$pricesrc,
+						$user,
+						$id_sw,
+						$qty,
+						1,
+						GETPOST("label"),
+						$pricesrc,
 						$dlc,
 						$dluo,
 						$batch,
@@ -261,12 +261,12 @@ if ($action == 'createmovements')
 
 					// Add stock
 					$result2 = $product->correct_stock_batch(
-		    			$user,
-		    			$id_tw,
-		    			$qty,
-		    			0,
-		    			GETPOST("label"),
-		    			$pricedest,
+						$user,
+						$id_tw,
+						$qty,
+						0,
+						GETPOST("label"),
+						$pricedest,
 						$dlc,
 						$dluo,
 						$batch,

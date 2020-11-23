@@ -55,8 +55,8 @@ $search_year = GETPOST("search_year", "int");
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page < 0) $page = 0;
 $pageprev = $page - 1;
@@ -166,7 +166,7 @@ print '<script type="text/javascript">
 $sql = "SELECT er.ref, er.rowid as erid,";
 $sql .= " erd.rowid, erd.fk_c_type_fees, erd.comments, erd.total_ht, erd.fk_code_ventilation, erd.tva_tx, erd.vat_src_code, erd.date,";
 $sql .= " f.id as type_fees_id, f.code as type_fees_code, f.label as type_fees_label,";
-$sql .= " u.rowid, u.login, u.lastname, u.firstname, u.email, u.gender, u.employee, u.photo, u.statut,";
+$sql .= " u.rowid as userid, u.login, u.lastname, u.firstname, u.email, u.gender, u.employee, u.photo, u.statut,";
 $sql .= " aa.label, aa.labelshort, aa.account_number";
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as er";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport_det as erd ON er.rowid = erd.fk_expensereport";
@@ -264,7 +264,7 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" name="search_login" class="maxwidth50" value="'.$search_login.'"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td><input type="text" class="flat maxwidth50" name="search_expensereport" value="'.dol_escape_htmltag($search_expensereport).'"></td>';
-	if (! empty($conf->global->ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE)) {
+	if (!empty($conf->global->ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE)) {
 		print '<td class="liste_titre"></td>';
 	}
 	print '<td class="liste_titre center">';
@@ -287,7 +287,7 @@ if ($result) {
 	print_liste_field_titre("Employees", $_SERVER['PHP_SELF'], "u.login", $param, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "erd.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("ExpenseReport", $_SERVER["PHP_SELF"], "er.ref", "", $param, '', $sortfield, $sortorder);
-	if (! empty($conf->global->ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE)) {
+	if (!empty($conf->global->ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE)) {
 		print_liste_field_titre("DateValidation", $_SERVER["PHP_SELF"], "er.date_valid", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
 	print_liste_field_titre("DateOfLine", $_SERVER["PHP_SELF"], "erd.date, erd.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -311,7 +311,7 @@ if ($result) {
 		$expensereportstatic->ref = $objp->ref;
 		$expensereportstatic->id = $objp->erid;
 
-		$userstatic->id = $objp->rowid;
+		$userstatic->id = $objp->userid;
 		$userstatic->ref = $objp->label;
 		$userstatic->login = $objp->login;
 		$userstatic->statut = $objp->statut;
@@ -341,7 +341,7 @@ if ($result) {
 		print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
 
 		// Date validation
-		if (! empty($conf->global->ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE)) {
+		if (!empty($conf->global->ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE)) {
 			print '<td class="center">'.dol_print_date($db->jdate($objp->date_valid), 'day').'</td>';
 		}
 

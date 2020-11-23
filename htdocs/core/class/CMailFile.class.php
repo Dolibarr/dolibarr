@@ -170,7 +170,7 @@ class CMailFile
 		$this->sendmode = '';
 		if (!empty($this->sendcontext)) {
 			$smtpContextKey = strtoupper($this->sendcontext);
-			$keyForSMTPSendMode = 'MAIN_MAIL_SENDMODE_' . $smtpContextKey;
+			$keyForSMTPSendMode = 'MAIN_MAIL_SENDMODE_'.$smtpContextKey;
 			$smtpContextSendMode = $conf->global->{$keyForSMTPSendMode};
 			if (!empty($smtpContextSendMode) && $smtpContextSendMode != 'default') {
 				$this->sendmode = $smtpContextSendMode;
@@ -294,6 +294,16 @@ class CMailFile
 			$addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
 		}
 
+		$keyforsslseflsigned = 'MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED';
+		if (!empty($this->sendcontext)) {
+			$smtpContextKey = strtoupper($this->sendcontext);
+			$keyForSMTPSendMode = 'MAIN_MAIL_SENDMODE_'.$smtpContextKey;
+			$smtpContextSendMode = $conf->global->{$keyForSMTPSendMode};
+			if (!empty($smtpContextSendMode) && $smtpContextSendMode != 'default') {
+				$keyforsslseflsigned = 'MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_'.$smtpContextKey;
+			}
+		}
+
 		// We set all data according to choosed sending method.
 		// We also set a value for ->msgid
 		if ($this->sendmode == 'mail')
@@ -404,6 +414,7 @@ class CMailFile
 			$smtps->setBCC($this->addr_bcc);
 			$smtps->setErrorsTo($this->errors_to);
 			$smtps->setDeliveryReceipt($this->deliveryreceipt);
+			if (!empty($conf->global->$keyforsslseflsigned)) $smtps->setOptions(array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true)));
 
 			$host = dol_getprefix('email');
 			$this->msgid = time().'.SMTPs-dolibarr-'.$this->trackid.'@'.$host;
@@ -443,9 +454,9 @@ class CMailFile
 
 			// Set the From address with an associative array
 			//$this->message->setFrom(array('john@doe.com' => 'John Doe'));
-			if (! empty($this->addr_from)) {
+			if (!empty($this->addr_from)) {
 				try {
-					if (! empty($conf->global->MAIN_FORCE_DISABLE_MAIL_SPOOFING)) {
+					if (!empty($conf->global->MAIN_FORCE_DISABLE_MAIL_SPOOFING)) {
 						// Prevent email spoofing for smtp server with a strict configuration
 						$regexp = '/([a-z0-9_\.\-\+])+\@(([a-z0-9\-])+\.)+([a-z0-9]{2,4})+/i'; // This regular expression extracts all emails from a string
 						$emailMatchs = preg_match_all($regexp, $from, $adressEmailFrom);
@@ -465,7 +476,7 @@ class CMailFile
 			}
 
 			// Set the To addresses with an associative array
-			if (! empty($this->addr_to)) {
+			if (!empty($this->addr_to)) {
 				try {
 					$result = $this->message->setTo($this->getArrayAddress($this->addr_to));
 				} catch (Exception $e) {
@@ -473,7 +484,7 @@ class CMailFile
 				}
 			}
 
-			if (! empty($this->reply_to)) {
+			if (!empty($this->reply_to)) {
 				try {
 					$result = $this->message->SetReplyTo($this->getArrayAddress($this->reply_to));
 				} catch (Exception $e) {
@@ -525,12 +536,15 @@ class CMailFile
 				{
 					//$this->message->attach(Swift_Attachment::fromPath($filename_list[$i],$mimetype_list[$i]));
 					$attachment = Swift_Attachment::fromPath($filename_list[$i], $mimetype_list[$i]);
+					if (!empty($mimefilename_list[$i])) {
+						$attachment->setFilename($mimefilename_list[$i]);
+					}
 					$this->message->attach($attachment);
 				}
 			}
 
-			if (! empty($this->addr_cc)) $this->message->setCc($this->getArrayAddress($this->addr_cc));
-			if (! empty($this->addr_bcc)) $this->message->setBcc($this->getArrayAddress($this->addr_bcc));
+			if (!empty($this->addr_cc)) $this->message->setCc($this->getArrayAddress($this->addr_cc));
+			if (!empty($this->addr_bcc)) $this->message->setBcc($this->getArrayAddress($this->addr_bcc));
 			//if (! empty($this->errors_to)) $this->message->setErrorsTo($this->getArrayAddress($this->errors_to));
 			if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $this->message->setReadReceiptTo($this->getArrayAddress($this->addr_from));
 		} else {
@@ -639,17 +653,19 @@ class CMailFile
 			$keyforsmtppw    = 'MAIN_MAIL_SMTPS_PW';
 			$keyfortls       = 'MAIN_MAIL_EMAIL_TLS';
 			$keyforstarttls  = 'MAIN_MAIL_EMAIL_STARTTLS';
+			$keyforsslseflsigned = 'MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED';
 			if (!empty($this->sendcontext)) {
 				$smtpContextKey = strtoupper($this->sendcontext);
-				$keyForSMTPSendMode = 'MAIN_MAIL_SENDMODE_' . $smtpContextKey;
+				$keyForSMTPSendMode = 'MAIN_MAIL_SENDMODE_'.$smtpContextKey;
 				$smtpContextSendMode = $conf->global->{$keyForSMTPSendMode};
 				if (!empty($smtpContextSendMode) && $smtpContextSendMode != 'default') {
-					$keyforsmtpserver = 'MAIN_MAIL_SMTP_SERVER_' . $smtpContextKey;
-					$keyforsmtpport   = 'MAIN_MAIL_SMTP_PORT_' . $smtpContextKey;
-					$keyforsmtpid     = 'MAIN_MAIL_SMTPS_ID_' . $smtpContextKey;
-					$keyforsmtppw     = 'MAIN_MAIL_SMTPS_PW_' . $smtpContextKey;
-					$keyfortls        = 'MAIN_MAIL_EMAIL_TLS_' . $smtpContextKey;
-					$keyforstarttls   = 'MAIN_MAIL_EMAIL_STARTTLS_' . $smtpContextKey;
+					$keyforsmtpserver = 'MAIN_MAIL_SMTP_SERVER_'.$smtpContextKey;
+					$keyforsmtpport   = 'MAIN_MAIL_SMTP_PORT_'.$smtpContextKey;
+					$keyforsmtpid     = 'MAIN_MAIL_SMTPS_ID_'.$smtpContextKey;
+					$keyforsmtppw     = 'MAIN_MAIL_SMTPS_PW_'.$smtpContextKey;
+					$keyfortls        = 'MAIN_MAIL_EMAIL_TLS_'.$smtpContextKey;
+					$keyforstarttls   = 'MAIN_MAIL_EMAIL_STARTTLS_'.$smtpContextKey;
+					$keyforsslseflsigned = 'MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_'.$smtpContextKey;
 				}
 			}
 
@@ -846,6 +862,7 @@ class CMailFile
 
 				if (!empty($conf->global->$keyforsmtpid)) $this->transport->setUsername($conf->global->$keyforsmtpid);
 				if (!empty($conf->global->$keyforsmtppw)) $this->transport->setPassword($conf->global->$keyforsmtppw);
+				if (!empty($conf->global->$keyforsslseflsigned)) $this->transport->setStreamOptions(array('ssl' => array('allow_self_signed' => true, 'verify_peer' => false)));
 				//$smtps->_msgReplyTo  = 'reply@web.com';
 
 				// Switch content encoding to base64 - avoid the doubledot issue with quoted-printable
@@ -1527,6 +1544,7 @@ class CMailFile
 		$i = 0;
 		foreach ($arrayaddress as $val)
 		{
+			$regs = array();
 			if (preg_match('/^(.*)<(.*)>$/i', trim($val), $regs))
 			{
 				$name  = trim($regs[1]);

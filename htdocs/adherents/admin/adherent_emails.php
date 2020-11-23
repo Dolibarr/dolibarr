@@ -41,7 +41,7 @@ if (!$user->admin) accessforbidden();
 
 $oldtypetonewone = array('texte'=>'text', 'chaine'=>'string'); // old type to new ones
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 $error = 0;
 
@@ -83,9 +83,9 @@ if ($action == 'update' || $action == 'add') {
 	$constlineid = GETPOST('rowid', 'int');
 	$constname = GETPOST('constname', 'alpha');
 
-	$constvalue = (GETPOSTISSET('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname, 'alpha') : GETPOST('constvalue'));
+	$constvalue = (GETPOSTISSET('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname, 'alphanohtml') : GETPOST('constvalue'));
 	$consttype = (GETPOSTISSET('consttype_'.$constname) ? GETPOST('consttype_'.$constname, 'alphanohtml') : GETPOST('consttype'));
-	$constnote = (GETPOSTISSET('constnote_'.$constname) ? GETPOST('constnote_'.$constname, 'none') : GETPOST('constnote'));
+	$constnote = (GETPOSTISSET('constnote_'.$constname) ? GETPOST('constnote_'.$constname, 'restricthtml') : GETPOST('constnote'));
 
 	$typetouse = empty($oldtypetonewone[$consttype]) ? $consttype : $oldtypetonewone[$consttype];
 	$constvalue = preg_replace('/:member$/', '', $constvalue);
@@ -119,7 +119,7 @@ print load_fiche_titre($langs->trans("MembersSetup"), $linkback, 'title_setup');
 
 $head = member_admin_prepare_head();
 
-dol_fiche_head($head, 'emails', $langs->trans("Members"), -1, 'user');
+print dol_get_fiche_head($head, 'emails', $langs->trans("Members"), -1, 'user');
 
 // TODO Use global form
 //print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -136,7 +136,7 @@ form_constantes($constantes, 0, $helptext);
 //print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
 //print '</form>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

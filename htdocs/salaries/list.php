@@ -31,11 +31,6 @@ if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/account
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "salaries", "bills", "hrm"));
 
-// Security check
-$socid = GETPOST("socid", "int");
-if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'salaries', '', '', '');
-
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $search_ref = GETPOST('search_ref', 'int');
 $search_user = GETPOST('search_user', 'alpha');
@@ -56,7 +51,7 @@ if (!$sortfield) $sortfield = "s.datep,s.rowid";
 if (!$sortorder) $sortorder = "DESC,DESC";
 $optioncss = GETPOST('optioncss', 'alpha');
 
-$filtre = GETPOST("filtre", 'none');
+$filtre = GETPOST("filtre", 'restricthtml');
 
 if (!GETPOST('typeid', 'int'))
 {
@@ -70,6 +65,13 @@ if (!GETPOST('typeid', 'int'))
 } else {
 	$typeid = GETPOST('typeid', 'int');
 }
+
+$childids = $user->getAllChildIds(1);
+
+// Security check
+$socid = GETPOST("socid", "int");
+if ($user->socid) $socid = $user->socid;
+$result = restrictedArea($user, 'salaries', '', '', '');
 
 
 
@@ -86,7 +88,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_date_end = '';
 	$search_amount = "";
 	$search_account = '';
-    $typeid = "";
+	$typeid = "";
 }
 
 
@@ -112,6 +114,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.ro
 $sql .= " ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = s.fk_user";
 $sql .= " AND s.entity = ".$conf->entity;
+if (empty($user->rights->salaries->readall)) $sql .= " AND s.fk_user IN (".join(',', $childids).")";
 
 // Search criteria
 if ($search_ref)			$sql .= " AND s.rowid=".$search_ref;
@@ -122,11 +125,11 @@ if ($search_date_end)		$sql .= " AND s.datep <= '".$db->idate($search_date_end).
 if ($search_amount)			$sql .= natural_search("s.amount", $search_amount, 1);
 if ($search_account > 0)	$sql .= " AND b.fk_account=".$search_account;
 if ($filtre) {
-    $filtre = str_replace(":", "=", $filtre);
-    $sql .= " AND ".$filtre;
+	$filtre = str_replace(":", "=", $filtre);
+	$sql .= " AND ".$filtre;
 }
 if ($typeid) {
-    $sql .= " AND s.fk_typepayment=".$typeid;
+	$sql .= " AND s.fk_typepayment=".$typeid;
 }
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -135,7 +138,7 @@ $totalnboflines = 0;
 $result = $db->query($sql);
 if ($result)
 {
-    $totalnboflines = $db->num_rows($result);
+	$totalnboflines = $db->num_rows($result);
 }
 $sql .= $db->plimit($limit + 1, $offset);
 
@@ -143,34 +146,32 @@ $sql .= $db->plimit($limit + 1, $offset);
 $result = $db->query($sql);
 if ($result)
 {
-    $num = $db->num_rows($result);
-    $i = 0;
-    $total = 0;
+	$num = $db->num_rows($result);
+	$i = 0;
+	$total = 0;
 
 	$param = '';
-    if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 	if ($typeid) $param .= '&amp;typeid='.$typeid;
 	if ($optioncss != '') $param .= '&amp;optioncss='.$optioncss;
 
-	$newcardbutton = '';
-	if (!empty($user->rights->salaries->write))
-	{
-		$newcardbutton .= dolGetButtonTitle($langs->trans('NewSalaryPayment'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/salaries/card.php?action=create');
-	}
+	$url = DOL_URL_ROOT.'/salaries/card.php?action=create';
+	if (!empty($socid)) $url .= '&socid='.$socid;
+	$newcardbutton = dolGetButtonTitle($langs->trans('NewSalaryPayment'), '', 'fa fa-plus-circle', $url, '', $user->rights->salaries->write);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
+	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-    print '<input type="hidden" name="action" value="list">';
-    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-    print_barre_liste($langs->trans("SalariesPayments"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'object_payment', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	print_barre_liste($langs->trans("SalariesPayments"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'object_payment', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
-    print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<div class="div-table-responsive">';
+	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre_filter">';
 	// Ref
@@ -186,12 +187,10 @@ if ($result)
 	// Date
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
-	print $langs->trans('From').' ';
-	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1);
+	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
 	print '<div class="nowrap">';
-	print $langs->trans('to').' ';
-	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1);
+	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
 	// Type
@@ -200,51 +199,51 @@ if ($result)
 	print '</td>';
 	// Account
 	if (!empty($conf->banque->enabled))
-    {
-	    print '<td class="liste_titre">';
-	    $form->select_comptes($search_account, 'search_account', 0, '', 1);
-	    print '</td>';
-    }
+	{
+		print '<td class="liste_titre">';
+		$form->select_comptes($search_account, 'search_account', 0, '', 1);
+		print '</td>';
+	}
 	// Amount
 	print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$db->escape($search_amount).'"></td>';
 
-    print '<td class="liste_titre maxwidthsearch">';
-    $searchpicto = $form->showFilterAndCheckAddButtons(0);
-    print $searchpicto;
-    print '</td>';
+	print '<td class="liste_titre maxwidthsearch">';
+	$searchpicto = $form->showFilterAndCheckAddButtons(0);
+	print $searchpicto;
+	print '</td>';
 
-    print '<tr class="liste_titre">';
-    print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "s.rowid", "", $param, "", $sortfield, $sortorder);
-    print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.rowid", "", $param, "", $sortfield, $sortorder);
-    print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "s.label", "", $param, 'class="left"', $sortfield, $sortorder);
-    print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "s.datep,s.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
-    print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, 'class="left"', $sortfield, $sortorder);
-    if (!empty($conf->banque->enabled)) print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
-    print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "s.amount", "", $param, 'class="right"', $sortfield, $sortorder);
-    print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
-    print "</tr>\n";
+	print '<tr class="liste_titre">';
+	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "s.rowid", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.rowid", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "s.label", "", $param, 'class="left"', $sortfield, $sortorder);
+	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "s.datep,s.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, 'class="left"', $sortfield, $sortorder);
+	if (!empty($conf->banque->enabled)) print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "s.amount", "", $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
+	print "</tr>\n";
 
 	print "</tr>\n";
 
-    while ($i < min($num, $limit))
-    {
-        $obj = $db->fetch_object($result);
+	while ($i < min($num, $limit))
+	{
+		$obj = $db->fetch_object($result);
 
-        print '<tr class="oddeven">';
+		print '<tr class="oddeven">';
 
-        $userstatic->id = $obj->uid;
-        $userstatic->lastname = $obj->lastname;
-        $userstatic->firstname = $obj->firstname;
-        $userstatic->admin = $obj->admin;
-        $userstatic->login = $obj->login;
-        $userstatic->email = $obj->email;
-        $userstatic->socid = $obj->fk_soc;
-        $userstatic->statut = $obj->status;
+		$userstatic->id = $obj->uid;
+		$userstatic->lastname = $obj->lastname;
+		$userstatic->firstname = $obj->firstname;
+		$userstatic->admin = $obj->admin;
+		$userstatic->login = $obj->login;
+		$userstatic->email = $obj->email;
+		$userstatic->socid = $obj->fk_soc;
+		$userstatic->statut = $obj->status;
 
-        $salstatic->id = $obj->rowid;
+		$salstatic->id = $obj->rowid;
 		$salstatic->ref = $obj->rowid;
 
-        // Ref
+		// Ref
 		print "<td>".$salstatic->getNomUrl(1)."</td>\n";
 		if (!$i) $totalarray['nbfield']++;
 
@@ -253,27 +252,27 @@ if ($result)
 		if (!$i) $totalarray['nbfield']++;
 
 		// Label payment
-        print "<td>".dol_trunc($obj->label, 40)."</td>\n";
+		print "<td>".dol_trunc($obj->label, 40)."</td>\n";
 		if (!$i) $totalarray['nbfield']++;
 
 		// Date payment
-        print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
+		print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
 		if (!$i) $totalarray['nbfield']++;
 
-        // Type
-        print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';
+		// Type
+		print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';
 		if (!$i) $totalarray['nbfield']++;
 
 		// Account
-    	if (!empty($conf->banque->enabled))
-	    {
-	        print '<td>';
-	        if ($obj->fk_bank > 0)
-	        {
-	        	//$accountstatic->fetch($obj->fk_bank);
-	            $accountstatic->id = $obj->bid;
-	            $accountstatic->ref = $obj->bref;
-	            $accountstatic->number = $obj->bnumber;
+		if (!empty($conf->banque->enabled))
+		{
+			print '<td>';
+			if ($obj->fk_bank > 0)
+			{
+				//$accountstatic->fetch($obj->fk_bank);
+				$accountstatic->id = $obj->bid;
+				$accountstatic->ref = $obj->bref;
+				$accountstatic->number = $obj->bnumber;
 
 				if (!empty($conf->accounting->enabled))
 				{
@@ -284,38 +283,38 @@ if ($result)
 
 					$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
 				}
-	            $accountstatic->label = $obj->blabel;
-	        	print $accountstatic->getNomUrl(1);
-	        } else print '&nbsp;';
-	        print '</td>';
+				$accountstatic->label = $obj->blabel;
+				print $accountstatic->getNomUrl(1);
+			} else print '&nbsp;';
+			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
-	    }
+		}
 
-        // Amount
-        print '<td class="nowrap right">'.price($obj->amount).'</td>';
+		// Amount
+		print '<td class="nowrap right">'.price($obj->amount).'</td>';
 		if (!$i) $totalarray['nbfield']++;
 		if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
 		$totalarray['val']['totalttcfield'] += $obj->amount;
 
-        print '<td></td>';
+		print '<td></td>';
 
 		if (!$i) $totalarray['nbfield']++;
 
-        print "</tr>\n";
+		print "</tr>\n";
 
-        $i++;
-    }
+		$i++;
+	}
 
 	// Show total line
 	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
-    print "</table>";
-    print '</div>';
+	print "</table>";
+	print '</div>';
 	print '</form>';
 
-    $db->free($result);
+	$db->free($result);
 } else {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 // End of page

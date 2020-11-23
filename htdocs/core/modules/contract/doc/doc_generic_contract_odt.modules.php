@@ -45,15 +45,15 @@ class doc_generic_contract_odt extends ModelePDFContract
 	public $emetteur;
 
 	/**
-     * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.6 = array(5, 6)
-     */
+	 * @var array Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 */
 	public $phpmin = array(5, 6);
 
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr';
 
 
@@ -67,7 +67,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 		global $conf, $langs, $mysoc;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array("main", "companies"));
+		$langs->loadLangs(array("main", "companies"));
 
 		$this->db = $db;
 		$this->name = "ODT templates";
@@ -112,7 +112,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 		global $conf, $langs;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array('companies', 'errors'));
+		$langs->loadLangs(array('companies', 'errors'));
 
 		$form = new Form($this->db);
 
@@ -165,7 +165,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 		$texte .= '<div>'.$langs->trans("UploadNewTemplate").' <input type="file" name="uploadfile">';
 		$texte .= '<input type="hidden" value="CONTRACT_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
 		$texte .= '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
-        $texte .= '</div>';
+		$texte .= '</div>';
 
 		$texte .= '</td>';
 
@@ -180,7 +180,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 		return $texte;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Function to build a document on disk using the generic odt module.
 	 *
@@ -194,7 +194,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;
 
 		if (empty($srctemplatepath))
@@ -234,6 +234,8 @@ class doc_generic_contract_odt extends ModelePDFContract
 				}
 			}
 
+			$object->fetch_thirdparty();
+
 			$dir = $conf->contrat->dir_output;
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) $dir .= "/".$objectref;
@@ -262,8 +264,8 @@ class doc_generic_contract_odt extends ModelePDFContract
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
 				if (!empty($conf->global->MAIN_DOC_USE_TIMING))
 				{
-				    $format = $conf->global->MAIN_DOC_USE_TIMING;
-				    if ($format == '1') $format = '%Y%m%d%H%M%S';
+					$format = $conf->global->MAIN_DOC_USE_TIMING;
+					if ($format == '1') $format = '%Y%m%d%H%M%S';
 					$filename = $newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
 				} else {
 					$filename = $newfiletmp.'.'.$newfileformat;
@@ -288,15 +290,15 @@ class doc_generic_contract_odt extends ModelePDFContract
 
 				// Recipient name
 				$contactobject = null;
-                if (!empty($usecontact)) {
-                    // On peut utiliser le nom de la societe du contact
-                    if (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
-                        $socobject = $object->contact;
-                    } else {
-                        $socobject = $object->thirdparty;
-                        // if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
-                        $contactobject = $object->contact;
-                    }
+				if (!empty($usecontact)) {
+					// On peut utiliser le nom de la societe du contact
+					if (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
+						$socobject = $object->contact;
+					} else {
+						$socobject = $object->thirdparty;
+						// if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
+						$contactobject = $object->contact;
+					}
 				} else {
 					$socobject = $object->thirdparty;
 				}
@@ -337,7 +339,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-                    $odfHandler = new odf(
+					$odfHandler = new odf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->contrat->dir_temp,
@@ -380,7 +382,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 						}
 					} catch (OdfException $e)
 					{
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 
@@ -437,7 +439,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 						$odfHandler->setVars($key, $value, true, 'UTF-8');
 					} catch (OdfException $e)
 					{
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 
@@ -455,7 +457,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 					}
 				} else {
 					try {
-					    $odfHandler->saveToDisk($file);
+						$odfHandler->saveToDisk($file);
 					} catch (Exception $e) {
 						$this->error = $e->getMessage();
 						return -1;

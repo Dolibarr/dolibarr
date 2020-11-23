@@ -50,7 +50,7 @@ print '<br>';
 print '<div class="center">';
 if (count($export->array_export_code))
 {
-    print dolGetButtonTitle($langs->trans('NewExport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/exports/export.php?leftmenu=export', '', $user->rights->export->creer);
+	print dolGetButtonTitle($langs->trans('NewExport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/exports/export.php?leftmenu=export', '', $user->rights->export->creer);
 }
 print '</div>';
 print '<br>';
@@ -73,10 +73,10 @@ $liste = $model->liste_modeles($db); // This is not a static method for exports 
 
 foreach ($liste as $key => $val)
 {
-    if (preg_match('/__\(Disabled\)__/', $liste[$key]))
-    {
-    	$liste[$key] = preg_replace('/__\(Disabled\)__/', '('.$langs->transnoentitiesnoconv("Disabled").')', $liste[$key]);
-    }
+	if (preg_match('/__\(Disabled\)__/', $liste[$key]))
+	{
+		$liste[$key] = preg_replace('/__\(Disabled\)__/', '('.$langs->transnoentitiesnoconv("Disabled").')', $liste[$key]);
+	}
 
 	print '<tr class="oddeven">';
 	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key), $model->getPictoForKey($key)).'</td>';

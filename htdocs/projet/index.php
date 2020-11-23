@@ -39,7 +39,7 @@ $hookmanager->initHooks(array('projectsindex'));
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $search_project_user = GETPOST('search_project_user', 'int');
 $mine = GETPOST('mode', 'aZ09') == 'mine' ? 1 : 0;
 if ($mine == 0 && $search_project_user === '') $search_project_user = $user->conf->MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX;
@@ -53,7 +53,7 @@ if (!$user->rights->projet->lire) accessforbidden();
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 
-$max = 3;
+$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 
 /*
@@ -68,7 +68,7 @@ if (empty($reshook)) {
 		$search_project_user = GETPOST('search_project_user', 'int');
 		$tabparam = array("MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX" => $search_project_user);
 
-		include_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		$result = dol_set_user_param($db, $conf, $user, $tabparam);
 	}
 }
@@ -170,33 +170,33 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
-    // Search project
-    if (!empty($conf->projet->enabled) && $user->rights->projet->lire)
-    {
-    	$listofsearchfields['search_project'] = array('text'=>'Project');
-    }
+	// Search project
+	if (!empty($conf->projet->enabled) && $user->rights->projet->lire)
+	{
+		$listofsearchfields['search_project'] = array('text'=>'Project');
+	}
 
-    if (count($listofsearchfields))
-    {
-    	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-    	print '<input type="hidden" name="token" value="'.newToken().'">';
-        print '<div class="div-table-responsive-no-min">';
-    	print '<table class="noborder nohover centpercent">';
-    	$i = 0;
-    	foreach ($listofsearchfields as $key => $value)
-    	{
-    		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    		print '<tr>';
-    		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
-    		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-    		print '</tr>';
-    		$i++;
-    	}
-    	print '</table>';
-        print '</div>';
-    	print '</form>';
-    	print '<br>';
-    }
+	if (count($listofsearchfields))
+	{
+		print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder nohover centpercent">';
+		$i = 0;
+		foreach ($listofsearchfields as $key => $value)
+		{
+			if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+			print '<tr>';
+			print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
+			if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+			print '</tr>';
+			$i++;
+		}
+		print '</table>';
+		print '</div>';
+		print '</form>';
+		print '<br>';
+	}
 }
 
 
@@ -226,7 +226,7 @@ $sql .= $db->plimit($max, 0);
 $resql = $db->query($sql);
 if ($resql)
 {
-    print '<div class="div-table-responsive-no-min">';
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="4">'.$langs->trans("LatestModifiedProjects", $max).'</th></tr>';
@@ -362,7 +362,7 @@ if ($resql)
 	if ($othernb) {
 		print '<tr class="oddeven">';
 		print '<td class="nowrap">';
-		print '...';
+		print '<span class="opacitymedium">...</span>';
 		print '</td>';
 		print '<td class="nowrap right">';
 		print $othernb;
@@ -379,12 +379,12 @@ print '</div>';
 
 if (empty($conf->global->PROJECT_HIDE_PROJECT_LIST_ON_PROJECT_AREA))
 {
-    // This list can be very long, so we allow to hide it to prefer to use the list page.
-    // Add constant PROJECT_HIDE_PROJECT_LIST_ON_PROJECT_AREA to hide this list
+	// This list can be very long, so we allow to hide it to prefer to use the list page.
+	// Add constant PROJECT_HIDE_PROJECT_LIST_ON_PROJECT_AREA to hide this list
 
-    print '<br>';
+	print '<br>';
 
-    print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 1, $listofoppstatus, array());
+	print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 1, $listofoppstatus, array());
 }
 
 print '</div></div></div>';

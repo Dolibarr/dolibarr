@@ -194,6 +194,8 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 	if ($features == 'member') $features = 'adherent';
 	if ($features == 'subscription') { $features = 'adherent'; $feature2 = 'cotisation'; };
 	if ($features == 'websitepage') { $features = 'website'; $tableandshare = 'website_page'; $parentfortableentity = 'fk_website@website'; }
+	if ($features == 'project') $features = 'projet';
+	if ($features == 'product') $features = 'produit';
 
 	// Get more permissions checks from hooks
 	$parameters = array('features'=>$features, 'objectid'=>$objectid, 'idtype'=>$dbt_select);
@@ -526,7 +528,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 			{
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON dbt.fk_soc = sc.fk_soc AND sc.fk_user = '".$user->id."'";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON dbt.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 				$sql .= " WHERE dbt.".$dbt_select." IN (".$objectid.")";
 				$sql .= " AND (dbt.fk_soc IS NULL OR sc.fk_soc IS NOT NULL)"; // Contact not linked to a company or to a company of user
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
@@ -642,13 +644,13 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
  */
 function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $showonlymessage = 0, $params = null)
 {
-    global $conf, $db, $user, $langs, $hookmanager;
-    if (!is_object($langs))
-    {
-        include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
-        $langs = new Translate('', $conf);
-        $langs->setDefaultLang();
-    }
+	global $conf, $db, $user, $langs, $hookmanager;
+	if (!is_object($langs))
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
+		$langs = new Translate('', $conf);
+		$langs->setDefaultLang();
+	}
 
 	$langs->load("errors");
 

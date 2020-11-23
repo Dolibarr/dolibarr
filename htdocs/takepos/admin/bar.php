@@ -65,6 +65,10 @@ if (GETPOST('action', 'alpha') == 'set')
 	}
 }
 
+if ($conf->global->TAKEPOS_ORDER_NOTES == 1) {
+	$extrafields = new ExtraFields($db);
+	$extrafields->addExtraField('order_notes', 'Order notes', 'varchar', 0, 255, 'facturedet', 0, 0, '', '', 0, '', 0, 1);
+}
 
 /*
  * View
@@ -80,7 +84,7 @@ llxHeader('', $langs->trans("CashDeskSetup"), '', '', 0, 0, $arrayofjs, $arrayof
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
 $head = takepos_admin_prepare_head();
-dol_fiche_head($head, 'bar', 'TakePOS', -1, 'cash-register');
+print dol_get_fiche_head($head, 'bar', 'TakePOS', -1, 'cash-register');
 
 
 // Mode
@@ -179,7 +183,7 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT) {
 
 	print '<br>';
 
-	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
+	print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
 }
 
 if ($conf->global->TAKEPOS_BAR_RESTAURANT) {

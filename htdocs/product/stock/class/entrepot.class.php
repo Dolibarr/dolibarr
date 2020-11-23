@@ -488,7 +488,7 @@ class Entrepot extends CommonObject
 				$this->model_pdf      = $obj->model_pdf;
 				$this->import_key     = $obj->import_key;
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
@@ -707,13 +707,13 @@ class Entrepot extends CommonObject
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("Warehouse").'</u>';
+		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Warehouse").'</u>';
+		if (isset($this->statut)) {
+			$label .= ' '.$this->getLibStatut(5);
+		}
 		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.(empty($this->ref) ? (empty($this->label) ? $this->libelle : $this->label) : $this->ref);
 		if (!empty($this->lieu)) {
 			$label .= '<br><b>'.$langs->trans('LocationSummary').':</b> '.$this->lieu;
-		}
-		if (isset($this->statut)) {
-			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
 		}
 
 		$url = DOL_URL_ROOT.'/product/stock/card.php?id='.$this->id;
@@ -736,7 +736,7 @@ class Entrepot extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-		if ($withpicto != 2) $result .= (($showfullpath || !empty($conf->global->STOCK_ALWAYS_SHOW_FULL_ARBO)) ? $this->get_full_arbo() : (empty($this->label)?$this->libelle:$this->label));
+		if ($withpicto != 2) $result .= (($showfullpath || !empty($conf->global->STOCK_ALWAYS_SHOW_FULL_ARBO)) ? $this->get_full_arbo() : (empty($this->label) ? $this->libelle : $this->label));
 		$result .= $linkend;
 
 		global $action;
@@ -867,8 +867,8 @@ class Entrepot extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'standard';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->STOCK_ADDON_PDF)) {
 				$modele = $conf->global->STOCK_ADDON_PDF;
 			}

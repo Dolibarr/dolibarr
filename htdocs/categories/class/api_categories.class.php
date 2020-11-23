@@ -155,7 +155,7 @@ class Categories extends DolibarrApi
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
-		$sql .= $db->order($sortfield, $sortorder);
+		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0)
 			{
@@ -163,19 +163,19 @@ class Categories extends DolibarrApi
 			}
 			$offset = $limit * $page;
 
-			$sql .= $db->plimit($limit + 1, $offset);
+			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
 
-		$result = $db->query($sql);
+		$result = $this->db->query($sql);
 		if ($result)
 		{
 			$i = 0;
-			$num = $db->num_rows($result);
+			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			while ($i < $min)
 			{
-				$obj = $db->fetch_object($result);
-				$category_static = new Categorie($db);
+				$obj = $this->db->fetch_object($result);
+				$category_static = new Categorie($this->db);
 				if ($category_static->fetch($obj->rowid)) {
 					$obj_ret[] = $this->_cleanObjectDatas($category_static);
 				}
@@ -183,7 +183,7 @@ class Categories extends DolibarrApi
 			}
 		}
 		else {
-			throw new RestException(503, 'Error when retrieve category list : '.$db->lasterror());
+			throw new RestException(503, 'Error when retrieve category list : '.$this->db->lasterror());
 		}
 		if (!count($obj_ret)) {
 			throw new RestException(404, 'No category found');
@@ -658,7 +658,7 @@ class Categories extends DolibarrApi
 	 * Clean sensible object datas
 	 *
 	 * @param   Categorie  $object    Object to clean
-	 * @return    array    Array of cleaned object properties
+	 * @return  Object     Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{

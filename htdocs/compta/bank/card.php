@@ -115,7 +115,7 @@ if ($action == 'add')
 
 	$object->min_allowed     = GETPOST("account_min_allowed", 'int');
 	$object->min_desired     = GETPOST("account_min_desired", 'int');
-	$object->comment         = trim(GETPOST("account_comment", 'none'));
+	$object->comment         = trim(GETPOST("account_comment", 'restricthtml'));
 
 	$object->fk_user_author  = $user->id;
 
@@ -213,7 +213,7 @@ if ($action == 'update')
 
 	$object->min_allowed     = GETPOST("account_min_allowed", 'int');
 	$object->min_desired     = GETPOST("account_min_desired", 'int');
-	$object->comment         = trim(GETPOST("account_comment", 'none'));
+	$object->comment         = trim(GETPOST("account_comment", 'restricthtml'));
 
 	if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($object->account_number))
 	{
@@ -331,7 +331,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="clos" value="0">';
 
-	dol_fiche_head('');
+	print dol_get_fiche_head('');
 
 	print '<table class="border centpercent">';
 
@@ -544,7 +544,7 @@ if ($action == 'create')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("CreateAccount").'">';
@@ -574,7 +574,7 @@ if ($action == 'create')
 
 		// Show tabs
 		$head = bank_prepare_head($object);
-		dol_fiche_head($head, 'bankname', $langs->trans("FinancialAccount"), -1, 'account');
+		print dol_get_fiche_head($head, 'bankname', $langs->trans("FinancialAccount"), -1, 'account');
 
 		$formconfirm = '';
 
@@ -752,7 +752,7 @@ if ($action == 'create')
 
 		print '<div class="clearboth"></div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		/*
 		 * Barre d'actions
@@ -761,13 +761,13 @@ if ($action == 'create')
 
 		if ($user->rights->banque->configurer)
 		{
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
 		}
 
 		$canbedeleted = $object->can_be_deleted(); // Renvoi vrai si compte sans mouvements
 		if ($user->rights->banque->configurer && $canbedeleted)
 		{
-			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans("Delete").'</a>';
+			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a>';
 		}
 
 		print '</div>';
@@ -810,7 +810,7 @@ if ($action == 'create')
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.$_REQUEST["id"].'">'."\n\n";
 
-		dol_fiche_head(array(), 0, '', 0);
+		print dol_get_fiche_head(array(), 0, '', 0);
 
 		//print '<div class="underbanner clearboth"></div>';
 
@@ -1028,7 +1028,7 @@ if ($action == 'create')
 			print '</table>';
 		}
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input value="'.$langs->trans("Modify").'" type="submit" class="button">';

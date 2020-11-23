@@ -150,7 +150,7 @@ class FormTicket
 
 		print "\n<!-- Begin form TICKET -->\n";
 
-		if ($withdolfichehead) dol_fiche_head(null, 'card', '', 0, '');
+		if ($withdolfichehead) print dol_get_fiche_head(null, 'card', '', 0, '');
 
 		print '<form method="POST" '.($withdolfichehead ? '' : 'style="margin-bottom: 30px;" ').'name="ticket" id="form_create_ticket" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -231,7 +231,7 @@ class FormTicket
 		}
 
 		// MESSAGE
-		$msg = GETPOSTISSET('message') ? GETPOST('message', 'none') : '';
+		$msg = GETPOSTISSET('message') ? GETPOST('message', 'restricthtml') : '';
 		print '<tr><td><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span></label></td><td>';
 
 		// If public form, display more information
@@ -421,7 +421,7 @@ class FormTicket
 
 		print '</table>';
 
-		if ($withdolfichehead) dol_fiche_end();
+		if ($withdolfichehead) print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input class="button" type="submit" name="add" value="'.$langs->trans(($this->withthreadid > 0 ? "SendResponse" : "NewTicket")).'" />';
@@ -919,7 +919,7 @@ class FormTicket
 
 			// Subject
 			print '<tr class="email_line"><td class="titlefieldcreate">'.$langs->trans('Subject').'</td>';
-			print '<td><input type="text" class="text minwidth500" name="subject" value="[' . $conf->global->MAIN_INFO_SOCIETE_NOM . ' - ' . $langs->trans("Ticket") . ' ' . $this->ref . '] '.$langs->trans('TicketNewMessage').'" />';
+			print '<td><input type="text" class="text minwidth500" name="subject" value="['.$conf->global->MAIN_INFO_SOCIETE_NOM.' - '.$langs->trans("Ticket").' '.$this->ref.'] '.$langs->trans('TicketNewMessage').'" />';
 			print '</td></tr>';
 
 			// Destinataires
@@ -985,12 +985,12 @@ class FormTicket
 			print '</td></tr>';
 		}
 
-        // MESSAGE
-        $defaultmessage="";
+		// MESSAGE
+		$defaultmessage = "";
 		if (is_object($arraydefaultmessage) && $arraydefaultmessage->content) {
 			$defaultmessage = $arraydefaultmessage->content;
 		}
-        $defaultmessage = str_replace('\n', "\n", $defaultmessage);
+		$defaultmessage = str_replace('\n', "\n", $defaultmessage);
 
 		// Deal with format differences between message and signature (text / HTML)
 		if (dol_textishtml($defaultmessage) && !dol_textishtml($this->substit['__USER_SIGNATURE__'])) {

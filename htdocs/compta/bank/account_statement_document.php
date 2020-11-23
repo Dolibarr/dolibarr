@@ -38,7 +38,7 @@ $langs->loadLangs(array('banks', 'companies', 'other'));
 
 $id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('account', 'int'));
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $numref = (GETPOST('num', 'alpha') ? GETPOST('num', 'alpha') : GETPOST('sectionid', 'alpha'));
 
@@ -152,7 +152,7 @@ if ($id > 0 || !empty($ref)) {
 
 		// Onglets
 		$head = account_statement_prepare_head($object, $numref);
-		dol_fiche_head($head, 'document', $langs->trans("AccountStatement"), -1, 'account');
+		print dol_get_fiche_head($head, 'document', $langs->trans("AccountStatement"), -1, 'account');
 
 
 		// Build file list
@@ -182,7 +182,7 @@ if ($id > 0 || !empty($ref)) {
 
 		print '</div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 
 		$modulepart = 'bank';

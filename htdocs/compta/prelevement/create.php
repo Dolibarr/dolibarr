@@ -46,7 +46,7 @@ $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 $type = GETPOST('type', 'aZ09');
 
 // Get supervariables
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $mode = GETPOST('mode', 'alpha') ?GETPOST('mode', 'alpha') : 'real';
 $format = GETPOST('format', 'aZ09');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -141,7 +141,7 @@ $head[$h][2] = 'payment';
 $hselected = 'payment';
 $h++;
 
-dol_fiche_head($head, $hselected, $langs->trans("StandingOrders"), 0, 'payment');
+print dol_get_fiche_head($head, $hselected, $langs->trans("StandingOrders"), 0, 'payment');
 */
 
 $title = $langs->trans("NewStandingOrder");
@@ -151,7 +151,7 @@ if ($type == 'bank-transfer') {
 
 print load_fiche_titre($title);
 
-dol_fiche_head();
+print dol_get_fiche_head();
 
 $nb = $bprev->nbOfInvoiceToPay($type);
 $pricetowithdraw = $bprev->SommeAPrelever($type);
@@ -185,7 +185,7 @@ if ($mesg) print $mesg;
 print '<div class="tabsAction">'."\n";
 
 print '<form action="'.$_SERVER['PHP_SELF'].'?action=create" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 if ($nb) {
 	if ($pricetowithdraw) {
@@ -271,7 +271,7 @@ if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS))
 	$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
 }
 //$sql .= " AND pfd.amount > 0";
-$sql .= " AND f.total_ttc > 0";		// Avoid credit notes
+$sql .= " AND f.total_ttc > 0"; // Avoid credit notes
 $sql .= " AND pfd.traite = 0";
 $sql .= " AND pfd.ext_payment_id IS NULL";
 if ($type == 'bank-transfer') {

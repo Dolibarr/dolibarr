@@ -220,7 +220,7 @@ class pdf_standard extends ModelePDFStock
 			$supplierprices = $stockFournisseur->list_product_fournisseur_price($object->id);
 			$object->supplierprices = $supplierprices;
 
-			$productstatic = new Product($db);
+			$productstatic = new Product($this->db);
 
 			if (!file_exists($dir))
 			{
@@ -313,13 +313,13 @@ class pdf_standard extends ModelePDFStock
 				$sql .= " WHERE ps.fk_product = p.rowid";
 				$sql .= " AND ps.reel <> 0"; // We do not show if stock is 0 (no product in this warehouse)
 				$sql .= " AND ps.fk_entrepot = ".$object->id;
-				$sql .= $db->order($sortfield, $sortorder);
+				$sql .= $this->db->order($sortfield, $sortorder);
 
 				//dol_syslog('List products', LOG_DEBUG);
-				$resql = $db->query($sql);
+				$resql = $this->db->query($sql);
 				if ($resql)
 				{
-					$num = $db->num_rows($resql);
+					$num = $this->db->num_rows($resql);
 					$i = 0;
 					$nblines = $num;
 
@@ -330,7 +330,7 @@ class pdf_standard extends ModelePDFStock
 					{
 						$curY = $nexY;
 
-						$objp = $db->fetch_object($resql);
+						$objp = $this->db->fetch_object($resql);
 
 						// Multilangs
 						if (!empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
@@ -338,13 +338,13 @@ class pdf_standard extends ModelePDFStock
 							$sql = "SELECT label";
 							$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 							$sql .= " WHERE fk_product=".$objp->rowid;
-							$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
+							$sql .= " AND lang='".$this->db->escape($langs->getDefaultLang())."'";
 							$sql .= " LIMIT 1";
 
-							$result = $db->query($sql);
+							$result = $this->db->query($sql);
 							if ($result)
 							{
-								$objtp = $db->fetch_object($result);
+								$objtp = $this->db->fetch_object($result);
 								if ($objtp->label != '') $objp->produit = $objtp->label;
 							}
 						}
@@ -501,7 +501,7 @@ class pdf_standard extends ModelePDFStock
 						}
 					}
 
-					$db->free($resql);
+					$this->db->free($resql);
 
 					/**
 					 * Footer table
@@ -542,7 +542,7 @@ class pdf_standard extends ModelePDFStock
 						}
 					}
 				} else {
-					dol_print_error($db);
+					dol_print_error($this->db);
 				}
 
 				// Displays notes
@@ -825,7 +825,7 @@ class pdf_standard extends ModelePDFStock
 		$pdf->SetTextColor(0, 0, 60);
 
 		// Parent entrepot
-		$e = new Entrepot($db);
+		$e = new Entrepot($this->db);
 		$hasparent = (!empty($object->fk_parent) && $e->fetch($object->fk_parent) > 0);
 
 		if ($hasparent) {
@@ -863,14 +863,14 @@ class pdf_standard extends ModelePDFStock
 		// Last movement
 		$sql = "SELECT max(m.datem) as datem";
 		$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
-		$sql .= " WHERE m.fk_entrepot = '".$object->id."'";
-		$resqlbis = $db->query($sql);
+		$sql .= " WHERE m.fk_entrepot = ".((int) $object->id);
+		$resqlbis = $this->db->query($sql);
 		if ($resqlbis)
 		{
-			$obj = $db->fetch_object($resqlbis);
-			$lastmovementdate = $db->jdate($obj->datem);
+			$obj = $this->db->fetch_object($resqlbis);
+			$lastmovementdate = $this->db->jdate($obj->datem);
 		} else {
-			dol_print_error($db);
+			dol_print_error($this->db);
 		}
 
 		if ($lastmovementdate)
@@ -912,7 +912,7 @@ class pdf_standard extends ModelePDFStock
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
-		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf, $outputlangs, 'PRODUCT_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 }

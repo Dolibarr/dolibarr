@@ -36,7 +36,7 @@ $tmptype2label = ExtraFields::$type2label;
 $type2label = array('');
 foreach ($tmptype2label as $key => $val) $type2label[$key] = $langs->transnoentitiesnoconv($val);
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'recruitment_recruitmentjobposition';
 
@@ -65,11 +65,11 @@ print load_fiche_titre($langs->trans("RecruitmentSetup"), $linkback, 'title_setu
 
 $head = recruitmentAdminPrepareHead();
 
-dol_fiche_head($head, 'jobposition_extrafields', '', -1, '');
+print dol_get_fiche_head($head, 'jobposition_extrafields', '', -1, '');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 // Buttons

@@ -161,7 +161,7 @@ for ($i = 1; $i <= 12; $i++) {
 }
 print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
-$sql = "SELECT  ".$db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number')." AS codecomptable,";
+$sql = "SELECT ".$db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number')." AS codecomptable,";
 $sql .= "  ".$db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label')." AS intitule,";
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
@@ -234,7 +234,7 @@ for ($i = 1; $i <= 12; $i++) {
 }
 print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
-$sql = "SELECT  ".$db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number')." AS codecomptable,";
+$sql = "SELECT ".$db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number')." AS codecomptable,";
 $sql .= "  ".$db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label')." AS intitule,";
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
@@ -309,7 +309,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 	}
 	print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
-	$sql = "SELECT '".$langs->trans("TotalExpenseReport")."' AS label,";
+	$sql = "SELECT '".$db->escape($langs->trans("TotalExpenseReport"))."' AS label,";
 	for ($i = 1; $i <= 12; $i++) {
 		$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
 		if ($j > 12) $j -= 12;

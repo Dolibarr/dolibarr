@@ -8,7 +8,7 @@
  * Copyright (C) 2013-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2020       Open-Dsi     			<support@open-dsi.fr>
  *
@@ -55,7 +55,7 @@ $action = (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $id = GETPOST('id', 'int');
-$socid		= GETPOST('socid', 'int');
+$socid = GETPOST('socid', 'int');
 
 $object = new Contact($db);
 $extrafields = new ExtraFields($db);
@@ -78,7 +78,7 @@ if (!empty($canvas))
 
 // Security check
 if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
+$result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', 0); // If we create a contact with no company (shared contacts), no check on write permission
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('contactcard', 'globalcard'));
@@ -177,16 +177,16 @@ if (empty($reshook))
 		if ($canvas) $object->canvas = $canvas;
 
 		$object->entity = (GETPOSTISSET('entity') ?GETPOST('entity', 'int') : $conf->entity);
-		$object->socid			= GETPOST("socid", 'int');
-		$object->lastname = GETPOST("lastname", 'alpha');
-		$object->firstname = GETPOST("firstname", 'alpha');
-		$object->civility_code	= GETPOST("civility_code", 'alpha');
-		$object->poste			= GETPOST("poste", 'alpha');
-		$object->address = GETPOST("address", 'alpha');
-		$object->zip = GETPOST("zipcode", 'alpha');
-		$object->town = GETPOST("town", 'alpha');
-		$object->country_id = GETPOST("country_id", 'int');
-		$object->state_id = GETPOST("state_id", 'int');
+		$object->socid = GETPOST("socid", 'int');
+		$object->lastname = (string) GETPOST("lastname", 'alpha');
+		$object->firstname = (string) GETPOST("firstname", 'alpha');
+		$object->civility_code = (string) GETPOST("civility_code", 'alpha');
+		$object->poste = (string) GETPOST("poste", 'alpha');
+		$object->address = (string) GETPOST("address", 'alpha');
+		$object->zip = (string) GETPOST("zipcode", 'alpha');
+		$object->town = (string) GETPOST("town", 'alpha');
+		$object->country_id = (int) GETPOST("country_id", 'int');
+		$object->state_id = (int) GETPOST("state_id", 'int');
 		//$object->jabberid		= GETPOST("jabberid", 'alpha');
 		//$object->skype		= GETPOST("skype", 'alpha');
 		//$object->twitter		= GETPOST("twitter", 'alpha');
@@ -196,22 +196,22 @@ if (empty($reshook))
 		if (!empty($conf->socialnetworks->enabled)) {
 			foreach ($socialnetworks as $key => $value) {
 				if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml') != '') {
-					$object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
+					$object->socialnetworks[$key] = (string) GETPOST($key, 'alphanohtml');
 				}
 			}
 		}
-		$object->email = GETPOST("email", 'alpha');
+		$object->email = (string) GETPOST("email", 'alpha');
 		$object->no_email = GETPOST("no_email", "int");
-		$object->phone_pro = GETPOST("phone_pro", 'alpha');
-		$object->phone_perso = GETPOST("phone_perso", 'alpha');
-		$object->phone_mobile = GETPOST("phone_mobile", 'alpha');
-		$object->fax = GETPOST("fax", 'alpha');
+		$object->phone_pro = (string) GETPOST("phone_pro", 'alpha');
+		$object->phone_perso = (string) GETPOST("phone_perso", 'alpha');
+		$object->phone_mobile = (string) GETPOST("phone_mobile", 'alpha');
+		$object->fax = (string) GETPOST("fax", 'alpha');
 		$object->priv = GETPOST("priv", 'int');
-		$object->note_public = GETPOST("note_public", 'none');
-		$object->note_private = GETPOST("note_private", 'none');
+		$object->note_public = (string) GETPOST("note_public", 'restricthtml');
+		$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 		$object->roles = GETPOST("roles", 'array');
 
-		$object->statut			= 1; //Defult status to Actif
+		$object->statut = 1; //Default status to Actif
 
 		// Note: Correct date should be completed with location to have exact GM time of birth.
 		$object->birthday = dol_mktime(0, 0, 0, GETPOST("birthdaymonth", 'int'), GETPOST("birthdayday", 'int'), GETPOST("birthdayyear", 'int'));
@@ -225,9 +225,9 @@ if (empty($reshook))
 			$action = 'create';
 		}
 
-		if (!GETPOST("lastname"))
-		{
-			$error++; $errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Lastname").' / '.$langs->transnoentities("Label"));
+		if (!GETPOST("lastname")) {
+			$error++;
+			$errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Lastname").' / '.$langs->transnoentities("Label"));
 			$action = 'create';
 		}
 
@@ -236,7 +236,8 @@ if (empty($reshook))
 			$id = $object->create($user);
 			if ($id <= 0)
 			{
-				$error++; $errors = array_merge($errors, ($object->error ? array($object->error) : $object->errors));
+				$error++;
+				$errors = array_merge($errors, ($object->error ? array($object->error) : $object->errors));
 				$action = 'create';
 			} else {
 				// Categories association
@@ -278,14 +279,12 @@ if (empty($reshook))
 		$result = $object->fetch($id);
 		$object->oldcopy = clone $object;
 
-		$object->old_lastname = GETPOST("old_lastname");
-		$object->old_firstname = GETPOST("old_firstname");
+		$object->old_lastname = (string) GETPOST("old_lastname", 'alpha');
+		$object->old_firstname = (string) GETPOST("old_firstname", 'alpha');
 
 		$result = $object->delete();
-		if ($result > 0)
-		{
-			if ($backtopage)
-			{
+		if ($result > 0) {
+			if ($backtopage) {
 				header("Location: ".$backtopage);
 				exit;
 			} else {
@@ -360,22 +359,22 @@ if (empty($reshook))
 
 			$object->oldcopy = clone $object;
 
-			$object->old_lastname = GETPOST("old_lastname", 'alpha');
-			$object->old_firstname = GETPOST("old_firstname", 'alpha');
+			$object->old_lastname = (string) GETPOST("old_lastname", 'alpha');
+			$object->old_firstname = (string) GETPOST("old_firstname", 'alpha');
 
 			$object->socid = GETPOST("socid", 'int');
-			$object->lastname = GETPOST("lastname", 'alpha');
-			$object->firstname = GETPOST("firstname", 'alpha');
-			$object->civility_code = GETPOST("civility_code", 'alpha');
-			$object->poste = GETPOST("poste", 'alpha');
+			$object->lastname = (string) GETPOST("lastname", 'alpha');
+			$object->firstname = (string) GETPOST("firstname", 'alpha');
+			$object->civility_code = (string) GETPOST("civility_code", 'alpha');
+			$object->poste = (string) GETPOST("poste", 'alpha');
 
-			$object->address = GETPOST("address", 'alpha');
-			$object->zip = GETPOST("zipcode", 'alpha');
-			$object->town = GETPOST("town", 'alpha');
-			$object->state_id   	= GETPOST("state_id", 'int');
-			$object->country_id		= GETPOST("country_id", 'int');
+			$object->address = (string) GETPOST("address", 'alpha');
+			$object->zip = (string) GETPOST("zipcode", 'alpha');
+			$object->town = (string) GETPOST("town", 'alpha');
+			$object->state_id = GETPOST("state_id", 'int');
+			$object->country_id = GETPOST("country_id", 'int');
 
-			$object->email = GETPOST("email", 'alpha');
+			$object->email = (string) GETPOST("email", 'alpha');
 			$object->no_email = GETPOST("no_email", "int");
 			//$object->jabberid		= GETPOST("jabberid", 'alpha');
 			//$object->skype		= GETPOST("skype", 'alpha');
@@ -386,17 +385,17 @@ if (empty($reshook))
 			if (!empty($conf->socialnetworks->enabled)) {
 				foreach ($socialnetworks as $key => $value) {
 					if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml') != '') {
-						$object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
+						$object->socialnetworks[$key] = (string) GETPOST($key, 'alphanohtml');
 					}
 				}
 			}
-			$object->phone_pro = GETPOST("phone_pro", 'alpha');
-			$object->phone_perso = GETPOST("phone_perso", 'alpha');
-			$object->phone_mobile = GETPOST("phone_mobile", 'alpha');
-			$object->fax = GETPOST("fax", 'alpha');
-			$object->priv = GETPOST("priv", 'int');
-			$object->note_public = GETPOST("note_public", 'none');
-			$object->note_private = GETPOST("note_private", 'none');
+			$object->phone_pro = (string) GETPOST("phone_pro", 'alpha');
+			$object->phone_perso = (string) GETPOST("phone_perso", 'alpha');
+			$object->phone_mobile = (string) GETPOST("phone_mobile", 'alpha');
+			$object->fax = (string) GETPOST("fax", 'alpha');
+			$object->priv = (string) GETPOST("priv", 'int');
+			$object->note_public = (string) GETPOST("note_public", 'restricthtml');
+			$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 			$object->roles = GETPOST("roles", 'array');
 
 			// Fill array 'array_options' with data from add form
@@ -611,7 +610,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				print '<input type="hidden" name="entity" value="'.$objsoc->entity.'">';
 			}
 
-			dol_fiche_head($head, 'card', '', 0, '');
+			print dol_get_fiche_head($head, 'card', '', 0, '');
 
 			print '<table class="border centpercent">';
 
@@ -851,7 +850,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print '<table class="border centpercent">';
 
 			// Date To Birth
-			print '<tr><td><label for="birthday">'.$langs->trans("DateToBirth").'</label></td><td>';
+			print '<tr><td><label for="birthday">'.$langs->trans("DateOfBirth").'</label></td><td>';
 			$form = new Form($db);
 			if ($object->birthday)
 			{
@@ -873,7 +872,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 			print "</table>";
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
 			print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
@@ -888,8 +887,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print '</div>';
 
 			print "</form>";
-		} elseif ($action == 'edit' && !empty($id))
-		{
+		} elseif ($action == 'edit' && !empty($id)) {
 			/*
              * Fiche en mode edition
              */
@@ -940,7 +938,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print '<input type="hidden" name="old_firstname" value="'.$object->firstname.'">';
 			if (!empty($backtopage)) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-			dol_fiche_head($head, 'card', $title, 0, 'contact');
+			print dol_get_fiche_head($head, 'card', $title, 0, 'contact');
 
 			print '<table class="border centpercent">';
 
@@ -1237,16 +1235,21 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 			print '</table>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
-			print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+			print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 			print ' &nbsp; &nbsp; ';
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 
 			print "</form>";
 		}
+	}
+
+	// Select mail models is same action as presend
+	if (GETPOST('modelselected', 'alpha')) {
+		$action = 'presend';
 	}
 
 	if (!empty($id) && $action != 'edit' && $action != 'create')
@@ -1258,7 +1261,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		// Show errors
 		dol_htmloutput_errors(is_numeric($error) ? '' : $error, $errors);
 
-		dol_fiche_head($head, 'card', $title, -1, 'contact');
+		print dol_get_fiche_head($head, 'card', $title, -1, 'contact');
 
 		if ($action == 'create_user')
 		{
@@ -1355,7 +1358,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 		$object->fetch_thirdparty();
 
-		if (! empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {
+		if (!empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {
 			if ($object->thirdparty->client == 2 || $object->thirdparty->client == 3)
 			{
 				print '<br>';
@@ -1368,11 +1371,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 				print $langs->trans('ProspectLevel');
 				print '<td>';
-				if ($action != 'editlevel' && $user->rights->societe->contact->creer) print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editlevel&amp;id=' . $object->id . '">' . img_edit($langs->trans('Modify'), 1) . '</a></td>';
+				if ($action != 'editlevel' && $user->rights->societe->contact->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlevel&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify'), 1).'</a></td>';
 				print '</tr></table>';
 				print '</td><td>';
 				if ($action == 'editlevel') {
-					$formcompany->formProspectContactLevel($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_prospectlevel, 'prospect_contact_level_id', 1);
+					$formcompany->formProspectContactLevel($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_prospectlevel, 'prospect_contact_level_id', 1);
 				} else {
 					print $object->getLibProspLevel();
 				}
@@ -1381,13 +1384,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 				// Status of prospection
 				$object->loadCacheOfProspStatus();
-				print '<tr><td>' . $langs->trans("StatusProsp") . '</td><td>' . $object->getLibProspCommStatut(4, $object->cacheprospectstatus[$object->stcomm_id]['label']);
+				print '<tr><td>'.$langs->trans("StatusProsp").'</td><td>'.$object->getLibProspCommStatut(4, $object->cacheprospectstatus[$object->stcomm_id]['label']);
 				print ' &nbsp; &nbsp; ';
 				print '<div class="floatright">';
 				foreach ($object->cacheprospectstatus as $key => $val) {
 					$titlealt = 'default';
 					if (!empty($val['code']) && !in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt = $val['label'];
-					if ($object->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&stcomm=' . $val['code'] . '&action=setstcomm">' . img_action($titlealt, $val['code'], $val['picto']) . '</a>';
+					if ($object->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&stcomm='.$val['code'].'&action=setstcomm&token='.newToken().'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
 				}
 				print '</div></td></tr>';
 
@@ -1477,7 +1480,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '</div></div></div>';
 		print '<div style="clear:both"></div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		// Barre d'actions
 		print '<div class="tabsAction">';
@@ -1521,7 +1524,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			// Delete
 			if ($user->rights->societe->contact->supprimer)
 			{
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete'.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.$langs->trans('Delete').'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().''.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.$langs->trans('Delete').'</a>';
 			}
 		}
 
@@ -1554,7 +1557,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		$modelmail = 'contact';
 		$defaulttopic = 'Information';
 		$diroutput = $conf->contact->dir_output;
-		$trackid = 'con'.$object->id;
+		$trackid = 'ctc'.$object->id;
 
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	}

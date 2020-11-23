@@ -188,18 +188,18 @@ if (empty($reshook))
 
 		if (!$error)
 		{
-			$object->titre = GETPOST('titre', 'nohtml'); // deprecated
-			$object->title = GETPOST('titre', 'nohtml');
-			$object->note_private = GETPOST('note_private', 'none');
-            $object->note_public = GETPOST('note_public', 'none');
-            $object->modelpdf = GETPOST('modelpdf', 'alpha');
+			$object->titre = GETPOST('title', 'nohtml'); // deprecated
+			$object->title = GETPOST('title', 'nohtml');
+			$object->note_private = GETPOST('note_private', 'restricthtml');
+			$object->note_public = GETPOST('note_public', 'restricthtml');
+			$object->model_pdf = GETPOST('modelpdf', 'alpha');
 			$object->usenewprice = GETPOST('usenewprice', 'alpha');
 
 			$object->frequency = $frequency;
 			$object->unit_frequency = GETPOST('unit_frequency', 'alpha');
 			$object->nb_gen_max = $nb_gen_max;
 			$object->auto_validate = GETPOST('auto_validate', 'int');
-            $object->generate_pdf = GETPOST('generate_pdf', 'int');
+			$object->generate_pdf = GETPOST('generate_pdf', 'int');
 			$object->fk_project = $projectid;
 
 			$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
@@ -315,7 +315,7 @@ if (empty($reshook))
 	elseif ($action == 'setauto_validate' && $user->rights->facture->creer)
 	{
 		$object->setAutoValidate(GETPOST('auto_validate', 'int'));
-    } // Set generate pdf
+	} // Set generate pdf
 	elseif ($action == 'setgenerate_pdf' && $user->rights->facture->creer)
 	{
 		$object->setGeneratepdf(GETPOST('generate_pdf', 'int'));
@@ -405,7 +405,7 @@ if (empty($reshook))
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
 		if ($ret < 0) $error++;
 
 		if (!$error)
@@ -650,7 +650,7 @@ if (empty($reshook))
 	    				$outputlangs = new Translate("", $conf);
 	    				$outputlangs->setDefaultLang($newlang);
 	    			    }
-	    			    $model=$object->modelpdf;
+	    			    $model=$object->model_pdf;
 	    			    $ret = $object->fetch($id); // Reload to get new records
 
 	    			    $result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -713,7 +713,7 @@ if (empty($reshook))
 		$date_end = '';
 		//$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 		//$date_end = dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
-		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'none') ? GETPOST('product_desc', 'none') : GETPOST('desc', 'none'));
+		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'restricthtml') ? GETPOST('product_desc', 'restricthtml') : GETPOST('desc', 'restricthtml'));
 		$pu_ht = GETPOST('price_ht');
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 		$qty = GETPOST('qty');
@@ -861,7 +861,7 @@ if (empty($reshook))
                                 }
 
                                 $ret = $object->fetch($id); // Reload to get new records
-                                $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+                                $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
                     }*/
 
 				$object->fetch($object->id); // Reload lines
@@ -945,7 +945,7 @@ if ($action == 'create')
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="facid" value="'.$object->id.'">';
 
-		dol_fiche_head(null, '', '', 0);
+		print dol_get_fiche_head(null, '', '', 0);
 
 		$rowspan = 4;
 		if (!empty($conf->projet->enabled)) $rowspan++;
@@ -957,15 +957,15 @@ if ($action == 'create')
 
 		// Title
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Title").'</td><td>';
-		print '<input class="flat quatrevingtpercent" type="text" name="titre" value="'.$_POST["titre"].'">';
+		print '<input class="flat quatrevingtpercent" type="text" name="titre" value="'.dol_escape_htmltag(GETPOST("titre", 'alphanohtml')).'">';
 		print '</td></tr>';
 
 		// Third party
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Customer").'</td><td>'.$object->thirdparty->getNomUrl(1, 'customer').'</td>';
 		print '</tr>';
 
-		$note_public = GETPOST('note_public', 'none') ?GETPOST('note_public', 'none') : $object->note_public;
-		$note_private = GETPOST('note_private', 'none') ?GETPOST('note_private', 'none') : $object->note_private;
+		$note_public = GETPOSTISSET('note_public') ? GETPOST('note_public', 'restricthtml') : $object->note_public;
+		$note_private = GETPOSTISSET('note_private') ? GETPOST('note_private', 'restricthtml') : $object->note_private;
 
 		// Help of substitution key
 		$substitutionarray = getCommonSubstitutionArray($langs, 2, null, $object);
@@ -1047,23 +1047,23 @@ if ($action == 'create')
 			print "</td></tr>";
 		}
 
-        // Model pdf
-        print "<tr><td>".$langs->trans('Model')."</td><td>";
-        include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
-        $list = ModelePDFFactures::liste_modeles($db);
-        print $form->selectarray('modelpdf', $list, $conf->global->FACTURE_ADDON_PDF);
-        print "</td></tr>";
+		// Model pdf
+		print "<tr><td>".$langs->trans('Model')."</td><td>";
+		include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
+		$list = ModelePDFFactures::liste_modeles($db);
+		print $form->selectarray('modelpdf', $list, $conf->global->FACTURE_ADDON_PDF);
+		print "</td></tr>";
 
 		print "</table>";
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 
 		// Autogeneration
 		$title = $langs->trans("Recurrence");
 		print load_fiche_titre('<span class="fa fa-calendar"></span> '.$title, '', '');
 
-		dol_fiche_head(null, '', '', 0);
+		print dol_get_fiche_head(null, '', '', 0);
 
 		print '<table class="border centpercent">';
 
@@ -1102,7 +1102,7 @@ if ($action == 'create')
 
 		print "</table>";
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 
 		$title = $langs->trans("ProductsAndServices");
@@ -1176,7 +1176,7 @@ if ($action == 'create')
 
 		$head = invoice_rec_prepare_head($object);
 
-		dol_fiche_head($head, 'card', $langs->trans("RepeatableInvoice"), -1, 'bill'); // Add a div
+		print dol_get_fiche_head($head, 'card', $langs->trans("RepeatableInvoice"), -1, 'bill'); // Add a div
 
 		// Recurring invoice content
 
@@ -1327,7 +1327,7 @@ if ($action == 'create')
 				print '</td>';
 				if ($usercancreate && $action != 'editmulticurrencyrate' && !empty($object->brouillon) && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencyrate&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
-                }
+				}
 				print '</tr></table>';
 				print '</td><td>';
 				if ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') {
@@ -1365,6 +1365,8 @@ if ($action == 'create')
 		// Only on template invoices
 		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__'] = $langs->trans("DateNextInvoiceBeforeGen").' ('.$langs->trans("Example").': '.dol_print_date(($object->date_when ? $object->date_when : dol_now()), 'dayhour').')';
 		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_AFTER_GEN__'] = $langs->trans("DateNextInvoiceAfterGen").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree(($object->date_when ? $object->date_when : dol_now()), $object->frequency, $object->unit_frequency), 'dayhour').')';
+		$substitutionarray['__INVOICE_COUNTER_CURRENT__'] = $object->nb_gen_done;
+		$substitutionarray['__INVOICE_COUNTER_MAX__'] = $object->nb_gen_max;
 
 		$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
 		foreach ($substitutionarray as $key => $val)
@@ -1407,30 +1409,30 @@ if ($action == 'create')
 		print "</td>";
 		print '</tr>';
 
-        // Model pdf
-        print '<tr><td class="nowrap">';
-        print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-        print $langs->trans('Model');
-        print '<td>';
-        if (($action != 'editmodelpdf') && $user->rights->facture->creer && $object->statut == FactureRec::STATUS_DRAFT)
-            print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmodelpdf&amp;id='.$object->id.'">'.img_edit($langs->trans('SetModel'), 1).'</a></td>';
-        print '</tr></table>';
-        print '</td><td>';
-        if ($action == 'editmodelpdf')
-        {
-            include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
-            $list = array();
-            $models = ModelePDFFactures::liste_modeles($db);
-            foreach ($models as $k => $model) {
-                $list[] = str_replace(':', '|', $k).':'.$model;
-            }
-            $select = 'select;'.implode(',', $list);
-            print $form->editfieldval($langs->trans("Model"), 'modelpdf', $object->modelpdf, $object, $user->rights->facture->creer, $select);
-        } else {
-            print $object->modelpdf;
-        }
-        print "</td>";
-        print '</tr>';
+		// Model pdf
+		print '<tr><td class="nowrap">';
+		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+		print $langs->trans('Model');
+		print '<td>';
+		if (($action != 'editmodelpdf') && $user->rights->facture->creer && $object->statut == FactureRec::STATUS_DRAFT)
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmodelpdf&amp;id='.$object->id.'">'.img_edit($langs->trans('SetModel'), 1).'</a></td>';
+		print '</tr></table>';
+		print '</td><td>';
+		if ($action == 'editmodelpdf')
+		{
+			include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
+			$list = array();
+			$models = ModelePDFFactures::liste_modeles($db);
+			foreach ($models as $k => $model) {
+				$list[] = str_replace(':', '|', $k).':'.$model;
+			}
+			$select = 'select;'.implode(',', $list);
+			print $form->editfieldval($langs->trans("Model"), 'modelpdf', $object->model_pdf, $object, $user->rights->facture->creer, $select);
+		} else {
+			print $object->model_pdf;
+		}
+		print "</td>";
+		print '</tr>';
 
 		// Other attributes
 		$cols = 2;
@@ -1617,13 +1619,12 @@ if ($action == 'create')
 		// Show object lines
 		if (!empty($object->lines))
 		{
-			//$disableedit=1;
-			//$disablemove=1;
+			$canchangeproduct = 1;
 			$ret = $object->printObjectLines($action, $mysoc, $object->thirdparty, $lineid, 0); // No date selector for template invoice
 		}
 
 		// Form to add new line
-		if ($object->statut == 0 && $user->rights->facture->creer && $action != 'valid' && $action != 'editline')
+		if ($object->statut == $object::STATUS_DRAFT && $user->rights->facture->creer && $action != 'valid' && $action != 'editline')
 		{
 			if ($action != 'editline')
 			{
@@ -1640,7 +1641,7 @@ if ($action == 'create')
 
 		print "</form>\n";
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 
 		/**

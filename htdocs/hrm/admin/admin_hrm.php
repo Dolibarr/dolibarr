@@ -30,7 +30,7 @@ $langs->loadLangs(array('admin', 'hrm'));
 if (!$user->admin)
 	accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Other parameters HRM_*
 $list = array(
@@ -58,9 +58,11 @@ if ($action == 'update') {
 	}
 }
 
+
 /*
  * View
  */
+
 llxHeader('', $langs->trans('Parameters'));
 
 $form = new Form($db);
@@ -78,7 +80,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
-dol_fiche_head($head, 'parameters', $langs->trans("HRM"), -1, "user");
+print dol_get_fiche_head($head, 'parameters', $langs->trans("HRM"), -1, "user");
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
@@ -102,7 +104,7 @@ foreach ($list as $key) {
 
 print "</table>\n";
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 

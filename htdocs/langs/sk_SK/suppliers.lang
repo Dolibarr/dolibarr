@@ -38,6 +38,7 @@ MenuOrdersSupplierToBill=Purchase orders to invoice
 NbDaysToDelivery=Delivery delay (days)
 DescNbDaysToDelivery=The longest delivery delay of the products from this order
 SupplierReputation=Vendor reputation
+ReferenceReputation=Reference reputation
 DoNotOrderThisProductToThisSupplier=Neobjednávať
 NotTheGoodQualitySupplier=Low quality
 ReputationForThisProduct=Reputácia

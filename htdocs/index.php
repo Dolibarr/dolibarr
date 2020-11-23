@@ -68,7 +68,7 @@ if (GETPOST('addbox'))	// Add box (when submit is done from a form when ajax dis
  * View
  */
 
-if (!is_object($form)) $form = new Form($db);
+if (!isset($form) || !is_object($form)) $form = new Form($db);
 
 // Title
 $title = $langs->trans("HomeArea").' - Dolibarr '.DOL_VERSION;
@@ -294,7 +294,10 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 				$boxstatItem = '';
 				$class = $classes[$val];
 				// Search in cache if load_state_board is already realized
-				if (!isset($boardloaded[$class]) || !is_object($boardloaded[$class]))
+				$classkeyforcache = $class;
+				if ($classkeyforcache == 'ProductService') $classkeyforcache = 'Product'; // ProductService use same load_state_board than Product
+
+				if (!isset($boardloaded[$classkeyforcache]) || !is_object($boardloaded[$classkeyforcache]))
 				{
 					include_once $includes[$val]; // Loading a class cost around 1Mb
 
@@ -302,7 +305,7 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 					$board->load_state_board();
 					$boardloaded[$class] = $board;
 				} else {
-					$board = $boardloaded[$class];
+					$board = $boardloaded[$classkeyforcache];
 				}
 
 				$langs->load(empty($langfile[$val]) ? $val : $langfile[$val]);
@@ -425,7 +428,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	if (!empty($conf->banque->enabled) && $user->rights->banque->lire && !$user->socid) {
 		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$board = new Account($db);
-		$nb = $board::countAccountToReconcile(); // Get nb of account to reconciliate
+		$nb = $board->countAccountToReconcile(); // Get nb of account to reconciliate
 		if ($nb > 0) {
 			$dashboardlines[$board->element] = $board->load_board($user);
 		}
@@ -450,14 +453,14 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->approve) {
 		include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 		$board = new ExpenseReport($db);
-		$dashboardlines[$board->element . '_toapprove'] = $board->load_board($user, 'toapprove');
+		$dashboardlines[$board->element.'_toapprove'] = $board->load_board($user, 'toapprove');
 	}
 
 	// Number of expense reports to pay
 	if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->to_paid) {
 		include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 		$board = new ExpenseReport($db);
-		$dashboardlines[$board->element . '_topay'] = $board->load_board($user, 'topay');
+		$dashboardlines[$board->element.'_topay'] = $board->load_board($user, 'topay');
 	}
 
 	// Number of holidays to approve
@@ -695,15 +698,18 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 				// Show the span for the total of record
 				if (!empty($groupElement['globalStats'])) {
 					$globalStatInTopOpenedDashBoard[] = $globalStatsKey;
-					$openedDashBoard .= '		<span class="info-box-icon-text" title="'.$groupElement['globalStats']['text'].'">'.$nbTotal.'</span>'."\n";
+					$openedDashBoard .= '<span class="info-box-icon-text" title="'.$groupElement['globalStats']['text'].'">'.$nbTotal.'</span>';
 				}
 
-				$openedDashBoard .= '		</span>'."\n";
-				$openedDashBoard .= '		<div class="info-box-content">'."\n";
+				$openedDashBoard .= '</span>'."\n";
+				$openedDashBoard .= '<div class="info-box-content">'."\n";
 
-				$openedDashBoard .= '			<span class="info-box-title" title="'.strip_tags($groupName).'">'.$groupName.'</span>'."\n";
+				$openedDashBoard .= '<div class="info-box-title" title="'.strip_tags($groupName).'">'.$groupName.'</div>'."\n";
+				$openedDashBoard .= '<div class="info-box-lines">'."\n";
 
 				foreach ($boards as $board) {
+					$openedDashBoard .= '<div class="info-box-line">';
+
 					if (!empty($board->labelShort)) {
 						$infoName = '<span title="'.$board->label.'">'.$board->labelShort.'</span>';
 					} else {
@@ -719,8 +725,6 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 						$textLate .= '<i class="fa fa-exclamation-triangle"></i> '.$board->nbtodolate;
 						$textLate .= '</span>';
 					}
-
-					$openedDashBoard .= '<div class="info-box-line">';
 
 					$nbtodClass = '';
 					if ($board->nbtodo > 0) {
@@ -742,11 +746,12 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 					if ($board->total > 0 && !empty($conf->global->MAIN_WORKBOARD_SHOW_TOTAL_WO_TAX)) {
 						$openedDashBoard .= '<a href="'.$board->url.'" class="info-box-text">'.$langs->trans('Total').' : '.price($board->total).'</a>';
 					}
-
-					$openedDashBoard .= '</div>';
+					$openedDashBoard .= '</div>'."\n";
 				}
 
-				$openedDashBoard .= '		</div><!-- /.info-box-content -->'."\n";
+				// TODO Add hook here to add more "info-box-line"
+
+				$openedDashBoard .= '		</div><!-- /.info-box-lines --></div><!-- /.info-box-content -->'."\n";
 				$openedDashBoard .= '	</div><!-- /.info-box -->'."\n";
 				$openedDashBoard .= '</div><!-- /.box-flex-item-with-margin -->'."\n";
 				$openedDashBoard .= '</div><!-- /.box-flex-item -->'."\n";
@@ -773,7 +778,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 			$weatherDashBoard .= img_weather('', $weather->level, '', 0, 'valignmiddle width50');
 			$weatherDashBoard .= '       </span>'."\n";
 			$weatherDashBoard .= '		<div class="info-box-content">'."\n";
-			$weatherDashBoard .= '			<span class="info-box-title">'.$langs->trans('GlobalOpenedElemView').'</span>'."\n";
+			$weatherDashBoard .= '			<div class="info-box-title">'.$langs->trans('GlobalOpenedElemView').'</div>'."\n";
 
 			if ($totallatePercentage > 0 && !empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
 				$weatherDashBoard .= '			<span class="info-box-number">'.$langs->transnoentitiesnoconv("NActionsLate",
@@ -823,7 +828,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 
 			$boxwork .= '<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats130 boxstatsborder">';
 			$boxwork .= '<div class="boxstatscontent">';
-			$boxwork .= '<span class="boxstatstext" title="'.dol_escape_htmltag($board->label).'">'.$board->img.' '.$board->label.'</span><br>';
+			$boxwork .= '<span class="boxstatstext" title="'.dol_escape_htmltag($board->label).'">'.$board->img.' <span>'.$board->label.'</span></span><br>';
 			$boxwork .= '<a class="valignmiddle dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator'.(($board->nbtodo == 0) ? ' dashboardlineok' : '').'">'.$board->nbtodo.'</span></a>';
 			if ($board->total > 0 && !empty($conf->global->MAIN_WORKBOARD_SHOW_TOTAL_WO_TAX)) {
 				$boxwork .= '&nbsp;/&nbsp;<a class="valignmiddle dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator'.(($board->nbtodo == 0) ? ' dashboardlineok' : '').'">'.price($board->total).'</span></a>';
@@ -911,7 +916,7 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 		$boxstat .= '<div class="box">';
 		$boxstat .= '<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable boxtablenobottom nohover widgetstats" width="100%">';
 		$boxstat .= '<tr class="liste_titre box_titre">';
-		$boxstat .= '<td class="liste_titre">';
+		$boxstat .= '<td>';
 		$boxstat .= '<div class="inline-block valignmiddle">'.$langs->trans("DolibarrStateBoard").'</div>';
 		$boxstat .= '</td>';
 		$boxstat .= '</tr>';

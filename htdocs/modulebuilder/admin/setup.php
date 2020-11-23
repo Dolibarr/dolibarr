@@ -29,7 +29,7 @@ $langs->loadLangs(array("admin", "other", "modulebuilder"));
 if (!$user->admin || empty($conf->modulebuilder->enabled))
 	accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 /*
@@ -37,7 +37,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
  */
 if ($action == "update")
 {
-	$res1 = dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_README', GETPOST('MODULEBUILDER_SPECIFIC_README', 'none'), 'chaine', 0, '', $conf->entity);
+	$res1 = dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_README', GETPOST('MODULEBUILDER_SPECIFIC_README', 'restricthtml'), 'chaine', 0, '', $conf->entity);
 	$res2 = dolibarr_set_const($db, 'MODULEBUILDER_ASCIIDOCTOR', GETPOST('MODULEBUILDER_ASCIIDOCTOR', 'nohtml'), 'chaine', 0, '', $conf->entity);
 	$res3 = dolibarr_set_const($db, 'MODULEBUILDER_ASCIIDOCTORPDF', GETPOST('MODULEBUILDER_ASCIIDOCTORPDF', 'nohtml'), 'chaine', 0, '', $conf->entity);
 	$res4 = dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_EDITOR_NAME', GETPOST('MODULEBUILDER_SPECIFIC_EDITOR_NAME', 'nohtml'), 'chaine', 0, '', $conf->entity);
@@ -97,7 +97,7 @@ print '<input type="hidden" name="action" value="update">';
 print load_fiche_titre($langs->trans("ModuleSetup").' '.$langs->trans('Modulebuilder'), $linkback);
 
 if (GETPOST('withtab', 'alpha')) {
-	dol_fiche_head($head, 'modulebuilder', '', -1);
+	print dol_get_fiche_head($head, 'modulebuilder', '', -1);
 }
 
 print '<span class="opacitymedium">'.$langs->trans("ModuleBuilderDesc")."</span><br>\n";
@@ -123,9 +123,9 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 		print ajax_constantonoff('MODULEBUILDER_USE_ABOUT');
 	} else {
 		if (empty($conf->global->MODULEBUILDER_USE_ABOUT)) {
-			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=set_MODULEBUILDER_USE_ABOUT">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=set_MODULEBUILDER_USE_ABOUT&amp;token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 		} else {
-			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=del_MODULEBUILDER_USE_ABOUT">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=del_MODULEBUILDER_USE_ABOUT&amp;token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 		}
 	}
 	print '</td></tr>';
@@ -191,10 +191,10 @@ print '</tr>';
 
 print '</table>';
 
-print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'" name="Button"></center>';
+print '<center><input type="submit" class="button button-save" value="'.$langs->trans("Save").'" name="Button"></center>';
 
 if (GETPOST('withtab', 'alpha')) {
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 print '<br>';

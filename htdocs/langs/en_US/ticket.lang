@@ -31,10 +31,8 @@ TicketDictType=Ticket - Types
 TicketDictCategory=Ticket - Groupes
 TicketDictSeverity=Ticket - Severities
 TicketDictResolution=Ticket - Resolution
-TicketTypeShortBUGSOFT=Dysfonctionnement logiciel
-TicketTypeShortBUGHARD=Dysfonctionnement matériel
-TicketTypeShortCOM=Commercial question
 
+TicketTypeShortCOM=Commercial question
 TicketTypeShortHELP=Request for functionnal help
 TicketTypeShortISSUE=Issue, bug or problem
 TicketTypeShortREQUEST=Change or enhancement request

@@ -44,27 +44,27 @@ class Comment extends CommonObject
 	public $description;
 
 	/**
-     * Date modification record (tms)
-     *
-     * @var integer
-     */
+	 * Date modification record (tms)
+	 *
+	 * @var integer
+	 */
 	public $tms;
 
 	/**
-     * Date creation record (datec)
-     *
-     * @var integer
-     */
-    public $datec;
+	 * Date creation record (datec)
+	 *
+	 * @var integer
+	 */
+	public $datec;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_author;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_modif;
 
 	/**
@@ -186,7 +186,7 @@ class Comment extends CommonObject
 		$sql .= " c.entity,";
 		$sql .= " c.import_key";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as c";
-		$sql .= " WHERE c.rowid = ".$id;
+		$sql .= " WHERE c.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -349,25 +349,25 @@ class Comment extends CommonObject
 			$sql .= " c.rowid";
 			$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as c";
 			$sql .= " WHERE c.fk_element = ".$fk_element;
-			$sql .= " AND c.element_type = '".$db->escape($element_type)."'";
+			$sql .= " AND c.element_type = '".$this->db->escape($element_type)."'";
 			$sql .= " AND c.entity = ".$conf->entity;
 			$sql .= " ORDER BY c.tms DESC";
 
 			dol_syslog(get_class($this).'::'.__METHOD__, LOG_DEBUG);
-			$resql = $db->query($sql);
+			$resql = $this->db->query($sql);
 			if ($resql)
 			{
-				$num_rows = $db->num_rows($resql);
+				$num_rows = $this->db->num_rows($resql);
 				if ($num_rows > 0)
 				{
-					while ($obj = $db->fetch_object($resql))
+					while ($obj = $this->db->fetch_object($resql))
 					{
 						$comment = new self($db);
 						$comment->fetch($obj->rowid);
 						$this->comments[] = $comment;
 					}
 				}
-				$db->free($resql);
+				$this->db->free($resql);
 			} else {
 				$this->errors[] = "Error ".$this->db->lasterror();
 				return -1;

@@ -67,7 +67,7 @@ if (!empty($conf->productbatch->enabled)) $langs->load("productbatch");
 $id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('orderid', 'int'));
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $lineid = GETPOST('lineid', 'int');
@@ -119,6 +119,8 @@ if (!empty($conf->expedition->enabled) && !empty($conf->global->WAREHOUSE_ASK_WA
 }
 
 $error = 0;
+
+$date_delivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
 
 /*
@@ -221,7 +223,7 @@ if (empty($reshook))
 			}
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$ret = $object->fetch($object->id); // Reload to get new records
-				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -242,7 +244,7 @@ if (empty($reshook))
 	{
 		$datecommande = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 		$datelivraison = dol_mktime(12, 0, 0, GETPOST('liv_month'), GETPOST('liv_day'), GETPOST('liv_year'));
-        $selectedLines = GETPOST('toselect', 'array');
+		$selectedLines = GETPOST('toselect', 'array');
 
 		if ($datecommande == '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Date')), null, 'errors');
@@ -263,18 +265,19 @@ if (empty($reshook))
 			$db->begin();
 
 			$object->date_commande = $datecommande;
-			$object->note_private = GETPOST('note_private', 'none');
-			$object->note_public = GETPOST('note_public', 'none');
+			$object->note_private = GETPOST('note_private', 'restricthtml');
+			$object->note_public = GETPOST('note_public', 'restricthtml');
 			$object->source = GETPOST('source_id');
 			$object->fk_project = GETPOST('projectid', 'int');
 			$object->ref_client = GETPOST('ref_client', 'alpha');
-			$object->modelpdf = GETPOST('model');
+			$object->model_pdf = GETPOST('model');
 			$object->cond_reglement_id = GETPOST('cond_reglement_id');
 			$object->mode_reglement_id = GETPOST('mode_reglement_id');
 			$object->fk_account = GETPOST('fk_account', 'int');
 			$object->availability_id = GETPOST('availability_id');
 			$object->demand_reason_id = GETPOST('demand_reason_id');
-			$object->date_livraison = $datelivraison;
+			$object->date_livraison = $datelivraison;	// deprecated
+			$object->delivery_date = $datelivraison;
 			$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
 			$object->warehouse_id = GETPOST('warehouse_id', 'int');
 			$object->fk_delivery_address = GETPOST('fk_address');
@@ -349,7 +352,7 @@ if (empty($reshook))
 
 							for ($i = 0; $i < $num; $i++)
 							{
-                                if (!in_array($lines[$i]->id, $selectedLines)) continue; // Skip unselected lines
+								if (!in_array($lines[$i]->id, $selectedLines)) continue; // Skip unselected lines
 
 								$label = (!empty($lines[$i]->label) ? $lines[$i]->label : '');
 								$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : '');
@@ -417,7 +420,7 @@ if (empty($reshook))
 						        $originidforcontact=$srcobject->origin_id;
 						    }
 						    $sqlcontact = "SELECT code, fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
-						    $sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
+						    $sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$db->escape($originforcontact)."'";
 
 						    $resqlcontact = $db->query($sqlcontact);
 						    if ($resqlcontact)
@@ -537,14 +540,14 @@ if (empty($reshook))
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'setdate_livraison' && $usercancreate) {
-	    // print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
-	    $datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
+		// print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
+		$date_delivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
-	    $object->fetch($id);
-	    $result = $object->set_date_livraison($user, $datedelivery);
-	    if ($result < 0) {
-	        setEventMessages($object->error, $object->errors, 'errors');
-	    }
+		$object->fetch($id);
+		$result = $object->setDeliveryDate($user, $date_delivery);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	} elseif ($action == 'setmode' && $usercancreate) {
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
 		if ($result < 0)
@@ -584,7 +587,7 @@ if (empty($reshook))
 				}
 
 				$ret = $object->fetch($object->id); // Reload to get new records
-				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		}
 	}
@@ -738,8 +741,8 @@ if (empty($reshook))
 					$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
 					if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
 					{
-					    if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) $tva_tx = $prod->multiprices_tva_tx[$object->thirdparty->price_level];
-					    if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) $tva_npr = $prod->multiprices_recuperableonly[$object->thirdparty->price_level];
+						if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) $tva_tx = $prod->multiprices_tva_tx[$object->thirdparty->price_level];
+						if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) $tva_npr = $prod->multiprices_recuperableonly[$object->thirdparty->price_level];
 					}
 				}
 				// If price per customer
@@ -820,7 +823,7 @@ if (empty($reshook))
 				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
 
 				// if price ht is forced (ie: calculated by margin rate and cost price). TODO Why this ?
-				if (!empty($price_ht)) {
+				if (!empty($price_ht) || $price_ht === '0') {
 					$pu_ht = price2num($price_ht, 'MU');
 					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
 				}
@@ -940,7 +943,7 @@ if (empty($reshook))
 							$outputlangs->setDefaultLang($newlang);
 						}
 
-						$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+						$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 					}
 
 					unset($_POST['prod_entry_mode']);
@@ -992,7 +995,7 @@ if (empty($reshook))
 		$date_end = '';
 		$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 		$date_end = dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
-		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'none'));
+		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'restricthtml'));
 		$pu_ht = GETPOST('price_ht');
 		$vat_rate = (GETPOST('tva_tx') ?GETPOST('tva_tx') : 0);
 		$pu_ht_devise = GETPOST('multicurrency_subprice');
@@ -1084,7 +1087,7 @@ if (empty($reshook))
 					}
 
 					$ret = $object->fetch($object->id); // Reload to get new records
-					$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 
 				unset($_POST['qty']);
@@ -1158,7 +1161,7 @@ if (empty($reshook))
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
 					}
-					$model = $object->modelpdf;
+					$model = $object->model_pdf;
 					$ret = $object->fetch($id); // Reload to get new records
 
 					$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -1207,7 +1210,7 @@ if (empty($reshook))
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
 					}
-					$model = $object->modelpdf;
+					$model = $object->model_pdf;
 					$ret = $object->fetch($id); // Reload to get new records
 
 					$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -1256,7 +1259,7 @@ if (empty($reshook))
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
 		if ($ret < 0) $error++;
 
 		if (!$error)
@@ -1273,93 +1276,84 @@ if (empty($reshook))
 		if ($error) $action = 'edit_extras';
 	}
 
-	if ($action == 'set_thirdparty' && $usercancreate)
-	{
-		$object->fetch($id);
-		$object->setValueFrom('fk_soc', $socid, '', '', 'date', '', $user, 'ORDER_MODIFY');
-
-		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
-		exit();
-	}
-
 	// add lines from objectlinked
 	if ($action == 'import_lines_from_object'
-	    && $usercancreate
-	    && $object->statut == Commande::STATUS_DRAFT
+		&& $usercancreate
+		&& $object->statut == Commande::STATUS_DRAFT
 	  )
 	{
-	    $fromElement = GETPOST('fromelement');
-	    $fromElementid = GETPOST('fromelementid');
-	    $importLines = GETPOST('line_checkbox');
+		$fromElement = GETPOST('fromelement');
+		$fromElementid = GETPOST('fromelementid');
+		$importLines = GETPOST('line_checkbox');
 
-	    if (!empty($importLines) && is_array($importLines) && !empty($fromElement) && ctype_alpha($fromElement) && !empty($fromElementid))
-	    {
-	        if ($fromElement == 'commande')
-	        {
-	            dol_include_once('/'.$fromElement.'/class/'.$fromElement.'.class.php');
-	            $lineClassName = 'OrderLine';
-	        } elseif ($fromElement == 'propal')
-	        {
-	            dol_include_once('/comm/'.$fromElement.'/class/'.$fromElement.'.class.php');
-	            $lineClassName = 'PropaleLigne';
-	        }
-	        $nextRang = count($object->lines) + 1;
-	        $importCount = 0;
-	        $error = 0;
-	        foreach ($importLines as $lineId)
-	        {
-	            $lineId = intval($lineId);
-	            $originLine = new $lineClassName($db);
-	            if (intval($fromElementid) > 0 && $originLine->fetch($lineId) > 0)
-	            {
-	                $originLine->fetch_optionals();
-	                $desc = $originLine->desc;
-	                $pu_ht = $originLine->subprice;
-	                $qty = $originLine->qty;
-	                $txtva = $originLine->tva_tx;
-	                $txlocaltax1 = $originLine->localtax1_tx;
-	                $txlocaltax2 = $originLine->localtax2_tx;
-	                $fk_product = $originLine->fk_product;
-	                $remise_percent = $originLine->remise_percent;
-	                $date_start = $originLine->date_start;
-	                $date_end = $originLine->date_end;
-	                $ventil = 0;
-	                $info_bits = $originLine->info_bits;
-	                $fk_remise_except = $originLine->fk_remise_except;
-	                $price_base_type = 'HT';
-	                $pu_ttc = 0;
-	                $type = $originLine->product_type;
-	                $rang = $nextRang++;
-	                $special_code = $originLine->special_code;
-	                $origin = $originLine->element;
-	                $origin_id = $originLine->id;
-	                $fk_parent_line = 0;
-	                $fk_fournprice = $originLine->fk_fournprice;
-	                $pa_ht = $originLine->pa_ht;
-	                $label = $originLine->label;
-	                $array_options = $originLine->array_options;
-	                $situation_percent = 100;
-	                $fk_prev_id = '';
-	                $fk_unit = $originLine->fk_unit;
-	                $pu_ht_devise = $originLine->multicurrency_subprice;
+		if (!empty($importLines) && is_array($importLines) && !empty($fromElement) && ctype_alpha($fromElement) && !empty($fromElementid))
+		{
+			if ($fromElement == 'commande')
+			{
+				dol_include_once('/'.$fromElement.'/class/'.$fromElement.'.class.php');
+				$lineClassName = 'OrderLine';
+			} elseif ($fromElement == 'propal')
+			{
+				dol_include_once('/comm/'.$fromElement.'/class/'.$fromElement.'.class.php');
+				$lineClassName = 'PropaleLigne';
+			}
+			$nextRang = count($object->lines) + 1;
+			$importCount = 0;
+			$error = 0;
+			foreach ($importLines as $lineId)
+			{
+				$lineId = intval($lineId);
+				$originLine = new $lineClassName($db);
+				if (intval($fromElementid) > 0 && $originLine->fetch($lineId) > 0)
+				{
+					$originLine->fetch_optionals();
+					$desc = $originLine->desc;
+					$pu_ht = $originLine->subprice;
+					$qty = $originLine->qty;
+					$txtva = $originLine->tva_tx;
+					$txlocaltax1 = $originLine->localtax1_tx;
+					$txlocaltax2 = $originLine->localtax2_tx;
+					$fk_product = $originLine->fk_product;
+					$remise_percent = $originLine->remise_percent;
+					$date_start = $originLine->date_start;
+					$date_end = $originLine->date_end;
+					$ventil = 0;
+					$info_bits = $originLine->info_bits;
+					$fk_remise_except = $originLine->fk_remise_except;
+					$price_base_type = 'HT';
+					$pu_ttc = 0;
+					$type = $originLine->product_type;
+					$rang = $nextRang++;
+					$special_code = $originLine->special_code;
+					$origin = $originLine->element;
+					$origin_id = $originLine->id;
+					$fk_parent_line = 0;
+					$fk_fournprice = $originLine->fk_fournprice;
+					$pa_ht = $originLine->pa_ht;
+					$label = $originLine->label;
+					$array_options = $originLine->array_options;
+					$situation_percent = 100;
+					$fk_prev_id = '';
+					$fk_unit = $originLine->fk_unit;
+					$pu_ht_devise = $originLine->multicurrency_subprice;
 
-	                $res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $info_bits, $fk_remise_except, $price_base_type, $pu_ttc, $date_start, $date_end, $type, $rang, $special_code, $fk_parent_line, $fk_fournprice, $pa_ht, $label, $array_options, $fk_unit, $origin, $origin_id, $pu_ht_devise);
+					$res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $info_bits, $fk_remise_except, $price_base_type, $pu_ttc, $date_start, $date_end, $type, $rang, $special_code, $fk_parent_line, $fk_fournprice, $pa_ht, $label, $array_options, $fk_unit, $origin, $origin_id, $pu_ht_devise);
 
-	                if ($res > 0) {
-	                    $importCount++;
-	                } else {
-	                    $error++;
-	                }
-	            } else {
-	                $error++;
-	            }
-	        }
+					if ($res > 0) {
+						$importCount++;
+					} else {
+						$error++;
+					}
+				} else {
+					$error++;
+				}
+			}
 
-	        if ($error)
-	        {
-	            setEventMessages($langs->trans('ErrorsOnXLines', $error), null, 'errors');
-	        }
-	    }
+			if ($error)
+			{
+				setEventMessages($langs->trans('ErrorsOnXLines', $error), null, 'errors');
+			}
+		}
 	}
 
 	// Actions when printing a doc from card
@@ -1515,7 +1509,8 @@ if ($action == 'create' && $usercancreate)
 			$remise_absolue		= (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
 			$dateorder = empty($conf->global->MAIN_AUTOFILL_DATE_ORDER) ?-1 : '';
 
-			$datedelivery = (!empty($objectsrc->date_livraison) ? $objectsrc->date_livraison : '');
+			$date_delivery = (!empty($objectsrc->delivery_date) ? $objectsrc->delivery_date : '');
+			if (empty($date_delivery)) $date_delivery = (!empty($objectsrc->date_livraison) ? $objectsrc->date_livraison : '');
 
 			if (!empty($conf->multicurrency->enabled))
 			{
@@ -1556,7 +1551,7 @@ if ($action == 'create' && $usercancreate)
 	print '<input type="hidden" name="originid" value="'.$originid.'">';
 	if (!empty($currency_tx)) print '<input type="hidden" name="originmulticurrency_tx" value="'.$currency_tx.'">';
 
-	dol_fiche_head('');
+	print dol_get_fiche_head('');
 
 	print '<table class="border centpercent">';
 
@@ -1582,11 +1577,12 @@ if ($action == 'create' && $usercancreate)
 		print '<td>';
 		print $form->select_company('', 'socid', '(s.client = 1 OR s.client = 2 OR s.client = 3)', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
 		// reload page to retrieve customer informations
-		if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE))
+		if (empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED))
 		{
 			print '<script type="text/javascript">
 			$(document).ready(function() {
 				$("#socid").change(function() {
+					console.log("We have changed the company - Reload page");
 					var socid = $(this).val();
 					// reload page
 					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&ref_client="+$("input[name=ref_client]").val();
@@ -1627,8 +1623,7 @@ if ($action == 'create' && $usercancreate)
 	// Date delivery planned
 	print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
 	print '<td colspan="3">';
-	//print dol_print_date($object->date_livraison, "day");	// date_livraison come from order and will be stored into date_delivery planed.
-	$date_delivery = ($date_delivery ? $date_delivery : $object->date_livraison); // $date_delivery comes from GETPOST
+	$date_delivery = ($date_delivery ? $date_delivery : $object->date_delivery);
 	print $form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
 	print "</td>\n";
 	print '</tr>';
@@ -1828,7 +1823,7 @@ if ($action == 'create' && $usercancreate)
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	// Button "Create Draft"
 	print '<div class="center">';
@@ -1849,7 +1844,7 @@ if ($action == 'create' && $usercancreate)
 		print '</table>';
 	}
 
-    print '</form>';
+	print '</form>';
 } else {
 	// Mode view
 	$now = dol_now();
@@ -1863,10 +1858,11 @@ if ($action == 'create' && $usercancreate)
 		$author = new User($db);
 		$author->fetch($object->user_author_id);
 
+		$object->fetch_thirdparty();
 		$res = $object->fetch_optionals();
 
 		$head = commande_prepare_head($object);
-		dol_fiche_head($head, 'order', $langs->trans("CustomerOrder"), -1, 'order');
+		print dol_get_fiche_head($head, 'order', $langs->trans("CustomerOrder"), -1, 'order');
 
 		$formconfirm = '';
 
@@ -2023,7 +2019,6 @@ if ($action == 'create' && $usercancreate)
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/commande/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-
 		$morehtmlref = '<div class="refidno">';
 		// Ref customer
 		$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string', '', 0, 1);
@@ -2145,12 +2140,12 @@ if ($action == 'create' && $usercancreate)
 			print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate_livraison">';
-			print $form->selectDate($object->date_livraison ? $object->date_livraison : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
+			print $form->selectDate($object->delivery_date ? $object->delivery_date : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
 			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
-			print $object->date_livraison ? dol_print_date($object->date_livraison, 'dayhour') : '&nbsp;';
-			if ($object->hasDelay() && !empty($object->date_livraison)) {
+			print $object->delivery_date ? dol_print_date($object->delivery_date, 'dayhour') : '&nbsp;';
+			if ($object->hasDelay() && !empty($object->delivery_date)) {
 				print ' '.img_picto($langs->trans("Late").' : '.$object->showDelay(), "warning");
 			}
 		}
@@ -2473,7 +2468,7 @@ if ($action == 'create' && $usercancreate)
 
 		print "</form>\n";
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		/*
 		 * Buttons for actions
@@ -2555,7 +2550,7 @@ if ($action == 'create' && $usercancreate)
 					$numshipping = $object->nb_expedition();
 
 					if ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
-						if (($conf->expedition_bon->enabled && $user->rights->expedition->creer) || ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->creer)) {
+						if (($conf->expedition_bon->enabled && $user->rights->expedition->creer) || ($conf->delivery_note->enabled && $user->rights->expedition->delivery->creer)) {
 							if ($user->rights->expedition->creer) {
 								print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id.'">'.$langs->trans('CreateShipment').'</a>';
 							} else {
@@ -2572,7 +2567,6 @@ if ($action == 'create' && $usercancreate)
 				if (($object->statut == Commande::STATUS_VALIDATED || $object->statut == Commande::STATUS_SHIPMENTONPROCESS) && $usercanclose) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=shipped">'.$langs->trans('ClassifyShipped').'</a></div>';
 				}
-
 				// Create bill and Classify billed
 				// Note: Even if module invoice is not enabled, we should be able to use button "Classified billed"
 				if ($object->statut > Commande::STATUS_DRAFT && !$object->billed && $object->total_ttc >= 0) {
@@ -2602,7 +2596,7 @@ if ($action == 'create' && $usercancreate)
 				// Delete order
 				if ($usercandelete) {
 					if ($numshipping == 0) {
-						print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a></div>';
 					} else {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ShippingExist").'">'.$langs->trans("Delete").'</a></div>';
 					}
@@ -2627,7 +2621,7 @@ if ($action == 'create' && $usercancreate)
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 			$genallowed = $usercanread;
 			$delallowed = $usercancreate;
-			print $formfile->showdocuments('commande', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang, '', $object);
+			print $formfile->showdocuments('commande', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang, '', $object);
 
 
 			// Show links to link elements
@@ -2635,9 +2629,9 @@ if ($action == 'create' && $usercancreate)
 
 			$compatibleImportElementsList = false;
 			if ($usercancreate
-			    && $object->statut == Commande::STATUS_DRAFT)
+				&& $object->statut == Commande::STATUS_DRAFT)
 			{
-			    $compatibleImportElementsList = array('commande', 'propal'); // import from linked elements
+				$compatibleImportElementsList = array('commande', 'propal'); // import from linked elements
 			}
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, $compatibleImportElementsList);
 

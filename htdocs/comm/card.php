@@ -138,12 +138,12 @@ if (empty($reshook))
 	}
 
 	// customer preferred shipping method
-    if ($action == 'setshippingmethod' && $user->rights->societe->creer)
-    {
-        $object->fetch($id);
-        $result = $object->setShippingMethod(GETPOST('shipping_method_id', 'int'));
-        if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
-    }
+	if ($action == 'setshippingmethod' && $user->rights->societe->creer)
+	{
+		$object->fetch($id);
+		$result = $object->setShippingMethod(GETPOST('shipping_method_id', 'int'));
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+	}
 
 	// assujetissement a la TVA
 	if ($action == 'setassujtva' && $user->rights->societe->creer)
@@ -191,31 +191,31 @@ if (empty($reshook))
 	}
 
 	// Set sales representatives
-    if ($action == 'set_salesrepresentatives' && $user->rights->societe->creer)
+	if ($action == 'set_salesrepresentatives' && $user->rights->societe->creer)
 	{
 		$object->fetch($id);
 		$result = $object->setSalesRep(GETPOST('commercial', 'array'));
 	}
 
 	if ($action == 'update_extras') {
-        $object->fetch($id);
+		$object->fetch($id);
 
-        $object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object);
 
-        // Fill array 'array_options' with data from update form
-        $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
-        if ($ret < 0) $error++;
-        if (!$error)
-        {
-        	$result = $object->insertExtraFields('COMPANY_MODIFY');
+		// Fill array 'array_options' with data from update form
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		if ($ret < 0) $error++;
+		if (!$error)
+		{
+			$result = $object->insertExtraFields('COMPANY_MODIFY');
 			if ($result < 0)
 			{
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
 			}
-        }
-        if ($error) $action = 'edit_extras';
-    }
+		}
+		if ($error) $action = 'edit_extras';
+	}
 }
 
 
@@ -245,15 +245,15 @@ if ($object->id > 0)
 {
 	$head = societe_prepare_head($object);
 
-	dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"), -1, 'company');
+	print dol_get_fiche_head($head, 'customer', $langs->trans("ThirdParty"), -1, 'company');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
+	dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
 	// Prospect/Customer
@@ -262,16 +262,16 @@ if ($object->id > 0)
 	print '</td></tr>';
 
 	// Prefix
-    if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
-    {
-        print '<tr><td>'.$langs->trans("Prefix").'</td><td>';
-	    print ($object->prefix_comm ? $object->prefix_comm : '&nbsp;');
-	    print '</td></tr>';
-    }
+	if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
+	{
+		print '<tr><td>'.$langs->trans("Prefix").'</td><td>';
+		print ($object->prefix_comm ? $object->prefix_comm : '&nbsp;');
+		print '</td></tr>';
+	}
 
 	if ($object->client)
 	{
-        $langs->load("compta");
+		$langs->load("compta");
 
 		print '<tr><td>';
 		print $langs->trans('CustomerCode').'</td><td>';
@@ -386,64 +386,64 @@ if ($object->id > 0)
 	// Relative discounts (Discounts-Drawbacks-Rebates)
 	if ($isCustomer)
 	{
-    	print '<tr><td class="nowrap">';
-    	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-    	print $langs->trans("CustomerRelativeDiscountShort");
-    	print '<td><td class="right">';
-    	if ($user->rights->societe->creer && !$user->socid > 0)
-    	{
-    		print '<a class="editfielda" href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.img_edit($langs->trans("Modify")).'</a>';
-    	}
-    	print '</td></tr></table>';
-    	print '</td><td>'.($object->remise_percent ? '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.$object->remise_percent.'%</a>' : '').'</td>';
-    	print '</tr>';
+		print '<tr><td class="nowrap">';
+		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+		print $langs->trans("CustomerRelativeDiscountShort");
+		print '<td><td class="right">';
+		if ($user->rights->societe->creer && !$user->socid > 0)
+		{
+			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+		}
+		print '</td></tr></table>';
+		print '</td><td>'.($object->remise_percent ? '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.$object->remise_percent.'%</a>' : '').'</td>';
+		print '</tr>';
 
-    	// Absolute discounts (Discounts-Drawbacks-Rebates)
-    	print '<tr><td class="nowrap">';
-    	print '<table width="100%" class="nobordernopadding">';
-    	print '<tr><td class="nowrap">';
-    	print $langs->trans("CustomerAbsoluteDiscountShort");
-    	print '<td><td class="right">';
-    	if ($user->rights->societe->creer && !$user->socid > 0)
-    	{
-    		print '<a class="editfielda" href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.img_edit($langs->trans("Modify")).'</a>';
-    	}
-    	print '</td></tr></table>';
-    	print '</td>';
-    	print '<td>';
-    	$amount_discount = $object->getAvailableDiscounts();
-    	if ($amount_discount < 0) dol_print_error($db, $object->error);
-    	if ($amount_discount > 0) print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.price($amount_discount, 1, $langs, 1, -1, -1, $conf->currency).'</a>';
-    	//else print $langs->trans("DiscountNone");
-    	print '</td>';
-    	print '</tr>';
+		// Absolute discounts (Discounts-Drawbacks-Rebates)
+		print '<tr><td class="nowrap">';
+		print '<table width="100%" class="nobordernopadding">';
+		print '<tr><td class="nowrap">';
+		print $langs->trans("CustomerAbsoluteDiscountShort");
+		print '<td><td class="right">';
+		if ($user->rights->societe->creer && !$user->socid > 0)
+		{
+			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.img_edit($langs->trans("Modify")).'</a>';
+		}
+		print '</td></tr></table>';
+		print '</td>';
+		print '<td>';
+		$amount_discount = $object->getAvailableDiscounts();
+		if ($amount_discount < 0) dol_print_error($db, $object->error);
+		if ($amount_discount > 0) print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.price($amount_discount, 1, $langs, 1, -1, -1, $conf->currency).'</a>';
+		//else print $langs->trans("DiscountNone");
+		print '</td>';
+		print '</tr>';
 	}
 
 	// Max outstanding bill
 	if ($object->client)
 	{
-	    print '<tr class="nowrap">';
-	    print '<td>';
-	    print $form->editfieldkey("OutstandingBill", 'outstanding_limit', $object->outstanding_limit, $object, $user->rights->societe->creer);
-	    print '</td><td>';
-	    $limit_field_type = (!empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) ? 'numeric' : 'amount';
-	    print $form->editfieldval("OutstandingBill", 'outstanding_limit', $object->outstanding_limit, $object, $user->rights->societe->creer, $limit_field_type, ($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
-	    print '</td>';
-	    print '</tr>';
+		print '<tr class="nowrap">';
+		print '<td>';
+		print $form->editfieldkey("OutstandingBill", 'outstanding_limit', $object->outstanding_limit, $object, $user->rights->societe->creer);
+		print '</td><td>';
+		$limit_field_type = (!empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) ? 'numeric' : 'amount';
+		print $form->editfieldval("OutstandingBill", 'outstanding_limit', $object->outstanding_limit, $object, $user->rights->societe->creer, $limit_field_type, ($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
+		print '</td>';
+		print '</tr>';
 	}
 
 	if ($object->client)
 	{
 		if (!empty($conf->commande->enabled) && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT))
 		{
-		    print '<!-- Minimim amount for orders -->'."\n";
-		    print '<tr class="nowrap">';
-		    print '<td>';
-		    print $form->editfieldkey("OrderMinAmount", 'order_min_amount', $object->order_min_amount, $object, $user->rights->societe->creer);
-		    print '</td><td>';
-		    print $form->editfieldval("OrderMinAmount", 'order_min_amount', $object->order_min_amount, $object, $user->rights->societe->creer, $limit_field_type, ($object->order_min_amount != '' ? price($object->order_min_amount) : ''));
-		    print '</td>';
-		    print '</tr>';
+			print '<!-- Minimim amount for orders -->'."\n";
+			print '<tr class="nowrap">';
+			print '<td>';
+			print $form->editfieldkey("OrderMinAmount", 'order_min_amount', $object->order_min_amount, $object, $user->rights->societe->creer);
+			print '</td><td>';
+			print $form->editfieldval("OrderMinAmount", 'order_min_amount', $object->order_min_amount, $object, $user->rights->societe->creer, $limit_field_type, ($object->order_min_amount != '' ? price($object->order_min_amount) : ''));
+			print '</td>';
+			print '</tr>';
 		}
 	}
 
@@ -468,24 +468,45 @@ if ($object->id > 0)
 		print '</tr>';
 	}
 
-    // Preferred shipping Method
-    if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD)) {
-        print '<tr><td class="nowrap">';
-        print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-        print $langs->trans('SendingMethod');
-        print '<td>';
-        if (($action != 'editshipping') && $user->rights->societe->creer) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshipping&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
-        print '</tr></table>';
-        print '</td><td>';
-        if ($action == 'editshipping')
-        {
-            $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->shipping_method_id, 'shipping_method_id', 1);
-        } else {
-            $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->shipping_method_id, 'none');
-        }
-        print "</td>";
-        print '</tr>';
-    }
+	// Preferred shipping Method
+	if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD)) {
+		print '<tr><td class="nowrap">';
+		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+		print $langs->trans('SendingMethod');
+		print '<td>';
+		if (($action != 'editshipping') && $user->rights->societe->creer) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshipping&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+		print '</tr></table>';
+		print '</td><td>';
+		if ($action == 'editshipping')
+		{
+			$form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->shipping_method_id, 'shipping_method_id', 1);
+		} else {
+			$form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->shipping_method_id, 'none');
+		}
+		print "</td>";
+		print '</tr>';
+	}
+
+	if (!empty($conf->intracommreport->enabled))
+	{
+		// Transport mode by default
+		print '<tr><td class="nowrap">';
+		print '<table class="centpercent nobordernopadding"><tr><td class="nowrap">';
+		print $langs->trans('IntracommReportTransportMode');
+		print '<td>';
+		if (($action != 'edittransportmode') && $user->rights->societe->creer) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edittransportmode&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+		print '</tr></table>';
+		print '</td><td>';
+		if ($action == 'edittransportmode')
+		{
+			$form->formSelectTransportMode($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->fk_transport_mode, 'fk_transport_mode', 1);
+		}
+		else {
+			$form->formSelectTransportMode($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->fk_transport_mode, 'none');
+		}
+		print "</td>";
+		print '</tr>';
+	}
 
 	// Categories
 	if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
@@ -500,70 +521,70 @@ if ($object->id > 0)
 	$parameters = array('socid'=>$object->id);
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
-    // Sales representative
+	// Sales representative
 	include DOL_DOCUMENT_ROOT.'/societe/tpl/linesalesrepresentative.tpl.php';
 
-    // Module Adherent
-    if (!empty($conf->adherent->enabled))
-    {
-        $langs->load("members");
-        $langs->load("users");
+	// Module Adherent
+	if (!empty($conf->adherent->enabled))
+	{
+		$langs->load("members");
+		$langs->load("users");
 
-        print '<tr><td class="titlefield">'.$langs->trans("LinkedToDolibarrMember").'</td>';
-        print '<td>';
-        $adh = new Adherent($db);
-        $result = $adh->fetch('', '', $object->id);
-        if ($result > 0)
-        {
-            $adh->ref = $adh->getFullName($langs);
-            print $adh->getNomUrl(1);
-        } else {
-            print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
-        }
-        print '</td>';
-        print "</tr>\n";
-    }
+		print '<tr><td class="titlefield">'.$langs->trans("LinkedToDolibarrMember").'</td>';
+		print '<td>';
+		$adh = new Adherent($db);
+		$result = $adh->fetch('', '', $object->id);
+		if ($result > 0)
+		{
+			$adh->ref = $adh->getFullName($langs);
+			print $adh->getNomUrl(1);
+		} else {
+			print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
+		}
+		print '</td>';
+		print "</tr>\n";
+	}
 
 	print "</table>";
 
 	// Prospection level and status
 	if ($object->client == 2 || $object->client == 3)
 	{
-    	print '<br>';
+		print '<br>';
 
-    	print '<div class="underbanner clearboth"></div>';
-    	print '<table class="border centpercent tableforfield">';
+		print '<div class="underbanner clearboth"></div>';
+		print '<table class="border centpercent tableforfield">';
 
-	    // Level of prospection
-	    print '<tr><td class="titlefield nowrap">';
-	    print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-	    print $langs->trans('ProspectLevel');
-	    print '<td>';
-	    if ($action != 'editlevel' && $user->rights->societe->creer) print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editlevel&amp;socid='.$object->id.'">'.img_edit($langs->trans('Modify'), 1).'</a></td>';
-	    print '</tr></table>';
-	    print '</td><td>';
-	    if ($action == 'editlevel')
-	    {
-	        $formcompany->form_prospect_level($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->fk_prospectlevel, 'prospect_level_id', 1);
-	    } else {
-	        print $object->getLibProspLevel();
-	    }
-        print "</td>";
-        print '</tr>';
+		// Level of prospection
+		print '<tr><td class="titlefield nowrap">';
+		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+		print $langs->trans('ProspectLevel');
+		print '<td>';
+		if ($action != 'editlevel' && $user->rights->societe->creer) print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editlevel&amp;socid='.$object->id.'">'.img_edit($langs->trans('Modify'), 1).'</a></td>';
+		print '</tr></table>';
+		print '</td><td>';
+		if ($action == 'editlevel')
+		{
+			$formcompany->form_prospect_level($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->fk_prospectlevel, 'prospect_level_id', 1);
+		} else {
+			print $object->getLibProspLevel();
+		}
+		print "</td>";
+		print '</tr>';
 
-        // Status of prospection
-        $object->loadCacheOfProspStatus();
-        print '<tr><td>'.$langs->trans("StatusProsp").'</td><td>'.$object->getLibProspCommStatut(4, $object->cacheprospectstatus[$object->stcomm_id]['label']);
-        print ' &nbsp; &nbsp; ';
-        print '<div class="floatright">';
-        foreach ($object->cacheprospectstatus as $key => $val)
-        {
+		// Status of prospection
+		$object->loadCacheOfProspStatus();
+		print '<tr><td>'.$langs->trans("StatusProsp").'</td><td>'.$object->getLibProspCommStatut(4, $object->cacheprospectstatus[$object->stcomm_id]['label']);
+		print ' &nbsp; &nbsp; ';
+		print '<div class="floatright">';
+		foreach ($object->cacheprospectstatus as $key => $val)
+		{
 			$titlealt = 'default';
 			if (!empty($val['code']) && !in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt = $val['label'];
-			if ($object->stcomm_id != $val['id']) print '<a class="pictosubstatus reposition" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&stcomm='.$val['code'].'&action=setstcomm">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
+			if ($object->stcomm_id != $val['id']) print '<a class="pictosubstatus reposition" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&stcomm='.$val['code'].'&action=setstcomm&token='.newToken().'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
 		}
-        print '</div></td></tr>';
-        print "</table>";
+		print '</div></td></tr>';
+		print "</table>";
 	}
 
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
@@ -591,7 +612,7 @@ if ($object->id > 0)
 		$icon = 'bill';
 		if ($link) $boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 		$boxstat .= '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
-		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' '.$text.'</span><br>';
+		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
 		$boxstat .= '<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 		$boxstat .= '</div>';
 		if ($link) $boxstat .= '</a>';
@@ -609,7 +630,7 @@ if ($object->id > 0)
 		$icon = 'bill';
 		if ($link) $boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 		$boxstat .= '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
-		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' '.$text.'</span><br>';
+		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
 		$boxstat .= '<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 		$boxstat .= '</div>';
 		if ($link) $boxstat .= '</a>';
@@ -618,16 +639,17 @@ if ($object->id > 0)
 	if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
 		// Box factures
-		$tmp = $object->getOutstandingBills();
+		$tmp = $object->getOutstandingBills('customer', 0);
 		$outstandingOpened = $tmp['opened'];
 		$outstandingTotal = $tmp['total_ht'];
 		$outstandingTotalIncTax = $tmp['total_ttc'];
+
 		$text = $langs->trans("OverAllInvoices");
 		$link = DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id;
 		$icon = 'bill';
 		if ($link) $boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 		$boxstat .= '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
-		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' '.$text.'</span><br>';
+		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
 		$boxstat .= '<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 		$boxstat .= '</div>';
 		if ($link) $boxstat .= '</a>';
@@ -643,10 +665,28 @@ if ($object->id > 0)
 		$icon = 'bill';
 		if ($link) $boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 		$boxstat .= '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
-		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' '.$text.'</span><br>';
+		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
 		$boxstat .= '<span class="boxstatsindicator'.($outstandingOpened > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpened, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
 		$boxstat .= '</div>';
 		if ($link) $boxstat .= '</a>';
+
+		$tmp = $object->getOutstandingBills('customer', 1);
+		$outstandingOpenedLate = $tmp['opened'];
+		if ($outstandingOpened != $outstandingOpenedLate && !empty($outstandingOpenedLate)) {
+			$warn = '';
+			if ($object->outstanding_limit != '' && $object->outstanding_limit < $outstandingOpenedLate) {
+				$warn = ' '.img_warning($langs->trans("OutstandingBillReached"));
+			}
+			$text = $langs->trans("CurrentOutstandingBillLate");
+			$link = DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id;
+			$icon = 'bill';
+			if ($link) $boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
+			$boxstat .= '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
+			$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
+			$boxstat .= '<span class="boxstatsindicator'.($outstandingOpenedLate > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpenedLate, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
+			$boxstat .= '</div>';
+			if ($link) $boxstat .= '</a>';
+		}
 	}
 
 	$parameters = array();
@@ -670,9 +710,9 @@ if ($object->id > 0)
 		$langs->load("propal");
 
 		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.total_ht";
-        $sql .= ", p.tva as total_tva";
-        $sql .= ", p.total as total_ttc";
-        $sql .= ", p.ref, p.ref_client, p.remise";
+		$sql .= ", p.tva as total_tva";
+		$sql .= ", p.total as total_ttc";
+		$sql .= ", p.ref, p.ref_client, p.remise";
 		$sql .= ", p.datep as dp, p.fin_validite as date_limit";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
 		$sql .= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
@@ -686,17 +726,17 @@ if ($object->id > 0)
 			$propal_static = new Propal($db);
 
 			$num = $db->num_rows($resql);
-            if ($num > 0)
-            {
-            	print '<div class="div-table-responsive-no-min">';
-            	print '<table class="noborder centpercent lastrecordtable">';
+			if ($num > 0)
+			{
+				print '<div class="div-table-responsive-no-min">';
+				print '<table class="noborder centpercent lastrecordtable">';
 
-                print '<tr class="liste_titre">';
-    			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastPropals", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->id.'">'.$langs->trans("AllPropals").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
-                print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
-    			print '</tr></table></td>';
-    			print '</tr>';
-            }
+				print '<tr class="liste_titre">';
+				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastPropals", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->id.'">'.$langs->trans("AllPropals").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+				print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
+				print '</tr></table></td>';
+				print '</tr>';
+			}
 
 			$i = 0;
 			while ($i < $num && $i < $MAXLIST)
@@ -704,17 +744,17 @@ if ($object->id > 0)
 				$objp = $db->fetch_object($resql);
 
 				print '<tr class="oddeven">';
-                print '<td class="nowrap">';
-                $propal_static->id = $objp->propalid;
-                $propal_static->ref = $objp->ref;
-                $propal_static->ref_client = $objp->ref_client;
-                $propal_static->total_ht = $objp->total_ht;
-                $propal_static->total_tva = $objp->total_tva;
-                $propal_static->total_ttc = $objp->total_ttc;
-                print $propal_static->getNomUrl(1);
-                if (($db->jdate($objp->date_limit) < ($now - $conf->propal->cloture->warning_delay)) && $objp->fk_statut == $propal_static::STATUS_VALIDATED) {
-                    print " ".img_warning();
-                }
+				print '<td class="nowrap">';
+				$propal_static->id = $objp->propalid;
+				$propal_static->ref = $objp->ref;
+				$propal_static->ref_client = $objp->ref_client;
+				$propal_static->total_ht = $objp->total_ht;
+				$propal_static->total_tva = $objp->total_tva;
+				$propal_static->total_ttc = $objp->total_ttc;
+				print $propal_static->getNomUrl(1);
+				if (($db->jdate($objp->date_limit) < ($now - $conf->propal->cloture->warning_delay)) && $objp->fk_statut == $propal_static::STATUS_VALIDATED) {
+					print " ".img_warning();
+				}
 				print '</td><td class="right" width="80px">'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
 				print '<td class="right" style="min-width: 60px">'.price($objp->total_ht).'</td>';
 				print '<td class="right" style="min-width: 60px" class="nowrap">'.$propal_static->LibStatut($objp->fk_statut, 5).'</td></tr>';
@@ -737,12 +777,12 @@ if ($object->id > 0)
 	 */
 	if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 	{
-        $sql = "SELECT s.nom, s.rowid";
-        $sql .= ", c.rowid as cid, c.total_ht";
-        $sql .= ", c.tva as total_tva";
-        $sql .= ", c.total_ttc";
-        $sql .= ", c.ref, c.ref_client, c.fk_statut, c.facture";
-        $sql .= ", c.date_commande as dc";
+		$sql = "SELECT s.nom, s.rowid";
+		$sql .= ", c.rowid as cid, c.total_ht";
+		$sql .= ", c.tva as total_tva";
+		$sql .= ", c.total_ttc";
+		$sql .= ", c.ref, c.ref_client, c.fk_statut, c.facture";
+		$sql .= ", c.date_commande as dc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
 		$sql .= " WHERE c.fk_soc = s.rowid ";
 		$sql .= " AND s.rowid = ".$object->id;
@@ -777,8 +817,6 @@ if ($object->id > 0)
 				print '<tr class="liste_titre">';
 				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastCustomerOrders", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->id.'">'.$langs->trans("AllOrders").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
 				print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/commande/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
-				//if($num2 > 0) print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/commande/orderstoinvoice.php?socid='.$object->id.'">'.img_picto($langs->trans("CreateInvoiceForThisCustomer"),'object_bill').'</a></td>';
-				//else print '<td width="20px" class="right"><a href="#">'.img_picto($langs->trans("NoOrdersToInvoice"),'object_bill').'</a></td>';
 				print '</tr></table></td>';
 				print '</tr>';
 			}
@@ -797,8 +835,8 @@ if ($object->id > 0)
 				$commande_static->billed = $objp->billed;
 
 				print '<tr class="oddeven">';
-                print '<td class="nowrap">';
-                print $commande_static->getNomUrl(1);
+				print '<td class="nowrap">';
+				print $commande_static->getNomUrl(1);
 				print '</td><td class="right" width="80px">'.dol_print_date($db->jdate($objp->dc), 'day')."</td>\n";
 				print '<td class="right" style="min-width: 60px">'.price($objp->total_ht).'</td>';
 				print '<td class="right" style="min-width: 60px" class="nowrap">'.$commande_static->LibStatut($objp->fk_statut, $objp->facture, 5).'</td></tr>';
@@ -816,78 +854,78 @@ if ($object->id > 0)
 		}
 	}
 
-    /*
+	/*
      *   Latest shipments
      */
-    if (!empty($conf->expedition->enabled) && $user->rights->expedition->lire)
-    {
-        $sql = 'SELECT e.rowid as id';
-        $sql .= ', e.ref';
-        $sql .= ', e.date_creation';
-        $sql .= ', e.fk_statut as statut';
-        $sql .= ', s.nom';
-        $sql .= ', s.rowid as socid';
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."expedition as e";
-        $sql .= " WHERE e.fk_soc = s.rowid AND s.rowid = ".$object->id;
-        $sql .= " AND e.entity IN (".getEntity('expedition').")";
-        $sql .= ' GROUP BY e.rowid';
-        $sql .= ', e.ref';
-        $sql .= ', e.date_creation';
-        $sql .= ', e.fk_statut';
-        $sql .= ', s.nom';
-        $sql .= ', s.rowid';
-        $sql .= " ORDER BY e.date_creation DESC";
+	if (!empty($conf->expedition->enabled) && $user->rights->expedition->lire)
+	{
+		$sql = 'SELECT e.rowid as id';
+		$sql .= ', e.ref';
+		$sql .= ', e.date_creation';
+		$sql .= ', e.fk_statut as statut';
+		$sql .= ', s.nom';
+		$sql .= ', s.rowid as socid';
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."expedition as e";
+		$sql .= " WHERE e.fk_soc = s.rowid AND s.rowid = ".$object->id;
+		$sql .= " AND e.entity IN (".getEntity('expedition').")";
+		$sql .= ' GROUP BY e.rowid';
+		$sql .= ', e.ref';
+		$sql .= ', e.date_creation';
+		$sql .= ', e.fk_statut';
+		$sql .= ', s.nom';
+		$sql .= ', s.rowid';
+		$sql .= " ORDER BY e.date_creation DESC";
 
-        $resql = $db->query($sql);
-        if ($resql)
-        {
-        	$sendingstatic = new Expedition($db);
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$sendingstatic = new Expedition($db);
 
-        	$num = $db->num_rows($resql);
-            if ($num > 0) {
-            	print '<div class="div-table-responsive-no-min">';
-            	print '<table class="noborder centpercent lastrecordtable">';
+			$num = $db->num_rows($resql);
+			if ($num > 0) {
+				print '<div class="div-table-responsive-no-min">';
+				print '<table class="noborder centpercent lastrecordtable">';
 
-                print '<tr class="liste_titre">';
-                print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSendings", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/expedition/list.php?socid='.$object->id.'">'.$langs->trans("AllSendings").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
-                print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/expedition/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
-                print '</tr></table></td>';
-                print '</tr>';
-            }
+				print '<tr class="liste_titre">';
+				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSendings", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/expedition/list.php?socid='.$object->id.'">'.$langs->trans("AllSendings").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+				print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/expedition/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
+				print '</tr></table></td>';
+				print '</tr>';
+			}
 
-            $i = 0;
-            while ($i < $num && $i < $MAXLIST)
-            {
-                $objp = $db->fetch_object($resql);
+			$i = 0;
+			while ($i < $num && $i < $MAXLIST)
+			{
+				$objp = $db->fetch_object($resql);
 
-                $sendingstatic->id = $objp->id;
-                $sendingstatic->ref = $objp->ref;
+				$sendingstatic->id = $objp->id;
+				$sendingstatic->ref = $objp->ref;
 
-                print '<tr class="oddeven">';
-                print '<td class="nowrap">';
-                print $sendingstatic->getNomUrl(1);
-                print '</td>';
-                if ($objp->date_creation > 0) {
-                    print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->date_creation), 'day').'</td>';
-                } else {
-                    print '<td class="right"><b>!!!</b></td>';
-                }
+				print '<tr class="oddeven">';
+				print '<td class="nowrap">';
+				print $sendingstatic->getNomUrl(1);
+				print '</td>';
+				if ($objp->date_creation > 0) {
+					print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->date_creation), 'day').'</td>';
+				} else {
+					print '<td class="right"><b>!!!</b></td>';
+				}
 
-                print '<td class="nowrap right" width="100" >'.$sendingstatic->LibStatut($objp->statut, 5).'</td>';
-                print "</tr>\n";
-                $i++;
-            }
-            $db->free($resql);
+				print '<td class="nowrap right" width="100" >'.$sendingstatic->LibStatut($objp->statut, 5).'</td>';
+				print "</tr>\n";
+				$i++;
+			}
+			$db->free($resql);
 
-            if ($num > 0)
-            {
-                print "</table>";
-                print '</div>';
-            }
-        } else {
-            dol_print_error($db);
-        }
-    }
+			if ($num > 0)
+			{
+				print "</table>";
+				print '</div>';
+			}
+		} else {
+			dol_print_error($db);
+		}
+	}
 
 	/*
 	 * Latest contracts
@@ -912,7 +950,7 @@ if ($object->id > 0)
 				print '<div class="div-table-responsive-no-min">';
 				print '<table class="noborder centpercent lastrecordtable">';
 
-			    print '<tr class="liste_titre">';
+				print '<tr class="liste_titre">';
 				print '<td colspan="5"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastContracts", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td>';
 				print '<td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->id.'">'.$langs->trans("AllContracts").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
 				//print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/contract/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
@@ -935,7 +973,7 @@ if ($object->id > 0)
 				$late = '';
 				foreach ($contrat->lines as $line) {
 					if ($contrat->statut == Contrat::STATUS_VALIDATED && $line->statut == ContratLigne::STATUS_OPEN) {
-						if (((!empty($line->date_fin_validite)?$line->date_fin_validite:0) + $conf->contrat->services->expires->warning_delay) < $now) $late = img_warning($langs->trans("Late"));
+						if (((!empty($line->date_fin_validite) ? $line->date_fin_validite : 0) + $conf->contrat->services->expires->warning_delay) < $now) $late = img_warning($langs->trans("Late"));
 					}
 				}
 
@@ -989,7 +1027,7 @@ if ($object->id > 0)
 				print '<div class="div-table-responsive-no-min">';
 				print '<table class="noborder centpercent lastrecordtable">';
 
-			    print '<tr class="liste_titre">';
+				print '<tr class="liste_titre">';
 				print '<td colspan="3"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastInterventions", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fichinter/list.php?socid='.$object->id.'">'.$langs->trans("AllInterventions").'<span class="badge marginleftonlyshort">'.$num.'</span></td>';
 				print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/fichinter/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
 				print '</tr></table></td>';
@@ -1002,11 +1040,11 @@ if ($object->id > 0)
 				$objp = $db->fetch_object($resql);
 
 				$fichinter_static->id = $objp->id;
-                $fichinter_static->statut = $objp->fk_statut;
+				$fichinter_static->statut = $objp->fk_statut;
 
 				print '<tr class="oddeven">';
 				print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/fichinter/card.php?id='.$objp->id.'">'.img_object($langs->trans("ShowPropal"), "propal").' '.$objp->ref.'</a></td>'."\n";
-                //print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->startdate)).'</td>'."\n";
+				//print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->startdate)).'</td>'."\n";
 				print '<td class="right" style="min-width: 60px">'.convertSecondToTime($objp->duration).'</td>'."\n";
 				print '<td class="nowrap right" style="min-width: 60px">'.$fichinter_static->getLibStatut(5).'</td>'."\n";
 				print '</tr>';
@@ -1132,10 +1170,10 @@ if ($object->id > 0)
 	 */
 	if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
-        $sql = 'SELECT f.rowid as facid, f.ref, f.type';
-        $sql .= ', f.total as total_ht';
-        $sql .= ', f.tva as total_tva';
-        $sql .= ', f.total_ttc';
+		$sql = 'SELECT f.rowid as facid, f.ref, f.type';
+		$sql .= ', f.total as total_ht';
+		$sql .= ', f.tva as total_tva';
+		$sql .= ', f.total_ttc';
 		$sql .= ', f.datef as df, f.datec as dc, f.paye as paye, f.fk_statut as statut';
 		$sql .= ', s.nom, s.rowid as socid';
 		$sql .= ', SUM(pf.amount) as am';
@@ -1161,7 +1199,7 @@ if ($object->id > 0)
 
 				print '<tr class="liste_titre">';
 				print '<td colspan="5"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastCustomersBills", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id.'">'.$langs->trans("AllBills").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
-                print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
+				print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
 				print '</tr></table></td>';
 				print '</tr>';
 			}
@@ -1194,9 +1232,9 @@ if ($object->id > 0)
 
 				if (!empty($conf->global->MAIN_SHOW_PRICE_WITH_TAX_IN_SUMMARIES))
 				{
-    				print '<td class="right" style="min-width: 60px">';
-    				print price($objp->total_ttc);
-    				print '</td>';
+					print '<td class="right" style="min-width: 60px">';
+					print price($objp->total_ttc);
+					print '</td>';
 				}
 
 				print '<td class="nowrap right" style="min-width: 60px">'.($facturestatic->LibStatut($objp->paye, $objp->statut, 5, $objp->am)).'</td>';
@@ -1218,7 +1256,7 @@ if ($object->id > 0)
 	print '</div></div></div>';
 	print '<div style="clear:both"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	/*
@@ -1230,81 +1268,79 @@ if ($object->id > 0)
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 
-    if (empty($reshook))
-    {
-        if ($object->status != 1)
-        {
-            print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("ThirdPartyIsClosed").'</a></div>';
-        }
+	if (empty($reshook))
+	{
+		if ($object->status != 1)
+		{
+			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("ThirdPartyIsClosed").'</a></div>';
+		}
 
-    	if (!empty($conf->propal->enabled) && $user->rights->propal->creer && $object->status == 1)
-    	{
-    		$langs->load("propal");
-    		print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddProp").'</a></div>';
-    	}
+		if (!empty($conf->propal->enabled) && $user->rights->propal->creer && $object->status == 1)
+		{
+			$langs->load("propal");
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddProp").'</a></div>';
+		}
 
-    	if (!empty($conf->commande->enabled) && $user->rights->commande->creer && $object->status == 1)
-    	{
-    		$langs->load("orders");
-    		print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddOrder").'</a></div>';
-    	}
+		if (!empty($conf->commande->enabled) && $user->rights->commande->creer && $object->status == 1)
+		{
+			$langs->load("orders");
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddOrder").'</a></div>';
+		}
 
-    	if ($user->rights->contrat->creer && $object->status == 1)
-    	{
-    		$langs->load("contracts");
-    		print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddContract").'</a></div>';
-    	}
+		if ($user->rights->contrat->creer && $object->status == 1)
+		{
+			$langs->load("contracts");
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddContract").'</a></div>';
+		}
 
-    	if (!empty($conf->ficheinter->enabled) && $user->rights->ficheinter->creer && $object->status == 1)
-    	{
-    		$langs->load("fichinter");
-    		print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddIntervention").'</a></div>';
-    	}
+		if (!empty($conf->ficheinter->enabled) && $user->rights->ficheinter->creer && $object->status == 1)
+		{
+			$langs->load("fichinter");
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddIntervention").'</a></div>';
+		}
 
-    	// Add invoice
-    	if ($user->socid == 0)
-    	{
-    		if (!empty($conf->deplacement->enabled) && $object->status == 1)
-    		{
-    			$langs->load("trips");
-    			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/deplacement/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddTrip").'</a></div>';
-    		}
+		// Add invoice
+		if ($user->socid == 0)
+		{
+			if (!empty($conf->deplacement->enabled) && $object->status == 1)
+			{
+				$langs->load("trips");
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/deplacement/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddTrip").'</a></div>';
+			}
 
-    		if (!empty($conf->facture->enabled) && $object->status == 1)
-    		{
-    			if (empty($user->rights->facture->creer))
-    			{
-    			    print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
-    			} else {
-    				$langs->load("bills");
-    				$langs->load("orders");
+			if (!empty($conf->facture->enabled) && $object->status == 1)
+			{
+				if (empty($user->rights->facture->creer))
+				{
+					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+				} else {
+					$langs->loadLangs(array("orders", "bills"));
 
-    				if (!empty($conf->commande->enabled))
-    				{
-    				    if ($object->client != 0 && $object->client != 2)
-    				    {
-    					    if (!empty($orders2invoice) && $orders2invoice > 0) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/orderstoinvoice.php?socid='.$object->id.'">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
-    					    else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
-    				    } else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
-    				}
+					if (!empty($conf->commande->enabled))
+					{
+						if ($object->client != 0 && $object->client != 2) {
+							if (!empty($orders2invoice) && $orders2invoice > 0) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->id.'&search_billed=0&autoselectall=1">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
+							else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
+						} else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+					}
 
-    				if ($object->client != 0 && $object->client != 2) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a></div>';
-    				else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
-    			}
-    		}
-    	}
+					if ($object->client != 0 && $object->client != 2) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a></div>';
+					else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+				}
+			}
+		}
 
-    	// Add action
-    	if (!empty($conf->agenda->enabled) && !empty($conf->global->MAIN_REPEATTASKONEACHTAB) && $object->status == 1)
-    	{
-    		if ($user->rights->agenda->myactions->create)
-    		{
-    			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddAction").'</a></div>';
-    		} else {
-    			print '<div class="inline-block divButAction"><a class="butAction" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddAction").'</a></div>';
-    		}
-    	}
-    }
+		// Add action
+		if (!empty($conf->agenda->enabled) && !empty($conf->global->MAIN_REPEATTASKONEACHTAB) && $object->status == 1)
+		{
+			if ($user->rights->agenda->myactions->create)
+			{
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddAction").'</a></div>';
+			} else {
+				print '<div class="inline-block divButAction"><a class="butAction" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddAction").'</a></div>';
+			}
+		}
+	}
 
 	print '</div>';
 
@@ -1314,14 +1350,14 @@ if ($object->id > 0)
 		show_contacts($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id);
 	}
 
-    if (!empty($conf->global->MAIN_REPEATTASKONEACHTAB))
-    {
-        print load_fiche_titre($langs->trans("ActionsOnCompany"), '', '');
+	if (!empty($conf->global->MAIN_REPEATTASKONEACHTAB))
+	{
+		print load_fiche_titre($langs->trans("ActionsOnCompany"), '', '');
 
-        // List of todo actions
+		// List of todo actions
 		show_actions_todo($conf, $langs, $db, $object);
 
-        // List of done actions
+		// List of done actions
 		show_actions_done($conf, $langs, $db, $object);
 	}
 } else {

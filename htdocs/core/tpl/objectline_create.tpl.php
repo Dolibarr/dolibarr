@@ -306,7 +306,7 @@ if ($nolinesbefore) {
 		if (!empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows = $conf->global->MAIN_INPUT_DESC_HEIGHT;
 		$toolbarname = 'dolibarr_details';
 		if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS_FULL)) $toolbarname = 'dolibarr_notes';
-		$doleditor = new DolEditor('dp_desc', GETPOST('dp_desc', 'none'), '', (empty($conf->global->MAIN_DOLEDITOR_HEIGHT) ? 100 : $conf->global->MAIN_DOLEDITOR_HEIGHT), $toolbarname, '', false, true, $enabled, $nbrows, '98%');
+		$doleditor = new DolEditor('dp_desc', GETPOST('dp_desc', 'restricthtml'), '', (empty($conf->global->MAIN_DOLEDITOR_HEIGHT) ? 100 : $conf->global->MAIN_DOLEDITOR_HEIGHT), $toolbarname, '', false, true, $enabled, $nbrows, '98%');
 		$doleditor->Create();
 		// Show autofill date for recurring invoices
 		if (!empty($conf->service->enabled) && $object->element == 'facturerec')
@@ -426,13 +426,13 @@ if ((!empty($conf->service->enabled) || ($object->element == 'contrat')) && $dat
 
 	$prefillDates = false;
 
-	if (!empty($conf->global->MAIN_FILL_SERVICE_DATES_FROM_LAST_SERVICE_LINE) && ! empty($object->lines))
+	if (!empty($conf->global->MAIN_FILL_SERVICE_DATES_FROM_LAST_SERVICE_LINE) && !empty($object->lines))
 	{
 		for ($i = count($object->lines) - 1; $i >= 0; $i--)
 		{
 			$lastline = $object->lines[$i];
 
-			if ($lastline->product_type == Product::TYPE_SERVICE && (! empty($lastline->date_start) || ! empty($lastline->date_end)))
+			if ($lastline->product_type == Product::TYPE_SERVICE && (!empty($lastline->date_start) || !empty($lastline->date_end)))
 			{
 				$date_start_prefill = $lastline->date_start;
 				$date_end_prefill = $lastline->date_end;
@@ -459,7 +459,7 @@ if ((!empty($conf->service->enabled) || ($object->element == 'contrat')) && $dat
 
 	if ($prefillDates)
 	{
-		echo ' <span class="small"><a href="#" id="prefill_service_dates">' . $langs->trans('FillWithLastServiceDates') .  '</a></span>';
+		echo ' <span class="small"><a href="#" id="prefill_service_dates">'.$langs->trans('FillWithLastServiceDates').'</a></span>';
 	}
 
 	print '<script>';
@@ -693,7 +693,8 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 			$("#buying_price").val("").show();
 
 			/* Call post to load content of combo list fournprice_predef */
-			$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php?bestpricefirst=1', { 'idprod': $(this).val() }, function(data) {
+			var token = '<?php echo currentToken(); ?>';		// For AJAX Call we use old 'token' and not 'newtoken'
+			$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php?bestpricefirst=1', { 'idprod': $(this).val(), 'token': token }, function(data) {
 				if (data && data.length > 0)
 				{
 					var options = ''; var defaultkey = ''; var defaultprice = ''; var bestpricefound = 0;

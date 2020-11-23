@@ -75,7 +75,7 @@ if ($action == 'presend')
 		$outputlangs = new Translate('', $conf);
 		$outputlangs->setDefaultLang($newlang);
 		// Load traductions files required by page
-		$outputlangs->loadLangs(array('commercial', 'bills', 'orders', 'contracts', 'members', 'propal', 'products', 'supplier_proposal', 'interventions'));
+		$outputlangs->loadLangs(array('commercial', 'bills', 'orders', 'contracts', 'members', 'propal', 'products', 'supplier_proposal', 'interventions', 'receptions'));
 	}
 
 	$topicmail = '';
@@ -93,7 +93,7 @@ if ($action == 'presend')
 	{
 		if ((!$file || !is_readable($file)) && method_exists($object, 'generateDocument'))
 		{
-			$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result < 0) {
 				dol_print_error($db, $object->error, $object->errors);
 				exit();
@@ -114,7 +114,7 @@ if ($action == 'presend')
 	print '<br>';
 	print load_fiche_titre($langs->trans($titreform));
 
-	dol_fiche_head('');
+	print dol_get_fiche_head('');
 
 	// Create form for email
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -144,7 +144,7 @@ if ($action == 'presend')
 		$formmail->fromtype = 'special';
 	}
 
-	$formmail->trackid=$trackid;
+	$formmail->trackid = $trackid;
 	if (!empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
 	{
 		include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -167,6 +167,9 @@ if ($action == 'presend')
 	} elseif ($object->element == 'user' || $object->element == 'member') {
 		$liste['thirdparty'] = $object->getFullName($outputlangs)." <".$object->email.">";
 	} else {
+		if (!empty($object->socid) && $object->socid > 0 && !is_object($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
+			$object->fetch_thirdparty();
+		}
 		if (is_object($object->thirdparty))
 		{
 			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value) {
@@ -289,5 +292,5 @@ if ($action == 'presend')
 	// Show form
 	print $formmail->get_form();
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }

@@ -7,7 +7,7 @@
  * Copyright (C) 2015 	   Claudio Aschieri     <c.aschieri@19.coop>
  * Copyright (C) 2018 	   Ferran Marcet	    <fmarcet@2byte.es>
  * Copyright (C) 2019 	   Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2020		Tobias Sean			<tobias.sekan@startmail.com>
+ * Copyright (C) 2020	   Tobias Sean			<tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ if (!empty($conf->categorie->enabled))
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies', 'commercial'));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
@@ -109,7 +109,7 @@ if ($search_status == '') $search_status = -1; // -1 or 1
 
 if (!empty($conf->categorie->enabled))
 {
-	$search_category_array = GETPOST("search_category_".Categorie::TYPE_PROJECT."_array", "array");
+	$search_category_array = GETPOST("search_category_".Categorie::TYPE_PROJECT."_list", "array");
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -123,34 +123,43 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
-$fieldstosearchall = array(
-	'p.ref'=>"Ref",
-	'p.title'=>"Label",
-	's.nom'=>"ThirdPartyName",
-	"p.note_public"=>"NotePublic"
-);
-if (empty($user->socid)) $fieldstosearchall["p.note_private"] = "NotePrivate";
+$fieldstosearchall = array();
+foreach ($object->fields as $key => $val) {
+	if (empty($val['searchall'])) {
+		continue;
+	}
 
-$arrayfields = array(
-	'p.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-	'p.title'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
-	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'enabled'=>(empty($conf->societe->enabled) ? 0 : 1)),
-	'commercial'=>array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>0),
-	'p.dateo'=>array('label'=>$langs->trans("DateStart"), 'checked'=>1, 'position'=>100),
-	'p.datee'=>array('label'=>$langs->trans("DateEnd"), 'checked'=>1, 'position'=>101),
-	'p.public'=>array('label'=>$langs->trans("Visibility"), 'checked'=>1, 'position'=>102),
-	'p.opp_amount'=>array('label'=>$langs->trans("OpportunityAmountShort"), 'checked'=>1, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES ? 1 : 0), 'position'=>103),
-	'p.fk_opp_status'=>array('label'=>$langs->trans("OpportunityStatusShort"), 'checked'=>1, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES ? 1 : 0), 'position'=>104),
-	'p.opp_percent'=>array('label'=>$langs->trans("OpportunityProbabilityShort"), 'checked'=>1, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES ? 1 : 0), 'position'=>105),
-    'opp_weighted_amount'=>array('label'=>$langs->trans('OpportunityWeightedAmountShort'), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES ? 1 : 0), 'position'=>106),
-    'p.budget_amount'=>array('label'=>$langs->trans("Budget"), 'checked'=>0, 'position'=>110),
-	'p.usage_opportunity'=>array('label'=>$langs->trans("UsageOpportunity"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES ? 1 : 0), 'position'=>115),
-	'p.usage_task'=>array('label'=>$langs->trans("UsageTasks"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_HIDE_TASKS ? 0 : 1), 'position'=>116),
-	'p.usage_bill_time'=>array('label'=>$langs->trans("UsageBillTimeShort"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_HIDE_TASKS ? 0 : 1), 'position'=>117),
-	'p.datec'=>array('label'=>$langs->trans("DateCreationShort"), 'checked'=>0, 'position'=>500),
-	'p.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
-	'p.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
-);
+	// Don't allow search in private notes for external users when doing "search in all"
+	if (!empty($user->socid) && $key == "note_private") {
+		continue;
+	}
+
+	$fieldstosearchall['p.'.$key] = $val['label'];
+}
+
+// Add none object fields to "search in all"
+$fieldstosearchall['s.nom'] = "ThirdPartyName";
+
+// Definition of fields for list
+$arrayfields = array();
+foreach ($object->fields as $key => $val) {
+	// If $val['visible']==0, then we never show the field
+	if (empty($val['visible'])) {
+		continue;
+	}
+
+	$arrayfields['p.'.$key] = array(
+		'label'=>$val['label'],
+		'checked'=>(($val['visible'] < 0) ? 0 : 1),
+		'enabled'=>($val['enabled'] && ($val['visible'] != 3)),
+		'position'=>$val['position']);
+}
+
+// Add none object fields to fields for list
+$arrayfields['s.nom'] = array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'enabled'=>(empty($conf->societe->enabled) ? 0 : 1));
+$arrayfields['commercial'] = array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>0);
+$arrayfields['opp_weighted_amount'] = array('label'=>$langs->trans('OpportunityWeightedAmountShort'), 'checked'=>0, 'enabled'=>(empty($conf->global->PROJECT_USE_OPPORTUNITIES) ? 0 : 1), 'position'=>106);
+
 // Extra fields
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
@@ -160,7 +169,7 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
 	}
 }
-$object->fields = dol_sort_array($object->fields, 'position');
+
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 
@@ -219,47 +228,47 @@ if (empty($reshook))
 	$uploaddir = $conf->projet->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-    // Close records
-    if (!$error && $massaction == 'close' && $user->rights->projet->creer)
-    {
-        $db->begin();
+	// Close records
+	if (!$error && $massaction == 'close' && $user->rights->projet->creer)
+	{
+		$db->begin();
 
-        $objecttmp = new $objectclass($db);
-        $nbok = 0;
-        foreach ($toselect as $toselectid)
-        {
-            $result = $objecttmp->fetch($toselectid);
-            if ($result > 0)
-            {
-                $userWrite  = $object->restrictedProjectArea($user, 'write');
-                if ($userWrite > 0 && $objecttmp->statut == 1) {
-                    $result = $objecttmp->setClose($user);
-                    if ($result <= 0) {
-                        setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-                        $error++;
-                        break;
-                    } else $nbok++;
-                } elseif ($userWrite <= 0) {
-                    setEventMessages($langs->trans("DontHavePermissionForCloseProject", $objecttmp->ref), null, 'warnings');
-                } else {
-                    setEventMessages($langs->trans("DontHaveTheValidateStatus", $objecttmp->ref), null, 'warnings');
-                }
-            } else {
-                setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-                $error++;
-                break;
-            }
-        }
+		$objecttmp = new $objectclass($db);
+		$nbok = 0;
+		foreach ($toselect as $toselectid)
+		{
+			$result = $objecttmp->fetch($toselectid);
+			if ($result > 0)
+			{
+				$userWrite = $object->restrictedProjectArea($user, 'write');
+				if ($userWrite > 0 && $objecttmp->statut == 1) {
+					$result = $objecttmp->setClose($user);
+					if ($result <= 0) {
+						setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+						$error++;
+						break;
+					} else $nbok++;
+				} elseif ($userWrite <= 0) {
+					setEventMessages($langs->trans("DontHavePermissionForCloseProject", $objecttmp->ref), null, 'warnings');
+				} else {
+					setEventMessages($langs->trans("DontHaveTheValidateStatus", $objecttmp->ref), null, 'warnings');
+				}
+			} else {
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error++;
+				break;
+			}
+		}
 
-        if (!$error)
-        {
-            if ($nbok > 1) setEventMessages($langs->trans("RecordsClosed", $nbok), null, 'mesgs');
-            else setEventMessages($langs->trans("RecordsClosed", $nbok), null, 'mesgs');
-            $db->commit();
-        } else {
-            $db->rollback();
-        }
-    }
+		if (!$error)
+		{
+			if ($nbok > 1) setEventMessages($langs->trans("RecordsClosed", $nbok), null, 'mesgs');
+			else setEventMessages($langs->trans("RecordsClosed", $nbok), null, 'mesgs');
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
+	}
 }
 
 
@@ -275,14 +284,14 @@ $formproject = new FormProjets($db);
 $title = $langs->trans("Projects");
 
 
-// Get list of project id allowed to user (in a string list separated by coma)
+// Get list of project id allowed to user (in a string list separated by comma)
 $projectsListId = '';
 if (!$user->rights->projet->all->lire) $projectsListId = $object->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 
 // Get id of types of contacts for projects (This list never contains a lot of elements)
 $listofprojectcontacttype = array();
 $sql = "SELECT ctc.rowid, ctc.code FROM ".MAIN_DB_PREFIX."c_type_contact as ctc";
-$sql .= " WHERE ctc.element = '".$object->element."'";
+$sql .= " WHERE ctc.element = '".$db->escape($object->element)."'";
 $sql .= " AND ctc.source = 'internal'";
 $resql = $db->query($sql);
 if ($resql)
@@ -377,7 +386,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller than paging size (filtering), goto and load page 0
 	{
 		$page = 0;
 		$offset = 0;
@@ -438,8 +447,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // List of mass actions available
 $arrayofmassactions = array(
 	'generate_doc'=>$langs->trans("ReGeneratePDF"),
-    //'builddoc'=>$langs->trans("PDFMerge"),
-    //'presend'=>$langs->trans("SendByMail"),
+	//'builddoc'=>$langs->trans("PDFMerge"),
+	//'presend'=>$langs->trans("SendByMail"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
 if ($user->rights->projet->creer) $arrayofmassactions['close'] = $langs->trans("Close");
@@ -448,11 +457,9 @@ if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = 
 
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-$newcardbutton = '';
-if ($user->rights->projet->creer)
-{
-    $newcardbutton .= dolGetButtonTitle($langs->trans('NewProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?action=create');
-}
+$url = DOL_URL_ROOT.'/projet/card.php?action=create';
+if (!empty($socid)) $url .= '&socid='.$socid;
+$newcardbutton = dolGetButtonTitle($langs->trans('NewProject'), '', 'fa fa-plus-circle', $url, '', $user->rights->projet->creer);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -461,15 +468,14 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 // Show description of content
 $texthelp = '';
 if ($search_project_user == $user->id) $texthelp .= $langs->trans("MyProjectsDesc");
 else {
-    if ($user->rights->projet->all->lire && !$socid) $texthelp .= $langs->trans("ProjectsDesc");
-    else $texthelp .= $langs->trans("ProjectsPublicDesc");
+	if ($user->rights->projet->all->lire && !$socid) $texthelp .= $langs->trans("ProjectsDesc");
+	else $texthelp .= $langs->trans("ProjectsPublicDesc");
 }
 
 print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'project', 0, $newcardbutton, '', $limit, 0, 0, 1);
@@ -478,7 +484,7 @@ print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_
 $topicmail = "Information";
 $modelmail = "project";
 $objecttmp = new Project($db);
-$trackid = 'prj'.$object->id;
+$trackid = 'proj'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($search_all)
@@ -490,7 +496,7 @@ if ($search_all)
 $moreforfilter = '';
 
 // Filter on categories
-if (!empty($conf->categorie->enabled))
+if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire)
 {
 	$formcategory = new FormCategory($db);
 	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PROJECT, $search_category_array);
@@ -499,7 +505,8 @@ if (!empty($conf->categorie->enabled))
 // If the user can view user other than himself
 $moreforfilter .= '<div class="divsearchfield">';
 $moreforfilter .= $langs->trans('ProjectsWithThisUserAsContact').': ';
-$includeonly = 'hierarchyme';
+//$includeonly = 'hierarchyme';
+$includeonly = '';
 if (empty($user->rights->user->user->lire)) $includeonly = array($user->id);
 $moreforfilter .= $form->select_dolusers($search_project_user ? $search_project_user : '', 'search_project_user', 1, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth200');
 $moreforfilter .= '</div>';
@@ -610,8 +617,8 @@ if (!empty($arrayfields['p.opp_percent']['checked']))
 }
 if (!empty($arrayfields['opp_weighted_amount']['checked']))
 {
-    print '<td class="liste_titre nowrap right">';
-    print '</td>';
+	print '<td class="liste_titre nowrap right">';
+	print '</td>';
 }
 if (!empty($arrayfields['p.budget_amount']['checked']))
 {
@@ -679,7 +686,7 @@ print '<tr class="liste_titre">';
 if (!empty($arrayfields['p.ref']['checked']))           print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, "", $sortfield, $sortorder);
 if (!empty($arrayfields['p.title']['checked']))         print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER["PHP_SELF"], "p.title", "", $param, "", $sortfield, $sortorder);
 if (!empty($arrayfields['s.nom']['checked']))           print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
-if (!empty($arrayfields['commercial']['checked']))      print_liste_field_titre($arrayfields['commercial']['label'], $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder);
+if (!empty($arrayfields['commercial']['checked']))      print_liste_field_titre($arrayfields['commercial']['label'], $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder, 'tdoverflowmax100imp ');
 if (!empty($arrayfields['p.dateo']['checked']))         print_liste_field_titre($arrayfields['p.dateo']['label'], $_SERVER["PHP_SELF"], "p.dateo", "", $param, '', $sortfield, $sortorder, 'center ');
 if (!empty($arrayfields['p.datee']['checked']))         print_liste_field_titre($arrayfields['p.datee']['label'], $_SERVER["PHP_SELF"], "p.datee", "", $param, '', $sortfield, $sortorder, 'center ');
 if (!empty($arrayfields['p.public']['checked']))        print_liste_field_titre($arrayfields['p.public']['label'], $_SERVER["PHP_SELF"], "p.public", "", $param, "", $sortfield, $sortorder);
@@ -705,8 +712,8 @@ print "</tr>\n";
 
 $i = 0;
 $totalarray = array(
-    'nbfield' => 0,
-    'val' => array(),
+	'nbfield' => 0,
+	'val' => array(),
 );
 while ($i < min($num, $limit))
 {
@@ -726,9 +733,9 @@ while ($i < min($num, $limit))
 	$userAccess = $object->restrictedProjectArea($user); // why this ?
 	if ($userAccess >= 0)
 	{
-	    $socstatic->id = $obj->socid;
-	    $socstatic->name = $obj->name;
-	    $socstatic->email = $obj->email;
+		$socstatic->id = $obj->socid;
+		$socstatic->name = $obj->name;
+		$socstatic->email = $obj->email;
 
 		print '<tr class="oddeven">';
 
@@ -856,19 +863,19 @@ while ($i < min($num, $limit))
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
-        // Opp weighted amount
-        if (!empty($arrayfields['opp_weighted_amount']['checked']))
-        {
-            if (!isset($totalarray['val']['opp_weighted_amount']))  $totalarray['val']['opp_weighted_amount'] = 0;
-            print '<td align="right">';
-            if ($obj->opp_weighted_amount) {
-                print price($obj->opp_weighted_amount, 1, $langs, 1, -1, -1, '');
-                $totalarray['val']['opp_weighted_amount'] += $obj->opp_weighted_amount;
-            }
-            print '</td>';
-            if (!$i) $totalarray['nbfield']++;
-            if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'opp_weighted_amount';
-        }
+		// Opp weighted amount
+		if (!empty($arrayfields['opp_weighted_amount']['checked']))
+		{
+			if (!isset($totalarray['val']['opp_weighted_amount']))  $totalarray['val']['opp_weighted_amount'] = 0;
+			print '<td align="right">';
+			if ($obj->opp_weighted_amount) {
+				print price($obj->opp_weighted_amount, 1, $langs, 1, -1, -1, '');
+				$totalarray['val']['opp_weighted_amount'] += $obj->opp_weighted_amount;
+			}
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'opp_weighted_amount';
+		}
 		// Budget
 		if (!empty($arrayfields['p.budget_amount']['checked']))
 		{

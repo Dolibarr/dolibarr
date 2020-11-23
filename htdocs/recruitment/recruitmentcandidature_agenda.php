@@ -50,7 +50,7 @@ $langs->loadLangs(array("recruitment", "other"));
 // Get parameters
 $id = GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -137,7 +137,7 @@ if ($object->id > 0)
 	$head = recruitmentCandidaturePrepareHead($object);
 
 
-	dol_fiche_head($head, 'agenda', $langs->trans("RecruitmentCandidature"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'agenda', $langs->trans("RecruitmentCandidature"), -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------
@@ -195,7 +195,7 @@ if ($object->id > 0)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 

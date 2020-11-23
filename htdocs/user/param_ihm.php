@@ -35,7 +35,7 @@ $langs->loadLangs(array('companies', 'products', 'admin', 'users', 'languages', 
 $canreaduser = ($user->admin || $user->rights->user->user->lire);
 
 $id = GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userihm'; // To manage different context of search
 
 if ($id)
@@ -198,7 +198,7 @@ if ($action == 'edit')
 
 if ($action == 'edit')
 {
-	dol_fiche_head($head, 'guisetup', $title, -1, 'user');
+	print dol_get_fiche_head($head, 'guisetup', $title, -1, 'user');
 
 	$linkback = '';
 
@@ -316,16 +316,16 @@ if ($action == 'edit')
 	// Theme
 	showSkins($object, (($user->admin || empty($dolibarr_main_demo)) ? 1 : 0), true);
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 } else {
-	dol_fiche_head($head, 'guisetup', $title, -1, 'user');
+	print dol_get_fiche_head($head, 'guisetup', $title, -1, 'user');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -386,7 +386,7 @@ if ($action == 'edit')
 	// Skin
 	showSkins($object, 0, true);
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	print '<div class="tabsAction">';

@@ -33,7 +33,7 @@ $langs->loadLangs(array("admin", "errors", "contracts"));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
@@ -143,7 +143,7 @@ elseif ($action == 'setdoc')
 	dolibarr_set_const($db, "CONTRACT_ADDON", $value, 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'set_other')
 {
-	$freetext = GETPOST('CONTRACT_FREE_TEXT', 'none'); // No alpha here, we want exact string
+	$freetext = GETPOST('CONTRACT_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
 	$res1 = dolibarr_set_const($db, "CONTRACT_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 
 	$draft = GETPOST('CONTRACT_DRAFT_WATERMARK', 'alpha');
@@ -178,7 +178,7 @@ print load_fiche_titre($langs->trans("ContractsSetup"), $linkback, 'title_setup'
 
 $head = contract_admin_prepare_head();
 
-dol_fiche_head($head, 'contract', $langs->trans("Contracts"), -1, 'contract');
+print dol_get_fiche_head($head, 'contract', $langs->trans("Contracts"), -1, 'contract');
 
 /*
  * Contracts Numbering model
@@ -238,7 +238,7 @@ foreach ($dirmodels as $reldir)
 						{
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
 						}
@@ -287,7 +287,7 @@ print load_fiche_titre($langs->trans("TemplatePDFContracts"), '', '');
 $def = array();
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql .= " WHERE type = '".$type."'";
+$sql .= " WHERE type = '".$db->escape($type)."'";
 $sql .= " AND entity = ".$conf->entity;
 $resql = $db->query($sql);
 if ($resql)
@@ -371,7 +371,7 @@ foreach ($dirmodels as $reldir)
 									print '</td>';
 								} else {
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 									print "</td>";
 								}
 
@@ -381,7 +381,7 @@ foreach ($dirmodels as $reldir)
 								{
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 								}
 								print '</td>';
 
@@ -476,19 +476,19 @@ print '</td></tr>'."\n";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("HideClosedServiceByDefault").'</td>';
 print '<td width="60" class="right">';
-print $form->selectyesno("activate_hideClosedServiceByDefault", (! empty($conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT)?$conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT:0), 1);
+print $form->selectyesno("activate_hideClosedServiceByDefault", (!empty($conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT) ? $conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT : 0), 1);
 print '</td>';
 print '</tr>';
 
 print '</table>';
 
 print '<div class="center">';
-print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

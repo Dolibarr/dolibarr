@@ -17,7 +17,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 	min-height: 90px;
 	/* background: #fff; */
 	width: 100%;
-	box-shadow: 1px 1px 2px rgba(128, 128, 128, 0.2);
+	box-shadow: 1px 1px 15px rgba(192, 192, 192, 0.2);
     border-radius: 2px;
     border: 1px solid #e9e9e9;
 	margin-bottom: 15px;
@@ -87,12 +87,12 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 }
 .info-box-sm .info-box-icon {
     height: 80px;
-    width: 80px;
+    width: 78px;
     font-size: 25px;
     line-height: 92px;
 }
 .opened-dash-board-wrap .info-box-sm .info-box-icon {
-    border-radius: 0 20px 0 20px;
+    border-radius: 0 0 0 20px;
 }
 .opened-dash-board-wrap .info-box-sm .info-box-icon {
     line-height: 80px;
@@ -214,6 +214,8 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	text-transform: uppercase;
 	font-weight: bold;
 	margin-bottom: 3px;	/* not too much space so we can add another lines */
+	opacity: 0.6;
+	/* color: var(--colortexttitlenotab); */
 }
 .info-box-text{
 	font-size: 0.92em;
@@ -255,7 +257,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 }
 
 .customer-back {
-	background-color: #95a55d !important;
+	background-color: #55955d !important;
 	color: #FFF !important;
 	padding: 2px;
 	margin: 2px;
@@ -263,6 +265,13 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 }
 .vendor-back {
 	background-color: #599caf !important;
+	color: #FFF !important;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
+}
+.user-back {
+	background-color: #79633f !important;
 	color: #FFF !important;
 	padding: 2px;
 	margin: 2px;
@@ -278,13 +287,13 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	<?php echo $prefix; ?>color: #b06080 !important;
 }
 .bg-infobox-propal, .bg-infobox-facture, .bg-infobox-commande {
-	<?php echo $prefix; ?>color: #95a55d !important;
+	<?php echo $prefix; ?>color: #55955d !important;
 }
 .bg-infobox-supplier_proposal, .bg-infobox-invoice_supplier, .bg-infobox-order_supplier {
 	<?php echo $prefix; ?>color: #599caf !important;
 }
 .bg-infobox-contrat, .bg-infobox-ticket{
-	<?php echo $prefix; ?>color: #46a676 !important;
+	<?php echo $prefix; ?>color: #3bbfa8 !important;
 }
 .bg-infobox-bank_account{
 	<?php echo $prefix; ?>color: #b0bb39 !important;
@@ -308,18 +317,18 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 .infobox-action{
 	color: #b06080 !important;
 }
-.infobox-propal,
-.infobox-facture,
-.infobox-commande{
-	color: #95a55d !important;
+.infobox-propal:not(.pictotitle),
+.infobox-facture:not(.pictotitle),
+.infobox-commande:not(.pictotitle) {
+	color: #65955d !important;
 }
-.infobox-supplier_proposal,
-.infobox-invoice_supplier,
-.infobox-order_supplier{
+.infobox-supplier_proposal:not(.pictotitle),
+.infobox-invoice_supplier:not(.pictotitle),
+.infobox-order_supplier:not(.pictotitle){
 	color: #599caf !important;
 }
 .infobox-contrat, .infobox-ticket{
-	color: #46a676 !important;
+	color: #3bbfa8 !important;
 }
 .infobox-bank_account{
 	color: #b0bb39 !important;
@@ -379,23 +388,23 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 }
 .fa-weather-level0:before{
 	content: "\f185";
-	color : #cccccc;
+	color : #cfbf00;
 }
 .fa-weather-level1:before{
 	content: "\f6c4";
-	color : #cccccc;
+	color : #bc9526;
 }
 .fa-weather-level2:before{
-	content: "\f0c2";
-	color : #cccccc;
+	content: "\f743";
+	color : #b16000;
 }
 .fa-weather-level3:before{
 	content: "\f740";
-	color : #cccccc;
+	color : #b04000;
 }
 .fa-weather-level4:before{
 	content: "\f0e7";
-	color : #b91f1f;
+	color : #b01000;
 }
 
 
@@ -428,18 +437,19 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	min-width: 350px;
     max-width: 350px;
 }
+
 @media only screen and (max-width: 1740px) {
 	.info-box-module {
 	    min-width: 315px;
 	    max-width: 315px;
 	}
 }
+
 @media only screen and (max-width: 767px) {
 	.info-box-module {
 		min-width: 260px;
 	}
 }
-
 
 .info-box-module .info-box-content {
 	height: 98px;
@@ -456,9 +466,18 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	    margin: 0 0 0 0px !important;
 	    width: 100% !important;
 	}
-
 	.info-box-module {
 		width: 100%;
 		max-width: unset;
 	}
+	.info-box-sm .info-box-icon {
+		width: 60px;
+	}
+	.info-box-sm .info-box-content {
+		margin-left: 60px;
+	}
+	.info-box {
+		border: 1px solid #e0e0e0;
+	}
+}
 }

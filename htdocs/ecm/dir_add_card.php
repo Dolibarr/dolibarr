@@ -46,8 +46,8 @@ if (empty($module)) $module = 'ecm';
 // Security check
 if ($user->socid > 0)
 {
-    $action = '';
-    $socid = $user->socid;
+	$action = '';
+	$socid = $user->socid;
 }
 
 $section = $urlsection = GETPOST('section', 'alpha');
@@ -228,7 +228,7 @@ if ($action == 'create')
 	$title = $langs->trans("ECMNewSection");
 	print load_fiche_titre($title);
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -251,7 +251,7 @@ if ($action == 'create')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="create" value="'.$langs->trans("Create").'">';
@@ -270,7 +270,7 @@ if (empty($action) || $action == 'delete_section')
 	print load_fiche_titre($langs->trans("ECMSectionOfDocuments"));
 	print '<br>';
 
-    /*
+	/*
 	$ecmdir->ref=$ecmdir->label;
 	print $langs->trans("ECMSection").': ';
 	print img_picto('','object_dir').' ';
@@ -292,7 +292,7 @@ if (empty($action) || $action == 'delete_section')
 	print '<div class="tabsAction">';
 	if ($user->rights->ecm->setup)
 	{
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_section">'.$langs->trans('Delete').'</a>';
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_section&token='.newToken().'">'.$langs->trans('Delete').'</a>';
 	} else {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
 	}

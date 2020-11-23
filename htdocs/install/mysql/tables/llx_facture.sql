@@ -39,7 +39,7 @@ create table llx_facture
   datef					date,									-- date invoice
   date_pointoftax		date DEFAULT NULL,									-- date point of tax (for GB)
   date_valid			date,									-- date validation
-  tms					timestamp,								-- date creation/modification
+  tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,								-- last modification date
   date_closing				datetime,						-- date de cloture
   paye					smallint DEFAULT 0 NOT NULL,
   --amount				double(24,8)     DEFAULT 0 NOT NULL,
@@ -85,6 +85,8 @@ create table llx_facture
 
   fk_incoterms          integer,								-- for incoterms
   location_incoterms    varchar(255),							-- for incoterms
+
+  fk_mode_transport     integer,								-- for intracomm report
 
   situation_cycle_ref smallint,  -- situation cycle reference
   situation_counter   smallint,  -- situation counter

@@ -50,7 +50,7 @@ $langs->loadLangs(array("recruitment", "other"));
 // Get parameters
 $id = GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -137,7 +137,7 @@ if ($object->id > 0)
 	$head = recruitmentjobpositionPrepareHead($object);
 
 
-	dol_fiche_head($head, 'agenda', $langs->trans("RecruitmentJobPosition"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'agenda', $langs->trans("RecruitmentJobPosition"), -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------
@@ -152,15 +152,15 @@ if ($object->id > 0)
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	*/
 	// Project
-	if (! empty($conf->projet->enabled))
+	if (!empty($conf->projet->enabled))
 	{
 		$langs->load("projects");
-		$morehtmlref .= $langs->trans('Project') . ' ';
+		$morehtmlref .= $langs->trans('Project').' ';
 		if ($permissiontoadd)
 		{
 			if ($action != 'classify')
 				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-			$morehtmlref .=' : ';
+			$morehtmlref .= ' : ';
 			if ($action == 'classify') {
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -170,10 +170,10 @@ if ($object->id > 0)
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 			}
 		} else {
-			if (! empty($object->fk_project)) {
+			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
 				$morehtmlref .= ': '.$proj->getNomUrl();
@@ -195,7 +195,7 @@ if ($object->id > 0)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 

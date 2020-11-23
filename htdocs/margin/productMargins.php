@@ -34,7 +34,7 @@ $langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $TSelectedCats = GETPOST('categories', 'array');
 
@@ -49,8 +49,8 @@ $mesg = '';
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -63,8 +63,8 @@ if (!$sortfield)
 		$sortfield = "f.datef";
 		$sortorder = "DESC";
 	} else {
-	    $sortfield = "p.ref";
-	    $sortorder = "ASC";
+		$sortfield = "p.ref";
+		$sortorder = "ASC";
 	}
 }
 
@@ -100,18 +100,18 @@ $picto = 'margin';
 
 print '<form method="post" name="sel" action="'.$_SERVER['PHP_SELF'].'">';
 
-dol_fiche_head($head, 'productMargins', $titre, 0, $picto);
+print dol_get_fiche_head($head, 'productMargins', $titre, 0, $picto);
 
 print '<table class="border centpercent">';
 
 if ($id > 0) {
-    print '<tr><td class="titlefield">'.$langs->trans('ChooseProduct/Service').'</td>';
-    print '<td class="maxwidthonsmartpone" colspan="4">';
-    $form->select_produits($id, 'id', '', 20, 0, 1, 2, '', 1, array(), 0, 'All');
-    print '</td></tr>';
+	print '<tr><td class="titlefield">'.$langs->trans('ChooseProduct/Service').'</td>';
+	print '<td class="maxwidthonsmartpone" colspan="4">';
+	$form->select_produits($id, 'id', '', 20, 0, 1, 2, '', 1, array(), 0, 'All');
+	print '</td></tr>';
 
-    if (!$sortorder) $sortorder = "DESC";
-    if (!$sortfield) $sortfield = "f.datef";
+	if (!$sortorder) $sortorder = "DESC";
+	if (!$sortfield) $sortfield = "f.datef";
 } else {
 	print '<tr><td class="titlefield">'.$langs->trans('ChooseProduct/Service').'</td>';
 	print '<td class="maxwidthonsmartphone" colspan="4">';
@@ -170,7 +170,7 @@ if (!empty($conf->global->DISPLAY_MARK_RATES)) {
 
 print "</table>";
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '</form>';
 
@@ -224,15 +224,15 @@ if ($result)
 
 	//var_dump($conf->global->MARGIN_TYPE);
 	if ($conf->global->MARGIN_TYPE == "1")
-	    $labelcostprice = 'BuyingPrice';
+		$labelcostprice = 'BuyingPrice';
 	else // value is 'costprice' or 'pmp'
-	    $labelcostprice = 'CostPrice';
+		$labelcostprice = 'CostPrice';
 
 	$moreforfilter = '';
 
 	$i = 0;
-    print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<div class="div-table-responsive">';
+	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre">';
 	if ($id > 0) {
@@ -287,15 +287,15 @@ if ($result)
 				print '<td>';
 				if ($objp->rowid > 0)
 				{
-    				$product_static->type = $objp->fk_product_type;
-    				$product_static->id = $objp->rowid;
-    				$product_static->ref = $objp->ref;
-    				$product_static->label = $objp->label;
-    				$product_static->entity = $objp->pentity;
-    				$text = $product_static->getNomUrl(1);
-    				print $text .= ' - '.$objp->label;
+					$product_static->type = $objp->fk_product_type;
+					$product_static->id = $objp->rowid;
+					$product_static->ref = $objp->ref;
+					$product_static->label = $objp->label;
+					$product_static->entity = $objp->pentity;
+					$text = $product_static->getNomUrl(1);
+					print $text .= ' - '.$objp->label;
 				} else {
-				    print img_object('', 'product').' '.$langs->trans("NotPredefinedProducts");
+					print img_object('', 'product').' '.$langs->trans("NotPredefinedProducts");
 				}
 				print "</td>\n";
 				//print "<td>".$product_static->getNomUrl(1)."</td>\n";

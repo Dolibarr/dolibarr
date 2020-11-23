@@ -22,8 +22,11 @@
  *	\brief      Page to list surveys
  */
 
-define("NOLOGIN", 1); // This means this output page does not require to be logged.
-define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+if (!defined('NOLOGIN'))		define("NOLOGIN", 1); // This means this output page does not require to be logged.
+if (!defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
+if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
@@ -66,7 +69,7 @@ if (GETPOST('ajoutcomment', 'alpha'))
 
 	$error = 0;
 
-	$comment = GETPOST("comment", 'none');
+	$comment = GETPOST("comment", 'restricthtml');
 	$comment_user = GETPOST('commentuser', 'nohtml');
 
 	if (!$comment)
@@ -390,7 +393,7 @@ if ($object->format == "D")
 	for ($i = 0; isset($toutsujet[$i]); $i++)
 	{
 		$tmp = explode('@', $toutsujet[$i]);
-		print '<td class="sujet">'.$tmp[0].'</td>'."\n";
+		print '<td class="sujet">'.dol_escape_htmltag($tmp[0]).'</td>'."\n";
 	}
 
 	print '</tr>'."\n";
@@ -548,7 +551,7 @@ while ($compteur < $num)
 			{
 				print '<td class="casevide">';
 				print '<input type="hidden" name="idtomodify'.$compteur.'" value="'.$obj->id_users.'">';
-				print '<input type="submit" class="button" name="validermodifier'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '<input type="submit" class="button button-save" name="validermodifier'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 				print '</td>'."\n";
 			}
 		}
@@ -733,7 +736,7 @@ if ($comments)
 if ($object->allow_comments) {
 	print '<div class="addcomment"><span class="opacitymedium">'.$langs->trans("AddACommentForPoll")."</span><br>\n";
 
-	print '<textarea name="comment" rows="'.ROWS_2.'" class="quatrevingtpercent">'.dol_escape_htmltag(GETPOST('comment', 'none'), 0, 1).'</textarea><br>'."\n";
+	print '<textarea name="comment" rows="'.ROWS_2.'" class="quatrevingtpercent">'.dol_escape_htmltag(GETPOST('comment', 'restricthtml'), 0, 1).'</textarea><br>'."\n";
 	print $langs->trans("Name").': ';
 	print '<input type="text" name="commentuser" maxlength="64" value="'.GETPOST('commentuser', 'nohtml').'"> &nbsp; '."\n";
 	print '<input type="submit" class="button" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";

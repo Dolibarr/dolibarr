@@ -31,10 +31,8 @@ TicketDictType=Billett - Typer
 TicketDictCategory=Billett - Grupper
 TicketDictSeverity=Billett - Alvorlighetsgrader
 TicketDictResolution=Billett - Løsning
-TicketTypeShortBUGSOFT=Programvarefeil
-TicketTypeShortBUGHARD=Hardwarefeil
-TicketTypeShortCOM=Prisforespørsel
 
+TicketTypeShortCOM=Prisforespørsel
 TicketTypeShortHELP=Be om funksjonell hjelp
 TicketTypeShortISSUE=Problem eller feil
 TicketTypeShortREQUEST=Endring- eller forbedringsforespørsel
@@ -44,7 +42,7 @@ TicketTypeShortOTHER=Annet
 TicketSeverityShortLOW=Lav
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Høy
-TicketSeverityShortBLOCKING=Kritisk / Blokkering
+TicketSeverityShortBLOCKING=Kritisk, blokkerende
 
 ErrorBadEmailAddress=Felt '%s' er feil
 MenuTicketMyAssign=Mine supportsedler

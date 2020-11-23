@@ -46,7 +46,7 @@ $langs->loadLangs(array("recruitment", "companies"));
 // Get parameters
 $id = GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -95,7 +95,7 @@ if ($id > 0 || !empty($ref))
 
 	$head = recruitmentCandidaturePrepareHead($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("RecruitmentCandidature"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'note', $langs->trans("RecruitmentCandidature"), -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------
@@ -155,7 +155,7 @@ if ($id > 0 || !empty($ref))
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

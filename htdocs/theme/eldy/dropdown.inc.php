@@ -217,6 +217,7 @@ a.top-menu-dropdown-link {
 }
 
 .dropdown-menu > .user-footer {
+    border-top: 1px solid #f0f0f0;
     background-color: #f9f9f9;
     padding: 10px;
 }
@@ -225,8 +226,9 @@ a.top-menu-dropdown-link {
     clear: both;
 }
 
-
 .dropdown-menu > .bookmark-footer{
+    border-top: 1px solid #f0f0f0;
+    background-color: #f9f9f9;
     padding: 10px;
 }
 
@@ -239,7 +241,6 @@ a.top-menu-dropdown-link {
 }
 
 .dropdown-menu > .bookmark-body, .dropdown-body{
-    padding: 10px 0;
     overflow-y: auto;
     max-height: 60vh ; /* fallback for browsers without support for calc() */
     max-height: calc(90vh - 110px) ;
@@ -333,7 +334,7 @@ a.top-menu-dropdown-link {
     display: block !important;
     box-sizing: border-box;
     width: 100%;
-    padding: .25rem 1.5rem .25rem 1rem;
+    padding: .3em 1.5em .4em 1em;
     clear: both;
     font-weight: 400;
     color: #212529  !important;
@@ -410,8 +411,13 @@ a.top-menu-dropdown-link {
  * QUICK ADD
  */
 #topmenu-quickadd-dropdown .dropdown-menu {
-	width: 300px !important;
+	width: 310px !important;
 	color: #444;
+}
+
+.quickadd-body.dropdown-body {
+	padding: unset;
+	padding-top: 15px;
 }
 
 .quickadd-header {
@@ -448,8 +454,8 @@ div.quickadd a:hover, div.quickadd a:active {
 }
 
 div.quickaddblock {
-	width: 80px;
-	display: block ruby;
+	width: 95px;
+	height: 80px;
 }
 
 div.quickaddblock:hover,

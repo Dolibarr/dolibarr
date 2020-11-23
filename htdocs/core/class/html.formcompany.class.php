@@ -186,13 +186,13 @@ class FormCompany extends Form
 	{
 		global $user, $langs;
 
-		print '<form method="post" action="' . $page . '">';
+		print '<form method="post" action="'.$page.'">';
 		print '<input type="hidden" name="action" value="setprospectcontactlevel">';
-		print '<input type="hidden" name="token" value="' . newToken() . '">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$sql = "SELECT code, label";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "c_prospectcontactlevel";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_prospectcontactlevel";
 		$sql .= " WHERE active > 0";
 		$sql .= " ORDER BY sortorder";
 		$resql = $this->db->query($sql);
@@ -220,8 +220,8 @@ class FormCompany extends Form
 			print Form::selectarray($htmlname, $options, $selected);
 		}
 		else dol_print_error($this->db);
-		if (!empty($htmlname) && $user->admin) print ' ' . info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-		print '<input type="submit" class="button valignmiddle" value="' . $langs->trans("Modify") . '">';
+		if (!empty($htmlname) && $user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 		print '</form>';
 	}
 
@@ -375,7 +375,7 @@ class FormCompany extends Form
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			print '<select class="flat" name="'.$htmlname.'">';
+			print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num)
@@ -407,6 +407,7 @@ class FormCompany extends Form
 				}
 			}
 			print '</select>';
+			print ajax_combobox($htmlname);
 		} else {
 			dol_print_error($this->db);
 		}
@@ -516,7 +517,7 @@ class FormCompany extends Form
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_country as c";
 		$sql .= " WHERE f.fk_pays=c.rowid";
 		$sql .= " AND f.active = 1 AND c.active = 1";
-		if ($country_codeid) $sql .= " AND c.code = '".$country_codeid."'";
+		if ($country_codeid) $sql .= " AND c.code = '".$this->db->escape($country_codeid)."'";
 		if ($filter) $sql .= " ".$filter;
 		$sql .= " ORDER BY c.code";
 
@@ -1003,6 +1004,7 @@ class FormCompany extends Form
 			}
 		}
 		$out .= '</select>';
+		$out .= ajax_combobox($htmlidname);
 
 		return $out;
 	}

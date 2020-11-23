@@ -317,7 +317,7 @@ class Task extends CommonObject
 					$this->task_parent_position = $obj->task_parent_position;
 				}
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				$this->fetch_optionals();
 			}
 
@@ -648,7 +648,7 @@ class Task extends CommonObject
 		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
 		$result = '';
-		$label = '<u>'.$langs->trans("ShowTask").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("ShowTask").'</u>';
 		if (!empty($this->ref))
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (!empty($this->label))
@@ -673,7 +673,9 @@ class Task extends CommonObject
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip"';
+			$linkclose .= ' class="classfortooltip nowraponall"';
+		} else {
+			$linkclose .= ' class="nowraponall"';
 		}
 
 		$linkstart = '<a href="'.$url.'"';
@@ -1675,7 +1677,7 @@ class Task extends CommonObject
 				$clone_task->note_public = '';
 			} else {
 				$this->db->begin();
-				$res = $clone_task->update_note(dol_html_entity_decode($clone_task->note_public, ENT_QUOTES), '_public');
+				$res = $clone_task->update_note(dol_html_entity_decode($clone_task->note_public, ENT_QUOTES | ENT_HTML5), '_public');
 				if ($res < 0)
 				{
 					$this->error .= $clone_task->error;
@@ -1686,7 +1688,7 @@ class Task extends CommonObject
 				}
 
 				$this->db->begin();
-				$res = $clone_task->update_note(dol_html_entity_decode($clone_task->note_private, ENT_QUOTES), '_private');
+				$res = $clone_task->update_note(dol_html_entity_decode($clone_task->note_private, ENT_QUOTES | ENT_HTML5), '_private');
 				if ($res < 0)
 				{
 					$this->error .= $clone_task->error;
@@ -1702,7 +1704,7 @@ class Task extends CommonObject
 			{
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-				//retreive project origin ref to know folder to copy
+				//retrieve project origin ref to know folder to copy
 				$projectstatic = new Project($this->db);
 				$projectstatic->fetch($ori_project_id);
 				$ori_project_ref = $projectstatic->ref;
@@ -1900,7 +1902,7 @@ class Task extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'nodefault';
 
-			if ($this->modelpdf) {
+			if (!empty($this->modelpdf)) {
 				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->PROJECT_TASK_ADDON_PDF)) {
 				$modele = $conf->global->PROJECT_TASK_ADDON_PDF;

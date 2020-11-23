@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('contracts', 'products', 'companies', 'compta'));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
@@ -363,17 +363,15 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 $arrayofmassactions = array(
 	'generate_doc'=>$langs->trans("ReGeneratePDF"),
 	'builddoc'=>$langs->trans("PDFMerge"),
-    'presend'=>$langs->trans("SendByMail"),
+	'presend'=>$langs->trans("SendByMail"),
 );
 if ($user->rights->contrat->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-$newcardbutton = '';
-if ($user->rights->contrat->creer)
-{
-    $newcardbutton .= dolGetButtonTitle($langs->trans('NewContractSubscription'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contrat/card.php?action=create');
-}
+$url = DOL_URL_ROOT.'/contrat/card.php?action=create';
+if (!empty($socid)) $url .= '&socid='.$socid;
+$newcardbutton = dolGetButtonTitle($langs->trans('NewContractSubscription'), '', 'fa fa-plus-circle', $url, '', $user->rights->contrat->creer);
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -418,7 +416,7 @@ if ($user->rights->user->user->lire)
  	$moreforfilter .= '</div>';
 }
 // If the user can view categories of products
-if ($conf->categorie->enabled && ($user->rights->produit->lire || $user->rights->service->lire))
+if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire && ($user->rights->produit->lire || $user->rights->service->lire))
 {
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
@@ -581,13 +579,13 @@ $parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['c.datec']['checked'])) {
-    print_liste_field_titre($arrayfields['c.datec']['label'], $_SERVER["PHP_SELF"], "c.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	print_liste_field_titre($arrayfields['c.datec']['label'], $_SERVER["PHP_SELF"], "c.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 }
 if (!empty($arrayfields['c.tms']['checked'])) {
-    print_liste_field_titre($arrayfields['c.tms']['label'], $_SERVER["PHP_SELF"], "c.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	print_liste_field_titre($arrayfields['c.tms']['label'], $_SERVER["PHP_SELF"], "c.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 }
 if (!empty($arrayfields['lower_planned_end_date']['checked'])) {
-    print_liste_field_titre($arrayfields['lower_planned_end_date']['label'], $_SERVER["PHP_SELF"], "lower_planned_end_date", "", $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre($arrayfields['lower_planned_end_date']['label'], $_SERVER["PHP_SELF"], "lower_planned_end_date", "", $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['status']['checked'])) {
 	print_liste_field_titre($staticcontratligne->LibStatut(0, 3, -1, 'class="nochangebackground"'), '', '', '', '', 'width="16"');
@@ -636,7 +634,7 @@ while ($i < min($num, $limit))
 
 	if (!empty($arrayfields['c.ref_customer']['checked']))
 	{
-	    print '<td>'.$contracttmp->getFormatedCustomerRef($obj->ref_customer).'</td>';
+		print '<td>'.$contracttmp->getFormatedCustomerRef($obj->ref_customer).'</td>';
 	}
 	if (!empty($arrayfields['c.ref_supplier']['checked']))
 	{

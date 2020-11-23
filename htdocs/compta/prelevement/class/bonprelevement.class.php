@@ -205,9 +205,9 @@ class BonPrelevement extends CommonObject
 			$sql .= " FROM  ".MAIN_DB_PREFIX."prelevement_lignes";
 			$sql .= " WHERE fk_prelevement_bons = ".$this->id;
 			$sql .= " AND fk_soc =".$client_id;
-			$sql .= " AND code_banque ='".$code_banque."'";
-			$sql .= " AND code_guichet ='".$code_guichet."'";
-			$sql .= " AND number ='".$number."'";
+			$sql .= " AND code_banque = '".$this->db->escape($code_banque)."'";
+			$sql .= " AND code_guichet = '".$this->db->escape($code_guichet)."'";
+			$sql .= " AND number = '".$this->db->escape($number)."'";
 
 			$resql = $this->db->query($sql);
 			if ($resql)
@@ -234,10 +234,10 @@ class BonPrelevement extends CommonObject
 			$sql .= ", ".$client_id;
 			$sql .= ", '".$this->db->escape($client_nom)."'";
 			$sql .= ", '".price2num($amount)."'";
-			$sql .= ", '".$code_banque."'";
-			$sql .= ", '".$code_guichet."'";
-			$sql .= ", '".$number."'";
-			$sql .= ", '".$number_key."'";
+			$sql .= ", '".$this->db->escape($code_banque)."'";
+			$sql .= ", '".$this->db->escape($code_guichet)."'";
+			$sql .= ", '".$this->db->escape($number)."'";
+			$sql .= ", '".$this->db->escape($number_key)."'";
 			$sql .= ")";
 
 			if ($this->db->query($sql))
@@ -449,7 +449,7 @@ class BonPrelevement extends CommonObject
 				$message = $langs->trans("InfoCreditMessage", $this->ref, dol_print_date($date, 'dayhour'));
 
 				//Add payment of withdrawal into bank
-				$bankaccount = $conf->global->PRELEVEMENT_ID_BANKACCOUNT;
+				$bankaccount = ($this->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
 				$facs = array();
 				$amounts = array();
 				$amountsperthirdparty = array();
@@ -507,7 +507,6 @@ class BonPrelevement extends CommonObject
 					}
 
 					$paiement->num_payment = $this->ref; // Set ref of direct debit note
-					$paiement->num_paiement = $this->ref; // For backward compatibility
 					$paiement->id_prelevement = $this->id;
 
 					$paiement_id = $paiement->create($user); // This use ->paiementid, that is ID of payment mode
@@ -1303,7 +1302,7 @@ class BonPrelevement extends CommonObject
 
 		$result = '';
 
-		$labeltoshow = 'Withdraw';
+		$labeltoshow = 'PaymentByDirectDebit';
 		if ($this->type == 'bank-transfer') {
 			$labeltoshow = 'PaymentByBankTransfer';
 		}
@@ -1381,7 +1380,7 @@ class BonPrelevement extends CommonObject
 		$result = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
-		$sql .= " WHERE rowid = '".$rowid."'";
+		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		if ($this->db->query($sql))
 		{
@@ -1405,7 +1404,7 @@ class BonPrelevement extends CommonObject
 		$result = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
-		$sql .= " WHERE fk_user=".$user." AND fk_action='".$action."'";
+		$sql .= " WHERE fk_user=".$user." AND fk_action='".$this->db->escape($action)."'";
 
 		if ($this->db->query($sql))
 		{
@@ -1434,7 +1433,7 @@ class BonPrelevement extends CommonObject
 			$now = dol_now();
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_user, fk_soc, fk_contact, fk_action)";
-			$sql .= " VALUES (".$db->idate($now).",".$user.", 'NULL', 'NULL', '".$action."')";
+			$sql .= " VALUES ('".$this->db->idate($now)."', ".$user.", 'NULL', 'NULL', '".$this->db->escape($action)."')";
 
 			dol_syslog("adnotiff: ".$sql);
 			if ($this->db->query($sql))
@@ -1700,7 +1699,7 @@ class BonPrelevement extends CommonObject
 				fputs($this->file, '				<Id>'.$CrLf);
 				fputs($this->file, '				    <PrvtId>'.$CrLf);
 				fputs($this->file, '					<Othr>'.$CrLf);
-				fputs($this->file, '						<Id>'.$conf->global->PRELEVEMENT_ICS.'</Id>'.$CrLf);
+				fputs($this->file, '						<Id>'.$conf->global->PAYMENTBYBANKTRANSFER_ICS.'</Id>'.$CrLf);
 				fputs($this->file, '					</Othr>'.$CrLf);
 				fputs($this->file, '				    </PrvtId>'.$CrLf);
 				fputs($this->file, '				</Id>'.$CrLf);
@@ -2115,7 +2114,8 @@ class BonPrelevement extends CommonObject
 		$dateTime_YMDHMS = dol_print_date($ladate, '%Y-%m-%dT%H:%M:%S');
 
 		// Get data of bank account
-		$id = $configuration->global->PRELEVEMENT_ID_BANKACCOUNT;
+		//$id = $configuration->global->PRELEVEMENT_ID_BANKACCOUNT;
+		$id = ($type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
 		$account = new Account($this->db);
 		if ($account->fetch($id) > 0)
 		{

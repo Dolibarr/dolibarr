@@ -90,16 +90,18 @@ if ($user->socid > 0 && empty($id_journal))
 
 $error = 0;
 
-$year_current = strftime("%Y", dol_now());
-$pastmonth = strftime("%m", dol_now()) - 1;
-$pastmonthyear = $year_current;
-if ($pastmonth == 0) {
-	$pastmonth = 12;
-	$pastmonthyear--;
-}
-
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
+
+if (empty($date_startmonth) || empty($date_endmonth))
+{
+	// Period by default on transfer
+	$dates = getDefaultDatesForTransfer();
+	$date_start = $dates['date_start'];
+	$date_end = $dates['date_end'];
+	$pastmonthyear = $dates['pastmonthyear'];
+	$pastmonth = $dates['pastmonth'];
+}
 
 if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))) // We define date_start and date_end, only if we did not submit the form
 {
@@ -235,7 +237,7 @@ if ($result) {
 		);
 
 		// Set accountancy code for user
-		$compta_user = (!empty($obj->accountancy_code) ? $obj->accountancy_code : $account_employee);
+		$compta_user = (!empty($obj->accountancy_code) ? $obj->accountancy_code : '');
 
 		$tabuser[$obj->rowid] = array(
 				'id' => $obj->userid,
@@ -337,7 +339,7 @@ if ($result) {
 					$tabpay[$obj->rowid]["soclib"] = $chargestatic->getNomUrl(1, 30);
 					$tabpay[$obj->rowid]["paymentscid"] = $chargestatic->id;
 
-					// Retreive the accounting code of the social contribution of the payment from link of payment.
+					// Retrieve the accounting code of the social contribution of the payment from link of payment.
 					// Note: We have the social contribution id, it can be faster to get accounting code from social contribution id.
 					$sqlmid = 'SELECT cchgsoc.accountancy_code';
 					$sqlmid .= " FROM ".MAIN_DB_PREFIX."c_chargesociales cchgsoc";
@@ -392,9 +394,9 @@ if ($result) {
 					$tabpay[$obj->rowid]["paymentvariousid"] = $paymentvariousstatic->id;
 					$paymentvariousstatic->fetch($paymentvariousstatic->id);
 					$account_various = (!empty($paymentvariousstatic->accountancy_code) ? $paymentvariousstatic->accountancy_code : 'NotDefined'); // NotDefined is a reserved word
-                    $account_subledger = (!empty($paymentvariousstatic->subledger_account) ? $paymentvariousstatic->subledger_account : ''); // NotDefined is a reserved word
-                    $tabpay[$obj->rowid]["account_various"] = $account_various;
-                    $tabtp[$obj->rowid][$account_subledger] += $obj->amount;
+					$account_subledger = (!empty($paymentvariousstatic->subledger_account) ? $paymentvariousstatic->subledger_account : ''); // NotDefined is a reserved word
+					$tabpay[$obj->rowid]["account_various"] = $account_various;
+					$tabtp[$obj->rowid][$account_subledger] += $obj->amount;
 				} elseif ($links[$key]['type'] == 'payment_loan') {
 					$paymentloanstatic->id = $links[$key]['url_id'];
 					$paymentloanstatic->ref = $links[$key]['url_id'];
@@ -666,7 +668,7 @@ if (!$error && $action == 'writebookkeeping') {
 							$bookkeeping->label_compte = $accountingaccount->label;
 						} elseif ($tabtype[$key] == 'payment_various') {
 							$bookkeeping->subledger_account = $k;
-                            $bookkeeping->subledger_label = $tabcompany[$key]['name'];
+							$bookkeeping->subledger_label = $tabcompany[$key]['name'];
 							$bookkeeping->numero_compte = $tabpay[$key]["account_various"];
 
 							$accountingaccount->fetch(null, $bookkeeping->numero_compte, true);
@@ -852,7 +854,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 				print '"'.$date.'"'.$sep;
 				print '"'.$val["type_payment"].'"'.$sep;
 				print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
-				print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
+				print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
 				print "  ".$sep;
 				print '"'.$reflabel.'"'.$sep;
 				print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
@@ -880,7 +882,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 					print '"'.$key.'"'.$sep;
 					print '"'.$date.'"'.$sep;
 					print '"'.$val["type_payment"].'"'.$sep;
-					print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
+					print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 					if ($tabtype[$key] == 'payment_supplier') {
 						print '"'.$conf->global->ACCOUNTING_ACCOUNT_SUPPLIER.'"'.$sep;
 					} elseif ($tabtype[$key] == 'payment') {
@@ -890,7 +892,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 					} elseif ($tabtype[$key] == 'payment_salary') {
 						print '"'.$conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT.'"'.$sep;
 					} else {
-						print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
+						print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 					}
 					print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
 					print '"'.$reflabel.'"'.$sep;
@@ -913,7 +915,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 					print '"'.$date.'"'.$sep;
 					print '"'.$val["type_payment"].'"'.$sep;
 					print '"'.length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE).'"'.$sep;
-					print '"'.length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE).'"'.$sep;
+					print '"'.length_accounta($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE).'"'.$sep;
 					print "".$sep;
 					print '"'.$reflabel.'"'.$sep;
 					print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
@@ -952,8 +954,8 @@ if (empty($action) || $action == 'view') {
 	$description .= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 
 	$listofchoices = array('notyet'=>$langs->trans("NotYetInGeneralLedger"), 'already'=>$langs->trans("AlreadyInGeneralLedger"));
-    $period = $form->selectDate($date_start ? $date_start : -1, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end ? $date_end : -1, 'date_end', 0, 0, 0, '', 1, 0);
-    $period .= ' -  '.$langs->trans("JournalizationInLedgerStatus").' '.$form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
+	$period = $form->selectDate($date_start ? $date_start : -1, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end ? $date_end : -1, 'date_end', 0, 0, 0, '', 1, 0);
+	$period .= ' -  '.$langs->trans("JournalizationInLedgerStatus").' '.$form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
 
 	$varlink = 'id_journal='.$id_journal;
 
@@ -968,8 +970,9 @@ if (empty($action) || $action == 'view') {
 		$obj = $db->fetch_object($resql);
 		if ($obj->nb > 0)
 		{
-			print '<br>'.img_warning().' '.$langs->trans("TheJournalCodeIsNotDefinedOnSomeBankAccount");
+			print '<br><div class="warning">'.img_warning().' '.$langs->trans("TheJournalCodeIsNotDefinedOnSomeBankAccount");
 			print ' : '.$langs->trans("AccountancyAreaDescBank", 9, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("BankAccounts").'</strong>');
+			print '</div>';
 		}
 	} else dol_print_error($db);
 
@@ -988,11 +991,11 @@ if (empty($action) || $action == 'view') {
 	if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL) && $in_bookkeeping == 'notyet') print '<input type="button" class="butAction" name="exportcsv" value="'.$langs->trans("ExportDraftJournal").'" onclick="launch_export();" />';
 
 	if (($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "") || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1'
-	    || ($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "") || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1') {
-	    print '<input type="button" class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="'.$langs->trans("WriteBookKeeping").'" />';
+		|| ($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "") || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1') {
+		print '<input type="button" class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="'.$langs->trans("WriteBookKeeping").'" />';
 	} else {
-	    if ($in_bookkeeping == 'notyet') print '<input type="button" class="butAction" name="writebookkeeping" value="'.$langs->trans("WriteBookKeeping").'" onclick="writebookkeeping();" />';
-        else print '<a class="butActionRefused classfortooltip" name="writebookkeeping">'.$langs->trans("WriteBookKeeping").'</a>';
+		if ($in_bookkeeping == 'notyet') print '<input type="button" class="butAction" name="writebookkeeping" value="'.$langs->trans("WriteBookKeeping").'" onclick="writebookkeeping();" />';
+		else print '<a class="butActionRefused classfortooltip" name="writebookkeeping">'.$langs->trans("WriteBookKeeping").'</a>';
 	}
 
 	print '</div>';
@@ -1112,7 +1115,7 @@ if (empty($action) || $action == 'view') {
 					if ($tabtype[$key] == 'payment_vat')			$account_ledger = $conf->global->ACCOUNTING_VAT_PAY_ACCOUNT;
 					if ($tabtype[$key] == 'member')					$account_ledger = $conf->global->ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT;
 					if ($tabtype[$key] == 'payment_various')	    $account_ledger = $tabpay[$key]["account_various"];
-					$accounttoshow = length_accounta($account_ledger);
+					$accounttoshow = length_accountg($account_ledger);
 					if (empty($accounttoshow) || $accounttoshow == 'NotDefined')
 					{
 						if ($tabtype[$key] == 'unknown')
