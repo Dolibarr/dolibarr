@@ -1772,7 +1772,7 @@ if ($action == 'create' && $usercancreate)
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);
 	print $hookmanager->resPrint;
 	if (empty($reshook)) {
-		if (!empty($conf->global->THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_ORDER)) {
+		if (!empty($conf->global->THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_ORDER) && !empty($soc->id)) {
 			// copy from thirdparty
 			$tpExtrafields = new Extrafields($db);
 			$tpExtrafieldLabels = $tpExtrafields->fetch_name_optionals_label($soc->table_element);
