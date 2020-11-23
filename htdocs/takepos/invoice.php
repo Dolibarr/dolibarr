@@ -698,7 +698,7 @@ if ($action == "order" and $placeid != 0)
 		$existing = $c->containing($line->fk_product, Categorie::TYPE_PRODUCT, 'id');
 		$result = array_intersect($catsprinter1, $existing);
 		$count = count($result);
-		if (!$line->fk_product) $count++;
+		if (!$line->fk_product) $count++; // Print Free-text item (Unassigned printer) to Printer 1
 		if ($count > 0) {
 			$linestoprint++;
 			$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='1' where rowid=".$line->id; //Set to print on printer 1
