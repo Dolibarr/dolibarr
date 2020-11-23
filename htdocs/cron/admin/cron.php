@@ -35,7 +35,7 @@ $langs->loadLangs(array('admin', 'cron'));
 if (!$user->admin)
 	accessforbidden();
 
-$actionsave = GETPOST("save");
+$actionsave = GETPOST("save", 'alphanohtml');
 
 // Save parameters
 if (!empty($actionsave))
@@ -74,6 +74,8 @@ print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="po
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print dol_get_fiche_head($head, 'setup', $langs->trans("Module2300Name"), -1, 'cron');
+
+print '<span class="opacitymedium">'.$langs->trans('CronInfo').'</span><br>';
 
 print "<br>\n";
 
@@ -116,7 +118,7 @@ print '</form>';
 
 print '<br><br><br>';
 
-print $langs->trans("UseMenuModuleToolsToAddCronJobs", dol_buildpath('/cron/list.php?leftmenu=admintools', 1)).'<br>';
+//print $langs->trans("UseMenuModuleToolsToAddCronJobs", dol_buildpath('/cron/list.php?leftmenu=admintools', 1)).'<br>';
 if (!empty($conf->global->CRON_WARNING_DELAY_HOURS)) print info_admin($langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS)).'<br>';
 
 print '<br>';

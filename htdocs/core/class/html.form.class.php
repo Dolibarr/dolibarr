@@ -6259,7 +6259,7 @@ class Form
 	 *  Note: Do not apply langs->trans function on returned content, content may be entity encoded twice.
 	 *
 	 *	@param	string			$htmlname			Name of html select area. Must start with "multi" if this is a multiselect
-	 *	@param	array			$array				Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>...))
+	 *	@param	array			$array				Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
 	 *	@param	string|string[]	$id					Preselected key or preselected keys for multiselect
 	 *	@param	int|string		$show_empty			0 no empty value allowed, 1 or string to add an empty value into list (key is -1 and value is '' or '&nbsp;' if 1, key is -1 and value is text if string), <0 to add an empty value with key that is this value.
 	 *	@param	int				$key_in_label		1 to show key into label with format "[key] value"
@@ -6331,10 +6331,14 @@ class Form
 
 			foreach ($array as $key => $tmpvalue)
 			{
-				if (is_array($tmpvalue)) $value = $tmpvalue['label'];
-				else $value = $tmpvalue;
-
-				$disabled = ''; $style = '';
+				if (is_array($tmpvalue)) {
+					$value = $tmpvalue['label'];
+					$disabled = empty($tmpvalue['disabled']) ? '' : ' disabled';
+					$style = empty($tmpvalue['css']) ? ' class="'.$tmpvalue['css'].'"' : '';
+				} else {
+					$value = $tmpvalue;
+					$disabled = ''; $style = '';
+				}
 				if (!empty($disablebademail))
 				{
 					if (($disablebademail == 1 && !preg_match('/&lt;.+@.+&gt;/', $value))
@@ -7489,10 +7493,11 @@ class Form
 	 * 		@param	string		$imagesize		    'mini', 'small' or '' (original)
 	 *      @param  int         $addlinktofullsize  Add link to fullsize image
 	 *      @param  int         $cache              1=Accept to use image in cache
-	 *      @param	string		$forcecapture		Force parameter capture on HTML input file element to ask a smartphone to allow to open camera to take photo. Auto if empty.
+	 *      @param	string		$forcecapture		'', 'user' or 'environment'. Force parameter capture on HTML input file element to ask a smartphone to allow to open camera to take photo. Auto if ''.
+	 *      @param	int			$noexternsourceoverwrite	No overwrite image with extern source (like 'gravatar' or other module)
 	 * 	  	@return string    						HTML code to output photo
 	 */
-	public static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '')
+	public static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '', $noexternsourceoverwrite = 0)
 	{
 		global $conf, $langs;
 
@@ -7569,18 +7574,15 @@ class Form
 		{
 			if ($file && file_exists($dir."/".$file))
 			{
-				if ($addlinktofullsize)
-				{
+				if ($addlinktofullsize) {
 					$urladvanced = getAdvancedPreviewUrl($modulepart, $originalfile, 0, '&entity='.$entity);
 					if ($urladvanced) $ret .= '<a href="'.$urladvanced.'">';
 					else $ret .= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
 				}
 				$ret .= '<img alt="Photo" class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').' photologo'.(preg_replace('/[^a-z]/i', '_', $file)).'" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
 				if ($addlinktofullsize) $ret .= '</a>';
-			} elseif ($altfile && file_exists($dir."/".$altfile))
-			{
-				if ($addlinktofullsize)
-				{
+			} elseif ($altfile && file_exists($dir."/".$altfile)) {
+				if ($addlinktofullsize) {
 					$urladvanced = getAdvancedPreviewUrl($modulepart, $originalfile, 0, '&entity='.$entity);
 					if ($urladvanced) $ret .= '<a href="'.$urladvanced.'">';
 					else $ret .= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
@@ -7589,8 +7591,7 @@ class Form
 				if ($addlinktofullsize) $ret .= '</a>';
 			} else {
 				$nophoto = '/public/theme/common/nophoto.png';
-				if (in_array($modulepart, array('userphoto', 'contact', 'memberphoto')))	// For module that are "physical" users
-				{
+				if (in_array($modulepart, array('userphoto', 'contact', 'memberphoto'))) {	// For module that are "physical" users
 					if ($modulepart == 'memberphoto' && strpos($object->morphy, 'mor') !== false) {
 						$nophoto = '/public/theme/common/company.png';
 					} else {
@@ -7600,11 +7601,8 @@ class Form
 					}
 				}
 
-				if (!empty($conf->gravatar->enabled) && $email)
-				{
-					/**
-					 * @see https://gravatar.com/site/implement/images/php/
-					 */
+				if (!empty($conf->gravatar->enabled) && $email && empty($noexternsourceoverwrite)) {
+					// see https://gravatar.com/site/implement/images/php/
 					global $dolibarr_main_url_root;
 					$ret .= '<!-- Put link to gravatar -->';
 					//$defaultimg=urlencode(dol_buildpath($nophoto,3));

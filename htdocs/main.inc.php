@@ -1694,6 +1694,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				else $text .= sprintf($helpbaseurl, $helppage);
 				$text .= '">';
 				$text .= '<span class="fa fa-question-circle atoplogin valignmiddle'.($helppresent ? ' '.$helppresent : '').'"></span>';
+				if ($helppresent) $text .= '<span class="fa fa-circle helppresentcircle"></span>';
 				$text .= '</a>';
 				$toprightmenu .= $form->textwithtooltip('', $title, 2, 1, $text, 'login_block_elem', 2);
 			}

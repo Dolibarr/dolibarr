@@ -272,7 +272,7 @@ class ProductFournisseur extends Product
 		}
 
 		// Multicurrency
-		if ($conf->multicurrency->enabled) {
+		if (!empty($conf->multicurrency->enabled)) {
 			if (empty($multicurrency_tx)) $multicurrency_tx = 1;
 			if (empty($multicurrency_buyprice)) $multicurrency_buyprice = 0;
 
@@ -559,7 +559,7 @@ class ProductFournisseur extends Product
 				$this->fourn_multicurrency_code        = $obj->multicurrency_code;
 				if ($conf->barcode->enabled) {
 					$this->fourn_barcode = $obj->barcode; // deprecated
-					$this->fourn_fk_barcode_type = $obj->barcode; // deprecated
+					$this->fourn_fk_barcode_type = $obj->fk_barcode_type; // deprecated
 					$this->supplier_barcode = $obj->barcode;
 					$this->supplier_fk_barcode_type = $obj->fk_barcode_type;
 				}
@@ -674,8 +674,8 @@ class ProductFournisseur extends Product
 				}
 
 				if ($conf->barcode->enabled) {
-					$prodfourn->barcode = $record["barcode"];
-					$prodfourn->fk_barcode_type = $record["fk_barcode_type"];
+					$prodfourn->supplier_barcode = $record["barcode"];
+					$prodfourn->supplier_fk_barcode_type = $record["fk_barcode_type"];
 				}
 
 				if (!empty($conf->dynamicprices->enabled) && !empty($prodfourn->fk_supplier_price_expression)) {

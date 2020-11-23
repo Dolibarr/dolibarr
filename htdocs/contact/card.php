@@ -887,8 +887,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print '</div>';
 
 			print "</form>";
-		} elseif ($action == 'edit' && !empty($id))
-		{
+		} elseif ($action == 'edit' && !empty($id)) {
 			/*
              * Fiche en mode edition
              */

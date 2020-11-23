@@ -65,6 +65,10 @@ if (GETPOST('action', 'alpha') == 'set')
 	}
 }
 
+if ($conf->global->TAKEPOS_ORDER_NOTES == 1) {
+	$extrafields = new ExtraFields($db);
+	$extrafields->addExtraField('order_notes', 'Order notes', 'varchar', 0, 255, 'facturedet', 0, 0, '', '', 0, '', 0, 1);
+}
 
 /*
  * View
