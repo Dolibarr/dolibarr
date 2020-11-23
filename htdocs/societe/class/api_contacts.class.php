@@ -95,7 +95,7 @@ class Contacts extends DolibarrApi
 		{
 			$this->contact->load_ref_elements();
 		}
-		
+
 		if ($includeroles)
 		{
 			$this->contact->fetchRoles();
@@ -259,7 +259,7 @@ class Contacts extends DolibarrApi
 					if ($includecount)
 					{
 						$contact_static->load_ref_elements();
-					}			
+					}
 					if ($includeroles)
 					{
 						$contact_static->fetchRoles();
