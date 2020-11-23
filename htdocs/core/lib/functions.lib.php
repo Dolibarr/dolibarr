@@ -4783,6 +4783,9 @@ function price2num($amount, $rounding = '', $alreadysqlnb = 0)
 
 		// Convert amount to format with dolibarr dec and thousand (this is because PHP convert a number
 		// to format defined by LC_NUMERIC after a calculation and we want source format to be like defined by Dolibarr setup.
+		if ($thousand == '.') {
+			$amount = str_replace($thousand, '', $amount); // Replace of thousand before test of is_numeric to avoid pb if thousand is .
+		}
 		if (is_numeric($amount))
 		{
 			// We put in temps value of decimal ("0.00001"). Works with 0 and 2.0E-5 and 9999.10
@@ -4792,9 +4795,11 @@ function price2num($amount, $rounding = '', $alreadysqlnb = 0)
 			$amount = number_format($amount, $nbofdec, $dec, $thousand);
 		}
 		//print "QQ".$amount.'<br>';
-
+		
 		// Now make replace (the main goal of function)
-		if ($thousand != ',' && $thousand != '.') $amount = str_replace(',', '.', $amount); // To accept 2 notations for french users
+		if ($thousand != ',' && $thousand != '.') {
+			$amount = str_replace(',', '.', $amount); // To accept 2 notations for french users
+		}
 		$amount = str_replace(' ', '', $amount); // To avoid spaces
 		$amount = str_replace($thousand, '', $amount); // Replace of thousand before replace of dec to avoid pb if thousand is .
 		$amount = str_replace($dec, '.', $amount);
