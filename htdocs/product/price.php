@@ -279,10 +279,11 @@ if (empty($reshook))
 		}
 		elseif (!$error)
 		{
+			var_dump(GETPOST('price', 'alpha'));
 			$newprice = price2num(GETPOST('price', 'alpha'));
+			var_dump($newprice);exit;
 			$newprice_min = price2num(GETPOST('price_min', 'alpha'));
 			$newpricebase = GETPOST('price_base_type', 'alpha');
-
 			$tva_tx_txt = GETPOST('tva_tx', 'alpha'); // tva_tx can be '8.5'  or  '8.5*'  or  '8.5 (XXX)' or '8.5* (XXX)'
 
 			$tva_tx = $tva_tx_txt;

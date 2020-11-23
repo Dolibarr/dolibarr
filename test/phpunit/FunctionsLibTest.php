@@ -1225,6 +1225,15 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
      */
     public function testDolPrice2Num()
     {
+    	global $langs, $conf;
+
+    	$oldlangs = $langs;
+
+    	$newlangs = new Translate('', $conf);
+    	$newlangs->setDefaultLang('en_US');
+    	$newlangs->load("main");
+    	$langs = $newlangs;
+
         $this->assertEquals(1000, price2num('1 000.0'));
         $this->assertEquals(1000, price2num('1 000', 'MT'));
         $this->assertEquals(1000, price2num('1 000', 'MU'));
@@ -1239,9 +1248,35 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(1000.13, price2num('1 000.125456', 'MT'));
         $this->assertEquals(1000.12546, price2num('1 000.125456', 'MU'), "Test MU");
 
+        $this->assertEquals(1, price2num('1.000'), 'Test 1.000 give 1 with english language');
+
         // Text can't be converted
         $this->assertEquals('12.4$', price2num('12.4$'));
         $this->assertEquals('12r.4$', price2num('12r.4$'));
+
+        // For spanish language
+        $newlangs2 = new Translate('', $conf);
+        $newlangs2->setDefaultLang('es_ES');
+        $newlangs2->load("main");
+        $langs = $newlangs2;
+
+        $this->assertEquals(1000, price2num('1.000'), 'Test 1.000 give 1000 with spanish language');
+        $this->assertEquals(1000, price2num('1 000'), 'Test 1 000 give 1000 with spanish language');
+        $this->assertEquals(1234, price2num('1.234'), 'Test 1.234 give 1234 with spanish language');
+        $this->assertEquals(1.234, price2num('1,234'), 'Test 1,234 give 1.234 with spanish language');
+
+        // For french language
+        $newlangs3 = new Translate('', $conf);
+        $newlangs3->setDefaultLang('fr_FR');
+        $newlangs3->load("main");
+        $langs = $newlangs3;
+
+        $this->assertEquals(1, price2num('1.000'), 'Test 1.000 give 1 with french language');
+        $this->assertEquals(1000, price2num('1 000'), 'Test 1.000 give 1 with french language');
+        $this->assertEquals(1.234, price2num('1.234'), 'Test 1.234 give 1.234 with french language');
+        $this->assertEquals(1.234, price2num('1,234'), 'Test 1,234 give 1.234 with french language');
+
+        $langs = $oldlangs;
 
         return true;
     }
