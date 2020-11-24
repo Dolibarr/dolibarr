@@ -87,6 +87,11 @@ class box_produits extends ModeleBoxes
 		if ($user->rights->produit->lire || $user->rights->service->lire)
 		{
 			$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.fk_price_expression, p.entity";
+			$sql .= ", p.accountancy_code_sell";
+			$sql .= ", p.accountancy_code_sell_intra";
+			$sql .= ", p.accountancy_code_sell_export";
+			$sql .= ", p.accountancy_code_buy";
+			$sql .= ', p.barcode';
 			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 			$sql.= ' WHERE p.entity IN ('.getEntity($productstatic->element).')';
 			if (empty($user->rights->produit->lire)) $sql.=' AND p.fk_product_type != 0';
@@ -133,6 +138,13 @@ class box_produits extends ModeleBoxes
                     $productstatic->type = $objp->fk_product_type;
                     $productstatic->label = $objp->label;
 					$productstatic->entity = $objp->entity;
+					$productstatic->status = $objp->tosell;
+					$productstatic->status_buy = $objp->tobuy;
+					$productstatic->barcode = $objp->barcode;
+					$productstatic->accountancy_code_sell = $objp->accountancy_code_sell;
+					$productstatic->accountancy_code_sell_intra = $objp->accountancy_code_sell_intra;
+					$productstatic->accountancy_code_sell_export = $objp->accountancy_code_sell_export;
+					$productstatic->accountancy_code_buy = $objp->accountancy_code_buy;
 
 					$this->info_box_contents[$line][] = array(
                         'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
