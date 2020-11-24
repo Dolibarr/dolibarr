@@ -131,8 +131,6 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '')
 	{
-		global $db;
-
 		$obj_ret = array();
 
 		// case of external user, we force socids
@@ -294,7 +292,7 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function merge($id, $idtodelete)
 	{
-		global $db, $hookmanager;
+		global $hookmanager;
 
 		$error = 0;
 
@@ -829,8 +827,6 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getOutStandingProposals($id, $mode = 'customer')
 	{
-		$obj_ret = array();
-
 		if (!DolibarrApiAccess::$user->rights->societe->lire) {
 			throw new RestException(401);
 		}
@@ -873,8 +869,6 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getOutStandingOrder($id, $mode = 'customer')
 	{
-		$obj_ret = array();
-
 		if (!DolibarrApiAccess::$user->rights->societe->lire) {
 			throw new RestException(401);
 		}
@@ -916,8 +910,6 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getOutStandingInvoices($id, $mode = 'customer')
 	{
-		$obj_ret = array();
-
 		if (!DolibarrApiAccess::$user->rights->societe->lire) {
 			throw new RestException(401);
 		}
@@ -959,8 +951,6 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getSalesRepresentatives($id, $mode = 0)
 	{
-		$obj_ret = array();
-
 		if (!DolibarrApiAccess::$user->rights->societe->lire) {
 			throw new RestException(401);
 		}
@@ -1139,8 +1129,6 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getCompanyBankAccount($id)
 	{
-		global $db, $conf;
-
 		if (!DolibarrApiAccess::$user->rights->facture->lire) {
 			throw new RestException(401);
 		}
@@ -1330,58 +1318,54 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function generateBankAccountDocument($id, $companybankid = null, $model = 'sepamandate')
 	{
-		global $conf;
+		global $conf, $langs;
 
-		$this->langs->loadLangs(array("main", "dict", "commercial", "products", "companies", "banks", "bills", "withdrawals"));
+		$langs->loadLangs(array("main", "dict", "commercial", "products", "companies", "banks", "bills", "withdrawals"));
 
-		$this->company->fetch($id);
+		if ($this->company->fetch($id) <= 0) {
+			throw new RestException(404, 'Thirdparty not found');
+		}
 
-		$action = 'builddoc';
-		if (!DolibarrApiAccess::$user->rights->societe->creer)
+		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
+		}
 
 		$this->company->setDocModel(DolibarrApiAccess::$user, $model);
 
 		$this->company->fk_bank = $this->company->fk_account;
 
-		$outputlangs = $this->langs;
+		$outputlangs = $langs;
 		$newlang = '';
 
-		if ($this->conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-		if ($this->conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->company->thirdparty->default_lang)) $newlang = $this->company->thirdparty->default_lang; // for proposal, order, invoice, ...
-		if ($this->conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->company->default_lang)) $newlang = $this->company->default_lang; // for thirdparty
+		//if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+			if (isset($this->company->thirdparty->default_lang)) {
+				$newlang = $this->company->thirdparty->default_lang; // for proposal, order, invoice, ...
+			} elseif (isset($this->company->default_lang)) {
+				$newlang = $this->company->default_lang; // for thirdparty
+			}
+		}
 		if (!empty($newlang)) {
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
 
-		// To be sure vars is defined
-		$hidedetails = $hidedesc = $hideref = 0;
-		$moreparams = null;
-		if (empty($hidedetails)) $hidedetails = 0;
-		if (empty($hidedesc)) $hidedesc = 0;
-		if (empty($hideref)) $hideref = 0;
-		if (empty($moreparams)) $moreparams = null;
-
-
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib";
 		if ($id) $sql .= " WHERE fk_soc  = ".$id." ";
-		if ($companybankid) $sql .= " AND id = ".$companybankid."";
+		if ($companybankid) $sql .= " AND rowid = ".$companybankid."";
 
 		$i = 0;
 		$accounts = array();
 
 		$result = $this->db->query($sql);
-		if ($result)
-		{
-			if ($result && $this->db->num_rows($result) == 0) {
+		if ($result) {
+			if ($this->db->num_rows($result) == 0) {
 				throw new RestException(404, 'Bank account not found');
 			}
 
 			$num = $this->db->num_rows($result);
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
 
 				$account = new CompanyBankAccount($this->db);
@@ -1391,20 +1375,17 @@ class Thirdparties extends DolibarrApi
 				$i++;
 			}
 		} else {
-			throw new RestException(404, 'Bank account not found');
+			throw new RestException(500, 'Sql error '.$this->db->lasterror());
 		}
 
 		$moreparams = array(
-			'use_companybankid'=>$accounts[0]->id,
-			'force_dir_output'=>$this->conf->societe->multidir_output[$this->company->entity].'/'.dol_sanitizeFileName($this->company->id)
+			'use_companybankid' => $accounts[0]->id,
+			'force_dir_output' => $conf->societe->multidir_output[$this->company->entity].'/'.dol_sanitizeFileName($this->company->id)
 		);
 
-		$result = 0;
+		$result = $this->company->generateDocument($model, $outputlangs, 0, 0, 0, $moreparams);
 
-		$result = $this->company->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
-
-		if ($result > 0)
-		{
+		if ($result > 0) {
 			return array("success" => $result);
 		} else {
 			throw new RestException(500);
@@ -1425,8 +1406,6 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getSocieteAccounts($id, $site = null)
 	{
-		global $db, $conf;
-
 		if (!DolibarrApiAccess::$user->rights->societe->lire) {
 			throw new RestException(401);
 		}
@@ -1502,8 +1481,6 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function createSocieteAccount($id, $request_data = null)
 	{
-		global $db;
-
 		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
@@ -1561,8 +1538,6 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function putSocieteAccount($id, $site, $request_data = null)
 	{
-		global $db;
-
 		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
@@ -1644,8 +1619,6 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function patchSocieteAccount($id, $site, $request_data = null)
 	{
-		global $db;
-
 		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
@@ -1697,8 +1670,6 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function deleteSocieteAccount($id, $site)
 	{
-		global $db;
-
 		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
@@ -1733,8 +1704,6 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function deleteSocieteAccounts($id)
 	{
-		global $db;
-
 		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
