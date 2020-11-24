@@ -299,7 +299,11 @@ $formother = new FormOther($db);
 
 //$help_url="EN:Module_MyObject|FR:Module_MyObject_FR|ES:Módulo_MyObject";
 $help_url = '';
-$text = $langs->trans("ListOfUsers");
+if ($contextpage == 'employeelist' && $search_employee == 1) {
+	$text = $langs->trans("ListOfEmployees");
+} else {
+	$text = $langs->trans("ListOfUsers");
+}
 
 $user2 = new User($db);
 
