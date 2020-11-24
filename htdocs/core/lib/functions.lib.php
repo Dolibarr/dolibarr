@@ -4748,19 +4748,19 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  *	Function to use on each input amount before any numeric test or database insert. A better name for this function
  *  should be roundtext2num().
  *
- *	@param	float	$amount			Amount to convert/clean or round
- *	@param	string	$rounding		''=No rounding
- * 									'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
- *									'MT'=Round to Max for totals with Tax (MAIN_MAX_DECIMALS_TOT)
- *									'MS'=Round to Max for stock quantity (MAIN_MAX_DECIMALS_STOCK)
- *                                  'CR'=Currency rate
- *									Numeric = Nb of digits for rounding
- * 	@param	int		$alreadysqlnb	Put 1 if you know that content is already universal format number
- *	@return	string					Amount with universal numeric format (Example: '99.99999').
- *									If conversion fails, it return text unchanged if $rounding = '' or '0' if $rounding is defined.
- *									If amount is null or '', it returns '' if $rounding = '' or '0' if $rounding is defined..
+ *	@param	string|float	$amount			Amount to convert/clean or round
+ *	@param	string			$rounding		''=No rounding
+ * 											'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
+ *											'MT'=Round to Max for totals with Tax (MAIN_MAX_DECIMALS_TOT)
+ *											'MS'=Round to Max for stock quantity (MAIN_MAX_DECIMALS_STOCK)
+ *      		                            'CR'=Currency rate
+ *											Numeric = Nb of digits for rounding
+ * 	@param	int				$alreadysqlnb	Put 1 if you know that content is already universal format number
+ *	@return	string							Amount with universal numeric format (Example: '99.99999').
+ *											If conversion fails, it return text unchanged if $rounding = '' or '0' if $rounding is defined.
+ *											If amount is null or '', it returns '' if $rounding = '' or '0' if $rounding is defined..
  *
- *	@see    price()					Opposite function of price2num
+ *	@see    price()							Opposite function of price2num
  */
 function price2num($amount, $rounding = '', $alreadysqlnb = 0)
 {
@@ -4777,15 +4777,15 @@ function price2num($amount, $rounding = '', $alreadysqlnb = 0)
 	//print "amount=".$amount." html=".$form." trunc=".$trunc." nbdecimal=".$nbdecimal." dec='".$dec."' thousand='".$thousand."'<br>";
 
 	// Convert value to universal number format (no thousand separator, '.' as decimal separator)
-	if ($alreadysqlnb != 1)	// If not a PHP number or unknown, we change format
-	{
-		//print 'PP'.$amount.' - '.$dec.' - '.$thousand.' - '.intval($amount).'<br>';
+	if ($alreadysqlnb != 1) {	// If not a PHP number or unknown, we change or clean format
+		print 'PP'.$amount.' - '.$dec.' - '.$thousand.' - '.intval($amount).'<br>';
 
+		if ($thousand == '.' && preg_match('/\.(\d\d\d)$/', (string) $amount)) {	// It means the . is used as a thousand separator, not as a decimal separator
+			$amount = str_replace($thousand, '', $amount); // Replace of thousand before test of is_numeric to avoid pb if thousand is . and there is 3 numbers after
+			print 'TTTT'.$amount;
+		}
 		// Convert amount to format with dolibarr dec and thousand (this is because PHP convert a number
 		// to format defined by LC_NUMERIC after a calculation and we want source format to be like defined by Dolibarr setup.
-		if ($thousand == '.') {
-			$amount = str_replace($thousand, '', $amount); // Replace of thousand before test of is_numeric to avoid pb if thousand is .
-		}
 		if (is_numeric($amount))
 		{
 			// We put in temps value of decimal ("0.00001"). Works with 0 and 2.0E-5 and 9999.10
@@ -4795,7 +4795,7 @@ function price2num($amount, $rounding = '', $alreadysqlnb = 0)
 			$amount = number_format($amount, $nbofdec, $dec, $thousand);
 		}
 		//print "QQ".$amount.'<br>';
-		
+
 		// Now make replace (the main goal of function)
 		if ($thousand != ',' && $thousand != '.') {
 			$amount = str_replace(',', '.', $amount); // To accept 2 notations for french users
