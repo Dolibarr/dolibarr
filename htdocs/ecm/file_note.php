@@ -39,7 +39,9 @@ $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
 
-if (!$user->rights->ecm->setup) accessforbidden();
+if (!$user->rights->ecm->setup) {
+	accessforbidden();
+}
 
 // Get parameters
 $socid = GETPOST("socid", "int");
@@ -53,12 +55,18 @@ $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "ASC";
-if (!$sortfield) $sortfield = "label";
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
+if (!$sortfield) {
+	$sortfield = "label";
+}
 
 $section = GETPOST("section", 'alpha');
 if (!$section) {
@@ -83,13 +91,9 @@ $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 
 $fullpath = $conf->ecm->dir_output.'/'.$relativepath.$urlfile;
 
-$file = new stdClass();
-$file->section_id = $ecmdir->id;
-$file->label = $urlfile;
-
 $relativetodocument = 'ecm/'.$relativepath; // $relativepath is relative to ECM dir, we need relative to document
-$filepath = $relativepath.$file->label;
-$filepathtodocument = $relativetodocument.$file->label;
+$filepath = $relativepath.$urlfile;
+$filepathtodocument = $relativetodocument.$urlfile;
 
 // Try to load object from index
 $object = new ECMFiles($db);
@@ -120,7 +124,9 @@ llxHeader('', $langs->trans('EcmFiles'));
 
 $form = new Form($db);
 
-$head = ecm_file_prepare_head($file);
+$object->section_id = $ecmdir->id;
+$object->label = $urlfile;
+$head = ecm_file_prepare_head($object);
 
 print dol_get_fiche_head($head, 'note', $langs->trans("File"), -1, 'generic');
 
@@ -132,8 +138,7 @@ $i = 0;
 while ($tmpecmdir && $result > 0) {
 	$tmpecmdir->ref = $tmpecmdir->label;
 	$s = $tmpecmdir->getNomUrl(1).$s;
-	if ($tmpecmdir->fk_parent)
-	{
+	if ($tmpecmdir->fk_parent) {
 		$s = ' -> '.$s;
 		$result = $tmpecmdir->fetch($tmpecmdir->fk_parent);
 	} else {
@@ -145,8 +150,11 @@ while ($tmpecmdir && $result > 0) {
 $urlfiletoshow = preg_replace('/\.noexe$/', '', $urlfile);
 
 $s = img_picto('', 'object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a> -> '.$s.' -> ';
-if ($action == 'edit') $s .= '<input type="text" name="label" class="quatrevingtpercent" value="'.$urlfiletoshow.'">';
-else $s .= $urlfiletoshow;
+if ($action == 'edit') {
+	$s .= '<input type="text" name="label" class="quatrevingtpercent" value="'.$urlfiletoshow.'">';
+} else {
+	$s .= $urlfiletoshow;
+}
 
 $linkback = '';
 if ($backtopage) {
