@@ -59,7 +59,6 @@ $search_ref = GETPOST("search_ref", 'alpha');
 $search_barcode = GETPOST("search_barcode", 'alpha');
 $search_label = GETPOST("search_label", 'alpha');
 $search_type = GETPOST("search_type", 'int');
-$search_sale = GETPOST("search_sale", 'int');
 $search_vatrate = GETPOST("search_vatrate", 'alpha');
 $searchCategoryProductOperator = (GETPOST('search_category_product_operator', 'int') ? GETPOST('search_category_product_operator', 'int') : 0);
 $searchCategoryProductList = GETPOST('search_category_product_list', 'array');
@@ -278,10 +277,10 @@ if (empty($reshook))
 		$searchCategoryProductList = array();
 		$search_tosell = "";
 		$search_tobuy = "";
+		$search_tobatch = '';
 		$search_country = "";
 		$search_state = "";
 		$search_vatrate = "";
-		$search_tobatch = '';
 		$search_finished = '';
 		//$search_type='';						// There is 2 types of list: a list of product and a list of services. No list with both. So when we clear search criteria, we must keep the filter on type.
 
@@ -373,8 +372,9 @@ if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTE
 if ($search_ref)     $sql .= natural_search('p.ref', $search_ref);
 if ($search_label)   $sql .= natural_search('p.label', $search_label);
 if ($search_barcode) $sql .= natural_search('p.barcode', $search_barcode);
-if (isset($search_tosell) && dol_strlen($search_tosell) > 0 && $search_tosell != -1) $sql .= " AND p.tosell = ".$db->escape($search_tosell);
-if (isset($search_tobuy) && dol_strlen($search_tobuy) > 0 && $search_tobuy != -1)   $sql .= " AND p.tobuy = ".$db->escape($search_tobuy);
+if (isset($search_tosell) && dol_strlen($search_tosell) > 0 && $search_tosell != -1) $sql .= " AND p.tosell = ".((int) $search_tosell);
+if (isset($search_tobuy) && dol_strlen($search_tobuy) > 0 && $search_tobuy != -1)   $sql .= " AND p.tobuy = ".((int) $search_tobuy);
+if (isset($search_tobatch) && dol_strlen($search_tobatch) > 0 && $search_tobatch != -1)   $sql .= " AND p.tobatch = ".((int) $search_tobatch);
 if ($search_vatrate) $sql .= natural_search('p.tva_tx', $search_vatrate);
 if (dol_strlen($canvas) > 0)                    $sql .= " AND p.canvas = '".$db->escape($canvas)."'";
 if ($catid > 0)     $sql .= " AND cp.fk_categorie = ".$catid;
@@ -403,8 +403,7 @@ if ($searchCategoryProductOperator == 1) {
 		$sql .= " AND (".implode(' AND ', $searchCategoryProductSqlList).")";
 	}
 }
-if ($fourn_id > 0)  $sql .= " AND pfp.fk_soc = ".$fourn_id;
-if ($search_tobatch != '' && $search_tobatch >= 0)   $sql .= " AND p.tobatch = ".$db->escape($search_tobatch);
+if ($fourn_id > 0)  $sql .= " AND pfp.fk_soc = ".((int) $fourn_id);
 if ($search_country)     $sql .= " AND p.fk_country = ".$search_country;
 if ($search_state)     $sql .= " AND p.fk_state = ".$search_state;
 if ($search_finished >= 0 && $search_finished !== '') $sql .= " AND p.finished = ".$search_finished;
@@ -505,16 +504,16 @@ if ($resql)
 	if ($search_label) $param .= "&search_label=".urlencode($search_label);
 	if ($search_tosell != '') $param .= "&search_tosell=".urlencode($search_tosell);
 	if ($search_tobuy != '') $param .= "&search_tobuy=".urlencode($search_tobuy);
+	if ($search_tobatch) $param = "&search_tobatch=".urlencode($search_tobatch);
 	if ($search_country != '') $param .= "&search_country=".urlencode($search_country);
 	if ($search_state != '') $param .= "&search_state=".urlencode($search_state);
-	if ($search_vatrate) $sql .= natural_search('p.tva_tx', $search_vatrate);
+	if ($search_vatrate) $param = "&search_vatrate=".urlencode($search_vatrate);
 	if ($fourn_id > 0) $param .= ($fourn_id ? "&fourn_id=".$fourn_id : "");
 	//if ($seach_categ) $param.=($search_categ?"&search_categ=".urlencode($search_categ):"");
 	if ($show_childproducts) $param .= ($show_childproducts ? "&search_show_childproducts=".urlencode($show_childproducts) : "");
 	if ($type != '') $param .= '&type='.urlencode($type);
 	if ($search_type != '') $param .= '&search_type='.urlencode($search_type);
 	if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
-	if ($search_tobatch) $param = "&search_ref_supplier=".urlencode($search_ref_supplier);
 	if ($search_accountancy_code_sell) $param = "&search_accountancy_code_sell=".urlencode($search_accountancy_code_sell);
 	if ($search_accountancy_code_sell_intra) $param = "&search_accountancy_code_sell_intra=".urlencode($search_accountancy_code_sell_intra);
 	if ($search_accountancy_code_sell_export) $param = "&search_accountancy_code_sell_export=".urlencode($search_accountancy_code_sell_export);
@@ -826,7 +825,7 @@ if ($resql)
 	// Stock
 	if (!empty($arrayfields['stock_virtual']['checked'])) print '<td class="liste_titre">&nbsp;</td>';
 	// To batch
-	if (!empty($arrayfields['p.tobatch']['checked'])) print '<td class="liste_titre center">'.$form->selectyesno($search_tobatch, '', '', '', 1).'</td>';
+	if (!empty($arrayfields['p.tobatch']['checked'])) print '<td class="liste_titre center">'.$form->selectyesno('search_tobatch', $search_tobatch, 1, false, 1).'</td>';
 	// Country
 	if (!empty($arrayfields['p.fk_country']['checked'])) print '<td class="liste_titre center">'.$form->select_country($search_country, 'search_country', '', 0).'</td>';
 	// State
