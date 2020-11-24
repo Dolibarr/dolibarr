@@ -4778,11 +4778,10 @@ function price2num($amount, $rounding = '', $alreadysqlnb = 0)
 
 	// Convert value to universal number format (no thousand separator, '.' as decimal separator)
 	if ($alreadysqlnb != 1) {	// If not a PHP number or unknown, we change or clean format
-		print 'PP'.$amount.' - '.$dec.' - '.$thousand.' - '.intval($amount).'<br>';
+		//print 'PP'.$amount.' - '.$dec.' - '.$thousand.' - '.intval($amount).'<br>';
 
 		if ($thousand == '.' && preg_match('/\.(\d\d\d)$/', (string) $amount)) {	// It means the . is used as a thousand separator, not as a decimal separator
 			$amount = str_replace($thousand, '', $amount); // Replace of thousand before test of is_numeric to avoid pb if thousand is . and there is 3 numbers after
-			print 'TTTT'.$amount;
 		}
 		// Convert amount to format with dolibarr dec and thousand (this is because PHP convert a number
 		// to format defined by LC_NUMERIC after a calculation and we want source format to be like defined by Dolibarr setup.
