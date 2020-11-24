@@ -678,7 +678,10 @@ if ($action == "order" and $placeid != 0)
 		$printer = new dolReceiptPrinter($db);
 	}
 
-	$headerorder = '<html><br><b>'.$langs->trans('Place').' '.$place.'<br><table width="65%"><thead><tr><th class="left">'.$langs->trans("Label").'</th><th class="right">'.$langs->trans("Qty").'</th></tr></thead><tbody>';
+	$sql = "SELECT label FROM ".MAIN_DB_PREFIX."takepos_floor_tables where rowid=".((int) $place);
+    $resql = $db->query($sql);
+    $row = $db->fetch_object($resql);
+	$headerorder = '<html><br><b>'.$langs->trans('Place').' '.$row->label.'<br><table width="65%"><thead><tr><th class="left">'.$langs->trans("Label").'</th><th class="right">'.$langs->trans("Qty").'</th></tr></thead><tbody>';
 	$footerorder = '</tbody></table>'.dol_print_date(dol_now(), 'dayhour').'<br></html>';
 	$order_receipt_printer1 = "";
 	$order_receipt_printer2 = "";
@@ -695,11 +698,15 @@ if ($action == "order" and $placeid != 0)
 		$existing = $c->containing($line->fk_product, Categorie::TYPE_PRODUCT, 'id');
 		$result = array_intersect($catsprinter1, $existing);
 		$count = count($result);
+		if (!$line->fk_product) $count++; // Print Free-text item (Unassigned printer) to Printer 1
 		if ($count > 0) {
 			$linestoprint++;
 			$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='1' where rowid=".$line->id; //Set to print on printer 1
 			$db->query($sql);
-			$order_receipt_printer1 .= '<tr>'.$line->product_label.'<td class="right">'.$line->qty;
+			$order_receipt_printer1 .= '<tr><td class="left">';
+			if ($line->fk_product) $order_receipt_printer1 .= $line->product_label;
+			else $order_receipt_printer1 .= $line->description;
+			$order_receipt_printer1 .= '</td><td class="right">'.$line->qty;
 			if (!empty($line->array_options['options_order_notes'])) $order_receipt_printer1 .= "<br>(".$line->array_options['options_order_notes'].")";
 			$order_receipt_printer1 .= '</td></tr>';
 		}
