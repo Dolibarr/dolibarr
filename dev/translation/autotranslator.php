@@ -21,8 +21,8 @@
  *		\ingroup    dev
  * 		\brief      This script uses google language ajax api as the translator engine
  *                  The main translator function can be found at:
- *                  defunct -http://code.google.com/intl/fr/apis/language/translate/overview.html- 
- *                  defunct -http://translate.google.com/translate_tools- 
+ *                  defunct -http://code.google.com/intl/fr/apis/language/translate/overview.html-
+ *                  defunct -http://translate.google.com/translate_tools-
  *                  https://code.google.com/apis/console
  */
 
