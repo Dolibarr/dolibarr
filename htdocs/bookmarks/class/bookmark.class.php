@@ -71,10 +71,16 @@ class Bookmark extends CommonObject
 	 */
 	public $datec;
 
+	/**
+	 * @var string url
+	 */
 	public $url;
 
 	public $target; // 0=replace, 1=new window
 
+	/**
+	 * @var string title
+	 */
 	public $title;
 
 	public $position;
