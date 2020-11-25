@@ -362,7 +362,6 @@ if (empty($reshook))
 			}
 		}
 	}
-
 }
 
 
