@@ -1320,7 +1320,7 @@ class BonPrelevement extends CommonObject
 
 		$url = DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id;
 		if ($this->type == 'bank-transfer') {
-			$url = DOL_URL_ROOT.'/compta/paymentbybanktransfer/card.php?id='.$this->id;
+			$url = DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id;
 		}
 
 		if ($option != 'nolink')
