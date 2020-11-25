@@ -127,7 +127,6 @@ class Contacts extends DolibarrApi
 			$result = $this->contact->initAsSpecimen();
 		} else {
 			$result = $this->contact->fetch('', '', '', $email);
-			$this->contact->fetchRoles();
 		}
 
 		if (!$result)
