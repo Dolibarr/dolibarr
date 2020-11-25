@@ -1151,7 +1151,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		}
 
 		// Units
-		if ($conf->global->PRODUCT_USE_UNITS)
+		if (!empty($conf->global->PRODUCT_USE_UNITS))
 		{
 			print '<tr><td>'.$langs->trans('DefaultUnitToShow').'</td>';
 			print '<td colspan="3">';
@@ -1610,7 +1610,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				}
 			}
 			// Units
-			if ($conf->global->PRODUCT_USE_UNITS)
+			if (!empty($conf->global->PRODUCT_USE_UNITS))
 			{
 				print '<tr><td>'.$langs->trans('DefaultUnitToShow').'</td>';
 				print '<td colspan="3">';

@@ -189,7 +189,7 @@ $coldisplay++;
 	</td>
 
 	<?php
-	if ($conf->global->PRODUCT_USE_UNITS)
+	if (!empty($conf->global->PRODUCT_USE_UNITS))
 	{
 		$coldisplay++;
 		print '<td class="left">';
