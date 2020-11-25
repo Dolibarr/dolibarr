@@ -1282,31 +1282,59 @@ if ($resql)
 
 
 		// Multiprices
-		if ($conf->global->PRODUIT_MULTIPRICES) {
+		if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
+		    if (! isset($productpricescache)) {
+		        $productpricescache=array();
+		    }
+		    if (! isset($productpricescache[$obj->rowid])) {
+		        $productpricescache[$obj->rowid] = array();
+		    }
+
+		    if ($obj->tosell)
+		    {
+		        // Make 1 request for all price levels (without filter on price_level) and saved result into an cache array
+		        // then reuse the cache array if we need prices for other price levels
+		        $sqlp = "SELECT p.rowid, p.fk_product, p.price, p.price_ttc, p.price_level, p.date_price, p.price_base_type";
+		        $sqlp .= " FROM ".MAIN_DB_PREFIX."product_price as p";
+		        $sqlp .= " WHERE fk_product = ".$obj->rowid;
+		        $sqlp .= " ORDER BY p.date_price DESC, p.rowid DESC, p.price_level ASC";
+		        $resultp = $db->query($sqlp);
+		        if ($resultp)
+		        {
+		            $nump = $db->num_rows($resultp);
+		            $j = 0;
+		            while ($j < $nump)
+		            {
+		                $objp = $db->fetch_object($resultp);
+
+		                if (empty($productpricescache[$obj->rowid][$objp->price_level]))
+		                {
+		                    $productpricescache[$obj->rowid][$objp->price_level]['price'] = $objp->price;
+		                    $productpricescache[$obj->rowid][$objp->price_level]['price_ttc'] = $objp->price_ttc;
+		                    $productpricescache[$obj->rowid][$objp->price_level]['price_base_type'] = $objp->price_base_type;
+		                }
+
+		                $j++;
+		            }
+
+		            $db->free($resultp);
+		        } else {
+		            dol_print_error($db);
+		        }
+		    }
+
 			foreach ($arraypricelevel as $key => $value)
 			{
 				if (!empty($arrayfields['p.sellprice'.$key]['checked']))
 				{
 					print '<td class="right nowraponall">';
-					if ($obj->tosell)
+					if (! empty($productpricescache[$obj->rowid]))
 					{
-						// TODO Make 1 request for all price levels (without filter on price_level) and saved result into an cache array
-						// then reuse the cache array if we need prices for other price levels
-						$resultp = "SELECT p.rowid, p.fk_product, p.price, p.price_ttc, p.price_level, p.date_price";
-						$resultp .= " FROM ".MAIN_DB_PREFIX."product_price as p";
-						$resultp .= " WHERE fk_product = ".$obj->rowid;
-						$resultp .= " AND p.price_level = ".$key;
-						$resultp .= " ORDER BY p.date_price DESC, p.rowid DESC, p.price_level ASC";
-						$resultp = $db->query($resultp);
-						if ($resultp)
-						{
-							$objp = $db->fetch_object($resultp);
-								if ($obj->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
-							else print price($objp->price).' '.$langs->trans("HT");
-								$db->free($resultp);
-						} else {
-							dol_print_error($db);
-						}
+					    if ($productpricescache[$obj->rowid][$key]['price_base_type'] == 'TTC') {
+					        print price($productpricescache[$obj->rowid][$key]['price_ttc']).' '.$langs->trans("TTC");
+					    } else {
+					        print price($productpricescache[$obj->rowid][$key]['price']).' '.$langs->trans("HT");
+					    }
 					}
 					print '</td>';
 					if (!$i) $totalarray['nbfield']++;

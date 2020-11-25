@@ -632,8 +632,10 @@ if ($object->id > 0)
 	print "\n<div class=\"tabsAction\">\n";
 
 	$buttonlabel = $langs->trans("MakeWithdrawRequest");
+	$user_perms=$user->rights->prelevement->bons->creer;
 	if ($type == 'bank-transfer') {
 		$buttonlabel = $langs->trans("MakeBankTransferOrder");
+		$user_perms=$user->rights->paymentbybanktransfer->create;
 	}
 
 	// Add a transfer request
@@ -641,7 +643,7 @@ if ($object->id > 0)
 	{
 		if ($resteapayer > 0)
 		{
-			if ($user->rights->prelevement->bons->creer)
+			if ($user_perms)
 			{
 				$remaintopaylesspendingdebit = $resteapayer - $pending;
 

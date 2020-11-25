@@ -1,4 +1,4 @@
-Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: Dolibarr
 Upstream-Contact: Laurent Destailleur <eldy@users.sourceforge.net>
 Source: https://www.dolibarr.org/files/stable/standard/
@@ -38,6 +38,7 @@ Copyright: 2002-2009, Rodolphe Quiedeville   <rodolphe@quiedeville.org>
            2011, Herve Prot                  <herve.prot@symeos.com>
            2011, Remy Younes                 <ryounes@gmail.com>
            2012-2013, Christophe Battarel         <christophe.battarel@altairis.fr>
+	   
 License: GPL-3+
  This program is free software; you can redistribute it
  and/or modify it under the terms of the GNU General Public
@@ -56,7 +57,9 @@ License: GPL-3+
  .
  On Debian systems, the full text of the GNU General Public
  License version 3 can be found in the file
- `/usr/share/common-licenses/GPL-3'.
+ '/usr/share/common-licenses/GPL-3'.
+
+------------------------------------------------------------
 
 Files: htdocs/includes/adodbtime/*
 Copyright: 2003-2005, John Lim
@@ -79,6 +82,9 @@ License: BSD-3-Clause
 Comment:
  Those files are not shipped in the binary package since we use
  the library as packaged in "libphp-adodb".
+
+
+------------------------------------------------------------
 
 Files: htdocs/includes/ckeditor/*
 Copyright: 2003-2012 CKSource - Frederico Knabben
@@ -108,6 +114,9 @@ Comment:
  ckeditor_basic_source.js, ckeditor_source.js and files into directory _source.
  Those files are not shipped in the binary package since we use the
  library as packaged in "ckeditor".
+
+
+------------------------------------------------------------
 
 Files: htdocs/includes/fonts/*
 Copyright: 2003, Bitstream Inc
@@ -158,7 +167,10 @@ License: other
 Comments:
  Those files are not shipped in the binary package as we
  configure Dolibarr to use Dejavu fonts from "fonts-dejavu-core".
-  
+
+
+------------------------------------------------------------
+
 Files: doc/images/*
 Copyright: Laurent Destailleur 
 License: CC-BY-SA-3.0
@@ -174,7 +186,10 @@ License: CC-BY-SA-3.0
  distribute the resulting work only under the same, similar or a compatible
  license.
  .
- For more information, see http://creativecommons.org/licenses/by-sa/3.0/
+ For more information, see https://creativecommons.org/licenses/by-sa/3.0/
+
+
+------------------------------------------------------------
 
 Files: htdocs/includes/fpdfi/*
 Copyright: 2004-2011 Setasign - Jan Slabon
@@ -196,7 +211,10 @@ License: GPL-2+
  .
  On Debian systems, the full text of the GNU General Public
  License version 2 can be found in the file
- `/usr/share/common-licenses/GPL-2'.
+ '/usr/share/common-licenses/GPL-2'.
+
+
+------------------------------------------------------------
 
 Files: htdocs/includes/geoip/*
 Copyright: 2007 MaxMind LLC
@@ -216,10 +234,14 @@ License: LGPL-2.1+
  .
  On Debian systems, the full text of the GNU Lesser General Public
  License version 2.1 can be found in the file
- `/usr/share/common-licenses/LGPL-2.1'.
+ '/usr/share/common-licenses/LGPL-2.1'.
+
+
+------------------------------------------------------------
 
 Files: htdocs/includes/jquery/*
 Copyright: JQuery team
+https://www.jquery.com
 License: GPL-2+ or MIT
  === GPL-2+ LICENSE NOTICE ===
  .
@@ -240,7 +262,7 @@ License: GPL-2+ or MIT
  .
  On Debian systems, the full text of the GNU General Public
  License version 2 can be found in the file
- `/usr/share/common-licenses/GPL-2'.
+ '/usr/share/common-licenses/GPL-2'.
  .
  === MIT LICENSE ===
  .
@@ -267,6 +289,8 @@ Comment:
  "libjs-jquery-ui". Most of the plugins are shipped though.
 
 
+------------------------------------------------------------
+
 Files: htdocs/includes/jquery/plugins/flot/*
 Copyright: Flot team
 License: Public-Domain
@@ -274,6 +298,9 @@ License: Public-Domain
 Comment:
  Those files are not shipped in the binary package because we configure
  Dolibarr to use the files provided by "libjs-flot".
+
+
+------------------------------------------------------------
 
 Files: htdocs/includes/jsgantt/*
 Copyright: JSGantt team
@@ -295,7 +322,10 @@ License: GPL-2+
  .
  On Debian systems, the full text of the GNU General Public
  License version 2 can be found in the file
- `/usr/share/common-licenses/GPL-2'.
+ '/usr/share/common-licenses/GPL-2'.
+
+
+------------------------------------------------------------
 
 Files: htdocs/includes/nusoap/*
 Copyright: 2002-2010 NuSphere Corporation
@@ -315,10 +345,13 @@ License: LGPL-2.1+
  .
  On Debian systems, the full text of the GNU Lesser General Public
  License version 2.1 can be found in the file
- `/usr/share/common-licenses/LGPL-2.1'.
+ '/usr/share/common-licenses/LGPL-2.1'.
 Comment:
  Those files are not shipped in the binary package since we
  configure Dolibarr to use the library provided in "libnusoap-php".
+
+
+------------------------------------------------------------
 
 Files: htdocs/includes/odtphp/*
 Copyright: 2008, Julien Pauli
@@ -342,7 +375,10 @@ License: GPL-2+
  .
  On Debian systems, the full text of the GNU General Public
  License version 2 can be found in the file
- `/usr/share/common-licenses/GPL-2'.
+ '/usr/share/common-licenses/GPL-2'.
+
+
+------------------------------------------------------------
 
 Files: htdocs/includes/phpexcel/*
 Copyright: 2006-2011 PHPExcel (http://www.codeplex.com/PHPExcel)
@@ -362,7 +398,10 @@ License: LGPL-2.1+
  .
  On Debian systems, the full text of the GNU Lesser General Public
  License version 2.1 can be found in the file
- `/usr/share/common-licenses/LGPL-2.1'.
+ '/usr/share/common-licenses/LGPL-2.1'.
+
+
+------------------------------------------------------------
 
 Files: htdocs/includes/tcpdf/*
 Copyright: 2002-2013 Nicola Asuni - Tecnick.com LTD
