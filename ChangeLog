@@ -16,6 +16,7 @@ NEW: Accountancy - add options to disable binding on sales, purchases & expense 
 NEW: Accountancy balance - add a menu entry to show subtotal by group
 NEW: Accountancy - move to real ledger, real journals, menu disposition
 NEW: Accountancy - on transfers, select the periodicity by default
+NEW: Accountancy - Add export for Gestinum (v3 & v5)
 NEW: new currency rate editor
 NEW: add 2 rules for emailcollector: Message send/not sent from Dolibarr
 NEW: add a counter of number of words for pages in website module

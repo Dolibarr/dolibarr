@@ -1260,10 +1260,18 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
         $newlangs2->load("main");
         $langs = $newlangs2;
 
-        $this->assertEquals(1000, price2num('1.000'), 'Test 1.000 give 1000 with spanish language');
-        $this->assertEquals(1000, price2num('1 000'), 'Test 1 000 give 1000 with spanish language');
+        // Test with 3 chars after . or ,
+        // If a . is used and there is 3 digits after, it is a thousand separator
+        $this->assertEquals(1234, price2num('1.234'), 'Test 1.234 give 1234 with spanish language');
+        $this->assertEquals(1234, price2num('1 234'), 'Test 1 234 give 1234 with spanish language');
         $this->assertEquals(1234, price2num('1.234'), 'Test 1.234 give 1234 with spanish language');
         $this->assertEquals(1.234, price2num('1,234'), 'Test 1,234 give 1.234 with spanish language');
+        $this->assertEquals(21500123, price2num('21.500.123'), 'Test 21.500.123 give 21500123 with spanish language');
+        $this->assertEquals(21500123, price2num('21500.123'), 'Test 21500.123 give 21500123 with spanish language');
+        $this->assertEquals(21500.123, price2num('21500,123'), 'Test 21500,123 give 21500.123 with spanish language');
+        // Test with 2 digits
+        $this->assertEquals(21500.12, price2num('21500.12'), 'Test 21500.12 give 21500.12 with spanish language');
+        $this->assertEquals(21500.12, price2num('21500,12'), 'Test 21500,12 give 21500.12 with spanish language');
 
         // For french language
         $newlangs3 = new Translate('', $conf);
@@ -1275,6 +1283,10 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(1000, price2num('1 000'), 'Test 1.000 give 1 with french language');
         $this->assertEquals(1.234, price2num('1.234'), 'Test 1.234 give 1.234 with french language');
         $this->assertEquals(1.234, price2num('1,234'), 'Test 1,234 give 1.234 with french language');
+        $this->assertEquals(21500000, price2num('21500 000'), 'Test 21500 000 give 21500000 with french language');
+        $this->assertEquals(21500000, price2num('21 500 000'), 'Test 21 500 000 give 21500000 with french language');
+        $this->assertEquals(21500, price2num('21500.00'), 'Test 21500.00 give 21500 with french language');
+        $this->assertEquals(21500, price2num('21500,00'), 'Test 21500,00 give 21500 with french language');
 
         $langs = $oldlangs;
 

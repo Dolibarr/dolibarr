@@ -40,7 +40,7 @@ $langs->load("opensurvey");
 $post_var = array('title', 'description', 'mailsonde', 'creation_sondage_date', 'creation_sondage_autre');
 foreach ($post_var as $var)
 {
-	$$var = GETPOST($var);
+	${$var} = GETPOST($var);
 }
 
 // On initialise egalement la session car sinon bonjour les warning :-)

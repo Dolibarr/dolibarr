@@ -1756,7 +1756,6 @@ class pdf_eratosthene extends ModelePDFCommandes
 			$this->cols['photo']['status'] = true;
 		}
 
-
 		$rank = $rank + 10;
 		$this->cols['vat'] = array(
 			'rank' => $rank,
@@ -1783,6 +1782,17 @@ class pdf_eratosthene extends ModelePDFCommandes
 			),
 			'border-left' => true, // add left line separator
 		);
+
+		// Adapt dynamically the width of subprice, if text is too long.
+		$tmpwidth = 0;
+		$nblines = count($object->lines);
+		for ($i = 0; $i < $nblines; $i++) {
+			$tmpwidth2 = dol_strlen(dol_string_nohtmltag(pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails)));
+			$tmpwidth = max($tmpwidth, $tmpwidth2);
+		}
+		if ($tmpwidth > 10) {
+			$this->cols['subprice']['width'] += (2 * ($tmpwidth - 10));
+		}
 
 		$rank = $rank + 10;
 		$this->cols['qty'] = array(

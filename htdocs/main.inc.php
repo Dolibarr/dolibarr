@@ -229,6 +229,11 @@ if (!empty($_POST["DOL_AUTOSET_COOKIE"]))
 // Init the 5 global objects, this include will make the 'new Xxx()' and set properties for: $conf, $db, $langs, $user, $mysoc
 require_once 'master.inc.php';
 
+// Set the handler of session
+if (ini_get('session.save_handler') == 'user') {
+	require_once 'core/lib/phpsessionindb.lib.php';
+}
+
 // Init session. Name of session is specific to Dolibarr instance.
 // Must be done after the include of master.inc.php so $conf file is loaded and vars like $dolibarr_main_force_https are set.
 // Note: the function dol_getprefix may have been redefined to return a different key to manage another area to protect.

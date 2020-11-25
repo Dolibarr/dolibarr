@@ -126,7 +126,7 @@ if (empty($reshook))
 		}
 		if (!GETPOST('title'))
 		{
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("ProjectLabel")), null, 'errors');
 			$error++;
 		}
 
@@ -236,7 +236,7 @@ if (empty($reshook))
 		{
 			$error++;
 			//$_GET["id"]=$_POST["id"]; // We return on the project card
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("ProjectLabel")), null, 'errors');
 		}
 
 		$db->begin();
@@ -529,7 +529,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	print '</td></tr>';
 
 	// Label
-	print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input class="minwidth500" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title", 'alphanohtml')).'" autofocus></td></tr>';
+	print '<tr><td><span class="fieldrequired">'.$langs->trans("ProjectLabel").'</span></td><td><input class="minwidth500" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title", 'alphanohtml')).'" autofocus></td></tr>';
 
 	// Usage (opp, task, bill time, ...)
 	print '<tr><td class="tdtop">';
@@ -804,9 +804,8 @@ if ($action == 'create' && $user->rights->projet->creer)
 		print '</td></tr>';
 
 		// Label
-		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("ProjectLabel").'</td>';
 		print '<td><input class="quatrevingtpercent" name="title" value="'.dol_escape_htmltag($object->title).'"></td></tr>';
-
 
 		// Status
 		print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td><td>';
