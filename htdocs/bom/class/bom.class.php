@@ -112,13 +112,31 @@ class BOM extends CommonObject
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>1010),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>2, 'position'=>1000, 'notnull'=>1, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Enabled', 9=>'Disabled')),
 	);
+
+	/**
+	 * @var int rowid
+	 */
 	public $rowid;
+
+	/**
+	 * @var string ref
+	 */
 	public $ref;
+
+	/**
+	 * @var string label
+	 */
 	public $label;
+
+	/**
+	 * @var int bomtype
+	 */
 	public $bomtype;
+
+	/**
+	 * @var string description
+	 */
 	public $description;
-	public $note_public;
-	public $note_private;
 
 	/**
 	 * @var integer|string date_creation
@@ -127,10 +145,30 @@ class BOM extends CommonObject
 
 
 	public $tms;
+
+	/**
+	 * @var int Id User creator
+	 */
 	public $fk_user_creat;
+
+	/**
+	 * @var int Id User modifying
+	 */
 	public $fk_user_modif;
+
+	/**
+	 * @var string import key
+	 */
 	public $import_key;
+
+	/**
+	 * @var int status
+	 */
 	public $status;
+
+	/**
+	 * @var int product Id
+	 */
 	public $fk_product;
 	public $qty;
 	public $efficiency;
@@ -1097,15 +1135,43 @@ class BOMLine extends CommonObjectLine
 		'position' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>1, 'visible'=>0, 'default'=>0, 'position'=>200, 'notnull'=>1,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
 	);
+
+	/**
+	 * @var int rowid
+	 */
 	public $rowid;
+
+	/**
+	 * @var int fk_bom
+	 */
 	public $fk_bom;
+
+	/**
+	 * @var int Id of product
+	 */
 	public $fk_product;
+
+	/**
+	 * @var string description
+	 */
 	public $description;
 	public $qty;
+
+	/**
+	 * @var int qty frozen
+	 */
 	public $qty_frozen;
 	public $disable_stock_change;
 	public $efficiency;
+
+	/**
+	 * @var int position of line
+	 */
 	public $position;
+
+	/**
+	 * @var string import key
+	 */
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
 

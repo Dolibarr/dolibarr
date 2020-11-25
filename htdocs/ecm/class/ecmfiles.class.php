@@ -60,15 +60,29 @@ class EcmFiles extends CommonObject
 	 */
 	public $label;
 
-	public $share; // hash for file sharing, empty by default (example: getRandomPassword(true))
+	/**
+	 * @var string hash for file sharing, empty by default (example: getRandomPassword(true))
+	 */
+	public $share;
 
 	/**
 	 * @var int Entity
 	 */
 	public $entity;
 
-	public $filename; // Note: Into ecm database record, the entry $filename never ends with .noexe
+	/**
+	 * @var string filename, Note: Into ecm database record, the entry $filename never ends with .noexe
+	 */
+	public $filename;
+
+	/**
+	 * @var string filepath
+	 */
 	public $filepath;
+
+	/**
+	 * @var string fullpath origin
+	 */
 	public $fullpath_orig;
 
 	/**
@@ -76,12 +90,31 @@ class EcmFiles extends CommonObject
 	 */
 	public $description;
 
+	/**
+	 * @var string keywords
+	 */
 	public $keywords;
 	public $cover;
 	public $position;
-	public $gen_or_uploaded; // can be 'generated', 'uploaded', 'unknown'
+
+	/**
+	 * @var string can be 'generated', 'uploaded', 'unknown'
+	 */
+	public $gen_or_uploaded;
+
+	/**
+	 * @var string extraparams
+	 */
 	public $extraparams;
+
+	/**
+	 * @var int|string date create
+	 */
 	public $date_c = '';
+
+	/**
+	 * @var int|string date modify
+	 */
 	public $date_m = '';
 
 	/**
@@ -94,6 +127,9 @@ class EcmFiles extends CommonObject
 	 */
 	public $fk_user_m;
 
+	/**
+	 * @var string acl
+	 */
 	public $acl;
 	public $src_object_type;
 	public $src_object_id;
@@ -135,7 +171,7 @@ class EcmFiles extends CommonObject
 			$this->share = trim($this->share);
 		}
 		if (isset($this->entity)) {
-			$this->entity = trim($this->entity);
+			$this->entity = (int) $this->entity;
 		}
 		if (isset($this->filename)) {
 			$this->filename = preg_replace('/\.noexe$/', '', trim($this->filename));
@@ -163,10 +199,10 @@ class EcmFiles extends CommonObject
 			$this->extraparams = trim($this->extraparams);
 		}
 		if (isset($this->fk_user_c)) {
-			$this->fk_user_c = trim($this->fk_user_c);
+			$this->fk_user_c = (int) $this->fk_user_c;
 		}
 		if (isset($this->fk_user_m)) {
-			$this->fk_user_m = trim($this->fk_user_m);
+			$this->fk_user_m = (int) $this->fk_user_m;
 		}
 		if (isset($this->acl)) {
 			$this->acl = trim($this->acl);
@@ -174,13 +210,16 @@ class EcmFiles extends CommonObject
 		if (isset($this->src_object_type)) {
 			$this->src_object_type = trim($this->src_object_type);
 		}
-		if (empty($this->date_c)) $this->date_c = dol_now();
-		if (empty($this->date_m)) $this->date_m = dol_now();
+		if (empty($this->date_c)) {
+			$this->date_c = dol_now();
+		}
+		if (empty($this->date_m)) {
+			$this->date_m = dol_now();
+		}
 
 		// If ref not defined
 		$ref = '';
-		if (!empty($this->ref))
-		{
+		if (!empty($this->ref)) {
 			$ref = $this->ref;
 		} else {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
@@ -188,8 +227,8 @@ class EcmFiles extends CommonObject
 		}
 
 		$maxposition = 0;
-		if (empty($this->position))   // Get max used
-		{
+		if (empty($this->position)) {
+			// Get max used
 			$sql = "SELECT MAX(position) as maxposition FROM ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " WHERE filepath ='".$this->db->escape($this->filepath)."'";
 
