@@ -1081,53 +1081,82 @@ class ExpenseReport extends CommonObject
 	 */
 	public function delete(User $fuser = null)
 	{
-		global $user, $langs, $conf;
+        global $user, $langs, $conf;
 
-		$rowid = $this->id;
+        $error = 0;
 
-		$error = 0;
+		$this->db->begin();
 
-		// Delete lines
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element_line.' WHERE '.$this->fk_element.' = '.$rowid;
-		if (!$error && !$this->db->query($sql))
-		{
-			$this->error = $this->db->error()." sql=".$sql;
-			dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
-			$error++;
-		}
+        if (!$rowid) $rowid = $this->id;
 
-		// Delete llx_ecm_files
-		if (!$error) {
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."ecm_files WHERE src_object_type = '".$this->db->escape($this->table_element.(empty($this->module) ? '' : '@'.$this->module))."' AND src_object_id = ".$this->id;
-			$resql = $this->db->query($sql);
-			if (!$resql)
-			{
-				$this->error = $this->db->lasterror();
-				$this->errors[] = $this->error;
-				$error++;
-			}
-		}
+        $sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element_line.' WHERE '.$this->fk_element.' = '.$rowid;
+        if ($this->db->query($sql)) {
+            $sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE rowid = '.$rowid;
+            $resql = ;
+            if ($this->db->query($sql)) {
 
-		// Delete main record
-		if (!$error) {
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE rowid = '.$rowid;
-			$resql = $this->db->query($sql);
-			if (!$resql)
-			{
-				$this->error = $this->db->error()." sql=".$sql;
-				dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
-			}
-		}
+                // Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
+                $this->deleteEcmFiles();
 
-		// Commit or rollback
-		if ($error) {
-			$this->db->rollback();
-			return -1;
-		} else {
-			$this->db->commit();
-			return 1;
-		}
-	}
+                // We remove directory
+                $ref = dol_sanitizeFileName($this->ref);
+                if ($conf->expensereport->multidir_output[$this->entity] && !empty($this->ref)) {
+                    $dir = $conf->expensereport->multidir_output[$this->entity]."/".$ref;
+                    $file = $dir."/".$ref.".pdf";
+                    if (file_exists($file)) {
+                        dol_delete_preview($this);
+
+                        if (!dol_delete_file($file, 0, 0, 0, $this)) // For triggers
+                        {
+                            $this->error = 'ErrorFailToDeleteFile';
+                            $this->errors = array('ErrorFailToDeleteFile');
+                            $this->db->rollback();
+                            return 0;
+                        }
+                    }
+                    if (file_exists($dir)) {
+                        $res = @dol_delete_dir_recursive($dir);
+                        if (!$res) {
+                            $this->error = 'ErrorFailToDeleteDir';
+                            $this->errors = array('ErrorFailToDeleteDir');
+                            $this->db->rollback();
+                            return 0;
+                        }
+                    }
+                }
+
+                // Removed extrafields
+                if (!$error) {
+                    $result = $this->deleteExtraFields();
+                    if ($result < 0) {
+                        $error++;
+                        $errorflag = -4;
+                        dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
+                    }
+                }
+
+                if (!$error) {
+                    dol_syslog(get_class($this)."::delete ".$this->id." by ".$user->id, LOG_DEBUG);
+                    $this->db->commit();
+                    return 1;
+                } else {
+                    $this->error = $this->db->lasterror();
+                    $this->db->rollback();
+                    return 0;
+                }
+            } else {
+                $this->error = $this->db->error()." sql=".$sql;
+                dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
+                $this->db->rollback();
+                return -6;
+            }
+        } else {
+            $this->error = $this->db->error()." sql=".$sql;
+            dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
+            $this->db->rollback();
+            return -4;
+        }
+    }
 
 	/**
 	 * Set to status validate
