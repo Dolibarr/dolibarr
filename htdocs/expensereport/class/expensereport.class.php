@@ -1074,87 +1074,115 @@ class ExpenseReport extends CommonObject
 
 
 	/**
-	 * delete
+	 * Delete object in database
 	 *
 	 * @param   User    $fuser      User that delete
+	 * @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
 	 * @return  int                 <0 if KO, >0 if OK
 	 */
-	public function delete(User $fuser = null)
+	public function delete(User $fuser = null, $notrigger = false)
 	{
-        global $user, $langs, $conf;
+		global $conf;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-        $error = 0;
+		$error = 0;
 
 		$this->db->begin();
 
-        if (!$rowid) $rowid = $this->id;
+		if (!$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('EXPENSEREPORT_DELETE', $user);
+			if ($result < 0) { $error++; }
+			// End call triggers
+		}
 
-        $sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element_line.' WHERE '.$this->fk_element.' = '.$rowid;
-        if ($this->db->query($sql)) {
-            $sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE rowid = '.$rowid;
-            $resql = ;
-            if ($this->db->query($sql)) {
-                // Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
-                $this->deleteEcmFiles();
+		// Delete extrafields of lines and lines
+		if (!$error && !empty($this->table_element_line)) {
+			$tabletodelete = $this->table_element_line;
+			//$sqlef = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete."_extrafields WHERE fk_object IN (SELECT rowid FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id.")";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id;
+			if (! $this->db->query($sql)) {
+				$error++;
+				$this->error = $this->db->lasterror();
+				dol_syslog(get_class($this)."::delete error ".$this->error, LOG_ERR);
+			}
+		}
 
-                // We remove directory
-                $ref = dol_sanitizeFileName($this->ref);
-                if ($conf->expensereport->multidir_output[$this->entity] && !empty($this->ref)) {
-                    $dir = $conf->expensereport->multidir_output[$this->entity]."/".$ref;
-                    $file = $dir."/".$ref.".pdf";
-                    if (file_exists($file)) {
-                        dol_delete_preview($this);
+		// Removed extrafields of object
+		if (!$error) {
+			$result = $this->deleteExtraFields();
+			if ($result < 0) {
+				$error++;
+				dol_syslog(get_class($this)."::delete error ".$this->error, LOG_ERR);
+			}
+		}
 
-                        if (!dol_delete_file($file, 0, 0, 0, $this)) // For triggers
-                        {
-                            $this->error = 'ErrorFailToDeleteFile';
-                            $this->errors = array('ErrorFailToDeleteFile');
-                            $this->db->rollback();
-                            return 0;
-                        }
-                    }
-                    if (file_exists($dir)) {
-                        $res = @dol_delete_dir_recursive($dir);
-                        if (!$res) {
-                            $this->error = 'ErrorFailToDeleteDir';
-                            $this->errors = array('ErrorFailToDeleteDir');
-                            $this->db->rollback();
-                            return 0;
-                        }
-                    }
-                }
+		// Delete main record
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE rowid = ".$this->id;
+			$res = $this->db->query($sql);
+			if (! $res) {
+				$error++;
+				dol_syslog(get_class($this)."::delete error ".$this->error, LOG_ERR);
+			}
+		}
 
-                // Removed extrafields
-                if (!$error) {
-                    $result = $this->deleteExtraFields();
-                    if ($result < 0) {
-                        $error++;
-                        $errorflag = -4;
-                        dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
-                    }
-                }
+		if (! $error) {
+			// Delete linked object
+			$res = $this->deleteObjectLinked();
+			if ($res < 0) $error++;
+		}
 
-                if (!$error) {
-                    dol_syslog(get_class($this)."::delete ".$this->id." by ".$user->id, LOG_DEBUG);
-                    $this->db->commit();
-                    return 1;
-                } else {
-                    $this->error = $this->db->lasterror();
-                    $this->db->rollback();
-                    return 0;
-                }
-            } else {
-                $this->error = $this->db->error()." sql=".$sql;
-                dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
-                $this->db->rollback();
-                return -6;
-            }
-        } else {
-            $this->error = $this->db->error()." sql=".$sql;
-            dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
-            $this->db->rollback();
-            return -4;
-        }
+		if (! $error) {
+			// Delete linked contacts
+			$res = $this->delete_linked_contact();
+			if ($res < 0) $error++;
+		}
+
+		// Delete record into ECM index and physically
+		if (!$error) {
+			$res = $this->deleteEcmFiles(); // Deleting files physically is done later with the dol_delete_dir_recursive
+			if (! $res) {
+				$error++;
+			}
+		}
+
+		if (!$error) {
+			// We remove directory
+			$ref = dol_sanitizeFileName($this->ref);
+			if ($conf->propal->multidir_output[$this->entity] && !empty($this->ref)) {
+				$dir = $conf->propal->multidir_output[$this->entity]."/".$ref;
+				$file = $dir."/".$ref.".pdf";
+				if (file_exists($file)) {
+					dol_delete_preview($this);
+
+					if (!dol_delete_file($file, 0, 0, 0, $this)) {
+						$this->error = 'ErrorFailToDeleteFile';
+						$this->errors = array('ErrorFailToDeleteFile');
+						$this->db->rollback();
+						return 0;
+					}
+				}
+				if (file_exists($dir)) {
+					$res = @dol_delete_dir_recursive($dir);
+					if (!$res) {
+						$this->error = 'ErrorFailToDeleteDir';
+						$this->errors = array('ErrorFailToDeleteDir');
+						$this->db->rollback();
+						return 0;
+					}
+				}
+			}
+		}
+
+		if (!$error) {
+			dol_syslog(get_class($this)."::delete ".$this->id." by ".$user->id, LOG_DEBUG);
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
     }
 
 	/**
@@ -2466,7 +2494,7 @@ class ExpenseReport extends CommonObject
 		{
 			$obj = $this->db->fetch_object($resql);
 			$this->db->free($resql);
-			return $obj->amount;
+			return (empty($obj->amount) ? 0 : $obj->amount);
 		} else {
 			$this->error = $this->db->lasterror();
 			return -1;

@@ -2942,8 +2942,8 @@ class Propal extends CommonObject
 		// Delete extrafields of lines and lines
 		if (!$error && !empty($this->table_element_line)) {
 			$tabletodelete = $this->table_element_line;
-			$sqlef = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete."_extrafields WHERE fk_object IN (SELECT rowid FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE fk_propal = ".$this->id.")";
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE fk_propal = ".$this->id;
+			$sqlef = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete."_extrafields WHERE fk_object IN (SELECT rowid FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id.")";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id;
 			if (! $this->db->query($sqlef) || ! $this->db->query($sql)) {
 				$error++;
 				$this->error = $this->db->lasterror();
@@ -2962,7 +2962,7 @@ class Propal extends CommonObject
 
 		// Delete main record
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal WHERE rowid = ".$this->id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE rowid = ".$this->id;
 			$res = $this->db->query($sql);
 			if (! $res) {
 				$error++;
