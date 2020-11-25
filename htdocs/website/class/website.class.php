@@ -99,6 +99,10 @@ class Website extends CommonObject
 	 * @var integer
 	 */
 	public $fk_default_home;
+
+	/**
+	 * @var int User Create Id
+	 */
 	public $fk_user_creat;
 
 	/**
@@ -878,13 +882,13 @@ class Website extends CommonObject
 		global $user;
 
 		$this->id = 0;
-
+		$this->specimen =1;
 		$this->entity = 1;
 		$this->ref = 'myspecimenwebsite';
 		$this->description = 'A specimen website';
 		$this->lang = 'en';
 		$this->otherlang = 'fr,es';
-		$this->status = '';
+		$this->status = 1;
 		$this->fk_default_home = null;
 		$this->virtualhost = 'http://myvirtualhost';
 		$this->fk_user_creat = $user->id;
@@ -1349,8 +1353,7 @@ class Website extends CommonObject
 			$i++;
 		}
 
-		if ($error)
-		{
+		if ($error) {
 			return -1;
 		} else {
 			return $num;
