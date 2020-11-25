@@ -307,13 +307,10 @@ if ($massaction == 'makepayment') {
 
 	header('Location: '.$loc);
 	exit;
-}
-elseif ($massaction == 'withdrawrequest')
-{
+} elseif ($massaction == 'withdrawrequest') {
 	$langs->load("withdrawals");
 
-	if (!$user->rights->prelevement->bons->creer)
-	{
+	if (!$user->rights->prelevement->bons->creer) {
 		$error++;
 		setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
 	} else {
@@ -326,8 +323,7 @@ elseif ($massaction == 'withdrawrequest')
 		{
 			$objecttmp = new Facture($db);
 			$result = $objecttmp->fetch($toselectid);
-			if ($result > 0)
-			{
+			if ($result > 0) {
 				$totalpaye = $objecttmp->getSommePaiement();
 				$totalcreditnotes = $objecttmp->getSumCreditNotesUsed();
 				$totaldeposits = $objecttmp->getSumDepositsUsed();
