@@ -170,6 +170,7 @@ if (empty($reshook))
 		$object->stcomm_id = dol_getIdFromCode($db, GETPOST('stcomm', 'alpha'), 'c_stcomm');
 		$result = $object->update($object->id, $user);
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+		else $result = $object->fetch($object->id);
 	}
 
 	// update outstandng limit
