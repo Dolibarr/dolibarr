@@ -396,8 +396,7 @@ class Thirdparties extends DolibarrApi
 		}
 
 		// Move links
-		if (!$error)
-		{
+		if (!$error) {
 			// This list is also into the societe/card.php file
 			// TODO Mutualise the list into object societe.class.php
 			$objects = array(
@@ -431,57 +430,49 @@ class Thirdparties extends DolibarrApi
 			{
 				require_once DOL_DOCUMENT_ROOT.$object_file;
 
-				if (!$errors && !$object_name::replaceThirdparty($this->db, $soc_origin->id, $object->id))
-				{
-					$errors++;
+				if (!$error && !$object_name::replaceThirdparty($this->db, $soc_origin->id, $object->id)) {
+					$error++;
 					//setEventMessages($this->db->lasterror(), null, 'errors');
 				}
 			}
 		}
 
 		// External modules should update their ones too
-		if (!$errors)
-		{
+		if (!$error) {
 			$reshook = $hookmanager->executeHooks('replaceThirdparty', array(
 				'soc_origin' => $soc_origin->id,
 				'soc_dest' => $object->id
 			), $soc_dest, $action);
 
-			if ($reshook < 0)
-			{
+			if ($reshook < 0) {
 				//setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-				$errors++;
+				$error++;
 			}
 		}
 
 
-		if (!$error)
-		{
+		if (!$error) {
 			$object->context = array('merge'=>1, 'mergefromid'=>$soc_origin->id);
 
 			// Call trigger
 			$result = $object->call_trigger('COMPANY_MODIFY', $user);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				//setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
 			}
 			// End call triggers
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			//We finally remove the old thirdparty
-			if ($soc_origin->delete($soc_origin->id, $user) < 1)
-			{
-				$errors++;
+			if ($soc_origin->delete($soc_origin->id, $user) < 1) {
+				$error++;
 			}
 		}
 
 		// End of merge
 
-		if ($error)
-		{
+		if ($error) {
 			$this->db->rollback();
 
 			throw new RestException(500, 'Error failed to merged thirdparty '.$this->companytoremove->id.' into '.$id.'. Enable and read log file for more information.');
