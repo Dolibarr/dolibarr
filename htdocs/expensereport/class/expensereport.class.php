@@ -1076,11 +1076,11 @@ class ExpenseReport extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param   User    $fuser      User that delete
+	 * @param   User    $user       User that delete
 	 * @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
 	 * @return  int                 <0 if KO, >0 if OK
 	 */
-	public function delete(User $fuser = null, $notrigger = false)
+	public function delete(User $user = null, $notrigger = false)
 	{
 		global $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
