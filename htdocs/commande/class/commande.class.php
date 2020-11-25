@@ -4036,11 +4036,22 @@ class OrderLine extends CommonOrderLine
 	public $commande_id;
 
 	public $fk_parent_line;
+
+	/**
+	 * @var int Id of invoice
+	 */
 	public $fk_facture;
 
+	/**
+	 * @var string External ref
+	 */
 	public $ref_ext;
 
 	public $fk_remise_except;
+
+	/**
+	 * @var int line rank
+	 */
 	public $rang = 0;
 	public $fk_fournprice;
 
