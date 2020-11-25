@@ -8445,7 +8445,7 @@ abstract class CommonObject
 	/**
 	 * Delete related files of object in database
 	 *
-	 * @param	integer		$mode		0=Use path to find record, 1=Use src_object_xxx fields
+	 * @param	integer		$mode		0=Use path to find record, 1=Use src_object_xxx fields (Mode 1 is recommanded for new objects)
 	 * @return 	bool					True if OK, False if KO
 	 */
 	public function deleteEcmFiles($mode = 0)
@@ -8503,7 +8503,7 @@ abstract class CommonObject
 		// Delete in database with mode 1
 		if ($mode == 1) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."ecm_files_extrafields";
-			$sql .= " WHERE fk_object IN (SELECT rowid FROM ".MAIN_DB_PREFIX."ecm_files WHERE src_object_type = '".$this->db->escape($this->table_element.(empty($this->module) ? '' : '@'.$this->module))."' AND src_object_id = ".$this->id;
+			$sql .= " WHERE fk_object IN (SELECT rowid FROM ".MAIN_DB_PREFIX."ecm_files WHERE src_object_type = '".$this->db->escape($this->table_element.(empty($this->module) ? '' : '@'.$this->module))."' AND src_object_id = ".$this->id.")";
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->error = $this->db->lasterror();
