@@ -8477,9 +8477,22 @@ abstract class CommonObject
 				$element = $this->element;
 		}
 
+		// Delete ecm_files extrafields
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."ecm_files_extrafields WHERE fk_object IN (";
+		$sql .= " SELECT rowid FROM ".MAIN_DB_PREFIX."ecm_files WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
+		$sql .= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".$conf->entity;	// No need of getEntity here
+		$sql .= ")";
+
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
+			return false;
+		}
+
+		// Delete ecm_files
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."ecm_files";
 		$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
-		$sql .= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".$conf->entity;
+		$sql .= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".$conf->entity;	// No need of getEntity here
 
 		if (!$this->db->query($sql)) {
 			$this->error = $this->db->lasterror();
