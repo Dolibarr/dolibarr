@@ -37,8 +37,8 @@ if (!$user->rights->bookmark->lire) {
 
 $id = GETPOST("id", 'int');
 $action = GETPOST("action", "alpha");
-$title = GETPOST("title", "alpha");
-$url = GETPOST("url", "alpha");
+$title = (string) GETPOST("title", "alpha");
+$url = (string) GETPOST("url", "alpha");
 $urlsource = GETPOST("urlsource", "alpha");
 $target = GETPOST("target", "alpha");
 $userid = GETPOST("userid", "int");
@@ -71,8 +71,9 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 
 	if ($action == 'update') $object->fetch(GETPOST("id", 'int'));
 	// Check if null because user not admin can't set an user and send empty value here.
-	if (!empty($userid))
+	if (!empty($userid)) {
 		$object->fk_user = $userid;
+	}
 	$object->title = $title;
 	$object->url = $url;
 	$object->target = $target;
