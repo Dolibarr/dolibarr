@@ -35,6 +35,8 @@ ALTER TABLE llx_payment_various MODIFY COLUMN ref varchar(30) NULL;
 
 ALTER TABLE llx_prelevement_bons ADD COLUMN type varchar(16) DEFAULT 'debit-order';
 
+ALTER TABLE llx_prelevement_facture CHANGE COLUMN fk_facture_foun fk_facture_fourn integer NULL;
+
 ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_demande_fk_facture (fk_facture);
 ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_demande_fk_facture_fourn (fk_facture_fourn);
 
