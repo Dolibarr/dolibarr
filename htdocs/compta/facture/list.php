@@ -307,7 +307,8 @@ if ($massaction == 'makepayment') {
 
 	header('Location: '.$loc);
 	exit;
-} elseif ($massaction == 'withdrawrequest')
+}
+elseif ($massaction == 'withdrawrequest')
 {
 	$langs->load("withdrawals");
 
@@ -667,7 +668,7 @@ if ($resql)
 		'presend'=>$langs->trans("SendByMail"),
 		//'makepayment'=>$langs->trans("InvoicePaymentsLimits"),   TODO Blank page when using this
 	);
-	if ($conf->prelevement->enabled) {
+	if ($conf->prelevement->enabled && !empty($user->rights->prelevement->bons->creer)) {
 			$langs->load("withdrawals");
 			$arrayofmassactions['withdrawrequest'] = $langs->trans("MakeWithdrawRequest");
 	}
