@@ -1283,7 +1283,6 @@ if ($resql)
 
 		// Multiprices
 		if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
-
 		    if (! isset($productpricescache)) {
 		        $productpricescache=array();
 		    }
