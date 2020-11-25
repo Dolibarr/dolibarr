@@ -1094,7 +1094,6 @@ class ExpenseReport extends CommonObject
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE rowid = '.$rowid;
             $resql = ;
             if ($this->db->query($sql)) {
-
                 // Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
                 $this->deleteEcmFiles();
 
