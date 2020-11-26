@@ -280,7 +280,7 @@ if (empty($reshook))
                 elseif ($keycode == 'content') {
                 	$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
                 }
-                elseif (in_array($keycode, array('joinfile', 'private', 'position', 'scale'))) {
+                elseif (in_array($keycode, array('joinfiles', 'private', 'position', 'scale'))) {
                 	$sql .= (int) GETPOST($keycode, 'int');
                 }
                 else {
