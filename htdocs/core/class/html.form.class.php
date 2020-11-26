@@ -6594,7 +6594,7 @@ class Form
 						var separ = urlBase.indexOf("?") >= 0 ? "&" : "?";
 						/* console.log("params.term="+params.term); */
 						/* console.log("params.term encoded="+encodeURIComponent(params.term)); */
-						saveRemoteData[data.id].url = urlBase + separ + "sall=" + encodeURIComponent(params.term);';
+						saveRemoteData[data.id].url = urlBase + separ + "sall=" + encodeURIComponent(params.term.replace(/\"/g, ""));';
 		}
 
 		if (!$disableFiltering) {
@@ -6625,7 +6625,7 @@ class Form
 					$.each( saveRemoteData, function( key, value ) {
 						if (key == selected)
 						{
-							console.log("selectArrayAjax - Do a redirect to "+value.url)
+							console.log("selectArrayFilter - Do a redirect to "+value.url)
 							location.assign(value.url);
 						}
 					});
