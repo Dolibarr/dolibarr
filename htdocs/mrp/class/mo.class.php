@@ -250,10 +250,11 @@ class Mo extends CommonObject
 		$this->db->begin();
 
 		if ($this->fk_product > 0) {
+			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			$tmpproduct = new Product($this->db);
-			$tmpproduct->feth($this->fk_product);
+			$tmpproduct->fetch($this->fk_product);
 			if ($tmpproduct->hasFatherOrChild(1) > 0) {
-				$this->error = 'AVirtualProductCanBeUsedIntoAMO';
+				$this->error = 'ErrorAVirtualProductCantBeUsedIntoABomOrMo';
 				$this->errors[] = $this->error;
 				$this->db->rollback();
 				return -1;
