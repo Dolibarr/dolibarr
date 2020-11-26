@@ -635,7 +635,6 @@ class pdf_eratosthene extends ModelePDFCommandes
 					}
 
 
-
 					$nexY = max($pdf->GetY(), $posYAfterImage);
 
 
