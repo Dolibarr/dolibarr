@@ -1961,7 +1961,7 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
 		elseif (empty($hidedetails) || $hidedetails > 1)
 		{
 			$total_ht = (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ht : $object->lines[$i]->total_ht);
-			if ($object->lines[$i]->situation_percent > 0)
+			if (!empty($object->lines[$i]->situation_percent) && $object->lines[$i]->situation_percent > 0)
 			{
 				// TODO Remove this. The total should be saved correctly in database instead of being modified here.
 				$prev_progress = 0;
