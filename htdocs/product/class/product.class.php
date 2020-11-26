@@ -248,6 +248,13 @@ class Product extends CommonObject
 	 */
 	public $finished;
 
+		/**
+	 * fk_default_bom indicates the default bom
+	 *
+	 * @var int
+	 */
+	public $fk_default_bom;
+
 	/**
 	 * We must manage lot/batch number, sell-by date and so on : '1':yes '0':no
 	 *
@@ -996,6 +1003,7 @@ class Product extends CommonObject
 			$sql .= ", tobuy = ".(int) $this->status_buy;
 			$sql .= ", tobatch = ".((empty($this->status_batch) || $this->status_batch < 0) ? '0' : (int) $this->status_batch);
 			$sql .= ", finished = ".((!isset($this->finished) || $this->finished < 0 || $this->finished == '') ? "null" : (int) $this->finished);
+			$sql .= ", fk_default_bom = ".((!isset($this->fk_default_bom) || $this->fk_default_bom < 0 || $this->fk_default_bom == '') ? "null" : (int) $this->fk_default_bom);
 			$sql .= ", net_measure = ".($this->net_measure != '' ? "'".$this->db->escape($this->net_measure)."'" : 'null');
 			$sql .= ", net_measure_units = ".($this->net_measure_units != '' ? "'".$this->db->escape($this->net_measure_units)."'" : 'null');
 			$sql .= ", weight = ".($this->weight != '' ? "'".$this->db->escape($this->weight)."'" : 'null');
@@ -2046,7 +2054,7 @@ class Product extends CommonObject
 		$sql .= " price_min, price_min_ttc, price_base_type, cost_price, default_vat_code, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, tosell,";
 		$sql .= " tobuy, fk_product_type, duration, fk_default_warehouse, seuil_stock_alerte, canvas, net_measure, net_measure_units, weight, weight_units,";
 		$sql .= " length, length_units, width, width_units, height, height_units,";
-		$sql .= " surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
+		$sql .= " surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,fk_default_bom,";
 		$sql .= " accountancy_code_buy, accountancy_code_buy_intra, accountancy_code_buy_export,";
 		$sql .= " accountancy_code_sell, accountancy_code_sell_intra, accountancy_code_sell_export, stock, pmp,";
 		$sql .= " datec, tms, import_key, entity, desiredstock, tobatch, fk_unit,";
@@ -2107,8 +2115,10 @@ class Product extends CommonObject
 				$this->localtax2_tx                    = $obj->localtax2_tx;
 				$this->localtax1_type                = $obj->localtax1_type;
 				$this->localtax2_type                = $obj->localtax2_type;
-
+				
 				$this->finished                        = $obj->finished;
+				$this->fk_default_bom                  = $obj->fk_default_bom;
+
 				$this->duration                        = $obj->duration;
 				$this->duration_value                = substr($obj->duration, 0, dol_strlen($obj->duration) - 1);
 				$this->duration_unit = substr($obj->duration, -1);
