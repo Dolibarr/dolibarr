@@ -8512,13 +8512,13 @@ abstract class CommonObject
 			}
 
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."ecm_files";
-			 $sql .= " WHERE src_object_type = '".$this->db->escape($this->table_element.(empty($this->module) ? '' : '@'.$this->module))."' AND src_object_id = ".$this->id;
-			 $resql = $this->db->query($sql);
-			 if (!$resql) {
-			 	$this->error = $this->db->lasterror();
-			 	$this->db->rollback();
-			 	return false;
-			 }
+			$sql .= " WHERE src_object_type = '".$this->db->escape($this->table_element.(empty($this->module) ? '' : '@'.$this->module))."' AND src_object_id = ".$this->id;
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				return false;
+			}
 		}
 
 		$this->db->commit();
