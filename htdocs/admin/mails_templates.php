@@ -325,7 +325,7 @@ if (empty($reshook)) {
 					}
 				} elseif ($keycode == 'content') {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
-				} elseif (in_array($keycode, array('joinfile', 'private', 'position'))) {
+				} elseif (in_array($keycode, array('joinfiles', 'private', 'position'))) {
 					$sql .= (int) GETPOST($keycode, 'int');
 				} else {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
@@ -385,7 +385,7 @@ if (empty($reshook)) {
 					}
 				} elseif ($keycode == 'content') {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
-				} elseif (in_array($keycode, array('joinfile', 'private', 'position'))) {
+				} elseif (in_array($keycode, array('joinfiles', 'private', 'position'))) {
 					$sql .= (int) GETPOST($keycode, 'int');
 				} else {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
@@ -417,7 +417,7 @@ if (empty($reshook)) {
 
 		$sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol."=".((int) $rowid);
 		if (!$user->admin) {	// A non admin user can only edit its own template
-			$sql .= " AND fk_user  = ".((int) $user->id;
+			$sql .= " AND fk_user  = ".((int) $user->id);
 		}
 		dol_syslog("delete", LOG_DEBUG);
 		$result = $db->query($sql);
