@@ -639,12 +639,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 			}
 
-			// Close / Cancel
-			if ($permissiontoadd && $object->status == $object::STATUS_VALIDATED)
-			{
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=close">'.$langs->trans("Disable").'</a>';
-			}
-
 			// Re-open
 			if ($permissiontoadd && $object->status == $object::STATUS_CANCELED)
 			{
@@ -664,6 +658,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($permissiontoadd)
 			{
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&object=bom">'.$langs->trans("ToClone").'</a>';
+			}
+
+			// Close / Cancel
+			if ($permissiontoadd && $object->status == $object::STATUS_VALIDATED)
+			{
+				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=close">'.$langs->trans("Disable").'</a>';
 			}
 
 			/*
