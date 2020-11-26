@@ -34,16 +34,6 @@ class AdvanceTargetingMailing extends CommonObject
 	public $db;
 
 	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-
-	/**
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'advtargetemailing';
@@ -58,17 +48,54 @@ class AdvanceTargetingMailing extends CommonObject
 	 */
 	public $id;
 
+	/**
+	 * @var string name
+	 */
 	public $name;
-	public $entity;
+
+	/**
+	 * @var int	element id
+	 */
 	public $fk_element;
+
+	/**
+	 * @var string type element
+	 */
 	public $type_element;
+
+	/**
+	 * @var string filter value
+	 */
 	public $filtervalue;
+
+	/**
+	 * @var int user author id
+	 */
 	public $fk_user_author;
+
+	/**
+	 * @var int|string datec
+	 */
 	public $datec = '';
+
+	/**
+	 * @var int user mod id
+	 */
 	public $fk_user_mod;
+
+	/**
+	 * @var int|string tms
+	 */
 	public $tms = '';
 
+	/**
+	 * @var array select target type
+	 */
 	public $select_target_type = array();
+
+	/**
+	 * @var array type status comm prospect
+	 */
 	public $type_statuscommprospect = array();
 	public $thirdparty_lines;
 	public $contact_lines;
