@@ -542,7 +542,7 @@ if ($resql)
 	if ($search_all)
 	{
 		foreach ($fieldstosearchall as $key => $val) $fieldstosearchall[$key] = $langs->trans($val);
-		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+		print '<div class="divsearchfieldfilter">'.$langs->transnoentities("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
 	}
 
  	// If the user can view prospects other than his'
