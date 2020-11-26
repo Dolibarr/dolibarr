@@ -2738,9 +2738,10 @@ class Form
 	 *  @param  int     $limit          Limit of line number
 	 *  @param  int     $alsoproductwithnosupplierprice    1=Add also product without supplier prices
 	 *  @param	string	$morecss		Add more CSS
+	 *  @param	int		$showstockinlist	Show stock information (slower).
 	 *  @return array           		Array of keys for json
 	 */
-	public function select_produits_fournisseurs_list($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $filterkey = '', $statut = -1, $outputmode = 0, $limit = 100, $alsoproductwithnosupplierprice = 0, $morecss = '')
+	public function select_produits_fournisseurs_list($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $filterkey = '', $statut = -1, $outputmode = 0, $limit = 100, $alsoproductwithnosupplierprice = 0, $morecss = '', $showstockinlist = 0)
 	{
 		// phpcs:enable
 		global $langs, $conf, $db, $user;
@@ -2756,10 +2757,7 @@ class Form
 			$langs->load('other');
 		}
 
-		$sql = "SELECT p.rowid, p.ref, p.label, p.price, p.duration, p.fk_product_type,";
-		if (!empty($conf->stock->enabled)) {
-			$sql .= " p.stock,";
-		}
+		$sql = "SELECT p.rowid, p.ref, p.label, p.price, p.duration, p.fk_product_type, p.stock,";
 		$sql .= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.remise_percent, pfp.remise, pfp.unitprice,";
 		$sql .= " pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, pfp.fk_soc, s.nom as name,";
 		$sql .= " pfp.supplier_reputation";
@@ -2977,18 +2975,20 @@ class Form
 					}
 				}
 
-				if (!empty($conf->stock->enabled) && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)))
+				if (!empty($conf->stock->enabled) && $showstockinlist && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)))
 				{
+					$novirtualstock = ($showstockinlist == 2);
+
 					if (!empty($user->rights->stock->lire)) {
-						$optlabel .= ' - '.$langs->trans("Stock").':'.$objp->stock;
+						$outvallabel .= ' - '.$langs->trans("Stock").':'.$objp->stock;
 
 						if ($objp->stock > 0) {
-							$outval .= ' - <span class="product_line_stock_ok">';
+							$optlabel .= ' - <span class="product_line_stock_ok">';
 						} elseif ($objp->stock <= 0) {
-							$outval .= ' - <span class="product_line_stock_too_low">';
+							$optlabel .= ' - <span class="product_line_stock_too_low">';
 						}
-						$outval .= $langs->transnoentities("Stock").':'.$objp->stock;
-						$outval .= '</span>';
+						$optlabel .= $langs->transnoentities("Stock").':'.$objp->stock;
+						$optlabel .= '</span>';
 						if (empty($novirtualstock) && !empty($conf->global->STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO))  // Warning, this option may slow down combo list generation
 						{
 							$langs->load("stocks");
@@ -2998,16 +2998,16 @@ class Form
 							$tmpproduct->load_virtual_stock();
 							$virtualstock = $tmpproduct->stock_theorique;
 
-							$optlabel .= ' - '.$langs->trans("VirtualStock").':'.$virtualstock;
+							$outvallabel .= ' - '.$langs->trans("VirtualStock").':'.$virtualstock;
 
-							$outval .= ' - '.$langs->transnoentities("VirtualStock").':';
+							$optlabel .= ' - '.$langs->transnoentities("VirtualStock").':';
 							if ($virtualstock > 0) {
-								$outval .= '<span class="product_line_stock_ok">';
+								$optlabel .= '<span class="product_line_stock_ok">';
 							} elseif ($virtualstock <= 0) {
-								$outval .= '<span class="product_line_stock_too_low">';
+								$optlabel .= '<span class="product_line_stock_too_low">';
 							}
-							$outval .= $virtualstock;
-							$outval .= '</span>';
+							$optlabel .= $virtualstock;
+							$optlabel .= '</span>';
 
 							unset($tmpproduct);
 						}
