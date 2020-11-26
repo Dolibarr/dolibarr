@@ -353,16 +353,20 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Title
-	print '<tr><td class="fieldrequired">'.$langs->trans('Title').'</td><td><input type="text" class="minwidth300" name="titre" value="'.dol_escape_htmltag(GETPOST("titre", 'alphanohtml')).'"></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans('Title').'</td>';
+	print '<td><input type="text" class="minwidth300" name="titre" value="'.dol_escape_htmltag(GETPOST("titre", 'alphanohtml')).'"></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
 
 	// URL
-	print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td><td><input type="text" class="minwidth500" name="url" value="'.GETPOST("url", 'alphanohtml').'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td>';
+	print '<td><input type="text" class="minwidth500" name="url" value="'.GETPOST("url", 'alphanohtml').'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
 
 	// Langs
-	print '<tr><td>'.$langs->trans('LangFile').'</td><td><input type="text" class="minwidth300" name="langs" value="'.$parent_langs.'"></td><td>'.$langs->trans('DetailLangs').'</td></tr>';
+	print '<tr><td>'.$langs->trans('LangFile').'</td>';
+	print '<td><input type="text" class="minwidth300" name="langs" value="'.$parent_langs.'"></td><td>'.$langs->trans('DetailLangs').'</td></tr>';
 
 	// Position
-	print '<tr><td>'.$langs->trans('Position').'</td><td><input type="text" class="width100" name="position" value="'.dol_escape_htmltag(GETPOSTISSET("position") ? GETPOST("position", 'int') : 100).'"></td><td>'.$langs->trans('DetailPosition').'</td></tr>';
+	print '<tr><td>'.$langs->trans('Position').'</td>';
+	print '<td><input type="text" class="width100" name="position" value="'.dol_escape_htmltag(GETPOSTISSET("position") ? GETPOST("position", 'int') : 100).'"></td><td>'.$langs->trans('DetailPosition').'</td></tr>';
 
 	// Target
 	print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target">';
@@ -371,10 +375,12 @@ if ($action == 'create') {
 	print '</select></td></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
 
 	// Enabled
-	print '<tr><td>'.$langs->trans('Enabled').'</td><td><input type="text" class="minwidth500" name="enabled" value="'.(GETPOSTISSET('enabled') ? GETPOST("enabled", 'alphanohtml') : '1').'"></td><td>'.$langs->trans('DetailEnabled').'</td></tr>';
+	print '<tr><td>'.$langs->trans('Enabled').'</td>';
+	print '<td><input type="text" class="minwidth500" name="enabled" value="'.(GETPOSTISSET('enabled') ? GETPOST("enabled", 'alphanohtml') : '1').'"></td><td>'.$langs->trans('DetailEnabled').'</td></tr>';
 
 	// Perms
-	print '<tr><td>'.$langs->trans('Rights').'</td><td><input type="text" class="minwidth500" name="perms" value="'.(GETPOSTISSET('perms') ? GETPOST('perms', 'alphanohtml') : '1').'"></td><td>'.$langs->trans('DetailRight').'</td></tr>';
+	print '<tr><td>'.$langs->trans('Rights').'</td>';
+	print '<td><input type="text" class="minwidth500" name="perms" value="'.(GETPOSTISSET('perms') ? GETPOST('perms', 'alphanohtml') : '1').'"></td><td>'.$langs->trans('DetailRight').'</td></tr>';
 
 	print '</table>';
 
@@ -426,7 +432,8 @@ if ($action == 'create') {
 	print '</select></td><td>'.$langs->trans('DetailUser').'</td></tr>';
 
 	// Type
-	print '<tr><td class="fieldrequired">'.$langs->trans('Type').'</td><td>'.$langs->trans(ucfirst($menu->type)).'</td><td>'.$langs->trans('DetailType').'</td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans('Type').'</td>';
+	print '<td>'.$langs->trans(ucfirst($menu->type)).'</td><td>'.$langs->trans('DetailType').'</td></tr>';
 
 	// Mainmenu code
 	if ($menu->type == 'top') {
@@ -463,16 +470,20 @@ if ($action == 'create') {
 	//print '<tr><td>'.$langs->trans('Level').'</td><td>'.$menu->level.'</td><td>'.$langs->trans('DetailLevel').'</td></tr>';
 
 	// Title
-	print '<tr><td class="fieldrequired">'.$langs->trans('Title').'</td><td><input type="text" class="minwidth300" name="titre" value="'.dol_escape_htmltag($menu->title).'"></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans('Title').'</td>';
+	print '<td><input type="text" class="minwidth300" name="titre" value="'.dol_escape_htmltag($menu->title).'"></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
 
 	// Url
-	print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td><td><input type="text" class="quatrevingtpercent" name="url" value="'.$menu->url.'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td>';
+	print '<td><input type="text" class="quatrevingtpercent" name="url" value="'.$menu->url.'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
 
 	// Langs
-	print '<tr><td>'.$langs->trans('LangFile').'</td><td><input type="text" class="minwidth300" name="langs" value="'.dol_escape_htmltag($menu->langs).'"></td><td>'.$langs->trans('DetailLangs').'</td></tr>';
+	print '<tr><td>'.$langs->trans('LangFile').'</td>';
+	print '<td><input type="text" class="minwidth300" name="langs" value="'.dol_escape_htmltag($menu->langs).'"></td><td>'.$langs->trans('DetailLangs').'</td></tr>';
 
 	// Position
-	print '<tr><td>'.$langs->trans('Position').'</td><td><input type="text" class="minwidth100" name="position" value="'.$menu->position.'"></td><td>'.$langs->trans('DetailPosition').'</td></tr>';
+	print '<tr><td>'.$langs->trans('Position').'</td>';
+	print '<td><input type="text" class="minwidth100" name="position" value="'.$menu->position.'"></td><td>'.$langs->trans('DetailPosition').'</td></tr>';
 
 	// Target
 	print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target">';
@@ -481,14 +492,16 @@ if ($action == 'create') {
 	print '</select></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
 
 	// Enabled
-	print '<tr><td>'.$langs->trans('Enabled').'</td><td><input type="text" class="minwidth500" name="enabled" value="'.dol_escape_htmltag($menu->enabled).'"></td><td>'.$langs->trans('DetailEnabled');
+	print '<tr><td>'.$langs->trans('Enabled').'</td>';
+	print '<td><input type="text" class="minwidth500" name="enabled" value="'.dol_escape_htmltag($menu->enabled).'"></td><td>'.$langs->trans('DetailEnabled');
 	if (!empty($menu->enabled)) {
 		print ' ('.$langs->trans("ConditionIsCurrently").': '.yn(dol_eval($menu->enabled, 1)).')';
 	}
 	print '</td></tr>';
 
 	// Perms
-	print '<tr><td>'.$langs->trans('Rights').'</td><td><input type="text" class="minwidth500" name="perms" value="'.dol_escape_htmltag($menu->perms).'"></td><td>'.$langs->trans('DetailRight');
+	print '<tr><td>'.$langs->trans('Rights').'</td>';
+	print '<td><input type="text" class="minwidth500" name="perms" value="'.dol_escape_htmltag($menu->perms).'"></td><td>'.$langs->trans('DetailRight');
 	if (!empty($menu->perms)) {
 		print ' ('.$langs->trans("ConditionIsCurrently").': '.yn(dol_eval($menu->perms, 1)).')';
 	}
