@@ -168,7 +168,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	 * testMyObjectDelete
 	 *
 	 * @param	int		$id		Id of object
-	 * @return	void
+	 * @return	int
 	 *
 	 * @depends	testMyObjectCreate
 	 * The depends says test is run only if previous is ok
