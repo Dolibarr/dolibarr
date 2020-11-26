@@ -682,7 +682,7 @@ class pdf_sponge extends ModelePDFFactures
 					}
 
 					$nexY = max($pdf->GetY(), $posYAfterImage, $posYAfterDescription);
-					
+
 					$pageposafter = $pdf->getPage();
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);

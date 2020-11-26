@@ -518,7 +518,7 @@ if ($search_status)
 	elseif ($search_status == '3,4') $title .= ' - '.$langs->trans("SuppliersOrdersAwaitingReception");
 	elseif ($search_status == '1,2,3') $title .= ' - '.$langs->trans("StatusOrderToProcessShort");
 	elseif ($search_status == '6,7') $title .= ' - '.$langs->trans("StatusOrderCanceled");
-	elseif(is_numeric($search_status)) $title .= ' - '.$commandestatic->LibStatut($search_status);
+	elseif (is_numeric($search_status)) $title .= ' - '.$commandestatic->LibStatut($search_status);
 }
 if ($search_billed > 0) $title .= ' - '.$langs->trans("Billed");
 
