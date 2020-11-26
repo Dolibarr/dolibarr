@@ -3175,7 +3175,7 @@ class CommandeFournisseur extends CommonOrder
         if (empty($this->date_delivery) && !empty($this->date_livraison)) $this->date_delivery = $this->date_livraison; // For backward compatibility
 
         $now = dol_now();
-        $date_to_test = empty($this->date_livraison) ? $this->date_commande : $this->date_livraison;
+        $date_to_test = empty($this->date_delivery) ? $this->date_commande : $this->date_delivery;
 
         return ($this->statut > 0 && $this->statut < 5) && $date_to_test && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
     }
