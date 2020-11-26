@@ -59,8 +59,10 @@ jobs:
   include:
     - if: type = push
       php: '5.6'
+      env: DB=postgresql
     - if: type = pull_request OR type = push
       php: '7.4'
+      env: DB=mysql
     - if: type = push AND branch = develop
       php: nightly 
 
