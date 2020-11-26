@@ -31,31 +31,15 @@ addons:
     # We need pgloader for import mysql database into pgsql
     - pgloader
 
-#php:
-#- '5.6'
-#- '7.4'
-#- nightly
-
 env:
   global:
   # Set to true for very verbose output
   - DEBUG=false
-  #jobs:
-  # MariaDB overrides MySQL installation so it's not possible to test both yet
-  #- DB=mariadb
-  #- DB=mysql
-  #- DB=postgresql
-  # See https://docs.travis-ci.com/user/languages/php/#Apache-%2B-PHP
-  #- WS=apache
 
 jobs:
   fast_finish: true
   allow_failures:
   - php: nightly
-  # We exclude some combinations not usefull to save Travis CPU
-  exclude:
-  - php: nightly
-    env: DB=postgresql
   include:
     - if: type = push
       php: '5.6'
@@ -416,7 +400,7 @@ script:
   php step5.php 12.0.0 13.0.0 > $TRAVIS_BUILD_DIR/upgrade12001300-3.log
 
   # Enable modules not enabled into original dump
-  php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_API,MAIN_MODULE_SUPPLIERPROPOSAL,MAIN_MODULE_WEBSITE,MAIN_MODULE_TICKET,MAIN_MODULE_ACCOUNTING,MAIN_MODULE_MRP > $TRAVIS_BUILD_DIR/enablemodule.log
+  php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_API,MAIN_MODULE_SUPPLIERPROPOSAL,MAIN_MODULE_WEBSITE,MAIN_MODULE_TICKET,MAIN_MODULE_ACCOUNTING,MAIN_MODULE_MRP,MAIN_MODULE_RECRUITMENT > $TRAVIS_BUILD_DIR/enablemodule.log
   echo $?
   cd -
   set +e
