@@ -3342,106 +3342,95 @@ class Commande extends CommonOrder
 
 		$this->db->begin();
 
-		if (!$error && !$notrigger)
-		{
+		if (!$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('ORDER_DELETE', $user);
-			if ($result < 0) $error++;
+			if ($result < 0) { $error++; }
 			// End call triggers
 		}
 
+		// Test we can delete
 		if ($this->nb_expedition() != 0)
 		{
 			$this->errors[] = $langs->trans('SomeShipmentExists');
 			$error++;
 		}
 
-		if (!$error)
-		{
-			// Delete extrafields of order details
-						$main = MAIN_DB_PREFIX.'commandedet';
-						$ef = $main."_extrafields";
-						$sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_commande = ".$this->id.")";
-			if (!$this->db->query($sql))
-			{
+		// Delete extrafields of lines and lines
+		if (!$error && !empty($this->table_element_line)) {
+			$tabletodelete = $this->table_element_line;
+			$sqlef = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete."_extrafields WHERE fk_object IN (SELECT rowid FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id.")";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id;
+			if (! $this->db->query($sqlef) || ! $this->db->query($sql)) {
 				$error++;
-				$this->errors[] = $this->db->lasterror();
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+				dol_syslog(get_class($this)."::delete error ".$this->error, LOG_ERR);
 			}
 		}
 
-		if (!$error)
-		{
-			// Delete order details
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE fk_commande = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$error++;
-				$this->errors[] = $this->db->lasterror();
-			}
-		}
-
-		if (!$error)
-		{
+		if (!$error) {
 			// Delete linked object
 			$res = $this->deleteObjectLinked();
 			if ($res < 0) $error++;
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			// Delete linked contacts
 			$res = $this->delete_linked_contact();
 			if ($res < 0) $error++;
 		}
 
-		if (!$error)
-		{
-			// Remove extrafields
+		// Removed extrafields of object
+		if (!$error) {
 			$result = $this->deleteExtraFields();
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$error++;
-				dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
+				dol_syslog(get_class($this)."::delete error ".$this->error, LOG_ERR);
 			}
 		}
 
-		if (!$error)
-		{
-			// Delete object
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande WHERE rowid = ".$this->id;
-			if (!$this->db->query($sql))
-			{
+		// Delete main record
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE rowid = ".$this->id;
+			$res = $this->db->query($sql);
+			if (! $res) {
 				$error++;
-				$this->errors[] = $this->db->lasterror();
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+				dol_syslog(get_class($this)."::delete error ".$this->error, LOG_ERR);
 			}
 		}
 
-		if (!$error)
-		{
-			// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
-			$this->deleteEcmFiles();
+		// Delete record into ECM index and physically
+		if (!$error) {
+			$res = $this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
+			if (! $res) {
+				$error++;
+			}
+		}
 
-			// Remove directory with files
-			$comref = dol_sanitizeFileName($this->ref);
-			if ($conf->commande->multidir_output[$this->entity] && !empty($this->ref))
-			{
-				$dir = $conf->commande->multidir_output[$this->entity]."/".$comref;
-				$file = $conf->commande->multidir_output[$this->entity]."/".$comref."/".$comref.".pdf";
-				if (file_exists($file))	// We must delete all files before deleting directory
-				{
+		if (!$error) {
+			// We remove directory
+			$ref = dol_sanitizeFileName($this->ref);
+			if ($conf->commande->multidir_output[$this->entity] && !empty($this->ref)) {
+				$dir = $conf->commande->multidir_output[$this->entity]."/".$ref;
+				$file = $dir."/".$ref.".pdf";
+				if (file_exists($file)) {
 					dol_delete_preview($this);
 
-					if (!dol_delete_file($file, 0, 0, 0, $this)) // For triggers
-					{
+					if (!dol_delete_file($file, 0, 0, 0, $this)) {
+						$this->error = 'ErrorFailToDeleteFile';
+						$this->errors[] = $this->error;
 						$this->db->rollback();
 						return 0;
 					}
 				}
-				if (file_exists($dir))
-				{
-					if (!dol_delete_dir_recursive($dir))
-					{
-						$this->error = $langs->trans("ErrorCanNotDeleteDir", $dir);
+				if (file_exists($dir)) {
+					$res = @dol_delete_dir_recursive($dir);
+					if (!$res) {
+						$this->error = 'ErrorFailToDeleteDir';
+						$this->errors[] = $this->error;
 						$this->db->rollback();
 						return 0;
 					}
@@ -3449,17 +3438,13 @@ class Commande extends CommonOrder
 			}
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
+			dol_syslog(get_class($this)."::delete ".$this->id." by ".$user->id, LOG_DEBUG);
 			$this->db->commit();
 			return 1;
 		} else {
-			foreach ($this->errors as $errmsg)
-			{
-				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-			}
 			$this->db->rollback();
-			return -1 * $error;
+			return -1;
 		}
 	}
 

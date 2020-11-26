@@ -2947,8 +2947,21 @@ class Propal extends CommonObject
 			if (! $this->db->query($sqlef) || ! $this->db->query($sql)) {
 				$error++;
 				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
 				dol_syslog(get_class($this)."::delete error ".$this->error, LOG_ERR);
 			}
+		}
+
+		if (!$error) {
+			// Delete linked object
+			$res = $this->deleteObjectLinked();
+			if ($res < 0) $error++;
+		}
+
+		if (!$error) {
+			// Delete linked contacts
+			$res = $this->delete_linked_contact();
+			if ($res < 0) $error++;
 		}
 
 		// Removed extrafields of object
@@ -2966,25 +2979,15 @@ class Propal extends CommonObject
 			$res = $this->db->query($sql);
 			if (! $res) {
 				$error++;
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
 				dol_syslog(get_class($this)."::delete error ".$this->error, LOG_ERR);
 			}
 		}
 
-		if (! $error) {
-			// Delete linked object
-			$res = $this->deleteObjectLinked();
-			if ($res < 0) $error++;
-		}
-
-		if (! $error) {
-			// Delete linked contacts
-			$res = $this->delete_linked_contact();
-			if ($res < 0) $error++;
-		}
-
 		// Delete record into ECM index and physically
 		if (!$error) {
-			$res = $this->deleteEcmFiles(); // Deleting files physically is done later with the dol_delete_dir_recursive
+			$res = $this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
 			if (! $res) {
 				$error++;
 			}
@@ -3001,7 +3004,7 @@ class Propal extends CommonObject
 
 					if (!dol_delete_file($file, 0, 0, 0, $this)) {
 						$this->error = 'ErrorFailToDeleteFile';
-						$this->errors = array('ErrorFailToDeleteFile');
+						$this->errors[] = $this->error;
 						$this->db->rollback();
 						return 0;
 					}
@@ -3010,7 +3013,7 @@ class Propal extends CommonObject
 					$res = @dol_delete_dir_recursive($dir);
 					if (!$res) {
 						$this->error = 'ErrorFailToDeleteDir';
-						$this->errors = array('ErrorFailToDeleteDir');
+						$this->errors[] = $this->error;
 						$this->db->rollback();
 						return 0;
 					}
