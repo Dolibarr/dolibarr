@@ -40,11 +40,11 @@ env:
   global:
   # Set to true for very verbose output
   - DEBUG=false
-  jobs:
+  #jobs:
   # MariaDB overrides MySQL installation so it's not possible to test both yet
   #- DB=mariadb
-  - DB=mysql
-  - DB=postgresql
+  #- DB=mysql
+  #- DB=postgresql
   # See https://docs.travis-ci.com/user/languages/php/#Apache-%2B-PHP
   #- WS=apache
 
@@ -65,6 +65,7 @@ jobs:
       env: DB=mysql
     - if: type = push AND branch = develop
       php: nightly 
+      env: DB=mysql
 
 notifications:
   email:
