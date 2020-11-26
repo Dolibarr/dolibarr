@@ -1338,28 +1338,23 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	// We add ref of product (and supplier ref if defined)
 	$prefix_prodserv = "";
 	$ref_prodserv = "";
-	if (!empty($conf->global->PRODUCT_ADD_TYPE_IN_DOCUMENTS))   // In standard mode, we do not show this
-	{
-		if ($prodser->isService())
-		{
+	if (!empty($conf->global->PRODUCT_ADD_TYPE_IN_DOCUMENTS)) {   // In standard mode, we do not show this
+		if ($prodser->isService()) {
 			$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Service")." ";
 		} else {
 			$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Product")." ";
 		}
 	}
 
-	if (empty($hideref))
-	{
-		if ($issupplierline)
-		{
-			if ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 1)
-				$ref_prodserv = $ref_supplier;
-			elseif ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 2)
-				$ref_prodserv = $ref_supplier.' ('.$outputlangs->transnoentitiesnoconv("InternalRef").' '.$prodser->ref.')';
-			else // Common case
-			{
+	if (empty($hideref)) {
+		if ($issupplierline) {
+			if (empty($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES)) {  // Common case
 				$ref_prodserv = $prodser->ref; // Show local ref
 				if ($ref_supplier) $ref_prodserv .= ($prodser->ref ? ' (' : '').$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.($prodser->ref ? ')' : '');
+			} elseif ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 1) {
+				$ref_prodserv = $ref_supplier;
+			} elseif ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 2) {
+				$ref_prodserv = $ref_supplier.' ('.$outputlangs->transnoentitiesnoconv("InternalRef").' '.$prodser->ref.')';
 			}
 		} else {
 			$ref_prodserv = $prodser->ref; // Show local ref only
