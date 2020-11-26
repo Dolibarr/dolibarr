@@ -3016,7 +3016,8 @@ class CommandeFournisseur extends CommonOrder
             {
                 $response->nbtodo++;
 
-                $commandestatic->date_livraison = $this->db->jdate($obj->delivery_date);
+                $commandestatic->date_livraison = $this->db->jdate($obj->delivery_date);	// deprecated
+                $commandestatic->date_delivery = $this->db->jdate($obj->delivery_date);
                 $commandestatic->date_commande = $this->db->jdate($obj->date_commande);
                 $commandestatic->statut = $obj->fk_statut;
 
