@@ -133,6 +133,7 @@ class CoreTest extends PHPUnit\Framework\TestCase
      *
      * @return	void
      */
+    /*
     public function testDetectURLROOT()
     {
         global $dolibarr_main_prod;
@@ -236,7 +237,7 @@ class CoreTest extends PHPUnit\Framework\TestCase
 
         return true;
     }
-
+	*/
 
     /**
      * testSqlAndScriptInjectWithPHPUnit
