@@ -2113,7 +2113,7 @@ class Form
 		$outarray = array();
 
 		// Units
-		if ($conf->global->PRODUCT_USE_UNITS) {
+		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 			$langs->load('other');
 		}
 
@@ -2738,12 +2738,13 @@ class Form
 	 *  @param  int     $limit          Limit of line number
 	 *  @param  int     $alsoproductwithnosupplierprice    1=Add also product without supplier prices
 	 *  @param	string	$morecss		Add more CSS
+	 *  @param	int		$showstockinlist	Show stock information (slower).
 	 *  @return array           		Array of keys for json
 	 */
-	public function select_produits_fournisseurs_list($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $filterkey = '', $statut = -1, $outputmode = 0, $limit = 100, $alsoproductwithnosupplierprice = 0, $morecss = '')
+	public function select_produits_fournisseurs_list($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $filterkey = '', $statut = -1, $outputmode = 0, $limit = 100, $alsoproductwithnosupplierprice = 0, $morecss = '', $showstockinlist = 0)
 	{
 		// phpcs:enable
-		global $langs, $conf, $db;
+		global $langs, $conf, $db, $user;
 
 		$out = '';
 		$outarray = array();
@@ -2752,16 +2753,16 @@ class Form
 
 		$langs->load('stocks');
 		// Units
-		if ($conf->global->PRODUCT_USE_UNITS) {
+		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 			$langs->load('other');
 		}
 
-		$sql = "SELECT p.rowid, p.ref, p.label, p.price, p.duration, p.fk_product_type,";
+		$sql = "SELECT p.rowid, p.ref, p.label, p.price, p.duration, p.fk_product_type, p.stock,";
 		$sql .= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.remise_percent, pfp.remise, pfp.unitprice,";
 		$sql .= " pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, pfp.fk_soc, s.nom as name,";
 		$sql .= " pfp.supplier_reputation";
 		// Units
-		if ($conf->global->PRODUCT_USE_UNITS) {
+		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 			$sql .= ", u.label as unit_long, u.short_label as unit_short, p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units";
 		}
 		if (!empty($conf->barcode->enabled)) $sql .= ", pfp.barcode";
@@ -2770,7 +2771,7 @@ class Form
 		if ($socid) $sql .= " AND pfp.fk_soc = ".$socid;
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pfp.fk_soc = s.rowid";
 		// Units
-		if ($conf->global->PRODUCT_USE_UNITS) {
+		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_units u ON u.rowid = p.fk_unit";
 		}
 		$sql .= " WHERE p.entity IN (".getEntity('product').")";
@@ -2837,7 +2838,7 @@ class Form
 
 				// Units
 				$outvalUnits = '';
-				if ($conf->global->PRODUCT_USE_UNITS) {
+				if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 					if (!empty($objp->unit_short)) {
 						$outvalUnits .= ' - '.$objp->unit_short;
 					}
@@ -2971,6 +2972,45 @@ class Form
 					{
 						$optlabel .= " - <span class='opacitymedium'>".$langs->trans("NoPriceDefinedForThisSupplier").'</span>';
 						$outvallabel .= ' - '.$langs->transnoentities("NoPriceDefinedForThisSupplier");
+					}
+				}
+
+				if (!empty($conf->stock->enabled) && $showstockinlist && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)))
+				{
+					$novirtualstock = ($showstockinlist == 2);
+
+					if (!empty($user->rights->stock->lire)) {
+						$outvallabel .= ' - '.$langs->trans("Stock").':'.$objp->stock;
+
+						if ($objp->stock > 0) {
+							$optlabel .= ' - <span class="product_line_stock_ok">';
+						} elseif ($objp->stock <= 0) {
+							$optlabel .= ' - <span class="product_line_stock_too_low">';
+						}
+						$optlabel .= $langs->transnoentities("Stock").':'.$objp->stock;
+						$optlabel .= '</span>';
+						if (empty($novirtualstock) && !empty($conf->global->STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO))  // Warning, this option may slow down combo list generation
+						{
+							$langs->load("stocks");
+
+							$tmpproduct = new Product($this->db);
+							$tmpproduct->fetch($objp->rowid, '', '', '', 1, 1, 1); // Load product without lang and prices arrays (we just need to make ->virtual_stock() after)
+							$tmpproduct->load_virtual_stock();
+							$virtualstock = $tmpproduct->stock_theorique;
+
+							$outvallabel .= ' - '.$langs->trans("VirtualStock").':'.$virtualstock;
+
+							$optlabel .= ' - '.$langs->transnoentities("VirtualStock").':';
+							if ($virtualstock > 0) {
+								$optlabel .= '<span class="product_line_stock_ok">';
+							} elseif ($virtualstock <= 0) {
+								$optlabel .= '<span class="product_line_stock_too_low">';
+							}
+							$optlabel .= $virtualstock;
+							$optlabel .= '</span>';
+
+							unset($tmpproduct);
+						}
 					}
 				}
 
@@ -6554,7 +6594,7 @@ class Form
 						var separ = urlBase.indexOf("?") >= 0 ? "&" : "?";
 						/* console.log("params.term="+params.term); */
 						/* console.log("params.term encoded="+encodeURIComponent(params.term)); */
-						saveRemoteData[data.id].url = urlBase + separ + "sall=" + encodeURIComponent(params.term);';
+						saveRemoteData[data.id].url = urlBase + separ + "sall=" + encodeURIComponent(params.term.replace(/\"/g, ""));';
 		}
 
 		if (!$disableFiltering) {
@@ -6585,7 +6625,7 @@ class Form
 					$.each( saveRemoteData, function( key, value ) {
 						if (key == selected)
 						{
-							console.log("selectArrayAjax - Do a redirect to "+value.url)
+							console.log("selectArrayFilter - Do a redirect to "+value.url)
 							location.assign(value.url);
 						}
 					});

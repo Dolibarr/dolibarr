@@ -402,36 +402,36 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 		}
 	}
 
-	if ($error == 0)
-	{
-		if (!$silent) {
-			print '<tr><td>'.$langs->trans("ProcessMigrateScript").'</td>';
-			print '<td class="right">'.$langs->trans("OK");
-			//if (! empty($conf->use_javascript_ajax)) {
-				print '<script type="text/javascript" language="javascript">
-				jQuery(document).ready(function() {
-					function init_trrunsql()
-					{
-						console.log("toggle .trforrunsql");
-						jQuery(".trforrunsql").toggle();
-					}
-					init_trrunsql();
-					jQuery(".trforrunsqlshowhide").click(function() {
-						init_trrunsql();
-					});
-				});
-				</script>';
-				print ' - <a class="trforrunsqlshowhide" href="#">'.$langs->trans("ShowHideDetails").'</a>';
-			//}
-			print '</td></tr>'."\n";
+	if (!$silent) {
+		print '<tr><td>'.$langs->trans("ProcessMigrateScript").'</td>';
+		print '<td class="right">';
+		if ($error == 0) {
+			print '<span class="ok">'.$langs->trans("OK").'</span>';
+		} else {
+			print '<span class="error">'.$langs->trans("Error").'</span>';
 		}
+		//if (! empty($conf->use_javascript_ajax)) {
+			print '<script type="text/javascript" language="javascript">
+			jQuery(document).ready(function() {
+				function init_trrunsql()
+				{
+					console.log("toggle .trforrunsql");
+					jQuery(".trforrunsql").toggle();
+				}
+				init_trrunsql();
+				jQuery(".trforrunsqlshowhide").click(function() {
+					init_trrunsql();
+				});
+			});
+			</script>';
+			print ' - <a class="trforrunsqlshowhide" href="#">'.$langs->trans("ShowHideDetails").'</a>';
+		//}
+		print '</td></tr>'."\n";
+	}
+
+	if ($error == 0) {
 		$ok = 1;
 	} else {
-		if (!$silent) {
-			print '<tr><td>'.$langs->trans("ProcessMigrateScript").'</td>';
-			print '<td class="right"><font class="error">'.$langs->trans("KO").'</font>';
-			print '</td></tr>'."\n";
-		}
 		$ok = 0;
 	}
 

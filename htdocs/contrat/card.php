@@ -1477,7 +1477,7 @@ if ($action == 'create')
 				//	print '<td width="80" class="right">'.$langs->trans("PriceUHTCurrency").'</td>';
 				//}
 				print '<td width="30" class="center">'.$langs->trans("Qty").'</td>';
-				if ($conf->global->PRODUCT_USE_UNITS) print '<td width="30" class="left">'.$langs->trans("Unit").'</td>';
+				if (!empty($conf->global->PRODUCT_USE_UNITS)) print '<td width="30" class="left">'.$langs->trans("Unit").'</td>';
 				print '<td width="50" class="right">'.$langs->trans("ReductionShort").'</td>';
 				if (!empty($conf->margin->enabled) && !empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) print '<td width="50" class="right">'.$langs->trans("BuyingPrice").'</td>';
 				print '<td width="30">&nbsp;</td>';
@@ -1538,7 +1538,7 @@ if ($action == 'create')
 					// Quantity
 					print '<td class="center">'.$objp->qty.'</td>';
 					// Unit
-					if ($conf->global->PRODUCT_USE_UNITS) print '<td class="left">'.$langs->trans($object->lines[$cursorline - 1]->getLabelOfUnit()).'</td>';
+					if (!empty($conf->global->PRODUCT_USE_UNITS)) print '<td class="left">'.$langs->trans($object->lines[$cursorline - 1]->getLabelOfUnit()).'</td>';
 					// Discount
 					if ($objp->remise_percent > 0)
 					{
@@ -1682,7 +1682,7 @@ if ($action == 'create')
 					print '<td class="center"><input size="2" type="text" name="elqty" value="'.$objp->qty.'"></td>';
 
 					// Unit
-					if ($conf->global->PRODUCT_USE_UNITS)
+					if (!empty($conf->global->PRODUCT_USE_UNITS))
 					{
 						print '<td class="left">';
 						print $form->selectUnits($objp->fk_unit, "unit");
@@ -1706,7 +1706,7 @@ if ($action == 'create')
 
 					$colspan = 6;
 					if (!empty($conf->margin->enabled) && !empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) $colspan++;
-					if ($conf->global->PRODUCT_USE_UNITS) $colspan++;
+					if (!empty($conf->global->PRODUCT_USE_UNITS)) $colspan++;
 
 					// Ligne dates prevues
 					print '<tr class="oddeven">';

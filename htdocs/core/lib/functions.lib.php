@@ -1060,7 +1060,7 @@ function dol_escape_json($stringtoescape)
  *  Returns text escaped for inclusion in HTML alt or title tags, or into values of HTML input fields.
  *
  *  @param      string		$stringtoescape			String to escape
- *  @param		int			$keepb					1=Preserve b tags (otherwise, remove them)
+ *  @param		int			$keepb					1=Keep b tags and escape them, 0=remove them
  *  @param      int         $keepn              	1=Preserve \r\n strings (otherwise, replace them with escaped value). Set to 1 when escaping for a <textarea>.
  *  @param		string		$keepmoretags			'' or 'common' or list of tags
  *  @param		int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
@@ -1069,7 +1069,7 @@ function dol_escape_json($stringtoescape)
  */
 function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $keepmoretags = '', $escapeonlyhtmltags = 0)
 {
-	if ($keepmoretags == 'common') $keepmoretags = 'html,body,a,em,i,u,ul,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody';
+	if ($keepmoretags == 'common') $keepmoretags = 'html,body,a,b,em,i,u,ul,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody';
 	// TODO Implement $keepmoretags
 
 	// escape quotes and backslashes, newlines, etc.
@@ -6725,7 +6725,7 @@ function get_date_range($date_start, $date_end, $format = '', $outputlangs = '',
  *
  * @param	string	$firstname		Firstname
  * @param	string	$lastname		Lastname
- * @param	int		$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname, 3=Firstname if defined else lastname
+ * @param	int		$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname, 3=Firstname if defined else lastname, 4=Lastname, 5=Lastname if defined else firstname
  * @return	string					Firstname + lastname or Lastname + firstname
  */
 function dolGetFirstLastname($firstname, $lastname, $nameorder = -1)
@@ -6735,22 +6735,24 @@ function dolGetFirstLastname($firstname, $lastname, $nameorder = -1)
 	$ret = '';
 	// If order not defined, we use the setup
 	if ($nameorder < 0) $nameorder = (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION) ? 1 : 0);
-	if ($nameorder && $nameorder != 2 && $nameorder != 3)
-	{
+	if ($nameorder == 1) {
 		$ret .= $firstname;
 		if ($firstname && $lastname) $ret .= ' ';
 		$ret .= $lastname;
-	} elseif ($nameorder == 2 || $nameorder == 3)
-	{
+	} elseif ($nameorder == 2 || $nameorder == 3) {
 		$ret .= $firstname;
-		if (empty($ret) && $nameorder == 3)
-		{
+		if (empty($ret) && $nameorder == 3) {
 			$ret .= $lastname;
 		}
-	} else {
+	} else {	// 0, 4 or 5
 		$ret .= $lastname;
-		if ($firstname && $lastname) $ret .= ' ';
-		$ret .= $firstname;
+		if (empty($ret) && $nameorder == 5) {
+			$ret .= $firstname;
+		}
+		if ($nameorder == 0) {
+			if ($firstname && $lastname) $ret .= ' ';
+			$ret .= $firstname;
+		}
 	}
 	return $ret;
 }

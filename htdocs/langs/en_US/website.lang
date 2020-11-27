@@ -136,3 +136,4 @@ RSSFeed=RSS Feed
 RSSFeedDesc=You can get a RSS feed of latest articles with type 'blogpost' using this URL
 PagesRegenerated=%s page(s)/container(s) regenerated
 RegenerateWebsiteContent=Regenerate web site cache files
+AllowedInFrames=Allowed in Frames

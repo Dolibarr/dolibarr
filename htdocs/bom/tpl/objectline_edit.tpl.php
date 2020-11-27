@@ -108,7 +108,7 @@ if (($line->info_bits & 2) != 2) {
 }
 print '</td>';
 
-if ($conf->global->PRODUCT_USE_UNITS)
+if (!empty($conf->global->PRODUCT_USE_UNITS))
 {
 	$coldisplay++;
 	print '<td class="nobottom linecoluseunit left">';

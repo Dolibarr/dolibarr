@@ -2184,6 +2184,7 @@ class Facture extends CommonInvoice
 				if (!$this->db->query($sql))
 				{
 					$this->error = $this->db->error()." sql=".$sql;
+					$this->errors[] = $this->error;
 					$this->db->rollback();
 					return -5;
 				}
@@ -2244,6 +2245,7 @@ class Facture extends CommonInvoice
 							{
 								$langs->load("errors");
 								$this->error = $langs->trans("ErrorFailToDeleteFile", $file);
+								$this->errors[] = $this->error;
 								$this->db->rollback();
 								return 0;
 							}
@@ -2254,6 +2256,7 @@ class Facture extends CommonInvoice
 							{
 								$langs->load("errors");
 								$this->error = $langs->trans("ErrorFailToDeleteDir", $dir);
+								$this->errors[] = $this->error;
 								$this->db->rollback();
 								return 0;
 							}
@@ -2264,11 +2267,13 @@ class Facture extends CommonInvoice
 					return 1;
 				} else {
 					$this->error = $this->db->lasterror()." sql=".$sql;
+					$this->errors[] = $this->error;
 					$this->db->rollback();
 					return -6;
 				}
 			} else {
 				$this->error = $this->db->lasterror()." sql=".$sql;
+				$this->errors[] = $this->error;
 				$this->db->rollback();
 				return -4;
 			}

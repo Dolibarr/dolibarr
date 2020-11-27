@@ -133,7 +133,7 @@ if (empty($reshook))
 		$error = 0;
 
 		// Set if we used free entry or predefined product
-		$idprod = GETPOST('idprod', 'int');
+		$idprod = (int) GETPOST('idprod', 'int');
 		$qty = GETPOST('qty', 'int');
 		$qty_frozen = GETPOST('qty_frozen', 'int');
 		$disable_stock_change = GETPOST('disable_stock_change', 'int');
@@ -172,8 +172,7 @@ if (empty($reshook))
    			$bomline->position = ($ranktouse + 1);
 
 			$result = $bomline->create($user);
-			if ($result <= 0)
-			{
+			if ($result <= 0) {
 				setEventMessages($bomline->error, $bomline->errors, 'errors');
 				$action = '';
 			} else {
@@ -640,12 +639,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 			}
 
-			// Close / Cancel
-			if ($permissiontoadd && $object->status == $object::STATUS_VALIDATED)
-			{
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=close">'.$langs->trans("Disable").'</a>';
-			}
-
 			// Re-open
 			if ($permissiontoadd && $object->status == $object::STATUS_CANCELED)
 			{
@@ -665,6 +658,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($permissiontoadd)
 			{
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&object=bom">'.$langs->trans("ToClone").'</a>';
+			}
+
+			// Close / Cancel
+			if ($permissiontoadd && $object->status == $object::STATUS_VALIDATED)
+			{
+				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=close">'.$langs->trans("Disable").'</a>';
 			}
 
 			/*

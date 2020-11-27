@@ -163,4 +163,3 @@ function dolSessionGC($max_lifetime)
 
 // Call to register user call back functions.
 session_set_save_handler("dolSessionOpen", "dolSessionClose", "dolSessionRead", "dolSessionWrite", "dolSessionDestroy", "dolSessionGC");
-

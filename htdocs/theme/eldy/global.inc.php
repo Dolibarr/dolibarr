@@ -2617,7 +2617,8 @@ a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { text-align
 	/* color: #f3e4ac !important; */
 }
 .helppresentcircle {
-    color: var(--butactionbg);
+    color: var(--colorbackhmenu1);
+    filter: invert(0.8);
     margin-left: -7px;
     display: inline-block;
     margin-top: -10px;

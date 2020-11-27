@@ -60,7 +60,7 @@ if ($nolinesbefore) {
 	print '<div id="add"></div><span class="hideonsmartphone">'.$langs->trans('AddNewLine').'</span>';
 	print '</td>';
 	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
-	if ($conf->global->PRODUCT_USE_UNITS)
+	if (!empty($conf->global->PRODUCT_USE_UNITS))
 	{
 		print '<td class="linecoluseunit left">';
 		print '<span id="title_units">';
@@ -109,7 +109,7 @@ $coldisplay++;
 print '<td class="bordertop nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="'.(GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : 1).'">';
 print '</td>';
 
-if ($conf->global->PRODUCT_USE_UNITS)
+if (!empty($conf->global->PRODUCT_USE_UNITS))
 {
 	$coldisplay++;
 	print '<td class="nobottom linecoluseunit left">';

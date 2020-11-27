@@ -630,7 +630,7 @@ else $buttonLabel = $langs->trans("ExportList");
 $parameters = array();
 $reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
-// Button re-export
+	// Button re-export
 	if (!empty($conf->global->ACCOUNTING_REEXPORT)) {
 		$newcardbutton = '<a class="valignmiddle" href="' . $_SERVER['PHP_SELF'] . '?action=setreexport&token=' . newToken() . '&value=0' . ($param ? '&' . $param : '') . '">' . img_picto($langs->trans("Activated"), 'switch_on') . '</a> ';
 	} else {

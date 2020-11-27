@@ -161,7 +161,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$this->posxdiscount = 162;
 		$this->postotalht = 174;
 
-		if ($conf->global->PRODUCT_USE_UNITS) {
+		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 			$this->posxtva = 99;
 			$this->posxup = 114;
 			$this->posxqty = 130;
@@ -400,6 +400,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$pageposbefore = $pdf->getPage();
 
 					$showpricebeforepagebreak = 1;
+					$posYAfterImage = 0;
 
 					// Description of product line
 					$curX = $this->posxdesc - 1;

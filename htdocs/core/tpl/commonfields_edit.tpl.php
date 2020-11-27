@@ -51,6 +51,7 @@ foreach ($object->fields as $key => $val)
 	else print $langs->trans($val['label']);
 	print '</td>';
 	print '<td>';
+	if (!empty($val['picto'])) { print img_picto('', $val['picto']); }
 	if (in_array($val['type'], array('int', 'integer'))) $value = GETPOSTISSET($key) ?GETPOST($key, 'int') : $object->$key;
 	elseif (preg_match('/^(text|html)/', $val['type'])) {
 		$tmparray = explode(':', $val['type']);

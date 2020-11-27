@@ -578,7 +578,7 @@ abstract class CommonObject
 	 *
 	 *	@param	Translate	$langs			Language object for translation of civility (used only if option is 1)
 	 *	@param	int			$option			0=No option, 1=Add civility
-	 * 	@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname, 3=Firstname if defined else lastname
+	 * 	@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname, 3=Firstname if defined else lastname, 4=Lastname, 5=Lastname if defined else firstname
 	 * 	@param	int			$maxlen			Maximum length
 	 * 	@return	string						String with full name
 	 */
@@ -4259,7 +4259,7 @@ abstract class CommonObject
 		print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
 		if (!empty($conf->multicurrency->enabled)) print '<td class="right">'.$langs->trans('PriceUHTCurrency').'</td>';
 		print '<td class="right">'.$langs->trans('Qty').'</td>';
-		if ($conf->global->PRODUCT_USE_UNITS)
+		if (!empty($conf->global->PRODUCT_USE_UNITS))
 		{
 			print '<td class="left">'.$langs->trans('Unit').'</td>';
 		}
@@ -4402,7 +4402,7 @@ abstract class CommonObject
 		$this->tpl['price'] = price($line->subprice);
 		$this->tpl['multicurrency_price'] = price($line->multicurrency_subprice);
 		$this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
-		if ($conf->global->PRODUCT_USE_UNITS) $this->tpl['unit'] = $langs->transnoentities($line->getLabelOfUnit('long'));
+		if (!empty($conf->global->PRODUCT_USE_UNITS)) $this->tpl['unit'] = $langs->transnoentities($line->getLabelOfUnit('long'));
 		$this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? vatrate($line->remise_percent, true) : '&nbsp;';
 
 		// Is the line strike or not
@@ -6324,8 +6324,18 @@ abstract class CommonObject
 			$param_list_array = explode(':', $param_list[0]);
 			$showempty = (($required && $default != '') ? 0 : 1);
 
-			if (!preg_match('/search_/', $keyprefix) && !empty($param_list_array[2])) {		// If the entry into $fields is set to add a create button
-				$morecss .= ' widthcentpercentminusx';
+			if (!preg_match('/search_/', $keyprefix)) {
+				if (!empty($param_list_array[2])) {		// If the entry into $fields is set to add a create button
+					if ($this->fields[$key]['picto']) {
+						$morecss .= ' widthcentpercentminusxx';
+					} else {
+						$morecss .= ' widthcentpercentminusx';
+					}
+				} else {
+					if ($this->fields[$key]['picto']) {
+						$morecss .= ' widthcentpercentminusx';
+					}
+				}
 			}
 
 			$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, $moreparam, 0, empty($val['disabled']) ? 0 : 1);
@@ -8053,12 +8063,8 @@ abstract class CommonObject
 
 		// Delete llx_ecm_files
 		if (!$error) {
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."ecm_files WHERE src_object_type = '".$this->db->escape($this->table_element.(empty($this->module) ? '' : '@'.$this->module))."' AND src_object_id = ".$this->id;
-			$resql = $this->db->query($sql);
-			if (!$resql)
-			{
-				$this->error = $this->db->lasterror();
-				$this->errors[] = $this->error;
+			$res = $this->deleteEcmFiles(1); // Deleting files physically is done later with the dol_delete_dir_recursive
+			if (! $res) {
 				$error++;
 			}
 		}
@@ -8456,42 +8462,80 @@ abstract class CommonObject
 	/**
 	 * Delete related files of object in database
 	 *
-	 * @return bool
+	 * @param	integer		$mode		0=Use path to find record, 1=Use src_object_xxx fields (Mode 1 is recommanded for new objects)
+	 * @return 	bool					True if OK, False if KO
 	 */
-	public function deleteEcmFiles()
+	public function deleteEcmFiles($mode = 0)
 	{
 		global $conf;
 
 		$this->db->begin();
 
-		switch ($this->element) {
-			case 'propal':
-				$element = 'propale';
-				break;
-			case 'product':
-				$element = 'produit';
-				break;
-			case 'order_supplier':
-				$element = 'fournisseur/commande';
-				break;
-			case 'invoice_supplier':
-				$element = 'fournisseur/facture/'.get_exdir($this->id, 2, 0, 1, $this, 'invoice_supplier');
-				break;
-			case 'shipping':
-				$element = 'expedition/sending';
-				break;
-			default:
-				$element = $this->element;
+		// Delete in database with mode 0
+		if ($mode == 0) {
+			switch ($this->element) {
+				case 'propal':
+					$element = 'propale';
+					break;
+				case 'product':
+					$element = 'produit';
+					break;
+				case 'order_supplier':
+					$element = 'fournisseur/commande';
+					break;
+				case 'invoice_supplier':
+					$element = 'fournisseur/facture/'.get_exdir($this->id, 2, 0, 1, $this, 'invoice_supplier');
+					break;
+				case 'shipping':
+					$element = 'expedition/sending';
+					break;
+				default:
+					$element = $this->element;
+			}
+
+			// Delete ecm_files extrafields
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."ecm_files_extrafields WHERE fk_object IN (";
+			$sql .= " SELECT rowid FROM ".MAIN_DB_PREFIX."ecm_files WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
+			$sql .= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".$conf->entity;	// No need of getEntity here
+			$sql .= ")";
+
+			if (!$this->db->query($sql)) {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				return false;
+			}
+
+			// Delete ecm_files
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."ecm_files";
+			$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
+			$sql .= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".$conf->entity;	// No need of getEntity here
+
+			if (!$this->db->query($sql)) {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				return false;
+			}
 		}
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."ecm_files";
-		$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
-		$sql .= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".$conf->entity;
+		// Delete in database with mode 1
+		if ($mode == 1) {
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."ecm_files_extrafields";
+			$sql .= " WHERE fk_object IN (SELECT rowid FROM ".MAIN_DB_PREFIX."ecm_files WHERE src_object_type = '".$this->db->escape($this->table_element.(empty($this->module) ? '' : '@'.$this->module))."' AND src_object_id = ".$this->id.")";
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				return false;
+			}
 
-		if (!$this->db->query($sql)) {
-			$this->error = $this->db->lasterror();
-			$this->db->rollback();
-			return false;
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."ecm_files";
+			$sql .= " WHERE src_object_type = '".$this->db->escape($this->table_element.(empty($this->module) ? '' : '@'.$this->module))."' AND src_object_id = ".$this->id;
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				return false;
+			}
 		}
 
 		$this->db->commit();

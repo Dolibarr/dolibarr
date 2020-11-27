@@ -68,6 +68,8 @@ function testSqlAndScriptInject($val, $type)
 	// We clean string because some hacks try to obfuscate evil strings by inserting non printable chars. Example: 'java(ascci09)scr(ascii00)ipt' is processed like 'javascript' (whatever is place of evil ascii char)
 	// We should use dol_string_nounprintableascii but function is not yet loaded/available
 	$val = preg_replace('/[\x00-\x1F\x7F]/u', '', $val); // /u operator makes UTF8 valid characters being ignored so are not included into the replace
+	// We clean html comments because some hacks try to obfuscate evil strings by inserting HTML comments. Example: on<!-- -->error=alert(1)
+	$val = preg_replace('/<!--[^>]*-->/', '', $val);
 
 	$inj = 0;
 	// For SQL Injection (only GET are used to be included into bad escaped SQL requests)

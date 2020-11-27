@@ -219,8 +219,9 @@ class pdf_sponge extends ModelePDFFactures
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies"));
 
+		global $outputlangsbis;
+		$outputlangsbis = null;
 		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {
-			global $outputlangsbis;
 			$outputlangsbis = new Translate('', $conf);
 			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
 			$outputlangsbis->loadLangs(array("main", "bills", "products", "dict", "companies"));
@@ -260,7 +261,11 @@ class pdf_sponge extends ModelePDFFactures
 				{
 					if (!$arephoto)
 					{
-						$dir = $conf->product->dir_output.'/'.$midir;
+						if ($conf->product->entity != $objphoto->entity) {
+							$dir = $conf->product->multidir_output[$objphoto->entity].'/'.$midir; //Check repertories of current entities
+						} else {
+							$dir = $conf->product->dir_output.'/'.$midir; //Check repertory of the current product
+						}
 
 						foreach ($objphoto->liste_photos($dir, 1) as $key => $obj)
 						{
@@ -646,6 +651,7 @@ class pdf_sponge extends ModelePDFFactures
 						if ($pageposafter > $pageposbefore)	// There is a pagebreak
 						{
 							$pdf->rollbackTransaction(true);
+							$pageposafter = $pageposbefore;
 							$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 
 							$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
@@ -675,7 +681,8 @@ class pdf_sponge extends ModelePDFFactures
 						$posYAfterDescription = $pdf->GetY();
 					}
 
-					$nexY = $pdf->GetY();
+					$nexY = max($pdf->GetY(), $posYAfterImage, $posYAfterDescription);
+
 					$pageposafter = $pdf->getPage();
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
@@ -2000,7 +2007,7 @@ class pdf_sponge extends ModelePDFFactures
 		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && is_object($outputlangsbis)) {
 			$title .= ' - '.$outputlangsbis->transnoentities("DateInvoice");
 		}
-		$pdf->MultiCell($w, 3, $title." : ".dol_print_date($object->date, "day", false, $outputlangs), '', 'R');
+		$pdf->MultiCell($w, 3, $title." : ".dol_print_date($object->date, "day", false, $outputlangs, true), '', 'R');
 
 		if (!empty($conf->global->INVOICE_POINTOFTAX_DATE))
 		{
@@ -2321,7 +2328,7 @@ class pdf_sponge extends ModelePDFFactures
 			),
 			'border-left' => true, // add left line separator
 		);
-		if ($conf->global->PRODUCT_USE_UNITS) {
+		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 			$this->cols['unit']['status'] = true;
 		}
 

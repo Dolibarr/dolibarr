@@ -519,7 +519,7 @@ if ($id > 0 || $ref)
 					print '<input class="flat" name="qty" size="5" value="'.$quantity.'">';
 				}
 				// Units
-				if ($conf->global->PRODUCT_USE_UNITS) {
+				if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 					$unit = $object->getLabelOfUnit();
 					if ($unit !== '') {
 						print '&nbsp;&nbsp;'.$langs->trans($unit);
@@ -537,7 +537,7 @@ if ($id > 0 || $ref)
 					print '<input class="flat" name="packaging" size="5" value="'.$packaging.'">';
 
 					// Units
-					if ($conf->global->PRODUCT_USE_UNITS) {
+					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 						$unit = $object->getLabelOfUnit();
 						if ($unit !== '') {
 							print '&nbsp;&nbsp;'.$langs->trans($unit);
@@ -1000,7 +1000,7 @@ END;
 							print '<td class="right">';
 							print $productfourn->fourn_qty;
 							// Units
-							if ($conf->global->PRODUCT_USE_UNITS) {
+							if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 								$unit = $object->getLabelOfUnit();
 								if ($unit !== '') {
 									print '&nbsp;&nbsp;'.$langs->trans($unit);
