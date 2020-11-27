@@ -435,16 +435,11 @@ if (empty($reshook))
 
 	    $result = $object->valid($user);
 
-	    if ($result < 0)
-	    {
-			$langs->load("errors");
-			setEventMessages($langs->trans($object->error), $object->errors, 'errors');
-	    }
-	    else
-	    {
+	    if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+	    } else {
 	    	// Define output language
-	    	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-	    	{
+	    	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 	    		$outputlangs = $langs;
 	    		$newlang = '';
 	    		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');

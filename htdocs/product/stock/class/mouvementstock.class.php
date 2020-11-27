@@ -204,6 +204,7 @@ class MouvementStock extends CommonObject
 		{
 			if (empty($batch))
 			{
+				$langs->load("errors");
 				$this->errors[] = $langs->transnoentitiesnoconv("ErrorTryToMakeMoveOnProductRequiringBatchData", $product->ref);
 				dol_syslog("Try to make a movement of a product with status_batch on without any batch data");
 
