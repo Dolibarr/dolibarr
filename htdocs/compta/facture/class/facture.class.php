@@ -3326,6 +3326,7 @@ class Facture extends CommonInvoice
 
 			// Clean vat code
     		$vat_src_code = '';
+    		$reg = array();
     		if (preg_match('/\((.*)\)/', $txtva, $reg))
     		{
     		    $vat_src_code = $reg[1];

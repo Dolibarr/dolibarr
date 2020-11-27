@@ -1504,9 +1504,9 @@ class Contrat extends CommonObject
 			}
 
 			$txtva = price2num($txtva);
-
 			$txlocaltax1 = price2num($txlocaltax1);
 			$txlocaltax2 = price2num($txlocaltax2);
+
 			$remise_percent = price2num($remise_percent);
 			$qty = price2num($qty);
 			if (empty($qty)) $qty = 1;

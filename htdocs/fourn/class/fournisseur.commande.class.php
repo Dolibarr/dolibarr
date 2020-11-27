@@ -1776,8 +1776,6 @@ class CommandeFournisseur extends CommonOrder
             $localtax1_type = $localtaxes_type[0];
 			$localtax2_type = $localtaxes_type[2];
 
-            $subprice = price2num($pu, 'MU');
-
             $rangmax = $this->line_max();
             $rang = $rangmax + 1;
 
@@ -2635,9 +2633,9 @@ class CommandeFournisseur extends CommonOrder
             if (!$qty) $qty = 1;
             $pu = price2num($pu);
         	$pu_ht_devise = price2num($pu_ht_devise);
-            $txtva = price2num($txtva);
-            $txlocaltax1 = price2num($txlocaltax1);
-            $txlocaltax2 = price2num($txlocaltax2);
+        	$txtva = price2num($txtva);
+        	$txlocaltax1 = price2num($txlocaltax1);
+        	$txlocaltax2 = price2num($txlocaltax2);
 
             // Check parameters
             if ($type < 0) return -1;
@@ -2658,6 +2656,7 @@ class CommandeFournisseur extends CommonOrder
 
             // Clean vat code
             $vat_src_code = '';
+			$reg = array();
             if (preg_match('/\((.*)\)/', $txtva, $reg))
             {
                 $vat_src_code = $reg[1];
@@ -2682,8 +2681,6 @@ class CommandeFournisseur extends CommonOrder
 
             $localtax1_type = $localtaxes_type[0];
 			$localtax2_type = $localtaxes_type[2];
-
-            $subprice = price2num($pu_ht, 'MU');
 
             //Fetch current line from the database and then clone the object and set it in $oldline property
             $this->line = new CommandeFournisseurLigne($this->db);
