@@ -212,7 +212,7 @@ class Interfaces
                 if ($result < 0)
                 {
                     // Action KO
-                    //dol_syslog("Error in trigger ".$action." - Nb of error string returned = ".count($objMod->errors), LOG_ERR);
+                    //dol_syslog("Error in trigger ".$action." - result = ".$result." - Nb of error strings returned = ".count($objMod->errors), LOG_ERR);
                     $nbtotal++;
                     $nbko++;
                     if (!empty($objMod->errors)) $this->errors = array_merge($this->errors, $objMod->errors);
