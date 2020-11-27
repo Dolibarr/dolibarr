@@ -1389,7 +1389,7 @@ abstract class CommonDocGenerator
 						if ($itemsInRow > 0) {
 							// close table row and empty cols
 							for ($i = $itemsInRow; $i <= $maxItemsInRow; $i++) {
-								$html .= "<td ></td><td></td>";
+								$html .= "<td></td><td></td>";
 							}
 							$html .= "</tr>";
 

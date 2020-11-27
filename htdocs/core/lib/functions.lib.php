@@ -4755,14 +4755,15 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  *											'MS'=Round to Max for stock quantity (MAIN_MAX_DECIMALS_STOCK)
  *      		                            'CR'=Currency rate
  *											Numeric = Nb of digits for rounding
- * 	@param	int				$alreadysqlnb	Put 1 if you know that content is already universal format number
+ * 	@param	int				$option			Put 1 if you know that content is already universal format number (so no correction on decimal will be done)
+ * 											Put 2 if you know that number is a user input (so we know we don't have to fix decimal separator).
  *	@return	string							Amount with universal numeric format (Example: '99.99999').
  *											If conversion fails, it return text unchanged if $rounding = '' or '0' if $rounding is defined.
  *											If amount is null or '', it returns '' if $rounding = '' or '0' if $rounding is defined..
  *
  *	@see    price()							Opposite function of price2num
  */
-function price2num($amount, $rounding = '', $alreadysqlnb = 0)
+function price2num($amount, $rounding = '', $option = 0)
 {
 	global $langs, $conf;
 
@@ -4777,14 +4778,16 @@ function price2num($amount, $rounding = '', $alreadysqlnb = 0)
 	//print "amount=".$amount." html=".$form." trunc=".$trunc." nbdecimal=".$nbdecimal." dec='".$dec."' thousand='".$thousand."'<br>";
 
 	// Convert value to universal number format (no thousand separator, '.' as decimal separator)
-	if ($alreadysqlnb != 1) {	// If not a PHP number or unknown, we change or clean format
+	if ($option != 1) {	// If not a PHP number or unknown, we change or clean format
 		//print 'PP'.$amount.' - '.$dec.' - '.$thousand.' - '.intval($amount).'<br>';
 
-		if ($thousand == '.' && preg_match('/\.(\d\d\d)$/', (string) $amount)) {	// It means the . is used as a thousand separator, not as a decimal separator
-			$amount = str_replace($thousand, '', $amount); // Replace of thousand before test of is_numeric to avoid pb if thousand is . and there is 3 numbers after
+		if ($option == 2 && $thousand == '.' && preg_match('/\.(\d\d\d)$/', (string) $amount)) {	// It means the . is used as a thousand separator and string come frominput data, so 1.123 is 1123
+			$amount = str_replace($thousand, '', $amount);
 		}
+
 		// Convert amount to format with dolibarr dec and thousand (this is because PHP convert a number
 		// to format defined by LC_NUMERIC after a calculation and we want source format to be like defined by Dolibarr setup.
+		// So if number was already a good number, it is converted into local Dolibarr setup.
 		if (is_numeric($amount))
 		{
 			// We put in temps value of decimal ("0.00001"). Works with 0 and 2.0E-5 and 9999.10
@@ -4793,7 +4796,7 @@ function price2num($amount, $rounding = '', $alreadysqlnb = 0)
 			$nbofdec = max(0, dol_strlen($temps) - 2); // -2 to remove "0."
 			$amount = number_format($amount, $nbofdec, $dec, $thousand);
 		}
-		//print "QQ".$amount.'<br>';
+		//print "QQ".$amount."<br>\n";
 
 		// Now make replace (the main goal of function)
 		if ($thousand != ',' && $thousand != '.') {

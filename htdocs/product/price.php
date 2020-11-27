@@ -33,6 +33,7 @@
  * \ingroup product
  * \brief Page to show product prices
  */
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -111,6 +112,7 @@ if (empty($reshook))
 
 		// We must define tva_tx, npr and local taxes
 		$tva_tx = $tva_tx_txt;
+	    $reg = array();
 		$vatratecode = '';
 		if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg))
 		{
@@ -262,8 +264,8 @@ if (empty($reshook))
 				}
 
 				$pricestoupdate[$i] = array(
-					'price' => price2num($newprice[$i]),
-					'price_min' => price2num($newprice_min[$i]),
+					'price' => price2num($newprice[$i], '', 2),
+					'price_min' => price2num($newprice_min[$i], '', 2),
 					'price_base_type' => $newpricebase[$i],
 					'default_vat_code' => $vatratecode,
 					'vat_tx' => $tva_tx, // default_vat_code should be used in priority in a future
@@ -278,8 +280,8 @@ if (empty($reshook))
 			}
 		} elseif (!$error)
 		{
-			$newprice = price2num(GETPOST('price', 'alpha'));
-			$newprice_min = price2num(GETPOST('price_min', 'alpha'));
+			$newprice = price2num(GETPOST('price', 'alpha'), '', 2);
+			$newprice_min = price2num(GETPOST('price_min', 'alpha'), '', 2);
 			$newpricebase = GETPOST('price_base_type', 'alpha');
 			$tva_tx_txt = GETPOST('tva_tx', 'alpha'); // tva_tx can be '8.5'  or  '8.5*'  or  '8.5 (XXX)' or '8.5* (XXX)'
 

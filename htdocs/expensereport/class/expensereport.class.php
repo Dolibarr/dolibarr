@@ -1805,6 +1805,7 @@ class ExpenseReport extends CommonObject
 			$localtaxes_type = getLocalTaxesFromRate($vatrate, 0, $mysoc, $this->thirdparty);
 
 			$vat_src_code = '';
+			$reg = array();
 			if (preg_match('/\s*\((.*)\)/', $vatrate, $reg))
 			{
 				$vat_src_code = $reg[1];
@@ -2038,6 +2039,7 @@ class ExpenseReport extends CommonObject
 			$localtaxes_type = getLocalTaxesFromRate($vatrate, 0, $buyer, $seller);
 
 			// Clean vat code
+			$reg = array();
 			$vat_src_code = '';
 			if (preg_match('/\((.*)\)/', $vatrate, $reg))
 			{
@@ -2053,10 +2055,6 @@ class ExpenseReport extends CommonObject
 
 			$tx_tva = $vatrate / 100;
 			$tx_tva = $tx_tva + 1;
-			$total_ht = price2num($total_ttc / $tx_tva, 'MT');
-
-			$total_tva = price2num($total_ttc - $total_ht, 'MT');
-			// fin calculs
 
 			$this->line = new ExpenseReportLine($this->db);
 			$this->line->comments        = $comments;
