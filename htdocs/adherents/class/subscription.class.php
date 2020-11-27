@@ -384,7 +384,18 @@ class Subscription extends CommonObject
 		$result = '';
 
 		$langs->load("members");
-		$label = $langs->trans("ShowSubscription").': '.$this->ref;
+
+		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Subscription").'</u>';
+		/*if (isset($this->statut)) {
+			$label .= ' '.$this->getLibStatut(5);
+		}*/
+		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (!empty($this->dateh)) {
+			$label .= '<br><b>'.$langs->trans('DateStart').':</b> '.dol_print_date($this->dateh, 'day');
+		}
+		if (!empty($this->datef)) {
+			$label .= '<br><b>'.$langs->trans('DateEnd').':</b> '.dol_print_date($this->datef, 'day');
+		}
 
 		$url = DOL_URL_ROOT.'/adherents/subscription/card.php?rowid='.$this->id;
 
@@ -397,8 +408,6 @@ class Subscription extends CommonObject
 
 		$linkstart = '<a href="'.$url.'" class="classfortooltip" title="'.dol_escape_htmltag($label, 1).'">';
 		$linkend = '</a>';
-
-		$picto = 'payment';
 
 		$result .= $linkstart;
 		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);

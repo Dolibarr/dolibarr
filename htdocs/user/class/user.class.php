@@ -74,6 +74,10 @@ class User extends CommonObject
 	public $ldap_sid;
 	public $search_sid;
 	public $employee;
+
+	/**
+	 * @var string gender
+	 */
 	public $gender;
 	public $birth;
 
@@ -91,6 +95,30 @@ class User extends CommonObject
 	 * @var array array of socialnetworks
 	 */
 	public $socialnetworks;
+
+	/**
+	 * @var string skype account
+	 * @deprecated
+	 */
+	public $skype;
+
+	/**
+	 * @var string twitter account
+	 * @deprecated
+	 */
+	public $twitter;
+
+	/**
+	 * @var string facebook account
+	 * @deprecated
+	 */
+	public $facebook;
+
+	/**
+	 * @var string linkedin account
+	 * @deprecated
+	 */
+	public $linkedin;
 
 	/**
 	 * @var string job position
@@ -307,6 +335,9 @@ class User extends CommonObject
 	public $default_c_exp_tax_cat;
 	public $default_range;
 
+	/**
+	 *@var int id of warehouse
+	 */
 	public $fk_warehouse;
 
 	public $fields = array(
@@ -1636,7 +1667,7 @@ class User extends CommonObject
 		$this->datestartvalidity = empty($this->datestartvalidity) ? '' : $this->datestartvalidity;
 		$this->dateendvalidity = empty($this->dateendvalidity) ? '' : $this->dateendvalidity;
 		$this->birth        = trim($this->birth);
-		$this->fk_warehouse = trim(empty($this->fk_warehouse) ? '' : $this->fk_warehouse);
+		$this->fk_warehouse = (int) $this->fk_warehouse;
 
 		// Check parameters
 		if (!empty($conf->global->USER_MAIL_REQUIRED) && !isValidEMail($this->email)) {
@@ -1707,7 +1738,7 @@ class User extends CommonObject
 		$sql .= ", entity = '".$this->db->escape($this->entity)."'";
 		$sql .= ", default_range = ".($this->default_range > 0 ? $this->default_range : 'null');
 		$sql .= ", default_c_exp_tax_cat = ".($this->default_c_exp_tax_cat > 0 ? $this->default_c_exp_tax_cat : 'null');
-		$sql .= ", fk_warehouse = ".($this->fk_warehouse ? "'".$this->db->escape($this->fk_warehouse)."'" : "null");
+		$sql .= ", fk_warehouse = ".($this->fk_warehouse > 0 ? $this->fk_warehouse : "null");
 		$sql .= ", lang = ".($this->lang ? "'".$this->db->escape($this->lang)."'" : "null");
 		$sql .= " WHERE rowid = ".$this->id;
 
@@ -2646,6 +2677,9 @@ class User extends CommonObject
 		global $conf, $langs;
 
 		$info = array();
+
+		$socialnetworks = getArrayOfSocialNetworks();
+
 		$keymodified = false;
 
 		// Object classes
@@ -2665,10 +2699,6 @@ class User extends CommonObject
 			'LDAP_FIELD_FAX'		=> 'office_fax',
 			'LDAP_FIELD_MAIL'		=> 'email',
 			'LDAP_FIELD_SID'		=> 'ldap_sid',
-			'LDAP_FIELD_SKYPE'		=> 'skype',
-			'LDAP_FIELD_TWITTER'	=> 'twitter',
-			'LDAP_FIELD_FACEBOOK'	=> 'facebook',
-			'LDAP_FIELD_LINKEDIN'	=> 'linkedin'
 		);
 
 		// Champs
@@ -2682,6 +2712,11 @@ class User extends CommonObject
 						$keymodified = true; // For check if LDAP key has been modified
 					}
 				}
+			}
+		}
+		foreach ($socialnetworks as $key => $value) {
+			if ($this->socialnetworks[$value['label']] && !empty($conf->global->{'LDAP_FIELD_'.strtoupper($value['label'])})) {
+				$info[$conf->global->{'LDAP_FIELD_'.strtoupper($value['label'])}] = $this->socialnetworks[$value['label']];
 			}
 		}
 		if ($this->address && !empty($conf->global->LDAP_FIELD_ADDRESS)) {
@@ -2916,23 +2951,20 @@ class User extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."user";
 		if ($option == 'superadmin') {
 			$sql .= " WHERE entity = 0";
-			if ($admin >= 0) {
-				$sql .= " AND admin = ".$admin;
-			}
 		} else {
 			$sql .= " WHERE entity IN (".getEntity('user', 0).")";
 			if ($limitTo == 'active') {
 				$sql .= " AND statut = 1";
 			}
-			if ($admin >= 0) {
-				$sql .= " AND admin = ".$admin;
-			}
+		}
+		if ($admin >= 0) {
+			$sql .= " AND admin = ".(int) $admin;
 		}
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			$nb = $obj->nb;
+			$nb = (int) $obj->nb;
 
 			$this->db->free($resql);
 			return $nb;
@@ -2955,6 +2987,8 @@ class User extends CommonObject
 		// TODO: Voir pourquoi le update met à jour avec toutes les valeurs vide (global $user écrase ?)
 		global $user, $conf;
 
+		$socialnetworks = getArrayOfSocialNetworks();
+
 		$this->firstname = $ldapuser->{$conf->global->LDAP_FIELD_FIRSTNAME};
 		$this->lastname = $ldapuser->{$conf->global->LDAP_FIELD_NAME};
 		$this->login = $ldapuser->{$conf->global->LDAP_FIELD_LOGIN};
@@ -2965,14 +2999,14 @@ class User extends CommonObject
 		$this->user_mobile = $ldapuser->{$conf->global->LDAP_FIELD_MOBILE};
 		$this->office_fax = $ldapuser->{$conf->global->LDAP_FIELD_FAX};
 		$this->email = $ldapuser->{$conf->global->LDAP_FIELD_MAIL};
-		$this->skype = $ldapuser->{$conf->global->LDAP_FIELD_SKYPE};
-		$this->twitter = $ldapuser->{$conf->global->LDAP_FIELD_TWITTER};
-		$this->facebook = $ldapuser->{$conf->global->LDAP_FIELD_FACEBOOK};
-		$this->linkedin = $ldapuser->{$conf->global->LDAP_FIELD_LINKEDIN};
+		foreach ($socialnetworks as $key => $value) {
+			$tmpkey = 'LDAP_FIELD_'.strtoupper($value['label']);
+			$this->socialnetworks[$value['label']] = $ldapuser->{$conf->global->$tmpkey};
+		}
 		$this->ldap_sid = $ldapuser->{$conf->global->LDAP_FIELD_SID};
 
 		$this->job = $ldapuser->{$conf->global->LDAP_FIELD_TITLE};
-		$this->note = $ldapuser->{$conf->global->LDAP_FIELD_DESCRIPTION};
+		$this->note_public = $ldapuser->{$conf->global->LDAP_FIELD_DESCRIPTION};
 
 		$result = $this->update($user);
 

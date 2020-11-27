@@ -5,7 +5,7 @@
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2019  Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,6 +54,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT');
 $donation_date = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
+$public_donation = (int) GETPOST("public", 'int');
 
 $object = new Don($db);
 $extrafields = new ExtraFields($db);
@@ -141,28 +142,27 @@ if ($action == 'update')
 	{
 		$object->fetch($id);
 
-		$object->firstname = GETPOST("firstname", 'alpha');
-		$object->lastname = GETPOST("lastname", 'alpha');
-		$object->societe = GETPOST("societe", 'alpha');
-		$object->address = GETPOST("address", 'alpha');
+		$object->firstname = (string) GETPOST("firstname", 'alpha');
+		$object->lastname = (string) GETPOST("lastname", 'alpha');
+		$object->societe = (string) GETPOST("societe", 'alpha');
+		$object->address = (string) GETPOST("address", 'alpha');
 		$object->amount = price2num(GETPOST("amount", 'alpha'));
-		$object->town = GETPOST("town", 'alpha');
-		$object->zip = GETPOST("zipcode", 'alpha');
-		$object->country_id = GETPOST('country_id', 'int');
-		$object->email = GETPOST("email", 'alpha');
+		$object->town = (string) GETPOST("town", 'alpha');
+		$object->zip = (string) GETPOST("zipcode", 'alpha');
+		$object->country_id = (int) GETPOST('country_id', 'int');
+		$object->email = (string) GETPOST("email", 'alpha');
 		$object->date = $donation_date;
-		$object->public = GETPOST("public", 'alpha');
-		$object->fk_project = GETPOST("fk_project", 'alpha');
-		$object->note_private = GETPOST("note_private", 'restricthtml');
-		$object->note_public = GETPOST("note_public", 'restricthtml');
-		$object->modepaymentid = GETPOST('modepayment', 'int');
+		$object->public = $public_donation;
+		$object->fk_project = (int) GETPOST("fk_project", 'int');
+		$object->note_private = (string) GETPOST("note_private", 'restricthtml');
+		$object->note_public = (string) GETPOST("note_public", 'restricthtml');
+		$object->modepaymentid = (int) GETPOST('modepayment', 'int');
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) $error++;
 
-		if ($object->update($user) > 0)
-		{
+		if ($object->update($user) > 0) {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
 		}
@@ -195,30 +195,29 @@ if ($action == 'add')
 
 	if (!$error)
 	{
-		$object->socid = GETPOST("socid", 'int');
-		$object->firstname = GETPOST("firstname", 'alpha');
-		$object->lastname = GETPOST("lastname", 'alpha');
-		$object->societe = GETPOST("societe", 'alpha');
-		$object->address = GETPOST("address", 'alpha');
+		$object->socid = (int) GETPOST("socid", 'int');
+		$object->firstname = (string) GETPOST("firstname", 'alpha');
+		$object->lastname = (string) GETPOST("lastname", 'alpha');
+		$object->societe = (string) GETPOST("societe", 'alpha');
+		$object->address = (string) GETPOST("address", 'alpha');
 		$object->amount = price2num(GETPOST("amount", 'alpha'));
-		$object->zip = GETPOST("zipcode", 'alpha');
-		$object->town = GETPOST("town", 'alpha');
-		$object->country_id = GETPOST('country_id', 'int');
-		$object->email = GETPOST('email', 'alpha');
+		$object->zip = (string) GETPOST("zipcode", 'alpha');
+		$object->town = (string) GETPOST("town", 'alpha');
+		$object->country_id = (int) GETPOST('country_id', 'int');
+		$object->email = (string) GETPOST('email', 'alpha');
 		$object->date = $donation_date;
-		$object->note_private = GETPOST("note_private", 'restricthtml');
-		$object->note_public = GETPOST("note_public", 'restricthtml');
-		$object->public = GETPOST("public", 'alpha');
-		$object->fk_project = GETPOST("fk_project", 'alpha');
-		$object->modepaymentid = GETPOST('modepayment', 'int');
+		$object->note_private = (string) GETPOST("note_private", 'restricthtml');
+		$object->note_public = (string) GETPOST("note_public", 'restricthtml');
+		$object->public = $public_donation;
+		$object->fk_project = (int) GETPOST("fk_project", 'int');
+		$object->modepaymentid = (int) GETPOST('modepayment', 'int');
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) $error++;
 
 		$res = $object->create($user);
-		if ($res > 0)
-		{
+		if ($res > 0) {
 			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$res);
 			exit;
 		} else {
@@ -226,12 +225,10 @@ if ($action == 'add')
 		}
 	}
 }
-if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights->don->supprimer)
-{
+if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights->don->supprimer) {
 	$object->fetch($id);
 	$result = $object->delete($user);
-	if ($result > 0)
-	{
+	if ($result > 0) {
 		header("Location: index.php");
 		exit;
 	} else {
@@ -239,42 +236,31 @@ if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights-
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
-if ($action == 'valid_promesse')
-{
+if ($action == 'valid_promesse') {
 	$object->fetch($id);
-	if ($object->valid_promesse($id, $user->id) >= 0)
-	{
+	if ($object->valid_promesse($id, $user->id) >= 0) {
 		setEventMessages($langs->trans("DonationValidated", $object->ref), null);
-
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
-		exit;
+		$action = '';
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
-if ($action == 'set_cancel')
-{
+if ($action == 'set_cancel') {
 	$object->fetch($id);
-	if ($object->set_cancel($id) >= 0)
-	{
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
-		exit;
+	if ($object->set_cancel($id) >= 0) {
+		$action = '';
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
-if ($action == 'set_paid')
-{
+if ($action == 'set_paid') {
 	$object->fetch($id);
-	if ($object->set_paid($id, $modepayment) >= 0)
-	{
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
-		exit;
+	if ($object->set_paid($id, $modepayment) >= 0) {
+		$action = '';
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-} elseif ($action == 'classin' && $user->rights->don->creer)
-{
+} elseif ($action == 'classin' && $user->rights->don->creer) {
 	$object->fetch($id);
 	$object->setProject($projectid);
 }
@@ -419,7 +405,7 @@ if ($action == 'create')
 
 	// Public donation
 	print '<tr><td class="fieldrequired">'.$langs->trans("PublicDonation")."</td><td>";
-	print $form->selectyesno("public", isset($_POST["public"]) ? $_POST["public"] : 1, 1);
+	print $form->selectyesno("public", $public_donation, 1);
 	print "</td></tr>\n";
 
 	if (empty($conf->societe->enabled) || empty($conf->global->DONATION_USE_THIRDPARTIES))
@@ -494,9 +480,9 @@ if ($action == 'create')
 	print dol_get_fiche_end();
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+	print '<input type="submit" class="button button-save" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" onClick="javascript:history.go(-1)">';
+	print '<input type="button" class="button button-cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" onClick="javascript:history.go(-1)">';
 	print '</div>';
 
 	print "</form>\n";
@@ -546,8 +532,7 @@ if (!empty($id) && $action == 'edit')
 	print '</td>';
 
 	// Amount
-	if ($object->statut == 0)
-	{
+	if ($object->statut == 0) {
 		print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10" value="'.price($object->amount).'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	} else {
 		print '<tr><td>'.$langs->trans("Amount").'</td><td>';
@@ -556,7 +541,7 @@ if (!empty($id) && $action == 'edit')
 	}
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PublicDonation")."</td><td>";
-	print $form->selectyesno("public", 1, 1);
+	print $form->selectyesno("public", $object->public, 1);
 	print "</td>";
 	print "</tr>\n";
 
@@ -601,8 +586,7 @@ if (!empty($id) && $action == 'edit')
 	print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
 	// Project
-	if (!empty($conf->projet->enabled))
-	{
+	if (!empty($conf->projet->enabled)) {
 		$formproject = new FormProjets($db);
 
 		$langs->load('projects');
@@ -624,7 +608,7 @@ if (!empty($id) && $action == 'edit')
 
 	print dol_get_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+	print '<div class="center"><input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
 
 	print "</form>\n";
 }

@@ -817,8 +817,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 
 	$pdf->SetFont('', '', $default_font_size - $diffsizecontent);
 
-	if (empty($onlynumber) && !empty($account->domiciliation))
-	{
+	if (empty($onlynumber) && !empty($account->domiciliation)) {
 		$pdf->SetXY($curx, $cury);
 		$val = $outputlangs->transnoentities("Residence").': '.$outputlangs->convToOutputCharset($account->domiciliation);
 		$pdf->MultiCell(100, 3, $val, 0, 'L', 0);
@@ -828,15 +827,15 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 		$cury += $tmpy;
 	}
 
-	if (!empty($account->proprio))
-	{
+	if (!empty($account->proprio)) {
 		$pdf->SetXY($curx, $cury);
 		$val = $outputlangs->transnoentities("BankAccountOwner").': '.$outputlangs->convToOutputCharset($account->proprio);
 		$pdf->MultiCell(100, 3, $val, 0, 'L', 0);
 		$tmpy = $pdf->getStringHeight(100, $val);
 		$cury += $tmpy;
-		$cur += 1;
-	} elseif (!$usedetailedbban) $cury += 1;
+	} elseif (!$usedetailedbban) {
+		$cury += 1;
+	}
 
 	// Use correct name of bank id according to country
 	$ibankey = FormBank::getIBANLabel($account);
@@ -1339,28 +1338,23 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	// We add ref of product (and supplier ref if defined)
 	$prefix_prodserv = "";
 	$ref_prodserv = "";
-	if (!empty($conf->global->PRODUCT_ADD_TYPE_IN_DOCUMENTS))   // In standard mode, we do not show this
-	{
-		if ($prodser->isService())
-		{
+	if (!empty($conf->global->PRODUCT_ADD_TYPE_IN_DOCUMENTS)) {   // In standard mode, we do not show this
+		if ($prodser->isService()) {
 			$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Service")." ";
 		} else {
 			$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Product")." ";
 		}
 	}
 
-	if (empty($hideref))
-	{
-		if ($issupplierline)
-		{
-			if ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 1)
-				$ref_prodserv = $ref_supplier;
-			elseif ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 2)
-				$ref_prodserv = $ref_supplier.' ('.$outputlangs->transnoentitiesnoconv("InternalRef").' '.$prodser->ref.')';
-			else // Common case
-			{
+	if (empty($hideref)) {
+		if ($issupplierline) {
+			if (empty($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES)) {  // Common case
 				$ref_prodserv = $prodser->ref; // Show local ref
 				if ($ref_supplier) $ref_prodserv .= ($prodser->ref ? ' (' : '').$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.($prodser->ref ? ')' : '');
+			} elseif ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 1) {
+				$ref_prodserv = $ref_supplier;
+			} elseif ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 2) {
+				$ref_prodserv = $ref_supplier.' ('.$outputlangs->transnoentitiesnoconv("InternalRef").' '.$prodser->ref.')';
 			}
 		} else {
 			$ref_prodserv = $prodser->ref; // Show local ref only
@@ -1625,7 +1619,7 @@ function pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails = 0)
 	{
 		if (empty($hidedetails) || $hidedetails > 1)
 		{
-			$subprice = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_subprice : $object->lines[$i]->subprice);
+			$subprice = (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_subprice : $object->lines[$i]->subprice);
 			$result .= price($sign * $subprice, 0, $outputlangs);
 		}
 	}
@@ -1966,8 +1960,8 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
 		}
 		elseif (empty($hidedetails) || $hidedetails > 1)
 		{
-			$total_ht = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ht : $object->lines[$i]->total_ht);
-			if ($object->lines[$i]->situation_percent > 0)
+			$total_ht = (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ht : $object->lines[$i]->total_ht);
+			if (!empty($object->lines[$i]->situation_percent) && $object->lines[$i]->situation_percent > 0)
 			{
 				// TODO Remove this. The total should be saved correctly in database instead of being modified here.
 				$prev_progress = 0;
@@ -2023,7 +2017,7 @@ function pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails = 0)
 		}
 		elseif (empty($hidedetails) || $hidedetails > 1)
 		{
-			$total_ttc = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ttc : $object->lines[$i]->total_ttc);
+			$total_ttc = (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ttc : $object->lines[$i]->total_ttc);
 			if ($object->lines[$i]->situation_percent > 0)
 			{
 				// TODO Remove this. The total should be saved correctly in database instead of being modified here.

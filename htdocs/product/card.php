@@ -1151,7 +1151,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		}
 
 		// Units
-		if ($conf->global->PRODUCT_USE_UNITS)
+		if (!empty($conf->global->PRODUCT_USE_UNITS))
 		{
 			print '<tr><td>'.$langs->trans('DefaultUnitToShow').'</td>';
 			print '<td colspan="3">';
@@ -1175,10 +1175,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			// State
 			if (empty($conf->global->PRODUCT_DISABLE_STATE))
 			{
-					if ($conf->browser->layout == 'phone') print '</tr><tr>';
+				if ($conf->browser->layout == 'phone') print '</tr><tr>';
 				if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
 				{
-					print '<td>'.$form->editfieldkey('Region-StateOrigine', 'state_id', '', $object, 0).'</td><td colspan="3">';
+					print '<td>'.$form->editfieldkey('RegionStateOrigin', 'state_id', '', $object, 0).'</td><td colspan="3">';
 				} else {
 					print '<td>'.$form->editfieldkey('StateOrigin', 'state_id', '', $object, 0).'</td><td colspan="3">';
 				}
@@ -1186,7 +1186,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				print $formcompany->select_state($object->state_id, $object->country_code);
 				print '</tr>';
 			}
-				print '</tr>';
+
+			print '</tr>';
 		}
 
 		// Other attributes
@@ -1391,7 +1392,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '<div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
 		print ' &nbsp; &nbsp; ';
-		print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+		print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 		print '</div>';
 
 		print '</form>';
@@ -1609,7 +1610,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				}
 			}
 			// Units
-			if ($conf->global->PRODUCT_USE_UNITS)
+			if (!empty($conf->global->PRODUCT_USE_UNITS))
 			{
 				print '<tr><td>'.$langs->trans('DefaultUnitToShow').'</td>';
 				print '<td colspan="3">';
@@ -1634,7 +1635,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 					if ($conf->browser->layout == 'phone') print '</tr><tr>';
 					if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
 					{
-						print '<td>'.$form->editfieldkey('Region-StateOrigine', 'state_id', '', $object, 0).'</td><td colspan="3">';
+						print '<td>'.$form->editfieldkey('RegionStateOrigin', 'state_id', '', $object, 0).'</td><td colspan="3">';
 					} else {
 						print '<td>'.$form->editfieldkey('StateOrigin', 'state_id', '', $object, 0).'</td><td colspan="3">';
 					}
@@ -1774,9 +1775,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print dol_get_fiche_end();
 
 			print '<div class="center">';
-			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+			print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 
 			print '</form>';

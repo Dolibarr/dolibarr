@@ -78,7 +78,7 @@ function getServerTimeZoneString()
  * Return server timezone int.
  *
  * @param	string	$refgmtdate		Reference period for timezone (timezone differs on winter and summer. May be 'now', 'winter' or 'summer')
- * @return 	int						An offset in hour (+1 for Europe/Paris on winter and +2 for Europe/Paris on summer)
+ * @return 	float					An offset in hour (+1 for Europe/Paris on winter and +2 for Europe/Paris on summer). Note some countries use half and even quarter hours.
  */
 function getServerTimeZoneInt($refgmtdate = 'now')
 {

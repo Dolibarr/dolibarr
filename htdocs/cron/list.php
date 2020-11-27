@@ -55,10 +55,12 @@ $pagenext = $page + 1;
 if (!$sortfield) $sortfield = 't.status,t.priority';
 if (!$sortorder) $sortorder = 'DESC,ASC';
 
-$search_status = (GETPOSTISSET('search_status') ?GETPOST('search_status', 'int') : GETPOST('status', 'int'));
-
+$mode = GETPOST('mode', 'aZ09');
 //Search criteria
+$search_status = (GETPOSTISSET('search_status') ?GETPOST('search_status', 'int') : GETPOST('status', 'int'));
 $search_label = GETPOST("search_label", 'alpha');
+$search_module_name = GETPOST("search_module_name", 'alpha');
+
 $securitykey = GETPOST('securitykey', 'alpha');
 
 $diroutputmassaction = $conf->cronjob->dir_output.'/temp/massgeneration/'.$user->id;
@@ -211,7 +213,6 @@ $pagetitle = $langs->trans("CronList");
 
 llxHeader('', $pagetitle);
 
-
 $sql = "SELECT";
 $sql .= " t.rowid,";
 $sql .= " t.tms,";
@@ -254,8 +255,8 @@ if (is_array($filter) && count($filter) > 0) {
 	}
 }
 $sqlwhere = array();
-if (!empty($module_name)) {
-	$sqlwhere[] = '(t.module_name='.$db->escape($module_name).')';
+if (!empty($search_module_name)) {
+	$sqlwhere[] = '(t.module_name='.$db->escape($search_module_name).')';
 }
 if (count($sqlwhere) > 0) {
 	$sql .= " WHERE ".implode(' AND ', $sqlwhere);
@@ -296,6 +297,8 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&co
 if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 if ($search_status)   $param .= '&search_status='.urlencode($search_status);
 if ($search_label)	  $param .= '&search_label='.urlencode($search_label);
+if ($search_module_name) $param .= '&search_module_name='.urlencode($search_module_name);
+if ($mode) $param .= '&mode='.urlencode($mode);
 if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -322,6 +325,13 @@ if ($user->rights->mymodule->delete) $arrayofmassactions['predelete'] = '<span c
 if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
+if ($mode == 'modulesetup') {
+	$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+	print load_fiche_titre($langs->trans("CronSetup"), $linkback, 'title_setup');
+
+	// Configuration header
+	$head = cronadmin_prepare_head();
+}
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="search_form">'."\n";
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -332,15 +342,21 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 // Line with explanation and button new
-$newcardbutton = dolGetButtonTitle($langs->trans('New'), $langs->trans('CronCreateJob'), 'fa fa-plus-circle', DOL_URL_ROOT.'/cron/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $user->rights->cron->create);
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), $langs->trans('CronCreateJob'), 'fa fa-plus-circle', DOL_URL_ROOT.'/cron/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].'?mode=modulesetup'), '', $user->rights->cron->create);
 
 
-print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_setup', 0, $newcardbutton, '', $limit);
+if ($mode == 'modulesetup') {
+	print dol_get_fiche_head($head, 'jobs', $langs->trans("Module2300Name"), -1, 'cron');
+
+	//print '<span class="opacitymedium">'.$langs->trans('CronInfo').'</span><br>';
+}
 
 
-print '<span class="opacitymedium">'.$langs->trans('CronInfo').'</span><br>';
+print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, ($mode == 'modulesetup' ? '' : 'title_setup'), 0, $newcardbutton, '', $limit);
+
 
 $text = $langs->trans("HoursOnThisPageAreOnServerTZ").' '.$stringcurrentdate.'<br>';
 if (!empty($conf->global->CRON_WARNING_DELAY_HOURS)) $text .= $langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS);
@@ -533,11 +549,11 @@ if ($num > 0)
 
 		print '<td class="nowraponall right">';
 
-		$backtourl = urlencode($_SERVER["PHP_SELF"].'?'.$param.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : ''));
+		$backtopage = urlencode($_SERVER["PHP_SELF"].'?'.$param.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : ''));
 		if ($user->rights->cron->create)
 		{
 			print '<a class="editfielda" href="'.DOL_URL_ROOT."/cron/card.php?id=".$obj->rowid.'&action=edit&token='.newToken().($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').$param;
-			print "&backtourl=".$backtourl."\" title=\"".dol_escape_htmltag($langs->trans('Edit'))."\">".img_picto($langs->trans('Edit'), 'edit')."</a> &nbsp;";
+			print "&backtopage=".$backtopage."\" title=\"".dol_escape_htmltag($langs->trans('Edit'))."\">".img_picto($langs->trans('Edit'), 'edit')."</a> &nbsp;";
 		}
 		if ($user->rights->cron->delete)
 		{
@@ -581,11 +597,10 @@ print '</div>';
 
 print '</from>';
 
+if ($mode == 'modulesetup') {
+	print dol_get_fiche_end();
+}
 
-print '<br><br>';
-
-
-dol_print_cron_urls();
 
 llxFooter();
 

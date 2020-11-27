@@ -530,7 +530,7 @@ if (GETPOST('ajoutsujet'))
 		print $langs->trans("Type").' '.$form->selectarray("typecolonne", $tmparray, GETPOST('typecolonne')).'<br><br>';
 		print '<input type="submit" class="button" name="ajoutercolonne" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
 		print ' &nbsp; &nbsp; ';
-		print '<input type="submit" class="button" name="retoursondage" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+		print '<input type="submit" class="button button-cancel" name="retoursondage" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 		print '<br><br>'."\n";
 	} else {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -583,7 +583,7 @@ if (GETPOST('ajoutsujet'))
 		print '<br><br>';
 		print' <input type="submit" class="button" name="ajoutercolonne" value="'.dol_escape_htmltag($langs->trans("Add")).'">'."\n";
 		print '&nbsp; &nbsp;';
-		print '<input type="submit" class="button" name="retoursondage" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button button-cancel" name="retoursondage" value="'.$langs->trans("Cancel").'">';
 	}
 
 	print '</form>'."\n";
@@ -913,7 +913,7 @@ while ($compteur < $num)
 			{
 				print '<td class="casevide">';
 				print '<input type="hidden" name="idtomodify'.$compteur.'" value="'.$obj->id_users.'">';
-				print '<input type="submit" class="button" name="validermodifier'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '<input type="submit" class="button button-save" name="validermodifier'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 				print '</td>'."\n";
 			}
 		}

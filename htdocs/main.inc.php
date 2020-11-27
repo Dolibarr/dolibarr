@@ -68,6 +68,8 @@ function testSqlAndScriptInject($val, $type)
 	// We clean string because some hacks try to obfuscate evil strings by inserting non printable chars. Example: 'java(ascci09)scr(ascii00)ipt' is processed like 'javascript' (whatever is place of evil ascii char)
 	// We should use dol_string_nounprintableascii but function is not yet loaded/available
 	$val = preg_replace('/[\x00-\x1F\x7F]/u', '', $val); // /u operator makes UTF8 valid characters being ignored so are not included into the replace
+	// We clean html comments because some hacks try to obfuscate evil strings by inserting HTML comments. Example: on<!-- -->error=alert(1)
+	$val = preg_replace('/<!--[^>]*-->/', '', $val);
 
 	$inj = 0;
 	// For SQL Injection (only GET are used to be included into bad escaped SQL requests)
@@ -228,6 +230,11 @@ if (!empty($_POST["DOL_AUTOSET_COOKIE"]))
 
 // Init the 5 global objects, this include will make the 'new Xxx()' and set properties for: $conf, $db, $langs, $user, $mysoc
 require_once 'master.inc.php';
+
+// Set the handler of session
+if (ini_get('session.save_handler') == 'user') {
+	require_once 'core/lib/phpsessionindb.lib.php';
+}
 
 // Init session. Name of session is specific to Dolibarr instance.
 // Must be done after the include of master.inc.php so $conf file is loaded and vars like $dolibarr_main_force_https are set.
@@ -988,7 +995,7 @@ if (!defined('NOLOGIN'))
 	$user->getrights();
 }
 
-dol_syslog("--- Access to ".$_SERVER["REQUEST_METHOD"].' '.$_SERVER["PHP_SELF"].' - action='.GETPOST('action', 'aZ09').', massaction='.GETPOST('massaction', 'aZ09'));
+dol_syslog("--- Access to ".$_SERVER["REQUEST_METHOD"].' '.$_SERVER["PHP_SELF"].' - action='.GETPOST('action', 'aZ09').', massaction='.GETPOST('massaction', 'aZ09').' NOTOKENRENEWAL='.(defined('NOTOKENRENEWAL')?constant('NOTOKENRENEWAL'):''));
 //Another call for easy debugg
 //dol_syslog("Access to ".$_SERVER["PHP_SELF"].' GET='.join(',',array_keys($_GET)).'->'.join(',',$_GET).' POST:'.join(',',array_keys($_POST)).'->'.join(',',$_POST));
 
@@ -1412,7 +1419,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				print 'var urlLoadInPlace = \''.DOL_URL_ROOT.'/core/ajax/loadinplace.php\';'."\n";
 				print 'var tooltipInPlace = \''.$langs->transnoentities('ClickToEdit').'\';'."\n"; // Added in title attribute of span
 				print 'var placeholderInPlace = \'&nbsp;\';'."\n"; // If we put another string than $langs->trans("ClickToEdit") here, nothing is shown. If we put empty string, there is error, Why ?
-				print 'var cancelInPlace = \''.$langs->trans('Cancel').'\';'."\n";
+				print 'var cancelInPlace = \''.$langs->trans("Cancel").'\';'."\n";
 				print 'var submitInPlace = \''.$langs->trans('Ok').'\';'."\n";
 				print 'var indicatorInPlace = \'<img src="'.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'">\';'."\n";
 				print 'var withInPlace = 300;'; // width in pixel for default string edit
@@ -1694,6 +1701,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				else $text .= sprintf($helpbaseurl, $helppage);
 				$text .= '">';
 				$text .= '<span class="fa fa-question-circle atoplogin valignmiddle'.($helppresent ? ' '.$helppresent : '').'"></span>';
+				if ($helppresent) $text .= '<span class="fa fa-circle helppresentcircle"></span>';
 				$text .= '</a>';
 				$toprightmenu .= $form->textwithtooltip('', $title, 2, 1, $text, 'login_block_elem', 2);
 			}

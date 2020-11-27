@@ -1202,7 +1202,7 @@ if ($action == 'create')
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 	print '</div>';
 
 	if (is_object($objectsrc))
@@ -1477,7 +1477,7 @@ if ($action == 'create')
 				//	print '<td width="80" class="right">'.$langs->trans("PriceUHTCurrency").'</td>';
 				//}
 				print '<td width="30" class="center">'.$langs->trans("Qty").'</td>';
-				if ($conf->global->PRODUCT_USE_UNITS) print '<td width="30" class="left">'.$langs->trans("Unit").'</td>';
+				if (!empty($conf->global->PRODUCT_USE_UNITS)) print '<td width="30" class="left">'.$langs->trans("Unit").'</td>';
 				print '<td width="50" class="right">'.$langs->trans("ReductionShort").'</td>';
 				if (!empty($conf->margin->enabled) && !empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) print '<td width="50" class="right">'.$langs->trans("BuyingPrice").'</td>';
 				print '<td width="30">&nbsp;</td>';
@@ -1538,7 +1538,7 @@ if ($action == 'create')
 					// Quantity
 					print '<td class="center">'.$objp->qty.'</td>';
 					// Unit
-					if ($conf->global->PRODUCT_USE_UNITS) print '<td class="left">'.$langs->trans($object->lines[$cursorline - 1]->getLabelOfUnit()).'</td>';
+					if (!empty($conf->global->PRODUCT_USE_UNITS)) print '<td class="left">'.$langs->trans($object->lines[$cursorline - 1]->getLabelOfUnit()).'</td>';
 					// Discount
 					if ($objp->remise_percent > 0)
 					{
@@ -1682,7 +1682,7 @@ if ($action == 'create')
 					print '<td class="center"><input size="2" type="text" name="elqty" value="'.$objp->qty.'"></td>';
 
 					// Unit
-					if ($conf->global->PRODUCT_USE_UNITS)
+					if (!empty($conf->global->PRODUCT_USE_UNITS))
 					{
 						print '<td class="left">';
 						print $form->selectUnits($objp->fk_unit, "unit");
@@ -1700,13 +1700,13 @@ if ($action == 'create')
 					}
 					print '<td class="center">';
 					print '<input type="submit" class="button margintoponly marginbottomonly" name="save" value="'.$langs->trans("Modify").'">';
-					print '<br><input type="submit" class="button margintoponly marginbottomonly" name="cancel" value="'.$langs->trans("Cancel").'">';
+					print '<br><input type="submit" class="button margintoponly marginbottomonly button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 					print '</td>';
 					print '</tr>';
 
 					$colspan = 6;
 					if (!empty($conf->margin->enabled) && !empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) $colspan++;
-					if ($conf->global->PRODUCT_USE_UNITS) $colspan++;
+					if (!empty($conf->global->PRODUCT_USE_UNITS)) $colspan++;
 
 					// Ligne dates prevues
 					print '<tr class="oddeven">';
@@ -1907,10 +1907,10 @@ if ($action == 'create')
 				print '</tr>';
 
 				print '<tr class="oddeven">';
-				print '<td class="nohover">'.$langs->trans("Comment").'</td><td colspan="3" class="nohover" colspan="'.($conf->margin->enabled ? 4 : 3).'"><input type="text" class="minwidth300" name="comment" value="'.GETPOST("comment", 'alphanohtml').'"></td>';
+				print '<td class="nohover">'.$langs->trans("Comment").'</td><td colspan="3" class="nohover" colspan="'.($conf->margin->enabled ? 4 : 3).'"><input type="text" class="minwidth300" name="comment" value="'.dol_escape_htmltag(GETPOST("comment", 'alphanohtml')).'"></td>';
 				print '<td class="nohover right">';
 				print '<input type="submit" class="button" name="activate" value="'.$langs->trans("Activate").'"> &nbsp; ';
-				print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+				print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</td>';
 				print '</tr>';
 
@@ -1968,7 +1968,7 @@ if ($action == 'create')
 				print '<td class="nohover">'.$langs->trans("Comment").'</td><td class="nohover"><input size="70" type="text" class="flat" name="comment" value="'.dol_escape_htmltag(GETPOST('comment', 'alpha')).'"></td>';
 				print '<td class="nohover right">';
 				print '<input type="submit" class="button" name="close" value="'.$langs->trans("Disable").'"> &nbsp; ';
-				print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+				print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</td>';
 				print '</tr>';
 
@@ -2183,7 +2183,7 @@ if (!empty($conf->margin->enabled) && $action == 'editline')
 $(document).ready(function() {
   var idprod = $("input[name='idprod']").val();
   var fournprice = $("input[name='fournprice']").val();
-  var token = '<?php echo $_SESSION["token"]; ?>';		// For AJAX Call we use old 'token' and not 'newtoken'
+  var token = '<?php echo currentToken(); ?>';		// For AJAX Call we use old 'token' and not 'newtoken'
   if (idprod > 0) {
 	  $.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {
 		  'idprod': idprod,

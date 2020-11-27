@@ -59,7 +59,6 @@ $search_ref = GETPOST("search_ref", 'alpha');
 $search_barcode = GETPOST("search_barcode", 'alpha');
 $search_label = GETPOST("search_label", 'alpha');
 $search_type = GETPOST("search_type", 'int');
-$search_sale = GETPOST("search_sale", 'int');
 $search_vatrate = GETPOST("search_vatrate", 'alpha');
 $searchCategoryProductOperator = (GETPOST('search_category_product_operator', 'int') ? GETPOST('search_category_product_operator', 'int') : 0);
 $searchCategoryProductList = GETPOST('search_category_product_list', 'array');
@@ -237,7 +236,7 @@ if ($conf->global->PRODUIT_MULTIPRICES) {
 		} else {
 			$labelp = $langs->trans("SellingPrice")." ".$i;
 		}
-		$arrayfields['p.sellprice'.$i] = array('label'=>$labelp, 'checked'=>1, 'enabled'=>$conf->global->PRODUIT_MULTIPRICES, 'position'=>40);
+		$arrayfields['p.sellprice'.$i] = array('label'=>$labelp, 'checked'=>1, 'enabled'=>$conf->global->PRODUIT_MULTIPRICES, 'position'=>floatval('40.'.sprintf('%03s', $i)));
 		$arraypricelevel[$i] = array($i);
 	}
 }
@@ -278,10 +277,10 @@ if (empty($reshook))
 		$searchCategoryProductList = array();
 		$search_tosell = "";
 		$search_tobuy = "";
+		$search_tobatch = '';
 		$search_country = "";
 		$search_state = "";
 		$search_vatrate = "";
-		$search_tobatch = '';
 		$search_finished = '';
 		//$search_type='';						// There is 2 types of list: a list of product and a list of services. No list with both. So when we clear search criteria, we must keep the filter on type.
 
@@ -373,8 +372,9 @@ if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTE
 if ($search_ref)     $sql .= natural_search('p.ref', $search_ref);
 if ($search_label)   $sql .= natural_search('p.label', $search_label);
 if ($search_barcode) $sql .= natural_search('p.barcode', $search_barcode);
-if (isset($search_tosell) && dol_strlen($search_tosell) > 0 && $search_tosell != -1) $sql .= " AND p.tosell = ".$db->escape($search_tosell);
-if (isset($search_tobuy) && dol_strlen($search_tobuy) > 0 && $search_tobuy != -1)   $sql .= " AND p.tobuy = ".$db->escape($search_tobuy);
+if (isset($search_tosell) && dol_strlen($search_tosell) > 0 && $search_tosell != -1) $sql .= " AND p.tosell = ".((int) $search_tosell);
+if (isset($search_tobuy) && dol_strlen($search_tobuy) > 0 && $search_tobuy != -1)   $sql .= " AND p.tobuy = ".((int) $search_tobuy);
+if (isset($search_tobatch) && dol_strlen($search_tobatch) > 0 && $search_tobatch != -1)   $sql .= " AND p.tobatch = ".((int) $search_tobatch);
 if ($search_vatrate) $sql .= natural_search('p.tva_tx', $search_vatrate);
 if (dol_strlen($canvas) > 0)                    $sql .= " AND p.canvas = '".$db->escape($canvas)."'";
 if ($catid > 0)     $sql .= " AND cp.fk_categorie = ".$catid;
@@ -403,8 +403,7 @@ if ($searchCategoryProductOperator == 1) {
 		$sql .= " AND (".implode(' AND ', $searchCategoryProductSqlList).")";
 	}
 }
-if ($fourn_id > 0)  $sql .= " AND pfp.fk_soc = ".$fourn_id;
-if ($search_tobatch != '' && $search_tobatch >= 0)   $sql .= " AND p.tobatch = ".$db->escape($search_tobatch);
+if ($fourn_id > 0)  $sql .= " AND pfp.fk_soc = ".((int) $fourn_id);
 if ($search_country)     $sql .= " AND p.fk_country = ".$search_country;
 if ($search_state)     $sql .= " AND p.fk_state = ".$search_state;
 if ($search_finished >= 0 && $search_finished !== '') $sql .= " AND p.finished = ".$search_finished;
@@ -505,16 +504,16 @@ if ($resql)
 	if ($search_label) $param .= "&search_label=".urlencode($search_label);
 	if ($search_tosell != '') $param .= "&search_tosell=".urlencode($search_tosell);
 	if ($search_tobuy != '') $param .= "&search_tobuy=".urlencode($search_tobuy);
+	if ($search_tobatch) $param = "&search_tobatch=".urlencode($search_tobatch);
 	if ($search_country != '') $param .= "&search_country=".urlencode($search_country);
 	if ($search_state != '') $param .= "&search_state=".urlencode($search_state);
-	if ($search_vatrate) $sql .= natural_search('p.tva_tx', $search_vatrate);
+	if ($search_vatrate) $param = "&search_vatrate=".urlencode($search_vatrate);
 	if ($fourn_id > 0) $param .= ($fourn_id ? "&fourn_id=".$fourn_id : "");
 	//if ($seach_categ) $param.=($search_categ?"&search_categ=".urlencode($search_categ):"");
 	if ($show_childproducts) $param .= ($show_childproducts ? "&search_show_childproducts=".urlencode($show_childproducts) : "");
 	if ($type != '') $param .= '&type='.urlencode($type);
 	if ($search_type != '') $param .= '&search_type='.urlencode($search_type);
 	if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
-	if ($search_tobatch) $param = "&search_ref_supplier=".urlencode($search_ref_supplier);
 	if ($search_accountancy_code_sell) $param = "&search_accountancy_code_sell=".urlencode($search_accountancy_code_sell);
 	if ($search_accountancy_code_sell_intra) $param = "&search_accountancy_code_sell_intra=".urlencode($search_accountancy_code_sell_intra);
 	if ($search_accountancy_code_sell_export) $param = "&search_accountancy_code_sell_export=".urlencode($search_accountancy_code_sell_export);
@@ -600,7 +599,7 @@ if ($resql)
 		$categoriesProductArr = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', '', 64, 0, 1);
 		$categoriesProductArr[-2] = '- '.$langs->trans('NotCategorized').' -';
 		$moreforfilter .= Form::multiselectarray('search_category_product_list', $categoriesProductArr, $searchCategoryProductList, 0, 0, 'minwidth300');
-		$moreforfilter .= ' <input type="checkbox" class="valignmiddle" name="search_category_product_operator" value="1"'.($searchCategoryProductOperator == 1 ? ' checked="checked"' : '').'/> <span class="opacitymedium">'.$langs->trans('UseOrOperatorForCategories').'</span>';
+		$moreforfilter .= ' <input type="checkbox" class="valignmiddle" name="search_category_product_operator" value="1"'.($searchCategoryProductOperator == 1 ? ' checked="checked"' : '').'/> <span class="none">'.$langs->trans('UseOrOperatorForCategories').'</span>';
 		$moreforfilter .= '</div>';
 	}
 
@@ -826,7 +825,7 @@ if ($resql)
 	// Stock
 	if (!empty($arrayfields['stock_virtual']['checked'])) print '<td class="liste_titre">&nbsp;</td>';
 	// To batch
-	if (!empty($arrayfields['p.tobatch']['checked'])) print '<td class="liste_titre center">'.$form->selectyesno($search_tobatch, '', '', '', 1).'</td>';
+	if (!empty($arrayfields['p.tobatch']['checked'])) print '<td class="liste_titre center">'.$form->selectyesno('search_tobatch', $search_tobatch, 1, false, 1).'</td>';
 	// Country
 	if (!empty($arrayfields['p.fk_country']['checked'])) print '<td class="liste_titre center">'.$form->select_country($search_country, 'search_country', '', 0).'</td>';
 	// State
@@ -1283,31 +1282,59 @@ if ($resql)
 
 
 		// Multiprices
-		if ($conf->global->PRODUIT_MULTIPRICES) {
+		if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
+		    if (! isset($productpricescache)) {
+		        $productpricescache=array();
+		    }
+		    if (! isset($productpricescache[$obj->rowid])) {
+		        $productpricescache[$obj->rowid] = array();
+		    }
+
+		    if ($obj->tosell)
+		    {
+		        // Make 1 request for all price levels (without filter on price_level) and saved result into an cache array
+		        // then reuse the cache array if we need prices for other price levels
+		        $sqlp = "SELECT p.rowid, p.fk_product, p.price, p.price_ttc, p.price_level, p.date_price, p.price_base_type";
+		        $sqlp .= " FROM ".MAIN_DB_PREFIX."product_price as p";
+		        $sqlp .= " WHERE fk_product = ".$obj->rowid;
+		        $sqlp .= " ORDER BY p.date_price DESC, p.rowid DESC, p.price_level ASC";
+		        $resultp = $db->query($sqlp);
+		        if ($resultp)
+		        {
+		            $nump = $db->num_rows($resultp);
+		            $j = 0;
+		            while ($j < $nump)
+		            {
+		                $objp = $db->fetch_object($resultp);
+
+		                if (empty($productpricescache[$obj->rowid][$objp->price_level]))
+		                {
+		                    $productpricescache[$obj->rowid][$objp->price_level]['price'] = $objp->price;
+		                    $productpricescache[$obj->rowid][$objp->price_level]['price_ttc'] = $objp->price_ttc;
+		                    $productpricescache[$obj->rowid][$objp->price_level]['price_base_type'] = $objp->price_base_type;
+		                }
+
+		                $j++;
+		            }
+
+		            $db->free($resultp);
+		        } else {
+		            dol_print_error($db);
+		        }
+		    }
+
 			foreach ($arraypricelevel as $key => $value)
 			{
 				if (!empty($arrayfields['p.sellprice'.$key]['checked']))
 				{
 					print '<td class="right nowraponall">';
-					if ($obj->tosell)
+					if (! empty($productpricescache[$obj->rowid]))
 					{
-						// TODO Make 1 request for all price levels (without filter on price_level) and saved result into an cache array
-						// then reuse the cache array if we need prices for other price levels
-						$resultp = "SELECT p.rowid, p.fk_product, p.price, p.price_ttc, p.price_level, p.date_price";
-						$resultp .= " FROM ".MAIN_DB_PREFIX."product_price as p";
-						$resultp .= " WHERE fk_product = ".$obj->rowid;
-						$resultp .= " AND p.price_level = ".$key;
-						$resultp .= " ORDER BY p.date_price DESC, p.rowid DESC, p.price_level ASC";
-						$resultp = $db->query($resultp);
-						if ($resultp)
-						{
-							$objp = $db->fetch_object($resultp);
-								if ($obj->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
-							else print price($objp->price).' '.$langs->trans("HT");
-								$db->free($resultp);
-						} else {
-							dol_print_error($db);
-						}
+					    if ($productpricescache[$obj->rowid][$key]['price_base_type'] == 'TTC') {
+					        print price($productpricescache[$obj->rowid][$key]['price_ttc']).' '.$langs->trans("TTC");
+					    } else {
+					        print price($productpricescache[$obj->rowid][$key]['price']).' '.$langs->trans("HT");
+					    }
 					}
 					print '</td>';
 					if (!$i) $totalarray['nbfield']++;

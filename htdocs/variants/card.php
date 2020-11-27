@@ -181,9 +181,9 @@ print dol_get_fiche_end();
 if ($action == 'edit') {
 	print '<div style="text-align: center;">';
 	print '<div class="inline-block divButAction">';
-	print '<input type="submit" class="button" value="'.$langs->trans('Save').'">';
+	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 	print '&nbsp; &nbsp;';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 	print '</div></form>';
 } else {
@@ -252,9 +252,9 @@ if ($action == 'edit') {
 				<td><input type="text" name="ref" value="<?php echo $attrval->ref ?>"></td>
 				<td><input type="text" name="value" value="<?php echo $attrval->value ?>"></td>
 				<td class="right">
-					<input type="submit" value="<?php echo $langs->trans('Save') ?>" class="button">
+					<input type="submit" value="<?php echo $langs->trans("Save") ?>" class="button button-save">
 					&nbsp; &nbsp;
-					<input type="submit" name="cancel" value="<?php echo $langs->trans('Cancel') ?>" class="button">
+					<input type="submit" name="cancel" value="<?php echo $langs->trans("Cancel") ?>" class="button button-cancel">
 				</td>
 			<?php
 		} else {

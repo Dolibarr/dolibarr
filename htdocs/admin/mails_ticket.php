@@ -364,9 +364,9 @@ if ($action == 'edit')
 	print dol_get_fiche_end();
 
 	print '<br><div class="center">';
-	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
+	print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
 	print '</form>';

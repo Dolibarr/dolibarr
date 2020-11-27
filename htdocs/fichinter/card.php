@@ -8,6 +8,7 @@
  * Copyright (C) 2014-2018  Charlene Benke          <charlies@patas-monkey.com>
  * Copyright (C) 2015-2016  Abbes Bahfir            <bafbes@gmail.com>
  * Copyright (C) 2018 		Philippe Grand       	<philippe.grand@atoo-net.com>
+ * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,8 +58,8 @@ $langs->loadLangs(array('bills', 'companies', 'interventions'));
 
 $id			= GETPOST('id', 'int');
 $ref		= GETPOST('ref', 'alpha');
-$socid = GETPOST('socid', 'int');
-$contratid = GETPOST('contratid', 'int');
+$socid = (int) GETPOST('socid', 'int');
+$contratid = (int) GETPOST('contratid', 'int');
 $action		= GETPOST('action', 'alpha');
 $cancel		= GETPOST('cancel', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
@@ -175,8 +176,7 @@ if (empty($reshook))
 		} else {
 			$mesg = $object->error;
 		}
-	} elseif ($action == 'confirm_modify' && $confirm == 'yes' && $user->rights->ficheinter->creer)
-	{
+	} elseif ($action == 'confirm_modify' && $confirm == 'yes' && $user->rights->ficheinter->creer) {
 		$result = $object->setDraft($user);
 		if ($result >= 0)
 		{
@@ -187,8 +187,7 @@ if (empty($reshook))
 				$newlang = '';
 				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
 				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang = $object->thirdparty->default_lang;
-				if (!empty($newlang))
-				{
+				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
@@ -200,14 +199,13 @@ if (empty($reshook))
 		} else {
 			$mesg = $object->error;
 		}
-	} elseif ($action == 'add' && $user->rights->ficheinter->creer)
-	{
+	} elseif ($action == 'add' && $user->rights->ficheinter->creer) {
 		$object->socid = $socid;
-		$object->duration = GETPOST('duration', 'int');
-		$object->fk_project		= GETPOST('projectid', 'int');
-		$object->fk_contrat		= GETPOST('contratid', 'int');
+		$object->duration = (int) GETPOST('duration', 'int');
+		$object->fk_project = (int) GETPOST('projectid', 'int');
+		$object->fk_contrat = (int) GETPOST('contratid', 'int');
 		$object->author = $user->id;
-		$object->description	= GETPOST('description', 'restricthtml');
+		$object->description = GETPOST('description', 'restricthtml');
 		$object->ref = $ref;
 		$object->model_pdf = GETPOST('model', 'alpha');
 		$object->note_private = GETPOST('note_private', 'restricthtml');
@@ -409,13 +407,12 @@ if (empty($reshook))
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty"));
 			$action = 'create';
 		}
-	} elseif ($action == 'update' && $user->rights->ficheinter->creer)
-	{
+	} elseif ($action == 'update' && $user->rights->ficheinter->creer) {
 		$object->socid = $socid;
-		$object->fk_project		= GETPOST('projectid', 'int');
-		$object->fk_contrat		= GETPOST('contratid', 'int');
+		$object->fk_project = (int) GETPOST('projectid', 'int');
+		$object->fk_contrat = (int) GETPOST('contratid', 'int');
 		$object->author = $user->id;
-		$object->description	= GETPOST('description', 'restricthtml');
+		$object->description = GETPOST('description', 'restricthtml');
 		$object->ref = $ref;
 
 		$result = $object->update($user);
@@ -520,8 +517,7 @@ if (empty($reshook))
 	elseif ($action == 'classifybilled' && $user->rights->ficheinter->creer)
 	{
 		$result = $object->setStatut(2);
-		if ($result > 0)
-		{
+		if ($result > 0) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
 		} else {
@@ -1017,7 +1013,7 @@ if ($action == 'create')
 		print '<div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+		print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 		print '</div>';
 
 		print '</form>';
@@ -1059,7 +1055,7 @@ if ($action == 'create')
 		print '<input type="hidden" name="action" value="create">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+		print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 		print '</div>';
 
 		print '</form>';
@@ -1482,8 +1478,8 @@ if ($action == 'create')
 					print '</td>';
 
 					print '<td class="center" colspan="5" valign="center">';
-					print '<input type="submit" class="button buttongen marginbottomonly" name="save" value="'.$langs->trans("Save").'">';
-					print '<input type="submit" class="button buttongen marginbottomonly" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
+					print '<input type="submit" class="button buttongen marginbottomonly button-save" name="save" value="'.$langs->trans("Save").'">';
+					print '<input type="submit" class="button buttongen marginbottomonly button-cancel" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
 					print '</tr>'."\n";
 
 					$line = new FichinterLigne($db);

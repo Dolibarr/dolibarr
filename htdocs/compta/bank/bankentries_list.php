@@ -634,7 +634,7 @@ if ($resql)
 		print ' '.$langs->trans("or").' ';
 		print '<input class="button" name="confirm_reconcile" type="submit" value="'.$langs->trans("Conciliate").'">';
 		print ' '.$langs->trans("or").' ';
-		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		// Show last bank statements
@@ -741,7 +741,7 @@ if ($resql)
 		}*/
 		print '<td class="center">';
 		print '<input type="submit" name="save" class="button buttongen marginbottomonly" value="'.$langs->trans("Add").'"><br>';
-		print '<input type="submit" name="cancel" class="button buttongen marginbottomonly" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" name="cancel" class="button buttongen marginbottomonly button-cancel" value="'.$langs->trans("Cancel").'">';
 		print '</td></tr>';
 
 		print '</table>';
@@ -1093,7 +1093,7 @@ if ($resql)
 				}
 
 				print '<td class="center">';
-				print '<input type="checkbox" id="selectAll" />';
+				print '<input type="checkbox" id="selectAll" title="'.dol_escape_htmltag($langs->trans("SelectAll")).'" />';
 				print ' <script type="text/javascript">
 						$("input#selectAll").change(function() {
 							$("input[type=checkbox][name^=rowid]").prop("checked", $(this).is(":checked"));

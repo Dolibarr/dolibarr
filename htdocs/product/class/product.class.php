@@ -3807,11 +3807,11 @@ class Product extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Verifie si c'est un sous-produit
+	 *  Check if it is a sub-product into a kit
 	 *
-	 * @param  int $fk_parent Id du produit auquel le produit est lie
-	 * @param  int $fk_child  Id du produit lie
-	 * @return int                    < 0 si erreur, > 0 si ok
+	 * @param  int 	$fk_parent 		Id of parent kit product
+	 * @param  int 	$fk_child  		Id of child product
+	 * @return int                  <0 if KO, >0 if OK
 	 */
 	public function is_sousproduit($fk_parent, $fk_child)
 	{
@@ -3827,6 +3827,7 @@ class Product extends CommonObject
 
 			if ($num > 0) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->is_sousproduit_qty = $obj->qty;
 				$this->is_sousproduit_incdec = $obj->incdec;
 
@@ -4221,22 +4222,30 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *  Return all parent products for current product (first level only)
+	 * Count all parent and children products for current product (first level only)
 	 *
-	 * @return int            Nb of father + child
+	 * @param	int		$mode	0=Both parent and child, -1=Parents only, 1=Children only
+	 * @return 	int            	Nb of father + child
+	 * @see getFather(), get_sousproduits_arbo()
 	 */
-	public function hasFatherOrChild()
+	public function hasFatherOrChild($mode = 0)
 	{
 		$nb = 0;
 
 		$sql = "SELECT COUNT(pa.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_association as pa";
-		$sql .= " WHERE pa.fk_product_fils = ".$this->id." OR pa.fk_product_pere = ".$this->id;
+		if ($mode == 0) {
+			$sql .= " WHERE pa.fk_product_fils = ".$this->id." OR pa.fk_product_pere = ".$this->id;
+		} elseif ($mode == -1) {
+			$sql .= " WHERE pa.fk_product_fils = ".$this->id;	// We are a child, so we found lines that link to parents (can have several parents)
+		} elseif ($mode == 1) {
+			$sql .= " WHERE pa.fk_product_pere = ".$this->id;	// We are a parent, so we found lines that link to children (can have several children)
+		}
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			if ($obj) { $nb = $obj->nb;
-			}
+			if ($obj) { $nb = $obj->nb;	}
 		} else {
 			return -1;
 		}
@@ -4297,6 +4306,7 @@ class Product extends CommonObject
 	 *  Return all parent products for current product (first level only)
 	 *
 	 * @return array         Array of product
+	 * @see hasFatherOrChild()
 	 */
 	public function getFather()
 	{
@@ -4887,7 +4897,7 @@ class Product extends CommonObject
 			$this->db->free($result);
 
 			if (!preg_match('/novirtual/', $option)) {
-				$this->load_virtual_stock($includedraftpoforvirtual); // This also load stats_commande_fournisseur, ...
+				$this->load_virtual_stock($includedraftpoforvirtual); // This also load all arrays stats_xxx...
 			}
 
 			return 1;

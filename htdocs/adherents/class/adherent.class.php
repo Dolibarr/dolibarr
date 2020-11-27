@@ -1999,11 +1999,11 @@ class Adherent extends CommonObject
 	 *	@param	int		$withpictoimg				0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
 	 *	@param	int		$maxlen						length max label
 	 *	@param	string	$option						Page for link ('card', 'category', 'subscription', ...)
-	 *	@param  string  $mode           			''=Show firstname+lastname as label (using default order), 'firstname'=Show only firstname, 'login'=Show login, 'ref'=Show ref
+	 *	@param  string  $mode           			''=Show firstname+lastname as label (using default order), 'firstname'=Show only firstname, 'lastname'=Show only lastname, 'login'=Show login, 'ref'=Show ref
 	 *	@param  string  $morecss        			Add more css on link
 	 *	@param  int		$save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@param	int		$notooltip					1=Disable tooltip
-	 *	@param  int		$addlinktonotes			1=Add link to notes
+	 *	@param  int		$addlinktonotes				1=Add link to notes
 	 *	@return	string								Chaine avec URL
 	 */
 	public function getNomUrl($withpictoimg = 0, $maxlen = 0, $option = 'card', $mode = '', $morecss = '', $save_lastsearch_value = -1, $notooltip = 0, $addlinktonotes = 0)
@@ -2083,7 +2083,7 @@ class Adherent extends CommonObject
 			} elseif ($mode == 'ref') {
 				$result .= $this->ref;
 			} else {
-				$result .= $this->getFullName($langs, '', ($mode == 'firstname' ? 2 : -1), $maxlen);
+				$result .= $this->getFullName($langs, '', ($mode == 'firstname' ? 2 : ($mode == 'lastname' ? 4 : -1)), $maxlen);
 			}
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result .= '</span>';
 		}
@@ -2416,6 +2416,7 @@ class Adherent extends CommonObject
 		global $conf, $langs;
 
 		$info = array();
+		$socialnetworks = getArrayOfSocialNetworks();
 		$keymodified = false;
 
 		// Object classes
@@ -2430,8 +2431,13 @@ class Adherent extends CommonObject
 		}
 
 		// Possible LDAP KEY (constname => varname)
-		$ldapkey = array('LDAP_MEMBER_FIELD_FULLNAME' => 'fullname', 'LDAP_MEMBER_FIELD_NAME' => 'lastname', 'LDAP_MEMBER_FIELD_LOGIN' => 'login', 'LDAP_MEMBER_FIELD_LOGIN_SAMBA' => 'login',
-			'LDAP_MEMBER_FIELD_MAIL' => 'email');
+		$ldapkey = array(
+			'LDAP_MEMBER_FIELD_FULLNAME' => 'fullname',
+			'LDAP_MEMBER_FIELD_NAME' => 'lastname',
+			'LDAP_MEMBER_FIELD_LOGIN' => 'login',
+			'LDAP_MEMBER_FIELD_LOGIN_SAMBA' => 'login',
+			'LDAP_MEMBER_FIELD_MAIL' => 'email'
+		);
 
 		// Member
 		foreach ($ldapkey as $constname => $varname) {
@@ -2451,10 +2457,11 @@ class Adherent extends CommonObject
 		if ($this->zip && !empty($conf->global->LDAP_MEMBER_FIELD_ZIP)) $info[$conf->global->LDAP_MEMBER_FIELD_ZIP] = $this->zip;
 		if ($this->town && !empty($conf->global->LDAP_MEMBER_FIELD_TOWN)) $info[$conf->global->LDAP_MEMBER_FIELD_TOWN] = $this->town;
 		if ($this->country_code && !empty($conf->global->LDAP_MEMBER_FIELD_COUNTRY)) $info[$conf->global->LDAP_MEMBER_FIELD_COUNTRY] = $this->country_code;
-		if ($this->skype && !empty($conf->global->LDAP_MEMBER_FIELD_SKYPE)) $info[$conf->global->LDAP_MEMBER_FIELD_SKYPE] = $this->skype;
-		if ($this->twitter && !empty($conf->global->LDAP_MEMBER_FIELD_TWITTER)) $info[$conf->global->LDAP_MEMBER_FIELD_TWITTER] = $this->twitter;
-		if ($this->facebook && !empty($conf->global->LDAP_MEMBER_FIELD_FACEBOOK)) $info[$conf->global->LDAP_MEMBER_FIELD_FACEBOOK] = $this->facebook;
-		if ($this->linkedin && !empty($conf->global->LDAP_MEMBER_FIELD_LINKEDIN)) $info[$conf->global->LDAP_MEMBER_FIELD_LINKEDIN] = $this->linkedin;
+		foreach ($socialnetworks as $key => $value) {
+			if ($this->socialnetworks[$value['label']] && !empty($conf->global->{'LDAP_MEMBER_FIELD_'.strtoupper($value['label'])})) {
+				$info[$conf->global->{'LDAP_MEMBER_FIELD_'.strtoupper($value['label'])}] = $this->socialnetworks[$value['label']];
+			}
+		}
 		if ($this->phone && !empty($conf->global->LDAP_MEMBER_FIELD_PHONE)) $info[$conf->global->LDAP_MEMBER_FIELD_PHONE] = $this->phone;
 		if ($this->phone_perso && !empty($conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO)) $info[$conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO] = $this->phone_perso;
 		if ($this->phone_mobile && !empty($conf->global->LDAP_MEMBER_FIELD_MOBILE)) $info[$conf->global->LDAP_MEMBER_FIELD_MOBILE] = $this->phone_mobile;
@@ -2467,8 +2474,12 @@ class Adherent extends CommonObject
 
 		// When password is modified
 		if (!empty($this->pass)) {
-			if (!empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD)) $info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD] = $this->pass; // this->pass = mot de passe non crypte
-			if (!empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED)) $info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass, 4); // Create OpenLDAP MD5 password (TODO add type of encryption)
+			if (!empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD)) {
+				$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD] = $this->pass; // this->pass = mot de passe non crypte
+			}
+			if (!empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED)) {
+				$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass, 4); // Create OpenLDAP MD5 password (TODO add type of encryption)
+			}
 		} // Set LDAP password if possible
 		elseif ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') { // If ldap key is modified and LDAPv3 we use ldap_rename function for avoid lose encrypt password
 			if (!empty($conf->global->DATABASE_PWD_ENCRYPTED)) {

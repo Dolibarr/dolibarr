@@ -14,6 +14,7 @@ FileToLaunchCronJobs=Command line to check and launch qualified cron jobs
 CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
 CronExplainHowToRunWin=Microsoft (tm) Windows vidē jūs varat izmantot Scheduled Task rīkus, lai palaistu komandrindu ik pēc 5 minūtēm
 CronMethodDoesNotExists=Class %s does not contains any method %s
+CronMethodNotAllowed=%s klases %s metode ir aizliegto metožu melnajā sarakstā
 CronJobDefDesc=Cron darba profili ir definēti moduļa deskriptora failā. Kad modulis ir aktivizēts, tie ir ielādēti un pieejami, lai jūs varētu administrēt darbus no admin instrumentu izvēlnes %s.
 CronJobProfiles=Iepriekš noteiktu cron darba profilu saraksts
 # Menu
@@ -46,6 +47,7 @@ CronNbRun=Palaizšanas skaits
 CronMaxRun=Maksimālais startu skaits
 CronEach=Katru
 JobFinished=Darbs uzsākts un pabeigts
+Scheduled=Plānots
 #Page card
 CronAdd= Pievienot darbu
 CronEvery=Izpildīt katru darbu
@@ -56,12 +58,12 @@ CronNote=Komentārs
 CronFieldMandatory=Lauki %s ir obligāti
 CronErrEndDateStartDt=Beigu datums nevar būt pirms sākuma datuma
 StatusAtInstall=Statuss moduļa instalācijā
-CronStatusActiveBtn=Ieslēgt
+CronStatusActiveBtn=Grafiks
 CronStatusInactiveBtn=Izslēgt
 CronTaskInactive=Šis darbs ir izslēgts
 CronId=Id
-CronClassFile=Filename with class
-CronModuleHelp=Dolibarr moduļu direktorijas nosaukums (arī darbojas ar ārēju Dolibarr moduli). <BR> Piemēram, lai izsauktu Dolibarr produkta objekta /htdocs/<uproduct</u>/class/product.class.php iegūšanas metodi, moduļa vērtība ir <br> <i> produkts </i>
+CronClassFile=Faila nosaukums ar klasi
+CronModuleHelp=Dolibarr moduļu direktorijas nosaukums (arī darbojas ar ārēju Dolibarr moduli). <BR> Piemēram, lai izsauktu Dolibarr produkta objektu /htdocs/<u>product</u>/class/product.class.php iegūšanas metodi, moduļa vērtība ir <br> <i>produkts</i>
 CronClassFileHelp=Relatīvais ceļš un faila nosaukums ielādei (ceļš ir salīdzinājumā ar tīmekļa servera saknes direktoriju). <BR> Piemēram, lai izsauktu Dolibarr produkta objekta htdocs / product / class / <u> product.class.php </ u> iegūšanas metodi, klases faila nosaukuma vērtība ir <br> <i> produkts / klase / product.class.php </ i>
 CronObjectHelp=Objekta nosaukums ielādei. <BR> Piemēram, lai izsauktu Dolibarr Produkta objekta /htdocs/product/class/product.class.php ielādes metodi, klases faila nosaukuma vērtība ir <br> <i> Produkts </ i>
 CronMethodHelp=Objekta metode, lai palaistu. <BR> Piemēram, lai izsauktu Dolibarr Produkta objekta /htdocs/product/class/product.class.php iegūšanas metodi, metodes vērtība ir <br> <i> atnest </ i>
@@ -72,12 +74,13 @@ CronFrom=No
 # Info
 # Common
 CronType=Darba veids
-CronType_method=PHP klases zvana metode
+CronType_method=PHP klases izsaukšanas metode
 CronType_command=Shell komanda
 CronCannotLoadClass=Nevar ielādēt klases failu %s (izmantot klasi %s)
 CronCannotLoadObject=Klases fails %s tika ielādēts, bet objekts %s tajā netika atrasts
-UseMenuModuleToolsToAddCronJobs=Lai skatītu un rediģētu ieplānotās darbavietas, dodieties uz izvēlni "Sākums - Administratora rīki - Plānotās darbavietas".
+UseMenuModuleToolsToAddCronJobs=Lai redzētu un rediģētu ieplānotos darbus, dodieties uz izvēlni <a href="%s">Sākums - Administratora rīki - Plānotie darbi</a>.
 JobDisabled=Darbs ir atspējots
 MakeLocalDatabaseDumpShort=Lokālās datu bāzes dublēšana
 MakeLocalDatabaseDump=Izveidojiet vietējo datubāzes dump. Parametri ir: kompresija ("gz" vai "bz" vai "neviens"), dublēšanas veids ("mysql", "pgsql", "auto"), 1, "auto" vai faila nosaukums,
 WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.
+DATAPOLICYJob=Datu tīrītājs un anonimizators

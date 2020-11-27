@@ -189,7 +189,7 @@ $coldisplay++;
 	</td>
 
 	<?php
-	if ($conf->global->PRODUCT_USE_UNITS)
+	if (!empty($conf->global->PRODUCT_USE_UNITS))
 	{
 		$coldisplay++;
 		print '<td class="left">';
@@ -255,8 +255,8 @@ $coldisplay++;
 
 	<!-- colspan for this td because it replace total_ht+3 td for buttons+... -->
 	<td class="center valignmiddle" colspan="<?php echo $colspan; ?>"><?php $coldisplay += $colspan; ?>
-		<input type="submit" class="button buttongen marginbottomonly" id="savelinebutton marginbottomonly" name="save" value="<?php echo $langs->trans("Save"); ?>"><br>
-		<input type="submit" class="button buttongen marginbottomonly" id="cancellinebutton" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
+		<input type="submit" class="button buttongen marginbottomonly button-save" id="savelinebutton marginbottomonly" name="save" value="<?php echo $langs->trans("Save"); ?>"><br>
+		<input type="submit" class="button buttongen marginbottomonly button-cancel" id="cancellinebutton" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
 	</td>
 </tr>
 
@@ -434,7 +434,8 @@ jQuery(document).ready(function()
 		});
 
 		/* Init field buying_price and fournprice */
-		$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': <?php echo $line->fk_product ? $line->fk_product : 0; ?>, 'token': '<?php echo newToken(); ?>'}, function(data) {
+		var token = '<?php echo currentToken(); ?>';		// For AJAX Call we use old 'token' and not 'newtoken'
+		$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': <?php echo $line->fk_product ? $line->fk_product : 0; ?>, 'token': token }, function(data) {
           if (data && data.length > 0) {
 			var options = '';
 			var trouve=false;

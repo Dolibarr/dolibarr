@@ -105,36 +105,21 @@ if (!isset($_GET["testget"]) && !isset($_POST["testpost"]) && !isset($_GET["main
 
 print '</td></tr>';
 print '<tr><td>Sessions support</td><td>';
-
 if (!function_exists("session_id"))
 {
 	print '<img src="'.$ErrorPicturePath.'" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportSessions");
 } else {
 	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportSessions");
 }
-
 print '</td></tr>';
 
 print '<tr><td>UTF-8 support</td><td>';
-
 if (!function_exists("utf8_encode"))
 {
 	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupport", "UTF8");
 } else {
 	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupport", "UTF8");
 }
-
-print '</td></tr>';
-
-print '<tr><td>MBString support</td><td>';
-
-if (!function_exists("mb_check_encoding"))
-{
-	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupport", "mbstring");
-} else {
-	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupport", "mbstring");
-}
-
 print '</td></tr>';
 
 print '</table>';
@@ -152,6 +137,28 @@ print '<td align="center">'.$langs->trans("Loaded").'</td>';
 print '<td align="center">'.$langs->trans("FunctionTest").'</td>';
 print '<td>'.$langs->trans("Result").'</td>';
 print '</tr>';
+
+$functions = ["mb_check_encoding"];
+$name      = "MBString";
+
+print "<tr>";
+print "<td>".$name."</td>";
+//print getTableColumn($name, $activatedExtensions);
+print getTableColumn($name, $loadedExtensions);
+print getTableColumnFunction($functions);
+print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
+print "</tr>";
+
+$functions = ["json_decode"];
+$name      = "JSON";
+
+print "<tr>";
+print "<td>".$name."</td>";
+//print getTableColumn($name, $activatedExtensions);
+print getTableColumn($name, $loadedExtensions);
+print getTableColumnFunction($functions);
+print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
+print "</tr>";
 
 $functions = ["imagecreate"];
 $name      = "GD";
@@ -186,7 +193,6 @@ if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@loc
 	print getTableColumn($name, $loadedExtensions);
 	print getTableColumnFunction($functions);
 	print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
-
 	print "</tr>";
 }
 
@@ -225,7 +231,7 @@ foreach ($phparray as $key => $value)
 			print '<td>'.$keyparam.'</td>';
 			$valtoshow = $keyvalue;
 			if ($keyparam == 'X-ChromePhp-Data') $valtoshow = dol_trunc($keyvalue, 80);
-			print '<td colspan="2">';
+			print '<td colspan="2" class="wordbreak">';
 			if ($keyparam == 'Path') $valtoshow = implode('; ', explode(';', trim($valtoshow)));
 			if ($keyparam == 'PATH') $valtoshow = implode('; ', explode(';', trim($valtoshow)));
 			if ($keyparam == '_SERVER["PATH"]') $valtoshow = implode('; ', explode(';', trim($valtoshow)));
@@ -425,7 +431,7 @@ function getResultColumn($name, array $activated, array $loaded, array $function
 	}
 
 	$html = "<td>";
-	$html .= $result ? $langs->trans("PHPSupport".$name) : $langs->trans("ErrorPHPDoesNotSupport".$name);
+	$html .= $result ? $langs->trans("PHPSupport", $name) : $langs->trans("ErrorPHPDoesNotSupport".$name);
 	$html .= "</td>";
 
 	return $html;

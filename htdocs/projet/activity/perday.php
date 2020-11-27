@@ -756,7 +756,7 @@ print '</div>';
 print '<input type="hidden" id="numberOfLines" name="numberOfLines" value="'.count($tasksarray).'"/>'."\n";
 
 print '<div class="center">';
-print '<input type="submit" class="button"'.($disabledtask ? ' disabled' : '').' value="'.$langs->trans("Save").'">';
+print '<input type="submit" class="button button-save"'.($disabledtask ? ' disabled' : '').' value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';

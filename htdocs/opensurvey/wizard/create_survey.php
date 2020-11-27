@@ -35,15 +35,13 @@ if (!$user->rights->opensurvey->write) accessforbidden();
 
 $langs->load("opensurvey");
 
-// On teste toutes les variables pour supprimer l'ensemble des warnings PHP
-// On transforme en entites html les données afin éviter les failles XSS
-$post_var = array('title', 'description', 'mailsonde', 'creation_sondage_date', 'creation_sondage_autre');
-foreach ($post_var as $var)
-{
-	$$var = GETPOST($var);
-}
+$title = GETPOST('title');
+$description = GETPOST('description', 'restricthtml');
+$mailsonde = GETPOST('mailsonde');
+$creation_sondage_date = GETPOST('creation_sondage_date');
+$creation_sondage_date = GETPOST('creation_sondage_date');
 
-// On initialise egalement la session car sinon bonjour les warning :-)
+// We init some session variable to avoir warning
 $session_var = array('title', 'description', 'mailsonde');
 foreach ($session_var as $var)
 {

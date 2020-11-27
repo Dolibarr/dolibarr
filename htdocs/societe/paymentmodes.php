@@ -611,7 +611,7 @@ if (empty($reshook))
 					$tokenstring['stripe_user_id'] = $stripesup->id;
 					$tokenstring['type'] = $stripesup->type;
 					$sql = "UPDATE ".MAIN_DB_PREFIX."oauth_token";
-					$sql .= " SET tokenstring = '".dol_json_encode($tokenstring)."'";
+					$sql .= " SET tokenstring = '".$db->escape(json_encode($tokenstring))."'";
 					$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$db->escape($site_account)."') AND fk_soc = ".$object->id." AND service = '".$db->escape($service)."' AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
 					// TODO Add site and site_account on oauth_token table
 					$sql .= " WHERE fk_soc = ".$object->id." AND service = '".$db->escape($service)."' AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
@@ -630,7 +630,7 @@ if (empty($reshook))
 					$tokenstring['stripe_user_id'] = $stripesup->id;
 					$tokenstring['type'] = $stripesup->type;
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, fk_soc, entity, tokenstring)";
-					$sql .= " VALUES ('".$db->escape($service)."', ".$object->id.", ".$conf->entity.", '".dol_json_encode($tokenstring)."')";
+					$sql .= " VALUES ('".$db->escape($service)."', ".$object->id.", ".$conf->entity.", '".$db->escape(json_encode($tokenstring))."')";
 					// TODO Add site and site_account on oauth_token table
 				} catch (Exception $e) {
 					$error++;
@@ -1691,7 +1691,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 	print '<div class="center">';
 	print '<input class="button" value="'.$langs->trans("Modify").'" type="submit">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
+	print '<input class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 	print '</div>';
 }
 
@@ -1738,7 +1738,7 @@ if ($socid && $action == 'editcard' && $user->rights->societe->creer)
 	print '<div class="center">';
 	print '<input class="button" value="'.$langs->trans("Modify").'" type="submit">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
+	print '<input class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 	print '</div>';
 }
 
@@ -1854,7 +1854,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 	print '<div class="center">';
 	print '<input class="button" value="'.$langs->trans("Add").'" type="submit">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input name="cancel" class="button" value="'.$langs->trans("Cancel").'" type="submit">';
+	print '<input name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 	print '</div>';
 }
 
@@ -1904,7 +1904,7 @@ if ($socid && $action == 'createcard' && $user->rights->societe->creer)
 	print '<div class="center">';
 	print '<input class="button" value="'.$langs->trans("Add").'" type="submit">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input name="cancel" class="button" value="'.$langs->trans("Cancel").'" type="submit">';
+	print '<input name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 	print '</div>';
 }
 

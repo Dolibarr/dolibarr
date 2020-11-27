@@ -93,18 +93,18 @@ if (empty($reshook))
 	// Ajout entrepot
 	if ($action == 'add' && $user->rights->stock->creer)
 	{
-		$object->ref         = GETPOST("ref");
-		$object->fk_parent   = GETPOST("fk_parent");
-		$object->label = GETPOST("libelle");
-		$object->description = GETPOST("desc");
+		$object->ref = (string) GETPOST("ref", "alpha");
+		$object->fk_parent = (int) GETPOST("fk_parent", "int");
+		$object->label = (string) GETPOST("libelle", "alpha");
+		$object->description = (string) GETPOST("desc", "alpha");
 		$object->statut      = GETPOST("statut");
-		$object->lieu        = GETPOST("lieu");
-		$object->address     = GETPOST("address");
-		$object->zip         = GETPOST("zipcode");
-		$object->town        = GETPOST("town");
+		$object->lieu = (string) GETPOST("lieu", "alpha");
+		$object->address = (string) GETPOST("address", "alpha");
+		$object->zip = (string) GETPOST("zipcode", "alpha");
+		$object->town = (string) GETPOST("town", "alpha");
 		$object->country_id  = GETPOST("country_id");
-		$object->phone = GETPOST("phone");
-		$object->fax = GETPOST("fax");
+		$object->phone = (string) GETPOST("phone", "alpha");
+		$object->fax = (string) GETPOST("fax", "alpha");
 
 		if (!empty($object->label)) {
 			// Fill array 'array_options' with data from add form
@@ -329,7 +329,7 @@ if ($action == 'create')
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 	print '</div>';
 
 	print '</form>';
@@ -776,9 +776,9 @@ if ($action == 'create')
 			print dol_get_fiche_end();
 
 			print '<div class="center">';
-			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+			print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 
 			print '</form>';

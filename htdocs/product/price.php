@@ -11,7 +11,7 @@
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018		Nicolas ZABOURI			<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,9 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'bills', 'companies', 'other'));
 
-$mesg = ''; $error = 0; $errors = array();
+$mesg = '';
+$error = 0;
+$errors = array();
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -224,6 +226,7 @@ if (empty($reshook))
 
 				$tva_tx = $tva_tx_txt;
 				$vatratecode = '';
+				$reg = array();
 				if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg))
 				{
 					$vat_src_code = $reg[1];
@@ -259,8 +262,8 @@ if (empty($reshook))
 				}
 
 				$pricestoupdate[$i] = array(
-					'price' => $newprice[$i],
-					'price_min' => $newprice_min[$i],
+					'price' => price2num($newprice[$i]),
+					'price_min' => price2num($newprice_min[$i]),
 					'price_base_type' => $newpricebase[$i],
 					'default_vat_code' => $vatratecode,
 					'vat_tx' => $tva_tx, // default_vat_code should be used in priority in a future
@@ -275,10 +278,14 @@ if (empty($reshook))
 			}
 		} elseif (!$error)
 		{
+			$newprice = price2num(GETPOST('price', 'alpha'));
+			$newprice_min = price2num(GETPOST('price_min', 'alpha'));
+			$newpricebase = GETPOST('price_base_type', 'alpha');
 			$tva_tx_txt = GETPOST('tva_tx', 'alpha'); // tva_tx can be '8.5'  or  '8.5*'  or  '8.5 (XXX)' or '8.5* (XXX)'
 
 			$tva_tx = $tva_tx_txt;
 			$vatratecode = '';
+			$reg = array();
 			if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg))
 			{
 				$vat_src_code = $reg[1];
@@ -318,10 +325,10 @@ if (empty($reshook))
 				}
 			}
 			$pricestoupdate[0] = array(
-				'price' => $_POST["price"],
-				'price_min' => $_POST["price_min"],
-				'price_base_type' => $_POST["price_base_type"],
-				'default_vat_code' => $vatratecode,
+				'price' => $newprice,
+				'price_min' => $newprice_min,
+				'price_base_type' => $newpricebase,
+			    'default_vat_code' => $vatratecode,
 				'vat_tx' => $tva_tx, // default_vat_code should be used in priority in a future
 				'npr' => $npr, // default_vat_code should be used in priority in a future
 				'localtaxes_array' => array('0'=>$localtax1_type, '1'=>$localtax1, '2'=>$localtax2_type, '3'=>$localtax2)   // default_vat_code should be used in priority in a future
@@ -474,8 +481,7 @@ if (empty($reshook))
 		}
 	}
 
-	if ($action == 'delete_all_price_by_qty')
-	{
+	if ($action == 'delete_all_price_by_qty') {
 		$priceid = GETPOST('priceid', 'int');
 		if (!empty($rowid)) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price_by_qty";
@@ -483,7 +489,7 @@ if (empty($reshook))
 
 			$result = $db->query($sql);
 		} else {
-			setEventMessages(('delete_price_by_qty'.$langs->transnoentities(MissingIds)), null, 'errors');
+			setEventMessages(('delete_price_by_qty'.$langs->transnoentities('MissingIds')), null, 'errors');
 		}
 	}
 
@@ -662,7 +668,7 @@ if (empty($reshook))
 			if ($result < 0) {
 				setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 			} else {
-				setEventMessages($langs->trans('Save'), null, 'mesgs');
+				setEventMessages($langs->trans("Save"), null, 'mesgs');
 			}
 
 			$action = '';
@@ -1162,9 +1168,9 @@ if ($action == 'edit_vat' && ($user->rights->produit->creer || $user->rights->se
 	print dol_get_fiche_end();
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
 	print '<br></form><br>';
@@ -1275,9 +1281,9 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		print dol_get_fiche_end();
 
 		print '<div class="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		print '<br></form>';
@@ -1395,9 +1401,9 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		//print dol_get_fiche_end();
 
 		print '<div style="text-align: center">';
-		print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
 		print '</form>';
 	}
 }
@@ -1712,9 +1718,9 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print $langs->trans('ForceUpdateChildPriceSoc');
 		print '</div>';
 
-		print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		print '</form>';
@@ -1805,9 +1811,9 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print $langs->trans('ForceUpdateChildPriceSoc');
 		print "</div>";
 
-		print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		print '<br></form>';

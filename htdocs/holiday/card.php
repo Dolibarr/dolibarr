@@ -73,7 +73,7 @@ if (($id > 0) || $ref)
 
 	// Check current user can read this leave request
 	$canread = 0;
-	if (!empty($user->rights->holiday->read_all)) $canread = 1;
+	if (!empty($user->rights->holiday->readall)) $canread = 1;
 	if (!empty($user->rights->holiday->read) && in_array($object->fk_user, $childids)) $canread = 1;
 	if (!$canread)
 	{
@@ -1099,7 +1099,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 		print '<div class="center">';
 		print '<input type="submit" value="'.$langs->trans("SendRequestCP").'" name="bouton" class="button">';
 		print '&nbsp; &nbsp; ';
-		print '<input type="button" value="'.$langs->trans("Cancel").'" class="button" onclick="history.go(-1)">';
+		print '<input type="button" value="'.$langs->trans("Cancel").'" class="button button-cancel" onclick="history.go(-1)">';
 		print '</div>';
 
 		print '</from>'."\n";
@@ -1356,8 +1356,8 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 					}
 					if ($action == 'editvalidator')
 					{
-						print '<input type="submit" class="button" name="savevalidator" value="'.$langs->trans("Save").'">';
-						print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+						print '<input type="submit" class="button button-save" name="savevalidator" value="'.$langs->trans("Save").'">';
+						print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 					}
 					print '</td>';
 					print '</tr>';
@@ -1444,7 +1444,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 						print '<div class="center">';
 						if ($cancreate && $object->statut == Holiday::STATUS_DRAFT)
 						{
-							print '<input type="submit" value="'.$langs->trans("Save").'" class="button">';
+							print '<input type="submit" value="'.$langs->trans("Save").'" class="button button-save">';
 						}
 						print '</div>';
 					}

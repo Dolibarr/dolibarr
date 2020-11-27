@@ -1011,6 +1011,12 @@ select.flat.selectlimit {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.tdoverflowmax125 {			/* For tdoverflow, the max-midth become a minimum ! */
+    max-width: 125px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 .tdoverflowmax150 {			/* For tdoverflow, the max-midth become a minimum ! */
     max-width: 150px;
     overflow: hidden;
@@ -2524,6 +2530,9 @@ img.userphotosmall {			/* size for user photo in lists */
     background-size: contain;
     vertical-align: middle;
 }
+img.userphoto[alt="Gravatar avatar"] {
+    background: #fff;
+}
 .span-icon-user {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png', 1); ?>);
 	background-repeat: no-repeat;
@@ -2569,7 +2578,7 @@ div.vmenu, td.vmenu {
 .searchform { padding-top: 10px; }
 
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu { white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
-font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }
+font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; white-space: nowrap; }
 a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 
 a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 8px; }
@@ -2578,6 +2587,17 @@ a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; wh
 font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { text-align: <?php print $left; ?>; font-weight: normal; color: #999; text-decoration: none; }
+
+.helppresentcircle {
+    color: var(--colorbackhmenu1);
+    filter: invert(0.5);
+    margin-left: -7px;
+    display: inline-block;
+    margin-top: -10px;
+    font-size: x-small;
+    vertical-align: super;
+    opacity: 0.95;
+}
 
 div.blockvmenulogo
 {
@@ -3881,7 +3901,7 @@ img.boxhandle, img.boxclose {
 .ok      { color: #114466; }
 .warning { color: #887711 !important; }
 .error   { color: #550000 !important; font-weight: bold; }
-.green   { color: #118822; }
+.green   { color: #118822 !important; }
 
 div.ok {
   color: #114466;

@@ -1145,7 +1145,8 @@ if (empty($reshook))
 			$object->fk_account        = GETPOST('fk_account', 'int');
 			$object->note_private	= GETPOST('note_private', 'restricthtml');
 			$object->note_public   	= GETPOST('note_public', 'restricthtml');
-			$object->date_livraison = $datelivraison;
+			$object->date_livraison = $datelivraison;	// deprecated
+			$object->delivery_date = $datelivraison;
 			$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
@@ -1199,7 +1200,8 @@ if (empty($reshook))
 						$result = $srcobject->fetch($object->origin_id);
 						if ($result > 0)
 						{
-							$object->setDeliveryDate($user, $srcobject->date_livraison);
+							$tmpdate = ($srcobject->delivery_date ? $srcobject->delivery_date : $srcobject->date_livraison);
+							$object->setDeliveryDate($user, $tmpdate);
 							$object->set_id_projet($user, $srcobject->fk_project);
 
 							$lines = $srcobject->lines;
@@ -1551,7 +1553,7 @@ if ($action == 'create')
 		$remise_absolue		= (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
 		$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '';
 
-		$datedelivery = (!empty($objectsrc->date_livraison) ? $objectsrc->date_livraison : '');
+		$datedelivery = (!empty($objectsrc->date_livraison) ? $objectsrc->date_livraison : (!empty($objectsrc->delivery_date) ? $objectsrc->delivery_date : ''));
 
 		if (!empty($conf->multicurrency->enabled))
 		{
@@ -1770,7 +1772,7 @@ if ($action == 'create')
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 	print '</div>';
 
 
@@ -2000,9 +2002,9 @@ if ($action == 'create')
 	if ($object->methode_commande_id > 0)
 	{
 		print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>';
-		if ($object->date_commande)
-		{
-			print dol_print_date($object->date_commande, "dayhour")."\n";
+		print $object->date_commande ? dol_print_date($object->date_commande, $usehourmin) : '';
+		if ($object->hasDelay() && !empty($object->date_delivery) && !empty($object->date_commande)) {
+			print ' '.img_picto($langs->trans("Late").' : '.$object->showDelay(), "warning");
 		}
 		print "</td></tr>";
 
@@ -2160,14 +2162,14 @@ if ($action == 'create')
 		print '<input type="hidden" name="action" value="setdate_livraison">';
 		$usehourmin = 0;
 		if (!empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) $usehourmin = 1;
-		print $form->selectDate($object->date_livraison ? $object->date_livraison : -1, 'liv_', $usehourmin, $usehourmin, '', "setdate_livraison");
+		print $form->selectDate($object->delivery_date ? $object->delivery_date : -1, 'liv_', $usehourmin, $usehourmin, '', "setdate_livraison");
 		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	} else {
 		$usehourmin = 'day';
 		if (!empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) $usehourmin = 'dayhour';
-		print $object->date_livraison ? dol_print_date($object->date_livraison, $usehourmin) : '&nbsp;';
-		if ($object->hasDelay() && !empty($object->date_livraison)) {
+		print $object->delivery_date ? dol_print_date($object->delivery_date, $usehourmin) : '&nbsp;';
+		if ($object->hasDelay() && !empty($object->delivery_date)) {
 			print ' '.img_picto($langs->trans("Late").' : '.$object->showDelay(), "warning");
 		}
 	}
@@ -2595,7 +2597,7 @@ if ($action == 'create')
 			print '<tr><td class="center" colspan="2">';
 			print '<input type="submit" name="makeorder" class="button" value="'.$langs->trans("ToOrder").'">';
 			print ' &nbsp; &nbsp; ';
-			print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
 			print '</td></tr>';
 			print '</table>';
 
@@ -2715,7 +2717,7 @@ if ($action == 'create')
 				if ($error_occurred)
 				{
 					print "<br>".$langs->trans("ErrorOccurredReviseAndRetry")."<br>";
-					print '<input class="button" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+					print '<input class="button button-cancel" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				} else {
 					$textinput_size = "50";
 					// Webservice url
@@ -2729,7 +2731,7 @@ if ($action == 'create')
 					print '<input class="button" type="submit" id="ws_submit" name="ws_submit" value="'.$langs->trans("CreateRemoteOrder").'">';
 					print ' &nbsp; &nbsp; ';
 					//Cancel button
-					print '<input class="button" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+					print '<input class="button button-cancel" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 					print '</td></tr>';
 				}
 
@@ -2860,7 +2862,7 @@ if ($action == 'create')
 					print '<input class="button" type="submit" id="ws_submit" name="ws_submit" value="'.$langs->trans("Confirm").'">';
 					print ' &nbsp; &nbsp; ';
 				}
-				print '<input class="button" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+				print '<input class="button button-cancel" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</form>';
 			}
 		}

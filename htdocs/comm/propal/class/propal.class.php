@@ -152,9 +152,15 @@ class Propal extends CommonObject
 	public $datep;
 
 	/**
-	 * @var integer|string $delivery_date;
+	 * @var int	Date expected for delivery
+	 * @deprecated
 	 */
-	public $delivery_date;
+	public $date_livraison;	// deprecated; Use delivery_date instead.
+
+	/**
+	 * @var integer|string 	$delivery_date;
+	 */
+	public $delivery_date; // Date expected of shipment (date starting shipment, not the reception that occurs some days after)
 
 
 	public $fin_validite;
@@ -351,7 +357,7 @@ class Propal extends CommonObject
 
 		$this->products = array();
 
-		$this->duree_validite = $conf->global->PROPALE_VALIDITY_DURATION;
+		$this->duree_validite = ((int) $conf->global->PROPALE_VALIDITY_DURATION);
 	}
 
 
@@ -985,6 +991,9 @@ class Propal extends CommonObject
 			$this->multicurrency_tx = 1;
 		}
 
+		// Set tmp vars
+		$delivery_date = empty($this->delivery_date) ? $this->date_livraison : $this->delivery_date;
+
 		dol_syslog(get_class($this)."::create");
 
 		// Check parameters
@@ -1072,7 +1081,7 @@ class Propal extends CommonObject
 		$sql .= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : 'NULL');
 		$sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
 		$sql .= ", '".$this->db->escape($this->ref_client)."'";
-		$sql .= ", ".($this->date_livraison != '' ? "'".$this->db->idate($this->date_livraison)."'" : "NULL");
+		$sql .= ", ".(empty($delivery_date) ? "NULL" : "'".$this->db->idate($delivery_date)."'");
 		$sql .= ", ".($this->shipping_method_id > 0 ? $this->shipping_method_id : 'NULL');
 		$sql .= ", ".$this->availability_id;
 		$sql .= ", ".$this->demand_reason_id;
@@ -1313,7 +1322,6 @@ class Propal extends CommonObject
 
 		// Load source object
 		$object->fetch($this->id);
-		$object->fetch_lines();
 
 		$objsoc = new Societe($this->db);
 
@@ -1435,7 +1443,7 @@ class Propal extends CommonObject
 		$sql .= ", p.date_valid as datev";
 		$sql .= ", p.datep as dp";
 		$sql .= ", p.fin_validite as dfv";
-		$sql .= ", p.date_livraison as date_livraison";
+		$sql .= ", p.date_livraison as delivery_date";
 		$sql .= ", p.model_pdf, p.last_main_doc, p.ref_client, p.extraparams";
 		$sql .= ", p.note_private, p.note_public";
 		$sql .= ", p.fk_projet as fk_project, p.fk_statut";
@@ -1517,7 +1525,8 @@ class Propal extends CommonObject
 				$this->date                 = $this->db->jdate($obj->dp); // Proposal date
 				$this->datep                = $this->db->jdate($obj->dp); // deprecated
 				$this->fin_validite         = $this->db->jdate($obj->dfv);
-				$this->date_livraison       = $this->db->jdate($obj->date_livraison);
+				$this->date_livraison       = $this->db->jdate($obj->delivery_date);	// deprecated
+				$this->delivery_date        = $this->db->jdate($obj->delivery_date);
 				$this->shipping_method_id   = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
 				$this->availability_id      = $obj->fk_availability;
 				$this->availability_code    = $obj->availability_code;
@@ -1606,7 +1615,7 @@ class Propal extends CommonObject
 		if (isset($this->note_public)) $this->note_public = trim($this->note_public);
 		if (isset($this->model_pdf)) $this->model_pdf = trim($this->model_pdf);
 		if (isset($this->import_key)) $this->import_key = trim($this->import_key);
-		if (!empty($this->duree_validite)) $this->fin_validite = $this->date + ($this->duree_validite * 24 * 3600);
+		if (!empty($this->duree_validite) && is_numeric($this->duree_validite)) $this->fin_validite = $this->date + ($this->duree_validite * 24 * 3600);
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -1698,7 +1707,7 @@ class Propal extends CommonObject
 		$sql = 'SELECT d.rowid, d.fk_propal, d.fk_parent_line, d.label as custom_label, d.description, d.price, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,';
 		$sql .= ' d.info_bits, d.total_ht, d.total_tva, d.total_localtax1, d.total_localtax2, d.total_ttc, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht, d.special_code, d.rang, d.product_type,';
 		$sql .= ' d.fk_unit,';
-		$sql .= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label, p.tobatch as product_batch,';
+		$sql .= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label, p.tobatch as product_tobatch, p.barcode as product_barcode,';
 		$sql .= ' p.weight, p.weight_units, p.volume, p.volume_units,';
 		$sql .= ' d.date_start, d.date_end,';
 		$sql .= ' d.fk_multicurrency, d.multicurrency_code, d.multicurrency_subprice, d.multicurrency_total_ht, d.multicurrency_total_tva, d.multicurrency_total_ttc';
@@ -1760,11 +1769,14 @@ class Propal extends CommonObject
 				$line->fk_product       = $objp->fk_product;
 
 				$line->ref = $objp->product_ref; // deprecated
-				$line->product_ref = $objp->product_ref;
 				$line->libelle = $objp->product_label; // deprecated
+
+				$line->product_ref = $objp->product_ref;
 				$line->product_label = $objp->product_label;
 				$line->product_desc     = $objp->product_desc; // Description produit
 				$line->product_tobatch  = $objp->product_tobatch;
+				$line->product_barcode  = $objp->product_barcode;
+
 				$line->fk_product_type  = $objp->fk_product_type; // deprecated
 				$line->fk_unit          = $objp->fk_unit;
 				$line->weight = $objp->weight;
@@ -2104,6 +2116,7 @@ class Propal extends CommonObject
 			{
 				$this->oldcopy = clone $this;
 				$this->date_livraison = $delivery_date;
+				$this->delivery_date = $delivery_date;
 			}
 
 			if (!$notrigger && empty($error))
@@ -2908,7 +2921,7 @@ class Propal extends CommonObject
 	 *
 	 *	@param	User	$user        	Object user that delete
 	 *	@param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return	int						1 if ok, otherwise if error
+	 *	@return	int						>0 if OK, <=0 if KO
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -2919,102 +2932,99 @@ class Propal extends CommonObject
 
 		$this->db->begin();
 
-		if (!$notrigger)
-		{
+		if (!$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('PROPAL_DELETE', $user);
 			if ($result < 0) { $error++; }
 			// End call triggers
 		}
 
-		if (!$error)
-		{
-			$main = MAIN_DB_PREFIX.'propaldet';
-			$ef = $main."_extrafields";
-			$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_propal = ".$this->id.")";
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = ".$this->id;
-			if ($this->db->query($sqlef) && $this->db->query($sql))
-			{
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal WHERE rowid = ".$this->id;
-				if ($this->db->query($sql))
-				{
-					// Delete linked object
-					$res = $this->deleteObjectLinked();
-					if ($res < 0) $error++;
+		// Delete extrafields of lines and lines
+		if (!$error && !empty($this->table_element_line)) {
+			$tabletodelete = $this->table_element_line;
+			$sqlef = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete."_extrafields WHERE fk_object IN (SELECT rowid FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id.")";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id;
+			if (! $this->db->query($sqlef) || ! $this->db->query($sql)) {
+				$error++;
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+				dol_syslog(get_class($this)."::delete error ".$this->error, LOG_ERR);
+			}
+		}
 
-					// Delete linked contacts
-					$res = $this->delete_linked_contact();
-					if ($res < 0) $error++;
+		if (!$error) {
+			// Delete linked object
+			$res = $this->deleteObjectLinked();
+			if ($res < 0) $error++;
+		}
 
-					if (!$error)
-					{
-						// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
-						$this->deleteEcmFiles();
+		if (!$error) {
+			// Delete linked contacts
+			$res = $this->delete_linked_contact();
+			if ($res < 0) $error++;
+		}
 
-						// We remove directory
-						$ref = dol_sanitizeFileName($this->ref);
-						if ($conf->propal->multidir_output[$this->entity] && !empty($this->ref))
-						{
-							$dir = $conf->propal->multidir_output[$this->entity]."/".$ref;
-							$file = $dir."/".$ref.".pdf";
-							if (file_exists($file))
-							{
-								dol_delete_preview($this);
+		// Removed extrafields of object
+		if (!$error) {
+			$result = $this->deleteExtraFields();
+			if ($result < 0) {
+				$error++;
+				dol_syslog(get_class($this)."::delete error ".$this->error, LOG_ERR);
+			}
+		}
 
-								if (!dol_delete_file($file, 0, 0, 0, $this)) // For triggers
-								{
-									$this->error = 'ErrorFailToDeleteFile';
-									$this->errors = array('ErrorFailToDeleteFile');
-									$this->db->rollback();
-									return 0;
-								}
-							}
-							if (file_exists($dir))
-							{
-								$res = @dol_delete_dir_recursive($dir);
-								if (!$res)
-								{
-									$this->error = 'ErrorFailToDeleteDir';
-									$this->errors = array('ErrorFailToDeleteDir');
-									$this->db->rollback();
-									return 0;
-								}
-							}
-						}
-					}
+		// Delete main record
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE rowid = ".$this->id;
+			$res = $this->db->query($sql);
+			if (! $res) {
+				$error++;
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+				dol_syslog(get_class($this)."::delete error ".$this->error, LOG_ERR);
+			}
+		}
 
-					// Removed extrafields
-					if (!$error)
-					{
-						$result = $this->deleteExtraFields();
-						if ($result < 0)
-						{
-							$error++;
-							$errorflag = -4;
-							dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
-						}
-					}
+		// Delete record into ECM index and physically
+		if (!$error) {
+			$res = $this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
+			if (! $res) {
+				$error++;
+			}
+		}
 
-					if (!$error)
-					{
-						dol_syslog(get_class($this)."::delete ".$this->id." by ".$user->id, LOG_DEBUG);
-						$this->db->commit();
-						return 1;
-					} else {
-						$this->error = $this->db->lasterror();
+		if (!$error) {
+			// We remove directory
+			$ref = dol_sanitizeFileName($this->ref);
+			if ($conf->propal->multidir_output[$this->entity] && !empty($this->ref)) {
+				$dir = $conf->propal->multidir_output[$this->entity]."/".$ref;
+				$file = $dir."/".$ref.".pdf";
+				if (file_exists($file)) {
+					dol_delete_preview($this);
+
+					if (!dol_delete_file($file, 0, 0, 0, $this)) {
+						$this->error = 'ErrorFailToDeleteFile';
+						$this->errors[] = $this->error;
 						$this->db->rollback();
 						return 0;
 					}
-				} else {
-					$this->error = $this->db->lasterror();
-					$this->db->rollback();
-					return -3;
 				}
-			} else {
-				$this->error = $this->db->lasterror();
-				$this->db->rollback();
-				return -2;
+				if (file_exists($dir)) {
+					$res = @dol_delete_dir_recursive($dir);
+					if (!$res) {
+						$this->error = 'ErrorFailToDeleteDir';
+						$this->errors[] = $this->error;
+						$this->db->rollback();
+						return 0;
+					}
+				}
 			}
+		}
+
+		if (!$error) {
+			dol_syslog(get_class($this)."::delete ".$this->id." by ".$user->id, LOG_DEBUG);
+			$this->db->commit();
+			return 1;
 		} else {
 			$this->db->rollback();
 			return -1;
@@ -3566,16 +3576,24 @@ class Propal extends CommonObject
 			if (isset($this->statut)) {
 				$label .= ' '.$this->getLibStatut(5);
 			}
-			if (!empty($this->ref))
+			if (!empty($this->ref)) {
 				$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-			if (!empty($this->ref_client))
+			}
+			if (!empty($this->ref_client)) {
 				$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.$this->ref_client;
-			if (!empty($this->total_ht))
+			}
+			if (!empty($this->total_ht)) {
 				$label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
-			if (!empty($this->total_tva))
+			}
+			if (!empty($this->total_tva)) {
 				$label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
-			if (!empty($this->total_ttc))
+			}
+			if (!empty($this->total_ttc)) {
 				$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+			}
+			if (!empty($this->delivery_date)) {
+					$label .= '<br><b>'.$langs->trans('DeliveryDate').':</b> '.dol_print_date($this->delivery_date, 'dayhour');
+			}
 
 			if ($option == '') {
 				$url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$this->id.$get_params;
@@ -3819,6 +3837,18 @@ class PropaleLigne extends CommonObjectLine
 	 * @var string
 	 */
 	public $product_desc;
+
+	/**
+	 * Product use lot
+	 * @var string
+	 */
+	public $product_tobatch;
+
+	/**
+	 * Product barcode
+	 * @var string
+	 */
+	public $product_barcode;
 
 	public $localtax1_tx; // Local tax 1
 	public $localtax2_tx; // Local tax 2

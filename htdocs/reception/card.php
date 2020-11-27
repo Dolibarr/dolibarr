@@ -111,6 +111,8 @@ $hookmanager->initHooks(array('receptioncard', 'globalcard'));
 $permissiondellink = $user->rights->reception->creer; // Used by the include of actions_dellink.inc.php
 //var_dump($object->lines[0]->detail_batch);
 
+$date_delivery = dol_mktime(GETPOST('date_deliveryhour', 'int'), GETPOST('date_deliverymin', 'int'), 0, GETPOST('date_deliverymonth', 'int'), GETPOST('date_deliveryday', 'int'), GETPOST('date_deliveryyear', 'int'));
+
 
 /*
  * Actions
@@ -225,8 +227,6 @@ if (empty($reshook))
 		$object->sizeS = GETPOST('sizeS', 'int') == '' ? "NULL" : GETPOST('sizeS', 'int');
 		$object->size_units = GETPOST('size_units', 'int');
 		$object->weight_units = GETPOST('weight_units', 'int');
-
-		$date_delivery = dol_mktime(GETPOST('date_deliveryhour', 'int'), GETPOST('date_deliverymin', 'int'), 0, GETPOST('date_deliverymonth', 'int'), GETPOST('date_deliveryday', 'int'), GETPOST('date_deliveryyear', 'int'));
 
 		// On va boucler sur chaque ligne du document d'origine pour completer objet reception
 		// avec info diverses + qte a livrer
@@ -649,7 +649,7 @@ if (empty($reshook))
 			header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // Pour reaffichage de la fiche en cours d'edition
 			exit();
 		}
-	} elseif ($action == 'updateline' && $user->rights->reception->creer && GETPOST('cancel', 'alpha') == $langs->trans('Cancel')) {
+	} elseif ($action == 'updateline' && $user->rights->reception->creer && GETPOST('cancel', 'alpha') == $langs->trans("Cancel")) {
 		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
 	}
@@ -777,8 +777,7 @@ if ($action == 'create')
 			// Date delivery planned
 			print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
 			print '<td colspan="3">';
-			//print dol_print_date($object->date_livraison,"day");	// date_livraison come from order and will be stored into date_delivery planed.
-			$date_delivery = ($date_delivery ? $date_delivery : $object->date_livraison); // $date_delivery comes from GETPOST
+			$date_delivery = ($date_delivery ? $date_delivery : $object->delivery_date); // $date_delivery comes from GETPOST
 			print $form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
 			print "</td>\n";
 			print '</tr>';
@@ -1165,7 +1164,7 @@ if ($action == 'create')
 			print '<div class="center">';
 			print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
 			print '&nbsp; ';
-			print '<input type="'.($backtopage ? "submit" : "button").'" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
+			print '<input type="'.($backtopage ? "submit" : "button").'" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
 			print '</div>';
 
 			print '</form>';
@@ -1404,7 +1403,7 @@ if ($action == 'create')
 			print '<input id="trueWeight" name="trueWeight" value="'.$object->trueWeight.'" type="text">';
 			print $formproduct->selectMeasuringUnits("weight_units", "weight", $object->weight_units, 0, 2);
 			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
-			print ' <input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
+			print ' <input class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 			print '</form>';
 		} else {
 			print $object->trueWeight;
@@ -1437,7 +1436,7 @@ if ($action == 'create')
 			print '<input id="trueHeight" name="trueHeight" value="'.$object->trueHeight.'" type="text">';
 			print $formproduct->selectMeasuringUnits("size_units", "size", $object->size_units, 0, 2);
 			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
-			print ' <input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
+			print ' <input class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 			print '</form>';
 		} else {
 			print $object->trueHeight;
@@ -1903,8 +1902,8 @@ if ($action == 'create')
 			if ($action == 'editline' && $lines[$i]->id == $line_id)
 			{
 				print '<td class="center" colspan="2" valign="middle">';
-				print '<input type="submit" class="button" id="savelinebutton marginbottomonly" name="save" value="'.$langs->trans("Save").'"><br>';
-				print '<input type="submit" class="button" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'"><br>';
+				print '<input type="submit" class="button button-save" id="savelinebutton marginbottomonly" name="save" value="'.$langs->trans("Save").'"><br>';
+				print '<input type="submit" class="button button-cancel" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'"><br>';
 			} elseif ($object->statut == Reception::STATUS_DRAFT)
 			{
 				// edit-delete buttons

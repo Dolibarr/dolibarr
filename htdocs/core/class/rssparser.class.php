@@ -308,11 +308,9 @@ class RssParser
 			$items = array();
 
 			// Save description entries
-			if ($rss->_format == 'rss')
-			{
+			if ($rss->_format == 'rss') {
 				//var_dump($rss);
-				if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML))
-				{
+				if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) {
 					if (!empty($rss->channel->language))      $this->_language = (string) $rss->channel->language;
 					if (!empty($rss->channel->generator))     $this->_generator = (string) $rss->channel->generator;
 					if (!empty($rss->channel->copyright))     $this->_copyright = (string) $rss->channel->copyright;
@@ -336,8 +334,7 @@ class RssParser
 				if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) $items = $rss->channel->item; // With simplexml
 				else $items = $rss->items; // With xmlparse
 				//var_dump($items);exit;
-			} elseif ($rss->_format == 'atom')
-			{
+			} elseif ($rss->_format == 'atom') {
 				//var_dump($rss);
 				if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML))
 				{
@@ -370,15 +367,11 @@ class RssParser
 			$i = 0;
 
 			// Loop on each record
-			if (is_array($items))
-			{
-				foreach ($items as $item)
-				{
+			if (is_array($items)) {
+				foreach ($items as $item) {
 					//var_dump($item);exit;
-					if ($rss->_format == 'rss')
-					{
-						if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML))
-						{
+					if ($rss->_format == 'rss') {
+						if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) {
 							$itemLink = (string) $item->link;
 							$itemTitle = (string) $item->title;
 							$itemDescription = (string) $item->description;
@@ -396,17 +389,13 @@ class RssParser
 
 						// Loop on each category
 						$itemCategory = array();
-						if (is_array($item->category))
-						{
-							foreach ($item->category as $cat)
-							{
+						if (is_array($item->category)) {
+							foreach ($item->category as $cat) {
 								$itemCategory[] = (string) $cat;
 							}
 						}
-					} elseif ($rss->_format == 'atom')
-					{
-						if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML))
-						{
+					} elseif ($rss->_format == 'atom') {
+						if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) {
 							$itemLink = (isset($item['link']) ? (string) $item['link'] : '');
 							$itemTitle = (string) $item['title'];
 							$itemDescription = $this->getAtomItemDescription($item);
@@ -421,7 +410,17 @@ class RssParser
 							$itemId = (string) $item['id'];
 							$itemAuthor = (string) ($item['author'] ? $item['author'] : $item['author_name']);
 						}
-					} else print 'ErrorBadFeedFormat';
+						$itemCategory = array();
+					} else {
+						$itemCategory = array();
+						$itemLink = '';
+						$itemTitle = '';
+						$itemDescription = '';
+						$itemPubDate = '';
+						$itemId = '';
+						$itemAuthor = '';
+						print 'ErrorBadFeedFormat';
+					}
 
 					// Add record to result array
 					$this->_rssarray[$i] = array(
@@ -431,7 +430,8 @@ class RssParser
 						'pubDate'=>$itemPubDate,
 						'category'=>$itemCategory,
 						'id'=>$itemId,
-						'author'=>$itemAuthor);
+						'author'=>$itemAuthor
+					);
 					//var_dump($this->_rssarray);
 
 					$i++;

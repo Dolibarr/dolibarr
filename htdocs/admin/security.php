@@ -323,7 +323,7 @@ if ($conf->global->USER_PASSWORD_GENERATED == "Perso") {
 
 	print '<br>';
 	print '<div class="center">';
-	print '<a class="button" id="linkChangePattern">'.$langs->trans("Save").'</a>';
+	print '<a class="button button-save" id="linkChangePattern">'.$langs->trans("Save").'</a>';
 	print '</div>';
 	print '<br><br>';
 

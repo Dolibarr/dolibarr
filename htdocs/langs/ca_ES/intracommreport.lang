@@ -1,0 +1,40 @@
+Module68000Name = Informe intracomm
+Module68000Desc = Gestió d’informes intracomm (suport per al format francès DEB/DES)
+IntracommReportSetup = Configuració del mòdul d'informes intracomm
+IntracommReportAbout = Quant a l'informe intracomm
+
+# Setup
+INTRACOMMREPORT_NUM_AGREMENT=Número d'acord (lliurat per la CISD)
+INTRACOMMREPORT_TYPE_ACTEUR=Tipus d’actor
+INTRACOMMREPORT_ROLE_ACTEUR=Role jugat per l'actor
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Nivell d'obligacions de les introduccions
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Nivell d'obligacions de les expedicions
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Categoria de serveis de tipus "Frais de port"
+
+INTRACOMMREPORT_NUM_DECLARATION=Número de declarant
+
+# Menu
+MenuIntracommReport=Informe intracomm
+MenuIntracommReportNew=Nova declaració
+MenuIntracommReportList=Llistat
+
+# View
+NewDeclaration=Nova declaració
+Declaration=Declaració
+AnalysisPeriod=Període d’anàlisi
+TypeOfDeclaration=Tipus de declaració
+DEB=Declaració de canvi de mercaderies (DEB)
+DES=Declaració d'intercanvi de serveis (DES)
+
+# Export page
+IntracommReportTitle=Preparació d’un fitxer XML en format ProDouane
+
+# List
+IntracommReportList=Llista de declaracions generades
+IntracommReportNumber=Número de declaració
+IntracommReportPeriod=Període d'anàlisi
+IntracommReportTypeDeclaration=Tipus de declaració
+IntracommReportDownload=descarrega fitxer XML
+
+# Invoice
+IntracommReportTransportMode=Mode de transport

@@ -37,7 +37,8 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 $langs->loadLangs(array("companies", "members", "other"));
 
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTISSET('id') ? GETPOST('id', 'int') : GETPOST('rowid', 'int');
+$ref = GETPOST('ref', 'alphanohtml');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
@@ -60,7 +61,7 @@ if (!$sortfield) $sortfield = "name";
 $form = new Form($db);
 $object = new Adherent($db);
 $membert = new AdherentType($db);
-$result = $object->fetch($id);
+$result = $object->fetch($id, $ref);
 if ($result < 0) {
 	dol_print_error($db);
 	exit;

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2014-2018  Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2014-2020  Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -141,6 +141,8 @@ class printing_printipp extends PrintingDriver
 		$ipp->setPort($this->port);
 		$ipp->setJobName($file, true);
 		$ipp->setUserName($this->userid);
+		// Set default number of copy
+		$ipp->setCopies(1);
 		if (!empty($this->user)) $ipp->setAuthentication($this->user, $this->password);
 
 		// select printer uri for module order, propal,...
@@ -148,10 +150,11 @@ class printing_printipp extends PrintingDriver
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
-			if ($obj)
-			{
+			if ($obj) {
 				dol_syslog("Found a default printer for user ".$user->id." = ".$obj->printer_id);
 				$ipp->setPrinterURI($obj->printer_id);
+				// Set number of copy
+				$ipp->setCopies($obj->copy);
 			} else {
 				if (!empty($conf->global->PRINTIPP_URI_DEFAULT))
 				{
@@ -167,8 +170,6 @@ class printing_printipp extends PrintingDriver
 			dol_print_error($this->db);
 		}
 
-		// Set number of copy
-		$ipp->setCopies($obj->copy);
 		$fileprint = $conf->{$module}->dir_output;
 		if ($subdir != '') $fileprint .= '/'.$subdir;
 		$fileprint .= '/'.$file;

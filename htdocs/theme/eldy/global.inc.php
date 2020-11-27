@@ -21,8 +21,8 @@
 	--colorbackbody: rgb(<?php print $colorbackbody; ?>);
 	--colortexttitlenotab: rgb(<?php print $colortexttitlenotab; ?>);
 	--colortexttitlenotab2: rgb(<?php print $colortexttitlenotab2; ?>);
-	--colortexttitle: rgb(<?php print $colortexttitle; ?>);
-	--colortexttitlelink: rgb(<?php print $colortexttitlelink; ?>);
+	--colortexttitle: rgba(<?php print $colortexttitle; ?>, 0.9);
+	--colortexttitlelink: rgba(<?php print $colortexttitlelink; ?>, 0.9);
 	--colortext: rgb(<?php print $colortext; ?>);
 	--colortextlink: rgb(<?php print $colortextlink; ?>);
 	--colortextbackhmenu: #<?php echo $colortextbackhmenu; ?>;
@@ -111,6 +111,7 @@ body {
     <?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
 
+/* Style used to protect html content in output to avoid attack by replacing full page with js content */
 .sensiblehtmlcontent * {
 	position: static !important;
 }
@@ -317,6 +318,7 @@ input.buttonpaymentstripe {
 }
 .logopublicpayment #dolpaymentlogo {
 	max-height: 100px;
+	max-width: 320px;
 }
 
 a.buttonticket {
@@ -984,6 +986,12 @@ select.flat.selectlimit {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.tdoverflowmax125 {			/* For tdoverflow, the max-midth become a minimum ! */
+    max-width: 125px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 .tdoverflowmax150 {			/* For tdoverflow, the max-midth become a minimum ! */
     max-width: 150px;
     overflow: hidden;
@@ -1311,6 +1319,25 @@ select.widthcentpercentminusxx, input.widthcentpercentminusxx {
 		width: calc(100% - 40px) !important;
 		display: inline-block;
 	}
+
+	.logopublicpayment #dolpaymentlogo {
+		max-width: 260px;
+	}
+	#tablepublicpayment {
+		width:	auto !important;
+	}
+	.poweredbypublicpayment {
+    	float: unset !important;
+		top: unset !important;
+    	bottom: 8px;
+    	position: relative !important;
+    }
+    .poweredbyimg {
+    	width: 48px;
+    }
+    input.buttonpayment, button.buttonpayment, div.buttonpayment {
+    	min-width: 270px;
+    }
 }
 
 /* Force values for small screen 570 */
@@ -2510,6 +2537,9 @@ img.userphotosmall {			/* size for user photo in lists */
     vertical-align: middle;
     background-color: #FFF;
 }
+img.userphoto[alt="Gravatar avatar"] {
+    background: #fff;
+}
 .span-icon-user {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png', 1); ?>);
 	background-repeat: no-repeat;
@@ -2565,7 +2595,7 @@ input.vmenusearchselectcombo[type=text] {
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu { white-space: nowrap; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; }
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active,
 span.vmenu, span.vmenu:link, span.vmenu:visited, span.vmenu:hover, span.vmenu:active { font-weight: bold;  }	/* bold = 600, 500 is ko with Edge on 1200x960 */
-font.vmenudisabled  { font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }												/* bold = 600, 500 is ko with Edge on 1200x960 */
+font.vmenudisabled  { font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; white-space: nowrap; }												/* bold = 600, 500 is ko with Edge on 1200x960 */
 a.vmenu:link, a.vmenu:visited { color: var(--colortextbackvmenu); }
 
 a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu {
@@ -2583,7 +2613,19 @@ font.vsmenudisabledmargin { margin: 1px 1px 1px 6px; }
 li a.vsmenudisabled, li.vsmenudisabled { color: #aaa !important; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { text-align: <?php print $left; ?>; color: #aaa; text-decoration: none; }
-.helppresent, .helppresent:hover { color: #f3e4ac !important; }
+.helppresent, .helppresent:hover {
+	/* color: #f3e4ac !important; */
+}
+.helppresentcircle {
+    color: var(--colorbackhmenu1);
+    filter: invert(0.8);
+    margin-left: -7px;
+    display: inline-block;
+    margin-top: -10px;
+    font-size: x-small;
+    vertical-align: super;
+    opacity: 0.95;
+}
 
 .vmenu div.blockvmenufirst, .vmenu div.blockvmenulogo, .vmenu div.blockvmenusearchphone, .vmenu div.blockvmenubookmarks
 {
@@ -3027,9 +3069,8 @@ div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border
 }
 div .tdtop {
     vertical-align: top !important;
-	padding-top: 10px !important;
-	padding-bottom: 2px !important;
-	padding-bottom: 0px;
+	/*padding-top: 10px !important;
+	padding-bottom: 2px !important; */
 }
 
 table.border td, table.bordernooddeven td, div.border div div.tagtd {
@@ -3963,7 +4004,7 @@ img.boxhandle, img.boxclose {
 .ok      { color: #114466; }
 .warning { color: #887711 !important; }
 .error   { color: #660000 !important; font-weight: bold; }
-.green   { color: #118822; }
+.green   { color: #118822 !important; }
 
 div.ok {
   color: #114466;
@@ -4156,7 +4197,7 @@ div.backgreypublicpayment { background-color: #f0f0f0; padding: 20px; border-bot
     color: #222;
     opacity: 0.3;
 }
-#dolpaymenttable { min-width: 320px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
+#dolpaymenttable { min-width: 290px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
 #tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }

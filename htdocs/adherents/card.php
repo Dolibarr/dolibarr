@@ -6,7 +6,7 @@
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012-2020  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -978,9 +978,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<input type="submit" name="button" class="button" value="'.$langs->trans("AddMember").'">';
 		print '&nbsp;&nbsp;';
 		if (!empty($backtopage)) {
-			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		} else {
-			print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+			print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 		}
 		print '</div>';
 
@@ -1235,9 +1235,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print dol_get_fiche_end();
 
 		print '<div class="center">';
-		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		print '</form>';
@@ -1564,7 +1564,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'userid', '');
 		} else {
 			if ($object->user_id) {
-				$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'none');
+				$linkeduser = new User($db);
+				$linkeduser->fetch($object->user_id);
+				print $linkeduser->getNomUrl(-1);
 			} else {
 				print $langs->trans("NoDolibarrAccess");
 			}

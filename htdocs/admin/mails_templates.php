@@ -268,6 +268,7 @@ if (empty($reshook)) {
 			if ($value == 'content') continue;
 			if ($value == 'content_lines') continue;
 
+			// Rename some POST variables into a generic name
 			if (GETPOST('actionmodify', 'alpha') && $value == 'topic') $_POST['topic'] = $_POST['topic-'.$rowid];
 
 			if ((!isset($_POST[$value]) || $_POST[$value] == '' || $_POST[$value] == '-1') && $value != 'lang' && $value != 'fk_user' && $value != 'position')
@@ -306,6 +307,7 @@ if (empty($reshook)) {
 				if ($value == 'lang') $keycode = 'langcode';
 				if (empty($keycode)) $keycode = $value;
 
+				// Clean input variables
 				if ($value == 'entity') $_POST[$keycode] = $conf->entity;
 				if ($value == 'fk_user' && !($_POST[$keycode] > 0)) $_POST[$keycode] = '';
 				if ($value == 'private' && !is_numeric($_POST[$keycode])) $_POST[$keycode] = '0';
@@ -319,11 +321,11 @@ if (empty($reshook)) {
 					if (!$user->admin) {	// A non admin user can only edit its own template
 						$sql .= " ".((int) $user->id);
 					} else {
-						$sql .= " ".((int) GETPOST($keycode, 'fk_user'));
+						$sql .= " ".((int) GETPOST($keycode, 'int'));
 					}
 				} elseif ($keycode == 'content') {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
-				} elseif (in_array($keycode, array('joinfile', 'private', 'position'))) {
+				} elseif (in_array($keycode, array('joinfiles', 'private', 'position'))) {
 					$sql .= (int) GETPOST($keycode, 'int');
 				} else {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
@@ -362,6 +364,7 @@ if (empty($reshook)) {
 				if ($field == 'lang') $keycode = 'langcode';
 				if (empty($keycode)) $keycode = $field;
 
+				// Rename some POST variables into a generic name
 				if ($field == 'fk_user' && !($_POST['fk_user'] > 0)) $_POST['fk_user'] = '';
 				if ($field == 'topic') $_POST['topic'] = $_POST['topic-'.$rowid];
 				if ($field == 'joinfiles') $_POST['joinfiles'] = $_POST['joinfiles-'.$rowid];
@@ -378,11 +381,11 @@ if (empty($reshook)) {
 					if (!$user->admin) {	// A non admin user can only edit its own template
 						$sql .= " ".((int) $user->id);
 					} else {
-						$sql .= " ".((int) GETPOST($keycode, 'fk_user'));
+						$sql .= " ".((int) GETPOST($keycode, 'int'));
 					}
 				} elseif ($keycode == 'content') {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
-				} elseif (in_array($keycode, array('joinfile', 'private', 'position'))) {
+				} elseif (in_array($keycode, array('joinfiles', 'private', 'position'))) {
 					$sql .= (int) GETPOST($keycode, 'int');
 				} else {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
@@ -393,7 +396,7 @@ if (empty($reshook)) {
 
 			$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
 			if (!$user->admin) {	// A non admin user can only edit its own template
-				$sql .= " AND fk_user  = ".$user->id;
+				$sql .= " AND fk_user  = ".((int) $user->id);
 			}
 			//print $sql;exit;
 			dol_syslog("actionmodify", LOG_DEBUG);
@@ -414,7 +417,7 @@ if (empty($reshook)) {
 
 		$sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol."=".((int) $rowid);
 		if (!$user->admin) {	// A non admin user can only edit its own template
-			$sql .= " AND fk_user  = ".$user->id;
+			$sql .= " AND fk_user  = ".((int) $user->id);
 		}
 		dol_syslog("delete", LOG_DEBUG);
 		$result = $db->query($sql);
@@ -791,7 +794,7 @@ if ($resql)
 				print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 				print '<input type="submit" class="button buttongen" name="actionmodify" value="'.$langs->trans("Modify").'">';
 				print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
-				print '<input type="submit" class="button buttongen" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+				print '<input type="submit" class="button buttongen button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 				print '</td>';
 
 				$fieldsforcontent = array('topic', 'joinfiles', 'content');

@@ -28,8 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 // Load translation files required by page
 $langs->loadLangs(array('users', 'admin'));
 
-$action = GETPOST('action', 'aZ09');
-$id = GETPOST('id', 'int');
+$action = (string) GETPOST('action', 'aZ09');
+$id = (int) GETPOST('id', 'int');
 
 // Security check
 $socid = 0;
@@ -54,14 +54,13 @@ if (empty($reshook)) {
 		$edituser = new User($db);
 		$edituser->fetch($id);
 
-		$edituser->clicktodial_url = GETPOST("url");
-		$edituser->clicktodial_login = GETPOST("login");
-		$edituser->clicktodial_password = GETPOST("password");
-		$edituser->clicktodial_poste = GETPOST("poste");
+		$edituser->clicktodial_url = (string) GETPOST("url", "alpha");
+		$edituser->clicktodial_login = (string) GETPOST("login", "alpha");
+		$edituser->clicktodial_password = (string) GETPOST("password", "alpha");
+		$edituser->clicktodial_poste = (string) GETPOST("poste", "alpha");
 
 		$result = $edituser->update_clicktodial();
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			setEventMessages($edituser->error, $edituser->errors, 'errors');
 		}
 	}
@@ -185,9 +184,9 @@ if ($id > 0)
 	if ($action == 'edit')
 	{
 		print '<br>';
-		print '<div class="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">';
+		print '<div class="center"><input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp&nbsp;';
-		print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 	}
 

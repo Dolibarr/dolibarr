@@ -897,6 +897,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 		if ($id) $param .= '&id='.urlencode($id);
 		if ($projectid) $param .= '&projectid='.urlencode($projectid);
 		if ($withproject) $param .= '&withproject='.urlencode($withproject);
+		if ($page) $param .= '&page='.urlencode($page);
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -978,13 +979,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 				print '<br>';
 				print '<div class="center">';
 				print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('GenerateBill').'">  ';
-				print '<input type="submit" class="button" id="cancel" name="cancel" value="'.$langs->trans('Cancel').'">';
+				print '<input type="submit" class="button button-cancel" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</div>';
 				print '<br>';
 			} else {
 				print '<div class="warning">'.$langs->trans("ThirdPartyRequiredToGenerateInvoice").'</div>';
 				print '<div class="center">';
-				print '<input type="submit" class="button" id="cancel" name="cancel" value="'.$langs->trans('Cancel').'">';
+				print '<input type="submit" class="button button-cancel" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</div>';
 				$massaction = '';
 			}
@@ -1163,7 +1164,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 
 			print '<td class="center">';
 			print '<input type="submit" name="save" class="button buttongen marginleftonly margintoponlyshort marginbottomonlyshort" value="'.$langs->trans("Add").'">';
-			print '<input type="submit" name="cancel" class="button buttongen marginleftonly margintoponlyshort marginbottomonlyshort" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" name="cancel" class="button buttongen marginleftonly margintoponlyshort marginbottomonlyshort button-cancel" value="'.$langs->trans("Cancel").'">';
 			print '</td></tr>';
 
 			print '</table>';
@@ -1431,8 +1432,6 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 				}
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
-				if (!$i) $totalarray['totalvaluebilledfield'] = $totalarray['nbfield'];
-				$totalarray['totalvaluebilled'] += $valuebilled;
 			}
 
 			/*
@@ -1450,9 +1449,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			if (($action == 'editline' || $action == 'splitline') && $_GET['lineid'] == $task_time->rowid)
 			{
 				print '<input type="hidden" name="lineid" value="'.$_GET['lineid'].'">';
-				print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort" name="save" value="'.$langs->trans("Save").'">';
+				print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort button-save" name="save" value="'.$langs->trans("Save").'">';
 				print '<br>';
-				print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort" name="cancel" value="'.$langs->trans('Cancel').'">';
+				print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			} elseif ($user->rights->projet->lire || $user->rights->projet->all->creer)	 // Read project and enter time consumed on assigned tasks
 			{
 				if ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids) || $user->rights->projet->all->creer)
@@ -1471,7 +1470,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 					print '</a>';
 
 					print '&nbsp;';
-					print '<a class="reposition paddingleft" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&amp;action=deletelin&amp;token='.newToken().'&amp;lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
+					print '<a class="reposition paddingleft" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&amp;action=deleteline&amp;token='.newToken().'&amp;lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
 					print img_delete('default', 'class="pictodelete paddingleft"');
 					print '</a>';
 

@@ -348,7 +348,7 @@ class ActionsDatapolicy
                                   window.open(href);
                                   $( this ).dialog( "close" );
                                 },
-                                "' . $langs->trans('Cancel').'": function() {
+                                "' . $langs->trans("Cancel").'": function() {
                                   $( this ).dialog( "close" );
                                 }
                               }

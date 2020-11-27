@@ -450,7 +450,7 @@ if ($action == "transfert_stock" && !$cancel)
 }
 
 // Update batch information
-if ($action == 'updateline' && GETPOST('save') == $langs->trans('Save'))
+if ($action == 'updateline' && GETPOST('save') == $langs->trans("Save"))
 {
 	$pdluo = new Productbatch($db);
 	$result = $pdluo->fetch(GETPOST('pdluoid', 'int'));
@@ -911,8 +911,8 @@ if (!$variants) {
 							print '</td>';
 						}
 						print '<td class="right" colspan="3">'.$pdluo->qty.($pdluo->qty < 0 ? ' '.img_warning() : '').'</td>';
-						print '<td colspan="4"><input type="submit" class="button" id="savelinebutton marginbottomonly" name="save" value="'.$langs->trans("Save").'">';
-						print '<input type="submit" class="button" id="cancellinebutton" name="Cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+						print '<td colspan="4"><input type="submit" class="button button-save" id="savelinebutton marginbottomonly" name="save" value="'.$langs->trans("Save").'">';
+						print '<input type="submit" class="button button-cancel" id="cancellinebutton" name="Cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 						print '</table>';
 						print '</form>';
 						print '</td></tr>';
@@ -985,7 +985,7 @@ if (!$variants) {
 			print '<tr class="liste_titre"><td width="40%">'.$formproduct->selectWarehouses('', 'fk_entrepot').'</td>';
 			print '<td class="right"><input name="seuil_stock_alerte" type="text" placeholder="'.$langs->trans("StockLimit").'" /></td>';
 			print '<td class="right"><input name="desiredstock" type="text" placeholder="'.$langs->trans("DesiredStock").'" /></td>';
-			print '<td class="right"><input type="submit" value="'.$langs->trans('Save').'" class="button" /></td>';
+			print '<td class="right"><input type="submit" value="'.$langs->trans("Save").'" class="button button-save" /></td>';
 			print '</tr>';
 		} else {
 			print '<tr class="liste_titre"><td width="40%">'.$langs->trans("Warehouse").'</td>';

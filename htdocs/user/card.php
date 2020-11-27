@@ -13,7 +13,7 @@
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2015-2018 Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2016      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2018       David Beniamine     <David.Beniamine@Tetras-Libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1018,50 +1018,54 @@ if ($action == 'create' || $action == 'adduserldap')
 	}
 
 	// Tel
-	print '<tr><td>'.img_picto('', 'object_phoning').' '.$langs->trans("PhonePro").'</td>';
+	print '<tr><td>'.$langs->trans("PhonePro").'</td>';
 	print '<td>';
+	print img_picto('', 'object_phoning');
 	if (!empty($ldap_phone))
 	{
 		print '<input type="hidden" name="office_phone" value="'.dol_escape_htmltag($ldap_phone).'">';
 		print $ldap_phone;
 	} else {
-		print '<input size="20" type="text" name="office_phone" value="'.dol_escape_htmltag(GETPOST('office_phone', 'alphanohtml')).'">';
+		print '<input type="text" name="office_phone" value="'.dol_escape_htmltag(GETPOST('office_phone', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
 
 	// Tel portable
-	print '<tr><td>'.img_picto('', 'object_phoning_mobile').' '.$langs->trans("PhoneMobile").'</td>';
+	print '<tr><td>'.$langs->trans("PhoneMobile").'</td>';
 	print '<td>';
+	print img_picto('', 'object_phoning_mobile');
 	if (!empty($ldap_mobile))
 	{
 		print '<input type="hidden" name="user_mobile" value="'.dol_escape_htmltag($ldap_mobile).'">';
 		print $ldap_mobile;
 	} else {
-		print '<input size="20" type="text" name="user_mobile" value="'.dol_escape_htmltag(GETPOST('user_mobile', 'alphanohtml')).'">';
+		print '<input type="text" name="user_mobile" value="'.dol_escape_htmltag(GETPOST('user_mobile', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
 
 	// Fax
-	print '<tr><td>'.img_picto('', 'object_phoning_fax').' '.$langs->trans("Fax").'</td>';
+	print '<tr><td>'.$langs->trans("Fax").'</td>';
 	print '<td>';
+	print img_picto('', 'object_phoning_fax');
 	if (!empty($ldap_fax))
 	{
 		print '<input type="hidden" name="office_fax" value="'.dol_escape_htmltag($ldap_fax).'">';
 		print $ldap_fax;
 	} else {
-		print '<input size="20" type="text" name="office_fax" value="'.dol_escape_htmltag(GETPOST('office_fax', 'alphanohtml')).'">';
+		print '<input type="text" name="office_fax" value="'.dol_escape_htmltag(GETPOST('office_fax', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
 
 	// EMail
-	print '<tr><td'.(!empty($conf->global->USER_MAIL_REQUIRED) ? ' class="fieldrequired"' : '').'>'.img_picto('', 'object_email').' '.$langs->trans("EMail").'</td>';
+	print '<tr><td'.(!empty($conf->global->USER_MAIL_REQUIRED) ? ' class="fieldrequired"' : '').'>'.$langs->trans("EMail").'</td>';
 	print '<td>';
+	print img_picto('', 'object_email');
 	if (!empty($ldap_mail))
 	{
 		print '<input type="hidden" name="email" value="'.dol_escape_htmltag($ldap_mail).'">';
 		print $ldap_mail;
 	} else {
-		print '<input size="40" type="text" name="email" value="'.dol_escape_htmltag(GETPOST('email', 'alphanohtml')).'">';
+		print '<input type="text" name="email" class="maxwidth500 widthcentpercentminusx" value="'.dol_escape_htmltag(GETPOST('email', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
 
@@ -1093,7 +1097,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	{
 		print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
-		print '<input size="30" type="text" name="accountancy_code" value="'.dol_escape_htmltag(GETPOST('accountancy_code', 'alphanohtml')).'">';
+		print '<input type="text" name="accountancy_code" value="'.dol_escape_htmltag(GETPOST('accountancy_code', 'alphanohtml')).'">';
 		print '</td></tr>';
 	}
 
@@ -1257,7 +1261,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '<div class="center">';
 	print '<input class="button" value="'.$langs->trans("CreateUser").'" name="create" type="submit">';
 	//print '&nbsp; &nbsp; &nbsp;';
-	//print '<input value="'.$langs->trans("Cancel").'" class="button" type="submit" name="cancel">';
+	//print '<input value="'.$langs->trans("Cancel").'" class="button button-cancel" type="submit" name="cancel">';
 	print '</div>';
 
 	print "</form>";
@@ -1753,7 +1757,7 @@ if ($action == 'create' || $action == 'adduserldap')
 						$s .= $societe->getNomUrl(1, '');
 					}
 				} else {
-					$s .= $langs->trans("ThisUserIsNot");
+					$s .= '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ThisUserIsNot").'</span>';
 				}
 				if (!empty($object->contact_id))
 				{
@@ -1781,9 +1785,9 @@ if ($action == 'create' || $action == 'adduserldap')
 					$adh = new Adherent($db);
 					$adh->fetch($object->fk_member);
 					$adh->ref = $adh->getFullname($langs); // Force to show login instead of id
-					print $adh->getNomUrl(1);
+					print $adh->getNomUrl(-1);
 				} else {
-					print $langs->trans("UserNotLinkedToMember");
+					print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("UserNotLinkedToMember").'</span>';
 				}
 				print '</td>';
 				print '</tr>'."\n";
@@ -2357,11 +2361,12 @@ if ($action == 'create' || $action == 'adduserldap')
 			}
 
 			// Tel pro
-			print "<tr>".'<td>'.img_picto('', 'object_phoning').' '.$langs->trans("PhonePro").'</td>';
+			print "<tr>".'<td>'.$langs->trans("PhonePro").'</td>';
 			print '<td>';
+			print img_picto('', 'object_phoning');
 			if ($caneditfield && empty($object->ldap_sid))
 			{
-				print '<input size="20" type="text" name="office_phone" class="flat" value="'.$object->office_phone.'">';
+				print '<input type="text" name="office_phone" class="flat maxwidth200" value="'.$object->office_phone.'">';
 			} else {
 				print '<input type="hidden" name="office_phone" value="'.$object->office_phone.'">';
 				print $object->office_phone;
@@ -2369,11 +2374,12 @@ if ($action == 'create' || $action == 'adduserldap')
 			print '</td></tr>';
 
 			// Tel mobile
-			print "<tr>".'<td>'.img_picto('', 'object_phoning_mobile').' '.$langs->trans("PhoneMobile").'</td>';
+			print "<tr>".'<td>'.$langs->trans("PhoneMobile").'</td>';
 			print '<td>';
+			print img_picto('', 'object_phoning_mobile');
 			if ($caneditfield && empty($object->ldap_sid))
 			{
-				print '<input size="20" type="text" name="user_mobile" class="flat" value="'.$object->user_mobile.'">';
+				print '<input type="text" name="user_mobile" class="flat maxwidth200" value="'.$object->user_mobile.'">';
 			} else {
 				print '<input type="hidden" name="user_mobile" value="'.$object->user_mobile.'">';
 				print $object->user_mobile;
@@ -2381,11 +2387,12 @@ if ($action == 'create' || $action == 'adduserldap')
 			print '</td></tr>';
 
 			// Fax
-			print "<tr>".'<td>'.img_picto('', 'object_phoning_fax').' '.$langs->trans("Fax").'</td>';
+			print "<tr>".'<td>'.$langs->trans("Fax").'</td>';
 			print '<td>';
+			print img_picto('', 'object_phoning_fax');
 			if ($caneditfield && empty($object->ldap_sid))
 			{
-				print '<input size="20" type="text" name="office_fax" class="flat" value="'.$object->office_fax.'">';
+				print '<input type="text" name="office_fax" class="flat maxwidth200" value="'.$object->office_fax.'">';
 			} else {
 				print '<input type="hidden" name="office_fax" value="'.$object->office_fax.'">';
 				print $object->office_fax;
@@ -2393,11 +2400,12 @@ if ($action == 'create' || $action == 'adduserldap')
 			print '</td></tr>';
 
 			// EMail
-			print "<tr>".'<td'.(!empty($conf->global->USER_MAIL_REQUIRED) ? ' class="fieldrequired"' : '').'>'.img_picto('', 'object_email').' '.$langs->trans("EMail").'</td>';
+			print "<tr>".'<td'.(!empty($conf->global->USER_MAIL_REQUIRED) ? ' class="fieldrequired"' : '').'>'.$langs->trans("EMail").'</td>';
 			print '<td>';
+			print img_picto('', 'object_email');
 			if ($caneditfield && empty($object->ldap_sid))
 			{
-				print '<input class="minwidth100" type="text" name="email" class="flat" value="'.$object->email.'">';
+				print '<input class="minwidth100 maxwidth500 widthcentpercentminusx" type="text" name="email" class="flat" value="'.$object->email.'">';
 			} else {
 				print '<input type="hidden" name="email" value="'.$object->email.'">';
 				print $object->email;
@@ -2475,7 +2483,7 @@ if ($action == 'create' || $action == 'adduserldap')
 			print '<tr>';
 			print '<td>'.$langs->trans("Photo").'</td>';
 			print '<td>';
-			print $form->showphoto('userphoto', $object, 60, 0, $caneditfield, 'photowithmargin', 'small');
+			print $form->showphoto('userphoto', $object, 60, 0, $caneditfield, 'photowithmargin', 'small', 1, 0, 'user', 1);
 			print '</td>';
 			print '</tr>';
 
@@ -2531,9 +2539,9 @@ if ($action == 'create' || $action == 'adduserldap')
 						print ' / <a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$object->contact_id.'">'.img_object($langs->trans("ShowContact"), 'contact').' '.dol_trunc($contact->getFullName($langs), 32).'</a>';
 					}
 				} else {
-					print $langs->trans("ThisUserIsNot");
+					print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ThisUserIsNot").'</span>';
 				}
-				print ' ('.$langs->trans("UseTypeFieldToChange").')';
+				print ' <span class="opacitymedium hideonsmartphone">('.$langs->trans("UseTypeFieldToChange").')</span>';
 				print '</td>';
 				print "</tr>\n";
 			}
@@ -2551,7 +2559,7 @@ if ($action == 'create' || $action == 'adduserldap')
 					$adh->ref = $adh->login; // Force to show login instead of id
 					print $adh->getNomUrl(1);
 				} else {
-					print $langs->trans("UserNotLinkedToMember");
+					print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("UserNotLinkedToMember").'</span>';
 				}
 				print '</td>';
 				print "</tr>\n";
@@ -2743,9 +2751,9 @@ if ($action == 'create' || $action == 'adduserldap')
 			print dol_get_fiche_end();
 
 			print '<div class="center">';
-			print '<input value="'.$langs->trans("Save").'" class="button" type="submit" name="save">';
+			print '<input value="'.$langs->trans("Save").'" class="button button-save" type="submit" name="save">';
 			print '&nbsp; &nbsp; &nbsp;';
-			print '<input value="'.$langs->trans("Cancel").'" class="button" type="submit" name="cancel">';
+			print '<input value="'.$langs->trans("Cancel").'" class="button button-cancel" type="submit" name="cancel">';
 			print '</div>';
 
 			print '</form>';

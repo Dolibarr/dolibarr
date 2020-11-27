@@ -973,7 +973,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			setEventMessages($langs->trans('NewCustomerSupplierCodeProposed'), '', 'warnings');
 		}
 
-
 		$object->address = GETPOST('address', 'alphanohtml');
 		$object->zip = GETPOST('zipcode', 'alphanohtml');
 		$object->town = GETPOST('town', 'alphanohtml');
@@ -1306,7 +1305,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		// Country
 		print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
 		print img_picto('', 'globe-americas', 'class="paddingrightonly"');
-		print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 widthcentpercentminusx');
+		print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 maxwidth500 widthcentpercentminusx');
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		print '</td></tr>';
 
@@ -1334,9 +1333,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 		// Email / Web
 		print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', $conf->global->SOCIETE_EMAIL_MANDATORY).'</td>';
-		print '<td colspan="3">'.img_picto('', 'object_email').' <input type="text" class="widthcentpercentminusx" name="email" id="email" value="'.$object->email.'"></td></tr>';
+		print '<td colspan="3">'.img_picto('', 'object_email').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="email" id="email" value="'.$object->email.'"></td></tr>';
 		print '<tr><td>'.$form->editfieldkey('Web', 'url', '', $object, 0).'</td>';
-		print '<td colspan="3">'.img_picto('', 'globe').' <input type="text" class="widthcentpercentminusx" name="url" id="url" value="'.$object->url.'"></td></tr>';
+		print '<td colspan="3">'.img_picto('', 'globe').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="url" id="url" value="'.$object->url.'"></td></tr>';
 
 		if (!empty($conf->socialnetworks->enabled)) {
 			foreach ($socialnetworks as $key => $value) {
@@ -1544,10 +1543,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		if (!empty($backtopage))
 		{
 			print ' &nbsp; &nbsp; ';
-			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		} else {
 			print ' &nbsp; &nbsp; ';
-			print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+			print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 		}
 		print '</div>'."\n";
 
@@ -2185,9 +2184,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			  print dol_get_fiche_end();
 
 			print '<div class="center">';
-			print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+			print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 			print ' &nbsp; &nbsp; ';
-			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 
 			print '</form>';

@@ -44,7 +44,11 @@ class Cchargesociales
 	 */
 	public $table_element = 'c_chargesociales';
 
+	/**
+	 * @var string Label
+	 */
 	public $libelle;
+
 	public $deductible;
 	public $active;
 	public $code;
@@ -54,6 +58,9 @@ class Cchargesociales
 	 */
 	public $fk_pays;
 
+	/**
+	 * @var string module
+	 */
 	public $module;
 	public $accountancy_code;
 
@@ -504,13 +511,12 @@ class Cchargesociales
 
 	/**
 	 * Trim object parameters
-	 * @param string[] $parameters array of parameters to trim
 	 *
+	 * @param string[] $parameters array of parameters to trim
 	 * @return void
 	 */
 	private function trimParameters($parameters)
 	{
-		if (!is_array($parameters)) return;
 		foreach ($parameters as $parameter) {
 			if (isset($this->$parameter)) {
 				$this->$parameter = trim($this->$parameter);

@@ -117,8 +117,8 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 $TRemindTypes = array();
-if (!empty($conf->global->AGENDA_REMINDER_EMAIL)) $TRemindTypes['email'] = $langs->trans('EMail');
-if (!empty($conf->global->AGENDA_REMINDER_BROWSER)) $TRemindTypes['browser'] = $langs->trans('BrowserPush');
+if (!empty($conf->global->AGENDA_REMINDER_BROWSER)) $TRemindTypes['browser'] = array('label'=>$langs->trans('BrowserPush'), 'disabled'=>(empty($conf->global->AGENDA_REMINDER_BROWSER) ? 1 : 0));
+if (!empty($conf->global->AGENDA_REMINDER_EMAIL)) $TRemindTypes['email'] = array('label'=>$langs->trans('EMail'), 'disabled'=>(empty($conf->global->AGENDA_REMINDER_EMAIL) ? 1 : 0));
 
 $TDurationTypes = array('y'=>$langs->trans('Years'), 'm'=>$langs->trans('Month'), 'w'=>$langs->trans('Weeks'), 'd'=>$langs->trans('Days'), 'h'=>$langs->trans('Hours'), 'i'=>$langs->trans('Minutes'));
 
@@ -503,7 +503,6 @@ if (empty($reshook) && $action == 'update')
 		$object->note_private = trim(GETPOST("note", "restricthtml"));
 		$object->fk_element	 = GETPOST("fk_element", "int");
 		$object->elementtype = GETPOST("elementtype", "alphanohtml");
-
 		if (!$datef && $percentage == 100)
 		{
 			$error++; $donotclearsession = 1;
@@ -1247,12 +1246,7 @@ if ($action == 'create')
 
 		//Reminder
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
-		print '<input type="number" name="offsetvalue" value="10" size="5">';
-		print '</td></tr>';
-
-		//Time Type
-		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("TimeType").'</td><td colspan="3">';
-		print $form->selectTypeDuration('offsetunit', 'i');
+		print '<input class="width50" type="number" name="offsetvalue" value="'.(GETPOSTISSET('offsetvalue') ? GETPOST('offsetvalue', 'int') : '15').'"> '.$form->selectTypeDuration('offsetunit', 'i');
 		print '</td></tr>';
 
 		//Reminder Type
@@ -1297,9 +1291,9 @@ if ($action == 'create')
 	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Add").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	if (empty($backtopage)) {
-		print '<input type="button" class="button" name="cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+		print '<input type="button" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 	} else {
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	}
 	print '</div>';
 
@@ -1731,20 +1725,13 @@ if ($id > 0)
 
 			print '<table class="border centpercent">';
 
-			//Reminder
+			// Reminder
 			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
-			print '<input type="number" name="offsetvalue" value="'.$actionCommReminder->offsetvalue.'" size="5">';
+			print '<input type="number" name="offsetvalue" class="width50" value="'.$actionCommReminder->offsetvalue.'"> '.$form->selectTypeDuration('offsetunit', $actionCommReminder->offsetunit);
 			print '</td></tr>';
 
-			//Time Type
-			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("TimeType").'</td><td colspan="3">';
-			print $form->selectTypeDuration('offsetunit', $actionCommReminder->offsetunit);
-			print '</td></tr>';
-
-			//Reminder Type
+			// Reminder Type
 			$TRemindTypes = array();
-			if (!empty($conf->global->AGENDA_REMINDER_EMAIL)) $TRemindTypes['email'] = $langs->trans('EMail');
-			if (!empty($conf->global->AGENDA_REMINDER_BROWSER)) $TRemindTypes['browser'] = $langs->trans('BrowserPush');
 			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderType").'</td><td colspan="3">';
 			print $form->selectarray('selectremindertype', $TRemindTypes, $actionCommReminder->typeremind);
 			print '</td></tr>';
@@ -1752,7 +1739,7 @@ if ($id > 0)
 			$hide = '';
 			if ($actionCommReminder->typeremind == 'browser') $hide = 'style="display:none;"';
 
-			//Mail Model
+			// Mail Model
 			print '<tr '.$hide.'><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
 			print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1);
 			print '</td></tr>';
@@ -1785,9 +1772,9 @@ if ($id > 0)
 		print dol_get_fiche_end();
 
 		print '<div class="center">';
-		print '<input type="submit" class="button" name="edit" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button button-save" name="edit" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		print '</form>';

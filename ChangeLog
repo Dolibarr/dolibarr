@@ -4,153 +4,128 @@ English Dolibarr ChangeLog
 
 
 ***** ChangeLog for 13.0.0 compared to 12.0.0 *****
+
 For users:
+----------
 NEW: Add module "Credit transfer SEPA" to manage payment of vendors using bank credit transfer SEPA files.
 NEW: Module Reception (for a more accurate management of your receptions) moved from experimental to stable.
+NEW: Module Recruitment to manage Job position and applications.
 NEW: Several security issues after a private bug bounty campaign. 
-NEW: #15065 Put the product label in bold in the PDF templates if configured
-NEW: Accountancy - Add chart of sub accounts
-NEW: Accountancy - Add options to disable binding on sales, purchases & expense reports independently of the modules
-NEW: Accountancy balance - Add a menu entry to show subtotal by group
-NEW: Accountancy - Move to real ledger, real journals, menu disposition
-NEW: Accountancy - On transfers, select the periodicity by default
-NEW: New currency rate editor.
-NEW: Add 2 rules for emailcollector: Message send/not sent from Dolibarr
-NEW: Add a counter of number of words for pages in website module
-NEW: add alert before changing thirdparty in takepos
-NEW: Add a page to list Stock at a given date in the past.
-NEW: Add a start date to begin binding in accountancy
-NEW: Add a statistics page to list popularity of products on invoices
-NEW: Add calendar selection for agenda view
-NEW: Support documents generation for ticket edition (pdf or odt)
-NEW: Add column payment term into list of supplier invoices.
-NEW: Add column quantity in product margin page
-NEW: Add column vat rate in page to define accounting account on product/service
-NEW: Add common list function for available app/module page
+NEW: Accountancy - add chart of sub accounts
+NEW: Accountancy - add options to disable binding on sales, purchases & expense reports independently of the modules
+NEW: Accountancy balance - add a menu entry to show subtotal by group
+NEW: Accountancy - change menu disposition
+NEW: Accountancy - on transfers, select the periodicity by default
+NEW: Accountancy - Add export for Gestinum (v3 & v5)
+NEW: new currency rate editor
+NEW: add 2 rules for emailcollector: Message send/not sent from Dolibarr
+NEW: add a counter of number of words for pages in website module
+NEW: add alert before changing thirdparty in TakePOS
+NEW: add a page to list Stock at a given date in the past
+NEW: add a start date to begin binding in accountancy
+NEW: add a statistics page to list popularity of products on invoices
+NEW: add calendar selection for agenda view
+NEW: Support documents generation for ticket edition (PDF or ODT)
+NEW: add column payment term into list of supplier invoices
+NEW: add column quantity in product margin page
+NEW: add column vat rate in page to define accounting account on product/service
 NEW: add costprice in fields of products list
-NEW: Added an import profile for CUSTOMER ORDER, PO, PROPOSAL MODULE, SUPPLIER INVOICE
-NEW: Added incoterms dara into the substitution array
-NEW: Add employee link in expense report binding page
-NEW: Add export for various payment
-NEW: add extra fields labels and values in mail on create ticket
-NEW: Add extrafields support on ECM module
-NEW: Add filter rules "is answer" and "is not answer" in email collector
-NEW: Add focus when editing on product/stock/product.php Close #14548
-NEW: add formConfirm hook on product page
+NEW: added an import profile for CUSTOMER ORDER, PO, PROPOSAL MODULE, SUPPLIER INVOICE
+NEW: add employee link in expense report binding page
+NEW: add EORI No. as ProfID5
+NEW: add export for various payments
+NEW: add Extrafields labels and values in mail on create ticket
+NEW: add Extrafields support on ECM module
+NEW: add filter rules "is answer" and "is not answer" in email collector
+NEW: add focus when editing on product/stock/product.php Close #14548
 NEW: add free text on each terminal of cash desk
-NEW: Add function dolButtonToOpenUrlInDialogPopup() to be able to open
-NEW: Add global search for customer payments and vendor payments
-NEW: Add global search for miscellaneous payments
-NEW: Add helper function for table headers with numbers
-NEW: add hooks on stats pages
-NEW: Add link to edit property from search result of website pages
-NEW: Add link to reset qty on supplier dispatch page
+NEW: add global search for customer payments and vendor payments
+NEW: add global search for miscellaneous payments
+NEW: add helper function for table headers with numbers
+NEW: add link to edit property from the search result of website pages
+NEW: add link to reset qty on supplier dispatch page
 NEW: add MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER const to remove header stored by email collector
-NEW: Add Manufacturing Orders attached files into the automatic ECM view
+NEW: add Manufacturing Orders attached files into the automatic ECM view
 NEW: add margin info in invoice list
-NEW: Add mass action to set category on a list of website pages.
-NEW: Add mass deletion for events
-NEW: Add mass deletion for draft invoices
-NEW: Add __MEMBER_TYPE__ substitution key
-NEW: Add a message in error_log after detection of SQL or script injection
-NEW: Add module Credit transfer SEPA to manage payment of supplier using
-NEW: Add more filters on monthly statement list
-NEW: Add option TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT
-NEW: Add option to define a default warehouse at user level
-NEW: Add option to include products without alert in replenish
+NEW: add mass action to set category on a list of website pages
+NEW: add mass deletion for events
+NEW: add mass deletion for draft invoices
+NEW: add more filters on monthly statement list
+NEW: add option TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT
+NEW: add option to define a default warehouse at user level
+NEW: add option to include products without alert in replenish
 NEW: add order by lastname and firstname by default in get sales representatives
-NEW: Add param to not show links when output tags
-NEW: Add PDF document templates for warehouses (list of stock)
-NEW: Add property cssview when declaring fields of an object
-NEW: Add prospect status managment for the contact with managment of custom icon
-NEW: Add public note on products. This also partially fix the #14342
-NEW: Add quick dropdown menu in top right menu (MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN)
+NEW: add param to not show links when output tags
+NEW: add PDF document templates for warehouses (list of stock)
+NEW: add a prospect status for the contact with managment of custom icon
+NEW: add public note on products ; this also partially fix the #14342
+NEW: add quick dropdown menu in top right menu (experimental with MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN)
 NEW: add region in export companies and contacts
 NEW: add rights on margin info on invoice list
-NEW: Add search param for close date on order list
-NEW: add send context for ticket
-NEW: Add show preview for mail attachement on form mail
-NEW: add state origin for product
+NEW: add search param for close date on order list
+NEW: add show preview for mail attachement on form mail
 NEW: add State/Province origin for products
-NEW: Add the workflow interaction close intervention on closing ticket
-NEW: Add third order printer to TakePOS
+NEW: add the workflow interaction close intervention on closing ticket
+NEW: add third order printer to TakePOS
 NEW: add tracking number in list and search_all items
-NEW: add two hooks printFieldListFrom and printFieldSearchParam
-NEW: Add __TYPE__ substitution key
-NEW: Add validation of MX domain for emails
-NEW: add vcard for aderent and user
+NEW: add vcard for adherent and user
 NEW: add week number for month view in agenda
-NEW: Algeria data (tva and forme_juridique)
-NEW: Allow click on all header numbers on commerce area
-NEW: Allow to reopen interventions (green button)
-NEW: Allow zero quality on supplier/vendor order line
-NEW: Appearance tab in TakePOS with more visual parameters
-NEW: Better currency rate editor
-NEW: Calculate the virtual stock in transverse mode ( not on getEntity('commande'), ... but on getEntity('stock') )
-NEW: Can add event to log into blockedlog module with a constant.
-NEW: Can build vendor invoice from vendor orders
-NEW: Can change a product in line of recurring invoice or contract
-NEW: Can change size of logo on PDF documents
-NEW: Can change VAT rate of all lines of a draft object in one step.
-NEW: Can define date range of validity of a login during creation
-NEW: Can disable, from edit page, the whole web site
+NEW: Algeria data (VAT and forme_juridique)
+NEW: allow click on all header numbers on commerce area
+NEW: allow to reopen interventions (green button)
+NEW: allow zero quantity on supplier/vendor order line
+NEW: appearance tab in TakePOS with more visual parameters
+NEW: better currency rate editor
+NEW: can build vendor invoice from vendor orders
+NEW: can change a product in lines of a recurring invoice or contract
+NEW: can change size of logo on PDF documents
+NEW: can change VAT rate of all lines of a draft object in one step
+NEW: can define date range of validity of a login during creation
+NEW: can disable, from edit page, the whole web site
 NEW: can edit and set sales representatives directly on thirdparty card
-NEW: Can edit the list of sending email profiles.
-NEW: Can enable/disable users in bulk actions
-NEW: Can filter on accounting system ref in export of chart of account
-NEW: Can filter on container type, language and tags in the list of pages
-NEW: Can force the antivirus from conf file or autoprepend ini setup.
-NEW: Can hide eatby, sellby dates with option PRODUCT_DISABLE_SELLBY and PRODUCT_DISABLE_EATBY
-NEW: Can import proposals, sales orders, supplier invoices
+NEW: can edit the list of sending email profiles
+NEW: can enable/disable users in bulk actions
+NEW: can filter on accounting system ref in export of chart of account
+NEW: can filter on container type, language and tags in the list of web pages
+NEW: can hide eatby, sellby dates with option PRODUCT_DISABLE_SELLBY and PRODUCT_DISABLE_EATBY
+NEW: can import proposals, sales orders, supplier invoices
 NEW: can set a dedicated SMTP config for sending email from public ticket interface
-NEW: Can set tags/categories to website pages.
-NEW: Can set type of price without tax per default for new sale price creation
-NEW: Can use desired stock of a given warehouse for replenishment
-NEW: Can use THEME_DARKMODEENABLED=2 for a preview of theme in dark mode
-NEW: change thirdparty with barcode scan in takepos
-NEW: Common behavior for monthly leave list view
-NEW: conf to allow show full arbo in warehouse getnomurl
+NEW: can set tags/categories to website pages
+NEW: can set type of price without tax per default for new sale price creation
+NEW: can use desired stock of a given warehouse for replenishment
+NEW: change thirdparty with barcode scan in TakePOS
+NEW: common behavior for monthly leave list view
 NEW: convert all subscription in datetime
-NEW: create thirdparty customer from TAKEPOS
-NEW: Date shipment from order accepts hours
-NEW: Declinaison price level compatibility
-NEW: Delayed payment in TakePOS
-NEW: Development of module Recruitment
-NEW: display date range if exist in takepos
-NEW: display resiliate status in takepos for member
+NEW: can create a thirdparty customer from TakePOS
+NEW: date shipment from order accepts hours
+NEW: price level compatibility for variant
+NEW: delayed payment in TakePOS
+NEW: display date range if exist in TakePOS
+NEW: display resiliate status in TakePOS for member
 NEW: display stat for BOM on "object referent"/linked Object product tab
-NEW: edit and update a ticket
-NEW: edit or delete dispatched lines
-NEW: Email configuration - Allow auto signed certificat when smtp ssl activated
+NEW: Email configuration - allow auto signed certificate when smtp ssl activated
 NEW: enable free emails input with select2
-NEW: endpoint getContacts and Clean results
 NEW: Events in agenda for contact
-NEW: Field to link website page to an other object
-NEW: Fill ECM src object fields in dol_add_file_process
 NEW: filter on progress column in task list
 NEW: filter product list by country and/or state/province
 NEW: format tickets sent by mail in public interface
-NEW: add juridical status for Algeria
 NEW: form to add customer/supplier into categories
-NEW: Framework is ready for CSRF token protection on explicit GET URLs.
-NEW: get all child recursively
-NEW: Get contacts list of a given order
+NEW: Framework is ready for CSRF token protection on explicit GET URLs
 NEW: helper functions for export with phpspreadsheet
 NEW: hide closed contract lines
-NEW: hide label in pdf for variants
-NEW: Hook on propal card
-NEW: If specific help page is available, we change color of icon
-NEW: Include the tag editor of page as a popup into website editor
-NEW: Introduce constant FACTUREFOURN_REUSE_NOTES_ON_CREATE_FROM
-NEW: Introducing new modal boxes in TakePOS
-NEW: Keep takepos terminal when login/logout
-NEW: Link on balance to the ledger
+NEW: hide label in PDF for variants
+NEW: if specific help page is available, we change color of icon
+NEW: include the tag editor of page as a popup into website editor
+NEW: introduce constant FACTUREFOURN_REUSE_NOTES_ON_CREATE_FROM
+NEW: introducing new modal boxes in TakePOS
+NEW: keep TakePOS terminal when login/logout
+NEW: link on balance to the ledger
 NEW: MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER const in email collector
 NEW: manage errors on update extra fields in ticket card
 NEW: mass-actions for the event list view
 NEW: Module Intracomm report
-NEW: More filter for "View change logs"
-NEW: multicurrency total in takepos
+NEW: more filter for "View change logs"
+NEW: multicurrency total in TakePOS
 NEW: multiselect type and date to date filter
 NEW: Nature of product is now a dictionay
 NEW: new line template: hidden conf to fill service dates from the last service line
@@ -159,56 +134,68 @@ NEW: possibilty to group payments by mode and show their subtotal
 NEW: Print payment method and change in TakePOS
 NEW: Priority and transparency from external calendar events
 NEW: Products Import/Export 'default warehouse' and 'use batch number' fields
-NEW: Purchase price table: Added filterable table columns
+NEW: Purchase price table: added filterable table columns
 NEW: rate editor for multicurrency
 NEW: ref_ext field for Commande lines, order lines, Attributes and Combinations, Invoice lines, payments, order lines
 NEW: remove new lines in mail on add ticket message
-NEW: restrict thirdparty to customer in takepos
-NEW: Allow to edit "demand reason" field though API
+NEW: restrict thirdparty to customer in TakePOS
 NEW: Rule "email to" accept wildcard *
 NEW: Save filter of the project homepage
-NEW: Select-able columns on customer invoice paymnet list
-NEW: Select-able columns on miscellaneous payments + more data columns
-NEW: Select-able columns on social taxes list
-NEW: Select-able columns on supplier invoice payment list
+NEW: select-able columns on customer and supplier invoice paymnet list
+NEW: select-able columns on miscellaneous payments + more data columns
+NEW: select-able columns on social taxes list
 NEW: send context and remove new lines on create ticket
-NEW: set entity when creating invoice on takepos
-NEW: Show available stock in TakePOS
-NEW: Show category filter on lists only when user have rights to read categories
-NEW: Show header number and make it clickable in warehouse arean, payment area, shipment area
-NEW: Show image of user in the combo select of users
-NEW: Show label on batch card
-NEW: Show line number on intervention card (via MAIN_VIEW_LINE_NUMBER)
+NEW: show available stock in TakePOS
+NEW: show category filter on lists only when user have rights to read categories
+NEW: show header number and make it clickable in warehouse area, payment area, shipment area
+NEW: show image of user in the combo select of users
+NEW: show label on batch card
 NEW: show links for select and multi-select in category extra field
-NEW: Show module and permission ids on user/group rights (only admin)
-NEW: Show place from events on import calender
-NEW: Show references in contract form on interventions
-NEW: Show tags and status in search list of website pages
-NEW: Show user on external calender events (when found)
+NEW: show module and permission ids on user/group rights (only admin)
+NEW: show place from events on import calender
+NEW: show references in contract form on interventions
+NEW: show tags and status in search list of website pages
+NEW: show user on external calender events (when found)
 NEW: subject title with company name instead of application title in ticket message
 NEW: Support for Samba4 AD
 NEW: TakePOS connector compatibility with RECEIPT PRINTERS module
 NEW: TakePOS Gift Receipt
 NEW: TakePOS Multicurrency compatibility
-NEW: The global header of a website can also have dynamic content
+NEW: the global header of a website can also have dynamic content
 NEW: Third-Party Import new fields: mother company,outstanding debt limit,bank account,incoterms
 NEW: Thirdparty module : box on customer/supplier tab for invoice outsantding amount late
 NEW: ticket classification on create from email collector
 NEW: Ticket message notifications when edited from public interface
 NEW: translate classification labels in ticket
-NEW: triggers create, modify, delete
-NEW: VAT for Algeria
-NEW: Use preselect third-party from list on new card
-NEW: Vat report - Invert constant to show by default zero vat in reports
+NEW: Add VAT and juridical status for Algeria
+NEW: VAT report - Invert constant to show by default zero VAT in reports
 NEW: website page fields selection
 NEW: Weighing Scale compatibility with TakePOS connector
-NEW: When creating a user from a member linked to a thirdparty, you can choose to create if as external or internal user
-NEW: Add clone functionality on miscellaneous payment
+NEW: when creating a user from a member linked to a thirdparty, you can choose to create it as external or internal user
+NEW: add clone button on miscellaneous payment
+NEW: #15065 Add option to put the product label in bold in the PDF templates if configured
+
 
 For developers:
+---------------
+NEW: Hook on propal card
+NEW: add __MEMBER_TYPE__ substitution key
+NEW: add function dolButtonToOpenUrlInDialogPopup() to be able to open page into a popup
+NEW: add hooks on stats pages
+NEW: show line number on intervention card (via MAIN_VIEW_LINE_NUMBER)
+NEW: API get contacts list of a given order
+NEW: API endpoint getContacts and Clean results
+NEW: Add some fields to link website page to an other object
+NEW: fill ECM src object fields in dol_add_file_process
+NEW: conf to allow to show the full tree in warehouse popup
+NEW: can use THEME_DARKMODEENABLED=2 for a preview of theme in dark mode
+NEW: can force the antivirus from conf file or autoprepend ini setup
+NEW: can add event to log into blockedlog module with a constant
+NEW: add property cssview when declaring fields of an object
 NEW: Can use dynamic code into the 'enabled' property of DAO fields
-NEW: API Can update a payment
-NEW: api get member by thirdparty
+NEW: allow to edit "demand reason" field though API
+NEW: API can update a payment
+NEW: API get member by thirdparty
 NEW: API get thirdparty by barcode
 NEW: API get users by email / login
 NEW: fetch contact by email with REST API
@@ -216,14 +203,23 @@ NEW: field ref_ext in llx_commandedet
 NEW: fields ref_ext for Attributes and Combinations
 NEW: get state by REST API
 NEW: get state dictionnary by REST API
-NEW: Improve Product API for variant products
-NEW: Oauth SCOPE for Admin SDK
-NEW: Retrieve discount from invoice from API
+NEW: improve Product API for variant products
+NEW: OAuth SCOPE for Admin SDK
+NEW: retrieve discount from invoice from API
 NEW: standardizes API thirdparties by email like other object
-NEW: thirdparty REST API: endpoint to set price level
-NEW: Use new category API for project list view
+NEW: Thirdparty REST API: endpoint to set price level
+NEW: use new category API for project list view
 NEW: Triggers Attributes and Attributes values
-NEW: Add hooks on newpayment page to allow external payment modules
+NEW: add hooks on newpayment page to allow external payment modules
+NEW: added incoterms data into the substitution array
+NEW: add formConfirm hook on product page
+NEW: add send context for ticket
+NEW: add a message in error_log after detection of SQL or script injection
+NEW: add two hooks printFieldListFrom and printFieldSearchParam
+NEW: add __TYPE__ substitution key
+NEW: add validation of MX domain for emails
+NEW: calculate the virtual stock in transverse mode ( not on getEntity('commande'), ... but on getEntity('stock') )
+
 
 WARNING:
 
@@ -288,6 +284,7 @@ FIX: using decimal on stock correction
 FIX: Visualization rights correction on last modified contacts box
 FIX: Wrong redirection
 FIX: Yogosha report 4425 (backport)
+
 
 ***** ChangeLog for 12.0.2 compared to 12.0.1 *****
 FIX: computation of the bottom margin of <body> returns NaN because body is not loaded yet

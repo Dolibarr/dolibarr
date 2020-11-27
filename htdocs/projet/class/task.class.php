@@ -673,7 +673,9 @@ class Task extends CommonObject
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip"';
+			$linkclose .= ' class="classfortooltip nowraponall"';
+		} else {
+			$linkclose .= ' class="nowraponall"';
 		}
 
 		$linkstart = '<a href="'.$url.'"';
