@@ -108,7 +108,7 @@ body {
     margin-bottom: 0;
     margin-right: 0;
     margin-left: 0;
-    font-weight: 300px;
+    font-weight: 400;
     <?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
 
@@ -4162,7 +4162,7 @@ div.titre {
 	text-decoration: none;
 	padding-top: 5px;
     padding-bottom: 5px;
-    /* text-transform: capitalize; */
+    font-weight: 400;
 }
 div.fiche > table.table-fiche-title:first-of-type div {
     color: var(--colortexttitlenotab);
