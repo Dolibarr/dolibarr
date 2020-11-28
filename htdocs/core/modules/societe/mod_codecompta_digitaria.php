@@ -99,8 +99,10 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		$s3 = $form->textwithpicto('<input type="text" class="flat" size="2" name="value3" value="'.$conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER.'">', $tooltip, 1, 1);
 		$s4 = $form->textwithpicto('<input type="text" class="flat" size="2" name="value4" value="'.$conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER.'">', $tooltip, 1, 1);
 		$texte .= '<tr><td>';
-		$texte .= $langs->trans("ModuleCompanyCodeCustomer".$this->name, $s2, $s4)."<br>\n";
-		$texte .= $langs->trans("ModuleCompanyCodeSupplier".$this->name, $s1, $s3)."<br>\n";
+		// trans remove html entities
+		$texte .= $langs->trans("ModuleCompanyCodeCustomer".$this->name, '{s2}', '{s4}')."<br>\n";
+		$texte .= $langs->trans("ModuleCompanyCodeSupplier".$this->name, '{s1}', '{s3}')."<br>\n";
+		$texte = str_replace(array('{s1}', '{s2}', '{s3}', '{s4}'), array($s1, $s2, $s3, $s4), $texte);
 		$texte .= "<br>\n";
 		// Remove special char if COMPANY_DIGITARIA_REMOVE_SPECIAL is set to 1 or not set (default)
 		if (!isset($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL) || !empty($conf->global->$conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL)) $texte .= $langs->trans('RemoveSpecialChars').' = '.yn(1)."<br>\n";
