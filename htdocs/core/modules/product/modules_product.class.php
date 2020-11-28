@@ -204,11 +204,9 @@ abstract class ModeleProductCode
 		if ($type == -1) {
 			$s .= $langs->trans("Name").': <b>'.$this->getNom($langs).'</b><br>';
 			$s .= $langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
-		}
-		if ($type == 0) {
+		} elseif ($type == 0) {
 			$s .= $langs->trans("ProductCodeDesc").'<br>';
-		}
-		if ($type == 1) {
+		} elseif ($type == 1) {
 			$s .= $langs->trans("ServiceCodeDesc").'<br>';
 		}
 		if ($type != -1) {
