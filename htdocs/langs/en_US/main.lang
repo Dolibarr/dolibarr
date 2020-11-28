@@ -258,6 +258,7 @@ Cards=Cards
 Card=Card
 Now=Now
 HourStart=Start hour
+Deadline=Deadline
 Date=Date
 DateAndHour=Date and hour
 DateToday=Today's date
