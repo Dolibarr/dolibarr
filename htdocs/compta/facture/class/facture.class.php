@@ -177,11 +177,6 @@ class Facture extends CommonInvoice
 	public $fk_bank;
 
 	/**
-	 * @deprecated
-	 */
-	public $products = array();
-
-	/**
 	 * @var FactureLigne[]
 	 */
 	public $lines = array();
@@ -1077,7 +1072,6 @@ class Facture extends CommonInvoice
 		$facture->origin_id         = $this->origin_id;
 
 		$facture->lines = $this->lines; // Array of lines of invoice
-		$facture->products = $this->lines; // Tant que products encore utilise
 		$facture->situation_counter = $this->situation_counter;
 		$facture->situation_cycle_ref = $this->situation_cycle_ref;
 		$facture->situation_final = $this->situation_final;
@@ -1179,7 +1173,6 @@ class Facture extends CommonInvoice
 		$object->ref_client         = '';
 		$object->close_code         = '';
 		$object->close_note         = '';
-		$object->products = $object->lines; // For backward compatibility
 		if ($conf->global->MAIN_DONT_KEEP_NOTE_ON_CLONING == 1) {
 			$object->note_private = '';
 			$object->note_public = '';
@@ -1191,7 +1184,6 @@ class Facture extends CommonInvoice
 			if (($object->lines[$i]->info_bits & 0x02) == 0x02)	// We do not clone line of discounts
 			{
 				unset($object->lines[$i]);
-				unset($object->products[$i]); // Tant que products encore utilise
 			}
 						// Bloc to update dates of service (month by month only if previously filled at 1d near start or end of month)
 			// If it's a service with start and end dates

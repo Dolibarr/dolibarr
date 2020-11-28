@@ -187,6 +187,8 @@ class FactureFournisseur extends CommonInvoice
 	public $mode_reglement_id;
 	public $mode_reglement_code;
 
+	public $extraparams = array();
+
 	/**
 	 * Invoice lines
 	 * @var SupplierInvoiceLine[]
@@ -197,8 +199,6 @@ class FactureFournisseur extends CommonInvoice
 	 * @deprecated
 	 */
 	public $fournisseur;
-
-	public $extraparams = array();
 
 	// Multicurrency
 	/**
@@ -331,8 +331,6 @@ class FactureFournisseur extends CommonInvoice
 	public function __construct($db)
 	{
 		$this->db = $db;
-
-		$this->products = array();
 	}
 
 	/**

@@ -286,8 +286,6 @@ class CommandeFournisseur extends CommonOrder
 	public function __construct($db)
 	{
 		$this->db = $db;
-
-		$this->products = array();
 	}
 
 

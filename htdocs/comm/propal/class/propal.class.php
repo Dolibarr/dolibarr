@@ -208,7 +208,6 @@ class Propal extends CommonObject
 	public $demand_reason_id;
 	public $demand_reason_code;
 
-	public $products = array();
 	public $extraparams = array();
 
 	/**
@@ -355,15 +354,13 @@ class Propal extends CommonObject
 		$this->socid = $socid;
 		$this->id = $propalid;
 
-		$this->products = array();
-
 		$this->duree_validite = ((int) $conf->global->PROPALE_VALIDITY_DURATION);
 	}
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Add line into array products
+	 *  Add line into array ->lines
 	 *  $this->thirdparty should be loaded
 	 *
 	 * 	@param  int		$idproduct       	Product Id to add
@@ -372,7 +369,6 @@ class Propal extends CommonObject
 	 *  @return	int							<0 if KO, >0 if OK
 	 *
 	 *	TODO	Replace calls to this function by generation objet Ligne
-	 *			inserted into table $this->products
 	 */
 	public function add_product($idproduct, $qty, $remise_percent = 0)
 	{
@@ -1277,24 +1273,6 @@ class Propal extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Insert into DB a proposal object completely defined by its data members (ex, results from copy).
-	 *
-	 *	@param 		User	$user	User that create
-	 *	@return    	int				Id of the new object if ok, <0 if ko
-	 *	@see       	create()
-	 */
-	public function create_from($user)
-	{
-		// phpcs:enable
-		// i love this function because $this->products is not used in create function...
-		$this->products = $this->lines;
-
-		return $this->create($user);
 	}
 
 	/**

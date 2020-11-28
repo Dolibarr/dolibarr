@@ -366,9 +366,6 @@ if (empty($reshook))
 					$object->statut = Propal::STATUS_DRAFT;
 					$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 					$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
-
-					// the create is done below and further more the existing create_from function is quite hilarating
-					//$id = $object->create_from($user);
 				} else {
 					setEventMessages($langs->trans("ErrorFailedToCopyProposal", GETPOST('copie_propal')), null, 'errors');
 				}

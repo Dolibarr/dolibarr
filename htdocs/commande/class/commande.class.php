@@ -199,6 +199,7 @@ class Commande extends CommonOrder
 	public $rang;
 	public $special_code;
 	public $source; // Order mode. How we received order (by phone, by email, ...)
+
 	public $extraparams = array();
 
 	public $linked_objects = array();
@@ -368,8 +369,6 @@ class Commande extends CommonOrder
 
 		$this->remise = 0;
 		$this->remise_percent = 0;
-
-		$this->products = array();
 	}
 
 	/**
@@ -1690,7 +1689,6 @@ class Commande extends CommonOrder
 	 * 	@return void
 	 *
 	 *	TODO	Remplacer les appels a cette fonction par generation objet Ligne
-	 *			insere dans tableau $this->products
 	 */
 	public function add_product($idproduct, $qty, $remise_percent = 0.0, $date_start = '', $date_end = '')
 	{
@@ -1752,15 +1750,13 @@ class Commande extends CommonOrder
 			 $prods_arbo = $prod->get_arbo_each_prod();
 			 if(count($prods_arbo) > 0)
 			 {
-			 foreach($prods_arbo as $key => $value)
-			 {
-			 // print "id : ".$value[1].' :qty: '.$value[0].'<br>';
-			 if(! in_array($value[1],$this->products))
-			 $this->add_product($value[1], $value[0]);
-
-			 }
-			 }
-
+				 foreach($prods_arbo as $key => $value)
+				 {
+					 // print "id : ".$value[1].' :qty: '.$value[0].'<br>';
+					 if not in lines {
+					 	$this->add_product($value[1], $value[0]);
+					 }
+				 }
 			 }
 			 **/
 		}
