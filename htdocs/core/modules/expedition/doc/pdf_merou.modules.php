@@ -693,6 +693,8 @@ class pdf_merou extends ModelePdfExpedition
 		$blW = 54;
 		$Yoff = $Ydef + 1;
 
+		$widthrecbox = $blW;
+
 		// Show Recipient frame
 		$pdf->SetFont('', 'B', $default_font_size - 3);
 		$pdf->SetXY($blDestX, $Yoff - 4);
