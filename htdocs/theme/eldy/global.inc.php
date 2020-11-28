@@ -108,6 +108,7 @@ body {
     margin-bottom: 0;
     margin-right: 0;
     margin-left: 0;
+    font-weight: 300px;
     <?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
 
@@ -2161,6 +2162,8 @@ div.menu_titre {
 {
 	padding-<?php print $left; ?>: 2px;
 	padding-<?php print $right; ?>: 2px;
+	font-family: Roboto,<?php echo $fontlist; ?>;
+	font-weight: 400;
 }
 
 div.mainmenu {
