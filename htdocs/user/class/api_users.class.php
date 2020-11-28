@@ -264,7 +264,7 @@ class Users extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-    
+
 		if ($includepermissions) {
 			$this->useraccount->getRights();
 		}
