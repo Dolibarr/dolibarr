@@ -168,12 +168,10 @@ abstract class ModeleThirdPartyCode
 		$sql = "";
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $db->num_rows($resql);
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$row = $db->fetch_row($resql);
 				$liste[$row[0]] = $row[1];
 				$i++;
@@ -240,12 +238,16 @@ abstract class ModeleThirdPartyCode
 		$s .= '<br>';
 		if ($type == 0 || $type == -1) {
 			$nextval = $this->getNextValue($soc, 0);
-			if (empty($nextval)) $nextval = $langs->trans("Undefined");
+			if (empty($nextval)) {
+				$nextval = $langs->trans("Undefined");
+			}
 			$s .= $langs->trans("NextValue").($type == -1 ? ' ('.$langs->trans("Customer").')' : '').': <b>'.$nextval.'</b><br>';
 		}
 		if ($type == 1 || $type == -1) {
 			$nextval = $this->getNextValue($soc, 1);
-			if (empty($nextval)) $nextval = $langs->trans("Undefined");
+			if (empty($nextval)) {
+				$nextval = $langs->trans("Undefined");
+			}
 			$s .= $langs->trans("NextValue").($type == -1 ? ' ('.$langs->trans("Supplier").')' : '').': <b>'.$nextval.'</b>';
 		}
 		return $s;
@@ -361,13 +363,17 @@ abstract class ModeleAccountancyCode
 		if ($type == 0 || $type == -1) {
 			$result = $this->get_code($db, $soc, 'customer');
 			$nextval = $this->code;
-			if (empty($nextval)) $nextval = $langs->trans("Undefined");
+			if (empty($nextval)) {
+				$nextval = $langs->trans("Undefined");
+			}
 			$s .= $langs->trans("NextValue").($type == -1 ? ' ('.$langs->trans("Customer").')' : '').': <b>'.$nextval.'</b><br>';
 		}
 		if ($type == 1 || $type == -1) {
 			$result = $this->get_code($db, $soc, 'supplier');
 			$nextval = $this->code;
-			if (empty($nextval)) $nextval = $langs->trans("Undefined");
+			if (empty($nextval)) {
+				$nextval = $langs->trans("Undefined");
+			}
 			$s .= $langs->trans("NextValue").($type == -1 ? ' ('.$langs->trans("Supplier").')' : '').': <b>'.$nextval.'</b>';
 		}
 		return $s;
