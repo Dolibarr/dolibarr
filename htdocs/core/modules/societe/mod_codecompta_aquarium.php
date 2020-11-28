@@ -87,7 +87,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		$texte .= '<tr><td>';
 		// trans remove html entities
 		$texte .= $langs->trans("ModuleCompanyCodeCustomer".$this->name, '{s2}')."<br>\n";
-		$texte .= $langs->trans("ModuleCompanyCodeSupplier".$this->name '{s1}')."<br>\n";
+		$texte .= $langs->trans("ModuleCompanyCodeSupplier".$this->name, '{s1}')."<br>\n";
 		$texte = str_replace(array('{s1}', '{s2}'), array($s1, $s2), $texte);
 		$texte .= "<br>\n";
 		if (!isset($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL) || !empty($conf->global->$conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL)) $texte .= $langs->trans('RemoveSpecialChars').' = '.yn(1)."<br>\n";
