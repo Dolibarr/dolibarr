@@ -137,7 +137,7 @@ print '</table>';
 
 print '<br>';
 
-$activatedExtensions = array_map('strtolower', getActivatedExtensions());
+$activatedExtensions = array();
 $loadedExtensions    = array_map('strtolower', get_loaded_extensions(false));
 
 print '<table class="noborder centpercent">';
@@ -154,7 +154,6 @@ $name      = "GD";
 
 print "<tr>";
 print "<td>".$name."</td>";
-//print getTableColumn($name, $activatedExtensions);
 print getTableColumn($name, $loadedExtensions);
 print getTableColumnFunction($functions);
 print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
@@ -165,7 +164,6 @@ $name      = "Curl";
 
 print "<tr>";
 print "<td>".$name."</td>";
-//print getTableColumn($name, $activatedExtensions);
 print getTableColumn($name, $loadedExtensions);
 print getTableColumnFunction($functions);
 print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
@@ -178,7 +176,6 @@ if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@loc
 
 	print "<tr>";
 	print "<td>".$name."</td>";
-	//print getTableColumn($name, $activatedExtensions);
 	print getTableColumn($name, $loadedExtensions);
 	print getTableColumnFunction($functions);
 	print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
@@ -191,7 +188,6 @@ $name      = "xDebug";
 
 print "<tr>";
 print "<td>".$name."</td>";
-//print getTableColumn($name, $activatedExtensions);
 print getTableColumn($name, $loadedExtensions);
 print getTableColumnFunction($functions);
 print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
@@ -221,7 +217,7 @@ foreach ($phparray as $key => $value)
 			print '<td>'.$keyparam.'</td>';
 			$valtoshow = $keyvalue;
 			if ($keyparam == 'X-ChromePhp-Data') $valtoshow = dol_trunc($keyvalue, 80);
-			print '<td colspan="2">';
+			print '<td colspan="2" class="wordbreak">';
 			if ($keyparam == 'Path') $valtoshow = implode('; ', explode(';', trim($valtoshow)));
 			if ($keyparam == 'PATH') $valtoshow = implode('; ', explode(';', trim($valtoshow)));
 			if ($keyparam == '_SERVER["PATH"]') $valtoshow = implode('; ', explode(';', trim($valtoshow)));
@@ -232,7 +228,7 @@ foreach ($phparray as $key => $value)
 		else
 		{
 			print '<tr class="oddeven">';
-			print '<td>'.$keyparam.'</td>';
+			print '<td class="wordbreak">'.$keyparam.'</td>';
 			$i = 0;
 			foreach ($keyvalue as $keyparam2 => $keyvalue2)
 			{
@@ -256,78 +252,6 @@ foreach ($phparray as $key => $value)
 llxFooter();
 $db->close();
 
-/**
- * Return all list with all activated, but possible not loaded PHP extensions
- *
- * @return array
- */
-function getActivatedExtensions()
-{
-	$file    = getConfigFilePath();
-	$handle  = fopen(GetConfigFilePath(), "r");
-	$content = fread($handle, filesize($file));
-
-	fclose($handle);
-
-	$configLines = explode("\r", $content);
-
-	$extensions = array();
-	$lastLine = "";
-
-	foreach ($configLines as $line)
-	{
-		$line = trim($line);
-
-		// ignore comment lines
-		if (substr($line, 0, 1) === ";")
-		{
-			continue;
-		}
-
-		// extension
-		if (substr($line, 0, 9) === "extension" && substr($line, 0, 10) !== "extension_")
-		{
-			$value = trim(end(explode("=", $line)));
-
-			$extensions[] = $value === "gd2" ? "gd" : $value;
-		}
-
-		// zend_extension
-		if (substr($line, 0, 14) === "zend_extension")
-		{
-			$extensions[] = str_replace("[", "", str_replace("]", "", $lastLine));
-		}
-
-		$lastLine = $line;
-	}
-
-	return array_unique($extensions);
-}
-
-/**
- * Return the path to the current used php config file
- *
- * @return string
- */
-function getConfigFilePath()
-{
-	$phparray = phpinfo_array();
-
-	foreach ($phparray as $value)
-	{
-		foreach ($value as $keyparam => $keyvalue)
-		{
-			if (strtolower($keyparam) !== "loaded configuration file")
-			{
-				continue;
-			}
-
-			return $keyvalue;
-		}
-	}
-
-	return "";
-}
 
 /**
  * Return a table column with a indicator (okay or warning), based on the given name and list
@@ -400,7 +324,7 @@ function getTableColumnFunction(array $functions)
  * Return a result column with a translated result text
  *
  * @param string $name			The name of the PHP extension
- * @param array $activated		A list with all activated PHP extensions
+ * @param array $activated		A list with all activated PHP extensions. Deprecated.
  * @param array $loaded			A list with all loaded PHP extensions
  * @param array $functions		A list with all PHP functions to check
  *
