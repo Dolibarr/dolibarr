@@ -4112,7 +4112,9 @@ if ($action == 'create')
 		$discount = new DiscountAbsolute($db);
 		$result = $discount->fetch(0, $object->id);
 		if ($result > 0) {
-			print '. <span class="opacitymediumbycolor">'.$langs->trans("CreditNoteConvertedIntoDiscount", $object->getLibType(1), $discount->getNomUrl(1, 'discount')).'</span><br>';
+			print '. <span class="opacitymediumbycolor">';
+			print $langs->transnoentities("CreditNoteConvertedIntoDiscount", $object->getLibType(1), $discount->getNomUrl(1, 'discount'));
+			print '</span><br>';
 		}
 	}
 
@@ -4121,10 +4123,9 @@ if ($action == 'create')
 		$tmptemplate = new FactureRec($db);
 		$result = $tmptemplate->fetch($object->fk_fac_rec_source);
 		if ($result > 0) {
-			print '. <span class="opacitymediumbycolor">'.$langs->trans(
-				"GeneratedFromTemplate",
-				'<a href="'.DOL_MAIN_URL_ROOT.'/compta/facture/card-rec.php?facid='.$tmptemplate->id.'">'.$tmptemplate->ref.'</a>'
-			).'</span>';
+			print '. <span class="opacitymediumbycolor">';
+			print $langs->transnoentities("GeneratedFromTemplate", '<a href="'.DOL_MAIN_URL_ROOT.'/compta/facture/card-rec.php?facid='.$tmptemplate->id.'">'.dol_escape_htmltag($tmptemplate->ref).'</a>');
+			print '</span>';
 		}
 	}
 	print '</td></tr>';
