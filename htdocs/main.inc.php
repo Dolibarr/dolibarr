@@ -1307,7 +1307,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 		if (!empty($conf->global->MAIN_ENABLE_FONT_ROBOTO)) {
 			print '<link rel="preconnect" href="https://fonts.gstatic.com">'."\n";
-			print '<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&display=swap" rel="stylesheet">'."\n";
+			print '<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@200;300;400;500;600&display=swap" rel="stylesheet">'."\n";
 		}
 
 		if (!defined('DISABLE_JQUERY') && !$disablejs && $conf->use_javascript_ajax)
