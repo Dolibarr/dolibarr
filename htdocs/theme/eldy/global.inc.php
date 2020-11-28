@@ -2934,7 +2934,7 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 
 	border-right: 1px solid #CCC !important;
 	border-left: 1px solid #CCC !important;
-	border-top: <?php echo 2; ?>px solid var(--colorbackhmenu1) !important;
+	border-top: 3px solid var(--colorbackhmenu1) !important;
 }
 a.tab:hover
 {
