@@ -2411,7 +2411,9 @@ if ($action == 'create')
 			if ($action != 'editline')
 			{
 				// Validate
-				if ($object->statut == Propal::STATUS_DRAFT && $object->total_ttc >= 0 && count($object->lines) > 0)
+
+
+				if (($object->statut == Propal::STATUS_DRAFT && $object->total_ttc >= 0 && count($object->lines) 0) || ($object->statut == Propal::STATUS_DRAFT && !empty($conf->global->PROPAL_ENABLE_NEGATIVE) && count($object->lines) > 0))
 				{
 					if ($usercanvalidate)
 					{
