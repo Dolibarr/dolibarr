@@ -824,15 +824,22 @@ class Form
 						$atleastonefavorite = 0;
 						$out .= '<option value="" disabled class="selectoptiondisabledwhite">------------</option>';
 					}
-					if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['code_iso3'] || $selected == $row['label']))
-					{
-						$out .= '<option value="'.($usecodeaskey ? ($usecodeaskey == 'code2' ? $row['code_iso'] : $row['code_iso3']) : $row['rowid']).'" selected>';
-					} else {
-						$out .= '<option value="'.($usecodeaskey ? ($usecodeaskey == 'code2' ? $row['code_iso'] : $row['code_iso3']) : $row['rowid']).'">';
+
+					$labeltoshow = '';
+					if ($row['label']) $labeltoshow .= dol_trunc($row['label'], $maxlength, 'middle');
+					else $labeltoshow .= '&nbsp;';
+					if ($row['code_iso']) {
+						$labeltoshow .= ' <span class="opacitymedium">('.$row['code_iso'].')</span>';
+						$tmpflag = picto_from_langcode($row['code_iso'], 'class="saturatemedium marginrightonly"');
+						$labeltoshow = $tmpflag.' '.$labeltoshow;
 					}
-					if ($row['label']) $out .= dol_trunc($row['label'], $maxlength, 'middle');
-					else $out .= '&nbsp;';
-					if ($row['code_iso']) $out .= ' ('.$row['code_iso'].')';
+
+					if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['code_iso3'] || $selected == $row['label'])) {
+						$out .= '<option value="'.($usecodeaskey ? ($usecodeaskey == 'code2' ? $row['code_iso'] : $row['code_iso3']) : $row['rowid']).'" selected data-html="'.dol_escape_htmltag($labeltoshow).'">';
+					} else {
+						$out .= '<option value="'.($usecodeaskey ? ($usecodeaskey == 'code2' ? $row['code_iso'] : $row['code_iso3']) : $row['rowid']).'" data-html="'.dol_escape_htmltag($labeltoshow).'">';
+					}
+					$out .= $labeltoshow;
 					$out .= '</option>';
 				}
 			}
