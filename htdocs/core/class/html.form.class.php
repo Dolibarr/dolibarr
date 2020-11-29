@@ -5102,19 +5102,21 @@ class Form
 		$out .= '<select class="flat maxwidth200onsmartphone minwidth300" name="'.$htmlname.'" id="'.$htmlname.'">';
 		foreach ($langs->cache_currencies as $code_iso => $currency)
 		{
-			if ($selected && $selected == $code_iso)
-			{
-				$out .= '<option value="'.$code_iso.'" selected>';
-			} else {
-				$out .= '<option value="'.$code_iso.'">';
-			}
-			$out .= $currency['label'];
+			$labeltoshow = $currency['label'];
 			if ($mode == 1)
 			{
-				$out .= ' ('.$code_iso.')';
+				$labeltoshow .= ' <span class="opacitymedium">('.$code_iso.')</span>';
 			} else {
-				$out .= ' ('.$langs->getCurrencySymbol($code_iso).')';
+				$labeltoshow .= ' <span class="opacitymedium">('.$langs->getCurrencySymbol($code_iso).')</span>';
 			}
+
+			if ($selected && $selected == $code_iso)
+			{
+				$out .= '<option value="'.$code_iso.'" selected data-html="'.dol_escape_htmltag($labeltoshow).'">';
+			} else {
+				$out .= '<option value="'.$code_iso.'" data-html="'.dol_escape_htmltag($labeltoshow).'">';
+			}
+			$out .= $labeltoshow;
 			$out .= '</option>';
 		}
 		$out .= '</select>';

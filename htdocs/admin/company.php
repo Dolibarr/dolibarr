@@ -406,11 +406,12 @@ print '<input name="nom" id="name" class="minwidth200" value="'.dol_escape_htmlt
 print '<tr class="oddeven"><td><label for="MAIN_INFO_SOCIETE_ADDRESS">'.$langs->trans("CompanyAddress").'</label></td><td>';
 print '<textarea name="MAIN_INFO_SOCIETE_ADDRESS" id="MAIN_INFO_SOCIETE_ADDRESS" class="quatrevingtpercent" rows="'.ROWS_3.'">'.($conf->global->MAIN_INFO_SOCIETE_ADDRESS ? $conf->global->MAIN_INFO_SOCIETE_ADDRESS : GETPOST("MAIN_INFO_SOCIETE_ADDRESS", 'nohtml')).'</textarea></td></tr>'."\n";
 
+// Zip
 print '<tr class="oddeven"><td><label for="MAIN_INFO_SOCIETE_ZIP">'.$langs->trans("CompanyZip").'</label></td><td>';
-print '<input class="minwidth100" name="MAIN_INFO_SOCIETE_ZIP" id="MAIN_INFO_SOCIETE_ZIP" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_ZIP ? $conf->global->MAIN_INFO_SOCIETE_ZIP : GETPOST("MAIN_INFO_SOCIETE_ZIP", 'alpha')).'"></td></tr>'."\n";
+print '<input class="width100" name="MAIN_INFO_SOCIETE_ZIP" id="MAIN_INFO_SOCIETE_ZIP" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_ZIP ? $conf->global->MAIN_INFO_SOCIETE_ZIP : GETPOST("MAIN_INFO_SOCIETE_ZIP", 'alpha')).'"></td></tr>'."\n";
 
 print '<tr class="oddeven"><td><label for="MAIN_INFO_SOCIETE_TOWN">'.$langs->trans("CompanyTown").'</label></td><td>';
-print '<input name="MAIN_INFO_SOCIETE_TOWN" class="minwidth100" id="MAIN_INFO_SOCIETE_TOWN" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_TOWN ? $conf->global->MAIN_INFO_SOCIETE_TOWN : GETPOST("MAIN_INFO_SOCIETE_TOWN", 'nohtml')).'"></td></tr>'."\n";
+print '<input name="MAIN_INFO_SOCIETE_TOWN" class="minwidth200" id="MAIN_INFO_SOCIETE_TOWN" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_TOWN ? $conf->global->MAIN_INFO_SOCIETE_TOWN : GETPOST("MAIN_INFO_SOCIETE_TOWN", 'nohtml')).'"></td></tr>'."\n";
 
 // Country
 print '<tr class="oddeven"><td class="fieldrequired"><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td class="maxwidthonsmartphone">';
