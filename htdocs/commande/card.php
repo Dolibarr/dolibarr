@@ -453,26 +453,15 @@ if (empty($reshook))
 				if (!$error)
 				{
 					$object_id = $object->create($user);
-
-					// If some invoice's lines already known
-					$NBLINES = 8;
-					for ($i = 1; $i <= $NBLINES; $i++) {
-						if ($_POST['idprod'.$i]) {
-							$xid = 'idprod'.$i;
-							$xqty = 'qty'.$i;
-							$xremise = 'remise_percent'.$i;
-							$object->add_product($_POST[$xid], $_POST[$xqty], $_POST[$xremise]);
-						}
-					}
 				}
 			}
 
 			// Insert default contacts if defined
 			if ($object_id > 0)
 			{
-				if (GETPOST('contactid'))
+				if (GETPOST('contactid', 'int'))
 				{
-					$result = $object->add_contact(GETPOST('contactid'), 'CUSTOMER', 'external');
+					$result = $object->add_contact(GETPOST('contactid', 'int'), 'CUSTOMER', 'external');
 					if ($result < 0) {
 						setEventMessages($langs->trans("ErrorFailedToAddContact"), null, 'errors');
 						$error++;
