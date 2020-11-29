@@ -499,6 +499,10 @@ input.pageplusone {
     padding-top: 4px;
 }
 
+.saturatemedium {
+	filter: saturate(0.8);
+}
+
 .optionblue {
 	color: rgb(<?php echo $colortextlink; ?>);
 }

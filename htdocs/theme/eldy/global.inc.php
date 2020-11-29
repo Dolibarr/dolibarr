@@ -367,6 +367,10 @@ input.pageplusone {
     padding-top: 4px;
 }
 
+.saturatemedium {
+	filter: saturate(0.8);
+}
+
 .optionblue {
 	color: var(--colortextlink);
 }
@@ -1032,27 +1036,34 @@ select.flat.selectlimit {
 .tablelistofcalendars {
 	margin-top: 25px !important;
 }
+
+/* Styles for amount on card */
+table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaintopay {
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
 .amountalreadypaid {
 }
 .amountpaymentcomplete {
 	color: var(--amountpaymentcomplete);
 	font-weight: bold;
-	font-size: 1.2em;
+	font-size: 1.7em;
 }
 .amountremaintopay {
 	color: var(--amountremaintopaycolor);
 	font-weight: bold;
-	font-size: 1.2em;
+	font-size: 1.7em;
 }
 .amountremaintopayback {
 	color: var(--amountremaintopaybackcolor);
 	font-weight: bold;
-	font-size: 1.2em;
+	font-size: 1.7em;
 }
 .amountpaymentneutral {
 	font-weight: bold;
-	font-size: 1.2em;
+	font-size: 1.7em;
 }
+
 .onlinepaymentbody .amountpaymentcomplete {
     background-color: var(--amountpaymentcomplete);
     color: #fff;
@@ -5328,6 +5339,10 @@ div.dataTables_length select {
 /* ============================================================================== */
 /*  Select2                                                                       */
 /* ============================================================================== */
+
+span.select2-selection--single.flat[aria-disabled="true"] span.select2-selection__rendered {
+	opacity: 0.5;
+}
 
 span#select2-taskid-container[title^='--'] {
     opacity: 0.3;

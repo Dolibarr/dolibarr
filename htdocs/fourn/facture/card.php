@@ -2480,7 +2480,9 @@ if ($action == 'create')
 
 		// Type
 		print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td>';
+		print '<span class="badgeneutral">';
 		print $object->getLibType();
+		print '</span>';
 		if ($object->type == FactureFournisseur::TYPE_REPLACEMENT)
 		{
 			$facreplaced = new FactureFournisseur($db);
@@ -2519,7 +2521,7 @@ if ($action == 'create')
 			$discount = new DiscountAbsolute($db);
 			$result = $discount->fetch(0, 0, $object->id);
 			if ($result > 0) {
-				print '. '.$langs->trans("CreditNoteConvertedIntoDiscount", $object->getLibType(1), $discount->getNomUrl(1, 'discount')).'<br>';
+				print ' '.$langs->trans("CreditNoteConvertedIntoDiscount", $object->getLibType(1), $discount->getNomUrl(1, 'discount')).'<br>';
 			}
 		}
 		print '</td></tr>';
@@ -2902,10 +2904,12 @@ if ($action == 'create')
 		{
 			// Total already paid
 			print '<tr><td colspan="'.$nbcols.'" class="right">';
+			print '<span class="opacitymedium">';
 			if ($object->type != FactureFournisseur::TYPE_DEPOSIT)
 				print $langs->trans('AlreadyPaidNoCreditNotesNoDeposits');
 			else print $langs->trans('AlreadyPaid');
-			print ' :</td><td class="right"'.(($totalpaye > 0) ? ' class="amountalreadypaid"' : '').'>'.price($totalpaye).'</td><td>&nbsp;</td></tr>';
+			print '</span>';
+			print '</td><td class="right"'.(($totalpaye > 0) ? ' class="amountalreadypaid"' : '').'>'.price($totalpaye).'</td><td>&nbsp;</td></tr>';
 
 			//$resteapayer = $object->total_ttc - $totalpaye;
 			$resteapayeraffiche = $resteapayer;
@@ -2953,7 +2957,9 @@ if ($action == 'create')
 			// Paye partiellement 'escompte'
 			if (($object->statut == FactureFournisseur::STATUS_CLOSED || $object->statut == FactureFournisseur::STATUS_ABANDONED) && $object->close_code == 'discount_vat') {
 				print '<tr><td colspan="'.$nbcols.'" class="right nowrap">';
-				print $form->textwithpicto($langs->trans("Discount").':', $langs->trans("HelpEscompte"), - 1);
+				print '<span class="opacitymedium">';
+				print $form->textwithpicto($langs->trans("Discount"), $langs->trans("HelpEscompte"), - 1);
+				print '</span>';
 				print '</td><td class="right">'.price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
 				$resteapayeraffiche = 0;
 				$cssforamountpaymentcomplete = 'amountpaymentneutral';
@@ -2961,7 +2967,9 @@ if ($action == 'create')
 			// Paye partiellement ou Abandon 'badsupplier'
 			if (($object->statut == FactureFournisseur::STATUS_CLOSED || $object->statut == FactureFournisseur::STATUS_ABANDONED) && $object->close_code == 'badsupplier') {
 				print '<tr><td colspan="'.$nbcols.'" class="right nowrap">';
-				print $form->textwithpicto($langs->trans("Abandoned").':', $langs->trans("HelpAbandonBadCustomer"), - 1);
+				print '<span class="opacitymedium">';
+				print $form->textwithpicto($langs->trans("Abandoned"), $langs->trans("HelpAbandonBadCustomer"), - 1);
+				print '</span>';
 				print '</td><td class="right">'.price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
 				// $resteapayeraffiche=0;
 				$cssforamountpaymentcomplete = 'amountpaymentneutral';
@@ -2969,7 +2977,9 @@ if ($action == 'create')
 			// Paye partiellement ou Abandon 'product_returned'
 			if (($object->statut == FactureFournisseur::STATUS_CLOSED || $object->statut == FactureFournisseur::STATUS_ABANDONED) && $object->close_code == 'product_returned') {
 				print '<tr><td colspan="'.$nbcols.'" class="right nowrap">';
-				print $form->textwithpicto($langs->trans("ProductReturned").':', $langs->trans("HelpAbandonProductReturned"), - 1);
+				print '<span class="opacitymedium">';
+				print $form->textwithpicto($langs->trans("ProductReturned"), $langs->trans("HelpAbandonProductReturned"), - 1);
+				print '</span>';
 				print '</td><td class="right">'.price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
 				$resteapayeraffiche = 0;
 				$cssforamountpaymentcomplete = 'amountpaymentneutral';
@@ -2980,21 +2990,29 @@ if ($action == 'create')
 				$text = $langs->trans("HelpAbandonOther");
 				if ($object->close_note)
 					$text .= '<br><br><b>'.$langs->trans("Reason").'</b>:'.$object->close_note;
-				print $form->textwithpicto($langs->trans("Abandoned").':', $text, - 1);
+				print '<span class="opacitymedium">';
+				print $form->textwithpicto($langs->trans("Abandoned"), $text, - 1);
+				print '</span>';
 				print '</td><td class="right">'.price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
 				$resteapayeraffiche = 0;
 				$cssforamountpaymentcomplete = 'amountpaymentneutral';
 			}
 
 			// Billed
-			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("Billed").' :</td><td class="right">'.price($object->total_ttc).'</td><td>&nbsp;</td></tr>';
+			print '<tr><td colspan="'.$nbcols.'" class="right">';
+			print '<span class="opacitymedium">';
+			print $langs->trans("Billed");
+			print '</span>';
+			print '</td><td class="right">'.price($object->total_ttc).'</td><td>&nbsp;</td></tr>';
 
 			// Remainder to pay
 			print '<tr><td colspan="'.$nbcols.'" class="right">';
+			print '<span class="opacitymedium">';
 			if ($resteapayeraffiche >= 0)
 				print $langs->trans('RemainderToPay');
 			else print $langs->trans('ExcessPaid');
-			print ' :</td>';
+			print '</span>';
+			print '</td>';
 			print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($resteapayeraffiche).'</td>';
 			print '<td class="nowrap">&nbsp;</td></tr>';
 		} else // Credit note
@@ -3011,10 +3029,12 @@ if ($action == 'create')
 
 			// Remainder to pay back
 			print '<tr><td colspan="'.$nbcols.'" class="right">';
+			print '<span class="opacitymedium">';
 			if ($resteapayeraffiche <= 0)
 				print $langs->trans('RemainderToPayBack');
 			else print $langs->trans('ExcessPaid');
-			print ' :</td>';
+			print '</td>';
+			print '</span>';
 			print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($sign * $resteapayeraffiche).'</td>';
 			print '<td class="nowrap">&nbsp;</td></tr>';
 
