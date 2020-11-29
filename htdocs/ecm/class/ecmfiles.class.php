@@ -895,16 +895,16 @@ class EcmFiles extends CommonObject
 		global $conf, $user;
 
 		$this->id = 0;
-
+		$this->specimen = 1;
 		$this->label = '0a1b2c3e4f59999999';
-		$this->entity = '1';
+		$this->entity = 1;
 		$this->filename = 'myspecimenfilefile.pdf';
 		$this->filepath = '/aaa/bbb';
 		$this->fullpath_orig = 'c:/file on my disk.pdf';
 		$this->description = 'This is a long description of file';
 		$this->keywords = 'key1,key2';
 		$this->cover = '1';
-		$this->position = '5';
+		$this->position = 5;
 		$this->gen_or_uploaded = 'uploaded';
 		$this->extraparams = '';
 		$this->date_c = (dol_now() - 3600 * 24 * 10);
