@@ -38,11 +38,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
-$mode = GETPOST("mode") ?GETPOST("mode") : 'customer';
+$mode = GETPOSTISSET("mode") ? GETPOST("mode", 'aZ09') : 'customer';
 if ($mode == 'customer' && !$user->rights->commande->lire) accessforbidden();
 if ($mode == 'supplier' && !$user->rights->fournisseur->commande->lire) accessforbidden();
 
-$object_status = GETPOST('object_status');
+$object_status = GETPOST('object_status', 'intcomma');
 $typent_id = GETPOST('typent_id', 'int');
 $categ_id = GETPOST('categ_id', 'categ_id');
 
@@ -308,11 +308,11 @@ if ($mode == 'customer')
         Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
         Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceled")
     );
-    print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'int'), -4);
+    print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'intcomma'), -4);
 }
 if ($mode == 'supplier')
 {
-    $formorder->selectSupplierOrderStatus((strstr($object_status, ',') ?-1 : $object_status), 0, 'object_status');
+    $formorder->selectSupplierOrderStatus((strstr($object_status, ',') ? -1 : $object_status), 0, 'object_status');
 }
 print '</td></tr>';
 // Year

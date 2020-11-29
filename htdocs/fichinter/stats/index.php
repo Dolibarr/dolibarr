@@ -42,12 +42,12 @@ if ($user->socid > 0)
 }
 
 $nowyear = strftime("%Y", dol_now());
-$year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
+$year = GETPOST('year') > 0 ? GETPOST('year', 'int') : $nowyear;
 //$startyear=$year-2;
 $startyear = $year - 1;
 $endyear = $year;
 
-$object_status = GETPOST('object_status');
+$object_status = GETPOST('object_status', 'intcomma');
 
 // Load translation files required by the page
 $langs->loadLangs(array('interventions', 'companies', 'other', 'suppliers'));

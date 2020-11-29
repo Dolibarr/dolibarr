@@ -37,11 +37,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
-$mode = GETPOST("mode") ?GETPOST("mode") : 'customer';
+$mode = GETPOSTISSET("mode") ? GETPOST("mode", 'aZ09') : 'customer';
 if ($mode == 'customer' && !$user->rights->propale->lire) accessforbidden();
 if ($mode == 'supplier' && !$user->rights->supplier_proposal->lire) accessforbidden();
 
-$object_status = GETPOST('object_status');
+$object_status = GETPOST('object_status', 'intcomma');
 $typent_id = GETPOST('typent_id', 'int');
 $categ_id = GETPOST('categ_id', 'categ_id');
 
@@ -55,7 +55,7 @@ if ($user->socid > 0)
 }
 
 $nowyear = strftime("%Y", dol_now());
-$year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
+$year = GETPOST('year') > 0 ? GETPOST('year', 'int') : $nowyear;
 //$startyear=$year-2;
 $startyear = $year - 1;
 $endyear = $year;

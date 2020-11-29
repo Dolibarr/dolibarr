@@ -34,8 +34,8 @@ $langs->loadLangs(array('trips', 'companies'));
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
-$mode = GETPOST("mode") ?GETPOST("mode") : 'customer';
-$object_status = GETPOST('object_status');
+$mode = GETPOSTISSET("mode") ? GETPOST("mode", 'aZ09') : 'customer';
+$object_status = GETPOST('object_status', 'intcomma');
 
 $userid = GETPOST('userid', 'int');
 $socid = GETPOST('socid', 'int'); if ($socid < 0) $socid = 0;
@@ -51,7 +51,7 @@ if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'expensereport', $id, '');
 
 $nowyear = strftime("%Y", dol_now());
-$year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
+$year = GETPOST('year') > 0 ? GETPOST('year', 'int') : $nowyear;
 //$startyear=$year-2;
 $startyear = $year - 1;
 $endyear = $year;
@@ -231,7 +231,7 @@ print '</td></tr>';
 // Status
 print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
 $liststatus = $tmpexpensereport->statuts;
-print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'int'), -4, 0, 0, '', 1);
+print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'intcomma'), -4, 0, 0, '', 1);
 print '</td></tr>';
 // Year
 print '<tr><td>';
