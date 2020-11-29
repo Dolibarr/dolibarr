@@ -1965,8 +1965,8 @@ div.statusrefbis {
 }
 img.photoref, div.photoref {
 	/* border: 1px solid #DDD; */
-    -webkit-box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
-    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+    -webkit-box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
     padding: 4px;
 	height: 80px;
 	width: 80px;
