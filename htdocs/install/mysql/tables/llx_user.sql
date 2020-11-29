@@ -80,6 +80,7 @@ create table llx_user
   model_pdf         varchar(255) DEFAULT NULL,
   datelastlogin     datetime,
   datepreviouslogin datetime,
+  datelastpassvalidation datetime,
   datestartvalidity datetime,
   dateendvalidity   datetime,
   iplastlogin       varchar(250),
