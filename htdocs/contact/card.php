@@ -11,6 +11,7 @@
  * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2020       Open-Dsi     			<support@open-dsi.fr>
+ * Copyright (C) 2020       Bailly Benjamin         <benjamin@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1297,14 +1298,36 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$morehtmlref = '<div class="refidno">';
-		if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
-		{
-			$objsoc->fetch($object->socid);
-			// Thirdparty
-			$morehtmlref .= $langs->trans('ThirdParty').' : ';
-			if ($objsoc->id > 0) $morehtmlref .= $objsoc->getNomUrl(1, 'contact');
-			else $morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
-		}
+
+		   // Code added here, resolving issue when users who have no access rights to see for fournisseurs can access to them anyway by passing trough contacts  // 
+		   $sql = "SELECT fournisseur, client FROM " . MAIN_DB_PREFIX . "societe WHERE nom = '" . $object->socname . "'";
+		   $resql = $db->query($sql);
+		   if ($resql) {
+			   $result = $resql->fetch_object();
+		   }
+		   if ($result->client == 0 && $result->fournisseur > 0) {
+			   if (!empty($user->rights->fournisseur->lire)) {
+				   if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+					   $objsoc = new Societe($db);
+					   $objsoc->fetch($object->socid);
+					   // Thirdparty
+					   $morehtmlref .= $langs->trans('ThirdParty') . ' : ';
+					   if ($objsoc->id > 0) $morehtmlref .= $objsoc->getNomUrl(1, 'contact');
+					   else $morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
+				   }
+			   }
+		   }
+		   
+		   if (empty($conf->global->SOCIETE_DISABLE_CONTACTS) && $result->client > 0)
+		   {
+			   $objsoc = new Societe($db);
+			   $objsoc->fetch($object->socid);
+			   // Thirdparty
+			   $morehtmlref .= $langs->trans('ThirdParty').' : ';
+			   if ($objsoc->id > 0) $morehtmlref .= $objsoc->getNomUrl(1, 'contact');
+			   else $morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
+		   }
+   
 		$morehtmlref .= '</div>';
 
 		dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
