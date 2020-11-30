@@ -171,9 +171,7 @@ class SupplierProposal extends CommonObject
 	public $remise_percent = 0;
 	public $remise_absolue = 0;
 
-	public $products = array();
 	public $extraparams = array();
-
 	public $lines = array();
 	public $line;
 
@@ -237,15 +235,12 @@ class SupplierProposal extends CommonObject
 
 		$this->socid = $socid;
 		$this->id = $supplier_proposalid;
-
-		$this->products = array();
 	}
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 	Add line into array products
-	 *  $this->client doit etre charge
+	 * 	Add line into array ->lines
 	 *
 	 * 	@param  int		$idproduct       	Product Id to add
 	 * 	@param  int		$qty             	Quantity
@@ -253,7 +248,6 @@ class SupplierProposal extends CommonObject
 	 *  @return	int							<0 if KO, >0 if OK
 	 *
 	 *	TODO	Remplacer les appels a cette fonction par generation objet Ligne
-	 *			insere dans tableau $this->products
 	 */
 	public function add_product($idproduct, $qty, $remise_percent = 0)
 	{
@@ -1083,23 +1077,6 @@ class SupplierProposal extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Insert into DB a supplier_proposal object completely defined by its data members (ex, results from copy).
-	 *
-	 *	@param 		User	$user	User that create
-	 *	@return    	int				Id of the new object if ok, <0 if ko
-	 *	@see       	create()
-	 */
-	public function create_from($user)
-	{
-		// phpcs:enable
-		$this->products = $this->lines;
-
-		return $this->create($user);
 	}
 
 	/**

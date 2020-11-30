@@ -208,7 +208,6 @@ class Propal extends CommonObject
 	public $demand_reason_id;
 	public $demand_reason_code;
 
-	public $products = array();
 	public $extraparams = array();
 
 	/**
@@ -355,15 +354,13 @@ class Propal extends CommonObject
 		$this->socid = $socid;
 		$this->id = $propalid;
 
-		$this->products = array();
-
 		$this->duree_validite = ((int) $conf->global->PROPALE_VALIDITY_DURATION);
 	}
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Add line into array products
+	 *  Add line into array ->lines
 	 *  $this->thirdparty should be loaded
 	 *
 	 * 	@param  int		$idproduct       	Product Id to add
@@ -372,7 +369,6 @@ class Propal extends CommonObject
 	 *  @return	int							<0 if KO, >0 if OK
 	 *
 	 *	TODO	Replace calls to this function by generation objet Ligne
-	 *			inserted into table $this->products
 	 */
 	public function add_product($idproduct, $qty, $remise_percent = 0)
 	{
@@ -1277,24 +1273,6 @@ class Propal extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Insert into DB a proposal object completely defined by its data members (ex, results from copy).
-	 *
-	 *	@param 		User	$user	User that create
-	 *	@return    	int				Id of the new object if ok, <0 if ko
-	 *	@see       	create()
-	 */
-	public function create_from($user)
-	{
-		// phpcs:enable
-		// i love this function because $this->products is not used in create function...
-		$this->products = $this->lines;
-
-		return $this->create($user);
 	}
 
 	/**
@@ -2947,8 +2925,21 @@ class Propal extends CommonObject
 			if (! $this->db->query($sqlef) || ! $this->db->query($sql)) {
 				$error++;
 				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
 				dol_syslog(get_class($this)."::delete error ".$this->error, LOG_ERR);
 			}
+		}
+
+		if (!$error) {
+			// Delete linked object
+			$res = $this->deleteObjectLinked();
+			if ($res < 0) $error++;
+		}
+
+		if (!$error) {
+			// Delete linked contacts
+			$res = $this->delete_linked_contact();
+			if ($res < 0) $error++;
 		}
 
 		// Removed extrafields of object
@@ -2966,25 +2957,15 @@ class Propal extends CommonObject
 			$res = $this->db->query($sql);
 			if (! $res) {
 				$error++;
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
 				dol_syslog(get_class($this)."::delete error ".$this->error, LOG_ERR);
 			}
 		}
 
-		if (! $error) {
-			// Delete linked object
-			$res = $this->deleteObjectLinked();
-			if ($res < 0) $error++;
-		}
-
-		if (! $error) {
-			// Delete linked contacts
-			$res = $this->delete_linked_contact();
-			if ($res < 0) $error++;
-		}
-
 		// Delete record into ECM index and physically
 		if (!$error) {
-			$res = $this->deleteEcmFiles(); // Deleting files physically is done later with the dol_delete_dir_recursive
+			$res = $this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
 			if (! $res) {
 				$error++;
 			}
@@ -3001,7 +2982,7 @@ class Propal extends CommonObject
 
 					if (!dol_delete_file($file, 0, 0, 0, $this)) {
 						$this->error = 'ErrorFailToDeleteFile';
-						$this->errors = array('ErrorFailToDeleteFile');
+						$this->errors[] = $this->error;
 						$this->db->rollback();
 						return 0;
 					}
@@ -3010,7 +2991,7 @@ class Propal extends CommonObject
 					$res = @dol_delete_dir_recursive($dir);
 					if (!$res) {
 						$this->error = 'ErrorFailToDeleteDir';
-						$this->errors = array('ErrorFailToDeleteDir');
+						$this->errors[] = $this->error;
 						$this->db->rollback();
 						return 0;
 					}

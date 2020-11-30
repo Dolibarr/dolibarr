@@ -119,7 +119,7 @@ $arrayfields = array(
 	't.label'=>array('label'=>$langs->trans("LabelTask"), 'checked'=>1, 'position'=>80),
 	't.description'=>array('label'=>$langs->trans("Description"), 'checked'=>0, 'position'=>80),
 	't.dateo'=>array('label'=>$langs->trans("DateStart"), 'checked'=>1, 'position'=>100),
-	't.datee'=>array('label'=>$langs->trans("DateEnd"), 'checked'=>1, 'position'=>101),
+	't.datee'=>array('label'=>$langs->trans("Deadline"), 'checked'=>1, 'position'=>101),
 	'p.ref'=>array('label'=>$langs->trans("ProjectRef"), 'checked'=>1),
 	'p.title'=>array('label'=>$langs->trans("ProjectLabel"), 'checked'=>0),
 	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>0),
@@ -654,7 +654,7 @@ while ($i < min($num, $limit))
 	$object->description = $obj->description;
 	$object->fk_statut = $obj->fk_statut;
 	$object->progress = $obj->progress;
-	$object->datee = $db->jdate($obj->date_end); // deprecated
+	$object->date_start = $db->jdate($obj->date_start);
 	$object->date_end = $db->jdate($obj->date_end);
 	$object->planned_workload = $obj->planned_workload;
 	$object->duration_effective = $obj->duration_effective;

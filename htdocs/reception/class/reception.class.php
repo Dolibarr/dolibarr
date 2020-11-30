@@ -68,7 +68,6 @@ class Reception extends CommonObject
 
 	public $brouillon;
 	public $entrepot_id;
-	public $lines = array();
 	public $tracking_number;
 	public $tracking_url;
 	public $billed;
@@ -106,6 +105,8 @@ class Reception extends CommonObject
 	public $meths;
 	public $listmeths; // List of carriers
 
+	public $lines = array();
+
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -121,8 +122,6 @@ class Reception extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
-		$this->lines = array();
-		$this->products = array();
 
 		// List of long language codes for status
 		$this->statuts = array();

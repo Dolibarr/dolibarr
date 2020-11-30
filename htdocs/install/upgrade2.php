@@ -531,7 +531,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				print '</td></tr>';
 			} else {
 				print '<tr><td colspan="4">';
-				print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: OK';
+				print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: <span class="ok">OK</span>';
 				print "<!-- (".$reshook.") -->";
 				print '</td></tr>';
 			}
@@ -1353,9 +1353,9 @@ function migrate_paiementfourn_facturefourn($db, $langs, $conf)
 						if ($insert_resql)
 						{
 							$nb++;
-							print '<td><span style="color:green">'.$langs->trans("OK").'</span></td>';
+							print '<td><span class="ok">'.$langs->trans("OK").'</span></td>';
 						} else {
-							print '<td><span style="color:red">Error on insert</span></td>';
+							print '<td><span class="error">Error on insert</span></td>';
 							$error++;
 						}
 						print '</tr>';

@@ -400,6 +400,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$pageposbefore = $pdf->getPage();
 
 					$showpricebeforepagebreak = 1;
+					$posYAfterImage = 0;
 
 					// Description of product line
 					$curX = $this->posxdesc - 1;

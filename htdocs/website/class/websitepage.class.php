@@ -81,6 +81,7 @@ class WebsitePage extends CommonObject
 	 */
 	public $lang;
 
+	public $allowed_in_frames;
 	public $htmlheader;
 	public $content;
 	public $grabbed_from;
@@ -160,6 +161,7 @@ class WebsitePage extends CommonObject
 		//'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'index'=>true,   'position'=>1000),
 		'fk_website'     =>array('type'=>'integer', 'label'=>'WebsiteId', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>40, 'searchall'=>0, 'foreignkey'=>'websitepage.rowid'),
 		'fk_page'        =>array('type'=>'integer', 'label'=>'ParentPageId', 'enabled'=>1, 'visible'=>1, 'notnull'=>-1, 'position'=>45, 'searchall'=>0, 'foreignkey'=>'website.rowid'),
+		'allowed_in_frames'   =>array('type'=>'integer', 'label'=>'AllowedInFrames', 'enabled'=>1, 'visible'=>-1, 'position'=>48, 'searchall'=>0),
 		'htmlheader'     =>array('type'=>'text', 'label'=>'HtmlHeader', 'enabled'=>1, 'visible'=>0, 'position'=>50, 'searchall'=>0),
 		'content'        =>array('type'=>'mediumtext', 'label'=>'Content', 'enabled'=>1, 'visible'=>0, 'position'=>51, 'searchall'=>0),
 		'grabbed_from'   =>array('type'=>'varchar(255)', 'label'=>'GrabbedFrom', 'enabled'=>1, 'visible'=>1, 'index'=>1, 'position'=>400, 'comment'=>'URL page content was grabbed from'),
@@ -265,6 +267,7 @@ class WebsitePage extends CommonObject
 		$sql .= " t.content,";
 		$sql .= " t.lang,";
 		$sql .= " t.fk_page,";
+		$sql .= " t.allowed_in_frames,";
 		$sql .= " t.status,";
 		$sql .= " t.grabbed_from,";
 		$sql .= " t.date_creation,";
@@ -325,6 +328,7 @@ class WebsitePage extends CommonObject
 				$this->content = $obj->content;
 				$this->lang = $obj->lang;
 				$this->fk_page = $obj->fk_page;
+				$this->allowed_in_frames = $obj->allowed_in_frames;
 				$this->status = $obj->status;
 				$this->grabbed_from = $obj->grabbed_from;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
@@ -383,6 +387,7 @@ class WebsitePage extends CommonObject
 		$sql .= " t.content,";
 		$sql .= " t.lang,";
 		$sql .= " t.fk_page,";
+		$sql .= " t.allowed_in_frames,";
 		$sql .= " t.status,";
 		$sql .= " t.grabbed_from,";
 		$sql .= " t.date_creation,";
@@ -453,6 +458,7 @@ class WebsitePage extends CommonObject
 				$record->content = $obj->content;
 				$record->lang = $obj->lang;
 				$record->fk_page = $obj->fk_page;
+				$record->allowed_in_frames = $obj->allowed_in_frames;
 				$record->status = $obj->status;
 				$record->grabbed_from = $obj->grabbed_from;
 				$record->date_creation = $this->db->jdate($obj->date_creation);
@@ -839,6 +845,7 @@ class WebsitePage extends CommonObject
 		$this->description = 'This is my page';
 		$this->image = '';
 		$this->keywords = 'keyword1, keyword2';
+		$this->allowed_in_frames = 1;
 		$this->htmlheader = '';
 		$this->content = '<html><body>This is a html content</body></html>';
 		$this->status = '';

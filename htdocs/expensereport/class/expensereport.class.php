@@ -1104,8 +1104,21 @@ class ExpenseReport extends CommonObject
 			if (! $this->db->query($sql)) {
 				$error++;
 				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
 				dol_syslog(get_class($this)."::delete error ".$this->error, LOG_ERR);
 			}
+		}
+
+		if (!$error) {
+			// Delete linked object
+			$res = $this->deleteObjectLinked();
+			if ($res < 0) $error++;
+		}
+
+		if (!$error) {
+			// Delete linked contacts
+			$res = $this->delete_linked_contact();
+			if ($res < 0) $error++;
 		}
 
 		// Removed extrafields of object
@@ -1123,25 +1136,15 @@ class ExpenseReport extends CommonObject
 			$res = $this->db->query($sql);
 			if (! $res) {
 				$error++;
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
 				dol_syslog(get_class($this)."::delete error ".$this->error, LOG_ERR);
 			}
 		}
 
-		if (! $error) {
-			// Delete linked object
-			$res = $this->deleteObjectLinked();
-			if ($res < 0) $error++;
-		}
-
-		if (! $error) {
-			// Delete linked contacts
-			$res = $this->delete_linked_contact();
-			if ($res < 0) $error++;
-		}
-
 		// Delete record into ECM index and physically
 		if (!$error) {
-			$res = $this->deleteEcmFiles(); // Deleting files physically is done later with the dol_delete_dir_recursive
+			$res = $this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
 			if (! $res) {
 				$error++;
 			}
@@ -1150,15 +1153,15 @@ class ExpenseReport extends CommonObject
 		if (!$error) {
 			// We remove directory
 			$ref = dol_sanitizeFileName($this->ref);
-			if ($conf->propal->multidir_output[$this->entity] && !empty($this->ref)) {
-				$dir = $conf->propal->multidir_output[$this->entity]."/".$ref;
+			if ($conf->expensereport->multidir_output[$this->entity] && !empty($this->ref)) {
+				$dir = $conf->expensereport->multidir_output[$this->entity]."/".$ref;
 				$file = $dir."/".$ref.".pdf";
 				if (file_exists($file)) {
 					dol_delete_preview($this);
 
 					if (!dol_delete_file($file, 0, 0, 0, $this)) {
 						$this->error = 'ErrorFailToDeleteFile';
-						$this->errors = array('ErrorFailToDeleteFile');
+						$this->errors[] = $this->error;
 						$this->db->rollback();
 						return 0;
 					}
@@ -1167,7 +1170,7 @@ class ExpenseReport extends CommonObject
 					$res = @dol_delete_dir_recursive($dir);
 					if (!$res) {
 						$this->error = 'ErrorFailToDeleteDir';
-						$this->errors = array('ErrorFailToDeleteDir');
+						$this->errors[] = $this->error;
 						$this->db->rollback();
 						return 0;
 					}
@@ -1802,6 +1805,7 @@ class ExpenseReport extends CommonObject
 			$localtaxes_type = getLocalTaxesFromRate($vatrate, 0, $mysoc, $this->thirdparty);
 
 			$vat_src_code = '';
+			$reg = array();
 			if (preg_match('/\s*\((.*)\)/', $vatrate, $reg))
 			{
 				$vat_src_code = $reg[1];
@@ -2035,6 +2039,7 @@ class ExpenseReport extends CommonObject
 			$localtaxes_type = getLocalTaxesFromRate($vatrate, 0, $buyer, $seller);
 
 			// Clean vat code
+			$reg = array();
 			$vat_src_code = '';
 			if (preg_match('/\((.*)\)/', $vatrate, $reg))
 			{
@@ -2050,10 +2055,6 @@ class ExpenseReport extends CommonObject
 
 			$tx_tva = $vatrate / 100;
 			$tx_tva = $tx_tva + 1;
-			$total_ht = price2num($total_ttc / $tx_tva, 'MT');
-
-			$total_tva = price2num($total_ttc - $total_ht, 'MT');
-			// fin calculs
 
 			$this->line = new ExpenseReportLine($this->db);
 			$this->line->comments        = $comments;

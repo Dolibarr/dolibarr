@@ -433,9 +433,7 @@ while ($i < min($num, $limit)) {
 
 	// Lastname
 	if (!empty($arrayfields['d.lastname']['checked'])) {
-		$adherent->firstname = '';
-		print '<td>'.$adherent->getNomUrl(-1).'</td>';
-		$adherent->firstname = $obj->firstname;
+		print '<td>'.$adherent->getNomUrl(-1, 0, 'card', 'lastname').'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 	// Firstname

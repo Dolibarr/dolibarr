@@ -940,6 +940,7 @@ if ($action == 'addcontainer')
 		$objectpage->otherlang = GETPOST('WEBSITE_OTHERLANG', 'aZ09comma');
 		$objectpage->image = GETPOST('WEBSITE_IMAGE', 'alpha');
 		$objectpage->keywords = str_replace(array('<', '>'), '', GETPOST('WEBSITE_KEYWORDS', 'alphanohtml'));
+		$objectpage->allowed_in_frames = GETPOST('WEBSITE_ALLOWED_IN_FRAMES', 'aZ09');
 		$objectpage->htmlheader = GETPOST('htmlheader', 'none');
 		$objectpage->author_alias = GETPOST('WEBSITE_AUTHORALIAS', 'alphanohtml');
 		$objectpage->object_type = GETPOST('WEBSITE_OBJECTCLASS');
@@ -1562,7 +1563,7 @@ if ($action == 'setashome')
 	}
 }
 
-// Update page (meta)
+// Update page properties (meta)
 if ($action == 'updatemeta')
 {
 	$db->begin();
@@ -1656,6 +1657,7 @@ if ($action == 'updatemeta')
 		$objectpage->description = str_replace(array('<', '>'), '', GETPOST('WEBSITE_DESCRIPTION', 'alphanohtml'));
 		$objectpage->image = GETPOST('WEBSITE_IMAGE', 'alpha');
 		$objectpage->keywords = str_replace(array('<', '>'), '', GETPOST('WEBSITE_KEYWORDS', 'alphanohtml'));
+		$objectpage->allowed_in_frames = GETPOST('WEBSITE_ALLOWED_IN_FRAMES', 'aZ09');
 		$objectpage->htmlheader = trim(GETPOST('htmlheader', 'none'));
 		$objectpage->fk_page = (GETPOST('pageidfortranslation', 'int') > 0 ? GETPOST('pageidfortranslation', 'int') : 0);
 		$objectpage->author_alias = trim(GETPOST('WEBSITE_AUTHORALIAS', 'alphanohtml'));
@@ -2831,7 +2833,6 @@ if (!GETPOST('hide_websitemenu'))
 		print '</span>'; // end websitehelp
 
 
-
 		if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')
 		{
 			// Adding jquery code to change on the fly url of preview ext
@@ -2885,7 +2886,6 @@ if (!GETPOST('hide_websitemenu'))
 
 	print '</div>'; // end current websitebar
 }
-
 
 
 $head = array();
@@ -3279,7 +3279,7 @@ if ($action == 'importsite')
 	print '<br>';
 }
 
-if ($action == 'editmeta' || $action == 'createcontainer')
+if ($action == 'editmeta' || $action == 'createcontainer')	// Edit properties of a web site OR properties of a web page
 {
 	print '<div class="fiche">';
 
@@ -3366,6 +3366,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		$pageimage = $objectpage->image;
 		$pagekeywords = $objectpage->keywords;
 		$pagelang = $objectpage->lang;
+		$pageallowedinframes = $objectpage->allowed_in_frames;
 		$pagehtmlheader = $objectpage->htmlheader;
 		$pagedatecreation = $objectpage->date_creation;
 		$pagedatemodification = $objectpage->date_modification;
@@ -3389,6 +3390,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	if (GETPOST('WEBSITE_IMAGE', 'alpha'))       $pageimage = GETPOST('WEBSITE_IMAGE', 'alpha');
 	if (GETPOST('WEBSITE_KEYWORDS', 'alpha'))    $pagekeywords = str_replace(array('<', '>'), '', GETPOST('WEBSITE_KEYWORDS', 'alphanohtml'));
 	if (GETPOST('WEBSITE_LANG', 'aZ09'))         $pagelang = GETPOST('WEBSITE_LANG', 'aZ09');
+	if (GETPOST('WEBSITE_ALLOWED_IN_FRAMES', 'aZ09')) $pageallowedinframes = GETPOST('WEBSITE_ALLOWED_IN_FRAMES', 'aZ09');
 	if (GETPOST('htmlheader', 'none'))			 $pagehtmlheader = GETPOST('htmlheader', 'none');
 
 	if ($action != 'createcontainer')
@@ -3542,6 +3544,15 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	}
 	print '</td></tr>';
 
+	// Allowed in frames
+	print '<tr><td>';
+	print $langs->trans('AllowedInFrames');
+	//$htmlhelp = $langs->trans("AllowedInFramesDesc");
+	//print $form->textwithpicto($langs->trans('AllowedInFrames'), $htmlhelp, 1, 'help', '', 0, 2, 'allowedinframestooltip');
+	print '</td><td>';
+	print '<input type="checkbox" class="flat" name="WEBSITE_ALLOWED_IN_FRAMES" value="1"'.($pageallowedinframes ? 'checked="checked"' : '').'>';
+	print '</td></tr>';
+
 	// Categories
 	if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire))
 	{
@@ -3566,18 +3577,19 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		print "</td></tr>";
 	}
 
-	print '<tr><td class="titlefieldcreate">';
-	print 'ObjectClass';
-	print '</td><td>';
-	print '<input type="text" class="flat minwidth300" name="WEBSITE_OBJECTCLASS" placeholder="ClassName::/path/class/ObjectClass.class.php" >';
-	print '</td></tr>';
+	if (!empty($conf->global->WEBSITE_PAGE_SHOW_INTERNAL_LINKS_TO_OBJECT)) {
+		print '<tr><td class="titlefieldcreate">';
+		print 'ObjectClass';
+		print '</td><td>';
+		print '<input type="text" class="flat minwidth300" name="WEBSITE_OBJECTCLASS" placeholder="ClassName::/path/class/ObjectClass.class.php" >';
+		print '</td></tr>';
 
-	print '<tr><td class="titlefieldcreate">';
-	print 'ObjectID';
-	print '</td><td>';
-	print '<input type="text" class="flat minwidth300" name="WEBSITE_OBJECTID" >';
-	print '</td></tr>';
-
+		print '<tr><td class="titlefieldcreate">';
+		print 'ObjectID';
+		print '</td><td>';
+		print '<input type="text" class="flat minwidth300" name="WEBSITE_OBJECTID" >';
+		print '</td></tr>';
+	}
 
 	$fuser = new User($db);
 

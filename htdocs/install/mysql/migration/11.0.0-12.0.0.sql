@@ -335,3 +335,6 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (72
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,note,active) values (722, 72,   '18','0', '0.9', '1', 'VAT Rate 18+0.9', 1);
 
 ALTER TABLE llx_expedition ADD COLUMN billed smallint    DEFAULT 0;
+
+-- VMYSQL4.3 ALTER TABLE llx_mrp_mo MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+

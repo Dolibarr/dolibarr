@@ -203,4 +203,27 @@ class LangTest extends PHPUnit\Framework\TestCase
 
         return;
     }
+
+    /**
+     * testTrans
+     *
+     * @return string
+     */
+    public function testTrans()
+    {
+    	global $conf,$user,$langs,$db;
+    	$conf=$this->savconf;
+    	$user=$this->savuser;
+    	$langs=$this->savlangs;
+    	$db=$this->savdb;
+
+    	$tmplangs=new Translate('', $conf);
+    	$langcode='en_US';
+    	$tmplangs->setDefaultLang($langcode);
+    	$tmplangs->load("main");
+
+    	$result = $tmplangs->trans("FilterOnInto", "<input autofocus onfocus='alert(1337)' <--!");
+    	print __METHOD__." result trans FilterOnInto = ".$result."\n";
+    	$this->assertEquals($result, "Search criteria '<b>&lt;input autofocus onfocus='alert(1337)' &lt;--!</b>' into fields ", 'Result of lang->trans must have original translation string with its original HTML tag, but inserted values must be fully encoded.');
+    }
 }
