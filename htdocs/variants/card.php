@@ -43,7 +43,7 @@ if ($object->fetch($id) < 1) {
 
 if ($cancel) $action = '';
 
-if ($_POST) {
+if ($action) {
 	if ($action == 'edit') {
 		$object->ref = $ref;
 		$object->label = $label;

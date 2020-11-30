@@ -80,13 +80,11 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
 		}
 	}
 
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id.($withproject ? '&withproject=1' : ''));
 		exit;
-	} else {$nbofcontacts
-		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-		{
+	} else {
+		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
 		} else {
@@ -98,8 +96,7 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
 // bascule du statut d'un contact
 if ($action == 'swapstatut' && $user->rights->projet->creer)
 {
-	if ($object->fetch($id, $ref))
-	{
+	if ($object->fetch($id, $ref)) {
 		$result = $object->swapContactStatus(GETPOST('ligne'));
 	} else {
 		dol_print_error($db);
@@ -407,7 +404,6 @@ if ($id > 0 || !empty($ref))
 				print '<input type="hidden" name="source" value="external">';
 				print '<input type="hidden" name="id" value="'.$object->id.'">';
 				if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">';
-
 
 				print '<tr class="oddeven">';
 
