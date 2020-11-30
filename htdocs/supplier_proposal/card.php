@@ -1217,9 +1217,9 @@ if ($action == 'create')
 	$liste = ModelePDFSupplierProposal::liste_modeles($db);
 	if ( count($liste) > 1 ) {
 		print '<tr>';
-		print '<td>' . $langs->trans( "DefaultModel" ) . '</td>';
+		print '<td>' . $langs->trans("DefaultModel") . '</td>';
 		print '<td colspan="2">';
-		print $form->selectarray( 'model', $liste, ( $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT : $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF ) );
+		print $form->selectarray('model', $liste, ( $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT : $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF ));
 		print "</td></tr>";
 	}
 	// Project
