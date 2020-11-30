@@ -111,7 +111,8 @@ class modFacture extends DolibarrModules
 		$this->boxes = array(
 				0=>array('file'=>'box_factures_imp.php', 'enabledbydefaulton'=>'Home'),
 				1=>array('file'=>'box_factures.php', 'enabledbydefaulton'=>'Home'),
-				2=>array('file'=>'box_graph_invoices_permonth.php', 'enabledbydefaulton'=>'Home')
+				2=>array('file'=>'box_graph_invoices_permonth.php', 'enabledbydefaulton'=>'Home'),
+				3=>array('file'=>'box_customers_outstanding_bill_reached.php','enabledbydefaulton'=>'Home')
 		);
 
 		// Cronjobs
