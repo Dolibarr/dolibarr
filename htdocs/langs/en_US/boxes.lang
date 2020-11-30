@@ -46,6 +46,7 @@ BoxTitleLastModifiedDonations=Latest %s modified donations
 BoxTitleLastModifiedExpenses=Latest %s modified expense reports
 BoxTitleLatestModifiedBoms=Latest %s modified BOMs
 BoxTitleLatestModifiedMos=Latest %s modified Manufacturing Orders
+BoxTitleLastOutstandingBillReached=Latest %s customers with maximum outstanding exceeded
 BoxGlobalActivity=Global activity (invoices, proposals, orders)
 BoxGoodCustomers=Good customers
 BoxTitleGoodCustomers=%s Good customers

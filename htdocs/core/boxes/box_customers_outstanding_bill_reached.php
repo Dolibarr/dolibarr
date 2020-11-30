@@ -82,7 +82,7 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 		$thirdpartystatic = new Societe($this->db);
 
-		$this->info_box_head = array('text' => "Last Cutomers Outstanding Bill Reached");
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastOutstandingBillReached", $max));
 
 		if ($user->rights->societe->lire)
 		{
@@ -142,11 +142,6 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 							'td' => '',
 							'text' => $thirdpartystatic->getNomUrl(1),
 							'asis' => 1,
-						);
-
-						$this->info_box_contents[$line][] = array(
-							'td' => 'class="right"',
-							'text' => dol_print_date($datem, "day")
 						);
 
 						$this->info_box_contents[$line][] = array(
