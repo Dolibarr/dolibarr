@@ -772,11 +772,6 @@ if (!empty($id) || !empty($ref))
 			print '<a href="combinations.php?id='.$object->id.'&action=copy" class="butAction">'.$langs->trans('PropagateVariant').'</a>';
 		}
 
-		// Too much bugged page.
-		/*
-		print '<a href="generator.php?id='.$object->id.'" class="butAction">'.$langs->trans('ProductCombinationGenerator').'</a>';
-		*/
-
 		print '	</div>';
 
 		print '</div>';
