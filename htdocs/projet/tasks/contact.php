@@ -84,7 +84,7 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id.($withproject ? '&withproject=1' : ''));
 		exit;
-	} else {
+	} else {$nbofcontacts
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
@@ -423,7 +423,8 @@ if ($id > 0 || !empty($ref))
 
 				print '<td>';
 				$contactofproject = $projectstatic->getListContactId('external');
-				$nbofcontacts = $form->select_contacts($selectedCompany, '', 'contactid', 0, '', $contactofproject);
+				print $form->selectcontacts($selectedCompany, '', 'contactid', 0, '', $contactofproject);
+				$nbofcontacts = $form->num;
 				print '</td>';
 				print '<td>';
 				$formcompany->selectTypeContact($object, '', 'type', 'external', 'rowid');

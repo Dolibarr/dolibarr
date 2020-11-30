@@ -1456,6 +1456,7 @@ class Form
 		$langs->load('companies');
 
 		if (empty($htmlid)) $htmlid = $htmlname;
+		$num = 0;
 
 		if ($selected === '') $selected = array();
 		elseif (!is_array($selected)) $selected = array($selected);
@@ -4999,7 +5000,8 @@ class Form
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
-			$num = $this->select_contacts($societe->id, $selected, $htmlname);
+			print $this->selectcontacts($societe->id, $selected, $htmlname);
+			$num = $this->num;
 			if ($num == 0)
 			{
 				$addcontact = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
