@@ -143,7 +143,7 @@ if (empty($user->socid)) $fieldstosearchall["c.note_private"] = "NotePrivate";
 $checkedtypetiers = 0;
 $arrayfields = array(
 	'c.ref'=>array('label'=>"Ref", 'checked'=>1, 'position'=>5),
-    'c.ref_client'=>array('label'=>"RefCustomerOrder", 'checked'=>1, 'position'=>10),
+    'c.ref_client'=>array('label'=>"RefCustomerOrder", 'checked'=>-1, 'position'=>10),
     'p.ref'=>array('label'=>"ProjectRef", 'checked'=>1, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1), 'position'=>20),
     'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1), 'position'=>25),
     's.nom'=>array('label'=>"ThirdParty", 'checked'=>1, 'position'=>30),
