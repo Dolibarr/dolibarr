@@ -78,7 +78,7 @@ class Categorie extends CommonObject
 		'bank_line'    => 8,
 		'warehouse'    => 9,
         'actioncomm'   => 10,
-		'website_page' => 11
+		'website_page' => 11,
 	);
 
     /**
@@ -98,6 +98,7 @@ class Categorie extends CommonObject
 		8 => 'bank_line',
 		9 => 'warehouse',
         10 => 'actioncomm',
+        11 => 'website_page',
 	);
 
 	/**
@@ -140,7 +141,7 @@ class Categorie extends CommonObject
         'project'  => 'Project',
         'warehouse'=> 'Entrepot',
         'actioncomm' => 'ActionComm',
-		'website_page' => 'WebsitePage'
+		'website_page' => 'WebsitePage',
 	);
 
     /**
@@ -216,7 +217,6 @@ class Categorie extends CommonObject
 	/**
 	 * @var string	Category type
 	 *
-	 * @see Categorie::TYPE_ACCOUNT
 	 * @see Categorie::TYPE_PRODUCT
 	 * @see Categorie::TYPE_SUPPLIER
 	 * @see Categorie::TYPE_CUSTOMER
@@ -224,9 +224,11 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_CONTACT
 	 * @see Categorie::TYPE_USER
 	 * @see Categorie::TYPE_PROJECT
+	 * @see Categorie::TYPE_ACCOUNT
 	 * @see Categorie::TYPE_BANK_LINE
      * @see Categorie::TYPE_WAREHOUSE
      * @see Categorie::TYPE_ACTIONCOMM
+     * @see Categorie::TYPE_WEBSITE_PAGE
 	 */
 	public $type;
 
