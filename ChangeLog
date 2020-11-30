@@ -178,10 +178,8 @@ NEW: #15065 Add option to put the product label in bold in the PDF templates if 
 
 For developers:
 ---------------
-NEW: Hook on propal card
 NEW: add __MEMBER_TYPE__ substitution key
 NEW: add function dolButtonToOpenUrlInDialogPopup() to be able to open page into a popup
-NEW: add hooks on stats pages
 NEW: show line number on intervention card (via MAIN_VIEW_LINE_NUMBER)
 NEW: API get contacts list of a given order
 NEW: API endpoint getContacts and Clean results
@@ -210,15 +208,19 @@ NEW: standardizes API thirdparties by email like other object
 NEW: Thirdparty REST API: endpoint to set price level
 NEW: use new category API for project list view
 NEW: Triggers Attributes and Attributes values
-NEW: add hooks on newpayment page to allow external payment modules
 NEW: added incoterms data into the substitution array
-NEW: add formConfirm hook on product page
 NEW: add send context for ticket
 NEW: add a message in error_log after detection of SQL or script injection
 NEW: add two hooks printFieldListFrom and printFieldSearchParam
 NEW: add __TYPE__ substitution key
 NEW: add validation of MX domain for emails
 NEW: calculate the virtual stock in transverse mode ( not on getEntity('commande'), ... but on getEntity('stock') )
+
+HOOKs
+NEW: Hook on propal card
+NEW: add hooks on newpayment page to allow external payment modules
+NEW: add hooks on stats pages
+NEW: add formConfirm hook on product page
 
 
 WARNING:
@@ -238,6 +240,7 @@ Following changes may create regressions for some external modules, but were nec
 * The API addPayment for api_invoice has evolved to accept amount into a foreign currency. You must provide array(amount=>X,mutlicurrency_ammount=>Y) instead of simple amount.
 * The method select_thirdparty(), deprecated since 3.8, into html.form.class.php has been removed.
 * Depreciate all methods with name ->valide(). Use instead methods ->validate().
+
 
 
 ***** ChangeLog for 12.0.3 compared to 12.0.2 *****
