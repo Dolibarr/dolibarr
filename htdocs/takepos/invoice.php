@@ -412,16 +412,21 @@ if ($action == "delete") {
         {
         	$db->begin();
 
-        	// We delete the lines
-        	$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_extrafields where fk_object = ".$placeid;
-        	$resql1 = $db->query($sql);
-        	$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet where fk_facture = ".$placeid;
-            $resql2 = $db->query($sql);
+			// We delete the lines
+			$resdeletelines = 1;
+			foreach($invoice->lines as $line){
+				$tmpres = $invoice->deleteline($line->id);
+				if ($tmpres < 0) {
+					$resdeletelines = 0;
+					break;
+				}
+			}
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]};
 			$sql .= " WHERE ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
-			$resql3 = $db->query($sql);
+			$resql1 = $db->query($sql);
 
-            if ($resql1 && $resql2 && $resql3)
+			if ($resdeletelines && $resql1)
             {
             	$db->commit();
             }
@@ -430,7 +435,7 @@ if ($action == "delete") {
             	$db->rollback();
             }
 
-            $invoice->fetch($placeid);
+			$invoice->fetch($placeid);
         }
     }
 }
