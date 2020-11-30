@@ -92,7 +92,7 @@ $diroutputmassaction = $conf->contrat->dir_output.'/temp/massgeneration/'.$user-
 $staticcontrat = new Contrat($db);
 $staticcontratligne = new ContratLigne($db);
 
-if ($search_status == '') $search_status = 1;
+if ($search_status == '') $search_status = "";
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Contrat($db);
@@ -106,6 +106,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
 	'c.ref'=>'Ref',
+	'c.statut'=>'Contract Status',
 	'c.ref_customer'=>'RefCustomer',
 	'c.ref_supplier'=>'RefSupplier',
 	's.nom'=>"ThirdParty",
@@ -124,6 +125,7 @@ $arrayfields = array(
 	'state.nom'=>array('label'=>$langs->trans("StateShort"), 'checked'=>0),
 	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
 	'sale_representative'=>array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>1),
+	'c.statut'=>array('label'=>$langs->trans("Contract Status"), 'checked'=>1),
 	'c.date_contrat'=>array('label'=>$langs->trans("DateContract"), 'checked'=>1),
 	'c.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'c.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
@@ -217,6 +219,7 @@ $sql .= ' SUM('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.
 $sql .= ' SUM('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now)."')", 1, 0).') as nb_expired,';
 $sql .= ' SUM('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now - $conf->contrat->services->expires->warning_delay)."')", 1, 0).') as nb_late,';
 $sql .= ' SUM('.$db->ifsql("cd.statut=5", 1, 0).') as nb_closed';
+
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
@@ -256,6 +259,12 @@ if ($search_sale > 0)
 }
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if ($search_user > 0) $sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='contrat' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
+
+if ($search_status != '' && $search_status != '-1')
+{
+	$sql .= ' AND c.statut IN ('.$db->sanitize($db->escape($search_status)).')';
+}
+
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
@@ -344,6 +353,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&co
 if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 if ($sall != '')                $param .= '&sall='.urlencode($sall);
 if ($search_contract != '')     $param .= '&search_contract='.urlencode($search_contract);
+if ($search_status != '')     $param .= '&search_status='.urlencode($search_status);
 if ($search_name != '')         $param .= '&search_name='.urlencode($search_name);
 if ($search_email != '')        $param .= '&search_email='.urlencode($search_email);
 if ($search_ref_customer != '') $param .= '&search_ref_customer='.urlencode($search_ref_customer);
@@ -548,11 +558,28 @@ if (!empty($arrayfields['lower_planned_end_date']['checked']))
 		$formother->select_year($search_dfyear, 'search_dfyear', 1, 20, 5, 0, 0, '');
 		print '</td>';
 }
+
 // Status
 if (!empty($arrayfields['status']['checked']))
 {
 	print '<td class="liste_titre right" colspan="4"></td>';
 }
+
+// Status
+if (!empty($arrayfields['c.statut']['checked']))
+{
+	$arrayOfStatuses = array(
+		0 => 'Draft',
+		1 => 'Active',
+		2 => 'Closed'
+	);
+
+
+	print '<td class="liste_titre maxwidthonsmartphone center">';
+	print $form->selectarray('search_status', $arrayOfStatuses, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'width100');
+	print '</td>';
+}
+
 print '<td class="liste_titre center">';
 $searchpicto = $form->showFilterButtons();
 print $searchpicto;
@@ -593,6 +620,10 @@ if (!empty($arrayfields['status']['checked'])) {
 	print_liste_field_titre($staticcontratligne->LibStatut(4, 3, 1, 'class="nochangebackground"'), '', '', '', '', 'width="16"');
 	print_liste_field_titre($staticcontratligne->LibStatut(5, 3, -1, 'class="nochangebackground"'), '', '', '', '', 'width="16"');
 }
+if (!empty($arrayfields['c.statut']['checked'])) {
+	print_liste_field_titre($arrayfields['c.statut']['label'], $_SERVER["PHP_SELF"], "c.statut", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+}
+
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>\n";
 
@@ -775,6 +806,11 @@ while ($i < min($num, $limit))
 		print '<td class="center">'.($obj->nb_running > 0 ? $obj->nb_running : '').'</td>';
 		print '<td class="center">'.($obj->nb_expired > 0 ? $obj->nb_expired : '').'</td>';
 		print '<td class="center">'.($obj->nb_closed > 0 ? $obj->nb_closed : '').'</td>';
+	}
+	// Contract Status
+	if (!empty($arrayfields['c.statut']['checked']))
+	{
+		print '<td class="center">'.$staticcontrat->LibStatut($obj->statut,2).'</td>';
 	}
 	// Action column
 	print '<td class="nowrap center">';
