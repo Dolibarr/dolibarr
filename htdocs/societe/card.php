@@ -1543,10 +1543,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		if (!empty($backtopage))
 		{
 			print ' &nbsp; &nbsp; ';
-			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		} else {
 			print ' &nbsp; &nbsp; ';
-			print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+			print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 		}
 		print '</div>'."\n";
 
@@ -2186,7 +2186,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print '<div class="center">';
 			print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 			print ' &nbsp; &nbsp; ';
-			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 
 			print '</form>';

@@ -81,7 +81,7 @@ $theme = 'eldy'; // Value of theme
 if (!empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path = '/'.$conf->global->MAIN_OVERWRITE_THEME_RES; $theme = $conf->global->MAIN_OVERWRITE_THEME_RES; }
 
 // Define image path files and other constants
-$fontlist = 'roboto,arial,tahoma,verdana,helvetica'; //$fontlist='helvetica, verdana, arial, sans-serif';
+$fontlist = 'arial,tahoma,verdana,helvetica'; //$fontlist='helvetica, verdana, arial, sans-serif';
 //$fontlist='"open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;';
 $img_head = '';
 $img_button = dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png', 1);

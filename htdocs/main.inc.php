@@ -68,6 +68,8 @@ function testSqlAndScriptInject($val, $type)
 	// We clean string because some hacks try to obfuscate evil strings by inserting non printable chars. Example: 'java(ascci09)scr(ascii00)ipt' is processed like 'javascript' (whatever is place of evil ascii char)
 	// We should use dol_string_nounprintableascii but function is not yet loaded/available
 	$val = preg_replace('/[\x00-\x1F\x7F]/u', '', $val); // /u operator makes UTF8 valid characters being ignored so are not included into the replace
+	// We clean html comments because some hacks try to obfuscate evil strings by inserting HTML comments. Example: on<!-- -->error=alert(1)
+	$val = preg_replace('/<!--[^>]*-->/', '', $val);
 
 	$inj = 0;
 	// For SQL Injection (only GET are used to be included into bad escaped SQL requests)
@@ -228,6 +230,11 @@ if (!empty($_POST["DOL_AUTOSET_COOKIE"]))
 
 // Init the 5 global objects, this include will make the 'new Xxx()' and set properties for: $conf, $db, $langs, $user, $mysoc
 require_once 'master.inc.php';
+
+// Set the handler of session
+if (ini_get('session.save_handler') == 'user') {
+	require_once 'core/lib/phpsessionindb.lib.php';
+}
 
 // Init session. Name of session is specific to Dolibarr instance.
 // Must be done after the include of master.inc.php so $conf file is loaded and vars like $dolibarr_main_force_https are set.
@@ -1298,6 +1305,11 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		if (GETPOSTISSET('THEME_DARKMODEENABLED')) { $themeparam .= '&amp;THEME_DARKMODEENABLED='.GETPOST('THEME_DARKMODEENABLED', 'int'); }
 		if (GETPOSTISSET('THEME_SATURATE_RATIO')) { $themeparam .= '&amp;THEME_SATURATE_RATIO='.GETPOST('THEME_SATURATE_RATIO', 'int'); }
 
+		if (!empty($conf->global->MAIN_ENABLE_FONT_ROBOTO)) {
+			print '<link rel="preconnect" href="https://fonts.gstatic.com">'."\n";
+			print '<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@200;300;400;500;600&display=swap" rel="stylesheet">'."\n";
+		}
+
 		if (!defined('DISABLE_JQUERY') && !$disablejs && $conf->use_javascript_ajax)
 		{
 			print '<!-- Includes CSS for JQuery (Ajax library) -->'."\n";
@@ -1412,7 +1424,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				print 'var urlLoadInPlace = \''.DOL_URL_ROOT.'/core/ajax/loadinplace.php\';'."\n";
 				print 'var tooltipInPlace = \''.$langs->transnoentities('ClickToEdit').'\';'."\n"; // Added in title attribute of span
 				print 'var placeholderInPlace = \'&nbsp;\';'."\n"; // If we put another string than $langs->trans("ClickToEdit") here, nothing is shown. If we put empty string, there is error, Why ?
-				print 'var cancelInPlace = \''.$langs->trans('Cancel').'\';'."\n";
+				print 'var cancelInPlace = \''.$langs->trans("Cancel").'\';'."\n";
 				print 'var submitInPlace = \''.$langs->trans('Ok').'\';'."\n";
 				print 'var indicatorInPlace = \'<img src="'.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'">\';'."\n";
 				print 'var withInPlace = 300;'; // width in pixel for default string edit
@@ -1687,8 +1699,12 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			if ($helpbaseurl && $helppage)
 			{
 				$text = '';
-				$title = $langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage' : 'GoToHelpPage');
-				if ($mode == 'wiki') $title .= ' - '.$langs->trans("PageWiki").' &quot;'.dol_escape_htmltag(strtr($helppage, '_', ' ')).'&quot;'."";
+				$title = $langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage' : 'GoToHelpPage').'...';
+				if ($mode == 'wiki') {
+					$title .= '<br>'.$langs->trans("PageWiki").' '.dol_escape_htmltag('"'.strtr($helppage, '_', ' ').'"');
+					if ($helppresent) $title.= ' <span class="opacitymedium">('.$langs->trans("DedicatedPageAvailable").')</span>';
+					else $title.= ' <span class="opacitymedium">('.$langs->trans("HomePage").')</span>';
+				}
 				$text .= '<a class="help" target="_blank" rel="noopener" href="';
 				if ($mode == 'wiki') $text .= sprintf($helpbaseurl, urlencode(html_entity_decode($helppage)));
 				else $text .= sprintf($helpbaseurl, $helppage);
@@ -1707,7 +1723,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		}
 
 		if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-			$text = '<span href="#" class="aversion"><span class="hideonsmartphone small">'.DOL_VERSION.'</span></span>';
+			$text = '<span class="aversion"><span class="hideonsmartphone small">'.DOL_VERSION.'</span></span>';
 			$toprightmenu .= $form->textwithtooltip('', $appli, 2, 1, $text, 'login_block_elem', 2);
 		}
 

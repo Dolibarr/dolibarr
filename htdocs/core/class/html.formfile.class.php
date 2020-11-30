@@ -188,7 +188,7 @@ class FormFile
 			if ($addcancel)
 			{
 				$out .= ' &nbsp; ';
-				$out .= '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+				$out .= '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			}
 
 			if (!empty($conf->global->MAIN_UPLOAD_DOC))
@@ -1363,7 +1363,7 @@ class FormFile
 						print '<td class="right">';
 						print '<input type="hidden" name="ecmfileid" value="'.$filearray[$key]['rowid'].'">';
 						print '<input type="submit" class="button button-save" name="renamefilesave" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
-						print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+						print '<input type="submit" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 						print '</td>';
 						if (empty($disablemove)) print '<td class="right"></td>';
 					}
@@ -1853,8 +1853,8 @@ class FormFile
 				print '<td class="center">'.dol_print_date(dol_now(), "dayhour", "tzuser").'</td>';
 				print '<td class="right"></td>';
 				print '<td class="right">';
-				print '<input type="submit" name="save" class="button" value="'.dol_escape_htmltag($langs->trans('Save')).'">';
-				print '<input type="submit" name="cancel" class="button" value="'.dol_escape_htmltag($langs->trans('Cancel')).'">';
+				print '<input type="submit" name="save" class="button button-save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '<input type="submit" name="cancel" class="button button-cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 				print '</td>';
 			} else {
 				print '<td>';

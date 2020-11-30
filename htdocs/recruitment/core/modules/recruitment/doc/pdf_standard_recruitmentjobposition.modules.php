@@ -1213,7 +1213,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	        ),
 	        'border-left' => true, // add left line separator
 	    );
-	    if ($conf->global->PRODUCT_USE_UNITS) {
+	    if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 	        $this->cols['unit']['status'] = true;
 	    }
 

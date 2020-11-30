@@ -519,7 +519,7 @@ if ($id > 0 || $ref)
 					print '<input class="flat" name="qty" size="5" value="'.$quantity.'">';
 				}
 				// Units
-				if ($conf->global->PRODUCT_USE_UNITS) {
+				if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 					$unit = $object->getLabelOfUnit();
 					if ($unit !== '') {
 						print '&nbsp;&nbsp;'.$langs->trans($unit);
@@ -537,7 +537,7 @@ if ($id > 0 || $ref)
 					print '<input class="flat" name="packaging" size="5" value="'.$packaging.'">';
 
 					// Units
-					if ($conf->global->PRODUCT_USE_UNITS) {
+					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 						$unit = $object->getLabelOfUnit();
 						if ($unit !== '') {
 							print '&nbsp;&nbsp;'.$langs->trans($unit);
@@ -826,7 +826,7 @@ END;
 				print '<div class="center">';
 				print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
 				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-				print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+				print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</div>';
 
 				print '</form>';
@@ -1000,7 +1000,7 @@ END;
 							print '<td class="right">';
 							print $productfourn->fourn_qty;
 							// Units
-							if ($conf->global->PRODUCT_USE_UNITS) {
+							if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 								$unit = $object->getLabelOfUnit();
 								if ($unit !== '') {
 									print '&nbsp;&nbsp;'.$langs->trans($unit);

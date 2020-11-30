@@ -168,7 +168,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
 		}
 	}
-	if (isset($_POST["code"]))
+	if (GETPOSTISSET("code"))
 	{
 		if ($_POST["code"] == '0')
 		{
@@ -705,7 +705,7 @@ if ($id)
 					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 					print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
 					print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
-					print '<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+					print '<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 					print '</td>';
 					print '<td></td>';
 				} else {

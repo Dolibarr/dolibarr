@@ -280,7 +280,7 @@ if (empty($reshook) && $action == 'add')
 				}
 			}
 		}
-		$object->fk_project = isset($_POST["projectid"]) ? $_POST["projectid"] : 0;
+		$object->fk_project = GETPOSTISSET("projectid") ? GETPOST("projectid", 'int') : 0;
 
 		$taskid = GETPOST('taskid', 'int');
 		if (!empty($taskid)) {
@@ -324,7 +324,7 @@ if (empty($reshook) && $action == 'add')
 
 	$object->note_private = trim(GETPOST("note", "restricthtml"));
 
-	if (isset($_POST["contactid"])) $object->contact = $contact;
+	if (GETPOSTISSET("contactid")) $object->contact = $contact;
 
 	if (GETPOST('socid', 'int') > 0)
 	{
@@ -1051,8 +1051,8 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
 	print '<td>';
 	$percent = -1;
-	if (isset($_GET['status']) || isset($_POST['status'])) $percent = GETPOST('status');
-	elseif (isset($_GET['percentage']) || isset($_POST['percentage'])) $percent = GETPOST('percentage');
+	if (GETPOSTISSET('status')) $percent = GETPOST('status');
+	elseif (GETPOSTISSET('percentage')) $percent = GETPOST('percentage');
 	else {
 		if (GETPOST('complete') == '0' || GETPOST("afaire") == 1) $percent = '0';
 		elseif (GETPOST('complete') == 100 || GETPOST("afaire") == 2) $percent = 100;
@@ -1291,9 +1291,9 @@ if ($action == 'create')
 	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Add").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	if (empty($backtopage)) {
-		print '<input type="button" class="button" name="cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+		print '<input type="button" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 	} else {
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	}
 	print '</div>';
 
@@ -1774,7 +1774,7 @@ if ($id > 0)
 		print '<div class="center">';
 		print '<input type="submit" class="button button-save" name="edit" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		print '</form>';

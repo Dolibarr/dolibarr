@@ -36,7 +36,7 @@ if (!empty($conf->multicurrency->enabled))
 	print '<td class="right">'.$this->tpl['multicurrency_price'].'</td>';
 
 print '<td class="right">'.$this->tpl['qty'].'</td>';
-if ($conf->global->PRODUCT_USE_UNITS)
+if (!empty($conf->global->PRODUCT_USE_UNITS))
 	print '<td class="left">'.$langs->trans($this->tpl['unit']).'</td>';
 
 print '<td class="right">'.$this->tpl['remise_percent'].'</td>';

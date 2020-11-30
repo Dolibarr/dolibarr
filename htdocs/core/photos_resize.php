@@ -455,7 +455,7 @@ print '<input type="hidden" name="id" value="'.$id.'" />';
 print '<br>';
 print '<input class="button" id="submitresize" name="sendit" value="'.dol_escape_htmltag($langs->trans("Resize")).'" type="submit" />';
 print '&nbsp;';
-print '<input type="submit" id="cancelresize" name="cancel" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" />';
+print '<input type="submit" id="cancelresize" name="cancel" class="button button-cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" />';
 print '</fieldset>'."\n";
 print '</form>';
 print '<br>'."\n";
@@ -514,7 +514,7 @@ if (!empty($conf->use_javascript_ajax))
 	      <br>
 	      <input type="submit" id="submitcrop" name="submitcrop" class="button" value="'.dol_escape_htmltag($langs->trans("Recenter")).'" />
 	      &nbsp;
-	      <input type="submit" id="cancelcrop" name="cancel" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" />
+	      <input type="submit" id="cancelcrop" name="cancel" class="button button-cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" />
 	   </form>'."\n";
 	print '</fieldset>'."\n";
 	print '<br>';

@@ -578,7 +578,7 @@ abstract class CommonObject
 	 *
 	 *	@param	Translate	$langs			Language object for translation of civility (used only if option is 1)
 	 *	@param	int			$option			0=No option, 1=Add civility
-	 * 	@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname, 3=Firstname if defined else lastname
+	 * 	@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname, 3=Firstname if defined else lastname, 4=Lastname, 5=Lastname if defined else firstname
 	 * 	@param	int			$maxlen			Maximum length
 	 * 	@return	string						String with full name
 	 */
@@ -936,11 +936,11 @@ abstract class CommonObject
 	/**
 	 *  Add a link between element $this->element and a contact
 	 *
-	 *  @param	int		$fk_socpeople       Id of thirdparty contact (if source = 'external') or id of user (if souce = 'internal') to link
-	 *  @param 	int		$type_contact 		Type of contact (code or id). Must be id or code found into table llx_c_type_contact. For example: SALESREPFOLL
-	 *  @param  string	$source             external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
-	 *  @param  int		$notrigger			Disable all triggers
-	 *  @return int                 		<0 if KO, >0 if OK
+	 *  @param	int			$fk_socpeople       Id of thirdparty contact (if source = 'external') or id of user (if souce = 'internal') to link
+	 *  @param 	int|string	$type_contact 		Type of contact (code or id). Must be id or code found into table llx_c_type_contact. For example: SALESREPFOLL
+	 *  @param  string		$source             external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
+	 *  @param  int			$notrigger			Disable all triggers
+	 *  @return int         	        		<0 if KO, >0 if OK
 	 */
 	public function add_contact($fk_socpeople, $type_contact, $source = 'external', $notrigger = 0)
 	{
@@ -4252,7 +4252,7 @@ abstract class CommonObject
 		print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
 		if (!empty($conf->multicurrency->enabled)) print '<td class="right">'.$langs->trans('PriceUHTCurrency').'</td>';
 		print '<td class="right">'.$langs->trans('Qty').'</td>';
-		if ($conf->global->PRODUCT_USE_UNITS)
+		if (!empty($conf->global->PRODUCT_USE_UNITS))
 		{
 			print '<td class="left">'.$langs->trans('Unit').'</td>';
 		}
@@ -4395,7 +4395,7 @@ abstract class CommonObject
 		$this->tpl['price'] = price($line->subprice);
 		$this->tpl['multicurrency_price'] = price($line->multicurrency_subprice);
 		$this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
-		if ($conf->global->PRODUCT_USE_UNITS) $this->tpl['unit'] = $langs->transnoentities($line->getLabelOfUnit('long'));
+		if (!empty($conf->global->PRODUCT_USE_UNITS)) $this->tpl['unit'] = $langs->transnoentities($line->getLabelOfUnit('long'));
 		$this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? vatrate($line->remise_percent, true) : '&nbsp;';
 
 		// Is the line strike or not
@@ -6317,8 +6317,18 @@ abstract class CommonObject
 			$param_list_array = explode(':', $param_list[0]);
 			$showempty = (($required && $default != '') ? 0 : 1);
 
-			if (!preg_match('/search_/', $keyprefix) && !empty($param_list_array[2])) {		// If the entry into $fields is set to add a create button
-				$morecss .= ' widthcentpercentminusx';
+			if (!preg_match('/search_/', $keyprefix)) {
+				if (!empty($param_list_array[2])) {		// If the entry into $fields is set to add a create button
+					if ($this->fields[$key]['picto']) {
+						$morecss .= ' widthcentpercentminusxx';
+					} else {
+						$morecss .= ' widthcentpercentminusx';
+					}
+				} else {
+					if ($this->fields[$key]['picto']) {
+						$morecss .= ' widthcentpercentminusx';
+					}
+				}
 			}
 
 			$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, $moreparam, 0, empty($val['disabled']) ? 0 : 1);
@@ -6598,7 +6608,7 @@ abstract class CommonObject
 			{
 				$toprint = array();
 				foreach ($value_arr as $keyval=>$valueval) {
-					$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.$param['options'][$valueval].'</li>';
+					$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.$param['options'][$valueval].'</li>';
 				}
 				$value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
 			}
@@ -6646,9 +6656,9 @@ abstract class CommonObject
 									$translabel = $langs->trans($obj->$field_toshow);
 								}
 								if ($translabel != $field_toshow) {
-									$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.dol_trunc($translabel, 18).'</li>';
+									$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.dol_trunc($translabel, 18).'</li>';
 								} else {
-									$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.$obj->$field_toshow.'</li>';
+									$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.$obj->$field_toshow.'</li>';
 								}
 							}
 						} else {
@@ -6657,9 +6667,9 @@ abstract class CommonObject
 								$translabel = $langs->trans($obj->{$InfoFieldList[1]});
 							}
 							if ($translabel != $obj->{$InfoFieldList[1]}) {
-								$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.dol_trunc($translabel, 18).'</li>';
+								$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.dol_trunc($translabel, 18).'</li>';
 							} else {
-								$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.$obj->{$InfoFieldList[1]}.'</li>';
+								$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.$obj->{$InfoFieldList[1]}.'</li>';
 							}
 						}
 					}
@@ -6718,7 +6728,7 @@ abstract class CommonObject
 	 * @param 	array       $params         Optional parameters. Example: array('style'=>'class="oddeven"', 'colspan'=>$colspan)
 	 * @param 	string      $keysuffix      Suffix string to add after name and id of field (can be used to avoid duplicate names)
 	 * @param 	string      $keyprefix      Prefix string to add before name and id of field (can be used to avoid duplicate names)
-	 * @param	string		$onetrtd		All fields in same tr td (TODO field not used ?)
+	 * @param	string		$onetrtd		All fields in same tr td. Used by objectline_create.tpl.php for example.
 	 * @return 	string
 	 */
 	public function showOptionals($extrafields, $mode = 'view', $params = null, $keysuffix = '', $keyprefix = '', $onetrtd = 0)
@@ -6884,6 +6894,9 @@ abstract class CommonObject
 						$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
 
 						$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="'.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.'" '.$domData.' >';
+						if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+							$out .= '<td></td>';
+						}
 						$out .= '<td class="wordbreak';
 						//$out .= "titlefield";
 						//if (GETPOST('action', 'restricthtml') == 'create') $out.='create';
@@ -8046,12 +8059,8 @@ abstract class CommonObject
 
 		// Delete llx_ecm_files
 		if (!$error) {
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."ecm_files WHERE src_object_type = '".$this->db->escape($this->table_element.(empty($this->module) ? '' : '@'.$this->module))."' AND src_object_id = ".$this->id;
-			$resql = $this->db->query($sql);
-			if (!$resql)
-			{
-				$this->error = $this->db->lasterror();
-				$this->errors[] = $this->error;
+			$res = $this->deleteEcmFiles(1); // Deleting files physically is done later with the dol_delete_dir_recursive
+			if (! $res) {
 				$error++;
 			}
 		}
@@ -8449,42 +8458,80 @@ abstract class CommonObject
 	/**
 	 * Delete related files of object in database
 	 *
-	 * @return bool
+	 * @param	integer		$mode		0=Use path to find record, 1=Use src_object_xxx fields (Mode 1 is recommanded for new objects)
+	 * @return 	bool					True if OK, False if KO
 	 */
-	public function deleteEcmFiles()
+	public function deleteEcmFiles($mode = 0)
 	{
 		global $conf;
 
 		$this->db->begin();
 
-		switch ($this->element) {
-			case 'propal':
-				$element = 'propale';
-				break;
-			case 'product':
-				$element = 'produit';
-				break;
-			case 'order_supplier':
-				$element = 'fournisseur/commande';
-				break;
-			case 'invoice_supplier':
-				$element = 'fournisseur/facture/'.get_exdir($this->id, 2, 0, 1, $this, 'invoice_supplier');
-				break;
-			case 'shipping':
-				$element = 'expedition/sending';
-				break;
-			default:
-				$element = $this->element;
+		// Delete in database with mode 0
+		if ($mode == 0) {
+			switch ($this->element) {
+				case 'propal':
+					$element = 'propale';
+					break;
+				case 'product':
+					$element = 'produit';
+					break;
+				case 'order_supplier':
+					$element = 'fournisseur/commande';
+					break;
+				case 'invoice_supplier':
+					$element = 'fournisseur/facture/'.get_exdir($this->id, 2, 0, 1, $this, 'invoice_supplier');
+					break;
+				case 'shipping':
+					$element = 'expedition/sending';
+					break;
+				default:
+					$element = $this->element;
+			}
+
+			// Delete ecm_files extrafields
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."ecm_files_extrafields WHERE fk_object IN (";
+			$sql .= " SELECT rowid FROM ".MAIN_DB_PREFIX."ecm_files WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
+			$sql .= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".$conf->entity;	// No need of getEntity here
+			$sql .= ")";
+
+			if (!$this->db->query($sql)) {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				return false;
+			}
+
+			// Delete ecm_files
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."ecm_files";
+			$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
+			$sql .= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".$conf->entity;	// No need of getEntity here
+
+			if (!$this->db->query($sql)) {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				return false;
+			}
 		}
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."ecm_files";
-		$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
-		$sql .= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".$conf->entity;
+		// Delete in database with mode 1
+		if ($mode == 1) {
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."ecm_files_extrafields";
+			$sql .= " WHERE fk_object IN (SELECT rowid FROM ".MAIN_DB_PREFIX."ecm_files WHERE src_object_type = '".$this->db->escape($this->table_element.(empty($this->module) ? '' : '@'.$this->module))."' AND src_object_id = ".$this->id.")";
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				return false;
+			}
 
-		if (!$this->db->query($sql)) {
-			$this->error = $this->db->lasterror();
-			$this->db->rollback();
-			return false;
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."ecm_files";
+			$sql .= " WHERE src_object_type = '".$this->db->escape($this->table_element.(empty($this->module) ? '' : '@'.$this->module))."' AND src_object_id = ".$this->id;
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				return false;
+			}
 		}
 
 		$this->db->commit();

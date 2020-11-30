@@ -333,7 +333,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 				$listofpaths = array();
 				$listofnames = array();
 				$listofmimes = array();
-				if (is_object($object->invoice)) {
+				if (is_object($object->invoice) && (!is_object($arraydefaultmessage) || intval($arraydefaultmessage->joinfiles))) {
 					$invoicediroutput = $conf->facture->dir_output;
 					$fileparams = dol_most_recent_file($invoicediroutput.'/'.$object->invoice->ref, preg_quote($object->invoice->ref, '/').'[^\-]+');
 					$file = $fileparams['fullname'];
@@ -1025,7 +1025,7 @@ if ($rowid > 0) {
 		print '<div class="center">';
 		print '<input type="submit" class="button" name="add" value="'.$langs->trans("AddSubscription").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		print '</form>';

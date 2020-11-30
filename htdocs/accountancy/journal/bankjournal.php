@@ -437,13 +437,15 @@ if ($result) {
 					// Get thirdparty
 					$tmppayment->fetch($links[$key]['url_id']);
 					$arrayofamounts = $tmppayment->getAmountsArray();
-					foreach ($arrayofamounts as $invoiceid => $amount)
-					{
-						$tmpinvoice->fetch($invoiceid);
-						$tmpinvoice->fetch_thirdparty();
-						if ($tmpinvoice->thirdparty->code_compta)
+					if (is_array($arrayofamounts)) {
+						foreach ($arrayofamounts as $invoiceid => $amount)
 						{
-							$tabtp[$obj->rowid][$tmpinvoice->thirdparty->code_compta] += $amount;
+							$tmpinvoice->fetch($invoiceid);
+							$tmpinvoice->fetch_thirdparty();
+							if ($tmpinvoice->thirdparty->code_compta)
+							{
+								$tabtp[$obj->rowid][$tmpinvoice->thirdparty->code_compta] += $amount;
+							}
 						}
 					}
 				}

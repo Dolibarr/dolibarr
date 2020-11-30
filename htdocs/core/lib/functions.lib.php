@@ -224,14 +224,14 @@ function dol_shutdown()
 }
 
 /**
- * Return true if we are in a context of submitting a parameter
+ * Return true if we are in a context of submitting the parameter $paramname
  *
  * @param 	string	$paramname		Name or parameter to test
  * @return 	boolean					True if we have just submit a POST or GET request with the parameter provided (even if param is empty)
  */
 function GETPOSTISSET($paramname)
 {
-	$isset = 0;
+	$isset = false;
 
 	$relativepathstring = $_SERVER["PHP_SELF"];
 	// Clean $relativepathstring
@@ -254,7 +254,7 @@ function GETPOSTISSET($paramname)
 				{
 					if ($key == $paramname)	// We are on the requested parameter
 					{
-						$isset = 1;
+						$isset = true;
 						break;
 					}
 				}
@@ -263,16 +263,16 @@ function GETPOSTISSET($paramname)
 		// If there is saved contextpage, page or limit
 		if ($paramname == 'contextpage' && !empty($_SESSION['lastsearch_contextpage_'.$relativepathstring]))
 		{
-			$isset = 1;
+			$isset = true;
 		} elseif ($paramname == 'page' && !empty($_SESSION['lastsearch_page_'.$relativepathstring]))
 		{
-			$isset = 1;
+			$isset = true;
 		} elseif ($paramname == 'limit' && !empty($_SESSION['lastsearch_limit_'.$relativepathstring]))
 		{
-			$isset = 1;
+			$isset = true;
 		}
 	} else {
-		$isset = (isset($_POST[$paramname]) || isset($_GET[$paramname]));
+		$isset = (isset($_POST[$paramname]) || isset($_GET[$paramname]));	// We must keep $_POST and $_GET here
 	}
 
 	return $isset;
@@ -287,13 +287,13 @@ function GETPOSTISSET($paramname)
  *  @param  string  $check	     Type of check
  *                               ''=no check (deprecated)
  *                               'none'=no check (only for param that should have very rich content)
+ *                               'array', 'array:restricthtml' or 'array:aZ09' to check it's an array
  *                               'int'=check it's numeric (integer or float)
  *                               'intcomma'=check it's integer+comma ('1,2,3,4...')
  *                               'alpha'=Same than alphanohtml since v13
  *                               'alphanohtml'=check there is no html content and no " and no ../
  *                               'aZ'=check it's a-z only
  *                               'aZ09'=check it's simple alpha string (recommended for keys)
- *                               'array'=check it's array
  *                               'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
  *                               'nohtml'=check there is no html content and no " and no ../
  *                               'restricthtml'=check html content is restricted to some tags only
@@ -411,7 +411,6 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 						}
 					}
 				} // Management of default search_filters and sort order
-				//elseif (preg_match('/list.php$/', $_SERVER["PHP_SELF"]) && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
 				elseif (!empty($paramname) && !isset($_GET[$paramname]) && !isset($_POST[$paramname]))
 				{
 					if (!empty($user->default_values))		// $user->default_values defined from menu 'Setup - Default values'
@@ -476,6 +475,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 
 								if ($qualified)
 								{
+									// We must keep $_POST and $_GET here
 									if (isset($_POST['sall']) || isset($_POST['search_all']) || isset($_GET['sall']) || isset($_GET['search_all']))
 									{
 										// We made a search from quick search menu, do we still use default filter ?
@@ -604,6 +604,22 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	return $out;
 }
 
+/**
+ *  Return value of a param into GET or POST supervariable.
+ *  Use the property $user->default_values[path]['creatform'] and/or $user->default_values[path]['filters'] and/or $user->default_values[path]['sortorder']
+ *  Note: The property $user->default_values is loaded by main.php when loading the user.
+ *
+ *  @param  string  $paramname   Name of parameter to found
+ *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
+ *  @param  int     $filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
+ *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'
+ *  @param	string	$noreplace   Force disable of replacement of __xxx__ strings.
+ *  @return int                  Value found (int)
+ */
+function GETPOSTINT($paramname, $method = 0, $filter = null, $options = null, $noreplace = 0)
+{
+	return (int) GETPOST($paramname, 'int', $method, $filter, $options, $noreplace);
+}
 
 /**
  *  Return a value after checking on a rule.
@@ -1060,7 +1076,7 @@ function dol_escape_json($stringtoescape)
  *  Returns text escaped for inclusion in HTML alt or title tags, or into values of HTML input fields.
  *
  *  @param      string		$stringtoescape			String to escape
- *  @param		int			$keepb					1=Preserve b tags (otherwise, remove them)
+ *  @param		int			$keepb					1=Keep b tags and escape them, 0=remove them
  *  @param      int         $keepn              	1=Preserve \r\n strings (otherwise, replace them with escaped value). Set to 1 when escaping for a <textarea>.
  *  @param		string		$keepmoretags			'' or 'common' or list of tags
  *  @param		int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
@@ -1069,7 +1085,7 @@ function dol_escape_json($stringtoescape)
  */
 function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $keepmoretags = '', $escapeonlyhtmltags = 0)
 {
-	if ($keepmoretags == 'common') $keepmoretags = 'html,body,a,em,i,u,ul,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody';
+	if ($keepmoretags == 'common') $keepmoretags = 'html,body,a,b,em,i,u,ul,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody';
 	// TODO Implement $keepmoretags
 
 	// escape quotes and backslashes, newlines, etc.
@@ -1273,6 +1289,12 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
  */
 function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $disabled = '')
 {
+    if (strpos($url, '?') > 0) {
+        $url .= '&dol_hide_topmenu=1&dol_hide_leftmenu=1&dol_openinpopup=1';
+    } else {
+        $url .= '?dol_hide_menuinpopup=1&dol_hide_leftmenu=1&dol_openinpopup=1';
+    }
+
 	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
 	$out = '<a class="button bordertransp button_'.$name.'"'.$disabled.' title="'.dol_escape_htmltag($label).'">'.$buttonstring.'</a>';
 	$out .= '<script language="javascript">
@@ -3186,7 +3208,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 		if (empty($srconly) && in_array($pictowithouttext, array(
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
-				'accountancy', 'account', 'accountline', 'action', 'add', 'address', 'bank_account', 'barcode', 'bank', 'bill', 'bookmark', 'bom', 'building',
+				'accountancy', 'account', 'accountline', 'action', 'add', 'address', 'bank_account', 'barcode', 'bank', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'building',
 				'cash-register', 'category', 'check', 'clock', 'close_title', 'company', 'contact', 'contract', 'cubes',
 				'delete', 'dolly', 'dollyrevert', 'donation', 'edit', 'ellipsis-h', 'email', 'eraser', 'external-link-alt', 'external-link-square-alt',
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'globe', 'globe-americas', 'grip', 'grip_title', 'group',
@@ -3328,7 +3350,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			// Define $color
 			$arrayconvpictotocolor = array(
 				'address'=>'#6c6aa8', 'building'=>'#6c6aa8', 'bom'=>'#a69944',
-				'companies'=>'#6c6aa8', 'company'=>'#6c6aa8', 'contact'=>'#37a', 'dynamicprice'=>'#a69944',
+				'companies'=>'#6c6aa8', 'company'=>'#6c6aa8', 'contact'=>'#6c6aa8', 'dynamicprice'=>'#a69944',
 				'edit'=>'#444', 'note'=>'#999', 'error'=>'', 'help'=>'#bbb', 'listlight'=>'#999',
 				'dolly'=>'#a69944', 'dollyrevert'=>'#a69944', 'lot'=>'#a69944',
 				'map-marker-alt'=>'#aaa', 'mrp'=>'#a69944', 'product'=>'#a69944', 'service'=>'#a69944', 'stock'=>'#a69944',
@@ -4748,21 +4770,22 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  *	Function to use on each input amount before any numeric test or database insert. A better name for this function
  *  should be roundtext2num().
  *
- *	@param	float	$amount			Amount to convert/clean or round
- *	@param	string	$rounding		''=No rounding
- * 									'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
- *									'MT'=Round to Max for totals with Tax (MAIN_MAX_DECIMALS_TOT)
- *									'MS'=Round to Max for stock quantity (MAIN_MAX_DECIMALS_STOCK)
- *                                  'CR'=Currency rate
- *									Numeric = Nb of digits for rounding
- * 	@param	int		$alreadysqlnb	Put 1 if you know that content is already universal format number
- *	@return	string					Amount with universal numeric format (Example: '99.99999').
- *									If conversion fails, it return text unchanged if $rounding = '' or '0' if $rounding is defined.
- *									If amount is null or '', it returns '' if $rounding = '' or '0' if $rounding is defined..
+ *	@param	string|float	$amount			Amount to convert/clean or round
+ *	@param	string			$rounding		''=No rounding
+ * 											'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
+ *											'MT'=Round to Max for totals with Tax (MAIN_MAX_DECIMALS_TOT)
+ *											'MS'=Round to Max for stock quantity (MAIN_MAX_DECIMALS_STOCK)
+ *      		                            'CR'=Currency rate
+ *											Numeric = Nb of digits for rounding
+ * 	@param	int				$option			Put 1 if you know that content is already universal format number (so no correction on decimal will be done)
+ * 											Put 2 if you know that number is a user input (so we know we don't have to fix decimal separator).
+ *	@return	string							Amount with universal numeric format (Example: '99.99999').
+ *											If conversion fails, it return text unchanged if $rounding = '' or '0' if $rounding is defined.
+ *											If amount is null or '', it returns '' if $rounding = '' or '0' if $rounding is defined..
  *
- *	@see    price()					Opposite function of price2num
+ *	@see    price()							Opposite function of price2num
  */
-function price2num($amount, $rounding = '', $alreadysqlnb = 0)
+function price2num($amount, $rounding = '', $option = 0)
 {
 	global $langs, $conf;
 
@@ -4777,12 +4800,19 @@ function price2num($amount, $rounding = '', $alreadysqlnb = 0)
 	//print "amount=".$amount." html=".$form." trunc=".$trunc." nbdecimal=".$nbdecimal." dec='".$dec."' thousand='".$thousand."'<br>";
 
 	// Convert value to universal number format (no thousand separator, '.' as decimal separator)
-	if ($alreadysqlnb != 1)	// If not a PHP number or unknown, we change format
-	{
+	if ($option != 1) {	// If not a PHP number or unknown, we change or clean format
 		//print 'PP'.$amount.' - '.$dec.' - '.$thousand.' - '.intval($amount).'<br>';
+		if (!is_numeric($amount)) {
+			$amount = preg_replace('/[a-zA-Z\/\\\*\(\)\<\>\-]/', '', $amount);
+		}
+
+		if ($option == 2 && $thousand == '.' && preg_match('/\.(\d\d\d)$/', (string) $amount)) {	// It means the . is used as a thousand separator and string come frominput data, so 1.123 is 1123
+			$amount = str_replace($thousand, '', $amount);
+		}
 
 		// Convert amount to format with dolibarr dec and thousand (this is because PHP convert a number
 		// to format defined by LC_NUMERIC after a calculation and we want source format to be like defined by Dolibarr setup.
+		// So if number was already a good number, it is converted into local Dolibarr setup.
 		if (is_numeric($amount))
 		{
 			// We put in temps value of decimal ("0.00001"). Works with 0 and 2.0E-5 and 9999.10
@@ -4791,10 +4821,12 @@ function price2num($amount, $rounding = '', $alreadysqlnb = 0)
 			$nbofdec = max(0, dol_strlen($temps) - 2); // -2 to remove "0."
 			$amount = number_format($amount, $nbofdec, $dec, $thousand);
 		}
-		//print "QQ".$amount.'<br>';
+		//print "QQ".$amount."<br>\n";
 
 		// Now make replace (the main goal of function)
-		if ($thousand != ',' && $thousand != '.') $amount = str_replace(',', '.', $amount); // To accept 2 notations for french users
+		if ($thousand != ',' && $thousand != '.') {
+			$amount = str_replace(',', '.', $amount); // To accept 2 notations for french users
+		}
 		$amount = str_replace(' ', '', $amount); // To avoid spaces
 		$amount = str_replace($thousand, '', $amount); // Replace of thousand before replace of dec to avoid pb if thousand is .
 		$amount = str_replace($dec, '.', $amount);
@@ -6721,7 +6753,7 @@ function get_date_range($date_start, $date_end, $format = '', $outputlangs = '',
  *
  * @param	string	$firstname		Firstname
  * @param	string	$lastname		Lastname
- * @param	int		$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname, 3=Firstname if defined else lastname
+ * @param	int		$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname, 3=Firstname if defined else lastname, 4=Lastname, 5=Lastname if defined else firstname
  * @return	string					Firstname + lastname or Lastname + firstname
  */
 function dolGetFirstLastname($firstname, $lastname, $nameorder = -1)
@@ -6731,22 +6763,24 @@ function dolGetFirstLastname($firstname, $lastname, $nameorder = -1)
 	$ret = '';
 	// If order not defined, we use the setup
 	if ($nameorder < 0) $nameorder = (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION) ? 1 : 0);
-	if ($nameorder && $nameorder != 2 && $nameorder != 3)
-	{
+	if ($nameorder == 1) {
 		$ret .= $firstname;
 		if ($firstname && $lastname) $ret .= ' ';
 		$ret .= $lastname;
-	} elseif ($nameorder == 2 || $nameorder == 3)
-	{
+	} elseif ($nameorder == 2 || $nameorder == 3) {
 		$ret .= $firstname;
-		if (empty($ret) && $nameorder == 3)
-		{
+		if (empty($ret) && $nameorder == 3) {
 			$ret .= $lastname;
 		}
-	} else {
+	} else {	// 0, 4 or 5
 		$ret .= $lastname;
-		if ($firstname && $lastname) $ret .= ' ';
-		$ret .= $firstname;
+		if (empty($ret) && $nameorder == 5) {
+			$ret .= $firstname;
+		}
+		if ($nameorder == 0) {
+			if ($firstname && $lastname) $ret .= ' ';
+			$ret .= $firstname;
+		}
 	}
 	return $ret;
 }
@@ -7246,14 +7280,12 @@ function dol_validElement($element)
 /**
  * 	Return img flag of country for a language code or country code
  *
- * 	@param	string	$codelang	Language code (en_IN, fr_CA...) or Country code (IN, FR)
- *  @param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"')
+ * 	@param	string	$codelang	Language code ('en_IN', 'fr_CA', ...) or ISO Country code on 2 characters in uppercase ('IN', 'FR')
+ *  @param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"' or 'class="saturatemedium"')
  * 	@return	string				HTML img string with flag.
  */
 function picto_from_langcode($codelang, $moreatt = '')
 {
-	global $langs;
-
 	if (empty($codelang)) return '';
 
 	if ($codelang == 'auto')
@@ -7266,7 +7298,14 @@ function picto_from_langcode($codelang, $moreatt = '')
 		'ca_ES' => 'catalonia',
 		'da_DA' => 'dk',
 		'fr_CA' => 'mq',
-		'sv_SV' => 'se'
+		'sv_SV' => 'se',
+		'AQ' => 'unknown',
+		'CW' => 'unknown',
+		'IM' => 'unknown',
+		'JE' => 'unknown',
+		'MF' => 'unknown',
+		'BL' => 'unknown',
+		'SX' => 'unknown'
 	);
 
 	if (isset($langtocountryflag[$codelang])) $flagImage = $langtocountryflag[$codelang];

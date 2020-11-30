@@ -37,8 +37,8 @@ if (!$user->rights->bookmark->lire) {
 
 $id = GETPOST("id", 'int');
 $action = GETPOST("action", "alpha");
-$title = GETPOST("title", "alpha");
-$url = GETPOST("url", "alpha");
+$title = (string) GETPOST("title", "alpha");
+$url = (string) GETPOST("url", "alpha");
 $urlsource = GETPOST("urlsource", "alpha");
 $target = GETPOST("target", "alpha");
 $userid = GETPOST("userid", "int");
@@ -71,8 +71,9 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 
 	if ($action == 'update') $object->fetch(GETPOST("id", 'int'));
 	// Check if null because user not admin can't set an user and send empty value here.
-	if (!empty($userid))
+	if (!empty($userid)) {
 		$object->fk_user = $userid;
+	}
 	$object->title = $title;
 	$object->url = $url;
 	$object->target = $target;
@@ -181,7 +182,7 @@ if ($action == 'create')
 
 	print '<div align="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("CreateBookmark").'" name="create"> &nbsp; ';
-	print '<input type="submit" class="button" value="'.$langs->trans("Cancel").'" name="cancel">';
+	print '<input type="submit" class="button button-cancel" value="'.$langs->trans("Cancel").'" name="cancel">';
 	print '</div>';
 
 	print '</form>';
@@ -299,7 +300,7 @@ if ($id > 0 && !preg_match('/^add/i', $action))
 
 	if ($action == 'edit')
 	{
-		print '<div align="center"><input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+		print '<div align="center"><input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
 		print '</form>';
 	}
 

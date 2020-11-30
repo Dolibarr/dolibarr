@@ -1145,7 +1145,7 @@ if ($action == 'create')
 
 		print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+		print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 		print '</div>';
 		print "</form>\n";
 	} else {
@@ -1233,7 +1233,7 @@ if ($action == 'create')
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border centpercent">';
+		print '<table class="border centpercent tableforfield">';
 
 		print '<tr><td class="titlefield">'.$langs->trans("Author").'</td><td>'.$author->getFullName($langs)."</td></tr>";
 
@@ -1262,7 +1262,7 @@ if ($action == 'create')
 
 		// Payment term
 		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('PaymentConditionsShort');
 		print '</td>';
 		if ($action != 'editconditions' && $user->rights->facture->creer)
@@ -1452,7 +1452,7 @@ if ($action == 'create')
 		$title = $langs->trans("Recurrence");
 		//print load_fiche_titre($title, '', 'calendar');
 
-		print '<table class="border centpercent">';
+		print '<table class="border centpercent tableforfield">';
 
 		print '<tr><td colspan="2"><span class="fa fa-calendar"></span> '.$title.'</td></tr>';
 
@@ -1573,7 +1573,7 @@ if ($action == 'create')
 			}
 
 			print '<div class="underbanner clearboth"></div>';
-			print '<table class="border centpercent">';
+			print '<table class="border centpercent tableforfield">';
 
 			// Nb of generation already done
 			print '<tr><td style="width: 50%">'.$langs->trans("NbOfGenerationDone").'</td>';

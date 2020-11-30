@@ -178,6 +178,7 @@ if ($action == 'edit')
                             jQuery("#MAIN_MAIL_EMAIL_DKIM_DOMAIN").prop("disabled", true);
                             jQuery("#MAIN_MAIL_EMAIL_DKIM_SELECTOR").prop("disabled", true);
                             jQuery("#MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY").prop("disabled", true);
+                            jQuery(".smtp_method").hide();
                             jQuery(".dkim").hide();
                             ';
 		if ($linuxlike)
@@ -191,7 +192,7 @@ if ($action == 'edit')
 			print '
                             jQuery("#MAIN_MAIL_SMTP_SERVER").prop("disabled", true);
                             jQuery("#MAIN_MAIL_SMTP_PORT").prop("disabled", true);
-                            jQuery("#smtp_server_mess").hide();
+							jQuery("#smtp_server_mess").hide();
                             jQuery("#smtp_port_mess").hide();';
 		}
 		print '
@@ -220,7 +221,8 @@ if ($action == 'edit')
                             jQuery("#MAIN_MAIL_SMTP_PORT").show();
                             jQuery("#smtp_server_mess").hide();
 			                jQuery("#smtp_port_mess").hide();
-                            jQuery(".dkim").hide();
+                            jQuery(".smtp_method").show();
+							jQuery(".dkim").hide();
 						}
                         if (jQuery("#MAIN_MAIL_SENDMODE").val()==\'swiftmailer\')
                         {
@@ -246,6 +248,7 @@ if ($action == 'edit')
                             jQuery("#MAIN_MAIL_SMTP_PORT").show();
                             jQuery("#smtp_server_mess").hide();
                             jQuery("#smtp_port_mess").hide();
+							jQuery(".smtp_method").show();
                             jQuery(".dkim").show();
                         }
                     }
@@ -318,13 +321,15 @@ if ($action == 'edit')
 	print '</td></tr>';
 
 	// Host server
-	print '<tr class="oddeven"><td>';
-	if (!$conf->use_javascript_ajax && $linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
-	{
+	print '<tr class="oddeven">';
+	if (!$conf->use_javascript_ajax && $linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail') {
+		print '<td>';
 		print $langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike");
 		print '</td><td>';
 		print '<span class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span>';
+		print '</td>';
 	} else {
+		print '<td>';
 		$mainserver = (!empty($conf->global->MAIN_MAIL_SMTP_SERVER) ? $conf->global->MAIN_MAIL_SMTP_SERVER : '');
 		$smtpserver = ini_get('SMTP') ?ini_get('SMTP') : $langs->transnoentities("Undefined");
 		if ($linuxlike) print $langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike");
@@ -333,17 +338,19 @@ if ($action == 'edit')
 		// SuperAdministrator access only
 		if (empty($conf->multicompany->enabled) || ($user->admin && !$user->entity))
 		{
-			print '<input class="flat" id="MAIN_MAIL_SMTP_SERVER" name="MAIN_MAIL_SMTP_SERVER" size="18" value="'.$mainserver.'" autocomplete="off">';
+			print '<input class="flat minwidth300" id="MAIN_MAIL_SMTP_SERVER" name="MAIN_MAIL_SMTP_SERVER" value="'.$mainserver.'" autocomplete="off">';
 			print '<input type="hidden" id="MAIN_MAIL_SMTP_SERVER_sav" name="MAIN_MAIL_SMTP_SERVER_sav" value="'.$mainserver.'">';
 			print '<span id="smtp_server_mess" class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span>';
+			print ' <span class="opacitymedium smtp_method">'.$langs->trans("SeeLinkToOnlineDocumentation").'</span>';
 		} else {
 			$text = !empty($mainserver) ? $mainserver : $smtpserver;
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $form->textwithpicto($text, $htmltext, 1, 'superadmin');
 			print '<input type="hidden" id="MAIN_MAIL_SMTP_SERVER" name="MAIN_MAIL_SMTP_SERVER" value="'.$mainserver.'">';
 		}
+		print '</td>';
 	}
-	print '</td></tr>';
+	print '</tr>';
 
 	// Port
 	print '<tr class="oddeven"><td>';
@@ -511,7 +518,7 @@ if ($action == 'edit')
 	print '<br><div class="center">';
 	print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
 	print '</form>';
@@ -856,8 +863,8 @@ if ($action == 'edit')
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
 		$formmail->trackid = (($action == 'testhtml') ? "testhtml" : "test");
-		$formmail->fromname = (isset($_POST['fromname']) ? $_POST['fromname'] : $conf->global->MAIN_MAIL_EMAIL_FROM);
-		$formmail->frommail = (isset($_POST['frommail']) ? $_POST['frommail'] : $conf->global->MAIN_MAIL_EMAIL_FROM);
+		$formmail->fromname = (GETPOSTISSET('fromname') ? $_POST['fromname'] : $conf->global->MAIN_MAIL_EMAIL_FROM);
+		$formmail->frommail = (GETPOSTISSET('frommail') ? $_POST['frommail'] : $conf->global->MAIN_MAIL_EMAIL_FROM);
 		$formmail->fromid = $user->id;
 		$formmail->fromalsorobot = 1;
 		$formmail->fromtype = (GETPOSTISSET('fromtype') ?GETPOST('fromtype', 'aZ09') : (!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE) ? $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE : 'user'));
@@ -865,13 +872,13 @@ if ($action == 'edit')
 		$formmail->withsubstit = 1;
 		$formmail->withfrom = 1;
 		$formmail->witherrorsto = 1;
-		$formmail->withto = (!empty($_POST['sendto']) ? $_POST['sendto'] : ($user->email ? $user->email : 1));
-		$formmail->withtocc = (!empty($_POST['sendtocc']) ? $_POST['sendtocc'] : 1); // ! empty to keep field if empty
-		$formmail->withtoccc = (!empty($_POST['sendtoccc']) ? $_POST['sendtoccc'] : 1); // ! empty to keep field if empty
-		$formmail->withtopic = (isset($_POST['subject']) ? $_POST['subject'] : $langs->trans("Test"));
+		$formmail->withto = (!empty($_POST['sendto']) ? GETPOST('sendto', 'restricthtml') : ($user->email ? $user->email : 1));
+		$formmail->withtocc = (!empty($_POST['sendtocc']) ? GETPOST('sendtocc', 'restricthtml') : 1); // ! empty to keep field if empty
+		$formmail->withtoccc = (!empty($_POST['sendtoccc']) ? GETPOST('sendtoccc', 'restricthtml') : 1); // ! empty to keep field if empty
+		$formmail->withtopic = (GETPOSTISSET('subject') ? GETPOST('subject') : $langs->trans("Test"));
 		$formmail->withtopicreadonly = 0;
 		$formmail->withfile = 2;
-		$formmail->withbody = (isset($_POST['message']) ? $_POST['message'] : ($action == 'testhtml' ? $langs->transnoentities("PredefinedMailTestHtml") : $langs->transnoentities("PredefinedMailTest")));
+		$formmail->withbody = (GETPOSTISSET('message') ? GETPOST('message', 'restricthtml') : ($action == 'testhtml' ? $langs->transnoentities("PredefinedMailTestHtml") : $langs->transnoentities("PredefinedMailTest")));
 		$formmail->withbodyreadonly = 0;
 		$formmail->withcancel = 1;
 		$formmail->withdeliveryreceipt = 1;

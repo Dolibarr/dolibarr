@@ -582,10 +582,13 @@ abstract class CommonDocGenerator
 		$resarray = array(
 			'line_pos' => $linenumber,
 			'line_fulldesc'=>doc_getlinedesc($line, $outputlangs),
-			'line_product_ref'=>$line->product_ref,
-			'line_product_ref_fourn'=>$line->ref_fourn, // for supplier doc lines
-			'line_product_label'=>$line->product_label,
-			'line_product_type'=>$line->product_type,
+
+			'line_product_ref'=>(empty($line->product_ref) ? '' : $line->product_ref),
+			'line_product_ref_fourn'=>(empty($line->ref_fourn) ? '' : $line->ref_fourn), // for supplier doc lines
+			'line_product_label'=>(empty($line->product_label) ? '' :$line->product_label),
+			'line_product_type'=>(empty($line->product_type) ? '' : $line->product_type),
+			'line_product_barcode'=>(empty($line->product_barcode) ? '' : $line->product_barcode),
+
 			'line_desc'=>$line->desc,
 			'line_vatrate'=>vatrate($line->tva_tx, true, $line->info_bits),
 			'line_localtax1_rate'=>vatrate($line->localtax1_tx),
@@ -622,7 +625,7 @@ abstract class CommonDocGenerator
 		);
 
 		// Units
-		if ($conf->global->PRODUCT_USE_UNITS)
+		if (!empty($conf->global->PRODUCT_USE_UNITS))
 		{
 			  $resarray['line_unit'] = $outputlangs->trans($line->getLabelOfUnit('long'));
 			  $resarray['line_unit_short'] = $outputlangs->trans($line->getLabelOfUnit('short'));
@@ -649,7 +652,7 @@ abstract class CommonDocGenerator
 			{
 				$columns = "";
 
-				foreach ($extralabels as $key)
+				foreach ($extralabels as $key => $label)
 				{
 					$columns .= "$key, ";
 				}
@@ -663,7 +666,7 @@ abstract class CommonDocGenerator
 					{
 						$resql = $this->db->fetch_object($resql);
 
-						foreach ($extralabels as $key)
+						foreach ($extralabels as $key => $label)
 						{
 							$resarray['line_product_supplier_'.$key] = $resql->{$key};
 						}
@@ -1386,7 +1389,7 @@ abstract class CommonDocGenerator
 						if ($itemsInRow > 0) {
 							// close table row and empty cols
 							for ($i = $itemsInRow; $i <= $maxItemsInRow; $i++) {
-								$html .= "<td ></td><td></td>";
+								$html .= "<td></td><td></td>";
 							}
 							$html .= "</tr>";
 

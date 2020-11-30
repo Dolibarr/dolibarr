@@ -57,6 +57,8 @@ class AccountancyExport
 	public static $EXPORT_TYPE_OPENCONCERTO = 100;
 	public static $EXPORT_TYPE_LDCOMPTA = 110;
 	public static $EXPORT_TYPE_LDCOMPTA10 = 120;
+    public static $EXPORT_TYPE_GESTINUMV3 = 130;
+    public static $EXPORT_TYPE_GESTINUMV5 = 135;
 	public static $EXPORT_TYPE_FEC = 1000;
 
 
@@ -113,10 +115,12 @@ class AccountancyExport
 			self::$EXPORT_TYPE_AGIRIS => $langs->trans('Modelcsv_agiris'),
 			self::$EXPORT_TYPE_OPENCONCERTO => $langs->trans('Modelcsv_openconcerto'),
 			self::$EXPORT_TYPE_SAGE50_SWISS => $langs->trans('Modelcsv_Sage50_Swiss'),
+            self::$EXPORT_TYPE_CHARLEMAGNE => $langs->trans('Modelcsv_charlemagne'),
 			self::$EXPORT_TYPE_LDCOMPTA => $langs->trans('Modelcsv_LDCompta'),
 			self::$EXPORT_TYPE_LDCOMPTA10 => $langs->trans('Modelcsv_LDCompta10'),
+            self::$EXPORT_TYPE_GESTINUMV3 => $langs->trans('Modelcsv_Gestinum_v3'),
+            self::$EXPORT_TYPE_GESTINUMV5 => $langs->trans('Modelcsv_Gestinum_v5'),
 			self::$EXPORT_TYPE_FEC => $langs->trans('Modelcsv_FEC'),
-			self::$EXPORT_TYPE_CHARLEMAGNE => $langs->trans('Modelcsv_charlemagne'),
 		);
 
 		ksort($listofexporttypes, SORT_NUMERIC);
@@ -144,9 +148,12 @@ class AccountancyExport
 			self::$EXPORT_TYPE_COGILOG => 'cogilog',
 			self::$EXPORT_TYPE_AGIRIS => 'agiris',
 			self::$EXPORT_TYPE_OPENCONCERTO => 'openconcerto',
-			self::$EXPORT_TYPE_SAGE50_SWISS => 'sage50ch',
-			self::$EXPORT_TYPE_LDCOMPTA => 'ldcompta',
-			self::$EXPORT_TYPE_LDCOMPTA10 => 'ldcompta10',
+            self::$EXPORT_TYPE_SAGE50_SWISS => 'sage50ch',
+            self::$EXPORT_TYPE_CHARLEMAGNE => 'charlemagne',
+            self::$EXPORT_TYPE_LDCOMPTA => 'ldcompta',
+            self::$EXPORT_TYPE_LDCOMPTA10 => 'ldcompta10',
+            self::$EXPORT_TYPE_GESTINUMV3 => 'gestinumv3',
+            self::$EXPORT_TYPE_GESTINUMV5 => 'gestinumv5',
 			self::$EXPORT_TYPE_FEC => 'fec',
 		);
 
@@ -201,28 +208,30 @@ class AccountancyExport
 				self::$EXPORT_TYPE_AGIRIS => array(
 					'label' => $langs->trans('Modelcsv_agiris'),
 				),
-				self::$EXPORT_TYPE_OPENCONCERTO => array(
-					'label' => $langs->trans('Modelcsv_openconcerto'),
-					'ACCOUNTING_EXPORT_FORMAT' => 'csv',
-				),
+                self::$EXPORT_TYPE_OPENCONCERTO => array(
+                    'label' => $langs->trans('Modelcsv_openconcerto'),
+                ),
 				self::$EXPORT_TYPE_SAGE50_SWISS => array(
 					'label' => $langs->trans('Modelcsv_Sage50_Swiss'),
-					'ACCOUNTING_EXPORT_FORMAT' => 'csv',
-				),
-				self::$EXPORT_TYPE_LDCOMPTA => array(
-					'label' => $langs->trans('Modelcsv_LDCompta'),
-					'ACCOUNTING_EXPORT_FORMAT' => 'csv',
-				),
-				self::$EXPORT_TYPE_LDCOMPTA10 => array(
-					'label' => $langs->trans('Modelcsv_LDCompta10'),
-					'ACCOUNTING_EXPORT_FORMAT' => 'csv',
-				),
-				self::$EXPORT_TYPE_FEC => array(
-					'label' => $langs->trans('Modelcsv_FEC'),
-					'ACCOUNTING_EXPORT_FORMAT' => 'txt',
 				),
 				self::$EXPORT_TYPE_CHARLEMAGNE => array(
 					'label' => $langs->trans('Modelcsv_charlemagne'),
+					'ACCOUNTING_EXPORT_FORMAT' => 'txt',
+				),
+                self::$EXPORT_TYPE_LDCOMPTA => array(
+                    'label' => $langs->trans('Modelcsv_LDCompta'),
+                ),
+				self::$EXPORT_TYPE_LDCOMPTA10 => array(
+                    'label' => $langs->trans('Modelcsv_LDCompta10'),
+                ),
+                self::$EXPORT_TYPE_GESTINUMV3 => array(
+                    'label' => $langs->trans('Modelcsv_Gestinumv3'),
+                ),
+                self::$EXPORT_TYPE_GESTINUMV5 => array(
+                    'label' => $langs->trans('Modelcsv_Gestinumv5'),
+                ),
+				self::$EXPORT_TYPE_FEC => array(
+					'label' => $langs->trans('Modelcsv_FEC'),
 					'ACCOUNTING_EXPORT_FORMAT' => 'txt',
 				),
 			),
@@ -295,18 +304,24 @@ class AccountancyExport
 			case self::$EXPORT_TYPE_SAGE50_SWISS :
 				$this->exportSAGE50SWISS($TData);
 				break;
-			case self::$EXPORT_TYPE_LDCOMPTA :
-				$this->exportLDCompta($TData);
-				break;
-			case self::$EXPORT_TYPE_LDCOMPTA10 :
-				$this->exportLDCompta10($TData);
-				break;
-			case self::$EXPORT_TYPE_FEC :
-				$this->exportFEC($TData);
-				break;
 			case self::$EXPORT_TYPE_CHARLEMAGNE :
 				$this->exportCharlemagne($TData);
 				break;
+            case self::$EXPORT_TYPE_LDCOMPTA :
+                $this->exportLDCompta($TData);
+                break;
+            case self::$EXPORT_TYPE_LDCOMPTA10 :
+                $this->exportLDCompta10($TData);
+                break;
+            case self::$EXPORT_TYPE_GESTINUMV3 :
+                $this->exportGestimumV3($TData);
+                break;
+            case self::$EXPORT_TYPE_GESTINUMV5 :
+                $this->exportGestimumV5($TData);
+                break;
+            case self::$EXPORT_TYPE_FEC :
+                $this->exportFEC($TData);
+                break;
 			default:
 				$this->errors[] = $langs->trans('accountancy_error_modelnotfound');
 				break;
@@ -1469,6 +1484,136 @@ class AccountancyExport
 		}
 	}
 
+    /**
+     * Export format : Gestimum V3
+     *
+     * @param array $objectLines data
+     *
+     * @return void
+     */
+    public function exportGestimumV3($objectLines)
+	{
+        global $langs;
+
+        $this->separator = ',';
+
+        $invoices_infos = array();
+        $supplier_invoices_infos = array();
+        foreach ($objectLines as $line) {
+            $date = dol_print_date($line->doc_date, '%d/%m/%Y');
+
+            $invoice_ref = $line->doc_ref;
+            $company_name = "";
+
+            if (($line->doc_type == 'customer_invoice' || $line->doc_type == 'supplier_invoice') && $line->fk_doc > 0) {
+                if (($line->doc_type == 'customer_invoice' && !isset($invoices_infos[$line->fk_doc])) ||
+                    ($line->doc_type == 'supplier_invoice' && !isset($supplier_invoices_infos[$line->fk_doc]))) {
+                    if ($line->doc_type == 'customer_invoice') {
+                        // Get new customer invoice ref and company name
+                        $sql = 'SELECT f.facnumber, s.nom FROM ' . MAIN_DB_PREFIX . 'facture as f';
+                        $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'societe AS s ON f.fk_soc = s.rowid';
+                        $sql .= ' WHERE f.rowid = ' . $line->fk_doc;
+                        $resql = $this->db->query($sql);
+                        if ($resql) {
+                            if ($obj = $this->db->fetch_object($resql)) {
+                                // Save invoice infos
+                                $invoices_infos[$line->fk_doc] = array('ref' => $obj->facnumber, 'company_name' => $obj->nom);
+                                $invoice_ref = $obj->facnumber;
+                                $company_name = $obj->nom;
+                            }
+                        }
+                    } else {
+                        // Get new supplier invoice ref and company name
+                        $sql = 'SELECT ff.ref, s.nom FROM ' . MAIN_DB_PREFIX . 'facture_fourn as ff';
+                        $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'societe AS s ON ff.fk_soc = s.rowid';
+                        $sql .= ' WHERE ff.rowid = ' . $line->fk_doc;
+                        $resql = $this->db->query($sql);
+                        if ($resql) {
+                            if ($obj = $this->db->fetch_object($resql)) {
+                                // Save invoice infos
+                                $supplier_invoices_infos[$line->fk_doc] = array('ref' => $obj->ref, 'company_name' => $obj->nom);
+                                $invoice_ref = $obj->ref;
+                                $company_name = $obj->nom;
+                            }
+                        }
+                    }
+                } elseif ($line->doc_type == 'customer_invoice') {
+                    // Retrieve invoice infos
+                    $invoice_ref = $invoices_infos[$line->fk_doc]['ref'];
+                    $company_name = $invoices_infos[$line->fk_doc]['company_name'];
+                } else {
+                    // Retrieve invoice infos
+                    $invoice_ref = $supplier_invoices_infos[$line->fk_doc]['ref'];
+                    $company_name = $supplier_invoices_infos[$line->fk_doc]['company_name'];
+                }
+            }
+
+            print $line->id . $this->separator;
+            print $date . $this->separator;
+            print substr($line->code_journal, 0, 4) . $this->separator;
+
+            if ((substr($line->numero_compte, 0, 3) == '411') || (substr($line->numero_compte, 0, 3) == '401')) {
+                print length_accountg($line->subledger_account) . $this->separator;
+            } else {
+                print substr(length_accountg($line->numero_compte), 0, 15) . $this->separator;
+            }
+            //Libellé Auto
+            print $this->separator;
+            //print '"'.dol_trunc(str_replace('"', '', $line->label_operation),40,'right','UTF-8',1).'"' . $this->separator;
+            //Libellé manuel
+            print dol_trunc(str_replace('"', '', $invoice_ref . (!empty($company_name) ? ' - ' : '') . $company_name), 40, 'right', 'UTF-8', 1) . $this->separator;
+            //Numéro de pièce
+            print dol_trunc(str_replace('"', '', $line->piece_num), 10, 'right', 'UTF-8', 1) . $this->separator;
+            //Devise
+            print 'EUR' . $this->separator;
+            //Montant
+            print price2num(abs($line->montant)) . $this->separator;
+            //Sens
+            print $line->sens . $this->separator;
+            //Code lettrage
+            print $this->separator;
+            //Date Echéance
+            print $date;
+            print $this->end_line;
+        }
+    }
+
+    /**
+     * Export format : Gestimum V5
+     *
+     * @param array $objectLines data
+     *
+     * @return void
+     */
+    public function exportGestimumV5($objectLines)
+	{
+
+        $this->separator = ',';
+
+        foreach ($objectLines as $line) {
+            $date = dol_print_date($line->doc_date, '%d%m%Y');
+
+            print $line->id . $this->separator;
+            print $date . $this->separator;
+            print substr($line->code_journal, 0, 4) . $this->separator;
+            if ((substr($line->numero_compte, 0, 3) == '411') || (substr($line->numero_compte, 0, 3) == '401'))  {
+                print length_accountg($line->subledger_account) . $this->separator;
+            } else {
+                print substr(length_accountg($line->numero_compte), 0, 15) . $this->separator;
+            }
+            print $this->separator;
+            //print '"'.dol_trunc(str_replace('"', '', $line->label_operation),40,'right','UTF-8',1).'"' . $this->separator;
+            print '"'.dol_trunc(str_replace('"', '', $line->doc_ref), 40, 'right', 'UTF-8', 1).'"' . $this->separator;
+            print '"'.dol_trunc(str_replace('"', '', $line->piece_num), 10, 'right', 'UTF-8', 1).'"'.$this->separator;
+            print price2num($line->montant).$this->separator;
+            print $line->sens.$this->separator;
+            print $date . $this->separator;
+            print $this->separator;
+            print $this->separator;
+            print 'EUR';
+            print $this->end_line;
+        }
+    }
 
 	/**
 	 * trunc

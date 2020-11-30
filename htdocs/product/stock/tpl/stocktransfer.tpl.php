@@ -127,7 +127,7 @@ print '<td>'.$langs->trans("MovementLabel").'</td>';
 print '<td>';
 print '<input type="text" name="label" class="minwidth300" value="'.dol_escape_htmltag($valformovementlabel).'">';
 print '</td>';
-print '<td>'.$langs->trans("InventoryCode").'</td><td><input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(isset($_POST["inventorycode"]) ?GETPOST("inventorycode", 'alpha') : dol_print_date(dol_now(), '%y%m%d%H%M%S')).'"></td>';
+print '<td>'.$langs->trans("InventoryCode").'</td><td><input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(GETPOSTISSET("inventorycode") ? GETPOST("inventorycode", 'alpha') : dol_print_date(dol_now(), '%y%m%d%H%M%S')).'"></td>';
 print '</tr>';
 
 print '</table>';
@@ -135,9 +135,9 @@ print '</table>';
 print dol_get_fiche_end();
 
 print '<div class="center">';
-print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Save')).'">';
+print '<input type="submit" class="button button-save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+print '<input type="submit" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 print '</div>';
 
 print '</form>';

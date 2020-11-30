@@ -35,15 +35,13 @@ if (!$user->rights->opensurvey->write) accessforbidden();
 
 $langs->load("opensurvey");
 
-// On teste toutes les variables pour supprimer l'ensemble des warnings PHP
-// On transforme en entites html les données afin éviter les failles XSS
-$post_var = array('title', 'description', 'mailsonde', 'creation_sondage_date', 'creation_sondage_autre');
-foreach ($post_var as $var)
-{
-	$$var = GETPOST($var);
-}
+$title = GETPOST('title');
+$description = GETPOST('description', 'restricthtml');
+$mailsonde = GETPOST('mailsonde');
+$creation_sondage_date = GETPOST('creation_sondage_date');
+$creation_sondage_date = GETPOST('creation_sondage_date');
 
-// On initialise egalement la session car sinon bonjour les warning :-)
+// We init some session variable to avoir warning
 $session_var = array('title', 'description', 'mailsonde');
 foreach ($session_var as $var)
 {
@@ -177,11 +175,11 @@ if ($_SESSION["mailsonde"]) $cochemail = "checked";
 print '<input type="checkbox" name="mailsonde" '.$cochemail.'> '.$langs->trans("ToReceiveEMailForEachVote").'<br>'."\n";
 
 if ($_SESSION['allow_comments']) $allow_comments = 'checked';
-if (isset($_POST['allow_comments'])) $allow_comments = GETPOST('allow_comments') ? 'checked' : '';
+if (GETPOSTISSET('allow_comments')) $allow_comments = GETPOST('allow_comments') ? 'checked' : '';
 print '<input type="checkbox" name="allow_comments" '.$allow_comments.'"> '.$langs->trans('CanComment').'<br>'."\n";
 
 if ($_SESSION['allow_spy']) $allow_spy = 'checked';
-if (isset($_POST['allow_spy'])) $allow_spy = GETPOST('allow_spy') ? 'checked' : '';
+if (GETPOSTISSET('allow_spy')) $allow_spy = GETPOST('allow_spy') ? 'checked' : '';
 print '<input type="checkbox" name="allow_spy" '.$allow_spy.'> '.$langs->trans('CanSeeOthersVote').'<br>'."\n";
 
 if (GETPOST('choix_sondage'))

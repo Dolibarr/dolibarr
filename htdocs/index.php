@@ -593,9 +593,10 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	//Remove any invalid response
 	//load_board can return an integer if failed or WorkboardResponse if OK
 	$valid_dashboardlines = array();
-	foreach ($dashboardlines as $infoKey => $tmp) {
+	foreach ($dashboardlines as $workboardid => $tmp) {
 		if ($tmp instanceof WorkboardResponse) {
-			$valid_dashboardlines[$infoKey] = $tmp;
+			$tmp->id = $workboardid;	// Complete the object to add its id into its name
+			$valid_dashboardlines[$workboardid] = $tmp;
 		}
 	}
 
@@ -651,7 +652,6 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 
 		foreach ($dashboardgroup as $groupKey => $groupElement) {
 			$boards = array();
-
 			if (empty($conf->global->MAIN_DISABLE_NEW_OPENED_DASH_BOARD)) {
 				foreach ($groupElement['stats'] as $infoKey) {
 					if (!empty($valid_dashboardlines[$infoKey])) {
@@ -719,9 +719,13 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 					$textLateTitle = $langs->trans("NActionsLate", $board->nbtodolate);
 					$textLateTitle .= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';
 
+					if ($board->id == 'bank_account') {
+						$textLateTitle .= '<br><span class="opacitymedium">'.$langs->trans("IfYouDontReconcileDisableProperty", $langs->transnoentitiesnoconv("Conciliable")).'</span>';
+					}
+
 					$textLate = '';
 					if ($board->nbtodolate > 0) {
-						$textLate .= '<span title="'.dol_htmlentities($textLateTitle).'" class="classfortooltip badge badge-warning">';
+						$textLate .= '<span title="'.dol_escape_htmltag($textLateTitle).'" class="classfortooltip badge badge-warning">';
 						$textLate .= '<i class="fa fa-exclamation-triangle"></i> '.$board->nbtodolate;
 						$textLate .= '</span>';
 					}

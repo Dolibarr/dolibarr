@@ -336,7 +336,7 @@ if ($status == 'todo') $title = $langs->trans("ToDoActions");
 */
 
 $param = '';
-if ($actioncode || isset($_GET['search_actioncode']) || isset($_POST['search_actioncode'])) {
+if ($actioncode || GETPOSTISSET('search_actioncode')) {
 	if (is_array($actioncode)) {
 		foreach ($actioncode as $str_action) $param .= "&search_actioncode[]=".urlencode($str_action);
 	} else $param .= "&search_actioncode=".urlencode($actioncode);

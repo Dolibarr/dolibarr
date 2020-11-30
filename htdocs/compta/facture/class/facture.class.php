@@ -74,7 +74,7 @@ class Facture extends CommonInvoice
 	public $fk_element = 'fk_facture';
 
 	/**
-	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 * @var string String with name of icon for myobject.
 	 */
 	public $picto = 'bill';
 
@@ -175,11 +175,6 @@ class Facture extends CommonInvoice
 	 * @var int ID Field to store bank id to use when payment mode is withdraw
 	 */
 	public $fk_bank;
-
-	/**
-	 * @deprecated
-	 */
-	public $products = array();
 
 	/**
 	 * @var FactureLigne[]
@@ -1077,7 +1072,6 @@ class Facture extends CommonInvoice
 		$facture->origin_id         = $this->origin_id;
 
 		$facture->lines = $this->lines; // Array of lines of invoice
-		$facture->products = $this->lines; // Tant que products encore utilise
 		$facture->situation_counter = $this->situation_counter;
 		$facture->situation_cycle_ref = $this->situation_cycle_ref;
 		$facture->situation_final = $this->situation_final;
@@ -1179,7 +1173,6 @@ class Facture extends CommonInvoice
 		$object->ref_client         = '';
 		$object->close_code         = '';
 		$object->close_note         = '';
-		$object->products = $object->lines; // For backward compatibility
 		if ($conf->global->MAIN_DONT_KEEP_NOTE_ON_CLONING == 1) {
 			$object->note_private = '';
 			$object->note_public = '';
@@ -1191,7 +1184,6 @@ class Facture extends CommonInvoice
 			if (($object->lines[$i]->info_bits & 0x02) == 0x02)	// We do not clone line of discounts
 			{
 				unset($object->lines[$i]);
-				unset($object->products[$i]); // Tant que products encore utilise
 			}
 						// Bloc to update dates of service (month by month only if previously filled at 1d near start or end of month)
 			// If it's a service with start and end dates
@@ -1432,11 +1424,11 @@ class Facture extends CommonInvoice
 		$label = '';
 
 		if ($user->rights->facture->lire) {
-			$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Invoice").'</u>';
-			if ($this->type == self::TYPE_REPLACEMENT) $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("ReplacementInvoice").'</u>';
-			if ($this->type == self::TYPE_CREDIT_NOTE) $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
-			if ($this->type == self::TYPE_DEPOSIT)     $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("Deposit").'</u>';
-			if ($this->type == self::TYPE_SITUATION)   $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("InvoiceSituation").'</u>';
+			$label = img_picto('', $picto).' <u class="paddingrightonly">'.$langs->trans("Invoice").'</u>';
+			if ($this->type == self::TYPE_REPLACEMENT) $label = img_picto('', $picto).' <u class="paddingrightonly">'.$langs->transnoentitiesnoconv("ReplacementInvoice").'</u>';
+			if ($this->type == self::TYPE_CREDIT_NOTE) $label = img_picto('', $picto).' <u class="paddingrightonly">'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
+			if ($this->type == self::TYPE_DEPOSIT)     $label = img_picto('', $picto).' <u class="paddingrightonly">'.$langs->transnoentitiesnoconv("Deposit").'</u>';
+			if ($this->type == self::TYPE_SITUATION)   $label = img_picto('', $picto).' <u class="paddingrightonly">'.$langs->transnoentitiesnoconv("InvoiceSituation").'</u>';
 			if (isset($this->statut) && isset($this->alreadypaid)) {
 				$label .= ' '.$this->getLibStatut(5, $this->alreadypaid);
 			}
@@ -2184,6 +2176,7 @@ class Facture extends CommonInvoice
 				if (!$this->db->query($sql))
 				{
 					$this->error = $this->db->error()." sql=".$sql;
+					$this->errors[] = $this->error;
 					$this->db->rollback();
 					return -5;
 				}
@@ -2244,6 +2237,7 @@ class Facture extends CommonInvoice
 							{
 								$langs->load("errors");
 								$this->error = $langs->trans("ErrorFailToDeleteFile", $file);
+								$this->errors[] = $this->error;
 								$this->db->rollback();
 								return 0;
 							}
@@ -2254,6 +2248,7 @@ class Facture extends CommonInvoice
 							{
 								$langs->load("errors");
 								$this->error = $langs->trans("ErrorFailToDeleteDir", $dir);
+								$this->errors[] = $this->error;
 								$this->db->rollback();
 								return 0;
 							}
@@ -2264,11 +2259,13 @@ class Facture extends CommonInvoice
 					return 1;
 				} else {
 					$this->error = $this->db->lasterror()." sql=".$sql;
+					$this->errors[] = $this->error;
 					$this->db->rollback();
 					return -6;
 				}
 			} else {
 				$this->error = $this->db->lasterror()." sql=".$sql;
+				$this->errors[] = $this->error;
 				$this->db->rollback();
 				return -4;
 			}
@@ -3290,6 +3287,7 @@ class Facture extends CommonInvoice
 			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 
 			// Clean vat code
+			$reg = array();
 			$vat_src_code = '';
 			if (preg_match('/\((.*)\)/', $txtva, $reg))
 			{

@@ -2071,7 +2071,7 @@ class Societe extends CommonObject
 			$discount->amount_tva = $discount->multicurrency_amount_tva = price2num($remise * $vatrate / 100, 'MT');
 			$discount->amount_ttc = $discount->multicurrency_amount_ttc = price2num($discount->amount_ht + $discount->amount_tva, 'MT');
 
-			$discount->tva_tx = price2num($vatrate, 'MT');
+			$discount->tva_tx = price2num($vatrate);
 			$discount->vat_src_code = $vat_src_code;
 
 			$discount->description = $desc;
@@ -2534,7 +2534,7 @@ class Societe extends CommonObject
 		$langs->load('companies');
 
 		$statusType = 'status4';
-		if ($status == 0) $statusType = 'status5';
+		if ($status == 0) $statusType = 'status6';
 
 		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{

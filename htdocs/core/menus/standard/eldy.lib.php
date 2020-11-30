@@ -717,17 +717,18 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$langs->loadLangs(array("admin", "help"));
 
 				$warnpicto = '';
-				if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY))
+				if (!empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 				{
 					$langs->load("errors");
-					$warnpicto = ' '.img_warning($langs->trans("WarningMandatorySetupNotComplete"));
+					$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"));
 				}
 				$newmenu->add("/admin/company.php?mainmenu=home", $langs->trans("MenuCompanySetup").$warnpicto, 1);
+
 				$warnpicto = '';
-				if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING))	// If only user module enabled
+				if (1 || count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING))	// If only user module enabled
 				{
 					$langs->load("errors");
-					$warnpicto = ' '.img_warning($langs->trans("WarningMandatorySetupNotComplete"));
+					$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"));
 				}
 				$newmenu->add("/admin/modules.php?mainmenu=home", $langs->trans("Modules").$warnpicto, 1);
 				$newmenu->add("/admin/ihm.php?mainmenu=home", $langs->trans("GUISetup"), 1);
@@ -740,7 +741,18 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$newmenu->add("/admin/security_other.php?mainmenu=home", $langs->trans("Security"), 1);
 				$newmenu->add("/admin/limits.php?mainmenu=home", $langs->trans("MenuLimits"), 1);
 				$newmenu->add("/admin/pdf.php?mainmenu=home", $langs->trans("PDF"), 1);
-				$newmenu->add("/admin/mails.php?mainmenu=home", $langs->trans("Emails"), 1);
+
+				$warnpicto = '';
+				if ($conf->global->MAIN_MAIL_SENDMODE == 'mail' && empty($conf->global->MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP)) {
+					$langs->load("errors");
+					$warnpicto = img_warning($langs->trans("WarningPHPMailD"));
+				}
+				if (in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmail')) && empty($conf->global->MAIN_MAIL_SMTP_SERVER)) {
+					$langs->load("errors");
+					$warnpicto = img_warning($langs->trans("ErrorSetupOfEmailsNotComplete"));
+				}
+
+				$newmenu->add("/admin/mails.php?mainmenu=home", $langs->trans("Emails").$warnpicto, 1);
 				$newmenu->add("/admin/sms.php?mainmenu=home", $langs->trans("SMS"), 1);
 				$newmenu->add("/admin/dict.php?mainmenu=home", $langs->trans("Dictionary"), 1);
 				$newmenu->add("/admin/const.php?mainmenu=home", $langs->trans("OtherSetup"), 1);
@@ -1740,7 +1752,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				} elseif ($conf->global->PROJECT_USE_OPPORTUNITIES == 1)
 				{
 					$newmenu->add("/projet/list.php?leftmenu=projets".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("List"), 1, $showmode, '', 'project', 'list');
-					$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_usage_opportunity=1&search_status=99&contextpage=lead', $langs->trans("ListOpenLeads"), 2, $showmode);
+					$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_usage_opportunity=1&search_status=99&search_opp_status=openedopp&contextpage=lead', $langs->trans("ListOpenLeads"), 2, $showmode);
 					$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_opp_status=notopenedopp&search_status=99&contextpage=project', $langs->trans("ListOpenProjects"), 2, $showmode);
 				} elseif ($conf->global->PROJECT_USE_OPPORTUNITIES == 2) {	// 2 = leads only
 					$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_usage_opportunity=1&search_status=99', $langs->trans("List"), 2, $showmode);
@@ -1985,17 +1997,14 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			if (!empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED) && empty($menu_array[$i]['enabled'])) 	$showmenu = false;
 
 			// Begin of new left menu block
-			if (empty($menu_array[$i]['level']) && $showmenu)
-			{
+			if (empty($menu_array[$i]['level']) && $showmenu) {
 				$altok++;
 				$blockvmenuopened = true;
 				$lastopened = true;
-				for ($j = ($i + 1); $j < $num; $j++)
-				{
+				for ($j = ($i + 1); $j < $num; $j++) {
 					if (empty($menu_array[$j]['level'])) $lastopened = false;
 				}
-				if ($altok % 2 == 0)
-				{
+				if ($altok % 2 == 0) {
 					print '<div class="blockvmenu blockvmenuimpair'.$invert.($lastopened ? ' blockvmenulast' : '').($altok == 1 ? ' blockvmenufirst' : '').'">'."\n";
 				} else {
 					print '<div class="blockvmenu blockvmenupair'.$invert.($lastopened ? ' blockvmenulast' : '').($altok == 1 ? ' blockvmenufirst' : '').'">'."\n";
@@ -2005,10 +2014,8 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			// Add tabulation
 			$tabstring = '';
 			$tabul = ($menu_array[$i]['level'] - 1);
-			if ($tabul > 0)
-			{
-				for ($j = 0; $j < $tabul; $j++)
-				{
+			if ($tabul > 0) {
+				for ($j = 0; $j < $tabul; $j++) {
 					$tabstring .= '&nbsp;&nbsp;&nbsp;';
 				}
 			}
@@ -2048,7 +2055,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				if ($menu_array[$i]['enabled'])     // Enabled so visible
 				{
 					print '<div class="menu_titre">'.$tabstring;
-					if ($shorturlwithoutparam) print '<a class="vmenu" title="'.dol_escape_htmltag($menu_array[$i]['titre']).'" href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
+					if ($shorturlwithoutparam) print '<a class="vmenu" title="'.dol_escape_htmltag(dol_string_nohtmltag($menu_array[$i]['titre'])).'" href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
 					else print '<span class="vmenu">';
 					print ($menu_array[$i]['prefix'] ? $menu_array[$i]['prefix'] : '').$menu_array[$i]['titre'];
 					if ($shorturlwithoutparam) print '</a>';
@@ -2077,7 +2084,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				if ($menu_array[$i]['enabled'] && $lastlevel0 == 'enabled')     // Enabled so visible, except if parent was not enabled.
 				{
 					print '<div class="menu_contenu'.$cssmenu.'">'.$tabstring;
-					if ($shorturlwithoutparam) print '<a class="vsmenu" title="'.dol_escape_htmltag($menu_array[$i]['titre']).'" href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
+					if ($shorturlwithoutparam) print '<a class="vsmenu" title="'.dol_escape_htmltag(dol_string_nohtmltag($menu_array[$i]['titre'])).'" href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
 					else print '<span class="vsmenu" title="'.dol_escape_htmltag($menu_array[$i]['titre']).'">';
 					print $menu_array[$i]['titre'];
 					if ($shorturlwithoutparam) print '</a>';

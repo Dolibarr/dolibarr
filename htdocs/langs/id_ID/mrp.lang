@@ -77,3 +77,4 @@ UnitCost=Biaya satuan
 TotalCost=Total biaya
 BOMTotalCost=Biaya untuk menghasilkan BOM ini berdasarkan pada biaya setiap kuantitas dan produk yang akan dikonsumsi (gunakan harga Biaya jika ditentukan, selain itu Harga Rata-rata Tertimbang jika ditentukan, selain itu harga pembelian Terbaik)
 GoOnTabProductionToProduceFirst=You must first have started the production to close a Manufacturing Order (See tab '%s'). But you can Cancel it.
+ErrorAVirtualProductCantBeUsedIntoABomOrMo=A kit can't be used into a BOM or a MO

@@ -272,6 +272,96 @@ if (empty($reshook))
 	$permissiontodelete = $user->rights->fournisseur->facture->supprimer;
 	$uploaddir = $conf->fournisseur->facture->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+	if ($massaction == 'banktransfertrequest')
+	{
+		$langs->load("withdrawals");
+
+		if (!$user->rights->paymentbybanktransfer->create)
+		{
+			$error++;
+			setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
+		} else {
+			//Checking error
+			$error = 0;
+
+			$arrayofselected = is_array($toselect) ? $toselect : array();
+			$listofbills = array();
+			foreach ($arrayofselected as $toselectid)
+			{
+				$objecttmp = new FactureFournisseur($db);
+				$result = $objecttmp->fetch($toselectid);
+				if ($result > 0)
+				{
+					$totalpaye = $objecttmp->getSommePaiement();
+					$totalcreditnotes = $objecttmp->getSumCreditNotesUsed();
+					$totaldeposits = $objecttmp->getSumDepositsUsed();
+					$objecttmp->resteapayer = price2num($objecttmp->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+					if ($objecttmp->paye || $objecttmp->resteapayer == 0) {
+						$error++;
+						setEventMessages($objecttmp->ref.' '.$langs->trans("AlreadyPaid"), $objecttmp->errors, 'errors');
+					} elseif ($objecttmp->resteapayer < 0) {
+						$error++;
+						setEventMessages($objecttmp->ref.' '.$langs->trans("AmountMustBePositive"), $objecttmp->errors, 'errors');
+					}
+					if (!($objecttmp->statut > FactureFournisseur::STATUS_DRAFT)) {
+						$error++;
+						setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');
+					}
+
+					$rsql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
+					$rsql .= " , pfd.date_traite as date_traite";
+					$rsql .= " , pfd.amount";
+					$rsql .= " , u.rowid as user_id, u.lastname, u.firstname, u.login";
+					$rsql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+					$rsql .= " , ".MAIN_DB_PREFIX."user as u";
+					$rsql .= " WHERE fk_facture_fourn = ".$objecttmp->id;
+					$rsql .= " AND pfd.fk_user_demande = u.rowid";
+					$rsql .= " AND pfd.traite = 0";
+					$rsql .= " ORDER BY pfd.date_demande DESC";
+
+					$result_sql = $db->query($rsql);
+					if ($result_sql)
+					{
+						$numprlv = $db->num_rows($result_sql);
+					}
+
+					if ($numprlv > 0) {
+						$error++;
+						setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'warnings');
+					} elseif (!empty($objecttmp->mode_reglement_code) && $objecttmp->mode_reglement_code != 'PRE') {
+						$error++;
+						setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
+					} else {
+						$listofbills[] = $objecttmp; // $listofbills will only contains invoices with good payment method and no request already done
+					}
+				}
+			}
+
+			//Massive withdraw request for request with no errors
+			if (!empty($listofbills))
+			{
+				$nbwithdrawrequestok = 0;
+				foreach ($listofbills as $aBill)
+				{
+					$db->begin();
+					$result = $aBill->demande_prelevement($user, $aBill->resteapayer, 'bank-transfer', 'supplier_invoice');
+					if ($result > 0)
+					{
+						$db->commit();
+						$nbwithdrawrequestok++;
+					} else {
+						$db->rollback();
+						setEventMessages($aBill->error, $aBill->errors, 'errors');
+					}
+				}
+				if ($nbwithdrawrequestok > 0)
+				{
+					setEventMessages($langs->trans("WithdrawRequestsDone", $nbwithdrawrequestok), null, 'mesgs');
+				}
+			}
+		}
+	}
 }
 
 
@@ -517,6 +607,10 @@ if ($resql)
 		//'presend'=>$langs->trans("SendByMail"),
 	);
 	//if($user->rights->fournisseur->facture->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
+	if (!empty($conf->paymentbybanktransfer->enabled) && !empty($user->rights->paymentbybanktransfer->create)) {
+		$langs->load('withdrawals');
+		$arrayofmassactions['banktransfertrequest'] = $langs->trans("MakeBankTransferOrder");
+	}
 	if ($user->rights->fournisseur->facture->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	if (in_array($massaction, array('presend', 'predelete', 'createbills'))) $arrayofmassactions = array();
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -578,7 +672,7 @@ if ($resql)
 		print '<br>';
 		print '<div class="center">';
 		print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('CreateInvoiceForThisCustomer').'">  ';
-		print '<input type="submit" class="button" id="cancel" name="cancel" value="'.$langs->trans('Cancel').'">';
+		print '<input type="submit" class="button button-cancel" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 		print '<br>';
 	}

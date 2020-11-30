@@ -631,11 +631,18 @@ class dolReceiptPrinter extends Printer
 						break;
 					case 'DOL_PRINT_OBJECT_LINES':
 						foreach ($object->lines as $line) {
-							//var_dump($line);
-							$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - 10 - 1;
-							$spaces = str_repeat(' ', $spacestoadd);
-							$this->printer->text($line->ref.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
-							$this->printer->text(strip_tags(htmlspecialchars_decode($line->product_label))."\n");
+							if ($line->fk_product)
+							{
+								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - 10 - 1;
+								$spaces = str_repeat(' ', $spacestoadd);
+								$this->printer->text($line->ref.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
+								$this->printer->text(strip_tags(htmlspecialchars_decode($line->product_label))."\n");
+							}
+							else {
+								$spacestoadd = $nbcharactbyline - strlen($line->description) - strlen($line->qty) - 10 - 1;
+								$spaces = str_repeat(' ', $spacestoadd);
+								$this->printer->text($line->description.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
+							}
 						}
 						break;
 					case 'DOL_PRINT_OBJECT_TAX':

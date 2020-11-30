@@ -241,8 +241,8 @@ print '<input type="hidden" name="action" value="update">';
 clearstatcache();
 
 print '<br>';
-print '<table summary="edit" class="noborder centpercent editmode">';
-print '<tr class="liste_titre"><th>'.$langs->trans("Language").'</th><th></th>';
+print '<table summary="edit" class="noborder centpercent editmode tableforfield">';
+print '<tr class="liste_titre"><th>'.img_picto('', 'language').' '.$langs->trans("Language").'</th><th></th>';
 print '</tr>';
 
 // Default language

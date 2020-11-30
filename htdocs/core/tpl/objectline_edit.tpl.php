@@ -189,7 +189,7 @@ $coldisplay++;
 	</td>
 
 	<?php
-	if ($conf->global->PRODUCT_USE_UNITS)
+	if (!empty($conf->global->PRODUCT_USE_UNITS))
 	{
 		$coldisplay++;
 		print '<td class="left">';
@@ -234,7 +234,7 @@ $coldisplay++;
 		if ($user->rights->margins->creer) {
 			if (!empty($conf->global->DISPLAY_MARGIN_RATES))
 			{
-				$margin_rate = (isset($_POST["np_marginRate"]) ?GETPOST("np_marginRate", "alpha", 2) : (($line->pa_ht == 0) ? '' : price($line->marge_tx)));
+				$margin_rate = (GETPOSTISSET("np_marginRate") ? GETPOST("np_marginRate", "alpha", 2) : (($line->pa_ht == 0) ? '' : price($line->marge_tx)));
 				// if credit note, dont allow to modify margin
 				if ($line->subprice < 0)
 					echo '<td class="right nowrap margininfos">'.$margin_rate.'<span class="hideonsmartphone">%</span></td>';
@@ -242,7 +242,7 @@ $coldisplay++;
 				$coldisplay++;
 			} elseif (!empty($conf->global->DISPLAY_MARK_RATES))
 			{
-				$mark_rate = (isset($_POST["np_markRate"]) ?GETPOST("np_markRate", 'alpha', 2) : price($line->marque_tx));
+				$mark_rate = (GETPOSTISSET("np_markRate") ? GETPOST("np_markRate", 'alpha', 2) : price($line->marque_tx));
 				// if credit note, dont allow to modify margin
 				if ($line->subprice < 0)
 					echo '<td class="right nowrap margininfos">'.$mark_rate.'<span class="hideonsmartphone">%</span></td>';
@@ -256,7 +256,7 @@ $coldisplay++;
 	<!-- colspan for this td because it replace total_ht+3 td for buttons+... -->
 	<td class="center valignmiddle" colspan="<?php echo $colspan; ?>"><?php $coldisplay += $colspan; ?>
 		<input type="submit" class="button buttongen marginbottomonly button-save" id="savelinebutton marginbottomonly" name="save" value="<?php echo $langs->trans("Save"); ?>"><br>
-		<input type="submit" class="button buttongen marginbottomonly" id="cancellinebutton" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
+		<input type="submit" class="button buttongen marginbottomonly button-cancel" id="cancellinebutton" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
 	</td>
 </tr>
 

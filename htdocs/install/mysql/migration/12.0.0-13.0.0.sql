@@ -35,6 +35,8 @@ ALTER TABLE llx_payment_various MODIFY COLUMN ref varchar(30) NULL;
 
 ALTER TABLE llx_prelevement_bons ADD COLUMN type varchar(16) DEFAULT 'debit-order';
 
+ALTER TABLE llx_prelevement_facture CHANGE COLUMN fk_facture_foun fk_facture_fourn integer NULL;
+
 ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_demande_fk_facture (fk_facture);
 ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_demande_fk_facture_fourn (fk_facture_fourn);
 
@@ -104,6 +106,7 @@ ALTER TABLE llx_user DROP COLUMN googleplus;
 ALTER TABLE llx_user DROP COLUMN youtube;
 ALTER TABLE llx_user DROP COLUMN whatsapp;
 
+ALTER TABLE llx_user ADD COLUMN datelastpassvalidation datetime;
 ALTER TABLE llx_user ADD COLUMN datestartvalidity datetime;
 ALTER TABLE llx_user ADD COLUMN dateendvalidity   datetime;
 
@@ -405,6 +408,7 @@ CREATE TABLE llx_ecm_directories_extrafields
 ) ENGINE=innodb;
 
 ALTER TABLE llx_ecm_directories_extrafields ADD INDEX idx_ecm_directories_extrafields (fk_object);
+ALTER TABLE llx_website_page ADD COLUMN allowed_in_frames integer DEFAULT 0;
 ALTER TABLE llx_website_page ADD COLUMN object_type varchar(255);
 ALTER TABLE llx_website_page ADD COLUMN fk_object varchar(255);
 
@@ -527,4 +531,14 @@ CREATE TABLE llx_zapier_hook(
     tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     import_key varchar(14)
 ) ENGINE=innodb;
+
+
+CREATE TABLE llx_session(
+  session_id varchar(50) PRIMARY KEY,
+  session_variable text,
+  last_accessed datetime NOT NULL,
+  fk_user integer NOT NULL,
+  remote_ip varchar(64) NULL,
+  user_agent varchar(128) NULL
+)ENGINE=innodb;
 
