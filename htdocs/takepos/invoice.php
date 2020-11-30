@@ -411,13 +411,13 @@ if ($action == "delete") {
         if ($result > 0 && $invoice->statut == Facture::STATUS_DRAFT)
         {
         	$db->begin();
-			
+
 			// We delete the lines
 			$resdeletelines = 1;
 			foreach($invoice->lines as $line){
 				$resdeletelines *= $invoice->deleteline($line->id);
 			}
-		
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]};
 			$sql .= " WHERE ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
 			$resql1 = $db->query($sql);
@@ -430,7 +430,7 @@ if ($action == "delete") {
             {
             	$db->rollback();
             }
-			
+
 			$invoice->fetch($placeid);
         }
     }
