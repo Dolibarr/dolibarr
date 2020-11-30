@@ -2298,7 +2298,7 @@ if (!GETPOST('hide_websitemenu'))
 
 
 	//var_dump($objectpage);exit;
-	print '<div class="centpercent websitebar">';
+	print '<div class="centpercent websitebar'.(GETPOST('dol_openinpopup', 'int') ? ' hidden' : '').'">';
 
 	//
 	// Toolbar for websites

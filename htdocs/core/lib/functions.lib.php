@@ -1273,6 +1273,12 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
  */
 function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $disabled = '')
 {
+    if (strpos($url, '?') > 0) {
+        $url .= '&dol_hide_topmenu=1&dol_hide_leftmenu=1&dol_openinpopup=1';
+    } else {
+        $url .= '?dol_hide_menuinpopup=1&dol_hide_leftmenu=1&dol_openinpopup=1';
+    }
+
 	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
 	$out = '<a class="button bordertransp button_'.$name.'"'.$disabled.' title="'.dol_escape_htmltag($label).'">'.$buttonstring.'</a>';
 	$out .= '<script language="javascript">
