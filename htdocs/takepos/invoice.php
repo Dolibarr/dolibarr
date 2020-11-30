@@ -415,7 +415,11 @@ if ($action == "delete") {
 			// We delete the lines
 			$resdeletelines = 1;
 			foreach($invoice->lines as $line){
-				$resdeletelines *= $invoice->deleteline($line->id);
+				$tmpres = $invoice->deleteline($line->id);
+				if ($tmpres < 0) {
+					$resdeletelines = 0;
+					break;
+				}
 			}
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]};
