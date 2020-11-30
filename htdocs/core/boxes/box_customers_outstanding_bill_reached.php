@@ -136,8 +136,8 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 
 					$nboutstandingbillreachedcustomers = 0;
 
-					if ($outstandingtotal >= $outstandinglimit) {
-
+					if ($outstandingtotal >= $outstandinglimit)
+					{
 						$this->info_box_contents[$line][] = array(
 							'td' => '',
 							'text' => $thirdpartystatic->getNomUrl(1),
