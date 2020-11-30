@@ -418,11 +418,11 @@ $sql .= " s.entity,";
 $sql .= " st.libelle as stcomm, st.picto as stcomm_picto, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
 $sql .= " s.email, s.phone, s.fax, s.url, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4 as idprof4, s.idprof5 as idprof5, s.idprof6 as idprof6, s.tva_intra, s.fk_pays,";
 $sql .= " s.tms as date_update, s.datec as date_creation,";
-$sql .= " s.code_compta, s.code_compta_fournisseur, s.parent as fk_parent,";
+$sql .= " s.code_compta, s.code_compta_fournisseur, s.parent as fk_parent, s.import_key,";
 $sql .= " s2.nom as name2,";
 $sql .= " typent.code as typent_code,";
 $sql .= " staff.code as staff_code,";
-$sql .= " country.code as country_code, country.label as country_label,";
+$sql .= " country.code as country_code, country.label as country_label, country.code_iso,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " region.code_region as region_code, region.nom as region_name";
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
