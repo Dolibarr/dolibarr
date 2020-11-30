@@ -2533,7 +2533,7 @@ class Societe extends CommonObject
 		$langs->load('companies');
 
 		$statusType = 'status4';
-		if ($status == 0) $statusType = 'status5';
+		if ($status == 0) $statusType = 'status6';
 
 		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
