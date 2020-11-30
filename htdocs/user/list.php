@@ -231,7 +231,7 @@ if ($search_thirdparty != '') $sql .= natural_search(array('s.nom'), $search_thi
 if ($search_login != '')      $sql .= natural_search("u.login", $search_login);
 if ($search_lastname != '')   $sql .= natural_search("u.lastname", $search_lastname);
 if ($search_firstname != '')  $sql .= natural_search("u.firstname", $search_firstname);
-if ($search_gender != '' && $search_gender != '-1')     $sql .= " AND u.gender = '".$search_gender."'";
+if ($search_gender != '' && $search_gender != '-1')     $sql .= " AND u.gender = '".$db->escape($search_gender)."'";	// Cannot use natural_search as looking for %man% also includes woman
 if (is_numeric($search_employee) && $search_employee >= 0) {
 	$sql .= ' AND u.employee = '.(int) $search_employee;
 }
