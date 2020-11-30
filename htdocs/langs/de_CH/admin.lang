@@ -483,13 +483,11 @@ NotificationSetup=E-Mail Benachrichtigunen konfigurieren
 NotificationEMailFrom=Absender E-Mail (From:) des Benachrichtigungsmoduls
 SendingsSetup=Modul Versand einrichten
 FCKeditorForCompany=WYSIWIG Erstellung/Bearbeitung der Firmennformationen und Notizen (ausser Produkte/Services)
-FCKeditorForProductDetails=Freihand - Editor für Produkte und alle Objekte.<font class="warning">Obacht: Das kann für die PDF - Generierung grosse Probleme in Layout und Satz bedeuten! - Für diesen Fall bitte nicht verwenden.</font>
 FCKeditorForMail=WYSIWYG Erstellung/Bearbeitung für gesamte Mail (ausser Werkzeuge->Massenmaling)
 StockSetup=Modul Lagerverwaltung einrichten
 DetailTitre=Menübezeichner oder Bezeichnungs-Code für Übersetzung
 DetailLangs=Sprachdateiname für Bezeichnungsübersetzung
 OptionVatMode=MwSt. fällig
-AGENDA_REMINDER_EMAIL=E-Mail - Benachrichtigung bei Ereignissen.<br>Obacht: Dazu muss das Modul <strong>'%s'</strong> aktiv - und richtig konfiguriert sein.
 CashDeskSetup=Modul Kasse (POS) einrichten
 BookmarkSetup=Lesezeichenmoduleinstellungen
 ApiSetup=API-Modul-Setup

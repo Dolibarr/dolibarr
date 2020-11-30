@@ -3025,6 +3025,10 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 .unsetcolor {
 	color: unset !important;
 }
+
+.smallpaddingimp {
+    padding: 4px !important;
+}
 .nopaddingleft {
 	padding-<?php print $left; ?>: 0px;
 }

@@ -534,6 +534,7 @@ SearchIntoSupplierProposals=Propuestas del vendedor
 SearchIntoCustomerShipments=Envíos de clientes
 SearchIntoExpenseReports=Reporte de gastos
 SearchIntoLeaves=Hoja
+SearchIntoVendorPayments=Pagos a proveedores
 CommentPage=Espacio para comentarios
 Everybody=Todos
 AssignedTo=Asignado a

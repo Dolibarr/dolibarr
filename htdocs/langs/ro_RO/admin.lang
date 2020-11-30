@@ -1314,6 +1314,7 @@ PHPModuleLoaded=Componenta PHP %seste încărcată
 PreloadOPCode=Componenta OPCode preîncărcată este utilizată
 AddRefInList=Afișați Lista de  informatii a clientului/Furnizorului  (selectați lista sau combobox)  și cea mai mare parte a hiperlinkului.<br> Terții vor apărea cu un format de nume "CC12345 - SC45678 - The Big Company corp". în loc de "The Big Company corp".
 AddAdressInList=Afișați Lista de informatii a clientului/Furnizorului (selectați lista sau combobox).<br> Terții i vor apărea cu numele format din "Big Company corp - 21 jump street 123456 Big city - USA" în loc de "Big Company corp".
+AddEmailPhoneTownInContactList=Afișați adresa de email de contact (sau telefoanele dacă nu este definită) și lista cu orașe (lista combo sau caseta combinată)<br> Contactele vor apărea cu formatul de nume "Dupond Durand - dupond.durand@email.com - Paris" sau "Dupond Durand - 06 07 59 65 66 - Paris" în loc de "Dupond Durand".
 AskForPreferredShippingMethod=Solicitați o metodă de transport preferată pentru terți.
 FieldEdition=Editarea  campului %s
 FillThisOnlyIfRequired=Exemplu: +2 (completați numai dacă problemele decalajjului fusului orar sunt cunoscute)
@@ -1420,6 +1421,7 @@ AdherentMailRequired=E-mail necesar pentru a crea un nou membru
 MemberSendInformationByMailByDefault=Validare pentru a trimite mail de confirmare a membrilor este în mod implicit
 VisitorCanChooseItsPaymentMode=Vizitatorul poate alege din modurile disponibile de plată
 MEMBER_REMINDER_EMAIL=Activați memento automat <b> prin email </b> de abonamente expirate. Notă: Modul <strong> %s </strong> trebuie să fie activat and setat corect pentru a trimite mementouri.
+MembersDocModules=Șabloane documente pentru documentele generate din înregistrarea membrilor
 ##### LDAP setup #####
 LDAPSetup=LDAP Setup
 LDAPGlobalParameters=Global parametrii
@@ -1670,7 +1672,7 @@ AdvancedEditor=Editor avansat
 ActivateFCKeditor=Activaţi FCKeditor pentru:
 FCKeditorForCompany=WYSIWIG crearea / editie a companiilor şi de note descriere
 FCKeditorForProduct=WYSIWIG crearea / editie a produselor / serviciilor "descrierea şi nota
-FCKeditorForProductDetails=WYSIWIG creare / editare de linii cu detalii ale produselor pentru toate entitățile (propuneri, comenzi, facturi, etc ...). <font class="warning"> Avertisment: utilizarea acestei opțiuni pentru acest caz nu este foarte recomandată, deoarece poate create probleme cu caracterele speciale and formatarea paginii la construirea fişierelor PDF. </font>
+FCKeditorForProductDetails=Crearea/editarea WYSIWIG a liniilor de detalii ale produselor pentru toate entitățile (propuneri, comenzi, facturi, etc.).<span class="warning"> Atenţie: Utilizarea acestei opțiuni pentru acest caz nu este serios recomandată, deoarece poate crea probleme cu caracterele speciale și formatarea paginilor atunci când creați fișiere PDF.</span>
 FCKeditorForMailing= WYSIWIG crearea / ediţie de mailing
 FCKeditorForUserSignature=Creare/editare WYSIWIG  a semnăturii utilizatorilor
 FCKeditorForMail=Crearea / editarea WYSIWIG pentru toate e-mailurile (cu excepția Tools-> eMailing)
@@ -1736,9 +1738,10 @@ AGENDA_USE_EVENT_TYPE_DEFAULT=Puneți automat această valoare implicită pentru
 AGENDA_DEFAULT_FILTER_TYPE=Puneți automat acest tip de eveniment în filtrul de căutare al vizualizării agendei
 AGENDA_DEFAULT_FILTER_STATUS=Puneți automat această stare pentru evenimentele din filtrul de căutare din vizualizarea agendei
 AGENDA_DEFAULT_VIEW=Ce vizualizare doriți să deschideți implicit atunci când selectați meniul Agenda
-AGENDA_REMINDER_EMAIL=Activați memento-ul evenimentului <b> de emailuri </b> (opțiunea de reamintire / întârziere poate fi definită pe fiecare event). Nota: Modulul <strong> %s </strong> trebuie să fie activat and gestionat corect pentru a avea memento trimis la frecvența corectă.
-AGENDA_REMINDER_BROWSER=Activați memento-ul evenimentului <b> pe browser-ul utlizatorului </b> (când se ajunge la data evenimentului, fiecare utilizator poate să refuze întrebarea de confirmare a browserului)
+AGENDA_REMINDER_BROWSER=Activați memento-uri evenimente în <b>browserul utilizatorului</b> (Când este atinsă data de reamintire, browserul afișează un popup. Fiecare utilizator poate dezactiva astfel de notificări din configurarea sa de notificări browser).
 AGENDA_REMINDER_BROWSER_SOUND=Activați notificarea sonoră
+AGENDA_REMINDER_EMAIL=Activați memento evenimente <b>prin email</b> (opțiunea de reamintire/întârziere poate fi definită pentru fiecare eveniment).
+AGENDA_REMINDER_EMAIL_NOTE= Notă: Frecvența sarcinii %s trebuie să fie suficientă pentru a vă asigura că reamintirea este trimisă la momentul corect.
 AGENDA_SHOW_LINKED_OBJECT=Afișați un obiect asociat în vizualizarea agendei
 ##### Clicktodial #####
 ClickToDialSetup=Click pentru a Dial modul setup

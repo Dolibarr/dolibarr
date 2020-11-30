@@ -77,3 +77,4 @@ UnitCost=Costo unitario
 TotalCost=Costo totale
 BOMTotalCost=Il costo per produrre questa distinta base in base al costo di ciascuna quantità e prodotto da consumare (utilizzare il prezzo di costo se definito, altrimenti il prezzo medio ponderato se definito, altrimenti il miglior prezzo di acquisto)
 GoOnTabProductionToProduceFirst=You must first have started the production to close a Manufacturing Order (See tab '%s'). But you can Cancel it.
+ErrorAVirtualProductCantBeUsedIntoABomOrMo=A kit can't be used into a BOM or a MO
