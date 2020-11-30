@@ -1299,9 +1299,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 		$morehtmlref = '<div class="refidno">';
 
-		   // Code added here, resolving issue when users who have no access rights to see for fournisseurs can access to them anyway by passing trough contacts  //
-		   $sql = "SELECT fournisseur, client FROM " . MAIN_DB_PREFIX . "societe WHERE nom = '" . $object->socname . "'";
-		   $resql = $db->query($sql);
+		// Code added here, resolving issue when users who have no access rights to see for fournisseurs can access to them anyway by passing trough contacts  //
+		$sql = "SELECT fournisseur, client FROM " . MAIN_DB_PREFIX . "societe WHERE nom = '" . $object->socname . "'";
+		$resql = $db->query($sql);
 		if ($resql) {
 			$result = $resql->fetch_object();
 		}
