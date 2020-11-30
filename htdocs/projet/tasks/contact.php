@@ -72,11 +72,13 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
 				$contactsofproject = $projectstatic->getListContactId('internal');
 				foreach ($contactsofproject as $key => $val)
 				{
-					$result = $object->add_contact($val, GETPOST("type"), GETPOST("source"));
+					$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+					$result = $object->add_contact($val, $type, GETPOST("source", 'aZ09'));
 				}
 			}
 		} else {
-  			$result = $object->add_contact($idfortaskuser, GETPOST("type"), GETPOST("source"));
+			$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+			$result = $object->add_contact($idfortaskuser, $typeid, GETPOST("source", 'aZ09'));
 		}
 	}
 
@@ -449,6 +451,7 @@ if ($id > 0 || !empty($ref))
 		foreach (array('internal', 'external') as $source)
 		{
 			$tab = $object->liste_contact(-1, $source);
+
 			$num = count($tab);
 
 			$i = 0;
@@ -489,7 +492,7 @@ if ($id > 0 || !empty($ref))
 					$userstatic->photo = $tab[$i]['photo'];
 					$userstatic->login = $tab[$i]['login'];
 					$userstatic->email = $tab[$i]['email'];
-					$userstatic->statut = $tab[$i]['statucontact'];
+					$userstatic->statut = $tab[$i]['statuscontact'];
 
 					print $userstatic->getNomUrl(-1);
 				}
@@ -499,8 +502,7 @@ if ($id > 0 || !empty($ref))
 					$contactstatic->lastname = $tab[$i]['lastname'];
 					$contactstatic->firstname = $tab[$i]['firstname'];
 					$contactstatic->email = $tab[$i]['email'];
-					$contactstatic->statut = $tab[$i]['statucontact'];
-
+					$contactstatic->statut = $tab[$i]['statuscontact'];
 					print $contactstatic->getNomUrl(1);
 				}
 				print '</td>';

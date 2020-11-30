@@ -459,8 +459,7 @@ if (empty($reshook))
 			// Insert default contacts if defined
 			if ($object_id > 0)
 			{
-				if (GETPOST('contactid', 'int'))
-				{
+				if (GETPOST('contactid', 'int')) {
 					$result = $object->add_contact(GETPOST('contactid', 'int'), 'CUSTOMER', 'external');
 					if ($result < 0) {
 						setEventMessages($langs->trans("ErrorFailedToAddContact"), null, 'errors');
@@ -1367,7 +1366,8 @@ if (empty($reshook))
 		{
 			if ($object->id > 0) {
 				$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
-				$result = $object->add_contact($contactid, GETPOST('type'), GETPOST('source'));
+				$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+				$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 			}
 
 			if ($result >= 0) {
