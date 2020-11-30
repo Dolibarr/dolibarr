@@ -419,7 +419,9 @@ if (is_object($objectline)) {
 if ((!empty($conf->service->enabled) || ($object->element == 'contrat')) && $dateSelector && GETPOST('type') != '0')	// We show date field if required
 {
 	print '<tr id="trlinefordates" class="oddeven">'."\n";
-	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { print '<td></td>'; }
+	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+		print '<td></td>';
+	}
 	print '<td colspan="'.($coldisplay - (empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? 0 : 1)).'">';
 	$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 	$date_end = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));

@@ -6728,7 +6728,7 @@ abstract class CommonObject
 	 * @param 	array       $params         Optional parameters. Example: array('style'=>'class="oddeven"', 'colspan'=>$colspan)
 	 * @param 	string      $keysuffix      Suffix string to add after name and id of field (can be used to avoid duplicate names)
 	 * @param 	string      $keyprefix      Prefix string to add before name and id of field (can be used to avoid duplicate names)
-	 * @param	string		$onetrtd		All fields in same tr td (TODO field not used ?)
+	 * @param	string		$onetrtd		All fields in same tr td. Used by objectline_create.tpl.php for example.
 	 * @return 	string
 	 */
 	public function showOptionals($extrafields, $mode = 'view', $params = null, $keysuffix = '', $keyprefix = '', $onetrtd = 0)
@@ -6894,6 +6894,9 @@ abstract class CommonObject
 						$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
 
 						$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="'.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.'" '.$domData.' >';
+						if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+							$out .= '<td></td>';
+						}
 						$out .= '<td class="wordbreak';
 						//$out .= "titlefield";
 						//if (GETPOST('action', 'restricthtml') == 'create') $out.='create';
