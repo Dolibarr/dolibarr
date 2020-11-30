@@ -1214,13 +1214,14 @@ if ($action == 'create')
 
 
 	// Model
-	print '<tr>';
-	print '<td>'.$langs->trans("DefaultModel").'</td>';
-	print '<td colspan="2">';
 	$liste = ModelePDFSupplierProposal::liste_modeles($db);
-	print $form->selectarray('model', $liste, ($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT : $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF));
-	print "</td></tr>";
-
+	if ( count($liste) > 1 ) {
+		print '<tr>';
+		print '<td>' . $langs->trans( "DefaultModel" ) . '</td>';
+		print '<td colspan="2">';
+		print $form->selectarray( 'model', $liste, ( $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT : $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF ) );
+		print "</td></tr>";
+	}
 	// Project
 	if (!empty($conf->projet->enabled))
 	{

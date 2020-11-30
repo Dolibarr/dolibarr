@@ -1712,12 +1712,14 @@ if ($action == 'create' && $usercancreate)
 	}
 
 	// Template to use by default
-	print '<tr><td>'.$langs->trans('DefaultModel').'</td>';
-	print '<td>';
-	include_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
 	$liste = ModelePDFCommandes::liste_modeles($db);
-	print $form->selectarray('model', $liste, $conf->global->COMMANDE_ADDON_PDF);
-	print "</td></tr>";
+	if ( count($liste) > 1 )  {
+		print '<tr><td>'.$langs->trans('DefaultModel').'</td>';
+		print '<td>';
+		include_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
+		print $form->selectarray('model', $liste, $conf->global->COMMANDE_ADDON_PDF);
+		print "</td></tr>";
+	}
 
 	// Multicurrency
 	if (!empty($conf->multicurrency->enabled))

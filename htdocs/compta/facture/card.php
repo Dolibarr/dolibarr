@@ -3475,19 +3475,21 @@ if ($action == 'create')
 	}
 
 	// Template to use by default
-	print '<tr><td>'.$langs->trans('Model').'</td>';
-	print '<td colspan="2">';
-	include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 	$liste = ModelePDFFactures::liste_modeles($db);
-	if (!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)) {
-		// Hidden conf
-		$paramkey = 'FACTURE_ADDON_PDF_'.$object->type;
-		$curent = !empty($conf->global->$paramkey) ? $conf->global->$paramkey : $conf->global->FACTURE_ADDON_PDF;
-	} else {
-		$curent = $conf->global->FACTURE_ADDON_PDF;
+	if ( count($liste) > 1 ) {
+		print '<tr><td>' . $langs->trans( 'Model' ) . '</td>';
+		print '<td colspan="2">';
+		include_once DOL_DOCUMENT_ROOT . '/core/modules/facture/modules_facture.php';
+		if ( ! empty( $conf->global->INVOICE_USE_DEFAULT_DOCUMENT ) ) {
+			// Hidden conf
+			$paramkey = 'FACTURE_ADDON_PDF_' . $object->type;
+			$curent   = ! empty( $conf->global->$paramkey ) ? $conf->global->$paramkey : $conf->global->FACTURE_ADDON_PDF;
+		} else {
+			$curent = $conf->global->FACTURE_ADDON_PDF;
+		}
+		print $form->selectarray( 'model', $liste, $curent );
+		print "</td></tr>";
 	}
-	print $form->selectarray('model', $liste, $curent);
-	print "</td></tr>";
 
 	// Multicurrency
 	if (!empty($conf->multicurrency->enabled))
