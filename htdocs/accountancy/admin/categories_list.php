@@ -168,7 +168,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
 		}
 	}
-	if (isset($_POST["code"]))
+	if (GETPOSTISSET("code"))
 	{
 		if ($_POST["code"] == '0')
 		{

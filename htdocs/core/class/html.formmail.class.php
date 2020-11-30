@@ -1133,7 +1133,7 @@ class FormMail extends Form
 			if (!empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_SUPPLIER_PROPOSAL) && !empty($this->param['models']) && $this->param['models'] == 'supplier_proposal_send') $defaultvaluefordeliveryreceipt = 1;
 			if (!empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_ORDER) && !empty($this->param['models']) && $this->param['models'] == 'order_send') $defaultvaluefordeliveryreceipt = 1;
 			if (!empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_INVOICE) && !empty($this->param['models']) && $this->param['models'] == 'facture_send') $defaultvaluefordeliveryreceipt = 1;
-			$out .= $form->selectyesno('deliveryreceipt', (isset($_POST["deliveryreceipt"]) ? $_POST["deliveryreceipt"] : $defaultvaluefordeliveryreceipt), 1);
+			$out .= $form->selectyesno('deliveryreceipt', (GETPOSTISSET("deliveryreceipt") ? GETPOST("deliveryreceipt") : $defaultvaluefordeliveryreceipt), 1);
 		}
 		$out .= "</td></tr>\n";
 		return $out;
@@ -1170,7 +1170,7 @@ class FormMail extends Form
 			$out .= $defaulttopic;
 			$out .= '<input type="hidden" class="quatrevingtpercent" id="subject" name="subject" value="'.$defaulttopic.'" />';
 		} else {
-			$out .= '<input type="text" class="quatrevingtpercent" id="subject" name="subject" value="'.((isset($_POST["subject"]) && !$_POST['modelselected']) ? $_POST["subject"] : ($defaulttopic ? $defaulttopic : '')).'" />';
+			$out .= '<input type="text" class="quatrevingtpercent" id="subject" name="subject" value="'.((GETPOSTISSET("subject") && !GETPOST('modelselected')) ? GETPOST("subject") : ($defaulttopic ? $defaulttopic : '')).'" />';
 		}
 		$out .= "</td></tr>\n";
 		return $out;

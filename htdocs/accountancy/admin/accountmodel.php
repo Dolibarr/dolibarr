@@ -187,7 +187,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br>';
 	    }*/
 	}
-	if (isset($_POST["country"]) && ($_POST["country"] == '0') && ($id != 2))
+	if (GETPOSTISSET("country") && (GETPOST("country") == '0') && ($id != 2))
 	{
 		$ok = 0;
 		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities("Country")), null, 'errors');
