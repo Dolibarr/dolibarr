@@ -4,6 +4,7 @@
  * Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2013-2018 Philippe Grand      	<philippe.grand@atoo-net.com>
+ * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,18 +40,30 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 */
 	public $name = 'Elephant';
 
-	public $code_modifiable; // Code modifiable
-
-	public $code_modifiable_invalide; // Code modifiable si il est invalide
-
-	public $code_modifiable_null; // Code modifiables si il est null
-
-	public $code_null; // Code facultatif
+	/**
+	 * @var int Code modifiable
+	 */
+	public $code_modifiable;
 
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * @var int Code modifiable si il est invalide
+	 */
+	public $code_modifiable_invalide;
+
+	/**
+	 * @var int Code modifiables si il est null
+	 */
+	public $code_modifiable_null;
+
+	/**
+	 * @var int Code facultatif
+	 */
+	public $code_null;
+
+	/**
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
@@ -58,11 +71,20 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 */
 	public $code_auto;
 
-	public $searchcode; // String de recherche
+	/**
+	 * @var string search string
+	 */
+	public $searchcode;
 
-	public $numbitcounter; // Nombre de chiffres du compteur
+	/**
+	 * @var int Nombre de chiffres du compteur
+	 */
+	public $numbitcounter;
 
-	public $prefixIsRequired; // Le champ prefix du tiers doit etre renseigne quand on utilise {pre}
+	/**
+	 * @var int thirdparty prefix is required when using {pre}
+	 */
+	public $prefixIsRequired;
 
 
 	/**
@@ -80,7 +102,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 
 	/**
-     *  Return description of module
+	 *  Return description of module
 	 *
 	 *  @param	Translate	$langs		Object langs
 	 *  @return string      			Description of module
@@ -138,56 +160,41 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 */
 	public function getExample($langs, $objsoc = 0, $type = -1)
 	{
-		if ($type == 0 || $type == -1)
-		{
+		$examplecust = '';
+		$examplesup = '';
+		$errmsg = array(
+			"ErrorBadMask",
+			"ErrorCantUseRazIfNoYearInMask",
+			"ErrorCantUseRazInStartedYearIfNoYearMonthInMask",
+		);
+		if ($type != 1) {
 			$examplecust = $this->getNextValue($objsoc, 0);
-			if (!$examplecust)
-			{
+			if (!$examplecust) {
 				$examplecust = $langs->trans('NotConfigured');
 			}
-			if ($examplecust == "ErrorBadMask")
-			{
-				$langs->load("errors");
-				$examplecust = $langs->trans($examplecust);
-			}
-			if ($examplecust == "ErrorCantUseRazIfNoYearInMask")
-			{
-				$langs->load("errors");
-				$examplecust = $langs->trans($examplecust);
-			}
-			if ($examplecust == "ErrorCantUseRazInStartedYearIfNoYearMonthInMask")
-			{
+			if (in_array($examplecust, $errmsg)) {
 				$langs->load("errors");
 				$examplecust = $langs->trans($examplecust);
 			}
 		}
-		if ($type == 1 || $type == -1)
-		{
+		if ($type != 0) {
 			$examplesup = $this->getNextValue($objsoc, 1);
-			if (!$examplesup)
-			{
+			if (!$examplesup) {
 				$examplesup = $langs->trans('NotConfigured');
 			}
-			if ($examplesup == "ErrorBadMask")
-			{
-				$langs->load("errors");
-				$examplesup = $langs->trans($examplesup);
-			}
-			if ($examplesup == "ErrorCantUseRazIfNoYearInMask")
-			{
-				$langs->load("errors");
-				$examplesup = $langs->trans($examplesup);
-			}
-			if ($examplesup == "ErrorCantUseRazInStartedYearIfNoYearMonthInMask")
-			{
+			if (in_array($examplesup, $errmsg)) {
 				$langs->load("errors");
 				$examplesup = $langs->trans($examplesup);
 			}
 		}
 
-		if ($type == 0) return $examplecust;
-		if ($type == 1) return $examplesup;
-		return $examplecust.'<br>'.$examplesup;
+		if ($type == 0) {
+			return $examplecust;
+		} elseif ($type == 1) {
+			return $examplesup;
+		} else {
+			return $examplecust.'<br>'.$examplesup;
+		}
 	}
 
 	/**
@@ -232,7 +239,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *   Check if mask/numbering use prefix
 	 *
@@ -240,7 +247,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 */
 	public function verif_prefixIsUsed()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		$mask = $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
@@ -306,7 +313,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *		Renvoi si un code est pris ou non (par autre tiers)
 	 *
@@ -318,7 +325,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 */
 	public function verif_dispo($db, $code, $soc, $type = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
 		if ($type == 1) $sql .= " WHERE code_fournisseur = '".$db->escape($code)."'";
 		else $sql .= " WHERE code_client = '".$db->escape($code)."'";

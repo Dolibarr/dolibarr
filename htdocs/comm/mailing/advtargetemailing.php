@@ -415,7 +415,7 @@ $formother = new FormOther($db);
 if ($object->fetch($id) >= 0) {
 	$head = emailing_prepare_head($object);
 
-	dol_fiche_head($head, 'advtargets', $langs->trans("Mailing"), 0, 'email');
+	print dol_get_fiche_head($head, 'advtargets', $langs->trans("Mailing"), 0, 'email');
 
 	print '<table class="border centpercent">';
 

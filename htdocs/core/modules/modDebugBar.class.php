@@ -32,77 +32,77 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 class modDebugBar extends DolibarrModules
 {
 
-    /**
-     *   Constructor. Define names, constants, directories, boxes, permissions
-     *
-     *   @param      DoliDB		$db      Database handler
-     */
-    public function __construct($db)
-    {
-        $this->db = $db;
+	/**
+	 *   Constructor. Define names, constants, directories, boxes, permissions
+	 *
+	 *   @param      DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
 
-        $this->numero = 43;
+		$this->numero = 43;
 
-        $this->rights_class = 'debugbar';
+		$this->rights_class = 'debugbar';
 
-        $this->family = "base";
-        $this->module_position = '75';
+		$this->family = "base";
+		$this->module_position = '75';
 
-        // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-        $this->name = preg_replace('/^mod/i', '', get_class($this));
-        $this->description = "A tool for developper adding a debug bar in your browser.";
-        // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-        $this->version = 'dolibarr';
-        $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-        $this->picto = 'bug';
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
+		$this->description = "A tool for developper adding a debug bar in your browser.";
+		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+		$this->version = 'dolibarr';
+		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+		$this->picto = 'bug';
 
-        $this->module_parts = array('moduleforexternal' => 0);
+		$this->module_parts = array('moduleforexternal' => 0);
 
-        // Data directories to create when module is enabled
-        $this->dirs = array();
+		// Data directories to create when module is enabled
+		$this->dirs = array();
 
-        // Dependencies
-        $this->depends = array(); // May be used for product or service or third party module
-        $this->requiredby = array();
+		// Dependencies
+		$this->depends = array(); // May be used for product or service or third party module
+		$this->requiredby = array();
 
-        // Config pages
-        $this->config_page_url = array("debugbar.php");
+		// Config pages
+		$this->config_page_url = array("debugbar.php");
 
-        // Constants
-        // Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',0),
-        //							  1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
-        $this->const = array();
+		// Constants
+		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',0),
+		//							  1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
+		$this->const = array();
 
-        // Boxes
-        $this->boxes = array();
+		// Boxes
+		$this->boxes = array();
 
-        // Permissions
-        $this->rights = array();
+		// Permissions
+		$this->rights = array();
 
-        $this->rights[1][0] = 430; // id de la permission
-        $this->rights[1][1] = 'Use Debug Bar'; // libelle de la permission
-        $this->rights[1][2] = 'u'; // type de la permission (deprecie a ce jour)
-        $this->rights[1][3] = 1; // La permission est-elle une permission par defaut
-        $this->rights[1][4] = 'read';
-    }
+		$this->rights[1][0] = 430; // id de la permission
+		$this->rights[1][1] = 'Use Debug Bar'; // libelle de la permission
+		$this->rights[1][2] = 'u'; // type de la permission (deprecie a ce jour)
+		$this->rights[1][3] = 1; // La permission est-elle une permission par defaut
+		$this->rights[1][4] = 'read';
+	}
 
 
-    /**
-     *      Function called when module is enabled.
-     *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-     *      It also creates data directories.
-     *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-     *      @return     int             	1 if OK, 0 if KO
-     */
-    public function init($options = '')
-    {
-        // Permissions
-        $this->remove($options);
+	/**
+	 *      Function called when module is enabled.
+	 *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *      It also creates data directories.
+	 *
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
+	 */
+	public function init($options = '')
+	{
+		// Permissions
+		$this->remove($options);
 
-        $sql = array(
-        );
+		$sql = array(
+		);
 
-        return $this->_init($sql, $options);
-    }
+		return $this->_init($sql, $options);
+	}
 }

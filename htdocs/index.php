@@ -68,7 +68,7 @@ if (GETPOST('addbox'))	// Add box (when submit is done from a form when ajax dis
  * View
  */
 
-if (!is_object($form)) $form = new Form($db);
+if (!isset($form) || !is_object($form)) $form = new Form($db);
 
 // Title
 $title = $langs->trans("HomeArea").' - Dolibarr '.DOL_VERSION;
@@ -295,7 +295,7 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 				$class = $classes[$val];
 				// Search in cache if load_state_board is already realized
 				$classkeyforcache = $class;
-				if ($classkeyforcache == 'ProductService') $classkeyforcache = 'Product';	// ProductService use same load_state_board than Product
+				if ($classkeyforcache == 'ProductService') $classkeyforcache = 'Product'; // ProductService use same load_state_board than Product
 
 				if (!isset($boardloaded[$classkeyforcache]) || !is_object($boardloaded[$classkeyforcache]))
 				{
@@ -593,9 +593,10 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	//Remove any invalid response
 	//load_board can return an integer if failed or WorkboardResponse if OK
 	$valid_dashboardlines = array();
-	foreach ($dashboardlines as $infoKey => $tmp) {
+	foreach ($dashboardlines as $workboardid => $tmp) {
 		if ($tmp instanceof WorkboardResponse) {
-			$valid_dashboardlines[$infoKey] = $tmp;
+			$tmp->id = $workboardid;	// Complete the object to add its id into its name
+			$valid_dashboardlines[$workboardid] = $tmp;
 		}
 	}
 
@@ -651,7 +652,6 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 
 		foreach ($dashboardgroup as $groupKey => $groupElement) {
 			$boards = array();
-
 			if (empty($conf->global->MAIN_DISABLE_NEW_OPENED_DASH_BOARD)) {
 				foreach ($groupElement['stats'] as $infoKey) {
 					if (!empty($valid_dashboardlines[$infoKey])) {
@@ -698,15 +698,18 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 				// Show the span for the total of record
 				if (!empty($groupElement['globalStats'])) {
 					$globalStatInTopOpenedDashBoard[] = $globalStatsKey;
-					$openedDashBoard .= '		<span class="info-box-icon-text" title="'.$groupElement['globalStats']['text'].'">'.$nbTotal.'</span>'."\n";
+					$openedDashBoard .= '<span class="info-box-icon-text" title="'.$groupElement['globalStats']['text'].'">'.$nbTotal.'</span>';
 				}
 
-				$openedDashBoard .= '		</span>'."\n";
-				$openedDashBoard .= '		<div class="info-box-content">'."\n";
+				$openedDashBoard .= '</span>'."\n";
+				$openedDashBoard .= '<div class="info-box-content">'."\n";
 
-				$openedDashBoard .= '			<span class="info-box-title" title="'.strip_tags($groupName).'">'.$groupName.'</span>'."\n";
+				$openedDashBoard .= '<div class="info-box-title" title="'.strip_tags($groupName).'">'.$groupName.'</div>'."\n";
+				$openedDashBoard .= '<div class="info-box-lines">'."\n";
 
 				foreach ($boards as $board) {
+					$openedDashBoard .= '<div class="info-box-line">';
+
 					if (!empty($board->labelShort)) {
 						$infoName = '<span title="'.$board->label.'">'.$board->labelShort.'</span>';
 					} else {
@@ -716,14 +719,16 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 					$textLateTitle = $langs->trans("NActionsLate", $board->nbtodolate);
 					$textLateTitle .= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';
 
+					if ($board->id == 'bank_account') {
+						$textLateTitle .= '<br><span class="opacitymedium">'.$langs->trans("IfYouDontReconcileDisableProperty", $langs->transnoentitiesnoconv("Conciliable")).'</span>';
+					}
+
 					$textLate = '';
 					if ($board->nbtodolate > 0) {
-						$textLate .= '<span title="'.dol_htmlentities($textLateTitle).'" class="classfortooltip badge badge-warning">';
+						$textLate .= '<span title="'.dol_escape_htmltag($textLateTitle).'" class="classfortooltip badge badge-warning">';
 						$textLate .= '<i class="fa fa-exclamation-triangle"></i> '.$board->nbtodolate;
 						$textLate .= '</span>';
 					}
-
-					$openedDashBoard .= '<div class="info-box-line">';
 
 					$nbtodClass = '';
 					if ($board->nbtodo > 0) {
@@ -745,11 +750,12 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 					if ($board->total > 0 && !empty($conf->global->MAIN_WORKBOARD_SHOW_TOTAL_WO_TAX)) {
 						$openedDashBoard .= '<a href="'.$board->url.'" class="info-box-text">'.$langs->trans('Total').' : '.price($board->total).'</a>';
 					}
-
-					$openedDashBoard .= '</div>';
+					$openedDashBoard .= '</div>'."\n";
 				}
 
-				$openedDashBoard .= '		</div><!-- /.info-box-content -->'."\n";
+				// TODO Add hook here to add more "info-box-line"
+
+				$openedDashBoard .= '		</div><!-- /.info-box-lines --></div><!-- /.info-box-content -->'."\n";
 				$openedDashBoard .= '	</div><!-- /.info-box -->'."\n";
 				$openedDashBoard .= '</div><!-- /.box-flex-item-with-margin -->'."\n";
 				$openedDashBoard .= '</div><!-- /.box-flex-item -->'."\n";
@@ -776,7 +782,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 			$weatherDashBoard .= img_weather('', $weather->level, '', 0, 'valignmiddle width50');
 			$weatherDashBoard .= '       </span>'."\n";
 			$weatherDashBoard .= '		<div class="info-box-content">'."\n";
-			$weatherDashBoard .= '			<span class="info-box-title">'.$langs->trans('GlobalOpenedElemView').'</span>'."\n";
+			$weatherDashBoard .= '			<div class="info-box-title">'.$langs->trans('GlobalOpenedElemView').'</div>'."\n";
 
 			if ($totallatePercentage > 0 && !empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
 				$weatherDashBoard .= '			<span class="info-box-number">'.$langs->transnoentitiesnoconv("NActionsLate",
@@ -914,7 +920,7 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 		$boxstat .= '<div class="box">';
 		$boxstat .= '<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable boxtablenobottom nohover widgetstats" width="100%">';
 		$boxstat .= '<tr class="liste_titre box_titre">';
-		$boxstat .= '<td class="liste_titre">';
+		$boxstat .= '<td>';
 		$boxstat .= '<div class="inline-block valignmiddle">'.$langs->trans("DolibarrStateBoard").'</div>';
 		$boxstat .= '</td>';
 		$boxstat .= '</tr>';

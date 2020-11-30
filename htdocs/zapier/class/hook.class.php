@@ -126,7 +126,7 @@ class Hook extends CommonObject
 		),
 		'module' => array(
 			'type' => 'varchar(128)',
-			'label' => 'Url',
+			'label' => 'Module',
 			'enabled' => 1,
 			'visible' => 1,
 			'position' => 30,
@@ -137,7 +137,7 @@ class Hook extends CommonObject
 		),
 		'action' => array(
 			'type' => 'varchar(128)',
-			'label' => 'Url',
+			'label' => 'Action',
 			'enabled' => 1,
 			'visible' => 1,
 			'position' => 30,

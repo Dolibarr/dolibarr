@@ -80,21 +80,21 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
-    // Search contract
-    if (!empty($conf->contrat->enabled))
-    {
-    	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/list.php">';
-    	print '<input type="hidden" name="token" value="'.newToken().'">';
+	// Search contract
+	if (!empty($conf->contrat->enabled))
+	{
+		print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/list.php">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 
 		print '<div class="div-table-responsive-no-min">';
-    	print '<table class="noborder nohover centpercent">';
-    	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    	print '<tr class="oddeven">';
-    	print '<td class="nowrap">'.$langs->trans("Contract").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
-    	print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-    	print "</table></div></form>\n";
-    	print "<br>";
-    }
+		print '<table class="noborder nohover centpercent">';
+		print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+		print '<tr class="oddeven">';
+		print '<td class="nowrap">'.$langs->trans("Contract").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
+		print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+		print "</table></div></form>\n";
+		print "<br>";
+	}
 }
 
 
@@ -131,11 +131,11 @@ if ($resql)
 		{
 			$nb[$obj->status] = $obj->nb;
 			if ($obj->status != 5)
-            {
-            	$vals[$obj->status] = $obj->nb;
-            	$totalinprocess += $obj->nb;
-            }
-            $total += $obj->nb;
+			{
+				$vals[$obj->status] = $obj->nb;
+				$totalinprocess += $obj->nb;
+			}
+			$total += $obj->nb;
 		}
 		$i++;
 	}
@@ -159,24 +159,24 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 
-    // 0 inactive, 4 active, 5 closed
-    $i = 0;
-    while ($i < $num)
-    {
-        $obj = $db->fetch_object($resql);
-        if ($obj)
-        {
-        	$nb[$obj->status.true] = $obj->nb;
-            if ($obj->status != 5)
-            {
-            	$vals[$obj->status.true] = $obj->nb;
-            	$totalinprocess += $obj->nb;
-            }
-            $total += $obj->nb;
-        }
-        $i++;
-    }
-    $db->free($resql);
+	// 0 inactive, 4 active, 5 closed
+	$i = 0;
+	while ($i < $num)
+	{
+		$obj = $db->fetch_object($resql);
+		if ($obj)
+		{
+			$nb[$obj->status.true] = $obj->nb;
+			if ($obj->status != 5)
+			{
+				$vals[$obj->status.true] = $obj->nb;
+				$totalinprocess += $obj->nb;
+			}
+			$total += $obj->nb;
+		}
+		$i++;
+	}
+	$db->free($resql);
 } else {
 	dol_print_error($db);
 }
@@ -191,51 +191,51 @@ print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' -
 $listofstatus = array(0, 4, 4, 5); $bool = false;
 foreach ($listofstatus as $status)
 {
-    $dataseries[] = array($staticcontratligne->LibStatut($status, 1, ($bool ? 1 : 0)), (isset($nb[$status.$bool]) ? (int) $nb[$status.$bool] : 0));
-    if ($status == ContratLigne::STATUS_INITIAL) $colorseries[$status.$bool] = '-'.$badgeStatus0;
-    if ($status == ContratLigne::STATUS_OPEN && !$bool) $colorseries[$status.$bool] = $badgeStatus4;
-    if ($status == ContratLigne::STATUS_OPEN && $bool) $colorseries[$status.$bool] = $badgeStatus1;
-    if ($status == ContratLigne::STATUS_CLOSED) $colorseries[$status.$bool] = $badgeStatus6;
+	$dataseries[] = array($staticcontratligne->LibStatut($status, 1, ($bool ? 1 : 0)), (isset($nb[$status.$bool]) ? (int) $nb[$status.$bool] : 0));
+	if ($status == ContratLigne::STATUS_INITIAL) $colorseries[$status.$bool] = '-'.$badgeStatus0;
+	if ($status == ContratLigne::STATUS_OPEN && !$bool) $colorseries[$status.$bool] = $badgeStatus4;
+	if ($status == ContratLigne::STATUS_OPEN && $bool) $colorseries[$status.$bool] = $badgeStatus1;
+	if ($status == ContratLigne::STATUS_CLOSED) $colorseries[$status.$bool] = $badgeStatus6;
 
-    if (empty($conf->use_javascript_ajax))
-    {
-        print '<tr class="oddeven">';
-        print '<td>'.$staticcontratligne->LibStatut($status, 0, ($bool ? 1 : 0)).'</td>';
-        print '<td class="right"><a href="services_list.php?mode='.$status.($bool ? '&filter=expired' : '').'">'.($nb[$status.$bool] ? $nb[$status.$bool] : 0).' '.$staticcontratligne->LibStatut($status, 3, ($bool ? 1 : 0)).'</a></td>';
-        print "</tr>\n";
-    }
-    if ($status == 4 && !$bool) $bool = true;
-    else $bool = false;
+	if (empty($conf->use_javascript_ajax))
+	{
+		print '<tr class="oddeven">';
+		print '<td>'.$staticcontratligne->LibStatut($status, 0, ($bool ? 1 : 0)).'</td>';
+		print '<td class="right"><a href="services_list.php?mode='.$status.($bool ? '&filter=expired' : '').'">'.($nb[$status.$bool] ? $nb[$status.$bool] : 0).' '.$staticcontratligne->LibStatut($status, 3, ($bool ? 1 : 0)).'</a></td>';
+		print "</tr>\n";
+	}
+	if ($status == 4 && !$bool) $bool = true;
+	else $bool = false;
 }
 if (!empty($conf->use_javascript_ajax))
 {
-    print '<tr class="impair"><td class="center" colspan="2">';
+	print '<tr class="impair"><td class="center" colspan="2">';
 
-    include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-    $dolgraph = new DolGraph();
-    $dolgraph->SetData($dataseries);
-    $dolgraph->SetDataColor(array_values($colorseries));
-    $dolgraph->setShowLegend(2);
-    $dolgraph->setShowPercent(1);
-    $dolgraph->SetType(array('pie'));
-    $dolgraph->setHeight('200');
-    $dolgraph->draw('idgraphstatus');
-    print $dolgraph->show($total ? 0 : 1);
+	include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+	$dolgraph = new DolGraph();
+	$dolgraph->SetData($dataseries);
+	$dolgraph->SetDataColor(array_values($colorseries));
+	$dolgraph->setShowLegend(2);
+	$dolgraph->setShowPercent(1);
+	$dolgraph->SetType(array('pie'));
+	$dolgraph->setHeight('200');
+	$dolgraph->draw('idgraphstatus');
+	print $dolgraph->show($total ? 0 : 1);
 
-    print '</td></tr>';
+	print '</td></tr>';
 }
 $listofstatus = array(0, 4, 4, 5); $bool = false;
 foreach ($listofstatus as $status)
 {
-    if (empty($conf->use_javascript_ajax))
-    {
-    	print '<tr class="oddeven">';
-    	print '<td>'.$staticcontratligne->LibStatut($status, 0, ($bool ? 1 : 0)).'</td>';
-    	print '<td class="right"><a href="services_list.php?mode='.$status.($bool ? '&filter=expired' : '').'">'.($nb[$status.$bool] ? $nb[$status.$bool] : 0).' '.$staticcontratligne->LibStatut($status, 3, ($bool ? 1 : 0)).'</a></td>';
-    	if ($status == 4 && !$bool) $bool = true;
-    	else $bool = false;
-        print "</tr>\n";
-    }
+	if (empty($conf->use_javascript_ajax))
+	{
+		print '<tr class="oddeven">';
+		print '<td>'.$staticcontratligne->LibStatut($status, 0, ($bool ? 1 : 0)).'</td>';
+		print '<td class="right"><a href="services_list.php?mode='.$status.($bool ? '&filter=expired' : '').'">'.($nb[$status.$bool] ? $nb[$status.$bool] : 0).' '.$staticcontratligne->LibStatut($status, 3, ($bool ? 1 : 0)).'</a></td>';
+		if ($status == 4 && !$bool) $bool = true;
+		else $bool = false;
+		print "</tr>\n";
+	}
 }
 //if ($totalinprocess != $total)
 //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("ServicesRunning").')</td><td class="right">'.$totalinprocess.'</td></tr>';
@@ -424,15 +424,15 @@ if ($resql)
 		print '<td>';
 		if ($obj->fk_product > 0)
 		{
-    		$productstatic->id = $obj->fk_product;
-            $productstatic->type = $obj->ptype;
-            $productstatic->ref = $obj->pref;
+			$productstatic->id = $obj->fk_product;
+			$productstatic->type = $obj->ptype;
+			$productstatic->ref = $obj->pref;
 			$productstatic->entity = $obj->pentity;
-            print $productstatic->getNomUrl(1, '', 20);
+			print $productstatic->getNomUrl(1, '', 20);
 		} else {
-		    print '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"), "service");
-            if ($obj->label) print ' '.dol_trunc($obj->label, 20).'</a>';
-            else print '</a> '.dol_trunc($obj->note, 20);
+			print '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"), "service");
+			if ($obj->label) print ' '.dol_trunc($obj->label, 20).'</a>';
+			else print '</a> '.dol_trunc($obj->note, 20);
 		}
 		print '</td>';
 		print '<td>';
@@ -500,17 +500,17 @@ if ($resql)
 		print '<td class="nowrap">';
 		if ($obj->fk_product > 0)
 		{
-    		$productstatic->id = $obj->fk_product;
-            $productstatic->type = $obj->ptype;
-            $productstatic->ref = $obj->pref;
+			$productstatic->id = $obj->fk_product;
+			$productstatic->type = $obj->ptype;
+			$productstatic->ref = $obj->pref;
 			$productstatic->entity = $obj->pentity;
-            print $productstatic->getNomUrl(1, '', 20);
+			print $productstatic->getNomUrl(1, '', 20);
 		} else {
-		    print '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"), "service");
-            if ($obj->label) print ' '.dol_trunc($obj->label, 20).'</a>';
-            else print '</a> '.dol_trunc($obj->note, 20);
+			print '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"), "service");
+			if ($obj->label) print ' '.dol_trunc($obj->label, 20).'</a>';
+			else print '</a> '.dol_trunc($obj->note, 20);
 		}
-        print '</td>';
+		print '</td>';
 		print '<td>';
 		$staticcompany->id = $obj->fk_soc;
 		$staticcompany->name = $obj->name;
@@ -576,15 +576,15 @@ if ($resql)
 		print '<td class="nowrap">';
 		if ($obj->fk_product > 0)
 		{
-    		$productstatic->id = $obj->fk_product;
-            $productstatic->type = $obj->ptype;
-            $productstatic->ref = $obj->pref;
+			$productstatic->id = $obj->fk_product;
+			$productstatic->type = $obj->ptype;
+			$productstatic->ref = $obj->pref;
 			$productstatic->entity = $obj->pentity;
-            print $productstatic->getNomUrl(1, '', 20);
+			print $productstatic->getNomUrl(1, '', 20);
 		} else {
-		    print '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"), "service");
-            if ($obj->label) print ' '.dol_trunc($obj->label, 20).'</a>';
-            else print '</a> '.dol_trunc($obj->note, 20);
+			print '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"), "service");
+			if ($obj->label) print ' '.dol_trunc($obj->label, 20).'</a>';
+			else print '</a> '.dol_trunc($obj->note, 20);
 		}
 		print '</td>';
 		print '<td>';

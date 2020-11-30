@@ -178,7 +178,7 @@ print load_fiche_titre($langs->trans("ContractsSetup"), $linkback, 'title_setup'
 
 $head = contract_admin_prepare_head();
 
-dol_fiche_head($head, 'contract', $langs->trans("Contracts"), -1, 'contract');
+print dol_get_fiche_head($head, 'contract', $langs->trans("Contracts"), -1, 'contract');
 
 /*
  * Contracts Numbering model
@@ -229,7 +229,11 @@ foreach ($dirmodels as $reldir)
 						// Show example of numbering model
 						print '<td class="nowrap">';
 						$tmp = $module->getExample();
-						if (preg_match('/^Error/', $tmp)) { $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; } elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
+						if (preg_match('/^Error/', $tmp)) {
+							$langs->load("errors");
+							print '<div class="error">'.$langs->trans($tmp).'</div>';
+						}
+						elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
 						else print $tmp;
 						print '</td>'."\n";
 
@@ -476,19 +480,19 @@ print '</td></tr>'."\n";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("HideClosedServiceByDefault").'</td>';
 print '<td width="60" class="right">';
-print $form->selectyesno("activate_hideClosedServiceByDefault", (! empty($conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT)?$conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT:0), 1);
+print $form->selectyesno("activate_hideClosedServiceByDefault", (!empty($conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT) ? $conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT : 0), 1);
 print '</td>';
 print '</tr>';
 
 print '</table>';
 
 print '<div class="center">';
-print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

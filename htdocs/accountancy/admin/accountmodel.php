@@ -187,7 +187,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br>';
 	    }*/
 	}
-	if (isset($_POST["country"]) && ($_POST["country"] == '0') && ($id != 2))
+	if (GETPOSTISSET("country") && (GETPOST("country") == '0') && ($id != 2))
 	{
 		$ok = 0;
 		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities("Country")), null, 'errors');
@@ -472,13 +472,13 @@ if ($id)
 
 			if ($valuetoshow != '') {
 				print '<td class="'.$class.'">';
-                if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
-                    print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
-                } elseif (!empty($tabhelp[$id][$value])) {
-                    print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
-                } else {
-                    print $valuetoshow;
-                }
+				if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
+					print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+				} elseif (!empty($tabhelp[$id][$value])) {
+					print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
+				} else {
+					print $valuetoshow;
+				}
 				print '</td>';
 			}
 			if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') $alabelisused = 1;
@@ -609,7 +609,7 @@ if ($id)
 					if (empty($reshook)) fieldListAccountModel($fieldlist, $obj, $tabname[$id], 'edit');
 
 					print '<td colspan="3" class="right"><a name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
-					print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
+					print '&nbsp;<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
 				} else {
 				  	$tmpaction = 'view';
 					$parameters = array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);

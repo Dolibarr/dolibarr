@@ -2,9 +2,9 @@
 
 if (empty($keyforselect) || empty($keyforelement) || empty($keyforaliasextra))
 {
-    //print $keyforselet.' - '.$keyforelement.' - '.$keyforaliasextra;
-    dol_print_error('', 'include of file extrafieldsinexport.inc.php was done but var $keyforselect or $keyforelement or $keyforaliasextra was not set');
-    exit;
+	//print $keyforselet.' - '.$keyforelement.' - '.$keyforaliasextra;
+	dol_print_error('', 'include of file extrafieldsinexport.inc.php was done but var $keyforselect or $keyforelement or $keyforaliasextra was not set');
+	exit;
 }
 
 // Add extra fields
@@ -36,14 +36,14 @@ if ($resql)    // This can fail when class is used on old database (during migra
 				$typeFilter = "Boolean";
 				break;
 			case 'select':
-			    if (!empty($conf->global->EXPORT_LABEL_FOR_SELECT))
-			    {
-    			    $tmpparam = unserialize($obj->param); // $tmpparam may be array with 'options' = array(key1=>val1, key2=>val2 ...)
-    			    if ($tmpparam['options'] && is_array($tmpparam['options'])) {
-    			        $typeFilter = "Select:".$obj->param;
-    			    }
-			    }
-			    break;
+				if (!empty($conf->global->EXPORT_LABEL_FOR_SELECT))
+				{
+					$tmpparam = unserialize($obj->param); // $tmpparam may be array with 'options' = array(key1=>val1, key2=>val2 ...)
+					if ($tmpparam['options'] && is_array($tmpparam['options'])) {
+						$typeFilter = "Select:".$obj->param;
+					}
+				}
+				break;
 			case 'sellist':
 				$tmp = '';
 				$tmpparam = unserialize($obj->param); // $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
@@ -56,19 +56,19 @@ if ($resql)    // This can fail when class is used on old database (during migra
 		}
 		if ($obj->type != 'separate')
 		{
-		    // If not a computed field
-		    if (empty($obj->fieldcomputed))
-		    {
-    			$this->export_fields_array[$r][$fieldname] = $fieldlabel;
-    			$this->export_TypeFields_array[$r][$fieldname] = $typeFilter;
-    			$this->export_entities_array[$r][$fieldname] = $keyforelement;
-		    }
+			// If not a computed field
+			if (empty($obj->fieldcomputed))
+			{
+				$this->export_fields_array[$r][$fieldname] = $fieldlabel;
+				$this->export_TypeFields_array[$r][$fieldname] = $typeFilter;
+				$this->export_entities_array[$r][$fieldname] = $keyforelement;
+			}
 			// If this is a computed field
 			else {
-			    $this->export_fields_array[$r][$fieldname] = $fieldlabel;
-			    $this->export_TypeFields_array[$r][$fieldname] = $typeFilter.'Compute';
-			    $this->export_special_array[$r][$fieldname] = $obj->fieldcomputed;
-			    $this->export_entities_array[$r][$fieldname] = $keyforelement;
+				$this->export_fields_array[$r][$fieldname] = $fieldlabel;
+				$this->export_TypeFields_array[$r][$fieldname] = $typeFilter.'Compute';
+				$this->export_special_array[$r][$fieldname] = $obj->fieldcomputed;
+				$this->export_entities_array[$r][$fieldname] = $keyforelement;
 			}
 		}
 	}

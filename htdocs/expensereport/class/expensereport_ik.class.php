@@ -68,28 +68,28 @@ class ExpenseReportIk extends CoreObject
 	 */
 	public $ikoffset;
 
-    /**
-     * Attribute object linked with database
-     * @var array
-     */
+	/**
+	 * Attribute object linked with database
+	 * @var array
+	 */
 	public $fields = array(
 		'rowid'=>array('type'=>'integer', 'index'=>true)
 		,'fk_c_exp_tax_cat'=>array('type'=>'integer', 'index'=>true)
-	    ,'fk_range'=>array('type'=>'integer', 'index'=>true)
+		,'fk_range'=>array('type'=>'integer', 'index'=>true)
 		,'coef'=>array('type'=>'double')
 		,'ikoffset'=>array('type'=>'double')
 	);
 
-    /**
-     *  Constructor
-     *
-     *  @param      DoliDB		$db      Database handler
-     */
+	/**
+	 *  Constructor
+	 *
+	 *  @param      DoliDB		$db      Database handler
+	 */
 	public function __construct(DoliDB &$db)
 	{
 		global $conf;
 
-        parent::__construct($db);
+		parent::__construct($db);
 		parent::init();
 
 		$this->errors = array();
@@ -129,15 +129,15 @@ class ExpenseReportIk extends CoreObject
 		return $categories;
 	}
 
-    /**
-     * Return an array of ranges for a user
-     *
-     * @param User  $userauthor         user author id
-     * @param int   $fk_c_exp_tax_cat   category
-     * @return boolean|array
-     */
-    public static function getRangeByUser(User $userauthor, $fk_c_exp_tax_cat)
-    {
+	/**
+	 * Return an array of ranges for a user
+	 *
+	 * @param User  $userauthor         user author id
+	 * @param int   $fk_c_exp_tax_cat   category
+	 * @return boolean|array
+	 */
+	public static function getRangeByUser(User $userauthor, $fk_c_exp_tax_cat)
+	{
 		$default_range = (int) $userauthor->default_range; // if not defined, then 0
 		$ranges = self::getRangesByCategory($fk_c_exp_tax_cat);
 

@@ -187,7 +187,7 @@ if (!empty($object->multilangs))
 	}
 }
 
-dol_fiche_head($head, 'translation', $langs->trans($title), -1, 'category');
+print dol_get_fiche_head($head, 'translation', $langs->trans($title), -1, 'category');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("BackToList").'</a>';
 $object->next_prev_filter = ' type = '.$object->type;
@@ -223,7 +223,7 @@ print '</td></tr>';
 print '</table>';
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 
@@ -285,9 +285,9 @@ if ($action == 'edit')
 	print '<br>';
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
 	print '</form>';
@@ -346,9 +346,9 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '</table>';
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
 	print '</form>';

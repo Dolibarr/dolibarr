@@ -191,15 +191,15 @@ if (empty($reshook))
 			$object->titre = GETPOST('title', 'nohtml'); // deprecated
 			$object->title = GETPOST('title', 'nohtml');
 			$object->note_private = GETPOST('note_private', 'restricthtml');
-            $object->note_public = GETPOST('note_public', 'restricthtml');
-            $object->model_pdf = GETPOST('modelpdf', 'alpha');
+			$object->note_public = GETPOST('note_public', 'restricthtml');
+			$object->model_pdf = GETPOST('modelpdf', 'alpha');
 			$object->usenewprice = GETPOST('usenewprice', 'alpha');
 
 			$object->frequency = $frequency;
 			$object->unit_frequency = GETPOST('unit_frequency', 'alpha');
 			$object->nb_gen_max = $nb_gen_max;
 			$object->auto_validate = GETPOST('auto_validate', 'int');
-            $object->generate_pdf = GETPOST('generate_pdf', 'int');
+			$object->generate_pdf = GETPOST('generate_pdf', 'int');
 			$object->fk_project = $projectid;
 
 			$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
@@ -315,7 +315,7 @@ if (empty($reshook))
 	elseif ($action == 'setauto_validate' && $user->rights->facture->creer)
 	{
 		$object->setAutoValidate(GETPOST('auto_validate', 'int'));
-    } // Set generate pdf
+	} // Set generate pdf
 	elseif ($action == 'setgenerate_pdf' && $user->rights->facture->creer)
 	{
 		$object->setGeneratepdf(GETPOST('generate_pdf', 'int'));
@@ -945,7 +945,7 @@ if ($action == 'create')
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="facid" value="'.$object->id.'">';
 
-		dol_fiche_head(null, '', '', 0);
+		print dol_get_fiche_head(null, '', '', 0);
 
 		$rowspan = 4;
 		if (!empty($conf->projet->enabled)) $rowspan++;
@@ -957,7 +957,7 @@ if ($action == 'create')
 
 		// Title
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Title").'</td><td>';
-		print '<input class="flat quatrevingtpercent" type="text" name="titre" value="'.$_POST["titre"].'">';
+		print '<input class="flat quatrevingtpercent" type="text" name="titre" value="'.dol_escape_htmltag(GETPOST("titre", 'alphanohtml')).'">';
 		print '</td></tr>';
 
 		// Third party
@@ -1047,23 +1047,23 @@ if ($action == 'create')
 			print "</td></tr>";
 		}
 
-        // Model pdf
-        print "<tr><td>".$langs->trans('Model')."</td><td>";
-        include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
-        $list = ModelePDFFactures::liste_modeles($db);
-        print $form->selectarray('modelpdf', $list, $conf->global->FACTURE_ADDON_PDF);
-        print "</td></tr>";
+		// Model pdf
+		print "<tr><td>".$langs->trans('Model')."</td><td>";
+		include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
+		$list = ModelePDFFactures::liste_modeles($db);
+		print $form->selectarray('modelpdf', $list, $conf->global->FACTURE_ADDON_PDF);
+		print "</td></tr>";
 
 		print "</table>";
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 
 		// Autogeneration
 		$title = $langs->trans("Recurrence");
 		print load_fiche_titre('<span class="fa fa-calendar"></span> '.$title, '', '');
 
-		dol_fiche_head(null, '', '', 0);
+		print dol_get_fiche_head(null, '', '', 0);
 
 		print '<table class="border centpercent">';
 
@@ -1102,7 +1102,7 @@ if ($action == 'create')
 
 		print "</table>";
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 
 		$title = $langs->trans("ProductsAndServices");
@@ -1145,7 +1145,7 @@ if ($action == 'create')
 
 		print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+		print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 		print '</div>';
 		print "</form>\n";
 	} else {
@@ -1176,7 +1176,7 @@ if ($action == 'create')
 
 		$head = invoice_rec_prepare_head($object);
 
-		dol_fiche_head($head, 'card', $langs->trans("RepeatableInvoice"), -1, 'bill'); // Add a div
+		print dol_get_fiche_head($head, 'card', $langs->trans("RepeatableInvoice"), -1, 'bill'); // Add a div
 
 		// Recurring invoice content
 
@@ -1233,7 +1233,7 @@ if ($action == 'create')
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border centpercent">';
+		print '<table class="border centpercent tableforfield">';
 
 		print '<tr><td class="titlefield">'.$langs->trans("Author").'</td><td>'.$author->getFullName($langs)."</td></tr>";
 
@@ -1262,7 +1262,7 @@ if ($action == 'create')
 
 		// Payment term
 		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('PaymentConditionsShort');
 		print '</td>';
 		if ($action != 'editconditions' && $user->rights->facture->creer)
@@ -1327,7 +1327,7 @@ if ($action == 'create')
 				print '</td>';
 				if ($usercancreate && $action != 'editmulticurrencyrate' && !empty($object->brouillon) && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencyrate&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
-                }
+				}
 				print '</tr></table>';
 				print '</td><td>';
 				if ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') {
@@ -1409,30 +1409,30 @@ if ($action == 'create')
 		print "</td>";
 		print '</tr>';
 
-        // Model pdf
-        print '<tr><td class="nowrap">';
-        print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-        print $langs->trans('Model');
-        print '<td>';
-        if (($action != 'editmodelpdf') && $user->rights->facture->creer && $object->statut == FactureRec::STATUS_DRAFT)
-            print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmodelpdf&amp;id='.$object->id.'">'.img_edit($langs->trans('SetModel'), 1).'</a></td>';
-        print '</tr></table>';
-        print '</td><td>';
-        if ($action == 'editmodelpdf')
-        {
-            include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
-            $list = array();
-            $models = ModelePDFFactures::liste_modeles($db);
-            foreach ($models as $k => $model) {
-                $list[] = str_replace(':', '|', $k).':'.$model;
-            }
-            $select = 'select;'.implode(',', $list);
-            print $form->editfieldval($langs->trans("Model"), 'modelpdf', $object->model_pdf, $object, $user->rights->facture->creer, $select);
-        } else {
-            print $object->model_pdf;
-        }
-        print "</td>";
-        print '</tr>';
+		// Model pdf
+		print '<tr><td class="nowrap">';
+		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+		print $langs->trans('Model');
+		print '<td>';
+		if (($action != 'editmodelpdf') && $user->rights->facture->creer && $object->statut == FactureRec::STATUS_DRAFT)
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmodelpdf&amp;id='.$object->id.'">'.img_edit($langs->trans('SetModel'), 1).'</a></td>';
+		print '</tr></table>';
+		print '</td><td>';
+		if ($action == 'editmodelpdf')
+		{
+			include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
+			$list = array();
+			$models = ModelePDFFactures::liste_modeles($db);
+			foreach ($models as $k => $model) {
+				$list[] = str_replace(':', '|', $k).':'.$model;
+			}
+			$select = 'select;'.implode(',', $list);
+			print $form->editfieldval($langs->trans("Model"), 'modelpdf', $object->model_pdf, $object, $user->rights->facture->creer, $select);
+		} else {
+			print $object->model_pdf;
+		}
+		print "</td>";
+		print '</tr>';
 
 		// Other attributes
 		$cols = 2;
@@ -1452,7 +1452,7 @@ if ($action == 'create')
 		$title = $langs->trans("Recurrence");
 		//print load_fiche_titre($title, '', 'calendar');
 
-		print '<table class="border centpercent">';
+		print '<table class="border centpercent tableforfield">';
 
 		print '<tr><td colspan="2"><span class="fa fa-calendar"></span> '.$title.'</td></tr>';
 
@@ -1573,7 +1573,7 @@ if ($action == 'create')
 			}
 
 			print '<div class="underbanner clearboth"></div>';
-			print '<table class="border centpercent">';
+			print '<table class="border centpercent tableforfield">';
 
 			// Nb of generation already done
 			print '<tr><td style="width: 50%">'.$langs->trans("NbOfGenerationDone").'</td>';
@@ -1641,7 +1641,7 @@ if ($action == 'create')
 
 		print "</form>\n";
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 
 		/**

@@ -1,56 +1,78 @@
-#Run End-to-End Tests
+# Run End-to-End Tests
 
-###Run Selenium
+### Run Selenium
 
 Selenium has been used for automating the browser.
 
-We can run selenium by two ways:
+[Download](https://www.selenium.dev/downloads/) the `latest stable version` of the `Selenium standalone server JAR file`.
 
-* Usually, for running tests using selenium we download `selenium standalone server JAR file` and `chrome driver` and start selenium server with a command which usually looks like:
+Also [download](https://chromedriver.chromium.org/downloads) the `latest stable version` of `Chrome Driver`.
 
-   `java -jar selenium-server-standalone-<selenium version>.jar -port <port-no>`
+Once you have downloaded Chrome Driver, you need to unzip it by running the following command:
+
+  `unzip chromedriver_linux64.zip`
+    
+Once you have unzipped it, you need to move the *chromedriver* file (shared library) and place it inside the same folder where you have placed the Selenium standalone server file.
+
+Now we can run selenium by two ways:
+
+* Start selenium server with a command which usually looks like:
+
+   `java -jar selenium-server-standalone-<selenium version>.jar -port 4444`
+
 
 * Run selenium in docker with
 
    `docker run -d -p 4444:4444 -p 5900:5900 -v /dev/shm:/dev/shm selenium/standalone-chrome-debug`
+   
+   or `docker run -d --network="host" -v /dev/shm:/dev/shm selenium/standalone-chrome-debug`
 
-                                       OR
-     
-   `docker run -d --network="host" -v /dev/shm:/dev/shm selenium/standalone-chrome-debug`
+   or `docker run -d --network host -v /dev/shm:/dev/shm selenium/standalone-chrome-debug`
 
-                                       OR
+### Run the acceptance tests 
 
-   `docker run -d --network host -v /dev/shm:/dev/shm selenium/standalone-chrome-debug`
-
-###Run the acceptance tests 
-
- * In `nightwatch.conf.js` file inside the root directory of the project and inside the configuration file following environment variable has been specified. We can change the default values according to our local configuration.
+* Install *yarn*. For example on Ubuntu:
 
    ```
-    const admin_username = process.env.ADMIN_USERNAME || 'dolibarr';
+   apt install yarnpkg
+   ```
+
+* Install *nodejs* libraries. For example on Ubuntu:
+
+   ```
+   apt install npm
+   npm install cucumber
+   npm install nightwatch-api
+   npm install nightwatch
+   npm update
+   ```
+
+* In *nightwatch.conf.js* file inside the root directory of the project and inside the configuration file following environment variable has been specified. We can change the default values according to our local configuration.
+
+   ```
+    const admin_username = process.env.ADMIN_USERNAME || 'admin';
 
     const admin_password = process.env.ADMIN_PASSWORD || 'password';
 
     const launch_url = process.env.LAUNCH_URL || 'http://localhost/dolibarr/htdocs/';
    ```
- * You can run test using following commands
 
-   `yarn run test:e2e test/acceptance/features/<feature_file>`
+* You can run a test using following commands
+
+  `LAUNCH_URL='<launch_url>'; ADMIN_USERNAME='<admin_username>'; ADMIN_PASSWORD='<admin_password>';`
+  
+  `yarn run test:e2e test/acceptance/features/<feature_file>`
    
-    For example: `yarn run test:e2e test/acceptance/features/addUsers.feature`
-   
-                                     OR 
-   
-   `LAUNCH_URL='<launch_url>' ADMIN_USERNAME='<admin_username>' ADMIN_PASSWORD='<admin_password>' yarn run test:e2e test/acceptance/features/`
+  For example: `yarn run test:e2e test/acceptance/features/WebUI/addUsers.feature`
  
-    The full script to run the acceptance tests is specified in `scripts` object of `package.json` file inside the project's root directory as :
+  Note: The script to run all the acceptance tests is specified in `scripts` object of `package.json` file inside the project's root directory as :
  
-     `"test:e2e": "node_modules/cucumber/bin/cucumber-js --require test/acceptance/index.js --require test/acceptance/stepDefinitions -f node_modules/cucumber-pretty"`
+  `"test:e2e": "node_modules/cucumber/bin/cucumber-js --require test/acceptance/index.js --require test/acceptance/stepDefinitions -f node_modules/cucumber-pretty"`
      
-     After you run the above command you can see the test running. For that : 
+  After you run the above command you can see the test running. For that : 
   
-     * open `Remmina` (Remmina is a Remote Desktop Client and comes installed with Ubuntu)
+* open `Remmina` (Remmina is a Remote Desktop Client and comes installed with Ubuntu)
   
-     * choose `VNC` and enter `localhost` on the address bar
+* choose `VNC` and enter `localhost` on the address bar
   
-     * enter `secret` as the password
+* enter `secret` as the password

@@ -17,6 +17,7 @@
 	<exclude-pattern type="relative">*/nltechno*</exclude-pattern>
 	<exclude-pattern type="relative">*/htdocs/includes</exclude-pattern>
 	<exclude-pattern type="relative">*/htdocs/includes</exclude-pattern>
+	<exclude-pattern type="relative">.git</exclude-pattern>
 
 	<!-- List of all tests -->
 

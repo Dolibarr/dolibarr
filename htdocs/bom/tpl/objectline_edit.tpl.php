@@ -82,8 +82,8 @@ if ($line->fk_product > 0) {
 if (is_object($hookmanager))
 {
 	$fk_parent_line = (GETPOST('fk_parent_line') ? GETPOST('fk_parent_line') : $line->fk_parent_line);
-    $parameters = array('line'=>$line, 'fk_parent_line'=>$fk_parent_line, 'var'=>$var, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer);
-    $reshook = $hookmanager->executeHooks('formEditProductOptions', $parameters, $this, $action);
+	$parameters = array('line'=>$line, 'fk_parent_line'=>$fk_parent_line, 'var'=>$var, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer);
+	$reshook = $hookmanager->executeHooks('formEditProductOptions', $parameters, $this, $action);
 }
 
 print '</td>';
@@ -108,11 +108,11 @@ if (($line->info_bits & 2) != 2) {
 }
 print '</td>';
 
-if ($conf->global->PRODUCT_USE_UNITS)
+if (!empty($conf->global->PRODUCT_USE_UNITS))
 {
-    $coldisplay++;
+	$coldisplay++;
 	print '<td class="nobottom linecoluseunit left">';
-	print $form->selectUnits($line->fk_unit, "units");
+	// print $form->selectUnits($line->fk_unit, "units");
 	print '</td>';
 }
 
@@ -135,9 +135,9 @@ print '</td>';
 $coldisplay += $colspan;
 print '<td class="nobottom linecoledit center valignmiddle" colspan="'.$colspan.'">';
 $coldisplay += $colspan;
-print '<input type="submit" class="button buttongen marginbottomonly" id="savelinebutton marginbottomonly" name="save" value="'.$langs->trans("Save").'">';
+print '<input type="submit" class="button buttongen marginbottomonly button-save" id="savelinebutton marginbottomonly" name="save" value="'.$langs->trans("Save").'">';
 print '<br>';
-print '<input type="submit" class="button buttongen marginbottomonly" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'">';
+print '<input type="submit" class="button buttongen marginbottomonly button-cancel" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'">';
 print '</td>';
 print '</tr>';
 

@@ -120,7 +120,7 @@ class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
         $password = 'admin';
         $url = $this->api_url.'/login?login='.$login.'&password='.$password;
         // Call the API login method to save api_key for this test class
-        $result = getURLContent($url, 'GET', '', 1, array());
+        $result = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
         echo __METHOD__.' result = '.var_export($result, true)."\n";
         echo __METHOD__.' curl_error_no: '.$result['curl_error_no']."\n";
         $this->assertEquals($result['curl_error_no'], '');
@@ -171,7 +171,7 @@ class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
             'fileencoding'=>""
         );
 
-        $result = getURLContent($url, 'POST', $data, 1);
+        $result = getURLContent($url, 'POST', $data, 1, array(), array('http', 'https'), 2);
         echo __METHOD__.' Result for sending document: '.var_export($result, true)."\n";
         echo __METHOD__.' curl_error_no: '.$result['curl_error_no']."\n";
         $object = json_decode($result['content'], true);
@@ -192,7 +192,7 @@ class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
             'fileencoding'=>""
         );
 
-        $result2 = getURLContent($url, 'POST', $data, 1);
+        $result2 = getURLContent($url, 'POST', $data, 1, array(), array('http', 'https'), 2);
         echo __METHOD__.' Result for sending document: '.var_export($result2, true)."\n";
         echo __METHOD__.' curl_error_no: '.$result2['curl_error_no']."\n";
         $object2 = json_decode($result2['content'], true);

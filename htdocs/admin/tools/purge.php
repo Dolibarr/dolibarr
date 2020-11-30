@@ -48,16 +48,16 @@ if (!empty($conf->syslog->enabled))
  */
 if ($action == 'purge' && !preg_match('/^confirm/i', $choice) && ($choice != 'allfiles' || $confirm == 'yes'))
 {
-    // Increase limit of time. Works only if we are not in safe mode
-    $ExecTimeLimit = 600;
-    if (!empty($ExecTimeLimit))
-    {
-        $err = error_reporting();
-        error_reporting(0); // Disable all errors
-        //error_reporting(E_ALL);
-        @set_time_limit($ExecTimeLimit); // Need more than 240 on Windows 7/64
-        error_reporting($err);
-    }
+	// Increase limit of time. Works only if we are not in safe mode
+	$ExecTimeLimit = 600;
+	if (!empty($ExecTimeLimit))
+	{
+		$err = error_reporting();
+		error_reporting(0); // Disable all errors
+		//error_reporting(E_ALL);
+		@set_time_limit($ExecTimeLimit); // Need more than 240 on Windows 7/64
+		error_reporting($err);
+	}
 
 	require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 	$utils = new Utils($db);
@@ -97,9 +97,9 @@ if (!empty($conf->syslog->enabled))
 	$filelogparam = $filelog;
 	if ($user->admin && preg_match('/^dolibarr.*\.log$/', basename($filelog)))
 	{
-	    $filelogparam = '<a class="wordbreak" href="'.DOL_URL_ROOT.'/document.php?modulepart=logs&file=';
-	    $filelogparam .= basename($filelog);
-	    $filelogparam .= '">'.$filelog.'</a>';
+		$filelogparam = '<a class="wordbreak" href="'.DOL_URL_ROOT.'/document.php?modulepart=logs&file=';
+		$filelogparam .= basename($filelog);
+		$filelogparam .= '">'.$filelog.'</a>';
 	}
 	print '> '.$langs->trans("PurgeDeleteLogFile", $filelogparam);
 	print '<br><br>';

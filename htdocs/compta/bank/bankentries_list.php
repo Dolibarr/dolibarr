@@ -42,11 +42,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
@@ -212,7 +214,8 @@ if (empty($reshook))
 }
 
 // Conciliation
-if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', 'alpha')) && $user->rights->banque->consolidate)
+if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', 'alpha')) && $user->rights->banque->consolidate
+	&& (!GETPOSTISSET('pageplusone') || (GETPOST('pageplusone') == GETPOST('pageplusoneold'))))
 {
 	$error = 0;
 
@@ -222,17 +225,16 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 	if ($num_releve)
 	{
 		$bankline = new AccountLine($db);
-		if (isset($_POST['rowid']) && is_array($_POST['rowid']))
-		{
-			foreach ($_POST['rowid'] as $row)
-			{
-				if ($row > 0)
-				{
+
+		$rowids = GETPOST('rowid', 'array');
+
+		if (!empty($rowids) && is_array($rowids)) {
+			foreach ($rowids as $row) {
+				if ($row > 0) {
 					$result = $bankline->fetch($row);
 					$bankline->num_releve = $num_releve; //$_POST["num_releve"];
 					$result = $bankline->update_conciliation($user, GETPOST("cat"), GETPOST('confirm_reconcile', 'alpha') ? 1 : 0); // If we confirm_reconcile, we set flag 'rappro' to 1.
-					if ($result < 0)
-					{
+					if ($result < 0) {
 						setEventMessages($bankline->error, $bankline->errors, 'errors');
 						$error++;
 						break;
@@ -277,11 +279,11 @@ if (GETPOST('save') && !$cancel && $user->rights->banque->modifier)
 {
 	$error = 0;
 
-	if (price2num($_POST["addcredit"]) > 0)
+	if (price2num(GETPOST("addcredit")) > 0)
 	{
-		$amount = price2num($_POST["addcredit"]);
+		$amount = price2num(GETPOST("addcredit"));
 	} else {
-		$amount = - price2num($_POST["adddebit"]);
+		$amount = - price2num(GETPOST("adddebit"));
 	}
 
 	$operation = GETPOST("operation", 'alpha');
@@ -368,12 +370,14 @@ $userstatic = new User($db);
 $chargestatic = new ChargeSociales($db);
 $loanstatic = new Loan($db);
 $memberstatic = new Adherent($db);
+$donstatic = new Don($db);
 $paymentstatic = new Paiement($db);
 $paymentsupplierstatic = new PaiementFourn($db);
+$paymentscstatic = new PaymentSocialContribution($db);
 $paymentvatstatic = new TVA($db);
 $paymentsalstatic = new PaymentSalary($db);
+$paymentdonationstatic = new PaymentDonation($db);
 $paymentvariousstatic = new PaymentVarious($db);
-$donstatic = new Don($db);
 $paymentexpensereportstatic = new PaymentExpenseReport($db);
 $bankstatic = new Account($db);
 $banklinestatic = new AccountLine($db);
@@ -429,13 +433,13 @@ if ($id > 0 || !empty($ref))
 
 	// Bank card
 	$head = bank_prepare_head($object);
-	dol_fiche_head($head, 'journal', $langs->trans("FinancialAccount"), 0, 'account');
+	print dol_get_fiche_head($head, 'journal', $langs->trans("FinancialAccount"), 0, 'account');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	/*
@@ -629,7 +633,7 @@ if ($resql)
 		print ' '.$langs->trans("or").' ';
 		print '<input class="button" name="confirm_reconcile" type="submit" value="'.$langs->trans("Conciliate").'">';
 		print ' '.$langs->trans("or").' ';
-		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		// Show last bank statements
@@ -736,7 +740,7 @@ if ($resql)
 		}*/
 		print '<td class="center">';
 		print '<input type="submit" name="save" class="button buttongen marginbottomonly" value="'.$langs->trans("Add").'"><br>';
-		print '<input type="submit" name="cancel" class="button buttongen marginbottomonly" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" name="cancel" class="button buttongen marginbottomonly button-cancel" value="'.$langs->trans("Cancel").'">';
 		print '</td></tr>';
 
 		print '</table>';
@@ -773,7 +777,7 @@ if ($resql)
 	{
 		if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT))
 		{
-			if (empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT))	// If direct entries is done using miscellaneous payments
+			if (empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT))	// Default is to record miscellaneous direct entries using miscellaneous payments
 			{
 				$newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.$search_account.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.urlencode($search_account)), '', $user->rights->banque->modifier);
 			} else // If direct entries is not done using miscellaneous payments
@@ -785,11 +789,12 @@ if ($resql)
 		}
 	}
 
-	$morehtml = '<div class="inline-block '.(($buttonreconcile || $newcardbutton) ? 'marginrightonly' : '').'">';
+	/*$morehtml = '<div class="inline-block '.(($buttonreconcile || $newcardbutton) ? 'marginrightonly' : '').'">';
 	$morehtml .= '<label for="pageplusone">'.$langs->trans("Page")."</label> "; // ' Page ';
 	$morehtml .= '<input type="text" name="pageplusone" id="pageplusone" class="flat right width25 pageplusone" value="'.($page + 1).'">';
 	$morehtml .= '/'.$nbtotalofpages.' ';
 	$morehtml .= '</div>';
+	*/
 
 	if ($action != 'addline' && $action != 'reconcile')
 	{
@@ -801,7 +806,7 @@ if ($resql)
 	$picto = 'bank_account';
 	if ($id > 0 || !empty($ref)) $picto = '';
 
-	print_barre_liste($langs->trans("BankTransactions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $morehtml, '', $limit);
+	print_barre_liste($langs->trans("BankTransactions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $morehtml, '', $limit, 0, 0, 1);
 
 	// We can add page now to param
 	if ($page != '') $param .= '&page='.urlencode($page);
@@ -837,7 +842,7 @@ if ($resql)
 			$moreforfilter .= '<div class="divsearchfield">';
 			$moreforfilter .= $langs->trans('RubriquesTransactions').' : ';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_BANK_LINE, $search_bid, 'parent', null, null, 1);
-			$moreforfilter .= $form->selectarray('search_bid', $cate_arbo, $search_bid, 1);
+			$moreforfilter .= $form->selectarray('search_bid', $cate_arbo, $search_bid, 1, 0, 0, '', 0, 0, 0, '', '', 1);
 			$moreforfilter .= '</div>';
 		}
 	}
@@ -938,7 +943,7 @@ if ($resql)
 	if (!empty($arrayfields['b.conciliated']['checked']))
 	{
 		print '<td class="liste_titre" align="center">';
-		print $form->selectyesno('search_conciliated', $search_conciliated, 1, false, 1);
+		print $form->selectyesno('search_conciliated', $search_conciliated, 1, false, 1, 1);
 		print '</td>';
 	}
 	print '<td class="liste_titre" align="middle">';
@@ -1087,7 +1092,7 @@ if ($resql)
 				}
 
 				print '<td class="center">';
-				print '<input type="checkbox" id="selectAll" />';
+				print '<input type="checkbox" id="selectAll" title="'.dol_escape_htmltag($langs->trans("SelectAll")).'" />';
 				print ' <script type="text/javascript">
 						$("input#selectAll").change(function() {
 							$("input[type=checkbox][name^=rowid]").prop("checked", $(this).is(":checked"));
@@ -1197,10 +1202,10 @@ if ($resql)
 					print ' '.$paymentsupplierstatic->getNomUrl(2);
 				} elseif ($links[$key]['type'] == 'payment_sc')
 				{
-					print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$links[$key]['url_id'].'">';
-					print ' '.img_object($langs->trans('ShowPayment'), 'payment').' ';
-					//print $langs->trans("SocialContributionPayment");
-					print '</a>';
+					$paymentscstatic->id = $links[$key]['url_id'];
+					$paymentscstatic->ref = $links[$key]['url_id'];
+					$paymentscstatic->label = $links[$key]['label'];
+					print ' '.$paymentscstatic->getNomUrl(2);
 				} elseif ($links[$key]['type'] == 'payment_vat')
 				{
 					$paymentvatstatic->id = $links[$key]['url_id'];
@@ -1210,6 +1215,7 @@ if ($resql)
 				{
 					$paymentsalstatic->id = $links[$key]['url_id'];
 					$paymentsalstatic->ref = $links[$key]['url_id'];
+					$paymentsalstatic->label = $links[$key]['label'];
 					print ' '.$paymentsalstatic->getNomUrl(2);
 				} elseif ($links[$key]['type'] == 'payment_loan')
 				{
@@ -1218,9 +1224,9 @@ if ($resql)
 					print '</a>';
 				} elseif ($links[$key]['type'] == 'payment_donation')
 				{
-					print '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?id='.$links[$key]['url_id'].'">';
-					print ' '.img_object($langs->trans('ShowPayment'), 'payment').' ';
-					print '</a>';
+					$paymentdonationstatic->id = $links[$key]['url_id'];
+					$paymentdonationstatic->ref = $links[$key]['url_id'];
+					print ' '.$paymentdonationstatic->getNomUrl(2);
 				} elseif ($links[$key]['type'] == 'payment_expensereport')
 				{
 					$paymentexpensereportstatic->id = $links[$key]['url_id'];

@@ -79,10 +79,10 @@ $coldisplay++;
 echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formating role of function price
 print '</td>';
 
-if ($conf->global->PRODUCT_USE_UNITS)
+if (!empty($conf->global->PRODUCT_USE_UNITS))
 {
 	print '<td class="linecoluseunit nowrap left">';
-	$label = $line->getLabelOfUnit('short');
+	$label = $tmpproduct->getLabelOfUnit('long');
 	if ($label !== '') {
 		print $langs->trans($label);
 	}

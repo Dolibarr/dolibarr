@@ -430,7 +430,7 @@ class FormOther
 		if ($showempty) $out .= '<option value="0">&nbsp;</option>';
 
 		// Get list of users allowed to be viewed
-		$sql_usr = "SELECT u.rowid, u.lastname, u.firstname, u.statut, u.login";
+		$sql_usr = "SELECT u.rowid, u.lastname, u.firstname, u.statut as status, u.login, u.photo, u.gender, u.entity, u.admin";
 		$sql_usr .= " FROM ".MAIN_DB_PREFIX."user as u";
 
 		if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
@@ -455,7 +455,7 @@ class FormOther
 		if (empty($user->rights->user->user->lire) && $user->socid)
 		{
 			$sql_usr .= " UNION ";
-			$sql_usr .= "SELECT u2.rowid, u2.lastname, u2.firstname, u2.statut, u2.login";
+			$sql_usr .= "SELECT u2.rowid, u2.lastname, u2.firstname, u2.statut as status, u2.login, u2.photo, u2.gender, u2.entity, u2.admin";
 			$sql_usr .= " FROM ".MAIN_DB_PREFIX."user as u2, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 
 			if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
@@ -480,14 +480,37 @@ class FormOther
 		$resql_usr = $this->db->query($sql_usr);
 		if ($resql_usr)
 		{
+			$userstatic = new User($this->db);
+			$showstatus = 1;
+
 			while ($obj_usr = $this->db->fetch_object($resql_usr))
 			{
+				$userstatic->id = $obj_usr->rowid;
+				$userstatic->lastname = $obj_usr->lastname;
+				$userstatic->firstname = $obj_usr->firstname;
+				$userstatic->photo = $obj_usr->photo;
+				$userstatic->statut = $obj_usr->status;
+				$userstatic->entity = $obj_usr->entity;
+				$userstatic->admin = $obj_usr->admin;
+
+				$labeltoshow = dolGetFirstLastname($obj_usr->firstname, $obj_usr->lastname);
+				if (empty($obj_usr->firstname) && empty($obj_usr->lastname)) $labeltoshow = $obj_usr->login;
+
 				$out .= '<option value="'.$obj_usr->rowid.'"';
-
 				if ($obj_usr->rowid == $selected) $out .= ' selected';
+				$out .= ' data-html="';
+				$outhtml = '';
+				if (!empty($obj_usr->photo))
+				{
+					$outhtml .= $userstatic->getNomUrl(-3, '', 0, 1, 24, 1, 'login', '', 1).' ';
+				}
+				if ($showstatus >= 0 && $obj_usr->status == 0) $outhtml .= '<strike class="opacitymediumxxx">';
+				$outhtml .= $labeltoshow;
+				if ($showstatus >= 0 && $obj_usr->status == 0) $outhtml .= '</strike>';
+				$out .= dol_escape_htmltag($outhtml);
+				$out .= '">';
 
-				$out .= '>';
-				$out .= dolGetFirstLastname($obj_usr->firstname, $obj_usr->lastname);
+				$out .= $labeltoshow;
 				// Complete name with more info
 				$moreinfo = 0;
 				if (!empty($conf->global->MAIN_SHOW_LOGIN))
@@ -497,12 +520,12 @@ class FormOther
 				}
 				if ($showstatus >= 0)
 				{
-					if ($obj_usr->statut == 1 && $showstatus == 1)
+					if ($obj_usr->status == 1 && $showstatus == 1)
 					{
 						$out .= ($moreinfo ? ' - ' : ' (').$langs->trans('Enabled');
 						$moreinfo++;
 					}
-					if ($obj_usr->statut == 0)
+					if ($obj_usr->status == 0)
 					{
 						$out .= ($moreinfo ? ' - ' : ' (').$langs->trans('Disabled');
 						$moreinfo++;
@@ -703,10 +726,11 @@ class FormOther
 	 *  @param	int			$showcolorbox	1=Show color code and color box, 0=Show only color code
 	 *  @param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
 	 *  @param	string		$morecss		Add css style into input field
+	 *  @param	string		$setpropertyonselect	Set this property after selecting a color
 	 *  @return	string
 	 *  @see showColor()
 	 */
-	public static function selectColor($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = '', $morecss = '')
+	public static function selectColor($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = '', $morecss = '', $setpropertyonselect = '')
 	{
 		// Deprecation warning
 		if ($form_name) {
@@ -727,39 +751,46 @@ class FormOther
 				$out .= '<script type="text/javascript">
 	             jQuery(document).ready(function(){
 	                $(\'#colorpicker'.$prefix.'\').jPicker( {
-	                window: {
-	                  title: \''.dol_escape_js($langs->trans("SelectAColor")).'\', /* any title for the jPicker window itself - displays "Drag Markers To Pick A Color" if left null */
-	                  effects:
-	                    {
-	                    type: \'show\', /* effect used to show/hide an expandable picker. Acceptable values "slide", "show", "fade" */
-	                    speed:
-	                    {
-	                      show: \'fast\', /* duration of "show" effect. Acceptable values are "fast", "slow", or time in ms */
-	                      hide: \'fast\' /* duration of "hide" effect. Acceptable values are "fast", "slow", or time in ms */
-	                    }
-	                    },
-	                  position:
-	                    {
-	                    x: \'screenCenter\', /* acceptable values "left", "center", "right", "screenCenter", or relative px value */
-	                    y: \'center\' /* acceptable values "top", "bottom", "center", or relative px value */
-	                    },
-	                },
-	                images: {
-	                    clientPath: \''.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/images/\',
-	                    picker: { file: \'../../../../../theme/common/colorpicker.png\', width: 14, height: 14 }
-	          		},
-	                localization: // alter these to change the text presented by the picker (e.g. different language)
-	                  {
-	                    text:
-	                    {
-	                      title: \''.dol_escape_js($langs->trans("SelectAColor")).'\',
-	                      newColor: \''.dol_escape_js($langs->trans("New")).'\',
-	                      currentColor: \''.dol_escape_js($langs->trans("Current")).'\',
-	                      ok: \''.dol_escape_js($langs->trans("Save")).'\',
-	                      cancel: \''.dol_escape_js($langs->trans("Cancel")).'\'
-	                    }
-	                  }
-			        } ); });
+		                window: {
+		                  title: \''.dol_escape_js($langs->trans("SelectAColor")).'\', /* any title for the jPicker window itself - displays "Drag Markers To Pick A Color" if left null */
+		                  effects:
+		                    {
+		                    type: \'show\', /* effect used to show/hide an expandable picker. Acceptable values "slide", "show", "fade" */
+		                    speed:
+		                    {
+		                      show: \'fast\', /* duration of "show" effect. Acceptable values are "fast", "slow", or time in ms */
+		                      hide: \'fast\' /* duration of "hide" effect. Acceptable values are "fast", "slow", or time in ms */
+		                    }
+		                    },
+		                  position:
+		                    {
+		                    x: \'screenCenter\', /* acceptable values "left", "center", "right", "screenCenter", or relative px value */
+		                    y: \'center\' /* acceptable values "top", "bottom", "center", or relative px value */
+		                    },
+		                },
+		                images: {
+		                    clientPath: \''.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/images/\',
+		                    picker: { file: \'../../../../../theme/common/colorpicker.png\', width: 14, height: 14 }
+		          		},
+		                localization: // alter these to change the text presented by the picker (e.g. different language)
+		                  {
+		                    text:
+		                    {
+		                      title: \''.dol_escape_js($langs->trans("SelectAColor")).'\',
+		                      newColor: \''.dol_escape_js($langs->trans("New")).'\',
+		                      currentColor: \''.dol_escape_js($langs->trans("Current")).'\',
+		                      ok: \''.dol_escape_js($langs->trans("Save")).'\',
+		                      cancel: \''.dol_escape_js($langs->trans("Cancel")).'\'
+		                    }
+		                  }
+				        },
+						function(color, context) { console.log("close"); },
+						function(color, context) { var hex = color.val(\'hex\'); console.log("new color selected in jpicker "+hex);';
+				if ($setpropertyonselect) { $out .= ' if (hex != null) document.documentElement.style.setProperty(\'--'.$setpropertyonselect.'\', \'#\'+hex);'; }
+						$out .= '},
+						function(color, context) { console.log("cancel"); }
+					);
+				 });
 	             </script>';
 			}
 			$out .= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat'.($morecss ? ' '.$morecss : '').'" type="text" value="'.dol_escape_htmltag($set_color).'" />';
@@ -952,11 +983,20 @@ class FormOther
 	 *  @param	int		$invert			Invert
 	 *  @param	string	$option			Option
 	 *  @param	string	$morecss		More css
+	 *  @param  bool	$addjscombo		Add js combo
 	 *  @return	string
 	 */
-	public function selectyear($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle maxwidth75imp')
+	public function selectyear($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle maxwidth75imp', $addjscombo = false)
 	{
 		$out = '';
+
+		// Add code for jquery to use multiselect
+		if ($addjscombo)
+		{
+			// Enhance with select2
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+			$out .= ajax_combobox($htmlname);
+		}
 
 		$currentyear = date("Y") + $offset;
 		$max_year = $currentyear + $max_year;
@@ -1135,6 +1175,7 @@ class FormOther
 		}
 
 		// Define boxlista and boxlistb
+		$boxlista = ''; $boxlistb = '';
 		$nbboxactivated = count($boxidactivatedforuser);
 
 		if ($nbboxactivated)

@@ -246,7 +246,7 @@ print load_fiche_titre($langs->trans("OrdersSetup"), $linkback, 'title_setup');
 
 $head = order_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("Orders"), -1, 'order');
+print dol_get_fiche_head($head, 'general', $langs->trans("Orders"), -1, 'order');
 
 /*
  * Orders Numbering model
@@ -297,8 +297,10 @@ foreach ($dirmodels as $reldir)
 						// Show example of numbering model
 						print '<td class="nowrap">';
 						$tmp = $module->getExample();
-						if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
-						elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
+						if (preg_match('/^Error/', $tmp)) {
+							$langs->load("errors");
+							print '<div class="error">'.$langs->trans($tmp).'</div>';
+						} elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
 						else print $tmp;
 						print '</td>'."\n";
 

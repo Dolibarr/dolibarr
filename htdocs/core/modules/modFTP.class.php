@@ -33,11 +33,11 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 class modFTP extends DolibarrModules
 {
 
-    /**
-     *   Constructor. Define names, constants, directories, boxes, permissions
-     *
-     *   @param      DoliDB		$db      Database handler
-    */
+	/**
+	 *   Constructor. Define names, constants, directories, boxes, permissions
+	 *
+	 *   @param      DoliDB		$db      Database handler
+	 */
 	public function __construct($db)
 	{
 		$this->db = $db;
@@ -75,8 +75,8 @@ class modFTP extends DolibarrModules
 
 		// Constants
 		$this->const = array(
-		    1=>array('FTP_CONNECT_WITH_SSL', 'chaine', '0', 'Use FTPS for FTP module', 1, 'current', 1),
-		    2=>array('FTP_CONNECT_WITH_SFTP', 'chaine', '0', 'Use SFTP for FTP module', 1, 'current', 1)
+			1=>array('FTP_CONNECT_WITH_SSL', 'chaine', '0', 'Use FTPS for FTP module', 1, 'current', 1),
+			2=>array('FTP_CONNECT_WITH_SFTP', 'chaine', '0', 'Use SFTP for FTP module', 1, 'current', 1)
 		); // List of parameters
 
 		// Boxes
@@ -85,10 +85,10 @@ class modFTP extends DolibarrModules
 
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
 		// Example:
-        //$this->boxes[$r][1] = "myboxa.php";
-    	//$r++;
-        //$this->boxes[$r][1] = "myboxb.php";
-    	//$r++;
+		//$this->boxes[$r][1] = "myboxa.php";
+		//$r++;
+		//$this->boxes[$r][1] = "myboxb.php";
+		//$r++;
 
 		// Permissions
 		$this->rights_class = 'ftp'; // Permission key
@@ -118,8 +118,8 @@ class modFTP extends DolibarrModules
 							  'url'=>'/ftp/index.php',
 							  'langs'=>'ftp',
 							  'position'=>100,
-                              'enabled'=>'$conf->ftp->enabled',
-		                      'perms'=>'$user->rights->ftp->read || $user->rights->ftp->write || $user->rights->ftp->setup',
+							  'enabled'=>'$conf->ftp->enabled',
+							  'perms'=>'$user->rights->ftp->read || $user->rights->ftp->write || $user->rights->ftp->setup',
 							  'target'=>'',
 							  'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
 		$r++;

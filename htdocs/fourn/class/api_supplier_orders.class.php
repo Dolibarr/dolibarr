@@ -108,18 +108,18 @@ class SupplierOrders extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
+		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) $search_sale = DolibarrApiAccess::$user->id;
 
 		$sql = "SELECT t.rowid";
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as t";
 
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 
   		if (!empty($product_ids)) $sql .= ", ".MAIN_DB_PREFIX."commande_fournisseurdet as cd"; // We need this table joined to the select in order to filter by product
 
 		$sql .= ' WHERE t.entity IN ('.getEntity('supplier_order').')';
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= " AND t.fk_soc = sc.fk_soc";
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= " AND t.fk_soc = sc.fk_soc";
 		if (!empty($product_ids)) $sql .= " AND cd.fk_commande = t.rowid AND cd.fk_product IN (".$product_ids.")";
 		if ($socids) $sql .= " AND t.fk_soc IN (".$socids.")";
 		if ($search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
@@ -339,8 +339,8 @@ class SupplierOrders extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
-	 * @param   Object  $object    Object to clean
-	 * @return  array              Array of cleaned object properties
+	 * @param   Object  $object     Object to clean
+	 * @return  Object              Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{

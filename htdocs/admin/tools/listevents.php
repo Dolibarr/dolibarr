@@ -76,11 +76,11 @@ $nowarray = dol_getdate($now);
 
 if (empty($date_start)) // We define date_start and date_end
 {
-    $date_start = dol_get_first_day($nowarray['year'], $nowarray['mon'], false);
+	$date_start = dol_get_first_day($nowarray['year'], $nowarray['mon'], false);
 }
 if (empty($date_end))
 {
-    $date_end = dol_mktime(23, 59, 59, $nowarray['mon'], $nowarray['mday'], $nowarray['year']);
+	$date_end = dol_mktime(23, 59, 59, $nowarray['mon'], $nowarray['mday'], $nowarray['year']);
 }
 // Set $date_startmonth...
 $tmp = dol_getdate($date_start);
@@ -104,14 +104,14 @@ $now = dol_now();
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
-    $date_start = -1;
-    $date_end = -1;
-    $search_code = '';
-    $search_ip = '';
-    $search_user = '';
-    $search_desc = '';
-    $search_ua = '';
-    $search_prefix_session = '';
+	$date_start = -1;
+	$date_end = -1;
+	$search_code = '';
+	$search_ip = '';
+	$search_user = '';
+	$search_desc = '';
+	$search_ua = '';
+	$search_prefix_session = '';
 }
 
 // Purge audit events
@@ -144,7 +144,7 @@ if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin)
 	$result = $securityevent->create($user);
 	if ($result > 0)
 	{
-	    $db->commit();
+		$db->commit();
 		dol_syslog($text, LOG_WARNING);
 	} else {
 		$error++;
@@ -167,7 +167,7 @@ $usefilter = 0;
 
 $sql = "SELECT e.rowid, e.type, e.ip, e.user_agent, e.dateevent,";
 $sql .= " e.fk_user, e.description, e.prefix_session,";
-$sql .= " u.login";
+$sql .= " u.login, u.admin, u.entity, u.firstname, u.lastname, u.statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."events as e";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = e.fk_user";
 $sql .= " WHERE e.entity IN (".getEntity('event').")";
@@ -219,16 +219,16 @@ if ($result)
 	if ($date_endday)     $param .= "&date_endday=".urlencode($date_endday);
 	if ($date_endyear)    $param .= "&date_endyear=".urlencode($date_endyear);
 
-    $langs->load('withdrawals');
-    if ($num)
-    {
-        $center = '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("Purge").'</a>';
-    }
+	$langs->load('withdrawals');
+	if ($num)
+	{
+		$center = '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("Purge").'</a>';
+	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
-    print_barre_liste($langs->trans("ListOfSecurityEvents"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $nbtotalofrecords, 'setup', 0, '', '', $limit);
+	print_barre_liste($langs->trans("ListOfSecurityEvents"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $nbtotalofrecords, 'setup', 0, '', '', $limit);
 
 	if ($action == 'purge')
 	{
@@ -337,7 +337,18 @@ if ($result)
 		{
 			$userstatic->id = $obj->fk_user;
 			$userstatic->login = $obj->login;
+			$userstatic->admin = $obj->admin;
+			$userstatic->entity = $obj->entity;
+			$userstatic->status = $obj->status;
+
 			print $userstatic->getLoginUrl(1);
+			if (!empty($conf->multicompany->enabled) && $userstatic->admin && !$userstatic->entity)
+			{
+				print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
+			} elseif ($userstatic->admin)
+			{
+				print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
+			}
 		} else print '&nbsp;';
 		print '</td>';
 

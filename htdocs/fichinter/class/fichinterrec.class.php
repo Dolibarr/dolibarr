@@ -53,6 +53,9 @@ class FichinterRec extends Fichinter
 	 */
 	public $picto = 'intervention';
 
+	/**
+	 * @var string title
+	 */
 	public $title;
 	public $number;
 	public $date;
@@ -60,14 +63,28 @@ class FichinterRec extends Fichinter
 	public $remise;
 	public $tva;
 	public $total;
-	public $db_table;
+
+	/**
+	 * @var int Proposal Id
+	 */
 	public $propalid;
 
 	public $date_last_gen;
 	public $date_when;
+
+	/**
+	 * @var int number of generation done
+	 */
 	public $nb_gen_done;
+
+	/**
+	 * @var int number of maximum generation
+	 */
 	public $nb_gen_max;
 
+	/**
+	 * int rank
+	 */
 	public $rang;
 	public $special_code;
 
@@ -281,7 +298,7 @@ class FichinterRec extends Fichinter
 				$this->note_public			= $obj->note_public;
 				$this->user_author			= $obj->fk_user_author;
 				$this->model_pdf			= $obj->model_pdf;
-				$this->modelpdf				= $obj->model_pdf;
+				$this->modelpdf				= $obj->model_pdf; // deprecated
 				$this->rang = $obj->rang;
 				$this->special_code = $obj->special_code;
 				$this->frequency			= $obj->frequency;

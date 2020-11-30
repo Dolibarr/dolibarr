@@ -187,7 +187,7 @@ class Project extends CommonObject
 		'datee' =>array('type'=>'date', 'label'=>'DateEnd', 'enabled'=>1, 'visible'=>1, 'position'=>35),
 		'ref' =>array('type'=>'varchar(50)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'showoncombobox'=>1, 'position'=>40, 'searchall'=>1),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>3, 'notnull'=>1, 'position'=>45),
-		'title' =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>50, 'showoncombobox'=>1, 'searchall'=>1),
+		'title' =>array('type'=>'varchar(255)', 'label'=>'ProjectLabel', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>50, 'showoncombobox'=>1, 'searchall'=>1),
 		'description' =>array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>3, 'position'=>55, 'searchall'=>1),
 		'fk_user_creat' =>array('type'=>'integer', 'label'=>'Fk user creat', 'enabled'=>1, 'visible'=>3, 'notnull'=>1, 'position'=>60),
 		'public' =>array('type'=>'integer', 'label'=>'Visibility', 'enabled'=>1, 'visible'=>1, 'position'=>65),
@@ -586,7 +586,7 @@ class Project extends CommonObject
 
 				$this->db->free($resql);
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
@@ -1102,7 +1102,10 @@ class Project extends CommonObject
 		}
 
 		$label = '';
-		if ($option != 'nolink') $label = img_picto('', $this->picto).' <u>'.$langs->trans("Project").'</u>';
+		if ($option != 'nolink') $label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Project").'</u>';
+		if (isset($this->status)) {
+			$label .= ' '.$this->getLibStatut(5);
+		}
 		$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('Ref').': </b>'.$this->ref; // The space must be after the : to not being explode when showing the title in img_picto
 		$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('Label').': </b>'.$this->title; // The space must be after the : to not being explode when showing the title in img_picto
 		if (isset($this->public)) {
@@ -1118,9 +1121,6 @@ class Project extends CommonObject
 			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('DateEnd').': </b>'.dol_print_date($this->datee, 'day'); // The space must be after the : to not being explode when showing the title in img_picto
 		}
 		if ($moreinpopup) $label .= '<br>'.$moreinpopup;
-		if (isset($this->status)) {
-			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
-		}
 
 		$url = '';
 		if ($option != 'nolink')
@@ -1233,7 +1233,7 @@ class Project extends CommonObject
 	 * 	@param  string	$mode		Type of permission we want to know: 'read', 'write'
 	 * 	@return	int					>0 if user has permission, <0 if user has no permission
 	 */
-	public function restrictedProjectArea($user, $mode = 'read')
+	public function restrictedProjectArea(User $user, $mode = 'read')
 	{
 		// To verify role of users
 		$userAccess = 0;
@@ -1243,7 +1243,7 @@ class Project extends CommonObject
 		} elseif ($this->public && (($mode == 'read' && !empty($user->rights->projet->lire)) || ($mode == 'write' && !empty($user->rights->projet->creer)) || ($mode == 'delete' && !empty($user->rights->projet->supprimer))))
 		{
 			$userAccess = 1;
-		} else {
+		} else {	// No access due to permission to read all projects, so we check if we are a contact of project
 			foreach (array('internal', 'external') as $source)
 			{
 				$userRole = $this->liste_contact(4, $source);
@@ -1252,7 +1252,13 @@ class Project extends CommonObject
 				$nblinks = 0;
 				while ($nblinks < $num)
 				{
-					if ($source == 'internal' && preg_match('/^PROJECT/', $userRole[$nblinks]['code']) && $user->id == $userRole[$nblinks]['id'])
+					if ($source == 'internal' && $user->id == $userRole[$nblinks]['id'])	// $userRole[$nblinks]['id'] is id of user (llx_user) for internal contacts
+					{
+						if ($mode == 'read' && $user->rights->projet->lire)      $userAccess++;
+						if ($mode == 'write' && $user->rights->projet->creer)     $userAccess++;
+						if ($mode == 'delete' && $user->rights->projet->supprimer) $userAccess++;
+					}
+					if ($source == 'external' && $user->socid > 0 && $user->socid == $userRole[$nblinks]['socid'])	// $userRole[$nblinks]['id'] is id of contact (llx_socpeople) or external contacts
 					{
 						if ($mode == 'read' && $user->rights->projet->lire)      $userAccess++;
 						if ($mode == 'write' && $user->rights->projet->creer)     $userAccess++;
@@ -1471,7 +1477,7 @@ class Project extends CommonObject
 				$clone_project->note_public = '';
 			} else {
 				$this->db->begin();
-				$res = $clone_project->update_note(dol_html_entity_decode($clone_project->note_public, ENT_QUOTES), '_public');
+				$res = $clone_project->update_note(dol_html_entity_decode($clone_project->note_public, ENT_QUOTES | ENT_HTML5), '_public');
 				if ($res < 0)
 				{
 					$this->error .= $clone_project->error;
@@ -1482,7 +1488,7 @@ class Project extends CommonObject
 				}
 
 				$this->db->begin();
-				$res = $clone_project->update_note(dol_html_entity_decode($clone_project->note_private, ENT_QUOTES), '_private');
+				$res = $clone_project->update_note(dol_html_entity_decode($clone_project->note_private, ENT_QUOTES | ENT_HTML5), '_private');
 				if ($res < 0)
 				{
 					$this->error .= $clone_project->error;

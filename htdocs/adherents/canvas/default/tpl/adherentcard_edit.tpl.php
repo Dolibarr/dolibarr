@@ -134,8 +134,8 @@ echo $this->control->tpl['ajax_selectcountry'];
 
 <tr>
 	<td colspan="4" class="center">
-	<input type="submit" class="button" name="save" value="<?php echo $langs->trans("Save"); ?>">&nbsp;
-	<input type="submit" class="button" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
+	<input type="submit" class="button button-save" name="save" value="<?php echo $langs->trans("Save"); ?>">&nbsp;
+	<input type="submit" class="button button-cancel" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
 	</td>
 </tr>
 

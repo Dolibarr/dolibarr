@@ -255,7 +255,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
                 //if ($reg[0] != 'db') $ok=false;
             }
             //print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-            $this->assertTrue($ok, 'Found a $this->db->idate to forge a sql request without quotes around this date field '.$file['relativename'].' :: '.$val[0]);
+            $this->assertTrue($ok, 'Found a $this->db->idate to forge a sql request without quotes around this date field '.$file['relativename']);
             //exit;
 
 
@@ -274,14 +274,14 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
                 //if ($reg[0] != 'db') $ok=false;
             }
             //print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-            $this->assertTrue($ok, 'Found non escaped string in building of a sql request '.$file['relativename'].': '.$val[0].' - Bad.');
+            $this->assertTrue($ok, 'Found non escaped string in building of a sql request '.$file['relativename'].' - Bad.');
             //exit;
 
             // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
             preg_match_all('/sql.+\s*\'"\s*\.\s*\$(.........)/', $filecontent, $matches, PREG_SET_ORDER);
             foreach ($matches as $key => $val)
             {
-            	if (! in_array($val[1], array('this->db-', 'this->esc', 'db->escap', 'db->idate', 'excludeGr', 'includeGr'))) {
+            	if (! in_array($val[1], array('this->db-', 'this->esc', 'db->escap', 'dbsession', 'db->idate', 'excludeGr', 'includeGr'))) {
             		$ok=false;
             		break;
             	}
@@ -341,7 +341,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
             $ok=true;
             $matches=array();
             // Check string   name="token" value="'.$_SESSINON
-            preg_match_all('/name="token" value="\'\.\$_SESSION/', $filecontent, $matches, PREG_SET_ORDER);
+            preg_match_all('/name="token" value="\'\s*\.\s*\$_SESSION/', $filecontent, $matches, PREG_SET_ORDER);
             foreach ($matches as $key => $val)
             {
             	if ($file['name'] != 'excludefile.php')

@@ -54,19 +54,18 @@ if ($action == 'addconst')
 
 if ($action == 'add') {
 	$error = 0;
+	$boxids = GETPOST('boxid', 'array');
+
 	$db->begin();
-	if (isset($_POST['boxid']) && is_array($_POST['boxid']))
-	{
-		foreach ($_POST['boxid'] as $boxid)
-		{
+	if (is_array($boxids)) {
+		foreach ($boxids as $boxid) {
 			if (is_numeric($boxid['pos']) && $boxid['pos'] >= 0)	// 0=Home, 1=...
 			{
 				$pos = $boxid['pos'];
 
 				// Initialize distinct fk_user with all already existing values of fk_user (user that use a personalized view of boxes for page "pos")
 				$distinctfkuser = array();
-				if (!$error)
-				{
+				if (!$error) {
 					$sql = "SELECT fk_user";
 					$sql .= " FROM ".MAIN_DB_PREFIX."user_param";
 					$sql .= " WHERE param = 'MAIN_BOXES_".$db->escape($pos)."' AND value = '1'";
@@ -146,7 +145,7 @@ if ($action == 'add') {
 if ($action == 'delete')
 {
 	$sql = "SELECT box_id FROM ".MAIN_DB_PREFIX."boxes";
-	$sql .= " WHERE rowid=".$rowid;
+	$sql .= " WHERE rowid=".((int) $rowid);
 
 	$resql = $db->query($sql);
 	$obj = $db->fetch_object($resql);
@@ -474,7 +473,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL == 2 || !empty($conf->global->MAIN_ACTIVA
 print '</table>';
 
 print '<br>';
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'" name="Button"></div>';
+print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'" name="Button"></div>';
 print '<br>';
 
 print '</form>';

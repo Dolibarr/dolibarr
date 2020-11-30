@@ -89,7 +89,7 @@ if ($inputalsopricewithtax) print '<td class="right" style="width: 80px">'.$lang
 // Qty
 print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 
-if ($conf->global->PRODUCT_USE_UNITS)
+if (!empty($conf->global->PRODUCT_USE_UNITS))
 {
 	print '<td class="linecoluseunit left">'.$langs->trans('Unit').'</td>';
 }

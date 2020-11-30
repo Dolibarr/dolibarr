@@ -77,15 +77,10 @@ if ($action == 'set')
 	$res = dolibarr_set_const($db, "TAKEPOS_SORTPRODUCTFIELD", GETPOST('TAKEPOS_SORTPRODUCTFIELD', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUM_TERMINALS", GETPOST('TAKEPOS_NUM_TERMINALS', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_ADDON", GETPOST('TAKEPOS_ADDON', 'alpha'), 'int', 0, '', $conf->entity);
-    $res = dolibarr_set_const($db, "TAKEPOS_EMAIL_TEMPLATE_INVOICE", GETPOST('TAKEPOS_EMAIL_TEMPLATE_INVOICE', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_EMAIL_TEMPLATE_INVOICE", GETPOST('TAKEPOS_EMAIL_TEMPLATE_INVOICE', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (!empty($conf->global->TAKEPOS_ENABLE_SUMUP)) {
 		$res = dolibarr_set_const($db, "TAKEPOS_SUMUP_AFFILIATE", GETPOST('TAKEPOS_SUMUP_AFFILIATE', 'alpha'), 'chaine', 0, '', $conf->entity);
 		$res = dolibarr_set_const($db, "TAKEPOS_SUMUP_APPID", GETPOST('TAKEPOS_SUMUP_APPID', 'alpha'), 'chaine', 0, '', $conf->entity);
-	}
-	if ($conf->global->TAKEPOS_ORDER_NOTES == 1)
-	{
-		$extrafields = new ExtraFields($db);
-		$extrafields->addExtraField('order_notes', 'Order notes', 'varchar', 0, 255, 'facturedet', 0, 0, '', '', 0, '', 0, 1);
 	}
 
 	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
@@ -93,11 +88,11 @@ if ($action == 'set')
 	if (!$res > 0) $error++;
 
  	if (!$error)
-    {
-        $db->commit();
-    } else {
-        $db->rollback();
-    }
+	{
+		$db->commit();
+	} else {
+		$db->rollback();
+	}
 } elseif ($action == 'updateMask') {
 	$maskconst = GETPOST('maskconst', 'alpha');
 	$maskvalue = GETPOST('maskvalue', 'alpha');
@@ -131,7 +126,7 @@ llxHeader('', $langs->trans("CashDeskSetup"));
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
 $head = takepos_admin_prepare_head();
-dol_fiche_head($head, 'setup', 'TakePOS', -1, 'cash-register');
+print dol_get_fiche_head($head, 'setup', 'TakePOS', -1, 'cash-register');
 
 // Numbering modules
 $now = dol_now();
@@ -184,8 +179,10 @@ foreach ($dirmodels as $reldir)
 						// Show example of numbering module
 						print '<td class="nowrap">';
 						$tmp = $module->getExample();
-						if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
-						elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
+						if (preg_match('/^Error/', $tmp)) {
+							$langs->load("errors");
+							print '<div class="error">'.$langs->trans($tmp).'</div>';
+						} elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
 						else print $tmp;
 						print '</td>'."\n";
 
@@ -336,14 +333,14 @@ $nboftemplates = $formmail->fetchAllEMailTemplate('facture_send', $user, null, -
 //$arraydefaultmessage = $formmail->getEMailTemplate($db, $tmp[1], $user, null, 0, 1, '');
 $arrayofmessagename = array();
 if (is_array($formmail->lines_model)) {
-    foreach ($formmail->lines_model as $modelmail) {
-        //var_dump($modelmail);
-        $moreonlabel = '';
-        if (!empty($arrayofmessagename[$modelmail->label])) {
-            $moreonlabel = ' <span class="opacitymedium">('.$langs->trans("SeveralLangugeVariatFound").')</span>';
-        }
-        $arrayofmessagename[$modelmail->id] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->topic)).$moreonlabel;
-    }
+	foreach ($formmail->lines_model as $modelmail) {
+		//var_dump($modelmail);
+		$moreonlabel = '';
+		if (!empty($arrayofmessagename[$modelmail->label])) {
+			$moreonlabel = ' <span class="opacitymedium">('.$langs->trans("SeveralLangugeVariatFound").')</span>';
+		}
+		$arrayofmessagename[$modelmail->id] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->topic)).$moreonlabel;
+	}
 }
 //var_dump($arraydefaultmessage);
 //var_dump($arrayofmessagename);
@@ -460,7 +457,7 @@ if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
 
 print '<br>';
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
+print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
 
 print "</form>\n";
 

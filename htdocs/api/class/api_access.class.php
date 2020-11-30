@@ -52,7 +52,7 @@ class DolibarrApiAccess implements iAuthenticate
 	/**
 	 * @var string $role		user role
 	 */
-    public static $role = 'user';
+	public static $role = 'user';
 
 	/**
 	 * @var User		$user	Loggued user
@@ -69,7 +69,7 @@ class DolibarrApiAccess implements iAuthenticate
 		$this->db = $db;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName
 	/**
 	 * Check access
 	 *
@@ -80,7 +80,7 @@ class DolibarrApiAccess implements iAuthenticate
 	 */
 	public function __isAllowed()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $db;
 
 		$login = '';
@@ -97,17 +97,17 @@ class DolibarrApiAccess implements iAuthenticate
 		$api_key = '';
 		if (isset($_GET['api_key']))	// For backward compatibility
 		{
-		    // TODO Add option to disable use of api key on url. Return errors if used.
-		    $api_key = $_GET['api_key'];
+			// TODO Add option to disable use of api key on url. Return errors if used.
+			$api_key = $_GET['api_key'];
 		}
 		if (isset($_GET['DOLAPIKEY']))
 		{
-		    // TODO Add option to disable use of api key on url. Return errors if used.
-		    $api_key = $_GET['DOLAPIKEY']; // With GET method
+			// TODO Add option to disable use of api key on url. Return errors if used.
+			$api_key = $_GET['DOLAPIKEY']; // With GET method
 		}
 		if (isset($_SERVER['HTTP_DOLAPIKEY']))         // Param DOLAPIKEY in header can be read with HTTP_DOLAPIKEY
 		{
-		    $api_key = $_SERVER['HTTP_DOLAPIKEY']; // With header method (recommanded)
+			$api_key = $_SERVER['HTTP_DOLAPIKEY']; // With header method (recommanded)
 		}
 
 		if ($api_key)
@@ -149,7 +149,7 @@ class DolibarrApiAccess implements iAuthenticate
 
 			if (!$login)
 			{
-			    throw new RestException(503, 'Error when searching login user from api key');
+				throw new RestException(503, 'Error when searching login user from api key');
 			}
 			$fuser = new User($this->db);
 			$result = $fuser->fetch('', $login, '', 0, (empty($userentity) ? -1 : $conf->entity)); // If user is not entity 0, we search in working entity $conf->entity  (that may have been forced to a different value than user entity)
@@ -161,49 +161,49 @@ class DolibarrApiAccess implements iAuthenticate
 
 			if ($fuser->socid) {
 				static::$role = 'external';
-            }
+			}
 
 			if ($fuser->admin) {
 				static::$role = 'admin';
-            }
-        } else {
-		    throw new RestException(401, "Failed to login to API. No parameter 'HTTP_DOLAPIKEY' on HTTP header (and no parameter DOLAPIKEY in URL).");
+			}
+		} else {
+			throw new RestException(401, "Failed to login to API. No parameter 'HTTP_DOLAPIKEY' on HTTP header (and no parameter DOLAPIKEY in URL).");
 		}
 
-	    $userClass::setCacheIdentifier(static::$role);
-	    Resources::$accessControlFunction = 'DolibarrApiAccess::verifyAccess';
-	    $requirefortest = static::$requires;
-	    if (!is_array($requirefortest)) $requirefortest = explode(',', $requirefortest);
-	    return in_array(static::$role, (array) $requirefortest) || static::$role == 'admin';
+		$userClass::setCacheIdentifier(static::$role);
+		Resources::$accessControlFunction = 'DolibarrApiAccess::verifyAccess';
+		$requirefortest = static::$requires;
+		if (!is_array($requirefortest)) $requirefortest = explode(',', $requirefortest);
+		return in_array(static::$role, (array) $requirefortest) || static::$role == 'admin';
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName
 	/**
 	 * @return string string to be used with WWW-Authenticate header
 	 */
-    public function __getWWWAuthenticateString()
-    {
-        // phpcs:enable
-        return '';
-    }
+	public function __getWWWAuthenticateString()
+	{
+		// phpcs:enable
+		return '';
+	}
 
-    /**
-     * Verify access
-     *
-     * @param   array $m Properties of method
-     *
-     * @access private
-     * @return bool
-     */
-    public static function verifyAccess(array $m)
-    {
-        $requires = isset($m['class']['DolibarrApiAccess']['properties']['requires'])
-                ? $m['class']['DolibarrApiAccess']['properties']['requires']
-                : false;
+	/**
+	 * Verify access
+	 *
+	 * @param   array $m Properties of method
+	 *
+	 * @access private
+	 * @return bool
+	 */
+	public static function verifyAccess(array $m)
+	{
+		$requires = isset($m['class']['DolibarrApiAccess']['properties']['requires'])
+				? $m['class']['DolibarrApiAccess']['properties']['requires']
+				: false;
 
 
-        return $requires
-            ? static::$role == 'admin' || in_array(static::$role, (array) $requires)
-            : true;
-    }
+		return $requires
+			? static::$role == 'admin' || in_array(static::$role, (array) $requires)
+			: true;
+	}
 }

@@ -3,7 +3,7 @@
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2017	Regis Houssin	        <regis.houssin@inodbox.com>
  * Copyright (C) 2017	Neil Orley	            <neil.orley@oeris.fr>
- * Copyright (C) 2018   Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020   Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018-2020   Thibault FOUCART        <support@ptibogxiv.net>
  *
  *
@@ -525,8 +525,8 @@ class Setup extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
-	 * @param object    $object    Object to clean
-	 * @return array 				Array of cleaned object properties
+	 * @param Object    $object    Object to clean
+	 * @return Object 				Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -1634,7 +1634,7 @@ class Setup extends DolibarrApi
 			$xmlarray = getURLContent($xmlremote);
 
 			// Return array('content'=>response,'curl_error_no'=>errno,'curl_error_msg'=>errmsg...)
-			if (!$xmlarray['curl_error_no'] && $xmlarray['http_code'] != '404')
+			if (!$xmlarray['curl_error_no'] && $xmlarray['http_code'] != '400' && $xmlarray['http_code'] != '404')
 			{
 				$xmlfile = $xmlarray['content'];
 				//print "xmlfilestart".$xmlfile."endxmlfile";

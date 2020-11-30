@@ -38,6 +38,7 @@ MenuOrdersSupplierToBill=Inköpsorder att fakturera
 NbDaysToDelivery=Leveransfördröjning (dagar)
 DescNbDaysToDelivery=Den längsta leveransförseningen för produkterna från denna order
 SupplierReputation=Leverantörs rykte
+ReferenceReputation=Reference reputation
 DoNotOrderThisProductToThisSupplier=Beställ inte
 NotTheGoodQualitySupplier=Låg kvalitet
 ReputationForThisProduct=Rykte

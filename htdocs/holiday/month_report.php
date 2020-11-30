@@ -57,8 +57,8 @@ $limit       = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_
 $sortfield   = GETPOST('sortfield', 'aZ09comma');
 $sortorder   = GETPOST('sortorder', 'alpha');
 
-if (! $sortfield) $sortfield = "cp.rowid";
-if (! $sortorder) $sortorder = "ASC";
+if (!$sortfield) $sortfield = "cp.rowid";
+if (!$sortorder) $sortorder = "ASC";
 
 $hookmanager->initHooks(array('leavemovementlist'));
 
@@ -78,42 +78,42 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    // Selection of new fields
-    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+	// Selection of new fields
+	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-    // Purge search criteria
-    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
-    {
-        $search_ref = '';
-        $search_employee = '';
-        $search_type = '';
-        $search_description = '';
-        $toselect = '';
-        $search_array_options = array();
-    }
+	// Purge search criteria
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
+	{
+		$search_ref = '';
+		$search_employee = '';
+		$search_type = '';
+		$search_description = '';
+		$toselect = '';
+		$search_array_options = array();
+	}
 
-    if (GETPOST('button_removefilter_x', 'alpha')
-        || GETPOST('button_removefilter.x', 'alpha')
-        || GETPOST('button_removefilter', 'alpha')
-        || GETPOST('button_search_x', 'alpha')
-        || GETPOST('button_search.x', 'alpha')
-        || GETPOST('button_search', 'alpha'))
-    {
-        $massaction = '';
-    }
+	if (GETPOST('button_removefilter_x', 'alpha')
+		|| GETPOST('button_removefilter.x', 'alpha')
+		|| GETPOST('button_removefilter', 'alpha')
+		|| GETPOST('button_search_x', 'alpha')
+		|| GETPOST('button_search.x', 'alpha')
+		|| GETPOST('button_search', 'alpha'))
+	{
+		$massaction = '';
+	}
 }
 
 $arrayfields = array(
-    'cp.ref'=>array('label'=>$langs->trans('Ref'), 'checked'=>1),
-    'cp.fk_user'=>array('label'=>$langs->trans('Employee'), 'checked'=>1),
-    'ct.label'=>array('label'=>$langs->trans('Type'), 'checked'=>1),
-    'cp.date_debut'=>array('label'=>$langs->trans('DateDebCP'), 'checked'=>1),
-    'cp.date_fin'=>array('label'=>$langs->trans('DateFinCP'), 'checked'=>1),
-    'used_days'=>array('label'=>$langs->trans('NbUseDaysCPShort'), 'checked'=>1),
-    'date_start_month'=>array('label'=>$langs->trans('DateStartInMonth'), 'checked'=>1),
-    'date_end_month'=>array('label'=>$langs->trans('DateEndInMonth'), 'checked'=>1),
-    'used_days_month'=>array('label'=>$langs->trans('NbUseDaysCPShortInMonth'), 'checked'=>1),
-    'cp.description'=>array('label'=>$langs->trans('DescCP'), 'checked'=>1),
+	'cp.ref'=>array('label'=>$langs->trans('Ref'), 'checked'=>1),
+	'cp.fk_user'=>array('label'=>$langs->trans('Employee'), 'checked'=>1),
+	'ct.label'=>array('label'=>$langs->trans('Type'), 'checked'=>1),
+	'cp.date_debut'=>array('label'=>$langs->trans('DateDebCP'), 'checked'=>1),
+	'cp.date_fin'=>array('label'=>$langs->trans('DateFinCP'), 'checked'=>1),
+	'used_days'=>array('label'=>$langs->trans('NbUseDaysCPShort'), 'checked'=>1),
+	'date_start_month'=>array('label'=>$langs->trans('DateStartInMonth'), 'checked'=>1),
+	'date_end_month'=>array('label'=>$langs->trans('DateEndInMonth'), 'checked'=>1),
+	'used_days_month'=>array('label'=>$langs->trans('NbUseDaysCPShortInMonth'), 'checked'=>1),
+	'cp.description'=>array('label'=>$langs->trans('DescCP'), 'checked'=>1),
 );
 
 
@@ -134,19 +134,19 @@ $search_year = GETPOST("reyear", 'int') ?GETPOST("reyear", 'int') : date("Y", ti
 $year_month = sprintf("%04d", $search_year).'-'.sprintf("%02d", $search_month);
 
 $sql = "SELECT cp.rowid, cp.ref, cp.fk_user, cp.date_debut, cp.date_fin, ct.label, cp.description, cp.halfday";
-$sql.= " FROM ".MAIN_DB_PREFIX."holiday cp";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user u ON cp.fk_user = u.rowid";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_holiday_types ct ON cp.fk_type = ct.rowid";
-$sql.= " WHERE cp.rowid > 0";
-$sql.= " AND cp.statut = 3"; // 3 = Approved
-$sql.= " AND (date_format(cp.date_debut, '%Y-%m') = '".$db->escape($year_month)."' OR date_format(cp.date_fin, '%Y-%m') = '".$db->escape($year_month)."')";
+$sql .= " FROM ".MAIN_DB_PREFIX."holiday cp";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user u ON cp.fk_user = u.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_holiday_types ct ON cp.fk_type = ct.rowid";
+$sql .= " WHERE cp.rowid > 0";
+$sql .= " AND cp.statut = 3"; // 3 = Approved
+$sql .= " AND (date_format(cp.date_debut, '%Y-%m') = '".$db->escape($year_month)."' OR date_format(cp.date_fin, '%Y-%m') = '".$db->escape($year_month)."')";
 
 if (!empty($search_ref))            $sql .= natural_search('cp.ref', $search_ref);
 if (!empty($search_employee))       $sql .= " AND cp.fk_user = '".$db->escape($search_employee)."'";
 if (!empty($search_type))           $sql .= ' AND cp.fk_type IN ('.$db->escape($search_type).')';
-if (!empty($search_description))    $sql.= natural_search('cp.description', $search_description);
+if (!empty($search_description))    $sql .= natural_search('cp.description', $search_description);
 
-$sql.= $db->order($sortfield, $sortorder);
+$sql .= $db->order($sortfield, $sortorder);
 
 $resql = $db->query($sql);
 if (empty($resql))
@@ -158,7 +158,7 @@ if (empty($resql))
 $num = $db->num_rows($resql);
 
 $param = '';
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"])   $param.= '&contextpage='.urlencode($contextpage);
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"])   $param .= '&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit)                     $param .= '&limit='.urlencode($limit);
 if (!empty($search_ref))                                            $param .= '&search_ref='.urlencode($search_ref);
 if (!empty($search_employee))                                       $param .= '&search_employee='.urlencode($search_employee);
@@ -190,7 +190,7 @@ $moreforfilter = '';
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = '';
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
-$selectedfields.= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
 print '<table class="noborder centpercent">';
@@ -199,31 +199,31 @@ print '<tr class="liste_titre">';
 
 // Filter: Ref
 if (!empty($arrayfields['cp.ref']['checked'])) {
-    print '<td class="liste_titre">';
-    print '<input class="flat maxwidth100" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
-    print '</td>';
+	print '<td class="liste_titre">';
+	print '<input class="flat maxwidth100" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+	print '</td>';
 }
 
 // Filter: Employee
 if (!empty($arrayfields['cp.fk_user']['checked'])) {
-    print '<td class="liste_titre">';
-    print $form->select_dolusers($search_employee, "search_employee", 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
-    print '</td>';
+	print '<td class="liste_titre">';
+	print $form->select_dolusers($search_employee, "search_employee", 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
+	print '</td>';
 }
 
 // Filter: Type
 if (!empty($arrayfields['ct.label']['checked'])) {
-    $typeleaves = $holidaystatic->getTypes(1, -1);
-    $arraytypeleaves = array();
-    foreach ($typeleaves as $key => $val)
-    {
-        $labeltoshow = ($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']);
-        $arraytypeleaves[$val['rowid']] = $labeltoshow;
-    }
+	$typeleaves = $holidaystatic->getTypes(1, -1);
+	$arraytypeleaves = array();
+	foreach ($typeleaves as $key => $val)
+	{
+		$labeltoshow = ($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']);
+		$arraytypeleaves[$val['rowid']] = $labeltoshow;
+	}
 
-    print '<td class="liste_titre">';
-    print $form->selectarray('search_type', $arraytypeleaves, $search_type, 1, 0, 0, '', 0, 0, 0, '', '', 1);
-    print '</td>';
+	print '<td class="liste_titre">';
+	print $form->selectarray('search_type', $arraytypeleaves, $search_type, 1, 0, 0, '', 0, 0, 0, '', '', 1);
+	print '</td>';
 }
 
 if (!empty($arrayfields['cp.date_debut']['checked'])) print '<td class="liste_titre"></td>';
@@ -235,9 +235,9 @@ if (!empty($arrayfields['used_days_month']['checked'])) print '<td class="liste_
 
 // Filter: Description
 if (!empty($arrayfields['cp.description']['checked'])) {
-    print '<td class="liste_titre">';
-    print '<input type="text" class="maxwidth100" name="search_description" value="'.$search_description.'">';
-    print '</td>';
+	print '<td class="liste_titre">';
+	print '<input type="text" class="maxwidth100" name="search_description" value="'.$search_description.'">';
+	print '</td>';
 }
 
 // Action column
@@ -263,93 +263,93 @@ print '</tr>';
 
 if ($num == 0)
 {
-    print '<tr><td colspan="10" class="opacitymedium">'.$langs->trans('None').'</td></tr>';
+	print '<tr><td colspan="10" class="opacitymedium">'.$langs->trans('None').'</td></tr>';
 }
 else {
-    while ($obj = $db->fetch_object($resql))
-    {
-        $user = new User($db);
-        $user->fetch($obj->fk_user);
+	while ($obj = $db->fetch_object($resql))
+	{
+		$user = new User($db);
+		$user->fetch($obj->fk_user);
 
-        $date_start = $db->jdate($obj->date_debut, true);
-        $date_end = $db->jdate($obj->date_fin, true);
+		$date_start = $db->jdate($obj->date_debut, true);
+		$date_end = $db->jdate($obj->date_fin, true);
 
-        $tmpstart = dol_getdate($date_start);
-        $tmpend = dol_getdate($date_end);
+		$tmpstart = dol_getdate($date_start);
+		$tmpend = dol_getdate($date_end);
 
-        $starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
-        $endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';
+		$starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
+		$endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';
 
-        $halfdayinmonth = $obj->halfday;
-        $starthalfdayinmonth = $starthalfday;
-        $endhalfdayinmonth = $endhalfday;
+		$halfdayinmonth = $obj->halfday;
+		$starthalfdayinmonth = $starthalfday;
+		$endhalfdayinmonth = $endhalfday;
 
-        //0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
+		//0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
 
-        // Set date_start_gmt and date_end_gmt that are date to show for the selected month
-        $date_start_inmonth = $db->jdate($obj->date_debut, true);
-        $date_end_inmonth = $db->jdate($obj->date_fin, true);
-        if ($tmpstart['year'] < $search_year || $tmpstart['mon'] < $search_month)
-        {
-            $date_start_inmonth = dol_get_first_day($search_year, $search_month, true);
-            $starthalfdayinmonth = 'morning';
-            if ($halfdayinmonth == 2) $halfdayinmonth = 1;
-            if ($halfdayinmonth == -1) $halfdayinmonth = 0;
-        }
-        if ($tmpend['year'] > $search_year || $tmpend['mon'] > $search_month)
-        {
-            $date_end_inmonth = dol_get_last_day($search_year, $search_month, true) - ((24 * 3600) - 1);
-            $endhalfdayinmonth = 'afternoon';
-            if ($halfdayinmonth == 2) $halfdayinmonth = -1;
-            if ($halfdayinmonth == 1) $halfdayinmonth = 0;
-        }
+		// Set date_start_gmt and date_end_gmt that are date to show for the selected month
+		$date_start_inmonth = $db->jdate($obj->date_debut, true);
+		$date_end_inmonth = $db->jdate($obj->date_fin, true);
+		if ($tmpstart['year'] < $search_year || $tmpstart['mon'] < $search_month)
+		{
+			$date_start_inmonth = dol_get_first_day($search_year, $search_month, true);
+			$starthalfdayinmonth = 'morning';
+			if ($halfdayinmonth == 2) $halfdayinmonth = 1;
+			if ($halfdayinmonth == -1) $halfdayinmonth = 0;
+		}
+		if ($tmpend['year'] > $search_year || $tmpend['mon'] > $search_month)
+		{
+			$date_end_inmonth = dol_get_last_day($search_year, $search_month, true) - ((24 * 3600) - 1);
+			$endhalfdayinmonth = 'afternoon';
+			if ($halfdayinmonth == 2) $halfdayinmonth = -1;
+			if ($halfdayinmonth == 1) $halfdayinmonth = 0;
+		}
 
-        // Leave request
-        $holidaystatic->id = $obj->rowid;
-        $holidaystatic->ref = $obj->ref;
+		// Leave request
+		$holidaystatic->id = $obj->rowid;
+		$holidaystatic->ref = $obj->ref;
 
-        print '<tr class="oddeven">';
+		print '<tr class="oddeven">';
 
-        if (!empty($arrayfields['cp.ref']['checked'])) print '<td>'.$holidaystatic->getNomUrl(1, 1).'</td>';
-        if (!empty($arrayfields['cp.fk_user']['checked'])) print '<td>'.$user->getFullName($langs).'</td>';
-        if (!empty($arrayfields['ct.label']['checked'])) print '<td>'.$obj->label.'</td>';
+		if (!empty($arrayfields['cp.ref']['checked'])) print '<td>'.$holidaystatic->getNomUrl(1, 1).'</td>';
+		if (!empty($arrayfields['cp.fk_user']['checked'])) print '<td>'.$user->getFullName($langs).'</td>';
+		if (!empty($arrayfields['ct.label']['checked'])) print '<td>'.$obj->label.'</td>';
 
-        if (!empty($arrayfields['cp.date_debut']['checked']))
-        {
-            print '<td class="center">'.dol_print_date($db->jdate($obj->date_debut), 'day');
-            print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$starthalfday]).')</span>';
-            print '</td>';
-        }
+		if (!empty($arrayfields['cp.date_debut']['checked']))
+		{
+			print '<td class="center">'.dol_print_date($db->jdate($obj->date_debut), 'day');
+			print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$starthalfday]).')</span>';
+			print '</td>';
+		}
 
-        if (!empty($arrayfields['cp.date_fin']['checked']))
-        {
-            print '<td class="center">'.dol_print_date($db->jdate($obj->date_fin), 'day');
-            print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$endhalfday]).')</span>';
-            print '</td>';
-        }
+		if (!empty($arrayfields['cp.date_fin']['checked']))
+		{
+			print '<td class="center">'.dol_print_date($db->jdate($obj->date_fin), 'day');
+			print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$endhalfday]).')</span>';
+			print '</td>';
+		}
 
-        if (!empty($arrayfields['used_days']['checked'])) print '<td class="right">'.num_open_day($date_start, $date_end, 0, 1, $obj->halfday).'</td>';
+		if (!empty($arrayfields['used_days']['checked'])) print '<td class="right">'.num_open_day($date_start, $date_end, 0, 1, $obj->halfday).'</td>';
 
-        if (!empty($arrayfields['date_start_month']['checked']))
-        {
-            print '<td class="center">'.dol_print_date($date_start_inmonth, 'day');
-            print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$starthalfdayinmonth]).')</span>';
-            print '</td>';
-        }
+		if (!empty($arrayfields['date_start_month']['checked']))
+		{
+			print '<td class="center">'.dol_print_date($date_start_inmonth, 'day');
+			print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$starthalfdayinmonth]).')</span>';
+			print '</td>';
+		}
 
-        if (!empty($arrayfields['date_end_month']['checked']))
-        {
-            print '<td class="center">'.dol_print_date($date_end_inmonth, 'day');
-            print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$endhalfdayinmonth]).')</span>';
-            print '</td>';
-        }
+		if (!empty($arrayfields['date_end_month']['checked']))
+		{
+			print '<td class="center">'.dol_print_date($date_end_inmonth, 'day');
+			print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$endhalfdayinmonth]).')</span>';
+			print '</td>';
+		}
 
-        if (!empty($arrayfields['used_days_month']['checked'])) print '<td class="right">'.num_open_day($date_start_inmonth, $date_end_inmonth, 0, 1, $halfdayinmonth).'</td>';
-        if (!empty($arrayfields['cp.description']['checked'])) print '<td class="maxwidth300">'.dol_escape_htmltag(dolGetFirstLineOfText($obj->description)).'</td>';
+		if (!empty($arrayfields['used_days_month']['checked'])) print '<td class="right">'.num_open_day($date_start_inmonth, $date_end_inmonth, 0, 1, $halfdayinmonth).'</td>';
+		if (!empty($arrayfields['cp.description']['checked'])) print '<td class="maxwidth300">'.dol_escape_htmltag(dolGetFirstLineOfText($obj->description)).'</td>';
 
-        print '<td></td>';
-        print '</tr>';
-    }
+		print '<td></td>';
+		print '</tr>';
+	}
 }
 print '</table>';
 print '</div>';

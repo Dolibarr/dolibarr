@@ -164,10 +164,12 @@ class BonPrelevement extends CommonObject
 					$result = 0;
 				} else {
 					$result = -1;
+					$this->errors[] = get_class($this)."::AddFacture " . $this->db->lasterror;
 					dol_syslog(get_class($this)."::AddFacture Error $result");
 				}
 			} else {
 				$result = -2;
+				$this->errors[]=get_class($this)."::AddFacture linedid Empty";
 				dol_syslog(get_class($this)."::AddFacture Error $result");
 			}
 		} else {
@@ -245,6 +247,7 @@ class BonPrelevement extends CommonObject
 				$line_id = $this->db->last_insert_id(MAIN_DB_PREFIX."prelevement_lignes");
 				$result = 0;
 			} else {
+				$this->errors[]=get_class($this)."::addline Error -2 " .$this->db->lasterror;
 				dol_syslog(get_class($this)."::addline Error -2");
 				$result = -2;
 			}
@@ -449,7 +452,7 @@ class BonPrelevement extends CommonObject
 				$message = $langs->trans("InfoCreditMessage", $this->ref, dol_print_date($date, 'dayhour'));
 
 				//Add payment of withdrawal into bank
-				$bankaccount = $conf->global->PRELEVEMENT_ID_BANKACCOUNT;
+				$bankaccount = ($this->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
 				$facs = array();
 				$amounts = array();
 				$amountsperthirdparty = array();
@@ -1121,7 +1124,8 @@ class BonPrelevement extends CommonObject
 						if (!$resql)
 						{
 							$error++;
-							dol_syslog(__METHOD__."::Update Error=".$this->db->error(), LOG_ERR);
+							$this->errors[]=$this->db->lasterror();
+							dol_syslog(__METHOD__."::Update Error=".$this->db->lasterror(), LOG_ERR);
 						}
 					}
 				}
@@ -1316,7 +1320,7 @@ class BonPrelevement extends CommonObject
 
 		$url = DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id;
 		if ($this->type == 'bank-transfer') {
-			$url = DOL_URL_ROOT.'/compta/paymentbybanktransfer/card.php?id='.$this->id;
+			$url = DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id;
 		}
 
 		if ($option != 'nolink')
@@ -1699,7 +1703,7 @@ class BonPrelevement extends CommonObject
 				fputs($this->file, '				<Id>'.$CrLf);
 				fputs($this->file, '				    <PrvtId>'.$CrLf);
 				fputs($this->file, '					<Othr>'.$CrLf);
-				fputs($this->file, '						<Id>'.$conf->global->PRELEVEMENT_ICS.'</Id>'.$CrLf);
+				fputs($this->file, '						<Id>'.$conf->global->PAYMENTBYBANKTRANSFER_ICS.'</Id>'.$CrLf);
 				fputs($this->file, '					</Othr>'.$CrLf);
 				fputs($this->file, '				    </PrvtId>'.$CrLf);
 				fputs($this->file, '				</Id>'.$CrLf);
@@ -2114,7 +2118,8 @@ class BonPrelevement extends CommonObject
 		$dateTime_YMDHMS = dol_print_date($ladate, '%Y-%m-%dT%H:%M:%S');
 
 		// Get data of bank account
-		$id = $configuration->global->PRELEVEMENT_ID_BANKACCOUNT;
+		//$id = $configuration->global->PRELEVEMENT_ID_BANKACCOUNT;
+		$id = ($type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
 		$account = new Account($this->db);
 		if ($account->fetch($id) > 0)
 		{

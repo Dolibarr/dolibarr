@@ -88,9 +88,9 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 		dolibarr_del_const($db, "MAIN_INFO_SOCIETE_STATE", $conf->entity);
 	}
 
-    $db->begin();
+	$db->begin();
 
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM", GETPOST("nom", 'nohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM", GETPOST("nom", 'nohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADDRESS", GETPOST("MAIN_INFO_SOCIETE_ADDRESS", 'nohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TOWN", GETPOST("MAIN_INFO_SOCIETE_TOWN", 'nohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ZIP", GETPOST("MAIN_INFO_SOCIETE_ZIP", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
@@ -141,8 +141,8 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 						// Create thumbs of logo (Note that PDF use original file and not thumbs)
 						if ($isimage > 0)
 						{
-						    // Create thumbs
-						    //$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retreive value with get...
+							// Create thumbs
+							//$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retrieve value with get...
 
 							// Create small thumb, Used on logon for example
 							$imgThumbSmall = vignette($dirforimage.$original_file, $maxwidthsmall, $maxheightsmall, '_small', $quality);
@@ -269,8 +269,8 @@ if ($action == 'addthumb' || $action == 'addthumbsquarred')  // Regenerate thumb
 
 			$reg = array();
 
-		    // Create thumbs
-			//$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retreive value with get...
+			// Create thumbs
+			//$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retrieve value with get...
 
 			// Create small thumb. Used on logon for example
 			$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$_GET["file"], $maxwidthsmall, $maxheightsmall, '_small', $quality);
@@ -373,7 +373,7 @@ print load_fiche_titre($langs->trans("CompanyFoundation"), '', 'title_setup');
 
 $head = company_admin_prepare_head();
 
-dol_fiche_head($head, 'company', $langs->trans("Company"), -1, 'company');
+print dol_get_fiche_head($head, 'company', $langs->trans("Company"), -1, 'company');
 
 print '<span class="opacitymedium">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Save"))."</span><br>\n";
 print "<br>\n";
@@ -406,11 +406,12 @@ print '<input name="nom" id="name" class="minwidth200" value="'.dol_escape_htmlt
 print '<tr class="oddeven"><td><label for="MAIN_INFO_SOCIETE_ADDRESS">'.$langs->trans("CompanyAddress").'</label></td><td>';
 print '<textarea name="MAIN_INFO_SOCIETE_ADDRESS" id="MAIN_INFO_SOCIETE_ADDRESS" class="quatrevingtpercent" rows="'.ROWS_3.'">'.($conf->global->MAIN_INFO_SOCIETE_ADDRESS ? $conf->global->MAIN_INFO_SOCIETE_ADDRESS : GETPOST("MAIN_INFO_SOCIETE_ADDRESS", 'nohtml')).'</textarea></td></tr>'."\n";
 
+// Zip
 print '<tr class="oddeven"><td><label for="MAIN_INFO_SOCIETE_ZIP">'.$langs->trans("CompanyZip").'</label></td><td>';
-print '<input class="minwidth100" name="MAIN_INFO_SOCIETE_ZIP" id="MAIN_INFO_SOCIETE_ZIP" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_ZIP ? $conf->global->MAIN_INFO_SOCIETE_ZIP : GETPOST("MAIN_INFO_SOCIETE_ZIP", 'alpha')).'"></td></tr>'."\n";
+print '<input class="width100" name="MAIN_INFO_SOCIETE_ZIP" id="MAIN_INFO_SOCIETE_ZIP" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_ZIP ? $conf->global->MAIN_INFO_SOCIETE_ZIP : GETPOST("MAIN_INFO_SOCIETE_ZIP", 'alpha')).'"></td></tr>'."\n";
 
 print '<tr class="oddeven"><td><label for="MAIN_INFO_SOCIETE_TOWN">'.$langs->trans("CompanyTown").'</label></td><td>';
-print '<input name="MAIN_INFO_SOCIETE_TOWN" class="minwidth100" id="MAIN_INFO_SOCIETE_TOWN" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_TOWN ? $conf->global->MAIN_INFO_SOCIETE_TOWN : GETPOST("MAIN_INFO_SOCIETE_TOWN", 'nohtml')).'"></td></tr>'."\n";
+print '<input name="MAIN_INFO_SOCIETE_TOWN" class="minwidth200" id="MAIN_INFO_SOCIETE_TOWN" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_TOWN ? $conf->global->MAIN_INFO_SOCIETE_TOWN : GETPOST("MAIN_INFO_SOCIETE_TOWN", 'nohtml')).'"></td></tr>'."\n";
 
 // Country
 print '<tr class="oddeven"><td class="fieldrequired"><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td class="maxwidthonsmartphone">';
@@ -558,13 +559,13 @@ $langs->load("companies");
 
 // Managing Director(s)
 print '<tr class="oddeven"><td><label for="director">'.$langs->trans("ManagingDirectors").'</label></td><td>';
-print '<input name="MAIN_INFO_SOCIETE_MANAGERS" id="director" class="minwidth500" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MANAGERS).'"></td></tr>';
+print '<input name="MAIN_INFO_SOCIETE_MANAGERS" id="directors" class="minwidth200" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MANAGERS).'"></td></tr>';
 
 // GDPR contact
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("GDPRContact"), $langs->trans("GDPRContactDesc"));
 print '</td><td>';
-print '<input name="MAIN_INFO_GDPR" id="director" class="minwidth500" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_GDPR).'"></td></tr>';
+print '<input name="MAIN_INFO_GDPR" id="infodirector" class="minwidth500" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_GDPR).'"></td></tr>';
 
 // Capital
 print '<tr class="oddeven"><td><label for="capital">'.$langs->trans("Capital").'</label></td><td>';
@@ -777,8 +778,8 @@ if ($mysoc->useLocalTax(2))
 	$tooltiphelp = ($tooltiphelp != "LocalTax2IsUsedExample" ? "<i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax2IsUsedExample", $mysoc->country_code)."</i>\n" : "");
 	if (!isOnlyOneLocalTax(2))
 	{
-	    print '<br><label for="lt2">'.$langs->trans("LTRate").'</label>: ';
-	    $formcompany->select_localtax(2, $conf->global->MAIN_INFO_VALUE_LOCALTAX2, "lt2");
+		print '<br><label for="lt2">'.$langs->trans("LTRate").'</label>: ';
+		$formcompany->select_localtax(2, $conf->global->MAIN_INFO_VALUE_LOCALTAX2, "lt2");
 	}
 	print '<br><label for="clt2">'.$langs->trans("CalcLocaltax").'</label>: ';
 	print $form->selectarray("clt2", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC2);
@@ -834,7 +835,7 @@ print "</table>";
 
 
 print '<br><div class="center">';
-print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';
