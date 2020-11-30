@@ -20,8 +20,8 @@
 
 /**
  *	\file       htdocs/core/boxes/box_clients.php
- *	\ingroup    societes
- *	\brief      Module de generation de l'affichage de la box clients
+ *	\ingroup    Facture
+ *	\brief      Module d'affichage pour les encours dépassés
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
