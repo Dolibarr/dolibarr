@@ -123,7 +123,7 @@ abstract class CommonDocGenerator
 		if ($member->photo) {
 			$logotouse = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $member, 'user').'/photos/'.$member->photo;
 		} else {
-			$logotouse = DOL_DOCUMENT_ROOT . '/public/theme/common/nophoto.png';
+			$logotouse = DOL_DOCUMENT_ROOT.'/public/theme/common/nophoto.png';
 		}
 
 		$array_member = array(
@@ -585,7 +585,7 @@ abstract class CommonDocGenerator
 
 			'line_product_ref'=>(empty($line->product_ref) ? '' : $line->product_ref),
 			'line_product_ref_fourn'=>(empty($line->ref_fourn) ? '' : $line->ref_fourn), // for supplier doc lines
-			'line_product_label'=>(empty($line->product_label) ? '' :$line->product_label),
+			'line_product_label'=>(empty($line->product_label) ? '' : $line->product_label),
 			'line_product_type'=>(empty($line->product_type) ? '' : $line->product_type),
 			'line_product_barcode'=>(empty($line->product_barcode) ? '' : $line->product_barcode),
 

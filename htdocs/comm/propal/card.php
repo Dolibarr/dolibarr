@@ -343,7 +343,7 @@ if (empty($reshook))
 					$object->ref = GETPOST('ref');
 					$object->datep = $datep;
 					$object->date = $datep;
-					$object->date_livraison = $date_delivery;	// deprecated
+					$object->date_livraison = $date_delivery; // deprecated
 					$object->delivery_date = $date_delivery;
 					$object->availability_id = GETPOST('availability_id');
 					$object->demand_reason_id = GETPOST('demand_reason_id');

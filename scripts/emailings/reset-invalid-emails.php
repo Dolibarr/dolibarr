@@ -77,12 +77,12 @@ if (!$myfile)
 }
 
 $tmp = 1;
-while ($tmp!=null)
+while ($tmp != null)
 {
-	$groupofemails=array();
-	for ($i=0; $i < MAXEMAILS; $i++)
+	$groupofemails = array();
+	for ($i = 0; $i < MAXEMAILS; $i++)
 	{
-		$tmp =fgets($myfile);
+		$tmp = fgets($myfile);
 		if ($tmp == null)
 		{
 			break;
@@ -99,7 +99,7 @@ while ($tmp!=null)
 		{
 			// Loop on each record and update the email to null if email into $groupofemails
 
-			$sql=$sql_base."societe as s SET s.email = NULL WHERE s.email = '".$db->escape($email)."';";
+			$sql = $sql_base."societe as s SET s.email = NULL WHERE s.email = '".$db->escape($email)."';";
 			$db->query($sql);
 		}
 
@@ -107,7 +107,7 @@ while ($tmp!=null)
 		{
 			// Loop on each record and update the email to null if email into $groupofemails
 
-			$sql=$sql_base."socpeople as s SET s.email = NULL WHERE s.email = '".$db->escape($email)."';";
+			$sql = $sql_base."socpeople as s SET s.email = NULL WHERE s.email = '".$db->escape($email)."';";
 			$db->query($sql);
 		}
 
@@ -115,7 +115,7 @@ while ($tmp!=null)
 		{
 			// Loop on each record and update the email to null if email into $groupofemails
 
-			$sql=$sql_base."user as u SET u.email = NULL WHERE u.email = '".$db->escape($email)."';";
+			$sql = $sql_base."user as u SET u.email = NULL WHERE u.email = '".$db->escape($email)."';";
 			$db->query($sql);
 		}
 
@@ -123,8 +123,8 @@ while ($tmp!=null)
 		{
 			// Loop on each record and update the email to null if email into $groupofemails
 
-			$sql=$sql_base."adherent as a SET a.email = NULL WHERE a.email = '".$db->escape($email)."';";
-			$resql=$db->query($sql);
+			$sql = $sql_base."adherent as a SET a.email = NULL WHERE a.email = '".$db->escape($email)."';";
+			$resql = $db->query($sql);
 		}
 		echo $email;
 	}

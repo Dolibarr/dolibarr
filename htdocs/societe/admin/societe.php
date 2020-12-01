@@ -813,14 +813,14 @@ print '</a></td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td width="80%">' . $langs->trans("AddEmailPhoneTownInContactList") . '</td>';
+print '<td width="80%">'.$langs->trans("AddEmailPhoneTownInContactList").'</td>';
 print '<td>&nbsp</td>';
 print '<td class="center">';
 if (!empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) {
-	print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setaddemailphonetownincontactlist&token='.newToken().'&value=0">';
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddemailphonetownincontactlist&token='.newToken().'&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
-	print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setaddemailphonetownincontactlist&token='.newToken().'&value=1">';
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddemailphonetownincontactlist&token='.newToken().'&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 }
 print '</a></td>';
