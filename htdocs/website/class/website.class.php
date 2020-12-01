@@ -882,7 +882,7 @@ class Website extends CommonObject
 		global $user;
 
 		$this->id = 0;
-		$this->specimen =1;
+		$this->specimen = 1;
 		$this->entity = 1;
 		$this->ref = 'myspecimenwebsite';
 		$this->description = 'A specimen website';

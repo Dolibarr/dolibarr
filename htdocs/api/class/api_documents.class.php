@@ -475,7 +475,7 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->categorie->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'category').$object->id."/photos/".dol_sanitizeFileName($object->ref);
 		} elseif ($modulepart == 'ecm') {
-            throw new RestException(500, 'Modulepart Ecm not implemented yet.');
+			throw new RestException(500, 'Modulepart Ecm not implemented yet.');
 			// // require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 			// if (!DolibarrApiAccess::$user->rights->ecm->read) {
@@ -634,7 +634,7 @@ class Documents extends DolibarrApi
 				require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 				$object = new Propal($this->db);
 			} else {
-    			// TODO Implement additional moduleparts
+				// TODO Implement additional moduleparts
 				throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
 			}
 

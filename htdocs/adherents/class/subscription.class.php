@@ -250,10 +250,10 @@ class Subscription extends CommonObject
 
 		$this->db->begin();
 
-        if (!is_numeric($this->amount)) {
-        	$this->error = 'BadValueForParameterAmount';
-        	return -1;
-        }
+		if (!is_numeric($this->amount)) {
+			$this->error = 'BadValueForParameterAmount';
+			return -1;
+		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."subscription SET ";
 		$sql .= " fk_type = ".$this->fk_type.",";

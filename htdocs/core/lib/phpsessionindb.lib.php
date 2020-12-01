@@ -150,7 +150,7 @@ function dolSessionGC($max_lifetime)
 
 	$time_stamp = dol_now();
 
-	$delete_query =	"DELETE FROM ".MAIN_DB_PREFIX."session";
+	$delete_query = "DELETE FROM ".MAIN_DB_PREFIX."session";
 	$delete_query .= " WHERE last_accessed < '".$dbsession->idate($time_stamp - $max_lifetime)."'";
 
 	$resql = $dbsession->query($delete_query);

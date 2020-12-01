@@ -184,7 +184,7 @@ class Commande extends CommonOrder
 	 * @var int	Date expected for delivery
 	 * @deprecated
 	 */
-	public $date_livraison;	// deprecated; Use delivery_date instead.
+	public $date_livraison; // deprecated; Use delivery_date instead.
 
 	public $delivery_date; // Date expected of shipment (date starting shipment, not the reception that occurs some days after)
 
@@ -1359,7 +1359,7 @@ class Commande extends CommonOrder
 		$this->fk_account           = $object->fk_account;
 		$this->availability_id      = $object->availability_id;
 		$this->demand_reason_id     = $object->demand_reason_id;
-		$this->date_livraison       = $object->date_livraison;	// deprecated
+		$this->date_livraison       = $object->date_livraison; // deprecated
 		$this->delivery_date        = $object->date_livraison;
 		$this->shipping_method_id   = $object->shipping_method_id;
 		$this->warehouse_id         = $object->warehouse_id;
@@ -1867,7 +1867,7 @@ class Commande extends CommonOrder
 				$this->availability	    	= $obj->availability_label;
 				$this->demand_reason_id		= $obj->fk_input_reason;
 				$this->demand_reason_code = $obj->demand_reason_code;
-				$this->date_livraison = $this->db->jdate($obj->delivery_date);	// deprecated
+				$this->date_livraison = $this->db->jdate($obj->delivery_date); // deprecated
 				$this->delivery_date = $this->db->jdate($obj->delivery_date);
 				$this->shipping_method_id   = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
 				$this->warehouse_id         = ($obj->fk_warehouse > 0) ? $obj->fk_warehouse : null;
@@ -3358,7 +3358,7 @@ class Commande extends CommonOrder
 			$tabletodelete = $this->table_element_line;
 			$sqlef = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete."_extrafields WHERE fk_object IN (SELECT rowid FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id.")";
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id;
-			if (! $this->db->query($sqlef) || ! $this->db->query($sql)) {
+			if (!$this->db->query($sqlef) || !$this->db->query($sql)) {
 				$error++;
 				$this->error = $this->db->lasterror();
 				$this->errors[] = $this->error;
@@ -3391,7 +3391,7 @@ class Commande extends CommonOrder
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE rowid = ".$this->id;
 			$res = $this->db->query($sql);
-			if (! $res) {
+			if (!$res) {
 				$error++;
 				$this->error = $this->db->lasterror();
 				$this->errors[] = $this->error;
@@ -3402,7 +3402,7 @@ class Commande extends CommonOrder
 		// Delete record into ECM index and physically
 		if (!$error) {
 			$res = $this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
-			if (! $res) {
+			if (!$res) {
 				$error++;
 			}
 		}
