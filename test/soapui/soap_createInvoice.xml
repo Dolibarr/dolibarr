@@ -1,6 +1,6 @@
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/">
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="https://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="https://schemas.xmlsoap.org/soap/encoding/">
    <SOAP-ENV:Body>
-      <ns1160:createInvoice xmlns:ns1160="http://www.Dolibarr.org/ns/">
+      <ns1160:createInvoice xmlns:ns1160="https://www.Dolibarr.org/ns/">
          <authentication>
             <dolibarrkey xsi:type="xsd:string">dolibarrkey</dolibarrkey>
             <sourceapplication xsi:type="xsd:string">PRESTASHOP</sourceapplication>
@@ -11,7 +11,7 @@
          <invoice>
             <ref_ext xsi:type="xsd:string">WSTESTCREATEINVOICE1</ref_ext>
             <thirdparty_id xsi:type="xsd:string">1</thirdparty_id>
-            <date xsi:type="xsd:string">2014-04-23 15:59:24</date>
+            <date xsi:type="xsd:string">2020-11-22 15:59:24</date>
             <type xsi:type="xsd:string">0</type>
             <note_private xsi:type="xsd:string">Created from WS</note_private>
             <note_public xsi:nil="true"/>
