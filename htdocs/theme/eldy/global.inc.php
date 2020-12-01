@@ -2551,7 +2551,7 @@ img.userphotosmall {			/* size for user photo in lists */
     vertical-align: middle;
     background-color: #FFF;
 }
-img.userphoto[alt="Gravatar avatar"] {
+img.userphoto[alt="Gravatar avatar"], img.photouserphoto.dropdown-user-image[alt="Gravatar avatar"] {
     background: #fff;
 }
 .span-icon-user {
