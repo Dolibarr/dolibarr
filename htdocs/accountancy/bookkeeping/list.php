@@ -632,19 +632,19 @@ $reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $obj
 if (empty($reshook)) {
 	// Button re-export
 	if (!empty($conf->global->ACCOUNTING_REEXPORT)) {
-		$newcardbutton = '<a class="valignmiddle" href="' . $_SERVER['PHP_SELF'] . '?action=setreexport&token=' . newToken() . '&value=0' . ($param ? '&' . $param : '') . '">' . img_picto($langs->trans("Activated"), 'switch_on') . '</a> ';
+		$newcardbutton = '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=0'.($param ? '&'.$param : '').'">'.img_picto($langs->trans("Activated"), 'switch_on').'</a> ';
 	} else {
-		$newcardbutton = '<a class="valignmiddle" href="' . $_SERVER['PHP_SELF'] . '?action=setreexport&token=' . newToken() . '&value=1' . ($param ? '&' . $param : '') . '">' . img_picto($langs->trans("Disabled"), 'switch_off') . '</a> ';
+		$newcardbutton = '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=1'.($param ? '&'.$param : '').'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a> ';
 	}
-	$newcardbutton .= '<span class="valignmiddle marginrightonly">' . $langs->trans("IncludeDocsAlreadyExported") . '</span>';
+	$newcardbutton .= '<span class="valignmiddle marginrightonly">'.$langs->trans("IncludeDocsAlreadyExported").'</span>';
 
-	$newcardbutton .= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList") . ' (' . $listofformat[$formatexportset] . ')', 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"] . '?action=export_file' . ($param ? '&' . $param : ''), $user->rights->accounting->mouvements->export);
+	$newcardbutton .= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file'.($param ? '&'.$param : ''), $user->rights->accounting->mouvements->export);
 
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/list.php?' . $param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
-	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?' . $param, '', 1, array('morecss' => 'marginleftonly'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param, '', 1, array('morecss' => 'marginleftonly'));
 
 	$url = './card.php?action=create';
-	if (!empty($socid)) $url .= '&socid=' . $socid;
+	if (!empty($socid)) $url .= '&socid='.$socid;
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', $url, '', $user->rights->accounting->mouvements->creer);
 }
 

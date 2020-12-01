@@ -639,7 +639,7 @@ class ImportXlsx extends ModeleImports
 										$errorforthistable++;
 										$error++;
 									} else {
-										$newval = $arrayrecord[($key - 1)]['val'];	//We get new value computed.
+										$newval = $arrayrecord[($key - 1)]['val']; //We get new value computed.
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'numeric') {
 									$newval = price2num($newval);

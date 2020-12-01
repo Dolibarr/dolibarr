@@ -112,7 +112,7 @@ if (empty($reshook))
 
 		// We must define tva_tx, npr and local taxes
 		$tva_tx = $tva_tx_txt;
-	    $reg = array();
+		$reg = array();
 		$vatratecode = '';
 		if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg))
 		{
@@ -330,7 +330,7 @@ if (empty($reshook))
 				'price' => $newprice,
 				'price_min' => $newprice_min,
 				'price_base_type' => $newpricebase,
-			    'default_vat_code' => $vatratecode,
+				'default_vat_code' => $vatratecode,
 				'vat_tx' => $tva_tx, // default_vat_code should be used in priority in a future
 				'npr' => $npr, // default_vat_code should be used in priority in a future
 				'localtaxes_array' => array('0'=>$localtax1_type, '1'=>$localtax1, '2'=>$localtax2_type, '3'=>$localtax2)   // default_vat_code should be used in priority in a future

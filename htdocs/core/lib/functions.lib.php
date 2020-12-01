@@ -272,7 +272,7 @@ function GETPOSTISSET($paramname)
 			$isset = true;
 		}
 	} else {
-		$isset = (isset($_POST[$paramname]) || isset($_GET[$paramname]));	// We must keep $_POST and $_GET here
+		$isset = (isset($_POST[$paramname]) || isset($_GET[$paramname])); // We must keep $_POST and $_GET here
 	}
 
 	return $isset;
@@ -1289,11 +1289,11 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
  */
 function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $disabled = '')
 {
-    if (strpos($url, '?') > 0) {
-        $url .= '&dol_hide_topmenu=1&dol_hide_leftmenu=1&dol_openinpopup=1';
-    } else {
-        $url .= '?dol_hide_menuinpopup=1&dol_hide_leftmenu=1&dol_openinpopup=1';
-    }
+	if (strpos($url, '?') > 0) {
+		$url .= '&dol_hide_topmenu=1&dol_hide_leftmenu=1&dol_openinpopup=1';
+	} else {
+		$url .= '?dol_hide_menuinpopup=1&dol_hide_leftmenu=1&dol_openinpopup=1';
+	}
 
 	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
 	$out = '<a class="button bordertransp button_'.$name.'"'.$disabled.' title="'.dol_escape_htmltag($label).'">'.$buttonstring.'</a>';
@@ -4139,7 +4139,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		print $out;
 	} else {
 		if (empty($langs->defaultlang)) $langs->setDefaultLang();
-		$langs->loadLangs(array("main", "errors"));		// Reload main because language may have been set only on previous line so we have to reload files we need.
+		$langs->loadLangs(array("main", "errors")); // Reload main because language may have been set only on previous line so we have to reload files we need.
 		// This should not happen, except if there is a bug somewhere. Enabled and check log in such case.
 		print 'This website or feature is currently temporarly not available or failed after a technical error.<br><br>This may be due to a maintenance operation. Current status of operation are on next line...<br><br>'."\n";
 		print $langs->trans("DolibarrHasDetectedError").'. ';
@@ -5592,7 +5592,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 		// In a future, we may distribut directories on several levels depending on setup and object.
 		// Here, $object->id, $object->ref and $modulepart are required.
 		//var_dump($modulepart);
-		if (! in_array($modulepart, array('product'))) {	// Test to remove
+		if (!in_array($modulepart, array('product'))) {	// Test to remove
 			$path = dol_sanitizeFileName(empty($object->ref) ? $object->id : $object->ref);
 		}
 	}
@@ -6294,7 +6294,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 			if (is_object($object) && ($object->element == 'adherent' || $object->element == 'member') && $object->id > 0)
 			{
-				$birthday = (empty($object->birth) ? '': dol_print_date($object->birth, 'day'));
+				$birthday = (empty($object->birth) ? '' : dol_print_date($object->birth, 'day'));
 
 				$substitutionarray['__MEMBER_ID__'] = (isset($object->id) ? $object->id : '');
 				if (method_exists($object, 'getCivilityLabel')) $substitutionarray['__MEMBER_CIVILITY__'] = $object->getCivilityLabel();
@@ -6694,7 +6694,7 @@ function complete_substitutions_array(&$substitutionarray, $outputlangs, $object
 		// to list all tags in odt template
 		$tags = '';
 		foreach ($substitutionarray as $key => $value) {
-			$tags .= '{' . $key . '} => ' . $value ."\n";
+			$tags .= '{'.$key.'} => '.$value."\n";
 		}
 		$substitutionarray = array_merge($substitutionarray, array('__ALL_TAGS__' => $tags));
 	}

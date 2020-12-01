@@ -595,7 +595,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	$valid_dashboardlines = array();
 	foreach ($dashboardlines as $workboardid => $tmp) {
 		if ($tmp instanceof WorkboardResponse) {
-			$tmp->id = $workboardid;	// Complete the object to add its id into its name
+			$tmp->id = $workboardid; // Complete the object to add its id into its name
 			$valid_dashboardlines[$workboardid] = $tmp;
 		}
 	}

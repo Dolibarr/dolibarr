@@ -995,7 +995,7 @@ if (!defined('NOLOGIN'))
 	$user->getrights();
 }
 
-dol_syslog("--- Access to ".$_SERVER["REQUEST_METHOD"].' '.$_SERVER["PHP_SELF"].' - action='.GETPOST('action', 'aZ09').', massaction='.GETPOST('massaction', 'aZ09').' NOTOKENRENEWAL='.(defined('NOTOKENRENEWAL')?constant('NOTOKENRENEWAL'):''));
+dol_syslog("--- Access to ".$_SERVER["REQUEST_METHOD"].' '.$_SERVER["PHP_SELF"].' - action='.GETPOST('action', 'aZ09').', massaction='.GETPOST('massaction', 'aZ09').' NOTOKENRENEWAL='.(defined('NOTOKENRENEWAL') ?constant('NOTOKENRENEWAL') : ''));
 //Another call for easy debugg
 //dol_syslog("Access to ".$_SERVER["PHP_SELF"].' GET='.join(',',array_keys($_GET)).'->'.join(',',$_GET).' POST:'.join(',',array_keys($_POST)).'->'.join(',',$_POST));
 
@@ -1702,8 +1702,8 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				$title = $langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage' : 'GoToHelpPage').'...';
 				if ($mode == 'wiki') {
 					$title .= '<br>'.$langs->trans("PageWiki").' '.dol_escape_htmltag('"'.strtr($helppage, '_', ' ').'"');
-					if ($helppresent) $title.= ' <span class="opacitymedium">('.$langs->trans("DedicatedPageAvailable").')</span>';
-					else $title.= ' <span class="opacitymedium">('.$langs->trans("HomePage").')</span>';
+					if ($helppresent) $title .= ' <span class="opacitymedium">('.$langs->trans("DedicatedPageAvailable").')</span>';
+					else $title .= ' <span class="opacitymedium">('.$langs->trans("HomePage").')</span>';
 				}
 				$text .= '<a class="help" target="_blank" rel="noopener" href="';
 				if ($mode == 'wiki') $text .= sprintf($helpbaseurl, urlencode(html_entity_decode($helppage)));

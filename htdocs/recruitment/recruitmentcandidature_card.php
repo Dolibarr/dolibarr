@@ -247,7 +247,7 @@ if (empty($reshook))
 			$nuser->personal_mobile = $object->phone;
 			$nuser->birth = $object->date_birth;
 			$nuser->salary = $object->remuneration_proposed;
-			$nuser->fk_user = $jobposition->fk_user_supervisor;	// Supervisor
+			$nuser->fk_user = $jobposition->fk_user_supervisor; // Supervisor
 
 			$result = $nuser->create($user);
 
