@@ -583,7 +583,7 @@ if ($action == "delete") {
 
 			// We delete the lines
 			$resdeletelines = 1;
-			foreach($invoice->lines as $line){
+			foreach($invoice->lines as $line) {
 				$tmpres = $invoice->deleteline($line->id);
 				if ($tmpres < 0) {
 					$resdeletelines = 0;
@@ -595,12 +595,9 @@ if ($action == "delete") {
 			$sql .= " WHERE ref='(PROV-POS".$db->escape($_SESSION["takeposterminal"]."-".$place).")'";
 			$resql1 = $db->query($sql);
 
-			if ($resdeletelines && $resql1)
-            {
+			if ($resdeletelines && $resql1) {
             	$db->commit();
-            }
-            else
-            {
+            } else {
             	$db->rollback();
             }
 
