@@ -93,8 +93,8 @@ if (empty($force_install_nophpinfo)) print ' (<a href="phpinfo.php" target="_bla
 print "<br>\n";
 
 
-// Check PHP support for $_POST
-if (!isset($_GET["testget"]) && !isset($_POST["testpost"]))
+// Check PHP support for $_GET and $_POST
+if (!isset($_GET["testget"]) && !isset($_POST["testpost"]))	// We must keep $_GET and $_POST here
 {
 	print '<img src="../theme/eldy/img/warning.png" alt="Warning"> '.$langs->trans("PHPSupportPOSTGETKo");
 	print ' (<a href="'.$_SERVER["PHP_SELF"].'?testget=ok">'.$langs->trans("Recheck").'</a>)';

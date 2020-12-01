@@ -140,15 +140,18 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 ### Other general features
 
 - Localization in most major languages
+- Multi-Language Support
 - Multi-Users and groups with finely grained rights
-- Multi-currency
-- Multi-company by adding of an external module
+- Multi-Currency
+- Multi-Company (by adding of an external module)
+
 - Very user friendly and easy to use
 - customizable Dashboard
 - Highly customizable: enable only the modules you need, add user personalized fields, choose your skin, several menu managers (can be used by internal users as a back-office with a particular menu, or by external users as a front-office with another one)
 
-- APIs
+- APIs (REST, SOAP)
 - Code that is easy to understand, maintain and develop (PHP with no heavy framework; trigger and hook architecture)
+
 - Support a lot of country specific features:
   - Spanish Tax RE and ISPF
   - French NPR VAT rate (VAT called "Non Perçue Récupérable" for DOM-TOM)

@@ -155,7 +155,7 @@ class Propal extends CommonObject
 	 * @var int	Date expected for delivery
 	 * @deprecated
 	 */
-	public $date_livraison;	// deprecated; Use delivery_date instead.
+	public $date_livraison; // deprecated; Use delivery_date instead.
 
 	/**
 	 * @var integer|string 	$delivery_date;
@@ -208,7 +208,6 @@ class Propal extends CommonObject
 	public $demand_reason_id;
 	public $demand_reason_code;
 
-	public $products = array();
 	public $extraparams = array();
 
 	/**
@@ -355,15 +354,13 @@ class Propal extends CommonObject
 		$this->socid = $socid;
 		$this->id = $propalid;
 
-		$this->products = array();
-
 		$this->duree_validite = ((int) $conf->global->PROPALE_VALIDITY_DURATION);
 	}
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Add line into array products
+	 *  Add line into array ->lines
 	 *  $this->thirdparty should be loaded
 	 *
 	 * 	@param  int		$idproduct       	Product Id to add
@@ -372,7 +369,6 @@ class Propal extends CommonObject
 	 *  @return	int							<0 if KO, >0 if OK
 	 *
 	 *	TODO	Replace calls to this function by generation objet Ligne
-	 *			inserted into table $this->products
 	 */
 	public function add_product($idproduct, $qty, $remise_percent = 0)
 	{
@@ -1279,24 +1275,6 @@ class Propal extends CommonObject
 		}
 	}
 
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Insert into DB a proposal object completely defined by its data members (ex, results from copy).
-	 *
-	 *	@param 		User	$user	User that create
-	 *	@return    	int				Id of the new object if ok, <0 if ko
-	 *	@see       	create()
-	 */
-	public function create_from($user)
-	{
-		// phpcs:enable
-		// i love this function because $this->products is not used in create function...
-		$this->products = $this->lines;
-
-		return $this->create($user);
-	}
-
 	/**
 	 *		Load an object from its id and create a new one in database
 	 *
@@ -1525,7 +1503,7 @@ class Propal extends CommonObject
 				$this->date                 = $this->db->jdate($obj->dp); // Proposal date
 				$this->datep                = $this->db->jdate($obj->dp); // deprecated
 				$this->fin_validite         = $this->db->jdate($obj->dfv);
-				$this->date_livraison       = $this->db->jdate($obj->delivery_date);	// deprecated
+				$this->date_livraison       = $this->db->jdate($obj->delivery_date); // deprecated
 				$this->delivery_date        = $this->db->jdate($obj->delivery_date);
 				$this->shipping_method_id   = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
 				$this->availability_id      = $obj->fk_availability;
@@ -2944,7 +2922,7 @@ class Propal extends CommonObject
 			$tabletodelete = $this->table_element_line;
 			$sqlef = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete."_extrafields WHERE fk_object IN (SELECT rowid FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id.")";
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id;
-			if (! $this->db->query($sqlef) || ! $this->db->query($sql)) {
+			if (!$this->db->query($sqlef) || !$this->db->query($sql)) {
 				$error++;
 				$this->error = $this->db->lasterror();
 				$this->errors[] = $this->error;
@@ -2977,7 +2955,7 @@ class Propal extends CommonObject
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE rowid = ".$this->id;
 			$res = $this->db->query($sql);
-			if (! $res) {
+			if (!$res) {
 				$error++;
 				$this->error = $this->db->lasterror();
 				$this->errors[] = $this->error;
@@ -2988,7 +2966,7 @@ class Propal extends CommonObject
 		// Delete record into ECM index and physically
 		if (!$error) {
 			$res = $this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
-			if (! $res) {
+			if (!$res) {
 				$error++;
 			}
 		}

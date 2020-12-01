@@ -1314,6 +1314,7 @@ PHPModuleLoaded=PHPコンポーネント%sがロードされる
 PreloadOPCode=プリロードされたOPCodeが使用される
 AddRefInList=顧客/仕入先参照を表示する。情報リスト ( 選択リストまたはコンボボックス ) およびほとんどのハイパーリンク。 <br>取引先は、「CC12345-SC45678-The BigCompanycorp。」という名前の形式で表示される。 「TheBigCompanycorp」の代わりに。
 AddAdressInList=顧客/仕入先の住所情報リストを表示する ( リストまたはコンボボックスを選択 ) <br>取引先は、「TheBigCompanycorp。」ではなく「TheBigCompanycorp。-21jumpstreet 123456Bigtown-USA」の名前形式で表示される。
+AddEmailPhoneTownInContactList=連絡先の電子メール（または未定義の場合は電話）と町の情報リスト（選択リストまたはコンボボックス）を表示<br>連絡先は以下の名称と形式で表記される："Dupond Durand" の形式でなく、 "Dupond Durand - dupond.durand@email.com - Paris" または "Dupond Durand - 06 07 59 65 66 - Paris" 。
 AskForPreferredShippingMethod=取引先の優先配送方法を尋ねる。
 FieldEdition=フィールド%sのエディション
 FillThisOnlyIfRequired=例：+2 ( タイムゾーンオフセットの問題が発生した場合にのみ入力 ) 
@@ -1420,6 +1421,7 @@ AdherentMailRequired=新規メンバーを作成するにはメールが必要
 MemberSendInformationByMailByDefault=メンバー ( 検証や新規サブスクリプション ) にメールの確認を送信するチェックボックスはデフォルトでオンになっている
 VisitorCanChooseItsPaymentMode=訪問者は利用可能な支払いモードから選択できる
 MEMBER_REMINDER_EMAIL=期限切れのサブスクリプションの電子メール</b>によって自動リマインダー<b>を有効にする。注：モジュール<strong> %s </strong>を有効にして、リマインダーを送信するように正しく設定する必要がある。
+MembersDocModules=メンバーレコードから生成されたドキュメント用のドキュメントテンプレート
 ##### LDAP setup #####
 LDAPSetup=LDAPの設定
 LDAPGlobalParameters=グローバルパラメータ
@@ -1670,7 +1672,7 @@ AdvancedEditor=高度なエディタ
 ActivateFCKeditor=のための高度なエディタをアクティブにする。
 FCKeditorForCompany=要素の説明と注意事項のWYSIWIGエディタの作成/版 ( 製品/サービスを除く ) 
 FCKeditorForProduct=製品/サービスの説明と注意事項のWYSIWIGエディタの作成/版
-FCKeditorForProductDetails=WYSIWIGによる製品の作成/エディションは、すべてのエンティティ ( 提案、注文、請求書など ) の詳細行を示する。 <font class="warning">警告：この場合にこのオプションを使用することは、PDFファイルを作成するときに特殊文字やページの書式設定で問題が発生する可能性があるため、真剣に推奨されない。 </font>
+FCKeditorForProductDetails=WYSIWIG creation/edition of products details lines for all entities (proposals, orders, invoices, etc...). <span class="warning">Warning: Using this option for this case is seriously not recommended as it can create problems with special characters and page formatting when building PDF files.</span>
 FCKeditorForMailing= 郵送のWYSIWIGエディタの作成/版
 FCKeditorForUserSignature=WYSIWIGによるユーザ署名の作成/編集
 FCKeditorForMail=すべてのメールのWYSIWIG作成/エディション ( 【ツール】-> 【電子メール】を除く ) 
@@ -1736,9 +1738,10 @@ AGENDA_USE_EVENT_TYPE_DEFAULT=イベント作成フォームでイベントの�
 AGENDA_DEFAULT_FILTER_TYPE=アジェンダビューの検索フィルターでこの種別のイベントを自動的に設定する
 AGENDA_DEFAULT_FILTER_STATUS=アジェンダビューの検索フィルターでイベントのこのステータスを自動的に設定する
 AGENDA_DEFAULT_VIEW=メニューの議題を選択するときに、デフォルトでどのビューを開くか
-AGENDA_REMINDER_EMAIL=電子メール</b>でイベントリマインダー<b>を有効にする ( リマインダーオプション/遅延は各イベントで定義できる ) 。注：モジュール<strong> %s </strong>を有効にして、正しい頻度でリマインダーを送信するように正しく設定する必要がある。
-AGENDA_REMINDER_BROWSER=ユーザのブラウザ</b>でイベントリマインダー<b>を有効にする ( イベントの日付に達すると、各ユーザはブラウザの確認の質問からこれを拒否できる ) 
+AGENDA_REMINDER_BROWSER=ユーザーのブラウザ</b>でイベントリマインダー<b>を有効にする（リマインダーの日付に達すると、ブラウザにポップアップが表示される。各ユーザーは、ブラウザの通知設定からそのような通知を無効にできる）。
 AGENDA_REMINDER_BROWSER_SOUND=音声通知を有効にする
+AGENDA_REMINDER_EMAIL=電子メール</b>でイベントリマインダー<b>を有効にする（リマインダーオプション/遅延は各イベントで定義できる）。
+AGENDA_REMINDER_EMAIL_NOTE=注：タスク%sの頻度は、リマインダーが正しいタイミングで送信されることを確認するのに十分でなければならない。
 AGENDA_SHOW_LINKED_OBJECT=リンクされたオブジェクトを議題ビューに表示する
 ##### Clicktodial #####
 ClickToDialSetup=モジュールの設定をダイヤルする】をクリックする

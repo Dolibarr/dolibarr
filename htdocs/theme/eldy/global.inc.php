@@ -108,6 +108,7 @@ body {
     margin-bottom: 0;
     margin-right: 0;
     margin-left: 0;
+    font-weight: 400;
     <?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
 
@@ -364,6 +365,10 @@ select.flat, form.flat select, .pageplusone {
 input.pageplusone {
     padding-bottom: 4px;
     padding-top: 4px;
+}
+
+.saturatemedium {
+	filter: saturate(0.8);
 }
 
 .optionblue {
@@ -1031,27 +1036,34 @@ select.flat.selectlimit {
 .tablelistofcalendars {
 	margin-top: 25px !important;
 }
+
+/* Styles for amount on card */
+table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaintopay {
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
 .amountalreadypaid {
 }
 .amountpaymentcomplete {
 	color: var(--amountpaymentcomplete);
 	font-weight: bold;
-	font-size: 1.2em;
+	font-size: 1.7em;
 }
 .amountremaintopay {
 	color: var(--amountremaintopaycolor);
 	font-weight: bold;
-	font-size: 1.2em;
+	font-size: 1.7em;
 }
 .amountremaintopayback {
 	color: var(--amountremaintopaybackcolor);
 	font-weight: bold;
-	font-size: 1.2em;
+	font-size: 1.7em;
 }
 .amountpaymentneutral {
 	font-weight: bold;
-	font-size: 1.2em;
+	font-size: 1.7em;
 }
+
 .onlinepaymentbody .amountpaymentcomplete {
     background-color: var(--amountpaymentcomplete);
     color: #fff;
@@ -1953,8 +1965,8 @@ div.statusrefbis {
 }
 img.photoref, div.photoref {
 	/* border: 1px solid #DDD; */
-    -webkit-box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
-    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+    -webkit-box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
     padding: 4px;
 	height: 80px;
 	width: 80px;
@@ -2161,6 +2173,8 @@ div.menu_titre {
 {
 	padding-<?php print $left; ?>: 2px;
 	padding-<?php print $right; ?>: 2px;
+	font-family: Roboto,<?php echo $fontlist; ?>;
+	font-weight: 400;
 }
 
 div.mainmenu {
@@ -2537,7 +2551,7 @@ img.userphotosmall {			/* size for user photo in lists */
     vertical-align: middle;
     background-color: #FFF;
 }
-img.userphoto[alt="Gravatar avatar"] {
+img.userphoto[alt="Gravatar avatar"], img.photouserphoto.dropdown-user-image[alt="Gravatar avatar"] {
     background: #fff;
 }
 .span-icon-user {
@@ -2617,7 +2631,8 @@ a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { text-align
 	/* color: #f3e4ac !important; */
 }
 .helppresentcircle {
-    color: var(--butactionbg);
+    color: var(--colorbackhmenu1);
+    filter: invert(0.8);
     margin-left: -7px;
     display: inline-block;
     margin-top: -10px;
@@ -2930,7 +2945,7 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 
 	border-right: 1px solid #CCC !important;
 	border-left: 1px solid #CCC !important;
-	border-top: <?php echo 2; ?>px solid var(--colorbackhmenu1) !important;
+	border-top: 3px solid var(--colorbackhmenu1) !important;
 }
 a.tab:hover
 {
@@ -3009,6 +3024,10 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 
 .unsetcolor {
 	color: unset !important;
+}
+
+.smallpaddingimp {
+    padding: 4px !important;
 }
 .nopaddingleft {
 	padding-<?php print $left; ?>: 0px;
@@ -4158,7 +4177,7 @@ div.titre {
 	text-decoration: none;
 	padding-top: 5px;
     padding-bottom: 5px;
-    /* text-transform: capitalize; */
+    font-weight: 400;
 }
 div.fiche > table.table-fiche-title:first-of-type div {
     color: var(--colortexttitlenotab);
@@ -5324,6 +5343,10 @@ div.dataTables_length select {
 /* ============================================================================== */
 /*  Select2                                                                       */
 /* ============================================================================== */
+
+span.select2-selection--single.flat[aria-disabled="true"] span.select2-selection__rendered {
+	opacity: 0.5;
+}
 
 span#select2-taskid-container[title^='--'] {
     opacity: 0.3;

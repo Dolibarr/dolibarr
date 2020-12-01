@@ -339,6 +339,8 @@ Modelcsv_configurable=Export configurable
 Modelcsv_FEC=Export FEC
 Modelcsv_Sage50_Swiss=Export pour Sage 50 Suisse
 Modelcsv_winfic=Export pour Winfic - eWinfic - WinSis Compta
+Modelcsv_Gestinumv3=Export vers Gestinum (v3)
+Modelcsv_Gestinumv5Export Pour Gestinum (V5)
 ChartofaccountsId=Id plan comptable
 
 ## Tools - Init accounting account on product / service

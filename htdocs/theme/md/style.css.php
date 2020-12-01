@@ -499,6 +499,10 @@ input.pageplusone {
     padding-top: 4px;
 }
 
+.saturatemedium {
+	filter: saturate(0.8);
+}
+
 .optionblue {
 	color: rgb(<?php echo $colortextlink; ?>);
 }
@@ -2588,6 +2592,17 @@ font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { text-align: <?php print $left; ?>; font-weight: normal; color: #999; text-decoration: none; }
 
+.helppresentcircle {
+    color: var(--colorbackhmenu1);
+    filter: invert(0.5);
+    margin-left: -7px;
+    display: inline-block;
+    margin-top: -10px;
+    font-size: x-small;
+    vertical-align: super;
+    opacity: 0.95;
+}
+
 div.blockvmenulogo
 {
 	border-bottom: 0 !important;
@@ -2982,6 +2997,10 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 
 .unsetcolor {
 	color: unset !important;
+}
+
+.smallpaddingimp {
+    padding: 4px !important;
 }
 .nopaddingleft {
 	padding-<?php print $left; ?>: 0px;

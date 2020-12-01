@@ -271,5 +271,7 @@ SearchIntoSupplierOrders=Ordenes de compra
 SearchIntoCustomerProposals=Propuestas comerciales
 SearchIntoExpenseReports=Reporte de gastos
 AssignedTo=Asignado a
+ToProcess=Procesar
 ContactDefault_agenda=Evento
+ContactDefault_order_supplier=Orden de compra
 ContactDefault_propal=Cotización

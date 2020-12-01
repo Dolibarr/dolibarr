@@ -3,16 +3,17 @@
 HRM_EMAIL_EXTERNAL_SERVICE=HRM外部サービスを防止するためのメール
 Establishments=事業所
 Establishment=事業所
-NewEstablishment=新しい事業所
+NewEstablishment=新規事業所
 DeleteEstablishment=事業所を削除
-ConfirmDeleteEstablishment=Are you sure you wish to delete this establishment?
+ConfirmDeleteEstablishment=この事業所を削除したいのね、いいよね？
 OpenEtablishment=事業所を開く
 CloseEtablishment=事業所を閉じる
 # Dictionary
-DictionaryPublicHolidays=HRM - Public holidays
-DictionaryDepartment=HRM - 部門リスト
-DictionaryFunction=HRM - Job positions
+DictionaryPublicHolidays=HRM - 祝祭日
+DictionaryDepartment=HRM - 部門一覧
+DictionaryFunction=HRM - 職位
 # Module
-Employees=従業員
+Employees=従業員s
 Employee=従業員
-NewEmployee=新しい従業員
+NewEmployee=新規従業員
+ListOfEmployees=List of employees

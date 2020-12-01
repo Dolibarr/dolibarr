@@ -179,3 +179,4 @@ BankColorizeMovement=Colorize movements
 BankColorizeMovementDesc=If this function is enable, you can choose specific background color for debit or credit movements
 BankColorizeMovementName1=Background color for debit movement
 BankColorizeMovementName2=Background color for credit movement
+IfYouDontReconcileDisableProperty=If you don't make the bank reconciliations on some bank accounts, disable the property "%s" on them to remove this warning.

@@ -420,9 +420,9 @@ if ($action == 'creditnote')
 	}
 }
 
-if ($action == 'history' || $action=='creditnote')
+if ($action == 'history' || $action == 'creditnote')
 {
-	if ($action=='creditnote') $placeid = $creditnote->id;
+	if ($action == 'creditnote') $placeid = $creditnote->id;
 	else $placeid = (int) GETPOST('placeid', 'int');
 	$invoice = new Facture($db);
 	$invoice->fetch($placeid);
@@ -582,21 +582,24 @@ if ($action == "delete") {
 			$db->begin();
 
 			// We delete the lines
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_extrafields where fk_object = ".$placeid;
-			$resql1 = $db->query($sql);
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet where fk_facture = ".$placeid;
-			$resql2 = $db->query($sql);
-			$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]};
-			$sql .= " WHERE ref='(PROV-POS".$db->escape($_SESSION["takeposterminal"])."-".$db->escape($place).")'";
-			$resql3 = $db->query($sql);
-
-			$invoice->update_price(1);
-			if ($resql1 && $resql2 && $resql3)
-			{
-				$db->commit();
-			} else {
-				$db->rollback();
+			$resdeletelines = 1;
+			foreach($invoice->lines as $line) {
+				$tmpres = $invoice->deleteline($line->id);
+				if ($tmpres < 0) {
+					$resdeletelines = 0;
+					break;
+				}
 			}
+
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]};
+			$sql .= " WHERE ref='(PROV-POS".$db->escape($_SESSION["takeposterminal"]."-".$place).")'";
+			$resql1 = $db->query($sql);
+
+			if ($resdeletelines && $resql1) {
+            	$db->commit();
+            } else {
+            	$db->rollback();
+            }
 
 			$invoice->fetch($placeid);
 		}
@@ -679,8 +682,8 @@ if ($action == "order" and $placeid != 0)
 	}
 
 	$sql = "SELECT label FROM ".MAIN_DB_PREFIX."takepos_floor_tables where rowid=".((int) $place);
-    $resql = $db->query($sql);
-    $row = $db->fetch_object($resql);
+	$resql = $db->query($sql);
+	$row = $db->fetch_object($resql);
 	$headerorder = '<html><br><b>'.$langs->trans('Place').' '.$row->label.'<br><table width="65%"><thead><tr><th class="left">'.$langs->trans("Label").'</th><th class="right">'.$langs->trans("Qty").'</th></tr></thead><tbody>';
 	$footerorder = '</tbody></table>'.dol_print_date(dol_now(), 'dayhour').'<br></html>';
 	$order_receipt_printer1 = "";
@@ -858,7 +861,7 @@ $(document).ready(function() {
 <?php
 
 if ($action == "order" and $order_receipt_printer1 != "") {
-	if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true){
+	if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
 		?>
 		$.ajax({
 			type: "POST",
@@ -880,7 +883,7 @@ if ($action == "order" and $order_receipt_printer1 != "") {
 }
 
 if ($action == "order" and $order_receipt_printer2 != "") {
-	if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true){
+	if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
 		?>
 		$.ajax({
 			type: "POST",
@@ -902,7 +905,7 @@ if ($action == "order" and $order_receipt_printer2 != "") {
 }
 
 if ($action == "order" and $order_receipt_printer3 != "") {
-	if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true){
+	if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
 		?>
 		$.ajax({
 			type: "POST",

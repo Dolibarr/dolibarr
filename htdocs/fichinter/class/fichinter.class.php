@@ -176,6 +176,7 @@ class Fichinter extends CommonObject
 	 */
 	const STATUS_CLOSED = 3;
 
+
 	/**
 	 *	Constructor
 	 *
@@ -184,8 +185,6 @@ class Fichinter extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
-
-		$this->products = array();
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

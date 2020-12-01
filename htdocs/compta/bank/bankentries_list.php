@@ -225,17 +225,16 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 	if ($num_releve)
 	{
 		$bankline = new AccountLine($db);
-		if (isset($_POST['rowid']) && is_array($_POST['rowid']))
-		{
-			foreach ($_POST['rowid'] as $row)
-			{
-				if ($row > 0)
-				{
+
+		$rowids = GETPOST('rowid', 'array');
+
+		if (!empty($rowids) && is_array($rowids)) {
+			foreach ($rowids as $row) {
+				if ($row > 0) {
 					$result = $bankline->fetch($row);
 					$bankline->num_releve = $num_releve; //$_POST["num_releve"];
 					$result = $bankline->update_conciliation($user, GETPOST("cat"), GETPOST('confirm_reconcile', 'alpha') ? 1 : 0); // If we confirm_reconcile, we set flag 'rappro' to 1.
-					if ($result < 0)
-					{
+					if ($result < 0) {
 						setEventMessages($bankline->error, $bankline->errors, 'errors');
 						$error++;
 						break;
