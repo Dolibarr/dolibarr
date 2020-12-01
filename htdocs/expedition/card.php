@@ -1524,14 +1524,20 @@ if ($action == 'create')
 						}
 						if ($subj == 0) // Line not shown yet, we show it
 						{
-						    print '<!-- line not shown yet, we show it -->';
-							print '<tr class="oddeven"><td colspan="3" ></td><td class="center">';
+							$warehouse_selected_id = GETPOST('entrepot_id', 'int');
+
+							print '<!-- line not shown yet, we show it -->';
+							print '<tr class="oddeven"><td colspan="3"></td><td class="center">';
+
 							if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES))
 							{
 							    $disabled = '';
 						        if (!empty($conf->productbatch->enabled) && $product->hasbatch())
 						        {
 	                                $disabled = 'disabled="disabled"';
+							    }
+							    if ($warehouse_selected_id <= 0) {		// We did not force a given warehouse, so we won't have no warehouse to change qty.
+							    	$disabled = 'disabled="disabled"';
 							    }
 	    						print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0"'.($disabled ? ' '.$disabled : '').'> ';
 							}
@@ -1544,7 +1550,6 @@ if ($action == 'create')
 							print '<td class="left">';
 							if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES))
 							{
-								$warehouse_selected_id = GETPOST('entrepot_id', 'int');
 	    						if ($warehouse_selected_id > 0)
 	    						{
 	    							$warehouseObject = new Entrepot($db);

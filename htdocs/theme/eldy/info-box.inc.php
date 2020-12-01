@@ -153,10 +153,15 @@ a.info-box-text{ text-decoration: none;}
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $prefix='';
-//$prefix = 'background-';
 if (! empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) $prefix = 'background-';
 
-if (! isset($conf->global->THEME_AGRESSIVENESS_RATIO) && $prefix) $conf->global->THEME_AGRESSIVENESS_RATIO=-50;
+if (! isset($conf->global->THEME_AGRESSIVENESS_RATIO)) {
+	if ($prefix) {
+		$conf->global->THEME_AGRESSIVENESS_RATIO = -50;
+	} else {
+		$conf->global->THEME_AGRESSIVENESS_RATIO = 0;
+	}
+}
 if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENESS_RATIO=GETPOST('THEME_AGRESSIVENESS_RATIO', 'int');
 //var_dump($conf->global->THEME_AGRESSIVENESS_RATIO);
 ?>

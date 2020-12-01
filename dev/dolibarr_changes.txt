@@ -8,6 +8,7 @@ ALL:
 Check "@CHANGE"
 
 
+
 PrestaShopWebservice:
 ---------------------
 Replace
@@ -24,6 +25,19 @@ Replace:
 	body { ... margin: 20px;
 With
 	body { ... margin: 5px;
+
+
+
+DEBUGBAR:
+---------
+
+Move
+    this.options = {
+                bodyMarginBottom: true,
+                bodyMarginBottomHeight: parseInt($('body').css('margin-bottom')),
+    };
+few line lower in the  
+	initialize: function() {
 
 
 

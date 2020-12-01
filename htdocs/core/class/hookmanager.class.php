@@ -105,7 +105,7 @@ class HookManager
 				if (in_array($context, $arrayhooks) || in_array('all', $arrayhooks))    // We instantiate action class only if initialized hook is handled by module
 				{
 					// Include actions class overwriting hooks
-					if (! is_object($this->hooks[$context][$module]))	// If set, class was already loaded
+					if (empty($this->hooks[$context][$module]) || !is_object($this->hooks[$context][$module]))	// If set to an object value, class was already loaded
 					{
 						$path 		= '/'.$module.'/class/';
 						$actionfile = 'actions_'.$module.'.class.php';
@@ -166,6 +166,7 @@ class HookManager
 				'doActions',
 				'doMassActions',
 				'formatEvent',
+				'formConfirm',
 				'formCreateThirdpartyOptions',
 				'formObjectOptions',
 				'formattachOptions',

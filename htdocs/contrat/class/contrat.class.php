@@ -820,7 +820,8 @@ class Contrat extends CommonObject
 		$sql .= " d.fk_user_author,";
 		$sql .= " d.fk_user_ouverture,";
 		$sql .= " d.fk_user_cloture,";
-		$sql .= " d.fk_unit";
+		$sql .= " d.fk_unit,";
+		$sql .= " d.product_type";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as d LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
 		$sql .= " WHERE d.fk_contrat = ".$this->id;
 		$sql .= " ORDER by d.rowid ASC";
@@ -860,6 +861,7 @@ class Contrat extends CommonObject
 				$line->total_ttc		= $objp->total_ttc;
 				$line->fk_product = (($objp->fk_product > 0) ? $objp->fk_product : 0);
 				$line->info_bits		= $objp->info_bits;
+				$line->type				= $objp->type;
 
 				$line->fk_fournprice = $objp->fk_fournprice;
 				$marginInfos = getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $line->fk_fournprice, $objp->pa_ht);
@@ -872,7 +874,8 @@ class Contrat extends CommonObject
 
 				$line->ref = $objp->product_ref; // deprecated
 				$line->product_ref = $objp->product_ref; // Product Ref
-				$line->product_desc		= $objp->product_desc; // Product Description
+				$line->product_type		= $objp->product_type;  // Product Type
+				$line->product_desc		= $objp->product_desc;  // Product Description
 				$line->product_label	= $objp->product_label; // Product Label
 
 				$line->description = $objp->description;
@@ -1234,8 +1237,8 @@ class Contrat extends CommonObject
 			}
 		}
 
-		if (!$error)
-                {
+		// Delete lines
+		if (!$error) {
 				// Delete contratdet extrafields
 				$main = MAIN_DB_PREFIX . 'contratdet';
 				$ef = $main . "_extrafields";
@@ -1265,9 +1268,21 @@ class Contrat extends CommonObject
 			}
 		}
 
+		// Delete llx_ecm_files
+		if (!$error) {
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."ecm_files WHERE src_object_type = '".$this->db->escape($this->table_element.(empty($this->module) ? '' : '@'.$this->module))."' AND src_object_id = ".$this->id;
+			$resql = $this->db->query($sql);
+			if (!$resql)
+			{
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+				$error++;
+			}
+		}
+
+		// Delete contract
 		if (!$error)
 		{
-			// Delete contrat
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contrat";
 			$sql .= " WHERE rowid=".$this->id;
 
@@ -2674,6 +2689,7 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $description;
 
+	public $product_type;			// 0 for product, 1 for service
 	public $product_ref;
 	public $product_label;
 

@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2011-2017	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011-2020	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
@@ -323,10 +323,10 @@ class Expedition extends CommonObject
 		$sql.= ", ".($this->fk_delivery_address>0?$this->fk_delivery_address:"null");
 		$sql.= ", ".($this->shipping_method_id>0?$this->shipping_method_id:"null");
 		$sql.= ", '".$this->db->escape($this->tracking_number)."'";
-		$sql.= ", ".$this->weight;
-		$sql.= ", ".$this->sizeS;	// TODO Should use this->trueDepth
-		$sql.= ", ".$this->sizeW;	// TODO Should use this->trueWidth
-		$sql.= ", ".$this->sizeH;	// TODO Should use this->trueHeight
+		$sql.= ", ".(is_numeric($this->weight)?$this->weight:'NULL');
+		$sql.= ", ".(is_numeric($this->sizeS)?$this->sizeS:'NULL');	// TODO Should use this->trueDepth
+		$sql.= ", ".(is_numeric($this->sizeW)?$this->sizeW:'NULL');	// TODO Should use this->trueWidth
+		$sql.= ", ".(is_numeric($this->sizeH)?$this->sizeH:'NULL');	// TODO Should use this->trueHeight
 		$sql.= ", ".($this->weight_units != '' ? (int) $this->weight_units : 'NULL');
 		$sql.= ", ".($this->size_units != '' ? (int) $this->size_units : 'NULL');
 		$sql.= ", ".(!empty($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
@@ -1324,6 +1324,9 @@ class Expedition extends CommonObject
 						if (!$error)
 						{
 							$this->db->commit();
+
+							// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
+							$this->deleteEcmFiles();
 
 							// We delete PDFs
 							$ref = dol_sanitizeFileName($this->ref);

@@ -664,11 +664,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$larg_sign = ($this->page_largeur-$this->marge_gauche-$this->marge_droite)/3;
 		$pdf->Rect($this->marge_gauche, $posy + 1, $larg_sign, 25);
 		$pdf->SetXY($this->marge_gauche + 2, $posy + 2);
-		$pdf->MultiCell($larg_sign, 2, $outputlangs->trans("For").' '.$outputlangs->convToOutputCharset($mysoc->name).":", '', 'L');
+		$pdf->MultiCell($larg_sign, 2, $outputlangs->transnoentities("For") . ' ' . $outputlangs->convToOutputCharset($mysoc->name) . ":", '', 'L');
 
 		$pdf->Rect(2*$larg_sign+$this->marge_gauche, $posy + 1, $larg_sign, 25);
 		$pdf->SetXY(2*$larg_sign+$this->marge_gauche + 2, $posy + 2);
-		$pdf->MultiCell($larg_sign, 2, $outputlangs->trans("ForCustomer").':', '', 'L');
+		$pdf->MultiCell($larg_sign, 2, $outputlangs->transnoentities("ForCustomer") . ':', '', 'L');
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

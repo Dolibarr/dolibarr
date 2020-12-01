@@ -66,12 +66,13 @@ if ($id > 0 || ! empty($ref))
 
 if ($cancel) $action ='';
 
-// Action association d'un sousproduit
+// Add subproduct to product
 if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
 	$error=0;
 
-	for ($i=0; $i < GETPOST("max_prod", 'int'); $i++)
+	$maxprod = GETPOST("max_prod", 'int');
+	for ($i=0; $i < $maxprod; $i++)
 	{
 		$qty = price2num(GETPOST("prod_qty_".$i, 'alpha'), 'MS');
 		if ($qty > 0)
@@ -365,11 +366,12 @@ if ($id > 0 || ! empty($ref))
 					$fourn_remise_percent = (!empty($product_fourn->fourn_remise_percent)?$product_fourn->fourn_remise_percent:0);
 					$fourn_remise = (!empty($product_fourn->fourn_remise)?$product_fourn->fourn_remise:0);
 
-					$totalline=price2num($value['nb'] * ($fourn_unitprice * (1 - $fourn_remise_percent/100) - $fourn_remise), 'MT');
-					$total+=$totalline;
+					$unitline = price2num(($fourn_unitprice * (1 - $fourn_remise_percent/100) - $fourn_remise), 'MU');
+					$totalline = price2num($value['nb'] * ($fourn_unitprice * (1 - $fourn_remise_percent/100) - $fourn_remise), 'MT');
+					$total += $totalline;
 
 					print '<td class="right">';
-					print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : '').price($fourn_unitprice, '', '', 0, 0, -1, $conf->currency));
+					print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : '').price($unitline, '', '', 0, 0, -1, $conf->currency));
 					print '</td>';
 
 					// Best selling price
