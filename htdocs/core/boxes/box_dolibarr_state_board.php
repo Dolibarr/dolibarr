@@ -299,7 +299,6 @@ class box_dolibarr_state_board extends ModeleBoxes
 
 				$boxstat .= '</td></tr>';
 				$boxstat .= '</table>';
-				$boxstat .= '</div>';
 
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
