@@ -5,6 +5,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2014 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2020      Stéphane Lesafe      <stephane.lesage@ateis.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -514,29 +515,70 @@ class modSociete extends DolibarrModules
 			),
 			's.capital' => array('rule' => 'numeric'),
 			's.fk_stcomm' => array('rule' => 'zeroifnull'),
+			/* TODO
+			's.fk_stcomm' => array(
+				'rule' => 'fetchidfromcodeid',
+				'file' => '/core/class/cstcomm.class.php',
+				'class' => 'Cstcomm',
+				'method' => 'fetch',
+				'element' => 'cstcomm'
+			),
 			's.parent' => array(
-				'rule' => 'fetchidfromref',
+				'rule' => 'fetchidfromreforcode',
 				'file' => '/societe/class/societe.class.php',
 				'class' => 'Societe',
-				'method' => 'fetch',
+				'method' => 'fetchbycode',
 				'element' => 'ThirdParty'
 			),
 			's.outstanding_limit' => array('rule' => 'numeric'),
+			/* TODO
+			'c.cond_reglement' => array(
+				'rule' => 'fetchidfromcodeid',
+				'file' => '/core/class/cpaymentterm.class.php',
+				'class' => 'Cpaymentterm',
+				'method' => 'fetch',
+				'element' => 'cpaymentterm'
+			),
+			*/
+			'c.mode_reglement' => array(
+				'rule' => 'fetchidfromcodeid',
+				'file' => '/compta/paiement/class/cpaiement.class.php',
+				'class' => 'Cpaiement',
+				'method' => 'fetch',
+				'element' => 'cpayment'
+			),
+			/* TODO
+			'c.cond_reglement_supplier' => array(
+				'rule' => 'fetchidfromcodeid',
+				'file' => '/core/class/cpaymentterm.class.php',
+				'class' => 'Cpaymentterm',
+				'method' => 'fetch',
+				'element' => 'cpaymentterm'
+			),
+			*/
+			'c.mode_reglement_supplier' => array(
+				'rule' => 'fetchidfromcodeid',
+				'file' => '/compta/paiement/class/cpaiement.class.php',
+				'class' => 'Cpaiement',
+				'method' => 'fetch',
+				'element' => 'cpayment'
+			),
 			's.fk_account' => array(
 				'rule' => 'fetchidfromcodeid',
 				'classfile' => '/compta/bank/class/account.class.php',
 				'class' => 'Account',
 				'method' => 'fetch',
 				'element' => 'BankAccount'
-		//          ),
-		//          TODO
-		//          's.fk_incoterms' => array(
-		//              'rule' => 'fetchidfromcodeid',
-		//              'classfile' => '/core/class/cincoterm.class.php',
-		//              'class' => 'Cincoterm',
-		//              'method' => 'fetch',
-		//              'dict' => 'IncotermLabel'
-			)
+			),
+			/* TODO
+			's.fk_incoterms' => array(
+				'rule' => 'fetchidfromcodeid',
+		        'classfile' => '/core/class/cincoterm.class.php',
+		        'class' => 'Cincoterm',
+		        'method' => 'fetch',
+		        'dict' => 'IncotermLabel'
+			),
+			*/
 		);
 		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
 		$this->import_regex_array[$r] = array(//field order as per structure of table llx_societe
@@ -558,7 +600,7 @@ class modSociete extends DolibarrModules
 		$this->import_examplevalues_array[$r] = array(//field order as per structure of table llx_societe
 			's.nom' => "TPBigCompany",
 			's.name_alias' => "Alias for TPBigCompany",
-			's.parent' => "TPMotherCompany",
+			's.parent' => "TPMotherCompany, name or customer/supplier code",
 			's.status' => "0 (closed) / 1 (active)",
 			's.code_client' => 'eg. CU01-0001 / empty / "auto"',
 			's.code_fournisseur' => 'eg. SU01-0001 / empty / "auto"',
@@ -591,9 +633,9 @@ class modSociete extends DolibarrModules
 			's.client' => '0 (no customer no prospect) / 1 (customer) / 2 (prospect)/ 3 (customer and prospect)',
 			's.fournisseur' => '0 (not supplier) / 1 (supplier)',
 			's.fk_prospectlevel' => 'eg. "PL_MEDIUM" matches field "code" in table "'.MAIN_DB_PREFIX.'c_prospectlevel"',
-			's.mode_reglement' => '1/2/3...matches field "id" in table "'.MAIN_DB_PREFIX.'c_paiement"',
+			's.mode_reglement' => 'id or code in table "'.MAIN_DB_PREFIX.'c_paiement"',
 			's.cond_reglement' => '1/2/3...matches field "rowid" in table "'.MAIN_DB_PREFIX.'c_payment_term"',
-			's.mode_reglement_supplier' => '1/2/3...matches field "id" in table "'.MAIN_DB_PREFIX.'c_paiement"',
+			's.mode_reglement_supplier' => 'id or code in table "'.MAIN_DB_PREFIX.'c_paiement"',
 			's.cond_reglement_supplier' => '1/2/3...matches field "rowid" in table "'.MAIN_DB_PREFIX.'c_payment_term"',
 			's.outstanding_limit' => "5000",
 			's.fk_account' => "rowid or ref",
@@ -636,7 +678,7 @@ class modSociete extends DolibarrModules
 			's.town' => "Town",
 			's.fk_departement' => "StateCode",
 			's.fk_pays' => "CountryCode",
-			's.birthday' => "BirthdayDate",
+			's.birthday' => "DateOfBirth",
 			's.poste' => "Role",
 			's.phone' => "Phone",
 			's.phone_perso' => "PhonePerso",
@@ -665,10 +707,10 @@ class modSociete extends DolibarrModules
 		); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_convertvalue_array[$r] = array(
 			's.fk_soc' => array(
-				'rule' => 'fetchidfromref',
+				'rule' => 'fetchidfromreforcode',
 				'file' => '/societe/class/societe.class.php',
 				'class' => 'Societe',
-				'method' => 'fetch',
+				'method' => 'fetchbycode',
 				'element' => 'ThirdParty'
 			),
 			's.fk_departement' => array(
@@ -694,7 +736,7 @@ class modSociete extends DolibarrModules
 		$this->import_examplevalues_array[$r] = array(//field order as per structure of table llx_socpeople
 			's.rowid' => '1',
 			's.datec' => 'formatted as '.dol_print_date(dol_now(), '%Y-%m-%d'),
-			's.fk_soc' => 'Third Party name eg. TPBigCompany',
+			's.fk_soc' => 'Third Party name or customer/supplier code',
 			's.civility' => 'Title of civility eg: MR...matches field "code" in table "'.MAIN_DB_PREFIX.'c_civility"',
 			's.lastname' => "lastname or label",
 			's.firstname' => 'John',
@@ -746,18 +788,17 @@ class modSociete extends DolibarrModules
 
 		$this->import_convertvalue_array[$r] = array(
 			'sr.fk_soc' => array(
-				'rule' => 'fetchidfromref',
+				'rule' => 'fetchidfromreforcode',
 				'classfile' => '/societe/class/societe.class.php',
 				'class' => 'Societe',
-				'method' => 'fetch',
+				'method' => 'fetchbycode',
 				'element' => 'ThirdParty'
 			)
 		);
 		$this->import_examplevalues_array[$r] = array(//field order as per structure of table llx_societe_rib
 			'sr.label' => 'eg. "account1"',
-			'sr.fk_soc' => 'eg. "TPBigCompany"',
-			'sr.datec' => 'date used for creating direct debit UMR formatted as '.dol_print_date(dol_now(),
-					'%Y-%m-%d'),
+			'sr.fk_soc' => 'Third Party name or customer/supplier code',
+			'sr.datec' => 'date used for creating direct debit UMR formatted as '.dol_print_date(dol_now(), '%Y-%m-%d'),
 			'sr.bank' => 'bank name eg: "ING-Direct"',
 			'sr.code_banque' => 'account sort code (GB)/Routing number (US) eg. "8456"',
 			'sr.code_guichet' => "bank code for office/branch",
@@ -783,10 +824,26 @@ class modSociete extends DolibarrModules
 		$this->import_fields_array[$r] = array('sr.fk_soc'=>"ThirdPartyName*", 'sr.fk_user'=>"User*");
 
 		$this->import_convertvalue_array[$r] = array(
-				'sr.fk_soc'=>array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty'),
-				'sr.fk_user'=>array('rule'=>'fetchidfromref', 'classfile'=>'/user/class/user.class.php', 'class'=>'User', 'method'=>'fetch', 'element'=>'User')
+			'sr.fk_soc' => array(
+				'rule' => 'fetchidfromreforcode',
+				'classfile' => '/societe/class/societe.class.php',
+				'class' => 'Societe',
+				'method' => 'fetchbycode',
+				'element' => 'ThirdParty'
+			),
+			'sr.fk_user' => array(
+				'rule' => 'fetchidfromref',
+				'classfile' => '/user/class/user.class.php',
+				'class' => 'User',
+				'method' => 'fetch',
+				'element' => 'User'
+			),
 		);
-		$this->import_examplevalues_array[$r] = array('sr.fk_soc'=>"MyBigCompany", 'sr.fk_user'=>"login");
+
+		$this->import_examplevalues_array[$r] = array(
+			'sr.fk_soc' => 'Third Party name or customer/supplier code',
+			'sr.fk_user'=>"login"
+		);
 	}
 
 

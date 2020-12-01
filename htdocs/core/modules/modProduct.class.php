@@ -8,6 +8,7 @@
  * Copyright (C) 2014      Christophe Battarel	<contact@altairis.fr>
  * Copyright (C) 2014      Cedric Gross			<c.gross@kreiz-it.fr>
  * Copyright (C) 2020	   Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2020      Stéphane Lesafe      <stephane.lesage@ateis.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -652,13 +653,13 @@ class modProduct extends DolibarrModules
             }
 
 			$this->import_convertvalue_array[$r] = array(
-					'sp.fk_soc'=>array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty'),
+					'sp.fk_soc'=>array('rule'=>'fetchidfromreforcode', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetchbysuppliercode', 'element'=>'ThirdParty'),
 					'sp.fk_product'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/class/product.class.php', 'class'=>'Product', 'method'=>'fetch', 'element'=>'Product')
 			);
 
 			$this->import_examplevalues_array[$r] = array(
                 'sp.fk_product' => "PRODUCT_REF or id:123456",
-                'sp.fk_soc' => "My Supplier",
+				'sp.fk_soc' => "Supplier name or code",
                 'sp.ref_fourn' => "XYZ-F123456",
                 'sp.quantity' => "5",
                 'sp.tva_tx' => '10',
