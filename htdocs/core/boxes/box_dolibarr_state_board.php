@@ -20,14 +20,14 @@
 
 /**
  *	\file       htdocs/core/boxes/box_dolibarr_state_board.php
- *	\ingroup    
+ *	\ingroup
  *	\brief      Module Dolibarr state base
  */
 
 use Symfony\Component\VarDumper\VarDumper;
 
 include_once DOL_DOCUMENT_ROOT . '/core/boxes/modules_boxes.php';
-include_once(DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php');
+include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
 
 
 /**
@@ -304,7 +304,6 @@ class box_dolibarr_state_board extends ModeleBoxes
 					'td' => '',
 					'textnoformat' => $boxstat
 				);
-
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => 'class="nohover center"',
