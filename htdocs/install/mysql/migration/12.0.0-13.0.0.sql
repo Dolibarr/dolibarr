@@ -439,7 +439,8 @@ INSERT INTO llx_c_product_nature (code, label, active) VALUES (1, 'Finished', 1)
 ALTER TABLE llx_product MODIFY COLUMN finished tinyint DEFAULT NULL;
 ALTER TABLE llx_product ADD CONSTRAINT fk_product_finished FOREIGN KEY (finished) REFERENCES llx_c_product_nature (code);
 
-
+INSERT INTO llx_boxes_def (file) VALUES ('box_dolibarr_state_board.php');
+INSERT INTO llx_boxes (box_id, position, box_order, maxline, params) VALUES ((SELECT b.rowid FROM llx_boxes_def as b WHERE file = 'box_dolibarr_state_board.php'), 0, 0, NULL, NULL);
 -- MIGRATION TO DO AFTER RENAMING AN OBJECT
 
 -- drop constraint
