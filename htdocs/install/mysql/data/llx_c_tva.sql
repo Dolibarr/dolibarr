@@ -366,6 +366,10 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 1
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 132, 13,  '9','0','TVA 9%',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 133, 13,     '19','0','TVA 19%',   1);
 
+-- ANGOLA (id country=35)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 351,  35,   '0','0','VAT Rate 0', 1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 352,  35,  '7','0','VAT reduced rate',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 353,  35,  '14','0','VAT standard rate',1);
 
 -- Example of code to insert a vat rate 0 for each country
 --delete from llx_c_tva where rowid = 1181;		-- to delete a record that does not follow rules for rowid (fk_pays+'1')
