@@ -583,7 +583,7 @@ if ($action == "delete") {
 
 			// We delete the lines
 			$resdeletelines = 1;
-			foreach($invoice->lines as $line) {
+			foreach ($invoice->lines as $line) {
 				$tmpres = $invoice->deleteline($line->id);
 				if ($tmpres < 0) {
 					$resdeletelines = 0;
