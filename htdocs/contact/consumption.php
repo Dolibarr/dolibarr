@@ -114,7 +114,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_value
 $morehtmlref = '<div class="refidno">';
 
 // Code added here, resolving issue when users who have no access rights to see for fournisseurs can access to them anyway by passing trough contacts  //
-$sql = "SELECT fournisseur, client FROM " . MAIN_DB_PREFIX . "societe WHERE rowid = " . (int)$object->socid ;
+$sql = "SELECT fournisseur, client FROM " . MAIN_DB_PREFIX . "societe WHERE rowid = " . (int) $object->socid ;
 $resql = $db->query($sql);
 if ($resql) {
 	$result = $resql->fetch_object();
