@@ -966,6 +966,8 @@ if (empty($reshook))
 						}
 
 						$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					} else {
+						$object->fetch_thirdparty();
 					}
 
 					unset($_POST['prod_entry_mode']);
