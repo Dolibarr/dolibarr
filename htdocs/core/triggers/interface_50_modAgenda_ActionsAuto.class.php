@@ -475,21 +475,17 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				$object->actionmsg = $langs->transnoentities("SupplierOrderSentByEMail", $object->ref);
 			}
 
-        elseif ($action == 'ORDER_SENTBYMAIL')
-        {
-            // Load translation files required by the page
-            $langs->loadLangs(array("agenda","other","bills","orders"));
+			// Parameters $object->sendtoid defined by caller
+			//$object->sendtoid=0;
+		} elseif ($action == 'ORDER_SENTBYMAIL') {
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "bills", "orders"));
 
-            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderSentByEMail", $object->ref);
-            if (empty($object->actionmsg))
-            {
-                $object->actionmsg=$langs->transnoentities("OrderSentByEMail", $object->ref);
-            }
+			if (empty($object->actionmsg2)) $object->actionmsg2 = $langs->transnoentities("OrderSentByEMail", $object->ref);
+			if (empty($object->actionmsg)) {
+				$object->actionmsg = $langs->transnoentities("OrderSentByEMail", $object->ref);
+			}
 
-            // Parameters $object->sendtoid defined by caller
-            //$object->sendtoid=0;
-        }			
-			
 			// Parameters $object->sendtoid defined by caller
 			//$object->sendtoid=0;
 		} elseif ($action == 'ORDER_SUPPLIER_CLASSIFY_BILLED') {
