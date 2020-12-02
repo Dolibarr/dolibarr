@@ -717,7 +717,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$langs->loadLangs(array("admin", "help"));
 
 				$warnpicto = '';
-				if (!empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY))
+				if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 				{
 					$langs->load("errors");
 					$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"));
@@ -725,7 +725,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$newmenu->add("/admin/company.php?mainmenu=home", $langs->trans("MenuCompanySetup").$warnpicto, 1);
 
 				$warnpicto = '';
-				if (1 || count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING))	// If only user module enabled
+				if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING))	// If only user module enabled
 				{
 					$langs->load("errors");
 					$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"));
