@@ -1456,6 +1456,7 @@ class Form
 		$langs->load('companies');
 
 		if (empty($htmlid)) $htmlid = $htmlname;
+		$num = 0;
 
 		if ($selected === '') $selected = array();
 		elseif (!is_array($selected)) $selected = array($selected);
@@ -1489,7 +1490,7 @@ class Form
 				$out .= ajax_combobox($htmlid, $events, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
 			}
 
-			if ($htmlname != 'none' && !$options_only) $out .= '<select class="flat'.($moreclass ? ' '.$moreclass : '').'"'.($num?'':' disabled').' id="'.$htmlid.'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.(!empty($moreparam) ? $moreparam : '').'>';
+			if ($htmlname != 'none' && !$options_only) $out .= '<select class="flat'.($moreclass ? ' '.$moreclass : '').'"'.($num ? '' : ' disabled').' id="'.$htmlid.'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.(!empty($moreparam) ? $moreparam : '').'>';
 			if (($showempty == 1 || ($showempty == 3 && $num > 1)) && !$multiple) $out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>&nbsp;</option>';
 			if ($showempty == 2) $out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>-- '.$langs->trans("Internal").' --</option>';
 
@@ -1522,7 +1523,7 @@ class Form
 						if (!empty($contact_town)) $extendedInfos[] = $contact_town;
 						elseif (!empty($company_town)) $extendedInfos[] = $company_town;
 						$extendedInfos = implode(' - ', $extendedInfos);
-						if (!empty($extendedInfos)) $extendedInfos = ' - ' . $extendedInfos;
+						if (!empty($extendedInfos)) $extendedInfos = ' - '.$extendedInfos;
 					}
 
 					$contactstatic->id = $obj->rowid;
@@ -1539,7 +1540,7 @@ class Form
 								$out .= '<option value="'.$obj->rowid.'"';
 								if ($disabled) $out .= ' disabled';
 								$out .= ' selected>';
-								$out .= $contactstatic->getFullName($langs) . $extendedInfos;
+								$out .= $contactstatic->getFullName($langs).$extendedInfos;
 								if ($showfunction && $obj->poste) $out .= ' ('.$obj->poste.')';
 								if (($showsoc > 0) && $obj->company) $out .= ' - ('.$obj->company.')';
 								$out .= '</option>';
@@ -1547,7 +1548,7 @@ class Form
 								$out .= '<option value="'.$obj->rowid.'"';
 								if ($disabled) $out .= ' disabled';
 								$out .= '>';
-								$out .= $contactstatic->getFullName($langs) . $extendedInfos;
+								$out .= $contactstatic->getFullName($langs).$extendedInfos;
 								if ($showfunction && $obj->poste) $out .= ' ('.$obj->poste.')';
 								if (($showsoc > 0) && $obj->company) $out .= ' - ('.$obj->company.')';
 								$out .= '</option>';
@@ -1555,7 +1556,7 @@ class Form
 						} else {
 							if (in_array($obj->rowid, $selected))
 							{
-								$out .= $contactstatic->getFullName($langs) . $extendedInfos;
+								$out .= $contactstatic->getFullName($langs).$extendedInfos;
 								if ($showfunction && $obj->poste) $out .= ' ('.$obj->poste.')';
 								if (($showsoc > 0) && $obj->company) $out .= ' - ('.$obj->company.')';
 							}
@@ -4548,7 +4549,7 @@ class Form
 			$out .= '<input type="hidden" name="action" value="classin">';
 			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$out .= $formproject->select_projects($socid, $selected, $htmlname, $maxlength, 0, 1, $discard_closed, $forcefocus, 0, 0, '', 1);
-			$out .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+			$out .= '<input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'">';
 			$out .= '</form>';
 		} else {
 			if ($selected)
@@ -4590,7 +4591,7 @@ class Form
 			print '<input type="hidden" name="action" value="setconditions">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			$this->select_conditions_paiements($selected, $htmlname, -1, $addempty);
-			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+			print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		} else {
 			if ($selected)
@@ -4623,7 +4624,7 @@ class Form
 			print '<input type="hidden" name="action" value="setavailability">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			$this->selectAvailabilityDelay($selected, $htmlname, -1, $addempty);
-			print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+			print '<input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		} else {
 			if ($selected)
@@ -4655,7 +4656,7 @@ class Form
 			print '<input type="hidden" name="action" value="setdemandreason">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			$this->selectInputReason($selected, $htmlname, -1, $addempty);
-			print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+			print '<input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		} else {
 			if ($selected)
@@ -4704,7 +4705,7 @@ class Form
 			$ret .= '<tr><td>';
 			$ret .= $this->selectDate($selected, $htmlname, $displayhour, $displaymin, 1, 'form'.$htmlname, 1, 0);
 			$ret .= '</td>';
-			$ret .= '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			$ret .= '<td class="left"><input type="submit smallpaddingimp" class="button" value="'.$langs->trans("Modify").'"></td>';
 			$ret .= '</tr></table></form>';
 		} else {
 			if ($displayhour) $ret .= dol_print_date($selected, 'dayhour');
@@ -4738,7 +4739,7 @@ class Form
 			print '<input type="hidden" name="action" value="set'.$htmlname.'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print $this->select_dolusers($selected, $htmlname, 1, $exclude, 0, $include);
-			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+			print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		} else {
 			if ($selected)
@@ -4776,7 +4777,7 @@ class Form
 			print '<input type="hidden" name="action" value="setmode">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			$this->select_types_paiements($selected, $htmlname, $filtertype, 0, $addempty, 0, 0, $active);
-			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+			print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		} else {
 			if ($selected)
@@ -4808,7 +4809,7 @@ class Form
 			print '<input type="hidden" name="action" value="setmode">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			$this->selectTransportMode($selected, $htmlname, 2, $addempty, 0, 0, $active);
-			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+			print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		}
 		else {
@@ -4841,7 +4842,7 @@ class Form
 			print '<input type="hidden" name="action" value="setmulticurrencycode">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print $this->selectMultiCurrency($selected, $htmlname, 0);
-			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+			print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		} else {
 			dol_include_once('/core/lib/company.lib.php');
@@ -4874,7 +4875,7 @@ class Form
 			print '<option value="1">'.$currency.' > '.$conf->currency.'</option>';
 			print '<option value="2">'.$conf->currency.' > '.$currency.'</option>';
 			print '</select> ';
-			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+			print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		} else {
 			if (!empty($rate))
@@ -4949,7 +4950,7 @@ class Form
 				$nbqualifiedlines = $this->select_remises($selected, $htmlname, $newfilter, $socid, $maxvalue);
 				if ($nbqualifiedlines > 0)
 				{
-					print ' &nbsp; <input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("UseLine")).'"';
+					print ' &nbsp; <input type="submit" class="button smallpaddingimp" value="'.dol_escape_htmltag($langs->trans("UseLine")).'"';
 					if (!empty($discount_type) && $filter && $filter != "fk_invoice_supplier_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')")
 						print ' title="'.$langs->trans("UseCreditNoteInInvoicePayment").'"';
 					if (empty($discount_type) && $filter && $filter != "fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')")
@@ -4999,14 +5000,15 @@ class Form
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
-			$num = $this->select_contacts($societe->id, $selected, $htmlname);
+			print $this->selectcontacts($societe->id, $selected, $htmlname);
+			$num = $this->num;
 			if ($num == 0)
 			{
 				$addcontact = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
 				print '<a href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$societe->id.'&amp;action=create&amp;backtoreferer=1">'.$addcontact.'</a>';
 			}
 			print '</td>';
-			print '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			print '<td class="left"><input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'"></td>';
 			print '</tr></table></form>';
 		} else {
 			if ($selected)
@@ -5048,7 +5050,7 @@ class Form
 			$out .= '<input type="hidden" name="action" value="set_thirdparty">';
 			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$out .= $this->select_company($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events);
-			$out .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 			$out .= '</form>';
 		} else {
 			if ($selected)

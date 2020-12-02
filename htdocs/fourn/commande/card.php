@@ -1143,9 +1143,9 @@ if (empty($reshook))
 			$object->cond_reglement_id = GETPOST('cond_reglement_id');
 			$object->mode_reglement_id = GETPOST('mode_reglement_id');
 			$object->fk_account        = GETPOST('fk_account', 'int');
-			$object->note_private	= GETPOST('note_private', 'restricthtml');
+			$object->note_private = GETPOST('note_private', 'restricthtml');
 			$object->note_public   	= GETPOST('note_public', 'restricthtml');
-			$object->date_livraison = $datelivraison;	// deprecated
+			$object->date_livraison = $datelivraison; // deprecated
 			$object->delivery_date = $datelivraison;
 			$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
@@ -1432,7 +1432,8 @@ if (empty($reshook))
 			if ($object->id > 0)
 			{
 				$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
-				$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
+				$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+				$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 			}
 
 			if ($result >= 0)

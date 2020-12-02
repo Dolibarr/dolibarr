@@ -2664,7 +2664,8 @@ if (empty($reshook))
 
 			if ($result > 0 && $id > 0) {
 				$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
-				$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
+				$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+				$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 			}
 
 			if ($result >= 0) {
@@ -3415,7 +3416,7 @@ if ($action == 'create')
 
 	// Payment mode
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
-	$form->select_types_paiements(isset($_POST['mode_reglement_id']) ? $_POST['mode_reglement_id'] : $mode_reglement_id, 'mode_reglement_id', 'CRDT');
+	$form->select_types_paiements(GETPOSTISSET('mode_reglement_id') ? GETPOST('mode_reglement_id') : $mode_reglement_id, 'mode_reglement_id', 'CRDT');
 	print '</td></tr>';
 
 	// Bank Account
@@ -4073,7 +4074,7 @@ if ($action == 'create')
 	print $object->getLibType();
 	print '</span>';
 	if ($object->module_source) {
-		print ' <span class="opacitymediumbycolor paddingleft">('.$langs->trans("POS").' '.$object->module_source.' - '.$langs->trans("Terminal").' '.$object->pos_source.')</span>';
+		print ' <span class="opacitymediumbycolor paddingleft">('.$langs->trans("POS").' '.ucfirst($object->module_source).' - '.$langs->trans("Terminal").' '.$object->pos_source.')</span>';
 	}
 	if ($object->type == Facture::TYPE_REPLACEMENT) {
 		$facreplaced = new Facture($db);

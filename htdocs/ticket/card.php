@@ -194,7 +194,8 @@ if (empty($reshook)) {
 				$type_contact = GETPOST("type", 'alpha');
 
 				if ($contactid > 0 && $type_contact) {
-					$result = $object->add_contact($contactid, GETPOST("type"), 'external');
+					$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+					$result = $object->add_contact($contactid, $typeid, 'external');
 				}
 
 				// altairis: link ticket to project

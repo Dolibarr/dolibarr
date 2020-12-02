@@ -37,6 +37,7 @@ $langs->loadLangs(array('members', 'languages'));
 $id = GETPOST('rowid', 'int');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
+$ref = GETPOST('ref', 'alphanohtml');
 
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
@@ -67,15 +68,17 @@ if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->rights->ad
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
 
+	$forcelangprod = GETPOST("forcelangprod", 'aZ09');
+
 	// update of object
-	if ($_POST["forcelangprod"] == $current_lang) {
-		$object->label			= $_POST["libelle"];
-		$object->description = dol_htmlcleanlastbr($_POST["desc"]);
-		$object->other			= dol_htmlcleanlastbr($_POST["other"]);
+	if ($forcelangprod == $current_lang) {
+		$object->label		 = GETPOST("libelle", 'alphanohtml');
+		$object->description = dol_htmlcleanlastbr(GETPOST("desc", 'restricthtml'));
+		$object->other		 = dol_htmlcleanlastbr(GETPOST("other", 'restricthtml'));
 	} else {
-		$object->multilangs[$_POST["forcelangprod"]]["label"]		= $_POST["libelle"];
-		$object->multilangs[$_POST["forcelangprod"]]["description"] = dol_htmlcleanlastbr($_POST["desc"]);
-		$object->multilangs[$_POST["forcelangprod"]]["other"]		= dol_htmlcleanlastbr($_POST["other"]);
+		$object->multilangs[$forcelangprod]["label"] = GETPOST("libelle", 'alphanohtml');
+		$object->multilangs[$forcelangprod]["description"] = dol_htmlcleanlastbr(GETPOST("desc", 'restricthtml'));
+		$object->multilangs[$forcelangprod]["other"] = dol_htmlcleanlastbr(GETPOST("other", 'restricthtml'));
 	}
 
 	// backup into database
@@ -95,13 +98,13 @@ if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $user->rights->a
 
 	foreach ($object->multilangs as $key => $value) { // saving new values in the object
 		if ($key == $current_lang) {
-			$object->label			= $_POST["libelle-".$key];
-			$object->description = dol_htmlcleanlastbr($_POST["desc-".$key]);
-			$object->other			= dol_htmlcleanlastbr($_POST["other-".$key]);
+			$object->label			= GETPOST("libelle-".$key, 'alphanohtml');
+			$object->description = dol_htmlcleanlastbr(GETPOST("desc-".$key, 'restricthtml'));
+			$object->other			= dol_htmlcleanlastbr(GETPOST("other-".$key, 'restricthtml'));
 		} else {
-			$object->multilangs[$key]["label"]			= $_POST["libelle-".$key];
-			$object->multilangs[$key]["description"] = dol_htmlcleanlastbr($_POST["desc-".$key]);
-			$object->multilangs[$key]["other"]			= dol_htmlcleanlastbr($_POST["other-".$key]);
+			$object->multilangs[$key]["label"]			= GETPOST("libelle-".$key, 'alphanohtml');
+			$object->multilangs[$key]["description"] = dol_htmlcleanlastbr(GETPOST("desc-".$key, 'restricthtml'));
+			$object->multilangs[$key]["other"]			= dol_htmlcleanlastbr(GETPOST("other-".$key, 'restricthtml'));
 		}
 	}
 
@@ -205,7 +208,7 @@ if ($action == 'edit') {
 
 			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border centpercent">';
-			print '<tr><td class="tdtop titlefieldcreate fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.dol_escape_htmltag($object->multilangs[$key]["label"]).'"></td></tr>';
+			print '<tr><td class="tdtop titlefieldcreate fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" class="minwidth300" value="'.dol_escape_htmltag($object->multilangs[$key]["label"]).'"></td></tr>';
 			print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
 			$doleditor = new DolEditor("desc-$key", $object->multilangs[$key]["description"], '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
 			$doleditor->Create();
@@ -264,7 +267,7 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 	print '<tr><td class="tdtop titlefieldcreate fieldrequired">'.$langs->trans('Language').'</td><td>';
 	print $formadmin->select_language('', 'forcelangprod', 0, $object->multilangs, 1);
 	print '</td></tr>';
-	print '<tr><td class="tdtop fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle" size="40"></td></tr>';
+	print '<tr><td class="tdtop fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle" class="minwidth300" value="'.dol_escape_htmltag(GETPOST("libelle", 'alphanohtml')).'"></td></tr>';
 	print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
 	$doleditor = new DolEditor('desc', '', '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
 	$doleditor->Create();

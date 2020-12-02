@@ -58,6 +58,8 @@ class CMailFile
 	public $alternative_boundary;
 	public $deliveryreceipt;
 
+	public $atleastonefile;
+
 	public $eol;
 	public $eol2;
 
@@ -171,7 +173,7 @@ class CMailFile
 		if (!empty($this->sendcontext)) {
 			$smtpContextKey = strtoupper($this->sendcontext);
 			$keyForSMTPSendMode = 'MAIN_MAIL_SENDMODE_'.$smtpContextKey;
-			$smtpContextSendMode = $conf->global->{$keyForSMTPSendMode};
+			$smtpContextSendMode = empty($conf->global->{$keyForSMTPSendMode}) ? '' : $conf->global->{$keyForSMTPSendMode};
 			if (!empty($smtpContextSendMode) && $smtpContextSendMode != 'default') {
 				$this->sendmode = $smtpContextSendMode;
 			}
@@ -298,7 +300,7 @@ class CMailFile
 		if (!empty($this->sendcontext)) {
 			$smtpContextKey = strtoupper($this->sendcontext);
 			$keyForSMTPSendMode = 'MAIN_MAIL_SENDMODE_'.$smtpContextKey;
-			$smtpContextSendMode = $conf->global->{$keyForSMTPSendMode};
+			$smtpContextSendMode = empty($conf->global->{$keyForSMTPSendMode}) ? '' : $conf->global->{$keyForSMTPSendMode};
 			if (!empty($smtpContextSendMode) && $smtpContextSendMode != 'default') {
 				$keyforsslseflsigned = 'MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_'.$smtpContextKey;
 			}
@@ -338,8 +340,7 @@ class CMailFile
 			$text_body = $this->write_body($msg);
 
 			// Add attachments to text_encoded
-			if ($this->atleastonefile)
-			{
+			if (!empty($this->atleastonefile)) {
 				$files_encoded = $this->write_files($filename_list, $mimetype_list, $mimefilename_list);
 			}
 
@@ -401,7 +402,7 @@ class CMailFile
 				}
 			}
 
-			if ($this->atleastonefile)
+			if (!empty($this->atleastonefile))
 			{
 				foreach ($filename_list as $i => $val)
 				{
@@ -530,7 +531,7 @@ class CMailFile
 				$this->message->addPart(dol_nl2br($msg), 'text/html');
 			}
 
-			if ($this->atleastonefile)
+			if (!empty($this->atleastonefile))
 			{
 				foreach ($filename_list as $i => $val)
 				{
@@ -657,7 +658,7 @@ class CMailFile
 			if (!empty($this->sendcontext)) {
 				$smtpContextKey = strtoupper($this->sendcontext);
 				$keyForSMTPSendMode = 'MAIN_MAIL_SENDMODE_'.$smtpContextKey;
-				$smtpContextSendMode = $conf->global->{$keyForSMTPSendMode};
+				$smtpContextSendMode = empty($conf->global->{$keyForSMTPSendMode}) ? '' : $conf->global->{$keyForSMTPSendMode};
 				if (!empty($smtpContextSendMode) && $smtpContextSendMode != 'default') {
 					$keyforsmtpserver = 'MAIN_MAIL_SMTP_SERVER_'.$smtpContextKey;
 					$keyforsmtpport   = 'MAIN_MAIL_SMTP_PORT_'.$smtpContextKey;

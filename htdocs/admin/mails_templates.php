@@ -271,7 +271,7 @@ if (empty($reshook)) {
 			// Rename some POST variables into a generic name
 			if (GETPOST('actionmodify', 'alpha') && $value == 'topic') $_POST['topic'] = $_POST['topic-'.$rowid];
 
-			if ((!isset($_POST[$value]) || $_POST[$value] == '' || $_POST[$value] == '-1') && $value != 'lang' && $value != 'fk_user' && $value != 'position')
+			if ((!GETPOSTISSET($value) || GETPOST($value) == '' || GETPOST($value) == '-1') && $value != 'lang' && $value != 'fk_user' && $value != 'position')
 			{
 				$ok = 0;
 				$fieldnamekey = $listfield[$f];

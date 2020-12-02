@@ -102,7 +102,7 @@ if (empty($reshook))
 		$object->address = (string) GETPOST("address", "alpha");
 		$object->zip = (string) GETPOST("zipcode", "alpha");
 		$object->town = (string) GETPOST("town", "alpha");
-		$object->country_id  = GETPOST("country_id");
+		$object->country_id = GETPOST("country_id");
 		$object->phone = (string) GETPOST("phone", "alpha");
 		$object->fax = (string) GETPOST("fax", "alpha");
 

@@ -159,7 +159,7 @@ class MouvementStock extends CommonObject
 		dol_syslog(get_class($this)."::_create start userid=$user->id, fk_product=$fk_product, warehouse_id=$entrepot_id, qty=$qty, type=$type, price=$price, label=$label, inventorycode=$inventorycode, datem=".$datem.", eatby=".$eatby.", sellby=".$sellby.", batch=".$batch.", skip_batch=".$skip_batch);
 
 		// Clean parameters
-		$price = price2num($price, 'MU');	// Clean value for the casse we receive a float zero value, to have it a real zero value.
+		$price = price2num($price, 'MU'); // Clean value for the casse we receive a float zero value, to have it a real zero value.
 		if (empty($price)) $price = 0;
 		$now = (!empty($datem) ? $datem : dol_now());
 

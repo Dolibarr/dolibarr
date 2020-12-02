@@ -153,8 +153,7 @@ if ($action == 'add')
 
 		if (!$error) {
 			// attrname must be alphabetical and lower case only
-			if (GETPOSISSET("attrname") && preg_match("/^[a-z0-9-_]+$/", GETPOST('attrname', 'aZ09')) && !is_numeric(GETPOST('attrname', 'aZ09')))
-			{
+			if (GETPOSTISSET("attrname") && preg_match("/^[a-z0-9-_]+$/", GETPOST('attrname', 'aZ09')) && !is_numeric(GETPOST('attrname', 'aZ09'))) {
 				// Construct array for parameter (value of select list)
 				$default_value = GETPOST('default_value', 'alpha');
 				$parameters = $param;
@@ -166,7 +165,7 @@ if ($action == 'add')
 						$params['options'] = array($parameters=>null);
 					}
 				} else {
-					//Esle it's separated key/value and coma list
+					// Else it's separated key/value and coma list
 					foreach ($parameters_array as $param_ligne)
 					{
 						list($key, $value) = explode(',', $param_ligne);
@@ -375,7 +374,7 @@ if ($action == 'update')
 					GETPOST('computed_value', 'alpha'),
 					(GETPOST('entitycurrentorall', 'alpha') ? 0 : ''),
 					GETPOST('langfile'),
-				    GETPOST('enabled', 'alpha'),
+					GETPOST('enabled', 'alpha'),
 					(GETPOST('totalizable', 'alpha') ? 1 : 0),
 					GETPOST('printable', 'alpha')
 				);

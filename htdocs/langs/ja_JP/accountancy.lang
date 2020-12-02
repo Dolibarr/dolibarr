@@ -339,6 +339,8 @@ Modelcsv_configurable=CSV構成可能のエクスポート
 Modelcsv_FEC=FECのエクスポート
 Modelcsv_Sage50_Swiss=セージ50スイスへのエクスポート
 Modelcsv_winfic=Winficのエクスポート-eWinfic-WinSisCompta
+Modelcsv_Gestinumv3=Export for Gestinum (v3)
+Modelcsv_Gestinumv5Export for Gestinum (v5)
 ChartofaccountsId=勘定科目表ID
 
 ## Tools - Init accounting account on product / service

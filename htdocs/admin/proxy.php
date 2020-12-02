@@ -135,7 +135,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ConnectionTimeout").'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_USE_CONNECT_TIMEOUT" type="text" size="4" value="'.(isset($_POST["MAIN_USE_CONNECT_TIMEOUT"]) ?GETPOST("MAIN_USE_CONNECT_TIMEOUT") : $conf->global->MAIN_USE_CONNECT_TIMEOUT).'">';
+print '<input class="flat" name="MAIN_USE_CONNECT_TIMEOUT" type="text" size="4" value="'.(GETPOSTISSET("MAIN_USE_CONNECT_TIMEOUT") ? GETPOST("MAIN_USE_CONNECT_TIMEOUT") : $conf->global->MAIN_USE_CONNECT_TIMEOUT).'">';
 print ' '.strtolower($langs->trans("Seconds"));
 print '</td>';
 print '</tr>';

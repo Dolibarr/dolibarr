@@ -288,7 +288,7 @@ function limitChars(textarea, limit, infodiv)
 				$defaultmessage = $this->withbody;
 			}
 			$defaultmessage = make_substitutions($defaultmessage, $this->substit);
-			if (isset($_POST["message"])) $defaultmessage = $_POST["message"];
+			if (GETPOSTISSET("message")) $defaultmessage = GETPOST("message", 'restricthtml');
 			$defaultmessage = str_replace('\n', "\n", $defaultmessage);
 
 			print "<tr>";

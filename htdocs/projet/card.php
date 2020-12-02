@@ -672,7 +672,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	print $hookmanager->resPrint;
 	if (empty($reshook))
 	{
-		print $object->showOptionals($extrafields, 'edit');
+		print $object->showOptionals($extrafields, 'create');
 	}
 
 	print '</table>';

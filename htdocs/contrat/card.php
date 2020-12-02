@@ -946,7 +946,8 @@ if (empty($reshook))
 		if ($action == 'addcontact')
 		{
 			$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
-			$result = $object->add_contact($contactid, GETPOST('type'), GETPOST('source'));
+			$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+			$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 
 			if ($result >= 0)
 			{

@@ -343,7 +343,7 @@ if (empty($reshook))
 					$object->ref = GETPOST('ref');
 					$object->datep = $datep;
 					$object->date = $datep;
-					$object->date_livraison = $date_delivery;	// deprecated
+					$object->date_livraison = $date_delivery; // deprecated
 					$object->delivery_date = $date_delivery;
 					$object->availability_id = GETPOST('availability_id');
 					$object->demand_reason_id = GETPOST('demand_reason_id');
@@ -547,9 +547,8 @@ if (empty($reshook))
 
 				if ($id > 0)
 				{
-					// Insertion contact par defaut si defini
-					if (GETPOST('contactid') > 0)
-					{
+					// Insert default contacts if defined
+					if (GETPOST('contactid') > 0) {
 						$result = $object->add_contact(GETPOST('contactid'), 'CUSTOMER', 'external');
 						if ($result < 0)
 						{
@@ -1344,7 +1343,8 @@ if (empty($reshook))
 		{
 			if ($object->id > 0) {
 				$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
-				$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
+				$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+				$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 			}
 
 			if ($result >= 0) {

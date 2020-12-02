@@ -177,7 +177,7 @@ if (preg_match('/install\.lock/i', $_SERVER["SCRIPT_FILENAME"]))
 	print $langs->trans("YouTryInstallDisabledByDirLock");
 	if (!empty($dolibarr_main_url_root))
 	{
-		print 'Click on following link, <a href="'.$dolibarr_main_url_root.'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"]) ? '&username='.urlencode($_POST["login"]) : '').'">';
+		print 'Click on following link, <a href="'.$dolibarr_main_url_root.'/admin/index.php?mainmenu=home&leftmenu=setup'.(GETPOSTISSET("login") ? '&username='.urlencode(GETPOST("login")) : '').'">';
 		print $langs->trans("ClickHereToGoToApp");
 		print '</a>';
 	}
@@ -202,7 +202,7 @@ if (@file_exists($lockfile))
 	if (!empty($dolibarr_main_url_root))
 	{
 		print $langs->trans("ClickOnLinkOrRemoveManualy").'<br>';
-		print '<a href="'.$dolibarr_main_url_root.'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"]) ? '&username='.urlencode($_POST["login"]) : '').'">';
+		print '<a href="'.$dolibarr_main_url_root.'/admin/index.php?mainmenu=home&leftmenu=setup'.(GETPOSTISSET("login") ? '&username='.urlencode(GETPOST("login")) : '').'">';
 		print $langs->trans("ClickHereToGoToApp");
 		print '</a>';
 	} else {

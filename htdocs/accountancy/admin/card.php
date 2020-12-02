@@ -247,7 +247,7 @@ if ($action == 'create') {
 	// Chart of accounts type
 	print '<tr><td>'.$langs->trans("Pcgtype").'</td>';
 	print '<td>';
-	print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(isset($_POST['pcg_type']) ?GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
+	print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(GETPOSTISSET('pcg_type') ? GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
 	print '</td></tr>';
 
 	print '</table>';
@@ -309,7 +309,7 @@ if ($action == 'create') {
 			// Chart of accounts type
 			print '<tr><td>'.$langs->trans("Pcgtype").'</td>';
 			print '<td>';
-			print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(isset($_POST['pcg_type']) ?GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
+			print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(GETPOSTISSET('pcg_type') ? GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
 			print '</td></tr>';
 
 			print '</table>';

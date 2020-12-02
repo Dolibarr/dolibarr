@@ -9,10 +9,10 @@ if (empty($conf) || !is_object($conf))
 	exit;
 }
 
-if (empty($extrafieldsobjectkey) && is_object($object)) $extrafieldsobjectkey=$object->table_element;
+if (empty($extrafieldsobjectkey) && is_object($object)) $extrafieldsobjectkey = $object->table_element;
 
 // Loop to show all columns of extrafields from $obj, $extrafields and $db
-if (! empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_element like 'societe', 'socpeople', ...
+if (!empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_element like 'societe', 'socpeople', ...
 {
 	if (is_array($extrafields->attributes[$extrafieldsobjectkey]['label']) && count($extrafields->attributes[$extrafieldsobjectkey]['label']) > 0) {
 		if (empty($extrafieldsobjectprefix)) $extrafieldsobjectprefix = 'ef.';

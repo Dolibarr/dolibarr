@@ -224,14 +224,14 @@ function dol_shutdown()
 }
 
 /**
- * Return true if we are in a context of submitting a parameter
+ * Return true if we are in a context of submitting the parameter $paramname
  *
  * @param 	string	$paramname		Name or parameter to test
  * @return 	boolean					True if we have just submit a POST or GET request with the parameter provided (even if param is empty)
  */
 function GETPOSTISSET($paramname)
 {
-	$isset = 0;
+	$isset = false;
 
 	$relativepathstring = $_SERVER["PHP_SELF"];
 	// Clean $relativepathstring
@@ -254,7 +254,7 @@ function GETPOSTISSET($paramname)
 				{
 					if ($key == $paramname)	// We are on the requested parameter
 					{
-						$isset = 1;
+						$isset = true;
 						break;
 					}
 				}
@@ -263,16 +263,16 @@ function GETPOSTISSET($paramname)
 		// If there is saved contextpage, page or limit
 		if ($paramname == 'contextpage' && !empty($_SESSION['lastsearch_contextpage_'.$relativepathstring]))
 		{
-			$isset = 1;
+			$isset = true;
 		} elseif ($paramname == 'page' && !empty($_SESSION['lastsearch_page_'.$relativepathstring]))
 		{
-			$isset = 1;
+			$isset = true;
 		} elseif ($paramname == 'limit' && !empty($_SESSION['lastsearch_limit_'.$relativepathstring]))
 		{
-			$isset = 1;
+			$isset = true;
 		}
 	} else {
-		$isset = (isset($_POST[$paramname]) || isset($_GET[$paramname]));
+		$isset = (isset($_POST[$paramname]) || isset($_GET[$paramname])); // We must keep $_POST and $_GET here
 	}
 
 	return $isset;
@@ -287,13 +287,13 @@ function GETPOSTISSET($paramname)
  *  @param  string  $check	     Type of check
  *                               ''=no check (deprecated)
  *                               'none'=no check (only for param that should have very rich content)
+ *                               'array', 'array:restricthtml' or 'array:aZ09' to check it's an array
  *                               'int'=check it's numeric (integer or float)
  *                               'intcomma'=check it's integer+comma ('1,2,3,4...')
  *                               'alpha'=Same than alphanohtml since v13
  *                               'alphanohtml'=check there is no html content and no " and no ../
  *                               'aZ'=check it's a-z only
  *                               'aZ09'=check it's simple alpha string (recommended for keys)
- *                               'array'=check it's array
  *                               'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
  *                               'nohtml'=check there is no html content and no " and no ../
  *                               'restricthtml'=check html content is restricted to some tags only
@@ -411,7 +411,6 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 						}
 					}
 				} // Management of default search_filters and sort order
-				//elseif (preg_match('/list.php$/', $_SERVER["PHP_SELF"]) && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
 				elseif (!empty($paramname) && !isset($_GET[$paramname]) && !isset($_POST[$paramname]))
 				{
 					if (!empty($user->default_values))		// $user->default_values defined from menu 'Setup - Default values'
@@ -476,6 +475,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 
 								if ($qualified)
 								{
+									// We must keep $_POST and $_GET here
 									if (isset($_POST['sall']) || isset($_POST['search_all']) || isset($_GET['sall']) || isset($_GET['search_all']))
 									{
 										// We made a search from quick search menu, do we still use default filter ?
@@ -604,6 +604,22 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	return $out;
 }
 
+/**
+ *  Return value of a param into GET or POST supervariable.
+ *  Use the property $user->default_values[path]['creatform'] and/or $user->default_values[path]['filters'] and/or $user->default_values[path]['sortorder']
+ *  Note: The property $user->default_values is loaded by main.php when loading the user.
+ *
+ *  @param  string  $paramname   Name of parameter to found
+ *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
+ *  @param  int     $filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
+ *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'
+ *  @param	string	$noreplace   Force disable of replacement of __xxx__ strings.
+ *  @return int                  Value found (int)
+ */
+function GETPOSTINT($paramname, $method = 0, $filter = null, $options = null, $noreplace = 0)
+{
+	return (int) GETPOST($paramname, 'int', $method, $filter, $options, $noreplace);
+}
 
 /**
  *  Return a value after checking on a rule.
@@ -1273,11 +1289,11 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
  */
 function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $disabled = '')
 {
-    if (strpos($url, '?') > 0) {
-        $url .= '&dol_hide_topmenu=1&dol_hide_leftmenu=1&dol_openinpopup=1';
-    } else {
-        $url .= '?dol_hide_menuinpopup=1&dol_hide_leftmenu=1&dol_openinpopup=1';
-    }
+	if (strpos($url, '?') > 0) {
+		$url .= '&dol_hide_topmenu=1&dol_hide_leftmenu=1&dol_openinpopup=1';
+	} else {
+		$url .= '?dol_hide_menuinpopup=1&dol_hide_leftmenu=1&dol_openinpopup=1';
+	}
 
 	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
 	$out = '<a class="button bordertransp button_'.$name.'"'.$disabled.' title="'.dol_escape_htmltag($label).'">'.$buttonstring.'</a>';
@@ -3334,7 +3350,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			// Define $color
 			$arrayconvpictotocolor = array(
 				'address'=>'#6c6aa8', 'building'=>'#6c6aa8', 'bom'=>'#a69944',
-				'companies'=>'#6c6aa8', 'company'=>'#6c6aa8', 'contact'=>'#37a', 'dynamicprice'=>'#a69944',
+				'companies'=>'#6c6aa8', 'company'=>'#6c6aa8', 'contact'=>'#6c6aa8', 'dynamicprice'=>'#a69944',
 				'edit'=>'#444', 'note'=>'#999', 'error'=>'', 'help'=>'#bbb', 'listlight'=>'#999',
 				'dolly'=>'#a69944', 'dollyrevert'=>'#a69944', 'lot'=>'#a69944',
 				'map-marker-alt'=>'#aaa', 'mrp'=>'#a69944', 'product'=>'#a69944', 'service'=>'#a69944', 'stock'=>'#a69944',
@@ -4123,7 +4139,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		print $out;
 	} else {
 		if (empty($langs->defaultlang)) $langs->setDefaultLang();
-		$langs->loadLangs(array("main", "errors"));		// Reload main because language may have been set only on previous line so we have to reload files we need.
+		$langs->loadLangs(array("main", "errors")); // Reload main because language may have been set only on previous line so we have to reload files we need.
 		// This should not happen, except if there is a bug somewhere. Enabled and check log in such case.
 		print 'This website or feature is currently temporarly not available or failed after a technical error.<br><br>This may be due to a maintenance operation. Current status of operation are on next line...<br><br>'."\n";
 		print $langs->trans("DolibarrHasDetectedError").'. ';
@@ -5576,7 +5592,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 		// In a future, we may distribut directories on several levels depending on setup and object.
 		// Here, $object->id, $object->ref and $modulepart are required.
 		//var_dump($modulepart);
-		if (! in_array($modulepart, array('product'))) {	// Test to remove
+		if (!in_array($modulepart, array('product'))) {	// Test to remove
 			$path = dol_sanitizeFileName(empty($object->ref) ? $object->id : $object->ref);
 		}
 	}
@@ -6278,7 +6294,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 			if (is_object($object) && ($object->element == 'adherent' || $object->element == 'member') && $object->id > 0)
 			{
-				$birthday = (empty($object->birth) ? '': dol_print_date($object->birth, 'day'));
+				$birthday = (empty($object->birth) ? '' : dol_print_date($object->birth, 'day'));
 
 				$substitutionarray['__MEMBER_ID__'] = (isset($object->id) ? $object->id : '');
 				if (method_exists($object, 'getCivilityLabel')) $substitutionarray['__MEMBER_CIVILITY__'] = $object->getCivilityLabel();
@@ -6678,7 +6694,7 @@ function complete_substitutions_array(&$substitutionarray, $outputlangs, $object
 		// to list all tags in odt template
 		$tags = '';
 		foreach ($substitutionarray as $key => $value) {
-			$tags .= '{' . $key . '} => ' . $value ."\n";
+			$tags .= '{'.$key.'} => '.$value."\n";
 		}
 		$substitutionarray = array_merge($substitutionarray, array('__ALL_TAGS__' => $tags));
 	}

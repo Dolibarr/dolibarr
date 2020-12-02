@@ -155,7 +155,7 @@ if ($permission)
 			<?php
 			$tmpobject = $object;
 			if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) $tmpobject = $objectsrc;
-			$formcompany->selectTypeContact($tmpobject, $preselectedtypeofcontact, 'type', 'external', 'position', 0, 'minwidth100imp');
+			$formcompany->selectTypeContact($tmpobject, $preselectedtypeofcontact, 'typecontact', 'external', 'position', 0, 'minwidth100imp');
 			?>
 		</div>
 		<div class="tagtd noborderbottom">&nbsp;</div>

@@ -620,7 +620,7 @@ if ($test) $isavailable[$daytoparse] = array('morning'=>false, 'afternoon'=>fals
 
 $tmparray = dol_getdate($daytoparse, true); // detail of current day
 // For monday, must be 0 for monday if MAIN_START_WEEK = 1, must be 1 for monday if MAIN_START_WEEK = 0
-$idw = ($tmparray['wday'] - (empty($conf->global->MAIN_START_WEEK)?0:1));
+$idw = ($tmparray['wday'] - (empty($conf->global->MAIN_START_WEEK) ? 0 : 1));
 // numstartworkingday and numendworkingday are default start and end date of working days (1 means sunday if MAIN_START_WEEK is 0, 1 means monday if MAIN_START_WEEK is 1)
 $cssweekend = '';
 if ((($idw + 1) < $numstartworkingday) || (($idw + 1) > $numendworkingday))	// This is a day is not inside the setup of working days, so we use a week-end css.

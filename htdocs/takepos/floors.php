@@ -64,8 +64,8 @@ if ($action == "getTables")
 	$rows = array();
 	while ($row = $db->fetch_array($resql)) {
 		$invoice = new Facture($db);
-		$result=$invoice->fetch('', '(PROV-POS'.$_SESSION['takeposterminal'].'-'.$row['rowid'].')');
-		if ($result>0) $row['occupied']="red";
+		$result = $invoice->fetch('', '(PROV-POS'.$_SESSION['takeposterminal'].'-'.$row['rowid'].')');
+		if ($result > 0) $row['occupied'] = "red";
 		$rows[] = $row;
 	}
 	echo json_encode($rows);
