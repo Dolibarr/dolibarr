@@ -58,13 +58,14 @@ ProductQtyInCustomersOrdersRunning=Quantitat de producte en comandes de venda ob
 ProductQtyInSuppliersOrdersRunning=Quantitat de producte en comandes de compra obertes
 ProductQtyInShipmentAlreadySent=Quantitat de producte de comandes de vendes obertes ja enviades
 ProductQtyInSuppliersShipmentAlreadyRecevied=Quantitat de producte de comandes de compra obertes ja rebudes
-NoProductToShipFoundIntoStock=No s'ha trobat cap producte per enviar en el magatzem <b>%s</b>. Corregeix l'estoc o torna enrera per triar un altre magatzem.
+NoProductToShipFoundIntoStock=No s'ha trobat cap producte per enviar al magatzem <b>%s</b>. Corregiu l'estoc o torneu enrere per triar un altre magatzem.
 WeightVolShort=Pes/Vol.
 ValidateOrderFirstBeforeShipment=S'ha de validar la comanda abans de fer expedicions.
 
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Model complet de nota de lliurament (logo...)
+DocumentModelStorm=Model de document més complet pels rebuts de lliurament i compatibilitat de camps extra (logotip ...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER no definida
 SumOfProductVolumes=Suma del volum dels productes
 SumOfProductWeights=Suma del pes dels productes

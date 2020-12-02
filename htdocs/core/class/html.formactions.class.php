@@ -233,13 +233,15 @@ class FormActions
 					if ($max && $cursorevent >= $max) break;
 
 					$ref = $actioncomm->getNomUrl(1, -1);
-					$label = $actioncomm->getNomUrl(0, 38);
+					$label = $actioncomm->getNomUrl(0, 36);
 
 					print '<tr class="oddeven">';
+
 					// Ref
 					print '<td class="nowraponall">'.$ref.'</td>';
+
 					// Onwer
-					print '<td class="tdoverflowmax150">';
+					print '<td class="nowraponall tdoverflowmax125">';
 					if (!empty($actioncomm->userownerid))
 					{
 						if (is_object($cacheusers[$actioncomm->userownerid]))
@@ -266,13 +268,13 @@ class FormActions
 						if ($actioncomm->type_picto) {
 							$imgpicto = img_picto('', $actioncomm->type_picto);
 						} else {
-							if ($actioncomm->type_code == 'AC_RDV')         $imgpicto = img_picto('', 'object_group', '', false, 0, 0, '', 'paddingright').' ';
-							elseif ($actioncomm->type_code == 'AC_TEL')     $imgpicto = img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright').' ';
-							elseif ($actioncomm->type_code == 'AC_FAX')     $imgpicto = img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright').' ';
-							elseif ($actioncomm->type_code == 'AC_EMAIL')   $imgpicto = img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright').' ';
-							elseif ($actioncomm->type_code == 'AC_INT')     $imgpicto = img_picto('', 'object_intervention', '', false, 0, 0, '', 'paddingright').' ';
-							elseif ($actioncomm->type_code == 'AC_OTH' && $actioncomm->code == 'TICKET_MSG') $imgpicto = img_picto('', 'object_conversation', '', false, 0, 0, '', 'paddingright').' ';
-							elseif (!preg_match('/_AUTO/', $actioncomm->type_code)) $imgpicto = img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').' ';
+							if ($actioncomm->type_code == 'AC_RDV')         $imgpicto = img_picto('', 'object_group', '', false, 0, 0, '', 'paddingright');
+							elseif ($actioncomm->type_code == 'AC_TEL')     $imgpicto = img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright');
+							elseif ($actioncomm->type_code == 'AC_FAX')     $imgpicto = img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright');
+							elseif ($actioncomm->type_code == 'AC_EMAIL')   $imgpicto = img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright');
+							elseif ($actioncomm->type_code == 'AC_INT')     $imgpicto = img_picto('', 'object_intervention', '', false, 0, 0, '', 'paddingright');
+							elseif ($actioncomm->type_code == 'AC_OTH' && $actioncomm->code == 'TICKET_MSG') $imgpicto = img_picto('', 'object_conversation', '', false, 0, 0, '', 'paddingright');
+							elseif (!preg_match('/_AUTO/', $actioncomm->type_code)) $imgpicto = img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright');
 						}
 					}
 					print $imgpicto;
@@ -282,8 +284,10 @@ class FormActions
 						print $actioncomm->type_short ? $actioncomm->type_short : $actioncomm->type;
 					}
 					print '</td>';
+
 					// Label
 					print '<td>'.$label.'</td>';
+
 					// Date
 					print '<td class="center">'.dol_print_date($actioncomm->datep, 'dayhour', 'tzuserrel');
 					if ($actioncomm->datef)

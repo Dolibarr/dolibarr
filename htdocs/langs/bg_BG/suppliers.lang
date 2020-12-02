@@ -38,6 +38,7 @@ MenuOrdersSupplierToBill=Поръчки за покупка за фактури�
 NbDaysToDelivery=Забавяне на доставка (дни)
 DescNbDaysToDelivery=Най-дълго забавяне на доставка за продукти от тази поръчка
 SupplierReputation=Репутация на доставчика
+ReferenceReputation=Reference reputation
 DoNotOrderThisProductToThisSupplier=Не поръчвайте
 NotTheGoodQualitySupplier=Ниско качество
 ReputationForThisProduct=Репутация

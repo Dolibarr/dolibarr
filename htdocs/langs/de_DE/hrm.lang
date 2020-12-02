@@ -16,3 +16,4 @@ DictionaryFunction=HRM - Stellenangebote
 Employees=Mitarbeiter
 Employee=Mitarbeiter/in
 NewEmployee=neuer Mitarbeiter
+ListOfEmployees=Liste der Mitarbeiter

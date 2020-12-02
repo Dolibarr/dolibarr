@@ -150,7 +150,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $head = user_prepare_head($object);
 
-dol_fiche_head($head, 'extsites', $langs->trans("User"), -1, 'user');
+print dol_get_fiche_head($head, 'extsites', $langs->trans("User"), -1, 'user');
 
 $linkback = '';
 
@@ -215,10 +215,10 @@ print '</div>';
 
 
 print '<div class="center">';
-print "<input type=\"submit\" id=\"save\" name=\"save\" class=\"button hideifnotset\" value=\"".$langs->trans("Save")."\">";
+print '<input type="submit" id="save" name="save" class="button hideifnotset button-save" value="'.$langs->trans("Save").'">';
 print "</div>";
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print "</form>\n";
 

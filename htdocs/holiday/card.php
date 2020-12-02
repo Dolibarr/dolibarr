@@ -55,8 +55,8 @@ $now = dol_now();
 
 $childids = $user->getAllChildIds(1);
 
-$morefilter = 'AND employee = 1';
-if (!empty($conf->global->HOLIDAY_FOR_NON_SALARIES_TOO)) $morefilter = '';
+$morefilter = '';
+if (!empty($conf->global->HOLIDAY_HIDE_FOR_NON_SALARIES)) $morefilter = 'AND employee = 1';
 
 $error = 0;
 
@@ -73,7 +73,7 @@ if (($id > 0) || $ref)
 
 	// Check current user can read this leave request
 	$canread = 0;
-	if (!empty($user->rights->holiday->read_all)) $canread = 1;
+	if (!empty($user->rights->holiday->readall)) $canread = 1;
 	if (!empty($user->rights->holiday->read) && in_array($object->fk_user, $childids)) $canread = 1;
 	if (!$canread)
 	{
@@ -82,7 +82,8 @@ if (($id > 0) || $ref)
 }
 
 $cancreate = 0;
-if (!empty($user->rights->holiday->write_all)) $cancreate = 1;
+
+if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall_advance)) $cancreate = 1;
 if (!empty($user->rights->holiday->write) && in_array($fuserid, $childids)) $cancreate = 1;
 
 $candelete = 0;
@@ -146,12 +147,26 @@ if (empty($reshook))
 			$valideur = GETPOST('valideur', 'int');
 			$description = trim(GETPOST('description', 'restricthtml'));
 
+			// Check that leave is for a user inside the hierarchy or advanced permission for all is set
+			if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->creer)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->writeall_advance))) {
+				$error++;
+				setEventMessages($langs->trans("NotEnoughPermission"), null, 'errors');
+			} else {
+				if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)) {
+					if (!in_array($fuserid, $childids)) {
+						$error++;
+						setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
+						$action = 'create';
+					}
+				}
+			}
+
 			// If no type
 			if ($type <= 0)
 			{
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 				$error++;
-				$action = 'add';
+				$action = 'create';
 			}
 
 			// If no start date
@@ -159,21 +174,21 @@ if (empty($reshook))
 			{
 				setEventMessages($langs->trans("NoDateDebut"), null, 'errors');
 				$error++;
-				$action = 'add';
+				$action = 'create';
 			}
 			// If no end date
 			if (empty($date_fin))
 			{
 				setEventMessages($langs->trans("NoDateFin"), null, 'errors');
 				$error++;
-				$action = 'add';
+				$action = 'create';
 			}
 			// If start date after end date
 			if ($date_debut > $date_fin)
 			{
 				setEventMessages($langs->trans("ErrorEndDateCP"), null, 'errors');
 				$error++;
-				$action = 'add';
+				$action = 'create';
 			}
 
 			// Check if there is already holiday for this period
@@ -182,16 +197,16 @@ if (empty($reshook))
 			{
 				setEventMessages($langs->trans("alreadyCPexist"), null, 'errors');
 				$error++;
-				$action = 'add';
+				$action = 'create';
 			}
 
 			// If there is no Business Days within request
 			$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
 			if ($nbopenedday < 0.5)
 			{
-				setEventMessages($langs->trans("ErrorDureeCP"), null, 'errors');
+				setEventMessages($langs->trans("ErrorDureeCP"), null, 'errors'); // No working day
 				$error++;
-				$action = 'add';
+				$action = 'create';
 			}
 
 			// If no validator designated
@@ -741,7 +756,8 @@ if (empty($reshook))
 		$object->fetch($id);
 
 		// Si statut en attente de validation et valideur = valideur ou utilisateur, ou droits de faire pour les autres
-		if (($object->statut == Holiday::STATUS_VALIDATED || $object->statut == Holiday::STATUS_APPROVED) && ($user->id == $object->fk_validator || in_array($object->fk_user, $childids) || !empty($user->rights->holiday->write_all)))
+		if (($object->statut == Holiday::STATUS_VALIDATED || $object->statut == Holiday::STATUS_APPROVED) && ($user->id == $object->fk_validator || in_array($object->fk_user, $childids)
+			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall_advance))))
 		{
 			$db->begin();
 
@@ -866,15 +882,15 @@ llxHeader('', $langs->trans('CPTitreMenu'));
 
 if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 {
-	// Si l'utilisateur n'a pas le droit de faire une demande
-	if (($fuserid == $user->id && empty($user->rights->holiday->write)) || ($fuserid != $user->id && empty($user->rights->holiday->write_all)))
+	// If user has no permission to create a leave
+	if ((in_array($fuserid, $childids) && empty($user->rights->holiday->write)) || (!in_array($fuserid, $childids) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->holiday->writeall_advance))))
 	{
 		$errors[] = $langs->trans('CantCreateCP');
 	} else {
-		// Formulaire de demande de congés payés
+		// Form to add a leave request
 		print load_fiche_titre($langs->trans('MenuAddCP'), '', 'title_hrm.png');
 
-		// Si il y a une erreur
+		// Error management
 		if (GETPOST('error')) {
 			switch (GETPOST('error')) {
 				case 'datefin' :
@@ -948,7 +964,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 
 		if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
 		{
-			dol_fiche_head('', '', '', -1);
+			print dol_get_fiche_head('', '', '', -1);
 
 			$out = '';
 			$typeleaves = $object->getTypes(1, 1);
@@ -963,13 +979,13 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 			print $langs->trans('SoldeCPUser', round($nb_holiday, 5)).'<br>';
 			print $out;
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 		} elseif (!is_numeric($conf->global->HOLIDAY_HIDE_BALANCE))
 		{
 			print $langs->trans($conf->global->HOLIDAY_HIDE_BALANCE).'<br>';
 		}
 
-		dol_fiche_head();
+		print dol_get_fiche_head();
 
 		//print '<span>'.$langs->trans('DelayToRequestCP',$object->getConfCP('delayForRequest')).'</span><br><br>';
 
@@ -981,11 +997,13 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 		print '<td class="titlefield fieldrequired">'.$langs->trans("User").'</td>';
 		print '<td>';
 
-		if (empty($user->rights->holiday->write_all))
+		if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->holiday->writeall_advance))
 		{
 			print $form->select_dolusers(($fuserid ? $fuserid : $user->id), 'fuserid', 0, '', 0, 'hierarchyme', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'maxwidth300');
 			//print '<input type="hidden" name="fuserid" value="'.($fuserid?$fuserid:$user->id).'">';
-		} else print $form->select_dolusers(GETPOST('fuserid', 'int') ?GETPOST('fuserid', 'int') : $user->id, 'fuserid', 0, '', 0, '', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'maxwidth300');
+		} else {
+			print $form->select_dolusers(GETPOST('fuserid', 'int') ? GETPOST('fuserid', 'int') : $user->id, 'fuserid', 0, '', 0, '', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'maxwidth300');
+		}
 		print '</td>';
 		print '</tr>';
 
@@ -1076,12 +1094,12 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 		print '</tbody>';
 		print '</table>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" value="'.$langs->trans("SendRequestCP").'" name="bouton" class="button">';
 		print '&nbsp; &nbsp; ';
-		print '<input type="button" value="'.$langs->trans("Cancel").'" class="button" onclick="history.go(-1)">';
+		print '<input type="button" value="'.$langs->trans("Cancel").'" class="button button-cancel" onclick="history.go(-1)">';
 		print '</div>';
 
 		print '</from>'."\n";
@@ -1159,7 +1177,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 					print '<input type="hidden" name="id" value="'.$object->id.'" />'."\n";
 				}
 
-				dol_fiche_head($head, 'card', $langs->trans("CPTitreMenu"), -1, 'holiday');
+				print dol_get_fiche_head($head, 'card', $langs->trans("CPTitreMenu"), -1, 'holiday');
 
 				$linkback = '<a href="'.DOL_URL_ROOT.'/holiday/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -1338,8 +1356,8 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 					}
 					if ($action == 'editvalidator')
 					{
-						print '<input type="submit" class="button" name="savevalidator" value="'.$langs->trans("Save").'">';
-						print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+						print '<input type="submit" class="button button-save" name="savevalidator" value="'.$langs->trans("Save").'">';
+						print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 					}
 					print '</td>';
 					print '</tr>';
@@ -1376,7 +1394,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 
 				print '<div class="clearboth"></div>';
 
-				dol_fiche_end();
+				print dol_get_fiche_end();
 
 
 				// Confirmation messages
@@ -1426,7 +1444,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 						print '<div class="center">';
 						if ($cancreate && $object->statut == Holiday::STATUS_DRAFT)
 						{
-							print '<input type="submit" value="'.$langs->trans("Save").'" class="button">';
+							print '<input type="submit" value="'.$langs->trans("Save").'" class="button button-save">';
 						}
 						print '</div>';
 					}
@@ -1459,7 +1477,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 							print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("NotTheAssignedApprover").'">'.$langs->trans("ActionRefuseCP").'</a>';
 						}
 					}
-					if (($user->id == $object->fk_validator || in_array($object->fk_user, $childids) || !empty($user->rights->holiday->write_all)) && ($object->statut == 2 || $object->statut == 3))	// Status validated or approved
+					if (($user->id == $object->fk_validator || in_array($object->fk_user, $childids) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall_advance))) && ($object->statut == 2 || $object->statut == 3))	// Status validated or approved
 					{
 						if (($object->date_debut > dol_now()) || $user->admin) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
 						else print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("HolidayStarted").'">'.$langs->trans("ActionCancelCP").'</a>';

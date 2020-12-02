@@ -24,6 +24,9 @@
  * \ingroup facture
  * \brief Script to send a mail to dolibarr users linked to companies with unpaid invoices
  */
+
+if (!defined('NOSESSION')) define('NOSESSION', '1');
+
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = __DIR__.'/';

@@ -44,27 +44,27 @@ class Comment extends CommonObject
 	public $description;
 
 	/**
-     * Date modification record (tms)
-     *
-     * @var integer
-     */
+	 * Date modification record (tms)
+	 *
+	 * @var integer
+	 */
 	public $tms;
 
 	/**
-     * Date creation record (datec)
-     *
-     * @var integer
-     */
-    public $datec;
+	 * Date creation record (datec)
+	 *
+	 * @var integer
+	 */
+	public $datec;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_author;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_modif;
 
 	/**
@@ -186,7 +186,7 @@ class Comment extends CommonObject
 		$sql .= " c.entity,";
 		$sql .= " c.import_key";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as c";
-		$sql .= " WHERE c.rowid = ".$id;
+		$sql .= " WHERE c.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);

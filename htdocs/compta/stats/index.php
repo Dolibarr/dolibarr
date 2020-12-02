@@ -108,6 +108,10 @@ if (!empty($conf->accounting->enabled)) $result = restrictedArea($user, 'account
  * View
  */
 
+$param = '';
+if ($date_startday && $date_startmonth && $date_startyear) $param .= '&date_startday='.$date_startday.'&date_startmonth='.$date_startmonth.'&date_startyear='.$date_startyear;
+if ($date_endday && $date_endmonth && $date_endyear) $param .= '&date_endday='.$date_endday.'&date_endmonth='.$date_endmonth.'&date_endyear='.$date_endyear;
+
 llxHeader();
 
 $form = new Form($db);
@@ -118,7 +122,7 @@ if ($modecompta == "CREANCES-DETTES")
 	$name = $langs->trans("Turnover");
 	$calcmode = $langs->trans("CalcModeDebt");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
-	$calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">', '</a>').')';
+	$calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '<a class="bold" href="'.$_SERVER["PHP_SELF"].'?'.($param ? $param : 'year_start='.$year_start).'&modecompta=BOOKKEEPING">', '</a>').')';
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesCADue");
@@ -142,7 +146,7 @@ if ($modecompta == "CREANCES-DETTES")
 {
 	$name = $langs->trans("Turnover");
 	$calcmode = $langs->trans("CalcModeBookkeeping");
-	$calcmode .= '<br>('.$langs->trans("SeeReportInDueDebtMode", '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">', '</a>').')';
+	$calcmode .= '<br>('.$langs->trans("SeeReportInDueDebtMode", '<a class="bold" href="'.$_SERVER["PHP_SELF"].'?'.($param ? $param : 'year_start='.$year_start).'&modecompta=CREANCES-DETTES">', '</a>').')';
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
@@ -157,7 +161,7 @@ report_header($name, $namelink, $period, $periodlink, $description, $builddate, 
 
 if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
-    print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 
 
@@ -271,9 +275,9 @@ for ($annee = $year_start; $annee <= $year_end; $annee++)
 	else print '<td align="center" width="10%" colspan="2" class="borderrightlight">';
 	if ($modecompta != 'BOOKKEEPING') print '<a href="casoc.php?year='.$annee.'">';
 	print $annee;
-    if ($conf->global->SOCIETE_FISCAL_MONTH_START > 1) print '-'.($annee + 1);
-    if ($modecompta != 'BOOKKEEPING') print '</a>';
-    print '</td>';
+	if ($conf->global->SOCIETE_FISCAL_MONTH_START > 1) print '-'.($annee + 1);
+	if ($modecompta != 'BOOKKEEPING') print '</a>';
+	print '</td>';
 	if ($annee != $year_end) print '<td width="15">&nbsp;</td>';
 }
 print '</tr>';
@@ -305,6 +309,11 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++)
 	if ($mois > 12) {$mois_modulo = $mois - 12; } // ajout
 
 	if ($year_start == $year_end) {
+		// If we show only one year or one month, we do not show month before the selected month
+		if ($mois < $date_startmonth && $year_start <= $date_startyear) {
+			continue;
+		}
+		// If we show only one year or one month, we do not show month after the selected month
 		if ($mois > $date_endmonth && $year_end >= $date_endyear) {
 			break;
 		}

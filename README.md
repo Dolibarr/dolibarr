@@ -2,6 +2,8 @@
 
 ![Downloads per day](https://img.shields.io/sourceforge/dw/dolibarr.svg)
 ![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/develop.svg)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg?style=flat-square)](https://php.net/)
+[![GitHub release](https://img.shields.io/github/v/release/Dolibarr/dolibarr)](https://github.com/Dolibarr/dolibarr)
 
 Dolibarr ERP & CRM is a modern software package that helps manage your organization's activity (contacts, suppliers, invoices, orders, stocks, agenda…).
 
@@ -11,9 +13,9 @@ You can freely use, study, modify or distribute it according to its licence.
 
 You can use it as a standalone application or as a web application to access it from the Internet or a LAN.
 
-Dolibarr has a large community ready to help you, free forums and [oficially preferred partners ready to offer commercial support should you need it](https://partners.dolibarr.org)
+Dolibarr has a large community ready to help you, free forums and [officially preferred partners ready to offer commercial support should you need it](https://partners.dolibarr.org)
 
-![ScreenShot](https://www.dolibarr.org/images/dolibarr_screenshot1_1920x1080.jpg)
+![ScreenShot](https://www.dolibarr.org/medias/dolibarr_screenshot1_1920x1080.jpg)
 
 ## LICENSE
 
@@ -43,7 +45,7 @@ On GNU/Linux, first check if your distribution has already packaged Dolibarr.
 
 #### Generic install steps:
 
-- Check that your installed PHP version is supported [see PHP support](https://wiki.dolibarr.org/index.php/Versions).
+- Check that your installed PHP version is supported [see PHP support](https://wiki.dolibarr.org/index.php/Releases).
 
 - Uncompress the downloaded .zip archive to copy the "dolibarr/htdocs" directory and all its files inside your web server root or get the files directly from GitHub (recommanded if you know git as it makes it easier if you want to upgrade later):
 
@@ -87,6 +89,7 @@ Dolibarr supports upgrading usually wihtout the need for any (commercial) suppor
 ## WHAT'S NEW
 
 See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog) file.
+
 
 ## FEATURES
 
@@ -137,15 +140,18 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 ### Other general features
 
 - Localization in most major languages
+- Multi-Language Support
 - Multi-Users and groups with finely grained rights
-- Multi-currency
-- Multi-company by adding of an external module
+- Multi-Currency
+- Multi-Company (by adding of an external module)
+
 - Very user friendly and easy to use
 - customizable Dashboard
 - Highly customizable: enable only the modules you need, add user personalized fields, choose your skin, several menu managers (can be used by internal users as a back-office with a particular menu, or by external users as a front-office with another one)
 
-- APIs
+- APIs (REST, SOAP)
 - Code that is easy to understand, maintain and develop (PHP with no heavy framework; trigger and hook architecture)
+
 - Support a lot of country specific features:
   - Spanish Tax RE and ISPF
   - French NPR VAT rate (VAT called "Non Perçue Récupérable" for DOM-TOM)
@@ -160,8 +166,8 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 
 ### System Environment / Requirements
 
-- Works with PHP 5.5+ and MariaDB 5.0.3+, MySQL 5.0.3+ or PostgreSQL 8.1.4+ (See requirements on the [Wiki](https://wiki.dolibarr.org/index.php/Prerequisite))
-- Compatible with all Cloud solutions that match MySQL, PHP or PostgreSQL prerequisites.
+- Works with PHP 5.6+ and MariaDB 5.0.3+, MySQL 5.0.3+ or PostgreSQL 8.1.4+ (See requirements on the [Wiki](https://wiki.dolibarr.org/index.php/Prerequisite))
+- Compatible with all Cloud solutions that match PHP & MySQL or PostgreSQL prerequisites.
 
 ### Extending
 

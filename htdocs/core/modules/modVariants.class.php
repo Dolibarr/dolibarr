@@ -92,7 +92,7 @@ class modVariants extends DolibarrModules
 
 		// Array to add new pages in new tabs
 		$this->tabs = array(
-        //	'product:+combinations:Combinaciones:products:1:/variants/combinations.php?id=__ID__'
+		//	'product:+combinations:Combinaciones:products:1:/variants/combinations.php?id=__ID__'
 		);
 
 		// Dictionaries

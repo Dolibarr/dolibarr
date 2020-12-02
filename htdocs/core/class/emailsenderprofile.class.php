@@ -114,21 +114,20 @@ class EmailSenderProfile extends CommonObject
 	public $entity;
 
 	/**
-     * @var string Email Sender Profile label
-     */
-    public $label;
+	 * @var string Email Sender Profile label
+	 */
+	public $label;
 
 	public $email;
 
 	/**
-     * @var integer|string date_creation
-     */
+	 * @var integer|string date_creation
+	 */
 	public $date_creation;
 
 
 	public $tms;
-	//public $fk_user_creat;
-	//public $fk_user_modif;
+	public $private;
 	public $signature;
 	public $position;
 	public $active;
@@ -306,9 +305,9 @@ class EmailSenderProfile extends CommonObject
 		$result = '';
 		$companylink = '';
 
-        $label = $this->label;
+		$label = $this->label;
 
-        $url = '';
+		$url = '';
 		//$url = dol_buildpath('/monmodule/emailsenderprofile_card.php',1).'?id='.$this->id;
 
 		$linkstart = '';
@@ -333,7 +332,7 @@ class EmailSenderProfile extends CommonObject
 		return $this->LibStatut($this->active, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -357,8 +356,8 @@ class EmailSenderProfile extends CommonObject
 		return dolGetStatus($label, $labelshort, '', $statusType, $mode);
 	}
 
-    /**
-     *  Charge les informations d'ordre info dans l'objet commande
+	/**
+	 *  Charge les informations d'ordre info dans l'objet commande
 	 *
 	 *  @param  int     $id       Id of order
 	 *  @return	void

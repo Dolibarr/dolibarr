@@ -286,7 +286,7 @@ print load_fiche_titre($title, $linkback);
 if (GETPOST('withtab', 'alpha'))
 {
 	$head = blockedlogadmin_prepare_head();
-	dol_fiche_head($head, 'fingerprints', '', -1);
+	print dol_get_fiche_head($head, 'fingerprints', '', -1);
 }
 
 print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("FingerprintsDesc")."<br></span>\n";
@@ -559,7 +559,7 @@ jQuery(document).ready(function () {
 
 if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->global->BLOCKEDLOG_AUTHORITY_URL))
 {
-    ?>
+	?>
 		<script type="text/javascript">
 
 			$.ajax({
@@ -582,7 +582,7 @@ if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->glob
 
 if (GETPOST('withtab', 'alpha'))
 {
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 print '<br><br>';

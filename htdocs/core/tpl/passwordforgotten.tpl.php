@@ -16,6 +16,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+
+if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', 1);
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf))
 {

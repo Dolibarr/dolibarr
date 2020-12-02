@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - mrp
 Mrp=Ordenes de Fabricación
-MO=Orden de Fabricación
+ManufacturingOrder=Orden de Fabricación
 MRPDescription=Módulo para administrar producción y Ordenes de Fabricación (OF).
 MRPArea=Area MRP
 MrpSetupPage=Configuración de módulo MRP

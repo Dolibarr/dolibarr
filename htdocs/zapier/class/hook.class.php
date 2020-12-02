@@ -126,7 +126,7 @@ class Hook extends CommonObject
 		),
 		'module' => array(
 			'type' => 'varchar(128)',
-			'label' => 'Url',
+			'label' => 'Module',
 			'enabled' => 1,
 			'visible' => 1,
 			'position' => 30,
@@ -137,7 +137,7 @@ class Hook extends CommonObject
 		),
 		'action' => array(
 			'type' => 'varchar(128)',
-			'label' => 'Url',
+			'label' => 'Action',
 			'enabled' => 1,
 			'visible' => 1,
 			'position' => 30,
@@ -212,9 +212,14 @@ class Hook extends CommonObject
 	public $label;
 
 	/**
-	 * @var string amount
+	 * @var string url of webhook
 	 */
-	public $amount;
+	public $url;
+
+	/**
+	 * @var int ID of user owner webhook
+	 */
+	public $fk_user;
 
 	/**
 	 * @var int Status

@@ -38,6 +38,7 @@ MenuOrdersSupplierToBill=Comenzi de achiziție pentru facturare
 NbDaysToDelivery=întârziere de livrare (zile)
 DescNbDaysToDelivery=Cea mai lungă întârziere de livrare a produselor din această comandă
 SupplierReputation=Reputația furnizorului
+ReferenceReputation=Reputație de referință
 DoNotOrderThisProductToThisSupplier=Nu comanda
 NotTheGoodQualitySupplier=Calitate scăzută
 ReputationForThisProduct=Reputatie

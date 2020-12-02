@@ -21,6 +21,7 @@ Mobiledetect           2.8.34        MIT License                 Yes            
 NuSoap                 0.9.5         LGPL 2.1+                   Yes             Library to develop SOAP Web services (not into rpm and deb package)
 PEAR Mail_MIME         1.8.9         BSD                         Yes             NuSoap dependency
 ParseDown              1.6           MIT License                 Yes             Markdown parser
+PCLZip                 2.8.4         LGPL-3+                     Yes             Library to zip/unzip files             
 PHPDebugBar            1.15.1        MIT License	             Yes             Used only by the module "debugbar" for developers
 PHPExcel               1.8.1         LGPL-2.1+                   Yes             Read/Write XLS files, read ODS files
 PHPSpreadSheet         ?             LGPL-2.1+                   Yes             Read/Write XLS files, read ODS files

@@ -401,7 +401,7 @@ $head[$h][1] = $langs->trans("Options");
 $head[$h][2] = 'options';
 $h++;
 
-dol_fiche_head($head, 'website', '', -1);
+print dol_get_fiche_head($head, 'website', '', -1);
 
 
 print '<span class="opacitymedium">'.$langs->trans("WebsiteSetupDesc").'</span><br>';
@@ -567,7 +567,7 @@ if ($id)
 					if (empty($reshook)) fieldListWebsites($fieldlist, $obj, $tabname[$id], 'edit');
 
 					print '<td colspan="3" class="right"><a name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
-					print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
+					print '&nbsp;<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
 				} else {
 				  	$tmpaction = 'view';
 					$parameters = array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
@@ -621,7 +621,7 @@ if ($id)
 	}
 }
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

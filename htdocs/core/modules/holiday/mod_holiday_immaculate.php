@@ -31,9 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/holiday/modules_holiday.php';
 class mod_holiday_immaculate extends ModelNumRefHolidays
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr';
 
 	/**
@@ -63,9 +63,9 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	 *
 	 *	@return     string      text description
 	 */
-    public function info()
-    {
-        global $db, $conf, $langs;
+	public function info()
+	{
+		global $db, $conf, $langs;
 
 		$langs->load("bills");
 
@@ -92,20 +92,20 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 		$texte .= '</form>';
 
 		return $texte;
-    }
+	}
 
 	/**
 	 *	Return numbering example
 	 *
 	 *	@return     string      Example
 	 */
-    public function getExample()
-    {
-     	global $conf, $langs, $user;
+	public function getExample()
+	{
+	 	global $conf, $langs, $user;
 
-    	$old_login = $user->login;
-    	$user->login = 'UUUUUUU';
-     	$numExample = $this->getNextValue($user, '');
+		$old_login = $user->login;
+		$user->login = 'UUUUUUU';
+	 	$numExample = $this->getNextValue($user, '');
 		$user->login = $old_login;
 
 		if (!$numExample)
@@ -113,7 +113,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
-    }
+	}
 
 	/**
 	 *	Return next value
@@ -122,8 +122,8 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	 *	@param	Object		$holiday	holiday object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-    public function getNextValue($user, $holiday)
-    {
+	public function getNextValue($user, $holiday)
+	{
 		global $db, $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -141,7 +141,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 		return  $numFinal;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return next value
 	 *
@@ -149,9 +149,9 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	 *  @param  Object		$objforref	Holiday object
 	 *  @return string      			Value if OK, 0 if KO
 	 */
-    public function holiday_get_num($fuser, $objforref)
-    {
-        // phpcs:enable
-        return $this->getNextValue($fuser, $objforref);
-    }
+	public function holiday_get_num($fuser, $objforref)
+	{
+		// phpcs:enable
+		return $this->getNextValue($fuser, $objforref);
+	}
 }

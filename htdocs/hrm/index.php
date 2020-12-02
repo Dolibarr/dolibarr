@@ -180,7 +180,7 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read)
 	$sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
 	$sql .= " WHERE u.rowid = x.fk_user";
 	$sql .= " AND x.entity = ".$conf->entity;
-	if (empty($user->rights->holiday->read_all)) $sql .= ' AND x.fk_user IN ('.join(',', $childids).')';
+	if (empty($user->rights->holiday->readall)) $sql .= ' AND x.fk_user IN ('.join(',', $childids).')';
 	//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".$socid;
 	$sql .= $db->order("x.tms", "DESC");
@@ -294,6 +294,7 @@ if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 				$expensereportstatic->id = $obj->rowid;
 				$expensereportstatic->ref = $obj->ref;
 				$expensereportstatic->statut = $obj->status;
+				$expensereportstatic->status = $obj->status;
 
 				$userstatic->id = $obj->uid;
 				$userstatic->lastname = $obj->lastname;

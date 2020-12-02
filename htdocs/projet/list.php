@@ -7,7 +7,7 @@
  * Copyright (C) 2015 	   Claudio Aschieri     <c.aschieri@19.coop>
  * Copyright (C) 2018 	   Ferran Marcet	    <fmarcet@2byte.es>
  * Copyright (C) 2019 	   Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2020		Tobias Sean			<tobias.sekan@startmail.com>
+ * Copyright (C) 2020	   Tobias Sean			<tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,7 +109,7 @@ if ($search_status == '') $search_status = -1; // -1 or 1
 
 if (!empty($conf->categorie->enabled))
 {
-	$search_category_array = GETPOST("search_category_".Categorie::TYPE_PROJECT."_array", "array");
+	$search_category_array = GETPOST("search_category_".Categorie::TYPE_PROJECT."_list", "array");
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -240,7 +240,7 @@ if (empty($reshook))
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0)
 			{
-				$userWrite  = $object->restrictedProjectArea($user, 'write');
+				$userWrite = $object->restrictedProjectArea($user, 'write');
 				if ($userWrite > 0 && $objecttmp->statut == 1) {
 					$result = $objecttmp->setClose($user);
 					if ($result <= 0) {
@@ -284,7 +284,7 @@ $formproject = new FormProjets($db);
 $title = $langs->trans("Projects");
 
 
-// Get list of project id allowed to user (in a string list separated by coma)
+// Get list of project id allowed to user (in a string list separated by comma)
 $projectsListId = '';
 if (!$user->rights->projet->all->lire) $projectsListId = $object->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 
@@ -386,7 +386,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller than paging size (filtering), goto and load page 0
 	{
 		$page = 0;
 		$offset = 0;
@@ -419,28 +419,29 @@ $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("", $title, $help_url);
 
 $param = '';
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
-if ($search_all != '') 			$param .= '&search_all='.$search_all;
-if ($search_sday)              		    $param .= '&search_sday='.$search_sday;
-if ($search_smonth)              		$param .= '&search_smonth='.$search_smonth;
-if ($search_syear)               		$param .= '&search_syear='.$search_syear;
-if ($search_eday)               		$param .= '&search_eday='.$search_eday;
-if ($search_emonth)              		$param .= '&search_emonth='.$search_emonth;
-if ($search_eyear)               		$param .= '&search_eyear='.$search_eyear;
-if ($socid)				        $param .= '&socid='.$socid;
-if ($search_ref != '') 			$param .= '&search_ref='.$search_ref;
-if ($search_label != '') 		$param .= '&search_label='.$search_label;
-if ($search_societe != '') 		$param .= '&search_societe='.$search_societe;
-if ($search_status >= 0) 		$param .= '&search_status='.$search_status;
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+if ($search_all != '') 			$param .= '&search_all='.urlencode($search_all);
+if ($search_sday)              		    $param .= '&search_sday='.urlencode($search_sday);
+if ($search_smonth)              		$param .= '&search_smonth='.urlencode($search_smonth);
+if ($search_syear)               		$param .= '&search_syear='.urlencode($search_syear);
+if ($search_eday)               		$param .= '&search_eday='.urlencode($search_eday);
+if ($search_emonth)              		$param .= '&search_emonth='.urlencode($search_emonth);
+if ($search_eyear)               		$param .= '&search_eyear='.urlencode($search_eyear);
+if ($socid)				        $param .= '&socid='.urlencode($socid);
+if ($search_categ)              $param .= '&search_categ='.urlencode($search_categ);
+if ($search_ref != '') 			$param .= '&search_ref='.urlencode($search_ref);
+if ($search_label != '') 		$param .= '&search_label='.urlencode($search_label);
+if ($search_societe != '') 		$param .= '&search_societe='.urlencode($search_societe);
+if ($search_status >= 0) 		$param .= '&search_status='.urlencode($search_status);
 if ((is_numeric($search_opp_status) && $search_opp_status >= 0) || in_array($search_opp_status, array('all', 'openedopp', 'notopenedopp', 'none'))) 	    $param .= '&search_opp_status='.urlencode($search_opp_status);
 if ($search_opp_percent != '') 	$param .= '&search_opp_percent='.urlencode($search_opp_percent);
-if ($search_public != '') 		$param .= '&search_public='.$search_public;
-if ($search_project_user != '')   $param .= '&search_project_user='.$search_project_user;
-if ($search_sale > 0)    		$param .= '&search_sale='.$search_sale;
-if ($search_opp_amount != '')    $param .= '&search_opp_amount='.$search_opp_amount;
-if ($search_budget_amount != '') $param .= '&search_budget_amount='.$search_budget_amount;
-if ($optioncss != '') $param .= '&optioncss='.$optioncss;
+if ($search_public != '') 		$param .= '&search_public='.urlencode($search_public);
+if ($search_project_user != '')   $param .= '&search_project_user='.urlencode($search_project_user);
+if ($search_sale > 0)    		$param .= '&search_sale='.urlencode($search_sale);
+if ($search_opp_amount != '')    $param .= '&search_opp_amount='.urlencode($search_opp_amount);
+if ($search_budget_amount != '') $param .= '&search_budget_amount='.urlencode($search_budget_amount);
+if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -484,7 +485,7 @@ print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_
 $topicmail = "Information";
 $modelmail = "project";
 $objecttmp = new Project($db);
-$trackid = 'prj'.$object->id;
+$trackid = 'proj'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($search_all)
@@ -505,7 +506,8 @@ if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire)
 // If the user can view user other than himself
 $moreforfilter .= '<div class="divsearchfield">';
 $moreforfilter .= $langs->trans('ProjectsWithThisUserAsContact').': ';
-$includeonly = 'hierarchyme';
+//$includeonly = 'hierarchyme';
+$includeonly = '';
 if (empty($user->rights->user->user->lire)) $includeonly = array($user->id);
 $moreforfilter .= $form->select_dolusers($search_project_user ? $search_project_user : '', 'search_project_user', 1, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth200');
 $moreforfilter .= '</div>';

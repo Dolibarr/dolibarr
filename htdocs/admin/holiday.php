@@ -177,7 +177,7 @@ print load_fiche_titre($langs->trans("HolidaySetup"), $linkback, 'title_setup');
 
 $head = holiday_admin_prepare_head();
 
-dol_fiche_head($head, 'holiday', $langs->trans("Holidays"), -1, 'holiday');
+print dol_get_fiche_head($head, 'holiday', $langs->trans("Holidays"), -1, 'holiday');
 
 /*
  * Holiday Numbering model
@@ -229,7 +229,10 @@ foreach ($dirmodels as $reldir)
 						// Show example of numbering model
 						print '<td class="nowrap">';
 						$tmp = $module->getExample();
-						if (preg_match('/^Error/', $tmp)) { $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; } elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
+						if (preg_match('/^Error/', $tmp)) {
+							$langs->load("errors");
+							print '<div class="error">'.$langs->trans($tmp).'</div>';
+						} elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
 						else print $tmp;
 						print '</td>'."\n";
 
@@ -282,7 +285,7 @@ print '<br>';
 
 
 if ($conf->global->MAIN_FEATURES_LEVEL < 2) {
-	dol_fiche_end();
+	print dol_get_fiche_end();
 	// End of page
 	llxFooter();
 	$db->close();
@@ -494,14 +497,14 @@ print '</div>';
 
 
 print '<div class="center">';
-print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';
 
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

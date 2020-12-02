@@ -110,11 +110,11 @@ if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
 // Already in bookkeeping or not
 if ($in_bookkeeping == 'already')
 {
-    $sql .= " AND er.rowid IN (SELECT fk_doc FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab  WHERE ab.doc_type='expense_report')";
+	$sql .= " AND er.rowid IN (SELECT fk_doc FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab  WHERE ab.doc_type='expense_report')";
 }
 if ($in_bookkeeping == 'notyet')
 {
-    $sql .= " AND er.rowid NOT IN (SELECT fk_doc FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab  WHERE ab.doc_type='expense_report')";
+	$sql .= " AND er.rowid NOT IN (SELECT fk_doc FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab  WHERE ab.doc_type='expense_report')";
 }
 $sql .= " ORDER BY er.date_debut";
 
@@ -370,8 +370,8 @@ if ($action == 'writebookkeeping') {
 
 			if ($error >= 10)
 			{
-			    setEventMessages($langs->trans("ErrorTooManyErrorsProcessStopped"), null, 'errors');
-			    break; // Break in the foreach
+				setEventMessages($langs->trans("ErrorTooManyErrorsProcessStopped"), null, 'errors');
+				break; // Break in the foreach
 			}
 		}
 	}
@@ -433,48 +433,48 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	print "\n";
 
 	foreach ($taber as $key => $val) {
-	    $date = dol_print_date($val["date"], 'day');
+		$date = dol_print_date($val["date"], 'day');
 
-	    $userstatic->id = $tabuser[$key]['id'];
-	    $userstatic->name = $tabuser[$key]['name'];
+		$userstatic->id = $tabuser[$key]['id'];
+		$userstatic->name = $tabuser[$key]['name'];
 
-	    // Fees
-	    foreach ($tabht[$key] as $k => $mt) {
-	        $accountingaccount = new AccountingAccount($db);
-	        $accountingaccount->fetch(null, $k, true);
-	        if ($mt) {
-	            print '"'.$date.'"'.$sep;
-	            print '"'.$val["ref"].'"'.$sep;
-	            print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
-	            print '"'.dol_trunc($accountingaccount->label, 32).'"'.$sep;
-	            print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
-	            print '"'.($mt < 0 ? price(-$mt) : '').'"';
-	            print "\n";
-	        }
-	    }
-	    // VAT
-	    foreach ($tabtva[$key] as $k => $mt) {
-	        if ($mt) {
-	            print '"'.$date.'"'.$sep;
-	            print '"'.$val["ref"].'"'.$sep;
-	            print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
-	            print '"'.dol_trunc($langs->trans("VAT")).'"'.$sep;
-	            print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
-	            print '"'.($mt < 0 ? price(-$mt) : '').'"';
-	            print "\n";
-	        }
-	    }
+		// Fees
+		foreach ($tabht[$key] as $k => $mt) {
+			$accountingaccount = new AccountingAccount($db);
+			$accountingaccount->fetch(null, $k, true);
+			if ($mt) {
+				print '"'.$date.'"'.$sep;
+				print '"'.$val["ref"].'"'.$sep;
+				print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
+				print '"'.dol_trunc($accountingaccount->label, 32).'"'.$sep;
+				print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
+				print '"'.($mt < 0 ? price(-$mt) : '').'"';
+				print "\n";
+			}
+		}
+		// VAT
+		foreach ($tabtva[$key] as $k => $mt) {
+			if ($mt) {
+				print '"'.$date.'"'.$sep;
+				print '"'.$val["ref"].'"'.$sep;
+				print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
+				print '"'.dol_trunc($langs->trans("VAT")).'"'.$sep;
+				print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
+				print '"'.($mt < 0 ? price(-$mt) : '').'"';
+				print "\n";
+			}
+		}
 
-	    // Third party
-	    foreach ($tabttc[$key] as $k => $mt) {
-	        print '"'.$date.'"'.$sep;
-	        print '"'.$val["ref"].'"'.$sep;
-	        print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
-	        print '"'.dol_trunc($userstatic->name).'"'.$sep;
-	        print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
-	        print '"'.($mt >= 0 ? price($mt) : '').'"';
-	    }
-	    print "\n";
+		// Third party
+		foreach ($tabttc[$key] as $k => $mt) {
+			print '"'.$date.'"'.$sep;
+			print '"'.$val["ref"].'"'.$sep;
+			print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
+			print '"'.dol_trunc($userstatic->name).'"'.$sep;
+			print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
+			print '"'.($mt >= 0 ? price($mt) : '').'"';
+		}
+		print "\n";
 	}
 }
 
@@ -489,8 +489,8 @@ if (empty($action) || $action == 'view') {
 	$description .= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 
 	$listofchoices = array('notyet'=>$langs->trans("NotYetInGeneralLedger"), 'already'=>$langs->trans("AlreadyInGeneralLedger"));
-    $period = $form->selectDate($date_start ? $date_start : -1, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end ? $date_end : -1, 'date_end', 0, 0, 0, '', 1, 0);
-    $period .= ' -  '.$langs->trans("JournalizationInLedgerStatus").' '.$form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
+	$period = $form->selectDate($date_start ? $date_start : -1, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end ? $date_end : -1, 'date_end', 0, 0, 0, '', 1, 0);
+	$period .= ' -  '.$langs->trans("JournalizationInLedgerStatus").' '.$form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
 
 	$varlink = 'id_journal='.$id_journal;
 

@@ -31,19 +31,19 @@ header('Content-Type: application/json');
 $id = GETPOST('id', 'int');
 
 if (!$id) {
-    print json_encode(array(
-        'error' => 'ID not set'
-    ));
-    exit();
+	print json_encode(array(
+		'error' => 'ID not set'
+	));
+	exit();
 }
 
 $prodattr = new ProductAttribute($db);
 
 if ($prodattr->fetch($id) < 0) {
-    print json_encode(array(
-        'error' => 'Attribute not found'
-    ));
-    exit();
+	print json_encode(array(
+		'error' => 'Attribute not found'
+	));
+	exit();
 }
 
 $prodattrval = new ProductAttributeValue($db);
@@ -51,10 +51,10 @@ $prodattrval = new ProductAttributeValue($db);
 $res = $prodattrval->fetchAllByProductAttribute($id);
 
 if ($res == -1) {
-    print json_encode(array(
-        'error' => 'Internal error'
-    ));
-    exit();
+	print json_encode(array(
+		'error' => 'Internal error'
+	));
+	exit();
 }
 
 print json_encode($res);

@@ -299,7 +299,11 @@ $formother = new FormOther($db);
 
 //$help_url="EN:Module_MyObject|FR:Module_MyObject_FR|ES:Módulo_MyObject";
 $help_url = '';
-$text = $langs->trans("ListOfUsers");
+if ($contextpage == 'employeelist' && $search_employee == 1) {
+	$text = $langs->trans("ListOfEmployees");
+} else {
+	$text = $langs->trans("ListOfUsers");
+}
 
 $user2 = new User($db);
 
@@ -311,7 +315,7 @@ $sql .= " u2.rowid as id2, u2.login as login2, u2.firstname as firstname2, u2.la
 $sql .= " s.nom as name, s.canvas";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key.', ' : '');
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
 }
 // Add fields from hooks
 $parameters = array();
@@ -339,7 +343,7 @@ if ($search_thirdparty != '') $sql .= natural_search(array('s.nom'), $search_thi
 if ($search_login != '')      $sql .= natural_search("u.login", $search_login);
 if ($search_lastname != '')   $sql .= natural_search("u.lastname", $search_lastname);
 if ($search_firstname != '')  $sql .= natural_search("u.firstname", $search_firstname);
-if ($search_gender != '' && $search_gender != '-1')     $sql .= natural_search("u.gender", $search_gender);
+if ($search_gender != '' && $search_gender != '-1')     $sql .= " AND u.gender = '".$db->escape($search_gender)."'"; // Cannot use natural_search as looking for %man% also includes woman
 if (is_numeric($search_employee) && $search_employee >= 0) {
 	$sql .= ' AND u.employee = '.(int) $search_employee;
 }
@@ -648,6 +652,7 @@ if (is_array($extrafields->attributes[$object->table_element]['computed']) && co
 // --------------------------------------------------------------------
 $i = 0;
 $totalarray = array();
+$arrayofselected = array();
 while ($i < ($limit ? min($num, $limit) : $num))
 {
 	$obj = $db->fetch_object($resql);
