@@ -6889,7 +6889,7 @@ abstract class CommonObject
 						$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
 
 						$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="'.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.'" '.$domData.' >';
-						if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+						if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER) && $action == 'view') {
 							$out .= '<td></td>';
 						}
 						$out .= '<td class="wordbreak';
