@@ -888,7 +888,7 @@ print '<div class="fichecenter fichecenterbis">';
 
 
 /*
- * Show boxes
+ * Show widgets (boxes)
  */
 
 $boxlist .= '<div class="twocolumns">';
