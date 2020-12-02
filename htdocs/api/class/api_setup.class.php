@@ -112,7 +112,7 @@ class Setup extends DolibarrApi
 	}
 
     /**
-     * Get the list of ordering reasons.
+     * Get the list of ordering origins.
      *
      * @param string    $sortfield  Sort field
      * @param string    $sortorder  Sort order
@@ -121,13 +121,13 @@ class Setup extends DolibarrApi
      * @param int       $active     Payment type is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters SQL criteria to filter with. Syntax example "(t.code:=:'OrderByWWW')"
      *
-     * @url     GET dictionary/ordering_reasons
+     * @url     GET dictionary/ordering_origins
      *
      * @return array [List of ordering reasons]
      *
      * @throws RestException 400
      */
-    public function getOrderingReasons($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
+    public function getOrderingOrigins($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
         $list = array();
 
