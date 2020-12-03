@@ -106,7 +106,7 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 			$sql .= " AND s.outstanding_limit > 0";
 			$sql .= " AND s.rowid IN (SELECT fk_soc from ".MAIN_DB_PREFIX."facture as f WHERE f.fk_statut = 1 and f.fk_soc = s.rowid)";
 			$sql .= " ORDER BY s.tms DESC";
-			$sql .= $this->db->plimit($max, 0);
+			//$sql .= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
 			$result = $this->db->query($sql);
@@ -114,10 +114,13 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 			{
 				$num = $this->db->num_rows($result);
 
+				$nboutstandingbillreachedcustomers = 0;
+
 				$line = 0;
 				while ($line < $num)
 				{
 					$objp = $this->db->fetch_object($result);
+
 					$datec = $this->db->jdate($objp->datec);
 					$datem = $this->db->jdate($objp->tms);
 					$thirdpartystatic->id = $objp->socid;
@@ -136,22 +139,21 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 					$outstandingtotal = $thirdpartystatic->getOutstandingBills()['opened'];
 					$outstandinglimit = $thirdpartystatic->outstanding_limit;
 
-					$nboutstandingbillreachedcustomers = 0;
-
 					if ($outstandingtotal >= $outstandinglimit)
 					{
-						$this->info_box_contents[$line][] = array(
+						$this->info_box_contents[$nboutstandingbillreachedcustomers][] = array(
 							'td' => '',
-							'text' => $thirdpartystatic->getNomUrl(1),
+							'text' => $thirdpartystatic->getNomUrl(1, 'customer'),
 							'asis' => 1,
 						);
 
-						$this->info_box_contents[$line][] = array(
+						$this->info_box_contents[$nboutstandingbillreachedcustomers][] = array(
 							'td' => 'class="right" width="18"',
 							'text' => $thirdpartystatic->LibStatut($objp->status, 3)
 						);
 						$nboutstandingbillreachedcustomers++;
 					}
+
 					$line++;
 				}
 

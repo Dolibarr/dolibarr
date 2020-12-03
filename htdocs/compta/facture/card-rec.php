@@ -117,6 +117,8 @@ $usercancreatewithdrarequest = $user->rights->prelevement->bons->creer;
 
 $now = dol_now();
 
+$error = 0;
+
 
 /*
  * Actions
@@ -287,13 +289,21 @@ if (empty($reshook))
 	elseif ($action == 'setref' && $user->rights->facture->creer)
 	{
 		//var_dump(GETPOST('ref', 'alpha'));exit;
-		$result = $object->setValueFrom('titre', GETPOST('ref', 'alpha'), '', null, 'text', '', $user, 'BILLREC_MODIFY');
+		$result = $object->setValueFrom('titre', $ref, '', null, 'text', '', $user, 'BILLREC_MODIFY');
 		if ($result > 0)
 		{
 			$object->titre = GETPOST('ref', 'alpha'); // deprecated
 			$object->title = GETPOST('ref', 'alpha');
 			$object->ref = $object->title;
-		} else dol_print_error($db, $object->error, $object->errors);
+		} else {
+			$error++;
+			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$langs->load("errors");
+				setEventMessages($langs->trans('ErrorRefAlreadyExists', $ref), null, 'errors');
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
 	} // Set bank account
 	elseif ($action == 'setbankaccount' && $user->rights->facture->creer)
 	{

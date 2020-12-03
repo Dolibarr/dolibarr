@@ -113,17 +113,17 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON s.fk_bank = b.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid,";
 $sql .= " ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = s.fk_user";
-$sql .= " AND s.entity = ".$conf->entity;
+$sql .= " AND s.entity IN (".getEntity('payment_salaries').")";
 if (empty($user->rights->salaries->readall)) $sql .= " AND s.fk_user IN (".join(',', $childids).")";
 
 // Search criteria
-if ($search_ref)			$sql .= " AND s.rowid=".$search_ref;
+if ($search_ref)			$sql .= " AND s.rowid=".((int) $search_ref);
 if ($search_user)			$sql .= natural_search(array('u.login', 'u.lastname', 'u.firstname', 'u.email'), $search_user);
 if ($search_label)			$sql .= natural_search(array('s.label'), $search_label);
 if ($search_date_start)     $sql .= " AND s.datep >= '".$db->idate($search_date_start)."'";
 if ($search_date_end)		$sql .= " AND s.datep <= '".$db->idate($search_date_end)."'";
 if ($search_amount)			$sql .= natural_search("s.amount", $search_amount, 1);
-if ($search_account > 0)	$sql .= " AND b.fk_account=".$search_account;
+if ($search_account > 0)	$sql .= " AND b.fk_account=".((int) $search_account);
 if ($filtre) {
 	$filtre = str_replace(":", "=", $filtre);
 	$sql .= " AND ".$filtre;

@@ -8,6 +8,7 @@ ErrorBadEMail=Email %s is wrong
 ErrorBadMXDomain=Email %s seems wrong (domain has no valid MX record)
 ErrorBadUrl=Url %s is wrong
 ErrorBadValueForParamNotAString=Bad value for your parameter. It appends generally when translation is missing.
+ErrorRefAlreadyExists=Reference <b>%s</b> already exists.
 ErrorLoginAlreadyExists=Login %s already exists.
 ErrorGroupAlreadyExists=Group %s already exists.
 ErrorRecordNotFound=Record not found.
