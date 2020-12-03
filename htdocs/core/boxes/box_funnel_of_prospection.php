@@ -174,7 +174,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 						if ($code) $labelStatus = $langs->transnoentitiesnoconv("OppStatus" . $code);
 						if (empty($labelStatus)) $labelStatus = $listofopplabel[$status];
 
-						$dataseries[] = array($labelStatus, (isset($valsamount[$status]) ? (float) $valsamount[$status] : 0));
+						$dataseries[] = array($labelStatus,(isset($valsamount[$status]) ? (float) $valsamount[$status] : 0));
 						if (!$conf->use_javascript_ajax) {
 							$stringtoprint .= '<tr class="oddeven">';
 							$stringtoprint .= '<td>' . $labelStatus . '</td>';
@@ -188,6 +188,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 					$dolgraph = new DolGraph();
 					$dolgraph->SetData($dataseries);
 					$dolgraph->SetDataColor(array_values($colorseriesstat));
+					//$dolgraph->SetLegend(array('PROSP',$dataseries['PROSP']));
 					$dolgraph->setShowLegend(2);
 					$dolgraph->setShowPercent(1);
 					$dolgraph->SetType(array('pie'));
