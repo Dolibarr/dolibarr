@@ -39,6 +39,7 @@ $langs->loadlangs(array('admin', 'exports', 'other', 'users', 'companies', 'proj
 //if (! $user->admin)
 //  accessforbidden();
 
+// Map icons, array duplicated in import.php, was not synchronized, TODO put it somewhere only once
 $entitytoicon = array(
 	'invoice'      => 'bill',
     'invoice_line' => 'bill',
@@ -54,13 +55,13 @@ $entitytoicon = array(
     'payment'      => 'payment',
 	'tax'          => 'generic',
     'tax_type'     => 'generic',
-    'stock'        => 'generic',
     'other'        => 'generic',
 	'account'      => 'account',
 	'product'      => 'product',
     'virtualproduct'=>'product',
 	'subproduct'   => 'product',
 	'product_supplier_ref'      => 'product',
+    'stock'        => 'stock',
 	'warehouse'    => 'stock',
 	'batch'        => 'stock',
 	'stockbatch'   => 'stock',
@@ -78,7 +79,7 @@ $entitytoicon = array(
     'bomline'      => 'bom'
 );
 
-// Translation code
+// Translation code, array duplicated in import.php, was not synchronized, TODO put it somewhere only once
 $entitytolang = array(
 	'user'         => 'User',
 	'company'      => 'Company',
@@ -459,15 +460,14 @@ if ($step == 1 || !$datatoexport)
     	$sortedarrayofmodules = dol_sort_array($objexport->array_export_module, 'module_position', 'asc', 0, 0, 1);
     	foreach ($sortedarrayofmodules as $key => $value)
         {
+			//var_dump($objexport->array_import_code[$key]);
             print '<tr class="oddeven"><td nospan="nospan">';
-	        //print img_object($objexport->array_export_module[$key]->getName(),$export->array_export_module[$key]->picto).' ';
-            print $objexport->array_export_module[$key]->getName();
+			print $objexport->array_export_module[$key]->getName();
             print '</td><td>';
-			$icon = preg_replace('/:.*$/', '', $objexport->array_export_icon[$key]);
-			$label = $objexport->array_export_label[$key];
-            //print $value.'-'.$icon.'-'.$label."<br>";
-			print img_object($objexport->array_export_module[$key]->getName(), $icon).' ';
-            print $label;
+			$entity = preg_replace('/:.*$/', '', $objexport->array_export_icon[$key]);
+			$entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
+ 			print img_object($objexport->array_export_module[$key]->getName(), $entityicon).' ';
+            print $objexport->array_export_label[$key];
             print '</td><td class="right">';
             if ($objexport->array_export_perms[$key])
             {
@@ -522,11 +522,10 @@ if ($step == 2 && $datatoexport)
     // Lot de donnees a exporter
     print '<tr><td>'.$langs->trans("DatasetToExport").'</td>';
     print '<td>';
-	$icon = preg_replace('/:.*$/', '', $objexport->array_export_icon[0]);
-    $label = $objexport->array_export_label[0];
-    //print $value.'-'.$icon.'-'.$label."<br>";
-    print img_object($objexport->array_export_module[0]->getName(), $icon).' ';
-    print $label;
+	$entity = preg_replace('/:.*$/', '', $objexport->array_export_icon[0]);
+	$entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
+    print img_object($objexport->array_export_module[0]->getName(), $entityicon).' ';
+    print $objexport->array_export_label[0];
     print '</td></tr>';
 
     print '</table>';
@@ -728,11 +727,10 @@ if ($step == 3 && $datatoexport)
 	// Lot de donnees a exporter
 	print '<tr><td>'.$langs->trans("DatasetToExport").'</td>';
 	print '<td>';
-	$icon = preg_replace('/:.*$/', '', $objexport->array_export_icon[0]);
-	$label = $objexport->array_export_label[0];
-	//print $value.'-'.$icon.'-'.$label."<br>";
-	print img_object($objexport->array_export_module[0]->getName(), $icon).' ';
-	print $label;
+	$entity = preg_replace('/:.*$/', '', $objexport->array_export_icon[0]);
+	$entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
+	print img_object($objexport->array_export_module[0]->getName(), $entityicon).' ';
+	print $objexport->array_export_label[0];
 	print '</td></tr>';
 
 	// Nbre champs exportes
@@ -920,8 +918,9 @@ if ($step == 4 && $datatoexport)
     // Lot de donnees a exporter
     print '<tr><td>'.$langs->trans("DatasetToExport").'</td>';
     print '<td>';
-	$icon = preg_replace('/:.*$/', '', $objexport->array_export_icon[0]);
-    print img_object($objexport->array_export_module[0]->getName(), $icon).' ';
+	$entity = preg_replace('/:.*$/', '', $objexport->array_export_icon[0]);
+	$entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
+    print img_object($objexport->array_export_module[0]->getName(), $entityicon).' ';
     print $objexport->array_export_label[0];
     print '</td></tr>';
 
@@ -1190,8 +1189,9 @@ if ($step == 5 && $datatoexport)
     // Dataset to export
     print '<tr><td>'.$langs->trans("DatasetToExport").'</td>';
     print '<td>';
-	$icon = preg_replace('/:.*$/', '', $objexport->array_export_icon[0]);
-    print img_object($objexport->array_export_module[0]->getName(), $icon).' ';
+	$entity = preg_replace('/:.*$/', '', $objexport->array_export_icon[0]);
+	$entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
+    print img_object($objexport->array_export_module[0]->getName(), $entityicon).' ';
     print $objexport->array_export_label[0];
     print '</td></tr>';
 
