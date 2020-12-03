@@ -33,7 +33,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 {
 	public $boxcode = "FunnelOfProspection";
 	public $boximg = "object_projectpub";
-	public $boxlabel = "BoxFunnelOfProspection";
+	public $boxlabel = "BoxTitleFunnelOfProspection";
 	public $depends = array("projet");
 
 	/**
@@ -104,12 +104,6 @@ class box_funnel_of_prospection extends ModeleBoxes
 					case 'NEGO':
 						$colorseriesstat[$objp->rowid] = $badgeStatus4;
 						break;
-					case 'LOST':
-						$colorseriesstat[$objp->rowid] = $badgeStatus9;
-						break;
-					case 'WON':
-						$colorseriesstat[$objp->rowid] = $badgeStatus6;
-						break;
 					default:
 						$colorseriesstat[$objp->rowid] = $badgeStatus2;
 						break;
@@ -133,6 +127,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 			$sql .= " WHERE p.entity IN (" . getEntity('project') . ")";
 			$sql .= " AND p.fk_opp_status = cls.rowid";
 			$sql .= " AND p.fk_statut = 1"; // Opend projects only
+			$sql .= " AND cls.code NOT IN ('WON', 'LOST')";
 			$sql .= " GROUP BY p.fk_opp_status, cls.code";
 			$resql = $this->db->query($sql);
 
@@ -156,10 +151,8 @@ class box_funnel_of_prospection extends ModeleBoxes
 						$valsamount[$obj->opp_status] = $obj->opp_amount;
 						$totalnb += $obj->nb;
 						if ($obj->opp_status) $totaloppnb += $obj->nb;
-						if (!in_array($obj->code, array('WON', 'LOST'))) {
-							$totalamount += $obj->opp_amount;
-							$ponderated_opp_amount += $obj->ponderated_opp_amount;
-						}
+						$totalamount += $obj->opp_amount;
+						$ponderated_opp_amount += $obj->ponderated_opp_amount;
 					}
 					$i++;
 				}
@@ -171,17 +164,18 @@ class box_funnel_of_prospection extends ModeleBoxes
 				$listofstatus = array_keys($listofoppstatus);
 				foreach ($listofstatus as $status) {
 					$labelStatus = '';
+					if ($status != 7 && $status != 6) {
+						$code = dol_getIdFromCode($this->db, $status, 'c_lead_status', 'rowid', 'code');
+						if ($code) $labelStatus = $langs->transnoentitiesnoconv("OppStatus" . $code);
+						if (empty($labelStatus)) $labelStatus = $listofopplabel[$status];
 
-					$code = dol_getIdFromCode($this->db, $status, 'c_lead_status', 'rowid', 'code');
-					if ($code) $labelStatus = $langs->transnoentitiesnoconv("OppStatus" . $code);
-					if (empty($labelStatus)) $labelStatus = $listofopplabel[$status];
-
-					$dataseries[] = array($labelStatus, (isset($valsamount[$status]) ? (float) $valsamount[$status] : 0));
-					if (!$conf->use_javascript_ajax) {
-						$stringtoprint .= '<tr class="oddeven">';
-						$stringtoprint .= '<td>' . $labelStatus . '</td>';
-						$stringtoprint .= '<td class="right"><a href="list.php?statut=' . $status . '">' . price((isset($valsamount[$status]) ? (float) $valsamount[$status] : 0), 0, '', 1, -1, -1, $conf->currency) . '</a></td>';
-						$stringtoprint .= "</tr>\n";
+						$dataseries[] = array($labelStatus, (isset($valsamount[$status]) ? (float) $valsamount[$status] : 0));
+						if (!$conf->use_javascript_ajax) {
+							$stringtoprint .= '<tr class="oddeven">';
+							$stringtoprint .= '<td>' . $labelStatus . '</td>';
+							$stringtoprint .= '<td class="right"><a href="list.php?statut=' . $status . '">' . price((isset($valsamount[$status]) ? (float) $valsamount[$status] : 0), 0, '', 1, -1, -1, $conf->currency) . '</a></td>';
+							$stringtoprint .= "</tr>\n";
+						}
 					}
 				}
 				if ($conf->use_javascript_ajax) {
@@ -231,7 +225,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 					'tr' => 'class="oddeven"',
 					'td' => 'class="left "',
 					'maxlength' => 500,
-					'text' => $form->textwithpicto($langs->trans("OpportunityPonderatedAmount").' ('.$langs->trans("WonLostExcluded").')', $langs->trans("OpportunityPonderatedAmountDesc"), 1)
+					'text' => $form->textwithpicto($langs->trans("OpportunityPonderatedAmount") . ' (' . $langs->trans("WonLostExcluded") . ')', $langs->trans("OpportunityPonderatedAmountDesc"), 1)
 
 				);
 				$this->info_box_contents[$line][] = array(
