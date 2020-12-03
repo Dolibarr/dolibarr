@@ -286,7 +286,6 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 <?php if (count($arrayOfValidPaymentModes) > 0) {
 	$paycode = $arrayOfValidPaymentModes[0]->code;
 	$payIcon = '';
-	$payLabel = '';
 	if ($paycode == 'LIQ') {
 		$paycode = 'cash';
 		if (!empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON))	$payIcon = 'coins';
@@ -298,8 +297,7 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 		if (!empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON))	$payIcon = 'money-check';
 	}
 
-	if (!empty($conf->global->TAKEPOS_NUMPAD_FORCE_PAYMENT_ICONS_LABELS)) $payLabel = ' iconwithlabel';
-	print '<button type="button" class="calcbutton2" onclick="Validate(\''.$langs->trans($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.$payLabel.'"></span>'.(!empty($conf->global->TAKEPOS_NUMPAD_FORCE_PAYMENT_ICONS_LABELS) ? '<br/> '. $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[0]->code) : '') : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[0]->code)).'</button>';
+	print '<button type="button" class="calcbutton2" onclick="Validate(\''.$langs->trans($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br/> '. $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[0]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[0]->code)).'</button>';
 } else {
 	print '<button type="button" class="calcbutton2">'.$langs->trans("NoPaimementModesDefined").'</button>';
 }
@@ -311,7 +309,6 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 <?php if (count($arrayOfValidPaymentModes) > 1) {
 	$paycode = $arrayOfValidPaymentModes[1]->code;
 	$payIcon = '';
-	$payLabel = '';
 	if ($paycode == 'LIQ') {
 		$paycode = 'cash';
 		if (!empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON))	$payIcon = 'coins';
@@ -323,8 +320,7 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 		if (!empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON))	$payIcon = 'money-check';
 	}
 
-	if (!empty($conf->global->TAKEPOS_NUMPAD_FORCE_PAYMENT_ICONS_LABELS)) $payLabel = ' iconwithlabel';
-	print '<button type="button" class="calcbutton2" onclick="Validate(\''.$langs->trans($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.$payLabel.'"></span>'.(!empty($conf->global->TAKEPOS_NUMPAD_FORCE_PAYMENT_ICONS_LABELS) ? '<br/> '. $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[1]->code) : '') : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[1]->code)).'</button>';
+	print '<button type="button" class="calcbutton2" onclick="Validate(\''.$langs->trans($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br/> '. $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[1]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[1]->code)).'</button>';
 } else {
 	$button = array_pop($action_buttons);
 	print '<button type="button" class="calcbutton2" onclick="'.$button["function"].'"><span '.$button["span"].'>'.$button["text"].'</span></button>';
@@ -337,7 +333,6 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 <?php if (count($arrayOfValidPaymentModes) > 2) {
 	$paycode = $arrayOfValidPaymentModes[2]->code;
 	$payIcon = '';
-	$payLabel = '';
 	if ($paycode == 'LIQ') {
 		$paycode = 'cash';
 		if (!empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON))	$payIcon = 'coins';
@@ -349,8 +344,7 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 		if (!empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON))	$payIcon = 'money-check';
 	}
 
-	if (!empty($conf->global->TAKEPOS_NUMPAD_FORCE_PAYMENT_ICONS_LABELS)) $payLabel = ' iconwithlabel';
-	print '<button type="button" class="calcbutton2" onclick="Validate(\''.$langs->trans($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.$payLabel.'"></span>'.(!empty($conf->global->TAKEPOS_NUMPAD_FORCE_PAYMENT_ICONS_LABELS) ? '<br/> '. $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[2]->code) : '') : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[2]->code)).'</button>';
+	print '<button type="button" class="calcbutton2" onclick="Validate(\''.$langs->trans($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span>'.(!empty($conf->global->TAKEPOS_NUMPAD_FORCE_PAYMENT_ICONS_LABELS) ? '<br/> '. $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[2]->code) : '') : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[2]->code)).'</button>';
 } else {
 	$button = array_pop($action_buttons);
 	print '<button type="button" class="calcbutton2" onclick="'.$button["function"].'"><span '.$button["span"].'>'.$button["text"].'</span></button>';
