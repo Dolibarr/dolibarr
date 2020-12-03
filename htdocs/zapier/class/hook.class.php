@@ -212,9 +212,14 @@ class Hook extends CommonObject
 	public $label;
 
 	/**
-	 * @var string amount
+	 * @var string url of webhook
 	 */
-	public $amount;
+	public $url;
+
+	/**
+	 * @var int ID of user owner webhook
+	 */
+	public $fk_user;
 
 	/**
 	 * @var int Status
