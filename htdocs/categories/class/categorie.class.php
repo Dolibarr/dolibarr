@@ -56,7 +56,8 @@ class Categorie extends CommonObject
 	const TYPE_WAREHOUSE = 'warehouse';
 	const TYPE_ACTIONCOMM = 'actioncomm';
 	const TYPE_WEBSITE_PAGE = 'website_page';
-
+	const FILTER_MODE_OR = 'OR';
+	const FILTER_MODE_AND = 'AND';
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
@@ -1883,8 +1884,37 @@ class Categorie extends CommonObject
 	 * @param Array		$searchList		A list with the selected categories
 	 * @return string					A additional SQL SELECT query
 	 */
-	public static function getFilterSelectQuery($type, $rowIdName, $searchList)
+	public static function getFilterSelectQuery($type, $rowIdName, $searchList, $mode=self::FILTER_MODE_AND)
 	{
+		$tableSuffix = $type;
+		$fk = $type;
+		$listAlias = substr($type, 0, 1);
+		switch ($type) {
+			case 'contact':
+				$fk = 'socpeople'; $listAlias = 'p';
+				break;
+			case 'account':
+				$listAlias = 'b';
+				break;
+			case 'event':case 'actioncomm':
+			$tableSuffix = 'actioncomm';
+			$fk = 'actioncomm';
+			$listAlias = 'a';
+			break;
+			case 'supplier':
+				$tableSuffix = 'fournisseur';
+				$fk = 'soc';
+				$listAlias = 's'; // TODO vérifier
+				break;
+			case 'customer':
+				$tableSuffix = 'societe';
+				$fk = 'soc';
+				$listAlias = 's'; // TODO vérifier
+				break;
+			case 'societe':
+				$fk = 'soc';
+				break;
+		}
 		if ($type == 'bank_account') $type = 'account';
 
 		if (empty($searchList) && !is_array($searchList)) {
@@ -1896,12 +1926,14 @@ class Categorie extends CommonObject
 			if (intval($searchCategory) == -2) {
 				$searchCategorySqlList[] = " cp.fk_categorie IS NULL";
 			} elseif (intval($searchCategory) > 0) {
-				$searchCategorySqlList[] = " ".$rowIdName." IN (SELECT fk_".$type." FROM ".MAIN_DB_PREFIX."categorie_".$type." WHERE fk_categorie = ".((int) $searchCategory).")";
+				$searchCategorySqlList[] = " ".$rowIdName." IN (SELECT fk_".$fk." FROM ".MAIN_DB_PREFIX."categorie_".$tableSuffix." WHERE fk_categorie = ".$searchCategory.")";
 			}
 		}
 
 		if (!empty($searchCategorySqlList)) {
-			return " AND (".implode(' AND ', $searchCategorySqlList).")";
+			if ($mode === Categorie::FILTER_MODE_AND) $glueOperator = ' AND ';
+			elseif ($mode === Categorie::FILTER_MODE_OR) $glueOperator = ' OR ';
+			return " AND (".implode($glueOperator, $searchCategorySqlList).")";
 		} else {
 			return "";
 		}
