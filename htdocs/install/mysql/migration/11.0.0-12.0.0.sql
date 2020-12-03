@@ -338,3 +338,6 @@ ALTER TABLE llx_expedition ADD COLUMN billed smallint    DEFAULT 0;
 
 -- VMYSQL4.3 ALTER TABLE llx_mrp_mo MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
+ALTER TABLE llx_commande_fournisseurdet ADD INDEX idx_commande_fournisseurdet_fk_commande (fk_commande);
+ALTER TABLE llx_commande_fournisseurdet ADD INDEX idx_commande_fournisseurdet_fk_product (fk_product);
+
