@@ -2535,6 +2535,8 @@ img.login, img.printer, img.entity {
     border-radius: 50%;
     background-size: contain;
     background-size: contain;
+    border: 1px solid;
+    border-color: rgba(255, 255, 255, 0.2);
 }
 img.userphoto {			/* size for user photo in lists */
 	border-radius: 0.72em;
