@@ -542,4 +542,4 @@ CREATE TABLE llx_session(
   user_agent varchar(128) NULL
 )ENGINE=innodb;
 
-INSERT INTO llx_boxes_def(file, entity) VALUES ('box_customers_outstanding_bill_reached', 1);
+INSERT INTO llx_boxes_def(file, entity) VALUES ('box_customers_outstanding_bill_reached.php', 1);
