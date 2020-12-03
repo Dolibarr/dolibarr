@@ -953,7 +953,8 @@ if (empty($reshook))
 
 				if ($result > 0) {
 					$ret = $object->fetch($object->id); // Reload to get new records
-
+					$object->fetch_thirdparty();
+					
 					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 						// Define output language
 						$outputlangs = $langs;
@@ -966,8 +967,6 @@ if (empty($reshook))
 						}
 
 						$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-					} else {
-						$object->fetch_thirdparty();
 					}
 
 					unset($_POST['prod_entry_mode']);
