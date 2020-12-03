@@ -1817,7 +1817,11 @@ abstract class CommonObject
 				return -2;
 			}
 		} else {
-			$this->error = $this->db->lasterror();
+			if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$this->error = 'DB_ERROR_RECORD_ALREADY_EXISTS';
+			} else {
+				$this->error = $this->db->lasterror();
+			}
 			$this->db->rollback();
 			return -1;
 		}
@@ -5417,26 +5421,20 @@ abstract class CommonObject
 					$sql .= ",".$attributeKey;
 			}
 			// We must insert a default value for fields for other entities that are mandatory to avoid not null error
-			if (is_array($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities']))
-			{
-				foreach ($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'] as  $tmpkey => $tmpval)
-				{
-					if (!isset($extrafields->attributes[$this->table_element]['type'][$tmpkey]))    // If field not already added previously
-					{
+			if (!empty($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities']) && is_array($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'])) {
+				foreach ($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'] as  $tmpkey => $tmpval) {
+					if (!isset($extrafields->attributes[$this->table_element]['type'][$tmpkey])) {    // If field not already added previously
 						$sql .= ",".$tmpkey;
 					}
 				}
 			}
 			$sql .= ") VALUES (".$this->id;
 
-			foreach ($new_array_options as $key => $value)
-			{
+			foreach ($new_array_options as $key => $value) {
 				$attributeKey = substr($key, 8); // Remove 'options_' prefix
 				// Add field of attribute
-				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] != 'separate') // Only for other type than separator)
-				{
-					if ($new_array_options[$key] != '' || $new_array_options[$key] == '0')
-					{
+				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] != 'separate') { // Only for other type than separator)
+					if ($new_array_options[$key] != '' || $new_array_options[$key] == '0') {
 						$sql .= ",'".$this->db->escape($new_array_options[$key])."'";
 					} else {
 						$sql .= ",null";
@@ -5444,12 +5442,9 @@ abstract class CommonObject
 				}
 			}
 			// We must insert a default value for fields for other entities that are mandatory to avoid not null error
-			if (is_array($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities']))
-			{
-				foreach ($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'] as  $tmpkey => $tmpval)
-				{
-					if (!isset($extrafields->attributes[$this->table_element]['type'][$tmpkey]))    // If field not already added previously
-					{
+			if (!empty($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities']) && is_array($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'])) {
+				foreach ($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'] as  $tmpkey => $tmpval) {
+					if (!isset($extrafields->attributes[$this->table_element]['type'][$tmpkey])) {   // If field not already added previously
 						if (in_array($tmpval, array('int', 'double', 'price'))) $sql .= ", 0";
 						else $sql .= ", ''";
 					}
@@ -6894,7 +6889,7 @@ abstract class CommonObject
 						$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
 
 						$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="'.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.'" '.$domData.' >';
-						if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+						if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER) && $action == 'view') {
 							$out .= '<td></td>';
 						}
 						$out .= '<td class="wordbreak';

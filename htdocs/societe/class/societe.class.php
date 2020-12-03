@@ -3241,7 +3241,7 @@ class Societe extends CommonObject
 			// si son index (position dans la chaîne en commence à 0 au premier caractère) est impair
 			// on double sa valeur et si cette dernière est supérieure à 9, on lui retranche 9
 			// on ajoute cette valeur à la somme totale
-
+			$sum = 0;
 			for ($index = 0; $index < 9; $index++)
 			{
 				$number = (int) $chaine[$index];
@@ -3266,7 +3266,7 @@ class Societe extends CommonObject
 			// si son index (position dans la chaîne en commence à 0 au premier caractère) est pair
 			// on double sa valeur et si cette dernière est supérieure à 9, on lui retranche 9
 			// on ajoute cette valeur à la somme totale
-
+			$sum = 0;
 			for ($index = 0; $index < 14; $index++)
 			{
 				$number = (int) $chaine[$index];
@@ -3342,10 +3342,6 @@ class Societe extends CommonObject
 		{
 			$string = trim($this->idprof1);
 			$string = preg_replace('/(\s)/', '', $string);
-
-			for ($i = 0; $i < 9; $i++) {
-				$num[$i] = substr($string, $i, 1);
-			}
 
 			//Check NIF
 			if (preg_match('/(^[0-9]{9}$)/', $string)) {

@@ -541,4 +541,8 @@ CREATE TABLE llx_session(
   user_agent varchar(128) NULL
 )ENGINE=innodb;
 
+
 INSERT INTO llx_boxes_def (file) VALUES ('box_dolibarr_state_board.php');
+
+INSERT INTO llx_boxes_def(file, entity) VALUES ('box_customers_outstanding_bill_reached.php', 1);
+

@@ -18,6 +18,7 @@ NEW: Accountancy - change menu disposition
 NEW: Accountancy - on transfers, select the periodicity by default
 NEW: Accountancy - Add export for Gestinum (v3 & v5)
 NEW: new currency rate editor
+NEW: add a widget to show the customers with outstanding limits reached
 NEW: add 2 rules for emailcollector: Message send/not sent from Dolibarr
 NEW: add a counter of number of words for pages in website module
 NEW: add alert before changing thirdparty in TakePOS
@@ -167,7 +168,8 @@ NEW: Thirdparty module : box on customer/supplier tab for invoice outsantding am
 NEW: ticket classification on create from email collector
 NEW: Ticket message notifications when edited from public interface
 NEW: translate classification labels in ticket
-NEW: Add VAT and juridical status for Algeria
+NEW: VAT rate for Angola #15606
+NEW: VAT and juridical status for Algeria
 NEW: VAT report - Invert constant to show by default zero VAT in reports
 NEW: website page fields selection
 NEW: Weighing Scale compatibility with TakePOS connector
@@ -211,7 +213,6 @@ NEW: Triggers Attributes and Attributes values
 NEW: added incoterms data into the substitution array
 NEW: add send context for ticket
 NEW: add a message in error_log after detection of SQL or script injection
-NEW: add two hooks printFieldListFrom and printFieldSearchParam
 NEW: add __TYPE__ substitution key
 NEW: add validation of MX domain for emails
 NEW: calculate the virtual stock in transverse mode ( not on getEntity('commande'), ... but on getEntity('stock') )
@@ -221,6 +222,7 @@ NEW: Hook on propal card
 NEW: add hooks on newpayment page to allow external payment modules
 NEW: add hooks on stats pages
 NEW: add formConfirm hook on product page
+NEW: add two hooks printFieldListFrom and printFieldSearchParam
 
 
 WARNING:
@@ -269,7 +271,7 @@ FIX: Look and feel v12: First tab must be name of object
 FIX: missing entity check
 FIX: missing param for hook
 FIX: Missing transaction on PO actions
-FIX: MySql Strict mode
+FIX: MySQL Strict mode
 FIX: param entity in html form file
 FIX: Problems on FEC format
 FIX: round stock value on product list
