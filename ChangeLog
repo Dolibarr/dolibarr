@@ -18,6 +18,7 @@ NEW: Accountancy - change menu disposition
 NEW: Accountancy - on transfers, select the periodicity by default
 NEW: Accountancy - Add export for Gestinum (v3 & v5)
 NEW: new currency rate editor
+NEW: add a widget to show the customers with outstanding limits reached
 NEW: add 2 rules for emailcollector: Message send/not sent from Dolibarr
 NEW: add a counter of number of words for pages in website module
 NEW: add alert before changing thirdparty in TakePOS
