@@ -216,11 +216,7 @@ class modProduct extends DolibarrModules
 			'p.price_base_type'=>"Text", 'p.price'=>"Numeric", 'p.price_ttc'=>"Numeric", 'p.tva_tx'=>'Numeric',
 			'p.datec'=>'Date', 'p.tms'=>'Date'
 		);
-<<<<<<< HEAD
-		if (!empty($conf->stock->enabled)) $this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.tobatch'=>'Numeric', 'p.stock'=>'Numeric', 'p.seuil_stock_alerte'=>'Numeric', 'p.desiredstock'=>'Numeric', 'p.pmp'=>'Numeric', 'p.cost_price'=>'Numeric'));
-=======
 		if (!empty($conf->stock->enabled)) $this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('e.ref'=>'Text', 'p.tobatch'=>'Numeric', 'p.stock'=>'Numeric', 'p.seuil_stock_alerte'=>'Numeric', 'p.desiredstock'=>'Numeric', 'p.pmp'=>'Numeric', 'p.cost_price'=>'Numeric'));
->>>>>>> Merge pull request #14512 from StephaneLesage/import-product-warehouse-usebatch
 		if (!empty($conf->barcode->enabled)) $this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.barcode'=>'Text'));
 		if (!empty($conf->fournisseur->enabled)) $this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('s.nom'=>'Text', 'pf.ref_fourn'=>'Text', 'pf.unitprice'=>'Numeric', 'pf.quantity'=>'Numeric', 'pf.remise_percent'=>'Numeric', 'pf.delivery_time_days'=>'Numeric'));
 		if (!empty($conf->global->MAIN_MULTILANGS)) $this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('l.lang'=>'Text', 'l.label'=>'Text', 'l.description'=>'Text', 'l.note'=>'Text'));
@@ -583,11 +579,7 @@ class modProduct extends DolibarrModules
         );
         //clauses copied from import_fields_array
         if (!empty($conf->stock->enabled)) $import_sample = array_merge($import_sample, array(
-<<<<<<< HEAD
         		'p.tobatch'=>"0 (don't use) / 1 (use batch/serial number)",
-=======
-				'p.tobatch'=>"0 (don't use) / 1 (use batch/serial number)",
->>>>>>> Merge pull request #14512 from StephaneLesage/import-product-warehouse-usebatch
                 'p.seuil_stock_alerte' => '',
                 'p.pmp' => '0',
                 'p.desiredstock' => ''
