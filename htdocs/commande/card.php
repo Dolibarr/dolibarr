@@ -954,7 +954,7 @@ if (empty($reshook))
 				if ($result > 0) {
 					$ret = $object->fetch($object->id); // Reload to get new records
 					$object->fetch_thirdparty();
-					
+
 					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 						// Define output language
 						$outputlangs = $langs;
