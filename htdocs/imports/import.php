@@ -38,31 +38,93 @@ $langs->loadLangs(array('exports', 'compta', 'errors'));
 // Security check
 $result = restrictedArea($user, 'import');
 
+// Map icons, array duplicated in export.php, was not synchronized, TODO put it somewhere only once
 $entitytoicon = array(
-	'invoice'=>'bill', 'invoice_line'=>'bill',
-	'order'=>'order', 'order_line'=>'order',
-	'intervention'=>'intervention', 'inter_line'=>'intervention',
-	'member'=>'user', 'member_type'=>'group', 'subscription'=>'payment',
-	'tax'=>'bill', 'tax_type'=>'generic',
-	'account'=>'account',
-	'payment'=>'payment',
-	'product'=>'product', 'stock'=>'generic', 'warehouse'=>'stock',
-	'category'=>'generic',
-	'other'=>'generic'
+	'invoice'      => 'bill',
+    'invoice_line' => 'bill',
+	'order'        => 'order',
+    'order_line'   => 'order',
+	'propal'       => 'propal',
+    'propal_line'  => 'propal',
+	'intervention' => 'intervention',
+    'inter_line'   => 'intervention',
+	'member'       => 'user',
+    'member_type'  => 'group',
+    'subscription' => 'payment',
+    'payment'      => 'payment',
+	'tax'          => 'bill',
+    'tax_type'     => 'generic',
+    'other'        => 'generic',
+	'account'      => 'account',
+	'product'      => 'product',
+    'virtualproduct'=>'product',
+	'subproduct'   => 'product',
+	'product_supplier_ref'      => 'product',
+    'stock'        => 'stock',
+	'warehouse'    => 'stock',
+	'batch'        => 'stock',
+	'stockbatch'   => 'stock',
+	'category'     => 'category',
+	'shipment'     => 'sending',
+    'shipment_line'=> 'sending',
+    'reception'=> 'sending',
+    'reception_line'=> 'sending',
+	'expensereport'=> 'trip',
+    'expensereport_line'=> 'trip',
+	'holiday'      => 'holiday',
+    'contract_line' => 'contract',
+    'translation'  => 'generic',
+    'bomm'         => 'bom',
+    'bomline'      => 'bom'
 );
-$entitytolang = array(		// Translation code
-	'user'=>'User',
-	'company'=>'Company', 'contact'=>'Contact',
-	'invoice'=>'Bill', 'invoice_line'=>'InvoiceLine',
-	'order'=>'Order', 'order_line'=>'OrderLine',
-	'intervention'=>'Intervention', 'inter_line'=>'InterLine',
-	'member'=>'Member', 'member_type'=>'MemberType', 'subscription'=>'Subscription',
-	'tax'=>'SocialContribution', 'tax_type'=>'DictionarySocialContributions',
-	'account'=>'BankTransactions',
-	'payment'=>'Payment',
-	'product'=>'Product', 'stock'=>'Stock', 'warehouse'=>'Warehouse',
-	'category'=>'Category',
-	'other'=>'Other'
+
+// Translation code, array duplicated in export.php, was not synchronized, TODO put it somewhere only once
+$entitytolang = array(
+	'user'         => 'User',
+	'company'      => 'Company',
+    'contact'      => 'Contact',
+	'invoice'      => 'Bill',
+    'invoice_line' => 'InvoiceLine',
+	'order'        => 'Order',
+    'order_line'   => 'OrderLine',
+    'propal'       => 'Proposal',
+    'propal_line'  => 'ProposalLine',
+	'intervention' => 'Intervention',
+    'inter_line'   => 'InterLine',
+	'member'       => 'Member',
+    'member_type'  => 'MemberType',
+    'subscription' => 'Subscription',
+	'tax'          => 'SocialContribution',
+    'tax_type'     => 'DictionarySocialContributions',
+	'account'      => 'BankTransactions',
+	'payment'      => 'Payment',
+	'product'      => 'Product',
+	'virtualproduct'  => 'AssociatedProducts',
+	'subproduct'      => 'SubProduct',
+	'product_supplier_ref'      => 'SupplierPrices',
+	'service'      => 'Service',
+    'stock'        => 'Stock',
+	'movement'	   => 'StockMovement',
+	'batch'        => 'Batch',
+	'stockbatch'   => 'StockDetailPerBatch',
+	'warehouse'    => 'Warehouse',
+	'category'     => 'Category',
+	'other'        => 'Other',
+    'trip'         => 'TripsAndExpenses',
+    'shipment'     => 'Shipments',
+    'shipment_line'=> 'ShipmentLine',
+    'project'      => 'Projects',
+    'projecttask'  => 'Tasks',
+    'task_time'    => 'TaskTimeSpent',
+	'action'       => 'Event',
+	'expensereport'=> 'ExpenseReport',
+	'expensereport_line'=> 'ExpenseReportLine',
+	'holiday'      => 'TitreRequestCP',
+	'contract'     => 'Contract',
+    'contract_line'=> 'ContractLine',
+    'translation'  => 'Translation',
+    'bom'          => 'BOM',
+    'bomline'      => 'BOMLine'
 );
 
 $datatoimport		= GETPOST('datatoimport');
@@ -365,7 +427,9 @@ if ($step == 1 || !$datatoimport)
 			if (in_array($objimport->array_import_code[$key], array('produit_supplierprices', 'produit_multiprice', 'produit_languages'))) $titleofmodule = $langs->trans("ProductOrService");
 			print $titleofmodule;
 			print '</td><td>';
-			print img_object($objimport->array_import_module[$key]->getName(), $objimport->array_import_icon[$key]).' ';
+			$entity = preg_replace('/:.*$/', '', $objimport->array_import_icon[$key]);
+			$entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
+			print img_object($objimport->array_import_module[$key]->getName(), $entityicon).' ';
 			print $objimport->array_import_label[$key];
             print '</td><td style="text-align: right">';
 			if ($objimport->array_import_perms[$key])
@@ -422,16 +486,16 @@ if ($step == 2 && $datatoimport)
 	// Lot de donnees a importer
 	print '<tr><td>'.$langs->trans("DatasetToImport").'</td>';
 	print '<td>';
-	print img_object($objimport->array_import_module[0]->getName(), $objimport->array_import_icon[0]).' ';
+	$entity = preg_replace('/:.*$/', '', $objimport->array_import_icon[0]);
+	$entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
+	print img_object($objimport->array_import_module[0]->getName(), $entityicon).' ';
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
 	print '</table>';
-
 	print '</div>';
 
 	dol_fiche_end();
-
 
 	print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" METHOD="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -512,16 +576,16 @@ if ($step == 3 && $datatoimport)
 	// Lot de donnees a importer
 	print '<tr><td>'.$langs->trans("DatasetToImport").'</td>';
 	print '<td>';
-	print img_object($objimport->array_import_module[0]->getName(), $objimport->array_import_icon[0]).' ';
+	$entity = preg_replace('/:.*$/', '', $objimport->array_import_icon[0]);
+	$entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
+	print img_object($objimport->array_import_module[0]->getName(), $entityicon).' ';
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
 	print '</table>';
 	print '</div>';
 
-
 	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', '');
-
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
@@ -797,13 +861,14 @@ if ($step == 4 && $datatoimport)
 	// Lot de donnees a importer
 	print '<tr><td>'.$langs->trans("DatasetToImport").'</td>';
 	print '<td>';
-	print img_object($objimport->array_import_module[0]->getName(), $objimport->array_import_icon[0]).' ';
+	$entity = preg_replace('/:.*$/', '', $objimport->array_import_icon[0]);
+	$entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
+	print img_object($objimport->array_import_module[0]->getName(), $entityicon).' ';
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
 	print '</table>';
 	print '</div>';
-
 
 	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', '');
 
@@ -1273,13 +1338,14 @@ if ($step == 5 && $datatoimport)
 	// Lot de donnees a importer
 	print '<tr><td>'.$langs->trans("DatasetToImport").'</td>';
 	print '<td>';
-	print img_object($objimport->array_import_module[0]->getName(), $objimport->array_import_icon[0]).' ';
+	$entity = preg_replace('/:.*$/', '', $objimport->array_import_icon[0]);
+	$entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
+	print img_object($objimport->array_import_module[0]->getName(), $entityicon).' ';
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
 	print '</table>';
 	print '</div>';
-
 
 	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', '');
 
@@ -1716,13 +1782,14 @@ if ($step == 6 && $datatoimport)
 	// Lot de donnees a importer
 	print '<tr><td>'.$langs->trans("DatasetToImport").'</td>';
 	print '<td>';
-	print img_object($objimport->array_import_module[0]->getName(), $objimport->array_import_icon[0]).' ';
+	$entity = preg_replace('/:.*$/', '', $objimport->array_import_icon[0]);
+	$entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
+	print img_object($objimport->array_import_module[0]->getName(), $entityicon).' ';
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
 	print '</table>';
 	print '</div>';
-
 
 	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', '');
 
