@@ -104,6 +104,9 @@ class box_funnel_of_prospection extends ModeleBoxes
 					case 'NEGO':
 						$colorseriesstat[$objp->rowid] = $badgeStatus4;
 						break;
+					case 'WON':
+						$colorseriesstat[$objp->rowid] = $badgeStatus6;
+						break;
 					default:
 						$colorseriesstat[$objp->rowid] = $badgeStatus2;
 						break;
@@ -127,7 +130,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 			$sql .= " WHERE p.entity IN (" . getEntity('project') . ")";
 			$sql .= " AND p.fk_opp_status = cls.rowid";
 			$sql .= " AND p.fk_statut = 1"; // Opend projects only
-			$sql .= " AND cls.code NOT IN ('WON', 'LOST')";
+			$sql .= " AND cls.code NOT IN ('LOST')";
 			$sql .= " GROUP BY p.fk_opp_status, cls.code";
 			$resql = $this->db->query($sql);
 
@@ -151,8 +154,10 @@ class box_funnel_of_prospection extends ModeleBoxes
 						$valsamount[$obj->opp_status] = $obj->opp_amount;
 						$totalnb += $obj->nb;
 						if ($obj->opp_status) $totaloppnb += $obj->nb;
-						$totalamount += $obj->opp_amount;
-						$ponderated_opp_amount += $obj->ponderated_opp_amount;
+						if (!in_array($obj->code, array('WON', 'LOST'))) {
+							$totalamount += $obj->opp_amount;
+							$ponderated_opp_amount += $obj->ponderated_opp_amount;
+						}
 					}
 					$i++;
 				}
@@ -164,7 +169,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 				$listofstatus = array_keys($listofoppstatus);
 				foreach ($listofstatus as $status) {
 					$labelStatus = '';
-					if ($status != 7 && $status != 6) {
+					if ($status != 7) {
 						$code = dol_getIdFromCode($this->db, $status, 'c_lead_status', 'rowid', 'code');
 						if ($code) $labelStatus = $langs->transnoentitiesnoconv("OppStatus" . $code);
 						if (empty($labelStatus)) $labelStatus = $listofopplabel[$status];

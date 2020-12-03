@@ -544,7 +544,6 @@ CREATE TABLE llx_session(
 
 
 INSERT INTO llx_boxes_def(file,entity) VALUES ('box_funnel_of_prospection.php',1);
-INSERT INTO llx_boxes (box_id, position, box_order, maxline, params) VALUES ((SELECT b.rowid FROM llx_boxes_def as b WHERE file = 'box_funnel_of_prospection.php'), 0, 0, NULL, NULL);
 
 INSERT INTO llx_boxes_def(file, entity) VALUES ('box_customers_outstanding_bill_reached.php', 1);
 
