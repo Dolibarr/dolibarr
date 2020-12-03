@@ -128,7 +128,7 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page <= 0 ) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 if (!$sortorder && !empty($conf->global->INVOICE_DEFAULT_UNPAYED_SORT_ORDER) && $search_status == '1') $sortorder = $conf->global->INVOICE_DEFAULT_UNPAYED_SORT_ORDER;
 if (!$sortorder) $sortorder = 'DESC';
@@ -579,8 +579,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
 	{
-		$page = 0;
-		$offset = 0;
+		$page = ceil($nbtotalofrecords/$limit)-1;
+		$offset = $limit*$page;
 	}
 }
 
