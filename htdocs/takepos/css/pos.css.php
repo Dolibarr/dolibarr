@@ -125,6 +125,10 @@ button.calcbutton2 {
     border-radius: 3px;
 }
 
+button.calcbutton2 .iconwithlabel {
+	padding-bottom: 10px;
+}
+
 button.calcbutton3 {
 	display: inline-block;
 	position: relative;
