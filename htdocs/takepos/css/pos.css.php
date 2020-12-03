@@ -467,7 +467,7 @@ div.description_content {
 .header{
 	margin: 0 auto;
 	width: 100%;
-	height: 50px;
+	height: 52px;
 	background: rgb(60,70,100);
 }
 
