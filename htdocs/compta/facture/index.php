@@ -192,10 +192,10 @@ function getPieChart($socid = 0)
 	{
 		$dolgraph = new DolGraph();
 		$dolgraph->SetData($dataseries);
-		$dolgraph->setShowLegend(1);
+		$dolgraph->setShowLegend(2);
 		$dolgraph->setShowPercent(1);
 		$dolgraph->SetType(['pie']);
-		$dolgraph->setWidth('100%');
+		$dolgraph->setHeight('200');
 		$dolgraph->draw('idgraphthirdparties');
 
 		$result .= '<tr>';
