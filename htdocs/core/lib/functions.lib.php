@@ -4431,7 +4431,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 	if ($picto == 'setup') $picto = 'title_setup.png';
 	if (($conf->browser->name == 'ie') && $picto == 'generic') $picto = 'title.gif';
 	if ($limit < 0) $limit = $conf->liste_limit;
-	if ($savlimit != 0 && (($num > $limit) || ($num == -1) || ($limit == 0)))
+	if ($savlimit != 0 && (($num > $limit) || ($num != -1) || ($limit == 0)))
 	{
 		$nextpage = 1;
 	} else {
