@@ -448,6 +448,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (!$connection)
 	{
 		$morehtml .= 'Failed to open IMAP connection '.$connectstringsource;
+		$morehtml .= '<br>'.imap_last_error();
 	}
 	else
 	{
