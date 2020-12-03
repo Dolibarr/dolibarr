@@ -307,13 +307,6 @@ print '<td colspan="2">';
 print ajax_constantonoff("TAKEPOS_NUMPAD_USE_PAYMENT_ICON", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
-// Numpad show labels for icons
-print '<tr class="oddeven"><td>';
-print $langs->trans('TakeposNumpadForcePaymentLabels');
-print '<td colspan="2">';
-print ajax_constantonoff("TAKEPOS_NUMPAD_FORCE_PAYMENT_ICONS_LABELS", array(), $conf->entity, 0, 0, 1, 0);
-print "</td></tr>\n";
-
 // Direct Payment
 print '<tr class="oddeven"><td>';
 print $langs->trans('DirectPaymentButton');
