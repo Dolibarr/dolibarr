@@ -16,6 +16,7 @@ ThisService=This service
 ThisProduct=This product
 DefaultForService=Default for service
 DefaultForProduct=Default for product
+DefaultForThirdparty=Default for thirdparty
 CantSuggest=Can't suggest
 AccountancySetupDoneFromAccountancyMenu=Most setup of the accountancy is done from the menu %s
 ConfigAccountingExpert=Configuration of the module accounting (double entry)
