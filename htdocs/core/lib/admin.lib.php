@@ -241,7 +241,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 			//print $buf.'<br>';exit;
 
 			if (preg_match('/;/', $buffer)) {	// If string contains ';', it's end of a request string, we save it in arraysql.
-			// Found new request
+				// Found new request
 				if ($buffer) {
 					$arraysql[$i] = $buffer;
 				}

@@ -720,7 +720,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 		// Activate/Disable and Setup (2 columns)
 		if (!empty($conf->global->$const_name)) {	// If module is already activated
-		// Set $codeenabledisable
+			// Set $codeenabledisable
 			$disableSetup = 0;
 			if (!empty($arrayofwarnings[$modName])) {
 				$codeenabledisable .= '<!-- This module has a warning to show when we activate it (note: your country is '.$mysoc->country_code.') -->'."\n";
