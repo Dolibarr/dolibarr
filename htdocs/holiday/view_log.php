@@ -34,7 +34,7 @@ if (empty($user->rights->holiday->define_holiday) || $user->socid > 0) {
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 
 $action             = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction         = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
@@ -72,7 +72,7 @@ if (!$sortorder) $sortorder = "DESC";
 if (!$user->rights->holiday->readall) accessforbidden();
 
 // Load translation files required by the page
-$langs->load('users');
+$langs->loadLangs(array('users', 'other', 'holiday'));
 
 // Initialize technical objects
 $object = new Holiday($db);
@@ -82,6 +82,16 @@ $hookmanager->initHooks(array('leavemovementlist')); // Note that conf->hooks_mo
 
 $arrayfields = array();
 $arrayofmassactions = array();
+
+if (empty($conf->holiday->enabled))
+{
+	llxHeader('', $langs->trans('CPTitreMenu'));
+	print '<div class="tabBar">';
+	print '<span style="color: #FF0000;">'.$langs->trans('NotActiveModCP').'</span>';
+	print '</div>';
+	llxFooter();
+	exit();
+}
 
 
 /*
@@ -263,9 +273,9 @@ if (!empty($arrayfields['cpl.rowid']['checked'])) {
 
 // Filter: Date
 if (!empty($arrayfields['cpl.date_action']['checked'])) {
-	print '<td class="liste_titre right">';
+	print '<td class="liste_titre center">';
 	print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month" value="'.dol_escape_htmltag($search_month).'">';
-	print $formother->selectyear($search_year, 'search_year', 1, 10, 5, 0, 0, '', 'maxwidth200', true);
+	print $formother->selectyear($search_year, 'search_year', 1, 10, 5, 0, 0, '', 'valignmiddle width75', true);
 	print '</td>';
 }
 

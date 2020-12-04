@@ -103,6 +103,7 @@ class Adherent extends CommonObject
 	 * @var int Thirdparty ID
 	 */
 	public $fk_soc;
+	public $socid;
 
 	/**
 	 * @var string Address
@@ -1262,14 +1263,15 @@ class Adherent extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as dep ON d.state_id = dep.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON d.rowid = u.fk_member";
 		$sql .= " WHERE d.fk_adherent_type = t.rowid";
-		if ($rowid)
-			$sql .= " AND d.rowid=".$rowid;
-		elseif ($ref || $fk_soc) {
+		if ($rowid) {
+			$sql .= " AND d.rowid=".((int) $rowid);
+		} elseif ($ref || $fk_soc) {
 			$sql .= " AND d.entity IN (".getEntity('adherent').")";
-			if ($ref)
+			if ($ref) {
 				$sql .= " AND d.rowid='".$this->db->escape($ref)."'";
-			elseif ($fk_soc > 0)
-				$sql .= " AND d.fk_soc=".$fk_soc;
+			} elseif ($fk_soc > 0) {
+				$sql .= " AND d.fk_soc=".((int) $fk_soc);
+			}
 		} elseif ($ref_ext) {
 			$sql .= " AND d.ref_ext='".$this->db->escape($ref_ext)."'";
 		}
