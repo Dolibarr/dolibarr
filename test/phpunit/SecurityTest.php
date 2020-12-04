@@ -34,6 +34,7 @@ if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
 if (! defined("NOLOGIN"))        define("NOLOGIN", '1');       // If this page is public (can be called outside logged session)
+if (! defined("NOSESSION"))      define("NOSESSION", '1');
 
 require_once dirname(__FILE__).'/../../htdocs/main.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
