@@ -128,6 +128,7 @@ class Opensurveysondage extends CommonObject
      */
     public function create(User $user, $notrigger = 0)
     {
+        global $conf;
         $error = 0;
 
         // Clean parameters
@@ -153,7 +154,8 @@ class Opensurveysondage extends CommonObject
         $sql .= "mailsonde,";
         $sql .= "allow_comments,";
         $sql .= "allow_spy,";
-        $sql .= "sujet";
+        $sql .= "sujet,";
+        $sql .= "entity";
         $sql .= ") VALUES (";
         $sql .= "'".$this->db->escape($this->id_sondage)."',";
         $sql .= " ".(empty($this->commentaires) ? 'NULL' : "'".$this->db->escape($this->commentaires)."'").",";
@@ -165,7 +167,8 @@ class Opensurveysondage extends CommonObject
         $sql .= " ".$this->db->escape($this->mailsonde).",";
         $sql .= " ".$this->db->escape($this->allow_comments).",";
         $sql .= " ".$this->db->escape($this->allow_spy).",";
-        $sql .= " '".$this->db->escape($this->sujet)."'";
+        $sql .= " '".$this->db->escape($this->sujet)."',";
+        $sql .= " ".$conf->entity;
         $sql .= ")";
 
         $this->db->begin();
