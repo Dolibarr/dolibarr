@@ -854,7 +854,7 @@ class Product extends CommonObject
             $this->surface = $this->length * $this->width;
             $this->surface_units = measuring_units_squared($this->length_units);
         }
-        if (empty($this->volume) && !empty($this->surface_units) && !empty($this->height) && $this->length_units == $this->height_units) {
+        if (empty($this->volume) && !empty($this->surface) && !empty($this->height) && $this->length_units == $this->height_units) {
             $this->volume = $this->surface * $this->height;
             $this->volume_units = measuring_units_cubed($this->height_units);
         }
