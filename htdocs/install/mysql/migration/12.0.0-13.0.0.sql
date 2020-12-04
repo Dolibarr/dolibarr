@@ -546,3 +546,5 @@ CREATE TABLE llx_session(
 )ENGINE=innodb;
 
 INSERT INTO llx_boxes_def(file, entity) VALUES ('box_customers_outstanding_bill_reached.php', 1);
+
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging varchar(64); 

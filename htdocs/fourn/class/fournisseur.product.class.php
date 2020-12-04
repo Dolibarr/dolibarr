@@ -522,10 +522,11 @@ class ProductFournisseur extends Product
 		$sql .= " pfp.fk_soc, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_product, pfp.charges, pfp.fk_supplier_price_expression, pfp.delivery_time_days,";
 		$sql .= " pfp.supplier_reputation, pfp.fk_user, pfp.datec,";
 		$sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code,";
-		$sql .= "  pfp.barcode, pfp.fk_barcode_type";
-		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) $sql .= ", pfp.packaging";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
+		$sql .= " pfp.barcode, pfp.fk_barcode_type, pfp.packaging,";
+		$sql .= " p.ref as product_ref";
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp, ".MAIN_DB_PREFIX."product as p";
 		$sql .= " WHERE pfp.rowid = ".(int) $rowid;
+		$sql .= " AND pfp.fk_product = p.rowid";
 
 		dol_syslog(get_class($this)."::fetch_product_fournisseur_price", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -536,8 +537,11 @@ class ProductFournisseur extends Product
 			{
 				$this->product_fourn_price_id = $rowid;
 				$this->id = $obj->fk_product;
+
 				$this->fk_product				= $obj->fk_product;
-				$this->product_id				= $obj->fk_product; // deprecated
+				$this->product_id				= $obj->fk_product;
+				$this->product_ref				= $obj->product_ref;
+
 				$this->fourn_id					= $obj->fk_soc;
 				$this->fourn_ref				= $obj->ref_fourn; // deprecated
 				$this->ref_supplier             = $obj->ref_fourn;
@@ -596,7 +600,7 @@ class ProductFournisseur extends Product
 				return 0;
 			}
 		} else {
-			$this->error = $this->db->error();
+			$this->error = $this->db->lasterror();
 			return -1;
 		}
 	}
