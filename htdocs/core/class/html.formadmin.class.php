@@ -98,7 +98,7 @@ class FormAdmin
 			if ($showcode == 1) $valuetoshow = $key.' - '.$value;
 			if ($showcode == 2) {
 				if ($mainlangonly) $valuetoshow = $value.' ('.preg_replace('/[_-].*$/', '', $key).')';
-				else $valuetoshow = $value.' ('.$key.')';
+				else $valuetoshow = $value.' <span class="opacitymedium">('.$key.')</span>';
 			}
 
 			$keytouse = $key;
@@ -111,11 +111,11 @@ class FormAdmin
 				continue;
 			}
 
-			if ($selected == $keytouse)
-			{
-				$out .= '<option value="'.$keytouse.'" selected>'.$valuetoshow.'</option>';
+			$valuetoshow .= ' '.picto_from_langcode($key, 'class="saturatemedium"');
+			if ($selected == $keytouse) {
+				$out .= '<option value="'.$keytouse.'" selected data-html="'.dol_escape_htmltag($valuetoshow).'">'.$valuetoshow.'</option>';
 			} else {
-				$out .= '<option value="'.$keytouse.'">'.$valuetoshow.'</option>';
+				$out .= '<option value="'.$keytouse.'" data-html="'.dol_escape_htmltag($valuetoshow).'">'.$valuetoshow.'</option>';
 			}
 		}
 		$out .= '</select>';

@@ -286,8 +286,6 @@ class CommandeFournisseur extends CommonOrder
 	public function __construct($db)
 	{
 		$this->db = $db;
-
-		$this->products = array();
 	}
 
 
@@ -365,7 +363,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->date_approve			= $this->db->jdate($obj->date_approve);
 			$this->date_approve2		= $this->db->jdate($obj->date_approve2);
 			$this->date_commande		= $this->db->jdate($obj->date_commande); // date we make the order to supplier
-			$this->date_livraison = $this->db->jdate($obj->delivery_date);	// deprecated
+			$this->date_livraison = $this->db->jdate($obj->delivery_date); // deprecated
 			$this->delivery_date = $this->db->jdate($obj->delivery_date);
 			$this->remise_percent = $obj->remise_percent;
 			$this->methode_commande_id = $obj->fk_input_method;
@@ -1723,8 +1721,6 @@ class CommandeFournisseur extends CommonOrder
 			$localtax1_type = $localtaxes_type[0];
 			$localtax2_type = $localtaxes_type[2];
 
-			$subprice = price2num($pu, 'MU');
-
 			$rangmax = $this->line_max();
 			$rang = $rangmax + 1;
 
@@ -2578,6 +2574,7 @@ class CommandeFournisseur extends CommonOrder
 			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $mysoc, $this->thirdparty);
 
 			// Clean vat code
+			$reg = array();
 			$vat_src_code = '';
 			if (preg_match('/\((.*)\)/', $txtva, $reg))
 			{
@@ -2604,12 +2601,9 @@ class CommandeFournisseur extends CommonOrder
 			$localtax1_type = $localtaxes_type[0];
 			$localtax2_type = $localtaxes_type[2];
 
-			$subprice = price2num($pu_ht, 'MU');
-
 			//Fetch current line from the database and then clone the object and set it in $oldline property
 			$this->line = new CommandeFournisseurLigne($this->db);
 			$this->line->fetch($rowid);
-			$this->line->fetch_optionals();
 
 			$oldline = clone $this->line;
 			$this->line->oldline = $oldline;

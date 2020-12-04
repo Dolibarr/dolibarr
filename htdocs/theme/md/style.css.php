@@ -499,6 +499,10 @@ input.pageplusone {
     padding-top: 4px;
 }
 
+.saturatemedium {
+	filter: saturate(0.8);
+}
+
 .optionblue {
 	color: rgb(<?php echo $colortextlink; ?>);
 }
@@ -2993,6 +2997,10 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 
 .unsetcolor {
 	color: unset !important;
+}
+
+.smallpaddingimp {
+    padding: 4px !important;
 }
 .nopaddingleft {
 	padding-<?php print $left; ?>: 0px;

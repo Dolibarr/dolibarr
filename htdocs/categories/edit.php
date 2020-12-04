@@ -145,7 +145,7 @@ print '</tr>';
 // Description
 print '<tr>';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td >';
+print '<td>';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 $doleditor = new DolEditor('description', $object->description, '', 200, 'dolibarr_notes', '', false, true, $conf->fckeditor->enabled, ROWS_6, '90%');
 $doleditor->Create();
@@ -154,7 +154,7 @@ print '</td></tr>';
 // Color
 print '<tr>';
 print '<td>'.$langs->trans("Color").'</td>';
-print '<td >';
+print '<td>';
 print $formother->selectColor($object->color, 'color');
 print '</td></tr>';
 

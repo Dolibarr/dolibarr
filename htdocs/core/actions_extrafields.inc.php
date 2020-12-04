@@ -40,7 +40,7 @@ if ($type == 'select')   $extrasize = '';
 // Add attribute
 if ($action == 'add')
 {
-	if ($_POST["button"] != $langs->trans("Cancel"))
+	if (GETPOST("button") != $langs->trans("Cancel"))
 	{
 		// Check values
 		if (!$type)
@@ -132,11 +132,28 @@ if ($action == 'add')
 			}
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
+			if (strlen(GETPOST('attrname', 'aZ09')) < 3) {
+				$error++;
+				$langs->load("errors");
+				$mesg[] = $langs->trans("ErrorValueLength", $langs->transnoentitiesnoconv("AttributeCode"), 3);
+				$action = 'create';
+			}
+		}
+
+		// Check reserved keyword with more than 3 characters
+		if (!$error) {
+			if (in_array(GETPOST('attrname', 'aZ09'), array('and', 'keyword', 'table', 'index', 'integer', 'float', 'double', 'position'))) {
+				$error++;
+				$langs->load("errors");
+				$mesg[] = $langs->trans("ErrorReservedKeyword", GETPOST('attrname', 'aZ09'));
+				$action = 'create';
+			}
+		}
+
+		if (!$error) {
 			// attrname must be alphabetical and lower case only
-			if (isset($_POST["attrname"]) && preg_match("/^[a-z0-9-_]+$/", $_POST['attrname']) && !is_numeric($_POST["attrname"]))
-			{
+			if (GETPOSTISSET("attrname") && preg_match("/^[a-z0-9-_]+$/", GETPOST('attrname', 'aZ09')) && !is_numeric(GETPOST('attrname', 'aZ09'))) {
 				// Construct array for parameter (value of select list)
 				$default_value = GETPOST('default_value', 'alpha');
 				$parameters = $param;
@@ -148,7 +165,7 @@ if ($action == 'add')
 						$params['options'] = array($parameters=>null);
 					}
 				} else {
-					//Esle it's separated key/value and coma list
+					// Else it's separated key/value and coma list
 					foreach ($parameters_array as $param_ligne)
 					{
 						list($key, $value) = explode(',', $param_ligne);
@@ -161,7 +178,7 @@ if ($action == 'add')
 				if ($type == 'separate') $visibility = 3;
 
 				$result = $extrafields->addExtraField(
-					GETPOST('attrname', 'alpha'),
+					GETPOST('attrname', 'aZ09'),
 					GETPOST('label', 'alpha'),
 					$type,
 					GETPOST('pos', 'int'),
@@ -208,7 +225,7 @@ if ($action == 'add')
 // Rename field
 if ($action == 'update')
 {
-	if ($_POST["button"] != $langs->trans("Cancel"))
+	if (GETPOST("button") != $langs->trans("Cancel"))
 	{
 		// Check values
 		if (!$type)
@@ -293,9 +310,28 @@ if ($action == 'update')
 			}
 		}
 
+		if (!$error) {
+			if (strlen(GETPOST('attrname', 'aZ09')) < 3 && empty($conf->global->MAIN_DISABLE_EXTRAFIELDS_CHECK_FOR_UPDATE)) {
+				$error++;
+				$langs->load("errors");
+				$mesg[] = $langs->trans("ErrorValueLength", $langs->transnoentitiesnoconv("AttributeCode"), 3);
+				$action = 'edit';
+			}
+		}
+
+		// Check reserved keyword with more than 3 characters
+		if (!$error) {
+			if (in_array(GETPOST('attrname', 'aZ09'), array('and', 'keyword', 'table', 'index', 'integer', 'float', 'double', 'position')) && empty($conf->global->MAIN_DISABLE_EXTRAFIELDS_CHECK_FOR_UPDATE)) {
+				$error++;
+				$langs->load("errors");
+				$mesg[] = $langs->trans("ErrorReservedKeyword", GETPOST('attrname', 'aZ09'));
+				$action = 'edit';
+			}
+		}
+
 		if (!$error)
 		{
-			if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/", $_POST['attrname']))
+			if (GETPOSTISSET("attrname") && preg_match("/^\w[a-zA-Z0-9-_]*$/", GETPOST('attrname', 'aZ09')) && !is_numeric(GETPOST('attrname', 'aZ09')))
 			{
 				$pos = GETPOST('pos', 'int');
 				// Construct array for parameter (value of select list)
@@ -321,7 +357,7 @@ if ($action == 'update')
 				if ($type == 'separate') $visibility = 3;
 
 				$result = $extrafields->update(
-					GETPOST('attrname', 'alpha'),
+					GETPOST('attrname', 'aZ09'),
 					GETPOST('label', 'alpha'),
 					$type,
 					$extrasize,
@@ -338,12 +374,11 @@ if ($action == 'update')
 					GETPOST('computed_value', 'alpha'),
 					(GETPOST('entitycurrentorall', 'alpha') ? 0 : ''),
 					GETPOST('langfile'),
-				    GETPOST('enabled', 'alpha'),
+					GETPOST('enabled', 'alpha'),
 					(GETPOST('totalizable', 'alpha') ? 1 : 0),
 					GETPOST('printable', 'alpha')
 				);
-				if ($result > 0)
-				{
+				if ($result > 0) {
 					setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
 					header("Location: ".$_SERVER["PHP_SELF"]);
 					exit;
@@ -365,13 +400,10 @@ if ($action == 'update')
 }
 
 // Delete attribute
-if ($action == 'delete')
-{
-	if (isset($_GET["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/", $_GET["attrname"]))
-	{
-		$result = $extrafields->delete($_GET["attrname"], $elementtype);
-		if ($result >= 0)
-		{
+if ($action == 'delete') {
+	if (GETPOSTISSET("attrname") && preg_match("/^\w[a-zA-Z0-9-_]*$/", GETPOST("attrname", 'aZ09'))) {
+		$result = $extrafields->delete(GETPOST("attrname", 'aZ09'), $elementtype);
+		if ($result >= 0) {
 			header("Location: ".$_SERVER["PHP_SELF"]);
 			exit;
 		} else $mesg = $extrafields->error;

@@ -122,8 +122,8 @@ $tmparray = explode('-', $tmp);
 $begin_d = 1;
 $end_d = 53;
 
-if ($status == '' && !isset($_GET['status']) && !isset($_POST['status'])) $status = (empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
-if (empty($action) && !isset($_GET['action']) && !isset($_POST['action'])) $action = (empty($conf->global->AGENDA_DEFAULT_VIEW) ? 'show_month' : $conf->global->AGENDA_DEFAULT_VIEW);
+if ($status == '' && !GETPOSTISSET('status')) $status = (empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
+if (empty($action) && !GETPOSTISSET('action')) $action = (empty($conf->global->AGENDA_DEFAULT_VIEW) ? 'show_month' : $conf->global->AGENDA_DEFAULT_VIEW);
 
 if (GETPOST('viewcal', 'alpha') && $action != 'show_day' && $action != 'show_week' && $action != 'show_peruser') {
 	$action = 'show_month'; $day = '';
@@ -227,13 +227,13 @@ if ($status == 'done') $title = $langs->trans("DoneActions");
 if ($status == 'todo') $title = $langs->trans("ToDoActions");
 
 $param = '';
-if ($actioncode || isset($_GET['search_actioncode']) || isset($_POST['search_actioncode'])) {
+if ($actioncode || GETPOSTISSET('search_actioncode')) {
 	if (is_array($actioncode)) {
 		foreach ($actioncode as $str_action) $param .= "&search_actioncode[]=".urlencode($str_action);
 	} else $param .= "&search_actioncode=".urlencode($actioncode);
 }
 if ($resourceid > 0) $param .= "&search_resourceid=".urlencode($resourceid);
-if ($status || isset($_GET['status']) || isset($_POST['status'])) $param .= "&search_status=".urlencode($status);
+if ($status || GETPOSTISSET('status')) $param .= "&search_status=".urlencode($status);
 if ($filter)        $param .= "&search_filter=".urlencode($filter);
 if ($filtert)       $param .= "&search_filtert=".urlencode($filtert);
 if ($usergroup)     $param .= "&search_usergroup=".urlencode($usergroup);

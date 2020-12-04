@@ -524,7 +524,7 @@ class ActionComm extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$this->ref =$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm", "id");
+			$this->ref = $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm", "id");
 
 			// Now insert assigned users
 			if (!$error)
@@ -2186,7 +2186,7 @@ class ActionComm extends CommonObject
 			$this->db->commit();
 			return 0;
 		} else {
-			$this->db->commit();	// We commit also on error, to have the error message recorded.
+			$this->db->commit(); // We commit also on error, to have the error message recorded.
 			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? join(', ', $errorsMsg) : $error;
 			return $error;
 		}

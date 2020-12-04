@@ -179,3 +179,4 @@ BankColorizeMovement=移動に色を付ける
 BankColorizeMovementDesc=この機能が有効になっている場合は、借方または貸方の移動に特定の背景色を選択できます
 BankColorizeMovementName1=借方移動の背景色
 BankColorizeMovementName2=クレジット移動の背景色
+IfYouDontReconcileDisableProperty=If you don't make the bank reconciliations on some bank accounts, disable the property "%s" on them to remove this warning.

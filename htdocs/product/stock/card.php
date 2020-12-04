@@ -102,7 +102,7 @@ if (empty($reshook))
 		$object->address = (string) GETPOST("address", "alpha");
 		$object->zip = (string) GETPOST("zipcode", "alpha");
 		$object->town = (string) GETPOST("town", "alpha");
-		$object->country_id  = GETPOST("country_id");
+		$object->country_id = GETPOST("country_id");
 		$object->phone = (string) GETPOST("phone", "alpha");
 		$object->fax = (string) GETPOST("fax", "alpha");
 
@@ -319,7 +319,7 @@ if ($action == 'create')
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 1);
-		print $form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, '', 0, '100%');
+		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print "</td></tr>";
 	}
 	print '</table>';
@@ -767,7 +767,7 @@ if ($action == 'create')
 				foreach ($cats as $cat) {
 					$arrayselected[] = $cat->id;
 				}
-				print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+				print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 				print "</td></tr>";
 			}
 

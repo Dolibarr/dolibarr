@@ -102,6 +102,8 @@ class Delivery extends CommonObject
 	 */
 	public $model_pdf;
 
+	public $lines = array();
+
 
 	/**
 	 * Constructor
@@ -111,8 +113,6 @@ class Delivery extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
-		$this->lines = array();
-		$this->products = array();
 
 		// List of short language codes for status
 		$this->statuts[-1] = 'StatusDeliveryCanceled';

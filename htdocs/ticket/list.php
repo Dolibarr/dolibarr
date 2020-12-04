@@ -112,7 +112,7 @@ foreach ($object->fields as $key => $val)
 	if (!empty($val['visible'])) $arrayfields['t.'.$key] = array('label'=>$val['label'], 'checked'=>(($val['visible'] < 0) ? 0 : 1), 'enabled'=>$val['enabled'], 'position'=>$val['position']);
 }
 // Extra fields
-include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_array_fields.tpl.php';
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -316,7 +316,7 @@ if ($socid > 0)
 
 foreach ($search as $key => $val)
 {
-    if ($key == 'fk_statut' && !empty($search['fk_statut']))
+	if ($key == 'fk_statut' && !empty($search['fk_statut']))
 	{
 		$newarrayofstatus = array();
 		foreach ($search['fk_statut'] as $key2 => $val2) {
@@ -636,9 +636,9 @@ foreach ($object->fields as $key => $val)
 			$formTicket->selectSeveritiesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css'] ? $val['css'] : 'maxwidth150'));
 			print '</td>';
 		} elseif ($key == 'fk_user_assign' || $key == 'fk_user_create') {
-		    print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-		    print $form->select_dolusers($search[$key], 'search_'.$key, 1, null, 0, '', '', '0', 0, 0, '', 0, '', ($val['css'] ? $val['css'] : 'maxwidth150'));
-		    print '</td>';
+			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
+			print $form->select_dolusers($search[$key], 'search_'.$key, 1, null, 0, '', '', '0', 0, 0, '', 0, '', ($val['css'] ? $val['css'] : 'maxwidth150'));
+			print '</td>';
 		} elseif ($key == 'fk_statut') {
 			$arrayofstatus = array();
 			$arrayofstatus['openall'] = '-- '.$langs->trans('OpenAll').' --';

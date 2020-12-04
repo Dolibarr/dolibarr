@@ -805,19 +805,16 @@ class Contact extends CommonObject
 		}
 
 		// Mis a jour alerte birthday
-		if ($this->birthday_alert)
-		{
+		if (!empty($this->birthday_alert)) {
 			//check existing
 			$sql_check = "SELECT rowid FROM ".MAIN_DB_PREFIX."user_alert WHERE type=1 AND fk_contact=".$this->db->escape($id)." AND fk_user=".$user->id;
 			$result_check = $this->db->query($sql_check);
-			if (!$result_check || ($this->db->num_rows($result_check) < 1))
-			{
+			if (!$result_check || ($this->db->num_rows($result_check) < 1)) {
 				//insert
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_alert(type,fk_contact,fk_user) ";
 				$sql .= "VALUES (1,".$this->db->escape($id).",".$user->id.")";
 				$result = $this->db->query($sql);
-				if (!$result)
-				{
+				if (!$result) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
@@ -828,23 +825,20 @@ class Contact extends CommonObject
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_alert ";
 			$sql .= "WHERE type=1 AND fk_contact=".$this->db->escape($id)." AND fk_user=".$user->id;
 			$result = $this->db->query($sql);
-			if (!$result)
-			{
+			if (!$result) {
 				$error++;
 				$this->error = $this->db->lasterror();
 			}
 		}
 
-		if (!$error && !$notrigger)
-		{
+		if (!$error && !$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('CONTACT_MODIFY', $user);
 			if ($result < 0) { $error++; }
 			// End call triggers
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$this->db->commit();
 			return 1;
 		} else {

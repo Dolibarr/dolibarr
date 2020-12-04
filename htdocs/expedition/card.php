@@ -418,10 +418,8 @@ if (empty($reshook))
 
 		$result = $object->valid($user);
 
-		if ($result < 0)
-		{
-			$langs->load("errors");
-			setEventMessages($langs->trans($object->error), $object->errors, 'errors');
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
 			// Define output language
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))

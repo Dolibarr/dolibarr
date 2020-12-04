@@ -893,7 +893,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
              */
 
 			// We set country_id, and country_code label of the chosen country
-			if (isset($_POST["country_id"]) || $object->country_id)
+			if (GETPOSTISSET("country_id") || $object->country_id)
 			{
 				$tmparray = getCountry($object->country_id, 'all');
 				$object->country_code = $tmparray['code'];

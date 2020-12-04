@@ -148,15 +148,15 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testMyObjectCreate()
 	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new MyObject($this->savdb);
+		$localobject = new MyObject($this->savdb);
 		$localobject->initAsSpecimen();
-		$result=$localobject->create($user);
+		$result = $localobject->create($user);
 
 		print __METHOD__." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -175,15 +175,15 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testMyObjectDelete($id)
 	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new MyObject($this->savdb);
-		$result=$localobject->fetch($id);
-		$result=$localobject->delete($user);
+		$localobject = new MyObject($this->savdb);
+		$result = $localobject->fetch($id);
+		$result = $localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);

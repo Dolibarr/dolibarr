@@ -97,6 +97,16 @@ if (!empty($canvas))
 // Security check
 $result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', 0);
 
+/*
+if ($object->id > 0) {
+	if ($object->client == 0 && $object->fournisseur > 0) {
+		if (!empty($user->rights->fournisseur->lire)) {
+			accessforbidden();
+		}
+	}
+}
+*/
+
 $permissiontoread = $user->rights->societe->lire;
 $permissiontoadd = $user->rights->societe->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->rights->societe->delete || ($permissiontoadd && isset($object->status) && $object->status == 0);

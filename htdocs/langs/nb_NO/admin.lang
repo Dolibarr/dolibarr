@@ -1314,6 +1314,7 @@ PHPModuleLoaded=PHP-komponent %s lastet
 PreloadOPCode=Forhåndslastet OPCode brukes
 AddRefInList=Vis kunde/leverandør-ref i liste (velg liste eller kombinasjonsboks), og det meste av hyperkobling. Tredjepart vil vises med navnet "CC12345 - SC45678 - Stort selskap", i stedet for "Stort selskap".
 AddAdressInList=Vis liste over kunde-/leverandøradresseinfo (velg liste eller kombinasjonsboks) <br> Tredjeparter vil vises med et navnformat av "The Big Company Corp." - 21 Jump Street 123456 Big Town - USA "i stedet for" The Big Company Corp ".
+AddEmailPhoneTownInContactList=Display Contact email (or phones if not defined) and town info list (select list or combobox)<br>Contacts will appear with a name format of "Dupond Durand - dupond.durand@email.com - Paris" or "Dupond Durand - 06 07 59 65 66 - Paris" instead of "Dupond Durand".
 AskForPreferredShippingMethod=Spør etter foretrukket sendingsmetode for tredjeparter
 FieldEdition=Endre felt %s
 FillThisOnlyIfRequired=Eksempel: +2 (brukes kun hvis du opplever problemer med tidssone offset)
@@ -1420,6 +1421,7 @@ AdherentMailRequired=E-post kreves for å lage et nytt medlem
 MemberSendInformationByMailByDefault=Valg for å sende e-postbekreftelse til medlemmer (validering eller nytt abonnement) er krysset av som standard
 VisitorCanChooseItsPaymentMode=Besøkende kan velge blant tilgjengelige betalingsmåter
 MEMBER_REMINDER_EMAIL=Aktiver automatisk påminnelse <b> via e-post </b> av utløpte abonnementer. Merk: Modul <strong> %s </strong> må være aktivert og riktig oppsatt for å sende påminnelser.
+MembersDocModules=Document templates for documents generated from member record
 ##### LDAP setup #####
 LDAPSetup=LDAP Setup
 LDAPGlobalParameters=Globale parametre
@@ -1670,7 +1672,7 @@ AdvancedEditor=Avansert editor
 ActivateFCKeditor=Aktiver avansert editor for:
 FCKeditorForCompany=WYSIWIG opprettelse/endring av elementbeskrivelse og notater (untatt varer og tjenester)
 FCKeditorForProduct=WYSIWIG opprettelse/endring av vare-/tjenestebeskrivelse og notater
-FCKeditorForProductDetails=WYSIWIG opprettelse/endring av varedetaljer for alle enheter (tilbud, ordre, fakturaer, osv ...). <font class="warning"> Advarsel! Bruk av dette alternativet er i dette tilfellet ikke anbefalt, da det kan skape problemer med spesialkarakterer og sideformatering ved opprettelse av PDF-filer.</font>
+FCKeditorForProductDetails=WYSIWIG creation/edition of products details lines for all entities (proposals, orders, invoices, etc...). <span class="warning">Warning: Using this option for this case is seriously not recommended as it can create problems with special characters and page formatting when building PDF files.</span>
 FCKeditorForMailing= WYSIWIG opprettelse/endring av masse-e-postutsendelser (Verktøy->E-post)
 FCKeditorForUserSignature=WYSIWIG-opprettelse av signatur
 FCKeditorForMail=WYSIWIG opprettelse/redigering for all post (unntatt Verktøy ->eMailing)
@@ -1736,9 +1738,10 @@ AGENDA_USE_EVENT_TYPE_DEFAULT=Angi denne standardverdien automatisk for type hen
 AGENDA_DEFAULT_FILTER_TYPE=Still inn denne typen hendelse automatisk i søkefilter i agendavisning
 AGENDA_DEFAULT_FILTER_STATUS=Angi denne status automatisk for hendelser i søkefilter i agendavisning
 AGENDA_DEFAULT_VIEW=Which view do you want to open by default when selecting menu Agenda
-AGENDA_REMINDER_EMAIL=Aktiver hendelsespåminnelse <b> via e-post </b> (påminnelsesalternativ/forsinkelse kan defineres for hver hendelse). Merk: Modul <strong> %s</strong> må være aktivert og riktig satt opp for å få påminnelse sendt med riktig frekvens.
-AGENDA_REMINDER_BROWSER=Aktiver hendelsespåminnelse <b> i brukerens nettleser </b> (når hendelsesdatoen er nådd, kan hver bruker nekte dette fra spørsmålet om nettleserbekreftelse)
+AGENDA_REMINDER_BROWSER=Enable event reminder <b>on user's browser</b> (When remind date is reached, a popup is shown by the browser. Each user can disable such notifications from its browser notification setup).
 AGENDA_REMINDER_BROWSER_SOUND=Aktiver lydvarsler
+AGENDA_REMINDER_EMAIL=Enable event reminder <b>by emails</b> (remind option/delay can be defined on each event).
+AGENDA_REMINDER_EMAIL_NOTE=Note: The frequency of the task %s must be enough to be sure that the remind are sent at the correct moment.
 AGENDA_SHOW_LINKED_OBJECT=Vis koblet objekt i agendavisning
 ##### Clicktodial #####
 ClickToDialSetup='Click To Dial' modul

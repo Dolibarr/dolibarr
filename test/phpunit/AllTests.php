@@ -77,8 +77,8 @@ class AllTests
 
         $suite = new PHPUnit\Framework\TestSuite('PHPUnit Framework');
 
-        require_once dirname(__FILE__).'/CoreTest.php';
-        $suite->addTestSuite('CoreTest');
+        //require_once dirname(__FILE__).'/CoreTest.php';
+        //$suite->addTestSuite('CoreTest');
         require_once dirname(__FILE__).'/AdminLibTest.php';
         $suite->addTestSuite('AdminLibTest');
         require_once dirname(__FILE__).'/CompanyLibTest.php';

@@ -682,7 +682,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	{
 		// Discard check of mandatory fields for country for some tables
 		if ($value == 'country_id' && in_array($tablib[$id], array('DictionaryPublicHolidays', 'DictionaryVAT', 'DictionaryRegion', 'DictionaryCompanyType', 'DictionaryHolidayTypes', 'DictionaryRevenueStamp', 'DictionaryAccountancysystem', 'DictionaryAccountancyCategory'))) continue; // For some pages, country is not mandatory
-		if ($value == 'country' && in_array($tablib[$id], array('DictionaryPublicHolidays', 'DictionaryCanton', 'DictionaryCompanyType', 'DictionaryRevenueStamp'))) continue; // For some pages, country is not mandatory
+		if ($value == 'country' && in_array($tablib[$id], array('DictionaryPublicHolidays', 'DictionaryCanton', 'DictionaryCompanyType', 'DictionaryHolidayTypes', 'DictionaryRevenueStamp'))) continue; // For some pages, country is not mandatory
 		// Discard check of mandatory fiedls for other fields
 		if ($value == 'localtax1' && empty($_POST['localtax1_type'])) continue;
 		if ($value == 'localtax2' && empty($_POST['localtax2_type'])) continue;
@@ -690,7 +690,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 		if ($value == 'formula' && empty($_POST['formula'])) continue;
 		if ($value == 'dayrule' && empty($_POST['dayrule'])) continue;
 		if ($value == 'sortorder') continue; // For a column name 'sortorder', we use the field name 'position'
-		if ((!isset($_POST[$value]) || $_POST[$value] == '')
+		if ((!GETPOSTISSET($value) || GETPOST($value) == '')
 			&& (!in_array($listfield[$f], array('decalage', 'module', 'accountancy_code', 'accountancy_code_sell', 'accountancy_code_buy', 'tracking', 'picto'))  // Fields that are not mandatory
 			&& (!($id == 10 && $listfield[$f] == 'code')) // Code is mandatory fir table 10
 			)
@@ -719,7 +719,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 		}
 	}
 	// Other checks
-	if (GETPOST('actionadd') && $tabname[$id] == MAIN_DB_PREFIX."c_actioncomm" && isset($_POST["type"]) && in_array($_POST["type"], array('system', 'systemauto'))) {
+	if (GETPOST('actionadd') && $tabname[$id] == MAIN_DB_PREFIX."c_actioncomm" && GETPOSTISSET("type") && in_array(GETPOST("type"), array('system', 'systemauto'))) {
 		$ok = 0;
 		setEventMessages($langs->transnoentities('ErrorReservedTypeSystemSystemAuto'), null, 'errors');
 	}
@@ -757,7 +757,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	if ($_POST["accountancy_code"] <= 0) $_POST["accountancy_code"] = ''; // If empty, we force to null
 	if ($_POST["accountancy_code_sell"] <= 0) $_POST["accountancy_code_sell"] = ''; // If empty, we force to null
 	if ($_POST["accountancy_code_buy"] <= 0) $_POST["accountancy_code_buy"] = ''; // If empty, we force to null
-	if ($id == 10 && isset($_POST["code"]))  // Spaces are not allowed into code
+	if ($id == 10 && GETPOSTISSET("code"))  // Spaces are not allowed into code
 	{
 		$_POST["code"] = preg_replace('/\s/', '', $_POST["code"]);
 	}

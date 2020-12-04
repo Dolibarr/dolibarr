@@ -164,12 +164,12 @@ class BonPrelevement extends CommonObject
 					$result = 0;
 				} else {
 					$result = -1;
-					$this->errors[] = get_class($this)."::AddFacture " . $this->db->lasterror;
+					$this->errors[] = get_class($this)."::AddFacture ".$this->db->lasterror;
 					dol_syslog(get_class($this)."::AddFacture Error $result");
 				}
 			} else {
 				$result = -2;
-				$this->errors[]=get_class($this)."::AddFacture linedid Empty";
+				$this->errors[] = get_class($this)."::AddFacture linedid Empty";
 				dol_syslog(get_class($this)."::AddFacture Error $result");
 			}
 		} else {
@@ -247,7 +247,7 @@ class BonPrelevement extends CommonObject
 				$line_id = $this->db->last_insert_id(MAIN_DB_PREFIX."prelevement_lignes");
 				$result = 0;
 			} else {
-				$this->errors[]=get_class($this)."::addline Error -2 " .$this->db->lasterror;
+				$this->errors[] = get_class($this)."::addline Error -2 ".$this->db->lasterror;
 				dol_syslog(get_class($this)."::addline Error -2");
 				$result = -2;
 			}
@@ -1124,7 +1124,7 @@ class BonPrelevement extends CommonObject
 						if (!$resql)
 						{
 							$error++;
-							$this->errors[]=$this->db->lasterror();
+							$this->errors[] = $this->db->lasterror();
 							dol_syslog(__METHOD__."::Update Error=".$this->db->lasterror(), LOG_ERR);
 						}
 					}

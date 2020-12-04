@@ -246,12 +246,13 @@ class Users extends DolibarrApi
 	 *
 	 * @url	GET /info
 	 *
+	 * @param	int		$includepermissions	Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
 	 * @return  array|mixed Data without useless information
 	 *
 	 * @throws RestException 401     Insufficient rights
 	 * @throws RestException 404     User or group not found
 	 */
-	public function getInfo()
+	public function getInfo($includepermissions = 0)
 	{
 		$apiUser = DolibarrApiAccess::$user;
 
@@ -262,6 +263,10 @@ class Users extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		if ($includepermissions) {
+			$this->useraccount->getRights();
 		}
 
 		$usergroup = new UserGroup($this->db);

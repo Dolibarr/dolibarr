@@ -83,7 +83,7 @@ AccountancyAreaDescAnalyze=STAP %s: Maak boekingen aan of wijzigingen toe en maa
 
 AccountancyAreaDescClosePeriod=STAP %s: Sluit periode af zodat er geen wijzigingen meer kunnen worden aangebracht.
 
-TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup has not been completed (accounting code journal not defined for all bank accounts)
+TheJournalCodeIsNotDefinedOnSomeBankAccount=Een verplichte stap in de installatie is niet voltooid (journaal met boekhoudcode niet gedefinieerd voor alle bankrekeningen)
 Selectchartofaccounts=Selecteer actief rekeningschema
 ChangeAndLoad=Wijzigen en inlezen
 Addanaccount=Nieuwe grootboekrekening
@@ -156,8 +156,8 @@ ACCOUNTING_MANAGE_ZERO=Sta toe om een verschillend aantal nullen aan het einde v
 BANK_DISABLE_DIRECT_INPUT=Rechtstreeks boeken van transactie in bankboek uitzetten
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Schakel concept export van het journaal in
 ACCOUNTANCY_COMBO_FOR_AUX=Combo-lijst inschakelen voor dochteronderneming-account (kan traag zijn als u veel externe partijen hebt)
-ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, select period show by default
+ACCOUNTING_DATE_START_BINDING=Definieer een startdatum voor het koppelen en doorboeken naar de boekhouding. Transacties voor deze datum worden niet doorgeboekt naar de boekhouding.
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Selecteer bij boekhoudkundige overdracht standaard periodeweergave
 
 ACCOUNTING_SELL_JOURNAL=Verkoopboek
 ACCOUNTING_PURCHASE_JOURNAL=Inkoopboek
@@ -213,12 +213,12 @@ ByPredefinedAccountGroups=Op voorgedefinieerde groepen
 ByPersonalizedAccountGroups=Op gepersonaliseerde groepen
 ByYear=Per jaar
 NotMatch=Niet ingesteld
-DeleteMvt=Delete some operation lines from accounting
+DeleteMvt=Verwijder enkele boekregels uit de boekhouding
 DelMonth=Maand om te verwijderen
 DelYear=Te verwijderen jaar
 DelJournal=Te verwijderen journaal
-ConfirmDeleteMvt=This will delete all operation lines of the accounting for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
-ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all operation lines related to the same transaction will be deleted)
+ConfirmDeleteMvt=Hiermee worden alle boekingen van de boekhouding voor het jaar / maand en / of voor een specifiek dagboek verwijderd (er is ten minste één criterium vereist). U moet de functie '%s' opnieuw gebruiken om de verwijderde boeking terug te krijgen.
+ConfirmDeleteMvtPartial=Hiermee wordt de boeking uit de boekhouding verwijderd (alle regels die betrekking hebben op dezelfde boeking worden verwijderd)
 FinanceJournal=Kas/Bank journaal
 ExpenseReportsJournal=Overzicht resultaatrekening
 DescFinanceJournal=Financieel journaal inclusief alle soorten betalingen per kas/bankrekening
@@ -339,6 +339,8 @@ Modelcsv_configurable=Configureerbare CSV export
 Modelcsv_FEC=FEC exporteren
 Modelcsv_Sage50_Swiss=Export voor Sage 50 Zwitserland
 Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
+Modelcsv_Gestinumv3=Export for Gestinum (v3)
+Modelcsv_Gestinumv5Export for Gestinum (v5)
 ChartofaccountsId=Rekeningschema Id
 
 ## Tools - Init accounting account on product / service
