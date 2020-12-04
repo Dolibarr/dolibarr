@@ -664,7 +664,7 @@ if (empty($reshook))
 					$fournprice = (is_numeric(GETPOST('idprodfournprice', 'alpha')) ? GETPOST('idprodfournprice', 'alpha') : -1);
 					$buyingprice = 0;
 					$pu_ht_devise = price2num($price_ht_devise, 'MU');
-					
+
 					$result = $object->addline(
 					    $desc,
 					    $pu_ht,
