@@ -96,7 +96,7 @@ while ($tmp != null)
 
 	// Generate the string tp allow a mass update (with a limit of MAXEMAILS per request).
 	$emailsin = '';
-	foreach($groupofemails as $email) {
+	foreach ($groupofemails as $email) {
 		$emailsin .= ($emailsin ? ", " : "")."'".$db->escape($email)."'";
 	}
 
