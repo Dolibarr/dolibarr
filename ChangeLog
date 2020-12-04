@@ -216,6 +216,7 @@ NEW: add a message in error_log after detection of SQL or script injection
 NEW: add __TYPE__ substitution key
 NEW: add validation of MX domain for emails
 NEW: calculate the virtual stock in transverse mode ( not on getEntity('commande'), ... but on getEntity('stock') )
+NEW: Graphics can be horizontal bars.
 
 HOOKs
 NEW: Hook on propal card
