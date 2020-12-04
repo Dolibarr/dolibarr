@@ -118,6 +118,7 @@ class PaiementFourn extends Paiement
 				$this->bank_account   = $obj->fk_account;
 				$this->bank_line      = $obj->fk_bank;
 				$this->montant        = $obj->amount;
+				$this->amount        = $obj->amount;
 				$this->note           = $obj->note;
 				$this->type_code      = $obj->paiement_code;
 				$this->type_libelle   = $obj->paiement_type;
