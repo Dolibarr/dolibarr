@@ -116,24 +116,24 @@ class ImportXlsx extends ModeleImports
 		require_once DOL_DOCUMENT_ROOT . '/includes/Psr/autoloader.php';
 		require_once PHPEXCELNEW_PATH . 'Spreadsheet.php';
 		$this->workbook = new Spreadsheet();
-		
+
 		//if ($this->id == 'excel2007new')
 		{
-			if (!class_exists('ZipArchive'))	// For Excel2007
+		if (!class_exists('ZipArchive'))	// For Excel2007
 			{
-				$langs->load("errors");
-				$this->error = $langs->trans('ErrorPHPNeedModule', 'zip');
-				return -1;
-			}
+			$langs->load("errors");
+			$this->error = $langs->trans('ErrorPHPNeedModule', 'zip');
+			return -1;
+		}
 		}
 		$this->label_lib = 'PhpSpreadSheet';
 		$this->version_lib = '1.8.0';
-		
+
 		$this->datatoimport = $datatoimport;
 		if (preg_match('/^societe_/', $datatoimport)) $this->thirpartyobject = new Societe($this->db);
 	}
-	
-	
+
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Output header of an example file for this format
