@@ -168,7 +168,7 @@ class Opensurveysondage extends CommonObject
         $sql .= " ".$this->db->escape($this->allow_comments).",";
         $sql .= " ".$this->db->escape($this->allow_spy).",";
         $sql .= " '".$this->db->escape($this->sujet)."',";
-        $sql .= " '".$conf->entity."',";
+        $sql .= " ".$conf->entity;
         $sql .= ")";
 
         $this->db->begin();
