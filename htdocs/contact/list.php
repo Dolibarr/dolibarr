@@ -82,9 +82,16 @@ if (!empty($conf->socialnetworks->enabled)) {
 	}
 }
 $search_priv = GETPOST("search_priv", 'alpha');
-$search_categ = GETPOST("search_categ", 'int');
-$search_categ_thirdparty = GETPOST("search_categ_thirdparty", 'int');
-$search_categ_supplier = GETPOST("search_categ_supplier", 'int');
+if (!empty($conf->categorie->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+	$searchCategoryContactList = GETPOST('search_category_' . Categorie::TYPE_CONTACT . '_list', 'array');
+	$searchCategoryCustomerList = GETPOST('search_category_' . Categorie::TYPE_CUSTOMER . '_list', 'array');
+	$searchCategorySupplierList = GETPOST('search_category_' . Categorie::TYPE_SUPPLIER . '_list', 'array');
+	$searchCategoryContactOperator = (GETPOST('search_category_' . Categorie::TYPE_CONTACT . '_operator', 'int') ? GETPOST('search_category_' . Categorie::TYPE_CONTACT . '_operator', 'int') : 0);
+	$searchCategoryCustomerOperator = (GETPOST('search_category_' . Categorie::TYPE_CUSTOMER . '_operator', 'int') ? GETPOST('search_category_' . Categorie::TYPE_CUSTOMER . '_operator', 'int') : 0);
+	$searchCategorySupplierOperator = (GETPOST('search_category_' . Categorie::TYPE_SUPPLIER . '_operator', 'int') ? GETPOST('search_category_' . Categorie::TYPE_SUPPLIER . '_operator', 'int') : 0);
+}
 $search_status = GETPOST("search_status", 'int');
 $search_type = GETPOST('search_type', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
@@ -263,9 +270,12 @@ if (empty($reshook))
 		$search_stcomm = '';
 		$search_level = '';
 		$search_status = -1;
-		$search_categ = '';
-		$search_categ_thirdparty = '';
-		$search_categ_supplier = '';
+		$searchCategoryContactList = array();
+		$searchCategoryCustomerList = array();
+		$searchCategorySupplierList = array();
+		$searchCategoryContactOperator = 0;
+		$searchCategoryCustomerOperator = 0;
+		$searchCategorySupplierOperator = 0;
 		$search_import_key = '';
 		$toselect = '';
 		$search_array_options = array();
@@ -348,9 +358,11 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = p.fk_pays";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_stcommcontact as st ON st.id = p.fk_stcommcontact";
-if (!empty($search_categ)) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_contact as cc ON p.rowid = cc.fk_socpeople"; // We need this table joined to the select in order to filter by categ
-if (!empty($search_categ_thirdparty)) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc"; // We need this table joined to the select in order to filter by categ
-if (!empty($search_categ_supplier)) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs2 ON s.rowid = cs2.fk_soc"; // We need this table joined to the select in order to filter by categ
+if ($conf->categorie->enabled) {
+	if (!empty($searchCategoryContactList)) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_contact as cc ON p.rowid = cc.fk_socpeople"; // We need this table joined to the select in order to filter by categ
+	if (!empty($searchCategoryCustomerList)) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc"; // We'll need this table joined to the select in order to filter by categ
+	if (!empty($searchCategorySupplierList)) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs2 ON s.rowid = cs2.fk_soc"; // We'll need this table joined to the select in order to filter by categ
+}
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 $sql .= ' WHERE p.entity IN ('.getEntity('socpeople').')';
 if (!$user->rights->societe->client->voir && !$socid) //restriction
@@ -373,12 +385,17 @@ if ($search_priv != '0' && $search_priv != '1')
 	if ($search_priv == '1') $sql .= " AND (p.priv='1' AND p.fk_user_creat=".$user->id.")";
 }
 
-if ($search_categ > 0)   $sql .= " AND cc.fk_categorie = ".$db->escape($search_categ);
-if ($search_categ == -2) $sql .= " AND cc.fk_categorie IS NULL";
-if ($search_categ_thirdparty > 0)   $sql .= " AND cs.fk_categorie = ".$db->escape($search_categ_thirdparty);
-if ($search_categ_thirdparty == -2) $sql .= " AND cs.fk_categorie IS NULL";
-if ($search_categ_supplier > 0)     $sql .= " AND cs2.fk_categorie = ".$db->escape($search_categ_supplier);
-if ($search_categ_supplier == -2)   $sql .= " AND cs2.fk_categorie IS NULL";
+if ($conf->categorie->enabled) {
+	if ($searchCategoryContactList) {
+		$sql .= Categorie::getFilterSelectQuery(Categorie::TYPE_CONTACT, "p.rowid", $searchCategoryContactList, !empty($searchCategoryContactOperator)?Categorie::FILTER_MODE_OR:Categorie::FILTER_MODE_AND, 'cc');
+	}
+	if ($searchCategoryCustomerList) {
+		$sql .= Categorie::getFilterSelectQuery(Categorie::TYPE_CUSTOMER, "s.rowid", $searchCategoryCustomerList, !empty($searchCategoryCustomerOperator)?Categorie::FILTER_MODE_OR:Categorie::FILTER_MODE_AND, 'cs');
+	}
+	if ($searchCategorySupplierList) {
+		$sql .= Categorie::getFilterSelectQuery(Categorie::TYPE_SUPPLIER, "s.rowid", $searchCategorySupplierList, !empty($searchCategorySupplierOperator)?Categorie::FILTER_MODE_OR:Categorie::FILTER_MODE_AND, 'cs2');
+	}
+}
 
 if ($sall)                          $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if (strlen($search_phone))          $sql .= natural_search(array('p.phone', 'p.phone_perso', 'p.phone_mobile'), $search_phone);
@@ -435,6 +452,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
+$sql .= ' GROUP BY p.rowid';
+
 // Add order
 if ($view == "recent")
 {
@@ -485,9 +504,18 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&am
 if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&amp;limit='.$limit;
 $param .= '&amp;begin='.urlencode($begin).'&amp;userid='.urlencode($userid).'&amp;contactname='.urlencode($sall);
 $param .= '&amp;type='.urlencode($type).'&amp;view='.urlencode($view);
-if (!empty($search_categ)) $param .= '&amp;search_categ='.urlencode($search_categ);
-if (!empty($search_categ_thirdparty)) $param .= '&amp;search_categ_thirdparty='.urlencode($search_categ_thirdparty);
-if (!empty($search_categ_supplier)) $param .= '&amp;search_categ_supplier='.urlencode($search_categ_supplier);
+foreach ($searchCategoryContactList as $searchCategoryContactParam) {
+	$param .= '&search_category_' . Categorie::TYPE_CONTACT . '_list[]=' . urlencode($searchCategoryContactParam);
+}
+foreach ($searchCategoryCustomerList as $searchCategoryCustomerParam) {
+	$param .= '&search_category_' . Categorie::TYPE_CUSTOMER . '_list[]=' . urlencode($searchCategoryCustomerParam);
+}
+foreach ($searchCategorySupplierList as $searchCategorySupplierParam) {
+	$param .= '&search_category_' . Categorie::TYPE_SUPPLIER . '_list[]=' . urlencode($searchCategorySupplierParam);
+}
+if ($searchCategoryContactOperator == 1) $param .= "&search_category_customer_operator=".urlencode($searchCategoryContactOperator);
+if ($searchCategoryCustomerOperator == 1) $param .= "&search_category_customer_operator=".urlencode($searchCategoryCustomerOperator);
+if ($searchCategorySupplierOperator == 1) $param .= "&search_category_supplier_operator=".urlencode($searchCategorySupplierOperator);
 if ($sall != '') $param .= '&amp;sall='.urlencode($sall);
 if ($search_id > 0) $param .= "&amp;search_id=".urlencode($search_id);
 if ($search_lastname != '') $param .= '&amp;search_lastname='.urlencode($search_lastname);
@@ -561,26 +589,15 @@ if ($search_firstlast_only)
 $moreforfilter = '';
 if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire)
 {
-	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('Categories').': ';
-	$moreforfilter .= $formother->select_categories(Categorie::TYPE_CONTACT, $search_categ, 'search_categ', 1);
-	$moreforfilter .= '</div>';
-	if (empty($type) || $type == 'c' || $type == 'p')
-	{
-		$moreforfilter .= '<div class="divsearchfield">';
-		if ($type == 'c') $moreforfilter .= $langs->trans('CustomersCategoriesShort').': ';
-		elseif ($type == 'p') $moreforfilter .= $langs->trans('ProspectsCategoriesShort').': ';
-		else $moreforfilter .= $langs->trans('CustomersProspectsCategoriesShort').': ';
-		$moreforfilter .= $formother->select_categories(Categorie::TYPE_CUSTOMER, $search_categ_thirdparty, 'search_categ_thirdparty', 1);
-		$moreforfilter .= '</div>';
-	}
-	if (empty($type) || $type == 'f')
-	{
-		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= $langs->trans('SuppliersCategoriesShort').': ';
-		$moreforfilter .= $formother->select_categories(Categorie::TYPE_SUPPLIER, $search_categ_supplier, 'search_categ_supplier', 1);
-		$moreforfilter .= '</div>';
+	if (!empty($conf->categorie->enabled)) {
+		$formcategory = new FormCategory($db);
+		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CONTACT, $searchCategoryContactList, 'Categories',true, $searchCategoryContactOperator);
+		if(empty($type) || $type == 'c' || $type == 'p') {
+			$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'CustomersCategoriesShort', true, $searchCategoryCustomerOperator);
+		}
+		if(empty($type) || $type == 'f') {
+			$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_SUPPLIER, $searchCategorySupplierList, 'SuppliersCategoriesShort', true, $searchCategorySupplierOperator);
+		}
 	}
 }
 

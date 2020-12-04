@@ -1879,37 +1879,34 @@ class Categorie extends CommonObject
 	/**
 	 * Return the addtional SQL SELECT query for filtering a list by a category
 	 *
-	 * @param string	$type			The category type (e.g Categorie::TYPE_WAREHOUSE)
-	 * @param string	$rowIdName		The name of the row id inside the whole sql query (e.g. "e.rowid")
-	 * @param Array		$searchList		A list with the selected categories
-	 * @return string					A additional SQL SELECT query
+	 * @param string $type       The category type (e.g Categorie::TYPE_WAREHOUSE)
+	 * @param string $rowIdName  The name of the row id inside the whole sql query (e.g. "e.rowid")
+	 * @param Array  $searchList A list with the selected categories
+	 * @param string $mode       Handle checkbox or/and
+	 * @param string $categAlias Alias of table category
+	 * @return string                    A additional SQL SELECT query
 	 */
-	public static function getFilterSelectQuery($type, $rowIdName, $searchList, $mode=self::FILTER_MODE_AND)
+	public static function getFilterSelectQuery($type, $rowIdName, $searchList, $mode=self::FILTER_MODE_AND, $categAlias = 'cp')
 	{
 		$tableSuffix = $type;
 		$fk = $type;
-		$listAlias = substr($type, 0, 1);
 		switch ($type) {
 			case 'contact':
 				$fk = 'socpeople'; $listAlias = 'p';
 				break;
 			case 'account':
-				$listAlias = 'b';
 				break;
 			case 'event':case 'actioncomm':
 			$tableSuffix = 'actioncomm';
 			$fk = 'actioncomm';
-			$listAlias = 'a';
 			break;
 			case 'supplier':
 				$tableSuffix = 'fournisseur';
 				$fk = 'soc';
-				$listAlias = 's'; // TODO vérifier
 				break;
 			case 'customer':
 				$tableSuffix = 'societe';
 				$fk = 'soc';
-				$listAlias = 's'; // TODO vérifier
 				break;
 			case 'societe':
 				$fk = 'soc';
@@ -1924,7 +1921,7 @@ class Categorie extends CommonObject
 		$searchCategorySqlList = array();
 		foreach ($searchList as $searchCategory) {
 			if (intval($searchCategory) == -2) {
-				$searchCategorySqlList[] = " cp.fk_categorie IS NULL";
+				$searchCategorySqlList[] = " $categAlias.fk_categorie IS NULL";
 			} elseif (intval($searchCategory) > 0) {
 				$searchCategorySqlList[] = " ".$rowIdName." IN (SELECT fk_".$fk." FROM ".MAIN_DB_PREFIX."categorie_".$tableSuffix." WHERE fk_categorie = ".$searchCategory.")";
 			}

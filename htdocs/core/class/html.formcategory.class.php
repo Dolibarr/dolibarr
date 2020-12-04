@@ -32,11 +32,14 @@ class FormCategory extends Form
 	/**
 	 * Return a HTML filter box for a list filter view
 	 *
-	 * @param string	$type			The categorie type (e.g Categorie::TYPE_WAREHOUSE)
-	 * @param Array		$preSelected	A list with the elements that should pre-selected
-	 * @return string					A HTML filter box (Note: selected results can get with GETPOST("search_category_".$type."_list"))
+	 * @param string $type              The categorie type (e.g Categorie::TYPE_WAREHOUSE)
+	 * @param Array  $preSelected       A list with the elements that should pre-selected
+	 * @param string $title             Multiselect label
+	 * @param bool   $withOperator      Add operator choice to form
+	 * @param int    $preselectOperator Preselected value for operator
+	 * @return string                    A HTML filter box (Note: selected results can get with GETPOST("search_category_".$type."_list"))
 	 */
-	public function getFilterBox($type, array $preSelected)
+	public function getFilterBox($type, array $preSelected, $title = 'Categories', $withOperator = false, $preselectOperator = 0)
 	{
 		global $langs;
 
@@ -52,8 +55,9 @@ class FormCategory extends Form
 
 		$filter = '';
 		$filter .= '<div class="divsearchfield">';
-		$filter .= $langs->trans('Categories').": ";
+		$filter .= $langs->trans($title).": ";
 		$filter .= Form::multiselectarray($htmlName, $categoryArray, $preSelected, 0, 0, "minwidth300");
+		if($withOperator) $filter .= ' <br/><input type="checkbox" class="valignmiddle" name="search_category_'.$type.'_operator" value="1"'.($preselectOperator == 1 ? ' checked="checked"' : '').'/> <span class="none">'.$langs->trans('UseOrOperatorForCategories').'</span>';
 		$filter .= "</div>";
 
 		return $filter;
