@@ -134,7 +134,7 @@ if (!$sortfield)
 }
 
 // Products
-$TRes = $form->select_produits_list('', '', '', 20, 0, '', 1, 2, 1, 0, '', 1);
+$TRes = $form->select_produits_list('', '', '', '', 0, '', 1, 2, 1, 0, '', 1);
 
 $TProducts = array();
 foreach ($TRes as $prod) {
