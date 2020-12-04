@@ -1336,9 +1336,10 @@ class Contact extends CommonObject
 		if (!empty($this->poste)) $label .= '<br><b>'.$langs->trans("Poste").':</b> '.$this->poste;
 		$label .= '<br><b>'.$langs->trans("EMail").':</b> '.$this->email;
 		$phonelist = array();
-		if ($this->phone_pro) $phonelist[] = dol_print_phone($this->phone_pro, $this->country_code, $this->id, 0, '', '&nbsp;', 'phone');
-		if ($this->phone_mobile) $phonelist[] = dol_print_phone($this->phone_mobile, $this->country_code, $this->id, 0, '', '&nbsp;', 'mobile');
-		if ($this->phone_perso) $phonelist[] = dol_print_phone($this->phone_perso, $this->country_code, $this->id, 0, '', '&nbsp;', 'phone');
+		$country_code = empty($this->country_code) ? '': $this->country_code;
+		if ($this->phone_pro) $phonelist[] = dol_print_phone($this->phone_pro, $country_code, $this->id, 0, '', '&nbsp;', 'phone');
+		if ($this->phone_mobile) $phonelist[] = dol_print_phone($this->phone_mobile, $country_code, $this->id, 0, '', '&nbsp;', 'mobile');
+		if ($this->phone_perso) $phonelist[] = dol_print_phone($this->phone_perso, $country_code, $this->id, 0, '', '&nbsp;', 'phone');
 		$label .= '<br><b>'.$langs->trans("Phone").':</b> '.implode('&nbsp;', $phonelist);
 		$label .= '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ' ', $langs);
 
