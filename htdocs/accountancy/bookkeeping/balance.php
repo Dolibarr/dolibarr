@@ -360,12 +360,12 @@ if ($action != 'export_csv')
 
 	if (!empty($show_subgroup))
 	{
-		print '<tr class="liste_total"><td class="right" colspan="2">'.$langs->trans("SubTotal").':</td><td class="nowrap right">'.price($sous_total_debit).'</td><td class="nowrap right">'.price($sous_total_credit).'</td><td class="nowrap right">'.price(price2num($sous_total_debit - $sous_total_credit)).'</td>';
+		print '<tr class="liste_total"><td class="right" colspan="2">'.$langs->trans("SubTotal").':</td><td class="nowrap right">'.price($sous_total_debit).'</td><td class="nowrap right">'.price($sous_total_credit).'</td><td class="nowrap right">'.price(price2num($sous_total_opening_balance + $sous_total_debit - $sous_total_credit, 'MT')).'</td>';
 		print "<td></td>\n";
 		print '</tr>';
 	}
 
-	print '<tr class="liste_total"><td class="right" colspan="2">'.$langs->trans("AccountBalance").':</td><td class="nowrap right">'.price($total_debit).'</td><td class="nowrap right">'.price($total_credit).'</td><td class="nowrap right">'.price(price2num($total_debit - $total_credit)).'</td>';
+	print '<tr class="liste_total"><td class="right" colspan="2">'.$langs->trans("AccountBalance").':</td><td class="nowrap right">'.price($total_debit).'</td><td class="nowrap right">'.price($total_credit).'</td><td class="nowrap right">'.price(price2num($total_opening_balance + $total_debit - $total_credit, 'MT')).'</td>';
 	print "<td></td>\n";
 	print '</tr>';
 

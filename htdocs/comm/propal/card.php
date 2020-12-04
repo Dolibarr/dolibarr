@@ -343,7 +343,7 @@ if (empty($reshook))
 					$object->ref = GETPOST('ref');
 					$object->datep = $datep;
 					$object->date = $datep;
-					$object->date_livraison = $date_delivery;	// deprecated
+					$object->date_livraison = $date_delivery; // deprecated
 					$object->delivery_date = $date_delivery;
 					$object->availability_id = GETPOST('availability_id');
 					$object->demand_reason_id = GETPOST('demand_reason_id');
@@ -366,9 +366,6 @@ if (empty($reshook))
 					$object->statut = Propal::STATUS_DRAFT;
 					$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 					$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
-
-					// the create is done below and further more the existing create_from function is quite hilarating
-					//$id = $object->create_from($user);
 				} else {
 					setEventMessages($langs->trans("ErrorFailedToCopyProposal", GETPOST('copie_propal')), null, 'errors');
 				}
@@ -550,9 +547,8 @@ if (empty($reshook))
 
 				if ($id > 0)
 				{
-					// Insertion contact par defaut si defini
-					if (GETPOST('contactid') > 0)
-					{
+					// Insert default contacts if defined
+					if (GETPOST('contactid') > 0) {
 						$result = $object->add_contact(GETPOST('contactid'), 'CUSTOMER', 'external');
 						if ($result < 0)
 						{
@@ -1347,7 +1343,8 @@ if (empty($reshook))
 		{
 			if ($object->id > 0) {
 				$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
-				$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
+				$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+				$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 			}
 
 			if ($result >= 0) {
@@ -2411,7 +2408,8 @@ if ($action == 'create')
 			if ($action != 'editline')
 			{
 				// Validate
-				if ($object->statut == Propal::STATUS_DRAFT && $object->total_ttc >= 0 && count($object->lines) > 0)
+				if (($object->statut == Propal::STATUS_DRAFT && $object->total_ttc >= 0 && count($object->lines) > 0)
+					|| ($object->statut == Propal::STATUS_DRAFT && !empty($conf->global->PROPAL_ENABLE_NEGATIVE) && count($object->lines) > 0))
 				{
 					if ($usercanvalidate)
 					{

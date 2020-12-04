@@ -1101,7 +1101,7 @@ class ExpenseReport extends CommonObject
 			$tabletodelete = $this->table_element_line;
 			//$sqlef = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete."_extrafields WHERE fk_object IN (SELECT rowid FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id.")";
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id;
-			if (! $this->db->query($sql)) {
+			if (!$this->db->query($sql)) {
 				$error++;
 				$this->error = $this->db->lasterror();
 				$this->errors[] = $this->error;
@@ -1134,7 +1134,7 @@ class ExpenseReport extends CommonObject
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE rowid = ".$this->id;
 			$res = $this->db->query($sql);
-			if (! $res) {
+			if (!$res) {
 				$error++;
 				$this->error = $this->db->lasterror();
 				$this->errors[] = $this->error;
@@ -1145,7 +1145,7 @@ class ExpenseReport extends CommonObject
 		// Delete record into ECM index and physically
 		if (!$error) {
 			$res = $this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
-			if (! $res) {
+			if (!$res) {
 				$error++;
 			}
 		}
@@ -1186,7 +1186,7 @@ class ExpenseReport extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-    }
+	}
 
 	/**
 	 * Set to status validate
@@ -1805,6 +1805,7 @@ class ExpenseReport extends CommonObject
 			$localtaxes_type = getLocalTaxesFromRate($vatrate, 0, $mysoc, $this->thirdparty);
 
 			$vat_src_code = '';
+			$reg = array();
 			if (preg_match('/\s*\((.*)\)/', $vatrate, $reg))
 			{
 				$vat_src_code = $reg[1];
@@ -2038,6 +2039,7 @@ class ExpenseReport extends CommonObject
 			$localtaxes_type = getLocalTaxesFromRate($vatrate, 0, $buyer, $seller);
 
 			// Clean vat code
+			$reg = array();
 			$vat_src_code = '';
 			if (preg_match('/\((.*)\)/', $vatrate, $reg))
 			{
@@ -2053,10 +2055,6 @@ class ExpenseReport extends CommonObject
 
 			$tx_tva = $vatrate / 100;
 			$tx_tva = $tx_tva + 1;
-			$total_ht = price2num($total_ttc / $tx_tva, 'MT');
-
-			$total_tva = price2num($total_ttc - $total_ht, 'MT');
-			// fin calculs
 
 			$this->line = new ExpenseReportLine($this->db);
 			$this->line->comments        = $comments;

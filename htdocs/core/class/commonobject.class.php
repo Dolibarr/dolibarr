@@ -936,11 +936,11 @@ abstract class CommonObject
 	/**
 	 *  Add a link between element $this->element and a contact
 	 *
-	 *  @param	int		$fk_socpeople       Id of thirdparty contact (if source = 'external') or id of user (if souce = 'internal') to link
-	 *  @param 	int		$type_contact 		Type of contact (code or id). Must be id or code found into table llx_c_type_contact. For example: SALESREPFOLL
-	 *  @param  string	$source             external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
-	 *  @param  int		$notrigger			Disable all triggers
-	 *  @return int                 		<0 if KO, >0 if OK
+	 *  @param	int			$fk_socpeople       Id of thirdparty contact (if source = 'external') or id of user (if souce = 'internal') to link
+	 *  @param 	int|string	$type_contact 		Type of contact (code or id). Must be id or code found into table llx_c_type_contact. For example: SALESREPFOLL
+	 *  @param  string		$source             external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
+	 *  @param  int			$notrigger			Disable all triggers
+	 *  @return int         	        		<0 if KO, >0 if OK
 	 */
 	public function add_contact($fk_socpeople, $type_contact, $source = 'external', $notrigger = 0)
 	{
@@ -1817,7 +1817,11 @@ abstract class CommonObject
 				return -2;
 			}
 		} else {
-			$this->error = $this->db->lasterror();
+			if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$this->error = 'DB_ERROR_RECORD_ALREADY_EXISTS';
+			} else {
+				$this->error = $this->db->lasterror();
+			}
 			$this->db->rollback();
 			return -1;
 		}
@@ -5099,7 +5103,7 @@ abstract class CommonObject
 		global $conf, $extrafields;
 
 		if (empty($rowid)) $rowid = $this->id;
-		if (empty($rowid) && isset($this->rowid)) $rowid = $this->rowid;	// deprecated
+		if (empty($rowid) && isset($this->rowid)) $rowid = $this->rowid; // deprecated
 
 		// To avoid SQL errors. Probably not the better solution though
 		if (!$this->table_element) {
@@ -5424,26 +5428,20 @@ abstract class CommonObject
 					$sql .= ",".$attributeKey;
 			}
 			// We must insert a default value for fields for other entities that are mandatory to avoid not null error
-			if (is_array($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities']))
-			{
-				foreach ($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'] as  $tmpkey => $tmpval)
-				{
-					if (!isset($extrafields->attributes[$this->table_element]['type'][$tmpkey]))    // If field not already added previously
-					{
+			if (!empty($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities']) && is_array($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'])) {
+				foreach ($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'] as  $tmpkey => $tmpval) {
+					if (!isset($extrafields->attributes[$this->table_element]['type'][$tmpkey])) {    // If field not already added previously
 						$sql .= ",".$tmpkey;
 					}
 				}
 			}
 			$sql .= ") VALUES (".$this->id;
 
-			foreach ($new_array_options as $key => $value)
-			{
+			foreach ($new_array_options as $key => $value) {
 				$attributeKey = substr($key, 8); // Remove 'options_' prefix
 				// Add field of attribute
-				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] != 'separate') // Only for other type than separator)
-				{
-					if ($new_array_options[$key] != '' || $new_array_options[$key] == '0')
-					{
+				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] != 'separate') { // Only for other type than separator)
+					if ($new_array_options[$key] != '' || $new_array_options[$key] == '0') {
 						$sql .= ",'".$this->db->escape($new_array_options[$key])."'";
 					} else {
 						$sql .= ",null";
@@ -5451,12 +5449,9 @@ abstract class CommonObject
 				}
 			}
 			// We must insert a default value for fields for other entities that are mandatory to avoid not null error
-			if (is_array($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities']))
-			{
-				foreach ($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'] as  $tmpkey => $tmpval)
-				{
-					if (!isset($extrafields->attributes[$this->table_element]['type'][$tmpkey]))    // If field not already added previously
-					{
+			if (!empty($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities']) && is_array($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'])) {
+				foreach ($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'] as  $tmpkey => $tmpval) {
+					if (!isset($extrafields->attributes[$this->table_element]['type'][$tmpkey])) {   // If field not already added previously
 						if (in_array($tmpval, array('int', 'double', 'price'))) $sql .= ", 0";
 						else $sql .= ", ''";
 					}
@@ -5946,7 +5941,7 @@ abstract class CommonObject
 			$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1);
 		} elseif (in_array($type, array('duration'))) {
 			$out = $form->select_duration($keyprefix.$key.$keysuffix, $value, 0, 'text', 0, 1);
-		} elseif (in_array($type, array('int', 'integer')))	{
+		} elseif (in_array($type, array('int', 'integer'))) {
 			$tmp = explode(',', $size);
 			$newsize = $tmp[0];
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
@@ -5956,7 +5951,7 @@ abstract class CommonObject
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (in_array($type, array('mail', 'phone', 'url'))) {
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
-		} elseif (preg_match('/^text/', $type))	{
+		} elseif (preg_match('/^text/', $type)) {
 			if (!preg_match('/search_/', $keyprefix))		// If keyprefix is search_ or search_options_, we must just use a simple text field
 			{
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -6735,7 +6730,7 @@ abstract class CommonObject
 	 * @param 	array       $params         Optional parameters. Example: array('style'=>'class="oddeven"', 'colspan'=>$colspan)
 	 * @param 	string      $keysuffix      Suffix string to add after name and id of field (can be used to avoid duplicate names)
 	 * @param 	string      $keyprefix      Prefix string to add before name and id of field (can be used to avoid duplicate names)
-	 * @param	string		$onetrtd		All fields in same tr td (TODO field not used ?)
+	 * @param	string		$onetrtd		All fields in same tr td. Used by objectline_create.tpl.php for example.
 	 * @return 	string
 	 */
 	public function showOptionals($extrafields, $mode = 'view', $params = null, $keysuffix = '', $keyprefix = '', $onetrtd = 0)
@@ -6901,6 +6896,9 @@ abstract class CommonObject
 						$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
 
 						$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="'.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.'" '.$domData.' >';
+						if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER) && $action == 'view') {
+							$out .= '<td></td>';
+						}
 						$out .= '<td class="wordbreak';
 						//$out .= "titlefield";
 						//if (GETPOST('action', 'restricthtml') == 'create') $out.='create';
@@ -8064,7 +8062,7 @@ abstract class CommonObject
 		// Delete llx_ecm_files
 		if (!$error) {
 			$res = $this->deleteEcmFiles(1); // Deleting files physically is done later with the dol_delete_dir_recursive
-			if (! $res) {
+			if (!$res) {
 				$error++;
 			}
 		}
@@ -8496,7 +8494,7 @@ abstract class CommonObject
 			// Delete ecm_files extrafields
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."ecm_files_extrafields WHERE fk_object IN (";
 			$sql .= " SELECT rowid FROM ".MAIN_DB_PREFIX."ecm_files WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
-			$sql .= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".$conf->entity;	// No need of getEntity here
+			$sql .= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".$conf->entity; // No need of getEntity here
 			$sql .= ")";
 
 			if (!$this->db->query($sql)) {
@@ -8508,7 +8506,7 @@ abstract class CommonObject
 			// Delete ecm_files
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."ecm_files";
 			$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
-			$sql .= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".$conf->entity;	// No need of getEntity here
+			$sql .= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".$conf->entity; // No need of getEntity here
 
 			if (!$this->db->query($sql)) {
 				$this->error = $this->db->lasterror();

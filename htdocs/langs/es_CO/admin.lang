@@ -916,7 +916,6 @@ FreeLegalTextOnDeliveryReceipts=Texto libre en los recibos de entrega
 ActivateFCKeditor=Activar editor avanzado para:
 FCKeditorForCompany=Creación / edición de WYSIWIG de elementos, descripción y nota (excepto productos / servicios)
 FCKeditorForProduct=WYSIWIG creación / edición de productos / servicios descripción y nota
-FCKeditorForProductDetails=Creación / edición WYSIWIG de líneas de detalles de productos para todas las entidades (propuestas, pedidos, facturas, etc.). <font class = "warning"> Advertencia: el uso de esta opción para este caso no se recomienda seriamente, ya que puede crear problemas con los caracteres especiales y el formato de página al crear archivos PDF. </font>
 FCKeditorForMailing=Creación / edición WYSIWIG para eMailings masivos (Herramientas-> eMailing)
 FCKeditorForUserSignature=Creación / edición WYSIWIG de la firma del usuario.
 FCKeditorForMail=Creación / edición WYSIWIG para todo el correo (excepto Herramientas-> eMailing)
@@ -966,8 +965,6 @@ AGENDA_USE_EVENT_TYPE=Usar tipos de eventos (administrados en el menú Configura
 AGENDA_USE_EVENT_TYPE_DEFAULT=Establecer automáticamente este valor predeterminado para el tipo de evento en el formulario de creación de evento
 AGENDA_DEFAULT_FILTER_TYPE=Configure automáticamente este tipo de evento en el filtro de búsqueda de la vista de agenda
 AGENDA_DEFAULT_FILTER_STATUS=Establecer automáticamente este estado para eventos en el filtro de búsqueda de la vista de agenda
-AGENDA_REMINDER_EMAIL=Habilite el recordatorio del evento <b> por correos electrónicos </b> (la opción de recordatorio / retraso se puede definir en cada evento). Nota: el módulo <strong> %s </strong> debe estar habilitado y configurado correctamente para que se envíe un recordatorio con la frecuencia correcta.
-AGENDA_REMINDER_BROWSER=Habilite el recordatorio de evento <b> en el navegador del usuario </b> (cuando se alcanza la fecha del evento, cada usuario puede rechazar esto de la pregunta de confirmación del navegador)
 AGENDA_REMINDER_BROWSER_SOUND=Habilitar notificación de sonido
 AGENDA_SHOW_LINKED_OBJECT=Mostrar objeto vinculado en vista de agenda
 ClickToDialSetup=Haga clic para configurar el módulo de marcado.

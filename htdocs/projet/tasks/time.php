@@ -963,7 +963,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 				print $langs->trans('InvoiceToUse');
 				print '</td>';
 				print '<td>';
-	            $form->selectInvoice('invoice', '', 'invoiceid', 24, 0, $langs->trans('NewInvoice'), 1, 0, 0, 'maxwidth500', '', 'all');
+				$form->selectInvoice('invoice', '', 'invoiceid', 24, 0, $langs->trans('NewInvoice'), 1, 0, 0, 'maxwidth500', '', 'all');
 				print '</td>';
 				print '</tr>';
 				/*print '<tr>';
@@ -1398,7 +1398,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			if (!empty($arrayfields['value']['checked']))
 			{
 				print '<td class="nowraponall right">';
-				$value = price2num($task_time->thm * $task_time->task_duration / 3600, 'MT');
+				$value = price2num($task_time->thm * $task_time->task_duration / 3600, 'MT', 1);
 				print price($value, 1, $langs, 1, -1, -1, $conf->currency);
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
@@ -1598,7 +1598,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 				if (!empty($arrayfields['value']['checked']))
 				{
 					print '<td class="right">';
-					$value = price2num($task_time->thm * $task_time->task_duration / 3600);
+					$value = price2num($task_time->thm * $task_time->task_duration / 3600, 'MT', 1);
 					print price($value, 1, $langs, 1, -1, -1, $conf->currency);
 					print '</td>';
 				}
@@ -1607,7 +1607,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 				if (!empty($arrayfields['valuebilled']['checked']))
 				{
 					print '<td class="right">';
-					$valuebilled = price2num($task_time->total_ht);
+					$valuebilled = price2num($task_time->total_ht, '', 1);
 					if (isset($task_time->total_ht)) print price($valuebilled, 1, $langs, 1, -1, -1, $conf->currency);
 					print '</td>';
 				}
@@ -1745,7 +1745,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 				if (!empty($arrayfields['valuebilled']['checked']))
 				{
 					print '<td class="right">';
-					$valuebilled = price2num($task_time->total_ht);
+					$valuebilled = price2num($task_time->total_ht, '', 1);
 					if (isset($task_time->total_ht)) print price($valuebilled, 1, $langs, 1, -1, -1, $conf->currency);
 					print '</td>';
 				}

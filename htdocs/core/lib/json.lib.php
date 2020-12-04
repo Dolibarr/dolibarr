@@ -103,8 +103,7 @@ function dol_json_encode($elements)
  */
 function _val($val)
 {
-	if (is_string($val))
-	{
+	if (is_string($val)) {
 		// STRINGS ARE EXPECTED TO BE IN ASCII OR UTF-8 FORMAT
 		$ascii = '';
 		$strlen_var = strlen($val);

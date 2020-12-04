@@ -336,7 +336,7 @@ if ($status == 'todo') $title = $langs->trans("ToDoActions");
 */
 
 $param = '';
-if ($actioncode || isset($_GET['search_actioncode']) || isset($_POST['search_actioncode'])) {
+if ($actioncode || GETPOSTISSET('search_actioncode')) {
 	if (is_array($actioncode)) {
 		foreach ($actioncode as $str_action) $param .= "&search_actioncode[]=".urlencode($str_action);
 	} else $param .= "&search_actioncode=".urlencode($actioncode);
@@ -1492,19 +1492,19 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
 	if ($nonew <= 0)
 	{
-		print '<div class="tagtr"><div class="nowrap tagtd">';
+		print '<div class="tagtr"><div class="nowrap tagtd"><div class="left inline-block">';
 		print '<a class="dayevent-aday" style="color: #666" href="'.$urltoshow.'">';
 		if ($showinfo) print dol_print_date($curtime, 'daytextshort');
 		else print dol_print_date($curtime, '%d');
 		print '</a>';
-		print '</div><div class="nowrap tagtd right">';
+		print '</div><div class="nowrap floatright inline-block marginrightonly">';
 		if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create)
 		{
 			print '<a class="cursoradd" href="'.$urltocreate.'">'; // Explicit link, usefull for nojs interfaces
 			print img_picto($langs->trans("NewAction"), 'edit_add.png');
 			print '</a>';
 		}
-		print '</div></div>'."\n";
+		print '</div></div></div>'."\n";
 	}
 
 	if ($nonew < 0)

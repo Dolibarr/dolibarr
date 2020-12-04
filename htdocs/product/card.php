@@ -1034,8 +1034,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		if ($showbarcode)
 		{
  			print '<tr><td>'.$langs->trans('BarcodeType').'</td><td>';
- 			if (isset($_POST['fk_barcode_type']))
-			{
+ 			if (GETPOSTISSET('fk_barcode_type')) {
 			 	$fk_barcode_type = GETPOST('fk_barcode_type');
 			} else {
 				if (empty($fk_barcode_type) && !empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE)) $fk_barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
@@ -1046,7 +1045,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print '</td>';
 			if ($conf->browser->layout == 'phone') print '</tr><tr>';
 			print '<td>'.$langs->trans("BarcodeValue").'</td><td>';
-			$tmpcode = isset($_POST['barcode']) ?GETPOST('barcode') : $object->barcode;
+			$tmpcode = GETPOSTISSET('barcode') ? GETPOST('barcode') : $object->barcode;
 			if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) $tmpcode = $modBarCodeProduct->getNextValue($object, $type);
 			print '<input class="maxwidth100" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
 			print '</td></tr>';
@@ -1215,7 +1214,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			// Categories
 			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
-			print $form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, '', 0, '100%');
+			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 			print "</td></tr>";
 		}
 
@@ -1497,8 +1496,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			if ($showbarcode)
 			{
 				print '<tr><td>'.$langs->trans('BarcodeType').'</td><td>';
-				if (isset($_POST['fk_barcode_type']))
-				{
+				if (GETPOSTISSET('fk_barcode_type')) {
 				 	$fk_barcode_type = GETPOST('fk_barcode_type');
 				} else {
 					$fk_barcode_type = $object->barcode_type;
@@ -1508,7 +1506,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				$formbarcode = new FormBarCode($db);
 				print $formbarcode->selectBarcodeType($fk_barcode_type, 'fk_barcode_type', 1);
 				print '</td><td>'.$langs->trans("BarcodeValue").'</td><td>';
-				$tmpcode = isset($_POST['barcode']) ?GETPOST('barcode') : $object->barcode;
+				$tmpcode = GETPOSTISSET('barcode') ? GETPOST('barcode') : $object->barcode;
 				if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) $tmpcode = $modBarCodeProduct->getNextValue($object, $type);
 				print '<input size="40" class="maxwidthonsmartphone" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
 				print '</td></tr>';
@@ -1668,7 +1666,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 						$arrayselected[] = $cat->id;
 					}
 				}
-				print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+				print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 				print "</td></tr>";
 			}
 
@@ -1853,7 +1851,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				print '</td><td colspan="2">';
 				if ($action == 'editbarcode')
 				{
-					$tmpcode = isset($_POST['barcode']) ?GETPOST('barcode') : $object->barcode;
+					$tmpcode = GETPOSTISSET('barcode') ? GETPOST('barcode') : $object->barcode;
 					if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) $tmpcode = $modBarCodeProduct->getNextValue($object, $type);
 
 					print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';

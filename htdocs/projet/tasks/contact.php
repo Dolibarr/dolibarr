@@ -72,21 +72,21 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
 				$contactsofproject = $projectstatic->getListContactId('internal');
 				foreach ($contactsofproject as $key => $val)
 				{
-					$result = $object->add_contact($val, GETPOST("type"), GETPOST("source"));
+					$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+					$result = $object->add_contact($val, $type, GETPOST("source", 'aZ09'));
 				}
 			}
 		} else {
-  			$result = $object->add_contact($idfortaskuser, GETPOST("type"), GETPOST("source"));
+			$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+			$result = $object->add_contact($idfortaskuser, $typeid, GETPOST("source", 'aZ09'));
 		}
 	}
 
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id.($withproject ? '&withproject=1' : ''));
 		exit;
 	} else {
-		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-		{
+		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
 		} else {
@@ -98,8 +98,7 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
 // bascule du statut d'un contact
 if ($action == 'swapstatut' && $user->rights->projet->creer)
 {
-	if ($object->fetch($id, $ref))
-	{
+	if ($object->fetch($id, $ref)) {
 		$result = $object->swapContactStatus(GETPOST('ligne'));
 	} else {
 		dol_print_error($db);
@@ -408,7 +407,6 @@ if ($id > 0 || !empty($ref))
 				print '<input type="hidden" name="id" value="'.$object->id.'">';
 				if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
-
 				print '<tr class="oddeven">';
 
 				print '<td class="nowrap">';
@@ -423,7 +421,8 @@ if ($id > 0 || !empty($ref))
 
 				print '<td>';
 				$contactofproject = $projectstatic->getListContactId('external');
-				$nbofcontacts = $form->select_contacts($selectedCompany, '', 'contactid', 0, '', $contactofproject);
+				print $form->selectcontacts($selectedCompany, '', 'contactid', 0, '', $contactofproject);
+				$nbofcontacts = $form->num;
 				print '</td>';
 				print '<td>';
 				$formcompany->selectTypeContact($object, '', 'type', 'external', 'rowid');
@@ -452,6 +451,7 @@ if ($id > 0 || !empty($ref))
 		foreach (array('internal', 'external') as $source)
 		{
 			$tab = $object->liste_contact(-1, $source);
+
 			$num = count($tab);
 
 			$i = 0;
@@ -492,7 +492,7 @@ if ($id > 0 || !empty($ref))
 					$userstatic->photo = $tab[$i]['photo'];
 					$userstatic->login = $tab[$i]['login'];
 					$userstatic->email = $tab[$i]['email'];
-					$userstatic->statut = $tab[$i]['statucontact'];
+					$userstatic->statut = $tab[$i]['statuscontact'];
 
 					print $userstatic->getNomUrl(-1);
 				}
@@ -502,8 +502,7 @@ if ($id > 0 || !empty($ref))
 					$contactstatic->lastname = $tab[$i]['lastname'];
 					$contactstatic->firstname = $tab[$i]['firstname'];
 					$contactstatic->email = $tab[$i]['email'];
-					$contactstatic->statut = $tab[$i]['statucontact'];
-
+					$contactstatic->statut = $tab[$i]['statuscontact'];
 					print $contactstatic->getNomUrl(1);
 				}
 				print '</td>';

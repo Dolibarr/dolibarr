@@ -2300,7 +2300,7 @@ if (!GETPOST('hide_websitemenu'))
 
 
 	//var_dump($objectpage);exit;
-	print '<div class="centpercent websitebar">';
+	print '<div class="centpercent websitebar'.(GETPOST('dol_openinpopup', 'int') ? ' hidden' : '').'">';
 
 	//
 	// Toolbar for websites
@@ -3009,7 +3009,7 @@ if ($action == 'editcss')
 
 	print dol_get_fiche_head();
 
-	print '<!-- Edit CSS -->'."\n";
+	print '<!-- Edit Website properties -->'."\n";
 	print '<table class="border centpercent">';
 
 	// Website
@@ -3039,8 +3039,8 @@ if ($action == 'editcss')
 
 	// Other languages
 	print '<tr><td class="tdtop">';
-	$htmltext = '';
-	print $form->textwithpicto($langs->trans('OtherLanguages'), $htmltext, 1, 'help', '', 0, 2, 'WEBSITE_OTHERLANG');
+	$htmltext = $langs->trans("Example").': fr,de,sv,it,pt';
+	print $form->textwithpicto($langs->trans('OtherLanguages'), $htmltext, 1, 'help', '', 0, 2);
 	print '</td><td>';
 	print '<input type="text" class="flat" value="'.(GETPOSTISSET('WEBSITE_OTHERLANG') ? GETPOST('WEBSITE_OTHERLANG', 'alpha') : $object->otherlang).'" name="WEBSITE_OTHERLANG">';
 	print '</td>';
@@ -3049,10 +3049,11 @@ if ($action == 'editcss')
 	// VirtualHost
 	print '<tr><td class="tdtop">';
 
-	$htmltext = $langs->trans("SetHereVirtualHost", DOL_DATA_ROOT.'/website/<i>'.$websitekey.'</i>');
+	$htmltext = $langs->trans("SetHereVirtualHost", DOL_DATA_ROOT.'/website/{s1}'.$websitekey.'{s2}');
+	$htmltext = str_replace(array('{s1}', '{s2}'), array('<i>', '</i>'), $htmltext);
 	$htmltext .= '<br>';
-	$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
-	$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias');
+	$htmltext .= '<br>'.$langs->transnoentitiesnoconv("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
+	$htmltext .= '<br>'.$langs->transnoentitiesnoconv("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias');
 
 	print $form->textwithpicto($langs->trans('Virtualhost'), $htmltext, 1, 'help', '', 0, 2, 'virtualhosttooltip');
 	print '</td><td>';
@@ -3573,7 +3574,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')	// Edit properties of
 		}
 
 		print '<tr class="visibleifsupplier"><td class="toptd">'.$form->editfieldkey('Categories', 'categories', '', $objectpage, 0).'</td><td colspan="3">';
-		print img_picto('', 'category', 'class="paddingright"').$form->multiselectarray('categories', $cate_arbo, (GETPOSTISSET('categories') ? GETPOST('categories', 'array') : $arrayselected), null, null, null, null, "90%");
+		print img_picto('', 'category', 'class="paddingright"').$form->multiselectarray('categories', $cate_arbo, (GETPOSTISSET('categories') ? GETPOST('categories', 'array') : $arrayselected), null, null, 'quatrevingtpercent widthcentpercentminusx');
 		print "</td></tr>";
 	}
 

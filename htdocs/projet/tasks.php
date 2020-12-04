@@ -106,7 +106,7 @@ $arrayfields = array(
 	't.label'=>array('label'=>$langs->trans("LabelTask"), 'checked'=>1, 'position'=>2),
 	't.description'=>array('label'=>$langs->trans("Description"), 'checked'=>0, 'position'=>3),
 	't.dateo'=>array('label'=>$langs->trans("DateStart"), 'checked'=>1, 'position'=>4),
-	't.datee'=>array('label'=>$langs->trans("DateEnd"), 'checked'=>1, 'position'=>5),
+	't.datee'=>array('label'=>$langs->trans("Deadline"), 'checked'=>1, 'position'=>5),
 	't.planned_workload'=>array('label'=>$langs->trans("PlannedWorkload"), 'checked'=>1, 'position'=>6),
 	't.duration_effective'=>array('label'=>$langs->trans("TimeSpent"), 'checked'=>1, 'position'=>7),
 	't.progress_calculated'=>array('label'=>$langs->trans("ProgressCalculated"), 'checked'=>1, 'position'=>8),
@@ -220,8 +220,8 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 	// If we use user timezone, we must change also view/list to use user timezone everywhere
 	//$date_start = dol_mktime($_POST['dateohour'],$_POST['dateomin'],0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear'],'user');
 	//$date_end = dol_mktime($_POST['dateehour'],$_POST['dateemin'],0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear'],'user');
-	$date_start = dol_mktime($_POST['dateohour'], $_POST['dateomin'], 0, $_POST['dateomonth'], $_POST['dateoday'], $_POST['dateoyear']);
-	$date_end = dol_mktime($_POST['dateehour'], $_POST['dateemin'], 0, $_POST['dateemonth'], $_POST['dateeday'], $_POST['dateeyear']);
+	$date_start = dol_mktime(GETPOST('dateohour', 'int'), GETPOST('dateomin', 'int'), 0, GETPOST('dateomonth', 'int'), GETPOST('dateoday', 'int'), GETPOST('dateoyear', 'int'));
+	$date_end = dol_mktime(GETPOST('dateehour', 'int'), GETPOST('dateemin', 'int'), 0, GETPOST('dateemonth', 'int'), GETPOST('dateeday', 'int'), GETPOST('dateeyear', 'int'));
 
 	if (!$cancel)
 	{
@@ -245,7 +245,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 
 		if (!$error)
 		{
-			$tmparray = explode('_', $_POST['task_parent']);
+			$tmparray = explode('_', GETPOST('task_parent'));
 			$projectid = $tmparray[0];
 			if (empty($projectid)) $projectid = $id; // If projectid is ''
 			$task_parent = $tmparray[1];
@@ -345,7 +345,7 @@ if ($id > 0 || !empty($ref))
 	//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
 
-	$tab = GETPOST('tab') ?GETPOST('tab') : 'tasks';
+	$tab = (GETPOSTISSET('tab') ? GETPOST('tab') : 'tasks');
 
 	$head = project_prepare_head($object);
 	print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));

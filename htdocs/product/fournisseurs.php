@@ -610,17 +610,17 @@ if ($id > 0 || $ref)
 					</script>';
 				}
 
-                if (!empty($conf->multicurrency->enabled)) {
-                    // Currency
-                    print '<tr><td class="fieldrequired">'.$langs->trans("Currency").'</td>';
-                    print '<td>';
-                    $currencycodetouse = GETPOST('multicurrency_code') ?GETPOST('multicurrency_code') : (isset($object->fourn_multicurrency_code) ? $object->fourn_multicurrency_code : '');
-                    if (empty($currencycodetouse) && $object->fourn_multicurrency_tx == 1) $currencycodetouse = $conf->currency;
-                    print $form->selectMultiCurrency($currencycodetouse, "multicurrency_code", 1);
-                    print ' &nbsp; '.$langs->trans("CurrencyRate").' ';
-                    print '<input class="flat" name="multicurrency_tx" size="4" value="'.vatrate(GETPOST('multicurrency_tx') ? GETPOST('multicurrency_tx') : (isset($object->fourn_multicurrency_tx) ? $object->fourn_multicurrency_tx : '')).'">';
-                    print '</td>';
-                    print '</tr>';
+				if (!empty($conf->multicurrency->enabled)) {
+					// Currency
+					print '<tr><td class="fieldrequired">'.$langs->trans("Currency").'</td>';
+					print '<td>';
+					$currencycodetouse = GETPOST('multicurrency_code') ?GETPOST('multicurrency_code') : (isset($object->fourn_multicurrency_code) ? $object->fourn_multicurrency_code : '');
+					if (empty($currencycodetouse) && $object->fourn_multicurrency_tx == 1) $currencycodetouse = $conf->currency;
+					print $form->selectMultiCurrency($currencycodetouse, "multicurrency_code", 1);
+					print ' &nbsp; '.$langs->trans("CurrencyRate").' ';
+					print '<input class="flat" name="multicurrency_tx" size="4" value="'.vatrate(GETPOST('multicurrency_tx') ? GETPOST('multicurrency_tx') : (isset($object->fourn_multicurrency_tx) ? $object->fourn_multicurrency_tx : '')).'">';
+					print '</td>';
+					print '</tr>';
 
 					// Currency price qty min
 					print '<tr><td class="fieldrequired">'.$langs->trans("PriceQtyMinCurrency").'</td>';
@@ -980,8 +980,7 @@ END;
 						}
 
 						// Supplier ref
-						if ($usercancreate) // change required right here
-						{
+						if ($usercancreate) { // change required right here
 							print '<td class="left">'.$productfourn->getNomUrl().'</td>';
 						} else {
 							print '<td class="left">'.$productfourn->fourn_ref.'</td>';
@@ -1138,7 +1137,7 @@ END;
 
 						if ($usercancreate)
 						{
-							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=update_price&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_edit()."</a>";
+							print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=update_price&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_edit()."</a>";
 							print ' &nbsp; ';
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=ask_remove_pf&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_picto($langs->trans("Remove"), 'delete').'</a>';
 						}

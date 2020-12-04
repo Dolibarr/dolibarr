@@ -59,6 +59,13 @@ a.badge:focus, a.badge:hover {
     color: #fff;
 }
 
+span.badgeneutral {
+    padding: 2px 7px 2px 7px;
+    background-color: #e4e4e4;
+    color: #666;
+    border-radius: 10px;
+}
+
 
 /* PRIMARY */
 .badge-primary{

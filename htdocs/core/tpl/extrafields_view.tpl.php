@@ -85,7 +85,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 		if (!empty($extrafields->attributes[$object->table_element]['langfile'][$tmpkeyextra])) $langs->load($extrafields->attributes[$object->table_element]['langfile'][$tmpkeyextra]);
 		if ($action == 'edit_extras')
 		{
-			$value = (isset($_POST["options_".$tmpkeyextra]) ? $_POST["options_".$tmpkeyextra] : $object->array_options["options_".$tmpkeyextra]);
+			$value = (GETPOSTISSET("options_".$tmpkeyextra) ? GETPOST("options_".$tmpkeyextra) : $object->array_options["options_".$tmpkeyextra]);
 		} else {
 			$value = $object->array_options["options_".$tmpkeyextra];
 			//var_dump($tmpkeyextra.' - '.$value);
@@ -172,7 +172,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 					$datenotinstring = $db->jdate($datenotinstring);
 				}
 				//print 'x'.$object->array_options['options_' . $tmpkeyextra].'-'.$datenotinstring.' - '.dol_print_date($datenotinstring, 'dayhour');
-				$value = isset($_POST["options_".$tmpkeyextra]) ? dol_mktime($_POST["options_".$tmpkeyextra."hour"], $_POST["options_".$tmpkeyextra."min"], 0, $_POST["options_".$tmpkeyextra."month"], $_POST["options_".$tmpkeyextra."day"], $_POST["options_".$tmpkeyextra."year"]) : $datenotinstring;
+				$value = GETPOSTISSET("options_".$tmpkeyextra) ? dol_mktime(GETPOST("options_".$tmpkeyextra."hour", 'int'), GETPOST("options_".$tmpkeyextra."min", 'int'), 0, GETPOST("options_".$tmpkeyextra."month", 'int'), GETPOST("options_".$tmpkeyextra."day", 'int'), GETPOST("options_".$tmpkeyextra."year", 'int')) : $datenotinstring;
 			}
 
 			//TODO Improve element and rights detection
