@@ -250,7 +250,50 @@ if (!defined('NOSESSION'))
 	session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
 	session_name($sessionname);
 	session_start();
+
+	// By default conf->entity is 1, but we change this if we ask another value.
+	if (session_id() && !empty($_SESSION["dol_entity"])) {
+		// Entity inside an opened session
+		$conf->entity = $_SESSION["dol_entity"];
+	} elseif (!empty($_ENV["dol_entity"])) {
+		// Entity inside a CLI script
+		$conf->entity = $_ENV["dol_entity"];
+	} elseif (GETPOSTISSET("loginfunction") && GETPOST("entity", 'int')) {
+		// Just after a login page
+		$conf->entity = GETPOST("entity", 'int');
+	} elseif (defined('DOLENTITY') && is_numeric(constant('DOLENTITY'))) {
+		// For public page with MultiCompany module
+		$conf->entity = constant('DOLENTITY');
+	}
 }
+
+
+// If software has been locked. Only login $conf->global->MAIN_ONLY_LOGIN_ALLOWED is allowed.
+if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
+{
+	$ok = 0;
+	if ((!session_id() || !isset($_SESSION["dol_login"])) && !isset($_POST["username"]) && !empty($_SERVER["GATEWAY_INTERFACE"])) $ok = 1; // We let working pages if not logged and inside a web browser (login form, to allow login by admin)
+	elseif (isset($_POST["username"]) && $_POST["username"] == $conf->global->MAIN_ONLY_LOGIN_ALLOWED) $ok = 1; // We let working pages that is a login submission (login submit, to allow login by admin)
+	elseif (defined('NOREQUIREDB'))   $ok = 1; // We let working pages that don't need database access (xxx.css.php)
+	elseif (defined('EVEN_IF_ONLY_LOGIN_ALLOWED')) $ok = 1; // We let working pages that ask to work even if only login enabled (logout.php)
+	elseif (session_id() && isset($_SESSION["dol_login"]) && $_SESSION["dol_login"] == $conf->global->MAIN_ONLY_LOGIN_ALLOWED) $ok = 1; // We let working if user is allowed admin
+	if (!$ok)
+	{
+		if (session_id() && isset($_SESSION["dol_login"]) && $_SESSION["dol_login"] != $conf->global->MAIN_ONLY_LOGIN_ALLOWED)
+		{
+			print 'Sorry, your application is offline.'."\n";
+			print 'You are logged with user "'.$_SESSION["dol_login"].'" and only administrator user "'.$conf->global->MAIN_ONLY_LOGIN_ALLOWED.'" is allowed to connect for the moment.'."\n";
+			$nexturl = DOL_URL_ROOT.'/user/logout.php';
+			print 'Please try later or <a href="'.$nexturl.'">click here to disconnect and change login user</a>...'."\n";
+		} else {
+			print 'Sorry, your application is offline. Only administrator user "'.$conf->global->MAIN_ONLY_LOGIN_ALLOWED.'" is allowed to connect for the moment.'."\n";
+			$nexturl = DOL_URL_ROOT.'/';
+			print 'Please try later or <a href="'.$nexturl.'">click here to change login user</a>...'."\n";
+		}
+		exit;
+	}
+}
+
 
 // Activate end of page function
 register_shutdown_function('dol_shutdown');
@@ -2586,7 +2629,7 @@ function main_area($title = '')
 
 	print '<!-- Begin div class="fiche" -->'."\n".'<div class="fiche">'."\n";
 
-	if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) print info_admin($langs->trans("WarningYouAreInMaintenanceMode", $conf->global->MAIN_ONLY_LOGIN_ALLOWED));
+	if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) print info_admin($langs->trans("WarningYouAreInMaintenanceMode", $conf->global->MAIN_ONLY_LOGIN_ALLOWED), 0, 0, 1, 'warning maintenancemode');
 
 	// Permit to add user company information on each printed document by set SHOW_SOCINFO_ON_PRINT
 	if (!empty($conf->global->SHOW_SOCINFO_ON_PRINT) && GETPOST('optioncss', 'aZ09') == 'print' && empty(GETPOST('disable_show_socinfo_on_print', 'az09')))
