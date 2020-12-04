@@ -1267,9 +1267,9 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(1234, price2num('1.234', '', 2), 'Test 1.234 give 1234 with spanish language if user input');
         $this->assertEquals(1.234, price2num('1,234', '', 2), 'Test 1,234 give 1234 with spanish language if user input');
         $this->assertEquals(1234, price2num('1 234', '', 2), 'Test 1 234 give 1234 with spanish language if user input');
-        $this->assertEquals(1.234, price2num('1.234'), 'Test 1.234 give 1.234 with spanish language');
-        $this->assertEquals(1.234, price2num('1,234'), 'Test 1,234 give 1234 with spanish language');
-        $this->assertEquals(1234, price2num('1 234'), 'Test 1 234 give 1234 with spanish language');
+        $this->assertEquals(-1.234, price2num('-1.234'), 'Test 1.234 give 1.234 with spanish language');
+        $this->assertEquals(-1.234, price2num('-1,234'), 'Test 1,234 give 1234 with spanish language');
+        $this->assertEquals(-1234, price2num('-1 234'), 'Test 1 234 give 1234 with spanish language');
         $this->assertEquals(21500123, price2num('21.500.123'), 'Test 21.500.123 give 21500123 with spanish language');
         $this->assertEquals(21500123, price2num('21500.123', 0, 2), 'Test 21500.123 give 21500123 with spanish language if user input');
         $this->assertEquals(21500.123, price2num('21500.123'), 'Test 21500.123 give 21500123 with spanish language');
