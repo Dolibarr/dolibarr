@@ -1564,7 +1564,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			// Accountancy_code_sell
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 			print '<td>';
-			if($type == 0) {
+			if ($type == 0) {
 				$accountancy_code_sell = (GETPOST('accountancy_code_sell', 'alpha')?(GETPOST('accountancy_code_sell', 'alpha')):$conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT);
 			} else {
 				$accountancy_code_sell = (GETPOST('accountancy_code_sell', 'alpha')?(GETPOST('accountancy_code_sell', 'alpha')):$conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT);
@@ -1575,7 +1575,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			// Accountancy_code_buy
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
 			print '<td>';
-			if($type == 0) {
+			if ($type == 0) {
 				$accountancy_code_buy = (GETPOST('accountancy_code_buy', 'alpha')?(GETPOST('accountancy_code_buy', 'alpha')):$conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT);
 			} else {
 				$accountancy_code_buy = (GETPOST('accountancy_code_buy', 'alpha')?(GETPOST('accountancy_code_buy', 'alpha')):$conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT);

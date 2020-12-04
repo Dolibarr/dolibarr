@@ -4491,8 +4491,7 @@ class Societe extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error=$this->db->lasterror();
 			$this->db->rollback();
 			return -1;
