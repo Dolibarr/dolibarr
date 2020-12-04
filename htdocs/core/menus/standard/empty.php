@@ -147,7 +147,7 @@ class MenuManager
 		}
 
 		if ($mode == 'jmobile') {     // Used to get menu in xml ul/li
-		// Home
+			// Home
 			$showmode = 1;
 			$classname = 'class="tmenusel"';
 			$idsel = 'home';

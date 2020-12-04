@@ -701,7 +701,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 	 * --------------------------------------------------
 	 */
 	if ($mainmenu) {	// If this is empty, loading hard coded menu and loading personalised menu will fail
-	/*
+		/*
 		 * Menu HOME
 		 */
 		if ($mainmenu == 'home') {
