@@ -591,11 +591,11 @@ if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire)
 {
 	if (!empty($conf->categorie->enabled)) {
 		$formcategory = new FormCategory($db);
-		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CONTACT, $searchCategoryContactList, 'Categories',true, $searchCategoryContactOperator);
-		if(empty($type) || $type == 'c' || $type == 'p') {
+		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CONTACT, $searchCategoryContactList, 'Categories', true, $searchCategoryContactOperator);
+		if (empty($type) || $type == 'c' || $type == 'p') {
 			$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'CustomersCategoriesShort', true, $searchCategoryCustomerOperator);
 		}
-		if(empty($type) || $type == 'f') {
+		if (empty($type) || $type == 'f') {
 			$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_SUPPLIER, $searchCategorySupplierList, 'SuppliersCategoriesShort', true, $searchCategorySupplierOperator);
 		}
 	}

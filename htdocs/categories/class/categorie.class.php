@@ -1886,7 +1886,7 @@ class Categorie extends CommonObject
 	 * @param string $categAlias Alias of table category
 	 * @return string                    A additional SQL SELECT query
 	 */
-	public static function getFilterSelectQuery($type, $rowIdName, $searchList, $mode=self::FILTER_MODE_AND, $categAlias = 'cp')
+	public static function getFilterSelectQuery($type, $rowIdName, $searchList, $mode = self::FILTER_MODE_AND, $categAlias = 'cp')
 	{
 		$tableSuffix = $type;
 		$fk = $type;
@@ -1897,8 +1897,8 @@ class Categorie extends CommonObject
 			case 'account':
 				break;
 			case 'event':case 'actioncomm':
-			$tableSuffix = 'actioncomm';
-			$fk = 'actioncomm';
+				$tableSuffix = 'actioncomm';
+				$fk = 'actioncomm';
 			break;
 			case 'supplier':
 				$tableSuffix = 'fournisseur';

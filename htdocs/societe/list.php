@@ -98,7 +98,6 @@ if (!empty($conf->categorie->enabled)) {
 	$searchCategorySupplierList = GETPOST('search_category_' . Categorie::TYPE_SUPPLIER . '_list', 'array');
 	$searchCategoryCustomerOperator = (GETPOST('search_category_' . Categorie::TYPE_CUSTOMER . '_operator', 'int') ? GETPOST('search_category_' . Categorie::TYPE_CUSTOMER . '_operator', 'int') : 0);
 	$searchCategorySupplierOperator = (GETPOST('search_category_' . Categorie::TYPE_SUPPLIER . '_operator', 'int') ? GETPOST('search_category_' . Categorie::TYPE_SUPPLIER . '_operator', 'int') : 0);
-
 }
 $search_country = GETPOST("search_country", 'intcomma');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
@@ -450,10 +449,10 @@ if ($search_sale == -2)    $sql .= " AND sc.fk_user IS NULL";
 elseif ($search_sale)          $sql .= " AND sc.fk_user = ".$db->escape($search_sale);
 if ($conf->categorie->enabled) {
 	if ($searchCategoryCustomerList) {
-		$sql .= Categorie::getFilterSelectQuery(Categorie::TYPE_CUSTOMER, "s.rowid", $searchCategoryCustomerList,!empty($searchCategoryCustomerOperator)?Categorie::FILTER_MODE_OR:Categorie::FILTER_MODE_AND, 'cc');
+		$sql .= Categorie::getFilterSelectQuery(Categorie::TYPE_CUSTOMER, "s.rowid", $searchCategoryCustomerList, !empty($searchCategoryCustomerOperator)?Categorie::FILTER_MODE_OR:Categorie::FILTER_MODE_AND, 'cc');
 	}
 	if ($searchCategorySupplierList) {
-		$sql .= Categorie::getFilterSelectQuery(Categorie::TYPE_SUPPLIER, "s.rowid", $searchCategorySupplierList,!empty($searchCategorySupplierOperator)?Categorie::FILTER_MODE_OR:Categorie::FILTER_MODE_AND, 'cs');
+		$sql .= Categorie::getFilterSelectQuery(Categorie::TYPE_SUPPLIER, "s.rowid", $searchCategorySupplierList, !empty($searchCategorySupplierOperator)?Categorie::FILTER_MODE_OR:Categorie::FILTER_MODE_AND, 'cs');
 	}
 }
 
@@ -691,10 +690,10 @@ if ($search_all)
 $moreforfilter = '';
 if (!empty($conf->categorie->enabled)) {
 	$formcategory = new FormCategory($db);
-	if(empty($type) || $type == 'c' || $type == 'p') {
+	if (empty($type) || $type == 'c' || $type == 'p') {
 		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'CustomersCategoriesShort', true, $searchCategoryCustomerOperator);
 	}
-	if(empty($type) || $type == 'f') {
+	if (empty($type) || $type == 'f') {
 		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_SUPPLIER, $searchCategorySupplierList, 'SuppliersCategoriesShort', true, $searchCategorySupplierOperator);
 	}
 }
