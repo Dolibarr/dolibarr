@@ -1897,8 +1897,8 @@ class Categorie extends CommonObject
 			case 'account':
 				break;
 			case 'event':case 'actioncomm':
-				$tableSuffix = 'actioncomm';
-				$fk = 'actioncomm';
+					$tableSuffix = 'actioncomm';
+					$fk = 'actioncomm';
 			break;
 			case 'supplier':
 				$tableSuffix = 'fournisseur';
