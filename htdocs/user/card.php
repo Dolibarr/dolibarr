@@ -740,7 +740,7 @@ if ($action == 'create' || $action == 'adduserldap')
 						if ($value === $conf->global->LDAP_FIELD_PASSWORD || $value === $conf->global->LDAP_FIELD_PASSWORD_CRYPTED)
  						{
  							$label .= $value."=******* ";
- 						} else if ($value) {
+ 						} elseif ($value) {
  							$label .= $value."=".$ldapuser[$value]." ";
  						}
 					}
