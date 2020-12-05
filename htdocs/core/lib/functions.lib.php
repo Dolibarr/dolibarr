@@ -1891,16 +1891,14 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	if (isset($object->country_code) && in_array($object->country_code, array('AU', 'CA', 'US')) || !empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)) {  	// US: title firstname name \n address lines \n town, state, zip \n country
 		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
 		$ret .= ($ret ? $sep : '').$town;
-		if ($object->state)
-		{
+		if (!empty($object->state))	{
 			$ret .= ($ret ? ", " : '').$object->state;
 		}
 		if ($object->zip) $ret .= ($ret ? ", " : '').$object->zip;
 	} elseif (isset($object->country_code) && in_array($object->country_code, array('GB', 'UK'))) { // UK: title firstname name \n address lines \n town state \n zip \n country
 		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
 		$ret .= ($ret ? $sep : '').$town;
-		if ($object->state)
-		{
+		if (!empty($object->state)) {
 			$ret .= ($ret ? ", " : '').$object->state;
 		}
 		if ($object->zip) $ret .= ($ret ? $sep : '').$object->zip;
@@ -1908,21 +1906,19 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 		$ret .= ($ret ? $sep : '').$object->zip;
 		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
 		$ret .= ($town ? (($object->zip ? ' ' : '').$town) : '');
-		if ($object->state)
-		{
+		if (!empty($object->state)) {
 			$ret .= "\n".$object->state;
 		}
 	} elseif (isset($object->country_code) && in_array($object->country_code, array('IT'))) { // IT: tile firstname name\n address lines \n zip (Code Departement) \n country
 		$ret .= ($ret ? $sep : '').$object->zip;
 		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
 		$ret .= ($town ? (($object->zip ? ' ' : '').$town) : '');
-		$ret .= ($object->state_code ? (' '.($object->state_code)) : '');
+		$ret .= (empty($object->state_code) ? '' : (' '.$object->state_code));
 	} else { // Other: title firstname name \n address lines \n zip town \n country
 		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
 		$ret .= $object->zip ? (($ret ? $sep : '').$object->zip) : '';
 		$ret .= ($town ? (($object->zip ? ' ' : ($ret ? $sep : '')).$town) : '');
-		if ($object->state && in_array($object->country_code, $countriesusingstate))
-		{
+		if (!empty($object->state) && in_array($object->country_code, $countriesusingstate)) {
 			$ret .= ($ret ? ", " : '').$object->state;
 		}
 	}
