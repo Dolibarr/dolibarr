@@ -7,7 +7,7 @@
  * Copyright (C) 2013-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
- * Copyright (C) 2017-2018  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2017-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018		Ferran Marcet	        <fmarcet@2byte.es>
  * Copyright (C) 2018		Eric Seigne	            <eric.seigne@cap-rel.fr>
  *
@@ -970,10 +970,11 @@ if (empty($action) || $action == 'view') {
 	if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
-		if ($obj->nb > 0)
-		{
+		if ($obj->nb > 0) {
 			print '<br><div class="warning">'.img_warning().' '.$langs->trans("TheJournalCodeIsNotDefinedOnSomeBankAccount");
-			print ' : '.$langs->trans("AccountancyAreaDescBank", 9, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("BankAccounts").'</strong>');
+			$desc = ' : '.$langs->trans("AccountancyAreaDescBank", 9, '{link}');
+			$desc = str_replace('{link}', '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("BankAccounts").'</strong>', $desc);
+			print $desc;
 			print '</div>';
 		}
 	} else dol_print_error($db);
