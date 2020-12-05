@@ -129,7 +129,7 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print "<!-- title of cash fence -->\n";
+	print "<!-- title of cash desk closing -->\n";
 	print "<center><h2>";
 	if ($cashcontrol->status != $cashcontrol::STATUS_DRAFT) print $langs->trans("CashControl")." ".$cashcontrol->id;
 	else print $langs->trans("CashControl")." - ".$langs->trans("Draft");

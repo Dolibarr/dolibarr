@@ -24,7 +24,7 @@
 /**
  *      \file       htdocs/compta/cashcontrol/cashcontrol_card.php
  *      \ingroup    cashdesk|takepos
- *      \brief      Page to show a cash fence
+ *      \brief      Page to show a cash desk closing
  */
 
 require '../../main.inc.php';
@@ -215,7 +215,7 @@ if ($action == "valid")	// validate = close
 		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 	} else {
-		setEventMessages($langs->trans("CashFenceDone"), null);
+		setEventMessages($langs->trans("CashDeskClosingDone"), null);
 		$db->commit();
 	}
 

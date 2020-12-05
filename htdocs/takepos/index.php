@@ -718,12 +718,12 @@ function MoreActions(totalactions){
 
 function ControlCashOpening()
 {
-    $.colorbox({href:"../compta/cashcontrol/cashcontrol_card.php?action=create&contextpage=takepos", width:"90%", height:"60%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("NewCashFence"); ?>"});
+    $.colorbox({href:"../compta/cashcontrol/cashcontrol_card.php?action=create&contextpage=takepos", width:"90%", height:"60%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("NewCashDeskClosing"); ?>"});
 }
 
-function CloseCashFence(rowid)
+function CloseCashDeskClosing(rowid)
 {
-    $.colorbox({href:"../compta/cashcontrol/cashcontrol_card.php?id="+rowid+"&contextpage=takepos", width:"90%", height:"90%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("NewCashFence"); ?>"});
+    $.colorbox({href:"../compta/cashcontrol/cashcontrol_card.php?id="+rowid+"&contextpage=takepos", width:"90%", height:"90%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("NewCashDeskClosing"); ?>"});
 }
 
 function CashReport(rowid)
@@ -1031,7 +1031,7 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 		$menus[$r++] = array('title'=>'<span class="fas fa-file-invoice-dollar paddingrightonly"></span><div class="trunc">'.$langs->trans("CashReport").'</div>', 'action'=>'CashReport('.$obj->rowid.');');
-		if ($obj->status == 0) $menus[$r++] = array('title'=>'<span class="fas fa-cash-register paddingrightonly"></span><div class="trunc">'.$langs->trans("CloseCashFence").'</div>', 'action'=>'CloseCashFence('.$obj->rowid.');');
+		if ($obj->status == 0) $menus[$r++] = array('title'=>'<span class="fas fa-cash-register paddingrightonly"></span><div class="trunc">'.$langs->trans("CloseCashDeskClosing").'</div>', 'action'=>'CloseCashDeskClosing('.$obj->rowid.');');
 	}
 }
 

@@ -25,7 +25,7 @@
  */
 
 /**
- *    Class to manage cash fence
+ *    Class to manage cash control
  */
 class CashControl extends CommonObject
 {
@@ -202,7 +202,7 @@ class CashControl extends CommonObject
 	}
 
 	/**
-	 * Validate cash fence
+	 * Validate cash control
 	 *
 	 * @param 	User 		$user		User
 	 * @param 	number 		$notrigger	No trigger
@@ -376,7 +376,7 @@ class CashControl extends CommonObject
 
 		$newref = ($this->ref ? $this->ref : $this->id);
 
-		$label = '<u>'.$langs->trans("CashFence").'</u>';
+		$label = '<u>'.$langs->trans("CashDeskClosing").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.($this->ref ? $this->ref : $this->id);
 
