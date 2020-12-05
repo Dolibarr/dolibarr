@@ -21,7 +21,7 @@
  */
 
 /**
- *      \file       htdocs/modulebuilder/tempalte/admin/myobject_extrafields.php
+ *      \file       htdocs/modulebuilder/template/admin/myobject_extrafields.php
  *		\ingroup    mymodule
  *		\brief      Page to setup extra fields of myobject
  */
