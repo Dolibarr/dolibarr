@@ -228,18 +228,15 @@ if (!empty($_POST["DOL_AUTOSET_COOKIE"]))
 }
 
 
-// Init the 5 global objects, this include will make the 'new Xxx()' and set properties for: $conf, $db, $langs, $user, $mysoc
-require_once 'master.inc.php';
-
 // Set the handler of session
 if (ini_get('session.save_handler') == 'user') {
 	require_once 'core/lib/phpsessionindb.lib.php';
 }
 
 // Init session. Name of session is specific to Dolibarr instance.
-// Must be done after the include of master.inc.php so $conf file is loaded and vars like $dolibarr_main_force_https are set.
-// Note: the function dol_getprefix may have been redefined to return a different key to manage another area to protect.
-$prefix = dol_getprefix(''); // This uses the $conf file
+// Must be done after the include of filefunc.inc.php so global variables of conf file are defined (like $dolibarr_main_instance_unique_id or $dolibarr_main_force_https).
+// Note: the function dol_getprefix is defined into functions.lib.php but may have been defined to return a different key to manage another area to protect.
+$prefix = dol_getprefix('');
 $sessionname = 'DOLSESSID_'.$prefix;
 $sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
 if (!empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime', $_COOKIE[$sessiontimeout]);
@@ -250,22 +247,11 @@ if (!defined('NOSESSION'))
 	session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
 	session_name($sessionname);
 	session_start();
-
-	// By default conf->entity is 1, but we change this if we ask another value.
-	if (session_id() && !empty($_SESSION["dol_entity"])) {
-		// Entity inside an opened session
-		$conf->entity = $_SESSION["dol_entity"];
-	} elseif (!empty($_ENV["dol_entity"])) {
-		// Entity inside a CLI script
-		$conf->entity = $_ENV["dol_entity"];
-	} elseif (GETPOSTISSET("loginfunction") && GETPOST("entity", 'int')) {
-		// Just after a login page
-		$conf->entity = GETPOST("entity", 'int');
-	} elseif (defined('DOLENTITY') && is_numeric(constant('DOLENTITY'))) {
-		// For public page with MultiCompany module
-		$conf->entity = constant('DOLENTITY');
-	}
 }
+
+
+// Init the 5 global objects, this include will make the 'new Xxx()' and set properties for: $conf, $db, $langs, $user, $mysoc
+require_once 'master.inc.php';
 
 
 // If software has been locked. Only login $conf->global->MAIN_ONLY_LOGIN_ALLOWED is allowed.

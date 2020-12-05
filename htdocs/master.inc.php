@@ -169,9 +169,9 @@ if (session_id() && !empty($_SESSION["dol_entity"])) {
 } elseif (GETPOSTISSET("loginfunction") && GETPOST("entity", 'int')) {
 	// Just after a login page
 	$conf->entity = GETPOST("entity", 'int');
-} elseif (defined('DOLENTITY') && is_numeric(DOLENTITY)) {
+} elseif (defined('DOLENTITY') && is_numeric(constant('DOLENTITY'))) {
 	// For public page with MultiCompany module
-	$conf->entity = DOLENTITY;
+	$conf->entity = constant('DOLENTITY');
 }
 
 // Sanitize entity
@@ -186,21 +186,14 @@ if (!defined('NOREQUIREDB'))
 }
 
 // Overwrite database value
-if (!empty($conf->file->mailing_limit_sendbyweb))
-{
+if (!empty($conf->file->mailing_limit_sendbyweb)) {
 	$conf->global->MAILING_LIMIT_SENDBYWEB = $conf->file->mailing_limit_sendbyweb;
 }
-if (empty($conf->global->MAILING_LIMIT_SENDBYWEB))
-{
+if (empty($conf->global->MAILING_LIMIT_SENDBYWEB)) {
 	$conf->global->MAILING_LIMIT_SENDBYWEB = 25;
 }
-if (!empty($conf->file->mailing_limit_sendbycli))
-{
+if (!empty($conf->file->mailing_limit_sendbycli)) {
 	$conf->global->MAILING_LIMIT_SENDBYCLI = $conf->file->mailing_limit_sendbycli;
-}
-if (empty($conf->global->MAILING_LIMIT_SENDBYCLI))
-{
-	$conf->global->MAILING_LIMIT_SENDBYCLI = 0;
 }
 
 // Create object $mysoc (A thirdparty object that contains properties of companies managed by Dolibarr.
