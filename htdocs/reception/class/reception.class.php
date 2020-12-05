@@ -46,7 +46,14 @@ class Reception extends CommonObject
 {
 	use CommonIncoterm;
 
+	/**
+	 * @var string element name
+	 */
 	public $element = "reception";
+
+	/**
+	 * @var string Fieldname with ID of parent key if this field has a parent
+	 */
 	public $fk_element = "fk_reception";
 	public $table_element = "reception";
 	public $table_element_line = "commande_fournisseur_dispatch";

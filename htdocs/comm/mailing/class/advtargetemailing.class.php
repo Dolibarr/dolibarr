@@ -54,7 +54,7 @@ class AdvanceTargetingMailing extends CommonObject
 	public $name;
 
 	/**
-	 * @var int	element id
+	 * @var int	element id (it's not the name of a field)
 	 */
 	public $fk_element;
 

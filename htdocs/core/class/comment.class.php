@@ -32,10 +32,13 @@ class Comment extends CommonObject
 	public $table_element = 'comment';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var int ID of parent key (it's nome the name of a field)
 	 */
-	public $fk_element = '';
+	public $fk_element;
 
+	/**
+	 * @var string element type
+	 */
 	public $element_type;
 
 	/**

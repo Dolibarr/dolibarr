@@ -48,7 +48,7 @@ class Delivery extends CommonObject
 	public $element = "delivery";
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = "fk_delivery";
 
@@ -58,7 +58,7 @@ class Delivery extends CommonObject
 	public $table_element = "delivery";
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = "deliverydet";
 

@@ -170,35 +170,35 @@ class RecruitmentJobPosition extends CommonObject
 
 	// If this object has a subtable with lines
 
-	/**
-	 * @var int    Name of subtable line
-	 */
-	//public $table_element_line = 'recruitment_recruitmentjobpositionline';
+	// /**
+	//  * @var string    Name of subtable line
+	//  */
+	// public $table_element_line = 'recruitment_recruitmentjobpositionline';
 
-	/**
-	 * @var int    Field with ID of parent key if this field has a parent
-	 */
-	//public $fk_element = 'fk_recruitmentjobposition';
+	// /**
+	//  * @var string    Field with ID of parent key if this field has a parent
+	//  */
+	// public $fk_element = 'fk_recruitmentjobposition';
 
-	/**
-	 * @var int    Name of subtable class that manage subtable lines
-	 */
-	//public $class_element_line = 'RecruitmentJobPositionline';
+	// /**
+	//  * @var string    Name of subtable class that manage subtable lines
+	//  */
+	// public $class_element_line = 'RecruitmentJobPositionline';
 
-	/**
-	 * @var array	List of child tables. To test if we can delete object.
-	 */
-	//protected $childtables=array();
+	// /**
+	//  * @var array	List of child tables. To test if we can delete object.
+	//  */
+	// protected $childtables=array();
 
-	/**
-	 * @var array	List of child tables. To know object to delete on cascade.
-	 */
-	//protected $childtablesoncascade=array('recruitment_recruitmentjobpositiondet');
+	// /**
+	//  * @var array	List of child tables. To know object to delete on cascade.
+	//  */
+	// protected $childtablesoncascade=array('recruitment_recruitmentjobpositiondet');
 
-	/**
-	 * @var RecruitmentJobPositionLine[]     Array of subtable lines
-	 */
-	//public $lines = array();
+	// /**
+	//  * @var RecruitmentJobPositionLine[]     Array of subtable lines
+	//  */
+	// public $lines = array();
 
 
 
