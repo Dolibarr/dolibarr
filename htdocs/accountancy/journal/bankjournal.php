@@ -688,7 +688,7 @@ if (!$error && $action == 'writebookkeeping') {
 							$bookkeeping->label_compte = $accountingaccount->label;
 						} else {
 							if ($tabtype[$key] == 'unknown') {	// Unknown transaction, we will use a waiting account for thirdparty.
-							// Temporary account
+								// Temporary account
 								$bookkeeping->subledger_account = '';
 								$bookkeeping->subledger_label = '';
 								$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE;
