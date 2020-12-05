@@ -204,6 +204,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
+			$object->civility_code = GETPOST("civility_code", 'aZ09');
 			$object->lastname = GETPOST("lastname", 'alphanohtml');
 			$object->firstname = GETPOST("firstname", 'alphanohtml');
 			$object->login = GETPOST("login", 'alphanohtml');
@@ -366,6 +367,7 @@ if (empty($reshook)) {
 
 				$db->begin();
 
+				$object->civility_code = GETPOST("civility_code", 'aZ09');
 				$object->lastname = GETPOST("lastname", 'alphanohtml');
 				$object->firstname = GETPOST("firstname", 'alphanohtml');
 				$object->login = GETPOST("login", 'alphanohtml');
@@ -788,6 +790,11 @@ if ($action == 'create' || $action == 'adduserldap')
 	print dol_set_focus('#lastname');
 
 	print '<table class="border centpercent">';
+
+	// Civility
+	print '<tr><td><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
+	print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'aZ09') : $object->civility_code, 'civility_code');
+	print '</td></tr>';
 
 	// Lastname
 	print '<tr>';
@@ -2036,6 +2043,11 @@ if ($action == 'create' || $action == 'adduserldap')
 				print '</td>';
 				print '</tr>';
 			}
+
+			// Civility
+			print '<tr><td><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
+			print $formcompany->select_civility( GETPOSTISSET( "civility_code" ) ? GETPOST( "civility_code" , 'aZ09' ) : $object->civility_code , 'civility_code' );
+			print '</td></tr>';
 
 			// Lastname
 			print "<tr>";
