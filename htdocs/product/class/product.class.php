@@ -915,8 +915,8 @@ class Product extends CommonObject
 
 		$this->db->begin();
 
-		// Check name is required and codes are ok or unique.
-		// If error, this->errors[] is filled
+		$result = 0;
+		// Check name is required and codes are ok or unique. If error, this->errors[] is filled
 		if ($action != 'add') {
 			$result = $this->verify(); // We don't check when update called during a create because verify was already done
 		}
@@ -2186,14 +2186,14 @@ class Product extends CommonObject
 						if ($resql) {
 							$result = $this->db->fetch_array($resql);
 
-							$this->multiprices[$i] = $result["price"];
-							$this->multiprices_ttc[$i] = $result["price_ttc"];
-							$this->multiprices_min[$i] = $result["price_min"];
-							$this->multiprices_min_ttc[$i] = $result["price_min_ttc"];
-							$this->multiprices_base_type[$i] = $result["price_base_type"];
+							$this->multiprices[$i] = $result ? $result["price"] : null;
+							$this->multiprices_ttc[$i] = $result ? $result["price_ttc"] : null;
+							$this->multiprices_min[$i] =  $result ? $result["price_min"] : null;
+							$this->multiprices_min_ttc[$i] = $result ? $result["price_min_ttc"] : null;
+							$this->multiprices_base_type[$i] = $result ? $result["price_base_type"] : null;
 							// Next two fields are used only if PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL is on
-							$this->multiprices_tva_tx[$i] = $result["tva_tx"]; // TODO Add ' ('.$result['default_vat_code'].')'
-							$this->multiprices_recuperableonly[$i] = $result["recuperableonly"];
+							$this->multiprices_tva_tx[$i] = $result ? $result["tva_tx"].($result ? ' ('.$result['default_vat_code'].')' : '') : null;
+							$this->multiprices_recuperableonly[$i] = $result ? $result["recuperableonly"] : null;
 
 							// Price by quantity
 							/*
