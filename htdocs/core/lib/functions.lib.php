@@ -5150,17 +5150,17 @@ function getTaxesFromId($vatrate, $buyer = null, $seller = null, $firstparamisid
 /**
  *  Get type and rate of localtaxes for a particular vat rate/country of a thirdparty.
  *  This does not take into account the seller setup if subject to vat or not, only country.
- *  TODO
- *  This function is ALSO called to retrieve type for building PDF. Such call of function must be removed.
- *  Instead this function must be called when adding a line to get the array of localtax and type, and then
- *  provide it to the function calcul_price_total.
+ *
+ *  TODO This function is ALSO called to retrieve type for building PDF. Such call of function must be removed.
+ *  Instead this function must be called when adding a line to get the array of possible values for localtax and type, and then
+ *  provide the selected value to the function calcul_price_total.
  *
  *  @param	int|string  $vatrate			VAT ID or Rate+Code. Value can be value or the string with code into parenthesis or rowid if $firstparamisid is 1. Example: '8.5' or '8.5 (8.5NPR)' or 123.
  *  @param	int		    $local              Number of localtax (1 or 2, or 0 to return 1 & 2)
  *  @param	Societe	    $buyer         		Company object
  *  @param	Societe	    $seller        		Company object
  *  @param  int         $firstparamisid     1 if first param is ID into table instead of Rate+code (use this if you can)
- *  @return	array    	    				array(localtax_type1(1-6/0 if not found), rate localtax1, localtax_type2, rate localtax2, accountancycodecust, accountancycodesupp)
+ *  @return	array    	    				array(localtax_type1(1-6 or 0 if not found), rate localtax1, localtax_type2, rate localtax2, accountancycodecust, accountancycodesupp)
  *  @see getTaxesFromId()
  */
 function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisid = 0)
@@ -5172,13 +5172,13 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 	// Search local taxes
 	$sql  = "SELECT t.taux as rate, t.code, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.accountancy_code_sell, t.accountancy_code_buy";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t";
-	if ($firstparamisid) $sql .= " WHERE t.rowid = ".(int) $vatrate;
-	else {
+	if ($firstparamisid) {
+		$sql .= " WHERE t.rowid = ".(int) $vatrate;
+	} else {
 		$vatratecleaned = $vatrate;
 		$vatratecode = '';
 		$reg = array();
-		if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "x.x (yy)"
-		{
+		if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg)) {     // If vat is "x.x (yy)"
 			$vatratecleaned = $reg[1];
 			$vatratecode = $reg[2];
 		}
@@ -5191,20 +5191,19 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 	}
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$obj = $db->fetch_object($resql);
 
-		$vateratestring = $obj->rate.($obj->code ? ' ('.$obj->code.')' : '');
+		if ($obj) {
+			$vateratestring = $obj->rate.($obj->code ? ' ('.$obj->code.')' : '');
 
-		if ($local == 1)
-		{
-			return array($obj->localtax1_type, get_localtax($vateratestring, $local, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
-		} elseif ($local == 2)
-		{
-			return array($obj->localtax2_type, get_localtax($vateratestring, $local, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
-		} else {
-			return array($obj->localtax1_type, get_localtax($vateratestring, 1, $buyer, $seller), $obj->localtax2_type, get_localtax($vateratestring, 2, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
+			if ($local == 1) {
+				return array($obj->localtax1_type, get_localtax($vateratestring, $local, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
+			} elseif ($local == 2) {
+				return array($obj->localtax2_type, get_localtax($vateratestring, $local, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
+			} else {
+				return array($obj->localtax1_type, get_localtax($vateratestring, 1, $buyer, $seller), $obj->localtax2_type, get_localtax($vateratestring, 2, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
+			}
 		}
 	}
 
