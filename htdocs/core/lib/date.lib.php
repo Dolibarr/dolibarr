@@ -598,13 +598,14 @@ function dol_get_first_day_week($day, $month, $year, $gm = false)
 }
 
 /**
- *	Return the easte day in GMT time.
+ *	Return the easter day in GMT time.
  *  This function replaces easter_date() that returns a date in local TZ.
  *
  *	@param	    int			$year     			Year
- *	@return   	int								GMT Date
+ *	@return   	int								GMT Date of easter day
  */
-function getGMTEasterDatetime($year) {
+function getGMTEasterDatetime($year)
+{
 	$base = new DateTime("$year-03-21");
 	$days = easter_days($year);	// Return number of days between 21 march and easter day.
 	$tmp = $base->add(new DateInterval("P{$days}D"));
