@@ -306,7 +306,7 @@ if ($mode == 'customer')
 }
 if ($mode == 'supplier')
 {
-    $formorder->selectSupplierOrderStatus((strstr($object_status, ',') ? -1 : $object_status), 0, 'object_status');
+	$formorder->selectSupplierOrderStatus((strstr($object_status, ',') ? -1 : $object_status), 0, 'object_status');
 }
 print '</td></tr>';
 // Year

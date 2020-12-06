@@ -39,9 +39,9 @@
  */
 class DolGraph
 {
-	public $type = array(); // Array with type of each series. Example: array('bars', 'lines', ...)
+	public $type = array(); // Array with type of each series. Example: array('bars', 'horizontalbars', 'lines', 'pies', 'piesemicircle', 'polar'...)
 	public $mode = 'side'; // Mode bars graph: side, depth
-	private $_library = 'jflot'; // Graphic library to use (jflot, artichow)
+	private $_library = 'chart'; // Graphic library to use (jflot, chart, artichow)
 
 	//! Array of data
 	public $data; // Data of graph: array(array('abs1',valA1,valB1), array('abs2',valA2,valB2), ...)
@@ -115,7 +115,7 @@ class DolGraph
 
 		$this->_library = $library;
 		if ($this->_library == 'auto') {
-			$this->_library = (empty($conf->global->MAIN_JS_GRAPH) ? 'jflot' : $conf->global->MAIN_JS_GRAPH);
+			$this->_library = (empty($conf->global->MAIN_JS_GRAPH) ? 'chart' : $conf->global->MAIN_JS_GRAPH);
 		}
 	}
 
@@ -261,7 +261,7 @@ class DolGraph
 	 * Set type
 	 *
 	 * @param 	array	$type		Array with type for each serie. Example: array('type1', 'type2', ...) where type can be:
-	 * 								'pie', 'piesemicircle', 'polar', 'lines', 'linesnopoint', 'bars', ...
+	 * 								'pie', 'piesemicircle', 'polar', 'lines', 'linesnopoint', 'bars', 'horirontalbars'...
 	 * @return	void
 	 */
 	public function SetType($type)
@@ -1156,6 +1156,7 @@ class DolGraph
 		else {
 			$type = 'bar';
 			if (!isset($this->type[$firstlot]) || $this->type[$firstlot] == 'bars') $type = 'bar';
+			if (isset($this->type[$firstlot]) && $this->type[$firstlot] == 'horizontalbars') $type = 'horizontalBar';
 			if (isset($this->type[$firstlot]) && ($this->type[$firstlot] == 'lines' || $this->type[$firstlot] == 'linesnopoint')) $type = 'line';
 
 			$this->stringtoshow .= 'var options = { maintainAspectRatio: false, aspectRatio: 2.5, ';

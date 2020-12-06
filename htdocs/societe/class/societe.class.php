@@ -3116,10 +3116,10 @@ class Societe extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Returns if a profid sould be verified
+	 *  Returns if a profid sould be verified to be unique
 	 *
-	 *  @param	int		$idprof		1,2,3,4,5,6 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm,5=idprof5,6=idprof6)
-	 *  @return boolean         	true , false
+	 *  @param	int		$idprof		1,2,3,4,5,6 (Example: 1=siren, 2=siret, 3=naf, 4=rcs/rm, 5=eori, 6=idprof6)
+	 *  @return boolean         	true if the ID must be unique
 	 */
 	public function id_prof_verifiable($idprof)
 	{
@@ -3129,22 +3129,22 @@ class Societe extends CommonObject
 	 	switch ($idprof)
 		{
 			case 1:
-				$ret = (!$conf->global->SOCIETE_IDPROF1_UNIQUE ?false:true);
+				$ret = (empty($conf->global->SOCIETE_IDPROF1_UNIQUE) ? false : true);
 				break;
 			case 2:
-				$ret = (!$conf->global->SOCIETE_IDPROF2_UNIQUE ?false:true);
+				$ret = (empty($conf->global->SOCIETE_IDPROF2_UNIQUE) ? false : true);
 				break;
 			case 3:
-				$ret = (!$conf->global->SOCIETE_IDPROF3_UNIQUE ?false:true);
+				$ret = (empty($conf->global->SOCIETE_IDPROF3_UNIQUE) ? false : true);
 				break;
 			case 4:
-				$ret = (!$conf->global->SOCIETE_IDPROF4_UNIQUE ?false:true);
+				$ret = (empty($conf->global->SOCIETE_IDPROF4_UNIQUE) ? false : true);
 				break;
 			case 5:
-				$ret = (!$conf->global->SOCIETE_IDPROF5_UNIQUE ?false:true);
+				$ret = (empty($conf->global->SOCIETE_IDPROF5_UNIQUE) ? false : true);
 				break;
 			case 6:
-				$ret = (!$conf->global->SOCIETE_IDPROF6_UNIQUE ?false:true);
+				$ret = (empty($conf->global->SOCIETE_IDPROF6_UNIQUE) ? false : true);
 				break;
 			default:
 				$ret = false;
@@ -3242,7 +3242,7 @@ class Societe extends CommonObject
 			// si son index (position dans la chaîne en commence à 0 au premier caractère) est impair
 			// on double sa valeur et si cette dernière est supérieure à 9, on lui retranche 9
 			// on ajoute cette valeur à la somme totale
-
+			$sum = 0;
 			for ($index = 0; $index < 9; $index++)
 			{
 				$number = (int) $chaine[$index];
@@ -3267,7 +3267,7 @@ class Societe extends CommonObject
 			// si son index (position dans la chaîne en commence à 0 au premier caractère) est pair
 			// on double sa valeur et si cette dernière est supérieure à 9, on lui retranche 9
 			// on ajoute cette valeur à la somme totale
-
+			$sum = 0;
 			for ($index = 0; $index < 14; $index++)
 			{
 				$number = (int) $chaine[$index];
@@ -3343,10 +3343,6 @@ class Societe extends CommonObject
 		{
 			$string = trim($this->idprof1);
 			$string = preg_replace('/(\s)/', '', $string);
-
-			for ($i = 0; $i < 9; $i++) {
-				$num[$i] = substr($string, $i, 1);
-			}
 
 			//Check NIF
 			if (preg_match('/(^[0-9]{9}$)/', $string)) {

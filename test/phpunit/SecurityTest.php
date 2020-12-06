@@ -34,6 +34,7 @@ if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
 if (! defined("NOLOGIN"))        define("NOLOGIN", '1');       // If this page is public (can be called outside logged session)
+if (! defined("NOSESSION"))      define("NOSESSION", '1');
 
 require_once dirname(__FILE__).'/../../htdocs/main.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
@@ -284,9 +285,10 @@ class SecurityTest extends PHPUnit\Framework\TestCase
         $_POST["param6"]="&quot;&gt;<svg o&#110;load='console.log(&quot;123&quot;)'&gt;";
         $_GET["param7"]='"c:\this is a path~1\aaa&#110;" abc<bad>def</bad>';
         $_POST["param8"]="Hacker<svg o&#110;load='console.log(&quot;123&quot;)'";	// html tag is not closed so it is not detected as html tag but is still harmfull
+		$_POST["param9"]='is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : \'objnotdefined\'';
+		$_POST["param10"]='is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : \'<abc>objnotdefined\'';
 
-        // Test int
-        $result=GETPOST('id', 'int');              // Must return nothing
+		$result=GETPOST('id', 'int');              // Must return nothing
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, '');
 
@@ -345,6 +347,14 @@ class SecurityTest extends PHPUnit\Framework\TestCase
         $result=GETPOST("param8", 'alphanohtml');
         print __METHOD__." result=".$result."\n";
         $this->assertEquals("Hacker<svg onload='console.log(123)'", $result);
+
+        $result=GETPOST("param9", 'alphanohtml');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($_POST["param9"], $result);
+
+        $result=GETPOST("param10", 'alphanohtml');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($_POST["param9"], $result, 'We should get param9 after processing param10');
 
         return $result;
     }

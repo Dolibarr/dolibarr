@@ -233,7 +233,7 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 				$supplierproposalstatic->total_ht = $obj->total_ht;
 				$supplierproposalstatic->total_tva = $obj->total_tva;
 				$supplierproposalstatic->total_ttc = $obj->total_ttc;
-				$supplierproposalstatic->statut	 = $obj->status;
+				$supplierproposalstatic->statut = $obj->status;
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;

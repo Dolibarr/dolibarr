@@ -537,6 +537,8 @@ class Conf
 		if (!empty($this->global->MAILING_EMAIL_FROM))	$this->mailing->email_from = $this->global->MAILING_EMAIL_FROM;
 		if (!isset($this->global->MAIN_EMAIL_ADD_TRACK_ID)) $this->global->MAIN_EMAIL_ADD_TRACK_ID = 1;
 
+		if (!isset($this->global->MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP)) $this->global->MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP = 1;
+
 		// Format for date (used by default when not found or not searched in lang)
 		$this->format_date_short = "%d/%m/%Y"; // Format of day with PHP/C tags (strftime functions)
 		$this->format_date_short_java = "dd/MM/yyyy"; // Format of day with Java tags

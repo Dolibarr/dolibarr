@@ -244,7 +244,7 @@ class ZapierApi extends DolibarrApi
 		$fields = array(
 			'url',
 		);
-		dol_syslog("API Zapier create hook receive : " . print_r($request_data, true), LOG_DEBUG);
+		dol_syslog("API Zapier create hook receive : ".print_r($request_data, true), LOG_DEBUG);
 		$result = $this->validate($request_data, $fields);
 
 		foreach ($request_data as $field => $value) {

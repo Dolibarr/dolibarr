@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2011-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -356,6 +356,9 @@ if ($action == 'update')
 				$visibility = GETPOST('list', 'alpha');
 				if ($type == 'separate') $visibility = 3;
 
+				// Example: is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : 'objnotdefined'
+				$computedvalue = GETPOST('computed_value', 'nohtml');
+
 				$result = $extrafields->update(
 					GETPOST('attrname', 'aZ09'),
 					GETPOST('label', 'alpha'),
@@ -371,10 +374,10 @@ if ($action == 'update')
 					$visibility,
 					GETPOST('help', 'alpha'),
 					GETPOST('default_value', 'alpha'),
-					GETPOST('computed_value', 'alpha'),
+					$computedvalue,
 					(GETPOST('entitycurrentorall', 'alpha') ? 0 : ''),
 					GETPOST('langfile'),
-				    GETPOST('enabled', 'alpha'),
+					GETPOST('enabled', 'alpha'),
 					(GETPOST('totalizable', 'alpha') ? 1 : 0),
 					GETPOST('printable', 'alpha')
 				);

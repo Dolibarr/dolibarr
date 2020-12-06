@@ -155,7 +155,7 @@ class Propal extends CommonObject
 	 * @var int	Date expected for delivery
 	 * @deprecated
 	 */
-	public $date_livraison;	// deprecated; Use delivery_date instead.
+	public $date_livraison; // deprecated; Use delivery_date instead.
 
 	/**
 	 * @var integer|string 	$delivery_date;
@@ -1503,7 +1503,7 @@ class Propal extends CommonObject
 				$this->date                 = $this->db->jdate($obj->dp); // Proposal date
 				$this->datep                = $this->db->jdate($obj->dp); // deprecated
 				$this->fin_validite         = $this->db->jdate($obj->dfv);
-				$this->date_livraison       = $this->db->jdate($obj->delivery_date);	// deprecated
+				$this->date_livraison       = $this->db->jdate($obj->delivery_date); // deprecated
 				$this->delivery_date        = $this->db->jdate($obj->delivery_date);
 				$this->shipping_method_id   = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
 				$this->availability_id      = $obj->fk_availability;
@@ -2924,7 +2924,7 @@ class Propal extends CommonObject
 			$tabletodelete = $this->table_element_line;
 			$sqlef = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete."_extrafields WHERE fk_object IN (SELECT rowid FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id.")";
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id;
-			if (! $this->db->query($sqlef) || ! $this->db->query($sql)) {
+			if (!$this->db->query($sqlef) || !$this->db->query($sql)) {
 				$error++;
 				$this->error = $this->db->lasterror();
 				$this->errors[] = $this->error;
@@ -2957,7 +2957,7 @@ class Propal extends CommonObject
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE rowid = ".$this->id;
 			$res = $this->db->query($sql);
-			if (! $res) {
+			if (!$res) {
 				$error++;
 				$this->error = $this->db->lasterror();
 				$this->errors[] = $this->error;
@@ -2968,7 +2968,7 @@ class Propal extends CommonObject
 		// Delete record into ECM index and physically
 		if (!$error) {
 			$res = $this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
-			if (! $res) {
+			if (!$res) {
 				$error++;
 			}
 		}

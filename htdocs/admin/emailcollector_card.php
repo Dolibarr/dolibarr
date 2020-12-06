@@ -223,21 +223,6 @@ $help_url = "EN:Module_EMail_Collector|FR:Module_Collecteur_de_courrier_électro
 
 llxHeader('', 'EmailCollector', $help_url);
 
-// Example : Adding jquery code
-print '<script type="text/javascript" language="javascript">
-jQuery(document).ready(function() {
-	function init_myfunc()
-	{
-		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
-	}
-	init_myfunc();
-	jQuery("#mybutton").click(function() {
-		init_myfunc();
-	});
-});
-</script>';
-
 // Part to create
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewEmailCollector", $langs->transnoentitiesnoconv("EmailCollector")));
@@ -433,6 +418,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (!$connection)
 	{
 		$morehtml .= 'Failed to open IMAP connection '.$connectstringsource;
+		$morehtml .= '<br>'.imap_last_error();
+		//var_dump(imap_errors())
 	} else {
 		$morehtml .= imap_num_msg($connection);
 	}

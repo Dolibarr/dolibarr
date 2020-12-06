@@ -682,7 +682,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	{
 		// Discard check of mandatory fields for country for some tables
 		if ($value == 'country_id' && in_array($tablib[$id], array('DictionaryPublicHolidays', 'DictionaryVAT', 'DictionaryRegion', 'DictionaryCompanyType', 'DictionaryHolidayTypes', 'DictionaryRevenueStamp', 'DictionaryAccountancysystem', 'DictionaryAccountancyCategory'))) continue; // For some pages, country is not mandatory
-		if ($value == 'country' && in_array($tablib[$id], array('DictionaryPublicHolidays', 'DictionaryCanton', 'DictionaryCompanyType', 'DictionaryRevenueStamp'))) continue; // For some pages, country is not mandatory
+		if ($value == 'country' && in_array($tablib[$id], array('DictionaryPublicHolidays', 'DictionaryCanton', 'DictionaryCompanyType', 'DictionaryHolidayTypes', 'DictionaryRevenueStamp'))) continue; // For some pages, country is not mandatory
 		// Discard check of mandatory fiedls for other fields
 		if ($value == 'localtax1' && empty($_POST['localtax1_type'])) continue;
 		if ($value == 'localtax2' && empty($_POST['localtax2_type'])) continue;

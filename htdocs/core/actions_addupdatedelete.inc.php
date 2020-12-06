@@ -62,7 +62,7 @@ if ($action == 'add' && !empty($permissiontoadd))
 		// Ignore special fields
 		if (in_array($key, array('rowid', 'entity', 'import_key'))) continue;
 		if (in_array($key, array('date_creation', 'tms', 'fk_user_creat', 'fk_user_modif'))) {
-			if (!in_array(abs($val['visible']), array(1, 3))) continue;	// Only 1 and 3 that are case to create
+			if (!in_array(abs($val['visible']), array(1, 3))) continue; // Only 1 and 3 that are case to create
 		}
 
 		// Set value to insert
@@ -146,7 +146,7 @@ if ($action == 'update' && !empty($permissiontoadd))
 		// Ignore special fields
 		if (in_array($key, array('rowid', 'entity', 'import_key'))) continue;
 		if (in_array($key, array('date_creation', 'tms', 'fk_user_creat', 'fk_user_modif'))) {
-			if (!in_array(abs($val['visible']), array(1, 3, 4))) continue;	// Only 1 and 3 and 4 that are case to update
+			if (!in_array(abs($val['visible']), array(1, 3, 4))) continue; // Only 1 and 3 and 4 that are case to update
 		}
 
 		// Set value to update

@@ -922,7 +922,7 @@ class Task extends CommonObject
 					$tasks[$i]->planned_workload = $obj->planned_workload;
 
 					if ($includebilltime) {
-						$tasks[$i]->tobill  		= $obj->tobill;
+						$tasks[$i]->tobill = $obj->tobill;
 						$tasks[$i]->billed = $obj->billed;
 					}
 
