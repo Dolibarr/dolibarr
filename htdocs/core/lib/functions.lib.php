@@ -3191,8 +3191,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 	// We forge fullpathpicto for image to $path/img/$picto. By default, we take DOL_URL_ROOT/theme/$conf->theme/img/$picto
 	$url = DOL_URL_ROOT;
-
-	$theme = isset($conf->theme) ? $conf->theme : null;
+	$theme = $conf->theme;
 	$path = 'theme/'.$theme;
 
 	// Define fullpathpicto to use into src
