@@ -794,29 +794,33 @@ class Translate
 				if ($mainlangonly) {
 					$arrayofspecialmainlanguages = array(
 						'en'=>'en_US',
-						'sq'=>'sq_AL',
+						'am'=>'am_ET',
 						'ar'=>'ar_SA',
-						'eu'=>'eu_ES',
 						'bn'=>'bn_DB',
 						'bs'=>'bs_BA',
 						'ca'=>'ca_ES',
-						'zh'=>'zh_TW',
 						'cs'=>'cs_CZ',
 						'da'=>'da_DK',
 						'et'=>'et_EE',
-						'ka'=>'ka_GE',
 						'el'=>'el_GR',
+						'eu'=>'eu_ES',
+						'fa'=>'fa_IR',
 						'he'=>'he_IL',
-						'kn'=>'kn_IN',
+						'ka'=>'ka_GE',
 						'km'=>'km_KH',
+						'kn'=>'kn_IN',
 						'ko'=>'ko_KR',
+						'ja'=>'ja_JP',
 						'lo'=>'lo_LA',
 						'nb'=>'nb_NO',
 						'fa'=>'fa_IR',
+						'sq'=>'sq_AL',
 						'sr'=>'sr_RS',
+						'sv'=>'sv_SE',
 						'sl'=>'sl_SI',
 						'uk'=>'uk_UA',
-						'vi'=>'vi_VN'
+						'vi'=>'vi_VN',
+						'zh'=>'zh_CN'
 					);
 					if (strtolower($regs[1]) != strtolower($regs[2]) && !in_array($dir, $arrayofspecialmainlanguages)) continue;
 				}

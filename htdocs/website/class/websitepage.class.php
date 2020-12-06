@@ -682,6 +682,7 @@ class WebsitePage extends CommonObject
 		$object->author_alias = '';
 		$object->date_creation = $now;
 		$object->title = ($newtitle == '1' ? $object->title : ($newtitle ? $newtitle : $object->title));
+		$object->description = $object->title;
 		if (!empty($newlang)) $object->lang = $newlang;
 		if ($istranslation) $object->fk_page = $fromid;
 		else $object->fk_page = 0;
