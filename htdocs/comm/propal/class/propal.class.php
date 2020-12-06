@@ -2520,7 +2520,7 @@ class Propal extends CommonObject
 	 */
 	public function cloture($user, $status, $note = "", $notrigger = 0)
 	{
-		global $langs, $conf;
+		global $langs, $conf, $user;
 
 		$error = 0;
 		$now = dol_now();
@@ -2601,11 +2601,13 @@ class Propal extends CommonObject
 				$this->note_private = $this->oldcopy->note_private;
 
 				$this->db->rollback();
+				return $this->error;
 				return -1;
 			}
 		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
+			return $this->error;
 			return -1;
 		}
 	}

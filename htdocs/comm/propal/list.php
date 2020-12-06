@@ -423,7 +423,7 @@ if ($resql)
 
 		$id = $obj->rowid;
 
-		header("Location: ".DOL_URL_ROOT.'/comm/propal/card.php?id='.$id);
+		header("Location: ".DOL_URL_ROOT.'/custom/crm/propalcard.php?id='.$id);
 		exit;
 	}
 
@@ -475,7 +475,7 @@ if ($resql)
 	if (in_array($massaction, array('presend', 'predelete', 'closed'))) $arrayofmassactions = array();
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-	$url = DOL_URL_ROOT.'/comm/propal/card.php?action=create';
+	$url = DOL_URL_ROOT.'/custom/crm/propalcard.php?action=create';
 	if (!empty($socid)) $url .= '&socid='.$socid;
 	$newcardbutton = dolGetButtonTitle($langs->trans('NewPropal'), '', 'fa fa-plus-circle', $url, '', $user->rights->propal->creer);
 
