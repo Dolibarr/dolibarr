@@ -5701,8 +5701,10 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 	if ($removelinefeed == 2) $stringtoclean = preg_replace('/<br[^>]*>(\n|\r)+/ims', '<br>', $stringtoclean);
 	$temp = preg_replace('/<br[^>]*>/i', "\n", $stringtoclean);
 
-	// We remove entities BEFORE stripping (in case of a separator char is encoded and not the other, the strip will fails)
+	// We remove entities BEFORE stripping (in case of an open separator char that is entity encoded and not the closing other, the strip will fails)
 	$temp = dol_html_entity_decode($temp, ENT_COMPAT | ENT_HTML5, $pagecodeto);
+
+	$temp = str_replace('< ', '__ltspace__', $temp);
 
 	if ($strip_tags) {
 		$temp = strip_tags($temp);
@@ -5727,16 +5729,19 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 		}
 	}
 
+	$temp = str_replace('__ltspace__', '< ', $temp);
+
 	return trim($temp);
 }
 
 /**
  *	Clean a string to keep only desirable HTML tags.
+ *  WARNING: This also clean HTML comments (used to obfuscate tag name).
  *
  *	@param	string	$stringtoclean			String to clean
  *  @param	int		$cleanalsosomestyles	Remove absolute/fixed positioning from inline styles
  *  @param	int		$removeclassattribute	Remove the class attribute from tags
- *  @param	int		$cleanalsojavascript	Remove also occurence of (javascript:'
+ *  @param	int		$cleanalsojavascript	Remove also occurence of 'javascript:'.
  *	@return string	    					String cleaned
  *
  * 	@see	dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_neverthesehtmltags()
@@ -5754,16 +5759,21 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	$stringtoclean = dol_string_nounprintableascii($stringtoclean, 0);
 	$stringtoclean = preg_replace('/&colon;/i', ':', $stringtoclean);
 
+	$stringtoclean = preg_replace('/<!--[^>]*-->/', '', $stringtoclean);
+	$stringtoclean = preg_replace('/&#58;|&#0000058|&#x3A/i', '', $stringtoclean); // refused string ':' encoded (no reason to have it encoded) to lock 'javascript:...'
+	$stringtoclean = preg_replace('/javascript\s*:/i', '', $stringtoclean);
+
 	$temp = strip_tags($stringtoclean, $allowed_tags_string);
 
 	if ($cleanalsosomestyles) {	// Clean for remaining html tags
-		$stringtoclean = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/i', '', $temp); // Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
+		$temp = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/i', '', $temp); // Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
 	}
 	if ($removeclassattribute) {	// Clean for remaining html tags
-		$stringtoclean = preg_replace('/(<[^>]+)\s+class=((["\']).*?\\3|\\w*)/i', '\\1', $temp);
+		$temp = preg_replace('/(<[^>]+)\s+class=((["\']).*?\\3|\\w*)/i', '\\1', $temp);
 	}
 
 	// Remove 'javascript:' that we should not find into a text with
+	// Warning: This is not reliable to fight against obfuscated javascript, there is a lot of other solution to include js into a common html tag (only filtered by the GETPOST).
 	if ($cleanalsojavascript) {
 		$temp = preg_replace('/javascript\s*:/i', '', $temp);
 	}
