@@ -217,7 +217,7 @@
         },
         {
             "name": "nnnick/chartjs",
-            "version": "v2.9.3",
+            "version": "v2.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/chartjs/Chart.js.git",
@@ -315,7 +315,7 @@
             "time": "2015-05-01T07:00:55+00:00"
         },
         {
-            "name": "psr/log",
+            "name": "Psr/log",
             "version": "1.1.3",
             "source": {
                 "type": "git",
