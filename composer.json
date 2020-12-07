@@ -1,7 +1,6 @@
 {
 	"name" : "dolibarr/dolibarr",
 	"type" : "project",
-	"version": "999.999.999",
 	"description" : "Dolibarr ERP & CRM is a modern and easy to use web software to manage your business",
 	"keywords" : [
 		"erp",
