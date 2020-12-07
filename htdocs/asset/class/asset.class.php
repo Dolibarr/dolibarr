@@ -158,28 +158,6 @@ class Asset extends CommonObject
 	 */
 	public $status;
 
-	// If this object has a subtable with lines
-
-	// /**
-	//  * @var int    Name of subtable line
-	//  */
-	// public $table_element_line = 'assetdet';
-	// /**
-	//  * @var string    Fieldname with ID of parent key if this field has a parent
-	//  */
-	// public $fk_element = 'fk_asset';
-	// /**
-	//  * @var string    Name of subtable class that manage subtable lines
-	//  */
-	// public $class_element_line = 'Assetline';
-	// /**
-	//  * @var array	List of child tables. To test if we can delete object.
-	//  */
-	// protected $childtables=array();
-	// /**
-	//  * @var AssetLine[]     Array of subtable lines
-	//  */
-	// public $lines = array();
 
 	/**
 	 * Constructor
