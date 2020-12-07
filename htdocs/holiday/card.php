@@ -403,7 +403,7 @@ if (empty($reshook))
 	{
 		$object->fetch($id);
 
-		// Si brouillon et créateur
+		// If draft and owner of leave
 		if ($object->statut == Holiday::STATUS_DRAFT && $cancreate)
 		{
 			$object->oldcopy = dol_clone($object);
@@ -430,7 +430,8 @@ if (empty($reshook))
 				// From
 				$expediteur = new User($db);
 				$expediteur->fetch($object->fk_user);
-				$emailFrom = $expediteur->email;
+				//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
+				$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 				// Subject
 				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
@@ -441,6 +442,7 @@ if (empty($reshook))
 				// Content
 				$message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
 				$message .= "\n";
+
 				$message .= $langs->transnoentities("HolidaysToValidateBody")."\n";
 
 				$delayForRequest = $object->getConfCP('delayForRequest');
@@ -525,7 +527,7 @@ if (empty($reshook))
 	{
 		$object->fetch($id);
 
-		// Si statut en attente de validation et valideur = utilisateur
+		// If status is waiting approval and approver is also user
 		if ($object->statut == Holiday::STATUS_VALIDATED && $user->id == $object->fk_validator)
 		{
 			$object->oldcopy = dol_clone($object);
@@ -582,7 +584,8 @@ if (empty($reshook))
 					// From
 					$expediteur = new User($db);
 					$expediteur->fetch($object->fk_validator);
-					$emailFrom = $expediteur->email;
+					//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
+					$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 					// Subject
 					$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
@@ -593,6 +596,7 @@ if (empty($reshook))
 					// Content
 					$message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
 					$message .= "\n";
+
 					$message .= $langs->transnoentities("HolidaysValidatedBody", dol_print_date($object->date_debut, 'day'), dol_print_date($object->date_fin, 'day'))."\n";
 
 					$message .= "- ".$langs->transnoentitiesnoconv("ValidatedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
@@ -666,7 +670,8 @@ if (empty($reshook))
 						// From
 						$expediteur = new User($db);
 						$expediteur->fetch($object->fk_validator);
-						$emailFrom = $expediteur->email;
+						//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
+						$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 						// Subject
 						$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
@@ -677,6 +682,7 @@ if (empty($reshook))
 						// Content
 						$message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
 						$message .= "\n";
+
 						$message .= $langs->transnoentities("HolidaysRefusedBody", dol_print_date($object->date_debut, 'day'), dol_print_date($object->date_fin, 'day'))."\n";
 						$message .= GETPOST('detail_refuse', 'alpha')."\n\n";
 
@@ -813,7 +819,8 @@ if (empty($reshook))
 				// From
 				$expediteur = new User($db);
 				$expediteur->fetch($object->fk_user_cancel);
-				$emailFrom = $expediteur->email;
+				//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
+				$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 				// Subject
 				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
