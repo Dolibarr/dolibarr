@@ -201,7 +201,7 @@ if (empty($reshook))
     {
         $error = 0;
 
-        if (!GETPOST('label', 'alphanohtml'))
+        if (!GETPOST('label', 'restricthtml'))
         {
             setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Label')), null, 'errors');
             $action = "create";
@@ -225,7 +225,7 @@ if (empty($reshook))
 	        $units = GETPOST('units', 'int');
 
             $object->ref                   = $ref;
-            $object->label                 = GETPOST('label', 'alphanohtml');
+            $object->label                 = GETPOST('label', 'restricthtml');
             $object->price_base_type       = GETPOST('price_base_type', 'aZ09');
 
             if ($object->price_base_type == 'TTC')
@@ -406,7 +406,7 @@ if (empty($reshook))
 				$object->oldcopy = clone $object;
 
                 $object->ref                    = $ref;
-                $object->label                  = GETPOST('label', 'alphanohtml');
+                $object->label                  = GETPOST('label', 'restricthtml');
                 $object->description            = dol_htmlcleanlastbr(GETPOST('desc', 'none'));
             	$object->url = GETPOST('url');
     			if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB))
@@ -1005,7 +1005,7 @@ else
         print '</td></tr>';
 
         // Label
-        print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="label" class="minwidth300 maxwidth400onsmartphone" maxlength="255" value="'.dol_escape_htmltag(GETPOST('label', 'alphanohtml')).'"></td></tr>';
+        print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="label" class="minwidth300 maxwidth400onsmartphone" maxlength="255" value="'.dol_escape_htmltag(GETPOST('label', 'restricthtml')).'"></td></tr>';
 
         // On sell
         print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="3">';
