@@ -148,7 +148,7 @@ if (empty($reshook))
 			$description = trim(GETPOST('description', 'restricthtml'));
 
 			// Check that leave is for a user inside the hierarchy or advanced permission for all is set
-			if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->holiday->create)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->holiday->writeall_advance))) {
+			if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->holiday->write)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->holiday->writeall_advance))) {
 				$error++;
 				setEventMessages($langs->trans("NotEnoughPermission"), null, 'errors');
 			} else {
@@ -962,8 +962,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 		print '<input type="hidden" name="token" value="'.newToken().'" />'."\n";
 		print '<input type="hidden" name="action" value="add" />'."\n";
 
-		if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
-		{
+		if (empty($conf->global->HOLIDAY_HIDE_BALANCE)) {
 			print dol_get_fiche_head('', '', '', -1);
 
 			$out = '';
@@ -980,8 +979,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 			print $out;
 
 			print dol_get_fiche_end();
-		} elseif (!is_numeric($conf->global->HOLIDAY_HIDE_BALANCE))
-		{
+		} elseif (!is_numeric($conf->global->HOLIDAY_HIDE_BALANCE)) {
 			print $langs->trans($conf->global->HOLIDAY_HIDE_BALANCE).'<br>';
 		}
 
