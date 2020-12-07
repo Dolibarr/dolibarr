@@ -251,7 +251,7 @@ class Hook extends CommonObject
 	 */
 	public $import_key;
 
-	
+
 	/**
 	 * Constructor
 	 *
