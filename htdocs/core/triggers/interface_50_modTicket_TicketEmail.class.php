@@ -247,7 +247,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						$message_customer .= '<p>'.$langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer').' : <a href="'.$url_public_ticket.'">'.$url_public_ticket.'</a></p>';
 						$message_customer .= '<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmail').'</p>';
 
-						$from = $conf->global->MAIN_INFO_SOCIETE_NOM.'<'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
+						$from = (empty($conf->global->MAIN_INFO_SOCIETE_NOM) ? '' : $conf->global->MAIN_INFO_SOCIETE_NOM.' ').'<'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
 						$replyto = $from;
 
 						$trackid = 'tic'.$object->id;
