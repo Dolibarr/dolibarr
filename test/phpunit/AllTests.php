@@ -258,6 +258,8 @@ class AllTests
 
         require_once dirname(__FILE__).'/PaypalTest.php';
         $suite->addTestSuite('PaypalTest');
+        require_once dirname(__FILE__).'/StripeTest.php';
+        $suite->addTestSuite('StripeTest');
 
         return $suite;
     }

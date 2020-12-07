@@ -22,6 +22,8 @@
  *  \brief			Library for common paypal functions
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+
 
 /**
  *  Define head array for tabs of paypal tools setup pages
@@ -51,131 +53,6 @@ function paypaladmin_prepare_head()
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'paypaladmin', 'remove');
 
 	return $head;
-}
-
-
-
-/**
- * Return string with full Url
- *
- * @param   string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'membersubscription' ...)
- * @param	string	$ref		Ref of object
- * @return	string				Url string
- */
-function showPaypalPaymentUrl($type, $ref)
-{
-	global $conf, $langs;
-
-	$langs->load("paypal");
-	$langs->load("paybox");
-	$servicename = 'PayPal';
-	$out = '<br><br>';
-	$out .= img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'<br>';
-	$url = getPaypalPaymentUrl(0, $type, $ref);
-	$out .= '<input type="text" id="paypalurl" class="quatrevingtpercent" value="'.$url.'">';
-	$out .= ajax_autoselect("paypalurl", 0);
-	return $out;
-}
-
-
-/**
- * Return string with full Url
- *
- * @param   int		$mode		0=True url, 1=Url formated with colors
- * @param   string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'membersubscription' ...)
- * @param	string	$ref		Ref of object
- * @param	int		$amount		Amount
- * @param	string	$freetag	Free tag
- * @return	string				Url string
- */
-function getPaypalPaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag = 'your_tag')
-{
-	global $conf;
-
-	$ref = str_replace(' ', '', $ref);
-
-	if ($type == 'free')
-	{
-		$out = DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?amount='.($mode ? '<font color="#666666">' : '').$amount.($mode ? '</font>' : '').'&tag='.($mode ? '<font color="#666666">' : '').$freetag.($mode ? '</font>' : '');
-		if (!empty($conf->global->PAYPAL_SECURITY_TOKEN))
-		{
-			if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $out .= '&securekey='.$conf->global->PAYPAL_SECURITY_TOKEN;
-			else $out .= '&securekey='.dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
-		}
-	}
-	if ($type == 'order')
-	{
-		$out = DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=order&ref='.($mode ? '<font color="#666666">' : '');
-		if ($mode == 1) $out .= 'order_ref';
-		if ($mode == 0) $out .= urlencode($ref);
-		$out .= ($mode ? '</font>' : '');
-		if (!empty($conf->global->PAYPAL_SECURITY_TOKEN))
-		{
-			if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $out .= '&securekey='.$conf->global->PAYPAL_SECURITY_TOKEN;
-			else {
-				$out .= '&securekey='.($mode ? '<font color="#666666">' : '');
-				if ($mode == 1) $out .= "hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + '".$type."' + order_ref)";
-				if ($mode == 0) $out .= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.$type.$ref, 2);
-				$out .= ($mode ? '</font>' : '');
-			}
-		}
-	}
-	if ($type == 'invoice')
-	{
-		$out = DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=invoice&ref='.($mode ? '<font color="#666666">' : '');
-		if ($mode == 1) $out .= 'invoice_ref';
-		if ($mode == 0) $out .= urlencode($ref);
-		$out .= ($mode ? '</font>' : '');
-		if (!empty($conf->global->PAYPAL_SECURITY_TOKEN))
-		{
-			if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $out .= '&securekey='.$conf->global->PAYPAL_SECURITY_TOKEN;
-			else {
-				$out .= '&securekey='.($mode ? '<font color="#666666">' : '');
-				if ($mode == 1) $out .= "hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + '".$type."' + invoice_ref)";
-				if ($mode == 0) $out .= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.$type.$ref, 2);
-				$out .= ($mode ? '</font>' : '');
-			}
-		}
-	}
-	if ($type == 'contractline')
-	{
-		$out = DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=contractline&ref='.($mode ? '<font color="#666666">' : '');
-		if ($mode == 1) $out .= 'contractline_ref';
-		if ($mode == 0) $out .= urlencode($ref);
-		$out .= ($mode ? '</font>' : '');
-		if (!empty($conf->global->PAYPAL_SECURITY_TOKEN))
-		{
-			if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $out .= '&securekey='.$conf->global->PAYPAL_SECURITY_TOKEN;
-			else {
-				$out .= '&securekey='.($mode ? '<font color="#666666">' : '');
-				if ($mode == 1) $out .= "hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + '".$type."' + contractline_ref)";
-				if ($mode == 0) $out .= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.$type.$ref, 2);
-				$out .= ($mode ? '</font>' : '');
-			}
-		}
-	}
-	if ($type == 'membersubscription')
-	{
-		$out = DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?source=membersubscription&ref='.($mode ? '<font color="#666666">' : '');
-		if ($mode == 1) $out .= 'member_ref';
-		if ($mode == 0) $out .= urlencode($ref);
-		$out .= ($mode ? '</font>' : '');
-		if (!empty($conf->global->PAYPAL_SECURITY_TOKEN))
-		{
-			if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $out .= '&securekey='.$conf->global->PAYPAL_SECURITY_TOKEN;
-			else {
-				$out .= '&securekey='.($mode ? '<font color="#666666">' : '');
-				if ($mode == 1) $out .= "hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + '".$type."' + member_ref)";
-				if ($mode == 0) $out .= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.$type.$ref, 2);
-				$out .= ($mode ? '</font>' : '');
-			}
-		}
-	}
-
-	// For multicompany
-	$out .= "&entity=".$conf->entity; // Check the entity because He may be the same reference in several entities
-
-	return $out;
 }
 
 
