@@ -242,6 +242,7 @@ class CMailFile
 		{
 			$this->html = $msg;
 
+			$findimg = 0;
 			if (!empty($conf->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS))
 			{
 				$findimg = $this->findHtmlImages($dolibarr_main_data_root.'/medias');
