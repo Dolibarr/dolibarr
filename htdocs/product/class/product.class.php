@@ -1091,7 +1091,7 @@ class Product extends CommonObject
 				}
 
 				if (!$error) {
-					if ($conf->variants->enabled) {
+					if (!empty($conf->variants->enabled)) {
 						include_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 
 						$comb = new ProductCombination($this->db);
