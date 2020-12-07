@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/PaypalTest.php
+ *      \file       test/phpunit/StripeTest.php
  *		\ingroup    test
  *      \brief      PHPUnit test
  *		\remarks	To run this script as CLI:  phpunit filename.php
@@ -28,7 +28,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/geturl.lib.php';
-require_once dirname(__FILE__).'/../../htdocs/paypal/lib/paypal.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/stripe/lib/stripe.lib.php';
 
 if (empty($user->id))
 {
@@ -46,7 +46,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class PaypalTest extends PHPUnit\Framework\TestCase
+class StripeTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -84,7 +84,7 @@ class PaypalTest extends PHPUnit\Framework\TestCase
     {
     	global $conf,$user,$langs,$db;
 
-    	if (empty($conf->paypal->enabled)) { print __METHOD__." Module Paypal must be enabled.\n"; die(); }
+    	if (empty($conf->stripe->enabled)) { print __METHOD__." Module Stripe must be enabled.\n"; die(); }
 
         $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
@@ -131,11 +131,11 @@ class PaypalTest extends PHPUnit\Framework\TestCase
     }
 
     /**
-     * testPaypalOk
+     * testStripeOk
      *
      * @return	void
      */
-    public function testPaypalOk()
+    public function testStripeOk()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;

@@ -59,7 +59,7 @@ class Societe extends CommonObject
 	public $table_element = 'societe';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent or for child tables
+	 * @var string Field with ID of parent key if this field has a parent or for child tables
 	 */
 	public $fk_element = 'fk_soc';
 

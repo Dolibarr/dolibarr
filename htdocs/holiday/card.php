@@ -148,11 +148,11 @@ if (empty($reshook))
 			$description = trim(GETPOST('description', 'restricthtml'));
 
 			// Check that leave is for a user inside the hierarchy or advanced permission for all is set
-			if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->creer)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->writeall_advance))) {
+			if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->holiday->write)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->holiday->writeall_advance))) {
 				$error++;
 				setEventMessages($langs->trans("NotEnoughPermission"), null, 'errors');
 			} else {
-				if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)) {
+				if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->holiday->writeall_advance)) {
 					if (!in_array($fuserid, $childids)) {
 						$error++;
 						setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
@@ -403,7 +403,7 @@ if (empty($reshook))
 	{
 		$object->fetch($id);
 
-		// Si brouillon et créateur
+		// If draft and owner of leave
 		if ($object->statut == Holiday::STATUS_DRAFT && $cancreate)
 		{
 			$object->oldcopy = dol_clone($object);
@@ -430,7 +430,8 @@ if (empty($reshook))
 				// From
 				$expediteur = new User($db);
 				$expediteur->fetch($object->fk_user);
-				$emailFrom = $expediteur->email;
+				//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
+				$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 				// Subject
 				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
@@ -441,6 +442,7 @@ if (empty($reshook))
 				// Content
 				$message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
 				$message .= "\n";
+
 				$message .= $langs->transnoentities("HolidaysToValidateBody")."\n";
 
 				$delayForRequest = $object->getConfCP('delayForRequest');
@@ -525,7 +527,7 @@ if (empty($reshook))
 	{
 		$object->fetch($id);
 
-		// Si statut en attente de validation et valideur = utilisateur
+		// If status is waiting approval and approver is also user
 		if ($object->statut == Holiday::STATUS_VALIDATED && $user->id == $object->fk_validator)
 		{
 			$object->oldcopy = dol_clone($object);
@@ -582,7 +584,8 @@ if (empty($reshook))
 					// From
 					$expediteur = new User($db);
 					$expediteur->fetch($object->fk_validator);
-					$emailFrom = $expediteur->email;
+					//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
+					$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 					// Subject
 					$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
@@ -593,6 +596,7 @@ if (empty($reshook))
 					// Content
 					$message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
 					$message .= "\n";
+
 					$message .= $langs->transnoentities("HolidaysValidatedBody", dol_print_date($object->date_debut, 'day'), dol_print_date($object->date_fin, 'day'))."\n";
 
 					$message .= "- ".$langs->transnoentitiesnoconv("ValidatedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
@@ -666,7 +670,8 @@ if (empty($reshook))
 						// From
 						$expediteur = new User($db);
 						$expediteur->fetch($object->fk_validator);
-						$emailFrom = $expediteur->email;
+						//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
+						$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 						// Subject
 						$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
@@ -677,6 +682,7 @@ if (empty($reshook))
 						// Content
 						$message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
 						$message .= "\n";
+
 						$message .= $langs->transnoentities("HolidaysRefusedBody", dol_print_date($object->date_debut, 'day'), dol_print_date($object->date_fin, 'day'))."\n";
 						$message .= GETPOST('detail_refuse', 'alpha')."\n\n";
 
@@ -813,7 +819,8 @@ if (empty($reshook))
 				// From
 				$expediteur = new User($db);
 				$expediteur->fetch($object->fk_user_cancel);
-				$emailFrom = $expediteur->email;
+				//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
+				$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 				// Subject
 				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
@@ -962,8 +969,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 		print '<input type="hidden" name="token" value="'.newToken().'" />'."\n";
 		print '<input type="hidden" name="action" value="add" />'."\n";
 
-		if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
-		{
+		if (empty($conf->global->HOLIDAY_HIDE_BALANCE)) {
 			print dol_get_fiche_head('', '', '', -1);
 
 			$out = '';
@@ -973,15 +979,14 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 				$nb_type = $object->getCPforUser($user->id, $val['rowid']);
 				$nb_holiday += $nb_type;
 
-				$out .= ' - '.($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']).': <strong>'.($nb_type ?price2num($nb_type) : 0).'</strong><br>';
+				$out .= ' - '.($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']).': <strong>'.($nb_type ? price2num($nb_type) : 0).'</strong><br>';
 				//$out .= ' - '.$val['label'].': <strong>'.($nb_type ?price2num($nb_type) : 0).'</strong><br>';
 			}
 			print $langs->trans('SoldeCPUser', round($nb_holiday, 5)).'<br>';
 			print $out;
 
 			print dol_get_fiche_end();
-		} elseif (!is_numeric($conf->global->HOLIDAY_HIDE_BALANCE))
-		{
+		} elseif (!is_numeric($conf->global->HOLIDAY_HIDE_BALANCE)) {
 			print $langs->trans($conf->global->HOLIDAY_HIDE_BALANCE).'<br>';
 		}
 

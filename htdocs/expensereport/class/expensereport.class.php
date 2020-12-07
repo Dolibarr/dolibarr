@@ -44,7 +44,14 @@ class ExpenseReport extends CommonObject
 	 */
 	public $table_element = 'expensereport';
 
+	/**
+	 * @var string table element line name
+	 */
 	public $table_element_line = 'expensereport_det';
+
+	/**
+	 * @var string Fieldname with ID of parent key if this field has a parent
+	 */
 	public $fk_element = 'fk_expensereport';
 
 	/**

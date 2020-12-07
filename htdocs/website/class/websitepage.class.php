@@ -181,19 +181,19 @@ class WebsitePage extends CommonObject
 
 	// If this object has a subtable with lines
 
-	/**
-	 * @var int    Name of subtable line
-	 */
+	// /**
+	//  * @var string    Name of subtable line
+	//  */
 	//public $table_element_line = 'mymodule_myobjectline';
 
 	/**
-	 * @var int 	Field with ID of parent key if this field has a parent or for child tables
+	 * @var string 	Field with ID of parent key if this field has a parent or for child tables
 	 */
 	public $fk_element = 'fk_website_page';
 
-	/**
-	 * @var int    Name of subtable class that manage subtable lines
-	 */
+	// /**
+	//  * @var string    Name of subtable class that manage subtable lines
+	//  */
 	//public $class_element_line = 'MyObjectline';
 
 	/**

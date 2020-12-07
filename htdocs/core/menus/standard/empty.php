@@ -32,9 +32,12 @@ class MenuManager
 
 	public $type_user = 0; // Put 0 for internal users, 1 for external users
 	public $atarget = ""; // To store default target to use onto links
+	public $name = "empty";
 
 	public $menu;
 	public $menu_array_after;
+
+	public $tabMenu;
 
 
 	/**
@@ -60,6 +63,7 @@ class MenuManager
 	public function loadMenu($forcemainmenu = '', $forceleftmenu = '')
 	{
 		// Do nothing
+		$this->tabMenu = array();
 	}
 
 
@@ -348,14 +352,29 @@ class MenuManager
 
 			// ***** END *****
 
+			$menu_array_before = array();
+			$menu_array_after = array();
+
 			// do not change code after this
+
+			$menu_array = $this->menu->liste;
+			if (is_array($menu_array_before)) {
+				$menu_array = array_merge($menu_array_before, $menu_array);
+			}
+			if (is_array($menu_array_after)) {
+				$menu_array = array_merge($menu_array, $menu_array_after);
+			}
+			//var_dump($menu_array);exit;
+			if (!is_array($menu_array)) {
+				return 0;
+			}
 
 			if (empty($noout)) {
 				$alt = 0; $altok = 0; $blockvmenuopened = false;
-				$num = count($this->menu->liste);
+				$num = count($menu_array);
 				for ($i = 0; $i < $num; $i++) {
 					$alt++;
-					if (empty($this->menu->liste[$i]['level'])) {
+					if (empty($menu_array[$i]['level'])) {
 						$altok++;
 						$blockvmenuopened = true;
 						$lastopened = true;
@@ -375,55 +394,55 @@ class MenuManager
 
 					// Add tabulation
 					$tabstring = '';
-					$tabul = ($this->menu->liste[$i]['level'] - 1);
+					$tabul = ($menu_array[$i]['level'] - 1);
 					if ($tabul > 0) {
 						for ($j = 0; $j < $tabul; $j++) {
 							$tabstring .= '&nbsp; &nbsp;';
 						}
 					}
 
-					if ($this->menu->liste[$i]['level'] == 0) {
-						if ($this->menu->liste[$i]['enabled']) {
-							print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.dol_buildpath($this->menu->liste[$i]['url'], 1).'"'.($this->menu->liste[$i]['target'] ? ' target="'.$this->menu->liste[$i]['target'].'"' : '').'>'.$this->menu->liste[$i]['titre'].'</a></div>'."\n";
+					if ($menu_array[$i]['level'] == 0) {
+						if ($menu_array[$i]['enabled']) {
+							print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.dol_buildpath($menu_array[$i]['url'], 1).'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>'.$menu_array[$i]['titre'].'</a></div>'."\n";
 						} else {
-							print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$this->menu->liste[$i]['titre'].'</font></div>'."\n";
+							print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$menu_array[$i]['titre'].'</font></div>'."\n";
 						}
 						print '<div class="menu_top"></div>'."\n";
 					}
 
-					if ($this->menu->liste[$i]['level'] > 0) {
+					if ($menu_array[$i]['level'] > 0) {
 						$cssmenu = '';
-						if ($this->menu->liste[$i]['url']) {
-							$cssmenu = ' menu_contenu'.dol_string_nospecial(preg_replace('/\.php.*$/', '', $this->menu->liste[$i]['url']));
+						if ($menu_array[$i]['url']) {
+							$cssmenu = ' menu_contenu'.dol_string_nospecial(preg_replace('/\.php.*$/', '', $menu_array[$i]['url']));
 						}
 
 						print '<div class="menu_contenu'.$cssmenu.'">';
 
-						if ($this->menu->liste[$i]['enabled']) {
+						if ($menu_array[$i]['enabled']) {
 							print $tabstring;
-							if ($this->menu->liste[$i]['url']) {
-								print '<a class="vsmenu"  itle="'.dol_escape_htmltag($this->menu->liste[$i]['titre']).'" href="'.dol_buildpath($this->menu->liste[$i]['url'], 1).'"'.($this->menu->liste[$i]['target'] ? ' target="'.$this->menu->liste[$i]['target'].'"' : '').'>';
+							if ($menu_array[$i]['url']) {
+								print '<a class="vsmenu"  itle="'.dol_escape_htmltag($menu_array[$i]['titre']).'" href="'.dol_buildpath($menu_array[$i]['url'], 1).'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
 							} else {
-								print '<span class="vsmenu" title="'.dol_escape_htmltag($this->menu->liste[$i]['titre']).'">';
+								print '<span class="vsmenu" title="'.dol_escape_htmltag($menu_array[$i]['titre']).'">';
 							}
-							if ($this->menu->liste[$i]['url']) {
-								print $this->menu->liste[$i]['titre'].'</a>';
+							if ($menu_array[$i]['url']) {
+								print $menu_array[$i]['titre'].'</a>';
 							} else {
 								print '</span>';
 							}
 						} else {
-							print $tabstring.'<font class="vsmenudisabled vsmenudisabledmargin">'.$this->menu->liste[$i]['titre'].'</font>';
+							print $tabstring.'<font class="vsmenudisabled vsmenudisabledmargin">'.$menu_array[$i]['titre'].'</font>';
 						}
 
 						// If title is not pure text and contains a table, no carriage return added
-						if (!strstr($this->menu->liste[$i]['titre'], '<table')) {
+						if (!strstr($menu_array[$i]['titre'], '<table')) {
 							print '<br>';
 						}
 						print '</div>'."\n";
 					}
 
 					// If next is a new block or end
-					if (empty($this->menu->liste[$i + 1]['level'])) {
+					if (empty($menu_array[$i + 1]['level'])) {
 						print '<div class="menu_end"></div>'."\n";
 						print "</div>\n";
 					}
@@ -436,66 +455,9 @@ class MenuManager
 
 			if ($mode == 'jmobile') {
 				$this->leftmenu = clone $this->menu;
-				unset($this->menu->liste);
+				unset($menu_array);
 			}
 		}
-		/*
-		if ($mode == 'jmobile')
-		{
-			$substitarray = getCommonSubstitutionArray($langs, 0, null, null);
-
-			foreach($this->menu->liste as $key => $val)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
-			{
-				print '<ul class="ulmenu" data-inset="true">';
-				print '<li class="lilevel0">';
-
-				$val['url'] = make_substitutions($val['url'], $substitarray);
-
-				if ($val['enabled'] == 1)
-				{
-					$relurl=dol_buildpath($val['url'],1);
-
-					print '<a href="#">'.$val['titre'].'</a>'."\n";
-					// Search submenu fot this entry
-					$tmpmainmenu=$val['mainmenu'];
-					$tmpleftmenu='all';
-					//$submenu=new Menu();
-					//$res=print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$submenu,1,$tmpmainmenu,$tmpleftmenu, null, $this->type_user);
-					//$nexturl=dol_buildpath($submenu->liste[0]['url'],1);
-					$submenu=$this->leftmenu;
-
-					$canonrelurl=preg_replace('/\?.*$/','',$relurl);
-					$canonnexturl=preg_replace('/\?.*$/','',$nexturl);
-					//var_dump($canonrelurl);
-					//var_dump($canonnexturl);
-					print '<ul>';
-					if ($canonrelurl != $canonnexturl && ! in_array($val['mainmenu'],array('home','tools')))
-					{
-						// We add sub entry
-						print '<li><a href="'.$relurl.'">'.$langs->trans("MainArea").'-'.$val['titre'].'</a></li>'."\n";
-					}
-					foreach($submenu->liste as $key2 => $val2)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
-					{
-						$val2['url'] = make_substitutions($val2['url'], $substitarray);
-
-						$relurl2=dol_buildpath($val2['url'],1);
-						//var_dump($val2);
-						print '<li><a href="'.$relurl2.'">'.$val2['titre'].'</a></li>'."\n";
-					}
-					//var_dump($submenu);
-					print '</ul>';
-				}
-				if ($val['enabled'] == 2)
-				{
-					print '<font class="vsmenudisabled">'.$val['titre'].'</font>';
-				}
-				print '</li>';
-				print '</ul>'."\n";
-
-				break;	// Only first menu entry (so home)
-			}
-		}
-		*/
 		unset($this->menu);
 
 		return $res;

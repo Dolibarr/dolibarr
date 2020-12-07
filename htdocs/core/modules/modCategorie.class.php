@@ -386,10 +386,10 @@ class modCategorie extends DolibarrModules
 			)
 		);
 		$typeexample = "";
-		if ($conf->product->enabled) { $typeexample .= ($typeexample ? "/" : "")."0=Product"; }
+		if (!empty($conf->product->enabled)) { $typeexample .= ($typeexample ? "/" : "")."0=Product"; }
 		if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) { $typeexample .= ($typeexample ? "/" : "")."1=Supplier"; }
-		if ($conf->societe->enabled) { $typeexample .= ($typeexample ? "/" : "")."2=Customer-Prospect"; }
-		if ($conf->adherent->enabled) { $typeexample .= ($typeexample ? "/" : "")."3=Member"; }
+		if (!empty($conf->societe->enabled)) { $typeexample .= ($typeexample ? "/" : "")."2=Customer-Prospect"; }
+		if (!empty($conf->adherent->enabled)) { $typeexample .= ($typeexample ? "/" : "")."3=Member"; }
 		$this->import_examplevalues_array[$r] = array(
 			'ca.label'=>"Supplier Category", 'ca.type'=>$typeexample, 'ca.description'=>"My Category description",
 			'ca.fk_parent' => '0'

@@ -31,7 +31,7 @@ NEW: add column payment term into list of supplier invoices
 NEW: add column quantity in product margin page
 NEW: add column vat rate in page to define accounting account on product/service
 NEW: add costprice in fields of products list
-NEW: added an import profile for CUSTOMER ORDER, PO, PROPOSAL MODULE, SUPPLIER INVOICE
+NEW: add an import profile for CUSTOMER ORDER, PO, PROPOSAL MODULE, SUPPLIER INVOICE
 NEW: add employee link in expense report binding page
 NEW: add EORI No. as ProfID5
 NEW: add export for various payments
@@ -181,10 +181,9 @@ NEW: #15065 Add option to put the product label in bold in the PDF templates if 
 For developers:
 ---------------
 NEW: add __MEMBER_TYPE__ substitution key
+NEW: add __TYPE__ substitution key
 NEW: add function dolButtonToOpenUrlInDialogPopup() to be able to open page into a popup
 NEW: show line number on intervention card (via MAIN_VIEW_LINE_NUMBER)
-NEW: API get contacts list of a given order
-NEW: API endpoint getContacts and Clean results
 NEW: Add some fields to link website page to an other object
 NEW: fill ECM src object fields in dol_add_file_process
 NEW: conf to allow to show the full tree in warehouse popup
@@ -194,10 +193,6 @@ NEW: can add event to log into blockedlog module with a constant
 NEW: add property cssview when declaring fields of an object
 NEW: Can use dynamic code into the 'enabled' property of DAO fields
 NEW: allow to edit "demand reason" field though API
-NEW: API can update a payment
-NEW: API get member by thirdparty
-NEW: API get thirdparty by barcode
-NEW: API get users by email / login
 NEW: fetch contact by email with REST API
 NEW: field ref_ext in llx_commandedet
 NEW: fields ref_ext for Attributes and Combinations
@@ -213,10 +208,17 @@ NEW: Triggers Attributes and Attributes values
 NEW: added incoterms data into the substitution array
 NEW: add send context for ticket
 NEW: add a message in error_log after detection of SQL or script injection
-NEW: add __TYPE__ substitution key
 NEW: add validation of MX domain for emails
 NEW: calculate the virtual stock in transverse mode ( not on getEntity('commande'), ... but on getEntity('stock') )
-NEW: Graphics can be horizontal bars.
+NEW: Graphics can be horizontal bars
+
+APIs
+NEW: API get contacts list of a given order
+NEW: API endpoint getContacts and Clean results
+NEW: API can update a payment
+NEW: API get member by thirdparty
+NEW: API get thirdparty by barcode
+NEW: API get users by email / login
 
 HOOKs
 NEW: Hook on propal card
@@ -243,7 +245,7 @@ Following changes may create regressions for some external modules, but were nec
 * The API addPayment for api_invoice has evolved to accept amount into a foreign currency. You must provide array(amount=>X,mutlicurrency_ammount=>Y) instead of simple amount.
 * The method select_thirdparty(), deprecated since 3.8, into html.form.class.php has been removed.
 * Depreciate all methods with name ->valide(). Use instead methods ->validate().
-
+* Function showStripePaymentUrl, getStripePaymentUrl, showPaypalPaymentUrl and getPaypalPaymentUrl has been removed. The generic one showOnlinePaymentUrl and getOnlinePaymentUrl are always used.
 
 
 ***** ChangeLog for 12.0.3 compared to 12.0.2 *****
@@ -380,8 +382,8 @@ FIX: SQL Problem in customer invoice list
 FIX: SQL Problem in social contribution list
 FIX: SQL Problem in supplier invoice list
 FIX: SQL syntax error when editing extrafields
-FIX: Sql type
-FIX: takepos 12 hook
+FIX: SQL type
+FIX: TakePOS 12 hook
 FIX: Update form erased extrafields that were hidden
 FIX: Update of extrafields date
 FIX: Update of extrafiels on draft object
@@ -395,7 +397,7 @@ For users:
 
 NEW: Module MO (Manufacturing Order) is available as stable module.
 NEW: Receipt printer module moved from 'development' to 'experimental'
-NEW: Add option MAIN_VIEW_LINE_NUMBER_IN_LIST for some lists.
+NEW: add option MAIN_VIEW_LINE_NUMBER_IN_LIST for some lists
 NEW: add numbering module for TakePOS module
 NEW: 2 new options when creating an invoice from time spent on a project : by period or by task
 NEW: Accountancy add column thirdparty on binding page
@@ -406,19 +408,19 @@ NEW: Accountancy - Add possibility to manage a short alternative label for accou
 NEW: Accountancy - General ledger - Add an option to search not reconciled lines
 NEW: Add accountancy code of thirdparty in contact and supplier export
 NEW: support webp image format
-NEW: Add checkbox "overwrite if exists" into ECM/DMS module
+NEW: add checkbox "overwrite if exists" into ECM/DMS module
 NEW: add a link to notes in members list
 NEW: add a parameter to group same products in TakePOS
 NEW: add a parameter to sort product by label in TakePOS
-NEW: Add a profil to import contact categories
-NEW: Add company extrafields into order export
+NEW: add a profil to import contact categories
+NEW: add company extrafields into order export
 NEW: add const CASHDESK_FORCE_DECREASE_STOCK to force batch decrementation
 NEW: add const TAKEPOS_NUMPAD_USE_PAYMENT_ICON to use icons on payment buttons
 NEW: add csv separator setup in module admin
 NEW: add dedicated substitutions keys for extrafields of type date and datetime
 NEW: add default warehouse for dispatch
-NEW: Add due date in feature "Export accounting documents"
-NEW: Add duration information for fichinter
+NEW: add due date in feature "Export accounting documents"
+NEW: add duration information for fichinter
 NEW: Start support of Dark theme into ELDY theme
 NEW: Add field author public alias for blog post on website module
 NEW: Add "finished" field on product list

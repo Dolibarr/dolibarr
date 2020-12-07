@@ -41,6 +41,10 @@ class FichinterRec extends Fichinter
 	public $element = 'fichinterrec';
 	public $table_element = 'fichinter_rec';
 	public $table_element_line = 'fichinter_rec';
+
+	/**
+	 * @var string Fieldname with ID of parent key if this field has a parent
+	 */
 	public $fk_element = 'fk_fichinter';
 
 	/**

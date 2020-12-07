@@ -56,14 +56,22 @@ class Product extends CommonObject
 	public $table_element = 'product';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_product';
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
-	protected $childtables = array('supplier_proposaldet', 'propaldet', 'commandedet', 'facturedet', 'contratdet', 'facture_fourn_det', 'commande_fournisseurdet');
+	protected $childtables = array(
+		'supplier_proposaldet',
+		'propaldet',
+		'commandedet',
+		'facturedet',
+		'contratdet',
+		'facture_fourn_det',
+		'commande_fournisseurdet'
+	);
 
 	/**
 	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -828,7 +836,8 @@ class Product extends CommonObject
 		$error = 0;
 
 		// Check parameters
-		if (!$this->label) { $this->label = 'MISSING LABEL';
+		if (!$this->label) {
+			$this->label = 'MISSING LABEL';
 		}
 
 		// Clean parameters
@@ -919,6 +928,9 @@ class Product extends CommonObject
 		// Check name is required and codes are ok or unique. If error, this->errors[] is filled
 		if ($action != 'add') {
 			$result = $this->verify(); // We don't check when update called during a create because verify was already done
+		} else {
+			// we can continue
+			$result = 0;
 		}
 
 		if ($result >= 0) {
@@ -1091,7 +1103,7 @@ class Product extends CommonObject
 				}
 
 				if (!$error) {
-					if ($conf->variants->enabled) {
+					if (!empty($conf->variants->enabled)) {
 						include_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 
 						$comb = new ProductCombination($this->db);
