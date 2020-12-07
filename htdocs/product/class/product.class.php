@@ -836,7 +836,8 @@ class Product extends CommonObject
 		$error = 0;
 
 		// Check parameters
-		if (!$this->label) { $this->label = 'MISSING LABEL';
+		if (!$this->label) {
+			$this->label = 'MISSING LABEL';
 		}
 
 		// Clean parameters
@@ -927,6 +928,9 @@ class Product extends CommonObject
 		// Check name is required and codes are ok or unique. If error, this->errors[] is filled
 		if ($action != 'add') {
 			$result = $this->verify(); // We don't check when update called during a create because verify was already done
+		} else {
+			// we can continue
+			$result = 0;
 		}
 
 		if ($result >= 0) {
