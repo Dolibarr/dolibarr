@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2017  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,8 +128,7 @@ if ($action == "confirm_update") {
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
-				if ($mode != '_tmp')
-				{
+				if ($mode != '_tmp') {
 					setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 				}
 
@@ -165,14 +164,14 @@ if ($action == "confirm_update") {
 		$object->label_operation = $label_operation;
 		$object->debit = $debit;
 		$object->credit = $credit;
-		$object->doc_date = GETPOST('doc_date', 'alpha');
-		$object->doc_type = GETPOST('doc_type', 'alpha');
+		$object->doc_date = (string) GETPOST('doc_date', 'alpha');
+		$object->doc_type = (string) GETPOST('doc_type', 'alpha');
 		$object->piece_num = $piece_num;
-		$object->doc_ref = GETPOST('doc_ref', 'alpha');
+		$object->doc_ref = (string) GETPOST('doc_ref', 'alpha');
 		$object->code_journal = $journal_code;
 		$object->journal_label = $journal_label;
-		$object->fk_doc = (int) GETPOST('fk_doc', 'int');
-		$object->fk_docdet = (int) GETPOST('fk_docdet', 'int');
+		$object->fk_doc = GETPOSTINT('fk_doc');
+		$object->fk_docdet = GETPOSTINT('fk_docdet');
 
 		if (floatval($debit) != 0.0) {
 			$object->montant = $debit; // deprecated
@@ -190,8 +189,7 @@ if ($action == "confirm_update") {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
-			if ($mode != '_tmp')
-			{
+			if ($mode != '_tmp') {
 				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			}
 
