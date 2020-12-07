@@ -439,7 +439,6 @@ INSERT INTO llx_c_product_nature (code, label, active) VALUES (1, 'Finished', 1)
 ALTER TABLE llx_product MODIFY COLUMN finished tinyint DEFAULT NULL;
 ALTER TABLE llx_product ADD CONSTRAINT fk_product_finished FOREIGN KEY (finished) REFERENCES llx_c_product_nature (code);
 
-
 -- MIGRATION TO DO AFTER RENAMING AN OBJECT
 
 -- drop constraint
@@ -545,6 +544,10 @@ CREATE TABLE llx_session(
   user_agent varchar(128) NULL
 )ENGINE=innodb;
 
+
+
+INSERT INTO llx_boxes_def(file,entity) VALUES ('box_funnel_of_prospection.php',1);
+
 INSERT INTO llx_boxes_def(file, entity) VALUES ('box_customers_outstanding_bill_reached.php', 1);
 
-ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging varchar(64); 
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging varchar(64);
