@@ -61,6 +61,12 @@ require_once DOL_DOCUMENT_ROOT."/comm/mailing/class/mailing.class.php";
 $version = DOL_VERSION;
 $error = 0;
 
+if (empty($conf->global->MAILING_LIMIT_SENDBYCLI))
+{
+	$conf->global->MAILING_LIMIT_SENDBYCLI = 0;
+}
+
+
 /*
  * Main
  */

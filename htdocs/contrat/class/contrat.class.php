@@ -1032,21 +1032,19 @@ class Contrat extends CommonObject
 			}
 
 			// Insert business contacts ('SALESREPFOLL','contrat')
-			if (!$error)
-			{
+			if (!$error) {
 				$result = $this->add_contact($this->commercial_suivi_id, 'SALESREPFOLL', 'internal');
 				if ($result < 0) $error++;
 			}
 
-			if (!$error)
-			{
+			if (!$error) {
 				if (!empty($this->linkedObjectsIds) && empty($this->linked_objects))	// To use new linkedObjectsIds instead of old linked_objects
 				{
 					$this->linked_objects = $this->linkedObjectsIds; // TODO Replace linked_objects with linkedObjectsIds
 				}
 
 				// Add object linked
-				if (!$error && $this->id && is_array($this->linked_objects) && !empty($this->linked_objects))
+				if (!$error && $this->id && !empty($this->linked_objects) && is_array($this->linked_objects))
 				{
 					foreach ($this->linked_objects as $origin => $tmp_origin_id)
 					{
@@ -1144,10 +1142,10 @@ class Contrat extends CommonObject
 
 
 	/**
-	 *  Supprime l'objet de la base
+	 *  Delete object
 	 *
-	 *  @param	User		$user       Utilisateur qui supprime
-	 *  @return int         			< 0 si erreur, > 0 si ok
+	 *  @param	User		$user       User that deletes
+	 *  @return int         			< 0 if KO, > 0 if OK
 	 */
 	public function delete($user)
 	{

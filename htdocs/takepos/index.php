@@ -813,7 +813,9 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			</a>
 			<?php
 			if (!empty($conf->multicurrency->enabled)) {
-				print '<a class="valignmiddle tdoverflowmax100 minwidth75" id="multicurrency" onclick="ModalBox(\'ModalCurrency\');" title=""><span class="fas fa-coins paddingrightonly"></span>'.$langs->trans("Currency").'</a>';
+				print '<a class="valignmiddle tdoverflowmax100" id="multicurrency" onclick="ModalBox(\'ModalCurrency\');" title=""><span class="fas fa-coins paddingrightonly"></span>';
+				print '<span class="hideonsmartphone">'.$langs->trans("Currency").'</span>';
+				print '</a>';
 			}
 			?>
 			</div>
@@ -830,7 +832,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				<a onclick="ClearSearch();"><span class="fa fa-backspace"></span></a>
 				<a onclick="window.location.href='<?php echo DOL_URL_ROOT.'/'; ?>';"><span class="fas fa-home"></span></a>
 				<?php if (empty($conf->dol_use_jmobile)) { ?>
-				<a onclick="FullScreen();"><span class="fa fa-expand-arrows-alt"></span></a>
+				<a class="hideonsmartphone" onclick="FullScreen();"><span class="fa fa-expand-arrows-alt"></span></a>
 				<?php } ?>
 				</div>
 				<div class="login_block_user">

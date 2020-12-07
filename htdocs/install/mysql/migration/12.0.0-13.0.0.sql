@@ -516,6 +516,9 @@ UPDATE llx_rights_def set perms = 'delivery' WHERE perms = 'livraison' and modul
 UPDATE llx_rights_def set perms = 'delivery_advance' WHERE perms = 'livraison_advance' and module = 'expedition';
 
 
+ALTER TABLE llx_commande_fournisseurdet ADD INDEX idx_commande_fournisseurdet_fk_commande (fk_commande);
+ALTER TABLE llx_commande_fournisseurdet ADD INDEX idx_commande_fournisseurdet_fk_product (fk_product);
+
 
 CREATE TABLE llx_zapier_hook(
     rowid integer AUTO_INCREMENT PRIMARY KEY,
@@ -547,3 +550,4 @@ INSERT INTO llx_boxes_def(file,entity) VALUES ('box_funnel_of_prospection.php',1
 
 INSERT INTO llx_boxes_def(file, entity) VALUES ('box_customers_outstanding_bill_reached.php', 1);
 
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging varchar(64);

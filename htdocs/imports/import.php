@@ -424,7 +424,11 @@ if ($step == 2 && $datatoimport)
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 
-	print '<span class="opacitymedium">'.$langs->trans("ChooseFormatOfFileToImport", img_picto('', 'next', '')).'</span><br><br>';
+	print '<span class="opacitymedium">';
+	$s = $langs->trans("ChooseFormatOfFileToImport", '{s1}');
+	$s = str_replace('{s1}', img_picto('', 'next'), $s);
+	print $s;
+	print '</span><br><br>';
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
@@ -542,14 +546,18 @@ if ($step == 3 && $datatoimport)
 	print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 
 	print '<input type="hidden" value="'.$step.'" name="step">';
-	print '<input type="hidden" value="'.$format.'" name="format">';
+	print '<input type="hidden" value="'.dol_escape_htmltag($format).'" name="format">';
 	print '<input type="hidden" value="'.$excludefirstline.'" name="excludefirstline">';
 	print '<input type="hidden" value="'.$endatlinenb.'" name="endatlinenb">';
 	print '<input type="hidden" value="'.dol_escape_htmltag($separator).'" name="separator">';
 	print '<input type="hidden" value="'.dol_escape_htmltag($enclosure).'" name="enclosure">';
-	print '<input type="hidden" value="'.$datatoimport.'" name="datatoimport">';
+	print '<input type="hidden" value="'.dol_escape_htmltag($datatoimport).'" name="datatoimport">';
 
-	print '<span class="opacitymedium">'.$langs->trans("ChooseFileToImport", img_picto('', 'next')).'</span><br><br>';
+	print '<span class="opacitymedium">';
+	$s = $langs->trans("ChooseFileToImport", '{s1}');
+	$s = str_replace('{s1}', img_picto('', 'next'), $s);
+	print $s;
+	print '</span><br><br>';
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
@@ -857,7 +865,11 @@ if ($step == 4 && $datatoimport)
 	print '<input type="hidden" name="enclosure" value="'.dol_escape_htmltag($enclosure).'">';
 
 	print '<div class="marginbottomonly">';
-	print '<span class="opacitymedium">'.$langs->trans("SelectImportFields", img_picto('', 'grip_title', '', false, 0, 0, '', '', 0)).'</span> ';
+	print '<span class="opacitymedium">';
+	$s = $langs->trans("SelectImportFields", '{s1}');
+	$s = str_replace('{s1}', img_picto('', 'grip_title', '', false, 0, 0, '', '', 0), $s);
+	print $s;
+	print '</span> ';
 	$htmlother->select_import_model($importmodelid, 'importmodelid', $datatoimport, 1);
 	print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
 	print '</div>';

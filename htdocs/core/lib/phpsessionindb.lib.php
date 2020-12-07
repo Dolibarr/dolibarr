@@ -19,7 +19,7 @@
 /**
  *  \file		htdocs/core/lib/phpsessionindb.lib.php
  *  \ingroup    core
- *  \brief		Set function handlers for PHP session management in DB
+ *  \brief		Set function handlers for PHP session management in DB.
  */
 
 // The session handler file must be included just after the call of the master.inc.php into main.inc.php

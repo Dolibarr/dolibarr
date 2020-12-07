@@ -2078,7 +2078,7 @@ a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudis
 }
 
 a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
-	padding: 0px 4px 0px 4px;
+	padding: 0px 2px 0px 2px;
 	white-space: nowrap;
 	color: var(--colortextbackhmenu);
     text-decoration: none;
@@ -2530,11 +2530,13 @@ img.login, img.printer, img.entity {
 	font-weight: bold;
 }
 .userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {		/* size for user photo in login bar */
-	width: <?php echo $disableimages ? '26' : '32'; ?>px;
-    height: <?php echo $disableimages ? '26' : '32'; ?>px;
+	width: <?php echo $disableimages ? '26' : '30'; ?>px;
+    height: <?php echo $disableimages ? '26' : '30'; ?>px;
     border-radius: 50%;
     background-size: contain;
     background-size: contain;
+    border: 1px solid;
+    border-color: rgba(255, 255, 255, 0.2);
 }
 img.userphoto {			/* size for user photo in lists */
 	border-radius: 0.72em;
