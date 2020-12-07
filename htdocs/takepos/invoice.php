@@ -1018,7 +1018,7 @@ $( document ).ready(function() {
 
 	<?php
 	$sql = "SELECT rowid, datec, ref FROM ".MAIN_DB_PREFIX."facture";
-	$sql .= " WHERE ref LIKE '(PROV-POS".$_SESSION["takeposterminal"]."-0%'";
+	$sql .= " WHERE ref LIKE '(PROV-POS".$_SESSION["takeposterminal"]."-0%' AND entity IN (".getEntity('invoice').")";
 	$sql .= $db->order('datec', 'ASC');
 	$resql = $db->query($sql);
 	if ($resql) {
