@@ -32,9 +32,12 @@ class MenuManager
 
 	public $type_user = 0; // Put 0 for internal users, 1 for external users
 	public $atarget = ""; // To store default target to use onto links
+	public $name = "empty";
 
 	public $menu;
 	public $menu_array_after;
+
+	public $tabMenu;
 
 
 	/**
@@ -60,6 +63,7 @@ class MenuManager
 	public function loadMenu($forcemainmenu = '', $forceleftmenu = '')
 	{
 		// Do nothing
+		$this->tabMenu = array();
 	}
 
 
