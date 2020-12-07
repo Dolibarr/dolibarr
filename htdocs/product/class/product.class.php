@@ -934,6 +934,7 @@ class Product extends CommonObject
             if ($this->hasbatch() && !$this->oldcopy->hasbatch()) {
                 //$valueforundefinedlot = 'Undefined';  // In previous version, 39 and lower
                 $valueforundefinedlot = '000000';
+				if (!empty($conf->global->STOCK_DEFAULT_BATCH)) $valueforundefinedlot = $conf->global->STOCK_DEFAULT_BATCH;
 
                 dol_syslog("Flag batch of product id=".$this->id." is set to ON, so we will create missing records into product_batch");
 
