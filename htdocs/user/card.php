@@ -737,10 +737,12 @@ if ($action == 'create' || $action == 'adduserldap')
 					$label = '';
 					foreach ($required_fields as $value)
 					{
-						if ($value)
-						{
-							$label .= $value."=".$ldapuser[$value]." ";
-						}
+						if ($value === $conf->global->LDAP_FIELD_PASSWORD || $value === $conf->global->LDAP_FIELD_PASSWORD_CRYPTED)
+ 						{
+ 							$label .= $value."=******* ";
+ 						} elseif ($value) {
+ 							$label .= $value."=".$ldapuser[$value]." ";
+ 						}
 					}
 					$liste[$key] = $label;
 				}
