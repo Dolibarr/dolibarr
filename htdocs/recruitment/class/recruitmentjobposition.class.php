@@ -167,7 +167,7 @@ class RecruitmentJobPosition extends CommonObject
 	public $status;
 	// END MODULEBUILDER PROPERTIES
 
-	
+
 	/**
 	 * Constructor
 	 *
