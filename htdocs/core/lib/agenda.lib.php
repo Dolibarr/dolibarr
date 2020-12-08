@@ -164,9 +164,11 @@ function show_array_actions_to_do($max = 5)
 	include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
-	$sql = "SELECT a.id, a.label, a.datep as dp, a.datep2 as dp2, a.fk_user_author, a.percent,";
-	$sql .= " c.code, c.libelle as type_label,";
-	$sql .= " s.nom as sname, s.rowid, s.client";
+	$sql = "SELECT a.id, a.label, a.datep as dp, a.datep2 as dp2, a.fk_user_author, a.percent";
+	$sql .= ", c.code, c.libelle as type_label";
+	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+	$sql .= ", s.code_client, s.code_compta, s.client";
+	$sql .= ", s.logo, s.email, s.entity";
 	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";
 	$sql .= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
@@ -210,12 +212,18 @@ function show_array_actions_to_do($max = 5)
 			// print '<td>'.dol_trunc($obj->label,22).'</td>';
 
 			print '<td>';
-			if ($obj->rowid > 0)
+			if ($obj->socid > 0)
 			{
-				$customerstatic->id = $obj->rowid;
-				$customerstatic->name = $obj->sname;
+				$customerstatic->id = $obj->socid;
+				$customerstatic->name = $obj->name;
+				//$customerstatic->name_alias = $obj->name_alias;
+				$customerstatic->code_client = $obj->code_client;
+				$customerstatic->code_compta = $obj->code_compta;
 				$customerstatic->client = $obj->client;
-				print $customerstatic->getNomUrl(1, '', 16);
+				$customerstatic->logo = $obj->logo;
+				$customerstatic->email = $obj->email;
+				$customerstatic->entity = $obj->entity;
+				print $customerstatic->getNomUrl(1, '', 40);
 			}
 			print '</td>';
 
@@ -260,9 +268,11 @@ function show_array_last_actions_done($max = 5)
 
 	$now = dol_now();
 
-	$sql = "SELECT a.id, a.percent, a.datep as da, a.datep2 as da2, a.fk_user_author, a.label,";
-	$sql .= " c.code, c.libelle,";
-	$sql .= " s.rowid, s.nom as sname, s.client";
+	$sql = "SELECT a.id, a.percent, a.datep as da, a.datep2 as da2, a.fk_user_author, a.label";
+	$sql .= ", c.code, c.libelle";
+	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+	$sql .= ", s.code_client, s.code_compta, s.client";
+	$sql .= ", s.logo, s.email, s.entity";
 	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";
 	$sql .= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action ";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
@@ -305,12 +315,18 @@ function show_array_last_actions_done($max = 5)
 			//print '<td>'.dol_trunc($obj->label,24).'</td>';
 
 			print '<td>';
-			if ($obj->rowid > 0)
+			if ($obj->socid > 0)
 			{
-				$customerstatic->id = $obj->rowid;
-				$customerstatic->name = $obj->sname;
+				$customerstatic->id = $obj->socid;
+				$customerstatic->name = $obj->name;
+				//$customerstatic->name_alias = $obj->name_alias;
+				$customerstatic->code_client = $obj->code_client;
+				$customerstatic->code_compta = $obj->code_compta;
 				$customerstatic->client = $obj->client;
-				print $customerstatic->getNomUrl(1, '', 24);
+				$customerstatic->logo = $obj->logo;
+				$customerstatic->email = $obj->email;
+				$customerstatic->entity = $obj->entity;
+				print $customerstatic->getNomUrl(1, '', 30);
 			}
 			print '</td>';
 
