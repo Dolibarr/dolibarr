@@ -240,7 +240,7 @@ if (empty($reshook))
 			$stockLocation = "ent1".$i."_0";
 	    	$qty = "qtyl".$i;
 
-			if ($objectsrc->lines[$i]->product_tobatch)      // If product need a batch number
+	    	if (!empty($conf->productbatch->enabled) && $objectsrc->lines[$i]->product_tobatch)      // If product need a batch number
 			{
 			    if (GETPOSTISSET($batch))
 			    {
