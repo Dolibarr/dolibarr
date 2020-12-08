@@ -374,7 +374,7 @@ class modCategorie extends DolibarrModules
 			'ca.label'=>"Label*", 'ca.type'=>"Type*", 'ca.description'=>"Description",
 			'ca.fk_parent' => 'Parent'
 		);
-		$this->import_regex_array[$r] = array('ca.type'=>'^[0|1|2|3]');
+		$this->import_regex_array[$r] = array('ca.type'=>'^\d+$');
 		$this->import_convertvalue_array[$r] = array(
 			'ca.fk_parent' => array(
 				'rule'          => 'fetchidfromcodeandlabel',
@@ -386,10 +386,10 @@ class modCategorie extends DolibarrModules
 			)
 		);
 		$typeexample = "";
-		if ($conf->product->enabled) { $typeexample .= ($typeexample ? "/" : "")."0=Product"; }
+		if (!empty($conf->product->enabled)) { $typeexample .= ($typeexample ? "/" : "")."0=Product"; }
 		if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) { $typeexample .= ($typeexample ? "/" : "")."1=Supplier"; }
-		if ($conf->societe->enabled) { $typeexample .= ($typeexample ? "/" : "")."2=Customer-Prospect"; }
-		if ($conf->adherent->enabled) { $typeexample .= ($typeexample ? "/" : "")."3=Member"; }
+		if (!empty($conf->societe->enabled)) { $typeexample .= ($typeexample ? "/" : "")."2=Customer-Prospect"; }
+		if (!empty($conf->adherent->enabled)) { $typeexample .= ($typeexample ? "/" : "")."3=Member"; }
 		$this->import_examplevalues_array[$r] = array(
 			'ca.label'=>"Supplier Category", 'ca.type'=>$typeexample, 'ca.description'=>"My Category description",
 			'ca.fk_parent' => '0'

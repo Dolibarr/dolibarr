@@ -139,15 +139,10 @@ class modTicket extends DolibarrModules
 
 		// Boxes
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
-		$this->boxes = array(); // Boxes list
-		$r = 0;
-		// Example:
-
-		$this->boxes[$r][1] = "box_last_ticket";
-		$r++;
-
-		$this->boxes[$r][1] = "box_last_modified_ticket";
-		$r++;
+		$this->boxes = array(
+			0=>array('file'=>'box_last_ticket.php', 'enabledbydefaulton'=>'Home'),
+			1=>array('file'=>'box_last_modified_ticket.php', 'enabledbydefaulton'=>'Home')
+		); // Boxes list
 
 		// Permissions
 		$this->rights = array(); // Permission array used by this module

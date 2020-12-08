@@ -242,11 +242,6 @@ class AllTests
         require_once dirname(__FILE__).'/ScriptsTest.php';
         $suite->addTestSuite('ScriptsTest');
 
-        require_once dirname(__FILE__).'/FormAdminTest.php';
-        $suite->addTestSuite('FormAdminTest');
-        require_once dirname(__FILE__).'/FormTest.php';
-        $suite->addTestSuite('FormTest');
-
         require_once dirname(__FILE__).'/ModulesTest.php';  // At end because it's the longer
         $suite->addTestSuite('ModulesTest');
 
@@ -254,10 +249,15 @@ class AllTests
         // GUI
         require_once dirname(__FILE__).'/FormAdminTest.php';
         $suite->addTestSuite('FormAdminTest');
+        require_once dirname(__FILE__).'/FormTest.php';
+        $suite->addTestSuite('FormTest');
 
 
+        // Payment services
         require_once dirname(__FILE__).'/PaypalTest.php';
         $suite->addTestSuite('PaypalTest');
+        require_once dirname(__FILE__).'/StripeTest.php';
+        $suite->addTestSuite('StripeTest');
 
         return $suite;
     }

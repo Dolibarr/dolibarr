@@ -50,7 +50,7 @@ class Holiday extends CommonObject
 	public $ismultientitymanaged = 0;
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_holiday';
 
@@ -1411,7 +1411,7 @@ class Holiday extends CommonObject
 
 				// Update each user counter
 				foreach ($users as $userCounter) {
-					$nbDaysToAdd = $typeleaves[$userCounter['type']]['newByMonth'];
+					$nbDaysToAdd = (isset($typeleaves[$userCounter['type']]['newByMonth']) ? $typeleaves[$userCounter['type']]['newByMonth'] : 0);
 					if (empty($nbDaysToAdd)) continue;
 
 					dol_syslog("We update leave type id ".$userCounter['type']." for user id ".$userCounter['rowid'], LOG_DEBUG);

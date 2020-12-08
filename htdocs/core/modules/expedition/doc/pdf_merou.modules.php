@@ -453,7 +453,7 @@ class pdf_merou extends ModelePdfExpedition
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		// Translations
-		$langs->loadLangs(array("main", "bills"));
+		$langs->loadLangs(array("main", "bills", "orders"));
 
 		if (empty($hidetop))
 		{
@@ -620,12 +620,12 @@ class pdf_merou extends ModelePdfExpedition
 
 		$pdf->SetFont('', 'B', $default_font_size - 3);
 		$pdf->SetTextColor(0, 0, 0);
-		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_delivery, 'day', false, $outputlangs, true), '', 'L');
+		$pdf->MultiCell(70, 8, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_delivery, 'day', false, $outputlangs, true), '', 'L');
 
 		$pdf->SetXY($blSocX - 80, $blSocY + 20);
 		$pdf->SetFont('', 'B', $default_font_size - 3);
 		$pdf->SetTextColor(0, 0, 0);
-		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("TrackingNumber")." : ".$object->tracking_number, '', 'L');
+		$pdf->MultiCell(70, 8, $outputlangs->transnoentities("TrackingNumber")." : ".$object->tracking_number, '', 'L');
 
 		// Deliverer
 		$pdf->SetXY($blSocX - 80, $blSocY + 23);

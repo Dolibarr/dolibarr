@@ -66,7 +66,7 @@ class Propal extends CommonObject
 	public $table_element_line = 'propaldet';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Fieldname with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_propal';
 
@@ -1099,7 +1099,7 @@ class Propal extends CommonObject
 			if ($this->id)
 			{
 				$this->ref = '(PROV'.$this->id.')';
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."propal SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".$this->id;
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."propal SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".((int) $this->id);
 
 				dol_syslog(get_class($this)."::create", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -1111,7 +1111,7 @@ class Propal extends CommonObject
 				}
 
 				// Add object linked
-				if (!$error && $this->id && is_array($this->linked_objects) && !empty($this->linked_objects))
+				if (!$error && $this->id && !empty($this->linked_objects) && is_array($this->linked_objects))
 				{
 					foreach ($this->linked_objects as $origin => $tmp_origin_id)
 					{
@@ -3753,7 +3753,10 @@ class PropaleLigne extends CommonObjectLine
 	public $product_type = Product::TYPE_PRODUCT;
 
 	public $qty;
+
 	public $tva_tx;
+	public $vat_src_code;
+
 	public $subprice;
 	public $remise_percent;
 	public $fk_remise_except;
@@ -3805,6 +3808,11 @@ class PropaleLigne extends CommonObjectLine
 	 * @see $product_label
 	 */
 	public $libelle;
+	/**
+	 * @deprecated
+	 * @see $product_label
+	 */
+	public $label;
 	/**
 	 *  Product label
 	 * @var string

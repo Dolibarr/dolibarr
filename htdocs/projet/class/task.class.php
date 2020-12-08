@@ -45,7 +45,7 @@ class Task extends CommonObject
 	public $table_element = 'projet_task';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_task';
 
