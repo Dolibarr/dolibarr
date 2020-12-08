@@ -68,6 +68,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 					$("input#search_'.$htmlname.'").keydown(function(e) {
 						if (e.keyCode != 9)		/* If not "Tab" key */
 						{
+							if (e.keyCode == 13) {return false;} /*disable "ENTER" key useful for barcode readers*/
 							console.log("Clear id previously selected for field '.$htmlname.'");
 							$("#'.$htmlname.'").val("");
 						}
