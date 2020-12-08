@@ -188,6 +188,35 @@ class modStock extends DolibarrModules
 		//--------
 		$r = 0;
 
+		// Export warehouses
+		$r++;
+		$this->export_code[$r] = $this->rights_class.'_warehouses';
+		$this->export_label[$r] = "Warehouses"; // Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_icon[$r] = "warehouse";
+		$this->export_permission[$r] = array(array("stock", "lire"));
+		$this->export_fields_array[$r] = array(
+			'e.rowid'=>'IdWarehouse', 'e.ref'=>'LocationSummary', 'e.description'=>'DescWareHouse', 'e.lieu'=>'LieuWareHouse', 'e.address'=>'Address', 'e.zip'=>'Zip', 'e.town'=>'Town',
+			'd.code_departement'=>'Departement', 'c.code'=>'CountryCode',
+			'e.phone'=>'Phone', 'e.fax'=>'Fax', 'e.statut'=>'Status', 'pe.rowid'=>'ParentWarehouse', 'pe.ref'=>'LocationSummary'
+		);
+		$this->export_TypeFields_array[$r] = array(
+			'e.ref'=>'Text', 'e.description'=>'Text', 'e.lieu'=>'Text', 'e.address'=>'Text', 'e.zip'=>'Text', 'e.town'=>'Text',
+			'd.code_departement'=>'List:c_departements:code_departement:code_departement:', 'c.code'=>'List:c_country:code:code:',
+			'e.phone'=>'Text', 'e.fax'=>'Text', 'e.statut'=>'Text', 'pe.rowid'=>'List:entrepot:ref:rowid:stock', 'pe.ref'=>'Text'
+		);
+		$this->export_entities_array[$r] = array();	// We define here only fields that use another icon that the one defined into export_icon
+		$this->export_aggregate_array[$r] = array();
+		$keyforselect = 'warehouse'; $keyforelement = 'warehouse'; $keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'entrepot as e';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON d.rowid = e.fk_departement';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON c.rowid = e.fk_pays';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot as pe ON pe.rowid = e.fk_parent';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot_extrafields as extra ON extra.fk_object = e.rowid';
+		$this->export_sql_end[$r] .= ' WHERE e.entity IN ('.getEntity('stock').')';
+
 		$r++;
 		$this->export_code[$r] = $this->rights_class;
 		$this->export_label[$r] = "WarehousesAndProducts"; // Translation key (used only if key ExportDataset_xxx_z not found)

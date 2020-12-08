@@ -130,7 +130,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
 	'cf.ref'=>'Ref',
-	'cf.ref_supplier'=>'RefSupplierOrder',
+	'cf.ref_supplier'=>'RefOrderSupplier',
 	'pd.description'=>'Description',
 	's.nom'=>"ThirdParty",
 	's.name_alias'=>"AliasNameShort",

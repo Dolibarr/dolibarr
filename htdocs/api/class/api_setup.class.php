@@ -1608,6 +1608,14 @@ class Setup extends DolibarrApi
 	{
 		global $mysoc;
 
+		unset($mysoc->skype);
+		unset($mysoc->twitter);
+		unset($mysoc->facebook);
+		unset($mysoc->linkedin);
+
+		unset($mysoc->note);
+		unset($mysoc->lines);
+
 		return $this->_cleanObjectDatas($mysoc);
 	}
 

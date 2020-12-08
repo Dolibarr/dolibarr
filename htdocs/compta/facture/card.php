@@ -3551,7 +3551,7 @@ if ($action == 'create')
 		print '</td></tr>';
 	}
 
-	// Lines from source (TODO Show them also when creating invoice from tempalte invoice)
+	// Lines from source (TODO Show them also when creating invoice from template invoice)
 	if (!empty($origin) && !empty($originid) && is_object($objectsrc))
 	{
 		// TODO for compatibility

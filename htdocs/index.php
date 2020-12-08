@@ -101,8 +101,6 @@ if (!empty($conf->global->MAIN_MOTD))
 
 
 
-
-
 /*
  * Dashboard Dolibarr states (statistics)
  * Hidden for external users
