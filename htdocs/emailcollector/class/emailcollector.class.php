@@ -52,13 +52,14 @@ class EmailCollector extends CommonObject
 	 * @var int  Does emailcollector support extrafields ? 0=No, 1=Yes
 	 */
 	public $isextrafieldmanaged = 0;
+
 	/**
 	 * @var string String with name of icon for emailcollector. Must be the part after the 'object_' into object_emailcollector.png
 	 */
 	public $picto = 'generic';
 
 	/**
-	 * @var int    Field with ID of parent key if this field has a parent
+	 * @var string    Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_emailcollector';
 
@@ -158,7 +159,9 @@ class EmailCollector extends CommonObject
 	 */
 	public $date_creation;
 
-
+	/**
+	 * @var int timestamp
+	 */
 	public $tms;
 
 	/**
@@ -171,6 +174,9 @@ class EmailCollector extends CommonObject
 	 */
 	public $fk_user_modif;
 
+	/**
+	 * @var string import key
+	 */
 	public $import_key;
 
 
@@ -227,7 +233,7 @@ class EmailCollector extends CommonObject
 		// Translate some data of arrayofkeyval
 		foreach ($this->fields as $key => $val)
 		{
-			if (is_array($val['arrayofkeyval']))
+			if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval']))
 			{
 				foreach ($val['arrayofkeyval'] as $key2 => $val2)
 				{
@@ -1342,6 +1348,15 @@ class EmailCollector extends CommonObject
 							$trackid = $reg[1].$reg[2];
 
 							$objectid = $reg[2];
+							// See also list into interface_50_modAgenda_ActionsAuto
+							if ($reg[1] == 'thi')
+							{
+								$objectemail = new Societe($this->db);
+							}
+							if ($reg[1] == 'ctc')
+							{
+								$objectemail = new Contact($this->db);
+							}
 							if ($reg[1] == 'inv')
 							{
 								$objectemail = new Facture($this->db);
@@ -1350,13 +1365,13 @@ class EmailCollector extends CommonObject
 							{
 								$objectemail = new Project($this->db);
 							}
+							if ($reg[1] == 'tas')
+							{
+								$objectemail = new Task($this->db);
+							}
 							if ($reg[1] == 'con')
 							{
 								$objectemail = new Contact($this->db);
-							}
-							if ($reg[1] == 'thi')
-							{
-								$objectemail = new Societe($this->db);
 							}
 							if ($reg[1] == 'use')
 							{
@@ -1369,6 +1384,10 @@ class EmailCollector extends CommonObject
 							if ($reg[1] == 'recruitmentcandidature')
 							{
 								$objectemail = new RecruitmentCandidature($this->db);
+							}
+							if ($reg[1] == 'mem')
+							{
+								$objectemail = new Adherent($this->db);
 							}
 						} elseif (preg_match('/<(.*@.*)>/', $reference, $reg)) {
 							// This is an external reference, we check if we have it in our database

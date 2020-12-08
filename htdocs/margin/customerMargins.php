@@ -88,7 +88,7 @@ $picto = 'margin';
 
 print '<form method="post" name="sel" action="'.$_SERVER['PHP_SELF'].'">';
 
-dol_fiche_head($head, 'customerMargins', $titre, 0, $picto);
+print dol_get_fiche_head($head, 'customerMargins', $titre, 0, $picto);
 
 print '<table class="border centpercent">';
 
@@ -125,13 +125,13 @@ if (!$sortfield)
 		$sortfield = "f.datef";
 		$sortorder = "DESC";
 	} else {
-	    $sortfield = "s.nom";
-	    $sortorder = "ASC";
+		$sortfield = "s.nom";
+		$sortorder = "ASC";
 	}
 }
 
 // Products
-$TRes = $form->select_produits_list('', '', '', 20, 0, '', 1, 2, 1, 0, '', 1);
+$TRes = $form->select_produits_list('', '', '', '', 0, '', 1, 2, 1, 0, '', 1);
 
 $TProducts = array();
 foreach ($TRes as $prod) {
@@ -149,7 +149,7 @@ $TCats = $form->select_all_categories(0, array(), '', 64, 0, 1);
 print '<tr>';
 print '<td class="titlefield">'.$langs->trans('ChooseCategory').'</td>';
 print '<td class="maxwidthonsmartphone" colspan="4">';
-print $form->multiselectarray('categories', $TCats, $TSelectedCats, 0, 0, 'minwidth500');
+print img_picto('', 'category').$form->multiselectarray('categories', $TCats, $TSelectedCats, 0, 0, 'quatrevingtpercent widthcentpercentminusx');
 print '</td>';
 print '</tr>';
 
@@ -193,7 +193,7 @@ if (!empty($conf->global->DISPLAY_MARK_RATES)) {
 
 print "</table>";
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '</form>';
 
@@ -251,9 +251,9 @@ if ($result)
 	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, $num, '', 0, '', '', 0, 1);
 
 	if ($conf->global->MARGIN_TYPE == "1")
-	    $labelcostprice = 'BuyingPrice';
+		$labelcostprice = 'BuyingPrice';
 	else // value is 'costprice' or 'pmp'
-	    $labelcostprice = 'CostPrice';
+		$labelcostprice = 'CostPrice';
 
 	$moreforfilter = '';
 
@@ -299,7 +299,7 @@ if ($result)
 
 			print '<tr class="oddeven">';
 			if ($client) {
-		        print '<td>';
+				print '<td>';
 				$invoicestatic->id = $objp->facid;
 				$invoicestatic->ref = $objp->ref;
 				print $invoicestatic->getNomUrl(1);
@@ -344,7 +344,7 @@ if ($result)
 
 	print '<tr class="liste_total">';
 	if ($client)
-	    print '<td colspan=2>';
+		print '<td colspan=2>';
   	else print '<td>';
   	print $langs->trans('TotalMargin')."</td>";
 	print "<td class=\"right\">".price($cumul_vente, null, null, null, null, $rounding)."</td>\n";

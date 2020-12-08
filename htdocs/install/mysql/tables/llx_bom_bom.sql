@@ -31,7 +31,7 @@ CREATE TABLE llx_bom_bom(
 	duration double(24,8) DEFAULT NULL,
 	date_creation datetime NOT NULL,
 	date_valid datetime,
-	tms timestamp, 
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 	fk_user_creat integer NOT NULL,
 	fk_user_modif integer, 
 	fk_user_valid integer, 

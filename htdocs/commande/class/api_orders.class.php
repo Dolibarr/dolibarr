@@ -573,13 +573,13 @@ class Orders extends DolibarrApi
 		 $contacts = $this->commande->liste_contact();
 
 		foreach ($contacts as $contact) {
-            if ($contact['id'] == $contactid && $contact['code'] == $type) {
-		        $result = $this->commande->delete_contact($contact['rowid']);
+			if ($contact['id'] == $contactid && $contact['code'] == $type) {
+				$result = $this->commande->delete_contact($contact['rowid']);
 
-		        if (!$result) {
-                    throw new RestException(500, 'Error when deleted the contact');
-                }
-		    }
+				if (!$result) {
+					throw new RestException(500, 'Error when deleted the contact');
+				}
+			}
 		}
 
 		return array(
@@ -950,8 +950,8 @@ class Orders extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
-	 * @param   object  $object    Object to clean
-	 * @return    array    Array of cleaned object properties
+	 * @param   Object  $object     Object to clean
+	 * @return  Object              Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{

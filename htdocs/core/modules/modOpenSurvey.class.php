@@ -37,8 +37,8 @@ class modOpenSurvey extends DolibarrModules
 	 *
 	 *   @param		DoliDB		$db		Database handler
 	 */
-    public function __construct($db)
-    {
+	public function __construct($db)
+	{
 		global $langs, $conf;
 
 		$this->db = $db;
@@ -83,7 +83,7 @@ class modOpenSurvey extends DolibarrModules
 		$this->const = array(); // List of parameters
 
 		// Dictionaries
-        $this->dictionaries = array();
+		$this->dictionaries = array();
 
 		// Boxes
 		$this->boxes = array(); // List of boxes
@@ -119,74 +119,86 @@ class modOpenSurvey extends DolibarrModules
 		$r++;
 
 
-        // Menus
-        //-------
-        $r = 0;
-        $this->menu[$r] = array(
-            'fk_menu'=>'fk_mainmenu=tools', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-            'type'=>'left',
-            'titre'=>'Survey',
-            'mainmenu'=>'tools',
-            'leftmenu'=>'opensurvey',
-            'url'=>'/opensurvey/index.php?mainmenu=tools&leftmenu=opensurvey',
-            'langs'=>'opensurvey',
-            'position'=>200,
-            'enabled'=>'$conf->opensurvey->enabled', // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
-            'perms'=>'$user->rights->opensurvey->read',
-            'target'=>'',
-            'user'=>0,
-        );
-        $r++;
+		// Menus
+		//-------
+		$r = 0;
+		$this->menu[$r] = array(
+			'fk_menu'=>'fk_mainmenu=tools', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'type'=>'left',
+			'titre'=>'Survey',
+			'mainmenu'=>'tools',
+			'leftmenu'=>'opensurvey',
+			'url'=>'/opensurvey/index.php?mainmenu=tools&leftmenu=opensurvey',
+			'langs'=>'opensurvey',
+			'position'=>200,
+			'enabled'=>'$conf->opensurvey->enabled', // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
+			'perms'=>'$user->rights->opensurvey->read',
+			'target'=>'',
+			'user'=>0,
+		);
+		$r++;
 
-        $this->menu[$r] = array(
-            'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=opensurvey', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-            'type'=>'left',
-            'titre'=>'NewSurvey',
-            'mainmenu'=>'tools',
-            'leftmenu'=>'opensurvey_new',
-            'url'=>'/opensurvey/wizard/index.php',
-            'langs'=>'opensurvey',
-            'position'=>210,
-            'enabled'=>'$conf->opensurvey->enabled', // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
-            'perms'=>'$user->rights->opensurvey->write',
-            'target'=>'',
-            'user'=>0,
-        );
-        $r++;
+		$this->menu[$r] = array(
+			'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=opensurvey', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'type'=>'left',
+			'titre'=>'NewSurvey',
+			'mainmenu'=>'tools',
+			'leftmenu'=>'opensurvey_new',
+			'url'=>'/opensurvey/wizard/index.php',
+			'langs'=>'opensurvey',
+			'position'=>210,
+			'enabled'=>'$conf->opensurvey->enabled', // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
+			'perms'=>'$user->rights->opensurvey->write',
+			'target'=>'',
+			'user'=>0,
+		);
+		$r++;
 
-        $this->menu[$r] = array(
-            'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=opensurvey', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-            'type'=>'left',
-            'titre'=>'List',
-            'mainmenu'=>'tools',
-            'leftmenu'=>'opensurvey_list',
-            'url'=>'/opensurvey/list.php',
-            'langs'=>'opensurvey',
-            'position'=>220,
-            'enabled'=>'$conf->opensurvey->enabled', // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
-            'perms'=>'$user->rights->opensurvey->read',
-            'target'=>'',
-            'user'=>0,
-        );
-        $r++;
-    }
+		$this->menu[$r] = array(
+			'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=opensurvey', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'type'=>'left',
+			'titre'=>'List',
+			'mainmenu'=>'tools',
+			'leftmenu'=>'opensurvey_list',
+			'url'=>'/opensurvey/list.php',
+			'langs'=>'opensurvey',
+			'position'=>220,
+			'enabled'=>'$conf->opensurvey->enabled', // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
+			'perms'=>'$user->rights->opensurvey->read',
+			'target'=>'',
+			'user'=>0,
+		);
+		$r++;
+	}
 
 	/**
 	 *	Function called when module is enabled.
 	 *	The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *	It also creates data directories
 	 *
+<<<<<<< HEAD
      *  @param      string	$options        Options when enabling module ('', 'noboxes')
      *  @param      int     $force_entity	Force current entity
 	 *  @return     int             	    1 if OK, 0 if KO
+=======
+	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *  @return     int             	1 if OK, 0 if KO
+>>>>>>> branch 'develop' of git@github.com:Dolibarr/dolibarr.git
 	 */
+<<<<<<< HEAD
     public function init($options = '', $force_entity = null)
     {
         // Permissions
         $this->remove($options);
+=======
+	public function init($options = '')
+	{
+		// Permissions
+		$this->remove($options);
+>>>>>>> branch 'develop' of git@github.com:Dolibarr/dolibarr.git
 
-        $sql = array();
+		$sql = array();
 
-        return $this->_init($sql, $options);
-    }
+		return $this->_init($sql, $options);
+	}
 }

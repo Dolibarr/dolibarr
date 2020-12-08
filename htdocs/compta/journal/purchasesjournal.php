@@ -81,8 +81,8 @@ $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
-    $date_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
-    $date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
+	$date_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
+	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
 
 $name = $langs->trans("PurchasesJournal");
@@ -236,7 +236,7 @@ foreach ($tabfac as $key => $val)
 				if (isset($line['inv']))
 				{
 					print '<td class="right">'.($mt < 0 ?price(-$mt) : '')."</td>";
-	    			print '<td class="right">'.($mt >= 0 ?price($mt) : '')."</td>";
+					print '<td class="right">'.($mt >= 0 ?price($mt) : '')."</td>";
 				} else {
 					print '<td class="right">'.($mt >= 0 ?price($mt) : '')."</td>";
 					print '<td class="right">'.($mt < 0 ?price(-$mt) : '')."</td>";

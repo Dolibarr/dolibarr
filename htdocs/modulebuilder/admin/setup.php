@@ -97,7 +97,7 @@ print '<input type="hidden" name="action" value="update">';
 print load_fiche_titre($langs->trans("ModuleSetup").' '.$langs->trans('Modulebuilder'), $linkback);
 
 if (GETPOST('withtab', 'alpha')) {
-	dol_fiche_head($head, 'modulebuilder', '', -1);
+	print dol_get_fiche_head($head, 'modulebuilder', '', -1);
 }
 
 print '<span class="opacitymedium">'.$langs->trans("ModuleBuilderDesc")."</span><br>\n";
@@ -191,10 +191,10 @@ print '</tr>';
 
 print '</table>';
 
-print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'" name="Button"></center>';
+print '<center><input type="submit" class="button button-save" value="'.$langs->trans("Save").'" name="Button"></center>';
 
 if (GETPOST('withtab', 'alpha')) {
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 print '<br>';

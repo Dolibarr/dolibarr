@@ -142,7 +142,7 @@ class Odf
 		}
 
 		$this->vars[$tag] = $this->convertVarToOdf($value, $encode, $charset);
-		
+
 		return $this;
 	}
 
@@ -156,6 +156,7 @@ class Odf
      */
 	public function convertVarToOdf($value, $encode = true, $charset = 'ISO-8859')
 	{
+		$value = $encode ? htmlspecialchars($value) : $value;
 		$value = ($charset == 'ISO-8859') ? utf8_encode($value) : $value;
 		$convertedValue = $value;
 
@@ -170,9 +171,9 @@ class Odf
 				'<style:style style:name="subText" style:family="text"><style:text-properties style:text-position="sub 58%" /></style:style>',
 				'<style:style style:name="supText" style:family="text"><style:text-properties style:text-position="super 58%" /></style:style>'
 			);
-	
+
 			$convertedValue = $this->_replaceHtmlWithOdtTag($this->_getDataFromHtml($value), $customStyles, $fontDeclarations);
-	
+
 			foreach ($customStyles as $key => $val) {
 				array_push($automaticStyles, '<style:style style:name="customStyle' . $key . '" style:family="text">' . $val . '</style:style>');
 			}
@@ -399,7 +400,7 @@ class Odf
 	public function htmlToUTFAndPreOdf($value)
 	{
 		// We decode into utf8, entities
-		$value=dol_html_entity_decode($value, ENT_QUOTES);
+		$value=dol_html_entity_decode($value, ENT_QUOTES|ENT_HTML5);
 
 		// We convert html tags
 		$ishtml=dol_textishtml($value);

@@ -34,7 +34,7 @@ if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't nee
 if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
 if (!defined('NOLOGIN'))        define("NOLOGIN", 1); // This means this output page does not require to be logged.
 if (!defined('NOCSRFCHECK'))    define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-if (!defined('NOIPCHECK'))		 define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 
 
 // It's a wrapper, so empty header
@@ -57,6 +57,11 @@ function llxFooterVierge()
 {
 	print '</body></html>';
 }
+
+// For MultiCompany module.
+// Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+if (is_numeric($entity)) define("DOLENTITY", $entity);
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';

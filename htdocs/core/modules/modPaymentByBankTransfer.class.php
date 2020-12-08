@@ -120,12 +120,13 @@ class modPaymentByBankTransfer extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'debit';
 
-        // Menus
-        //-------
-        $this->menu = 1; // This module add menu entries. They are coded into menu manager.
-    }
+		// Menus
+		//-------
+		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
+	}
 
 
+<<<<<<< HEAD
     /**
      *  Function called when module is enabled.
      *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
@@ -138,12 +139,25 @@ class modPaymentByBankTransfer extends DolibarrModules
     public function init($options = '', $force_entity = null)
     {
         global $conf;
+=======
+	/**
+	 *  Function called when module is enabled.
+	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates data directories
+	 *
+	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *  @return     int             	1 if OK, 0 if KO
+	 */
+	public function init($options = '')
+	{
+		global $conf;
+>>>>>>> branch 'develop' of git@github.com:Dolibarr/dolibarr.git
 
-        // Permissions
-        $this->remove($options);
+		// Permissions
+		$this->remove($options);
 
-        $sql = array();
+		$sql = array();
 
-        return $this->_init($sql, $options);
-    }
+		return $this->_init($sql, $options);
+	}
 }

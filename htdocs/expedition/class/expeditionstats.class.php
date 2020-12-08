@@ -34,38 +34,38 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class ExpeditionStats extends Stats
 {
-    /**
-     * @var string Name of table without prefix where object is stored
-     */
-    public $table_element;
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element;
 
-    public $socid;
-    public $userid;
+	public $socid;
+	public $userid;
 
-    public $from;
-    public $field;
-    public $where;
+	public $from;
+	public $field;
+	public $where;
 
 
-    /**
-     * Constructor
-     *
-     * @param	DoliDB	$db      	Database handler
+	/**
+	 * Constructor
+	 *
+	 * @param	DoliDB	$db      	Database handler
 	 * @param 	int		$socid	   	Id third party for filter
 	 * @param 	string	$mode	   	Option (not used)
 	 * @param   int		$userid    	Id user for filter (creation user)
-     */
-    public function __construct($db, $socid, $mode, $userid = 0)
-    {
+	 */
+	public function __construct($db, $socid, $mode, $userid = 0)
+	{
 		global $user, $conf;
 
 		$this->db = $db;
 
 		$this->socid = ($socid > 0 ? $socid : 0);
-        $this->userid = $userid;
+		$this->userid = $userid;
 		$this->cachefilesuffix = $mode;
 
-        $object = new Expedition($this->db);
+		$object = new Expedition($this->db);
 		$this->from = MAIN_DB_PREFIX.$object->table_element." as c";
 		//$this->from.= ", ".MAIN_DB_PREFIX."societe as s";
 		$this->field = 'weight'; // Warning, unit of weight is NOT USED AND MUST BE
@@ -78,31 +78,31 @@ class ExpeditionStats extends Stats
 		{
 			$this->where .= " AND c.fk_soc = ".$this->socid;
 		}
-        if ($this->userid > 0) $this->where .= ' AND c.fk_user_author = '.$this->userid;
-    }
+		if ($this->userid > 0) $this->where .= ' AND c.fk_user_author = '.$this->userid;
+	}
 
-    /**
-     * Return shipment number by month for a year
-     *
+	/**
+	 * Return shipment number by month for a year
+	 *
 	 * @param	int		$year		Year to scan
-     *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 * @return	array				Array with number by month
-     */
-    public function getNbByMonth($year, $format = 0)
-    {
-        global $user;
+	 */
+	public function getNbByMonth($year, $format = 0)
+	{
+		global $user;
 
-        $sql = "SELECT date_format(c.date_valid,'%m') as dm, COUNT(*) as nb";
+		$sql = "SELECT date_format(c.date_valid,'%m') as dm, COUNT(*) as nb";
 		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql .= " WHERE c.date_valid BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
-        $sql .= $this->db->order('dm', 'DESC');
+		$sql .= $this->db->order('dm', 'DESC');
 
 		$res = $this->_getNbByMonth($year, $sql, $format);
 		return $res;
-    }
+	}
 
 	/**
 	 * Return shipments number per year
@@ -119,7 +119,7 @@ class ExpeditionStats extends Stats
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY dm";
-        $sql .= $this->db->order('dm', 'DESC');
+		$sql .= $this->db->order('dm', 'DESC');
 
 		return $this->_getNbByYear($sql);
 	}
@@ -138,7 +138,7 @@ class ExpeditionStats extends Stats
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY year";
-        $sql .= $this->db->order('year', 'DESC');
+		$sql .= $this->db->order('year', 'DESC');
 
 		return $this->_getAllByYear($sql);
 	}

@@ -336,7 +336,7 @@ if ($status == 'todo') $title = $langs->trans("ToDoActions");
 */
 
 $param = '';
-if ($actioncode || isset($_GET['search_actioncode']) || isset($_POST['search_actioncode'])) {
+if ($actioncode || GETPOSTISSET('search_actioncode')) {
 	if (is_array($actioncode)) {
 		foreach ($actioncode as $str_action) $param .= "&search_actioncode[]=".urlencode($str_action);
 	} else $param .= "&search_actioncode=".urlencode($actioncode);
@@ -360,7 +360,9 @@ if (empty($action) || $action == 'show_month')
 	$nav .= " <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $month, 1, $year), "%b %Y");
 	$nav .= " </span>\n";
 	$nav .= " &nbsp; <a href=\"?year=".$next_year."&amp;month=".$next_month.$param."\"><i class=\"fa fa-chevron-right\"></i></a>\n";
-	$nav .= " &nbsp; <a href=\"?year=".$nowyear."&amp;month=".$nowmonth.$param."\">".$langs->trans("Today")."</a> ";
+	if (empty($conf->dol_optimize_smallscreen)) {
+		$nav .= " &nbsp; <a href=\"?year=".$nowyear."&amp;month=".$nowmonth.$param."\">".$langs->trans("Today")."</a> ";
+	}
 	$picto = 'calendar';
 }
 if ($action == 'show_week')
@@ -369,7 +371,9 @@ if ($action == 'show_week')
 	$nav .= " <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $first_month, $first_day, $first_year), "%Y").", ".$langs->trans("Week")." ".$week;
 	$nav .= " </span>\n";
 	$nav .= " &nbsp; <a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\"><i class=\"fa fa-chevron-right\" title=\"".dol_escape_htmltag($langs->trans("Next"))."\"></i></a>\n";
-	$nav .= " &nbsp; <a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a> ";
+	if (empty($conf->dol_optimize_smallscreen)) {
+		$nav .= " &nbsp; <a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a> ";
+	}
 	$picto = 'calendarweek';
 }
 if ($action == 'show_day')
@@ -378,7 +382,9 @@ if ($action == 'show_day')
 	$nav .= " <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $month, $day, $year), "daytextshort");
 	$nav .= " </span>\n";
 	$nav .= " &nbsp; <a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\"><i class=\"fa fa-chevron-right\"></i></a>\n";
-	$nav .= " &nbsp; <a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a> ";
+	if (empty($conf->dol_optimize_smallscreen)) {
+		$nav .= " &nbsp; <a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a> ";
+	}
 	$picto = 'calendarday';
 }
 
@@ -409,9 +415,9 @@ print '<form method="POST" id="searchFormList" class="listactionsfilter" action=
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
-//dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
+//print dol_get_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
 //print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, $listofextcals, $actioncode, $usergroup, '', $resourceid);
-//dol_fiche_end();
+//print dol_get_fiche_end();
 
 $viewmode = '';
 $viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&restore_lastsearch_values=1">';
@@ -1259,7 +1265,7 @@ if (empty($action) || $action == 'show_month')      // View by month
 				/* Show days before the beginning of the current month (previous month)  */
 				$style = 'cal_other_month cal_past';
 				if ($iter_day == 6) $style .= ' cal_other_month_right';
-				echo '  <td class="'.$style.' nowrap" width="14%" valign="top">';
+				echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
 				show_day_events($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
 				echo "  </td>\n";
 			} elseif ($tmpday <= $max_day_in_month) {
@@ -1272,14 +1278,14 @@ if (empty($action) || $action == 'show_month')      // View by month
 				if ($today) $style = 'cal_today';
 				if ($curtime < $todaytms) $style .= ' cal_past';
 				//var_dump($todayarray['mday']."==".$tmpday." && ".$todayarray['mon']."==".$month." && ".$todayarray['year']."==".$year.' -> '.$style);
-				echo '  <td class="'.$style.' nowrap" width="14%" valign="top">';
+				echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
 				show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
-				echo "  </td>\n";
+				echo "</td>\n";
 			} else {
 				/* Show days after the current month (next month) */
 				$style = 'cal_other_month';
 				if ($iter_day == 6) $style .= ' cal_other_month_right';
-				echo '  <td class="'.$style.' nowrap" width="14%" valign="top">';
+				echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
 				show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
 				echo "</td>\n";
 			}
@@ -1471,32 +1477,34 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
 	print "\n";
 
-	// Line with title of day
 	$curtime = dol_mktime(0, 0, 0, $month, $day, $year);
-	print '<div id="dayevent_'.$dateint.'" class="dayevent tagtable centpercent nobordernopadding">'."\n";
+	$urltoshow = DOL_URL_ROOT.'/comm/action/index.php?action=show_day&day='.str_pad($day, 2, "0", STR_PAD_LEFT).'&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year.$newparam;
+	$urltocreate = '';
+	if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create)
+	{
+		$newparam .= '&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year;
+		$hourminsec = '100000';
+		$urltocreate = DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $year, $month, $day).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
+	}
+
+	// Line with title of day
+	print '<div id="dayevent_'.$dateint.'" class="cursorpointer dayevent tagtable centpercent nobordernopadding" onclick="window.location=\''.$urltocreate.'\';">'."\n";
 
 	if ($nonew <= 0)
 	{
-		print '<div class="tagtr"><div class="nowrap float">';
-		print '<a class="dayevent-aday" style="color: #666" href="'.DOL_URL_ROOT.'/comm/action/index.php?';
-		print 'action=show_day&day='.str_pad($day, 2, "0", STR_PAD_LEFT).'&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year;
-		print $newparam;
-		print '">';
+		print '<div class="tagtr"><div class="nowrap tagtd"><div class="left inline-block">';
+		print '<a class="dayevent-aday" style="color: #666" href="'.$urltoshow.'">';
 		if ($showinfo) print dol_print_date($curtime, 'daytextshort');
 		else print dol_print_date($curtime, '%d');
 		print '</a>';
-		print '</div><div class="floatright nowrap">';
+		print '</div><div class="nowrap floatright inline-block marginrightonly">';
 		if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create)
 		{
-			$newparam .= '&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year;
-
-			//$param='month='.$monthshown.'&year='.$year;
-			$hourminsec = '100000';
-			print '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $year, $month, $day).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : '')).'">';
+			print '<a class="cursoradd" href="'.$urltocreate.'">'; // Explicit link, usefull for nojs interfaces
 			print img_picto($langs->trans("NewAction"), 'edit_add.png');
 			print '</a>';
 		}
-		print '</div></div>'."\n";
+		print '</div></div></div>'."\n";
 	}
 
 	if ($nonew < 0)
@@ -1832,7 +1840,9 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 			break;
 		}
 	}
-	if (!$i) print '&nbsp;';
+	if (!$i) {	// No events
+		print '&nbsp;';
+	}
 
 	if (!empty($conf->global->MAIN_JS_SWITCH_AGENDA) && $i > $maxprint && $maxprint)
 	{

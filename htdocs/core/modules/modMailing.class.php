@@ -146,9 +146,14 @@ class modMailing extends DolibarrModules
 	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *  It also creates data directories
 	 *
+<<<<<<< HEAD
      *  @param      string	$options        Options when enabling module ('', 'noboxes')
      *  @param      int     $force_entity   Force current entity
 	 *  @return     int             	    1 if OK, 0 if KO
+=======
+	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *  @return     int             	1 if OK, 0 if KO
+>>>>>>> branch 'develop' of git@github.com:Dolibarr/dolibarr.git
 	 */
 	public function init($options = '', $force_entity = null)
 	{

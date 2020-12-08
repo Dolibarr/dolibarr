@@ -63,7 +63,7 @@ class modSupplierProposal extends DolibarrModules
 		$this->dirs = array();
 
 		 // Config pages. Put here list of php page names stored in admin directory used to setup module.
-        $this->config_page_url = array("supplier_proposal.php");
+		$this->config_page_url = array("supplier_proposal.php");
 
 		// Dependencies
 		$this->hidden = false; // A condition to hide module
@@ -127,7 +127,7 @@ class modSupplierProposal extends DolibarrModules
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
 		$this->rights[$r][1] = 'Envoyer les demandes fournisseurs'; // libelle de la permission
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
-        $this->rights[$r][4] = 'send_advance';
+		$this->rights[$r][4] = 'send_advance';
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
@@ -152,11 +152,20 @@ class modSupplierProposal extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
+<<<<<<< HEAD
      *      @param      string	$options        Options when enabling module ('', 'noboxes')
      *      @param      int     $force_entity   Force current entity
 	 *      @return     int             	    1 if OK, 0 if KO
+=======
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
+>>>>>>> branch 'develop' of git@github.com:Dolibarr/dolibarr.git
 	 */
+<<<<<<< HEAD
     public function init($options = '', $force_entity = null)
+=======
+	public function init($options = '')
+>>>>>>> branch 'develop' of git@github.com:Dolibarr/dolibarr.git
 	{
 		global $conf, $langs;
 
@@ -201,10 +210,10 @@ class modSupplierProposal extends DolibarrModules
 	 */
 	public function remove($options = '')
 	{
-	    $sql = array(
-	        "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'askpricesupplier'"		// To delete/clean deprecated entries
-	    );
+		$sql = array(
+			"DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'askpricesupplier'"		// To delete/clean deprecated entries
+		);
 
-	    return $this->_remove($sql, $options);
+		return $this->_remove($sql, $options);
 	}
 }

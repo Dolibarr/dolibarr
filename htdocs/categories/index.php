@@ -109,6 +109,8 @@ if (empty($nosearch)) {
 
 		foreach ($cats as $cat)
 		{
+			$color = $categstatic->color ? ' style="background: #'.$categstatic->color.';"' : ' style="background: #bbb"';
+
 			print "\t".'<tr class="oddeven">'."\n";
 			print "\t\t<td>";
 			$categstatic->id = $cat->id;
@@ -116,7 +118,7 @@ if (empty($nosearch)) {
 			$categstatic->label = $cat->label;
 			$categstatic->type = $cat->type;
 			$categstatic->color = $cat->color;
-			print '<span class="noborderoncategories" '.($categstatic->color ? ' style="background: #'.$categstatic->color.';"' : ' style="background: #aaa"').'>';
+			print '<span class="noborderoncategories"'.$color.'>';
 			print $categstatic->getNomUrl(1, '');
 			print '</span>';
 			print "</td>\n";
@@ -170,10 +172,12 @@ foreach ($fulltree as $key => $val)
 		$counter = "<td class='left' width='40px;'>".(is_countable($elements) ? count($elements) : '0')."</td>";
 	}
 
+	$color = $categstatic->color ? ' style="background: #'.$categstatic->color.';"' : ' style="background: #bbb"';
+
 	$data[] = array(
 	'rowid'=>$val['rowid'],
 	'fk_menu'=>$val['fk_parent'],
-	'entry'=>'<table class="nobordernopadding centpercent"><tr><td><span class="noborderoncategories" '.($categstatic->color ? ' style="background: #'.$categstatic->color.';"' : ' style="background: #aaa"').'>'.$li.'</span></td>'.$counter.
+	'entry'=>'<table class="nobordernopadding centpercent"><tr><td><span class="noborderoncategories"'.$color.'>'.$li.'</span></td>'.$counter.
 		'<td class="right" width="20px;"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.$moreparam.'&backtolist='.urlencode($_SERVER["PHP_SELF"].'?type='.$type.$moreparam).'">'.img_view().'</a></td></tr></table>'
 	);
 }

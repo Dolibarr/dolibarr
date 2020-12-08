@@ -194,7 +194,7 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 // Configuration header
 $head = recruitmentAdminPrepareHead();
-dol_fiche_head($head, 'settings_candidatures', '', -1, '');
+print dol_get_fiche_head($head, 'settings_candidatures', '', -1, '');
 
 // Setup page goes here
 //echo '<span class="opacitymedium">'.$langs->trans("RecruitmentSetupPage").'</span><br><br>';
@@ -219,7 +219,7 @@ if ($action == 'edit')
 	print '</table>';
 
 	print '<br><div class="center">';
-	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+	print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
 	print '</div>';
 
 	print '</form>';
@@ -308,8 +308,10 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								// Show example of numbering model
 								print '<td class="nowrap">';
 								$tmp = $module->getExample();
-								if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
-								elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
+								if (preg_match('/^Error/', $tmp)) {
+									$langs->load("errors");
+									print '<div class="error">'.$langs->trans($tmp).'</div>';
+								} elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
 								else print $tmp;
 								print '</td>'."\n";
 
@@ -517,7 +519,7 @@ if (empty($setupnotempty)) {
 }
 
 // Page end
-dol_fiche_end();
+print dol_get_fiche_end();
 
 llxFooter();
 $db->close();

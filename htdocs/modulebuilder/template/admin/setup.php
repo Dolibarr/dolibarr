@@ -193,7 +193,7 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'object_mymodule@my
 
 // Configuration header
 $head = mymoduleAdminPrepareHead();
-dol_fiche_head($head, 'settings', '', -1, "mymodule@mymodule");
+print dol_get_fiche_head($head, 'settings', '', -1, "mymodule@mymodule");
 
 // Setup page goes here
 echo '<span class="opacitymedium">'.$langs->trans("MyModuleSetupPage").'</span><br><br>';
@@ -218,7 +218,7 @@ if ($action == 'edit')
 	print '</table>';
 
 	print '<br><div class="center">';
-	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+	print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
 	print '</div>';
 
 	print '</form>';
@@ -252,7 +252,7 @@ if ($action == 'edit')
 
 $moduledir = 'mymodule';
 $myTmpObjects = array();
-$myTmpObjects['MyObject']=array('includerefgeneration'=>0, 'includedocgeneration'=>0);
+$myTmpObjects['MyObject'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
 
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
@@ -310,8 +310,10 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								// Show example of numbering model
 								print '<td class="nowrap">';
 								$tmp = $module->getExample();
-								if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
-								elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
+								if (preg_match('/^Error/', $tmp)) {
+									$langs->load("errors");
+									print '<div class="error">'.$langs->trans($tmp).'</div>';
+								} elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
 								else print $tmp;
 								print '</td>'."\n";
 
@@ -493,7 +495,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										print '<td class="center">';
 										if ($module->type == 'pdf')
 										{
-											print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'&object='.$myTmpObjectKey.'">'.img_object($langs->trans("Preview"), 'generic').'</a>';
+											print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'&object='.$myTmpObjectKey.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 										} else {
 											print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 										}
@@ -518,7 +520,7 @@ if (empty($setupnotempty)) {
 }
 
 // Page end
-dol_fiche_end();
+print dol_get_fiche_end();
 
 llxFooter();
 $db->close();

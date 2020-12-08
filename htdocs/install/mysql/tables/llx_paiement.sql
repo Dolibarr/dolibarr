@@ -25,7 +25,7 @@ create table llx_paiement
   ref_ext          varchar(255) NULL,                    -- payment external reference
   entity           integer   DEFAULT 1 NOT NULL,		-- Multi company id
   datec            datetime,							-- date de creation
-  tms              timestamp,
+  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datep            datetime,							-- payment date
   amount           double(24,8) DEFAULT 0,				-- amount paid in Dolibarr currency
   multicurrency_amount double(24,8) DEFAULT 0,			-- amount paid in invoice currency	

@@ -172,6 +172,7 @@ class Menubase
 	{
 		global $conf, $langs;
 
+<<<<<<< HEAD
         // Clean parameters
         $this->menu_handler = trim($this->menu_handler);
         $this->module = trim($this->module);
@@ -192,6 +193,28 @@ class Menubase
         $this->entity = (isset($this->entity) ? (int) $this->entity : $conf->entity);
         if (empty($this->position)) $this->position = 0;
         if (!$this->level) $this->level = 0;
+=======
+		// Clean parameters
+		if (!isset($this->enabled)) $this->enabled = '1';
+		$this->menu_handler = trim($this->menu_handler);
+		$this->module = trim($this->module);
+		$this->type = trim($this->type);
+		$this->mainmenu = trim($this->mainmenu);
+		$this->leftmenu = trim($this->leftmenu);
+		$this->fk_menu = (int) $this->fk_menu; // If -1, fk_mainmenu and fk_leftmenu must be defined
+		$this->fk_mainmenu = trim($this->fk_mainmenu);
+		$this->fk_leftmenu = trim($this->fk_leftmenu);
+		$this->position = (int) $this->position;
+		$this->url = trim($this->url);
+		$this->target = trim($this->target);
+		$this->title = trim($this->title);
+		$this->langs = trim($this->langs);
+		$this->perms = trim($this->perms);
+		$this->enabled = trim($this->enabled);
+		$this->user = (int) $this->user;
+		if (empty($this->position)) $this->position = 0;
+		if (!$this->level) $this->level = 0;
+>>>>>>> branch 'develop' of git@github.com:Dolibarr/dolibarr.git
 
 		// Check parameters
 		if (empty($this->menu_handler)) return -1;

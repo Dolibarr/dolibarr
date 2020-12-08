@@ -43,10 +43,10 @@ $langs->load("admin");
 // Enable and test if module Api is enabled
 if (empty($conf->global->MAIN_MODULE_API))
 {
-    dol_syslog("Call Dolibarr API interfaces with module REST disabled");
-    print $langs->trans("WarningModuleNotActive", 'Api').'.<br><br>';
-    print $langs->trans("ToActivateModule");
-    exit;
+	dol_syslog("Call Dolibarr API interfaces with module REST disabled");
+	print $langs->trans("WarningModuleNotActive", 'Api').'.<br><br>';
+	print $langs->trans("ToActivateModule");
+	exit;
 }
 
 
@@ -61,45 +61,45 @@ $listofapis = array();
 $modulesdir = dolGetModulesDirs();
 foreach ($modulesdir as $dir)
 {
-    /*
+	/*
      * Search available module
      */
-    //dol_syslog("Scan directory ".$dir." for API modules");
+	//dol_syslog("Scan directory ".$dir." for API modules");
 
-    $handle = @opendir(dol_osencode($dir));
-    if (is_resource($handle))
-    {
-        while (($file = readdir($handle)) !== false)
-        {
-            if (is_readable($dir.$file) && preg_match("/^(mod.*)\.class\.php$/i", $file, $reg))
-            {
-                $modulename = $reg[1];
+	$handle = @opendir(dol_osencode($dir));
+	if (is_resource($handle))
+	{
+		while (($file = readdir($handle)) !== false)
+		{
+			if (is_readable($dir.$file) && preg_match("/^(mod.*)\.class\.php$/i", $file, $reg))
+			{
+				$modulename = $reg[1];
 
-                // Defined if module is enabled
-                $enabled = true;
-                $module = $part = $obj = strtolower(preg_replace('/^mod/i', '', $modulename));
-                //if ($part == 'propale') $part='propal';
-                if ($module == 'societe') {
+				// Defined if module is enabled
+				$enabled = true;
+				$module = $part = $obj = strtolower(preg_replace('/^mod/i', '', $modulename));
+				//if ($part == 'propale') $part='propal';
+				if ($module == 'societe') {
 					$obj = 'thirdparty';
 				}
-                if ($module == 'categorie') {
-                    $part = 'categories';
+				if ($module == 'categorie') {
+					$part = 'categories';
 					$obj = 'category';
 				}
-                if ($module == 'facture') {
-                    $part = 'compta/facture';
+				if ($module == 'facture') {
+					$part = 'compta/facture';
 					$obj = 'facture';
 				}
-                if ($module == 'ficheinter') {
-                    $obj = 'fichinter';
-                    $part = 'fichinter';
-                    $module = 'fichinter';
-                }
+				if ($module == 'ficheinter') {
+					$obj = 'fichinter';
+					$part = 'fichinter';
+					$module = 'fichinter';
+				}
 
-                if (empty($conf->$module->enabled)) $enabled = false;
+				if (empty($conf->$module->enabled)) $enabled = false;
 
-                if ($enabled) {
-                    /*
+				if ($enabled) {
+					/*
                      * If exists, load the API class for enable module
                      *
                      * Search files named api_<object>.class.php into /htdocs/<module>/class directory
@@ -107,25 +107,25 @@ foreach ($modulesdir as $dir)
                      * @todo : take care of externals module!
                      * @todo : use getElementProperties() function ?
                      */
-                    $dir_part = DOL_DOCUMENT_ROOT.'/'.$part.'/class/';
+					$dir_part = DOL_DOCUMENT_ROOT.'/'.$part.'/class/';
 
-                    $handle_part = @opendir(dol_osencode($dir_part));
-                    if (is_resource($handle_part))
-                    {
-                        while (($file_searched = readdir($handle_part)) !== false)
-                        {
-                            if (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i", $file_searched, $reg))
-                            {
-                                $classname = ucwords($reg[1]);
-                                require_once $dir_part.$file_searched;
-                                if (class_exists($classname))
-                                {
-                                    dol_syslog("Found API classname=".$classname." into ".$dir);
-                                    $listofapis[] = $classname;
-                                }
-                            }
+					$handle_part = @opendir(dol_osencode($dir_part));
+					if (is_resource($handle_part))
+					{
+						while (($file_searched = readdir($handle_part)) !== false)
+						{
+							if (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i", $file_searched, $reg))
+							{
+								$classname = ucwords($reg[1]);
+								require_once $dir_part.$file_searched;
+								if (class_exists($classname))
+								{
+									dol_syslog("Found API classname=".$classname." into ".$dir);
+									$listofapis[] = $classname;
+								}
+							}
 
-                            /*
+							/*
                             if (is_readable($dir_part.$file_searched) && preg_match("/^(api_.*)\.class\.php$/i",$file_searched,$reg))
                             {
                                 $classname=$reg[1];
@@ -150,12 +150,12 @@ foreach ($modulesdir as $dir)
                                 //     //$listofapis[]=array('classname'=>$classname, 'fullpath'=>$file_searched);
                                 // }
                             }*/
-                        }
-                    }
-                }
-            }
-        }
-    }
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 //var_dump($listofapis);
@@ -188,28 +188,28 @@ $oldclass = '';
 print $langs->trans("ListOfAvailableAPIs").':<br>';
 foreach ($listofapis['v1'] as $key => $val)
 {
-    if ($key == 'login') continue;
-    if ($key == 'index') continue;
+	if ($key == 'login') continue;
+	if ($key == 'index') continue;
 
-    if ($key)
-    {
-        foreach ($val as $method => $val2)
-        {
-            $newclass = $val2['className'];
+	if ($key)
+	{
+		foreach ($val as $method => $val2)
+		{
+			$newclass = $val2['className'];
 
-            if (preg_match('/restler/i', $newclass)) continue;
+			if (preg_match('/restler/i', $newclass)) continue;
 
-            if ($oldclass != $newclass)
-            {
-                print "\n<br>\n".$langs->trans("Class").': '.$newclass.'<br>'."\n";
-                $oldclass = $newclass;
-            }
-            //print $key.' - '.$val['classname'].' - '.$val['fullpath']." - ".DOL_MAIN_URL_ROOT.'/api/index.php/'.strtolower(preg_replace('/Api$/','',$val['classname']))."/xxx<br>\n";
-            $url = $urlwithroot.'/api/index.php/'.$key;
-            $url .= '?api_key=token';
-            print img_picto('', 'globe').' '.$method.' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-        }
-    }
+			if ($oldclass != $newclass)
+			{
+				print "\n<br>\n".$langs->trans("Class").': '.$newclass.'<br>'."\n";
+				$oldclass = $newclass;
+			}
+			//print $key.' - '.$val['classname'].' - '.$val['fullpath']." - ".DOL_MAIN_URL_ROOT.'/api/index.php/'.strtolower(preg_replace('/Api$/','',$val['classname']))."/xxx<br>\n";
+			$url = $urlwithroot.'/api/index.php/'.$key;
+			$url .= '?api_key=token';
+			print img_picto('', 'globe').' '.$method.' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+		}
+	}
 }
 
 print '<br>';
