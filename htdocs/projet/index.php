@@ -233,13 +233,14 @@ if ($resql)
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="4">'.$langs->trans("LatestModifiedProjects", $max).'</th></tr>';
+	print '<th colspan="4">'.$langs->trans("LatestModifiedProjects", $max).'</th>';
+	print '</tr>';
 
 	$num = $db->num_rows($resql);
+
 	if ($num)
 	{
 		$i = 0;
-		$var = true;
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
@@ -299,21 +300,15 @@ if ($resql)
 			print '</tr>';
 			$i++;
 		}
+	} else {
+		print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
-	print "</table></div><br>";
+	print "</table></div>";
 } else dol_print_error($db);
 
 
 $companystatic = new Societe($db); // We need a clean new object for next loop because current one has some properties set.
 
-
-// Open project per thirdparty
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print_liste_field_titre("OpenedProjectsByThirdparties", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder);
-print_liste_field_titre("NbOfProjects", $_SERVER["PHP_SELF"], "nb", "", "", '', $sortfield, $sortorder, 'right ');
-print "</tr>\n";
 
 $sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount)";
 $sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
@@ -337,6 +332,18 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 	$othernb = 0;
+
+	if ($num) {
+		print '<br>';
+
+		// Open project per thirdparty
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
+		print '<tr class="liste_titre">';
+		print_liste_field_titre("OpenedProjectsByThirdparties", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder);
+		print_liste_field_titre("NbOfProjects", $_SERVER["PHP_SELF"], "nb", "", "", '', $sortfield, $sortorder, 'right ');
+		print "</tr>\n";
+	}
 
 	while ($i < $num)
 	{
@@ -391,12 +398,15 @@ if ($resql)
 		print "</tr>\n";
 	}
 
+	if ($num) {
+		print "</table>";
+		print '</div>';
+	}
+
 	$db->free($resql);
 } else {
 	dol_print_error($db);
 }
-print "</table>";
-print '</div>';
 
 if (empty($conf->global->PROJECT_HIDE_PROJECT_LIST_ON_PROJECT_AREA))
 {
