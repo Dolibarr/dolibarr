@@ -4358,18 +4358,19 @@ class Product extends CommonObject
 	/**
 	 *  Return childs of product $id
 	 *
-	 * @param  int $id             Id of product to search childs of
-	 * @param  int $firstlevelonly Return only direct child
-	 * @param  int $level          Level of recursing call (start to 1)
-	 * @return array                       Return array(prodid=>array(0=prodid, 1=>qty, 2=> ...)
+	 * @param  int $id             		Id of product to search childs of
+	 * @param  int $firstlevelonly 		Return only direct child
+	 * @param  int $level          		Level of recursing call (start to 1)
+	 * @return array                    Return array(prodid=>array(0=prodid, 1=>qty, 2=>product type, 3=>label, 4=>incdec, 5=>product ref)
 	 */
 	public function getChildsArbo($id, $firstlevelonly = 0, $level = 1)
 	{
 		global $alreadyfound;
 
-		$sql = "SELECT p.rowid, p.label as label, pa.qty as qty, pa.fk_product_fils as id, p.fk_product_type, pa.incdec";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-		$sql .= ", ".MAIN_DB_PREFIX."product_association as pa";
+		$sql = "SELECT p.rowid, p.ref, p.label as label, p.fk_product_type,";
+		$sql .= " pa.qty as qty, pa.fk_product_fils as id, pa.incdec";
+		$sql .= " FROM ".MAIN_DB_PREFIX."product as p,";
+		$sql .= " ".MAIN_DB_PREFIX."product_association as pa";
 		$sql .= " WHERE p.rowid = pa.fk_product_fils";
 		$sql .= " AND pa.fk_product_pere = ".$id;
 		$sql .= " AND pa.fk_product_fils != ".$id; // This should not happens, it is to avoid infinite loop if it happens
@@ -4397,7 +4398,8 @@ class Product extends CommonObject
 				 1=>$rec['qty'],
 				 2=>$rec['fk_product_type'],
 				 3=>$this->db->escape($rec['label']),
-				 4=>$rec['incdec']
+				 4=>$rec['incdec'],
+				 5=>$rec['ref']
 				);
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty'],2=>$rec['fk_product_type']);
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
@@ -4419,7 +4421,7 @@ class Product extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *     Return tree of all subproducts for product. Tree contains id, name and quantity.
+	 *     Return tree of all subproducts for product. Tree contains array of array(0=prodid, 1=>qty, 2=>product type, 3=>label, 4=>incdec, 5=>product ref)
 	 *     Set this->sousprods
 	 *
 	 * @return void
