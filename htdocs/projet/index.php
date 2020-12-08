@@ -213,8 +213,12 @@ print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppst
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Latest modified projects
-$sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut as status, p.tms as datem,";
-$sql .= " s.rowid as socid, s.nom as name, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.canvas, s.status as thirdpartystatus";
+$sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut as status, p.tms as datem";
+$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+$sql .= ", s.code_client, s.code_compta, s.client";
+$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
+$sql .= ", s.logo, s.email, s.entity";
+$sql .= ", s.canvas, s.status as thirdpartystatus";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql .= " WHERE p.entity IN (".getEntity('project').")";
@@ -253,11 +257,16 @@ if ($resql)
 
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->name;
-			$companystatic->email = $obj->email;
+			//$companystatic->name_alias = $obj->name_alias;
+			//$companystatic->code_client = $obj->code_client;
+			$companystatic->code_compta = $obj->code_compta;
 			$companystatic->client = $obj->client;
+			//$companystatic->code_fournisseur = $obj->code_fournisseur;
+			$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 			$companystatic->fournisseur = $obj->fournisseur;
-			$companystatic->code_client = $obj->code_client;
-			$companystatic->code_fournisseur = $obj->code_fournisseur;
+			$companystatic->logo = $obj->logo;
+			$companystatic->email = $obj->email;
+			$companystatic->entity = $obj->entity;
 			$companystatic->canvas = $obj->canvas;
 			$companystatic->status = $obj->thirdpartystatus;
 
@@ -307,7 +316,11 @@ print_liste_field_titre("NbOfProjects", $_SERVER["PHP_SELF"], "nb", "", "", '', 
 print "</tr>\n";
 
 $sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount)";
-$sql .= ", s.rowid as socid, s.nom as name, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.canvas, s.status";
+$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+$sql .= ", s.code_client, s.code_compta, s.client";
+$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
+$sql .= ", s.logo, s.email, s.entity";
+$sql .= ", s.canvas, s.status";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql .= " WHERE p.entity IN (".getEntity('project').")";
@@ -341,9 +354,17 @@ if ($resql)
 		{
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->name;
-			$companystatic->email = $obj->email;
+			$companystatic->name_alias = $obj->name_alias;
+			$companystatic->code_client = $obj->code_client;
+			$companystatic->code_compta = $obj->code_compta;
 			$companystatic->client = $obj->client;
+			$companystatic->code_fournisseur = $obj->code_fournisseur;
+			$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 			$companystatic->fournisseur = $obj->fournisseur;
+			$companystatic->logo = $obj->logo;
+			$companystatic->email = $obj->email;
+			$companystatic->entity = $obj->entity;
+			$companystatic->canvas = $obj->canvas;
 			$companystatic->status = $obj->status;
 
 			print $companystatic->getNomUrl(1);
