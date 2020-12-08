@@ -27,7 +27,8 @@ Default language here is english. So please prepare your contributions in englis
 4. Commit and push your changes.
 5. [Make a pull request](https://help.github.com/articles/creating-a-pull-request).
 
-### <a name="branches"></a>Branches
+<span id="branches" name="branches"></span>
+### Branches
 
 Unless you're fixing a bug, all pull requests should be made against the *develop* branch.
 
