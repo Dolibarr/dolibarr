@@ -146,8 +146,10 @@ class CMailFile
 			}
 		}
 
-		// Add autocopy to (Note: Adding bcc for specific modules are also done from pages)
-		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) $addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
+		// Add autocopy to if not already in $to (Note: Adding bcc for specific modules are also done from pages)
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO) && !preg_match('/'.preg_quote($conf->global->MAIN_MAIL_AUTOCOPY_TO, '/').'/i', $to)) {
+		    $addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
+		}
 
 		$this->subject = $subject;
 		$this->addr_to = $to;
@@ -275,6 +277,11 @@ class CMailFile
 			}
 		}
 
+		// Add autocopy to if not already in $to (Note: Adding bcc for specific modules are also done from pages)
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO) && !preg_match('/'.preg_quote($conf->global->MAIN_MAIL_AUTOCOPY_TO, '/').'/i', $to)) {
+		    $addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
+		}
+
 		$this->addr_to = $to;
 		$this->addr_cc = $addr_cc;
 		$this->addr_bcc = $addr_bcc;
@@ -290,11 +297,6 @@ class CMailFile
 			$this->addr_to = $conf->global->MAIN_MAIL_FORCE_SENDTO;
 			$this->addr_cc = '';
 			$this->addr_bcc = '';
-		}
-
-		// Add autocopy to (Note: Adding bcc for specific modules are also done from pages)
-		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) {
-			$addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
 		}
 
 		$keyforsslseflsigned = 'MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED';
