@@ -562,6 +562,13 @@ if (!defined('NOLOGIN'))
 			}
 		}
 
+		// Hooks for security access
+		$action = '';
+		$hookmanager->initHooks(array('loginsecurity'));
+		$parameters = array('dol_authmode'=>$dol_authmode);
+		$reshook = $hookmanager->executeHooks('loginCheckSecurityAccess', $parameters, $user, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook < 0) $error++;
+
 		// Verification security graphic code
 		if (GETPOST("username", "alpha", 2) && !empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA) && !isset($_SESSION['dol_bypass_antispam']))
 		{
