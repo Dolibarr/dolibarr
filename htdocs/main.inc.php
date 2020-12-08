@@ -564,7 +564,7 @@ if (!defined('NOLOGIN'))
 
 		// Hooks for security access
 		$action = '';
-		$hookmanager->initHooks(array('loginsecurity'));
+		$hookmanager->initHooks(array('login'));
 		$parameters = array('dol_authmode'=>$dol_authmode);
 		$reshook = $hookmanager->executeHooks('loginCheckSecurityAccess', $parameters, $user, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook < 0) $error++;
