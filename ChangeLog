@@ -226,7 +226,7 @@ NEW: add hooks on newpayment page to allow external payment modules
 NEW: add hooks on stats pages
 NEW: add formConfirm hook on product page
 NEW: add two hooks printFieldListFrom and printFieldSearchParam
-
+NEW: add hook "loginCheckSecurityAccess"
 
 WARNING:
 
