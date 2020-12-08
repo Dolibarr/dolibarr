@@ -24,8 +24,6 @@
  *	\brief      Module Dolibarr state base
  */
 
-use Symfony\Component\VarDumper\VarDumper;
-
 include_once DOL_DOCUMENT_ROOT . '/core/boxes/modules_boxes.php';
 include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
 
