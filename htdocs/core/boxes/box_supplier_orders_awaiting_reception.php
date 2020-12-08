@@ -77,20 +77,20 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 		$supplierorderstatic = new CommandeFournisseur($this->db);
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-		$thirdpartytmp = new Fournisseur($this->db);
+		$thirdpartystatic = new Fournisseur($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleSupplierOrdersAwaitingReception", $max));
 
 		if ($user->rights->fournisseur->commande->lire)
 		{
-			$sql = "SELECT s.nom as name, s.rowid as socid,";
-			$sql .= " s.code_client, s.code_fournisseur, s.email,";
-			$sql .= " s.logo,";
-			$sql .= " c.rowid, c.ref, c.tms, c.date_commande, c.date_livraison as delivery_date, ";
-			$sql .= " c.total_ht,";
-			$sql .= " c.tva as total_tva,";
-			$sql .= " c.total_ttc,";
-			$sql .= " c.fk_statut";
+			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
+			$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
+			$sql .= ", s.logo, s.email, s.entity";
+			$sql .= ", c.rowid, c.ref, c.tms, c.date_commande, c.date_livraison as delivery_date";
+			$sql .= ", c.total_ht";
+			$sql .= ", c.tva as total_tva";
+			$sql .= ", c.total_ttc";
+			$sql .= ", c.fk_statut";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as c";
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -121,12 +121,15 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 					$supplierorderstatic->id = $objp->rowid;
 					$supplierorderstatic->ref = $objp->ref;
 
-					$thirdpartytmp->id = $objp->socid;
-					$thirdpartytmp->name = $objp->name;
-					$thirdpartytmp->email = $objp->email;
-					$thirdpartytmp->fournisseur = 1;
-					$thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
-					$thirdpartytmp->logo = $objp->logo;
+					$thirdpartystatic->id = $objp->socid;
+					$thirdpartystatic->name = $objp->name;
+					//$thirdpartystatic->name_alias = $objp->name_alias;
+					$thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
+					$thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
+					$thirdpartystatic->fournisseur = $objp->fournisseur;
+					$thirdpartystatic->logo = $objp->logo;
+					$thirdpartystatic->email = $objp->email;
+					$thirdpartystatic->entity = $objp->entity;
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="nowraponall"',
@@ -136,7 +139,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-						'text' => $thirdpartytmp->getNomUrl(1, 'supplier'),
+						'text' => $thirdpartystatic->getNomUrl(1, 'supplier'),
 						'asis' => 1,
 					);
 
