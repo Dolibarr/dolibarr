@@ -90,7 +90,7 @@ class PaiementFourn extends Paiement
 		$error=0;
 
 		$sql = 'SELECT p.rowid, p.ref, p.entity, p.datep as dp, p.amount, p.statut, p.fk_bank, p.multicurrency_amount,';
-		$sql.= ' c.code as paiement_code, c.libelle as paiement_type,';
+		$sql.= ' c.code as payment_code, c.libelle as payment_type,';
 		$sql.= ' p.num_paiement as num_payment, p.note, b.fk_account';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
@@ -111,6 +111,7 @@ class PaiementFourn extends Paiement
 			if ($num > 0)
 			{
 				$obj = $this->db->fetch_object($resql);
+
 				$this->id                   = $obj->rowid;
 				$this->ref                  = $obj->ref;
 				$this->entity               = $obj->entity;
@@ -118,6 +119,7 @@ class PaiementFourn extends Paiement
 				$this->datepaye             = $this->db->jdate($obj->dp);
 				$this->num_paiement         = $obj->num_payment;
 				$this->num_payment          = $obj->num_payment;
+				$this->numero               = $obj->num_payment;
 				$this->bank_account         = $obj->fk_account;
 				$this->fk_account           = $obj->fk_account;
 				$this->bank_line            = $obj->fk_bank;
@@ -126,9 +128,10 @@ class PaiementFourn extends Paiement
 				$this->multicurrency_amount = $obj->multicurrency_amount;
 				$this->note                 = $obj->note;
 				$this->note_private         = $obj->note;
-				$this->type_code            = $obj->paiement_code;
-				$this->type_label           = $obj->paiement_type;
+				$this->type_code            = $obj->payment_code;
+				$this->type_label           = $obj->payment_type;
 				$this->statut               = $obj->statut;
+
 				$error = 1;
 			}
 			else
