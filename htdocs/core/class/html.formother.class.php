@@ -620,15 +620,17 @@ class FormOther
 						if ($i > 0) print '<option value="0" disabled>----------</option>';
 						print '<option value="'.$lines[$i]->fk_project.'_0"';
 						if ($selectedproject == $lines[$i]->fk_project) print ' selected';
-						print '>'; // Project -> Task
-						print $langs->trans("Project").' '.$lines[$i]->projectref;
-						if (empty($lines[$i]->public))
-						{
-							print ' ('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')';
+
+						$labeltoshow = $langs->trans("Project").' '.$lines[$i]->projectref;
+						if (empty($lines[$i]->public)) {
+							$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')</span>';
 						} else {
-							print ' ('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')';
+							$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')</span>';
 						}
-						//print '-'.$parent.'-'.$lines[$i]->fk_project.'-'.$lastprojectid;
+
+						print ' data-html="'.dol_escape_htmltag($labeltoshow).'"';
+						print '>'; // Project -> Task
+						print $labeltoshow;
 						print "</option>\n";
 
 						$lastprojectid = $lines[$i]->fk_project;
@@ -652,21 +654,26 @@ class FormOther
 					print '<option value="'.$lines[$i]->fk_project.'_'.$lines[$i]->id.'"';
 					if (($lines[$i]->id == $selectedtask) || ($lines[$i]->fk_project.'_'.$lines[$i]->id == $selectedtask)) print ' selected';
 					if ($disabled) print ' disabled';
-					print '>';
-					print $langs->trans("Project").' '.$lines[$i]->projectref;
-					print ' '.$lines[$i]->projectlabel;
+
+					$labeltoshow = $langs->trans("Project").' '.$lines[$i]->projectref;
+					$labeltoshow .= ' '.$lines[$i]->projectlabel;
 					if (empty($lines[$i]->public))
 					{
-						print ' ('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')';
+						$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')</span>';
 					} else {
-						print ' ('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')';
+						$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')</span>';
 					}
-					if ($lines[$i]->id) print ' > ';
+					if ($lines[$i]->id) $labeltoshow .= ' > ';
 					for ($k = 0; $k < $level; $k++)
 					{
-						print "&nbsp;&nbsp;&nbsp;";
+						$labeltoshow .= "&nbsp;&nbsp;&nbsp;";
 					}
-					print $lines[$i]->ref.' '.$lines[$i]->label."</option>\n";
+					$labeltoshow .= $lines[$i]->ref.' '.$lines[$i]->label;
+
+					print ' data-html="'.dol_escape_htmltag($labeltoshow).'"';
+					print '>';
+					print $labeltoshow;
+					print "</option>\n";
 					$inc++;
 				}
 
