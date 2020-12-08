@@ -630,6 +630,9 @@ textarea.centpercent {
 .nowrap {
 	white-space: <?php print ($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
 }
+.nowraponsmartphone {
+	white-space: <?php print ($dol_optimize_smallscreen ? 'nowrap' : 'normal'); ?>;
+}
 .liste_titre .nowrap {
 	white-space: nowrap;
 }

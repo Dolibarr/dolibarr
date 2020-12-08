@@ -729,6 +729,9 @@ textarea.centpercent {
 .nowrap {
 	white-space: <?php print ($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
 }
+.nowraponsmartphone {
+	white-space: <?php print ($dol_optimize_smallscreen ? 'nowrap' : 'normal'); ?>;
+}
 .liste_titre .nowrap {
 	white-space: nowrap;
 }
@@ -1279,6 +1282,7 @@ table[summary="list_of_modules"] .fa-cog {
     .minwidth500imp { min-width: 250px !important; }
 }
 
+/* Set a width. Note: add also a max-width that will be used in priority */ 
 .widthcentpercentminusx {
 	width: calc(100% - 50px) !important;
 	display: inline-block;

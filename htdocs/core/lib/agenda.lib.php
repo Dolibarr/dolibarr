@@ -87,7 +87,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<div class="divsearchfield">';
 		print img_picto('', 'user', 'class="fawidth30 inline-block"');
 		print '<span class="hideonsmartphone">'.$langs->trans("ActionsToDoBy").'</span>';
-		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'maxwidth500');
+		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'maxwidth500 widthcentpercentminusxx');
 		print '</div>';
 		print '<div class="divsearchfield">';
 		print img_picto('', 'object_group', 'class="fawidth30 inline-block"');
@@ -189,7 +189,6 @@ function show_array_actions_to_do($max = 5)
 		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&status=todo">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
 
-		$var = true;
 		$i = 0;
 
 		$staticaction = new ActionComm($db);
@@ -284,7 +283,7 @@ function show_array_last_actions_done($max = 5)
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastDoneTasks", $max).'</th>';
 		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&status=done">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
-		$var = true;
+
 		$i = 0;
 
 		$staticaction = new ActionComm($db);
