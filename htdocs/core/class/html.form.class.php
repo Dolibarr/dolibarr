@@ -8234,12 +8234,13 @@ class Form
 	/**
 	 * selectModelMail
 	 *
-	 * @param   string   $prefix     Prefix
-	 * @param   string   $modelType  Model type
-	 * @param	int		 $default	 1=Show also Default mail template
-	 * @return  string               HTML select string
+	 * @param   string   $prefix     	Prefix
+	 * @param   string   $modelType  	Model type
+	 * @param	int		 $default	 	1=Show also Default mail template
+	 * @param	int		 $addjscombo	Add js combobox
+	 * @return  string               	HTML select string
 	 */
-	public function selectModelMail($prefix, $modelType = '', $default = 0)
+	public function selectModelMail($prefix, $modelType = '', $default = 0, $addjscombo = 0)
 	{
 		global $langs, $db, $user;
 
@@ -8266,6 +8267,8 @@ class Form
 		}
 
 		$retstring .= "</select>";
+
+		if ($addjscombo) $retstring .= ajax_combobox('select_'.$prefix.'model_mail');
 
 		return $retstring;
 	}
