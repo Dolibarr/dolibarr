@@ -98,7 +98,7 @@ if (!empty($creation_sondage_date) || !empty($creation_sondage_autre))
 	if (!$testdate) {
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("ExpireDate")), null, 'errors');
 	}
-var_dump($creation_sondage_date,$creation_sondage_autre);
+
 	if ($title && $testdate)
 	{
 		if (!empty($creation_sondage_date))
