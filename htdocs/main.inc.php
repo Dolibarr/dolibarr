@@ -1591,7 +1591,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 	$searchform = '';
 	$bookmarks = '';
 
-	// Instantiate hooks of thirdparty module
+	// Instantiate hooks for external modules
 	$hookmanager->initHooks(array('toprightmenu'));
 
 	$toprightmenu = '';
@@ -2429,7 +2429,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 
 	if (empty($conf->dol_hide_leftmenu) && (!defined('NOREQUIREMENU') || !constant('NOREQUIREMENU')))
 	{
-		// Instantiate hooks of thirdparty module
+		// Instantiate hooks for external modules
 		$hookmanager->initHooks(array('searchform', 'leftblock'));
 
 		print "\n".'<!-- Begin side-nav id-left -->'."\n".'<div class="side-nav"><div id="id-left">'."\n";
@@ -2617,11 +2617,11 @@ function main_area($title = '')
 
 	if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) print info_admin($langs->trans("WarningYouAreInMaintenanceMode", $conf->global->MAIN_ONLY_LOGIN_ALLOWED), 0, 0, 1, 'warning maintenancemode');
 
-	// Permit to add user company information on each printed document by set SHOW_SOCINFO_ON_PRINT
+	// Permit to add user company information on each printed document by setting SHOW_SOCINFO_ON_PRINT
 	if (!empty($conf->global->SHOW_SOCINFO_ON_PRINT) && GETPOST('optioncss', 'aZ09') == 'print' && empty(GETPOST('disable_show_socinfo_on_print', 'az09')))
 	{
 		global $hookmanager;
-		$hookmanager->initHooks(array('showsocinfoonprint'));
+		$hookmanager->initHooks(array('main'));
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('showSocinfoOnPrint', $parameters);
 		if (empty($reshook))
