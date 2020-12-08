@@ -4,7 +4,7 @@ How to contribute to Dolibarr
 Bug reports and feature requests
 --------------------------------
 
-<a name="not-a-support-forum"></a>*Note*: Issues are not a support forum. If you need help using the software, please use [the forums](https://www.dolibarr.org/forum). Forums exist in different languages.
+<a name="not-a-support-forum"></a>*Note*: Issues are not a support forum. If you need help using the software, please use [the forums](https://www.dolibarr.org/forum.php). Forums exist in different languages.
 
 Issues are managed on [GitHub](https://github.com/Dolibarr/dolibarr/issues). 
 Default language here is english. So please prepare your contributions in english.
