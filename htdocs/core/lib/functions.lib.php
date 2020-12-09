@@ -4282,7 +4282,11 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 		$out .= '>';
 	}
 
-	if ($tooltip) $out .= $form->textwithpicto($langs->trans($name), $langs->trans($tooltip));
+	if ($tooltip) {
+		// You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
+		$tmptooltip = explode(':', $tooltip);
+		$out .= $form->textwithpicto($langs->trans($name), $langs->trans($tmptooltip[0]), 1, 'help', '', 0, 3, (empty($tmptooltip[1]) ? '' : 'extra_'.str_replace('.', '_', $field).'_'.$tmptooltip[1]));
+	}
 	else $out .= $langs->trans($name);
 
 	if (empty($thead) && $field && empty($disablesortlink))    // If this is a sort field
