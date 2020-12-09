@@ -122,7 +122,7 @@ if ($modecompta == "CREANCES-DETTES")
 	$name = $langs->trans("Turnover");
 	$calcmode = $langs->trans("CalcModeDebt");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
-	$calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '{links1}', '{link2}').')';
+	$calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '{link1}', '{link2}').')';
 	$calcmode = str_replace('{link1}', '<a class="bold" href="'.$_SERVER["PHP_SELF"].'?'.($param ? $param : 'year_start='.$year_start).'&modecompta=BOOKKEEPING">', $calcmode);
 	$calcmode = str_replace('{link2}', '</a>', $calcmode);
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
