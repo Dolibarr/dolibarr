@@ -183,19 +183,19 @@ class BOM extends CommonObject
 	public $table_element_line = 'bom_bomline';
 
 	/**
-	 * @var int    Field with ID of parent key if this field has a parent
+	 * @var string    Fieldname with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_bom';
 
 	/**
-	 * @var int    Name of subtable class that manage subtable lines
+	 * @var string    Name of subtable class that manage subtable lines
 	 */
 	public $class_element_line = 'BOMLine';
 
-	/**
-	 * @var array	List of child tables. To test if we can delete object.
-	 */
-	//protected $childtables=array();
+	// /**
+	//  * @var array	List of child tables. To test if we can delete object.
+	//  */
+	// protected $childtables=array();
 
 	/**
 	 * @var array	List of child tables. To know object to delete on cascade.

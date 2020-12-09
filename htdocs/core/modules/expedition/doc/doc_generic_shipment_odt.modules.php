@@ -304,12 +304,11 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 				// Recipient name
 				$contactobject = null;
 				if (!empty($usecontact)) {
-					// On peut utiliser le nom de la societe du contact
-					if (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT))
+					if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 						$socobject = $object->contact;
-					else {
+					} else {
 						$socobject = $object->thirdparty;
-						// if we have a SHIIPPING contact and we dont use it as recipient we store the contact object for later use
+						// if we have a SHIPPING contact and we dont use as recipient we store the contact object for later use
 						$contactobject = $object->contact;
 					}
 				} else {
@@ -455,6 +454,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 
 				// Replace tags of object + external modules
 				$tmparray = $this->get_substitutionarray_shipment($object, $outputlangs);
+
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 				// Call the ODTSubstitution hook
 				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);

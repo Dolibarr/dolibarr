@@ -2083,3 +2083,5 @@ CountryIfSpecificToOneCountry=Country (if specific to a given country)
 YouMayFindSecurityAdviceHere=You may find security advisory here
 ModuleActivatedMayExposeInformation=This module may expose sensitive data. If you don't need it, disable it.
 ModuleActivatedDoNotUseInProduction=A module designed for the development has been enabled. Do not enable it on a production environment.
+CombinationsSeparator=Separator character for product combinations
+SeeLinkToOnlineDocumentation=See link to online documention on top menu for examples

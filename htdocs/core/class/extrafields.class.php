@@ -1937,10 +1937,10 @@ class ExtraFields
 					$out .= '<script type="text/javascript">';
 					$out .= 'jQuery(document).ready(function(){';
 					if ($collapse_display === false) {
-						$out .= '   jQuery("#trextrafieldseparator'.$key.' td").prepend("<span class=\"cursorpointer fa fa-plus-square\"></span>&nbsp;");'."\n";
+						$out .= '   jQuery("#trextrafieldseparator'.$key.' td").prepend("<span class=\"cursorpointer far fa-plus-square\"></span>&nbsp;");'."\n";
 						$out .= '   jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").hide();'."\n";
 					} else {
-						$out .= '   jQuery("#trextrafieldseparator'.$key.' td").prepend("<span class=\"cursorpointer fa fa-minus-square\"></span>&nbsp;");'."\n";
+						$out .= '   jQuery("#trextrafieldseparator'.$key.' td").prepend("<span class=\"cursorpointer far fa-minus-square\"></span>&nbsp;");'."\n";
 						$out .= '   document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
 					}
 					$out .= '   jQuery("#trextrafieldseparator'.$key.'").click(function(){'."\n";

@@ -1234,7 +1234,9 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
     	$newlangs->load("main");
     	$langs = $newlangs;
 
-        $this->assertEquals(1000, price2num('1 000.0'));
+    	$this->assertEquals(150, price2num('(SELECT/**/CASE/**/WHEN/**/(0<1)/**/THEN/**/SLEEP(5)/**/ELSE/**/SLEEP(0)/**/END)'));
+
+    	$this->assertEquals(1000, price2num('1 000.0'));
         $this->assertEquals(1000, price2num('1 000', 'MT'));
         $this->assertEquals(1000, price2num('1 000', 'MU'));
 
@@ -1252,7 +1254,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
         // Text can't be converted
         $this->assertEquals('12.4$', price2num('12.4$'));
-        $this->assertEquals('12r.4$', price2num('12r.4$'));
+        $this->assertEquals('12.4$', price2num('12r.4$'));
 
         // For spanish language
         $newlangs2 = new Translate('', $conf);
@@ -1265,9 +1267,9 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(1234, price2num('1.234', '', 2), 'Test 1.234 give 1234 with spanish language if user input');
         $this->assertEquals(1.234, price2num('1,234', '', 2), 'Test 1,234 give 1234 with spanish language if user input');
         $this->assertEquals(1234, price2num('1 234', '', 2), 'Test 1 234 give 1234 with spanish language if user input');
-        $this->assertEquals(1.234, price2num('1.234'), 'Test 1.234 give 1.234 with spanish language');
-        $this->assertEquals(1.234, price2num('1,234'), 'Test 1,234 give 1234 with spanish language');
-        $this->assertEquals(1234, price2num('1 234'), 'Test 1 234 give 1234 with spanish language');
+        $this->assertEquals(-1.234, price2num('-1.234'), 'Test 1.234 give 1.234 with spanish language');
+        $this->assertEquals(-1.234, price2num('-1,234'), 'Test 1,234 give 1234 with spanish language');
+        $this->assertEquals(-1234, price2num('-1 234'), 'Test 1 234 give 1234 with spanish language');
         $this->assertEquals(21500123, price2num('21.500.123'), 'Test 21.500.123 give 21500123 with spanish language');
         $this->assertEquals(21500123, price2num('21500.123', 0, 2), 'Test 21500.123 give 21500123 with spanish language if user input');
         $this->assertEquals(21500.123, price2num('21500.123'), 'Test 21500.123 give 21500123 with spanish language');

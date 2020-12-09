@@ -130,7 +130,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
 	'cf.ref'=>'Ref',
-	'cf.ref_supplier'=>'RefSupplierOrder',
+	'cf.ref_supplier'=>'RefOrderSupplier',
 	'pd.description'=>'Description',
 	's.nom'=>"ThirdParty",
 	's.name_alias'=>"AliasNameShort",
@@ -512,14 +512,14 @@ if ($socid > 0)
 	$title .= ' - '.$fourn->name;
 }
 
-if ($search_status)
+/*if ($search_status)
 {
 	if ($search_status == '1,2') $title .= ' - '.$langs->trans("SuppliersOrdersToProcess");
 	elseif ($search_status == '3,4') $title .= ' - '.$langs->trans("SuppliersOrdersAwaitingReception");
 	elseif ($search_status == '1,2,3') $title .= ' - '.$langs->trans("StatusOrderToProcessShort");
 	elseif ($search_status == '6,7') $title .= ' - '.$langs->trans("StatusOrderCanceled");
-	elseif (is_numeric($search_status)) $title .= ' - '.$commandestatic->LibStatut($search_status);
-}
+	elseif (is_numeric($search_status) && $search_status >= 0) $title .= ' - '.$commandestatic->LibStatut($search_status);
+}*/
 if ($search_billed > 0) $title .= ' - '.$langs->trans("Billed");
 
 //$help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";

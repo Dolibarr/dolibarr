@@ -55,7 +55,7 @@ class Expedition extends CommonObject
 	public $element = "shipping";
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = "fk_expedition";
 
@@ -65,7 +65,7 @@ class Expedition extends CommonObject
 	public $table_element = "expedition";
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = "expeditiondet";
 
@@ -106,7 +106,6 @@ class Expedition extends CommonObject
 	 * @var int warehouse id
 	 */
 	public $entrepot_id;
-	public $lines = array();
 
 	/**
 	 * @var string Tracking number
@@ -171,6 +170,9 @@ class Expedition extends CommonObject
 	public $meths;
 	public $listmeths; // List of carriers
 
+	public $lines = array();
+
+
 	/**
 	 * Draft status
 	 */
@@ -202,8 +204,6 @@ class Expedition extends CommonObject
 		global $conf;
 
 		$this->db = $db;
-		$this->lines = array();
-		$this->products = array();
 
 		// List of long language codes for status
 		$this->statuts = array();
@@ -620,7 +620,7 @@ class Expedition extends CommonObject
 				$this->getUrlTrackingStatus($obj->tracking_number);
 
 				// Thirdparty
-				$result = $this->fetch_thirdparty();	// TODO Remove this
+				$result = $this->fetch_thirdparty(); // TODO Remove this
 
 				// Retrieve extrafields
 				$this->fetch_optionals();

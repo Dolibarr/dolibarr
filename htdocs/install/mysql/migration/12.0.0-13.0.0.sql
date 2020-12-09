@@ -106,6 +106,7 @@ ALTER TABLE llx_user DROP COLUMN googleplus;
 ALTER TABLE llx_user DROP COLUMN youtube;
 ALTER TABLE llx_user DROP COLUMN whatsapp;
 
+ALTER TABLE llx_user ADD COLUMN datelastpassvalidation datetime;
 ALTER TABLE llx_user ADD COLUMN datestartvalidity datetime;
 ALTER TABLE llx_user ADD COLUMN dateendvalidity   datetime;
 
@@ -438,7 +439,6 @@ INSERT INTO llx_c_product_nature (code, label, active) VALUES (1, 'Finished', 1)
 ALTER TABLE llx_product MODIFY COLUMN finished tinyint DEFAULT NULL;
 ALTER TABLE llx_product ADD CONSTRAINT fk_product_finished FOREIGN KEY (finished) REFERENCES llx_c_product_nature (code);
 
-
 -- MIGRATION TO DO AFTER RENAMING AN OBJECT
 
 -- drop constraint
@@ -516,6 +516,9 @@ UPDATE llx_rights_def set perms = 'delivery' WHERE perms = 'livraison' and modul
 UPDATE llx_rights_def set perms = 'delivery_advance' WHERE perms = 'livraison_advance' and module = 'expedition';
 
 
+ALTER TABLE llx_commande_fournisseurdet ADD INDEX idx_commande_fournisseurdet_fk_commande (fk_commande);
+ALTER TABLE llx_commande_fournisseurdet ADD INDEX idx_commande_fournisseurdet_fk_product (fk_product);
+
 
 CREATE TABLE llx_zapier_hook(
     rowid integer AUTO_INCREMENT PRIMARY KEY,
@@ -541,3 +544,10 @@ CREATE TABLE llx_session(
   user_agent varchar(128) NULL
 )ENGINE=innodb;
 
+
+
+INSERT INTO llx_boxes_def(file,entity) VALUES ('box_funnel_of_prospection.php',1);
+
+INSERT INTO llx_boxes_def(file, entity) VALUES ('box_customers_outstanding_bill_reached.php', 1);
+
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging varchar(64);

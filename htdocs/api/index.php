@@ -46,9 +46,9 @@ if (!$res) die("Include of main fails");
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/AutoLoader.php';
 
 call_user_func(function () {
-    $loader = Luracast\Restler\AutoLoader::instance();
-    spl_autoload_register($loader);
-    return $loader;
+	$loader = Luracast\Restler\AutoLoader::instance();
+	spl_autoload_register($loader);
+	return $loader;
 });
 
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';

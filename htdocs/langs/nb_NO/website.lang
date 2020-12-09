@@ -136,3 +136,4 @@ RSSFeed=RSS nyhetsstrøm
 RSSFeedDesc=Du kan få en RSS-feed med de nyeste artiklene med typen 'blogpost' ved hjelp av denne URL-en
 PagesRegenerated=%s side(r)/container(e) regenerert
 RegenerateWebsiteContent=Regenerer cache-filer på nettstedet
+AllowedInFrames=Allowed in Frames

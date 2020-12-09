@@ -67,8 +67,8 @@ if (!$user->rights->projet->lire) accessforbidden();
 $diroutputmassaction = $conf->projet->dir_output.'/temp/massgeneration/'.$user->id;
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", "alpha");
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST("sortfield", "aZ09comma");
+$sortorder = GETPOST("sortorder", 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
@@ -144,15 +144,7 @@ $fieldstosearchall['s.nom'] = "ThirdPartyName";
 $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
-	if (empty($val['visible'])) {
-		continue;
-	}
-
-	$arrayfields['p.'.$key] = array(
-		'label'=>$val['label'],
-		'checked'=>(($val['visible'] < 0) ? 0 : 1),
-		'enabled'=>($val['enabled'] && ($val['visible'] != 3)),
-		'position'=>$val['position']);
+	if (!empty($val['visible'])) $arrayfields['p.'.$key] = array('label'=>$val['label'], 'checked'=>(($val['visible'] < 0) ? 0 : 1), 'enabled'=>($val['enabled'] && ($val['visible'] != 3)), 'position'=>$val['position']);
 }
 
 // Add none object fields to fields for list
@@ -165,8 +157,14 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
 	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+		if (!empty($extrafields->attributes[$object->table_element]['list'][$key])) {
+			$arrayfields["ef.".$key] = array(
+				'label'=>$extrafields->attributes[$object->table_element]['label'][$key],
+				'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1),
+				'position'=>$extrafields->attributes[$object->table_element]['pos'][$key],
+				'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key])
+			);
+		}
 	}
 }
 

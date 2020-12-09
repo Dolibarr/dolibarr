@@ -94,7 +94,15 @@ class EcmFiles extends CommonObject
 	 * @var string keywords
 	 */
 	public $keywords;
+
+	/**
+	 * @var string cover
+	 */
 	public $cover;
+
+	/**
+	 * @var int position
+	 */
 	public $position;
 
 	/**
@@ -131,7 +139,15 @@ class EcmFiles extends CommonObject
 	 * @var string acl
 	 */
 	public $acl;
+
+	/**
+	 * @var string src object type
+	 */
 	public $src_object_type;
+
+	/**
+	 * @var int src object id
+	 */
 	public $src_object_id;
 
 
@@ -233,8 +249,7 @@ class EcmFiles extends CommonObject
 			$sql .= " WHERE filepath ='".$this->db->escape($this->filepath)."'";
 
 			$resql = $this->db->query($sql);
-			if ($resql)
-			{
+			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
 				$maxposition = (int) $obj->maxposition;
 			} else {
@@ -247,13 +262,11 @@ class EcmFiles extends CommonObject
 		}
 
 		// Check parameters
-		if (empty($this->filename) || empty($this->filepath))
-		{
+		if (empty($this->filename) || empty($this->filepath)) {
 			$this->errors[] = 'Bad property filename or filepath';
 			return --$error;
 		}
-		if (!isset($this->entity))
-		{
+		if (!isset($this->entity)) {
 			$this->entity = $conf->entity;
 		}
 		// Put here code to add control on parameters values
@@ -317,11 +330,12 @@ class EcmFiles extends CommonObject
 			$this->position = $maxposition;
 
 			// Triggers
-			if (!$notrigger)
-			{
+			if (!$notrigger) {
 				// Call triggers
 				$result = $this->call_trigger(strtoupper(get_class($this)).'_CREATE', $user);
-				if ($result < 0) { $error++; }
+				if ($result < 0) {
+					$error++;
+				}
 				// End call triggers
 			}
 		}
@@ -401,8 +415,7 @@ class EcmFiles extends CommonObject
 		} elseif (!empty($hashforshare)) {
 			$sql .= " AND t.share = '".$this->db->escape($hashforshare)."'";
 			//$sql .= " AND t.entity = ".$conf->entity;							// hashforshare already unique
-		} elseif ($src_object_type && $src_object_id)
-		{
+		} elseif ($src_object_type && $src_object_id) {
 			// Warning: May return several record, and only first one is returned !
 			$sql .= " AND t.src_object_type ='".$this->db->escape($src_object_type)."' AND t.src_object_id = ".$this->db->escape($src_object_id);
 			$sql .= " AND t.entity = ".$conf->entity;
@@ -668,11 +681,12 @@ class EcmFiles extends CommonObject
 		}
 
 		// Triggers
-		if (!$error && !$notrigger)
-		{
+		if (!$error && !$notrigger) {
 			// Call triggers
 			$result = $this->call_trigger(strtoupper(get_class($this)).'_MODIFY', $user);
-			if ($result < 0) { $error++; } //Do also here what you must do to rollback action if trigger fail
+			if ($result < 0) {
+				$error++;
+			} //Do also here what you must do to rollback action if trigger fail
 			// End call triggers
 		}
 
@@ -705,11 +719,12 @@ class EcmFiles extends CommonObject
 		$this->db->begin();
 
 		// Triggers
-		if (!$notrigger)
-		{
+		if (!$notrigger) {
 			// Call triggers
 			$result = $this->call_trigger(strtoupper(get_class($this)).'_DELETE', $user);
-			if ($result < 0) { $error++; } //Do also here what you must do to rollback action if trigger fail
+			if ($result < 0) {
+				$error++;
+			} //Do also here what you must do to rollback action if trigger fail
 			// End call triggers
 		}
 
@@ -804,7 +819,9 @@ class EcmFiles extends CommonObject
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
 		global $menumanager;
 
-		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
 		$result = '';
 
@@ -815,25 +832,26 @@ class EcmFiles extends CommonObject
 		$url = DOL_URL_ROOT.'/ecm/'.$this->table_name.'_card.php?id='.$this->id;
 
 		$linkclose = '';
-		if (empty($notooltip))
-		{
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-			{
+		if (empty($notooltip)) {
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowProject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		}
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
-		if ($withpicto)
-		{
+		if ($withpicto) {
 			$result .= ($linkstart.img_object(($notooltip ? '' : $label), 'label', ($notooltip ? '' : 'class="classfortooltip"')).$linkend);
-			if ($withpicto != 2) $result .= ' ';
+			if ($withpicto != 2) {
+				$result .= ' ';
+			}
 		}
 		$result .= $linkstart.$this->ref.$linkend;
 		return $result;
@@ -877,16 +895,16 @@ class EcmFiles extends CommonObject
 		global $conf, $user;
 
 		$this->id = 0;
-
+		$this->specimen = 1;
 		$this->label = '0a1b2c3e4f59999999';
-		$this->entity = '1';
+		$this->entity = 1;
 		$this->filename = 'myspecimenfilefile.pdf';
 		$this->filepath = '/aaa/bbb';
 		$this->fullpath_orig = 'c:/file on my disk.pdf';
 		$this->description = 'This is a long description of file';
 		$this->keywords = 'key1,key2';
 		$this->cover = '1';
-		$this->position = '5';
+		$this->position = 5;
 		$this->gen_or_uploaded = 'uploaded';
 		$this->extraparams = '';
 		$this->date_c = (dol_now() - 3600 * 24 * 10);

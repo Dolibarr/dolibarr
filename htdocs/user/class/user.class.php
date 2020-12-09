@@ -54,7 +54,7 @@ class User extends CommonObject
 	public $table_element = 'user';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_user';
 
@@ -74,6 +74,7 @@ class User extends CommonObject
 	public $ldap_sid;
 	public $search_sid;
 	public $employee;
+	public $civility_code;
 
 	/**
 	 * @var string gender
@@ -342,8 +343,8 @@ class User extends CommonObject
 
 	public $fields = array(
 		'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
-		'lastname'=>array('type'=>'varchar(50)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1, 'comment'=>'Reference of object'),
-		'firstname'=>array('type'=>'varchar(50)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
+		'lastname'=>array('type'=>'varchar(50)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1),
+		'firstname'=>array('type'=>'varchar(50)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
 	);
 
 
@@ -400,7 +401,7 @@ class User extends CommonObject
 		$login = trim($login);
 
 		// Get user
-		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.birth, u.email, u.personal_email, u.job,";
+		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.civility as civility_code, u.birth, u.email, u.personal_email, u.job,";
 		$sql .= " u.socialnetworks,";
 		$sql .= " u.signature, u.office_phone, u.office_fax, u.user_mobile, u.personal_mobile,";
 		$sql .= " u.address, u.zip, u.town, u.fk_state as state_id, u.fk_country as country_id,";
@@ -412,6 +413,7 @@ class User extends CommonObject
 		$sql .= " u.tms as datem,";
 		$sql .= " u.datelastlogin as datel,";
 		$sql .= " u.datepreviouslogin as datep,";
+		$sql .= " u.datelastpassvalidation,";
 		$sql .= " u.datestartvalidity,";
 		$sql .= " u.dateendvalidity,";
 		$sql .= " u.photo as photo,";
@@ -469,6 +471,7 @@ class User extends CommonObject
 				$this->ref_ext = $obj->ref_ext;
 
 				$this->ldap_sid = $obj->ldap_sid;
+				$this->civility_code = $obj->civility_code;
 				$this->lastname = $obj->lastname;
 				$this->firstname = $obj->firstname;
 
@@ -1292,6 +1295,8 @@ class User extends CommonObject
 
 		// Clean parameters
 		$this->setUpperOrLowerCase();
+
+		$this->civility_code = trim($this->civility_code);
 		$this->login = trim($this->login);
 		if (!isset($this->entity)) {
 			$this->entity = $conf->entity; // If not defined, we use default value
@@ -1418,6 +1423,7 @@ class User extends CommonObject
 
 		// Define parameters
 		$this->admin = 0;
+		$this->civility_code = $contact->civility_code;
 		$this->lastname = $contact->lastname;
 		$this->firstname = $contact->firstname;
 		$this->gender = $contact->gender;
@@ -1446,6 +1452,7 @@ class User extends CommonObject
 		if ($result > 0) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 			$sql .= " SET fk_socpeople=".$contact->id;
+			$sql .= ", civility=".$contact->civility_code;
 			if ($contact->socid) {
 				$sql .= ", fk_soc=".$contact->socid;
 			}
@@ -1496,6 +1503,7 @@ class User extends CommonObject
 
 		// Set properties on new user
 		$this->admin = 0;
+		$this->civility_code = $member->civility_id;
 		$this->lastname     = $member->lastname;
 		$this->firstname    = $member->firstname;
 		$this->gender = $member->gender;
@@ -1631,6 +1639,7 @@ class User extends CommonObject
 		dol_syslog(get_class($this)."::update notrigger=".$notrigger.", nosyncmember=".$nosyncmember.", nosyncmemberpass=".$nosyncmemberpass);
 
 		// Clean parameters
+		$this->civility_code = trim($this->civility_code);
 		$this->lastname     = trim($this->lastname);
 		$this->firstname    = trim($this->firstname);
 		$this->employee    	= $this->employee ? $this->employee : 0;
@@ -1685,7 +1694,8 @@ class User extends CommonObject
 
 		// Update datas
 		$sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
-		$sql .= " lastname = '".$this->db->escape($this->lastname)."'";
+		$sql .= " civility = '".$this->db->escape($this->civility_code)."'";
+		$sql .= ", lastname = '".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname = '".$this->db->escape($this->firstname)."'";
 		$sql .= ", employee = ".(int) $this->employee;
 		$sql .= ", login = '".$this->db->escape($this->login)."'";
@@ -1787,6 +1797,7 @@ class User extends CommonObject
 					$result = $adh->fetch($this->fk_member);
 
 					if ($result > 0) {
+						$adh->civility_code = $this->civility_code;
 						$adh->firstname = $this->firstname;
 						$adh->lastname = $this->lastname;
 						$adh->login = $this->login;
@@ -1837,6 +1848,7 @@ class User extends CommonObject
 					$result = $tmpobj->fetch($this->contact_id);
 
 					if ($result >= 0) {
+						$tmpobj->civility_code = $this->civility_code;
 						$tmpobj->firstname = $this->firstname;
 						$tmpobj->lastname = $this->lastname;
 						$tmpobj->login = $this->login;

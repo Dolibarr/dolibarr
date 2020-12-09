@@ -266,8 +266,8 @@ class Form
 				elseif (preg_match('/^text/', $typeofdata) || preg_match('/^note/', $typeofdata))  $ret .= dol_htmlentitiesbr($value);
 				elseif (preg_match('/^safehtmlstring/', $typeofdata)) $ret .= dol_string_onlythesehtmltags($value);
 				elseif (preg_match('/^restricthtml/', $typeofdata)) $ret .= dol_string_onlythesehtmltags($value);
-				elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') $ret .= dol_print_date($value, 'day');
-				elseif ($typeofdata == 'dayhour' || $typeofdata == 'datehourpicker') $ret .= dol_print_date($value, 'dayhour');
+				elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') $ret .= '<span class="valuedate">'.dol_print_date($value, 'day').'</span>';
+				elseif ($typeofdata == 'dayhour' || $typeofdata == 'datehourpicker') $ret .= '<span class="valuedate">'.dol_print_date($value, 'dayhour').'</span>';
 				elseif (preg_match('/^select;/', $typeofdata))
 				{
 					$arraydata = explode(',', preg_replace('/^select;/', '', $typeofdata));
@@ -636,11 +636,11 @@ class Form
 	 * Generate select HTML to choose massaction
 	 *
 	 * @param	string	$selected		Value auto selected when at least one record is selected. Not a preselected value. Use '0' by default.
-	 * @param	array		$arrayofaction	array('code'=>'label', ...). The code is the key stored into the GETPOST('massaction') when submitting action.
+	 * @param	array	$arrayofaction	array('code'=>'label', ...). The code is the key stored into the GETPOST('massaction') when submitting action.
 	 * @param   int     $alwaysvisible  1=select button always visible
-	 * @param       string  $name     Name for massaction
-	 * @param       string  $cssclass CSS class used to check for select
-	 * @return	string|void					Select list
+	 * @param   string  $name     		Name for massaction
+	 * @param   string  $cssclass 		CSS class used to check for select
+	 * @return	string|void				Select list
 	 */
 	public function selectMassAction($selected, $arrayofaction, $alwaysvisible = 0, $name = 'massaction', $cssclass = 'checkforselect')
 	{
@@ -780,8 +780,6 @@ class Form
 			$i = 0;
 			if ($num)
 			{
-				$foundselected = false;
-
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
@@ -826,16 +824,22 @@ class Form
 						$atleastonefavorite = 0;
 						$out .= '<option value="" disabled class="selectoptiondisabledwhite">------------</option>';
 					}
-					if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['code_iso3'] || $selected == $row['label']))
-					{
-						$foundselected = true;
-						$out .= '<option value="'.($usecodeaskey ? ($usecodeaskey == 'code2' ? $row['code_iso'] : $row['code_iso3']) : $row['rowid']).'" selected>';
-					} else {
-						$out .= '<option value="'.($usecodeaskey ? ($usecodeaskey == 'code2' ? $row['code_iso'] : $row['code_iso3']) : $row['rowid']).'">';
+
+					$labeltoshow = '';
+					if ($row['label']) $labeltoshow .= dol_trunc($row['label'], $maxlength, 'middle');
+					else $labeltoshow .= '&nbsp;';
+					if ($row['code_iso']) {
+						$labeltoshow .= ' <span class="opacitymedium">('.$row['code_iso'].')</span>';
+						$tmpflag = picto_from_langcode($row['code_iso'], 'class="saturatemedium marginrightonly"');
+						$labeltoshow = $tmpflag.' '.$labeltoshow;
 					}
-					if ($row['label']) $out .= dol_trunc($row['label'], $maxlength, 'middle');
-					else $out .= '&nbsp;';
-					if ($row['code_iso']) $out .= ' ('.$row['code_iso'].')';
+
+					if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['code_iso3'] || $selected == $row['label'])) {
+						$out .= '<option value="'.($usecodeaskey ? ($usecodeaskey == 'code2' ? $row['code_iso'] : $row['code_iso3']) : $row['rowid']).'" selected data-html="'.dol_escape_htmltag($labeltoshow).'">';
+					} else {
+						$out .= '<option value="'.($usecodeaskey ? ($usecodeaskey == 'code2' ? $row['code_iso'] : $row['code_iso3']) : $row['rowid']).'" data-html="'.dol_escape_htmltag($labeltoshow).'">';
+					}
+					$out .= $labeltoshow;
 					$out .= '</option>';
 				}
 			}
@@ -1413,7 +1417,7 @@ class Form
 	 *  @param	string	$moreparam		Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
 	 *  @param	string	$htmlid			Html id to use instead of htmlname
 	 *  @return	int						<0 if KO, Nb of contact in list if OK
-	 *  @deprected						You can use selectcontacts directly (warning order of param was changed)
+	 *  @deprecated						You can use selectcontacts directly (warning order of param was changed)
 	 */
 	public function select_contacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $moreclass = '', $showsoc = 0, $forcecombo = 0, $events = array(), $options_only = false, $moreparam = '', $htmlid = '')
 	{
@@ -1443,15 +1447,17 @@ class Form
 	 *  @param	string		$moreparam		Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
 	 *  @param	string		$htmlid			Html id to use instead of htmlname
 	 *  @param	bool		$multiple		add [] in the name of element and add 'multiple' attribut
+	 *  @param	integer		$disableifempty Set tag 'disabled' on select if there is no choice
 	 *	@return	 int						<0 if KO, Nb of contact in list if OK
 	 */
-	public function selectcontacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $moreclass = '', $options_only = false, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false)
+	public function selectcontacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $moreclass = '', $options_only = false, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0)
 	{
 		global $conf, $langs, $hookmanager, $action;
 
 		$langs->load('companies');
 
 		if (empty($htmlid)) $htmlid = $htmlname;
+		$num = 0;
 
 		if ($selected === '') $selected = array();
 		elseif (!is_array($selected)) $selected = array($selected);
@@ -1485,11 +1491,13 @@ class Form
 				$out .= ajax_combobox($htmlid, $events, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
 			}
 
-			if ($htmlname != 'none' && !$options_only) $out .= '<select class="flat'.($moreclass ? ' '.$moreclass : '').'" id="'.$htmlid.'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.(!empty($moreparam) ? $moreparam : '').'>';
+			if ($htmlname != 'none' && !$options_only) {
+				$out .= '<select class="flat'.($moreclass ? ' '.$moreclass : '').'" id="'.$htmlid.'" name="'.$htmlname.(($num || empty($disableifempty)) ? '' : ' disabled').($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.(!empty($moreparam) ? $moreparam : '').'>';
+			}
+
 			if (($showempty == 1 || ($showempty == 3 && $num > 1)) && !$multiple) $out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>&nbsp;</option>';
 			if ($showempty == 2) $out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>-- '.$langs->trans("Internal").' --</option>';
 
-			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num)
 			{
@@ -1519,7 +1527,7 @@ class Form
 						if (!empty($contact_town)) $extendedInfos[] = $contact_town;
 						elseif (!empty($company_town)) $extendedInfos[] = $company_town;
 						$extendedInfos = implode(' - ', $extendedInfos);
-						if (!empty($extendedInfos)) $extendedInfos = ' - ' . $extendedInfos;
+						if (!empty($extendedInfos)) $extendedInfos = ' - '.$extendedInfos;
 					}
 
 					$contactstatic->id = $obj->rowid;
@@ -1536,7 +1544,7 @@ class Form
 								$out .= '<option value="'.$obj->rowid.'"';
 								if ($disabled) $out .= ' disabled';
 								$out .= ' selected>';
-								$out .= $contactstatic->getFullName($langs) . $extendedInfos;
+								$out .= $contactstatic->getFullName($langs).$extendedInfos;
 								if ($showfunction && $obj->poste) $out .= ' ('.$obj->poste.')';
 								if (($showsoc > 0) && $obj->company) $out .= ' - ('.$obj->company.')';
 								$out .= '</option>';
@@ -1544,7 +1552,7 @@ class Form
 								$out .= '<option value="'.$obj->rowid.'"';
 								if ($disabled) $out .= ' disabled';
 								$out .= '>';
-								$out .= $contactstatic->getFullName($langs) . $extendedInfos;
+								$out .= $contactstatic->getFullName($langs).$extendedInfos;
 								if ($showfunction && $obj->poste) $out .= ' ('.$obj->poste.')';
 								if (($showsoc > 0) && $obj->company) $out .= ' - ('.$obj->company.')';
 								$out .= '</option>';
@@ -1552,7 +1560,7 @@ class Form
 						} else {
 							if (in_array($obj->rowid, $selected))
 							{
-								$out .= $contactstatic->getFullName($langs) . $extendedInfos;
+								$out .= $contactstatic->getFullName($langs).$extendedInfos;
 								if ($showfunction && $obj->poste) $out .= ' ('.$obj->poste.')';
 								if (($showsoc > 0) && $obj->company) $out .= ' - ('.$obj->company.')';
 							}
@@ -1561,8 +1569,9 @@ class Form
 					$i++;
 				}
 			} else {
-				$out .= '<option value="-1"'.(($showempty == 2 || $multiple) ? '' : ' selected').' disabled>';
-				$out .= ($socid != -1) ? ($langs->trans($socid ? "NoContactDefinedForThirdParty" : "NoContactDefined")) : $langs->trans('SelectAThirdPartyFirst');
+				$labeltoshow = ($socid != -1) ? ($langs->trans($socid ? "NoContactDefinedForThirdParty" : "NoContactDefined")) : $langs->trans('SelectAThirdPartyFirst');
+				$out .= '<option class="disabled" value="-1"'.(($showempty == 2 || $multiple) ? '' : ' selected').' disabled="disabled">';
+				$out .= $labeltoshow;
 				$out .= '</option>';
 			}
 
@@ -1719,7 +1728,7 @@ class Form
 				$out .= ajax_combobox($htmlname);
 
 				// do not use maxwidthonsmartphone by default. Set it by caller so auto size to 100% will work when not defined
-				$out .= '<select class="flat'.($morecss ? ' minwidth100imp '.$morecss : ' minwidth200').'" id="'.$htmlname.'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.($disabled ? ' disabled' : '').'>';
+				$out .= '<select class="flat'.($morecss ? ' '.$morecss : ' minwidth200').'" id="'.$htmlname.'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.($disabled ? ' disabled' : '').'>';
 				if ($show_empty && !$multiple) $out .= '<option value="-1"'.((empty($selected) || in_array(-1, $selected)) ? ' selected' : '').'>&nbsp;</option>'."\n";
 				if ($show_every) $out .= '<option value="-2"'.((in_array(-2, $selected)) ? ' selected' : '').'>-- '.$langs->trans("Everybody").' --</option>'."\n";
 
@@ -4212,7 +4221,7 @@ class Form
 	 *     @param	string			$title       	   	Title
 	 *     @param	string			$question    	   	Question
 	 *     @param 	string			$action      	   	Action
-	 *	   @param  	array|string	$formquestion	   	An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , ))
+	 *	   @param  	array|string	$formquestion	   	An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , 'size'=>, 'morecss'=>, 'moreattr'=>))
 	 *													type can be 'hidden', 'text', 'password', 'checkbox', 'radio', 'date', 'morecss', ...
 	 * 	   @param  	string			$selectedchoice  	'' or 'no', or 'yes' or '1' or '0'
 	 * 	   @param  	int|string		$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
@@ -4544,7 +4553,7 @@ class Form
 			$out .= '<input type="hidden" name="action" value="classin">';
 			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$out .= $formproject->select_projects($socid, $selected, $htmlname, $maxlength, 0, 1, $discard_closed, $forcefocus, 0, 0, '', 1);
-			$out .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+			$out .= '<input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'">';
 			$out .= '</form>';
 		} else {
 			if ($selected)
@@ -4586,7 +4595,7 @@ class Form
 			print '<input type="hidden" name="action" value="setconditions">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			$this->select_conditions_paiements($selected, $htmlname, -1, $addempty);
-			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+			print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		} else {
 			if ($selected)
@@ -4619,7 +4628,7 @@ class Form
 			print '<input type="hidden" name="action" value="setavailability">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			$this->selectAvailabilityDelay($selected, $htmlname, -1, $addempty);
-			print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+			print '<input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		} else {
 			if ($selected)
@@ -4651,7 +4660,7 @@ class Form
 			print '<input type="hidden" name="action" value="setdemandreason">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			$this->selectInputReason($selected, $htmlname, -1, $addempty);
-			print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+			print '<input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		} else {
 			if ($selected)
@@ -4700,7 +4709,7 @@ class Form
 			$ret .= '<tr><td>';
 			$ret .= $this->selectDate($selected, $htmlname, $displayhour, $displaymin, 1, 'form'.$htmlname, 1, 0);
 			$ret .= '</td>';
-			$ret .= '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			$ret .= '<td class="left"><input type="submit smallpaddingimp" class="button" value="'.$langs->trans("Modify").'"></td>';
 			$ret .= '</tr></table></form>';
 		} else {
 			if ($displayhour) $ret .= dol_print_date($selected, 'dayhour');
@@ -4734,7 +4743,7 @@ class Form
 			print '<input type="hidden" name="action" value="set'.$htmlname.'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print $this->select_dolusers($selected, $htmlname, 1, $exclude, 0, $include);
-			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+			print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		} else {
 			if ($selected)
@@ -4772,7 +4781,7 @@ class Form
 			print '<input type="hidden" name="action" value="setmode">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			$this->select_types_paiements($selected, $htmlname, $filtertype, 0, $addempty, 0, 0, $active);
-			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+			print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		} else {
 			if ($selected)
@@ -4804,7 +4813,7 @@ class Form
 			print '<input type="hidden" name="action" value="setmode">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			$this->selectTransportMode($selected, $htmlname, 2, $addempty, 0, 0, $active);
-			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+			print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		}
 		else {
@@ -4837,7 +4846,7 @@ class Form
 			print '<input type="hidden" name="action" value="setmulticurrencycode">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print $this->selectMultiCurrency($selected, $htmlname, 0);
-			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+			print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		} else {
 			dol_include_once('/core/lib/company.lib.php');
@@ -4870,7 +4879,7 @@ class Form
 			print '<option value="1">'.$currency.' > '.$conf->currency.'</option>';
 			print '<option value="2">'.$conf->currency.' > '.$currency.'</option>';
 			print '</select> ';
-			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+			print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		} else {
 			if (!empty($rate))
@@ -4945,7 +4954,7 @@ class Form
 				$nbqualifiedlines = $this->select_remises($selected, $htmlname, $newfilter, $socid, $maxvalue);
 				if ($nbqualifiedlines > 0)
 				{
-					print ' &nbsp; <input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("UseLine")).'"';
+					print ' &nbsp; <input type="submit" class="button smallpaddingimp" value="'.dol_escape_htmltag($langs->trans("UseLine")).'"';
 					if (!empty($discount_type) && $filter && $filter != "fk_invoice_supplier_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')")
 						print ' title="'.$langs->trans("UseCreditNoteInInvoicePayment").'"';
 					if (empty($discount_type) && $filter && $filter != "fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')")
@@ -4995,14 +5004,15 @@ class Form
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
-			$num = $this->select_contacts($societe->id, $selected, $htmlname);
+			print $this->selectcontacts($societe->id, $selected, $htmlname);
+			$num = $this->num;
 			if ($num == 0)
 			{
 				$addcontact = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
 				print '<a href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$societe->id.'&amp;action=create&amp;backtoreferer=1">'.$addcontact.'</a>';
 			}
 			print '</td>';
-			print '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			print '<td class="left"><input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'"></td>';
 			print '</tr></table></form>';
 		} else {
 			if ($selected)
@@ -5044,7 +5054,7 @@ class Form
 			$out .= '<input type="hidden" name="action" value="set_thirdparty">';
 			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$out .= $this->select_company($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events);
-			$out .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 			$out .= '</form>';
 		} else {
 			if ($selected)
@@ -5098,19 +5108,21 @@ class Form
 		$out .= '<select class="flat maxwidth200onsmartphone minwidth300" name="'.$htmlname.'" id="'.$htmlname.'">';
 		foreach ($langs->cache_currencies as $code_iso => $currency)
 		{
-			if ($selected && $selected == $code_iso)
-			{
-				$out .= '<option value="'.$code_iso.'" selected>';
-			} else {
-				$out .= '<option value="'.$code_iso.'">';
-			}
-			$out .= $currency['label'];
+			$labeltoshow = $currency['label'];
 			if ($mode == 1)
 			{
-				$out .= ' ('.$code_iso.')';
+				$labeltoshow .= ' <span class="opacitymedium">('.$code_iso.')</span>';
 			} else {
-				$out .= ' ('.$langs->getCurrencySymbol($code_iso).')';
+				$labeltoshow .= ' <span class="opacitymedium">('.$langs->getCurrencySymbol($code_iso).')</span>';
 			}
+
+			if ($selected && $selected == $code_iso)
+			{
+				$out .= '<option value="'.$code_iso.'" selected data-html="'.dol_escape_htmltag($labeltoshow).'">';
+			} else {
+				$out .= '<option value="'.$code_iso.'" data-html="'.dol_escape_htmltag($labeltoshow).'">';
+			}
+			$out .= $labeltoshow;
 			$out .= '</option>';
 		}
 		$out .= '</select>';

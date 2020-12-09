@@ -64,17 +64,17 @@ class Facture extends CommonInvoice
 	public $table_element = 'facture';
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = 'facturedet';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Fieldname with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_facture';
 
 	/**
-	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 * @var string String with name of icon for myobject.
 	 */
 	public $picto = 'bill';
 
@@ -119,7 +119,7 @@ class Facture extends CommonInvoice
 	 * @var int	Date expected for delivery
 	 * @deprecated
 	 */
-	public $date_livraison;	// deprecated; Use delivery_date instead.
+	public $date_livraison; // deprecated; Use delivery_date instead.
 
 	public $delivery_date; // Date expected of shipment (date starting shipment, not the reception that occurs some days after)
 
@@ -175,11 +175,6 @@ class Facture extends CommonInvoice
 	 * @var int ID Field to store bank id to use when payment mode is withdraw
 	 */
 	public $fk_bank;
-
-	/**
-	 * @deprecated
-	 */
-	public $products = array();
 
 	/**
 	 * @var FactureLigne[]
@@ -1077,7 +1072,6 @@ class Facture extends CommonInvoice
 		$facture->origin_id         = $this->origin_id;
 
 		$facture->lines = $this->lines; // Array of lines of invoice
-		$facture->products = $this->lines; // Tant que products encore utilise
 		$facture->situation_counter = $this->situation_counter;
 		$facture->situation_cycle_ref = $this->situation_cycle_ref;
 		$facture->situation_final = $this->situation_final;
@@ -1179,7 +1173,6 @@ class Facture extends CommonInvoice
 		$object->ref_client         = '';
 		$object->close_code         = '';
 		$object->close_note         = '';
-		$object->products = $object->lines; // For backward compatibility
 		if ($conf->global->MAIN_DONT_KEEP_NOTE_ON_CLONING == 1) {
 			$object->note_private = '';
 			$object->note_public = '';
@@ -1191,7 +1184,6 @@ class Facture extends CommonInvoice
 			if (($object->lines[$i]->info_bits & 0x02) == 0x02)	// We do not clone line of discounts
 			{
 				unset($object->lines[$i]);
-				unset($object->products[$i]); // Tant que products encore utilise
 			}
 						// Bloc to update dates of service (month by month only if previously filled at 1d near start or end of month)
 			// If it's a service with start and end dates
@@ -1339,7 +1331,7 @@ class Facture extends CommonInvoice
 		$this->availability_id      = $object->availability_id;
 		$this->demand_reason_id     = $object->demand_reason_id;
 		$this->delivery_date        = (empty($object->delivery_date) ? $object->date_livraison : $object->delivery_date);
-		$this->date_livraison       = $object->delivery_date;	// deprecated
+		$this->date_livraison       = $object->delivery_date; // deprecated
 		$this->fk_delivery_address  = $object->fk_delivery_address; // deprecated
 		$this->contact_id           = $object->contact_id;
 		$this->ref_client           = $object->ref_client;
@@ -1432,11 +1424,11 @@ class Facture extends CommonInvoice
 		$label = '';
 
 		if ($user->rights->facture->lire) {
-			$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Invoice").'</u>';
-			if ($this->type == self::TYPE_REPLACEMENT) $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("ReplacementInvoice").'</u>';
-			if ($this->type == self::TYPE_CREDIT_NOTE) $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
-			if ($this->type == self::TYPE_DEPOSIT)     $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("Deposit").'</u>';
-			if ($this->type == self::TYPE_SITUATION)   $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("InvoiceSituation").'</u>';
+			$label = img_picto('', $picto).' <u class="paddingrightonly">'.$langs->trans("Invoice").'</u>';
+			if ($this->type == self::TYPE_REPLACEMENT) $label = img_picto('', $picto).' <u class="paddingrightonly">'.$langs->transnoentitiesnoconv("ReplacementInvoice").'</u>';
+			if ($this->type == self::TYPE_CREDIT_NOTE) $label = img_picto('', $picto).' <u class="paddingrightonly">'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
+			if ($this->type == self::TYPE_DEPOSIT)     $label = img_picto('', $picto).' <u class="paddingrightonly">'.$langs->transnoentitiesnoconv("Deposit").'</u>';
+			if ($this->type == self::TYPE_SITUATION)   $label = img_picto('', $picto).' <u class="paddingrightonly">'.$langs->transnoentitiesnoconv("InvoiceSituation").'</u>';
 			if (isset($this->statut) && isset($this->alreadypaid)) {
 				$label .= ' '.$this->getLibStatut(5, $this->alreadypaid);
 			}
@@ -3134,8 +3126,8 @@ class Facture extends CommonInvoice
 			$this->line->tva_tx = $txtva;
 			$this->line->localtax1_tx = ($total_localtax1 ? $localtaxes_type[1] : 0);
 			$this->line->localtax2_tx = ($total_localtax2 ? $localtaxes_type[3] : 0);
-			$this->line->localtax1_type = $localtaxes_type[0];
-			$this->line->localtax2_type = $localtaxes_type[2];
+			$this->line->localtax1_type = isset($localtaxes_type[0]) ? $localtaxes_type[0] : '';
+			$this->line->localtax2_type = isset($localtaxes_type[2]) ? $localtaxes_type[2] : '';
 
 			$this->line->total_ht = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_ht) : $total_ht); // For credit note and if qty is negative, total is negative
 			$this->line->total_ttc = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_ttc) : $total_ttc); // For credit note and if qty is negative, total is negative

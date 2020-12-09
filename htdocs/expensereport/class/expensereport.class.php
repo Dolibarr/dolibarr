@@ -44,7 +44,14 @@ class ExpenseReport extends CommonObject
 	 */
 	public $table_element = 'expensereport';
 
+	/**
+	 * @var string table element line name
+	 */
 	public $table_element_line = 'expensereport_det';
+
+	/**
+	 * @var string Fieldname with ID of parent key if this field has a parent
+	 */
 	public $fk_element = 'fk_expensereport';
 
 	/**
@@ -1101,7 +1108,7 @@ class ExpenseReport extends CommonObject
 			$tabletodelete = $this->table_element_line;
 			//$sqlef = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete."_extrafields WHERE fk_object IN (SELECT rowid FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id.")";
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id;
-			if (! $this->db->query($sql)) {
+			if (!$this->db->query($sql)) {
 				$error++;
 				$this->error = $this->db->lasterror();
 				$this->errors[] = $this->error;
@@ -1134,7 +1141,7 @@ class ExpenseReport extends CommonObject
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE rowid = ".$this->id;
 			$res = $this->db->query($sql);
-			if (! $res) {
+			if (!$res) {
 				$error++;
 				$this->error = $this->db->lasterror();
 				$this->errors[] = $this->error;
@@ -1145,7 +1152,7 @@ class ExpenseReport extends CommonObject
 		// Delete record into ECM index and physically
 		if (!$error) {
 			$res = $this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
-			if (! $res) {
+			if (!$res) {
 				$error++;
 			}
 		}
@@ -1186,7 +1193,7 @@ class ExpenseReport extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-    }
+	}
 
 	/**
 	 * Set to status validate

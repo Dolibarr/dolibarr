@@ -123,7 +123,7 @@ abstract class CommonDocGenerator
 		if ($member->photo) {
 			$logotouse = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $member, 'user').'/photos/'.$member->photo;
 		} else {
-			$logotouse = DOL_DOCUMENT_ROOT . '/public/theme/common/nophoto.png';
+			$logotouse = DOL_DOCUMENT_ROOT.'/public/theme/common/nophoto.png';
 		}
 
 		$array_member = array(
@@ -585,7 +585,7 @@ abstract class CommonDocGenerator
 
 			'line_product_ref'=>(empty($line->product_ref) ? '' : $line->product_ref),
 			'line_product_ref_fourn'=>(empty($line->ref_fourn) ? '' : $line->ref_fourn), // for supplier doc lines
-			'line_product_label'=>(empty($line->product_label) ? '' :$line->product_label),
+			'line_product_label'=>(empty($line->product_label) ? '' : $line->product_label),
 			'line_product_type'=>(empty($line->product_type) ? '' : $line->product_type),
 			'line_product_barcode'=>(empty($line->product_barcode) ? '' : $line->product_barcode),
 
@@ -652,7 +652,7 @@ abstract class CommonDocGenerator
 			{
 				$columns = "";
 
-				foreach ($extralabels as $key)
+				foreach ($extralabels as $key => $label)
 				{
 					$columns .= "$key, ";
 				}
@@ -666,7 +666,7 @@ abstract class CommonDocGenerator
 					{
 						$resql = $this->db->fetch_object($resql);
 
-						foreach ($extralabels as $key)
+						foreach ($extralabels as $key => $label)
 						{
 							$resarray['line_product_supplier_'.$key] = $resql->{$key};
 						}
@@ -741,6 +741,12 @@ abstract class CommonDocGenerator
 			$object->fetch_optionals();
 
 			$array_shipment = $this->fill_substitutionarray_with_extrafields($object, $array_shipment, $extrafields, $array_key, $outputlangs);
+		}
+
+		// Add infor from $object->xxx where xxx has been loaded by fetch_origin() of shipment
+		if (!empty($object->commande) && is_object($object->commande)) {
+			$array_shipment['order_ref'] = $object->commande->ref;
+			$array_shipment['order_ref_customer'] = $object->commande->ref_customer;
 		}
 
 		return $array_shipment;

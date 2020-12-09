@@ -76,7 +76,7 @@ class Fichinter extends CommonObject
 	public $table_element = 'fichinter';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_fichinter';
 
@@ -176,6 +176,7 @@ class Fichinter extends CommonObject
 	 */
 	const STATUS_CLOSED = 3;
 
+
 	/**
 	 *	Constructor
 	 *
@@ -184,8 +185,6 @@ class Fichinter extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
-
-		$this->products = array();
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1436,7 +1435,7 @@ class FichinterLigne extends CommonObjectLine
 	public $table_element = 'fichinterdet';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_fichinter';
 

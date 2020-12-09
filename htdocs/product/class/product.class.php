@@ -35,6 +35,7 @@
  *    \ingroup    produit
  *    \brief      File of class to manage predefined products or services
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
@@ -55,14 +56,22 @@ class Product extends CommonObject
 	public $table_element = 'product';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_product';
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
-	protected $childtables = array('supplier_proposaldet', 'propaldet', 'commandedet', 'facturedet', 'contratdet', 'facture_fourn_det', 'commande_fournisseurdet');
+	protected $childtables = array(
+		'supplier_proposaldet',
+		'propaldet',
+		'commandedet',
+		'facturedet',
+		'contratdet',
+		'facture_fourn_det',
+		'commande_fournisseurdet'
+	);
 
 	/**
 	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -827,7 +836,8 @@ class Product extends CommonObject
 		$error = 0;
 
 		// Check parameters
-		if (!$this->label) { $this->label = 'MISSING LABEL';
+		if (!$this->label) {
+			$this->label = 'MISSING LABEL';
 		}
 
 		// Clean parameters
@@ -845,6 +855,11 @@ class Product extends CommonObject
 		$this->width_units = trim($this->width_units);
 		$this->height = price2num($this->height);
 		$this->height_units = trim($this->height_units);
+		$this->surface = price2num($this->surface);
+		$this->surface_units = trim($this->surface_units);
+		$this->volume = price2num($this->volume);
+		$this->volume_units = trim($this->volume_units);
+
 		// set unit not defined
 		if (is_numeric($this->length_units)) {
 			$this->width_units = $this->length_units; // Not used yet
@@ -852,20 +867,17 @@ class Product extends CommonObject
 		if (is_numeric($this->length_units)) {
 			$this->height_units = $this->length_units; // Not used yet
 		}
+
 		// Automated compute surface and volume if not filled
 		if (empty($this->surface) && !empty($this->length) && !empty($this->width) && $this->length_units == $this->width_units) {
 			$this->surface = $this->length * $this->width;
 			$this->surface_units = measuring_units_squared($this->length_units);
 		}
-		if (empty($this->volume) && !empty($this->surface_units) && !empty($this->height) && $this->length_units == $this->height_units) {
+		if (empty($this->volume) && !empty($this->surface) && !empty($this->height) && $this->length_units == $this->height_units) {
 			$this->volume = $this->surface * $this->height;
 			$this->volume_units = measuring_units_cubed($this->height_units);
 		}
 
-		$this->surface = price2num($this->surface);
-		$this->surface_units = trim($this->surface_units);
-		$this->volume = price2num($this->volume);
-		$this->volume_units = trim($this->volume_units);
 		if (empty($this->tva_tx)) {
 			$this->tva_tx = 0;
 		}
@@ -912,10 +924,13 @@ class Product extends CommonObject
 
 		$this->db->begin();
 
-		// Check name is required and codes are ok or unique.
-		// If error, this->errors[] is filled
+		$result = 0;
+		// Check name is required and codes are ok or unique. If error, this->errors[] is filled
 		if ($action != 'add') {
 			$result = $this->verify(); // We don't check when update called during a create because verify was already done
+		} else {
+			// we can continue
+			$result = 0;
 		}
 
 		if ($result >= 0) {
@@ -1088,7 +1103,7 @@ class Product extends CommonObject
 				}
 
 				if (!$error) {
-					if ($conf->variants->enabled) {
+					if (!empty($conf->variants->enabled)) {
 						include_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 
 						$comb = new ProductCombination($this->db);
@@ -2183,14 +2198,14 @@ class Product extends CommonObject
 						if ($resql) {
 							$result = $this->db->fetch_array($resql);
 
-							$this->multiprices[$i] = $result["price"];
-							$this->multiprices_ttc[$i] = $result["price_ttc"];
-							$this->multiprices_min[$i] = $result["price_min"];
-							$this->multiprices_min_ttc[$i] = $result["price_min_ttc"];
-							$this->multiprices_base_type[$i] = $result["price_base_type"];
+							$this->multiprices[$i] = $result ? $result["price"] : null;
+							$this->multiprices_ttc[$i] = $result ? $result["price_ttc"] : null;
+							$this->multiprices_min[$i] =  $result ? $result["price_min"] : null;
+							$this->multiprices_min_ttc[$i] = $result ? $result["price_min_ttc"] : null;
+							$this->multiprices_base_type[$i] = $result ? $result["price_base_type"] : null;
 							// Next two fields are used only if PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL is on
-							$this->multiprices_tva_tx[$i] = $result["tva_tx"]; // TODO Add ' ('.$result['default_vat_code'].')'
-							$this->multiprices_recuperableonly[$i] = $result["recuperableonly"];
+							$this->multiprices_tva_tx[$i] = $result ? $result["tva_tx"].($result ? ' ('.$result['default_vat_code'].')' : '') : null;
+							$this->multiprices_recuperableonly[$i] = $result ? $result["recuperableonly"] : null;
 
 							// Price by quantity
 							/*
@@ -4237,15 +4252,15 @@ class Product extends CommonObject
 		if ($mode == 0) {
 			$sql .= " WHERE pa.fk_product_fils = ".$this->id." OR pa.fk_product_pere = ".$this->id;
 		} elseif ($mode == -1) {
-			$sql .= " WHERE pa.fk_product_fils = ".$this->id;	// We are a child, so we found lines that link to parents (can have several parents)
+			$sql .= " WHERE pa.fk_product_fils = ".$this->id; // We are a child, so we found lines that link to parents (can have several parents)
 		} elseif ($mode == 1) {
-			$sql .= " WHERE pa.fk_product_pere = ".$this->id;	// We are a parent, so we found lines that link to children (can have several children)
+			$sql .= " WHERE pa.fk_product_pere = ".$this->id; // We are a parent, so we found lines that link to children (can have several children)
 		}
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			if ($obj) { $nb = $obj->nb;	}
+			if ($obj) { $nb = $obj->nb; }
 		} else {
 			return -1;
 		}

@@ -363,7 +363,7 @@ if ($mode == 'overwrite')
 
 if ($mode == 'searchkey')
 {
-	$langcode = GETPOST('langcode') ?GETPOST('langcode') : $langs->defaultlang;
+	$langcode = GETPOSTISSET('langcode') ? GETPOST('langcode') : $langs->defaultlang;
 
 	$newlang = new Translate('', $conf);
 	$newlang->setDefaultLang($langcode);
@@ -384,8 +384,7 @@ if ($mode == 'searchkey')
 	if (empty($langcode) || $langcode == '-1') $nbempty++;
 	if (empty($transkey)) $nbempty++;
 	if (empty($transvalue)) $nbempty++;
-	if ($action == 'search' && ($nbempty > 999))    // 999 to disable this
-	{
+	if ($action == 'search' && ($nbempty > 999)) {    // 999 to disable this
 		setEventMessages($langs->trans("WarningAtLeastKeyOrTranslationRequired"), null, 'warnings');
 	} else {
 		// Search into dir of modules (the $modulesdir is already a list that loop on $conf->file->dol_document_root)

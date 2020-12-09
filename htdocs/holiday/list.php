@@ -32,12 +32,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
-require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('users', 'holiday', 'hrm'));
+$langs->loadLangs(array('users', 'other', 'holiday', 'hrm'));
 
 // Protection if external user
 if ($user->socid > 0) accessforbidden();
@@ -152,6 +152,15 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 	}
 }
 
+if (empty($conf->holiday->enabled))
+{
+	llxHeader('', $langs->trans('CPTitreMenu'));
+	print '<div class="tabBar">';
+	print '<span style="color: #FF0000;">'.$langs->trans('NotActiveModCP').'</span>';
+	print '</div>';
+	llxFooter();
+	exit();
+}
 
 
 /*

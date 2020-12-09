@@ -1417,13 +1417,16 @@ class pdf_aurore extends ModelePDFSupplierProposal
 			// Recipient name
 			if (!empty($usecontact))
 			{
-				// On peut utiliser le nom de la societe du contact
-				if (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socname = $object->contact->socname;
-				else $socname = $object->thirdparty->name;
-				$carac_client_name = $outputlangs->convToOutputCharset($socname);
+				if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
+					$socname = $object->contact->socname;
+				} else {
+					$socname = $object->thirdparty->name;
+				}
 			} else {
-				$carac_client_name = $outputlangs->convToOutputCharset($object->thirdparty->name);
+				$socname = $object->thirdparty->name;
 			}
+
+			$carac_client_name = pdfBuildThirdpartyName($socname, $outputlangs);
 
 			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), $usecontact, 'target', $object);
 

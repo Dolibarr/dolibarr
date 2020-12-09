@@ -57,12 +57,12 @@ class FactureFournisseur extends CommonInvoice
 	public $table_element = 'facture_fourn';
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = 'facture_fourn_det';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_facture_fourn';
 
@@ -187,6 +187,8 @@ class FactureFournisseur extends CommonInvoice
 	public $mode_reglement_id;
 	public $mode_reglement_code;
 
+	public $extraparams = array();
+
 	/**
 	 * Invoice lines
 	 * @var SupplierInvoiceLine[]
@@ -197,8 +199,6 @@ class FactureFournisseur extends CommonInvoice
 	 * @deprecated
 	 */
 	public $fournisseur;
-
-	public $extraparams = array();
 
 	// Multicurrency
 	/**
@@ -331,14 +331,12 @@ class FactureFournisseur extends CommonInvoice
 	public function __construct($db)
 	{
 		$this->db = $db;
-
-		$this->products = array();
 	}
 
 	/**
 	 *    Create supplier invoice into database
 	 *
-	 *    @param      User		$user       object utilisateur qui cree
+	 *    @param      User		$user       user object that creates
 	 *    @return     int    	     		Id invoice created if OK, < 0 if KO
 	 */
 	public function create($user)
@@ -1253,8 +1251,8 @@ class FactureFournisseur extends CommonInvoice
 	 *  Tag invoice as a payed invoice
 	 *
 	 *	@param  User	$user       Object user
-	 *	@param  string	$close_code	Code renseigne si on classe a payee completement alors que paiement incomplet. Not implementd yet.
-	 *	@param  string	$close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet. Not implementd yet.
+	 *	@param  string	$close_code	Code indicates whether the class has paid in full while payment is incomplete. Not implementd yet.
+	 *	@param  string	$close_note	Comment informs if the class has been paid while payment is incomplete. Not implementd yet.
 	 *	@return int         		<0 si ko, >0 si ok
 	 */
 	public function set_paid($user, $close_code = '', $close_note = '')
@@ -1296,9 +1294,9 @@ class FactureFournisseur extends CommonInvoice
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Tag la facture comme non payee completement + appel trigger BILL_UNPAYED
-	 *	Fonction utilisee quand un paiement prelevement est refuse,
-	 *	ou quand une facture annulee et reouverte.
+	 *	Tag the invoice as not fully paid + trigger call BILL_UNPAYED
+	 *	Function used when a direct debit payment is refused,
+	 *	or when the invoice was canceled and reopened.
 	 *
 	 *	@param      User	$user       Object user that change status
 	 *	@return     int         		<0 si ok, >0 si ok
@@ -1581,25 +1579,25 @@ class FactureFournisseur extends CommonInvoice
 
 
 	/**
-	 *	Ajoute une ligne de facture (associe a aucun produit/service predefini)
-	 *	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
-	 *	de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
-	 *	par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,idprod)
-	 *	et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue).
+	 *	Adds an invoice line (associated with no predefined product/service)
+	 *	The parameters are already supposed to be correct and with final values when calling
+	 *	this method. Also, for the VAT rate, it must already have been defined by the caller by
+	 *	by the get_default_tva method(vendor_company, buying company, idprod) and the desc must
+	 *	already have the right value (the caller has to manage the multilanguage).
 	 *
-	 *	@param    	string	$desc            	Description de la ligne
-	 *	@param    	double	$pu              	Prix unitaire (HT ou TTC selon price_base_type, > 0 even for credit note)
+	 *	@param    	string	$desc            	Description of the line
+	 *	@param    	double	$pu              	Unit price (HT or TTC according to price_base_type, > 0 even for credit note)
 	 *	@param    	double	$txtva           	Force Vat rate to use, -1 for auto.
 	 *	@param		double	$txlocaltax1		LocalTax1 Rate
 	 *	@param		double	$txlocaltax2		LocalTax2 Rate
-	 *	@param    	double	$qty             	Quantite
+	 *	@param    	double	$qty             	Quantity
 	 *	@param    	int		$fk_product      	Product/Service ID predefined
 	 *	@param    	double	$remise_percent  	Percentage discount of the line
-	 *	@param    	integer	$date_start      	Date de debut de validite du service
-	 * 	@param    	integer	$date_end        	Date de fin de validite du service
-	 * 	@param    	string	$ventil          	Code de ventilation comptable
-	 *	@param    	int		$info_bits			Bits de type de lines
-	 *	@param    	string	$price_base_type 	HT ou TTC
+	 *	@param    	integer	$date_start      	Service start date
+	 * 	@param    	integer	$date_end        	Service expiry date
+	 * 	@param    	string	$ventil          	Accounting breakdown code
+	 *	@param    	int		$info_bits			Line type bits
+	 *	@param    	string	$price_base_type 	HT or TTC
 	 *	@param		int		$type				Type of line (0=product, 1=service)
 	 *  @param      int		$rang            	Position of line
 	 *  @param		int		$notrigger			Disable triggers
@@ -2048,9 +2046,9 @@ class FactureFournisseur extends CommonInvoice
 
 
 	/**
-	 *	Charge les informations d'ordre info dans l'objet facture
+	 *	Loads the info order information into the invoice object
 	 *
-	 *	@param  int		$id       	Id de la facture a charger
+	 *	@param  int		$id       	Id of the invoice to load
 	 *	@return	void
 	 */
 	public function info($id)
@@ -2097,11 +2095,11 @@ class FactureFournisseur extends CommonInvoice
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Renvoi liste des factures remplacables
-	 *	Statut validee ou abandonnee pour raison autre + non payee + aucun paiement + pas deja remplacee
+	 *	Return list of replaceable invoices
+	 *	Status valid or abandoned for other reason + not paid + no payment + not already replaced
 	 *
-	 *	@param      int		$socid		Id societe
-	 *	@return    	array|int			Tableau des factures ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
+	 *	@param      int		$socid		Thirdparty id
+	 *	@return    	array|int			Table of invoices ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
 	 *                                  <0 if error
 	 */
 	public function list_replacable_supplier_invoices($socid = 0)
@@ -2146,12 +2144,12 @@ class FactureFournisseur extends CommonInvoice
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Renvoi liste des factures qualifiables pour correction par avoir
-	 *	Les factures qui respectent les regles suivantes sont retournees:
-	 *	(validee + paiement en cours) ou classee (payee completement ou payee partiellement) + pas deja remplacee + pas deja avoir
+	 *	Return list of qualifying invoices for correction by credit note
+	 *	Invoices that respect the following rules are returned:
+	 *	(validated + payment in progress) or classified (paid in full or paid in part) + not already replaced + not already having
 	 *
-	 *	@param		int		$socid		Id societe
-	 *	@return    	array|int			Tableau des factures ($id => array('ref'=>,'paymentornot'=>,'status'=>,'paye'=>)
+	 *	@param		int		$socid		Thirdparty id
+	 *	@return    	array|int			Table of invoices ($id => array('ref'=>,'paymentornot'=>,'status'=>,'paye'=>)
 	 *                                  <0 if error
 	 */
 	public function list_qualified_avoir_supplier_invoices($socid = 0)
