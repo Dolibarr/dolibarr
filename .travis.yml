@@ -279,7 +279,10 @@ script:
 - |
   git remote set-branches --add origin develop
   git fetch
-  git diff --name-only HEAD origin/develop
+  STAGED_FILES_CMD=`git diff --cached --name-only --diff-filter=ACMR HEAD | grep
+  \\\\.php`
+  SFILES=${$STAGED_FILES_CMD}
+  echo SFILES
   echo "Checking coding style (excluding Pull Requests builds to not overload travis, excluding also some jobs to avoid duplicate tests)"
   # Ensure we catch errors
   set -e
