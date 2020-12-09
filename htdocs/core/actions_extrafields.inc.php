@@ -159,7 +159,7 @@ if ($action == 'add')
 				$parameters = $param;
 				$parameters_array = explode("\r\n", $parameters);
 				//In sellist we have only one line and it can have come to do SQL expression
-				if ($type == 'sellist') {
+				if ($type == 'sellist' || $type == 'chkbxlst') {
 					foreach ($parameters_array as $param_ligne)
 					{
 						$params['options'] = array($parameters=>null);
@@ -338,7 +338,7 @@ if ($action == 'update')
 				$parameters = $param;
 				$parameters_array = explode("\r\n", $parameters);
 				//In sellist we have only one line and it can have come to do SQL expression
-				if ($type == 'sellist') {
+				if ($type == 'sellist' || $type == 'chkbxlst') {
 					foreach ($parameters_array as $param_ligne)
 					{
 						$params['options'] = array($parameters=>null);
