@@ -176,6 +176,7 @@ NEW: Weighing Scale compatibility with TakePOS connector
 NEW: when creating a user from a member linked to a thirdparty, you can choose to create it as external or internal user
 NEW: add clone button on miscellaneous payment
 NEW: #15065 Add option to put the product label in bold in the PDF templates if configured
+NEW: Add option "If the feature to manage kits of module Stock is used, show details of subproducts of a kit on PDF."
 
 
 For developers:
