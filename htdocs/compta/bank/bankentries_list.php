@@ -763,7 +763,13 @@ if ($resql)
     			return false;
     		});
     	});
+    	$(document).ready(function() {
+			$("input#selectAll").change(function() {
+				$("input[type=checkbox][name^=rowid]").prop("checked", $(this).is(":checked"));
+			});
+    	});
     });
+
     </script>
     ';
 
@@ -954,6 +960,10 @@ if ($resql)
 	print '</td>';
 	print "</tr>\n";
 
+	if ($action == 'reconcile') {
+		$check_all='<input type="checkbox" id="selectAll" title="'.dol_escape_htmltag($langs->trans("SelectAll")).'" />';
+	}
+
 	// Fields title
 	print '<tr class="liste_titre">';
 	if (!empty($arrayfields['b.rowid']['checked']))            print_liste_field_titre($arrayfields['b.rowid']['label'], $_SERVER['PHP_SELF'], 'b.rowid', '', $param, '', $sortfield, $sortorder);
@@ -968,7 +978,7 @@ if ($resql)
 	if (!empty($arrayfields['b.credit']['checked']))           print_liste_field_titre($arrayfields['b.credit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, '', $sortfield, $sortorder, "right ");
 	if (!empty($arrayfields['balancebefore']['checked']))      print_liste_field_titre($arrayfields['balancebefore']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, "right ");
 	if (!empty($arrayfields['balance']['checked']))            print_liste_field_titre($arrayfields['balance']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, "right ");
-	if (!empty($arrayfields['b.num_releve']['checked']))       print_liste_field_titre($arrayfields['b.num_releve']['label'], $_SERVER['PHP_SELF'], 'b.num_releve', '', $param, '', $sortfield, $sortorder, "center ");
+	if (!empty($arrayfields['b.num_releve']['checked']))       print_liste_field_titre($arrayfields['b.num_releve']['label'].$check_all, $_SERVER['PHP_SELF'], 'b.num_releve', '', $param, '', $sortfield, $sortorder, "center ");
 	if (!empty($arrayfields['b.conciliated']['checked']))      print_liste_field_titre($arrayfields['b.conciliated']['label'], $_SERVER['PHP_SELF'], 'b.rappro', '', $param, '', $sortfield, $sortorder, "center ");
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -1091,15 +1101,7 @@ if ($resql)
 					print '</td>';
 				}
 
-				print '<td class="center">';
-				print '<input type="checkbox" id="selectAll" title="'.dol_escape_htmltag($langs->trans("SelectAll")).'" />';
-				print ' <script type="text/javascript">
-						$("input#selectAll").change(function() {
-							$("input[type=checkbox][name^=rowid]").prop("checked", $(this).is(":checked"));
-						});
-						</script>';
-				print '</td>';
-				print '<td colspan="'.($tmpnbfieldafterbalance + 2).'">';
+				print '<td colspan="'.($tmpnbfieldafterbalance + 1).'">';
 				print '&nbsp;';
 				print '</td>';
 				print '</tr>';
