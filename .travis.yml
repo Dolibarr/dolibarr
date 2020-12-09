@@ -277,9 +277,9 @@ script:
   echo
 
 - |
-  git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+  git remote set-branches --add origin develop
   git fetch
-  git diff --name-only HEAD origin/${TRAVIS_BRANCH}
+  git diff --name-only HEAD origin/develop
   echo "Checking coding style (excluding Pull Requests builds to not overload travis, excluding also some jobs to avoid duplicate tests)"
   # Ensure we catch errors
   set -e
