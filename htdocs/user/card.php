@@ -956,7 +956,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	// Hierarchy
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("HierarchicalResponsible").'</td>';
 	print '<td>';
-	print $form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
+	print img_picto('', 'user').$form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
 	print '</td>';
 	print "</tr>\n";
 
@@ -968,7 +968,7 @@ if ($action == 'create' || $action == 'adduserldap')
 		print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
 		print '</td>';
 		print '<td>';
-		print $form->select_dolusers($object->fk_user_expense_validator, 'fk_user_expense_validator', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
+		print img_picto('', 'user').$form->select_dolusers($object->fk_user_expense_validator, 'fk_user_expense_validator', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
 		print '</td>';
 		print "</tr>\n";
 	}
@@ -981,7 +981,7 @@ if ($action == 'create' || $action == 'adduserldap')
 		print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
 		print '</td>';
 		print '<td>';
-		print $form->select_dolusers($object->fk_user_holiday_validator, 'fk_user_holiday_validator', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
+		print img_picto('', 'user').$form->select_dolusers($object->fk_user_holiday_validator, 'fk_user_holiday_validator', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
 		print '</td>';
 		print "</tr>\n";
 	}
