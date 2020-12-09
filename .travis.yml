@@ -48,7 +48,7 @@ jobs:
       php: '7.4'
       env: DB=mysql
     - if: type = push AND branch = develop
-      php: nightly 
+      php: nightly
       env: DB=mysql
 
 notifications:
@@ -277,6 +277,9 @@ script:
   echo
 
 - |
+  git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+  git fetch
+  git diff --name-only HEAD origin/${TRAVIS_BRANCH}
   echo "Checking coding style (excluding Pull Requests builds to not overload travis, excluding also some jobs to avoid duplicate tests)"
   # Ensure we catch errors
   set -e
