@@ -81,6 +81,8 @@ class box_funnel_of_prospection extends ModeleBoxes
 		$sql = "SELECT cls.rowid, cls.code, cls.percent, cls.label";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "c_lead_status as cls";
 		$sql .= " WHERE active=1";
+		$sql .= " Order by cls.rowid";
+		$sql .= " AND cls.code != 'LOST'";
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -108,7 +110,6 @@ class box_funnel_of_prospection extends ModeleBoxes
 						$colorseriesstat[$objp->rowid] = $badgeStatus6;
 						break;
 					default:
-						$colorseriesstat[$objp->rowid] = $badgeStatus2;
 						break;
 				}
 				$i++;
@@ -167,14 +168,16 @@ class box_funnel_of_prospection extends ModeleBoxes
 				$stringtoprint = '';
 				$stringtoprint .= '<div class="div-table-responsive-no-min ">';
 				$listofstatus = array_keys($listofoppstatus);
+				$liststatus = array();
+				$data = array('');
 				foreach ($listofstatus as $status) {
 					$labelStatus = '';
 					if ($status != 7) {
 						$code = dol_getIdFromCode($this->db, $status, 'c_lead_status', 'rowid', 'code');
 						if ($code) $labelStatus = $langs->transnoentitiesnoconv("OppStatus" . $code);
 						if (empty($labelStatus)) $labelStatus = $listofopplabel[$status];
-
-						$dataseries[] = array($labelStatus,(isset($valsamount[$status]) ? (float) $valsamount[$status] : 0));
+						$liststatus[] = $labelStatus;
+						$data[] = (isset($valsamount[$status]) ? (float) $valsamount[$status] : 0);
 						if (!$conf->use_javascript_ajax) {
 							$stringtoprint .= '<tr class="oddeven">';
 							$stringtoprint .= '<td>' . $labelStatus . '</td>';
@@ -183,16 +186,21 @@ class box_funnel_of_prospection extends ModeleBoxes
 						}
 					}
 				}
+				$dataseries[] = $data;
 				if ($conf->use_javascript_ajax) {
 					include_once DOL_DOCUMENT_ROOT . '/core/class/dolgraph.class.php';
 					$dolgraph = new DolGraph();
+					$dolgraph->SetMinValue(0);
 					$dolgraph->SetData($dataseries);
+					$dolgraph->SetLegend($liststatus);
 					$dolgraph->SetDataColor(array_values($colorseriesstat));
-					//$dolgraph->SetLegend(array('PROSP',$dataseries['PROSP']));
 					$dolgraph->setShowLegend(2);
 					$dolgraph->setShowPercent(1);
-					$dolgraph->SetType(array('pie'));
+					$dolgraph->setTitle('FunnelOfProspection');
+					$dolgraph->SetType(array('horizontalbars'));
 					$dolgraph->SetHeight('200');
+					$dolgraph->SetWidth('600');
+					$dolgraph->mode='depth';
 					$dolgraph->draw('idgraphstatus');
 					$stringtoprint .= $dolgraph->show($totaloppnb ? 0 : 1);
 				}
