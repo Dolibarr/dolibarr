@@ -1245,14 +1245,14 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 				// Journals
 				if (!empty($conf->accounting->enabled) && !empty($user->rights->accounting->comptarapport->lire) && $mainmenu == 'accountancy') {
-					$newmenu->add('', $langs->trans("RegistrationInAccounting"), 1, $user->rights->accounting->comptarapport->lire);
+					$newmenu->add('', $langs->trans("RegistrationInAccounting"), 1, $user->rights->accounting->comptarapport->lire, '', '', '');
 
 					// Multi journal
 					$sql = "SELECT rowid, code, label, nature";
 					$sql .= " FROM ".MAIN_DB_PREFIX."accounting_journal";
 					$sql .= " WHERE entity = ".$conf->entity;
 					$sql .= " AND active = 1";
-					$sql .= " ORDER BY label DESC";
+					$sql .= " ORDER BY nature ASC, label DESC";
 
 					$resql = $db->query($sql);
 					if ($resql) {
