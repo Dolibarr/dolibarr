@@ -98,7 +98,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 		$sql .= " FROM " . MAIN_DB_PREFIX . "c_lead_status as cls";
 		$sql .= " WHERE active=1";
 		$sql .= " AND cls.code <> 'LOST'";
-		$sql .= $this->db->order('cls.rowid','ASC');
+		$sql .= $this->db->order('cls.rowid', 'ASC');
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
