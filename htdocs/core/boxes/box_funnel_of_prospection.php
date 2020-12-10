@@ -139,7 +139,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 
 		$this->info_box_head = array(
 			'text' => $langs->trans("Statistics") . ' - ' . $langs->trans("OpportunitiesStatusForOpenedProjects"),
-			$max
+			'graph' => '1'
 		);
 
 		if ($user->rights->projet->lire || !empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
@@ -224,7 +224,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 					$dolgraph->SetType(array('horizontalbars'));
 					$dolgraph->SetHeight('200');
 					$dolgraph->SetWidth('600');
-					$dolgraph->mode='depth';
+					$dolgraph->mode = 'depth';
 					$dolgraph->draw('idgraphstatus');
 					$stringtoprint .= $dolgraph->show($totaloppnb ? 0 : 1);
 				}
