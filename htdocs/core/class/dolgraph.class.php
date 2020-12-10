@@ -1142,7 +1142,6 @@ class DolGraph
 			$this->stringtoshow .= 'scales: { xAxes: [{ ';
 			if ($isfunnel) {
 				$this->stringtoshow .= ' ticks: { beginAtZero: true}, display: false,';
-
 			}
 			//$this->stringtoshow .= 'type: \'time\', ';		// Need Moment.js
 			$this->stringtoshow .= 'distribution: \'linear\'';
@@ -1179,12 +1178,12 @@ class DolGraph
 
 			$i = 0;
 			if (!$isfunnel);{
-				foreach ($legends as $val)	// Loop on each serie
+			foreach ($legends as $val)	// Loop on each serie
 				{
-					if ($i > 0) $this->stringtoshow .= ', ';
-					$this->stringtoshow .= "'".dol_escape_js(dol_trunc($val, 32))."'";
-					$i++;
-				}
+				if ($i > 0) $this->stringtoshow .= ', ';
+				$this->stringtoshow .= "'".dol_escape_js(dol_trunc($val, 32))."'";
+				$i++;
+			}
 			}
 
 			//var_dump($arrayofgroupslegend);
@@ -1271,17 +1270,16 @@ class DolGraph
 				if ($isfunnel){
 					$this->stringtoshow .= 'borderWidth: \'2\', ';
 				}
-				else if ($type == 'bar' || $type == 'horizontalBar') {
+				elseif ($type == 'bar' || $type == 'horizontalBar') {
 					$this->stringtoshow .= 'borderWidth: \'1\', ';
 				}
 				$this->stringtoshow .= 'borderColor: \'' . $bordercolor . '\', ';
 				$this->stringtoshow .= 'backgroundColor: \'' . $color . '\', ';
 				if ($arrayofgroupslegend[$i]) $this->stringtoshow .= 'stack: \'' . $arrayofgroupslegend[$i]['stacknum'] . '\', ';
 				$this->stringtoshow .='data: [';
-				if($isfunnel){
+				if ($isfunnel){
 					$this->stringtoshow .= '['.-$serie[$i].','.$serie[$i].']';
-
-				}else{
+				}else {
 					$this->stringtoshow .= $serie[$i];
 				}
 				$this->stringtoshow .=']';
