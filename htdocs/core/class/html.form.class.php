@@ -7560,41 +7560,37 @@ class Form
 		if ($modulepart == 'societe')
 		{
 			$dir = $conf->societe->multidir_output[$entity];
-			if (!empty($object->logo))
-			{
-				if ((string) $imagesize == 'mini') $file = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'/logos/'.getImageFileNameForSize($object->logo, '_mini'); // getImageFileNameForSize include the thumbs
-				elseif ((string) $imagesize == 'small') $file = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'/logos/'.getImageFileNameForSize($object->logo, '_small');
-				else $file = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'/logos/'.$object->logo;
-				$originalfile = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'/logos/'.$object->logo;
+			if (!empty($object->logo)) {
+				if ((string) $imagesize == 'mini') $file = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'logos/'.getImageFileNameForSize($object->logo, '_mini'); // getImageFileNameForSize include the thumbs
+				elseif ((string) $imagesize == 'small') $file = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'logos/'.getImageFileNameForSize($object->logo, '_small');
+				else $file = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'logos/'.$object->logo;
+				$originalfile = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'logos/'.$object->logo;
 			}
 			$email = $object->email;
-		} elseif ($modulepart == 'contact')
-		{
+		} elseif ($modulepart == 'contact')	{
 			$dir = $conf->societe->multidir_output[$entity].'/contact';
 			if (!empty($object->photo))
 			{
-				if ((string) $imagesize == 'mini') $file = get_exdir(0, 0, 0, 0, $object, 'contact').'/photos/'.getImageFileNameForSize($object->photo, '_mini');
-				elseif ((string) $imagesize == 'small') $file = get_exdir(0, 0, 0, 0, $object, 'contact').'/photos/'.getImageFileNameForSize($object->photo, '_small');
-				else $file = get_exdir(0, 0, 0, 0, $object, 'contact').'/photos/'.$object->photo;
-				$originalfile = get_exdir(0, 0, 0, 0, $object, 'contact').'/photos/'.$object->photo;
+				if ((string) $imagesize == 'mini') $file = get_exdir(0, 0, 0, 0, $object, 'contact').'photos/'.getImageFileNameForSize($object->photo, '_mini');
+				elseif ((string) $imagesize == 'small') $file = get_exdir(0, 0, 0, 0, $object, 'contact').'photos/'.getImageFileNameForSize($object->photo, '_small');
+				else $file = get_exdir(0, 0, 0, 0, $object, 'contact').'photos/'.$object->photo;
+				$originalfile = get_exdir(0, 0, 0, 0, $object, 'contact').'photos/'.$object->photo;
 			}
 			$email = $object->email;
 			$capture = 'user';
-		} elseif ($modulepart == 'userphoto')
-		{
+		} elseif ($modulepart == 'userphoto') {
 			$dir = $conf->user->dir_output;
 			if (!empty($object->photo))
 			{
-				if ((string) $imagesize == 'mini') $file = get_exdir(0, 0, 0, 0, $object, 'user').$object->id.'/'.getImageFileNameForSize($object->photo, '_mini');
-				elseif ((string) $imagesize == 'small') $file = get_exdir(0, 0, 0, 0, $object, 'user').$object->id.'/'.getImageFileNameForSize($object->photo, '_small');
-				else $file = get_exdir(0, 0, 0, 0, $object, 'user').'/'.$object->id.'/'.$object->photo;
-				$originalfile = get_exdir(0, 0, 0, 0, $object, 'user').'/'.$object->id.'/'.$object->photo;
+				if ((string) $imagesize == 'mini') $file = get_exdir(0, 0, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_mini');
+				elseif ((string) $imagesize == 'small') $file = get_exdir(0, 0, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_small');
+				else $file = get_exdir(0, 0, 0, 0, $object, 'user').$object->photo;
+				$originalfile = get_exdir(0, 0, 0, 0, $object, 'user').$object->photo;
 			}
 			if (!empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile = $object->id.".jpg"; // For backward compatibility
 			$email = $object->email;
 			$capture = 'user';
-		} elseif ($modulepart == 'memberphoto')
-		{
+		} elseif ($modulepart == 'memberphoto')	{
 			$dir = $conf->adherent->dir_output;
 			if (!empty($object->photo))
 			{

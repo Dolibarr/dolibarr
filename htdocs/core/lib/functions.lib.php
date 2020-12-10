@@ -1697,7 +1697,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 							$phototoshow .= '</div>';
 						}
 					}
-				} elseif (!$phototoshow) {
+				} elseif (!$phototoshow) { // example if modulepart = 'photo'
 					$phototoshow .= $form->showphoto($modulepart, $object, 0, 0, 0, 'photoref', 'small', 1, 0, $maxvisiblephotos);
 				}
 
@@ -5555,10 +5555,10 @@ function yn($yesno, $case = 1, $color = 0)
 
 /**
  *	Return a path to have a the directory according to object where files are stored.
- *  New usage:       $conf->module->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, '')
- *         or:       $conf->module->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, '')     if multidir_output not defined.
- *  Example our with new usage:       $object is invoice -> 'INYYMM-ABCD'
- *  Example our with old usage:       '015' with level 3->"0/1/5/", '015' with level 1->"5/", 'ABC-1' with level 3 ->"0/0/1/"
+ *  New usage:       $conf->module->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, '').'/'
+ *         or:       $conf->module->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, '')     if multidir_output not defined.
+ *  Example out with new usage:       $object is invoice -> 'INYYMM-ABCD'
+ *  Example out with old usage:       '015' with level 3->"0/1/5/", '015' with level 1->"5/", 'ABC-1' with level 3 ->"0/0/1/"
  *
  *	@param	string|int	$num            Id of object (deprecated, $object will be used in future)
  *	@param  int			$level		    Level of subdirs to return (1, 2 or 3 levels). (deprecated, global option will be used in future)
@@ -5576,10 +5576,9 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 
 	$path = '';
 
-	$arrayforoldpath = array('cheque', 'user', 'category', 'holiday', 'supplier_invoice', 'invoice_supplier', 'mailing', 'supplier_payment');
+	$arrayforoldpath = array('cheque', 'category', 'holiday', 'supplier_invoice', 'invoice_supplier', 'mailing', 'supplier_payment');
 	if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $arrayforoldpath[] = 'product';
-	if (!empty($level) && in_array($modulepart, $arrayforoldpath))
-	{
+	if (!empty($level) && in_array($modulepart, $arrayforoldpath)) {
 		// This part should be removed once all code is using "get_exdir" to forge path, with all parameters provided.
 		if (empty($alpha)) $num = preg_replace('/([^0-9])/i', '', $num);
 		else $num = preg_replace('/^.*\-/i', '', $num);
