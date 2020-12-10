@@ -70,7 +70,7 @@ if (!function_exists('gzdecode')) {
  * Action
  */
 
-if ($action == 'addprinter' && $user->admin) {
+*if ($action == 'addprinter' && $user->admin) {
 	$error = 0;
 	if (empty($printername)) {
 		$error++;
