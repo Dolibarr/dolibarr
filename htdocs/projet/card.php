@@ -587,7 +587,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 		print '</td><td class="maxwidthonsmartphone">';
 		$filteronlist = '';
 		if (!empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist = $conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
-	   	$text = img_picto('', 'company').$form->select_company(GETPOST('socid', 'int'), 'socid', $filteronlist, 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300 widthcentpercentminusx');
+	   	$text = img_picto('', 'company').$form->select_company(GETPOST('socid', 'int'), 'socid', $filteronlist, 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300 widthcentpercentminusxx');
 		if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile))
 		{
 			$texthelp = $langs->trans("IfNeedToUseOtherObjectKeepEmpty");
