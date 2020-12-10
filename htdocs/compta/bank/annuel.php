@@ -138,7 +138,7 @@ if ($resql)
 
 // Onglets
 $head = bank_prepare_head($object);
-dol_fiche_head($head, 'annual', $langs->trans("FinancialAccount"), 0, 'account');
+print dol_get_fiche_head($head, 'annual', $langs->trans("FinancialAccount"), 0, 'account');
 
 $title = $langs->trans("FinancialAccount")." : ".$object->label;
 $link = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?account=".$object->id."&year_start=".($year_start - 1)."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$object->id."&year_start=".($year_start + 1)."'>".img_next('', 'class="valignbottom"')."</a>" : "");
@@ -148,25 +148,25 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_v
 
 if (!empty($id))
 {
-    if (!preg_match('/,/', $id))
-    {
-        dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
-    } else {
-        $bankaccount = new Account($db);
-        $listid = explode(',', $id);
-        foreach ($listid as $key => $aId)
-        {
-            $bankaccount->fetch($aId);
-            $bankaccount->label = $bankaccount->ref;
-            print $bankaccount->getNomUrl(1);
-            if ($key < (count($listid) - 1)) print ', ';
-        }
-    }
+	if (!preg_match('/,/', $id))
+	{
+		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
+	} else {
+		$bankaccount = new Account($db);
+		$listid = explode(',', $id);
+		foreach ($listid as $key => $aId)
+		{
+			$bankaccount->fetch($aId);
+			$bankaccount->label = $bankaccount->ref;
+			print $bankaccount->getNomUrl(1);
+			if ($key < (count($listid) - 1)) print ', ';
+		}
+	}
 } else {
 	print $langs->trans("AllAccounts");
 }
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 // Affiche tableau

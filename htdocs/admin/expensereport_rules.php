@@ -151,7 +151,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_valu
 print load_fiche_titre($langs->trans("ExpenseReportsSetup"), $linkback, 'title_setup');
 
 $head = expensereport_admin_prepare_head();
-dol_fiche_head($head, 'expenserules', $langs->trans("ExpenseReportsRules"), -1, 'trip');
+print dol_get_fiche_head($head, 'expenserules', $langs->trans("ExpenseReportsRules"), -1, 'trip');
 
 echo '<span class="opacitymedium">'.$langs->trans('ExpenseReportRulesDesc').'</span>';
 print '<br><br>';
@@ -305,11 +305,11 @@ foreach ($rules as $rule)
 	echo '<td class="center">';
 	if ($object->id != $rule->id)
 	{
-		echo '<a class="editfielda paddingright paddingleft" href="'.$_SERVER['PHP_SELF'].'?action=edit&id='.$rule->id.'">'.img_edit().'</a>&nbsp;';
-		echo '<a class="paddingright paddingleft" href="'.$_SERVER['PHP_SELF'].'?action=delete&id='.$rule->id.'">'.img_delete().'</a>';
+		echo '<a class="editfielda paddingright paddingleft" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$rule->id.'">'.img_edit().'</a>&nbsp;';
+		echo '<a class="paddingright paddingleft" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$rule->id.'">'.img_delete().'</a>';
 	} else {
 		echo '<input type="submit" class="button" value="'.$langs->trans('Update').'" />&nbsp;';
-		echo '<a href="'.$_SERVER['PHP_SELF'].'" class="button">'.$langs->trans('Cancel').'</a>';
+		echo '<a href="'.$_SERVER['PHP_SELF'].'" class="button button-cancel">'.$langs->trans("Cancel").'</a>';
 	}
 	echo '</td>';
 
@@ -338,7 +338,7 @@ echo '<script type="text/javascript"> $(function() {
 
 }); </script>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

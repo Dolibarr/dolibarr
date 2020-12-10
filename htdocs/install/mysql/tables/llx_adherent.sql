@@ -72,7 +72,7 @@ create table llx_adherent
   model_pdf		   varchar(255),
   datevalid        datetime,  -- date de validation
   datec            datetime,  -- date de creation
-  tms              timestamp, -- date de modification
+  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- last modification date
   fk_user_author   integer,   -- can be null because member can be create by a guest
   fk_user_mod      integer,
   fk_user_valid    integer,

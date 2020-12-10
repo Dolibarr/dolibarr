@@ -122,20 +122,14 @@ class modSociete extends DolibarrModules
 		$r++;
 
 		// Boxes
-		$this->boxes = array();
-		$r = 0;
-		$this->boxes[$r][1] = "box_clients.php";
-		$r++;
-		$this->boxes[$r][1] = "box_prospect.php";
-		$r++;
-		$this->boxes[$r][1] = "box_contacts.php";
-		$r++;
-		$this->boxes[$r][1] = "box_activity.php";
-		$this->boxes[$r][2] = '(WarningUsingThisBoxSlowDown)';
-		$r++;
-		$this->boxes[$r][1] = "box_goodcustomers.php";
-		$this->boxes[$r][2] = '(WarningUsingThisBoxSlowDown)';
-		$r++;
+		$this->boxes = array(
+			0=>array('file'=>'box_clients.php', 'enabledbydefaulton'=>'Home'),
+			1=>array('file'=>'box_prospect.php', 'enabledbydefaulton'=>'Home'),
+			2=>array('file'=>'box_contacts.php', 'enabledbydefaulton'=>'Home'),
+			3=>array('file'=>'box_activity.php', 'enabledbydefaulton'=>'Home', 'note'=>'(WarningUsingThisBoxSlowDown)'),
+			4=>array('file'=>'box_goodcustomers.php', 'enabledbydefaulton'=>'Home', 'note'=>'(WarningUsingThisBoxSlowDown)'),
+		);
+
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'societe';
@@ -295,7 +289,7 @@ class modSociete extends DolibarrModules
 			's.rowid'=>"Numeric", 's.nom'=>"Text", 's.name_alias'=>"Text", 'ps.nom'=>"Text",
 			's.status'=>"Numeric", 's.client'=>"Numeric", 's.fournisseur'=>"Boolean", 's.datec'=>"Date", 's.tms'=>"Date",
 			's.code_client'=>"Text", 's.code_fournisseur'=>"Text", 's.code_compta'=>"Text", 's.code_compta_fournisseur'=>"Text",
-			's.address'=>"Text", 's.zip'=>"Text",'s.town'=>"Text",
+			's.address'=>"Text", 's.zip'=>"Text", 's.town'=>"Text",
 			'd.nom'=>'Text', 'r.nom'=>'Text', 'c.label'=>"List:c_country:label:label", 'c.code'=>"Text",
 			's.phone'=>"Text", 's.fax'=>"Text",
 			's.url'=>"Text", 's.email'=>"Text", 's.default_lang'=>"Text", 's.canvas' => "Canvas",

@@ -58,6 +58,8 @@ class CMailFile
 	public $alternative_boundary;
 	public $deliveryreceipt;
 
+	public $atleastonefile;
+
 	public $eol;
 	public $eol2;
 
@@ -144,8 +146,10 @@ class CMailFile
 			}
 		}
 
-		// Add autocopy to (Note: Adding bcc for specific modules are also done from pages)
-		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) $addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
+		// Add autocopy to if not already in $to (Note: Adding bcc for specific modules are also done from pages)
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO) && !preg_match('/'.preg_quote($conf->global->MAIN_MAIL_AUTOCOPY_TO, '/').'/i', $to)) {
+		    $addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
+		}
 
 		$this->subject = $subject;
 		$this->addr_to = $to;
@@ -171,7 +175,7 @@ class CMailFile
 		if (!empty($this->sendcontext)) {
 			$smtpContextKey = strtoupper($this->sendcontext);
 			$keyForSMTPSendMode = 'MAIN_MAIL_SENDMODE_'.$smtpContextKey;
-			$smtpContextSendMode = $conf->global->{$keyForSMTPSendMode};
+			$smtpContextSendMode = empty($conf->global->{$keyForSMTPSendMode}) ? '' : $conf->global->{$keyForSMTPSendMode};
 			if (!empty($smtpContextSendMode) && $smtpContextSendMode != 'default') {
 				$this->sendmode = $smtpContextSendMode;
 			}
@@ -240,6 +244,7 @@ class CMailFile
 		{
 			$this->html = $msg;
 
+			$findimg = 0;
 			if (!empty($conf->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS))
 			{
 				$findimg = $this->findHtmlImages($dolibarr_main_data_root.'/medias');
@@ -272,6 +277,11 @@ class CMailFile
 			}
 		}
 
+		// Add autocopy to if not already in $to (Note: Adding bcc for specific modules are also done from pages)
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO) && !preg_match('/'.preg_quote($conf->global->MAIN_MAIL_AUTOCOPY_TO, '/').'/i', $to)) {
+		    $addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
+		}
+
 		$this->addr_to = $to;
 		$this->addr_cc = $addr_cc;
 		$this->addr_bcc = $addr_bcc;
@@ -289,18 +299,13 @@ class CMailFile
 			$this->addr_bcc = '';
 		}
 
-		// Add autocopy to (Note: Adding bcc for specific modules are also done from pages)
-		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) {
-			$addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
-		}
-
-		$keyforsslseflsigned  ='MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED';
+		$keyforsslseflsigned = 'MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED';
 		if (!empty($this->sendcontext)) {
 			$smtpContextKey = strtoupper($this->sendcontext);
-			$keyForSMTPSendMode = 'MAIN_MAIL_SENDMODE_' . $smtpContextKey;
-			$smtpContextSendMode = $conf->global->{$keyForSMTPSendMode};
+			$keyForSMTPSendMode = 'MAIN_MAIL_SENDMODE_'.$smtpContextKey;
+			$smtpContextSendMode = empty($conf->global->{$keyForSMTPSendMode}) ? '' : $conf->global->{$keyForSMTPSendMode};
 			if (!empty($smtpContextSendMode) && $smtpContextSendMode != 'default') {
-				$keyforsslseflsigned  ='MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_' . $smtpContextKey;
+				$keyforsslseflsigned = 'MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_'.$smtpContextKey;
 			}
 		}
 
@@ -338,8 +343,7 @@ class CMailFile
 			$text_body = $this->write_body($msg);
 
 			// Add attachments to text_encoded
-			if ($this->atleastonefile)
-			{
+			if (!empty($this->atleastonefile)) {
 				$files_encoded = $this->write_files($filename_list, $mimetype_list, $mimefilename_list);
 			}
 
@@ -401,7 +405,7 @@ class CMailFile
 				}
 			}
 
-			if ($this->atleastonefile)
+			if (!empty($this->atleastonefile))
 			{
 				foreach ($filename_list as $i => $val)
 				{
@@ -530,7 +534,7 @@ class CMailFile
 				$this->message->addPart(dol_nl2br($msg), 'text/html');
 			}
 
-			if ($this->atleastonefile)
+			if (!empty($this->atleastonefile))
 			{
 				foreach ($filename_list as $i => $val)
 				{
@@ -653,19 +657,19 @@ class CMailFile
 			$keyforsmtppw    = 'MAIN_MAIL_SMTPS_PW';
 			$keyfortls       = 'MAIN_MAIL_EMAIL_TLS';
 			$keyforstarttls  = 'MAIN_MAIL_EMAIL_STARTTLS';
-			$keyforsslseflsigned  ='MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED';
+			$keyforsslseflsigned = 'MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED';
 			if (!empty($this->sendcontext)) {
 				$smtpContextKey = strtoupper($this->sendcontext);
 				$keyForSMTPSendMode = 'MAIN_MAIL_SENDMODE_'.$smtpContextKey;
-				$smtpContextSendMode = $conf->global->{$keyForSMTPSendMode};
+				$smtpContextSendMode = empty($conf->global->{$keyForSMTPSendMode}) ? '' : $conf->global->{$keyForSMTPSendMode};
 				if (!empty($smtpContextSendMode) && $smtpContextSendMode != 'default') {
-					$keyforsmtpserver = 'MAIN_MAIL_SMTP_SERVER_' . $smtpContextKey;
-					$keyforsmtpport   = 'MAIN_MAIL_SMTP_PORT_' . $smtpContextKey;
-					$keyforsmtpid     = 'MAIN_MAIL_SMTPS_ID_' . $smtpContextKey;
-					$keyforsmtppw     = 'MAIN_MAIL_SMTPS_PW_' . $smtpContextKey;
-					$keyfortls        = 'MAIN_MAIL_EMAIL_TLS_' . $smtpContextKey;
-					$keyforstarttls   = 'MAIN_MAIL_EMAIL_STARTTLS_' . $smtpContextKey;
-					$keyforsslseflsigned  ='MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_' . $smtpContextKey;
+					$keyforsmtpserver = 'MAIN_MAIL_SMTP_SERVER_'.$smtpContextKey;
+					$keyforsmtpport   = 'MAIN_MAIL_SMTP_PORT_'.$smtpContextKey;
+					$keyforsmtpid     = 'MAIN_MAIL_SMTPS_ID_'.$smtpContextKey;
+					$keyforsmtppw     = 'MAIN_MAIL_SMTPS_PW_'.$smtpContextKey;
+					$keyfortls        = 'MAIN_MAIL_EMAIL_TLS_'.$smtpContextKey;
+					$keyforstarttls   = 'MAIN_MAIL_EMAIL_STARTTLS_'.$smtpContextKey;
+					$keyforsslseflsigned = 'MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_'.$smtpContextKey;
 				}
 			}
 
@@ -862,7 +866,7 @@ class CMailFile
 
 				if (!empty($conf->global->$keyforsmtpid)) $this->transport->setUsername($conf->global->$keyforsmtpid);
 				if (!empty($conf->global->$keyforsmtppw)) $this->transport->setPassword($conf->global->$keyforsmtppw);
-				if (! empty($conf->global->$keyforsslseflsigned)) $this->transport->setStreamOptions(array('ssl' => array('allow_self_signed' => true, 'verify_peer' => false)));;
+				if (!empty($conf->global->$keyforsslseflsigned)) $this->transport->setStreamOptions(array('ssl' => array('allow_self_signed' => true, 'verify_peer' => false)));
 				//$smtps->_msgReplyTo  = 'reply@web.com';
 
 				// Switch content encoding to base64 - avoid the doubledot issue with quoted-printable
@@ -1544,6 +1548,7 @@ class CMailFile
 		$i = 0;
 		foreach ($arrayaddress as $val)
 		{
+			$regs = array();
 			if (preg_match('/^(.*)<(.*)>$/i', trim($val), $regs))
 			{
 				$name  = trim($regs[1]);

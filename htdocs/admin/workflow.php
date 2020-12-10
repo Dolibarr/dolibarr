@@ -139,7 +139,7 @@ if (!empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['w
 }
 
 // remove not available workflows (based on activated modules and global defined keys)
-$workflowcodes  = array_filter($workflowcodes, function ($var) {
+$workflowcodes = array_filter($workflowcodes, function ($var) {
 	return $var['enabled']; });
 
 /*
@@ -219,11 +219,11 @@ foreach ($workflowcodes as $key => $params) {
 		print ajax_constantonoff($key);
 	} else {
 		if (!empty($conf->global->$key)) {
-			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=del'.$key.'">';
+			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=del'.$key.'&amp;token='.newToken().'">';
 			print img_picto($langs->trans("Activated"), 'switch_on');
 			print '</a>';
 		} else {
-			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=set'.$key.'">';
+			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=set'.$key.'&amp;token='.newToken().'">';
 			print img_picto($langs->trans("Disabled"), 'switch_off');
 			print '</a>';
 		}

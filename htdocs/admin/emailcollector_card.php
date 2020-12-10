@@ -223,21 +223,6 @@ $help_url = "EN:Module_EMail_Collector|FR:Module_Collecteur_de_courrier_électro
 
 llxHeader('', 'EmailCollector', $help_url);
 
-// Example : Adding jquery code
-print '<script type="text/javascript" language="javascript">
-jQuery(document).ready(function() {
-	function init_myfunc()
-	{
-		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
-	}
-	init_myfunc();
-	jQuery("#mybutton").click(function() {
-		init_myfunc();
-	});
-});
-</script>';
-
 // Part to create
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewEmailCollector", $langs->transnoentitiesnoconv("EmailCollector")));
@@ -247,7 +232,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	dol_fiche_head(array(), '');
+	print dol_get_fiche_head(array(), '');
 
 	print '<table class="border centpercent tableforfield">'."\n";
 
@@ -261,12 +246,12 @@ if ($action == 'create') {
 
 	print '</table>'."\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
 	print '&nbsp; ';
-	print '<input type="'.($backtopage ? "submit" : "button").'" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
+	print '<input type="'.($backtopage ? "submit" : "button").'" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
 	print '</div>';
 
 	print '</form>';
@@ -283,7 +268,7 @@ if (($id || $ref) && $action == 'edit')
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent tableforfield">'."\n";
 
@@ -295,10 +280,10 @@ if (($id || $ref) && $action == 'edit')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<div class="center"><input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
+	print ' &nbsp; <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
 	print '</form>';
@@ -313,7 +298,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$object->fetchActions();
 
 	$head = emailcollectorPrepareHead($object);
-	dol_fiche_head($head, 'card', $langs->trans("EmailCollector"), -1, 'email');
+	print dol_get_fiche_head($head, 'card', $langs->trans("EmailCollector"), -1, 'email');
 
 	$formconfirm = '';
 
@@ -433,6 +418,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (!$connection)
 	{
 		$morehtml .= 'Failed to open IMAP connection '.$connectstringsource;
+		$morehtml .= '<br>'.imap_last_error();
+		//var_dump(imap_errors())
 	} else {
 		$morehtml .= imap_num_msg($connection);
 	}
@@ -496,6 +483,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		'X3'=>'---',
 		'withtrackingid'=>array('label'=>'WithDolTrackingID', 'data-noparam'=>1),
 		'withouttrackingid'=>array('label'=>'WithoutDolTrackingID', 'data-noparam'=>1),
+		'withtrackingidinmsgid'=>array('label'=>'WithDolTrackingIDInMsgId', 'data-noparam'=>1),
+		'withouttrackingidinmsgid'=>array('label'=>'WithoutDolTrackingIDInMsgId', 'data-noparam'=>1),
 		'X4'=>'---',
 		'isnotanswer'=>array('label'=>'IsNotAnAnswer', 'data-noparam'=>1),
 		'isanswer'=>array('label'=>'IsAnAnswer', 'data-noparam'=>1)
@@ -538,7 +527,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</td>';
 		print '<td>'.$rulefilter['rulevalue'].'</td>';
 		print '<td class="right">';
-		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletefilter&filterid='.$rulefilter['id'].'">'.img_delete().'</a>';
+		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletefilter&token='.urlencode(newToken()).'&filterid='.$rulefilter['id'].'">'.img_delete().'</a>';
 		print '</td>';
 		print '</tr>';
 	}
@@ -612,7 +601,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		{
 			print '<input type="text" class="quatrevingtquinzepercent" name="operationparam2" value="'.$ruleaction['actionparam'].'"><br>';
 			print '<input type="hidden" name="rowidoperation2" value="'.$ruleaction['id'].'"><br>';
-			print '<input type="submit" class="button" name="saveoperation2" value="'.$langs->trans("Save").'"> <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" class="button button-save" name="saveoperation2" value="'.$langs->trans("Save").'">';
+			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		} else {
 			print $ruleaction['actionparam'];
 		}
@@ -630,7 +620,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Delete
 		print '<td class="right nowraponall">';
 		print '<a class="editfielda marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editoperation&operationid='.$ruleaction['id'].'">'.img_edit().'</a>';
-		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteoperation&operationid='.$ruleaction['id'].'">'.img_delete().'</a>';
+		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteoperation&token='.newToken().'&operationid='.$ruleaction['id'].'">'.img_delete().'</a>';
 		print '</td>';
 		print '</tr>';
 		$i++;
@@ -653,7 +643,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '<div class="clearboth"></div><br>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	// Buttons for actions
 	if ($action != 'presend' && $action != 'editline') {
@@ -677,7 +667,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoOperations")).'">'.$langs->trans("CollectNow").'</a></div>';
 			}
 
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.urlencode(newToken()).'">'.$langs->trans('Delete').'</a></div>';
 		}
 		print '</div>'."\n";
 	}
@@ -686,61 +676,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	{
 		print info_admin($debuginfo);
 	}
-
-
-	// Select mail models is same action as presend
-	if (GETPOST('modelselected')) {
-		$action = 'presend';
-	}
-
-	/*
-	if ($action != 'presend') {
-		print '<div class="fichecenter"><div class="fichehalfleft">';
-		print '<a name="builddoc"></a>'; // ancre
-	*/
-		// Documents
-		/*$objref = dol_sanitizeFileName($object->ref);
-	    $relativepath = $comref . '/' . $comref . '.pdf';
-	    $filedir = $conf->emailcollector->dir_output . '/' . $objref;
-	    $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-	    $genallowed = $user->rights->emailcollector->read;	// If you can read, you can build the PDF to read content
-	    $delallowed = $user->rights->emailcollector->create;	// If you can create/edit, you can remove a file on card
-	    print $formfile->showdocuments('emailcollector', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
-		*/
-	/*
-		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('emailcollector'));
-		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-
-		$MAXEVENT = 10;
-
-		$morehtmlright = '<a href="' . dol_buildpath('/emailcollector/emailcollector_info.php', 1) . '?id=' . $object->id . '">';
-		$morehtmlright .= $langs->trans("SeeAll");
-		$morehtmlright .= '</a>';
-
-		// List of actions on element
-		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
-		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, 'emailcollector_emailcollector', $socid, 1, '', $MAXEVENT, '', $morehtmlright);
-
-		print '</div></div></div>';
-	}
-	*/
-
-	//Select mail models is same action as presend
-	/*
-	 if (GETPOST('modelselected')) $action = 'presend';
-
-	 // Presend form
-	 $modelmail='inventory';
-	 $defaulttopic='InformationMessage';
-	 $diroutput = $conf->product->dir_output.'/inventory';
-	 $trackid = 'stockinv'.$object->id;
-
-	 include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
-	 */
 }
 
 // End of page

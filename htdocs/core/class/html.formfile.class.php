@@ -79,9 +79,10 @@ class FormFile
 	 *	@param	string		$sectiondir		If upload must be done inside a particular directory (if sectiondir defined, sectionid must not be)
 	 *  @param  int         $usewithoutform 0=Default, 1=Disable <form> and style to use in existing area
 	 *  @param	int			$capture		1=Add tag capture="capture" to force use of micro or video recording to generate file. When setting this to 1, you must also provide a value for $accept.
+	 *  @param	int			$disablemulti	0=Default, 1=Disable multiple file upload
 	 * 	@return	int							<0 if KO, >0 if OK
 	 */
-	public function form_attach_new_file($url, $title = '', $addcancel = 0, $sectionid = 0, $perm = 1, $size = 50, $object = '', $options = '', $useajax = 1, $savingdocmask = '', $linkfiles = 1, $htmlname = 'formuserfile', $accept = '', $sectiondir = '', $usewithoutform = 0, $capture = 0)
+	public function form_attach_new_file($url, $title = '', $addcancel = 0, $sectionid = 0, $perm = 1, $size = 50, $object = '', $options = '', $useajax = 1, $savingdocmask = '', $linkfiles = 1, $htmlname = 'formuserfile', $accept = '', $sectiondir = '', $usewithoutform = 0, $capture = 0, $disablemulti = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs, $hookmanager;
@@ -114,6 +115,9 @@ class FormFile
 
 			if (empty($usewithoutform))		// Try to avoid this and set instead the form by the caller.
 			{
+				// Add a param as GET parameter to detect when POST were cleaned by PHP because a file larger than post_max_size
+				$url .= (strpos($url, '?') === false ? '?' : '&').'uploadform=1';
+
 				$out .= '<form name="'.$htmlname.'" id="'.$htmlname.'" action="'.$url.'" enctype="multipart/form-data" method="POST">';
 				$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$out .= '<input type="hidden" id="'.$htmlname.'_section_dir" name="section_dir" value="'.$sectiondir.'">';
@@ -167,7 +171,7 @@ class FormFile
 
 			$out .= '<input class="flat minwidth400 maxwidth200onsmartphone" type="file"';
 			//$out .= ((!empty($conf->global->MAIN_DISABLE_MULTIPLE_FILEUPLOAD) || $conf->browser->layout != 'classic') ? ' name="userfile"' : ' name="userfile[]" multiple');
-			$out .= ((!empty($conf->global->MAIN_DISABLE_MULTIPLE_FILEUPLOAD)) ? ' name="userfile"' : ' name="userfile[]" multiple');
+			$out .= ((!empty($conf->global->MAIN_DISABLE_MULTIPLE_FILEUPLOAD) || $disablemulti) ? ' name="userfile"' : ' name="userfile[]" multiple');
 			$out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm) ? ' disabled' : '');
 			$out .= (!empty($accept) ? ' accept="'.$accept.'"' : ' accept=""');
 			$out .= (!empty($capture) ? ' capture="capture"' : '');
@@ -184,7 +188,7 @@ class FormFile
 			if ($addcancel)
 			{
 				$out .= ' &nbsp; ';
-				$out .= '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+				$out .= '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			}
 
 			if (!empty($conf->global->MAIN_UPLOAD_DOC))
@@ -363,7 +367,7 @@ class FormFile
 		}
 
 		$printer = 0;
-		if (in_array($modulepart, array('facture', 'supplier_proposal', 'propal', 'proposal', 'order', 'commande', 'expedition', 'commande_fournisseur', 'expensereport', 'livraison', 'ticket')))	// The direct print feature is implemented only for such elements
+		if (in_array($modulepart, array('facture', 'supplier_proposal', 'propal', 'proposal', 'order', 'commande', 'expedition', 'commande_fournisseur', 'expensereport', 'delivery', 'ticket')))	// The direct print feature is implemented only for such elements
 		{
 			$printer = (!empty($user->rights->printing->read) && !empty($conf->printing->enabled)) ?true:false;
 		}
@@ -463,11 +467,11 @@ class FormFile
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
 					$modellist = ModelePdfReception::liste_modeles($this->db);
 				}
-			} elseif ($modulepart == 'livraison')
+			} elseif ($modulepart == 'delivery')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
 				else {
-					include_once DOL_DOCUMENT_ROOT.'/core/modules/livraison/modules_livraison.php';
+					include_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/modules_delivery.php';
 					$modellist = ModelePDFDeliveryOrder::liste_modeles($this->db);
 				}
 			} elseif ($modulepart == 'ficheinter')
@@ -1031,10 +1035,9 @@ class FormFile
 	public function list_of_documents($filearray, $object, $modulepart, $param = '', $forcedownload = 0, $relativepath = '', $permonobject = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $title = '', $url = '', $showrelpart = 0, $permtoeditline = -1, $upload_dir = '', $sortfield = '', $sortorder = 'ASC', $disablemove = 1, $addfilterfields = 0, $disablecrop = -1)
 	{
 		// phpcs:enable
-		global $user, $conf, $langs, $hookmanager;
+		global $user, $conf, $langs, $hookmanager, $form;
 		global $sortfield, $sortorder, $maxheightmini;
 		global $dolibarr_main_url_root;
-		global $form;
 
 		if ($disablecrop == -1)
 		{
@@ -1200,7 +1203,7 @@ class FormFile
 					{
 						print '</a>';
 						$section_dir = dirname(GETPOST('urlfile', 'alpha'));
-						if (! preg_match('/\/$/', $section_dir)) $section_dir.='/';
+						if (!preg_match('/\/$/', $section_dir)) $section_dir .= '/';
 						print '<input type="hidden" name="section_dir" value="'.$section_dir.'">';
 						print '<input type="hidden" name="renamefilefrom" value="'.dol_escape_htmltag($file['name']).'">';
 						print '<input type="text" name="renamefileto" class="quatrevingtpercent" value="'.dol_escape_htmltag($file['name']).'">';
@@ -1218,7 +1221,6 @@ class FormFile
 					// Size
 					$sizetoshow = dol_print_size($file['size'], 1, 1);
 					$sizetoshowbytes = dol_print_size($file['size'], 0, 1);
-
 					print '<td class="right nowraponall">';
 					if ($sizetoshow == $sizetoshowbytes) print $sizetoshow;
 					else {
@@ -1300,7 +1302,7 @@ class FormFile
 						if ($useinecm == 1 || $useinecm == 5)	// ECM manual tree only
 						{
 							// $section is inside $param
-							$newparam.=preg_replace('/&file=.*$/', '', $param);		// We don't need param file=
+							$newparam .= preg_replace('/&file=.*$/', '', $param); // We don't need param file=
 							$backtopage = DOL_URL_ROOT.'/ecm/index.php?&section_dir='.urlencode($relativepath).$newparam;
 							print '<a class="editfielda" href="'.DOL_URL_ROOT.'/ecm/file_card.php?urlfile='.urlencode($file['name']).$param.'&backtopage='.urlencode($backtopage).'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
 						}
@@ -1337,7 +1339,7 @@ class FormFile
 							if (!empty($conf->dol_use_jmobile)) $useajax = 0;
 							if (empty($conf->use_javascript_ajax)) $useajax = 0;
 							if (!empty($conf->global->MAIN_ECM_DISABLE_JS)) $useajax = 0;
-							print '<a href="'.((($useinecm && $useinecm != 6) && $useajax) ? '#' : ($url.'?action=delete&urlfile='.urlencode($filepath).$param)).'" class="reposition deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
+							print '<a href="'.((($useinecm && $useinecm != 6) && $useajax) ? '#' : ($url.'?action=delete&token='.newToken().'&urlfile='.urlencode($filepath).$param)).'" class="reposition deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
 						}
 						print "</td>";
 
@@ -1360,8 +1362,8 @@ class FormFile
 					} else {
 						print '<td class="right">';
 						print '<input type="hidden" name="ecmfileid" value="'.$filearray[$key]['rowid'].'">';
-						print '<input type="submit" class="button" name="renamefilesave" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
-						print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+						print '<input type="submit" class="button button-save" name="renamefilesave" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+						print '<input type="submit" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 						print '</td>';
 						if (empty($disablemove)) print '<td class="right"></td>';
 					}
@@ -1403,9 +1405,9 @@ class FormFile
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Show list of documents in a directory
+	 *	Show list of documents in a directory of ECM module.
 	 *
-	 *  @param	string	$upload_dir         Directory that was scanned
+	 *  @param	string	$upload_dir         Directory that was scanned. This directory will contains files into subdirs REF/files
 	 *  @param  array	$filearray          Array of files loaded by dol_dir_list function before calling this function
 	 *  @param  string	$modulepart         Value for modulepart used by download wrapper
 	 *  @param  string	$param              Parameters on sort links
@@ -1423,9 +1425,10 @@ class FormFile
 	public function list_of_autoecmfiles($upload_dir, $filearray, $modulepart, $param, $forcedownload = 0, $relativepath = '', $permissiontodelete = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $url = '', $addfilterfields = 0)
 	{
 		// phpcs:enable
-		global $user, $conf, $langs, $form;
+		global $user, $conf, $langs, $hookmanager, $form;
 		global $sortfield, $sortorder;
 		global $search_doc_ref;
+		global $dolibarr_main_url_root;
 
 		dol_syslog(get_class($this).'::list_of_autoecmfiles upload_dir='.$upload_dir.' modulepart='.$modulepart);
 
@@ -1543,6 +1546,23 @@ class FormFile
 			$object_instance = new Mo($this->db);
 		}
 
+		//var_dump($filearray);
+
+		// Get list of files stored into database for same relative directory
+		$relativepathfromroot = preg_replace('/'.preg_quote(DOL_DATA_ROOT.'/', '/').'/', '', $upload_dir);
+		if ($relativepathfromroot)
+		{
+			completeFileArrayWithDatabaseInfo($filearray, $relativepathfromroot.'/%');
+
+			//var_dump($sortfield.' - '.$sortorder);
+			if ($sortfield && $sortorder)	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
+			{
+				$filearray = dol_sort_array($filearray, $sortfield, $sortorder);
+			}
+		}
+
+		//var_dump($filearray);
+
 		foreach ($filearray as $key => $file)
 		{
 			if (!is_dir($file['name'])
@@ -1554,7 +1574,7 @@ class FormFile
 				// Define relative path used to store the file
 				$relativefile = preg_replace('/'.preg_quote($upload_dir.'/', '/').'/', '', $file['fullname']);
 
-				$id = 0; $ref = ''; $label = '';
+				$id = 0; $ref = '';
 
 				// To show ref or specific information according to view to show (defined by $module)
 				$reg = array();
@@ -1586,7 +1606,7 @@ class FormFile
 				{
 					$found = 1;
 				} else {
-					//print 'Fetch '.$id." - ".$ref.'<br>';
+					//print 'Fetch '.$id." - ".$ref.' class='.get_class($object_instance).'<br>';
 
 					if ($id) {
 						$result = $object_instance->fetch($id);
@@ -1615,13 +1635,12 @@ class FormFile
 				else print $langs->trans("ObjectDeleted", ($id ? $id : $ref));
 
 				//$modulesubdir=dol_sanitizeFileName($ref);
-				$modulesubdir = dirname($relativefile);
+				//$modulesubdir = dirname($relativefile);
 
 				//$filedir=$conf->$modulepart->dir_output . '/' . dol_sanitizeFileName($obj->ref);
-				$filedir = $file['path'];
+				//$filedir = $file['path'];
 				//$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 				//print $formfile->getDocumentsLink($modulepart, $filename, $filedir);
-
 				print '</td>';
 
 				// File
@@ -1635,17 +1654,48 @@ class FormFile
 				print '</a>';
 
 				//print $this->getDocumentsLink($modulepart, $modulesubdir, $filedir, '^'.preg_quote($file['name'],'/').'$');
+
 				print $this->showPreview($file, $modulepart, $file['relativename']);
 
 				print "</td>\n";
-				print '<td class="right">'.dol_print_size($file['size'], 1, 1).'</td>';
+
+				// Size
+				$sizetoshow = dol_print_size($file['size'], 1, 1);
+				$sizetoshowbytes = dol_print_size($file['size'], 0, 1);
+				print '<td class="right nowraponall">';
+				if ($sizetoshow == $sizetoshowbytes) print $sizetoshow;
+				else {
+					print $form->textwithpicto($sizetoshow, $sizetoshowbytes, -1);
+				}
+				print '</td>';
+
+				// Date
 				print '<td class="center">'.dol_print_date($file['date'], "dayhour").'</td>';
+
+				// Share link
 				print '<td class="right">';
+				if ($file['share']) {
+					// Define $urlwithroot
+					$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+					$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+					//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+					//print '<span class="opacitymedium">'.$langs->trans("Hash").' : '.$file['share'].'</span>';
+					$forcedownload = 0;
+					$paramlink = '';
+					if (!empty($file['share'])) $paramlink .= ($paramlink ? '&' : '').'hashp='.$file['share']; // Hash for public share
+					if ($forcedownload) $paramlink .= ($paramlink ? '&' : '').'attachment=1';
+
+					$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
+
+					print img_picto($langs->trans("FileSharedViaALink"), 'globe').' ';
+					print '<input type="text" class="quatrevingtpercent width100" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
+				}
 				//if (! empty($useinecm) && $useinecm != 6)  print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
 				//if ($forcedownload) print '&attachment=1';
 				//print '&file='.urlencode($relativefile).'">';
 				//print img_view().'</a> &nbsp; ';
-				//if ($permissiontodelete) print '<a href="'.$url.'?id='.$object->id.'&section='.$_REQUEST["section"].'&action=delete&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
+				//if ($permissiontodelete) print '<a href="'.$url.'?id='.$object->id.'&section='.$_REQUEST["section"].'&action=delete&token='.newToken().'&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
 				//else print '&nbsp;';
 				print "</td></tr>\n";
 			}
@@ -1803,8 +1853,8 @@ class FormFile
 				print '<td class="center">'.dol_print_date(dol_now(), "dayhour", "tzuser").'</td>';
 				print '<td class="right"></td>';
 				print '<td class="right">';
-				print '<input type="submit" name="save" class="button" value="'.dol_escape_htmltag($langs->trans('Save')).'">';
-				print '<input type="submit" name="cancel" class="button" value="'.dol_escape_htmltag($langs->trans('Cancel')).'">';
+				print '<input type="submit" name="save" class="button button-save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '<input type="submit" name="cancel" class="button button-cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 				print '</td>';
 			} else {
 				print '<td>';
@@ -1819,7 +1869,7 @@ class FormFile
 				print '<td class="right">';
 				print '<a href="'.$_SERVER['PHP_SELF'].'?action=update&linkid='.$link->id.$param.'" class="editfilelink editfielda reposition" >'.img_edit().'</a>'; // id= is included into $param
 				if ($permissiontodelete) {
-					print ' &nbsp; <a class="deletefilelink" href="'.$_SERVER['PHP_SELF'].'?action=delete&linkid='.$link->id.$param.'">'.img_delete().'</a>'; // id= is included into $param
+					print ' &nbsp; <a class="deletefilelink" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&linkid='.$link->id.$param.'">'.img_delete().'</a>'; // id= is included into $param
 				} else {
 					print '&nbsp;';
 				}

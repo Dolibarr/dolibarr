@@ -83,16 +83,19 @@ class Stripe extends CommonObject
 	 *
 	 * @param 	string	$mode		'StripeTest' or 'StripeLive'
 	 * @param	int		$fk_soc		Id of thirdparty
+	 * @param	int		$entity		Id of entity (-1 = current environment)
 	 * @return 	string				Stripe account 'acc_....' or '' if no OAuth token found
 	 */
-	public function getStripeAccount($mode = 'StripeTest', $fk_soc = 0)
+	public function getStripeAccount($mode = 'StripeTest', $fk_soc = 0, $entity = -1)
 	{
 		global $conf;
 
+		if ($entity < 0) $entity = $conf->entity;
+
 		$sql = "SELECT tokenstring";
 		$sql .= " FROM ".MAIN_DB_PREFIX."oauth_token";
-		$sql .= " WHERE entity = ".$conf->entity;
-		$sql .= " AND service = '".$this->db->escape($mode)."'";
+		$sql .= " WHERE service = '".$this->db->escape($mode)."'";
+		$sql .= " AND entity = ".((int) $entity);
 		if ($fk_soc > 0) {
 			$sql .= " AND fk_soc = ".$fk_soc;
 		} else {
@@ -107,7 +110,7 @@ class Stripe extends CommonObject
 				$obj = $this->db->fetch_object($result);
 				$tokenstring = $obj->tokenstring;
 
-				$tmparray = dol_json_decode($tokenstring);
+				$tmparray = json_decode($tokenstring);
 				$key = $tmparray->stripe_user_id;
 			} else {
 				$tokenstring = '';
@@ -183,9 +186,11 @@ class Stripe extends CommonObject
 
 				try {
 					if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
-						$customer = \Stripe\Customer::retrieve("$tiers");
+						//$customer = \Stripe\Customer::retrieve("$tiers");
+						$customer = \Stripe\Customer::retrieve(array('id'=>"$tiers", 'expand[]'=>'sources'));
 					} else {
-						$customer = \Stripe\Customer::retrieve("$tiers", array("stripe_account" => $key));
+						//$customer = \Stripe\Customer::retrieve("$tiers", array("stripe_account" => $key));
+						$customer = \Stripe\Customer::retrieve(array('id'=>"$tiers", 'expand[]'=>'sources'), array("stripe_account" => $key));
 					}
 				} catch (Exception $e)
 				{
@@ -296,7 +301,7 @@ class Stripe extends CommonObject
 	 * Warning. If a payment was tried and failed, a payment intent was created.
 	 * But if we change something on object to pay (amount or other), reusing same payment intent is not allowed by Stripe.
 	 * Recommended solution is to recreate a new payment intent each time we need one (old one will be automatically closed after a delay),
-	 * that's why i comment the part of code to retreive a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
+	 * that's why i comment the part of code to retrieve a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
 	 * Note: This is used when option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is on when making a payment from the public/payment/newpayment.php page
 	 * but not when using the STRIPE_USE_NEW_CHECKOUT.
 	 *
@@ -351,7 +356,7 @@ class Stripe extends CommonObject
 			// But if we change something on object to pay (amount or other that does not change the idempotency key), reusing same payment intent is not allowed by Stripe.
 			// Recommended solution is to recreate a new payment intent each time we need one (old one will be automatically closed by Stripe after a delay), Stripe will
 			// automatically return the existing payment intent if idempotency is provided when we try to create the new one.
-			// That's why we can comment the part of code to retreive a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
+			// That's why we can comment the part of code to retrieve a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
 
 			$sql = "SELECT pi.ext_payment_id, pi.entity, pi.fk_facture, pi.sourcetype, pi.ext_payment_site";
 			$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pi";
@@ -533,7 +538,7 @@ class Stripe extends CommonObject
 	 * Warning. If a payment was tried and failed, a payment intent was created.
 	 * But if we change something on object to pay (amount or other), reusing same payment intent is not allowed.
 	 * Recommanded solution is to recreate a new payment intent each time we need one (old one will be automatically closed after a delay),
-	 * that's why i comment the part of code to retreive a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
+	 * that's why i comment the part of code to retrieve a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
 	 * Note: This is used when option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is on when making a payment from the public/payment/newpayment.php page
 	 * but not when using the STRIPE_USE_NEW_CHECKOUT.
 	 *
@@ -677,7 +682,7 @@ class Stripe extends CommonObject
 	/**
 	 * Get the Stripe card of a company payment mode (option to create it on Stripe if not linked yet is no more available on new Stripe API)
 	 *
-	 * @param	\Stripe\StripeCustomer	$cu								Object stripe customer
+	 * @param	\Stripe\StripeCustomer	$cu								Object stripe customer.
 	 * @param	CompanyPaymentMode		$object							Object companypaymentmode to check, or create on stripe (create on stripe also update the societe_rib table for current entity)
 	 * @param	string					$stripeacc						''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int						$status							Status (0=test, 1=live)
@@ -708,14 +713,14 @@ class Stripe extends CommonObject
 				{
 					try {
 						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
-							if (!preg_match('/^pm_/', $cardref))
+							if (!preg_match('/^pm_/', $cardref) && !empty($cu->sources))
 							{
 								$card = $cu->sources->retrieve($cardref);
 							} else {
 								$card = \Stripe\PaymentMethod::retrieve($cardref);
 							}
 						} else {
-							if (!preg_match('/^pm_/', $cardref))
+							if (!preg_match('/^pm_/', $cardref) && !empty($cu->sources))
 							{
 								//$card = $cu->sources->retrieve($cardref, array("stripe_account" => $stripeacc));		// this API fails when array stripe_account is provided
 								$card = $cu->sources->retrieve($cardref);
@@ -737,9 +742,11 @@ class Stripe extends CommonObject
 					$cvc = $obj->cvn; // cvn in database, cvc for stripe
 					$cardholdername = $obj->proprio;
 
+					$ipaddress = getUserRemoteIP();
+
 					$dataforcard = array(
 						"source" => array('object'=>'card', 'exp_month'=>$exp_date_month, 'exp_year'=>$exp_date_year, 'number'=>$number, 'cvc'=>$cvc, 'name'=>$cardholdername),
-						"metadata" => array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']))
+						"metadata" => array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>$ipaddress)
 					);
 
 					//$a = \Stripe\Stripe::getApiKey();
@@ -884,6 +891,8 @@ class Stripe extends CommonObject
 			$description = "INV=".$ref.".CUS=".$societe->id.".PM=stripe";
 		}
 
+		$ipaddress = getUserRemoteIP();
+
 		$metadata = array(
 			"dol_id" => "".$item."",
 			"dol_type" => "".$origin."",
@@ -891,7 +900,7 @@ class Stripe extends CommonObject
 			'dol_thirdparty_name' => $societe->name,
 			'dol_version'=>DOL_VERSION,
 			'dol_entity'=>$conf->entity,
-			'ipaddress'=>(empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR'])
+			'ipaddress'=>$ipaddress
 		);
 		$return = new Stripe($this->db);
 		try {
@@ -1031,7 +1040,7 @@ class Stripe extends CommonObject
 
 			if (preg_match('/pm_/i', $source))
 			{
-				$return->message = 'Payment retreived by card status = '.$charge->status;
+				$return->message = 'Payment retrieved by card status = '.$charge->status;
 			} else {
 				if ($charge->source->type == 'card') {
 					$return->message = $charge->source->card->brand." ....".$charge->source->card->last4;

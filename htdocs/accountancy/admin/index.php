@@ -61,8 +61,6 @@ $list_binding = array(
  * Actions
  */
 
-$accounting_mode = empty($conf->global->ACCOUNTING_MODE) ? 'RECETTES-DEPENSES' : $conf->global->ACCOUNTING_MODE;
-
 if ($action == 'update') {
 	$error = 0;
 
@@ -227,36 +225,6 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
-// Default mode for calculating turnover (parameter ACCOUNTING_MODE)
-/*
-print '<table class="noborder centpercent">';
-
-print '<tr class="liste_titre">';
-print '<td>' . $langs->trans('OptionMode') . '</td><td>' . $langs->trans('Description') . '</td>';
-print "</tr>\n";
-print '<tr ' . $bc[false] . '><td width="200"><input type="radio" name="accounting_mode" value="RECETTES-DEPENSES"' . ($accounting_mode != 'CREANCES-DETTES' ? ' checked' : '') . '> ' . $langs->trans('OptionModeTrue') . '</td>';
-print '<td colspan="2">' . nl2br($langs->trans('OptionModeTrueDesc'));
-// Write info on way to count VAT
-// if (! empty($conf->global->MAIN_MODULE_COMPTABILITE))
-// {
-// // print "<br>\n";
-// // print nl2br($langs->trans('OptionModeTrueInfoModuleComptabilite'));
-// }
-// else
-// {
-// // print "<br>\n";
-// // print nl2br($langs->trans('OptionModeTrueInfoExpert'));
-// }
-print "</td></tr>\n";
-print '<tr ' . $bc[true] . '><td width="200"><input type="radio" name="accounting_mode" value="CREANCES-DETTES"' . ($accounting_mode == 'CREANCES-DETTES' ? ' checked' : '') . '> ' . $langs->trans('OptionModeVirtual') . '</td>';
-print '<td colspan="2">' . nl2br($langs->trans('OptionModeVirtualDesc')) . "</td></tr>\n";
-
-print "</table>\n";
-
-
-print '<br>';
-*/
-
 // Params
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
@@ -269,11 +237,11 @@ print "</tr>\n";
 print '<tr>';
 print '<td>'.$langs->trans("ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL").'</td>';
 if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL)) {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setenabledraftexport&value=0">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&enabledraftexport&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a></td>';
 } else {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setenabledraftexport&value=1">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&enabledraftexport&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a></td>';
 }
@@ -283,11 +251,11 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("BANK_DISABLE_DIRECT_INPUT").'</td>';
 if (!empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisabledirectinput&value=0">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&disabledirectinput&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a></td>';
 } else {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisabledirectinput&value=1">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&disabledirectinput&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a></td>';
 }
@@ -296,11 +264,11 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ACCOUNTANCY_COMBO_FOR_AUX").'</td>';
 if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setenablesubsidiarylist&value=0">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&enablesubsidiarylist&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a></td>';
 } else {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setenablesubsidiarylist&value=1">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&enablesubsidiarylist&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a></td>';
 }
@@ -309,11 +277,11 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ACCOUNTING_MANAGE_ZERO").'</td>';
 if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setmanagezero&value=0">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&managezero&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a></td>';
 } else {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setmanagezero&value=1">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&managezero&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a></td>';
 }
@@ -349,11 +317,11 @@ print "</tr>\n";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_TODO").'</td>';
 if (!empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO)) {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlistsorttodo&value=0">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&listsorttodo&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a></td>';
 } else {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlistsorttodo&value=1">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&listsorttodo&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a></td>';
 }
@@ -362,11 +330,11 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_DONE").'</td>';
 if (!empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlistsortdone&value=0">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&listsortdone&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a></td>';
 } else {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlistsortdone&value=1">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&listsortdone&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a></td>';
 }
@@ -398,11 +366,11 @@ foreach ($list_binding as $key)
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ACCOUNTING_DISABLE_BINDING_ON_SALES").'</td>';
 if (!empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_SALES)) {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablebindingonsales&value=0">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&disablebindingonsales&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a></td>';
 } else {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablebindingonsales&value=1">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&disablebindingonsales&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a></td>';
 }
@@ -411,11 +379,11 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ACCOUNTING_DISABLE_BINDING_ON_PURCHASES").'</td>';
 if (!empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_PURCHASES)) {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablebindingonpurchases&value=0">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&disablebindingonpurchases&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a></td>';
 } else {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablebindingonpurchases&value=1">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&disablebindingonpurchases&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a></td>';
 }
@@ -424,11 +392,11 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS").'</td>';
 if (!empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS)) {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablebindingonexpensereports&value=0">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&disablebindingonexpensereports&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a></td>';
 } else {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablebindingonexpensereports&value=1">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&disablebindingonexpensereports&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a></td>';
 }

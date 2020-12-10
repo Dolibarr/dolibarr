@@ -95,7 +95,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_valu
 print load_fiche_titre($langs->trans("ExpenseReportsSetup"), $linkback, 'title_setup');
 
 $head = expensereport_admin_prepare_head();
-dol_fiche_head($head, 'expenseik', $langs->trans("ExpenseReportsIk"), -1, 'trip');
+print dol_get_fiche_head($head, 'expenseik', $langs->trans("ExpenseReportsIk"), -1, 'trip');
 
 echo '<span class="opacitymedium">'.$langs->trans('ExpenseReportIkDesc').'</span>';
 print '<br><br>';
@@ -163,11 +163,11 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 		{
 			if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat)
 			{
-				echo '<input id="" class="button" name="save" value="'.$langs->trans('Save').'" type="submit" />';
-				echo '<input class="button" value="'.$langs->trans('Cancel').'" onclick="javascript:history.go(-1)" type="button" />';
+				echo '<input id="" class="button button-save" name="save" value="'.$langs->trans("Save").'" type="submit" />';
+				echo '<input class="button button-cancel" value="'.$langs->trans("Cancel").'" onclick="javascript:history.go(-1)" type="button" />';
 			} else {
-				echo '<a class="editfielda marginrightonly paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?action=edit&id='.$range->ik->id.'&fk_c_exp_tax_cat='.$range->fk_c_exp_tax_cat.'&fk_range='.$range->rowid.'">'.img_edit().'</a>';
-				if (!empty($range->ik->id)) echo '<a class="paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?action=delete&id='.$range->ik->id.'">'.img_delete().'</a>';
+				echo '<a class="editfielda marginrightonly paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$range->ik->id.'&fk_c_exp_tax_cat='.$range->fk_c_exp_tax_cat.'&fk_range='.$range->rowid.'">'.img_edit().'</a>';
+				if (!empty($range->ik->id)) echo '<a class="paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$range->ik->id.'">'.img_delete().'</a>';
 				// TODO add delete link
 			}
 		}
@@ -180,7 +180,7 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 echo '</table>';
 echo '</form>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

@@ -234,7 +234,7 @@ class ActionsTicket
 		if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
 			print '<div class="center">';
 			print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-			print ' <input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+			print ' <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 		}
 		print '</td>';
@@ -408,7 +408,7 @@ class ActionsTicket
 				{
 					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=mark_ticket_read'; // To set as read, we use a dedicated action
 				} else {
-					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=set_status&new_status='.$status;
+					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=set_status&token='.newToken().'&new_status='.$status;
 				}
 
 				print '<a class="butAction buttonticket marginbottomonly" href="'.$urlforbutton.'">';

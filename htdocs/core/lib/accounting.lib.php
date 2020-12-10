@@ -188,7 +188,7 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].$varlink.'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
-	dol_fiche_head($head, 'journal');
+	print dol_get_fiche_head($head, 'journal');
 
 	foreach ($moreparam as $key => $value)
 	{
@@ -235,7 +235,7 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></div>';
 

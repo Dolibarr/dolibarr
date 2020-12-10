@@ -544,9 +544,10 @@ class Orders extends DolibarrApi
 	 * Unlink a contact type of given order
 	 *
 	 * @param int    $id             Id of order to update
-	 * @param int    $rowid          Row key of the contact in the array contact_ids.
+	 * @param int    $contactid      Id of contact
+	 * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER).
 	 *
-	 * @url	DELETE {id}/contact/{rowid}
+	 * @url	DELETE {id}/contact/{contactid}/{type}
 	 *
 	 * @return int
 	 *
@@ -554,7 +555,7 @@ class Orders extends DolibarrApi
 	 * @throws RestException 404
 	 * @throws RestException 500
 	 */
-	public function deleteContact($id, $rowid)
+	public function deleteContact($id, $contactid, $type)
 	{
 		if (!DolibarrApiAccess::$user->rights->commande->creer) {
 			throw new RestException(401);
@@ -569,10 +570,16 @@ class Orders extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->commande->delete_linked_contact($rowid);
+		 $contacts = $this->commande->liste_contact();
 
-		if (!$result) {
-			throw new RestException(500, 'Error when deleted the contact');
+		foreach ($contacts as $contact) {
+			if ($contact['id'] == $contactid && $contact['code'] == $type) {
+				$result = $this->commande->delete_contact($contact['rowid']);
+
+				if (!$result) {
+					throw new RestException(500, 'Error when deleted the contact');
+				}
+			}
 		}
 
 		return array(
@@ -943,8 +950,8 @@ class Orders extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
-	 * @param   object  $object    Object to clean
-	 * @return    array    Array of cleaned object properties
+	 * @param   Object  $object     Object to clean
+	 * @return  Object              Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{

@@ -189,7 +189,7 @@ print load_fiche_titre($langs->trans("ReceptionsSetup"), $linkback, 'title_setup
 print '<br>';
 $head = reception_admin_prepare_head();
 
-dol_fiche_head($head, 'reception', $langs->trans("Receptions"), -1, 'sending');
+print dol_get_fiche_head($head, 'reception', $langs->trans("Receptions"), -1, 'sending');
 
 // Reception numbering model
 
@@ -240,7 +240,8 @@ foreach ($dirmodels as $reldir)
 						print '<td class="nowrap">';
 						$tmp = $module->getExample();
 						if (preg_match('/^Error/', $tmp)) {
-							$langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>';
+							$langs->load("errors");
+							print '<div class="error">'.$langs->trans($tmp).'</div>';
 						} elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
 						else print $tmp;
 						print '</td>'."\n";
@@ -250,7 +251,7 @@ foreach ($dirmodels as $reldir)
 						{
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodel&amp;value='.$file.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodel&amp;token='.newToken().'&amp;value='.urlencode($file).'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
 						}
@@ -379,13 +380,13 @@ foreach ($dirmodels as $reldir)
 								if (in_array($name, $def))
 								{
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&amp;token='.newToken().'&amp;value='.$name.'">';
 									print img_picto($langs->trans("Enabled"), 'switch_on');
 									print '</a>';
 									print '</td>';
 								} else {
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 									print "</td>";
 								}
 
@@ -395,7 +396,7 @@ foreach ($dirmodels as $reldir)
 								{
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 								}
 								print '</td>';
 
@@ -423,7 +424,7 @@ foreach ($dirmodels as $reldir)
 								print '<td class="center">';
 								if ($module->type == 'pdf')
 								{
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_object($langs->trans("Preview"), 'reception').'</a>';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
 									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 								}

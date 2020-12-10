@@ -68,6 +68,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 					$("input#search_'.$htmlname.'").keydown(function(e) {
 						if (e.keyCode != 9)		/* If not "Tab" key */
 						{
+							if (e.keyCode == 13) { return false; } /* disable "ENTER" key useful for barcode readers */
 							console.log("Clear id previously selected for field '.$htmlname.'");
 							$("#'.$htmlname.'").val("");
 						}
@@ -504,8 +505,8 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 
 	if (empty($conf->use_javascript_ajax) || $forcenoajax)
 	{
-		if (empty($conf->global->$code)) print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_'.$code.'&entity='.$entity.'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-		else print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&entity='.$entity.'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		if (empty($conf->global->$code)) print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_'.$code.'&token='.newToken().'&entity='.$entity.'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		else print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&token='.newToken().'&entity='.$entity.'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	} else {
 		$out = "\n<!-- Ajax code to switch constant ".$code." -->".'
 		<script>

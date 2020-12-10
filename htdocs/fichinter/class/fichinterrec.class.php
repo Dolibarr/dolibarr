@@ -41,6 +41,10 @@ class FichinterRec extends Fichinter
 	public $element = 'fichinterrec';
 	public $table_element = 'fichinter_rec';
 	public $table_element_line = 'fichinter_rec';
+
+	/**
+	 * @var string Fieldname with ID of parent key if this field has a parent
+	 */
 	public $fk_element = 'fk_fichinter';
 
 	/**
@@ -53,6 +57,9 @@ class FichinterRec extends Fichinter
 	 */
 	public $picto = 'intervention';
 
+	/**
+	 * @var string title
+	 */
 	public $title;
 	public $number;
 	public $date;
@@ -60,14 +67,28 @@ class FichinterRec extends Fichinter
 	public $remise;
 	public $tva;
 	public $total;
-	public $db_table;
+
+	/**
+	 * @var int Proposal Id
+	 */
 	public $propalid;
 
 	public $date_last_gen;
 	public $date_when;
+
+	/**
+	 * @var int number of generation done
+	 */
 	public $nb_gen_done;
+
+	/**
+	 * @var int number of maximum generation
+	 */
 	public $nb_gen_max;
 
+	/**
+	 * int rank
+	 */
 	public $rang;
 	public $special_code;
 
@@ -250,12 +271,11 @@ class FichinterRec extends Fichinter
 	 */
 	public function fetch($rowid = 0, $ref = '', $ref_ext = '')
 	{
-		$sql = 'SELECT f.titre, f.fk_soc';
+		$sql = 'SELECT f.titre as title, f.fk_soc';
 		$sql .= ', f.datec, f.duree, f.fk_projet, f.fk_contrat, f.description';
 		$sql .= ', f.note_private, f.note_public, f.fk_user_author';
 		$sql .= ', f.frequency, f.unit_frequency, f.date_when, f.date_last_gen, f.nb_gen_done, f.nb_gen_max, f.auto_validate';
 		$sql .= ', f.note_private, f.note_public, f.fk_user_author';
-
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinter_rec as f';
 		if ($rowid > 0) $sql .= ' WHERE f.rowid='.$rowid;
 		elseif ($ref) $sql .= " WHERE f.titre='".$this->db->escape($ref)."'";
@@ -268,8 +288,9 @@ class FichinterRec extends Fichinter
 				$obj = $this->db->fetch_object($result);
 
 				$this->id = $rowid;
-				$this->titre				= $obj->titre;
-				$this->ref = $obj->titre;
+				$this->titre				= $obj->title;
+				$this->title				= $obj->title;
+				$this->ref = $obj->title;
 				$this->description = $obj->description;
 				$this->datec				= $obj->datec;
 				$this->duration = $obj->duree;
@@ -281,7 +302,7 @@ class FichinterRec extends Fichinter
 				$this->note_public			= $obj->note_public;
 				$this->user_author			= $obj->fk_user_author;
 				$this->model_pdf			= $obj->model_pdf;
-				$this->modelpdf				= $obj->model_pdf;
+				$this->modelpdf				= $obj->model_pdf; // deprecated
 				$this->rang = $obj->rang;
 				$this->special_code = $obj->special_code;
 				$this->frequency			= $obj->frequency;
@@ -564,14 +585,14 @@ class FichinterRec extends Fichinter
 		if ($user->rights->fichinter->creer) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter_rec ";
 			$sql .= " SET frequency='".$this->db->escape($freq)."'";
-			$sql .= ", last_gen='".$this->db->escape($courant)."'";
+			$sql .= ", date_last_gen='".$this->db->escape($courant)."'";
 			$sql .= " WHERE rowid = ".$this->id;
 
 			$resql = $this->db->query($sql);
 
 			if ($resql) {
 				$this->frequency = $freq;
-				$this->last_gen = $courant;
+				$this->date_last_gen = $courant;
 				return 0;
 			} else {
 				dol_print_error($this->db);

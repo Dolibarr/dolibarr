@@ -71,18 +71,18 @@ if ($action == 'setvalue' && $user->admin)
 	if (!$result > 0) $error++;
 	$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE", GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (!$result > 0) $error++;
-        $result = dolibarr_set_const($db, "PAYBOX_HMAC_KEY", dol_encode(GETPOST('PAYBOX_HMAC_KEY', 'alpha')), 'chaine', 0, '', $conf->entity);
+		$result = dolibarr_set_const($db, "PAYBOX_HMAC_KEY", dol_encode(GETPOST('PAYBOX_HMAC_KEY', 'alpha')), 'chaine', 0, '', $conf->entity);
 	if (!$result > 0) $error++;
 
 
-    if (!$error)
+	if (!$error)
   	{
   		$db->commit();
-	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
   	} else {
   		$db->rollback();
 		dol_print_error($db);
-    }
+	}
 }
 
 
@@ -114,7 +114,7 @@ print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
-dol_fiche_head($head, 'payboxaccount', '', -1);
+print dol_get_fiche_head($head, 'payboxaccount', '', -1);
 
 print $langs->trans("PayBoxDesc")."<br>\n";
 print '<br>';
@@ -248,7 +248,7 @@ print '</td></tr>';
 
 print '</table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 

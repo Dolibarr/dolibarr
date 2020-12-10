@@ -25,6 +25,10 @@
  * \brief		Page to detect empty accounting account
  */
 
+if (!defined('NOSESSION')) define('NOSESSION', '1');
+
+$path = __DIR__.'/';
+
 require_once $path."../../htdocs/master.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';

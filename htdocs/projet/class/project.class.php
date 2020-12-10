@@ -45,17 +45,17 @@ class Project extends CommonObject
 	public $table_element = 'projet';
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = 'projet_task';
 
 	/**
-	 * @var int    Name of field date
+	 * @var string    Name of field date
 	 */
 	public $table_element_date;
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_projet';
 
@@ -151,6 +151,66 @@ class Project extends CommonObject
 	public $lines;
 
 	/**
+	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *  'label' the translation key.
+	 *  'enabled' is a condition when the field must be managed.
+	 *  'position' is the sort order of field.
+	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'noteditable' says if field is not editable (1 or 0)
+	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'index' if we want an index in database.
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
+	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
+	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
+	 *  'help' is a string visible as a tooltip on field
+	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
+	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
+	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
+	 *
+	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
+	 */
+
+	// BEGIN MODULEBUILDER PROPERTIES
+	/**
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields = array(
+		'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+		'fk_soc' =>array('type'=>'integer', 'label'=>'Fk soc', 'enabled'=>1, 'visible'=>3, 'position'=>15),
+		'datec' =>array('type'=>'datetime', 'label'=>'DateCreationShort', 'enabled'=>1, 'visible'=>1, 'position'=>20),
+		'tms' =>array('type'=>'timestamp', 'label'=>'DateModificationShort', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>25),
+		'dateo' =>array('type'=>'date', 'label'=>'DateStart', 'enabled'=>1, 'visible'=>1, 'position'=>30),
+		'datee' =>array('type'=>'date', 'label'=>'DateEnd', 'enabled'=>1, 'visible'=>1, 'position'=>35),
+		'ref' =>array('type'=>'varchar(50)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'showoncombobox'=>1, 'position'=>40, 'searchall'=>1),
+		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>3, 'notnull'=>1, 'position'=>45),
+		'title' =>array('type'=>'varchar(255)', 'label'=>'ProjectLabel', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>50, 'showoncombobox'=>1, 'searchall'=>1),
+		'description' =>array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>3, 'position'=>55, 'searchall'=>1),
+		'fk_user_creat' =>array('type'=>'integer', 'label'=>'Fk user creat', 'enabled'=>1, 'visible'=>3, 'notnull'=>1, 'position'=>60),
+		'public' =>array('type'=>'integer', 'label'=>'Visibility', 'enabled'=>1, 'visible'=>1, 'position'=>65),
+		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>500),
+		'fk_opp_status' =>array('type'=>'integer', 'label'=>'OpportunityStatusShort', 'enabled'=>1, 'visible'=>1, 'position'=>75),
+		'opp_percent' =>array('type'=>'double(5,2)', 'label'=>'OpportunityProbabilityShort', 'enabled'=>1, 'visible'=>1, 'position'=>80),
+		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>3, 'position'=>85, 'searchall'=>1),
+		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>3, 'position'=>90, 'searchall'=>1),
+		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>3, 'position'=>95),
+		'budget_amount' =>array('type'=>'double(24,8)', 'label'=>'Budget', 'enabled'=>1, 'visible'=>1, 'position'=>100),
+		'date_close' =>array('type'=>'datetime', 'label'=>'Date close', 'enabled'=>1, 'visible'=>3, 'position'=>105),
+		'fk_user_close' =>array('type'=>'integer', 'label'=>'Fk user close', 'enabled'=>1, 'visible'=>3, 'position'=>110),
+		'opp_amount' =>array('type'=>'double(24,8)', 'label'=>'OpportunityAmountShort', 'enabled'=>1, 'visible'=>1, 'position'=>115),
+		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>3, 'position'=>120),
+		'fk_user_modif' =>array('type'=>'integer', 'label'=>'Fk user modif', 'enabled'=>1, 'visible'=>3, 'position'=>125),
+		'usage_bill_time' =>array('type'=>'integer', 'label'=>'UsageBillTimeShort', 'enabled'=>1, 'visible'=>1, 'position'=>130),
+		'usage_opportunity' =>array('type'=>'integer', 'label'=>'UsageOpportunity', 'enabled'=>1, 'visible'=>1, 'position'=>135),
+		'usage_task' =>array('type'=>'integer', 'label'=>'UsageTasks', 'enabled'=>1, 'visible'=>1, 'position'=>140),
+		'usage_organize_event' =>array('type'=>'integer', 'label'=>'Usage organize event', 'enabled'=>1, 'visible'=>3, 'position'=>145),
+	);
+	// END MODULEBUILDER PROPERTIES
+
+	/**
 	 * Draft status
 	 */
 	const STATUS_DRAFT = 0;
@@ -165,40 +225,6 @@ class Project extends CommonObject
 	 */
 	const STATUS_CLOSED = 2;
 
-
-	public $fields = array(
-		'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
-		'fk_soc' =>array('type'=>'integer', 'label'=>'Fk soc', 'enabled'=>1, 'visible'=>-1, 'position'=>15),
-		'datec' =>array('type'=>'datetime', 'label'=>'Datec', 'enabled'=>1, 'visible'=>-1, 'position'=>20),
-		'tms' =>array('type'=>'timestamp', 'label'=>'Tms', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25),
-		'dateo' =>array('type'=>'date', 'label'=>'Dateo', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
-		'datee' =>array('type'=>'date', 'label'=>'Datee', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
-		'ref' =>array('type'=>'varchar(50)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'showoncombobox'=>1, 'position'=>40),
-		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>45),
-		'title' =>array('type'=>'varchar(255)', 'label'=>'Title', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>50, 'showoncombobox'=>1),
-		'description' =>array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
-		'fk_user_creat' =>array('type'=>'integer', 'label'=>'Fk user creat', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>60),
-		'public' =>array('type'=>'integer', 'label'=>'Public', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
-		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Fk statut', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
-		'fk_opp_status' =>array('type'=>'integer', 'label'=>'Fk opp status', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
-		'opp_percent' =>array('type'=>'double(5,2)', 'label'=>'Opp percent', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
-		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>85),
-		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>90),
-		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>95),
-		'budget_amount' =>array('type'=>'double(24,8)', 'label'=>'Budget amount', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
-		'date_close' =>array('type'=>'datetime', 'label'=>'Date close', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
-		'fk_user_close' =>array('type'=>'integer', 'label'=>'Fk user close', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
-		'opp_amount' =>array('type'=>'double(24,8)', 'label'=>'Opp amount', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
-		'email_msgid' => array('type'=>'varchar(255)', 'label'=>'EmailMsgID', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'help'=>'EmailMsgIDDesc'),
-		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
-		'fk_user_modif' =>array('type'=>'integer', 'label'=>'Fk user modif', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
-		'usage_bill_time' =>array('type'=>'integer', 'label'=>'Usage bill time', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
-		'usage_opportunity' =>array('type'=>'integer', 'label'=>'Usage opportunity', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
-		'usage_task' =>array('type'=>'integer', 'label'=>'Usage task', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
-		'usage_organize_event' =>array('type'=>'integer', 'label'=>'Usage organize event', 'enabled'=>1, 'visible'=>-1, 'position'=>145),
-	);
-
-
 	/**
 	 *  Constructor
 	 *
@@ -210,6 +236,22 @@ class Project extends CommonObject
 
 		$this->statuts_short = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
 		$this->statuts_long = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
+
+		global $conf;
+
+		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $this->fields['rowid']['visible'] = 0;
+
+		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			$this->fields['fk_opp_status']['enabled'] = 0;
+			$this->fields['opp_percent']['enabled'] = 0;
+			$this->fields['opp_amount']['enabled'] = 0;
+			$this->fields['usage_opportunity']['enabled'] = 0;
+		}
+
+		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+			$this->fields['usage_bill_time']['visible'] = 0;
+			$this->fields['usage_task']['visible'] = 0;
+		}
 	}
 
 	/**
@@ -535,7 +577,7 @@ class Project extends CommonObject
 				$this->opp_percent = $obj->opp_percent;
 				$this->budget_amount = $obj->budget_amount;
 				$this->model_pdf = $obj->model_pdf;
-				$this->modelpdf = $obj->model_pdf;	// deprecated
+				$this->modelpdf = $obj->model_pdf; // deprecated
 				$this->usage_opportunity = (int) $obj->usage_opportunity;
 				$this->usage_task = (int) $obj->usage_task;
 				$this->usage_bill_time = (int) $obj->usage_bill_time;
@@ -544,7 +586,7 @@ class Project extends CommonObject
 
 				$this->db->free($resql);
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
@@ -807,6 +849,45 @@ class Project extends CommonObject
 	}
 
 	/**
+	 * Return the count of a type of linked elements of this project
+	 *
+	 * @param string	$type			The type of the linked elements (e.g. 'propal', 'order', 'invoice', 'order_supplier', 'invoice_supplier')
+	 * @param string	$tablename		The name of table associated of the type
+	 * @param string	$projectkey 	(optional) Equivalent key to fk_projet for actual type
+	 * @return integer					The count of the linked elements (the count is zero on request error too)
+	 */
+	public function getElementCount($type, $tablename, $projectkey = 'fk_projet')
+	{
+		if ($this->id <= 0) return 0;
+
+		if ($type == 'agenda') {
+			$sql = "SELECT COUNT(id) as nb FROM ".MAIN_DB_PREFIX."actioncomm WHERE fk_project = ".$this->id." AND entity IN (".getEntity('agenda').")";
+		} elseif ($type == 'expensereport') {
+			$sql = "SELECT COUNT(ed.rowid) as nb FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND e.entity IN (".getEntity('expensereport').") AND ed.fk_projet = ".$this->id;
+		} elseif ($type == 'project_task') {
+			$sql = "SELECT DISTINCT COUNT(pt.rowid) as nb FROM ".MAIN_DB_PREFIX."projet_task as pt WHERE pt.fk_projet = ".$this->id;
+		} elseif ($type == 'project_task_time') {	// Case we want to duplicate line foreach user
+			$sql = "SELECT DISTINCT COUNT(pt.rowid) as nb FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet_task_time as ptt WHERE pt.rowid = ptt.fk_task AND pt.fk_projet = ".$this->id;
+		} elseif ($type == 'stock_mouvement') {
+			$sql = 'SELECT COUNT(ms.rowid) as nb FROM '.MAIN_DB_PREFIX."stock_mouvement as ms, ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.origintype = 'project' AND ms.fk_origin = ".$this->id." AND ms.type_mouvement = 1";
+		} elseif ($type == 'loan') {
+			$sql = 'SELECT COUNT(l.rowid) as nb FROM '.MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').") AND l.fk_projet = ".$this->id;
+		} else {
+			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$projectkey." = ".$this->id." AND entity IN (".getEntity($type).")";
+		}
+
+		$result = $this->db->query($sql);
+
+		if (!$result) return 0;
+
+		$obj = $this->db->fetch_object($result);
+
+		$this->db->free($result);
+
+		return $obj->nb;
+	}
+
+	/**
 	 * 		Delete tasks with no children first, then task with children recursively
 	 *
 	 *  	@param     	User		$user		User
@@ -1021,7 +1102,10 @@ class Project extends CommonObject
 		}
 
 		$label = '';
-		if ($option != 'nolink') $label = img_picto('', $this->picto).' <u>'.$langs->trans("Project").'</u>';
+		if ($option != 'nolink') $label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Project").'</u>';
+		if (isset($this->status)) {
+			$label .= ' '.$this->getLibStatut(5);
+		}
 		$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('Ref').': </b>'.$this->ref; // The space must be after the : to not being explode when showing the title in img_picto
 		$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('Label').': </b>'.$this->title; // The space must be after the : to not being explode when showing the title in img_picto
 		if (isset($this->public)) {
@@ -1037,9 +1121,6 @@ class Project extends CommonObject
 			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('DateEnd').': </b>'.dol_print_date($this->datee, 'day'); // The space must be after the : to not being explode when showing the title in img_picto
 		}
 		if ($moreinpopup) $label .= '<br>'.$moreinpopup;
-		if (isset($this->status)) {
-			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
-		}
 
 		$url = '';
 		if ($option != 'nolink')
@@ -1152,7 +1233,7 @@ class Project extends CommonObject
 	 * 	@param  string	$mode		Type of permission we want to know: 'read', 'write'
 	 * 	@return	int					>0 if user has permission, <0 if user has no permission
 	 */
-	public function restrictedProjectArea($user, $mode = 'read')
+	public function restrictedProjectArea(User $user, $mode = 'read')
 	{
 		// To verify role of users
 		$userAccess = 0;
@@ -1162,7 +1243,7 @@ class Project extends CommonObject
 		} elseif ($this->public && (($mode == 'read' && !empty($user->rights->projet->lire)) || ($mode == 'write' && !empty($user->rights->projet->creer)) || ($mode == 'delete' && !empty($user->rights->projet->supprimer))))
 		{
 			$userAccess = 1;
-		} else {
+		} else {	// No access due to permission to read all projects, so we check if we are a contact of project
 			foreach (array('internal', 'external') as $source)
 			{
 				$userRole = $this->liste_contact(4, $source);
@@ -1171,7 +1252,13 @@ class Project extends CommonObject
 				$nblinks = 0;
 				while ($nblinks < $num)
 				{
-					if ($source == 'internal' && preg_match('/^PROJECT/', $userRole[$nblinks]['code']) && $user->id == $userRole[$nblinks]['id'])
+					if ($source == 'internal' && $user->id == $userRole[$nblinks]['id'])	// $userRole[$nblinks]['id'] is id of user (llx_user) for internal contacts
+					{
+						if ($mode == 'read' && $user->rights->projet->lire)      $userAccess++;
+						if ($mode == 'write' && $user->rights->projet->creer)     $userAccess++;
+						if ($mode == 'delete' && $user->rights->projet->supprimer) $userAccess++;
+					}
+					if ($source == 'external' && $user->socid > 0 && $user->socid == $userRole[$nblinks]['socid'])	// $userRole[$nblinks]['id'] is id of contact (llx_socpeople) or external contacts
 					{
 						if ($mode == 'read' && $user->rights->projet->lire)      $userAccess++;
 						if ($mode == 'write' && $user->rights->projet->creer)     $userAccess++;
@@ -1390,7 +1477,7 @@ class Project extends CommonObject
 				$clone_project->note_public = '';
 			} else {
 				$this->db->begin();
-				$res = $clone_project->update_note(dol_html_entity_decode($clone_project->note_public, ENT_QUOTES), '_public');
+				$res = $clone_project->update_note(dol_html_entity_decode($clone_project->note_public, ENT_QUOTES | ENT_HTML5), '_public');
 				if ($res < 0)
 				{
 					$this->error .= $clone_project->error;
@@ -1401,7 +1488,7 @@ class Project extends CommonObject
 				}
 
 				$this->db->begin();
-				$res = $clone_project->update_note(dol_html_entity_decode($clone_project->note_private, ENT_QUOTES), '_private');
+				$res = $clone_project->update_note(dol_html_entity_decode($clone_project->note_private, ENT_QUOTES | ENT_HTML5), '_private');
 				if ($res < 0)
 				{
 					$this->error .= $clone_project->error;

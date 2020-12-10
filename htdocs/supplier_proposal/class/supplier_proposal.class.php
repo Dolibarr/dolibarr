@@ -13,7 +13,7 @@
  * Copyright (C) 2014      Marcos García            <marcosgdf@gmail.com>
  * Copyright (C) 2016      Ferran Marcet            <fmarcet@2byte.es>
  * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2019      Frédéric France          <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2020 Frédéric France          <frederic.france@netlogic.fr>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -61,12 +61,12 @@ class SupplierProposal extends CommonObject
 	public $table_element = 'supplier_proposal';
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = 'supplier_proposaldet';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_supplier_proposal';
 
@@ -111,8 +111,14 @@ class SupplierProposal extends CommonObject
 
 	/**
 	 * @var integer|string date_livraison
+	 * @deprecated
 	 */
 	public $date_livraison;
+
+	/**
+	 * @var integer|string date_livraison
+	 */
+	public $delivery_date;
 
 	/**
 	 * @deprecated
@@ -165,9 +171,7 @@ class SupplierProposal extends CommonObject
 	public $remise_percent = 0;
 	public $remise_absolue = 0;
 
-	public $products = array();
 	public $extraparams = array();
-
 	public $lines = array();
 	public $line;
 
@@ -176,8 +180,6 @@ class SupplierProposal extends CommonObject
 
 	public $nbtodo;
 	public $nbtodolate;
-
-	public $specimen;
 
 	// Multicurrency
 	/**
@@ -233,15 +235,12 @@ class SupplierProposal extends CommonObject
 
 		$this->socid = $socid;
 		$this->id = $supplier_proposalid;
-
-		$this->products = array();
 	}
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 	Add line into array products
-	 *  $this->client doit etre charge
+	 * 	Add line into array ->lines
 	 *
 	 * 	@param  int		$idproduct       	Product Id to add
 	 * 	@param  int		$qty             	Quantity
@@ -249,7 +248,6 @@ class SupplierProposal extends CommonObject
 	 *  @return	int							<0 if KO, >0 if OK
 	 *
 	 *	TODO	Remplacer les appels a cette fonction par generation objet Ligne
-	 *			insere dans tableau $this->products
 	 */
 	public function add_product($idproduct, $qty, $remise_percent = 0)
 	{
@@ -503,7 +501,7 @@ class SupplierProposal extends CommonObject
 			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 			$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 
-			if ($conf->multicurrency->enabled && $pu_ht_devise > 0) {
+			if (!empty($conf->multicurrency->enabled) && $pu_ht_devise > 0) {
 				$pu = 0;
 			}
 
@@ -692,7 +690,7 @@ class SupplierProposal extends CommonObject
 				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 			}
 
-			if ($conf->multicurrency->enabled && $pu_ht_devise > 0) {
+			if (!empty($conf->multicurrency->enabled) && $pu_ht_devise > 0) {
 				$pu = 0;
 			}
 
@@ -857,8 +855,6 @@ class SupplierProposal extends CommonObject
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -3;
 		}
-
-		// Check parameters
 		if (!empty($this->ref))	// We check that ref is not already used
 		{
 			$result = self::isExistingObject($this->element, 0, $this->ref); // Check ref is not yet used
@@ -870,6 +866,9 @@ class SupplierProposal extends CommonObject
 				return -1;
 			}
 		}
+
+		// Set tmp vars
+		$delivery_date = empty($this->delivery_date) ? $this->date_livraison : $this->delivery_date;
 
 		// Multicurrency
 		if (!empty($this->multicurrency_code)) list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $now);
@@ -925,7 +924,7 @@ class SupplierProposal extends CommonObject
 		$sql .= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : 'NULL');
 		$sql .= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : 'NULL');
 		$sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
-		$sql .= ", ".($this->date_livraison != '' ? "'".$this->db->idate($this->date_livraison)."'" : "null");
+		$sql .= ", ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : "null");
 		$sql .= ", ".($this->shipping_method_id > 0 ? $this->shipping_method_id : 'NULL');
 		$sql .= ", ".($this->fk_project ? $this->fk_project : "null");
 		$sql .= ", ".$conf->entity;
@@ -1080,23 +1079,6 @@ class SupplierProposal extends CommonObject
 		}
 	}
 
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Insert into DB a supplier_proposal object completely defined by its data members (ex, results from copy).
-	 *
-	 *	@param 		User	$user	User that create
-	 *	@return    	int				Id of the new object if ok, <0 if ko
-	 *	@see       	create()
-	 */
-	public function create_from($user)
-	{
-		// phpcs:enable
-		$this->products = $this->lines;
-
-		return $this->create($user);
-	}
-
 	/**
 	 *		Load an object from its id and create a new one in database
 	 *
@@ -1203,7 +1185,7 @@ class SupplierProposal extends CommonObject
 		$sql .= ", p.total, p.tva, p.localtax1, p.localtax2, p.total_ht";
 		$sql .= ", p.datec";
 		$sql .= ", p.date_valid as datev";
-		$sql .= ", p.date_livraison as date_livraison";
+		$sql .= ", p.date_livraison as delivery_date";
 		$sql .= ", p.model_pdf, p.extraparams";
 		$sql .= ", p.note_private, p.note_public";
 		$sql .= ", p.fk_projet as fk_project, p.fk_statut";
@@ -1248,7 +1230,7 @@ class SupplierProposal extends CommonObject
 				$this->socid                = $obj->fk_soc;
 				$this->fk_project           = $obj->fk_project;
 				$this->model_pdf            = $obj->model_pdf;
-				$this->modelpdf             = $obj->model_pdf;	// deprecated
+				$this->modelpdf             = $obj->model_pdf; // deprecated
 				$this->note                 = $obj->note_private; // TODO deprecated
 				$this->note_private         = $obj->note_private;
 				$this->note_public          = $obj->note_public;
@@ -1258,7 +1240,8 @@ class SupplierProposal extends CommonObject
 				$this->datev                = $this->db->jdate($obj->datev); // TODO deprecated
 				$this->date_creation = $this->db->jdate($obj->datec); //Creation date
 				$this->date_validation = $this->db->jdate($obj->datev); //Validation date
-				$this->date_livraison       = $this->db->jdate($obj->date_livraison);
+				$this->date_livraison       = $this->db->jdate($obj->delivery_date); // deprecated
+				$this->delivery_date        = $this->db->jdate($obj->delivery_date);
 				$this->shipping_method_id   = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
 
 				$this->mode_reglement_id    = $obj->fk_mode_reglement;
@@ -1289,7 +1272,7 @@ class SupplierProposal extends CommonObject
 					$this->brouillon = 1;
 				}
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
@@ -1379,7 +1362,7 @@ class SupplierProposal extends CommonObject
 					return -1;
 				}
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
@@ -1510,26 +1493,40 @@ class SupplierProposal extends CommonObject
 	/**
 	 *	Set delivery date
 	 *
-	 *	@param      User 		$user        		Object user that modify
-	 *	@param      int			$date_livraison     Delivery date
-	 *	@return     int         					<0 if ko, >0 if ok
+	 *	@param      User 	$user        		Object user that modify
+	 *	@param      int		$delivery_date		Delivery date
+	 *	@return     int         				<0 if ko, >0 if ok
+	 *	@deprecated Use  setDeliveryDate
 	 */
-	public function set_date_livraison($user, $date_livraison)
+	public function set_date_livraison($user, $delivery_date)
 	{
 		// phpcs:enable
+		return $this->setDeliveryDate($user, $delivery_date);
+	}
+
+	/**
+	 *	Set delivery date
+	 *
+	 *	@param      User 		$user        		Object user that modify
+	 *	@param      int			$delivery_date     Delivery date
+	 *	@return     int         					<0 if ko, >0 if ok
+	 */
+	public function setDeliveryDate($user, $delivery_date)
+	{
 		if (!empty($user->rights->supplier_proposal->creer))
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal ";
-			$sql .= " SET date_livraison = ".($date_livraison != '' ? "'".$this->db->idate($date_livraison)."'" : 'null');
+			$sql .= " SET date_livraison = ".($delivery_date != '' ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".$this->id;
 
 			if ($this->db->query($sql))
 			{
-				$this->date_livraison = $date_livraison;
+				$this->date_livraison = $delivery_date;
+				$this->delivery_date = $delivery_date;
 				return 1;
 			} else {
 				$this->error = $this->db->error();
-				dol_syslog(get_class($this)."::set_date_livraison Erreur SQL");
+				dol_syslog(get_class($this)."::setDeliveryDate Erreur SQL");
 				return -1;
 			}
 		}
@@ -1688,13 +1685,13 @@ class SupplierProposal extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$modelpdf = $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED : $this->modelpdf;
+			$modelpdf = $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED : (empty($this->modelpdf) ? '' : $this->modelpdf);
 			$triggerName = 'PROPOSAL_SUPPLIER_CLOSE_REFUSED';
 
 			if ($status == 2)
 			{
 				$triggerName = 'PROPOSAL_SUPPLIER_CLOSE_SIGNED';
-				$modelpdf = $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL : $this->modelpdf;
+				$modelpdf = $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL : (empty($this->modelpdf) ? '' : $this->modelpdf);
 
 				if (!empty($conf->global->SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL))     // TODO This option was not tested correctly. Error if product ref does not exists
 				{
@@ -2103,7 +2100,7 @@ class SupplierProposal extends CommonObject
 		$sql .= " c.datec, c.date_valid as datev, c.date_cloture as dateo,";
 		$sql .= " c.fk_user_author, c.fk_user_valid, c.fk_user_cloture";
 		$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as c";
-		$sql .= " WHERE c.rowid = ".$id;
+		$sql .= " WHERE c.rowid = ".((int) $id);
 
 		$result = $this->db->query($sql);
 
@@ -2474,15 +2471,15 @@ class SupplierProposal extends CommonObject
 		$url = '';
 		$result = '';
 
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("SupplierProposal").'</u>';
+		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("SupplierProposal").'</u>';
+		if (isset($this->status)) {
+			$label .= ' '.$this->getLibStatut(5);
+		}
 		if (!empty($this->ref)) $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (!empty($this->ref_fourn)) $label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_fourn;
 		if (!empty($this->total_ht)) $label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
 		if (!empty($this->total_tva)) $label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
 		if (!empty($this->total_ttc)) $label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
-		if (isset($this->status)) {
-		   	$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
-		}
 
 		if ($option == '') {
 			$url = DOL_URL_ROOT.'/supplier_proposal/card.php?id='.$this->id.$get_params;

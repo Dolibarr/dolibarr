@@ -146,7 +146,7 @@ if (empty($reshook))
 if ($massaction == 'ventil') {
 	$msg = '';
 
-	//print '<div><font color="red">' . $langs->trans("Processing") . '...</font></div>';
+	//print '<div><span style="color:red">' . $langs->trans("Processing") . '...</span></div>';
 	if (!empty($mesCasesCochees)) {
 		$msg = '<div>'.$langs->trans("SelectedLines").': '.count($mesCasesCochees).'</div>';
 		$msg .= '<div class="detail">';
@@ -161,7 +161,7 @@ if ($massaction == 'ventil') {
 
 			if ($monCompte <= 0)
 			{
-				$msg .= '<div><font color="red">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NoAccountSelected").'</font></div>';
+				$msg .= '<div><span style="color:red">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NoAccountSelected").'</span></div>';
 				$ko++;
 			} else {
 				$sql = " UPDATE ".MAIN_DB_PREFIX."facture_fourn_det";
@@ -169,14 +169,14 @@ if ($massaction == 'ventil') {
 				$sql .= " WHERE rowid = ".$monId;
 
 				$accountventilated = new AccountingAccount($db);
-				$accountventilated->fetch($monCompte, '');
+				$accountventilated->fetch($monCompte, '', 1);
 
 				dol_syslog('accountancy/supplier/list.php:: sql='.$sql, LOG_DEBUG);
 				if ($db->query($sql)) {
-					$msg .= '<div><font color="green">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("VentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'</font></div>';
+					$msg .= '<div><span style="color:green">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("VentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'</span></div>';
 					$ok++;
 				} else {
-					$msg .= '<div><font color="red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NotVentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'<br/> <pre>'.$sql.'</pre></font></div>';
+					$msg .= '<div><span style="color:red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NotVentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'<br/> <pre>'.$sql.'</pre></span></div>';
 					$ko++;
 				}
 			}
@@ -357,12 +357,6 @@ if ($result) {
 	print_barre_liste($langs->trans("InvoiceLines"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 
 	print '<span class="opacitymedium">'.$langs->trans("DescVentilTodoCustomer").'</span></br><br>';
-
-	/*$topicmail="Information";
-	 $modelmail="project";
-	 $objecttmp=new Project($db);
-	 $trackid='prj'.$object->id;
-	 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';*/
 
 	if ($msg) print $msg.'<br>';
 

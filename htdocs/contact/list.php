@@ -149,44 +149,45 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
-$fieldstosearchall = array(
-	'p.lastname'=>'Lastname',
-	'p.firstname'=>'Firstname',
-	'p.email'=>'EMail',
-	's.nom'=>"ThirdParty",
-	'p.phone'=>"Phone",
-	'p.phone_perso'=>"PhonePerso",
-	'p.phone_mobile'=>"PhoneMobile",
-	'p.fax'=>"Fax",
-	'p.note_public'=>"NotePublic",
-	'p.note_private'=>"NotePrivate",
-);
+$fieldstosearchall = array();
+foreach ($object->fields as $key => $val)
+{
+	// don't allow search in private notes for external users when doing "search in all"
+	if (!empty($user->socid) && $key == "note_private") {
+		continue;
+	}
+
+	if (empty($val['searchall'])) {
+		continue;
+	}
+
+	$fieldstosearchall['p.'.$key] = $val['label'];
+}
+
+// Add none object fields for "search in all"
+if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+	$fieldstosearchall['s.nom'] = "ThirdParty";
+}
 
 // Definition of fields for list
-$arrayfields = array(
-	'p.rowid'=>array('label'=>"TechnicalID", 'position'=>1, 'checked'=>($conf->global->MAIN_SHOW_TECHNICAL_ID ? 1 : 0), 'enabled'=>($conf->global->MAIN_SHOW_TECHNICAL_ID ? 1 : 0)),
-	'p.lastname'=>array('label'=>"Lastname", 'position'=>2, 'checked'=>1),
-	'p.firstname'=>array('label'=>"Firstname", 'position'=>3, 'checked'=>1),
-	'p.poste'=>array('label'=>"PostOrFunction", 'position'=>10, 'checked'=>1),
-	'p.town'=>array('label'=>"Town", 'position'=>20, 'checked'=>0),
-	'p.zip'=>array('label'=>"Zip", 'position'=>21, 'checked'=>0),
-	'country.code_iso'=>array('label'=>"Country", 'position'=>22, 'checked'=>0),
-	'p.phone'=>array('label'=>"Phone", 'position'=>30, 'checked'=>1),
-	'p.phone_perso'=>array('label'=>"PhonePerso", 'position'=>31, 'checked'=>0),
-	'p.phone_mobile'=>array('label'=>"PhoneMobile", 'position'=>32, 'checked'=>1),
-	'p.fax'=>array('label'=>"Fax", 'position'=>33, 'checked'=>0),
-	'p.email'=>array('label'=>"EMail", 'position'=>40, 'checked'=>1),
-	'p.no_email'=>array('label'=>"No_Email", 'position'=>41, 'checked'=>0, 'enabled'=>(!empty($conf->mailing->enabled))),
-	'p.thirdparty'=>array('label'=>"ThirdParty", 'position'=>50, 'checked'=>1, 'enabled'=>empty($conf->global->SOCIETE_DISABLE_CONTACTS)),
-	'p.priv'=>array('label'=>"ContactVisibility", 'checked'=>1, 'position'=>200),
-	'p.datec'=>array('label'=>"DateCreationShort", 'checked'=>0, 'position'=>500),
-	'p.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
-	'p.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
-	'p.import_key'=>array('label'=>"ImportId", 'checked'=>0, 'position'=>1100),
-);
-if (!empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {
-	$arrayfields['p.fk_prospectcontactlevel'] = array('label'=>"ProspectLevelShort", 'checked'=>1, 'position'=>210);
-	$arrayfields['p.fk_stcommcontact'] = array('label'=>"StatusProsp", 'checked'=>1, 'position'=>215);
+$arrayfields = array();
+foreach ($object->fields as $key => $val) {
+	// If $val['visible']==0, then we never show the field
+	if (empty($val['visible'])) {
+		continue;
+	}
+
+	$arrayfields['p.'.$key] = array(
+		'label'=>$val['label'],
+		'checked'=>(($val['visible'] < 0) ? 0 : 1),
+		'enabled'=>($val['enabled'] && ($val['visible'] != 3)),
+		'position'=>$val['position']);
+}
+
+// Add none object fields to fields for list
+$arrayfields['country.code_iso'] = array('label'=>"Country", 'position'=>22, 'checked'=>0);
+if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+	$arrayfields['s.nom'] = array('label'=>"ThirdParty", 'position'=>25, 'checked'=>1);
 }
 
 if (!empty($conf->socialnetworks->enabled)) {
@@ -200,21 +201,10 @@ if (!empty($conf->socialnetworks->enabled)) {
 		}
 	}
 }
+
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array(
-				'label'=>$extrafields->attributes[$object->table_element]['label'][$key],
-				'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1),
-				'position'=>$extrafields->attributes[$object->table_element]['pos'][$key],
-				'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]),
-				'langfile'=>$extrafields->attributes[$object->table_element]['langfile'][$key],
-			);
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -395,10 +385,10 @@ if (strlen($search_phone))          $sql .= natural_search(array('p.phone', 'p.p
 if (strlen($search_cti))            $sql .= natural_search(array('p.phone', 'p.phone_perso', 'p.phone_mobile'), $search_cti);
 if (strlen($search_firstlast_only)) $sql .= natural_search(array('p.lastname', 'p.firstname'), $search_firstlast_only);
 
-if ($search_id > 0)                 $sql .= natural_search("p.rowid", $search_id, 1);
+if ($search_id > 0)                 $sql .= natural_search('p.rowid', $search_id, 1);
 if ($search_lastname)               $sql .= natural_search('p.lastname', $search_lastname);
 if ($search_firstname)              $sql .= natural_search('p.firstname', $search_firstname);
-if ($search_societe)                $sql .= natural_search('s.nom', $search_societe);
+if ($search_societe)                $sql .= natural_search(empty($conf->global->SOCIETE_DISABLE_CONTACTS) ? 's.nom' : 'p.fk_soc', $search_societe);
 if ($search_country)                $sql .= " AND p.fk_pays IN (".$search_country.')';
 if (strlen($search_poste))          $sql .= natural_search('p.poste', $search_poste);
 if (strlen($search_phone_perso))    $sql .= natural_search('p.phone_perso', $search_phone_perso);
@@ -569,7 +559,7 @@ if ($search_firstlast_only)
 }
 
 $moreforfilter = '';
-if (!empty($conf->categorie->enabled))
+if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire)
 {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
@@ -592,20 +582,19 @@ if (!empty($conf->categorie->enabled))
 		$moreforfilter .= $formother->select_categories(Categorie::TYPE_SUPPLIER, $search_categ_supplier, 'search_categ_supplier', 1);
 		$moreforfilter .= '</div>';
 	}
-	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('Roles').': ';
-	$moreforfilter .= $formcompany->showRoles("search_roles", $objecttmp, 'edit', $search_roles);
-	$moreforfilter .= '</div>';
 }
-if ($moreforfilter)
-{
-	print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	print $moreforfilter;
-	$parameters = array('type'=>$type);
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
-	print '</div>';
-}
+
+$moreforfilter .= '<div class="divsearchfield">';
+$moreforfilter .= $langs->trans('Roles').': ';
+$moreforfilter .= $formcompany->showRoles("search_roles", $objecttmp, 'edit', $search_roles);
+$moreforfilter .= '</div>';
+
+print '<div class="liste_titre liste_titre_bydiv centpercent">';
+print $moreforfilter;
+$parameters = array('type'=>$type);
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+print '</div>';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
@@ -721,7 +710,7 @@ if (!empty($conf->socialnetworks->enabled)) {
 		}
 	}
 }
-if (!empty($arrayfields['p.thirdparty']['checked']))
+if (!empty($arrayfields['p.fk_soc']['checked']) || !empty($arrayfields['s.nom']['checked']))
 {
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="search_societe" size="8" value="'.dol_escape_htmltag($search_societe).'">';
@@ -819,10 +808,11 @@ if (!empty($conf->socialnetworks->enabled)) {
 		}
 	}
 }
-if (!empty($arrayfields['p.thirdparty']['checked']))          print_liste_field_titre($arrayfields['p.thirdparty']['label'], $_SERVER["PHP_SELF"], "s.nom", $begin, $param, '', $sortfield, $sortorder);
-if (!empty($arrayfields['p.priv']['checked']))                print_liste_field_titre($arrayfields['p.priv']['label'], $_SERVER["PHP_SELF"], "p.priv", $begin, $param, '', $sortfield, $sortorder, 'center ');
-if (!empty($arrayfields['p.fk_prospectcontactlevel']['checked'])) 	print_liste_field_titre($arrayfields['p.fk_prospectcontactlevel']['label'], $_SERVER["PHP_SELF"], "p.fk_prospectcontactlevel", "", $param, '', $sortfield, $sortorder, 'center ');
-if (!empty($arrayfields['p.fk_stcommcontact']['checked'])) 			print_liste_field_titre($arrayfields['p.fk_stcommcontact']['label'], $_SERVER["PHP_SELF"], "p.fk_stcommcontact", "", $param, '', $sortfield, $sortorder, 'center ');
+if (!empty($arrayfields['p.fk_soc']['checked']))					print_liste_field_titre($arrayfields['p.fk_soc']['label'], $_SERVER["PHP_SELF"], "p.fk_soc", $begin, $param, '', $sortfield, $sortorder);
+if (!empty($arrayfields['s.nom']['checked']))						print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", $begin, $param, '', $sortfield, $sortorder);
+if (!empty($arrayfields['p.priv']['checked']))						print_liste_field_titre($arrayfields['p.priv']['label'], $_SERVER["PHP_SELF"], "p.priv", $begin, $param, '', $sortfield, $sortorder, 'center ');
+if (!empty($arrayfields['p.fk_prospectcontactlevel']['checked']))	print_liste_field_titre($arrayfields['p.fk_prospectcontactlevel']['label'], $_SERVER["PHP_SELF"], "p.fk_prospectcontactlevel", "", $param, '', $sortfield, $sortorder, 'center ');
+if (!empty($arrayfields['p.fk_stcommcontact']['checked']))			print_liste_field_titre($arrayfields['p.fk_stcommcontact']['label'], $_SERVER["PHP_SELF"], "p.fk_stcommcontact", "", $param, '', $sortfield, $sortorder, 'center ');
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
@@ -889,7 +879,7 @@ while ($i < min($num, $limit))
 	if (!empty($arrayfields['p.lastname']['checked']))
 	{
 		print '<td class="middle tdoverflowmax200">';
-		print $contactstatic->getNomUrl(1, '', 0);
+		print $contactstatic->getNomUrl(1);
 		print '</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
@@ -983,7 +973,7 @@ while ($i < min($num, $limit))
 		}
 	}
 	// Company
-	if (!empty($arrayfields['p.thirdparty']['checked']))
+	if (!empty($arrayfields['p.fk_soc']['checked']) || !empty($arrayfields['s.nom']['checked']))
 	{
 		print '<td>';
 		if ($obj->socid)
@@ -1021,7 +1011,7 @@ while ($i < min($num, $limit))
 		foreach ($contactstatic->cacheprospectstatus as $key => $val) {
 			$titlealt = 'default';
 			if (!empty($val['code']) && !in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt = $val['label'];
-			if ($obj->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?stcommcontactid='.$obj->rowid.'&stcomm='.$val['code'].'&action=setstcomm'.$param.($page ? '&page='.urlencode($page) : '').'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
+			if ($obj->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?stcommcontactid='.$obj->rowid.'&stcomm='.$val['code'].'&action=setstcomm&token='.newToken().$param.($page ? '&page='.urlencode($page) : '').'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
 		}
 		print '</div></div></td>';
 		if (!$i) $totalarray['nbfield']++;

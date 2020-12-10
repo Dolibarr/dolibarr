@@ -52,13 +52,14 @@ class EmailCollector extends CommonObject
 	 * @var int  Does emailcollector support extrafields ? 0=No, 1=Yes
 	 */
 	public $isextrafieldmanaged = 0;
+
 	/**
 	 * @var string String with name of icon for emailcollector. Must be the part after the 'object_' into object_emailcollector.png
 	 */
 	public $picto = 'generic';
 
 	/**
-	 * @var int    Field with ID of parent key if this field has a parent
+	 * @var string    Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_emailcollector';
 
@@ -158,7 +159,9 @@ class EmailCollector extends CommonObject
 	 */
 	public $date_creation;
 
-
+	/**
+	 * @var int timestamp
+	 */
 	public $tms;
 
 	/**
@@ -171,6 +174,9 @@ class EmailCollector extends CommonObject
 	 */
 	public $fk_user_modif;
 
+	/**
+	 * @var string import key
+	 */
 	public $import_key;
 
 
@@ -227,7 +233,7 @@ class EmailCollector extends CommonObject
 		// Translate some data of arrayofkeyval
 		foreach ($this->fields as $key => $val)
 		{
-			if (is_array($val['arrayofkeyval']))
+			if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval']))
 			{
 				foreach ($val['arrayofkeyval'] as $key2 => $val2)
 				{
@@ -1006,6 +1012,8 @@ class EmailCollector extends CommonObject
 			if ($rule['type'] == 'smaller') $search .= ($search ? ' ' : '').'SMALLER "'.str_replace('"', '', $rule['rulevalue']).'"';
 			if ($rule['type'] == 'larger')  $search .= ($search ? ' ' : '').'LARGER "'.str_replace('"', '', $rule['rulevalue']).'"';
 
+			if ($rule['type'] == 'withtrackingidinmsgid') { $searchfilterdoltrackid++; $searchhead .= '/Message-ID.*@'.preg_quote($host, '/').'/'; }
+			if ($rule['type'] == 'withouttrackingidinmsgid') { $searchfilterdoltrackid++; $searchhead .= '/Message-ID.*@'.preg_quote($host, '/').'/'; }
 			if ($rule['type'] == 'withtrackingid') { $searchfilterdoltrackid++; $searchhead .= '/References.*@'.preg_quote($host, '/').'/'; }
 			if ($rule['type'] == 'withouttrackingid') { $searchfilternodoltrackid++; $searchhead .= '! /References.*@'.preg_quote($host, '/').'/'; }
 
@@ -1340,6 +1348,15 @@ class EmailCollector extends CommonObject
 							$trackid = $reg[1].$reg[2];
 
 							$objectid = $reg[2];
+							// See also list into interface_50_modAgenda_ActionsAuto
+							if ($reg[1] == 'thi')
+							{
+								$objectemail = new Societe($this->db);
+							}
+							if ($reg[1] == 'ctc')
+							{
+								$objectemail = new Contact($this->db);
+							}
 							if ($reg[1] == 'inv')
 							{
 								$objectemail = new Facture($this->db);
@@ -1348,13 +1365,13 @@ class EmailCollector extends CommonObject
 							{
 								$objectemail = new Project($this->db);
 							}
+							if ($reg[1] == 'tas')
+							{
+								$objectemail = new Task($this->db);
+							}
 							if ($reg[1] == 'con')
 							{
 								$objectemail = new Contact($this->db);
-							}
-							if ($reg[1] == 'thi')
-							{
-								$objectemail = new Societe($this->db);
 							}
 							if ($reg[1] == 'use')
 							{
@@ -1367,6 +1384,10 @@ class EmailCollector extends CommonObject
 							if ($reg[1] == 'recruitmentcandidature')
 							{
 								$objectemail = new RecruitmentCandidature($this->db);
+							}
+							if ($reg[1] == 'mem')
+							{
+								$objectemail = new Adherent($this->db);
 							}
 						} elseif (preg_match('/<(.*@.*)>/', $reference, $reg)) {
 							// This is an external reference, we check if we have it in our database
@@ -1672,8 +1693,10 @@ class EmailCollector extends CommonObject
 							$description = dol_concatdesc($description, $messagetext);
 
 							$descriptionfull = $description;
-							$descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
-							$descriptionfull = dol_concatdesc($descriptionfull, $header);
+							if (empty($conf->global->MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER)) {
+								$descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
+								$descriptionfull = dol_concatdesc($descriptionfull, $header);
+							}
 
 							// Insert record of emails sent
 							$actioncomm->type_code   = 'AC_OTH_AUTO'; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
@@ -1760,8 +1783,10 @@ class EmailCollector extends CommonObject
 							$description = dol_concatdesc($description, $messagetext);
 
 							$descriptionfull = $description;
-							$descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
-							$descriptionfull = dol_concatdesc($descriptionfull, $header);
+							if (empty($conf->global->MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER)) {
+								$descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
+								$descriptionfull = dol_concatdesc($descriptionfull, $header);
+							}
 
 							$id_opp_status = dol_getIdFromCode($this->db, 'PROSP', 'c_lead_status', 'code', 'rowid');
 							$percent_opp_status = dol_getIdFromCode($this->db, 'PROSP', 'c_lead_status', 'code', 'percent');
@@ -1874,8 +1899,10 @@ class EmailCollector extends CommonObject
 							$description = dol_concatdesc($description, $messagetext);
 
 							$descriptionfull = $description;
-							$descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
-							$descriptionfull = dol_concatdesc($descriptionfull, $header);
+							if (empty($conf->global->MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER)) {
+								$descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
+								$descriptionfull = dol_concatdesc($descriptionfull, $header);
+							}
 
 							$tickettocreate->subject = $subject;
 							$tickettocreate->message = $description;

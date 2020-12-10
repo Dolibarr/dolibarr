@@ -124,7 +124,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 if ($massaction == 'ventil') {
 	$msg = '';
-	//print '<div><font color="red">' . $langs->trans("Processing") . '...</font></div>';
+	//print '<div><span style="color:red">' . $langs->trans("Processing") . '...</span></div>';
 	if (!empty($mesCasesCochees)) {
 		$msg = '<div>'.$langs->trans("SelectedLines").': '.count($mesCasesCochees).'</div>';
 		$msg .= '<div class="detail">';
@@ -139,7 +139,7 @@ if ($massaction == 'ventil') {
 
 			if ($monCompte <= 0)
 			{
-				$msg .= '<div><font color="red">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NoAccountSelected").'</font></div>';
+				$msg .= '<div><span style="color:red">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NoAccountSelected").'</span></div>';
 				$ko++;
 			} else {
 				$sql = " UPDATE ".MAIN_DB_PREFIX."expensereport_det";
@@ -147,14 +147,14 @@ if ($massaction == 'ventil') {
 				$sql .= " WHERE rowid = ".$monId;
 
 				$accountventilated = new AccountingAccount($db);
-				$accountventilated->fetch($monCompte, '');
+				$accountventilated->fetch($monCompte, '', 1);
 
 				dol_syslog('accountancy/expensereport/list.php:: sql='.$sql, LOG_DEBUG);
 				if ($db->query($sql)) {
-					$msg .= '<div><font color="green">'.$langs->trans("LineOfExpenseReport").' '.$monId.' - '.$langs->trans("VentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'</font></div>';
+					$msg .= '<div><span style="color:green">'.$langs->trans("LineOfExpenseReport").' '.$monId.' - '.$langs->trans("VentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'</span></div>';
 					$ok++;
 				} else {
-					$msg .= '<div><font color="red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NotVentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'<br/> <pre>'.$sql.'</pre></font></div>';
+					$msg .= '<div><span style="color:red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NotVentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'<br/> <pre>'.$sql.'</pre></span></div>';
 					$ko++;
 				}
 			}
@@ -190,7 +190,7 @@ if (empty($chartaccountcode))
 $sql = "SELECT er.ref, er.rowid as erid, er.date_debut, er.date_valid,";
 $sql .= " erd.rowid, erd.fk_c_type_fees, erd.comments, erd.total_ht as price, erd.fk_code_ventilation, erd.tva_tx as tva_tx_line, erd.vat_src_code, erd.date,";
 $sql .= " f.id as type_fees_id, f.code as type_fees_code, f.label as type_fees_label, f.accountancy_code as code_buy,";
-$sql .= " u.rowid, u.login, u.lastname, u.firstname, u.email, u.gender, u.employee, u.photo, u.statut,";
+$sql .= " u.rowid as userid, u.login, u.lastname, u.firstname, u.email, u.gender, u.employee, u.photo, u.statut,";
 $sql .= " aa.rowid as aarowid";
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as er";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport_det as erd ON er.rowid = erd.fk_expensereport";
@@ -285,12 +285,6 @@ if ($result) {
 
 	print '<span class="opacitymedium">'.$langs->trans("DescVentilTodoExpenseReport").'</span></br><br>';
 
-	/*$topicmail="Information";
-	$modelmail="project";
-	$objecttmp=new Project($db);
-	$trackid='prj'.$object->id;
-	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';*/
-
 	if ($msg) print $msg.'<br>';
 
 	$moreforfilter = '';
@@ -356,7 +350,7 @@ if ($result) {
 		$expensereport_static->ref = $objp->ref;
 		$expensereport_static->id = $objp->erid;
 
-		$userstatic->id = $objp->rowid;
+		$userstatic->id = $objp->userid;
 		$userstatic->ref = $objp->label;
 		$userstatic->login = $objp->login;
 		$userstatic->statut = $objp->statut;

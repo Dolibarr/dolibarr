@@ -29,20 +29,20 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
  */
 class box_graph_product_distribution extends ModeleBoxes
 {
-    public $boxcode = "productdistribution";
-    public $boximg = "object_product";
-    public $boxlabel = "BoxProductDistribution";
-    public $depends = array("product|service", "facture|propal|commande");
+	public $boxcode = "productdistribution";
+	public $boximg = "object_product";
+	public $boxlabel = "BoxProductDistribution";
+	public $depends = array("product|service", "facture|propal|commande");
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $param;
+	public $param;
 
-    public $info_box_head = array();
-    public $info_box_contents = array();
+	public $info_box_head = array();
+	public $info_box_contents = array();
 
 
 	/**
@@ -58,7 +58,7 @@ class box_graph_product_distribution extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !(
-		    (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire))
+			(!empty($conf->facture->enabled) && !empty($user->rights->facture->lire))
 		 || (!empty($conf->commande->enabled) && !empty($user->rights->commande->lire))
 		 || (!empty($conf->propal->enabled) && !empty($user->rights->propale->lire))
 		);
@@ -68,7 +68,7 @@ class box_graph_product_distribution extends ModeleBoxes
 	 *  Load data into info_box_contents array to show array later.
 	 *
 	 *  @param	int		$max        Maximum number of records to load
-     *  @return	void
+	 *  @return	void
 	 */
 	public function loadBox($max = 5)
 	{
@@ -138,7 +138,7 @@ class box_graph_product_distribution extends ModeleBoxes
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showpropalnb)
 			{
-                $langs->load("propal");
+				$langs->load("propal");
 				include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propalestats.class.php';
 
 				$showpointvalue = 1; $nocolor = 0;
@@ -197,7 +197,7 @@ class box_graph_product_distribution extends ModeleBoxes
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showordernb)
 			{
-			    $langs->load("orders");
+				$langs->load("orders");
 				include_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
 
 				$showpointvalue = 1; $nocolor = 0;
@@ -315,8 +315,8 @@ class box_graph_product_distribution extends ModeleBoxes
 
 		if (empty($nbofgraph))
 		{
-		    $langs->load("errors");
-		    $mesg = $langs->trans("ReadPermissionNotAllowed");
+			$langs->load("errors");
+			$mesg = $langs->trans("ReadPermissionNotAllowed");
 		}
 		if (empty($conf->use_javascript_ajax))
 		{
@@ -388,13 +388,13 @@ class box_graph_product_distribution extends ModeleBoxes
 				$stringtoshow .= '</div></div>';
 			}
 			$this->info_box_contents[0][0] = array(
-                'tr'=>'class="oddeven nohover"',
-                'td' => 'class="nohover center"',
-                'textnoformat'=>$stringtoshow,
-            );
+				'tr'=>'class="oddeven nohover"',
+				'td' => 'class="nohover center"',
+				'textnoformat'=>$stringtoshow,
+			);
 		} else {
 			$this->info_box_contents[0][0] = array(
-			    'td' => 'class="nohover opacitymedium left"',
+				'td' => 'class="nohover opacitymedium left"',
 				'maxlength'=>500,
 				'text' => $mesg
 			);
@@ -409,8 +409,8 @@ class box_graph_product_distribution extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    public function showBox($head = null, $contents = null, $nooutput = 0)
-    {
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }

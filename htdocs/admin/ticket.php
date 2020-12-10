@@ -182,11 +182,11 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 // Configuration header
 $head = ticketAdminPrepareHead();
 
-dol_fiche_head($head, 'settings', $langs->trans("Module56000Name"), -1, "ticket");
+print dol_get_fiche_head($head, 'settings', $langs->trans("Module56000Name"), -1, "ticket");
 
 print '<span class="opacitymedium">'.$langs->trans("TicketSetupDictionaries").'</span> : <a href="'.DOL_URL_ROOT.'/admin/dict.php">'.$langs->trans("ClickHereToGoTo", $langs->transnoentitiesnoconv("DictionarySetup")).'</a><br>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 /*
@@ -240,6 +240,7 @@ foreach ($dirmodels as $reldir) {
 						print '<td class="nowrap">';
 						$tmp = $module->getExample();
 						if (preg_match('/^Error/', $tmp)) {
+							$langs->load("errors");
 							print '<div class="error">'.$langs->trans($tmp).'</div>';
 						} elseif ($tmp == 'NotConfigured') {
 							print $langs->trans($tmp);
@@ -253,7 +254,7 @@ foreach ($dirmodels as $reldir) {
 						if ($conf->global->TICKET_ADDON == 'mod_'.$classname) {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value=mod_'.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;token='.newToken().'&amp;value=mod_'.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 						}
 						print '</td>';
 
@@ -410,7 +411,7 @@ print '</td></tr>';
 print '</table>';
 
 print '<div class="center">';
-print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';

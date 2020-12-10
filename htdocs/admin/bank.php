@@ -215,7 +215,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="save">';
 
 $head = bank_admin_prepare_head(null);
-dol_fiche_head($head, 'general', $langs->trans("BankSetupModule"), -1, 'account');
+print dol_get_fiche_head($head, 'general', $langs->trans("BankSetupModule"), -1, 'account');
 
 //Show bank account order
 print load_fiche_titre($langs->trans("BankOrderShow"), '', '');
@@ -258,7 +258,7 @@ while ($i < $nbofbank) {
 		print img_picto($langs->trans("Activated"), 'on');
 		print '</td>';
 	} else {
-		print '<td class="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setbankorder&amp;value='.$i.'">';
+		print '<td class="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setbankorder&amp;token='.newToken().'&amp;value='.$i.'">';
 		print img_picto($langs->trans("Disabled"), 'off');
 		print '</a></td>';
 	}
@@ -350,13 +350,13 @@ foreach ($dirmodels as $reldir) {
 								// Active
 								if (in_array($name, $def)) {
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&amp;token='.newToken().'&amp;value='.$name.'">';
 									print img_picto($langs->trans("Enabled"), 'switch_on');
 									print '</a>';
 									print '</td>';
 								} else {
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;token='.newToken().'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 									print "</td>";
 								}
 
@@ -365,7 +365,7 @@ foreach ($dirmodels as $reldir) {
 								if ($conf->global->BANKADDON_PDF == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 								}
 								print '</td>';
 
@@ -391,7 +391,7 @@ foreach ($dirmodels as $reldir) {
 								// Preview
 								print '<td class="center">';
 								if ($module->type == 'pdf') {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
 									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 								}
@@ -424,13 +424,13 @@ print "</td>";
 // Active
 if ($conf->global->BANK_COLORIZE_MOVEMENT) {
 	print '<td class="center">'."\n";
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetbankcolorizemovement">';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetbankcolorizemovement&amp;token='.newToken().'">';
 	print img_picto($langs->trans("Enabled"), 'switch_on');
 	print '</a>';
 	print '</td>';
 } else {
 	print '<td class="center">'."\n";
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=setbankcolorizemovement">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=setbankcolorizemovement&amp;token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 	print "</td>";
 }
 
@@ -483,7 +483,7 @@ print '</td>';
 // Active
 if ($conf->global->BANK_REPORT_LAST_NUM_RELEVE) {
 	print '<td class="center">'."\n";
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetreportlastnumreleve">';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetreportlastnumreleve&amp;token='.newToken().'">';
 	print img_picto($langs->trans("Enabled"), 'switch_on');
 	print '</a>';
 	print '</td>';
@@ -495,10 +495,10 @@ if ($conf->global->BANK_REPORT_LAST_NUM_RELEVE) {
 
 print "</tr>\n";
 print '</table>';
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center">';
-print '<input type="submit" id="save" name="save" class="button hideifnotset" value="'.$langs->trans("Save").'">';
+print '<input type="submit" id="save" name="save" class="button hideifnotset button-save" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print "</form>\n";

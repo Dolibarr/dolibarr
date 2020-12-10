@@ -93,7 +93,7 @@ if ($action == 'warehouse')
 {
 	$value = GETPOST('default_warehouse', 'alpha');
 	$res = dolibarr_set_const($db, "MAIN_DEFAULT_WAREHOUSE", $value, 'chaine', 0, '', $conf->entity);
-	if ($value == -1 || empty($value) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)){
+	if ($value == -1 || empty($value) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) {
 		$res = dolibarr_del_const($db, "MAIN_DEFAULT_WAREHOUSE", $conf->entity);
 	}
 	if (!$res > 0) $error++;
@@ -184,7 +184,7 @@ print load_fiche_titre($langs->trans("StockSetup"), $linkback, 'title_setup');
 
 $head = stock_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("StockSetup"), -1, 'stock');
+print dol_get_fiche_head($head, 'general', $langs->trans("StockSetup"), -1, 'stock');
 
 $form = new Form($db);
 $formproduct = new FormProduct($db);
@@ -483,13 +483,15 @@ if ($virtualdiffersfromphysical)
 	print '</tr>'."\n";
 
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("UseVirtualStockByDefault").'</td>';
+	print '<td>';
+	print $form->textwithpicto($langs->trans("UseRealStockByDefault"), $langs->trans("ReplenishmentCalculation"));
+	print '</td>';
 	print '<td class="right">';
 	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('STOCK_USE_VIRTUAL_STOCK');
+		print ajax_constantonoff('STOCK_USE_REAL_STOCK_BY_DEFAULT_FOR_REPLENISHMENT');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STOCK_USE_VIRTUAL_STOCK", $arrval, $conf->global->STOCK_USE_VIRTUAL_STOCK);
+		print $form->selectarray("STOCK_USE_REAL_STOCK_BY_DEFAULT_FOR_REPLENISHMENT", $arrval, $conf->global->STOCK_USE_REAL_STOCK_BY_DEFAULT_FOR_REPLENISHMENT);
 	}
 	print "</td>\n";
 	print "</tr>\n";
@@ -594,13 +596,13 @@ foreach ($dirmodels as $reldir)
 								if (in_array($name, $def))
 								{
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&amp;token='.newToken().'&amp;value='.$name.'">';
 									print img_picto($langs->trans("Enabled"), 'switch_on');
 									print '</a>';
 									print '</td>';
 								} else {
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 									print "</td>";
 								}
 
@@ -610,7 +612,7 @@ foreach ($dirmodels as $reldir)
 								{
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 								}
 								print '</td>';
 
@@ -636,7 +638,7 @@ foreach ($dirmodels as $reldir)
 								print '<td class="center">';
 								if ($module->type == 'pdf')
 								{
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
 									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 								}
@@ -668,8 +670,8 @@ print load_fiche_titre($langs->trans("Other"), '', '');
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print "<td>".$langs->trans("Other")."</td>\n";
-print '<td class="right">'.$langs->trans("Status").'</td>'."\n";
+print "<td>".$langs->trans("Parameter")."</td>\n";
+print '<td class="right">'.$langs->trans("Value").'</td>'."\n";
 print '</tr>'."\n";
 
 print '<tr class="oddeven">';
@@ -684,7 +686,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UserDefaultWarehouse").'</td>';
 print '<td class="right">';
 if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('MAIN_DEFAULT_WAREHOUSE_USER', array(), null,  0, 0, 1);
+	print ajax_constantonoff('MAIN_DEFAULT_WAREHOUSE_USER', array(), null, 0, 0, 1);
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 	print $form->selectarray("MAIN_DEFAULT_WAREHOUSE_USER", $arrval, $conf->global->MAIN_DEFAULT_WAREHOUSE_USER);
@@ -692,7 +694,7 @@ if ($conf->use_javascript_ajax) {
 print "</td>\n";
 print "</tr>\n";
 
-if (! empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
+if (!empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("UserWarehouseAutoCreate").'</td>';
 	print '<td class="right">';

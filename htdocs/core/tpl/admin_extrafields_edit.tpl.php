@@ -56,17 +56,17 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
     		var list = jQuery("#list");
             var totalizable = jQuery("#totalizable");
     		<?php
-    		if ((GETPOST('type', 'alpha') != "select") && (GETPOST('type', 'alpha') != "sellist"))
-    		{
-    			print 'jQuery("#value_choice").hide();';
-    		}
+			if ((GETPOST('type', 'alpha') != "select") && (GETPOST('type', 'alpha') != "sellist"))
+			{
+				print 'jQuery("#value_choice").hide();';
+			}
 
-    		if (GETPOST('type', 'alpha') == "separate")
-    		{
+			if (GETPOST('type', 'alpha') == "separate")
+			{
 				print "jQuery('#size, #default_value, #langfile').val('').prop('disabled', true);";
-    			print 'jQuery("#value_choice").hide();';
-    		}
-    		?>
+				print 'jQuery("#value_choice").hide();';
+			}
+			?>
 
     		// Case of computed field
     		if (type == 'varchar' || type == 'int' || type == 'double' || type == 'price') {
@@ -145,8 +145,9 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 <input type="hidden" name="attrname" value="<?php echo $attrname; ?>">
 <input type="hidden" name="action" value="update">
 <input type="hidden" name="rowid" value="<?php echo $rowid ?>">
+<input type="hidden" name="enabled" value="<?php echo $extrafields->attributes[$elementtype]['enabled'][$attrname]; ?>">
 
-<?php dol_fiche_head(); ?>
+<?php print dol_get_fiche_head(); ?>
 
 <table summary="listofattributes" class="border centpercent">
 
@@ -203,9 +204,10 @@ $typewecanchangeinto = array(
 	'html'=>array('text', 'html'),
 	'password'=>array('password', 'varchar'),
 	'mail'=>array('varchar', 'phone', 'mail', 'url', 'select'),
-    'url'=>array('varchar', 'phone', 'mail', 'url', 'select'),
-    'phone'=>array('varchar', 'phone', 'mail', 'url', 'select'),
-    'select'=>array('varchar', 'phone', 'mail', 'url', 'select')
+	'url'=>array('varchar', 'phone', 'mail', 'url', 'select'),
+	'phone'=>array('varchar', 'phone', 'mail', 'url', 'select'),
+	'select'=>array('varchar', 'phone', 'mail', 'url', 'select'),
+	'date'=>array('date', 'datetime')
 );
 /* Disabled because text is text on several lines, when varchar is text on 1 line, we should not be able to convert
 if ($size <= 255 && in_array($type, array('text', 'html'))) {
@@ -214,19 +216,20 @@ if ($size <= 255 && in_array($type, array('text', 'html'))) {
 
 if (in_array($type, array_keys($typewecanchangeinto)))
 {
-    $newarray = array();
-    print '<select id="type" class="flat type" name="type">';
-    foreach ($type2label as $key => $val)
-    {
-        $selected = '';
-        if ($key == (GETPOST('type', 'alpha') ?GETPOST('type', 'alpha') : $type)) $selected = ' selected="selected"';
-        if (in_array($key, $typewecanchangeinto[$type])) print '<option value="'.$key.'"'.$selected.'>'.$val.'</option>';
-        else print '<option value="'.$key.'" disabled="disabled"'.$selected.'>'.$val.'</option>';
-    }
-    print '</select>';
+	$newarray = array();
+	print '<select id="type" class="flat type" name="type">';
+	foreach ($type2label as $key => $val)
+	{
+		$selected = '';
+		if ($key == (GETPOST('type', 'alpha') ?GETPOST('type', 'alpha') : $type)) $selected = ' selected="selected"';
+		if (in_array($key, $typewecanchangeinto[$type])) print '<option value="'.$key.'"'.$selected.'>'.$val.'</option>';
+		else print '<option value="'.$key.'" disabled="disabled"'.$selected.'>'.$val.'</option>';
+	}
+	print '</select>';
+	print ajax_combobox('type');
 } else {
 	print $type2label[$type];
-    print '<input type="hidden" name="type" id="type" value="'.$type.'">';
+	print '<input type="hidden" name="type" id="type" value="'.$type.'">';
 }
 ?>
 </td></tr>
@@ -298,10 +301,10 @@ if (in_array($type, array_keys($typewecanchangeinto)))
 <?php } ?>
 </table>
 
-<?php dol_fiche_end(); ?>
+<?php print dol_get_fiche_end(); ?>
 
-<div class="center"><input type="submit" name="button" class="button" value="<?php echo $langs->trans("Save"); ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="submit" name="button" class="button" value="<?php echo $langs->trans("Cancel"); ?>"></div>
+<div class="center"><input type="submit" name="button" class="button button-save" value="<?php echo $langs->trans("Save"); ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="submit" name="button" class="button button-cancel" value="<?php echo $langs->trans("Cancel"); ?>"></div>
 
 </form>
 

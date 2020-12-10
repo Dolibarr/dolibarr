@@ -57,9 +57,9 @@ class modReception extends DolibarrModules
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/reception/receipt",
-		                    "/reception/receipt/temp",
-		                    "/doctemplates/receptions"
-		                    );
+							"/reception/receipt/temp",
+							"/doctemplates/receptions"
+							);
 
 		// Config pages
 		$this->config_page_url = array("reception_setup.php");
@@ -138,7 +138,7 @@ class modReception extends DolibarrModules
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'reception_advance';
-        $this->rights[$r][5] = 'send';
+		$this->rights[$r][5] = 'send';
 
 		$r++;
 		$this->rights[$r][0] = $this->numero.$r;
@@ -205,8 +205,8 @@ class modReception extends DolibarrModules
 		$this->export_dependencies_array[$r] = array('reception_line'=>'ed.rowid', 'product'=>'ed.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 		if ($idcontacts && !empty($conf->global->RECEPTION_ADD_CONTACTS_IN_EXPORT))
 		{
-		    $keyforselect = 'socpeople'; $keyforelement = 'contact'; $keyforaliasextra = 'extra3';
-		    include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+			$keyforselect = 'socpeople'; $keyforelement = 'contact'; $keyforaliasextra = 'extra3';
+			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		}
 		$keyforselect = 'reception'; $keyforelement = 'reception'; $keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
@@ -225,9 +225,9 @@ class modReception extends DolibarrModules
 		$this->export_sql_end[$r] .= ' , '.MAIN_DB_PREFIX.'commande_fournisseurdet as cd';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on cd.fk_product = p.rowid';
 		if ($idcontacts && !empty($conf->global->RECEPTION_ADD_CONTACTS_IN_EXPORT)) {
-		    $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'element_contact as ee ON ee.element_id = cd.fk_commande AND ee.fk_c_type_contact IN ('.$idcontacts.')';
-		    $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople as sp ON sp.rowid = ee.fk_socpeople';
-		    $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra3 ON sp.rowid = extra3.fk_object';
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'element_contact as ee ON ee.element_id = cd.fk_commande AND ee.fk_c_type_contact IN ('.$idcontacts.')';
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople as sp ON sp.rowid = ee.fk_socpeople';
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra3 ON sp.rowid = extra3.fk_object';
 		}
 		$this->export_sql_end[$r] .= ' WHERE c.fk_soc = s.rowid AND c.rowid = ed.fk_reception AND ed.fk_commandefourndet = cd.rowid';
 		$this->export_sql_end[$r] .= ' AND c.entity IN ('.getEntity('reception').')';
@@ -240,7 +240,7 @@ class modReception extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')

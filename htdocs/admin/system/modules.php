@@ -56,10 +56,12 @@ $arrayfields = array(
 	'name'=>array('label'=>$langs->trans("Modules"), 'checked'=>1, 'position'=>10),
 	'version'=>array('label'=>$langs->trans("Version"), 'checked'=>1, 'position'=>20),
 	'id'=>array('label'=>$langs->trans("IdModule"), 'checked'=>1, 'position'=>30),
+	'module_position'=>array('label'=>$langs->trans("Position"), 'checked'=>1, 'position'=>35),
 	'permission'=>array('label'=>$langs->trans("IdPermissions"), 'checked'=>1, 'position'=>40)
 );
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
+
 
 /*
  * Actions
@@ -129,6 +131,7 @@ foreach ($modules as $key=>$module) {
 	$newModule->name = $module->getName();
 	$newModule->version = $module->getVersion();
 	$newModule->id = $key;
+	$newModule->module_position = $module->module_position;
 
 	$alt = $module->name.' - '.$modules_files[$key];
 
@@ -223,6 +226,10 @@ if ($arrayfields['id']['checked']) {
 	print '<input class="flat" type="text" name="search_id" size="8" value="'.$search_id.'">';
 	print '</td>';
 }
+if ($arrayfields['module_position']['checked']) {
+	print '<td class="liste_titre left">';
+	print '</td>';
+}
 if ($arrayfields['permission']['checked']) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" name="search_permission" size="8" value="'.$search_permission.'">';
@@ -246,6 +253,9 @@ if ($arrayfields['version']['checked']) {
 }
 if ($arrayfields['id']['checked']) {
 	print_liste_field_titre($arrayfields['id']['label'], $_SERVER["PHP_SELF"], "id", "", "", "", $sortfield, $sortorder);
+}
+if ($arrayfields['module_position']['checked']) {
+	print_liste_field_titre($arrayfields['module_position']['label'], $_SERVER["PHP_SELF"], "module_position", "", "", "", $sortfield, $sortorder);
 }
 if ($arrayfields['permission']['checked']) {
 	print_liste_field_titre($arrayfields['permission']['label'], $_SERVER["PHP_SELF"], "permission", "", "", "", $sortfield, $sortorder);
@@ -273,6 +283,8 @@ if ($sortfield == "id" && $sortorder == "desc") usort($moduleList, "compareIdDes
 if ($sortfield == "permission" && $sortorder == "asc") usort($moduleList, "comparePermissionIdsAsc");
 if ($sortfield == "permission" && $sortorder == "desc") usort($moduleList, "comparePermissionIdsDesc");
 
+$moduleList = dol_sort_array($moduleList, 'module_position');
+
 foreach ($moduleList as $module) {
 	print '<tr class="oddeven">';
 
@@ -289,6 +301,10 @@ foreach ($moduleList as $module) {
 
 	if ($arrayfields['id']['checked']) {
 		print '<td class="center">'.$module->id.'</td>';
+	}
+
+	if ($arrayfields['module_position']['checked']) {
+		print '<td class="center">'.$module->module_position.'</td>';
 	}
 
 	if ($arrayfields['permission']['checked']) {

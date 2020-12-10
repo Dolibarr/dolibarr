@@ -33,7 +33,7 @@ create table llx_bordereau_cheque
   fk_bank_account   integer,
   fk_user_author    integer,
   statut            smallint NOT NULL DEFAULT 0,
-  tms               timestamp,
+  tms               timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   note              text,
   entity            integer DEFAULT 1 NOT NULL			-- multi company id
 )ENGINE=innodb;

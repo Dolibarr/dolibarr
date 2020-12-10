@@ -54,14 +54,14 @@ $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=expeditionstats&file=expediti
 $px = new DolGraph();
 $mesg = $px->isGraphKo();
 if (!$mesg) {
-    $px->SetData($data);
-    $px->SetMaxValue($px->GetCeilMaxValue());
-    $px->SetWidth($WIDTH);
-    $px->SetHeight($HEIGHT);
-    $px->SetYLabel($langs->trans("NbOfSendings"));
-    $px->SetShading(3);
-    $px->SetHorizTickIncrement(1);
-    $px->draw($filename, $fileurl);
+	$px->SetData($data);
+	$px->SetMaxValue($px->GetCeilMaxValue());
+	$px->SetWidth($WIDTH);
+	$px->SetHeight($HEIGHT);
+	$px->SetYLabel($langs->trans("NbOfSendings"));
+	$px->SetShading(3);
+	$px->SetHorizTickIncrement(1);
+	$px->draw($filename, $fileurl);
 }
 
 print '<table class="border centpercent">';

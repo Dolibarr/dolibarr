@@ -1250,12 +1250,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				//print "Remove box ".$file.'<br>';
 				if ($file == 'box_graph_product_distribution.php') {
 					if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
-						dol_syslog("We discard disabling of module ".$file." because another module still active require it.");
+						dol_syslog("We discard deleting module ".$file." because another module still active requires it.");
 						continue;
 					}
 				}
 
-				if (empty($file)) { $file = isset($this->boxes[$key][1]) ? $this->boxes[$key][1] : ''; // For backward compatibility
+				if (empty($file)) {
+					$file = isset($this->boxes[$key][1]) ? $this->boxes[$key][1] : ''; // For backward compatibility
 				}
 
 				if ($this->db->type == 'sqlite3') {
@@ -1284,7 +1285,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def";
 				$sql .= " WHERE file = '".$this->db->escape($file)."'";
-				$sql .= " AND entity = ".$conf->entity;
+				$sql .= " AND entity = ".$conf->entity;		// Do not use getEntity here, we want to delete only in current company
 
 				dol_syslog(get_class($this)."::delete_boxes", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -1679,13 +1680,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$r_id       = $this->rights[$key][0];
 					$r_desc     = $this->rights[$key][1];
 					$r_type     = isset($this->rights[$key][2]) ? $this->rights[$key][2] : '';
-					$r_def      = $this->rights[$key][3];
+					$r_def      = empty($this->rights[$key][3]) ? 0 : $this->rights[$key][3];
 					$r_perms    = $this->rights[$key][4];
 					$r_subperms = isset($this->rights[$key][5]) ? $this->rights[$key][5] : '';
 					$r_modul = empty($this->rights_class) ?strtolower($this->name) : $this->rights_class;
 
 					if (empty($r_type)) { $r_type = 'w'; }
-					if (empty($r_def)) { $r_def = 0; }
 
 					// Search if perm already present
 					$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."rights_def";

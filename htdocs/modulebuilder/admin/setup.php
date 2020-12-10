@@ -97,7 +97,7 @@ print '<input type="hidden" name="action" value="update">';
 print load_fiche_titre($langs->trans("ModuleSetup").' '.$langs->trans('Modulebuilder'), $linkback);
 
 if (GETPOST('withtab', 'alpha')) {
-	dol_fiche_head($head, 'modulebuilder', '', -1);
+	print dol_get_fiche_head($head, 'modulebuilder', '', -1);
 }
 
 print '<span class="opacitymedium">'.$langs->trans("ModuleBuilderDesc")."</span><br>\n";
@@ -123,9 +123,9 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 		print ajax_constantonoff('MODULEBUILDER_USE_ABOUT');
 	} else {
 		if (empty($conf->global->MODULEBUILDER_USE_ABOUT)) {
-			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=set_MODULEBUILDER_USE_ABOUT">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=set_MODULEBUILDER_USE_ABOUT&amp;token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 		} else {
-			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=del_MODULEBUILDER_USE_ABOUT">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=del_MODULEBUILDER_USE_ABOUT&amp;token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 		}
 	}
 	print '</td></tr>';
@@ -191,10 +191,10 @@ print '</tr>';
 
 print '</table>';
 
-print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'" name="Button"></center>';
+print '<center><input type="submit" class="button button-save" value="'.$langs->trans("Save").'" name="Button"></center>';
 
 if (GETPOST('withtab', 'alpha')) {
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 print '<br>';

@@ -18,6 +18,7 @@
  * Copyright (C) 2017		Josep Lluís Amador	 <joseplluis@lliuretic.cat>
  * Copyright (C) 2019       Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2019-2020  Thibault FOUCART     <support@ptibogxiv.net>
+ * Copyright (C) 2020  		Pierre Ardoin     	 <mapiolca@me.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,6 +80,17 @@ $confirm = GETPOST('confirm', 'alpha');
 $socid = GETPOST('socid', 'int');
 $duration_value = GETPOST('duration_value', 'int');
 $duration_unit = GETPOST('duration_unit', 'alpha');
+
+$accountancy_code_sell = GETPOST('accountancy_code_sell', 'alpha');
+$accountancy_code_sell_intra = GETPOST('accountancy_code_sell_intra', 'alpha');
+$accountancy_code_sell_export = GETPOST('accountancy_code_sell_export', 'alpha');
+$accountancy_code_buy = GETPOST('accountancy_code_buy', 'alpha');
+$accountancy_code_buy_intra = GETPOST('accountancy_code_buy_intra', 'alpha');
+$accountancy_code_buy_export = GETPOST('accountancy_code_buy_export', 'alpha');
+
+// by default 'alphanohtml' (better security); hidden conf MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML allows basic html
+$label_security_check = empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML) ? 'alphanohtml' : 'restricthtml';
+
 if (!empty($user->socid)) $socid = $user->socid;
 
 $object = new Product($db);
@@ -192,32 +204,32 @@ if (empty($reshook))
 	{
 		$error = 0;
 
-		if (!GETPOST('label', 'alphanohtml'))
-		{
-			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Label')), null, 'errors');
-			$action = "create";
-			$error++;
-		}
-		if (empty($ref))
-		{
-			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Ref')), null, 'errors');
-			$action = "create";
-			$error++;
-		}
-		if (!empty($duration_value) && empty($duration_unit))
-		{
-			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Unit')), null, 'errors');
-			$action = "create";
-			$error++;
-		}
+        if (!GETPOST('label', $label_security_check))
+        {
+            setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Label')), null, 'errors');
+            $action = "create";
+            $error++;
+        }
+        if (empty($ref))
+        {
+            setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Ref')), null, 'errors');
+            $action = "create";
+            $error++;
+        }
+        if (!empty($duration_value) && empty($duration_unit))
+        {
+            setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Unit')), null, 'errors');
+            $action = "create";
+            $error++;
+        }
 
 		if (!$error)
 		{
 			$units = GETPOST('units', 'int');
 
-			$object->ref                   = $ref;
-			$object->label                 = GETPOST('label', 'alphanohtml');
-			$object->price_base_type       = GETPOST('price_base_type', 'aZ09');
+            $object->ref                   = $ref;
+            $object->label                 = GETPOST('label', $label_security_check);
+            $object->price_base_type       = GETPOST('price_base_type', 'aZ09');
 
 			if ($object->price_base_type == 'TTC')
 				$object->price_ttc = GETPOST('price');
@@ -292,8 +304,8 @@ if (empty($reshook))
 			$object->note_private          	 = dol_htmlcleanlastbr(GETPOST('note_private', 'restricthtml'));
 			$object->note               	 = $object->note_private; // deprecated
 			$object->customcode              = GETPOST('customcode', 'alphanohtml');
-	        $object->country_id = GETPOST('country_id', 'int');
-	        $object->state_id = GETPOST('state_id', 'int');
+			$object->country_id = GETPOST('country_id', 'int');
+			$object->state_id = GETPOST('state_id', 'int');
 			$object->duration_value     	 = $duration_value;
 			$object->duration_unit      	 = $duration_unit;
 			$object->fk_default_warehouse	 = GETPOST('fk_default_warehouse');
@@ -312,8 +324,19 @@ if (empty($reshook))
 			$object->surface_units      	 = GETPOST('surface_units'); // This is not the fk_unit but the power of unit
 			$object->volume             	 = GETPOST('volume');
 			$object->volume_units       	 = GETPOST('volume_units'); // This is not the fk_unit but the power of unit
-			$object->finished           	 = GETPOST('finished', 'alpha');
-			$object->fk_unit = GETPOST('units', 'alpha'); // This is the fk_unit of sale
+			$finished = GETPOST('finished', 'int');
+			if ($finished > 0) {
+				$object->finished = $finished;
+			} else {
+				$object->finished = null;
+			}
+
+			$units = GETPOST('units', 'int');
+			if ($units > 0) {
+				$object->fk_unit = $units;
+			} else {
+				$object->fk_unit = null;
+			}
 
 			$accountancy_code_sell = GETPOST('accountancy_code_sell', 'alpha');
 			$accountancy_code_sell_intra = GETPOST('accountancy_code_sell_intra', 'alpha');
@@ -389,7 +412,7 @@ if (empty($reshook))
 				$object->oldcopy = clone $object;
 
 				$object->ref                    = $ref;
-				$object->label                  = GETPOST('label', 'alphanohtml');
+				$object->label                  = GETPOST('label', $label_security_check);
 				$object->description            = dol_htmlcleanlastbr(GETPOST('desc', 'restricthtml'));
 				$object->url = GETPOST('url');
 				if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB))
@@ -426,10 +449,15 @@ if (empty($reshook))
 				$object->surface_units          = GETPOST('surface_units'); // This is not the fk_unit but the power of unit
 				$object->volume                 = GETPOST('volume');
 				$object->volume_units           = GETPOST('volume_units'); // This is not the fk_unit but the power of unit
-				$object->finished               = GETPOST('finished', 'alpha');
+
+				$finished = GETPOST('finished', 'int');
+				if ($finished >= 0) {
+					$object->finished = $finished;
+				} else {
+					$object->finished = null;
+				}
 
 				$units = GETPOST('units', 'int');
-
 				if ($units > 0) {
 					$object->fk_unit = $units;
 				} else {
@@ -956,16 +984,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		$linkback = "";
 		print load_fiche_titre($title, $linkback, $picto);
 
-        // We set country_id, country_code and country for the selected country
-        $object->country_id = GETPOSTISSET('country_id') ? GETPOST('country_id', 'int') : null;
-        if ($object->country_id > 0)
-        {
-            $tmparray = getCountry($object->country_id, 'all');
-            $object->country_code = $tmparray['code'];
-            $object->country = $tmparray['label'];
-        }
+		// We set country_id, country_code and country for the selected country
+		$object->country_id = GETPOSTISSET('country_id') ? GETPOST('country_id', 'int') : null;
+		if ($object->country_id > 0)
+		{
+			$tmparray = getCountry($object->country_id, 'all');
+			$object->country_code = $tmparray['code'];
+			$object->country = $tmparray['label'];
+		}
 
-		dol_fiche_head('');
+		print dol_get_fiche_head('');
 
 		print '<table class="border centpercent">';
 
@@ -980,7 +1008,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '</td></tr>';
 
 		// Label
-		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="label" class="minwidth300 maxwidth400onsmartphone" maxlength="255" value="'.dol_escape_htmltag(GETPOST('label', 'alphanohtml')).'"></td></tr>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="label" class="minwidth300 maxwidth400onsmartphone" maxlength="255" value="'.dol_escape_htmltag(GETPOST('label', $label_security_check)).'"></td></tr>';
 
 		// On sell
 		print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="3">';
@@ -1009,8 +1037,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		if ($showbarcode)
 		{
  			print '<tr><td>'.$langs->trans('BarcodeType').'</td><td>';
- 			if (isset($_POST['fk_barcode_type']))
-			{
+ 			if (GETPOSTISSET('fk_barcode_type')) {
 			 	$fk_barcode_type = GETPOST('fk_barcode_type');
 			} else {
 				if (empty($fk_barcode_type) && !empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE)) $fk_barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
@@ -1021,7 +1048,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print '</td>';
 			if ($conf->browser->layout == 'phone') print '</tr><tr>';
 			print '<td>'.$langs->trans("BarcodeValue").'</td><td>';
-			$tmpcode = isset($_POST['barcode']) ?GETPOST('barcode') : $object->barcode;
+			$tmpcode = GETPOSTISSET('barcode') ? GETPOST('barcode') : $object->barcode;
 			if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) $tmpcode = $modBarCodeProduct->getNextValue($object, $type);
 			print '<input class="maxwidth100" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
 			print '</td></tr>';
@@ -1126,7 +1153,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		}
 
 		// Units
-		if ($conf->global->PRODUCT_USE_UNITS)
+		if (!empty($conf->global->PRODUCT_USE_UNITS))
 		{
 			print '<tr><td>'.$langs->trans('DefaultUnitToShow').'</td>';
 			print '<td colspan="3">';
@@ -1142,26 +1169,27 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			// Origin country
 			print '<td>'.$langs->trans("CountryOrigin").'</td>';
 			print '<td>';
-            print img_picto('', 'globe-americas', 'class="paddingrightonly"');
-            print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 widthcentpercentminusx');
-            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			print img_picto('', 'globe-americas', 'class="paddingrightonly"');
+			print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 widthcentpercentminusx');
+			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			print '</td>';
 
-            // State
-            if (empty($conf->global->PRODUCT_DISABLE_STATE))
-            {
-            		if ($conf->browser->layout == 'phone') print '</tr><tr>';
-                if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
-                {
-                    print '<td>'.$form->editfieldkey('Region-StateOrigine', 'state_id', '', $object, 0).'</td><td colspan="3">';
-                } else {
-                    print '<td>'.$form->editfieldkey('StateOrigin', 'state_id', '', $object, 0).'</td><td colspan="3">';
-                }
+			// State
+			if (empty($conf->global->PRODUCT_DISABLE_STATE))
+			{
+				if ($conf->browser->layout == 'phone') print '</tr><tr>';
+				if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
+				{
+					print '<td>'.$form->editfieldkey('RegionStateOrigin', 'state_id', '', $object, 0).'</td><td colspan="3">';
+				} else {
+					print '<td>'.$form->editfieldkey('StateOrigin', 'state_id', '', $object, 0).'</td><td colspan="3">';
+				}
 
 				print $formcompany->select_state($object->state_id, $object->country_code);
-                print '</tr>';
-            }
-                print '</tr>';
+				print '</tr>';
+			}
+
+			print '</tr>';
 		}
 
 		// Other attributes
@@ -1189,7 +1217,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			// Categories
 			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
-			print $form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, '', 0, '100%');
+			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 			print "</td></tr>";
 		}
 
@@ -1316,6 +1344,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print '</td></tr>';
 		} else // For external software
 		{
+			if (!empty($accountancy_code_sell)) { $object->accountancy_code_sell = $accountancy_code_sell; }
+			if (!empty($accountancy_code_sell_intra)) { $object->accountancy_code_sell_intra = $accountancy_code_sell_intra; }
+			if (!empty($accountancy_code_sell_export)) { $object->accountancy_code_sell_export = $accountancy_code_sell_export; }
+			if (!empty($accountancy_code_buy)) { $object->accountancy_code_buy = $accountancy_code_buy; }
+			if (!empty($accountancy_code_buy_intra)) { $object->accountancy_code_buy_intra = $accountancy_code_buy_intra; }
+			if (!empty($accountancy_code_buy_export)) { $object->accountancy_code_buy_export = $accountancy_code_buy_export; }
+
 			// Accountancy_code_sell
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 			print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code_sell" value="'.$object->accountancy_code_sell.'">';
@@ -1354,12 +1389,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		}
 		print '</table>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
 		print ' &nbsp; &nbsp; ';
-		print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+		print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 		print '</div>';
 
 		print '</form>';
@@ -1406,7 +1441,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			$head = product_prepare_head($object);
 			$titre = $langs->trans("CardProduct".$object->type);
 			$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
-			dol_fiche_head($head, 'card', $titre, 0, $picto);
+			print dol_get_fiche_head($head, 'card', $titre, 0, $picto);
 
 
 			print '<table class="border allwidth">';
@@ -1464,8 +1499,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			if ($showbarcode)
 			{
 				print '<tr><td>'.$langs->trans('BarcodeType').'</td><td>';
-				if (isset($_POST['fk_barcode_type']))
-				{
+				if (GETPOSTISSET('fk_barcode_type')) {
 				 	$fk_barcode_type = GETPOST('fk_barcode_type');
 				} else {
 					$fk_barcode_type = $object->barcode_type;
@@ -1475,7 +1509,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				$formbarcode = new FormBarCode($db);
 				print $formbarcode->selectBarcodeType($fk_barcode_type, 'fk_barcode_type', 1);
 				print '</td><td>'.$langs->trans("BarcodeValue").'</td><td>';
-				$tmpcode = isset($_POST['barcode']) ?GETPOST('barcode') : $object->barcode;
+				$tmpcode = GETPOSTISSET('barcode') ? GETPOST('barcode') : $object->barcode;
 				if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) $tmpcode = $modBarCodeProduct->getNextValue($object, $type);
 				print '<input size="40" class="maxwidthonsmartphone" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
 				print '</td></tr>';
@@ -1531,8 +1565,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			} else {
 				// Nature
 				print '<tr><td>'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td colspan="3">';
-				$statutarray = array('-1'=>'&nbsp;', '1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
-				print $form->selectarray('finished', $statutarray, $object->finished);
+				print $formproduct->selectProductNature('finished', $object->finished);
 				print '</td></tr>';
 
 				// Brut Weight
@@ -1578,7 +1611,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				}
 			}
 			// Units
-			if ($conf->global->PRODUCT_USE_UNITS)
+			if (!empty($conf->global->PRODUCT_USE_UNITS))
 			{
 				print '<tr><td>'.$langs->trans('DefaultUnitToShow').'</td>';
 				print '<td colspan="3">';
@@ -1600,10 +1633,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				// State
 				if (empty($conf->global->PRODUCT_DISABLE_STATE))
 				{
-            		if ($conf->browser->layout == 'phone') print '</tr><tr>';
+					if ($conf->browser->layout == 'phone') print '</tr><tr>';
 					if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
 					{
-						print '<td>'.$form->editfieldkey('Region-StateOrigine', 'state_id', '', $object, 0).'</td><td colspan="3">';
+						print '<td>'.$form->editfieldkey('RegionStateOrigin', 'state_id', '', $object, 0).'</td><td colspan="3">';
 					} else {
 						print '<td>'.$form->editfieldkey('StateOrigin', 'state_id', '', $object, 0).'</td><td colspan="3">';
 					}
@@ -1636,7 +1669,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 						$arrayselected[] = $cat->id;
 					}
 				}
-				print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+				print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 				print "</td></tr>";
 			}
 
@@ -1740,12 +1773,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			}
 			print '</table>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
-			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+			print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 
 			print '</form>';
@@ -1758,7 +1791,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			$titre = $langs->trans("CardProduct".$object->type);
 			$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 
-			dol_fiche_head($head, 'card', $titre, -1, $picto);
+			print dol_get_fiche_head($head, 'card', $titre, -1, $picto);
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 			$object->next_prev_filter = " fk_product_type = ".$object->type;
@@ -1821,7 +1854,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				print '</td><td colspan="2">';
 				if ($action == 'editbarcode')
 				{
-					$tmpcode = isset($_POST['barcode']) ?GETPOST('barcode') : $object->barcode;
+					$tmpcode = GETPOSTISSET('barcode') ? GETPOST('barcode') : $object->barcode;
 					if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) $tmpcode = $modBarCodeProduct->getNextValue($object, $type);
 
 					print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
@@ -2138,7 +2171,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print '</div></div>';
 			print '<div style="clear:both"></div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 		}
 	} elseif ($action != 'create')
 	{
@@ -2161,7 +2194,7 @@ if ($result > 0)
 $tmpcode = '';
 if (!empty($modCodeProduct->code_auto)) $tmpcode = $modCodeProduct->getNextValue($object, $object->type);
 
-$formconfirm='';
+$formconfirm = '';
 
 // Confirm delete product
 if (($action == 'delete' && (empty($conf->use_javascript_ajax) || !empty($conf->dol_use_jmobile)))	// Output when action = clone if jmobile or no js
@@ -2189,7 +2222,7 @@ if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->d
 		$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_composition', 'label' => $langs->trans('CloneCompositionProduct'), 'value' => 1);
 	}
 
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneProduct', $object->ref), 'confirm_clone', $formquestionclone, 'yes', 'action-clone', 350, 600);
+	$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneProduct', $object->ref), 'confirm_clone', $formquestionclone, 'yes', 'action-clone', 350, 600);
 }
 
 // Call Hook formConfirm
@@ -2238,7 +2271,7 @@ if ($action != 'create' && $action != 'edit')
 				{
 					print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>'."\n";
 				} else {
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("Delete").'</a>';
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;token='.newToken().'&amp;id='.$object->id.'">'.$langs->trans("Delete").'</a>';
 				}
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ProductIsUsed").'">'.$langs->trans("Delete").'</a>';
@@ -2337,7 +2370,7 @@ if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action ==
 
 		print load_fiche_titre($langs->trans("AddToDraft"), '', '');
 
-		dol_fiche_head('');
+		print dol_get_fiche_head('');
 
 		$html .= '<tr><td class="nowrap">'.$langs->trans("Quantity").' ';
 		$html .= '<input type="text" class="flat" name="qty" size="1" value="1"></td>';
@@ -2353,7 +2386,7 @@ if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action ==
 		print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 		print '</div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '</form>';
 	}
@@ -2372,7 +2405,11 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete')
 	// Documents
 	$objectref = dol_sanitizeFileName($object->ref);
 	$relativepath = $comref.'/'.$objectref.'.pdf';
-	$filedir = $conf->product->dir_output.'/'.$objectref;
+	if (!empty($conf->product->multidir_output[$object->entity])) {
+		$filedir = $conf->product->multidir_output[$object->entity].'/'.$objectref; //Check repertories of current entities
+	} else {
+		$filedir = $conf->product->dir_output.'/'.$objectref;
+	}
 	$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 	$genallowed = $usercanread;
 	$delallowed = $usercancreate;
