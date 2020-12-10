@@ -104,6 +104,7 @@ SuspenseAccountNotDefined=Suspense account isn't defined
 BoxLastCustomerShipments=Last customer shipments
 BoxTitleLastCustomerShipments=Latest %s customer shipments
 NoRecordedShipments=No recorded customer shipment
+BoxCustomersOutstandingBillReached=Customers with oustanding limit reached
 # Pages
 AccountancyHome=Accountancy
 ValidatedProjects=Validated projects

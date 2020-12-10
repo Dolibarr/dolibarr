@@ -191,6 +191,16 @@ if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@loc
 	print "</tr>";
 }
 
+$functions = ["imap_open"];
+$name      = "IMAP";
+
+print "<tr>";
+print "<td>".$name."</td>";
+print getTableColumn($name, $loadedExtensions);
+print getTableColumnFunction($functions);
+print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
+print "</tr>";
+
 $functions = array();
 $name      = "xDebug";
 
@@ -346,7 +356,7 @@ function getResultColumn($name, array $activated, array $loaded, array $function
 	}
 
 	$html = "<td>";
-	$html .= $result ? $langs->trans("PHPSupport", $name) : $langs->trans("ErrorPHPDoesNotSupport".$name);
+	$html .= $result ? $langs->trans("PHPSupport", $name) : $langs->trans("ErrorPHPDoesNotSupport", $name);
 	$html .= "</td>";
 
 	return $html;
