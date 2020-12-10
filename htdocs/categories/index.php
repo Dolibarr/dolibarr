@@ -172,7 +172,7 @@ foreach ($fulltree as $key => $val)
 		$counter = "<td class='left' width='40px;'>".(is_countable($elements) ? count($elements) : '0')."</td>";
 	}
 
-	$color = $categstatic->color ? ' style="background: #'.$categstatic->color.';"' : ' style="background: #bbb"';
+	$color = $categstatic->color ? ' style="background: #'.sprintf("%06s", $categstatic->color).';"' : ' style="background: #bbb"';
 
 	$data[] = array(
 	'rowid'=>$val['rowid'],

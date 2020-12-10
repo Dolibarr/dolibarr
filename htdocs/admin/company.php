@@ -478,6 +478,14 @@ if (!empty($mysoc->logo_small)) {
 		print '<div class="inline-block valignmiddle">';
 		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small).'">';
 		print '</div>';
+	} elseif (!empty($mysoc->logo)) {
+	    if (!file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini)) {
+	        $imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo, $maxwidthmini, $maxheightmini, '_mini', $quality);
+	    }
+	    $imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo, $maxwidthmini, $maxheightmini, '_small', $quality);
+	    print '<div class="inline-block valignmiddle">';
+	    print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.basename($imgThumbSmall)).'">';
+	    print '</div>';
 	}
 	print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 } elseif (!empty($mysoc->logo)) {
@@ -505,6 +513,14 @@ if (!empty($mysoc->logo_squarred_small)) {
 		print '<div class="inline-block valignmiddle marginrightonly">';
 		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_small).'">';
 		print '</div>';
+	} elseif (!empty($mysoc->logo_squarred)) {
+	    if (!file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini)) {
+	        $imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo_squarred, $maxwidthmini, $maxheightmini, '_mini', $quality);
+	    }
+	    $imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo_squarred, $maxwidthmini, $maxheightmini, '_small', $quality);
+	    print '<div class="inline-block valignmiddle">';
+	    print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.basename($imgThumbSmall)).'">';
+	    print '</div>';
 	}
 	print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogosquarred">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 } elseif (!empty($mysoc->logo_squarred)) {

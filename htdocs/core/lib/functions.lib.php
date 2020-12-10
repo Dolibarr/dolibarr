@@ -4282,7 +4282,11 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 		$out .= '>';
 	}
 
-	if ($tooltip) $out .= $form->textwithpicto($langs->trans($name), $langs->trans($tooltip));
+	if ($tooltip) {
+		// You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
+		$tmptooltip = explode(':', $tooltip);
+		$out .= $form->textwithpicto($langs->trans($name), $langs->trans($tmptooltip[0]), 1, 'help', '', 0, 3, (empty($tmptooltip[1]) ? '' : 'extra_'.str_replace('.', '_', $field).'_'.$tmptooltip[1]));
+	}
 	else $out .= $langs->trans($name);
 
 	if (empty($thead) && $field && empty($disablesortlink))    // If this is a sort field
@@ -6500,12 +6504,18 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 	}
 	if (empty($exclude) || !in_array('objectamount', $exclude))
 	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functionsnumtoword.lib.php';
+
 		$substitutionarray['__DATE_YMD__']        = is_object($object) ? (isset($object->date) ? dol_print_date($object->date, 'day', 0, $outputlangs) : null) : '';
 		$substitutionarray['__DATE_DUE_YMD__']    = is_object($object) ? (isset($object->date_lim_reglement) ? dol_print_date($object->date_lim_reglement, 'day', 0, $outputlangs) : null) : '';
 
 		$substitutionarray['__AMOUNT__']          = is_object($object) ? $object->total_ttc : '';
+		$substitutionarray['__AMOUNT_TEXT__']     = is_object($object) ? dol_convertToWord($object->total_ttc, $outputlangs, '', true) : '';
+		$substitutionarray['__AMOUNT_TEXTCURRENCY__'] = is_object($object) ? dol_convertToWord($object->total_ttc, $outputlangs, $conf->currency, true) : '';
 		$substitutionarray['__AMOUNT_EXCL_TAX__'] = is_object($object) ? $object->total_ht : '';
 		$substitutionarray['__AMOUNT_VAT__']      = is_object($object) ? (isset($object->total_vat) ? $object->total_vat : $object->total_tva) : '';
+		$substitutionarray['__AMOUNT_VAT_TEXT__']      = is_object($object) ? (isset($object->total_vat) ? dol_convertToWord($object->total_vat, $outputlangs, '', true) : dol_convertToWord($object->total_tva, $outputlangs, '', true)) : '';
+		$substitutionarray['__AMOUNT_VAT_TEXTCURRENCY__']      = is_object($object) ? (isset($object->total_vat) ? dol_convertToWord($object->total_vat, $outputlangs, $conf->currency, true) : dol_convertToWord($object->total_tva, $outputlangs, $conf->currency, true)) : '';
 		if ($onlykey != 2 || $mysoc->useLocalTax(1)) $substitutionarray['__AMOUNT_TAX2__']     = is_object($object) ? $object->total_localtax1 : '';
 		if ($onlykey != 2 || $mysoc->useLocalTax(2)) $substitutionarray['__AMOUNT_TAX3__']     = is_object($object) ? $object->total_localtax2 : '';
 
@@ -6515,7 +6525,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		if ($onlykey != 2 || $mysoc->useLocalTax(1)) $substitutionarray['__AMOUNT_TAX2_FORMATED__']     = is_object($object) ? ($object->total_localtax1 ? price($object->total_localtax1, 0, $outputlangs, 0, 0, -1, $conf->currency) : null) : '';
 		if ($onlykey != 2 || $mysoc->useLocalTax(2)) $substitutionarray['__AMOUNT_TAX3_FORMATED__']     = is_object($object) ? ($object->total_localtax2 ? price($object->total_localtax2, 0, $outputlangs, 0, 0, -1, $conf->currency) : null) : '';
 
-		// TODO Add keys for foreign multicurrency
+		$substitutionarray['__AMOUNT_MULTICURRENCY__']          = is_object($object) ? $object->multicurrency_total_ttc : '';
+		$substitutionarray['__AMOUNT_MULTICURRENCY_TEXT__']     = is_object($object) ? dol_convertToWord($object->multicurrency_total_ttc, $outputlangs, '', true) : '';
+		$substitutionarray['__AMOUNT_MULTICURRENCY_TEXTCURRENCY__'] = is_object($object) ? dol_convertToWord($object->multicurrency_total_ttc, $outputlangs, $object->multicurrency_code, true) : '';
+		// TODO Add other keys for foreign multicurrency
 
 		// For backward compatibility
 		if ($onlykey != 2)
