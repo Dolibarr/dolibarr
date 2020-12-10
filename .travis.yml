@@ -266,7 +266,7 @@ script:
 - |
   git remote set-branches --add origin develop
   git fetch
-  STAGED_FILES_CMD=`git diff --name-only --diff-filter=ACMR HEAD | grep \\\\.php`
+  STAGED_FILES_CMD=`git diff --name-only --diff-filter=ACMR origin/develop | grep \\\\.php`
   FILES=${FILES:-$STAGED_FILES_CMD}
   echo "Checking PHP syntax errors"
   # Ensure we catch errors
