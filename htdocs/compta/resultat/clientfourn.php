@@ -144,8 +144,12 @@ if ($modecompta == "CREANCES-DETTES")
 {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByPredefinedAccountGroups");
 	$calcmode = $langs->trans("CalcModeDebt");
-	$calcmode .= '<br>('.$langs->trans("SeeReportInInputOutputMode", '<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=RECETTES-DEPENSES">', '</a>').')';
-	if (!empty($conf->accounting->enabled)) $calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=BOOKKEEPING">', '</a>').')';
+	$calcmode .= '<br>('.$langs->trans("SeeReportInInputOutputMode", '{s1}', '{s2}').')';
+	$calcmode = str_replace(array('{s1}', '{s2}'), array('<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=RECETTES-DEPENSES">', '</a>'), $calcmode);
+	if (!empty($conf->accounting->enabled)) {
+		$calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '{s1}', '{s2}').')';
+		$calcmode = str_replace(array('{s1}', '{s2}'), array('<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=BOOKKEEPING">', '</a>'), $calcmode);
+	}
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year'] - 1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year'] + 1)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesResultDue");
@@ -157,8 +161,12 @@ if ($modecompta == "CREANCES-DETTES")
 {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByPredefinedAccountGroups");
 	$calcmode = $langs->trans("CalcModeEngagement");
-	$calcmode .= '<br>('.$langs->trans("SeeReportInDueDebtMode", '<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=CREANCES-DETTES">', '</a>').')';
-	if (!empty($conf->accounting->enabled)) $calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=BOOKKEEPING">', '</a>').')';
+	$calcmode .= '<br>('.$langs->trans("SeeReportInDueDebtMode", '{s1}', '{s2}').')';
+	$calcmode = str_replace(array('{s1}', '{s2}'), array('<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=CREANCES-DETTES">', '</a>'), $calcmode);
+	if (!empty($conf->accounting->enabled)) {
+		$calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '{s1}', '{s2}').')';
+		$calcmode = str_replace(array('{s1}', '{s2}'), array('<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=BOOKKEEPING">', '</a>'), $calcmode);
+	}
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year'] - 1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year'] + 1)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesResultInOut");
@@ -168,8 +176,10 @@ if ($modecompta == "CREANCES-DETTES")
 {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByPredefinedAccountGroups");
 	$calcmode = $langs->trans("CalcModeBookkeeping");
-	$calcmode .= '<br>('.$langs->trans("SeeReportInInputOutputMode", '<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=RECETTES-DEPENSES">', '</a>').')';
-	$calcmode .= '<br>('.$langs->trans("SeeReportInDueDebtMode", '<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=CREANCES-DETTES">', '</a>').')';
+	$calcmode .= '<br>('.$langs->trans("SeeReportInInputOutputMode", '{s1}', '{s2}').')';
+	$calcmode = str_replace(array('{s1}', '{s2}'), array('<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=RECETTES-DEPENSES">', '</a>'), $calcmode);
+	$calcmode .= '<br>('.$langs->trans("SeeReportInDueDebtMode", '{s1}', '{s2}').')';
+	$calcmode = str_replace(array('{s1}', '{s2}'), array('<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=CREANCES-DETTES">', '</a>'), $calcmode);
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$arraylist = array('no'=>$langs->trans("No"), 'yes'=>$langs->trans("AccountWithNonZeroValues"), 'all'=>$langs->trans("All"));
 	$period .= ' &nbsp; &nbsp; '.$langs->trans("DetailByAccount").' '.$form->selectarray('showaccountdetail', $arraylist, $showaccountdetail, 0);

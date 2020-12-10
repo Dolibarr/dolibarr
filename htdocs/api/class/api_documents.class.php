@@ -120,7 +120,7 @@ class Documents extends DolibarrApi
 	/**
 	 * Build a document.
 	 *
-	 * Test sample 1: { "module_part": "invoice", "original_file": "FA1701-001/FA1701-001.pdf", "doctemplate": "crabe", "langcode": "fr_FR" }.
+	 * Test sample 1: { "modulepart": "invoice", "original_file": "FA1701-001/FA1701-001.pdf", "doctemplate": "crabe", "langcode": "fr_FR" }.
 	 *
 	 * @param   string  $modulepart    Name of module or area concerned by file download ('invoice', 'order', ...).
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: IN201701-999/IN201701-999.pdf).

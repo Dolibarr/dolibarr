@@ -615,13 +615,12 @@ if ($contextpage == 'poslist' && $type == 't' && (!empty($conf->global->PRODUIT_
 
 // Show the new button only when this page is not opend from the Extended POS (pop-up window)
 // but allow it too, when a user has the rights to create a new customer
-if ($contextpage != 'poslist')
-{
+if ($contextpage != 'poslist') {
 	$url = DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter;
 	if (!empty($socid)) $url .= '&socid='.$socid;
 	$newcardbutton = dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url, '', $user->rights->societe->creer);
 } elseif ($user->rights->societe->creer) {
-	$url = DOL_URL_ROOT.'/societe/card.php?action=create&type=t&contextpage=poslist&optioncss=print&backtopage='.$_SERVER["PHP_SELF"].'?type=t&contextpage=poslist&nomassaction=1&optioncss=print&place='.urlencode($place);
+	$url = DOL_URL_ROOT.'/societe/card.php?action=create&type=t&contextpage=poslist&optioncss=print&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type=t&contextpage=poslist&nomassaction=1&optioncss=print&place='.$place);
 	$label = 'MenuNewCustomer';
 	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url);
 }

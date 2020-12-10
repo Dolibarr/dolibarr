@@ -1288,7 +1288,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		$prodser->get_sousproduits_arbo();
 		if (!empty($prodser->sousprods) && is_array($prodser->sousprods) && count($prodser->sousprods)) {
 			$tmparrayofsubproducts = reset($prodser->sousprods);
-			foreach($tmparrayofsubproducts as $subprodval) {
+			foreach ($tmparrayofsubproducts as $subprodval) {
 				$libelleproduitservice .= "\n * ".$subprodval[5].(($subprodval[5] && $subprodval[3]) ? ' - ' : '').$subprodval[3].' ('.$subprodval[1].')';
 			}
 		}
