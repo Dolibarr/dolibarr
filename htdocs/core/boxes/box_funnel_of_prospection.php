@@ -135,7 +135,6 @@ class box_funnel_of_prospection extends ModeleBoxes
 		}
 
 		global $conf, $user, $langs;
-		data
 		$this->max = $max;
 
 		$this->info_box_head = array(
