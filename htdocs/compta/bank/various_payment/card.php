@@ -401,7 +401,7 @@ if ($action == 'create')
 		print '<td>';
 		print $formaccounting->select_account($accountancy_code, 'accountancy_code', 1, null, 1, 1);
 		print '</td></tr>';
-	} else  { // For external software
+	} else { // For external software
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("AccountAccounting").'</td>';
 		print '<td><input class="minwidth100 maxwidthonsmartphone" name="accountancy_code" value="'.$accountancy_code.'">';
 		print '</td></tr>';
@@ -411,8 +411,7 @@ if ($action == 'create')
 	if (!empty($conf->accounting->enabled)) {
 		print '<tr><td>'.$langs->trans("SubledgerAccount").'aaaa</td>';
 		print '<td>';
-		if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
-		{
+		if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
 			print $formaccounting->select_auxaccount($subledger_account, 'subledger_account', 1, '');
 		} else {
 			print '<input type="text" class="maxwidth200 maxwidthonsmartphone" name="subledger_account" value="'.$subledger_account.'">';
