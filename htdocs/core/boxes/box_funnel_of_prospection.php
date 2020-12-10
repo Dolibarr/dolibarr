@@ -97,8 +97,8 @@ class box_funnel_of_prospection extends ModeleBoxes
 		$sql = "SELECT cls.rowid, cls.code, cls.percent, cls.label";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "c_lead_status as cls";
 		$sql .= " WHERE active=1";
-		$sql .= " Order by cls.rowid";
-		$sql .= " AND cls.code != 'LOST'";
+		$sql .= " AND cls.code <> 'LOST'";
+		$sql .= $this->db->order('cls.rowid','ASC');
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -201,7 +201,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 						}
 
 						$data[] = (isset($valsamount[$status]) ? (float) $valsamount[$status] : 0);
-
+						$liststatus[] = $labelStatus;
 						if (!$conf->use_javascript_ajax) {
 							$stringtoprint .= '<tr class="oddeven">';
 							$stringtoprint .= '<td>' . $labelStatus . '</td>';
