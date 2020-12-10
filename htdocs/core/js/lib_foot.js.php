@@ -196,3 +196,7 @@ print '
 					}
 				});
 			});'."\n";
+// hide topmenus disabled
+if (!empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (!$user->admin)) {
+    print '$("li:has(.tmenudisabled)").hide();';
+}
