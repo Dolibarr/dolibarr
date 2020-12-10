@@ -1154,6 +1154,18 @@ class DolGraph
 				$this->stringtoshow .= ', yAxes: [{ stacked: true }]';
 			}
 			$this->stringtoshow .= ' }';
+			if ($isfunnel) {
+				$this->stringtoshow .= ', tooltips: {mode: \'nearest\',
+					callbacks: {
+						title: function(tooltipItem, data) {
+							return data.datasets[tooltipItem[0].datasetIndex].label;
+						},
+						label: function(tooltipItem, data) {
+							return data.datasets[tooltipItem.datasetIndex].data[0][1];
+						}
+					}
+				},';
+			}
 			$this->stringtoshow .= '};';
 			$this->stringtoshow .= '
 				var ctx = document.getElementById("canvas_' . $tag . '").getContext("2d");
@@ -1265,7 +1277,14 @@ class DolGraph
 				$this->stringtoshow .= 'borderColor: \'' . $bordercolor . '\', ';
 				$this->stringtoshow .= 'backgroundColor: \'' . $color . '\', ';
 				if ($arrayofgroupslegend[$i]) $this->stringtoshow .= 'stack: \'' . $arrayofgroupslegend[$i]['stacknum'] . '\', ';
-				$this->stringtoshow .= 'data: [' . $serie[$i] . ']';
+				$this->stringtoshow .='data: [';
+				if($isfunnel){
+					$this->stringtoshow .= '['.-$serie[$i].','.$serie[$i].']';
+
+				}else{
+					$this->stringtoshow .= $serie[$i];
+				}
+				$this->stringtoshow .=']';
 				$this->stringtoshow .= '}' . "\n";
 
 				$i++;
