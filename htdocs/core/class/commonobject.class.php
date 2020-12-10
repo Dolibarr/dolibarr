@@ -817,10 +817,12 @@ abstract class CommonObject
 
 			if (is_array($this->socialnetworks) && count($this->socialnetworks) > 0) {
 				foreach ($this->socialnetworks as $key => $value) {
-					$outsocialnetwork .= dol_print_socialnetworks($value, $this->id, $object->id, $key);
+					if ($value) {
+						$outsocialnetwork .= dol_print_socialnetworks($value, $this->id, $object->id, $key);
+					}
 					$outdone++;
 				}
-			} else {
+			} else {	// Old code
 				if ($this->skype) $outsocialnetwork .= dol_print_socialnetworks($this->skype, $this->id, $object->id, 'skype');
 				$outdone++;
 				if ($this->jabberid) $outsocialnetwork .= dol_print_socialnetworks($this->jabberid, $this->id, $object->id, 'jabber');
