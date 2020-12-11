@@ -97,10 +97,7 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 body {
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') {  ?>
 	background-color: #FFFFFF;
-<?php } else { ?>
-	background: var(--colorbackbody);
 <?php } ?>
-	color: var(--colortext);
 	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize; ?>;
 	line-height: 1.4;
 	font-family: <?php print $fontlist ?>;
@@ -5398,6 +5395,9 @@ input.select2-input {
 {
     background-color: var(--colorbackvmenu1);
 }
+.select2-container--default .select2-selection--single {
+    background-color: var(--colorbackbody);
+}
 #blockvmenusearch .select2-container--default .select2-selection--single .select2-selection__placeholder {
     color: var(--colortextbackvmenu);
 }
@@ -5506,6 +5506,8 @@ input.select2-input {
 	/*background-color: var(--colorbackvmenu1);
 	border: 1px solid var(--colorbackvmenu1); */
 	box-shadow: 1px 2px 10px var(--colorbackvmenu1);
+	background-color: var(--colorbackbody);
+	color: var(--colortext);
 }
 .select2-dropdown-open {
 	background-color: var(--colorbackvmenu1);

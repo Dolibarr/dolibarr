@@ -2518,27 +2518,33 @@ if (!GETPOST('hide_websitemenu'))
 
 		if ($action != 'addcontainer')
 		{
-			print '<span class="websiteselection">';
-			print $formwebsite->selectContainer($website, 'pageid', $pageid, 0, $action, 'maxwidth200onsmartphone');
-			print '</span>';
-
-			$urltocreatenewpage = $_SERVER["PHP_SEFL"].'?action=createcontainer&website='.$website->ref;
-
 			$out = '';
-			if (!empty($conf->use_javascript_ajax)) {
-				$out .= '<script language="javascript">';
-				$out .= 'jQuery(document).ready(function () {';
-				$out .= '	jQuery("#pageid").change(function () {';
-				$out .= '   	console.log("We select "+jQuery("#pageid option:selected").val());';
-				$out .= '   	if (jQuery("#pgeid option:selected").val() == \'-2\') {';
-				$out .= '  			window.location.href = "'.$urltocreatenewpage.'";';
-				$out .= '		} else {';
-				$out .= '  			window.location.href = "'.$_SERVER["PHP_SEFL"].'?website='.$website->ref.'&pageid="+jQuery("#pageid option:selected").val();';
-				$out .= '       }';
-				$out .= '   });';
-				$out .= '});';
-				$out .= '</script>';
+
+			$s = $formwebsite->selectContainer($website, 'pageid', $pageid, 0, $action, 'maxwidth200onsmartphone');
+
+			if ($formwebsite->num > 0) {
+				$out .= '<span class="websiteselection">';
+				$out .= $s;
+				$out .= '</span>';
+
+				$urltocreatenewpage = $_SERVER["PHP_SEFL"].'?action=createcontainer&website='.$website->ref;
+
+				if (!empty($conf->use_javascript_ajax)) {
+					$out .= '<script language="javascript">';
+					$out .= 'jQuery(document).ready(function () {';
+					$out .= '	jQuery("#pageid").change(function () {';
+					$out .= '   	console.log("We select "+jQuery("#pageid option:selected").val());';
+					$out .= '   	if (jQuery("#pgeid option:selected").val() == \'-2\') {';
+					$out .= '  			window.location.href = "'.$urltocreatenewpage.'";';
+					$out .= '		} else {';
+					$out .= '  			window.location.href = "'.$_SERVER["PHP_SEFL"].'?website='.$website->ref.'&pageid="+jQuery("#pageid option:selected").val();';
+					$out .= '       }';
+					$out .= '   });';
+					$out .= '});';
+					$out .= '</script>';
+				}
 			}
+
 			print $out;
 		}
 		else {
@@ -2579,9 +2585,9 @@ if (!GETPOST('hide_websitemenu'))
 		}
 
 		if ($pagepreviousid) print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?website='.urlencode($object->ref).'&pageid='.$pagepreviousid.'&action='.$action.'">'.img_previous($langs->trans("PreviousContainer")).'</a>';
-		else print '<span class="valignmiddle opacitymedium">'.img_previous($langs->trans("PreviousContainer")).'</span>';
+		else print '<span class="valignmiddle opacitymedium">'.img_previous($langs->trans("Previous")).'</span>';
 		if ($pagenextid) print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?website='.urlencode($object->ref).'&pageid='.$pagenextid.'&action='.$action.'">'.img_next($langs->trans("NextContainer")).'</a>';
-		else print '<span class="valignmiddle opacitymedium">'.img_next($langs->trans("NextContainer")).'</span>';
+		else print '<span class="valignmiddle opacitymedium">'.img_next($langs->trans("Next")).'</span>';
 
 		$websitepage = new WebSitePage($db);
 		if ($pageid > 0 && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone'))

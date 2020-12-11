@@ -34,6 +34,11 @@ class FormWebsite
 	 */
 	public $error;
 
+	/**
+	 * var int		A number of lines
+	 */
+	public $num;
+
 
 	/**
 	 *	Constructor
@@ -220,11 +225,11 @@ class FormWebsite
 	 *  @param	string		$action			Action on page that use this select list
 	 *  @param	string		$morecss		More CSS
 	 *  @param	array		$excludeids		Exclude some ID in list
-	 * 	@return	string						HTML select component with list of type of containers
+	 * 	@return	string						HTML select component with list of block containers
 	 */
 	public function selectContainer($website, $htmlname = 'pageid', $pageid = 0, $showempty = 0, $action = '', $morecss = 'minwidth200', $excludeids = null)
 	{
-		global $langs;
+		$this->num = 0;
 
 		$atleastonepage = (is_array($website->lines) && count($website->lines) > 0);
 
@@ -273,6 +278,8 @@ class FormWebsite
 				$out .= '>';
 				$out .= $valueforoption;
 				$out .= '</option>';
+
+				++$this->num;
 			}
 		}
 		$out .= '</select>';
