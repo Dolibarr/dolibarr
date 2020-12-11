@@ -1914,7 +1914,7 @@ class Form
 			$out .= '});';
 			$out .= '})</script>';
 			$out .= $this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
-			$out .= ' <input type="submit" disabled class="button valignmiddle" id="'.$action.'assignedtouser" name="'.$action.'assignedtouser" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
+			$out .= ' <input type="submit" disabled class="button valignmiddle smallpaddingimp" id="'.$action.'assignedtouser" name="'.$action.'assignedtouser" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
 			$out .= '<br>';
 		}
 
@@ -5928,15 +5928,23 @@ class Form
 	/**
 	 * selectTypeDuration
 	 *
-	 * @param   string   $prefix     Prefix
-	 * @param   string   $selected   Selected type
-	 * @return  string               HTML select string
+	 * @param   string   	$prefix     	Prefix
+	 * @param   string   	$selected   	Selected duration type
+	 * @param	array|null	$ecludetypes	Array of duration types to exclude. Example array('y', 'm')
+	 * @return  string      	         	HTML select string
 	 */
-	public function selectTypeDuration($prefix, $selected = 'i')
+	public function selectTypeDuration($prefix, $selected = 'i', $excludtypes = null)
 	{
 		global $langs;
 
 		$TDurationTypes = array('y'=>$langs->trans('Years'), 'm'=>$langs->trans('Month'), 'w'=>$langs->trans('Weeks'), 'd'=>$langs->trans('Days'), 'h'=>$langs->trans('Hours'), 'i'=>$langs->trans('Minutes'));
+
+		// Removed undesired duration types
+		if (is_array($excludtypes)) {
+			foreach($excludtypes as $value) {
+				unset($TDurationTypes[$value]);
+			}
+		}
 
 		$retstring = '<select class="flat" id="select_'.$prefix.'type_duration" name="'.$prefix.'type_duration">';
 		foreach ($TDurationTypes as $key=>$typeduration) {
@@ -5947,6 +5955,8 @@ class Form
 			$retstring .= ">".$typeduration."</option>";
 		}
 		$retstring .= "</select>";
+
+		$retstring .= ajax_combobox('select_'.$prefix.'type_duration');
 
 		return $retstring;
 	}
