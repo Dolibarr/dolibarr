@@ -1000,7 +1000,7 @@ class DolGraph
 		$tag = dol_escape_htmltag(dol_string_unaccent(dol_string_nospecial(basename($file), '_', array('-', '.'))));
 
 		$this->stringtoshow = '<!-- Build using chart -->' . "\n";
-		if (!empty($this->title)&&$this->title!='FunnelOfProspection') $this->stringtoshow .= '<div class="center dolgraphtitle' . (empty($this->cssprefix) ? '' : ' dolgraphtitle' . $this->cssprefix) . '">' . $this->title . '</div>';
+		if (!empty($this->title)) $this->stringtoshow .= '<div class="center dolgraphtitle' . (empty($this->cssprefix) ? '' : ' dolgraphtitle' . $this->cssprefix) . '">' . $this->title . '</div>';
 		if (!empty($this->shownographyet)) {
 			$this->stringtoshow .= '<div style="width:' . $this->width . (strpos($this->width, '%') > 0 ? '' : 'px') . '; height:' . $this->height . 'px;" class="nographyet"></div>';
 			$this->stringtoshow .= '<div class="nographyettext margintoponly">' . $langs->trans("NotEnoughDataYet") . '...</div>';
@@ -1129,10 +1129,12 @@ class DolGraph
 		// Other cases, graph of type 'bars', 'lines', 'linesnopoint'
 		else {
 			$type = 'bar';
+
 			$isfunnel = false;
+			if ($file == 'idgraphleadfunnel') $isfunnel = true;
+
 			if (!isset($this->type[$firstlot]) || $this->type[$firstlot] == 'bars') $type = 'bar';
 			if (isset($this->type[$firstlot]) && $this->type[$firstlot] == 'horizontalbars') $type = 'horizontalBar';
-			if ($this->title == 'FunnelOfProspection') $isfunnel = true;
 			if (isset($this->type[$firstlot]) && ($this->type[$firstlot] == 'lines' || $this->type[$firstlot] == 'linesnopoint')) $type = 'line';
 
 			$this->stringtoshow .= 'var options = { maintainAspectRatio: false, aspectRatio: 2.5, ';
@@ -1140,8 +1142,8 @@ class DolGraph
 				$this->stringtoshow .= 'legend: { display: false }, ';
 			}
 			$this->stringtoshow .= 'scales: { xAxes: [{ ';
-			if ($isfunnel) {
-				$this->stringtoshow .= ' ticks: { beginAtZero: true}, display: false,';
+			if ($isfunnel) {	// FIXME Remove isfunnel by introducing a method hideXValues() on dolgraph
+				$this->stringtoshow .= ' ticks: { display: false }, display: true,';
 			}
 			//$this->stringtoshow .= 'type: \'time\', ';		// Need Moment.js
 			$this->stringtoshow .= 'distribution: \'linear\'';
@@ -1153,8 +1155,9 @@ class DolGraph
 				$this->stringtoshow .= ', yAxes: [{ stacked: true }]';
 			}
 			$this->stringtoshow .= ' }';
+			// Add a callback to change label to show only positive value
 			if ($isfunnel) {
-				$this->stringtoshow .= ', tooltips: {mode: \'nearest\',
+				$this->stringtoshow .= ', tooltips: { mode: \'nearest\',
 					callbacks: {
 						title: function(tooltipItem, data) {
 							return data.datasets[tooltipItem[0].datasetIndex].label;
@@ -1177,13 +1180,13 @@ class DolGraph
 					labels: [';
 
 			$i = 0;
-			if (!$isfunnel);{
-			foreach ($legends as $val)	// Loop on each serie
-				{
-				if ($i > 0) $this->stringtoshow .= ', ';
-				$this->stringtoshow .= "'".dol_escape_js(dol_trunc($val, 32))."'";
-				$i++;
-			}
+			if (!$isfunnel) {
+				foreach ($legends as $val)	// Loop on each serie
+					{
+					if ($i > 0) $this->stringtoshow .= ', ';
+					$this->stringtoshow .= "'".dol_escape_js(dol_trunc($val, 32))."'";
+					$i++;
+				}
 			}
 
 			//var_dump($arrayofgroupslegend);
@@ -1238,25 +1241,33 @@ class DolGraph
 					$color = 'rgb(' . $newcolor[0] . ', ' . $newcolor[1] . ', ' . $newcolor[2] . ', 0.9)';
 					$bordercolor = 'rgb(' . $newcolor[0] . ', ' . $newcolor[1] . ', ' . $newcolor[2] . ')';
 				} else { // We do not use a 'group by'
-					if (is_array($this->datacolor[$i])) $color = 'rgb(' . $this->datacolor[$i][0] . ', ' . $this->datacolor[$i][1] . ', ' . $this->datacolor[$i][2] . ')'; // If datacolor is array(R, G, B)
-					else {
-						$tmp = str_replace('#', '', $this->datacolor[$i]);
-						if (strpos($tmp, '-') !== false) {
-							$foundnegativecolor++;
-							$color = '#FFFFFF'; // If $val is '-123'
+					if ($isfunnel) {
+						if (is_array($this->datacolor[$i])) {
+							$color = 'rgb(' . $this->datacolor[$i][0] . ', ' . $this->datacolor[$i][1] . ', ' . $this->datacolor[$i][2] . ', 0.9)'; // If datacolor is array(R, G, B)
 						} else {
-							$color = "#" . $tmp; // If $val is '123' or '#123'
-							$bordercolor = $color;
-						}
-						if ($foundnegativecolor) {
-							if (is_array($this->datacolor[$i])) $color = 'null'; // If datacolor is array(R, G, B)
-							else {
-								$tmp = str_replace('#', '', $this->datacolor[$i]);
-								if (strpos($tmp, '-') !== false) $bordercolor = '#' . str_replace('-', '', $tmp); // If $val is '-123'
-								else $bordercolor = 'null'; // If $val is '123' or '#123'
+							// TODO FIXME This logic must be in the caller that set $this->datacolor
+							$tmp = str_replace('#', '', $this->datacolor[$i]);
+							if (strpos($tmp, '-') !== false) {
+								$foundnegativecolor++;
+								$color = '#FFFFFF'; // If $val is '-123'
+							} else {
+								$color = "#" . $tmp; // If $val is '123' or '#123'
+								$bordercolor = $color;
 							}
-							$bordercolor == 'null' ? "'rgba(0,0,0,0.2)'" : "'" . $bordercolor . "'";
+							if ($foundnegativecolor) {
+								if (is_array($this->datacolor[$i])) $color = 'null'; // If datacolor is array(R, G, B)
+								else {
+									$tmp = str_replace('#', '', $this->datacolor[$i]);
+									if (strpos($tmp, '-') !== false) $bordercolor = '#' . str_replace('-', '', $tmp); // If $val is '-123'
+									else $bordercolor = 'null'; // If $val is '123' or '#123'
+								}
+								$bordercolor == 'null' ? "'rgba(0,0,0,0.2)'" : "'" . $bordercolor . "'";
+							}
 						}
+					} else {
+						$color = 'rgb('.$this->datacolor[$i][0].', '.$this->datacolor[$i][1].', '.$this->datacolor[$i][2].', 0.9)';
+						$bordercolor = $color;
+						//$color = (!empty($data['seriescolor']) ? json_encode($data['seriescolor']) : json_encode($datacolor));
 					}
 				}
 
@@ -1267,19 +1278,18 @@ class DolGraph
 				$this->stringtoshow .= 'label: \'' . dol_escape_js(dol_string_nohtmltag($textoflegend)) . '\', ';
 				$this->stringtoshow .= 'pointStyle: \'' . ($this->type[$i] == 'linesnopoint' ? 'line' : 'circle') . '\', ';
 				$this->stringtoshow .= 'fill: ' . ($type == 'bar' ? 'true' : 'false') . ', ';
-				if ($isfunnel){
+				if ($isfunnel) {
 					$this->stringtoshow .= 'borderWidth: \'2\', ';
-				}
-				elseif ($type == 'bar' || $type == 'horizontalBar') {
+				} elseif ($type == 'bar' || $type == 'horizontalBar') {
 					$this->stringtoshow .= 'borderWidth: \'1\', ';
 				}
 				$this->stringtoshow .= 'borderColor: \'' . $bordercolor . '\', ';
 				$this->stringtoshow .= 'backgroundColor: \'' . $color . '\', ';
 				if ($arrayofgroupslegend[$i]) $this->stringtoshow .= 'stack: \'' . $arrayofgroupslegend[$i]['stacknum'] . '\', ';
 				$this->stringtoshow .='data: [';
-				if ($isfunnel){
+				if ($isfunnel) {
 					$this->stringtoshow .= '['.-$serie[$i].','.$serie[$i].']';
-				}else {
+				} else {
 					$this->stringtoshow .= $serie[$i];
 				}
 				$this->stringtoshow .=']';

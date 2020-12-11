@@ -138,7 +138,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 		$this->max = $max;
 
 		$this->info_box_head = array(
-			'text' => $langs->trans("Statistics") . ' - ' . $langs->trans("OpportunitiesStatusForOpenedProjects"),
+			'text' => $langs->trans("Statistics") . ' - ' . $langs->trans("BoxTitleFunnelOfProspection"),
 			'graph' => '1'
 		);
 
@@ -220,12 +220,12 @@ class box_funnel_of_prospection extends ModeleBoxes
 					$dolgraph->SetDataColor(array_values($colorseriesstat));
 					$dolgraph->setShowLegend(2);
 					$dolgraph->setShowPercent(1);
-					$dolgraph->setTitle('FunnelOfProspection');
+					$dolgraph->setTitle('');
 					$dolgraph->SetType(array('horizontalbars'));
 					$dolgraph->SetHeight('200');
 					$dolgraph->SetWidth('600');
 					$dolgraph->mode = 'depth';
-					$dolgraph->draw('idgraphstatus');
+					$dolgraph->draw('idgraphleadfunnel');
 					$stringtoprint .= $dolgraph->show($totaloppnb ? 0 : 1);
 				}
 				$stringtoprint .= '</div>';
