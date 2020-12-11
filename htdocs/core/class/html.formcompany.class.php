@@ -760,7 +760,7 @@ class FormCompany extends Form
 	 *  @param  int      	$output         0=return HTML, 1= direct print
 	 *  @return	void
 	 */
-	public function selectTypeContact($object, $selected, $htmlname = 'type', $source = 'internal', $sortorder = 'position', $showempty = 0, $morecss = '', $output=1)
+	public function selectTypeContact($object, $selected, $htmlname = 'type', $source = 'internal', $sortorder = 'position', $showempty = 0, $morecss = '', $output = 1)
 	{
 		global $user, $langs;
 		$out = '';

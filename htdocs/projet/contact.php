@@ -78,17 +78,17 @@ if ($action == 'addcontact_confirm' && $user->rights->projet->creer)
 			}
 		}
 
-  		$affecttotask=GETPOST('tasksavailable','intcomma');
+  		$affecttotask=GETPOST('tasksavailable', 'intcomma');
 		if (!empty($affecttotask)) {
 			require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-			$task_to_affect = explode(',',$affecttotask);
+			$task_to_affect = explode(',', $affecttotask);
 			if (!empty($task_to_affect)) {
-				foreach($task_to_affect as $task_id) {
-					if (GETPOSTISSET('person_'.$task_id,'san_alpha') && GETPOST('person_'.$task_id,'san_alpha')=='on') {
+				foreach ($task_to_affect as $task_id) {
+					if (GETPOSTISSET('person_'.$task_id, 'san_alpha') && GETPOST('person_'.$task_id, 'san_alpha')=='on') {
 						$tasksToAffect = new Task($db);
 						$result=$tasksToAffect->fetch($task_id);
 						if ($result < 0) {
-							setEventMessage($tasksToAffect->error,'errors');
+							setEventMessage($tasksToAffect->error, 'errors');
 						} else {
 							$result = $tasksToAffect->add_contact($contactid, GETPOST('person_role_'.$task_id), GETPOST("source", 'aZ09'));
 							if ($result < 0) {
@@ -177,7 +177,6 @@ if ($id > 0 || !empty($ref))
 
 	// Test if we can add contact to task at the same times
 	if ($action == 'addcontact') {
-
 		$source=GETPOST("source", 'aZ09');
 
 		$taskstatic = new Task($db);
@@ -191,18 +190,17 @@ if ($id > 0 || !empty($ref))
 		$url_redirect='?id='.$object->id.'&'.$affect_to.'&'.$type_to.'&source='.$source;
 
 		if (empty($conf->global->PROJECT_HIDE_TASKS) || $nbTasks > 0) {
-
 			$text = $langs->trans('AddPersonToTask');
 			$formquestion = array('text' => $text);
 
 			$task_to_affect = array();
-			foreach($task_array as $task) {
+			foreach ($task_array as $task) {
 				$task_already_affected=false;
 				$personsLinked = $task->liste_contact(-1, $source);
 				if (!is_array($personsLinked) && coun($personsLinked) < 0) {
-					setEventMessage($object->error,'errors');
+					setEventMessage($object->error, 'errors');
 				} else {
-					foreach($personsLinked as $person) {
+					foreach ($personsLinked as $person) {
 						if ($person['id']==$personToAffect) {
 							$task_already_affected = true;
 							break;
@@ -218,7 +216,7 @@ if ($id > 0 || !empty($ref))
 				header("Location: ".$_SERVER['PHP_SELF'].$url_redirect);
 				exit;
 			} else {
-				foreach($task_to_affect as $key=>$val) {
+				foreach ($task_to_affect as $key=>$val) {
 					$formquestion[] = array('type' => 'checkbox', 'name' => 'person_'.$key, 'label' => $val, 'value' => true);
 					$formquestion[] = array(
 						'type' => 'other',
@@ -226,7 +224,7 @@ if ($id > 0 || !empty($ref))
 						'label' => $langs->trans("ContactType"),
 						'value' => $formcompany->selectTypeContact($taskstatic, '', 'person_role_' . $key, $source, 'position', 0, 'minwidth100imp', 0));
 				}
-				$formquestion[] = array('type'=> 'other', 'name'=>'tasksavailable', 'label'=>'', 'value' => '<input type="hidden" id="tasksavailable" name="tasksavailable" value="'.implode(',',array_keys($task_to_affect)).'">');
+				$formquestion[] = array('type'=> 'other', 'name'=>'tasksavailable', 'label'=>'', 'value' => '<input type="hidden" id="tasksavailable" name="tasksavailable" value="'.implode(',', array_keys($task_to_affect)).'">');
 			}
 
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . $url_redirect, $text, '', 'addcontact_confirm', $formquestion, '', 1, 300, 590);
