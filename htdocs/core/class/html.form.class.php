@@ -5930,24 +5930,29 @@ class Form
 	 *
 	 * @param   string   	$prefix     	Prefix
 	 * @param   string   	$selected   	Selected duration type
-	 * @param	array|null	$ecludetypes	Array of duration types to exclude. Example array('y', 'm')
+	 * @param	array		$excludetypes	Array of duration types to exclude. Example array('y', 'm')
 	 * @return  string      	         	HTML select string
 	 */
-	public function selectTypeDuration($prefix, $selected = 'i', $excludtypes = null)
+	public function selectTypeDuration($prefix, $selected = 'i', $excludetypes = array())
 	{
 		global $langs;
 
-		$TDurationTypes = array('y'=>$langs->trans('Years'), 'm'=>$langs->trans('Month'), 'w'=>$langs->trans('Weeks'), 'd'=>$langs->trans('Days'), 'h'=>$langs->trans('Hours'), 'i'=>$langs->trans('Minutes'));
+		$TDurationTypes = array(
+			'y'=>$langs->trans('Years'),
+			'm'=>$langs->trans('Month'),
+			'w'=>$langs->trans('Weeks'),
+			'd'=>$langs->trans('Days'),
+			'h'=>$langs->trans('Hours'),
+			'i'=>$langs->trans('Minutes')
+		);
 
 		// Removed undesired duration types
-		if (is_array($excludtypes)) {
-			foreach($excludtypes as $value) {
-				unset($TDurationTypes[$value]);
-			}
+		foreach ($excludetypes as $value) {
+			unset($TDurationTypes[$value]);
 		}
 
 		$retstring = '<select class="flat" id="select_'.$prefix.'type_duration" name="'.$prefix.'type_duration">';
-		foreach ($TDurationTypes as $key=>$typeduration) {
+		foreach ($TDurationTypes as $key => $typeduration) {
 			$retstring .= '<option value="'.$key.'"';
 			if ($key == $selected) {
 				$retstring .= " selected";
