@@ -92,14 +92,16 @@ class box_scheduled_jobs extends ModeleBoxes
 			$nbjobsinerror = 0;
 			if ($result) {
 				$num = $this->db->num_rows($result);
-				$i = 1;
-				$objp = $this->db->fetch_object($result);
-				$cronstatic->id = $objp->rowid;
-				$cronstatic->ref = $objp->rowid;
-				$cronstatic->status = $objp->status;
-				$cronstatic->datenextrun = $objp->datenextrun;
-				$cronstatic->datelastrun = $objp->datelastrun;
+				$i = 0;
 				while ($i < $num) {
+					$objp = $this->db->fetch_object($result);
+					if ($line == 0 || $objp->datenextrun < $cronstatic->datenextrun) {
+						$cronstatic->id = $objp->rowid;
+						$cronstatic->ref = $objp->rowid;
+						$cronstatic->status = $objp->status;
+						$cronstatic->datenextrun = $objp->datenextrun;
+						$cronstatic->datelastrun = $objp->datelastrun;
+					}
 					if ($line == 0) {
 						$resultarray[$line] = array(
 							$langs->trans("LastExecutedScheduledJob"),
@@ -108,16 +110,8 @@ class box_scheduled_jobs extends ModeleBoxes
 							$cronstatic->status
 						);
 						$line++;
-					} else {
-						$objp = $this->db->fetch_object($result);
-						if ($objp->datenextrun < $cronstatic->datenextrun) {
-							$cronstatic->id = $objp->rowid;
-							$cronstatic->ref = $objp->rowid;
-							$cronstatic->status = $objp->status;
-							$cronstatic->datenextrun = $objp->datenextrun;
-						}
-					}
-					if ($obj->lastresult < 0) {
+					} 
+					if (!empty($objp->lastresult)){
 						$nbjobsinerror++;
 					}
 					$i++;
@@ -141,7 +135,7 @@ class box_scheduled_jobs extends ModeleBoxes
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'textnoformat' => dol_print_date($resultarray[$line][2],"dayhoursec")
+						'textnoformat' => dol_print_date($resultarray[$line][2], "dayhoursec")
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" ',
@@ -155,7 +149,7 @@ class box_scheduled_jobs extends ModeleBoxes
 				);
 				$this->info_box_contents[$line][] = array(
 					'td' => 'class="right"colspan="2"',
-					'text' => $nbjobsinerror . ""
+					'text' => $nbjobsinerror
 				);
 			} else {
 				$this->info_box_contents[0][0] = array(
