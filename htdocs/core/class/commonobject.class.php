@@ -4557,6 +4557,11 @@ abstract class CommonObject
 		{
 			dol_syslog("commonGenerateDocument modele=".$modele." outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'));
 
+			if (empty($modele)) {
+				$this->error = 'BadValueForParameterModele';
+				return -1;
+			}
+
 			// Increase limit for PDF build
 			$err = error_reporting();
 			error_reporting(0);
