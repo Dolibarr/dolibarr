@@ -244,7 +244,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
         $login=checkLoginPassEntity('admin', 'admin', 1, array('dolibarr'));            // Should works because admin/admin exists
         print __METHOD__." login=".$login."\n";
-        $this->assertEquals($login, 'admin');
+        $this->assertEquals($login, 'admin', 'The test to check if pass of user "admin" is "admin" has failed');
 
         $login=checkLoginPassEntity('admin', 'admin', 1, array('http','dolibarr'));    // Should work because of second authetntication method
         print __METHOD__." login=".$login."\n";
@@ -325,5 +325,28 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$result=restrictedArea($user, 'societe');
 		$this->assertEquals(1, $result);
+    }
+
+    /**
+     * testDolSanitizeFileName
+     *
+     * @return void
+     */
+    public function testDolSanitizeFileName()
+    {
+    	global $conf,$user,$langs,$db;
+    	$conf=$this->savconf;
+    	$user=$this->savuser;
+    	$langs=$this->savlangs;
+    	$db=$this->savdb;
+
+    	//$dummyuser=new User($db);
+    	//$result=restrictedArea($dummyuser,'societe');
+
+    	$result=dol_sanitizeFileName('bad file | evilaction');
+    	$this->assertEquals('bad file _ evilaction', $result);
+
+    	$result=dol_sanitizeFileName('bad file --evilparam');
+    	$this->assertEquals('bad file _evilparam', $result);
     }
 }

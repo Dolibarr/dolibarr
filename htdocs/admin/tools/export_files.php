@@ -34,7 +34,7 @@ $action = GETPOST('action', 'alpha');
 $what = GETPOST('what', 'alpha');
 $export_type = GETPOST('export_type', 'alpha');
 $file = trim(GETPOST('zipfilename_template', 'alpha'));
-$compression = GETPOST('compression');
+$compression = GETPOST('compression', 'aZ09');
 
 $file = dol_sanitizeFileName($file);
 $file = preg_replace('/(\.zip|\.tar|\.tgz|\.gz|\.tar\.gz|\.bz2)$/i', '', $file);
