@@ -364,7 +364,7 @@ print '</tr>';
 
 // Hide wiki link on login page
 $pictohelp = '<span class="fa fa-question-circle"></span>';
-print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DisableLinkToHelp", $pictohelp).'</td><td>';
+print '<tr class="oddeven"><td class="titlefield">'.str_replace('{picto}', $pictohelp, $langs->trans("DisableLinkToHelp", '{picto}')).'</td><td>';
 print ajax_constantonoff("MAIN_HELP_DISABLELINK", array(), $conf->entity, 0, 0, 1, 0);
 //print $form->selectyesno('MAIN_HELP_DISABLELINK', isset($conf->global->MAIN_HELP_DISABLELINK) ? $conf->global->MAIN_HELP_DISABLELINK : 0, 1);
 print '</td>';
