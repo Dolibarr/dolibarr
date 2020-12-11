@@ -1482,7 +1482,7 @@ class pdf_sponge extends ModelePDFFactures
 
 					foreach ($localtax_rate as $tvakey => $tvaval) {
 						if ($tvakey != 0) {    // On affiche pas taux 0
-						//$this->atleastoneratenotnull++;
+							//$this->atleastoneratenotnull++;
 
 							$index++;
 							$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
@@ -1514,7 +1514,7 @@ class pdf_sponge extends ModelePDFFactures
 
 					foreach ($localtax_rate as $tvakey => $tvaval) {
 						if ($tvakey != 0) {    // On affiche pas taux 0
-						//$this->atleastoneratenotnull++;
+							//$this->atleastoneratenotnull++;
 
 							$index++;
 							$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
@@ -1590,7 +1590,7 @@ class pdf_sponge extends ModelePDFFactures
 
 					foreach ($localtax_rate as $tvakey => $tvaval) {
 						if ($tvakey != 0) {    // On affiche pas taux 0
-						//$this->atleastoneratenotnull++;
+							//$this->atleastoneratenotnull++;
 
 							$index++;
 							$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
@@ -1622,7 +1622,7 @@ class pdf_sponge extends ModelePDFFactures
 					foreach ($localtax_rate as $tvakey => $tvaval) {
 						// retrieve global local tax
 						if ($tvakey != 0) {    // On affiche pas taux 0
-						//$this->atleastoneratenotnull++;
+							//$this->atleastoneratenotnull++;
 
 							$index++;
 							$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);

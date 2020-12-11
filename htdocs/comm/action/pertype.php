@@ -975,7 +975,7 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 		//print $annee.'-'.$mois.'-'.$jour.' '.$year.'-'.$month.'-'.$day."<br>\n";
 
 		if ($day == $jour && $month == $mois && $year == $annee) {	// Is it the day we are looking for when calling function ?
-		// Scan all event for this date
+			// Scan all event for this date
 			foreach ($eventarray[$daykey] as $index => $event) {
 				//var_dump($event);
 
@@ -1021,7 +1021,7 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 				}
 
 				if ($color < 0) {	// Color was not set on user card. Set color according to color index.
-				// Define color index if not yet defined
+					// Define color index if not yet defined
 					$idusertouse = ($event->userownerid ? $event->userownerid : 0);
 					if (isset($colorindexused[$idusertouse])) {
 						$colorindex = $colorindexused[$idusertouse]; // Color already assigned to this user

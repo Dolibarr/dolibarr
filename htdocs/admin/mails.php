@@ -840,7 +840,7 @@ if ($action == 'edit') {
 				$text .= ($text ? '<br><br>' : '').$langs->trans("WarningPHPMail2", $conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS);
 			}
 			if (!empty($conf->global->MAIN_EXTERNAL_SMTP_SPF_STRING_TO_ADD)) {	// Should be required only if you have preset the Dolibarr to use your own SMTP and you want to warn users to update their domain name to match your SMTP server.
-			// List of string to add in SPF if we use the smtp method. Example 'include:spf.mydomain.com'
+				// List of string to add in SPF if we use the smtp method. Example 'include:spf.mydomain.com'
 				$text .= ($text ? '<br><br>' : '').$langs->trans("WarningPHPMailSPF", $conf->global->MAIN_EXTERNAL_SMTP_SPF_STRING_TO_ADD);
 			}
 		}

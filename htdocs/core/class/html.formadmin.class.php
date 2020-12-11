@@ -230,7 +230,7 @@ class FormAdmin
 				continue;
 			}
 			if ($newprefix != $oldprefix) {	// Add separators
-			// Affiche titre
+				// Affiche titre
 				print '<option value="-1" disabled>';
 				if ($newprefix == '0') {
 					print '-- '.$langs->trans("VersionRecommanded").' --';

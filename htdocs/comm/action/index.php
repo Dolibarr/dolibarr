@@ -995,7 +995,7 @@ if (count($listofextcals)) {
 			$moreicalevents = array();
 			foreach ($icalevents as $icalevent) {
 				if (isset($icalevent['RRULE']) && is_array($icalevent['RRULE'])) { //repeatable event
-				//if ($event->date_start_in_calendar < $firstdaytoshow) $event->date_start_in_calendar=$firstdaytoshow;
+					//if ($event->date_start_in_calendar < $firstdaytoshow) $event->date_start_in_calendar=$firstdaytoshow;
 					//if ($event->date_end_in_calendar > $lastdaytoshow) $event->date_end_in_calendar=($lastdaytoshow-1);
 					if ($icalevent['DTSTART;VALUE=DATE']) { //fullday event
 						$datecurstart = dol_stringtotime($icalevent['DTSTART;VALUE=DATE'], 1);
@@ -1096,7 +1096,7 @@ if (count($listofextcals)) {
 				$event = new ActionComm($db);
 				$addevent = false;
 				if (isset($icalevent['DTSTART;VALUE=DATE'])) { // fullday event
-				// For full day events, date are also GMT but they wont but converted using tz during output
+					// For full day events, date are also GMT but they wont but converted using tz during output
 					$datestart = dol_stringtotime($icalevent['DTSTART;VALUE=DATE'], 1);
 					$dateend = dol_stringtotime($icalevent['DTEND;VALUE=DATE'], 1) - 1; // We remove one second to get last second of day
 					//print 'x'.$datestart.'-'.$dateend;exit;
@@ -1122,7 +1122,7 @@ if (count($listofextcals)) {
 
 					// $buggedfile is set to uselocalandtznodaylight if conf->global->AGENDA_EXT_BUGGEDFILEx = 'uselocalandtznodaylight'
 					if ($buggedfile === 'uselocalandtznodaylight') {	// unixtime is a local date that does not take daylight into account, TZID is +1 for example for 'Europe/Paris' in summer instead of 2
-					// TODO
+						// TODO
 					}
 					// $buggedfile is set to uselocalandtzdaylight if conf->global->AGENDA_EXT_BUGGEDFILEx = 'uselocalandtzdaylight' (for example with bluemind)
 					if ($buggedfile === 'uselocalandtzdaylight') {	// unixtime is a local date that does take daylight into account, TZID is +2 for example for 'Europe/Paris' in summer
@@ -1691,7 +1691,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					}
 
 					if ($color < 0) {	// Color was not set on user card. Set color according to color index.
-					// Define color index if not yet defined
+						// Define color index if not yet defined
 						$idusertouse = ($event->userownerid ? $event->userownerid : 0);
 						if (isset($colorindexused[$idusertouse])) {
 							$colorindex = $colorindexused[$idusertouse]; // Color already assigned to this user

@@ -746,7 +746,7 @@ function isValidUrl($url, $http = 0, $pass = 0, $port = 0, $path = 0, $query = 0
 function isValidVATID($company)
 {
 	if ($company->isInEEC()) {    // Syntax check rules for EEC countries
-	/* Disabled because some companies can have an address in Irland and a vat number in France.
+		/* Disabled because some companies can have an address in Irland and a vat number in France.
 		$vatprefix = $company->country_code;
 		if ($vatprefix == 'GR') $vatprefix = '(EL|GR)';
 		elseif ($vatprefix == 'MC') $vatprefix = 'FR';	// Monaco is using french VAT numbers

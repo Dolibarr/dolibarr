@@ -1304,7 +1304,7 @@ class Expedition extends CommonObject
 							$this->fetch_origin();
 							$origin = $this->origin;
 							if ($this->$origin->statut == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
-							// Check if there is no more shipment. If not, we can move back status of order to "validated" instead of "shipment in progress"
+								// Check if there is no more shipment. If not, we can move back status of order to "validated" instead of "shipment in progress"
 								$this->$origin->loadExpeditions();
 								//var_dump($this->$origin->expeditions);exit;
 								if (count($this->$origin->expeditions) <= 0) {
@@ -1496,7 +1496,7 @@ class Expedition extends CommonObject
 							$this->fetch_origin();
 							$origin = $this->origin;
 							if ($this->$origin->statut == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
-							// Check if there is no more shipment. If not, we can move back status of order to "validated" instead of "shipment in progress"
+								// Check if there is no more shipment. If not, we can move back status of order to "validated" instead of "shipment in progress"
 								$this->$origin->loadExpeditions();
 								//var_dump($this->$origin->expeditions);exit;
 								if (count($this->$origin->expeditions) <= 0) {

@@ -227,7 +227,7 @@ include DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php'; // Show content of a 
 
 
 if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) { // Show filtree when ajax is enabled
-//var_dump($modulepart);
+	//var_dump($modulepart);
 	// Variables that may be defined:
 	// $_GET['modulepart'], $_GET['openeddir'], $_GET['sortfield'], $_GET['sortorder']
 	// $_POST['dir']

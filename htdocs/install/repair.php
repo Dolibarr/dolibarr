@@ -871,7 +871,7 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 					$result = $object_instance->fetch($id, $ref);
 					//print $result.'<br>';
 					if ($result == 0) {    // Not found but no error
-					// Clean of orphelins directories are done into repair.php
+						// Clean of orphelins directories are done into repair.php
 						print '<tr><td colspan="2">';
 						print 'Delete orphelins file '.$file['fullname'].'<br>';
 						if (GETPOST('clean_orphelin_dir', 'alpha') == 'confirmed') {

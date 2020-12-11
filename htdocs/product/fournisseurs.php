@@ -573,7 +573,7 @@ if ($id > 0 || $ref) {
 				print '</td></tr>';
 
 				if (!empty($conf->dynamicprices->enabled)) { //Only show price mode and expression selector if module is enabled
-				// Price mode selector
+					// Price mode selector
 					print '<tr><td class="fieldrequired">'.$langs->trans("PriceMode").'</td><td>';
 					$price_expression = new PriceExpression($db);
 					$price_expression_list = array(0 => $langs->trans("PriceNumeric")); //Put the numeric mode as first option

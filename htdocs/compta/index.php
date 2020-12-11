@@ -90,7 +90,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is useless due to the global search combo
-// Search customer invoices
+	// Search customer invoices
 	if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
 		$listofsearchfields['search_invoice'] = array('text'=>'CustomerInvoice');
 	}

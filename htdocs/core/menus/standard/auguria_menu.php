@@ -95,7 +95,7 @@ class MenuManager
 			$_SESSION["leftmenu"] = $leftmenu;
 
 			if ($_SESSION["leftmenuopened"] == $leftmenu) {	// To collapse
-			//$leftmenu="";
+				//$leftmenu="";
 				$_SESSION["leftmenuopened"] = "";
 			} else {
 				$_SESSION["leftmenuopened"] = $leftmenu;

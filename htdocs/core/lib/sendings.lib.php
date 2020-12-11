@@ -51,7 +51,7 @@ function shipping_prepare_head($object)
 		// delivery link
 		$object->fetchObjectLinked($object->id, $object->element);
 		if (is_array($object->linkedObjectsIds['delivery']) && count($object->linkedObjectsIds['delivery']) > 0) {        // If there is a delivery
-		// Take first one element of array
+			// Take first one element of array
 			$tmp = reset($object->linkedObjectsIds['delivery']);
 
 			$head[$h][0] = DOL_URL_ROOT."/delivery/card.php?id=".$tmp;

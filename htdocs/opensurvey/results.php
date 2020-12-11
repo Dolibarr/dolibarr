@@ -264,7 +264,7 @@ if (isset($_POST["ajoutercolonne"]) && $object->format == "D") {
 // Delete line
 for ($i = 0; $i < $nblines; $i++) {
 	if (GETPOST("effaceligne".$i) || GETPOST("effaceligne".$i."_x") || GETPOST("effaceligne".$i.".x")) {	// effacelignei for chrome, effacelignei_x for firefox
-	// Security check
+		// Security check
 		if (!$user->rights->opensurvey->write) {
 			accessforbidden();
 		}
@@ -299,7 +299,7 @@ for ($i = 0; $i < $nblines; $i++) {
 for ($i = 0; $i < $nbcolonnes; $i++) {
 	if ((GETPOST("effacecolonne".$i) || GETPOST("effacecolonne".$i."_x") || GETPOST("effacecolonne".$i.".x"))
 		&& $nbcolonnes > 1) {	// effacecolonnei for chrome, effacecolonnei_x for firefox
-	// Security check
+		// Security check
 		if (!$user->rights->opensurvey->write) {
 			accessforbidden();
 		}

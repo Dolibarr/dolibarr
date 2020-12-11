@@ -1397,9 +1397,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur'))) {
 			$sql .= ", sp.lastname, sp.firstname";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') {
-/* Nothing */
+			/* Nothing */
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Project') {
-		/* Nothing */
+			/* Nothing */
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') {
 			$sql .= ", m.lastname, m.firstname";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') {
@@ -1435,7 +1435,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$sql .= " AND er.element_id = a.id";
 			$sql .= " AND er.resource_id = ".$filterobj->id;
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Project') {
-/* Nothing */
+			/* Nothing */
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') {
 			$sql .= ", ".MAIN_DB_PREFIX."adherent as m";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') {
@@ -1457,7 +1457,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')) && $filterobj->id) {
 				$sql .= " AND a.fk_soc = ".$filterobj->id;
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') {
-/* Nothing */
+				/* Nothing */
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) {
 				$sql .= " AND a.fk_project = ".$filterobj->id;
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') {

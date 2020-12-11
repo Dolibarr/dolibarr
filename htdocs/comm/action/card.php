@@ -528,7 +528,7 @@ if (empty($reshook) && $action == 'update') {
 		// Users
 		$listofuserid = array();
 		if (!empty($_SESSION['assignedtouser'])) {	// Now concat assigned users
-		// Restore array with key with same value than param 'id'
+			// Restore array with key with same value than param 'id'
 			$tmplist1 = json_decode($_SESSION['assignedtouser'], true);
 			foreach ($tmplist1 as $key => $val) {
 				if ($val['id'] > 0 && $val['id'] != $assignedtouser) {
@@ -1554,7 +1554,7 @@ if ($id > 0) {
 				);
 			}
 			if (!empty($object->userassigned)) {	// Now concat assigned users
-			// Restore array with key with same value than param 'id'
+				// Restore array with key with same value than param 'id'
 				$tmplist1 = $object->userassigned;
 				foreach ($tmplist1 as $key => $val) {
 					if ($val['id'] && $val['id'] != $object->userownerid) {
@@ -1941,7 +1941,7 @@ if ($id > 0) {
 				);
 			}
 			if (!empty($object->userassigned)) {	// Now concat assigned users
-			// Restore array with key with same value than param 'id'
+				// Restore array with key with same value than param 'id'
 				$tmplist1 = $object->userassigned;
 				foreach ($tmplist1 as $key => $val) {
 					if ($val['id'] && $val['id'] != $object->userownerid) {

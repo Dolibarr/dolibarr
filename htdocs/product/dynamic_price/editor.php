@@ -66,7 +66,7 @@ if ($action == 'add') {
 	if ($eid == 0) {
 		$result = $price_expression->find_title($title);
 		if ($result == 0) { //No existing entry found with title, ok
-		//Check the expression validity by parsing it
+			//Check the expression validity by parsing it
 			$priceparser = new PriceParser($db);
 			$price_result = $priceparser->testExpression($id, $expression);
 			if ($price_result < 0) { //Expression is not valid
@@ -94,7 +94,7 @@ if ($action == 'update') {
 	if ($eid != 0) {
 		$result = $price_expression->find_title($title);
 		if ($result == 0 || $result == $eid) { //No existing entry found with title or existing one is the current one, ok
-		//Check the expression validity by parsing it
+			//Check the expression validity by parsing it
 			$priceparser = new PriceParser($db);
 			$price_result = $priceparser->testExpression($id, $expression);
 			if ($price_result < 0) { //Expression is not valid

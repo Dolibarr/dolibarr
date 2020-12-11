@@ -399,7 +399,7 @@ if (!$ret) {
 					$listofuserid[$act->userownerid] = array('id'=>$act->userownerid, 'transparency'=>$act->transparency); // Owner first
 				}
 				if (!empty($act->userassigned)) {	// Now concat assigned users
-				// Restore array with key with same value than param 'id'
+					// Restore array with key with same value than param 'id'
 					$tmplist1 = $act->userassigned; $tmplist2 = array();
 					foreach ($tmplist1 as $key => $val) {
 						if ($val['id'] && $val['id'] != $act->userownerid) {

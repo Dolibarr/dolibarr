@@ -260,10 +260,10 @@ if ($action == 'saveorder') {
 	$fieldsarray = explode(',', $list);
 	$pos = 0;
 	foreach ($fieldsarray as $fieldnb) {	// For each elem in list. fieldnb start from 1 to ...
-	// Get name of database fields at position $pos and put it into $namefield
+		// Get name of database fields at position $pos and put it into $namefield
 		$posbis = 0; $namefield = '';
 		foreach ($fieldstarget as $key => $val) {	// key:   val:
-		//dol_syslog('AjaxImport key='.$key.' val='.$val);
+			//dol_syslog('AjaxImport key='.$key.' val='.$val);
 			if ($posbis < $pos) {
 				$posbis++;
 				continue;

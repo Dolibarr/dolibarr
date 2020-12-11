@@ -371,7 +371,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {    // Update list of contacts
-		// Si déjà un user assigné on le supprime des contacts
+			// Si déjà un user assigné on le supprime des contacts
 			if ($useroriginassign > 0) {
 				$internal_contacts = $object->listeContact(-1, 'internal');
 

@@ -75,7 +75,7 @@ if (!$sortorder) {
 // Security check
 $socid = 0;
 if ($user->socid > 0) {	// Protection if external user
-//$socid = $user->socid;
+	//$socid = $user->socid;
 	accessforbidden();
 }
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {

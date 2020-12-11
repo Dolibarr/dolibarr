@@ -155,7 +155,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 
 		// Center
 		if ($textright == '') {	// Only a left part
-		// Output left area
+			// Output left area
 			if ($textleft == '%LOGO%' && $logo) {
 				$pdf->Image($logo, $_PosX + $xleft, $_PosY + $ytop, 0, $logoHeight);
 			} elseif ($code && !empty($encoding)) {

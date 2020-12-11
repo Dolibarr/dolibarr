@@ -797,7 +797,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 		}
 
 		if (empty($conf->global->PDF_BANK_HIDE_NUMBER_SHOW_ONLY_BICIBAN)) {    // Note that some countries still need bank number, BIC/IBAN not enougth for them
-		// Note:
+			// Note:
 			// bank = code_banque (FR), sort code (GB, IR. Example: 12-34-56)
 			// desk = code guichet (FR), used only when $usedetailedbban = 1
 			// number = account number
@@ -1084,7 +1084,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	// The start of the bottom of this page footer is positioned according to # of lines
 	$freetextheight = 0;
 	if ($line) {	// Free text
-	//$line="sample text<br>\nfd<strong>sf</strong>sdf<br>\nghfghg<br>";
+		//$line="sample text<br>\nfd<strong>sf</strong>sdf<br>\nghfghg<br>";
 		if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
 			$width = 20000; $align = 'L'; // By default, ask a manual break: We use a large value 20000, to not have automatic wrap. This make user understand, he need to add CR on its text.
 			if (!empty($conf->global->MAIN_USE_AUTOWRAP_ON_FREETEXT)) {

@@ -198,7 +198,7 @@ asort($orders);
  */
 
 if (GETPOST('action', 'aZ09') == 'gotodemo') {     // Action run when we click on "Start" after selection modules
-//print 'ee'.GETPOST("demochoice");
+	//print 'ee'.GETPOST("demochoice");
 	$disablestring = '';
 	// If we disable modules using a profile choice
 	if (GETPOST("demochoice")) {
@@ -361,7 +361,7 @@ foreach ($demoprofiles as $profilearray) {
 			$nbcolsmod = empty($conf->dol_optimize_smallscreen) ? 4 : 3;
 			//var_dump($modules);
 			foreach ($orders as $index => $key) { // Loop on qualified (enabled) modules
-			//print $index.' '.$key;
+				//print $index.' '.$key;
 				$val = $modules[$index];
 				$modulekeyname = strtolower($val->name);
 

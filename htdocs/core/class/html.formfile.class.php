@@ -119,7 +119,7 @@ class FormFile
 			}
 
 			if (empty($usewithoutform)) {		// Try to avoid this and set instead the form by the caller.
-			// Add a param as GET parameter to detect when POST were cleaned by PHP because a file larger than post_max_size
+				// Add a param as GET parameter to detect when POST were cleaned by PHP because a file larger than post_max_size
 				$url .= (strpos($url, '?') === false ? '?' : '&').'uploadform=1';
 
 				$out .= '<form name="'.$htmlname.'" id="'.$htmlname.'" action="'.$url.'" enctype="multipart/form-data" method="POST">';

@@ -95,7 +95,7 @@ if (empty($reshook)) {
 
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
-	/*foreach($object->fields as $key => $val)
+		/*foreach($object->fields as $key => $val)
 		{
 			$search[$key]='';
 		}*/

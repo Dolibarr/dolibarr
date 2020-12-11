@@ -469,7 +469,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 					} // For bypass the second test if the first is ok
 				}
 			} elseif (!empty($feature)) {							// This is used for permissions on 1 level
-			//print '<br>feature='.$feature.' creer='.$user->rights->$feature->supprimer.' write='.$user->rights->$feature->delete;
+				//print '<br>feature='.$feature.' creer='.$user->rights->$feature->supprimer.' write='.$user->rights->$feature->delete;
 				if (empty($user->rights->$feature->supprimer)
 					&& empty($user->rights->$feature->delete)
 					&& empty($user->rights->$feature->run)) {
@@ -584,7 +584,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 				}
 			}
 		} elseif (in_array($feature, $checksoc)) {	// We check feature = checksoc
-		// If external user: Check permission for external users
+			// If external user: Check permission for external users
 			if ($user->socid > 0) {
 				if ($user->socid <> $objectid) {
 					return false;
@@ -606,7 +606,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 				$sql .= " AND s.entity IN (".getEntity($sharedelement, 1).")";
 			}
 		} elseif (in_array($feature, $checkother)) {	// Test on entity and link to societe. Allowed if link is empty (Ex: contacts...).
-		// If external user: Check permission for external users
+			// If external user: Check permission for external users
 			if ($user->socid > 0) {
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
@@ -671,7 +671,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 		} elseif (!in_array($feature, $nocheck)) {		// By default (case of $checkdefault), we check on object entity + link to third party on field $dbt_keyfield
-		// If external user: Check permission for external users
+			// If external user: Check permission for external users
 			if ($user->socid > 0) {
 				if (empty($dbt_keyfield)) {
 					dol_print_error('', 'Param dbt_keyfield is required but not defined');

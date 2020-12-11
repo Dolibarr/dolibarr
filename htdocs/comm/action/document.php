@@ -226,7 +226,7 @@ if ($object->id > 0) {
 			$listofuserid[$object->userownerid] = array('id'=>$object->userownerid, 'transparency'=>$object->transparency); // Owner first
 		}
 		if (!empty($object->userassigned)) {	// Now concat assigned users
-		// Restore array with key with same value than param 'id'
+			// Restore array with key with same value than param 'id'
 			$tmplist1 = $object->userassigned; $tmplist2 = array();
 			foreach ($tmplist1 as $key => $val) {
 				if ($val['id'] && $val['id'] != $object->userownerid) {

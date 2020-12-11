@@ -156,7 +156,7 @@ class pdf_standard extends CommonStickerGenerator
 
 		// Center
 		if ($textright == '') {	// Only a left part
-		// Output left area
+			// Output left area
 			if ($textleft == '__LOGO__' && $logo) {
 				$pdf->Image($logo, $_PosX + $xleft, $_PosY + $ytop, $widthtouse, $heighttouse);
 			} elseif ($textleft == '__PHOTO__' && $photo) {

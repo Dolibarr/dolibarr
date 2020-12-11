@@ -1771,7 +1771,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				}
 
 				if ($reinitadminperms && !empty($user->admin)) {  // Reload permission for current user if defined
-				// We reload permissions
+					// We reload permissions
 					$user->clearrights();
 					$user->getrights();
 				}

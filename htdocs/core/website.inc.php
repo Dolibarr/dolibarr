@@ -89,7 +89,7 @@ if (GETPOST('l', 'aZ09')) {
 }
 // A lang was forced, so we check to find if we must make a redirect on translation page
 if ($_SERVER['PHP_SELF'] != DOL_URL_ROOT.'/website/index.php') {	// If we browsing page using Dolibarr server or a Native web server
-//print_r(get_defined_constants(true));exit;
+	//print_r(get_defined_constants(true));exit;
 	if (GETPOST('l', 'aZ09')) {
 		$sql = "SELECT wp.rowid, wp.lang, wp.pageurl, wp.fk_page";
 		$sql .= " FROM ".MAIN_DB_PREFIX."website_page as wp";

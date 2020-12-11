@@ -740,7 +740,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			//Local tax 1
 			foreach ($this->localtax1 as $tvakey => $tvaval) {
 				if ($tvakey != 0) {    // On affiche pas taux 0
-				//$this->atleastoneratenotnull++;
+					//$this->atleastoneratenotnull++;
 
 					$index++;
 					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
@@ -765,7 +765,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			//Local tax 2
 			foreach ($this->localtax2 as $tvakey => $tvaval) {
 				if ($tvakey != 0) {    // On affiche pas taux 0
-				//$this->atleastoneratenotnull++;
+					//$this->atleastoneratenotnull++;
 
 					$index++;
 					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);

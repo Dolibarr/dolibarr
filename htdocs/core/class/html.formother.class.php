@@ -637,7 +637,7 @@ class FormOther
 
 				// Print task
 				if (isset($lines[$i]->id)) {		// We use isset because $lines[$i]->id may be null if project has no task and are on root project (tasks may be caught by a left join). We enter here only if '0' or >0
-				// Check if we must disable entry
+					// Check if we must disable entry
 					$disabled = 0;
 					if ($disablechildoftaskid && (($lines[$i]->id == $disablechildoftaskid || $lines[$i]->fk_parent == $disablechildoftaskid))) {
 						$disabled++;

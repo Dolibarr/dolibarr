@@ -359,7 +359,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 				foreach ($tmparray as $key => $value) {
 					try {
 						if (preg_match('/logo$/', $key)) { // Image
-						//var_dump($value);exit;
+							//var_dump($value);exit;
 							if (file_exists($value)) {
 								$odfHandler->setImage($key, $value);
 							} else {
@@ -379,7 +379,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 				foreach ($tmparray as $key => $value) {
 					try {
 						if (preg_match('/logo$/', $key)) {	// Image
-						//var_dump($value);exit;
+							//var_dump($value);exit;
 							if (file_exists($value)) {
 								$odfHandler->setImage($key, $value);
 							} else {

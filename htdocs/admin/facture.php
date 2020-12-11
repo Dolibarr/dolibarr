@@ -562,7 +562,7 @@ foreach ($dirmodels as $reldir) {
 print '</table>';
 
 if (!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)) { // Hidden conf
-/*
+	/*
 	 *  Document templates generators
 	 */
 	print '<br>';

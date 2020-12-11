@@ -2351,7 +2351,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			$transfound = 0;
 			$transkey = '';
 			if (in_array($fieldlist[$field], array('label', 'libelle'))) {		// For label
-			// Special case for labels
+				// Special case for labels
 				if ($tabname == MAIN_DB_PREFIX.'c_civility') {
 					$transkey = "Civility".strtoupper($obj->code);
 				}

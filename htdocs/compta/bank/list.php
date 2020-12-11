@@ -704,7 +704,7 @@ if (!$found) {
 
 // Show total line
 if ($lastcurrencycode != 'various') {	// If there is several currency, $lastcurrencycode is set to 'various' before
-// Show total line
+	// Show total line
 	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 }
 

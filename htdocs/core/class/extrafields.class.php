@@ -2015,7 +2015,7 @@ class ExtraFields
 				}
 
 				if ($this->attributes[$object->table_element]['required'][$key]) {	// Value is required
-				// Check if empty without using GETPOST, value can be alpha, int, array, etc...
+					// Check if empty without using GETPOST, value can be alpha, int, array, etc...
 					if ((!is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] != 'select' && $_POST["options_".$key] != '0')
 						|| (!is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'select')
 						|| (is_array($_POST["options_".$key]) && empty($_POST["options_".$key]))) {

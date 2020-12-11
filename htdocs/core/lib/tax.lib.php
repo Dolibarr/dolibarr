@@ -461,7 +461,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 	// CASE OF EXPENSE REPORT
 
 	if ($direction == 'buy') {		// buy only for expense reports
-	// Define sql request
+		// Define sql request
 		$sql = '';
 
 		// Count on payments date
@@ -958,7 +958,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 	// CASE OF EXPENSE REPORT
 
 	if ($direction == 'buy') {		// buy only for expense reports
-	// Define sql request
+		// Define sql request
 		$sql = '';
 
 		// Count on payments date

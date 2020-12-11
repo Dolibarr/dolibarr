@@ -139,7 +139,7 @@ function barcode_encode($code, $encoding)
 		dol_syslog("barcode.lib.php::barcode_encode Use barcode_encode_ean");
 		$bars = barcode_encode_ean($code, $encoding);
 	} elseif (file_exists($genbarcode_loc)) {	// For example C39
-	/* use genbarcode */
+		/* use genbarcode */
 		dol_syslog("barcode.lib.php::barcode_encode Use genbarcode ".$genbarcode_loc." code=".$code." encoding=".$encoding);
 		$bars = barcode_encode_genbarcode($code, $encoding);
 	} else {

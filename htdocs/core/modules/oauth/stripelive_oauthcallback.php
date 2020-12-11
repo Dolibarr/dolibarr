@@ -108,7 +108,7 @@ if ($action == 'delete') {
 }
 
 if (!empty($_GET['code'])) {     // We are coming from oauth provider page
-// We should have
+	// We should have
 	//$_GET=array('code' => string 'aaaaaaaaaaaaaa' (length=20), 'state' => string 'user,public_repo' (length=16))
 
 	dol_syslog("We are coming from the oauth provider page");

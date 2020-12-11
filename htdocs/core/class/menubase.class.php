@@ -244,7 +244,7 @@ class Menubase
 			$row = $this->db->fetch_row($result);
 
 			if ($row[0] == 0) {   // If not found
-			// Insert request
+				// Insert request
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu(";
 				$sql .= "menu_handler,";
 				$sql .= "entity,";
@@ -560,7 +560,7 @@ class Menubase
 		foreach ($tabMenu as $key => $val) {
 			//var_dump($tabMenu);
 			if ($val['fk_menu'] == -1 && $val['fk_mainmenu'] == $mainmenu) {    // We found a menu entry not linked to parent with good mainmenu
-			//print 'Try to add menu (current is mainmenu='.$mainmenu.' leftmenu='.$leftmenu.') for '.join(',',$val).' fk_mainmenu='.$val['fk_mainmenu'].' fk_leftmenu='.$val['fk_leftmenu'].'<br>';
+				//print 'Try to add menu (current is mainmenu='.$mainmenu.' leftmenu='.$leftmenu.') for '.join(',',$val).' fk_mainmenu='.$val['fk_mainmenu'].' fk_leftmenu='.$val['fk_leftmenu'].'<br>';
 				//var_dump($this->newmenu->liste);exit;
 
 				if (empty($val['fk_leftmenu'])) {

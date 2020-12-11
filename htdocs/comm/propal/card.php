@@ -924,7 +924,7 @@ if (empty($reshook)) {
 				} // If price per quantity
 				elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) {
 					if ($prod->prices_by_qty[0]) {	// yes, this product has some prices per quantity
-					// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
+						// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
 						$pqp = GETPOST('pbq', 'int');
 
 						// Search price into product_price_by_qty from $prod->id
@@ -945,7 +945,7 @@ if (empty($reshook)) {
 				} // If price per quantity and customer
 				elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
 					if ($prod->prices_by_qty[$object->thirdparty->price_level]) { // yes, this product has some prices per quantity
-					// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
+						// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
 						$pqp = GETPOST('pbq', 'int');
 
 						// Search price into product_price_by_qty from $prod->id

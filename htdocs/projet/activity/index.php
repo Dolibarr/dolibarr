@@ -110,7 +110,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is useless due to the global search combo
-// Search project
+	// Search project
 	if (!empty($conf->projet->enabled) && $user->rights->projet->lire) {
 		$listofsearchfields['search_task'] = array('text'=>'Task');
 	}

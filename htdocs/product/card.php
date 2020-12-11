@@ -1164,7 +1164,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		if ($type != 1) {	// Nature, Weight and volume only applies to products and not to services
-		// Nature
+			// Nature
 			print '<tr><td>'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td colspan="3">';
 			$statutarray = array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
 			print $form->selectarray('finished', $statutarray, GETPOST('finished', 'alpha'), 1);
@@ -2229,7 +2229,7 @@ if (($action == 'delete' && (empty($conf->use_javascript_ajax) || !empty($conf->
 // Clone confirmation
 if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->dol_use_jmobile)))		// Output when action = clone if jmobile or no js
 	|| (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))) {							// Always output when not jmobile nor js
-// Define confirmation messages
+	// Define confirmation messages
 	$formquestionclone = array(
 		'text' => $langs->trans("ConfirmClone"),
 		array('type' => 'text', 'name' => 'clone_ref', 'label' => $langs->trans("NewRefForClone"), 'value' => empty($tmpcode) ? $langs->trans("CopyOf").' '.$object->ref : $tmpcode, 'size'=>24),

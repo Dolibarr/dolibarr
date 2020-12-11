@@ -637,7 +637,7 @@ if ($step == 2 && $datatoexport) {
 
 if ($step == 3 && $datatoexport) {
 	if (count($array_selected) < 1) {      // This occurs when going back to page after sessecion expired
-	// Switch to step 2
+		// Switch to step 2
 		header("Location: ".DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$datatoexport);
 		exit;
 	}
@@ -802,7 +802,7 @@ if ($step == 3 && $datatoexport) {
 
 if ($step == 4 && $datatoexport) {
 	if (count($array_selected) < 1) {     // This occurs when going back to page after sessecion expired
-	// Switch to step 2
+		// Switch to step 2
 		header("Location: ".DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$datatoexport);
 		exit;
 	}
@@ -1047,7 +1047,7 @@ if ($step == 4 && $datatoexport) {
 
 if ($step == 5 && $datatoexport) {
 	if (count($array_selected) < 1) {      // This occurs when going back to page after sessecion expired
-	// Switch to step 2
+		// Switch to step 2
 		header("Location: ".DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$datatoexport);
 		exit;
 	}

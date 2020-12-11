@@ -1232,7 +1232,7 @@ class pdf_crabe extends ModelePDFFactures
 
 					foreach ($localtax_rate as $tvakey => $tvaval) {
 						if ($tvakey != 0) {    // On affiche pas taux 0
-						//$this->atleastoneratenotnull++;
+							//$this->atleastoneratenotnull++;
 
 							$index++;
 							$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
@@ -1263,7 +1263,7 @@ class pdf_crabe extends ModelePDFFactures
 
 					foreach ($localtax_rate as $tvakey => $tvaval) {
 						if ($tvakey != 0) {    // On affiche pas taux 0
-						//$this->atleastoneratenotnull++;
+							//$this->atleastoneratenotnull++;
 
 
 
@@ -1319,7 +1319,7 @@ class pdf_crabe extends ModelePDFFactures
 
 					foreach ($localtax_rate as $tvakey => $tvaval) {
 						if ($tvakey != 0) {    // On affiche pas taux 0
-						//$this->atleastoneratenotnull++;
+							//$this->atleastoneratenotnull++;
 
 							$index++;
 							$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);

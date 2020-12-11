@@ -733,7 +733,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 		print '</td></tr>';
 
 		if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) {  // using this option is a bug. kept for backward compatibility
-		// TVA
+			// TVA
 			print '<tr><td>'.$langs->trans("DefaultTaxRate").'</td><td colspan="2">';
 
 			$positiverates = '';
@@ -780,7 +780,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 		}
 	} else {
 		if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) {  // using this option is a bug. kept for backward compatibility
-		// We show only vat for level 1
+			// We show only vat for level 1
 			print '<tr><td class="titlefield">'.$langs->trans("DefaultTaxRate").'</td>';
 			print '<td colspan="2">'.vatrate($object->multiprices_tva_tx[1], true).'</td>';
 			print '</tr>';

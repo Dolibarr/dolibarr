@@ -83,7 +83,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 if ($user->socid > 0) {	// Protection if external user
-//$socid = $user->socid;
+	//$socid = $user->socid;
 	accessforbidden();
 }
 // Security check

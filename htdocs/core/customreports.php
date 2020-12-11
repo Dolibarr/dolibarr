@@ -147,7 +147,7 @@ if ($objecttype) {
 // Security check
 $socid = 0;
 if ($user->socid > 0) {	// Protection if external user
-//$socid = $user->socid;
+	//$socid = $user->socid;
 	accessforbidden();
 }
 
