@@ -1371,9 +1371,10 @@ class FormOther
 	 * @param 	mixed	$object				Object analyzed
 	 * @param	array	$search_groupby		Array of preselected fields
 	 * @param	array	$arrayofgroupby		Array of groupby to fill
+	 * @param	string	$morecss			More CSS
 	 * @return string						HTML string component
 	 */
-	public function selectGroupByField($object, $search_groupby, &$arrayofgroupby)
+	public function selectGroupByField($object, $search_groupby, &$arrayofgroupby, $morecss = 'minwidth200 maxwidth250')
 	{
 		global $langs, $extrafields, $form;
 
@@ -1395,9 +1396,9 @@ class FormOther
 				if (preg_match('/^pass/', $key)) continue;
 				if (in_array($val['type'], array('html', 'text'))) continue;
 				if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
-					$arrayofgroupby['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.')', 'position' => $val['position'].'-y');
-					$arrayofgroupby['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.')', 'position' => $val['position'].'-m');
-					$arrayofgroupby['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.'-'.$DD.')', 'position' => $val['position'].'-d');
+					$arrayofgroupby['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.')</span>', 'position' => $val['position'].'-y');
+					$arrayofgroupby['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>', 'position' => $val['position'].'-m');
+					$arrayofgroupby['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.'-'.$DD.')</span>', 'position' => $val['position'].'-d');
 				} else {
 					$arrayofgroupby['t.'.$key] = array('label' => $langs->trans($val['label']), 'position' => (int) $val['position']);
 				}
@@ -1417,7 +1418,7 @@ class FormOther
 		foreach ($arrayofgroupby as $key => $val) {
 			$arrayofgroupbylabel[$key] = $val['label'];
 		}
-		$result = $form->selectarray('search_groupby', $arrayofgroupbylabel, $search_groupby, 1, 0, 0, '', 0, 0, 0, '', 'minwidth250', 1);
+		$result = $form->selectarray('search_groupby', $arrayofgroupbylabel, $search_groupby, 1, 0, 0, '', 0, 0, 0, '', $morecss, 1);
 
 		return $result;
 	}

@@ -6772,7 +6772,7 @@ class Form
 					{
 						$out .= ' selected';
 					}
-					$out .= ' data-html="'.$newval.'"';
+					$out .= ' data-html="'.dol_escape_htmltag($newval).'"';
 					$out .= '>';
 					$out .= dol_htmlentitiesbr($newval);
 					$out .= '</option>'."\n";
