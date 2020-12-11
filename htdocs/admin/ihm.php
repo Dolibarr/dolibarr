@@ -242,6 +242,7 @@ print '<input type="hidden" name="action" value="update">';
 clearstatcache();
 
 print '<br>';
+print '<div class="div-table-responsive-no-min">';
 print '<table summary="edit" class="noborder centpercent editmode tableforfield">';
 print '<tr class="liste_titre"><th>'.img_picto('', 'language').' '.$langs->trans("Language").'</th><th></th>';
 print '</tr>';
@@ -260,12 +261,14 @@ print '</td>';
 print '</tr>';
 
 print '</table><br>'."\n";
+print '</div>';
 
 // Themes and themes options
 showSkins(null, 1);
 print '<br>';
 
 // Other
+print '<div class="div-table-responsive-no-min">';
 print '<table summary="otherparameters" class="noborder centpercent editmode">';
 print '<tr class="liste_titre"><th>'.$langs->trans("Miscellaneous").'</th><th></th>';
 print '<th width="20">&nbsp;</tg>';
@@ -391,6 +394,7 @@ $doleditor->Create();
 print '</td></tr>'."\n";
 
 print '</table>'."\n";
+print '</div>';
 
 print '<br>';
 
