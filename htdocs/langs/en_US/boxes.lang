@@ -51,6 +51,7 @@ BoxGlobalActivity=Global activity (invoices, proposals, orders)
 BoxGoodCustomers=Good customers
 BoxTitleGoodCustomers=%s Good customers
 BoxTitleFunnelOfProspection=Amount of prospection by status
+BoxScheduledJobs=Schedules jobs
 FailedToRefreshDataInfoNotUpToDate=Failed to refresh RSS flux. Latest successful refresh date: %s
 LastRefreshDate=Latest refresh date
 NoRecordedBookmarks=No bookmarks defined.
