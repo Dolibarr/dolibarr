@@ -49,8 +49,9 @@ $search_price_ttc = GETPOST('search_price_ttc');
 
 // Security check
 $socid = GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('id', 'int');
-if ($user->socid)
+if ($user->socid) {
 	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
 $object = new Societe($db);
@@ -67,12 +68,12 @@ $error = 0;
 
 $parameters = array('id'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if (empty($reshook))
-{
-	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
-	{
+if (empty($reshook)) {
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
 		$search_prod = $search_label = $search_price = $search_price_ttc = '';
 	}
 
@@ -101,8 +102,7 @@ if (empty($reshook))
 			$npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
 			$localtax1 = 0; $localtax2 = 0; $localtax1_type = '0'; $localtax2_type = '0';
 			// If value contains the unique code of vat line (new recommended method), we use it to find npr and local taxes
-			if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg))
-			{
+			if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg)) {
 				// We look into database using code (we can't use get_localtax() because it depends on buyer that is not known). Same in update price.
 				$vatratecode = $reg[1];
 				// Get record from code
@@ -112,8 +112,7 @@ if (empty($reshook))
 				$sql .= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
 				$sql .= " AND t.code ='".$db->escape($vatratecode)."'";
 				$resql = $db->query($sql);
-				if ($resql)
-				{
+				if ($resql) {
 					$obj = $db->fetch_object($resql);
 					$npr = $obj->recuperableonly;
 					$localtax1 = $obj->localtax1;
@@ -191,8 +190,9 @@ $object = new Societe($db);
 $result = $object->fetch($socid);
 llxHeader("", $langs->trans("ThirdParty").'-'.$langs->trans('PriceByCustomer'));
 
-if (!empty($conf->notification->enabled))
+if (!empty($conf->notification->enabled)) {
 	$langs->load("mails");
+}
 $head = societe_prepare_head($object);
 
 print dol_get_fiche_head($head, 'price', $langs->trans("ThirdParty"), -1, 'company');
@@ -206,8 +206,7 @@ print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent">';
 
-if (!empty($conf->global->SOCIETE_USEPREFIX)) // Old not used prefix field
-{
+if (!empty($conf->global->SOCIETE_USEPREFIX)) { // Old not used prefix field
 	print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 }
 
@@ -215,8 +214,9 @@ if ($object->client) {
 	print '<tr><td class="titlefield">';
 	print $langs->trans('CustomerCode').'</td><td colspan="3">';
 	print $object->code_client;
-	if ($object->check_codeclient() != 0)
+	if ($object->check_codeclient() != 0) {
 		print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+	}
 	print '</td></tr>';
 }
 
@@ -224,8 +224,9 @@ if ($object->fournisseur) {
 	print '<tr><td class="titlefield">';
 	print $langs->trans('SupplierCode').'</td><td colspan="3">';
 	print $object->code_fournisseur;
-	if ($object->check_codefournisseur() != 0)
+	if ($object->check_codefournisseur() != 0) {
 		print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+	}
 	print '</td></tr>';
 }
 
@@ -244,14 +245,18 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	$sortorder = GETPOST("sortorder", 'alpha');
 	$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 	$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-	if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+	if (empty($page) || $page == -1) {
+		$page = 0;
+	}     // If $page is not defined, or '' or -1
 	$offset = $limit * $page;
 	$pageprev = $page - 1;
 	$pagenext = $page + 1;
-	if (!$sortorder)
+	if (!$sortorder) {
 		$sortorder = "ASC";
-	if (!$sortfield)
+	}
+	if (!$sortfield) {
 		$sortfield = "soc.nom";
+	}
 
 		// Build filter to display only concerned lines
 	$filter = array(
@@ -355,8 +360,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print load_fiche_titre($langs->trans('PriceByCustomer'));
 
 		$result = $prodcustprice->fetch(GETPOST('lineid', 'int'));
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 		}
 
@@ -443,8 +447,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		}
 
 		$result = $prodcustprice->fetch_all_log($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 		}
 
@@ -521,14 +524,12 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		// Count total nb of records
 		$nbtotalofrecords = '';
-		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-		{
+		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 			$nbtotalofrecords = $prodcustprice->fetch_all('', '', 0, 0, $filter);
 		}
 
 		$result = $prodcustprice->fetch_all($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 		}
 
@@ -558,8 +559,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<td>&nbsp;</td>';
 		print '</tr>';
 
-		if (count($prodcustprice->lines) > 0 || $search_prod)
-		{
+		if (count($prodcustprice->lines) > 0 || $search_prod) {
 			print '<tr class="liste_titre">';
 			print '<td class="liste_titre"><input type="text" class="flat" name="search_prod" value="'.$search_prod.'" size="20"></td>';
 			print '<td class="liste_titre" ><input type="text" class="flat" name="search_label" value="'.$search_label.'" size="20"></td>';
@@ -575,10 +575,8 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			print '</tr>';
 		}
 
-		if (count($prodcustprice->lines) > 0)
-		{
-			foreach ($prodcustprice->lines as $line)
-			{
+		if (count($prodcustprice->lines) > 0) {
+			foreach ($prodcustprice->lines as $line) {
 				print '<tr class="oddeven">';
 
 				$staticprod = new Product($db);
@@ -603,8 +601,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				print '</td>';
 
 				// Action
-				if ($user->rights->produit->creer || $user->rights->service->creer)
-				{
+				if ($user->rights->produit->creer || $user->rights->service->creer) {
 					print '<td class="right nowraponall">';
 					print '<a class="paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=showlog_customer_price&amp;socid='.$object->id.'&amp;prodid='.$line->fk_product.'">';
 					print img_info();
@@ -624,7 +621,9 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			}
 		} else {
 			$colspan = 9;
-			if ($user->rights->produit->supprimer || $user->rights->service->supprimer) $colspan += 1;
+			if ($user->rights->produit->supprimer || $user->rights->service->supprimer) {
+				$colspan += 1;
+			}
 			print '<tr class="oddeven"><td colspan="'.$colspan.'">'.$langs->trans('None').'</td></tr>';
 		}
 

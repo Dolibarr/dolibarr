@@ -31,8 +31,8 @@ $path=dirname(__FILE__).'/';
 // Test si mode batch
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-    exit;
+	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+	exit;
 }
 
 // Recupere root dolibarr
@@ -54,8 +54,7 @@ define(GEN_NUMBER_PRODUIT, 100000);
 
 
 $ret=$user->fetch('', 'admin');
-if (! $ret > 0)
-{
+if (! $ret > 0) {
 	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
 	exit;
 }
@@ -65,38 +64,50 @@ $user->getrights();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product"; $productsid = array();
 $resql=$db->query($sql);
 if ($resql) {
-    $num = $db->num_rows($resql); $i = 0;
-    while ($i < $num) {      $row = $db->fetch_row($resql);      $productsid[$i] = $row[0];      $i++; }
+	$num = $db->num_rows($resql); $i = 0;
+	while ($i < $num) {
+		$row = $db->fetch_row($resql);      $productsid[$i] = $row[0];      $i++;
+	}
 }
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe"; $societesid = array();
 $resql=$db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql); $i = 0;
-    while ($i < $num) { $row = $db->fetch_row($resql);      $societesid[$i] = $row[0];      $i++; }
-} else { print "err"; }
+	while ($i < $num) {
+		$row = $db->fetch_row($resql);      $societesid[$i] = $row[0];      $i++;
+	}
+} else {
+	print "err";
+}
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande"; $commandesid = array();
 $resql=$db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql); $i = 0;
-    while ($i < $num) { $row = $db->fetch_row($resql);      $commandesid[$i] = $row[0];      $i++; }
-} else { print "err"; }
+	while ($i < $num) {
+		$row = $db->fetch_row($resql);      $commandesid[$i] = $row[0];      $i++;
+	}
+} else {
+	print "err";
+}
 
 
 print "Generates ".GEN_NUMBER_PRODUIT." products\n";
-for ($s = 0 ; $s < GEN_NUMBER_PRODUIT ; $s++)
-{
-    print "Product ".$s;
-    $produit = new Product($db);
-    $produit->type = mt_rand(0, 1);
-    $produit->status = 1;
-    $produit->ref = ($produit->type?'S':'P').time().$s;
-    $produit->label = 'Label '.time().$s;
-    $produit->description = 'Description '.time().$s;
-    $produit->price = mt_rand(1, 1000);
-    $produit->tva_tx = "19.6";
-    $ret=$produit->create($user);
-    if ($ret < 0) print "Error $ret - ".$produit->error."\n";
-	else print " OK with ref ".$produit->ref."\n";
+for ($s = 0; $s < GEN_NUMBER_PRODUIT; $s++) {
+	print "Product ".$s;
+	$produit = new Product($db);
+	$produit->type = mt_rand(0, 1);
+	$produit->status = 1;
+	$produit->ref = ($produit->type?'S':'P').time().$s;
+	$produit->label = 'Label '.time().$s;
+	$produit->description = 'Description '.time().$s;
+	$produit->price = mt_rand(1, 1000);
+	$produit->tva_tx = "19.6";
+	$ret=$produit->create($user);
+	if ($ret < 0) {
+		print "Error $ret - ".$produit->error."\n";
+	} else {
+		print " OK with ref ".$produit->ref."\n";
+	}
 }

@@ -45,50 +45,47 @@ function dol_setcache($memoryid, $data)
 	$result = 0;
 
 	// Using a memcached server
-	if (!empty($conf->memcached->enabled) && class_exists('Memcached'))
-	{
+	if (!empty($conf->memcached->enabled) && class_exists('Memcached')) {
 		global $dolmemcache;
-		if (empty($dolmemcache) || !is_object($dolmemcache))
-		{
-	   		$dolmemcache = new Memcached();
-	   		$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
-	   		$result = $dolmemcache->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
-	   		if (!$result) return -1;
-	   	}
+		if (empty($dolmemcache) || !is_object($dolmemcache)) {
+			$dolmemcache = new Memcached();
+			$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
+			$result = $dolmemcache->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
+			if (!$result) {
+				return -1;
+			}
+		}
 
 		$memoryid = session_name().'_'.$memoryid;
 		//$dolmemcache->setOption(Memcached::OPT_COMPRESSION, false);
 		$dolmemcache->add($memoryid, $data); // This fails if key already exists
 		$rescode = $dolmemcache->getResultCode();
-		if ($rescode == 0)
-		{
+		if ($rescode == 0) {
 			return count($data);
 		} else {
 			return -$rescode;
 		}
-	} elseif (!empty($conf->memcached->enabled) && class_exists('Memcache'))
-	{
+	} elseif (!empty($conf->memcached->enabled) && class_exists('Memcache')) {
 		global $dolmemcache;
-		if (empty($dolmemcache) || !is_object($dolmemcache))
-		{
-	   		$dolmemcache = new Memcache();
-	   		$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
-	   		$result = $dolmemcache->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
-	   		if (!$result) return -1;
-	   	}
+		if (empty($dolmemcache) || !is_object($dolmemcache)) {
+			$dolmemcache = new Memcache();
+			$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
+			$result = $dolmemcache->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
+			if (!$result) {
+				return -1;
+			}
+		}
 
-	   	$memoryid = session_name().'_'.$memoryid;
+		$memoryid = session_name().'_'.$memoryid;
 		//$dolmemcache->setOption(Memcached::OPT_COMPRESSION, false);
 		$result = $dolmemcache->add($memoryid, $data); // This fails if key already exists
-		if ($result)
-		{
+		if ($result) {
 			return count($data);
 		} else {
 			return -1;
 		}
 	} // Using shmop
-	elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))
-	{
+	elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
 		$result = dol_setshmop($memoryid, $data);
 	}
 
@@ -106,16 +103,16 @@ function dol_getcache($memoryid)
 	global $conf;
 
 	// Using a memcached server
-	if (!empty($conf->memcached->enabled) && class_exists('Memcached'))
-	{
+	if (!empty($conf->memcached->enabled) && class_exists('Memcached')) {
 		global $m;
-		if (empty($m) || !is_object($m))
-		{
+		if (empty($m) || !is_object($m)) {
 			$m = new Memcached();
-	   		$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
-	   		$result = $m->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
-	   		if (!$result) return -1;
-	   	}
+			$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
+			$result = $m->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
+			if (!$result) {
+				return -1;
+			}
+		}
 
 		$memoryid = session_name().'_'.$memoryid;
 		//$m->setOption(Memcached::OPT_COMPRESSION, false);
@@ -124,37 +121,34 @@ function dol_getcache($memoryid)
 		$rescode = $m->getResultCode();
 		//print "memoryid=".$memoryid." - rescode=".$rescode." - data=".count($data)."\n<br>";
 		//var_dump($data);
-		if ($rescode == 0)
-		{
+		if ($rescode == 0) {
 			return $data;
 		} else {
 			return -$rescode;
 		}
-	} elseif (!empty($conf->memcached->enabled) && class_exists('Memcache'))
-	{
+	} elseif (!empty($conf->memcached->enabled) && class_exists('Memcache')) {
 		global $m;
-		if (empty($m) || !is_object($m))
-		{
-	   		$m = new Memcache();
-	   		$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
-	   		$result = $m->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
-	   		if (!$result) return -1;
-	   	}
+		if (empty($m) || !is_object($m)) {
+			$m = new Memcache();
+			$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
+			$result = $m->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
+			if (!$result) {
+				return -1;
+			}
+		}
 
-	   	$memoryid = session_name().'_'.$memoryid;
+		$memoryid = session_name().'_'.$memoryid;
 		//$m->setOption(Memcached::OPT_COMPRESSION, false);
 		$data = $m->get($memoryid);
 		//print "memoryid=".$memoryid." - rescode=".$rescode." - data=".count($data)."\n<br>";
 		//var_dump($data);
-		if ($data)
-		{
+		if ($data) {
 			return $data;
 		} else {
 			return -1;
 		}
 	} // Using shmop
-	elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))
-	{
+	elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
 		$data = dol_getshmop($memoryid);
 		return $data;
 	}
@@ -173,7 +167,9 @@ function dol_getcache($memoryid)
 function dol_getshmopaddress($memoryid)
 {
 	global $shmkeys, $shmoffset;
-	if (empty($shmkeys[$memoryid])) return 0;
+	if (empty($shmkeys[$memoryid])) {
+		return 0;
+	}
 	return $shmkeys[$memoryid] + $shmoffset;
 }
 
@@ -187,10 +183,11 @@ function dol_listshmop()
 	global $shmkeys, $shmoffset;
 
 	$resarray = array();
-	foreach ($shmkeys as $key => $val)
-	{
+	foreach ($shmkeys as $key => $val) {
 		$result = dol_getshmop($key);
-		if (!is_numeric($result) || $result > 0) $resarray[$key] = $result;
+		if (!is_numeric($result) || $result > 0) {
+			$resarray[$key] = $result;
+		}
 	}
 	return $resarray;
 }
@@ -207,19 +204,19 @@ function dol_setshmop($memoryid, $data)
 	global $shmkeys, $shmoffset;
 
 	//print 'dol_setshmop memoryid='.$memoryid."<br>\n";
-	if (empty($shmkeys[$memoryid]) || !function_exists("shmop_write")) return 0;
+	if (empty($shmkeys[$memoryid]) || !function_exists("shmop_write")) {
+		return 0;
+	}
 	$shmkey = dol_getshmopaddress($memoryid);
 	$newdata = serialize($data);
 	$size = strlen($newdata);
 	//print 'dol_setshmop memoryid='.$memoryid." shmkey=".$shmkey." newdata=".$size."bytes<br>\n";
 	$handle = shmop_open($shmkey, 'c', 0644, 6 + $size);
-	if ($handle)
-	{
+	if ($handle) {
 		$shm_bytes_written1 = shmop_write($handle, str_pad($size, 6), 0);
 		$shm_bytes_written2 = shmop_write($handle, $newdata, 6);
-		if (($shm_bytes_written1 + $shm_bytes_written2) != (6 + dol_strlen($newdata)))
-		{
-   			print "Couldn't write the entire length of data\n";
+		if (($shm_bytes_written1 + $shm_bytes_written2) != (6 + dol_strlen($newdata))) {
+			print "Couldn't write the entire length of data\n";
 		}
 		shmop_close($handle);
 		return ($shm_bytes_written1 + $shm_bytes_written2);
@@ -239,15 +236,19 @@ function dol_getshmop($memoryid)
 {
 	global $shmkeys, $shmoffset;
 
-	if (empty($shmkeys[$memoryid]) || !function_exists("shmop_open")) return 0;
+	if (empty($shmkeys[$memoryid]) || !function_exists("shmop_open")) {
+		return 0;
+	}
 	$shmkey = dol_getshmopaddress($memoryid);
 	//print 'dol_getshmop memoryid='.$memoryid." shmkey=".$shmkey."<br>\n";
 	$handle = @shmop_open($shmkey, 'a', 0, 0);
-	if ($handle)
-	{
+	if ($handle) {
 		$size = trim(shmop_read($handle, 0, 6));
-		if ($size) $data = unserialize(shmop_read($handle, 6, $size));
-		else return -1;
+		if ($size) {
+			$data = unserialize(shmop_read($handle, 6, $size));
+		} else {
+			return -1;
+		}
 		shmop_close($handle);
 	} else {
 		return -2;

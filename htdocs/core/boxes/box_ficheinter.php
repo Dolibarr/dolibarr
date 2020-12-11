@@ -80,8 +80,7 @@ class box_ficheinter extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastFicheInter", $max));
 
-		if (!empty($user->rights->ficheinter->lire))
-		{
+		if (!empty($user->rights->ficheinter->lire)) {
 			$sql = "SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut";
 			$sql .= ", f.datec";
 			$sql .= ", f.date_valid as datev";
@@ -90,26 +89,30 @@ class box_ficheinter extends ModeleBoxes
 			$sql .= ", s.code_client, s.code_compta, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (!$user->rights->societe->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			if (!$user->rights->societe->client->voir) {
+				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			}
 			$sql .= ", ".MAIN_DB_PREFIX."fichinter as f";
 			$sql .= " WHERE f.fk_soc = s.rowid ";
 			$sql .= " AND f.entity = ".$conf->entity;
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-			if ($user->socid)	$sql .= " AND s.rowid = ".$user->socid;
+			if (!$user->rights->societe->client->voir && !$user->socid) {
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			}
+			if ($user->socid) {
+				$sql .= " AND s.rowid = ".$user->socid;
+			}
 			$sql .= " ORDER BY f.tms DESC";
 			$sql .= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this).'::loadBox', LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if ($resql)
-			{
+			if ($resql) {
 				$num = $this->db->num_rows($resql);
 				$now = dol_now();
 
 				$i = 0;
 
-				while ($i < $num)
-				{
+				while ($i < $num) {
 					$objp = $this->db->fetch_object($resql);
 					$datec = $this->db->jdate($objp->datec);
 
@@ -153,10 +156,12 @@ class box_ficheinter extends ModeleBoxes
 					$i++;
 				}
 
-				if ($num == 0) $this->info_box_contents[$i][0] = array(
+				if ($num == 0) {
+					$this->info_box_contents[$i][0] = array(
 					'td' => 'class="center opacitymedium"',
 					'text'=>$langs->trans("NoRecordedInterventions")
-				);
+					);
+				}
 
 				$this->db->free($resql);
 			} else {

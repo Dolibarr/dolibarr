@@ -38,7 +38,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $langs->loadLangs(array('products', 'stocks', 'orders'));
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'produit|service');
 
 $sall = GETPOST('search_all', 'alphanohtml');
@@ -56,10 +58,16 @@ $search_date = dol_mktime(0, 0, 0, $search_datemonth, $search_dateday, $search_d
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-if (!$sortorder) $sortorder = 'DESC';
-if (!$sortfield) $sortfield = 'cf.date_creation';
+if (!$sortorder) {
+	$sortorder = 'DESC';
+}
+if (!$sortfield) {
+	$sortfield = 'cf.date_creation';
+}
 $page = GETPOST('page', 'int') ? GETPOST('page', 'int') : 0;
-if ($page < 0) $page = 0;
+if ($page < 0) {
+	$page = 0;
+}
 $offset = $limit * $page;
 
 
@@ -67,8 +75,7 @@ $offset = $limit * $page;
  * Actions
  */
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
-{
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
 	$sall = "";
 	$sref = "";
 	$snom = "";
@@ -130,13 +137,25 @@ if ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) {
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = '.$user->id;
 }
-if ($sref) $sql .= natural_search('cf.ref', $sref);
-if ($snom) $sql .= natural_search('s.nom', $snom);
-if ($suser) $sql .= natural_search('u.login', $suser);
-if ($sttc) $sql .= natural_search('cf.total_ttc', $sttc, 1);
+if ($sref) {
+	$sql .= natural_search('cf.ref', $sref);
+}
+if ($snom) {
+	$sql .= natural_search('s.nom', $snom);
+}
+if ($suser) {
+	$sql .= natural_search('u.login', $suser);
+}
+if ($sttc) {
+	$sql .= natural_search('cf.total_ttc', $sttc, 1);
+}
 $sql .= dolSqlDateFilter('cf.date_creation', $search_dateday, $search_datemonth, $search_dateyear);
-if ($sall) $sql .= natural_search(array('cf.ref', 'cf.note'), $sall);
-if (!empty($socid)) $sql .= ' AND s.rowid = '.$socid;
+if ($sall) {
+	$sql .= natural_search(array('cf.ref', 'cf.note'), $sall);
+}
+if (!empty($socid)) {
+	$sql .= ' AND s.rowid = '.$socid;
+}
 if (GETPOST('statut', 'int')) {
 	$sql .= ' AND fk_statut = '.GETPOST('statut', 'int');
 }
@@ -148,8 +167,7 @@ if (!$search_product) {
 }
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
@@ -160,16 +178,36 @@ if ($resql)
 	print_barre_liste('', $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', $num, 0, '');
 
 	$param = '';
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
-	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-	if ($sref) $param .= '&search_ref='.urlencode($sref);
-	if ($snom) $param .= '&search_nom='.urlencode($snom);
-	if ($suser) $param .= '&search_user='.urlencode($suser);
-	if ($sttc) $param .= '&search_ttc='.urlencode($sttc);
-	if ($search_dateyear) $param .= '&search_dateyear='.urlencode($search_dateyear);
-	if ($search_datemonth) $param .= '&search_datemonth='.urlencode($search_datemonth);
-	if ($search_dateday) $param .= '&search_dateday='.urlencode($search_dateday);
-	if ($optioncss != '')     $param .= '&optioncss='.urlencode($optioncss);
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+		$param .= '&contextpage='.urlencode($contextpage);
+	}
+	if ($limit > 0 && $limit != $conf->liste_limit) {
+		$param .= '&limit='.urlencode($limit);
+	}
+	if ($sref) {
+		$param .= '&search_ref='.urlencode($sref);
+	}
+	if ($snom) {
+		$param .= '&search_nom='.urlencode($snom);
+	}
+	if ($suser) {
+		$param .= '&search_user='.urlencode($suser);
+	}
+	if ($sttc) {
+		$param .= '&search_ttc='.urlencode($sttc);
+	}
+	if ($search_dateyear) {
+		$param .= '&search_dateyear='.urlencode($search_dateyear);
+	}
+	if ($search_datemonth) {
+		$param .= '&search_datemonth='.urlencode($search_datemonth);
+	}
+	if ($search_dateday) {
+		$param .= '&search_dateday='.urlencode($search_dateday);
+	}
+	if ($optioncss != '') {
+		$param .= '&optioncss='.urlencode($optioncss);
+	}
 
 	print '<table class="noborder centpercent">';
 
@@ -261,14 +299,12 @@ if ($resql)
 
 	$userstatic = new User($db);
 
-	while ($i < min($num, $search_product ? $num : $conf->liste_limit))
-	{
+	while ($i < min($num, $search_product ? $num : $conf->liste_limit)) {
 		$obj = $db->fetch_object($resql);
 
 		$showline = dolDispatchToDo($obj->rowid) && (!$search_product || in_array($search_product, getProducts($obj->rowid)));
 
-		if ($showline)
-		{
+		if ($showline) {
 			$href = DOL_URL_ROOT.'/fourn/commande/card.php?id='.$obj->rowid;
 
 			print '<tr>';

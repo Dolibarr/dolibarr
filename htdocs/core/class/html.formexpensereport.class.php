@@ -66,13 +66,15 @@ class FormExpenseReport
 		$tmpep = new ExpenseReport($this->db);
 
 		print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
-		if ($useempty) print '<option value="-1">&nbsp;</option>';
+		if ($useempty) {
+			print '<option value="-1">&nbsp;</option>';
+		}
 		$arrayoflabels = $tmpep->statuts;
-		if ($useshortlabel) $arrayoflabels = $tmpep->statuts_short;
-		foreach ($arrayoflabels as $key => $val)
-		{
-			if ($selected != '' && $selected == $key)
-			{
+		if ($useshortlabel) {
+			$arrayoflabels = $tmpep->statuts_short;
+		}
+		foreach ($arrayoflabels as $key => $val) {
+			if ($selected != '' && $selected == $key) {
 				print '<option value="'.$key.'" selected>';
 			} else {
 				print '<option value="'.$key.'">';
@@ -102,30 +104,36 @@ class FormExpenseReport
 		$out = '';
 
 		$out .= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
-		if ($showempty)
-		{
+		if ($showempty) {
 			$out .= '<option value="-1"';
-			if ($selected == -1) $out .= ' selected';
+			if ($selected == -1) {
+				$out .= ' selected';
+			}
 			$out .= '>&nbsp;</option>';
 		}
 
 		$sql = "SELECT c.id, c.code, c.label as type FROM ".MAIN_DB_PREFIX."c_type_fees as c";
-		if ($active >= 0) $sql .= " WHERE c.active = ".$active;
+		if ($active >= 0) {
+			$sql .= " WHERE c.active = ".$active;
+		}
 		$sql .= " ORDER BY c.label ASC";
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 				$out .= '<option value="'.$obj->id.'"';
-				if ($obj->code == $selected || $obj->id == $selected) $out .= ' selected';
+				if ($obj->code == $selected || $obj->id == $selected) {
+					$out .= ' selected';
+				}
 				$out .= '>';
-				if ($obj->code != $langs->trans($obj->code)) $out .= $langs->trans($obj->code);
-				else $out .= $langs->trans($obj->type);
+				if ($obj->code != $langs->trans($obj->code)) {
+					$out .= $langs->trans($obj->code);
+				} else {
+					$out .= $langs->trans($obj->type);
+				}
 				$i++;
 			}
 		}

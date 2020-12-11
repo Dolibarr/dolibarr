@@ -46,8 +46,7 @@ if ($cat_id == 0) {
 }
 
 // Security check
-if (empty($user->rights->accounting->chartofaccount))
-{
+if (empty($user->rights->accounting->chartofaccount)) {
 	accessforbidden();
 }
 
@@ -62,8 +61,9 @@ $accountingcategory = new AccountancyCategory($db);
 if (!empty($selectcpt)) {
 	$cpts = array();
 	foreach ($selectcpt as $selectedoption) {
-		if (!array_key_exists($selectedoption, $cpts))
+		if (!array_key_exists($selectedoption, $cpts)) {
 			$cpts[$selectedoption] = "'".$selectedoption."'";
+		}
 	}
 
 	$return = $accountingcategory->updateAccAcc($cat_id, $cpts);
@@ -114,8 +114,7 @@ print '<input class="button" type="submit" value="'.$langs->trans("Select").'">'
 print '</td></tr>';
 
 // Select the accounts
-if (!empty($cat_id))
-{
+if (!empty($cat_id)) {
 	$return = $accountingcategory->getAccountsWithNoCategory($cat_id);
 	if ($return < 0) {
 		setEventMessages(null, $accountingcategory->errors, 'errors');
@@ -124,8 +123,7 @@ if (!empty($cat_id))
 	print '<td>';
 
 	$arraykeyvalue = array();
-	foreach ($accountingcategory->lines_cptbk as $key => $val)
-	{
+	foreach ($accountingcategory->lines_cptbk as $key => $val) {
 		$arraykeyvalue[length_accountg($val->numero_compte)] = length_accountg($val->numero_compte).' ('.$val->label_compte.($val->doc_ref ? ' '.$val->doc_ref : '').')';
 	}
 
@@ -152,8 +150,8 @@ print '</form>';
 
 
 if ($action == 'display' || $action == 'delete') {
-    print "<table class='noborder' width='100%'>\n";
-    print '<tr class="liste_titre">';
+	print "<table class='noborder' width='100%'>\n";
+	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">'.$langs->trans("AccountAccounting")."</td>";
 	print '<td class="liste_titre" colspan="2">'.$langs->trans("Label")."</td>";
 	print "</tr>\n";

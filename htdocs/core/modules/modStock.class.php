@@ -148,8 +148,7 @@ class modStock extends DolibarrModules
 		$this->rights[4][4] = 'mouvement';
 		$this->rights[4][5] = 'creer';
 
-		if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-		{
+		if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 			$this->rights[5][0] = 1011;
 			$this->rights[5][1] = 'inventoryReadPermission'; // Permission label
 			$this->rights[5][3] = 0; // Permission by default for new user (0/1)
@@ -249,8 +248,7 @@ class modStock extends DolibarrModules
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'product as p LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra ON extra.fk_object = p.rowid, '.MAIN_DB_PREFIX.'product_stock as ps, '.MAIN_DB_PREFIX.'entrepot as e';
 		$this->export_sql_end[$r] .= ' WHERE p.rowid = ps.fk_product AND ps.fk_entrepot = e.rowid';
 		$this->export_sql_end[$r] .= ' AND e.entity IN ('.getEntity('stock').')';
-		if ($conf->productbatch->enabled)
-		{
+		if ($conf->productbatch->enabled) {
 			// Export of stock including lot number
 			$langs->load("productbatch");
 
@@ -316,8 +314,7 @@ class modStock extends DolibarrModules
 			'p.note'=>"product", 'p.price'=>"product", 'p.tva_tx'=>'product', 'p.tosell'=>"product", 'p.tobuy'=>"product", 'p.duration'=>"product", 'p.datec'=>'product',
 			'p.tms'=>'product', 'sm.rowid'=>'movement', 'sm.value'=>'movement', 'sm.datem'=>'movement', 'sm.label'=>'movement', 'sm.inventorycode'=>'movement'
 		);
-		if ($conf->productbatch->enabled)
-		{
+		if ($conf->productbatch->enabled) {
 			$this->export_fields_array[$r]['sm.batch'] = 'Batch';
 			$this->export_TypeFields_array[$r]['sm.batch'] = 'Text';
 			$this->export_entities_array[$r]['sm.batch'] = 'movement';
@@ -404,13 +401,11 @@ class modStock extends DolibarrModules
 		$dirodt = DOL_DATA_ROOT.'/doctemplates/stocks';
 		$dest = $dirodt.'/template_warehouse.odt';
 
-		if (file_exists($src) && !file_exists($dest))
-		{
+		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
 			$result = dol_copy($src, $dest, 0, 0);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;

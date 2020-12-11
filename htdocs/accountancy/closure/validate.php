@@ -34,22 +34,26 @@ $langs->loadLangs(array("compta", "bills", "other", "main", "accountancy"));
 if (empty($conf->accounting->enabled)) {
 	accessforbidden();
 }
-if ($user->socid > 0)
+if ($user->socid > 0) {
 	accessforbidden();
-	if (!$user->rights->accounting->fiscalyear->write)
+}
+if (!$user->rights->accounting->fiscalyear->write) {
 	accessforbidden();
+}
 
 
 $month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
-if (GETPOST("year", 'int')) $year_start = GETPOST("year", 'int');
-else {
+if (GETPOST("year", 'int')) {
+	$year_start = GETPOST("year", 'int');
+} else {
 	$year_start = dol_print_date(dol_now(), '%Y');
-	if (dol_print_date(dol_now(), '%m') < $month_start) $year_start--; // If current month is lower that starting fiscal month, we start last year
+	if (dol_print_date(dol_now(), '%m') < $month_start) {
+		$year_start--; // If current month is lower that starting fiscal month, we start last year
+	}
 }
 $year_end = $year_start + 1;
 $month_end = $month_start - 1;
-if ($month_end < 1)
-{
+if ($month_end < 1) {
 	$month_end = 12;
 	$year_end--;
 }
@@ -61,8 +65,7 @@ $year_current = $year_start;
  * Actions
  */
 
-if ($action == 'validate')
-{
+if ($action == 'validate') {
 	$now = dol_now();
 
 	// Update database
@@ -109,7 +112,9 @@ print '<table class="noborder centpercent">';
 print '<tr class="oddeven">';
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
-	if ($j > 12) $j -= 12;
+	if ($j > 12) {
+		$j -= 12;
+	}
 	print '<td class="center">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
 }
 print '<td><b>'.$langs->trans("Total").'</b></td></tr>';
@@ -118,7 +123,9 @@ print '<tr class="oddeven">';
 $sql = "SELECT COUNT(b.rowid) as detail,";
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
-	if ($j > 12) $j -= 12;
+	if ($j > 12) {
+		$j -= 12;
+	}
 	$sql .= "  SUM(".$db->ifsql('MONTH(b.doc_date)='.$j, '1', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
 }
 $sql .= " COUNT(b.rowid) as total";

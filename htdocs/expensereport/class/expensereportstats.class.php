@@ -70,20 +70,20 @@ class ExpenseReportStats extends Stats
 		$this->where .= ' e.entity IN ('.getEntity('expensereport').')';
 
 		//$this->where.= " AND entity = ".$conf->entity;
-		if ($this->socid)
-		{
+		if ($this->socid) {
 			$this->where .= " AND e.fk_soc = ".$this->socid;
 		}
 
 		// Only me and subordinates
-		if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous))
-		{
+		if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) {
 			$childids = $user->getAllChildIds();
 			$childids[] = $user->id;
 			$this->where .= " AND e.fk_user_author IN (".(join(',', $childids)).")";
 		}
 
-		if ($this->userid > 0) $this->where .= ' AND e.fk_user_author = '.$this->userid;
+		if ($this->userid > 0) {
+			$this->where .= ' AND e.fk_user_author = '.$this->userid;
+		}
 	}
 
 

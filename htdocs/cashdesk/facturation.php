@@ -40,16 +40,21 @@ if (GETPOST('filtre', 'alpha')) {
 	$ret = array(); $i = 0;
 
 	$sql = "SELECT p.rowid, p.ref, p.label, p.tva_tx, p.fk_product_type";
-	if (!empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql .= ", ps.reel";
+	if (!empty($conf->stock->enabled) && !empty($conf_fkentrepot)) {
+		$sql .= ", ps.reel";
+	}
 	$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-	if (!empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '".$db->escape($conf_fkentrepot)."'";
+	if (!empty($conf->stock->enabled) && !empty($conf_fkentrepot)) {
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '".$db->escape($conf_fkentrepot)."'";
+	}
 	$sql .= " WHERE p.entity IN (".getEntity('product').")";
 	$sql .= " AND p.tosell = 1";
-	if (!$conf->global->CASHDESK_SERVICES) $sql .= " AND p.fk_product_type = 0";
+	if (!$conf->global->CASHDESK_SERVICES) {
+		$sql .= " AND p.fk_product_type = 0";
+	}
 	$sql .= " AND (";
 	$sql .= "p.ref LIKE '%".$db->escape(GETPOST('filtre'))."%' OR p.label LIKE '%".$db->escape(GETPOST('filtre'))."%'";
-	if (!empty($conf->barcode->enabled))
-	{
+	if (!empty($conf->barcode->enabled)) {
 		$filtre = GETPOST('filtre', 'alpha');
 
 		//If the barcode looks like an EAN13 format and the last digit is included in it,
@@ -67,14 +72,11 @@ if (GETPOST('filtre', 'alpha')) {
 
 	dol_syslog("facturation.php", LOG_DEBUG);
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$nbr_enreg = $db->num_rows($resql);
 
-		while ($i < $conf_taille_listes && $tab = $db->fetch_array($resql))
-		{
-			foreach ($tab as $cle => $valeur)
-			{
+		while ($i < $conf_taille_listes && $tab = $db->fetch_array($resql)) {
+			foreach ($tab as $cle => $valeur) {
 				$ret[$i][$cle] = $valeur;
 			}
 			$i++;
@@ -90,24 +92,27 @@ if (GETPOST('filtre', 'alpha')) {
 	$i = 0;
 
 	$sql = "SELECT p.rowid, ref, label, tva_tx, p.fk_product_type";
-	if (!empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql .= ", ps.reel";
+	if (!empty($conf->stock->enabled) && !empty($conf_fkentrepot)) {
+		$sql .= ", ps.reel";
+	}
 	$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-	if (!empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '".$db->escape($conf_fkentrepot)."'";
+	if (!empty($conf->stock->enabled) && !empty($conf_fkentrepot)) {
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '".$db->escape($conf_fkentrepot)."'";
+	}
 	$sql .= " WHERE p.entity IN (".getEntity('product').")";
 	$sql .= " AND p.tosell = 1";
-	if (!$conf->global->CASHDESK_SERVICES) $sql .= " AND p.fk_product_type = 0";
+	if (!$conf->global->CASHDESK_SERVICES) {
+		$sql .= " AND p.fk_product_type = 0";
+	}
 	$sql .= " ORDER BY p.label";
 
 	dol_syslog($sql);
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$nbr_enreg = $db->num_rows($resql);
 
-		while ($i < $conf_taille_listes && $tab = $db->fetch_array($resql))
-		{
-			foreach ($tab as $cle => $valeur)
-			{
+		while ($i < $conf_taille_listes && $tab = $db->fetch_array($resql)) {
+			foreach ($tab as $cle => $valeur) {
 				$ret[$i][$cle] = $valeur;
 			}
 			$i++;
@@ -121,16 +126,13 @@ if (GETPOST('filtre', 'alpha')) {
 
 //$nbr_enreg = count($tab_designations);
 
-if ($nbr_enreg > 1)
-{
-	if ($nbr_enreg > $conf_taille_listes)
-	{
+if ($nbr_enreg > 1) {
+	if ($nbr_enreg > $conf_taille_listes) {
 		$top_liste_produits = '----- '.$conf_taille_listes.' '.$langs->transnoentitiesnoconv("CashDeskProducts").' '.$langs->trans("CashDeskOn").' '.$nbr_enreg.' -----';
 	} else {
 		$top_liste_produits = '----- '.$nbr_enreg.' '.$langs->transnoentitiesnoconv("CashDeskProducts").' '.$langs->trans("CashDeskOn").' '.$nbr_enreg.' -----';
 	}
-} elseif ($nbr_enreg == 1)
-{
+} elseif ($nbr_enreg == 1) {
 	$top_liste_produits = '----- 1 '.$langs->transnoentitiesnoconv("ProductFound").' -----';
 } else {
 	$top_liste_produits = '----- '.$langs->transnoentitiesnoconv("NoProductFound").' -----';

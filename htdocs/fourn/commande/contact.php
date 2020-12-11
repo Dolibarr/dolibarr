@@ -41,7 +41,9 @@ $ref	= GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 $object = new CommandeFournisseur($db);
@@ -51,24 +53,20 @@ $object = new CommandeFournisseur($db);
  * Add a new contact
  */
 
-if ($action == 'addcontact' && $user->rights->fournisseur->commande->creer)
-{
+if ($action == 'addcontact' && $user->rights->fournisseur->commande->creer) {
 	$result = $object->fetch($id);
 
-	if ($result > 0 && $id > 0)
-	{
+	if ($result > 0 && $id > 0) {
 		$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 	}
 
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	} else {
-		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-		{
+		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
 		} else {
@@ -78,10 +76,8 @@ if ($action == 'addcontact' && $user->rights->fournisseur->commande->creer)
 }
 
 // Toggle the status of a contact
-elseif ($action == 'swapstatut' && $user->rights->fournisseur->commande->creer)
-{
-	if ($object->fetch($id))
-	{
+elseif ($action == 'swapstatut' && $user->rights->fournisseur->commande->creer) {
+	if ($object->fetch($id)) {
 		$result = $object->swapContactStatus(GETPOST('ligne'));
 	} else {
 		dol_print_error($db);
@@ -89,13 +85,11 @@ elseif ($action == 'swapstatut' && $user->rights->fournisseur->commande->creer)
 }
 
 // Deleting a contact
-elseif ($action == 'deletecontact' && $user->rights->fournisseur->commande->creer)
-{
+elseif ($action == 'deletecontact' && $user->rights->fournisseur->commande->creer) {
 	$object->fetch($id);
 	$result = $object->delete_contact($_GET["lineid"]);
 
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	} else {
@@ -123,12 +117,10 @@ $userstatic = new User($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$langs->trans("OrderCard");
 
-	if ($object->fetch($id, $ref) > 0)
-	{
+	if ($object->fetch($id, $ref) > 0) {
 		$object->fetch_thirdparty();
 
 		$head = ordersupplier_prepare_head($object);
@@ -145,12 +137,10 @@ if ($id > 0 || !empty($ref))
 		// Thirdparty
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 		// Project
-		if (!empty($conf->projet->enabled))
-		{
+		if (!empty($conf->projet->enabled)) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-			if ($user->rights->fournisseur->commande->creer)
-			{
+			if ($user->rights->fournisseur->commande->creer) {
 				if ($action != 'classify') {
 					//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 					$morehtmlref .= ' : ';

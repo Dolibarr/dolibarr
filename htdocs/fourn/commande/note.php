@@ -40,7 +40,9 @@ $ref = GETPOST('ref');
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 $object = new CommandeFournisseur($db);
@@ -72,10 +74,8 @@ $form = new Form($db);
 
 $now = dol_now();
 
-if ($id > 0 || !empty($ref))
-{
-	if ($result >= 0)
-	{
+if ($id > 0 || !empty($ref)) {
+	if ($result >= 0) {
 		$object->fetch_thirdparty();
 
 		$author = new User($db);
@@ -97,12 +97,10 @@ if ($id > 0 || !empty($ref))
 		// Thirdparty
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 		// Project
-		if (!empty($conf->projet->enabled))
-		{
+		if (!empty($conf->projet->enabled)) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-			if ($user->rights->fournisseur->commande->creer)
-			{
+			if ($user->rights->fournisseur->commande->creer) {
 				if ($action != 'classify') {
 					//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 					$morehtmlref .= ' : ';

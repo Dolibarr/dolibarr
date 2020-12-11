@@ -95,11 +95,11 @@ class modOauth extends DolibarrModules
 		// $this->rights[$r][5]     Niveau 2 pour nommer permission dans code
 
 		/*$r++;
-        $this->rights[$r][0] = 66000;
-        $this->rights[$r][1] = 'OauthAccess';
-        $this->rights[$r][2] = 'r';
-        $this->rights[$r][3] = 0;
-        $this->rights[$r][4] = 'read';*/
+		$this->rights[$r][0] = 66000;
+		$this->rights[$r][1] = 'OauthAccess';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'read';*/
 
 		// Main menu entries
 		$this->menus = array(); // List of menus to add

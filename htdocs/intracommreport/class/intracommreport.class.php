@@ -117,8 +117,11 @@ class IntracommReport extends CommonObject
 		$declaration = $enveloppe->addChild('Declaration');
 		$declaration->addChild('declarationId', $id_declaration);
 		$declaration->addChild('referencePeriod', $period_reference);
-		if ($conf->global->INTRACOMMREPORT_TYPE_ACTEUR === 'PSI') $psiId = $party_id;
-		else $psiId = 'NA';
+		if ($conf->global->INTRACOMMREPORT_TYPE_ACTEUR === 'PSI') {
+			$psiId = $party_id;
+		} else {
+			$psiId = 'NA';
+		}
 		$declaration->addChild('PSIId', $psiId);
 		$function = $declaration->addChild('Function');
 		$functionCode = $function->addChild('functionCode', $mode);
@@ -133,8 +136,11 @@ class IntracommReport extends CommonObject
 
 		$this->errors = array_unique($this->errors);
 
-		if (!empty($res)) return $e->asXML();
-		else return 0;
+		if (!empty($res)) {
+			return $e->asXML();
+		} else {
+			return 0;
+		}
 	}
 
 	/**
@@ -163,8 +169,11 @@ class IntracommReport extends CommonObject
 
 		$this->errors = array_unique($this->errors);
 
-		if (!empty($res)) return $e->asXML();
-		else return 0;
+		if (!empty($res)) {
+			return $e->asXML();
+		} else {
+			return 0;
+		}
 	}
 
 	/**
@@ -201,8 +210,7 @@ class IntracommReport extends CommonObject
 			}
 
 			while ($res = $this->db->fetch_object($resql)) {
-				if ($exporttype == 'des')
-				{
+				if ($exporttype == 'des') {
 					$this->addItemXMlDes($declaration, $res, $i);
 				} else {
 					if (empty($res->fk_pays)) {
@@ -211,16 +219,22 @@ class IntracommReport extends CommonObject
 					} else {
 						if ($conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT > 0 && $categ_fraisdeport->containsObject('product', $res->id_prod)) {
 							$TLinesFraisDePort[] = $res;
-						} else $this->addItemXMl($declaration, $res, $i, '');
+						} else {
+							$this->addItemXMl($declaration, $res, $i, '');
+						}
 					}
 				}
 
 				$i++;
 			}
 
-			if (!empty($TLinesFraisDePort)) $this->addItemFraisDePort($declaration, $TLinesFraisDePort, $type, $categ_fraisdeport, $i);
+			if (!empty($TLinesFraisDePort)) {
+				$this->addItemFraisDePort($declaration, $TLinesFraisDePort, $type, $categ_fraisdeport, $i);
+			}
 
-			if (count($this->errors) > 0) return 0;
+			if (count($this->errors) > 0) {
+				return 0;
+			}
 		}
 
 		return 1;
@@ -244,8 +258,7 @@ class IntracommReport extends CommonObject
 			$table_extraf = 'facture_extrafields';
 			$tabledet = 'facturedet';
 			$field_link = 'fk_facture';
-		}
-		else { // Introduction
+		} else { // Introduction
 			$sql = 'SELECT f.ref_supplier as facnumber, f.total_ht';
 			$table = 'facture_fourn';
 			$table_extraf = 'facture_fourn_extrafields';
@@ -286,10 +299,15 @@ class IntracommReport extends CommonObject
 		$item = $declaration->addChild('Item');
 		$item->addChild('ItemNumber', $i);
 		$cn8 = $item->addChild('CN8');
-		if (empty($code_douane_spe)) $code_douane = $res->customcode;
-		else $code_douane = $code_douane_spe;
+		if (empty($code_douane_spe)) {
+			$code_douane = $res->customcode;
+		} else {
+			$code_douane = $code_douane_spe;
+		}
 		$cn8->addChild('CN8Code', $code_douane);
-		if (!empty($res->tva_intra)) $item->addChild('partnerId', $res->tva_intra);
+		if (!empty($res->tva_intra)) {
+			$item->addChild('partnerId', $res->tva_intra);
+		}
 		$item->addChild('MSConsDestCode', $res->code); // code iso pays client
 		$item->addChild('netMass', $res->weight * $res->qty); // Poids du produit
 		$item->addChild('quantityInSU', $res->qty); // Quantité de produit dans la ligne
@@ -386,7 +404,9 @@ class IntracommReport extends CommonObject
 	public function getNextDeclarationNumber()
 	{
 		$resql = $this->db->query('SELECT MAX(numero_declaration) as max_declaration_number FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE exporttype="'.$this->exporttype.'"');
-		if ($resql) $res = $this->db->fetch_object($resql);
+		if ($resql) {
+			$res = $this->db->fetch_object($resql);
+		}
 
 		return ($res->max_declaration_number + 1);
 	}

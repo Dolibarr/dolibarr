@@ -40,8 +40,7 @@ class FormCategory extends Form
 	{
 		global $langs;
 
-		if (empty($preSelected) || !is_array($preSelected))
-		{
+		if (empty($preSelected) || !is_array($preSelected)) {
 			$preSelected = array();
 		}
 

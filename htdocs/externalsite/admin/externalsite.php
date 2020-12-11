@@ -26,14 +26,17 @@
  *    \brief      Page de configuration du module externalsite
  */
 
-if (!defined('NOSCANPOSTFORINJECTION')) define('NOSCANPOSTFORINJECTION', '1'); // Do not check anti CSRF attack test
+if (!defined('NOSCANPOSTFORINJECTION')) {
+	define('NOSCANPOSTFORINJECTION', '1'); // Do not check anti CSRF attack test
+}
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'other', 'externalsite'));
@@ -43,8 +46,7 @@ $def = array();
 $action = GETPOST('action', 'aZ09');
 
 // Sauvegardes parametres
-if ($action == 'update')
-{
+if ($action == 'update') {
 	$i = 0;
 
 	$db->begin();
@@ -55,8 +57,7 @@ if ($action == 'update')
 	$i += dolibarr_set_const($db, 'EXTERNALSITE_LABEL', trim($label), 'chaine', 0, '', $conf->entity);
 	$i += dolibarr_set_const($db, 'EXTERNALSITE_URL', trim($exturl), 'chaine', 0, '', $conf->entity);
 
-	if ($i >= 2)
-	{
+	if ($i >= 2) {
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {

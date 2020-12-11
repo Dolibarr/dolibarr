@@ -17,13 +17,23 @@
 
 // TODO Do we really need this page. We alread have a ipn.php page !
 
-if (!defined('NOLOGIN'))		define("NOLOGIN", 1); // This means this output page does not require to be logged.
-if (!defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
+if (!defined('NOLOGIN')) {
+	define("NOLOGIN", 1); // This means this output page does not require to be logged.
+}
+if (!defined('NOCSRFCHECK')) {
+	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+}
+if (!defined('NOIPCHECK')) {
+	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+if (!defined('NOBROWSERNOTIF')) {
+	define('NOBROWSERNOTIF', '1');
+}
 
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
-if (is_numeric($entity)) define("DOLENTITY", $entity);
+if (is_numeric($entity)) {
+	define("DOLENTITY", $entity);
+}
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -39,14 +49,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/stripe/stripe-php/init.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
-if (empty($conf->stripe->enabled)) accessforbidden('', 0, 0, 1);
+if (empty($conf->stripe->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
 
 
 // You can find your endpoint's secret in your webhook settings
-if (isset($_GET['connect']))
-{
-	if (isset($_GET['test']))
-	{
+if (isset($_GET['connect'])) {
+	if (isset($_GET['test'])) {
 		$endpoint_secret = $conf->global->STRIPE_TEST_WEBHOOK_CONNECT_KEY;
 		$service = 'StripeTest';
 		$servicestatus = 0;
@@ -56,8 +66,7 @@ if (isset($_GET['connect']))
 		$servicestatus = 1;
 	}
 } else {
-	if (isset($_GET['test']))
-	{
+	if (isset($_GET['test'])) {
 		$endpoint_secret = $conf->global->STRIPE_TEST_WEBHOOK_KEY;
 		$service = 'StripeTest';
 		$servicestatus = 0;
@@ -86,7 +95,9 @@ $stripe = new Stripe($db);
 
 // Subject
 $societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
+if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+	$societeName = $conf->global->MAIN_APPLICATION_TITLE;
+}
 
 
 dol_syslog("Stripe confirm_payment was called");
@@ -115,7 +126,7 @@ try {
 	if (isset($json_obj->payment_intent_id)) {
 		$intent = \Stripe\PaymentIntent::retrieve(
 			$json_obj->payment_intent_id
-			);
+		);
 		$intent->confirm();
 	}
 	generatePaymentResponse($intent);

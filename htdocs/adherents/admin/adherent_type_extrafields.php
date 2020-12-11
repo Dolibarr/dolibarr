@@ -40,13 +40,17 @@ $form = new Form($db);
 // List of supported format
 $tmptype2label = ExtraFields::$type2label;
 $type2label = array('');
-foreach ($tmptype2label as $key => $val) $type2label[$key] = $langs->transnoentitiesnoconv($val);
+foreach ($tmptype2label as $key => $val) {
+	$type2label[$key] = $langs->transnoentitiesnoconv($val);
+}
 
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'adherent_type'; //Must be the $table_element of the class that manage extrafield
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 /*

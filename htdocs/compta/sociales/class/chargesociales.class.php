@@ -140,15 +140,16 @@ class ChargeSociales extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_chargesociales as c ON cs.fk_type = c.id";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON cs.fk_mode_reglement = p.id';
 		$sql .= ' WHERE cs.entity IN ('.getEntity('tax').')';
-		if ($ref) $sql .= " AND cs.rowid = ".$ref;
-		else $sql .= " AND cs.rowid = ".$id;
+		if ($ref) {
+			$sql .= " AND cs.rowid = ".$ref;
+		} else {
+			$sql .= " AND cs.rowid = ".$id;
+		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
@@ -190,8 +191,7 @@ class ChargeSociales extends CommonObject
 		$newamount = price2num($this->amount, 'MT');
 
 		// Validation parametres
-		if (!$newamount > 0 || empty($this->date_ech) || empty($this->periode))
-		{
+		if (!$newamount > 0 || empty($this->date_ech) || empty($this->periode)) {
 			return false;
 		}
 
@@ -243,7 +243,9 @@ class ChargeSociales extends CommonObject
 
 			//dol_syslog("ChargesSociales::create this->id=".$this->id);
 			$result = $this->call_trigger('SOCIALCONTRIBUTION_CREATE', $user);
-			if ($result < 0) $error++;
+			if ($result < 0) {
+				$error++;
+			}
 
 			if (empty($error)) {
 				$this->db->commit();
@@ -278,47 +280,39 @@ class ChargeSociales extends CommonObject
 		$lines_url = $account->get_url('', $this->id, 'sc');
 
 		// Delete bank urls
-		foreach ($lines_url as $line_url)
-		{
-			if (!$error)
-			{
+		foreach ($lines_url as $line_url) {
+			if (!$error) {
 				$accountline = new AccountLine($this->db);
 				$accountline->fetch($line_url['fk_bank']);
 				$result = $accountline->delete_urls($user);
-				if ($result < 0)
-				{
+				if ($result < 0) {
 					$error++;
 				}
 			}
 		}
 
 		// Delete payments
-		if (!$error)
-		{
+		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."paiementcharge WHERE fk_charge=".$this->id;
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if (!$resql)
-			{
+			if (!$resql) {
 				$error++;
 				$this->error = $this->db->lasterror();
 			}
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."chargesociales WHERE rowid=".$this->id;
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if (!$resql)
-			{
+			if (!$resql) {
 				$error++;
 				$this->error = $this->db->lasterror();
 			}
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$this->db->commit();
 			return 1;
 		} else {
@@ -356,22 +350,20 @@ class ChargeSociales extends CommonObject
 			$error++; $this->errors[] = "Error ".$this->db->lasterror();
 		}
 
-		if (!$error)
-		{
-			if (!$notrigger)
-			{
+		if (!$error) {
+			if (!$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('SOCIALCHARGES_MODIFY', $user);
-				if ($result < 0) $error++;
+				if ($result < 0) {
+					$error++;
+				}
 				// End call triggers
 			}
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -403,10 +395,8 @@ class ChargeSociales extends CommonObject
 		}
 
 		$result = $this->db->query($sql);
-		if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
+		if ($result) {
+			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->db->free($result);
 				return $obj->amount;
@@ -433,8 +423,11 @@ class ChargeSociales extends CommonObject
 		$sql .= " paye = 1";
 		$sql .= " WHERE rowid = ".$this->id;
 		$return = $this->db->query($sql);
-		if ($return) return 1;
-		else return -1;
+		if ($return) {
+			return 1;
+		} else {
+			return -1;
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -451,8 +444,11 @@ class ChargeSociales extends CommonObject
 		$sql .= " paye = 0";
 		$sql .= " WHERE rowid = ".$this->id;
 		$return = $this->db->query($sql);
-		if ($return) return 1;
-		else return -1;
+		if ($return) {
+			return 1;
+		} else {
+			return -1;
+		}
 	}
 
 	/**
@@ -488,21 +484,28 @@ class ChargeSociales extends CommonObject
 		$this->labelStatus = array();
 		$this->labelStatusShort = array();
 
-		if (empty($this->labelStatus) || empty($this->labelStatusShort))
-		{
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
 			$this->labelStatus[self::STATUS_UNPAID] = $langs->trans('Unpaid');
 			$this->labelStatus[self::STATUS_PAID] = $langs->trans('Paid');
-			if ($status == self::STATUS_UNPAID && $alreadypaid > 0) $this->labelStatus[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+			if ($status == self::STATUS_UNPAID && $alreadypaid > 0) {
+				$this->labelStatus[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+			}
 			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans('Unpaid');
 			$this->labelStatusShort[self::STATUS_PAID] = $langs->trans('Paid');
-			if ($status == self::STATUS_UNPAID && $alreadypaid > 0) $this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+			if ($status == self::STATUS_UNPAID && $alreadypaid > 0) {
+				$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+			}
 		}
 
 		$statusType = 'status1';
-		if ($status == 0 && $alreadypaid > 0) $statusType = 'status3';
-		if ($status == 1) $statusType = 'status6';
+		if ($status == 0 && $alreadypaid > 0) {
+			$statusType = 'status3';
+		}
+		if ($status == 1) {
+			$statusType = 'status6';
+		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
@@ -522,40 +525,50 @@ class ChargeSociales extends CommonObject
 	{
 		global $langs, $conf, $user, $form;
 
-		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
 		$result = '';
 
 		$url = DOL_URL_ROOT.'/compta/sociales/card.php?id='.$this->id;
 
-		if ($short) return $url;
-
-		if ($option !== 'nolink')
-		{
-			// Add param to save lastsearch_values or not
-			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+		if ($short) {
+			return $url;
 		}
 
-		if (empty($this->ref)) $this->ref = $this->label;
+		if ($option !== 'nolink') {
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
+		}
+
+		if (empty($this->ref)) {
+			$this->ref = $this->label;
+		}
 
 		$label = img_picto('', 'tax').'<u class="paddingrightonly">'.$langs->trans("SocialContribution").'</u>';
 		if (isset($this->paye)) {
 			$label .= ' '.$this->getLibStatut(5);
 		}
-		if (!empty($this->ref))
+		if (!empty($this->ref)) {
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		if (!empty($this->label))
+		}
+		if (!empty($this->label)) {
 			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
-		if (!empty($this->type_label))
+		}
+		if (!empty($this->type_label)) {
 			$label .= '<br><b>'.$langs->trans('Type').':</b> '.$this->type_label;
+		}
 
 		$linkclose = '';
-		if (empty($notooltip) && $user->rights->facture->lire)
-		{
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-			{
+		if (empty($notooltip) && $user->rights->facture->lire) {
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("SocialContribution");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -568,8 +581,12 @@ class ChargeSociales extends CommonObject
 		$linkend = '</a>';
 
 		$result .= $linkstart;
-		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-		if ($withpicto != 2) $result .= ($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref);
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		}
+		if ($withpicto != 2) {
+			$result .= ($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref);
+		}
 		$result .= $linkend;
 
 		return $result;
@@ -595,7 +612,9 @@ class ChargeSociales extends CommonObject
 			$amount = 0;
 
 			$obj = $this->db->fetch_object($resql);
-			if ($obj) $amount = $obj->amount ? $obj->amount : 0;
+			if ($obj) {
+				$amount = $obj->amount ? $obj->amount : 0;
+			}
 
 			$this->db->free($resql);
 			return $amount;
@@ -619,10 +638,8 @@ class ChargeSociales extends CommonObject
 
 		dol_syslog(get_class($this)."::info", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
+		if ($result) {
+			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 
 				$this->id = $obj->rowid;

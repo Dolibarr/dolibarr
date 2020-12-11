@@ -33,8 +33,9 @@ $id = GETPOST('id', 'int');
 $langs->load("mails");
 
 // Security check
-if (!$user->rights->mailing->lire || $user->socid > 0)
-accessforbidden();
+if (!$user->rights->mailing->lire || $user->socid > 0) {
+	accessforbidden();
+}
 
 
 
@@ -48,8 +49,7 @@ $form = new Form($db);
 
 $object = new Mailing($db);
 
-if ($object->fetch($id) >= 0)
-{
+if ($object->fetch($id) >= 0) {
 	$head = emailing_prepare_head($object);
 
 	print dol_get_fiche_head($head, 'info', $langs->trans("Mailing"), -1, 'email');
@@ -58,13 +58,14 @@ if ($object->fetch($id) >= 0)
 
 	$morehtmlright = '';
 	$nbtry = $nbok = 0;
-	if ($object->statut == 2 || $object->statut == 3)
-	{
+	if ($object->statut == 2 || $object->statut == 3) {
 		$nbtry = $object->countNbOfTargets('alreadysent');
 		$nbko  = $object->countNbOfTargets('alreadysentko');
 
 		$morehtmlright .= ' ('.$nbtry.'/'.$object->nbemail;
-		if ($nbko) $morehtmlright .= ' - '.$nbko.' '.$langs->trans("Error");
+		if ($nbko) {
+			$morehtmlright .= ' - '.$nbko.' '.$langs->trans("Error");
+		}
 		$morehtmlright .= ') &nbsp; ';
 	}
 

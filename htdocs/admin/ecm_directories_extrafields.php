@@ -33,8 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'other', 'ecm'));

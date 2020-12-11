@@ -20,12 +20,24 @@
  *       			 This Ajax service is called when option MAIN_DIRECT_STATUS_UPDATE is set.
  */
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (!defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (!defined('NOREQUIRETRAN')) {
+	define('NOREQUIRETRAN', '1');
+}
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
@@ -74,7 +86,9 @@ if (($action == 'set') && !empty($id)) {
 	}
 
 	$tablename = $element;
-	if ($tablename == 'websitepage') $tablename = 'website_page';
+	if ($tablename == 'websitepage') {
+		$tablename = 'website_page';
+	}
 
 	$format = 'int';
 

@@ -64,8 +64,7 @@ class Client extends Societe
 
 		$sql = "SELECT count(s.rowid) as nb, s.client";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-		if (!$user->rights->societe->client->voir && !$user->socid)
-		{
+		if (!$user->rights->societe->client->voir && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".$user->id;
 			$clause = "AND";
@@ -75,12 +74,14 @@ class Client extends Societe
 		$sql .= " GROUP BY s.client";
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			while ($obj = $this->db->fetch_object($resql))
-			{
-				if ($obj->client == 1 || $obj->client == 3) $this->nb["customers"] += $obj->nb;
-				if ($obj->client == 2 || $obj->client == 3) $this->nb["prospects"] += $obj->nb;
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				if ($obj->client == 1 || $obj->client == 3) {
+					$this->nb["customers"] += $obj->nb;
+				}
+				if ($obj->client == 2 || $obj->client == 3) {
+					$this->nb["prospects"] += $obj->nb;
+				}
 			}
 			$this->db->free($resql);
 			return 1;
@@ -101,8 +102,10 @@ class Client extends Societe
 	{
 		global $langs;
 
-   		$sql = "SELECT id, code, libelle as label, picto FROM ".MAIN_DB_PREFIX."c_stcomm";
-   		if ($active >= 0) $sql .= " WHERE active = ".$active;
+		$sql = "SELECT id, code, libelle as label, picto FROM ".MAIN_DB_PREFIX."c_stcomm";
+		if ($active >= 0) {
+			$sql .= " WHERE active = ".$active;
+		}
 		$resql = $this->db->query($sql);
 		$num = $this->db->num_rows($resql);
 		$i = 0;

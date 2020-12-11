@@ -24,12 +24,24 @@
  *       \brief      File to return Ajax response on third parties request
  */
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1');
+}
 
 $res = 0;
 require '../../main.inc.php';
@@ -52,21 +64,20 @@ dol_syslog(join(',', $_GET));
 
 
 // Generation liste des projets
-if (GETPOST('fk_projet') != '')
-{
+if (GETPOST('fk_projet') != '') {
 	$return_arr = array();
 
 	$sql = "SELECT p.rowid, p.ref, p.title, s.nom";
 	$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
-	if (!empty($_GET["fk_projet"])) $sql .= " WHERE p.ref LIKE '%".$db->escape($_GET["fk_projet"])."%' OR p.title LIKE '%".$db->escape($_GET["fk_projet"])."%' OR s.nom LIKE '%".$db->escape($_GET["fk_projet"])."%'"; // Add other filters
+	if (!empty($_GET["fk_projet"])) {
+		$sql .= " WHERE p.ref LIKE '%".$db->escape($_GET["fk_projet"])."%' OR p.title LIKE '%".$db->escape($_GET["fk_projet"])."%' OR s.nom LIKE '%".$db->escape($_GET["fk_projet"])."%'"; // Add other filters
+	}
 	$sql .= " ORDER BY p.ref ASC";
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
-		while ($row = $db->fetch_array($resql))
-		{
+	if ($resql) {
+		while ($row = $db->fetch_array($resql)) {
 			$label = $row['ref'].' - '.$row['title'];
 			$row_array['label'] = $label;
 			$row_array['value'] = $label;

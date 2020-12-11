@@ -41,7 +41,9 @@ $ref = GETPOST('ref', 'alpha');
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
 $socid = '';
-if (!empty($user->socid)) $socid = $user->socid;
+if (!empty($user->socid)) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -54,12 +56,18 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "DESC";
-if (!$sortfield) $sortfield = "f.datef";
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
+if (!$sortfield) {
+	$sortfield = "f.datef";
+}
 
 $search_month = GETPOST('search_month', 'int');
 $search_year = GETPOST('search_year', 'int');
@@ -81,8 +89,7 @@ $societestatic = new Societe($db);
 $form = new Form($db);
 $formother = new FormOther($db);
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$product = new Product($db);
 	$result = $product->fetch($id, $ref);
 
@@ -90,26 +97,25 @@ if ($id > 0 || !empty($ref))
 
 	$parameters = array('id'=>$id);
 	$reshook = $hookmanager->executeHooks('doActions', $parameters, $product, $action); // Note that $action and $object may have been modified by some hooks
-	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	}
 
 	$title = $langs->trans('ProductServiceCard');
 	$helpurl = '';
 	$shortlabel = dol_trunc($object->label, 16);
-	if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
-	{
+	if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) {
 		$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('Referers');
 		$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 	}
-	if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
-	{
+	if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 		$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('Referers');
 		$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 	}
 
 	llxHeader('', $title, $helpurl);
 
-	if ($result > 0)
-	{
+	if ($result > 0) {
 		$head = product_prepare_head($product);
 		$titre = $langs->trans("CardProduct".$product->type);
 		$picto = ($product->type == Product::TYPE_SERVICE ? 'service' : 'product');
@@ -117,12 +123,16 @@ if ($id > 0 || !empty($ref))
 
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $product, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
-		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		}
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$shownav = 1;
-		if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
+		if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+			$shownav = 0;
+		}
 
 		dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
@@ -140,29 +150,37 @@ if ($id > 0 || !empty($ref))
 
 		print dol_get_fiche_end();
 
-		if ($showmessage && $nboflines > 1)
-		{
+		if ($showmessage && $nboflines > 1) {
 			print '<span class="opacitymedium">'.$langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")).'</span>';
-		} elseif ($user->rights->facture->lire)
-		{
+		} elseif ($user->rights->facture->lire) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client,";
 			$sql .= " f.ref, f.datef, f.paye, f.type, f.fk_statut as statut, f.rowid as facid,";
 			$sql .= " d.rowid, d.total_ht as total_ht, d.qty"; // We must keep the d.rowid here to not loose record because of the distinct used to ignore duplicate line when link on societe_commerciaux is used
-			if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
+			if (!$user->rights->societe->client->voir && !$socid) {
+				$sql .= ", sc.fk_soc, sc.fk_user ";
+			}
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."facture as f";
 			$sql .= ", ".MAIN_DB_PREFIX."facturedet as d";
-			if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			if (!$user->rights->societe->client->voir && !$socid) {
+				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			}
 			$sql .= " WHERE f.fk_soc = s.rowid";
 			$sql .= " AND f.entity IN (".getEntity('invoice').")";
 			$sql .= " AND d.fk_facture = f.rowid";
 			$sql .= " AND d.fk_product =".$product->id;
-			if (!empty($search_month))
+			if (!empty($search_month)) {
 				$sql .= ' AND MONTH(f.datef) IN ('.$search_month.')';
-			if (!empty($search_year))
+			}
+			if (!empty($search_year)) {
 				$sql .= ' AND YEAR(f.datef) IN ('.$search_year.')';
-			if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-			if ($socid) $sql .= " AND f.fk_soc = ".$socid;
+			}
+			if (!$user->rights->societe->client->voir && !$socid) {
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			}
+			if ($socid) {
+				$sql .= " AND f.fk_soc = ".$socid;
+			}
 			$sql .= $db->order($sortfield, $sortorder);
 
 			// Calcul total qty and amount for global if full scan list
@@ -171,8 +189,7 @@ if ($id > 0 || !empty($ref))
 
 			// Count total nb of records
 			$totalofrecords = '';
-			if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-			{
+			if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 				$result = $db->query($sql);
 				$totalofrecords = $db->num_rows($result);
 			}
@@ -180,24 +197,35 @@ if ($id > 0 || !empty($ref))
 			$sql .= $db->plimit($limit + 1, $offset);
 
 			$result = $db->query($sql);
-			if ($result)
-			{
+			if ($result) {
 				$num = $db->num_rows($result);
 
-				if ($limit > 0 && $limit != $conf->liste_limit) $option .= '&limit='.urlencode($limit);
-				if (!empty($id)) $option .= '&id='.$product->id;
-				if (!empty($search_month)) $option .= '&search_month='.urlencode($search_month);
-				if (!empty($search_year)) $option .= '&search_year='.urlencode($search_year);
+				if ($limit > 0 && $limit != $conf->liste_limit) {
+					$option .= '&limit='.urlencode($limit);
+				}
+				if (!empty($id)) {
+					$option .= '&id='.$product->id;
+				}
+				if (!empty($search_month)) {
+					$option .= '&search_month='.urlencode($search_month);
+				}
+				if (!empty($search_year)) {
+					$option .= '&search_year='.urlencode($search_year);
+				}
 
 				print '<form method="post" action="'.$_SERVER ['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
-				if (!empty($sortfield))
+				if (!empty($sortfield)) {
 					print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
-				if (!empty($sortorder))
+				}
+				if (!empty($sortorder)) {
 					print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
+				}
 
 				print_barre_liste($langs->trans("CustomersInvoices"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);
 
-				if (!empty($page)) $option .= '&page='.urlencode($page);
+				if (!empty($page)) {
+					$option .= '&page='.urlencode($page);
+				}
 
 				print '<div class="liste_titre liste_titre_bydiv centpercent">';
 				print '<div class="divsearchfield">';
@@ -224,13 +252,13 @@ if ($id > 0 || !empty($ref))
 				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "f.paye,f.fk_statut", "", $option, 'align="right"', $sortfield, $sortorder);
 				print "</tr>\n";
 
-				if ($num > 0)
-				{
-					while ($i < min($num, $limit))
-					{
+				if ($num > 0) {
+					while ($i < min($num, $limit)) {
 						$objp = $db->fetch_object($result);
 
-						if ($objp->type == Facture::TYPE_CREDIT_NOTE) $objp->qty = -($objp->qty);
+						if ($objp->type == Facture::TYPE_CREDIT_NOTE) {
+							$objp->qty = -($objp->qty);
+						}
 
 						$total_ht += $objp->total_ht;
 						$total_qty += $objp->qty;
@@ -256,8 +284,11 @@ if ($id > 0 || !empty($ref))
 					}
 				}
 				print '<tr class="liste_total">';
-				if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
-				else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
+				if ($num < $limit) {
+					print '<td class="left">'.$langs->trans("Total").'</td>';
+				} else {
+					print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
+				}
 				print '<td colspan="3"></td>';
 				print '<td class="center">'.$total_qty.'</td>';
 				print '<td align="right">'.price($total_ht).'</td>';

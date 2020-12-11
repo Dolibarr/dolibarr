@@ -75,8 +75,7 @@ class mailing_advthirdparties extends MailingTargets
 
 		if (($type_of_target == 1) || ($type_of_target == 3)) {
 			// Select the third parties from category
-			if (count($socid) > 0)
-			{
+			if (count($socid) > 0) {
 				$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact";
 				$sql .= " FROM ".MAIN_DB_PREFIX."societe as s LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_extrafields se ON se.fk_object=s.rowid";
 				$sql .= " WHERE s.entity IN (".getEntity('societe').")";
@@ -85,15 +84,13 @@ class mailing_advthirdparties extends MailingTargets
 
 				// Stock recipients emails into targets table
 				$result = $this->db->query($sql);
-				if ($result)
-				{
+				if ($result) {
 					$num = $this->db->num_rows($result);
 					$i = 0;
 
 					dol_syslog(get_class($this)."::add_to_target_spec mailing ".$num." targets found", LOG_DEBUG);
 
-					while ($i < $num)
-					{
+					while ($i < $num) {
 						$obj = $this->db->fetch_object($result);
 
 						if (!empty($obj->email) && filter_var($obj->email, FILTER_VALIDATE_EMAIL)) {
@@ -123,8 +120,7 @@ class mailing_advthirdparties extends MailingTargets
 
 		if (($type_of_target == 1) || ($type_of_target == 2) || ($type_of_target == 4)) {
 			// Select the third parties from category
-			if (count($socid) > 0 || count($contactid) > 0)
-			{
+			if (count($socid) > 0 || count($contactid) > 0) {
 				$sql = "SELECT socp.rowid as id, socp.email as email, socp.lastname as lastname, socp.firstname as firstname";
 				$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as socp";
 				$sql .= " WHERE socp.entity IN (".getEntity('socpeople').")";
@@ -138,15 +134,13 @@ class mailing_advthirdparties extends MailingTargets
 
 				// Stock recipients emails into targets table
 				$result = $this->db->query($sql);
-				if ($result)
-				{
+				if ($result) {
 					$num = $this->db->num_rows($result);
 					$i = 0;
 
 					dol_syslog(get_class($this)."::add_to_target_spec mailing ".$num." targets found");
 
-					while ($i < $num)
-					{
+					while ($i < $num) {
 						$obj = $this->db->fetch_object($result);
 
 						if (!empty($obj->email) && filter_var($obj->email, FILTER_VALIDATE_EMAIL)) {
@@ -246,25 +240,34 @@ class mailing_advthirdparties extends MailingTargets
 
 		//print $sql;
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			if (empty($conf->categorie->enabled)) $num = 0; // Force empty list if category module is not enabled
+			if (empty($conf->categorie->enabled)) {
+				$num = 0; // Force empty list if category module is not enabled
+			}
 
-			if ($num) $s .= '<option value="0">&nbsp;</option>';
-			else $s .= '<option value="0">'.$langs->trans("ContactsAllShort").'</option>';
+			if ($num) {
+				$s .= '<option value="0">&nbsp;</option>';
+			} else {
+				$s .= '<option value="0">'.$langs->trans("ContactsAllShort").'</option>';
+			}
 
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
 				$type = '';
-				if ($obj->type == 1) $type = $langs->trans("Supplier");
-				if ($obj->type == 2) $type = $langs->trans("Customer");
+				if ($obj->type == 1) {
+					$type = $langs->trans("Supplier");
+				}
+				if ($obj->type == 2) {
+					$type = $langs->trans("Customer");
+				}
 				$s .= '<option value="'.$obj->rowid.'">'.dol_trunc($obj->label, 38, 'middle');
-				if ($type) $s .= ' ('.$type.')';
+				if ($type) {
+					$s .= ' ('.$type.')';
+				}
 				$s .= '</option>';
 				$i++;
 			}

@@ -37,7 +37,9 @@ $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 // Security check
 $socid = GETPOST('socid', 'int');
 $status = GETPOST('status', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'directdebitcredittransferlist'; // To manage different context of search
@@ -54,12 +56,18 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
+if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "DESC";
-if (!$sortfield) $sortfield = "f.ref";
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
+if (!$sortfield) {
+	$sortfield = "f.ref";
+}
 
 $massactionbutton = '';
 
@@ -72,11 +80,12 @@ $hookmanager->initHooks(array('withdrawalstodolist'));
 
 $parameters = array('socid' => $socid, 'limit' => $limit, 'page' => $page, 'offset' => $offset);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 // Purge search criteria
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
-{
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_facture = '';
 	$search_societe = '';
 	$search_array_options = array();
@@ -123,17 +132,26 @@ if ($type != 'bank-transfer') {
 }
 $sql .= " ".MAIN_DB_PREFIX."societe as s,";
 $sql .= " ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+}
 $sql .= " WHERE s.rowid = f.fk_soc";
 $sql .= " AND f.entity IN (".getEntity('invoice').")";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-if ($socid) $sql .= " AND f.fk_soc = ".$socid;
-if (!$status) $sql .= " AND pfd.traite = 0";
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+}
+if ($socid) {
+	$sql .= " AND f.fk_soc = ".$socid;
+}
+if (!$status) {
+	$sql .= " AND pfd.traite = 0";
+}
 $sql .= " AND pfd.ext_payment_id IS NULL";
-if ($status) $sql .= " AND pfd.traite = ".$status;
+if ($status) {
+	$sql .= " AND pfd.traite = ".$status;
+}
 $sql .= " AND f.total_ttc > 0";
-if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS))
-{
+if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
 	$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
 }
 if ($type != 'bank-transfer') {
@@ -141,32 +159,32 @@ if ($type != 'bank-transfer') {
 } else {
 	$sql .= " AND pfd.fk_facture_fourn = f.rowid";
 }
-if ($search_facture) $sql .= natural_search("f.ref", $search_facture);
-if ($search_societe) $sql .= natural_search("s.nom", $search_societe);
+if ($search_facture) {
+	$sql .= natural_search("f.ref", $search_facture);
+}
+if ($search_societe) {
+	$sql .= natural_search("s.nom", $search_societe);
+}
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-{
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
-	if (($page * $limit) > $nbtotalofrecords)	// if total of record found is smaller than page * limit, goto and load page 0
-	{
+	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
 }
 // if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
-if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
-{
+if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords) {
 	$num = $nbtotalofrecords;
 } else {
 	$sql .= $db->plimit($limit + 1, $offset);
 
 	$resql = $db->query($sql);
-	if (!$resql)
-	{
+	if (!$resql) {
 		dol_print_error($db);
 		exit;
 	}
@@ -182,7 +200,9 @@ if ($type == 'bank-transfer') {
 }
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST"  id="searchFormList" name="searchFormList">';
-if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+if ($optioncss != '') {
+	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+}
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="action" value="list">';
@@ -226,10 +246,11 @@ print '</td>';
 print '</tr>';
 
 $i = 0;
-while ($i < min($num, $limit))
-{
+while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
-	if (empty($obj)) break; // Should not happen
+	if (empty($obj)) {
+		break; // Should not happen
+	}
 
 	$invoicestatic->fetch($obj->rowid);
 

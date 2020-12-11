@@ -268,58 +268,58 @@ class AccountancyExport
 
 
 		switch ($formatexportset) {
-			case self::$EXPORT_TYPE_CONFIGURABLE :
+			case self::$EXPORT_TYPE_CONFIGURABLE:
 				$this->exportConfigurable($TData);
 				break;
-			case self::$EXPORT_TYPE_CEGID :
+			case self::$EXPORT_TYPE_CEGID:
 				$this->exportCegid($TData);
 				break;
-			case self::$EXPORT_TYPE_COALA :
+			case self::$EXPORT_TYPE_COALA:
 				$this->exportCoala($TData);
 				break;
-			case self::$EXPORT_TYPE_BOB50 :
+			case self::$EXPORT_TYPE_BOB50:
 				$this->exportBob50($TData);
 				break;
-			case self::$EXPORT_TYPE_CIEL :
+			case self::$EXPORT_TYPE_CIEL:
 				$this->exportCiel($TData);
 				break;
-			case self::$EXPORT_TYPE_QUADRATUS :
+			case self::$EXPORT_TYPE_QUADRATUS:
 				$this->exportQuadratus($TData);
 				break;
-			case self::$EXPORT_TYPE_WINFIC :
+			case self::$EXPORT_TYPE_WINFIC:
 				$this->exportWinfic($TData);
 				break;
-			case self::$EXPORT_TYPE_EBP :
+			case self::$EXPORT_TYPE_EBP:
 				$this->exportEbp($TData);
 				break;
-			case self::$EXPORT_TYPE_COGILOG :
+			case self::$EXPORT_TYPE_COGILOG:
 				$this->exportCogilog($TData);
 				break;
-			case self::$EXPORT_TYPE_AGIRIS :
+			case self::$EXPORT_TYPE_AGIRIS:
 				$this->exportAgiris($TData);
 				break;
-			case self::$EXPORT_TYPE_OPENCONCERTO :
+			case self::$EXPORT_TYPE_OPENCONCERTO:
 				$this->exportOpenConcerto($TData);
 				break;
-			case self::$EXPORT_TYPE_SAGE50_SWISS :
+			case self::$EXPORT_TYPE_SAGE50_SWISS:
 				$this->exportSAGE50SWISS($TData);
 				break;
-			case self::$EXPORT_TYPE_CHARLEMAGNE :
+			case self::$EXPORT_TYPE_CHARLEMAGNE:
 				$this->exportCharlemagne($TData);
 				break;
-			case self::$EXPORT_TYPE_LDCOMPTA :
+			case self::$EXPORT_TYPE_LDCOMPTA:
 				$this->exportLDCompta($TData);
 				break;
-			case self::$EXPORT_TYPE_LDCOMPTA10 :
+			case self::$EXPORT_TYPE_LDCOMPTA10:
 				$this->exportLDCompta10($TData);
 				break;
-			case self::$EXPORT_TYPE_GESTINUMV3 :
+			case self::$EXPORT_TYPE_GESTINUMV3:
 				$this->exportGestimumV3($TData);
 				break;
-			case self::$EXPORT_TYPE_GESTINUMV5 :
+			case self::$EXPORT_TYPE_GESTINUMV5:
 				$this->exportGestimumV5($TData);
 				break;
-			case self::$EXPORT_TYPE_FEC :
+			case self::$EXPORT_TYPE_FEC:
 				$this->exportFEC($TData);
 				break;
 			default:
@@ -469,8 +469,9 @@ class AccountancyExport
 		$date_ecriture = dol_print_date(dol_now(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be yyyymmdd
 		foreach ($TData as $data) {
 			$code_compta = $data->numero_compte;
-			if (!empty($data->subledger_account))
+			if (!empty($data->subledger_account)) {
 				$code_compta = $data->subledger_account;
+			}
 
 			$Tab = array();
 			$Tab['num_ecriture'] = str_pad($i, 5);
@@ -510,8 +511,9 @@ class AccountancyExport
 		//$date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
 		foreach ($TData as $data) {
 			$code_compta = $data->numero_compte;
-			if (!empty($data->subledger_account))
+			if (!empty($data->subledger_account)) {
 				$code_compta = $data->subledger_account;
+			}
 
 			$Tab = array();
 			$Tab['type_ligne'] = 'M';
@@ -594,8 +596,9 @@ class AccountancyExport
 		//$date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
 		foreach ($TData as $data) {
 			$code_compta = $data->numero_compte;
-			if (!empty($data->subledger_account))
+			if (!empty($data->subledger_account)) {
 				$code_compta = $data->subledger_account;
+			}
 
 			$Tab = array();
 			//$Tab['type_ligne'] = 'M';
@@ -825,8 +828,8 @@ class AccountancyExport
 
 		foreach ($objectLines as $line) {
 			if ($line->debit == 0 && $line->credit == 0) {
-                unset($array[$line]);
-            } else {
+				unset($array[$line]);
+			} else {
 				$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
 				$date_document = dol_print_date($line->doc_date, '%Y%m%d');
 				$date_lettering = dol_print_date($line->date_lettering, '%Y%m%d');
@@ -913,21 +916,17 @@ class AccountancyExport
 		$thisPieceNum = "";
 		$thisPieceAccountNr = "";
 		$aSize = count($objectLines);
-		foreach ($objectLines as $aIndex=>$line)
-		{
+		foreach ($objectLines as $aIndex => $line) {
 			$sammelBuchung = false;
-			if ($aIndex - 2 >= 0 && $objectLines[$aIndex - 2]->piece_num == $line->piece_num)
-			{
+			if ($aIndex - 2 >= 0 && $objectLines[$aIndex - 2]->piece_num == $line->piece_num) {
 				$sammelBuchung = true;
-			} elseif ($aIndex + 2 < $aSize && $objectLines[$aIndex + 2]->piece_num == $line->piece_num)
-			{
+			} elseif ($aIndex + 2 < $aSize && $objectLines[$aIndex + 2]->piece_num == $line->piece_num) {
 				$sammelBuchung = true;
 			} elseif ($aIndex + 1 < $aSize
 					&& $objectLines[$aIndex + 1]->piece_num == $line->piece_num
 					&& $aIndex - 1 < $aSize
 					&& $objectLines[$aIndex - 1]->piece_num == $line->piece_num
-					)
-			{
+					) {
 				$sammelBuchung = true;
 			}
 
@@ -941,8 +940,7 @@ class AccountancyExport
 			// Kto
 			print length_accountg($line->numero_compte).$this->separator;
 			// S/H
-			if ($line->sens == 'D')
-			{
+			if ($line->sens == 'D') {
 				print 'S'.$this->separator;
 			} else {
 				print 'H'.$this->separator;
@@ -950,10 +948,8 @@ class AccountancyExport
 			//Grp
 			print self::trunc($line->code_journal, 1).$this->separator;
 			// GKto
-			if (empty($line->code_tiers))
-			{
-				if ($line->piece_num == $thisPieceNum)
-				{
+			if (empty($line->code_tiers)) {
+				if ($line->piece_num == $thisPieceNum) {
 					print length_accounta($thisPieceAccountNr).$this->separator;
 				} else {
 					print "div".$this->separator;
@@ -971,8 +967,7 @@ class AccountancyExport
 			print "0".$this->separator;
 
 			//MTyp 1=Fibu Einzelbuchung 2=Sammebuchung
-			if ($sammelBuchung)
-			{
+			if ($sammelBuchung) {
 				print "2".$this->separator;
 			} else {
 				print "1".$this->separator;
@@ -980,8 +975,7 @@ class AccountancyExport
 			// Code
 			print '""'.$this->separator;
 			// Netto
-			if ($line->montant >= 0)
-			{
+			if ($line->montant >= 0) {
 				print $line->montant.$this->separator;
 			} else {
 				print ($line->montant * -1).$this->separator;
@@ -992,18 +986,15 @@ class AccountancyExport
 			print "0.00".$this->separator;
 			// Tx1
 			$line1 = self::toAnsi($line->label_compte, 29);
-			if ($line1 == "LIQ" || $line1 == "LIQ Beleg ok" || strlen($line1) <= 3)
-			{
+			if ($line1 == "LIQ" || $line1 == "LIQ Beleg ok" || strlen($line1) <= 3) {
 				$line1 = "";
 			}
 			$line2 = self::toAnsi($line->doc_ref, 29);
-			if (strlen($line1) == 0)
-			{
+			if (strlen($line1) == 0) {
 				$line1 = $line2;
 				$line2 = "";
 			}
-			if (strlen($line1) > 0 && strlen($line2) > 0 && (strlen($line1) + strlen($line2)) < 27)
-			{
+			if (strlen($line1) > 0 && strlen($line2) > 0 && (strlen($line1) + strlen($line2)) < 27) {
 				$line1 = $line1.' / '.$line2;
 				$line2 = "";
 			}
@@ -1021,8 +1012,7 @@ class AccountancyExport
 
 			print $this->end_line;
 
-			if ($line->piece_num !== $thisPieceNum)
-			{
+			if ($line->piece_num !== $thisPieceNum) {
 				$thisPieceNum = $line->piece_num;
 				$thisPieceAccountNr = $line->numero_compte;
 			}
@@ -1185,15 +1175,14 @@ class AccountancyExport
 				$sql .= " WHERE code_client = '".$this->db->escape($line->thirdparty_code)."'";
 				$resql = $this->db->query($sql);
 
-				if ($resql && $this->db->num_rows($resql) > 0)
-				{
+				if ($resql && $this->db->num_rows($resql) > 0) {
 					$soc = $this->db->fetch_object($resql);
 
 					$address = array('', '', '');
 					if (strpos($soc->address, "\n") !== false) {
 						$address = explode("\n", $soc->address);
 						if (is_array($address) && count($address) > 0) {
-							foreach ($address as $key=>$data) {
+							foreach ($address as $key => $data) {
 								$address[$key] = str_replace(array("\t", "\n", "\r"), "", $data);
 								$address[$key] = dol_trunc($address[$key], 40, 'right', 'UTF-8', 1);
 							}
@@ -1468,8 +1457,9 @@ class AccountancyExport
 
 			print self::trunc($line->code_journal, 6).$separator; //Journal code
 
-			if (!empty($line->subledger_account)) $account = $line->subledger_account;
-			else {
+			if (!empty($line->subledger_account)) {
+				$account = $line->subledger_account;
+			} else {
 				$account = $line->numero_compte;
 			}
 			print self::trunc($account, 15).$separator; //Account number
@@ -1601,7 +1591,7 @@ class AccountancyExport
 			print $line->id . $this->separator;
 			print $date . $this->separator;
 			print substr($line->code_journal, 0, 4) . $this->separator;
-			if ((substr($line->numero_compte, 0, 3) == '411') || (substr($line->numero_compte, 0, 3) == '401'))  {
+			if ((substr($line->numero_compte, 0, 3) == '411') || (substr($line->numero_compte, 0, 3) == '401')) {
 				print length_accountg($line->subledger_account) . $this->separator;
 			} else {
 				print substr(length_accountg($line->numero_compte), 0, 15) . $this->separator;
@@ -1642,8 +1632,7 @@ class AccountancyExport
 	public static function toAnsi($str, $size = -1)
 	{
 		$retVal = dol_string_nohtmltag($str, 1, 'Windows-1251');
-		if ($retVal >= 0 && $size >= 0)
-		{
+		if ($retVal >= 0 && $size >= 0) {
 			$retVal = mb_substr($retVal, 0, $size, 'Windows-1251');
 		}
 		return $retVal;

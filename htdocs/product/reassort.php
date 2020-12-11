@@ -36,7 +36,9 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 $langs->loadLangs(array('products', 'stocks'));
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'produit|service');
 
 
@@ -55,11 +57,19 @@ $fourn_id = GETPOST("fourn_id", 'int');
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page < 0) $page = 0;
-if (!$sortfield) $sortfield = "p.ref";
-if (!$sortorder) $sortorder = "ASC";
+if (empty($page) || $page < 0) {
+	$page = 0;
+}
+if (!$sortfield) {
+	$sortfield = "p.ref";
+}
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 
 // Load sale and categ filters
@@ -69,8 +79,7 @@ $search_categ = GETPOST("search_categ");
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $canvas = GETPOST("canvas");
 $objcanvas = null;
-if (!empty($canvas))
-{
+if (!empty($canvas)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
 	$objcanvas = new Canvas($db, $action);
 	$objcanvas->getCanvas('product', 'list', $canvas);
@@ -83,8 +92,7 @@ if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 	|| !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)
 	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)
 	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)
-	|| !empty($conf->mrp->enabled))
-{
+	|| !empty($conf->mrp->enabled)) {
 	$virtualdiffersfromphysical = 1; // According to increase/decrease stock options, virtual and physical stock may differs.
 }
 
@@ -97,8 +105,7 @@ $hookmanager->initHooks(array('productreassortlist'));
  * Actions
  */
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
-{
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$sref = "";
 	$snom = "";
 	$sall = "";
@@ -128,7 +135,9 @@ $sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price
 $sql .= ' p.fk_product_type, p.tms as datem,';
 $sql .= ' p.duration, p.tosell as statut, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
 $sql .= ' SUM(s.reel) as stock_physique';
-if (!empty($conf->global->PRODUCT_USE_UNITS)) $sql .= ', u.short_label as unit_short';
+if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+	$sql .= ', u.short_label as unit_short';
+}
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
@@ -136,49 +145,73 @@ $sql .= $hookmanager->resPrint;
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s ON p.rowid = s.fk_product';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot as e ON s.fk_entrepot = e.rowid AND e.entity IN ('.getEntity('entrepot').')';
-if (!empty($conf->global->PRODUCT_USE_UNITS)) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_units as u on p.fk_unit = u.rowid';
+if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_units as u on p.fk_unit = u.rowid';
+}
 // We'll need this table joined to the select in order to filter by categ
-if ($search_categ) $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
+if ($search_categ) {
+	$sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
+}
 $sql .= " WHERE p.entity IN (".getEntity('product').")";
-if ($search_categ) $sql .= " AND p.rowid = cp.fk_product"; // Join for the needed table to filter by categ
-if ($sall) $sql .= natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $sall);
+if ($search_categ) {
+	$sql .= " AND p.rowid = cp.fk_product"; // Join for the needed table to filter by categ
+}
+if ($sall) {
+	$sql .= natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $sall);
+}
 // if the type is not 1, we show all products (type = 0,2,3)
-if (dol_strlen($type))
-{
-	if ($type == 1)
-	{
+if (dol_strlen($type)) {
+	if ($type == 1) {
 		$sql .= " AND p.fk_product_type = '1'";
 	} else {
 		$sql .= " AND p.fk_product_type <> '1'";
 	}
 }
-if ($sref)     $sql .= natural_search('p.ref', $sref);
-if ($search_barcode) $sql .= natural_search('p.barcode', $search_barcode);
-if ($snom)     $sql .= natural_search('p.label', $snom);
-if (!empty($tosell)) $sql .= " AND p.tosell = ".$tosell;
-if (!empty($tobuy)) $sql .= " AND p.tobuy = ".$tobuy;
-if (!empty($canvas)) $sql .= " AND p.canvas = '".$db->escape($canvas)."'";
-if ($catid) $sql .= " AND cp.fk_categorie = ".$catid;
-if ($fourn_id > 0) $sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".$fourn_id;
+if ($sref) {
+	$sql .= natural_search('p.ref', $sref);
+}
+if ($search_barcode) {
+	$sql .= natural_search('p.barcode', $search_barcode);
+}
+if ($snom) {
+	$sql .= natural_search('p.label', $snom);
+}
+if (!empty($tosell)) {
+	$sql .= " AND p.tosell = ".$tosell;
+}
+if (!empty($tobuy)) {
+	$sql .= " AND p.tobuy = ".$tobuy;
+}
+if (!empty($canvas)) {
+	$sql .= " AND p.canvas = '".$db->escape($canvas)."'";
+}
+if ($catid) {
+	$sql .= " AND cp.fk_categorie = ".$catid;
+}
+if ($fourn_id > 0) {
+	$sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".$fourn_id;
+}
 // Insert categ filter
-if ($search_categ) $sql .= " AND cp.fk_categorie = ".$db->escape($search_categ);
+if ($search_categ) {
+	$sql .= " AND cp.fk_categorie = ".$db->escape($search_categ);
+}
 $sql .= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,";
 $sql .= " p.fk_product_type, p.tms, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock";
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-if ($toolowstock) $sql .= " HAVING SUM(".$db->ifsql('s.reel IS NULL', '0', 's.reel').") < p.seuil_stock_alerte";
+if ($toolowstock) {
+	$sql .= " HAVING SUM(".$db->ifsql('s.reel IS NULL', '0', 's.reel').") < p.seuil_stock_alerte";
+}
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-{
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-	{
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -187,41 +220,68 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql .= $db->plimit($limit + 1, $offset);
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 
 	$i = 0;
 
-	if ($num == 1 && GETPOST('autojumpifoneonly') && ($sall || $snom || $sref))
-	{
+	if ($num == 1 && GETPOST('autojumpifoneonly') && ($sall || $snom || $sref)) {
 		$objp = $db->fetch_object($resql);
 		header("Location: card.php?id=$objp->rowid");
 		exit;
 	}
 
-	if (isset($type))
-	{
-		if ($type == 1) { $texte = $langs->trans("Services"); } else { $texte = $langs->trans("Products"); }
+	if (isset($type)) {
+		if ($type == 1) {
+			$texte = $langs->trans("Services");
+		} else {
+			$texte = $langs->trans("Products");
+		}
 	} else {
 		$texte = $langs->trans("ProductsAndServices");
 	}
 	$texte .= ' ('.$langs->trans("MenuStocks").')';
 
 	$param = '';
-	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-	if ($sall)	    $param .= "&sall=".urlencode($sall);
-	if ($tosell)	$param .= "&tosell=".urlencode($tosell);
-	if ($tobuy)		$param .= "&tobuy=".urlencode($tobuy);
-	if ($type)		$param .= "&type=".urlencode($type);
-	if ($fourn_id)	$param .= "&fourn_id=".urlencode($fourn_id);
-	if ($snom)		$param .= "&snom=".urlencode($snom);
-	if ($sref)		$param .= "&sref=".urlencode($sref);
-	if ($search_sale)  $param .= "&search_sale=".urlencode($search_sale);
-	if ($search_categ) $param .= "&search_categ=".urlencode($search_categ);
-	if ($toolowstock)  $param .= "&toolowstock=".urlencode($toolowstock);
-	if ($sbarcode) $param .= "&sbarcode=".urlencode($sbarcode);
-	if ($catid)    $param .= "&catid=".urlencode($catid);
+	if ($limit > 0 && $limit != $conf->liste_limit) {
+		$param .= '&limit='.urlencode($limit);
+	}
+	if ($sall) {
+		$param .= "&sall=".urlencode($sall);
+	}
+	if ($tosell) {
+		$param .= "&tosell=".urlencode($tosell);
+	}
+	if ($tobuy) {
+		$param .= "&tobuy=".urlencode($tobuy);
+	}
+	if ($type) {
+		$param .= "&type=".urlencode($type);
+	}
+	if ($fourn_id) {
+		$param .= "&fourn_id=".urlencode($fourn_id);
+	}
+	if ($snom) {
+		$param .= "&snom=".urlencode($snom);
+	}
+	if ($sref) {
+		$param .= "&sref=".urlencode($sref);
+	}
+	if ($search_sale) {
+		$param .= "&search_sale=".urlencode($search_sale);
+	}
+	if ($search_categ) {
+		$param .= "&search_categ=".urlencode($search_categ);
+	}
+	if ($toolowstock) {
+		$param .= "&toolowstock=".urlencode($toolowstock);
+	}
+	if ($sbarcode) {
+		$param .= "&sbarcode=".urlencode($sbarcode);
+	}
+	if ($catid) {
+		$param .= "&catid=".urlencode($catid);
+	}
 
 	llxHeader("", $texte, $helpurl);
 
@@ -234,8 +294,7 @@ if ($resql)
 
 	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'product', 0, '', '', $limit);
 
-	if (!empty($catid))
-	{
+	if (!empty($catid)) {
 		print "<div id='ways'>";
 		$c = new Categorie($db);
 		$c->fetch($catid);
@@ -245,21 +304,19 @@ if ($resql)
 	}
 
 	// Filter on categories
- 	$moreforfilter = '';
-	if (!empty($conf->categorie->enabled))
-	{
-	 	$moreforfilter .= '<div class="divsearchfield">';
-	 	$moreforfilter .= $langs->trans('Categories').': ';
+	$moreforfilter = '';
+	if (!empty($conf->categorie->enabled)) {
+		$moreforfilter .= '<div class="divsearchfield">';
+		$moreforfilter .= $langs->trans('Categories').': ';
 		$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ');
-	 	$moreforfilter .= '</div>';
+		$moreforfilter .= '</div>';
 	}
 
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans("StockTooLow").' <input type="checkbox" name="toolowstock" value="1"'.($toolowstock ? ' checked' : '').'>';
 	$moreforfilter .= '</div>';
 
-	if (!empty($moreforfilter))
-	{
+	if (!empty($moreforfilter)) {
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
 		$parameters = array();
@@ -269,21 +326,39 @@ if ($resql)
 	}
 
 	$param = '';
-	if ($tosell)	$param .= "&tosell=".urlencode($tosell);
-	if ($tobuy)		$param .= "&tobuy=".urlencode($tobuy);
-	if ($type)		$param .= "&type=".urlencode($type);
-	if ($fourn_id)	$param .= "&fourn_id=".urlencode($fourn_id);
-	if ($snom)		$param .= "&snom=".urlencode($snom);
-	if ($sref)		$param .= "&sref=".urlencode($sref);
-	if ($toolowstock)		$param .= "&toolowstock=".urlencode($toolowstock);
-	if ($search_categ)		$param .= "&search_categ=".urlencode($search_categ);
+	if ($tosell) {
+		$param .= "&tosell=".urlencode($tosell);
+	}
+	if ($tobuy) {
+		$param .= "&tobuy=".urlencode($tobuy);
+	}
+	if ($type) {
+		$param .= "&type=".urlencode($type);
+	}
+	if ($fourn_id) {
+		$param .= "&fourn_id=".urlencode($fourn_id);
+	}
+	if ($snom) {
+		$param .= "&snom=".urlencode($snom);
+	}
+	if ($sref) {
+		$param .= "&sref=".urlencode($sref);
+	}
+	if ($toolowstock) {
+		$param .= "&toolowstock=".urlencode($toolowstock);
+	}
+	if ($search_categ) {
+		$param .= "&search_categ=".urlencode($search_categ);
+	}
 
 	$formProduct = new FormProduct($db);
 	$formProduct->loadWarehouses();
 	$warehouses_list = $formProduct->cache_warehouses;
 	$nb_warehouse = count($warehouses_list);
 	$colspan_warehouse = 1;
-	if (!empty($conf->global->STOCK_DETAIL_ON_WAREHOUSE)) { $colspan_warehouse = $nb_warehouse > 1 ? $nb_warehouse + 1 : 1; }
+	if (!empty($conf->global->STOCK_DETAIL_ON_WAREHOUSE)) {
+		$colspan_warehouse = $nb_warehouse > 1 ? $nb_warehouse + 1 : 1;
+	}
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">';
@@ -297,8 +372,7 @@ if ($resql)
 	print '<input class="flat" type="text" name="snom" size="8" value="'.$snom.'">';
 	print '</td>';
 	// Duration
-	if (!empty($conf->service->enabled) && $type == 1)
-	{
+	if (!empty($conf->service->enabled) && $type == 1) {
 		print '<td class="liste_titre">';
 		print '&nbsp;';
 		print '</td>';
@@ -307,7 +381,9 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre right">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	if ($virtualdiffersfromphysical) print '<td class="liste_titre">&nbsp;</td>';
+	if ($virtualdiffersfromphysical) {
+		print '<td class="liste_titre">&nbsp;</td>';
+	}
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" colspan="'.$colspan_warehouse.'">&nbsp;</td>';
 	print '<td class="liste_titre"></td>';
@@ -315,8 +391,8 @@ if ($resql)
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	print '<td class="liste_titre maxwidthsearch">';
-   	$searchpicto = $form->showFilterAndCheckAddButtons(0);
-   	print $searchpicto;
+	$searchpicto = $form->showFilterAndCheckAddButtons(0);
+	print $searchpicto;
 	print '</td>';
 	print '</tr>';
 
@@ -324,20 +400,23 @@ if ($resql)
 	print "<tr class=\"liste_titre\">";
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", $param, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", $param, "", "", $sortfield, $sortorder);
-	if (!empty($conf->service->enabled) && $type == 1) print_liste_field_titre("Duration", $_SERVER["PHP_SELF"], "p.duration", $param, "", '', $sortfield, $sortorder, 'center ');
+	if (!empty($conf->service->enabled) && $type == 1) {
+		print_liste_field_titre("Duration", $_SERVER["PHP_SELF"], "p.duration", $param, "", '', $sortfield, $sortorder, 'center ');
+	}
 	print_liste_field_titre("StockLimit", $_SERVER["PHP_SELF"], "p.seuil_stock_alerte", $param, "", '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("DesiredStock", $_SERVER["PHP_SELF"], "p.desiredstock", $param, "", '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("PhysicalStock", $_SERVER["PHP_SELF"], "stock_physique", $param, "", '', $sortfield, $sortorder, 'right ');
 	// Details per warehouse
-	if (!empty($conf->global->STOCK_DETAIL_ON_WAREHOUSE))	// TODO This should be moved into the selection of fields on page product/list (page product/stock will be removed and replaced with product/list with its own context)
-	{
+	if (!empty($conf->global->STOCK_DETAIL_ON_WAREHOUSE)) {	// TODO This should be moved into the selection of fields on page product/list (page product/stock will be removed and replaced with product/list with its own context)
 		if ($nb_warehouse > 1) {
 			foreach ($warehouses_list as &$wh) {
 				print_liste_field_titre($wh['label'], '', '', '', '', '', '', '', 'right ');
 			}
 		}
 	}
-	if ($virtualdiffersfromphysical) print_liste_field_titre("VirtualStock", $_SERVER["PHP_SELF"], "", $param, "", '', $sortfield, $sortorder, 'right ', 'VirtualStockDesc');
+	if ($virtualdiffersfromphysical) {
+		print_liste_field_titre("VirtualStock", $_SERVER["PHP_SELF"], "", $param, "", '', $sortfield, $sortorder, 'right ', 'VirtualStockDesc');
+	}
 	// Units
 	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 		print_liste_field_titre("Unit", $_SERVER["PHP_SELF"], "unit_short", $param, "", 'align="right"', $sortfield, $sortorder);
@@ -352,8 +431,7 @@ if ($resql)
 	print_liste_field_titre('');
 	print "</tr>\n";
 
-	while ($i < min($num, $limit))
-	{
+	while ($i < min($num, $limit)) {
 		$objp = $db->fetch_object($resql);
 
 		$product = new Product($db);
@@ -367,13 +445,17 @@ if ($resql)
 		print '</td>';
 		print '<td>'.$product->label.'</td>';
 
-		if (!empty($conf->service->enabled) && $type == 1)
-		{
+		if (!empty($conf->service->enabled) && $type == 1) {
 			print '<td class="center">';
-			if (preg_match('/([0-9]+)y/i', $objp->duration, $regs)) print $regs[1].' '.$langs->trans("DurationYear");
-			elseif (preg_match('/([0-9]+)m/i', $objp->duration, $regs)) print $regs[1].' '.$langs->trans("DurationMonth");
-			elseif (preg_match('/([0-9]+)d/i', $objp->duration, $regs)) print $regs[1].' '.$langs->trans("DurationDay");
-			else print $objp->duration;
+			if (preg_match('/([0-9]+)y/i', $objp->duration, $regs)) {
+				print $regs[1].' '.$langs->trans("DurationYear");
+			} elseif (preg_match('/([0-9]+)m/i', $objp->duration, $regs)) {
+				print $regs[1].' '.$langs->trans("DurationMonth");
+			} elseif (preg_match('/([0-9]+)d/i', $objp->duration, $regs)) {
+				print $regs[1].' '.$langs->trans("DurationDay");
+			} else {
+				print $objp->duration;
+			}
 			print '</td>';
 		}
 		//print '<td class="right">'.$objp->stock_theorique.'</td>';
@@ -381,13 +463,14 @@ if ($resql)
 		print '<td class="right">'.$objp->desiredstock.'</td>';
 		// Real stock
 		print '<td class="right">';
-		if ($objp->seuil_stock_alerte != '' && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
+		if ($objp->seuil_stock_alerte != '' && ($objp->stock_physique < $objp->seuil_stock_alerte)) {
+			print img_warning($langs->trans("StockTooLow")).' ';
+		}
 		print price2num($objp->stock_physique, 'MS');
 		print '</td>';
 
 		// Details per warehouse
-		if (!empty($conf->global->STOCK_DETAIL_ON_WAREHOUSE))	// TODO This should be moved into the selection of fields on page product/list (page product/stock will be removed and replaced with product/list with its own context)
-		{
+		if (!empty($conf->global->STOCK_DETAIL_ON_WAREHOUSE)) {	// TODO This should be moved into the selection of fields on page product/list (page product/stock will be removed and replaced with product/list with its own context)
 			if ($nb_warehouse > 1) {
 				foreach ($warehouses_list as &$wh) {
 					print '<td class="right">';
@@ -398,10 +481,11 @@ if ($resql)
 		}
 
 		// Virtual stock
-		if ($virtualdiffersfromphysical)
-		{
+		if ($virtualdiffersfromphysical) {
 			print '<td class="right">';
-			if ($objp->seuil_stock_alerte != '' && ($product->stock_theorique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
+			if ($objp->seuil_stock_alerte != '' && ($product->stock_theorique < $objp->seuil_stock_alerte)) {
+				print img_warning($langs->trans("StockTooLow")).' ';
+			}
 			print price2num($product->stock_theorique, 'MS');
 			print '</td>';
 		}

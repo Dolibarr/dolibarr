@@ -94,9 +94,13 @@ function length_accountg($account)
 {
 	global $conf;
 
-	if ($account < 0 || is_empty($account)) return '';
+	if ($account < 0 || is_empty($account)) {
+		return '';
+	}
 
-	if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) return $account;
+	if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+		return $account;
+	}
 
 	$g = $conf->global->ACCOUNTING_LENGTH_GACCOUNT;
 	if (!is_empty($g)) {
@@ -129,9 +133,13 @@ function length_accounta($accounta)
 {
 	global $conf;
 
-	if ($accounta < 0 || is_empty($accounta)) return '';
+	if ($accounta < 0 || is_empty($accounta)) {
+		return '';
+	}
 
-	if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) return $accounta;
+	if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+		return $accounta;
+	}
 
 	$a = $conf->global->ACCOUNTING_LENGTH_AACCOUNT;
 	if (!is_empty($a)) {
@@ -177,7 +185,9 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 
 	print "\n\n<!-- start banner journal -->\n";
 
-	if (!is_empty($varlink)) $varlink = '?'.$varlink;
+	if (!is_empty($varlink)) {
+		$varlink = '?'.$varlink;
+	}
 
 	$head = array();
 	$h = 0;
@@ -190,8 +200,7 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 
 	print dol_get_fiche_head($head, 'journal');
 
-	foreach ($moreparam as $key => $value)
-	{
+	foreach ($moreparam as $key => $value) {
 		print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 	}
 	print '<table width="100%" class="border">';
@@ -205,14 +214,18 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 	print '</tr>';
 
 	// Calculation mode
-	if ($calcmode)
-	{
+	if ($calcmode) {
 		print '<tr>';
 		print '<td width="110">'.$langs->trans("CalculationMode").'</td>';
-		if (!$variante) print '<td colspan="3">';
-		else print '<td>';
+		if (!$variante) {
+			print '<td colspan="3">';
+		} else {
+			print '<td>';
+		}
 		print $calcmode;
-		if ($variante) print '</td><td colspan="2">'.$variante;
+		if ($variante) {
+			print '</td><td colspan="2">'.$variante;
+		}
 		print '</td>';
 		print '</tr>';
 	}
@@ -220,10 +233,17 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 	// Ligne de la periode d'analyse du rapport
 	print '<tr>';
 	print '<td>'.$langs->trans("ReportPeriod").'</td>';
-	if (!$periodlink) print '<td colspan="3">';
-	else print '<td>';
-	if ($period) print $period;
-	if ($periodlink) print '</td><td colspan="2">'.$periodlink;
+	if (!$periodlink) {
+		print '<td colspan="3">';
+	} else {
+		print '<td>';
+	}
+	if ($period) {
+		print $period;
+	}
+	if ($periodlink) {
+		print '</td><td colspan="2">'.$periodlink;
+	}
 	print '</td>';
 	print '</tr>';
 
@@ -270,8 +290,7 @@ function getDefaultDatesForTransfer()
 			$year_start = dol_print_date(dol_now(), '%Y');
 			$year_end = $year_start + 1;
 			$month_end = $month_start - 1;
-			if ($month_end < 1)
-			{
+			if ($month_end < 1) {
 				$month_end = 12;
 				$year_end--;
 			}

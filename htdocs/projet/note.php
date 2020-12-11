@@ -39,7 +39,9 @@ $mine = $_REQUEST['mode'] == 'mine' ? 1 : 0;
 $object = new Project($db);
 
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
-if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
+if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) {
+	$object->fetchComments();
+}
 
 // Security check
 $socid = 0;
@@ -61,7 +63,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, 
  */
 
 $title = $langs->trans("Project").' - '.$langs->trans("Note").' - '.$object->ref.' '.$object->name;
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->ref.' '.$object->name.' - '.$langs->trans("Note");
+if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Note");
+}
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("", $title, $help_url);
 
@@ -70,8 +74,7 @@ $userstatic = new User($db);
 
 $now = dol_now();
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	// To verify role of users
 	//$userAccess = $object->restrictedProjectArea($user,'read');
 	$userWrite = $object->restrictedProjectArea($user, 'write');
@@ -90,15 +93,13 @@ if ($id > 0 || !empty($ref))
 	// Title
 	$morehtmlref .= $object->title;
 	// Thirdparty
-	if ($object->thirdparty->id > 0)
-	{
+	if ($object->thirdparty->id > 0) {
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
 	}
 	$morehtmlref .= '</div>';
 
 	// Define a complementary filter for search of next/prev ref.
-	if (!$user->rights->projet->all->lire)
-	{
+	if (!$user->rights->projet->all->lire) {
 		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
 		$object->next_prev_filter = " rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 	}

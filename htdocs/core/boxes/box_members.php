@@ -63,7 +63,9 @@ class box_members extends ModeleBoxes
 
 		// disable module for such cases
 		$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
-		if (!in_array('adherent', $listofmodulesforexternal) && !empty($user->socid)) $this->enabled = 0; // disabled for external users
+		if (!in_array('adherent', $listofmodulesforexternal) && !empty($user->socid)) {
+			$this->enabled = 0; // disabled for external users
+		}
 
 		$this->hidden = !($user->rights->adherent->lire);
 	}
@@ -151,11 +153,12 @@ class box_members extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0)
+				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
 						'text'=>$langs->trans("NoRecordedCustomers"),
 					);
+				}
 
 				$this->db->free($result);
 			} else {

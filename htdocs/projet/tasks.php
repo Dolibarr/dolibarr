@@ -31,7 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-if ($conf->categorie->enabled) { require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php'; }
+if ($conf->categorie->enabled) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'users', 'companies'));
@@ -73,10 +75,11 @@ $taskstatic = new Task($db);
 $extrafields = new ExtraFields($db);
 
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
-if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
+if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) {
+	$object->fetchComments();
+}
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	// fetch optionals attributes and labels
 	$extrafields->fetch_name_optionals_label($object->table_element);
 }
@@ -119,12 +122,11 @@ if ($object->usage_bill_time) {
 }
 
 // Extra fields
-if (is_array($extrafields->attributes[$taskstatic->table_element]['label']) && count($extrafields->attributes[$taskstatic->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$taskstatic->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$taskstatic->table_element]['list'][$key]))
+if (is_array($extrafields->attributes[$taskstatic->table_element]['label']) && count($extrafields->attributes[$taskstatic->table_element]['label']) > 0) {
+	foreach ($extrafields->attributes[$taskstatic->table_element]['label'] as $key => $val) {
+		if (!empty($extrafields->attributes[$taskstatic->table_element]['list'][$key])) {
 			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$taskstatic->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$taskstatic->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$taskstatic->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$taskstatic->table_element]['list'][$key]) != 3 && $extrafields->attributes[$taskstatic->table_element]['perms'][$key]));
+		}
 	}
 }
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -138,16 +140,16 @@ $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 
 $parameters = array('id'=>$id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if (empty($reshook))
-{
+if (empty($reshook)) {
 	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 	// Purge search criteria
-	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
-	{
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$search_user_id = "";
 		$search_taskref = '';
 		$search_tasklabel = '';
@@ -185,10 +187,14 @@ if (!empty($search_tasklabel)) {
 }
 
 $moresql = dolSqlDateFilter('t.dateo', $search_dtstartday, $search_dtstartmonth, $search_dtstartyear, 1);
-if ($moresql) $morewherefilterarray[] = $moresql;
+if ($moresql) {
+	$morewherefilterarray[] = $moresql;
+}
 
 $moresql = dolSqlDateFilter('t.datee', $search_dtendday, $search_dtendmonth, $search_dtendyear, 1);
-if ($moresql) $morewherefilterarray[] = $moresql;
+if ($moresql) {
+	$morewherefilterarray[] = $moresql;
+}
 
 if (!empty($search_planedworkload)) {
 	$morewherefilterarray[] = natural_search('t.planned_workload', $search_planedworkload, 1, 1);
@@ -213,8 +219,7 @@ if (count($morewherefilterarray) > 0) {
 	$morewherefilter = ' AND '.implode(' AND ', $morewherefilterarray);
 }
 
-if ($action == 'createtask' && $user->rights->projet->creer)
-{
+if ($action == 'createtask' && $user->rights->projet->creer) {
 	$error = 0;
 
 	// If we use user timezone, we must change also view/list to use user timezone everywhere
@@ -223,33 +228,32 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 	$date_start = dol_mktime(GETPOST('dateohour', 'int'), GETPOST('dateomin', 'int'), 0, GETPOST('dateomonth', 'int'), GETPOST('dateoday', 'int'), GETPOST('dateoyear', 'int'));
 	$date_end = dol_mktime(GETPOST('dateehour', 'int'), GETPOST('dateemin', 'int'), 0, GETPOST('dateemonth', 'int'), GETPOST('dateeday', 'int'), GETPOST('dateeyear', 'int'));
 
-	if (!$cancel)
-	{
-		if (empty($taskref))
-		{
+	if (!$cancel) {
+		if (empty($taskref)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 			$action = 'create';
 			$error++;
 		}
-		if (empty($label))
-		{
+		if (empty($label)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 			$action = 'create';
 			$error++;
-		} elseif (empty($_POST['task_parent']))
-		{
+		} elseif (empty($_POST['task_parent'])) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("ChildOfProjectTask")), null, 'errors');
 			$action = 'create';
 			$error++;
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$tmparray = explode('_', GETPOST('task_parent'));
 			$projectid = $tmparray[0];
-			if (empty($projectid)) $projectid = $id; // If projectid is ''
+			if (empty($projectid)) {
+				$projectid = $id; // If projectid is ''
+			}
 			$task_parent = $tmparray[1];
-			if (empty($task_parent)) $task_parent = 0; // If task_parent is ''
+			if (empty($task_parent)) {
+				$task_parent = 0; // If task_parent is ''
+			}
 
 			$task = new Task($db);
 
@@ -269,12 +273,10 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 
 			$taskid = $task->create($user);
 
-			if ($taskid > 0)
-			{
+			if ($taskid > 0) {
 				$result = $task->add_contact($_POST["userid"], 'TASKEXECUTIVE', 'internal');
 			} else {
-				if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-				{
+				if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 					$langs->load("projects");
 					setEventMessages($langs->trans('NewTaskRefSuggested'), '', 'warnings');
 					$duplicate_code_error = true;
@@ -286,26 +288,21 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			}
 		}
 
-		if (!$error)
-		{
-			if (!empty($backtopage))
-			{
+		if (!$error) {
+			if (!empty($backtopage)) {
 				header("Location: ".$backtopage);
 				exit;
-			} elseif (empty($projectid))
-			{
+			} elseif (empty($projectid)) {
 				header("Location: ".DOL_URL_ROOT.'/projet/tasks/list.php'.(empty($mode) ? '' : '?mode='.$mode));
 				exit;
 			}
 			$id = $projectid;
 		}
 	} else {
-		if (!empty($backtopage))
-		{
+		if (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
-		} elseif (empty($id))
-		{
+		} elseif (empty($id)) {
 			// We go back on task list
 			header("Location: ".DOL_URL_ROOT.'/projet/tasks/list.php'.(empty($mode) ? '' : '?mode='.$mode));
 			exit;
@@ -327,13 +324,14 @@ $taskstatic = new Task($db);
 $userstatic = new User($db);
 
 $title = $langs->trans("Project").' - '.$langs->trans("Tasks").' - '.$object->ref.' '.$object->name;
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->ref.' '.$object->name.' - '.$langs->trans("Tasks");
+if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Tasks");
+}
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("", $title, $help_url);
 
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 	$object->fetch_thirdparty();
 	$res = $object->fetch_optionals();
@@ -351,22 +349,54 @@ if ($id > 0 || !empty($ref))
 	print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
 
 	$param = '&id='.$object->id;
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
-	if ($search_user_id)                 		$param .= '&search_user_id='.urlencode($search_user_id);
-	if ($search_taskref)              		$param .= '&search_taskref='.urlencode($search_taskref);
-	if ($search_tasklabel)              		$param .= '&search_tasklabel='.urlencode($search_tasklabel);
-	if ($search_taskdescription)              		$param .= '&search_taskdescription='.urlencode($search_taskdescription);
-	if ($search_dtstartday)              		$param .= '&search_dtstartday='.urlencode($search_dtstartday);
-	if ($search_dtstartmonth)              		$param .= '&search_dtstartmonth='.urlencode($search_dtstartmonth);
-	if ($search_dtstartyear)              		$param .= '&search_dtstartyear='.urlencode($search_dtstartyear);
-	if ($search_dtendday)              		$param .= '&search_dtendday='.urlencode($search_dtendday);
-	if ($search_dtendmonth)              		$param .= '&search_dtendmonth='.urlencode($search_dtendmonth);
-	if ($search_dtendyear)              		$param .= '&search_dtendyear='.urlencode($search_dtendyear);
-	if ($search_planedworkload)              		$param .= '&search_planedworkload='.urlencode($search_planedworkload);
-	if ($search_timespend)              		$param .= '&search_timespend='.urlencode($search_timespend);
-	if ($search_progresscalc)              		$param .= '&search_progresscalc='.urlencode($search_progresscalc);
-	if ($search_progressdeclare)              		$param .= '&search_progressdeclare='.urlencode($search_progressdeclare);
-	if ($optioncss != '')           $param .= '&optioncss='.urlencode($optioncss);
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+		$param .= '&contextpage='.urlencode($contextpage);
+	}
+	if ($search_user_id) {
+		$param .= '&search_user_id='.urlencode($search_user_id);
+	}
+	if ($search_taskref) {
+		$param .= '&search_taskref='.urlencode($search_taskref);
+	}
+	if ($search_tasklabel) {
+		$param .= '&search_tasklabel='.urlencode($search_tasklabel);
+	}
+	if ($search_taskdescription) {
+		$param .= '&search_taskdescription='.urlencode($search_taskdescription);
+	}
+	if ($search_dtstartday) {
+		$param .= '&search_dtstartday='.urlencode($search_dtstartday);
+	}
+	if ($search_dtstartmonth) {
+		$param .= '&search_dtstartmonth='.urlencode($search_dtstartmonth);
+	}
+	if ($search_dtstartyear) {
+		$param .= '&search_dtstartyear='.urlencode($search_dtstartyear);
+	}
+	if ($search_dtendday) {
+		$param .= '&search_dtendday='.urlencode($search_dtendday);
+	}
+	if ($search_dtendmonth) {
+		$param .= '&search_dtendmonth='.urlencode($search_dtendmonth);
+	}
+	if ($search_dtendyear) {
+		$param .= '&search_dtendyear='.urlencode($search_dtendyear);
+	}
+	if ($search_planedworkload) {
+		$param .= '&search_planedworkload='.urlencode($search_planedworkload);
+	}
+	if ($search_timespend) {
+		$param .= '&search_timespend='.urlencode($search_timespend);
+	}
+	if ($search_progresscalc) {
+		$param .= '&search_progresscalc='.urlencode($search_progresscalc);
+	}
+	if ($search_progressdeclare) {
+		$param .= '&search_progressdeclare='.urlencode($search_progressdeclare);
+	}
+	if ($optioncss != '') {
+		$param .= '&optioncss='.urlencode($optioncss);
+	}
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -378,15 +408,13 @@ if ($id > 0 || !empty($ref))
 	// Title
 	$morehtmlref .= $object->title;
 	// Thirdparty
-	if ($object->thirdparty->id > 0)
-	{
+	if ($object->thirdparty->id > 0) {
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
 	}
 	$morehtmlref .= '</div>';
 
 	// Define a complementary filter for search of next/prev ref.
-	if (!$user->rights->projet->all->lire)
-	{
+	if (!$user->rights->projet->all->lire) {
 		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
 		$object->next_prev_filter = " rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 	}
@@ -404,22 +432,19 @@ if ($id > 0 || !empty($ref))
 	print $langs->trans("Usage");
 	print '</td>';
 	print '<td>';
-	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-	{
+	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 		print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
 		$htmltext = $langs->trans("ProjectFollowOpportunity");
 		print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
 		print '<br>';
 	}
-	if (empty($conf->global->PROJECT_HIDE_TASKS))
-	{
+	if (empty($conf->global->PROJECT_HIDE_TASKS)) {
 		print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
 		$htmltext = $langs->trans("ProjectFollowTasks");
 		print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
 		print '<br>';
 	}
-	if (!empty($conf->global->PROJECT_BILL_TIME_SPENT))
-	{
+	if (!empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
 		print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
 		$htmltext = $langs->trans("ProjectBillTimeDescription");
 		print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
@@ -429,8 +454,11 @@ if ($id > 0 || !empty($ref))
 
 	// Visibility
 	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
-	if ($object->public) print $langs->trans('SharedProject');
-	else print $langs->trans('PrivateProject');
+	if ($object->public) {
+		print $langs->trans('SharedProject');
+	} else {
+		print $langs->trans('PrivateProject');
+	}
 	print '</td></tr>';
 
 	// Date start - end
@@ -440,12 +468,16 @@ if ($id > 0 || !empty($ref))
 	$end = dol_print_date($object->date_end, 'day');
 	print ' - ';
 	print ($end ? $end : '?');
-	if ($object->hasDelay()) print img_warning("Late");
+	if ($object->hasDelay()) {
+		print img_warning("Late");
+	}
 	print '</td></tr>';
 
 	// Budget
 	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-	if (strcmp($object->budget_amount, '')) print price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+	if (strcmp($object->budget_amount, '')) {
+		print price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+	}
 	print '</td></tr>';
 
 	// Other attributes
@@ -486,9 +518,10 @@ if ($id > 0 || !empty($ref))
 }
 
 
-if ($action == 'create' && $user->rights->projet->creer && (empty($object->thirdparty->id) || $userWrite > 0))
-{
-	if ($id > 0 || !empty($ref)) print '<br>';
+if ($action == 'create' && $user->rights->projet->creer && (empty($object->thirdparty->id) || $userWrite > 0)) {
+	if ($id > 0 || !empty($ref)) {
+		print '<br>';
+	}
 
 	print load_fiche_titre($langs->trans("NewTask"), '', 'projecttask');
 
@@ -510,7 +543,9 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="createtask">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-	if (!empty($object->id)) print '<input type="hidden" name="id" value="'.$object->id.'">';
+	if (!empty($object->id)) {
+		print '<input type="hidden" name="id" value="'.$object->id.'">';
+	}
 
 	print dol_get_fiche_head('');
 
@@ -518,19 +553,19 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	$defaultref = '';
 	$obj = empty($conf->global->PROJECT_TASK_ADDON) ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
-	if (!empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.".php"))
-	{
+	if (!empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.".php")) {
 		require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.'.php';
 		$modTask = new $obj;
 		$defaultref = $modTask->getNextValue($object->thirdparty, null);
 	}
 
-	if (is_numeric($defaultref) && $defaultref <= 0) $defaultref = '';
+	if (is_numeric($defaultref) && $defaultref <= 0) {
+		$defaultref = '';
+	}
 
 	// Ref
 	print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td>';
-	if (empty($duplicate_code_error))
-	{
+	if (empty($duplicate_code_error)) {
 		print (GETPOSTISSET("ref") ?GETPOST("ref", 'alpha') : $defaultref);
 	} else {
 		print $defaultref;
@@ -549,8 +584,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
 	$contactsofproject = (!empty($object->id) ? $object->getListContactId('internal') : '');
-	if (is_array($contactsofproject) && count($contactsofproject))
-	{
+	if (is_array($contactsofproject) && count($contactsofproject)) {
 		print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, '', 'maxwidth300');
 	} else {
 		print $langs->trans("NoUserAssignedToTheProject");
@@ -588,8 +622,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $taskstatic, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
-	if (empty($reshook) && !empty($extrafields->attributes[$taskstatic->table_element]['label']))
-	{
+	if (empty($reshook) && !empty($extrafields->attributes[$taskstatic->table_element]['label'])) {
 		print $taskstatic->showOptionals($extrafields, 'edit'); // Do not use $object here that is object of project but use $taskstatic
 	}
 
@@ -627,7 +660,9 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	$linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', $linktocreatetaskUserRight, $linktocreatetaskParam);
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
-	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	if ($optioncss != '') {
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
@@ -650,28 +685,27 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// We load also tasks limited to a particular user
 	$tmpuser = new User($db);
-	if ($search_user_id > 0) $tmpuser->fetch($search_user_id);
+	if ($search_user_id > 0) {
+		$tmpuser->fetch($search_user_id);
+	}
 
 	$tasksrole = ($tmpuser->id > 0 ? $taskstatic->getUserRolesForProjectsOrTasks(0, $tmpuser, $object->id, 0) : '');
 	//var_dump($tasksarray);
 	//var_dump($tasksrole);
 
-	if (!empty($conf->use_javascript_ajax))
-	{
+	if (!empty($conf->use_javascript_ajax)) {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 	}
 
 	// Filter on categories
 	$moreforfilter = '';
-	if (count($tasksarray) > 0)
-	{
+	if (count($tasksarray) > 0) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$moreforfilter .= $langs->trans("TasksAssignedTo").': ';
 		$moreforfilter .= $form->select_dolusers($tmpuser->id > 0 ? $tmpuser->id : '', 'search_user_id', 1);
 		$moreforfilter .= '</div>';
 	}
-	if ($moreforfilter)
-	{
+	if ($moreforfilter) {
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
 		print '</div>';
@@ -744,8 +778,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	// progress resume not searchable
 	print '<td class="liste_titre right"></td>';
 
-	if ($object->usage_bill_time)
-	{
+	if ($object->usage_bill_time) {
 		if (!empty($arrayfields['t.tobill']['checked'])) {
 			print '<td class="liste_titre right">';
 			print '</td>';
@@ -757,7 +790,9 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		}
 	}
 
-	if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) print '<td class="liste_titre"></td>';
+	if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
+		print '<td class="liste_titre"></td>';
+	}
 
 	$extrafieldsobjectkey = $taskstatic->table_element;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
@@ -771,22 +806,47 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	print '<tr class="liste_titre nodrag nodrop">';
 	// print '<td>'.$langs->trans("Project").'</td>';
-	if (!empty($arrayfields['t.ref']['checked'])) print_liste_field_titre($arrayfields['t.ref']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '');
-	if (!empty($arrayfields['t.label']['checked'])) print_liste_field_titre($arrayfields['t.label']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, '');
-	if (!empty($arrayfields['t.description']['checked'])) print_liste_field_titre($arrayfields['t.description']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, '');
-	if (!empty($arrayfields['t.dateo']['checked'])) print_liste_field_titre($arrayfields['t.dateo']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center ');
-	if (!empty($arrayfields['t.datee']['checked'])) print_liste_field_titre($arrayfields['t.datee']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center ');
-	if (!empty($arrayfields['t.planned_workload']['checked'])) print_liste_field_titre($arrayfields['t.planned_workload']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
-	if (!empty($arrayfields['t.duration_effective']['checked'])) print_liste_field_titre($arrayfields['t.duration_effective']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
-	if (!empty($arrayfields['t.progress_calculated']['checked'])) print_liste_field_titre($arrayfields['t.progress_calculated']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
-	if (!empty($arrayfields['t.progress']['checked']))  print_liste_field_titre($arrayfields['t.progress']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
-	if (!empty($arrayfields['t.progress_summary']['checked'])) print_liste_field_titre($arrayfields['t.progress_summary']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center ');
-	if ($object->usage_bill_time)
-	{
-		if (!empty($arrayfields['t.tobill']['checked']))  print_liste_field_titre($arrayfields['t.tobill']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
-		if (!empty($arrayfields['t.billed']['checked'])) print_liste_field_titre($arrayfields['t.billed']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
+	if (!empty($arrayfields['t.ref']['checked'])) {
+		print_liste_field_titre($arrayfields['t.ref']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '');
 	}
-	if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) print_liste_field_titre("TaskRessourceLinks", $_SERVER["PHP_SELF"], '', '', $param, $sortfield, $sortorder);
+	if (!empty($arrayfields['t.label']['checked'])) {
+		print_liste_field_titre($arrayfields['t.label']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, '');
+	}
+	if (!empty($arrayfields['t.description']['checked'])) {
+		print_liste_field_titre($arrayfields['t.description']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, '');
+	}
+	if (!empty($arrayfields['t.dateo']['checked'])) {
+		print_liste_field_titre($arrayfields['t.dateo']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center ');
+	}
+	if (!empty($arrayfields['t.datee']['checked'])) {
+		print_liste_field_titre($arrayfields['t.datee']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center ');
+	}
+	if (!empty($arrayfields['t.planned_workload']['checked'])) {
+		print_liste_field_titre($arrayfields['t.planned_workload']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
+	}
+	if (!empty($arrayfields['t.duration_effective']['checked'])) {
+		print_liste_field_titre($arrayfields['t.duration_effective']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
+	}
+	if (!empty($arrayfields['t.progress_calculated']['checked'])) {
+		print_liste_field_titre($arrayfields['t.progress_calculated']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
+	}
+	if (!empty($arrayfields['t.progress']['checked'])) {
+		print_liste_field_titre($arrayfields['t.progress']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
+	}
+	if (!empty($arrayfields['t.progress_summary']['checked'])) {
+		print_liste_field_titre($arrayfields['t.progress_summary']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center ');
+	}
+	if ($object->usage_bill_time) {
+		if (!empty($arrayfields['t.tobill']['checked'])) {
+			print_liste_field_titre($arrayfields['t.tobill']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
+		}
+		if (!empty($arrayfields['t.billed']['checked'])) {
+			print_liste_field_titre($arrayfields['t.billed']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
+		}
+	}
+	if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
+		print_liste_field_titre("TaskRessourceLinks", $_SERVER["PHP_SELF"], '', '', $param, $sortfield, $sortorder);
+	}
 	// Extra fields
 	$disablesortlink = 1;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -797,14 +857,15 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print "</tr>\n";
 
-	if (count($tasksarray) > 0)
-	{
+	if (count($tasksarray) > 0) {
 		// Show all lines in taskarray (recursive function to go down on tree)
 		$j = 0; $level = 0;
 		$nboftaskshown = projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $object->id, 1, $object->id, $filterprogresscalc, ($object->usage_bill_time ? 1 : 0), $arrayfields);
 	} else {
 		$colspan = 10;
-		if ($object->usage_bill_time) $colspan += 2;
+		if ($object->usage_bill_time) {
+			$colspan += 2;
+		}
 		print '<tr class="oddeven nobottom"><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoTasks").'</span></td></tr>';
 	}
 
@@ -816,18 +877,14 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// Test if database is clean. If not we clean it.
 	//print 'mode='.$_REQUEST["mode"].' $nboftaskshown='.$nboftaskshown.' count($tasksarray)='.count($tasksarray).' count($tasksrole)='.count($tasksrole).'<br>';
-	if (!empty($user->rights->projet->all->lire))	// We make test to clean only if user has permission to see all (test may report false positive otherwise)
-	{
-		if ($search_user_id == $user->id)
-		{
-			if ($nboftaskshown < count($tasksrole))
-			{
+	if (!empty($user->rights->projet->all->lire)) {	// We make test to clean only if user has permission to see all (test may report false positive otherwise)
+		if ($search_user_id == $user->id) {
+			if ($nboftaskshown < count($tasksrole)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 				cleanCorruptedTree($db, 'projet_task', 'fk_task_parent');
 			}
 		} else {
-			if ($nboftaskshown < count($tasksarray) && !GETPOST('search_user_id', 'int'))
-			{
+			if ($nboftaskshown < count($tasksarray) && !GETPOST('search_user_id', 'int')) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 				cleanCorruptedTree($db, 'projet_task', 'fk_task_parent');
 			}

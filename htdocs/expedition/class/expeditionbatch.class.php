@@ -75,10 +75,8 @@ class ExpeditionLineBatch extends CommonObject
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->sellby = $this->db->jdate($obj->sellby);
@@ -126,16 +124,16 @@ class ExpeditionLineBatch extends CommonObject
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.self::$_table_element);
 			$this->fk_expeditiondet = $id_line_expdet;
 			return $this->id;
 		} else {
-			foreach ($this->errors as $errmsg)
-			{
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -159,8 +157,7 @@ class ExpeditionLineBatch extends CommonObject
 		$sql .= " WHERE fk_expeditiondet in (SELECT rowid FROM ".MAIN_DB_PREFIX."expeditiondet WHERE fk_expedition=".$id_expedition.")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
-		if ($db->query($sql))
-		{
+		if ($db->query($sql)) {
 			return 1;
 		} else {
 			return -1;
@@ -185,27 +182,23 @@ class ExpeditionLineBatch extends CommonObject
 		$sql .= " eb.batch,";
 		$sql .= " eb.qty,";
 		$sql .= " eb.fk_origin_stock";
-		if ($fk_product > 0)
-		{
+		if ($fk_product > 0) {
 			$sql .= ", pl.sellby";
 			$sql .= ", pl.eatby";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX.self::$_table_element." as eb";
-		if ($fk_product > 0)
-		{
+		if ($fk_product > 0) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON pl.batch = eb.batch AND pl.fk_product = ".$fk_product;
 		}
 		$sql .= " WHERE fk_expeditiondet=".(int) $id_line_expdet;
 
 		dol_syslog(__METHOD__."", LOG_DEBUG);
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $db->num_rows($resql);
 			$i = 0;
 			$ret = array();
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$tmp = new self($db);
 
 				$obj = $db->fetch_object($resql);

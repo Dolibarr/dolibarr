@@ -196,7 +196,7 @@ class Categorie extends CommonObject
 	/**
 	 * @var string Category label
 	 */
-   	public $label;
+	public $label;
 
 	/**
 	 * @var string description
@@ -311,8 +311,12 @@ class Categorie extends CommonObject
 		global $conf;
 
 		// Check parameters
-		if (empty($id) && empty($label) && empty($ref_ext)) return -1;
-		if (!is_numeric($type)) $type = $this->MAP_ID[$type];
+		if (empty($id) && empty($label) && empty($ref_ext)) {
+			return -1;
+		}
+		if (!is_numeric($type)) {
+			$type = $this->MAP_ID[$type];
+		}
 
 		$sql = "SELECT rowid, fk_parent, entity, label, description, color, fk_soc, visible, type, ref_ext";
 		$sql .= ", date_creation, tms, fk_user_creat, fk_user_modif";
@@ -323,7 +327,9 @@ class Categorie extends CommonObject
 			$sql .= " WHERE ref_ext LIKE '".$this->db->escape($ref_ext)."'";
 		} else {
 			$sql .= " WHERE label = '".$this->db->escape($label)."' AND entity IN (".getEntity('category').")";
-			if (!is_null($type)) $sql .= " AND type = ".((int) $type);
+			if (!is_null($type)) {
+				$sql .= " AND type = ".((int) $type);
+			}
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -355,7 +361,9 @@ class Categorie extends CommonObject
 				$this->db->free($resql);
 
 				// multilangs
-				if (!empty($conf->global->MAIN_MULTILANGS)) $this->getMultiLangs();
+				if (!empty($conf->global->MAIN_MULTILANGS)) {
+					$this->getMultiLangs();
+				}
 
 				return 1;
 			} else {
@@ -383,7 +391,9 @@ class Categorie extends CommonObject
 
 		$type = $this->type;
 
-		if (!is_numeric($type)) $type = $this->MAP_ID[$type];
+		if (!is_numeric($type)) {
+			$type = $this->MAP_ID[$type];
+		}
 
 		$error = 0;
 
@@ -395,7 +405,9 @@ class Categorie extends CommonObject
 		$this->color = trim($this->color);
 		$this->import_key = trim($this->import_key);
 		$this->ref_ext = trim($this->ref_ext);
-		if (empty($this->visible)) $this->visible = 0;
+		if (empty($this->visible)) {
+			$this->visible = 0;
+		}
 		$this->fk_parent = ($this->fk_parent != "" ? intval($this->fk_parent) : 0);
 
 		if ($this->already_exists()) {
@@ -459,7 +471,9 @@ class Categorie extends CommonObject
 				if (!$error) {
 					// Call trigger
 					$result = $this->call_trigger('CATEGORY_CREATE', $user);
-					if ($result < 0) { $error++; }
+					if ($result < 0) {
+						$error++;
+					}
 					// End call triggers
 				}
 
@@ -538,7 +552,9 @@ class Categorie extends CommonObject
 			if (!$error) {
 				// Call trigger
 				$result = $this->call_trigger('CATEGORY_MODIFY', $user);
-				if ($result < 0) { $error++; $this->db->rollback(); return -1; }
+				if ($result < 0) {
+					$error++; $this->db->rollback(); return -1;
+				}
 				// End call triggers
 			}
 
@@ -575,7 +591,9 @@ class Categorie extends CommonObject
 		if (!$error && !$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('CATEGORY_DELETE', $user);
-			if ($result < 0) $error++;
+			if ($result < 0) {
+				$error++;
+			}
 			// End call triggers
 		}
 
@@ -645,9 +663,13 @@ class Categorie extends CommonObject
 
 		$error = 0;
 
-		if ($this->id == -1) return -2;
+		if ($this->id == -1) {
+			return -2;
+		}
 
-		if (empty($type)) $type = $obj->element;
+		if (empty($type)) {
+			$type = $obj->element;
+		}
 
 		$this->db->begin();
 
@@ -695,7 +717,9 @@ class Categorie extends CommonObject
 			// Call trigger
 			$this->context = array('linkto'=>$obj); // Save object we want to link category to into category instance to provide information to trigger
 			$result = $this->call_trigger('CATEGORY_LINK', $user);
-			if ($result < 0) { $error++; }
+			if ($result < 0) {
+				$error++;
+			}
 			// End call triggers
 
 			if (!$error) {
@@ -753,7 +777,9 @@ class Categorie extends CommonObject
 			// Call trigger
 			$this->context = array('unlinkoff'=>$obj); // Save object we want to link category to into category instance to provide information to trigger
 			$result = $this->call_trigger('CATEGORY_UNLINK', $user);
-			if ($result < 0) { $error++; }
+			if ($result < 0) {
+				$error++;
+			}
 			// End call triggers
 
 			if (!$error) {
@@ -801,7 +827,9 @@ class Categorie extends CommonObject
 		if (($type == 'customer' || $type == 'supplier') && $user->socid > 0) {
 			$sql .= " AND o.rowid = ".$user->socid;
 		}
-		if ($limit > 0 || $offset > 0)  $sql .= $this->db->plimit($limit + 1, $offset);
+		if ($limit > 0 || $offset > 0) {
+			$sql .= $this->db->plimit($limit + 1, $offset);
+		}
 		$sql .= $this->db->order($sortfield, $sortorder);
 
 		dol_syslog(get_class($this)."::getObjectsInCateg", LOG_DEBUG);
@@ -1033,7 +1061,9 @@ class Categorie extends CommonObject
 		// phpcs:enable
 		global $conf, $langs;
 
-		if (!is_numeric($type)) $type = $this->MAP_ID[$type];
+		if (!is_numeric($type)) {
+			$type = $this->MAP_ID[$type];
+		}
 		if (is_null($type)) {
 			$this->error = 'BadValueForParameterType';
 			return -1;
@@ -1059,9 +1089,13 @@ class Categorie extends CommonObject
 
 		// Init $this->cats array
 		$sql = "SELECT DISTINCT c.rowid, c.label, c.description, c.color, c.fk_parent, c.visible"; // Distinct reduce pb with old tables with duplicates
-		if (!empty($conf->global->MAIN_MULTILANGS)) $sql .= ", t.label as label_trans, t.description as description_trans";
+		if (!empty($conf->global->MAIN_MULTILANGS)) {
+			$sql .= ", t.label as label_trans, t.description as description_trans";
+		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as c";
-		if (!empty($conf->global->MAIN_MULTILANGS)) $sql .= " LEFT  JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang='".$this->db->escape($current_lang)."'";
+		if (!empty($conf->global->MAIN_MULTILANGS)) {
+			$sql .= " LEFT  JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang='".$this->db->escape($current_lang)."'";
+		}
 		$sql .= " WHERE c.entity IN (".getEntity('category').")";
 		$sql .= " AND c.type = ".(int) $type;
 
@@ -1198,14 +1232,18 @@ class Categorie extends CommonObject
 	public function get_all_categories($type = null, $parent = false)
 	{
 		// phpcs:enable
-		if (!is_numeric($type)) $type = $this->MAP_ID[$type];
+		if (!is_numeric($type)) {
+			$type = $this->MAP_ID[$type];
+		}
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
 		$sql .= " WHERE entity IN (".getEntity('category').")";
-		if (!is_null($type))
+		if (!is_null($type)) {
 			$sql .= " AND type = ".(int) $type;
-		if ($parent)
+		}
+		if ($parent) {
 			$sql .= " AND fk_parent = 0";
+		}
 
 		$res = $this->db->query($sql);
 		if ($res) {
@@ -1246,7 +1284,9 @@ class Categorie extends CommonObject
 		// phpcs:enable
 		$type = $this->type;
 
-		if (!is_numeric($type)) $type = $this->MAP_ID[$type];
+		if (!is_numeric($type)) {
+			$type = $this->MAP_ID[$type];
+		}
 
 		/* We have to select any rowid from llx_categorie which category's mother and label
 		 * are equals to those of the calling category
@@ -1312,7 +1352,9 @@ class Categorie extends CommonObject
 						// Check contrast with background and correct text color
 						$forced_color = 'categtextwhite';
 						if ($cat->color) {
-							if (colorIsLight($cat->color)) $forced_color = 'categtextblack';
+							if (colorIsLight($cat->color)) {
+								$forced_color = 'categtextblack';
+							}
 						}
 					}
 				}
@@ -1393,8 +1435,9 @@ class Categorie extends CommonObject
 			}
 		}
 
-		if (count($ways) == 0)
+		if (count($ways) == 0) {
 			$ways[0][0] = $this;
+		}
 
 		return $ways;
 	}
@@ -1413,7 +1456,9 @@ class Categorie extends CommonObject
 	{
 		$cats = array();
 
-		if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type];
+		if (is_numeric($type)) {
+			$type = Categorie::$MAP_ID_TO_CODE[$type];
+		}
 
 		if ($type === Categorie::TYPE_BANK_LINE) {   // TODO Remove this with standard category code after migration of llx_bank_categ into llx_categorie
 			// Load bank categories
@@ -1503,11 +1548,14 @@ class Categorie extends CommonObject
 		$sql .= " WHERE type = ".$this->MAP_ID[$type];
 		$sql .= " AND entity IN (".getEntity('category').")";
 		if ($nom) {
-			if (!$exact)
+			if (!$exact) {
 				$nom = '%'.str_replace('*', '%', $nom).'%';
-			if (!$case)
+			}
+			if (!$case) {
 				$sql .= " AND label LIKE '".$this->db->escape($nom)."'";
-			else $sql .= " AND label LIKE BINARY '".$this->db->escape($nom)."'";
+			} else {
+				$sql .= " AND label LIKE BINARY '".$this->db->escape($nom)."'";
+			}
 		}
 		if ($id) {
 			$sql .= " AND rowid = '".$id."'";
@@ -1548,7 +1596,9 @@ class Categorie extends CommonObject
 		// Check contrast with background and correct text color
 		$forced_color = 'categtextwhite';
 		if ($this->color) {
-			if (colorIsLight($this->color)) $forced_color = 'categtextblack';
+			if (colorIsLight($this->color)) {
+				$forced_color = 'categtextblack';
+			}
 		}
 
 		$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.$moreparam.'&backtopage='.urlencode($_SERVER['PHP_SELF'].($moreparam ? '?'.$moreparam : '')).'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip '.$forced_color.'">';
@@ -1557,9 +1607,15 @@ class Categorie extends CommonObject
 		$picto = 'category';
 
 
-		if ($withpicto) $result .= ($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
-		if ($withpicto && $withpicto != 2) $result .= ' ';
-		if ($withpicto != 2) $result .= $link.dol_trunc(($this->ref ? $this->ref : $this->label), $maxlength).$linkend;
+		if ($withpicto) {
+			$result .= ($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+		}
+		if ($withpicto && $withpicto != 2) {
+			$result .= ' ';
+		}
+		if ($withpicto != 2) {
+			$result .= $link.dol_trunc(($this->ref ? $this->ref : $this->label), $maxlength).$linkend;
+		}
 		return $result;
 	}
 
@@ -1647,13 +1703,18 @@ class Categorie extends CommonObject
 						// Objet
 						$obj = array();
 						$obj['photo'] = $photo;
-						if ($photo_vignette && is_file($dirthumb.$photo_vignette)) $obj['photo_vignette'] = 'thumbs/'.$photo_vignette;
-						else $obj['photo_vignette'] = "";
+						if ($photo_vignette && is_file($dirthumb.$photo_vignette)) {
+							$obj['photo_vignette'] = 'thumbs/'.$photo_vignette;
+						} else {
+							$obj['photo_vignette'] = "";
+						}
 
 						$tabobj[$nbphoto - 1] = $obj;
 
 						// On continue ou on arrete de boucler
-						if ($nbmax && $nbphoto >= $nbmax) break;
+						if ($nbmax && $nbphoto >= $nbmax) {
+							break;
+						}
 					}
 				}
 
@@ -1758,8 +1819,9 @@ class Categorie extends CommonObject
 				}
 
 				// on ne sauvegarde pas des champs vides
-				if ($this->multilangs["$key"]["label"] || $this->multilangs["$key"]["description"] || $this->multilangs["$key"]["note"])
+				if ($this->multilangs["$key"]["label"] || $this->multilangs["$key"]["description"] || $this->multilangs["$key"]["note"]) {
 					dol_syslog(get_class($this).'::setMultiLangs', LOG_DEBUG);
+				}
 				if (!$this->db->query($sql2)) {
 					$this->error = $this->db->lasterror();
 					return -1;
@@ -1870,7 +1932,9 @@ class Categorie extends CommonObject
 	 */
 	public static function getFilterJoinQuery($type, $rowIdName)
 	{
-		if ($type == 'bank_account') $type = 'account';
+		if ($type == 'bank_account') {
+			$type = 'account';
+		}
 
 		return " LEFT JOIN ".MAIN_DB_PREFIX."categorie_".$type." as cp ON ".$rowIdName." = cp.fk_".$type;
 	}
@@ -1885,7 +1949,9 @@ class Categorie extends CommonObject
 	 */
 	public static function getFilterSelectQuery($type, $rowIdName, $searchList)
 	{
-		if ($type == 'bank_account') $type = 'account';
+		if ($type == 'bank_account') {
+			$type = 'account';
+		}
 
 		if (empty($searchList) && !is_array($searchList)) {
 			return "";

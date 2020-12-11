@@ -126,11 +126,9 @@ abstract class DoliDB implements Database
 	 */
 	public function begin()
 	{
-		if (!$this->transaction_opened)
-		{
+		if (!$this->transaction_opened) {
 			$ret = $this->query("BEGIN");
-			if ($ret)
-			{
+			if ($ret) {
 				$this->transaction_opened++;
 				dol_syslog("BEGIN Transaction", LOG_DEBUG);
 				dol_syslog('', 0, 1);
@@ -152,11 +150,9 @@ abstract class DoliDB implements Database
 	public function commit($log = '')
 	{
 		dol_syslog('', 0, -1);
-		if ($this->transaction_opened <= 1)
-		{
+		if ($this->transaction_opened <= 1) {
 			$ret = $this->query("COMMIT");
-			if ($ret)
-			{
+			if ($ret) {
 				$this->transaction_opened = 0;
 				dol_syslog("COMMIT Transaction".($log ? ' '.$log : ''), LOG_DEBUG);
 				return 1;
@@ -178,8 +174,7 @@ abstract class DoliDB implements Database
 	public function rollback($log = '')
 	{
 		dol_syslog('', 0, -1);
-		if ($this->transaction_opened <= 1)
-		{
+		if ($this->transaction_opened <= 1) {
 			$ret = $this->query("ROLLBACK");
 			$this->transaction_opened = 0;
 			dol_syslog("ROLLBACK Transaction".($log ? ' '.$log : ''), LOG_DEBUG);
@@ -200,10 +195,17 @@ abstract class DoliDB implements Database
 	public function plimit($limit = 0, $offset = 0)
 	{
 		global $conf;
-		if (empty($limit)) return "";
-		if ($limit < 0) $limit = $conf->liste_limit;
-		if ($offset > 0) return " LIMIT $offset,$limit ";
-		else return " LIMIT $limit ";
+		if (empty($limit)) {
+			return "";
+		}
+		if ($limit < 0) {
+			$limit = $conf->liste_limit;
+		}
+		if ($offset > 0) {
+			return " LIMIT $offset,$limit ";
+		} else {
+			return " LIMIT $limit ";
+		}
 	}
 
 	/**
@@ -235,16 +237,18 @@ abstract class DoliDB implements Database
 	 */
 	public function order($sortfield = null, $sortorder = null)
 	{
-		if (!empty($sortfield))
-		{
+		if (!empty($sortfield)) {
 			$oldsortorder = '';
 			$return = '';
 			$fields = explode(',', $sortfield);
 			$orders = explode(',', $sortorder);
 			$i = 0;
 			foreach ($fields as $val) {
-				if (!$return) $return .= ' ORDER BY ';
-				else $return .= ', ';
+				if (!$return) {
+					$return .= ' ORDER BY ';
+				} else {
+					$return .= ', ';
+				}
 
 				$return .= preg_replace('/[^0-9a-z_\.]/i', '', $val); // Add field
 
@@ -291,7 +295,9 @@ abstract class DoliDB implements Database
 	public function jdate($string, $gm = false)
 	{
 		// TODO GMT must set param gm to true by default
-		if ($string == 0 || $string == "0000-00-00 00:00:00") return '';
+		if ($string == 0 || $string == "0000-00-00 00:00:00") {
+			return '';
+		}
 		$string = preg_replace('/([^0-9])/i', '', $string);
 		$tmp = $string.'000000';
 		$date = dol_mktime((int) substr($tmp, 8, 2), (int) substr($tmp, 10, 2), (int) substr($tmp, 12, 2), (int) substr($tmp, 4, 2), (int) substr($tmp, 6, 2), (int) substr($tmp, 0, 4), $gm);
@@ -320,8 +326,7 @@ abstract class DoliDB implements Database
 		$sql .= ' LIMIT 1;';
 
 		$res = $this->query($sql);
-		if ($res)
-		{
+		if ($res) {
 			return $this->fetch_object($res);
 		}
 
@@ -338,8 +343,7 @@ abstract class DoliDB implements Database
 	public function getRows($sql)
 	{
 		$res = $this->query($sql);
-		if ($res)
-		{
+		if ($res) {
 			$results = array();
 			if ($this->num_rows($res) > 0) {
 				while ($obj = $this->fetch_object($res)) {

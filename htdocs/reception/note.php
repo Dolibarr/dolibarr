@@ -48,30 +48,28 @@ $action = GETPOST('action', 'aZ09');
 
 // Security check
 $socid = '';
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, $origin, $origin_id);
 
 $object = new Reception($db);
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 	$object->fetch_thirdparty();
 
-	if (!empty($object->origin))
-	{
+	if (!empty($object->origin)) {
 		$typeobject = $object->origin;
 		$origin = $object->origin;
 		$object->fetch_origin();
 	}
 
 	// Linked documents
-	if ($typeobject == 'commande' && $object->$typeobject->id && !empty($conf->commande->enabled))
-	{
+	if ($typeobject == 'commande' && $object->$typeobject->id && !empty($conf->commande->enabled)) {
 		$objectsrc = new Commande($db);
 		$objectsrc->fetch($object->$typeobject->id);
 	}
-	if ($typeobject == 'propal' && $object->$typeobject->id && !empty($conf->propal->enabled))
-	{
+	if ($typeobject == 'propal' && $object->$typeobject->id && !empty($conf->propal->enabled)) {
 		$objectsrc = new Propal($db);
 		$objectsrc->fetch($object->$typeobject->id);
 	}
@@ -95,8 +93,7 @@ llxHeader('', 'Reception');
 
 $form = new Form($db);
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$head = reception_prepare_head($object);
 	print dol_get_fiche_head($head, 'note', $langs->trans("Reception"), -1, 'dollyrevert');
 

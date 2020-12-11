@@ -54,8 +54,7 @@ print load_fiche_titre($langs->trans("SendingsArea"), '', 'dolly');
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
-{
+if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is useless due to the global search combo
 	print '<form method="post" action="list.php">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<div class="div-table-responsive-no-min">';
@@ -79,19 +78,19 @@ $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'shipping'";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
-if (!$user->rights->societe->client->voir && !$socid)
-{
+if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
 	$sql .= $clause." sc.fk_user = ".$user->id;
 	$clause = " AND ";
 }
 $sql .= $clause." e.fk_statut = ".Expedition::STATUS_DRAFT;
 $sql .= " AND e.entity IN (".getEntity('expedition').")";
-if ($socid) $sql .= " AND c.fk_soc = ".$socid;
+if ($socid) {
+	$sql .= " AND c.fk_soc = ".$socid;
+}
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 
 	print '<div class="div-table-responsive-no-min">';
@@ -105,11 +104,9 @@ if ($resql)
 	print '</th>';
 	print '</tr>';
 
-	if ($num)
-	{
+	if ($num) {
 		$i = 0;
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
 			$shipment->id = $obj->rowid;
@@ -123,7 +120,9 @@ if ($resql)
 			print '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.$obj->name.'</a>';
 			print '</td>';
 			print '<td>';
-			if ($obj->commande_id) print '<a href="'.DOL_URL_ROOT.'/commande/card.php?id='.$obj->commande_id.'">'.$obj->commande_ref.'</a>';
+			if ($obj->commande_id) {
+				print '<a href="'.DOL_URL_ROOT.'/commande/card.php?id='.$obj->commande_id.'">'.$obj->commande_ref.'</a>';
+			}
 			print '</td></tr>';
 			$i++;
 		}
@@ -151,17 +150,22 @@ $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'shipping' AND el.sourcetype IN ('commande')";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid AND el.sourcetype IN ('commande') AND el.targettype = 'shipping'";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
+}
 $sql .= " WHERE e.entity IN (".getEntity('expedition').")";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND sc.fk_user = ".$user->id;
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= " AND sc.fk_user = ".$user->id;
+}
 $sql .= " AND e.fk_statut = ".Expedition::STATUS_VALIDATED;
-if ($socid) $sql .= " AND c.fk_soc = ".$socid;
+if ($socid) {
+	$sql .= " AND c.fk_soc = ".$socid;
+}
 $sql .= " ORDER BY e.date_delivery DESC";
 $sql .= $db->plimit($max, 0);
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 
 	print '<div class="div-table-responsive-no-min">';
@@ -175,11 +179,9 @@ if ($resql)
 	print '</th>';
 	print '</tr>';
 
-	if ($num)
-	{
+	if ($num) {
 		$i = 0;
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
 			$shipment->id = $obj->rowid;
@@ -191,8 +193,7 @@ if ($resql)
 			print '</td>';
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.$obj->name.'</a></td>';
 			print '<td>';
-			if ($obj->commande_id > 0)
-			{
+			if ($obj->commande_id > 0) {
 				$orderstatic->id = $obj->commande_id;
 				$orderstatic->ref = $obj->commande_ref;
 				print $orderstatic->getNomUrl(1);
@@ -209,7 +210,9 @@ if ($resql)
 	}
 	print "</table></div><br>";
 	$db->free($resql);
-} else dol_print_error($db);
+} else {
+	dol_print_error($db);
+}
 
 /*
  * Open orders
@@ -217,17 +220,22 @@ if ($resql)
 $sql = "SELECT c.rowid, c.ref, c.ref_client as ref_customer, c.fk_statut as status, c.facture as billed, s.nom as name, s.rowid as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."commande as c,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+}
 $sql .= " WHERE c.fk_soc = s.rowid";
 $sql .= " AND c.entity IN (".getEntity('order').")";
 $sql .= " AND c.fk_statut IN (".Commande::STATUS_VALIDATED.", ".Commande::STATUS_ACCEPTED.")";
-if ($socid > 0) $sql .= " AND c.fk_soc = ".$socid;
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+if ($socid > 0) {
+	$sql .= " AND c.fk_soc = ".$socid;
+}
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+}
 $sql .= " ORDER BY c.rowid ASC";
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$langs->load("orders");
 
 	$num = $db->num_rows($resql);
@@ -243,11 +251,9 @@ if ($resql)
 	print '</th>';
 	print '</tr>';
 
-	if ($num)
-	{
+	if ($num) {
 		$i = 0;
-		while ($i < $num && $i < 10)
-		{
+		while ($i < $num && $i < 10) {
 			$obj = $db->fetch_object($resql);
 
 			$orderstatic->id = $obj->rowid;
@@ -284,7 +290,9 @@ if ($resql)
 	}
 
 	print "</table></div><br>";
-} else dol_print_error($db);
+} else {
+	dol_print_error($db);
+}
 
 
 print '</div></div></div>';

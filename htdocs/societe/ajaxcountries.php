@@ -22,12 +22,24 @@
  *       \brief      File to return Ajax response on country request
  */
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1');
+}
 
 require '../main.inc.php';
 
@@ -50,8 +62,7 @@ print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"])
 dol_syslog(join(',', $_POST));
 
 // Generate list of countries
-if (!empty($country))
-{
+if (!empty($country)) {
 	global $langs;
 	$langs->load("dict");
 
@@ -61,11 +72,9 @@ if (!empty($country))
 	$sql .= " ORDER BY label ASC";
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		print '<ul>';
-		while ($country = $db->fetch_object($resql))
-		{
+		while ($country = $db->fetch_object($resql)) {
 			print '<li>';
 			// Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
 			print ($country->code && $langs->trans("Country".$country->code) != "Country".$country->code ? $langs->trans("Country".$country->code) : ($country->label != '-' ? $country->label : '&nbsp;'));

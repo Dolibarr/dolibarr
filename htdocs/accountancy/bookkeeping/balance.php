@@ -49,7 +49,9 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
+if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -75,8 +77,7 @@ $formaccounting = new FormAccounting($db);
 $formother = new FormOther($db);
 $form = new Form($db);
 
-if (empty($search_date_start) && !GETPOSTISSET('formfilteraction'))
-{
+if (empty($search_date_start) && !GETPOSTISSET('formfilteraction')) {
 	$sql = "SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
 	$sql .= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."'";
 	$sql .= $db->plimit(1);
@@ -90,8 +91,7 @@ if (empty($search_date_start) && !GETPOSTISSET('formfilteraction'))
 		$year_start = dol_print_date(dol_now(), '%Y');
 		$year_end = $year_start + 1;
 		$month_end = $month_start - 1;
-		if ($month_end < 1)
-		{
+		if ($month_end < 1) {
 			$month_end = 12;
 			$year_end--;
 		}
@@ -99,13 +99,21 @@ if (empty($search_date_start) && !GETPOSTISSET('formfilteraction'))
 		$search_date_end = dol_get_last_day($year_end, $month_end);
 	}
 }
-if ($sortorder == "") $sortorder = "ASC";
-if ($sortfield == "") $sortfield = "t.numero_compte";
+if ($sortorder == "") {
+	$sortorder = "ASC";
+}
+if ($sortfield == "") {
+	$sortfield = "t.numero_compte";
+}
 
 
 $param = '';
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
-if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+	$param .= '&contextpage='.urlencode($contextpage);
+}
+if ($limit > 0 && $limit != $conf->liste_limit) {
+	$param .= '&limit='.urlencode($limit);
+}
 
 $filter = array();
 if (!empty($search_date_start)) {
@@ -129,8 +137,7 @@ if (!empty($search_accountancy_code_end)) {
  * Action
  */
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
-{
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$show_subgroup = '';
 	$search_date_start = '';
 	$search_date_end = '';
@@ -144,8 +151,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
  * View
  */
 
-if ($action == 'export_csv')
-{
+if ($action == 'export_csv') {
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
 	$filename = 'balance';
@@ -157,8 +163,7 @@ if ($action == 'export_csv')
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
-	foreach ($object->lines as $line)
-	{
+	foreach ($object->lines as $line) {
 		print length_accountg($line->numero_compte).$sep;
 		print $object->get_compte_desc($line->numero_compte).$sep;
 		print price($line->debit).$sep;
@@ -176,12 +181,10 @@ $title_page = $langs->trans("AccountBalance");
 llxHeader('', $title_page);
 
 
-if ($action != 'export_csv')
-{
+if ($action != 'export_csv') {
 	// List
 	$nbtotalofrecords = '';
-	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-	{
+	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 		$nbtotalofrecords = $object->fetchAllBalance($sortorder, $sortfield, 0, 0, $filter);
 		if ($nbtotalofrecords < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -194,7 +197,9 @@ if ($action != 'export_csv')
 	}
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
-	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	if ($optioncss != '') {
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" id="action" value="list">';
@@ -292,8 +297,7 @@ if ($action != 'export_csv')
 		$opening_balances["'".$arr['numero_compte']."'"] = $arr['opening_balance'];
 	}
 
-	foreach ($object->lines as $line)
-	{
+	foreach ($object->lines as $line) {
 		$accountingaccountstatic->fetch(null, $line->numero_compte, true);
 		if (!empty($accountingaccountstatic->account_number)) {
 			$accounting_account = $accountingaccountstatic->getNomUrl(0, 1);
@@ -316,8 +320,7 @@ if ($action != 'export_csv')
 		}
 		print '<tr class="oddeven">';
 
-		if (!empty($show_subgroup))
-		{
+		if (!empty($show_subgroup)) {
 			// Show accounting account
 			if (empty($displayed_account) || $root_account_number != $displayed_account) {
 				// Show subtotal per accounting account
@@ -358,8 +361,7 @@ if ($action != 'export_csv')
 		$sous_total_opening_balance += $opening_balance;
 	}
 
-	if (!empty($show_subgroup))
-	{
+	if (!empty($show_subgroup)) {
 		print '<tr class="liste_total"><td class="right" colspan="2">'.$langs->trans("SubTotal").':</td><td class="nowrap right">'.price($sous_total_debit).'</td><td class="nowrap right">'.price($sous_total_credit).'</td><td class="nowrap right">'.price(price2num($sous_total_opening_balance + $sous_total_debit - $sous_total_credit, 'MT')).'</td>';
 		print "<td></td>\n";
 		print '</tr>';

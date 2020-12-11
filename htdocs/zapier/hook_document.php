@@ -50,12 +50,18 @@ $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "ASC";
-if (!$sortfield) $sortfield = "name";
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
+if (!$sortfield) {
+	$sortfield = "name";
+}
 //if (! $sortfield) $sortfield="position_name";
 
 // Initialize technical objects
@@ -71,7 +77,9 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
 //if ($id > 0 || ! empty($ref)) $upload_dir = $conf->sellyoursaas->multidir_output[$object->entity] . "/myobject/" . dol_sanitizeFileName($object->id);
-if ($id > 0 || !empty($ref)) $upload_dir = $conf->sellyoursaas->multidir_output[$object->entity]."/myobject/".dol_sanitizeFileName($object->ref);
+if ($id > 0 || !empty($ref)) {
+	$upload_dir = $conf->sellyoursaas->multidir_output[$object->entity]."/myobject/".dol_sanitizeFileName($object->ref);
+}
 
 
 /*

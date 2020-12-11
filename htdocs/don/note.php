@@ -29,8 +29,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-if (!empty($conf->projet->enabled))
-{
+if (!empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
@@ -45,7 +44,9 @@ $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
 // Security check
 $socid = 0;
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'don', $id, '');
 
 $object = new Don($db);
@@ -59,8 +60,7 @@ $permissionnote = $user->rights->don->creer; // Used by the include of actions_s
  */
 include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
 
-if ($action == 'classin' && $user->rights->don->creer)
-{
+if ($action == 'classin' && $user->rights->don->creer) {
 	$object->fetch($id);
 	$object->setProject($projectid);
 }
@@ -74,10 +74,11 @@ $helpurl = "";
 llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
-if (!empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
+if (!empty($conf->projet->enabled)) {
+	$formproject = new FormProjets($db);
+}
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$object = new Don($db);
 	$object->fetch($id, $ref);
 
@@ -89,12 +90,10 @@ if ($id > 0 || !empty($ref))
 
 	$morehtmlref = '<div class="refidno">';
 	// Project
-	if (!empty($conf->projet->enabled))
-	{
+	if (!empty($conf->projet->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project').' ';
-		if ($user->rights->don->creer)
-		{
+		if ($user->rights->don->creer) {
 			if ($action != 'classify') {
 				// $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			}

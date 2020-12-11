@@ -41,8 +41,7 @@ if ($object->fetch($id) < 1) {
  * Actions
  */
 
-if ($cancel)
-{
+if ($cancel) {
 	$action = '';
 	header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$object->id);
 	exit();
@@ -56,8 +55,7 @@ if ($cancel)
  * View
  */
 
-if ($action == 'add')
-{
+if ($action == 'add') {
 	if (empty($ref) || empty($value)) {
 		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
 	} else {

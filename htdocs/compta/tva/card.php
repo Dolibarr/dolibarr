@@ -36,7 +36,9 @@ $langs->loadLangs(array('compta', 'banks', 'bills'));
 $id = GETPOST("id", 'int');
 $action = GETPOST("action", "alpha");
 $refund = GETPOST("refund", "int");
-if (empty($refund)) $refund = 0;
+if (empty($refund)) {
+	$refund = 0;
+}
 
 $datev = dol_mktime(12, 0, 0, GETPOST("datevmonth", 'int'), GETPOST("datevday", 'int'), GETPOST("datevyear", 'int'));
 $datep = dol_mktime(12, 0, 0, GETPOST("datepmonth", 'int'), GETPOST("datepday", 'int'), GETPOST("datepyear", 'int'));
@@ -44,7 +46,9 @@ $datep = dol_mktime(12, 0, 0, GETPOST("datepmonth", 'int'), GETPOST("datepday", 
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 $object = new Tva($db);
@@ -57,32 +61,31 @@ $hookmanager->initHooks(array('taxvatcard', 'globalcard'));
  * Actions
  */
 
-if ($_POST["cancel"] == $langs->trans("Cancel") && !$id)
-{
+if ($_POST["cancel"] == $langs->trans("Cancel") && !$id) {
 	header("Location: list.php");
 	exit;
 }
 
-if ($action == 'setlib' && $user->rights->tax->charges->creer)
-{
+if ($action == 'setlib' && $user->rights->tax->charges->creer) {
 	$object->fetch($id);
 	$result = $object->setValueFrom('label', GETPOST('lib', 'alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
-	if ($result < 0)
+	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
+	}
 }
 
-if ($action == 'setdatev' && $user->rights->tax->charges->creer)
-{
+if ($action == 'setdatev' && $user->rights->tax->charges->creer) {
 	$object->fetch($id);
 	$object->datev = $datev;
 	$result = $object->update($user);
-	if ($result < 0) dol_print_error($db, $object->error);
+	if ($result < 0) {
+		dol_print_error($db, $object->error);
+	}
 
 	$action = '';
 }
 
-if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
-{
+if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel")) {
 	$error = 0;
 
 	$object->accountid = GETPOST("accountid", 'int');
@@ -100,34 +103,28 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$object->label = GETPOST("label", 'alpha');
 	$object->note_private = GETPOST("note", 'restricthtml');
 
-	if (empty($object->datep))
-	{
+	if (empty($object->datep)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatePayment")), null, 'errors');
 		$error++;
 	}
-	if (empty($object->datev))
-	{
+	if (empty($object->datev)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PeriodEndDate")), null, 'errors');
 		$error++;
 	}
-	if (empty($object->type_payment) || $object->type_payment < 0)
-	{
+	if (empty($object->type_payment) || $object->type_payment < 0) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PaymentMode")), null, 'errors');
 		$error++;
 	}
-	if (empty($object->amount))
-	{
+	if (empty($object->amount)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
 		$error++;
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$db->begin();
 
 		$ret = $object->addPayment($user);
-		if ($ret > 0)
-		{
+		if ($ret > 0) {
 			$db->commit();
 			header("Location: list.php");
 			exit;
@@ -141,26 +138,23 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$action = 'create';
 }
 
-if ($action == 'delete')
-{
+if ($action == 'delete') {
 	$result = $object->fetch($id);
 
-	if ($object->rappro == 0)
-	{
+	if ($object->rappro == 0) {
 		$db->begin();
 
 		$ret = $object->delete($user);
-		if ($ret > 0)
-		{
-			if ($object->fk_bank)
-			{
+		if ($ret > 0) {
+			if ($object->fk_bank) {
 				$accountline = new AccountLine($db);
 				$result = $accountline->fetch($object->fk_bank);
-				if ($result > 0) $result = $accountline->delete($user); // $result may be 0 if not found (when bank entry was deleted manually and fk_bank point to nothing)
+				if ($result > 0) {
+					$result = $accountline->delete($user); // $result may be 0 if not found (when bank entry was deleted manually and fk_bank point to nothing)
+				}
 			}
 
-			if ($result >= 0)
-			{
+			if ($result >= 0) {
 				$db->commit();
 				header("Location: ".DOL_URL_ROOT.'/compta/tva/list.php');
 				exit;
@@ -191,23 +185,19 @@ $help_url = '';
 llxHeader("", $title, $helpurl);
 
 
-if ($id)
-{
+if ($id) {
 	$result = $object->fetch($id);
-	if ($result <= 0)
-	{
+	if ($result <= 0) {
 		dol_print_error($db);
 		exit;
 	}
 }
 
 // Form to enter VAT
-if ($action == 'create')
-{
+if ($action == 'create') {
 	print load_fiche_titre($langs->trans("VAT").' - '.$langs->trans("New"));
 
-	if (!empty($conf->use_javascript_ajax))
-	{
+	if (!empty($conf->use_javascript_ajax)) {
 		print "\n".'<script type="text/javascript" language="javascript">';
 		print '$(document).ready(function () {
                 $("#radiopayment").click(function() {
@@ -268,8 +258,7 @@ if ($action == 'create')
 	// Amount
 	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount", "alpha").'"></td></tr>';
 
-	if (!empty($conf->banque->enabled))
-	{
+	if (!empty($conf->banque->enabled)) {
 		print '<tr><td class="fieldrequired">'.$langs->trans("BankAccount").'</td><td>';
 		$form->select_comptes(GETPOST("accountid", 'int'), "accountid", 0, "courant=1", 2); // List of bank account available
 		print '</td></tr>';
@@ -305,8 +294,7 @@ if ($action == 'create')
 }
 
 // View mode
-if ($id)
-{
+if ($id) {
 	$head = vat_prepare_head($object);
 
 	print dol_get_fiche_head($head, 'card', $langs->trans("VATPayment"), -1, 'payment');
@@ -344,10 +332,8 @@ if ($id)
 
 	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
 
-	if (!empty($conf->banque->enabled))
-	{
-		if ($object->fk_account > 0)
-		{
+	if (!empty($conf->banque->enabled)) {
+		if ($object->fk_account > 0) {
 			$bankline = new AccountLine($db);
 			$bankline->fetch($object->fk_bank);
 
@@ -375,10 +361,8 @@ if ($id)
 	 * Action buttons
 	 */
 	print "<div class=\"tabsAction\">\n";
-	if ($object->rappro == 0)
-	{
-		if (!empty($user->rights->tax->charges->supprimer))
-		{
+	if ($object->rappro == 0) {
+		if (!empty($user->rights->tax->charges->supprimer)) {
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a></div>';

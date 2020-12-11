@@ -33,8 +33,7 @@ $langs->loadLangs(array('orders', 'companies'));
 $id = GETPOST('id', 'int');
 $_socid = GETPOST("id", 'int');
 // Security check
-if ($user->socid > 0)
-{
+if ($user->socid > 0) {
 	$_socid = $user->socid;
 }
 
@@ -43,8 +42,7 @@ if ($user->socid > 0)
  * Actions
  */
 
-if ($_POST["action"] == 'setpricelevel')
-{
+if ($_POST["action"] == 'setpricelevel') {
 	$soc = new Societe($db);
 	$soc->fetch($id);
 	$soc->set_price_level($_POST["price_level"], $user);
@@ -62,8 +60,7 @@ llxHeader();
 
 $userstatic = new User($db);
 
-if ($_socid > 0)
-{
+if ($_socid > 0) {
 	// We load data of thirdparty
 	$objsoc = new Societe($db);
 	$objsoc->id = $_socid;
@@ -73,8 +70,12 @@ if ($_socid > 0)
 	$head = societe_prepare_head($objsoc);
 
 	$tabchoice = '';
-	if ($objsoc->client == 1) $tabchoice = 'customer';
-	if ($objsoc->client == 2) $tabchoice = 'prospect';
+	if ($objsoc->client == 1) {
+		$tabchoice = 'customer';
+	}
+	if ($objsoc->client == 2) {
+		$tabchoice = 'prospect';
+	}
 
 	print '<form method="POST" action="multiprix.php?id='.$objsoc->id.'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -90,14 +91,16 @@ if ($_socid > 0)
 	print '<tr><td>';
 	print $langs->trans("NewValue").'</td><td>';
 	print '<select name="price_level" class="flat">';
-	for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
-	{
+	for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 		print '<option value="'.$i.'"';
-		if ($i == $objsoc->price_level)
-		print 'selected';
+		if ($i == $objsoc->price_level) {
+			print 'selected';
+		}
 		print '>'.$i;
 		$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
-		if (!empty($conf->global->$keyforlabel)) print ' - '.$langs->trans($conf->global->$keyforlabel);
+		if (!empty($conf->global->$keyforlabel)) {
+			print ' - '.$langs->trans($conf->global->$keyforlabel);
+		}
 		print '</option>';
 	}
 	print '</select>';
@@ -125,8 +128,7 @@ if ($_socid > 0)
 	$sql .= " ORDER BY rc.datec DESC";
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		print '<table class="noborder centpercent">';
 		$tag = !$tag;
 		print '<tr class="liste_titre">';
@@ -137,8 +139,7 @@ if ($_socid > 0)
 		$i = 0;
 		$num = $db->num_rows($resql);
 
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';

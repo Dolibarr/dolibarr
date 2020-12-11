@@ -96,7 +96,9 @@ if ($action == 'update' && $user->rights->categorie->creer) {
 	}
 	if (!$error && empty($object->error)) {
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
-		if ($ret < 0) $error++;
+		if ($ret < 0) {
+			$error++;
+		}
 
 		if (!$error && $object->update($user) > 0) {
 			header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);

@@ -32,19 +32,27 @@ $langs->loadLangs(array('companies', 'users', 'trips'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'deplacement', '', '');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "DESC";
-if (!$sortfield) $sortfield = "d.dated";
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
+if (!$sortfield) {
+	$sortfield = "d.dated";
+}
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 
 
@@ -67,17 +75,17 @@ $totalnb = 0;
 $sql = "SELECT count(d.rowid) as nb, sum(d.km) as km, d.type";
 $sql .= " FROM ".MAIN_DB_PREFIX."deplacement as d";
 $sql .= " WHERE d.entity = ".$conf->entity;
-if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $sql .= ' AND d.fk_user IN ('.join(',', $childids).')';
+if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) {
+	$sql .= ' AND d.fk_user IN ('.join(',', $childids).')';
+}
 $sql .= " GROUP BY d.type";
 $sql .= " ORDER BY d.type";
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
 	$num = $db->num_rows($result);
 	$i = 0;
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$objp = $db->fetch_object($result);
 
 		$somme[$objp->type] = $objp->km;
@@ -104,13 +112,11 @@ print '<td colspan="4">'.$langs->trans("Statistics").'</td>';
 print "</tr>\n";
 
 $listoftype = $tripandexpense_static->listOfTypes();
-foreach ($listoftype as $code => $label)
-{
+foreach ($listoftype as $code => $label) {
 	$dataseries[] = array($label, (isset($nb[$code]) ? (int) $nb[$code] : 0));
 }
 
-if ($conf->use_javascript_ajax)
-{
+if ($conf->use_javascript_ajax) {
 	print '<tr><td align="center" colspan="4">';
 
 	include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
@@ -144,18 +150,25 @@ $langs->load("boxes");
 
 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, d.rowid, d.dated as date, d.tms as dm, d.km, d.fk_statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."deplacement as d, ".MAIN_DB_PREFIX."user as u";
-if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->societe->client->voir && !$user->socid) {
+	$sql .= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+}
 $sql .= " WHERE u.rowid = d.fk_user";
 $sql .= " AND d.entity = ".$conf->entity;
-if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $sql .= ' AND d.fk_user IN ('.join(',', $childids).')';
-if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND d.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-if ($socid) $sql .= " AND d.fk_soc = ".$socid;
+if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) {
+	$sql .= ' AND d.fk_user IN ('.join(',', $childids).')';
+}
+if (!$user->rights->societe->client->voir && !$user->socid) {
+	$sql .= " AND d.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+}
+if ($socid) {
+	$sql .= " AND d.fk_soc = ".$socid;
+}
 $sql .= $db->order("d.tms", "DESC");
 $sql .= $db->plimit($max, 0);
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
 	$var = false;
 	$num = $db->num_rows($result);
 
@@ -168,14 +181,12 @@ if ($result)
 	print '<td class="right">'.$langs->trans("DateModificationShort").'</td>';
 	print '<td width="16">&nbsp;</td>';
 	print '</tr>';
-	if ($num)
-	{
+	if ($num) {
 		$total_ttc = $totalam = $total = 0;
 
 		$deplacementstatic = new Deplacement($db);
 		$userstatic = new User($db);
-		while ($i < $num && $i < $max)
-		{
+		while ($i < $num && $i < $max) {
 			$obj = $db->fetch_object($result);
 			$deplacementstatic->ref = $obj->rowid;
 			$deplacementstatic->id = $obj->rowid;
@@ -196,7 +207,9 @@ if ($result)
 		print '<tr class="oddeven"><td colspan="2" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 	}
 	print '</table><br>';
-} else dol_print_error($db);
+} else {
+	dol_print_error($db);
+}
 
 
 print '</div></div></div>';

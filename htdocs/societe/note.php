@@ -35,11 +35,15 @@ $langs->load("companies");
 
 // Security check
 $id = GETPOST('id') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
-if ($user->socid) $id = $user->socid;
+if ($user->socid) {
+	$id = $user->socid;
+}
 $result = restrictedArea($user, 'societe', $id, '&societe');
 
 $object = new Societe($db);
-if ($id > 0) $object->fetch($id);
+if ($id > 0) {
+	$object->fetch($id);
+}
 
 $permissionnote = $user->rights->societe->creer; // Used by the include of actions_setnotes.inc.php
 
@@ -61,16 +65,19 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, 
 $form = new Form($db);
 
 $title = $langs->trans("ThirdParty").' - '.$langs->trans("Notes");
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->name.' - '.$langs->trans("Notes");
+if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+	$title = $object->name.' - '.$langs->trans("Notes");
+}
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
-if ($object->id > 0)
-{
+if ($object->id > 0) {
 	/*
-     * Affichage onglets
-     */
-	if (!empty($conf->notification->enabled)) $langs->load("mails");
+	 * Affichage onglets
+	 */
+	if (!empty($conf->notification->enabled)) {
+		$langs->load("mails");
+	}
 
 	$head = societe_prepare_head($object);
 
@@ -89,26 +96,27 @@ if ($object->id > 0)
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
-	if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
-	{
+	if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
 		print '<tr><td class="'.$cssclass.'">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 	}
 
-	if ($object->client)
-	{
+	if ($object->client) {
 		print '<tr><td class="'.$cssclass.'">';
 		print $langs->trans('CustomerCode').'</td><td colspan="3">';
 		print $object->code_client;
-		if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+		if ($object->check_codeclient() <> 0) {
+			print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+		}
 		print '</td></tr>';
 	}
 
-	if ($object->fournisseur)
-	{
+	if ($object->fournisseur) {
 		print '<tr><td class="'.$cssclass.'">';
 		print $langs->trans('SupplierCode').'</td><td colspan="3">';
 		print $object->code_fournisseur;
-		if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+		if ($object->check_codefournisseur() <> 0) {
+			print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+		}
 		print '</td></tr>';
 	}
 

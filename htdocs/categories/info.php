@@ -39,7 +39,9 @@ $socid = 0;
 $id = GETPOST('id', 'int');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
@@ -48,7 +50,9 @@ if (!$object->fetch($id) > 0) {
 	exit;
 }
 $type = $object->type;
-if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
+if (is_numeric($type)) {
+	$type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
+}
 
 /*
  * View

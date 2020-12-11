@@ -60,7 +60,9 @@ function loan_prepare_head($object)
 	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$tab][0] = DOL_URL_ROOT.'/loan/document.php?id='.$object->id;
 	$head[$tab][1] = $langs->trans("Documents");
-	if (($nbFiles + $nbLinks) > 0) $head[$tab][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	if (($nbFiles + $nbLinks) > 0) {
+		$head[$tab][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	}
 	$head[$tab][2] = 'documents';
 	$tab++;
 
@@ -68,7 +70,9 @@ function loan_prepare_head($object)
 		$nbNote = (empty($object->note_private) ? 0 : 1) + (empty($object->note_public) ? 0 : 1);
 		$head[$tab][0] = DOL_URL_ROOT."/loan/note.php?id=".$object->id;
 		$head[$tab][1] = $langs->trans("Notes");
-		if ($nbNote > 0) $head[$tab][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		if ($nbNote > 0) {
+			$head[$tab][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		}
 		$head[$tab][2] = 'note';
 		$tab++;
 	}

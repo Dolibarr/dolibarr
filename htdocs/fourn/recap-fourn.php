@@ -32,8 +32,7 @@ $langs->loadLangs(array('bills', 'companies'));
 
 // Security check
 $socid = GETPOST("socid", 'int');
-if ($user->socid > 0)
-{
+if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
@@ -51,22 +50,20 @@ $userstatic = new User($db);
 
 llxHeader();
 
-if ($socid > 0)
-{
+if ($socid > 0) {
 	$societe = new Societe($db);
 	$societe->fetch($socid);
 
 	/*
-     * Affichage onglets
-     */
+	 * Affichage onglets
+	 */
 	$head = societe_prepare_head($societe);
 
 	print dol_get_fiche_head($head, 'supplier', $langs->trans("ThirdParty"), 0, 'company');
 	dol_banner_tab($societe, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
 	print dol_get_fiche_end();
 
-	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->facture->lire)
-	{
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->facture->lire) {
 		// Invoice list
 		print load_fiche_titre($langs->trans("SupplierPreview"));
 
@@ -82,8 +79,7 @@ if ($socid > 0)
 		$sql .= " ORDER BY f.datef DESC";
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $db->num_rows($resql);
 
 			print '<tr class="liste_titre">';
@@ -96,22 +92,19 @@ if ($socid > 0)
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 
-			if (!$num > 0)
-			{
+			if (!$num > 0) {
 				print '<tr><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
 			}
 
 			$solde = 0;
 
 			// Boucle sur chaque facture
-			for ($i = 0; $i < $num; $i++)
-			{
+			for ($i = 0; $i < $num; $i++) {
 				$objf = $db->fetch_object($resql);
 
 				$fac = new FactureFournisseur($db);
 				$ret = $fac->fetch($objf->facid);
-				if ($ret < 0)
-				{
+				if ($ret < 0) {
 					print $fac->error."<br>";
 					continue;
 				}
@@ -144,13 +137,11 @@ if ($socid > 0)
 				$sql .= " AND pf.fk_facturefourn = ".$fac->id;
 
 				$resqlp = $db->query($sql);
-				if ($resqlp)
-				{
+				if ($resqlp) {
 					$nump = $db->num_rows($resqlp);
 					$j = 0;
 
-					while ($j < $nump)
-					{
+					while ($j < $nump) {
 						$objp = $db->fetch_object($resqlp);
 						//
 						print '<tr class="oddeven">';

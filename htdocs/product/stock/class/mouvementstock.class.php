@@ -981,15 +981,13 @@ class MouvementStock extends CommonObject
 				break;
 
 			default:
-				if ($origintype)
-				{
+				if ($origintype) {
 					// Separate originetype with "@" : left part is class name, right part is module name
 					$origintype_array = explode('@', $origintype);
 					$classname = ucfirst($origintype_array[0]);
 					$modulename = empty($origintype_array[1]) ? $classname : $origintype_array[1];
 					$result = dol_include_once('/'.$modulename.'/class/'.strtolower($classname).'.class.php');
-					if ($result)
-					{
+					if ($result) {
 						$classname = ucfirst($classname);
 						$origin = new $classname($this->db);
 					}
@@ -997,7 +995,9 @@ class MouvementStock extends CommonObject
 				break;
 		}
 
-		if (empty($origin) || !is_object($origin)) return '';
+		if (empty($origin) || !is_object($origin)) {
+			return '';
+		}
 
 		if ($origin->fetch($fk_origin) > 0) {
 			return $origin->getNomUrl(1);
@@ -1016,17 +1016,16 @@ class MouvementStock extends CommonObject
 	 */
 	public function setOrigin($origin_element, $origin_id)
 	{
-		if (!empty($origin_element) && $origin_id > 0)
-		{
+		if (!empty($origin_element) && $origin_id > 0) {
 			$origin = '';
-			if ($origin_element == 'project')
-			{
-				if (!class_exists('Project')) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+			if ($origin_element == 'project') {
+				if (!class_exists('Project')) {
+					require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+				}
 				$origin = new Project($this->db);
 			}
 
-			if (!empty($origin))
-			{
+			if (!empty($origin)) {
 				$this->origin = $origin;
 				$this->origin->id = $origin_id;
 			}
@@ -1080,10 +1079,11 @@ class MouvementStock extends CommonObject
 		$link .= '>';
 		$linkend = '</a>';
 
-		if ($withpicto)
-		{
+		if ($withpicto) {
 			$result .= ($link.img_object(($notooltip ? '' : $label), 'stock', ($notooltip ? '' : 'class="classfortooltip"')).$linkend);
-			if ($withpicto != 2) $result .= ' ';
+			if ($withpicto != 2) {
+				$result .= ' ';
+			}
 		}
 		$result .= $link.$this->id.$linkend;
 		return $result;

@@ -120,8 +120,7 @@ class modApi extends DolibarrModules
 		$this->tabs = array();
 
 		// Dictionaries
-		if (!isset($conf->api->enabled))
-		{
+		if (!isset($conf->api->enabled)) {
 			$conf->api = new stdClass();
 			$conf->api->enabled = 0;
 		}

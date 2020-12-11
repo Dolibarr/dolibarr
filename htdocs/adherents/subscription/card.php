@@ -48,8 +48,9 @@ $note = GETPOST('note', 'alpha');
 $typeid = (int) GETPOST('typeid', 'int');
 $amount = price2num(GETPOST('amount', 'alpha'), 'MT');
 
-if (!$user->rights->adherent->cotisation->lire)
+if (!$user->rights->adherent->cotisation->lire) {
 	 accessforbidden();
+}
 
 $permissionnote = $user->rights->adherent->cotisation->creer; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->adherent->cotisation->creer; // Used by the include of actions_dellink.inc.php
@@ -60,7 +61,9 @@ $permissiontoedit = $user->rights->adherent->cotisation->creer; // Used by the i
  * 	Actions
  */
 
-if ($cancel) $action = '';
+if ($cancel) {
+	$action = '';
+}
 
 //include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
 
@@ -117,7 +120,9 @@ if ($user->rights->adherent->cotisation->creer && $action == 'update' && !$cance
 					$errmsg = $object->error;
 				} else {
 					foreach ($object->errors as $error) {
-						if ($errmsg) $errmsg .= '<br>';
+						if ($errmsg) {
+							$errmsg .= '<br>';
+						}
 						$errmsg .= $error;
 					}
 				}
@@ -264,7 +269,9 @@ if ($rowid && $action != 'edit') {
 		//$formquestion=array();
 		//$formquestion['text']='<b>'.$langs->trans("ThisWillAlsoDeleteBankRecord").'</b>';
 		$text = $langs->trans("ConfirmDeleteSubscription");
-		if (!empty($conf->banque->enabled) && !empty($conf->global->ADHERENT_BANK_USE)) $text .= '<br>'.img_warning().' '.$langs->trans("ThisWillAlsoDeleteBankRecord");
+		if (!empty($conf->banque->enabled) && !empty($conf->global->ADHERENT_BANK_USE)) {
+			$text .= '<br>'.img_warning().' '.$langs->trans("ThisWillAlsoDeleteBankRecord");
+		}
 		print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id, $langs->trans("DeleteSubscription"), $text, "confirm_delete", $formquestion, 0, 1);
 	}
 
@@ -337,9 +344,9 @@ if ($rowid && $action != 'edit') {
 	print dol_get_fiche_end();
 
 	/*
-     * Barre d'actions
-     *
-     */
+	 * Barre d'actions
+	 *
+	 */
 	print '<div class="tabsAction">';
 
 	if ($user->rights->adherent->cotisation->creer) {
@@ -363,15 +370,15 @@ if ($rowid && $action != 'edit') {
 
 	// Documents generes
 	/*
-    $filename = dol_sanitizeFileName($object->ref);
-    $filedir = $conf->facture->dir_output . '/' . dol_sanitizeFileName($object->ref);
-    $urlsource = $_SERVER['PHP_SELF'] . '?facid=' . $object->id;
-    $genallowed = $user->rights->facture->lire;
-    $delallowed = $user->rights->facture->creer;
+	$filename = dol_sanitizeFileName($object->ref);
+	$filedir = $conf->facture->dir_output . '/' . dol_sanitizeFileName($object->ref);
+	$urlsource = $_SERVER['PHP_SELF'] . '?facid=' . $object->id;
+	$genallowed = $user->rights->facture->lire;
+	$delallowed = $user->rights->facture->creer;
 
-    print $formfile->showdocuments('facture', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
-    $somethingshown = $formfile->numoffiles;
-    */
+	print $formfile->showdocuments('facture', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+	$somethingshown = $formfile->numoffiles;
+	*/
 	// Show links to link elements
 	//$linktoelem = $form->showLinkToObjectBlock($object, null, array('subscription'));
 	$somethingshown = $form->showLinkedObjectBlock($object, '');
@@ -379,16 +386,16 @@ if ($rowid && $action != 'edit') {
 	// Show links to link elements
 	/*$linktoelem = $form->showLinkToObjectBlock($object,array('order'));
 	if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
-    */
+	*/
 
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 	// List of actions on element
 	/*
-    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
-    $formactions = new FormActions($db);
-    $somethingshown = $formactions->showactions($object, 'invoice', $socid, 1);
-    */
+	include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+	$formactions = new FormActions($db);
+	$somethingshown = $formactions->showactions($object, 'invoice', $socid, 1);
+	*/
 
 	print '</div></div></div>';
 }

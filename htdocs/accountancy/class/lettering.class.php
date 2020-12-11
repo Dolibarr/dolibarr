@@ -67,12 +67,15 @@ class Lettering extends BookKeeping
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as bk";
 		$sql .= " LEFT JOIN  ".MAIN_DB_PREFIX."bank_url as bu ON(bk.fk_doc = bu.fk_bank AND bu.type IN ('payment', 'payment_supplier') ) ";
 		$sql .= " WHERE ( ";
-		if ($object->code_compta != "")
+		if ($object->code_compta != "") {
 			$sql .= " bk.subledger_account = '".$this->db->escape($object->code_compta)."'  ";
-		if ($object->code_compta != "" && $object->code_compta_fournisseur != "")
+		}
+		if ($object->code_compta != "" && $object->code_compta_fournisseur != "") {
 			$sql .= " OR ";
-		if ($object->code_compta_fournisseur != "")
+		}
+		if ($object->code_compta_fournisseur != "") {
 			$sql .= " bk.subledger_account = '".$this->db->escape($object->code_compta_fournisseur)."' ";
+		}
 
 		$sql .= " ) AND (bk.date_lettering ='' OR bk.date_lettering IS NULL) ";
 		$sql .= "  AND (bk.lettering_code != '' OR bk.lettering_code IS NULL) ";
@@ -89,8 +92,7 @@ class Lettering extends BookKeeping
 				$ids = array();
 				$ids_fact = array();
 
-				if ($obj->type == 'payment_supplier')
-				{
+				if ($obj->type == 'payment_supplier') {
 					$sql = 'SELECT DISTINCT bk.rowid, facf.ref, facf.ref_supplier, payf.fk_bank, facf.rowid as fact_id';
 					$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn facf ";
 					$sql .= " INNER JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as payfacf ON  payfacf.fk_facturefourn=facf.rowid";
@@ -244,8 +246,9 @@ class Lettering extends BookKeeping
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
 			$lettre = (empty($obj->lettering_code) ? 'AAA' : $obj->lettering_code);
-			if (!empty($obj->lettering_code))
+			if (!empty($obj->lettering_code)) {
 				$lettre++;
+			}
 		} else {
 			$this->errors[] = 'Error'.$this->db->lasterror();
 			$error++;
@@ -269,8 +272,7 @@ class Lettering extends BookKeeping
 
 		$now = dol_now();
 
-		if (!$error)
-		{
+		if (!$error) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping SET";
 			$sql .= " lettering_code='".$this->db->escape($lettre)."'";
 			$sql .= " , date_lettering = '".$this->db->idate($now)."'"; // todo correct date it's false

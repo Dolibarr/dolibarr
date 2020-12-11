@@ -113,7 +113,9 @@ class box_funnel_of_prospection extends ModeleBoxes
 				}
 				$i++;
 			}
-		} else dol_print_error($this->db);
+		} else {
+			dol_print_error($this->db);
+		}
 
 		global $conf, $user, $langs;
 
@@ -153,7 +155,9 @@ class box_funnel_of_prospection extends ModeleBoxes
 						$valsnb[$obj->opp_status] = $obj->nb;
 						$valsamount[$obj->opp_status] = $obj->opp_amount;
 						$totalnb += $obj->nb;
-						if ($obj->opp_status) $totaloppnb += $obj->nb;
+						if ($obj->opp_status) {
+							$totaloppnb += $obj->nb;
+						}
 						if (!in_array($obj->code, array('WON', 'LOST'))) {
 							$totalamount += $obj->opp_amount;
 							$ponderated_opp_amount += $obj->ponderated_opp_amount;
@@ -171,8 +175,12 @@ class box_funnel_of_prospection extends ModeleBoxes
 					$labelStatus = '';
 					if ($status != 7) {
 						$code = dol_getIdFromCode($this->db, $status, 'c_lead_status', 'rowid', 'code');
-						if ($code) $labelStatus = $langs->transnoentitiesnoconv("OppStatus" . $code);
-						if (empty($labelStatus)) $labelStatus = $listofopplabel[$status];
+						if ($code) {
+							$labelStatus = $langs->transnoentitiesnoconv("OppStatus" . $code);
+						}
+						if (empty($labelStatus)) {
+							$labelStatus = $listofopplabel[$status];
+						}
 
 						$dataseries[] = array($labelStatus,(isset($valsamount[$status]) ? (float) $valsamount[$status] : 0));
 						if (!$conf->use_javascript_ajax) {

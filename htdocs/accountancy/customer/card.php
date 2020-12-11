@@ -38,19 +38,20 @@ $codeventil = GETPOST('codeventil', 'int');
 $id = GETPOST('id', 'int');
 
 // Security check
-if ($user->socid > 0)
+if ($user->socid > 0) {
 	accessforbidden();
+}
 
 
 /*
  * Actions
  */
 
-if ($action == 'ventil' && $user->rights->accounting->bind->write)
-{
-	if (!$cancel)
-	{
-		if ($codeventil < 0) $codeventil = 0;
+if ($action == 'ventil' && $user->rights->accounting->bind->write) {
+	if (!$cancel) {
+		if ($codeventil < 0) {
+			$codeventil = 0;
+		}
 
 		$sql = " UPDATE ".MAIN_DB_PREFIX."facturedet";
 		$sql .= " SET fk_code_ventilation = ".$codeventil;
@@ -61,8 +62,7 @@ if ($action == 'ventil' && $user->rights->accounting->bind->write)
 			setEventMessages($db->lasterror(), null, 'errors');
 		} else {
 			setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
-			if ($backtopage)
-			{
+			if ($backtopage) {
 				header("Location: ".$backtopage);
 				exit();
 			}

@@ -36,8 +36,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "errors"));
 
-if (!$user->admin)
-  accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 
@@ -46,28 +47,42 @@ $action = GETPOST('action', 'aZ09');
  * Actions
  */
 
-if ($action == 'setvalue' && $user->admin)
-{
+if ($action == 'setvalue' && $user->admin) {
 	$error = 0;
 	$db->begin();
 
-	if (!dolibarr_set_const($db, 'LDAP_GROUP_DN', GETPOST("group", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_GROUP_OBJECT_CLASS', GETPOST("objectclass", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_GROUP_DN', GETPOST("group", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_GROUP_OBJECT_CLASS', GETPOST("objectclass", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
 
-	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_FULLNAME', GETPOST("fieldfullname", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_FULLNAME', GETPOST("fieldfullname", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
 	//if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_NAME',GETPOST("fieldname", 'alphanohtml'),'chaine',0,'',$conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_DESCRIPTION', GETPOST("fielddescription", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_GROUPMEMBERS', GETPOST("fieldgroupmembers", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_GROUPID', GETPOST("fieldgroupid", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_DESCRIPTION', GETPOST("fielddescription", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_GROUPMEMBERS', GETPOST("fieldgroupmembers", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_GROUPID', GETPOST("fieldgroupid", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
 
 	// This one must be after the others
 	$valkey = '';
 	$key = GETPOST("key");
-	if ($key) $valkey = $conf->global->$key;
-	if (!dolibarr_set_const($db, 'LDAP_KEY_GROUPS', $valkey, 'chaine', 0, '', $conf->entity)) $error++;
+	if ($key) {
+		$valkey = $conf->global->$key;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_KEY_GROUPS', $valkey, 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -90,8 +105,7 @@ print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
 $head = ldap_prepare_head();
 
 // Test si fonction LDAP actives
-if (!function_exists("ldap_connect"))
-{
+if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
@@ -190,8 +204,7 @@ print '</form>';
 /*
  * Test de la connexion
  */
-if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
-{
+if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') {
 	$butlabel = $langs->trans("LDAPTestSynchroGroup");
 	$testlabel = 'testgroup';
 	$key = $conf->global->LDAP_KEY_GROUPS;
@@ -201,10 +214,8 @@ if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
 	show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
 }
 
-if (function_exists("ldap_connect"))
-{
-	if ($_GET["action"] == 'testgroup')
-	{
+if (function_exists("ldap_connect")) {
+	if ($_GET["action"] == 'testgroup') {
 		// Creation objet
 		$object = new UserGroup($db);
 		$object->initAsSpecimen();
@@ -213,8 +224,7 @@ if (function_exists("ldap_connect"))
 		$ldap = new Ldap();
 		$result = $ldap->connect_bind();
 
-		if ($result > 0)
-		{
+		if ($result > 0) {
 			$info = $object->_load_ldap_info();
 			$dn = $object->_load_ldap_dn($info);
 
@@ -227,8 +237,7 @@ if (function_exists("ldap_connect"))
 			$result2 = $ldap->add($dn, $info, $user); // Now the test
 			$result3 = $ldap->delete($dn); // Clean what we did
 
-			if ($result2 > 0)
-			{
+			if ($result2 > 0) {
 				print img_picto('', 'info').' ';
 				print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
 			} else {

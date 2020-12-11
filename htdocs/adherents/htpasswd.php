@@ -27,7 +27,9 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
 // Security check
-if (!$user->rights->adherent->export) accessforbidden();
+if (!$user->rights->adherent->export) {
+	accessforbidden();
+}
 
 
 /*
@@ -38,8 +40,12 @@ llxHeader();
 
 $now = dol_now();
 
-if (empty($sortorder)) {  $sortorder = "ASC"; }
-if (empty($sortfield)) {  $sortfield = "d.login"; }
+if (empty($sortorder)) {
+	$sortorder = "ASC";
+}
+if (empty($sortfield)) {
+	$sortfield = "d.login";
+}
 if (!isset($statut)) {
 	$statut = 1;
 }

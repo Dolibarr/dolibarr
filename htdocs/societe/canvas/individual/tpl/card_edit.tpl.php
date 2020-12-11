@@ -17,8 +17,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -173,7 +172,9 @@ if ($this->control->tpl['fournisseur']) {
 	<td colspan="3"><?php echo $this->control->tpl['yn_assujtva']; ?></td>
 </tr>
 
-<?php if (!empty($this->control->tpl['localtax'])) echo $this->control->tpl['localtax']; ?>
+<?php if (!empty($this->control->tpl['localtax'])) {
+	echo $this->control->tpl['localtax'];
+} ?>
 
 </table>
 <br>

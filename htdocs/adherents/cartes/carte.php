@@ -68,15 +68,24 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 	$sql .= " t.libelle as type,";
 	$sql .= " c.code as country_code, c.label as country";
 	// Add fields from extrafields
-	if (!empty($extrafields->attributes[$object->table_element]['label']))
-		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+	if (!empty($extrafields->attributes[$object->table_element]['label'])) {
+		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+			$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		}
+	}
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON d.country = c.rowid";
-	if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_extrafields as ef on (d.rowid = ef.fk_object)";
+	if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_extrafields as ef on (d.rowid = ef.fk_object)";
+	}
 	$sql .= " WHERE d.fk_adherent_type = t.rowid AND d.statut = 1";
 	$sql .= " AND d.entity IN (".getEntity('adherent').")";
-	if (is_numeric($foruserid)) $sql .= " AND d.rowid=".$foruserid;
-	if ($foruserlogin) $sql .= " AND d.login='".$db->escape($foruserlogin)."'";
+	if (is_numeric($foruserid)) {
+		$sql .= " AND d.rowid=".$foruserid;
+	}
+	if ($foruserlogin) {
+		$sql .= " AND d.login='".$db->escape($foruserlogin)."'";
+	}
 	$sql .= " ORDER BY d.rowid ASC";
 
 	dol_syslog("Search members", LOG_DEBUG);
@@ -87,7 +96,9 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 		while ($i < $num) {
 			$objp = $db->fetch_object($result);
 
-			if ($objp->country == '-') $objp->country = '';
+			if ($objp->country == '-') {
+				$objp->country = '';
+			}
 
 			$adherentstatic->id = $objp->rowid;
 			$adherentstatic->lastname = $objp->lastname;
@@ -140,7 +151,9 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 
 				if (is_numeric($foruserid) || $foruserlogin) {
 					$nb = $_Avery_Labels[$model]['NX'] * $_Avery_Labels[$model]['NY'];
-					if ($nb <= 0) $nb = 1; // Protection to avoid empty page
+					if ($nb <= 0) {
+						$nb = 1; // Protection to avoid empty page
+					}
 
 					for ($j = 0; $j < $nb; $j++) {
 						$arrayofmembers[] = array(
@@ -166,7 +179,9 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 
 			// For labels
 			if ($mode == 'label') {
-				if (empty($conf->global->ADHERENT_ETIQUETTE_TEXT)) $conf->global->ADHERENT_ETIQUETTE_TEXT = "__FULLNAME__\n__ADDRESS__\n__ZIP__ __TOWN__\n__COUNTRY__";
+				if (empty($conf->global->ADHERENT_ETIQUETTE_TEXT)) {
+					$conf->global->ADHERENT_ETIQUETTE_TEXT = "__FULLNAME__\n__ADDRESS__\n__ZIP__ __TOWN__\n__COUNTRY__";
+				}
 				$textleft = make_substitutions($conf->global->ADHERENT_ETIQUETTE_TEXT, $substitutionarray);
 				$textheader = '';
 				$textfooter = '';
@@ -191,7 +206,9 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 			if (empty($model) || $model == '-1') {
 				$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DescADHERENT_CARD_TYPE"));
 			}
-			if (!$mesg) $result = members_card_pdf_create($db, $arrayofmembers, $model, $outputlangs);
+			if (!$mesg) {
+				$result = members_card_pdf_create($db, $arrayofmembers, $model, $outputlangs);
+			}
 		} elseif ($mode == 'label') {
 			if (!count($arrayofmembers)) {
 				$mesg = $langs->trans("ErrorRecordNotFound");
@@ -199,7 +216,9 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 			if (empty($modellabel) || $modellabel == '-1') {
 				$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DescADHERENT_ETIQUETTE_TYPE"));
 			}
-			if (!$mesg) $result = doc_label_pdf_create($db, $arrayofmembers, $modellabel, $outputlangs);
+			if (!$mesg) {
+				$result = doc_label_pdf_create($db, $arrayofmembers, $modellabel, $outputlangs);
+			}
 		}
 
 		if ($result <= 0) {

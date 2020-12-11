@@ -31,7 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('banks', 'categories'));
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'banque');
 
 
@@ -65,13 +67,11 @@ $sql .= " GROUP BY c.label, c.rowid";
 $sql .= " ORDER BY c.label";
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
 	$num = $db->num_rows($result);
 	$i = 0; $total = 0; $totalnb = 0;
 
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$objp = $db->fetch_object($result);
 
 		print '<tr class="oddeven">';

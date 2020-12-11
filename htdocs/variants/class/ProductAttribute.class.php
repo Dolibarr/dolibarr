@@ -116,8 +116,7 @@ class ProductAttribute extends CommonObject
 		$sql = 'SELECT rowid, ref, ref_ext, label, rang FROM '.MAIN_DB_PREFIX."product_attribute WHERE entity IN (".getEntity('product').')';
 		$sql .= $this->db->order('rang', 'asc');
 		$query = $this->db->query($sql);
-		if ($query)
-		{
+		if ($query) {
 			while ($result = $this->db->fetch_object($query)) {
 				$tmp = new ProductAttribute($this->db);
 				$tmp->id = $result->rowid;
@@ -128,8 +127,9 @@ class ProductAttribute extends CommonObject
 
 				$return[] = $tmp;
 			}
+		} else {
+			dol_print_error($this->db);
 		}
-		else dol_print_error($this->db);
 
 		return $return;
 	}
@@ -159,8 +159,7 @@ class ProductAttribute extends CommonObject
 		VALUES ('".$this->db->escape($this->ref)."', '".$this->db->escape($this->ref_ext)."', '".$this->db->escape($this->label)."', ".(int) $this->entity.", ".(int) $this->rang.")";
 
 		$query = $this->db->query($sql);
-		if ($query)
-		{
+		if ($query) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'product_attribute');
 
 			return $this->id;

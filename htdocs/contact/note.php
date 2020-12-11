@@ -36,11 +36,15 @@ $langs->load("companies");
 
 // Security check
 $id = GETPOST('id', 'int');
-if ($user->socid) $id = $user->socid;
+if ($user->socid) {
+	$id = $user->socid;
+}
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 $object = new Contact($db);
-if ($id > 0) $object->fetch($id);
+if ($id > 0) {
+	$object->fetch($id);
+}
 
 $permissionnote = $user->rights->societe->creer; // Used by the include of actions_setnotes.inc.php
 
@@ -65,12 +69,13 @@ $form = new Form($db);
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
-if ($id > 0)
-{
+if ($id > 0) {
 	/*
-     * Affichage onglets
-     */
-	if (!empty($conf->notification->enabled)) $langs->load("mails");
+	 * Affichage onglets
+	 */
+	if (!empty($conf->notification->enabled)) {
+		$langs->load("mails");
+	}
 
 	$head = contact_prepare_head($object);
 
@@ -79,14 +84,16 @@ if ($id > 0)
 	$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
-	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
-	{
+	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 		$objsoc = new Societe($db);
 		$objsoc->fetch($object->socid);
 		// Thirdparty
 		$morehtmlref .= $langs->trans('ThirdParty').' : ';
-		if ($objsoc->id > 0) $morehtmlref .= $objsoc->getNomUrl(1);
-		else $morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
+		if ($objsoc->id > 0) {
+			$morehtmlref .= $objsoc->getNomUrl(1);
+		} else {
+			$morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
+		}
 	}
 	$morehtmlref .= '</div>';
 

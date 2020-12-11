@@ -48,8 +48,7 @@ print '<br>';
 
 
 print '<div class="center">';
-if (count($export->array_export_code))
-{
+if (count($export->array_export_code)) {
 	print dolGetButtonTitle($langs->trans('NewExport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/exports/export.php?leftmenu=export', '', $user->rights->export->creer);
 }
 print '</div>';
@@ -71,10 +70,8 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 $model = new ModeleExports($db);
 $liste = $model->liste_modeles($db); // This is not a static method for exports because method load non static properties
 
-foreach ($liste as $key => $val)
-{
-	if (preg_match('/__\(Disabled\)__/', $liste[$key]))
-	{
+foreach ($liste as $key => $val) {
+	if (preg_match('/__\(Disabled\)__/', $liste[$key])) {
 		$liste[$key] = preg_replace('/__\(Disabled\)__/', '('.$langs->transnoentitiesnoconv("Disabled").')', $liste[$key]);
 	}
 

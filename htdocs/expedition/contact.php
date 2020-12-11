@@ -42,30 +42,28 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'expedition', $id, '');
 
 $object = new Expedition($db);
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 	$object->fetch_thirdparty();
 
-	if (!empty($object->origin))
-	{
+	if (!empty($object->origin)) {
 		$typeobject = $object->origin;
 		$origin = $object->origin;
 		$object->fetch_origin();
 	}
 
 	// Linked documents
-	if ($typeobject == 'commande' && $object->$typeobject->id && !empty($conf->commande->enabled))
-	{
+	if ($typeobject == 'commande' && $object->$typeobject->id && !empty($conf->commande->enabled)) {
 		$objectsrc = new Commande($db);
 		$objectsrc->fetch($object->$typeobject->id);
 	}
-	if ($typeobject == 'propal' && $object->$typeobject->id && !empty($conf->propal->enabled))
-	{
+	if ($typeobject == 'propal' && $object->$typeobject->id && !empty($conf->propal->enabled)) {
 		$objectsrc = new Propal($db);
 		$objectsrc->fetch($object->$typeobject->id);
 	}
@@ -76,20 +74,16 @@ if ($id > 0 || !empty($ref))
  * Actions
  */
 
-if ($action == 'addcontact' && $user->rights->expedition->creer)
-{
-	if ($result > 0 && $id > 0)
-	{
-  		$result = $objectsrc->add_contact(GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'), $_POST["type"], $_POST["source"]);
+if ($action == 'addcontact' && $user->rights->expedition->creer) {
+	if ($result > 0 && $id > 0) {
+		$result = $objectsrc->add_contact(GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'), $_POST["type"], $_POST["source"]);
 	}
 
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	} else {
-		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-		{
+		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
 			$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
 		} else {
@@ -101,18 +95,15 @@ if ($action == 'addcontact' && $user->rights->expedition->creer)
 }
 
 // bascule du statut d'un contact
-elseif ($action == 'swapstatut' && $user->rights->expedition->creer)
-{
+elseif ($action == 'swapstatut' && $user->rights->expedition->creer) {
 	$result = $objectsrc->swapContactStatus(GETPOST('ligne'));
 }
 
 // Efface un contact
-elseif ($action == 'deletecontact' && $user->rights->expedition->creer)
-{
+elseif ($action == 'deletecontact' && $user->rights->expedition->creer) {
 	$result = $objectsrc->delete_contact(GETPOST("lineid"));
 
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	} else {
@@ -147,8 +138,7 @@ $userstatic = new User($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$langs->trans("OrderCard");
 
 	$head = shipping_prepare_head($object);
@@ -211,8 +201,7 @@ if ($id > 0 || !empty($ref))
 	print '<table class="border centpercent tableforfield">';
 
 	// Linked documents
-	if ($typeobject == 'commande' && $object->$typeobject->id && !empty($conf->commande->enabled))
-	{
+	if ($typeobject == 'commande' && $object->$typeobject->id && !empty($conf->commande->enabled)) {
 		print '<tr><td class="titlefield">';
 		$objectsrc = new Commande($db);
 		$objectsrc->fetch($object->$typeobject->id);
@@ -222,8 +211,7 @@ if ($id > 0 || !empty($ref))
 		print "</td>\n";
 		print '</tr>';
 	}
-	if ($typeobject == 'propal' && $object->$typeobject->id && !empty($conf->propal->enabled))
-	{
+	if ($typeobject == 'propal' && $object->$typeobject->id && !empty($conf->propal->enabled)) {
 		print '<tr><td class="titlefield">';
 		$objectsrc = new Propal($db);
 		$objectsrc->fetch($object->$typeobject->id);
@@ -258,10 +246,11 @@ if ($id > 0 || !empty($ref))
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
 	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
 	$preselectedtypeofcontact = dol_getIdFromCode($db, 'SHIPPING', 'c_type_contact', 'code', 'rowid');
-	foreach ($dirtpls as $reldir)
-	{
+	foreach ($dirtpls as $reldir) {
 		$res = @include dol_buildpath($reldir.'/contacts.tpl.php');
-		if ($res) break;
+		if ($res) {
+			break;
+		}
 	}
 }
 

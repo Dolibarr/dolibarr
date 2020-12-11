@@ -37,7 +37,9 @@ $ref = GETPOST('ref', 'alpha');
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -50,12 +52,18 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "DESC";
-if (!$sortfield) $sortfield = "c.date_contrat";
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
+if (!$sortfield) {
+	$sortfield = "c.date_contrat";
+}
 
 
 /*
@@ -67,8 +75,7 @@ $staticcontratligne = new ContratLigne($db);
 
 $form = new Form($db);
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$product = new Product($db);
 	$result = $product->fetch($id, $ref);
 
@@ -76,12 +83,13 @@ if ($id > 0 || !empty($ref))
 
 	$parameters = array('id'=>$id);
 	$reshook = $hookmanager->executeHooks('doActions', $parameters, $product, $action); // Note that $action and $object may have been modified by some hooks
-	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	}
 
 	llxHeader("", "", $langs->trans("CardProduct".$product->type));
 
-	if ($result > 0)
-	{
+	if ($result > 0) {
 		$head = product_prepare_head($product);
 		$titre = $langs->trans("CardProduct".$product->type);
 		$picto = ($product->type == Product::TYPE_SERVICE ? 'service' : 'product');
@@ -89,12 +97,16 @@ if ($id > 0 || !empty($ref))
 
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $product, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
-		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		}
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$shownav = 1;
-		if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
+		if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+			$shownav = 0;
+		}
 
 		dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
@@ -123,15 +135,21 @@ if ($id > 0 || !empty($ref))
 		$sql .= " c.rowid as rowid, c.ref, c.ref_customer, c.ref_supplier, c.date_contrat, c.statut as statut,";
 		$sql .= " s.nom as name, s.rowid as socid, s.code_client";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-		if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$socid) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
 		$sql .= ", ".MAIN_DB_PREFIX."contrat as c";
 		$sql .= ", ".MAIN_DB_PREFIX."contratdet as cd";
 		$sql .= " WHERE c.rowid = cd.fk_contrat";
 		$sql .= " AND c.fk_soc = s.rowid";
 		$sql .= " AND c.entity IN (".getEntity('contract').")";
 		$sql .= " AND cd.fk_product =".$product->id;
-		if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-		if ($socid) $sql .= " AND s.rowid = ".$socid;
+		if (!$user->rights->societe->client->voir && !$socid) {
+			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		}
+		if ($socid) {
+			$sql .= " AND s.rowid = ".$socid;
+		}
 		$sql .= " GROUP BY c.rowid, c.ref, c.ref_customer, c.ref_supplier, c.date_contrat, c.statut, s.nom, s.rowid, s.code_client";
 		$sql .= $db->order($sortfield, $sortorder);
 
@@ -141,8 +159,7 @@ if ($id > 0 || !empty($ref))
 
 		// Count total nb of records
 		$totalofrecords = '';
-		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-		{
+		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 			$result = $db->query($sql);
 			$totalofrecords = $db->num_rows($result);
 		}
@@ -150,25 +167,36 @@ if ($id > 0 || !empty($ref))
 		$sql .= $db->plimit($limit + 1, $offset);
 
 		$result = $db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$num = $db->num_rows($result);
 
-			if ($limit > 0 && $limit != $conf->liste_limit) $option .= '&limit='.urlencode($limit);
-			if (!empty($id)) $option .= '&id='.$product->id;
-			if (!empty($search_month)) $option .= '&search_month='.urlencode($search_month);
-			if (!empty($search_year)) $option .= '&search_year='.urlencode($search_year);
+			if ($limit > 0 && $limit != $conf->liste_limit) {
+				$option .= '&limit='.urlencode($limit);
+			}
+			if (!empty($id)) {
+				$option .= '&id='.$product->id;
+			}
+			if (!empty($search_month)) {
+				$option .= '&search_month='.urlencode($search_month);
+			}
+			if (!empty($search_year)) {
+				$option .= '&search_year='.urlencode($search_year);
+			}
 
 			print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
 
-			if (!empty($sortfield))
+			if (!empty($sortfield)) {
 				print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
-			if (!empty($sortorder))
+			}
+			if (!empty($sortorder)) {
 				print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
+			}
 
 			print_barre_liste($langs->trans("Contrats"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);
 
-			if (!empty($page)) $option .= '&page='.urlencode($page);
+			if (!empty($page)) {
+				$option .= '&page='.urlencode($page);
+			}
 
 			$i = 0;
 			print '<div class="div-table-responsive">';
@@ -187,10 +215,8 @@ if ($id > 0 || !empty($ref))
 
 			$contracttmp = new Contrat($db);
 
-			if ($num > 0)
-			{
-				while ($i < min($num, $limit))
-				{
+			if ($num > 0) {
+				while ($i < min($num, $limit)) {
 					$objp = $db->fetch_object($result);
 
 					$contracttmp->id = $objp->rowid;

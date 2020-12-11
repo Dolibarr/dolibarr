@@ -84,8 +84,7 @@ class box_boms extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLatestModifiedBoms", $max));
 
-		if ($user->rights->bom->read)
-		{
+		if ($user->rights->bom->read) {
 			$sql = "SELECT p.ref as product_ref, p.tobuy, p.tosell";
 			$sql .= ", c.rowid";
 			$sql .= ", c.date_creation";
@@ -132,7 +131,9 @@ class box_boms extends ModeleBoxes
 					);
 
 					if (!empty($conf->global->BOM_BOX_LAST_BOMS_SHOW_VALIDATE_USER)) {
-						if ($objp->fk_user_valid > 0) $userstatic->fetch($objp->fk_user_valid);
+						if ($objp->fk_user_valid > 0) {
+							$userstatic->fetch($objp->fk_user_valid);
+						}
 						$this->info_box_contents[$line][] = array(
 							'td' => 'class="right"',
 							'text' => (($objp->fk_user_valid > 0) ? $userstatic->getNomUrl(1) : ''),
@@ -153,10 +154,12 @@ class box_boms extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) $this->info_box_contents[$line][0] = array(
+				if ($num == 0) {
+					$this->info_box_contents[$line][0] = array(
 					'td' => 'class="center opacitymedium"',
 					'text'=>$langs->trans("NoRecordedOrders")
-				);
+					);
+				}
 
 				$this->db->free($result);
 			} else {

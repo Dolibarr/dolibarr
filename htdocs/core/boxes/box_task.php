@@ -145,7 +145,9 @@ class box_task extends ModeleBoxes
 
 			// Get list of project id allowed to user (in a string list separated by coma)
 			$projectsListId = '';
-			if (!$user->rights->projet->all->lire) $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
+			if (!$user->rights->projet->all->lire) {
+				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
+			}
 
 			$sql = "SELECT pt.rowid, pt.ref, pt.fk_projet, pt.fk_task_parent, pt.datec, pt.dateo, pt.datee, pt.datev, pt.label, pt.description, pt.duration_effective, pt.planned_workload, pt.progress";
 			$sql .= ", p.rowid project_id, p.ref project_ref, p.title project_title";
@@ -166,7 +168,9 @@ class box_task extends ModeleBoxes
 			$sql .= " AND p.fk_statut = ".Project::STATUS_VALIDATED;
 			$sql .= " AND (pt.progress < 100 OR pt.progress IS NULL ) "; // 100% is done and not displayed
 			$sql .= " AND p.usage_task = 1 ";
-			if (!$user->rights->projet->all->lire) $sql .= " AND p.rowid IN (".$projectsListId.")"; // public and assigned to, or restricted to company for external users
+			if (!$user->rights->projet->all->lire) {
+				$sql .= " AND p.rowid IN (".$projectsListId.")"; // public and assigned to, or restricted to company for external users
+			}
 
 			$sql .= " ORDER BY pt.datee ASC, pt.dateo ASC";
 			$sql .= $this->db->plimit($max, 0);

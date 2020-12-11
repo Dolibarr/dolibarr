@@ -81,10 +81,8 @@ class BankAccounts extends DolibarrApi
 			$sql .= " AND c.fk_categorie = ".$this->db->escape($category)." AND c.fk_account = t.rowid ";
 		}
 		// Add sql filters
-		if ($sqlfilters)
-		{
-			if (!DolibarrApi::_checkFilters($sqlfilters))
-			{
+		if ($sqlfilters) {
+			if (!DolibarrApi::_checkFilters($sqlfilters)) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
@@ -93,8 +91,7 @@ class BankAccounts extends DolibarrApi
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
-			if ($page < 0)
-			{
+			if ($page < 0) {
 				$page = 0;
 			}
 			$offset = $limit * $page;
@@ -222,12 +219,10 @@ class BankAccounts extends DolibarrApi
 			throw new RestException(404, 'The BankAccount for bankaccount_to_id provided does not exist.');
 		}
 
-		if ($accountto->currency_code == $accountfrom->currency_code)
-		{
+		if ($accountto->currency_code == $accountfrom->currency_code) {
 			$amount_to = $amount;
 		} else {
-			if (!$amount_to || empty($amount_to))
-			{
+			if (!$amount_to || empty($amount_to)) {
 				throw new RestException(422, 'You must provide amount_to value since bankaccount_from and bankaccount_to does not share the same currency.');
 			}
 		}
@@ -244,8 +239,7 @@ class BankAccounts extends DolibarrApi
 		$typefrom = 'PRE';
 		$typeto = 'VIR';
 
-		if ($accountto->courant == Account::TYPE_CASH || $accountfrom->courant == Account::TYPE_CASH)
-		{
+		if ($accountto->courant == Account::TYPE_CASH || $accountfrom->courant == Account::TYPE_CASH) {
 			// This is transfer of change
 			$typefrom = 'LIQ';
 			$typeto = 'LIQ';
@@ -291,8 +285,7 @@ class BankAccounts extends DolibarrApi
 			$error++;
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$this->db->commit();
 
 			return array(
@@ -327,12 +320,13 @@ class BankAccounts extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			if ($field == 'id') continue;
+			if ($field == 'id') {
+				continue;
+			}
 			$account->$field = $value;
 		}
 
-		if ($account->update(DolibarrApiAccess::$user) > 0)
-		{
+		if ($account->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
 			throw new RestException(500, $account->error);
@@ -380,8 +374,9 @@ class BankAccounts extends DolibarrApi
 	{
 		$account = array();
 		foreach (BankAccounts::$FIELDS as $field) {
-			if (!isset($data[$field]))
+			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
+			}
 			$account[$field] = $data[$field];
 		}
 		return $account;
@@ -433,10 +428,8 @@ class BankAccounts extends DolibarrApi
 		$sql .= " WHERE fk_account = ".$id;
 
 		// Add sql filters
-		if ($sqlfilters)
-		{
-			if (!DolibarrApi::_checkFilters($sqlfilters))
-			{
+		if ($sqlfilters) {
+			if (!DolibarrApi::_checkFilters($sqlfilters)) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
@@ -499,7 +492,8 @@ class BankAccounts extends DolibarrApi
 			$cheque_number,
 			$category,
 			DolibarrApiAccess::$user,
-			$cheque_writer, $cheque_bank
+			$cheque_writer,
+			$cheque_bank
 		);
 		if ($result < 0) {
 			throw new RestException(503, 'Error when adding line to account: '.$account->error);

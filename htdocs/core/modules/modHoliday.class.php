@@ -302,7 +302,7 @@ class modHoliday extends DolibarrModules
 				return 0;
 			}
 		}
-        */
+		*/
 
 		$sql = array(
 		//	"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'holiday' AND entity = ".$conf->entity,

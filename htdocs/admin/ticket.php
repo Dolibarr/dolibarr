@@ -60,8 +60,7 @@ if ($action == 'updateMask') {
 		$error++;
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
@@ -129,8 +128,7 @@ if ($action == 'setvarother') {
 		$error++;
 	}
 
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-	{
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 		$param_show_module_logo = GETPOST('TICKET_SHOW_MODULE_LOGO', 'alpha');
 		$res = dolibarr_set_const($db, 'TICKET_SHOW_MODULE_LOGO', $param_show_module_logo, 'chaine', 0, '', $conf->entity);
 		if (!$res > 0) {
@@ -138,8 +136,7 @@ if ($action == 'setvarother') {
 		}
 	}
 
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-	{
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 		$param_notification_also_main_addressemail = GETPOST('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', 'alpha');
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', $param_notification_also_main_addressemail, 'chaine', 0, '', $conf->entity);
 		if (!$res > 0) {
@@ -367,8 +364,7 @@ print '</td>';
 print '</tr>';
 
 // Also send to TICKET_NOTIFICATION_EMAIL_TO for responses (not only creation)
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-{
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	print '<tr class="oddeven"><td>'.$langs->trans("TicketsEmailAlsoSendToMainAddress").'</td>';
 	print '<td class="left">';
 	if ($conf->use_javascript_ajax) {

@@ -17,8 +17,7 @@
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-if (!class_exists('PrestaShopWebservice')) // We keep this because some modules add this lib too into a different path. This is to avoid "Cannot declare class PrestaShopWebservice" errors.
-{
+if (!class_exists('PrestaShopWebservice')) { // We keep this because some modules add this lib too into a different path. This is to avoid "Cannot declare class PrestaShopWebservice" errors.
 	include_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/PSWebServiceLibrary.class.php';
 }
 
@@ -67,7 +66,9 @@ class Dolistore
 		$langtmp    = explode('_', $langs->defaultlang);
 		$lang       = $langtmp[0];
 		$lang_array = array('en'=>1, 'fr'=>2, 'es'=>3, 'it'=>4, 'de'=>5); // Into table ps_lang of Prestashop - 1
-		if (!in_array($lang, array_keys($lang_array))) $lang = 'en';
+		if (!in_array($lang, array_keys($lang_array))) {
+			$lang = 'en';
+		}
 		$this->lang = $lang_array[$lang];
 	}
 
@@ -99,9 +100,11 @@ class Dolistore
 		} catch (PrestaShopWebserviceException $e) {
 			// Here we are dealing with errors
 			$trace = $e->getTrace();
-			if ($trace[0]['args'][0] == 404) die('Bad ID');
-			elseif ($trace[0]['args'][0] == 401) die('Bad auth key');
-			else {
+			if ($trace[0]['args'][0] == 404) {
+				die('Bad ID');
+			} elseif ($trace[0]['args'][0] == 401) {
+				die('Bad auth key');
+			} else {
 				print 'Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'<br>';
 				print $e->getMessage();
 			}
@@ -180,9 +183,11 @@ class Dolistore
 		} catch (PrestaShopWebserviceException $e) {
 			// Here we are dealing with errors
 			$trace = $e->getTrace();
-			if ($trace[0]['args'][0] == 404) die('Bad ID');
-			elseif ($trace[0]['args'][0] == 401) die('Bad auth key');
-			else {
+			if ($trace[0]['args'][0] == 404) {
+				die('Bad ID');
+			} elseif ($trace[0]['args'][0] == 401) {
+				die('Bad auth key');
+			} else {
 				print 'Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'<br>';
 				print $e->getMessage();
 			}
@@ -199,7 +204,9 @@ class Dolistore
 	public function get_categories($parent = 0)
 	{
 		// phpcs:enable
-		if (!isset($this->categories)) die('not possible');
+		if (!isset($this->categories)) {
+			die('not possible');
+		}
 		if ($parent != 0) {
 			$html = '<ul>';
 		} else {
@@ -207,8 +214,7 @@ class Dolistore
 		}
 
 		$nbofcateg = count($this->categories);
-		for ($i = 0; $i < $nbofcateg; $i++)
-		{
+		for ($i = 0; $i < $nbofcateg; $i++) {
 			$cat = $this->categories[$i];
 			if ($cat->is_root_category == 1 && $parent == 0) {
 				$html .= '<li class="root"><h3 class="nomargesupinf"><a class="nomargesupinf link2cat" href="?mode=marketplace&categorie='.$cat->id.'" ';
@@ -282,19 +288,31 @@ class Dolistore
 			if ($this->version_compare($product->dolibarr_min, DOL_VERSION) <= 0) {
 				if ($this->version_compare($product->dolibarr_max, DOL_VERSION) >= 0) {
 					//compatible
-					$version = '<span class="compatible">'.$langs->trans('CompatibleUpTo', $product->dolibarr_max,
-						$product->dolibarr_min, $product->dolibarr_max).'</span>';
+					$version = '<span class="compatible">'.$langs->trans(
+						'CompatibleUpTo',
+						$product->dolibarr_max,
+						$product->dolibarr_min,
+						$product->dolibarr_max
+					).'</span>';
 					$compatible = '';
 				} else {
 					//never compatible, module expired
-					$version = '<span class="notcompatible">'.$langs->trans('NotCompatible', DOL_VERSION,
-						$product->dolibarr_min, $product->dolibarr_max).'</span>';
+					$version = '<span class="notcompatible">'.$langs->trans(
+						'NotCompatible',
+						DOL_VERSION,
+						$product->dolibarr_min,
+						$product->dolibarr_max
+					).'</span>';
 					$compatible = 'NotCompatible';
 				}
 			} else {
 				//need update
-				$version    = '<span class="compatibleafterupdate">'.$langs->trans('CompatibleAfterUpdate', DOL_VERSION,
-					$product->dolibarr_min, $product->dolibarr_max).'</span>';
+				$version    = '<span class="compatibleafterupdate">'.$langs->trans(
+					'CompatibleAfterUpdate',
+					DOL_VERSION,
+					$product->dolibarr_min,
+					$product->dolibarr_max
+				).'</span>';
 				$compatible = 'NotCompatible';
 			}
 

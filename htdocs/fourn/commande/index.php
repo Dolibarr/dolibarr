@@ -32,7 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 // Security check
 $orderid = GETPOST('orderid');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'fournisseur', $orderid, '', 'commande');
 
 $hookmanager = new HookManager($db);
@@ -59,8 +61,7 @@ print load_fiche_titre($langs->trans("SuppliersOrdersArea"), '', 'supplier_order
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
-{
+if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is useless due to the global search combo
 	print '<form method="post" action="list.php">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<div class="div-table-responsive-no-min">';
@@ -79,16 +80,21 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useles
 $sql = "SELECT count(cf.rowid) as nb, fk_statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as cf";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+}
 $sql .= " WHERE cf.fk_soc = s.rowid";
 $sql .= " AND cf.entity IN (".getEntity('supplier_order').")";
-if ($user->socid) $sql .= ' AND cf.fk_soc = '.$user->socid;
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+if ($user->socid) {
+	$sql .= ' AND cf.fk_soc = '.$user->socid;
+}
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+}
 $sql .= " GROUP BY cf.fk_statut";
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
@@ -98,11 +104,9 @@ if ($resql)
 	//	0=Draft -> 1=Validated -> 2=Approved -> 3=Process runing -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
 	//	-> 7=Canceled/Never received -> (reopen) 3=Process runing
 	//	-> 6=Canceled -> (reopen) 2=Approved
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$obj = $db->fetch_object($resql);
-		if ($obj)
-		{
+		if ($obj) {
 			$vals[($obj->status == CommandeFournisseur::STATUS_CANCELED_AFTER_ORDER ? CommandeFournisseur::STATUS_CANCELED : $obj->status)] = $obj->nb;
 
 			$total += $obj->nb;
@@ -118,28 +122,41 @@ if ($resql)
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("SuppliersOrders").'</th></tr>';
 	print "</tr>\n";
 	$listofstatus = array(0, 1, 2, 3, 4, 5, 6, 9);
-	foreach ($listofstatus as $status)
-	{
+	foreach ($listofstatus as $status) {
 		$dataseries[] = array($commandestatic->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
-		if ($status == CommandeFournisseur::STATUS_DRAFT) $colorseries[$status] = '-'.$badgeStatus0;
-		if ($status == CommandeFournisseur::STATUS_VALIDATED) $colorseries[$status] = '-'.$badgeStatus1;
-		if ($status == CommandeFournisseur::STATUS_ACCEPTED) $colorseries[$status] = $badgeStatus1;
-		if ($status == CommandeFournisseur::STATUS_REFUSED) $colorseries[$status] = $badgeStatus9;
-		if ($status == CommandeFournisseur::STATUS_ORDERSENT) $colorseries[$status] = $badgeStatus4;
-		if ($status == CommandeFournisseur::STATUS_RECEIVED_PARTIALLY) $colorseries[$status] = '-'.$badgeStatus4;
-		if ($status == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) $colorseries[$status] = $badgeStatus6;
-		if ($status == CommandeFournisseur::STATUS_CANCELED || $status == CommandeFournisseur::STATUS_CANCELED_AFTER_ORDER) $colorseries[$status] = $badgeStatus9;
+		if ($status == CommandeFournisseur::STATUS_DRAFT) {
+			$colorseries[$status] = '-'.$badgeStatus0;
+		}
+		if ($status == CommandeFournisseur::STATUS_VALIDATED) {
+			$colorseries[$status] = '-'.$badgeStatus1;
+		}
+		if ($status == CommandeFournisseur::STATUS_ACCEPTED) {
+			$colorseries[$status] = $badgeStatus1;
+		}
+		if ($status == CommandeFournisseur::STATUS_REFUSED) {
+			$colorseries[$status] = $badgeStatus9;
+		}
+		if ($status == CommandeFournisseur::STATUS_ORDERSENT) {
+			$colorseries[$status] = $badgeStatus4;
+		}
+		if ($status == CommandeFournisseur::STATUS_RECEIVED_PARTIALLY) {
+			$colorseries[$status] = '-'.$badgeStatus4;
+		}
+		if ($status == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) {
+			$colorseries[$status] = $badgeStatus6;
+		}
+		if ($status == CommandeFournisseur::STATUS_CANCELED || $status == CommandeFournisseur::STATUS_CANCELED_AFTER_ORDER) {
+			$colorseries[$status] = $badgeStatus9;
+		}
 
-		if (!$conf->use_javascript_ajax)
-		{
+		if (!$conf->use_javascript_ajax) {
 			print '<tr class="oddeven">';
 			print '<td>'.$commandestatic->LibStatut($status, 0).'</td>';
 			print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).'</a></td>';
 			print "</tr>\n";
 		}
 	}
-	if ($conf->use_javascript_ajax)
-	{
+	if ($conf->use_javascript_ajax) {
 		print '<tr class="impair"><td class="center" colspan="2">';
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
@@ -168,32 +185,34 @@ if ($resql)
  * Draft orders
  */
 
-if (!empty($conf->fournisseur->enabled))
-{
+if (!empty($conf->fournisseur->enabled)) {
 	$sql = "SELECT c.rowid, c.ref, s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (!$user->rights->societe->client->voir && !$socid) {
+		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	}
 	$sql .= " WHERE c.fk_soc = s.rowid";
 	$sql .= " AND c.entity IN (".getEntity("supplier_order").")"; // Thirdparty sharing is mandatory with supplier order sharing
 	$sql .= " AND c.fk_statut = 0";
-	if (!empty($socid)) $sql .= " AND c.fk_soc = ".$socid;
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if (!empty($socid)) {
+		$sql .= " AND c.fk_soc = ".$socid;
+	}
+	if (!$user->rights->societe->client->voir && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	}
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("DraftOrders").'</th></tr>';
 		$langs->load("orders");
 		$num = $db->num_rows($resql);
-		if ($num)
-		{
+		if ($num) {
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 
 				print '<tr class="oddeven">';
@@ -218,8 +237,7 @@ if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_T
 }
 $sql .= " u.rowid, u.lastname, u.firstname, u.email, u.statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
-{
+if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 	$sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
 	$sql .= " WHERE ((ug.fk_user = u.rowid";
 	$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
@@ -230,8 +248,7 @@ if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_T
 $sql .= " AND u.fk_soc IS NULL"; // An external user can not approved
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
@@ -240,16 +257,14 @@ if ($resql)
 	print '<tr class="liste_titre"><th>'.$langs->trans("UserWithApproveOrderGrant").'</th>';
 	print "</tr>\n";
 
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$obj = $db->fetch_object($resql);
 
 		$userstatic = new User($db);
 		$userstatic->id = $obj->rowid;
 		$userstatic->getrights('fournisseur');
 
-		if (!empty($userstatic->rights->fournisseur->commande->approuver))
-		{
+		if (!empty($userstatic->rights->fournisseur->commande->approuver)) {
 			print '<tr class="oddeven">';
 			print '<td>';
 			$userstatic->lastname = $obj->lastname;
@@ -281,29 +296,32 @@ $max = 5;
 $sql = "SELECT c.rowid, c.ref, c.fk_statut as status, c.tms, c.billed, s.nom as name, s.rowid as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+}
 $sql .= " WHERE c.fk_soc = s.rowid";
 $sql .= " AND c.entity = ".$conf->entity;
 //$sql.= " AND c.fk_statut > 2";
-if (!empty($socid)) $sql .= " AND c.fk_soc = ".$socid;
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+if (!empty($socid)) {
+	$sql .= " AND c.fk_soc = ".$socid;
+}
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+}
 $sql .= " ORDER BY c.tms DESC";
 $sql .= $db->plimit($max, 0);
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="4">'.$langs->trans("LastModifiedOrders", $max).'</th></tr>';
 
 	$num = $db->num_rows($resql);
-	if ($num)
-	{
+	if ($num) {
 		$i = 0;
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
@@ -338,7 +356,9 @@ if ($resql)
 		}
 	}
 	print "</table></div><br>";
-} else dol_print_error($db);
+} else {
+	dol_print_error($db);
+}
 
 
 /*

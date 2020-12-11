@@ -59,8 +59,9 @@ class TaskStats extends Stats
 		$sql = "SELECT";
 		$sql .= " COUNT(t.rowid), t.priority";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task as t INNER JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = t.fk_projet";
-		if (!$user->rights->societe->client->voir && !$user->soc_id)
+		if (!$user->rights->societe->client->voir && !$user->soc_id) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user=".$user->id;
+		}
 		$sql .= $this->buildWhere();
 		//$sql .= " AND t.fk_statut <> 0";     // We want historic also, so all task not draft
 		$sql .= " GROUP BY t.priority";
@@ -76,20 +77,22 @@ class TaskStats extends Stats
 			$other = 0;
 			while ($i < $num) {
 				$row = $this->db->fetch_row($resql);
-				if ($i < $limit || $num == $limit)
-				{
+				if ($i < $limit || $num == $limit) {
 					$result[$i] = array(
 						$row[1],
 						$row[0]
 					);
-				} else $other += $row[1];
+				} else {
+					$other += $row[1];
+				}
 				$i++;
 			}
-			if ($num > $limit)
+			if ($num > $limit) {
 				$result[$i] = array(
 						$langs->transnoentitiesnoconv("Other"),
 						$other
 				);
+			}
 			$this->db->free($resql);
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
@@ -115,8 +118,9 @@ class TaskStats extends Stats
 
 		$sql = "SELECT date_format(t.datec,'%Y') as year, COUNT(t.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task as t INNER JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = t.fk_projet";
-		if (!$user->rights->societe->client->voir && !$user->soc_id)
+		if (!$user->rights->societe->client->voir && !$user->soc_id) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user=".$user->id;
+		}
 		$sql .= $this->buildWhere();
 		$sql .= " GROUP BY year";
 		$sql .= $this->db->order('year', 'DESC');
@@ -137,18 +141,23 @@ class TaskStats extends Stats
 
 		$sqlwhere[] = ' t.entity IN ('.getEntity('project').')';
 
-		if (!empty($this->userid))
+		if (!empty($this->userid)) {
 			$sqlwhere[] = ' t.fk_user_resp='.$this->userid;
+		}
 		// Forced filter on socid is similar to forced filter on project. TODO Use project assignement to allow to not use filter on project
-		if (!empty($this->socid))
+		if (!empty($this->socid)) {
 			$sqlwhere[] = ' p.fk_soc='.$this->socid; // Link on thirdparty is on project, not on task
-		if (!empty($this->year) && empty($this->yearmonth))
+		}
+		if (!empty($this->year) && empty($this->yearmonth)) {
 			$sqlwhere[] = " date_format(t.datec,'%Y')='".$this->db->escape($this->year)."'";
-		if (!empty($this->yearmonth))
+		}
+		if (!empty($this->yearmonth)) {
 			$sqlwhere[] = " t.datec BETWEEN '".$this->db->idate(dol_get_first_day($this->yearmonth))."' AND '".$this->db->idate(dol_get_last_day($this->yearmonth))."'";
+		}
 
-		if (!empty($this->status))
+		if (!empty($this->status)) {
 			$sqlwhere[] = " t.priority IN (".$this->priority.")";
+		}
 
 		if (count($sqlwhere) > 0) {
 			$sqlwhere_str = ' WHERE '.implode(' AND ', $sqlwhere);
@@ -172,8 +181,9 @@ class TaskStats extends Stats
 
 		$sql = "SELECT date_format(t.datec,'%m') as dm, COUNT(t.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task as t INNER JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = t.fk_projet";
-		if (!$user->rights->societe->client->voir && !$user->soc_id)
+		if (!$user->rights->societe->client->voir && !$user->soc_id) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user=".$user->id;
+		}
 		$sql .= $this->buildWhere();
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');

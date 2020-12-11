@@ -185,7 +185,7 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_end[$r] .= MAIN_DB_PREFIX.'categorie_societe as cf, ';
 		$this->export_sql_end[$r] .= MAIN_DB_PREFIX.'societe as s';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as ce ON s.fk_effectif = ce.id LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as cfj ON s.fk_forme_juridique = cfj.code';
-	 	$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extrasoc ON s.rowid = extrasoc.fk_object ';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extrasoc ON s.rowid = extrasoc.fk_object ';
 		$this->export_sql_end[$r] .= ' WHERE u.rowid = cf.fk_categorie AND cf.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .= ' AND u.entity IN ('.getEntity('category').')';
 		$this->export_sql_end[$r] .= ' AND u.type = 2'; // Customer/Prospect categories
@@ -316,15 +316,12 @@ class modCategorie extends DolibarrModules
 		// Add extra fields
 		$sql = "SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'socpeople' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
-		if ($resql)    // This can fail when class is used on old database (during migration for example)
-		{
-			while ($obj = $this->db->fetch_object($resql))
-			{
+		if ($resql) {    // This can fail when class is used on old database (during migration for example)
+			while ($obj = $this->db->fetch_object($resql)) {
 				$fieldname = 'extra.'.$obj->name;
 				$fieldlabel = ucfirst($obj->label);
 				$typeFilter = "Text";
-				switch ($obj->type)
-				{
+				switch ($obj->type) {
 					case 'int':
 					case 'double':
 					case 'price':
@@ -386,17 +383,24 @@ class modCategorie extends DolibarrModules
 			)
 		);
 		$typeexample = "";
-		if (!empty($conf->product->enabled)) { $typeexample .= ($typeexample ? "/" : "")."0=Product"; }
-		if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) { $typeexample .= ($typeexample ? "/" : "")."1=Supplier"; }
-		if (!empty($conf->societe->enabled)) { $typeexample .= ($typeexample ? "/" : "")."2=Customer-Prospect"; }
-		if (!empty($conf->adherent->enabled)) { $typeexample .= ($typeexample ? "/" : "")."3=Member"; }
+		if (!empty($conf->product->enabled)) {
+			$typeexample .= ($typeexample ? "/" : "")."0=Product";
+		}
+		if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+			$typeexample .= ($typeexample ? "/" : "")."1=Supplier";
+		}
+		if (!empty($conf->societe->enabled)) {
+			$typeexample .= ($typeexample ? "/" : "")."2=Customer-Prospect";
+		}
+		if (!empty($conf->adherent->enabled)) {
+			$typeexample .= ($typeexample ? "/" : "")."3=Member";
+		}
 		$this->import_examplevalues_array[$r] = array(
 			'ca.label'=>"Supplier Category", 'ca.type'=>$typeexample, 'ca.description'=>"My Category description",
 			'ca.fk_parent' => '0'
 		);
 
-		if (!empty($conf->product->enabled))
-		{
+		if (!empty($conf->product->enabled)) {
 			//Products
 			$r++;
 			$this->import_code[$r] = $this->rights_class.'_'.$r;
@@ -414,8 +418,7 @@ class modCategorie extends DolibarrModules
 			$this->import_examplevalues_array[$r] = array('cp.fk_categorie'=>"Imported category", 'cp.fk_product'=>"PREF123456");
 		}
 
-		if (!empty($conf->societe->enabled))
-		{
+		if (!empty($conf->societe->enabled)) {
 			// Customers
 			$r++;
 			$this->import_code[$r] = $this->rights_class.'_'.$r;
@@ -455,8 +458,7 @@ class modCategorie extends DolibarrModules
 			$this->import_examplevalues_array[$r] = array('cs.fk_categorie'=>"Imported category", 'cs.fk_socpeople'=>"123");
 		}
 
-		if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
-		{
+		if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
 			// Suppliers
 			$r++;
 			$this->import_code[$r] = $this->rights_class.'_'.$r;

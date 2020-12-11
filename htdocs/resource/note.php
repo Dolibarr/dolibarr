@@ -37,7 +37,9 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'resource', $id, 'resource');
 
 $object = new DolResource($db);
@@ -61,8 +63,7 @@ llxHeader();
 
 $form = new Form($db);
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$head = resource_prepare_head($object);
 	print dol_get_fiche_head($head, 'note', $langs->trans('ResourceSingular'), -1, 'resource');
 

@@ -30,7 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "errors"));
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $type = array('yesno', 'texte', 'chaine');
 
@@ -41,11 +43,9 @@ $action = GETPOST('action', 'aZ09');
 /*
  * Action
  */
-if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
-{
+if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$code = $reg[1];
-	if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
-	{
+	if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0) {
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	} else {
@@ -53,11 +53,9 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 	}
 }
 
-if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
-{
+if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$code = $reg[1];
-	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
-	{
+	if (dolibarr_del_const($db, $code, $conf->entity) > 0) {
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	} else {

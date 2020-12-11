@@ -128,12 +128,10 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	public function getExample($langs, $objproduct = 0)
 	{
 		$examplebarcode = $this->getNextValue($objproduct, '');
-		if (!$examplebarcode)
-		{
+		if (!$examplebarcode) {
 			$examplebarcode = $langs->trans('NotConfigured');
 		}
-		if ($examplebarcode == "ErrorBadMask")
-		{
+		if ($examplebarcode == "ErrorBadMask") {
 			$langs->load("errors");
 			$examplebarcode = $langs->trans($examplebarcode);
 		}
@@ -158,10 +156,11 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 		// Get Mask value
 		$mask = '';
-		if (!empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)) $mask = $conf->global->BARCODE_STANDARD_PRODUCT_MASK;
+		if (!empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)) {
+			$mask = $conf->global->BARCODE_STANDARD_PRODUCT_MASK;
+		}
 
-		if (empty($mask))
-		{
+		if (empty($mask)) {
 			$this->error = 'NotConfigured';
 			return '';
 		}
@@ -201,25 +200,20 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		$result = 0;
 		$code = strtoupper(trim($code));
 
-		if (empty($code) && $this->code_null && empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK))
-		{
+		if (empty($code) && $this->code_null && empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)) {
 			$result = 0;
-		} elseif (empty($code) && (!$this->code_null || !empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)))
-		{
+		} elseif (empty($code) && (!$this->code_null || !empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK))) {
 			$result = -2;
 		} else {
-			if ($this->verif_syntax($code, $type) >= 0)
-			{
+			if ($this->verif_syntax($code, $type) >= 0) {
 				$is_dispo = $this->verif_dispo($db, $code, $product);
-				if ($is_dispo <> 0)
-				{
+				if ($is_dispo <> 0) {
 					$result = -3;
 				} else {
 					$result = 0;
 				}
 			} else {
-				if (dol_strlen($code) == 0)
-				{
+				if (dol_strlen($code) == 0) {
 					$result = -2;
 				} else {
 					$result = -1;
@@ -246,13 +240,13 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		// phpcs:enable
 		$sql = "SELECT barcode FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE barcode = '".$db->escape($code)."'";
-		if ($product->id > 0) $sql .= " AND rowid <> ".$product->id;
+		if ($product->id > 0) {
+			$sql .= " AND rowid <> ".$product->id;
+		}
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
-			if ($db->num_rows($resql) == 0)
-			{
+		if ($resql) {
+			if ($db->num_rows($resql) == 0) {
 				return 0;
 			} else {
 				return -1;
@@ -279,8 +273,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 		// Get Mask value
 		$mask = empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK) ? '' : $conf->global->BARCODE_STANDARD_PRODUCT_MASK;
-		if (!$mask)
-		{
+		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return -1;
 		}
@@ -290,18 +283,17 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		$newcodefortest = $codefortest;
 
 		// Special case, if mask is on 12 digits instead of 13, we remove last char into code to test
-		if (in_array($typefortest, array('EAN13', 'ISBN')))	// We remove the CRC char not included into mask
-		{
-			if (preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i', $mask, $reg))
-			{
-				if (strlen($reg[1]) == 12) $newcodefortest = substr($newcodefortest, 0, 12);
+		if (in_array($typefortest, array('EAN13', 'ISBN'))) {	// We remove the CRC char not included into mask
+			if (preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i', $mask, $reg)) {
+				if (strlen($reg[1]) == 12) {
+					$newcodefortest = substr($newcodefortest, 0, 12);
+				}
 				dol_syslog(get_class($this).'::verif_syntax newcodefortest='.$newcodefortest);
 			}
 		}
 
 		$result = check_value($mask, $newcodefortest);
-		if (is_string($result))
-		{
+		if (is_string($result)) {
 			$this->error = $result;
 			return -1;
 		}

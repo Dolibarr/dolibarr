@@ -1,8 +1,7 @@
 <!-- BEGIN TEMPLATE resource_view.tpl.php -->
 <?php
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -28,16 +27,13 @@ print '<input type="hidden" name="id" value="'.$element_id.'" />';
 print '<input type="hidden" name="action" value="update_linked_resource" />';
 print '<input type="hidden" name="resource_type" value="'.$resource_type.'" />';
 
-if ((array) $linked_resources && count($linked_resources) > 0)
-{
-	foreach ($linked_resources as $linked_resource)
-	{
+if ((array) $linked_resources && count($linked_resources) > 0) {
+	foreach ($linked_resources as $linked_resource) {
 		$object_resource = fetchObjectByElement($linked_resource['resource_id'], $linked_resource['resource_type']);
 
 		//$element_id = $linked_resource['rowid'];
 
-		if ($mode == 'edit' && $linked_resource['rowid'] == GETPOST('lineid'))
-		{
+		if ($mode == 'edit' && $linked_resource['rowid'] == GETPOST('lineid')) {
 			print '<div class="tagtr oddeven">';
 			print '<input type="hidden" name="lineid" value="'.$linked_resource['rowid'].'" />';
 			print '<input type="hidden" name="element" value="'.$element.'" />';
@@ -51,8 +47,9 @@ if ((array) $linked_resources && count($linked_resources) > 0)
 			print '</div>';
 		} else {
 			$class = '';
-			if ($linked_resource['rowid'] == GETPOST('lineid'))
+			if ($linked_resource['rowid'] == GETPOST('lineid')) {
 				$class = 'highlight';
+			}
 
 			print '<div class="tagtr oddeven'.($class ? ' '.$class : '').'">';
 

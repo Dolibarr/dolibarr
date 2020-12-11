@@ -44,8 +44,12 @@ $cancel = GETPOST('cancel', 'alpha');
 $accountingaccount = GETPOST('accountingaccount', 'alpha');
 
 // Security check
-if ($user->socid > 0) accessforbidden();
-if (!$user->rights->accounting->chartofaccount) accessforbidden();
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (!$user->rights->accounting->chartofaccount) {
+	accessforbidden();
+}
 
 
 $object = new AccountingAccount($db);
@@ -55,15 +59,13 @@ $object = new AccountingAccount($db);
  * Action
  */
 
-if (GETPOST('cancel', 'alpha'))
-{
+if (GETPOST('cancel', 'alpha')) {
 	$urltogo = $backtopage ? $backtopage : dol_buildpath('/accountancy/admin/account.php', 1);
 	header("Location: ".$urltogo);
 	exit;
 }
 
-if ($action == 'add' && $user->rights->accounting->chartofaccount)
-{
+if ($action == 'add' && $user->rights->accounting->chartofaccount) {
 	if (!$cancel) {
 		$sql = 'SELECT pcg_version FROM '.MAIN_DB_PREFIX.'accounting_system WHERE rowid='.$conf->global->CHARTOFACCOUNTS;
 
@@ -74,15 +76,13 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		// Clean code
 
 		// To manage zero or not at the end of the accounting account
-		if ($conf->global->ACCOUNTING_MANAGE_ZERO == 1)
-		{
+		if ($conf->global->ACCOUNTING_MANAGE_ZERO == 1) {
 			$account_number = GETPOST('account_number', 'string');
 		} else {
 			$account_number = clean_account(GETPOST('account_number', 'string'));
 		}
 
-		if (GETPOST('account_parent', 'int') <= 0)
-		{
+		if (GETPOST('account_parent', 'int') <= 0) {
 			$account_parent = 0;
 		} else {
 			$account_parent = GETPOST('account_parent', 'int');
@@ -106,14 +106,12 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 			$error = 2;
 			$action = "create";
 			setEventMessages($object->error, $object->errors, 'errors');
-		} elseif ($res < 0)
-		{
+		} elseif ($res < 0) {
 			$error++;
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = "create";
 		}
-		if (!$error)
-		{
+		if (!$error) {
 			setEventMessages("RecordCreatedSuccessfully", null, 'mesgs');
 			$urltogo = $backtopage ? $backtopage : dol_buildpath('/accountancy/admin/account.php', 1);
 			header("Location: ".$urltogo);
@@ -133,15 +131,13 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		// Clean code
 
 		// To manage zero or not at the end of the accounting account
-		if ($conf->global->ACCOUNTING_MANAGE_ZERO == 1)
-		{
+		if ($conf->global->ACCOUNTING_MANAGE_ZERO == 1) {
 			$account_number = GETPOST('account_number', 'string');
 		} else {
 			$account_number = clean_account(GETPOST('account_number', 'string'));
 		}
 
-		if (GETPOST('account_parent', 'int') <= 0)
-		{
+		if (GETPOST('account_parent', 'int') <= 0) {
 			$account_parent = 0;
 		} else {
 			$account_parent = GETPOST('account_parent', 'int');
@@ -270,8 +266,7 @@ if ($action == 'create') {
 		$head = accounting_prepare_head($object);
 
 		// Edit mode
-		if ($action == 'update')
-		{
+		if ($action == 'update') {
 			print dol_get_fiche_head($head, 'card', $langs->trans('AccountAccounting'), 0, 'billr');
 
 			print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";

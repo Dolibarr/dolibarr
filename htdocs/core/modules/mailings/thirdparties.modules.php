@@ -72,8 +72,7 @@ class mailing_thirdparties extends MailingTargets
 
 		$addDescription = "";
 		// Select the third parties from category
-		if (empty($_POST['filter']))
-		{
+		if (empty($_POST['filter'])) {
 			$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, null as label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= " WHERE s.email <> ''";
@@ -84,17 +83,13 @@ class mailing_thirdparties extends MailingTargets
 			if (GETPOSTISSET("filter_client") && GETPOST("filter_client") <> '-1') {
 				$addFilter .= " AND s.client=".((int) GETPOST("filter_client", 'int'));
 				$addDescription = $langs->trans('ProspectCustomer')."=";
-				if ($_POST["filter_client"] == 0)
-				{
+				if ($_POST["filter_client"] == 0) {
 					$addDescription .= $langs->trans('NorProspectNorCustomer');
-				} elseif ($_POST["filter_client"] == 1)
-				{
+				} elseif ($_POST["filter_client"] == 1) {
 					$addDescription .= $langs->trans('Customer');
-				} elseif ($_POST["filter_client"] == 2)
-				{
+				} elseif ($_POST["filter_client"] == 2) {
 					$addDescription .= $langs->trans('Prospect');
-				} elseif ($_POST["filter_client"] == 3)
-				{
+				} elseif ($_POST["filter_client"] == 3) {
 					$addDescription .= $langs->trans('ProspectCustomer');
 				} else {
 					$addDescription .= "Unknown status ".GETPOST("filter_client");
@@ -137,8 +132,7 @@ class mailing_thirdparties extends MailingTargets
 
 		// Stock recipients emails into targets table
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			$j = 0;
@@ -146,14 +140,11 @@ class mailing_thirdparties extends MailingTargets
 			dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found");
 
 			$old = '';
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				if ($old <> $obj->email)
-				{
+				if ($old <> $obj->email) {
 					$otherTxt = ($obj->label ? $langs->transnoentities("Category").'='.$obj->label : '');
-					if (strlen($addDescription) > 0 && strlen($otherTxt) > 0)
-					{
+					if (strlen($addDescription) > 0 && strlen($otherTxt) > 0) {
 						$otherTxt .= ";";
 					}
 					$otherTxt .= $addDescription;
@@ -248,25 +239,34 @@ class mailing_thirdparties extends MailingTargets
 
 		//print $sql;
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			if (empty($conf->categorie->enabled)) $num = 0; // Force empty list if category module is not enabled
+			if (empty($conf->categorie->enabled)) {
+				$num = 0; // Force empty list if category module is not enabled
+			}
 
-			if ($num) $s .= '<option value="0">&nbsp;</option>';
-			else $s .= '<option value="0">'.$langs->trans("ContactsAllShort").'</option>';
+			if ($num) {
+				$s .= '<option value="0">&nbsp;</option>';
+			} else {
+				$s .= '<option value="0">'.$langs->trans("ContactsAllShort").'</option>';
+			}
 
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
 				$type = '';
-				if ($obj->type == 1) $type = $langs->trans("Supplier");
-				if ($obj->type == 2) $type = $langs->trans("Customer");
+				if ($obj->type == 1) {
+					$type = $langs->trans("Supplier");
+				}
+				if ($obj->type == 2) {
+					$type = $langs->trans("Customer");
+				}
 				$s .= '<option value="'.$obj->rowid.'">'.dol_trunc($obj->label, 38, 'middle');
-				if ($type) $s .= ' ('.$type.')';
+				if ($type) {
+					$s .= ' ('.$type.')';
+				}
 				$s .= '</option>';
 				$i++;
 			}

@@ -41,7 +41,9 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'contrat', $id);
 
 $object = new Contrat($db);
@@ -70,8 +72,7 @@ llxHeader('', $langs->trans("Contract"), "");
 
 $form = new Form($db);
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();
 
 	$head = contract_prepare_head($object);
@@ -89,9 +90,9 @@ if ($id > 0 || !empty($ref))
 	//if (! empty($modCodeContract->code_auto)) {
 	$morehtmlref .= $object->ref;
 	/*} else {
-     $morehtmlref.=$form->editfieldkey("",'ref',$object->ref,0,'string','',0,3);
-    $morehtmlref.=$form->editfieldval("",'ref',$object->ref,0,'string','',0,2);
-    }*/
+	 $morehtmlref.=$form->editfieldkey("",'ref',$object->ref,0,'string','',0,3);
+	$morehtmlref.=$form->editfieldval("",'ref',$object->ref,0,'string','',0,2);
+	}*/
 
 	$morehtmlref .= '<div class="refidno">';
 	// Ref customer
@@ -104,15 +105,14 @@ if ($id > 0 || !empty($ref))
 	// Thirdparty
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 	// Project
-	if (!empty($conf->projet->enabled))
-	{
+	if (!empty($conf->projet->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-		if ($user->rights->contrat->creer)
-		{
-			if ($action != 'classify')
+		if ($user->rights->contrat->creer) {
+			if ($action != 'classify') {
 				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				$morehtmlref .= ' : ';
+			}
 			if ($action == 'classify') {
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -150,12 +150,18 @@ if ($id > 0 || !empty($ref))
 
 	// Ligne info remises tiers
 	print '<tr><td class="titlefield">'.$langs->trans('Discount').'</td><td colspan="3">';
-	if ($object->thirdparty->remise_percent) print $langs->trans("CompanyHasRelativeDiscount", $object->thirdparty->remise_percent);
-	else print $langs->trans("CompanyHasNoRelativeDiscount");
+	if ($object->thirdparty->remise_percent) {
+		print $langs->trans("CompanyHasRelativeDiscount", $object->thirdparty->remise_percent);
+	} else {
+		print $langs->trans("CompanyHasNoRelativeDiscount");
+	}
 	$absolute_discount = $object->thirdparty->getAvailableDiscounts();
 	print '. ';
-	if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->trans("Currency".$conf->currency));
-	else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+	if ($absolute_discount) {
+		print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->trans("Currency".$conf->currency));
+	} else {
+		print $langs->trans("CompanyHasNoAbsoluteDiscount");
+	}
 	print '.';
 	print '</td></tr>';
 

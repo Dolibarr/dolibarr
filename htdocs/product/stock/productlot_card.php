@@ -49,12 +49,13 @@ $search_fk_user_creat = GETPOST('search_fk_user_creat', 'int');
 $search_fk_user_modif = GETPOST('search_fk_user_modif', 'int');
 $search_import_key = GETPOST('search_import_key', 'int');
 
-if (empty($action) && empty($id) && empty($ref)) $action = 'list';
+if (empty($action) && empty($id) && empty($ref)) {
+	$action = 'list';
+}
 
 
 // Protection if external user
-if ($user->socid > 0)
-{
+if ($user->socid > 0) {
 	//accessforbidden();
 }
 //$result = restrictedArea($user, 'mymodule', $id);
@@ -69,10 +70,8 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 //include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
-if ($id || $ref)
-{
-	if ($ref)
-	{
+if ($id || $ref) {
+	if ($ref) {
 		$tmp = explode('_', $ref);
 		$productid = $tmp[0];
 		$batch = $tmp[1];
@@ -99,52 +98,53 @@ $usercandelete = $user->rights->produit->supprimer;
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if (empty($reshook))
-{
-	if ($action == 'seteatby' && $user->rights->stock->creer)
-	{
+if (empty($reshook)) {
+	if ($action == 'seteatby' && $user->rights->stock->creer) {
 		$newvalue = dol_mktime(12, 0, 0, $_POST['eatbymonth'], $_POST['eatbyday'], $_POST['eatbyyear']);
 		$result = $object->setValueFrom('eatby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
-		if ($result < 0) dol_print_error($db, $object->error);
+		if ($result < 0) {
+			dol_print_error($db, $object->error);
+		}
 	}
 
-	if ($action == 'setsellby' && $user->rights->stock->creer)
-	{
+	if ($action == 'setsellby' && $user->rights->stock->creer) {
 		$newvalue = dol_mktime(12, 0, 0, $_POST['sellbymonth'], $_POST['sellbyday'], $_POST['sellbyyear']);
 		$result = $object->setValueFrom('sellby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
-		if ($result < 0) dol_print_error($db, $object->error);
+		if ($result < 0) {
+			dol_print_error($db, $object->error);
+		}
 	}
 
-	if ($action == 'update_extras')
-	{
+	if ($action == 'update_extras') {
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
-		if ($ret < 0) $error++;
+		if ($ret < 0) {
+			$error++;
+		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			// Actions on extra fields
 			$result = $object->insertExtraFields('PRODUCT_LOT_MODIFY');
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
 			}
 		}
 
-		if ($error)
+		if ($error) {
 			$action = 'edit_extras';
+		}
 	}
 
 	// Action to add record
-	if ($action == 'add')
-	{
-		if (GETPOST('cancel', 'alpha'))
-		{
+	if ($action == 'add') {
+		if (GETPOST('cancel', 'alpha')) {
 			$urltogo = $backtopage ? $backtopage : dol_buildpath('/stock/list.php', 1);
 			header("Location: ".$urltogo);
 			exit;
@@ -161,17 +161,14 @@ if (empty($reshook))
 		$object->fk_user_modif = GETPOST('fk_user_modif', 'int');
 		$object->import_key = GETPOST('import_key', 'int');
 
-		if (empty($object->ref))
-		{
+		if (empty($object->ref)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Ref")), null, 'errors');
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$result = $object->create($user);
-			if ($result > 0)
-			{
+			if ($result > 0) {
 				// Creation OK
 				$urltogo = $backtopage ? $backtopage : dol_buildpath('/stock/list.php', 1);
 				header("Location: ".$urltogo);
@@ -179,8 +176,11 @@ if (empty($reshook))
 			}
 			{
 				// Creation KO
-				if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-			else setEventMessages($object->error, null, 'errors');
+			if (!empty($object->errors)) {
+				setEventMessages(null, $object->errors, 'errors');
+			} else {
+				setEventMessages($object->error, null, 'errors');
+			}
 				$action = 'create';
 			}
 		} else {
@@ -189,11 +189,12 @@ if (empty($reshook))
 	}
 
 	// Cancel
-	if ($action == 'update' && GETPOST('cancel', 'alpha')) $action = 'view';
+	if ($action == 'update' && GETPOST('cancel', 'alpha')) {
+		$action = 'view';
+	}
 
 	// Action to update record
-	if ($action == 'update' && !GETPOST('cancel', 'alpha'))
-	{
+	if ($action == 'update' && !GETPOST('cancel', 'alpha')) {
 		$error = 0;
 
 		$object->entity = GETPOST('entity', 'int');
@@ -203,22 +204,22 @@ if (empty($reshook))
 		$object->fk_user_modif = GETPOST('fk_user_modif', 'int');
 		$object->import_key = GETPOST('import_key', 'int');
 
-		if (empty($object->ref))
-		{
+		if (empty($object->ref)) {
 			$error++;
 			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Ref")), null, 'errors');
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$result = $object->update($user);
-			if ($result > 0)
-			{
+			if ($result > 0) {
 				$action = 'view';
 			} else {
 				// Creation KO
-				if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-				else setEventMessages($object->error, null, 'errors');
+				if (!empty($object->errors)) {
+					setEventMessages(null, $object->errors, 'errors');
+				} else {
+					setEventMessages($object->error, null, 'errors');
+				}
 				$action = 'edit';
 			}
 		} else {
@@ -227,18 +228,19 @@ if (empty($reshook))
 	}
 
 	// Action to delete
-	if ($action == 'confirm_delete')
-	{
+	if ($action == 'confirm_delete') {
 		$result = $object->delete($user);
-		if ($result > 0)
-		{
+		if ($result > 0) {
 			// Delete OK
 			setEventMessages("RecordDeleted", null, 'mesgs');
 			header("Location: ".dol_buildpath('/stock/list.php', 1));
 			exit;
 		} else {
-			if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-			else setEventMessages($object->error, null, 'errors');
+			if (!empty($object->errors)) {
+				setEventMessages(null, $object->errors, 'errors');
+			} else {
+				setEventMessages($object->error, null, 'errors');
+			}
 		}
 	}
 
@@ -261,8 +263,7 @@ $form = new Form($db);
 
 
 // Part to create
-if ($action == 'create')
-{
+if ($action == 'create') {
 	print load_fiche_titre($langs->trans("Batch"));
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -291,8 +292,7 @@ if ($action == 'create')
 
 
 // Part to show record
-if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
-{
+if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$res = $object->fetch_optionals();
 
 	//print load_fiche_titre($langs->trans("Batch"));
@@ -310,7 +310,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/productlot_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$shownav = 1;
-	if ($user->socid && !in_array('batch', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
+	if ($user->socid && !in_array('batch', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+		$shownav = 0;
+	}
 
 	dol_banner_tab($object, 'id', $linkback, $shownav, 'rowid', 'batch');
 
@@ -360,10 +362,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="tabsAction">'."\n";
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	}
 
-	if (empty($reshook))
-	{
+	if (empty($reshook)) {
 		/*TODO      if ($user->rights->stock->lire)
 		{
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
@@ -391,8 +394,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
  * Documents generes
  */
 
-if (empty($action))
-{
+if (empty($action)) {
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 	print '<a name="builddoc"></a>'; // ancre
 

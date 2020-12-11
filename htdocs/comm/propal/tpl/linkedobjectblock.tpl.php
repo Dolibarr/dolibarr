@@ -44,16 +44,16 @@ $linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1)
 
 $total = 0;
 $ilink = 0;
-foreach ($linkedObjectBlock as $key => $objectlink)
-{
+foreach ($linkedObjectBlock as $key => $objectlink) {
 	$ilink++;
 
 	$trclass = 'oddeven';
-	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass .= ' liste_sub_total';
+	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
+		$trclass .= ' liste_sub_total';
+	}
 	print '<tr class="'.$trclass.'"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'" >';
 	print '<td class="linkedcol-element" >'.$langs->trans("Proposal");
-	if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES)
-	{
+	if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) {
 		$url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$objectlink->id;
 		print '<a class="objectlinked_importbtn" href="'.$url.'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a>';
 	}
@@ -71,8 +71,7 @@ foreach ($linkedObjectBlock as $key => $objectlink)
 	print '<td class="linkedcol-action right"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a></td>';
 	print "</tr>\n";
 }
-if (count($linkedObjectBlock) > 1)
-{
+if (count($linkedObjectBlock) > 1) {
 	print '<tr class="liste_total '.(empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : '').'">';
 	print '<td>'.$langs->trans("Total").'</td>';
 	print '<td></td>';

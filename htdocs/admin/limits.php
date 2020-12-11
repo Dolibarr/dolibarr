@@ -29,7 +29,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'products', 'admin'));
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 $currencycode = GETPOST('currencycode', 'alpha');
@@ -49,39 +51,33 @@ $valmainmaxdecimalstot = GETPOST($mainmaxdecimalstot, 'int');
 $valmainmaxdecimalsshown = GETPOST($mainmaxdecimalsshown, 'int');
 $valmainroundingruletot = price2num(GETPOST($mainroundingruletot, 'alpha'));
 
-if ($action == 'update')
-{
+if ($action == 'update') {
 	$error = 0;
 	$MAXDEC = 8;
 	if ($_POST[$mainmaxdecimalsunit] > $MAXDEC
 	|| $_POST[$mainmaxdecimalstot] > $MAXDEC
-	|| $_POST[$mainmaxdecimalsshown] > $MAXDEC)
-	{
+	|| $_POST[$mainmaxdecimalsshown] > $MAXDEC) {
 		$error++;
 		setEventMessages($langs->trans("ErrorDecimalLargerThanAreForbidden", $MAXDEC), null, 'errors');
 	}
 
 	if ($_POST[$mainmaxdecimalsunit].(!empty($currencycode) ? '_'.$currencycode : '') < 0
 	|| $_POST[$mainmaxdecimalstot] < 0
-	|| $_POST[$mainmaxdecimalsshown] < 0)
-	{
+	|| $_POST[$mainmaxdecimalsshown] < 0) {
 		$langs->load("errors");
 		$error++;
 		setEventMessages($langs->trans("ErrorNegativeValueNotAllowed"), null, 'errors');
 	}
 
-	if ($valmainroundingruletot)
-	{
-		if ($valmainroundingruletot * pow(10, $valmainmaxdecimalstot) < 1)
-		{
+	if ($valmainroundingruletot) {
+		if ($valmainroundingruletot * pow(10, $valmainmaxdecimalstot) < 1) {
 			$langs->load("errors");
 			$error++;
 			setEventMessages($langs->trans("ErrorMAIN_ROUNDING_RULE_TOTCanMAIN_MAX_DECIMALS_TOT"), null, 'errors');
 		}
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		dolibarr_set_const($db, $mainmaxdecimalsunit, $valmainmaxdecimalsunit, 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, $mainmaxdecimalstot, $valmainmaxdecimalstot, 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, $mainmaxdecimalsshown, $valmainmaxdecimalsshown, 'chaine', 0, '', $conf->entity);
@@ -109,24 +105,20 @@ print load_fiche_titre($title, '', 'title_setup');
 
 $aCurrencies = array($conf->currency); // Default currency always first position
 
-if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY))
-{
+if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/multicurrency.lib.php';
 
 	$sql = 'SELECT rowid, code FROM '.MAIN_DB_PREFIX.'multicurrency';
 	$sql .= ' WHERE entity = '.$conf->entity;
 	$sql .= ' AND code != "'.$conf->currency.'"'; // Default currency always first position
 	$resql = $db->query($sql);
-	if ($resql)
-	{
-		while ($obj = $db->fetch_object($resql))
-		{
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
 			$aCurrencies[] = $obj->code;
 		}
 	}
 
-	if (!empty($aCurrencies) && count($aCurrencies) > 1)
-	{
+	if (!empty($aCurrencies) && count($aCurrencies) > 1) {
 		$head = multicurrencyLimitPrepareHead($aCurrencies);
 
 		print dol_get_fiche_head($head, $currencycode, '', -1, '');
@@ -136,8 +128,7 @@ if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY
 print '<span class="opacitymedium">'.$langs->trans("LimitsDesc")."</span><br>\n";
 print "<br>\n";
 
-if ($action == 'edit')
-{
+if ($action == 'edit') {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
@@ -203,16 +194,13 @@ if ($action == 'edit')
 	print '</div>';
 }
 
-if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY))
-{
-	if (!empty($aCurrencies) && count($aCurrencies) > 1)
-	{
+if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
+	if (!empty($aCurrencies) && count($aCurrencies) > 1) {
 		print dol_get_fiche_end();
 	}
 }
 
-if (empty($mysoc->country_code))
-{
+if (empty($mysoc->country_code)) {
 	$langs->load("errors");
 	$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"));
 	print '<br><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a>';
@@ -252,26 +240,22 @@ if (empty($mysoc->country_code))
 	$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$db->escape($mysoc->country_code)."' AND (t.taux <> 0 OR t.localtax1 <>0 OR t.localtax2 <>0)";
 	$sql .= " ORDER BY t.taux ASC";
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
-		if ($num)
-		{
-			for ($i = 0; $i < $num; $i++)
-			{
+		if ($num) {
+			for ($i = 0; $i < $num; $i++) {
 				$obj = $db->fetch_object($resql);
 				$vat_rates[] = array('vat_rate'=>$obj->vat_rate, 'code'=>$obj->vat_code, 'localtax_rate1'=>$obj->localtax_rate1, 'locltax_rate2'=>$obj->localtax_rate2);
 			}
 		}
-	} else dol_print_error($db);
+	} else {
+		dol_print_error($db);
+	}
 
-	if (count($vat_rates))
-	{
-		foreach ($vat_rates as $vatarray)
-		{
+	if (count($vat_rates)) {
+		foreach ($vat_rates as $vatarray) {
 			$vat = $vatarray['vat_rate'];
-			for ($qty = 1; $qty <= 2; $qty++)
-			{
+			for ($qty = 1; $qty <= 2; $qty++) {
 				$vattxt = $vat.($vatarray['code'] ? ' ('.$vatarray['code'].')' : '');
 
 				$localtax_array = getLocalTaxesFromRate($vattxt, 0, $mysoc, $mysoc);

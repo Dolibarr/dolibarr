@@ -78,11 +78,9 @@ class box_accountancy_suspense_account extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleSuspenseAccount"));
 
-		if ($user->rights->accounting->mouvements->lire)
-		{
+		if ($user->rights->accounting->mouvements->lire) {
 			$suspenseAccount = $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE;
-			if (!empty($suspenseAccount) && $suspenseAccount > 0)
-			{
+			if (!empty($suspenseAccount) && $suspenseAccount > 0) {
 				$sql = "SELECT COUNT(*) as nb_suspense_account";
 				$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b";
 				$sql .= " WHERE b.numero_compte = ".$suspenseAccount;
@@ -90,8 +88,7 @@ class box_accountancy_suspense_account extends ModeleBoxes
 
 				$result = $this->db->query($sql);
 				$nbSuspenseAccount = 0;
-				if ($result)
-				{
+				if ($result) {
 					$obj = $this->db->fetch_object($result);
 					$nbSuspenseAccount = $obj->nb_suspense_account;
 				}

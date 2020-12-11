@@ -67,7 +67,9 @@ class box_validated_projects extends ModeleBoxes
 
 		$this->hidden = !($user->rights->projet->lire);
 
-		if ($conf->global->MAIN_FEATURES_LEVEL < 2) $this->enabled = 0;
+		if ($conf->global->MAIN_FEATURES_LEVEL < 2) {
+			$this->enabled = 0;
+		}
 	}
 
 	/**
@@ -99,7 +101,9 @@ class box_validated_projects extends ModeleBoxes
 
 			// Get list of project id allowed to user (in a string list separated by coma)
 			$projectsListId = '';
-			if (!$user->rights->projet->all->lire) $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
+			if (!$user->rights->projet->all->lire) {
+				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
+			}
 
 			// I tried to solve sql error and performance problem, rewriting sql request but it is not clear what we want.
 			// Count of tasks without time spent for tasks we are assigned too or
@@ -111,7 +115,9 @@ class box_validated_projects extends ModeleBoxes
 			// TODO Replace -1, -2, -3 with ID used for type of contat project_task into llx_c_type_contact. Once done, we can switch widget as stable.
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_contact as ec ON ec.element_id = t.rowid AND fk_c_type_contact IN (-1, -2, -3)";
 			$sql .= " WHERE p.fk_statut = 1"; // Only open projects
-			if ($projectsListId) $sql .= ' AND p.rowid IN ('.$this->db->sanitize($projectsListId).')'; // Only project we ara allowed
+			if ($projectsListId) {
+				$sql .= ' AND p.rowid IN ('.$this->db->sanitize($projectsListId).')'; // Only project we ara allowed
+			}
 			$sql .= " AND t.rowid NOT IN (SELECT fk_task FROM ".MAIN_DB_PREFIX."projet_task_time WHERE fk_user =".$user->id.")";
 			$sql .= " GROUP BY p.rowid, p.ref, p.fk_soc, p.dateo";
 			$sql .= " ORDER BY p.dateo ASC";
@@ -161,8 +167,7 @@ class box_validated_projects extends ModeleBoxes
 							'asis' => 1,
 							'url' => DOL_URL_ROOT.'/societe/card.php?socid='.$obj2->rowid
 						);
-					}
-					else {
+					} else {
 						$this->info_box_contents[$i][] = array(
 							'td' => 'class="tdoverflowmax150 maxwidth200onsmartphone"',
 							'text' => '',

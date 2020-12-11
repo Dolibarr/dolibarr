@@ -31,7 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
-if (!$user->rights->fournisseur->facture->lire) accessforbidden();
+if (!$user->rights->fournisseur->facture->lire) {
+	accessforbidden();
+}
 
 $langs->loadLangs(array("companies", "bills"));
 
@@ -39,8 +41,7 @@ $socid = GETPOST('socid', 'int');
 $option = GETPOST('option');
 
 // Security check
-if ($user->socid > 0)
-{
+if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
@@ -56,15 +57,20 @@ $search_amount_all_tax = GETPOST('search_amount_all_tax', 'alpha');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortfield) $sortfield = "f.date_lim_reglement";
-if (!$sortorder) $sortorder = "ASC";
+if (!$sortfield) {
+	$sortfield = "f.date_lim_reglement";
+}
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
-{
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
 	$search_ref = "";
 	$search_ref_supplier = "";
 	$search_company = "";
@@ -85,101 +91,124 @@ $title = $langs->trans("BillsSuppliersUnpaid");
 $facturestatic = new FactureFournisseur($db);
 $companystatic = new Societe($db);
 
-if ($user->rights->fournisseur->facture->lire)
-{
+if ($user->rights->fournisseur->facture->lire) {
 	$sql = "SELECT s.rowid as socid, s.nom as name,";
 	$sql .= " f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc,";
 	$sql .= " f.datef as df, f.date_lim_reglement as datelimite, ";
 	$sql .= " f.paye as paye, f.rowid as facid, f.fk_statut";
 	$sql .= " ,sum(pf.amount) as am";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
+	if (!$user->rights->societe->client->voir && !$socid) {
+		$sql .= ", sc.fk_soc, sc.fk_user ";
+	}
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (!$user->rights->societe->client->voir && !$socid) {
+		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	}
 	$sql .= ",".MAIN_DB_PREFIX."facture_fourn as f";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf ON f.rowid=pf.fk_facturefourn ";
 	$sql .= " WHERE f.entity = ".$conf->entity;
 	$sql .= " AND f.fk_soc = s.rowid";
 	$sql .= " AND f.paye = 0 AND f.fk_statut = 1";
-	if ($option == 'late') $sql .= " AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->fournisseur->warning_delay)."'";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-	if ($socid) $sql .= " AND s.rowid = ".$socid;
+	if ($option == 'late') {
+		$sql .= " AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->fournisseur->warning_delay)."'";
+	}
+	if (!$user->rights->societe->client->voir && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	}
+	if ($socid) {
+		$sql .= " AND s.rowid = ".$socid;
+	}
 
-	if (GETPOST('filtre'))
-	{
+	if (GETPOST('filtre')) {
 		$filtrearr = explode(",", GETPOST('filtre'));
-		foreach ($filtrearr as $fil)
-		{
+		foreach ($filtrearr as $fil) {
 			$filt = explode(":", $fil);
 			$sql .= " AND ".$filt[0]." = ".$filt[1];
 		}
 	}
 
-	if ($search_ref)
-	{
+	if ($search_ref) {
 		$sql .= " AND f.ref LIKE '%".$db->escape($search_ref)."%'";
 	}
-	if ($search_ref_supplier)
-	{
+	if ($search_ref_supplier) {
 		$sql .= " AND f.ref_supplier LIKE '%".$db->escape($search_ref_supplier)."%'";
 	}
 
-	if ($search_company)
-	{
+	if ($search_company) {
 		$sql .= " AND s.nom LIKE '%".$db->escape($search_company)."%'";
 	}
 
-	if ($search_amount_no_tax)
-	{
+	if ($search_amount_no_tax) {
 		$sql .= " AND f.total_ht = '".$db->escape($search_amount_no_tax)."'";
 	}
 
-	if ($search_amount_all_tax)
-	{
+	if ($search_amount_all_tax) {
 		$sql .= " AND f.total_ttc = '".$db->escape($search_amount_all_tax)."'";
 	}
 
-	if (dol_strlen(GETPOST('sf_re')) > 0)
-	{
+	if (dol_strlen(GETPOST('sf_re')) > 0) {
 		$sql .= " AND f.ref_supplier LIKE '%".$db->escape(GETPOST('sf_re'))."%'";
 	}
 
 	$sql .= " GROUP BY s.rowid, s.nom, f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.datef, f.date_lim_reglement, f.paye, f.fk_statut";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
+	if (!$user->rights->societe->client->voir && !$socid) {
+		$sql .= ", sc.fk_soc, sc.fk_user ";
+	}
 	$sql .= $db->order($sortfield, $sortorder);
-	if (!in_array("f.ref_supplier", explode(',', $sortfield))) $sql .= ", f.ref_supplier DESC";
+	if (!in_array("f.ref_supplier", explode(',', $sortfield))) {
+		$sql .= ", f.ref_supplier DESC";
+	}
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
 
-		if ($socid)
-		{
+		if ($socid) {
 			$soc = new Societe($db);
 			$soc->fetch($socid);
 		}
 
 		$param = '';
-		if ($socid) $param .= "&socid=".$socid;
+		if ($socid) {
+			$param .= "&socid=".$socid;
+		}
 
-		if ($search_ref)         	$param .= '&amp;search_ref='.urlencode($search_ref);
-		if ($search_ref_supplier)	$param .= '&amp;search_ref_supplier='.urlencode($search_ref_supplier);
-		if ($search_company)     	$param .= '&amp;search_company='.urlencode($search_company);
-		if ($search_amount_no_tax)	$param .= '&amp;search_amount_no_tax='.urlencode($search_amount_no_tax);
-		if ($search_amount_all_tax) $param .= '&amp;search_amount_all_tax='.urlencode($search_amount_all_tax);
+		if ($search_ref) {
+			$param .= '&amp;search_ref='.urlencode($search_ref);
+		}
+		if ($search_ref_supplier) {
+			$param .= '&amp;search_ref_supplier='.urlencode($search_ref_supplier);
+		}
+		if ($search_company) {
+			$param .= '&amp;search_company='.urlencode($search_company);
+		}
+		if ($search_amount_no_tax) {
+			$param .= '&amp;search_amount_no_tax='.urlencode($search_amount_no_tax);
+		}
+		if ($search_amount_all_tax) {
+			$param .= '&amp;search_amount_all_tax='.urlencode($search_amount_all_tax);
+		}
 
 		$param .= ($option ? "&option=".$option : "");
-		if (!empty($late)) $param .= '&late='.urlencode($late);
+		if (!empty($late)) {
+			$param .= '&late='.urlencode($late);
+		}
 		$urlsource = str_replace('&amp;', '&', $param);
 
 		$titre = ($socid ? $langs->trans("BillsSuppliersUnpaidForCompany", $soc->name) : $langs->trans("BillsSuppliersUnpaid"));
 
-		if ($option == 'late') $titre .= ' ('.$langs->trans("Late").')';
-		else $titre .= ' ('.$langs->trans("All").')';
+		if ($option == 'late') {
+			$titre .= ' ('.$langs->trans("Late").')';
+		} else {
+			$titre .= ' ('.$langs->trans("All").')';
+		}
 
 		$link = '';
-		if (empty($option)) $link = '<a href="'.$_SERVER["PHP_SELF"].'?option=late'.($socid ? '&socid='.$socid : '').'">'.$langs->trans("ShowUnpaidLateOnly").'</a>';
-		elseif ($option == 'late') $link = '<a href="'.$_SERVER["PHP_SELF"].'?'.($socid ? '&socid='.$socid : '').'">'.$langs->trans("ShowUnpaidAll").'</a>';
+		if (empty($option)) {
+			$link = '<a href="'.$_SERVER["PHP_SELF"].'?option=late'.($socid ? '&socid='.$socid : '').'">'.$langs->trans("ShowUnpaidLateOnly").'</a>';
+		} elseif ($option == 'late') {
+			$link = '<a href="'.$_SERVER["PHP_SELF"].'?'.($socid ? '&socid='.$socid : '').'">'.$langs->trans("ShowUnpaidAll").'</a>';
+		}
 		print load_fiche_titre($titre, $link);
 
 		print_barre_liste('', '', $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', 0); // We don't want pagination on this page
@@ -220,14 +249,12 @@ if ($user->rights->fournisseur->facture->lire)
 		print '</td>';
 		print "</tr>\n";
 
-		if ($num > 0)
-		{
+		if ($num > 0) {
 			$total_ht = 0;
 			$total_ttc = 0;
 			$total_paid = 0;
 
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
 				$facturestatic->statut = $objp->fk_statut;

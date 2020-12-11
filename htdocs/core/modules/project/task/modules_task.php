@@ -141,9 +141,15 @@ abstract class ModeleNumRefTask
 		global $langs;
 		$langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
+		if ($this->version == 'development') {
+			return $langs->trans("VersionDevelopment");
+		}
+		if ($this->version == 'experimental') {
+			return $langs->trans("VersionExperimental");
+		}
+		if ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		}
 		return $langs->trans("NotAvailable");
 	}
 }

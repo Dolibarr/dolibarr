@@ -16,8 +16,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -42,7 +41,9 @@ if ($action == 'editsalesrepresentatives') {
 	print '<input type="hidden" name="socid" value="'.$object->id.'" />';
 	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, '', 0, '', '', 0, 1);
 	$arrayselected = GETPOST('commercial', 'array');
-	if (empty($arrayselected)) $arrayselected = $object->getSalesRepresentatives($user, 1);
+	if (empty($arrayselected)) {
+		$arrayselected = $object->getSalesRepresentatives($user, 1);
+	}
 	print $form->multiselectarray('commercial', $userlist, $arrayselected, null, null, null, null, "90%");
 	print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'" />';
 	print '</form>';
@@ -65,6 +66,8 @@ if ($action == 'editsalesrepresentatives') {
 			print $userstatic->getNomUrl(-1);
 			print ' ';
 		}
-	} else print '<span class="opacitymedium">'.$langs->trans("NoSalesRepresentativeAffected").'</span>';
+	} else {
+		print '<span class="opacitymedium">'.$langs->trans("NoSalesRepresentativeAffected").'</span>';
+	}
 	print '</td></tr>';
 }
