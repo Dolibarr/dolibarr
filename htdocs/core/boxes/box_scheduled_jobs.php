@@ -110,8 +110,8 @@ class box_scheduled_jobs extends ModeleBoxes
 							$cronstatic->status
 						);
 						$line++;
-					} 
-					if (!empty($objp->lastresult)){
+					}
+					if (!empty($objp->lastresult)) {
 						$nbjobsinerror++;
 					}
 					$i++;
