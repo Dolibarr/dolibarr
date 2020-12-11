@@ -6197,6 +6197,7 @@ class Form
 			$tmpfieldstoshow = '';
 			foreach ($objecttmp->fields as $key => $val)
 			{
+				if (!dol_eval($val['enabled'], 1, 1)) continue;
 				if ($val['showoncombobox']) $tmpfieldstoshow .= ($tmpfieldstoshow ? ',' : '').'t.'.$key;
 			}
 			if ($tmpfieldstoshow) $fieldstoshow = $tmpfieldstoshow;
@@ -6294,8 +6295,7 @@ class Form
 					}
 					if (empty($outputmode))
 					{
-						if ($preselectedvalue > 0 && $preselectedvalue == $obj->rowid)
-						{
+						if ($preselectedvalue > 0 && $preselectedvalue == $obj->rowid) {
 							$out .= '<option value="'.$obj->rowid.'" selected>'.$label.'</option>';
 						} else {
 							$out .= '<option value="'.$obj->rowid.'">'.$label.'</option>';
