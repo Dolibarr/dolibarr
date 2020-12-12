@@ -97,6 +97,8 @@ class box_funnel_of_prospection extends ModeleBoxes
 		$sql = "SELECT cls.rowid, cls.code, cls.percent, cls.label";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "c_lead_status as cls";
 		$sql .= " WHERE active=1";
+		$sql .= " AND cls.code <> 'LOST'";
+		$sql .= $this->db->order('cls.rowid', 'ASC');
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -124,7 +126,6 @@ class box_funnel_of_prospection extends ModeleBoxes
 						$colorseriesstat[$objp->rowid] = $badgeStatus6;
 						break;
 					default:
-						$colorseriesstat[$objp->rowid] = $badgeStatus2;
 						break;
 				}
 				$i++;
@@ -134,12 +135,11 @@ class box_funnel_of_prospection extends ModeleBoxes
 		}
 
 		global $conf, $user, $langs;
-
 		$this->max = $max;
 
 		$this->info_box_head = array(
-			'text' => $langs->trans("Statistics") . ' - ' . $langs->trans("OpportunitiesStatusForOpenedProjects"),
-			$max
+			'text' => $langs->trans("Statistics") . ' - ' . $langs->trans("BoxTitleFunnelOfProspection"),
+			'graph' => '1'
 		);
 
 		if ($user->rights->projet->lire || !empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
@@ -187,6 +187,8 @@ class box_funnel_of_prospection extends ModeleBoxes
 				$stringtoprint = '';
 				$stringtoprint .= '<div class="div-table-responsive-no-min ">';
 				$listofstatus = array_keys($listofoppstatus);
+				$liststatus = array();
+				$data = array('');
 				foreach ($listofstatus as $status) {
 					$labelStatus = '';
 					if ($status != 7) {
@@ -198,7 +200,8 @@ class box_funnel_of_prospection extends ModeleBoxes
 							$labelStatus = $listofopplabel[$status];
 						}
 
-						$dataseries[] = array($labelStatus,(isset($valsamount[$status]) ? (float) $valsamount[$status] : 0));
+						$data[] = (isset($valsamount[$status]) ? (float) $valsamount[$status] : 0);
+						$liststatus[] = $labelStatus;
 						if (!$conf->use_javascript_ajax) {
 							$stringtoprint .= '<tr class="oddeven">';
 							$stringtoprint .= '<td>' . $labelStatus . '</td>';
@@ -207,17 +210,22 @@ class box_funnel_of_prospection extends ModeleBoxes
 						}
 					}
 				}
+				$dataseries[] = $data;
 				if ($conf->use_javascript_ajax) {
 					include_once DOL_DOCUMENT_ROOT . '/core/class/dolgraph.class.php';
 					$dolgraph = new DolGraph();
+					$dolgraph->SetMinValue(0);
 					$dolgraph->SetData($dataseries);
+					$dolgraph->SetLegend($liststatus);
 					$dolgraph->SetDataColor(array_values($colorseriesstat));
-					//$dolgraph->SetLegend(array('PROSP',$dataseries['PROSP']));
 					$dolgraph->setShowLegend(2);
 					$dolgraph->setShowPercent(1);
-					$dolgraph->SetType(array('pie'));
+					$dolgraph->setTitle('');
+					$dolgraph->SetType(array('horizontalbars'));
 					$dolgraph->SetHeight('200');
-					$dolgraph->draw('idgraphstatus');
+					$dolgraph->SetWidth('600');
+					$dolgraph->mode = 'depth';
+					$dolgraph->draw('idgraphleadfunnel');
 					$stringtoprint .= $dolgraph->show($totaloppnb ? 0 : 1);
 				}
 				$stringtoprint .= '</div>';

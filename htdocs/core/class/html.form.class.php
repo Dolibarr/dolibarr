@@ -1995,7 +1995,7 @@ class Form
 			if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
 				$urloption .= '&socid='.$socid;
 			}
-			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
+			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
 
 			if (!empty($conf->variants->enabled)) {
 				$out .= '
@@ -5930,24 +5930,29 @@ class Form
 	 *
 	 * @param   string   	$prefix     	Prefix
 	 * @param   string   	$selected   	Selected duration type
-	 * @param	array|null	$ecludetypes	Array of duration types to exclude. Example array('y', 'm')
+	 * @param	array		$excludetypes	Array of duration types to exclude. Example array('y', 'm')
 	 * @return  string      	         	HTML select string
 	 */
-	public function selectTypeDuration($prefix, $selected = 'i', $excludtypes = null)
+	public function selectTypeDuration($prefix, $selected = 'i', $excludetypes = array())
 	{
 		global $langs;
 
-		$TDurationTypes = array('y'=>$langs->trans('Years'), 'm'=>$langs->trans('Month'), 'w'=>$langs->trans('Weeks'), 'd'=>$langs->trans('Days'), 'h'=>$langs->trans('Hours'), 'i'=>$langs->trans('Minutes'));
+		$TDurationTypes = array(
+			'y'=>$langs->trans('Years'),
+			'm'=>$langs->trans('Month'),
+			'w'=>$langs->trans('Weeks'),
+			'd'=>$langs->trans('Days'),
+			'h'=>$langs->trans('Hours'),
+			'i'=>$langs->trans('Minutes')
+		);
 
 		// Removed undesired duration types
-		if (is_array($excludtypes)) {
-			foreach($excludtypes as $value) {
-				unset($TDurationTypes[$value]);
-			}
+		foreach ($excludetypes as $value) {
+			unset($TDurationTypes[$value]);
 		}
 
 		$retstring = '<select class="flat" id="select_'.$prefix.'type_duration" name="'.$prefix.'type_duration">';
-		foreach ($TDurationTypes as $key=>$typeduration) {
+		foreach ($TDurationTypes as $key => $typeduration) {
 			$retstring .= '<option value="'.$key.'"';
 			if ($key == $selected) {
 				$retstring .= " selected";
@@ -6192,6 +6197,7 @@ class Form
 			$tmpfieldstoshow = '';
 			foreach ($objecttmp->fields as $key => $val)
 			{
+				if (!dol_eval($val['enabled'], 1, 1)) continue;
 				if ($val['showoncombobox']) $tmpfieldstoshow .= ($tmpfieldstoshow ? ',' : '').'t.'.$key;
 			}
 			if ($tmpfieldstoshow) $fieldstoshow = $tmpfieldstoshow;
@@ -6289,8 +6295,7 @@ class Form
 					}
 					if (empty($outputmode))
 					{
-						if ($preselectedvalue > 0 && $preselectedvalue == $obj->rowid)
-						{
+						if ($preselectedvalue > 0 && $preselectedvalue == $obj->rowid) {
 							$out .= '<option value="'.$obj->rowid.'" selected>'.$label.'</option>';
 						} else {
 							$out .= '<option value="'.$obj->rowid.'">'.$label.'</option>';
@@ -6767,7 +6772,7 @@ class Form
 					{
 						$out .= ' selected';
 					}
-					$out .= ' data-html="'.$newval.'"';
+					$out .= ' data-html="'.dol_escape_htmltag($newval).'"';
 					$out .= '>';
 					$out .= dol_htmlentitiesbr($newval);
 					$out .= '</option>'."\n";
