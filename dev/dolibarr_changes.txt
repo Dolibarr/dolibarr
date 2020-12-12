@@ -48,6 +48,7 @@ By
 * In file nusoap.php, to avoid a warning,
 Replace call to serialize_val with no bugged value
 
+* In all files, replace constructor names into __construct. Replace also parent::constructor_name with parent::__construct
 
 
 
