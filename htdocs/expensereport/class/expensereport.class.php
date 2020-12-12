@@ -80,11 +80,15 @@ class ExpenseReport extends CommonObject
 	 */
 	public $fk_statut;
 
+	public $vat_src_code;
+
 	public $fk_c_paiement;
 	public $paid;
 
 	public $user_author_infos;
 	public $user_validator_infos;
+
+	public $rule_warning_message;
 
 	// ACTIONS
 
@@ -539,7 +543,7 @@ class ExpenseReport extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT d.rowid, d.ref, d.note_public, d.note_private,"; // DEFAULT
+		$sql = "SELECT d.rowid, d.entity, d.ref, d.note_public, d.note_private,"; // DEFAULT
 		$sql .= " d.detail_refuse, d.detail_cancel, d.fk_user_refuse, d.fk_user_cancel,"; // ACTIONS
 		$sql .= " d.date_refuse, d.date_cancel,"; // ACTIONS
 		$sql .= " d.total_ht, d.total_ttc, d.total_tva,"; // TOTAUX (int)
@@ -561,6 +565,9 @@ class ExpenseReport extends CommonObject
 			{
 				$this->id           = $obj->rowid;
 				$this->ref          = $obj->ref;
+
+				$this->entity       = $obj->entity;
+
 				$this->total_ht     = $obj->total_ht;
 				$this->total_tva    = $obj->total_tva;
 				$this->total_ttc    = $obj->total_ttc;
@@ -802,6 +809,7 @@ class ExpenseReport extends CommonObject
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
+		$this->entity = 1;
 		$this->date_create = $now;
 		$this->date_debut = $now;
 		$this->date_fin = $now;
@@ -2637,7 +2645,7 @@ class ExpenseReportLine
 	}
 
 	/**
-	 * insert
+	 * Insert a line of expense report
 	 *
 	 * @param   int     $notrigger      1=No trigger
 	 * @param   bool    $fromaddline    false=keep default behavior, true=exclude the update_price() of parent object
@@ -2649,11 +2657,11 @@ class ExpenseReportLine
 
 		$error = 0;
 
-		dol_syslog("ExpenseReportLine::Insert rang=".$this->rang, LOG_DEBUG);
+		dol_syslog("ExpenseReportLine::Insert", LOG_DEBUG);
 
 		// Clean parameters
 		$this->comments = trim($this->comments);
-		if (!$this->value_unit_HT) $this->value_unit_HT = 0;
+		if (empty($this->value_unit)) $this->value_unit = 0;
 		$this->qty = price2num($this->qty);
 		$this->vatrate = price2num($this->vatrate);
 		if (empty($this->fk_c_exp_tax_cat)) $this->fk_c_exp_tax_cat = 0;
@@ -2665,9 +2673,9 @@ class ExpenseReportLine
 		$sql .= ' tva_tx, vat_src_code, comments, qty, value_unit, total_ht, total_tva, total_ttc, date, rule_warning_message, fk_c_exp_tax_cat, fk_ecm_files)';
 		$sql .= " VALUES (".$this->db->escape($this->fk_expensereport).",";
 		$sql .= " ".$this->db->escape($this->fk_c_type_fees).",";
-		$sql .= " ".$this->db->escape($this->fk_project > 0 ? $this->fk_project : ($this->fk_projet > 0 ? $this->fk_projet : 'null')).",";
+		$sql .= " ".$this->db->escape((!empty($this->fk_project) && $this->fk_project > 0) ? $this->fk_project : ((!empty($this->fk_projet) && $this->fk_projet > 0) ? $this->fk_projet : 'null')).",";
 		$sql .= " ".$this->db->escape($this->vatrate).",";
-		$sql .= " '".$this->db->escape($this->vat_src_code)."',";
+		$sql .= " '".$this->db->escape(empty($this->vat_src_code) ? '' : $this->vat_src_code)."',";
 		$sql .= " '".$this->db->escape($this->comments)."',";
 		$sql .= " ".$this->db->escape($this->qty).",";
 		$sql .= " ".$this->db->escape($this->value_unit).",";
@@ -2675,7 +2683,7 @@ class ExpenseReportLine
 		$sql .= " ".$this->db->escape($this->total_tva).",";
 		$sql .= " ".$this->db->escape($this->total_ttc).",";
 		$sql .= " '".$this->db->idate($this->date)."',";
-		$sql .= " '".$this->db->escape($this->rule_warning_message)."',";
+		$sql .= " ".(empty($this->rule_warning_message) ? 'null' : "'".$this->db->escape($this->rule_warning_message)."'").",";
 		$sql .= " ".$this->db->escape($this->fk_c_exp_tax_cat).",";
 		$sql .= " ".($this->fk_ecm_files > 0 ? $this->fk_ecm_files : 'null');
 		$sql .= ")";
