@@ -79,12 +79,13 @@ class box_scheduled_jobs extends ModeleBoxes
 		if ($user->rights->cron->read) {
 			include_once DOL_DOCUMENT_ROOT . '/cron/class/cronjob.class.php';
 			$cronstatic = new Cronjob($this->db);
-			$nomUrlArray;
+			$resultarray = array();
 
 			$result = 0;
-			$sql = "SELECT t.rowid, t.datelastrun, t.datenextrun";
-			$sql .= ", t.label, t.status, t.lastresult";
+			$sql = "SELECT t.rowid, t.datelastrun, t.datenextrun,";
+			$sql .= " t.label, t.status, t.lastresult";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "cronjob as t";
+			$sql .= " WHERE status <> ".$cronstatic::STATUS_DISABLED;
 			$sql .= $this->db->order("t.datelastrun", "DESC");
 
 			$result = $this->db->query($sql);
@@ -98,6 +99,7 @@ class box_scheduled_jobs extends ModeleBoxes
 					if ($line == 0 || $objp->datenextrun < $cronstatic->datenextrun) {
 						$cronstatic->id = $objp->rowid;
 						$cronstatic->ref = $objp->rowid;
+						$cronstatic->label = $langs->trans($objp->label);
 						$cronstatic->status = $objp->status;
 						$cronstatic->datenextrun = $objp->datenextrun;
 						$cronstatic->datelastrun = $objp->datelastrun;
@@ -107,7 +109,8 @@ class box_scheduled_jobs extends ModeleBoxes
 							$langs->trans("LastExecutedScheduledJob"),
 							$cronstatic->getNomUrl(1),
 							$this->db->jdate($cronstatic->datelastrun),
-							$cronstatic->status
+							$cronstatic->status,
+							$cronstatic->getLibStatut(2)
 						);
 						$line++;
 					}
@@ -120,7 +123,8 @@ class box_scheduled_jobs extends ModeleBoxes
 					$langs->trans("NextScheduledJobExecute"),
 					$cronstatic->getNomUrl(1),
 					$this->db->jdate($cronstatic->datenextrun),
-					$cronstatic->status
+					$cronstatic->status,
+					$cronstatic->getLibStatut(2)
 				);
 				$line = 0;
 				while ($line < 2) {
@@ -139,7 +143,7 @@ class box_scheduled_jobs extends ModeleBoxes
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" ',
-						'textnoformat' => empty($resultarray[$line][3]) ? $langs->trans("Disabled") : $langs->trans("Scheduled")
+						'textnoformat' => $resultarray[$line][4]
 					);
 					$line++;
 				}
