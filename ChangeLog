@@ -2,6 +2,102 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 12.0.4 compared to 12.0.3 *****
+FIX: make formConfirm an addreplace-type hook
+FIX: regex to remove 'action' parameter: taking feedback from PR#15213 into account
+FIX: remove 'action' parameter from redirect URL when reordering lines on a document
+FIX: error when displaying lines on order after adding a line if both MAIN_MULTILANGS and MAIN_DISABLE_PDF_AUTOUPDATE are activated
+FIX: on survey creation, entity is always set to 1 ⇒ set it to $conf->entity
+FIX: set entity to $conf->entity (instead of 1 by default) when creating a survey; otherwise the survey cannot be listed from the entity it was created on unless it is the main entity
+FIX: the stringent XSS protection provided by 'alphanohtml' causes problems with some clients who used basic tags (bold, italic, underline) in product labels. Using 'restricthtml' instead could be a good compromise.
+FIX: third party of object is not always fetched when initiating the e-mail presend action (e.g. from an order)
+FIX: when the cronjob 'params' field is empty, the cron method is called with one empty string param instead of no params at all
+FIX: XSS protection too stringent -> replace 'alphanohtml' with 'restricthtml'
+FIX: #13067 including opening balance in calculation of displayed balance
+FIX: #14326
+FIX: #14649
+FIX: #14901
+FIX: #14927 Change ContratLigne property type to product_type
+FIX: #14979
+FIX: #15074
+FIX: #15111 Fix special characters output in PDF
+FIX: #15161 MO translation conflict
+FIX: #15163
+FIX: #15199
+FIX: #15208
+FIX: #15303
+FIX: #15365 export of extrafields for user and resources
+FIX: #15374 : "New" doesn't clear total amounts
+FIX: #15501
+FIX: #15572
+FIX: #15590
+FIX: #15618
+FIX: supplier proposals as linked objects of events are not correctly fetched
+FIX: when users create an event from a supplier proposal, the "linked objects" section says "Deleted"
+FIX: Accountancy - Some ajustments on length of the account (general & auxiliary)
+FIX: admin conf selected
+FIX: also check if there is a method $object->fetch_thirdparty() before calling it
+FIX: autofocus on first setup
+FIX: Bad rigths to send contract
+FIX: Better error message with IMAP when connection fails
+FIX: Can create user but not update user with activedirectory
+FIX: Can receipt of a product that required lot after disabling stock and
+FIX: Can't create shipment for virtual product. Add
+FIX: cant empty action comm desc
+FIX: CA report by product/service : subcategory filter
+FIX: Clean orphan records in llx_ecm_files into repair script.
+FIX: default accountancy values and posted values
+FIX: Deletion of expensereport + other generated object not complete.
+FIX: disabled users must not be available in sales representative list on societe edit mode
+FIX: Dol print error : conf usage thirdparty propagate extrafields to
+FIX: Don't display inactive users in birthday box and company card
+FIX: empty value is needed on filter list
+FIX: enable HTML in product labels depending on conf MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML
+FIX: error 500 on cash closure
+FIX: excess comma
+FIX: Export FEC - Remove line at zero
+FIX: extrafield required error after submit
+FIX: filter on project list
+FIX: force payment mode to withdraw
+FIX: formating of prices with foreign languages
+FIX: handling $heightforinfotot when he's superior to a page height
+FIX: if no PDF default model in admin for expense report, do not create a PDF
+FIX: invoice payment terms edition: error management
+FIX: list of fields in list of recurring invoices was empty
+FIX: load default linked options for linked sellist extra fields
+FIX: Loan - Return on list when you cancel create form or delete a loan
+FIX: Missing lang trans
+FIX: no empty value in required extrafield
+FIX: Param joinfiles not sanitized
+FIX: Payment by BankTransfer
+FIX: pdf_getlinetotalwithtax must show total incl tax
+FIX: Problem on supplier payment card
+FIX: product auto volume calculation
+FIX: product customer prices: missing triggers in CRUD class
+FIX: Request on purchase orders in timeout even on very small databases
+FIX: set paid on total discount of a product in cash desk
+FIX: several warning with the barcode use in ODT templates
+FIX: SHIP MODE install v12 bug insert
+FIX: stripe for connect mode
+FIX: subcat filter
+FIX: supplier invoice: automatically calculate payment term when modifying payment condition
+FIX: SUPPLIER PROPOSAL v12 bug add
+FIX: table making extrafield input too small on advance target mailing
+FIX: table making extrafield too small advtagertmailing
+FIX: Unable to edit extrafields in expense report
+FIX: update margins rates on object line edit
+FIX: uses price2numjs
+FIX: various payments: bad data handling for subledger account + useless db commit/rollback
+FIX: virtual products: displayed value is by unit
+FIX: virtual products: supplier discount was not applied in component list
+FIX: warning for purchase order delivery late.
+FIX: Warning on late purchase order delivery
+FIX: WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING must not consider services while STOCK_SUPPORTS_SERVICES is empty
+FIX: wrong tab
+FIX: Yogosha report 4425 (backport)
+FIX: Yogosha report 4434 (backport)
+
 ***** ChangeLog for 12.0.3 compared to 12.0.2 *****
 FIX: 10.0 - when the mime file name is different from the filesystem name, the attachment name should be the mime filename
 FIX: 11.0 - expenses lines overlapping the total amounts frame
