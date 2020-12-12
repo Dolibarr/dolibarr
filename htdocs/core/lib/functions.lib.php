@@ -2479,7 +2479,7 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 		} else {
 			if (!empty($dictsocialnetworks[$type]['url'])) {
 				$link = str_replace('{socialid}', $value, $dictsocialnetworks[$type]['url']);
-				$htmllink .= '&nbsp;<a href="'.$link.'">'.$value.'</a>';
+				$htmllink .= '&nbsp;<a href="'.$link.'" target="_blank">'.$value.'</a>';
 			} else {
 				$htmllink .= $value;
 			}
