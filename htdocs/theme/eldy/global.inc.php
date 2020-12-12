@@ -1220,6 +1220,7 @@ table[summary="list_of_modules"] .fa-cog {
 .width50  { width: 50px; }
 .width75  { width: 75px; }
 .width100 { width: 100px; }
+.width125 { width: 125px; }
 .width150 { width: 150px; }
 .width200 { width: 200px; }
 .maxwidth25  { max-width: 25px; }

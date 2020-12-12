@@ -49,7 +49,7 @@ You must not leak, manipulate, or destroy any user data of third parties to find
 
 ## Scope for qualified vulnerabilities
 
-ONLY vulnerabilities discovered, when the following setup on test platform is used, are "validated":
+ONLY vulnerabilities discovered, when the following setup on test platform is used, are "valid":
 
 * $dolibarr_main_prod must be set to 1 into conf.php
 * $dolibarr_nocsrfcheck must be kept to the value 0 into conf.php (this is the default value)
@@ -57,7 +57,7 @@ ONLY vulnerabilities discovered, when the following setup on test platform is us
 * The constant MAIN_SECURITY_CSRF_WITH_TOKEN must be set to 1 into backoffice menu Home - Setup - Other (this protection should be set to 1 soon by default)
 * The module DebugBar must NOT be enabled (by default, this module is not enabled. This is a developer tool)
 * The module ModuleBuilder must NOT be enabled (by default, this module is not enabled. This is a developer tool)
-* ONLY security reports on modules provided by default and with the "stable" status are allowed (troubles into "experimental", "developement" or external modules are not valid vulnerabilities).
+* ONLY security reports on modules provided by default and with the "stable" status are valid (troubles into "experimental", "developement" or external modules are not valid vulnerabilities).
 * The root of web server must link to htdocs and the documents directory must be outside of the web server root (this is the default when using the default installer but may differs with external installer).
 * The web server setup must be done so only the documents directory is in write mode. The root directory called htdocs must be readonly.
 * CSRF attacks are accepted for all when using a POST URL, but when using GET URL, they are validated only for creating or updating data resctricted to the admin user.
