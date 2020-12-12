@@ -816,9 +816,10 @@ abstract class CommonObject
 			$outsocialnetwork = '';
 
 			if (is_array($this->socialnetworks) && count($this->socialnetworks) > 0) {
+				$socialnetworksdict = getArrayOfSocialNetworks();
 				foreach ($this->socialnetworks as $key => $value) {
 					if ($value) {
-						$outsocialnetwork .= dol_print_socialnetworks($value, $this->id, $object->id, $key);
+						$outsocialnetwork .= dol_print_socialnetworks($value, $this->id, $object->id, $key, $socialnetworksdict);
 					}
 					$outdone++;
 				}
