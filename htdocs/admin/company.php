@@ -178,13 +178,6 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 		}
 	}
 
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FACEBOOK_URL", GETPOST("facebookurl", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TWITTER_URL", GETPOST("twitterurl", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LINKEDIN_URL", GETPOST("linkedinurl", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_INSTAGRAM_URL", GETPOST("instagramurl", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_YOUTUBE_URL", GETPOST("youtubeurl", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_GITHUB_URL", GETPOST("githuburl", 'alpha'), 'chaine', 0, '', $conf->entity);
-
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MANAGERS", GETPOST("MAIN_INFO_SOCIETE_MANAGERS", 'nohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_GDPR", GETPOST("MAIN_INFO_GDPR", 'nohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_CAPITAL", GETPOST("capital", 'nohtml'), 'chaine', 0, '', $conf->entity);
@@ -545,25 +538,6 @@ print '<textarea class="flat quatrevingtpercent" name="note" id="note" rows="'.R
 print '</td></tr>';
 
 print '</table>';
-
-// Social networks
-print '<br>';
-print '<table class="noborder centpercent editmode">';
-print '<tr class="liste_titre">';
-print '<td class="titlefield">'.$langs->trans("SocialNetworksInformation").'</td><td>'.$langs->trans("Value").'</td>';
-print "</tr>\n";
-
-$listofnetworks = array('facebook'=>'facebook', 'twitter'=>'twitter', 'linkedin'=>'linkedin', 'instagram'=>'instagram', 'youtube'=>'youtube', 'github'=>'github');
-foreach ($listofnetworks as $networkkey => $networkicon) {
-	print '<tr class="oddeven"><td>';
-	print '<label for="'.$networkkey.'url">'.$langs->trans("SocialNetworks".ucfirst($networkkey)."URL").'</label></td><td>';
-	$networkconst = 'MAIN_INFO_SOCIETE_'.strtoupper($networkkey).'_URL';
-	print '<span class="fa paddingright fa-'.($networkicon ? $networkicon : 'link').'"></span>';
-	print '<input name="'.$networkkey.'url" id="'.$networkkey.'url" class="minwidth300" value="'.dol_escape_htmltag($conf->global->$networkconst).'"></td></tr>';
-	print '</td></tr>'."\n";
-}
-
-print "</table>";
 
 print '<br>';
 

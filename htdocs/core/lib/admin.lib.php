@@ -1819,6 +1819,11 @@ function company_admin_prepare_head()
 	$head[$h][2] = 'accountant';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT."/admin/company_socialnetworks.php";
+	$head[$h][1] = $langs->trans("SocialNetworksInformation");
+	$head[$h][2] = 'socialnetworks';
+	$h++;
+
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'mycompany_admin', 'add');
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'mycompany_admin', 'remove');
