@@ -30,21 +30,16 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'admincompany'; // To manage different context of search
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'companies', 'bills'));
+$langs->loadLangs(array('admin', 'companies'));
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('adminsocialnetworkscompany', 'globaladmin'));
@@ -55,20 +50,17 @@ $hookmanager->initHooks(array('adminsocialnetworkscompany', 'globaladmin'));
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if (($action == 'update' && !GETPOST("cancel", 'alpha')) || ($action == 'updateedit')) {
+if (($action == 'update' && !GETPOST("cancel", 'alpha'))) {
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FACEBOOK_URL", GETPOST("facebookurl", 'alpha'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TWITTER_URL", GETPOST("twitterurl", 'alpha'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LINKEDIN_URL", GETPOST("linkedinurl", 'alpha'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_INSTAGRAM_URL", GETPOST("instagramurl", 'alpha'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_YOUTUBE_URL", GETPOST("youtubeurl", 'alpha'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_GITHUB_URL", GETPOST("githuburl", 'alpha'), 'chaine', 0, '', $conf->entity);
-
-	if ($action != 'updateedit' && !$error) {
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	}
 }
 
 
@@ -78,10 +70,6 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha')) || ($action == 'updatee
 
 $wikihelp = 'EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
 llxHeader('', $langs->trans("Setup"), $wikihelp);
-
-$form = new Form($db);
-$formother = new FormOther($db);
-$formcompany = new FormCompany($db);
 
 print load_fiche_titre($langs->trans("CompanyFoundation"), '', 'title_setup');
 
@@ -97,7 +85,7 @@ print "<br>\n";
  * Edit parameters
  */
 
-print '<form enctype="multipart/form-data" method="POST" action="'.$_SERVER["PHP_SELF"].'" name="form_index">';
+print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
