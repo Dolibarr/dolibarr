@@ -50,6 +50,7 @@ BoxTitleLastOutstandingBillReached=Customers with maximum outstanding exceeded
 BoxGlobalActivity=Global activity (invoices, proposals, orders)
 BoxGoodCustomers=Good customers
 BoxTitleGoodCustomers=%s Good customers
+BoxScheduledJobs=Scheduled jobs
 BoxTitleFunnelOfProspection=Lead funnel
 FailedToRefreshDataInfoNotUpToDate=Failed to refresh RSS flux. Latest successful refresh date: %s
 LastRefreshDate=Latest refresh date
