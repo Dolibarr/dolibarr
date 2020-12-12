@@ -56,18 +56,24 @@ if ($reshook < 0) {
 }
 if (($action == 'update' && !GETPOST("cancel", 'alpha'))) {
 	foreach ($listofnetworks as $key => $value) {
-		if (!empty($value['active']) && GETPOSTISSET($key.'url')) {
+		if (!empty($value['active'])) {
 			$networkconstname = 'MAIN_INFO_SOCIETE_'.strtoupper($key).'_URL';
 			$networkconstid = 'MAIN_INFO_SOCIETE_'.strtoupper($key);
-			dolibarr_set_const($db, $networkconstname, GETPOST($key.'url', 'alpha'), 'chaine', 0, '', $conf->entity);
-			dolibarr_set_const($db, $networkconstid, GETPOST($key, 'alpha'), 'chaine', 0, '', $conf->entity);
+			if (GETPOSTISSET($key.'url') && GETPOST($key.'url', 'alpha') != '') {
+				dolibarr_set_const($db, $networkconstname, GETPOST($key.'url', 'alpha'), 'chaine', 0, '', $conf->entity);
+				dolibarr_set_const($db, $networkconstid, GETPOST($key, 'alpha'), 'chaine', 0, '', $conf->entity);
+			} elseif (GETPOSTISSET($key) && GETPOST($key, 'alpha') != '') {
+				if (!empty($listofnetworks[$key]['url'])) {
+					$url = str_replace('{socialid}', GETPOST($key, 'alpha'), $listofnetworks[$key]['url']);
+					dolibarr_set_const($db, $networkconstname, $url, 'chaine', 0, '', $conf->entity);
+				}
+				dolibarr_set_const($db, $networkconstid, GETPOST($key, 'alpha'), 'chaine', 0, '', $conf->entity);
+			} else {
+				dolibarr_del_const($db, $networkconstname, $conf->entity);
+				dolibarr_del_const($db, $networkconstid, $conf->entity);
+			}
 		}
 	}
-	// dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TWITTER_URL", GETPOST("twitterurl", 'alpha'), 'chaine', 0, '', $conf->entity);
-	// dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LINKEDIN_URL", GETPOST("linkedinurl", 'alpha'), 'chaine', 0, '', $conf->entity);
-	// dolibarr_set_const($db, "MAIN_INFO_SOCIETE_INSTAGRAM_URL", GETPOST("instagramurl", 'alpha'), 'chaine', 0, '', $conf->entity);
-	// dolibarr_set_const($db, "MAIN_INFO_SOCIETE_YOUTUBE_URL", GETPOST("youtubeurl", 'alpha'), 'chaine', 0, '', $conf->entity);
-	// dolibarr_set_const($db, "MAIN_INFO_SOCIETE_GITHUB_URL", GETPOST("githuburl", 'alpha'), 'chaine', 0, '', $conf->entity);
 }
 
 
