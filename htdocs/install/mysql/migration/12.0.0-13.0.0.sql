@@ -376,7 +376,7 @@ ALTER TABLE llx_facturedet ADD COLUMN ref_ext varchar(255) AFTER multicurrency_t
 ALTER TABLE llx_c_ticket_category ADD COLUMN fk_parent integer DEFAULT 0 NOT NULL;
 ALTER TABLE llx_c_ticket_category ADD COLUMN force_severity varchar(32) NULL;
 
-ALTER TABLE llx_c_ticket_severity CHANGE color color VARCHAR(10) NULL; 
+ALTER TABLE llx_c_ticket_severity CHANGE color color VARCHAR(10) NULL;
 
 ALTER TABLE llx_expensereport ADD COLUMN fk_user_creat integer NULL;
 
@@ -421,7 +421,7 @@ ALTER TABLE llx_projet_task_time MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIM
 ALTER TABLE llx_projet_task_time MODIFY COLUMN datec datetime;
 
 
-DELETE FROM llx_user_rights WHERE fk_id IN (SELECT id FROM llx_rights_def where module = 'holiday' and perms = 'lire_tous'); 
+DELETE FROM llx_user_rights WHERE fk_id IN (SELECT id FROM llx_rights_def where module = 'holiday' and perms = 'lire_tous');
 DELETE FROM llx_rights_def where module = 'holiday' and perms = 'lire_tous';
 UPDATE llx_rights_def set perms = 'readall' WHERE perms = 'read_all' and module = 'holiday';
 
@@ -545,6 +545,7 @@ CREATE TABLE llx_session(
   user_agent varchar(128) NULL
 )ENGINE=innodb;
 
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'github', 'Github', 'https://github.com/{socialid}', 'fa-github', 1);
 
 -- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_funnel_of_prospection.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_funnel_of_prospection.php' AND entity = 1);
 -- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_customers_outstanding_bill_reached.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_customers_outstanding_bill_reached.php' AND entity = 1);
