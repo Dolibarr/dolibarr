@@ -139,8 +139,7 @@ function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
 		}
 
 		// If we need to write cents call again this function for cents
-		$decimalpart = $TNum[1];
-		$decimalpart = preg_replace('/0+$/', '', $decimalpart);
+		$decimalpart = empty($TNum[1]) ? '' : preg_replace('/0+$/', '', $TNum[1]);
 
 		if ($decimalpart) {
 			if (!empty($currency)) $concatWords .= ' '.$langs->transnoentities('and');
