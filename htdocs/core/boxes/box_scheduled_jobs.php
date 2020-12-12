@@ -72,7 +72,7 @@ class box_scheduled_jobs extends ModeleBoxes
 	public function loadBox($max = 5)
 	{
 		global $user, $langs, $conf;
-		$this->max = $max;
+
 		$langs->load("cron");
 		$this->info_box_head = array('text' => $langs->trans("BoxScheduledJobs", $max));
 
@@ -83,9 +83,10 @@ class box_scheduled_jobs extends ModeleBoxes
 
 			$result = 0;
 			$sql = "SELECT t.rowid, t.datelastrun, t.datenextrun,";
-			$sql .= " t.label, t.status, t.lastresult";
+			$sql .= " t.label, t.status, t.test, t.lastresult";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "cronjob as t";
 			$sql .= " WHERE status <> ".$cronstatic::STATUS_DISABLED;
+			$sql .= " AND entity IN (0, ".$conf->entity.")";
 			$sql .= $this->db->order("t.datelastrun", "DESC");
 
 			$result = $this->db->query($sql);
@@ -93,41 +94,53 @@ class box_scheduled_jobs extends ModeleBoxes
 			$nbjobsinerror = 0;
 			if ($result) {
 				$num = $this->db->num_rows($result);
+
 				$i = 0;
 				while ($i < $num) {
 					$objp = $this->db->fetch_object($result);
-					if ($line == 0 || $objp->datenextrun < $cronstatic->datenextrun) {
-						$cronstatic->id = $objp->rowid;
-						$cronstatic->ref = $objp->rowid;
-						$cronstatic->label = $langs->trans($objp->label);
-						$cronstatic->status = $objp->status;
-						$cronstatic->datenextrun = $objp->datenextrun;
-						$cronstatic->datelastrun = $objp->datelastrun;
-					}
-					if ($line == 0) {
-						$resultarray[$line] = array(
-							$langs->trans("LastExecutedScheduledJob"),
-							$cronstatic->getNomUrl(1),
-							$this->db->jdate($cronstatic->datelastrun),
-							$cronstatic->status,
-							$cronstatic->getLibStatut(2)
-						);
-						$line++;
-					}
-					if (!empty($objp->lastresult)) {
-						$nbjobsinerror++;
+
+					if (dol_eval($objp->test, 1, 1)) {
+
+						$nextrun = $this->db->jdate($objp->datenextrun);
+						if (empty($nextrun)) $nextrun = $this->db->jdate($objp->datestart);
+
+						if ($line == 0 || ($nextrun < $cronstatic->datenextrun && (empty($objp->nbrun) || empty($objp->maxrun) || $objp->nbrun < $obj->maxrun))) {
+							$cronstatic->id = $objp->rowid;
+							$cronstatic->ref = $objp->rowid;
+							$cronstatic->label = $langs->trans($objp->label);
+							$cronstatic->status = $objp->status;
+							$cronstatic->datenextrun = $this->db->jdate($objp->datenextrun);
+							$cronstatic->datelastrun = $this->db->jdate($objp->datelastrun);
+						}
+						if ($line == 0) {
+							$resultarray[$line] = array(
+								$langs->trans("LastExecutedScheduledJob"),
+								$cronstatic->getNomUrl(1),
+								$cronstatic->datelastrun,
+								$cronstatic->status,
+								$cronstatic->getLibStatut(2)
+							);
+							$line++;
+						}
+
+						if (!empty($objp->lastresult)) {
+							$nbjobsinerror++;
+						}
 					}
 					$i++;
 				}
-				$resultarray[$line] = array(
-					$langs->trans("NextScheduledJobExecute"),
-					$cronstatic->getNomUrl(1),
-					$this->db->jdate($cronstatic->datenextrun),
-					$cronstatic->status,
-					$cronstatic->getLibStatut(2)
-				);
-				$line = 0;
-				while ($line < 2) {
+
+				if ($line) {
+					$resultarray[$line] = array(
+						$langs->trans("NextScheduledJobExecute"),
+						$cronstatic->getNomUrl(1),
+						$cronstatic->datenextrun,
+						$cronstatic->status,
+						$cronstatic->getLibStatut(2)
+					);
+				}
+
+				foreach($resultarray as $line => $value) {
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="left"',
 						'text' => $resultarray[$line][0]
@@ -153,13 +166,13 @@ class box_scheduled_jobs extends ModeleBoxes
 				);
 				$this->info_box_contents[$line][] = array(
 					'td' => 'class="right"colspan="2"',
-					'text' => $nbjobsinerror
+					'textnoformat' => $nbjobsinerror ? '<span class="error"><a href="'.DOL_URL_ROOT.'/cron/list.php?search_lastresult='.urlencode('<>0').'">'.$nbjobsinerror.'</a></span>'.img_error() : '0'
 				);
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
 					'maxlength' => 500,
-					'text' => ($this->db->error() . ' sql=' . $sql)
+					'text' => ($this->db->lasterror() . ' sql=' . $sql)
 				);
 			}
 		} else {
