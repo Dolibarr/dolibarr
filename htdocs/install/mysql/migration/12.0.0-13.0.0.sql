@@ -548,9 +548,6 @@ CREATE TABLE llx_session(
 
 -- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_funnel_of_prospection.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_funnel_of_prospection.php' AND entity = 1);
 -- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_customers_outstanding_bill_reached.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_customers_outstanding_bill_reached.php' AND entity = 1);
---INSERT INTO llx_boxes_def(file, entity) VALUES ('box_funnel_of_prospection.php',1);
---INSERT INTO llx_boxes_def(file, entity) VALUES ('box_customers_outstanding_bill_reached.php', 1);
+-- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_scheduled_jobs.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_scheduled_jobs.php' AND entity = 1);
 
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging varchar(64);
-
-INSERT INTO llx_boxes_def(file, entity) VALUES ('box_scheduled_jobs.php',1);
