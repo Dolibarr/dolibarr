@@ -2440,13 +2440,14 @@ function getArrayOfSocialNetworks()
 /**
  * Show social network link
  *
- * @param	string		$value			Skype to show (only skype, without 'Name of recipient' before)
- * @param	int 		$cid 			Id of contact if known
- * @param	int 		$socid 			Id of third party if known
- * @param	string 		$type			'skype','facebook',...
- * @return	string						HTML Link
+ * @param	string		$value				Skype to show (only skype, without 'Name of recipient' before)
+ * @param	int 		$cid 				Id of contact if known
+ * @param	int 		$socid 				Id of third party if known
+ * @param	string 		$type				'skype','facebook',...
+ * @param	array		$dictsocialnetworks socialnetworks availables
+ * @return	string							HTML Link
  */
-function dol_print_socialnetworks($value, $cid, $socid, $type)
+function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetworks = array())
 {
 	global $conf, $user, $langs;
 
@@ -2454,13 +2455,11 @@ function dol_print_socialnetworks($value, $cid, $socid, $type)
 
 	if (empty($value)) return '&nbsp;';
 
-	if (!empty($type))
-	{
+	if (!empty($type)) {
 		$htmllink = '<div class="divsocialnetwork inline-block valignmiddle">';
 		$htmllink .= img_picto($langs->trans(strtoupper($type)), $type.'.png', '', false, 0, 0, '', 'paddingright', 0);
-		$htmllink .= $value;
-		if ($type == 'skype')
-		{
+		if ($type == 'skype') {
+			$htmllink .= $value;
 			$htmllink .= '&nbsp;';
 			$htmllink .= '<a href="skype:';
 			$htmllink .= $value;
@@ -2471,13 +2470,19 @@ function dol_print_socialnetworks($value, $cid, $socid, $type)
 			$htmllink .= '?chat" alt="'.$langs->trans("Chat").'&nbsp;'.$value.'" title="'.$langs->trans("Chat").'&nbsp;'.$value.'">';
 			$htmllink .= '<img class="paddingleft" src="'.DOL_URL_ROOT.'/theme/common/skype_chatbutton.png" border="0">';
 			$htmllink .= '</a>';
-		}
-		if (($cid || $socid) && !empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create && $type == 'skype')
-		{
-			$addlink = 'AC_SKYPE';
-			$link = '';
-			if (!empty($conf->global->AGENDA_ADDACTIONFORSKYPE)) $link = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$addlink.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
-			$htmllink .= ($link ? ' '.$link : '');
+			if (($cid || $socid) && !empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create) {
+				$addlink = 'AC_SKYPE';
+				$link = '';
+				if (!empty($conf->global->AGENDA_ADDACTIONFORSKYPE)) $link = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$addlink.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
+				$htmllink .= ($link ? ' '.$link : '');
+			}
+		} else {
+			if (!empty($dictsocialnetworks[$type]['url'])) {
+				$link = str_replace('{socialid}', $value, $dictsocialnetworks[$type]['url']);
+				$htmllink .= '&nbsp;<a href="'.$link.'">'.$value.'</a>';
+			} else {
+				$htmllink .= $value;
+			}
 		}
 		$htmllink .= '</div>';
 	} else {
