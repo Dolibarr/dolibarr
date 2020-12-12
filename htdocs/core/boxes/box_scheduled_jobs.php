@@ -100,7 +100,6 @@ class box_scheduled_jobs extends ModeleBoxes
 					$objp = $this->db->fetch_object($result);
 
 					if (dol_eval($objp->test, 1, 1)) {
-
 						$nextrun = $this->db->jdate($objp->datenextrun);
 						if (empty($nextrun)) $nextrun = $this->db->jdate($objp->datestart);
 
@@ -140,7 +139,7 @@ class box_scheduled_jobs extends ModeleBoxes
 					);
 				}
 
-				foreach($resultarray as $line => $value) {
+				foreach ($resultarray as $line => $value) {
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="left"',
 						'text' => $resultarray[$line][0]
