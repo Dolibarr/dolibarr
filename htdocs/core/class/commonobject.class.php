@@ -196,6 +196,11 @@ abstract class CommonObject
 	public $ref;
 
 	/**
+	 * @var string An external reference for the object
+	 */
+	public $ref_ext;
+
+	/**
 	 * @var string The object's previous reference
 	 */
 	public $ref_previous;
@@ -204,11 +209,6 @@ abstract class CommonObject
 	 * @var string The object's next reference
 	 */
 	public $ref_next;
-
-	/**
-	 * @var string An external reference for the object
-	 */
-	public $ref_ext;
 
 	/**
 	 * @var int The object's status
@@ -468,6 +468,12 @@ abstract class CommonObject
 	 * @var int 1 if object is specimen
 	 */
 	public $specimen = 0;
+
+	/**
+	 * @var	int	Id of contact to send object (used by the trigger of module Agenda)
+	 */
+	public $sendtoid;
+
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.

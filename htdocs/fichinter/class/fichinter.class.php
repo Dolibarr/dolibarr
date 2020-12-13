@@ -696,14 +696,16 @@ class Fichinter extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $langs;
+		global $conf;
 
-		$langs->load("interventions");
+		$outputlangs->load("interventions");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'soleil';
 
-			if (!empty($this->modelpdf)) {
+			if (!empty($this->model_pdf)) {
+				$modele = $this->model_pdf;
+			} elseif (!empty($this->modelpdf)) {	// deprecated
 				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->FICHEINTER_ADDON_PDF)) {
 				$modele = $conf->global->FICHEINTER_ADDON_PDF;
