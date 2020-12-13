@@ -1758,21 +1758,17 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		} else {
 			$morehtmlstatus .= '<span class="statusrefbuy">'.$object->getLibStatut(6, 1).'</span>';
 		}
-	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan')))
-	{
+	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan'))) {
 		$tmptxt = $object->getLibStatut(6, $object->totalpaye);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) $tmptxt = $object->getLibStatut(5, $object->totalpaye);
 		$morehtmlstatus .= $tmptxt;
-	} elseif ($object->element == 'contrat' || $object->element == 'contract')
-	{
+	} elseif ($object->element == 'contrat' || $object->element == 'contract') {
 		if ($object->statut == 0) $morehtmlstatus .= $object->getLibStatut(5);
 		else $morehtmlstatus .= $object->getLibStatut(4);
-	} elseif ($object->element == 'facturerec')
-	{
+	} elseif ($object->element == 'facturerec') {
 		if ($object->frequency == 0) $morehtmlstatus .= $object->getLibStatut(2);
 		else $morehtmlstatus .= $object->getLibStatut(5);
-	} elseif ($object->element == 'project_task')
-	{
+	} elseif ($object->element == 'project_task') {
 		$object->fk_statut = 1;
 		if ($object->progress > 0) $object->fk_statut = 2;
 		if ($object->progress >= 100) $object->fk_statut = 3;
@@ -2457,6 +2453,7 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 
 	if (!empty($type)) {
 		$htmllink = '<div class="divsocialnetwork inline-block valignmiddle">';
+		// TODO use dictionary definition for picto $dictsocialnetworks[$type]['icon']
 		$htmllink .= img_picto($langs->trans(dol_ucfirst($type)), $type.'.png', '', false, 0, 0, '', 'paddingright', 0);
 		if ($type == 'skype') {
 			$htmllink .= $value;
@@ -3306,8 +3303,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-'.$convertarray[$pictowithouttext];
 				if (preg_match('/selected/', $pictowithouttext)) $facolor = '#888';
 				$marginleftonlyshort = 1;
-			} elseif (!empty($arrayconvpictotofa[$pictowithouttext]))
-			{
+			} elseif (!empty($arrayconvpictotofa[$pictowithouttext])) {
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 			} else {
 				$fakey = 'fa-'.$pictowithouttext;
