@@ -7090,8 +7090,7 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
 			$temp = array();
 			foreach (array_keys($array) as $key)
 			{
-				if (is_object($array[$key]))
-				{
+				if (is_object($array[$key])) {
 					$temp[$key] = $array[$key]->$index;
 				} else {
 					$temp[$key] = $array[$key][$index];
