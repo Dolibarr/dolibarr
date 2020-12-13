@@ -785,7 +785,7 @@ class AccountancyExport
 	public function exportFEC($objectLines)
 	{
 		$separator = "\t";
-		$end_line = "\n";
+		$end_line = "\r\n";
 
 		print "JournalCode".$separator;
 		print "JournalLib".$separator;
