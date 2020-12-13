@@ -727,7 +727,11 @@ class CMailFile
 
 					if (!empty($conf->global->MAIN_MAIL_SENDMAIL_FORCE_ADDPARAM)) $additionnalparam .= ($additionnalparam ? ' ' : '').'-U '.$additionnalparam; // Use -U to add additionnal params
 
-					dol_syslog("CMailFile::sendfile: mail start HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port').", additionnal_parameters=".$additionnalparam, LOG_DEBUG);
+					$linuxlike = 1;
+					if (preg_match('/^win/i', PHP_OS)) $linuxlike = 0;
+					if (preg_match('/^mac/i', PHP_OS)) $linuxlike = 0;
+
+					dol_syslog("CMailFile::sendfile: mail start".($linuxlike ? '' : " HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port')).", additionnal_parameters=".$additionnalparam, LOG_DEBUG);
 
 					$this->message = stripslashes($this->message);
 
@@ -746,11 +750,7 @@ class CMailFile
 					{
 						$langs->load("errors");
 						$this->error = "Failed to send mail with php mail";
-						$linuxlike = 1;
-						if (preg_match('/^win/i', PHP_OS)) $linuxlike = 0;
-						if (preg_match('/^mac/i', PHP_OS)) $linuxlike = 0;
-						if (!$linuxlike)
-						{
+						if (!$linuxlike) {
 							$this->error .= " to HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port'); // This values are value used only for non linuxlike systems
 						}
 						$this->error .= ".<br>";
