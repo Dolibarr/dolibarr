@@ -66,8 +66,8 @@ class IntracommReport extends CommonObject
 	const TYPE_DES = 1;
 
 	public static $type = array(
-		'introduction'=>'Introduction'
-		,'expedition'=>'Expédition'
+		'introduction'=>'Introduction',
+		'expedition'=>'Expédition'
 	);
 
 	/**
@@ -131,7 +131,7 @@ class IntracommReport extends CommonObject
 		/********************************************************************/
 
 		/**************Ajout des lignes de factures**************************/
-		$res = self::addItemsFact($declaration, $type, $period_reference);
+		$res = $this->addItemsFact($declaration, $type, $period_reference);
 		/********************************************************************/
 
 		$this->errors = array_unique($this->errors);
