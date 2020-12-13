@@ -6530,9 +6530,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		if ($onlykey != 2 || $mysoc->useLocalTax(1)) $substitutionarray['__AMOUNT_TAX2_FORMATED__']     = is_object($object) ? ($object->total_localtax1 ? price($object->total_localtax1, 0, $outputlangs, 0, 0, -1, $conf->currency) : null) : '';
 		if ($onlykey != 2 || $mysoc->useLocalTax(2)) $substitutionarray['__AMOUNT_TAX3_FORMATED__']     = is_object($object) ? ($object->total_localtax2 ? price($object->total_localtax2, 0, $outputlangs, 0, 0, -1, $conf->currency) : null) : '';
 
-		$substitutionarray['__AMOUNT_MULTICURRENCY__']          = is_object($object) ? $object->multicurrency_total_ttc : '';
-		$substitutionarray['__AMOUNT_MULTICURRENCY_TEXT__']     = is_object($object) ? dol_convertToWord($object->multicurrency_total_ttc, $outputlangs, '', true) : '';
-		$substitutionarray['__AMOUNT_MULTICURRENCY_TEXTCURRENCY__'] = is_object($object) ? dol_convertToWord($object->multicurrency_total_ttc, $outputlangs, $object->multicurrency_code, true) : '';
+		$substitutionarray['__AMOUNT_MULTICURRENCY__']          = (is_object($object) && isset($object->multicurrency_total_ttc)) ? $object->multicurrency_total_ttc : '';
+		$substitutionarray['__AMOUNT_MULTICURRENCY_TEXT__']     = (is_object($object) && isset($object->multicurrency_total_ttc)) ? dol_convertToWord($object->multicurrency_total_ttc, $outputlangs, '', true) : '';
+		$substitutionarray['__AMOUNT_MULTICURRENCY_TEXTCURRENCY__'] = (is_object($object) && isset($object->multicurrency_total_ttc)) ? dol_convertToWord($object->multicurrency_total_ttc, $outputlangs, $object->multicurrency_code, true) : '';
 		// TODO Add other keys for foreign multicurrency
 
 		// For backward compatibility
