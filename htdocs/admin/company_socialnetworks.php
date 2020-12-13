@@ -40,6 +40,7 @@ $langs->loadLangs(array('admin', 'companies'));
 if (!$user->admin) {
 	accessforbidden();
 }
+$listofnetworks = getArrayOfSocialNetworks();
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('adminsocialnetworkscompany', 'globaladmin'));
@@ -53,14 +54,26 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
-
 if (($action == 'update' && !GETPOST("cancel", 'alpha'))) {
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FACEBOOK_URL", GETPOST("facebookurl", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TWITTER_URL", GETPOST("twitterurl", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LINKEDIN_URL", GETPOST("linkedinurl", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_INSTAGRAM_URL", GETPOST("instagramurl", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_YOUTUBE_URL", GETPOST("youtubeurl", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_GITHUB_URL", GETPOST("githuburl", 'alpha'), 'chaine', 0, '', $conf->entity);
+	foreach ($listofnetworks as $key => $value) {
+		if (!empty($value['active'])) {
+			$networkconstname = 'MAIN_INFO_SOCIETE_'.strtoupper($key).'_URL';
+			$networkconstid = 'MAIN_INFO_SOCIETE_'.strtoupper($key);
+			if (GETPOSTISSET($key.'url') && GETPOST($key.'url', 'alpha') != '') {
+				dolibarr_set_const($db, $networkconstname, GETPOST($key.'url', 'alpha'), 'chaine', 0, '', $conf->entity);
+				dolibarr_set_const($db, $networkconstid, GETPOST($key, 'alpha'), 'chaine', 0, '', $conf->entity);
+			} elseif (GETPOSTISSET($key) && GETPOST($key, 'alpha') != '') {
+				if (!empty($listofnetworks[$key]['url'])) {
+					$url = str_replace('{socialid}', GETPOST($key, 'alpha'), $listofnetworks[$key]['url']);
+					dolibarr_set_const($db, $networkconstname, $url, 'chaine', 0, '', $conf->entity);
+				}
+				dolibarr_set_const($db, $networkconstid, GETPOST($key, 'alpha'), 'chaine', 0, '', $conf->entity);
+			} else {
+				dolibarr_del_const($db, $networkconstname, $conf->entity);
+				dolibarr_del_const($db, $networkconstid, $conf->entity);
+			}
+		}
+	}
 }
 
 
@@ -93,25 +106,24 @@ print '<input type="hidden" name="action" value="update">';
 print '<br>';
 print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre">';
-print '<td class="titlefield">'.$langs->trans("SocialNetworksInformation").'</td><td>'.$langs->trans("Value").'</td>';
+print '<td class="titlefield">'.$langs->trans("SocialNetworksInformation").'</td><td>'.$langs->trans("Url").'</td><td>'.$langs->trans("SocialNetworkId").'</td><td></td>';
 print "</tr>\n";
 
-$listofnetworks = array(
-	'facebook'=>'facebook',
-	'twitter'=>'twitter',
-	'linkedin'=>'linkedin',
-	'instagram'=>'instagram',
-	'youtube'=>'youtube',
-	'github'=>'github'
-);
 
-foreach ($listofnetworks as $networkkey => $networkicon) {
-	print '<tr class="oddeven"><td>';
-	print '<label for="'.$networkkey.'url">'.$langs->trans("SocialNetworks".ucfirst($networkkey)."URL").'</label></td><td>';
-	$networkconst = 'MAIN_INFO_SOCIETE_'.strtoupper($networkkey).'_URL';
-	print '<span class="fa paddingright fa-'.($networkicon ? $networkicon : 'link').'"></span>';
-	print '<input name="'.$networkkey.'url" id="'.$networkkey.'url" class="minwidth300" value="'.dol_escape_htmltag($conf->global->$networkconst).'"></td></tr>';
-	print '</td></tr>'."\n";
+foreach ($listofnetworks as $key => $value) {
+	if (!empty($value['active'])) {
+		print '<tr class="oddeven">';
+		print '<td><label for="'.$key.'url">'.$langs->trans(ucfirst($key)).'</label></td>';
+		$networkconstname = 'MAIN_INFO_SOCIETE_'.strtoupper($key).'_URL';
+		$networkconstid = 'MAIN_INFO_SOCIETE_'.strtoupper($key);
+		print '<td><span class="fa paddingright '.($value['icon'] ? $value['icon'] : 'fa-link').'"></span>';
+		print '<input name="'.$key.'url" id="'.$key.'url" class="minwidth300" value="'.dol_escape_htmltag($conf->global->$networkconstname).'">';
+		print '</td><td>';
+		print '<input name="'.$key.'" id="'.$key.'" class="minwidth300" value="'.dol_escape_htmltag($conf->global->$networkconstid).'">';
+		print '</td>';
+		print '<td>'.dol_print_socialnetworks($conf->global->$networkconstid, 0, 0, $key, $listofnetworks).'</td>';
+		print '</tr>'."\n";
+	}
 }
 
 print "</table>";
