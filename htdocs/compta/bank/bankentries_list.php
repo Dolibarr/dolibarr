@@ -1101,7 +1101,7 @@ if ($resql)
 					print '</td>';
 				}
 
-				print '<td colspan="'.($tmpnbfieldafterbalance + 1).'">';
+				print '<td colspan="'.($tmpnbfieldafterbalance + 3).'">';
 				print '&nbsp;';
 				print '</td>';
 				print '</tr>';
