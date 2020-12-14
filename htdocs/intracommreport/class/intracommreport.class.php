@@ -82,12 +82,45 @@ class IntracommReport extends CommonObject
 	}
 
 	/**
+	 * Fonction create
+	 * @param 	User 	$user 		User
+	 * @param 	int 	$notrigger 	notrigger
+	 * @return 	int
+	 */
+	public function create($user, $notrigger = 0)
+	{
+		return 1;
+	}
+
+	/**
+	 * Fonction fetch
+	 * @param 	int 	$id 	object ID
+	 * @return 	int
+	 */
+	public function fetch($id)
+	{
+		return 1;
+	}
+
+	/**
+	 * Fonction delete
+	 * @param 	int 	$id 		object ID
+	 * @param 	User 	$user 		User
+	 * @param 	int 	$notrigger 	notrigger
+	 * @return 	int
+	 */
+	public function delete($id, $user, $notrigger = 0)
+	{
+		return 1;
+	}
+
+	/**
 	 * Generate XML file
 	 *
-	 * @param int		$mode 				O for create, R for regenerate (Look always 0 ment toujours 0 within the framework of XML exchanges according to documentation)
-	 * @param string	$type 				Declaration type by default - introduction or expedition (always 'expedition' for Des)
-	 * @param string	$period_reference	Period of reference
-	 * @return void
+	 * @param int			$mode 				O for create, R for regenerate (Look always 0 ment toujours 0 within the framework of XML exchanges according to documentation)
+	 * @param string		$type 				Declaration type by default - introduction or expedition (always 'expedition' for Des)
+	 * @param string		$period_reference	Period of reference
+	 * @return SimpleXMLElement|int
 	 */
 	public function getXML($mode = 'O', $type = 'introduction', $period_reference = '')
 	{
@@ -149,7 +182,7 @@ class IntracommReport extends CommonObject
 	 * @param int		$period_year		Year of declaration
 	 * @param int		$period_month		Month of declaration
 	 * @param string	$type_declaration	Declaration type by default - introduction or expedition (always 'expedition' for Des)
-	 * @return void
+	 * @return SimpleXMLElement|int
 	 */
 	public function getXMLDes($period_year, $period_month, $type_declaration = 'expedition')
 	{
@@ -246,7 +279,7 @@ class IntracommReport extends CommonObject
 	 *  @param      string	$type				Declaration type by default - introduction or expedition (always 'expedition' for Des)
 	 *  @param      int		$period_reference	Reference declaration
 	 *  @param      string	$exporttype	    	deb=DEB, des=DES
-	 *  @return     int       			  		<0 if KO, >0 if OK
+	 *  @return     string       			  		<0 if KO, >0 if OK
 	 */
 	public function getSQLFactLines($type, $period_reference, $exporttype = 'deb')
 	{
@@ -325,7 +358,7 @@ class IntracommReport extends CommonObject
 	 *	Add item for DES
 	 *
 	 * 	@param	SimpleXMLElement	$declaration		Reference declaration
-	 * 	@param	esurce				$res				Result of request SQL
+	 * 	@param	Resource				$res				Result of request SQL
 	 *  @param	int					$i					Line Id
 	 *  @return	void
 	 */
