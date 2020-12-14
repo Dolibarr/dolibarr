@@ -129,7 +129,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.ro
 $sql .= " WHERE cs.fk_type = c.id";
 $sql .= " AND cs.entity IN (".getEntity("tax").")";
 if ($search_sc_type > 0) {
-	$sql .= " AND pc.fk_typepaiement = ".((int) $search_sc_type);
+	$sql .= " AND cs.fk_type = ".((int) $search_sc_type);
 }
 if ($year > 0) {
 	$sql .= " AND (";
