@@ -5595,7 +5595,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 		// Here, $object->id, $object->ref and $modulepart are required.
 		//var_dump($modulepart);
 		if (!in_array($modulepart, array('product'))) {	// Test to remove
-			$path = dol_sanitizeFileName(empty($object->ref) ? $object->id : $object->ref);
+			$path = dol_sanitizeFileName(empty($object->ref) ? (string) $object->id : $object->ref);
 		}
 	}
 
@@ -7127,10 +7127,11 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
  */
 function utf8_check($str)
 {
+	$str = (string) $str;	// Sometimes string is an int.
+
 	// We must use here a binary strlen function (so not dol_strlen)
 	$strLength = dol_strlen($str);
-	for ($i = 0; $i < $strLength; $i++)
-	{
+	for ($i = 0; $i < $strLength; $i++) {
 		if (ord($str[$i]) < 0x80) continue; // 0bbbbbbb
 		elseif ((ord($str[$i]) & 0xE0) == 0xC0) $n = 1; // 110bbbbb
 		elseif ((ord($str[$i]) & 0xF0) == 0xE0) $n = 2; // 1110bbbb
