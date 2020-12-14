@@ -6698,6 +6698,7 @@ function complete_substitutions_array(&$substitutionarray, $outputlangs, $object
 		$substitfiles = dol_dir_list($dir, 'files', 0, 'functions_');
 		foreach ($substitfiles as $substitfile)
 		{
+			$reg = array();
 			if (preg_match('/functions_(.*)\.lib\.php/i', $substitfile['name'], $reg))
 			{
 				$module = $reg[1];
@@ -6707,7 +6708,9 @@ function complete_substitutions_array(&$substitutionarray, $outputlangs, $object
 				require_once $dir.$substitfile['name'];
 				// Call the user's function, and only if it is defined
 				$function_name = $module."_".$callfunc;
-				if (function_exists($function_name)) $function_name($substitutionarray, $outputlangs, $object, $parameters);
+				if (function_exists($function_name)) {
+					$function_name($substitutionarray, $outputlangs, $object, $parameters);
+				}
 			}
 		}
 	}
