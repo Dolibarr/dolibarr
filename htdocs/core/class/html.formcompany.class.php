@@ -1048,5 +1048,4 @@ class FormCompany extends Form
 		if ($nooutput) return $out;
 		else print $out;
 	}
-
 }
