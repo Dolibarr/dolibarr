@@ -1151,10 +1151,11 @@ class DolGraph
 				$this->stringtoshow .= ', stacked: true';
 			}
 			$this->stringtoshow .= ' }]';
+			$this->stringtoshow .= ', yAxes: [{ ticks: { beginAtZero: true }';
 			if ($type == 'bar' && count($arrayofgroupslegend) > 0) {
-				$this->stringtoshow .= ', yAxes: [{ stacked: true }]';
+				$this->stringtoshow .= ', stacked: true';
 			}
-			$this->stringtoshow .= ' }';
+			$this->stringtoshow .= ' }] }';
 			// Add a callback to change label to show only positive value
 			if ($isfunnel) {
 				$this->stringtoshow .= ', tooltips: { mode: \'nearest\',
