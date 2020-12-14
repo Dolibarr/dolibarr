@@ -232,7 +232,7 @@ while ($i < min($num, $limit)) {
 	print $socialcontrib->getNomUrl(1, '20');
 	print '</td>';
 	// Type
-	print '<td><a href="../sociales/list.php?filtre=cs.fk_type:'.$obj->type.'">'.$obj->label.'</a></td>';
+	print '<td title="'.dol_escape_htmltag($obj->label).'" class="tdmaxoverflow300">'.$obj->label.'</td>';
 	// Expected to pay
 	print '<td class="right">'.price($obj->total).'</td>';
 	// Ref payment
