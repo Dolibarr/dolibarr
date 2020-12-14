@@ -113,23 +113,7 @@ if ($disablenofollow) echo '</a>';
 </div>
 
 <?php
-if (!empty($morelogincontent)) {
-	if (is_array($morelogincontent)) {
-		foreach ($morelogincontent as $format => $option)
-		{
-			if ($format == 'table') {
-				echo '<!-- Option by hook -->';
-				echo $option;
-			}
-		}
-	} else {
-		echo '<!-- Option by hook -->';
-		echo $morelogincontent;
-	}
-}
-?>
-
-<?php if ($captcha) {
+if ($captcha) {
 	// Add a variable param to force not using cache (jmobile)
 	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self); // Remove param time
 	if (preg_match('/\?/', $php_self)) $php_self .= '&time='.dol_print_date(dol_now(), 'dayhourlog');
@@ -150,7 +134,24 @@ if (!empty($morelogincontent)) {
 	</span>
 
 	</div></div>
-<?php } ?>
+<?php
+}
+
+if (!empty($morelogincontent)) {
+	if (is_array($morelogincontent)) {
+		foreach ($morelogincontent as $format => $option)
+		{
+			if ($format == 'table') {
+				echo '<!-- Option by hook -->';
+				echo $option;
+			}
+		}
+	} else {
+		echo '<!-- Option by hook -->';
+		echo $morelogincontent;
+	}
+}
+?>
 
 </div>
 

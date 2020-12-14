@@ -164,21 +164,6 @@ if ($disablenofollow) echo '</a>';
 </div></div>
 
 <?php
-if (!empty($morelogincontent)) {
-	if (is_array($morelogincontent)) {
-		foreach ($morelogincontent as $format => $option)
-		{
-			if ($format == 'table') {
-				echo '<!-- Option by hook -->';
-				echo $option;
-			}
-		}
-	} else {
-		echo '<!-- Option by hook -->';
-		echo $morelogincontent;
-	}
-}
-
 if ($captcha) {
 	// Add a variable param to force not using cache (jmobile)
 	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self); // Remove param time
@@ -200,7 +185,25 @@ if ($captcha) {
 	</span>
 
 	</div></div>
-<?php } ?>
+<?php
+}
+
+if (!empty($morelogincontent)) {
+	if (is_array($morelogincontent)) {
+		foreach ($morelogincontent as $format => $option)
+		{
+			if ($format == 'table') {
+				echo '<!-- Option by hook -->';
+				echo $option;
+			}
+		}
+	} else {
+		echo '<!-- Option by hook -->';
+		echo $morelogincontent;
+	}
+}
+
+?>
 
 </div>
 
