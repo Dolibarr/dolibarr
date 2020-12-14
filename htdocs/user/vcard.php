@@ -40,8 +40,6 @@ if ($user->socid > 0) $socid = $user->socid;
 $feature2 = 'user';
 $result = restrictedArea($user, 'user', $id, 'user', $feature2);
 
-if ($user->id <> $id && !$canreaduser) accessforbidden();
-
 
 $result = $user2->fetch($id);
 if ($result <= 0)
@@ -63,7 +61,7 @@ $v = new vCard();
 $v->setProdId('Dolibarr '.DOL_VERSION);
 
 $v->setUid('DOLIBARR-USERID-'.$user2->id);
-$v->setName($user2->lastname, $user2->firstname, "", $user2->civility, "");
+$v->setName($user2->lastname, $user2->firstname, "", $user2->civility_code, "");
 $v->setFormattedName($user2->getFullName($langs, 1));
 
 $v->setPhoneNumber($user2->phone_pro, "TYPE=WORK;VOICE");
@@ -71,7 +69,7 @@ $v->setPhoneNumber($user2->phone_pro, "TYPE=WORK;VOICE");
 $v->setPhoneNumber($user2->phone_mobile, "TYPE=CELL;VOICE");
 $v->setPhoneNumber($user2->fax, "TYPE=WORK;FAX");
 
-$country = $user2->country_code ? $user2->country : '' ;
+$country = $user2->country_code ? $user2->country : '';
 
 $v->setAddress("", "", $user2->address, $user2->town, $user2->state, $user2->zip, $country, "TYPE=WORK;POSTAL");
 $v->setLabel("", "", $user2->address, $user2->town, $user2->state, $user2->zip, $country, "TYPE=WORK");
@@ -84,9 +82,9 @@ $v->setTitle($user2->poste);
 if ($company->id)
 {
 	$v->setURL($company->url, "TYPE=WORK");
-	if (! $user2->phone_pro) $v->setPhoneNumber($company->phone, "TYPE=WORK;VOICE");
-	if (! $user2->fax)       $v->setPhoneNumber($company->fax, "TYPE=WORK;FAX");
-	if (! $user2->zip)       $v->setAddress("", "", $company->address, $company->town, $company->state, $company->zip, $company->country, "TYPE=WORK;POSTAL");
+	if (!$user2->phone_pro) $v->setPhoneNumber($company->phone, "TYPE=WORK;VOICE");
+	if (!$user2->fax)       $v->setPhoneNumber($company->fax, "TYPE=WORK;FAX");
+	if (!$user2->zip)       $v->setAddress("", "", $company->address, $company->town, $company->state, $company->zip, $company->country, "TYPE=WORK;POSTAL");
 
 	// when company e-mail is empty, use only user e-mail
 	if (empty(trim($company->email)))
@@ -128,7 +126,7 @@ $db->close();
 
 $output = $v->getVCard();
 
-$filename = trim(urldecode($v->getFileName()));      // "Nom prenom.vcf"
+$filename = trim(urldecode($v->getFileName())); // "Nom prenom.vcf"
 $filenameurlencoded = dol_sanitizeFileName(urlencode($filename));
 //$filename = dol_sanitizeFileName($filename);
 

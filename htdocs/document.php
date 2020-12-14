@@ -153,7 +153,7 @@ if (isset($_GET["attachment"])) $attachment = GETPOST("attachment", 'alpha') ?tr
 if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment = false;
 
 // Define mime type
-$type = 'application/octet-stream';	// By default
+$type = 'application/octet-stream'; // By default
 if (GETPOST('type', 'alpha')) $type = GETPOST('type', 'alpha');
 else $type = dol_mimetype($original_file);
 // Security: Force to octet-stream if file is a dangerous file. For example when it is a .noexe file
@@ -173,7 +173,7 @@ $refname = basename(dirname($original_file)."/");
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
 
 // Check security and set return info with full path of file
-$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $refname);
+$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, $refname);
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
@@ -243,6 +243,23 @@ if (!file_exists($fullpath_original_file_osencoded))
 	exit;
 }
 
+// Hooks
+if (!is_object($hookmanager)) {
+	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+	$hookmanager = new HookManager($this->db);
+}
+$hookmanager->initHooks(array('document'));
+$parameters = array('ecmfile' => $ecmfile, 'modulepart' => $modulepart, 'original_file' => $original_file,
+	'entity' => $entity, 'refname' => $refname, 'fullpath_original_file' => $fullpath_original_file,
+	'filename' => $filename, 'fullpath_original_file_osencoded' => $fullpath_original_file_osencoded);
+$reshook = $hookmanager->executeHooks('downloadDocument', $parameters); // Note that $action and $object may have been
+if ($reshook < 0) {
+	$errors = $hookmanager->error.(is_array($hookmanager->errors) ? (!empty($hookmanager->error) ? ', ' : '').join($separator, $hookmanager->errors) : '');
+	dol_syslog("document.php - Errors when executing the hook 'downloadDocument' : ".$errors);
+	print "ErrorDownloadDocumentHooks: ".$errors;
+	exit;
+}
+
 // Permissions are ok and file found, so we return it
 top_httphead($type);
 header('Content-Description: File Transfer');
@@ -261,10 +278,11 @@ if (!$attachment && !empty($conf->global->MAIN_USE_EXIF_ROTATION) && image_forma
 	$readfile = !$imgres;
 }
 
+if (is_object($db)) $db->close();
+
+// Send file now
 if ($readfile) {
 	header('Content-Length: '.dol_filesize($fullpath_original_file));
 
-	readfile($fullpath_original_file_osencoded);
+	readfileLowMemory($fullpath_original_file_osencoded);
 }
-
-if (is_object($db)) $db->close();

@@ -658,7 +658,7 @@ class Categories extends DolibarrApi
 	 * Clean sensible object datas
 	 *
 	 * @param   Categorie  $object    Object to clean
-	 * @return    array    Array of cleaned object properties
+	 * @return  Object     Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -769,6 +769,7 @@ class Categories extends DolibarrApi
 
 		$objects = $result;
 		$cleaned_objects = array();
+		$objects_api = null;
 		if ($type == 'member') {
 			$objects_api = new Members();
 		} elseif ($type == 'customer' || $type == 'supplier') {

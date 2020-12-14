@@ -110,7 +110,7 @@ if ($id > 0 || !empty($ref))
 }
 
 // Common permissions
-$usercanread			= $user->rights->fournisseur->commande->lire;
+$usercanread = $user->rights->fournisseur->commande->lire;
 $usercancreate			= $user->rights->fournisseur->commande->creer;
 $usercandelete			= $user->rights->fournisseur->commande->supprimer;
 
@@ -119,14 +119,14 @@ $usercanvalidate		= ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($u
 
 // Additional area permissions
 $usercanapprove			= $user->rights->fournisseur->commande->approuver;
-$usercanapprovesecond	= $user->rights->fournisseur->commande->approve2;
-$usercanorder			= $user->rights->fournisseur->commande->commander;
+$usercanapprovesecond = $user->rights->fournisseur->commande->approve2;
+$usercanorder = $user->rights->fournisseur->commande->commander;
 $usercanreceived		= $user->rights->fournisseur->commande->receptionner;
 
 // Permissions for includes
 $permissionnote			= $usercancreate; // Used by the include of actions_setnotes.inc.php
-$permissiondellink		= $usercancreate; // Used by the include of actions_dellink.inc.php
-$permissiontoedit		= $usercancreate; // Used by the include of actions_lineupdown.inc.php
+$permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
+$permissiontoedit = $usercancreate; // Used by the include of actions_lineupdown.inc.php
 $permissiontoadd		= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
 
 
@@ -203,7 +203,7 @@ if (empty($reshook))
 	// date of delivery
 	if ($action == 'setdate_livraison' && $usercancreate)
 	{
-		$result = $object->set_date_livraison($user, $datelivraison);
+		$result = $object->setDeliveryDate($user, $datelivraison);
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
@@ -406,7 +406,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), null, 'errors');
 			$error++;
 		}
-		if (!GETPOST('qty'))
+		if (GETPOST('qty', 'int') == '')
 		{
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
@@ -666,7 +666,7 @@ if (empty($reshook))
 		$productsupplier = new ProductFournisseur($db);
 		if (!empty($conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY))
 		{
-			if ($line->fk_product > 0 && $productsupplier->get_buyprice(0, price2num($_POST['qty']), $line->fk_product, 'none', GETPOST('socid', 'int')) < 0)
+			if ($line->fk_product > 0 && $productsupplier->get_buyprice(0, price2num(GETPOST('qty', 'int')), $line->fk_product, 'none', GETPOST('socid', 'int')) < 0)
 			{
 				setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
 			}
@@ -719,7 +719,7 @@ if (empty($reshook))
 			$lineid,
 			$_POST['product_desc'],
 			$ht,
-			$_POST['qty'],
+			GETPOST('qty', 'int'),
 			$_POST['remise_percent'],
 			$vat_rate,
 			$localtax1_rate,
@@ -872,7 +872,7 @@ if (empty($reshook))
 			$action = 'confirm_approve'; // can make standard or first level approval also if permission is set
 		}
 
-		if (! $error) {
+		if (!$error) {
 			$db->commit();
 		} else {
 			$db->rollback();
@@ -1059,7 +1059,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Delivery")), null, 'errors');
 		}
 
-		if (! $error) {
+		if (!$error) {
 			$db->commit();
 		} else {
 			$db->rollback();
@@ -1084,7 +1084,7 @@ if (empty($reshook))
 	// Actions to send emails
 	$triggersendname = 'ORDER_SUPPLIER_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO';
-	$trackid = 'sor'.$object->id;
+	$trackid = 'sord'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	// Actions to build doc
@@ -1143,9 +1143,10 @@ if (empty($reshook))
 			$object->cond_reglement_id = GETPOST('cond_reglement_id');
 			$object->mode_reglement_id = GETPOST('mode_reglement_id');
 			$object->fk_account        = GETPOST('fk_account', 'int');
-			$object->note_private	= GETPOST('note_private', 'restricthtml');
+			$object->note_private = GETPOST('note_private', 'restricthtml');
 			$object->note_public   	= GETPOST('note_public', 'restricthtml');
-			$object->date_livraison = $datelivraison;
+			$object->date_livraison = $datelivraison; // deprecated
+			$object->delivery_date = $datelivraison;
 			$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
@@ -1199,7 +1200,8 @@ if (empty($reshook))
 						$result = $srcobject->fetch($object->origin_id);
 						if ($result > 0)
 						{
-							$object->set_date_livraison($user, $srcobject->date_livraison);
+							$tmpdate = ($srcobject->delivery_date ? $srcobject->delivery_date : $srcobject->date_livraison);
+							$object->setDeliveryDate($user, $tmpdate);
 							$object->set_id_projet($user, $srcobject->fk_project);
 
 							$lines = $srcobject->lines;
@@ -1430,7 +1432,8 @@ if (empty($reshook))
 			if ($object->id > 0)
 			{
 				$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
-				$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
+				$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+				$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 			}
 
 			if ($result >= 0)
@@ -1551,7 +1554,7 @@ if ($action == 'create')
 		$remise_absolue		= (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
 		$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '';
 
-		$datedelivery = (!empty($objectsrc->date_livraison) ? $objectsrc->date_livraison : '');
+		$datedelivery = (!empty($objectsrc->date_livraison) ? $objectsrc->date_livraison : (!empty($objectsrc->delivery_date) ? $objectsrc->delivery_date : ''));
 
 		if (!empty($conf->multicurrency->enabled))
 		{
@@ -1587,7 +1590,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="originid" value="'.$originid.'">';
 	if (!empty($currency_tx)) print '<input type="hidden" name="originmulticurrency_tx" value="'.$currency_tx.'">';
 
-	dol_fiche_head('');
+	print dol_get_fiche_head('');
 
 	print '<table class="border centpercent">';
 
@@ -1684,10 +1687,12 @@ if ($action == 'create')
 	// Incoterms
 	if (!empty($conf->incoterm->enabled))
 	{
+		$fkincoterms = (!empty($object->fk_incoterms) ? $object->fk_incoterms : ($socid > 0 ? $societe->fk_incoterms : ''));
+		$locincoterms = (!empty($object->location_incoterms) ? $object->location_incoterms : ($socid > 0 ? $societe->location_incoterms : ''));
 		print '<tr>';
 		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $object->label_incoterms, 1).'</label></td>';
 		print '<td class="maxwidthonsmartphone">';
-		print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''));
+		print $form->select_incoterms($fkincoterms, $locincoterms);
 		print '</td></tr>';
 	}
 
@@ -1763,12 +1768,12 @@ if ($action == 'create')
 	// Bouton "Create Draft"
 	print "</table>\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 	print '</div>';
 
 
@@ -1802,7 +1807,7 @@ if ($action == 'create')
 	$head = ordersupplier_prepare_head($object);
 
 	$title = $langs->trans("SupplierOrder");
-	dol_fiche_head($head, 'card', $title, -1, 'order');
+	print dol_get_fiche_head($head, 'card', $title, -1, 'order');
 
 
 	$formconfirm = '';
@@ -1998,9 +2003,9 @@ if ($action == 'create')
 	if ($object->methode_commande_id > 0)
 	{
 		print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>';
-		if ($object->date_commande)
-		{
-			print dol_print_date($object->date_commande, "dayhour")."\n";
+		print $object->date_commande ? dol_print_date($object->date_commande, $usehourmin) : '';
+		if ($object->hasDelay() && !empty($object->date_delivery) && !empty($object->date_commande)) {
+			print ' '.img_picto($langs->trans("Late").' : '.$object->showDelay(), "warning");
 		}
 		print "</td></tr>";
 
@@ -2158,14 +2163,14 @@ if ($action == 'create')
 		print '<input type="hidden" name="action" value="setdate_livraison">';
 		$usehourmin = 0;
 		if (!empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) $usehourmin = 1;
-		print $form->selectDate($object->date_livraison ? $object->date_livraison : -1, 'liv_', $usehourmin, $usehourmin, '', "setdate_livraison");
+		print $form->selectDate($object->delivery_date ? $object->delivery_date : -1, 'liv_', $usehourmin, $usehourmin, '', "setdate_livraison");
 		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	} else {
 		$usehourmin = 'day';
 		if (!empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) $usehourmin = 'dayhour';
-		print $object->date_livraison ? dol_print_date($object->date_livraison, $usehourmin) : '&nbsp;';
-		if ($object->hasDelay() && !empty($object->date_livraison)) {
+		print $object->delivery_date ? dol_print_date($object->delivery_date, $usehourmin) : '&nbsp;';
+		if ($object->hasDelay() && !empty($object->delivery_date)) {
 			print ' '.img_picto($langs->trans("Late").' : '.$object->showDelay(), "warning");
 		}
 	}
@@ -2337,7 +2342,7 @@ if ($action == 'create')
 	print '</div>';
 	print '</form>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	/**
 	 * Boutons actions
@@ -2593,7 +2598,7 @@ if ($action == 'create')
 			print '<tr><td class="center" colspan="2">';
 			print '<input type="submit" name="makeorder" class="button" value="'.$langs->trans("ToOrder").'">';
 			print ' &nbsp; &nbsp; ';
-			print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
 			print '</td></tr>';
 			print '</table>';
 
@@ -2713,7 +2718,7 @@ if ($action == 'create')
 				if ($error_occurred)
 				{
 					print "<br>".$langs->trans("ErrorOccurredReviseAndRetry")."<br>";
-					print '<input class="button" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+					print '<input class="button button-cancel" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				} else {
 					$textinput_size = "50";
 					// Webservice url
@@ -2727,7 +2732,7 @@ if ($action == 'create')
 					print '<input class="button" type="submit" id="ws_submit" name="ws_submit" value="'.$langs->trans("CreateRemoteOrder").'">';
 					print ' &nbsp; &nbsp; ';
 					//Cancel button
-					print '<input class="button" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+					print '<input class="button button-cancel" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 					print '</td></tr>';
 				}
 
@@ -2858,7 +2863,7 @@ if ($action == 'create')
 					print '<input class="button" type="submit" id="ws_submit" name="ws_submit" value="'.$langs->trans("Confirm").'">';
 					print ' &nbsp; &nbsp; ';
 				}
-				print '<input class="button" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+				print '<input class="button button-cancel" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</form>';
 			}
 		}
@@ -2873,7 +2878,7 @@ if ($action == 'create')
 		$defaulttopic = 'SendOrderRef';
 		$diroutput = $conf->fournisseur->commande->dir_output;
 		$autocopy = 'MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO';
-		$trackid = 'sor'.$object->id;
+		$trackid = 'sord'.$object->id;
 
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	}

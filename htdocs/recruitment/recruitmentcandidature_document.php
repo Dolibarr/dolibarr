@@ -77,7 +77,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
-if ($id > 0 || !empty($ref)) $upload_dir = $conf->recruitment->multidir_output[$object->entity ? $object->entity : $conf->entity]."/recruitmentcandidature/".dol_sanitizeFileName($object->ref);
+if ($id > 0 || !empty($ref)) $upload_dir = $conf->recruitment->multidir_output[$object->entity ? $object->entity : $conf->entity]."/recruitmentcandidature/".get_exdir(0, 0, 0, 1, $object);
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
@@ -113,7 +113,7 @@ if ($object->id)
 	 */
 	$head = recruitmentCandidaturePrepareHead($object);
 
-	dol_fiche_head($head, 'document', $langs->trans("RecruitmentCandidature"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'document', $langs->trans("RecruitmentCandidature"), -1, $object->picto);
 
 
 	// Build file list
@@ -186,7 +186,7 @@ if ($object->id)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	$modulepart = 'recruitment';
 	$permission = $user->rights->recruitment->recruitmentjobposition->write;

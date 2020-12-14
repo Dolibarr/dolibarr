@@ -119,7 +119,7 @@ if ($object->id > 0)
 
 	$head = group_prepare_head($object);
 	$title = $langs->trans("Group");
-	dol_fiche_head($head, 'rights', $title, -1, 'group');
+	print dol_get_fiche_head($head, 'rights', $title, -1, 'group');
 
 	// Charge les modules soumis a permissions
 	$modules = array();
@@ -374,7 +374,7 @@ if ($object->id > 0)
 	$reshook = $hookmanager->executeHooks('insertExtraFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

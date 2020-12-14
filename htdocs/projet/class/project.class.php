@@ -45,17 +45,17 @@ class Project extends CommonObject
 	public $table_element = 'projet';
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = 'projet_task';
 
 	/**
-	 * @var int    Name of field date
+	 * @var string    Name of field date
 	 */
 	public $table_element_date;
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_projet';
 
@@ -178,7 +178,7 @@ class Project extends CommonObject
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
 		'fk_soc' =>array('type'=>'integer', 'label'=>'Fk soc', 'enabled'=>1, 'visible'=>3, 'position'=>15),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreationShort', 'enabled'=>1, 'visible'=>1, 'position'=>20),
@@ -187,7 +187,7 @@ class Project extends CommonObject
 		'datee' =>array('type'=>'date', 'label'=>'DateEnd', 'enabled'=>1, 'visible'=>1, 'position'=>35),
 		'ref' =>array('type'=>'varchar(50)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'showoncombobox'=>1, 'position'=>40, 'searchall'=>1),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>3, 'notnull'=>1, 'position'=>45),
-		'title' =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>50, 'showoncombobox'=>1, 'searchall'=>1),
+		'title' =>array('type'=>'varchar(255)', 'label'=>'ProjectLabel', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>50, 'showoncombobox'=>1, 'searchall'=>1),
 		'description' =>array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>3, 'position'=>55, 'searchall'=>1),
 		'fk_user_creat' =>array('type'=>'integer', 'label'=>'Fk user creat', 'enabled'=>1, 'visible'=>3, 'notnull'=>1, 'position'=>60),
 		'public' =>array('type'=>'integer', 'label'=>'Visibility', 'enabled'=>1, 'visible'=>1, 'position'=>65),
@@ -577,7 +577,7 @@ class Project extends CommonObject
 				$this->opp_percent = $obj->opp_percent;
 				$this->budget_amount = $obj->budget_amount;
 				$this->model_pdf = $obj->model_pdf;
-				$this->modelpdf = $obj->model_pdf;	// deprecated
+				$this->modelpdf = $obj->model_pdf; // deprecated
 				$this->usage_opportunity = (int) $obj->usage_opportunity;
 				$this->usage_task = (int) $obj->usage_task;
 				$this->usage_bill_time = (int) $obj->usage_bill_time;
@@ -586,7 +586,7 @@ class Project extends CommonObject
 
 				$this->db->free($resql);
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
@@ -849,6 +849,45 @@ class Project extends CommonObject
 	}
 
 	/**
+	 * Return the count of a type of linked elements of this project
+	 *
+	 * @param string	$type			The type of the linked elements (e.g. 'propal', 'order', 'invoice', 'order_supplier', 'invoice_supplier')
+	 * @param string	$tablename		The name of table associated of the type
+	 * @param string	$projectkey 	(optional) Equivalent key to fk_projet for actual type
+	 * @return integer					The count of the linked elements (the count is zero on request error too)
+	 */
+	public function getElementCount($type, $tablename, $projectkey = 'fk_projet')
+	{
+		if ($this->id <= 0) return 0;
+
+		if ($type == 'agenda') {
+			$sql = "SELECT COUNT(id) as nb FROM ".MAIN_DB_PREFIX."actioncomm WHERE fk_project = ".$this->id." AND entity IN (".getEntity('agenda').")";
+		} elseif ($type == 'expensereport') {
+			$sql = "SELECT COUNT(ed.rowid) as nb FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND e.entity IN (".getEntity('expensereport').") AND ed.fk_projet = ".$this->id;
+		} elseif ($type == 'project_task') {
+			$sql = "SELECT DISTINCT COUNT(pt.rowid) as nb FROM ".MAIN_DB_PREFIX."projet_task as pt WHERE pt.fk_projet = ".$this->id;
+		} elseif ($type == 'project_task_time') {	// Case we want to duplicate line foreach user
+			$sql = "SELECT DISTINCT COUNT(pt.rowid) as nb FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet_task_time as ptt WHERE pt.rowid = ptt.fk_task AND pt.fk_projet = ".$this->id;
+		} elseif ($type == 'stock_mouvement') {
+			$sql = 'SELECT COUNT(ms.rowid) as nb FROM '.MAIN_DB_PREFIX."stock_mouvement as ms, ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.origintype = 'project' AND ms.fk_origin = ".$this->id." AND ms.type_mouvement = 1";
+		} elseif ($type == 'loan') {
+			$sql = 'SELECT COUNT(l.rowid) as nb FROM '.MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').") AND l.fk_projet = ".$this->id;
+		} else {
+			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$projectkey." = ".$this->id." AND entity IN (".getEntity($type).")";
+		}
+
+		$result = $this->db->query($sql);
+
+		if (!$result) return 0;
+
+		$obj = $this->db->fetch_object($result);
+
+		$this->db->free($result);
+
+		return $obj->nb;
+	}
+
+	/**
 	 * 		Delete tasks with no children first, then task with children recursively
 	 *
 	 *  	@param     	User		$user		User
@@ -1063,7 +1102,10 @@ class Project extends CommonObject
 		}
 
 		$label = '';
-		if ($option != 'nolink') $label = img_picto('', $this->picto).' <u>'.$langs->trans("Project").'</u>';
+		if ($option != 'nolink') $label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Project").'</u>';
+		if (isset($this->status)) {
+			$label .= ' '.$this->getLibStatut(5);
+		}
 		$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('Ref').': </b>'.$this->ref; // The space must be after the : to not being explode when showing the title in img_picto
 		$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('Label').': </b>'.$this->title; // The space must be after the : to not being explode when showing the title in img_picto
 		if (isset($this->public)) {
@@ -1079,9 +1121,6 @@ class Project extends CommonObject
 			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('DateEnd').': </b>'.dol_print_date($this->datee, 'day'); // The space must be after the : to not being explode when showing the title in img_picto
 		}
 		if ($moreinpopup) $label .= '<br>'.$moreinpopup;
-		if (isset($this->status)) {
-			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
-		}
 
 		$url = '';
 		if ($option != 'nolink')
@@ -1194,7 +1233,7 @@ class Project extends CommonObject
 	 * 	@param  string	$mode		Type of permission we want to know: 'read', 'write'
 	 * 	@return	int					>0 if user has permission, <0 if user has no permission
 	 */
-	public function restrictedProjectArea($user, $mode = 'read')
+	public function restrictedProjectArea(User $user, $mode = 'read')
 	{
 		// To verify role of users
 		$userAccess = 0;
@@ -1204,7 +1243,7 @@ class Project extends CommonObject
 		} elseif ($this->public && (($mode == 'read' && !empty($user->rights->projet->lire)) || ($mode == 'write' && !empty($user->rights->projet->creer)) || ($mode == 'delete' && !empty($user->rights->projet->supprimer))))
 		{
 			$userAccess = 1;
-		} else {
+		} else {	// No access due to permission to read all projects, so we check if we are a contact of project
 			foreach (array('internal', 'external') as $source)
 			{
 				$userRole = $this->liste_contact(4, $source);
@@ -1213,7 +1252,13 @@ class Project extends CommonObject
 				$nblinks = 0;
 				while ($nblinks < $num)
 				{
-					if ($source == 'internal' && preg_match('/^PROJECT/', $userRole[$nblinks]['code']) && $user->id == $userRole[$nblinks]['id'])
+					if ($source == 'internal' && $user->id == $userRole[$nblinks]['id'])	// $userRole[$nblinks]['id'] is id of user (llx_user) for internal contacts
+					{
+						if ($mode == 'read' && $user->rights->projet->lire)      $userAccess++;
+						if ($mode == 'write' && $user->rights->projet->creer)     $userAccess++;
+						if ($mode == 'delete' && $user->rights->projet->supprimer) $userAccess++;
+					}
+					if ($source == 'external' && $user->socid > 0 && $user->socid == $userRole[$nblinks]['socid'])	// $userRole[$nblinks]['id'] is id of contact (llx_socpeople) or external contacts
 					{
 						if ($mode == 'read' && $user->rights->projet->lire)      $userAccess++;
 						if ($mode == 'write' && $user->rights->projet->creer)     $userAccess++;
@@ -1432,7 +1477,7 @@ class Project extends CommonObject
 				$clone_project->note_public = '';
 			} else {
 				$this->db->begin();
-				$res = $clone_project->update_note(dol_html_entity_decode($clone_project->note_public, ENT_QUOTES), '_public');
+				$res = $clone_project->update_note(dol_html_entity_decode($clone_project->note_public, ENT_QUOTES | ENT_HTML5), '_public');
 				if ($res < 0)
 				{
 					$this->error .= $clone_project->error;
@@ -1443,7 +1488,7 @@ class Project extends CommonObject
 				}
 
 				$this->db->begin();
-				$res = $clone_project->update_note(dol_html_entity_decode($clone_project->note_private, ENT_QUOTES), '_private');
+				$res = $clone_project->update_note(dol_html_entity_decode($clone_project->note_private, ENT_QUOTES | ENT_HTML5), '_private');
 				if ($res < 0)
 				{
 					$this->error .= $clone_project->error;

@@ -22,8 +22,11 @@
  *	\brief      Page to list surveys
  */
 
-define("NOLOGIN", 1); // This means this output page does not require to be logged.
-define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+if (!defined('NOLOGIN'))		define("NOLOGIN", 1); // This means this output page does not require to be logged.
+if (!defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
+if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
@@ -105,13 +108,11 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 		$nouveauchoix = '';
 		for ($i = 0; $i < $nbcolonnes; $i++)
 		{
-			if (isset($_POST["choix$i"]) && $_POST["choix$i"] == '1')
-			{
+			if (GETPOSTISSET("choix$i") && GETPOST("choix$i") == '1') {
 				$nouveauchoix .= "1";
-			} elseif (isset($_POST["choix$i"]) && $_POST["choix$i"] == '2')
-			{
+			} elseif (GETPOSTISSET("choix$i") && GETPOST("choix$i") == '2') {
 				$nouveauchoix .= "2";
-			} else { // sinon c'est 0
+			} else {
 				$nouveauchoix .= "0";
 			}
 		}
@@ -179,14 +180,14 @@ $testligneamodifier = false;
 $ligneamodifier = -1;
 for ($i = 0; $i < $nblines; $i++)
 {
-	if (isset($_POST['modifierligne'.$i]))
+	if (GETPOSTISSET('modifierligne'.$i))
 	{
 		$ligneamodifier = $i;
 		$testligneamodifier = true;
 	}
 
 	//test to see if a line is to be modified
-	if (isset($_POST['validermodifier'.$i]))
+	if (GETPOSTISSET('validermodifier'.$i))
 	{
 		$modifier = $i;
 		$testmodifier = true;
@@ -200,13 +201,11 @@ if ($testmodifier)
 	for ($i = 0; $i < $nbcolonnes; $i++)
 	{
 		//var_dump($_POST["choix$i"]);
-		if (isset($_POST["choix".$i]) && $_POST["choix".$i] == '1')
-		{
+		if (GETPOSTISSET("choix".$i) && GETPOST("choix".$i) == '1') {
 			$nouveauchoix .= "1";
-		} elseif (isset($_POST["choix".$i]) && $_POST["choix".$i] == '2')
-		{
+		} elseif (GETPOSTISSET("choix".$i) && GETPOST("choix".$i) == '2') {
 			$nouveauchoix .= "2";
-		} else { // sinon c'est 0
+		} else {
 			$nouveauchoix .= "0";
 		}
 	}
@@ -536,19 +535,19 @@ while ($compteur < $num)
 	// Button edit at end of line
 	if ($compteur != $ligneamodifier && $mod_ok)
 	{
-		print '<td class="casevide"><input type="submit" class="button" name="modifierligne'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Edit")).'"></td>'."\n";
+		print '<td class="casevide"><input type="submit" class="button smallpaddingimp" name="modifierligne'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Edit")).'"></td>'."\n";
 	}
 
 	//demande de confirmation pour modification de ligne
 	for ($i = 0; $i < $nblines; $i++)
 	{
-		if (isset($_POST["modifierligne".$i]))
+		if (GETPOSTISSET("modifierligne".$i))
 		{
 			if ($compteur == $i)
 			{
 				print '<td class="casevide">';
 				print '<input type="hidden" name="idtomodify'.$compteur.'" value="'.$obj->id_users.'">';
-				print '<input type="submit" class="button" name="validermodifier'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '<input type="submit" class="button button-save" name="validermodifier'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 				print '</td>'."\n";
 			}
 		}
@@ -578,8 +577,7 @@ if ($ligneamodifier < 0 && (!isset($_SESSION['nom'])))
 		if (empty($listofanswers[$i]['format']) || !in_array($listofanswers[$i]['format'], array('yesno', 'foragainst')))
 		{
 			print '<input type="checkbox" name="choix'.$i.'" value="1"';
-			if (isset($_POST['choix'.$i]) && $_POST['choix'.$i] == '1')
-			{
+			if (GETPOSTISSET('choix'.$i) && GETPOST('choix'.$i) == '1') {
 				print ' checked';
 			}
 			print '>';
@@ -731,7 +729,7 @@ if ($comments)
 
 // Form to add comment
 if ($object->allow_comments) {
-	print '<div class="addcomment"><span class="opacitymedium">'.$langs->trans("AddACommentForPoll")."</span><br>\n";
+	print '<br><div class="addcomment"><span class="opacitymedium">'.$langs->trans("AddACommentForPoll")."</span><br>\n";
 
 	print '<textarea name="comment" rows="'.ROWS_2.'" class="quatrevingtpercent">'.dol_escape_htmltag(GETPOST('comment', 'restricthtml'), 0, 1).'</textarea><br>'."\n";
 	print $langs->trans("Name").': ';

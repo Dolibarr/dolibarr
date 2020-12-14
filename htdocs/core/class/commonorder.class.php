@@ -39,6 +39,12 @@ abstract class CommonOrder extends CommonObject
 abstract class CommonOrderLine extends CommonObjectLine
 {
 	/**
+	 * Custom label of line. Not used by default.
+	 * @deprecated
+	 */
+	public $label;
+
+	/**
 	 * Product ref
 	 * @var string
 	 * @deprecated Use product_ref
@@ -47,18 +53,18 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $ref;
 
 	/**
-	 * Product ref
-	 * @var string
-	 */
-	public $product_ref;
-
-	/**
 	 * Product label
 	 * @var string
 	 * @deprecated Use product_label
 	 * @see $product_label
 	 */
 	public $libelle;
+
+	/**
+	 * Product ref
+	 * @var string
+	 */
+	public $product_ref;
 
 	/**
 	 * Product label
@@ -73,6 +79,18 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $product_desc;
 
 	/**
+	 * Product use lot
+	 * @var string
+	 */
+	public $product_tobatch;
+
+	/**
+	 * Product barcode
+	 * @var string
+	 */
+	public $product_barcode;
+
+	/**
 	 * Quantity
 	 * @var float
 	 */
@@ -83,7 +101,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 * @deprecated
 	 * @see $subprice
 	 */
-    public $price;
+	public $price;
 
 	/**
 	 * Unit price before taxes
@@ -116,6 +134,12 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $remise_percent;
 
 	/**
+	 * VAT code
+	 * @var string
+	 */
+	public $vat_src_code;
+
+	/**
 	 * VAT %
 	 * @var float
 	 */
@@ -145,4 +169,11 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $info_bits = 0;
 
 	public $special_code = 0;
+
+	public $fk_multicurrency;
+	public $multicurrency_code;
+	public $multicurrency_subprice;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
 }

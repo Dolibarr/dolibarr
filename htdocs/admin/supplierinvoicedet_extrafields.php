@@ -76,11 +76,11 @@ print "<br>\n";
 
 $head = supplierorder_admin_prepare_head();
 
-dol_fiche_head($head, 'supplierinvoicedet', $langs->trans("Suppliers"), -1, 'company');
+print dol_get_fiche_head($head, 'supplierinvoicedet', $langs->trans("Suppliers"), -1, 'company');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 // Buttons

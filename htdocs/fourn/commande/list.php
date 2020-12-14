@@ -7,7 +7,7 @@
  * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2018      Charlene Benke       <charlie@patas-monkey.com>
+ * Copyright (C) 2018-2020 Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -74,7 +74,6 @@ $search_user = GETPOST('search_user', 'int');
 $search_request_author = GETPOST('search_request_author', 'alpha');
 $search_ht = GETPOST('search_ht', 'alpha');
 $search_ttc = GETPOST('search_ttc', 'alpha');
-$search_status = (GETPOST('search_status', 'alpha') != '' ?GETPOST('search_status', 'alpha') : GETPOST('statut', 'alpha')); // alpha and not intbecause it can be '6,7'
 $optioncss = GETPOST('optioncss', 'alpha');
 $socid = GETPOST('socid', 'int');
 $search_sale = GETPOST('search_sale', 'int');
@@ -92,8 +91,11 @@ $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 
-$status = GETPOST('statut', 'alpha');
-$search_status = GETPOST('search_status');
+if (is_array(GETPOST('search_status', 'intcomma'))) {
+	$search_status = join(',', GETPOST('search_status', 'intcomma'));
+} else {
+	$search_status = (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : GETPOST('statut', 'intcomma'));
+}
 
 // Security check
 $orderid = GETPOST('orderid', 'int');
@@ -128,7 +130,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
 	'cf.ref'=>'Ref',
-	'cf.ref_supplier'=>'RefSupplierOrder',
+	'cf.ref_supplier'=>'RefOrderSupplier',
 	'pd.description'=>'Description',
 	's.nom'=>"ThirdParty",
 	's.name_alias'=>"AliasNameShort",
@@ -177,6 +179,7 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
+$error = 0;
 
 
 /*
@@ -364,30 +367,30 @@ if (empty($reshook))
 							{
 								$fk_parent_line = 0;
 							}
-                            $result = $objecttmp->addline(
+							$result = $objecttmp->addline(
 								$desc,
 								$lines[$i]->subprice,
 								$lines[$i]->tva_tx,
 								$lines[$i]->localtax1_tx,
 								$lines[$i]->localtax2_tx,
-                            	$lines[$i]->qty,
-                            	$lines[$i]->fk_product,
+								$lines[$i]->qty,
+								$lines[$i]->fk_product,
 								$lines[$i]->remise_percent,
 								$date_start,
 								$date_end,
 								0,
 								$lines[$i]->info_bits,
-                            	'HT',
-                            	$product_type,
-                            	$lines[$i]->rang,
-                            	false,
-                            	$lines[$i]->array_options,
-                            	$lines[$i]->fk_unit,
-                            	$objecttmp->origin_id,
-                            	$lines[$i]->pa_ht,
-                            	$lines[$i]->ref_supplier,
-                            	$lines[$i]->special_code,
-                            	$fk_parent_line
+								'HT',
+								$product_type,
+								$lines[$i]->rang,
+								false,
+								$lines[$i]->array_options,
+								$lines[$i]->fk_unit,
+								$objecttmp->origin_id,
+								$lines[$i]->pa_ht,
+								$lines[$i]->ref_supplier,
+								$lines[$i]->special_code,
+								$fk_parent_line
 							);
 							if ($result > 0)
 							{
@@ -501,19 +504,22 @@ $formorder = new FormOrder($db);
 $formother = new FormOther($db);
 $formcompany = new FormCompany($db);
 
-$title = $langs->trans("SuppliersOrders");
+$title = $langs->trans("ListOfSupplierOrders");
 if ($socid > 0)
 {
 	$fourn = new Fournisseur($db);
 	$fourn->fetch($socid);
 	$title .= ' - '.$fourn->name;
 }
-if ($status)
+
+/*if ($search_status)
 {
-	if ($status == '1,2,3') $title .= ' - '.$langs->trans("StatusOrderToProcessShort");
-	if ($status == '6,7') $title .= ' - '.$langs->trans("StatusOrderCanceled");
-	else $title .= ' - '.$commandestatic->LibStatut($status);
-}
+	if ($search_status == '1,2') $title .= ' - '.$langs->trans("SuppliersOrdersToProcess");
+	elseif ($search_status == '3,4') $title .= ' - '.$langs->trans("SuppliersOrdersAwaitingReception");
+	elseif ($search_status == '1,2,3') $title .= ' - '.$langs->trans("StatusOrderToProcessShort");
+	elseif ($search_status == '6,7') $title .= ' - '.$langs->trans("StatusOrderCanceled");
+	elseif (is_numeric($search_status) && $search_status >= 0) $title .= ' - '.$commandestatic->LibStatut($search_status);
+}*/
 if ($search_billed > 0) $title .= ' - '.$langs->trans("Billed");
 
 //$help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
@@ -537,7 +543,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 }
 // Add fields from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
@@ -556,6 +562,9 @@ if ($search_user > 0)
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= ' WHERE cf.fk_soc = s.rowid';
 $sql .= ' AND cf.entity IN ('.getEntity('supplier_order').')';
 if ($socid > 0) $sql .= " AND s.rowid = ".$socid;
@@ -569,8 +578,8 @@ if ($search_billed != '' && $search_billed >= 0) $sql .= " AND cf.billed = ".$db
 if ($search_product_category > 0) $sql .= " AND cp.fk_categorie = ".$search_product_category;
 //Required triple check because statut=0 means draft filter
 if (GETPOST('statut', 'intcomma') !== '')
-	$sql .= " AND cf.fk_statut IN (".$db->sanitize($db->escape(GETPOST('statut', 'intcomma'))).")";
-if ($search_status != '' && $search_status >= 0)
+	$sql .= " AND cf.fk_statut IN (".$db->sanitize($db->escape($db->escape(GETPOST('statut', 'intcomma')))).")";
+if ($search_status != '' && $search_status != '-1')
 	$sql .= " AND cf.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
 $sql .= dolSqlDateFilter("cf.date_commande", $search_orderday, $search_ordermonth, $search_orderyear);
 $sql .= dolSqlDateFilter("cf.date_livraison", $search_deliveryday, $search_deliverymonth, $search_deliveryyear);
@@ -595,7 +604,7 @@ if ($search_project_ref != '') $sql .= natural_search("p.ref", $search_project_r
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
 $sql .= $db->order($sortfield, $sortorder);
@@ -619,15 +628,6 @@ $sql .= $db->plimit($limit + 1, $offset);
 $resql = $db->query($sql);
 if ($resql)
 {
-	if ($socid > 0)
-	{
-		$soc = new Societe($db);
-		$soc->fetch($socid);
-		$title = $langs->trans('ListOfSupplierOrders').' - '.$soc->name;
-	} else {
-		$title = $langs->trans('ListOfSupplierOrders');
-	}
-
 	$num = $db->num_rows($resql);
 
 	$arrayofselected = is_array($toselect) ? $toselect : array();
@@ -667,7 +667,7 @@ if ($resql)
 	if ($search_multicurrency_montant_vat != '')  $param .= '&search_multicurrency_montant_vat='.urlencode($search_multicurrency_montant_vat);
 	if ($search_multicurrency_montant_ttc != '') $param .= '&search_multicurrency_montant_ttc='.urlencode($search_multicurrency_montant_ttc);
 	if ($search_refsupp) 		$param .= "&search_refsupp=".urlencode($search_refsupp);
-	if ($search_status >= 0)  	$param .= "&search_status=".urlencode($search_status);
+	if ($search_status != '' && $search_status != '-1') $param .= "&search_status=".urlencode($search_status);
 	if ($search_project_ref >= 0) $param .= "&search_project_ref=".urlencode($search_project_ref);
 	if ($search_billed != '')   $param .= "&search_billed=".urlencode($search_billed);
 	if ($show_files)            $param .= '&show_files='.urlencode($show_files);
@@ -675,11 +675,15 @@ if ($resql)
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
+	$param .= $hookmanager->resPrint;
+
 	// List of mass actions available
 	$arrayofmassactions = array(
 		'generate_doc'=>$langs->trans("ReGeneratePDF"),
 		'builddoc'=>$langs->trans("PDFMerge"),
-	    'presend'=>$langs->trans("SendByMail"),
+		'presend'=>$langs->trans("SendByMail"),
 	);
 	if ($user->rights->fournisseur->facture->creer) $arrayofmassactions['createbills'] = $langs->trans("CreateInvoiceForThisSupplier");
 	if ($user->rights->fournisseur->commande->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
@@ -744,7 +748,7 @@ if ($resql)
 		print '<br>';
 		print '<div class="center">';
 		print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('CreateInvoiceForThisCustomer').'">  ';
-		print '<input type="submit" class="button" id="cancel" name="cancel" value="'.$langs->trans('Cancel').'">';
+		print '<input type="submit" class="button button-cancel" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 		print '<br>';
 	}
@@ -775,7 +779,7 @@ if ($resql)
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view prospects other than his'
-	if ($conf->categorie->enabled && ($user->rights->produit->lire || $user->rights->service->lire))
+	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire && ($user->rights->produit->lire || $user->rights->service->lire))
 	{
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
@@ -963,14 +967,14 @@ if ($resql)
 	if (!empty($arrayfields['cf.fk_statut']['checked']))
 	{
 		print '<td class="liste_titre right">';
-		$formorder->selectSupplierOrderStatus((strstr($search_status, ',') ?-1 : $search_status), 1, 'search_status');
+		$formorder->selectSupplierOrderStatus($search_status, 1, 'search_status');
 		print '</td>';
 	}
 	// Status billed
 	if (!empty($arrayfields['cf.billed']['checked']))
 	{
 		print '<td class="liste_titre center">';
-		print $form->selectyesno('search_billed', $search_billed, 1, 0, 1);
+		print $form->selectyesno('search_billed', $search_billed, 1, 0, 1, 1);
 		print '</td>';
 	}
 	// Action column
@@ -1044,6 +1048,7 @@ if ($resql)
 		$objectstatic->total_ht = $obj->total_ht;
 		$objectstatic->total_tva = $obj->total_tva;
 		$objectstatic->total_ttc = $obj->total_ttc;
+		$objectstatic->date_commande = $db->jdate($obj->date_commande);
 		$objectstatic->date_delivery = $db->jdate($obj->date_delivery);
 		$objectstatic->note_public = $obj->note_public;
 		$objectstatic->note_private = $obj->note_private;
@@ -1153,8 +1158,10 @@ if ($resql)
 		if (!empty($arrayfields['cf.date_commande']['checked']))
 		{
 			print '<td class="center">';
-			if ($obj->date_commande) print dol_print_date($db->jdate($obj->date_commande), 'day');
-			else print '';
+			print dol_print_date($db->jdate($obj->date_commande), 'day');
+			if ($objectstatic->hasDelay() && !empty($objectstatic->date_delivery)) {
+				print ' '.img_picto($langs->trans("Late").' : '.$objectstatic->showDelay(), "warning");
+			}
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
@@ -1286,14 +1293,14 @@ if ($resql)
 
 	$db->free($resql);
 
-    $parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
-    $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
+	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
-    print '</table>'."\n";
-    print '</div>';
+	print '</table>'."\n";
+	print '</div>';
 
-    print '</form>'."\n";
+	print '</form>'."\n";
 
 	$hidegeneratedfilelistifempty = 1;
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty = 0;

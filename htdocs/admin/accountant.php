@@ -82,7 +82,7 @@ print load_fiche_titre($langs->trans("CompanyFoundation"), '', 'title_setup');
 
 $head = company_admin_prepare_head();
 
-dol_fiche_head($head, 'accountant', $langs->trans("Company"), -1, 'company');
+print dol_get_fiche_head($head, 'accountant', $langs->trans("Company"), -1, 'company');
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -170,9 +170,9 @@ print '</td></tr>';
 print '</table>';
 
 print '<br><div class="center">';
-print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 //print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-//print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+//print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 print '</div>';
 //print '<br>';
 

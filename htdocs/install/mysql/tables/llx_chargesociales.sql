@@ -25,7 +25,7 @@ create table llx_chargesociales
   date_ech          datetime NOT NULL,              -- date echeance
   libelle           varchar(80) NOT NULL,
   entity            integer DEFAULT 1 NOT NULL,     -- multi company id
-  tms               timestamp,
+  tms               timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   date_creation     datetime,                       -- date de creation 
   date_valid        datetime,                       -- date de validation
   fk_user_author    integer,                        -- user making creation

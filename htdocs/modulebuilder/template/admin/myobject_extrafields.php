@@ -21,7 +21,7 @@
  */
 
 /**
- *      \file       htdocs/modulebuilder/tempalte/admin/myobject_extrafields.php
+ *      \file       htdocs/modulebuilder/template/admin/myobject_extrafields.php
  *		\ingroup    mymodule
  *		\brief      Page to setup extra fields of myobject
  */
@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/bom.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('mrp@mrp', 'admin'));
+$langs->loadLangs(array('mymodule@mymodule', 'admin'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -70,19 +70,19 @@ print load_fiche_titre($langs->trans("MyModuleSetup"), $linkback, 'title_setup')
 
 $head = mymoduleAdminPrepareHead();
 
-dol_fiche_head($head, 'myobject_extrafields', $langs->trans("MyObjectExtraFields"), -1, 'account');
+print dol_get_fiche_head($head, 'myobject_extrafields', $langs->trans("MyObjectExtraFields"), -1, 'account');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 // Buttons
 if ($action != 'create' && $action != 'edit')
 {
-    print '<div class="tabsAction">';
-    print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create#newattrib\">".$langs->trans("NewAttribute")."</a>";
-    print "</div>";
+	print '<div class="tabsAction">';
+	print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create#newattrib\">".$langs->trans("NewAttribute")."</a>";
+	print "</div>";
 }
 
 
@@ -92,9 +92,9 @@ if ($action != 'create' && $action != 'edit')
 if ($action == 'create')
 {
 	print '<br><div id="newattrib"></div>';
-    print load_fiche_titre($langs->trans('NewAttribute'));
+	print load_fiche_titre($langs->trans('NewAttribute'));
 
-    require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
+	require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
 }
 
 /*
@@ -102,10 +102,10 @@ if ($action == 'create')
  */
 if ($action == 'edit' && !empty($attrname))
 {
-    print "<br>";
-    print load_fiche_titre($langs->trans("FieldEdition", $attrname));
+	print "<br>";
+	print load_fiche_titre($langs->trans("FieldEdition", $attrname));
 
-    require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
+	require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }
 
 // End of page

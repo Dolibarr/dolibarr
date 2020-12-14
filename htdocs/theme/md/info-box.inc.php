@@ -33,6 +33,13 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	margin: 2px;
 	border-radius: 3px;
 }
+.user-back {
+	background-color: #79633f !important;
+	color: #FFF !important;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
+}
 
 
 .bg-infobox-project{
@@ -466,6 +473,12 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	min-width: 350px;
     max-width: 350px;
 }
+
+.info-box-module .info-box-content {
+	height: 6.3em;
+}
+
+
 @media only screen and (max-width: 1740px) {
 	.info-box-module {
 	    min-width: 315px;
@@ -476,8 +489,11 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	.info-box-module {
 		min-width: 260px;
 	}
+	.info-box-sm .info-box-icon {
+		width: 60px;
+	}
+	.info-box-sm .info-box-content {
+		margin-left: 60px;
+	}
 }
 
-.info-box-module .info-box-content {
-	height: 6.3em;
-}

@@ -82,11 +82,11 @@ if ($action == 'setvalue' && $user->admin)
 	$result = dolibarr_set_const($db, "STRIPE_BANK_ACCOUNT_FOR_PAYMENTS", GETPOST('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 'int'), 'chaine', 0, '', $conf->entity);
 	if (!$result > 0)
 		$error++;
-    $result = dolibarr_set_const($db, "STRIPE_USER_ACCOUNT_FOR_ACTIONS", GETPOST('STRIPE_USER_ACCOUNT_FOR_ACTIONS', 'int'), 'chaine', 0, '', $conf->entity);
-    if (!$result > 0) {
-        $error++;
-    }
-    $result = dolibarr_set_const($db, "STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS", GETPOST('STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS', 'int'), 'chaine', 0, '', $conf->entity);
+	$result = dolibarr_set_const($db, "STRIPE_USER_ACCOUNT_FOR_ACTIONS", GETPOST('STRIPE_USER_ACCOUNT_FOR_ACTIONS', 'int'), 'chaine', 0, '', $conf->entity);
+	if (!$result > 0) {
+		$error++;
+	}
+	$result = dolibarr_set_const($db, "STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS", GETPOST('STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS', 'int'), 'chaine', 0, '', $conf->entity);
 	if (!$result > 0)
 		$error++;
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_CSS_URL", GETPOST('ONLINE_PAYMENT_CSS_URL', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -161,7 +161,7 @@ print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
-dol_fiche_head($head, 'stripeaccount', '', -1);
+print dol_get_fiche_head($head, 'stripeaccount', '', -1);
 
 $stripearrayofwebhookevents = array('account.updated', 'payout.created', 'payout.paid', 'charge.pending', 'charge.refunded', 'charge.succeeded', 'charge.failed', 'payment_intent.succeeded', 'payment_intent.payment_failed', 'payment_method.attached', 'payment_method.updated', 'payment_method.card_automatically_updated', 'payment_method.detached', 'source.chargeable', 'customer.deleted');
 
@@ -169,6 +169,7 @@ print '<span class="opacitymedium">'.$langs->trans("StripeDesc")."</span><br>\n"
 
 print '<br>';
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("AccountParameter").'</td>';
@@ -177,13 +178,13 @@ print '<td></td>';
 print "</tr>\n";
 
 print '<tr class="oddeven">';
-print '<td class="titlefield">';
+print '<td>';
 print $langs->trans("StripeLiveEnabled").'</td><td>';
 if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('STRIPE_LIVE');
+	print ajax_constantonoff('STRIPE_LIVE');
 } else {
-    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("STRIPE_LIVE", $arrval, $conf->global->STRIPE_LIVE);
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("STRIPE_LIVE", $arrval, $conf->global->STRIPE_LIVE);
 }
 print '</td><td></td></tr>';
 
@@ -204,47 +205,47 @@ if (empty($conf->stripeconnect->enabled))
 	print '<tr class="oddeven"><td>';
 	print '<span class="titlefield">'.$langs->trans("STRIPE_TEST_WEBHOOK_KEY").'</span></td><td>';
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
-	    print '<input class="minwidth300" type="text" name="STRIPE_TEST_WEBHOOK_ID" value="'.$conf->global->STRIPE_TEST_WEBHOOK_ID.'">';
-        print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx</span><br>';
+		print '<input class="minwidth300" type="text" name="STRIPE_TEST_WEBHOOK_ID" value="'.$conf->global->STRIPE_TEST_WEBHOOK_ID.'">';
+		print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx</span><br>';
 	}
 	print '<input class="minwidth300" type="text" name="STRIPE_TEST_WEBHOOK_KEY" value="'.$conf->global->STRIPE_TEST_WEBHOOK_KEY.'">';
 	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx</span>';
-	  $out = img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForTestWebhook").' ';
-    $url = dol_buildpath('/public/stripe/ipn.php?test', 3);
-	$out .= '<input type="text" id="onlinetestwebhookurl" class="minwidth500" value="'.$url.'">';
+	  $out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForTestWebhook").'</span> ';
+	$url = dol_buildpath('/public/stripe/ipn.php?test', 3);
+	$out .= '<input type="text" id="onlinetestwebhookurl" class="minwidth500" value="'.$url.'" disabled>';
 	$out .= ajax_autoselect("onlinetestwebhookurl", 0);
 	print '<br>'.$out;
 	print '</td><td>';
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	{
-	    if (!empty($conf->global->STRIPE_TEST_WEBHOOK_KEY) && !empty($conf->global->STRIPE_TEST_SECRET_KEY) && !empty($conf->global->STRIPE_TEST_WEBHOOK_ID))
-    	{
-            \Stripe\Stripe::setApiKey($conf->global->STRIPE_TEST_SECRET_KEY);
-            $endpoint = \Stripe\WebhookEndpoint::retrieve($conf->global->STRIPE_TEST_WEBHOOK_ID);
-            $endpoint->enabled_events = $stripearrayofwebhookevents;
-            if (GETPOST('webhook', 'alpha') == $conf->global->STRIPE_TEST_WEBHOOK_ID) {
-                if (!GETPOST('status', 'alpha')) {
-                    $endpoint->disabled = true;
-                } else {
-                    $endpoint->disabled = false;
-                }
-            }
-            $endpoint->url = dol_buildpath('/public/stripe/ipn.php?test', 3);
-            $endpoint->save();
-            if ($endpoint->status == 'enabled')
-            {
-            	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=0">';
-            	print img_picto($langs->trans("Activated"), 'switch_on');
-            } else {
-            	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=1">';
-            	print img_picto($langs->trans("Disabled"), 'switch_off');
-            }
-            //print $endpoint;
-        } else {
-            print img_picto($langs->trans("inactive"), 'statut5');
-        }
+		if (!empty($conf->global->STRIPE_TEST_WEBHOOK_KEY) && !empty($conf->global->STRIPE_TEST_SECRET_KEY) && !empty($conf->global->STRIPE_TEST_WEBHOOK_ID))
+		{
+			\Stripe\Stripe::setApiKey($conf->global->STRIPE_TEST_SECRET_KEY);
+			$endpoint = \Stripe\WebhookEndpoint::retrieve($conf->global->STRIPE_TEST_WEBHOOK_ID);
+			$endpoint->enabled_events = $stripearrayofwebhookevents;
+			if (GETPOST('webhook', 'alpha') == $conf->global->STRIPE_TEST_WEBHOOK_ID) {
+				if (!GETPOST('status', 'alpha')) {
+					$endpoint->disabled = true;
+				} else {
+					$endpoint->disabled = false;
+				}
+			}
+			$endpoint->url = dol_buildpath('/public/stripe/ipn.php?test', 3);
+			$endpoint->save();
+			if ($endpoint->status == 'enabled')
+			{
+				print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=0">';
+				print img_picto($langs->trans("Activated"), 'switch_on');
+			} else {
+				print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=1">';
+				print img_picto($langs->trans("Disabled"), 'switch_off');
+			}
+			//print $endpoint;
+		} else {
+			print img_picto($langs->trans("inactive"), 'statut5');
+		}
 	}
-    print'</td></tr>';
+	print'</td></tr>';
 } else {
 	print '<tr class="oddeven"><td>'.$langs->trans("StripeConnect").'</td>';
 	print '<td><b>'.$langs->trans("StripeConnect_Mode").'</b><br/>';
@@ -273,47 +274,47 @@ if (empty($conf->stripeconnect->enabled))
 	print '<tr class="oddeven"><td>';
 	print '<span class="titlefield">'.$langs->trans("STRIPE_LIVE_WEBHOOK_KEY").'</span></td><td>';
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
-        print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_ID" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_ID.'">';
-        print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx</span><br>';
+		print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_ID" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_ID.'">';
+		print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx</span><br>';
 	}
 	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_KEY" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_KEY.'">';
 	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx</span>';
-    $out = img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForLiveWebhook").' ';
-    $url = dol_buildpath('/public/stripe/ipn.php', 3);
-	$out .= '<input type="text" id="onlinelivewebhookurl" class="minwidth500" value="'.$url.'">';
+	$out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForLiveWebhook").'</span> ';
+	$url = dol_buildpath('/public/stripe/ipn.php', 3);
+	$out .= '<input type="text" id="onlinelivewebhookurl" class="minwidth500" value="'.$url.'" disabled>';
 	$out .= ajax_autoselect("onlinelivewebhookurl", 0);
 	print '<br>'.$out;
 	print '</td><td>';
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	{
-	    if (!empty($conf->global->STRIPE_LIVE_WEBHOOK_KEY) && !empty($conf->global->STRIPE_LIVE_SECRET_KEY) && !empty($conf->global->STRIPE_LIVE_WEBHOOK_ID))
-	    {
-            \Stripe\Stripe::setApiKey($conf->global->STRIPE_LIVE_SECRET_KEY);
-            $endpoint = \Stripe\WebhookEndpoint::retrieve($conf->global->STRIPE_LIVE_WEBHOOK_ID);
-            $endpoint->enabled_events = $stripearrayofwebhookevents;
-            if (GETPOST('webhook', 'alpha') == $conf->global->STRIPE_LIVE_WEBHOOK_ID) {
-                if (empty(GETPOST('status', 'alpha'))) {
-                    $endpoint->disabled = true;
-                } else {
-                    $endpoint->disabled = false;
-                }
-            }
-            $endpoint->url = dol_buildpath('/public/stripe/ipn.php', 3);
-            $endpoint->save();
-            if ($endpoint->status == 'enabled')
-            {
-                print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=0">';
-                print img_picto($langs->trans("Activated"), 'switch_on');
-            } else {
-                print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=1">';
-                print img_picto($langs->trans("Disabled"), 'switch_off');
-            }
-            //print $endpoint;
-        } else {
-            print img_picto($langs->trans("inactive"), 'statut5');
-        }
+		if (!empty($conf->global->STRIPE_LIVE_WEBHOOK_KEY) && !empty($conf->global->STRIPE_LIVE_SECRET_KEY) && !empty($conf->global->STRIPE_LIVE_WEBHOOK_ID))
+		{
+			\Stripe\Stripe::setApiKey($conf->global->STRIPE_LIVE_SECRET_KEY);
+			$endpoint = \Stripe\WebhookEndpoint::retrieve($conf->global->STRIPE_LIVE_WEBHOOK_ID);
+			$endpoint->enabled_events = $stripearrayofwebhookevents;
+			if (GETPOST('webhook', 'alpha') == $conf->global->STRIPE_LIVE_WEBHOOK_ID) {
+				if (empty(GETPOST('status', 'alpha'))) {
+					$endpoint->disabled = true;
+				} else {
+					$endpoint->disabled = false;
+				}
+			}
+			$endpoint->url = dol_buildpath('/public/stripe/ipn.php', 3);
+			$endpoint->save();
+			if ($endpoint->status == 'enabled')
+			{
+				print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=0">';
+				print img_picto($langs->trans("Activated"), 'switch_on');
+			} else {
+				print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=1">';
+				print img_picto($langs->trans("Disabled"), 'switch_off');
+			}
+			//print $endpoint;
+		} else {
+			print img_picto($langs->trans("inactive"), 'statut5');
+		}
 	}
-    print '</td></tr>';
+	print '</td></tr>';
 } else {
 	print '<tr class="oddeven"><td>'.$langs->trans("StripeConnect").'</td>';
 	print '<td>'.$langs->trans("StripeConnect_Mode").'</td><td></td></tr>';
@@ -321,13 +322,15 @@ if (empty($conf->stripeconnect->enabled))
 
 
 print '</table>';
+print '</div>';
 
 print '<br>';
 
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td class="titlefield">'.$langs->trans("UsageParameter").'</td>';
+print '<td>'.$langs->trans("UsageParameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
@@ -339,11 +342,12 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("StripeUserAccountForActions").'</td><td>';
-print $form->select_dolusers($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS, 'STRIPE_USER_ACCOUNT_FOR_ACTIONS', 0);
+print img_picto('', 'user').$form->select_dolusers($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS, 'STRIPE_USER_ACCOUNT_FOR_ACTIONS', 0);
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("BankAccount").'</td><td>';
+print img_picto('', 'bank_account').' ';
 $form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS, 'STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
 print '</td></tr>';
 
@@ -358,14 +362,14 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// What is this for ?
 // Activate Payment Request API
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
 {
-    print '<tr class="oddeven"><td>';
+	print '<tr class="oddeven"><td>';
 	print $langs->trans("STRIPE_PAYMENT_REQUEST_API").'</td><td>';
-    if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('STRIPE_PAYMENT_REQUEST_API');
-    } else {
-        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-        print $form->selectarray("STRIPE_PAYMENT_REQUEST_API", $arrval, $conf->global->STRIPE_PAYMENT_REQUEST_API);
-    }
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('STRIPE_PAYMENT_REQUEST_API');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STRIPE_PAYMENT_REQUEST_API", $arrval, $conf->global->STRIPE_PAYMENT_REQUEST_API);
+	}
 	print '</td></tr>';
 }
 
@@ -374,12 +378,12 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
 {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("STRIPE_SEPA_DIRECT_DEBIT").'</td><td>';
-    if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('STRIPE_SEPA_DIRECT_DEBIT');
-    } else {
-        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-        print $form->selectarray("STRIPE_SEPA_DIRECT_DEBIT", $arrval, $conf->global->STRIPE_SEPA_DIRECT_DEBIT);
-    }
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('STRIPE_SEPA_DIRECT_DEBIT');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STRIPE_SEPA_DIRECT_DEBIT", $arrval, $conf->global->STRIPE_SEPA_DIRECT_DEBIT);
+	}
 	print '</td></tr>';
 }
 
@@ -437,6 +441,19 @@ print '<input class="minwidth200" type="text" name="ONLINE_PAYMENT_SENDEMAIL" va
 print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;</span>';
 print '</td></tr>';
 
+print '</table>';
+print '</div>';
+
+print '<br>';
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("UrlGenerationParameters").'</td>';
+print '<td>'.$langs->trans("Value").'</td>';
+print "</tr>\n";
+
 // Payment token for URL
 print '<tr class="oddeven"><td>';
 print $langs->trans("SecurityToken").'</td><td>';
@@ -444,7 +461,7 @@ print '<input class="minwidth300"  type="text" id="PAYMENT_SECURITY_TOKEN" name=
 if (!empty($conf->use_javascript_ajax)) {
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 }
-if (! empty($conf->global->PAYMENT_SECURITY_ACCEPT_ANY_TOKEN)) {
+if (!empty($conf->global->PAYMENT_SECURITY_ACCEPT_ANY_TOKEN)) {
 	$langs->load("errors");
 	print img_warning($langs->trans("WarningTheHiddenOptionIsOn", 'PAYMENT_SECURITY_ACCEPT_ANY_TOKEN'), '', 'pictowarning marginleftonly');
 }
@@ -453,18 +470,19 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>';
 print $langs->trans("SecurityTokenIsUnique").'</td><td>';
 if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('PAYMENT_SECURITY_TOKEN_UNIQUE');
+	print ajax_constantonoff('PAYMENT_SECURITY_TOKEN_UNIQUE');
 } else {
-    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("PAYMENT_SECURITY_TOKEN_UNIQUE", $arrval, $conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE);
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("PAYMENT_SECURITY_TOKEN_UNIQUE", $arrval, $conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE);
 }
 print '</td></tr>';
 
 print '</table>';
+print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
+print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
 
 print '</form>';
 
@@ -481,12 +499,14 @@ if (!empty($conf->use_javascript_ajax))
 {
 	print "\n".'<script type="text/javascript">';
 	print '$(document).ready(function () {
-            $("#apidoc").hide();
-            $("#apidoca").click(function() {
-                $("#apidoc").show();
-            	$("#apidoca").hide();
-            });
-    });';
+	            $("#apidoc").hide();
+	            $("#apidoca").click(function() {
+					console.log("We click on apidoca show/hide");
+	                $("#apidoc").show();
+	            	$("#apidoca").hide();
+					return false;
+	            });
+		   });';
 	print '</script>';
 }
 

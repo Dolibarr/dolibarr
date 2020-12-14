@@ -88,7 +88,7 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'object_datapolicy@
 
 // Configuration header
 $head = datapolicyAdminPrepareHead();
-dol_fiche_head($head, 'settings', '', -1, "datapolicy@datapolicy");
+print dol_get_fiche_head($head, 'settings', '', -1, "datapolicy@datapolicy");
 
 
 print "<script type='text/javascript'>
@@ -153,7 +153,7 @@ print '<br><center><input type="submit" class="button" value="'.$langs->trans("M
 
 print '</form>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<br><br>';
 

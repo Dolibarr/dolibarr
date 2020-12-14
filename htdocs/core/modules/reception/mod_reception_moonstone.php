@@ -30,18 +30,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
  */
 class mod_reception_moonstone extends ModelNumRefReception
 {
-    public $version = 'dolibarr';
-    public $error = '';
-    public $nom = 'Moonstone';
+	public $version = 'dolibarr';
+	public $error = '';
+	public $nom = 'Moonstone';
 
-    /**
-     *  Return default description of numbering model
-     *
-     *  @return     string      text description
-     */
-    public function info()
-    {
-    	global $conf, $langs, $db;
+	/**
+	 *  Return default description of numbering model
+	 *
+	 *  @return     string      text description
+	 */
+	public function info()
+	{
+		global $conf, $langs, $db;
 
 		$langs->load("bills");
 
@@ -68,22 +68,22 @@ class mod_reception_moonstone extends ModelNumRefReception
 		$texte .= '</form>';
 
 		return $texte;
-    }
+	}
 
 	/**
 	 *	Return numbering example
 	 *
 	 *	@return     string      Example
 	 */
-    public function getExample()
-    {
-     	global $conf, $langs, $mysoc;
+	public function getExample()
+	{
+	 	global $conf, $langs, $mysoc;
 
-    	$old_code_client = $mysoc->code_client;
-    	$old_code_type = $mysoc->typent_code;
-    	$mysoc->code_client = 'CCCCCCCCCC';
-    	$mysoc->typent_code = 'TTTTTTTTTT';
-     	$numExample = $this->getNextValue($mysoc, '');
+		$old_code_client = $mysoc->code_client;
+		$old_code_type = $mysoc->typent_code;
+		$mysoc->code_client = 'CCCCCCCCCC';
+		$mysoc->typent_code = 'TTTTTTTTTT';
+	 	$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client = $old_code_client;
 		$mysoc->typent_code = $old_code_type;
 
@@ -92,7 +92,7 @@ class mod_reception_moonstone extends ModelNumRefReception
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
-    }
+	}
 
 	/**
 	 *	Return next value
@@ -101,8 +101,8 @@ class mod_reception_moonstone extends ModelNumRefReception
 	 *	@param	Object		$reception	Reception object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-    public function getNextValue($objsoc, $reception)
-    {
+	public function getNextValue($objsoc, $reception)
+	{
 		global $db, $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -120,7 +120,7 @@ class mod_reception_moonstone extends ModelNumRefReception
 		$numFinal = get_next_value($db, $mask, 'reception', 'ref', '', $objsoc, $date);
 
 		return  $numFinal;
-    }
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**

@@ -40,7 +40,7 @@ $langs->loadLangs(array('products', 'stocks', 'orders'));
 
 // Security check
 if ($user->socid) {
-    $socid = $user->socid;
+	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'produit|service');
 
@@ -52,12 +52,16 @@ $hookmanager->initHooks(array('stockreplenishlist'));
 $action = GETPOST('action', 'aZ09');
 $type = GETPOST('type', 'int');
 $mode = GETPOST('mode', 'alpha');
+
 $date = '';
 $dateendofday = '';
 if (GETPOSTISSET('dateday') && GETPOSTISSET('datemonth') && GETPOSTISSET('dateyear')) {
 	$date = dol_mktime(0, 0, 0, GETPOST('datemonth', 'int'), GETPOST('dateday', 'int'), GETPOST('dateyear', 'int'));
 	$dateendofday = dol_mktime(23, 59, 59, GETPOST('datemonth', 'int'), GETPOST('dateday', 'int'), GETPOST('dateyear', 'int'));
 }
+
+$search_ref = GETPOST('search_ref', 'alphanohtml');
+$search_nom = GETPOST('search_nom', 'alphanohtml');
 
 $now = dol_now();
 
@@ -71,26 +75,26 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 if (!$sortfield) {
-    $sortfield = 'p.ref';
+	$sortfield = 'p.ref';
 }
 if (!$sortorder) {
-    $sortorder = 'ASC';
+	$sortorder = 'ASC';
 }
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-$dateIsValid= true;
+$dateIsValid = true;
 if ($mode == 'future') {
 	if ($date && $date < $now) {
 		setEventMessages($langs->trans("ErrorDateMustBeInFuture"), null, 'errors');
-		$dateIsValid= false;
+		$dateIsValid = false;
 	}
 } else {
 	if ($date && $date > $now) {
 		setEventMessages($langs->trans("ErrorDateMustBeBeforeToday"), null, 'errors');
-		$dateIsValid= false;
+		$dateIsValid = false;
 	}
 }
 
@@ -104,6 +108,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$date = '';
 	$productid = 0;
 	$fk_warehouse = 0;
+	$search_ref = '';
+	$search_nom = '';
 }
 
 $warehouseStatus = array();
@@ -123,7 +129,7 @@ if ($date && $dateIsValid) {	// Avoid heavy sql if mandatory date is not defined
 	$sql .= ", ".MAIN_DB_PREFIX."entrepot as w";
 	$sql .= " WHERE w.entity IN (".getEntity('stock').")";
 	$sql .= " AND w.rowid = ps.fk_entrepot";
-	if (! empty($conf->global->ENTREPOT_EXTRA_STATUS) && count($warehouseStatus)) {
+	if (!empty($conf->global->ENTREPOT_EXTRA_STATUS) && count($warehouseStatus)) {
 		$sql .= " AND w.statut IN (".$db->sanitize($db->escape(implode(',', $warehouseStatus))).")";
 	}
 	if ($productid > 0) {
@@ -146,7 +152,7 @@ if ($date && $dateIsValid) {	// Avoid heavy sql if mandatory date is not defined
 
 			$tmp_fk_product   = $obj->fk_product;
 			$tmp_fk_warehouse = $obj->fk_warehouse;
-			$stock 			  = $obj->stock;
+			$stock = $obj->stock;
 
 			$stock_prod_warehouse[$tmp_fk_product][$tmp_fk_warehouse] = $stock;
 			$stock_prod[$tmp_fk_product] = (isset($stock_prod[$tmp_fk_product]) ? $stock_prod[$tmp_fk_product] : 0) + $stock;
@@ -174,7 +180,7 @@ if ($date && $dateIsValid) {
 	$sql .= ", ".MAIN_DB_PREFIX."entrepot as w";
 	$sql .= " WHERE w.entity IN (".getEntity('stock').")";
 	$sql .= " AND w.rowid = sm.fk_entrepot";
-	if (! empty($conf->global->ENTREPOT_EXTRA_STATUS) && count($warehouseStatus)) {
+	if (!empty($conf->global->ENTREPOT_EXTRA_STATUS) && count($warehouseStatus)) {
 		$sql .= " AND w.statut IN (".$db->sanitize($db->escape(implode(',', $warehouseStatus))).")";
 	}
 	if ($mode == 'future') {
@@ -198,9 +204,9 @@ if ($date && $dateIsValid) {
 
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
-			$fk_product 	= $obj->fk_product;
+			$fk_product = $obj->fk_product;
 			$fk_entrepot 	= $obj->fk_entrepot;
-			$stock 			= $obj->stock;
+			$stock = $obj->stock;
 			$nbofmovement	= $obj->nbofmovement;
 
 			// Pour llx_product_stock.reel
@@ -298,8 +304,8 @@ if ($date && $dateIsValid) {	// We avoid a heavy sql if mandatory parameter date
 	$resql = $db->query($sql);
 	if (empty($resql))
 	{
-	    dol_print_error($db);
-	    exit;
+		dol_print_error($db);
+		exit;
 	}
 
 	$num = $db->num_rows($resql);
@@ -326,7 +332,7 @@ $head[1][2] = 'stockatdatefuture';
 
 print load_fiche_titre($langs->trans('StockAtDate'), '', 'stock');
 
-dol_fiche_head($head, ($mode == 'future' ? 'stockatdatefuture' : 'stockatdatepast'), '', -1, '');
+print dol_get_fiche_head($head, ($mode == 'future' ? 'stockatdatefuture' : 'stockatdatepast'), '', -1, '');
 
 $desc = $langs->trans("StockAtDatePastDesc");
 if ($mode == 'future') $desc = $langs->trans("StockAtDateFutureDesc");
@@ -345,7 +351,7 @@ print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly margin
 $form->select_produits($productid, 'productid', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'maxwidth300');
 
 print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddinrightonly">&nbsp;</span> '.$langs->trans('Warehouse').'</span> ';
-print $formproduct->selectWarehouses($fk_warehouse, 'fk_warehouse', '', 1);
+print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? $fk_warehouse : 'ifone'), 'fk_warehouse', '', 1);
 print '</div>';
 
 $parameters = array();
@@ -386,8 +392,8 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 // Fields title search
 print '<tr class="liste_titre_filter">';
-print '<td class="liste_titre"><input class="flat" type="text" name="search_ref" size="8" value="'.dol_escape_htmltag($sref).'"></td>';
-print '<td class="liste_titre"><input class="flat" type="text" name="search_nom" size="8" value="'.dol_escape_htmltag($snom).'"></td>';
+print '<td class="liste_titre"><input class="flat" type="text" name="search_ref" size="8" value="'.dol_escape_htmltag($search_ref).'"></td>';
+print '<td class="liste_titre"><input class="flat" type="text" name="search_nom" size="8" value="'.dol_escape_htmltag($search_nom).'"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
@@ -477,7 +483,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		}
 
 		if ($mode == 'future') {
-			$prod->load_stock('warehouseopen, warehouseinternal', 0);	// This call also ->load_virtual_stock()
+			$prod->load_stock('warehouseopen, warehouseinternal', 0); // This call also ->load_virtual_stock()
 
 			//$result = $prod->load_stats_reception(0, '4');
 			//print $prod->stats_commande_fournisseur['qty'].'<br>'."\n";
@@ -549,12 +555,18 @@ $parameters = array('sql'=>$sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
+if (empty($date) || ! $dateIsValid) {
+	$colspan = 6;
+	if ($mode == 'future') $colspan++;
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("EmptySearchString").'</span></td></tr>';
+}
+
 print '</table>';
 print '</div>';
 
 $db->free($resql);
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '</form>';
 

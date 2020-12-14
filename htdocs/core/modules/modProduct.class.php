@@ -51,7 +51,7 @@ class modProduct extends DolibarrModules
 		$this->numero = 50;
 
 		$this->family = "products";
-		$this->module_position = '25';
+		$this->module_position = '26';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Product management";
@@ -477,7 +477,14 @@ class modProduct extends DolibarrModules
 					'class' => 'Ccountry',
 					'method' => 'fetch',
 					'dict' => 'DictionaryCountry'
-				)
+				),
+				'p.finished'=> array(
+					'rule' => 'fetchidfromcodeorlabel',
+					'classfile' => '/core/class/cproductnature.class.php',
+					'class' => 'CProductNature',
+					'method' => 'fetch',
+					'dict' => 'DictionaryProductNature'
+					),
 		);
 
 		$this->import_regex_array[$r] = array(
@@ -488,7 +495,6 @@ class modProduct extends DolibarrModules
 			'p.fk_product_type' => '^[0|1]$',
 			'p.datec' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$',
 			'p.recuperableonly' => '^[0|1]$',
-			'p.finished' => '^[0|1]$'
 		);
 
 		if (!empty($conf->stock->enabled)) {//if Stock module enabled
@@ -578,7 +584,7 @@ class modProduct extends DolibarrModules
 			'p.surface_units' => 'm2', // Use a unit of measure from the dictionary. m2/cm2/mm2 etc....matches field "Short label" for unit type "surface" in table "' . MAIN_DB_PREFIX . 'c_units',
 			'p.volume' => "",
 			'p.volume_units' => 'm3', //Use a unit of measure from the dictionary. m3/cm3/mm3 etc....matches field "Short label" for unit type "volume" in table "' . MAIN_DB_PREFIX . 'c_units',
-			'p.finished' => '0 (raw material) / 1 (finished goods)'
+			'p.finished' => '0 (raw material) / 1 (finished goods), matches field "code" in dictionary table "'.MAIN_DB_PREFIX.'c_product_nature"'
 		);
 		//clauses copied from import_fields_array
 		if (!empty($conf->stock->enabled)) $import_sample = array_merge($import_sample, array(
@@ -622,7 +628,7 @@ class modProduct extends DolibarrModules
 			$this->import_label[$r] = "SuppliersPricesOfProductsOrServices"; // Translation key
 			$this->import_icon[$r] = $this->picto;
 			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
-			$this->import_tables_array[$r] = array('sp'=>MAIN_DB_PREFIX.'product_fournisseur_price');
+			$this->import_tables_array[$r] = array('sp'=>MAIN_DB_PREFIX.'product_fournisseur_price', 'extra'=>MAIN_DB_PREFIX.'product_fournisseur_price_extrafields');
 			$this->import_tables_creator_array[$r] = array('sp'=>'fk_user');
 			$this->import_fields_array[$r] = array(//field order as per structure of table llx_product_fournisseur_price, without optional fields
 				'sp.fk_product'=>"ProductOrService*",
@@ -643,7 +649,7 @@ class modProduct extends DolibarrModules
 					'sp.remise_percent'=>'DiscountQtyMin'
 			));
 
-			if ($conf->multicurrency->enabled)
+			if (!empty($conf->multicurrency->enabled))
 			{
 				$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array(
 					'sp.fk_multicurrency'=>'CurrencyCodeId', //ideally this should be automatically obtained from the CurrencyCode on the next line
@@ -653,6 +659,27 @@ class modProduct extends DolibarrModules
 					'sp.multicurrency_price'=>'CurrencyPrice',
 				));
 			}
+
+			if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+				$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('sp.packaging' => 'PackagingForThisProduct'));
+			}
+
+			// Add extra fields
+			$import_extrafield_sample = array();
+			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'product_fournisseur_price' AND entity IN (0, ".$conf->entity.")";
+			$resql = $this->db->query($sql);
+			if ($resql)    // This can fail when class is used on old database (during migration for example)
+			{
+				while ($obj = $this->db->fetch_object($resql))
+				{
+					$fieldname = 'extra.'.$obj->name;
+					$fieldlabel = ucfirst($obj->label);
+					$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+					$import_extrafield_sample[$fieldname] = $fieldlabel;
+				}
+			}
+			// End add extra fields
+			$this->import_fieldshidden_array[$r] = array('extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'product_fournisseur_price'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 
 			$this->import_convertvalue_array[$r] = array(
 					'sp.fk_soc'=>array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty'),
@@ -681,7 +708,7 @@ class modProduct extends DolibarrModules
 				// TODO Make this field not required and calculate it from price and qty
 				'sp.remise_percent' => '20'
 			));
-			if ($conf->multicurrency->enabled)
+			if (!empty($conf->multicurrency->enabled))
 			{
 				$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array(
 					'sp.fk_multicurrency'=>'eg: 2, rowid for code of multicurrency currency',
@@ -690,6 +717,11 @@ class modProduct extends DolibarrModules
 					'sp.multicurrency_unitprice'=>'',
 					// TODO Make this field not required and calculate it from price and qty
 					'sp.multicurrency_price'=>''
+				));
+			}
+			if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+				$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array(
+					'sp.packagning'=>'1',
 				));
 			}
 

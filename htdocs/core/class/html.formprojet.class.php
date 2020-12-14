@@ -170,7 +170,7 @@ class FormProjets
 			if (empty($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY))  $sql .= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
 			elseif ($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY != 'all')    // PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY is 'all' or a list of ids separated by coma.
 			{
-				$sql .= " AND (p.fk_soc IN (".$socid.", ".$conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY.") OR p.fk_soc IS NULL)";
+				$sql .= " AND (p.fk_soc IN (".$socid.", ".((int) $conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY).") OR p.fk_soc IS NULL)";
 			}
 		}
 		if (!empty($filterkey)) $sql .= natural_search(array('p.title', 'p.ref'), $filterkey);
@@ -261,7 +261,8 @@ class FormProjets
 								'key' => (int) $obj->rowid,
 								'value' => $obj->ref,
 								'ref' => $obj->ref,
-								'label' => $labeltoshow,
+								'labelx' => $labeltoshow,
+								'label' => ((bool) $disabled) ? '<span class="opacitymedium">'.$labeltoshow.'</span>' : $labeltoshow,
 								'disabled' => (bool) $disabled
 							);
 						}
@@ -297,7 +298,7 @@ class FormProjets
 	 *	@param	int		$maxlength		Maximum length of label
 	 *	@param	int		$option_only	Return only html options lines without the select tag
 	 *	@param	string	$show_empty		Add an empty line ('1' or string to show for empty line)
-	 *  @param	int		$discard_closed Discard closed projects (0=Keep,1=hide completely,2=Disable)
+	 *  @param	int		$discard_closed Discard closed projects (0=Keep, 1=hide completely, 2=Disable)
 	 *  @param	int		$forcefocus		Force focus on field (works with javascript only)
 	 *  @param	int		$disabled		Disabled
 	 *  @param	string	$morecss        More css added to the select component
@@ -348,12 +349,12 @@ class FormProjets
 		if ($resql)
 		{
 			// Use select2 selector
-			if (!empty($conf->use_javascript_ajax))
+			if (empty($option_only) && !empty($conf->use_javascript_ajax))
 			{
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 			   	$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
 				$out .= $comboenhancement;
-				$morecss = 'minwidth200imp maxwidth500';
+				$morecss = 'minwidth200 maxwidth500';
 			}
 
 			if (empty($option_only)) {
@@ -368,6 +369,7 @@ class FormProjets
 				} else $out .= '&nbsp;';
 				$out .= '</option>';
 			}
+
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num)
@@ -387,6 +389,18 @@ class FormProjets
 						}
 
 						$labeltoshow = '';
+
+						$disabled = 0;
+						if ($obj->fk_statut == Project::STATUS_DRAFT)
+						{
+							$disabled = 1;
+						} elseif ($obj->fk_statut == Project::STATUS_CLOSED)
+						{
+							if ($discard_closed == 2) $disabled = 1;
+						} elseif ($socid > 0 && (!empty($obj->fk_soc) && $obj->fk_soc != $socid))
+						{
+							$disabled = 1;
+						}
 
 						if ($showproject == 'all')
 						{
@@ -594,9 +608,10 @@ class FormProjets
 	 *    @param   int         $showpercent        Show default probability for status
 	 *    @param   string      $morecss            Add more css
 	 * 	  @param   int	       $noadmininfo        0=Add admin info, 1=Disable admin info
+	 *    @param   int		   $addcombojs         1=Add a js combo
 	 *    @return  int|string                      The HTML select list of element or '' if nothing or -1 if KO
 	 */
-	public function selectOpportunityStatus($htmlname, $preselected = '-1', $showempty = 1, $useshortlabel = 0, $showallnone = 0, $showpercent = 0, $morecss = '', $noadmininfo = 0)
+	public function selectOpportunityStatus($htmlname, $preselected = '-1', $showempty = 1, $useshortlabel = 0, $showallnone = 0, $showpercent = 0, $morecss = '', $noadmininfo = 0, $addcombojs = 0)
 	{
 		global $conf, $langs, $user;
 
@@ -642,7 +657,10 @@ class FormProjets
 					$i++;
 				}
 				$sellist .= '</select>';
+
 				if ($user->admin && !$noadmininfo) $sellist .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+
+				if ($addcombojs) $sellist .= ajax_combobox($htmlname);
 			}
 			/*else
 			{

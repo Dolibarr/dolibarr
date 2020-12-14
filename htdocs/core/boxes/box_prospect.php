@@ -34,27 +34,27 @@ include_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
  */
 class box_prospect extends ModeleBoxes
 {
-    public $boxcode = "lastprospects";
-    public $boximg = "object_company";
-    public $boxlabel = "BoxLastProspects";
-    public $depends = array("societe");
+	public $boxcode = "lastprospects";
+	public $boximg = "object_company";
+	public $boxlabel = "BoxLastProspects";
+	public $depends = array("societe");
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $enabled = 1;
+	public $enabled = 1;
 
-    public $info_box_head = array();
-    public $info_box_contents = array();
+	public $info_box_head = array();
+	public $info_box_contents = array();
 
 
 	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB	$db      	Database handler
-     *  @param	string	$param		More parameters
+	 *  @param	string	$param		More parameters
 	 */
 	public function __construct($db, $param = '')
 	{
@@ -72,7 +72,7 @@ class box_prospect extends ModeleBoxes
 	 *  Load data into info_box_contents array to show array later.
 	 *
 	 *  @param	int		$max        Maximum number of records to load
-     *  @return	void
+	 *  @return	void
 	 */
 	public function loadBox($max = 5)
 	{
@@ -86,13 +86,11 @@ class box_prospect extends ModeleBoxes
 
 		if ($user->rights->societe->lire)
 		{
-			$sql = "SELECT s.nom as name, s.rowid as socid";
-			$sql .= ", s.code_client";
-            $sql .= ", s.client, s.email";
-            $sql .= ", s.code_fournisseur";
-            $sql .= ", s.fournisseur";
-            $sql .= ", s.logo";
-			$sql .= ", s.fk_stcomm, s.datec, s.tms, s.status";
+			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
+			$sql .= ", s.code_client, s.code_compta, s.client";
+			$sql .= ", s.logo, s.email, s.entity";
+			$sql .= ", s.fk_stcomm";
+			$sql .= ", s.datec, s.tms, s.status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql .= " WHERE s.client IN (2, 3)";
@@ -114,59 +112,61 @@ class box_prospect extends ModeleBoxes
 					$objp = $this->db->fetch_object($resql);
 					$datec = $this->db->jdate($objp->datec);
 					$datem = $this->db->jdate($objp->tms);
+
 					$thirdpartystatic->id = $objp->socid;
-                    $thirdpartystatic->name = $objp->name;
-                    $thirdpartystatic->email = $objp->email;
-                    $thirdpartystatic->code_client = $objp->code_client;
-                    $thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
-                    $thirdpartystatic->client = $objp->client;
-                    $thirdpartystatic->fournisseur = $objp->fournisseur;
-                    $thirdpartystatic->logo = $objp->logo;
+					$thirdpartystatic->name = $objp->name;
+					$thirdpartystatic->name_alias = $objp->name_alias;
+					$thirdpartystatic->code_client = $objp->code_client;
+					$thirdpartystatic->code_compta = $objp->code_compta;
+					$thirdpartystatic->client = $objp->client;
+					$thirdpartystatic->logo = $objp->logo;
+					$thirdpartystatic->email = $objp->email;
+					$thirdpartystatic->entity = $objp->entity;
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => '',
-                        'text' => $thirdpartystatic->getNomUrl(1),
-                    	'asis' => 1,
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => '',
+						'text' => $thirdpartystatic->getNomUrl(1),
+						'asis' => 1,
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right"',
-                        'text' => dol_print_date($datem, "day"),
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right"',
+						'text' => dol_print_date($datem, "day"),
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right" width="18"',
-                        'text' => str_replace('img ', 'img height="14" ', $thirdpartystatic->LibProspCommStatut($objp->fk_stcomm, 3)),
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right" width="18"',
+						'text' => str_replace('img ', 'img height="14" ', $thirdpartystatic->LibProspCommStatut($objp->fk_stcomm, 3)),
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right" width="18"',
-                        'text' => $thirdpartystatic->LibStatut($objp->status, 3),
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right" width="18"',
+						'text' => $thirdpartystatic->LibStatut($objp->status, 3),
+					);
 
-                    $line++;
-                }
+					$line++;
+				}
 
-                if ($num == 0) {
-                    $this->info_box_contents[$line][0] = array(
-                        'td' => 'class="center opacitymedium"',
-                        'text'=> $langs->trans("NoRecordedProspects"),
-                    );
-                }
+				if ($num == 0) {
+					$this->info_box_contents[$line][0] = array(
+						'td' => 'class="center opacitymedium"',
+						'text'=> $langs->trans("NoRecordedProspects"),
+					);
+				}
 
-                $this->db->free($resql);
-            } else {
-                $this->info_box_contents[0][0] = array(
-                    'td' => '',
-                    'maxlength' => 500,
-                    'text' => ($this->db->error().' sql='.$sql),
-                );
-            }
-        } else {
-            $this->info_box_contents[0][0] = array(
-                'td' => 'class="nohover opacitymedium left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed")
-            );
+				$this->db->free($resql);
+			} else {
+				$this->info_box_contents[0][0] = array(
+					'td' => '',
+					'maxlength' => 500,
+					'text' => ($this->db->error().' sql='.$sql),
+				);
+			}
+		} else {
+			$this->info_box_contents[0][0] = array(
+				'td' => 'class="nohover opacitymedium left"',
+				'text' => $langs->trans("ReadPermissionNotAllowed")
+			);
 		}
 	}
 
@@ -178,8 +178,8 @@ class box_prospect extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    public function showBox($head = null, $contents = null, $nooutput = 0)
-    {
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }

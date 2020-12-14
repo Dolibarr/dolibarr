@@ -108,16 +108,16 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 			setEventMessages($object->error, $object->errors, 'errors');
 		} elseif ($res < 0)
 		{
-		    $error++;
-		    setEventMessages($object->error, $object->errors, 'errors');
-		    $action = "create";
+			$error++;
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = "create";
 		}
 		if (!$error)
 		{
-		    setEventMessages("RecordCreatedSuccessfully", null, 'mesgs');
-		    $urltogo = $backtopage ? $backtopage : dol_buildpath('/accountancy/admin/account.php', 1);
-		    header("Location: ".$urltogo);
-		    exit;
+			setEventMessages("RecordCreatedSuccessfully", null, 'mesgs');
+			$urltogo = $backtopage ? $backtopage : dol_buildpath('/accountancy/admin/account.php', 1);
+			header("Location: ".$urltogo);
+			exit;
 		}
 	}
 } elseif ($action == 'edit' && $user->rights->accounting->chartofaccount) {
@@ -158,15 +158,15 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		$result = $object->update($user);
 
 		if ($result > 0) {
-		    $urltogo = $backtopage ? $backtopage : ($_SERVER["PHP_SELF"]."?id=".$id);
-		    header("Location: ".$urltogo);
+			$urltogo = $backtopage ? $backtopage : ($_SERVER["PHP_SELF"]."?id=".$id);
+			header("Location: ".$urltogo);
 			exit();
 		} else {
 			$mesg = $object->error;
 		}
 	} else {
-	    $urltogo = $backtopage ? $backtopage : ($_SERVER["PHP_SELF"]."?id=".$id);
-	    header("Location: ".$urltogo);
+		$urltogo = $backtopage ? $backtopage : ($_SERVER["PHP_SELF"]."?id=".$id);
+		header("Location: ".$urltogo);
 		exit();
 	}
 } elseif ($action == 'delete' && $user->rights->accounting->chartofaccount) {
@@ -210,7 +210,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -247,17 +247,17 @@ if ($action == 'create') {
 	// Chart of accounts type
 	print '<tr><td>'.$langs->trans("Pcgtype").'</td>';
 	print '<td>';
-	print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(isset($_POST['pcg_type']) ?GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
+	print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(GETPOSTISSET('pcg_type') ? GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
 	print '</td></tr>';
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
-	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+	print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
 	print '</form>';
@@ -272,7 +272,7 @@ if ($action == 'create') {
 		// Edit mode
 		if ($action == 'update')
 		{
-			dol_fiche_head($head, 'card', $langs->trans('AccountAccounting'), 0, 'billr');
+			print dol_get_fiche_head($head, 'card', $langs->trans('AccountAccounting'), 0, 'billr');
 
 			print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 			print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -309,17 +309,17 @@ if ($action == 'create') {
 			// Chart of accounts type
 			print '<tr><td>'.$langs->trans("Pcgtype").'</td>';
 			print '<td>';
-			print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(isset($_POST['pcg_type']) ?GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
+			print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(GETPOSTISSET('pcg_type') ? GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
 			print '</td></tr>';
 
 			print '</table>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
-			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+			print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 
 			print '</form>';
@@ -327,7 +327,7 @@ if ($action == 'create') {
 			// View mode
 			$linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/account.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-			dol_fiche_head($head, 'card', $langs->trans('AccountAccounting'), -1, 'billr');
+			print dol_get_fiche_head($head, 'card', $langs->trans('AccountAccounting'), -1, 'billr');
 
 			dol_banner_tab($object, 'ref', $linkback, 1, 'account_number', 'ref');
 
@@ -364,7 +364,7 @@ if ($action == 'create') {
 
 			print '</div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			/*
 			 * Actions buttons

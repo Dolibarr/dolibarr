@@ -7,7 +7,7 @@
  * Copyright (C) 2015 	   Claudio Aschieri     <c.aschieri@19.coop>
  * Copyright (C) 2018 	   Ferran Marcet	    <fmarcet@2byte.es>
  * Copyright (C) 2019 	   Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2020		Tobias Sean			<tobias.sekan@startmail.com>
+ * Copyright (C) 2020	   Tobias Sean			<tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,8 +67,8 @@ if (!$user->rights->projet->lire) accessforbidden();
 $diroutputmassaction = $conf->projet->dir_output.'/temp/massgeneration/'.$user->id;
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", "alpha");
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST("sortfield", "aZ09comma");
+$sortorder = GETPOST("sortorder", 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
@@ -109,7 +109,7 @@ if ($search_status == '') $search_status = -1; // -1 or 1
 
 if (!empty($conf->categorie->enabled))
 {
-	$search_category_array = GETPOST("search_category_".Categorie::TYPE_PROJECT."_array", "array");
+	$search_category_array = GETPOST("search_category_".Categorie::TYPE_PROJECT."_list", "array");
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -144,15 +144,7 @@ $fieldstosearchall['s.nom'] = "ThirdPartyName";
 $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
-	if (empty($val['visible'])) {
-		continue;
-	}
-
-	$arrayfields['p.'.$key] = array(
-		'label'=>$val['label'],
-		'checked'=>(($val['visible'] < 0) ? 0 : 1),
-		'enabled'=>($val['enabled'] && ($val['visible'] != 3)),
-		'position'=>$val['position']);
+	if (!empty($val['visible'])) $arrayfields['p.'.$key] = array('label'=>$val['label'], 'checked'=>(($val['visible'] < 0) ? 0 : 1), 'enabled'=>($val['enabled'] && ($val['visible'] != 3)), 'position'=>$val['position']);
 }
 
 // Add none object fields to fields for list
@@ -165,8 +157,14 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
 	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+		if (!empty($extrafields->attributes[$object->table_element]['list'][$key])) {
+			$arrayfields["ef.".$key] = array(
+				'label'=>$extrafields->attributes[$object->table_element]['label'][$key],
+				'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1),
+				'position'=>$extrafields->attributes[$object->table_element]['pos'][$key],
+				'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key])
+			);
+		}
 	}
 }
 
@@ -228,47 +226,47 @@ if (empty($reshook))
 	$uploaddir = $conf->projet->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-    // Close records
-    if (!$error && $massaction == 'close' && $user->rights->projet->creer)
-    {
-        $db->begin();
+	// Close records
+	if (!$error && $massaction == 'close' && $user->rights->projet->creer)
+	{
+		$db->begin();
 
-        $objecttmp = new $objectclass($db);
-        $nbok = 0;
-        foreach ($toselect as $toselectid)
-        {
-            $result = $objecttmp->fetch($toselectid);
-            if ($result > 0)
-            {
-                $userWrite  = $object->restrictedProjectArea($user, 'write');
-                if ($userWrite > 0 && $objecttmp->statut == 1) {
-                    $result = $objecttmp->setClose($user);
-                    if ($result <= 0) {
-                        setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-                        $error++;
-                        break;
-                    } else $nbok++;
-                } elseif ($userWrite <= 0) {
-                    setEventMessages($langs->trans("DontHavePermissionForCloseProject", $objecttmp->ref), null, 'warnings');
-                } else {
-                    setEventMessages($langs->trans("DontHaveTheValidateStatus", $objecttmp->ref), null, 'warnings');
-                }
-            } else {
-                setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-                $error++;
-                break;
-            }
-        }
+		$objecttmp = new $objectclass($db);
+		$nbok = 0;
+		foreach ($toselect as $toselectid)
+		{
+			$result = $objecttmp->fetch($toselectid);
+			if ($result > 0)
+			{
+				$userWrite = $object->restrictedProjectArea($user, 'write');
+				if ($userWrite > 0 && $objecttmp->statut == 1) {
+					$result = $objecttmp->setClose($user);
+					if ($result <= 0) {
+						setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+						$error++;
+						break;
+					} else $nbok++;
+				} elseif ($userWrite <= 0) {
+					setEventMessages($langs->trans("DontHavePermissionForCloseProject", $objecttmp->ref), null, 'warnings');
+				} else {
+					setEventMessages($langs->trans("DontHaveTheValidateStatus", $objecttmp->ref), null, 'warnings');
+				}
+			} else {
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error++;
+				break;
+			}
+		}
 
-        if (!$error)
-        {
-            if ($nbok > 1) setEventMessages($langs->trans("RecordsClosed", $nbok), null, 'mesgs');
-            else setEventMessages($langs->trans("RecordsClosed", $nbok), null, 'mesgs');
-            $db->commit();
-        } else {
-            $db->rollback();
-        }
-    }
+		if (!$error)
+		{
+			if ($nbok > 1) setEventMessages($langs->trans("RecordsClosed", $nbok), null, 'mesgs');
+			else setEventMessages($langs->trans("RecordsClosed", $nbok), null, 'mesgs');
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
+	}
 }
 
 
@@ -284,7 +282,7 @@ $formproject = new FormProjets($db);
 $title = $langs->trans("Projects");
 
 
-// Get list of project id allowed to user (in a string list separated by coma)
+// Get list of project id allowed to user (in a string list separated by comma)
 $projectsListId = '';
 if (!$user->rights->projet->all->lire) $projectsListId = $object->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 
@@ -386,7 +384,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller than paging size (filtering), goto and load page 0
 	{
 		$page = 0;
 		$offset = 0;
@@ -419,36 +417,37 @@ $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("", $title, $help_url);
 
 $param = '';
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
-if ($search_all != '') 			$param .= '&search_all='.$search_all;
-if ($search_sday)              		    $param .= '&search_sday='.$search_sday;
-if ($search_smonth)              		$param .= '&search_smonth='.$search_smonth;
-if ($search_syear)               		$param .= '&search_syear='.$search_syear;
-if ($search_eday)               		$param .= '&search_eday='.$search_eday;
-if ($search_emonth)              		$param .= '&search_emonth='.$search_emonth;
-if ($search_eyear)               		$param .= '&search_eyear='.$search_eyear;
-if ($socid)				        $param .= '&socid='.$socid;
-if ($search_ref != '') 			$param .= '&search_ref='.$search_ref;
-if ($search_label != '') 		$param .= '&search_label='.$search_label;
-if ($search_societe != '') 		$param .= '&search_societe='.$search_societe;
-if ($search_status >= 0) 		$param .= '&search_status='.$search_status;
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+if ($search_all != '') 			$param .= '&search_all='.urlencode($search_all);
+if ($search_sday)              		    $param .= '&search_sday='.urlencode($search_sday);
+if ($search_smonth)              		$param .= '&search_smonth='.urlencode($search_smonth);
+if ($search_syear)               		$param .= '&search_syear='.urlencode($search_syear);
+if ($search_eday)               		$param .= '&search_eday='.urlencode($search_eday);
+if ($search_emonth)              		$param .= '&search_emonth='.urlencode($search_emonth);
+if ($search_eyear)               		$param .= '&search_eyear='.urlencode($search_eyear);
+if ($socid)				        $param .= '&socid='.urlencode($socid);
+if ($search_categ)              $param .= '&search_categ='.urlencode($search_categ);
+if ($search_ref != '') 			$param .= '&search_ref='.urlencode($search_ref);
+if ($search_label != '') 		$param .= '&search_label='.urlencode($search_label);
+if ($search_societe != '') 		$param .= '&search_societe='.urlencode($search_societe);
+if ($search_status >= 0) 		$param .= '&search_status='.urlencode($search_status);
 if ((is_numeric($search_opp_status) && $search_opp_status >= 0) || in_array($search_opp_status, array('all', 'openedopp', 'notopenedopp', 'none'))) 	    $param .= '&search_opp_status='.urlencode($search_opp_status);
 if ($search_opp_percent != '') 	$param .= '&search_opp_percent='.urlencode($search_opp_percent);
-if ($search_public != '') 		$param .= '&search_public='.$search_public;
-if ($search_project_user != '')   $param .= '&search_project_user='.$search_project_user;
-if ($search_sale > 0)    		$param .= '&search_sale='.$search_sale;
-if ($search_opp_amount != '')    $param .= '&search_opp_amount='.$search_opp_amount;
-if ($search_budget_amount != '') $param .= '&search_budget_amount='.$search_budget_amount;
-if ($optioncss != '') $param .= '&optioncss='.$optioncss;
+if ($search_public != '') 		$param .= '&search_public='.urlencode($search_public);
+if ($search_project_user != '')   $param .= '&search_project_user='.urlencode($search_project_user);
+if ($search_sale > 0)    		$param .= '&search_sale='.urlencode($search_sale);
+if ($search_opp_amount != '')    $param .= '&search_opp_amount='.urlencode($search_opp_amount);
+if ($search_budget_amount != '') $param .= '&search_budget_amount='.urlencode($search_budget_amount);
+if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions = array(
 	'generate_doc'=>$langs->trans("ReGeneratePDF"),
-    //'builddoc'=>$langs->trans("PDFMerge"),
-    //'presend'=>$langs->trans("SendByMail"),
+	//'builddoc'=>$langs->trans("PDFMerge"),
+	//'presend'=>$langs->trans("SendByMail"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
 if ($user->rights->projet->creer) $arrayofmassactions['close'] = $langs->trans("Close");
@@ -474,8 +473,8 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 $texthelp = '';
 if ($search_project_user == $user->id) $texthelp .= $langs->trans("MyProjectsDesc");
 else {
-    if ($user->rights->projet->all->lire && !$socid) $texthelp .= $langs->trans("ProjectsDesc");
-    else $texthelp .= $langs->trans("ProjectsPublicDesc");
+	if ($user->rights->projet->all->lire && !$socid) $texthelp .= $langs->trans("ProjectsDesc");
+	else $texthelp .= $langs->trans("ProjectsPublicDesc");
 }
 
 print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'project', 0, $newcardbutton, '', $limit, 0, 0, 1);
@@ -484,7 +483,7 @@ print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_
 $topicmail = "Information";
 $modelmail = "project";
 $objecttmp = new Project($db);
-$trackid = 'prj'.$object->id;
+$trackid = 'proj'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($search_all)
@@ -496,7 +495,7 @@ if ($search_all)
 $moreforfilter = '';
 
 // Filter on categories
-if (!empty($conf->categorie->enabled))
+if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire)
 {
 	$formcategory = new FormCategory($db);
 	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PROJECT, $search_category_array);
@@ -505,7 +504,8 @@ if (!empty($conf->categorie->enabled))
 // If the user can view user other than himself
 $moreforfilter .= '<div class="divsearchfield">';
 $moreforfilter .= $langs->trans('ProjectsWithThisUserAsContact').': ';
-$includeonly = 'hierarchyme';
+//$includeonly = 'hierarchyme';
+$includeonly = '';
 if (empty($user->rights->user->user->lire)) $includeonly = array($user->id);
 $moreforfilter .= $form->select_dolusers($search_project_user ? $search_project_user : '', 'search_project_user', 1, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth200');
 $moreforfilter .= '</div>';
@@ -616,8 +616,8 @@ if (!empty($arrayfields['p.opp_percent']['checked']))
 }
 if (!empty($arrayfields['opp_weighted_amount']['checked']))
 {
-    print '<td class="liste_titre nowrap right">';
-    print '</td>';
+	print '<td class="liste_titre nowrap right">';
+	print '</td>';
 }
 if (!empty($arrayfields['p.budget_amount']['checked']))
 {
@@ -711,8 +711,8 @@ print "</tr>\n";
 
 $i = 0;
 $totalarray = array(
-    'nbfield' => 0,
-    'val' => array(),
+	'nbfield' => 0,
+	'val' => array(),
 );
 while ($i < min($num, $limit))
 {
@@ -732,9 +732,9 @@ while ($i < min($num, $limit))
 	$userAccess = $object->restrictedProjectArea($user); // why this ?
 	if ($userAccess >= 0)
 	{
-	    $socstatic->id = $obj->socid;
-	    $socstatic->name = $obj->name;
-	    $socstatic->email = $obj->email;
+		$socstatic->id = $obj->socid;
+		$socstatic->name = $obj->name;
+		$socstatic->email = $obj->email;
 
 		print '<tr class="oddeven">';
 
@@ -794,8 +794,8 @@ while ($i < min($num, $limit))
 						$userstatic->statut = $val['statut'];
 						$userstatic->entity = $val['entity'];
 						$userstatic->photo = $val['photo'];
-						//print $userstatic->getNomUrl(1, '', 0, 0, 12);
-						print $userstatic->getNomUrl(-2);
+						print $userstatic->getNomUrl(1, '', 0, 0, 12);
+						//print $userstatic->getNomUrl(-2);
 						$j++;
 						if ($j < $nbofsalesrepresentative) print ' ';
 					}
@@ -862,19 +862,19 @@ while ($i < min($num, $limit))
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
-        // Opp weighted amount
-        if (!empty($arrayfields['opp_weighted_amount']['checked']))
-        {
-            if (!isset($totalarray['val']['opp_weighted_amount']))  $totalarray['val']['opp_weighted_amount'] = 0;
-            print '<td align="right">';
-            if ($obj->opp_weighted_amount) {
-                print price($obj->opp_weighted_amount, 1, $langs, 1, -1, -1, '');
-                $totalarray['val']['opp_weighted_amount'] += $obj->opp_weighted_amount;
-            }
-            print '</td>';
-            if (!$i) $totalarray['nbfield']++;
-            if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'opp_weighted_amount';
-        }
+		// Opp weighted amount
+		if (!empty($arrayfields['opp_weighted_amount']['checked']))
+		{
+			if (!isset($totalarray['val']['opp_weighted_amount']))  $totalarray['val']['opp_weighted_amount'] = 0;
+			print '<td align="right">';
+			if ($obj->opp_weighted_amount) {
+				print price($obj->opp_weighted_amount, 1, $langs, 1, -1, -1, '');
+				$totalarray['val']['opp_weighted_amount'] += $obj->opp_weighted_amount;
+			}
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'opp_weighted_amount';
+		}
 		// Budget
 		if (!empty($arrayfields['p.budget_amount']['checked']))
 		{

@@ -47,9 +47,9 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 	public $emetteur;
 
 	/**
-     * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.6 = array(5, 6)
-     */
+	 * @var array Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 */
 	public $phpmin = array(5, 6);
 
 	/**
@@ -299,9 +299,9 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 				$contactobject = null;
 				if (!empty($usecontact))
 				{
-					// On peut utiliser le nom de la societe du contact
-					if (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socobject = $object->contact;
-					else {
+					if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
+						$socobject = $object->contact;
+					} else {
 						$socobject = $object->thirdparty;
 						// if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
 						$contactobject = $object->contact;
@@ -316,7 +316,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 					'__FROM_EMAIL__' => $this->emetteur->email,
 					'__TOTAL_TTC__' => $object->total_ttc,
 					'__TOTAL_HT__' => $object->total_ht,
-					'__TOTAL_VAT__' => $object->total_vat
+					'__TOTAL_VAT__' => $object->total_tva
 				);
 				complete_substitutions_array($substitutionarray, $langs, $object);
 				// Call the ODTSubstitution hook
