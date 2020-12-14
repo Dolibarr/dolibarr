@@ -185,7 +185,7 @@ if ($captcha) {
 	</span>
 
 	</div></div>
-<?php
+	<?php
 }
 
 if (!empty($morelogincontent)) {
