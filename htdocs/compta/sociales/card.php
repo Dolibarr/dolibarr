@@ -302,7 +302,7 @@ if ($action == 'create')
 	print '<td class="titlefieldcreate fieldrequired">';
 	print $langs->trans("Label");
 	print '</td>';
-	print '<td><input type="text" size="34" name="label" class="flat" value="'.dol_escape_htmltag(GETPOST('label', 'alpha')).'" autofocus></td>';
+	print '<td><input type="text" name="label" class="flat minwidth300" value="'.dol_escape_htmltag(GETPOST('label', 'alpha')).'" autofocus></td>';
 	print '</tr>';
 	print '<tr>';
 
