@@ -2461,7 +2461,7 @@ class ExpenseReport extends CommonObject
 	}
 
 	/**
-	 *	Return if an expensereport was dispatched into bookkeeping
+	 *	Return if object was dispatched into bookkeeping
 	 *
 	 *	@return     int         <0 if KO, 0=no, 1=yes
 	 */

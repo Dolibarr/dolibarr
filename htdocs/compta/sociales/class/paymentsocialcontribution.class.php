@@ -694,7 +694,7 @@ class PaymentSocialContribution extends CommonObject
 			}
 			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$labeltoshow;
 		}
-		if ($this->date) $label .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->date, 'day');
+		if ($this->datep) $label .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datep, 'day');
 
 		if (!empty($this->id)) {
 			$link = '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
