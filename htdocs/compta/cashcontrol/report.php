@@ -262,26 +262,27 @@ if ($resql) {
 
 	print "</table>";
 
+    $negligibleDiff = pow(0.1, $conf->global->MAIN_MAX_DECIMALS_UNIT);
 	//$cash = $amountpertype['LIQ'] + $cashcontrol->opening;
 	$cash = $cash + $cashcontrol->opening;
 
 	print "<div style='text-align: right'><h2>";
 	print $langs->trans("Cash").": ".price($cash);
-	if ($cashcontrol->status == $cashcontrol::STATUS_VALIDATED && $cash != $cashcontrol->cash) {
+	if ($cashcontrol->status == $cashcontrol::STATUS_VALIDATED && abs($cash - $cashcontrol->cash) > $negligibleDiff) {
 		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($cashcontrol->cash).'</span>';
 	}
 	print "<br><br>";
 
 	//print '<br>';
 	print $langs->trans("PaymentTypeCHQ").": ".price($cheque);
-	if ($cashcontrol->status == $cashcontrol::STATUS_VALIDATED && $cheque != $cashcontrol->cheque) {
+	if ($cashcontrol->status == $cashcontrol::STATUS_VALIDATED && abs($cheque - $cashcontrol->cheque) > $negligibleDiff) {
 		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($cashcontrol->cheque).'</span>';
 	}
 	print "<br><br>";
 
 	//print '<br>';
 	print $langs->trans("PaymentTypeCB").": ".price($bank);
-	if ($cashcontrol->status == $cashcontrol::STATUS_VALIDATED && $bank != $cashcontrol->card) {
+	if ($cashcontrol->status == $cashcontrol::STATUS_VALIDATED && abs($bank - $cashcontrol->card) > $negligibleDiff) {
 		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($cashcontrol->card).'</span>';
 	}
 	print "<br><br>";
