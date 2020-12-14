@@ -230,6 +230,7 @@ if ($object->id > 0)
 	$permok = $user->rights->agenda->myactions->create;
 	if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok)
 	{
+		//$out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
 		if (get_class($objthirdparty) == 'Societe') $out .= '&socid='.urlencode($objthirdparty->id);
 		$out .= (!empty($objcon->id) ? '&contactid='.urlencode($objcon->id) : '').'&percentage=-1';
 		//$out.=$langs->trans("AddAnAction").' ';
