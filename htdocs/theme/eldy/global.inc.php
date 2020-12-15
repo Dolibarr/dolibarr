@@ -396,6 +396,13 @@ input.pageplusone {
 	color: #000;
 }
 
+.vmirror {
+    transform: scale(1, -1);
+}
+.hmirror {
+    transform: scale(-1, 1);
+}
+
 select:invalid {
 	color: gray;
 }
