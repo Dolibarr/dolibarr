@@ -640,7 +640,7 @@ if (empty($reshook))
 						$object->code_client = null;
 					}
 
-					if ($result==-3 && in_array('ErrorSupplierCodeAlreadyUsed',$object->errors))
+					if ($result==-3 && in_array('ErrorSupplierCodeAlreadyUsed', $object->errors))
 					{
 						$duplicate_code_error = true;
 						$object->code_fournisseur = null;
