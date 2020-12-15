@@ -593,8 +593,8 @@ class SupplierProposal extends CommonObject
 			// Mise en option de la ligne
 			if (empty($qty) && empty($special_code)) $this->line->special_code = 3;
 
-			if (is_array($array_option) && count($array_option) > 0) {
-				$this->line->array_options = $array_option;
+			if (is_array($array_options) && count($array_options) > 0) {
+				$this->line->array_options = $array_options;
 			}
 
 			$result = $this->line->insert();
