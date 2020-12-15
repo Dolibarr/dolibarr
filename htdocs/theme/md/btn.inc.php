@@ -359,12 +359,41 @@ div.pagination .btnTitle:hover .btnTitle-label{
     display: block;
 }
 
-
-
-
+/* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
+@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
+{
+	.butAction, .butActionRefused, .butActionDelete {
+		font-size: 0.95em;
+	}
+	.btnTitle, a.btnTitle {
+	    display: inline-block;
+	    padding: 4px 4px 4px 4px;
+		min-width: unset;
+	}
+}
 
 <?php if (!empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (!$user->admin)) { ?>
 .butActionRefused, .butActionNewRefused, .btnTitle.refused {
     display: none !important;
 }
-<?php }
+<?php } ?>
+
+
+/*
+ * BTN LINK
+ */
+
+.btn-link{
+	margin-right: 5px;
+	border: 1px solid #ddd;
+	color: #333;
+	padding: 5px 10px;
+	border-radius:1em;
+	text-decoration: none !important;
+}
+
+.btn-link:hover{
+	background-color: #ddd;
+	border: 1px solid #ddd;
+}
+

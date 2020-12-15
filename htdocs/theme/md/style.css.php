@@ -549,8 +549,8 @@ input.removedfile {
 }
 
 input[type=file ]    { background-color: transparent; border-top: none; border-left: none; border-right: none; box-shadow: none; }
-input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
-input[type=radio]    { background-color: transparent; border: none; box-shadow: none; }
+input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; vertical-align: middle; }
+input[type=radio]    { background-color: transparent; border: none; box-shadow: none; vertical-align: middle; }
 input[type=image]    { background-color: transparent; border: none; box-shadow: none; }
 input:-webkit-autofill {
 	background-color: #FBFFEA !important;
@@ -1899,6 +1899,11 @@ img.photoref, div.photoref {
 	width: 80px;
     object-fit: contain;
 }
+
+div.photoref .fa, div.photoref .fas, div.photoref .far {
+    font-size: 2.5em;
+}
+
 img.fitcontain {
     object-fit: contain;
 }
@@ -4071,7 +4076,6 @@ div.titre {
     padding-bottom: 5px;
     text-transform: uppercase;
 	/* text-shadow: 1px 1px 2px #FFFFFF; */
-	<?php print (empty($conf->dol_optimize_smallscreen) ? '' : 'margin-top: 4px;'); ?>
 }
 div.titre {
 	color: var(--colortexttitlenotab);
@@ -4999,6 +5003,12 @@ td.gminorheading {
 }
 td.gtaskheading.gstartdate, td.gtaskheading.genddate {
     white-space: break-spaces;
+}
+.gtasktableh tr:nth-child(2) td:nth-child(2), .gtasktableh tr:nth-child(2) td:nth-child(3), .gtasktableh tr:nth-child(2) td:nth-child(4), .gtasktableh tr:nth-child(2) td:nth-child(5), .gtasktableh tr:nth-child(2) td:nth-child(6), .gtasktableh tr:nth-child(2) td:nth-child(7) {
+    color: transparent !important;
+    border-left: none;
+    border-right: none;
+    border-top: none;
 }
 
 
@@ -6484,12 +6494,10 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 		padding-right: 5px;
 	}
     img.photoref, div.photoref {
-    	border: none;
+    	border: 1px solid rgba(0, 0, 0, 0.2);
     	-webkit-box-shadow: none;
         box-shadow: none;
         padding: 4px;
-    	height: 20px;
-    	width: 20px;
         object-fit: contain;
     }
 

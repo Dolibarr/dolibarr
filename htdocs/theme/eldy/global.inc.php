@@ -5095,10 +5095,15 @@ td.gminorheading {
 .glistlbl, .glistgrid {
 	width: 582px !important;
 }
-.gtaskname div, .gtaskname {
+/*.gtaskname div, .gtaskname {
     min-width: 250px !important;
     max-width: 250px !important;
     width: 250px !important;
+}*/
+.gtaskname div, .gtaskname {
+    min-width: 250px !important;
+    max-width: unset !important;
+    width: unset !important;
 }
 .gpccomplete div, .gpccomplete {
     min-width: 40px !important;
@@ -5108,7 +5113,12 @@ td.gminorheading {
 td.gtaskheading.gstartdate, td.gtaskheading.genddate {
     white-space: break-spaces;
 }
-
+.gtasktableh tr:nth-child(2) td:nth-child(2), .gtasktableh tr:nth-child(2) td:nth-child(3), .gtasktableh tr:nth-child(2) td:nth-child(4), .gtasktableh tr:nth-child(2) td:nth-child(5), .gtasktableh tr:nth-child(2) td:nth-child(6), .gtasktableh tr:nth-child(2) td:nth-child(7) {
+    color: transparent !important;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+}
 
 /* ============================================================================== */
 /*  jFileTree                                                                     */
