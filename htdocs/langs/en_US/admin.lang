@@ -56,6 +56,7 @@ GUISetup=Display
 SetupArea=Setup
 UploadNewTemplate=Upload new template(s)
 FormToTestFileUploadForm=Form to test file upload (according to setup)
+ModuleMustBeEnabled=Module <b>%s</b> must be enabled
 IfModuleEnabled=Note: yes is effective only if module <b>%s</b> is enabled
 RemoveLock=Remove/rename file <b>%s</b> if it exists, to allow usage of the Update/Install tool.
 RestoreLock=Restore file <b>%s</b>, with read permission only, to disable any further use of the Update/Install tool.
