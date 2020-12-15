@@ -576,6 +576,9 @@ class Project extends CommonObject
 	public function get_element_list($type, $tablename, $datefieldname = '', $dates = '', $datee = '', $projectkey = 'fk_projet')
 	{
 		// phpcs:enable
+
+		global $hookmanager;
+
 		$elements = array();
 
 		if ($this->id <= 0) return $elements;
@@ -630,6 +633,21 @@ class Project extends CommonObject
 			if (empty($datefieldname)) return 'Error this object has no date field defined';
 			$sql .= " AND (".$datefieldname." <= '".$this->db->idate($datee)."' OR ".$datefieldname." IS NULL)";
 		}
+
+		$hookmanager->initHooks(array('projectdao'));
+		$parameters = array(
+			'sql'=>$sql,
+			'type' => $type,
+			'tablename' => $tablename,
+			'datefieldname'  => $datefieldname,
+			'dates' => $dates,
+			'datee' => $datee,
+			'fk_projet' => $projectkey
+		);
+		$reshook = $hookmanager->executeHooks('getElementList', $parameters, $object, $action);
+		if ($reshook > 0) $sql = $hookmanager->resPrint;
+		else $sql .= $hookmanager->resPrint;
+
 		if (!$sql) return -1;
 
 		//print $sql;
