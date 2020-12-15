@@ -242,7 +242,7 @@ if ($action!= "updateRate" && $action!= "deleteRate" ) {
 
 	$form = new Form($db);
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post" name="formulaire">';
-	print '<table><tr>';
+	print '<table class="noborder centpercent"><tr>';
 
 	print ' <td>' . $langs->trans('date') . '</td>';
 	print ' <td><input class="minwidth200" name="dateinput" value="' . dol_escape_htmltag($dateinput) . '" type="date"></td>';
@@ -422,8 +422,10 @@ if ($resql)
 	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 	if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
+    // Line for title
+    print '<tr class="liste_titre">';
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+	print '<table class="tagtable centpercent liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 	// Lines with input filters
 	print '<tr class="liste_titre_filter">';
