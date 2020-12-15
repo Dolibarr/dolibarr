@@ -347,10 +347,14 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
 print '<span class="fieldrequired">'.$langs->trans('Date').'</span> '.$form->selectDate(($date ? $date : -1), 'date');
 
-print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddinrightonly">&nbsp;</span> '.$langs->trans('Product').'</span> ';
+print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddinrightonly">&nbsp;</span> ';
+print img_picto('', 'product').' ';
+print $langs->trans('Product').'</span> ';
 $form->select_produits($productid, 'productid', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'maxwidth300');
 
-print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddinrightonly">&nbsp;</span> '.$langs->trans('Warehouse').'</span> ';
+print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddinrightonly">&nbsp;</span> ';
+print img_picto('', 'stock').' ';
+print $langs->trans('Warehouse').'</span> ';
 print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? $fk_warehouse : 'ifone'), 'fk_warehouse', '', 1);
 print '</div>';
 
@@ -558,7 +562,7 @@ print $hookmanager->resPrint;
 if (empty($date) || ! $dateIsValid) {
 	$colspan = 6;
 	if ($mode == 'future') $colspan++;
-	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("EmptySearchString").'</span></td></tr>';
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("EnterADateCriteria").'</span></td></tr>';
 }
 
 print '</table>';

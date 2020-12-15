@@ -29,6 +29,7 @@ AvailableVariables=Available substitution variables
 NoTranslation=No translation
 Translation=Translation
 EmptySearchString=Enter non empty search criterias
+EnterADateCriteria=Enter a date criteria
 NoRecordFound=No record found
 NoRecordDeleted=No record deleted
 NotEnoughDataYet=Not enough data

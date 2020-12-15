@@ -128,26 +128,27 @@ class MouvementStock extends CommonObject
 	 *	Add a movement of stock (in one direction only).
 	 *  $this->origin can be also be set to save the source object of movement.
 	 *
-	 *	@param		User	$user			User object
-	 *	@param		int		$fk_product		Id of product
-	 *	@param		int		$entrepot_id	Id of warehouse
-	 *	@param		int		$qty			Qty of movement (can be <0 or >0 depending on parameter type)
-	 *	@param		int		$type			Direction of movement:
-	 *										0=input (stock increase by a stock transfer), 1=output (stock decrease by a stock transfer),
-	 *										2=output (stock decrease), 3=input (stock increase)
-	 *                                      Note that qty should be > 0 with 0 or 3, < 0 with 1 or 2.
-	 *	@param		int		$price			Unit price HT of product, used to calculate average weighted price (AWP or PMP in french). If 0, average weighted price is not changed.
-	 *	@param		string	$label			Label of stock movement
-	 *	@param		string	$inventorycode	Inventory code
-	 *	@param		string	$datem			Force date of movement
-	 *	@param		integer	$eatby			eat-by date. Will be used if lot does not exists yet and will be created.
-	 *	@param		integer	$sellby			sell-by date. Will be used if lot does not exists yet and will be created.
-	 *	@param		string	$batch			batch number
-	 *	@param		boolean	$skip_batch		If set to true, stock movement is done without impacting batch record
+	 *	@param		User	$user				User object
+	 *	@param		int		$fk_product			Id of product
+	 *	@param		int		$entrepot_id		Id of warehouse
+	 *	@param		int		$qty				Qty of movement (can be <0 or >0 depending on parameter type)
+	 *	@param		int		$type				Direction of movement:
+	 *											0=input (stock increase by a stock transfer), 1=output (stock decrease by a stock transfer),
+	 *											2=output (stock decrease), 3=input (stock increase)
+	 *                                      	Note that qty should be > 0 with 0 or 3, < 0 with 1 or 2.
+	 *	@param		int		$price				Unit price HT of product, used to calculate average weighted price (AWP or PMP in french). If 0, average weighted price is not changed.
+	 *	@param		string	$label				Label of stock movement
+	 *	@param		string	$inventorycode		Inventory code
+	 *	@param		string	$datem				Force date of movement
+	 *	@param		integer	$eatby				eat-by date. Will be used if lot does not exists yet and will be created.
+	 *	@param		integer	$sellby				sell-by date. Will be used if lot does not exists yet and will be created.
+	 *	@param		string	$batch				batch number
+	 *	@param		boolean	$skip_batch			If set to true, stock movement is done without impacting batch record
 	 * 	@param		int		$id_product_batch	Id product_batch (when skip_batch is false and we already know which record of product_batch to use)
-	 *	@return		int						<0 if KO, 0 if fk_product is null or product id does not exists, >0 if OK
+	 *  @param		int		$disablestockchangeforsubproduct	Disable stock change for sub-products of kit (usefull only if product is a subproduct)
+	 *	@return		int							<0 if KO, 0 if fk_product is null or product id does not exists, >0 if OK
 	 */
-	public function _create($user, $fk_product, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $skip_batch = false, $id_product_batch = 0)
+	public function _create($user, $fk_product, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $skip_batch = false, $id_product_batch = 0, $disablestockchangeforsubproduct = 0)
 	{
 		// phpcs:disable
 		global $conf, $langs;
@@ -571,9 +572,9 @@ class MouvementStock extends CommonObject
 		}
 
 		// Add movement for sub products (recursive call)
-		if (!$error && !empty($conf->global->PRODUIT_SOUSPRODUITS) && empty($conf->global->INDEPENDANT_SUBPRODUCT_STOCK))
+		if (!$error && !empty($conf->global->PRODUIT_SOUSPRODUITS) && empty($conf->global->INDEPENDANT_SUBPRODUCT_STOCK) && empty($disablestockchangeforsubproduct))
 		{
-			$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, 0, $label, $inventorycode); // we use 0 as price, because pmp is not changed for subproduct
+			$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, 0, $label, $inventorycode); // we use 0 as price, because AWP must not change for subproduct
 		}
 
 		if ($movestock && !$error)

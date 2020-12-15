@@ -4229,9 +4229,9 @@ class Product extends CommonObject
 		// phpcs:enable
 		$this->res = array();
 		if (isset($this->sousprods) && is_array($this->sousprods)) {
-			foreach ($this->sousprods as $prod_name => $desc_product)
-			{
-				if (is_array($desc_product)) { $this->fetch_prod_arbo($desc_product, "", $multiply, 1, $this->id);
+			foreach ($this->sousprods as $prod_name => $desc_product) {
+				if (is_array($desc_product)) {
+					$this->fetch_prod_arbo($desc_product, "", $multiply, 1, $this->id);
 				}
 			}
 		}
@@ -4777,9 +4777,10 @@ class Product extends CommonObject
 	 * @param  string $inventorycode  Inventory code
 	 * @param  string $origin_element Origin element type
 	 * @param  int    $origin_id      Origin id of element
+	 * @param  int	  $disablestockchangeforsubproduct	Disable stock change for sub-products of kit (usefull only if product is a subproduct)
 	 * @return int                     <0 if KO, >0 if OK
 	 */
-	public function correct_stock($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $inventorycode = '', $origin_element = '', $origin_id = null)
+	public function correct_stock($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0)
 	{
 		// phpcs:enable
 		if ($id_entrepot) {
@@ -4792,7 +4793,7 @@ class Product extends CommonObject
 
 			$movementstock = new MouvementStock($this->db);
 			$movementstock->setOrigin($origin_element, $origin_id); // Set ->origin and ->origin->id
-			$result = $movementstock->_create($user, $this->id, $id_entrepot, $op[$movement], $movement, $price, $label, $inventorycode);
+			$result = $movementstock->_create($user, $this->id, $id_entrepot, $op[$movement], $movement, $price, $label, $inventorycode, '', '', '', '', false, 0, $disablestockchangeforsubproduct);
 
 			if ($result >= 0) {
 				$this->db->commit();
@@ -4823,9 +4824,10 @@ class Product extends CommonObject
 	 * @param  string   $inventorycode  Inventory code
 	 * @param  string   $origin_element Origin element type
 	 * @param  int      $origin_id      Origin id of element
+	 * @param  int	    $disablestockchangeforsubproduct	Disable stock change for sub-products of kit (usefull only if product is a subproduct)
 	 * @return int                      <0 if KO, >0 if OK
 	 */
-	public function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $dlc = '', $dluo = '', $lot = '', $inventorycode = '', $origin_element = '', $origin_id = null)
+	public function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $dlc = '', $dluo = '', $lot = '', $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0)
 	{
 		// phpcs:enable
 		if ($id_entrepot) {
@@ -4838,7 +4840,7 @@ class Product extends CommonObject
 
 			$movementstock = new MouvementStock($this->db);
 			$movementstock->setOrigin($origin_element, $origin_id);
-			$result = $movementstock->_create($user, $this->id, $id_entrepot, $op[$movement], $movement, $price, $label, $inventorycode, '', $dlc, $dluo, $lot);
+			$result = $movementstock->_create($user, $this->id, $id_entrepot, $op[$movement], $movement, $price, $label, $inventorycode, '', $dlc, $dluo, $lot, false, 0, $disablestockchangeforsubproduct);
 
 			if ($result >= 0) {
 				$this->db->commit();
