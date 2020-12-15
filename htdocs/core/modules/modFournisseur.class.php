@@ -658,7 +658,7 @@ class modFournisseur extends DolibarrModules
 
 		$r++;
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
-		$this->import_label[$r] = "Supplier Invoice"; // Translation key
+		$this->import_label[$r] = "SuppliersInvoice"; // Translation key
 		$this->import_icon[$r] = $this->picto;
 		$this->import_entities_array[$r] = []; // We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r] = ['f' => MAIN_DB_PREFIX.'facture_fourn', 'extra' => MAIN_DB_PREFIX.'facture_fourn_extrafields'];
@@ -683,8 +683,8 @@ class modFournisseur extends DolibarrModules
 			'f.fk_account' => 'Bank Account*',
 			'f.note_public' => 'InvoiceNote',
 			'f.note_private' => 'NotePrivate',
-			'f.fk_cond_reglement' => 'Payment Condition',
-			'f.fk_mode_reglement' => 'Payment Mode',
+			'f.fk_cond_reglement' => 'PaymentTermsSupplier',
+			'f.fk_mode_reglement' => 'PaymentTypeSupplier',
 			'f.model_pdf' => 'Model',
 			'f.date_valid' => 'Validation Date'
 		];
@@ -712,9 +712,9 @@ class modFournisseur extends DolibarrModules
 		$this->import_regex_array[$r] = ['f.ref' => '(SI\d{4}-\d{4}|PROV.{1,32}$)', 'f.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency'];
 		$import_sample = [
 			'f.ref' => '(PROV001)',
-			'f.ref_supplier' => 'Supplier1',
+			'f.ref_supplier' => 'RefSupplier',
 			'f.type' => '0',
-			'f.fk_soc' => 'Vendor1',
+			'f.fk_soc' => 'Supplier/Vendor name or code',
 			'f.datec' => '2021-01-01',
 			'f.datef' => '',
 			'f.date_lim_reglement' => '2021-01-30',
@@ -730,8 +730,8 @@ class modFournisseur extends DolibarrModules
 			'f.fk_account' => 'BANK1',
 			'f.note_public' => 'Note: ',
 			'f.note_private' => '',
-			'f.fk_cond_reglement' => '1',
-			'f.fk_mode_reglement' => '2',
+			'f.fk_cond_reglement' => '1/2/3...matches field "rowid" in table "'.MAIN_DB_PREFIX.'c_payment_term"',
+			'f.fk_mode_reglement' => 'id or code in table "'.MAIN_DB_PREFIX.'c_paiement"',
 			'f.model_pdf' => 'crab',
 			'f.date_valid' => '',
 			'f.multicurrency_code' => 'USD',
@@ -744,14 +744,25 @@ class modFournisseur extends DolibarrModules
 		$this->import_updatekeys_array[$r] = ['f.ref' => 'Ref'];
 		$this->import_convertvalue_array[$r] = [
 			//'c.ref'=>array('rule'=>'getrefifauto'),
-			'f.fk_soc' => ['rule' => 'fetchidfromref', 'file' => '/societe/class/societe.class.php', 'class' => 'Societe', 'method' => 'fetch', 'element' => 'ThirdParty'],
-			'f.fk_account' => ['rule' => 'fetchidfromref', 'file' => '/compta/bank/class/account.class.php', 'class' => 'Account', 'method' => 'fetch', 'element' => 'bank_account'],
+			'f.fk_soc' => [
+				'rule'    => 'fetchidfromreforcode',
+				'file'    => '/societe/class/societe.class.php',
+				'class'   => 'Societe',
+				'method'  => 'fetchbysuppliercode',
+				'element' => 'ThirdParty'
+			],
+			'f.fk_account' => [
+				'rule' => 'fetchidfromref',
+				'file' => '/compta/bank/class/account.class.php',
+				'class' => 'Account',
+				'method' => 'fetch',
+				'element' => 'bank_account'],
 		];
 
 		//Import Supplier Invoice Lines
 		$r++;
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
-		$this->import_label[$r] = "Supplier Invoice Lines"; // Translation key
+		$this->import_label[$r] = "InvoiceLine"; // Translation key
 		$this->import_icon[$r] = $this->picto;
 		$this->import_entities_array[$r] = []; // We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r] = ['fd' => MAIN_DB_PREFIX.'facture_fourn_det', 'extra' => MAIN_DB_PREFIX.'facture_fourn_det_extrafields'];
@@ -831,7 +842,7 @@ class modFournisseur extends DolibarrModules
 		//Import Purchase Orders
 		$r++;
 		$this->import_code[$r] = 'commande_fournisseur_'.$r;
-		$this->import_label[$r] = 'Purchase Orders';
+		$this->import_label[$r] = 'SupplierOrder';
 		$this->import_icon[$r] = $this->picto;
 		$this->import_entities_array[$r] = [];
 		$this->import_tables_array[$r] = ['c' => MAIN_DB_PREFIX.'commande_fournisseur', 'extra' => MAIN_DB_PREFIX.'commande_fournisseur_extrafields'];
@@ -839,7 +850,7 @@ class modFournisseur extends DolibarrModules
 		$this->import_fields_array[$r] = [
 			'c.ref'               => 'Document Ref*',
 			'c.ref_supplier'      => 'RefSupplier',
-			'c.fk_soc'            => 'ThirdPartyName*',
+			'c.fk_soc'            => 'Supplier/Vendor*',
 			'c.fk_projet'         => 'ProjectId',
 			'c.date_creation'     => 'DateCreation',
 			'c.date_valid'        => 'DateValid',
@@ -858,8 +869,8 @@ class modFournisseur extends DolibarrModules
 			'c.note_private'      => 'NotePrivate',
 			'c.note_public'       => 'Note',
 			'c.date_livraison'    => 'DeliveryDate',
-			'c.fk_cond_reglement' => 'Payment Condition',
-			'c.fk_mode_reglement' => 'Payment Mode',
+			'c.fk_cond_reglement' => 'PaymentTypeSupplier',
+			'c.fk_mode_reglement' => 'PaymentTermsSupplier',
 			'c.model_pdf'         => 'Model'
 		];
 
@@ -870,7 +881,6 @@ class modFournisseur extends DolibarrModules
 			$this->import_fields_array[$r]['c.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
 			$this->import_fields_array[$r]['c.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
 		}
-
 		// Add extra fields
 		$import_extrafield_sample = [];
 		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'commande_fournisseur' AND entity IN (0, ".$conf->entity.")";
@@ -885,24 +895,45 @@ class modFournisseur extends DolibarrModules
 			}
 		}
 		// End add extra fields
-
 		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'commande_fournisseur'];
 		$this->import_regex_array[$r] = [
 			'c.ref' => '(PO\d{4}-\d{4}|PORDER.{1,32}$|PROV.{1,32}$)',
 			'c.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency'
 		];
+		$import_sample = [
+			'c.ref'	              => '(PROV001)',
+			'c.ref_supplier'	  => 'RefSupplier',
+			'c.fk_soc'	          => 'Supplier/Vendor name or code',
+			'c.date_creation'	  => '2021-01-01',
+			'c.date_valid'		  => '2021-01-01',
+			'c.date_approve'      => '2021-01-01',
+			'c.date_commande'     => '2021-01-01',
+			'c.date_livraison'	  => '2021-01-01',
+			'c.fk_cond_reglement' => '1/2/3...matches field "rowid" in table "'.MAIN_DB_PREFIX.'c_payment_term"',
+			'c.fk_mode_reglement' => 'id or code in table "'.MAIN_DB_PREFIX.'c_paiement"',
+		];
 
+		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
 		$this->import_updatekeys_array[$r] = ['c.ref' => 'Ref'];
 		$this->import_convertvalue_array[$r] = [
 			'c.fk_soc' => [
-				'rule'    => 'fetchidfromref',
+				'rule'    => 'fetchidfromreforcode',
 				'file'    => '/societe/class/societe.class.php',
 				'class'   => 'Societe',
-				'method'  => 'fetch',
+				'method'  => 'fetchbysuppliercode',
 				'element' => 'ThirdParty'
 			],
+			/* TODO
+			'c.fk_cond_reglement' => [
+				'rule' => 'fetchidfromcodeid',
+				'file' => '/core/class/cpaymentterm.class.php',
+				'class' => 'Cpaymentterm',
+				'method' => 'fetch',
+				'element' => 'cpaymentterm'
+			],
+			*/
 			'c.fk_mode_reglement' => [
-				'rule' => 'fetchidfromcodeorlabel',
+				'rule' => 'fetchidfromcodeid',
 				'file' => '/compta/paiement/class/cpaiement.class.php',
 				'class' => 'Cpaiement',
 				'method' => 'fetch',
@@ -914,7 +945,7 @@ class modFournisseur extends DolibarrModules
 		//Import PO Lines
 		$r++;
 		$this->import_code[$r] = 'commande_fournisseurdet_'.$r;
-		$this->import_label[$r] = 'PO Lines';
+		$this->import_label[$r] = 'OrderLine';
 		$this->import_icon[$r] = $this->picto;
 		$this->import_entities_array[$r] = [];
 		$this->import_tables_array[$r] = ['cd' => MAIN_DB_PREFIX.'commande_fournisseurdet', 'extra' => MAIN_DB_PREFIX.'commande_fournisseurdet_extrafields'];
@@ -948,7 +979,6 @@ class modFournisseur extends DolibarrModules
 			$this->import_fields_array[$r]['cd.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
 			$this->import_fields_array[$r]['cd.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
 		}
-
 		// Add extra fields
 		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'commande_fournisseurdet' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
@@ -960,7 +990,6 @@ class modFournisseur extends DolibarrModules
 			}
 		}
 		// End add extra fields
-
 		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'commande_fournisseurdet'];
 		$this->import_regex_array[$r] = [
 			'cd.product_type'       => '[0|1]$',

@@ -306,8 +306,8 @@ class modPropale extends DolibarrModules
 		$this->import_regex_array[$r] = ['c.ref' => '[^ ]'];
 		$import_sample = [
 			'c.ref' => 'PROV0077',
-			'c.ref_client' => 'Client1',
-			'c.fk_soc' => 'MyBigCompany',
+			'c.ref_client' => 'RefClient',
+			'c.fk_soc' => 'Customer name or code',
 			'c.datec' => '2020-01-01',
 			'c.datep' => '2020-01-01',
 			'c.fin_validite' => '2020-01-01',
@@ -328,10 +328,10 @@ class modPropale extends DolibarrModules
 		$this->import_updatekeys_array[$r] = ['c.ref'=>'Ref'];
 		$this->import_convertvalue_array[$r] = [
 			'c.fk_soc' => [
-				'rule' => 'fetchidfromref',
+				'rule' => 'fetchidfromreforcode',
 				'file' => '/societe/class/societe.class.php',
 				'class' => 'Societe',
-				'method' => 'fetch',
+				'method' => 'fetchbycustomercode',
 				'element' => 'ThirdParty'
 			]
 		];

@@ -682,13 +682,13 @@ class modProduct extends DolibarrModules
 			$this->import_fieldshidden_array[$r] = array('extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'product_fournisseur_price'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 
 			$this->import_convertvalue_array[$r] = array(
-					'sp.fk_soc'=>array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty'),
+					'sp.fk_soc'=>array('rule'=>'fetchidfromreforcode', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetchbysuppliercode', 'element'=>'ThirdParty'),
 					'sp.fk_product'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/class/product.class.php', 'class'=>'Product', 'method'=>'fetch', 'element'=>'Product')
 			);
 
 			$this->import_examplevalues_array[$r] = array(
 				'sp.fk_product' => "PRODUCT_REF or id:123456",
-				'sp.fk_soc' => "My Supplier",
+				'sp.fk_soc' => "Supplier name or code",
 				'sp.ref_fourn' => "XYZ-F123456",
 				'sp.quantity' => "5",
 				'sp.tva_tx' => '10',
