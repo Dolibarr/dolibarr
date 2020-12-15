@@ -877,7 +877,7 @@ SCRIPT;
 
 				// Suppliers list title
 				print '<div class="div-table-responsive">';
-				print '<table class="liste centpercent">';
+				print '<table class="noborder centpercent">';
 
 				$param = "&id=".$object->id;
 
