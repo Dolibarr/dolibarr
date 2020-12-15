@@ -48,7 +48,6 @@ $id_rate_selected 	= GETPOST('id_rate', 'int');
 $sall				= trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_date_sync	= GETPOST('search_date_sync', 'alpha');
 $search_rate		= GETPOST('search_rate', 'alpha');
-$search_code		= GETPOST('search_code', 'alpha');
 $multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 $dateinput 			= GETPOST('dateinput', 'alpha');
 $rateinput 			= GETPOST('rateinput', 'int');
@@ -205,7 +204,7 @@ if (empty($reshook))
 		$sall="";
 		$search_date_sync="";
 		$search_rate="";
-		$search_code="";
+		$multicurrency_code="";
 		$search_array_options=array();
 	}
 
@@ -280,8 +279,8 @@ if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 
 if ($search_date_sync)     $sql .= natural_search('cr.date_sync', $search_date_sync);
 if ($search_rate)   $sql .= natural_search('cr.rate', $search_rate);
-if ($search_code) $sql .= natural_search('m.code', $search_code);
 
+if ($multicurrency_code) $sql .= natural_search('m.code', $multicurrency_code);
 $sql.= ' WHERE m.code != \''.$conf->currency. '\'';
 
 // Add where from hooks
@@ -330,7 +329,7 @@ if ($resql)
 
 	if ($search_date_sync) $param="&search_date_sync=".urlencode($search_date_sync);
 	if ($search_rate) $param="&search_rate=".urlencode($search_rate);
-	if ($search_code != '') $param.="&search_code=".urlencode($search_code);
+    if ($multicurrency_code != '') $param.="&multicurrency_code=".urlencode($multicurrency_code);
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -399,7 +398,7 @@ if ($resql)
 	if (! empty($arrayfields['m.code']['checked']))
 	{
 		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" type="text" name="search_code" size="12" value="'.dol_escape_htmltag($search_code).'">';
+		print  $form->selectMultiCurrency($multicurrency_code, 'multicurrency_code', 1, " code != '".$conf->currency."'", true) ;
 		print '</td>';
 	}
 	// rate
