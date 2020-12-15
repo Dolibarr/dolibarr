@@ -29,11 +29,11 @@
  *
  * @param	float       $num			Number to convert (must be a numeric value, like reported by price2num())
  * @param	Translate   $langs			Language
- * @param	boolean     $currency		0=number to translate | 1=currency to translate
- * @param	boolean     $centimes		0=no cents/centimes | 1=there is cents/centimes to translate
+ * @param	string      $currency		''=number to translate | 'XX'=currency code to use into text
+ * @param	boolean     $centimes		false=no cents/centimes | true=there is cents/centimes
  * @return 	string|false			    Text of the number
  */
-function dol_convertToWord($num, $langs, $currency = false, $centimes = false)
+function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
 {
 	global $conf;
 
@@ -48,9 +48,9 @@ function dol_convertToWord($num, $langs, $currency = false, $centimes = false)
 
 	if (!empty($conf->global->MAIN_MODULE_NUMBERWORDS)) {
 		if ($currency) {
-			$type = 1;
+			$type = '1';
 		} else {
-			$type = 0;
+			$type = '0';
 		}
 
 		$concatWords = $langs->getLabelFromNumber($num, $type);
@@ -139,8 +139,7 @@ function dol_convertToWord($num, $langs, $currency = false, $centimes = false)
 		}
 
 		// If we need to write cents call again this function for cents
-		$decimalpart = $TNum[1];
-		$decimalpart = preg_replace('/0+$/', '', $decimalpart);
+		$decimalpart = empty($TNum[1]) ? '' : preg_replace('/0+$/', '', $TNum[1]);
 
 		if ($decimalpart) {
 			if (!empty($currency)) $concatWords .= ' '.$langs->transnoentities('and');

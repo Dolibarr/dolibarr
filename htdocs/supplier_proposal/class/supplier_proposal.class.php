@@ -954,7 +954,7 @@ class SupplierProposal extends CommonObject
 				}
 
 				// Add object linked
-				if (!$error && $this->id && is_array($this->linked_objects) && !empty($this->linked_objects))
+				if (!$error && $this->id && !empty($this->linked_objects) && is_array($this->linked_objects))
 				{
 					foreach ($this->linked_objects as $origin => $tmp_origin_id)
 					{
@@ -1006,7 +1006,7 @@ class SupplierProposal extends CommonObject
 							$fk_parent_line,
 							$this->lines[$i]->fk_fournprice,
 							$this->lines[$i]->pa_ht,
-							$this->lines[$i]->label,
+							empty($this->lines[$i]->label) ? '' : $this->lines[$i]->label,		// deprecated
 							$this->lines[$i]->array_options,
 							$this->lines[$i]->ref_fourn,
 							$this->lines[$i]->fk_unit,

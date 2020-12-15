@@ -967,7 +967,7 @@ while ($i < min($num, $limit))
 	if (!empty($conf->socialnetworks->enabled)) {
 		foreach ($socialnetworks as $key => $value) {
 			if ($value['active'] && !empty($arrayfields['p.'.$key]['checked'])) {
-				print '<td>'.dol_print_socialnetworks($arraysocialnetworks[$key], $obj->rowid, $obj->socid, $key).'</td>';
+				print '<td>'.dol_print_socialnetworks($arraysocialnetworks[$key], $obj->rowid, $obj->socid, $key, $socialnetworks).'</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}
 		}

@@ -438,7 +438,7 @@ class FactureFournisseur extends CommonInvoice
 			}
 
 			// Add object linked
-			if (!$error && $this->id && is_array($this->linked_objects) && !empty($this->linked_objects))
+			if (!$error && $this->id && !empty($this->linked_objects) && is_array($this->linked_objects))
 			{
 				foreach ($this->linked_objects as $origin => $tmp_origin_id)
 				{

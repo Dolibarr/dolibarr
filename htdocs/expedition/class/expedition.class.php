@@ -1868,6 +1868,7 @@ class Expedition extends CommonObject
 		$statusType = 'status'.$status;
 		if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
 		if ($status == self::STATUS_CLOSED) $statusType = 'status6';
+		if ($status == self::STATUS_CANCELED) $statusType = 'status9';
 
 		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
 	}
@@ -2482,15 +2483,16 @@ class Expedition extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $langs;
+		global $conf;
 
-		$langs->load("sendings");
 		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'rouget';
 
-			if (!empty($this->modelpdf)) {
+			if (!empty($this->model_pdf)) {
+				$modele = $this->model_pdf;
+			} elseif (!empty($this->modelpdf)) {	// deprecated
 				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->EXPEDITION_ADDON_PDF)) {
 				$modele = $conf->global->EXPEDITION_ADDON_PDF;

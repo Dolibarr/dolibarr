@@ -87,16 +87,13 @@ class ExportExcel2007new extends ModeleExports
 		$this->version = '1.30'; // Driver version
 		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 
-		$this->disabled = (in_array(constant('PHPEXCEL_PATH'), array('disabled', 'disabled/')) ? 1 : 0); // A condition to disable module (used for native debian packages)
+		$this->disabled = 0;
 
 		if (empty($this->disabled))
 		{
-				//require_once PHPEXCEL_PATH.'PHPExcel.php';
-				//require_once PHPEXCEL_PATH.'PHPExcel/Style/Alignment.php';
-				//$this->label_lib='PhpExcel';
-				require_once PHPEXCELNEW_PATH.'Spreadsheet.php';
-				$this->label_lib = 'PhpSpreadSheet';
-				$this->version_lib = '1.6.0'; // No way to get info from library
+			require_once PHPEXCELNEW_PATH.'Spreadsheet.php';
+			$this->label_lib = 'PhpSpreadSheet';
+			$this->version_lib = '1.6.0'; // No way to get info from library
 		}
 
 		$this->row = 0;
@@ -198,15 +195,13 @@ class ExportExcel2007new extends ModeleExports
 
 		$outputlangs->load("exports");
 
-		//require_once PHPEXCEL_PATH.'PHPExcel.php';
-		//require_once PHPEXCEL_PATH.'PHPExcel/Style/Alignment.php';
 		require_once DOL_DOCUMENT_ROOT.'/includes/phpoffice/autoloader.php';
 		require_once DOL_DOCUMENT_ROOT.'/includes/Psr/autoloader.php';
 		require_once PHPEXCELNEW_PATH.'Spreadsheet.php';
 
 		if ($this->id == 'excel2007new')
 		{
-			if (!class_exists('ZipArchive'))	// For Excel2007, PHPExcel need ZipArchive
+			if (!class_exists('ZipArchive'))	// For Excel2007, PHPSpreadSheet may need ZipArchive
 			{
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorPHPNeedModule', 'zip');
@@ -214,7 +209,6 @@ class ExportExcel2007new extends ModeleExports
 			}
 		}
 
-		//$this->workbook = new PHPExcel();
 		$this->workbook = new Spreadsheet();
 		$this->workbook->getProperties()->setCreator($user->getFullName($outputlangs).' - '.DOL_APPLICATION_TITLE.' '.DOL_VERSION);
 		//$this->workbook->getProperties()->setLastModifiedBy('Dolibarr '.DOL_VERSION);
@@ -352,7 +346,6 @@ class ExportExcel2007new extends ModeleExports
 			} else {
 				if ($typefield == 'Text' || $typefield == 'TextAuto')
 				{
-					//$this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row+1)->setValueExplicit($newvalue, PHPExcel_Cell_DataType::TYPE_STRING);
 					$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, (string) $newvalue);
 					$coord = $this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row + 1)->getCoordinate();
 					$this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('@');

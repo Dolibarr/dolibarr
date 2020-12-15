@@ -146,8 +146,7 @@ elseif ($action == 'setdoc')
 	{
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
-} elseif ($action == 'unsetdoc')
-{
+} elseif ($action == 'unsetdoc') {
 	dolibarr_del_const($db, "INVOICE_SUPPLIER_ADDON_PDF", $conf->entity);
 }
 

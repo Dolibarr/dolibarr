@@ -60,7 +60,7 @@ $mode = GETPOST('mode', 'aZ09');
 $search_status = (GETPOSTISSET('search_status') ?GETPOST('search_status', 'int') : GETPOST('status', 'int'));
 $search_label = GETPOST("search_label", 'alpha');
 $search_module_name = GETPOST("search_module_name", 'alpha');
-
+$search_lastresult = GETPOST("search_lastresult", "alpha");
 $securitykey = GETPOST('securitykey', 'alpha');
 
 $diroutputmassaction = $conf->cronjob->dir_output.'/temp/massgeneration/'.$user->id;
@@ -99,6 +99,7 @@ if (empty($reshook))
 	{
 		$search_label = '';
 		$search_status = -1;
+		$search_lastresult = '';
 		$toselect = '';
 		$search_array_options = array();
 	}
@@ -248,6 +249,7 @@ $sql .= " t.test";
 $sql .= " FROM ".MAIN_DB_PREFIX."cronjob as t";
 $sql .= " WHERE entity IN (0,".$conf->entity.")";
 if ($search_status >= 0 && $search_status < 2 && $search_status != '') $sql .= " AND t.status = ".(empty($search_status) ? '0' : '1');
+if ($search_lastresult != '') $sql .= natural_search("t.lastresult", $search_lastresult, 1);
 //Manage filter
 if (is_array($filter) && count($filter) > 0) {
 	foreach ($filter as $key => $value) {
@@ -298,6 +300,7 @@ if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($l
 if ($search_status)   $param .= '&search_status='.urlencode($search_status);
 if ($search_label)	  $param .= '&search_label='.urlencode($search_label);
 if ($search_module_name) $param .= '&search_module_name='.urlencode($search_module_name);
+if ($search_lastresult) $param .= '&search_lastresult='.urlencode($search_lastresult);
 if ($mode) $param .= '&mode='.urlencode($mode);
 if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
 // Add $param from extra fields
@@ -384,7 +387,7 @@ print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre center"><input type="text" class="width50" name="search_lastresult" value="'.$search_lastresult.'"></td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre" align="center">';
@@ -589,7 +592,7 @@ if ($num > 0)
 		$i++;
 	}
 } else {
-	print '<tr><td colspan="9" class="opacitymedium">'.$langs->trans('CronNoJobs').'</td></tr>';
+	print '<tr><td colspan="15" class="opacitymedium">'.$langs->trans('CronNoJobs').'</td></tr>';
 }
 
 print '</table>';

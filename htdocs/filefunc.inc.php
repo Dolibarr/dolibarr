@@ -245,7 +245,6 @@ if (!defined('ADODB_PATH')) { define('ADODB_PATH', (!isset($dolibarr_lib_ADODB_P
 if (!defined('TCPDF_PATH')) { define('TCPDF_PATH', (empty($dolibarr_lib_TCPDF_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/tecnickcom/tcpdf/' : $dolibarr_lib_TCPDF_PATH.'/'); }
 if (!defined('TCPDI_PATH')) { define('TCPDI_PATH', (empty($dolibarr_lib_TCPDI_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/tcpdi/' : $dolibarr_lib_TCPDI_PATH.'/'); }
 if (!defined('NUSOAP_PATH')) { define('NUSOAP_PATH', (!isset($dolibarr_lib_NUSOAP_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/nusoap/lib/' : (empty($dolibarr_lib_NUSOAP_PATH) ? '' : $dolibarr_lib_NUSOAP_PATH.'/')); }
-if (!defined('PHPEXCEL_PATH')) { define('PHPEXCEL_PATH', (!isset($dolibarr_lib_PHPEXCEL_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/phpoffice/phpexcel/Classes/' : (empty($dolibarr_lib_PHPEXCEL_PATH) ? '' : $dolibarr_lib_PHPEXCEL_PATH.'/')); }
 if (!defined('PHPEXCELNEW_PATH')) { define('PHPEXCELNEW_PATH', (!isset($dolibarr_lib_PHPEXCELNEW_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/phpoffice/PhpSpreadsheet/' : (empty($dolibarr_lib_PHPEXCELNEW_PATH) ? '' : $dolibarr_lib_PHPEXCELNEW_PATH.'/')); }
 if (!defined('ODTPHP_PATH')) { define('ODTPHP_PATH', (!isset($dolibarr_lib_ODTPHP_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/odtphp/' : (empty($dolibarr_lib_ODTPHP_PATH) ? '' : $dolibarr_lib_ODTPHP_PATH.'/')); }
 if (!defined('ODTPHP_PATHTOPCLZIP')) { define('ODTPHP_PATHTOPCLZIP', (!isset($dolibarr_lib_ODTPHP_PATHTOPCLZIP)) ?DOL_DOCUMENT_ROOT.'/includes/odtphp/zip/pclzip/' : (empty($dolibarr_lib_ODTPHP_PATHTOPCLZIP) ? '' : $dolibarr_lib_ODTPHP_PATHTOPCLZIP.'/')); }

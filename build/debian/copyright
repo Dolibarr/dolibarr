@@ -37,7 +37,7 @@ Copyright: 2002-2009, Rodolphe Quiedeville   <rodolphe@quiedeville.org>
            2010, Servitux Servicios Informaticos <info@servitux.es>
            2011, Herve Prot                  <herve.prot@symeos.com>
            2011, Remy Younes                 <ryounes@gmail.com>
-           2012-2013, Christophe Battarel         <christophe.battarel@altairis.fr>
+           2012-2013, Christophe Battarel    <christophe.battarel@altairis.fr>
 	   
 License: GPL-3+
  This program is free software; you can redistribute it
@@ -189,36 +189,12 @@ License: CC-BY-SA-3.0
  For more information, see https://creativecommons.org/licenses/by-sa/3.0/
 
 
-------------------------------------------------------------
-
-Files: htdocs/includes/fpdfi/*
-Copyright: 2004-2011 Setasign - Jan Slabon
-License: GPL-2+
- This program is free software; you can redistribute it
- and/or modify it under the terms of the GNU General Public
- License as published by the Free Software Foundation; either
- version 2 of the License, or (at your option) any later
- version.
- .
- This program is distributed in the hope that it will be
- useful, but WITHOUT ANY WARRANTY; without even the implied
- warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the GNU General Public License for more
- details.
- .
- You should have received a copy of the GNU General Public License
- along with this program. If not, see <https://www.gnu.org/licenses/>.
- .
- On Debian systems, the full text of the GNU General Public
- License version 2 can be found in the file
- '/usr/share/common-licenses/GPL-2'.
-
 
 ------------------------------------------------------------
 
-Files: htdocs/includes/geoip/*
+Files: htdocs/includes/geoip2/*
 Copyright: 2007 MaxMind LLC
-License: LGPL-2.1+
+License: CC-By-SA
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
  License as published by the Free Software Foundation; either
@@ -380,30 +356,7 @@ License: GPL-2+
 
 ------------------------------------------------------------
 
-Files: htdocs/includes/phpexcel/*
-Copyright: 2006-2011 PHPExcel (http://www.codeplex.com/PHPExcel)
-License: LGPL-2.1+
- This library is free software; you can redistribute it and/or
- modify it under the terms of the GNU Lesser General Public
- License as published by the Free Software Foundation; either
- version 2.1 of the License, or (at your option) any later version.
- .
- This library is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- Lesser General Public License for more details.
- .
- You should have received a copy of the GNU Lesser General Public License
- along with this program. If not, see <https://www.gnu.org/licenses/>.
- .
- On Debian systems, the full text of the GNU Lesser General Public
- License version 2.1 can be found in the file
- '/usr/share/common-licenses/LGPL-2.1'.
-
-
-------------------------------------------------------------
-
-Files: htdocs/includes/tcpdf/*
+Files: htdocs/includes/tecnickcom/*
 Copyright: 2002-2013 Nicola Asuni - Tecnick.com LTD
 License: LGPL-3.0+
  TCPDF is free software: you can redistribute it and/or modify it

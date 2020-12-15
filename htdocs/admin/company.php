@@ -178,13 +178,6 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 		}
 	}
 
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FACEBOOK_URL", GETPOST("facebookurl", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TWITTER_URL", GETPOST("twitterurl", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LINKEDIN_URL", GETPOST("linkedinurl", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_INSTAGRAM_URL", GETPOST("instagramurl", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_YOUTUBE_URL", GETPOST("youtubeurl", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_GITHUB_URL", GETPOST("githuburl", 'alpha'), 'chaine', 0, '', $conf->entity);
-
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MANAGERS", GETPOST("MAIN_INFO_SOCIETE_MANAGERS", 'nohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_GDPR", GETPOST("MAIN_INFO_GDPR", 'nohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_CAPITAL", GETPOST("capital", 'nohtml'), 'chaine', 0, '', $conf->entity);
@@ -478,6 +471,14 @@ if (!empty($mysoc->logo_small)) {
 		print '<div class="inline-block valignmiddle">';
 		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small).'">';
 		print '</div>';
+	} elseif (!empty($mysoc->logo)) {
+	    if (!file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini)) {
+	        $imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo, $maxwidthmini, $maxheightmini, '_mini', $quality);
+	    }
+	    $imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo, $maxwidthmini, $maxheightmini, '_small', $quality);
+	    print '<div class="inline-block valignmiddle">';
+	    print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.basename($imgThumbSmall)).'">';
+	    print '</div>';
 	}
 	print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 } elseif (!empty($mysoc->logo)) {
@@ -505,6 +506,14 @@ if (!empty($mysoc->logo_squarred_small)) {
 		print '<div class="inline-block valignmiddle marginrightonly">';
 		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_small).'">';
 		print '</div>';
+	} elseif (!empty($mysoc->logo_squarred)) {
+	    if (!file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini)) {
+	        $imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo_squarred, $maxwidthmini, $maxheightmini, '_mini', $quality);
+	    }
+	    $imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo_squarred, $maxwidthmini, $maxheightmini, '_small', $quality);
+	    print '<div class="inline-block valignmiddle">';
+	    print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.basename($imgThumbSmall)).'">';
+	    print '</div>';
 	}
 	print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogosquarred">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 } elseif (!empty($mysoc->logo_squarred)) {
@@ -529,25 +538,6 @@ print '<textarea class="flat quatrevingtpercent" name="note" id="note" rows="'.R
 print '</td></tr>';
 
 print '</table>';
-
-// Social networks
-print '<br>';
-print '<table class="noborder centpercent editmode">';
-print '<tr class="liste_titre">';
-print '<td class="titlefield">'.$langs->trans("SocialNetworksInformation").'</td><td>'.$langs->trans("Value").'</td>';
-print "</tr>\n";
-
-$listofnetworks = array('facebook'=>'facebook', 'twitter'=>'twitter', 'linkedin'=>'linkedin', 'instagram'=>'instagram', 'youtube'=>'youtube', 'github'=>'github');
-foreach ($listofnetworks as $networkkey => $networkicon) {
-	print '<tr class="oddeven"><td>';
-	print '<label for="'.$networkkey.'url">'.$langs->trans("SocialNetworks".ucfirst($networkkey)."URL").'</label></td><td>';
-	$networkconst = 'MAIN_INFO_SOCIETE_'.strtoupper($networkkey).'_URL';
-	print '<span class="fa paddingright fa-'.($networkicon ? $networkicon : 'link').'"></span>';
-	print '<input name="'.$networkkey.'url" id="'.$networkkey.'url" class="minwidth300" value="'.dol_escape_htmltag($conf->global->$networkconst).'"></td></tr>';
-	print '</td></tr>'."\n";
-}
-
-print "</table>";
 
 print '<br>';
 
@@ -695,7 +685,7 @@ print '<td class="right">&nbsp;</td>';
 print "</tr>\n";
 
 // Main tax
-print "<tr class=\"oddeven\"><td width=\"140\"><label><input type=\"radio\" name=\"optiontva\" id=\"use_vat\" value=\"1\"".(empty($conf->global->FACTURE_TVAOPTION) ? "" : " checked")."> ".$langs->trans("VATIsUsed")."</label></td>";
+print '<tr class="oddeven"><td width="140"><label><input type="radio" name="optiontva" id="use_vat" value="1"'.(empty($conf->global->FACTURE_TVAOPTION) ? "" : " checked")."> ".$langs->trans("VATIsUsed")."</label></td>";
 print '<td colspan="2">';
 $tooltiphelp = '';
 if ($mysoc->country_code == 'FR') $tooltiphelp = '<i>'.$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i>";
@@ -703,7 +693,7 @@ print "<label for=\"use_vat\">".$form->textwithpicto($langs->trans("VATIsUsedDes
 print "</td></tr>\n";
 
 
-print "<tr class=\"oddeven\"><td width=\"140\"><label><input type=\"radio\" name=\"optiontva\" id=\"no_vat\" value=\"0\"".(empty($conf->global->FACTURE_TVAOPTION) ? " checked" : "")."> ".$langs->trans("VATIsNotUsed")."</label></td>";
+print '<tr class="oddeven"><td width="140"><label><input type="radio" name="optiontva" id="no_vat" value="0"'.(empty($conf->global->FACTURE_TVAOPTION) ? " checked" : "")."> ".$langs->trans("VATIsNotUsed")."</label></td>";
 print '<td colspan="2">';
 $tooltiphelp = '';
 if ($mysoc->country_code == 'FR') $tooltiphelp = "<i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i>\n";
@@ -723,7 +713,7 @@ print "</tr>\n";
 if ($mysoc->useLocalTax(1))
 {
 	// Note: When option is not set, it must not appears as set on on, because there is no default value for this option
-	print "<tr class=\"oddeven\"><td><input type=\"radio\" name=\"optionlocaltax1\" id=\"lt1\" value=\"localtax1on\"".(($conf->global->FACTURE_LOCAL_TAX1_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1on") ? " checked" : "")."> ".$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code)."</td>";
+	print '<tr class="oddeven"><td><input type="radio" name="optionlocaltax1" id="lt1" value="localtax1on"'.(($conf->global->FACTURE_LOCAL_TAX1_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1on") ? " checked" : "")."> ".$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code)."</td>";
 	print '<td colspan="2">';
 	print '<div class="nobordernopadding">';
 	$tooltiphelp = $langs->transcountry("LocalTax1IsUsedExample", $mysoc->country_code);
@@ -742,7 +732,7 @@ if ($mysoc->useLocalTax(1))
 	print "</div>";
 	print "</td></tr>\n";
 
-	print "<tr class=\"oddeven\"><td><input type=\"radio\" name=\"optionlocaltax1\" id=\"nolt1\" value=\"localtax1off\"".((empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1off") ? " checked" : "")."> ".$langs->transcountry("LocalTax1IsNotUsed", $mysoc->country_code)."</td>";
+	print '<tr class="oddeven"><td><input type="radio" name="optionlocaltax1" id="nolt1" value="localtax1off"'.((empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1off") ? " checked" : "")."> ".$langs->transcountry("LocalTax1IsNotUsed", $mysoc->country_code)."</td>";
 	print '<td colspan="2">';
 	$tooltiphelp = $langs->transcountry("LocalTax1IsNotUsedExample", $mysoc->country_code);
 	$tooltiphelp = ($tooltiphelp != "LocalTax1IsNotUsedExample" ? "<i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax1IsNotUsedExample", $mysoc->country_code)."</i>\n" : "");
@@ -770,7 +760,7 @@ print "</tr>\n";
 if ($mysoc->useLocalTax(2))
 {
 	// Note: When option is not set, it must not appears as set on on, because there is no default value for this option
-	print "<tr class=\"oddeven\"><td><input type=\"radio\" name=\"optionlocaltax2\" id=\"lt2\" value=\"localtax2on\"".(($conf->global->FACTURE_LOCAL_TAX2_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2on") ? " checked" : "")."> ".$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code)."</td>";
+	print '<tr class="oddeven"><td><input type="radio" name="optionlocaltax2" id="lt2" value="localtax2on"'.(($conf->global->FACTURE_LOCAL_TAX2_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2on") ? " checked" : "")."> ".$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code)."</td>";
 	print '<td colspan="2">';
 	print '<div class="nobordernopadding">';
 	print '<label for="lt2">'.$langs->transcountry("LocalTax2IsUsedDesc", $mysoc->country_code)."</label>";
@@ -786,7 +776,7 @@ if ($mysoc->useLocalTax(2))
 	print "</div>";
 	print "</td></tr>\n";
 
-	print "<tr class=\"oddeven\"><td><input type=\"radio\" name=\"optionlocaltax2\" id=\"nolt2\" value=\"localtax2off\"".((empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2off") ? " checked" : "")."> ".$langs->transcountry("LocalTax2IsNotUsed", $mysoc->country_code)."</td>";
+	print '<tr class="oddeven"><td><input type="radio" name="optionlocaltax2" id="nolt2" value="localtax2off"'.((empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2off") ? " checked" : "")."> ".$langs->transcountry("LocalTax2IsNotUsed", $mysoc->country_code)."</td>";
 	print '<td colspan="2">';
 	print "<div>";
 	$tooltiphelp = $langs->transcountry("LocalTax2IsNotUsedExample", $mysoc->country_code);

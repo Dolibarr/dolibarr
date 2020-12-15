@@ -86,13 +86,11 @@ class box_prospect extends ModeleBoxes
 
 		if ($user->rights->societe->lire)
 		{
-			$sql = "SELECT s.nom as name, s.rowid as socid";
-			$sql .= ", s.code_client";
-			$sql .= ", s.client, s.email";
-			$sql .= ", s.code_fournisseur";
-			$sql .= ", s.fournisseur";
-			$sql .= ", s.logo";
-			$sql .= ", s.fk_stcomm, s.datec, s.tms, s.status";
+			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
+			$sql .= ", s.code_client, s.code_compta, s.client";
+			$sql .= ", s.logo, s.email, s.entity";
+			$sql .= ", s.fk_stcomm";
+			$sql .= ", s.datec, s.tms, s.status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql .= " WHERE s.client IN (2, 3)";
@@ -114,14 +112,16 @@ class box_prospect extends ModeleBoxes
 					$objp = $this->db->fetch_object($resql);
 					$datec = $this->db->jdate($objp->datec);
 					$datem = $this->db->jdate($objp->tms);
+
 					$thirdpartystatic->id = $objp->socid;
 					$thirdpartystatic->name = $objp->name;
-					$thirdpartystatic->email = $objp->email;
+					$thirdpartystatic->name_alias = $objp->name_alias;
 					$thirdpartystatic->code_client = $objp->code_client;
-					$thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
+					$thirdpartystatic->code_compta = $objp->code_compta;
 					$thirdpartystatic->client = $objp->client;
-					$thirdpartystatic->fournisseur = $objp->fournisseur;
 					$thirdpartystatic->logo = $objp->logo;
+					$thirdpartystatic->email = $objp->email;
+					$thirdpartystatic->entity = $objp->entity;
 
 					$this->info_box_contents[$line][] = array(
 						'td' => '',

@@ -37,7 +37,8 @@ class Export
 
 	public $error;
 
-	public $array_export_code = array(); // Tableau de "idmodule_numlot"
+	public $array_export_code = array(); // Tableau de "idmodule_numexportprofile"
+	public $array_export_code_for_sort = array(); // Tableau de "idmodule_numexportprofile"
 	public $array_export_module = array(); // Tableau de "nom de modules"
 	public $array_export_label = array(); // Tableau de "libelle de lots"
 	public $array_export_sql_start = array(); // Tableau des "requetes sql"
@@ -165,6 +166,7 @@ class Export
 										}
 									}
 
+
 									// Module
 									$this->array_export_module[$i] = $module;
 									// Permission
@@ -173,6 +175,8 @@ class Export
 									$this->array_export_icon[$i] = (isset($module->export_icon[$r]) ? $module->export_icon[$r] : $module->picto);
 									// Code du dataset export
 									$this->array_export_code[$i] = $module->export_code[$r];
+									// Define a key for sort
+									$this->array_export_code_for_sort[$i] = $module->module_position.'_'.$module->export_code[$r];	// Add a key into the module
 									// Libelle du dataset export
 									$this->array_export_label[$i] = $module->getExportDatasetLabel($r);
 									// Tableau des champ a exporter (cle=champ, valeur=libelle)

@@ -315,11 +315,15 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd)
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$model = $object->model_pdf;
 
 				$ret = $object->fetch($id); // Reload to get new records
 
-				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$model = $object->model_pdf;
+
+				$retgen = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				if ($retgen < 0) {
+					setEventMessages($object->error, $object->errors, 'warnings');
+				}
 			}
 		}
 	} else {
