@@ -631,26 +631,32 @@ if (empty($reshook))
 								$errors[] = "ErrorFilePartiallyUploaded";
 								break;
 						}
-					}
-					// Gestion du logo de la société
+	                }
 				} else {
-					if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') // TODO Sometime errors on duplicate on profid and not on code, so we must manage this case
+					if ($result == -3 && in_array('ErrorCustomerCodeAlreadyUsed', $object->errors))
+					{
+						$duplicate_code_error = true;
+						$object->code_client = null;
+					}
+
+					if ($result == -3 && in_array('ErrorSupplierCodeAlreadyUsed', $object->errors))
 					{
 						$duplicate_code_error = true;
 						$object->code_fournisseur = null;
-						$object->code_client = null;
+					}
+
+					if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {	// TODO Sometime errors on duplicate on profid and not on code, so we must manage this case
+						$duplicate_code_error = true;
 					}
 
 					setEventMessages($object->error, $object->errors, 'errors');
 				   	$error++;
 				}
 
-				if ($result >= 0 && !$error)
-				{
+				if ($result >= 0 && !$error) {
 					$db->commit();
 
-					if (!empty($backtopage))
-					{
+					if (!empty($backtopage)) {
 						$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
 						if (preg_match('/\?/', $backtopage)) $backtopage .= '&socid='.$object->id; // Old method
 			   			header("Location: ".$backtopage);
