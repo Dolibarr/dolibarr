@@ -265,52 +265,6 @@ if ($action!= "updateRate" && $action!= "deleteRate" ) {
 	print '</form>';
 }
 
-// passage updateRate vers edit line @TODO DEPRECATED
-if ($action == "updateRate"){
-//	$current_rate = new CurrencyRate($db);
-//	$current_rate->fetch(intval($id_rate_selected));
-//
-//	if ($current_rate) {
-//		$curr = new MultiCurrency($db);
-//		$resultcurrentCurrency =  $curr->fetch($current_rate->fk_multicurrency);
-//
-//		if ($resultcurrentCurrency){
-//			$currency_code = $curr->code;
-//		}else {
-//			$currency_code = '';
-//		}
-//
-//		print '<table class="noborder centpercent">';
-//		print '<tr class="liste_titre">';
-//		print '<td>' . $langs->trans("FormUpdateRate") . '</td>' . "\n";
-//		print '</tr></table>';
-//
-//		$form = new Form($db);
-//		print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post" name="formulaire">';
-//		print '<table><tr>';
-//		print ' <td>' . $langs->trans('date') . '</td>';
-//		print '<td><input class="minwidth200" name="dateinput" value="'. date('Y-m-d', dol_stringtotime($current_rate->date_sync)) .'" type="date"></td>';
-//
-//		print '<td>' . $langs->trans('Codemulticurrency') . '</td>';
-//		print '<td>' . $form->selectMultiCurrency($currency_code, 'multicurrency_code', 0, " code != '".$conf->currency."'", true) . '</td>';
-//
-//		print '<td>' . $langs->trans('rate') . '</td>';
-//		print '<td><input class="minwidth200" name="rateinput" value="' . dol_escape_htmltag($current_rate->rate) . '" type="text"></td>';
-//
-//		print '<td>';
-//		print '<input type="hidden" name="action" value="update">';
-//		print '<input type="hidden" name="id_rate" value="'.$current_rate->id.'">';
-//		print '<input type="submit" class="butAction" name="btnupdateCurrencyRate" value="' . $langs->trans('UpdateRate') . '">';
-//		print '<a href="'.$_SERVER["PHP_SELF"].'" class="butAction">' .$langs->trans('CancelUpdate') . '</a>';
-//
-//		print '</td>';
-//		print '</tr></table>';
-//		print '</form>';
-//	}else {
-//		dol_syslog("currency_rate:list:update", LOG_WARNING);
-//	}
-}
-
 
 $sql = 'SELECT cr.rowid, cr.date_sync, cr.rate, cr.entity, m.code, m.name ';
 
