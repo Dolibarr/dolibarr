@@ -280,20 +280,20 @@ class Product extends CommonObject
 
 	//! Metric of products
 	public $weight;
-	public $weight_units;
+	public $weight_units;	// scale -3, 0, 3, 6
 	public $length;
-	public $length_units;
+	public $length_units;	// scale -3, 0, 3, 6
 	public $width;
-	public $width_units;
+	public $width_units;	// scale -3, 0, 3, 6
 	public $height;
-	public $height_units;
+	public $height_units;	// scale -3, 0, 3, 6
 	public $surface;
-	public $surface_units;
+	public $surface_units;	// scale -3, 0, 3, 6
 	public $volume;
-	public $volume_units;
+	public $volume_units;	// scale -3, 0, 3, 6
 
 	public $net_measure;
-	public $net_measure_units;
+	public $net_measure_units;	// scale -3, 0, 3, 6
 
 	public $accountancy_code_sell;
 	public $accountancy_code_sell_intra;
@@ -5387,19 +5387,19 @@ class Product extends CommonObject
 		$this->date_modification = $now;
 
 		$this->weight = 4;
-		$this->weight_unit = 1;
+		$this->weight_units = 3;
 
 		$this->length = 5;
-		$this->length_unit = 1;
+		$this->length_units = 1;
 		$this->width = 6;
-		$this->width_unit = 0;
+		$this->width_units = 0;
 		$this->height = null;
-		$this->height_unit = null;
+		$this->height_units = null;
 
 		$this->surface = 30;
-		$this->surface_unit = 0;
+		$this->surface_units = 0;
 		$this->volume = 300;
-		$this->volume_unit = 0;
+		$this->volume_units = 0;
 
 		$this->barcode = -1; // Create barcode automatically
 	}
