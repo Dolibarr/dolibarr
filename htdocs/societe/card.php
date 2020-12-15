@@ -634,16 +634,20 @@ if (empty($reshook))
                 }
                 else
 				{
-					if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS' || ($result==-3 && in_array('ErrorCustomerCodeAlreadyUsed', $object->errors))) // TODO Sometime errors on duplicate on profid and not on code, so we must manage this case
+					if ($result==-3 && in_array('ErrorCustomerCodeAlreadyUsed', $object->errors))
 					{
 						$duplicate_code_error = true;
 						$object->code_client = null;
 					}
 
-					if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS' || ($result==-3 && in_array('ErrorSupplierCodeAlreadyUsed',$object->errors))) // TODO Sometime errors on duplicate on profid and not on code, so we must manage this case
+					if ($result==-3 && in_array('ErrorSupplierCodeAlreadyUsed',$object->errors))
 					{
 						$duplicate_code_error = true;
 						$object->code_fournisseur = null;
+					}
+
+					if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+						$duplicate_code_error = true;
 					}
 
                     setEventMessages($object->error, $object->errors, 'errors');
