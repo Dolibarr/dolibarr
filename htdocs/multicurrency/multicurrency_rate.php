@@ -58,6 +58,9 @@ $limit 				= GETPOST('limit', 'int')?GETPOST('limit', 'int') : $conf->liste_limi
 $sortfield 			= GETPOST("sortfield", 'alpha');
 $sortorder 			= GETPOST("sortorder", 'alpha');
 $page 				= (GETPOST("page", 'int')?GETPOST("page", 'int'):0);
+$actionModify       = (GETPOST("actionmodify", 'alpha') ? GETPOST("actionmodify", 'alpha') : null);
+
+
 
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -123,9 +126,9 @@ if ($action == "create"){
 	}
 }
 
-if ($action == 'update'){
+if ($actionModify){
 	$currencyRate = new CurrencyRate($db);
-	$result = $currencyRate->fetch($id_rate_selected);
+	$result = $currencyRate->fetch(GETPOST('rowid', 'alpha'));
 	if ( $result > 0){
 		$currency_static  = new MultiCurrency($db);
 		$fk_currency = $currency_static->getIdFromCode($db, $multicurrency_code);
@@ -245,13 +248,13 @@ if ($action!= "updateRate" && $action!= "deleteRate" ) {
 	print '<table class="noborder centpercent"><tr>';
 
 	print ' <td>' . $langs->trans('date') . '</td>';
-	print ' <td><input class="minwidth200" name="dateinput" value="' . dol_escape_htmltag($dateinput) . '" type="date"></td>';
+	print ' <td><input class="minwidth200" name="dateinput" value="" type="date"></td>';
 
 	print ' <td>' . $langs->trans('Codemulticurrency') . '</td>';
 	print '<td>' . $form->selectMultiCurrency('', 'multicurrency_code', 1, " code != '".$conf->currency."'", true) . '</td>';
 
 	print ' <td>' . $langs->trans('rate') . '</td>';
-	print ' <td><input type="number" min ="0" step="any" class="minwidth200" name="rateinput" value="' . dol_escape_htmltag($rateinput) . '"></td>';
+	print ' <td><input type="number" min ="0" step="any" class="minwidth200" name="rateinput" value=""></td>';
 
 	print '<td>';
 	print '<input type="hidden" name="action" value="create">';
@@ -262,49 +265,50 @@ if ($action!= "updateRate" && $action!= "deleteRate" ) {
 	print '</form>';
 }
 
+// passage updateRate vers edit line @TODO DEPRECATED
 if ($action == "updateRate"){
-	$current_rate = new CurrencyRate($db);
-	$current_rate->fetch(intval($id_rate_selected));
-
-	if ($current_rate) {
-		$curr = new MultiCurrency($db);
-		$resultcurrentCurrency =  $curr->fetch($current_rate->fk_multicurrency);
-
-		if ($resultcurrentCurrency){
-			$currency_code = $curr->code;
-		}else {
-			$currency_code = '';
-		}
-
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre">';
-		print '<td>' . $langs->trans("FormUpdateRate") . '</td>' . "\n";
-		print '</tr></table>';
-
-		$form = new Form($db);
-		print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post" name="formulaire">';
-		print '<table><tr>';
-		print ' <td>' . $langs->trans('date') . '</td>';
-		print '<td><input class="minwidth200" name="dateinput" value="'. date('Y-m-d', dol_stringtotime($current_rate->date_sync)) .'" type="date"></td>';
-
-		print '<td>' . $langs->trans('Codemulticurrency') . '</td>';
-		print '<td>' . $form->selectMultiCurrency($currency_code, 'multicurrency_code', 0, " code != '".$conf->currency."'", true) . '</td>';
-
-		print '<td>' . $langs->trans('rate') . '</td>';
-		print '<td><input class="minwidth200" name="rateinput" value="' . dol_escape_htmltag($current_rate->rate) . '" type="text"></td>';
-
-		print '<td>';
-		print '<input type="hidden" name="action" value="update">';
-		print '<input type="hidden" name="id_rate" value="'.$current_rate->id.'">';
-		print '<input type="submit" class="butAction" name="btnupdateCurrencyRate" value="' . $langs->trans('UpdateRate') . '">';
-		print '<a href="'.$_SERVER["PHP_SELF"].'" class="butAction">' .$langs->trans('CancelUpdate') . '</a>';
-
-		print '</td>';
-		print '</tr></table>';
-		print '</form>';
-	}else {
-		dol_syslog("currency_rate:list:update", LOG_WARNING);
-	}
+//	$current_rate = new CurrencyRate($db);
+//	$current_rate->fetch(intval($id_rate_selected));
+//
+//	if ($current_rate) {
+//		$curr = new MultiCurrency($db);
+//		$resultcurrentCurrency =  $curr->fetch($current_rate->fk_multicurrency);
+//
+//		if ($resultcurrentCurrency){
+//			$currency_code = $curr->code;
+//		}else {
+//			$currency_code = '';
+//		}
+//
+//		print '<table class="noborder centpercent">';
+//		print '<tr class="liste_titre">';
+//		print '<td>' . $langs->trans("FormUpdateRate") . '</td>' . "\n";
+//		print '</tr></table>';
+//
+//		$form = new Form($db);
+//		print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post" name="formulaire">';
+//		print '<table><tr>';
+//		print ' <td>' . $langs->trans('date') . '</td>';
+//		print '<td><input class="minwidth200" name="dateinput" value="'. date('Y-m-d', dol_stringtotime($current_rate->date_sync)) .'" type="date"></td>';
+//
+//		print '<td>' . $langs->trans('Codemulticurrency') . '</td>';
+//		print '<td>' . $form->selectMultiCurrency($currency_code, 'multicurrency_code', 0, " code != '".$conf->currency."'", true) . '</td>';
+//
+//		print '<td>' . $langs->trans('rate') . '</td>';
+//		print '<td><input class="minwidth200" name="rateinput" value="' . dol_escape_htmltag($current_rate->rate) . '" type="text"></td>';
+//
+//		print '<td>';
+//		print '<input type="hidden" name="action" value="update">';
+//		print '<input type="hidden" name="id_rate" value="'.$current_rate->id.'">';
+//		print '<input type="submit" class="butAction" name="btnupdateCurrencyRate" value="' . $langs->trans('UpdateRate') . '">';
+//		print '<a href="'.$_SERVER["PHP_SELF"].'" class="butAction">' .$langs->trans('CancelUpdate') . '</a>';
+//
+//		print '</td>';
+//		print '</tr></table>';
+//		print '</form>';
+//	}else {
+//		dol_syslog("currency_rate:list:update", LOG_WARNING);
+//	}
 }
 
 
@@ -479,59 +483,73 @@ if ($resql)
 
 	$i = 0;
 	$totalarray=array();
-	while ($i < min($num, $limit))
-	{
-		$obj = $db->fetch_object($resql);
+	while ($i < min($num, $limit)) {
+        $obj = $db->fetch_object($resql);
 
-		print '<tr class="oddeven">';
+        print '<tr class="oddeven">';
 
-		// date_sync
-		if (! empty($arrayfields['cr.date_sync']['checked']))
-		{
-			print '<td class="tdoverflowmax200">';
-			print $obj->date_sync;
-			print "</td>\n";
-			if (! $i) $totalarray['nbfield']++;
-		}
+        // USER REQUEST UPDATE FOR THIS LINE
+        if($action == "updateRate" && $obj->rowid == $id_rate_selected) {
+          //  var_dump($obj);
+            print ' <td><input class="minwidth200" name="dateinput" value="'. date('Y-m-d', dol_stringtotime($obj->date_sync)) .'" type="date"></td>';
+            print '<td>' . $form->selectMultiCurrency($obj->code, 'multicurrency_code', 1, " code != '".$conf->currency."'", true) . '</td>';
+            print ' <td><input type="number" min ="0" step="any" class="minwidth200" name="rateinput" value="' . dol_escape_htmltag($obj->rate) . '"></td>';
 
-		// code
-		if (! empty($arrayfields['m.code']['checked']))
-		{
-			print '<td class="tdoverflowmax200">';
-			print $obj->code ." ". $obj->name;
-			print "</td>\n";
+            print '<td colspan="3" class="center">';
+            print '<input type="hidden" name="page" value="'.dol_escape_htmltag($page).'">';
+            print '<input type="hidden" name="rowid" value="'.dol_escape_htmltag($obj->rowid).'">';
 
-			if (! $i) $totalarray['nbfield']++;
-		}
+            print '<input type="submit" class="button butAction" name="actionmodify" value="'.$langs->trans("Modify").'">';
+            print '<input type="submit" class="button butAction" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+            print '</td>';
 
-		// rate
-		if (! empty($arrayfields['cr.rate']['checked']))
-		{
-			print '<td class="tdoverflowmax200">';
-			print $obj->rate;
-			print "</td>\n";
-			if (! $i) $totalarray['nbfield']++;
-		}
+        }
+        else {
+            // date_sync
+            if(! empty($arrayfields['cr.date_sync']['checked'])) {
+                print '<td class="tdoverflowmax200">';
+                print $obj->date_sync;
+                print "</td>\n";
+                if(! $i) $totalarray['nbfield']++;
+            }
 
-		// Fields from hook
-		$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
-		$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters);    // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
+            // code
+            if(! empty($arrayfields['m.code']['checked'])) {
+                print '<td class="tdoverflowmax200">';
+                print $obj->code." ".$obj->name;
+                print "</td>\n";
 
-		// Action
-		print '<td class="nowrap" align="center">';
-		if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-		{
-			$selected=0;
-			if (in_array($obj->rowid, $arrayofselected)) $selected=1;
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=updateRate&amp;id_rate='.$obj->rowid.'" class="like-link " style="margin-right:15px;important">' . img_picto('edit', 'edit') . '</a>';
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=deleteRate&amp;id_rate='.$obj->rowid.'" class="like-link" style="margin-right:45px;important">' . img_picto('delete', 'delete') . '</a>';
-			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
-		}
-		print '</td>';
-		if (! $i) $totalarray['nbfield']++;
+                if(! $i) $totalarray['nbfield']++;
+            }
 
-		print "</tr>\n";
+            // rate
+            if(! empty($arrayfields['cr.rate']['checked'])) {
+                print '<td class="tdoverflowmax200">';
+                print $obj->rate;
+                print "</td>\n";
+                if(! $i) $totalarray['nbfield']++;
+            }
+
+
+        // Fields from hook
+        $parameters = ['arrayfields' => $arrayfields, 'obj' => $obj];
+        $reshook = $hookmanager->executeHooks('printFieldListValue', $parameters);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
+
+        // Action
+        print '<td class="nowrap" align="center">';
+        if($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+        {
+            $selected = 0;
+            if(in_array($obj->rowid, $arrayofselected)) $selected = 1;
+            print '<a href="'.$_SERVER["PHP_SELF"].'?action=updateRate&amp;id_rate='.$obj->rowid.'" class="like-link " style="margin-right:15px;important">'.img_picto('edit', 'edit').'</a>';
+            print '<a href="'.$_SERVER["PHP_SELF"].'?action=deleteRate&amp;id_rate='.$obj->rowid.'" class="like-link" style="margin-right:45px;important">'.img_picto('delete', 'delete').'</a>';
+            print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+        }
+        print '</td>';
+        if(! $i) $totalarray['nbfield']++;
+    }
+    print "</tr>\n";
 		$i++;
 	}
 
