@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'languages', 'other', 'companies', 'products', 'members'));
+$langs->loadLangs(array('admin', 'languages', 'other', 'companies', 'products', 'members', 'stocks'));
 
 if (!$user->admin) accessforbidden();
 
@@ -80,6 +80,7 @@ if ($action == 'update')
 	dolibarr_set_const($db, "MAIN_PDF_MAIN_HIDE_THIRD_TAX", GETPOST("MAIN_PDF_MAIN_HIDE_THIRD_TAX"), 'chaine', 0, '', $conf->entity);
 
 	dolibarr_set_const($db, "PDF_USE_ALSO_LANGUAGE_CODE", GETPOST('PDF_USE_ALSO_LANGUAGE_CODE', 'alpha'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "SHOW_SUBPRODUCT_REF_IN_PDF", GETPOST('SHOW_SUBPRODUCT_REF_IN_PDF', 'alpha'), 'chaine', 0, '', $conf->entity);
 
 	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 
@@ -331,6 +332,10 @@ print $formadmin->select_language(GETPOSTISSET('PDF_USE_ALSO_LANGUAGE_CODE') ? G
 //}
 print '</td></tr>';
 
+// SHOW_SUBPRODUCT_REF_IN_PDF - Option to show the detail of product ref for kits.
+print '<tr class="oddeven"><td>'.$langs->trans("SHOW_SUBPRODUCT_REF_IN_PDF", $langs->transnoentitiesnoconv("AssociatedProductsAbility"), $langs->transnoentitiesnoconv("Products")).'</td><td>';
+print $form->selectyesno('SHOW_SUBPRODUCT_REF_IN_PDF', (!empty($conf->global->SHOW_SUBPRODUCT_REF_IN_PDF)) ? $conf->global->SHOW_SUBPRODUCT_REF_IN_PDF : 0, 1);
+print '</td></tr>';
 
 print '</table>';
 print '</div>';

@@ -360,7 +360,7 @@ if (count($typeleaves) == 0)
 		print '<td>';
 		if (!empty($user->rights->holiday->define_holiday))	// Allowed to set the balance of any user
 		{
-			print '<input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Update")).'" class="button"/>';
+			print '<input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Save")).'" class="button smallpaddingimp"/>';
 		}
 		print '</td>'."\n";
 		print '</tr>';

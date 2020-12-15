@@ -120,7 +120,7 @@ class Documents extends DolibarrApi
 	/**
 	 * Build a document.
 	 *
-	 * Test sample 1: { "module_part": "invoice", "original_file": "FA1701-001/FA1701-001.pdf", "doctemplate": "crabe", "langcode": "fr_FR" }.
+	 * Test sample 1: { "modulepart": "invoice", "original_file": "FA1701-001/FA1701-001.pdf", "doctemplate": "crabe", "langcode": "fr_FR" }.
 	 *
 	 * @param   string  $modulepart    Name of module or area concerned by file download ('invoice', 'order', ...).
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: IN201701-999/IN201701-999.pdf).
@@ -497,6 +497,17 @@ class Documents extends DolibarrApi
 		$filearray = dol_dir_list($upload_dir, $type, $recursive, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
 		if (empty($filearray)) {
 			throw new RestException(404, 'Search for modulepart '.$modulepart.' with Id '.$object->id.(!empty($object->ref) ? ' or Ref '.$object->ref : '').' does not return any document.');
+		} else {
+			if (($object->id) > 0 && !empty($modulepart)) {
+				require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
+				$ecmfile = new EcmFiles($this->db);
+				$result = $ecmfile->fetchAll('', '', 0, 0, array('t.src_object_type' => $modulepart, 't.src_object_id' => $object->id));
+				if ($result < 0) {
+					throw new RestException(503, 'Error when retrieve ecm list : ' . $this->db->lasterror());
+				} elseif (is_array($ecmfile->lines) && count($ecmfile->lines) > 0) {
+					$filearray['ecmfiles_infos'] = $ecmfile->lines;
+				}
+			}
 		}
 
 		return $filearray;

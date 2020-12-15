@@ -196,6 +196,11 @@ abstract class CommonObject
 	public $ref;
 
 	/**
+	 * @var string An external reference for the object
+	 */
+	public $ref_ext;
+
+	/**
 	 * @var string The object's previous reference
 	 */
 	public $ref_previous;
@@ -204,11 +209,6 @@ abstract class CommonObject
 	 * @var string The object's next reference
 	 */
 	public $ref_next;
-
-	/**
-	 * @var string An external reference for the object
-	 */
-	public $ref_ext;
 
 	/**
 	 * @var int The object's status
@@ -470,6 +470,12 @@ abstract class CommonObject
 	public $specimen = 0;
 
 	/**
+	 * @var	int	Id of contact to send object (used by the trigger of module Agenda)
+	 */
+	public $sendtoid;
+
+
+	/**
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array();
@@ -694,17 +700,14 @@ abstract class CommonObject
 		$contactid = 0;
 		$thirdpartyid = 0;
 		$elementforaltlanguage = $this->element;
-		if ($this->element == 'societe')
-		{
+		if ($this->element == 'societe') {
 			$thirdpartyid = $this->id;
 		}
-		if ($this->element == 'contact')
-		{
+		if ($this->element == 'contact') {
 			$contactid = $this->id;
 			$thirdpartyid = $object->fk_soc;
 		}
-		if ($this->element == 'user')
-		{
+		if ($this->element == 'user') {
 			$contactid = $this->contact_id;
 			$thirdpartyid = $object->fk_soc;
 		}
@@ -773,54 +776,62 @@ abstract class CommonObject
 
 		if (!empty($this->phone) || !empty($this->phone_pro) || !empty($this->phone_mobile) || !empty($this->phone_perso) || !empty($this->fax) || !empty($this->office_phone) || !empty($this->user_mobile) || !empty($this->office_fax)) $out .= ($outdone ? '<br>' : '');
 		if (!empty($this->phone) && empty($this->phone_pro)) {		// For objects that store pro phone into ->phone
-			$out .= dol_print_phone($this->phone, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePro")); $outdone++;
+			$out .= dol_print_phone($this->phone, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePro"));
+			$outdone++;
 		}
 		if (!empty($this->phone_pro)) {
-			$out .= dol_print_phone($this->phone_pro, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePro")); $outdone++;
+			$out .= dol_print_phone($this->phone_pro, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePro"));
+			$outdone++;
 		}
 		if (!empty($this->phone_mobile)) {
-			$out .= dol_print_phone($this->phone_mobile, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'mobile', $langs->trans("PhoneMobile")); $outdone++;
+			$out .= dol_print_phone($this->phone_mobile, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'mobile', $langs->trans("PhoneMobile"));
+			$outdone++;
 		}
 		if (!empty($this->phone_perso)) {
-			$out .= dol_print_phone($this->phone_perso, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePerso")); $outdone++;
+			$out .= dol_print_phone($this->phone_perso, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePerso"));
+			$outdone++;
 		}
 		if (!empty($this->office_phone)) {
-			$out .= dol_print_phone($this->office_phone, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePro")); $outdone++;
+			$out .= dol_print_phone($this->office_phone, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePro"));
+			$outdone++;
 		}
 		if (!empty($this->user_mobile)) {
-			$out .= dol_print_phone($this->user_mobile, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'mobile', $langs->trans("PhoneMobile")); $outdone++;
+			$out .= dol_print_phone($this->user_mobile, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'mobile', $langs->trans("PhoneMobile"));
+			$outdone++;
 		}
 		if (!empty($this->fax)) {
-			$out .= dol_print_phone($this->fax, $this->country_code, $contactid, $thirdpartyid, 'AC_FAX', '&nbsp;', 'fax', $langs->trans("Fax")); $outdone++;
+			$out .= dol_print_phone($this->fax, $this->country_code, $contactid, $thirdpartyid, 'AC_FAX', '&nbsp;', 'fax', $langs->trans("Fax"));
+			$outdone++;
 		}
 		if (!empty($this->office_fax)) {
-			$out .= dol_print_phone($this->office_fax, $this->country_code, $contactid, $thirdpartyid, 'AC_FAX', '&nbsp;', 'fax', $langs->trans("Fax")); $outdone++;
+			$out .= dol_print_phone($this->office_fax, $this->country_code, $contactid, $thirdpartyid, 'AC_FAX', '&nbsp;', 'fax', $langs->trans("Fax"));
+			$outdone++;
 		}
 
 		if ($out) $out .= '<div style="clear: both;"></div>';
 		$outdone = 0;
-		if (!empty($this->email))
-		{
+		if (!empty($this->email)) {
 			$out .= dol_print_email($this->email, $this->id, $object->id, 'AC_EMAIL', 0, 0, 1);
 			$outdone++;
 		}
-		if (!empty($this->url))
-		{
+		if (!empty($this->url)) {
 			//$out.=dol_print_url($this->url,'_goout',0,1);//steve changed to blank
 			$out .= dol_print_url($this->url, '_blank', 0, 1);
 			$outdone++;
 		}
 
-		if (!empty($conf->socialnetworks->enabled))
-		{
+		if (!empty($conf->socialnetworks->enabled)) {
 			$outsocialnetwork = '';
 
 			if (is_array($this->socialnetworks) && count($this->socialnetworks) > 0) {
+				$socialnetworksdict = getArrayOfSocialNetworks();
 				foreach ($this->socialnetworks as $key => $value) {
-					$outsocialnetwork .= dol_print_socialnetworks($value, $this->id, $object->id, $key);
+					if ($value) {
+						$outsocialnetwork .= dol_print_socialnetworks($value, $this->id, $object->id, $key, $socialnetworksdict);
+					}
 					$outdone++;
 				}
-			} else {
+			} else {	// Old code to remove
 				if ($this->skype) $outsocialnetwork .= dol_print_socialnetworks($this->skype, $this->id, $object->id, 'skype');
 				$outdone++;
 				if ($this->jabberid) $outsocialnetwork .= dol_print_socialnetworks($this->jabberid, $this->id, $object->id, 'jabber');
@@ -4554,6 +4565,11 @@ abstract class CommonObject
 		if (empty($reshook))
 		{
 			dol_syslog("commonGenerateDocument modele=".$modele." outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'));
+
+			if (empty($modele)) {
+				$this->error = 'BadValueForParameterModele';
+				return -1;
+			}
 
 			// Increase limit for PDF build
 			$err = error_reporting();

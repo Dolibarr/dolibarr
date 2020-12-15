@@ -412,13 +412,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$morehtml .= $form->textwithpicto('', 'connect string '.$connectstringserver);
 	} else {
-		$morehtml .= 'IMAP functions not available on your PHP';
+		$morehtml .= 'IMAP functions not available on your PHP. ';
 	}
 
 	if (!$connection)
 	{
 		$morehtml .= 'Failed to open IMAP connection '.$connectstringsource;
-		$morehtml .= '<br>'.imap_last_error();
+		if (function_exists('imap_last_error')) {
+			$morehtml .= '<br>'.imap_last_error();
+		}
 		//var_dump(imap_errors())
 	} else {
 		$morehtml .= imap_num_msg($connection);

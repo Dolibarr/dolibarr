@@ -820,9 +820,12 @@ class Cronjob extends CommonObject
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("CronJob").'</u>';
-		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$label = img_picto('', 'object_'.$this->picto).' <u>'.$langs->trans("CronTask").'</u>';
+		if (isset($this->status)) {
+			$label .= ' '.$this->getLibStatut(5);
+		}
+		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$label .= '<br><b>'.$langs->trans('Title').':</b> '.$this->label;
 
 		$url = DOL_URL_ROOT.'/cron/card.php?id='.$this->id;
 

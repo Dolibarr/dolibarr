@@ -794,8 +794,8 @@ while ($i < min($num, $limit))
 						$userstatic->statut = $val['statut'];
 						$userstatic->entity = $val['entity'];
 						$userstatic->photo = $val['photo'];
-						//print $userstatic->getNomUrl(1, '', 0, 0, 12);
-						print $userstatic->getNomUrl(-2);
+						print $userstatic->getNomUrl(1, '', 0, 0, 12);
+						//print $userstatic->getNomUrl(-2);
 						$j++;
 						if ($j < $nbofsalesrepresentative) print ' ';
 					}

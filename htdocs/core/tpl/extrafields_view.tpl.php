@@ -128,8 +128,13 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			print '<td class="';
 			if ((!empty($action) && ($action == 'create' || $action == 'edit')) && !empty($extrafields->attributes[$object->table_element]['required'][$tmpkeyextra])) print ' fieldrequired';
 			print '">';
-			if (!empty($extrafields->attributes[$object->table_element]['help'][$tmpkeyextra])) print $form->textwithpicto($langs->trans($tmplabelextra), $langs->trans($extrafields->attributes[$object->table_element]['help'][$tmpkeyextra]));
-			else print $langs->trans($tmplabelextra);
+			if (!empty($extrafields->attributes[$object->table_element]['help'][$tmpkeyextra])) {
+				// You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
+				$tmptooltip = explode(':', $extrafields->attributes[$object->table_element]['help'][$tmpkeyextra]);
+				print $form->textwithpicto($langs->trans($tmplabelextra), $langs->trans($tmptooltip[0]), 1, 'help', '', 0, 3, (empty($tmptooltip[1]) ? '' : 'extra_'.$tmpkeyextra.'_'.$tmptooltip[1]));
+			} else {
+				print $langs->trans($tmplabelextra);
+			}
 			print '</td>';
 
 			//TODO Improve element and rights detection

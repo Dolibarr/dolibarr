@@ -244,7 +244,7 @@ class CategorieTest extends PHPUnit\Framework\TestCase
     /**
      * testCategorieUpdate
      *
-     * @param   Category        $localobject        Category
+     * @param   Categorie        $localobject        Category
      * @return  int
 
      * @depends testCategorieFetch
@@ -269,7 +269,7 @@ class CategorieTest extends PHPUnit\Framework\TestCase
     /**
      * testCategorieOther
      *
-     * @param   Category    $localobject    Category
+     * @param   Categorie    $localobject    Category
      * @return  int
      *
      * @depends testCategorieUpdate

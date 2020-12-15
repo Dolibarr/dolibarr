@@ -97,10 +97,7 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 body {
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') {  ?>
 	background-color: #FFFFFF;
-<?php } else { ?>
-	background: var(--colorbackbody);
 <?php } ?>
-	color: var(--colortext);
 	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize; ?>;
 	line-height: 1.4;
 	font-family: <?php print $fontlist ?>;
@@ -399,6 +396,13 @@ input.pageplusone {
 	color: #000;
 }
 
+.vmirror {
+    transform: scale(1, -1);
+}
+.hmirror {
+    transform: scale(-1, 1);
+}
+
 select:invalid {
 	color: gray;
 }
@@ -629,6 +633,9 @@ textarea.centpercent {
 }
 .nowrap {
 	white-space: <?php print ($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
+}
+.nowraponsmartphone {
+	white-space: <?php print ($dol_optimize_smallscreen ? 'nowrap' : 'normal'); ?>;
 }
 .liste_titre .nowrap {
 	white-space: nowrap;
@@ -1220,6 +1227,7 @@ table[summary="list_of_modules"] .fa-cog {
 .width50  { width: 50px; }
 .width75  { width: 75px; }
 .width100 { width: 100px; }
+.width125 { width: 125px; }
 .width150 { width: 150px; }
 .width200 { width: 200px; }
 .maxwidth25  { max-width: 25px; }
@@ -1882,7 +1890,7 @@ span.widthpictotitle.pictotitle {
 	vertical-align: middle;
 	margin-top: -3px
 }
-.pictowarning, .pictopreview {
+.pictowarning, .pictoerror, .pictopreview {
     padding-<?php echo $left; ?>: 3px;
 }
 .pictowarning {
@@ -4610,7 +4618,7 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 .cal_event a:link       { color: #111111; font-weight: normal !important; }
 .cal_event a:visited    { color: #111111; font-weight: normal !important; }
 .cal_event a:active     { color: #111111; font-weight: normal !important; }
-.cal_event_notbusy a.cal_event_title:hover { color: #111111; font-weight: normal !important; color:rgba(255,255,255,.75); }
+.cal_event_notbusy a.cal_event_title:hover { color: #111111; font-weight: normal !important; }
 .cal_event_busy      { }
 .cal_peruserviewname { max-width: 140px; height: 30px !important; }
 .cal_event span.badge.badge-status { border: 1px solid #aaa; }
@@ -5094,17 +5102,30 @@ td.gminorheading {
 .glistlbl, .glistgrid {
 	width: 582px !important;
 }
-.gtaskname div, .gtaskname {
+/*.gtaskname div, .gtaskname {
     min-width: 250px !important;
     max-width: 250px !important;
     width: 250px !important;
+}*/
+.gtaskname div, .gtaskname {
+    min-width: 250px !important;
+    max-width: unset !important;
+    width: unset !important;
 }
 .gpccomplete div, .gpccomplete {
     min-width: 40px !important;
     max-width: 40px !important;
     width: 40px !important;
 }
-
+td.gtaskheading.gstartdate, td.gtaskheading.genddate {
+    white-space: break-spaces;
+}
+.gtasktableh tr:nth-child(2) td:nth-child(2), .gtasktableh tr:nth-child(2) td:nth-child(3), .gtasktableh tr:nth-child(2) td:nth-child(4), .gtasktableh tr:nth-child(2) td:nth-child(5), .gtasktableh tr:nth-child(2) td:nth-child(6), .gtasktableh tr:nth-child(2) td:nth-child(7) {
+    color: transparent !important;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+}
 
 /* ============================================================================== */
 /*  jFileTree                                                                     */
@@ -5395,6 +5416,9 @@ input.select2-input {
 {
     background-color: var(--colorbackvmenu1);
 }
+.select2-container--default .select2-selection--single {
+    background-color: var(--colorbackbody);
+}
 #blockvmenusearch .select2-container--default .select2-selection--single .select2-selection__placeholder {
     color: var(--colortextbackvmenu);
 }
@@ -5503,6 +5527,8 @@ input.select2-input {
 	/*background-color: var(--colorbackvmenu1);
 	border: 1px solid var(--colorbackvmenu1); */
 	box-shadow: 1px 2px 10px var(--colorbackvmenu1);
+	background-color: var(--colorbackbody);
+	color: var(--colortext);
 }
 .select2-dropdown-open {
 	background-color: var(--colorbackvmenu1);

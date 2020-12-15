@@ -189,8 +189,8 @@ export res=$?
 export documentdir=`cat $mydir/../../htdocs/conf/conf.php | grep '^\$dolibarr_main_data_root' | sed -e 's/$dolibarr_main_data_root=//' | sed -e 's/;//' | sed -e "s/'//g" | sed -e 's/"//g' `
 if [ "x$documentdir" != "x" ]
 then
-	$DIALOG --title "Reset document directory tpp" --clear \
-	        --inputbox "Delete and recreate document directory $documentdir/:" 16 55 n 2> $fichtemp
+	$DIALOG --title "Reset document directory" --clear \
+	        --inputbox "DELETE and recreate document directory $documentdir/:" 16 55 n 2> $fichtemp
 	
 	valret=$?
 	

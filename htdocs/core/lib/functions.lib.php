@@ -931,8 +931,9 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 	// List of special chars for filenames in windows are defined on page https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file
 	// Char '>' '<' '|' '$' and ';' are special chars for shells.
 	// Char '/' and '\' are file delimiters.
-	$filesystem_forbidden_chars = array('<', '>', '/', '\\', '?', '*', '|', '"', ':', '°', '$', ';');
-	return dol_string_nospecial($unaccent ?dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
+	// -- car can be used into filename to inject special paramaters like --use-compress-program to make command with file as parameter making remote execution of command
+	$filesystem_forbidden_chars = array('<', '>', '/', '\\', '?', '*', '|', '"', ':', '°', '$', ';', '--');
+	return dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 }
 
 /**
@@ -1697,7 +1698,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 							$phototoshow .= '</div>';
 						}
 					}
-				} elseif (!$phototoshow) {
+				} elseif (!$phototoshow) { // example if modulepart = 'photo'
 					$phototoshow .= $form->showphoto($modulepart, $object, 0, 0, 0, 'photoref', 'small', 1, 0, $maxvisiblephotos);
 				}
 
@@ -1757,21 +1758,17 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		} else {
 			$morehtmlstatus .= '<span class="statusrefbuy">'.$object->getLibStatut(6, 1).'</span>';
 		}
-	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan')))
-	{
+	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan'))) {
 		$tmptxt = $object->getLibStatut(6, $object->totalpaye);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) $tmptxt = $object->getLibStatut(5, $object->totalpaye);
 		$morehtmlstatus .= $tmptxt;
-	} elseif ($object->element == 'contrat' || $object->element == 'contract')
-	{
+	} elseif ($object->element == 'contrat' || $object->element == 'contract') {
 		if ($object->statut == 0) $morehtmlstatus .= $object->getLibStatut(5);
 		else $morehtmlstatus .= $object->getLibStatut(4);
-	} elseif ($object->element == 'facturerec')
-	{
+	} elseif ($object->element == 'facturerec') {
 		if ($object->frequency == 0) $morehtmlstatus .= $object->getLibStatut(2);
 		else $morehtmlstatus .= $object->getLibStatut(5);
-	} elseif ($object->element == 'project_task')
-	{
+	} elseif ($object->element == 'project_task') {
 		$object->fk_statut = 1;
 		if ($object->progress > 0) $object->fk_statut = 2;
 		if ($object->progress >= 100) $object->fk_statut = 3;
@@ -1784,8 +1781,9 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	}
 
 	// Add if object was dispatched "into accountancy"
-	if (!empty($conf->accounting->enabled) && in_array($object->element, array('bank', 'facture', 'invoice', 'invoice_supplier', 'expensereport', 'payment_various')))
+	if (!empty($conf->accounting->enabled) && in_array($object->element, array('bank', 'paiementcharge', 'facture', 'invoice', 'invoice_supplier', 'expensereport', 'payment_various')))
 	{
+		// Note: For 'chargesociales', 'salaries'... this is the payments that are dispatched (so element = 'bank')
 		if (method_exists($object, 'getVentilExportCompta'))
 		{
 			$accounted = $object->getVentilExportCompta();
@@ -2439,13 +2437,14 @@ function getArrayOfSocialNetworks()
 /**
  * Show social network link
  *
- * @param	string		$value			Skype to show (only skype, without 'Name of recipient' before)
- * @param	int 		$cid 			Id of contact if known
- * @param	int 		$socid 			Id of third party if known
- * @param	string 		$type			'skype','facebook',...
- * @return	string						HTML Link
+ * @param	string		$value				Skype to show (only skype, without 'Name of recipient' before)
+ * @param	int 		$cid 				Id of contact if known
+ * @param	int 		$socid 				Id of third party if known
+ * @param	string 		$type				'skype','facebook',...
+ * @param	array		$dictsocialnetworks socialnetworks availables
+ * @return	string							HTML Link
  */
-function dol_print_socialnetworks($value, $cid, $socid, $type)
+function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetworks = array())
 {
 	global $conf, $user, $langs;
 
@@ -2453,13 +2452,12 @@ function dol_print_socialnetworks($value, $cid, $socid, $type)
 
 	if (empty($value)) return '&nbsp;';
 
-	if (!empty($type))
-	{
+	if (!empty($type)) {
 		$htmllink = '<div class="divsocialnetwork inline-block valignmiddle">';
-		$htmllink .= img_picto($langs->trans(strtoupper($type)), $type.'.png', '', false, 0, 0, '', 'paddingright', 0);
-		$htmllink .= $value;
-		if ($type == 'skype')
-		{
+		// TODO use dictionary definition for picto $dictsocialnetworks[$type]['icon']
+		$htmllink .= img_picto($langs->trans(dol_ucfirst($type)), $type.'.png', '', false, 0, 0, '', 'paddingright', 0);
+		if ($type == 'skype') {
+			$htmllink .= $value;
 			$htmllink .= '&nbsp;';
 			$htmllink .= '<a href="skype:';
 			$htmllink .= $value;
@@ -2470,13 +2468,19 @@ function dol_print_socialnetworks($value, $cid, $socid, $type)
 			$htmllink .= '?chat" alt="'.$langs->trans("Chat").'&nbsp;'.$value.'" title="'.$langs->trans("Chat").'&nbsp;'.$value.'">';
 			$htmllink .= '<img class="paddingleft" src="'.DOL_URL_ROOT.'/theme/common/skype_chatbutton.png" border="0">';
 			$htmllink .= '</a>';
-		}
-		if (($cid || $socid) && !empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create && $type == 'skype')
-		{
-			$addlink = 'AC_SKYPE';
-			$link = '';
-			if (!empty($conf->global->AGENDA_ADDACTIONFORSKYPE)) $link = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$addlink.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
-			$htmllink .= ($link ? ' '.$link : '');
+			if (($cid || $socid) && !empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create) {
+				$addlink = 'AC_SKYPE';
+				$link = '';
+				if (!empty($conf->global->AGENDA_ADDACTIONFORSKYPE)) $link = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$addlink.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
+				$htmllink .= ($link ? ' '.$link : '');
+			}
+		} else {
+			if (!empty($dictsocialnetworks[$type]['url'])) {
+				$link = str_replace('{socialid}', $value, $dictsocialnetworks[$type]['url']);
+				$htmllink .= '&nbsp;<a href="'.$link.'" target="_blank">'.$value.'</a>';
+			} else {
+				$htmllink .= $value;
+			}
 		}
 		$htmllink .= '</div>';
 	} else {
@@ -3205,7 +3209,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		if (empty($srconly) && in_array($pictowithouttext, array(
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 				'accountancy', 'account', 'accountline', 'action', 'add', 'address', 'bank_account', 'barcode', 'bank', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'building',
-				'cash-register', 'category', 'check', 'clock', 'close_title', 'company', 'contact', 'contract', 'cubes',
+				'cash-register', 'category', 'check', 'clock', 'close_title', 'company', 'contact', 'contract', 'cron', 'cubes',
 				'delete', 'dolly', 'dollyrevert', 'donation', 'edit', 'ellipsis-h', 'email', 'eraser', 'external-link-alt', 'external-link-square-alt',
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'globe', 'globe-americas', 'grip', 'grip_title', 'group',
 				'help', 'holiday',
@@ -3300,8 +3304,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-'.$convertarray[$pictowithouttext];
 				if (preg_match('/selected/', $pictowithouttext)) $facolor = '#888';
 				$marginleftonlyshort = 1;
-			} elseif (!empty($arrayconvpictotofa[$pictowithouttext]))
-			{
+			} elseif (!empty($arrayconvpictotofa[$pictowithouttext])) {
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 			} else {
 				$fakey = 'fa-'.$pictowithouttext;
@@ -4282,7 +4285,11 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 		$out .= '>';
 	}
 
-	if ($tooltip) $out .= $form->textwithpicto($langs->trans($name), $langs->trans($tooltip));
+	if ($tooltip) {
+		// You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
+		$tmptooltip = explode(':', $tooltip);
+		$out .= $form->textwithpicto($langs->trans($name), $langs->trans($tmptooltip[0]), 1, 'help', '', 0, 3, (empty($tmptooltip[1]) ? '' : 'extra_'.str_replace('.', '_', $field).'_'.$tmptooltip[1]));
+	}
 	else $out .= $langs->trans($name);
 
 	if (empty($thead) && $field && empty($disablesortlink))    // If this is a sort field
@@ -5031,8 +5038,8 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = "", $thirdparty_sell
    	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
    	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($thirdparty_seller->country_code)."'";
    	$sql .= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
-   	if ($vatratecode) $sql .= " AND t.code ='".$db->escape($vatratecode)."'"; // If we have the code, we use it in priority
-   	else $sql .= " AND t.recuperableonly ='".$db->escape($vatnpr)."'";
+   	if (!empty($vatratecode)) $sql .= " AND t.code ='".$db->escape($vatratecode)."'"; // If we have the code, we use it in priority
+   	else $sql .= " AND t.recuperableonly = '".$db->escape($vatnpr)."'";
    	dol_syslog("get_localtax", LOG_DEBUG);
    	$resql = $db->query($sql);
 
@@ -5551,10 +5558,10 @@ function yn($yesno, $case = 1, $color = 0)
 
 /**
  *	Return a path to have a the directory according to object where files are stored.
- *  New usage:       $conf->module->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, '')
- *         or:       $conf->module->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, '')     if multidir_output not defined.
- *  Example our with new usage:       $object is invoice -> 'INYYMM-ABCD'
- *  Example our with old usage:       '015' with level 3->"0/1/5/", '015' with level 1->"5/", 'ABC-1' with level 3 ->"0/0/1/"
+ *  New usage:       $conf->module->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, '').'/'
+ *         or:       $conf->module->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, '')     if multidir_output not defined.
+ *  Example out with new usage:       $object is invoice -> 'INYYMM-ABCD'
+ *  Example out with old usage:       '015' with level 3->"0/1/5/", '015' with level 1->"5/", 'ABC-1' with level 3 ->"0/0/1/"
  *
  *	@param	string|int	$num            Id of object (deprecated, $object will be used in future)
  *	@param  int			$level		    Level of subdirs to return (1, 2 or 3 levels). (deprecated, global option will be used in future)
@@ -5572,10 +5579,9 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 
 	$path = '';
 
-	$arrayforoldpath = array('cheque', 'user', 'category', 'holiday', 'supplier_invoice', 'invoice_supplier', 'mailing', 'supplier_payment');
+	$arrayforoldpath = array('cheque', 'category', 'holiday', 'supplier_invoice', 'invoice_supplier', 'mailing', 'supplier_payment');
 	if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $arrayforoldpath[] = 'product';
-	if (!empty($level) && in_array($modulepart, $arrayforoldpath))
-	{
+	if (!empty($level) && in_array($modulepart, $arrayforoldpath)) {
 		// This part should be removed once all code is using "get_exdir" to forge path, with all parameters provided.
 		if (empty($alpha)) $num = preg_replace('/([^0-9])/i', '', $num);
 		else $num = preg_replace('/^.*\-/i', '', $num);
@@ -5589,7 +5595,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 		// Here, $object->id, $object->ref and $modulepart are required.
 		//var_dump($modulepart);
 		if (!in_array($modulepart, array('product'))) {	// Test to remove
-			$path = dol_sanitizeFileName(empty($object->ref) ? $object->id : $object->ref);
+			$path = dol_sanitizeFileName(empty($object->ref) ? (string) $object->id : $object->ref);
 		}
 	}
 
@@ -6500,12 +6506,18 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 	}
 	if (empty($exclude) || !in_array('objectamount', $exclude))
 	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functionsnumtoword.lib.php';
+
 		$substitutionarray['__DATE_YMD__']        = is_object($object) ? (isset($object->date) ? dol_print_date($object->date, 'day', 0, $outputlangs) : null) : '';
 		$substitutionarray['__DATE_DUE_YMD__']    = is_object($object) ? (isset($object->date_lim_reglement) ? dol_print_date($object->date_lim_reglement, 'day', 0, $outputlangs) : null) : '';
 
 		$substitutionarray['__AMOUNT__']          = is_object($object) ? $object->total_ttc : '';
+		$substitutionarray['__AMOUNT_TEXT__']     = is_object($object) ? dol_convertToWord($object->total_ttc, $outputlangs, '', true) : '';
+		$substitutionarray['__AMOUNT_TEXTCURRENCY__'] = is_object($object) ? dol_convertToWord($object->total_ttc, $outputlangs, $conf->currency, true) : '';
 		$substitutionarray['__AMOUNT_EXCL_TAX__'] = is_object($object) ? $object->total_ht : '';
 		$substitutionarray['__AMOUNT_VAT__']      = is_object($object) ? (isset($object->total_vat) ? $object->total_vat : $object->total_tva) : '';
+		$substitutionarray['__AMOUNT_VAT_TEXT__']      = is_object($object) ? (isset($object->total_vat) ? dol_convertToWord($object->total_vat, $outputlangs, '', true) : dol_convertToWord($object->total_tva, $outputlangs, '', true)) : '';
+		$substitutionarray['__AMOUNT_VAT_TEXTCURRENCY__']      = is_object($object) ? (isset($object->total_vat) ? dol_convertToWord($object->total_vat, $outputlangs, $conf->currency, true) : dol_convertToWord($object->total_tva, $outputlangs, $conf->currency, true)) : '';
 		if ($onlykey != 2 || $mysoc->useLocalTax(1)) $substitutionarray['__AMOUNT_TAX2__']     = is_object($object) ? $object->total_localtax1 : '';
 		if ($onlykey != 2 || $mysoc->useLocalTax(2)) $substitutionarray['__AMOUNT_TAX3__']     = is_object($object) ? $object->total_localtax2 : '';
 
@@ -6515,7 +6527,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		if ($onlykey != 2 || $mysoc->useLocalTax(1)) $substitutionarray['__AMOUNT_TAX2_FORMATED__']     = is_object($object) ? ($object->total_localtax1 ? price($object->total_localtax1, 0, $outputlangs, 0, 0, -1, $conf->currency) : null) : '';
 		if ($onlykey != 2 || $mysoc->useLocalTax(2)) $substitutionarray['__AMOUNT_TAX3_FORMATED__']     = is_object($object) ? ($object->total_localtax2 ? price($object->total_localtax2, 0, $outputlangs, 0, 0, -1, $conf->currency) : null) : '';
 
-		// TODO Add keys for foreign multicurrency
+		$substitutionarray['__AMOUNT_MULTICURRENCY__']          = (is_object($object) && isset($object->multicurrency_total_ttc)) ? $object->multicurrency_total_ttc : '';
+		$substitutionarray['__AMOUNT_MULTICURRENCY_TEXT__']     = (is_object($object) && isset($object->multicurrency_total_ttc)) ? dol_convertToWord($object->multicurrency_total_ttc, $outputlangs, '', true) : '';
+		$substitutionarray['__AMOUNT_MULTICURRENCY_TEXTCURRENCY__'] = (is_object($object) && isset($object->multicurrency_total_ttc)) ? dol_convertToWord($object->multicurrency_total_ttc, $outputlangs, $object->multicurrency_code, true) : '';
+		// TODO Add other keys for foreign multicurrency
 
 		// For backward compatibility
 		if ($onlykey != 2)
@@ -6683,6 +6698,7 @@ function complete_substitutions_array(&$substitutionarray, $outputlangs, $object
 		$substitfiles = dol_dir_list($dir, 'files', 0, 'functions_');
 		foreach ($substitfiles as $substitfile)
 		{
+			$reg = array();
 			if (preg_match('/functions_(.*)\.lib\.php/i', $substitfile['name'], $reg))
 			{
 				$module = $reg[1];
@@ -6692,7 +6708,9 @@ function complete_substitutions_array(&$substitutionarray, $outputlangs, $object
 				require_once $dir.$substitfile['name'];
 				// Call the user's function, and only if it is defined
 				$function_name = $module."_".$callfunc;
-				if (function_exists($function_name)) $function_name($substitutionarray, $outputlangs, $object, $parameters);
+				if (function_exists($function_name)) {
+					$function_name($substitutionarray, $outputlangs, $object, $parameters);
+				}
 			}
 		}
 	}
@@ -7076,8 +7094,7 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
 			$temp = array();
 			foreach (array_keys($array) as $key)
 			{
-				if (is_object($array[$key]))
-				{
+				if (is_object($array[$key])) {
 					$temp[$key] = $array[$key]->$index;
 				} else {
 					$temp[$key] = $array[$key][$index];
@@ -7113,10 +7130,11 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
  */
 function utf8_check($str)
 {
+	$str = (string) $str;	// Sometimes string is an int.
+
 	// We must use here a binary strlen function (so not dol_strlen)
 	$strLength = dol_strlen($str);
-	for ($i = 0; $i < $strLength; $i++)
-	{
+	for ($i = 0; $i < $strLength; $i++) {
 		if (ord($str[$i]) < 0x80) continue; // 0bbbbbbb
 		elseif ((ord($str[$i]) & 0xE0) == 0xC0) $n = 1; // 110bbbbb
 		elseif ((ord($str[$i]) & 0xF0) == 0xE0) $n = 2; // 1110bbbb

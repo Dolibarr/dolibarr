@@ -198,7 +198,8 @@ Docdate=Date
 Docref=Reference
 LabelAccount=Label account
 LabelOperation=Label operation
-Sens=Sens
+Sens=Direction
+AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you received<br>For an accounting account of a supplier, use Debit to record a payment you make
 LetteringCode=Lettering code
 Lettering=Lettering
 Codejournal=Journal
@@ -206,7 +207,8 @@ JournalLabel=Journal label
 NumPiece=Piece number
 TransactionNumShort=Num. transaction
 AccountingCategory=Personalized groups
-GroupByAccountAccounting=Group by accounting account
+GroupByAccountAccounting=Group by general ledger account
+GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=You can define here some groups of accounting account. They will be used for personalized accounting reports.
 ByAccounts=By accounts
 ByPredefinedAccountGroups=By predefined groups
@@ -293,6 +295,7 @@ Accounted=Accounted in ledger
 NotYetAccounted=Not yet accounted in ledger
 ShowTutorial=Show Tutorial
 NotReconciled=Not reconciled
+WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
 
 ## Admin
 BindingOptions=Binding options

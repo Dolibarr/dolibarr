@@ -280,20 +280,20 @@ class Product extends CommonObject
 
 	//! Metric of products
 	public $weight;
-	public $weight_units;
+	public $weight_units;	// scale -3, 0, 3, 6
 	public $length;
-	public $length_units;
+	public $length_units;	// scale -3, 0, 3, 6
 	public $width;
-	public $width_units;
+	public $width_units;	// scale -3, 0, 3, 6
 	public $height;
-	public $height_units;
+	public $height_units;	// scale -3, 0, 3, 6
 	public $surface;
-	public $surface_units;
+	public $surface_units;	// scale -3, 0, 3, 6
 	public $volume;
-	public $volume_units;
+	public $volume_units;	// scale -3, 0, 3, 6
 
 	public $net_measure;
-	public $net_measure_units;
+	public $net_measure_units;	// scale -3, 0, 3, 6
 
 	public $accountancy_code_sell;
 	public $accountancy_code_sell_intra;
@@ -413,6 +413,7 @@ class Product extends CommonObject
 	public $fields = array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
 		'ref'           =>array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
+		'barcode'       =>array('type'=>'varchar(255)', 'label'=>'Barcode', 'enabled'=>'!empty($conf->barcode->enabled)', 'visible'=>-1, 'showoncombobox'=>1),
 		'entity'        =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>20),
 		'label'         =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1),
 		'note_public'   =>array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>61),
@@ -922,6 +923,7 @@ class Product extends CommonObject
 		$this->accountancy_code_sell_export = trim($this->accountancy_code_sell_export);
 
 
+
 		$this->db->begin();
 
 		$result = 0;
@@ -945,6 +947,7 @@ class Product extends CommonObject
 			if ($this->hasbatch() && !$this->oldcopy->hasbatch()) {
 				//$valueforundefinedlot = 'Undefined';  // In previous version, 39 and lower
 				$valueforundefinedlot = '000000';
+				if (!empty($conf->global->STOCK_DEFAULT_BATCH)) $valueforundefinedlot = $conf->global->STOCK_DEFAULT_BATCH;
 
 				dol_syslog("Flag batch of product id=".$this->id." is set to ON, so we will create missing records into product_batch");
 
@@ -4356,18 +4359,19 @@ class Product extends CommonObject
 	/**
 	 *  Return childs of product $id
 	 *
-	 * @param  int $id             Id of product to search childs of
-	 * @param  int $firstlevelonly Return only direct child
-	 * @param  int $level          Level of recursing call (start to 1)
-	 * @return array                       Return array(prodid=>array(0=prodid, 1=>qty, 2=> ...)
+	 * @param  int $id             		Id of product to search childs of
+	 * @param  int $firstlevelonly 		Return only direct child
+	 * @param  int $level          		Level of recursing call (start to 1)
+	 * @return array                    Return array(prodid=>array(0=prodid, 1=>qty, 2=>product type, 3=>label, 4=>incdec, 5=>product ref)
 	 */
 	public function getChildsArbo($id, $firstlevelonly = 0, $level = 1)
 	{
 		global $alreadyfound;
 
-		$sql = "SELECT p.rowid, p.label as label, pa.qty as qty, pa.fk_product_fils as id, p.fk_product_type, pa.incdec";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-		$sql .= ", ".MAIN_DB_PREFIX."product_association as pa";
+		$sql = "SELECT p.rowid, p.ref, p.label as label, p.fk_product_type,";
+		$sql .= " pa.qty as qty, pa.fk_product_fils as id, pa.incdec";
+		$sql .= " FROM ".MAIN_DB_PREFIX."product as p,";
+		$sql .= " ".MAIN_DB_PREFIX."product_association as pa";
 		$sql .= " WHERE p.rowid = pa.fk_product_fils";
 		$sql .= " AND pa.fk_product_pere = ".$id;
 		$sql .= " AND pa.fk_product_fils != ".$id; // This should not happens, it is to avoid infinite loop if it happens
@@ -4395,7 +4399,8 @@ class Product extends CommonObject
 				 1=>$rec['qty'],
 				 2=>$rec['fk_product_type'],
 				 3=>$this->db->escape($rec['label']),
-				 4=>$rec['incdec']
+				 4=>$rec['incdec'],
+				 5=>$rec['ref']
 				);
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty'],2=>$rec['fk_product_type']);
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
@@ -4417,7 +4422,7 @@ class Product extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *     Return tree of all subproducts for product. Tree contains id, name and quantity.
+	 *     Return tree of all subproducts for product. Tree contains array of array(0=prodid, 1=>qty, 2=>product type, 3=>label, 4=>incdec, 5=>product ref)
 	 *     Set this->sousprods
 	 *
 	 * @return void
@@ -5382,19 +5387,19 @@ class Product extends CommonObject
 		$this->date_modification = $now;
 
 		$this->weight = 4;
-		$this->weight_unit = 1;
+		$this->weight_units = 3;
 
 		$this->length = 5;
-		$this->length_unit = 1;
+		$this->length_units = 1;
 		$this->width = 6;
-		$this->width_unit = 0;
+		$this->width_units = 0;
 		$this->height = null;
-		$this->height_unit = null;
+		$this->height_units = null;
 
 		$this->surface = 30;
-		$this->surface_unit = 0;
+		$this->surface_units = 0;
 		$this->volume = 300;
-		$this->volume_unit = 0;
+		$this->volume_units = 0;
 
 		$this->barcode = -1; // Create barcode automatically
 	}

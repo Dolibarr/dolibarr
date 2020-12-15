@@ -38,7 +38,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("users", "companies", "agenda", "commercial", "other"));
+$langs->loadLangs(array("users", "companies", "agenda", "commercial", "other", "orders", "bills"));
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
