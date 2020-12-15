@@ -61,6 +61,8 @@ class box_funnel_of_prospection extends ModeleBoxes
 
 		$this->db = $db;
 
+		$this->enabled = ($conf->global->MAIN_FEATURES_LEVEL >= 1); // Not enabled by default, still need some work
+
 		$this->hidden = !($user->rights->projet->lire);
 	}
 

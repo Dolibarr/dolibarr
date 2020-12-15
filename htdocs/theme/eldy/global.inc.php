@@ -5105,6 +5105,9 @@ td.gminorheading {
     max-width: 40px !important;
     width: 40px !important;
 }
+td.gtaskheading.gstartdate, td.gtaskheading.genddate {
+    white-space: break-spaces;
+}
 
 
 /* ============================================================================== */
