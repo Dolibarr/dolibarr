@@ -594,7 +594,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 // Default product price base type
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DefaultPriceType").'</td>';
-print '<td width="60" class="right">';
+print '<td class="right">';
 print $form->selectPriceBaseType($conf->global->PRODUCT_PRICE_BASE_TYPE, "price_base_type");
 print '</td>';
 print '</tr>';
