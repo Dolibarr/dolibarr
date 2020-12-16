@@ -285,7 +285,7 @@ if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 
 if ($search_date_sync && $search_date_sync_end ){
 
-    $sql .= " AND (cr.date_sync BETWEEN '".$search_date_sync."' AND '".$search_date_sync_end."')";
+    $sql .= " AND (cr.date_sync BETWEEN '".dol_escape_htmltag($search_date_sync)."' AND '".dol_escape_htmltag($search_date_sync_end)."')";
 
 } else if ($search_date_sync && !$search_date_sync_end) {
 
