@@ -121,28 +121,29 @@ class modCategorie extends DolibarrModules
 		// All Categories List
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_list';
-		$this->export_label[$r] = 'CatList';
+		$this->export_label[$r] = 'CatListAll';
 		$this->export_icon[$r] = $this->picto;
         $this->export_enabled[$r] = 'true';
 		$this->export_permission[$r] = array(array("categorie", "lire"));
 
 		$typeexample = "";
-		if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) { $typeexample .= ($typeexample ? "/" : "")."0=Product-Service"; }
+		if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) { $typeexample .= ($typeexample ? " / " : "")."0=Product-Service"; }
 		if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) { $typeexample .= ($typeexample ? "/" : "")."1=Supplier"; }
-		if (!empty($conf->societe->enabled)) { $typeexample .= ($typeexample ? "/" : "")."2=Customer-Prospect"; }
-		if (!empty($conf->adherent->enabled)) { $typeexample .= ($typeexample ? "/" : "")."3=Member"; }
-		if (!empty($conf->societe->enabled)) { $typeexample .= ($typeexample ? "/" : "")."4=Contact"; }
-		if (!empty($conf->bank->enabled)) { $typeexample .= ($typeexample ? "/" : "")."5=Bank account"; }
-		if (!empty($conf->projet->enabled)) { $typeexample .= ($typeexample ? "/" : "")."6=Project"; }
-		if (!empty($conf->user->enabled)) { $typeexample .= ($typeexample ? "/" : "")."7=User"; }
-		if (!empty($conf->bank->enabled)) { $typeexample .= ($typeexample ? "/" : "")."8=Bank line"; }
-		if (!empty($conf->stock->enabled)) { $typeexample .= ($typeexample ? "/" : "")."9=Warehouse"; }
-		if (!empty($conf->agenda->enabled)) { $typeexample .= ($typeexample ? "/" : "")."10=Agenda event"; }
-		if (!empty($conf->website->enabled)) { $typeexample .= ($typeexample ? "/" : "")."11=Website page"; }
+		if (!empty($conf->societe->enabled)) { $typeexample .= ($typeexample ? " / " : "")."2=Customer-Prospect"; }
+		if (!empty($conf->adherent->enabled)) { $typeexample .= ($typeexample ? " / " : "")."3=Member"; }
+		if (!empty($conf->societe->enabled)) { $typeexample .= ($typeexample ? " / " : "")."4=Contact"; }
+		if (!empty($conf->bank->enabled)) { $typeexample .= ($typeexample ? " / " : "")."5=Bank account"; }
+		if (!empty($conf->projet->enabled)) { $typeexample .= ($typeexample ? " / " : "")."6=Project"; }
+		if (!empty($conf->user->enabled)) { $typeexample .= ($typeexample ? " / " : "")."7=User"; }
+		if (!empty($conf->bank->enabled)) { $typeexample .= ($typeexample ? " / " : "")."8=Bank line"; }
+		if (!empty($conf->stock->enabled)) { $typeexample .= ($typeexample ? " / " : "")."9=Warehouse"; }
+		if (!empty($conf->agenda->enabled)) { $typeexample .= ($typeexample ? " / " : "")."10=Agenda event"; }
+		if (!empty($conf->website->enabled)) { $typeexample .= ($typeexample ? " / " : "")."11=Website page"; }
 
-		$this->export_fields_array[$r] = array('cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.type'=>"Type ".$typeexample, 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategory", 'pcat.label'=>"ParentCategoryLabel" );
+		$this->export_fields_array[$r] = array('cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.type'=>"Type", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategory", 'pcat.label'=>"ParentCategoryLabel" );
 		$this->export_TypeFields_array[$r] = array('cat.label'=>"Text", 'cat.type'=>"Numeric", 'cat.description'=>"Text", 'cat.fk_parent'=>'List:categorie:label:rowid', 'pcat.label'=>'Text' );
 		$this->export_entities_array[$r] = array(); // We define here only fields that use another picto
+		$this->export_help_array[$r] = array('cat.type'=>$typeexample);
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'categorie as cat';
