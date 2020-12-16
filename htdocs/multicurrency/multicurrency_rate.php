@@ -32,6 +32,10 @@
  *  \brief      Page to list multicurrency rate
  */
 
+if (!defined('NOTOKENRENEWAL')) {
+    define('NOTOKENRENEWAL', 1);
+}
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/multicurrency.lib.php';
@@ -47,6 +51,7 @@ $toselect 			= GETPOST('toselect', 'array');
 $id_rate_selected 	= GETPOST('id_rate', 'int');
 $sall				= trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_date_sync	= GETPOST('search_date_sync', 'alpha');
+$search_date_sync_end	= GETPOST('search_date_sync_end', 'alpha');
 $search_rate		= GETPOST('search_rate', 'alpha');
 $multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 $dateinput 			= GETPOST('dateinput', 'alpha');
@@ -203,6 +208,7 @@ if (empty($reshook))
 	{
 		$sall="";
 		$search_date_sync="";
+        $search_date_sync_end="";
 		$search_rate="";
 		$multicurrency_code="";
 		$search_array_options=array();
@@ -277,9 +283,18 @@ $sql .=" INNER JOIN ".MAIN_DB_PREFIX."multicurrency AS m ON cr.fk_multicurrency 
 
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 
-if ($search_date_sync)     $sql .= natural_search('cr.date_sync', $search_date_sync);
-if ($search_rate)   $sql .= natural_search('cr.rate', $search_rate);
+if ($search_date_sync && $search_date_sync_end ){
 
+    $sql .= " AND (cr.date_sync BETWEEN '".$search_date_sync."' AND '".$search_date_sync_end."')";
+
+} else if ($search_date_sync && !$search_date_sync_end) {
+
+    $sql .= natural_search('cr.date_sync', $search_date_sync);
+
+}
+
+
+if ($search_rate)   $sql .= natural_search('cr.rate', $search_rate);
 if ($multicurrency_code) $sql .= natural_search('m.code', $multicurrency_code);
 $sql.= ' WHERE m.code != \''.$conf->currency. '\'';
 
@@ -328,6 +343,7 @@ if ($resql)
 	if ($sall) $param.="&sall=".urlencode($sall);
 
 	if ($search_date_sync) $param="&search_date_sync=".urlencode($search_date_sync);
+    if ($search_date_sync_end) $param="&search_date_sync_end=".urlencode($search_date_sync_end);
 	if ($search_rate) $param="&search_rate=".urlencode($search_rate);
     if ($multicurrency_code != '') $param.="&multicurrency_code=".urlencode($multicurrency_code);
 
@@ -391,7 +407,8 @@ if ($resql)
 	if (! empty($arrayfields['cr.date_sync']['checked']))
 	{
 		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" type="text" name="search_date_sync" size="8" value="'.dol_escape_htmltag($search_date_sync).'">';
+		print '<input class="flat" type="date" name="search_date_sync" size="8" value="'.dol_escape_htmltag($search_date_sync).'"><br>';
+        print '<input class="flat" type="date" name="search_date_sync_end" size="8" value="'.dol_escape_htmltag($search_date_sync_end).'">';
 		print '</td>';
 	}
 	// code
