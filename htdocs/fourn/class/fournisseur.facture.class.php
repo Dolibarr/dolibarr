@@ -398,7 +398,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= ", '".$this->db->escape($this->ref_supplier)."'";
 		$sql .= ", ".$conf->entity;
 		$sql .= ", '".$this->db->escape($this->type)."'";
-		$sql .= ", '".$this->db->escape($this->label ? $this->label : $this->libelle)."'";
+		$sql .= ", '".$this->db->escape(isset($this->label) ? $this->label : (isset($this->libelle) ? $this->libelle : ''))."'";
 		$sql .= ", ".$this->socid;
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", '".$this->db->idate($this->date)."'";
@@ -497,7 +497,7 @@ class FactureFournisseur extends CommonInvoice
 							$this->lines[$i]->date_end,
 							$this->lines[$i]->array_options,
 							$this->lines[$i]->fk_unit,
-							$this->lines[$i]->pu_ht_devise
+							$this->lines[$i]->multicurrency_subprice
 						);
 					} else {
 						$this->error = $this->db->lasterror();
@@ -2467,7 +2467,7 @@ class FactureFournisseur extends CommonInvoice
 			$xnbp = 0;
 			while ($xnbp < $nbp)
 			{
-				$line = new FactureLigne($this->db);
+				$line = new SupplierInvoiceLine($this->db);
 				$line->desc = $langs->trans("Description")." ".$xnbp;
 				$line->qty = 1;
 				$line->subprice = 100;
@@ -2807,8 +2807,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $fk_facture_fourn;
 
 	/**
-	 * Product label
-	 * This field may contains label of product (when invoice create from order)
+	 * This field may contains label of line (when invoice create from order)
 	 * @var string
 	 */
 	public $label;
@@ -2960,6 +2959,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $multicurrency_total_ht;
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
+
 
 	/**
 	 *	Constructor
