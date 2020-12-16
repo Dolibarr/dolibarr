@@ -472,7 +472,6 @@ if ($resql)
             print '<input type="submit" class="button butAction" name="actionmodify" value="'.$langs->trans("Modify").'">';
             print '<input type="submit" class="button butAction" name="actioncancel" value="'.$langs->trans("Cancel").'">';
             print '</td>';
-
         }
         else {
             // date_sync
