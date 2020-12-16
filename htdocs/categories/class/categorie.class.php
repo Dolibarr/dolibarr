@@ -312,7 +312,7 @@ class Categorie extends CommonObject
 
 		// Check parameters
 		if (empty($id) && empty($label) && empty($ref_ext)) return -1;
-		if (!is_numeric($type)) $type = $this->MAP_ID[$type];
+		if (!is_null($type) && !is_numeric($type)) $type = $this->MAP_ID[$type];
 
 		$sql = "SELECT rowid, fk_parent, entity, label, description, color, fk_soc, visible, type, ref_ext";
 		$sql .= ", date_creation, tms, fk_user_creat, fk_user_modif";
@@ -1058,7 +1058,7 @@ class Categorie extends CommonObject
 		$current_lang = $langs->getDefaultLang();
 
 		// Init $this->cats array
-		$sql = "SELECT DISTINCT c.rowid, c.label, c.description, c.color, c.fk_parent, c.visible"; // Distinct reduce pb with old tables with duplicates
+		$sql = "SELECT DISTINCT c.rowid, c.label, c.ref_ext, c.description, c.color, c.fk_parent, c.visible"; // Distinct reduce pb with old tables with duplicates
 		if (!empty($conf->global->MAIN_MULTILANGS)) $sql .= ", t.label as label_trans, t.description as description_trans";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as c";
 		if (!empty($conf->global->MAIN_MULTILANGS)) $sql .= " LEFT  JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang='".$this->db->escape($current_lang)."'";
