@@ -115,6 +115,8 @@ class MouvementStockTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
+		if (empty($conf->productbatch->enabled)) { print "\n".__METHOD__." module Lot/Serial must be enabled.\n"; die(); }
+
 		print __METHOD__."\n";
     }
 	/**
