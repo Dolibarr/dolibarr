@@ -4893,7 +4893,7 @@ class Product extends CommonObject
 		$sql .= " WHERE w.entity IN (".getEntity('stock').")";
 		$sql .= " AND w.rowid = ps.fk_entrepot";
 		$sql .= " AND ps.fk_product = ".$this->id;
-		if ($conf->global->ENTREPOT_EXTRA_STATUS && count($warehouseStatus)) {
+		if (!empty($conf->global->ENTREPOT_EXTRA_STATUS) && count($warehouseStatus)) {
 			$sql .= " AND w.statut IN (".$this->db->sanitize($this->db->escape(implode(',', $warehouseStatus))).")";
 		}
 
