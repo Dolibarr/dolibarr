@@ -1466,7 +1466,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
 
     		$result = $db->query($sql);
     		$num = $db->num_rows($result);
-     */}
+			*/}
 
     	if ($num > 0)
     	{
