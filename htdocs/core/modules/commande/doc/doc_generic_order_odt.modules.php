@@ -169,10 +169,14 @@ class doc_generic_order_odt extends ModelePDFCommandes
 
 		if ($nbofiles)
 		{
-   			$texte .= '<div id="div_'.get_class($this).'" class="hidden">';
+   			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
    			foreach ($listoffiles as $file)
    			{
-				$texte .= $file['name'].'<br>';
+   				// Show list of found files
+   				foreach ($listoffiles as $file)
+   				{
+   					$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=orders/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a><br>';
+   				}
    			}
    			$texte .= '</div>';
 		}
