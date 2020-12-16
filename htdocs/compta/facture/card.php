@@ -2534,7 +2534,7 @@ if (empty($reshook))
 	{
 	    $object->fetch($id, '', '', '', true);
 
-	    if ($object->statut == Facture::STATUS_VALIDATED
+	    if (in_array($object->statut, array(Facture::STATUS_CLOSED, Facture::STATUS_VALIDATED))
 	        && $object->type == Facture::TYPE_SITUATION
 	        && $usercancreate
 	        && !$objectidnext
@@ -3872,7 +3872,7 @@ elseif ($id > 0 || !empty($ref))
 	    $label = $langs->trans("ConfirmOuting");
 	    $formquestion = array();
 	    // remove situation from cycle
-	    if ($object->statut == Facture::STATUS_VALIDATED
+	    if (in_array($object->statut, array(Facture::STATUS_CLOSED, Facture::STATUS_VALIDATED))
 	        && $usercancreate
 	        && !$objectidnext
 	        && $object->is_last_in_cycle()
@@ -5387,7 +5387,7 @@ elseif ($id > 0 || !empty($ref))
 			}
 
 			// Remove situation from cycle
-			if ($object->statut > Facture::STATUS_DRAFT
+			if (in_array($object->statut, array(Facture::STATUS_CLOSED, Facture::STATUS_VALIDATED))
 			    && $object->type == Facture::TYPE_SITUATION
 			    && $usercancreate
 			    && !$objectidnext
