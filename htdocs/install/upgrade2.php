@@ -509,7 +509,11 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		{
 			$listofmodules[$value] = 'forceactivate';
 		}
-		migrate_reload_modules($db, $langs, $conf, $listofmodules, 1);
+
+		$resultreloadmodules = migrate_reload_modules($db, $langs, $conf, $listofmodules, 1);
+		if ($resultreloadmodules < 0) {
+			$error++;
+		}
 	}
 
 
@@ -4283,7 +4287,7 @@ function migrate_delete_old_dir($db, $langs, $conf)
  * @param	Conf		$conf			Object conf
  * @param	array		$listofmodule	List of modules
  * @param   int         $force          1=Reload module even if not already loaded
- * @return	void
+ * @return	int							<0 if KO, >0 if OK
  */
 function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $force = 0)
 {
@@ -4497,12 +4501,15 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 						//$mod->remove('noboxes');
 						$mod->init($reloadmode);
 					} else {
-						dolibarr_install_syslog('Failed to include '.strtolower($moduletoreloadshort).'/core/modules/mod'.$moduletoreloadshort.'.class.php');
+						dolibarr_install_syslog('Failed to include '.strtolower($moduletoreloadshort).'/core/modules/mod'.$moduletoreloadshort.'.class.php', LOG_ERR);
+						print "Error, can't find module with name ".$moduletoreload."\n";
+						return -1;
 					}
 				}
 			} else {
-				dolibarr_install_syslog("Error, can't find module with name ".$moduletoreload, LOG_WARNING);
-				print "Error, can't find module with name ".$moduletoreload;
+				dolibarr_install_syslog("Error, can't find module with name ".$moduletoreload, LOG_ERR);
+				print "Error, can't find module with name ".$moduletoreload."\n";
+				return -1;
 			}
 		}
 
@@ -4516,6 +4523,8 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 			print '</td></tr>';
 		}
 	}
+
+	return 1;
 }
 
 
