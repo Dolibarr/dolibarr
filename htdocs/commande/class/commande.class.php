@@ -492,26 +492,21 @@ class Commande extends CommonOrder
 			$error++;
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			// If stock is incremented on validate order, we must increment it
-			if ($result >= 0 && !empty($conf->stock->enabled) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
-			{
+			if ($result >= 0 && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 				$langs->load("agenda");
 
 				// Loop on each line
 				$cpt = count($this->lines);
-				for ($i = 0; $i < $cpt; $i++)
-				{
-					if ($this->lines[$i]->fk_product > 0)
-					{
+				for ($i = 0; $i < $cpt; $i++) {
+					if ($this->lines[$i]->fk_product > 0) {
 						$mouvP = new MouvementStock($this->db);
 						$mouvP->origin = &$this;
 						// We decrement stock of product (and sub-products)
 						$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderValidatedInDolibarr", $num));
-						if ($result < 0)
-						{
+						if ($result < 0) {
 							$error++;
 							$this->error = $mouvP->error;
 						}
@@ -521,16 +516,14 @@ class Commande extends CommonOrder
 			}
 		}
 
-		if (!$error && !$notrigger)
-		{
+		if (!$error && !$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('ORDER_VALIDATE', $user);
 			if ($result < 0) $error++;
 			// End call triggers
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$this->oldref = $this->ref;
 
 			// Rename directory if dir was a temporary ref
