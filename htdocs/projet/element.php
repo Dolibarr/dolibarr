@@ -869,7 +869,6 @@ print '<br>';
 // Detail
 foreach ($listofreferent as $key => $value)
 {
-
 	$parameters = array(
 		'key' => $key,
 		'value' =>& $value,
