@@ -3611,15 +3611,14 @@ class Form
 	 *
 	 *  @param	string	$selected       Id pre-selectionne
 	 *  @param  string	$htmlname       Nom de la zone select
+	 *  @param	string	$addjscombo		Add js combo
 	 * 	@return	string					Code of HTML select to chose tax or not
 	 */
-	public function selectPriceBaseType($selected = '', $htmlname = 'price_base_type')
+	public function selectPriceBaseType($selected = '', $htmlname = 'price_base_type', $addjscombo = 0)
 	{
 		global $langs;
 
-		$return = '';
-
-		$return .= '<select class="flat maxwidth75" id="select_'.$htmlname.'" name="'.$htmlname.'">';
+		$return = '<select class="flat maxwidth100" id="select_'.$htmlname.'" name="'.$htmlname.'">';
 		$options = array(
 			'HT'=>$langs->trans("HT"),
 			'TTC'=>$langs->trans("TTC")
@@ -3635,6 +3634,7 @@ class Form
 			$return .= '</option>';
 		}
 		$return .= '</select>';
+		if ($addjscombo) $return .= ajax_combobox('select_'.$htmlname);
 
 		return $return;
 	}

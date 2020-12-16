@@ -2231,7 +2231,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	// Fix modulepart
 	if ($modulepart == 'users') $modulepart = 'user';
 
-	dol_syslog('modulepart='.$modulepart.' original_file='.$original_file.' entity='.$entity);
+	dol_syslog('dol_check_secure_access_document modulepart='.$modulepart.' original_file='.$original_file.' entity='.$entity);
 
 	// We define $accessallowed and $sqlprotectagainstexternals
 	$accessallowed = 0;

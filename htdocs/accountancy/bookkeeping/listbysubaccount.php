@@ -39,8 +39,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $langs->loadLangs(array("accountancy", "compta"));
 
 $action = GETPOST('action', 'aZ09');
-$search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
-$search_date_end = dol_mktime(0, 0, 0, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
+$search_date_startyear =  GETPOST('search_date_startyear', 'int');
+$search_date_startmonth =  GETPOST('search_date_startmonth', 'int');
+$search_date_startday =  GETPOST('search_date_startday', 'int');
+$search_date_endyear =  GETPOST('search_date_endyear', 'int');
+$search_date_endmonth =  GETPOST('search_date_endmonth', 'int');
+$search_date_endday =  GETPOST('search_date_endday', 'int');
+$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);
+$search_date_end = dol_mktime(0, 0, 0, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 $search_doc_date = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
 
 $search_accountancy_code = GETPOST("search_accountancy_code");
@@ -126,6 +132,20 @@ $arrayfields = array(
 
 if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) unset($arrayfields['t.lettering_code']);
 
+if ($search_date_start && empty($search_date_startyear)) {
+	$tmparray = dol_getdate($search_date_start);
+	$search_date_startyear = $tmparray['year'];
+	$search_date_startmonth = $tmparray['mon'];
+	$search_date_startday = $tmparray['mday'];
+}
+if ($search_date_end && empty($search_date_endyear)) {
+	$tmparray = dol_getdate($search_date_end);
+	$search_date_endyear = $tmparray['year'];
+	$search_date_endmonth = $tmparray['mon'];
+	$search_date_endday = $tmparray['mday'];
+}
+
+
 /*
  * Action
  */
@@ -172,11 +192,11 @@ if (empty($reshook))
 
 	if (!empty($search_date_start)) {
 		$filter['t.doc_date>='] = $search_date_start;
-		$param .= '&search_date_startmonth='.GETPOST('search_date_startmonth', 'int').'&search_date_startday='.GETPOST('search_date_startday', 'int').'&search_date_startyear='.GETPOST('search_date_startyear', 'int');
+		$param .= '&search_date_startmonth='.$search_date_startmonth.'&search_date_startday='.$search_date_startday.'&search_date_startyear='.$search_date_startyear;
 	}
 	if (!empty($search_date_end)) {
 		$filter['t.doc_date<='] = $search_date_end;
-		$param .= '&search_date_endmonth='.GETPOST('search_date_endmonth', 'int').'&search_date_endday='.GETPOST('search_date_endday', 'int').'&search_date_endyear='.GETPOST('search_date_endyear', 'int');
+		$param .= '&search_date_endmonth='.$search_date_endmonth.'&search_date_endday='.$search_date_endday.'&search_date_endyear='.$search_date_endyear;
 	}
 	if (!empty($search_doc_date)) {
 		$filter['t.doc_date'] = $search_doc_date;
@@ -242,7 +262,7 @@ if ($action == 'delbookkeeping' && $user->rights->accounting->mouvements->suppri
 		}
 
 		// Make a redirect to avoid to launch the delete later after a back button
-		header("Location: listbyaccount.php".($param ? '?'.$param : ''));
+		header("Location: ".$_SERVER["PHP_SELF"].($param ? '?'.$param : ''));
 		exit;
 	}
 }
@@ -380,7 +400,10 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
-	$newcardbutton = dolGetButtonTitle($langs->trans('ViewAccountList'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php', '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
+	$newcardbutton = dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param);
+	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php', '', 1, array('morecss' => 'marginleftonly'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbysubaccount.php', '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
+
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=create');
 }
 
@@ -388,6 +411,8 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&co
 if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 
 print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $result, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit);
+
+print info_admin($langs->trans("WarningRecordWithoutSubledgerAreExcluded"));
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
@@ -554,8 +579,16 @@ while ($i < min($num, $limit))
 		// Show the break account
 		print "<tr>";
 		print '<td colspan="'.($totalarray['nbfield'] ? $totalarray['nbfield'] : 9).'" style="font-weight:bold; border-bottom: 1pt solid black;">';
-		if ($line->subledger_account != "" && $line->subledger_account != '-1') print length_accounta($line->subledger_account).' : '.$object->get_compte_desc($line->numero_compte);
-		else print '<span class="error">'.$langs->trans("Unknown").'</span>';
+		if ($line->subledger_account != "" && $line->subledger_account != '-1') {
+			print $object->get_compte_desc($line->numero_compte).' : '.length_accounta($line->subledger_account);
+		} else {
+			// Should not happen: subledger account must be null or a non empty value
+			print '<span class="error">'.$langs->trans("Unknown");
+			if ($line->subledger_label) print ' ('.$line->subledger_label.')';
+			$htmltext = 'EmptyStringForSubledgerAccountButSubledgerLabelDefined';
+			print $form->textwithpicto('', $htmltext);
+			print '</span>';
+		}
 		print '</td>';
 		print '</tr>';
 

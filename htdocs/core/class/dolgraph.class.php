@@ -1215,6 +1215,7 @@ class DolGraph
 				} else {
 					$textoflegend = $this->Legend[$i];
 				}
+
 				if ($usecolorvariantforgroupby) {
 					$newcolor = $this->datacolor[$arrayofgroupslegend[$i]['stacknum']];
 					// If we change the stack
@@ -1243,6 +1244,7 @@ class DolGraph
 					$bordercolor = 'rgb(' . $newcolor[0] . ', ' . $newcolor[1] . ', ' . $newcolor[2] . ')';
 				} else { // We do not use a 'group by'
 					if ($isfunnel) {
+						$bordercolor == 'null';
 						if (is_array($this->datacolor[$i])) {
 							$color = 'rgb(' . $this->datacolor[$i][0] . ', ' . $this->datacolor[$i][1] . ', ' . $this->datacolor[$i][2] . ', 0.9)'; // If datacolor is array(R, G, B)
 						} else {
@@ -1262,9 +1264,9 @@ class DolGraph
 									if (strpos($tmp, '-') !== false) $bordercolor = '#' . str_replace('-', '', $tmp); // If $val is '-123'
 									else $bordercolor = 'null'; // If $val is '123' or '#123'
 								}
-								$bordercolor == 'null' ? "'rgba(0,0,0,0.2)'" : "'" . $bordercolor . "'";
 							}
 						}
+						$bordercolor == 'null' ? "'rgba(0,0,0,0.2)'" : "'" . $bordercolor . "'";
 					} else {
 						$color = 'rgb('.$this->datacolor[$i][0].', '.$this->datacolor[$i][1].', '.$this->datacolor[$i][2].', 0.9)';
 						$bordercolor = $color;
