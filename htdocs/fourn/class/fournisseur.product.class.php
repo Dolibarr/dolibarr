@@ -132,6 +132,8 @@ class ProductFournisseur extends Product
 	 */
 	public $supplier_fk_barcode_type;
 
+	public $packaging;
+
 
 	/**
 	 *	Constructor
@@ -299,7 +301,7 @@ class ProductFournisseur extends Product
 		$charges = price2num($charges, 'MU');
 		$qty = price2num($qty, 'MS');
 		$unitBuyPrice = price2num($buyprice / $qty, 'MU');
-		$packaging = price2num((($this->packaging < $qty) ? $qty : $this->packaging), 'MS');
+		$packaging = price2num(((empty($this->packaging) || $this->packaging < $qty) ? $qty : $this->packaging), 'MS');
 
 		$error = 0;
 		$now = dol_now();
