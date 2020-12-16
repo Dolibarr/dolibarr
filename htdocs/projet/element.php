@@ -652,9 +652,29 @@ print '<td class="right" width="100">'.$langs->trans("AmountTTC").'</td>';
 print '</tr>';
 
 $total_revenue_ht = 0;
+$balance_ht = 0;
+$balance_ttc = 0;
 
 foreach ($listofreferent as $key => $value)
 {
+	$parameters = array(
+		'total_revenue_ht' =>& $total_revenue_ht,
+		'balance_ht' =>& $balance_ht,
+		'balance_ttc' =>& $balance_ttc,
+		'key' => $key,
+		'value' =>& $value,
+		'dates' => $dates,
+		'datee' => $datee
+	);
+	$reshook = $hookmanager->executeHooks('printOverviewProfit', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	}
+	elseif ($reshook > 0){
+		print $hookmanager->resPrint;
+		continue;
+	}
+
 	$name = $langs->trans($value['name']);
 	$title = $value['title'];
 	$classname = $value['class'];
@@ -849,6 +869,22 @@ print '<br>';
 // Detail
 foreach ($listofreferent as $key => $value)
 {
+
+	$parameters = array(
+		'key' => $key,
+		'value' =>& $value,
+		'dates' => $dates,
+		'datee' => $datee
+	);
+	$reshook = $hookmanager->executeHooks('printOverviewDetail', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	}
+	elseif ($reshook > 0){
+		print $hookmanager->resPrint;
+		continue;
+	}
+
 	$title = $value['title'];
 	$classname = $value['class'];
 	$tablename = $value['table'];
