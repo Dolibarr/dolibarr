@@ -60,6 +60,7 @@ class AccountancyExport
 	public static $EXPORT_TYPE_GESTINUMV3 = 130;
 	public static $EXPORT_TYPE_GESTINUMV5 = 135;
 	public static $EXPORT_TYPE_FEC = 1000;
+	public static $EXPORT_TYPE_FEC2 = 1010;
 
 
 	/**
@@ -121,6 +122,7 @@ class AccountancyExport
 			self::$EXPORT_TYPE_GESTINUMV3 => $langs->trans('Modelcsv_Gestinum_v3'),
 			self::$EXPORT_TYPE_GESTINUMV5 => $langs->trans('Modelcsv_Gestinum_v5'),
 			self::$EXPORT_TYPE_FEC => $langs->trans('Modelcsv_FEC'),
+			self::$EXPORT_TYPE_FEC2 => $langs->trans('Modelcsv_FEC2'),
 		);
 
 		ksort($listofexporttypes, SORT_NUMERIC);
@@ -155,6 +157,7 @@ class AccountancyExport
 			self::$EXPORT_TYPE_GESTINUMV3 => 'gestinumv3',
 			self::$EXPORT_TYPE_GESTINUMV5 => 'gestinumv5',
 			self::$EXPORT_TYPE_FEC => 'fec',
+			self::$EXPORT_TYPE_FEC2 => 'fec2',
 		);
 
 		return $formatcode[$type];
@@ -232,6 +235,10 @@ class AccountancyExport
 				),
 				self::$EXPORT_TYPE_FEC => array(
 					'label' => $langs->trans('Modelcsv_FEC'),
+					'ACCOUNTING_EXPORT_FORMAT' => 'txt',
+				),
+				self::$EXPORT_TYPE_FEC2 => array(
+					'label' => $langs->trans('Modelcsv_FEC2'),
 					'ACCOUNTING_EXPORT_FORMAT' => 'txt',
 				),
 			),
@@ -321,6 +328,9 @@ class AccountancyExport
 				break;
 			case self::$EXPORT_TYPE_FEC :
 				$this->exportFEC($TData);
+				break;
+			case self::$EXPORT_TYPE_FEC2 :
+				$this->exportFEC2($TData);
 				break;
 			default:
 				$this->errors[] = $langs->trans('accountancy_error_modelnotfound');
@@ -882,6 +892,105 @@ class AccountancyExport
 
 				// FEC:Montantdevise
 				print $line->multicurrency_amount.$separator;
+
+				// FEC:Idevise
+				print $line->multicurrency_code;
+
+				print $end_line;
+			}
+		}
+	}
+
+	/**
+	 * Export format : FEC2
+	 *
+	 * @param array $objectLines data
+	 * @return void
+	 */
+	public function exportFEC2($objectLines)
+	{
+		$separator = "\t";
+		$end_line = "\r\n";
+
+		print "JournalCode".$separator;
+		print "JournalLib".$separator;
+		print "EcritureNum".$separator;
+		print "EcritureDate".$separator;
+		print "CompteNum".$separator;
+		print "CompteLib".$separator;
+		print "CompAuxNum".$separator;
+		print "CompAuxLib".$separator;
+		print "PieceRef".$separator;
+		print "PieceDate".$separator;
+		print "EcritureLib".$separator;
+		print "Debit".$separator;
+		print "Credit".$separator;
+		print "EcritureLet".$separator;
+		print "DateLet".$separator;
+		print "ValidDate".$separator;
+		print "Montantdevise".$separator;
+		print "Idevise";
+		print $end_line;
+
+		foreach ($objectLines as $line) {
+			if ($line->debit == 0 && $line->credit == 0) {
+				unset($array[$line]);
+			} else {
+				$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
+				$date_document = dol_print_date($line->doc_date, '%Y%m%d');
+				$date_lettering = dol_print_date($line->date_lettering, '%Y%m%d');
+				$date_validation = dol_print_date($line->date_validated, '%Y%m%d');
+
+				// FEC:JournalCode
+				print $line->code_journal . $separator;
+
+				// FEC:JournalLib
+				print $line->journal_label . $separator;
+
+				// FEC:EcritureNum
+				print $line->piece_num . $separator;
+
+				// FEC:EcritureDate
+				print $date_creation . $separator;
+
+				// FEC:CompteNum
+				print $line->numero_compte . $separator;
+
+				// FEC:CompteLib
+				print dol_string_unaccent($line->label_compte) . $separator;
+
+				// FEC:CompAuxNum
+				print $line->subledger_account . $separator;
+
+				// FEC:CompAuxLib
+				print dol_string_unaccent($line->subledger_label) . $separator;
+
+				// FEC:PieceRef
+				print $line->doc_ref . $separator;
+
+				// FEC:PieceDate
+				print $date_document . $separator;
+
+				// FEC:EcritureLib
+				print dol_string_unaccent($line->label_operation) . $separator;
+
+				// FEC:Debit
+				print price2fec($line->debit) . $separator;
+
+				// FEC:Credit
+				print price2fec($line->credit) . $separator;
+
+				// FEC:EcritureLet
+				print $line->lettering_code . $separator;
+
+				// FEC:DateLet
+				print $date_lettering . $separator;
+
+				// FEC:ValidDate
+				print $date_validation . $separator;
+
+				// FEC:Montantdevise
+				print $line->multicurrency_amount . $separator;
 
 				// FEC:Idevise
 				print $line->multicurrency_code;
