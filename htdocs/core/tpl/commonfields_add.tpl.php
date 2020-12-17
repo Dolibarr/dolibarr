@@ -55,6 +55,7 @@ foreach ($object->fields as $key => $val)
 	print '<td>';
 	if (!empty($val['picto'])) { print img_picto('', $val['picto']); }
 	if (in_array($val['type'], array('int', 'integer'))) $value = GETPOST($key, 'int');
+	elseif ($val['type'] == 'double') $value = price2num(GETPOST($key, 'alphanohtml'));
 	elseif ($val['type'] == 'text' || $val['type'] == 'html') $value = GETPOST($key, 'restricthtml');
 	else $value = GETPOST($key, 'alpha');
 	if ($val['noteditable']) print $object->showOutputField($val, $key, $value, '', '', '', 0);
