@@ -784,7 +784,6 @@ foreach ($listofreferent as $key => $value)
 				}
 
 				if ($margin != "add")	{ // Revert sign
-				{
 					$total_ht = -$total_ht;
 					$total_ttc = -$total_ttc;
 				}
