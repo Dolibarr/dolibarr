@@ -28,9 +28,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-$langs->load("admin");
-$langs->load("install");
-$langs->load("errors");
+$langs->loadLangs(array("admin", "install", "errors"));
 
 if (!$user->admin)
 	accessforbidden();
@@ -85,54 +83,43 @@ $arrayphpminversionwarning = array(5, 6, 0);
 if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0)
 {
 	print '<img src="'.$ErrorPicturePath.'" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
-}
-elseif (versioncompare(versionphparray(), $arrayphpminversionwarning) < 0)
+} elseif (versioncompare(versionphparray(), $arrayphpminversionwarning) < 0)
 {
 	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionwarning));
-}
-else
-{
+} else {
 	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.versiontostring(versionphparray());
 }
 
 print '</td></tr>';
 print '<tr><td>GET and POST support</td><td>';
 
-if (!isset($_GET["testget"]) && !isset($_POST["testpost"]) && !isset($_GET["mainmenu"]))
+if (!isset($_GET["testget"]) && !isset($_POST["testpost"]) && !isset($_GET["mainmenu"]))	// We must keep $_GET and $_POST here
 {
 	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("PHPSupportPOSTGETKo");
 	print ' (<a href="'.$_SERVER["PHP_SELF"].'?testget=ok">'.$langs->trans("Recheck").'</a>)';
-}
-else
-{
+} else {
 	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportPOSTGETOk");
 }
 
 print '</td></tr>';
 print '<tr><td>Sessions support</td><td>';
-
 if (!function_exists("session_id"))
 {
 	print '<img src="'.$ErrorPicturePath.'" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportSessions");
-}
-else
-{
+} else {
 	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportSessions");
 }
-
 print '</td></tr>';
-print '<tr><td>UTF-8 support</td><td>';
 
+print '<tr><td>UTF-8 support</td><td>';
 if (!function_exists("utf8_encode"))
 {
-	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupportUTF8");
+	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupport", "UTF8");
+} else {
+	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupport", "UTF8");
 }
-else
-{
-	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportUTF8");
-}
-
 print '</td></tr>';
+
 print '</table>';
 
 print '<br>';
@@ -148,6 +135,28 @@ print '<td align="center">'.$langs->trans("Loaded").'</td>';
 print '<td align="center">'.$langs->trans("FunctionTest").'</td>';
 print '<td>'.$langs->trans("Result").'</td>';
 print '</tr>';
+
+$functions = ["mb_check_encoding"];
+$name      = "MBString";
+
+print "<tr>";
+print "<td>".$name."</td>";
+//print getTableColumn($name, $activatedExtensions);
+print getTableColumn($name, $loadedExtensions);
+print getTableColumnFunction($functions);
+print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
+print "</tr>";
+
+$functions = ["json_decode"];
+$name      = "JSON";
+
+print "<tr>";
+print "<td>".$name."</td>";
+//print getTableColumn($name, $activatedExtensions);
+print getTableColumn($name, $loadedExtensions);
+print getTableColumnFunction($functions);
+print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
+print "</tr>";
 
 $functions = ["imagecreate"];
 $name      = "GD";
@@ -179,9 +188,18 @@ if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@loc
 	print getTableColumn($name, $loadedExtensions);
 	print getTableColumnFunction($functions);
 	print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
-
 	print "</tr>";
 }
+
+$functions = ["imap_open"];
+$name      = "IMAP";
+
+print "<tr>";
+print "<td>".$name."</td>";
+print getTableColumn($name, $loadedExtensions);
+print getTableColumnFunction($functions);
+print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
+print "</tr>";
 
 $functions = array();
 $name      = "xDebug";
@@ -224,9 +242,7 @@ foreach ($phparray as $key => $value)
 			print $valtoshow;
 			print '</td>';
 			print '</tr>';
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven">';
 			print '<td class="wordbreak">'.$keyparam.'</td>';
 			$i = 0;
@@ -272,9 +288,7 @@ function getTableColumn($name, array $list)
 	{
 		if ($name == 'xdebug') $html .= '<img src="../../theme/eldy/img/warning.png" title="'.$langs->trans("ModuleActivated", "xdebug").'">';
 		else $html .= '<img src="../../theme/eldy/img/tick.png" title="Ok">';
-	}
-	else
-	{
+	} else {
 		if ($name == 'xdebug') $html .= yn(0);
 		else $html .= '<img src="../../theme/eldy/img/warning.png" title="Warning">';
 	}
@@ -309,9 +323,7 @@ function getTableColumnFunction(array $functions)
 	if ($result)
 	{
 		$html .= '<img src="../../theme/eldy/img/tick.png" alt="Ok">';
-	}
-	else
-	{
+	} else {
 		$html .= '<img src="../../theme/eldy/img/warning.png" alt="Warning">';
 	}
 
@@ -344,8 +356,8 @@ function getResultColumn($name, array $activated, array $loaded, array $function
 	}
 
 	$html = "<td>";
-	$html .= $result ? $langs->trans("PHPSupport".$name) : $langs->trans("ErrorPHPDoesNotSupport".$name);
+	$html .= $result ? $langs->trans("PHPSupport", $name) : $langs->trans("ErrorPHPDoesNotSupport", $name);
 	$html .= "</td>";
 
-    return $html;
+	return $html;
 }

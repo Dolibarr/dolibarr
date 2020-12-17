@@ -69,8 +69,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
-//if ($id > 0 || ! empty($ref)) $upload_dir = $conf->bom->multidir_output[$object->entity?$object->entity:1] . "/bom/" . dol_sanitizeFileName($object->id);
-if ($id > 0 || !empty($ref)) $upload_dir = $conf->bom->multidir_output[$object->entity ? $object->entity : 1]."/bom/".dol_sanitizeFileName($object->ref);
+if ($id > 0 || !empty($ref)) $upload_dir = $conf->bom->multidir_output[$object->entity ? $object->entity : 1]."/bom/".get_exdir(0, 0, 0, 1, $object);
 
 
 /*
@@ -98,7 +97,7 @@ if ($object->id)
 	 */
 	$head = bomPrepareHead($object);
 
-	dol_fiche_head($head, 'document', $langs->trans("BillOfMaterials"), -1, 'bom');
+	print dol_get_fiche_head($head, 'document', $langs->trans("BillOfMaterials"), -1, 'bom');
 
 
 	// Build file list
@@ -115,9 +114,9 @@ if ($object->id)
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
-    print '<div class="fichecenter">';
+	print '<div class="fichecenter">';
 
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
 	// Number of files
@@ -130,7 +129,7 @@ if ($object->id)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	$modulepart = 'bom';
 	$permission = $user->rights->bom->write;
@@ -141,9 +140,7 @@ if ($object->id)
 	$relativepathwithnofile = 'bom/'.dol_sanitizeFileName($object->ref).'/';
 
 	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-}
-else
-{
+} else {
 	accessforbidden('', 0, 1);
 }
 

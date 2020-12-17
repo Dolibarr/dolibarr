@@ -49,8 +49,7 @@ if (!isset($mode) || $mode != 'noajax')    // For ajax call
 	$preopened = GETPOST('preopened');
 
 	if ($selecteddir != '/') $selecteddir = preg_replace('/\/$/', '', $selecteddir); // We removed last '/' except if it is '/'
-}
-else    // For no ajax call
+} else // For no ajax call
 {
 	//if (GETPOST('preopened')) { $_GET['dir'] = $_POST['dir'] = GETPOST('preopened'); }
 
@@ -73,8 +72,7 @@ if ($modulepart == 'ecm')
 {
 	$fullpathselecteddir = $conf->ecm->dir_output.'/'.($selecteddir != '/' ? $selecteddir : '');
 	$fullpathpreopened = $conf->ecm->dir_output.'/'.($preopened != '/' ? $preopened : '');
-}
-elseif ($modulepart == 'medias')
+} elseif ($modulepart == 'medias')
 {
 	$fullpathselecteddir = $dolibarr_main_data_root.'/medias/'.($selecteddir != '/' ? $selecteddir : '');
 	$fullpathpreopened = $dolibarr_main_data_root.'/medias/'.($preopened != '/' ? $preopened : '');
@@ -85,18 +83,17 @@ elseif ($modulepart == 'medias')
 // On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
 if (preg_match('/\.\./', $fullpathselecteddir) || preg_match('/[<>|]/', $fullpathselecteddir))
 {
-    dol_syslog("Refused to deliver file ".$original_file);
-    // Do no show plain path in shown error message
-    dol_print_error(0, $langs->trans("ErrorFileNameInvalid", GETPOST("file")));
-    exit;
+	dol_syslog("Refused to deliver file ".$original_file);
+	// Do no show plain path in shown error message
+	dol_print_error(0, $langs->trans("ErrorFileNameInvalid", GETPOST("file")));
+	exit;
 }
 
 // Check permissions
 if ($modulepart == 'ecm')
 {
 	if (!$user->rights->ecm->read) accessforbidden();
-}
-elseif ($modulepart == 'medias')
+} elseif ($modulepart == 'medias')
 {
 	// Always allowed
 }
@@ -123,11 +120,11 @@ if (empty($sqltree)) $sqltree = $ecmdirstatic->get_full_arbo(0);
 $current_ecmdir_id = -1;
 foreach ($sqltree as $keycursor => $val)
 {
-    //print $val['fullrelativename']." == ".$selecteddir;
-    if ($val['fullrelativename'] == $selecteddir)
-    {
-        $current_ecmdir_id = $keycursor;
-    }
+	//print $val['fullrelativename']." == ".$selecteddir;
+	if ($val['fullrelativename'] == $selecteddir)
+	{
+		$current_ecmdir_id = $keycursor;
+	}
 }
 
 if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))
@@ -471,8 +468,7 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 							if ($modulepart == 'ecm')
 							{
 								$newfullpathselecteddir = $conf->ecm->dir_output.'/'.($val['fullrelativename'] != '/' ? $val['fullrelativename'] : '');
-							}
-							elseif ($modulepart == 'medias')
+							} elseif ($modulepart == 'medias')
 							{
 								$newfullpathselecteddir = $dolibarr_main_data_root.'/medias/'.($val['fullrelativename'] != '/' ? $val['fullrelativename'] : '');
 							}
@@ -486,7 +482,6 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 
 				echo "</ul>\n";
 			}
-		}
-		else print "PermissionDenied";
+		} else print "PermissionDenied";
 	}
 }

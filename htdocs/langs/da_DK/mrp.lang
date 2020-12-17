@@ -1,5 +1,6 @@
 Mrp=Fremstillingsordrer
-ManufacturingOrder=Fremstillingsordre
+MOs=Produktionsordrer
+ManufacturingOrder=Produktionsordre
 MRPDescription=Modul til styring af produktions- og produktionsordrer (MO).
 MRPArea=MRP-område
 MrpSetupPage=Opsætning af modul MRP
@@ -75,3 +76,5 @@ ProductsToProduce=Produkter til at producere
 UnitCost=Enhedspris
 TotalCost=Udgifter i alt
 BOMTotalCost=Omkostningerne til at fremstille denne BOM baseret på prisen for hver mængde og produkt, der skal forbruges (brug Prisen, hvis defineret, ellers Gennemsnit Vægtet pris, hvis defineret, ellers den bedste købspris)
+GoOnTabProductionToProduceFirst=Du skal først have startet produktionen for at lukke en produktionsordre (se fanen '%s'). Men du kan annullere det.
+ErrorAVirtualProductCantBeUsedIntoABomOrMo=Et sæt kan ikke bruges i en stykliste eller en MO

@@ -4,13 +4,14 @@ How to contribute to Dolibarr
 Bug reports and feature requests
 --------------------------------
 
-<a name="not-a-support-forum"></a>*Note*: Issues are not a support forum. If you need help using the software, please use [the forums](https://www.dolibarr.org/forum).
+<a name="not-a-support-forum"></a>*Note*: Issues are not a support forum. If you need help using the software, please use [the forums](https://www.dolibarr.org/forum.php). Forums exist in different languages.
 
-Issues are managed on [GitHub](https://github.com/Dolibarr/dolibarr/issues).
+Issues are managed on [GitHub](https://github.com/Dolibarr/dolibarr/issues). 
+Default language here is english. So please prepare your contributions in english.
 
 1. Please [use the search engine](https://help.github.com/articles/searching-issues) to check if nobody's already reported your problem.
 2. [Create an issue](https://help.github.com/articles/creating-an-issue). Choose an appropriate title. Prepend appropriately with Bug or Feature Request.
-4. Tell us the version you are using!
+4. Tell us the version you are using!   (look at  /htdocs/admin/system/dolibarr.php?  and check if you are using the latest version) 
 3. Write a report with as much detail as possible (Use [screenshots](https://help.github.com/articles/issue-attachments) or even screencasts and provide logging and debugging informations whenever possible).
 
 
@@ -26,7 +27,8 @@ Issues are managed on [GitHub](https://github.com/Dolibarr/dolibarr/issues).
 4. Commit and push your changes.
 5. [Make a pull request](https://help.github.com/articles/creating-a-pull-request).
 
-### <a name="branches"></a>Branches
+<span id="branches" name="branches"></span>
+### Branches
 
 Unless you're fixing a bug, all pull requests should be made against the *develop* branch.
 
@@ -56,7 +58,7 @@ You can add it to your git configuration using:
 git config --local commit.template .gitmessage
 ```
 
-where 
+where
 
 #### Keyword
 In uppercase if you want to have the log comment appears into the generated ChangeLog file.
@@ -101,7 +103,7 @@ Long description (Can span accross multiple lines).
 </pre>
 
 ### Pull Requests
-Pull Request (PR) process is the process to submit a change (enhancement, bug fix, ...) into the code of the project. There is some rules to know and 
+Pull Request (PR) process is the process to submit a change (enhancement, bug fix, ...) into the code of the project. There is some rules to know and
 a process to follow to optimize the chance to have PRs merged efficiently...
 
 * A PR must be atomic. It means it must contains the lower possible changes for 1 need (1 bug fix or 1 new feature) without breaking usability of code. If a PR can be split into several PRs, it often means your PR is not atomic.
@@ -120,7 +122,7 @@ Once a PR has been submitted, you may need to wait for its integration. It is co
 
 If the label of PR start with "Draft" or "WIP" (Work In Progress), it will not be analyzed for merging until you change the label of PR (but it can be analyzed for discussion).
 
-If your PR has errors reported by the Continuous Integration Platform, it means your PR is not valid and nothing will be done with it. It will be kept open to allow developers to fix this, or it may be closed several month later. Don't expect anything on your PR if you have such errors, you MUST first fix the Continuous Integration error to have it taken into consideration. 
+If your PR has errors reported by the Continuous Integration Platform, it means your PR is not valid and nothing will be done with it. It will be kept open to allow developers to fix this, or it may be closed several month later. Don't expect anything on your PR if you have such errors, you MUST first fix the Continuous Integration error to have it taken into consideration.
 
 If the PR is valid, and is kept open for a long time, a tag will also be added on the PR to describe the status of your PR and why the PR is kept open. By putting your mouse on the tag, you will get a full explanation of the tag/status that explain why your PR has not been integrated yet.
 In most cases, it gives you information of things you have to do to have the PR taken into consideration (for example a change is requested, a conflict is expected to be solved, some questions were asked). If you have a yellow, red flag of purple flag, don't expect to have your PR validated. You must first provide the answer the tag ask you. The majority of open PR are waiting an action of the author of the PR.
@@ -141,7 +143,7 @@ Translations done on transifex are available in the next major release.
 
 Note: Sometimes, the source text (english) is modified. In such a case, the translation is reset. Transifex assume that if the original source
 has changed, the translation is surely no more correct so must be done again. But old translation is not lost and you can use the tab "History"
-to retreive all old translation of a source text, and restore the translation in one click with no need to retranslate it if there is no need to. 
+to retrieve all old translation of a source text, and restore the translation in one click with no need to retranslate it if there is no need to.
 
 
 ### Resources

@@ -28,18 +28,18 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_graph_orders_permonth extends ModeleBoxes
 {
-    public $boxcode = "orderspermonth";
-    public $boximg = "object_order";
-    public $boxlabel = "BoxCustomersOrdersPerMonth";
-    public $depends = array("commande");
+	public $boxcode = "orderspermonth";
+	public $boximg = "object_order";
+	public $boxlabel = "BoxCustomersOrdersPerMonth";
+	public $depends = array("commande");
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $info_box_head = array();
-    public $info_box_contents = array();
+	public $info_box_head = array();
+	public $info_box_contents = array();
 
 
 	/**
@@ -61,7 +61,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 	 *  Load data into info_box_contents array to show array later.
 	 *
 	 *  @param	int		$max        Maximum number of records to load
-     *  @return	void
+	 *  @return	void
 	 */
 	public function loadBox($max = 5)
 	{
@@ -97,9 +97,9 @@ class box_graph_orders_permonth extends ModeleBoxes
 
 		if ($user->rights->commande->lire)
 		{
-		    $langs->load("orders");
+			$langs->load("orders");
 
-		    $param_year = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
+			$param_year = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
 			$param_shownb = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_shownb';
 			$param_showtot = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_showtot';
 
@@ -111,9 +111,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 				$endyear = GETPOST($param_year, 'int');
 				$shownb = GETPOST($param_shownb, 'alpha');
 				$showtot = GETPOST($param_showtot, 'alpha');
-			}
-			else
-			{
+			} else {
 				$tmparray = json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode], true);
 				$endyear = $tmparray['year'];
 				$shownb = $tmparray['shownb'];
@@ -135,7 +133,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 				$data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), ($WIDTH < 300 ? 2 : 0), $startmonth);
 
 				$filenamenb = $dir."/".$prefix."ordersnbinyear-".$endyear.".png";
-                // default value for customer mode
+				// default value for customer mode
 				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersnbinyear-'.$endyear.'.png';
 				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&amp;file=ordersnbinyear-'.$endyear.'.png';
 
@@ -146,15 +144,13 @@ class box_graph_orders_permonth extends ModeleBoxes
 					$px1->SetData($data1);
 					unset($data1);
 					$i = $startyear;
-                    $legend = array();
+					$legend = array();
 					while ($i <= $endyear)
 					{
 						if ($startmonth != 1)
 						{
 							$legend[] = sprintf("%d/%d", $i - 2001, $i - 2000);
-						}
-						else
-						{
+						} else {
 							$legend[] = $i;
 						}
 						$i++;
@@ -180,7 +176,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 				$data2 = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), ($WIDTH < 300 ? 2 : 0), $startmonth);
 
 				$filenamenb = $dir."/".$prefix."ordersamountinyear-".$endyear.".png";
-                // default value for customer mode
+				// default value for customer mode
 				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersamountinyear-'.$endyear.'.png';
 				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&amp;file=ordersamountinyear-'.$endyear.'.png';
 
@@ -196,9 +192,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 						if ($startmonth != 1)
 						{
 							$legend[] = sprintf("%d/%d", $i - 2001, $i - 2000);
-						}
-						else
-						{
+						} else {
 							$legend[] = $i;
 						}
 						$i++;
@@ -266,25 +260,22 @@ class box_graph_orders_permonth extends ModeleBoxes
 					$stringtoshow .= '</div>';
 				}
 				$this->info_box_contents[0][0] = array(
-                    'tr'=>'class="oddeven nohover"',
-                    'td' => 'class="nohover center"',
-                    'textnoformat'=>$stringtoshow,
-                );
-			}
-			else
-			{
+					'tr'=>'class="oddeven nohover"',
+					'td' => 'class="nohover center"',
+					'textnoformat'=>$stringtoshow,
+				);
+			} else {
 				$this->info_box_contents[0][0] = array(
-                    'tr'=>'class="oddeven nohover"',
-                    'td' => 'class="nohover left"',
-                    'maxlength'=>500,
-                    'text' => $mesg,
-                );
+					'tr'=>'class="oddeven nohover"',
+					'td' => 'class="nohover left"',
+					'maxlength'=>500,
+					'text' => $mesg,
+				);
 			}
-		}
-		else {
+		} else {
 			$this->info_box_contents[0][0] = array(
-			    'td' => 'class="nohover opacitymedium left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover opacitymedium left"',
+				'text' => $langs->trans("ReadPermissionNotAllowed")
 			);
 		}
 	}
@@ -297,8 +288,8 @@ class box_graph_orders_permonth extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *  @return	string
 	 */
-    public function showBox($head = null, $contents = null, $nooutput = 0)
-    {
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }

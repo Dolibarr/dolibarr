@@ -34,7 +34,7 @@ if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't nee
 if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
 if (!defined('NOLOGIN'))        define("NOLOGIN", 1); // This means this output page does not require to be logged.
 if (!defined('NOCSRFCHECK'))    define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-if (!defined('NOIPCHECK'))		 define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 
 
 // It's a wrapper, so empty header
@@ -57,6 +57,11 @@ function llxFooterVierge()
 {
 	print '</body></html>';
 }
+
+// For MultiCompany module.
+// Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+if (is_numeric($entity)) define("DOLENTITY", $entity);
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -109,8 +114,7 @@ if ($reshook < 0) {
 		print '<div class="error">'.$hookmanager->error.'</div>';
 	}
 	llxFooterVierge();
-}
-elseif (empty($reshook)) {
+} elseif (empty($reshook)) {
 	// Check exportkey
 	if (empty($_GET["exportkey"]) || $conf->global->MAIN_AGENDA_XCAL_EXPORTKEY != $_GET["exportkey"]) {
 		$user->getrights();
@@ -188,9 +192,7 @@ if ($format == 'ical' || $format == 'vcal')
 
 		//header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
 		exit;
-	}
-	else
-	{
+	} else {
 		print 'Error '.$agenda->error;
 
 		exit;
@@ -226,9 +228,7 @@ if ($format == 'rss')
 
 		// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
 		exit;
-	}
-	else
-	{
+	} else {
 		print 'Error '.$agenda->error;
 
 		exit;

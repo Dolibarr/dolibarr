@@ -28,10 +28,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
  */
 class mod_reception_beryl extends ModelNumRefReception
 {
-    public $version = 'dolibarr';
-    public $prefix = 'RCP';
-    public $error = '';
-    public $nom = 'Beryl';
+	public $version = 'dolibarr';
+	public $prefix = 'RCP';
+	public $error = '';
+	public $nom = 'Beryl';
 
 
 	/**
@@ -39,11 +39,11 @@ class mod_reception_beryl extends ModelNumRefReception
 	 *
 	 *	@return     string      text description
 	 */
-    public function info()
-    {
-    	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
-    }
+	public function info()
+	{
+		global $langs;
+	  	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+	}
 
 
 	/**
@@ -113,9 +113,7 @@ class mod_reception_beryl extends ModelNumRefReception
 			$obj = $db->fetch_object($resql);
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
-		}
-		else
-		{
+		} else {
 			dol_syslog("mod_reception_beryl::getNextValue", LOG_DEBUG);
 			return -1;
 		}

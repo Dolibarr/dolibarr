@@ -45,9 +45,7 @@ if (empty($usedolheader))
 
 
 	<?php
-}
-else
-{
+} else {
 	$arraycss = array();
 	$arrayjs = array();
 	/*
@@ -164,8 +162,8 @@ if (!empty($conf->use_javascript_ajax)) include DOL_DOCUMENT_ROOT.'/core/tpl/aja
 
 $nav = '';
 $nav .= '<form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?action=show_peruser'.$param.'">';
-if ($actioncode || isset($_GET['actioncode']) || isset($_POST['actioncode'])) $nav .= '<input type="hidden" name="actioncode" value="'.$actioncode.'">';
-if ($status || isset($_GET['status']) || isset($_POST['status']))  $nav .= '<input type="hidden" name="status" value="'.$status.'">';
+if ($actioncode || GETPOSTISSET('actioncode')) $nav .= '<input type="hidden" name="actioncode" value="'.$actioncode.'">';
+if ($status || GETPOSTISSET('status'))  $nav .= '<input type="hidden" name="status" value="'.$status.'">';
 if ($filter)  $nav .= '<input type="hidden" name="filter" value="'.$filter.'">';
 if ($filtert) $nav .= '<input type="hidden" name="filtert" value="'.$filtert.'">';
 if ($socid)   $nav .= '<input type="hidden" name="socid" value="'.$socid.'">';

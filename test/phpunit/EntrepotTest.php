@@ -219,7 +219,8 @@ class EntrepotTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		//$this->assertLessThan(1, 0);
+		$result = $localobject->get_full_arbo();
+		$this->assertEquals('WAREHOUSE SPECIMEN', $result);
 
         return $localobject->id;
     }

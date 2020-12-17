@@ -52,9 +52,9 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	public $code_null; // Code facultatif
 
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
@@ -77,7 +77,7 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 
 
 	/**
-     *  Return description of module
+	 *  Return description of module
 	 *
 	 *  @param  Translate   $langs  Object langs
 	 *  @return string              Description of module
@@ -126,8 +126,7 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))
 		{
 			$result = 0;
-		}
-		elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)))
+		} elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)))
 		{
 			$result = -2;
 		}

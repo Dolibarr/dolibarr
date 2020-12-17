@@ -55,188 +55,164 @@ $extrafields->fetch_name_optionals_label($object->table_element);
  * Actions
  */
 
-if ($mode == 'cardlogin' && empty($foruserlogin))
-{
-    $mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login"));
+if ($mode == 'cardlogin' && empty($foruserlogin)) {
+	$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login"));
 }
 
-if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg)
-{
-    $arrayofmembers = array();
+if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
+	$arrayofmembers = array();
 
-    // request taking into account member with up to date subscriptions
-    $sql = "SELECT d.rowid, d.firstname, d.lastname, d.login, d.societe as company, d.datefin,";
-    $sql .= " d.address, d.zip, d.town, d.country, d.birth, d.email, d.photo,";
-    $sql .= " t.libelle as type,";
-    $sql .= " c.code as country_code, c.label as country";
-    // Add fields from extrafields
-    if (!empty($extrafields->attributes[$object->table_element]['label']))
-    	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
-    $sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
-    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON d.country = c.rowid";
-    if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_extrafields as ef on (d.rowid = ef.fk_object)";
-    $sql .= " WHERE d.fk_adherent_type = t.rowid AND d.statut = 1";
-    $sql .= " AND d.entity IN (".getEntity('adherent').")";
-    if (is_numeric($foruserid)) $sql .= " AND d.rowid=".$foruserid;
-    if ($foruserlogin) $sql .= " AND d.login='".$db->escape($foruserlogin)."'";
-    $sql .= " ORDER BY d.rowid ASC";
+	// request taking into account member with up to date subscriptions
+	$sql = "SELECT d.rowid, d.firstname, d.lastname, d.login, d.societe as company, d.datefin,";
+	$sql .= " d.address, d.zip, d.town, d.country, d.birth, d.email, d.photo,";
+	$sql .= " t.libelle as type,";
+	$sql .= " c.code as country_code, c.label as country";
+	// Add fields from extrafields
+	if (!empty($extrafields->attributes[$object->table_element]['label']))
+		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON d.country = c.rowid";
+	if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_extrafields as ef on (d.rowid = ef.fk_object)";
+	$sql .= " WHERE d.fk_adherent_type = t.rowid AND d.statut = 1";
+	$sql .= " AND d.entity IN (".getEntity('adherent').")";
+	if (is_numeric($foruserid)) $sql .= " AND d.rowid=".$foruserid;
+	if ($foruserlogin) $sql .= " AND d.login='".$db->escape($foruserlogin)."'";
+	$sql .= " ORDER BY d.rowid ASC";
 
-    dol_syslog("Search members", LOG_DEBUG);
-    $result = $db->query($sql);
-    if ($result)
-    {
-    	$num = $db->num_rows($result);
-    	$i = 0;
-    	while ($i < $num)
-    	{
-    		$objp = $db->fetch_object($result);
+	dol_syslog("Search members", LOG_DEBUG);
+	$result = $db->query($sql);
+	if ($result) {
+		$num = $db->num_rows($result);
+		$i = 0;
+		while ($i < $num) {
+			$objp = $db->fetch_object($result);
 
-    		if ($objp->country == '-') $objp->country = '';
+			if ($objp->country == '-') $objp->country = '';
 
-    		$adherentstatic->id = $objp->rowid;
-    		$adherentstatic->lastname = $objp->lastname;
-    		$adherentstatic->firstname = $objp->firstname;
+			$adherentstatic->id = $objp->rowid;
+			$adherentstatic->lastname = $objp->lastname;
+			$adherentstatic->firstname = $objp->firstname;
 
-            // Format extrafield so they can be parsed in function complete_substitutions_array
-    		if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']))
-            {
-                $adherentstatic->array_options = array();
-                foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-                {
-                    $tmpkey = 'options_'.$key;
-                    if (!empty($objp->$tmpkey))
-                    {
-                        $adherentstatic->array_options[$tmpkey] = $objp->$tmpkey;
-                    }
-                    //if (!empty($objp->$key))
-                    //    $objp->array_options[$tmpkey] = $objp->$key;
-                    //$objp->array_options[$tmpkey] = $extrafields->showOutputField($key, $objp->$tmpkey, '', 1); //$objp->$tmpkey;
-                }
-            }
+			// Format extrafield so they can be parsed in function complete_substitutions_array
+			if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+				$adherentstatic->array_options = array();
+				foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+					$tmpkey = 'options_'.$key;
+					if (!empty($objp->$tmpkey)) {
+						$adherentstatic->array_options[$tmpkey] = $objp->$tmpkey;
+					}
+					//if (!empty($objp->$key))
+					//    $objp->array_options[$tmpkey] = $objp->$key;
+					//$objp->array_options[$tmpkey] = $extrafields->showOutputField($key, $objp->$tmpkey, '', 1); //$objp->$tmpkey;
+				}
+			}
 
-    		// List of values to scan for a replacement
-            $substitutionarray = array(
-                '__ID__'=>$objp->rowid,
-                '__LOGIN__'=>$objp->login,
-                '__FIRSTNAME__'=>$objp->firstname,
-                '__LASTNAME__'=>$objp->lastname,
-                '__FULLNAME__'=>$adherentstatic->getFullName($langs),
-                '__COMPANY__'=>$objp->company,
-                '__ADDRESS__'=>$objp->address,
-                '__ZIP__'=>$objp->zip,
-                '__TOWN__'=>$objp->town,
-                '__COUNTRY__'=>$objp->country,
-                '__COUNTRY_CODE__'=>$objp->country_code,
-                '__EMAIL__'=>$objp->email,
-                '__BIRTH__'=>dol_print_date($objp->birth, 'day'),
-                '__TYPE__'=>$objp->type,
-                '__YEAR__'=>$year,
-                '__MONTH__'=>$month,
-                '__DAY__'=>$day,
-                '__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
-                '__SERVER__'=>"http://".$_SERVER["SERVER_NAME"]."/"
-            );
-            complete_substitutions_array($substitutionarray, $langs, $adherentstatic);
+			// List of values to scan for a replacement
+			$substitutionarray = array(
+				'__ID__'=>$objp->rowid,
+				'__LOGIN__'=>$objp->login,
+				'__FIRSTNAME__'=>$objp->firstname,
+				'__LASTNAME__'=>$objp->lastname,
+				'__FULLNAME__'=>$adherentstatic->getFullName($langs),
+				'__COMPANY__'=>$objp->company,
+				'__ADDRESS__'=>$objp->address,
+				'__ZIP__'=>$objp->zip,
+				'__TOWN__'=>$objp->town,
+				'__COUNTRY__'=>$objp->country,
+				'__COUNTRY_CODE__'=>$objp->country_code,
+				'__EMAIL__'=>$objp->email,
+				'__BIRTH__'=>dol_print_date($objp->birth, 'day'),
+				'__TYPE__'=>$objp->type,
+				'__YEAR__'=>$year,
+				'__MONTH__'=>$month,
+				'__DAY__'=>$day,
+				'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
+				'__SERVER__'=>"http://".$_SERVER["SERVER_NAME"]."/"
+			);
+			complete_substitutions_array($substitutionarray, $langs, $adherentstatic);
 
-            // For business cards
-            if (empty($mode) || $mode == 'card' || $mode == 'cardlogin')
-            {
-                $textleft = make_substitutions($conf->global->ADHERENT_CARD_TEXT, $substitutionarray);
-                $textheader = make_substitutions($conf->global->ADHERENT_CARD_HEADER_TEXT, $substitutionarray);
-                $textfooter = make_substitutions($conf->global->ADHERENT_CARD_FOOTER_TEXT, $substitutionarray);
-                $textright = make_substitutions($conf->global->ADHERENT_CARD_TEXT_RIGHT, $substitutionarray);
+			// For business cards
+			if (empty($mode) || $mode == 'card' || $mode == 'cardlogin') {
+				$textleft = make_substitutions($conf->global->ADHERENT_CARD_TEXT, $substitutionarray);
+				$textheader = make_substitutions($conf->global->ADHERENT_CARD_HEADER_TEXT, $substitutionarray);
+				$textfooter = make_substitutions($conf->global->ADHERENT_CARD_FOOTER_TEXT, $substitutionarray);
+				$textright = make_substitutions($conf->global->ADHERENT_CARD_TEXT_RIGHT, $substitutionarray);
 
-                if (is_numeric($foruserid) || $foruserlogin)
-                {
-                    $nb = $_Avery_Labels[$model]['NX'] * $_Avery_Labels[$model]['NY'];
-                    if ($nb <= 0) $nb = 1; // Protection to avoid empty page
+				if (is_numeric($foruserid) || $foruserlogin) {
+					$nb = $_Avery_Labels[$model]['NX'] * $_Avery_Labels[$model]['NY'];
+					if ($nb <= 0) $nb = 1; // Protection to avoid empty page
 
-                    for ($j = 0; $j < $nb; $j++)
-                    {
-                        $arrayofmembers[] = array(
-                        	'textleft'=>$textleft,
-                            'textheader'=>$textheader,
-                            'textfooter'=>$textfooter,
-                            'textright'=>$textright,
-                            'id'=>$objp->rowid,
-                            'photo'=>$objp->photo
-                        );
-                    }
-                }
-                else
-                {
-                    $arrayofmembers[] = array(
-                    	'textleft'=>$textleft,
-                        'textheader'=>$textheader,
-                        'textfooter'=>$textfooter,
-                        'textright'=>$textright,
-                        'id'=>$objp->rowid,
-                        'photo'=>$objp->photo
-                    );
-                }
-            }
+					for ($j = 0; $j < $nb; $j++) {
+						$arrayofmembers[] = array(
+							'textleft'=>$textleft,
+							'textheader'=>$textheader,
+							'textfooter'=>$textfooter,
+							'textright'=>$textright,
+							'id'=>$objp->rowid,
+							'photo'=>$objp->photo
+						);
+					}
+				} else {
+					$arrayofmembers[] = array(
+						'textleft'=>$textleft,
+						'textheader'=>$textheader,
+						'textfooter'=>$textfooter,
+						'textright'=>$textright,
+						'id'=>$objp->rowid,
+						'photo'=>$objp->photo
+					);
+				}
+			}
 
-            // For labels
-            if ($mode == 'label')
-            {
-            	if (empty($conf->global->ADHERENT_ETIQUETTE_TEXT)) $conf->global->ADHERENT_ETIQUETTE_TEXT = "__FULLNAME__\n__ADDRESS__\n__ZIP__ __TOWN__\n__COUNTRY__";
-                $textleft = make_substitutions($conf->global->ADHERENT_ETIQUETTE_TEXT, $substitutionarray);
-                $textheader = '';
-                $textfooter = '';
-                $textright = '';
+			// For labels
+			if ($mode == 'label') {
+				if (empty($conf->global->ADHERENT_ETIQUETTE_TEXT)) $conf->global->ADHERENT_ETIQUETTE_TEXT = "__FULLNAME__\n__ADDRESS__\n__ZIP__ __TOWN__\n__COUNTRY__";
+				$textleft = make_substitutions($conf->global->ADHERENT_ETIQUETTE_TEXT, $substitutionarray);
+				$textheader = '';
+				$textfooter = '';
+				$textright = '';
 
-                $arrayofmembers[] = array('textleft'=>$textleft,
-                                        'textheader'=>$textheader,
-                                        'textfooter'=>$textfooter,
-                                        'textright'=>$textright,
-                                        'id'=>$objp->rowid,
-                                        'photo'=>$objp->photo);
-            }
+				$arrayofmembers[] = array('textleft'=>$textleft,
+										'textheader'=>$textheader,
+										'textfooter'=>$textfooter,
+										'textright'=>$textright,
+										'id'=>$objp->rowid,
+										'photo'=>$objp->photo);
+			}
 
-            $i++;
-    	}
+			$i++;
+		}
 
-    	// Build and output PDF
-        if (empty($mode) || $mode == 'card' || $mode == 'cardlogin')
-        {
-            if (!count($arrayofmembers))
-            {
-                $mesg = $langs->trans("ErrorRecordNotFound");
-            }
-            if (empty($model) || $model == '-1')
-            {
-            	$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DescADHERENT_CARD_TYPE"));
-            }
-            if (!$mesg) $result = members_card_pdf_create($db, $arrayofmembers, $model, $outputlangs);
-        }
-        elseif ($mode == 'label')
-        {
-            if (!count($arrayofmembers))
-            {
-                $mesg = $langs->trans("ErrorRecordNotFound");
-            }
-        	if (empty($modellabel) || $modellabel == '-1')
-    		{
-    			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DescADHERENT_ETIQUETTE_TYPE"));
-    		}
-        	if (!$mesg) $result = doc_label_pdf_create($db, $arrayofmembers, $modellabel, $outputlangs);
-        }
+		// Build and output PDF
+		if (empty($mode) || $mode == 'card' || $mode == 'cardlogin') {
+			if (!count($arrayofmembers)) {
+				$mesg = $langs->trans("ErrorRecordNotFound");
+			}
+			if (empty($model) || $model == '-1') {
+				$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DescADHERENT_CARD_TYPE"));
+			}
+			if (!$mesg) $result = members_card_pdf_create($db, $arrayofmembers, $model, $outputlangs);
+		} elseif ($mode == 'label') {
+			if (!count($arrayofmembers)) {
+				$mesg = $langs->trans("ErrorRecordNotFound");
+			}
+			if (empty($modellabel) || $modellabel == '-1') {
+				$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DescADHERENT_ETIQUETTE_TYPE"));
+			}
+			if (!$mesg) $result = doc_label_pdf_create($db, $arrayofmembers, $modellabel, $outputlangs);
+		}
 
-    	if ($result <= 0)
-    	{
-    		dol_print_error('', $result);
-    	}
-    }
-    else
-    {
-    	dol_print_error($db);
-    }
+		if ($result <= 0) {
+			dol_print_error('', $result);
+		}
+	} else {
+		dol_print_error($db);
+	}
 
-    if (!$mesg)
-    {
-    	$db->close();
-    	exit;
-    }
+	if (!$mesg) {
+		$db->close();
+		exit;
+	}
 }
 
 
@@ -266,8 +242,7 @@ print '<input type="hidden" name="action" value="builddoc">';
 print $langs->trans("DescADHERENT_CARD_TYPE").' ';
 // List of possible labels (defined into $_Avery_Labels variable set into format_cards.lib.php)
 $arrayoflabels = array();
-foreach (array_keys($_Avery_Labels) as $codecards)
-{
+foreach (array_keys($_Avery_Labels) as $codecards) {
 	$arrayoflabels[$codecards] = $_Avery_Labels[$codecards]['name'];
 }
 asort($arrayoflabels);
@@ -285,8 +260,7 @@ print '<input type="hidden" name="action" value="builddoc">';
 print $langs->trans("DescADHERENT_CARD_TYPE").' ';
 // List of possible labels (defined into $_Avery_Labels variable set into format_cards.lib.php)
 $arrayoflabels = array();
-foreach (array_keys($_Avery_Labels) as $codecards)
-{
+foreach (array_keys($_Avery_Labels) as $codecards) {
 	$arrayoflabels[$codecards] = $_Avery_Labels[$codecards]['name'];
 }
 asort($arrayoflabels);
@@ -305,8 +279,7 @@ print '<input type="hidden" name="action" value="builddoc">';
 print $langs->trans("DescADHERENT_ETIQUETTE_TYPE").' ';
 // List of possible labels (defined into $_Avery_Labels variable set into format_cards.lib.php)
 $arrayoflabels = array();
-foreach (array_keys($_Avery_Labels) as $codecards)
-{
+foreach (array_keys($_Avery_Labels) as $codecards) {
 	$arrayoflabels[$codecards] = $_Avery_Labels[$codecards]['name'];
 }
 asort($arrayoflabels);

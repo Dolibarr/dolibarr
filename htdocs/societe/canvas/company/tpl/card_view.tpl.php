@@ -30,7 +30,7 @@ print "<!-- BEGIN PHP TEMPLATE CARD_VIEW.TPL.PHP COMPANY -->\n";
 
 $head = societe_prepare_head($soc);
 
-dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
+print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
 ?>
 
@@ -235,7 +235,7 @@ for ($i = 1; $i <= 4; $i++) {
 
 </table>
 
-<?php dol_fiche_end(); ?>
+<?php print dol_get_fiche_end(); ?>
 
 <div class="tabsAction">
 <?php if ($user->rights->societe->creer) { ?>
@@ -246,7 +246,7 @@ for ($i = 1; $i <= 4; $i++) {
 	<?php if ($conf->use_javascript_ajax) { ?>
 		<span id="action-delete" class="butActionDelete"><?php echo $langs->trans('Delete'); ?></span>
 	<?php } else { ?>
-		<a class="butActionDelete" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&amp;action=delete&amp;canvas='.$canvas; ?>"><?php echo $langs->trans('Delete'); ?></a>
+		<a class="butActionDelete" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&amp;action=delete&amp;token='.newToken().'&amp;canvas='.$canvas; ?>"><?php echo $langs->trans('Delete'); ?></a>
 	<?php } ?>
 <?php } ?>
 </div>

@@ -1,4 +1,5 @@
 Mrp=Đơn đặt hàng sản xuất
+MOs=Manufacturing orders
 ManufacturingOrder=Đơn hàng sản xuất
 MRPDescription=Module to manage production and Manufacturing Orders (MO).
 MRPArea=Khu vực MRP
@@ -75,3 +76,5 @@ ProductsToProduce=Products to produce
 UnitCost=Unit cost
 TotalCost=Total cost
 BOMTotalCost=The cost to produce this BOM based on cost of each quantity and product to consume (use Cost price if defined, else Average Weighted Price if defined, else the Best purchase price)
+GoOnTabProductionToProduceFirst=You must first have started the production to close a Manufacturing Order (See tab '%s'). But you can Cancel it.
+ErrorAVirtualProductCantBeUsedIntoABomOrMo=A kit can't be used into a BOM or a MO

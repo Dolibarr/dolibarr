@@ -1,4 +1,5 @@
 Mrp=Órdenes de fabricación
+MOs=Órdenes de fabricación
 ManufacturingOrder=Orden de fabricación
 MRPDescription=Módulo para gestionar producción y Órdenes de Fabricación (OF).
 MRPArea=Área MRP
@@ -75,3 +76,5 @@ ProductsToProduce=Productos para producir
 UnitCost=Costo unitario
 TotalCost=Coste total
 BOMTotalCost=El costo para producir esta Lista de Materiales en función del costo de cada cantidad y producto a consumir (use el precio de costo si está definido, de lo contrario, el precio promedio ponderado si está definido, o el mejor precio de compra)
+GoOnTabProductionToProduceFirst=Primero debe haber iniciado la producción para cerrar una orden de fabricación (consulte la pestaña '%s'). Pero puedes cancelarlo.
+ErrorAVirtualProductCantBeUsedIntoABomOrMo=A kit can't be used into a BOM or a MO

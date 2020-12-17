@@ -165,6 +165,7 @@ class ActionsMyModule
 		global $conf, $user, $langs;
 
 		$error = 0; // Error counter
+		$disabled = 1;
 
 		/* print_r($parameters); print_r($object); echo "action: " . $action; */
 		if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2')))		// do something only for the context 'somecontext1' or 'somecontext2'
@@ -231,8 +232,8 @@ class ActionsMyModule
 		dol_syslog(get_class($this).'::executeHooks action='.$action);
 
 		/* print_r($parameters); print_r($object); echo "action: " . $action; */
-		if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2')))		// do something only for the context 'somecontext1' or 'somecontext2'
-		{
+		if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2'))) {
+			// do something only for the context 'somecontext1' or 'somecontext2'
 		}
 
 		return $ret;

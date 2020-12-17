@@ -18,12 +18,14 @@ DefaultForService=Προεπιλογή για υπηρεσία
 DefaultForProduct=Προεπιλογή για το προϊόν
 CantSuggest=Δεν μπορώ να προτείνω
 AccountancySetupDoneFromAccountancyMenu=Η μεγαλύτερη ρύθμιση της λογιστικής γίνεται από το μενού %s
-ConfigAccountingExpert=Διαμόρφωση της μονάδας λογιστικής expert
+ConfigAccountingExpert=Configuration of the module accounting (double entry)
 Journalization=Περιοδικότητα
-Journaux=Ημερολόγια
+Journals=Ημερολόγια
 JournalFinancial=Οικονομικά ημερολόγια
 BackToChartofaccounts=Επιστροφή στο διάγραμμα των λογαριασμών
 Chartofaccounts=Διάγραμμα λογαριασμών
+ChartOfSubaccounts=Chart of individual accounts
+ChartOfIndividualAccountsOfSubsidiaryLedger=Chart of individual accounts of the subsidiary ledger
 CurrentDedicatedAccountingAccount=Τρέχον ειδικό λογαριασμό
 AssignDedicatedAccountingAccount=Νέος λογαριασμός προς ανάθεση
 InvoiceLabel=Ετικέτα τιμολογίου
@@ -33,8 +35,8 @@ OtherInfo=Αλλες πληροφορίες
 DeleteCptCategory=Κατάργηση λογαριασμού λογιστικής από την ομάδα
 ConfirmDeleteCptCategory=Είστε βέβαιοι ότι θέλετε να καταργήσετε αυτόν τον λογαριασμό λογιστικής από την ομάδα λογαριασμών λογαριασμού;
 JournalizationInLedgerStatus=Κατάσταση της περιοδικής εγγραφής
-AlreadyInGeneralLedger=Έχει ήδη κυκλοφορήσει σε ημερολόγια
-NotYetInGeneralLedger=Δεν έχει ακόμη καταχωρηθεί σε ημερολόγια
+AlreadyInGeneralLedger=Already transferred in accounting journals and ledger
+NotYetInGeneralLedger=Not yet transferred in accouting journals and ledger
 GroupIsEmptyCheckSetup=Η ομάδα είναι κενή, ελέγξτε τη ρύθμιση της εξατομικευμένης ομάδας λογιστικής
 DetailByAccount=Εμφάνιση λεπτομερειών βάσει λογαριασμού
 AccountWithNonZeroValues=Λογαριασμοί με μη μηδενικές τιμές
@@ -43,7 +45,9 @@ CountriesInEEC=Χώρες στην ΕΟΚ
 CountriesNotInEEC=Χώρες που δεν βρίσκονται στην ΕΟΚ
 CountriesInEECExceptMe=Χώρες στην ΕΟΚ εκτός από το %s
 CountriesExceptMe=Όλες οι χώρες εκτός από το %s
-AccountantFiles=Εξαγωγή λογιστικών εγγράφων
+AccountantFiles=Export source documents
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
+VueByAccountAccounting=View by accounting account
 
 MainAccountForCustomersNotDefined=Κύριος λογαριασμός λογιστικής για πελάτες που δεν έχουν οριστεί στη ρύθμιση
 MainAccountForSuppliersNotDefined=Κύριος λογαριασμός λογιστικής για προμηθευτές που δεν καθορίζονται στη ρύθμιση
@@ -79,7 +83,7 @@ AccountancyAreaDescAnalyze=STEP %s: Προσθέστε ή επεξεργαστε
 
 AccountancyAreaDescClosePeriod=STEP %s: Κλείστε την περίοδο έτσι δεν μπορούμε να κάνουμε αλλαγές σε ένα μέλλον.
 
-TheJournalCodeIsNotDefinedOnSomeBankAccount=Ένα υποχρεωτικό βήμα στη ρύθμιση δεν ήταν πλήρης (το λογιστικό περιοδικό δεν καθορίστηκε για όλους τους τραπεζικούς λογαριασμούς)
+TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup has not been completed (accounting code journal not defined for all bank accounts)
 Selectchartofaccounts=Επιλέξτε ενεργό πίνακα λογαριασμών
 ChangeAndLoad=Αλλαγή και φόρτωση
 Addanaccount=Προσθέστε ένα λογιστικό λογαριασμό
@@ -89,6 +93,8 @@ SubledgerAccount=Λογαριασμός χρέωσης
 SubledgerAccountLabel=Ετικέτα λογαριασμού
 ShowAccountingAccount=Εμφάνιση λογαριασμού λογιστικής
 ShowAccountingJournal=Εμφάνιση λογιστικού περιοδικού
+ShowAccountingAccountInLedger=Show accounting account in ledger
+ShowAccountingAccountInJournals=Show accounting account in journals
 AccountAccountingSuggest=Λογαριασμός λογιστικής πρότεινε
 MenuDefaultAccounts=Προεπιλεγμένοι λογαριασμοί
 MenuBankAccounts=Τραπεζικοί Λογαριασμοί
@@ -110,8 +116,9 @@ ExpenseReportsVentilation=Αναφορά σύνδεσης εξόδων
 CreateMvts=Δημιουργήστε μία νέα συναλλαγή
 UpdateMvts=Τροποποίηση συναλλαγής
 ValidTransaction=Επικύρωση συναλλαγής
-WriteBookKeeping=Εγγραφή συναλλαγών στο Ledger
+WriteBookKeeping=Register transactions in accounting
 Bookkeeping=Καθολικό
+BookkeepingSubAccount=Subledger
 AccountBalance=Υπόλοιπο λογαριασμού
 ObjectsRef=Αναφορά αντικειμένου προέλευσης
 CAHTF=Συνολικός προμηθευτής αγοράς προ φόρων
@@ -149,6 +156,8 @@ ACCOUNTING_MANAGE_ZERO=Να επιτρέπεται η διαχείριση δι�
 BANK_DISABLE_DIRECT_INPUT=Απενεργοποιήστε την απευθείας εγγραφή συναλλαγής σε τραπεζικό λογαριασμό
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Ενεργοποιήστε το σχέδιο εξαγωγής στο περιοδικό
 ACCOUNTANCY_COMBO_FOR_AUX=Ενεργοποίηση σύνθετης λίστας για επικουρικό λογαριασμό (μπορεί να είναι αργή αν έχετε πολλούς τρίτους)
+ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, select period show by default
 
 ACCOUNTING_SELL_JOURNAL=Ημερολόγιο πωλήσεων
 ACCOUNTING_PURCHASE_JOURNAL=Ημερολόγιο αγορών
@@ -167,6 +176,8 @@ TransitionalAccount=Μεταβατικό τραπεζικό λογαριασμό
 ACCOUNTING_ACCOUNT_SUSPENSE=Λογαριασμός λογιστικής αναμονής
 DONATION_ACCOUNTINGACCOUNT=Λογαριασμός λογιστικής για την εγγραφή δωρεών
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Λογαριασμός λογιστικής για την εγγραφή συνδρομών
+
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Accounting account by default to register customer deposit
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Λογαριασμός λογιστικής από προεπιλογή για τα αγορασμένα προϊόντα (χρησιμοποιείται αν δεν ορίζεται στο φύλλο προϊόντων)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Λογαριασμός από προεπιλογή για τα προϊόντα που αγοράστηκαν στην ΕΟΚ (χρησιμοποιείται αν δεν ορίζεται στο φύλλο προϊόντος)
@@ -202,16 +213,16 @@ ByPredefinedAccountGroups=Με προκαθορισμένες ομάδες
 ByPersonalizedAccountGroups=Με εξατομικευμένες ομάδες
 ByYear=Με χρόνια
 NotMatch=Δεν έχει οριστεί
-DeleteMvt=Διαγραφή γραμμών Ledger
+DeleteMvt=Delete some operation lines from accounting
 DelMonth=Μήνας προς διαγραφή
 DelYear=Έτος προς διαγραφή
 DelJournal=Ημερολόγιο προς διαγραφή
-ConfirmDeleteMvt=Αυτό θα διαγράψει όλες τις γραμμές του Ημερολογίου Λογιστικής για το έτος / μήνα ή / και από μία συγκεκριμένη περίοδο (Απαιτείται τουλάχιστον ένα κριτήριο). Θα χρειαστεί να επαναχρησιμοποιήσετε τη λειτουργία "Εγγραφή στη λογιστική" για να έχετε το διαγραμμένο αρχείο πίσω στο ημερολόγιο.
-ConfirmDeleteMvtPartial=Αυτό θα διαγράψει τη συναλλαγή από το Ledger (όλες οι γραμμές που σχετίζονται με την ίδια συναλλαγή θα διαγραφούν)
+ConfirmDeleteMvt=This will delete all operation lines of the accounting for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
+ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all operation lines related to the same transaction will be deleted)
 FinanceJournal=Ημερολόγιο οικονομικών
 ExpenseReportsJournal=Έκθεση εκθέσεων δαπανών
 DescFinanceJournal=Finance journal including all the types of payments by bank account
-DescJournalOnlyBindedVisible=Πρόκειται για μια καταγραφή που συνδέεται με έναν λογαριασμό λογιστικής και μπορεί να καταγραφεί στον Λογαριασμό.
+DescJournalOnlyBindedVisible=This is a view of record that are bound to an accounting account and can be recorded into the Journals and Ledger.
 VATAccountNotDefined=Δεν έχει οριστεί λογαριασμός για ΦΠΑ
 ThirdpartyAccountNotDefined=Ο λογαριασμός για τρίτους δεν έχει οριστεί
 ProductAccountNotDefined=Λογαριασμός για το προϊόν δεν έχει οριστεί
@@ -284,6 +295,7 @@ ShowTutorial=Εμφάνιση εκπαιδευτικού προγράμματο�
 NotReconciled=Δεν ταιριάζουν
 
 ## Admin
+BindingOptions=Binding options
 ApplyMassCategories=Εφαρμογή κατηγοριών μάζας
 AddAccountFromBookKeepingWithNoCategories=Διαθέσιμος λογαριασμός που δεν έχει ακόμα εγγραφεί στην εξατομικευμένη ομάδα
 CategoryDeleted=Η κατηγορία για τον λογαριασμό λογιστηρίου έχει καταργηθεί
@@ -303,6 +315,9 @@ ErrorAccountingJournalIsAlreadyUse=Αυτό το περιοδικό χρησιμ
 AccountingAccountForSalesTaxAreDefinedInto=Σημείωση: Ο λογαριασμός λογιστικής για τον φόρο πωλήσεων ορίζεται στο μενού <b>%s</b> - <b>%s</b>
 NumberOfAccountancyEntries=Αριθμός καταχωρήσεων
 NumberOfAccountancyMovements=Αριθμός κινήσεων
+ACCOUNTING_DISABLE_BINDING_ON_SALES=Disable binding & transfer in accountancy on sales (customer invoices will not be taken into account in accounting)
+ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountancy on purchases (vendor invoices will not be taken into account in accounting)
+ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
 ExportDraftJournal=Εξαγωγή σχεδίου περιοδικού
@@ -324,6 +339,8 @@ Modelcsv_configurable=Εξαγωγή CSV εξαγωγής
 Modelcsv_FEC=Εξαγωγή FEC
 Modelcsv_Sage50_Swiss=Εξαγωγή για Sage 50 Ελβετία
 Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
+Modelcsv_Gestinumv3=Export for Gestinum (v3)
+Modelcsv_Gestinumv5Export for Gestinum (v5)
 ChartofaccountsId=Λογαριασμός Id
 
 ## Tools - Init accounting account on product / service

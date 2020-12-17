@@ -60,8 +60,6 @@ print '<body>'."\n";
 print '<div style="padding: 20px;">';
 //print '<br>';
 
-$nbofsearch = 0;
-
 // Define link to login card
 $appli = constant('DOL_APPLICATION_TITLE');
 if (!empty($conf->global->MAIN_APPLICATION_TITLE))
@@ -70,10 +68,8 @@ if (!empty($conf->global->MAIN_APPLICATION_TITLE))
 	if (preg_match('/\d\.\d/', $appli))
 	{
 		if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
-	}
-	else $appli .= " ".DOL_VERSION;
-}
-else $appli .= " ".DOL_VERSION;
+	} else $appli .= " ".DOL_VERSION;
+} else $appli .= " ".DOL_VERSION;
 
 if (!empty($conf->global->MAIN_FEATURES_LEVEL)) $appli .= "<br>".$langs->trans("LevelOfFeature").': '.$conf->global->MAIN_FEATURES_LEVEL;
 
@@ -89,9 +85,7 @@ if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 		//$logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout_top.png', 'class="login"', 0, 0, 1);
 		$logouttext .= '<span class="fa fa-sign-out atoplogin"></span>';
 		$logouttext .= '</a>';
-	}
-	else
-	{
+	} else {
 		$logouthtmltext .= $langs->trans("NoLogoutProcessWithAuthMode", $_SESSION["dol_authmode"]);
 		$logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout_top.png', 'class="login"', 0, 0, 1);
 	}
@@ -118,9 +112,13 @@ $result = $hookmanager->executeHooks('printTopRightMenu', $parameters); // Note 
 if (is_numeric($result))
 {
 	if (empty($result)) $toprightmenu .= $hookmanager->resPrint; // add
-	else  $toprightmenu = $hookmanager->resPrint; // replace
+	else $toprightmenu = $hookmanager->resPrint; // replace
+} else $toprightmenu .= $result; // For backward compatibility
+
+if (!isset($form) || !is_object($form)) {
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+	$form = new Form($db);
 }
-else $toprightmenu .= $result; // For backward compatibility
 
 // Link to module builder
 if (!empty($conf->modulebuilder->enabled))
@@ -129,7 +127,7 @@ if (!empty($conf->modulebuilder->enabled))
 	//$text.= img_picto(":".$langs->trans("ModuleBuilder"), 'printer_top.png', 'class="printer"');
 	$text .= '<span class="fa fa-bug atoplogin"></span>';
 	$text .= '</a>';
-	$toprightmenu .= @Form::textwithtooltip('', $langs->trans("ModuleBuilder"), 2, 1, $text, 'login_block_elem', 2);
+	$toprightmenu .= $form->textwithtooltip('', $langs->trans("ModuleBuilder"), 2, 1, $text, 'login_block_elem', 2);
 }
 
 // Link to print main content area
@@ -149,7 +147,7 @@ if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->global->MAIN_OP
 	//$text.= img_picto(":".$langs->trans("PrintContentArea"), 'printer_top.png', 'class="printer"');
 	$text.='<span class="fa fa-print atoplogin"></span>';
 	$text.='</a>';
-	$toprightmenu.=@Form::textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'login_block_elem',2);
+	$toprightmenu .= $form->textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'login_block_elem',2);
 }
 */
 
@@ -188,13 +186,13 @@ if (empty($conf->global->MAIN_HELP_DISABLELINK) && empty($conf->global->MAIN_OPT
 		//if ($mode == 'wiki') $text.=' ('.dol_trunc(strtr($helppage,'_',' '),8).')';
 		$text.='</a>';
 		//$toprightmenu.='</div>'."\n";
-		$toprightmenu.=@Form::textwithtooltip('',$title,2,1,$text,'login_block_elem',2);
+		$toprightmenu .= $form->textwithtooltip('',$title,2,1,$text,'login_block_elem',2);
 	}
 }
 */
 
 // Logout link
-if (GETPOST('withlogout', 'int')) $toprightmenu .= @Form::textwithtooltip('', $logouthtmltext, 2, 1, $logouttext, 'login_block_elem', 2);
+if (GETPOST('withlogout', 'int')) $toprightmenu .= $form->textwithtooltip('', $logouthtmltext, 2, 1, $logouttext, 'login_block_elem', 2);
 
 $toprightmenu .= '</div>';
 

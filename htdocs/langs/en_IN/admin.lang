@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - admin
-DoliPartnersDesc=List of companies providing custom-developed modules or features.<br>Note: since Dolibarr is an open source application, <i>anyone</i> experienced in PHP programming should be able to develop a module.
 Module20Name=Quotations
 Module20Desc=Management of quotations
 Permission21=Read quotations

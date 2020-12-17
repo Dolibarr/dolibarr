@@ -72,7 +72,6 @@ Deleted=حذف شده
 
 # Dict
 Type=نوع
-Category=کد Analytic
 Severity=حساسیت
 
 # Email templates
@@ -128,7 +127,6 @@ TicketsAutoAssignTicket=نسبت دادن خودکار کاربری که برگ�
 TicketsAutoAssignTicketHelp=در هنگام ساخت برگۀ‌پشتیبانی، کاربر می‌تواند به شکل خودکار به برگه نسبت داده شود
 TicketNumberingModules=واحد شماره‌دهی برگه‌های پشتیبانی
 TicketNotifyTiersAtCreation=اطلاع‌رسانی به شخص‌سوم در هنگام ساخت
-TicketGroup=گروه
 TicketsDisableCustomerEmail=همواره در هنگامی که یک برگۀ‌پشتیبانی از طریق رابط عمومی ساخته می‌شود، قابلیت رایانامه غیرفعال شود
 TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
@@ -162,7 +160,7 @@ CreatedBy=ساخته‌شده توسط
 NewTicket=برگۀ جدید
 SubjectAnswerToTicket=پاسخ برگه
 TicketTypeRequest=نوع درخواست
-TicketCategory=کد Analytic
+TicketCategory=گروه
 SeeTicket=نمایش برگه
 TicketMarkedAsRead=برگه به صورت خوانده شده علامت‌گذاری شد
 TicketReadOn=خواندن

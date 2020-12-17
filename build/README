@@ -1,48 +1,66 @@
 README (English)
+
+Path: /dolibarr/build/README
+
 ##################################################
 Building packages
 ##################################################
 
 All sub-directories of "build" directory contains files (setup or binary tools) required to build automatically Dolibarr packages.
-There are several tools:
 
+There are several tools:
 
 
 - To build full Dolibarr packages, launch the script
 > Launch command perl makepack-dolibarr.pl
 
-Note: Prerequisites to build tgz, debian, rpm package
+--------------------------------------------------------------------------------------------------
+
+
+Prerequisites to build tgz, debian, rpm package:
+
 > apt-get install tar dpkg dpatch p7zip-full rpm zip
 
-Note: Prerequisites to build autoexe DoliWamp package:
+
+--------------------------------------------------------------------------------------------------
+
+Prerequisites to build autoexe DoliWamp package:
 > apt-get install wine q4wine
 > Launch "wine cmd" to check a drive Z: pointing to / exists.
 > Install InnoSetup
-   For example by running isetup-5.3.9.exe (http://www.jrsoftware.org)
-> Install WampServer into "C:\Program Files\Wamp"
-   For example by running wampserver2.5-Apache-2.4.9-Mysql-5.6.17-php5.5.12-32b.exe (http://www.wampserver.com)
-> Install WampServer addon to have versions: Mysql5.0.45
-   For example by running WampServer2-MYSQL5045.exe (http://www.wampserver.com)
-> To build from Windows (running from makepack-dolibarr.pl script is however
-  recommanded), open file build/exe/doliwamp.iss and click on button "Compile".
-  The .exe file will be build into directory build.
+   For example by running isetup-5.5.8.exe (https://www.jrsoftware.org)  https://files.jrsoftware.org/is/5/
+> Install WampServer into "C:\wamp64" to have Apache, PHP and MariaDB
+   For example by running wampserver3.2.0_x64.exe (https://www.wampserver.com). 
+   See file build/exe/doliwamp.iss to know the doliwamp version currently setup.
 > Add path to ISCC into PATH windows var:
   Launch wine cmd, then regedit and add entry int HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment\PATH
+> To build manually the .exe from Windows (running from makepack-dolibarr.pl script is however recommanded), 
+  open file build/exe/doliwamp.iss and click on button "Compile".
+  The .exe file will be build into directory build.
+
+--------------------------------------------------------------------------------------------------
   
 - To build a theme package, launch the script
 > perl makepack-dolibarrtheme.pl
 
+
+--------------------------------------------------------------------------------------------------
+
 - To build a package for a module, launch the script
 > perl makepack-dolibarrmodule.pl
+
+
+--------------------------------------------------------------------------------------------------
 
 - To build developper documentation, launch the script
 > perl dolibarr-doxygen-build.pl
 
 
+--------------------------------------------------------------------------------------------------
+
 Note: 
-The build directory and all its contents is absolutely not required to make
-Dolibarr working. It is here only to build Dolibarr packages, and those
-generated packages will not contains this "build" directory.
+The build directory and all its contents is absolutely not required to make Dolibarr working. 
+It is here only to build Dolibarr packages, and those generated packages will not contains this "build" directory.
 
 
 You can find in "build", following sub-directories:
@@ -59,6 +77,9 @@ To build Mac OS package (not ready yet).
 * doap:
 To build Doap descriptor to promote/describe Dolibarr releases.
 
+* docker:
+To deploy Dolibarr with docker.
+
 * doxygen:
 Dir with config file to build doxygen documentation.
 
@@ -66,11 +87,11 @@ Dir with config file to build doxygen documentation.
 To build exe package for Windows that distribute Dolibarr sources or
 to build the complete DoliWamp package.
 
+* gource:
+To build the video of history of git changes.
+
 * launchpad:
 Doc file to explain how to use launchpad.
-
-* live:
-Doc file to explain how to create a demo live CD.
 
 * obs:
 Doc file to explain how to push release onto OBS.
@@ -89,6 +110,9 @@ To build Redhat, Opensuse or Mandriva package.
 
 * tgz:
 To build a tgz package.
+
+* travis-ci:
+Used by travis to make CI.
 
 * zip:
 To build a zip package.

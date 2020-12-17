@@ -39,9 +39,10 @@ if (!$user->rights->categorie->lire) accessforbidden();
 $id = GETPOST('id', 'int');
 $type = (GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
 $catname = GETPOST('catname', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $printer1 = GETPOST('printer1', 'alpha');
 $printer2 = GETPOST('printer2', 'alpha');
+$printer3 = GETPOST('printer3', 'alpha');
 
 if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
 
@@ -64,6 +65,14 @@ if ($action == "SavePrinter2") {
 	dolibarr_set_const($db, "TAKEPOS_PRINTED_CATEGORIES_2", $printedcategories, 'chaine', 0, '', $conf->entity);
 }
 
+if ($action == "SavePrinter3") {
+	$printedcategories = ";";
+	if (is_array($printer3)) foreach ($printer3 as $cat) {
+		$printedcategories = $printedcategories.$cat.";";
+	}
+	dolibarr_set_const($db, "TAKEPOS_PRINTED_CATEGORIES_3", $printedcategories, 'chaine', 0, '', $conf->entity);
+}
+
 
 /*
  * View
@@ -72,17 +81,39 @@ if ($action == "SavePrinter2") {
 $categstatic = new Categorie($db);
 $form = new Form($db);
 
-if ($type == Categorie::TYPE_PRODUCT) { $title = $langs->trans("ProductsCategoriesArea"); $typetext = 'product'; }
-elseif ($type == Categorie::TYPE_SUPPLIER) { $title = $langs->trans("SuppliersCategoriesArea"); $typetext = 'supplier'; }
-elseif ($type == Categorie::TYPE_CUSTOMER) { $title = $langs->trans("CustomersCategoriesArea"); $typetext = 'customer'; }
-elseif ($type == Categorie::TYPE_MEMBER) { $title = $langs->trans("MembersCategoriesArea"); $typetext = 'member'; }
-elseif ($type == Categorie::TYPE_CONTACT) { $title = $langs->trans("ContactsCategoriesArea"); $typetext = 'contact'; }
-elseif ($type == Categorie::TYPE_ACCOUNT) { $title = $langs->trans("AccountsCategoriesArea"); $typetext = 'bank_account'; }
-elseif ($type == Categorie::TYPE_PROJECT) { $title = $langs->trans("ProjectsCategoriesArea"); $typetext = 'project'; }
-elseif ($type == Categorie::TYPE_USER) { $title = $langs->trans("UsersCategoriesArea"); $typetext = 'user'; }
-else { $title = $langs->trans("CategoriesArea"); $typetext = 'unknown'; }
+if ($type == Categorie::TYPE_PRODUCT) {
+	$title = $langs->trans("ProductsCategoriesArea");
+	$typetext = 'product';
+} elseif ($type == Categorie::TYPE_SUPPLIER) {
+	$title = $langs->trans("SuppliersCategoriesArea");
+	$typetext = 'supplier';
+} elseif ($type == Categorie::TYPE_CUSTOMER) {
+	$title = $langs->trans("CustomersCategoriesArea");
+	$typetext = 'customer';
+} elseif ($type == Categorie::TYPE_MEMBER) {
+	$title = $langs->trans("MembersCategoriesArea");
+	$typetext = 'member';
+} elseif ($type == Categorie::TYPE_CONTACT) {
+	$title = $langs->trans("ContactsCategoriesArea");
+	$typetext = 'contact';
+} elseif ($type == Categorie::TYPE_ACCOUNT) {
+	$title = $langs->trans("AccountsCategoriesArea");
+	$typetext = 'bank_account';
+} elseif ($type == Categorie::TYPE_PROJECT) {
+	$title = $langs->trans("ProjectsCategoriesArea");
+	$typetext = 'project';
+} elseif ($type == Categorie::TYPE_USER) {
+	$title = $langs->trans("UsersCategoriesArea");
+	$typetext = 'user';
+} else {
+	$title = $langs->trans("CategoriesArea");
+	$typetext = 'unknown';
+}
 
-$arrayofjs = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
+$arrayofjs = array(
+	'/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
+	'/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js',
+);
 $arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
 llxHeader('', $title, '', '', 0, 0, $arrayofjs, $arrayofcss);
@@ -146,9 +177,7 @@ if ($nbofentries > 0)
 		if ($row["fk_menu"] == 0) print '<input type="checkbox" name="printer1[]" value="'.$row["rowid"].'" '.$checked.'>'.$row["label"].'<br>';
 	}
 	print '</td></tr>';
-}
-else
-{
+} else {
 	print '<tr class="pair">';
 	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
 	print '<td valign="middle">';
@@ -159,7 +188,7 @@ else
 	print '</tr>';
 }
 print "</table>";
-print '<input type="submit" value="'.$langs->trans("Save").'"></form><br><br>';
+print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></form><br><br>';
 
 //Printer2
 print '<table class="liste nohover" width="100%">';
@@ -176,9 +205,7 @@ if ($nbofentries > 0)
 		if ($row["fk_menu"] == 0) print '<input type="checkbox" name="printer2[]" value="'.$row["rowid"].'" '.$checked.'>'.$row["label"].'<br>';
 	}
 	print '</td></tr>';
-}
-else
-{
+} else {
 	print '<tr class="pair">';
 	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
 	print '<td valign="middle">';
@@ -189,7 +216,36 @@ else
 	print '</tr>';
 }
 print "</table>";
-print '<input type="submit" value="'.$langs->trans("Save").'"></form>';
+print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></form>';
+
+//Printer3
+print '<table class="liste nohover" width="100%">';
+print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 3</td><td></td><td class="right">';
+print '</td></tr>';
+$nbofentries = (count($data) - 1);
+print '<form action="orderprinters.php">';
+if ($nbofentries > 0)
+{
+	print '<tr class="pair"><td colspan="3">';
+	print '<input type="hidden" name="action" value="SavePrinter3">';
+	foreach ($data as $row) {
+		if (strpos($conf->global->TAKEPOS_PRINTED_CATEGORIES_3, ';'.$row["rowid"].';') !== false) $checked = 'checked'; else $checked = '';
+		if ($row["fk_menu"] == 0) print '<input type="checkbox" name="printer3[]" value="'.$row["rowid"].'" '.$checked.'>'.$row["label"].'<br>';
+	}
+	print '</td></tr>';
+} else {
+	print '<tr class="pair">';
+	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
+	print '<td valign="middle">';
+	print $langs->trans("NoCategoryYet");
+	print '</td>';
+	print '<td>&nbsp;</td>';
+	print '</table></td>';
+	print '</tr>';
+}
+
+print "</table>";
+print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></form>';
 
 print '</div>';
 

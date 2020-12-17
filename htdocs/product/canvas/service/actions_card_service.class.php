@@ -28,32 +28,32 @@ include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  */
 class ActionsCardService
 {
-    public $targetmodule;
-    public $canvas;
-    public $card;
+	public $targetmodule;
+	public $canvas;
+	public $card;
 
-    //! Template container
+	//! Template container
 	public $tpl = array();
 
 	// List of fiels for action=list
 	public $field_list = array();
-    public $list_datas = array();
+	public $list_datas = array();
 
 
 	/**
 	 *    Constructor
 	 *
-     *    @param   DoliDB	$db             Handler acces base de donnees
-     *    @param   string	$targetmodule   Name of directory of module where canvas is stored
-     *    @param   string	$canvas         Name of canvas
-     *    @param   string	$card           Name of tab (sub-canvas)
+	 *    @param   DoliDB	$db             Handler acces base de donnees
+	 *    @param   string	$targetmodule   Name of directory of module where canvas is stored
+	 *    @param   string	$canvas         Name of canvas
+	 *    @param   string	$card           Name of tab (sub-canvas)
 	 */
 	public function __construct($db, $targetmodule, $canvas, $card)
 	{
 		$this->db = $db;
 		$this->targetmodule = $targetmodule;
-        $this->canvas           = $canvas;
-        $this->card             = $card;
+		$this->canvas           = $canvas;
+		$this->card             = $card;
 
 		$this->module = "service";
 		$this->name = "service";
@@ -63,8 +63,8 @@ class ActionsCardService
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
 	 *    @param	string	$action    Type of action
@@ -74,23 +74,23 @@ class ActionsCardService
 	 */
 	public function assign_values(&$action, $id = 0, $ref = '')
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $limit, $offset, $sortfield, $sortorder;
-        global $conf, $langs, $user, $mysoc, $canvas;
+		global $conf, $langs, $user, $mysoc, $canvas;
 		global $form, $formproduct;
 
    		$tmpobject = new Product($this->db);
    		if (!empty($id) || !empty($ref)) $tmpobject->fetch($id, $ref);
-        $this->object = $tmpobject;
+		$this->object = $tmpobject;
 
 		//parent::assign_values($action);
 
-	    foreach ($this->object as $key => $value)
-        {
-            $this->tpl[$key] = $value;
-        }
+		foreach ($this->object as $key => $value)
+		{
+			$this->tpl[$key] = $value;
+		}
 
-        $this->tpl['error'] = get_htmloutput_errors($this->object->error, $this->object->errors);
+		$this->tpl['error'] = get_htmloutput_errors($this->object->error, $this->object->errors);
 
 		// canvas
 		$this->tpl['canvas'] = $this->canvas;
@@ -126,14 +126,14 @@ class ActionsCardService
 
 		if ($action == 'view')
 		{
-            $head = product_prepare_head($this->object);
+			$head = product_prepare_head($this->object);
 
-            $this->tpl['showrefnav'] = $form->showrefnav($this->object, 'ref', '', 1, 'ref');
+			$this->tpl['showrefnav'] = $form->showrefnav($this->object, 'ref', '', 1, 'ref');
 
-    		$titre = $langs->trans("CardProduct".$this->object->type);
-    		$picto = ($this->object->type == Product::TYPE_SERVICE ? 'service' : 'product');
-    		$this->tpl['showhead'] = dol_get_fiche_head($head, 'card', $titre, 0, $picto);
-            $this->tpl['showend'] = dol_get_fiche_end();
+			$titre = $langs->trans("CardProduct".$this->object->type);
+			$picto = ($this->object->type == Product::TYPE_SERVICE ? 'service' : 'product');
+			$this->tpl['showhead'] = dol_get_fiche_head($head, 'card', $titre, 0, $picto);
+			$this->tpl['showend'] = dol_get_fiche_end();
 
 			// Accountancy buy code
 			$this->tpl['accountancyBuyCodeKey'] = $form->editfieldkey("ProductAccountancyBuyCode", 'productaccountancycodesell', $this->accountancy_code_sell, $this, $user->rights->produit->creer);
@@ -168,17 +168,17 @@ class ActionsCardService
 
 		if ($action == 'create' || $action == 'edit')
 		{
-    		// Status
-    		$statutarray = array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
-    		$this->tpl['status'] = $form->selectarray('statut', $statutarray, $this->object->status);
+			// Status
+			$statutarray = array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
+			$this->tpl['status'] = $form->selectarray('statut', $statutarray, $this->object->status);
 
-    		$statutarray = array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
-    		$this->tpl['status_buy'] = $form->selectarray('statut_buy', $statutarray, $this->object->status_buy);
+			$statutarray = array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
+			$this->tpl['status_buy'] = $form->selectarray('statut_buy', $statutarray, $this->object->status_buy);
 
-    		$this->tpl['description'] = $this->description;
-    		$this->tpl['note'] = $this->note;
+			$this->tpl['description'] = $this->description;
+			$this->tpl['note'] = $this->note;
 
-		    // Duration unit
+			// Duration unit
 			// TODO creer fonction
 			$duration_unit = '<input name="duration_unit" type="radio" value="h"'.($this->object->duration_unit == 'h' ? ' checked' : '').'>'.$langs->trans("Hour");
 			$duration_unit .= '&nbsp; ';
@@ -194,7 +194,7 @@ class ActionsCardService
 
 		if ($action == 'view')
 		{
-		    // Photo
+			// Photo
 			$this->tpl['nblines'] = 4;
 			if ($this->object->is_photo_available($conf->service->multidir_output[$this->object->entity]))
 			{
@@ -205,8 +205,7 @@ class ActionsCardService
 			if ($this->object->duration_value > 1)
 			{
 				$dur = array("h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
-			}
-			elseif ($this->object->duration_value > 0)
+			} elseif ($this->object->duration_value > 0)
 			{
 				$dur = array("h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
 			}
@@ -217,7 +216,7 @@ class ActionsCardService
 
 		if ($action == 'list')
 		{
-	        $this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
+			$this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
 		}
 	}
 
@@ -231,7 +230,7 @@ class ActionsCardService
 	{
 		global $conf, $langs;
 
-        $this->field_list = array();
+		$this->field_list = array();
 
 		$sql = "SELECT rowid, name, alias, title, align, sort, search, visible, enabled, rang";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_field_list";
@@ -267,14 +266,12 @@ class ActionsCardService
 				$i++;
 			}
 			$this->db->free($resql);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db, $sql);
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Fetch datas list and save into ->list_datas
 	 *
@@ -286,11 +283,11 @@ class ActionsCardService
 	 */
 	public function LoadListDatas($limit, $offset, $sortfield, $sortorder)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 		global $search_categ, $sall, $sref, $search_barcode, $snom, $catid;
 
-        $this->getFieldList();
+		$this->getFieldList();
 
 		$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
 		$sql .= ' p.fk_product_type, p.tms as datem,';
@@ -360,9 +357,7 @@ class ActionsCardService
 				$i++;
 			}
 			$this->db->free($resql);
-		}
-		else
-		{
+		} else {
 			print $sql;
 		}
 	}

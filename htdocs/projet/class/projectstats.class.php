@@ -24,25 +24,25 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class ProjectStats extends Stats
 {
-    private $project;
-    public $userid;
-    public $socid;
-    public $year;
+	private $project;
+	public $userid;
+	public $socid;
+	public $year;
 
-    /**
-     * Constructor
-     *
-     * @param   DoliDB $db     Database handler
-     */
-    public function __construct($db)
-    {
-        global $conf, $user;
+	/**
+	 * Constructor
+	 *
+	 * @param   DoliDB $db     Database handler
+	 */
+	public function __construct($db)
+	{
+		global $conf, $user;
 
-        $this->db = $db;
+		$this->db = $db;
 
-        require_once 'project.class.php';
-        $this->project = new Project($this->db);
-    }
+		require_once 'project.class.php';
+		$this->project = new Project($this->db);
+	}
 
 
 	/**
@@ -92,9 +92,7 @@ class ProjectStats extends Stats
 					$label.' ('.price(price2num($row[0], 'MT'), 1, $langs, 1, -1, -1, $conf->currency).')',
 					$row[0]
 					);
-				}
-				else
-					$other += $row[1];
+				} else $other += $row[1];
 					$i++;
 			}
 			if ($num > $limit)
@@ -281,9 +279,7 @@ class ProjectStats extends Stats
 				$foundintocache = 1;
 
 				$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $filedate;
-			}
-			else
-			{
+			} else {
 				dol_syslog(get_class($this).'::'.__FUNCTION__." cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
 			}
 		}
@@ -293,9 +289,7 @@ class ProjectStats extends Stats
 		{
 			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
 			$data = json_decode(file_get_contents($newpathofdestfile), true);
-		}
-		else
-		{
+		} else {
 			$year = $startyear;
 			while ($year <= $endyear)
 			{
@@ -329,8 +323,7 @@ class ProjectStats extends Stats
 				fclose($fp);
 				if (!empty($conf->global->MAIN_UMASK)) $newmask = $conf->global->MAIN_UMASK;
 				@chmod($newpathofdestfile, octdec($newmask));
-			}
-			else dol_syslog("Failed to write cache file", LOG_ERR);
+			} else dol_syslog("Failed to write cache file", LOG_ERR);
 			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $nowgmt;
 		}
 

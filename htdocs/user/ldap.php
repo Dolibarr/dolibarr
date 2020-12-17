@@ -75,8 +75,7 @@ if (empty($reshook))
 
 		if ($result >= 0) {
 			setEventMessages($langs->trans("UserSynchronized"), null, 'mesgs');
-		}
-		else {
+		} else {
 			setEventMessages($ldap->error, $ldap->errors, 'errors');
 		}
 	}
@@ -93,7 +92,7 @@ llxHeader();
 $head = user_prepare_head($object);
 
 $title = $langs->trans("User");
-dol_fiche_head($head, 'ldap', $title, 0, 'user');
+print dol_get_fiche_head($head, 'ldap', $title, 0, 'user');
 
 $linkback = '';
 
@@ -113,9 +112,7 @@ print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
 if ($object->ldap_sid)
 {
 	print '<td class="warning">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';
-}
-else
-{
+} else {
 	print '<td>'.$object->login.'</td>';
 }
 print '</tr>';
@@ -150,7 +147,7 @@ print '</table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 /*
  * Barre d'actions
@@ -198,22 +195,16 @@ if ($result > 0)
 		if (!is_array($records))
 		{
 			print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
-		}
-		else
-		{
+		} else {
 			$result = show_ldap_content($records, 0, $records['count'], true);
 		}
-	}
-	else
-	{
+	} else {
 		print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
 	}
 
 	$ldap->unbind();
 	$ldap->close();
-}
-else
-{
+} else {
 	setEventMessages($ldap->error, $ldap->errors, 'errors');
 }
 

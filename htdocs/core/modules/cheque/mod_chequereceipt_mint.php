@@ -126,9 +126,7 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 			$obj = $db->fetch_object($resql);
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
-		}
-		else
-		{
+		} else {
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			return -1;
 		}

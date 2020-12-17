@@ -35,7 +35,7 @@ $langs->loadLangs(array('admin', 'sendings', 'deliveries'));
 if (!$user->admin)
   accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 /*
@@ -67,13 +67,12 @@ if ($action == 'disable_sending')
 if ($action == 'activate_delivery')
 {
 	dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1", 'chaine', 0, '', $conf->entity); // We must also enable this
-	dolibarr_set_const($db, "MAIN_SUBMODULE_LIVRAISON", "1", 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_SUBMODULE_DELIVERY", "1", 'chaine', 0, '', $conf->entity);
 	header("Location: confexped.php");
 	exit;
-}
-elseif ($action == 'disable_delivery')
+} elseif ($action == 'disable_delivery')
 {
-	dolibarr_del_const($db, "MAIN_SUBMODULE_LIVRAISON", $conf->entity);
+	dolibarr_del_const($db, "MAIN_SUBMODULE_DELIVERY", $conf->entity);
 	header("Location: confexped.php");
 	exit;
 }
@@ -93,7 +92,7 @@ print load_fiche_titre($langs->trans("SendingsSetup"), $linkback, 'title_setup')
 print '<br>';
 $head = expedition_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("Sendings"), -1, 'shipment');
+print dol_get_fiche_head($head, 'general', $langs->trans("Sendings"), -1, 'shipment');
 
 // Miscellaneous parameters
 
@@ -122,7 +121,7 @@ else
 print "</td>";
 print '</tr>';
 
-// Bon de livraison activation/desactivation
+// Delivery note activate/deactivate Bon de livraison activation/desactivation
 print '<tr>';
 print '<td>';
 print $langs->trans("DeliveriesOrderAbility");
@@ -132,12 +131,10 @@ print '<td>';
 print '</td>';
 print '<td class="center">';
 
-if (empty($conf->global->MAIN_SUBMODULE_LIVRAISON))
+if (empty($conf->global->MAIN_SUBMODULE_DELIVERY))
 {
 	print '<a href="confexped.php?action=activate_delivery">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-}
-else
-{
+} else {
 	print '<a href="confexped.php?action=disable_delivery">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 }
 

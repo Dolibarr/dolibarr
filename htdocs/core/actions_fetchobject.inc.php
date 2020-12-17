@@ -34,23 +34,20 @@ if (($id > 0 || (!empty($ref) && !in_array($action, array('create', 'createtask'
 	{
 		$ret = $object->fetch($id, $ref);
 		if ($ret > 0)
-	    {
-	        $object->fetch_thirdparty();
-	        $id = $object->id;
-	    }
-	    else
-	    {
-	    	if (empty($object->error) && !count($object->errors))
-	    	{
-	    		if ($ret < 0)	// if $ret == 0, it means not found.
-	    		{
-	    			setEventMessages('Fetch on object (type '.get_class($object).') return an error without filling $object->error nor $object->errors', null, 'errors');
-	    		}
-	    	}
-	    	else {
-	    		setEventMessages($object->error, $object->errors, 'errors');
-	    	}
-        	$action = '';
-	    }
+		{
+			$object->fetch_thirdparty();
+			$id = $object->id;
+		} else {
+			if (empty($object->error) && !count($object->errors))
+			{
+				if ($ret < 0)	// if $ret == 0, it means not found.
+				{
+					setEventMessages('Fetch on object (type '.get_class($object).') return an error without filling $object->error nor $object->errors', null, 'errors');
+				}
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+			$action = '';
+		}
 	}
 }

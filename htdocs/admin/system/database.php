@@ -73,13 +73,11 @@ $arraylist = array('listofvars', 'listofstatus');
 if (!count($listofvars) && !count($listofstatus))
 {
 	print $langs->trans("FeatureNotAvailableWithThisDatabaseDriver");
-}
-else
-{
+} else {
 	foreach ($arraylist as $listname)
 	{
 		print '<br>';
-        print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td width="300">'.$langs->trans("Parameters").'</td>';

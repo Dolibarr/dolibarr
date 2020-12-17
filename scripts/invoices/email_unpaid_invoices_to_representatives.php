@@ -24,6 +24,9 @@
  * \ingroup facture
  * \brief Script to send a mail to dolibarr users linked to companies with unpaid invoices
  */
+
+if (!defined('NOSESSION')) define('NOSESSION', '1');
+
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = __DIR__.'/';
@@ -137,8 +140,7 @@ if ($resql) {
 			print "Unpaid invoice ".$obj->ref.", price ".price2num($obj->total_ttc).", due date ".dol_print_date($db->jdate($obj->due_date), 'day')." (linked to company ".$obj->name.", sale representative ".dolGetFirstLastname($obj->firstname, $obj->lastname).", email ".$obj->email.", lang ".$outputlangs->defaultlang."): ";
 			if (dol_strlen($obj->email))
 				print "qualified.";
-			else
-				print "disqualified (no email).";
+			else print "disqualified (no email).";
 			print "\n";
 
 			unset($outputlangs);

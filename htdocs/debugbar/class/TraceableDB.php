@@ -46,7 +46,7 @@ class TraceableDB extends DoliDB
 	public function __construct($db)
 	{
 		$this->db      = $db;
-		$this->type    = $db->type;
+		$this->type    = $this->db->type;
 		$this->queries = array();
 	}
 
@@ -72,7 +72,7 @@ class TraceableDB extends DoliDB
 	 */
 	public function fetch_row($resultset)
 	{
-	    // phpcs:enable
+		// phpcs:enable
 		return $this->db->fetch_row($resultset);
 	}
 
@@ -156,7 +156,7 @@ class TraceableDB extends DoliDB
 	 */
 	public function affected_rows($resultset)
 	{
-	    // phpcs:enable
+		// phpcs:enable
 		return $this->db->affected_rows($resultset);
 	}
 
@@ -224,7 +224,7 @@ class TraceableDB extends DoliDB
 	 */
 	public function fetch_array($resultset)
 	{
-	    // phpcs:enable
+		// phpcs:enable
 		return $this->db->fetch_array($resultset);
 	}
 
@@ -259,8 +259,8 @@ class TraceableDB extends DoliDB
 	 */
 	public function last_insert_id($tab, $fieldid = 'rowid')
 	{
-	    // phpcs:enable
-	    return $this->db->last_insert_id($tab, $fieldid);
+		// phpcs:enable
+		return $this->db->last_insert_id($tab, $fieldid);
 	}
 
 	/**
@@ -409,7 +409,7 @@ class TraceableDB extends DoliDB
 	 */
 	public function num_rows($resultset)
 	{
-	    // phpcs:enable
+		// phpcs:enable
 		return $this->db->num_rows($resultset);
 	}
 
@@ -588,7 +588,7 @@ class TraceableDB extends DoliDB
 	 */
 	public function jdate($string, $gm = false)
 	{
-	    // phpcs:enable
+		// phpcs:enable
 		return $this->db->jdate($string, $gm);
 	}
 
@@ -678,7 +678,7 @@ class TraceableDB extends DoliDB
 	 */
 	public function fetch_object($resultset)
 	{
-	    // phpcs:enable
+		// phpcs:enable
 		return $this->db->fetch_object($resultset);
 	}
 
@@ -691,7 +691,7 @@ class TraceableDB extends DoliDB
 	 */
 	public function select_db($database)
 	{
-	    // phpcs:enable
+		// phpcs:enable
 		return $this->db->select_db($database);
 	}
 }

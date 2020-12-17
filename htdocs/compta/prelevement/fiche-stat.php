@@ -43,8 +43,8 @@ $type = GETPOST('type', 'aZ09');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -77,9 +77,9 @@ if ($prev_id > 0 || $ref)
 	if ($object->fetch($prev_id, $ref) >= 0)
 	{
 		$head = prelevement_prepare_head($object);
-		dol_fiche_head($head, 'statistics', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
+		print dol_get_fiche_head($head, 'statistics', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/bons.php'.($object->type != 'bank-transfer' ? '' : '?type=bank-transfer').'">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/orders_list.php?restore_lastsearch_values=1'.($object->type != 'bank-transfer' ? '' : '&type=bank-transfer').'">'.$langs->trans("BackToList").'</a>';
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
 
@@ -143,10 +143,8 @@ if ($prev_id > 0 || $ref)
 
 		print '</div>';
 
-		dol_fiche_end();
-	}
-	else
-	{
+		print dol_get_fiche_end();
+	} else {
 		dol_print_error($db);
 	}
 
@@ -196,9 +194,7 @@ if ($prev_id > 0 || $ref)
 
 		print "</table>";
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		print $db->error().' '.$sql;
 	}
 }

@@ -93,9 +93,7 @@ function dolKeepOnlyPhpCode($str)
 			if (!empty($partlings))
 			{
 				$newstr .= $partlings[0].'?>';
-			}
-			else
-			{
+			} else {
 				$newstr .= $part.'?>';
 			}
 		}
@@ -242,8 +240,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 			$content = preg_replace('/^.*<body(\s[^>]*)*>/ims', '', $content);
 			$content = preg_replace('/<\/body(\s[^>]*)*>.*$/ims', '', $content);
 		}
-	}
-	elseif (defined('USEDOLIBARRSERVER'))	// REPLACEMENT OF LINKS When page called from Dolibarr server
+	} elseif (defined('USEDOLIBARRSERVER'))	// REPLACEMENT OF LINKS When page called from Dolibarr server
 	{
 		$content = str_replace('<link rel="stylesheet" href="/styles.css', '<link rel="stylesheet" href="styles.css', $content);
 
@@ -299,8 +296,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		if (empty($includehtmlcontentopened)) {
 			$content = str_replace('!~!~!~', '', $content);
 		}
-	}
-	else									// REPLACEMENT OF LINKS When page called from virtual host
+	} else // REPLACEMENT OF LINKS When page called from virtual host
 	{
 		$symlinktomediaexists = 1;
 		if ($website->virtualhost) {
@@ -335,9 +331,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 			// If some links to documents or viewimage remains, we replace with wrapper
 			$content = preg_replace('/(<img[^>]*src=")\/?viewimage\.php/', '\1/wrapper.php', $content, -1, $nbrep);
 			$content = preg_replace('/(<a[^>]*href=")\/?documents\.php/', '\1/wrapper.php', $content, -1, $nbrep);
-		}
-		else
-		{
+		} else {
 			// <img src="image.png... => <img src="medias/image.png...
 			$content = preg_replace('/(<img[^>]*src=")\/?image\//', '\1/medias/image/', $content, -1, $nbrep);
 			$content = preg_replace('/(url\(["\']?)\/?image\//', '\1/medias/image/', $content, -1, $nbrep);
@@ -425,9 +419,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 		if ($result > 0)
 		{
 			$containerref = $tmpwebsitepage->pageurl;
-		}
-		else
-		{
+		} else {
 			print "Error, page contains a redirect to the alternative alias '".$containeraliasalt."' that does not exists in web site (".$website->id." / ".$website->ref.")";
 			exit;
 		}
@@ -463,19 +455,14 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 				{
 					print "Error, page with uri '.$currenturi.' try a redirect to the same alias page '".$containerref."' in web site '".$website->ref."'";
 					exit;
-				}
-				else
-				{
+				} else {
 					$newurl = preg_replace('/&pageref=([^&]+)/', '&pageref='.$containerref, $currenturi);
 				}
-			}
-			else
-			{
+			} else {
 				$newurl = $currenturi.'&pageref='.urlencode($containerref);
 			}
 		}
-	}
-	else								// When page called from virtual host server
+	} else // When page called from virtual host server
 	{
 		$newurl = '/'.$containerref.'.php';
 	}
@@ -487,9 +474,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 		}
 		header("Location: ".$newurl);
 		exit;
-	}
-	else
-	{
+	} else {
 		print "Error, page contains a redirect to the alias page '".$containerref."' that does not exists in web site (".$website->id." / ".$website->ref.")";
 		exit;
 	}
@@ -549,7 +534,7 @@ function includeContainer($containerref)
  * Return HTML content to add structured data for an article, news or Blog Post.
  * Use the json-ld format.
  *
- * @param 	string		$type				'blogpost', 'product', 'software', 'organization', ...
+ * @param 	string		$type				'blogpost', 'product', 'software', 'organization', 'qa',  ...
  * @param	array		$data				Array of data parameters for structured data
  * @return  string							HTML content
  */
@@ -557,21 +542,27 @@ function getStructuredData($type, $data = array())
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs; // Very important. Required to have var available when running inluded containers.
 
+	$type = strtolower($type);
+
 	if ($type == 'software')
 	{
-		$ret = '<!-- Add structured data for software post -->'."\n";
+		$ret = '<!-- Add structured data for entry in a software annuary -->'."\n";
 		$ret .= '<script type="application/ld+json">'."\n";
 		$ret .= '{
 			"@context": "https://schema.org",
 			"@type": "SoftwareApplication",
 			"name": "'.dol_escape_json($data['name']).'",
 			"operatingSystem": "'.dol_escape_json($data['os']).'",
-			"applicationCategory": "https://schema.org/'.$data['applicationCategory'].'",
-			"aggregateRating": {
-				"@type": "AggregateRating",
-				"ratingValue": "'.$data['ratingvalue'].'",
-				"ratingCount": "'.$data['ratingcount'].'"
-			},
+			"applicationCategory": "https://schema.org/'.$data['applicationCategory'].'",';
+		if (!empty($data['ratingcount'])) {
+			$ret .= '
+				"aggregateRating": {
+					"@type": "AggregateRating",
+					"ratingValue": "'.$data['ratingvalue'].'",
+					"ratingCount": "'.$data['ratingcount'].'"
+				},';
+		}
+		$ret .= '
 			"offers": {
 				"@type": "Offer",
 				"price": "'.$data['price'].'",
@@ -579,8 +570,7 @@ function getStructuredData($type, $data = array())
 			}
 		}'."\n";
 		$ret .= '</script>'."\n";
-	}
-	elseif ($type == 'organization')
+	} elseif ($type == 'organization')
 	{
 		$companyname = $mysoc->name;
 		$url = $mysoc->url;
@@ -602,14 +592,13 @@ function getStructuredData($type, $data = array())
 			$ret .= ",\n";
 			$ret .= '"sameAs": [';
 			$i = 0;
-			foreach($mysoc->socialnetworks as $key => $value) {
+			foreach ($mysoc->socialnetworks as $key => $value) {
 				if ($key == 'linkedin') {
-					$ret.= '"https://www.'.$key.'.com/company/'.dol_escape_json($value).'"';
+					$ret .= '"https://www.'.$key.'.com/company/'.dol_escape_json($value).'"';
 				} elseif ($key == 'youtube') {
-					$ret.= '"https://www.'.$key.'.com/user/'.dol_escape_json($value).'"';
-				}
-				else {
-					$ret.= '"https://www.'.$key.'.com/'.dol_escape_json($value).'"';
+					$ret .= '"https://www.'.$key.'.com/user/'.dol_escape_json($value).'"';
+				} else {
+					$ret .= '"https://www.'.$key.'.com/'.dol_escape_json($value).'"';
 				}
 				$i++;
 				if ($i < count($mysoc->socialnetworks)) $ret .= ', ';
@@ -618,8 +607,7 @@ function getStructuredData($type, $data = array())
 		}
 		$ret .= '}'."\n";
 		$ret .= '</script>'."\n";
-	}
-	elseif ($type == 'blogpost')
+	} elseif ($type == 'blogpost')
 	{
 		if (!empty($websitepage->author_alias))
 		{
@@ -635,7 +623,7 @@ function getStructuredData($type, $data = array())
 
 			$pageurl = str_replace('__WEBSITE_KEY__', $website->ref, $pageurl);
 			$title = str_replace('__WEBSITE_KEY__', $website->ref, $title);
-			$image = 'medias/'.str_replace('__WEBSITE_KEY__', $website->ref, $image);
+			$image = '/medias/'.str_replace('__WEBSITE_KEY__', $website->ref, $image);
 			$companyname = str_replace('__WEBSITE_KEY__', $website->ref, $companyname);
 			$description = str_replace('__WEBSITE_KEY__', $website->ref, $description);
 
@@ -671,8 +659,8 @@ function getStructuredData($type, $data = array())
 				$ret .= '"keywords": [';
 				$i = 0;
 				$arrayofkeywords = explode(',', $websitepage->keywords);
-				foreach($arrayofkeywords as $keyword) {
-					$ret.= '"'.dol_escape_json($keyword).'"';
+				foreach ($arrayofkeywords as $keyword) {
+					$ret .= '"'.dol_escape_json($keyword).'"';
 					$i++;
 					if ($i < count($arrayofkeywords)) $ret .= ', ';
 				}
@@ -682,8 +670,7 @@ function getStructuredData($type, $data = array())
 			$ret .= "\n".'}'."\n";
 			$ret .= '</script>'."\n";
 		}
-	}
-	elseif ($type == 'product')
+	} elseif ($type == 'product')
 	{
 		$ret = '<!-- Add structured data for product -->'."\n";
 		$ret .= '<script type="application/ld+json">'."\n";
@@ -719,6 +706,33 @@ function getStructuredData($type, $data = array())
 				}
 			}'."\n";
 		$ret .= '</script>'."\n";
+	} elseif ($type == 'qa')
+	{
+		$ret = '<!-- Add structured data for QA -->'."\n";
+		$ret .= '<script type="application/ld+json">'."\n";
+		$ret .= '{
+				"@context": "https://schema.org/",
+				"@type": "QAPage",
+				"mainEntity": {
+					"@type": "Question",
+					"name": "'.dol_escape_json($data['name']).'",
+					"text": "'.dol_escape_json($data['name']).'",
+					"answerCount": 1,
+					"author": {
+						"@type": "Person",
+						"name": "'.dol_escape_json($data['author']).'"
+					}
+					"acceptedAnswer": {
+						"@type": "Answer",
+						"text": "'.dol_escape_json(dol_string_nohtmltag(dolStripPhpCode($data['description']))).'",
+						"author": {
+							"@type": "Person",
+							"name": "'.dol_escape_json($data['author']).'"
+						}
+					}
+				}
+			}'."\n";
+		$ret .= '</script>'."\n";
 	}
 	return $ret;
 }
@@ -749,7 +763,8 @@ function getSocialNetworkSharingLinks()
 		// Reddit
 		$out .= '<div class="dol-social-share-reddit">'."\n";
 		$out .= '<a href="https://www.reddit.com/submit" target="_blank" onclick="window.location = \'https://www.reddit.com/submit?url='.$fullurl.'\'; return false">';
-		$out .= '<img src="https://www.reddit.com/static/spreddit7.gif" alt="Submit to reddit" border="0" /> </a>';
+		$out .= '<span class="dol-social-share-reddit-span">Reddit</span>';
+		$out .= '</a>';
 		$out .= '</div>'."\n";
 
 		// Facebook
@@ -793,9 +808,11 @@ function getSocialNetworkSharingLinks()
  * @param	string		$sortfield			Sort Fields
  * @param	string		$sortorder			Sort order ('DESC' or 'ASC')
  * @param	string		$langcode			Language code ('' or 'en', 'fr', 'es', ...)
+ * @param	array		$otherfilters		Other filters
+ * @param	int			$status				0 or 1, or -1 for both
  * @return  string							HTML content
  */
-function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '')
+function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '', $otherfilters = 'null', $status = 1)
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
 
@@ -804,30 +821,26 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 
 	if (!is_object($weblangs)) $weblangs = $langs;
 
-	if (empty($searchstring))
+	if (empty($searchstring) && empty($type) && empty($langcode) && empty($otherfilters))
 	{
 		$error++;
 		$arrayresult['code'] = 'KO';
 		$arrayresult['message'] = $weblangs->trans("EmptySearchString");
-	}
-	elseif (dol_strlen($searchstring) < 2)
-	{
+	} elseif ($searchstring && dol_strlen($searchstring) < 2) {
 		$weblangs->load("errors");
 		$error++;
 		$arrayresult['code'] = 'KO';
 		$arrayresult['message'] = $weblangs->trans("ErrorSearchCriteriaTooSmall");
-	}
-	else
-	{
+	} else {
 		$tmparrayoftype = explode(',', $type);
-		foreach ($tmparrayoftype as $tmptype) {
+		/*foreach ($tmparrayoftype as $tmptype) {
 			if (!in_array($tmptype, array('', 'page', 'blogpost'))) {
 				$error++;
 				$arrayresult['code'] = 'KO';
 				$arrayresult['message'] = 'Bad value for parameter type';
 				break;
 			}
-		}
+		}*/
 	}
 
 	$searchdone = 0;
@@ -835,31 +848,40 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 
 	if (!$error && (empty($max) || ($found < $max)) && (preg_match('/meta/', $algo) || preg_match('/content/', $algo)))
 	{
-		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'website_page';
-		$sql .= " WHERE fk_website = ".$website->id;
+		$sql = 'SELECT wp.rowid FROM '.MAIN_DB_PREFIX.'website_page as wp';
+		if (is_array($otherfilters) && !empty($otherfilters['category'])) {
+			$sql .= ', '.MAIN_DB_PREFIX.'categorie_website_page as cwp';
+		}
+		$sql .= " WHERE wp.fk_website = ".$website->id;
+		if ($status >= 0) {
+			$sql .= " AND wp.status = ".$status;
+		}
 		if ($langcode) {
-			$sql .= " AND lang ='".$db->escape($langcode)."'";
+			$sql .= " AND wp.lang ='".$db->escape($langcode)."'";
 		}
 		if ($type) {
 			$tmparrayoftype = explode(',', $type);
 			$typestring = '';
 			foreach ($tmparrayoftype as $tmptype) {
-				$typestring .= ($typestring ? ", " : "")."'".trim($tmptype)."'";
+				$typestring .= ($typestring ? ", " : "")."'".$db->escape(trim($tmptype))."'";
 			}
-			$sql .= " AND type_container IN (".$typestring.")";
+			$sql .= " AND wp.type_container IN (".$typestring.")";
 		}
 		$sql .= " AND (";
 		$searchalgo = '';
 		if (preg_match('/meta/', $algo))
 		{
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."title LIKE '%".$db->escape($searchstring)."%' OR description LIKE '%".$db->escape($searchstring)."%'";
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."keywords LIKE '".$db->escape($searchstring).",%' OR keywords LIKE '% ".$db->escape($searchstring)."%'"; // TODO Use a better way to scan keywords
+			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.title LIKE '%".$db->escape($searchstring)."%' OR wp.description LIKE '%".$db->escape($searchstring)."%'";
+			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.keywords LIKE '".$db->escape($searchstring).",%' OR wp.keywords LIKE '% ".$db->escape($searchstring)."%'"; // TODO Use a better way to scan keywords
 		}
 		if (preg_match('/content/', $algo))
 		{
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."content LIKE '%".$db->escape($searchstring)."%'";
+			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.content LIKE '%".$db->escape($searchstring)."%'";
 		}
 		$sql .= $searchalgo;
+		if (is_array($otherfilters) && !empty($otherfilters['category'])) {
+			$sql .= ' AND cwp.fk_website_page = wp.rowid AND cwp.fk_categorie = '.((int) $otherfilters['category']);
+		}
 		$sql .= ")";
 		$sql .= $db->order($sortfield, $sortorder);
 		$sql .= $db->plimit($max);
@@ -879,9 +901,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 				}
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			$error++;
 			$arrayresult['code'] = $db->lasterrno();
 			$arrayresult['message'] = $db->lasterror();
@@ -940,9 +960,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 				$arrayresult['code'] = 'KO';
 				$arrayresult['message'] = $weblangs->trans("NoRecordFound");
 			}
-		}
-		else
-		{
+		} else {
 			$error++;
 			$arrayresult['code'] = 'KO';
 			$arrayresult['message'] = 'No supported algorithm found';
@@ -991,9 +1009,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 		{
 			$urltograbdirrootwithoutslash = getRootURLFromURL($urltograb);
 			$urltograbbis = $urltograbdirrootwithoutslash.$regs[2][$key]; // We use dirroot
-		}
-		else
-		{
+		} else {
 			$urltograbbis = $urltograb.'/'.$regs[2][$key]; // We use dir of grabbed file
 		}
 
@@ -1029,15 +1045,12 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					$error++;
 					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
 					$action = 'create';
-				}
-				elseif ($tmpgeturl['http_code'] != '200')
+				} elseif ($tmpgeturl['http_code'] != '200')
 				{
 					$error++;
 					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
 					$action = 'create';
-				}
-				else
-				{
+				} else {
 					$alreadygrabbed[$urltograbbis] = 1; // Track that file was alreay grabbed.
 
 					dol_mkdir(dirname($filetosave));
@@ -1068,9 +1081,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 		{
 			$urltograbdirrootwithoutslash = getRootURLFromURL($urltograb);
 			$urltograbbis = $urltograbdirrootwithoutslash.$regs[2][$key]; // We use dirroot
-		}
-		else
-		{
+		} else {
 			$urltograbbis = $urltograb.'/'.$regs[2][$key]; // We use dir of grabbed file
 		}
 
@@ -1108,15 +1119,12 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					$error++;
 					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
 					$action = 'create';
-				}
-				elseif ($tmpgeturl['http_code'] != '200')
+				} elseif ($tmpgeturl['http_code'] != '200')
 				{
 					$error++;
 					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
 					$action = 'create';
-				}
-				else
-				{
+				} else {
 					$alreadygrabbed[$urltograbbis] = 1; // Track that file was alreay grabbed.
 
 					dol_mkdir(dirname($filetosave));

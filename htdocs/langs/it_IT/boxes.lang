@@ -83,6 +83,8 @@ BoxTitleLatestModifiedSupplierOrders=Ordini fornitore: ultimi %s modificati
 BoxTitleLastModifiedCustomerBills=Fatture attive: ultime %s modificate
 BoxTitleLastModifiedCustomerOrders=Ordini: ultimi %s modificati
 BoxTitleLastModifiedPropals=Ultime %s proposte modificate
+BoxTitleLatestModifiedJobPositions=Latest %s modified jobs
+BoxTitleLatestModifiedCandidatures=Latest %s modified candidatures
 ForCustomersInvoices=Fatture attive
 ForCustomersOrders=Ordini cliente
 ForProposals=Proposte
@@ -100,3 +102,5 @@ SuspenseAccountNotDefined=L'account Suspense non è definito
 BoxLastCustomerShipments=Ultime spedizioni cliente
 BoxTitleLastCustomerShipments=Ultime %s spedizioni cliente
 NoRecordedShipments=Nessuna spedizione cliente registrata
+# Pages
+AccountancyHome=Contabilità

@@ -35,7 +35,7 @@ $langs->loadLangs(array('admin', 'other', 'paybox', 'paypal'));
 if (!$user->admin)
   accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 if ($action == 'setvalue' && $user->admin)
@@ -71,20 +71,18 @@ if ($action == 'setvalue' && $user->admin)
 	if (!$result > 0) $error++;
 	$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE", GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (!$result > 0) $error++;
-        $result = dolibarr_set_const($db, "PAYBOX_HMAC_KEY", dol_encode(GETPOST('PAYBOX_HMAC_KEY', 'alpha')), 'chaine', 0, '', $conf->entity);
+		$result = dolibarr_set_const($db, "PAYBOX_HMAC_KEY", dol_encode(GETPOST('PAYBOX_HMAC_KEY', 'alpha')), 'chaine', 0, '', $conf->entity);
 	if (!$result > 0) $error++;
 
 
-    if (!$error)
+	if (!$error)
   	{
   		$db->commit();
-	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-  	}
-  	else
-  	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+  	} else {
   		$db->rollback();
 		dol_print_error($db);
-    }
+	}
 }
 
 
@@ -112,11 +110,11 @@ $head[$h][1] = $langs->trans("PayBox");
 $head[$h][2] = 'payboxaccount';
 $h++;
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
-dol_fiche_head($head, 'payboxaccount', '', -1);
+print dol_get_fiche_head($head, 'payboxaccount', '', -1);
 
 print $langs->trans("PayBoxDesc")."<br>\n";
 print '<br>';
@@ -131,27 +129,27 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYBOX_PBX_SITE").'</span></td><td>';
 print '<input size="32" type="text" name="PAYBOX_IBS_SITE" value="'.$conf->global->PAYBOX_IBS_SITE.'">';
-print '<br>'.$langs->trans("Example").': 1999888 ('.$langs->trans("Test").')';
+print '<span class="opacitymedium"><br>'.$langs->trans("Example").': 1999888 ('.$langs->trans("Test").')</span>';
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYBOX_PBX_RANG").'</span></td><td>';
 print '<input size="32" type="text" name="PAYBOX_IBS_RANG" value="'.$conf->global->PAYBOX_IBS_RANG.'">';
-print '<br>'.$langs->trans("Example").': 99 ('.$langs->trans("Test").')';
+print '<span class="opacitymedium"><br>'.$langs->trans("Example").': 99 ('.$langs->trans("Test").')</span>';
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYBOX_PBX_IDENTIFIANT").'</span></td><td>';
 print '<input size="32" type="text" name="PAYBOX_PBX_IDENTIFIANT" value="'.$conf->global->PAYBOX_PBX_IDENTIFIANT.'">';
-print '<br>'.$langs->trans("Example").': 2 ('.$langs->trans("Test").')';
+print '<span class="opacitymedium"><br>'.$langs->trans("Example").': 2 ('.$langs->trans("Test").')</span>';
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYBOX_HMAC_KEY").'</span></td><td>';
 print '<input size="100" type="text" name="PAYBOX_HMAC_KEY" value="'.dol_decode($conf->global->PAYBOX_HMAC_KEY).'">';
-print '<br>'.$langs->trans("Example").': 1A2B3C4D5E6F';
+print '<span class="opacitymedium"><br>'.$langs->trans("Example").': 1A2B3C4D5E6F</span>';
 print '</td></tr>';
 
 print '<tr class="liste_titre">';
@@ -181,15 +179,15 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYBOX_CGI_URL_V2").'</span></td><td>';
 print '<input size="64" type="text" name="PAYBOX_CGI_URL_V2" value="'.$conf->global->PAYBOX_CGI_URL_V2.'">';
-print '<br>'.$langs->trans("Example").' (preprod): https://preprod-tpeweb.paybox.com/php/';
-print '<br>'.$langs->trans("Example").' (prod): https://tpeweb.paybox.com/php/';
+print '<span class="opacitymedium"><br>'.$langs->trans("Example").' (preprod): https://preprod-tpeweb.paybox.com/php/';
+print '<br>'.$langs->trans("Example").' (prod): https://tpeweb.paybox.com/php/</span>';
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>';
-print $langs->trans("VendorName").'</td><td>';
-print '<input size="64" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.$conf->global->ONLINE_PAYMENT_CREDITOR.'">';
-print '<br>'.$langs->trans("Example").': '.$mysoc->name;
+print $langs->trans("PublicVendorName").'</td><td>';
+print '<input type="text" class="minwidth300" name="ONLINE_PAYMENT_CREDITOR" value="'.$conf->global->ONLINE_PAYMENT_CREDITOR.'">';
+print '<br><span class="opacitymedium">'.$langs->trans("Example").': '.$mysoc->name.'</span>';
 print '</td></tr>';
 
 
@@ -205,7 +203,7 @@ if (!empty($conf->banque->enabled))
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
 print '<input size="64" type="text" name="ONLINE_PAYMENT_CSS_URL" value="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'">';
-print '<br>'.$langs->trans("Example").': http://mysite/mycss.css';
+print '<span class="opacitymedium"><br>'.$langs->trans("Example").': http://mysite/mycss.css</span>';
 print '</td></tr>';
 
 
@@ -232,7 +230,7 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>';
 print $langs->trans("ONLINE_PAYMENT_SENDEMAIL").'</td><td>';
 print '<input size="32" type="text" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
-print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;';
+print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;</span>';
 print '</td></tr>';
 
 // Payment token for URL
@@ -250,7 +248,7 @@ print '</td></tr>';
 
 print '</table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 

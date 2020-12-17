@@ -54,9 +54,9 @@ $colorlist = array('BECEDD', 'DDBECE', 'BFDDBE', 'F598B4', 'F68654', 'CBF654', '
 
 if ($actionsave)
 {
-    $db->begin();
+	$db->begin();
 
-    $disableext = GETPOST('AGENDA_DISABLE_EXT', 'alpha');
+	$disableext = GETPOST('AGENDA_DISABLE_EXT', 'alpha');
 	$res = dolibarr_set_const($db, 'AGENDA_DISABLE_EXT', $disableext, 'chaine', 0, '', $conf->entity);
 
 	$i = 1; $errorsaved = 0;
@@ -103,16 +103,14 @@ if ($actionsave)
 		$MAXAGENDA = empty($conf->global->AGENDA_EXT_NB) ? 5 : $conf->global->AGENDA_EXT_NB;
 	}
 
-    if (!$error)
-    {
-        $db->commit();
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        $db->rollback();
-        if (empty($errorsaved))	setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	if (!$error)
+	{
+		$db->commit();
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		$db->rollback();
+		if (empty($errorsaved))	setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 /*
@@ -138,7 +136,7 @@ print '<input type="hidden" name="action" value="save">';
 
 $head = agenda_prepare_head();
 
-dol_fiche_head($head, 'extsites', $langs->trans("Agenda"), -1, 'action');
+print dol_get_fiche_head($head, 'extsites', $langs->trans("Agenda"), -1, 'action');
 
 print '<span class="opacitymedium">'.$langs->trans("AgendaExtSitesDesc")."</span><br>\n";
 print "<br>\n";
@@ -162,15 +160,11 @@ print '<td class="center">';
 if ($conf->use_javascript_ajax)
 {
 	print ajax_constantonoff('AGENDA_DISABLE_EXT', array('enabled'=>array(0=>'.hideifnotset')), null, 1);
-}
-else
-{
+} else {
 	if (empty($conf->global->AGENDA_DISABLE_EXT))
 	{
 		print '<a href="'.$_SERVER['PHP_SELF'].'?save=1&AGENDA_DISABLE_EXT=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
-	}
-	else
-	{
+	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?save=1&AGENDA_DISABLE_EXT=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	}
 }
@@ -230,10 +224,10 @@ while ($i <= $MAXAGENDA)
 
 print '</table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center">';
-print '<input type="submit" id="save" name="save" class="button hideifnotset" value="'.$langs->trans("Save").'">';
+print '<input type="submit" id="save" name="save" class="button hideifnotset button-save" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print "</form>\n";

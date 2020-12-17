@@ -51,9 +51,9 @@ if (empty($username))
 // Check third party id
 if (!($thirdpartyid > 0))
 {
-    $retour = $langs->trans("ErrorFieldRequired", $langs->transnoentities("CashDeskThirdPartyForSell"));
-    header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid.'&bankid_cash='.$bankid_cash.'&bankid_cheque='.$bankid_cheque.'&bankid_cb='.$bankid_cb);
-    exit;
+	$retour = $langs->trans("ErrorFieldRequired", $langs->transnoentities("CashDeskThirdPartyForSell"));
+	header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid.'&bankid_cash='.$bankid_cash.'&bankid_cheque='.$bankid_cheque.'&bankid_cb='.$bankid_cb);
+	exit;
 }
 
 // If we setup stock module to ask movement on invoices, we must not allow access if required setup not finished.
@@ -89,7 +89,7 @@ if ($retour >= 0)
 
 	$sql = "SELECT rowid, lastname, firstname";
 	$sql .= " FROM ".MAIN_DB_PREFIX."user";
-	$sql .= " WHERE login = '".$username."'";
+	$sql .= " WHERE login = '".$db->escape($username)."'";
 	$sql .= " AND entity IN (0,".$conf->entity.")";
 
 	$result = $db->query($sql);
@@ -107,25 +107,21 @@ if ($retour >= 0)
 		$_SESSION['lastname'] = $tab['lastname'];
 		$_SESSION['firstname'] = $tab['firstname'];
 		$_SESSION['CASHDESK_ID_THIRDPARTY'] = ($thirdpartyid > 0 ? $thirdpartyid : '');
-        $_SESSION['CASHDESK_ID_WAREHOUSE'] = ($warehouseid > 0 ? $warehouseid : '');
+		$_SESSION['CASHDESK_ID_WAREHOUSE'] = ($warehouseid > 0 ? $warehouseid : '');
 
-        $_SESSION['CASHDESK_ID_BANKACCOUNT_CASH'] = ($bankid_cash > 0 ? $bankid_cash : '');
-        $_SESSION['CASHDESK_ID_BANKACCOUNT_CHEQUE'] = ($bankid_cheque > 0 ? $bankid_cheque : '');
-        $_SESSION['CASHDESK_ID_BANKACCOUNT_CB'] = ($bankid_cb > 0 ? $bankid_cb : '');
-        //var_dump($_SESSION);exit;
+		$_SESSION['CASHDESK_ID_BANKACCOUNT_CASH'] = ($bankid_cash > 0 ? $bankid_cash : '');
+		$_SESSION['CASHDESK_ID_BANKACCOUNT_CHEQUE'] = ($bankid_cheque > 0 ? $bankid_cheque : '');
+		$_SESSION['CASHDESK_ID_BANKACCOUNT_CB'] = ($bankid_cb > 0 ? $bankid_cb : '');
+		//var_dump($_SESSION);exit;
 
 		header('Location: '.DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation&id=NOUV');
 		exit;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
-}
-else
-{
+} else {
 	// Load translation files required by the page
-    $langs->loadLangs(array("other", "errors"));
+	$langs->loadLangs(array("other", "errors"));
 	$retour = $langs->trans("ErrorBadLoginPassword");
 	header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid);
 	exit;

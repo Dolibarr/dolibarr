@@ -29,19 +29,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 {
-	public $family = 'mailmanspip';
-	public $description = "Triggers of this module allows to synchronize Mailman an Spip.";
-
 	/**
-	 * Version of the trigger
-	 * @var string
+	 * Constructor
+	 *
+	 * @param DoliDB $db Database handler
 	 */
-	public $version = self::VERSION_DOLIBARR;
+	public function __construct($db)
+	{
+		$this->db = $db;
 
-	/**
-	 * @var string Image of the trigger
-	 */
-	public $picto = 'technic';
+		$this->name = preg_replace('/^Interface/i', '', get_class($this));
+		$this->family = "mailmanspip";
+		$this->description = "Triggers of this module allows to synchronize Mailman an Spip.";
+		// 'development', 'experimental', 'dolibarr' or version
+		$this->version = self::VERSION_DOLIBARR;
+		$this->picto = 'technic';
+	}
 
 	/**
 	 * Function called when a Dolibarrr business event is done.
@@ -56,123 +59,95 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-        if (empty($conf->mailmanspip->enabled)) return 0; // Module not active, we do nothing
+		if (empty($conf->mailmanspip->enabled)) return 0; // Module not active, we do nothing
 
-        require_once DOL_DOCUMENT_ROOT."/mailmanspip/class/mailmanspip.class.php";
-        require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
+		require_once DOL_DOCUMENT_ROOT."/mailmanspip/class/mailmanspip.class.php";
+		require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
 
-        if ($action == 'CATEGORY_LINK')
-        {
-        	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+		if ($action == 'CATEGORY_LINK') {
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-        	// We add subscription if we change category (new category may means more mailing-list to subscribe)
-        	if (is_object($object->context['linkto']) && method_exists($object->context['linkto'], 'add_to_abo') && $object->context['linkto']->add_to_abo() < 0)
-    		{
-    			$this->error = $object->context['linkto']->error;
-    			$this->errors = $object->context['linkto']->errors;
-    			$return = -1;
-    		}
-			else
-			{
+			// We add subscription if we change category (new category may means more mailing-list to subscribe)
+			if (is_object($object->context['linkto']) && method_exists($object->context['linkto'], 'add_to_abo') && $object->context['linkto']->add_to_abo() < 0) {
+				$this->error = $object->context['linkto']->error;
+				$this->errors = $object->context['linkto']->errors;
+				$return = -1;
+			} else {
 				$return = 1;
 			}
 
-        	return $return;
-        }
-        elseif ($action == 'CATEGORY_UNLINK')
-        {
-        	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+			return $return;
+		} elseif ($action == 'CATEGORY_UNLINK') {
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-        	// We remove subscription if we change category (lessw category may means less mailing-list to subscribe)
-        	if (is_object($object->context['unlinkoff']) && method_exists($object->context['unlinkoff'], 'del_to_abo') && $object->context['unlinkoff']->del_to_abo() < 0)
-        	{
-        		$this->error = $object->context['unlinkoff']->error;
-        		$this->errors = $object->context['unlinkoff']->errors;
-        		$return = -1;
-        	}
-        	else
-        	{
-        		$return = 1;
-        	}
-
-        	return $return;
-        }
-
-        // Members
-        elseif ($action == 'MEMBER_VALIDATE')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-
-            $return = 0;
-            if ($object->add_to_abo() < 0)
-            {
-                $this->errors = $object->errors;
-                if (!empty($object->error)) $this->errors[] = $object->error;
-                $return = -1;
-            }
-            else
-            {
-                $return = 1;
-            }
-
-            return $return;
-        }
-        elseif ($action == 'MEMBER_MODIFY')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-
-            $return = 0;
-            // Add user into some linked tools (mailman, spip, etc...)
-            if (($object->oldcopy->email != $object->email) || ($object->oldcopy->typeid != $object->typeid))
-            {
-                if (is_object($object->oldcopy) && (($object->oldcopy->email != $object->email) || ($object->oldcopy->typeid != $object->typeid)))    // If email has changed or if list has changed we delete mailman subscription for old email
-                {
-                    if ($object->oldcopy->del_to_abo() < 0)
-                    {
-                        $this->errors = $object->oldcopy->errors;
-                        if (!empty($object->oldcopy->error)) $this->errors[] = $object->oldcopy->error;
-                        $return = -1;
-                    }
-                    else
-                    {
-                        $return = 1;
-                    }
-                }
-                // We add subscription if new email or new type (new type may means more mailing-list to subscribe)
-                if ($object->add_to_abo() < 0)
-                {
-                    $this->errors = $object->errors;
-                    if (!empty($object->error)) $this->errors[] = $object->error;
-                    $return = -1;
-                }
-                else
-                {
-                    $return = 1;
-                }
-            }
+			// We remove subscription if we change category (lessw category may means less mailing-list to subscribe)
+			if (is_object($object->context['unlinkoff']) && method_exists($object->context['unlinkoff'], 'del_to_abo') && $object->context['unlinkoff']->del_to_abo() < 0) {
+				$this->error = $object->context['unlinkoff']->error;
+				$this->errors = $object->context['unlinkoff']->errors;
+				$return = -1;
+			} else {
+				$return = 1;
+			}
 
 			return $return;
-        }
-        elseif ($action == 'MEMBER_RESILIATE' || $action == 'MEMBER_DELETE')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+		}
 
-            $return = 0;
-            // Remove from external tools (mailman, spip, etc...)
-        	if ($object->del_to_abo() < 0)
-			{
+		// Members
+		elseif ($action == 'MEMBER_VALIDATE') {
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+
+			$return = 0;
+			if ($object->add_to_abo() < 0) {
 				$this->errors = $object->errors;
 				if (!empty($object->error)) $this->errors[] = $object->error;
 				$return = -1;
-			}
-			else
-			{
+			} else {
 				$return = 1;
 			}
 
-	        return $return;
-        }
+			return $return;
+		} elseif ($action == 'MEMBER_MODIFY') {
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+
+			$return = 0;
+			// Add user into some linked tools (mailman, spip, etc...)
+			if (($object->oldcopy->email != $object->email) || ($object->oldcopy->typeid != $object->typeid)) {
+				if (is_object($object->oldcopy) && (($object->oldcopy->email != $object->email) || ($object->oldcopy->typeid != $object->typeid))) {    // If email has changed or if list has changed we delete mailman subscription for old email
+					if ($object->oldcopy->del_to_abo() < 0) {
+						$this->errors = $object->oldcopy->errors;
+						if (!empty($object->oldcopy->error)) $this->errors[] = $object->oldcopy->error;
+						$return = -1;
+					} else {
+						$return = 1;
+					}
+				}
+				// We add subscription if new email or new type (new type may means more mailing-list to subscribe)
+				if ($object->add_to_abo() < 0) {
+					$this->errors = $object->errors;
+					if (!empty($object->error)) $this->errors[] = $object->error;
+					$return = -1;
+				} else {
+					$return = 1;
+				}
+			}
+
+			return $return;
+		} elseif ($action == 'MEMBER_RESILIATE' || $action == 'MEMBER_DELETE') {
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+
+			$return = 0;
+			// Remove from external tools (mailman, spip, etc...)
+			if ($object->del_to_abo() < 0) {
+				$this->errors = $object->errors;
+				if (!empty($object->error)) $this->errors[] = $object->error;
+				$return = -1;
+			} else {
+				$return = 1;
+			}
+
+			return $return;
+		}
 
 		return 0;
-    }
+	}
 }

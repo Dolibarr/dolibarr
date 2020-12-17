@@ -35,8 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if (!empty($conf->projet->enabled))
 {
-    include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
 // Load translation files required by the page
@@ -57,7 +57,7 @@ $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
-    $page = 0;
+	$page = 0;
 }
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -81,10 +81,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 if ($action == 'setlib' && $user->rights->tax->charges->creer)
 {
-    $object->fetch($id);
-    $result = $object->setValueFrom('libelle', GETPOST('lib'), '', '', 'text', '', $user, 'TAX_MODIFY');
-    if ($result < 0)
-        setEventMessages($object->error, $object->errors, 'errors');
+	$object->fetch($id);
+	$result = $object->setValueFrom('libelle', GETPOST('lib'), '', '', 'text', '', $user, 'TAX_MODIFY');
+	if ($result < 0)
+		setEventMessages($object->error, $object->errors, 'errors');
 }
 
 
@@ -103,28 +103,28 @@ if ($object->id)
 {
 	$alreadypayed = $object->getSommePaiement();
 
-    $head = tax_prepare_head($object);
+	$head = tax_prepare_head($object);
 
-    dol_fiche_head($head, 'documents', $langs->trans("SocialContribution"), -1, 'bill');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("SocialContribution"), -1, 'bill');
 
 	$morehtmlref = '<div class="refidno">';
 	// Label of social contribution
 	$morehtmlref .= $form->editfieldkey("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
 	$morehtmlref .= $form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
-    // Project
+	// Project
 	if (!empty($conf->projet->enabled))
 	{
-	    $langs->load("projects");
-	    $morehtmlref .= '<br>'.$langs->trans('Project').' : ';
-        if (!empty($object->fk_project)) {
-            $proj = new Project($db);
-            $proj->fetch($object->fk_project);
-            $morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-            $morehtmlref .= $proj->ref;
-            $morehtmlref .= '</a>';
-        } else {
-            $morehtmlref .= '';
-        }
+		$langs->load("projects");
+		$morehtmlref .= '<br>'.$langs->trans('Project').' : ';
+		if (!empty($object->fk_project)) {
+			$proj = new Project($db);
+			$proj->fetch($object->fk_project);
+			$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+			$morehtmlref .= $proj->ref;
+			$morehtmlref .= '</a>';
+		} else {
+			$morehtmlref .= '';
+		}
 	}
 	$morehtmlref .= '</div>';
 
@@ -137,36 +137,34 @@ if ($object->id)
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-    // Build file list
-    $filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
-    $totalsize = 0;
-    foreach ($filearray as $key => $file)
-    {
-        $totalsize += $file['size'];
-    }
+	// Build file list
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$totalsize = 0;
+	foreach ($filearray as $key => $file)
+	{
+		$totalsize += $file['size'];
+	}
 
 
-    print '<table class="border tableforfield centpercent">';
+	print '<table class="border tableforfield centpercent">';
 
-    print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
-    print '</table>';
+	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
+	print '</table>';
 
-    print '</div>';
+	print '</div>';
 
-    print '<div class="clearboth"></div>';
+	print '<div class="clearboth"></div>';
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 
-    $modulepart = 'tax';
-    $permission = $user->rights->tax->charges->creer;
-    $permtoedit = $user->rights->fournisseur->facture->creer;
-    $param = '&id='.$object->id;
-    include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-}
-else
-{
-    print $langs->trans("ErrorUnknown");
+	$modulepart = 'tax';
+	$permission = $user->rights->tax->charges->creer;
+	$permtoedit = $user->rights->fournisseur->facture->creer;
+	$param = '&id='.$object->id;
+	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+} else {
+	print $langs->trans("ErrorUnknown");
 }
 
 // End of page

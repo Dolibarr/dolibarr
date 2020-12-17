@@ -69,7 +69,7 @@ if ($massaction == 'presend')
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
 
-	dol_fiche_head(null, '', '');
+	print dol_get_fiche_head(null, '', '');
 
 	// Cree l'objet formulaire mail
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -98,9 +98,7 @@ if ($massaction == 'presend')
 			$fuser = new User($db);
 			$fuser->fetch($thirdpartyid);
 			$liste['thirdparty'] = $fuser->getFullName($langs)." &lt;".$fuser->email."&gt;";
-		}
-		else
-		{
+		} else {
 			$soc = new Societe($db);
 			$soc->fetch($thirdpartyid);
 			foreach ($soc->thirdparty_and_contact_email_array(1) as $key => $value) {
@@ -158,13 +156,11 @@ if ($massaction == 'presend')
 		print img_warning().' '.$langs->trans('WarningNumberOfRecipientIsRestrictedInMassAction', $conf->global->MAILING_LIMIT_SENDBYWEB);
 		print ' - <a href="javascript: window.history.go(-1)">'.$langs->trans("GoBack").'</a>';
 		$arrayofmassactions = array();
-	}
-	else
-	{
+	} else {
 		print $formmail->get_form();
 	}
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 // Allow Pre-Mass-Action hook (eg for confirmation dialog)
 $parameters = array(
@@ -174,7 +170,7 @@ $parameters = array(
 
 $reshook = $hookmanager->executeHooks('doPreMassActions', $parameters, $object, $action);
 if ($reshook < 0) {
-    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 } else {
-    print $hookmanager->resPrint;
+	print $hookmanager->resPrint;
 }

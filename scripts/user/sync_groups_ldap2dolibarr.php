@@ -24,6 +24,9 @@
  * \ingroup ldap member
  * \brief Script to update groups into Dolibarr from LDAP
  */
+
+if (!defined('NOSESSION')) define('NOSESSION', '1');
+
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = __DIR__.'/';
@@ -167,7 +170,7 @@ if ($result >= 0) {
 				if ($key === 'count')
 					continue;
 				if (empty($userList[$userdn])) { // Récupération de l'utilisateur
-				                                 // Schéma rfc2307: les membres sont listés dans l'attribut memberUid sous form de login uniquement
+												 // Schéma rfc2307: les membres sont listés dans l'attribut memberUid sous form de login uniquement
 					if ($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS === 'memberUid') {
 						$userKey = array($userdn);
 					} else { // Pour les autres schémas, les membres sont listés sous forme de DN complets
@@ -211,8 +214,7 @@ if ($result >= 0) {
 		if (!$error || $forcecommit) {
 			if (!$error)
 				print $langs->transnoentities("NoErrorCommitIsDone")."\n";
-			else
-				print $langs->transnoentities("ErrorButCommitIsDone")."\n";
+			else print $langs->transnoentities("ErrorButCommitIsDone")."\n";
 			$db->commit();
 		} else {
 			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", $error)."\n";

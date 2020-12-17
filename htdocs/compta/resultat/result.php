@@ -90,8 +90,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 			$month_end = $month_start - 1;
 			if ($month_end < 1) $month_end = 12;
 			else $year_end++;
-		}
-		else $month_end = $month_start;
+		} else $month_end = $month_start;
 		$date_start = dol_get_first_day($year_start, $month_start, false); $date_end = dol_get_last_day($year_end, $month_end, false);
 	}
 	if ($q == 1) { $date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false); }
@@ -178,11 +177,10 @@ if ($modecompta == "CREANCES-DETTES")
 	//$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 	$description = $langs->trans("RulesResultDue");
 	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description .= $langs->trans("DepositsAreNotIncluded");
-	else  $description .= $langs->trans("DepositsAreIncluded");
+	else $description .= $langs->trans("DepositsAreIncluded");
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
-}
-elseif ($modecompta == "RECETTES-DEPENSES") {
+} elseif ($modecompta == "RECETTES-DEPENSES") {
 	$name = $langs->trans("AnnualByAccountInputOutputMode");
 	$calcmode = $langs->trans("CalcModeEngagement");
 	$calcmode .= '<br>('.$langs->trans("SeeReportInDueDebtMode", '<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.(GETPOST("month") > 0 ? '&month='.GETPOST("month") : '').'&modecompta=CREANCES-DETTES">', '</a>').')';
@@ -192,8 +190,7 @@ elseif ($modecompta == "RECETTES-DEPENSES") {
 	$description = $langs->trans("RulesResultInOut");
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
-}
-elseif ($modecompta == "BOOKKEEPING")
+} elseif ($modecompta == "BOOKKEEPING")
 {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByPersonalizedAccountGroups");
 	$calcmode = $langs->trans("CalcModeBookkeeping");
@@ -216,7 +213,7 @@ report_header($name, '', $period, $periodlink, $description, $builddate, $export
 
 if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
-    print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 
 
@@ -248,13 +245,11 @@ if ($modecompta == 'CREANCES-DETTES')
 {
 	//if (! empty($date_start) && ! empty($date_end))
 	//	$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
-}
-elseif ($modecompta == "RECETTES-DEPENSES")
+} elseif ($modecompta == "RECETTES-DEPENSES")
 {
 	//if (! empty($date_start) && ! empty($date_end))
 	//	$sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
-}
-elseif ($modecompta == "BOOKKEEPING")
+} elseif ($modecompta == "BOOKKEEPING")
 {
 	// Get array of all report groups that are active
 	$cats = $AccCat->getCats(); // WARNING: Computed groups must be after group they include
@@ -291,9 +286,9 @@ elseif ($modecompta == "BOOKKEEPING")
 		setEventMessages(null, $AccCat->errors, 'errors');
 	} elseif (is_array($cats) && count($cats) > 0) {
 		foreach ($cats as $cat) {
-            // Loop on each group
+			// Loop on each group
 			if (!empty($cat['category_type'])) {
-                // category calculed
+				// category calculed
 				// When we enter here, $sommes was filled by group of accounts
 
 				$formula = $cat['formula'];
@@ -375,7 +370,7 @@ elseif ($modecompta == "BOOKKEEPING")
 				print "</tr>\n";
 
 				//var_dump($sommes);
-			} else            // normal category
+			} else // normal category
 			{
 				$code = $cat['code']; // Category code we process
 

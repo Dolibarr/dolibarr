@@ -40,18 +40,16 @@ $langs->load("companies");
 // Get parameters
 $id = GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 if (GETPOST('actioncode', 'array'))
 {
-    $actioncode = GETPOST('actioncode', 'array', 3);
-    if (!count($actioncode)) $actioncode = '0';
-}
-else
-{
-    $actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+	$actioncode = GETPOST('actioncode', 'array', 3);
+	if (!count($actioncode)) $actioncode = '0';
+} else {
+	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
 $search_agenda_label = GETPOST('search_agenda_label');
 
@@ -91,19 +89,19 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    // Cancel
-    if (GETPOST('cancel', 'alpha') && !empty($backtopage))
-    {
-        header("Location: ".$backtopage);
-        exit;
-    }
+	// Cancel
+	if (GETPOST('cancel', 'alpha') && !empty($backtopage))
+	{
+		header("Location: ".$backtopage);
+		exit;
+	}
 
-    // Purge search criteria
-    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
-    {
-        $actioncode = '';
-        $search_agenda_label = '';
-    }
+	// Purge search criteria
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
+	{
+		$actioncode = '';
+		$search_agenda_label = '';
+	}
 }
 
 
@@ -133,40 +131,40 @@ if ($object->id > 0)
 	$head = resource_prepare_head($object);
 
 	$titre = $langs->trans("ResourceSingular");
-	dol_fiche_head($head, 'agenda', $titre, -1, $picto);
+	print dol_get_fiche_head($head, 'agenda', $titre, -1, $picto);
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/resource/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/resource/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    $morehtmlref = '<div class="refidno">';
-    $morehtmlref .= '</div>';
+	$morehtmlref = '<div class="refidno">';
+	$morehtmlref .= '</div>';
 
-    $shownav = 1;
-    if ($user->socid && !in_array('resource', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
+	$shownav = 1;
+	if ($user->socid && !in_array('resource', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
 
-    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
-    print '<div class="fichecenter">';
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
-    if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read)))
-    {
-    	$param = '&id='.$object->id.'&socid='.$socid;
-    	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
-    	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read)))
+	{
+		$param = '&id='.$object->id.'&socid='.$socid;
+		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+		if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 
 		print_barre_liste($langs->trans("ActionsOnResource"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlcenter, '', 0, 1, 1);
 
-        // List of all actions
+		// List of all actions
 		$filters = array();
-        $filters['search_agenda_label'] = $search_agenda_label;
+		$filters['search_agenda_label'] = $search_agenda_label;
 
-        // TODO Replace this with same code than into list.php
-        show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
-    }
+		// TODO Replace this with same code than into list.php
+		show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
+	}
 }
 
 // End of page

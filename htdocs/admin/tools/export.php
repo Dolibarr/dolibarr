@@ -30,15 +30,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->load("admin");
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $what = GETPOST('what', 'alpha');
 $export_type = GETPOST('export_type', 'alpha');
 $file = GETPOST('filename_template', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
@@ -49,9 +49,9 @@ if (!$user->admin) accessforbidden();
 
 if ($file && !$what)
 {
-    //print DOL_URL_ROOT.'/dolibarr_export.php';
+	//print DOL_URL_ROOT.'/dolibarr_export.php';
 	header("Location: ".DOL_URL_ROOT.'/admin/tools/dolibarr_export.php?msg='.urlencode($langs->trans("ErrorFieldRequired", $langs->transnoentities("ExportMethod"))).(GETPOST('page_y', 'int') ? '&page_y='.GETPOST('page_y', 'int') : ''));
-    exit;
+	exit;
 }
 
 $errormsg = '';
@@ -83,16 +83,16 @@ $_SESSION["commandbackupresult"] = '';
 $ExecTimeLimit = 600;
 if (!empty($ExecTimeLimit))
 {
-    $err = error_reporting();
-    error_reporting(0); // Disable all errors
-    //error_reporting(E_ALL);
-    @set_time_limit($ExecTimeLimit); // Need more than 240 on Windows 7/64
-    error_reporting($err);
+	$err = error_reporting();
+	error_reporting(0); // Disable all errors
+	//error_reporting(E_ALL);
+	@set_time_limit($ExecTimeLimit); // Need more than 240 on Windows 7/64
+	error_reporting($err);
 }
 $MemoryLimit = 0;
 if (!empty($MemoryLimit))
 {
-    @ini_set('memory_limit', $MemoryLimit);
+	@ini_set('memory_limit', $MemoryLimit);
 }
 
 $form = new Form($db);
@@ -122,51 +122,51 @@ $utils = new Utils($db);
 // MYSQL
 if ($what == 'mysql')
 {
-    $cmddump = GETPOST("mysqldump"); // Do not sanitize here with 'alpha', will be sanitize later by dol_sanitizePathName and escapeshellarg
-    $cmddump = dol_sanitizePathName($cmddump);
+	$cmddump = GETPOST("mysqldump", 'none'); // Do not sanitize here with 'alpha', will be sanitize later by dol_sanitizePathName and escapeshellarg
+	$cmddump = dol_sanitizePathName($cmddump);
 
-    if (!empty($dolibarr_main_restrict_os_commands))
-    {
-        $arrayofallowedcommand = explode(',', $dolibarr_main_restrict_os_commands);
-        dol_syslog("Command are restricted to ".$dolibarr_main_restrict_os_commands.". We check that one of this command is inside ".$cmddump);
-        $basenamecmddump = basename($cmddump);
-        if (!in_array($basenamecmddump, $arrayofallowedcommand))	// the provided command $cmddump must be an allowed command
-        {
-            $errormsg = $langs->trans('CommandIsNotInsideAllowedCommands');
-        }
-    }
+	if (!empty($dolibarr_main_restrict_os_commands))
+	{
+		$arrayofallowedcommand = explode(',', $dolibarr_main_restrict_os_commands);
+		dol_syslog("Command are restricted to ".$dolibarr_main_restrict_os_commands.". We check that one of this command is inside ".$cmddump);
+		$basenamecmddump = basename($cmddump);
+		if (!in_array($basenamecmddump, $arrayofallowedcommand))	// the provided command $cmddump must be an allowed command
+		{
+			$errormsg = $langs->trans('CommandIsNotInsideAllowedCommands');
+		}
+	}
 
-    if (!$errormsg && $cmddump)
-    {
-        dolibarr_set_const($db, 'SYSTEMTOOLS_MYSQLDUMP', $cmddump, 'chaine', 0, '', $conf->entity);
-    }
+	if (!$errormsg && $cmddump)
+	{
+		dolibarr_set_const($db, 'SYSTEMTOOLS_MYSQLDUMP', $cmddump, 'chaine', 0, '', $conf->entity);
+	}
 
-    if (!$errormsg)
-    {
-        $utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file);
-        $errormsg = $utils->error;
-        $_SESSION["commandbackuplastdone"] = $utils->result['commandbackuplastdone'];
-        $_SESSION["commandbackuptorun"] = $utils->result['commandbackuptorun'];
-    }
+	if (!$errormsg)
+	{
+		$utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file);
+		$errormsg = $utils->error;
+		$_SESSION["commandbackuplastdone"] = $utils->result['commandbackuplastdone'];
+		$_SESSION["commandbackuptorun"] = $utils->result['commandbackuptorun'];
+	}
 }
 
 // MYSQL NO BIN
 if ($what == 'mysqlnobin')
 {
-    $utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file);
+	$utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file);
 
-    $errormsg = $utils->error;
-    $_SESSION["commandbackuplastdone"] = $utils->result['commandbackuplastdone'];
-    $_SESSION["commandbackuptorun"] = $utils->result['commandbackuptorun'];
+	$errormsg = $utils->error;
+	$_SESSION["commandbackuplastdone"] = $utils->result['commandbackuplastdone'];
+	$_SESSION["commandbackuptorun"] = $utils->result['commandbackuptorun'];
 }
 
 // POSTGRESQL
 if ($what == 'postgresql')
 {
-    $cmddump = GETPOST("postgresqldump"); // Do not sanitize here with 'alpha', will be sanitize later by dol_sanitizePathName and escapeshellarg
-    $cmddump = dol_sanitizePathName($cmddump);
+	$cmddump = GETPOST("postgresqldump", 'none'); // Do not sanitize here with 'alpha', will be sanitize later by dol_sanitizePathName and escapeshellarg
+	$cmddump = dol_sanitizePathName($cmddump);
 
-    /* Not required, the command is output on screen but not ran for pgsql
+	/* Not required, the command is output on screen but not ran for pgsql
     if (! empty($dolibarr_main_restrict_os_commands))
     {
     	$arrayofallowedcommand=explode(',', $dolibarr_main_restrict_os_commands);
@@ -178,20 +178,20 @@ if ($what == 'postgresql')
     	}
     } */
 
-    if (!$errormsg && $cmddump)
-    {
-        dolibarr_set_const($db, 'SYSTEMTOOLS_POSTGRESQLDUMP', $cmddump, 'chaine', 0, '', $conf->entity);
-    }
+	if (!$errormsg && $cmddump)
+	{
+		dolibarr_set_const($db, 'SYSTEMTOOLS_POSTGRESQLDUMP', $cmddump, 'chaine', 0, '', $conf->entity);
+	}
 
-    if (!$errormsg)
-    {
-        $utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file);
-        $errormsg = $utils->error;
-        $_SESSION["commandbackuplastdone"] = $utils->result['commandbackuplastdone'];
-        $_SESSION["commandbackuptorun"] = $utils->result['commandbackuptorun'];
-    }
+	if (!$errormsg)
+	{
+		$utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file);
+		$errormsg = $utils->error;
+		$_SESSION["commandbackuplastdone"] = $utils->result['commandbackuplastdone'];
+		$_SESSION["commandbackuptorun"] = $utils->result['commandbackuptorun'];
+	}
 
-    $what = ''; // Clear to show message to run command
+	$what = ''; // Clear to show message to run command
 }
 
 
@@ -200,22 +200,20 @@ if ($errormsg)
 	setEventMessages($langs->trans("Error")." : ".$errormsg, null, 'errors');
 
 	$resultstring = '';
-    $resultstring .= '<div class="error">'.$langs->trans("Error")." : ".$errormsg.'</div>';
+	$resultstring .= '<div class="error">'.$langs->trans("Error")." : ".$errormsg.'</div>';
 
-    $_SESSION["commandbackupresult"] = $resultstring;
-}
-else
-{
+	$_SESSION["commandbackupresult"] = $resultstring;
+} else {
 	if ($what)
 	{
-        setEventMessages($langs->trans("BackupFileSuccessfullyCreated").'.<br>'.$langs->trans("YouCanDownloadBackupFile"), null, 'mesgs');
+		setEventMessages($langs->trans("BackupFileSuccessfullyCreated").'.<br>'.$langs->trans("YouCanDownloadBackupFile"), null, 'mesgs');
 
-        $resultstring = '<div class="ok">';
-        $resultstring .= $langs->trans("BackupFileSuccessfullyCreated").'.<br>';
-        $resultstring .= $langs->trans("YouCanDownloadBackupFile");
-        $resultstring .= '<div>';
+		$resultstring = '<div class="ok">';
+		$resultstring .= $langs->trans("BackupFileSuccessfullyCreated").'.<br>';
+		$resultstring .= $langs->trans("YouCanDownloadBackupFile");
+		$resultstring .= '<div>';
 
-        $_SESSION["commandbackupresult"] = $resultstring;
+		$_SESSION["commandbackupresult"] = $resultstring;
 	}
 	/*else
 	{

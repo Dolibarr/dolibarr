@@ -51,9 +51,9 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]['label']))
 {
 	$lastseparatorkeyfound = '';
-    $extrafields_collapse_num = '';
-    $extrafields_collapse_num_old = '';
-    $i = 0;
+	$extrafields_collapse_num = '';
+	$extrafields_collapse_num_old = '';
+	$i = 0;
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $tmpkeyextra => $tmplabelextra)
 	{
 		$i++;
@@ -85,7 +85,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 		if (!empty($extrafields->attributes[$object->table_element]['langfile'][$tmpkeyextra])) $langs->load($extrafields->attributes[$object->table_element]['langfile'][$tmpkeyextra]);
 		if ($action == 'edit_extras')
 		{
-			$value = (isset($_POST["options_".$tmpkeyextra]) ? $_POST["options_".$tmpkeyextra] : $object->array_options["options_".$tmpkeyextra]);
+			$value = (GETPOSTISSET("options_".$tmpkeyextra) ? GETPOST("options_".$tmpkeyextra) : $object->array_options["options_".$tmpkeyextra]);
 		} else {
 			$value = $object->array_options["options_".$tmpkeyextra];
 			//var_dump($tmpkeyextra.' - '.$value);
@@ -94,19 +94,19 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 		// Print line tr of extra field
 		if ($extrafields->attributes[$object->table_element]['type'][$tmpkeyextra] == 'separate')
 		{
-            $extrafields_collapse_num = '';
-            $extrafield_param = $extrafields->attributes[$object->table_element]['param'][$tmpkeyextra];
-            if (!empty($extrafield_param) && is_array($extrafield_param)) {
-                $extrafield_param_list = array_keys($extrafield_param['options']);
+			$extrafields_collapse_num = '';
+			$extrafield_param = $extrafields->attributes[$object->table_element]['param'][$tmpkeyextra];
+			if (!empty($extrafield_param) && is_array($extrafield_param)) {
+				$extrafield_param_list = array_keys($extrafield_param['options']);
 
-                if (count($extrafield_param_list) > 0) {
-                    $extrafield_collapse_display_value = intval($extrafield_param_list[0]);
+				if (count($extrafield_param_list) > 0) {
+					$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
 
-                    if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
-                        $extrafields_collapse_num = $extrafields->attributes[$object->table_element]['pos'][$tmpkeyextra];
-                    }
-                }
-            }
+					if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
+						$extrafields_collapse_num = $extrafields->attributes[$object->table_element]['pos'][$tmpkeyextra];
+					}
+				}
+			}
 
 			print $extrafields->showSeparator($tmpkeyextra, $object);
 
@@ -128,8 +128,13 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			print '<td class="';
 			if ((!empty($action) && ($action == 'create' || $action == 'edit')) && !empty($extrafields->attributes[$object->table_element]['required'][$tmpkeyextra])) print ' fieldrequired';
 			print '">';
-			if (!empty($extrafields->attributes[$object->table_element]['help'][$tmpkeyextra])) print $form->textwithpicto($langs->trans($tmplabelextra), $langs->trans($extrafields->attributes[$object->table_element]['help'][$tmpkeyextra]));
-			else print $langs->trans($tmplabelextra);
+			if (!empty($extrafields->attributes[$object->table_element]['help'][$tmpkeyextra])) {
+				// You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
+				$tmptooltip = explode(':', $extrafields->attributes[$object->table_element]['help'][$tmpkeyextra]);
+				print $form->textwithpicto($langs->trans($tmplabelextra), $langs->trans($tmptooltip[0]), 1, 'help', '', 0, 3, (empty($tmptooltip[1]) ? '' : 'extra_'.$tmpkeyextra.'_'.$tmptooltip[1]));
+			} else {
+				print $langs->trans($tmplabelextra);
+			}
 			print '</td>';
 
 			//TODO Improve element and rights detection
@@ -141,7 +146,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			if ($object->element == 'order_supplier')   $permok = $user->rights->fournisseur->commande->creer;
 			if ($object->element == 'invoice_supplier') $permok = $user->rights->fournisseur->facture->creer;
 			if ($object->element == 'shipping')         $permok = $user->rights->expedition->creer;
-			if ($object->element == 'delivery')         $permok = $user->rights->expedition->livraison->creer;
+			if ($object->element == 'delivery')         $permok = $user->rights->expedition->delivery->creer;
 			if ($object->element == 'productlot')       $permok = $user->rights->stock->creer;
 			if ($object->element == 'facturerec') 	    $permok = $user->rights->facture->creer;
 			if ($object->element == 'mo') 	    		$permok = $user->rights->mrp->write;
@@ -149,11 +154,11 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			$isdraft = ((isset($object->statut) && $object->statut == 0) || (isset($object->status) && $object->status == 0));
 			if (($isdraft || !empty($extrafields->attributes[$object->table_element]['alwayseditable'][$tmpkeyextra]))
 				&& $permok && $enabled != 5 && ($action != 'edit_extras' || GETPOST('attribute') != $tmpkeyextra)
-			    && empty($extrafields->attributes[$object->table_element]['computed'][$tmpkeyextra]))
+				&& empty($extrafields->attributes[$object->table_element]['computed'][$tmpkeyextra]))
 			{
-			    $fieldid = 'id';
-			    if ($object->table_element == 'societe') $fieldid = 'socid';
-			    print '<td class="right"><a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?'.$fieldid.'='.$object->id.'&action=edit_extras&attribute='.$tmpkeyextra.'&ignorecollapsesetup=1">'.img_edit().'</a></td>';
+				$fieldid = 'id';
+				if ($object->table_element == 'societe') $fieldid = 'socid';
+				print '<td class="right"><a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?'.$fieldid.'='.$object->id.'&action=edit_extras&attribute='.$tmpkeyextra.'&ignorecollapsesetup=1">'.img_edit().'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td>';
@@ -172,15 +177,15 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 					$datenotinstring = $db->jdate($datenotinstring);
 				}
 				//print 'x'.$object->array_options['options_' . $tmpkeyextra].'-'.$datenotinstring.' - '.dol_print_date($datenotinstring, 'dayhour');
-				$value = isset($_POST["options_".$tmpkeyextra]) ? dol_mktime($_POST["options_".$tmpkeyextra."hour"], $_POST["options_".$tmpkeyextra."min"], 0, $_POST["options_".$tmpkeyextra."month"], $_POST["options_".$tmpkeyextra."day"], $_POST["options_".$tmpkeyextra."year"]) : $datenotinstring;
+				$value = GETPOSTISSET("options_".$tmpkeyextra) ? dol_mktime(GETPOST("options_".$tmpkeyextra."hour", 'int'), GETPOST("options_".$tmpkeyextra."min", 'int'), 0, GETPOST("options_".$tmpkeyextra."month", 'int'), GETPOST("options_".$tmpkeyextra."day", 'int'), GETPOST("options_".$tmpkeyextra."year", 'int')) : $datenotinstring;
 			}
 
 			//TODO Improve element and rights detection
-			if ($action == 'edit_extras' && $permok && GETPOST('attribute', 'none') == $tmpkeyextra)
+			if ($action == 'edit_extras' && $permok && GETPOST('attribute', 'restricthtml') == $tmpkeyextra)
 			{
-			    $fieldid = 'id';
-			    if ($object->table_element == 'societe') $fieldid = 'socid';
-			    print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formextra">';
+				$fieldid = 'id';
+				if ($object->table_element == 'societe') $fieldid = 'socid';
+				print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formextra">';
 				print '<input type="hidden" name="action" value="update_extras">';
 				print '<input type="hidden" name="attribute" value="'.$tmpkeyextra.'">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -207,7 +212,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 	{
 		print "\n";
 		print '
-				<script type="text/javascript">
+				<script>
 				    jQuery(document).ready(function() {
 				    	function showOptions(child_list, parent_list)
 				    	{

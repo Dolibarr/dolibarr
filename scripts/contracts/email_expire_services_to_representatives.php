@@ -24,6 +24,9 @@
  * \ingroup contracts
  * \brief Script to send a mail to dolibarr users linked to companies with services to expire
  */
+
+if (!defined('NOSESSION')) define('NOSESSION', '1');
+
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = __DIR__.'/';
@@ -133,8 +136,7 @@ if ($resql) {
 			print "Service to expire ".$obj->ref.", label ".dol_concatdesc($obj->plabel, $obj->description).", due date ".dol_print_date($db->jdate($obj->date_fin_validite), 'day')." (linked to company ".$obj->name.", sale representative ".dolGetFirstLastname($obj->firstname, $obj->lastname).", email ".$obj->email."): ";
 			if (dol_strlen($obj->email))
 				print "qualified.";
-			else
-				print "disqualified (no email).";
+			else print "disqualified (no email).";
 			print "\n";
 
 			unset($outputlangs);
@@ -192,10 +194,8 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldsalerepre
 	if ($duration_value) {
 		if ($duration_value > 0)
 			$title = $newlangs->transnoentities("ListOfServicesToExpireWithDuration", $duration_value);
-		else
-			$title = $newlangs->transnoentities("ListOfServicesToExpireWithDurationNeg", $duration_value);
-	} else
-		$title = $newlangs->transnoentities("ListOfServicesToExpire");
+		else $title = $newlangs->transnoentities("ListOfServicesToExpireWithDurationNeg", $duration_value);
+	} else $title = $newlangs->transnoentities("ListOfServicesToExpire");
 
 	$subject = (empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_SUBJECT) ? $title : $conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_SUBJECT);
 	$sendto = $oldemail;

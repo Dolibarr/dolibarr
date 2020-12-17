@@ -68,6 +68,10 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
+// Security check
+if (!empty($user->socid)) $socid = $user->socid;
+$result = restrictedArea($user, 'asset', $id);
+
 //if ($id > 0 || ! empty($ref)) $upload_dir = $conf->sellyoursaas->multidir_output[$object->entity] . "/packages/" . dol_sanitizeFileName($object->id);
 if ($id > 0 || !empty($ref)) $upload_dir = $conf->sellyoursaas->multidir_output[$object->entity]."/packages/".dol_sanitizeFileName($object->ref);
 
@@ -99,7 +103,7 @@ if ($object->id)
 	if (!empty($conf->notification->enabled)) $langs->load("mails");
 	$head = asset_prepare_head($object);
 
-	dol_fiche_head($head, 'document', $langs->trans("Asset"), -1, 'generic');
+	print dol_get_fiche_head($head, 'document', $langs->trans("Asset"), -1, 'generic');
 
 
 	// Build file list
@@ -131,7 +135,7 @@ if ($object->id)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	$modulepart = 'asset';
 	//$permission = $user->rights->asset->create;
@@ -144,9 +148,7 @@ if ($object->id)
 	$relativepathwithnofile = 'asset/'.dol_sanitizeFileName($object->ref).'/';
 
 	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-}
-else
-{
+} else {
 	accessforbidden('', 0, 1);
 }
 

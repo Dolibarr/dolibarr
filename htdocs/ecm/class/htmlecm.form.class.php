@@ -27,15 +27,15 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
  */
 class FormEcm
 {
-    /**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    /**
-     * @var string Error code (or message)
-     */
-    public $error = '';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
 
 
 	/**
@@ -69,8 +69,7 @@ class FormEcm
 		{
 			$cat = new EcmDirectory($this->db);
 			$cate_arbo = $cat->get_full_arbo();
-		}
-		elseif ($module == 'medias')
+		} elseif ($module == 'medias')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			$path = $conf->medias->multidir_output[$conf->entity];
@@ -81,8 +80,7 @@ class FormEcm
 		if (is_array($cate_arbo))
 		{
 			if (!count($cate_arbo)) $output .= '<option value="-1" disabled>'.$langs->trans("NoDirectoriesFound").'</option>';
-			else
-			{
+			else {
 				$output .= '<option value="-1">&nbsp;</option>';
 				foreach ($cate_arbo as $key => $value)
 				{
@@ -90,9 +88,7 @@ class FormEcm
 					if ($selected && $valueforoption == $selected)
 					{
 						$add = 'selected ';
-					}
-					else
-					{
+					} else {
 						$add = '';
 					}
 					$output .= '<option '.$add.'value="'.dol_escape_htmltag($valueforoption).'">'.(empty($cate_arbo[$key]['fulllabel']) ? $cate_arbo[$key]['relativename'] : $cate_arbo[$key]['fulllabel']).'</option>';

@@ -1,9 +1,9 @@
 {
-  "name": "Dolibarr",
-  "version": "1.0.0",
+  "name": "dolibarr",
+  "version": "1.13.0",
   "description": "An app for connecting Dolibarr to the Zapier platform.",
   "repository": "Dolibarr/dolibarr",
-  "homepage": "https://www.dolibarr.fr/",
+  "homepage": "https://www.dolibarr.org/",
   "author": "Frédéric France <frederic.france@netlogic.fr>",
   "license": "BSD-3-Clause",
   "main": "index.js",
@@ -15,7 +15,7 @@
     "npm": ">=5.6.0"
   },
   "dependencies": {
-    "zapier-platform-core": "8.0.1"
+    "zapier-platform-core": "10.1.2"
   },
   "devDependencies": {
     "mocha": "^5.2.0",

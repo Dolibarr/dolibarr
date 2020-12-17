@@ -72,7 +72,6 @@ Deleted=Đã xóa
 
 # Dict
 Type=Loại
-Category=Mã phân tích
 Severity=Mức độ nghiêm trọng
 
 # Email templates
@@ -128,7 +127,6 @@ TicketsAutoAssignTicket=Tự động chỉ định người dùng đã tạo vé
 TicketsAutoAssignTicketHelp=Khi tạo vé, người dùng có thể được tự động chỉ định cho vé.
 TicketNumberingModules=Mô-đun đánh số vé
 TicketNotifyTiersAtCreation=Thông báo cho bên thứ ba khi tạo
-TicketGroup=Nhóm
 TicketsDisableCustomerEmail=Luôn vô hiệu hóa email khi vé được tạo từ giao diện công cộng
 TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
@@ -162,7 +160,7 @@ CreatedBy=Được tạo bởi
 NewTicket=Vé mới
 SubjectAnswerToTicket=Trả lời vé
 TicketTypeRequest=Loại yêu cầu
-TicketCategory=Mã phân tích
+TicketCategory=Nhóm
 SeeTicket=Xem vé
 TicketMarkedAsRead=Vé đã được đánh dấu là đã đọc
 TicketReadOn=Đọc tiếp

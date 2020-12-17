@@ -57,17 +57,29 @@ if (!empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES))
 }
 
 // Special cases
-if ($module == 'propal') { $permission = $user->rights->propale->creer; }
-elseif ($module == 'supplier_proposal') { $permission = $user->rights->supplier_proposal->creer; }
-elseif ($module == 'fichinter') { $permission = $user->rights->ficheinter->creer; }
-elseif ($module == 'project') { $permission = $user->rights->projet->creer; }
-elseif ($module == 'project_task') { $permission = $user->rights->projet->creer; }
-elseif ($module == 'invoice_supplier') { $permission = $user->rights->fournisseur->facture->creer; }
-elseif ($module == 'order_supplier') { $permission = $user->rights->fournisseur->commande->creer; }
-elseif ($module == 'societe') { $permission = $user->rights->societe->creer; }
-elseif ($module == 'contact') { $permission = $user->rights->societe->creer; }
-elseif ($module == 'shipping') { $permission = $user->rights->expedition->creer; }
-elseif ($module == 'product') { $permission = $user->rights->produit->creer; }
+if ($module == 'propal') {
+	$permission = $user->rights->propale->creer;
+} elseif ($module == 'supplier_proposal') {
+	$permission = $user->rights->supplier_proposal->creer;
+} elseif ($module == 'fichinter') {
+	$permission = $user->rights->ficheinter->creer;
+} elseif ($module == 'project') {
+	$permission = $user->rights->projet->creer;
+} elseif ($module == 'project_task') {
+	$permission = $user->rights->projet->creer;
+} elseif ($module == 'invoice_supplier') {
+	$permission = $user->rights->fournisseur->facture->creer;
+} elseif ($module == 'order_supplier') {
+	$permission = $user->rights->fournisseur->commande->creer;
+} elseif ($module == 'societe') {
+	$permission = $user->rights->societe->creer;
+} elseif ($module == 'contact') {
+	$permission = $user->rights->societe->creer;
+} elseif ($module == 'shipping') {
+	$permission = $user->rights->expedition->creer;
+} elseif ($module == 'product') {
+	$permission = $user->rights->produit->creer;
+}
 //else dol_print_error('','Bad value '.$module.' for param module');
 
 if (!empty($conf->fckeditor->enabled) && !empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) $typeofdata = 'ckeditor:dolibarr_notes:100%:200::1:12:95%:0'; // Rem: This var is for all notes, not only thirdparties note.
@@ -75,24 +87,23 @@ else $typeofdata = 'textarea:12:95%';
 
 print '<!-- BEGIN PHP TEMPLATE NOTES -->'."\n";
 print '<div class="tagtable border table-border tableforfield centpercent">'."\n";
-if ($module != 'product') {
-	// No public note yet on products
-	print '<div class="tagtr table-border-row">'."\n";
-	print '<div class="tagtd tagtdnote tdtop sensiblehtmlcontent table-key-border-col'.(empty($cssclass) ? '' : ' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
-	print $form->editfieldkey("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, $moreparam, '', 0);
-	print '</div>'."\n";
-	print '<div class="tagtd table-val-border-col sensiblehtmlcontent">'."\n";
-	print $form->editfieldval("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, '', null, null, $moreparam, 1)."\n";
-	print '</div>'."\n";
-	print '</div>'."\n";
-}
+print '<div class="tagtr table-border-row">'."\n";
+$editmode = (GETPOST('action', 'aZ09') == 'edit'.$note_public);
+print '<div class="tagtd tagtdnote tdtop'.($editmode ? '' : ' sensiblehtmlcontent').' table-key-border-col'.(empty($cssclass) ? '' : ' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
+print $form->editfieldkey("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, $moreparam, '', 0);
+print '</div>'."\n";
+print '<div class="tagtd wordbreak table-val-border-col'.($editmode ? '' : ' sensiblehtmlcontent').'">'."\n";
+print $form->editfieldval("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, '', null, null, $moreparam, 1)."\n";
+print '</div>'."\n";
+print '</div>'."\n";
 if (empty($user->socid)) {
 	// Private notes (always hidden to external users)
 	print '<div class="tagtr table-border-row">'."\n";
-	print '<div class="tagtd tagtdnote tdtop sensiblehtmlcontent table-key-border-col'.(empty($cssclass) ? '' : ' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
+	$editmode = (GETPOST('action', 'aZ09') == 'edit'.$note_private);
+	print '<div class="tagtd tagtdnote tdtop'.($editmode ? '' : ' sensiblehtmlcontent').' table-key-border-col'.(empty($cssclass) ? '' : ' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
 	print $form->editfieldkey("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, $moreparam, '', 0);
 	print '</div>'."\n";
-	print '<div class="tagtd table-val-border-col sensiblehtmlcontent">'."\n";
+	print '<div class="tagtd wordbreak table-val-border-col'.($editmode ? '' : ' sensiblehtmlcontent').'">'."\n";
 	print $form->editfieldval("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, '', null, null, $moreparam, 1);
 	print '</div>'."\n";
 	print '</div>'."\n";

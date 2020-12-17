@@ -86,8 +86,7 @@ function GetFoldersAndFiles($resourceType, $currentFolder)
 			{
 				if (is_dir($sServerDir.$sFile))
 					$aFolders[] = '<Folder name="'.ConvertToXmlAttribute($sFile).'" />';
-				else
-				{
+				else {
 					$iFileSize = @filesize($sServerDir.$sFile);
 					if (!$iFileSize) {
 						$iFileSize = 0;
@@ -147,8 +146,7 @@ function CreateFolder($resourceType, $currentFolder)
 
 		if (strpos($sNewFolderName, '..') !== false)
 			$sErrorNumber = '102'; // Invalid folder name.
-		else
-		{
+		else {
 			// Map the virtual path to the local server path of the current folder.
 			$sServerDir = ServerMapFolder($resourceType, $currentFolder, 'CreateFolder');
 
@@ -171,13 +169,9 @@ function CreateFolder($resourceType, $currentFolder)
 						$sErrorNumber = '110';
 						break;
 				}
-			}
-			else
-				$sErrorNumber = '103';
+			} else $sErrorNumber = '103';
 		}
-	}
-	else
-		$sErrorNumber = '102';
+	} else $sErrorNumber = '102';
 
 	// Create the "Error" node.
 	echo '<Error number="'.$sErrorNumber.'" />';
@@ -203,8 +197,8 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 	$sFileName = '';
 
 	if (isset($_FILES['NewFile']) && !is_null($_FILES['NewFile']['tmp_name'])
-       // This is for the QuickUpload tab box
-        or (isset($_FILES['upload']) && !is_null($_FILES['upload']['tmp_name'])))
+	   // This is for the QuickUpload tab box
+		or (isset($_FILES['upload']) && !is_null($_FILES['upload']['tmp_name'])))
 	{
 		global $Config;
 
@@ -254,9 +248,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 					$iCounter++;
 					$sFileName = RemoveExtension($sOriginalFileName).'('.$iCounter.').'.$sExtension;
 					$sErrorNumber = '201';
-				}
-				else
-				{
+				} else {
 					move_uploaded_file($oFile['tmp_name'], $sFilePath);
 
 					if (is_file($sFilePath))
@@ -289,19 +281,14 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 				{
 					@unlink($sFilePath);
 					$sErrorNumber = '202';
-				}
-				elseif (isset($detectHtml) && $detectHtml === -1 && DetectHtml($sFilePath) === true)
+				} elseif (isset($detectHtml) && $detectHtml === -1 && DetectHtml($sFilePath) === true)
 				{
 					@unlink($sFilePath);
 					$sErrorNumber = '202';
 				}
 			}
-		}
-		else
-			$sErrorNumber = '202';
-	}
-	else
-		$sErrorNumber = '202';
+		} else $sErrorNumber = '202';
+	} else $sErrorNumber = '202';
 
 
 	$sFileUrl = CombinePaths(GetResourceTypePath($resourceType, $sCommand), $currentFolder);
@@ -311,18 +298,16 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 	// @CHANGE
 	//SendUploadResults( $sErrorNumber, $sFileUrl, $sFileName );
 	if ($CKEcallback == '')
-    {
-        // this line already exists so wrap the if block around it
-        SendUploadResults($sErrorNumber, $sFileUrl, $sFileName);
-    }
-    else
 	{
-	    //issue the CKEditor Callback
-        SendCKEditorResults(
+		// this line already exists so wrap the if block around it
+		SendUploadResults($sErrorNumber, $sFileUrl, $sFileName);
+	} else {
+		//issue the CKEditor Callback
+		SendCKEditorResults(
 			$CKEcallback,
 			$sFileUrl,
 			($sErrorNumber != 0 ? 'Error '.$sErrorNumber.' upload failed.' : 'Upload Successful')
-    	);
+		);
 	}
 
 	exit;

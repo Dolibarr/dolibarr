@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 if (!$user->admin) accessforbidden();
 
@@ -54,7 +54,7 @@ $version = '0.0';
 
 if ($action == 'getlastversion')
 {
-	$result = getURLContent('http://sourceforge.net/projects/dolibarr/rss');
+	$result = getURLContent('https://sourceforge.net/projects/dolibarr/rss');
 	//var_dump($result['content']);
 	$sfurl = simplexml_load_string($result['content']);
 }
@@ -98,14 +98,10 @@ if (function_exists('curl_init'))
 
 			// Show version
 			print $langs->trans("LastStableVersion").' : <b>'.(($version != '0.0') ? $version : $langs->trans("Unknown")).'</b><br>';
-		}
-		else
-		{
+		} else {
 			print $langs->trans("LastStableVersion").' : <b>'.$langs->trans("UpdateServerOffline").'</b><br>';
 		}
-	}
-	else
-	{
+	} else {
 		print $langs->trans("LastStableVersion").' : <a href="'.$_SERVER["PHP_SELF"].'?action=getlastversion" class="button">'.$langs->trans("Check").'</a><br>';
 	}
 }

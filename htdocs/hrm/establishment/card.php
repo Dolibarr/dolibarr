@@ -33,7 +33,7 @@ if (!$user->admin) accessforbidden();
 
 $error = 0;
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $id = GETPOST('id', 'int');
@@ -41,7 +41,7 @@ $id = GETPOST('id', 'int');
 // List of status
 static $tmpstatus2label = array(
 		'0'=>'CloseEtablishment',
-        '1'=>'OpenEtablishment'
+		'1'=>'OpenEtablishment'
 );
 $status2label = array('');
 foreach ($tmpstatus2label as $key => $val) $status2label[$key] = $langs->trans($val);
@@ -58,33 +58,29 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 
 if ($action == 'confirm_delete' && $confirm == "yes")
 {
-    $result = $object->delete($id);
-    if ($result >= 0)
-    {
-        header("Location: ../admin/admin_establishment.php");
-        exit;
-    }
-    else
-    {
-        setEventMessages($object->error, $object->errors, 'errors');
-    }
-}
-
-elseif ($action == 'add')
+	$result = $object->delete($id);
+	if ($result >= 0)
+	{
+		header("Location: ../admin/admin_establishment.php");
+		exit;
+	} else {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+} elseif ($action == 'add')
 {
-    if (!$cancel)
-    {
-        $error = 0;
+	if (!$cancel)
+	{
+		$error = 0;
 
-		$object->name = GETPOST('name', 'alpha');
-        if (empty($object->name))
-        {
-	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Name")), null, 'errors');
-            $error++;
-        }
+		$object->label = GETPOST('label', 'alpha');
+		if (empty($object->label))
+		{
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
+			$error++;
+		}
 
-        if (empty($error))
-        {
+		if (empty($error))
+		{
 			$object->address = GETPOST('address', 'alpha');
 			$object->zip 			= GETPOST('zipcode', 'alpha');
 			$object->town			= GETPOST('town', 'alpha');
@@ -96,26 +92,20 @@ elseif ($action == 'add')
 
 			$id = $object->create($user);
 
-            if ($id > 0)
-            {
-                header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-                exit;
-			}
-			else
+			if ($id > 0)
 			{
+				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+				exit;
+			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
-        }
-        else
-        {
-            $action = 'create';
-        }
-    }
-    else
-    {
-        header("Location: ../admin/admin_establishment.php");
-        exit;
-    }
+		} else {
+			$action = 'create';
+		}
+	} else {
+		header("Location: ../admin/admin_establishment.php");
+		exit;
+	}
 }
 
 // Update record
@@ -124,15 +114,15 @@ elseif ($action == 'update')
 	$error = 0;
 
 	if (!$cancel) {
-		$name = GETPOST('name', 'alpha');
+		$name = GETPOST('label', 'alpha');
 		if (empty($name)) {
-			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Name')), null, 'errors');
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Label')), null, 'errors');
 			$error++;
 		}
 
 		if (empty($error))
 		{
-			$object->name = GETPOST('name', 'alpha');
+			$object->label = GETPOST('label', 'alphanohtml');
 			$object->address = GETPOST('address', 'alpha');
 			$object->zip 			= GETPOST('zipcode', 'alpha');
 			$object->town			= GETPOST('town', 'alpha');
@@ -143,19 +133,17 @@ elseif ($action == 'update')
 
 			$result = $object->update($user);
 
-            if ($result > 0)
-            {
-                header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_POST['id']);
-                exit;
-            }
-			else
+			if ($result > 0)
 			{
+				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_POST['id']);
+				exit;
+			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 	} else {
-        header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_POST['id']);
-        exit;
+		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_POST['id']);
+		exit;
 	}
 }
 
@@ -173,35 +161,38 @@ $formcompany = new FormCompany($db);
  */
 if ($action == 'create')
 {
-    print load_fiche_titre($langs->trans("NewEstablishment"));
+	print load_fiche_titre($langs->trans("NewEstablishment"));
 
-    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
-    print '<input type="hidden" name="action" value="add">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="add">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
-    print '<table class="border centpercent">';
+	print '<table class="border centpercent">';
 
 	// Name
 	print '<tr>';
-	print '<td>'.$form->editfieldkey('Name', 'name', '', $object, 0, 'string', '', 1).'</td>';
-	print '<td><input name="name" id="name" size="32" value="'.GETPOST("name", "alpha").'"></td>';
+	print '<td>'.$form->editfieldkey('Label', 'label', '', $object, 0, 'string', '', 1).'</td>';
+	print '<td><input name="label" id="label" value="'.GETPOST("label", "alphanohtml").'"></td>';
 	print '</tr>';
 
-	// Parent
-	print '<tr>';
-	print '<td>'.$form->editfieldkey('Parent', 'entity', '', $object, 0, 'string', '', 1).'</td>';
-	print '<td class="maxwidthonsmartphone">';
-	print $form->selectEstablishments(GETPOST('entity', 'int') > 0 ?GETPOST('entity', 'int') : $conf->entity, 'entity', 1);
-	print '</td>';
-	print '</tr>';
+	// Entity
+	/*
+	if (! empty($conf->multicompany->enabled)) {
+		print '<tr>';
+		print '<td>'.$form->editfieldkey('Parent', 'entity', '', $object, 0, 'string', '', 1).'</td>';
+		print '<td class="maxwidthonsmartphone">';
+		print $form->selectEstablishments(GETPOST('entity', 'int') > 0 ?GETPOST('entity', 'int') : $conf->entity, 'entity', 1);
+		print '</td>';
+		print '</tr>';
+	} */
 
 	// Address
 	print '<tr>';
 	print '<td>'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
 	print '<td>';
-	print '<input name="address" id="address" class="qutrevingtpercent" value="'.GETPOST('address', 'alpha').'">';
+	print '<input name="address" id="address" class="qutrevingtpercent" value="'.GETPOST('address', 'alphanohtml').'">';
 	print '</td>';
 	print '</tr>';
 
@@ -242,65 +233,68 @@ if ($action == 'create')
 	print '</tr>';
 
 	// Status
-    print '<tr>';
-    print '<td>'.$form->editfieldkey('Status', 'status', '', $object, 0, 'string', '', 1).'</td>';
+	print '<tr>';
+	print '<td>'.$form->editfieldkey('Status', 'status', '', $object, 0, 'string', '', 1).'</td>';
 	print '<td>';
 	print $form->selectarray('status', $status2label, GETPOSTISSET('status') ? GETPOST('status', 'alpha') : 1);
-    print '</td></tr>';
+	print '</td></tr>';
 
-    print '</table>';
+	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
-    print '<div class="center">';
-	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+	print '<div class="center">';
+	print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-    print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
-    print '</form>';
+	print '</form>';
 }
 
 // Part to edit record
 if (($id || $ref) && $action == 'edit')
 {
-    $result = $object->fetch($id);
-    if ($result > 0)
-    {
-        $head = establishment_prepare_head($object);
+	$result = $object->fetch($id);
+	if ($result > 0)
+	{
+		$head = establishment_prepare_head($object);
 
-        if ($action == 'edit')
-        {
-        	dol_fiche_head($head, 'card', $langs->trans("Establishment"), 0, 'building');
+		if ($action == 'edit')
+		{
+			print dol_get_fiche_head($head, 'card', $langs->trans("Establishment"), 0, 'building');
 
-        	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
-            print '<input type="hidden" name="token" value="'.newToken().'">';
-            print '<input type="hidden" name="action" value="update">';
-            print '<input type="hidden" name="id" value="'.$id.'">';
+			print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="action" value="update">';
+			print '<input type="hidden" name="id" value="'.$id.'">';
 
-            print '<table class="border centpercent">';
+			print '<table class="border centpercent">';
 
-            // Ref
-            print "<tr>";
-            print '<td width="25%">'.$langs->trans("Ref").'</td><td>';
-            print $object->id;
-            print '</td></tr>';
+			// Ref
+			print "<tr>";
+			print '<td class="titlefield">'.$langs->trans("Ref").'</td><td>';
+			print $object->id;
+			print '</td></tr>';
 
-            // Name
-            print '<tr><td>'.$form->editfieldkey('Name', 'name', '', $object, 0, 'string', '', 1).'</td><td>';
-            print '<input name="name" id="name" class="flat" size="32" value="'.$object->name.'">';
-            print '</td></tr>';
+			// Name
+			print '<tr><td>'.$form->editfieldkey('Label', 'label', '', $object, 0, 'string', '', 1).'</td><td>';
+			print '<input name="label" id="label" class="flat" value="'.$object->label.'">';
+			print '</td></tr>';
 
-			// Parent
-            print '<tr><td>'.$form->editfieldkey('Parent', 'entity', '', $object, 0, 'string', '', 1).'</td>';
-			print '<td class="maxwidthonsmartphone">';
-			print $form->selectEstablishments($object->entity > 0 ? $object->entity : $conf->entity, 'entity', 1);
-            print '</td></tr>';
+			// Entity
+			/*
+            if (! empty($conf->multicompany->enabled)) {
+	            print '<tr><td>'.$form->editfieldkey('Parent', 'entity', '', $object, 0, 'string', '', 1).'</td>';
+				print '<td class="maxwidthonsmartphone">';
+				print $object->entity > 0 ? $object->entity : $conf->entity;
+	            print '</td></tr>';
+            }*/
 
 			// Address
 			print '<tr><td>'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
 			print '<td>';
-			print '<input name="address" id="address" size="32" value="'.$object->address.'">';
+			print '<input name="address" id="address" value="'.$object->address.'">';
 			print '</td></tr>';
 
 			// Zipcode / Town
@@ -328,34 +322,33 @@ if (($id || $ref) && $action == 'edit')
 			print $form->selectarray('status', $status2label, $object->status);
 			print '</td></tr>';
 
-            print '</table>';
+			print '</table>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
-            print '<div class="center">';
-			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+			print '<div class="center">';
+			print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-            print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
-            print '</div>';
+			print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
+			print '</div>';
 
-            print '</form>';
-        }
-    }
-    else dol_print_error($db);
+			print '</form>';
+		}
+	} else dol_print_error($db);
 }
 
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
-    $res = $object->fetch_optionals();
+	$res = $object->fetch_optionals();
 
-    $head = establishment_prepare_head($object);
-    dol_fiche_head($head, 'card', $langs->trans("Establishment"), -1, 'building');
+	$head = establishment_prepare_head($object);
+	print dol_get_fiche_head($head, 'card', $langs->trans("Establishment"), -1, 'building');
 
-    // Confirmation to delete
-    if ($action == 'delete')
-    {
-        print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("DeleteEstablishment"), $langs->trans("ConfirmDeleteEstablishment"), "confirm_delete");
-    }
+	// Confirmation to delete
+	if ($action == 'delete')
+	{
+		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("DeleteEstablishment"), $langs->trans("ConfirmDeleteEstablishment"), "confirm_delete");
+	}
 
 
 	// Object card
@@ -364,27 +357,30 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$linkback = '<a href="'.DOL_URL_ROOT.'/hrm/admin/admin_establishment.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
-    $morehtmlref .= '</div>';
+	$morehtmlref .= '</div>';
 
-    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'id', $morehtmlref);
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'id', $morehtmlref);
 
 
-    print '<div class="fichecenter">';
-    //print '<div class="fichehalfleft">';
-    print '<div class="underbanner clearboth"></div>';
-    print '<table class="border centpercent">'."\n";
+	print '<div class="fichecenter">';
+	//print '<div class="fichehalfleft">';
+	print '<div class="underbanner clearboth"></div>';
+	print '<table class="border centpercent">'."\n";
 
 	// Name
 	print '<tr>';
-	print '<td class="titlefield">'.$langs->trans("Name").'</td>';
-	print '<td>'.$object->name.'</td>';
+	print '<td class="titlefield">'.$langs->trans("Label").'</td>';
+	print '<td>'.$object->label.'</td>';
 	print '</tr>';
 
-	// Parent
-	print '<tr>';
-	print '<td class="titlefield">'.$langs->trans("Parent").'</td>';
-	print '<td>'.$object->getNomUrlParent($object->entity).'</td>';
-	print '</tr>';
+	// Entity
+	/*
+	if ($conf->multicompany->enabled) {
+		print '<tr>';
+		print '<td class="titlefield">'.$langs->trans("Entity").'</td>';
+		print '<td>'.$object->entity.'</td>';
+		print '</tr>';
+	}*/
 
 	// Address
 	print '<tr>';
@@ -394,7 +390,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Zipcode
 	print '<tr>';
-	print '<td>'.$langs->trans("Zipcode").'</td>';
+	print '<td>'.$langs->trans("Zip").'</td>';
 	print '<td>'.$object->zip.'</td>';
 	print '</tr>';
 
@@ -417,21 +413,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</td>';
 	print '</tr>';
 
-    print '</table>';
-    print '</div>';
+	print '</table>';
+	print '</div>';
 
-    print '<div class="clearboth"></div><br>';
+	print '<div class="clearboth"></div><br>';
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 
-    /*
+	/*
      * Barre d'actions
     */
 
-    print '<div class="tabsAction">';
-    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
-	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
-    print '</div>';
+	print '<div class="tabsAction">';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
+	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$id.'">'.$langs->trans('Delete').'</a>';
+	print '</div>';
 }
 
 // End of page

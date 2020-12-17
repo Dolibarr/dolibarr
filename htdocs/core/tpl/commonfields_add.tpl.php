@@ -53,8 +53,9 @@ foreach ($object->fields as $key => $val)
 	else print $langs->trans($val['label']);
 	print '</td>';
 	print '<td>';
+	if (!empty($val['picto'])) { print img_picto('', $val['picto']); }
 	if (in_array($val['type'], array('int', 'integer'))) $value = GETPOST($key, 'int');
-	elseif ($val['type'] == 'text' || $val['type'] == 'html') $value = GETPOST($key, 'none');
+	elseif ($val['type'] == 'text' || $val['type'] == 'html') $value = GETPOST($key, 'restricthtml');
 	else $value = GETPOST($key, 'alpha');
 	if ($val['noteditable']) print $object->showOutputField($val, $key, $value, '', '', '', 0);
 	else print $object->showInputField($val, $key, $value, '', '', '', 0);

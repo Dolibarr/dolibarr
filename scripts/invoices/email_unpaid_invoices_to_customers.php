@@ -24,6 +24,9 @@
  * \ingroup facture
  * \brief Script to send a mail to customers with unpaid invoices
  */
+
+if (!defined('NOSESSION')) define('NOSESSION', '1');
+
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = __DIR__.'/';
@@ -135,8 +138,7 @@ if ($resql) {
 					if ($oldemail != 'none') {
 						if (empty($trackthirdpartiessent[$oldsid.'|'.$oldemail]))
 							print "- No email sent for '".$oldtarget."', total: ".$total."\n";
-						else
-							print "- No email sent for '".$oldtarget."', total: ".$total." (already sent to ".$trackthirdpartiessent[$oldsid.'|'.$oldemail].")\n";
+						else print "- No email sent for '".$oldtarget."', total: ".$total." (already sent to ".$trackthirdpartiessent[$oldsid.'|'.$oldemail].")\n";
 					}
 				}
 				$oldemail = $newemail;
@@ -166,8 +168,7 @@ if ($resql) {
 			print "Unpaid invoice ".$obj->ref.", price ".price2num($obj->total_ttc).", due date ".dol_print_date($db->jdate($obj->due_date), 'day').", customer id ".$obj->sid." ".$obj->name.", ".($obj->cid ? "contact id ".$obj->cid." ".$obj->clastname." ".$obj->cfirstname.", " : "")."email ".$newemail.", lang ".$outputlangs->defaultlang.": ";
 			if (dol_strlen($newemail))
 				print "qualified.";
-			else
-				print "disqualified (no email).";
+			else print "disqualified (no email).";
 			print "\n";
 
 			unset($outputlangs);
@@ -187,8 +188,7 @@ if ($resql) {
 				if ($oldemail != 'none') {
 					if (empty($trackthirdpartiessent[$oldsid.'|'.$oldemail]))
 						print "- No email sent for '".$oldtarget."', total: ".$total."\n";
-					else
-						print "- No email sent for '".$oldtarget."', total: ".$total." (already sent to ".$trackthirdpartiessent[$oldsid.'|'.$oldemail].")\n";
+					else print "- No email sent for '".$oldtarget."', total: ".$total." (already sent to ".$trackthirdpartiessent[$oldsid.'|'.$oldemail].")\n";
 				}
 			}
 		}

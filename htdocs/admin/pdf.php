@@ -33,11 +33,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'languages', 'other', 'companies', 'products', 'members'));
+$langs->loadLangs(array('admin', 'languages', 'other', 'companies', 'products', 'members', 'stocks'));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 
 
@@ -46,56 +46,44 @@ $cancel = GETPOST('cancel', 'alpha');
  */
 
 if ($cancel) {
-    $action = '';
+	$action = '';
 }
 
 if ($action == 'update')
 {
-	dolibarr_set_const($db, "MAIN_PDF_FORMAT", $_POST["MAIN_PDF_FORMAT"], 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PDF_FORMAT", GETPOST("MAIN_PDF_FORMAT"), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_PDF_MARGIN_LEFT", $_POST["MAIN_PDF_MARGIN_LEFT"], 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_PDF_MARGIN_RIGHT", $_POST["MAIN_PDF_MARGIN_RIGHT"], 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_PDF_MARGIN_TOP", $_POST["MAIN_PDF_MARGIN_TOP"], 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_PDF_MARGIN_BOTTOM", $_POST["MAIN_PDF_MARGIN_BOTTOM"], 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PDF_MARGIN_LEFT", GETPOST("MAIN_PDF_MARGIN_LEFT"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PDF_MARGIN_RIGHT", GETPOST("MAIN_PDF_MARGIN_TOP"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PDF_MARGIN_BOTTOM", GETPOST("MAIN_PDF_MARGIN_BOTTOM"), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS", GETPOST("MAIN_PROFID1_IN_ADDRESS", "nohtml"), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_PROFID2_IN_ADDRESS", GETPOST("MAIN_PROFID2_IN_ADDRESS", "nohtml"), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_PROFID3_IN_ADDRESS", GETPOST("MAIN_PROFID3_IN_ADDRESS", "nohtml"), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_PROFID4_IN_ADDRESS", GETPOST("MAIN_PROFID4_IN_ADDRESS", "nohtml"), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_PROFID5_IN_ADDRESS", GETPOST("MAIN_PROFID5_IN_ADDRESS", "nohtml"), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_PROFID6_IN_ADDRESS", GETPOST("MAIN_PROFID6_IN_ADDRESS", "nohtml"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS", GETPOST("MAIN_PROFID1_IN_ADDRESS"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PROFID2_IN_ADDRESS", GETPOST("MAIN_PROFID2_IN_ADDRESS"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PROFID3_IN_ADDRESS", GETPOST("MAIN_PROFID3_IN_ADDRESS"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PROFID4_IN_ADDRESS", GETPOST("MAIN_PROFID4_IN_ADDRESS"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PROFID5_IN_ADDRESS", GETPOST("MAIN_PROFID5_IN_ADDRESS"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PROFID6_IN_ADDRESS", GETPOST("MAIN_PROFID6_IN_ADDRESS"), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT", $_POST["MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT"], 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT", GETPOST("MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT"), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_TVAINTRA_NOT_IN_ADDRESS", $_POST["MAIN_TVAINTRA_NOT_IN_ADDRESS"], 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS", $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS"], 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DESC", $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_DESC"], 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_REF", $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_REF"], 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_TVAINTRA_NOT_IN_ADDRESS", GETPOST("MAIN_TVAINTRA_NOT_IN_ADDRESS"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS", GETPOST("MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DESC", GETPOST("MAIN_GENERATE_DOCUMENTS_HIDE_DESC"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_REF", GETPOST("MAIN_GENERATE_DOCUMENTS_HIDE_REF"), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_INVERT_SENDER_RECIPIENT", $_POST["MAIN_INVERT_SENDER_RECIPIENT"], 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_PDF_USE_ISO_LOCATION", $_POST["MAIN_PDF_USE_ISO_LOCATION"], 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS", $_POST["MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS"], 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_DOCUMENTS_LOGO_HEIGHT", GETPOST("MAIN_DOCUMENTS_LOGO_HEIGHT", 'int'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INVERT_SENDER_RECIPIENT", GETPOST("MAIN_INVERT_SENDER_RECIPIENT"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PDF_USE_ISO_LOCATION", GETPOST("MAIN_PDF_USE_ISO_LOCATION"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS", GETPOST("MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS"), 'chaine', 0, '', $conf->entity);
 
+	dolibarr_set_const($db, "MAIN_PDF_MAIN_HIDE_SECOND_TAX", GETPOST("MAIN_PDF_MAIN_HIDE_SECOND_TAX"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PDF_MAIN_HIDE_THIRD_TAX", GETPOST("MAIN_PDF_MAIN_HIDE_THIRD_TAX"), 'chaine', 0, '', $conf->entity);
 
-    dolibarr_set_const($db, "MAIN_PDF_MAIN_HIDE_SECOND_TAX", $_POST["MAIN_PDF_MAIN_HIDE_SECOND_TAX"], 'chaine', 0, '', $conf->entity);
-    dolibarr_set_const($db, "MAIN_PDF_MAIN_HIDE_THIRD_TAX", $_POST["MAIN_PDF_MAIN_HIDE_THIRD_TAX"], 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "PDF_USE_ALSO_LANGUAGE_CODE", GETPOST('PDF_USE_ALSO_LANGUAGE_CODE', 'alpha'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "SHOW_SUBPRODUCT_REF_IN_PDF", GETPOST('SHOW_SUBPRODUCT_REF_IN_PDF', 'alpha'), 'chaine', 0, '', $conf->entity);
 
-    dolibarr_set_const($db, "PDF_USE_ALSO_LANGUAGE_CODE", GETPOST('PDF_USE_ALSO_LANGUAGE_CODE', 'alpha'), 'chaine', 0, '', $conf->entity);
+	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 
-
-	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
-	exit;
-}
-
-if ($action == 'activate_pdfsecurity')
-{
-	dolibarr_set_const($db, "PDF_SECURITY_ENCRYPTION", "1", 'chaine', 0, '', $conf->entity);
-	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
-	exit;
-}
-elseif ($action == 'disable_pdfsecurity')
-{
-	dolibarr_del_const($db, "PDF_SECURITY_ENCRYPTION", $conf->entity);
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
 }
@@ -120,9 +108,41 @@ $arraydetailsforpdffoot = array(
 	3 => $langs->transnoentitiesnoconv('DisplayCompanyInfoAndManagers')
 );
 
+$s = $langs->trans("LibraryToBuildPDF")."<br>";
+$i = 0;
+$pdf = pdf_getInstance('A4');
+if (class_exists('FPDF') && !class_exists('TCPDF'))
+{
+	if ($i) $s .= ' + ';
+	$s .= 'FPDF';
+	$s .= ' ('.@constant('FPDF_PATH').')';
+	$i++;
+}
+if (class_exists('TCPDF'))
+{
+	if ($i) $s .= ' + ';
+	$s .= 'TCPDF';
+	$s .= ' ('.@constant('TCPDF_PATH').')';
+	$i++;
+}
+if (class_exists('FPDI'))
+{
+	if ($i) $s .= ' + ';
+	$s .= 'FPDI';
+	$s .= ' ('.@constant('FPDI_PATH').')';
+	$i++;
+}
+if (class_exists('TCPDI'))
+{
+	if ($i) $s .= ' + ';
+	$s .= 'TCPDI';
+	$s .= ' ('.@constant('TCPDI_PATH').')';
+	$i++;
+}
+
 print load_fiche_titre($langs->trans("PDF"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("PDFDesc")."</span><br>\n";
+print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("PDFDesc"), $s)."</span><br>\n";
 print "<br>\n";
 
 $noCountryCode = (empty($mysoc->country_code) ? true : false);
@@ -189,9 +209,7 @@ for ($i = 1; $i <= 6; $i++)
 	{
 		$pid = $langs->transcountry("ProfId".$i, $mysoc->country_code);
 		if ($pid == '-') $pid = false;
-	}
-	else
-	{
+	} else {
 		$pid = img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
 	}
 	if ($pid)
@@ -264,6 +282,12 @@ print '<div class="div-table-responsive-no-min">';
 print '<table summary="more" class="noborder centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
+// Height of logo
+
+print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DOCUMENTS_LOGO_HEIGHT").'</td><td>';
+print '<input type="text" class="maxwidth50" name="MAIN_DOCUMENTS_LOGO_HEIGHT" value="'.(!empty($conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT) ? $conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT : 20).'">';
+print '</td></tr>';
+
 //Desc
 
 print '<tr class="oddeven"><td>'.$langs->trans("HideDescOnPDF").'</td><td>';
@@ -308,68 +332,16 @@ print $formadmin->select_language(GETPOSTISSET('PDF_USE_ALSO_LANGUAGE_CODE') ? G
 //}
 print '</td></tr>';
 
+// SHOW_SUBPRODUCT_REF_IN_PDF - Option to show the detail of product ref for kits.
+print '<tr class="oddeven"><td>'.$langs->trans("SHOW_SUBPRODUCT_REF_IN_PDF", $langs->transnoentitiesnoconv("AssociatedProductsAbility"), $langs->transnoentitiesnoconv("Products")).'</td><td>';
+print $form->selectyesno('SHOW_SUBPRODUCT_REF_IN_PDF', (!empty($conf->global->SHOW_SUBPRODUCT_REF_IN_PDF)) ? $conf->global->SHOW_SUBPRODUCT_REF_IN_PDF : 0, 1);
+print '</td></tr>';
 
 print '</table>';
 print '</div>';
 
-
-/*
- *  Library
- */
-
-print '<br>';
-print load_fiche_titre($langs->trans("Library"), '', '');
-
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">'."\n";
-
-print '<tr class="liste_titre">'."\n";
-print '<td>'.$langs->trans("Name").'</td>'."\n";
-print '<td>'.$langs->trans("Value").'</td>'."\n";
-print "</tr>\n";
-
-print '<tr class="oddeven">'."\n";
-print '<td>'.$langs->trans("LibraryToBuildPDF").'</td>'."\n";
-print '<td>';
-$i = 0;
-$pdf = pdf_getInstance('A4');
-if (class_exists('FPDF') && !class_exists('TCPDF'))
-{
-	if ($i) print ' + ';
-	print 'FPDF';
-	print ' ('.@constant('FPDF_PATH').')';
-	$i++;
-}
-if (class_exists('TCPDF'))
-{
-	if ($i) print ' + ';
-	print 'TCPDF';
-	print ' ('.@constant('TCPDF_PATH').')';
-	$i++;
-}
-if (class_exists('FPDI'))
-{
-	if ($i) print ' + ';
-	print 'FPDI';
-	print ' ('.@constant('FPDI_PATH').')';
-	$i++;
-}
-if (class_exists('TCPDI'))
-{
-	if ($i) print ' + ';
-	print 'TCPDI';
-	print ' ('.@constant('TCPDI_PATH').')';
-	$i++;
-}
-print '</td>'."\n";
-print '</tr>'."\n";
-
-print "</table>\n";
-print '</div>';
-
-
 print '<br><div class="center">';
-print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
+print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';

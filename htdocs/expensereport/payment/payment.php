@@ -80,11 +80,11 @@ if ($action == 'add_payment')
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$error++;
 	}
-    if (!empty($conf->banque->enabled) && !($accountid > 0))
-    {
-        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToDebit")), null, 'errors');
-        $error++;
-    }
+	if (!empty($conf->banque->enabled) && !($accountid > 0))
+	{
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToDebit")), null, 'errors');
+		$error++;
+	}
 
 	if (!$error)
 	{
@@ -101,69 +101,67 @@ if ($action == 'add_payment')
 			}
 		}
 
-        if (count($amounts) <= 0)
-        {
-            $error++;
-            $errmsg = 'ErrorNoPaymentDefined';
-        }
+		if (count($amounts) <= 0)
+		{
+			$error++;
+			$errmsg = 'ErrorNoPaymentDefined';
+		}
 
-        if (!$error)
-        {
-    		$db->begin();
+		if (!$error)
+		{
+			$db->begin();
 
-    		// Create a line of payments
-    		$payment = new PaymentExpenseReport($db);
-    		$payment->fk_expensereport = $expensereport->id;
-    		$payment->datepaid       = $datepaid;
-    		$payment->amounts        = $amounts; // Tableau de montant
-    		$payment->total          = $total;
-    		$payment->fk_typepayment = GETPOST("fk_typepayment", 'int');
-    		$payment->num_payment    = GETPOST("num_payment", 'alphanothtml');
-    		$payment->note_public    = GETPOST("note_public", 'none');
+			// Create a line of payments
+			$payment = new PaymentExpenseReport($db);
+			$payment->fk_expensereport = $expensereport->id;
+			$payment->datepaid       = $datepaid;
+			$payment->amounts        = $amounts; // Tableau de montant
+			$payment->total          = $total;
+			$payment->fk_typepayment = GETPOST("fk_typepayment", 'int');
+			$payment->num_payment    = GETPOST("num_payment", 'alphanothtml');
+			$payment->note_public    = GETPOST("note_public", 'restricthtml');
 
-    		if (!$error)
-    		{
-    		    $paymentid = $payment->create($user);
-                if ($paymentid < 0)
-                {
-                	setEventMessages($payment->error, $payment->errors, 'errors');
-                    $error++;
-                }
-    		}
+			if (!$error)
+			{
+				$paymentid = $payment->create($user);
+				if ($paymentid < 0)
+				{
+					setEventMessages($payment->error, $payment->errors, 'errors');
+					$error++;
+				}
+			}
 
-            if (!$error)
-            {
-                $result = $payment->addPaymentToBank($user, 'payment_expensereport', '(ExpenseReportPayment)', $accountid, '', '');
-                if (!$result > 0)
-                {
-                	setEventMessages($payment->error, $payment->errors, 'errors');
-                    $error++;
-                }
-            }
+			if (!$error)
+			{
+				$result = $payment->addPaymentToBank($user, 'payment_expensereport', '(ExpenseReportPayment)', $accountid, '', '');
+				if (!$result > 0)
+				{
+					setEventMessages($payment->error, $payment->errors, 'errors');
+					$error++;
+				}
+			}
 
-            if (!$error) {
-                $payment->fetch($paymentid);
-                if ($expensereport->total_ttc - $payment->amount == 0) {
-                    $result = $expensereport->set_paid($expensereport->id, $user);
-                    if (!$result > 0) {
-                    	setEventMessages($payment->error, $payment->errors, 'errors');
-                        $error++;
-                    }
-                }
-            }
+			if (!$error) {
+				$payment->fetch($paymentid);
+				if ($expensereport->total_ttc - $payment->amount == 0) {
+					$result = $expensereport->set_paid($expensereport->id, $user);
+					if (!$result > 0) {
+						setEventMessages($payment->error, $payment->errors, 'errors');
+						$error++;
+					}
+				}
+			}
 
-    	    if (!$error)
-            {
-                $db->commit();
-                $loc = DOL_URL_ROOT.'/expensereport/card.php?id='.$id;
-                header('Location: '.$loc);
-                exit;
-            }
-            else
-            {
-                $db->rollback();
-            }
-        }
+			if (!$error)
+			{
+				$db->commit();
+				$loc = DOL_URL_ROOT.'/expensereport/card.php?id='.$id;
+				header('Location: '.$loc);
+				exit;
+			} else {
+				$db->rollback();
+			}
+		}
 	}
 
 	$action = 'create';
@@ -196,9 +194,9 @@ if ($action == 'create' || empty($action))
                         var amount = $(this).data("value");
 						document.getElementById($(this).data(\'rowid\')).value = amount ;
 					});';
-        print "\t});\n";
-        print "</script>\n";
-    }
+		print "\t});\n";
+		print "</script>\n";
+	}
 
 	print load_fiche_titre($langs->trans("DoPayment"));
 
@@ -208,17 +206,17 @@ if ($action == 'create' || empty($action))
 	print '<input type="hidden" name="chid" value="'.$expensereport->id.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
 
-    dol_fiche_head(null, '0', '', -1);
+	print dol_get_fiche_head(null, '0', '', -1);
 
-    $linkback = '';
-    // $linkback = '<a href="' . DOL_URL_ROOT . '/expensereport/payment/list.php">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '';
+	// $linkback = '<a href="' . DOL_URL_ROOT . '/expensereport/payment/list.php">' . $langs->trans("BackToList") . '</a>';
 
-    dol_banner_tab($expensereport, 'ref', $linkback, 1, 'ref', 'ref', '');
+	dol_banner_tab($expensereport, 'ref', $linkback, 1, 'ref', 'ref', '');
 
-    print '<div class="fichecenter">';
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border centpercent">'."\n";
+	print '<table class="border centpercent">'."\n";
 
 	print '<tr><td class="titlefield">'.$langs->trans("Period").'</td><td>'.get_date_range($expensereport->date_debut, $expensereport->date_fin, "", $langs, 0).'</td></tr>';
 	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($expensereport->total_ttc, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
@@ -226,7 +224,7 @@ if ($action == 'create' || empty($action))
 	$sql = "SELECT sum(p.amount) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."payment_expensereport as p, ".MAIN_DB_PREFIX."expensereport as e";
 	$sql .= " WHERE p.fk_expensereport = e.rowid AND p.fk_expensereport = ".$id;
-    $sql .= ' AND e.entity IN ('.getEntity('expensereport').')';
+	$sql .= ' AND e.entity IN ('.getEntity('expensereport').')';
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -237,17 +235,17 @@ if ($action == 'create' || empty($action))
 	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td>'.price($sumpaid, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td>'.price($total - $sumpaid, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
-    print '</table>';
+	print '</table>';
 
-    print '</div>';
+	print '</div>';
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 
-    dol_fiche_head();
+	print dol_get_fiche_head();
 
-    print '<table class="border centpercent">'."\n";
+	print '<table class="border centpercent">'."\n";
 
-    print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
+	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	$datepaid = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
 	$datepayment = ($datepaid == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datepaid);
 	print $form->selectDate($datepayment, '', '', '', 0, "add_payment", 1, 1);
@@ -261,11 +259,11 @@ if ($action == 'create' || empty($action))
 
 	if (!empty($conf->banque->enabled))
 	{
-    	print '<tr>';
-    	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
-    	print '<td colspan="2">';
-    	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid", "int") : $expensereport->accountid, "accountid", 0, '', 1); // Show open bank account list
-    	print '</td></tr>';
+		print '<tr>';
+		print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
+		print '<td colspan="2">';
+		$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid", "int") : $expensereport->accountid, "accountid", 0, '', 2); // Show open bank account list
+		print '</td></tr>';
 	}
 
 	// Number
@@ -281,7 +279,7 @@ if ($action == 'create' || empty($action))
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<br>';
 
@@ -321,9 +319,7 @@ if ($action == 'create' || empty($action))
 			$remaintopay = $objp->total_ttc - $sumpaid; // autofill remainder amount
 			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">'; // autofill remainder amount
 			print '<input type="text" size="8" name="'.$namef.'" id="'.$namef.'">';
-		}
-		else
-		{
+		} else {
 			print '-';
 		}
 		print "</td>";
@@ -350,9 +346,9 @@ if ($action == 'create' || empty($action))
 	print "</table>";
 
 	print '<br><div class="center">';
-	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
 	print "</form>\n";

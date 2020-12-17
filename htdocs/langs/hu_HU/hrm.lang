@@ -11,8 +11,9 @@ CloseEtablishment=Létesítmény lezárása
 # Dictionary
 DictionaryPublicHolidays=HRM - ünnepnapok
 DictionaryDepartment=HRM - Osztálylista
-DictionaryFunction=HRM - Job positions
+DictionaryFunction=HRM - Munkahelyek
 # Module
 Employees=Alkalmazottak
 Employee=Foglalkoztató
 NewEmployee=Új alkalmazott
+ListOfEmployees=List of employees

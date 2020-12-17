@@ -23,6 +23,9 @@
  * \ingroup ldap member
  * \brief Script de mise a jour des adherents dans Dolibarr depuis LDAP
  */
+
+if (!defined('NOSESSION')) define('NOSESSION', '1');
+
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = __DIR__.'/';
@@ -42,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT."/adherents/class/subscription.class.php";
 $langs->loadLangs(array("main", "errors"));
 
 // Global variables
-$version = DOL_VERSION;
+$version = constant('DOL_VERSION');
 $error = 0;
 $forcecommit = 0;
 $confirmed = 0;
@@ -114,8 +117,7 @@ print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
 print "DN to extract=".$conf->global->LDAP_MEMBER_DN."\n";
 if (!empty($conf->global->LDAP_MEMBER_FILTER))
 	print 'Filter=('.$conf->global->LDAP_MEMBER_FILTER.')'."\n"; // Note: filter is defined into function getRecords
-else
-	print 'Filter=('.$conf->global->LDAP_KEY_MEMBERS.'=*)'."\n";
+else print 'Filter=('.$conf->global->LDAP_KEY_MEMBERS.'=*)'."\n";
 print "----- To Dolibarr database:\n";
 print "type=".$conf->db->type."\n";
 print "host=".$conf->db->host."\n";
@@ -278,8 +280,7 @@ if ($result >= 0) {
 		if (!$error || $forcecommit) {
 			if (!$error)
 				print $langs->transnoentities("NoErrorCommitIsDone")."\n";
-			else
-				print $langs->transnoentities("ErrorButCommitIsDone")."\n";
+			else print $langs->transnoentities("ErrorButCommitIsDone")."\n";
 			$db->commit();
 		} else {
 			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", $error)."\n";

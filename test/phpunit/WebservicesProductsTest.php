@@ -188,7 +188,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
         print __METHOD__." call method ".$WS_METHOD."\n";
         try {
             $result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
-        } catch(SoapFault $exception) {
+        } catch (SoapFault $exception) {
             echo $exception;
             $result=0;
         }
@@ -202,7 +202,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
             print "\n";
         }
 
-        print __METHOD__." result=".$result."\n";
+        print __METHOD__." count(result)=".count($result)."\n";
         $this->assertEquals('OK', $result['result']['result_code']);
 
         return $result['id'];
@@ -251,7 +251,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
         print __METHOD__." call method ".$WS_METHOD."\n";
         try {
             $result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
-        } catch(SoapFault $exception) {
+        } catch (SoapFault $exception) {
             echo $exception;
             $result=0;
         }
@@ -265,7 +265,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
             print "\n";
         }
 
-        print __METHOD__." result=".$result."\n";
+        print __METHOD__." count(result)=".count($result)."\n";
         $this->assertEquals('OK', $result['result']['result_code']);
 
         return $id;
@@ -314,7 +314,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
         print __METHOD__." call method ".$WS_METHOD."\n";
         try {
             $result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
-        } catch(SoapFault $exception) {
+        } catch (SoapFault $exception) {
             echo $exception;
             $result=0;
         }
@@ -328,7 +328,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
             print "\n";
         }
 
-        print __METHOD__." result=".$result."\n";
+        print __METHOD__." count(result)=".count($result)."\n";
         $this->assertEquals('OK', $result['result']['result_code']);
 
         return 0;

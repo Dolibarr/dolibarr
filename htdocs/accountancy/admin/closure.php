@@ -39,8 +39,8 @@ $action = GETPOST('action', 'aZ09');
 
 
 $list_account_main = array(
-    'ACCOUNTING_RESULT_PROFIT',
-    'ACCOUNTING_RESULT_LOSS'
+	'ACCOUNTING_RESULT_PROFIT',
+	'ACCOUNTING_RESULT_LOSS'
 );
 
 /*
@@ -48,17 +48,17 @@ $list_account_main = array(
  */
 
 if ($action == 'update') {
-    $error = 0;
+	$error = 0;
 
-    $defaultjournal = GETPOST('ACCOUNTING_CLOSURE_DEFAULT_JOURNAL', 'alpha');
+	$defaultjournal = GETPOST('ACCOUNTING_CLOSURE_DEFAULT_JOURNAL', 'alpha');
 
-    if (!empty($defaultjournal)) {
-        if (!dolibarr_set_const($db, 'ACCOUNTING_CLOSURE_DEFAULT_JOURNAL', $defaultjournal, 'chaine', 0, '', $conf->entity)) {
-            $error++;
-        }
-    } else {
-        $error++;
-    }
+	if (!empty($defaultjournal)) {
+		if (!dolibarr_set_const($db, 'ACCOUNTING_CLOSURE_DEFAULT_JOURNAL', $defaultjournal, 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+	} else {
+		$error++;
+	}
 
 	foreach ($list_account_main as $constname) {
 		$constvalue = GETPOST($constname, 'alpha');
@@ -92,27 +92,27 @@ print '<span class="opacitymedium">'.$langs->trans("DefaultClosureDesc").'</span
 print '<br>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 // Define main accounts for closure
 print '<table class="noborder centpercent">';
 
 foreach ($list_account_main as $key) {
-    print '<tr class="oddeven value">';
-    // Param
-    $label = $langs->trans($key);
-    $keydesc = $key.'_Desc';
+	print '<tr class="oddeven value">';
+	// Param
+	$label = $langs->trans($key);
+	$keydesc = $key.'_Desc';
 
-    $htmltext = $langs->trans($keydesc);
-    print '<td class="fieldrequired" width="50%">';
-    print $form->textwithpicto($label, $htmltext);
-    print '</td>';
-    // Value
-    print '<td>'; // Do not force class=right, or it align also the content of the select box
-    print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
-    print '</td>';
-    print '</tr>';
+	$htmltext = $langs->trans($keydesc);
+	print '<td class="fieldrequired" width="50%">';
+	print $form->textwithpicto($label, $htmltext);
+	print '</td>';
+	// Value
+	print '<td>'; // Do not force class=right, or it align also the content of the select box
+	print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
+	print '</td>';
+	print '</tr>';
 }
 
 // Journal

@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('contracts', 'products', 'companies', 'compta'));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
@@ -50,13 +50,13 @@ $search_name = GETPOST('search_name', 'alpha');
 $search_email = GETPOST('search_email', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
-$search_state = trim(GETPOST("search_state", 'alpha'));
+$search_state = GETPOST("search_state", 'alpha');
 $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_contract = GETPOST('search_contract', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_ref_supplier = GETPOST('search_ref_supplier', 'alpha');
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$sall = (GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
 $search_status = GETPOST('search_status', 'alpha');
 $socid = GETPOST('socid', 'int');
 $search_user = GETPOST('search_user', 'int');
@@ -114,17 +114,17 @@ $fieldstosearchall = array(
 if (empty($user->socid)) $fieldstosearchall["c.note_private"] = "NotePrivate";
 
 $arrayfields = array(
-	'c.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-	'c.ref_customer'=>array('label'=>$langs->trans("RefCustomer"), 'checked'=>1),
-	'c.ref_supplier'=>array('label'=>$langs->trans("RefSupplier"), 'checked'=>1),
-	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
-	's.email'=>array('label'=>$langs->trans("ThirdPartyEmail"), 'checked'=>0),
-	's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>0),
-	's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>0),
-	'state.nom'=>array('label'=>$langs->trans("StateShort"), 'checked'=>0),
-	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
-	'sale_representative'=>array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>1),
-	'c.date_contrat'=>array('label'=>$langs->trans("DateContract"), 'checked'=>1),
+	'c.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1, 'position'=>10),
+	'c.ref_customer'=>array('label'=>$langs->trans("RefCustomer"), 'checked'=>1, 'position'=>12),
+	'c.ref_supplier'=>array('label'=>$langs->trans("RefSupplier"), 'checked'=>1, 'position'=>14),
+	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'position'=>30),
+	's.email'=>array('label'=>$langs->trans("ThirdPartyEmail"), 'checked'=>0, 'position'=>30),
+	's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>0, 'position'=>31),
+	's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>0, 'position'=>32),
+	'state.nom'=>array('label'=>$langs->trans("StateShort"), 'checked'=>0, 'position'=>33),
+	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0, 'position'=>34),
+	'sale_representative'=>array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>1, 'position'=>80),
+	'c.date_contrat'=>array('label'=>$langs->trans("DateContract"), 'checked'=>1, 'position'=>45),
 	'c.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'c.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 	'lower_planned_end_date'=>array('label'=>$langs->trans("LowerDateEndPlannedShort"), 'checked'=>1, 'position'=>900, 'help'=>$langs->trans("LowerDateEndPlannedShort")),
@@ -363,17 +363,15 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 $arrayofmassactions = array(
 	'generate_doc'=>$langs->trans("ReGeneratePDF"),
 	'builddoc'=>$langs->trans("PDFMerge"),
-    'presend'=>$langs->trans("SendByMail"),
+	'presend'=>$langs->trans("SendByMail"),
 );
 if ($user->rights->contrat->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-$newcardbutton = '';
-if ($user->rights->contrat->creer)
-{
-    $newcardbutton .= dolGetButtonTitle($langs->trans('NewContractSubscription'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contrat/card.php?action=create');
-}
+$url = DOL_URL_ROOT.'/contrat/card.php?action=create';
+if (!empty($socid)) $url .= '&socid='.$socid;
+$newcardbutton = dolGetButtonTitle($langs->trans('NewContractSubscription'), '', 'fa fa-plus-circle', $url, '', $user->rights->contrat->creer);
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -418,7 +416,7 @@ if ($user->rights->user->user->lire)
  	$moreforfilter .= '</div>';
 }
 // If the user can view categories of products
-if ($conf->categorie->enabled && ($user->rights->produit->lire || $user->rights->service->lire))
+if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire && ($user->rights->produit->lire || $user->rights->service->lire))
 {
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
@@ -581,13 +579,13 @@ $parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['c.datec']['checked'])) {
-    print_liste_field_titre($arrayfields['c.datec']['label'], $_SERVER["PHP_SELF"], "c.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	print_liste_field_titre($arrayfields['c.datec']['label'], $_SERVER["PHP_SELF"], "c.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 }
 if (!empty($arrayfields['c.tms']['checked'])) {
-    print_liste_field_titre($arrayfields['c.tms']['label'], $_SERVER["PHP_SELF"], "c.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	print_liste_field_titre($arrayfields['c.tms']['label'], $_SERVER["PHP_SELF"], "c.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 }
 if (!empty($arrayfields['lower_planned_end_date']['checked'])) {
-    print_liste_field_titre($arrayfields['lower_planned_end_date']['label'], $_SERVER["PHP_SELF"], "lower_planned_end_date", "", $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre($arrayfields['lower_planned_end_date']['label'], $_SERVER["PHP_SELF"], "lower_planned_end_date", "", $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['status']['checked'])) {
 	print_liste_field_titre($staticcontratligne->LibStatut(0, 3, -1, 'class="nochangebackground"'), '', '', '', '', 'width="16"');
@@ -636,7 +634,7 @@ while ($i < min($num, $limit))
 
 	if (!empty($arrayfields['c.ref_customer']['checked']))
 	{
-	    print '<td>'.$contracttmp->getFormatedCustomerRef($obj->ref_customer).'</td>';
+		print '<td>'.$contracttmp->getFormatedCustomerRef($obj->ref_customer).'</td>';
 	}
 	if (!empty($arrayfields['c.ref_supplier']['checked']))
 	{
@@ -708,8 +706,7 @@ while ($i < min($num, $limit))
 			if ($nbofsalesrepresentative > 3) {
 				// We print only number
 				print $nbofsalesrepresentative;
-			}
-			elseif ($nbofsalesrepresentative > 0)
+			} elseif ($nbofsalesrepresentative > 0)
 			{
 				$userstatic = new User($db);
 				$j = 0;
@@ -731,9 +728,7 @@ while ($i < min($num, $limit))
 				}
 			}
 			//else print $langs->trans("NoSalesRepresentativeAffected");
-		}
-		else
-		{
+		} else {
 			print '&nbsp';
 		}
 		print '</td>';

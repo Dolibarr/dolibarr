@@ -37,7 +37,7 @@ $langs->loadLangs(array("banks", "categories", "multicurrency"));
 if (!$user->rights->banque->transfer)
   accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $error = 0;
 
 
@@ -87,9 +87,7 @@ if ($action == 'add')
 		if ($accountto->currency_code == $accountfrom->currency_code)
 		{
 			$amountto = $amount;
-		}
-		else
-		{
+		} else {
 			if (!$amountto)
 			{
 				$error++;
@@ -120,9 +118,9 @@ if ($action == 'add')
 			if (!$error) $bank_line_id_to = $accountto->addline($dateo, $typeto, $label, $amountto, '', '', $user);
 			if (!($bank_line_id_to > 0)) $error++;
 
-		    if (!$error) $result = $accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
+			if (!$error) $result = $accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
 			if (!($result > 0)) $error++;
-		    if (!$error) $result = $accountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
+			if (!$error) $result = $accountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
 			if (!($result > 0)) $error++;
 
 			if (!$error)
@@ -130,16 +128,12 @@ if ($action == 'add')
 				$mesgs = $langs->trans("TransferFromToDone", '<a href="bankentries_list.php?id='.$accountfrom->id.'&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc">'.$accountfrom->label."</a>", '<a href="bankentries_list.php?id='.$accountto->id.'">'.$accountto->label."</a>", $amount, $langs->transnoentities("Currency".$conf->currency));
 				setEventMessages($mesgs, null, 'mesgs');
 				$db->commit();
-			}
-			else
-			{
+			} else {
 				setEventMessages($accountfrom->error.' '.$accountto->error, null, 'errors');
 				$db->rollback();
 			}
-		}
-		else
-		{
-		    $error++;
+		} else {
+			$error++;
 			setEventMessages($langs->trans("ErrorFromToAccountsMustDiffers"), null, 'errors');
 		}
 	}

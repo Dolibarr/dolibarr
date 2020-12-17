@@ -63,17 +63,22 @@ $domData .= ' data-id="'.$line->id.'"';
 $domData .= ' data-qty="'.$line->qty.'"';
 $domData .= ' data-product_type="'.$line->product_type.'"';
 
+$sign = 1;
+if (!empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE_SCREEN) && in_array($object->element, array('facture', 'invoice_supplier')) && $object->type == $object::TYPE_CREDIT_NOTE) {
+	$sign = -1;
+}
 
-$coldisplay = 0; ?>
+$coldisplay = 0;
+?>
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
 <tr  id="row-<?php print $line->id?>" class="drag drop oddeven" <?php print $domData; ?> >
 <?php if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
-	<td class="linecolnum center"><?php $coldisplay++; ?><?php print ($i + 1); ?></td>
+	<td class="linecolnum center"><span class="opacitymedium"><?php $coldisplay++; ?><?php print ($i + 1); ?></span></td>
 <?php } ?>
 	<td class="linecoldescription minwidth300imp"><?php $coldisplay++; ?><div id="line_<?php print $line->id; ?>"></div>
 <?php
 if (($line->info_bits & 2) == 2) {
-    print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$this->socid.'">';
+	print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$this->socid.'">';
 	$txt = '';
 	print img_object($langs->trans("ShowReduc"), 'reduc').' ';
 	if ($line->description == '(DEPOSIT)') $txt = $langs->trans("Deposit");
@@ -89,44 +94,35 @@ if (($line->info_bits & 2) == 2) {
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fetch($line->fk_remise_except);
 			print ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromCreditNote", $discount->getNomUrl(0));
-		}
-		elseif ($line->description == '(DEPOSIT)' && $line->fk_remise_except > 0)
+		} elseif ($line->description == '(DEPOSIT)' && $line->fk_remise_except > 0)
 		{
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fetch($line->fk_remise_except);
 			print ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromDeposit", $discount->getNomUrl(0));
 			// Add date of deposit
 			if (!empty($conf->global->INVOICE_ADD_DEPOSIT_DATE))
-			    print ' ('.dol_print_date($discount->datec).')';
-		}
-		elseif ($line->description == '(EXCESS RECEIVED)' && $objp->fk_remise_except > 0)
+				print ' ('.dol_print_date($discount->datec).')';
+		} elseif ($line->description == '(EXCESS RECEIVED)' && $objp->fk_remise_except > 0)
 		{
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fetch($line->fk_remise_except);
 			print ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessReceived", $discount->getNomUrl(0));
-		}
-		elseif ($line->description == '(EXCESS PAID)' && $objp->fk_remise_except > 0)
+		} elseif ($line->description == '(EXCESS PAID)' && $objp->fk_remise_except > 0)
 		{
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fetch($line->fk_remise_except);
 			print ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessPaid", $discount->getNomUrl(0));
-		}
-		else
-		{
+		} else {
 			print ($txt ? ' - ' : '').dol_htmlentitiesbr($line->description);
 		}
 	}
-}
-else
-{
+} else {
 	$format = $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE ? 'dayhour' : 'day';
 
-    if ($line->fk_product > 0)
+	if ($line->fk_product > 0)
 	{
 		print $form->textwithtooltip($text, $description, 3, '', '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
-	}
-	else
-	{
+	} else {
 		$type = (!empty($line->product_type) ? $line->product_type : $line->fk_product_type);
 		if ($type == 1) $text = img_object($langs->trans('Service'), 'service');
 		else $text = img_object($langs->trans('Product'), 'product');
@@ -139,8 +135,7 @@ else
 			if (preg_match('/^\(DEPOSIT\)/', $line->description)) {
 				$newdesc = preg_replace('/^\(DEPOSIT\)/', $langs->trans("Deposit"), $line->description);
 				print $text.' '.dol_htmlentitiesbr($newdesc);
-			}
-			else {
+			} else {
 				print $text.' '.dol_htmlentitiesbr($line->description);
 			}
 		}
@@ -153,8 +148,7 @@ else
 		if ($line->date_start_fill && $line->date_end_fill) print ' - ';
 		if ($line->date_end_fill) print $langs->trans('AutoFillDateToShort').': '.yn($line->date_end_fill);
 		if ($line->date_start_fill || $line->date_end_fill) print '</div>';
-	}
-	else {
+	} else {
 		if ($line->date_start || $line->date_end) print '<br><div class="clearboth nowraponall">'.get_date_range($line->date_start, $line->date_end, $format).'</div>';
 		//print get_date_range($line->date_start, $line->date_end, $format);
 	}
@@ -168,7 +162,7 @@ else
 
 if ($user->rights->fournisseur->lire && $line->fk_fournprice > 0)
 {
-    require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 	$productfourn = new ProductFournisseur($this->db);
 	$productfourn->fetch_product_fournisseur_price($line->fk_fournprice);
 	print '<div class="clearboth"></div>';
@@ -177,9 +171,7 @@ if ($user->rights->fournisseur->lire && $line->fk_fournprice > 0)
 	if ($user->rights->produit->creer || $user->rights->service->creer) // change required right here
 	{
 		print $productfourn->getNomUrl();
-	}
-	else
-	{
+	} else {
 		print $productfourn->ref_supplier;
 	}
 }
@@ -210,14 +202,14 @@ print vatrate($positiverates.($line->vat_src_code ? ' ('.$line->vat_src_code.')'
 //print vatrate($line->tva_tx.($line->vat_src_code?(' ('.$line->vat_src_code.')'):''), '%', $line->info_bits);
 ?></td>
 
-	<td class="linecoluht nowrap right"><?php $coldisplay++; ?><?php print price($line->subprice); ?></td>
+	<td class="linecoluht nowrap right"><?php $coldisplay++; ?><?php print price($sign * $line->subprice); ?></td>
 
 <?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { ?>
-	<td class="linecoluht_currency nowrap right"><?php $coldisplay++; ?><?php print price($line->multicurrency_subprice); ?></td>
+	<td class="linecoluht_currency nowrap right"><?php $coldisplay++; ?><?php print price($sign * $line->multicurrency_subprice); ?></td>
 <?php }
 
 if ($inputalsopricewithtax) { ?>
-	<td class="linecoluttc nowrap right"><?php $coldisplay++; ?><?php print (isset($line->pu_ttc) ?price($line->pu_ttc) : price($line->subprice)); ?></td>
+	<td class="linecoluttc nowrap right"><?php $coldisplay++; ?><?php print (isset($line->pu_ttc) ? price($sign * $line->pu_ttc) : price($sign * $line->subprice)); ?></td>
 <?php } ?>
 
 	<td class="linecolqty nowrap right"><?php $coldisplay++; ?>
@@ -231,7 +223,7 @@ if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
 } else print '&nbsp;';
 print '</td>';
 
-if ($conf->global->PRODUCT_USE_UNITS)
+if (!empty($conf->global->PRODUCT_USE_UNITS))
 {
 	print '<td class="linecoluseunit nowrap left">';
 	$label = $line->getLabelOfUnit('short');
@@ -254,13 +246,13 @@ if (!empty($line->remise_percent) && $line->special_code != 3) {
 // Fields for situation invoices
 if ($this->situation_cycle_ref)
 {
-    include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 	$coldisplay++;
 	print '<td class="linecolcycleref nowrap right">'.$line->situation_percent.'%</td>';
 	$coldisplay++;
 	$locataxes_array = getLocalTaxesFromRate($line->tva.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), 0, ($senderissupplier ? $mysoc : $object->thirdparty), ($senderissupplier ? $object->thirdparty : $mysoc));
 	$tmp = calcul_price_total($line->qty, $line->pu, $line->remise_percent, $line->txtva, -1, -1, 0, 'HT', $line->info_bits, $line->type, ($senderissupplier ? $object->thirdparty : $mysoc), $locataxes_array, 100, $object->multicurrency_tx, $line->multicurrency_subprice);
-	print '<td align="right" class="linecolcycleref2 nowrap">'.price($tmp[0]).'</td>';
+	print '<td align="right" class="linecolcycleref2 nowrap">'.price($sign * $tmp[0]).'</td>';
 }
 
 if ($usemargins && !empty($conf->margin->enabled) && empty($user->socid))
@@ -271,10 +263,11 @@ if ($usemargins && !empty($conf->margin->enabled) && empty($user->socid))
 	if (!empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) { ?>
 		<td class="linecolmargin2 nowrap margininfos right"><?php $coldisplay++; ?><?php print (($line->pa_ht == 0) ? 'n/a' : price(price2num($line->marge_tx, 'MT')).'%'); ?></td>
 	<?php }
-    if (!empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {?>
+	if (!empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {?>
   	  <td class="linecolmargin2 nowrap margininfos right"><?php $coldisplay++; ?><?php print price(price2num($line->marque_tx, 'MT')).'%'; ?></td>
     <?php }
 }
+// Price total without tax
 if ($line->special_code == 3) { ?>
 	<td class="linecoloption nowrap right"><?php $coldisplay++; ?><?php print $langs->trans('Option'); ?></td>
 <?php } else {
@@ -304,19 +297,19 @@ if ($line->special_code == 3) { ?>
 
 		print '<span class="classfortooltip" title="'.dol_escape_htmltag($tooltiponprice).'">';
 	}
-	print price($line->total_ht);
+	print price($sign * $line->total_ht);
 	if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 	{
-	    print '</span>';
+		print '</span>';
 	}
 	print '</td>';
 	if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
-		print '<td class="linecolutotalht_currency nowrap right">'.price($line->multicurrency_total_ht).'</td>';
+		print '<td class="linecolutotalht_currency nowrap right">'.price($sign * $line->multicurrency_total_ht).'</td>';
 		$coldisplay++;
 	}
 }
 if ($outputalsopricetotalwithtax) {
-    print '<td class="linecolht nowrap right">'.price($line->total_ttc).'</td>';
+	print '<td class="linecolht nowrap right">'.price($sign * $line->total_ttc).'</td>';
 	$coldisplay++;
 }
 
@@ -353,7 +346,7 @@ if ($this->statut == 0 && ($object_rights->creer) && $action != 'selectlines') {
 			</a>
 		<?php }
 		print '</td>';
-    } else {
+	} else {
 		print '<td '.(($conf->browser->layout != 'phone' && empty($disablemove)) ? ' class="linecolmove tdlineupdown center"' : ' class="linecolmove center"').'></td>';
 		$coldisplay++;
 	}

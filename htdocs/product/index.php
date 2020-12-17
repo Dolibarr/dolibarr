@@ -85,33 +85,33 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
-    // Search contract
-    if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($user->rights->produit->lire || $user->rights->service->lire))
-    {
-    	$listofsearchfields['search_product'] = array('text'=>'ProductOrService');
-    }
+	// Search contract
+	if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($user->rights->produit->lire || $user->rights->service->lire))
+	{
+		$listofsearchfields['search_product'] = array('text'=>'ProductOrService');
+	}
 
-    if (count($listofsearchfields))
-    {
-    	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-    	print '<input type="hidden" name="token" value="'.newToken().'">';
-        print '<div class="div-table-responsive-no-min">';
-    	print '<table class="noborder nohover centpercent">';
-    	$i = 0;
-    	foreach ($listofsearchfields as $key => $value)
-    	{
-    		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    		print '<tr class="oddeven">';
-    		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
-    		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-    		print '</tr>';
-    		$i++;
-    	}
-    	print '</table>';
-        print '</div>';
-    	print '</form>';
-    	print '<br>';
-    }
+	if (count($listofsearchfields))
+	{
+		print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder nohover centpercent">';
+		$i = 0;
+		foreach ($listofsearchfields as $key => $value)
+		{
+			if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+			print '<tr class="oddeven">';
+			print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
+			if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+			print '</tr>';
+			$i++;
+		}
+		print '</table>';
+		print '</div>';
+		print '</form>';
+		print '<br>';
+	}
 }
 
 /*
@@ -224,9 +224,7 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 				if ($i < $nbmax)
 				{
 					$dataseries[] = array($obj->label, round($obj->nb));
-				}
-				else
-				{
+				} else {
 					$rest += $obj->nb;
 				}
 				$total += $obj->nb;
@@ -246,9 +244,7 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 			$dolgraph->setHeight('200');
 			$dolgraph->draw('idstatscategproduct');
 			print $dolgraph->show($total ? 0 : 1);
-		}
-		else
-		{
+		} else {
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($result);
@@ -331,7 +327,7 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 					$sql = "SELECT label";
 					$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 					$sql .= " WHERE fk_product=".$objp->rowid;
-					$sql .= " AND lang='".$langs->getDefaultLang()."'";
+					$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
 
 					$resultd = $db->query($sql);
 					if ($resultd)
@@ -353,27 +349,27 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 				// Sell price
 				if (empty($conf->global->PRODUIT_MULTIPRICES))
 				{
-	                if (!empty($conf->dynamicprices->enabled) && !empty($objp->fk_price_expression))
-	                {
-	                	$product = new Product($db);
-	                	$product->fetch($objp->rowid);
-	                    $priceparser = new PriceParser($db);
-	                    $price_result = $priceparser->parseProduct($product);
-	                    if ($price_result >= 0) {
-	                        $objp->price = $price_result;
-	                    }
-	                }
+					if (!empty($conf->dynamicprices->enabled) && !empty($objp->fk_price_expression))
+					{
+						$product = new Product($db);
+						$product->fetch($objp->rowid);
+						$priceparser = new PriceParser($db);
+						$price_result = $priceparser->parseProduct($product);
+						if ($price_result >= 0) {
+							$objp->price = $price_result;
+						}
+					}
 					print '<td class="nowrap right">';
-	    			if (isset($objp->price_base_type) && $objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
-	    			else print price($objp->price).' '.$langs->trans("HT");
-	    			print '</td>';
+					if (isset($objp->price_base_type) && $objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
+					else print price($objp->price).' '.$langs->trans("HT");
+					print '</td>';
 				}
 				print '<td class="right nowrap width25"><span class="statusrefsell">';
 				print $product_static->LibStatut($objp->tosell, 3, 0);
 				print "</span></td>";
-	            print '<td class="right nowrap width25"><span class="statusrefbuy">';
-	            print $product_static->LibStatut($objp->tobuy, 3, 1);
-	            print "</span></td>";
+				print '<td class="right nowrap width25"><span class="statusrefbuy">';
+				print $product_static->LibStatut($objp->tobuy, 3, 1);
+				print "</span></td>";
 				print "</tr>\n";
 				$i++;
 			}
@@ -384,9 +380,7 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 			print '</div>';
 			print '<br>';
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -451,13 +445,12 @@ function activitytrim($product_type)
 
 		if ($num > 0)
 		{
-            print '<div class="div-table-responsive-no-min">';
+			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder" width="75%">';
 
 			if ($product_type == 0)
 				print '<tr class="liste_titre"><td class=left>'.$langs->trans("ProductSellByQuarterHT").'</td>';
-			else
-				print '<tr class="liste_titre"><td class=left>'.$langs->trans("ServiceSellByQuarterHT").'</td>';
+			else print '<tr class="liste_titre"><td class=left>'.$langs->trans("ServiceSellByQuarterHT").'</td>';
 			print '<td class=right>'.$langs->trans("Quarter1").'</td>';
 			print '<td class=right>'.$langs->trans("Quarter2").'</td>';
 			print '<td class=right>'.$langs->trans("Quarter3").'</td>';

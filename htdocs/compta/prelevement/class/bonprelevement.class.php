@@ -162,21 +162,17 @@ class BonPrelevement extends CommonObject
 				if ($this->db->query($sql))
 				{
 					$result = 0;
-				}
-				else
-				{
+				} else {
 					$result = -1;
+					$this->errors[] = get_class($this)."::AddFacture ".$this->db->lasterror;
 					dol_syslog(get_class($this)."::AddFacture Error $result");
 				}
-			}
-			else
-			{
+			} else {
 				$result = -2;
+				$this->errors[] = get_class($this)."::AddFacture linedid Empty";
 				dol_syslog(get_class($this)."::AddFacture Error $result");
 			}
-		}
-		else
-		{
+		} else {
 			$result = -3;
 			dol_syslog(get_class($this)."::AddFacture Error $result");
 		}
@@ -211,22 +207,18 @@ class BonPrelevement extends CommonObject
 			$sql .= " FROM  ".MAIN_DB_PREFIX."prelevement_lignes";
 			$sql .= " WHERE fk_prelevement_bons = ".$this->id;
 			$sql .= " AND fk_soc =".$client_id;
-			$sql .= " AND code_banque ='".$code_banque."'";
-			$sql .= " AND code_guichet ='".$code_guichet."'";
-			$sql .= " AND number ='".$number."'";
+			$sql .= " AND code_banque = '".$this->db->escape($code_banque)."'";
+			$sql .= " AND code_guichet = '".$this->db->escape($code_guichet)."'";
+			$sql .= " AND number = '".$this->db->escape($number)."'";
 
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
 				$num = $this->db->num_rows($resql);
-			}
-			else
-			{
+			} else {
 				$result = -1;
 			}
-		}
-		else
-		{
+		} else {
 			/*
 			 * No aggregate
 			 */
@@ -244,19 +236,18 @@ class BonPrelevement extends CommonObject
 			$sql .= ", ".$client_id;
 			$sql .= ", '".$this->db->escape($client_nom)."'";
 			$sql .= ", '".price2num($amount)."'";
-			$sql .= ", '".$code_banque."'";
-			$sql .= ", '".$code_guichet."'";
-			$sql .= ", '".$number."'";
-			$sql .= ", '".$number_key."'";
+			$sql .= ", '".$this->db->escape($code_banque)."'";
+			$sql .= ", '".$this->db->escape($code_guichet)."'";
+			$sql .= ", '".$this->db->escape($number)."'";
+			$sql .= ", '".$this->db->escape($number_key)."'";
 			$sql .= ")";
 
 			if ($this->db->query($sql))
 			{
 				$line_id = $this->db->last_insert_id(MAIN_DB_PREFIX."prelevement_lignes");
 				$result = 0;
-			}
-			else
-			{
+			} else {
+				$this->errors[] = get_class($this)."::addline Error -2 ".$this->db->lasterror;
 				dol_syslog(get_class($this)."::addline Error -2");
 				$result = -2;
 			}
@@ -330,20 +321,16 @@ class BonPrelevement extends CommonObject
 				$this->type           = $obj->type;
 
 				$this->status         = $obj->status;
-				$this->statut         = $obj->status;	// For backward compatibility
+				$this->statut         = $obj->status; // For backward compatibility
 
 				$this->fetched = 1;
 
 				return 1;
-			}
-			else
-			{
+			} else {
 				dol_syslog(get_class($this)."::Fetch Erreur aucune ligne retournee");
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			return -2;
 		}
 	}
@@ -411,17 +398,13 @@ class BonPrelevement extends CommonObject
 			{
 				$this->db->commit();
 				return 0;
-			}
-			else
-			{
+			} else {
 				$this->db->rollback();
 				dol_syslog(get_class($this)."::set_credite ROLLBACK ");
 
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			dol_syslog(get_class($this)."::set_credite Ouverture transaction SQL impossible ");
 			return -2;
 		}
@@ -527,19 +510,16 @@ class BonPrelevement extends CommonObject
 					}
 
 					$paiement->num_payment = $this->ref; // Set ref of direct debit note
-					$paiement->num_paiement = $this->ref; // For backward compatibility
 					$paiement->id_prelevement = $this->id;
 
-					$paiement_id = $paiement->create($user);		// This use ->paiementid, that is ID of payment mode
+					$paiement_id = $paiement->create($user); // This use ->paiementid, that is ID of payment mode
 					if ($paiement_id < 0)
 					{
 						$error++;
 						$this->error = $paiement->error;
 						$this->errors = $paiement->errors;
 						dol_syslog(get_class($this)."::set_infocredit AddPayment Error ".$this->error);
-					}
-					else
-					{
+					} else {
 						if ($this->type == 'bank-transfer') {
 							$modeforaddpayment = 'payment_supplier';
 						} else {
@@ -562,20 +542,17 @@ class BonPrelevement extends CommonObject
 
 				// Update withdrawal line
 				// TODO: Translate to ligneprelevement.class.php
-				if (! $error) {
+				if (!$error) {
 					$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes";
 					$sql .= " SET statut = 2";
 					$sql .= " WHERE fk_prelevement_bons = ".$this->id;
 
-					if (!$this->db->query($sql))
-					{
+					if (!$this->db->query($sql)) {
 						dol_syslog(get_class($this)."::set_infocredit Update lines Error");
 						$error++;
 					}
 				}
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->lasterror();
 				dol_syslog(get_class($this)."::set_infocredit Update Bons Error");
 				$error++;
@@ -591,15 +568,11 @@ class BonPrelevement extends CommonObject
 
 				$this->db->commit();
 				return 0;
-			}
-			else
-			{
+			} else {
 				$this->db->rollback();
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			return -1026;
 		}
 	}
@@ -641,9 +614,7 @@ class BonPrelevement extends CommonObject
 				$message .= $langs->trans("InfoTransData", price($this->amount), $this->methodes_trans[$this->method_trans], dol_print_date($date, 'day'));
 
 				// TODO Call trigger to create a notification using notification module
-			}
-			else
-			{
+			} else {
 				$error++;
 			}
 
@@ -655,17 +626,13 @@ class BonPrelevement extends CommonObject
 				$this->db->commit();
 
 				return 0;
-			}
-			else
-			{
+			} else {
 				$this->db->rollback();
 				dol_syslog(get_class($this)."::set_infotrans ROLLBACK", LOG_ERR);
 
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			dol_syslog(get_class($this)."::set_infotrans Ouverture transaction SQL impossible", LOG_CRIT);
 			return -2;
 		}
@@ -720,8 +687,7 @@ class BonPrelevement extends CommonObject
 				{
 					$row = $this->db->fetch_row($resql);
 					if (!$amounts) $arr[$i] = $row[0];
-					else
-					{
+					else {
 						$arr[$i] = array(
 							$row[0],
 							$row[1]
@@ -731,9 +697,7 @@ class BonPrelevement extends CommonObject
 				}
 			}
 			$this->db->free($resql);
-		}
-		else
-		{
+		} else {
 			dol_syslog(get_class($this)."::getListInvoices Erreur");
 		}
 
@@ -782,9 +746,7 @@ class BonPrelevement extends CommonObject
 			$this->db->free($resql);
 
 			return $obj->nb;
-		}
-		else
-		{
+		} else {
 			$error = 1;
 			dol_syslog(get_class($this)."::SommeAPrelever Erreur -1");
 			dol_syslog($this->db->error());
@@ -847,9 +809,7 @@ class BonPrelevement extends CommonObject
 			$this->db->free($resql);
 
 			return $obj->nb;
-		}
-		else
-		{
+		} else {
 			$this->error = get_class($this)."::NbFactureAPrelever Erreur -1 sql=".$this->db->error();
 			return -1;
 		}
@@ -926,7 +886,7 @@ class BonPrelevement extends CommonObject
 				$sql .= " AND f.rowid = pfd.fk_facture_fourn";
 			}
 			$sql .= " AND s.rowid = f.fk_soc";
-			$sql .= " AND f.fk_statut = 1";			// Invoice validated
+			$sql .= " AND f.fk_statut = 1"; // Invoice validated
 			$sql .= " AND f.paye = 0";
 			$sql .= " AND pfd.traite = 0";
 			$sql .= " AND f.total_ttc > 0";
@@ -954,9 +914,7 @@ class BonPrelevement extends CommonObject
 				}
 				$this->db->free($resql);
 				dol_syslog(__METHOD__."::Read invoices, ".$i." invoices to withdraw", LOG_DEBUG);
-			}
-			else
-			{
+			} else {
 				$error++;
 				dol_syslog(__METHOD__."::Read invoices error ".$this->db->error(), LOG_ERR);
 			}
@@ -1006,27 +964,19 @@ class BonPrelevement extends CommonObject
 								$factures_prev_id[$i] = $fac[0];
 								$i++;
 								//dol_syslog(__METHOD__."::RIB is ok", LOG_DEBUG);
-							}
-							else
-							{
+							} else {
 								dol_syslog(__METHOD__."::Check BAN Error on default bank number IBAN/BIC for thirdparty reported by verif() ".$tmpinvoice->socid." ".$soc->name, LOG_WARNING);
 								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for invoice ".$tmpinvoice->getNomUrl(0)." for thirdparty ".$soc->getNomUrl(0);
 								$this->thirdparty_in_error[$soc->id] = "Error on default bank number IBAN/BIC for invoice ".$tmpinvoice->getNomUrl(0)." for thirdparty ".$soc->getNomUrl(0);
 							}
-						}
-						else
-						{
+						} else {
 							dol_syslog(__METHOD__."::Check BAN Failed to read company", LOG_WARNING);
 						}
-					}
-					else
-					{
+					} else {
 						dol_syslog(__METHOD__."::Check BAN Failed to read invoice", LOG_WARNING);
 					}
 				}
-			}
-			else
-			{
+			} else {
 				dol_syslog(__METHOD__."::Check BAN No invoice to process", LOG_WARNING);
 			}
 		}
@@ -1112,15 +1062,11 @@ class BonPrelevement extends CommonObject
 						$prev_id = $this->db->last_insert_id(MAIN_DB_PREFIX."prelevement_bons");
 						$this->id = $prev_id;
 						$this->ref = $ref;
-					}
-					else
-					{
+					} else {
 						$error++;
 						dol_syslog(__METHOD__."::Create withdraw receipt ".$this->db->lasterror(), LOG_ERR);
 					}
-				}
-				else
-				{
+				} else {
 					$error++;
 					dol_syslog(__METHOD__."::Get last withdraw receipt ".$this->db->lasterror(), LOG_ERR);
 				}
@@ -1178,7 +1124,8 @@ class BonPrelevement extends CommonObject
 						if (!$resql)
 						{
 							$error++;
-							dol_syslog(__METHOD__."::Update Error=".$this->db->error(), LOG_ERR);
+							$this->errors[] = $this->db->lasterror();
+							dol_syslog(__METHOD__."::Update Error=".$this->db->lasterror(), LOG_ERR);
 						}
 					}
 				}
@@ -1235,7 +1182,7 @@ class BonPrelevement extends CommonObject
 			/*
 			 * Update total defined after generation of file
 			 */
-			if (! $error) {
+			if (!$error) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
 				$sql .= " SET amount = ".price2num($this->total);
 				$sql .= " WHERE rowid = ".$this->id;
@@ -1334,9 +1281,7 @@ class BonPrelevement extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -1361,7 +1306,7 @@ class BonPrelevement extends CommonObject
 
 		$result = '';
 
-		$labeltoshow = 'Withdraw';
+		$labeltoshow = 'PaymentByDirectDebit';
 		if ($this->type == 'bank-transfer') {
 			$labeltoshow = 'PaymentByBankTransfer';
 		}
@@ -1375,7 +1320,7 @@ class BonPrelevement extends CommonObject
 
 		$url = DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id;
 		if ($this->type == 'bank-transfer') {
-			$url = DOL_URL_ROOT.'/compta/paymentbybanktransfer/card.php?id='.$this->id;
+			$url = DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id;
 		}
 
 		if ($option != 'nolink')
@@ -1403,8 +1348,7 @@ class BonPrelevement extends CommonObject
 			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
 			 */
-		}
-		else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -1440,14 +1384,12 @@ class BonPrelevement extends CommonObject
 		$result = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
-		$sql .= " WHERE rowid = '".$rowid."'";
+		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		if ($this->db->query($sql))
 		{
 			return 0;
-		}
-		else
-		{
+		} else {
 			return -1;
 		}
 	}
@@ -1466,14 +1408,12 @@ class BonPrelevement extends CommonObject
 		$result = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
-		$sql .= " WHERE fk_user=".$user." AND fk_action='".$action."'";
+		$sql .= " WHERE fk_user=".$user." AND fk_action='".$this->db->escape($action)."'";
 
 		if ($this->db->query($sql))
 		{
 			return 0;
-		}
-		else
-		{
+		} else {
 			return -1;
 		}
 	}
@@ -1497,15 +1437,13 @@ class BonPrelevement extends CommonObject
 			$now = dol_now();
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_user, fk_soc, fk_contact, fk_action)";
-			$sql .= " VALUES (".$db->idate($now).",".$user.", 'NULL', 'NULL', '".$action."')";
+			$sql .= " VALUES ('".$this->db->idate($now)."', ".$user.", 'NULL', 'NULL', '".$this->db->escape($action)."')";
 
 			dol_syslog("adnotiff: ".$sql);
 			if ($this->db->query($sql))
 			{
 				$result = 0;
-			}
-			else
-			{
+			} else {
 				$result = -1;
 				dol_syslog(get_class($this)."::AddNotification Error $result");
 			}
@@ -1607,7 +1545,7 @@ class BonPrelevement extends CommonObject
 					{
 						$obj = $this->db->fetch_object($resql);
 
-						if (! empty($cachearraytotestduplicate[$obj->idfac])) {
+						if (!empty($cachearraytotestduplicate[$obj->idfac])) {
 							$this->error = $langs->trans('ErrorCompanyHasDuplicateDefaultBAN', $obj->socid);
 							$this->invoice_in_error[$obj->idfac] = $this->error;
 							$result = -2;
@@ -1722,7 +1660,7 @@ class BonPrelevement extends CommonObject
 					{
 						$obj = $this->db->fetch_object($resql);
 
-						if (! empty($cachearraytotestduplicate[$obj->idfac])) {
+						if (!empty($cachearraytotestduplicate[$obj->idfac])) {
 							$this->error = $langs->trans('ErrorCompanyHasDuplicateDefaultBAN', $obj->socid);
 							$this->invoice_in_error[$obj->idfac] = $this->error;
 							$result = -2;
@@ -1743,8 +1681,7 @@ class BonPrelevement extends CommonObject
 				}
 
 				// Define $fileEmetteurSection. Start of bloc PmtInf. Will contains all $nbtotalDrctDbtTxInf
-				if ($result != -2)
-				{
+				if ($result != -2) {
 					$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $nbtotalDrctDbtTxInf, $this->total, $CrLf, $format, $type);
 				}
 
@@ -1813,9 +1750,7 @@ class BonPrelevement extends CommonObject
 						// TODO Write record into file
 						$i++;
 					}
-				}
-				else
-				{
+				} else {
 					$result = -2;
 				}
 			} else {
@@ -1843,9 +1778,7 @@ class BonPrelevement extends CommonObject
 						// TODO Write record into file
 						$i++;
 					}
-				}
-				else
-				{
+				} else {
 					$result = -2;
 				}
 			}
@@ -2263,7 +2196,7 @@ class BonPrelevement extends CommonObject
 				 $XML_SEPA_INFO .= '					<AdrLine>'.$conf->global->MAIN_INFO_SOCIETE_ZIP.' '.$conf->global->MAIN_INFO_SOCIETE_TOWN.'</AdrLine>'.$CrLf;
 				 $XML_SEPA_INFO .= '				</PstlAdr>'.$CrLf;
 				 $XML_SEPA_INFO .= '			</UltmtCdtr>'.$CrLf;*/
-				$XML_SEPA_INFO .= '			<ChrgBr>SLEV</ChrgBr>'.$CrLf;		// Field "Responsible of fees". Must be SLEV
+				$XML_SEPA_INFO .= '			<ChrgBr>SLEV</ChrgBr>'.$CrLf; // Field "Responsible of fees". Must be SLEV
 				$XML_SEPA_INFO .= '			<CdtrSchmeId>'.$CrLf;
 				$XML_SEPA_INFO .= '				<Id>'.$CrLf;
 				$XML_SEPA_INFO .= '					<PrvtId>'.$CrLf;
@@ -2325,7 +2258,7 @@ class BonPrelevement extends CommonObject
 				 $XML_SEPA_INFO .= '					<AdrLine>'.$conf->global->MAIN_INFO_SOCIETE_ZIP.' '.$conf->global->MAIN_INFO_SOCIETE_TOWN.'</AdrLine>'.$CrLf;
 				 $XML_SEPA_INFO .= '				</PstlAdr>'.$CrLf;
 				 $XML_SEPA_INFO .= '			</UltmtCdtr>'.$CrLf;*/
-				$XML_SEPA_INFO .= '			<ChrgBr>SLEV</ChrgBr>'.$CrLf;		// Field "Responsible of fees". Must be SLEV
+				$XML_SEPA_INFO .= '			<ChrgBr>SLEV</ChrgBr>'.$CrLf; // Field "Responsible of fees". Must be SLEV
 				/*$XML_SEPA_INFO .= '			<CdtrSchmeId>'.$CrLf;
 				$XML_SEPA_INFO .= '				<Id>'.$CrLf;
 				$XML_SEPA_INFO .= '					<PrvtId>'.$CrLf;
@@ -2339,11 +2272,8 @@ class BonPrelevement extends CommonObject
 				$XML_SEPA_INFO .= '				</Id>'.$CrLf;
 				$XML_SEPA_INFO .= '			</CdtrSchmeId>'.$CrLf;*/
 			}
-		}
-		else
-		{
+		} else {
 			fputs($this->file, 'INCORRECT EMETTEUR '.$XML_SEPA_INFO.$CrLf);
-			$result = -2;
 		}
 		return $XML_SEPA_INFO;
 	}

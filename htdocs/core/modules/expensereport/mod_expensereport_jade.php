@@ -122,7 +122,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 		global $db, $conf;
 
 		// For backward compatibility and restore old behavior to get ref of expense report
-		if ($conf->global->EXPENSEREPORT_USE_OLD_NUMBERING_RULE)
+		if (!empty($conf->global->EXPENSEREPORT_USE_OLD_NUMBERING_RULE))
 		{
 			$fuser = null;
 			if ($object->fk_user_author > 0)
@@ -186,9 +186,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 			$obj = $db->fetch_object($resql);
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
-		}
-		else
-		{
+		} else {
 			dol_syslog("mod_expensereport_jade::getNextValue", LOG_DEBUG);
 			return 0;
 		}

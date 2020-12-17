@@ -31,94 +31,92 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 
 	if ($resql)
 	{
-	    $num = $db->num_rows($resql);
-	    $i = 0;
+		$num = $db->num_rows($resql);
+		$i = 0;
 
-	    $totalnb = 0;
-	    $totaloppnb = 0;
-	    $totalamount = 0;
-	    $ponderated_opp_amount = 0;
-	    $valsnb = array();
-	    $valsamount = array();
-	    $dataseries = array();
-	    // -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Sent/Received, billed or not)
-	    while ($i < $num)
-	    {
-	        $obj = $db->fetch_object($resql);
-	        if ($obj)
-	        {
-                $valsnb[$obj->opp_status] = $obj->nb;
-                $valsamount[$obj->opp_status] = $obj->opp_amount;
-                $totalnb += $obj->nb;
-                if ($obj->opp_status) $totaloppnb += $obj->nb;
+		$totalnb = 0;
+		$totaloppnb = 0;
+		$totalamount = 0;
+		$ponderated_opp_amount = 0;
+		$valsnb = array();
+		$valsamount = array();
+		$dataseries = array();
+		// -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Sent/Received, billed or not)
+		while ($i < $num)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj)
+			{
+				$valsnb[$obj->opp_status] = $obj->nb;
+				$valsamount[$obj->opp_status] = $obj->opp_amount;
+				$totalnb += $obj->nb;
+				if ($obj->opp_status) $totaloppnb += $obj->nb;
 				if (!in_array($obj->code, array('WON', 'LOST'))) {
 					$totalamount += $obj->opp_amount;
 					$ponderated_opp_amount += $obj->ponderated_opp_amount;
 				}
-	            $total += $obj->nb;
-	        }
-	        $i++;
-	    }
-	    $db->free($resql);
+				$total += $obj->nb;
+			}
+			$i++;
+		}
+		$db->free($resql);
 
-	    $ponderated_opp_amount = $ponderated_opp_amount / 100;
+		$ponderated_opp_amount = $ponderated_opp_amount / 100;
 
 		print '<div class="div-table-responsive-no-min">';
-	    print '<table class="noborder nohover centpercent">';
-	    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("OpportunitiesStatusForOpenedProjects").'</th></tr>'."\n";
-	    $listofstatus = array_keys($listofoppstatus);
-	    foreach ($listofstatus as $status)
-	    {
-	    	$labelStatus = '';
+		print '<table class="noborder nohover centpercent">';
+		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("OpportunitiesStatusForOpenedProjects").'</th></tr>'."\n";
+		$listofstatus = array_keys($listofoppstatus);
+		foreach ($listofstatus as $status)
+		{
+			$labelStatus = '';
 
 			$code = dol_getIdFromCode($db, $status, 'c_lead_status', 'rowid', 'code');
-	        if ($code) $labelStatus = $langs->transnoentitiesnoconv("OppStatus".$code);
-	        if (empty($labelStatus)) $labelStatus = $listofopplabel[$status];
+			if ($code) $labelStatus = $langs->transnoentitiesnoconv("OppStatus".$code);
+			if (empty($labelStatus)) $labelStatus = $listofopplabel[$status];
 
-	        //$labelStatus .= ' ('.$langs->trans("Coeff").': '.price2num($listofoppstatus[$status]).')';
-	        //$labelStatus .= ' - '.price2num($listofoppstatus[$status]).'%';
+			//$labelStatus .= ' ('.$langs->trans("Coeff").': '.price2num($listofoppstatus[$status]).')';
+			//$labelStatus .= ' - '.price2num($listofoppstatus[$status]).'%';
 
-	        $dataseries[] = array($labelStatus, (isset($valsamount[$status]) ? (float) $valsamount[$status] : 0));
-	        if (!$conf->use_javascript_ajax)
-	        {
-	            print '<tr class="oddeven">';
-	            print '<td>'.$labelStatus.'</td>';
-	            print '<td class="right"><a href="list.php?statut='.$status.'">'.price((isset($valsamount[$status]) ? (float) $valsamount[$status] : 0), 0, '', 1, -1, -1, $conf->currency).'</a></td>';
-	            print "</tr>\n";
-	        }
-	    }
-	    if ($conf->use_javascript_ajax)
-	    {
-	        print '<tr><td class="center nopaddingleftimp nopaddingrightimp" colspan="2">';
+			$dataseries[] = array($labelStatus, (isset($valsamount[$status]) ? (float) $valsamount[$status] : 0));
+			if (!$conf->use_javascript_ajax)
+			{
+				print '<tr class="oddeven">';
+				print '<td>'.$labelStatus.'</td>';
+				print '<td class="right"><a href="list.php?statut='.$status.'">'.price((isset($valsamount[$status]) ? (float) $valsamount[$status] : 0), 0, '', 1, -1, -1, $conf->currency).'</a></td>';
+				print "</tr>\n";
+			}
+		}
+		if ($conf->use_javascript_ajax)
+		{
+			print '<tr><td class="center nopaddingleftimp nopaddingrightimp" colspan="2">';
 
-	        include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-	        $dolgraph = new DolGraph();
-	        $dolgraph->SetData($dataseries);
-	        $dolgraph->SetDataColor(array_values($colorseries));
-	        $dolgraph->setShowLegend(2);
-	        $dolgraph->setShowPercent(1);
-	        $dolgraph->SetType(array('pie'));
-	        //$dolgraph->setWidth('100%');
-	        $dolgraph->SetHeight('200');
-	        $dolgraph->draw('idgraphstatus');
-	        print $dolgraph->show($totaloppnb ? 0 : 1);
+			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+			$dolgraph = new DolGraph();
+			$dolgraph->SetData($dataseries);
+			$dolgraph->SetDataColor(array_values($colorseries));
+			$dolgraph->setShowLegend(2);
+			$dolgraph->setShowPercent(1);
+			$dolgraph->SetType(array('pie'));
+			//$dolgraph->setWidth('100%');
+			$dolgraph->SetHeight('200');
+			$dolgraph->draw('idgraphstatus');
+			print $dolgraph->show($totaloppnb ? 0 : 1);
 
-	        print '</td></tr>';
-	    }
-	    //if ($totalinprocess != $total)
-	    //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td class="right">'.$totalinprocess.'</td></tr>';
-	    print '<tr class="liste_total"><td class="maxwidth200 tdoverflow">'.$langs->trans("OpportunityTotalAmount").' ('.$langs->trans("WonLostExcluded").')</td><td class="right">'.price($totalamount, 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
-	    print '<tr class="liste_total"><td class="minwidth200 tdoverflow">';
-	    //print $langs->trans("OpportunityPonderatedAmount").' ('.$langs->trans("WonLostExcluded").')';
-	    print $form->textwithpicto($langs->trans("OpportunityPonderatedAmount").' ('.$langs->trans("WonLostExcluded").')', $langs->trans("OpportunityPonderatedAmountDesc"), 1);
-	    print '</td><td class="right">'.price(price2num($ponderated_opp_amount, 'MT'), 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
-	    print "</table>";
-	    print "</div>";
+			print '</td></tr>';
+		}
+		//if ($totalinprocess != $total)
+		//print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td class="right">'.$totalinprocess.'</td></tr>';
+		print '<tr class="liste_total"><td class="maxwidth200 tdoverflow">'.$langs->trans("OpportunityTotalAmount").' ('.$langs->trans("WonLostExcluded").')</td><td class="right">'.price($totalamount, 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
+		print '<tr class="liste_total"><td class="minwidth200 tdoverflow">';
+		//print $langs->trans("OpportunityPonderatedAmount").' ('.$langs->trans("WonLostExcluded").')';
+		print $form->textwithpicto($langs->trans("OpportunityPonderatedAmount").' ('.$langs->trans("WonLostExcluded").')', $langs->trans("OpportunityPonderatedAmountDesc"), 1);
+		print '</td><td class="right">'.price(price2num($ponderated_opp_amount, 'MT'), 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
+		print "</table>";
+		print "</div>";
 
-	    print "<br>";
-	}
-	else
-	{
-	    dol_print_error($db);
+		print "<br>";
+	} else {
+		dol_print_error($db);
 	}
 }
