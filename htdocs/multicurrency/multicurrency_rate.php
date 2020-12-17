@@ -251,7 +251,7 @@ if ($action!= "updateRate" && $action!= "deleteRate" ) {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
-  print '<table class="noborder centpercent"><tr>';
+	print '<table class="noborder centpercent"><tr>';
 
 	print ' <td>' . $langs->trans('date') . '</td>';
 	print ' <td><input class="minwidth200" name="dateinput" value="" type="date"></td>';
