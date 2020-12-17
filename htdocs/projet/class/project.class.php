@@ -634,7 +634,6 @@ class Project extends CommonObject
 			$sql .= " AND (".$datefieldname." <= '".$this->db->idate($datee)."' OR ".$datefieldname." IS NULL)";
 		}
 
-		$hookmanager->initHooks(array('projectdao'));
 		$parameters = array(
 			'sql'=>$sql,
 			'type' => $type,
