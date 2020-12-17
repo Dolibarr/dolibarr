@@ -142,7 +142,7 @@ class IntracommReport extends CommonObject
 		$date_time->addChild('date', date('Y-m-d'));
 		$date_time->addChild('time', date('H:i:s'));
 		$party = $enveloppe->addChild('Party');
-		$party->addAttribute('partType', $conf->global->INTRACOMMREPORT_TYPE_ACTEUR);
+		$party->addAttribute('partyType', $conf->global->INTRACOMMREPORT_TYPE_ACTEUR);
 		$party->addAttribute('partyRole', $conf->global->INTRACOMMREPORT_ROLE_ACTEUR);
 		$party->addChild('partyId', $party_id);
 		$party->addChild('partyName', $declarant);
@@ -330,7 +330,7 @@ class IntracommReport extends CommonObject
 	public function addItemXMl(&$declaration, &$res, $i, $code_douane_spe = '')
 	{
 		$item = $declaration->addChild('Item');
-		$item->addChild('ItemNumber', $i);
+		$item->addChild('itemNumber', $i);
 		$cn8 = $item->addChild('CN8');
 		if (empty($code_douane_spe)) {
 			$code_douane = $res->customcode;
@@ -340,7 +340,7 @@ class IntracommReport extends CommonObject
 		$cn8->addChild('CN8Code', $code_douane);
 		$item->addChild('MSConsDestCode', $res->code); // code iso pays client
 		$item->addChild('countryOfOriginCode', substr($res->zip, 0, 2)); // code iso pays d'origine
-		$item->addChild('netMass', $res->weight * $res->qty); // Poids du produit
+		$item->addChild('netMass', round($res->weight * $res->qty)); // Poids du produit
 		$item->addChild('quantityInSU', $res->qty); // Quantité de produit dans la ligne
 		$item->addChild('invoicedAmount', round($res->total_ht)); // Montant total ht de la facture (entier attendu)
 		// $item->addChild('invoicedNumber', $res->refinvoice); // Numéro facture
