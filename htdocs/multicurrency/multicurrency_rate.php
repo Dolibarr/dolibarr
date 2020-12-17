@@ -32,9 +32,7 @@
  *  \brief      Page to list multicurrency rate
  */
 
-if (!defined('NOTOKENRENEWAL')) {
-    define('NOTOKENRENEWAL', 1);
-}
+
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -263,6 +261,7 @@ if ($action!= "updateRate" && $action!= "deleteRate" ) {
 
 	print '<td>';
 	print '<input type="hidden" name="action" value="create">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="submit" class="butAction" name="btnCreateCurrencyRate" value="' . $langs->trans('CreateRate') . '">';
 	print '</td>';
 
