@@ -173,7 +173,7 @@ class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
         );
 
         $param = '';
-        foreach($data as $key => $val) {
+        foreach ($data as $key => $val) {
         	$param .= '&'.$key.'='.urlencode($val);
         }
 
@@ -203,7 +203,7 @@ class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
         );
 
         $param = '';
-        foreach($data as $key => $val) {
+        foreach ($data as $key => $val) {
         	$param .= '&'.$key.'='.urlencode($val);
         }
 
@@ -231,7 +231,7 @@ class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
         );
 
         $param = '';
-        foreach($data as $key => $val) {
+        foreach ($data as $key => $val) {
         	$param .= '&'.$key.'='.urlencode($val);
         }
 

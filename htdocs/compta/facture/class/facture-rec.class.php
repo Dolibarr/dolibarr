@@ -215,7 +215,7 @@ class FactureRec extends CommonInvoice
 		$now = dol_now();
 
 		// Clean parameters
-		$this->titre = trim($this->titre); // deprecated
+		$this->titre = trim(isset($this->titre) ? $this->titre : $this->title); // deprecated
 		$this->title = trim($this->title);
 		$this->usenewprice = empty($this->usenewprice) ? 0 : $this->usenewprice;
 		if (empty($this->suspended)) $this->suspended = 0;
@@ -366,7 +366,7 @@ class FactureRec extends CommonInvoice
 				}
 
 				// Add object linked
-				if (!$error && $this->id && is_array($this->linked_objects) && !empty($this->linked_objects))
+				if (!$error && $this->id && !empty($this->linked_objects) && is_array($this->linked_objects))
 				{
 					foreach ($this->linked_objects as $origin => $tmp_origin_id)
 					{
@@ -702,7 +702,7 @@ class FactureRec extends CommonInvoice
 				$line->total_ht         = $objp->total_ht;
 				$line->total_tva        = $objp->total_tva;
 				$line->total_ttc        = $objp->total_ttc;
-				$line->code_ventilation = $objp->fk_code_ventilation;
+				//$line->code_ventilation = $objp->fk_code_ventilation;
 				$line->fk_fournprice = $objp->fk_fournprice;
 				$marginInfos = getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $line->fk_fournprice, $objp->pa_ht);
 				$line->pa_ht = $marginInfos[0];
@@ -1996,7 +1996,7 @@ class FactureLigneRec extends CommonInvoiceLine
 			$this->localtax1_type   = $objp->localtax1_type;
 			$this->localtax2_type   = $objp->localtax2_type;
 			$this->remise_percent   = $objp->remise_percent;
-			$this->fk_remise_except = $objp->fk_remise_except;
+			//$this->fk_remise_except = $objp->fk_remise_except;
 			$this->fk_product       = $objp->fk_product;
 			$this->date_start_fill  = $objp->date_start_fill;
 			$this->date_end_fill    = $objp->date_end_fill;
@@ -2004,7 +2004,7 @@ class FactureLigneRec extends CommonInvoiceLine
 			$this->total_ht         = $objp->total_ht;
 			$this->total_tva        = $objp->total_tva;
 			$this->total_ttc        = $objp->total_ttc;
-			$this->code_ventilation = $objp->fk_code_ventilation;
+			//$this->code_ventilation = $objp->fk_code_ventilation;
 			$this->rang = $objp->rang;
 			$this->special_code = $objp->special_code;
 			$this->fk_unit          = $objp->fk_unit;

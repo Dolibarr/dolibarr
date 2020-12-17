@@ -398,7 +398,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= ", '".$this->db->escape($this->ref_supplier)."'";
 		$sql .= ", ".$conf->entity;
 		$sql .= ", '".$this->db->escape($this->type)."'";
-		$sql .= ", '".$this->db->escape($this->label ? $this->label : $this->libelle)."'";
+		$sql .= ", '".$this->db->escape(isset($this->label) ? $this->label : (isset($this->libelle) ? $this->libelle : ''))."'";
 		$sql .= ", ".$this->socid;
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", '".$this->db->idate($this->date)."'";
@@ -497,7 +497,7 @@ class FactureFournisseur extends CommonInvoice
 							$this->lines[$i]->date_end,
 							$this->lines[$i]->array_options,
 							$this->lines[$i]->fk_unit,
-							$this->lines[$i]->pu_ht_devise
+							$this->lines[$i]->multicurrency_subprice
 						);
 					} else {
 						$this->error = $this->db->lasterror();
@@ -1856,6 +1856,7 @@ class FactureFournisseur extends CommonInvoice
 	public function updateline($id, $desc, $pu, $vatrate, $txlocaltax1 = 0, $txlocaltax2 = 0, $qty = 1, $idproduct = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $remise_percent = 0, $notrigger = false, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $ref_supplier = '')
 	{
 		global $mysoc, $langs;
+
 		dol_syslog(get_class($this)."::updateline $id,$desc,$pu,$vatrate,$qty,$idproduct,$price_base_type,$info_bits,$type,$remise_percent,$notrigger,$date_start,$date_end,$fk_unit,$pu_ht_devise,$ref_supplier", LOG_DEBUG);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
@@ -2467,7 +2468,7 @@ class FactureFournisseur extends CommonInvoice
 			$xnbp = 0;
 			while ($xnbp < $nbp)
 			{
-				$line = new FactureLigne($this->db);
+				$line = new SupplierInvoiceLine($this->db);
 				$line->desc = $langs->trans("Description")." ".$xnbp;
 				$line->qty = 1;
 				$line->subprice = 100;
@@ -2807,9 +2808,9 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $fk_facture_fourn;
 
 	/**
-	 * Product label
-	 * This field may contains label of product (when invoice create from order)
+	 * This field may contains label of line (when invoice create from order)
 	 * @var string
+	 * @deprecated
 	 */
 	public $label;
 
@@ -2961,6 +2962,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
 
+
 	/**
 	 *	Constructor
 	 *
@@ -3010,17 +3012,17 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->date_end = $obj->date_end;
 		$this->product_ref		= $obj->product_ref;
 		$this->ref_supplier		= $obj->ref_supplier;
-		$this->libelle			= $obj->label;
-		$this->label  			= $obj->label;
 		$this->product_desc		= $obj->product_desc;
-		$this->subprice = $obj->pu_ht;
-		$this->pu_ht				= $obj->pu_ht;
+
+		$this->subprice 		= $obj->pu_ht;
+		$this->pu_ht			= $obj->pu_ht;
 		$this->pu_ttc			= $obj->pu_ttc;
 		$this->tva_tx			= $obj->tva_tx;
 		$this->localtax1_tx		= $obj->localtax1_tx;
 		$this->localtax2_tx		= $obj->localtax2_tx;
-		$this->localtax1_type		= $obj->localtax1_type;
-		$this->localtax2_type		= $obj->localtax2_type;
+		$this->localtax1_type	= $obj->localtax1_type;
+		$this->localtax2_type	= $obj->localtax2_type;
+
 		$this->qty				= $obj->qty;
 		$this->remise_percent = $obj->remise_percent;
 		$this->tva				= $obj->total_tva; // deprecated

@@ -402,7 +402,6 @@ if (empty($reshook)) {
 	$newcardbutton = dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param);
 	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbysubaccount.php', '', 1, array('morecss' => 'marginleftonly'));
-
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=create');
 }
 
@@ -543,8 +542,15 @@ while ($i < min($num, $limit))
 
 	// Is it a break ?
 	if ($accountg != $displayed_account_number || !isset($displayed_account_number)) {
-		$colspan = $totalarray['nbfield'] - 3;
-		$colspanend = $totalarray['nbfield'] - 7;
+        if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING) || empty($arrayfields['t.lettering_code']['checked'])) {
+            $colnumber = 3;
+            $colnumberend = 7;
+        } else {
+            $colnumber = 4;
+            $colnumberend = 7;
+        }
+        $colspan = $totalarray['nbfield'] - $colnumber;
+        $colspanend = $totalarray['nbfield'] - $colnumberend;
 		// Show a subtotal by accounting account
 		if (isset($displayed_account_number)) {
 			print '<tr class="liste_total">';
@@ -665,11 +671,11 @@ while ($i < min($num, $limit))
 			// Other type
 		}
 
-		print '<td class="nowrap">';
+		print '<td class="maxwidth400">';
 
 		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 		// Picto + Ref
-		print '<td class="nobordernopadding nowrap">';
+		print '<td class="nobordernopadding">';
 
 		if ($line->doc_type == 'customer_invoice' || $line->doc_type == 'supplier_invoice' || $line->doc_type == 'expense_report')
 		{
@@ -744,8 +750,15 @@ while ($i < min($num, $limit))
 }
 
 // Show sub-total of last shown account
-$colspan = $totalarray['nbfield'] - 3;
-$colspanend = $totalarray['nbfield'] - 8;
+if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING) || empty($arrayfields['t.lettering_code']['checked'])) {
+    $colnumber = 3;
+    $colnumberend = 7;
+} else {
+    $colnumber = 4;
+    $colnumberend = 7;
+}
+$colspan = $totalarray['nbfield'] - $colnumber;
+$colspanend = $totalarray['nbfield'] - $colnumberend;
 print '<tr class="liste_total">';
 print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("TotalForAccount").' '.$accountg.':</td>';
 print '<td class="nowrap right">'.price($sous_total_debit).'</td>';

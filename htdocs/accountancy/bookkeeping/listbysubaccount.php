@@ -410,7 +410,7 @@ if (empty($reshook)) {
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 
-print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $result, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit);
+print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $result, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 print info_admin($langs->trans("WarningRecordWithoutSubledgerAreExcluded"));
 
@@ -546,8 +546,15 @@ while ($i < min($num, $limit))
 
 	// Is it a break ?
 	if ($accountg != $displayed_account_number || !isset($displayed_account_number)) {
-		$colspan = $totalarray['nbfield'] - 3;
-		$colspanend = $totalarray['nbfield'] - 7;
+        if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING) || empty($arrayfields['t.lettering_code']['checked'])) {
+            $colnumber = 3;
+            $colnumberend = 7;
+        } else {
+            $colnumber = 4;
+            $colnumberend = 7;
+        }
+        $colspan = $totalarray['nbfield'] - $colnumber;
+        $colspanend = $totalarray['nbfield'] - $colnumberend;
 		// Show a subtotal by accounting account
 		if (isset($displayed_account_number)) {
 			print '<tr class="liste_total">';
@@ -676,11 +683,11 @@ while ($i < min($num, $limit))
 			// Other type
 		}
 
-		print '<td class="nowrap">';
+		print '<td class="maxwidth400">';
 
 		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 		// Picto + Ref
-		print '<td class="nobordernopadding nowrap">';
+		print '<td class="nobordernopadding">';
 
 		if ($line->doc_type == 'customer_invoice' || $line->doc_type == 'supplier_invoice' || $line->doc_type == 'expense_report')
 		{
@@ -755,8 +762,15 @@ while ($i < min($num, $limit))
 }
 
 // Show sub-total of last shown account
-$colspan = $totalarray['nbfield'] - 3;
-$colspanend = $totalarray['nbfield'] - 8;
+if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING) || empty($arrayfields['t.lettering_code']['checked'])) {
+    $colnumber = 3;
+    $colnumberend = 7;
+} else {
+    $colnumber = 4;
+    $colnumberend = 7;
+}
+$colspan = $totalarray['nbfield'] - $colnumber;
+$colspanend = $totalarray['nbfield'] - $colnumberend;
 print '<tr class="liste_total">';
 print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("TotalForAccount").' '.$accountg.':</td>';
 print '<td class="nowrap right">'.price($sous_total_debit).'</td>';

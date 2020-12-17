@@ -140,8 +140,8 @@ class MouvementStock extends CommonObject
 	 *	@param		string	$label				Label of stock movement
 	 *	@param		string	$inventorycode		Inventory code
 	 *	@param		string	$datem				Force date of movement
-	 *	@param		integer	$eatby				eat-by date. Will be used if lot does not exists yet and will be created.
-	 *	@param		integer	$sellby				sell-by date. Will be used if lot does not exists yet and will be created.
+	 *	@param		integer|string	$eatby				eat-by date. Will be used if lot does not exists yet and will be created.
+	 *	@param		integer|string	$sellby				sell-by date. Will be used if lot does not exists yet and will be created.
 	 *	@param		string	$batch				batch number
 	 *	@param		boolean	$skip_batch			If set to true, stock movement is done without impacting batch record
 	 * 	@param		int		$id_product_batch	Id product_batch (when skip_batch is false and we already know which record of product_batch to use)
@@ -166,13 +166,14 @@ class MouvementStock extends CommonObject
 
 		// Check parameters
 		if (empty($fk_product)) return 0;
-		if ($eatby < 0)
-		{
+
+		if (is_numeric($eatby) && $eatby < 0) {
+			dol_syslog(get_class($this)."::_create start ErrorBadValueForParameterEatBy eatby = ".$eatby);
 			$this->errors[] = 'ErrorBadValueForParameterEatBy';
 			return -1;
 		}
-		if ($sellby < 0)
-		{
+		if (is_numeric($sellby) && $sellby < 0) {
+			dol_syslog(get_class($this)."::_create start ErrorBadValueForParameterSellBy sellby = ".$sellby);
 			$this->errors[] = 'ErrorBadValueForParameterSellBy';
 			return -1;
 		}
@@ -786,19 +787,19 @@ class MouvementStock extends CommonObject
 	/**
 	 *	Increase stock for product and subproducts
 	 *
-	 * 	@param 		User	$user			     Object user
-	 * 	@param		int		$fk_product		     Id product
-	 * 	@param		int		$entrepot_id	     Warehouse id
-	 * 	@param		int		$qty			     Quantity
-	 * 	@param		int		$price			     Price
-	 * 	@param		string	$label			     Label of stock movement
-	 *	@param		integer	$eatby			     eat-by date
-	 *	@param		integer	$sellby			     sell-by date
-	 *	@param		string	$batch			     batch number
-	 * 	@param		string	$datem			     Force date of movement
-	 * 	@param		int		$id_product_batch    Id product_batch
-	 *  @param      string  $inventorycode       Inventory code
-	 *	@return		int						     <0 if KO, >0 if OK
+	 * 	@param 		User			$user			     Object user
+	 * 	@param		int				$fk_product		     Id product
+	 * 	@param		int				$entrepot_id	     Warehouse id
+	 * 	@param		int				$qty			     Quantity
+	 * 	@param		int				$price			     Price
+	 * 	@param		string			$label			     Label of stock movement
+	 *	@param		integer|string	$eatby			     eat-by date
+	 *	@param		integer|string	$sellby			     sell-by date
+	 *	@param		string			$batch			     batch number
+	 * 	@param		string			$datem			     Force date of movement
+	 * 	@param		int				$id_product_batch    Id product_batch
+	 *  @param      string			$inventorycode       Inventory code
+	 *	@return		int								     <0 if KO, >0 if OK
 	 */
 	public function reception($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $eatby = '', $sellby = '', $batch = '', $datem = '', $id_product_batch = 0, $inventorycode = '')
 	{
@@ -918,8 +919,8 @@ class MouvementStock extends CommonObject
 			} else {					// product_batch record not found
 				$pdluo->fk_product_stock = $vfk_product_stock;
 				$pdluo->qty = $qty;
-				$pdluo->eatby = $veatby;
-				$pdluo->sellby = $vsellby;
+				$pdluo->eatby = empty($dluo['eatby']) ? '' : $dluo['eatby'];		// No more used. Now eatby date is store in table of lot, no more into prouct_batch table.
+				$pdluo->sellby = empty($dluo['sellby']) ? '' : $dluo['sellby'];		// No more used. Now sellby date is store in table of lot, no more into prouct_batch table.
 				$pdluo->batch = $vbatchnumber;
 
 				$result = $pdluo->create($user, 1);

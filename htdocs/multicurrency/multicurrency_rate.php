@@ -247,8 +247,11 @@ if ($action!= "updateRate" && $action!= "deleteRate" ) {
 	print '</tr></table>';
 
 	$form = new Form($db);
-	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post" name="formulaire">';
-	print '<table class="noborder centpercent"><tr>';
+
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+
+  print '<table class="noborder centpercent"><tr>';
 
 	print ' <td>' . $langs->trans('date') . '</td>';
 	print ' <td><input class="minwidth200" name="dateinput" value="" type="date"></td>';
@@ -275,8 +278,8 @@ $sql = 'SELECT cr.rowid, cr.date_sync, cr.rate, cr.entity, m.code, m.name ';
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
-$sql.=$hookmanager->resPrint;
-$sql.= ' FROM '.MAIN_DB_PREFIX.'multicurrency_rate as cr ';
+$sql .= $hookmanager->resPrint;
+$sql .= ' FROM '.MAIN_DB_PREFIX.'multicurrency_rate as cr ';
 $sql .=" INNER JOIN ".MAIN_DB_PREFIX."multicurrency AS m ON cr.fk_multicurrency = m.rowid";
 
 

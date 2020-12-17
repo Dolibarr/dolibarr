@@ -868,7 +868,7 @@ class Facture extends CommonInvoice
 							$line->situation_percent,
 							$line->fk_prev_id,
 							$line->fk_unit,
-							$line->pu_ht_devise,
+							$line->multicurrency_subprice,
 							$line->ref_ext
 						);
 						if ($result < 0)
@@ -968,7 +968,7 @@ class Facture extends CommonInvoice
 						$_facrec->lines[$i]->situation_percent,
 						'',
 						$_facrec->lines[$i]->fk_unit,
-						$_facrec->lines[$i]->pu_ht_devise
+						$_facrec->lines[$i]->multicurrency_subprice
 					);
 
 					if ($result_insert < 0)
@@ -2971,7 +2971,7 @@ class Facture extends CommonInvoice
 	 *  @param      int         $situation_percent  Situation advance percentage
 	 *  @param      int         $fk_prev_id         Previous situation line id reference
 	 *  @param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
-	 *  @param		double		$pu_ht_devise		Unit price in currency
+	 *  @param		double		$pu_ht_devise		Unit price in foreign currency
 	 *  @param		string		$ref_ext		    External reference of the line
 	 *  @return    	int             				<0 if KO, Id of line if OK
 	 */
