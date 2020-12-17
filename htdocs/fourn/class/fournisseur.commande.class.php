@@ -1607,15 +1607,15 @@ class CommandeFournisseur extends CommonOrder
 
 			$this->db->begin();
 
-			if ($fk_product > 0)
-			{
-				if (!empty($conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY))
-				{
+			$product_type = $type;
+			$label = '';	// deprecated
+
+			if ($fk_product > 0) {
+				if (!empty($conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY)) {
 					// Check quantity is enough
 					dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." fk_prod_fourn_price=".$fk_prod_fourn_price." qty=".$qty." ref_supplier=".$ref_supplier);
 					$prod = new Product($this->db);
-					if ($prod->fetch($fk_product) > 0)
-					{
+					if ($prod->fetch($fk_product) > 0) {
 						$product_type = $prod->type;
 						$label = $prod->label;
 
@@ -1664,25 +1664,20 @@ class CommandeFournisseur extends CommonOrder
 					}
 				}
 
-				// redefine quantity according to packaging
-				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING))
-				{
+				// Predefine quantity according to packaging
+				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
 					$prod = new Product($this->db, $fk_product);
 					$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc ? $this->fk_soc : $this->socid));
-					if ($qty < $prod->packaging)
-					{
+					if ($qty < $prod->packaging) {
 						$qty = $prod->packaging;
 					} else {
-						if (!empty($prod->packaging) && ($qty % $prod->packaging) > 0)
-						{
+						if (!empty($prod->packaging) && ($qty % $prod->packaging) > 0) {
 							$coeff = intval($qty / $prod->packaging) + 1;
 							$qty = $prod->packaging * $coeff;
 						}
 					}
 					setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
 				}
-			} else {
-				$product_type = $type;
 			}
 
 			if (!empty($conf->multicurrency->enabled) && $pu_ht_devise > 0) {

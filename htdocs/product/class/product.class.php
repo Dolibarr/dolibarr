@@ -1720,9 +1720,9 @@ class Product extends CommonObject
 
 		// We do a first seach with a select by searching with couple prodfournprice and qty only (later we will search on triplet qty/product_id/fourn_ref)
 		$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.remise_percent,";
-		$sql .= " pfp.fk_product, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_soc, pfp.tva_tx, pfp.fk_supplier_price_expression";
-		$sql .= " ,pfp.default_vat_code";
-		$sql .= " ,pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
+		$sql .= " pfp.fk_product, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_soc, pfp.tva_tx, pfp.fk_supplier_price_expression,";
+		$sql .= " pfp.default_vat_code,";
+		$sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
 		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) $sql .= ", pfp.packaging";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 		$sql .= " WHERE pfp.rowid = ".$prodfournprice;
@@ -1769,14 +1769,13 @@ class Product extends CommonObject
 				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) $this->packaging = $obj->packaging;
 				$result = $obj->fk_product;
 				return $result;
-			} else // If not found
-			{
+			} else { // If not found
 				// We do a second search by doing a select again but searching with less reliable criteria: couple qty/id product, and if set fourn_ref or fk_soc.
-				$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.fk_soc,";
-				$sql .= " pfp.fk_product, pfp.ref_fourn as ref_supplier, pfp.desc_fourn as desc_supplier, pfp.tva_tx, pfp.fk_supplier_price_expression";
-				$sql .= " ,pfp.default_vat_code";
-				$sql .= " ,pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
-				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) $sql .= ", pfp.packaging";
+				$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.remise_percent, pfp.fk_soc,";
+				$sql .= " pfp.fk_product, pfp.ref_fourn as ref_supplier, pfp.desc_fourn as desc_supplier, pfp.tva_tx, pfp.fk_supplier_price_expression,";
+				$sql .= " pfp.default_vat_code,";
+				$sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code,";
+				$sql .= " pfp.packaging";
 				$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 				$sql .= " WHERE pfp.fk_product = ".$product_id;
 				if ($fourn_ref != 'none') { $sql .= " AND pfp.ref_fourn = '".$this->db->escape($fourn_ref)."'";
@@ -3886,9 +3885,9 @@ class Product extends CommonObject
 		if ($ref_fourn) {
 			$sql = "SELECT rowid, fk_product";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
-			$sql .= " WHERE fk_soc = ".$id_fourn;
+			$sql .= " WHERE fk_soc = ".((int) $id_fourn);
 			$sql .= " AND ref_fourn = '".$this->db->escape($ref_fourn)."'";
-			$sql .= " AND fk_product != ".$this->id;
+			$sql .= " AND fk_product <> ".((int) $this->id);
 			$sql .= " AND entity IN (".getEntity('productsupplierprice').")";
 
 			$resql = $this->db->query($sql);
@@ -3918,7 +3917,7 @@ class Product extends CommonObject
 			$obj = $this->db->fetch_object($resql);
 
 			// The reference supplier does not exist, we create it for this product.
-			if (!$obj) {
+			if (empty($obj)) {
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price(";
 				$sql .= "datec";
 				$sql .= ", entity";
@@ -3960,9 +3959,9 @@ class Product extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoie la liste des fournisseurs du produit/service
+	 * Return list of suppliers providing the product or service
 	 *
-	 * @return array        Tableau des id de fournisseur
+	 * @return array        Array of vendor ids
 	 */
 	public function list_suppliers()
 	{
