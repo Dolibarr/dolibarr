@@ -6191,12 +6191,6 @@ class Form
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			if (!$forcecombo)
-			{
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlname, null, $conf->global->$confkeyforautocompletemode);
-			}
-
 			// Construct $out and $outarray
 			$out .= '<select id="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled="disabled"' : '').($moreparams ? ' '.$moreparams : '').' name="'.$htmlname.'">'."\n";
 
@@ -6247,6 +6241,12 @@ class Form
 			}
 
 			$out .= '</select>'."\n";
+
+			if (!$forcecombo)
+			{
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+				$out .= ajax_combobox($htmlname, null, $conf->global->$confkeyforautocompletemode);
+			}
 		}
 		else
 		{
