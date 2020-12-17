@@ -49,6 +49,9 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'int
 
 $search_ref = GETPOST('search_ref') ?GETPOST('search_ref', 'alpha') : GETPOST('search_inter', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
+$search_name_alias = GETPOST('search_name_alias', 'alpha');
+$search_town = GETPOST('search_town', 'alpha');
+$search_zip = GETPOST('search_zip', 'alpha');
 $search_desc = GETPOST('search_desc', 'alpha');
 $search_projet_ref = GETPOST('search_projet_ref', 'alpha');
 $search_contrat_ref = GETPOST('search_contrat_ref', 'alpha');
@@ -105,6 +108,9 @@ if (!empty($conf->global->FICHINTER_DISABLE_DETAILS)) unset($fieldstosearchall['
 $arrayfields = array(
 	'f.ref'=>array('label'=>'Ref', 'checked'=>1),
 	's.nom'=>array('label'=>'ThirdParty', 'checked'=>1),
+	's.name_alias'=>array('label'=>"AliasNames", 'checked'=>1),
+	's.town'=>array('label'=>"Town", 'checked'=>1),
+	's.zip'=>array('label'=>"Zip", 'checked'=>1),
 	'pr.ref'=>array('label'=>'Project', 'checked'=>1, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1)),
 	'c.ref'=>array('label'=>'Contract', 'checked'=>1, 'enabled'=>(empty($conf->contrat->enabled) ? 0 : 1)),
 	'f.description'=>array('label'=>'Description', 'checked'=>1),
@@ -149,6 +155,9 @@ if (empty($reshook))
 	{
 		$search_ref = "";
 		$search_company = "";
+		$search_name_alias = '';
+		$search_town = '';
+		$search_zip = "";
 		$search_projet_ref = "";
 		$search_contrat_ref = "";
 		$search_desc = "";
@@ -204,7 +213,7 @@ foreach ($arrayfields as $tmpkey => $tmpval)
 $sql = "SELECT";
 $sql .= " f.ref, f.rowid, f.fk_statut as status, f.description, f.datec as date_creation, f.tms as date_update, f.note_private,";
 if (empty($conf->global->FICHINTER_DISABLE_DETAILS) && $atleastonefieldinlines) $sql .= "fd.rowid as lineid, fd.description as descriptiondetail, fd.date as dp, fd.duree,";
-$sql .= " s.nom as name, s.rowid as socid, s.client, s.fournisseur, s.email, s.status as thirdpartystatus";
+$sql .= " s.nom as name, s.name_alias, s.town, s.zip, s.rowid as socid, s.client, s.fournisseur, s.email, s.status as thirdpartystatus";
 if (!empty($conf->projet->enabled)) {
     $sql .= ", pr.rowid as projet_id, pr.ref as projet_ref, pr.title as projet_title";
 }
@@ -237,6 +246,15 @@ if ($search_ref) {
 }
 if ($search_company) {
 	$sql .= natural_search('s.nom', $search_company);
+}
+if ($search_name_alias)	{
+	$sql .= natural_search('s.name_alias', $search_name_alias);
+}
+if ($search_town){
+	$sql .= natural_search('s.town', $search_town);
+}
+if ($search_zip){
+	$sql .= natural_search("s.zip", $search_zip);
 }
 if ($search_projet_ref) {
     $sql .= natural_search('pr.ref', $search_projet_ref);
@@ -303,7 +321,10 @@ if ($resql)
 	if ($socid)          $param .= "&socid=".urlencode($socid);
 	if ($search_ref)     $param .= "&search_ref=".urlencode($search_ref);
 	if ($search_company) $param .= "&search_company=".urlencode($search_company);
-	if ($search_desc)    $param .= "&search_desc=".urlencode($search_desc);
+	if ($search_name_alias)    	$param .= '&search_name_alias='.urlencode($search_name_alias);
+	if ($search_town)		 	$param .= '&search_town='.urlencode($search_town);
+	if ($search_zip)		 	$param .= '&search_zip='.urlencode($search_zip);
+	if ($search_desc)    		$param .= "&search_desc=".urlencode($search_desc);
 	if ($search_status != '' && $search_status > -1) $param .= "&search_status=".urlencode($search_status);
 	if ($show_files)            $param .= '&show_files='.urlencode($show_files);
 	if ($optioncss != '')       $param .= '&optioncss='.urlencode($optioncss);
@@ -379,6 +400,15 @@ if ($resql)
 		print '<input type="text" class="flat" name="search_company" value="'.$search_company.'" size="10">';
 		print '</td>';
 	}
+	//Alias
+	if (!empty($arrayfields['s.name_alias']['checked']))
+	{
+		print '<td class="liste_titre" align="left">';
+		print '<input class="flat maxwidth100" type="text" name="search_name_alias" value="'.dol_escape_htmltag($search_name_alias).'">';
+		print '</td>';
+	}
+	if (!empty($arrayfields['s.town']['checked'])) print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_town" value="'.$search_town.'"></td>';
+	if (!empty($arrayfields['s.zip']['checked'])) print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_zip" value="'.$search_zip.'"></td>';
     if (!empty($arrayfields['pr.ref']['checked']))
     {
         print '<td class="liste_titre">';
@@ -449,6 +479,10 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	if (!empty($arrayfields['f.ref']['checked']))          print_liste_field_titre($arrayfields['f.ref']['label'], $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['s.nom']['checked']))          print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['s.name_alias']['checked']))   print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], 's.name_alias', '', $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['s.town']['checked']))         print_liste_field_titre($arrayfields['s.town']['label'], $_SERVER["PHP_SELF"], 's.town', '', $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['s.zip']['checked']))          print_liste_field_titre($arrayfields['s.zip']['label'], $_SERVER["PHP_SELF"], 's.zip', '', $param, '', $sortfield, $sortorder);
+
 	if (!empty($arrayfields['pr.ref']['checked']))         print_liste_field_titre($arrayfields['pr.ref']['label'], $_SERVER["PHP_SELF"], "pr.ref", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['c.ref']['checked']))          print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], "c.ref", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['f.description']['checked']))  print_liste_field_titre($arrayfields['f.description']['label'], $_SERVER["PHP_SELF"], "f.description", "", $param, '', $sortfield, $sortorder);
@@ -529,6 +563,30 @@ if ($resql)
 		{
 			print '<td>';
 			print $companystatic->getNomUrl(1, '', 44);
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+		// Alias
+		if (!empty($arrayfields['s.name_alias']['checked']))
+		{
+			print '<td class="tdoverflowmax200">';
+			print $obj->name_alias;
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+		// Town
+		if (!empty($arrayfields['s.town']['checked']))
+		{
+			print '<td class="nocellnopadd">';
+			print $obj->town;
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+		// Zip
+		if (!empty($arrayfields['s.zip']['checked']))
+		{
+			print '<td class="nocellnopadd">';
+			print $obj->zip;
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}

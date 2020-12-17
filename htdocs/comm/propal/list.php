@@ -66,6 +66,8 @@ $search_refproject = GETPOST('search_refproject', 'alpha');
 $search_project = GETPOST('search_project', 'alpha');
 
 $search_societe = GETPOST('search_societe', 'alpha');
+//BB2A
+$search_name_alias = GETPOST('search_name_alias', 'alpha');
 $search_montant_ht = GETPOST('search_montant_ht', 'alpha');
 $search_montant_vat = GETPOST('search_montant_vat', 'alpha');
 $search_montant_ttc = GETPOST('search_montant_ttc', 'alpha');
@@ -157,6 +159,8 @@ $arrayfields = array(
 	'pr.ref'=>array('label'=>"ProjectRef", 'checked'=>1, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1)),
 	'pr.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1)),
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
+	//BB2A
+	's.name_alias'=>array('label'=>"AliasNames", 'checked'=>1),
 	's.town'=>array('label'=>"Town", 'checked'=>1),
 	's.zip'=>array('label'=>"Zip", 'checked'=>1),
 	'state.nom'=>array('label'=>"StateShort", 'checked'=>0),
@@ -220,6 +224,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_refproject = '';
 	$search_project = '';
 	$search_societe = '';
+	//BB2A
+	$search_name_alias = '';
 	$search_montant_ht = '';
 	$search_montant_vat = '';
 	$search_montant_ttc = '';
@@ -283,7 +289,8 @@ $help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos'
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
-$sql .= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
+//BB2A
+$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
 $sql .= " typent.code as typent_code,";
 $sql .= " ava.rowid as availability,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
@@ -340,8 +347,9 @@ if ($search_refcustomer)			$sql .= natural_search('p.ref_client', $search_refcus
 if ($search_refproject)				$sql .= natural_search('pr.ref', $search_refproject);
 if ($search_project)				$sql .= natural_search('pr.title', $search_project);
 if ($search_availability)			$sql .= " AND p.fk_availability IN (".$db->escape($search_availability).')';
-
 if ($search_societe)				$sql .= natural_search('s.nom', $search_societe);
+//BB2A
+if ($search_name_alias)				$sql .= natural_search('s.name_alias', $search_name_alias);
 if ($search_login)					$sql .= natural_search("u.login", $search_login);
 if ($search_montant_ht != '')		$sql .= natural_search("p.total_ht", $search_montant_ht, 1);
 if ($search_montant_vat != '')		$sql .= natural_search("p.tva", $search_montant_vat, 1);
@@ -448,6 +456,8 @@ if ($resql)
 	if ($search_refcustomer) 			$param .= '&search_refcustomer='.urlencode($search_refcustomer);
 	if ($search_refproject)  			$param .= '&search_refproject='.urlencode($search_refproject);
 	if ($search_societe)     			$param .= '&search_societe='.urlencode($search_societe);
+	//BB2A
+	if ($search_name_alias)     		$param .= '&search_name_alias='.urlencode($search_name_alias);
 	if ($search_user > 0)    			$param .= '&search_user='.urlencode($search_user);
 	if ($search_sale > 0)    			$param .= '&search_sale='.urlencode($search_sale);
 	if ($search_montant_ht)  			$param .= '&search_montant_ht='.urlencode($search_montant_ht);
@@ -595,6 +605,14 @@ if ($resql)
 	{
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat maxwidth100" type="text" name="search_societe" value="'.dol_escape_htmltag($search_societe).'">';
+		print '</td>';
+	}
+	//BB2A
+	//Alias
+	if (!empty($arrayfields['s.name_alias']['checked']))
+	{
+		print '<td class="liste_titre" align="left">';
+		print '<input class="flat maxwidth100" type="text" name="search_name_alias" value="'.dol_escape_htmltag($search_name_alias).'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['s.town']['checked'])) print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_town" value="'.$search_town.'"></td>';
@@ -810,6 +828,8 @@ if ($resql)
 	if (!empty($arrayfields['pr.ref']['checked']))				print_liste_field_titre($arrayfields['pr.ref']['label'], $_SERVER["PHP_SELF"], 'pr.ref', '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['pr.title']['checked']))         	print_liste_field_titre($arrayfields['pr.title']['label'], $_SERVER["PHP_SELF"], 'pr.title', '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['s.nom']['checked']))            	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], 's.nom', '', $param, '', $sortfield, $sortorder);
+	//BB2A
+	if (!empty($arrayfields['s.name_alias']['checked']))       	print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], 's.name_alias', '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['s.town']['checked']))           	print_liste_field_titre($arrayfields['s.town']['label'], $_SERVER["PHP_SELF"], 's.town', '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['s.zip']['checked']))            	print_liste_field_titre($arrayfields['s.zip']['label'], $_SERVER["PHP_SELF"], 's.zip', '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['state.nom']['checked']))        	print_liste_field_titre($arrayfields['state.nom']['label'], $_SERVER["PHP_SELF"], "state.nom", "", $param, '', $sortfield, $sortorder);
@@ -967,7 +987,15 @@ if ($resql)
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
-
+		//BB2A
+		// Alias
+		if (!empty($arrayfields['s.name_alias']['checked']))
+		{
+			print '<td class="tdoverflowmax200">';
+			print $obj->name_alias;
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
 		// Town
 		if (!empty($arrayfields['s.town']['checked']))
 		{

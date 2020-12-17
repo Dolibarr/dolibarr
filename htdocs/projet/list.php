@@ -76,6 +76,7 @@ $search_categ = GETPOST("search_categ", 'alpha');
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_label = GETPOST("search_label", 'alpha');
 $search_societe = GETPOST("search_societe", 'alpha');
+$search_name_alias = GETPOST('search_name_alias', 'alpha');
 $search_status = GETPOST("search_status", 'int');
 $search_opp_status = GETPOST("search_opp_status", 'alpha');
 $search_opp_percent = GETPOST("search_opp_percent", 'alpha');
@@ -124,6 +125,7 @@ $arrayfields = array(
 	'p.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
 	'p.title'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
 	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'enabled'=>(empty($conf->societe->enabled) ? 0 : 1)),
+	's.name_alias'=>array('label'=>"AliasNames", 'checked'=>1, 'enabled'=>(empty($conf->societe->enabled) ? 0 : 1)),
 	'commercial'=>array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>0),
 	'p.dateo'=>array('label'=>$langs->trans("DateStart"), 'checked'=>1, 'position'=>100),
 	'p.datee'=>array('label'=>$langs->trans("DateEnd"), 'checked'=>1, 'position'=>101),
@@ -178,6 +180,7 @@ if (empty($reshook))
 		$search_ref = "";
 		$search_label = "";
 		$search_societe = "";
+		$search_name_alias = '';
 		$search_status = -1;
 		$search_opp_status = -1;
 		$search_opp_amount = '';
@@ -286,7 +289,7 @@ if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0] = '0'; /
 $distinct = 'DISTINCT'; // We add distinct until we are added a protection to be sure a contact of a project and task is only once.
 $sql = "SELECT ".$distinct." p.rowid as id, p.ref, p.title, p.fk_statut as status, p.fk_opp_status, p.public, p.fk_user_creat";
 $sql .= ", p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount*p.opp_percent/100) as opp_weighted_amount, p.tms as date_update, p.budget_amount, p.usage_opportunity, p.usage_task, p.usage_bill_time";
-$sql .= ", s.rowid as socid, s.nom as name, s.email";
+$sql .= ", s.rowid as socid, s.nom as name, s.name_alias as name_alias, s.email";
 $sql .= ", cls.code as opp_status_code";
 // We'll need these fields in order to filter by categ
 if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_project";
@@ -321,6 +324,7 @@ if ($search_categ == -2)  $sql .= " AND cs.fk_categorie IS NULL";
 if ($search_ref) $sql .= natural_search('p.ref', $search_ref);
 if ($search_label) $sql .= natural_search('p.title', $search_label);
 if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
+if ($search_name_alias)	$sql .= natural_search('s.name_alias', $search_name_alias);
 if ($search_opp_amount) $sql .= natural_search('p.opp_amount', $search_opp_amount, 1);
 if ($search_opp_percent) $sql .= natural_search('p.opp_percent', $search_opp_percent, 1);
 $sql .= dolSqlDateFilter('p.dateo', $search_sday, $search_smonth, $search_syear);
@@ -410,6 +414,7 @@ if ($socid)				        $param .= '&socid='.$socid;
 if ($search_ref != '') 			$param .= '&search_ref='.$search_ref;
 if ($search_label != '') 		$param .= '&search_label='.$search_label;
 if ($search_societe != '') 		$param .= '&search_societe='.$search_societe;
+if ($search_name_alias)     	$param .= '&search_name_alias='.urlencode($search_name_alias);
 if ($search_status >= 0) 		$param .= '&search_status='.$search_status;
 if ((is_numeric($search_opp_status) && $search_opp_status >= 0) || in_array($search_opp_status, array('all', 'openedopp', 'notopenedopp', 'none'))) 	    $param .= '&search_opp_status='.urlencode($search_opp_status);
 if ($search_opp_percent != '') 	$param .= '&search_opp_percent='.urlencode($search_opp_percent);
@@ -549,6 +554,13 @@ if (!empty($arrayfields['s.nom']['checked']))
 	print '<input type="text" class="flat" name="search_societe" size="8" value="'.dol_escape_htmltag($search_societe).'">';
 	print '</td>';
 }
+//Alias
+if (!empty($arrayfields['s.name_alias']['checked']))
+	{
+		print '<td class="liste_titre" align="left">';
+		print '<input class="flat maxwidth100" type="text" name="search_name_alias" value="'.dol_escape_htmltag($search_name_alias).'">';
+		print '</td>';
+	}
 // Sale representative
 if (!empty($arrayfields['commercial']['checked']))
 {
@@ -669,6 +681,7 @@ print '<tr class="liste_titre">';
 if (!empty($arrayfields['p.ref']['checked']))           print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, "", $sortfield, $sortorder);
 if (!empty($arrayfields['p.title']['checked']))         print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER["PHP_SELF"], "p.title", "", $param, "", $sortfield, $sortorder);
 if (!empty($arrayfields['s.nom']['checked']))           print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
+if (!empty($arrayfields['s.name_alias']['checked']))    print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], 's.name_alias', '', $param, '', $sortfield, $sortorder);
 if (!empty($arrayfields['commercial']['checked']))      print_liste_field_titre($arrayfields['commercial']['label'], $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder);
 if (!empty($arrayfields['p.dateo']['checked']))         print_liste_field_titre($arrayfields['p.dateo']['label'], $_SERVER["PHP_SELF"], "p.dateo", "", $param, '', $sortfield, $sortorder, 'center ');
 if (!empty($arrayfields['p.datee']['checked']))         print_liste_field_titre($arrayfields['p.datee']['label'], $_SERVER["PHP_SELF"], "p.datee", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -749,6 +762,14 @@ while ($i < min($num, $limit))
 			} else {
 				print '&nbsp;';
 			}
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+		// Alias
+		if (!empty($arrayfields['s.name_alias']['checked']))
+		{
+			print '<td class="tdoverflowmax200">';
+			print $obj->name_alias;
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}

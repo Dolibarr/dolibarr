@@ -82,6 +82,7 @@ $search_type = GETPOST('search_type', 'int');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_project = GETPOST('search_project', 'alpha');
 $search_societe = GETPOST('search_societe', 'alpha');
+$search_name_alias = GETPOST('search_name_alias', 'alpha');
 $search_montant_ht = GETPOST('search_montant_ht', 'alpha');
 $search_montant_vat = GETPOST('search_montant_vat', 'alpha');
 $search_montant_localtax1 = GETPOST('search_montant_localtax1', 'alpha');
@@ -179,6 +180,7 @@ $arrayfields = array(
 	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>1, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1), 'position'=>40),
 	'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1), 'position'=>40),
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1, 'position'=>50),
+	's.name_alias'=>array('label'=>"AliasNames", 'checked'=>1),
 	's.town'=>array('label'=>"Town", 'checked'=>1, 'position'=>55),
 	's.zip'=>array('label'=>"Zip", 'checked'=>1, 'position'=>60),
 	'state.nom'=>array('label'=>"StateShort", 'checked'=>0, 'position'=>65),
@@ -251,6 +253,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_project_ref = '';
 	$search_project = '';
 	$search_societe = '';
+	$search_name_alias = '';
 	$search_montant_ht = '';
 	$search_montant_vat = '';
 	$search_montant_localtax1 = '';
@@ -418,7 +421,7 @@ $sql .= ' f.datef as df, f.date_valid, f.date_lim_reglement as datelimite, f.mod
 $sql .= ' f.paye as paye, f.fk_statut, f.close_code,';
 $sql .= ' f.datec as date_creation, f.tms as date_update, f.date_closing as date_closing,';
 $sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
-$sql .= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
+$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " country.code as country_code,";
@@ -481,6 +484,7 @@ if ($search_type != '' && $search_type != '-1') $sql .= " AND f.type IN (".$db->
 if ($search_project_ref) $sql .= natural_search('p.ref', $search_project_ref);
 if ($search_project) $sql .= natural_search('p.title', $search_project);
 if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
+if ($search_name_alias)	$sql .= natural_search('s.name_alias', $search_name_alias);
 if ($search_town)  $sql .= natural_search('s.town', $search_town);
 if ($search_zip)   $sql .= natural_search("s.zip", $search_zip);
 if ($search_state) $sql .= natural_search("state.nom", $search_state);
@@ -544,7 +548,7 @@ if (!$sall)
 	$sql .= ' f.paye, f.fk_statut, f.close_code,';
 	$sql .= ' f.datec, f.tms, f.date_closing,';
 	$sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
-	$sql .= ' s.rowid, s.nom, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
+	$sql .= ' s.rowid, s.nom, s.name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
 	$sql .= ' typent.code,';
 	$sql .= ' state.code_departement, state.nom,';
 	$sql .= ' country.code,';
@@ -620,6 +624,7 @@ if ($resql)
 	if ($search_project)     $param .= '&search_project='.urlencode($search_project);
 	if ($search_type != '')  $param .= '&search_type='.urlencode($search_type);
 	if ($search_societe)     $param .= '&search_societe='.urlencode($search_societe);
+	if ($search_name_alias)  $param .= '&search_name_alias='.urlencode($search_name_alias);
 	if ($search_town)        $param .= '&search_town='.urlencode($search_town);
 	if ($search_zip)         $param .= '&search_zip='.urlencode($search_zip);
 	if ($search_sale > 0)    $param .= '&search_sale='.urlencode($search_sale);
@@ -852,6 +857,10 @@ if ($resql)
 	{
 		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_societe" value="'.$search_societe.'"></td>';
 	}
+	if (!empty($arrayfields['s.name_alias']['checked']))
+	{
+		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_name_alias" value="'.dol_escape_htmltag($search_name_alias).'"></td>';
+	}
 	// Town
 	if (!empty($arrayfields['s.town']['checked'])) print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_town" value="'.dol_escape_htmltag($search_town).'"></td>';
 	// Zip
@@ -1058,6 +1067,7 @@ if ($resql)
 	if (!empty($arrayfields['p.ref']['checked']))                         print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER['PHP_SELF'], "p.ref", '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['p.title']['checked']))                       print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER['PHP_SELF'], "p.title", '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['s.nom']['checked']))                         print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER['PHP_SELF'], 's.nom', '', $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['s.name_alias']['checked']))       			print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], 's.name_alias', '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['s.town']['checked']))                        print_liste_field_titre($arrayfields['s.town']['label'], $_SERVER["PHP_SELF"], 's.town', '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['s.zip']['checked']))                         print_liste_field_titre($arrayfields['s.zip']['label'], $_SERVER["PHP_SELF"], 's.zip', '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['state.nom']['checked']))                     print_liste_field_titre($arrayfields['state.nom']['label'], $_SERVER["PHP_SELF"], "state.nom", "", $param, '', $sortfield, $sortorder);
@@ -1305,6 +1315,14 @@ if ($resql)
 				} else {
 				    print $thirdpartystatic->getNomUrl(1, 'customer');
 				}
+				print '</td>';
+				if (!$i) $totalarray['nbfield']++;
+			}
+			// Alias
+			if (!empty($arrayfields['s.name_alias']['checked']))
+			{
+				print '<td class="tdoverflowmax200">';
+				print $obj->name_alias;
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}
