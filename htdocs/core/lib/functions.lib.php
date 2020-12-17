@@ -4946,8 +4946,7 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = "", $thirdparty_sell
 
 	$vatratecleaned = $vatrate;
 	$reg = array();
-	if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "xx (yy)"
-	{
+	if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg)) {     // If vat is "xx (yy)"
 		$vatratecleaned = trim($reg[1]);
 		$vatratecode = $reg[2];
 	}
@@ -4958,25 +4957,20 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = "", $thirdparty_sell
 	}*/
 
 	// Some test to guess with no need to make database access
-	if ($mysoc->country_code == 'ES') // For spain localtaxes 1 and 2, tax is qualified if buyer use local tax
-	{
-		if ($local == 1)
-		{
+	if ($mysoc->country_code == 'ES') { // For spain localtaxes 1 and 2, tax is qualified if buyer use local tax
+		if ($local == 1) {
 			if (!$mysoc->localtax1_assuj || (string) $vatratecleaned == "0") return 0;
-			if ($thirdparty_seller->id == $mysoc->id)
-			{
+			if ($thirdparty_seller->id == $mysoc->id) {
 				if (!$thirdparty_buyer->localtax1_assuj) return 0;
 			} else {
 				if (!$thirdparty_seller->localtax1_assuj) return 0;
 			}
 		}
 
-		if ($local == 2)
-		{
+		if ($local == 2) {
 			//if (! $mysoc->localtax2_assuj || (string) $vatratecleaned == "0") return 0;
 			if (!$mysoc->localtax2_assuj) return 0; // If main vat is 0, IRPF may be different than 0.
-			if ($thirdparty_seller->id == $mysoc->id)
-			{
+			if ($thirdparty_seller->id == $mysoc->id) {
 				if (!$thirdparty_buyer->localtax2_assuj) return 0;
 			} else {
 				if (!$thirdparty_seller->localtax2_assuj) return 0;
@@ -4988,43 +4982,34 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = "", $thirdparty_sell
 	}
 
 	// For some country MAIN_GET_LOCALTAXES_VALUES_FROM_THIRDPARTY is forced to on.
-	if (in_array($mysoc->country_code, array('ES')))
-	{
+	if (in_array($mysoc->country_code, array('ES'))) {
 		$conf->global->MAIN_GET_LOCALTAXES_VALUES_FROM_THIRDPARTY = 1;
 	}
 
 	// Search local taxes
 	if (!empty($conf->global->MAIN_GET_LOCALTAXES_VALUES_FROM_THIRDPARTY))
 	{
-		if ($local == 1)
-		{
-			if ($thirdparty_seller != $mysoc)
-			{
+		if ($local == 1) {
+			if ($thirdparty_seller != $mysoc) {
 				if (!isOnlyOneLocalTax($local))  // TODO We should provide $vatrate to search on correct line and not always on line with highest vat rate
 				{
 					return $thirdparty_seller->localtax1_value;
 				}
-			} else // i am the seller
-			{
-				if (!isOnlyOneLocalTax($local))  // TODO If seller is me, why not always returning this, even if there is only one locatax vat.
-				{
+			} else { // i am the seller
+				if (!isOnlyOneLocalTax($local)) { // TODO If seller is me, why not always returning this, even if there is only one locatax vat.
 					return $conf->global->MAIN_INFO_VALUE_LOCALTAX1;
 				}
 			}
 		}
-		if ($local == 2)
-		{
-			if ($thirdparty_seller != $mysoc)
-			{
+		if ($local == 2) {
+			if ($thirdparty_seller != $mysoc) {
 				if (!isOnlyOneLocalTax($local))  // TODO We should provide $vatrate to search on correct line and not always on line with highest vat rate
 				// TODO We should also return value defined on thirdparty only if defined
 				{
 					return $thirdparty_seller->localtax2_value;
 				}
-			} else // i am the seller
-			{
-				if (in_array($mysoc->country_code, array('ES')))
-				{
+			} else { // i am the seller
+				if (in_array($mysoc->country_code, array('ES'))) {
 					return $thirdparty_buyer->localtax2_value;
 				} else {
 					return $conf->global->MAIN_INFO_VALUE_LOCALTAX2;
@@ -5046,8 +5031,10 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = "", $thirdparty_sell
    	if ($resql)
    	{
    		$obj = $db->fetch_object($resql);
-   		if ($local == 1) return $obj->localtax1;
-   		elseif ($local == 2) return $obj->localtax2;
+   		if ($obj) {
+	   		if ($local == 1) return $obj->localtax1;
+   			elseif ($local == 2) return $obj->localtax2;
+   		}
 	}
 
 	return 0;
@@ -5068,8 +5055,7 @@ function isOnlyOneLocalTax($local)
 
 	$valors = explode(":", $tax);
 
-	if (count($valors) > 1)
-	{
+	if (count($valors) > 1) {
 		return false;
 	} else {
 		return true;
@@ -5105,8 +5091,8 @@ function get_localtax_by_third($local)
 
 
 /**
- *  Get vat main information from Id.
- *  You can call getLocalTaxesFromRate after to get other fields.
+ *  Get tax (VAT) main information from Id.
+ *  You can also call getLocalTaxesFromRate() after to get only localtax fields.
  *
  *  @param	int|string  $vatrate		    VAT ID or Rate. Value can be value or the string with code into parenthesis or rowid if $firstparamisid is 1. Example: '8.5' or '8.5 (8.5NPR)' or 123.
  *  @param	Societe	    $buyer         		Company object
@@ -5122,12 +5108,15 @@ function getTaxesFromId($vatrate, $buyer = null, $seller = null, $firstparamisid
 	dol_syslog("getTaxesFromId vat id or rate = ".$vatrate);
 
 	// Search local taxes
-	$sql = "SELECT t.rowid, t.code, t.taux as rate, t.recuperableonly as npr, t.accountancy_code_sell, t.accountancy_code_buy";
+	$sql = "SELECT t.rowid, t.code, t.taux as rate, t.recuperableonly as npr, t.accountancy_code_sell, t.accountancy_code_buy,";
+	$sql .= " t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t";
-	if ($firstparamisid) $sql .= " WHERE t.rowid = ".(int) $vatrate;
-	else {
+	if ($firstparamisid) {
+		$sql .= " WHERE t.rowid = ".(int) $vatrate;
+	} else {
 		$vatratecleaned = $vatrate;
 		$vatratecode = '';
+		$reg = array();
 		if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "xx (yy)"
 		{
 			$vatratecleaned = $reg[1];
@@ -5143,10 +5132,20 @@ function getTaxesFromId($vatrate, $buyer = null, $seller = null, $firstparamisid
 	}
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$obj = $db->fetch_object($resql);
-		if ($obj) return array('rowid'=>$obj->rowid, 'code'=>$obj->code, 'rate'=>$obj->rate, 'npr'=>$obj->npr, 'accountancy_code_sell'=>$obj->accountancy_code_sell, 'accountancy_code_buy'=>$obj->accountancy_code_buy);
+		if ($obj) return array(
+			'rowid'=>$obj->rowid,
+			'code'=>$obj->code,
+			'rate'=>$obj->rate,
+			'localtax1'=>$obj->localtax1,
+			'localtax1_type'=>$obj->localtax1_type,
+			'localtax2'=>$obj->localtax2,
+			'localtax2_type'=>$obj->localtax2_type,
+			'npr'=>$obj->npr,
+			'accountancy_code_sell'=>$obj->accountancy_code_sell,
+			'accountancy_code_buy'=>$obj->accountancy_code_buy
+		);
 		else return array();
 	} else dol_print_error($db);
 
