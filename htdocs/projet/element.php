@@ -669,8 +669,7 @@ foreach ($listofreferent as $key => $value)
 	$reshook = $hookmanager->executeHooks('printOverviewProfit', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-	}
-	elseif ($reshook > 0){
+	} elseif ($reshook > 0) {
 		print $hookmanager->resPrint;
 		continue;
 	}
@@ -683,20 +682,17 @@ foreach ($listofreferent as $key => $value)
 	$qualified = $value['test'];
 	$margin = $value['margin'];
 	$project_field = $value['project_field'];
-	if ($qualified && isset($margin))		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
-	{
+	if ($qualified && isset($margin)) {		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
 		$element = new $classname($db);
 
 		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, !empty($project_field) ? $project_field : 'fk_projet');
 
-		if (is_array($elementarray) && count($elementarray) > 0)
-		{
+		if (is_array($elementarray) && count($elementarray) > 0) {
 			$total_ht = 0;
 			$total_ttc = 0;
 
 			$num = count($elementarray);
-			for ($i = 0; $i < $num; $i++)
-			{
+			for ($i = 0; $i < $num; $i++) {
 				$tmp = explode('_', $elementarray[$i]);
 				$idofelement = $tmp[0];
 				$idofelementuser = $tmp[1];
@@ -706,13 +702,11 @@ foreach ($listofreferent as $key => $value)
 
 				// Define if record must be used for total or not
 				$qualifiedfortotal = true;
-				if ($key == 'invoice')
-				{
+				if ($key == 'invoice') {
 				    if (!empty($element->close_code) && $element->close_code == 'replaced') $qualifiedfortotal = false; // Replacement invoice, do not include into total
 				    if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS) && $element->type == Facture::TYPE_DEPOSIT) $qualifiedfortotal = false; // If hidden option to use deposits as payment (deprecated, not recommended to use this), deposits are not included
 				}
-				if ($key == 'propal')
-				{
+				if ($key == 'propal') {
 					if ($element->status != Propal::STATUS_SIGNED && $element->status != Propal::STATUS_BILLED) $qualifiedfortotal = false; // Only signed proposal must not be included in total
 				}
 
@@ -722,15 +716,11 @@ foreach ($listofreferent as $key => $value)
 				if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'payment_salary') $total_ht_by_line = $element->amount;
 				elseif ($tablename == 'fichinter') $total_ht_by_line = $element->getAmount();
 				elseif ($tablename == 'stock_mouvement') $total_ht_by_line = $element->price * abs($element->qty);
-				elseif ($tablename == 'projet_task')
-				{
-					if ($idofelementuser)
-					{
+				elseif ($tablename == 'projet_task') {
+					if ($idofelementuser) {
 						$tmp = $element->getSumOfAmount($elementuser, $dates, $datee);
 						$total_ht_by_line = price2num($tmp['amount'], 'MT');
-					}
-					else
-					{
+					} else {
 						$tmp = $element->getSumOfAmount('', $dates, $datee);
 						$total_ht_by_line = price2num($tmp['amount'], 'MT');
 					}
@@ -739,8 +729,7 @@ foreach ($listofreferent as $key => $value)
                     if ((empty($dates) && empty($datee)) || (intval($dates) <= $element->datestart && intval($datee) >= $element->dateend)) {
                         // Get total loan
                         $total_ht_by_line = -$element->capital;
-                    }
-				    else {
+                    } else {
                         // Get loan schedule according to date filter
                         $total_ht_by_line = 0;
                         $loanScheduleStatic = new LoanSchedule($element->db);
@@ -766,29 +755,23 @@ foreach ($listofreferent as $key => $value)
 				if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'payment_salary') $total_ttc_by_line = $element->amount;
 				elseif ($tablename == 'fichinter') $total_ttc_by_line = $element->getAmount();
 				elseif ($tablename == 'stock_mouvement') $total_ttc_by_line = $element->price * abs($element->qty);
-				elseif ($tablename == 'projet_task')
-				{
+				elseif ($tablename == 'projet_task') {
 					$defaultvat = get_default_tva($mysoc, $mysoc);
 					$total_ttc_by_line = price2num($total_ht_by_line * (1 + ($defaultvat / 100)), 'MT');
-				}
-                elseif ($key == 'loan') {
+				} elseif ($key == 'loan') {
                         $total_ttc_by_line = $total_ht_by_line; // For loan there is actually no taxe managed in Dolibarr
-                }
-				else $total_ttc_by_line = $element->total_ttc;
+                } else $total_ttc_by_line = $element->total_ttc;
 
 				// Change sign of $total_ht_by_line and $total_ttc_by_line for some cases
-				if ($tablename == 'payment_various')
-				{
-			        if ($element->sens == 1)
-			        {
+				if ($tablename == 'payment_various') {
+			        if ($element->sens == 1) {
 			            $total_ht_by_line = -$total_ht_by_line;
 			            $total_ttc_by_line = -$total_ttc_by_line;
 			        }
 				}
 
 				// Add total if we have to
-				if ($qualifiedfortotal)
-				{
+				if ($qualifiedfortotal) {
 				    $total_ht = $total_ht + $total_ht_by_line;
 				    $total_ttc = $total_ttc + $total_ttc_by_line;
 				}
@@ -801,14 +784,12 @@ foreach ($listofreferent as $key => $value)
 			//var_dump($key.' '.$qualifiedforfinalprofit);
 
 			// Calculate margin
-			if ($qualifiedforfinalprofit)
-			{
+			if ($qualifiedforfinalprofit) {
 				if ($margin == 'add') {
 					$total_revenue_ht += $total_ht;
 				}
 
-			    if ($margin != "add")	// Revert sign
-				{
+			    if ($margin != "add") {	// Revert sign
 					$total_ht = -$total_ht;
 					$total_ttc = -$total_ttc;
 				}
@@ -878,8 +859,7 @@ foreach ($listofreferent as $key => $value)
 	$reshook = $hookmanager->executeHooks('printOverviewDetail', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-	}
-	elseif ($reshook > 0){
+	} elseif ($reshook > 0) {
 		print $hookmanager->resPrint;
 		continue;
 	}
@@ -898,8 +878,7 @@ foreach ($listofreferent as $key => $value)
 	$exclude_select_element = array('payment_various');
 	if (!empty($value['exclude_select_element'])) $exclude_select_element[] = $value['exclude_select_element'];
 
-	if ($qualified)
-	{
+	if ($qualified) {
 		// If we want the project task array to have details of users
 		//if ($key == 'project_task') $key = 'project_task_time';
 
