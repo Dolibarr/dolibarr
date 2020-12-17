@@ -8714,7 +8714,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 	}
 
 	$class = 'btnTitle';
-	if ($iconClass == 'fa fa-plus-circle') $class .= ' btnTitlePlus';
+	if (in_array($iconClass, array('fa fa-plus-circle', 'fa fa-comment-dots'))) $class .= ' btnTitlePlus';
 	$useclassfortooltip = 1;
 
 	if (!empty($params['morecss'])) $class .= ' '.$params['morecss'];
