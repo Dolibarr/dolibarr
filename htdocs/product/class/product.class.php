@@ -5136,7 +5136,7 @@ class Product extends CommonObject
 		if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
 			$dir .= '/'.get_exdir($this->id, 2, 0, 0, $this, 'product').$this->id."/photos/";
 		} else {
-			$dir .= '/'.get_exdir(0, 0, 0, 0, $this, 'product').dol_sanitizeFileName($this->ref).'/';
+			$dir .= '/'.get_exdir(0, 0, 0, 0, $this, 'product');
 		}
 
 		$nbphoto = 0;

@@ -319,10 +319,13 @@ input.buttonpaymentstripe {
 	max-width: 320px;
 }
 
-a.buttonticket {
+a.butStatus {
 	padding-left: 5px;
 	padding-right: 5px;
-    /* height: 40px; */
+    background-color: transparent;
+    color: var(--colortext) !important;
+    border: 2px solid var( --butactionbg);
+    margin: 0 0.45em !important;
 }
 
 /* Used by timesheets */
@@ -1498,7 +1501,7 @@ select.widthcentpercentminusxx, input.widthcentpercentminusxx {
 }
 .linkobject { cursor: pointer; }
 
-table.tableforfield tr>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
+table.tableforfield tr>td:first-of-type, tr.trforfield>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
 	color: var(--tableforfieldcolor);
 }
 
@@ -3695,8 +3698,8 @@ table.noborder.paymenttable {
 	box-shadow: 0px 0px 0px #DDD !important;
 }
 .shadow {
-	-webkit-box-shadow: 2px 2px 5px #CCC !important;
-	box-shadow: 2px 2px 5px #CCC !important;
+	-webkit-box-shadow: 1px 1px 7px #CCC !important;
+	box-shadow: 1px 1px 7px #CCC !important;
 }
 
 div.tabBar .noborder {
