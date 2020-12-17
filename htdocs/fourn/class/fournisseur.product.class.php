@@ -280,6 +280,8 @@ class ProductFournisseur extends Product
 		}
 
 		// Multicurrency
+		$multicurrency_buyprice = null;
+		$multicurrency_unitBuyPrice = null;
 		if (!empty($conf->multicurrency->enabled)) {
 			if (empty($multicurrency_tx)) $multicurrency_tx = 1;
 			if (empty($multicurrency_buyprice)) $multicurrency_buyprice = 0;
@@ -301,6 +303,7 @@ class ProductFournisseur extends Product
 		$charges = price2num($charges, 'MU');
 		$qty = price2num($qty, 'MS');
 		$unitBuyPrice = price2num($buyprice / $qty, 'MU');
+
 		$packaging = price2num(((empty($this->packaging) || $this->packaging < $qty) ? $qty : $this->packaging), 'MS');
 
 		$error = 0;
@@ -314,8 +317,7 @@ class ProductFournisseur extends Product
 			$localtax1 = $localtaxes_array['1'];
 			$localtaxtype2 = $localtaxes_array['2'];
 			$localtax2 = $localtaxes_array['3'];
-		} else // old method. deprecated because ot can't retrieve type
-		{
+		} else { // old method. deprecated because ot can't retrieve type
 			$localtaxtype1 = '0';
 			$localtax1 = get_localtax($newvat, 1);
 			$localtaxtype2 = '0';
