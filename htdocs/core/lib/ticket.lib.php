@@ -856,7 +856,7 @@ function getTicketTimelineIcon($actionstatic, &$histo, $key)
 	if ($actionstatic->code == 'AC_TICKET_CREATE') {
 		$iconClass = 'fa fa-ticket';
 	} elseif ($actionstatic->code == 'AC_TICKET_MODIFY') {
-		$iconClass = 'fa fa-pencil';
+		$iconClass = 'fa fa-pencilxxx';
 	} elseif ($actionstatic->code == 'TICKET_MSG') {
 		$iconClass = 'fa fa-comments';
 	} elseif ($actionstatic->code == 'TICKET_MSG_PRIVATE') {
