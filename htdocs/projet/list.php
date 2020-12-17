@@ -560,7 +560,7 @@ if (!empty($arrayfields['s.name_alias']['checked']))
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat maxwidth100" type="text" name="search_name_alias" value="'.dol_escape_htmltag($search_name_alias).'">';
 		print '</td>';
-	}
+}
 // Sale representative
 if (!empty($arrayfields['commercial']['checked']))
 {
