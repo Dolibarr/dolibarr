@@ -675,7 +675,7 @@ if ($resql)
 	if (!empty($arrayfields['s.nom']['checked']))
 	{
 		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
+		print '<input class="flat maxwidth100" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
 		print '</td>';
 	}
 	// Town
