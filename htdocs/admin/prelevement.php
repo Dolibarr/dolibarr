@@ -92,11 +92,10 @@ if ($action == "set")
         if (! $res > 0) $error++;
     }
 
-    if (GETPOST("PRELEVEMENT_ADDDAYS") || GETPOST("PRELEVEMENT_ADDDAYS")=="")
-    {
-        $res = dolibarr_set_const($db, "PRELEVEMENT_ADDDAYS", GETPOST("PRELEVEMENT_ADDDAYS"), 'chaine', 0, '', $conf->entity);
-        if (! $res > 0) $error++;
-    } elseif (! $error)
+    $res = dolibarr_set_const($db, "PRELEVEMENT_ADDDAYS", GETPOST("PRELEVEMENT_ADDDAYS"), 'chaine', 0, '', $conf->entity);
+    if (! $res > 0) $error++;
+    
+    if (! $error)
 	{
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
