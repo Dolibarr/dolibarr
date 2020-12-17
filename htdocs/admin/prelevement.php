@@ -94,7 +94,7 @@ if ($action == "set")
 
     $res = dolibarr_set_const($db, "PRELEVEMENT_ADDDAYS", GETPOST("PRELEVEMENT_ADDDAYS"), 'chaine', 0, '', $conf->entity);
     if (! ($res > 0)) $error++;
-    
+
     if (! $error) {
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
