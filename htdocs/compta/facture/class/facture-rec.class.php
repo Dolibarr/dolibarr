@@ -935,9 +935,9 @@ class FactureRec extends CommonInvoice
 			$sql .= ", ".price2num($txtva);
 			$sql .= ", '".$this->db->escape($vat_src_code)."'";
 			$sql .= ", ".price2num($txlocaltax1);
-			$sql .= ", '".$this->db->escape($localtaxes_type[0])."'";
+			$sql .= ", '".$this->db->escape(isset($localtaxes_type[0]) ? $localtaxes_type[0] : '')."'";
 			$sql .= ", ".price2num($txlocaltax2);
-			$sql .= ", '".$this->db->escape($localtaxes_type[2])."'";
+			$sql .= ", '".$this->db->escape(isset($localtaxes_type[2]) ? $localtaxes_type[2] : '')."'";
 			$sql .= ", ".(!empty($fk_product) ? "'".$this->db->escape($fk_product)."'" : "null");
 			$sql .= ", ".$product_type;
 			$sql .= ", ".price2num($remise_percent);

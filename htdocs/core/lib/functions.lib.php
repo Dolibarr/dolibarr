@@ -5216,7 +5216,7 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 		}
 	}
 
-	return 0;
+	return array();
 }
 
 /**

@@ -499,7 +499,15 @@ class SupplierProposal extends CommonObject
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
 			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
-			$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
+
+			// Clean vat code
+			$reg = array();
+			$vat_src_code = '';
+			if (preg_match('/\((.*)\)/', $txtva, $reg))
+			{
+				$vat_src_code = $reg[1];
+				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
+			}
 
 			if (!empty($conf->multicurrency->enabled) && $pu_ht_devise > 0) {
 				$pu = 0;
@@ -544,6 +552,8 @@ class SupplierProposal extends CommonObject
 			$this->line->label = $label;
 			$this->line->desc = $desc;
 			$this->line->qty = $qty;
+
+			$this->line->vat_src_code = $vat_src_code;
 			$this->line->tva_tx = $txtva;
 			$this->line->localtax1_tx = ($total_localtax1 ? $localtaxes_type[1] : 0);
 			$this->line->localtax2_tx = ($total_localtax2 ? $localtaxes_type[3] : 0);
@@ -2736,6 +2746,8 @@ class SupplierProposalLine extends CommonObjectLine
 
 	public $qty;
 	public $tva_tx;
+	public $vat_src_code;
+
 	public $subprice;
 	public $remise_percent;
 
