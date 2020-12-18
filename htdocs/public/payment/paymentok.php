@@ -489,13 +489,15 @@ if ($ispaymentok)
 								if (!$resql)
 								{
 									$error++;
-									$errmsg = 'Failed to save customer stripe id in database ; '.$db->lasterror();
+									$errmsg = 'Failed to insert customer stripe id in database : '.$db->lasterror();
+									dol_syslog($errmsg, LOG_ERR, 0, '_payment');
 									$postactionmessages[] = $errmsg;
 									$ispostactionok = -1;
 								}
 							} catch (Exception $e) {
 								$error++;
-								$errmsg = 'Failed to save customer stripe id in database ; '.$e->getMessage();
+								$errmsg = 'Failed to get or save customer stripe id in database : '.$e->getMessage();
+								dol_syslog($errmsg, LOG_ERR, 0, '_payment');
 								$postactionmessages[] = $errmsg;
 								$ispostactionok = -1;
 							}
