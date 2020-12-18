@@ -52,6 +52,7 @@ $search_date_sync	= GETPOST('search_date_sync', 'alpha');
 $search_date_sync_end	= GETPOST('search_date_sync_end', 'alpha');
 $search_rate		= GETPOST('search_rate', 'alpha');
 $multicurrency_code = GETPOST('multicurrency_code', 'alpha');
+$search_multicurrency_code = GETPOST('search_multicurrency_code', 'alpha');
 $dateinput 			= GETPOST('dateinput', 'alpha');
 $rateinput 			= GETPOST('rateinput', 'int');
 $search_tobatch 	= GETPOST('search_tobatch', 'int');
@@ -121,7 +122,7 @@ if ($action == "create"){
 			setEventMessage($langs->trans('successRateCreate', $multicurrency_code));
 		} else {
 			dol_syslog("currencyRate:createRate", LOG_WARNING);
-			setEventMessage($langs->trans('successRateCreate'));
+            setEventMessages($currencyRate_static->error, $currencyRate_static->errors, 'errors');
 		}
 	} else {
 		setEventMessage($langs->trans('NoEmptyRate'), "errors");
@@ -286,15 +287,17 @@ $sql .=" INNER JOIN ".MAIN_DB_PREFIX."multicurrency AS m ON cr.fk_multicurrency 
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 
 if ($search_date_sync && $search_date_sync_end ){
+
     $sql .= " AND (cr.date_sync BETWEEN '".dol_escape_htmltag($search_date_sync)."' AND '".dol_escape_htmltag($search_date_sync_end)."')";
 } elseif ($search_date_sync && !$search_date_sync_end) {
     $sql .= natural_search('cr.date_sync', $search_date_sync);
+
 }
 
 
 if ($search_rate)   $sql .= natural_search('cr.rate', $search_rate);
-if ($multicurrency_code) $sql .= natural_search('m.code', $multicurrency_code);
-$sql.= ' WHERE m.code != \''.$conf->currency. '\'';
+if ($search_multicurrency_code) $sql .= natural_search('m.code', $search_multicurrency_code);
+$sql .= " WHERE m.code <> '".$db->escape($conf->currency)."'";
 
 // Add where from hooks
 $parameters=array();
@@ -343,7 +346,7 @@ if ($resql)
 	if ($search_date_sync) $param="&search_date_sync=".urlencode($search_date_sync);
     if ($search_date_sync_end) $param="&search_date_sync_end=".urlencode($search_date_sync_end);
 	if ($search_rate) $param="&search_rate=".urlencode($search_rate);
-    if ($multicurrency_code != '') $param.="&multicurrency_code=".urlencode($multicurrency_code);
+    if ($search_multicurrency_code != '') $param.="&search_multicurrency_code=".urlencode($search_multicurrency_code);
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -413,7 +416,7 @@ if ($resql)
 	if (! empty($arrayfields['m.code']['checked']))
 	{
 		print '<td class="liste_titre" align="left">';
-		print  $form->selectMultiCurrency($multicurrency_code, 'multicurrency_code', 1, " code != '".$conf->currency."'", true);
+		print  $form->selectMultiCurrency($multicurrency_code, 'search_multicurrency_code', 1, " code != '".$conf->currency."'", true) ;
 		print '</td>';
 	}
 	// rate
@@ -470,6 +473,7 @@ if ($resql)
             print '<input type="submit" class="button butAction" name="actionmodify" value="'.$langs->trans("Modify").'">';
             print '<input type="submit" class="button butAction" name="actioncancel" value="'.$langs->trans("Cancel").'">';
             print '</td>';
+
         }
         else {
             // date_sync
