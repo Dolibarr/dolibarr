@@ -769,7 +769,7 @@ span.fa.fa-plus-circle.paddingleft {
     padding-bottom: 2px;
 }
 
-.size15x { font-size: 1.5em; }
+.size15x { font-size: 1.5em !important; }
 .fa-toggle-on, .fa-toggle-off, .size2x { font-size: 2em; }
 .websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
 .asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off,

@@ -142,7 +142,7 @@ class Stripe extends CommonObject
 
 
 	/**
-	 * Get the Stripe customer of a thirdparty (with option to create it if not linked yet).
+	 * Get the Stripe customer of a thirdparty (with option to create it in Stripe if not linked yet).
 	 * Search on site_account = 0 or = $stripearrayofkeysbyenv[$status]['publishable_key']
 	 *
 	 * @param	Societe	$object							Object thirdparty to check, or create on stripe (create on stripe also update the stripe_account table for current entity)
@@ -179,8 +179,7 @@ class Stripe extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
-			if ($num)
-			{
+			if ($num) {
 				$obj = $this->db->fetch_object($resql);
 				$tiers = $obj->key_account;
 
@@ -199,8 +198,7 @@ class Stripe extends CommonObject
 					// For exemple, we may have error: 'No such customer: cus_XXXXX; a similar object exists in live mode, but a test mode key was used to make this request.'
 					$this->error = $e->getMessage();
 				}
-			} elseif ($createifnotlinkedtostripe)
-			{
+			} elseif ($createifnotlinkedtostripe) {
 				$ipaddress = getUserRemoteIP();
 
 				$dataforcustomer = array(
