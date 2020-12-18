@@ -598,16 +598,13 @@ if ($action == 'addcontainer')
 	$db->begin();
 
 	$objectpage->fk_website = $object->id;
-	if (GETPOSTISSET('fetchexternalurl'))
+
+	if (GETPOSTISSET('fetchexternalurl'))	// Fetch from external url
 	{
 		$urltograb = GETPOST('externalurl', 'alpha');
 		$grabimages = GETPOST('grabimages', 'alpha');
 		$grabimagesinto = GETPOST('grabimagesinto', 'alpha');
-		//var_dump($grabimages);exit;
-	}
 
-	if (GETPOSTISSET('fetchexternalurl'))
-	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
 		if (empty($urltograb))
@@ -749,6 +746,7 @@ if ($action == 'addcontainer')
 				// Now loop to fetch JS
 				$tmp = $objectpage->htmlheader;
 
+				// We grab files found into <script> tags
 				preg_match_all('/<script([^\.>]+)src=["\']([^"\'>]+)["\']([^>]*)><\/script>/i', $objectpage->htmlheader, $regs);
 				$errorforsubresource = 0;
 				foreach ($regs[0] as $key => $val)
@@ -814,7 +812,7 @@ if ($action == 'addcontainer')
 				$objectpage->htmlheader = trim($tmp)."\n";
 
 
-				// Now loop to fetch CSS
+				// Now we grab CSS found into <link> tags
 				$pagecsscontent = "\n".'<style>'."\n";
 
 				preg_match_all('/<link([^\.>]+)href=["\']([^"\'>]+\.css[^"\'>]*)["\']([^>]*)>/i', $objectpage->htmlheader, $regs);
@@ -914,7 +912,7 @@ if ($action == 'addcontainer')
 				$objectpage->htmlheader .= trim($pagecsscontent)."\n";
 
 
-				// Now loop to fetch all images into page
+				// Now we have to fetch all images into page
 				$tmp = $objectpage->content;
 
 				getAllImages($object, $objectpage, $urltograb, $tmp, $action, 1, $grabimages, $grabimagesinto);
@@ -1049,6 +1047,7 @@ if ($action == 'addcontainer')
 			}
 		}
 	}
+
 	if (!$error)
 	{
 		$db->commit();
@@ -1073,6 +1072,17 @@ if ($action == 'addcontainer')
 			dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
 			dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure dir for website exists
 			$result = symlink($pathtomedias, $pathtomediasinwebsite);
+		}
+
+		// Now generate the master.inc.php page if it does not exists yet
+		if (!dol_is_file($filemaster))
+		{
+			$result = dolSaveMasterFile($filemaster);
+			if (!$result)
+			{
+				$error++;
+				setEventMessages('Failed to write file '.$filemaster, null, 'errors');
+			}
 		}
 
 		if (!dol_is_file($filehtmlheader))
