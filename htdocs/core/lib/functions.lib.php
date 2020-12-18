@@ -2898,6 +2898,26 @@ function getUserRemoteIP()
 }
 
 /**
+ * Return if we are using a HTTPS connexion
+ * Check HTTPS (no way to be modified by user but may be empty or wrong if user is using a proxy)
+ * Take HTTP_X_FORWARDED_PROTO (defined when using proxy)
+ * Then HTTP_X_FORWARDED_SSL
+ *
+ * @return	boolean		True if user is using HTTPS
+ */
+function getIsHTTPS()
+{
+	$isSecure = false;
+	if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
+		$isSecure = true;
+	}
+	elseif (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' || !empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') {
+		$isSecure = true;
+	}
+	return $isSecure;
+}
+
+/**
  * 	Return a country code from IP. Empty string if not found.
  *
  * 	@param	string	$ip			IP
