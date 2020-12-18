@@ -126,7 +126,6 @@ UseSpecificEditorURL = Use a specific editor URL
 UseSpecificFamily = Use a specific family
 UseSpecificAuthor = Use a specific author
 UseSpecificVersion = Use a specific initial version
-ModuleMustBeEnabled=The module/application must be enabled first
 IncludeRefGeneration=The reference of object must be generated automatically
 IncludeRefGenerationHelp=Check this if you want to include code to manage the generation automatically of the reference
 IncludeDocGeneration=I want to generate some documents from the object

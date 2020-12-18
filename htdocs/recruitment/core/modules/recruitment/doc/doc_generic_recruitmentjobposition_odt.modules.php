@@ -181,7 +181,7 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 		$texte .= '</td>';
 
 		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
-		$texte .= $langs->trans("ExampleOfDirectoriesForModelGen");
+		$texte .= '<span class="opacitymedium">'.$langs->trans("ExampleOfDirectoriesForModelGen").'</span>';
 		$texte .= '</td>';
 		$texte .= '</tr>';
 

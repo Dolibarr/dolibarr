@@ -146,8 +146,10 @@ class CMailFile
 			}
 		}
 
-		// Add autocopy to (Note: Adding bcc for specific modules are also done from pages)
-		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) $addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
+		// Add autocopy to if not already in $to (Note: Adding bcc for specific modules are also done from pages)
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO) && !preg_match('/'.preg_quote($conf->global->MAIN_MAIL_AUTOCOPY_TO, '/').'/i', $to)) {
+		    $addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
+		}
 
 		$this->subject = $subject;
 		$this->addr_to = $to;
@@ -242,6 +244,7 @@ class CMailFile
 		{
 			$this->html = $msg;
 
+			$findimg = 0;
 			if (!empty($conf->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS))
 			{
 				$findimg = $this->findHtmlImages($dolibarr_main_data_root.'/medias');
@@ -274,6 +277,11 @@ class CMailFile
 			}
 		}
 
+		// Add autocopy to if not already in $to (Note: Adding bcc for specific modules are also done from pages)
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO) && !preg_match('/'.preg_quote($conf->global->MAIN_MAIL_AUTOCOPY_TO, '/').'/i', $to)) {
+		    $addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
+		}
+
 		$this->addr_to = $to;
 		$this->addr_cc = $addr_cc;
 		$this->addr_bcc = $addr_bcc;
@@ -289,11 +297,6 @@ class CMailFile
 			$this->addr_to = $conf->global->MAIN_MAIL_FORCE_SENDTO;
 			$this->addr_cc = '';
 			$this->addr_bcc = '';
-		}
-
-		// Add autocopy to (Note: Adding bcc for specific modules are also done from pages)
-		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) {
-			$addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
 		}
 
 		$keyforsslseflsigned = 'MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED';
@@ -724,7 +727,11 @@ class CMailFile
 
 					if (!empty($conf->global->MAIN_MAIL_SENDMAIL_FORCE_ADDPARAM)) $additionnalparam .= ($additionnalparam ? ' ' : '').'-U '.$additionnalparam; // Use -U to add additionnal params
 
-					dol_syslog("CMailFile::sendfile: mail start HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port').", additionnal_parameters=".$additionnalparam, LOG_DEBUG);
+					$linuxlike = 1;
+					if (preg_match('/^win/i', PHP_OS)) $linuxlike = 0;
+					if (preg_match('/^mac/i', PHP_OS)) $linuxlike = 0;
+
+					dol_syslog("CMailFile::sendfile: mail start".($linuxlike ? '' : " HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port')).", additionnal_parameters=".$additionnalparam, LOG_DEBUG);
 
 					$this->message = stripslashes($this->message);
 
@@ -743,11 +750,7 @@ class CMailFile
 					{
 						$langs->load("errors");
 						$this->error = "Failed to send mail with php mail";
-						$linuxlike = 1;
-						if (preg_match('/^win/i', PHP_OS)) $linuxlike = 0;
-						if (preg_match('/^mac/i', PHP_OS)) $linuxlike = 0;
-						if (!$linuxlike)
-						{
+						if (!$linuxlike) {
 							$this->error .= " to HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port'); // This values are value used only for non linuxlike systems
 						}
 						$this->error .= ".<br>";

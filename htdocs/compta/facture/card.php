@@ -2433,22 +2433,22 @@ if (empty($reshook))
 	{
 		$object->fetch($id, '', '', '', true);
 
-		if ($object->statut == Facture::STATUS_VALIDATED
-			&& $object->type == Facture::TYPE_SITUATION
-			&& $usercancreate
-			&& !$objectidnext
-			&& $object->is_last_in_cycle()
-			&& $usercanunvalidate
-			)
-		{
-			$outingError = 0;
-			$newCycle = $object->newCycle(); // we need to keep the "situation behavior" so we place it on a new situation cycle
-			if ($newCycle > 1)
-			{
-				// Search credit notes
-				$lastCycle = $object->situation_cycle_ref;
-				$lastSituationCounter = $object->situation_counter;
-				$linkedCreditNotesList = array();
+	    if (in_array($object->statut, array(Facture::STATUS_CLOSED, Facture::STATUS_VALIDATED))
+	        && $object->type == Facture::TYPE_SITUATION
+	        && $usercancreate
+	        && !$objectidnext
+	        && $object->is_last_in_cycle()
+	    	&& $usercanunvalidate
+	        )
+	    {
+	        $outingError = 0;
+	        $newCycle = $object->newCycle(); // we need to keep the "situation behavior" so we place it on a new situation cycle
+	        if ($newCycle > 1)
+	        {
+	            // Search credit notes
+	            $lastCycle = $object->situation_cycle_ref;
+	            $lastSituationCounter = $object->situation_counter;
+	            $linkedCreditNotesList = array();
 
 				if (count($object->tab_next_situation_invoice) > 0) {
 					foreach ($object->tab_next_situation_invoice as $next_invoice) {
@@ -3551,7 +3551,7 @@ if ($action == 'create')
 		print '</td></tr>';
 	}
 
-	// Lines from source (TODO Show them also when creating invoice from tempalte invoice)
+	// Lines from source (TODO Show them also when creating invoice from template invoice)
 	if (!empty($origin) && !empty($originid) && is_object($objectsrc))
 	{
 		// TODO for compatibility
@@ -3764,18 +3764,18 @@ if ($action == 'create')
 
 	// Confirmation to remove invoice from cycle
 	if ($action == 'situationout') {
-		$text = $langs->trans('ConfirmRemoveSituationFromCycle', $object->ref);
-		$label = $langs->trans("ConfirmOuting");
-		$formquestion = array();
-		// remove situation from cycle
-		if ($object->statut == Facture::STATUS_VALIDATED
-			&& $usercancreate
-			&& !$objectidnext
-			&& $object->is_last_in_cycle()
-			&& $usercanunvalidate
-			)
-		{
-			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id, $label, $text, 'confirm_situationout', $formquestion, "yes", 1);
+	    $text = $langs->trans('ConfirmRemoveSituationFromCycle', $object->ref);
+	    $label = $langs->trans("ConfirmOuting");
+	    $formquestion = array();
+	    // remove situation from cycle
+	    if (in_array($object->statut, array(Facture::STATUS_CLOSED, Facture::STATUS_VALIDATED))
+	        && $usercancreate
+	        && !$objectidnext
+	        && $object->is_last_in_cycle()
+	    	&& $usercanunvalidate
+	        )
+	    {
+	        $formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id, $label, $text, 'confirm_situationout', $formquestion, "yes", 1);
 		}
 	}
 
@@ -5278,12 +5278,12 @@ if ($action == 'create')
 			}
 
 			// Remove situation from cycle
-			if ($object->statut > Facture::STATUS_DRAFT
-				&& $object->type == Facture::TYPE_SITUATION
-				&& $usercancreate
-				&& !$objectidnext
-				&& $object->situation_counter > 1
-				&& $object->is_last_in_cycle()
+			if (in_array($object->statut, array(Facture::STATUS_CLOSED, Facture::STATUS_VALIDATED))
+			    && $object->type == Facture::TYPE_SITUATION
+			    && $usercancreate
+			    && !$objectidnext
+			    && $object->situation_counter > 1
+			    && $object->is_last_in_cycle()
 				&& $usercanunvalidate
 				)
 			{

@@ -39,8 +39,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $langs->loadLangs(array("accountancy", "compta"));
 
 $action = GETPOST('action', 'aZ09');
-$search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
-$search_date_end = dol_mktime(0, 0, 0, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
+$search_date_startyear =  GETPOST('search_date_startyear', 'int');
+$search_date_startmonth =  GETPOST('search_date_startmonth', 'int');
+$search_date_startday =  GETPOST('search_date_startday', 'int');
+$search_date_endyear =  GETPOST('search_date_endyear', 'int');
+$search_date_endmonth =  GETPOST('search_date_endmonth', 'int');
+$search_date_endday =  GETPOST('search_date_endday', 'int');
+$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);
+$search_date_end = dol_mktime(0, 0, 0, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 $search_doc_date = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
 
 $search_accountancy_code = GETPOST("search_accountancy_code");
@@ -126,9 +132,24 @@ $arrayfields = array(
 
 if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) unset($arrayfields['t.lettering_code']);
 
+if ($search_date_start && empty($search_date_startyear)) {
+	$tmparray = dol_getdate($search_date_start);
+	$search_date_startyear = $tmparray['year'];
+	$search_date_startmonth = $tmparray['mon'];
+	$search_date_startday = $tmparray['mday'];
+}
+if ($search_date_end && empty($search_date_endyear)) {
+	$tmparray = dol_getdate($search_date_end);
+	$search_date_endyear = $tmparray['year'];
+	$search_date_endmonth = $tmparray['mon'];
+	$search_date_endday = $tmparray['mday'];
+}
+
+
 /*
  * Action
  */
+
 if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction = ''; }
 
@@ -172,11 +193,11 @@ if (empty($reshook))
 
 	if (!empty($search_date_start)) {
 		$filter['t.doc_date>='] = $search_date_start;
-		$param .= '&search_date_startmonth='.GETPOST('search_date_startmonth', 'int').'&search_date_startday='.GETPOST('search_date_startday', 'int').'&search_date_startyear='.GETPOST('search_date_startyear', 'int');
+		$param .= '&search_date_startmonth='.$search_date_startmonth.'&search_date_startday='.$search_date_startday.'&search_date_startyear='.$search_date_startyear;
 	}
 	if (!empty($search_date_end)) {
 		$filter['t.doc_date<='] = $search_date_end;
-		$param .= '&search_date_endmonth='.GETPOST('search_date_endmonth', 'int').'&search_date_endday='.GETPOST('search_date_endday', 'int').'&search_date_endyear='.GETPOST('search_date_endyear', 'int');
+		$param .= '&search_date_endmonth='.$search_date_endmonth.'&search_date_endday='.$search_date_endday.'&search_date_endyear='.$search_date_endyear;
 	}
 	if (!empty($search_doc_date)) {
 		$filter['t.doc_date'] = $search_doc_date;
@@ -242,7 +263,7 @@ if ($action == 'delbookkeeping' && $user->rights->accounting->mouvements->suppri
 		}
 
 		// Make a redirect to avoid to launch the delete later after a back button
-		header("Location: listbyaccount.php".($param ? '?'.$param : ''));
+		header("Location: ".$_SERVER["PHP_SELF"].($param ? '?'.$param : ''));
 		exit;
 	}
 }
@@ -267,7 +288,7 @@ if ($action == 'delbookkeepingyearconfirm' && $user->rights->accounting->mouveme
 		}
 
 		// Make a redirect to avoid to launch the delete later after a back button
-		header("Location: listbyaccount.php".($param ? '?'.$param : ''));
+		header("Location: ".$_SERVER["PHP_SELF"].($param ? '?'.$param : ''));
 		exit;
 	} else {
 		setEventMessages("NoRecordDeleted", null, 'warnings');
@@ -284,7 +305,7 @@ if ($action == 'delmouvconfirm' && $user->rights->accounting->mouvements->suppri
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		}
 
-		header("Location: listbyaccount.php?noreset=1".($param ? '&'.$param : ''));
+		header("Location: ".$_SERVER["PHP_SELF"]."?noreset=1".($param ? '&'.$param : ''));
 		exit;
 	}
 }
@@ -302,7 +323,6 @@ $form = new Form($db);
 $title_page = $langs->trans("Operations").' - '.$langs->trans("VueByAccountAccounting").' ('.$langs->trans("Bookkeeping").')';
 
 llxHeader('', $title_page);
-
 
 // List
 $nbtotalofrecords = '';
@@ -380,10 +400,8 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	$newcardbutton = dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param);
-	$newcardbutton .= dolGetButtonTitle($langs->trans('VueByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
-
-	$newcardbutton .= ' &nbsp; ';
-
+	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbysubaccount.php', '', 1, array('morecss' => 'marginleftonly'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=create');
 }
 
@@ -524,8 +542,15 @@ while ($i < min($num, $limit))
 
 	// Is it a break ?
 	if ($accountg != $displayed_account_number || !isset($displayed_account_number)) {
-		$colspan = $totalarray['nbfield'] - 3;
-		$colspanend = $totalarray['nbfield'] - 7;
+        if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING) || empty($arrayfields['t.lettering_code']['checked'])) {
+            $colnumber = 3;
+            $colnumberend = 7;
+        } else {
+            $colnumber = 4;
+            $colnumberend = 7;
+        }
+        $colspan = $totalarray['nbfield'] - $colnumber;
+        $colspanend = $totalarray['nbfield'] - $colnumberend;
 		// Show a subtotal by accounting account
 		if (isset($displayed_account_number)) {
 			print '<tr class="liste_total">';
@@ -646,11 +671,11 @@ while ($i < min($num, $limit))
 			// Other type
 		}
 
-		print '<td class="nowrap">';
+		print '<td class="maxwidth400">';
 
 		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 		// Picto + Ref
-		print '<td class="nobordernopadding nowrap">';
+		print '<td class="nobordernopadding">';
 
 		if ($line->doc_type == 'customer_invoice' || $line->doc_type == 'supplier_invoice' || $line->doc_type == 'expense_report')
 		{
@@ -725,8 +750,15 @@ while ($i < min($num, $limit))
 }
 
 // Show sub-total of last shown account
-$colspan = $totalarray['nbfield'] - 3;
-$colspanend = $totalarray['nbfield'] - 8;
+if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING) || empty($arrayfields['t.lettering_code']['checked'])) {
+    $colnumber = 3;
+    $colnumberend = 7;
+} else {
+    $colnumber = 4;
+    $colnumberend = 7;
+}
+$colspan = $totalarray['nbfield'] - $colnumber;
+$colspanend = $totalarray['nbfield'] - $colnumberend;
 print '<tr class="liste_total">';
 print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("TotalForAccount").' '.$accountg.':</td>';
 print '<td class="nowrap right">'.price($sous_total_debit).'</td>';

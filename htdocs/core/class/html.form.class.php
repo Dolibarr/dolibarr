@@ -1914,7 +1914,7 @@ class Form
 			$out .= '});';
 			$out .= '})</script>';
 			$out .= $this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
-			$out .= ' <input type="submit" disabled class="button valignmiddle" id="'.$action.'assignedtouser" name="'.$action.'assignedtouser" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
+			$out .= ' <input type="submit" disabled class="button valignmiddle smallpaddingimp" id="'.$action.'assignedtouser" name="'.$action.'assignedtouser" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
 			$out .= '<br>';
 		}
 
@@ -1995,7 +1995,7 @@ class Form
 			if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
 				$urloption .= '&socid='.$socid;
 			}
-			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
+			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
 
 			if (!empty($conf->variants->enabled)) {
 				$out .= '
@@ -3611,15 +3611,14 @@ class Form
 	 *
 	 *  @param	string	$selected       Id pre-selectionne
 	 *  @param  string	$htmlname       Nom de la zone select
+	 *  @param	string	$addjscombo		Add js combo
 	 * 	@return	string					Code of HTML select to chose tax or not
 	 */
-	public function selectPriceBaseType($selected = '', $htmlname = 'price_base_type')
+	public function selectPriceBaseType($selected = '', $htmlname = 'price_base_type', $addjscombo = 0)
 	{
 		global $langs;
 
-		$return = '';
-
-		$return .= '<select class="flat maxwidth75" id="select_'.$htmlname.'" name="'.$htmlname.'">';
+		$return = '<select class="flat maxwidth100" id="select_'.$htmlname.'" name="'.$htmlname.'">';
 		$options = array(
 			'HT'=>$langs->trans("HT"),
 			'TTC'=>$langs->trans("TTC")
@@ -3635,6 +3634,7 @@ class Form
 			$return .= '</option>';
 		}
 		$return .= '</select>';
+		if ($addjscombo) $return .= ajax_combobox('select_'.$htmlname);
 
 		return $return;
 	}
@@ -5928,18 +5928,31 @@ class Form
 	/**
 	 * selectTypeDuration
 	 *
-	 * @param   string   $prefix     Prefix
-	 * @param   string   $selected   Selected type
-	 * @return  string               HTML select string
+	 * @param   string   	$prefix     	Prefix
+	 * @param   string   	$selected   	Selected duration type
+	 * @param	array		$excludetypes	Array of duration types to exclude. Example array('y', 'm')
+	 * @return  string      	         	HTML select string
 	 */
-	public function selectTypeDuration($prefix, $selected = 'i')
+	public function selectTypeDuration($prefix, $selected = 'i', $excludetypes = array())
 	{
 		global $langs;
 
-		$TDurationTypes = array('y'=>$langs->trans('Years'), 'm'=>$langs->trans('Month'), 'w'=>$langs->trans('Weeks'), 'd'=>$langs->trans('Days'), 'h'=>$langs->trans('Hours'), 'i'=>$langs->trans('Minutes'));
+		$TDurationTypes = array(
+			'y'=>$langs->trans('Years'),
+			'm'=>$langs->trans('Month'),
+			'w'=>$langs->trans('Weeks'),
+			'd'=>$langs->trans('Days'),
+			'h'=>$langs->trans('Hours'),
+			'i'=>$langs->trans('Minutes')
+		);
+
+		// Removed undesired duration types
+		foreach ($excludetypes as $value) {
+			unset($TDurationTypes[$value]);
+		}
 
 		$retstring = '<select class="flat" id="select_'.$prefix.'type_duration" name="'.$prefix.'type_duration">';
-		foreach ($TDurationTypes as $key=>$typeduration) {
+		foreach ($TDurationTypes as $key => $typeduration) {
 			$retstring .= '<option value="'.$key.'"';
 			if ($key == $selected) {
 				$retstring .= " selected";
@@ -5947,6 +5960,8 @@ class Form
 			$retstring .= ">".$typeduration."</option>";
 		}
 		$retstring .= "</select>";
+
+		$retstring .= ajax_combobox('select_'.$prefix.'type_duration');
 
 		return $retstring;
 	}
@@ -6182,6 +6197,7 @@ class Form
 			$tmpfieldstoshow = '';
 			foreach ($objecttmp->fields as $key => $val)
 			{
+				if (!dol_eval($val['enabled'], 1, 1)) continue;
 				if ($val['showoncombobox']) $tmpfieldstoshow .= ($tmpfieldstoshow ? ',' : '').'t.'.$key;
 			}
 			if ($tmpfieldstoshow) $fieldstoshow = $tmpfieldstoshow;
@@ -6243,12 +6259,6 @@ class Form
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			if (!$forcecombo)
-			{
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlname, null, $conf->global->$confkeyforautocompletemode);
-			}
-
 			// Construct $out and $outarray
 			$out .= '<select id="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled="disabled"' : '').($moreparams ? ' '.$moreparams : '').' name="'.$htmlname.'">'."\n";
 
@@ -6279,8 +6289,7 @@ class Form
 					}
 					if (empty($outputmode))
 					{
-						if ($preselectedvalue > 0 && $preselectedvalue == $obj->rowid)
-						{
+						if ($preselectedvalue > 0 && $preselectedvalue == $obj->rowid) {
 							$out .= '<option value="'.$obj->rowid.'" selected>'.$label.'</option>';
 						} else {
 							$out .= '<option value="'.$obj->rowid.'">'.$label.'</option>';
@@ -6295,6 +6304,11 @@ class Form
 			}
 
 			$out .= '</select>'."\n";
+
+			if (!$forcecombo) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+				$out .= ajax_combobox($htmlname, null, $conf->global->$confkeyforautocompletemode);
+			}
 		} else {
 			dol_print_error($this->db);
 		}
@@ -6757,7 +6771,7 @@ class Form
 					{
 						$out .= ' selected';
 					}
-					$out .= ' data-html="'.$newval.'"';
+					$out .= ' data-html="'.dol_escape_htmltag($newval).'"';
 					$out .= '>';
 					$out .= dol_htmlentitiesbr($newval);
 					$out .= '</option>'."\n";
@@ -7560,41 +7574,37 @@ class Form
 		if ($modulepart == 'societe')
 		{
 			$dir = $conf->societe->multidir_output[$entity];
-			if (!empty($object->logo))
-			{
-				if ((string) $imagesize == 'mini') $file = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'/logos/'.getImageFileNameForSize($object->logo, '_mini'); // getImageFileNameForSize include the thumbs
-				elseif ((string) $imagesize == 'small') $file = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'/logos/'.getImageFileNameForSize($object->logo, '_small');
-				else $file = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'/logos/'.$object->logo;
-				$originalfile = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'/logos/'.$object->logo;
+			if (!empty($object->logo)) {
+				if ((string) $imagesize == 'mini') $file = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'logos/'.getImageFileNameForSize($object->logo, '_mini'); // getImageFileNameForSize include the thumbs
+				elseif ((string) $imagesize == 'small') $file = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'logos/'.getImageFileNameForSize($object->logo, '_small');
+				else $file = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'logos/'.$object->logo;
+				$originalfile = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'logos/'.$object->logo;
 			}
 			$email = $object->email;
-		} elseif ($modulepart == 'contact')
-		{
+		} elseif ($modulepart == 'contact')	{
 			$dir = $conf->societe->multidir_output[$entity].'/contact';
 			if (!empty($object->photo))
 			{
-				if ((string) $imagesize == 'mini') $file = get_exdir(0, 0, 0, 0, $object, 'contact').'/photos/'.getImageFileNameForSize($object->photo, '_mini');
-				elseif ((string) $imagesize == 'small') $file = get_exdir(0, 0, 0, 0, $object, 'contact').'/photos/'.getImageFileNameForSize($object->photo, '_small');
-				else $file = get_exdir(0, 0, 0, 0, $object, 'contact').'/photos/'.$object->photo;
-				$originalfile = get_exdir(0, 0, 0, 0, $object, 'contact').'/photos/'.$object->photo;
+				if ((string) $imagesize == 'mini') $file = get_exdir(0, 0, 0, 0, $object, 'contact').'photos/'.getImageFileNameForSize($object->photo, '_mini');
+				elseif ((string) $imagesize == 'small') $file = get_exdir(0, 0, 0, 0, $object, 'contact').'photos/'.getImageFileNameForSize($object->photo, '_small');
+				else $file = get_exdir(0, 0, 0, 0, $object, 'contact').'photos/'.$object->photo;
+				$originalfile = get_exdir(0, 0, 0, 0, $object, 'contact').'photos/'.$object->photo;
 			}
 			$email = $object->email;
 			$capture = 'user';
-		} elseif ($modulepart == 'userphoto')
-		{
+		} elseif ($modulepart == 'userphoto') {
 			$dir = $conf->user->dir_output;
 			if (!empty($object->photo))
 			{
-				if ((string) $imagesize == 'mini') $file = get_exdir(0, 0, 0, 0, $object, 'user').$object->id.'/'.getImageFileNameForSize($object->photo, '_mini');
-				elseif ((string) $imagesize == 'small') $file = get_exdir(0, 0, 0, 0, $object, 'user').$object->id.'/'.getImageFileNameForSize($object->photo, '_small');
-				else $file = get_exdir(0, 0, 0, 0, $object, 'user').'/'.$object->id.'/'.$object->photo;
-				$originalfile = get_exdir(0, 0, 0, 0, $object, 'user').'/'.$object->id.'/'.$object->photo;
+				if ((string) $imagesize == 'mini') $file = get_exdir(0, 0, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_mini');
+				elseif ((string) $imagesize == 'small') $file = get_exdir(0, 0, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_small');
+				else $file = get_exdir(0, 0, 0, 0, $object, 'user').$object->photo;
+				$originalfile = get_exdir(0, 0, 0, 0, $object, 'user').$object->photo;
 			}
 			if (!empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile = $object->id.".jpg"; // For backward compatibility
 			$email = $object->email;
 			$capture = 'user';
-		} elseif ($modulepart == 'memberphoto')
-		{
+		} elseif ($modulepart == 'memberphoto')	{
 			$dir = $conf->adherent->dir_output;
 			if (!empty($object->photo))
 			{
@@ -8234,12 +8244,13 @@ class Form
 	/**
 	 * selectModelMail
 	 *
-	 * @param   string   $prefix     Prefix
-	 * @param   string   $modelType  Model type
-	 * @param	int		 $default	 1=Show also Default mail template
-	 * @return  string               HTML select string
+	 * @param   string   $prefix     	Prefix
+	 * @param   string   $modelType  	Model type
+	 * @param	int		 $default	 	1=Show also Default mail template
+	 * @param	int		 $addjscombo	Add js combobox
+	 * @return  string               	HTML select string
 	 */
-	public function selectModelMail($prefix, $modelType = '', $default = 0)
+	public function selectModelMail($prefix, $modelType = '', $default = 0, $addjscombo = 0)
 	{
 		global $langs, $db, $user;
 
@@ -8266,6 +8277,8 @@ class Form
 		}
 
 		$retstring .= "</select>";
+
+		if ($addjscombo) $retstring .= ajax_combobox('select_'.$prefix.'model_mail');
 
 		return $retstring;
 	}

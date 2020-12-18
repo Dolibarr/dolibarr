@@ -924,30 +924,33 @@ function purgeSessions($mysessionid)
 	dol_syslog('admin.lib:purgeSessions mysessionid='.$mysessionid.' sessPath='.$sessPath);
 
 	$error = 0;
-	$dh = @opendir(dol_osencode($sessPath));
-	while (($file = @readdir($dh)) !== false) {
-		if ($file != "." && $file != "..") {
-			$fullpath = $sessPath.$file;
-			if (!@is_dir($fullpath)) {
-				$sessValues = file_get_contents($fullpath); // get raw session data
 
-				if (preg_match('/dol_login/i', $sessValues) && // limit to dolibarr session
-				preg_match('/dol_entity\|s:([0-9]+):"('.$conf->entity.')"/i', $sessValues) && // limit to current entity
-				preg_match('/dol_company\|s:([0-9]+):"('.$conf->global->MAIN_INFO_SOCIETE_NOM.')"/i', $sessValues)) { // limit to company name
-					$tmp = explode('_', $file);
-					$idsess = $tmp[1];
-					// We remove session if it's not ourself
-					if ($idsess != $mysessionid) {
-						$res = @unlink($fullpath);
-						if (!$res) {
-							$error++;
+	$dh = @opendir(dol_osencode($sessPath));
+	if ($dh) {
+		while (($file = @readdir($dh)) !== false) {
+			if ($file != "." && $file != "..") {
+				$fullpath = $sessPath.$file;
+				if (!@is_dir($fullpath)) {
+					$sessValues = file_get_contents($fullpath); // get raw session data
+
+					if (preg_match('/dol_login/i', $sessValues) && // limit to dolibarr session
+					preg_match('/dol_entity\|s:([0-9]+):"('.$conf->entity.')"/i', $sessValues) && // limit to current entity
+					preg_match('/dol_company\|s:([0-9]+):"('.$conf->global->MAIN_INFO_SOCIETE_NOM.')"/i', $sessValues)) { // limit to company name
+						$tmp = explode('_', $file);
+						$idsess = $tmp[1];
+						// We remove session if it's not ourself
+						if ($idsess != $mysessionid) {
+							$res = @unlink($fullpath);
+							if (!$res) {
+								$error++;
+							}
 						}
 					}
 				}
 			}
 		}
+		@closedir($dh);
 	}
-	@closedir($dh);
 
 	if (!$error) {
 		return 1;
@@ -1814,6 +1817,11 @@ function company_admin_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT."/admin/accountant.php";
 	$head[$h][1] = $langs->trans("Accountant");
 	$head[$h][2] = 'accountant';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/company_socialnetworks.php";
+	$head[$h][1] = $langs->trans("SocialNetworksInformation");
+	$head[$h][2] = 'socialnetworks';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'mycompany_admin', 'add');

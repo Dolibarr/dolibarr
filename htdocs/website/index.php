@@ -598,16 +598,13 @@ if ($action == 'addcontainer')
 	$db->begin();
 
 	$objectpage->fk_website = $object->id;
-	if (GETPOSTISSET('fetchexternalurl'))
+
+	if (GETPOSTISSET('fetchexternalurl'))	// Fetch from external url
 	{
 		$urltograb = GETPOST('externalurl', 'alpha');
 		$grabimages = GETPOST('grabimages', 'alpha');
 		$grabimagesinto = GETPOST('grabimagesinto', 'alpha');
-		//var_dump($grabimages);exit;
-	}
 
-	if (GETPOSTISSET('fetchexternalurl'))
-	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
 		if (empty($urltograb))
@@ -749,6 +746,7 @@ if ($action == 'addcontainer')
 				// Now loop to fetch JS
 				$tmp = $objectpage->htmlheader;
 
+				// We grab files found into <script> tags
 				preg_match_all('/<script([^\.>]+)src=["\']([^"\'>]+)["\']([^>]*)><\/script>/i', $objectpage->htmlheader, $regs);
 				$errorforsubresource = 0;
 				foreach ($regs[0] as $key => $val)
@@ -814,7 +812,7 @@ if ($action == 'addcontainer')
 				$objectpage->htmlheader = trim($tmp)."\n";
 
 
-				// Now loop to fetch CSS
+				// Now we grab CSS found into <link> tags
 				$pagecsscontent = "\n".'<style>'."\n";
 
 				preg_match_all('/<link([^\.>]+)href=["\']([^"\'>]+\.css[^"\'>]*)["\']([^>]*)>/i', $objectpage->htmlheader, $regs);
@@ -914,7 +912,7 @@ if ($action == 'addcontainer')
 				$objectpage->htmlheader .= trim($pagecsscontent)."\n";
 
 
-				// Now loop to fetch all images into page
+				// Now we have to fetch all images into page
 				$tmp = $objectpage->content;
 
 				getAllImages($object, $objectpage, $urltograb, $tmp, $action, 1, $grabimages, $grabimagesinto);
@@ -1049,6 +1047,7 @@ if ($action == 'addcontainer')
 			}
 		}
 	}
+
 	if (!$error)
 	{
 		$db->commit();
@@ -1073,6 +1072,17 @@ if ($action == 'addcontainer')
 			dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
 			dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure dir for website exists
 			$result = symlink($pathtomedias, $pathtomediasinwebsite);
+		}
+
+		// Now generate the master.inc.php page if it does not exists yet
+		if (!dol_is_file($filemaster))
+		{
+			$result = dolSaveMasterFile($filemaster);
+			if (!$result)
+			{
+				$error++;
+				setEventMessages('Failed to write file '.$filemaster, null, 'errors');
+			}
 		}
 
 		if (!dol_is_file($filehtmlheader))
@@ -2453,7 +2463,8 @@ if (!GETPOST('hide_websitemenu'))
 			$htmltext .= $langs->trans("SetHereVirtualHost", $dataroot);
 			$htmltext .= '<br>';
 			$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
-			$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias');
+			$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), '{s1}');
+			$htmltext = str_replace('{s1}', DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias', $htmltext);
 
 			$examplewithapache = '#php_admin_value open_basedir /tmp/:'.DOL_DOCUMENT_ROOT.':'.DOL_DATA_ROOT.':/dev/urandom'."\n";
 			$examplewithapache .= '<Directory "'.DOL_DOCUMENT_ROOT.'">'."\n";
@@ -2518,27 +2529,33 @@ if (!GETPOST('hide_websitemenu'))
 
 		if ($action != 'addcontainer')
 		{
-			print '<span class="websiteselection">';
-			print $formwebsite->selectContainer($website, 'pageid', $pageid, 0, $action, 'maxwidth200onsmartphone');
-			print '</span>';
-
-			$urltocreatenewpage = $_SERVER["PHP_SEFL"].'?action=createcontainer&website='.$website->ref;
-
 			$out = '';
-			if (!empty($conf->use_javascript_ajax)) {
-				$out .= '<script language="javascript">';
-				$out .= 'jQuery(document).ready(function () {';
-				$out .= '	jQuery("#pageid").change(function () {';
-				$out .= '   	console.log("We select "+jQuery("#pageid option:selected").val());';
-				$out .= '   	if (jQuery("#pgeid option:selected").val() == \'-2\') {';
-				$out .= '  			window.location.href = "'.$urltocreatenewpage.'";';
-				$out .= '		} else {';
-				$out .= '  			window.location.href = "'.$_SERVER["PHP_SEFL"].'?website='.$website->ref.'&pageid="+jQuery("#pageid option:selected").val();';
-				$out .= '       }';
-				$out .= '   });';
-				$out .= '});';
-				$out .= '</script>';
+
+			$s = $formwebsite->selectContainer($website, 'pageid', $pageid, 0, $action, 'maxwidth200onsmartphone');
+
+			if ($formwebsite->num > 0) {
+				$out .= '<span class="websiteselection">';
+				$out .= $s;
+				$out .= '</span>';
+
+				$urltocreatenewpage = $_SERVER["PHP_SEFL"].'?action=createcontainer&website='.$website->ref;
+
+				if (!empty($conf->use_javascript_ajax)) {
+					$out .= '<script language="javascript">';
+					$out .= 'jQuery(document).ready(function () {';
+					$out .= '	jQuery("#pageid").change(function () {';
+					$out .= '   	console.log("We select "+jQuery("#pageid option:selected").val());';
+					$out .= '   	if (jQuery("#pgeid option:selected").val() == \'-2\') {';
+					$out .= '  			window.location.href = "'.$urltocreatenewpage.'";';
+					$out .= '		} else {';
+					$out .= '  			window.location.href = "'.$_SERVER["PHP_SEFL"].'?website='.$website->ref.'&pageid="+jQuery("#pageid option:selected").val();';
+					$out .= '       }';
+					$out .= '   });';
+					$out .= '});';
+					$out .= '</script>';
+				}
 			}
+
 			print $out;
 		}
 		else {
@@ -2579,9 +2596,9 @@ if (!GETPOST('hide_websitemenu'))
 		}
 
 		if ($pagepreviousid) print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?website='.urlencode($object->ref).'&pageid='.$pagepreviousid.'&action='.$action.'">'.img_previous($langs->trans("PreviousContainer")).'</a>';
-		else print '<span class="valignmiddle opacitymedium">'.img_previous($langs->trans("PreviousContainer")).'</span>';
+		else print '<span class="valignmiddle opacitymedium">'.img_previous($langs->trans("Previous")).'</span>';
 		if ($pagenextid) print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?website='.urlencode($object->ref).'&pageid='.$pagenextid.'&action='.$action.'">'.img_next($langs->trans("NextContainer")).'</a>';
-		else print '<span class="valignmiddle opacitymedium">'.img_next($langs->trans("NextContainer")).'</span>';
+		else print '<span class="valignmiddle opacitymedium">'.img_next($langs->trans("Next")).'</span>';
 
 		$websitepage = new WebSitePage($db);
 		if ($pageid > 0 && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone'))
@@ -2777,7 +2794,8 @@ if (!GETPOST('hide_websitemenu'))
 
 			$htmltext = $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $realpage, $dataroot);
 			$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
-			$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias');
+			$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), '{s1}');
+			$htmltext = str_replace('{s1}', DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias', $htmltext);
 
 			print '<div class="websiteinputurl inline-block paddingright">';
 			print '<a class="websitebuttonsitepreview inline-block" id="previewpage" href="'.$realpage.'&nocache='.dol_now().'" class="button" target="tab'.$websitekey.'" alt="'.dol_escape_htmltag($htmltext).'">';
@@ -3055,8 +3073,9 @@ if ($action == 'editcss')
 	$htmltext = $langs->trans("SetHereVirtualHost", DOL_DATA_ROOT.'/website/{s1}'.$websitekey.'{s2}');
 	$htmltext = str_replace(array('{s1}', '{s2}'), array('<i>', '</i>'), $htmltext);
 	$htmltext .= '<br>';
-	$htmltext .= '<br>'.$langs->transnoentitiesnoconv("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
-	$htmltext .= '<br>'.$langs->transnoentitiesnoconv("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias');
+	$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
+	$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), '{s1}');
+	$htmltext = str_replace('{s1}', DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias', $htmltext);
 
 	print $form->textwithpicto($langs->trans('Virtualhost'), $htmltext, 1, 'help', '', 0, 2, 'virtualhosttooltip');
 	print '</td><td>';
@@ -3222,7 +3241,8 @@ if ($action == 'createsite')
 	$htmltext = $langs->trans("SetHereVirtualHost", DOL_DATA_ROOT.'/website/<i>websiteref</i>');
 	$htmltext .= '<br>';
 	$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
-	$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias');
+	$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), '{s1}');
+	$htmltext = str_replace('{s1}', DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias', $htmltext);
 
 	print $form->textwithpicto($langs->trans('Virtualhost'), $htmltext, 1, 'help', '', 0, 2, 'virtualhosttooltip');
 	print '</td><td>';

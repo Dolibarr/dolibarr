@@ -106,7 +106,7 @@ $morehtml .= '<SELECT name="search_project_user">';
 $morehtml .= '<option name="all" value="0"'.($mine ? '' : ' selected').'>'.$titleall.'</option>';
 $morehtml .= '<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id) ? ' selected' : '').'>'.$langs->trans("ProjectsImContactFor").'</option>';
 $morehtml .= '</SELECT>';
-$morehtml .= '<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
+$morehtml .= '<input type="submit" class="button smallpaddingimp" name="refresh" value="'.$langs->trans("Refresh").'">';
 $morehtml .= '</form>';
 
 if ($mine) $tooltiphelp = $langs->trans("MyProjectsDesc");
@@ -213,8 +213,12 @@ print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppst
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Latest modified projects
-$sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut as status, p.tms as datem,";
-$sql .= " s.rowid as socid, s.nom as name, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.canvas, s.status as thirdpartystatus";
+$sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut as status, p.tms as datem";
+$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+$sql .= ", s.code_client, s.code_compta, s.client";
+$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
+$sql .= ", s.logo, s.email, s.entity";
+$sql .= ", s.canvas, s.status as thirdpartystatus";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql .= " WHERE p.entity IN (".getEntity('project').")";
@@ -229,13 +233,14 @@ if ($resql)
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="4">'.$langs->trans("LatestModifiedProjects", $max).'</th></tr>';
+	print '<th colspan="4">'.$langs->trans("LatestModifiedProjects", $max).'</th>';
+	print '</tr>';
 
 	$num = $db->num_rows($resql);
+
 	if ($num)
 	{
 		$i = 0;
-		$var = true;
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
@@ -253,11 +258,16 @@ if ($resql)
 
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->name;
-			$companystatic->email = $obj->email;
+			//$companystatic->name_alias = $obj->name_alias;
+			//$companystatic->code_client = $obj->code_client;
+			$companystatic->code_compta = $obj->code_compta;
 			$companystatic->client = $obj->client;
+			//$companystatic->code_fournisseur = $obj->code_fournisseur;
+			$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 			$companystatic->fournisseur = $obj->fournisseur;
-			$companystatic->code_client = $obj->code_client;
-			$companystatic->code_fournisseur = $obj->code_fournisseur;
+			$companystatic->logo = $obj->logo;
+			$companystatic->email = $obj->email;
+			$companystatic->entity = $obj->entity;
 			$companystatic->canvas = $obj->canvas;
 			$companystatic->status = $obj->thirdpartystatus;
 
@@ -290,24 +300,22 @@ if ($resql)
 			print '</tr>';
 			$i++;
 		}
+	} else {
+		print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
-	print "</table></div><br>";
+	print "</table></div>";
 } else dol_print_error($db);
 
 
 $companystatic = new Societe($db); // We need a clean new object for next loop because current one has some properties set.
 
 
-// Open project per thirdparty
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print_liste_field_titre("OpenedProjectsByThirdparties", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder);
-print_liste_field_titre("NbOfProjects", $_SERVER["PHP_SELF"], "nb", "", "", '', $sortfield, $sortorder, 'right ');
-print "</tr>\n";
-
 $sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount)";
-$sql .= ", s.rowid as socid, s.nom as name, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.canvas, s.status";
+$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+$sql .= ", s.code_client, s.code_compta, s.client";
+$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
+$sql .= ", s.logo, s.email, s.entity";
+$sql .= ", s.canvas, s.status";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql .= " WHERE p.entity IN (".getEntity('project').")";
@@ -325,6 +333,18 @@ if ($resql)
 	$i = 0;
 	$othernb = 0;
 
+	if ($num) {
+		print '<br>';
+
+		// Open project per thirdparty
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
+		print '<tr class="liste_titre">';
+		print_liste_field_titre("OpenedProjectsByThirdparties", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder);
+		print_liste_field_titre("NbOfProjects", $_SERVER["PHP_SELF"], "nb", "", "", '', $sortfield, $sortorder, 'right ');
+		print "</tr>\n";
+	}
+
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
@@ -341,9 +361,17 @@ if ($resql)
 		{
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->name;
-			$companystatic->email = $obj->email;
+			$companystatic->name_alias = $obj->name_alias;
+			$companystatic->code_client = $obj->code_client;
+			$companystatic->code_compta = $obj->code_compta;
 			$companystatic->client = $obj->client;
+			$companystatic->code_fournisseur = $obj->code_fournisseur;
+			$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 			$companystatic->fournisseur = $obj->fournisseur;
+			$companystatic->logo = $obj->logo;
+			$companystatic->email = $obj->email;
+			$companystatic->entity = $obj->entity;
+			$companystatic->canvas = $obj->canvas;
 			$companystatic->status = $obj->status;
 
 			print $companystatic->getNomUrl(1);
@@ -370,12 +398,15 @@ if ($resql)
 		print "</tr>\n";
 	}
 
+	if ($num) {
+		print "</table>";
+		print '</div>';
+	}
+
 	$db->free($resql);
 } else {
 	dol_print_error($db);
 }
-print "</table>";
-print '</div>';
 
 if (empty($conf->global->PROJECT_HIDE_PROJECT_LIST_ON_PROJECT_AREA))
 {

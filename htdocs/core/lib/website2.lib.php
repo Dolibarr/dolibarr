@@ -442,7 +442,7 @@ function dolSaveReadme($file, $content)
 /**
  * 	Show list of themes. Show all thumbs of themes/skins
  *
- *	@param	Website		$website		Object website to load the tempalte into
+ *	@param	Website		$website		Object website to load the template into
  * 	@return	void
  */
 function showWebsiteTemplates(Website $website)

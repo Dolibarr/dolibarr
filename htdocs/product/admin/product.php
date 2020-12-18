@@ -127,8 +127,8 @@ if ($action == 'other')
 	$value = GETPOST('price_base_type', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUCT_PRICE_BASE_TYPE", $value, 'chaine', 0, '', $conf->entity);
 
-	$value = GETPOST('PRODUIT_SOUSPRODUITS', 'alpha');
-	$res = dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $value, 'chaine', 0, '', $conf->entity);
+	/*$value = GETPOST('PRODUIT_SOUSPRODUITS', 'alpha');
+	$res = dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $value, 'chaine', 0, '', $conf->entity);*/
 
 	$value = GETPOST('activate_viewProdDescInForm', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", $value, 'chaine', 0, '', $conf->entity);
@@ -312,7 +312,6 @@ print '  <td class="center" width="80">'.$langs->trans("Status").'</td>';
 print '  <td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
-$var = true;
 foreach ($dirproduct as $dirroot)
 {
 	$dir = dol_buildpath($dirroot, 0);
@@ -340,7 +339,6 @@ foreach ($dirproduct as $dirroot)
 				if ($modCodeProduct->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
 				if ($modCodeProduct->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-				$var = !$var;
 				print '<tr class="oddeven">'."\n";
 				print '<td width="140">'.$modCodeProduct->name.'</td>'."\n";
 				print '<td>'.$modCodeProduct->info($langs).'</td>'."\n";
@@ -537,16 +535,34 @@ print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
 print '</tr>'."\n";
 
 
-/*
- * Other parameters
- */
+// Enable kits (subproducts)
 
-$rowspan = 4;
-if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) $rowspan++;
-if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) $rowspan++;
-if (!empty($conf->global->MAIN_MULTILANGS)) $rowspan++;
-if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) $rowspan++;
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("AssociatedProductsAbility").'</td>';
+print '<td class="right">';
+print ajax_constantonoff("PRODUIT_SOUSPRODUITS", array(), $conf->entity, 0, 0, 1, 0);
+//print $form->selectyesno("PRODUIT_SOUSPRODUITS", $conf->global->PRODUIT_SOUSPRODUITS, 1);
+print '</td>';
+print '</tr>';
 
+
+// Enable variants
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("VariantsAbility").'</td>';
+print '<td class="right">';
+//print ajax_constantonoff("PRODUIT_SOUSPRODUITS", array(), $conf->entity, 0, 0, 1, 0);
+//print $form->selectyesno("PRODUIT_SOUSPRODUITS", $conf->global->PRODUIT_SOUSPRODUITS, 1);
+if (empty($conf->variants->enabled)) {
+	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabled", $langs->transnoentitiesnoconv("Module610Name")).'</span>';
+} else {
+	print yn(1).' <span class="opacitymedium">('.$langs->trans("ModuleIsEnabled", $langs->transnoentitiesnoconv("Module610Name")).')</span>';
+}
+print '</td>';
+print '</tr>';
+
+
+// Rule for price
 
 print '<tr class="oddeven">';
 if (empty($conf->multicompany->enabled))
@@ -575,24 +591,15 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 	print '</tr>';
 }
 
-//Default product price base type
+// Default product price base type
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DefaultPriceType").'</td>';
-print '<td width="60" class="right">';
+print '<td class="right">';
 print $form->selectPriceBaseType($conf->global->PRODUCT_PRICE_BASE_TYPE, "price_base_type");
 print '</td>';
 print '</tr>';
 
-// sousproduits activation/desactivation
-
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("AssociatedProductsAbility").'</td>';
-print '<td class="right">';
-print $form->selectyesno("PRODUIT_SOUSPRODUITS", $conf->global->PRODUIT_SOUSPRODUITS, 1);
-print '</td>';
-print '</tr>';
-
-// Utilisation formulaire Ajax sur choix produit
+// Use Ajax form to select a product
 
 print '<tr class="oddeven">';
 print '<td>'.$form->textwithpicto($langs->trans("UseSearchToSelectProduct"), $langs->trans('UseSearchToSelectProductTooltip'), 1).'</td>';

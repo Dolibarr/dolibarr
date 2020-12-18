@@ -265,7 +265,7 @@ class pdf_standard extends ModelePDFProduct
 				$tab_height = 130;
 				$tab_height_newpage = 150;
 
-				//
+				// Label of product
 				$pdf->SetFont('', 'B', $default_font_size);
 				$pdf->writeHTMLCell(190, 3, $this->marge_gauche, $tab_top, dol_htmlentitiesbr($object->label), 0, 1);
 				$nexY = $pdf->GetY();
@@ -276,29 +276,34 @@ class pdf_standard extends ModelePDFProduct
 
 				$nexY += 5;
 
+				$outputlangs->load("other");
 				if ($object->weight)
 				{
-					$pdf->writeHTMLCell(190, 3, $this->marge_gauche, $nexY, $langs->trans("Weight").': '.dol_htmlentitiesbr($object->weight), 0, 1);
+					$texttoshow = $langs->trans("Weight").': '.dol_htmlentitiesbr($object->weight);
+					if (isset($object->weight_units)) $texttoshow .= ' '.measuring_units_string($object->weight_units, 'weight', 0, 0, $outputlangs);
+					$pdf->writeHTMLCell(190, 3, $this->marge_gauche, $nexY, $texttoshow, 0, 1);
 					$nexY = $pdf->GetY();
 				}
 				if ($object->weight)
 				{
-					$pdf->writeHTMLCell(190, 3, $this->marge_gauche, $nexY, $langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").': '.($object->length != '' ? $object->length : '?').' x '.($object->width != '' ? $object->width : '?').' x '.($object->height != '' ? $object->height : '?'), 0, 1);
+					$texttoshow = $langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").': '.($object->length != '' ? $object->length : '?').' x '.($object->width != '' ? $object->width : '?').' x '.($object->height != '' ? $object->height : '?');
+					$pdf->writeHTMLCell(190, 3, $this->marge_gauche, $nexY, $texttoshow, 0, 1);
 					$nexY = $pdf->GetY();
 				}
 				if ($object->surface)
 				{
-					$pdf->writeHTMLCell(190, 3, $this->marge_gauche, $nexY, $langs->trans("Area").': '.dol_htmlentitiesbr($object->surface), 0, 1);
+					$texttoshow = $langs->trans("Area").': '.dol_htmlentitiesbr($object->surface);
+					$pdf->writeHTMLCell(190, 3, $this->marge_gauche, $nexY, $texttoshow, 0, 1);
 					$nexY = $pdf->GetY();
 				}
 				if ($object->volume)
 				{
-					$pdf->writeHTMLCell(190, 3, $this->marge_gauche, $nexY, $langs->trans("Volume").': '.dol_htmlentitiesbr($object->volume), 0, 1);
+					$texttoshow = $langs->trans("Volume").': '.dol_htmlentitiesbr($object->volume);
+					$pdf->writeHTMLCell(190, 3, $this->marge_gauche, $nexY, $texttoshow, 0, 1);
 	   				$nexY = $pdf->GetY();
 				}
 
-
-				// Affiche notes
+				// Show notes
 				// TODO There is no public note on product yet
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
 				if (!empty($conf->global->MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE))
@@ -465,8 +470,8 @@ class pdf_standard extends ModelePDFProduct
 					&& (! empty($localtax1_rate) || ! empty($localtax2_rate))) // and there is local tax
 					{
 						$localtaxtmp_array=getLocalTaxesFromRate($vatrate,0,$object->thirdparty,$mysoc);
-						$localtax1_type = $localtaxtmp_array[0];
-						$localtax2_type = $localtaxtmp_array[2];
+						$localtax1_type = isset($localtaxtmp_array[0]) ? $localtaxtmp_array[0] : '';
+						$localtax2_type = isset($localtaxtmp_array[2]) ? $localtaxtmp_array[2] : '';
 					}
 
 				    // retrieve global local tax

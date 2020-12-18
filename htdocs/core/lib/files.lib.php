@@ -2231,7 +2231,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	// Fix modulepart
 	if ($modulepart == 'users') $modulepart = 'user';
 
-	dol_syslog('modulepart='.$modulepart.' original_file='.$original_file.' entity='.$entity);
+	dol_syslog('dol_check_secure_access_document modulepart='.$modulepart.' original_file='.$original_file.' entity='.$entity);
 
 	// We define $accessallowed and $sqlprotectagainstexternals
 	$accessallowed = 0;
@@ -2260,6 +2260,11 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$accessallowed = ($user->admin && basename($original_file) == $original_file && preg_match('/^dolibarr.*\.log$/', basename($original_file)));
 		$original_file = $dolibarr_main_data_root.'/'.$original_file;
 	} // Wrapping for *.log files, like when used with url http://.../document.php?modulepart=logs&file=dolibarr.log
+	elseif ($modulepart == 'doctemplates' && !empty($dolibarr_main_data_root))
+	{
+		$accessallowed = $user->admin;
+		$original_file = $dolibarr_main_data_root.'/doctemplates/'.$original_file;
+	} // Wrapping for *.zip files, like when used with url http://.../document.php?modulepart=packages&file=module_myfile.zip
 	elseif ($modulepart == 'doctemplateswebsite' && !empty($dolibarr_main_data_root))
 	{
 		$accessallowed = ($fuser->rights->website->write && preg_match('/\.jpg$/i', basename($original_file)));

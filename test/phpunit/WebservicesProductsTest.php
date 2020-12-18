@@ -202,7 +202,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
             print "\n";
         }
 
-        print __METHOD__." result=".$result."\n";
+        print __METHOD__." count(result)=".(is_array($result) ? count($result) : '')."\n";
         $this->assertEquals('OK', $result['result']['result_code']);
 
         return $result['id'];
@@ -265,7 +265,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
             print "\n";
         }
 
-        print __METHOD__." result=".$result."\n";
+        print __METHOD__." count(result)=".count($result)."\n";
         $this->assertEquals('OK', $result['result']['result_code']);
 
         return $id;
@@ -328,7 +328,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
             print "\n";
         }
 
-        print __METHOD__." result=".$result."\n";
+        print __METHOD__." count(result)=".count($result)."\n";
         $this->assertEquals('OK', $result['result']['result_code']);
 
         return 0;

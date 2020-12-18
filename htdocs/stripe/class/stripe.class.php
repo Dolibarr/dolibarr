@@ -90,6 +90,7 @@ class Stripe extends CommonObject
 	{
 		global $conf;
 
+		$key = '';
 		if ($entity < 0) $entity = $conf->entity;
 
 		$sql = "SELECT tokenstring";
@@ -103,7 +104,8 @@ class Stripe extends CommonObject
 		}
 		$sql .= " AND fk_user IS NULL AND fk_adherent IS NULL";
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		dol_syslog(get_class($this)."::getStripeAccount", LOG_DEBUG);
+
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {

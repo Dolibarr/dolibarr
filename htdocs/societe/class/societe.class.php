@@ -59,7 +59,7 @@ class Societe extends CommonObject
 	public $table_element = 'societe';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent or for child tables
+	 * @var string Field with ID of parent key if this field has a parent or for child tables
 	 */
 	public $fk_element = 'fk_soc';
 
@@ -4356,6 +4356,31 @@ class Societe extends CommonObject
 		return $error ? -1 : 1;
 	}
 
+	/**
+	 *    Define third-party type of current company
+	 *
+	 *    @param	int		$typent_id	third party type rowid in llx_c_typent
+	 *    @return	int     			<0 if KO, >0 if OK
+	 */
+	public function setThirdpartyType($typent_id)
+	{
+		if ($this->id)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
+			$sql .= " SET fk_typent = ".($typent_id > 0 ? $typent_id : "null");
+			$sql .= " WHERE rowid = ".$this->id;
+			dol_syslog(get_class($this).'::setThirdpartyType', LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$this->typent_id = $typent_id;
+				$this->typent_code = dol_getIdFromCode($db, $this->$typent_id, 'c_typent', 'id', 'code');
+				return 1;
+			} else {
+				return -1;
+			}
+		} else return -1;
+	}
 
 	/**
 	 * Function used to replace a thirdparty id with another one.

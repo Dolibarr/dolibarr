@@ -631,26 +631,32 @@ if (empty($reshook))
 								$errors[] = "ErrorFilePartiallyUploaded";
 								break;
 						}
-					}
-					// Gestion du logo de la société
+	                }
 				} else {
-					if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') // TODO Sometime errors on duplicate on profid and not on code, so we must manage this case
+					if ($result == -3 && in_array('ErrorCustomerCodeAlreadyUsed', $object->errors))
+					{
+						$duplicate_code_error = true;
+						$object->code_client = null;
+					}
+
+					if ($result == -3 && in_array('ErrorSupplierCodeAlreadyUsed', $object->errors))
 					{
 						$duplicate_code_error = true;
 						$object->code_fournisseur = null;
-						$object->code_client = null;
+					}
+
+					if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {	// TODO Sometime errors on duplicate on profid and not on code, so we must manage this case
+						$duplicate_code_error = true;
 					}
 
 					setEventMessages($object->error, $object->errors, 'errors');
 				   	$error++;
 				}
 
-				if ($result >= 0 && !$error)
-				{
+				if ($result >= 0 && !$error) {
 					$db->commit();
 
-					if (!empty($backtopage))
-					{
+					if (!empty($backtopage)) {
 						$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
 						if (preg_match('/\?/', $backtopage)) $backtopage .= '&socid='.$object->id; // Old method
 			   			header("Location: ".$backtopage);
@@ -838,18 +844,25 @@ if (empty($reshook))
 		}
 	}
 
+	// Set third-party type
+	if ($action == 'set_thirdpartytype' && $user->rights->societe->creer)
+	{
+		$object->fetch($socid);
+		$result = $object->setThirdpartyType(GETPOST('typent_id', 'int'));
+	}
+
+	// Set incoterm
+	if ($action == 'set_incoterms' && $user->rights->societe->creer && !empty($conf->incoterm->enabled))
+	{
+		$object->fetch($socid);
+		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+	}
+
 	// Set parent company
 	if ($action == 'set_thirdparty' && $user->rights->societe->creer)
 	{
 		$object->fetch($socid);
-		$result = $object->set_parent(GETPOST('editparentcompany', 'int'));
-	}
-
-	// Set incoterm
-	if ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
-	{
-		$object->fetch($socid);
-		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+		$result = $object->set_parent(GETPOST('parent_id', 'int'));
 	}
 
 	// Set sales representatives
@@ -1252,7 +1265,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print '<td>'.$form->editfieldkey('Vendor', 'fournisseur', '', $object, 0, 'string', '', 1).'</td><td>';
 			$default = -1;
 			if (!empty($conf->global->THIRDPARTY_SUPPLIER_BY_DEFAULT)) $default = 1;
-			print $form->selectyesno("fournisseur", (GETPOST('fournisseur', 'int') != '' ? GETPOST('fournisseur', 'int') : (GETPOST("type", 'alpha') == '' ? $default : $object->fournisseur)), 1, 0, (GETPOST("type", 'alpha') == '' ? 1 : 0));
+			print $form->selectyesno("fournisseur", (GETPOST('fournisseur', 'int') != '' ? GETPOST('fournisseur', 'int') : (GETPOST("type", 'alpha') == '' ? $default : $object->fournisseur)), 1, 0, (GETPOST("type", 'alpha') == '' ? 1 : 0), 1);
 			print '</td>';
 
 
@@ -1280,7 +1293,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 		// Status
 		print '<tr><td>'.$form->editfieldkey('Status', 'status', '', $object, 0).'</td><td colspan="3">';
-		print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), 1);
+		print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), 1, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
 		print '</td></tr>';
 
 		// Barcode
@@ -1364,11 +1377,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 		// Prof ids
 		$i = 1; $j = 0; $NBCOLS = ($conf->browser->layout == 'phone' ? 1 : 2);
-		while ($i <= 6)
-		{
+		while ($i <= 6) {
 			$idprof = $langs->transcountry('ProfId'.$i, $object->country_code);
-			if ($idprof != '-')
-			{
+			if ($idprof != '-')	{
 				$key = 'idprof'.$i;
 
 				if (($j % $NBCOLS) == 0) print '<tr>';
@@ -1395,12 +1406,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '<td class="nowrap">';
 		$s = '<input type="text" class="flat maxwidthonsmartphone" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
 
-		if (empty($conf->global->MAIN_DISABLEVATCHECK) && isInEEC($object))
-		{
+		if (empty($conf->global->MAIN_DISABLEVATCHECK) && isInEEC($object)) {
 			$s .= ' ';
 
-			if (!empty($conf->use_javascript_ajax))
-			{
+			if (!empty($conf->use_javascript_ajax))	{
 				$widthpopup = 600;
 				if (!empty($conf->dol_use_jmobile)) $widthpopup = 350;
 				$heightpopup = 400;
@@ -1447,12 +1456,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		// Type - Workforce/Staff
 		print '<tr><td>'.$form->editfieldkey('ThirdPartyType', 'typent_id', '', $object, 0).'</td><td class="maxwidthonsmartphone"'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'."\n";
 		$sortparam = (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
-		print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, $sortparam);
+		print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, $sortparam, '', 1);
 		if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		print '</td>';
 		if ($conf->browser->layout == 'phone') print '</tr><tr>';
 		print '<td>'.$form->editfieldkey('Workforce', 'effectif_id', '', $object, 0).'</td><td class="maxwidthonsmartphone"'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>';
-		print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id);
+		print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id, 0, 0, 0, '', 0, 0, 0, '', '', 1);
 		if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		print '</td></tr>';
 
@@ -1499,7 +1508,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			//if ($object->prospect || $object->client || (! $object->fournisseur && ! empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER))) {
 			print '<tr class="visibleifcustomer"><td class="toptd">'.$form->editfieldkey('CustomersProspectsCategoriesShort', 'custcats', '', $object, 0).'</td><td colspan="3">';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
-			print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, null, null, "90%");
+			print img_picto('', 'category').$form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 			print "</td></tr>";
 			//}
 
@@ -1507,7 +1516,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			//if ($object->fournisseur) {
 			print '<tr class="visibleifsupplier"><td class="toptd">'.$form->editfieldkey('SuppliersCategoriesShort', 'suppcats', '', $object, 0).'</td><td colspan="3">';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, 'parent', null, null, 1);
-			print $form->multiselectarray('suppcats', $cate_arbo, GETPOST('suppcats', 'array'), null, null, null, null, "90%");
+			print img_picto('', 'category').$form->multiselectarray('suppcats', $cate_arbo, GETPOST('suppcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 			print "</td></tr>";
 			//}
 		}
@@ -1533,7 +1542,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'AND u.statut = 1', 0, '', '', 0, 1);
 		// Note: If user has no right to "see all thirdparties", we force selection of sale representative to him, so after creation he can see the record.
 		$selected = (count(GETPOST('commercial', 'array')) > 0 ? GETPOST('commercial', 'array') : (GETPOST('commercial', 'int') > 0 ? array(GETPOST('commercial', 'int')) : (empty($user->rights->societe->client->voir) ? array($user->id) : array())));
-		print $form->multiselectarray('commercial', $userlist, $selected, null, null, null, null, "90%");
+		print img_picto('', 'user').$form->multiselectarray('commercial', $userlist, $selected, null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print '</td></tr>';
 
 		// Ajout du logo
@@ -1561,8 +1570,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '</div>'."\n";
 
 		print '</form>'."\n";
-	} elseif ($action == 'edit')
-	{
+	} elseif ($action == 'edit') {
 		//print load_fiche_titre($langs->trans("EditCompany"));
 
 		if ($socid)
@@ -1851,7 +1859,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				print '<tr>';
 				print '<td>'.$form->editfieldkey('Supplier', 'fournisseur', '', $object, 0, 'string', '', 1).'</td>';
 				print '<td class="maxwidthonsmartphone">';
-				print $form->selectyesno("fournisseur", $object->fournisseur, 1);
+				print $form->selectyesno("fournisseur", $object->fournisseur, 1, false, 0, 1);
 				print '</td>';
 				if ($conf->browser->layout == 'phone') print '</tr><tr>';
 				print '<td>';
@@ -1892,7 +1900,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 			// Status
 			print '<tr><td>'.$form->editfieldkey('Status', 'status', '', $object, 0).'</td><td colspan="3">';
-			print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), $object->status);
+			print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), $object->status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
 			print '</td></tr>';
 
 			// Address
@@ -2069,12 +2077,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 			// Type - Workforce/Staff
 			print '<tr><td>'.$form->editfieldkey('ThirdPartyType', 'typent_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
-			print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT));
+			print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
 			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			print '</td>';
 			if ($conf->browser->layout == 'phone') print '</tr><tr>';
 			print '<td>'.$form->editfieldkey('Workforce', 'effectif_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
-			print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id);
+			print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id, 0, 0, 0, '', 0, 0, 0, '', '', 1);
 			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			print '</td></tr>';
 
@@ -2121,7 +2129,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				foreach ($cats as $cat) {
 					$arrayselected[] = $cat->id;
 				}
-				print $form->multiselectarray('custcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
+				print img_picto('', 'category').$form->multiselectarray('custcats', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 				print "</td></tr>";
 
 				// Supplier
@@ -2134,7 +2142,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				foreach ($cats as $cat) {
 					$arrayselected[] = $cat->id;
 				}
-				print $form->multiselectarray('suppcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
+				print img_picto('', 'category').$form->multiselectarray('suppcats', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 				print "</td></tr>";
 			}
 
@@ -2185,7 +2193,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'AND u.statut = 1', 0, '', '', 0, 1);
 			$arrayselected = GETPOST('commercial', 'array');
 			if (empty($arrayselected)) $arrayselected = $object->getSalesRepresentatives($user, 1);
-			print $form->multiselectarray('commercial', $userlist, $arrayselected, null, null, null, null, "90%");
+			print img_picto('', 'user').$form->multiselectarray('commercial', $userlist, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', '', 1);
 			print '</td></tr>';
 
 			print '</table>';
@@ -2460,18 +2468,24 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		} else {
 			print '&nbsp;';
 		}
-		print '</td>';
-		print '</tr>';
+		print '</td></tr>';
 
-		// Type + Workforce/Staff
-		$arr = $formcompany->typent_array(1);
-		$object->typent = $arr[$object->typent_code];
-		print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>'.$object->typent.'</td>';
+		// Third-Party Type
+		print '<tr><td>';
+		print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('ThirdPartyType').'</td>';
+		if ($action != 'editthirdpartytype' && $user->rights->societe->creer) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editthirdpartytype&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+		print '</tr></table>';
+		print '</td><td>';
+		$html_name = ($action == 'editthirdpartytype') ? 'typent_id' : 'none';
+		$formcompany->formThirdpartyType($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->typent_id, $html_name, '');
+		print '</td></tr>';
+
+		// Workforce/Staff
 		print '<tr><td>'.$langs->trans("Workforce").'</td><td>'.$object->effectif.'</td></tr>';
 
 		print '</table>';
-
 		print '</div>';
+
 		print '<div class="fichehalfright"><div class="ficheaddleft">';
 
 		print '<div class="underbanner clearboth"></div>';
@@ -2523,14 +2537,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		if (!empty($conf->incoterm->enabled))
 		{
 			print '<tr><td>';
-			print '<table width="100%" class="nobordernopadding"><tr><td>';
-			print $langs->trans('IncotermLabel');
-			print '<td><td class="right">';
-			if ($user->rights->societe->creer) print '<a class="editfielda" href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$object->id.'&action=editincoterm">'.img_edit('', 1).'</a>';
-			else print '&nbsp;';
-			print '</td></tr></table>';
-			print '</td>';
-			print '<td colspan="3">';
+			print '<table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans('IncotermLabel').'</td>';
+			if ($action != 'editincoterm' && $user->rights->societe->creer) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=editincoterm">'.img_edit('', 1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="3">';
 			if ($action != 'editincoterm')
 			{
 				print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
@@ -2558,20 +2568,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY))
 		{
 			print '<tr><td>';
-			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print $langs->trans('ParentCompany');
-			print '</td>';
-			if ($action != 'editparentcompany') print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editparentcompany&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('ParentCompany').'</td>';
+			if ($action != 'editparentcompany' && $user->rights->societe->creer) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editparentcompany&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td>';
-			if ($action == 'editparentcompany')
-			{
-				$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->parent, 'editparentcompany', 's.rowid <> '.$object->id, 1);
-			} else {
-				$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->parent, 'none', 's.rowid <> '.$object->id, 1);
-			}
-			print '</td>';
-			print '</tr>';
+			$html_name = ($action == 'editparentcompany') ? 'parent_id' : 'none';
+			$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->parent, $html_name, 's.rowid <> '.$object->id, 1);
+			print '</td></tr>';
 		}
 
 		// Sales representative
@@ -2592,8 +2595,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			} else {
 				print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
 			}
-			print '</td>';
-			print "</tr>\n";
+			print "</td></tr>\n";
 		}
 
 		// Webservices url/key

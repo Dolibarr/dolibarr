@@ -343,7 +343,7 @@ class Notify
 		$sql = '';
 
 		// Check notification per third party
-		if ($object->socid > 0)
+		if (!empty($object->socid) && $object->socid > 0)
 		{
 			$sql .= "SELECT 'tocontactid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.default_lang,";
 			$sql .= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
@@ -576,7 +576,7 @@ class Notify
 					$i++;
 				}
 			} else {
-				dol_syslog("No notification to thirdparty sent, nothing into notification setup for the thirdparty socid = ".$object->socid);
+				dol_syslog("No notification to thirdparty sent, nothing into notification setup for the thirdparty socid = ".(empty($object->socid) ? '' : $object->socid));
 			}
 		} else {
 	   		$error++;
