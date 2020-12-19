@@ -131,8 +131,12 @@ if ($action == 'presend' && GETPOST('trackid', 'alphanohtml') == 'testhtml')   $
 $form = new Form($db);
 
 $linuxlike = 1;
-if (preg_match('/^win/i', PHP_OS)) $linuxlike = 0;
-if (preg_match('/^mac/i', PHP_OS)) $linuxlike = 0;
+if (preg_match('/^win/i', PHP_OS)) {
+	$linuxlike = 0;
+}
+if (preg_match('/^mac/i', PHP_OS)) {
+	$linuxlike = 0;
+}
 
 if (empty($conf->global->MAIN_MAIL_SENDMODE)) $conf->global->MAIN_MAIL_SENDMODE = 'mail';
 $port = !empty($conf->global->MAIN_MAIL_SMTP_PORT) ? $conf->global->MAIN_MAIL_SMTP_PORT : ini_get('smtp_port');
