@@ -686,7 +686,10 @@ function OpenDrawer(){
 	console.log("OpenDrawer call ajax url http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print");
 	$.ajax({
 		type: "POST",
-		url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print',
+		<?php
+		if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) echo "url: '".$conf->global->TAKEPOS_PRINT_SERVER."/printer/drawer.php',";
+		else echo "url: 'http://".$conf->global->TAKEPOS_PRINT_SERVER.":8111/print',";
+		?>
 		data: "opendrawer"
 	});
 }
