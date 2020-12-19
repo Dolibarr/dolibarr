@@ -493,10 +493,8 @@ if ($mode == 'searchkey')
 		print '<tr class="oddeven"><td>'.$langcode.'</td><td>'.$key.'</td><td>';
 		print dol_escape_htmltag($val);
 		print '</td><td class="right nowraponall">';
-		if (!empty($newlangfileonly->tab_translate[$key]))
-		{
-			if ($val != $newlangfileonly->tab_translate[$key])
-			{
+		if (!empty($newlangfileonly->tab_translate[$key])) {
+			if ($val != $newlangfileonly->tab_translate[$key]) {
 				// retrieve rowid
 				$sql = "SELECT rowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."overwrite_trans";
@@ -508,16 +506,15 @@ if ($mode == 'searchkey')
 				{
 					$obj = $db->fetch_object($result);
 				}
-				print '<a class="editfielda reposition paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$conf->entity.'&action=edit">'.img_edit().'</a>';
+				print '<a class="editfielda reposition paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$conf->entity.'&action=edit&mode='.urlencode($mode).'">'.img_edit().'</a>';
 				print ' ';
-				print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$conf->entity.'&action=delete&token='.newToken().'">'.img_delete().'</a>';
+				print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$conf->entity.'&action=delete&mode='.urlencode($mode).'&token='.newToken().'">'.img_delete().'</a>';
 				print '&nbsp;&nbsp;';
 				$htmltext = $langs->trans("OriginalValueWas", '<i>'.$newlangfileonly->tab_translate[$key].'</i>');
 				print $form->textwithpicto('', $htmltext, 1, 'info');
-			} elseif (!empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
-			{
+			} elseif (!empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) {
 				//print $key.'-'.$val;
-				print '<a class="reposition paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=overwrite&amp;langcode='.$langcode.'&amp;transkey='.$key.'">'.img_edit_add($langs->trans("Overwrite")).'</a>';
+				print '<a class="reposition paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=overwrite&langcode='.urlencode($langcode).'&transkey='.urlencode($key).'">'.img_edit_add($langs->trans("Overwrite")).'</a>';
 			}
 
 			if (!empty($conf->global->MAIN_FEATURES_LEVEL))
