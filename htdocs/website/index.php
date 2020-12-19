@@ -940,12 +940,23 @@ if ($action == 'addcontainer')
 		$objectpage->keywords = str_replace(array('<', '>'), '', GETPOST('WEBSITE_KEYWORDS', 'alphanohtml'));
 		$objectpage->allowed_in_frames = GETPOST('WEBSITE_ALLOWED_IN_FRAMES', 'aZ09');
 		$objectpage->htmlheader = GETPOST('htmlheader', 'none');
-		$objectpage->fk_page = (GETPOST('pageidfortranslation', 'int') > 0 ? GETPOST('pageidfortranslation', 'int') : 0);
 		$objectpage->author_alias = GETPOST('WEBSITE_AUTHORALIAS', 'alphanohtml');
 		$objectpage->object_type = GETPOST('WEBSITE_OBJECTCLASS');
 		$objectpage->fk_object = GETPOST('WEBSITE_OBJECTID');
 		$substitutionarray = array();
 		$substitutionarray['__WEBSITE_CREATE_BY__'] = $user->getFullName($langs);
+
+		// Define id of page the new page is translation of
+		$pageidfortranslation = (GETPOST('pageidfortranslation', 'int') > 0 ? GETPOST('pageidfortranslation', 'int') : 0);
+		if ($pageidfortranslation > 0) {
+			// Check if the page we are translation of is alreayd a translation of a source page. if yes, we will use source id instead
+			$objectpagetmp = new WebsitePage($db);
+			$objectpagetmp->fetch($pageidfortranslation);
+			if ($objectpagetmp->fk_page > 0) {
+				$pageidfortranslation = $objectpagetmp->fk_page;
+			}
+		}
+		$objectpage->fk_page = $pageidfortranslation;
 
 		$sample = GETPOST('sample', 'alpha');
 		if (empty($sample)) $sample = 'empty';
