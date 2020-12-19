@@ -1605,18 +1605,55 @@ class Setup extends DolibarrApi
 	 *
 	 * @return  array|mixed Data without useless information
 	 *
+	 * @throws RestException 403 Forbidden
 	 */
 	public function getCompany()
 	{
 		global $mysoc;
+
+		if (!DolibarrApiAccess::$user->admin
+			&& (empty($conf->global->API_LOGINS_ALLOWED_FOR_GET_COMPANY) || DolibarrApiAccess::$user->login != $conf->global->API_LOGINS_ALLOWED_FOR_GET_COMPANY)) {
+				throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_COMPANY');
+		}
 
 		unset($mysoc->skype);
 		unset($mysoc->twitter);
 		unset($mysoc->facebook);
 		unset($mysoc->linkedin);
 
+		unset($mysoc->pays);
 		unset($mysoc->note);
+		unset($mysoc->nom);
+
 		unset($mysoc->lines);
+
+		unset($mysoc->effectif);
+		unset($mysoc->effectif_id);
+		unset($mysoc->forme_juridique_code);
+		unset($mysoc->forme_juridique);
+		unset($mysoc->mode_reglement_supplier_id);
+		unset($mysoc->cond_reglement_supplier_id);
+		unset($mysoc->transport_mode_supplier_id);
+		unset($mysoc->fk_prospectlevel);
+
+		unset($mysoc->total_ht);
+		unset($mysoc->total_tva);
+		unset($mysoc->total_localtax1);
+		unset($mysoc->total_localtax2);
+		unset($mysoc->total_ttc);
+
+		unset($mysoc->lastname);
+		unset($mysoc->firstname);
+		unset($mysoc->civility_id);
+
+		unset($mysoc->client);
+		unset($mysoc->prospect);
+		unset($mysoc->fournisseur);
+		unset($mysoc->contact_id);
+
+		unset($mysoc->fk_incoterms);
+		unset($mysoc->label_incoterms);
+		unset($mysoc->location_incoterms);
 
 		return $this->_cleanObjectDatas($mysoc);
 	}
@@ -1662,7 +1699,7 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET checkintegrity
 	 *
-	 * @throws RestException 403 Access refused
+	 * @throws RestException 403 Forbidden
 	 * @throws RestException 404 Signature file not found
 	 * @throws RestException 500 Technical error
 	 * @throws RestException 503 Forbidden
@@ -1974,7 +2011,7 @@ class Setup extends DolibarrApi
 	 *
 	 * @return  array|mixed Data without useless information
 	 *
-	 * @throws RestException 403 Access refused
+	 * @throws RestException 403 Forbidden
 	 */
 	public function getModules()
 	{
