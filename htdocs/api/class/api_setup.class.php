@@ -440,7 +440,7 @@ class Setup extends DolibarrApi
 	/**
 	 * Get country by Code.
 	 *
-	 * @param string    $code      Code of country
+	 * @param string    $code      Code of country (2 characters)
 	 * @param string    $lang      Code of the language the name of the
 	 *                             country must be translated to
 	 * @return array 			   Array of cleaned object properties
@@ -457,7 +457,7 @@ class Setup extends DolibarrApi
 	/**
 	 * Get country by Iso.
 	 *
-	 * @param string    $iso       ISO of country
+	 * @param string    $iso       ISO of country (3 characters)
 	 * @param string    $lang      Code of the language the name of the
 	 *                             country must be translated to
 	 * @return array 			   Array of cleaned object properties
@@ -498,8 +498,8 @@ class Setup extends DolibarrApi
 	 * Get country.
 	 *
 	 * @param int       $id        ID of country
-	 * @param string    $code      Code of country
-	 * @param string    $iso       ISO of country
+	 * @param string    $code      Code of country (2 characters)
+	 * @param string    $iso       ISO of country (3 characters)
 	 * @param string    $lang      Code of the language the name of the
 	 *                             country must be translated to
 	 * @return array 			   Array of cleaned object properties
@@ -511,10 +511,11 @@ class Setup extends DolibarrApi
 		$country = new Ccountry($this->db);
 
 		$result = $country->fetch($id, $code, $iso);
+
 		if ($result < 0) {
 			throw new RestException(503, 'Error when retrieving country : '.$country->error);
 		} elseif ($result == 0) {
-			throw new RestException(404, 'country not found');
+			throw new RestException(404, 'Country not found');
 		}
 
 		$this->translateLabel($country, $lang, 'Country');
