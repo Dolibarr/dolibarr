@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/cstate.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ccountry.class.php';
 
+
 /**
  * API class for dictionaries
  *
@@ -1617,6 +1618,24 @@ class Setup extends DolibarrApi
 		unset($mysoc->lines);
 
 		return $this->_cleanObjectDatas($mysoc);
+	}
+
+
+	/**
+	 * Get list of enabled modules
+	 *
+	 * @url	GET /modules
+	 *
+	 * @return  array|mixed Data without useless information
+	 *
+	 */
+	public function getModules()
+	{
+		global $conf;
+
+		sort($conf->modules);
+
+		return $this->_cleanObjectDatas($conf->modules);
 	}
 
 
