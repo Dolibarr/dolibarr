@@ -1306,6 +1306,7 @@ class Setup extends DolibarrApi
 	public function getListOfMeasuringUnits($sortfield = "rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
 	{
 		$list = array();
+
 		//TODO link with multicurrency module
 		$sql = "SELECT t.rowid, t.code, t.label,t.short_label, t.active, t.scale, t.unit_type";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_units as t";
@@ -1622,24 +1623,6 @@ class Setup extends DolibarrApi
 
 
 	/**
-	 * Get list of enabled modules
-	 *
-	 * @url	GET /modules
-	 *
-	 * @return  array|mixed Data without useless information
-	 *
-	 */
-	public function getModules()
-	{
-		global $conf;
-
-		sort($conf->modules);
-
-		return $this->_cleanObjectDatas($conf->modules);
-	}
-
-
-	/**
 	 * Get value of a setup variables
 	 *
 	 * Note that conf variables that stores security key or password hashes can't be loaded with API.
@@ -1679,6 +1662,7 @@ class Setup extends DolibarrApi
 	 *
 	 * @url     GET checkintegrity
 	 *
+	 * @throws RestException 403 Access refused
 	 * @throws RestException 404 Signature file not found
 	 * @throws RestException 500 Technical error
 	 * @throws RestException 503 Forbidden
@@ -1690,7 +1674,7 @@ class Setup extends DolibarrApi
 		if (!DolibarrApiAccess::$user->admin
 			&& (empty($conf->global->API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK) || DolibarrApiAccess::$user->login != $conf->global->API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK))
 		{
-			throw new RestException(503, 'Error API open to admin users only or to the users with logins defined into constant API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK');
+			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK');
 		}
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -1714,10 +1698,8 @@ class Setup extends DolibarrApi
 		if (empty($xmlremote) && !empty($conf->global->$param)) $xmlremote = $conf->global->$param;
 		if (empty($xmlremote)) $xmlremote = 'https://www.dolibarr.org/files/stable/signatures/filelist-'.DOL_VERSION.'.xml';
 
-		if ($target == 'local')
-		{
-			if (dol_is_file($xmlfile))
-			{
+		if ($target == 'local') {
+			if (dol_is_file($xmlfile)) {
 				$xml = simplexml_load_file($xmlfile);
 			} else {
 				throw new RestException(500, $langs->trans('XmlNotFound').': '.$xmlfile);
@@ -1726,8 +1708,7 @@ class Setup extends DolibarrApi
 			$xmlarray = getURLContent($xmlremote);
 
 			// Return array('content'=>response,'curl_error_no'=>errno,'curl_error_msg'=>errmsg...)
-			if (!$xmlarray['curl_error_no'] && $xmlarray['http_code'] != '400' && $xmlarray['http_code'] != '404')
-			{
+			if (!$xmlarray['curl_error_no'] && $xmlarray['http_code'] != '400' && $xmlarray['http_code'] != '404') {
 				$xmlfile = $xmlarray['content'];
 				//print "xmlfilestart".$xmlfile."endxmlfile";
 				$xml = simplexml_load_string($xmlfile);
@@ -1737,8 +1718,6 @@ class Setup extends DolibarrApi
 			}
 		}
 
-
-
 		if ($xml)
 		{
 			$checksumconcat = array();
@@ -1746,8 +1725,7 @@ class Setup extends DolibarrApi
 			$out = '';
 
 			// Forced constants
-			if (is_object($xml->dolibarr_constants[0]))
-			{
+			if (is_object($xml->dolibarr_constants[0])) {
 				$out .= load_fiche_titre($langs->trans("ForcedConstants"));
 
 				$out .= '<div class="div-table-responsive-no-min">';
@@ -1962,8 +1940,7 @@ class Setup extends DolibarrApi
 			$checksumtoget = trim((string) $xml->dolibarr_htdocs_dir_checksum);
 
 			$outexpectedchecksum = ($checksumtoget ? $checksumtoget : $langs->trans("Unknown"));
-			if ($checksumget == $checksumtoget)
-			{
+			if ($checksumget == $checksumtoget) {
 				if (count($file_list['added']))
 				{
 					$resultcode = 'warning';
@@ -1987,5 +1964,30 @@ class Setup extends DolibarrApi
 		}
 
 		return array('resultcode'=>$resultcode, 'resultcomment'=>$resultcomment, 'expectedchecksum'=> $outexpectedchecksum, 'currentchecksum'=> $outcurrentchecksum, 'out'=>$out);
+	}
+
+
+	/**
+	 * Get list of enabled modules
+	 *
+	 * @url	GET /modules
+	 *
+	 * @return  array|mixed Data without useless information
+	 *
+	 * @throws RestException 403 Access refused
+	 */
+	public function getModules()
+	{
+		global $conf;
+
+		if (!DolibarrApiAccess::$user->admin
+			&& (empty($conf->global->API_LOGIN_ALLOWED_FOR_GET_MODULES) || DolibarrApiAccess::$user->login != $conf->global->API_LOGIN_ALLOWED_FOR_GET_MODULES))
+		{
+			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGIN_ALLOWED_FOR_GET_MODULES');
+		}
+
+		sort($conf->modules);
+
+		return $this->_cleanObjectDatas($conf->modules);
 	}
 }
