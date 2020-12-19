@@ -976,7 +976,7 @@ END;
 
 						// Supplier
 						if (!empty($arrayfields['s.nom']['checked'])) {
-							print '<td>'.$productfourn->getSocNomUrl(1, 'supplier').'</td>';
+							print '<td class="tdoverflowmax200">'.$productfourn->getSocNomUrl(1, 'supplier').'</td>';
 						}
 
 						// Supplier ref

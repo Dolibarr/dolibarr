@@ -847,8 +847,8 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 				print '<input type="hidden" name="action" value="setlabelsellingprice">';
 				print '<input type="hidden" name="pricelevel" value="'.$i.'">';
 				print $langs->trans("SellingPrice").' '.$i.' - ';
-				print '<input size="10" class="maxwidthonsmartphone" type="text" name="labelsellingprice" value="'.$conf->global->$keyforlabel.'">';
-				print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+				print '<input class="maxwidthonsmartphone" type="text" name="labelsellingprice" value="'.$conf->global->$keyforlabel.'">';
+				print '&nbsp;<input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'">';
 				print '</form>';
 			} else {
 				print $langs->trans("SellingPrice").' '.$i;
