@@ -407,8 +407,7 @@ if (!empty($force_install_noedit)) {
 			<input type="password"
                    id="db_pass" autocomplete="off"
 			       name="db_pass"
-			       value="
-				<?php
+			       value="<?php
 				// If $force_install_databasepass is on, we don't want to set password, we just show '***'. Real value will be extracted from the forced install file at step1.
 				$autofill = ((!empty($_SESSION['dol_save_pass'])) ? $_SESSION['dol_save_pass'] : str_pad('', strlen($force_install_databasepass), '*'));
 				if (!empty($dolibarr_main_prod)) {
