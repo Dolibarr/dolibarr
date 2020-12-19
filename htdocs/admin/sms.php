@@ -310,7 +310,7 @@ else
 		$formsms->withfromreadonly = 0;
 		$formsms->withsubstit = 0;
 		$formsms->withfrom = 1;
-		$formsms->withto = (isset($_POST['sendto']) ? $_POST['sendto'] : $user->user_mobile ? $user->user_mobile : 1);
+		$formsms->withto = (isset($_POST['sendto']) ? $_POST['sendto'] : ($user->user_mobile ? $user->user_mobile : 1));
 		$formsms->withbody = (isset($_POST['message']) ? (empty($_POST['message']) ? 1 : $_POST['message']) : $langs->trans("ThisIsATestMessage"));
 		$formsms->withbodyreadonly = 0;
 		$formsms->withcancel = 1;
