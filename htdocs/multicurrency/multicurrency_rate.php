@@ -287,11 +287,9 @@ $sql .=" INNER JOIN ".MAIN_DB_PREFIX."multicurrency AS m ON cr.fk_multicurrency 
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 
 if ($search_date_sync && $search_date_sync_end ){
-
     $sql .= " AND (cr.date_sync BETWEEN '".dol_escape_htmltag($search_date_sync)."' AND '".dol_escape_htmltag($search_date_sync_end)."')";
 } elseif ($search_date_sync && !$search_date_sync_end) {
     $sql .= natural_search('cr.date_sync', $search_date_sync);
-
 }
 
 
@@ -416,7 +414,7 @@ if ($resql)
 	if (! empty($arrayfields['m.code']['checked']))
 	{
 		print '<td class="liste_titre" align="left">';
-		print  $form->selectMultiCurrency($multicurrency_code, 'search_multicurrency_code', 1, " code != '".$conf->currency."'", true) ;
+		print  $form->selectMultiCurrency($multicurrency_code, 'search_multicurrency_code', 1, " code != '".$conf->currency."'", true);
 		print '</td>';
 	}
 	// rate
@@ -473,7 +471,6 @@ if ($resql)
             print '<input type="submit" class="button butAction" name="actionmodify" value="'.$langs->trans("Modify").'">';
             print '<input type="submit" class="button butAction" name="actioncancel" value="'.$langs->trans("Cancel").'">';
             print '</td>';
-
         }
         else {
             // date_sync
