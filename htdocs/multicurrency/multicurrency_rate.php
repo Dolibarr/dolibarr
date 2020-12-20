@@ -118,8 +118,8 @@ if ($action == "create"){
 		$currencyRate_static->rate = $rateinput;
 
 		$result = $currencyRate_static->create(intval($fk_currency));
-		if ($result) {
-			setEventMessage($langs->trans('successRateCreate', $multicurrency_code));
+		if ($result > 0 ) {
+			setEventMessage($langs->trans('successRateCreate', $multicurrency_code), null);
 		} else {
 			dol_syslog("currencyRate:createRate", LOG_WARNING);
             setEventMessages($currencyRate_static->error, $currencyRate_static->errors, 'errors');
@@ -135,9 +135,9 @@ if ($actionModify){
 	if ( $result > 0){
 		$currency_static  = new MultiCurrency($db);
 		$fk_currency = $currency_static->getIdFromCode($db, $multicurrency_code);
-		$currencyRate->date_sync = $db->escape(GETPOST('dateinput', 'alpha'));
+		$currencyRate->date_sync = $dateinput;
 		$currencyRate->fk_multicurrency = $fk_currency;
-		$currencyRate->rate = $db->escape(GETPOST('rateinput', 'int'));
+		$currencyRate->rate = $rateinput;
 		$res = $currencyRate->update();
 		if ($res){
 			setEventMessage($langs->trans('successUpdateRate'));
