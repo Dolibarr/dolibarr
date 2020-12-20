@@ -4709,7 +4709,7 @@ class Form
 			$ret .= '<tr><td>';
 			$ret .= $this->selectDate($selected, $htmlname, $displayhour, $displaymin, 1, 'form'.$htmlname, 1, 0);
 			$ret .= '</td>';
-			$ret .= '<td class="left"><input type="submit smallpaddingimp" class="button" value="'.$langs->trans("Modify").'"></td>';
+			$ret .= '<td class="left"><input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'"></td>';
 			$ret .= '</tr></table></form>';
 		} else {
 			if ($displayhour) $ret .= dol_print_date($selected, 'dayhour');
