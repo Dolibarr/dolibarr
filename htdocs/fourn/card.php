@@ -181,7 +181,6 @@ if ($object->id > 0)
         print '<td class="titlefield">'.$langs->trans("SupplierCode").'</td><td>';
         print $object->code_fournisseur;
         $tmpcheck = $object->check_codefournisseur();
-        var_dump($tmpcheck);
         if ($tmpcheck != 0 && $tmpcheck != -5) {
         	print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
         }
