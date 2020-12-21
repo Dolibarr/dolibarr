@@ -20,6 +20,7 @@
 
 use Luracast\Restler\RestException;
 
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 /**
  * API class for thirdparties
@@ -51,7 +52,6 @@ class Thirdparties extends DolibarrApi
 		global $db, $conf;
 		$this->db = $db;
 
-		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
@@ -69,7 +69,7 @@ class Thirdparties extends DolibarrApi
 	 * Return an array with thirdparty informations
 	 *
 	 * @param 	int 	$id Id of third party to load
-	 * @return 	Object Cleaned Societe object
+	 * @return 	array|mixed Cleaned Societe object
 	 *
 	 * @throws 	RestException
 	 */
@@ -84,7 +84,7 @@ class Thirdparties extends DolibarrApi
 	 * Return an array with thirdparty informations
 	 *
 	 * @param string    $email  Email of third party to load
-	 * @return Object Cleaned Societe object
+	 * @return array|mixed Cleaned Societe object
 	 *
 	 * @url     GET email/{email}
 	 *
@@ -101,7 +101,7 @@ class Thirdparties extends DolibarrApi
 	 * Return an array with thirdparty informations
 	 *
 	 * @param string    $barcode  Barcode of third party to load
-	 * @return Object Cleaned Societe object
+	 * @return array|mixed Cleaned Societe object
 	 *
 	 * @url     GET barcode/{barcode}
 	 *
@@ -247,7 +247,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @param int   $id             Id of thirdparty to update
 	 * @param array $request_data   Datas
-	 * @return Object|boolean
+	 * @return array|mixed|boolean
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -1190,7 +1190,7 @@ class Thirdparties extends DolibarrApi
 	 * @param int  $id ID of thirdparty
 	 * @param array $request_data Request data
 	 *
-	 * @return object  BankAccount of thirdparty
+	 * @return array|mixed  BankAccount of thirdparty
 	 *
 	 * @url POST {id}/bankaccounts
 	 */
@@ -1233,7 +1233,7 @@ class Thirdparties extends DolibarrApi
 	 * @param int  $bankaccount_id ID of CompanyBankAccount
 	 * @param array $request_data Request data
 	 *
-	 * @return object  BankAccount of thirdparty
+	 * @return array|mixed  BankAccount of thirdparty
 	 *
 	 * @url PUT {id}/bankaccounts/{bankaccount_id}
 	 */
@@ -1389,7 +1389,7 @@ class Thirdparties extends DolibarrApi
 	 * @param int $id ID of thirdparty
 	 * @param string $site Site key
 	 *
-	 * @return SocieteAccount[]
+	 * @return array|mixed
 	 * @throws RestException 401 Unauthorized: User does not have permission to read thirdparties
 	 * @throws RestException 404 Not Found: Specified thirdparty ID does not belongs to an existing thirdparty
 	 *
@@ -1461,7 +1461,7 @@ class Thirdparties extends DolibarrApi
 	 * @param int $id ID of thirdparty
 	 * @param array $request_data Request data
 	 *
-	 * @return SocieteAccount
+	 * @return array|mixed
 	 *
 	 * @throws RestException 401 Unauthorized: User does not have permission to read thirdparties
 	 * @throws RestException 409 Conflict: A SocieteAccount entity (gateway) already exists for this company and site.
@@ -1519,7 +1519,7 @@ class Thirdparties extends DolibarrApi
 	 * @param string $site Site key
 	 * @param array $request_data Request data
 	 *
-	 * @return SocieteAccount
+	 * @return array|mixed
 	 *
 	 * @throws RestException 401 Unauthorized: User does not have permission to read thirdparties
 	 * @throws RestException 422 Unprocessable Entity: You must pass the site attribute in your request data !
@@ -1599,7 +1599,7 @@ class Thirdparties extends DolibarrApi
 	 * @param string  $site Site key
 	 * @param array $request_data Request data
 	 *
-	 * @return SocieteAccount
+	 * @return array|mixed
 	 *
 	 * @throws RestException 401 Unauthorized: User does not have permission to read thirdparties
 	 * @throws RestException 404 Not Found: Specified thirdparty ID does not belongs to an existing thirdparty
@@ -1733,7 +1733,7 @@ class Thirdparties extends DolibarrApi
 	 * Clean sensible object datas
 	 *
 	 * @param   Object  $object     Object to clean
-	 * @return  Object              Object with cleaned properties
+	 * @return  array|mixed         Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -1806,7 +1806,7 @@ class Thirdparties extends DolibarrApi
 	 * @param    string	$idprof6		Prof id 6 of third party (Warning, this can return several records)
 	 * @param    string	$email   		Email of third party (Warning, this can return several records)
 	 * @param    string	$ref_alias  Name_alias of third party (Warning, this can return several records)
-	 * @return Object cleaned Societe object
+	 * @return array|mixed cleaned Societe object
 	 *
 	 * @throws RestException
 	 */
