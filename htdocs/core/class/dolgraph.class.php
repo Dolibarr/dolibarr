@@ -300,7 +300,7 @@ class DolGraph
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Set data
+	 * Set tooltips labels of the graph
 	 *
 	 * @param 	array	$tooltipsLabels		Tooltips Labels array('...','...'...)
 	 * @return	void
@@ -313,7 +313,7 @@ class DolGraph
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Set data
+	 * Set tooltips titles of the graph
 	 *
 	 * @param 	array	$tooltipsTitles		Tooltips Titles array('...','...'...)
 	 * @return	void
