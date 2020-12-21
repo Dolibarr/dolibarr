@@ -198,7 +198,6 @@ class box_funnel_of_prospection extends ModeleBoxes
 				$liststatus = array();
 				$data = array('');
 				$customlabels = array();
-				$total=0;
 				foreach ($listofstatus as $status) {
 					$customlabel = '';
 					$labelStatus = '';
@@ -221,7 +220,13 @@ class box_funnel_of_prospection extends ModeleBoxes
 							$stringtoprint .= "</tr>\n";
 						}
 					}
-					$customlabels[]=$customlabel;
+					$customlabels[] = $customlabel;
+				}
+				for ($i = count($data) - 1; $i > 0; $i--) {
+					if ($i != count($data) - 1) {
+						$data[$i] += $data[$i + 1];
+					}
+					$customlabels[$i - 1] .= ', '.html_entity_decode($langs->trans("OpportunityTotalAmount")).': ' . $data[$i];
 				}
 				$dataseries[] = $data;
 				if ($conf->use_javascript_ajax) {
