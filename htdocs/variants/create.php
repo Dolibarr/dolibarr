@@ -29,7 +29,7 @@ $action = GETPOST('action', 'alpha');
  * Actions
  */
 
-if ($action == 'create') {
+if ($action == 'add') {
 	if (empty($ref) || empty($label)) {
 		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
 	} else {
@@ -70,7 +70,7 @@ print dol_get_fiche_head();
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="create">';
+print '<input type="hidden" name="action" value="add">';
 print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 ?>
