@@ -161,15 +161,10 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'confirm_enable' && $confirm == "yes" && $permissiontoadd) {
-
-		if(!empty($object->id)) $object->setStatus(1);
-
+		if (!empty($object->id)) $object->setStatus(1);
 	} elseif ($action == 'confirm_disable' && $confirm == "yes" && $permissiontoadd) {
-
-		if(!empty($object->id)) $object->setStatus(0);
-
+		if (!empty($object->id)) $object->setStatus(0);
 	}
-
 }
 
 
@@ -418,11 +413,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
 	//unset($object->fields['fk_project']);				// Hide field already shown in banner
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
-	if($object->type === 'MACHINE') $object->fields['nb_operators_required']['visible'] = 0;
+	if ($object->type === 'MACHINE') $object->fields['nb_operators_required']['visible'] = 0;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
 	// Groups
-	if($object->type !== 'MACHINE') {
+	if ($object->type !== 'MACHINE') {
 		$toprint = array();
 		foreach ($object->usergroups as $id_group) {
 			$g = new UserGroup($db);
@@ -435,7 +430,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// Resources
-	if($object->type !== 'HUMAN') {
+	if ($object->type !== 'HUMAN') {
 		$toprint = array();
 		foreach ($object->resources as $id_resource) {
 			$r = new Dolresource($db);
@@ -469,7 +464,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		if (empty($reshook))
 		{
-
 			// Modify
 			if ($permissiontoadd) {
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit">'.$langs->trans("Modify").'</a>'."\n";
@@ -503,7 +497,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 		print '</div>'."\n";
 	}
-
 }
 
 // End of page

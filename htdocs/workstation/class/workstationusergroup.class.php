@@ -46,7 +46,8 @@ class WorkstationUserGroup extends CommonObject
 		}
 	}
 
-	static public function getAllGroupsOfWorkstation($fk_workstation) {
+	static public function getAllGroupsOfWorkstation($fk_workstation)
+	{
 
 		global $db;
 
@@ -55,17 +56,17 @@ class WorkstationUserGroup extends CommonObject
 		$resql = $db->query($sql);
 
 		$TRes = array();
-		if(!empty($resql)) {
-			while($res = $db->fetch_object($resql)) {
+		if (!empty($resql)) {
+			while ($res = $db->fetch_object($resql)) {
 				$TRes[] = $res->fk_usergroup;
 			}
 		}
 
 		return $TRes;
-
 	}
 
-	static public function deleteAllGroupsOfWorkstation($fk_workstation) {
+	static public function deleteAllGroupsOfWorkstation($fk_workstation)
+	{
 
 		global $db;
 
@@ -73,10 +74,8 @@ class WorkstationUserGroup extends CommonObject
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$obj->table_element.' WHERE fk_workstation = '.$fk_workstation;
 		$resql = $db->query($sql);
 
-		if(empty($resql)) return 0;
+		if (empty($resql)) return 0;
 
 		return 1;
-
 	}
-
 }
