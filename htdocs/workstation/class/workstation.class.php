@@ -233,8 +233,8 @@ class Workstation extends CommonObject
 
 		// Usergroups
 		$groups = GETPOST('groups');
-		if(empty($groups)) $groups = $this->usergroups; // createFromClone
-		if(!empty($groups)) {
+		if (empty($groups)) $groups = $this->usergroups; // createFromClone
+		if (!empty($groups)) {
 			foreach ($groups as $id_group) {
 				$ws_usergroup = new WorkstationUserGroup($db);
 				$ws_usergroup->fk_workstation = $id;
@@ -246,8 +246,8 @@ class Workstation extends CommonObject
 
 		// Resources
 		$resources = GETPOST('resources');
-		if(empty($resources)) $resources = $this->resources; // createFromClone
-		if(!empty($resources)) {
+		if (empty($resources)) $resources = $this->resources; // createFromClone
+		if (!empty($resources)) {
 			foreach ($resources as $id_resource) {
 				$ws_resource = new WorkstationResource($db);
 				$ws_resource->fk_workstation = $id;
@@ -490,7 +490,7 @@ class Workstation extends CommonObject
 		$resources = GETPOST('resources');
 		WorkstationResource::deleteAllResourcesOfWorkstation($this->id);
 		$this->resources=array();
-		if(!empty($resources)) {
+		if (!empty($resources)) {
 			foreach ($resources as $id_resource) {
 				$ws_resource = new WorkstationResource($this->db);
 				$ws_resource->fk_workstation = $this->id;
@@ -677,7 +677,7 @@ class Workstation extends CommonObject
 
 		$this->status = $status;
 
-		if(empty($status)) $this->setDisabled($user, $notrigger);
+		if (empty($status)) $this->setDisabled($user, $notrigger);
 		else $this->setEnabled($user, $notrigger);
 	}
 
