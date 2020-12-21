@@ -1582,7 +1582,7 @@ class Setup extends DolibarrApi
 	 *
 	 * @url	GET /company
 	 *
-	 * @return  Object Mysoc object
+	 * @return  array|mixed Mysoc object
 	 *
 	 * @throws RestException 403 Forbidden
 	 */
