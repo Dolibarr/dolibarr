@@ -154,9 +154,7 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass = 'PaymentSalary';
 	$objectlabel = 'SalariesPayments';
-	$permissiontoread = $user->rights->salaries->read;
-	$permissiontodelete = $user->rights->salaries->delete;
-	$uploaddir = $conf->bom->dir_output;
+	$uploaddir = $conf->salaries->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// Validate records
