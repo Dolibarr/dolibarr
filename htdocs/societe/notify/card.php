@@ -165,23 +165,27 @@ if ($result > 0)
 		print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 	}
 
-	if ($object->client)
-	{
-		print '<tr><td class="titlefield">';
-		print $langs->trans('CustomerCode').'</td><td colspan="3">';
-		print $object->code_client;
-		if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
-		print '</td></tr>';
-	}
+    if ($object->client) {
+        print '<tr><td class="titlefield">';
+        print $langs->trans('CustomerCode').'</td><td colspan="3">';
+        print $object->code_client;
+        $tmpcheck = $object->check_codeclient();
+        if ($tmpcheck != 0 && $tmpcheck != -5) {
+        	print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+        }
+        print '</td></tr>';
+    }
 
-	if (!empty($conf->fournisseur->enabled) && $object->fournisseur && !empty($user->rights->fournisseur->lire))
-	{
-		print '<tr><td class="titlefield">';
-		print $langs->trans('SupplierCode').'</td><td colspan="3">';
-		print $object->code_fournisseur;
-		if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
-		print '</td></tr>';
-	}
+    if (!empty($conf->fournisseur->enabled) && $object->fournisseur && !empty($user->rights->fournisseur->lire)) {
+        print '<tr><td class="titlefield">';
+        print $langs->trans('SupplierCode').'</td><td colspan="3">';
+        print $object->code_fournisseur;
+        $tmpcheck = $object->check_codefournisseur();
+        if ($tmpcheck != 0 && $tmpcheck != -5) {
+        	print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+        }
+        print '</td></tr>';
+    }
 
 	/*print '<tr><td class="titlefield">'.$langs->trans("NbOfActiveNotifications").'</td>';   // Notification for this thirdparty
     print '<td colspan="3">';

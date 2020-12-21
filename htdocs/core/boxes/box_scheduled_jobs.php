@@ -117,7 +117,7 @@ class box_scheduled_jobs extends ModeleBoxes
 								$cronstatic->getNomUrl(1),
 								$cronstatic->datelastrun,
 								$cronstatic->status,
-								$cronstatic->getLibStatut(2)
+								$cronstatic->getLibStatut(3)
 							);
 							$line++;
 						}
@@ -135,18 +135,18 @@ class box_scheduled_jobs extends ModeleBoxes
 						$cronstatic->getNomUrl(1),
 						$cronstatic->datenextrun,
 						$cronstatic->status,
-						$cronstatic->getLibStatut(2)
+						$cronstatic->getLibStatut(3)
 					);
 				}
 
 				foreach ($resultarray as $line => $value) {
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="left"',
+						'td' => 'class="tdoverflowmax200"',
 						'text' => $resultarray[$line][0]
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="left"',
+						'td' => 'class="nowraponall"',
 						'textnoformat' => $resultarray[$line][1]
 					);
 					$this->info_box_contents[$line][] = array(
@@ -154,18 +154,18 @@ class box_scheduled_jobs extends ModeleBoxes
 						'textnoformat' => (empty($resultarray[$line][2]) ? '' : $form->textwithpicto(dol_print_date($resultarray[$line][2], "dayhoursec"), $langs->trans("CurrentTimeZone")))
 					);
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right" ',
+						'td' => 'class="center" ',
 						'textnoformat' => $resultarray[$line][4]
 					);
 					$line++;
 				}
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="left" colspan="2"',
+					'td' => 'class="tdoverflowmax300" colspan="3"',
 					'text' => $langs->trans("NumberScheduledJobError")
 				);
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right" colspan="2"',
-					'textnoformat' => ($nbjobsinerror ? '<span class="error"><a href="'.DOL_URL_ROOT.'/cron/list.php?search_lastresult='.urlencode('<>0').'">'.$nbjobsinerror.'</a></span>'.img_error() : '<span class="opacitymedium">'.$langs->trans("None").'<span>')
+					'td' => 'class="center"',
+					'textnoformat' => ($nbjobsinerror ? '<span class="error"><a href="'.DOL_URL_ROOT.'/cron/list.php?search_lastresult='.urlencode('<>0').'">'.$nbjobsinerror.img_error() : '<div class="center badge-status4">0</div></a></span>')
 				);
 			} else {
 				$this->info_box_contents[0][0] = array(

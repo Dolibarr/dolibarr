@@ -3292,7 +3292,7 @@ abstract class CommonObject
 
 	/**
 	 *	Fetch array of objects linked to current object (object of enabled modules only). Links are loaded into
-	 *		this->linkedObjectsIds array and
+	 *		this->linkedObjectsIds array +
 	 *		this->linkedObjects array if $loadalsoobjects = 1
 	 *  Possible usage for parameters:
 	 *  - all parameters empty -> we look all link to current object (current object can be source or target)
@@ -3405,6 +3405,7 @@ abstract class CommonObject
 				{
 					// Parse element/subelement (ex: project_task, cabinetmed_consultation, ...)
 					$module = $element = $subelement = $objecttype;
+					$regs = array();
 					if ($objecttype != 'supplier_proposal' && $objecttype != 'order_supplier' && $objecttype != 'invoice_supplier'
 						&& preg_match('/^([^_]+)_([^_]+)/i', $objecttype, $regs))
 					{
