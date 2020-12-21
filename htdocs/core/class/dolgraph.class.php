@@ -1210,9 +1210,6 @@ class DolGraph
 		else {
 			$type = 'bar';
 
-			$isfunnel = false;
-			if ($file == 'idgraphleadfunnel') $isfunnel = true;
-
 			if (!isset($this->type[$firstlot]) || $this->type[$firstlot] == 'bars') $type = 'bar';
 			if (isset($this->type[$firstlot]) && $this->type[$firstlot] == 'horizontalbars') $type = 'horizontalBar';
 			if (isset($this->type[$firstlot]) && ($this->type[$firstlot] == 'lines' || $this->type[$firstlot] == 'linesnopoint')) $type = 'line';
