@@ -165,7 +165,7 @@ class box_scheduled_jobs extends ModeleBoxes
 				);
 				$this->info_box_contents[$line][] = array(
 					'td' => 'class="center"',
-					'textnoformat' => (!$nbjobsinerror ? '<span class="error"><a href="'.DOL_URL_ROOT.'/cron/list.php?search_lastresult='.urlencode('<>0').'">'.$nbjobsinerror.img_error() : '<div class="center badge-status4">0</div></a></span>')
+					'textnoformat' => ($nbjobsinerror ? '<span class="error"><a href="'.DOL_URL_ROOT.'/cron/list.php?search_lastresult='.urlencode('<>0').'">'.$nbjobsinerror.img_error() : '<div class="center badge-status4">0</div></a></span>')
 				);
 			} else {
 				$this->info_box_contents[0][0] = array(
