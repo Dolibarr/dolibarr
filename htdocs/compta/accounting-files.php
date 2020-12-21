@@ -529,7 +529,7 @@ print '<span class="opacitymedium">'.$langs->trans("ExportAccountingSourceDocHel
 print '<br>';
 
 print $langs->trans("ReportPeriod").': '.$form->selectDate($date_start, 'date_start', 0, 0, 0, "", 1, 1, 0);
-print ' - '.$form->selectDate($date_stop, 'date_stop', 0, 0, 0, "", 1, 1, 0)."\n</a>";
+print ' - '.$form->selectDate($date_stop, 'date_stop', 0, 0, 0, "", 1, 1, 0)."\n";
 
 // Export is for current company only
 if (!empty($conf->multicompany->enabled) && is_object($mc))
@@ -560,7 +560,7 @@ $listofchoices = array(
 );
 foreach ($listofchoices as $choice => $val) {
 	$checked = (((!GETPOSTISSET('search') && $action != 'searchfiles') || GETPOST($choice)) ? ' checked="checked"' : '');
-	print '<div class="paddingleft inline-block marginrightonly"><input type="checkbox" name="'.$choice.'" value="1"'.$checked.'> '.$langs->trans($val['label']).'</div>';
+	print '<div class="paddingleft inline-block marginrightonly"><input type="checkbox" id="'.$choice.'" name="'.$choice.'" value="1"'.$checked.'> <label for="'.$choice.'">'.$langs->trans($val['label']).'</label></div>';
 }
 
 print '<input class="button" type="submit" name="search" value="'.$langs->trans("Search").'">';
