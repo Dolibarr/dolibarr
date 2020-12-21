@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2020 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -667,7 +667,7 @@ class Workstation extends CommonObject
 	/**
 	 *	Set draft status
 	 *
-	 *	@param	User	$user			Object user that modify
+	 *	@param	int	$status			New status to set
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
@@ -677,8 +677,8 @@ class Workstation extends CommonObject
 
 		$this->status = $status;
 
-		if (empty($status)) $this->setDisabled($user, $notrigger);
-		else $this->setEnabled($user, $notrigger);
+		if (empty($status)) return $this->setDisabled($user, $notrigger);
+		else return $this->setEnabled($user, $notrigger);
 	}
 
 

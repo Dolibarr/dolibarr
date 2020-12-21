@@ -1,4 +1,30 @@
 <?php
+/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2020 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ * \file        class/workstationusergroup.class.php
+ * \ingroup     workstation
+ * \brief       This file is a CRUD class file for WorkstationUserGroup (Create/Read/Update/Delete)
+ */
+
+/**
+ * Class for WorkstationUserGroup
+ */
 
 class WorkstationUserGroup extends CommonObject
 {
@@ -46,6 +72,11 @@ class WorkstationUserGroup extends CommonObject
 		}
 	}
 
+	/**
+	 * Function used to get an array with all usergroups linked to a workstation
+	 * @param	int		$fk_workstation		id of workstation we need to get linked usergroups
+	 * @return array
+	 */
 	static public function getAllGroupsOfWorkstation($fk_workstation)
 	{
 
@@ -65,6 +96,11 @@ class WorkstationUserGroup extends CommonObject
 		return $TRes;
 	}
 
+	/**
+	 * Function used to remove all usergroups linked to a workstation
+	 * @param	int		$fk_workstation		id of workstation we need to remove linked usergroups
+	 * @return int
+	 */
 	static public function deleteAllGroupsOfWorkstation($fk_workstation)
 	{
 
