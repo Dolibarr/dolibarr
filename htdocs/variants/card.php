@@ -145,7 +145,7 @@ if ($action == 'edit') {
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="valueid" value="'.$valueid.'">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-	}
+}
 
 
 if ($action != 'edit') {
