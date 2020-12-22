@@ -1915,7 +1915,7 @@ class ExtraFields
 	 * @param	string	$typeform		"card" for from display, "line" for docuement line display (exstraiedls on propal line, order line, etc...)
 	 * @return 	string					HTML code with line for separator
 	 */
-	public function showSeparator($key, $object, $colspan = 2, $typeform='card')
+	public function showSeparator($key, $object, $colspan = 2, $typeform = 'card')
 	{
 		global $langs;
 
