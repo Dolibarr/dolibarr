@@ -1555,10 +1555,9 @@ class EmailCollector extends CommonObject
 					// Search and create thirdparty
 					if ($operation['type'] == 'loadthirdparty' || $operation['type'] == 'loadandcreatethirdparty')
 					{
-						if (empty($operation['actionparam']))
-						{
+						if (empty($operation['actionparam'])) {
 							$errorforactions++;
-							$this->error = "Action loadthirdparty or loadandcreatethirdparty has empty parameter. Must be 'SET:xxx' or 'EXTRACT:(body|subject):regex' to define how to extract data";
+							$this->error = "Action loadthirdparty or loadandcreatethirdparty has empty parameter. Must be a rule like 'SET:xxx' or 'EXTRACT:(body|subject):regex' to define how to set or extract data";
 							$this->errors[] = $this->error;
 						} else {
 							$actionparam = $operation['actionparam'];
