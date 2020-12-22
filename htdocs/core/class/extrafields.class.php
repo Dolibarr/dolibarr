@@ -2181,12 +2181,12 @@ class ExtraFields
 					if (GETPOSTISSET($dateparamname_start . 'year') && GETPOSTISSET($dateparamname_end . 'year')) {
 						// values provided as a date pair (start date + end date), each date being broken down as year, month, day, etc.
 						$value_key = array(
-							'start' => mktime(
+							'start' => dol_mktime(
 								0, 0, 0,
 								GETPOST($dateparamname_start . 'month', 'int'),
 								GETPOST($dateparamname_start . 'day', 'int'),
 								GETPOST($dateparamname_start . 'year', 'int')),
-							'end' => mktime(
+							'end' => dol_mktime(
 								23, 59, 59,
 								GETPOST($dateparamname_end . 'month', 'int'),
 								GETPOST($dateparamname_end . 'day', 'int'),
