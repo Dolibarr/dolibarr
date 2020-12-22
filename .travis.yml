@@ -50,6 +50,9 @@ jobs:
     - if: type = push AND branch = develop
       php: nightly 
       env: DB=mysql
+    - if: type = push AND branch = 13.0
+      php: nightly 
+      env: DB=mysql
 
 notifications:
   email:
