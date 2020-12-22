@@ -153,6 +153,10 @@ if (GETPOST('addoperation', 'alpha'))
 	$emailcollectoroperation->status = 1;
 	$emailcollectoroperation->position = 50;
 
+	if ($emailcollectoroperation->type == '-1') {
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Operation")), null, 'errors');
+	}
 	if (in_array($emailcollectoroperation->type, array('loadthirdparty', 'loadandcreatethirdparty'))
 		&& empty($emailcollectoroperation->actionparam)) {
 		$error++;
