@@ -1714,8 +1714,8 @@ class CommandeFournisseur extends CommonOrder
 			$multicurrency_total_ttc = $tabprice[18];
 			$pu_ht_devise = $tabprice[19];
 
-			$localtax1_type = $localtaxes_type[0];
-			$localtax2_type = $localtaxes_type[2];
+			$localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
+			$localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 
 			$rangmax = $this->line_max();
 			$rang = $rangmax + 1;
@@ -1734,8 +1734,8 @@ class CommandeFournisseur extends CommonOrder
 			$this->line->tva_tx = $txtva;
 			$this->line->localtax1_tx = ($total_localtax1 ? $localtaxes_type[1] : 0);
 			$this->line->localtax2_tx = ($total_localtax2 ? $localtaxes_type[3] : 0);
-			$this->line->localtax1_type = $localtaxes_type[0];
-			$this->line->localtax2_type = $localtaxes_type[2];
+			$this->line->localtax1_type = $localtax1_type;
+			$this->line->localtax2_type = $localtax2_type;
 			$this->line->fk_product = $fk_product;
 			$this->line->product_type = $product_type;
 			$this->line->remise_percent = $remise_percent;
@@ -2594,8 +2594,8 @@ class CommandeFournisseur extends CommonOrder
 			$multicurrency_total_ttc = $tabprice[18];
 			$pu_ht_devise = $tabprice[19];
 
-			$localtax1_type = $localtaxes_type[0];
-			$localtax2_type = $localtaxes_type[2];
+			$localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
+			$localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 
 			//Fetch current line from the database and then clone the object and set it in $oldline property
 			$this->line = new CommandeFournisseurLigne($this->db);
@@ -2633,8 +2633,8 @@ class CommandeFournisseur extends CommonOrder
 			$this->line->tva_tx         = $txtva;
 			$this->line->localtax1_tx   = $txlocaltax1;
 			$this->line->localtax2_tx   = $txlocaltax2;
-			$this->line->localtax1_type = $localtaxes_type[0];
-			$this->line->localtax2_type = $localtaxes_type[2];
+			$this->line->localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
+			$this->line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 			$this->line->remise_percent = $remise_percent;
 			$this->line->subprice       = $pu_ht;
 			$this->line->rang           = $this->rang;
