@@ -437,6 +437,7 @@ RemainToPay=Remain to pay
 Module=Module/Application
 Modules=Modules/Applications
 Option=Option
+Filters=Filters
 List=List
 FullList=Full list
 FullConversation=Full conversation
