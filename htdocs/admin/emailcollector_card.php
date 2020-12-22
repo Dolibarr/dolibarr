@@ -135,12 +135,13 @@ if ($action == 'deletefilter')
 {
 	$emailcollectorfilter = new EmailCollectorFilter($db);
 	$emailcollectorfilter->fetch(GETPOST('filterid', 'int'));
-	$result = $emailcollectorfilter->delete($user);
-	if ($result > 0)
-	{
-		$object->fetchFilters();
-	} else {
-		setEventMessages($emailcollectorfilter->errors, $emailcollectorfilter->error, 'errors');
+	if ($emailcollectorfilter->id > 0) {
+		$result = $emailcollectorfilter->delete($user);
+		if ($result > 0) {
+			$object->fetchFilters();
+		} else {
+			setEventMessages($emailcollectorfilter->errors, $emailcollectorfilter->error, 'errors');
+		}
 	}
 }
 
@@ -204,12 +205,13 @@ if ($action == 'deleteoperation')
 {
 	$emailcollectoroperation = new EmailCollectorAction($db);
 	$emailcollectoroperation->fetch(GETPOST('operationid', 'int'));
-	$result = $emailcollectoroperation->delete($user);
-	if ($result > 0)
-	{
-		$object->fetchActions();
-	} else {
-		setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
+	if ($emailcollectoroperation->id > 0) {
+		$result = $emailcollectoroperation->delete($user);
+		if ($result > 0) {
+			$object->fetchActions();
+		} else {
+			setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
+		}
 	}
 }
 
