@@ -87,7 +87,6 @@ ShowPreview=Show preview
 ShowHideDetails=Show-Hide details
 PreviewNotAvailable=Preview not available
 ThemeCurrentlyActive=Theme currently active
-CurrentTimeZone=TimeZone PHP (server)
 MySQLTimeZone=TimeZone MySql (database)
 TZHasNoEffect=Dates are stored and returned by database server as if they were kept as submitted string. The timezone has effect only when using the UNIX_TIMESTAMP function (that should not be used by Dolibarr, so database TZ should have no effect, even if changed after data was entered).
 Space=Space
@@ -258,6 +257,7 @@ ReferencedPreferredPartners=Preferred Partners
 OtherResources=Other resources
 ExternalResources=External Resources
 SocialNetworks=Social Networks
+SocialNetworkId=Social Network ID
 ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank">%s</a></b>
 ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target="_blank">%s</a></b>
 HelpCenterDesc1=Here are some resources for getting help and support with Dolibarr.

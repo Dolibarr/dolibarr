@@ -12,6 +12,9 @@ function fbbb()
 	return 'fbbb';
 }
 
+/**
+ * Class Bbb
+ */
 class Bbb
 {
 	const BBB='bbb';
