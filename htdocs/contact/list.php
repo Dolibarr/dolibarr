@@ -267,7 +267,7 @@ if (empty($reshook))
 		$search_categ_thirdparty = '';
 		$search_categ_supplier = '';
 		$search_import_key = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 		$search_roles = array();
 	}

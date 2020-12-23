@@ -301,6 +301,7 @@ if (empty($reshook))
 
 	$permissiontoread = $user->rights->produit->lire;
 	$permissiontodelete = $user->rights->produit->supprimer;
+	$permissiontoadd = $user->rights->{$rightskey}->creer;
 	$uploaddir = $conf->product->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -533,6 +534,7 @@ if ($resql)
 	$rightskey = 'produit';
 	if ($type == Product::TYPE_SERVICE) $rightskey = 'service';
 	if ($user->rights->{$rightskey}->supprimer) $arrayofmassactions['predelete'] = "<span class='fa fa-trash paddingrightonly'></span>".$langs->trans("Delete");
+	if ($user->rights->{$rightskey}->creer) $arrayofmassactions['preaffecttag'] = '<span class="fa fa-tag paddingrightonly"></span>'.$langs->trans("AffectTag");
 	if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 

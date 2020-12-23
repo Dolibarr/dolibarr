@@ -648,7 +648,7 @@ if (is_array($extrafields->attributes[$object->table_element]['computed']) && co
 // --------------------------------------------------------------------
 $i = 0;
 $totalarray = array();
-$arrayofselected = array();
+$arrayofselected = is_array($toselect) ? $toselect : array();
 while ($i < ($limit ? min($num, $limit) : $num))
 {
 	$obj = $db->fetch_object($resql);

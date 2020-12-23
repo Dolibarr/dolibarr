@@ -1308,7 +1308,6 @@ if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd
 		$to_affecttag_type_array=array();
 		$categ_type_array=$categ->getMapList();
 		foreach($categ_type_array as $categdef) {
-
 			if (in_array($categdef['code'],  $affecttag_type_array)) {
 				$to_affecttag_type_array[] = $categdef['code'];
 			}
@@ -1319,10 +1318,10 @@ if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd
 		if (!empty($to_affecttag_type_array)) {
 			foreach ($to_affecttag_type_array as $categ_type) {
 				$contcats = GETPOST('contcats_' . $categ_type, 'array');
-var_dump($toselect);exit;
+				//var_dump($toselect);exit;
 				foreach ($toselect as $toselectid) {
 					$result = $object->fetch($toselectid);
-					var_dump($contcats);exit;
+					//var_dump($contcats);exit;
 					if ($result > 0) {
 
 						$result = $object->setCategoriesCommon($contcats, $categ_type, false);
