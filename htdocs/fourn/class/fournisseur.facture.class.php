@@ -1765,8 +1765,8 @@ class FactureFournisseur extends CommonInvoice
 			$this->line->tva_tx = $txtva;
 			$this->line->localtax1_tx = ($total_localtax1 ? $localtaxes_type[1] : 0);
 			$this->line->localtax2_tx = ($total_localtax2 ? $localtaxes_type[3] : 0);
-			$this->line->localtax1_type = $localtaxes_type[0];
-			$this->line->localtax2_type = $localtaxes_type[2];
+			$this->line->localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
+			$this->line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 
 			$this->line->total_ht = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_ht) : $total_ht); // For credit note and if qty is negative, total is negative
 			$this->line->total_tva = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_tva) : $total_tva);
@@ -1952,8 +1952,8 @@ class FactureFournisseur extends CommonInvoice
 		$line->tva_tx = $vatrate;
 		$line->localtax1_tx = $txlocaltax1;
 		$line->localtax2_tx = $txlocaltax2;
-		$line->localtax1_type = $localtaxes_type[0];
-		$line->localtax2_type = $localtaxes_type[2];
+		$line->localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
+		$line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 		$line->total_ht = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_ht) : $total_ht);
 		$line->total_tva = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_tva) : $total_tva);
 		$line->total_localtax1 = $total_localtax1;
