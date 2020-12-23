@@ -2887,12 +2887,16 @@ function getUserRemoteIP()
 {
 	if (empty($_SERVER['HTTP_X_FORWARDED_FOR']) || preg_match('/[^0-9\.\:,\[\]]/', $_SERVER['HTTP_X_FORWARDED_FOR'])) {
 		if (empty($_SERVER['HTTP_CLIENT_IP']) || preg_match('/[^0-9\.\:,\[\]]/', $_SERVER['HTTP_CLIENT_IP'])) {
-			$ip = (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']);
+			if (empty($_SERVER["HTTP_CF_CONNECTING_IP"])) {
+				$ip = (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']);	// value may have been forged by client
+			} else {
+				$ip = $_SERVER["HTTP_CF_CONNECTING_IP"];	// value here may have been forged by client
+			}
 		} else {
-			$ip = $_SERVER['HTTP_CLIENT_IP']; // value is clean here
+			$ip = $_SERVER['HTTP_CLIENT_IP']; // value is clean here but may have been forged by proxy
 		}
 	} else {
-		$ip = $_SERVER['HTTP_X_FORWARDED_FOR']; // value is clean here
+		$ip = $_SERVER['HTTP_X_FORWARDED_FOR']; // value is clean here but may have been forged by proxy
 	}
 	return $ip;
 }
