@@ -422,6 +422,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 $arrayofmassactions = array();
 if ($permissiontoadd) $arrayofmassactions['disable'] = $langs->trans("DisableUser");
 if ($permissiontoadd) $arrayofmassactions['reactivate'] = $langs->trans("Reactivate");
+if ($permissiontoadd) $arrayofmassactions['preaffecttag'] = '<span class="fa fa-tag paddingrightonly"></span>'.$langs->trans("AffectTag");
 //if ($permissiontodelete) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();

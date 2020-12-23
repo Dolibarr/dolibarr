@@ -8377,17 +8377,25 @@ abstract class CommonObject
 	/**
 	 * Sets object to given categories.
 	 *
-	 * Deletes object from existing categories not supplied.
 	 * Adds it to non existing supplied categories.
+	 * Deletes object from existing categories not supplied (if remove_existing==true).
 	 * Existing categories are left untouch.
 	 *
-	 * @param 	int[]|int 	$categories 	Category ID or array of Categories IDs
-	 * @param 	string 		$type_categ 	Category type ('customer', 'supplier', 'website_page', ...)
+	 * @param 	int[]|int 	$categories 		Category ID or array of Categories IDs
+	 * @param 	string 		$type_categ 		Category type ('customer', 'supplier', 'website_page', ...) definied into const class Categorie type
+	 * @param 	boolean		$remove_existing 	True: Remove existings categories from Object if not supplies by $categories, False: let them
 	 * @return	int							<0 if KO, >0 if OK
 	 */
-	public function setCategoriesCommon($categories, $type_categ)
+	public function setCategoriesCommon($categories, $type_categ='', $remove_existing=true)
 	{
+		dol_syslog(get_class($this)."::setCategoriesCommon Oject Id:".$this->id.' type_categ:'.$type_categ.' nb tag add:'.count($categories), LOG_DEBUG);
+
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+
+		if (empty($type_categ)) {
+			dol_syslog(__METHOD__.': Type '.$type_categ.'is an unknown category type. Done nothing.', LOG_ERR);
+			return -1;
+		}
 
 		// Handle single category
 		if (!is_array($categories)) {
@@ -8397,22 +8405,36 @@ abstract class CommonObject
 		// Get current categories
 		$c = new Categorie($this->db);
 		$existing = $c->containing($this->id, $type_categ, 'id');
-
-		// Diff
-		if (is_array($existing)) {
-			$to_del = array_diff($existing, $categories);
-			$to_add = array_diff($categories, $existing);
+		if ($remove_existing) {
+			// Diff
+			if (is_array($existing)) {
+				$to_del = array_diff($existing, $categories);
+				$to_add = array_diff($categories, $existing);
+			} else {
+				$to_del = array(); // Nothing to delete
+				$to_add = $categories;
+			}
 		} else {
 			$to_del = array(); // Nothing to delete
-			$to_add = $categories;
+			$to_add = array_diff($categories, $existing);
 		}
 
 		$error = 0;
+		$ok=0;
 
 		// Process
 		foreach ($to_del as $del) {
 			if ($c->fetch($del) > 0) {
-				$c->del_type($this, $type_categ);
+				$result=$c->del_type($this, $type_categ);
+				if ($result < 0)
+				{
+					$error++;
+					$this->error = $c->error;
+					$this->errors = $c->errors;
+					break;
+				} else {
+					$ok+=$result;
+				}
 			}
 		}
 		foreach ($to_add as $add) {
@@ -8425,11 +8447,13 @@ abstract class CommonObject
 					$this->error = $c->error;
 					$this->errors = $c->errors;
 					break;
+				} else {
+					$ok+=$result;
 				}
 			}
 		}
 
-		return $error ? -1 : 1;
+		return $error ? -1 * $error : $ok;
 	}
 
 	/**
