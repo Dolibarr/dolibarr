@@ -2802,7 +2802,7 @@ if (!function_exists("llxFooter"))
 
 			if (!empty($contextpage))                     $_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring] = $contextpage;
 			if (!empty($page) && $page > 0)               $_SESSION['lastsearch_page_tmp_'.$relativepathstring] = $page;
-			if (!empty($limit) && $limit != $conf->limit) $_SESSION['lastsearch_limit_tmp_'.$relativepathstring] = $limit;
+			if (!empty($limit) && $limit != $conf->liste_limit) $_SESSION['lastsearch_limit_tmp_'.$relativepathstring] = $limit;
 
 			unset($_SESSION['lastsearch_contextpage_'.$relativepathstring]);
 			unset($_SESSION['lastsearch_page_'.$relativepathstring]);
