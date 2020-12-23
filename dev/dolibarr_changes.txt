@@ -229,11 +229,21 @@ Change content of file htdocs/includes/restler/framework/Luracast/Restler/explor
     public static function getShortName($className)
     {
     	// @CHANGE LDR
-    	if (! is_string($className)) return;
+    	if (!is_string($className)) return;
     	//var_dump($className);
 
-    	
-    	
+* Add line into Data/Text.php to complete function
+
+    public static function endsWith($haystack, $needle)
+    {
+        $length = strlen($needle);
+        if ($length == 0) {
+            return true;
+        }
+    	// @CHANGE LDR
+        if (!is_string($haystack)) return false;
+
+
 PARSEDOWN
 ---------
 
