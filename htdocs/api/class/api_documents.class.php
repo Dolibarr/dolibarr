@@ -707,7 +707,7 @@ class Documents extends DolibarrApi
 
 		if (!empty($createdirifnotexists)) {
 			if (dol_mkdir($upload_dir) < 0) { // needed by products
-				throw new RestException(500, 'Error while trying to create directory.');
+				throw new RestException(500, 'Error while trying to create directory '.$upload_dir);
 			}
 		}
 
