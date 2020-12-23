@@ -294,12 +294,15 @@ class modStock extends DolibarrModules
 			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 			$this->export_sql_start[$r] = 'SELECT DISTINCT ';
-			$this->export_sql_end[$r]  = ' FROM ('.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'product_stock as ps, '.MAIN_DB_PREFIX.'product_batch as pb)';
+			$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'product_batch as pb';
+			$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_stock as ps ON ps.rowid = pb.fk_product_stock';
+			$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'product as p ON p.rowid = ps.fk_product';
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lot as pl ON pl.fk_product = p.rowid AND pl.batch = pb.batch';
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lot_extrafields as extra ON extra.fk_object = pl.rowid,';
 			$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'entrepot as e';
-			$this->export_sql_end[$r] .= ' WHERE p.rowid = ps.fk_product AND ps.fk_entrepot = e.rowid AND ps.rowid = pb.fk_product_stock';
-			$this->export_sql_end[$r] .= ' AND e.entity IN ('.getEntity('stock').')';		}
+			$this->export_sql_end[$r] .= ' WHERE ps.fk_entrepot = e.rowid';
+			$this->export_sql_end[$r] .= ' AND e.entity IN ('.getEntity('stock').')';
+		}
 
 		// Export of stock movements
 		$r++;

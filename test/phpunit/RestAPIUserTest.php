@@ -130,7 +130,7 @@ class RestAPIUserTest extends PHPUnit\Framework\TestCase
         print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
         $this->assertEquals($result['curl_error_no'], '');
         $object=json_decode($result['content'], true);
-        $this->assertNotNull($object, "Parsing of json result must no be null");
+        $this->assertNotNull($object, "Parsing of json result must not be null");
         $this->assertEquals('200', $object['success']['code']);
 
         $this->api_key = $object['success']['token'];
