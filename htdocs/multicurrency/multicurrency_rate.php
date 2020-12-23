@@ -236,7 +236,7 @@ print dol_get_fiche_head($head, 'ratelist', $langs->trans("ModuleSetup"), -1, "m
 
 // ACTION
 
-if (!in_array( $action, array("updateRate", "deleteRate"))) {
+if (!in_array($action, array("updateRate", "deleteRate"))) {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("FormCreateRate").'</td>'."\n";
