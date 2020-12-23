@@ -491,7 +491,7 @@ if ($id)
 		);
 		$formquestion[] = array('type' => 'date', 'tdclass'=>'fieldrequired', 'name' => 'clone_date_payment', 'label' => $langs->trans("DatePayment"), 'value' => -1);
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_value', 'label' => $langs->trans("DateValue"), 'value' => -1);
-		$formquestion[] = array('type' => 'other', 'tdclass'=>'fieldrequired', 'name' => 'accountid', 'label' => $langs->trans("BankAccount"), 'value' => $form->select_comptes($accountid, "accountid", 0, '', 1));
+		$formquestion[] = array('type' => 'other', 'tdclass'=>'fieldrequired', 'name' => 'accountid', 'label' => $langs->trans("BankAccount"), 'value' => $form->select_comptes($accountid, "accountid", 0, '', 1, '', 0, 'minwidth200', 1));
 
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneVariousPayment', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 300);
 	}
