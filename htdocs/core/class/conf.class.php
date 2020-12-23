@@ -52,9 +52,11 @@ class Conf
 	public $disable_compute;
 	//! Used to store current currency (ISO code like 'USD', 'EUR', ...)
 	public $currency;
+
 	//! Used to store current css (from theme)
 	public $theme; // Contains current theme ("eldy", "auguria", ...)
 	public $css; // Contains full path of css page ("/theme/eldy/style.css.php", ...)
+
 	//! Used to store current menu handler
 	public $standard_menu;
 	// List of activated modules
@@ -97,6 +99,8 @@ class Conf
 	public $dol_optimize_smallscreen; // Set if we force param dol_optimize_smallscreen into login url or if browser is smartphone
 	public $dol_no_mouse_hover; // Set if we force param dol_no_mouse_hover into login url or if browser is smartphone
 	public $dol_use_jmobile; // Set if we force param dol_use_jmobile into login url
+
+	public $liste_limit;
 
 
 	/**
