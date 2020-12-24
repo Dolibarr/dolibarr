@@ -401,7 +401,7 @@ $arrayofmassactions = array(
 if ($user->rights->adherent->creer) $arrayofmassactions['close'] = $langs->trans("Resiliate");
 if ($user->rights->adherent->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if ($user->rights->societe->creer) $arrayofmassactions['preaffecttag'] = '<span class="fa fa-tag paddingrightonly"></span>'.$langs->trans("AffectTag");
-if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
+if (in_array($massaction, array('presend', 'predelete','preaffecttag'))) $arrayofmassactions = array();
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $newcardbutton = '';
