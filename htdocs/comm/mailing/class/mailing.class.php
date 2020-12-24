@@ -461,6 +461,8 @@ class Mailing extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
+			$this->refreshNbOfTargets();
+
 			return 1;
 		}
 		else
@@ -532,6 +534,38 @@ class Mailing extends CommonObject
 	    return 0;
 	}
 
+	/**
+	 *  Refresh denormalized value ->nbemail into emailing record
+	 *  Note: There is also the method update_nb into modules_mailings that is used for this.
+	 *
+	 *  @return int        		<0 if KO, >0 if OK
+	 */
+	public function refreshNbOfTargets()
+	{
+		$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."mailing_cibles";
+		$sql .= " WHERE fk_mailing = ".$this->id;
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$nbforupdate = $obj->nb;
+
+				$sql = 'UPDATE '.MAIN_DB_PREFIX.'mailing SET nbemail = '.((int) $nbforupdate);
+				$sql .= ' WHERE rowid = '.$this->id;
+
+				$resqlupdate = $this->db->query($sql);
+				if (! $resqlupdate) {
+					$this->error = $this->db->lasterror();
+					return -1;
+				}
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		return 1;
+	}
 
 	/**
 	 *  Return a link to the object card (with optionally the picto)
