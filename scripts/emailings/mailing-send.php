@@ -318,7 +318,7 @@ if ($resql) {
 								}
 
 								if (!empty($conf->global->MAILING_DELAY)) {
-									sleep($conf->global->MAILING_DELAY);
+									usleep((float) $conf->global->MAILING_DELAY * 1000000);
 								}
 							}
 						} else {
