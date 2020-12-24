@@ -314,11 +314,13 @@ class Users extends DolibarrApi
 	/**
 	 * Update account
 	 *
-	 * @param int   $id             Id of account to update
-	 * @param array $request_data   Datas
-	 * @return array
+	 * @param 	int   		$id             	Id of account to update
+	 * @param	array 		$request_data   	Datas
+	 * @return 	array|mixed						Record after update
 	 *
-	 * @throws 	RestException
+	 * @throws RestException 401 Not allowed
+	 * @throws RestException 404 Not found
+	 * @throws RestException 500 System error
 	 */
 	public function put($id, $request_data = null)
 	{

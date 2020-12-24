@@ -169,7 +169,7 @@ class RestAPIUserTest extends PHPUnit\Framework\TestCase
         $this->assertEquals($result['curl_error_no'], '');
         $object=json_decode($result['content'], true);
         $this->assertNotNull($object, "Parsing of json result must not be null");
-        $this->assertEquals(404, $object['error']['code']);
+        $this->assertEquals(404, $object['error']['code'], 'Error code is not 404');
 
         $url = $this->api_url.'/users/1?api_key='.$this->api_key;
 
