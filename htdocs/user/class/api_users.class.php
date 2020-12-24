@@ -142,11 +142,11 @@ class Users extends DolibarrApi
 	 * Get properties of an user object
 	 *
 	 * @param 	int 	$id 					ID of user
-	 * @param	int		$includepermissions	Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
-	 * @return 	array|mixed data without useless information
+	 * @param	int		$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
+	 * @return 	array|mixed 					data without useless information
 	 *
-	 * @throws RestException 401     Insufficient rights
-	 * @throws RestException 404     User or group not found
+	 * @throws RestException 401 Insufficient rights
+	 * @throws RestException 404 User or group not found
 	 */
 	public function get($id, $includepermissions = 0)
 	{
@@ -177,13 +177,13 @@ class Users extends DolibarrApi
 	 * Get properties of an user object by login
 	 *
 	 * @param 	string 	$login 					Login of user
-	 * @param	int		$includepermissions	Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
-	 * @return 	array|mixed data without useless information
+	 * @param	int		$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
+	 * @return 	array|mixed 					Data without useless information
 	 *
 	 * @url GET login/{login}
 	 *
-	 * @throws RestException 401     Insufficient rights
-	 * @throws RestException 404     User or group not found
+	 * @throws RestException 401 Insufficient rights
+	 * @throws RestException 404 User or group not found
 	 */
 	public function getByLogin($login, $includepermissions = 0)
 	{
@@ -211,8 +211,8 @@ class Users extends DolibarrApi
 	 * Get properties of an user object by Email
 	 *
 	 * @param 	string 	$email 					Email of user
-	 * @param	int		$includepermissions	Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
-	 * @return 	array|mixed data without useless information
+	 * @param	int		$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
+	 * @return 	array|mixed 					Data without useless information
 	 *
 	 * @url GET email/{email}
 	 *
