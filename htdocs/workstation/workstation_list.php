@@ -61,6 +61,7 @@ if (!$res) die("Include of main fails");
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 
 // load workstation libraries
 require_once __DIR__.'/class/workstation.class.php';
@@ -119,6 +120,9 @@ foreach ($object->fields as $key => $val)
 	if (in_array($key, array('type', 'status')) && GETPOST('search_'.$key, 'alpha') == -1) $search[$key] = '';
 }
 
+$groups = GETPOST('groups');
+$resources = GETPOST('resources');
+
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
 foreach ($object->fields as $key => $val)
@@ -142,6 +146,23 @@ foreach ($object->fields as $key => $val)
 		);
 	}
 }
+
+$arrayfields['wug.fk_usergroup'] = array(
+	'label'=>$langs->trans('Groups'),
+	'checked'=>(($visible < 0) ? 0 : 1),
+	'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+	'position'=>1000,
+	'help'=>$val['help']
+);
+
+$arrayfields['wr.fk_resource'] = array(
+	'label'=>$langs->trans('Resources'),
+	'checked'=>(($visible < 0) ? 0 : 1),
+	'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+	'position'=>1001,
+	'help'=>$val['help']
+);
+
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -188,6 +209,7 @@ if (empty($reshook))
 		{
 			$search[$key] = '';
 		}
+		$groups=$resources=array();
 		$toselect = '';
 		$search_array_options = array();
 	}
@@ -211,6 +233,7 @@ if (empty($reshook))
  */
 
 $form = new Form($db);
+$formresource = new FormResource($db);
 
 $now = dol_now();
 
@@ -237,6 +260,8 @@ $sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
+if(!empty($groups) || $sortfield === 'wug.fk_usergroup') $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'workstation_workstation_usergroup wug ON (wug.fk_workstation = t.rowid)';
+if(!empty($resources) || $sortfield === 'wr.fk_resource') $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'workstation_workstation_resource wr ON (wr.fk_workstation = t.rowid)';
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -256,6 +281,13 @@ foreach ($search as $key => $val)
 if ($search_all) $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 //$sql.= dolSqlDateFilter("t.field", $search_xxxday, $search_xxxmonth, $search_xxxyear);
 // Add where from extra fields
+
+// usergroups
+if(!empty($groups)) $sql.= ' AND wug.fk_usergroup IN('.implode(',', $groups).')';
+
+// resources
+if(!empty($resources)) $sql.= ' AND wr.fk_resource IN('.implode(',', $resources).')';
+
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters = array();
@@ -278,7 +310,7 @@ $reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters, $object
 $sql.=$hookmanager->resPrint;
 $sql=preg_replace('/,\s*$/','', $sql);
 */
-
+$sql.= ' GROUP BY t.rowid';
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
@@ -422,6 +454,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 
 // Fields title search
 // --------------------------------------------------------------------
+
 print '<tr class="liste_titre">';
 foreach ($object->fields as $key => $val)
 {
@@ -440,6 +473,21 @@ foreach ($object->fields as $key => $val)
 		print '</td>';
 	}
 }
+
+// usergroups
+if (!empty($arrayfields['wug.fk_usergroup']['checked'])) {
+	print '<td class="liste_titre">';
+	print $form->select_dolgroups($groups, 'groups', 1, '', 0, '', '', $conf->entity, true);
+	print '</td>';
+}
+
+// resources
+if (!empty($arrayfields['wr.fk_resource']['checked'])) {
+	print '<td class="liste_titre">';
+	print $formresource->select_resource_list($resources, 'resources', '', '', 0, '', '', $conf->entity, true, 0, '', true);
+	print '</td>';
+}
+
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
@@ -470,6 +518,17 @@ foreach ($object->fields as $key => $val)
 		print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''))."\n";
 	}
 }
+
+// usergroups
+if (!empty($arrayfields['wug.fk_usergroup']['checked'])) {
+	print getTitleFieldOfList($arrayfields['wug.fk_usergroup']['label'], 0, $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, '') . "\n";
+}
+
+// resources
+if (!empty($arrayfields['wr.fk_resource']['checked'])) {
+	print getTitleFieldOfList($arrayfields['wr.fk_resource']['label'], 0, $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, '') . "\n";
+}
+
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
@@ -503,6 +562,8 @@ while ($i < ($limit ? min($num, $limit) : $num))
 
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
+	$object->usergroups = WorkstationUserGroup::getAllGroupsOfWorkstation($obj->rowid);
+	$object->resources = WorkstationResource::getAllResourcesOfWorkstation($obj->rowid);
 
 	// Show here line of result
 	print '<tr class="oddeven">';
@@ -532,6 +593,31 @@ while ($i < ($limit ? min($num, $limit) : $num))
 			}
 		}
 	}
+
+	if (!empty($arrayfields['wug.fk_usergroup']['checked'])) {
+		$toprint = array();
+		foreach ($object->usergroups as $id_group) {
+			$g = new UserGroup($db);
+			$g->fetch($id_group);
+			$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">' . $g->getNomUrl(1) . '</li>';
+		}
+		print '<td>';
+		print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
+		print '</td>';
+	}
+
+	if (!empty($arrayfields['wr.fk_resource']['checked'])) {
+		$toprint = array();
+		foreach ($object->resources as $id_resource) {
+			$r = new Dolresource($db);
+			$r->fetch($id_resource);
+			$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">' . $r->getNomUrl(1) . '</li>';
+		}
+		print '<td>';
+		print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
+		print '</td>';
+	}
+
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
