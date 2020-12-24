@@ -260,8 +260,8 @@ $sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
-if(!empty($groups) || $sortfield === 'wug.fk_usergroup') $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'workstation_workstation_usergroup wug ON (wug.fk_workstation = t.rowid)';
-if(!empty($resources) || $sortfield === 'wr.fk_resource') $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'workstation_workstation_resource wr ON (wr.fk_workstation = t.rowid)';
+if (!empty($groups) || $sortfield === 'wug.fk_usergroup') $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'workstation_workstation_usergroup wug ON (wug.fk_workstation = t.rowid)';
+if (!empty($resources) || $sortfield === 'wr.fk_resource') $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'workstation_workstation_resource wr ON (wr.fk_workstation = t.rowid)';
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -283,10 +283,10 @@ if ($search_all) $sql .= natural_search(array_keys($fieldstosearchall), $search_
 // Add where from extra fields
 
 // usergroups
-if(!empty($groups)) $sql.= ' AND wug.fk_usergroup IN('.implode(',', $groups).')';
+if (!empty($groups)) $sql.= ' AND wug.fk_usergroup IN('.implode(',', $groups).')';
 
 // resources
-if(!empty($resources)) $sql.= ' AND wr.fk_resource IN('.implode(',', $resources).')';
+if (!empty($resources)) $sql.= ' AND wr.fk_resource IN('.implode(',', $resources).')';
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
