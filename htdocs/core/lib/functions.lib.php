@@ -4461,7 +4461,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 	$savlimit = $limit;
 	$savtotalnboflines = $totalnboflines;
-	$totalnboflines = abs($totalnboflines);
+	$totalnboflines = abs((int) $totalnboflines);
 
 	if ($picto == 'setup') $picto = 'title_setup.png';
 	if (($conf->browser->name == 'ie') && $picto == 'generic') $picto = 'title.gif';
