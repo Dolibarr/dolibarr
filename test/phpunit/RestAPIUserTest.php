@@ -164,7 +164,7 @@ class RestAPIUserTest extends PHPUnit\Framework\TestCase
 
         print __METHOD__." Request GET url=".$url."\n";
         $result=getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
-        print __METHOD__." result for get on unexisting user: ".var_export($result, true)."\n";
+        //print __METHOD__." result for get on unexisting user: ".var_export($result, true)."\n";
         print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
         $this->assertEquals($result['curl_error_no'], '');
         $object=json_decode($result['content'], true);
@@ -175,7 +175,7 @@ class RestAPIUserTest extends PHPUnit\Framework\TestCase
 
         print __METHOD__." Request GET url=".$url."\n";
         $result=getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
-        //print __METHOD__." Result for existing user user: ".var_export($result, true)."\n";
+        print __METHOD__." result for get on an existing user: ".var_export($result, true)."\n";
         print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
         $this->assertEquals($result['curl_error_no'], '');
         $object=json_decode($result['content'], true);
