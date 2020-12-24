@@ -1292,14 +1292,13 @@ if (!$error && $massaction == 'generate_doc' && $permissiontoread)
 }
 
 if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd) {
-
 	$db->begin();
 
-	$affecttag_type=GETPOST('affecttag_type','alpha');
+	$affecttag_type=GETPOST('affecttag_type', 'alpha');
 	if (!empty($affecttag_type)) {
-		$affecttag_type_array=explode(',',$affecttag_type);
+		$affecttag_type_array=explode(',', $affecttag_type);
 	} else {
-		setEventMessage('CategTypeNotFound','errors');
+		setEventMessage('CategTypeNotFound', 'errors');
 	}
 	if (!empty($affecttag_type_array)) {
 		//check if tag type submited exists into Tag Map categorie class
@@ -1307,7 +1306,7 @@ if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd
 		$categ = new Categorie($db);
 		$to_affecttag_type_array=array();
 		$categ_type_array=$categ->getMapList();
-		foreach($categ_type_array as $categdef) {
+		foreach ($categ_type_array as $categdef) {
 			if (in_array($categdef['code'],  $affecttag_type_array)) {
 				$to_affecttag_type_array[] = $categdef['code'];
 			}
@@ -1323,14 +1322,12 @@ if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd
 					$result = $object->fetch($toselectid);
 					//var_dump($contcats);exit;
 					if ($result > 0) {
-
 						$result = $object->setCategoriesCommon($contcats, $categ_type, false);
 						if ($result > 0) {
 							$nbok++;
 						} else {
 							setEventMessages($object->error, $object->errors, 'errors');
 						}
-
 					} else {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;
