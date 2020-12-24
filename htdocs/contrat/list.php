@@ -614,14 +614,14 @@ while ($i < min($num, $limit))
 	$socstatic->logo = $obj->logo;
 	$socstatic->country_id = $obj->country_id;
 	$socstatic->country_code = '';
-	$socstatic->country_label = '';*/
+	$socstatic->country = '';*/
 	if ($obj->country_id > 0) {
 		if (!isset($cacheCountryIDCode[$obj->country_id]['code'])) {
 			$tmparray = getCountry($obj->country_id, 'all');
 			$cacheCountryIDCode[$obj->country_id] = array('code'=> empty($tmparray['code']) ? '' : $tmparray['code'], 'label' => empty($tmparray['label']) ? '' : $tmparray['label']);
 		}
 		$socstatic->country_code = $cacheCountryIDCode[$obj->country_id]['code'];
-		$socstatic->country_label = $cacheCountryIDCode[$obj->country_id]['label'];
+		$socstatic->country = $cacheCountryIDCode[$obj->country_id]['label'];
 	}
 
 
@@ -695,7 +695,7 @@ while ($i < min($num, $limit))
 	if (!empty($arrayfields['country.code_iso']['checked']))
 	{
 		print '<td class="center">';
-		print $socstatic->country_label;
+		print $socstatic->country;
 		print '</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}

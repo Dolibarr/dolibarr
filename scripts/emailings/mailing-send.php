@@ -74,6 +74,10 @@ if (empty($conf->global->MAILING_LIMIT_SENDBYCLI))
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 
+if (!empty($conf->global->MAILING_DELAY)) {
+	print 'A delay of '.((float) $conf->global->MAILING_DELAY * 1000000).' millisecond has been set between each email'."\n";
+}
+
 if ($conf->global->MAILING_LIMIT_SENDBYCLI == '-1') {}
 
 $user = new User($db);
@@ -332,7 +336,7 @@ if ($resql) {
 								}
 
 								if (!empty($conf->global->MAILING_DELAY)) {
-									sleep($conf->global->MAILING_DELAY);
+									usleep((float) $conf->global->MAILING_DELAY * 1000000);
 								}
 							}
 						} else {
