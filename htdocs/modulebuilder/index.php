@@ -902,6 +902,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 		$filetogenerate = array(
 			'myobject_card.php'=>strtolower($objectname).'_card.php',
 			'myobject_note.php'=>strtolower($objectname).'_note.php',
+			'myobject_contact.php'=>strtolower($objectname).'_contact.php',
 			'myobject_document.php'=>strtolower($objectname).'_document.php',
 			'myobject_agenda.php'=>strtolower($objectname).'_agenda.php',
 			'myobject_list.php'=>strtolower($objectname).'_list.php',
@@ -2336,6 +2337,7 @@ if ($module == 'initmodule')
 						$pathtodocument = strtolower($module).'/'.strtolower($tabobj).'_document.php';
 						$pathtolist     = strtolower($module).'/'.strtolower($tabobj).'_list.php';
 						$pathtonote     = strtolower($module).'/'.strtolower($tabobj).'_note.php';
+						$pathtocontact  = strtolower($module).'/'.strtolower($tabobj).'_contact.php';
 						$pathtophpunit  = strtolower($module).'/test/phpunit/'.strtolower($tabobj).'Test.php';
 						$pathtosql      = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'.sql';
 						$pathtosqlextra = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'_extrafields.sql';
@@ -2354,6 +2356,7 @@ if ($module == 'initmodule')
 						$realpathtodocument = $dirread.'/'.$pathtodocument;
 						$realpathtolist     = $dirread.'/'.$pathtolist;
 						$realpathtonote     = $dirread.'/'.$pathtonote;
+						$realpathtocontact  = $dirread.'/'.$pathtocontact;
 						$realpathtophpunit  = $dirread.'/'.$pathtophpunit;
 						$realpathtosql      = $dirread.'/'.$pathtosql;
 						$realpathtosqlextra = $dirread.'/'.$pathtosqlextra;
@@ -2485,6 +2488,14 @@ if ($module == 'initmodule')
 						{
 							print ' ';
 							print '<a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=confirm_removefile&file='.urlencode($pathtonote).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
+						}
+						print '<br>';
+						print '<span class="fa fa-file-o"></span> '.$langs->trans("PageForContactTab").' : <strong>'.($realpathtocontact ? '' : '<strike>').$pathtocontact.($realpathtocontact ? '' : '</strike>').'</strong>';
+						print ' <a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&format=php&file='.urlencode($pathtocontact).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+						if ($realpathtocontact)
+						{
+							print ' ';
+							print '<a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=confirm_removefile&file='.urlencode($pathtocontact).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
 						}
 						print '<br>';
 
