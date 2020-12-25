@@ -226,11 +226,14 @@ if ($dirins && $action == 'initmodule' && $modulename)
 		// Delete dir and files that can be generated in sub tabs later if we need them (we want a minimal module first)
 		dol_delete_dir_recursive($destdir.'/build/doxygen');
 		dol_delete_dir_recursive($destdir.'/core/modules/mailings');
+		dol_delete_dir_recursive($destdir.'/core/modules/'.strtolower($modulename).'');
 		dol_delete_dir_recursive($destdir.'/core/tpl');
 		dol_delete_dir_recursive($destdir.'/core/triggers');
 		dol_delete_dir_recursive($destdir.'/doc');
 		dol_delete_dir_recursive($destdir.'/.tx');
 		dol_delete_dir_recursive($destdir.'/core/boxes');
+
+		dol_delete_file($destdir.'/admin/myobject_extrafields');
 
 		dol_delete_file($destdir.'/sql/data.sql');
 		dol_delete_file($destdir.'/sql/update_x.x.x-y.y.y.sql');
@@ -1334,6 +1337,7 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname)
 		$filetodelete = array(
 			'myobject_card.php'=>strtolower($objectname).'_card.php',
 			'myobject_note.php'=>strtolower($objectname).'_note.php',
+			'myobject_contact.php'=>strtolower($objectname).'_contact.php',
 			'myobject_document.php'=>strtolower($objectname).'_document.php',
 			'myobject_agenda.php'=>strtolower($objectname).'_agenda.php',
 			'myobject_list.php'=>strtolower($objectname).'_list.php',
