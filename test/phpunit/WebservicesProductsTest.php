@@ -182,7 +182,10 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
                 'type'=>1,
                 'description'=>'This is a new product created from WS PHPUnit test case',
                 'barcode'=>'123456789012',
-                'barcode_type'=>2
+                'barcode_type'=>2,
+            	'price_net'=>10,
+            	'status_tosell'=>1,
+            	'status_tobuy'=>1
             )
         );
         print __METHOD__." call method ".$WS_METHOD."\n";

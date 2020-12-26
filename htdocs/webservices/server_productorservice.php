@@ -493,20 +493,20 @@ function createProductOrService($authentication, $product)
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
-	if ($product['price_net'] > 0) $product['price_base_type'] = 'HT';
-	if ($product['price'] > 0)     $product['price_base_type'] = 'TTC';
+	if (empty($product['price_base_type'])) {
+		if (isset($product['price_net']) && $product['price_net'] > 0) $product['price_base_type'] = 'HT';
+		if (isset($product['price']) && $product['price'] > 0)     $product['price_base_type'] = 'TTC';
+	}
 
-	if ($product['price_net'] > 0 && $product['price'] > 0)
+	if (isset($product['price_net']) && $product['price_net'] > 0 && isset($product['price']) && $product['price'] > 0)
 	{
 		$error++; $errorcode = 'KO'; $errorlabel = "You must choose between price or price_net to provide price.";
 	}
 
-	if ($product['barcode'] && !$product['barcode_type'])
+	if (!empty($product['barcode']) && empty($product['barcode_type']))
 	{
 		$error++; $errorcode = 'KO'; $errorlabel = "You must set a barcode type when setting a barcode.";
 	}
-
-
 
 	if (!$error)
 	{
@@ -514,21 +514,21 @@ function createProductOrService($authentication, $product)
 
 		$newobject = new Product($db);
 		$newobject->ref = $product['ref'];
-		$newobject->ref_ext = $product['ref_ext'];
-		$newobject->type = $product['type'];
-		$newobject->label = $product['label'];
-		$newobject->description = $product['description'];
-		$newobject->note_public = $product['note_public'];
-		$newobject->note_private = $product['note_private'];
-		$newobject->status = $product['status_tosell'];
-		$newobject->status_buy = $product['status_tobuy'];
-		$newobject->price = $product['price_net'];
-		$newobject->price_ttc = $product['price'];
-		$newobject->tva_tx = $product['vat_rate'];
+		$newobject->ref_ext = empty($product['ref_ext']) ? '' : $product['ref_ext'];
+		$newobject->type = empty($product['type']) ? 0 : $product['type'];
+		$newobject->label = empty($product['label']) ? '' : $product['label'];
+		$newobject->description = empty($product['description']) ? '' : $product['description'];
+		$newobject->note_public = empty($product['note_public']) ? '' : $product['note_public'];
+		$newobject->note_private = empty($product['note_private']) ? '' :$product['note_private'];
+		$newobject->status = empty($product['status_tosell']) ? 0 : $product['status_tosell'];
+		$newobject->status_buy = empty($product['status_tobuy']) ? 0 : $product['status_tobuy'];
+		$newobject->price = isset($product['price_net']) ? $product['price_net'] : 0;
+		$newobject->price_ttc = isset($product['price']) ? $product['price'] : 0;
+		$newobject->tva_tx = empty($product['vat_rate']) ? 0 : $product['vat_rate'];
 		$newobject->price_base_type = $product['price_base_type'];
 		$newobject->date_creation = $now;
 
-		if ($product['barcode'])
+		if (!empty($product['barcode']))
 		{
 			$newobject->barcode = $product['barcode'];
 			$newobject->barcode_type = $product['barcode_type'];
@@ -539,7 +539,7 @@ function createProductOrService($authentication, $product)
 		$newobject->seuil_stock_alert = $product['stock_alert'];
 
 		$newobject->country_id = $product['country_id'];
-		if ($product['country_code']) $newobject->country_id = getCountry($product['country_code'], 3);
+		if (!empty($product['country_code'])) $newobject->country_id = getCountry($product['country_code'], 3);
 		$newobject->customcode = $product['customcode'];
 
 		$newobject->canvas = $product['canvas'];
