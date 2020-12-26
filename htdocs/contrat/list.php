@@ -131,14 +131,8 @@ $arrayfields = array(
 	'status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -620,14 +614,14 @@ while ($i < min($num, $limit))
 	$socstatic->logo = $obj->logo;
 	$socstatic->country_id = $obj->country_id;
 	$socstatic->country_code = '';
-	$socstatic->country_label = '';*/
+	$socstatic->country = '';*/
 	if ($obj->country_id > 0) {
 		if (!isset($cacheCountryIDCode[$obj->country_id]['code'])) {
 			$tmparray = getCountry($obj->country_id, 'all');
 			$cacheCountryIDCode[$obj->country_id] = array('code'=> empty($tmparray['code']) ? '' : $tmparray['code'], 'label' => empty($tmparray['label']) ? '' : $tmparray['label']);
 		}
 		$socstatic->country_code = $cacheCountryIDCode[$obj->country_id]['code'];
-		$socstatic->country_label = $cacheCountryIDCode[$obj->country_id]['label'];
+		$socstatic->country = $cacheCountryIDCode[$obj->country_id]['label'];
 	}
 
 
@@ -701,7 +695,7 @@ while ($i < min($num, $limit))
 	if (!empty($arrayfields['country.code_iso']['checked']))
 	{
 		print '<td class="center">';
-		print $socstatic->country_label;
+		print $socstatic->country;
 		print '</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}

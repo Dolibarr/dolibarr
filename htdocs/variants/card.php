@@ -44,7 +44,7 @@ if ($object->fetch($id) < 1) {
 if ($cancel) $action = '';
 
 if ($action) {
-	if ($action == 'edit') {
+	if ($action == 'update') {
 		$object->ref = $ref;
 		$object->label = $label;
 
@@ -55,7 +55,7 @@ if ($action) {
 			header('Location: '.dol_buildpath('/variants/card.php?id='.$id, 2));
 			exit();
 		}
-	} elseif ($action == 'update') {
+	} elseif ($action == 'update_value') {
 		if ($objectval->fetch($valueid) > 0) {
 			$objectval->ref = $ref;
 			$objectval->value = GETPOST('value', 'alpha');
@@ -139,7 +139,12 @@ $h++;
 print dol_get_fiche_head($head, 'variant', $langs->trans('ProductAttributeName'), -1, 'generic');
 
 if ($action == 'edit') {
-	print '<form method="POST">';
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="action" value="update">';
+		print '<input type="hidden" name="id" value="'.$id.'">';
+		print '<input type="hidden" name="valueid" value="'.$valueid.'">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 }
 
 
@@ -232,7 +237,7 @@ if ($action == 'edit') {
 	if ($action == 'edit_value') {
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="hidden" name="action" value="update">';
+		print '<input type="hidden" name="action" value="update_value">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="valueid" value="'.$valueid.'">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';

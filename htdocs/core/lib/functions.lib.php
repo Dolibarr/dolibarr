@@ -2887,12 +2887,16 @@ function getUserRemoteIP()
 {
 	if (empty($_SERVER['HTTP_X_FORWARDED_FOR']) || preg_match('/[^0-9\.\:,\[\]]/', $_SERVER['HTTP_X_FORWARDED_FOR'])) {
 		if (empty($_SERVER['HTTP_CLIENT_IP']) || preg_match('/[^0-9\.\:,\[\]]/', $_SERVER['HTTP_CLIENT_IP'])) {
-			$ip = (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']);
+			if (empty($_SERVER["HTTP_CF_CONNECTING_IP"])) {
+				$ip = (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']);	// value may have been forged by client
+			} else {
+				$ip = $_SERVER["HTTP_CF_CONNECTING_IP"];	// value here may have been forged by client
+			}
 		} else {
-			$ip = $_SERVER['HTTP_CLIENT_IP']; // value is clean here
+			$ip = $_SERVER['HTTP_CLIENT_IP']; // value is clean here but may have been forged by proxy
 		}
 	} else {
-		$ip = $_SERVER['HTTP_X_FORWARDED_FOR']; // value is clean here
+		$ip = $_SERVER['HTTP_X_FORWARDED_FOR']; // value is clean here but may have been forged by proxy
 	}
 	return $ip;
 }
@@ -4457,7 +4461,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 	$savlimit = $limit;
 	$savtotalnboflines = $totalnboflines;
-	$totalnboflines = abs($totalnboflines);
+	$totalnboflines = abs((int) $totalnboflines);
 
 	if ($picto == 'setup') $picto = 'title_setup.png';
 	if (($conf->browser->name == 'ie') && $picto == 'generic') $picto = 'title.gif';
@@ -4873,7 +4877,7 @@ function price2num($amount, $rounding = '', $option = 0)
 		elseif ($rounding == 'CR') $nbofdectoround = 8;
 		elseif (is_numeric($rounding))  $nbofdectoround = $rounding;
 		//print "RR".$amount.' - '.$nbofdectoround.'<br>';
-		if (dol_strlen($nbofdectoround)) $amount = round($amount, $nbofdectoround); // $nbofdectoround can be 0.
+		if (dol_strlen($nbofdectoround)) $amount = round(is_string($amount) ? (float) $amount : $amount, $nbofdectoround); // $nbofdectoround can be 0.
 		else return 'ErrorBadParameterProvidedToFunction';
 		//print 'SS'.$amount.' - '.$nbofdec.' - '.$dec.' - '.$thousand.' - '.$nbofdectoround.'<br>';
 

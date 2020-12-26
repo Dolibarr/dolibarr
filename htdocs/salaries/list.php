@@ -154,9 +154,7 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass = 'PaymentSalary';
 	$objectlabel = 'SalariesPayments';
-	$permissiontoread = $user->rights->salaries->read;
-	$permissiontodelete = $user->rights->salaries->delete;
-	$uploaddir = $conf->bom->dir_output;
+	$uploaddir = $conf->salaries->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// Validate records
@@ -308,7 +306,7 @@ print '<input class="flat" type="text" size="6" name="search_user" value="'.$db-
 print '</td>';
 // Label
 print '<td class="liste_titre"><input type="text" class="flat width150" name="search_label" value="'.$db->escape($search_label).'"></td>';
-// Date
+// Date payment
 print '<td class="liste_titre center">';
 print '<div class="nowrap">';
 print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
@@ -316,6 +314,9 @@ print '</div>';
 print '<div class="nowrap">';
 print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 print '</div>';
+print '</td>';
+// Date value
+print '<td class="liste_titre center">';
 print '</td>';
 // Type
 print '<td class="liste_titre left">';
@@ -352,7 +353,8 @@ print '<tr class="liste_titre">';
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "s.rowid", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.rowid", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "s.label", "", $param, 'class="left"', $sortfield, $sortorder);
-print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "s.datep,s.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "s.datep,s.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre("DateValue", $_SERVER["PHP_SELF"], "s.datev,s.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
 print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, 'class="left"', $sortfield, $sortorder);
 if (!empty($conf->banque->enabled)) print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "s.amount", "", $param, 'class="right"', $sortfield, $sortorder);
@@ -419,6 +421,10 @@ while ($i < ($limit ? min($num, $limit) : $num))
 
 	// Date payment
 	print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
+	if (!$i) $totalarray['nbfield']++;
+
+	// Date value
+	print '<td class="center">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>\n";
 	if (!$i) $totalarray['nbfield']++;
 
 	// Type

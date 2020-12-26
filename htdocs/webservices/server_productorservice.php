@@ -142,7 +142,7 @@ $extrafield_array = null;
 if (is_array($extrafields) && count($extrafields) > 0) {
 	$extrafield_array = array();
 }
-if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 {
 	foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 	{
@@ -436,7 +436,7 @@ function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = ''
 				//Get extrafield values
 				$product->fetch_optionals();
 
-				if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+				if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 				{
 					foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 					{
@@ -563,7 +563,7 @@ function createProductOrService($authentication, $product)
 
 		$extrafields = new ExtraFields($db);
 		$extrafields->fetch_name_optionals_label($elementtype, true);
-		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+		if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
 			foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 			{
@@ -719,7 +719,7 @@ function updateProductOrService($authentication, $product)
 
 		$extrafields = new ExtraFields($db);
 		$extrafields->fetch_name_optionals_label($elementtype, true);
-		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+		if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
 			foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 			{
@@ -1090,7 +1090,7 @@ function getProductsForCategory($authentication, $id, $lang = '')
 							//Get extrafield values
 							$tmpproduct->fetch_optionals();
 
-							if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+							if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 							{
 								foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 								{

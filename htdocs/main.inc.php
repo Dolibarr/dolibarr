@@ -417,7 +417,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 	// Check all cases that need a token (all POST actions, all actions and mass actions on pages with CSRFCHECK_WITH_TOKEN set, all sensitive GET actions)
 	if ($_SERVER['REQUEST_METHOD'] == 'POST' ||
 		((GETPOSTISSET('action') || GETPOSTISSET('massaction')) && defined('CSRFCHECK_WITH_TOKEN')) ||
-		in_array(GETPOST('action', 'aZ09'), array('add', 'addtimespent', 'update', 'install', 'delete', 'deleteprof', 'deletepayment', 'confirm_create_user', 'confirm_create_thirdparty', 'confirm_reject_check')))
+		in_array(GETPOST('action', 'aZ09'), array('add', 'addtimespent', 'update', 'install', 'delete', 'deletefilter', 'deleteoperation', 'deleteprof', 'deletepayment', 'confirm_create_user', 'confirm_create_thirdparty', 'confirm_reject_check')))
 	{
 		if (!GETPOSTISSET('token')) {
 			if (GETPOST('uploadform', 'int')) {
@@ -2802,7 +2802,7 @@ if (!function_exists("llxFooter"))
 
 			if (!empty($contextpage))                     $_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring] = $contextpage;
 			if (!empty($page) && $page > 0)               $_SESSION['lastsearch_page_tmp_'.$relativepathstring] = $page;
-			if (!empty($limit) && $limit != $conf->limit) $_SESSION['lastsearch_limit_tmp_'.$relativepathstring] = $limit;
+			if (!empty($limit) && $limit != $conf->liste_limit) $_SESSION['lastsearch_limit_tmp_'.$relativepathstring] = $limit;
 
 			unset($_SESSION['lastsearch_contextpage_'.$relativepathstring]);
 			unset($_SESSION['lastsearch_page_'.$relativepathstring]);

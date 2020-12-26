@@ -891,7 +891,6 @@ class DolGraph
 			$color1 = sprintf("%02x%02x%02x", $this->bgcolorgrid[0], $this->bgcolorgrid[0], $this->bgcolorgrid[2]);
 			$color2 = sprintf("%02x%02x%02x", $this->bgcolorgrid[0], $this->bgcolorgrid[1], $this->bgcolorgrid[2]);
 			$this->stringtoshow .= ', grid: { hoverable: true, backgroundColor: { colors: ["#' . $color1 . '", "#' . $color2 . '"] }, borderWidth: 1, borderColor: \'#e6e6e6\', tickColor  : \'#e6e6e6\' }' . "\n";
-			//$this->stringtoshow.=', shadowSize: 20'."\n";    TODO Uncommet this
 			$this->stringtoshow .= '});' . "\n";
 			$this->stringtoshow .= '}' . "\n";
 		}
