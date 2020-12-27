@@ -204,7 +204,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
             print $soapclient->response;
             print "\n";
         }
-
+        print var_export($result, true);
         print __METHOD__." count(result)=".(is_array($result) ? count($result) : '')."\n";
         $this->assertEquals('OK', $result['result']['result_code']);
 
