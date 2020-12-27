@@ -150,6 +150,12 @@ class EcmFiles extends CommonObject
 	 */
 	public $src_object_id;
 
+	/**
+	 * @var int section_id		ID of section = ID of EcmDirectory, directory of manual ECM (not stored into database)
+	 */
+	public $section_id;
+
+
 
 	/**
 	 * Constructor
