@@ -57,8 +57,8 @@ $modulename = dol_sanitizeFileName(GETPOST('modulename', 'alpha'));
 $objectname = dol_sanitizeFileName(GETPOST('objectname', 'alpha'));
 
 // Security check
-if (empty($conf->modulebuilder->enabled)) accessforbidden('ModuleBuilderNotAllowed');
-if (!$user->admin && empty($conf->global->MODULEBUILDER_FOREVERYONE)) accessforbidden('ModuleBuilderNotAllowed');
+if (empty($conf->modulebuilder->enabled)) accessforbidden();
+if (!$user->admin && empty($conf->global->MODULEBUILDER_FOREVERYONE)) accessforbidden($langs->trans('ModuleBuilderNotAllowed'));
 
 
 // Dir for custom dirs

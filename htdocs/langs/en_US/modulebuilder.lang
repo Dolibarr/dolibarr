@@ -139,3 +139,4 @@ TypeOfFieldsHelp=Type of fields:<br>varchar(99), double(24,8), real, text, html,
 AsciiToHtmlConverter=Ascii to HTML converter
 AsciiToPdfConverter=Ascii to PDF converter
 TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.
+ModuleBuilderNotAllowed=The module builder is enabled but not allowed to your user.
