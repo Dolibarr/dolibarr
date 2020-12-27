@@ -79,11 +79,16 @@ if ($module == 'propal') {
 	$permission = $user->rights->expedition->creer;
 } elseif ($module == 'product') {
 	$permission = $user->rights->produit->creer;
+} elseif ($module == 'ecmfiles') {
+	$permission = $user->rights->ecm->setup;
 }
 //else dol_print_error('','Bad value '.$module.' for param module');
 
-if (!empty($conf->fckeditor->enabled) && !empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) $typeofdata = 'ckeditor:dolibarr_notes:100%:200::1:12:95%:0'; // Rem: This var is for all notes, not only thirdparties note.
-else $typeofdata = 'textarea:12:95%';
+if (!empty($conf->fckeditor->enabled) && !empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) {
+	$typeofdata = 'ckeditor:dolibarr_notes:100%:200::1:12:95%:0'; // Rem: This var is for all notes, not only thirdparties note.
+} else {
+	$typeofdata = 'textarea:12:95%';
+}
 
 print '<!-- BEGIN PHP TEMPLATE NOTES -->'."\n";
 print '<div class="tagtable border table-border tableforfield centpercent">'."\n";

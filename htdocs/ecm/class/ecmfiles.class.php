@@ -389,6 +389,8 @@ class EcmFiles extends CommonObject
 		$sql .= " t.tms as date_m,";
 		$sql .= " t.fk_user_c,";
 		$sql .= " t.fk_user_m,";
+		$sql .= ' t.note_private,';
+		$sql .= ' t.note_public,';
 		$sql .= " t.acl,";
 		$sql .= " t.src_object_type,";
 		$sql .= " t.src_object_id";
@@ -450,6 +452,8 @@ class EcmFiles extends CommonObject
 				$this->date_m = $this->db->jdate($obj->date_m);
 				$this->fk_user_c = $obj->fk_user_c;
 				$this->fk_user_m = $obj->fk_user_m;
+				$this->note_private = $obj->note_private;
+				$this->note_public = $obj->note_public;
 				$this->acl = $obj->acl;
 				$this->src_object_type = $obj->src_object_type;
 				$this->src_object_id = $obj->src_object_id;

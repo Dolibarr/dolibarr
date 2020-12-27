@@ -399,6 +399,8 @@ CREATE TABLE llx_ecm_files_extrafields
 ) ENGINE=innodb;
 
 ALTER TABLE llx_ecm_files_extrafields ADD INDEX idx_ecm_files_extrafields (fk_object);
+ALTER TABLE llx_ecm_files ADD COLUMN note_private text AFTER fk_user_m;
+ALTER TABLE llx_ecm_files ADD COLUMN note_public text AFTER note_private;
 
 CREATE TABLE llx_ecm_directories_extrafields
 (
@@ -409,6 +411,9 @@ CREATE TABLE llx_ecm_directories_extrafields
 ) ENGINE=innodb;
 
 ALTER TABLE llx_ecm_directories_extrafields ADD INDEX idx_ecm_directories_extrafields (fk_object);
+ALTER TABLE llx_ecm_directories ADD COLUMN note_private text AFTER fk_user_m;
+ALTER TABLE llx_ecm_directories ADD COLUMN note_public text AFTER note_private;
+
 ALTER TABLE llx_website_page ADD COLUMN allowed_in_frames integer DEFAULT 0;
 ALTER TABLE llx_website_page ADD COLUMN object_type varchar(255);
 ALTER TABLE llx_website_page ADD COLUMN fk_object varchar(255);
