@@ -2385,7 +2385,7 @@ if ($module == 'initmodule')
 		   					print ' &nbsp; ';
 		   					if (empty($conf->global->$const_name))	// If module is not activated
 		   					{
-		   						print '<a href="#" target="apiexplorer" title="'.$langs->trans("ModuleMustBeEnabled", $module).'"><strike>'.$langs->trans("GoToApiExplorer").'</strike></a>';
+		   						print '<a href="#" class="classfortooltip" target="apiexplorer" title="'.$langs->trans("ModuleMustBeEnabled", $module).'"><strike>'.$langs->trans("GoToApiExplorer").'</strike></a>';
 		   					} else {
 		   						print '<a href="'.DOL_URL_ROOT.'/api/index.php/explorer/" target="apiexplorer">'.$langs->trans("GoToApiExplorer").'</a>';
 		   					}
@@ -3412,7 +3412,7 @@ if ($module == 'initmodule')
 
 			if ($action != 'editfile' || empty($file))
 			{
-				print '<span class="opacitymedium">'.$langs->trans("CronJobDefDesc", '<a href="'.DOL_URL_ROOT.'/cron/list.php">'.$langs->transnoentities('CronList').'</a>').'</span><br>';
+				print '<span class="opacitymedium">'.str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/cron/list.php">'.$langs->transnoentities('CronList').'</a>', $langs->trans("CronJobDefDesc", '{s1}')).'</span><br>';
 				print '<br>';
 
 				print '<span class="fa fa-file-o"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';

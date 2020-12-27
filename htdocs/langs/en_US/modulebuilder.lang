@@ -105,7 +105,7 @@ TryToUseTheModuleBuilder=If you have knowledge of SQL and PHP, you may use the n
 SeeTopRightMenu=See <span class="fa fa-bug"></span> on the top right menu
 AddLanguageFile=Add language file
 YouCanUseTranslationKey=You can use here a key that is the translation key found into language file (see tab "Languages")
-DropTableIfEmpty=(Delete table if empty)
+DropTableIfEmpty=(Destroy table if empty)
 TableDoesNotExists=The table %s does not exists
 TableDropped=Table %s deleted
 InitStructureFromExistingTable=Build the structure array string of an existing table
