@@ -1125,20 +1125,20 @@ if (!function_exists("llxHeader"))
 	/**
 	 *	Show HTML header HTML + BODY + Top menu + left menu + DIV
 	 *
-	 * @param 	string 	$head				Optionnal head lines
-	 * @param 	string 	$title				HTML title
-	 * @param	string	$help_url			Url links to help page
-	 * 		                            	Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
-	 *                                  	For other external page: http://server/url
-	 * @param	string	$target				Target to use on links
-	 * @param 	int    	$disablejs			More content into html header
-	 * @param 	int    	$disablehead		More content into html header
-	 * @param 	array  	$arrayofjs			Array of complementary js files
-	 * @param 	array  	$arrayofcss			Array of complementary css files
-	 * @param	string	$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
-	 * @param   string  $morecssonbody      More CSS on body tag.
-	 * @param	string	$replacemainareaby	Replace call to main_area() by a print of this string
-	 * @param	int		$disablenofollow	Disable the "nofollow" on page
+	 * @param 	string 			$head				Optionnal head lines
+	 * @param 	string 			$title				HTML title
+	 * @param	string			$help_url			Url links to help page
+	 * 		                            			Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
+	 *                                  			For other external page: http://server/url
+	 * @param	string			$target				Target to use on links
+	 * @param 	int    			$disablejs			More content into html header
+	 * @param 	int    			$disablehead		More content into html header
+	 * @param 	array|string  	$arrayofjs			Array of complementary js files
+	 * @param 	array|string  	$arrayofcss			Array of complementary css files
+	 * @param	string			$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
+	 * @param   string  		$morecssonbody      More CSS on body tag. For example 'classforhorizontalscrolloftabs'.
+	 * @param	string			$replacemainareaby	Replace call to main_area() by a print of this string
+	 * @param	int				$disablenofollow	Disable the "nofollow" on page
 	 * @return	void
 	 */
 	function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0)
