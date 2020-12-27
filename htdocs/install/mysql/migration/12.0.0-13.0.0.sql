@@ -60,12 +60,6 @@ ALTER TABLE llx_mrp_mo_extrafields ADD INDEX idx_mrp_mo_fk_object(fk_object);
 
 
 -- For v13
--- members
-ALTER TABLE llx_adherent ADD COLUMN ref varchar(30) AFTER rowid;
-UPDATE llx_adherent SET ref = rowid WHERE ref = '';
-ALTER TABLE llx_adherent MODIFY COLUMN ref varchar(30) NOT NULL;
-ALTER TABLE llx_adherent ADD UNIQUE INDEX uk_adherent_ref (ref, entity);
-
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (111,11,     '0','0','No Sales Tax',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (112,11,     '4','0','Sales Tax 4%',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (113,11,     '6','0','Sales Tax 6%',1);
