@@ -534,15 +534,15 @@ function createProductOrService($authentication, $product)
 			$newobject->barcode_type = $product['barcode_type'];
 		}
 
-		$newobject->stock_reel = $product['stock_real'];
-		$newobject->pmp = $product['pmp'];
-		$newobject->seuil_stock_alert = $product['stock_alert'];
+		$newobject->stock_reel = isset($product['stock_real']) ? $product['stock_real'] : null;
+		$newobject->pmp = isset($product['pmp']) ? $product['pmp'] : null;
+		$newobject->seuil_stock_alert = isset($product['stock_alert']) ? $product['stock_alert'] : null;
 
-		$newobject->country_id = $product['country_id'];
+		$newobject->country_id = isset($product['country_id']) ? $product['country_id'] : 0;
 		if (!empty($product['country_code'])) $newobject->country_id = getCountry($product['country_code'], 3);
-		$newobject->customcode = $product['customcode'];
+		$newobject->customcode = isset($product['customcode']) ? $product['customcode'] : '';
 
-		$newobject->canvas = $product['canvas'];
+		$newobject->canvas = isset($product['canvas']) ? $product['canvas'] : '';
 		/*foreach($product['lines'] as $line)
         {
             $newline=new FactureLigne($db);
@@ -565,7 +565,7 @@ function createProductOrService($authentication, $product)
 		$extrafields->fetch_name_optionals_label($elementtype, true);
 		if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
-			foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+			foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 			{
 				$key = 'options_'.$key;
 				$newobject->array_options[$key] = $product[$key];
