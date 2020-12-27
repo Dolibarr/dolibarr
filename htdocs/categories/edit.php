@@ -38,6 +38,7 @@ $ref = GETPOST('ref', 'alphanohtml');
 $action = (GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'edit');
 $confirm = GETPOST('confirm');
 $cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 $socid = (int) GETPOST('socid', 'int');
 $label = (string) GETPOST('label', 'alphanohtml');
@@ -77,8 +78,13 @@ $error = 0;
  */
 
 if ($cancel) {
-	header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
-	exit;
+	if ($backtopage) {
+		header("Location: ".$backtopage);
+		exit;
+	} else {
+		header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
+		exit;
+	}
 }
 
 // Action mise a jour d'une categorie
@@ -101,9 +107,15 @@ if ($action == 'update' && $user->rights->categorie->creer) {
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) $error++;
 
-		if (!$error && $object->update($user) > 0) {
-			header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
-			exit;
+		if (!$error && $object->update($user) > 0)
+		{
+			if ($backtopage) {
+				header("Location: ".$backtopage);
+				exit;
+			} else {
+				header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
+				exit;
+			}
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -134,6 +146,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="id" value="'.$object->id.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
+print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 print dol_get_fiche_head('');
 
