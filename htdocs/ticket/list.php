@@ -426,30 +426,30 @@ if ($socid && !$projectid && !$project_ref && $user->rights->societe->lire) {
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border centpercent tableforfield">';
 
-		// Customer code
-		if ($socstat->client && !empty($socstat->code_client)) {
-			print '<tr><td class="titlefield">';
-			print $langs->trans('CustomerCode').'</td><td>';
-			print $socstat->code_client;
-			if ($socstat->check_codeclient() != 0) {
-				print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
-			}
-
-			print '</td>';
-			print '</tr>';
-		}
-		// Supplier code
-		if ($socstat->fournisseur && !empty($socstat->code_fournisseur)) {
-			print '<tr><td class="titlefield">';
-			print $langs->trans('SupplierCode').'</td><td>';
-			print $socstat->code_fournisseur;
-			if ($socstat->check_codefournisseur() != 0) {
-				print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
-			}
-
-			print '</td>';
-			print '</tr>';
-		}
+        // Customer code
+        if ($socstat->client && !empty($socstat->code_client)) {
+            print '<tr><td class="titlefield">';
+            print $langs->trans('CustomerCode').'</td><td>';
+            print $socstat->code_client;
+            $tmpcheck = $socstat->check_codeclient();
+            if ($tmpcheck != 0 && $tmpcheck != -5) {
+            	print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+            }
+            print '</td>';
+            print '</tr>';
+        }
+        // Supplier code
+        if ($socstat->fournisseur && !empty($socstat->code_fournisseur)) {
+        	print '<tr><td class="titlefield">';
+        	print $langs->trans('SupplierCode').'</td><td>';
+        	print $socstat->code_fournisseur;
+        	$tmpcheck = $socstat->check_codefournisseur();
+        	if ($tmpcheck != 0 && $tmpcheck != -5) {
+        		print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+        	}
+        	print '</td>';
+        	print '</tr>';
+        }
 
 		print '</table>';
 		print '</div>';

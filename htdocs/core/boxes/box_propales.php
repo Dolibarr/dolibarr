@@ -85,8 +85,10 @@ class box_propales extends ModeleBoxes
 
 		if ($user->rights->propale->lire)
 		{
-			$sql = "SELECT s.nom as name, s.rowid as socid, s.code_client, s.logo, s.entity, s.email,";
-			$sql .= " p.rowid, p.ref, p.fk_statut, p.datep as dp, p.datec, p.fin_validite, p.date_cloture, p.total_ht, p.tva as total_tva, p.total as total_ttc, p.tms";
+			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
+			$sql .= ", s.code_client, s.code_compta, s.client";
+			$sql .= ", s.logo, s.email, s.entity";
+			$sql .= ", p.rowid, p.ref, p.fk_statut, p.datep as dp, p.datec, p.fin_validite, p.date_cloture, p.total_ht, p.tva as total_tva, p.total as total_ttc, p.tms";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."propal as p";
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -113,14 +115,19 @@ class box_propales extends ModeleBoxes
 					$datem = $this->db->jdate($objp->tms);
 					$dateterm = $this->db->jdate($objp->fin_validite);
 					$dateclose = $this->db->jdate($objp->date_cloture);
+
 					$propalstatic->id = $objp->rowid;
 					$propalstatic->ref = $objp->ref;
 					$propalstatic->total_ht = $objp->total_ht;
 					$propalstatic->total_tva = $objp->total_tva;
 					$propalstatic->total_ttc = $objp->total_ttc;
+
 					$societestatic->id = $objp->socid;
 					$societestatic->name = $objp->name;
+					//$societestatic->name_alias = $objp->name_alias;
 					$societestatic->code_client = $objp->code_client;
+					$societestatic->code_compta = $objp->code_compta;
+					$societestatic->client = $objp->client;
 					$societestatic->logo = $objp->logo;
 					$societestatic->email = $objp->email;
 					$societestatic->entity = $objp->entity;

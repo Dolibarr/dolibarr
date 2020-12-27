@@ -490,7 +490,7 @@ class modSociete extends DolibarrModules
 				'classfile' => '/core/class/cstate.class.php',
 				'class' => 'Cstate',
 				'method' => 'fetch',
-				'dict' => 'DictionaryState'
+				'dict' => 'DictionaryStateCode'
 			),
 			's.fk_pays' => array(
 				'rule' => 'fetchidfromcodeid',
@@ -670,7 +670,7 @@ class modSociete extends DolibarrModules
 				'classfile' => '/core/class/cstate.class.php',
 				'class' => 'Cstate',
 				'method' => 'fetch',
-				'dict' => 'DictionaryState'
+				'dict' => 'DictionaryStateCode'
 			),
 			's.fk_pays' => array(
 				'rule' => 'fetchidfromcodeid',

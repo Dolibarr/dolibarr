@@ -60,7 +60,6 @@ OriginEmail=E-mail source
 Notify_TICKET_SENTBYMAIL=Envoi d'un message du ticket par e-mail
 
 # Status
-NotRead=Non lu
 Read=Lu
 Assigned=Assigné
 InProgress=En cours
@@ -231,7 +230,6 @@ TicketChangeStatus=Changer l'état
 TicketConfirmChangeStatus=Confirmez le changement d'état: %s?
 TicketLogStatusChanged=Statut modifié: %s à %s
 TicketNotNotifyTiersAtCreate=Ne pas notifier l'entreprise à la création
-Unread=Non lu
 TicketNotCreatedFromPublicInterface=Non disponible. Le ticket n’a pas été créé à partir de l'interface publique.
 PublicInterfaceNotEnabled=L’interface publique n’a pas été activée
 ErrorTicketRefRequired=La référence du ticket est requise

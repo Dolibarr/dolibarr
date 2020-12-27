@@ -2385,7 +2385,7 @@ if ($module == 'initmodule')
 		   					print ' &nbsp; ';
 		   					if (empty($conf->global->$const_name))	// If module is not activated
 		   					{
-		   						print '<a href="#" target="apiexplorer" title="'.$langs->trans("ModuleMustBeEnabled").'"><strike>'.$langs->trans("GoToApiExplorer").'</strike></a>';
+		   						print '<a href="#" target="apiexplorer" title="'.$langs->trans("ModuleMustBeEnabled", $module).'"><strike>'.$langs->trans("GoToApiExplorer").'</strike></a>';
 		   					} else {
 		   						print '<a href="'.DOL_URL_ROOT.'/api/index.php/explorer/" target="apiexplorer">'.$langs->trans("GoToApiExplorer").'</a>';
 		   					}

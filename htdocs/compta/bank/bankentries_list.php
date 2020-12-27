@@ -155,14 +155,8 @@ $arrayfields = array(
 	'b.conciliated'=>array('label'=>$langs->trans("Conciliated"), 'enabled'=> $object->rappro, 'checked'=>($action == 'reconcile' ? 1 : 0), 'position'=>1020),
 );
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -496,7 +490,7 @@ if (dol_strlen($search_dv_end) > 0) $sql .= " AND b.datev <= '".$db->idate($sear
 if ($search_ref) $sql .= natural_search("b.rowid", $search_ref, 1);
 if ($search_req_nb) $sql .= natural_search("b.num_chq", $search_req_nb);
 if ($search_num_releve) $sql .= natural_search("b.num_releve", $search_num_releve);
-if ($search_conciliated != '' && $search_conciliated != '-1') $sql .= " AND b.rappro = ".$search_conciliated;
+if ($search_conciliated != '' && $search_conciliated != '-1') $sql .= " AND b.rappro = ".urlencode($search_conciliated);
 if ($search_thirdparty) $sql .= natural_search("s.nom", $search_thirdparty);
 if ($search_description)
 {
@@ -861,6 +855,10 @@ if ($resql)
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+	// When action is 'reconcile', we force to have the column num_releve always enabled (otherwise we can't make reconciliation).
+	if ($action == 'reconcile') {
+		$arrayfields['b.num_releve']['checked'] = 1;
+	}
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
@@ -993,9 +991,8 @@ if ($resql)
 	while ($i < min($num, $limit))
 	{
 		$objp = $db->fetch_object($resql);
-
 		// If we are in a situation where we need/can show balance, we calculate the start of balance
-		if (!$balancecalculated && (!empty($arrayfields['balancebefore']['checked']) || !empty($arrayfields['balance']['checked'])) && $mode_balance_ok)
+		if (!$balancecalculated && (!empty($arrayfields['balancebefore']['checked']) || !empty($arrayfields['balance']['checked'])) && ($mode_balance_ok || $search_conciliated === '0'))
 		{
 			if (!$search_account)
 			{
@@ -1016,11 +1013,9 @@ if ($resql)
 			$sqlforbalance .= " AND (b.datev < '".$db->idate($db->jdate($objp->dv))."' OR (b.datev = '".$db->idate($db->jdate($objp->dv))."' AND (b.dateo < '".$db->idate($db->jdate($objp->do))."' OR (b.dateo = '".$db->idate($db->jdate($objp->do))."' AND b.rowid < ".$objp->rowid."))))";
 			$resqlforbalance = $db->query($sqlforbalance);
 			//print $sqlforbalance;
-			if ($resqlforbalance)
-			{
+			if ($resqlforbalance) {
 				$objforbalance = $db->fetch_object($resqlforbalance);
-				if ($objforbalance)
-				{
+				if ($objforbalance) {
 					// If sort is desc,desc,desc then total of previous date + amount is the balancebefore of the previous line before the line to show
 					if ($sortfield == 'b.datev,b.dateo,b.rowid' && $sortorder == 'desc,desc,desc')
 					{
@@ -1081,24 +1076,30 @@ if ($resql)
 				if (!empty($arrayfields['balancebefore']['checked']))
 				{
 					print '<td class="right">';
-					print price(price2num($balance, 'MT'), 1, $langs);
+					if ($search_conciliated !== '0') {
+						print price(price2num($balance, 'MT'), 1, $langs);
+					}
 					print '</td>';
 				}
 				if (!empty($arrayfields['balance']['checked']))
 				{
 					print '<td class="right">';
-					print price(price2num($balance, 'MT'), 1, $langs);
+					if ($search_conciliated !== '0') {
+						print price(price2num($balance, 'MT'), 1, $langs);
+					}
 					print '</td>';
 				}
-
-				print '<td class="center">';
-				print '<input type="checkbox" id="selectAll" title="'.dol_escape_htmltag($langs->trans("SelectAll")).'" />';
-				print ' <script type="text/javascript">
-						$("input#selectAll").change(function() {
-							$("input[type=checkbox][name^=rowid]").prop("checked", $(this).is(":checked"));
-						});
-						</script>';
-				print '</td>';
+				if (!empty($arrayfields['b.num_releve']['checked']))
+				{
+					print '<td class="center">';
+					print '<input type="checkbox" id="selectAll" title="'.dol_escape_htmltag($langs->trans("SelectAll")).'" />';
+					print ' <script type="text/javascript">
+							$("input#selectAll").change(function() {
+								$("input[type=checkbox][name^=rowid]").prop("checked", $(this).is(":checked"));
+							});
+							</script>';
+					print '</td>';
+				}
 				print '<td colspan="'.($tmpnbfieldafterbalance + 2).'">';
 				print '&nbsp;';
 				print '</td>';

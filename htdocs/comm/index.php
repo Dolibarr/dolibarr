@@ -137,8 +137,12 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {
  * Draft customer proposals
  */
 if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
-	$sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, p.tva as total_tva, p.total as total_ttc, p.fk_statut as status,";
-	$sql .= " s.rowid as socid, s.nom as name, s.client, s.canvas, s.code_client, s.email, s.entity, s.code_compta";
+	$sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, p.tva as total_tva, p.total as total_ttc, p.fk_statut as status";
+	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+	$sql .= ", s.code_client, s.code_compta, s.client";
+	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
+	$sql .= ", s.logo, s.email, s.entity";
+	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p,";
 	$sql .= " ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -171,13 +175,17 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
-				$companystatic->client = $obj->client;
+				$companystatic->name_alias = $obj->name_alias;
 				$companystatic->code_client = $obj->code_client;
-				$companystatic->code_fournisseur = $obj->code_fournisseur;
-				$companystatic->canvas = $obj->canvas;
-				$companystatic->entity = $obj->entity;
-				$companystatic->email = $obj->email;
 				$companystatic->code_compta = $obj->code_compta;
+				$companystatic->client = $obj->client;
+				$companystatic->code_fournisseur = $obj->code_fournisseur;
+				$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
+				$companystatic->fournisseur = $obj->fournisseur;
+				$companystatic->logo = $obj->logo;
+				$companystatic->email = $obj->email;
+				$companystatic->entity = $obj->entity;
+				$companystatic->canvas = $obj->canvas;
 
 				print '<tr class="oddeven">';
 				print '<td class="nowrap tdoverflowmax100">'.$propalstatic->getNomUrl(1).'</td>';
@@ -204,8 +212,12 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
  * Draft supplier proposals
  */
 if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire) {
-	$sql = "SELECT p.rowid, p.ref, p.total_ht, p.tva as total_tva, p.total as total_ttc, p.fk_statut as status,";
-	$sql .= " s.rowid as socid, s.nom as name, s.client, s.canvas, s.code_client, s.code_fournisseur, s.entity, s.email";
+	$sql = "SELECT p.rowid, p.ref, p.total_ht, p.tva as total_tva, p.total as total_ttc, p.fk_statut as status";
+	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+	$sql .= ", s.code_client, s.code_compta, s.client";
+	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
+	$sql .= ", s.logo, s.email, s.entity";
+	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p,";
 	$sql .= " ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -237,12 +249,17 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
-				$companystatic->client = $obj->client;
+				$companystatic->name_alias = $obj->name_alias;
 				$companystatic->code_client = $obj->code_client;
+				$companystatic->code_compta = $obj->code_compta;
+				$companystatic->client = $obj->client;
 				$companystatic->code_fournisseur = $obj->code_fournisseur;
-				$companystatic->canvas = $obj->canvas;
-				$companystatic->entity = $obj->entity;
+				$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
+				$companystatic->fournisseur = $obj->fournisseur;
+				$companystatic->logo = $obj->logo;
 				$companystatic->email = $obj->email;
+				$companystatic->entity = $obj->entity;
+				$companystatic->canvas = $obj->canvas;
 
 				print '<tr class="oddeven">';
 				print '<td class="nowrap tdoverflowmax100">'.$supplierproposalstatic->getNomUrl(1).'</td>';
@@ -269,8 +286,12 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
  * Draft customer orders
  */
 if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
-	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.tva as total_tva, c.total_ttc, c.fk_statut as status,";
-	$sql .= " s.rowid as socid, s.nom as name, s.client, s.canvas, s.code_client, s.email, s.entity, s.code_compta";
+	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.tva as total_tva, c.total_ttc, c.fk_statut as status";
+	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+	$sql .= ", s.code_client, s.code_compta, s.client";
+	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
+	$sql .= ", s.logo, s.email, s.entity";
+	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande as c,";
 	$sql .= " ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -303,12 +324,17 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
-				$companystatic->client = $obj->client;
+				$companystatic->name_alias = $obj->name_alias;
 				$companystatic->code_client = $obj->code_client;
+				$companystatic->code_compta = $obj->code_compta;
+				$companystatic->client = $obj->client;
 				$companystatic->code_fournisseur = $obj->code_fournisseur;
-				$companystatic->canvas = $obj->canvas;
+				$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
+				$companystatic->fournisseur = $obj->fournisseur;
+				$companystatic->logo = $obj->logo;
 				$companystatic->email = $obj->email;
 				$companystatic->entity = $obj->entity;
+				$companystatic->canvas = $obj->canvas;
 
 				print '<tr class="oddeven">';
 				print '<td class="nowrap tdoverflowmax100">'.$orderstatic->getNomUrl(1).'</td>';
@@ -335,8 +361,12 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
  * Draft purchase orders
  */
 if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) && $user->rights->fournisseur->commande->lire) {
-	$sql = "SELECT cf.rowid, cf.ref, cf.ref_supplier, cf.total_ttc, cf.fk_statut as status,";
-	$sql .= " s.rowid as socid, s.nom as name, s.client, s.canvas, s.code_client, s.code_fournisseur, s.entity, s.email";
+	$sql = "SELECT cf.rowid, cf.ref, cf.ref_supplier, cf.total_ttc, cf.fk_statut as status";
+	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+	$sql .= ", s.code_client, s.code_compta, s.client";
+	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
+	$sql .= ", s.logo, s.email, s.entity";
+	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf,";
 	$sql .= " ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -369,12 +399,17 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
-				$companystatic->client = $obj->client;
+				$companystatic->name_alias = $obj->name_alias;
 				$companystatic->code_client = $obj->code_client;
+				$companystatic->code_compta = $obj->code_compta;
+				$companystatic->client = $obj->client;
 				$companystatic->code_fournisseur = $obj->code_fournisseur;
-				$companystatic->canvas = $obj->canvas;
-				$companystatic->entity = $obj->entity;
+				$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
+				$companystatic->fournisseur = $obj->fournisseur;
+				$companystatic->logo = $obj->logo;
 				$companystatic->email = $obj->email;
+				$companystatic->entity = $obj->entity;
+				$companystatic->canvas = $obj->canvas;
 
 				print '<tr class="oddeven">';
 				print '<td class="nowrap tdoverflowmax100">'.$supplierorderstatic->getNomUrl(1).'</td>';
@@ -403,7 +438,12 @@ print '<div class="ficheaddleft">';
  * Last modified customers or prospects
  */
 if (!empty($conf->societe->enabled) && $user->rights->societe->lire) {
-	$sql = "SELECT s.rowid, s.nom as name, s.client, s.datec, s.tms, s.canvas, s.code_client, s.code_compta, s.entity, s.email";
+	$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
+	$sql .= ", s.code_client, s.code_compta, s.client";
+	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
+	$sql .= ", s.logo, s.email, s.entity";
+	$sql .= ", s.canvas";
+	$sql .= ", s.datec, s.tms";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE s.entity IN (".getEntity($companystatic->element).")";
@@ -434,15 +474,19 @@ if (!empty($conf->societe->enabled) && $user->rights->societe->lire) {
 			while ($i < $num && $i < $max) {
 				$objp = $db->fetch_object($resql);
 
-				$companystatic->id = $objp->rowid;
+				$companystatic->id = $objp->socid;
 				$companystatic->name = $objp->name;
-				$companystatic->client = $objp->client;
+				$companystatic->name_alias = $objp->name_alias;
 				$companystatic->code_client = $objp->code_client;
-				$companystatic->code_fournisseur = $objp->code_fournisseur;
-				$companystatic->canvas = $objp->canvas;
 				$companystatic->code_compta = $objp->code_compta;
-				$companystatic->entity = $objp->entity;
+				$companystatic->client = $objp->client;
+				$companystatic->code_fournisseur = $objp->code_fournisseur;
+				$companystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
+				$companystatic->fournisseur = $objp->fournisseur;
+				$companystatic->logo = $objp->logo;
 				$companystatic->email = $objp->email;
+				$companystatic->entity = $objp->entity;
+				$companystatic->canvas = $objp->canvas;
 
 				print '<tr class="oddeven">';
 				print '<td class="nowrap tdoverflowmax100">'.$companystatic->getNomUrl(1, 'customer').'</td>';
@@ -488,7 +532,12 @@ if (!empty($conf->societe->enabled) && $user->rights->societe->lire) {
  * Last suppliers
  */
 if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $user->rights->societe->lire) {
-	$sql = "SELECT s.nom as name, s.rowid, s.datec as dc, s.canvas, s.tms as dm, s.code_fournisseur, s.entity, s.email, s.fournisseur";
+	$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
+	$sql .= ", s.code_client, s.code_compta, s.client";
+	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
+	$sql .= ", s.logo, s.email, s.entity";
+	$sql .= ", s.canvas";
+	$sql .= ", s.datec as dc, s.tms as dm";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE s.entity IN (".getEntity($companystatic->element).")";
@@ -508,14 +557,19 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 			while ($i < $num && $i < $max) {
 				$objp = $db->fetch_object($resql);
 
-				$companystatic->id = $objp->rowid;
+				$companystatic->id = $objp->socid;
 				$companystatic->name = $objp->name;
+				$companystatic->name_alias = $objp->name_alias;
 				$companystatic->code_client = $objp->code_client;
+				$companystatic->code_compta = $objp->code_compta;
+				$companystatic->client = $objp->client;
 				$companystatic->code_fournisseur = $objp->code_fournisseur;
-				$companystatic->canvas = $objp->canvas;
-				$companystatic->entity = $objp->entity;
-				$companystatic->email = $objp->email;
+				$companystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
 				$companystatic->fournisseur = $objp->fournisseur;
+				$companystatic->logo = $objp->logo;
+				$companystatic->email = $objp->email;
+				$companystatic->entity = $objp->entity;
+				$companystatic->canvas = $objp->canvas;
 
 				print '<tr class="oddeven">';
 				print '<td class="nowrap tdoverflowmax100">'.$companystatic->getNomUrl(1, 'supplier').'</td>';
@@ -577,7 +631,11 @@ if ($user->rights->agenda->myactions->read) {
 if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) { // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
 	$staticcontrat = new Contrat($db);
 
-	$sql = "SELECT s.nom as name, s.rowid, s.canvas, s.code_client, s.entity, s.email";
+	$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
+	$sql .= ", s.code_client, s.code_compta, s.client";
+	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
+	$sql .= ", s.logo, s.email, s.entity";
+	$sql .= ", s.canvas";
 	$sql .= ", c.statut, c.rowid as contratid, p.ref, c.fin_validite as datefin, c.date_cloture as dateclo";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."contrat as c";
@@ -602,13 +660,19 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) { // T
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 
-				$companystatic->id = $objp->rowid;
-				$companystatic->name = $objp->name;
-				$companystatic->code_client = $objp->code_client;
-				$companystatic->code_fournisseur = $objp->code_fournisseur;
-				$companystatic->canvas = $objp->canvas;
-				$companystatic->entity = $objp->entity;
-				$companystatic->email = $objp->email;
+				$companystatic->id = $obj->socid;
+				$companystatic->name = $obj->name;
+				$companystatic->name_alias = $obj->name_alias;
+				$companystatic->code_client = $obj->code_client;
+				$companystatic->code_compta = $obj->code_compta;
+				$companystatic->client = $obj->client;
+				$companystatic->code_fournisseur = $obj->code_fournisseur;
+				$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
+				$companystatic->fournisseur = $obj->fournisseur;
+				$companystatic->logo = $obj->logo;
+				$companystatic->email = $obj->email;
+				$companystatic->entity = $obj->entity;
+				$companystatic->canvas = $obj->canvas;
 
 				$staticcontrat->id = $obj->contratid;
 				$staticcontrat->ref = $obj->ref;
@@ -638,7 +702,11 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) { // T
  */
 if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 	$sql = "SELECT p.rowid as propalid, p.entity, p.total as total_ttc, p.total_ht, p.tva as total_tva, p.ref, p.ref_client, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
-	$sql .= ", s.nom as name, s.rowid, s.code_client, s.entity, s.email";
+	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+	$sql .= ", s.code_client, s.code_compta, s.client";
+	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
+	$sql .= ", s.logo, s.email, s.entity";
+	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -678,14 +746,19 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 				$propalstatic->total_tva = $obj->total_tva;
 				$propalstatic->total_ttc = $obj->total_ttc;
 
-				$companystatic->id = $obj->rowid;
+				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
-				$companystatic->client = $obj->client;
+				$companystatic->name_alias = $obj->name_alias;
 				$companystatic->code_client = $obj->code_client;
+				$companystatic->code_compta = $obj->code_compta;
+				$companystatic->client = $obj->client;
 				$companystatic->code_fournisseur = $obj->code_fournisseur;
-				$companystatic->canvas = $obj->canvas;
-				$companystatic->entity = $obj->entity;
+				$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
+				$companystatic->fournisseur = $obj->fournisseur;
+				$companystatic->logo = $obj->logo;
 				$companystatic->email = $obj->email;
+				$companystatic->entity = $obj->entity;
+				$companystatic->canvas = $obj->canvas;
 
 				$filename = dol_sanitizeFileName($obj->ref);
 				$filedir = $conf->propal->multidir_output[$obj->entity].'/'.dol_sanitizeFileName($obj->ref);
@@ -739,7 +812,11 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
  */
 if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 	$sql = "SELECT c.rowid as commandeid, c.total_ttc, c.total_ht, c.tva as total_tva, c.ref, c.ref_client, c.fk_statut, c.date_valid as dv, c.facture as billed";
-	$sql .= ", s.nom as name, s.rowid, s.code_client, s.entity, s.email";
+	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+	$sql .= ", s.code_client, s.code_compta, s.client";
+	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
+	$sql .= ", s.logo, s.email, s.entity";
+	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -779,14 +856,19 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 				$orderstatic->total_tva = $obj->total_tva;
 				$orderstatic->total_ttc = $obj->total_ttc;
 
-				$companystatic->id = $obj->rowid;
+				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
-				$companystatic->client = $obj->client;
+				$companystatic->name_alias = $obj->name_alias;
 				$companystatic->code_client = $obj->code_client;
+				$companystatic->code_compta = $obj->code_compta;
+				$companystatic->client = $obj->client;
 				$companystatic->code_fournisseur = $obj->code_fournisseur;
-				$companystatic->canvas = $obj->canvas;
-				$companystatic->entity = $obj->entity;
+				$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
+				$companystatic->fournisseur = $obj->fournisseur;
+				$companystatic->logo = $obj->logo;
 				$companystatic->email = $obj->email;
+				$companystatic->entity = $obj->entity;
+				$companystatic->canvas = $obj->canvas;
 
 				$filename = dol_sanitizeFileName($obj->ref);
 				$filedir = $conf->commande->dir_output.'/'.dol_sanitizeFileName($obj->ref);

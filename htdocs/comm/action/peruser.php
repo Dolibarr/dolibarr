@@ -673,7 +673,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 	echo '<table width="100%" class="noborder nocellnopadd cal_month">';
 
 	echo '<tr class="liste_titre">';
-	echo '<td class="nopaddingtopimp nopaddingbottomimp">';
+	echo '<td class="nopaddingtopimp nopaddingbottomimp nowraponsmartphone">';
 
 	if ($canedit && $action == 'show_peruser')
 	{

@@ -187,11 +187,14 @@ if ($object->id > 0)
 	if ($object->fournisseur)
 	{
 		print '<tr>';
-		print '<td class="titlefield">'.$langs->trans("SupplierCode").'</td><td>';
-		print $object->code_fournisseur;
-		if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
-		print '</td>';
-		print '</tr>';
+        print '<td class="titlefield">'.$langs->trans("SupplierCode").'</td><td>';
+        print $object->code_fournisseur;
+        $tmpcheck = $object->check_codefournisseur();
+        if ($tmpcheck != 0 && $tmpcheck != -5) {
+        	print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+        }
+        print '</td>';
+        print '</tr>';
 
 		$langs->load('compta');
 		print '<tr>';
@@ -540,6 +543,8 @@ if ($object->id > 0)
 
 	if ($user->rights->supplier_proposal->lire)
 	{
+		$langs->loadLangs(array("supplier_proposal"));
+
 		$sql = "SELECT p.rowid, p.ref, p.date_valid as dc, p.fk_statut, p.total_ht, p.tva as total_tva, p.total as total_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p ";
 		$sql .= " WHERE p.fk_soc =".$object->id;

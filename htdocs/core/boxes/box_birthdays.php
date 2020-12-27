@@ -86,7 +86,7 @@ class box_birthdays extends ModeleBoxes
 		{
 			$tmparray = dol_getdate(dol_now(), true);
 
-			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth";
+			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth, u.email, u.statut as status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 			$sql .= " WHERE u.entity IN (".getEntity('user').")";
 			$sql .= " AND u.statut = 1";
@@ -104,10 +104,13 @@ class box_birthdays extends ModeleBoxes
 				while ($line < $num)
 				{
 					$objp = $this->db->fetch_object($result);
+
 					$userstatic->id = $objp->rowid;
 					$userstatic->firstname = $objp->firstname;
 					$userstatic->lastname = $objp->lastname;
 					$userstatic->email = $objp->email;
+					$userstatic->statut = $objp->status;
+
 					$dateb = $this->db->jdate($objp->birth);
 					$age = date('Y', dol_now()) - date('Y', $dateb);
 
