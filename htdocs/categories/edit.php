@@ -35,7 +35,6 @@ $langs->load("categories");
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alphanohtml');
-$type = GETPOST('type', 'aZ09');		// Can be int or string
 $action = (GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'edit');
 $confirm = GETPOST('confirm');
 $cancel = GETPOST('cancel', 'alpha');
@@ -56,9 +55,13 @@ if ($id == "") {
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
-if ($id > 0) {
-	$result = $object->fetch($id);
+$result = $object->fetch($id, $label);
+if ($result <= 0) {
+	dol_print_error($db, $object->error); exit;
 }
+
+$type = $object->type;
+if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
 
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);

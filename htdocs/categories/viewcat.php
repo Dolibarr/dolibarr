@@ -38,7 +38,6 @@ $langs->load("categories");
 
 $id         = GETPOST('id', 'int');
 $label      = GETPOST('label', 'alpha');
-$type       = GETPOST('type', 'aZ09');
 $removeelem = GETPOST('removeelem', 'int');
 $elemid     = GETPOST('elemid', 'int');
 
@@ -73,19 +72,12 @@ if ($id == "" && $label == "")
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
-$result = $object->fetch($id, $label, $type);
-if ($result <= 0) {
-	dol_print_error($db, $object->error); exit;
-}
-$object->fetch_optionals();
+$result = $object->fetch($id, $label);
 if ($result <= 0) {
 	dol_print_error($db, $object->error); exit;
 }
 
-$objecttype = $object->type;
-if (is_numeric($objecttype)) $objecttype = Categorie::$MAP_ID_TO_CODE[$objecttype];
-if ($type === '') $type = $objecttype;
-
+$type = $object->type;
 if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
 
 $extrafields = new ExtraFields($db);
@@ -93,12 +85,6 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categorycard', 'globalcard'));
-
-// Protection when type provided is not similare to type of category
-if ($objecttype != $type) {
-	print 'Error: Value for type parameter does not match value of the type of the category with id='.$id;
-	exit;
-}
 
 /*
  *	Actions
@@ -226,9 +212,8 @@ llxHeader("", $langs->trans("Categories"), $helpurl, '', 0, 0, $arrayofjs, $arra
 $title = Categorie::$MAP_TYPE_TITLE_AREA[$type];
 
 $head = categories_prepare_head($object, $type);
-
-
 print dol_get_fiche_head($head, 'card', $langs->trans($title), -1, 'category');
+
 $backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type);
 $linkback = '<a href="'.$backtolist.'">'.$langs->trans("BackToList").'</a>';
 $object->next_prev_filter = ' type = '.$object->type;
