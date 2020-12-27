@@ -302,7 +302,7 @@ if ($action != 'export_csv')
 		{
 			// Display a sub-total per account
 			if ($displayed_account != "") {
-				print '<tr class="liste_total"><td class="right" colspan="3">'.$langs->trans("SubTotal").':</td><td class="nowrap right">'.price($sous_total_opening_balance).'</td><td class="nowrap right">'.price($sous_total_debit).'</td><td class="nowrap right">'.price($sous_total_credit).'</td><td class="nowrap right">'.price(price2num($sous_total_credit - $sous_total_debit)).'</td>';
+				print '<tr class="liste_total"><td class="right" colspan="2">'.$langs->trans("SubTotal").':</td><td class="nowrap right">'.price($sous_total_opening_balance).'</td><td class="nowrap right">'.price($sous_total_debit).'</td><td class="nowrap right">'.price($sous_total_credit).'</td><td class="nowrap right">'.price(price2num($sous_total_credit - $sous_total_debit)).'</td>';
 				print "<td>&nbsp;</td>\n";
 				print '</tr>';
 			}
