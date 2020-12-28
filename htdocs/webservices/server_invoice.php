@@ -585,16 +585,16 @@ function createInvoice($authentication, $invoice)
 			$newline = new FactureLigne($db);
 			$newline->product_type = $line['type'];
 			$newline->desc = $line['desc'];
-			$newline->fk_product = $line['fk_product'];
-			$newline->tva_tx = $line['vat_rate'];
+			$newline->fk_product = $line['product_id'];
+			$newline->tva_tx = isset($line['vat_rate']) ? $line['vat_rate'] : 0;
 			$newline->qty = $line['qty'];
-			$newline->subprice = $line['unitprice'];
+			$newline->subprice = isset($line['unitprice']) ? $line['unitprice'] : null;
 			$newline->total_ht = $line['total_net'];
 			$newline->total_tva = $line['total_vat'];
 			$newline->total_ttc = $line['total'];
 			$newline->date_start = dol_stringtotime($line['date_start']);
 			$newline->date_end = dol_stringtotime($line['date_end']);
-			$newline->fk_product = $line['product_id'];
+
 			$new_invoice->lines[] = $newline;
 		}
 		//var_dump($newobject->date_lim_reglement); exit;
