@@ -499,7 +499,7 @@ if ($object->fetch($id) >= 0)
 
 	    // Fix/update nbemail on emailing record if it differs (may happen if user edit lines from database directly)
 	    if (empty($asearchcriteriahasbeenset)) {
-	    	if ($nbtotalofrecords != $object->email) {
+	    	if ($nbtotalofrecords != $object->nbemail) {
 	    		dol_syslog("We found a difference in nb of record in target table and the property ->nbemail, we fix ->nbemail");
 	    		//print "nbemail=".$object->nbemail." nbtotalofrecords=".$nbtotalofrecords;
 	    		$resultrefresh = $object->refreshNbOfTargets();

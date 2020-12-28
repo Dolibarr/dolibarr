@@ -65,7 +65,7 @@ if (!$section)
 	dol_print_error('', 'Error, section parameter missing');
 	exit;
 }
-$urlfile = GETPOST("urlfile");
+$urlfile = (string) dol_sanitizePathName(GETPOST("urlfile"));
 if (!$urlfile)
 {
 	dol_print_error('', "ErrorParamNotDefined");
