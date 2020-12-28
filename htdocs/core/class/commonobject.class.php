@@ -8393,7 +8393,7 @@ abstract class CommonObject
 	 * @param 	boolean		$remove_existing 	True: Remove existings categories from Object if not supplies by $categories, False: let them
 	 * @return	int							<0 if KO, >0 if OK
 	 */
-	public function setCategoriesCommon($categories, $type_categ='', $remove_existing=true)
+	public function setCategoriesCommon($categories, $type_categ = '', $remove_existing = true)
 	{
 		dol_syslog(get_class($this)."::setCategoriesCommon Oject Id:".$this->id.' type_categ:'.$type_categ.' nb tag add:'.count($categories), LOG_DEBUG);
 

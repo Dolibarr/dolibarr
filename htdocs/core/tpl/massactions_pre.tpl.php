@@ -43,18 +43,18 @@ if ($massaction == 'preaffecttag')
 	$categ = new Categorie($db);
 	$categ_types=array();
 	$categ_type_array=$categ->getMapList();
-	foreach($categ_type_array as $categdef) {
+	foreach ($categ_type_array as $categdef) {
 		if (isset($object) && $categdef['obj_table']==$object->table_element) {
-			if (!array_key_exists($categdef['code'],$categ_types)) $categ_types[$categdef['code']] = array('code'=>$categdef['code'],'label'=>$langs->trans($categdef['obj_class']));
+			if (!array_key_exists($categdef['code'], $categ_types)) $categ_types[$categdef['code']] = array('code'=>$categdef['code'],'label'=>$langs->trans($categdef['obj_class']));
 		}
 		if (isset($objecttmp) && $categdef['obj_table']==$objecttmp->table_element) {
-			if (!array_key_exists($categdef['code'],$categ_types)) $categ_types[$categdef['code']] = array('code'=>$categdef['code'],'label'=>$langs->trans($categdef['obj_class']));
+			if (!array_key_exists($categdef['code'], $categ_types)) $categ_types[$categdef['code']] = array('code'=>$categdef['code'],'label'=>$langs->trans($categdef['obj_class']));
 		}
 	}
 
 	$formquestion = array();
 	if (!empty($categ_types)) {
-		foreach($categ_types as $categ_type) {
+		foreach ($categ_types as $categ_type) {
 			$cate_arbo = $form->select_all_categories($categ_type['code'], null, 'parent', null, null, 1);
 			$formquestion[]=
 				array('type' => 'other',
@@ -66,7 +66,7 @@ if ($massaction == 'preaffecttag')
 			array('type' => 'other',
 				'name' => 'affecttag_type',
 				'label' => '',
-				'value' => '<input type="hidden" name="affecttag_type"  id="affecttag_type" value="'.implode(",",array_keys($categ_types)).'"/>');
+				'value' => '<input type="hidden" name="affecttag_type"  id="affecttag_type" value="'.implode(",", array_keys($categ_types)).'"/>');
 		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmAffectTag"), $langs->trans("ConfirmAffectTagQuestion", count($toselect)), "affecttag", $formquestion, 1, 0, 200, 500, 1);
 	} else {
 		setEventMessage('CategTypeNotFound');
@@ -83,8 +83,7 @@ if ($massaction == 'presend')
 
 	if (!GETPOST('cancel', 'alpha'))
 	{
-		foreach ($arrayofselected as $toselectid)
-		{
+		foreach ($arrayofselected as $toselectid) {
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0)
 			{
