@@ -93,8 +93,8 @@ if (empty($force_install_nophpinfo)) print ' (<a href="phpinfo.php" target="_bla
 print "<br>\n";
 
 
-// Check PHP support for $_POST
-if (!isset($_GET["testget"]) && !isset($_POST["testpost"]))
+// Check PHP support for $_GET and $_POST
+if (!isset($_GET["testget"]) && !isset($_POST["testpost"]))	// We must keep $_GET and $_POST here
 {
 	print '<img src="../theme/eldy/img/warning.png" alt="Warning"> '.$langs->trans("PHPSupportPOSTGETKo");
 	print ' (<a href="'.$_SERVER["PHP_SELF"].'?testget=ok">'.$langs->trans("Recheck").'</a>)';
@@ -439,7 +439,8 @@ if (!file_exists($conffile))
 								array('from'=>'9.0.0', 'to'=>'10.0.0'),
 								array('from'=>'10.0.0', 'to'=>'11.0.0'),
 								array('from'=>'11.0.0', 'to'=>'12.0.0'),
-								array('from'=>'12.0.0', 'to'=>'13.0.0')
+								array('from'=>'12.0.0', 'to'=>'13.0.0'),
+								array('from'=>'13.0.0', 'to'=>'14.0.0')
 		);
 
 		$count = 0;

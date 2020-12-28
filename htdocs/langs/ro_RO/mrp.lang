@@ -77,3 +77,4 @@ UnitCost=Cost unitar
 TotalCost=Cost total
 BOMTotalCost=Costul pentru fabricaţia acestui Bon de consum în funcție de costul fiecărei cantități și produs de consumat (utilizați Prețul de cost, dacă este definit, altfel Prețul mediu ponderat, dacă este definit, altfel cel mai bun preț de achiziție)
 GoOnTabProductionToProduceFirst=Mai întâi trebuie să fi început producția pentru a închide o Comandă de fabricație (Vezi fila '%s'). Puteți anula. 
+ErrorAVirtualProductCantBeUsedIntoABomOrMo=Un kit nu poate fi folosit într-un BOM sau MO

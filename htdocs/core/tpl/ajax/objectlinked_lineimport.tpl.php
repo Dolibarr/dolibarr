@@ -83,7 +83,7 @@ $(document).ready(function(){
     	      	        	$("#" + formId).append('<input type="hidden" name="fromelementid" value="' + fromelementid + '" />');
     	      	        	$("#" + formId).submit();
 	                    },
-	                    "<?php echo $langs->trans('Cancel'); ?>": function() {
+	                    "<?php echo $langs->trans("Cancel"); ?>": function() {
 	                      $( this ).dialog( "close" );
 	                    }
 	            }

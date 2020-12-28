@@ -52,6 +52,7 @@ class ActionCommReminder extends CommonObject
 
 	const STATUS_TODO = 0;
 	const STATUS_DONE = 1;
+	const STATUS_ERROR = -1;
 
 
 	/**
@@ -84,8 +85,9 @@ class ActionCommReminder extends CommonObject
 		'offsetvalue' => array('type'=>'integer', 'label'=>'OffsetValue', 'visible'=>1, 'enabled'=>1, 'position'=>56, 'notnull'=>1,),
 		'offsetunit' => array('type'=>'varchar(1)', 'label'=>'OffsetUnit', 'visible'=>1, 'enabled'=>1, 'position'=>57, 'notnull'=>1, 'comment'=>"y, m, d, w, h, i",),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>58, 'notnull'=>1, 'default'=>0, 'index'=>0, 'arrayofkeyval'=>array('0'=>'ToDo', '1'=>'Done')),
-		'fk_actioncomm' => array('type'=>'integer', 'label'=>'Project', 'visible'=>1, 'enabled'=>1, 'position'=>59, 'notnull'=>1, 'index'=>1,),
-		'fk_email_template' => array('type'=>'integer', 'label'=>'EmailTemplate', 'visible'=>1, 'enabled'=>1, 'position'=>60, 'notnull'=>0),
+		'lasterror' => array('type'=>'varchar(128)', 'label'=>'LastError', 'visible'=>-1, 'enabled'=>1, 'position'=>59, 'index'=>0),
+		'fk_actioncomm' => array('type'=>'integer', 'label'=>'Project', 'visible'=>1, 'enabled'=>1, 'position'=>70, 'notnull'=>1, 'index'=>1,),
+		'fk_email_template' => array('type'=>'integer', 'label'=>'EmailTemplate', 'visible'=>1, 'enabled'=>1, 'position'=>80, 'notnull'=>0),
 	);
 
 	/**
@@ -113,6 +115,11 @@ class ActionCommReminder extends CommonObject
 	 * @var int Status
 	 */
 	public $status;
+
+	/**
+	 * @var string Last error message
+	 */
+	public $lasterror;
 
 	/**
 	 * @var int Project
@@ -217,31 +224,19 @@ class ActionCommReminder extends CommonObject
 		// phpcs:enable
 		global $langs;
 
-		if ($mode == 0 || $mode == 1)
-		{
-			if ($status == 1) return $langs->trans('Done');
-			elseif ($status == 0) return $langs->trans('ToDo');
-		} elseif ($mode == 2)
-		{
-			if ($status == 1) return img_picto($langs->trans('Done'), 'statut4').' '.$langs->trans('Done');
-			elseif ($status == 0) return img_picto($langs->trans('ToDo'), 'statut5').' '.$langs->trans('ToDo');
-		} elseif ($mode == 3)
-		{
-			if ($status == 1) return img_picto($langs->trans('Done'), 'statut4');
-			elseif ($status == 0) return img_picto($langs->trans('ToDo'), 'statut5');
-		} elseif ($mode == 4)
-		{
-			if ($status == 1) return img_picto($langs->trans('Done'), 'statut4').' '.$langs->trans('Done');
-			elseif ($status == 0) return img_picto($langs->trans('ToDo'), 'statut5').' '.$langs->trans('ToDo');
-		} elseif ($mode == 5)
-		{
-			if ($status == 1) return $langs->trans('Done').' '.img_picto($langs->trans('Done'), 'statut4');
-			elseif ($status == 0) return $langs->trans('ToDo').' '.img_picto($langs->trans('ToDo'), 'statut5');
-		} elseif ($mode == 6)
-		{
-			if ($status == 1) return $langs->trans('Done').' '.img_picto($langs->trans('Done'), 'statut4');
-			elseif ($status == 0) return $langs->trans('ToDo').' '.img_picto($langs->trans('ToDo'), 'statut5');
-		}
+		$labelStatus = $langs->trans('ToDo');
+		if ($status == 1) $labelStatus = $langs->trans('Done');
+		elseif ($status == -1) $labelStatus = $langs->trans('Error');
+
+		$labelStatusShort = $langs->trans('ToDo');
+		if ($status == 1) $labelStatus = $langs->trans('Done');
+		elseif ($status == -1) $labelStatus = $langs->trans('Error');
+
+		$statusType = 'status5';
+		if ($status == 1) $statusType = 'status4';
+		elseif ($status == -1) $statusType = 'status8';
+
+		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
 	}
 
 	/**

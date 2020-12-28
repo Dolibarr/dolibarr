@@ -41,6 +41,10 @@ class FichinterRec extends Fichinter
 	public $element = 'fichinterrec';
 	public $table_element = 'fichinter_rec';
 	public $table_element_line = 'fichinter_rec';
+
+	/**
+	 * @var string Fieldname with ID of parent key if this field has a parent
+	 */
 	public $fk_element = 'fk_fichinter';
 
 	/**
@@ -53,6 +57,9 @@ class FichinterRec extends Fichinter
 	 */
 	public $picto = 'intervention';
 
+	/**
+	 * @var string title
+	 */
 	public $title;
 	public $number;
 	public $date;
@@ -60,14 +67,28 @@ class FichinterRec extends Fichinter
 	public $remise;
 	public $tva;
 	public $total;
-	public $db_table;
+
+	/**
+	 * @var int Proposal Id
+	 */
 	public $propalid;
 
 	public $date_last_gen;
 	public $date_when;
+
+	/**
+	 * @var int number of generation done
+	 */
 	public $nb_gen_done;
+
+	/**
+	 * @var int number of maximum generation
+	 */
 	public $nb_gen_max;
 
+	/**
+	 * int rank
+	 */
 	public $rang;
 	public $special_code;
 

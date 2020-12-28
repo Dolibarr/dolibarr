@@ -60,7 +60,10 @@ class modAdherent extends DolibarrModules
 		$this->picto = 'member';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array("/adherent/temp");
+		$this->dirs = array(
+			"/adherent/temp",
+			"/doctemplates/members",
+		);
 
 		// Config pages
 		$this->config_page_url = array("adherent.php@adherents");
@@ -175,6 +178,13 @@ class modAdherent extends DolibarrModules
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "";
 		$this->const[$r][3] = "ID of bank transaction category to use";
+		$this->const[$r][4] = 0;
+		$r++;
+
+		$this->const[$r][0] = "MEMBER_ADDON_PDF_ODT_PATH";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/members";
+		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
 

@@ -168,40 +168,6 @@ class RecruitmentJobPosition extends CommonObject
 	// END MODULEBUILDER PROPERTIES
 
 
-	// If this object has a subtable with lines
-
-	/**
-	 * @var int    Name of subtable line
-	 */
-	//public $table_element_line = 'recruitment_recruitmentjobpositionline';
-
-	/**
-	 * @var int    Field with ID of parent key if this field has a parent
-	 */
-	//public $fk_element = 'fk_recruitmentjobposition';
-
-	/**
-	 * @var int    Name of subtable class that manage subtable lines
-	 */
-	//public $class_element_line = 'RecruitmentJobPositionline';
-
-	/**
-	 * @var array	List of child tables. To test if we can delete object.
-	 */
-	//protected $childtables=array();
-
-	/**
-	 * @var array	List of child tables. To know object to delete on cascade.
-	 */
-	//protected $childtablesoncascade=array('recruitment_recruitmentjobpositiondet');
-
-	/**
-	 * @var RecruitmentJobPositionLine[]     Array of subtable lines
-	 */
-	//public $lines = array();
-
-
-
 	/**
 	 * Constructor
 	 *
@@ -1093,8 +1059,7 @@ class RecruitmentJobPosition extends CommonObject
 		$langs->load("recruitment");
 
 		if (!dol_strlen($modele)) {
-			if (!empty($conf->global->RECRUITMENTJOBPOSITION_ADDON_PDF))
-			{
+			if (!empty($conf->global->RECRUITMENTJOBPOSITION_ADDON_PDF)) {
 				$modele = $conf->global->RECRUITMENTJOBPOSITION_ADDON_PDF;
 			} else {
 				$modele = ''; // No default value. For job position, we allow to disable all PDF generation
@@ -1103,7 +1068,7 @@ class RecruitmentJobPosition extends CommonObject
 
 		$modelpath = "core/modules/recruitment/doc/";
 
-		if ($includedocgeneration) {
+		if ($includedocgeneration && !empty($modele)) {
 			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
 

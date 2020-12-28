@@ -460,7 +460,7 @@ class AccountingAccount extends CommonObject
 
 		$result = '';
 
-		$url = '';
+		$url = ''; $labelurl = '';
 		if (empty($option) || $option == 'ledger') {
 			$url = DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?search_accountancy_code_start='.urlencode($this->account_number).'&search_accountancy_code_end='.urlencode($this->account_number);
 			$labelurl = $langs->trans("ShowAccountingAccountInLedger");
@@ -617,16 +617,13 @@ class AccountingAccount extends CommonObject
 		// phpcs:enable
 		$this->db->begin();
 
-		if ($mode == 0)
-		{
-			$fieldtouse = 'active';
-		} elseif ($mode == 1)
-		{
+		$fieldtouse = 'active';
+		if ($mode == 1) {
 			$fieldtouse = 'reconcilable';
 		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_account ";
-		$sql .= "SET ".$fieldtouse." = '1'";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_account";
+		$sql .= " SET ".$fieldtouse." = '1'";
 		$sql .= " WHERE rowid = ".$this->db->escape($id);
 
 		dol_syslog(get_class($this)."::account_activate ".$fieldtouse." sql=".$sql, LOG_DEBUG);

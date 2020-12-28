@@ -196,7 +196,7 @@ if ($socid > 0)
 	if (!empty($backtopage))
 	{
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	}
 	print '</div>';
 

@@ -145,6 +145,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 <input type="hidden" name="attrname" value="<?php echo $attrname; ?>">
 <input type="hidden" name="action" value="update">
 <input type="hidden" name="rowid" value="<?php echo $rowid ?>">
+<input type="hidden" name="enabled" value="<?php echo $extrafields->attributes[$elementtype]['enabled'][$attrname]; ?>">
 
 <?php print dol_get_fiche_head(); ?>
 
@@ -205,7 +206,8 @@ $typewecanchangeinto = array(
 	'mail'=>array('varchar', 'phone', 'mail', 'url', 'select'),
 	'url'=>array('varchar', 'phone', 'mail', 'url', 'select'),
 	'phone'=>array('varchar', 'phone', 'mail', 'url', 'select'),
-	'select'=>array('varchar', 'phone', 'mail', 'url', 'select')
+	'select'=>array('varchar', 'phone', 'mail', 'url', 'select'),
+	'date'=>array('date', 'datetime')
 );
 /* Disabled because text is text on several lines, when varchar is text on 1 line, we should not be able to convert
 if ($size <= 255 && in_array($type, array('text', 'html'))) {
@@ -224,6 +226,7 @@ if (in_array($type, array_keys($typewecanchangeinto)))
 		else print '<option value="'.$key.'" disabled="disabled"'.$selected.'>'.$val.'</option>';
 	}
 	print '</select>';
+	print ajax_combobox('type');
 } else {
 	print $type2label[$type];
 	print '<input type="hidden" name="type" id="type" value="'.$type.'">';
@@ -300,8 +303,8 @@ if (in_array($type, array_keys($typewecanchangeinto)))
 
 <?php print dol_get_fiche_end(); ?>
 
-<div class="center"><input type="submit" name="button" class="button" value="<?php echo $langs->trans("Save"); ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="submit" name="button" class="button" value="<?php echo $langs->trans("Cancel"); ?>"></div>
+<div class="center"><input type="submit" name="button" class="button button-save" value="<?php echo $langs->trans("Save"); ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="submit" name="button" class="button button-cancel" value="<?php echo $langs->trans("Cancel"); ?>"></div>
 
 </form>
 

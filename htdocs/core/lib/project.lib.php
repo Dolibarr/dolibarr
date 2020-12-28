@@ -483,7 +483,9 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				$taskstatic->projectstatus = $lines[$i]->projectstatus;
 				$taskstatic->progress = $lines[$i]->progress;
 				$taskstatic->fk_statut = $lines[$i]->status;
-				$taskstatic->datee = $lines[$i]->date_end;
+				$taskstatic->date_start = $lines[$i]->date_start;
+				$taskstatic->date_end = $lines[$i]->date_end;
+				$taskstatic->datee = $lines[$i]->date_end; // deprecated
 				$taskstatic->planned_workload = $lines[$i]->planned_workload;
 				$taskstatic->duration_effective = $lines[$i]->duration;
 
@@ -678,10 +680,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print $hookmanager->resPrint;
 
 				// Tick to drag and drop
-				if ($addordertick)
-				{
-					print '<td class="tdlineupdown hideonsmartphone center">&nbsp;</td>';
-				}
+				print '<td class="tdlineupdown center"></td>';
 
 				print "</tr>\n";
 
@@ -796,7 +795,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		{
 			print '<td></td>';
 		}
-		if ($addordertick) print '<td class="hideonsmartphone"></td>';
+		print '<td class=""></td>';
 		print '</tr>';
 	}
 
@@ -1320,7 +1319,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				global $daytoparse;
 				$tmparray = dol_getdate($daytoparse, true); // detail of current day
 
-				$idw = ($tmparray['wday'] - (empty($conf->global->MAIN_START_WEEK)?0:1));
+				$idw = ($tmparray['wday'] - (empty($conf->global->MAIN_START_WEEK) ? 0 : 1));
 				global $numstartworkingday, $numendworkingday;
 				$cssweekend = '';
 				if ((($idw + 1) < $numstartworkingday) || (($idw + 1) > $numendworkingday))	// This is a day is not inside the setup of working days, so we use a week-end css.
@@ -2169,7 +2168,11 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	if (empty($arrayidofprojects)) $arrayidofprojects[0] = -1;
 
 	// Get list of project with calculation on tasks
-	$sql2 = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_soc, s.nom as socname, s.email, s.client, s.fournisseur,";
+	$sql2 = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_soc,";
+	$sql2 .= " s.rowid as socid, s.nom as socname, s.name_alias,";
+	$sql2 .= " s.code_client, s.code_compta, s.client,";
+	$sql2 .= " s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur,";
+	$sql2 .= " s.logo, s.email, s.entity,";
 	$sql2 .= " p.fk_user_creat, p.public, p.fk_statut as status, p.fk_opp_status as opp_status, p.opp_percent, p.opp_amount,";
 	$sql2 .= " p.dateo, p.datee,";
 	$sql2 .= " COUNT(t.rowid) as nb, SUM(t.planned_workload) as planned_workload, SUM(t.planned_workload * t.progress / 100) as declared_progess_workload";
@@ -2238,12 +2241,18 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 				print '<td class="nowraponall tdoverflowmax100">';
 				if ($objp->fk_soc > 0)
 				{
-					$thirdpartystatic->id = $objp->fk_soc;
-					$thirdpartystatic->ref = $objp->socname;
+					$thirdpartystatic->id = $objp->socid;
 					$thirdpartystatic->name = $objp->socname;
+					//$thirdpartystatic->name_alias = $objp->name_alias;
+					//$thirdpartystatic->code_client = $objp->code_client;
+					$thirdpartystatic->code_compta = $objp->code_compta;
 					$thirdpartystatic->client = $objp->client;
+					//$thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
+					$thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
 					$thirdpartystatic->fournisseur = $objp->fournisseur;
+					$thirdpartystatic->logo = $objp->logo;
 					$thirdpartystatic->email = $objp->email;
+					$thirdpartystatic->entity = $objp->entity;
 					print $thirdpartystatic->getNomUrl(1);
 				}
 				print '</td>';
@@ -2403,8 +2412,8 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 		// this conf is actually hidden, by default we use 10% for "be carefull or warning"
 		$warningRatio = !empty($conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT) ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.10;
 
-		$diffTitle = '<br/>'.$langs->trans('ProgressDeclared').' : '.$task->progress.($task->progress ? '%' : '');
-		$diffTitle .= '<br/>'.$langs->trans('ProgressCalculated').' : '.$progressCalculated.($progressCalculated ? '%' : '');
+		$diffTitle = '<br>'.$langs->trans('ProgressDeclared').' : '.$task->progress.($task->progress ? '%' : '');
+		$diffTitle .= '<br>'.$langs->trans('ProgressCalculated').' : '.$progressCalculated.($progressCalculated ? '%' : '');
 
 		//var_dump($progressCalculated.' '.$warningRatio.' '.$task->progress.' '.doubleval($task->progress * $warningRatio));
 		if (doubleval($progressCalculated) > doubleval($task->progress * $warningRatio)) {

@@ -270,7 +270,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0)
 		print '<div class="center">';
 		print '<input type="submit" class="button" name="save" value="'.$langs->trans($action == "create" ? "Create" : "Modify").'">';
 		print ' &nbsp; &nbsp; ';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 		print '</div>';
 

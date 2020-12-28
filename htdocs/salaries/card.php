@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2014       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2014-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Charlie BENKE           <charlie@patas-monkey.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
@@ -265,7 +265,7 @@ if ($action == 'create')
 	// Date payment
 	print '<tr><td>';
 	print $form->editfieldkey('DatePayment', 'datep', '', $object, 0, 'string', '', 1).'</td><td>';
-	print $form->selectDate((empty($datep) ?-1 : $datep), "datep", '', '', '', 'add', 1, 1);
+	print $form->selectDate((empty($datep) ? '' : $datep), "datep", 0, 0, 0, 'add', 1, 1);
 	print '</td></tr>';
 
 	// Date value for bank
@@ -305,16 +305,6 @@ if ($action == 'create')
 	print '<input name="amount" id="amount" class="minwidth100" value="'.GETPOST("amount").'">';
 	print '</td></tr>';
 
-	// Project
-	if (!empty($conf->projet->enabled))
-	{
-		$formproject = new FormProjets($db);
-
-		print '<tr><td>'.$langs->trans("Project").'</td><td>';
-		$formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
-		print '</td></tr>';
-	}
-
 	// Bank
 	if (!empty($conf->banque->enabled))
 	{
@@ -340,6 +330,16 @@ if ($action == 'create')
 		print '<td><input name="num_payment" id="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
 	}
 
+	// Project
+	if (!empty($conf->projet->enabled))
+	{
+	    $formproject = new FormProjets($db);
+
+	    print '<tr><td>'.$langs->trans("Project").'</td><td>';
+	    $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
+	    print '</td></tr>';
+	}
+
 	// Other attributes
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -354,11 +354,11 @@ if ($action == 'create')
 	print dol_get_fiche_end();
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp; &nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="saveandnew" value="'.$langs->trans("SaveAndNew").'">';
 	print '&nbsp;&nbsp; &nbsp;&nbsp;';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
 	print '</form>';
@@ -476,9 +476,8 @@ if ($id)
 	print dol_get_fiche_end();
 
 
-	/*
-	 * Action buttons
-	 */
+	// Action buttons
+
 	print '<div class="tabsAction">'."\n";
 	if ($object->rappro == 0)
 	{

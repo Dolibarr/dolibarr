@@ -71,7 +71,8 @@ if ($action == 'addcontact' && $user->rights->societe->creer)
 	if ($result > 0 && $id > 0)
 	{
 		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
-  		$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
+		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 	}
 
 	if ($result >= 0)
@@ -183,20 +184,26 @@ if ($id > 0 || !empty($ref))
 
 		if ($object->client)
 		{
-			print '<tr><td class="titlefield">';
-			print $langs->trans('CustomerCode').'</td><td colspan="3">';
-			print $object->code_client;
-			if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
-			print '</td></tr>';
+		    print '<tr><td class="titlefield">';
+		    print $langs->trans('CustomerCode').'</td><td colspan="3">';
+		    print $object->code_client;
+		    $tmpcheck = $object->check_codeclient();
+		    if ($tmpcheck != 0 && $tmpcheck != -5) {
+		    	print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+		    }
+		    print '</td></tr>';
 		}
 
 		if ($object->fournisseur)
 		{
-			print '<tr><td class="titlefield">';
-			print $langs->trans('SupplierCode').'</td><td colspan="3">';
-			print $object->code_fournisseur;
-			if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
-			print '</td></tr>';
+		    print '<tr><td class="titlefield">';
+		    print $langs->trans('SupplierCode').'</td><td colspan="3">';
+		    print $object->code_fournisseur;
+		    $tmpcheck = $object->check_codefournisseur();
+		    if ($tmpcheck != 0 && $tmpcheck != -5) {
+		    	print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+		    }
+		    print '</td></tr>';
 		}
 		print '</table>';
 

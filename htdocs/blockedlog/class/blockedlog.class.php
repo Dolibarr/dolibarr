@@ -18,16 +18,6 @@
  * See https://medium.com/@lhartikk/a-blockchain-in-200-lines-of-code-963cc1cc0e54
  */
 
-/*ini_set('unserialize_callback_func', 'mycallback');
-
-function mycallback($classname)
-{
-	//var_dump($classname);
-	include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-
-}*/
-
-
 
 /**
  *	Class to manage Blocked Log
@@ -182,8 +172,8 @@ class BlockedLog
 		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_MODIFY'] = 'logPAYMENT_VARIOUS_MODIFY';
 		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_DELETE'] = 'logPAYMENT_VARIOUS_DELETE';
 
-		// $conf->global->BANK_ENABLE_POS_CASHCONTROL must be set to 1 by all POS modules
-		$moduleposenabled = ($conf->cashdesk->enabled || $conf->takepos->enabled || !empty($conf->global->BANK_ENABLE_POS_CASHCONTROL));
+		// $conf->global->BANK_ENABLE_POS_CASHCONTROL must be set to 1 by all external POS modules
+		$moduleposenabled = (!empty($conf->cashdesk->enabled) || !empty($conf->takepos->enabled) || !empty($conf->global->BANK_ENABLE_POS_CASHCONTROL));
 		if ($moduleposenabled) $this->trackedevents['CASHCONTROL_VALIDATE'] = 'logCASHCONTROL_VALIDATE';
 
 		if (!empty($conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED)) {
@@ -454,7 +444,9 @@ class BlockedLog
 								'ref', 'multicurrency_code', 'multicurrency_total_ht', 'multicurrency_total_tva', 'multicurrency_total_ttc', 'qty', 'product_type', 'vat_src_code', 'tva_tx', 'info_bits', 'localtax1_tx', 'localtax2_tx', 'total_ht', 'total_tva', 'total_ttc', 'total_localtax1', 'total_localtax2'
 							))) continue; // Discard if not into a dedicated list
 
-							if (!is_object($this->object_data->invoiceline[$lineid])) $this->object_data->invoiceline[$lineid] = new stdClass();
+							if (empty($this->object_data->invoiceline[$lineid]) || !is_object($this->object_data->invoiceline[$lineid])) {		// To avoid warning
+								$this->object_data->invoiceline[$lineid] = new stdClass();
+							}
 
 							$this->object_data->invoiceline[$lineid]->{$keyline} = $valueline;
 						}
@@ -465,7 +457,7 @@ class BlockedLog
 			if (!empty($object->newref)) $this->object_data->ref = $object->newref;
 		} elseif ($this->element == 'invoice_supplier')
 		{
-			foreach ($object as $key=>$value)
+			foreach ($object as $key => $value)
 			{
 				if (in_array($key, $arrayoffieldstoexclude)) continue; // Discard some properties
 				if (!in_array($key, array(

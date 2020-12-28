@@ -938,7 +938,7 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 
 	/**
 	 * List of cumulative options:
-	 * Bit 0:	0 si TVA normal - 1 si TVA NPR
+	 * Bit 0:	0 for common VAT - 1 if VAT french NPR
 	 * Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)
 	 * @var int
 	 */
@@ -947,4 +947,9 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	public $special_code = 0;
 
 	public $fk_multicurrency;
+	public $multicurrency_code;
+	public $multicurrency_subprice;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
 }

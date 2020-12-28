@@ -38,6 +38,7 @@ MenuOrdersSupplierToBill=Comandes de compra a facturar
 NbDaysToDelivery=Retard de lliurament (dies)
 DescNbDaysToDelivery=El retard de lliurament més llarg dels productes d'aquesta comanda
 SupplierReputation=Reputació del proveïdor
+ReferenceReputation=Reputació de referència
 DoNotOrderThisProductToThisSupplier=No demanar
 NotTheGoodQualitySupplier=Baixa qualitat
 ReputationForThisProduct=Reputació

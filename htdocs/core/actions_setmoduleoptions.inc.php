@@ -100,7 +100,7 @@ if ($action == 'setModuleOptions')
 		}
 		if ($upload_dir)
 		{
-			$result = dol_add_file_process($upload_dir, 0, 1, 'uploadfile', '');
+			$result = dol_add_file_process($upload_dir, 1, 1, 'uploadfile', '');
 			if ($result <= 0) $error++;
 		}
 	}

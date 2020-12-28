@@ -142,11 +142,11 @@ class Users extends DolibarrApi
 	 * Get properties of an user object
 	 *
 	 * @param 	int 	$id 					ID of user
-	 * @param	int		$includepermissions	Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
-	 * @return 	array|mixed data without useless information
+	 * @param	int		$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
+	 * @return 	array|mixed 					data without useless information
 	 *
-	 * @throws RestException 401     Insufficient rights
-	 * @throws RestException 404     User or group not found
+	 * @throws RestException 401 Insufficient rights
+	 * @throws RestException 404 User or group not found
 	 */
 	public function get($id, $includepermissions = 0)
 	{
@@ -177,13 +177,13 @@ class Users extends DolibarrApi
 	 * Get properties of an user object by login
 	 *
 	 * @param 	string 	$login 					Login of user
-	 * @param	int		$includepermissions	Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
-	 * @return 	array|mixed data without useless information
+	 * @param	int		$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
+	 * @return 	array|mixed 					Data without useless information
 	 *
 	 * @url GET login/{login}
 	 *
-	 * @throws RestException 401     Insufficient rights
-	 * @throws RestException 404     User or group not found
+	 * @throws RestException 401 Insufficient rights
+	 * @throws RestException 404 User or group not found
 	 */
 	public function getByLogin($login, $includepermissions = 0)
 	{
@@ -211,8 +211,8 @@ class Users extends DolibarrApi
 	 * Get properties of an user object by Email
 	 *
 	 * @param 	string 	$email 					Email of user
-	 * @param	int		$includepermissions	Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
-	 * @return 	array|mixed data without useless information
+	 * @param	int		$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
+	 * @return 	array|mixed 					Data without useless information
 	 *
 	 * @url GET email/{email}
 	 *
@@ -246,12 +246,13 @@ class Users extends DolibarrApi
 	 *
 	 * @url	GET /info
 	 *
+	 * @param	int		$includepermissions	Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
 	 * @return  array|mixed Data without useless information
 	 *
 	 * @throws RestException 401     Insufficient rights
 	 * @throws RestException 404     User or group not found
 	 */
-	public function getInfo()
+	public function getInfo($includepermissions = 0)
 	{
 		$apiUser = DolibarrApiAccess::$user;
 
@@ -262,6 +263,10 @@ class Users extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		if ($includepermissions) {
+			$this->useraccount->getRights();
 		}
 
 		$usergroup = new UserGroup($this->db);
@@ -309,11 +314,13 @@ class Users extends DolibarrApi
 	/**
 	 * Update account
 	 *
-	 * @param int   $id             Id of account to update
-	 * @param array $request_data   Datas
-	 * @return array
+	 * @param 	int   		$id             	Id of account to update
+	 * @param	array 		$request_data   	Datas
+	 * @return 	array|mixed						Record after update
 	 *
-	 * @throws 	RestException
+	 * @throws RestException 401 Not allowed
+	 * @throws RestException 404 Not found
+	 * @throws RestException 500 System error
 	 */
 	public function put($id, $request_data = null)
 	{

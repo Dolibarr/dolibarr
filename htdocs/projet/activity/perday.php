@@ -129,7 +129,7 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
 	{
 		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["efpt.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+			$arrayfields["efpt.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs((int) $extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
 	}
 }
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -620,7 +620,7 @@ if ($test) $isavailable[$daytoparse] = array('morning'=>false, 'afternoon'=>fals
 
 $tmparray = dol_getdate($daytoparse, true); // detail of current day
 // For monday, must be 0 for monday if MAIN_START_WEEK = 1, must be 1 for monday if MAIN_START_WEEK = 0
-$idw = ($tmparray['wday'] - (empty($conf->global->MAIN_START_WEEK)?0:1));
+$idw = ($tmparray['wday'] - (empty($conf->global->MAIN_START_WEEK) ? 0 : 1));
 // numstartworkingday and numendworkingday are default start and end date of working days (1 means sunday if MAIN_START_WEEK is 0, 1 means monday if MAIN_START_WEEK is 1)
 $cssweekend = '';
 if ((($idw + 1) < $numstartworkingday) || (($idw + 1) > $numendworkingday))	// This is a day is not inside the setup of working days, so we use a week-end css.
@@ -756,7 +756,7 @@ print '</div>';
 print '<input type="hidden" id="numberOfLines" name="numberOfLines" value="'.count($tasksarray).'"/>'."\n";
 
 print '<div class="center">';
-print '<input type="submit" class="button"'.($disabledtask ? ' disabled' : '').' value="'.$langs->trans("Save").'">';
+print '<input type="submit" class="button button-save"'.($disabledtask ? ' disabled' : '').' value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';
