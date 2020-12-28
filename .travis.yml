@@ -50,7 +50,7 @@ jobs:
     - if: type = push AND branch = develop
       php: nightly 
       env: DB=mysql
-    - if: type = push AND branch = 13.0
+    - if: type = push AND branch = 14.0
       php: nightly 
       env: DB=mysql
 
@@ -401,6 +401,9 @@ script:
   php upgrade.php 12.0.0 13.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade12001300.log
   php upgrade2.php 12.0.0 13.0.0 > $TRAVIS_BUILD_DIR/upgrade12001300-2.log
   php step5.php 12.0.0 13.0.0 > $TRAVIS_BUILD_DIR/upgrade12001300-3.log
+  php upgrade.php 13.0.0 14.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade13001400.log
+  php upgrade2.php 13.0.0 14.0.0 > $TRAVIS_BUILD_DIR/upgrade13001400-2.log
+  php step5.php 13.0.0 14.0.0 > $TRAVIS_BUILD_DIR/upgrade13001400-3.log
 
   # Enable modules not enabled into original dump
   php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_API,MAIN_MODULE_PRODUCTBATCH,MAIN_MODULE_SUPPLIERPROPOSAL,MAIN_MODULE_WEBSITE,MAIN_MODULE_TICKET,MAIN_MODULE_ACCOUNTING,MAIN_MODULE_MRP > $TRAVIS_BUILD_DIR/enablemodule.log

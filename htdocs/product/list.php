@@ -534,6 +534,7 @@ if ($resql)
 		//'builddoc'=>$langs->trans("PDFMerge"),
 		//'presend'=>$langs->trans("SendByMail"),
 	);
+
 	if ($user->rights->{$rightskey}->supprimer) $arrayofmassactions['predelete'] = "<span class='fa fa-trash paddingrightonly'></span>".$langs->trans("Delete");
 	if ($user->rights->{$rightskey}->creer) $arrayofmassactions['preaffecttag'] = '<span class="fa fa-tag paddingrightonly"></span>'.$langs->trans("AffectTag");
 	if (in_array($massaction, array('presend', 'predelete','preaffecttag'))) $arrayofmassactions = array();

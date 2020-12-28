@@ -2651,14 +2651,14 @@ class Product extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql .= ", ".MAIN_DB_PREFIX."commande as c";
 		$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-		if (!$user->rights->societe->client->voir && !$socid && !$forVirtualStock) {
+		if (empty($user->rights->societe->client->voir) && !$socid && !$forVirtualStock) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE c.rowid = cd.fk_commande";
 		$sql .= " AND c.fk_soc = s.rowid";
 		$sql .= " AND c.entity IN (".getEntity($forVirtualStock && !empty($conf->global->STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE) ? 'stock' : 'commande').")";
 		$sql .= " AND cd.fk_product = ".$this->id;
-		if (!$user->rights->societe->client->voir && !$socid && !$forVirtualStock) {
+		if (empty($user->rights->societe->client->voir) && !$socid && !$forVirtualStock) {
 			$sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
 		if ($socid > 0) {

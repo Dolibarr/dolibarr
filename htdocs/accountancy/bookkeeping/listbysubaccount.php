@@ -679,6 +679,11 @@ while ($i < min($num, $limit))
 			$filedir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
 			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
+		} elseif ($line->doc_type == 'bank')
+		{
+			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+			$objectstatic = new AccountLine($db);
+			$objectstatic->fetch($line->fk_doc);
 		} else {
 			// Other type
 		}
@@ -693,6 +698,10 @@ while ($i < min($num, $limit))
 		{
 			print $objectstatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
 			print $documentlink;
+		} elseif ($line->doc_type == 'bank') {
+			print $objectstatic->getNomUrl(1);
+			$bank_ref = strstr($line->doc_ref, '-');
+			print " " . $bank_ref;
 		} else {
 			print $line->doc_ref;
 		}

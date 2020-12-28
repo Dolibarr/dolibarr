@@ -231,7 +231,7 @@ class modReception extends DolibarrModules
 		}
 		$this->export_sql_end[$r] .= ' WHERE c.fk_soc = s.rowid AND c.rowid = ed.fk_reception AND ed.fk_commandefourndet = cd.rowid';
 		$this->export_sql_end[$r] .= ' AND c.entity IN ('.getEntity('reception').')';
-		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' AND sc.fk_user = '.$user->id;
+		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
 	}
 
 
