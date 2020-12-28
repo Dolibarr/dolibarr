@@ -2909,7 +2909,7 @@ function getUserRemoteIP()
  *
  * @return	boolean		True if user is using HTTPS
  */
-function getIsHTTPS()
+function isHTTPS()
 {
 	$isSecure = false;
 	if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
