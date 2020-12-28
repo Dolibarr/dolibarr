@@ -438,7 +438,7 @@ function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = ''
 
 				if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 				{
-					foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+					foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 					{
 						$productorservice_result_fields = array_merge($productorservice_result_fields, array('options_'.$key => $product->array_options['options_'.$key]));
 					}
@@ -479,7 +479,7 @@ function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = ''
  */
 function createProductOrService($authentication, $product)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	$now = dol_now();
 
@@ -650,7 +650,7 @@ function createProductOrService($authentication, $product)
  */
 function updateProductOrService($authentication, $product)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	$now = dol_now();
 
@@ -721,7 +721,7 @@ function updateProductOrService($authentication, $product)
 		$extrafields->fetch_name_optionals_label($elementtype, true);
 		if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
-			foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+			foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 			{
 				$key = 'options_'.$key;
 				$newobject->array_options[$key] = $product[$key];
@@ -824,7 +824,7 @@ function updateProductOrService($authentication, $product)
  */
 function deleteProductOrService($authentication, $listofidstring)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	dol_syslog("Function: deleteProductOrService login=".$authentication['login']);
 
@@ -855,7 +855,7 @@ function deleteProductOrService($authentication, $listofidstring)
 
 		$db->begin();
 
-		foreach ($listofid as $key => $id)
+		foreach ($listofid as $id)
 		{
 			$newobject = new Product($db);
 			$result = $newobject->fetch($id);
@@ -917,7 +917,7 @@ function deleteProductOrService($authentication, $listofidstring)
  */
 function getListOfProductsOrServices($authentication, $filterproduct)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	dol_syslog("Function: getListOfProductsOrServices login=".$authentication['login']);
 
@@ -1092,7 +1092,7 @@ function getProductsForCategory($authentication, $id, $lang = '')
 
 							if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 							{
-								foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+								foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 								{
 									$products[$iProduct] = array_merge($products[$iProduct], array('options_'.$key => $tmpproduct->array_options['options_'.$key]));
 								}

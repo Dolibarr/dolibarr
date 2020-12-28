@@ -195,7 +195,7 @@ if (is_array($extrafields) && count($extrafields) > 0) {
 }
 if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 {
-	foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 	{
 		$type = $extrafields->attributes[$elementtype]['type'][$key];
 		if ($type == 'date' || $type == 'datetime') {$type = 'xsd:dateTime'; }
@@ -308,7 +308,7 @@ $server->register(
  */
 function getUser($authentication, $id, $ref = '', $ref_ext = '')
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	dol_syslog("Function: getUser login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
@@ -399,9 +399,7 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
  */
 function getListOfGroups($authentication)
 {
-	global $db, $conf, $langs;
-
-	$now = dol_now();
+	global $db, $conf;
 
 	dol_syslog("Function: getListOfGroups login=".$authentication['login']);
 
@@ -477,7 +475,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 {
 	global $db, $conf, $langs;
 
-	dol_syslog("Function: createUserFromThirdparty login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
+	dol_syslog("Function: createUserFromThirdparty login=".$authentication['login']);
 
 	if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
@@ -601,7 +599,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 						$extrafields->fetch_name_optionals_label($elementtype, true);
 						if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 						{
-							foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+							foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 							{
 								$key = 'contact_options_'.$key;
 								$key = substr($key, 8); // Remove 'contact_' prefix
@@ -644,7 +642,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 						}
 					} else {
 						$error++;
-						$errors = ($thirdparty->error ? array($thirdparty->error) : $thirdparty->errors);
+						$errorcode = join(', ', ($thirdparty->error ? array($thirdparty->error) : $thirdparty->errors));
 					}
 				}
 			} else {
@@ -662,7 +660,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 	{
 		$db->rollback();
 		$objectresp = array(
-		'result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel)
+			'result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel)
 		);
 	}
 
@@ -680,9 +678,9 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 function setUserPassword($authentication, $shortuser)
 {
 
-	global $db, $conf, $langs;
+	global $db, $conf;
 
-	dol_syslog("Function: setUserPassword login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
+	dol_syslog("Function: setUserPassword login=".$authentication['login']);
 
 	if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
@@ -715,7 +713,6 @@ function setUserPassword($authentication, $shortuser)
 				{
 					$objectresp = array(
 						'result'=>array('result_code' => 'OK', 'result_label' => ''),
-						'groups'=>$arraygroups
 					);
 				}
 				else {
