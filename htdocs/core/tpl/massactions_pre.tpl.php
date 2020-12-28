@@ -56,14 +56,12 @@ if ($massaction == 'preaffecttag')
 	if (!empty($categ_types)) {
 		foreach ($categ_types as $categ_type) {
 			$cate_arbo = $form->select_all_categories($categ_type['code'], null, 'parent', null, null, 1);
-			$formquestion[]=
-				array('type' => 'other',
+			$formquestion[]=array('type' => 'other',
 					'name' => 'affecttag_'.$categ_type['code'],
 					'label' => $langs->trans("Tag").' '.$categ_type['label'],
 					'value' => $form->multiselectarray('contcats_'.$categ_type['code'], $cate_arbo, GETPOST('contcats_'.$categ_type['code'], 'array'), null, null, null, null, '60%'));
 		}
-		$formquestion[]=
-			array('type' => 'other',
+		$formquestion[]=array('type' => 'other',
 				'name' => 'affecttag_type',
 				'label' => '',
 				'value' => '<input type="hidden" name="affecttag_type"  id="affecttag_type" value="'.implode(",", array_keys($categ_types)).'"/>');
