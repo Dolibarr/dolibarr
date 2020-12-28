@@ -459,9 +459,13 @@ input.buttonpaymentstripe {
 .logopublicpayment #dolpaymentlogo {
 	max-height: 100px;
 }
-a.buttonticket {
+a.butStatus {
 	padding-left: 5px;
 	padding-right: 5px;
+	background-color: transparent;
+    color: var(--colortext) !important;
+    border: 2px solid var( --butactionbg);
+    margin: 0 0.45em !important;
 }
 
 /* Used by timesheets */
@@ -526,6 +530,13 @@ input.pageplusone {
 }
 .colorblack {
 	color: #000;
+}
+
+.vmirror {
+    transform: scale(1, -1);
+}
+.hmirror {
+    transform: scale(-1, 1);
 }
 
 select:invalid {
@@ -829,7 +840,8 @@ body[class*="colorblind-"] .text-success{
     color: rgb(<?php echo $colortexttitle; ?>) !important;
 }
 
-.fa-toggle-on, .fa-toggle-off { font-size: 2em; }
+.size15x { font-size: 1.5em !important; }
+.fa-toggle-on, .fa-toggle-off, .size2x { font-size: 2em; }
 .websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
 .asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off {
 	font-size: 1.5em; vertical-align: text-bottom;
@@ -1446,7 +1458,7 @@ table[summary="list_of_modules"] .fa-cog {
 }
 .linkobject { cursor: pointer; }
 
-table.tableforfield tr>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
+table.tableforfield tr>td:first-of-type, tr.trforfield>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
 	color: #666;
 }
 

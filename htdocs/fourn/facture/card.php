@@ -115,6 +115,8 @@ $permissiondellink = $usercancreate; // Used by the include of actions_dellink.i
 $permissiontoedit = $usercancreate; // Used by the include of actions_lineupdown.inc.php
 $permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
+$error = 0;
+
 
 /*
  * Actions
@@ -183,8 +185,7 @@ if (empty($reshook))
 		}
 
 		// Check parameters
-		if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change)
-		{
+		if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change) {
 			$langs->load("stocks");
 			if (!$idwarehouse || $idwarehouse == -1)
 			{
@@ -194,11 +195,9 @@ if (empty($reshook))
 			}
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$result = $object->validate($user, '', $idwarehouse);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
 				// Define output language
@@ -220,8 +219,7 @@ if (empty($reshook))
 				}
 			}
 		}
-	} elseif ($action == 'confirm_delete' && $confirm == 'yes')
-	{
+	} elseif ($action == 'confirm_delete' && $confirm == 'yes') {
 		$object->fetch($id);
 		$object->fetch_thirdparty();
 
@@ -280,15 +278,13 @@ if (empty($reshook))
 	} elseif ($action == 'confirm_paid' && $confirm == 'yes' && $usercancreate) {
 		$object->fetch($id);
 		$result = $object->set_paid($user);
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
 	// Set supplier ref
-	if ($action == 'setref_supplier' && $usercancreate)
-	{
+	if ($action == 'setref_supplier' && $usercancreate) {
 		$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
 
 		if ($object->update($user) < 0) {
@@ -315,8 +311,7 @@ if (empty($reshook))
 	}
 
 	// payments conditions
-	if ($action == 'setconditions' && $usercancreate)
-	{
+	if ($action == 'setconditions' && $usercancreate) {
 		$object->fetch($id);
 		$object->cond_reglement_code = 0; // To clean property
 		$object->cond_reglement_id = 0; // To clean property
@@ -1680,20 +1675,17 @@ if ($action == 'create')
 	$currency_code = $conf->currency;
 
 	$societe = '';
-	if (GETPOST('socid') > 0)
-	{
+	if (GETPOST('socid') > 0) {
 		$societe = new Societe($db);
 		$societe->fetch(GETPOST('socid', 'int'));
 		if (!empty($conf->multicurrency->enabled) && !empty($societe->multicurrency_code)) $currency_code = $societe->multicurrency_code;
 	}
 
-	if (!empty($origin) && !empty($originid))
-	{
+	if (!empty($origin) && !empty($originid)) {
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
 
-		if ($element == 'project')
-		{
+		if ($element == 'project') {
 			$projectid = $originid;
 			$element = 'projet';
 		}
@@ -2109,7 +2101,7 @@ if ($action == 'create')
 	// Public note
 	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
-	$doleditor = new DolEditor('note_public', (GETPOSTISSET('note_public') ?GETPOST('note_public', 'restricthtml') : $note_public), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_public', (GETPOSTISSET('note_public') ?GETPOST('note_public', 'restricthtml') : $note_public), '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td>';
 	// print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
@@ -2118,7 +2110,7 @@ if ($action == 'create')
 	// Private note
 	print '<tr><td>'.$langs->trans('NotePrivate').'</td>';
 	print '<td>';
-	$doleditor = new DolEditor('note_private', (GETPOSTISSET('note_private') ?GETPOST('note_private', 'restricthtml') : $note_private), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_private', (GETPOSTISSET('note_private') ?GETPOST('note_private', 'restricthtml') : $note_private), '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td>';
 	// print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
@@ -2204,8 +2196,7 @@ if ($action == 'create')
 
 
 	// Show origin lines
-	if (is_object($objectsrc))
-	{
+	if (is_object($objectsrc)) {
 		print '<br>';
 
 		$title = $langs->trans('ProductsAndServices');
@@ -2218,8 +2209,7 @@ if ($action == 'create')
 		print '</table>';
 	}
 } else {
-	if ($id > 0 || !empty($ref))
-	{
+	if ($id > 0 || !empty($ref)) {
 		/* *************************************************************************** */
 		/*                                                                             */
 		/* Fiche en mode visu ou edition                                               */
@@ -2275,7 +2265,7 @@ if ($action == 'create')
 		$head = facturefourn_prepare_head($object);
 		$titre = $langs->trans('SupplierInvoice');
 
-		print dol_get_fiche_head($head, 'card', $titre, -1, 'bill');
+		print dol_get_fiche_head($head, 'card', $titre, -1, 'supplier_invoice');
 
 		$formconfirm = '';
 

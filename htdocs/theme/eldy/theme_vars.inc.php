@@ -114,7 +114,7 @@ $badgeStatus4 = '#25a580'; // Color ok
 $badgeStatus4b = '#25a580'; // Color ok
 $badgeStatus5 = '#cad2d2';
 $badgeStatus6 = '#cad2d2';
-$badgeStatus7 = '#baa32b';
+$badgeStatus7 = '#25a580';
 $badgeStatus8 = '#993013';
 $badgeStatus9 = '#e7f0f0';
 

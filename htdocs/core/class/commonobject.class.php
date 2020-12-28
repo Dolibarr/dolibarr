@@ -211,6 +211,11 @@ abstract class CommonObject
 	public $ref_next;
 
 	/**
+	 * @var string Ref to store on object to save the new ref to use for example when making a validate() of an object
+	 */
+	public $newref;
+
+	/**
 	 * @var int The object's status
 	 * @see setStatut()
 	 */
@@ -350,7 +355,7 @@ abstract class CommonObject
 	public $last_main_doc;
 
 	/**
-	 * @var int Bank account ID
+	 * @var int Bank account ID sometimes, ID of record into llx_bank sometimes
 	 * @deprecated
 	 * @see $fk_account
 	 */
@@ -2949,18 +2954,25 @@ abstract class CommonObject
 
 		// Special cas
 		if ($this->table_element == 'product' && $newsuffix == '_private') $newsuffix = '';
-
+		if (in_array($this->table_element, array('actioncomm', 'adherent', 'advtargetemailing', 'cronjob', 'establishment'))) {
+			$fieldusermod =  "fk_user_mod";
+		} elseif ($this->table_element == 'ecm_files') {
+			$fieldusermod = "fk_user_m";
+		} else {
+			$fieldusermod = "fk_user_modif";
+		}
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET note".$newsuffix." = ".(!empty($note) ? ("'".$this->db->escape($note)."'") : "NULL");
-		$sql .= " ,".(in_array($this->table_element, array('actioncomm', 'adherent', 'advtargetemailing', 'cronjob', 'establishment')) ? "fk_user_mod" : "fk_user_modif")." = ".$user->id;
+		$sql .= " ,".$fieldusermod." = ".$user->id;
 		$sql .= " WHERE rowid =".$this->id;
 
 		dol_syslog(get_class($this)."::update_note", LOG_DEBUG);
-		if ($this->db->query($sql))
-		{
-			if ($suffix == '_public') $this->note_public = $note;
-			elseif ($suffix == '_private') $this->note_private = $note;
-			else {
+		if ($this->db->query($sql)) {
+			if ($suffix == '_public') {
+				$this->note_public = $note;
+			} elseif ($suffix == '_private') {
+				$this->note_private = $note;
+			} else {
 				$this->note = $note; // deprecated
 				$this->note_private = $note;
 			}
@@ -3287,7 +3299,7 @@ abstract class CommonObject
 
 	/**
 	 *	Fetch array of objects linked to current object (object of enabled modules only). Links are loaded into
-	 *		this->linkedObjectsIds array and
+	 *		this->linkedObjectsIds array +
 	 *		this->linkedObjects array if $loadalsoobjects = 1
 	 *  Possible usage for parameters:
 	 *  - all parameters empty -> we look all link to current object (current object can be source or target)
@@ -3400,6 +3412,7 @@ abstract class CommonObject
 				{
 					// Parse element/subelement (ex: project_task, cabinetmed_consultation, ...)
 					$module = $element = $subelement = $objecttype;
+					$regs = array();
 					if ($objecttype != 'supplier_proposal' && $objecttype != 'order_supplier' && $objecttype != 'invoice_supplier'
 						&& preg_match('/^([^_]+)_([^_]+)/i', $objecttype, $regs))
 					{
@@ -7154,20 +7167,20 @@ abstract class CommonObject
 		$dir = $sdir.'/';
 		$pdir = '/';
 
-		$dir .= get_exdir(0, 0, 0, 0, $this, $modulepart).$this->ref.'/';
-		$pdir .= get_exdir(0, 0, 0, 0, $this, $modulepart).$this->ref.'/';
+		$dir .= get_exdir(0, 0, 0, 0, $this, $modulepart);
+		$pdir .= get_exdir(0, 0, 0, 0, $this, $modulepart);
 
 		// For backward compatibility
-		if ($modulepart == 'product' && !empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
-		{
-			$dir = $sdir.'/'.get_exdir($this->id, 2, 0, 0, $this, $modulepart).$this->id."/photos/";
-			$pdir = '/'.get_exdir($this->id, 2, 0, 0, $this, $modulepart).$this->id."/photos/";
+		if ($modulepart == 'product') {
+			if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
+				$dir = $sdir.'/'.get_exdir($this->id, 2, 0, 0, $this, $modulepart).$this->id."/photos/";
+				$pdir = '/'.get_exdir($this->id, 2, 0, 0, $this, $modulepart).$this->id."/photos/";
+			}
 		}
 
 		// Defined relative dir to DOL_DATA_ROOT
 		$relativedir = '';
-		if ($dir)
-		{
+		if ($dir) {
 			$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $dir);
 			$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
 			$relativedir = preg_replace('/[\\/]$/', '', $relativedir);
@@ -7189,23 +7202,19 @@ abstract class CommonObject
 
 		completeFileArrayWithDatabaseInfo($filearray, $relativedir);
 
-		if (count($filearray))
-		{
-			if ($sortfield && $sortorder)
-			{
+		if (count($filearray)) {
+			if ($sortfield && $sortorder) {
 				$filearray = dol_sort_array($filearray, $sortfield, $sortorder);
 			}
 
-			foreach ($filearray as $key => $val)
-			{
+			foreach ($filearray as $key => $val) {
 				$photo = '';
 				$file = $val['name'];
 
 				//if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure file is stored in UTF8 in memory
 
 				//if (dol_is_file($dir.$file) && image_format_supported($file) >= 0)
-				if (image_format_supported($file) >= 0)
-				{
+				if (image_format_supported($file) >= 0) {
 					$nbphoto++;
 					$photo = $file;
 					$viewfilename = $file;
@@ -7242,12 +7251,9 @@ abstract class CommonObject
 						$alt .= ' - '.$langs->transnoentitiesnoconv('Size').': '.$imgarray['width'].'x'.$imgarray['height'];
 						if ($notitle) $alt = '';
 
-						if ($usesharelink)
-						{
-							if ($val['share'])
-							{
-								if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight)
-								{
+						if ($usesharelink) {
+							if ($val['share']) {
+								if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight) {
 									$return .= '<!-- Show original file (thumb not yet available with shared links) -->';
 									$return .= '<img class="photo photowithmargin" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).'" title="'.dol_escape_htmltag($alt).'">';
 								} else {
@@ -7259,10 +7265,9 @@ abstract class CommonObject
 								$return .= '<img class="photo photowithmargin" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png" title="'.dol_escape_htmltag($alt).'">';
 							}
 						} else {
-							if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight)
-							{
+							if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight) {
 								$return .= '<!-- Show thumb -->';
-								$return .= '<img class="photo photowithmargin"  height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
+								$return .= '<img class="photo photowithmargin maxwidth150onsmartphone" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
 							} else {
 								$return .= '<!-- Show original file -->';
 								$return .= '<img class="photo photowithmargin" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';

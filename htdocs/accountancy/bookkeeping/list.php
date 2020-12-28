@@ -642,6 +642,7 @@ if (empty($reshook)) {
 
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param, '', 1, array('morecss' => 'marginleftonly'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbysubaccount.php', '', 1, array('morecss' => 'marginleftonly'));
 
 	$url = './card.php?action=create';
 	if (!empty($socid)) $url .= '&socid='.$socid;
@@ -936,6 +937,11 @@ while ($i < min($num, $limit))
 			$filedir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
 			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
+		} elseif ($line->doc_type == 'bank')
+		{
+			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+			$objectstatic = new AccountLine($db);
+			$objectstatic->fetch($line->fk_doc);
 		} else {
 			// Other type
 		}
@@ -950,6 +956,10 @@ while ($i < min($num, $limit))
 		{
 			print $objectstatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
 			print $documentlink;
+		} elseif ($line->doc_type == 'bank') {
+			print $objectstatic->getNomUrl(1);
+			$bank_ref = strstr($line->doc_ref, '-');
+			print " " . $bank_ref;
 		} else {
 			print $line->doc_ref;
 		}

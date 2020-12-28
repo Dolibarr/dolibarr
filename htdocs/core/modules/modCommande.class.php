@@ -263,6 +263,7 @@ class modCommande extends DolibarrModules
 		$this->export_sql_end[$r] .= ' WHERE c.fk_soc = s.rowid AND c.rowid = cd.fk_commande';
 		$this->export_sql_end[$r] .= ' AND c.entity IN ('.getEntity('commande').')';
 		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
+
 		// Imports
 		//--------
 		$r = 0;

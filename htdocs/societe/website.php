@@ -99,14 +99,8 @@ foreach ($objectwebsiteaccount->fields as $key => $val)
 }
 
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -213,8 +207,10 @@ if ($object->client) {
 	print '<tr><td class="titlefield">';
 	print $langs->trans('CustomerCode').'</td><td colspan="3">';
 	print $object->code_client;
-	if ($object->check_codeclient() != 0)
+	$tmpcheck = $object->check_codeclient();
+	if ($tmpcheck != 0 && $tmpcheck != -5) {
 		print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+	}
 	print '</td></tr>';
 }
 
@@ -222,8 +218,10 @@ if ($object->fournisseur) {
 	print '<tr><td class="titlefield">';
 	print $langs->trans('SupplierCode').'</td><td colspan="3">';
 	print $object->code_fournisseur;
-	if ($object->check_codefournisseur() != 0)
+	$tmpcheck = $object->check_codefournisseur();
+	if ($tmpcheck != 0 && $tmpcheck != -5) {
 		print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+	}
 	print '</td></tr>';
 }
 

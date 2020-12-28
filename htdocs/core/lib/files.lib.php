@@ -2231,7 +2231,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	// Fix modulepart
 	if ($modulepart == 'users') $modulepart = 'user';
 
-	dol_syslog('modulepart='.$modulepart.' original_file='.$original_file.' entity='.$entity);
+	dol_syslog('dol_check_secure_access_document modulepart='.$modulepart.' original_file='.$original_file.' entity='.$entity);
 
 	// We define $accessallowed and $sqlprotectagainstexternals
 	$accessallowed = 0;
@@ -2260,6 +2260,11 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$accessallowed = ($user->admin && basename($original_file) == $original_file && preg_match('/^dolibarr.*\.log$/', basename($original_file)));
 		$original_file = $dolibarr_main_data_root.'/'.$original_file;
 	} // Wrapping for *.log files, like when used with url http://.../document.php?modulepart=logs&file=dolibarr.log
+	elseif ($modulepart == 'doctemplates' && !empty($dolibarr_main_data_root))
+	{
+		$accessallowed = $user->admin;
+		$original_file = $dolibarr_main_data_root.'/doctemplates/'.$original_file;
+	} // Wrapping for *.zip files, like when used with url http://.../document.php?modulepart=packages&file=module_myfile.zip
 	elseif ($modulepart == 'doctemplateswebsite' && !empty($dolibarr_main_data_root))
 	{
 		$accessallowed = ($fuser->rights->website->write && preg_match('/\.jpg$/i', basename($original_file)));
@@ -2642,7 +2647,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->accounting->dir_output.'/'.$original_file;
 	} // Wrapping pour les expedition
-	elseif ($modulepart == 'expedition' && !empty($conf->expedition->dir_output))
+	elseif (($modulepart == 'expedition' || $modulepart == 'shipment') && !empty($conf->expedition->dir_output))
 	{
 		if ($fuser->rights->expedition->{$lire} || preg_match('/^specimen/i', $original_file))
 		{
@@ -2650,7 +2655,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->expedition->dir_output."/sending/".$original_file;
 	} // Delivery Note Wrapping
-	elseif ($modulepart == 'delivery' && !empty($conf->expedition->dir_output))
+	elseif (($modulepart == 'livraison' || $modulepart == 'delivery') && !empty($conf->expedition->dir_output))
 	{
 		if ($fuser->rights->expedition->delivery->{$lire} || preg_match('/^specimen/i', $original_file))
 		{

@@ -342,13 +342,13 @@ if ($object->id > 0)
 				if ($permissiontoadd)
 				{
 					/*
-    				if ($conf->barcode->enabled) {
+    				if (!empty($conf->barcode->enabled)) {
     					print '<a href="#" class="butAction">'.$langs->trans("UpdateByScaningProductBarcode").'</a>';
     				}
-    				if ($conf->productbatch->enabled) {
+    				if (!empty($conf->productbatch->enabled)) {
     					print '<a href="#" class="butAction">'.$langs->trans('UpdateByScaningLot').'</a>';
     				}*/
-					if ($conf->barcode->enabled || $conf->productbatch->enabled) {
+					if (!empty($conf->barcode->enabled) || !empty($conf->productbatch->enabled)) {
 						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning" class="butAction">'.$langs->trans("UpdateByScaning").'</a>';
 					}
 				} else {

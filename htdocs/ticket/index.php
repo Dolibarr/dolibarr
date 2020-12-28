@@ -186,21 +186,21 @@ if ($result) {
 	$dataseries = array();
 	$colorseries = array();
 
-	$dataseries[] = array('label' => $langs->trans("Unread"), 'data' => round($tick['unread']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_NOT_READ]), 'data' => round($tick['unread']));
 	$colorseries[Ticket::STATUS_NOT_READ] = '-'.$badgeStatus0;
-	$dataseries[] = array('label' => $langs->trans("Read"), 'data' => round($tick['read']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_READ]), 'data' => round($tick['read']));
 	$colorseries[Ticket::STATUS_READ] = $badgeStatus1;
-	$dataseries[] = array('label' => $langs->trans("Assigned"), 'data' => round($tick['assigned']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_ASSIGNED]), 'data' => round($tick['assigned']));
 	$colorseries[Ticket::STATUS_ASSIGNED] = $badgeStatus3;
-	$dataseries[] = array('label' => $langs->trans("InProgress"), 'data' => round($tick['inprogress']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_IN_PROGRESS]), 'data' => round($tick['inprogress']));
 	$colorseries[Ticket::STATUS_IN_PROGRESS] = $badgeStatus4;
-	$dataseries[] = array('label' => $langs->trans("Suspended"), 'data' => round($tick['waiting']));
-	$colorseries[Ticket::STATUS_WAITING] = '-'.$badgeStatus3;
-	$dataseries[] = array('label' => $langs->trans("NeedMoreInformation"), 'data' => round($tick['needmoreinfo']));
-	$colorseries[Ticket::STATUS_NEED_MORE_INFO] = $badgeStatus9;
-	$dataseries[] = array('label' => $langs->trans("Canceled"), 'data' => round($tick['canceled']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_WAITING]), 'data' => round($tick['waiting']));
+	$colorseries[Ticket::STATUS_WAITING] = '-'.$badgeStatus4;
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_NEED_MORE_INFO]), 'data' => round($tick['needmoreinfo']));
+	$colorseries[Ticket::STATUS_NEED_MORE_INFO] = '-'.$badgeStatus3;
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_CANCELED]), 'data' => round($tick['canceled']));
 	$colorseries[Ticket::STATUS_CANCELED] = $badgeStatus9;
-	$dataseries[] = array('label' => $langs->trans("Closed"), 'data' => round($tick['closed']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_CLOSED]), 'data' => round($tick['closed']));
 	$colorseries[Ticket::STATUS_CLOSED] = $badgeStatus6;
 } else {
 	dol_print_error($db);

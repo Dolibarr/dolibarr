@@ -156,7 +156,7 @@ if (empty($reshook))
 	// Create predefined invoice
 	if ($action == 'add')
 	{
-		if (!GETPOST('titre', 'nohtml'))
+		if (!GETPOST('title', 'alphanohtml'))
 		{
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Title")), null, 'errors');
 			$action = "create";
@@ -289,7 +289,7 @@ if (empty($reshook))
 	elseif ($action == 'setref' && $user->rights->facture->creer)
 	{
 		//var_dump(GETPOST('ref', 'alpha'));exit;
-		$result = $object->setValueFrom('titre', $ref, '', null, 'text', '', $user, 'BILLREC_MODIFY');
+		$result = $object->setValueFrom('title', $ref, '', null, 'text', '', $user, 'BILLREC_MODIFY');
 		if ($result > 0)
 		{
 			$object->titre = GETPOST('ref', 'alpha'); // deprecated
@@ -967,7 +967,7 @@ if ($action == 'create')
 
 		// Title
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Title").'</td><td>';
-		print '<input class="flat quatrevingtpercent" type="text" name="titre" value="'.dol_escape_htmltag(GETPOST("titre", 'alphanohtml')).'">';
+		print '<input class="flat quatrevingtpercent" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("titre", 'alphanohtml')).'">';
 		print '</td></tr>';
 
 		// Third party
@@ -1008,7 +1008,7 @@ if ($action == 'create')
 		print $form->textwithpicto($langs->trans('NotePublic'), $htmltext, 1, 'help', '', 0, 2, 'notepublic');
 		print '</td>';
 		print '<td>';
-		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 
 		// Private note
@@ -1019,7 +1019,7 @@ if ($action == 'create')
 			print $form->textwithpicto($langs->trans('NotePrivate'), $htmltext, 1, 'help', '', 0, 2, 'noteprivate');
 			print '</td>';
 			print '<td>';
-			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			// print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'.</textarea>
 			print '</td></tr>';
@@ -1237,7 +1237,7 @@ if ($action == 'create')
 		}
 		$morehtmlref .= '</div>';
 
-		dol_banner_tab($object, 'ref', $linkback, 1, 'titre', 'none', $morehtmlref, '', 0, '', $morehtmlright);
+		dol_banner_tab($object, 'ref', $linkback, 1, 'title', 'none', $morehtmlref, '', 0, '', $morehtmlright);
 
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';

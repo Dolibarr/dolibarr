@@ -1742,13 +1742,6 @@ class AccountLine extends CommonObject
 	public $amount;
 
 	/**
-	 * @var string bank transaction lines label
-	 */
-	public $label;
-
-	public $note;
-
-	/**
 	 * @var int ID
 	 */
 	public $fk_user_author;
@@ -1763,11 +1756,6 @@ class AccountLine extends CommonObject
 	 */
 	public $fk_type;
 
-	public $rappro; // Is it conciliated
-	public $num_releve; // If conciliated, what is bank statement
-	public $num_chq; // Num of cheque
-	public $bank_chq; // Bank of cheque
-
 	/**
 	 * @var int ID of cheque receipt
 	 */
@@ -1779,14 +1767,38 @@ class AccountLine extends CommonObject
 	public $fk_account;
 
 	/**
+	 * @var string		Ref of bank account
+	 */
+	public $bank_account_ref;
+
+	/**
 	 * @var string		Label of bank account
 	 */
 	public $bank_account_label;
 
 	/**
+	 * @var string		Bank account numero
+	 */
+	public $numero_compte;
+
+	/**
 	 * @var string		Name of check issuer
 	 */
 	public $emetteur;
+
+	public $rappro; // Is it conciliated
+	public $num_releve; // If conciliated, what is bank statement
+	public $num_chq; // Num of cheque
+	public $bank_chq; // Bank of cheque
+
+	/**
+	 * @var string bank transaction lines label
+	 */
+	public $label;
+
+	public $note;
+
+
 
 	/**
 	 *  Constructor

@@ -3611,15 +3611,14 @@ class Form
 	 *
 	 *  @param	string	$selected       Id pre-selectionne
 	 *  @param  string	$htmlname       Nom de la zone select
+	 *  @param	string	$addjscombo		Add js combo
 	 * 	@return	string					Code of HTML select to chose tax or not
 	 */
-	public function selectPriceBaseType($selected = '', $htmlname = 'price_base_type')
+	public function selectPriceBaseType($selected = '', $htmlname = 'price_base_type', $addjscombo = 0)
 	{
 		global $langs;
 
-		$return = '';
-
-		$return .= '<select class="flat maxwidth75" id="select_'.$htmlname.'" name="'.$htmlname.'">';
+		$return = '<select class="flat maxwidth100" id="select_'.$htmlname.'" name="'.$htmlname.'">';
 		$options = array(
 			'HT'=>$langs->trans("HT"),
 			'TTC'=>$langs->trans("TTC")
@@ -3635,6 +3634,7 @@ class Form
 			$return .= '</option>';
 		}
 		$return .= '</select>';
+		if ($addjscombo) $return .= ajax_combobox('select_'.$htmlname);
 
 		return $return;
 	}
@@ -3939,12 +3939,15 @@ class Form
 	 *  @param  string	$moreattrib         To add more attribute on select
 	 *  @param	int		$showcurrency		Show currency in label
 	 *  @param	string	$morecss			More CSS
+	 *  @param	int		$nooutput			1=Return string, do not send to output
 	 * 	@return	int							<0 if error, Num of bank account found if OK (0, 1, 2, ...)
 	 */
-	public function select_comptes($selected = '', $htmlname = 'accountid', $status = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0, $morecss = '')
+	public function select_comptes($selected = '', $htmlname = 'accountid', $status = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0, $morecss = '', $nooutput = 0)
 	{
 		// phpcs:enable
 		global $langs, $conf;
+
+		$out = '';
 
 		$langs->load("admin");
 		$num = 0;
@@ -3964,10 +3967,10 @@ class Form
 			$i = 0;
 			if ($num)
 			{
-				print '<select id="select'.$htmlname.'" class="flat selectbankaccount'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
+				$out .= '<select id="select'.$htmlname.'" class="flat selectbankaccount'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
 				if ($useempty == 1 || ($useempty == 2 && $num > 1))
 				{
-					print '<option value="-1">&nbsp;</option>';
+					$out .= '<option value="-1">&nbsp;</option>';
 				}
 
 				while ($i < $num)
@@ -3975,25 +3978,29 @@ class Form
 					$obj = $this->db->fetch_object($result);
 					if ($selected == $obj->rowid || ($useempty == 2 && $num == 1 && empty($selected)))
 					{
-						print '<option value="'.$obj->rowid.'" selected>';
+						$out .= '<option value="'.$obj->rowid.'" selected>';
 					} else {
-						print '<option value="'.$obj->rowid.'">';
+						$out .= '<option value="'.$obj->rowid.'">';
 					}
-					print trim($obj->label);
-					if ($showcurrency) print ' ('.$obj->currency_code.')';
-					if ($status == 2 && $obj->status == 1) print ' ('.$langs->trans("Closed").')';
-					print '</option>';
+					$out .= trim($obj->label);
+					if ($showcurrency) $out .= ' ('.$obj->currency_code.')';
+					if ($status == 2 && $obj->status == 1) $out .= ' ('.$langs->trans("Closed").')';
+					$out .= '</option>';
 					$i++;
 				}
-				print "</select>";
-				print ajax_combobox('select'.$htmlname);
+				$out .= "</select>";
+				$out .= ajax_combobox('select'.$htmlname);
 			} else {
-				if ($status == 0) print '<span class="opacitymedium">'.$langs->trans("NoActiveBankAccountDefined").'</span>';
-				else print '<span class="opacitymedium">'.$langs->trans("NoBankAccountFound").'</span>';
+				if ($status == 0) $out .= '<span class="opacitymedium">'.$langs->trans("NoActiveBankAccountDefined").'</span>';
+				else $out .= '<span class="opacitymedium">'.$langs->trans("NoBankAccountFound").'</span>';
 			}
 		} else {
 			dol_print_error($this->db);
 		}
+
+		// Output or return
+		if (empty($nooutput)) print $out;
+		else return $out;
 
 		return $num;
 	}
@@ -4709,7 +4716,7 @@ class Form
 			$ret .= '<tr><td>';
 			$ret .= $this->selectDate($selected, $htmlname, $displayhour, $displaymin, 1, 'form'.$htmlname, 1, 0);
 			$ret .= '</td>';
-			$ret .= '<td class="left"><input type="submit smallpaddingimp" class="button" value="'.$langs->trans("Modify").'"></td>';
+			$ret .= '<td class="left"><input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'"></td>';
 			$ret .= '</tr></table></form>';
 		} else {
 			if ($displayhour) $ret .= dol_print_date($selected, 'dayhour');
@@ -6259,12 +6266,6 @@ class Form
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			if (!$forcecombo)
-			{
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlname, null, $conf->global->$confkeyforautocompletemode);
-			}
-
 			// Construct $out and $outarray
 			$out .= '<select id="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled="disabled"' : '').($moreparams ? ' '.$moreparams : '').' name="'.$htmlname.'">'."\n";
 
@@ -6310,6 +6311,11 @@ class Form
 			}
 
 			$out .= '</select>'."\n";
+
+			if (!$forcecombo) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+				$out .= ajax_combobox($htmlname, null, $conf->global->$confkeyforautocompletemode);
+			}
 		} else {
 			dol_print_error($this->db);
 		}

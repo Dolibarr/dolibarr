@@ -637,26 +637,32 @@ if (empty($reshook))
 								$errors[] = "ErrorFilePartiallyUploaded";
 								break;
 						}
-					}
-					// Gestion du logo de la société
+	                }
 				} else {
-					if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') // TODO Sometime errors on duplicate on profid and not on code, so we must manage this case
+					if ($result == -3 && in_array('ErrorCustomerCodeAlreadyUsed', $object->errors))
+					{
+						$duplicate_code_error = true;
+						$object->code_client = null;
+					}
+
+					if ($result == -3 && in_array('ErrorSupplierCodeAlreadyUsed', $object->errors))
 					{
 						$duplicate_code_error = true;
 						$object->code_fournisseur = null;
-						$object->code_client = null;
+					}
+
+					if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {	// TODO Sometime errors on duplicate on profid and not on code, so we must manage this case
+						$duplicate_code_error = true;
 					}
 
 					setEventMessages($object->error, $object->errors, 'errors');
 				   	$error++;
 				}
 
-				if ($result >= 0 && !$error)
-				{
+				if ($result >= 0 && !$error) {
 					$db->commit();
 
-					if (!empty($backtopage))
-					{
+					if (!empty($backtopage)) {
 						$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
 						if (preg_match('/\?/', $backtopage)) $backtopage .= '&socid='.$object->id; // Old method
 			   			header("Location: ".$backtopage);
@@ -844,18 +850,25 @@ if (empty($reshook))
 		}
 	}
 
+	// Set third-party type
+	if ($action == 'set_thirdpartytype' && $user->rights->societe->creer)
+	{
+		$object->fetch($socid);
+		$result = $object->setThirdpartyType(GETPOST('typent_id', 'int'));
+	}
+
+	// Set incoterm
+	if ($action == 'set_incoterms' && $user->rights->societe->creer && !empty($conf->incoterm->enabled))
+	{
+		$object->fetch($socid);
+		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+	}
+
 	// Set parent company
 	if ($action == 'set_thirdparty' && $user->rights->societe->creer)
 	{
 		$object->fetch($socid);
-		$result = $object->set_parent(GETPOST('editparentcompany', 'int'));
-	}
-
-	// Set incoterm
-	if ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
-	{
-		$object->fetch($socid);
-		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+		$result = $object->set_parent(GETPOST('parent_id', 'int'));
 	}
 
 	// Set sales representatives
@@ -2354,7 +2367,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print '<tr><td>';
 			print $langs->trans('CustomerCode').'</td><td>';
 			print $object->code_client;
-			if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+			$tmpcheck = $object->check_codeclient();
+			if ($tmpcheck != 0 && $tmpcheck != -5) {
+				print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+			}
 			print '</td>';
 			print '</tr>';
 		}
@@ -2365,7 +2381,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print '<tr><td>';
 			print $langs->trans('SupplierCode').'</td><td>';
 			print $object->code_fournisseur;
-			if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+			$tmpcheck = $object->check_codefournisseur();
+			if ($tmpcheck != 0 && $tmpcheck != -5) {
+				print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+			}
 			print '</td>';
 			print '</tr>';
 		}
@@ -2541,18 +2560,24 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		} else {
 			print '&nbsp;';
 		}
-		print '</td>';
-		print '</tr>';
+		print '</td></tr>';
 
-		// Type + Workforce/Staff
-		$arr = $formcompany->typent_array(1);
-		$object->typent = $arr[$object->typent_code];
-		print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>'.$object->typent.'</td>';
+		// Third-Party Type
+		print '<tr><td>';
+		print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('ThirdPartyType').'</td>';
+		if ($action != 'editthirdpartytype' && $user->rights->societe->creer) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editthirdpartytype&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+		print '</tr></table>';
+		print '</td><td>';
+		$html_name = ($action == 'editthirdpartytype') ? 'typent_id' : 'none';
+		$formcompany->formThirdpartyType($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->typent_id, $html_name, '');
+		print '</td></tr>';
+
+		// Workforce/Staff
 		print '<tr><td>'.$langs->trans("Workforce").'</td><td>'.$object->effectif.'</td></tr>';
 
 		print '</table>';
-
 		print '</div>';
+
 		print '<div class="fichehalfright"><div class="ficheaddleft">';
 
 		print '<div class="underbanner clearboth"></div>';
@@ -2604,14 +2629,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		if (!empty($conf->incoterm->enabled))
 		{
 			print '<tr><td>';
-			print '<table width="100%" class="nobordernopadding"><tr><td>';
-			print $langs->trans('IncotermLabel');
-			print '<td><td class="right">';
-			if ($user->rights->societe->creer) print '<a class="editfielda" href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$object->id.'&action=editincoterm">'.img_edit('', 1).'</a>';
-			else print '&nbsp;';
-			print '</td></tr></table>';
-			print '</td>';
-			print '<td colspan="3">';
+			print '<table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans('IncotermLabel').'</td>';
+			if ($action != 'editincoterm' && $user->rights->societe->creer) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=editincoterm">'.img_edit('', 1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="3">';
 			if ($action != 'editincoterm')
 			{
 				print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
@@ -2675,20 +2696,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY))
 		{
 			print '<tr><td>';
-			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print $langs->trans('ParentCompany');
-			print '</td>';
-			if ($action != 'editparentcompany') print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editparentcompany&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('ParentCompany').'</td>';
+			if ($action != 'editparentcompany' && $user->rights->societe->creer) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editparentcompany&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td>';
-			if ($action == 'editparentcompany')
-			{
-				$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->parent, 'editparentcompany', 's.rowid <> '.$object->id, 1);
-			} else {
-				$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->parent, 'none', 's.rowid <> '.$object->id, 1);
-			}
-			print '</td>';
-			print '</tr>';
+			$html_name = ($action == 'editparentcompany') ? 'parent_id' : 'none';
+			$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->parent, $html_name, 's.rowid <> '.$object->id, 1);
+			print '</td></tr>';
 		}
 
 		// Sales representative
@@ -2709,8 +2723,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			} else {
 				print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
 			}
-			print '</td>';
-			print "</tr>\n";
+			print "</td></tr>\n";
 		}
 
 		// Webservices url/key

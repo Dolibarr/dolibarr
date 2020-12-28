@@ -60,18 +60,19 @@ ONLY vulnerabilities discovered, when the following setup on test platform is us
 * ONLY security reports on modules provided by default and with the "stable" status are valid (troubles into "experimental", "developement" or external modules are not valid vulnerabilities).
 * The root of web server must link to htdocs and the documents directory must be outside of the web server root (this is the default when using the default installer but may differs with external installer).
 * The web server setup must be done so only the documents directory is in write mode. The root directory called htdocs must be readonly.
-* CSRF attacks are accepted for all when using a POST URL, but when using GET URL, they are validated only for creating or updating data resctricted to the admin user.
+* CSRF attacks are accepted when using a POST URL, but when using GET URL, they are validated only for creating, updating or deleting data resctricted from pages restricted to admin users.
 * Ability for a high level user to edit web site pages into the CMS by including HTML or Javascript is an expected feature. Vulnerabilities into the website module are validated only if HTML or Javascript injection can be done by a non allowed user.
 
 Scope is the web application (back office) and the APIs.
 
 
 ## Qualifying vulnerabilities for Bug bounty programs
+
 * Remote code execution (RCE)
 * Local files access and manipulation (LFI, RFI, XXE, SSRF, XSPA)
 * Code injections (HTML, JS, SQL, PHP, ...)
 * Cross-Site Scripting (XSS)
-* Cross-Site Requests Forgery (CSRF) with real security impact
+* Cross-Site Requests Forgery (CSRF) with real security impact (when using GET URLs, CSRF are qualified only for creating, updating or deleting data from pages restricted to admin users)
 * Open redirect
 * Broken authentication & session management
 * Insecure direct object references
@@ -83,6 +84,7 @@ Scope is the web application (back office) and the APIs.
 
 
 ## Non-qualifying vulnerabilities for Bug bounty programs, but qualified for reporting
+
 * "Self" XSS
 * SSL/TLS best practices
 * Denial of Service attacks
