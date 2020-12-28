@@ -1241,6 +1241,16 @@ class Product extends CommonObject
                 }
             }
 
+            // Remove extrafields
+            if (!$error)
+            {
+            	$result = $this->deleteExtraFields();
+            	if ($result < 0) {
+            		$error++;
+            		dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
+            	}
+            }
+
             // Delete product
             if (!$error) {
                 $sqlz = "DELETE FROM ".MAIN_DB_PREFIX."product";
@@ -1265,16 +1275,6 @@ class Product extends CommonObject
                             $error++;
                         }
                     }
-                }
-            }
-
-            // Remove extrafields
-            if (!$error)
-            {
-                $result = $this->deleteExtraFields();
-                if ($result < 0) {
-                    $error++;
-                    dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
                 }
             }
 
