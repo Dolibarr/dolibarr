@@ -314,7 +314,6 @@ if ($action != 'export_csv')
 		if (empty($accountingaccountstatic->account_number)) {
 			$link = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/card.php?action=create&accountingaccount='.length_accountg($line->numero_compte).'">'.img_edit_add().'</a>';
 		}
-		print '<tr class="oddeven">';
 
 		if (!empty($show_subgroup))
 		{
@@ -343,6 +342,7 @@ if ($action != 'export_csv')
 			}
 		}
 
+		print '<tr class="oddeven">';
 		print '<td>'.$accounting_account.'</td>';
 		print '<td class="nowraponall right">'.price($opening_balance).'</td>';
 		print '<td class="nowraponall right">'.price($line->debit).'</td>';

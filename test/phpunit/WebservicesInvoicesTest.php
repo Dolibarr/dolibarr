@@ -102,6 +102,8 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
     {
         global $conf,$user,$langs,$db;
 
+        $now = dol_now();
+
 		// create a third_party, needed to create an invoice
 		//
 		// The third party is created in setUpBeforeClass() and not in the
