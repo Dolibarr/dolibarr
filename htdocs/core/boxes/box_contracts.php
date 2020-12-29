@@ -92,7 +92,7 @@ class box_contracts extends ModeleBoxes
 			$sql .= " AND c.entity = ".$conf->entity;
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 			if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
-			if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql .= " ORDER BY c.date_contrat DESC, c.ref DESC ";
+			if (! empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) $sql .= " ORDER BY c.date_contrat DESC, c.ref DESC ";
 			else $sql .= " ORDER BY c.tms DESC, c.ref DESC ";
 			$sql .= $this->db->plimit($max, 0);
 

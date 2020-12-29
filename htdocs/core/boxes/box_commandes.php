@@ -83,7 +83,7 @@ class box_commandes extends ModeleBoxes
 		$societestatic = new Societe($this->db);
 		$userstatic = new User($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE ? "" : "Modified")."CustomerOrders", $max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLast".(!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) ? "" : "Modified")."CustomerOrders", $max));
 
 		if ($user->rights->commande->lire)
 		{
@@ -108,7 +108,7 @@ class box_commandes extends ModeleBoxes
 			if (!empty($conf->global->ORDER_BOX_LAST_ORDERS_VALIDATED_ONLY)) $sql .= " AND c.fk_statut = 1";
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 			if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
-			if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql .= " ORDER BY c.date_commande DESC, c.ref DESC ";
+			if (!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) $sql .= " ORDER BY c.date_commande DESC, c.ref DESC ";
 			else $sql .= " ORDER BY c.tms DESC, c.ref DESC ";
 			$sql .= $this->db->plimit($max, 0);
 

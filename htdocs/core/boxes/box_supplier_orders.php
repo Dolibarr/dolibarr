@@ -79,7 +79,7 @@ class box_supplier_orders extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 		$thirdpartystatic = new Fournisseur($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLatest".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE ? "" : "Modified")."SupplierOrders", $max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLatest".(!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) ? "" : "Modified")."SupplierOrders", $max));
 
 		if ($user->rights->fournisseur->commande->lire)
 		{
@@ -98,7 +98,7 @@ class box_supplier_orders extends ModeleBoxes
 			$sql .= " AND c.entity IN (".getEntity('supplier_order').")";
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 			if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
-			if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql .= " ORDER BY c.date_commande DESC, c.ref DESC ";
+			if (!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) $sql .= " ORDER BY c.date_commande DESC, c.ref DESC ";
 			else $sql .= " ORDER BY c.tms DESC, c.ref DESC ";
 			$sql .= $this->db->plimit($max, 0);
 
