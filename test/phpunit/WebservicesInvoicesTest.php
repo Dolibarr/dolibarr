@@ -61,6 +61,9 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
 
 	protected $ns = 'http://www.dolibarr.org/ns/';
 
+	protected $pass = 'admin';
+
+
 	/**
 	 * Constructor
 	 * We save global variables into local variables
@@ -248,7 +251,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
     	'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
     	'sourceapplication'=>'DEMO',
     	'login'=>'admin',
-    	'password'=>'admin',
+    	'password'=>$this->pass,
     	'entity'=>'');
 
     	// Test URL
@@ -304,7 +307,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
     	'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
     	'sourceapplication'=>'DEMO',
     	'login'=>'admin',
-    	'password'=>'admin',
+    	'password'=>$this->pass,
     	'entity'=>'');
 
     	// Test URL
@@ -403,7 +406,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
     	'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
     	'sourceapplication'=>'DEMO',
     	'login'=>'admin',
-    	'password'=>'admin',
+    	'password'=>$this->pass,
     	'entity'=>'');
 
     	// Test URL
