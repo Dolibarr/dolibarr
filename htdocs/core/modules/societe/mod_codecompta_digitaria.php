@@ -157,6 +157,8 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		$i = 0;
 		$this->code = '';
 
+		$disponibility = 0;
+
 		if (is_object($societe))
 		{
 			dol_syslog("mod_codecompta_digitaria::get_code search code for type=".$type." & company=".(!empty($societe->name) ? $societe->name : ''));
@@ -216,8 +218,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 			}
 		}
 
-		if ($disponibility == 0)
-		{
+		if ($disponibility == 0) {
 			return 0; // return ok
 		} else {
 			return -1; // return ko

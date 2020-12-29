@@ -129,7 +129,7 @@ class Notify
 
 		if (is_array($listofnotiftodo)) {
 			$i = 0;
-			foreach ($listofnotiftodo as $key => $val) {
+			foreach ($listofnotiftodo as $val) {
 				if ($i) {
 					$texte .= ', ';
 				} else {

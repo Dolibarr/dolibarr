@@ -2418,6 +2418,7 @@ class User extends CommonObject
 		}
 
 		$result = ''; $label = '';
+		$companylink = '';
 
 		if (!empty($this->photo)) {
 			$label .= '<div class="photointooltip">';
