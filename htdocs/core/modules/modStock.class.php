@@ -254,7 +254,7 @@ class modStock extends DolibarrModules
 		$this->export_sql_end[$r] .= ' AND e.entity IN ('.getEntity('stock').')';
 
 		// Export stock including batch number
-		if ($conf->productbatch->enabled)
+		if (!empty($conf->productbatch->enabled))
 		{
 			$langs->load("productbatch");
 
