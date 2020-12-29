@@ -131,8 +131,8 @@ if (GETPOST('exportcsv', 'int'))
 	header('Content-Disposition: attachment;filename='.$completefilename);
 
 	// List of selected targets
-	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut, mc.date_envoi, mc.tms,";
-	$sql .= " mc.source_url, mc.source_id, mc.source_type, mc.error_text";
+	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut as status, mc.date_envoi, mc.tms,";
+	$sql .= " mc.source_id, mc.source_type, mc.error_text";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 	$sql .= " WHERE mc.fk_mailing=".$object->id;
 	$sql .= $db->order($sortfield, $sortorder);
@@ -146,16 +146,16 @@ if (GETPOST('exportcsv', 'int'))
 		while ($obj = $db->fetch_object($resql))
 		{
 			print $obj->rowid.$sep;
-			print $obj->lastname.$sep;
-			print $obj->firstname.$sep;
+			print '"'.$obj->lastname.'"'.$sep;
+			print '"'.$obj->firstname.'"'.$sep;
 			print $obj->email.$sep;
 			print $obj->other.$sep;
-			print $obj->date_envoi.$sep;
 			print $obj->tms.$sep;
-			print $obj->source_url.$sep;
-			print $obj->source_id.$sep;
 			print $obj->source_type.$sep;
-			print $obj->error_text.$sep;
+			print $obj->source_id.$sep;
+			print $obj->date_envoi.$sep;
+			print $obj->status.$sep;
+			print '"'.$obj->error_text.'"'.$sep;
 			print "\n";
 		}
 
@@ -499,7 +499,7 @@ if ($object->fetch($id) >= 0)
 
 	    // Fix/update nbemail on emailing record if it differs (may happen if user edit lines from database directly)
 	    if (empty($asearchcriteriahasbeenset)) {
-	    	if ($nbtotalofrecords != $object->email) {
+	    	if ($nbtotalofrecords != $object->nbemail) {
 	    		dol_syslog("We found a difference in nb of record in target table and the property ->nbemail, we fix ->nbemail");
 	    		//print "nbemail=".$object->nbemail." nbtotalofrecords=".$nbtotalofrecords;
 	    		$resultrefresh = $object->refreshNbOfTargets();

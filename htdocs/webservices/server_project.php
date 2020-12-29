@@ -131,7 +131,7 @@ $server->wsdl->addComplexType(
 );
 
 $project_elements = array();
-foreach ($listofreferent as $key => $_)
+foreach ($listofreferent as $key => $label)
 {
 	$project_elements[$key] = array('name'=>$key, 'type'=>'tns:elementsArray');
 }
@@ -279,7 +279,7 @@ function createProject($authentication, $project)
 			$extrafields->fetch_name_optionals_label($elementtype, true);
 			if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 			{
-				foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+				foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 				{
 					$key = 'options_'.$key;
 					$newobject->array_options[$key] = $project[$key];
@@ -338,7 +338,7 @@ function createProject($authentication, $project)
  */
 function getProject($authentication, $id = '', $ref = '')
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	dol_syslog("Function: getProject login=".$authentication['login']." id=".$id." ref=".$ref);
 
@@ -389,7 +389,7 @@ function getProject($authentication, $id = '', $ref = '')
 				if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 				{
 					$project->fetch_optionals();
-					foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+					foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 					{
 						$project_result_fields = array_merge($project_result_fields, array('options_'.$key => $project->array_options['options_'.$key]));
 					}
