@@ -87,7 +87,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $hookmanager->initHooks(array('thirdpartycomm', 'globalcard'));
 
 // Security check
-$result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', 0);
+$result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
 
 if ($object->id > 0) {
 	if (!($object->client > 0) || empty($user->rights->societe->lire)) {

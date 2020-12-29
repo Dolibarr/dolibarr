@@ -1097,7 +1097,12 @@ class ExtraFields
 			foreach ($param['options'] as $key => $val)
 			{
 				if ((string) $key == '') continue;
-				list($val, $parent) = explode('|', $val);
+				$valarray = explode('|', $val);
+				$val = $valarray[0];
+				$parent = '';
+				if (!empty($valarray[1])) {
+				    $parent = $valarray[1];
+				}
 				$out .= '<option value="'.$key.'"';
 				$out .= (((string) $value == (string) $key) ? ' selected' : '');
 				$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
@@ -2063,7 +2068,7 @@ class ExtraFields
 	{
 		global $_POST;
 
-		if (is_string($extrafieldsobjectkey) && is_array($this->attributes[$extrafieldsobjectkey]['label']))
+		if (is_string($extrafieldsobjectkey) && !empty($this->attributes[$extrafieldsobjectkey]['label']) && is_array($this->attributes[$extrafieldsobjectkey]['label']))
 		{
 			$extralabels = $this->attributes[$extrafieldsobjectkey]['label'];
 		} else {

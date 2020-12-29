@@ -302,7 +302,7 @@ function societe_prepare_head(Societe $object)
 	}
 
 	$head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
-	$head[$h][1] .= $langs->trans("Events");
+	$head[$h][1] = $langs->trans("Events");
 	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
@@ -862,7 +862,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 
 	// Definition of fields for list
 	$arrayfields = array(
-		't.rowid'=>array('label'=>"TechnicalID", 'checked'=>($conf->global->MAIN_SHOW_TECHNICAL_ID ? 1 : 0), 'enabled'=>($conf->global->MAIN_SHOW_TECHNICAL_ID ? 1 : 0), 'position'=>1),
+		't.rowid'=>array('label'=>"TechnicalID", 'checked'=>(!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) ? 1 : 0), 'enabled'=>(!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) ? 1 : 0), 'position'=>1),
 		't.name'=>array('label'=>"Name", 'checked'=>1, 'position'=>10),
 		't.poste'=>array('label'=>"PostOrFunction", 'checked'=>1, 'position'=>20),
 		't.address'=>array('label'=>(empty($conf->dol_optimize_smallscreen) ? $langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email") : $langs->trans("Address")), 'checked'=>1, 'position'=>30),
@@ -870,7 +870,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 		't.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>50, 'class'=>'center'),
 	);
 	// Extra fields
-	if (is_array($extrafields->attributes[$contactstatic->table_element]['label']) && count($extrafields->attributes[$contactstatic->table_element]['label'])) {
+	if (!empty($extrafields->attributes[$contactstatic->table_element]['label']) && is_array($extrafields->attributes[$contactstatic->table_element]['label']) && count($extrafields->attributes[$contactstatic->table_element]['label'])) {
 		foreach ($extrafields->attributes[$contactstatic->table_element]['label'] as $key => $val) {
 			if (!empty($extrafields->attributes[$contactstatic->table_element]['list'][$key])) {
 				$arrayfields["ef.".$key] = array(
@@ -989,7 +989,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 			} elseif (in_array($key, array('role'))) {
 				print $formcompany->showRoles("search_roles", $contactstatic, 'edit', $search_roles);
 			} else {
-				print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
+			    print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.(!empty($search[$key]) ? dol_escape_htmltag($search[$key]) : '').'">';
 			}
 			print '</td>';
 		}
@@ -1204,14 +1204,17 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 {
 	global $user, $conf;
 	global $form;
-
 	global $param, $massactionbutton;
+
 	$start_year = GETPOST('dateevent_startyear');
 	$start_month = GETPOST('dateevent_startmonth');
 	$start_day = GETPOST('dateevent_startday');
 	$end_year = GETPOST('dateevent_endyear');
 	$end_month = GETPOST('dateevent_endmonth');
 	$end_day = GETPOST('dateevent_endday');
+	$tms_start = '';
+	$tms_end = '';
+
 	if (!empty($start_year) && !empty($start_month) && !empty($start_day)) {
 		$search_start = $start_year.'-'.$start_month.'-'.$start_day;
 		$tms_start = strtotime($search_start);
@@ -1391,7 +1394,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 					//if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
 					//elseif ($donetodo == 'done') $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
 					$tododone = '';
-					if (($obj->percent >= 0 and $obj->percent < 100) || ($obj->percent == -1 && $obj->datep > $now)) $tododone = 'todo';
+					if (($obj->percent >= 0 and $obj->percent < 100) || ($obj->percent == -1 && (!empty($obj->datep) && $obj->datep > $now))) $tododone = 'todo';
 
 					$histo[$numaction] = array(
 						'type'=>$obj->type,
