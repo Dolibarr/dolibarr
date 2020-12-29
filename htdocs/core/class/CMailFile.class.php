@@ -58,6 +58,8 @@ class CMailFile
 	public $alternative_boundary;
 	public $deliveryreceipt;
 
+	public $atleastonefile;
+
 	public $eol;
 	public $eol2;
 
@@ -144,8 +146,10 @@ class CMailFile
 			}
 		}
 
-		// Add autocopy to (Note: Adding bcc for specific modules are also done from pages)
-		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) $addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
+		// Add autocopy to if not already in $to (Note: Adding bcc for specific modules are also done from pages)
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO) && !preg_match('/'.preg_quote($conf->global->MAIN_MAIL_AUTOCOPY_TO, '/').'/i', $to)) {
+		    $addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
+		}
 
 		$this->subject = $subject;
 		$this->addr_to = $to;
@@ -171,7 +175,7 @@ class CMailFile
 		if (!empty($this->sendcontext)) {
 			$smtpContextKey = strtoupper($this->sendcontext);
 			$keyForSMTPSendMode = 'MAIN_MAIL_SENDMODE_'.$smtpContextKey;
-			$smtpContextSendMode = $conf->global->{$keyForSMTPSendMode};
+			$smtpContextSendMode = empty($conf->global->{$keyForSMTPSendMode}) ? '' : $conf->global->{$keyForSMTPSendMode};
 			if (!empty($smtpContextSendMode) && $smtpContextSendMode != 'default') {
 				$this->sendmode = $smtpContextSendMode;
 			}
@@ -240,6 +244,7 @@ class CMailFile
 		{
 			$this->html = $msg;
 
+			$findimg = 0;
 			if (!empty($conf->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS))
 			{
 				$findimg = $this->findHtmlImages($dolibarr_main_data_root.'/medias');
@@ -272,6 +277,11 @@ class CMailFile
 			}
 		}
 
+		// Add autocopy to if not already in $to (Note: Adding bcc for specific modules are also done from pages)
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO) && !preg_match('/'.preg_quote($conf->global->MAIN_MAIL_AUTOCOPY_TO, '/').'/i', $to)) {
+		    $addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
+		}
+
 		$this->addr_to = $to;
 		$this->addr_cc = $addr_cc;
 		$this->addr_bcc = $addr_bcc;
@@ -289,16 +299,11 @@ class CMailFile
 			$this->addr_bcc = '';
 		}
 
-		// Add autocopy to (Note: Adding bcc for specific modules are also done from pages)
-		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) {
-			$addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
-		}
-
 		$keyforsslseflsigned = 'MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED';
 		if (!empty($this->sendcontext)) {
 			$smtpContextKey = strtoupper($this->sendcontext);
 			$keyForSMTPSendMode = 'MAIN_MAIL_SENDMODE_'.$smtpContextKey;
-			$smtpContextSendMode = $conf->global->{$keyForSMTPSendMode};
+			$smtpContextSendMode = empty($conf->global->{$keyForSMTPSendMode}) ? '' : $conf->global->{$keyForSMTPSendMode};
 			if (!empty($smtpContextSendMode) && $smtpContextSendMode != 'default') {
 				$keyforsslseflsigned = 'MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_'.$smtpContextKey;
 			}
@@ -338,8 +343,7 @@ class CMailFile
 			$text_body = $this->write_body($msg);
 
 			// Add attachments to text_encoded
-			if ($this->atleastonefile)
-			{
+			if (!empty($this->atleastonefile)) {
 				$files_encoded = $this->write_files($filename_list, $mimetype_list, $mimefilename_list);
 			}
 
@@ -401,7 +405,7 @@ class CMailFile
 				}
 			}
 
-			if ($this->atleastonefile)
+			if (!empty($this->atleastonefile))
 			{
 				foreach ($filename_list as $i => $val)
 				{
@@ -530,7 +534,7 @@ class CMailFile
 				$this->message->addPart(dol_nl2br($msg), 'text/html');
 			}
 
-			if ($this->atleastonefile)
+			if (!empty($this->atleastonefile))
 			{
 				foreach ($filename_list as $i => $val)
 				{
@@ -657,7 +661,7 @@ class CMailFile
 			if (!empty($this->sendcontext)) {
 				$smtpContextKey = strtoupper($this->sendcontext);
 				$keyForSMTPSendMode = 'MAIN_MAIL_SENDMODE_'.$smtpContextKey;
-				$smtpContextSendMode = $conf->global->{$keyForSMTPSendMode};
+				$smtpContextSendMode = empty($conf->global->{$keyForSMTPSendMode}) ? '' : $conf->global->{$keyForSMTPSendMode};
 				if (!empty($smtpContextSendMode) && $smtpContextSendMode != 'default') {
 					$keyforsmtpserver = 'MAIN_MAIL_SMTP_SERVER_'.$smtpContextKey;
 					$keyforsmtpport   = 'MAIN_MAIL_SMTP_PORT_'.$smtpContextKey;
@@ -723,7 +727,11 @@ class CMailFile
 
 					if (!empty($conf->global->MAIN_MAIL_SENDMAIL_FORCE_ADDPARAM)) $additionnalparam .= ($additionnalparam ? ' ' : '').'-U '.$additionnalparam; // Use -U to add additionnal params
 
-					dol_syslog("CMailFile::sendfile: mail start HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port').", additionnal_parameters=".$additionnalparam, LOG_DEBUG);
+					$linuxlike = 1;
+					if (preg_match('/^win/i', PHP_OS)) $linuxlike = 0;
+					if (preg_match('/^mac/i', PHP_OS)) $linuxlike = 0;
+
+					dol_syslog("CMailFile::sendfile: mail start".($linuxlike ? '' : " HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port')).", additionnal_parameters=".$additionnalparam, LOG_DEBUG);
 
 					$this->message = stripslashes($this->message);
 
@@ -742,11 +750,7 @@ class CMailFile
 					{
 						$langs->load("errors");
 						$this->error = "Failed to send mail with php mail";
-						$linuxlike = 1;
-						if (preg_match('/^win/i', PHP_OS)) $linuxlike = 0;
-						if (preg_match('/^mac/i', PHP_OS)) $linuxlike = 0;
-						if (!$linuxlike)
-						{
+						if (!$linuxlike) {
 							$this->error .= " to HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port'); // This values are value used only for non linuxlike systems
 						}
 						$this->error .= ".<br>";

@@ -100,9 +100,12 @@ if ($action == 'update')
 
 $form = new Form($db);
 
-llxHeader();
+$title = $langs->trans("LimitsSetup");
+$help_url = '';
 
-print load_fiche_titre($langs->trans("LimitsSetup"), '', 'title_setup');
+llxHeader('', $title, $help_url);
+
+print load_fiche_titre($title, '', 'title_setup');
 
 $aCurrencies = array($conf->currency); // Default currency always first position
 
@@ -125,7 +128,8 @@ if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY
 	if (!empty($aCurrencies) && count($aCurrencies) > 1)
 	{
 		$head = multicurrencyLimitPrepareHead($aCurrencies);
-		print dol_get_fiche_head($head, $currencycode, '', -1, "multicurrency");
+
+		print dol_get_fiche_head($head, $currencycode, '', -1, '');
 	}
 }
 
@@ -165,13 +169,14 @@ if ($action == 'edit')
 
 	print '<br>';
 	print '<div class="center">';
-	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+	print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
 	print '</div>';
 	print '<br>';
 
 	print '</form>';
 	print '<br>';
 } else {
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
@@ -191,6 +196,7 @@ if ($action == 'edit')
 	print '</td><td align="right">'.(isset($conf->global->$mainroundingruletot) ? $conf->global->$mainroundingruletot : $conf->global->MAIN_ROUNDING_RULE_TOT).'</td></tr>';
 
 	print '</table>';
+	print '</div>';
 
 	print '<div class="tabsAction">';
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit'.(!empty($currencycode) ? '&currencycode='.$currencycode : '').'">'.$langs->trans("Modify").'</a>';

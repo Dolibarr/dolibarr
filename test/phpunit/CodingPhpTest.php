@@ -281,7 +281,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
             preg_match_all('/sql.+\s*\'"\s*\.\s*\$(.........)/', $filecontent, $matches, PREG_SET_ORDER);
             foreach ($matches as $key => $val)
             {
-            	if (! in_array($val[1], array('this->db-', 'this->esc', 'db->escap', 'db->idate', 'excludeGr', 'includeGr'))) {
+            	if (! in_array($val[1], array('this->db-', 'this->esc', 'db->escap', 'dbsession', 'db->idate', 'excludeGr', 'includeGr'))) {
             		$ok=false;
             		break;
             	}

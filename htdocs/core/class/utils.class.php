@@ -50,11 +50,11 @@ class Utils
 	 *  Purge files into directory of data files.
 	 *  CAN BE A CRON TASK
 	 *
-	 *  @param	string      $choice		   Choice of purge mode ('tempfiles', '' or 'tempfilesold' to purge temp older than $nbsecondsold seconds, 'allfiles', 'logfile')
+	 *  @param	string      $choices	   Choice of purge mode ('tempfiles', '' or 'tempfilesold' to purge temp older than $nbsecondsold seconds, 'allfiles', 'logfile')
 	 *  @param  int         $nbsecondsold  Nb of seconds old to accept deletion of a directory if $choice is 'tempfilesold'
 	 *  @return	int						   0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function purgeFiles($choice = 'tempfilesold', $nbsecondsold = 86400)
+	public function purgeFiles($choices = 'tempfilesold,logfile', $nbsecondsold = 86400)
 	{
 		global $conf, $langs, $dolibarr_main_data_root;
 
@@ -62,112 +62,117 @@ class Utils
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		$filesarray = array();
-		if (empty($choice)) $choice = 'tempfilesold';
+		if (empty($choices)) $choices = 'tempfilesold,logfile';
 
-		dol_syslog("Utils::purgeFiles choice=".$choice, LOG_DEBUG);
-
-		if ($choice == 'tempfiles' || $choice == 'tempfilesold')
-		{
-			// Delete temporary files
-			if ($dolibarr_main_data_root)
-			{
-				$filesarray = dol_dir_list($dolibarr_main_data_root, "directories", 1, '^temp$', '', 'name', SORT_ASC, 2, 0, '', 1); // Do not follow symlinks
-
-				if ($choice == 'tempfilesold')
-				{
-					$now = dol_now();
-					foreach ($filesarray as $key => $val)
-					{
-						if ($val['date'] > ($now - ($nbsecondsold))) unset($filesarray[$key]); // Discard temp dir not older than $nbsecondsold
-					}
-				}
-			}
-		}
-
-		if ($choice == 'allfiles')
-		{
-			// Delete all files (except install.lock, do not follow symbolic links)
-			if ($dolibarr_main_data_root)
-			{
-				$filesarray = dol_dir_list($dolibarr_main_data_root, "all", 0, '', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);
-			}
-		}
-
-		if ($choice == 'logfile')
-		{
-			// Define files log
-			if ($dolibarr_main_data_root)
-			{
-				$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*(\.gz)?$', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);
-			}
-
-			$filelog = '';
-			if (!empty($conf->syslog->enabled))
-			{
-				$filelog = $conf->global->SYSLOG_FILE;
-				$filelog = preg_replace('/DOL_DATA_ROOT/i', DOL_DATA_ROOT, $filelog);
-
-				$alreadyincluded = false;
-				foreach ($filesarray as $tmpcursor)
-				{
-					if ($tmpcursor['fullname'] == $filelog) { $alreadyincluded = true; }
-				}
-				if (!$alreadyincluded) $filesarray[] = array('fullname'=>$filelog, 'type'=>'file');
-			}
-		}
+		dol_syslog("Utils::purgeFiles choice=".$choices, LOG_DEBUG);
 
 		$count = 0;
 		$countdeleted = 0;
 		$counterror = 0;
-		if (count($filesarray))
-		{
-			foreach ($filesarray as $key => $value)
-			{
-				//print "x ".$filesarray[$key]['fullname']."-".$filesarray[$key]['type']."<br>\n";
-				if ($filesarray[$key]['type'] == 'dir')
-				{
-					$startcount = 0;
-					$tmpcountdeleted = 0;
 
-					$result = dol_delete_dir_recursive($filesarray[$key]['fullname'], $startcount, 1, 0, $tmpcountdeleted);
-					$count += $result;
-					$countdeleted += $tmpcountdeleted;
-				} elseif ($filesarray[$key]['type'] == 'file')
+		$choicesarray = explode(',', $choices);
+		foreach ($choicesarray as $choice) {
+			$filesarray = array();
+
+			if ($choice == 'tempfiles' || $choice == 'tempfilesold')
+			{
+				// Delete temporary files
+				if ($dolibarr_main_data_root)
 				{
-					// If (file that is not logfile) or (if mode is logfile)
-					if ($filesarray[$key]['fullname'] != $filelog || $choice == 'logfile')
+					$filesarray = dol_dir_list($dolibarr_main_data_root, "directories", 1, '^temp$', '', 'name', SORT_ASC, 2, 0, '', 1); // Do not follow symlinks
+
+					if ($choice == 'tempfilesold')
 					{
-						$result = dol_delete_file($filesarray[$key]['fullname'], 1, 1);
-						if ($result)
+						$now = dol_now();
+						foreach ($filesarray as $key => $val)
 						{
-							$count++;
-							$countdeleted++;
-						} else {
-							$counterror++;
+							if ($val['date'] > ($now - ($nbsecondsold))) unset($filesarray[$key]); // Discard temp dir not older than $nbsecondsold
 						}
 					}
 				}
 			}
 
-			// Update cachenbofdoc
-			if (!empty($conf->ecm->enabled) && $choice == 'allfiles')
+			if ($choice == 'allfiles')
 			{
-				require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
-				$ecmdirstatic = new EcmDirectory($this->db);
-				$result = $ecmdirstatic->refreshcachenboffile(1);
+				// Delete all files (except install.lock, do not follow symbolic links)
+				if ($dolibarr_main_data_root)
+				{
+					$filesarray = dol_dir_list($dolibarr_main_data_root, "all", 0, '', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);
+				}
+			}
+
+			if ($choice == 'logfile')
+			{
+				// Define files log
+				if ($dolibarr_main_data_root)
+				{
+					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*(\.gz)?$', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);
+				}
+
+				$filelog = '';
+				if (!empty($conf->syslog->enabled))
+				{
+					$filelog = $conf->global->SYSLOG_FILE;
+					$filelog = preg_replace('/DOL_DATA_ROOT/i', DOL_DATA_ROOT, $filelog);
+
+					$alreadyincluded = false;
+					foreach ($filesarray as $tmpcursor)
+					{
+						if ($tmpcursor['fullname'] == $filelog) { $alreadyincluded = true; }
+					}
+					if (!$alreadyincluded) $filesarray[] = array('fullname'=>$filelog, 'type'=>'file');
+				}
+			}
+
+			if (is_array($filesarray) && count($filesarray)) {
+				foreach ($filesarray as $key => $value)
+				{
+					//print "x ".$filesarray[$key]['fullname']."-".$filesarray[$key]['type']."<br>\n";
+					if ($filesarray[$key]['type'] == 'dir') {
+						$startcount = 0;
+						$tmpcountdeleted = 0;
+
+						$result = dol_delete_dir_recursive($filesarray[$key]['fullname'], $startcount, 1, 0, $tmpcountdeleted);
+
+						if (!in_array($filesarray[$key]['fullname'], array($conf->api->dir_temp, $conf->user->dir_temp))) {		// The 2 directories $conf->api->dir_temp and $conf->user->dir_temp are recreated at end, so we do not count them
+							$count += $result;
+							$countdeleted += $tmpcountdeleted;
+						}
+					} elseif ($filesarray[$key]['type'] == 'file') {
+						// If (file that is not logfile) or (if mode is logfile)
+						if ($filesarray[$key]['fullname'] != $filelog || $choice == 'logfile')
+						{
+							$result = dol_delete_file($filesarray[$key]['fullname'], 1, 1);
+							if ($result)
+							{
+								$count++;
+								$countdeleted++;
+							} else {
+								$counterror++;
+							}
+						}
+					}
+				}
+
+				// Update cachenbofdoc
+				if (!empty($conf->ecm->enabled) && $choice == 'allfiles')
+				{
+					require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
+					$ecmdirstatic = new EcmDirectory($this->db);
+					$result = $ecmdirstatic->refreshcachenboffile(1);
+				}
 			}
 		}
 
-		if ($count > 0)
-		{
+		if ($count > 0) {
 			$this->output = $langs->trans("PurgeNDirectoriesDeleted", $countdeleted);
 			if ($count > $countdeleted) $this->output .= '<br>'.$langs->trans("PurgeNDirectoriesFailed", ($count - $countdeleted));
-		} else $this->output = $langs->trans("PurgeNothingToDelete").($choice == 'tempfilesold' ? ' (older than 24h)' : '');
+		} else {
+			$this->output = $langs->trans("PurgeNothingToDelete").(in_array('tempfilesold', $choicesarray) ? ' (older than 24h for temp files)' : '');
+		}
 
 		// Recreate temp dir that are not automatically recreated by core code for performance purpose, we need them
-		if (!empty($conf->api->enabled))
-		{
+		if (!empty($conf->api->enabled)) {
 			dol_mkdir($conf->api->dir_temp);
 		}
 		dol_mkdir($conf->user->dir_temp);

@@ -59,7 +59,7 @@ class Societe extends CommonObject
 	public $table_element = 'societe';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent or for child tables
+	 * @var string Field with ID of parent key if this field has a parent or for child tables
 	 */
 	public $fk_element = 'fk_soc';
 
@@ -2070,7 +2070,7 @@ class Societe extends CommonObject
 			$discount->amount_tva = $discount->multicurrency_amount_tva = price2num($remise * $vatrate / 100, 'MT');
 			$discount->amount_ttc = $discount->multicurrency_amount_ttc = price2num($discount->amount_ht + $discount->amount_tva, 'MT');
 
-			$discount->tva_tx = price2num($vatrate, 'MT');
+			$discount->tva_tx = price2num($vatrate);
 			$discount->vat_src_code = $vat_src_code;
 
 			$discount->description = $desc;
@@ -2533,7 +2533,7 @@ class Societe extends CommonObject
 		$langs->load('companies');
 
 		$statusType = 'status4';
-		if ($status == 0) $statusType = 'status5';
+		if ($status == 0) $statusType = 'status6';
 
 		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
@@ -2969,6 +2969,8 @@ class Societe extends CommonObject
 	 * 								-2 ErrorCustomerCodeRequired
 	 * 								-3 ErrorCustomerCodeAlreadyUsed
 	 * 								-4 ErrorPrefixRequired
+	 * 								-5 NotConfigured - Setup empty so any value may be ok or not
+	 * 								-6 Other (see this->error)
 	 */
 	public function check_codeclient()
 	{
@@ -3115,10 +3117,10 @@ class Societe extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Returns if a profid sould be verified
+	 *  Returns if a profid sould be verified to be unique
 	 *
-	 *  @param	int		$idprof		1,2,3,4,5,6 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm,5=idprof5,6=idprof6)
-	 *  @return boolean         	true , false
+	 *  @param	int		$idprof		1,2,3,4,5,6 (Example: 1=siren, 2=siret, 3=naf, 4=rcs/rm, 5=eori, 6=idprof6)
+	 *  @return boolean         	true if the ID must be unique
 	 */
 	public function id_prof_verifiable($idprof)
 	{
@@ -3128,22 +3130,22 @@ class Societe extends CommonObject
 	 	switch ($idprof)
 		{
 			case 1:
-				$ret = (!$conf->global->SOCIETE_IDPROF1_UNIQUE ?false:true);
+				$ret = (empty($conf->global->SOCIETE_IDPROF1_UNIQUE) ? false : true);
 				break;
 			case 2:
-				$ret = (!$conf->global->SOCIETE_IDPROF2_UNIQUE ?false:true);
+				$ret = (empty($conf->global->SOCIETE_IDPROF2_UNIQUE) ? false : true);
 				break;
 			case 3:
-				$ret = (!$conf->global->SOCIETE_IDPROF3_UNIQUE ?false:true);
+				$ret = (empty($conf->global->SOCIETE_IDPROF3_UNIQUE) ? false : true);
 				break;
 			case 4:
-				$ret = (!$conf->global->SOCIETE_IDPROF4_UNIQUE ?false:true);
+				$ret = (empty($conf->global->SOCIETE_IDPROF4_UNIQUE) ? false : true);
 				break;
 			case 5:
-				$ret = (!$conf->global->SOCIETE_IDPROF5_UNIQUE ?false:true);
+				$ret = (empty($conf->global->SOCIETE_IDPROF5_UNIQUE) ? false : true);
 				break;
 			case 6:
-				$ret = (!$conf->global->SOCIETE_IDPROF6_UNIQUE ?false:true);
+				$ret = (empty($conf->global->SOCIETE_IDPROF6_UNIQUE) ? false : true);
 				break;
 			default:
 				$ret = false;
@@ -3241,7 +3243,7 @@ class Societe extends CommonObject
 			// si son index (position dans la chaîne en commence à 0 au premier caractère) est impair
 			// on double sa valeur et si cette dernière est supérieure à 9, on lui retranche 9
 			// on ajoute cette valeur à la somme totale
-
+			$sum = 0;
 			for ($index = 0; $index < 9; $index++)
 			{
 				$number = (int) $chaine[$index];
@@ -3266,7 +3268,7 @@ class Societe extends CommonObject
 			// si son index (position dans la chaîne en commence à 0 au premier caractère) est pair
 			// on double sa valeur et si cette dernière est supérieure à 9, on lui retranche 9
 			// on ajoute cette valeur à la somme totale
-
+			$sum = 0;
 			for ($index = 0; $index < 14; $index++)
 			{
 				$number = (int) $chaine[$index];
@@ -3342,10 +3344,6 @@ class Societe extends CommonObject
 		{
 			$string = trim($this->idprof1);
 			$string = preg_replace('/(\s)/', '', $string);
-
-			for ($i = 0; $i < 9; $i++) {
-				$num[$i] = substr($string, $i, 1);
-			}
 
 			//Check NIF
 			if (preg_match('/(^[0-9]{9}$)/', $string)) {
@@ -4359,6 +4357,31 @@ class Societe extends CommonObject
 		return $error ? -1 : 1;
 	}
 
+	/**
+	 *    Define third-party type of current company
+	 *
+	 *    @param	int		$typent_id	third party type rowid in llx_c_typent
+	 *    @return	int     			<0 if KO, >0 if OK
+	 */
+	public function setThirdpartyType($typent_id)
+	{
+		if ($this->id)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
+			$sql .= " SET fk_typent = ".($typent_id > 0 ? $typent_id : "null");
+			$sql .= " WHERE rowid = ".$this->id;
+			dol_syslog(get_class($this).'::setThirdpartyType', LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$this->typent_id = $typent_id;
+				$this->typent_code = dol_getIdFromCode($db, $this->$typent_id, 'c_typent', 'id', 'code');
+				return 1;
+			} else {
+				return -1;
+			}
+		} else return -1;
+	}
 
 	/**
 	 * Function used to replace a thirdparty id with another one.

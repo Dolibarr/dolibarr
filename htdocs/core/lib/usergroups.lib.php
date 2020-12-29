@@ -137,7 +137,7 @@ function user_prepare_head($object)
 	if ((!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
 		|| (!empty($conf->hrm->enabled) && !empty($user->rights->hrm->employee->read))
 		|| (!empty($conf->expensereport->enabled) && !empty($user->rights->expensereport->lire) && ($user->id == $object->id || $user->rights->expensereport->readall))
-		|| (!empty($conf->holiday->enabled) && !empty($user->rights->holiday->read) && ($user->id == $object->id || $user->rights->holiday->read_all))
+		|| (!empty($conf->holiday->enabled) && !empty($user->rights->holiday->read) && ($user->id == $object->id || $user->rights->holiday->readall))
 		) {
 		// Bank
 		$head[$h][0] = DOL_URL_ROOT.'/user/bank.php?id='.$object->id;
@@ -315,6 +315,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	if ($foruserprofile) $colspan = 4;
 
 	$thumbsbyrow = 6;
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent'.($edit ? ' editmode' : '').' tableforfield">';
 
 	// Title
@@ -911,4 +912,5 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	} else {
 	}
 	print '</table>';
+	print '</div>';
 }

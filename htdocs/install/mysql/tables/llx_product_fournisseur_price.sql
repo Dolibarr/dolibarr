@@ -50,6 +50,7 @@ create table llx_product_fournisseur_price
   import_key			varchar(14),                -- Import key
   delivery_time_days    integer,
   supplier_reputation varchar(10),
+  packaging			    varchar(64),
   
   fk_multicurrency		integer,
   multicurrency_code	varchar(255),

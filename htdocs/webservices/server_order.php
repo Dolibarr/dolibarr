@@ -120,7 +120,7 @@ $extrafield_line_array = null;
 if (is_array($extrafields) && count($extrafields) > 0) {
 	$extrafield_line_array = array();
 }
-if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 {
 	foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 	{
@@ -224,7 +224,7 @@ $extrafield_array = null;
 if (is_array($extrafields) && count($extrafields) > 0) {
 	$extrafield_array = array();
 }
-if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 {
 	foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 	{
@@ -464,7 +464,7 @@ function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 					'mode_reglement_code' => $order->mode_reglement_code,
 					'mode_reglement' => $order->mode_reglement,
 
-					'date_livraison' => $order->date_livraison,
+					'date_livraison' => $order->delivery_date,
 
 					'demand_reason_id' => $order->demand_reason_id,
 					'demand_reason_code' => $order->demand_reason_code,
@@ -621,7 +621,7 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 					'mode_reglement' => $order->mode_reglement,
 					'mode_reglement_code' => $order->mode_reglement_code,
 
-					'date_livraison' => $order->date_livraison,
+					'date_livraison' => $order->delivery_date,
 
 					'demand_reason_id' => $order->demand_reason_id,
 					'demand_reason_code' => $order->demand_reason_code,
@@ -705,7 +705,7 @@ function createOrder($authentication, $order)
 		// fetch optionals attributes and labels
 		$extrafields = new ExtraFields($db);
 		$extrafields->fetch_name_optionals_label($elementtype, true);
-		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+		if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
 			foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 			{
@@ -743,7 +743,7 @@ function createOrder($authentication, $order)
 			// fetch optionals attributes and labels
 			$extrafields = new ExtraFields($db);
 			$extrafields->fetch_name_optionals_label($elementtype, true);
-			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+			if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 			{
 				foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 				{
@@ -948,7 +948,7 @@ function updateOrder($authentication, $order)
 			// fetch optionals attributes and labels
 			$extrafields = new ExtraFields($db);
 			$extrafields->fetch_name_optionals_label($elementtype, true);
-			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+			if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 			{
 				foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 				{

@@ -52,7 +52,7 @@ class Subscriptions extends DolibarrApi
 	 * Return an array with subscription informations
 	 *
 	 * @param     int     $id ID of subscription
-	 * @return    array|mixed data without useless information
+	 * @return    Object data without useless information
 	 *
 	 * @throws    RestException
 	 */
@@ -168,7 +168,7 @@ class Subscriptions extends DolibarrApi
 	 *
 	 * @param int   $id             ID of subscription to update
 	 * @param array $request_data   Datas
-	 * @return int
+	 * @return Object
 	 */
 	public function put($id, $request_data = null)
 	{

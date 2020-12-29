@@ -203,6 +203,7 @@ class CategorieTest extends PHPUnit\Framework\TestCase
         $result=$localobject2->create($user);
         $cat = new Categorie($this->savdb);
         $cat->id = $catid;
+        $cat->type = 0;
         $result=$cat->add_type($localobject2, "product");
 
         print __METHOD__." result=".$result."\n";
@@ -244,7 +245,7 @@ class CategorieTest extends PHPUnit\Framework\TestCase
     /**
      * testCategorieUpdate
      *
-     * @param   Category        $localobject        Category
+     * @param   Categorie        $localobject        Category
      * @return  int
 
      * @depends testCategorieFetch
@@ -269,7 +270,7 @@ class CategorieTest extends PHPUnit\Framework\TestCase
     /**
      * testCategorieOther
      *
-     * @param   Category    $localobject    Category
+     * @param   Categorie    $localobject    Category
      * @return  int
      *
      * @depends testCategorieUpdate

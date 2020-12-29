@@ -247,7 +247,7 @@ if ($action == 'create') {
 	// Chart of accounts type
 	print '<tr><td>'.$langs->trans("Pcgtype").'</td>';
 	print '<td>';
-	print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(isset($_POST['pcg_type']) ?GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
+	print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(GETPOSTISSET('pcg_type') ? GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
 	print '</td></tr>';
 
 	print '</table>';
@@ -255,9 +255,9 @@ if ($action == 'create') {
 	print dol_get_fiche_end();
 
 	print '<div class="center">';
-	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+	print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
 	print '</form>';
@@ -309,7 +309,7 @@ if ($action == 'create') {
 			// Chart of accounts type
 			print '<tr><td>'.$langs->trans("Pcgtype").'</td>';
 			print '<td>';
-			print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(isset($_POST['pcg_type']) ?GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
+			print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(GETPOSTISSET('pcg_type') ? GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
 			print '</td></tr>';
 
 			print '</table>';
@@ -317,9 +317,9 @@ if ($action == 'create') {
 			print dol_get_fiche_end();
 
 			print '<div class="center">';
-			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+			print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 
 			print '</form>';

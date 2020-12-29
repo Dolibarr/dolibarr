@@ -405,7 +405,7 @@ if ($result)
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
-	$buttonsave = '<input type="submit" class="button" id="changeaccount" name="changeaccount" value="'.$langs->trans("Save").'">';
+	$buttonsave = '<input type="submit" class="button button-save" id="changeaccount" name="changeaccount" value="'.$langs->trans("Save").'">';
 	//print '<br><div class="center">'.$buttonsave.'</div>';
 
 	$texte = $langs->trans("ListOfProductsServices");

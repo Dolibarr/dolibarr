@@ -239,7 +239,7 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		}
 		print '</div>';
 		if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
-			print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref?utm_medium=website&utm_source=poweredby" href="https://www.dolibarr.org" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 		}
 		print '</div>';
 	}
@@ -562,16 +562,15 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 		$out .= getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', '', $param, '', $sortfield, $sortorder, '')."\n";
 		//$out.='</td>';
 
-		$out .= '<th class="liste_titre"><strong>'.$langs->trans("Search").' : </strong></th>';
+		$out .= '<th class="liste_titre"><strong class="hideonsmartphone">'.$langs->trans("Search").' : </strong></th>';
 		if ($donetodo) {
 			$out .= '<th class="liste_titre"></th>';
 		}
 		$out .= '<th class="liste_titre">'.$langs->trans("Type").' ';
-		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1, 0, 0, 1);
+		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1, 0, 0, 1, 'minwidth200imp');
 		$out .= '</th>';
 		$out .= '<th class="liste_titre maxwidth100onsmartphone">';
-		$out .= $langs->trans("Label").' ';
-		$out .= '<input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'">';
+		$out .= '<input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'" placeholder="'.$langs->trans("Label").'">';
 		$out .= '</th>';
 
 		$out .= '<th class="liste_titre width50 middle">';
@@ -857,7 +856,7 @@ function getTicketTimelineIcon($actionstatic, &$histo, $key)
 	if ($actionstatic->code == 'AC_TICKET_CREATE') {
 		$iconClass = 'fa fa-ticket';
 	} elseif ($actionstatic->code == 'AC_TICKET_MODIFY') {
-		$iconClass = 'fa fa-pencil';
+		$iconClass = 'fa fa-pencilxxx';
 	} elseif ($actionstatic->code == 'TICKET_MSG') {
 		$iconClass = 'fa fa-comments';
 	} elseif ($actionstatic->code == 'TICKET_MSG_PRIVATE') {

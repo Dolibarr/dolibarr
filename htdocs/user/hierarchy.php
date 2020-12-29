@@ -43,6 +43,9 @@ if ($user->socid > 0)
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_user = GETPOST('search_user', 'alpha');
 
+// Load mode employee
+$mode = GETPOST("mode", 'alpha');
+
 $userstatic = new User($db);
 $search_statut = GETPOST('search_statut', 'int');
 
@@ -143,10 +146,7 @@ if (!is_array($user_arbo) && $user_arbo < 0)
 	$param = "search_statut=".urlencode($search_statut);
 
 	$newcardbutton = '';
-	if ($canadduser)
-	{
-		$newcardbutton .= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1' : '').'&leftmenu=');
-	}
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1' : '').'&leftmenu=', '', $canadduser);
 
 	$morehtmlright .= dolGetButtonTitle($langs->trans("List"), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/user/list.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : ''));
 	$param = array('morecss'=>'marginleftonly btnTitleSelected');

@@ -47,7 +47,7 @@ class Don extends CommonObject
 	public $table_element = 'don';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_donation';
 
@@ -735,8 +735,7 @@ class Don extends CommonObject
 		{
 			if ($this->db->affected_rows($resql))
 			{
-				if (!$notrigger)
-				{
+				if (!$notrigger) {
 					// Call trigger
 					$result = $this->call_trigger('DON_VALIDATE', $user);
 					if ($result < 0) { $error++; }
@@ -748,8 +747,8 @@ class Don extends CommonObject
 			$this->error = $this->db->lasterror();
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
+			$this->statut = 1;
 			$this->db->commit();
 			return 1;
 		} else {
@@ -777,10 +776,9 @@ class Don extends CommonObject
 		$sql .= " WHERE rowid = ".$id." AND fk_statut = 1";
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->affected_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->affected_rows($resql)) {
+				$this->statut = 2;
 				return 1;
 			} else {
 				return 0;
@@ -804,10 +802,9 @@ class Don extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = -1 WHERE rowid = ".$id;
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->affected_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->affected_rows($resql)) {
+				$this->statut = -1;
 				return 1;
 			} else {
 				return 0;
@@ -828,8 +825,7 @@ class Don extends CommonObject
 	public function reopen($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->statut != self::STATUS_CANCELED)
-		{
+		if ($this->statut != self::STATUS_CANCELED) {
 			return 0;
 		}
 

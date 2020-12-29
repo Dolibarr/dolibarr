@@ -139,7 +139,7 @@ print dol_get_fiche_end();
 print '<div class="center">';
 print '<input type="submit" class="button" name="create" value="'.$langs->trans("Create").'">';
 print ' &nbsp; ';
-print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 print '</div>';
 
 print '</form>';

@@ -66,6 +66,11 @@ class Tva extends CommonObject
 	public $fk_bank;
 
 	/**
+	 * @var int accountid
+	 */
+	public $accountid;
+
+	/**
 	 * @var int ID
 	 */
 	public $fk_user_creat;

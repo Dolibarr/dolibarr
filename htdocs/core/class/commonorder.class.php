@@ -79,6 +79,18 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $product_desc;
 
 	/**
+	 * Product use lot
+	 * @var string
+	 */
+	public $product_tobatch;
+
+	/**
+	 * Product barcode
+	 * @var string
+	 */
+	public $product_barcode;
+
+	/**
 	 * Quantity
 	 * @var float
 	 */
@@ -159,4 +171,9 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $special_code = 0;
 
 	public $fk_multicurrency;
+	public $multicurrency_code;
+	public $multicurrency_subprice;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
 }

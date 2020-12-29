@@ -105,8 +105,8 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
 
                             if (value.type == 'agenda')
                             {
-                             	url = '<?php echo DOL_URL_ROOT.'/comm/action/card.php?id='; ?>' + value.id_agenda;
-                                title = '<?php print $langs->trans('EventReminder') ?>';
+                             	url = '<?php print DOL_URL_ROOT.'/comm/action/card.php?id='; ?>' + value.id_agenda;
+                                title = '<?php print dol_escape_js($langs->trans('EventReminder')) ?>';
                             }
                             var extra = {
                                 icon: '<?php print DOL_URL_ROOT.'/theme/common/bell.png'; ?>',

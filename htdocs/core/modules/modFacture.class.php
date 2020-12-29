@@ -111,7 +111,8 @@ class modFacture extends DolibarrModules
 		$this->boxes = array(
 				0=>array('file'=>'box_factures_imp.php', 'enabledbydefaulton'=>'Home'),
 				1=>array('file'=>'box_factures.php', 'enabledbydefaulton'=>'Home'),
-				2=>array('file'=>'box_graph_invoices_permonth.php', 'enabledbydefaulton'=>'Home')
+				2=>array('file'=>'box_graph_invoices_permonth.php', 'enabledbydefaulton'=>'Home'),
+				3=>array('file'=>'box_customers_outstanding_bill_reached.php', 'enabledbydefaulton'=>'Home')
 		);
 
 		// Cronjobs
@@ -290,7 +291,7 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra3 on p.rowid = extra3.fk_object';
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
 		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('invoice').')';
-		if (isset($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' AND sc.fk_user = '.$user->id;
+		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
 		$r++;
 
 
@@ -370,7 +371,7 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON ba.rowid = b.fk_account';
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('invoice').')';
-		if (isset($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' AND sc.fk_user = '.$user->id;
+		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
 		$r++;
 	}
 

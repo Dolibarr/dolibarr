@@ -222,7 +222,7 @@ if ($conf->global->TAKEPOS_PRINT_PAYMENT_METHOD) {
 			echo $langs->transnoentitiesnoconv("PaymentTypeShort".$row->code);
 			echo '</td>';
 			echo '<td class="right">';
-			$amount_payment = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
+			$amount_payment = (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
 			if ($row->code == "LIQ") $amount_payment = $amount_payment + $row->pos_change; // Show amount with excess received if is cash payment
 			echo price($amount_payment, 1, '', 1, - 1, - 1, $conf->currency);
 			echo '</td>';

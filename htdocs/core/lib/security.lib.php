@@ -639,7 +639,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
  *	@param	int			$printheader		Show header before
  *  @param  int			$printfooter        Show footer after
  *  @param  int			$showonlymessage    Show only message parameter. Otherwise add more information.
- *  @param  array|null  $params         	Send params
+ *  @param  array|null  $params         	More parameters provided to hook
  *  @return	void
  */
 function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $showonlymessage = 0, $params = null)

@@ -67,8 +67,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
-//if ($id > 0 || ! empty($ref)) $upload_dir = $conf->mrp->multidir_output[$object->entity?$object->entity:$conf->entity] . "/mo/" . dol_sanitizeFileName($object->id);
-if ($id > 0 || !empty($ref)) $upload_dir = $conf->mrp->multidir_output[$object->entity ? $object->entity : $conf->entity]."/mo/".dol_sanitizeFileName($object->ref);
+if ($id > 0 || !empty($ref)) $upload_dir = $conf->mrp->multidir_output[$object->entity ? $object->entity : $conf->entity]."/mo/".get_exdir(0, 0, 0, 1, $object);
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();

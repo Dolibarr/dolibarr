@@ -181,8 +181,8 @@ if ($conf->use_javascript_ajax) {
 	}
 	$total = $SommeA + $SommeB + $SommeC + $SommeD;
 	$dataseries = array();
-	$dataseries[] = array($langs->transnoentitiesnoconv("MenuMembersNotUpToDate"), round($SommeB));
-	$dataseries[] = array($langs->transnoentitiesnoconv("MenuMembersUpToDate"), round($SommeC));
+	$dataseries[] = array($langs->transnoentitiesnoconv("OutOfDate"), round($SommeB));
+	$dataseries[] = array($langs->transnoentitiesnoconv("UpToDate"), round($SommeC));
 	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusResiliated"), round($SommeD));
 	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusToValid"), round($SommeA));
 
@@ -422,8 +422,8 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<th>'.$langs->trans("MembersTypes").'</th>';
 print '<th class=right>'.$langs->trans("MembersStatusToValid").'</th>';
-print '<th class=right>'.$langs->trans("MenuMembersNotUpToDate").'</th>';
-print '<th class=right>'.$langs->trans("MenuMembersUpToDate").'</th>';
+print '<th class=right>'.$langs->trans("OutOfDate").'</th>';
+print '<th class=right>'.$langs->trans("UpToDate").'</th>';
 print '<th class=right>'.$langs->trans("MembersStatusResiliated").'</th>';
 print "</tr>\n";
 

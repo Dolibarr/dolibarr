@@ -179,8 +179,8 @@ print load_fiche_titre($langs->trans('MenuReportMonth'), '', 'title_hrm');
 
 // Selection filter
 print '<div class="tabBar">';
-print $formother->select_month($search_month, 'remonth');
-print $formother->select_year($search_year, 'reyear');
+print $formother->select_month($search_month, 'remonth', 0, 0, 'minwidth50 maxwidth75imp valignmiddle', true);
+print $formother->selectyear($search_year, 'reyear', 0, 10, 5, 0, 0, '', 'valignmiddle width75', true);
 print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Search")).'" />';
 print '</div>';
 print '<br>';

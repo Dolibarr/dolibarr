@@ -33,3 +33,9 @@
 -- For v14
 
 ALTER TABLE llx_c_availability ADD COLUMN position integer NOT NULL DEFAULT 0;
+
+ALTER TABLE llx_adherent ADD COLUMN ref varchar(30) AFTER rowid;
+UPDATE llx_adherent SET ref = rowid WHERE ref = '' or ref IS NULL;
+ALTER TABLE llx_adherent MODIFY COLUMN ref varchar(30) NOT NULL;
+ALTER TABLE llx_adherent ADD UNIQUE INDEX uk_adherent_ref (ref, entity);
+
