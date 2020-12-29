@@ -275,7 +275,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
     		print "\n";
     	}
 
-    	print __METHOD__." result=".$result['result']['result_code']."\n";
+    	print __METHOD__." result=".$result['result']['result_code']." ".$result['result']['result_label']."\n";
     	$this->assertEquals('OK', $result['result']['result_code']);
     	$this->assertEquals('ref-phpunit-2', $result['ref_ext']);
 
