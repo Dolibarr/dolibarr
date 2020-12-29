@@ -145,7 +145,7 @@ $server->register(
  */
 function getVersions($authentication)
 {
-	global $db, $conf, $langs;
+	global $conf;
 
 	dol_syslog("Function: getVersions login=".$authentication['login']);
 
@@ -188,7 +188,7 @@ function getVersions($authentication)
  */
 function getDocument($authentication, $modulepart, $file, $refname = '')
 {
-	global $db, $conf, $langs, $mysoc;
+	global $db, $conf;
 
 	dol_syslog("Function: getDocument login=".$authentication['login'].' - modulepart='.$modulepart.' - file='.$file);
 
@@ -283,10 +283,7 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 		{
 			if (file_exists($original_file))
 			{
-				dol_syslog("Function: getDocument $original_file $filename content-type=$type");
-
-				$file = $fileparams['fullname'];
-				$filename = basename($file);
+				dol_syslog("Function: getDocument $original_file  content-type=$type");
 
 				$f = fopen($original_file, 'r');
 				$content_file = fread($f, filesize($original_file));

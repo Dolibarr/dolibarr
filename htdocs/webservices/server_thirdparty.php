@@ -132,7 +132,7 @@ if (is_array($extrafields) && count($extrafields) > 0) {
 }
 if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 {
-	foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 	{
 		//$value=$object->array_options["options_".$key];
 		$type = $extrafields->attributes[$elementtype]['type'][$key];
@@ -290,7 +290,7 @@ $server->register(
  */
 function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	dol_syslog("Function: getThirdParty login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
@@ -367,7 +367,7 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 
 				if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 				{
-					foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+					foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 					{
 						$thirdparty_result_fields = array_merge($thirdparty_result_fields, array('options_'.$key => $thirdparty->array_options['options_'.$key]));
 					}
@@ -408,7 +408,7 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
  */
 function createThirdParty($authentication, $thirdparty)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	$now = dol_now();
 
@@ -483,7 +483,7 @@ function createThirdParty($authentication, $thirdparty)
 		$extrafields->fetch_name_optionals_label($elementtype, true);
 		if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
-			foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+			foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 			{
 				$key = 'options_'.$key;
 				$newobject->array_options[$key] = $thirdparty[$key];
@@ -538,7 +538,7 @@ function createThirdParty($authentication, $thirdparty)
  */
 function updateThirdParty($authentication, $thirdparty)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	$now = dol_now();
 
@@ -617,7 +617,7 @@ function updateThirdParty($authentication, $thirdparty)
 			$extrafields->fetch_name_optionals_label($elementtype, true);
 			if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 			{
-				foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+				foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 				{
 					$key = 'options_'.$key;
 					$object->array_options[$key] = $thirdparty[$key];
@@ -672,9 +672,7 @@ function updateThirdParty($authentication, $thirdparty)
  */
 function getListOfThirdParties($authentication, $filterthirdparty)
 {
-	global $db, $conf, $langs;
-
-	$now = dol_now();
+	global $db, $conf;
 
 	dol_syslog("Function: getListOfThirdParties login=".$authentication['login']);
 
@@ -725,7 +723,7 @@ function getListOfThirdParties($authentication, $filterthirdparty)
 
 				if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 				{
-					foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+					foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 					{
 						$extrafieldsOptions['options_'.$key] = $obj->{$key};
 					}
@@ -782,7 +780,7 @@ function getListOfThirdParties($authentication, $filterthirdparty)
  */
 function deleteThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	dol_syslog("Function: deleteThirdParty login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 

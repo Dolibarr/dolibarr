@@ -619,12 +619,15 @@ class Mailing extends CommonObject
 				if (! $resqlupdate) {
 					$this->error = $this->db->lasterror();
 					return -1;
+				} else {
+					$this->nbemail = (int) $nbforupdate;
 				}
 			}
 		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
+
 		return 1;
 	}
 
