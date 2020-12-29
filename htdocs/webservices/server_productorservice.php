@@ -536,7 +536,7 @@ function createProductOrService($authentication, $product)
 
 		$newobject->stock_reel = isset($product['stock_real']) ? $product['stock_real'] : null;
 		$newobject->pmp = isset($product['pmp']) ? $product['pmp'] : null;
-		$newobject->seuil_stock_alert = isset($product['stock_alert']) ? $product['stock_alert'] : null;
+		$newobject->seuil_stock_alerte = isset($product['stock_alert']) ? $product['stock_alert'] : null;
 
 		$newobject->country_id = isset($product['country_id']) ? $product['country_id'] : 0;
 		if (!empty($product['country_code'])) $newobject->country_id = getCountry($product['country_code'], 3);
@@ -705,15 +705,15 @@ function updateProductOrService($authentication, $product)
 				$newobject->barcode_type = $product['barcode_type'];
 		}
 
-		$newobject->stock_reel = $product['stock_real'];
-		$newobject->pmp = $product['pmp'];
-		$newobject->seuil_stock_alert = $product['stock_alert'];
+		$newobject->stock_reel = isset($product['stock_real']) ? $product['stock_real'] : null;
+		$newobject->pmp = isset($product['pmp']) ? $product['pmp'] : null;
+		$newobject->seuil_stock_alerte = isset($product['stock_alert']) ? $product['stock_alert'] : null;
 
-		$newobject->country_id = $product['country_id'];
-		if ($product['country_code']) $newobject->country_id = getCountry($product['country_code'], 3);
-		$newobject->customcode = $product['customcode'];
+		$newobject->country_id = isset($product['country_id']) ? $product['country_id'] : 0;
+		if (!empty($product['country_code'])) $newobject->country_id = getCountry($product['country_code'], 3);
+		$newobject->customcode = isset($product['customcode']) ? $product['customcode'] : '';
 
-		$newobject->canvas = $product['canvas'];
+		$newobject->canvas = isset($product['canvas']) ? $product['canvas'] : '';
 
 		$elementtype = 'product';
 
