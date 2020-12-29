@@ -467,7 +467,7 @@ if (!empty($sortfield)) {
 
 // Export into a file with format defined into setup (FEC, CSV, ...)
 // Must be after definition of $sql
-if ($action == 'export_file' && $user->rights->accounting->mouvements->export) {
+if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->export) {
 	// TODO Replace the fetchAll + ->export later that consume too much memory on large export with the query($sql) and loop on each line to export them.
 	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', $conf->global->ACCOUNTING_REEXPORT);
 
@@ -495,6 +495,7 @@ if ($action == 'export_file' && $user->rights->accounting->mouvements->export) {
 
 					$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
 					$sql .= " SET date_export = '".$db->idate($now)."'";
+					$sql .= " , date_validated = '".$db->idate($now)."'";
 					$sql .= " WHERE rowid = ".$movement->id;
 
 					dol_syslog("/accountancy/bookeeping/list.php Function export_file Specify movements as exported sql=".$sql, LOG_DEBUG);
@@ -566,7 +567,25 @@ if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
 
 llxHeader('', $title_page);
 
+if ($action == 'export_file') {
+	$form_question = array();
 
+	$form_question['notifiedexportdate'] = array(
+		'name' => 'notifiedexportdate',
+		'type' => 'checkbox',
+		'label' => $langs->trans('NotifiedExportDate'),
+		'value' => (!empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE) ? 'false' : 'true'),
+	);
+	$form_question['notifiedvalidationdate'] = array(
+		'name' => 'notifiedvalidationdate',
+		'type' => 'checkbox', // We don't use select here, the journal_array is already a select html component
+		'label' => $langs->trans('NotifiedValidationDate'),
+		'value' => (!empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE) ? 'false' : 'true'),
+	);
+
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 300);
+	print $formconfirm;
+}
 if ($action == 'delmouv') {
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?mvt_num='.GETPOST('mvt_num').$param, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvtPartial'), 'delmouvconfirm', '', 0, 1);
 	print $formconfirm;
