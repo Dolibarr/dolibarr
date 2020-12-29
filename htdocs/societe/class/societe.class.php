@@ -863,7 +863,7 @@ class Societe extends CommonObject
 					$this->db->commit();
 					return $this->id;
 				} else {
-					dol_syslog(get_class($this)."::Create echec update ".$this->error." ".join(',', $this->errors), LOG_ERR);
+					dol_syslog(get_class($this)."::Create echec update ".$this->error.(empty($this->errors) ? '' : ' '.join(',', $this->errors)), LOG_ERR);
 					$this->db->rollback();
 					return -4;
 				}
