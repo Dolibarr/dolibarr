@@ -952,19 +952,15 @@ class Societe extends CommonObject
 		if ($this->client)
 		{
 			$rescode = $this->check_codeclient();
-			if ($rescode <> 0)
+			if ($rescode != 0 && $rescode != -5)
 			{
-				if ($rescode == -1)
-				{
+				if ($rescode == -1) {
 					$this->errors[] = 'ErrorBadCustomerCodeSyntax';
-				} elseif ($rescode == -2)
-				{
+				} elseif ($rescode == -2) {
 					$this->errors[] = 'ErrorCustomerCodeRequired';
-				} elseif ($rescode == -3)
-				{
+				} elseif ($rescode == -3) {
 					$this->errors[] = 'ErrorCustomerCodeAlreadyUsed';
-				} elseif ($rescode == -4)
-				{
+				} elseif ($rescode == -4) {
 					$this->errors[] = 'ErrorPrefixRequired';
 				} else {
 					$this->errors[] = 'ErrorUnknownOnCustomerCodeCheck';
@@ -977,19 +973,15 @@ class Societe extends CommonObject
 		if ($this->fournisseur)
 		{
 			$rescode = $this->check_codefournisseur();
-			if ($rescode <> 0)
+			if ($rescode != 0 && $rescode != -5)
 			{
-				if ($rescode == -1)
-				{
+				if ($rescode == -1) {
 					$this->errors[] = 'ErrorBadSupplierCodeSyntax';
-				} elseif ($rescode == -2)
-				{
+				} elseif ($rescode == -2) {
 					$this->errors[] = 'ErrorSupplierCodeRequired';
-				} elseif ($rescode == -3)
-				{
+				} elseif ($rescode == -3) {
 					$this->errors[] = 'ErrorSupplierCodeAlreadyUsed';
-				} elseif ($rescode == -4)
-				{
+				} elseif ($rescode == -4) {
 					$this->errors[] = 'ErrorPrefixRequired';
 				} else {
 					$this->errors[] = 'ErrorUnknownOnSupplierCodeCheck';
@@ -3010,6 +3002,8 @@ class Societe extends CommonObject
 	 * 							-2 ErrorCustomerCodeRequired
 	 * 							-3 ErrorCustomerCodeAlreadyUsed
 	 * 							-4 ErrorPrefixRequired
+	 * 							-5 NotConfigured - Setup empty so any value may be ok or not
+	 * 							-6 Other (see this->error)
 	 */
 	public function check_codefournisseur()
 	{
