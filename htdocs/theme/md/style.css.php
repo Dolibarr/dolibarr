@@ -1189,7 +1189,7 @@ table[summary="list_of_modules"] .fa-cog {
 	.titlefield { /* width: 30% !important; */ }
 	.titlefieldcreate { width: 30% !important; }
 	.minwidth50imp  { min-width: 50px !important; }
-    .minwidth75imp  { min-width: 75px !important; }
+    .minwidth75imp  { min-width: 75px !important; max-width: 150px !important; }
     .minwidth100imp { min-width: 100px !important; }
     .minwidth150imp { min-width: 150px !important; }
     .minwidth200imp { min-width: 200px !important; }
