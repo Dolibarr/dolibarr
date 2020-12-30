@@ -758,40 +758,42 @@ while ($i < min($num, $limit))
 	$i++;
 }
 
-// Show sub-total of last shown account
-if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING) || empty($arrayfields['t.lettering_code']['checked'])) {
-    $colnumber = 3;
-    $colnumberend = 7;
-} else {
-    $colnumber = 4;
-    $colnumberend = 7;
+if ($num > 0) {
+	// Show sub-total of last shown account
+	if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING) || empty($arrayfields['t.lettering_code']['checked'])) {
+	    $colnumber = 3;
+	    $colnumberend = 7;
+	} else {
+	    $colnumber = 4;
+	    $colnumberend = 7;
+	}
+	$colspan = $totalarray['nbfield'] - $colnumber;
+	$colspanend = $totalarray['nbfield'] - $colnumberend;
+	print '<tr class="liste_total">';
+	print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("TotalForAccount").' '.$accountg.':</td>';
+	print '<td class="nowrap right">'.price($sous_total_debit).'</td>';
+	print '<td class="nowrap right">'.price($sous_total_credit).'</td>';
+	print '<td colspan="'.$colspanend.'"></td>';
+	print '</tr>';
+	// Show balance of last shown account
+	$balance = $sous_total_debit - $sous_total_credit;
+	print '<tr class="liste_total">';
+	print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("Balance").':</td>';
+	if ($balance > 0)
+	{
+		print '<td class="nowraponall right">';
+		print price($sous_total_debit - $sous_total_credit);
+		print '</td>';
+		print '<td></td>';
+	} else {
+		print '<td></td>';
+		print '<td class="nowraponall right">';
+		print price($sous_total_credit - $sous_total_debit);
+		print '</td>';
+	}
+	print '<td colspan="'.$colspanend.'"></td>';
+	print '</tr>';
 }
-$colspan = $totalarray['nbfield'] - $colnumber;
-$colspanend = $totalarray['nbfield'] - $colnumberend;
-print '<tr class="liste_total">';
-print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("TotalForAccount").' '.$accountg.':</td>';
-print '<td class="nowrap right">'.price($sous_total_debit).'</td>';
-print '<td class="nowrap right">'.price($sous_total_credit).'</td>';
-print '<td colspan="'.$colspanend.'"></td>';
-print '</tr>';
-// Show balance of last shown account
-$balance = $sous_total_debit - $sous_total_credit;
-print '<tr class="liste_total">';
-print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("Balance").':</td>';
-if ($balance > 0)
-{
-	print '<td class="nowraponall right">';
-	print price($sous_total_debit - $sous_total_credit);
-	print '</td>';
-	print '<td></td>';
-} else {
-	print '<td></td>';
-	print '<td class="nowraponall right">';
-	print price($sous_total_credit - $sous_total_debit);
-	print '</td>';
-}
-print '<td colspan="'.$colspanend.'"></td>';
-print '</tr>';
 
 // Show total line
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
