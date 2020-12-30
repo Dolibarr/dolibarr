@@ -70,12 +70,12 @@ if ($action == 'updateMask') {
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'specimen') { // For fiche inter
+} elseif ($action == 'specimen') { // For fiche expensereport
 	$modele = GETPOST('module', 'alpha');
 
-	$inter = new ExpenseReport($db);
-	$inter->initAsSpecimen();
-	$inter->status = 0; // Force statut draft to show watermark
+	$expensespecimen = new ExpenseReport($db);
+	$expensespecimen->initAsSpecimen();
+	$expensespecimen->status = 0; // Force statut draft to show watermark
 
 	// Search template files
 	$file = ''; $classname = ''; $filefound = 0;
@@ -94,7 +94,7 @@ if ($action == 'updateMask') {
 
 		$module = new $classname($db);
 
-		if ($module->write_file($inter, $langs) > 0) {
+		if ($module->write_file($expensespecimen, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=expensereport&file=SPECIMEN.pdf");
 			return;
 		} else {
@@ -278,7 +278,7 @@ foreach ($dirmodels as $reldir) {
 print "</table><br>\n";
 
 /*
- *  Documents models for Interventions
+ *  Documents models for ExpenseReport
  */
 
 print load_fiche_titre($langs->trans("TemplatePDFExpenseReports"), '', '');
