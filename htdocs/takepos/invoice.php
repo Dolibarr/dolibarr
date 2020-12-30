@@ -158,7 +158,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	if ($invoice->total_ttc < 0) {
 		$invoice->type = $invoice::TYPE_CREDIT_NOTE;
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE ";
-		$sql .= "fk_soc = '".$invoice->socid."' ";
+		$sql .= "fk_soc = ".((int) $invoice->socid)." ";
 		$sql .= "AND type <> ".Facture::TYPE_CREDIT_NOTE." ";
 		$sql .= "AND fk_statut >= ".$invoice::STATUS_VALIDATED." ";
 		$sql .= "ORDER BY rowid DESC";
@@ -763,13 +763,13 @@ $( document ).ready(function() {
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
 			echo '$("#customerandsales").append(\'';
-			echo '<a class="valignmiddle" title="'.dol_escape_js($langs->trans("SaleStartedAt", dol_print_date($db->jdate($obj->datec), '%H:%M'))).'" onclick="place=\\\'';
+			echo '<a class="valignmiddle" title="'.dol_escape_js($langs->trans("SaleStartedAt", dol_print_date($db->jdate($obj->datec), '%H:%M', 'tzuser'))).'" onclick="place=\\\'';
 			$num_sale = str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $obj->ref));
 			echo $num_sale;
 			if (str_replace("-", "", $num_sale) > $max_sale) $max_sale = str_replace("-", "", $num_sale);
 			echo '\\\';Refresh();">';
 			if ($placeid == $obj->rowid) echo "<b>";
-			echo dol_print_date($db->jdate($obj->datec), '%H:%M');
+			echo dol_print_date($db->jdate($obj->datec), '%H:%M', 'tzuser');
 			if ($placeid == $obj->rowid) echo "</b>";
 			echo '</a>\');';
 		}
