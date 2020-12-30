@@ -157,7 +157,7 @@ if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafie
 	}
 }
 
-if (is_array($extrafield_array)) {
+if (!empty($extrafield_array) && is_array($extrafield_array)) {
 	$productorservice_fields = array_merge($productorservice_fields, $extrafield_array);
 }
 
