@@ -99,6 +99,7 @@ CashDeskRefNumberingModules=Numbering module for POS sales
 CashDeskGenericMaskCodes6 = <br><b>{TN}</b> tag is used to add the terminal number
 TakeposGroupSameProduct=Group same products lines
 StartAParallelSale=Start a new parallel sale
+SaleStartedAt=Sale started at %s
 ControlCashOpening=Control cash desk at opening POS
 CloseCashFence=Close cash desk control
 CashReport=Cash report
