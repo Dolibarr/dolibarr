@@ -1054,7 +1054,7 @@ class FormMail extends Form
 		global $conf, $langs, $form;
 		$tmparray = array();
 		$out = '<tr><td>';
-		$out .= $form->textwithpicto($langs->trans("MailCCC"), $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+		$out .= $form->textwithpicto($langs->trans("MailCCC"), $langs->trans("YouCanUseFreeEmailsForRecipients"));
 		$out .= '</td><td>';
 		if (!empty($this->withtocccreadonly)) {
 			$out .= (!is_array($this->withtoccc) && !is_numeric($this->withtoccc)) ? $this->withtoccc : "";

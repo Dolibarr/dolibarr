@@ -74,9 +74,15 @@ if (GETPOST('removAll', 'alpha')) {
 	$listofnames = array();
 	$listofmimes = array();
 	$keytoavoidconflict = empty($trackid) ? '' : '-'.$trackid;
-	if (!empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths = explode(';', $_SESSION["listofpaths".$keytoavoidconflict]);
-	if (!empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames = explode(';', $_SESSION["listofnames".$keytoavoidconflict]);
-	if (!empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes = explode(';', $_SESSION["listofmimes".$keytoavoidconflict]);
+	if (!empty($_SESSION["listofpaths".$keytoavoidconflict])) {
+		$listofpaths = explode(';', $_SESSION["listofpaths".$keytoavoidconflict]);
+	}
+	if (!empty($_SESSION["listofnames".$keytoavoidconflict])) {
+		$listofnames = explode(';', $_SESSION["listofnames".$keytoavoidconflict]);
+	}
+	if (!empty($_SESSION["listofmimes".$keytoavoidconflict])) {
+		$listofmimes = explode(';', $_SESSION["listofmimes".$keytoavoidconflict]);
+	}
 
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
@@ -98,7 +104,9 @@ if (GETPOST('removAll', 'alpha')) {
  * Send mail
  */
 if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST['removAll'] && !$_POST['removedfile'] && !$_POST['cancel'] && !$_POST['modelselected']) {
-	if (empty($trackid)) $trackid = GETPOST('trackid', 'aZ09');
+	if (empty($trackid)) {
+		$trackid = GETPOST('trackid', 'aZ09');
+	}
 
 	$subject = ''; $actionmsg = ''; $actionmsg2 = '';
 
@@ -111,24 +119,34 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 		if (method_exists($object, "fetch_thirdparty") && !in_array($object->element, array('member', 'user', 'expensereport', 'societe', 'contact'))) {
 			$resultthirdparty = $object->fetch_thirdparty();
 			$thirdparty = $object->thirdparty;
-			if (is_object($thirdparty)) $sendtosocid = $thirdparty->id;
+			if (is_object($thirdparty)) {
+				$sendtosocid = $thirdparty->id;
+			}
 		} elseif ($object->element == 'member' || $object->element == 'user') {
 			$thirdparty = $object;
-			if ($object->socid > 0) $sendtosocid = $object->socid;
+			if ($object->socid > 0) {
+				$sendtosocid = $object->socid;
+			}
 		} elseif ($object->element == 'expensereport') {
 			$tmpuser = new User($db);
 			$tmpuser->fetch($object->fk_user_author);
 			$thirdparty = $tmpuser;
-			if ($object->socid > 0) $sendtosocid = $object->socid;
+			if ($object->socid > 0) {
+				$sendtosocid = $object->socid;
+			}
 		} elseif ($object->element == 'societe') {
 			$thirdparty = $object;
-			if (is_object($thirdparty) && $thirdparty->id > 0) $sendtosocid = $thirdparty->id;
+			if (is_object($thirdparty) && $thirdparty->id > 0) {
+				$sendtosocid = $thirdparty->id;
+			}
 		} elseif ($object->element == 'contact') {
 			$contact = $object;
 			if ($contact->id > 0) {
 				$contact->fetch_thirdparty();
 				$thirdparty = $contact->thirdparty;
-				if (is_object($thirdparty) && $thirdparty->id > 0) $sendtosocid = $thirdparty->id;
+				if (is_object($thirdparty) && $thirdparty->id > 0) {
+					$sendtosocid = $thirdparty->id;
+				}
 			}
 		} else {
 			dol_print_error('', "Use actions_sendmails.in.php for an element/object '".$object->element."' that is not supported");
@@ -153,8 +171,11 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 		// Define $sendto
 		$receiver = $_POST['receiver'];
 		if (!is_array($receiver)) {
-			if ($receiver == '-1') $receiver = array();
-			else $receiver = array($receiver);
+			if ($receiver == '-1') {
+				$receiver = array();
+			} else {
+				$receiver = array($receiver);
+			}
 		}
 
 		$tmparray = array();
@@ -165,13 +186,11 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 
 		if (count($receiver) > 0) {
 			// Recipient was provided from combo list
-			foreach ($receiver as $key=>$val) {
+			foreach ($receiver as $key => $val) {
 				if ($val == 'thirdparty') {
 					// Key selected means current third party ('thirdparty' may be used for current member or current user too)
 					$tmparray[] = dol_string_nospecial($thirdparty->getFullName($langs), ' ', array(",")).' <'.$thirdparty->email.'>';
-				}
-				elseif ($val == 'contact') // Key selected means current contact
-				{
+				} elseif ($val == 'contact') { // Key selected means current contact
 					$tmparray[] = dol_string_nospecial($contact->getFullName($langs), ' ', array(",")).' <'.$contact->email.'>';
 					$sendtoid[] = $contact->id;
 				} elseif ((int) $val > 0) {
@@ -184,14 +203,11 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 			}
 		}
 
-		if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT))
-		{
+		if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
 			$receiveruser = $_POST['receiveruser'];
-			if (is_array($receiveruser) && count($receiveruser) > 0)
-			{
+			if (is_array($receiveruser) && count($receiveruser) > 0) {
 				$fuserdest = new User($db);
-				foreach ($receiveruser as $key=>$val)
-				{
+				foreach ($receiveruser as $key => $val) {
 					$tmparray[] = $fuserdest->user_get_property($val, 'email');
 					$sendtouserid[] = $val;
 				}
@@ -203,15 +219,18 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 		// Define $sendtocc
 		$receivercc = $_POST['receivercc'];
 		if (!is_array($receivercc)) {
-			if ($receivercc == '-1') $receivercc = array();
-			else $receivercc = array($receivercc);
+			if ($receivercc == '-1') {
+				$receivercc = array();
+			} else {
+				$receivercc = array($receivercc);
+			}
 		}
 		$tmparray = array();
 		if (trim($_POST['sendtocc'])) {
 			$tmparray[] = trim($_POST['sendtocc']);
 		}
 		if (count($receivercc) > 0) {
-			foreach ($receivercc as $key=>$val) {
+			foreach ($receivercc as $key => $val) {
 				// Recipient was provided from combo list
 				if ($val == 'thirdparty') {
 					// Key selected means currentthird party (may be usd for current member or current user too)
@@ -236,7 +255,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 
 			if (is_array($receiverccuser) && count($receiverccuser) > 0) {
 				$fuserdest = new User($db);
-				foreach ($receiverccuser as $key=>$val) {
+				foreach ($receiverccuser as $key => $val) {
 					$tmparray[] = $fuserdest->user_get_property($val, 'email');
 					$sendtoccuserid[] = $val;
 				}
@@ -378,14 +397,15 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 			$subject = make_substitutions($subject, $substitutionarray);
 			$message = make_substitutions($message, $substitutionarray);
 
-			if (method_exists($object, 'makeSubstitution'))
-			{
+			if (method_exists($object, 'makeSubstitution')) {
 				$subject = $object->makeSubstitution($subject);
 				$message = $object->makeSubstitution($message);
 			}
 
 			// Send mail (substitutionarray must be done just before this)
-			if (empty($sendcontext)) $sendcontext = 'standard';
+			if (empty($sendcontext)) {
+				$sendcontext = 'standard';
+			}
 			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext);
 
 			if ($mailfile->error) {
@@ -396,7 +416,9 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 				if ($result) {
 					// Initialisation of datas of object to call trigger
 					if (is_object($object)) {
-						if (empty($actiontypecode)) $actiontypecode = 'AC_OTH_AUTO'; // Event insert into agenda automatically
+						if (empty($actiontypecode)) {
+							$actiontypecode = 'AC_OTH_AUTO'; // Event insert into agenda automatically
+						}
 
 						$object->socid = $sendtosocid; // To link to a company
 						$object->sendtoid = $sendtoid; // To link to contact-addresses. This is an array.
@@ -443,10 +465,12 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 					$mesg = $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($sendto, 2));
 					setEventMessages($mesg, null, 'mesgs');
 
-  					$moreparam = '';
-	  				if (isset($paramname2) || isset($paramval2)) $moreparam .= '&'.($paramname2 ? $paramname2 : 'mid').'='.$paramval2;
-		  			header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname ? $paramname : 'id').'='.(is_object($object) ? $object->id : '').$moreparam);
-			  		exit;
+					$moreparam = '';
+					if (isset($paramname2) || isset($paramval2)) {
+						$moreparam .= '&'.($paramname2 ? $paramname2 : 'mid').'='.$paramval2;
+					}
+					header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname ? $paramname : 'id').'='.(is_object($object) ? $object->id : '').$moreparam);
+					exit;
 				} else {
 					$langs->load("other");
 					$mesg = '<div class="error">';
