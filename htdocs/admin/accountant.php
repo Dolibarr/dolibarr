@@ -164,7 +164,7 @@ print '<input name="code" id="code" class="minwidth100" value="'.(!empty($conf->
 
 // Note
 print '<tr class="oddeven"><td class="tdtop"><label for="note">'.$langs->trans("Note").'</label></td><td>';
-print '<textarea class="flat quatrevingtpercent" name="note" id="note" rows="'.ROWS_5.'">'.(!empty($conf->global->MAIN_INFO_ACCOUNTANT_NOTE) ? $conf->global->MAIN_INFO_ACCOUNTANT_NOTE : GETPOST("note", 'restricthtml')).'</textarea></td></tr>';
+print '<textarea class="flat quatrevingtpercent" name="note" id="note" rows="'.ROWS_5.'">'.(GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_NOTE) ? $conf->global->MAIN_INFO_ACCOUNTANT_NOTE : '')).'</textarea></td></tr>';
 print '</td></tr>';
 
 print '</table>';
