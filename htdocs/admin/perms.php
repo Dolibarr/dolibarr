@@ -166,7 +166,7 @@ if ($result)
 			if (is_object($modules[$obj->module]) && ($modules[$obj->module]->module_position > 0))
 			{
 				// TODO Define familyposition
-				$family = $modules[$obj->module]->family_position;
+			    $family = (!empty($modules[$obj->module]->family_position) ? $modules[$obj->module]->family_position : '');
 				$familyposition = 0;
 				$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."rights_def SET module_position = ".$modules[$obj->module]->module_position.",";
 				$sqlupdate .= " family_position = ".$familyposition;
@@ -214,7 +214,7 @@ if ($result)
 			print '</tr>'."\n";
 		}
 
-		$perm_libelle = ($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id) != ("PermissionAdvanced".$obj->id)) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != ("Permission".$obj->id)) ? $langs->trans("Permission".$obj->id) : $obj->label));
+		$perm_libelle = (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ($langs->trans("PermissionAdvanced".$obj->id) != ("PermissionAdvanced".$obj->id)) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != ("Permission".$obj->id)) ? $langs->trans("Permission".$obj->id) : $obj->label));
 
 		print '<tr class="oddeven">';
 

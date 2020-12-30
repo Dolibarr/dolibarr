@@ -1073,8 +1073,8 @@ class FormFile
 		if (empty($relativepath))
 		{
 			$relativepath = (!empty($object->ref) ?dol_sanitizeFileName($object->ref) : '').'/';
-			if ($object->element == 'invoice_supplier') $relativepath = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$relativepath; // TODO Call using a defined value for $relativepath
-			if ($object->element == 'project_task') $relativepath = 'Call_not_supported_._Call_function_using_a_defined_relative_path_.';
+			if (!empty($object->element) && $object->element == 'invoice_supplier') $relativepath = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$relativepath; // TODO Call using a defined value for $relativepath
+			if (!empty($object->element) && $object->element == 'project_task') $relativepath = 'Call_not_supported_._Call_function_using_a_defined_relative_path_.';
 		}
 		// For backward compatiblity, we detect file stored into an old path
 		if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO) && $filearray[0]['level1name'] == 'photos')

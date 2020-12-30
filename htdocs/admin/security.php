@@ -241,8 +241,8 @@ print '</tr>';
 foreach ($arrayhandler as $key => $module)
 {
 	// Show modules according to features level
-	if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-	if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+    if (!empty($module->version) && $module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+    if (!empty($module->version) && $module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
 	if ($module->isEnabled())
 	{

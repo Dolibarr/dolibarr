@@ -161,7 +161,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table summary="more" class="noborder centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
-$selected = $conf->global->MAIN_PDF_FORMAT;
+$selected = (isset($conf->global->MAIN_PDF_FORMAT) ? $conf->global->MAIN_PDF_FORMAT : '');
 if (empty($selected)) $selected = dol_getDefaultFormat();
 
 // Show pdf format
@@ -320,13 +320,13 @@ print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>'.$langs->trans("ShowDetailsInPDFPageFoot").'</td><td>';
-print $form->selectarray('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', $arraydetailsforpdffoot, $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS);
+print $form->selectarray('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', $arraydetailsforpdffoot, (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS : 0));
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("PDF_USE_ALSO_LANGUAGE_CODE").'</td><td>';
 //if (! empty($conf->global->MAIN_MULTILANGS))
 //{
-print $formadmin->select_language(GETPOSTISSET('PDF_USE_ALSO_LANGUAGE_CODE') ? GETPOST('PDF_USE_ALSO_LANGUAGE_CODE') : $conf->global->PDF_USE_ALSO_LANGUAGE_CODE, 'PDF_USE_ALSO_LANGUAGE_CODE', 0, null, 1);
+print $formadmin->select_language(GETPOSTISSET('PDF_USE_ALSO_LANGUAGE_CODE') ? GETPOST('PDF_USE_ALSO_LANGUAGE_CODE') : (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) ? $conf->global->PDF_USE_ALSO_LANGUAGE_CODE : 0), 'PDF_USE_ALSO_LANGUAGE_CODE', 0, null, 1);
 //} else {
 //	print '<span class="opacitymedium">'.$langs->trans("MultiLangNotEnabled").'</span>';
 //}

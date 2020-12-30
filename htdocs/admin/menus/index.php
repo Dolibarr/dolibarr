@@ -367,7 +367,7 @@ if ($conf->use_javascript_ajax)
 	$remainingdata = array();
 	foreach ($data as $datar)
 	{
-		if (empty($datar['rowid']) || $tree_recur_alreadyadded[$datar['rowid']]) continue;
+		if (empty($datar['rowid']) || !empty($tree_recur_alreadyadded[$datar['rowid']])) continue;
 		$remainingdata[] = $datar;
 	}
 

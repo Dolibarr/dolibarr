@@ -163,7 +163,7 @@ function tree_recur($tab, $pere, $rang, $iddivjstree = 'iddivjstree', $donoreset
 
 				print '<ul'.(empty($pere['rowid']) ? ' id="treeData"' : '').'>'; $ulprinted++;
 			}
-			print "\n".'<li '.($tab[$x]['statut'] ? ' class="liuseractive"' : 'class="liuserdisabled"').'>';
+			print "\n".'<li '.(!empty($tab[$x]['statut']) ? ' class="liuseractive"' : 'class="liuserdisabled"').'>';
 			if ($showfk)
 			{
 				print '<table class="nobordernopadding centpercent"><tr><td>';
@@ -194,7 +194,7 @@ function tree_recur($tab, $pere, $rang, $iddivjstree = 'iddivjstree', $donoreset
 
 				print '<ul'.(empty($pere['rowid']) ? ' id="treeData"' : '').'>'; $ulprinted++;
 			}
-			print "\n".'<li '.($tab[$x]['statut'] ? ' class="liuseractive"' : 'class="liuserdisabled"').'>';
+			print "\n".'<li '.(!empty($tab[$x]['statut']) ? ' class="liuseractive"' : 'class="liuserdisabled"').'>';
 			if ($showfk)
 			{
 				print '<table class="nobordernopadding centpercent"><tr><td>';

@@ -163,7 +163,7 @@ if ($action == 'edit')
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_ROUNDING_RULE_TOT"), $langs->trans("ParameterActiveForNextInputOnly"));
-	print '</td><td><input class="flat" name="'.$mainroundingruletot.'" size="3" value="'.(isset($conf->global->$mainroundingruletot) ? $conf->global->$mainroundingruletot : $conf->global->MAIN_ROUNDING_RULE_TOT).'"></td></tr>';
+	print '</td><td><input class="flat" name="'.$mainroundingruletot.'" size="3" value="'.(isset($conf->global->$mainroundingruletot) ? $conf->global->$mainroundingruletot : (!empty($conf->global->MAIN_ROUNDING_RULE_TOT) ? $conf->global->MAIN_ROUNDING_RULE_TOT : '')).'"></td></tr>';
 
 	print '</table>';
 
@@ -193,7 +193,7 @@ if ($action == 'edit')
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_ROUNDING_RULE_TOT"), $langs->trans("ParameterActiveForNextInputOnly"));
-	print '</td><td align="right">'.(isset($conf->global->$mainroundingruletot) ? $conf->global->$mainroundingruletot : $conf->global->MAIN_ROUNDING_RULE_TOT).'</td></tr>';
+	print '</td><td align="right">'.(isset($conf->global->$mainroundingruletot) ? $conf->global->$mainroundingruletot : (!empty($conf->global->MAIN_ROUNDING_RULE_TOT) ? $conf->global->MAIN_ROUNDING_RULE_TOT : '')).'</td></tr>';
 
 	print '</table>';
 	print '</div>';
