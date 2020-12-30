@@ -202,8 +202,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 
 		// Define $sendtocc
 		$receivercc = $_POST['receivercc'];
-		if (!is_array($receivercc))
-		{
+		if (!is_array($receivercc)) {
 			if ($receivercc == '-1') $receivercc = array();
 			else $receivercc = array($receivercc);
 		}
@@ -217,9 +216,8 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 				if ($val == 'thirdparty') {
 					// Key selected means currentthird party (may be usd for current member or current user too)
 					$tmparray[] = dol_string_nospecial($thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
-				}
-				// Recipient was provided from combo list
-				elseif ($val == 'contact') {
+				} elseif ($val == 'contact') {
+					// Recipient was provided from combo list
 					// Key selected means current contact
 					$tmparray[] = dol_string_nospecial($contact->name, ' ', array(",")).' <'.$contact->email.'>';
 					//$sendtoid[] = $contact->id;  TODO Add also id of contact in CC ?
@@ -295,8 +293,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 			$sendtobcc = GETPOST('sendtoccc');
 			// Autocomplete the $sendtobcc
 			// $autocopy can be MAIN_MAIL_AUTOCOPY_PROPOSAL_TO, MAIN_MAIL_AUTOCOPY_ORDER_TO, MAIN_MAIL_AUTOCOPY_INVOICE_TO, MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO...
-			if (!empty($autocopy))
-			{
+			if (!empty($autocopy)) {
 				$sendtobcc .= (empty($conf->global->$autocopy) ? '' : (($sendtobcc ? ", " : "").$conf->global->$autocopy));
 			}
 
@@ -307,7 +304,9 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 				if ($message) {
 					$actionmsg = $langs->transnoentities('MailFrom').': '.dol_escape_htmltag($from);
 					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTo').': '.dol_escape_htmltag($sendto));
-					if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".dol_escape_htmltag($sendtocc));
+					if ($sendtocc) {
+						$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".dol_escape_htmltag($sendtocc));
+					}
 					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic').": ".$subject);
 					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody').":");
 					$actionmsg = dol_concatdesc($actionmsg, $message);
@@ -389,28 +388,25 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 			if (empty($sendcontext)) $sendcontext = 'standard';
 			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext);
 
-			if ($mailfile->error)
-			{
+			if ($mailfile->error) {
 				setEventMessages($mailfile->error, $mailfile->errors, 'errors');
 				$action = 'presend';
 			} else {
 				$result = $mailfile->sendfile();
-				if ($result)
-				{
+				if ($result) {
 					// Initialisation of datas of object to call trigger
-					if (is_object($object))
-					{
+					if (is_object($object)) {
 						if (empty($actiontypecode)) $actiontypecode = 'AC_OTH_AUTO'; // Event insert into agenda automatically
 
 						$object->socid = $sendtosocid; // To link to a company
 						$object->sendtoid = $sendtoid; // To link to contact-addresses. This is an array.
 						$object->actiontypecode = $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 						$object->actionmsg = $actionmsg; // Long text (@todo Replace this with $message, we already have details of email in dedicated properties)
-						$object->actionmsg2		= $actionmsg2; // Short text ($langs->transnoentities('MailSentBy')...);
+						$object->actionmsg2 = $actionmsg2; // Short text ($langs->transnoentities('MailSentBy')...);
 
 						$object->trackid = $trackid;
-						$object->fk_element		= $object->id;
-						$object->elementtype	= $object->element;
+						$object->fk_element = $object->id;
+						$object->elementtype = $object->element;
 						if (is_array($attachedfiles) && count($attachedfiles) > 0) {
 							$object->attachedfiles = $attachedfiles;
 						}
@@ -428,13 +424,13 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 						$object->email_msgid = $mailfile->msgid;
 
 						// Call of triggers (you should have set $triggersendname to execute trigger. $trigger_name is deprecated)
-						if (!empty($triggersendname) || !empty($trigger_name))
-						{
+						if (!empty($triggersendname) || !empty($trigger_name)) {
 							// Call trigger
 							$result = $object->call_trigger(empty($triggersendname) ? $trigger_name : $triggersendname, $user);
-							if ($result < 0) $error++;
+							if ($result < 0) {
+								$error++;
+							}
 							// End call triggers
-
 							if ($error) {
 								setEventMessages($object->error, $object->errors, 'errors');
 							}
