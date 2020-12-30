@@ -11,7 +11,7 @@
  * Copyright (C) 2015-2016 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2017      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2018      Charlene Benke       <charlie@patas-monkey.com>
- * Copyright (C) 2018-2019 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020 Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,8 +60,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'sup
 $socid = GETPOST('socid', 'int');
 
 // Security check
-if ($user->socid > 0)
-{
+if ($user->socid > 0) {
 	$action = '';
 	$_GET["action"] = '';
 	$socid = $user->socid;
@@ -363,13 +362,10 @@ if ($massaction == 'transfer_request')
 {
 	$langs->load("withdrawals");
 
-	if (!$user->rights->paymentbybanktransfer->create)
-	{
+	if (!$user->rights->paymentbybanktransfer->create) {
 		$error++;
 		setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
-	}
-	else
-	{
+	} else {
 		//Checking error
 		$error = 0;
 
@@ -421,34 +417,27 @@ if ($massaction == 'transfer_request')
 				elseif (!empty($objecttmp->mode_reglement_code) && $objecttmp->mode_reglement_code != 'VIR') {
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
-				}
-				else {
+				} else {
 					$listofbills[] = $objecttmp; // $listofbills will only contains invoices with good payment method and no request already done
 				}
 			}
 		}
 
 		//Massive withdraw request for request with no errors
-		if (!empty($listofbills))
-		{
+		if (!empty($listofbills)) {
 			$nbwithdrawrequestok = 0;
-			foreach ($listofbills as $aBill)
-			{
+			foreach ($listofbills as $aBill) {
 				$db->begin();
 				$result = $aBill->demande_prelevement($user, $aBill->resteapayer, 'bank-transfer', 'supplier_invoice');
-				if ($result > 0)
-				{
+				if ($result > 0) {
 					$db->commit();
 					$nbwithdrawrequestok++;
-				}
-				else
-				{
+				} else {
 					$db->rollback();
 					setEventMessages($aBill->error, $aBill->errors, 'errors');
 				}
 			}
-			if ($nbwithdrawrequestok > 0)
-			{
+			if ($nbwithdrawrequestok > 0) {
 				setEventMessages($langs->trans("BankTransferRequestsDone", $nbwithdrawrequestok), null, 'mesgs');
 			}
 		}
