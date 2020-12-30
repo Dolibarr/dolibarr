@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016       Neil Orley          <neil.orley@oeris.fr>
  * Copyright (C) 2013-2016  Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2013-2016  Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2020  Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2020  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
@@ -22,7 +22,7 @@
 /**
  * \file 		htdocs/accountancy/bookkeeping/listbyaccount.php
  * \ingroup 	Accountancy (Double entries)
- * \brief 		List operation of book keeping ordered by account number
+ * \brief 		List operation of ledger ordered by account number
  */
 
 require '../../main.inc.php';
@@ -62,7 +62,7 @@ $search_doc_ref = GETPOST('search_doc_ref', 'alpha');
 $search_label_operation = GETPOST('search_label_operation', 'alpha');
 $search_mvt_num = GETPOST('search_mvt_num', 'int');
 $search_direction = GETPOST('search_direction', 'alpha');
-$search_ledger_code = GETPOST('search_ledger_code', 'alpha');
+$search_ledger_code = GETPOST('search_ledger_code', 'array');
 $search_debit = GETPOST('search_debit', 'alpha');
 $search_credit = GETPOST('search_credit', 'alpha');
 $search_lettering_code = GETPOST('search_lettering_code', 'alpha');
@@ -172,7 +172,7 @@ if (empty($reshook))
 		$search_label_operation = '';
 		$search_mvt_num = '';
 		$search_direction = '';
-		$search_ledger_code = '';
+		$search_ledger_code = array();
 		$search_date_start = '';
 		$search_date_end = '';
 		$search_date_startyear = '';
@@ -233,7 +233,9 @@ if (empty($reshook))
 	}
 	if (!empty($search_ledger_code)) {
 		$filter['t.code_journal'] = $search_ledger_code;
-		$param .= '&search_ledger_code='.urlencode($search_ledger_code);
+		foreach ($search_ledger_code as $code) {
+			$param .= '&search_ledger_code[]='.urlencode($code);
+		}
 	}
 	if (!empty($search_debit)) {
 		$filter['t.debit'] = $search_debit;
@@ -448,7 +450,9 @@ print '<tr class="liste_titre_filter">';
 
 // Code journal
 if (!empty($arrayfields['t.code_journal']['checked'])) {
-	print '<td class="liste_titre center"><input type="text" name="search_ledger_code" size="3" value="'.dol_escape_htmltag($search_ledger_code).'"></td>';
+	print '<td class="liste_titre center">';
+	print $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1);
+	print '</td>';
 }
 // Date document
 if (!empty($arrayfields['t.doc_date']['checked'])) {
