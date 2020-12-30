@@ -629,25 +629,23 @@ class FormMail extends Form
 			}
 
 			// To
-			if (!empty($this->withto) || is_array($this->withto))
-			{
+			if (!empty($this->withto) || is_array($this->withto)) {
 				$out .= '<tr><td class="fieldrequired">';
-				if ($this->withtofree) $out .= $form->textwithpicto($langs->trans("MailTo"), $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
-				else $out .= $langs->trans("MailTo");
+				if ($this->withtofree) {
+					$out .= $form->textwithpicto($langs->trans("MailTo"), $langs->trans("YouCanUseFreeEmailsForRecipients"));
+				} else {
+					$out .= $langs->trans("MailTo");
+				}
 				$out .= '</td><td>';
-				if ($this->withtoreadonly)
-				{
-					if (!empty($this->toname) && !empty($this->tomail))
-					{
+				if ($this->withtoreadonly) {
+					if (!empty($this->toname) && !empty($this->tomail)) {
 						$out .= '<input type="hidden" id="toname" name="toname" value="'.$this->toname.'" />';
 						$out .= '<input type="hidden" id="tomail" name="tomail" value="'.$this->tomail.'" />';
-						if ($this->totype == 'thirdparty')
-						{
+						if ($this->totype == 'thirdparty') {
 							$soc = new Societe($this->db);
 							$soc->fetch($this->toid);
 							$out .= $soc->getNomUrl(1);
-						} elseif ($this->totype == 'contact')
-						{
+						} elseif ($this->totype == 'contact') {
 							$contact = new Contact($this->db);
 							$contact->fetch($this->toid);
 							$out .= $contact->getNomUrl(1);
@@ -655,8 +653,7 @@ class FormMail extends Form
 							$out .= $this->toname;
 						}
 						$out .= ' &lt;'.$this->tomail.'&gt;';
-						if ($this->withtofree)
-						{
+						if ($this->withtofree) {
 							$out .= '<br>'.$langs->trans("and").' <input class="minwidth200" id="sendto" name="sendto" value="'.(!is_array($this->withto) && !is_numeric($this->withto) ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "").'" />';
 						}
 					} else {
@@ -665,49 +662,42 @@ class FormMail extends Form
 					}
 				} else {
 					// The free input of email
-					if (!empty($this->withtofree))
-					{
-						$out .= '<input class="minwidth200" id="sendto" name="sendto" value="'.(($this->withtofree && !is_numeric($this->withtofree)) ? $this->withtofree : (!is_array($this->withto) && !is_numeric($this->withto) ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "")).'" />';
+					if (!empty($this->withtofree)) {
+						//$out .= '<input class="minwidth200" id="sendto" name="sendto" value="'.(($this->withtofree && !is_numeric($this->withtofree)) ? $this->withtofree : (!is_array($this->withto) && !is_numeric($this->withto) ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "")).'" />';
 					}
 					// The select combo
-					if (!empty($this->withto) && is_array($this->withto))
-					{
-						if (!empty($this->withtofree)) $out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
+					if (!empty($this->withto) && is_array($this->withto)) {
+						//if (!empty($this->withtofree)) $out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
 						// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
 						$tmparray = $this->withto;
-						foreach ($tmparray as $key => $val)
-						{
+						foreach ($tmparray as $key => $val) {
 							$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 						}
 
 						$withtoselected = GETPOST("receiver", 'array'); // Array of selected value
 
-						if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend')
-						{
+						if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
 							$withtoselected = array_keys($tmparray);
 						}
-						$out .= $form->multiselectarray("receiver", $tmparray, $withtoselected, null, null, 'inline-block minwidth500', null, "");
+						$out .= $form->multiselectarray("receiver", $tmparray, $withtoselected, null, null, 'inline-block minwidth500', 0, '', '', 'email', '', -1, !empty($this->withtofree)?1:0);
 					}
 				}
 				$out .= "</td></tr>\n";
 			}
 
 			// To User
-			if (!empty($this->withtouser) && is_array($this->withtouser) && !empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT))
-			{
+			if (!empty($this->withtouser) && is_array($this->withtouser) && !empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
 				$out .= '<tr><td>';
 				$out .= $langs->trans("MailToUsers");
 				$out .= '</td><td>';
 
 				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
 				$tmparray = $this->withtouser;
-				foreach ($tmparray as $key => $val)
-				{
+				foreach ($tmparray as $key => $val) {
 					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 				}
 				$withtoselected = GETPOST("receiveruser", 'array'); // Array of selected value
-				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend')
-				{
+				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
 					$withtoselected = array_keys($tmparray);
 				}
 				$out .= $form->multiselectarray("receiveruser", $tmparray, $withtoselected, null, null, 'inline-block minwidth500', null, "");
@@ -715,8 +705,7 @@ class FormMail extends Form
 			}
 
 			// With option one email per recipient
-			if (!empty($this->withoptiononeemailperrecipient))
-			{
+			if (!empty($this->withoptiononeemailperrecipient)) {
 				$out .= '<tr><td class="minwidth200">';
 				$out .= $langs->trans("GroupEmails");
 				$out .= '</td><td>';
@@ -730,19 +719,16 @@ class FormMail extends Form
 			}
 
 			// CC
-			if (!empty($this->withtocc) || is_array($this->withtocc))
-			{
+			if (!empty($this->withtocc) || is_array($this->withtocc)) {
 				$out .= '<tr><td>';
-				$out .= $form->textwithpicto($langs->trans("MailCC"), $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+				$out .= $form->textwithpicto($langs->trans("MailCC"), $langs->trans("YouCanUseFreeEmailsForRecipients"));
 				$out .= '</td><td>';
-				if ($this->withtoccreadonly)
-				{
+				if ($this->withtoccreadonly) {
 					$out .= (!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : "";
 				} else {
-					$out .= '<input class="minwidth200" id="sendtocc" name="sendtocc" value="'.(GETPOST("sendtocc", "alpha") ? GETPOST("sendtocc", "alpha") : ((!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : '')).'" />';
-					if (!empty($this->withtocc) && is_array($this->withtocc))
-					{
-						$out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
+					//$out .= '<input class="minwidth200" id="sendtocc" name="sendtocc" value="'.(GETPOST("sendtocc", "alpha") ? GETPOST("sendtocc", "alpha") : ((!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : '')).'" />';
+					if (!empty($this->withtocc) && is_array($this->withtocc)) {
+						//$out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
 						// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
 						$tmparray = $this->withtocc;
 						foreach ($tmparray as $key => $val)
@@ -750,28 +736,25 @@ class FormMail extends Form
 							$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 						}
 						$withtoccselected = GETPOST("receivercc", 'array'); // Array of selected value
-						$out .= $form->multiselectarray("receivercc", $tmparray, $withtoccselected, null, null, 'inline-block minwidth500', null, "");
+						$out .= $form->multiselectarray("receivercc", $tmparray, $withtoccselected, null, null, 'inline-block minwidth500', 0, '', '', 'email', '', -1, !empty($this->withtofree)?1:0);
 					}
 				}
 				$out .= "</td></tr>\n";
 			}
 
 			// To User cc
-			if (!empty($this->withtoccuser) && is_array($this->withtoccuser) && !empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT))
-			{
+			if (!empty($this->withtoccuser) && is_array($this->withtoccuser) && !empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
 				$out .= '<tr><td>';
 				$out .= $langs->trans("MailToCCUsers");
 				$out .= '</td><td>';
 
 				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
 				$tmparray = $this->withtoccuser;
-				foreach ($tmparray as $key => $val)
-				{
+				foreach ($tmparray as $key => $val) {
 					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 				}
 				$withtoselected = GETPOST("receiverccuser", 'array'); // Array of selected value
-				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend')
-				{
+				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
 					$withtoselected = array_keys($tmparray);
 				}
 				$out .= $form->multiselectarray("receiverccuser", $tmparray, $withtoselected, null, null, 'inline-block minwidth500', null, "");
@@ -784,10 +767,8 @@ class FormMail extends Form
 			}
 
 			// Replyto
-			if (!empty($this->withreplyto))
-			{
-				if ($this->withreplytoreadonly)
-				{
+			if (!empty($this->withreplyto)) {
+				if ($this->withreplytoreadonly) {
 					$out .= '<input type="hidden" id="replyname" name="replyname" value="'.$this->replytoname.'" />';
 					$out .= '<input type="hidden" id="replymail" name="replymail" value="'.$this->replytomail.'" />';
 					$out .= "<tr><td>".$langs->trans("MailReply")."</td><td>".$this->replytoname.($this->replytomail ? (" &lt;".$this->replytomail."&gt;") : "");
@@ -818,34 +799,27 @@ class FormMail extends Form
 
 				$out .= '<td>';
 
-				if ($this->withmaindocfile)	// withmaindocfile is set to 1 or -1 to show the checkbox (-1 = checked or 1 = not checked)
-				{
-					if (GETPOSTISSET('sendmail'))
-					{
+				if ($this->withmaindocfile) {
+					// withmaindocfile is set to 1 or -1 to show the checkbox (-1 = checked or 1 = not checked)
+					if (GETPOSTISSET('sendmail')) {
 						$this->withmaindocfile = (GETPOST('addmaindocfile', 'alpha') ? -1 : 1);
-					}
-					// If a template was selected, we use setup of template to define if join file checkbox is selected or not.
-					elseif (is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
-					{
+					} elseif (is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+						// If a template was selected, we use setup of template to define if join file checkbox is selected or not.
 						$this->withmaindocfile = ($arraydefaultmessage->joinfiles ? -1 : 1);
 					}
 				}
 
-				if (!empty($this->withmaindocfile))
-				{
-					if ($this->withmaindocfile == 1)
-					{
+				if (!empty($this->withmaindocfile)) {
+					if ($this->withmaindocfile == 1) {
 						$out .= '<input type="checkbox" name="addmaindocfile" value="1" />';
 					}
-					if ($this->withmaindocfile == -1)
-					{
+					if ($this->withmaindocfile == -1) {
 						$out .= '<input type="checkbox" name="addmaindocfile" value="1" checked="checked" />';
 					}
 					$out .= ' '.$langs->trans("JoinMainDoc").'.<br>';
 				}
 
-				if (is_numeric($this->withfile))
-				{
+				if (is_numeric($this->withfile)) {
 					// TODO Trick to have param removedfile containing nb of file to delete. But this does not works without javascript
 					$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
 					$out .= '<script type="text/javascript" language="javascript">';
@@ -855,28 +829,25 @@ class FormMail extends Form
 					$out .= '    });';
 					$out .= '})';
 					$out .= '</script>'."\n";
-					if (count($listofpaths))
-					{
-						foreach ($listofpaths as $key => $val)
-						{
+					if (count($listofpaths)) {
+						foreach ($listofpaths as $key => $val) {
 							$out .= '<div id="attachfile_'.$key.'">';
 							// Preview of attachment
 							preg_match('#^(/)(\w+)(/)(.+)$#', substr($val, (strlen(DOL_DATA_ROOT) - strlen($val))), $formfile_params);
 							$out .= img_mime($listofnames[$key]).' '.$listofnames[$key];
 							$out .= $formfile->showPreview(array(), $formfile_params[2], $formfile_params[4]);
-							if (!$this->withfilereadonly)
-							{
+							if (!$this->withfilereadonly) {
 								$out .= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key + 1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
 								//$out.= ' <a href="'.$_SERVER["PHP_SELF"].'?removedfile='.($key+1).' id="removedfile_'.$key.'">'.img_delete($langs->trans("Delete").'</a>';
 							}
 							$out .= '<br></div>';
 						}
-					} elseif (empty($this->withmaindocfile))		// Do not show message if we asked to show the checkbox
-					{
+					} elseif (empty($this->withmaindocfile)) {
+						// Do not show message if we asked to show the checkbox
 						$out .= $langs->trans("NoAttachedFiles").'<br>';
 					}
-					if ($this->withfile == 2)	// Can add other files
-					{
+					if ($this->withfile == 2) {
+						// Can add other files
 						if (!empty($conf->global->FROM_MAIL_USE_INPUT_FILE_MULTIPLE)) $out .= '<input type="file" class="flat" id="addedfile" name="addedfile[]" value="'.$langs->trans("Upload").'" multiple />';
 						else $out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
 						$out .= ' ';

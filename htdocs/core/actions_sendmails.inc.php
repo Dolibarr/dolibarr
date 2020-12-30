@@ -33,8 +33,7 @@
 /*
  * Add file in email form
  */
-if (GETPOST('addfile', 'alpha'))
-{
+if (GETPOST('addfile', 'alpha')) {
 	$trackid = GETPOST('trackid', 'aZ09');
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -50,8 +49,7 @@ if (GETPOST('addfile', 'alpha'))
 /*
  * Remove file in email form
  */
-if (!empty($_POST['removedfile']) && empty($_POST['removAll']))
-{
+if (!empty($_POST['removedfile']) && empty($_POST['removAll'])) {
 	$trackid = GETPOST('trackid', 'aZ09');
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -69,8 +67,7 @@ if (!empty($_POST['removedfile']) && empty($_POST['removAll']))
 /*
  * Remove all files in email form
  */
-if (GETPOST('removAll', 'alpha'))
-{
+if (GETPOST('removAll', 'alpha')) {
 	$trackid = GETPOST('trackid', 'aZ09');
 
 	$listofpaths = array();
@@ -85,8 +82,7 @@ if (GETPOST('removAll', 'alpha'))
 	$formmail = new FormMail($db);
 	$formmail->trackid = $trackid;
 
-	foreach ($listofpaths as $key => $value)
-	{
+	foreach ($listofpaths as $key => $value) {
 		$pathtodelete = $value;
 		$filetodelete = $listofnames[$key];
 		$result = dol_delete_file($pathtodelete, 1); // Delete uploded Files
@@ -101,50 +97,44 @@ if (GETPOST('removAll', 'alpha'))
 /*
  * Send mail
  */
-if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST['removAll'] && !$_POST['removedfile'] && !$_POST['cancel'] && !$_POST['modelselected'])
-{
+if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST['removAll'] && !$_POST['removedfile'] && !$_POST['cancel'] && !$_POST['modelselected']) {
 	if (empty($trackid)) $trackid = GETPOST('trackid', 'aZ09');
 
 	$subject = ''; $actionmsg = ''; $actionmsg2 = '';
 
 	$langs->load('mails');
 
-	if (is_object($object))
-	{
+	if (is_object($object)) {
 		$result = $object->fetch($id);
 
 		$sendtosocid = 0; // Id of related thirdparty
-		if (method_exists($object, "fetch_thirdparty") && !in_array($object->element, array('member', 'user', 'expensereport', 'societe', 'contact')))
-		{
+		if (method_exists($object, "fetch_thirdparty") && !in_array($object->element, array('member', 'user', 'expensereport', 'societe', 'contact'))) {
 			$resultthirdparty = $object->fetch_thirdparty();
 			$thirdparty = $object->thirdparty;
 			if (is_object($thirdparty)) $sendtosocid = $thirdparty->id;
-		} elseif ($object->element == 'member' || $object->element == 'user')
-		{
+		} elseif ($object->element == 'member' || $object->element == 'user') {
 			$thirdparty = $object;
 			if ($object->socid > 0) $sendtosocid = $object->socid;
-		} elseif ($object->element == 'expensereport')
-		{
+		} elseif ($object->element == 'expensereport') {
 			$tmpuser = new User($db);
 			$tmpuser->fetch($object->fk_user_author);
 			$thirdparty = $tmpuser;
 			if ($object->socid > 0) $sendtosocid = $object->socid;
-		} elseif ($object->element == 'societe')
-		{
+		} elseif ($object->element == 'societe') {
 			$thirdparty = $object;
 			if (is_object($thirdparty) && $thirdparty->id > 0) $sendtosocid = $thirdparty->id;
-		} elseif ($object->element == 'contact')
-		{
+		} elseif ($object->element == 'contact') {
 			$contact = $object;
 			if ($contact->id > 0) {
 				$contact->fetch_thirdparty();
 				$thirdparty = $contact->thirdparty;
 				if (is_object($thirdparty) && $thirdparty->id > 0) $sendtosocid = $thirdparty->id;
 			}
-		} else dol_print_error('', "Use actions_sendmails.in.php for an element/object '".$object->element."' that is not supported");
+		} else {
+			dol_print_error('', "Use actions_sendmails.in.php for an element/object '".$object->element."' that is not supported");
+		}
 
-		if (is_object($hookmanager))
-		{
+		if (is_object($hookmanager)) {
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('initSendToSocid', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		}
@@ -152,8 +142,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 		$thirdparty = $mysoc;
 	}
 
-	if ($result > 0)
-	{
+	if ($result > 0) {
 		$sendto = '';
 		$sendtocc = '';
 		$sendtobcc = '';
@@ -163,36 +152,34 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 
 		// Define $sendto
 		$receiver = $_POST['receiver'];
-		if (!is_array($receiver))
-		{
+		if (!is_array($receiver)) {
 			if ($receiver == '-1') $receiver = array();
 			else $receiver = array($receiver);
 		}
 
 		$tmparray = array();
-		if (trim($_POST['sendto']))
-		{
+		if (trim($_POST['sendto'])) {
 			// Recipients are provided into free text
 			$tmparray[] = trim($_POST['sendto']);
 		}
 
-		if (count($receiver) > 0)
-		{
+		if (count($receiver) > 0) {
 			// Recipient was provided from combo list
-			foreach ($receiver as $key=>$val)
-			{
-				if ($val == 'thirdparty') // Key selected means current third party ('thirdparty' may be used for current member or current user too)
-				{
+			foreach ($receiver as $key=>$val) {
+				if ($val == 'thirdparty') {
+					// Key selected means current third party ('thirdparty' may be used for current member or current user too)
 					$tmparray[] = dol_string_nospecial($thirdparty->getFullName($langs), ' ', array(",")).' <'.$thirdparty->email.'>';
 				}
 				elseif ($val == 'contact') // Key selected means current contact
 				{
 					$tmparray[] = dol_string_nospecial($contact->getFullName($langs), ' ', array(",")).' <'.$contact->email.'>';
 					$sendtoid[] = $contact->id;
-				} elseif ($val)	// $val is the Id of a contact
-				{
+				} elseif ((int) $val > 0) {
+					// $val is the Id of a contact
 					$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 					$sendtoid[] = ((int) $val);
+				} else {
+					$tmparray[] = $val;
 				}
 			}
 		}
@@ -221,39 +208,37 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 			else $receivercc = array($receivercc);
 		}
 		$tmparray = array();
-		if (trim($_POST['sendtocc']))
-		{
+		if (trim($_POST['sendtocc'])) {
 			$tmparray[] = trim($_POST['sendtocc']);
 		}
-		if (count($receivercc) > 0)
-		{
-			foreach ($receivercc as $key=>$val)
-			{
+		if (count($receivercc) > 0) {
+			foreach ($receivercc as $key=>$val) {
 				// Recipient was provided from combo list
-				if ($val == 'thirdparty')	// Key selected means currentthird party (may be usd for current member or current user too)
-				{
+				if ($val == 'thirdparty') {
+					// Key selected means currentthird party (may be usd for current member or current user too)
 					$tmparray[] = dol_string_nospecial($thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
 				}
 				// Recipient was provided from combo list
-				elseif ($val == 'contact')	// Key selected means current contact
-				{
+				elseif ($val == 'contact') {
+					// Key selected means current contact
 					$tmparray[] = dol_string_nospecial($contact->name, ' ', array(",")).' <'.$contact->email.'>';
 					//$sendtoid[] = $contact->id;  TODO Add also id of contact in CC ?
-				} elseif ($val)				// $val is the Id of a contact
-				{
+				} elseif ((int) $val > 0) {
+					// $val is the Id of a contact
 					$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
-					//$sendtoid[] = ((int) $val);  TODO Add also id of contact in CC ?
+					//$sendtoid[] = ((int) $val);  TODO Add also id of contact
+					//in CC ?
+				} else {
+					$tmparray[] = $val;
 				}
 			}
 		}
 		if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
 			$receiverccuser = $_POST['receiverccuser'];
 
-			if (is_array($receiverccuser) && count($receiverccuser) > 0)
-			{
+			if (is_array($receiverccuser) && count($receiverccuser) > 0) {
 				$fuserdest = new User($db);
-				foreach ($receiverccuser as $key=>$val)
-				{
+				foreach ($receiverccuser as $key=>$val) {
 					$tmparray[] = $fuserdest->user_get_property($val, 'email');
 					$sendtoccuserid[] = $val;
 				}
@@ -261,8 +246,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 		}
 		$sendtocc = implode(',', $tmparray);
 
-		if (dol_strlen($sendto))
-		{
+		if (dol_strlen($sendto)) {
 			// Define $urlwithroot
 			$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 			$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
@@ -291,8 +275,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 				$sql .= ' WHERE rowid = '.(int) $reg[1];
 				$resql = $db->query($sql);
 				$obj = $db->fetch_object($resql);
-				if ($obj)
-				{
+				if ($obj) {
 					$from = dol_string_nospecial($obj->label, ' ', array(",")).' <'.$obj->email.'>';
 				}
 			} else {
@@ -319,11 +302,9 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 
 			$deliveryreceipt = $_POST['deliveryreceipt'];
 
-			if ($action == 'send' || $action == 'relance')
-			{
+			if ($action == 'send' || $action == 'relance') {
 				$actionmsg2 = $langs->transnoentities('MailSentBy').' '.CMailFile::getValidAddress($from, 4, 0, 1).' '.$langs->transnoentities('at').' '.CMailFile::getValidAddress($sendto, 4, 0, 1);
-				if ($message)
-				{
+				if ($message) {
 					$actionmsg = $langs->transnoentities('MailFrom').': '.dol_escape_htmltag($from);
 					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTo').': '.dol_escape_htmltag($sendto));
 					if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".dol_escape_htmltag($sendtocc));
