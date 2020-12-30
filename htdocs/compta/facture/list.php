@@ -1584,6 +1584,8 @@ if ($resql)
 			{
 				print '<td class="right nowrap">'.price($marginInfo['total_margin']).'</td>';
 				if (!$i) $totalarray['nbfield']++;
+				if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'total_margin';
+				$totalarray['val']['total_margin'] += $marginInfo['total_margin'];
 			}
 			// Total margin rate
 			if (!empty($arrayfields['total_margin_rate']['checked']))
