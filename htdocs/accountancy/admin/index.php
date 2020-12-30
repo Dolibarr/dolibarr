@@ -48,7 +48,7 @@ $action = GETPOST('action', 'aZ09');
 $list = array(
 	'ACCOUNTING_LENGTH_GACCOUNT',
 	'ACCOUNTING_LENGTH_AACCOUNT',
-	'ACCOUNTING_LIMIT_LIST_VENTILATION'
+//	'ACCOUNTING_LIMIT_LIST_VENTILATION'		   // there is already a global parameter to define the nb of records in lists, we must use it in priority. Having one parameter for nb of record for each page is deprecated.	
 //    'ACCOUNTING_LENGTH_DESCRIPTION',         // adjust size displayed for lines description for dol_trunc
 //    'ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT', // adjust size displayed for select account description for dol_trunc
 );
