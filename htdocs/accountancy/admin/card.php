@@ -238,16 +238,16 @@ if ($action == 'create') {
 	print $formaccounting->select_account($object->account_parent, 'account_parent', 1, null, 0, 0, 'minwidth200');
 	print '</td></tr>';
 
-	// Category
-	print '<tr><td>'.$langs->trans("AccountingCategory").'</td>';
-	print '<td>';
-	$formaccounting->select_accounting_category($object->account_category, 'account_category', 1, 0, 1);
-	print '</td></tr>';
-
 	// Chart of accounts type
 	print '<tr><td>'.$langs->trans("Pcgtype").'</td>';
 	print '<td>';
 	print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(GETPOSTISSET('pcg_type') ? GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
+	print '</td></tr>';
+
+	// Category
+	print '<tr><td>'.$langs->trans("AccountingCategory").'</td>';
+	print '<td>';
+	$formaccounting->select_accounting_category($object->account_category, 'account_category', 1, 0, 1);
 	print '</td></tr>';
 
 	print '</table>';
@@ -300,16 +300,16 @@ if ($action == 'create') {
 			print $formaccounting->select_account($object->account_parent, 'account_parent', 1);
 			print '</td></tr>';
 
-			// Category
-			print '<tr><td>'.$langs->trans("AccountingCategory").'</td>';
-			print '<td>';
-			$formaccounting->select_accounting_category($object->account_category, 'account_category', 1);
-			print '</td></tr>';
-
 			// Chart of accounts type
 			print '<tr><td>'.$langs->trans("Pcgtype").'</td>';
 			print '<td>';
 			print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(GETPOSTISSET('pcg_type') ? GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
+			print '</td></tr>';
+
+			// Category
+			print '<tr><td>'.$langs->trans("AccountingCategory").'</td>';
+			print '<td>';
+			$formaccounting->select_accounting_category($object->account_category, 'account_category', 1);
 			print '</td></tr>';
 
 			print '</table>';
