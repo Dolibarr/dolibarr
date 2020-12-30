@@ -1773,7 +1773,7 @@ class User extends CommonObject
 
 						$adh->pass = $this->pass;
 
-						$adh->societe = (empty($adh->societe) && $this->societe_id ? $this->societe_id : $adh->societe);
+						//$adh->societe = (empty($adh->societe) && $this->societe_id ? $this->societe_id : $adh->societe);
 
 						$adh->address = $this->address;
 						$adh->town = $this->town;
@@ -2385,6 +2385,7 @@ class User extends CommonObject
 		}
 
 		$result = ''; $label = '';
+		$companylink = '';
 
 		if (!empty($this->photo)) {
 			$label .= '<div class="photointooltip">';

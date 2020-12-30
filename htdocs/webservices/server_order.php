@@ -354,7 +354,7 @@ $server->register(
  */
 function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	dol_syslog("Function: getOrder login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
@@ -367,7 +367,7 @@ function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
-	if ($fuser->societe_id) $socid = $fuser->societe_id;
+	if ($fuser->socid) $socid = $fuser->socid;
 
 	// Check parameters
 	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
@@ -387,10 +387,10 @@ function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 			if ($result > 0)
 			{
 				// Security for external user
-				if ($socid && ($socid != $order->socid))
+				if ($socid && (empty($order->socid) || $socid != $order->socid))
 				{
 					$error++;
-					$errorcode = 'PERMISSION_DENIED'; $errorlabel = $order->socid.'User does not have permission for this request';
+					$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 				}
 
 				if (!$error)
@@ -504,7 +504,7 @@ function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
  */
 function getOrdersForThirdParty($authentication, $idthirdparty)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	dol_syslog("Function: getOrdersForThirdParty login=".$authentication['login']." idthirdparty=".$idthirdparty);
 
@@ -516,7 +516,7 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
-	if ($fuser->societe_id) $socid = $fuser->societe_id;
+	if ($fuser->socid) $socid = $fuser->socid;
 
 	// Check parameters
 	if (!$error && empty($idthirdparty))
@@ -707,7 +707,7 @@ function createOrder($authentication, $order)
 		$extrafields->fetch_name_optionals_label($elementtype, true);
 		if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
-			foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+			foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 			{
 				$key = 'options_'.$key;
 				$newobject->array_options[$key] = $order[$key];
@@ -813,7 +813,7 @@ function validOrder($authentication, $id = '', $id_warehouse = 0)
 {
 	global $db, $conf, $langs;
 
-	dol_syslog("Function: validOrder login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
+	dol_syslog("Function: validOrder login=".$authentication['login']." id=".$id." id_warehouse=".$id_warehouse);
 
 	// Init and check authentication
 	$objectresp = array();
@@ -830,7 +830,7 @@ function validOrder($authentication, $id = '', $id_warehouse = 0)
 		if ($fuser->rights->commande->lire)
 		{
 			$order = new Commande($db);
-			$result = $order->fetch($id, $ref, $ref_ext);
+			$result = $order->fetch($id);
 
 			$order->fetch_thirdparty();
 			$db->begin();
@@ -888,8 +888,6 @@ function validOrder($authentication, $id = '', $id_warehouse = 0)
 function updateOrder($authentication, $order)
 {
 	global $db, $conf, $langs;
-
-	$now = dol_now();
 
 	dol_syslog("Function: updateOrder login=".$authentication['login']);
 
@@ -950,7 +948,7 @@ function updateOrder($authentication, $order)
 			$extrafields->fetch_name_optionals_label($elementtype, true);
 			if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 			{
-				foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+				foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 				{
 					$key = 'options_'.$key;
 					if (isset($order[$key]))
