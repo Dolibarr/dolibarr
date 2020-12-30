@@ -572,16 +572,9 @@ if ($action == "deleteline") {
 	}
 }
 
+// Action to delete or discard an invoice
 if ($action == "delete") {
 	// $placeid is the invoice id (it differs from place) and is defined if the place is set and the ref of invoice is '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')', so the fetch at begining of page works.
-
-	/*$reg = array();
-	if (preg_match('/^(\d+)-(\d+)$/', $place, $reg)) {
-
-		$place = $reg[1];
-		var_dump($place);
-	}*/
-
 	if ($placeid > 0) {
 		$result = $invoice->fetch($placeid);
 
@@ -599,7 +592,9 @@ if ($action == "delete") {
 				}
 			}
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]};
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
+			$sql .= " SET fk_soc=".$conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]}.", ";
+			$sql .= " datec = '".$db->idate(dol_now())."'";
 			$sql .= " WHERE ref='(PROV-POS".$db->escape($_SESSION["takeposterminal"]."-".$place).")'";
 			$resql1 = $db->query($sql);
 

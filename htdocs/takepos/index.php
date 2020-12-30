@@ -483,7 +483,7 @@ function TakeposOrderNotes() {
 }
 
 function Refresh() {
-	console.log("Refresh");
+	console.log("Refresh by reloading place="+place);
 	$("#poslines").load("invoice.php?place="+place, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
@@ -491,9 +491,10 @@ function Refresh() {
 
 function New() {
 	// If we go here,it means $conf->global->TAKEPOS_BAR_RESTAURANT is not defined
-	console.log("New with place = <?php echo $place; ?>, js place="+place);
-
 	invoiceid = $("#invoiceid").val();
+
+	console.log("New with place = <?php echo $place; ?>, js place="+place+", invoiceid="+invoiceid);
+
 	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getInvoice&id='+invoiceid, function(data) {
 		var r;
 
