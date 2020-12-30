@@ -408,7 +408,7 @@ if ($action == 'create')
 
 	// Subledger account
 	if (!empty($conf->accounting->enabled)) {
-		print '<tr><td>'.$langs->trans("SubledgerAccount").'aaaa</td>';
+		print '<tr><td>'.$langs->trans("SubledgerAccount").'</td>';
 		print '<td>';
 		if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
 			print $formaccounting->select_auxaccount($subledger_account, 'subledger_account', 1, '');

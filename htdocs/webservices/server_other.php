@@ -208,7 +208,7 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
-	if ($fuser->societe_id) $socid = $fuser->societe_id;
+	if ($fuser->socid) $socid = $fuser->socid;
 
 	// Check parameters
 	if (!$error && (!$file || !$modulepart))
@@ -234,7 +234,7 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 		$original_file              = $check_access['original_file'];
 
 		// Basic protection (against external users only)
-		if ($fuser->societe_id > 0)
+		if ($fuser->socid > 0)
 		{
 			if ($sqlprotectagainstexternals)
 			{
@@ -246,7 +246,7 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 					while ($i < $num)
 					{
 						$obj = $db->fetch_object($resql);
-						if ($fuser->societe_id != $obj->fk_soc)
+						if ($fuser->socid != $obj->fk_soc)
 						{
 							$accessallowed = 0;
 							break;

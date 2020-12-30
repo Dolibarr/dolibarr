@@ -145,7 +145,7 @@ NotVentilatedinAccount=Not bound to the accounting account
 XLineSuccessfullyBinded=%s products/services successfully bound to an accounting account
 XLineFailedToBeBinded=%s products/services were not bound to any accounting account
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to bind shown by page (maximum recommended: 50)
+ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the page "Binding to do" by the most recent elements
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the page "Binding done" by the most recent elements
 
@@ -251,7 +251,7 @@ PaymentsNotLinkedToProduct=Payment not linked to any product / service
 OpeningBalance=Opening balance
 ShowOpeningBalance=Show opening balance
 HideOpeningBalance=Hide opening balance
-ShowSubtotalByGroup=Show subtotal by group
+ShowSubtotalByGroup=Show subtotal by level
 
 Pcgtype=Group of account
 PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.

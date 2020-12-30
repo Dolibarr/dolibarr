@@ -485,7 +485,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
-	if ($fuser->societe_id) $socid = $fuser->societe_id;
+	if ($fuser->socid) $socid = $fuser->socid;
 
 	if (!$error && !$thirdpartywithuser)
 	{
@@ -502,7 +502,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 			$thirdparty = new Societe($db);
 
 			// If a contact / company already exists with the email, return the corresponding socid
-			$sql = "SELECT s.rowid as societe_id FROM ".MAIN_DB_PREFIX."societe as s";
+			$sql = "SELECT s.rowid as socid FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON sp.fk_soc = s.rowid";
 			$sql .= " WHERE s.entity=".$conf->entity;
 			$sql .= " AND s.email='".$db->escape($thirdpartywithuser['email'])."'";
@@ -690,7 +690,7 @@ function setUserPassword($authentication, $shortuser)
 
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
-	if ($fuser->societe_id) $socid = $fuser->societe_id;
+	if ($fuser->socid) $socid = $fuser->socid;
 
 	if (!$error && !$shortuser)
 	{
