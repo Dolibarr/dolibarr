@@ -763,13 +763,13 @@ $( document ).ready(function() {
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
 			echo '$("#customerandsales").append(\'';
-			echo '<a class="valignmiddle" onclick="place=\\\'';
+			echo '<a class="valignmiddle" title="'.dol_escape_js($langs->trans("SaleStartedAt", dol_print_date($db->jdate($obj->datec), '%H:%M'))).'" onclick="place=\\\'';
 			$num_sale = str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $obj->ref));
 			echo $num_sale;
 			if (str_replace("-", "", $num_sale) > $max_sale) $max_sale = str_replace("-", "", $num_sale);
 			echo '\\\';Refresh();">';
 			if ($placeid == $obj->rowid) echo "<b>";
-			echo date('H:i', strtotime($obj->datec));
+			echo dol_print_date($db->jdate($obj->datec), '%H:%M');
 			if ($placeid == $obj->rowid) echo "</b>";
 			echo '</a>\');';
 		}
