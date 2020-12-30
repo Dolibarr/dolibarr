@@ -387,10 +387,10 @@ function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 			if ($result > 0)
 			{
 				// Security for external user
-				if ($socid && ($socid != $order->socid))
+				if ($socid && (empty($order->socid) || $socid != $order->socid))
 				{
 					$error++;
-					$errorcode = 'PERMISSION_DENIED'; $errorlabel = $order->socid.'User does not have permission for this request';
+					$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 				}
 
 				if (!$error)
