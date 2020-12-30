@@ -1,7 +1,7 @@
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
--- when current version is 13.0.0 or higher.
+-- when current version is 14.0.0 or higher.
 --
 -- To restrict request to Mysql version x.y minimum use -- VMYSQLx.y
 -- To restrict request to Pgsql version x.y minimum use -- VPGSQLx.y
@@ -30,9 +30,9 @@
 
 -- Missing in v13 or lower
 
-
-
 -- For v14
+
+ALTER TABLE llx_c_availability ADD COLUMN position integer NOT NULL DEFAULT 0;
 
 ALTER TABLE llx_adherent ADD COLUMN ref varchar(30) AFTER rowid;
 UPDATE llx_adherent SET ref = rowid WHERE ref = '' or ref IS NULL;
