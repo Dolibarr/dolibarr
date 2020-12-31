@@ -1155,7 +1155,7 @@ class BonPrelevement extends CommonObject
 						$this->emetteur_iban               = $account->iban;
 						$this->emetteur_bic                = $account->bic;
 
-						$this->emetteur_ics                = ($type == 'bank-transfer' ? $account->ics_transfer : $account->ics); 
+						$this->emetteur_ics                = ($type == 'bank-transfer' ? $account->ics_transfer : $account->ics);
 
 						$this->raison_sociale              = $account->proprio;
 					}

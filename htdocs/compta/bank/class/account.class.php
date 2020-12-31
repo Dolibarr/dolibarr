@@ -214,19 +214,19 @@ class Account extends CommonObject
 	 * @var int
 	 */
 	public $date_solde;
-	
+
 	/**
 	 * Creditor Identifier CI. Some banks use different ICS for direct debit and bank tranfer
 	 * @var string
 	 */
 	public $ics;
-	
+
 	/**
 	 * Creditor Identifier for Bank Transfer.
 	 * @var string
 	 */
 	public $ics_transfer;
-	
+
 
 
 	/**
@@ -1003,7 +1003,7 @@ class Account extends CommonObject
 
 				$this->date_creation  = $this->db->jdate($obj->date_creation);
 				$this->date_update    = $this->db->jdate($obj->date_update);
-				
+
 				$this->ics           = $obj->ics;
 				$this->ics_transfer  = $obj->ics_transfer;
 

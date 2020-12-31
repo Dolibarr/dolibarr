@@ -70,14 +70,13 @@ if ($action == "set")
         $res = dolibarr_set_const($db, "PRELEVEMENT_RAISON_SOCIALE", $account->proprio,'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
         */
-
 	} else $error++;
 
-/* Moved to account
+	/* Moved to account
 
 	$res = dolibarr_set_const($db, "PRELEVEMENT_ICS", GETPOST("PRELEVEMENT_ICS"), 'chaine', 0, '', $conf->entity);
 	if (!$res > 0) $error++;
-*/
+	*/
 	if (GETPOST("PRELEVEMENT_USER") > 0)
 	{
 		$res = dolibarr_set_const($db, "PRELEVEMENT_USER", GETPOST("PRELEVEMENT_USER"), 'chaine', 0, '', $conf->entity);

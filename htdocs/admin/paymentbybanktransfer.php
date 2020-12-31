@@ -71,10 +71,10 @@ if ($action == "set")
         if (! $res > 0) $error++;
         */
 	} else $error++;
-/* Moved to account
+	/* Moved to account
 	$res = dolibarr_set_const($db, "PAYMENTBYBANKTRANSFER_ICS", GETPOST("PAYMENTBYBANKTRANSFER_ICS"), 'chaine', 0, '', $conf->entity);
 	if (!$res > 0) $error++;
-*/
+	*/
 	if (GETPOST("PAYMENTBYBANKTRANSFER_USER") > 0)
 	{
 		$res = dolibarr_set_const($db, "PAYMENTBYBANKTRANSFER_USER", GETPOST("PAYMENTBYBANKTRANSFER_USER"), 'chaine', 0, '', $conf->entity);
