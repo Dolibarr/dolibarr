@@ -486,7 +486,9 @@ function createThirdParty($authentication, $thirdparty)
 			foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 			{
 				$key = 'options_'.$key;
-				$newobject->array_options[$key] = $thirdparty[$key];
+				if (isset($thirdparty[$key])) {
+					$newobject->array_options[$key] = $thirdparty[$key];
+				}
 			}
 		}
 
