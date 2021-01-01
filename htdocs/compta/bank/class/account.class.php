@@ -686,14 +686,14 @@ class Account extends CommonObject
 		$sql .= ", '".$this->db->escape($this->proprio)."'";
 		$sql .= ", '".$this->db->escape($this->owner_address)."'";
 		$sql .= ", '".$this->db->escape($this->currency_code)."'";
-		$sql .= ", ".$this->rappro;
+		$sql .= ", ".((int) $this->rappro);
 		$sql .= ", ".price2num($this->min_allowed);
 		$sql .= ", ".price2num($this->min_desired);
 		$sql .= ", '".$this->db->escape($this->comment)."'";
 		$sql .= ", ".($this->state_id > 0 ? $this->state_id : "null");
-		$sql .= ", ".$this->country_id;
-		$sql .= ", ".$this->db->escape($this->ics);
-		$sql .= ", ".$this->db->escape($this->ics_transfer);
+		$sql .= ", ".($this->country_id > 0 ? $this->country_id : 0);
+		$sql .= ", '".$this->db->escape($this->ics)."'";
+		$sql .= ", '".$this->db->escape($this->ics_transfer)."'";
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -822,8 +822,8 @@ class Account extends CommonObject
 
 		$sql .= ",state_id = ".($this->state_id > 0 ? $this->state_id : "null");
 		$sql .= ",fk_pays = ".$this->country_id;
-		$sql .= ",ics='".$this->db->escape($this->ics)."'";
-		$sql .= ",ics_transfer='".$this->db->escape($this->ics_transfer)."'";
+		$sql .= ",ics = '".$this->db->escape($this->ics)."'";
+		$sql .= ",ics_transfer = '".$this->db->escape($this->ics_transfer)."'";
 
 		$sql .= " WHERE rowid = ".$this->id;
 
