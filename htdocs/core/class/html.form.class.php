@@ -2652,14 +2652,14 @@ class Form
 		if (!empty($conf->stock->enabled) && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)))
 		{
 			if (!empty($user->rights->stock->lire)) {
-				$opt .= ' - '.$langs->trans("Stock").':'.$objp->stock;
+				$opt .= ' - '.$langs->trans("Stock").': '.price(price2num($objp->stock, 'MS'));
 
 				if ($objp->stock > 0) {
 					$outval .= ' - <span class="product_line_stock_ok">';
 				} elseif ($objp->stock <= 0) {
 					$outval .= ' - <span class="product_line_stock_too_low">';
 				}
-				$outval .= $langs->transnoentities("Stock").':'.$objp->stock;
+				$outval .= $langs->transnoentities("Stock").': '.price(price2num($objp->stock, 'MS'));
 				$outval .= '</span>';
 				if (empty($novirtualstock) && !empty($conf->global->STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO))  // Warning, this option may slow down combo list generation
 				{
@@ -2989,14 +2989,14 @@ class Form
 					$novirtualstock = ($showstockinlist == 2);
 
 					if (!empty($user->rights->stock->lire)) {
-						$outvallabel .= ' - '.$langs->trans("Stock").':'.$objp->stock;
+						$outvallabel .= ' - '.$langs->trans("Stock").': '.price(price2num($objp->stock, 'MS'));
 
 						if ($objp->stock > 0) {
 							$optlabel .= ' - <span class="product_line_stock_ok">';
 						} elseif ($objp->stock <= 0) {
 							$optlabel .= ' - <span class="product_line_stock_too_low">';
 						}
-						$optlabel .= $langs->transnoentities("Stock").':'.$objp->stock;
+						$optlabel .= $langs->transnoentities("Stock").':'.price(price2num($objp->stock, 'MS'));
 						$optlabel .= '</span>';
 						if (empty($novirtualstock) && !empty($conf->global->STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO))  // Warning, this option may slow down combo list generation
 						{
