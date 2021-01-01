@@ -528,11 +528,6 @@ class FormMail extends Form
 				//$out.='</div>';
 			}
 
-			/*var_dump(! empty($this->withfromreadonly));
-			var_dump($this->withfrom);
-			var_dump($this->fromtype);
-			var_dump($this->fromname);*/
-
 			// From
 			if (!empty($this->withfrom)) {
 				if (!empty($this->withfromreadonly)) {
@@ -692,8 +687,13 @@ class FormMail extends Form
 						$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 					}
 
-					$withtoselected = GETPOST("receiver", 'array'); // Array of selected value
-
+					$withtoselected = GETPOST("receiver", 'array:none'); // Array of selected value
+					// add free input in tmparray
+					foreach ($withtoselected as $value) {
+						if (!in_array($value, $tmparray) && !is_numeric($value) && $value != 'thirdparty' && $value != 'contact') {
+							$tmparray[$value] = $value;
+						}
+					}
 					if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
 						$withtoselected = array_keys($tmparray);
 					}
@@ -744,7 +744,8 @@ class FormMail extends Form
 					$out .= (!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : "";
 				} else {
 					$keyval = (GETPOST("sendtocc", "alpha") ? GETPOST("sendtocc", "alpha") : ((!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : ''));
-					$tmparray[$keyval] = $keyval;
+					$tmparray[$keyval] = dol_htmlentities($keyval, null, 'UTF-8', true);
+					//var_dump($tmparray, $this->withtocc);
 					if ($this->withtocc == $keyval && !is_array($this->withtocc)) {
 						$this->withtocc = $tmparray;
 					}

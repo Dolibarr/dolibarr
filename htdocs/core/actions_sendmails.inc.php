@@ -233,7 +233,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 			foreach ($receivercc as $key => $val) {
 				// Recipient was provided from combo list
 				if ($val == 'thirdparty') {
-					// Key selected means currentthird party (may be usd for current member or current user too)
+					// Key selected means current thirdparty (may be usd for current member or current user too)
 					$tmparray[] = dol_string_nospecial($thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
 				} elseif ($val == 'contact') {
 					// Recipient was provided from combo list
