@@ -211,7 +211,7 @@ if ($result)
 	if ($search_user) $param .= '&search_user='.urlencode($search_user);
 	if ($search_desc) $param .= '&search_desc='.urlencode($search_desc);
 	if ($search_ua)   $param .= '&search_ua='.urlencode($search_ua);
-	if ($search_prefix_sessiona)   $param .= '&search_prefix_session='.urlencode($search_prefix_session);
+	if ($search_prefix_session)   $param .= '&search_prefix_session='.urlencode($search_prefix_session);
 	if ($date_startmonth) $param .= "&date_startmonth=".urlencode($date_startmonth);
 	if ($date_startday)   $param .= "&date_startday=".urlencode($date_startday);
 	if ($date_startyear)  $param .= "&date_startyear=".urlencode($date_startyear);
