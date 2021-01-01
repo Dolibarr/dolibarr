@@ -77,3 +77,4 @@ UnitCost=Единична цена
 TotalCost=Обща цена
 BOMTotalCost=Разходите за производство на този списък с материали въз основа на разходите за всяко количество и продукт, които ще се използват (използвайте себестойност, ако е дефинирана, иначе средно претеглена цена, ако е определена, или най-добра покупна цена).
 GoOnTabProductionToProduceFirst=You must first have started the production to close a Manufacturing Order (See tab '%s'). But you can Cancel it.
+ErrorAVirtualProductCantBeUsedIntoABomOrMo=A kit can't be used into a BOM or a MO

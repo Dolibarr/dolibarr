@@ -567,8 +567,8 @@ if ($action == "create" || $action == "start" || $action == 'close')
 			}*/
 			// Save
 			print '<td class="center">';
-			print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
-			if ($action == 'start') print '<input type="submit" name="add" class="button" value="'.$langs->trans("Save").'">';
+			print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
+			if ($action == 'start') print '<input type="submit" name="add" class="button button-save" value="'.$langs->trans("Save").'">';
 			elseif ($action == 'close') print '<input type="submit" name="valid" class="button" value="'.$langs->trans("Validate").'">';
 			print '</td>';
 			print '</tr>';
@@ -853,8 +853,8 @@ if (empty($action) || $action == "view" || $action == "close")
 				}
 				// Save
 				print '<td class="center">';
-				print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
-				if ($action == 'start') print '<input type="submit" name="add" class="button" value="'.$langs->trans("Save").'">';
+				print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
+				if ($action == 'start') print '<input type="submit" name="add" class="button button-save" value="'.$langs->trans("Save").'">';
 				elseif ($action == 'close') print '<input type="submit" name="valid" class="button" value="'.$langs->trans("Close").'">';
 				print '</td>';
 				print '</tr>';

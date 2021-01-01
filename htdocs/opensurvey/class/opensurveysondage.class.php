@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García	    <marcosgdf@gmail.com>
+ * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +50,6 @@ class Opensurveysondage extends CommonObject
 	 */
 	public $picto = 'poll';
 
-
 	/**
 	 * @var string	ID survey
 	 */
@@ -60,7 +60,14 @@ class Opensurveysondage extends CommonObject
 	 */
 	public $description;
 
+	/**
+	 * @var string email admin
+	 */
 	public $mail_admin;
+
+	/**
+	 * @var string admin name
+	 */
 	public $nom_admin;
 
 	/**
@@ -75,10 +82,25 @@ class Opensurveysondage extends CommonObject
 	public $title;
 
 	public $date_fin = '';
+
+	/**
+	 * @var int status
+	 */
 	public $status = 1;
+
+	/**
+	 * @var string format of survey
+	 */
 	public $format;
+
+	/**
+	 * @var int mailsonde
+	 */
 	public $mailsonde;
 
+	/**
+	 * @var string subject
+	 */
 	public $sujet;
 
 	/**
@@ -106,7 +128,6 @@ class Opensurveysondage extends CommonObject
 	const STATUS_CLOSED = 2;
 
 
-
 	/**
 	 *  Constructor
 	 *
@@ -127,14 +148,15 @@ class Opensurveysondage extends CommonObject
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
+		global $conf;
+
 		$error = 0;
 
 		// Clean parameters
 		$this->cleanParameters();
 
 		// Check parameters
-		if (!$this->date_fin > 0)
-		{
+		if (!$this->date_fin > 0) {
 			$this->error = 'BadValueForEndDate';
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
@@ -152,19 +174,21 @@ class Opensurveysondage extends CommonObject
 		$sql .= "mailsonde,";
 		$sql .= "allow_comments,";
 		$sql .= "allow_spy,";
-		$sql .= "sujet";
+		$sql .= "sujet,";
+ 		$sql .= "entity";
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->escape($this->id_sondage)."',";
 		$sql .= " ".(empty($this->description) ? 'NULL' : "'".$this->db->escape($this->description)."'").",";
-		$sql .= " ".$user->id.",";
+		$sql .= " ".(int) $user->id.",";
 		$sql .= " '".$this->db->escape($this->title)."',";
 		$sql .= " '".$this->db->idate($this->date_fin)."',";
-		$sql .= " ".$this->status.",";
+		$sql .= " ".(int) $this->status.",";
 		$sql .= " '".$this->db->escape($this->format)."',";
-		$sql .= " ".$this->db->escape($this->mailsonde).",";
-		$sql .= " ".$this->db->escape($this->allow_comments).",";
-		$sql .= " ".$this->db->escape($this->allow_spy).",";
-		$sql .= " '".$this->db->escape($this->sujet)."'";
+		$sql .= " ".((int) $this->mailsonde).",";
+		$sql .= " ".((int) $this->allow_comments).",";
+		$sql .= " ".((int) $this->allow_spy).",";
+		$sql .= " '".$this->db->escape($this->sujet)."',";
+        $sql .= " ".((int) $conf->entity);
 		$sql .= ")";
 
 		$this->db->begin();
@@ -173,24 +197,18 @@ class Opensurveysondage extends CommonObject
 		$resql = $this->db->query($sql);
 		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-		if (!$error)
-		{
-			if (!$notrigger)
-			{
-				global $langs, $conf;
+		if (!$error && !$notrigger) {
+			global $langs, $conf;
 
-				// Call trigger
-				$result = $this->call_trigger('OPENSURVEY_CREATE', $user);
-				if ($result < 0) $error++;
-				// End call triggers
-			}
+			// Call trigger
+			$result = $this->call_trigger('OPENSURVEY_CREATE', $user);
+			if ($result < 0) $error++;
+			// End call triggers
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -310,10 +328,12 @@ class Opensurveysondage extends CommonObject
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
 
-		if (!$error && !$notrigger)
-		{
+		if (!$error && !$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('OPENSURVEY_MODIFY', $user);
 			if ($result < 0) $error++;
@@ -356,15 +376,11 @@ class Opensurveysondage extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error)
-		{
-			if (!$notrigger)
-			{
-				// Call trigger
-				$result = $this->call_trigger('OPENSURVEY_DELETE', $user);
-				if ($result < 0) $error++;
-				// End call triggers
-			}
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('OPENSURVEY_DELETE', $user);
+			if ($result < 0) $error++;
+			// End call triggers
 		}
 
 		if (!$error)
@@ -441,7 +457,9 @@ class Opensurveysondage extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		}
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -499,15 +517,15 @@ class Opensurveysondage extends CommonObject
 	{
 		$this->id = 0;
 
-		$this->id_sondage = '';
+		$this->id_sondage = 'a12d5g';
 		$this->description = 'Description of the specimen survey';
-		$this->mail_admin = '';
-		$this->nom_admin = '';
+		$this->mail_admin = 'email@email.com';
+		$this->nom_admin = 'surveyadmin';
 		$this->title = 'This is a specimen survey';
 		$this->date_fin = dol_now() + 3600 * 24 * 10;
 		$this->status = 1;
 		$this->format = 'classic';
-		$this->mailsonde = '';
+		$this->mailsonde = 0;
 	}
 
 	/**
@@ -591,7 +609,7 @@ class Opensurveysondage extends CommonObject
 		$this->mail_admin = trim($this->mail_admin);
 		$this->nom_admin = trim($this->nom_admin);
 		$this->title = trim($this->title);
-		$this->status = trim($this->status);
+		$this->status = (int) $this->status;
 		$this->format = trim($this->format);
 		$this->mailsonde = ($this->mailsonde ? 1 : 0);
 		$this->allow_comments = ($this->allow_comments ? 1 : 0);

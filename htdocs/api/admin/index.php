@@ -129,7 +129,7 @@ print ' '.$langs->trans("Example").': '.$langs->trans("IPListExample");
 print '</td>';
 print '<td><input type="text" name="API_RESTRICT_ON_IP" value="'.dol_escape_htmltag($conf->global->API_RESTRICT_ON_IP).'"></td>';
 print '<td>';
-print '<input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></td>';
+print '<input type="submit" class="button button-save" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></td>';
 print '</td>';
 print '</tr>';
 
@@ -160,7 +160,8 @@ if (dol_is_dir(DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/e
 	$url = DOL_MAIN_URL_ROOT.'/api/index.php/explorer';
 	print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 } else {
-	print $langs->trans("NotAvailableWithThisDistribution");
+	$langs->load("errors");
+	print info_admin($langs->trans("ErrorNotAvailableWithThisDistribution"), 0, 0, 'error');
 }
 
 llxFooter();

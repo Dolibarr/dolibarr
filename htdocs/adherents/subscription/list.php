@@ -395,6 +395,8 @@ while ($i < min($num, $limit)) {
 
 	$subscription->ref = $obj->crowid;
 	$subscription->id = $obj->crowid;
+	$subscription->dateh = $db->jdate($obj->dateadh);
+	$subscription->datef = $db->jdate($obj->datef);
 
 	$adherent->lastname = $obj->lastname;
 	$adherent->firstname = $obj->firstname;
@@ -431,9 +433,7 @@ while ($i < min($num, $limit)) {
 
 	// Lastname
 	if (!empty($arrayfields['d.lastname']['checked'])) {
-		$adherent->firstname = '';
-		print '<td>'.$adherent->getNomUrl(-1).'</td>';
-		$adherent->firstname = $obj->firstname;
+		print '<td>'.$adherent->getNomUrl(-1, 0, 'card', 'lastname').'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 	// Firstname

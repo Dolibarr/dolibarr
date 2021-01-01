@@ -22,13 +22,14 @@ require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 $ref = GETPOST('ref', 'alpha');
 $label = GETPOST('label', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$action = GETPOST('action', 'alpha');
 
 
 /*
  * Actions
  */
 
-if ($_POST) {
+if ($action == 'add') {
 	if (empty($ref) || empty($label)) {
 		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
 	} else {

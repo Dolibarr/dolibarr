@@ -11,7 +11,6 @@ SetLinkToThirdParty=Verknüpfung zu Dolibarr Partner
 MembersList=Mitgliederliste
 MembersListToValid=Liste der zu verifizierenden Mitglieder
 MembersListValid=Liste der verifizierten Mitglieder
-MembersListUpToDate=Liste der verifizierten aktiven Mitglieder
 DateSubscription=Start des Abonnements
 DateEndSubscription=Ende des Abonnements
 EndSubscription=Abo-Ende

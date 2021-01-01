@@ -9,8 +9,8 @@ descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Creare automaticamente una fattura atti
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Crea automaticamente una fattura cliente dopo che un ordine cliente è stato chiuso (la nuova fattura avrà lo stesso importo dell'ordine)
 # Autoclassify customer proposal or order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classifica come "da fatturare" la/e proposta/e commerciale/i quando l'ordine cliente collegato è impostato come da fatturare (e se l'ammontare dell'ordine è lo stesso ammontare della proposta commerciale firmata e collegata)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classifica "da fatturare" le proposte collegate quando la fattura cliente è validata (e se l'importo della fattura è uguale all'importo totale delle proposte collegate)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classifica "da fatturare" gli ordini cliente collegati quando la fattura cliente è validata (e se l'importo della fattura è uguale all'importo totale di ordini collegati)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classifica "fatturate" le proposte collegate quando la fattura cliente è validata (e se l'importo della fattura è uguale all'importo totale delle proposte collegate)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classifica "fatturato" gli ordini cliente collegati quando la fattura cliente è validata (e se l'importo della fattura è uguale all'importo totale di ordini collegati)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classifica "da fatturare" gli ordini cliente collegati quando la fattura cliente è impostata su pagamento (e se l'importo della fattura è uguale all'importo totale di ordini collegati)
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classifica "da spedire" l'ordine cliente collegato quando una spedizione viene convalidata (e se la quantità spedita da tutte le spedizioni è la stessa dell'ordine da aggiornare)
 # Autoclassify purchase order

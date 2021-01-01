@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - withdrawals
-CustomersStandingOrdersArea=Pagaments per ordres de domiciliació bancària
+CustomersStandingOrdersArea=Cobraments per ordres de domiciliació bancària
 SuppliersStandingOrdersArea=Pagaments per transferència bancària
 StandingOrdersPayment=Ordres de cobrament per domiciliació
 StandingOrderPayment=Ordre de cobrament per domiciliació
@@ -18,8 +18,8 @@ WithdrawalsLine=Línia d'ordre de domiciliació
 CreditTransferLine=Línia de transferència bancària
 WithdrawalsLines=Línies d'ordre de domiciliació
 CreditTransferLines=Línies de transferència bancària
-RequestStandingOrderToTreat=Peticions per a processar ordres de pagament per domiciliació
-RequestStandingOrderTreated=Peticions processades d'ordres de pagament per domiciliació
+RequestStandingOrderToTreat=Peticions per a processar ordres de cobrament per domiciliació
+RequestStandingOrderTreated=Peticions processades d'ordres de cobrament per domiciliació
 RequestPaymentsByBankTransferToTreat=Peticions de transferència bancària a processar
 RequestPaymentsByBankTransferTreated=Peticions de transferència bancària processades
 NotPossibleForThisStatusOfWithdrawReceiptORLine=Encara no és possible. L'estat de la domiciliació ter que ser 'abonada' abans de poder realitzar devolucions a les seves línies
@@ -31,7 +31,7 @@ InvoiceWaitingWithdraw=Factura esperant per domiciliació bancària
 InvoiceWaitingPaymentByBankTransfer=Factura en espera de transferència bancària
 AmountToWithdraw=Import a domiciliar
 NoInvoiceToWithdraw=No hi ha cap factura oberta per a '%s'. Vés a la fitxa "%s" de la targeta de factura per sol·licitar una sol·licitud.
-NoSupplierInvoiceToWithdraw=No hi ha cap factura de proveïdor pendent amb "sol·licituds de crèdit directe" obertes. Aneu a la pestanya "%s" de la fitxa de la factura per fer una sol·licitud.
+NoSupplierInvoiceToWithdraw=No hi ha cap factura de proveïdor pendent amb "sol·licituds de crèdit directe" obertes. Aneu a la pestanya "%s" de la fitxa de la factura per a fer una sol·licitud.
 ResponsibleUser=Usuari responsable
 WithdrawalsSetup=Configuració del pagament mitjançant domiciliació bancària
 CreditTransferSetup=Configuració de transferència bancària

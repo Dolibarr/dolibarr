@@ -628,7 +628,7 @@ class modProduct extends DolibarrModules
 			$this->import_label[$r] = "SuppliersPricesOfProductsOrServices"; // Translation key
 			$this->import_icon[$r] = $this->picto;
 			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
-			$this->import_tables_array[$r] = array('sp'=>MAIN_DB_PREFIX.'product_fournisseur_price','extra'=>MAIN_DB_PREFIX.'product_fournisseur_price_extrafields');
+			$this->import_tables_array[$r] = array('sp'=>MAIN_DB_PREFIX.'product_fournisseur_price', 'extra'=>MAIN_DB_PREFIX.'product_fournisseur_price_extrafields');
 			$this->import_tables_creator_array[$r] = array('sp'=>'fk_user');
 			$this->import_fields_array[$r] = array(//field order as per structure of table llx_product_fournisseur_price, without optional fields
 				'sp.fk_product'=>"ProductOrService*",
@@ -649,7 +649,7 @@ class modProduct extends DolibarrModules
 					'sp.remise_percent'=>'DiscountQtyMin'
 			));
 
-			if ($conf->multicurrency->enabled)
+			if (!empty($conf->multicurrency->enabled))
 			{
 				$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array(
 					'sp.fk_multicurrency'=>'CurrencyCodeId', //ideally this should be automatically obtained from the CurrencyCode on the next line
@@ -670,13 +670,13 @@ class modProduct extends DolibarrModules
 			$resql = $this->db->query($sql);
 			if ($resql)    // This can fail when class is used on old database (during migration for example)
 			{
-			    while ($obj = $this->db->fetch_object($resql))
-		    	{
-		        	$fieldname = 'extra.'.$obj->name;
-			        $fieldlabel = ucfirst($obj->label);
-			        $this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-			        $import_extrafield_sample[$fieldname] = $fieldlabel;
-			    }
+				while ($obj = $this->db->fetch_object($resql))
+				{
+					$fieldname = 'extra.'.$obj->name;
+					$fieldlabel = ucfirst($obj->label);
+					$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+					$import_extrafield_sample[$fieldname] = $fieldlabel;
+				}
 			}
 			// End add extra fields
 			$this->import_fieldshidden_array[$r] = array('extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'product_fournisseur_price'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
@@ -708,7 +708,7 @@ class modProduct extends DolibarrModules
 				// TODO Make this field not required and calculate it from price and qty
 				'sp.remise_percent' => '20'
 			));
-			if ($conf->multicurrency->enabled)
+			if (!empty($conf->multicurrency->enabled))
 			{
 				$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array(
 					'sp.fk_multicurrency'=>'eg: 2, rowid for code of multicurrency currency',

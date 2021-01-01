@@ -122,6 +122,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * A sample test
+	 *
 	 * @return bool
 	 */
 	public function testSomething()
@@ -137,6 +138,55 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertTrue($result);
 
+		return $result;
+	}
+
+	/**
+	 * testMyObjectCreate
+	 *
+	 * @return int
+	 */
+	public function testMyObjectCreate()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new MyObject($this->savdb);
+		$localobject->initAsSpecimen();
+		$result = $localobject->create($user);
+
+		print __METHOD__." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+
+		return $result;
+	}
+
+	/**
+	 * testMyObjectDelete
+	 *
+	 * @param	int		$id		Id of object
+	 * @return	int
+	 *
+	 * @depends	testMyObjectCreate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testMyObjectDelete($id)
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new MyObject($this->savdb);
+		$result = $localobject->fetch($id);
+		$result = $localobject->delete($user);
+
+		print __METHOD__." id=".$id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
 		return $result;
 	}
 }

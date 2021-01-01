@@ -352,7 +352,7 @@ if ($action == 'create')
 	// Type
 	print '<tr><td class="fieldrequired">'.$langs->trans("AccountType").'</td>';
 	print '<td>';
-	$formbank->selectTypeOfBankAccount(isset($_POST["type"]) ? $_POST["type"] : Account::TYPE_CURRENT, "type");
+	$formbank->selectTypeOfBankAccount(GETPOSTISSET("type") ? GETPOST("type") : Account::TYPE_CURRENT, "type");
 	print '</td></tr>';
 
 	// Currency
@@ -360,7 +360,7 @@ if ($action == 'create')
 	print '<td>';
 	$selectedcode = $object->currency_code;
 	if (!$selectedcode) $selectedcode = $conf->currency;
-	print $form->selectCurrency((isset($_POST["account_currency_code"]) ? $_POST["account_currency_code"] : $selectedcode), 'account_currency_code');
+	print $form->selectCurrency((GETPOSTISSET("account_currency_code") ? GETPOST("account_currency_code") : $selectedcode), 'account_currency_code');
 	//print $langs->trans("Currency".$conf->currency);
 	//print '<input type="hidden" name="account_currency_code" value="'.$conf->currency.'">';
 	print '</td></tr>';
@@ -373,9 +373,8 @@ if ($action == 'create')
 
 	// Country
 	$selectedcode = '';
-	if (isset($_POST["account_country_id"]))
-	{
-		$selectedcode = $_POST["account_country_id"] ? $_POST["account_country_id"] : $object->country_code;
+	if (GETPOSTISSET("account_country_id")) {
+		$selectedcode = GETPOST("account_country_id") ? GETPOST("account_country_id") : $object->country_code;
 	} elseif (empty($selectedcode)) $selectedcode = $mysoc->country_code;
 	$object->country_code = getCountry($selectedcode, 2); // Force country code on account to have following field on bank fields matching country rules
 
@@ -389,7 +388,7 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans('State').'</td><td>';
 	if ($selectedcode)
 	{
-		$formcompany->select_departement(isset($_POST["account_state_id"]) ? $_POST["account_state_id"] : '', $selectedcode, 'account_state_id');
+		$formcompany->select_departement(GETPOSTISSET("account_state_id") ? GETPOST("account_state_id") : '', $selectedcode, 'account_state_id');
 	} else {
 		print $countrynotdefined;
 	}
@@ -414,7 +413,7 @@ if ($action == 'create')
 				$arrayselected[] = $cat->id;
 			}
 		}
-		print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print "</td></tr>";
 	}
 
@@ -555,7 +554,7 @@ if ($action == 'create')
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("CreateAccount").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 	print '</div>';
 
 	print '</form>';
@@ -836,16 +835,16 @@ if ($action == 'create')
 
 		// Ref
 		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
-		print '<td><input type="text" class="flat maxwidth200" name="ref" value="'.dol_escape_htmltag(isset($_POST["ref"]) ?GETPOST("ref") : $object->ref).'"></td></tr>';
+		print '<td><input type="text" class="flat maxwidth200" name="ref" value="'.dol_escape_htmltag(GETPOSTISSET("ref") ? GETPOST("ref") : $object->ref).'"></td></tr>';
 
 		// Label
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-		print '<td><input type="text" class="flat minwidth300" name="label" value="'.dol_escape_htmltag(isset($_POST["label"]) ?GETPOST("label") : $object->label).'"></td></tr>';
+		print '<td><input type="text" class="flat minwidth300" name="label" value="'.dol_escape_htmltag(GETPOSTISSET("label") ? GETPOST("label") : $object->label).'"></td></tr>';
 
 		// Type
 		print '<tr><td class="fieldrequired">'.$langs->trans("AccountType").'</td>';
 		print '<td class="maxwidth200onsmartphone">';
-		$formbank->selectTypeOfBankAccount((isset($_POST["type"]) ? $_POST["type"] : $object->type), "type");
+		$formbank->selectTypeOfBankAccount((GETPOSTISSET("type") ? GETPOST("type") : $object->type), "type");
 		print '</td></tr>';
 
 		// Currency
@@ -855,7 +854,7 @@ if ($action == 'create')
 		print '<td class="maxwidth200onsmartphone">';
 		$selectedcode = $object->currency_code;
 		if (!$selectedcode) $selectedcode = $conf->currency;
-		print $form->selectCurrency((isset($_POST["account_currency_code"]) ? $_POST["account_currency_code"] : $selectedcode), 'account_currency_code');
+		print $form->selectCurrency((GETPOSTISSET("account_currency_code") ? GETPOST("account_currency_code") : $selectedcode), 'account_currency_code');
 		//print $langs->trans("Currency".$conf->currency);
 		//print '<input type="hidden" name="account_currency_code" value="'.$conf->currency.'">';
 		print '</td></tr>';
@@ -863,13 +862,13 @@ if ($action == 'create')
 		// Status
 		print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
 		print '<td class="maxwidth200onsmartphone">';
-		print $form->selectarray("clos", $object->status, (isset($_POST["clos"]) ? $_POST["clos"] : $object->clos));
+		print $form->selectarray("clos", $object->status, (GETPOSTISSET("clos") ? GETPOST("clos") : $object->clos));
 		print '</td></tr>';
 
 		// Country
 		$object->country_id = $object->country_id ? $object->country_id : $mysoc->country_id;
 		$selectedcode = $object->country_code;
-		if (isset($_POST["account_country_id"])) $selectedcode = $_POST["account_country_id"];
+		if (GETPOSTISSET("account_country_id")) $selectedcode = GETPOST("account_country_id");
 		elseif (empty($selectedcode)) $selectedcode = $mysoc->country_code;
 		$object->country_code = getCountry($selectedcode, 2); // Force country code on account to have following field on bank fields matching country rules
 
@@ -883,7 +882,7 @@ if ($action == 'create')
 		print '<tr><td>'.$langs->trans('State').'</td><td class="maxwidth200onsmartphone">';
 		if ($selectedcode)
 		{
-			print $formcompany->select_state(isset($_POST["account_state_id"]) ? $_POST["account_state_id"] : $object->state_id, $selectedcode, 'account_state_id');
+			print $formcompany->select_state(GETPOSTISSET("account_state_id") ? GETPOST("account_state_id") : $object->state_id, $selectedcode, 'account_state_id');
 		} else {
 			print $countrynotdefined;
 		}
@@ -900,14 +899,14 @@ if ($action == 'create')
 
 		// Balance
 		print '<tr><td>'.$langs->trans("BalanceMinimalAllowed").'</td>';
-		print '<td><input size="12" type="text" class="flat" name="account_min_allowed" value="'.(isset($_POST["account_min_allowed"]) ?GETPOST("account_min_allowed") : $object->min_allowed).'"></td></tr>';
+		print '<td><input size="12" type="text" class="flat" name="account_min_allowed" value="'.(GETPOSTISSET("account_min_allowed") ? GETPOST("account_min_allowed") : $object->min_allowed).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("BalanceMinimalDesired").'</td>';
-		print '<td ><input size="12" type="text" class="flat" name="account_min_desired" value="'.(isset($_POST["account_min_desired"]) ?GETPOST("account_min_desired") : $object->min_desired).'"></td></tr>';
+		print '<td><input size="12" type="text" class="flat" name="account_min_desired" value="'.(GETPOSTISSET("account_min_desired") ? GETPOST("account_min_desired") : $object->min_desired).'"></td></tr>';
 
 		// Web
 		print '<tr><td>'.$langs->trans("Web").'</td>';
-		print '<td><input class="maxwidth200onsmartphone" type="text" class="flat" name="url" value="'.(isset($_POST["url"]) ?GETPOST("url") : $object->url).'">';
+		print '<td><input class="maxwidth200onsmartphone" type="text" class="flat" name="url" value="'.(GETPOSTISSET("url") ? GETPOST("url") : $object->url).'">';
 		print '</td></tr>';
 
 		// Tags-Categories
@@ -923,7 +922,7 @@ if ($action == 'create')
 					$arrayselected[] = $cat->id;
 				}
 			}
-			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 			print "</td></tr>";
 		}
 
@@ -1061,7 +1060,7 @@ if ($action == 'create')
 		print '<div class="center">';
 		print '<input value="'.$langs->trans("Modify").'" type="submit" class="button">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input name="cancel" value="'.$langs->trans("Cancel").'" type="submit" class="button">';
+		print '<input name="cancel" value="'.$langs->trans("Cancel").'" type="submit" class="button button-cancel">';
 		print '</div>';
 
 		print '</form>';

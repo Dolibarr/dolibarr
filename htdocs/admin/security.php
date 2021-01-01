@@ -256,7 +256,10 @@ foreach ($arrayhandler as $key => $module)
 		// Show example of numbering module
 		print '<td class="nowrap">';
 		$tmp = $module->getExample();
-		if (preg_match('/^Error/', $tmp)) { $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; } elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
+		if (preg_match('/^Error/', $tmp)) {
+			$langs->load("errors");
+			print '<div class="error">'.$langs->trans($tmp).'</div>';
+		} elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
 		else print $tmp;
 		print '</td>'."\n";
 
@@ -323,7 +326,7 @@ if ($conf->global->USER_PASSWORD_GENERATED == "Perso") {
 
 	print '<br>';
 	print '<div class="center">';
-	print '<a class="button" id="linkChangePattern">'.$langs->trans("Save").'</a>';
+	print '<a class="button button-save" id="linkChangePattern">'.$langs->trans("Save").'</a>';
 	print '</div>';
 	print '<br><br>';
 

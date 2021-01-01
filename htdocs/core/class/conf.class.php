@@ -52,9 +52,11 @@ class Conf
 	public $disable_compute;
 	//! Used to store current currency (ISO code like 'USD', 'EUR', ...)
 	public $currency;
+
 	//! Used to store current css (from theme)
 	public $theme; // Contains current theme ("eldy", "auguria", ...)
 	public $css; // Contains full path of css page ("/theme/eldy/style.css.php", ...)
+
 	//! Used to store current menu handler
 	public $standard_menu;
 	// List of activated modules
@@ -97,6 +99,8 @@ class Conf
 	public $dol_optimize_smallscreen; // Set if we force param dol_optimize_smallscreen into login url or if browser is smartphone
 	public $dol_no_mouse_hover; // Set if we force param dol_no_mouse_hover into login url or if browser is smartphone
 	public $dol_use_jmobile; // Set if we force param dol_use_jmobile into login url
+
+	public $liste_limit;
 
 
 	/**
@@ -536,6 +540,8 @@ class Conf
 		$this->mailing->email_from = $this->email_from;
 		if (!empty($this->global->MAILING_EMAIL_FROM))	$this->mailing->email_from = $this->global->MAILING_EMAIL_FROM;
 		if (!isset($this->global->MAIN_EMAIL_ADD_TRACK_ID)) $this->global->MAIN_EMAIL_ADD_TRACK_ID = 1;
+
+		if (!isset($this->global->MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP)) $this->global->MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP = 1;
 
 		// Format for date (used by default when not found or not searched in lang)
 		$this->format_date_short = "%d/%m/%Y"; // Format of day with PHP/C tags (strftime functions)

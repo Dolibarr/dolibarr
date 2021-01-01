@@ -53,12 +53,12 @@ class Contrat extends CommonObject
 	public $table_element = 'contrat';
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = 'contratdet';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Fieldname with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_contrat';
 
@@ -727,7 +727,7 @@ class Contrat extends CommonObject
 					$this->note_private = $obj->note_private;
 					$this->note_public = $obj->note_public;
 					$this->model_pdf = $obj->model_pdf;
-					$this->modelpdf = $obj->model_pdf;	// deprecated
+					$this->modelpdf = $obj->model_pdf; // deprecated
 
 					$this->fk_projet = $obj->fk_project; // deprecated
 					$this->fk_project = $obj->fk_project;
@@ -1032,21 +1032,19 @@ class Contrat extends CommonObject
 			}
 
 			// Insert business contacts ('SALESREPFOLL','contrat')
-			if (!$error)
-			{
+			if (!$error) {
 				$result = $this->add_contact($this->commercial_suivi_id, 'SALESREPFOLL', 'internal');
 				if ($result < 0) $error++;
 			}
 
-			if (!$error)
-			{
+			if (!$error) {
 				if (!empty($this->linkedObjectsIds) && empty($this->linked_objects))	// To use new linkedObjectsIds instead of old linked_objects
 				{
 					$this->linked_objects = $this->linkedObjectsIds; // TODO Replace linked_objects with linkedObjectsIds
 				}
 
 				// Add object linked
-				if (!$error && $this->id && is_array($this->linked_objects) && !empty($this->linked_objects))
+				if (!$error && $this->id && !empty($this->linked_objects) && is_array($this->linked_objects))
 				{
 					foreach ($this->linked_objects as $origin => $tmp_origin_id)
 					{
@@ -1144,10 +1142,10 @@ class Contrat extends CommonObject
 
 
 	/**
-	 *  Supprime l'objet de la base
+	 *  Delete object
 	 *
-	 *  @param	User		$user       Utilisateur qui supprime
-	 *  @return int         			< 0 si erreur, > 0 si ok
+	 *  @param	User		$user       User that deletes
+	 *  @return int         			< 0 if KO, > 0 if OK
 	 */
 	public function delete($user)
 	{
@@ -1469,9 +1467,9 @@ class Contrat extends CommonObject
 			}
 
 			$txtva = price2num($txtva);
-
 			$txlocaltax1 = price2num($txlocaltax1);
 			$txlocaltax2 = price2num($txlocaltax2);
+
 			$remise_percent = price2num($remise_percent);
 			$qty = price2num($qty);
 			if (empty($qty)) $qty = 1;
@@ -2419,7 +2417,9 @@ class Contrat extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'strato';
 
-			if (! empty($this->modelpdf)) {
+			if (!empty($this->model_pdf)) {
+				$modele = $this->model_pdf;
+			} elseif (!empty($this->modelpdf)) {	// deprecated
 				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->CONTRACT_ADDON_PDF)) {
 				$modele = $conf->global->CONTRACT_ADDON_PDF;

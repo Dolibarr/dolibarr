@@ -188,7 +188,7 @@ if ($action == 'update')
 	if (!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $plus = '_PERCENTAGE';
 	// Update values
 	for ($i = 0; $i < 4; $i++) {
-		if (isset($_POST['MAIN_METEO'.$plus.'_LEVEL'.$i])) dolibarr_set_const($db, 'MAIN_METEO'.$plus.'_LEVEL'.$i, GETPOST('MAIN_METEO'.$plus.'_LEVEL'.$i, 'int'), 'chaine', 0, '', $conf->entity);
+		if (GETPOSTISSET('MAIN_METEO'.$plus.'_LEVEL'.$i)) dolibarr_set_const($db, 'MAIN_METEO'.$plus.'_LEVEL'.$i, GETPOST('MAIN_METEO'.$plus.'_LEVEL'.$i, 'int'), 'chaine', 0, '', $conf->entity);
 	}
 }
 
@@ -432,7 +432,7 @@ if ($conf->global->MAIN_DISABLE_METEO != 1) {
 
 
 if ($action == 'edit') {
-	print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
+	print '<br><div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
 	print '<br></form>';
 } else {
 	print '<br><div class="tabsAction">';

@@ -64,17 +64,17 @@ class Facture extends CommonInvoice
 	public $table_element = 'facture';
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = 'facturedet';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Fieldname with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_facture';
 
 	/**
-	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 * @var string String with name of icon for myobject.
 	 */
 	public $picto = 'bill';
 
@@ -114,6 +114,14 @@ class Facture extends CommonInvoice
 
 	public $date; // Date invoice
 	public $datem;
+
+	/**
+	 * @var int	Date expected for delivery
+	 * @deprecated
+	 */
+	public $date_livraison; // deprecated; Use delivery_date instead.
+
+	public $delivery_date; // Date expected of shipment (date starting shipment, not the reception that occurs some days after)
 
 	/**
 	 * @var string customer ref
@@ -169,11 +177,6 @@ class Facture extends CommonInvoice
 	public $fk_bank;
 
 	/**
-	 * @deprecated
-	 */
-	public $products = array();
-
-	/**
 	 * @var FactureLigne[]
 	 */
 	public $lines = array();
@@ -182,6 +185,8 @@ class Facture extends CommonInvoice
 	public $extraparams = array();
 
 	public $fac_rec;
+
+	public $date_pointoftax;
 
 	// Multicurrency
 	/**
@@ -627,7 +632,7 @@ class Facture extends CommonInvoice
 		$sql .= ", ".($this->remise_absolue > 0 ? $this->remise_absolue : 'NULL');
 		$sql .= ", ".($this->remise_percent > 0 ? $this->remise_percent : 'NULL');
 		$sql .= ", '".$this->db->idate($this->date)."'";
-		$sql .= ", ".(empty($this->date_pointoftax) ? "null": "'".$this->db->idate($this->date_pointoftax)."'");
+		$sql .= ", ".(empty($this->date_pointoftax) ? "null" : "'".$this->db->idate($this->date_pointoftax)."'");
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= ", ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
@@ -642,7 +647,7 @@ class Facture extends CommonInvoice
 		$sql .= ", ".$this->cond_reglement_id;
 		$sql .= ", ".$this->mode_reglement_id;
 		$sql .= ", '".$this->db->idate($this->date_lim_reglement)."'";
-		$sql .= ", ".(isset($this->modelpdf) ? "'".$this->db->escape($this->modelpdf)."'" : "null");
+		$sql .= ", ".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null");
 		$sql .= ", ".($this->situation_cycle_ref ? "'".$this->db->escape($this->situation_cycle_ref)."'" : "null");
 		$sql .= ", ".($this->situation_counter ? "'".$this->db->escape($this->situation_counter)."'" : "null");
 		$sql .= ", ".($this->situation_final ? $this->situation_final : 0);
@@ -674,7 +679,7 @@ class Facture extends CommonInvoice
 			}
 
 			// Add object linked
-			if (!$error && $this->id && is_array($this->linked_objects) && !empty($this->linked_objects))
+			if (!$error && $this->id && !empty($this->linked_objects) && is_array($this->linked_objects))
 			{
 				foreach ($this->linked_objects as $origin => $tmp_origin_id)
 				{
@@ -863,7 +868,7 @@ class Facture extends CommonInvoice
 							$line->situation_percent,
 							$line->fk_prev_id,
 							$line->fk_unit,
-							$line->pu_ht_devise,
+							$line->multicurrency_subprice,
 							$line->ref_ext
 						);
 						if ($result < 0)
@@ -963,7 +968,7 @@ class Facture extends CommonInvoice
 						$_facrec->lines[$i]->situation_percent,
 						'',
 						$_facrec->lines[$i]->fk_unit,
-						$_facrec->lines[$i]->pu_ht_devise
+						$_facrec->lines[$i]->multicurrency_subprice
 					);
 
 					if ($result_insert < 0)
@@ -1057,7 +1062,7 @@ class Facture extends CommonInvoice
 		$facture->note_public       = $this->note_public;
 		$facture->note_private      = $this->note_private;
 		$facture->ref_client        = $this->ref_client;
-		$facture->modelpdf          = $this->modelpdf;	// deprecated
+		$facture->modelpdf          = $this->modelpdf; // deprecated
 		$facture->model_pdf         = $this->modelpdf;
 		$facture->fk_project        = $this->fk_project;
 		$facture->cond_reglement_id = $this->cond_reglement_id;
@@ -1069,7 +1074,6 @@ class Facture extends CommonInvoice
 		$facture->origin_id         = $this->origin_id;
 
 		$facture->lines = $this->lines; // Array of lines of invoice
-		$facture->products = $this->lines; // Tant que products encore utilise
 		$facture->situation_counter = $this->situation_counter;
 		$facture->situation_cycle_ref = $this->situation_cycle_ref;
 		$facture->situation_final = $this->situation_final;
@@ -1077,6 +1081,8 @@ class Facture extends CommonInvoice
 		$facture->retained_warranty = $this->retained_warranty;
 		$facture->retained_warranty_fk_cond_reglement = $this->retained_warranty_fk_cond_reglement;
 		$facture->retained_warranty_date_limit = $this->retained_warranty_date_limit;
+
+		$facture->fk_user_author = $user->id;
 
 
 		// Loop on each line of new invoice
@@ -1162,8 +1168,10 @@ class Facture extends CommonInvoice
 
 		// Clear fields
 		$object->date               = (empty($this->date) ? dol_now() : $this->date);
-		$object->user_author        = $user->id;
-		$object->user_valid         = '';
+		$object->user_author        = $user->id;	// deprecated
+		$object->user_valid         = null;			// deprecated
+		$object->fk_user_author     = $user->id;
+		$object->fk_user_valid      = null;
 		$object->fk_facture_source  = 0;
 		$object->date_creation      = '';
 		$object->date_modification = '';
@@ -1171,7 +1179,6 @@ class Facture extends CommonInvoice
 		$object->ref_client         = '';
 		$object->close_code         = '';
 		$object->close_note         = '';
-		$object->products = $object->lines; // For backward compatibility
 		if ($conf->global->MAIN_DONT_KEEP_NOTE_ON_CLONING == 1) {
 			$object->note_private = '';
 			$object->note_public = '';
@@ -1183,7 +1190,6 @@ class Facture extends CommonInvoice
 			if (($object->lines[$i]->info_bits & 0x02) == 0x02)	// We do not clone line of discounts
 			{
 				unset($object->lines[$i]);
-				unset($object->products[$i]); // Tant que products encore utilise
 			}
 						// Bloc to update dates of service (month by month only if previously filled at 1d near start or end of month)
 			// If it's a service with start and end dates
@@ -1317,8 +1323,9 @@ class Facture extends CommonInvoice
 
 			// get extrafields from original line
 			$object->lines[$i]->fetch_optionals();
-			foreach ($object->lines[$i]->array_options as $options_key => $value)
+			foreach ($object->lines[$i]->array_options as $options_key => $value) {
 				$line->array_options[$options_key] = $value;
+			}
 
 			$this->lines[$i] = $line;
 		}
@@ -1330,7 +1337,8 @@ class Facture extends CommonInvoice
 		$this->mode_reglement_id    = $object->mode_reglement_id;
 		$this->availability_id      = $object->availability_id;
 		$this->demand_reason_id     = $object->demand_reason_id;
-		$this->date_livraison       = $object->date_livraison;
+		$this->delivery_date        = (empty($object->delivery_date) ? $object->date_livraison : $object->delivery_date);
+		$this->date_livraison       = $object->delivery_date; // deprecated
 		$this->fk_delivery_address  = $object->fk_delivery_address; // deprecated
 		$this->contact_id           = $object->contact_id;
 		$this->ref_client           = $object->ref_client;
@@ -1347,6 +1355,8 @@ class Facture extends CommonInvoice
 		$this->origin = $object->element;
 		$this->origin_id = $object->id;
 
+		$this->fk_user_author = $user->id;
+
 		// get extrafields from original line
 		$object->fetch_optionals();
 		foreach ($object->array_options as $options_key => $value)
@@ -1361,8 +1371,7 @@ class Facture extends CommonInvoice
 
 		$ret = $this->create($user);
 
-		if ($ret > 0)
-		{
+		if ($ret > 0) {
 			// Actions hooked (by external module)
 			$hookmanager->initHooks(array('invoicedao'));
 
@@ -1423,11 +1432,11 @@ class Facture extends CommonInvoice
 		$label = '';
 
 		if ($user->rights->facture->lire) {
-			$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Invoice").'</u>';
-			if ($this->type == self::TYPE_REPLACEMENT) $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("ReplacementInvoice").'</u>';
-			if ($this->type == self::TYPE_CREDIT_NOTE) $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
-			if ($this->type == self::TYPE_DEPOSIT)     $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("Deposit").'</u>';
-			if ($this->type == self::TYPE_SITUATION)   $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("InvoiceSituation").'</u>';
+			$label = img_picto('', $picto).' <u class="paddingrightonly">'.$langs->trans("Invoice").'</u>';
+			if ($this->type == self::TYPE_REPLACEMENT) $label = img_picto('', $picto).' <u class="paddingrightonly">'.$langs->transnoentitiesnoconv("ReplacementInvoice").'</u>';
+			if ($this->type == self::TYPE_CREDIT_NOTE) $label = img_picto('', $picto).' <u class="paddingrightonly">'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
+			if ($this->type == self::TYPE_DEPOSIT)     $label = img_picto('', $picto).' <u class="paddingrightonly">'.$langs->transnoentitiesnoconv("Deposit").'</u>';
+			if ($this->type == self::TYPE_SITUATION)   $label = img_picto('', $picto).' <u class="paddingrightonly">'.$langs->transnoentitiesnoconv("InvoiceSituation").'</u>';
 			if (isset($this->statut) && isset($this->alreadypaid)) {
 				$label .= ' '.$this->getLibStatut(5, $this->alreadypaid);
 			}
@@ -1599,8 +1608,10 @@ class Facture extends CommonInvoice
 				$this->note = $obj->note_private; // deprecated
 				$this->note_private = $obj->note_private;
 				$this->note_public			= $obj->note_public;
-				$this->user_author			= $obj->fk_user_author;
-				$this->user_valid = $obj->fk_user_valid;
+				$this->user_author			= $obj->fk_user_author;	// deprecated
+				$this->user_valid           = $obj->fk_user_valid;	// deprecated
+				$this->fk_user_author		= $obj->fk_user_author;
+				$this->fk_user_valid        = $obj->fk_user_valid;
 				$this->model_pdf = $obj->model_pdf;
 				$this->modelpdf = $obj->model_pdf; // deprecated
 				$this->last_main_doc = $obj->last_main_doc;
@@ -1889,7 +1900,7 @@ class Facture extends CommonInvoice
 		$sql .= " date_lim_reglement=".(strval($this->date_lim_reglement) != '' ? "'".$this->db->idate($this->date_lim_reglement)."'" : 'null').",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
-		$sql .= " model_pdf=".(isset($this->modelpdf) ? "'".$this->db->escape($this->modelpdf)."'" : "null").",";
+		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null").",";
 		$sql .= " situation_cycle_ref=".(empty($this->situation_cycle_ref) ? "null" : $this->db->escape($this->situation_cycle_ref)).",";
 		$sql .= " situation_counter=".(empty($this->situation_counter) ? "null" : $this->db->escape($this->situation_counter)).",";
@@ -2112,7 +2123,7 @@ class Facture extends CommonInvoice
 
 		$rowid = $this->id;
 
-		dol_syslog(get_class($this)."::delete rowid=".$rowid.", ref=".$this->ref.", thirdparty=".$this->thirdparty->name, LOG_DEBUG);
+		dol_syslog(get_class($this)."::delete rowid=".$rowid.", ref=".$this->ref.", thirdparty=".(empty($this->thirdparty) ? '' : $this->thirdparty->name), LOG_DEBUG);
 
 		// Test to avoid invoice deletion (allowed if draft)
 		$result = $this->is_erasable();
@@ -2175,6 +2186,7 @@ class Facture extends CommonInvoice
 				if (!$this->db->query($sql))
 				{
 					$this->error = $this->db->error()." sql=".$sql;
+					$this->errors[] = $this->error;
 					$this->db->rollback();
 					return -5;
 				}
@@ -2235,6 +2247,7 @@ class Facture extends CommonInvoice
 							{
 								$langs->load("errors");
 								$this->error = $langs->trans("ErrorFailToDeleteFile", $file);
+								$this->errors[] = $this->error;
 								$this->db->rollback();
 								return 0;
 							}
@@ -2245,6 +2258,7 @@ class Facture extends CommonInvoice
 							{
 								$langs->load("errors");
 								$this->error = $langs->trans("ErrorFailToDeleteDir", $dir);
+								$this->errors[] = $this->error;
 								$this->db->rollback();
 								return 0;
 							}
@@ -2255,11 +2269,13 @@ class Facture extends CommonInvoice
 					return 1;
 				} else {
 					$this->error = $this->db->lasterror()." sql=".$sql;
+					$this->errors[] = $this->error;
 					$this->db->rollback();
 					return -6;
 				}
 			} else {
 				$this->error = $this->db->lasterror()." sql=".$sql;
+				$this->errors[] = $this->error;
 				$this->db->rollback();
 				return -4;
 			}
@@ -2955,7 +2971,7 @@ class Facture extends CommonInvoice
 	 *  @param      int         $situation_percent  Situation advance percentage
 	 *  @param      int         $fk_prev_id         Previous situation line id reference
 	 *  @param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
-	 *  @param		double		$pu_ht_devise		Unit price in currency
+	 *  @param		double		$pu_ht_devise		Unit price in foreign currency
 	 *  @param		string		$ref_ext		    External reference of the line
 	 *  @return    	int             				<0 if KO, Id of line if OK
 	 */
@@ -3120,8 +3136,8 @@ class Facture extends CommonInvoice
 			$this->line->tva_tx = $txtva;
 			$this->line->localtax1_tx = ($total_localtax1 ? $localtaxes_type[1] : 0);
 			$this->line->localtax2_tx = ($total_localtax2 ? $localtaxes_type[3] : 0);
-			$this->line->localtax1_type = $localtaxes_type[0];
-			$this->line->localtax2_type = $localtaxes_type[2];
+			$this->line->localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
+			$this->line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 
 			$this->line->total_ht = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_ht) : $total_ht); // For credit note and if qty is negative, total is negative
 			$this->line->total_ttc = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_ttc) : $total_ttc); // For credit note and if qty is negative, total is negative
@@ -3281,6 +3297,7 @@ class Facture extends CommonInvoice
 			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 
 			// Clean vat code
+			$reg = array();
 			$vat_src_code = '';
 			if (preg_match('/\((.*)\)/', $txtva, $reg))
 			{
@@ -3358,8 +3375,8 @@ class Facture extends CommonInvoice
 			$this->line->tva_tx = $txtva;
 			$this->line->localtax1_tx		= $txlocaltax1;
 			$this->line->localtax2_tx		= $txlocaltax2;
-			$this->line->localtax1_type		= $localtaxes_type[0];
-			$this->line->localtax2_type		= $localtaxes_type[2];
+			$this->line->localtax1_type		= empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
+			$this->line->localtax2_type		= empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 
 			$this->line->remise_percent		= $remise_percent;
 			$this->line->subprice			= ($this->type == self::TYPE_CREDIT_NOTE ?-abs($pu_ht) : $pu_ht); // For credit note, unit price always negative, always positive otherwise
@@ -4111,7 +4128,7 @@ class Facture extends CommonInvoice
 	 */
 	public function initAsSpecimen($option = '')
 	{
-		global $conf, $langs;
+		global $conf, $langs, $user;
 
 		$now = dol_now();
 		$arraynow = dol_getdate($now);
@@ -4159,6 +4176,8 @@ class Facture extends CommonInvoice
 		$this->note_public = 'This is a comment (public)';
 		$this->note_private = 'This is a comment (private)';
 		$this->note = 'This is a comment (private)';
+
+		$this->fk_user_author = $user->id;
 
 		$this->multicurrency_tx = 1;
 		$this->multicurrency_code = $conf->currency;
@@ -4319,8 +4338,8 @@ class Facture extends CommonInvoice
 	/**
 	 *  Create a document onto disk according to template module.
 	 *
-	 *	@param	string		$modele			Generator to use. Caller must set it to obj->modelpdf or GETPOST('modelpdf','alpha') for example.
-	 *	@param	Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *	@param	string		$modele			Generator to use. Caller must set it to obj->model_pdf or GETPOST('model','alpha') for example.
+	 *	@param	Translate	$outputlangs	Object lang to use for translation
 	 *  @param  int			$hidedetails    Hide details of lines
 	 *  @param  int			$hidedesc       Hide description
 	 *  @param  int			$hideref        Hide ref
@@ -4338,7 +4357,9 @@ class Facture extends CommonInvoice
 			$modele = 'crabe';
 			$thisTypeConfName = 'FACTURE_ADDON_PDF_'.$this->type;
 
-			if (! empty($this->modelpdf)) {
+			if (!empty($this->model_pdf)) {
+				$modele = $this->model_pdf;
+			} elseif (!empty($this->modelpdf)) {	// deprecated
 				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->$thisTypeConfName)) {
 				$modele = $conf->global->$thisTypeConfName;

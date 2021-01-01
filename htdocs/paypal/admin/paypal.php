@@ -135,6 +135,7 @@ if (!function_exists('curl_version'))
 
 print '<br>';
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 
 // Account Parameters
@@ -144,7 +145,7 @@ print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 print '<tr class="oddeven">';
-print '<td class="titlefield">';
+print '<td>';
 print $langs->trans("PaypalLiveEnabled").'</td><td>';
 if (empty($conf->global->PAYPAL_API_SANDBOX))
 {
@@ -181,6 +182,15 @@ print $langs->trans("PAYPAL_SSLVERSION").'</td><td>';
 print $form->selectarray("PAYPAL_SSLVERSION", array('1'=> $langs->trans('TLSv1'), '6'=> $langs->trans('TLSv1.2')), $conf->global->PAYPAL_SSLVERSION);
 print '</td></tr>';
 
+print '</table>';
+print '</div>';
+
+print '<br>';
+
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+
 // Usage Parameters
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("UsageParameter").'</td>';
@@ -211,6 +221,7 @@ if (!empty($conf->banque->enabled))
 {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BankAccount").'</td><td>';
+	print img_picto('', 'bank_account').' ';
 	$form->select_comptes($conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS, 'PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
 	print '</td></tr>';
 }
@@ -255,6 +266,14 @@ print '<input class="minwidth200" type="text" name="ONLINE_PAYMENT_SENDEMAIL" va
 print ' &nbsp;  <span class="opacitymedium">'.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;</span>';
 print '</td></tr>';
 
+print '</table>';
+print '</div>';
+
+print '<br>';
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("UrlGenerationParameters").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
@@ -284,6 +303,7 @@ if ($conf->use_javascript_ajax) {
 print '</td></tr>';
 
 print '</table>';
+print '</div>';
 
 print dol_get_fiche_end();
 
@@ -296,7 +316,7 @@ print '<br><br>';
 // Help doc
 print '<u>'.$langs->trans("InformationToFindParameters", "Paypal").'</u>:<br>';
 if (!empty($conf->use_javascript_ajax))
-	print '<a href="#" class="reposition" id="apidoca">'.$langs->trans("ClickHere").'...</a>';
+	print '<a class="reposition" id="apidoca">'.$langs->trans("ClickHere").'...</a>';
 
 $realpaypalurl = 'www.paypal.com';
 $sandboxpaypalurl = 'developer.paypal.com';
@@ -318,11 +338,13 @@ if (!empty($conf->use_javascript_ajax))
 {
 	print "\n".'<script type="text/javascript">';
 	print '$(document).ready(function () {
-            $("#apidoc").hide();
-            $("#apidoca").click(function() {
-                $("#apidoc").show();
-            	$("#apidoca").hide();
-            })
+	            $("#apidoc").hide();
+	            $("#apidoca").click(function() {
+					console.log("We click on apidoca show/hide");
+	                $("#apidoc").show();
+	            	$("#apidoca").hide();
+					return false;
+	            })
 			});';
 	print '</script>';
 }

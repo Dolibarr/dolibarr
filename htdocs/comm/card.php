@@ -86,6 +86,15 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartycomm', 'globalcard'));
 
+// Security check
+$result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', 0);
+
+if ($object->id > 0) {
+	if (!($object->client > 0) || empty($user->rights->societe->lire)) {
+		accessforbidden();
+	}
+}
+
 $now = dol_now();
 
 
@@ -170,6 +179,7 @@ if (empty($reshook))
 		$object->stcomm_id = dol_getIdFromCode($db, GETPOST('stcomm', 'alpha'), 'c_stcomm');
 		$result = $object->update($object->id, $user);
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+		else $result = $object->fetch($object->id);
 	}
 
 	// update outstandng limit
@@ -276,7 +286,10 @@ if ($object->id > 0)
 		print '<tr><td>';
 		print $langs->trans('CustomerCode').'</td><td>';
 		print $object->code_client;
-		if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+		$tmpcheck = $object->check_codeclient();
+		if ($tmpcheck != 0 && $tmpcheck != -5) {
+			print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+		}
 		print '</td></tr>';
 
 		print '<tr>';

@@ -631,11 +631,18 @@ class dolReceiptPrinter extends Printer
 						break;
 					case 'DOL_PRINT_OBJECT_LINES':
 						foreach ($object->lines as $line) {
-							//var_dump($line);
-							$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - 10 - 1;
-							$spaces = str_repeat(' ', $spacestoadd);
-							$this->printer->text($line->ref.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
-							$this->printer->text(strip_tags(htmlspecialchars_decode($line->product_label))."\n");
+							if ($line->fk_product)
+							{
+								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - 10 - 1;
+								$spaces = str_repeat(' ', $spacestoadd);
+								$this->printer->text($line->ref.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
+								$this->printer->text(strip_tags(htmlspecialchars_decode($line->product_label))."\n");
+							}
+							else {
+								$spacestoadd = $nbcharactbyline - strlen($line->description) - strlen($line->qty) - 10 - 1;
+								$spaces = str_repeat(' ', $spacestoadd);
+								$this->printer->text($line->description.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
+							}
 						}
 						break;
 					case 'DOL_PRINT_OBJECT_TAX':
@@ -793,7 +800,7 @@ class dolReceiptPrinter extends Printer
 								$row = $this->db->fetch_object($resql);
 								$spacestoadd = $nbcharactbyline - strlen($langs->transnoentitiesnoconv("PaymentTypeShort".$row->code)) - 12;
 								$spaces = str_repeat(' ', $spacestoadd);
-								$amount_payment = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
+								$amount_payment = (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
 								if ($row->code == "LIQ") $amount_payment = $amount_payment + $row->pos_change; // Show amount with excess received if is cash payment
 								$this->printer->text($spaces.$langs->transnoentitiesnoconv("PaymentTypeShort".$row->code).' '.str_pad(price($amount_payment), 10, ' ', STR_PAD_LEFT)."\n");
 								if ($row->code == "LIQ" && $row->pos_change > 0) // Print change only in cash payments

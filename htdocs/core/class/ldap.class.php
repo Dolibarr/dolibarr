@@ -984,14 +984,12 @@ class Ldap
 		// Define filter
 		if (!empty($activefilter))
 		{
-			if (((string) $activefilter == '1' || (string) $activefilter == 'user') && $this->filter)
-			{
+			if (((string) $activefilter == '1' || (string) $activefilter == 'user') && $this->filter) {
 				$filter = '('.$this->filter.')';
-			} elseif (((string) $activefilter == 'member') && $this->filter)
-			{
+			} elseif (((string) $activefilter == 'member') && $this->filter) {
 				$filter = '('.$this->filtermember.')';
-			} else // If this->filter is empty, make fiter on * (all)
-			{
+			} else {
+				// If this->filter is empty, make fiter on * (all)
 				$filter = '('.$useridentifier.'=*)';
 			}
 		} else {
@@ -1070,6 +1068,7 @@ class Ldap
 	 */
 	public function littleEndian($hex)
 	{
+		$result = '';
 		for ($x = dol_strlen($hex) - 2; $x >= 0; $x = $x - 2) {
 			$result .= substr($hex, $x, 2);
 		}

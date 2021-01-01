@@ -177,7 +177,7 @@ if (preg_match('/install\.lock/i', $_SERVER["SCRIPT_FILENAME"]))
 	print $langs->trans("YouTryInstallDisabledByDirLock");
 	if (!empty($dolibarr_main_url_root))
 	{
-		print 'Click on following link, <a href="'.$dolibarr_main_url_root.'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"]) ? '&username='.urlencode($_POST["login"]) : '').'">';
+		print 'Click on following link, <a href="'.$dolibarr_main_url_root.'/admin/index.php?mainmenu=home&leftmenu=setup'.(GETPOSTISSET("login") ? '&username='.urlencode(GETPOST("login")) : '').'">';
 		print $langs->trans("ClickHereToGoToApp");
 		print '</a>';
 	}
@@ -202,7 +202,7 @@ if (@file_exists($lockfile))
 	if (!empty($dolibarr_main_url_root))
 	{
 		print $langs->trans("ClickOnLinkOrRemoveManualy").'<br>';
-		print '<a href="'.$dolibarr_main_url_root.'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"]) ? '&username='.urlencode($_POST["login"]) : '').'">';
+		print '<a href="'.$dolibarr_main_url_root.'/admin/index.php?mainmenu=home&leftmenu=setup'.(GETPOSTISSET("login") ? '&username='.urlencode(GETPOST("login")) : '').'">';
 		print $langs->trans("ClickHereToGoToApp");
 		print '</a>';
 	} else {
@@ -425,9 +425,7 @@ function pFooter($nonext = 0, $setuplang = '', $jscheckfunction = '', $withpleas
 {
 	global $conf, $langs;
 
-	$langs->load("main");
-	$langs->load("other");
-	$langs->load("admin");
+	$langs->loadLangs(array("main", "other", "admin"));
 
 	print '</td></tr></table>'."\n";
 	print '</td></tr></table>'."\n";
@@ -437,7 +435,10 @@ function pFooter($nonext = 0, $setuplang = '', $jscheckfunction = '', $withpleas
 		print '<div class="nextbutton" id="nextbutton">';
 		if ($nonext == '2')
 		{
-			print $langs->trans("ErrorFoundDuringMigration", isset($_SERVER["REQUEST_URI"]) ? $_SERVER["REQUEST_URI"].'&ignoreerrors=1' : '').'<br><br>';
+			print '<span class="warning">';
+			print $langs->trans("ErrorFoundDuringMigration", isset($_SERVER["REQUEST_URI"]) ? $_SERVER["REQUEST_URI"].'&ignoreerrors=1' : '');
+			print '</span>';
+			print '<br><br>';
 		}
 
 		print '<input type="submit" '.($nonext == '2' ? 'disabled="disabled" ' : '').'value="'.$langs->trans("NextStep").' ->"';

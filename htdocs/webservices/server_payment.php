@@ -45,6 +45,7 @@ $langs->load("main");
 if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 {
 	   $langs->load("admin");
+
 	   dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	   print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
 	   print $langs->trans("ToActivateModule");
@@ -139,7 +140,7 @@ $server->register(
  */
 function createPayment($authentication, $payment)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	$now = dol_now();
 
@@ -165,7 +166,7 @@ function createPayment($authentication, $payment)
 	if (!$error)
 	{
 		$soc = new Societe($db);
-		$res = $soc->fetch($payment['thirdparty_id']);
+		$soc->fetch($payment['thirdparty_id']);
 
 		$new_payment              = new Paiement($db);
 		$new_payment->amount      = doubleval($payment['amount']);

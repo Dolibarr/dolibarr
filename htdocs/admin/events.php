@@ -118,7 +118,7 @@ foreach ($eventstolog as $key => $arr)
 		print '<td>'.$arr['id'].'</td>';
 		print '<td class="center">';
 		$key = 'MAIN_LOGEVENTS_'.$arr['id'];
-		$value = $conf->global->$key;
+		$value = empty($conf->global->$key) ? '' : $conf->global->$key;
 		print '<input class="oddeven checkforselect" type="checkbox" name="'.$key.'" value="1"'.($value ? ' checked' : '').'>';
 		print '</td></tr>'."\n";
 	}
@@ -128,7 +128,7 @@ print '</table>';
 print dol_get_fiche_end();
 
 print '<div class="center">';
-print "<input type=\"submit\" name=\"save\" class=\"button\" value=\"".$langs->trans("Save")."\">";
+print '<input type="submit" name="save" class="button button-save" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print "</form>\n";

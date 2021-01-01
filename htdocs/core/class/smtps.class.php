@@ -1647,7 +1647,7 @@ class SMTPs
 	 *   - [2] Private
 	 *   - [3] Company Confidential
 	 *
-	 * @return 	void
+	 * @return 	string|boolean
 	 */
 	public function getSensitivity()
 	{

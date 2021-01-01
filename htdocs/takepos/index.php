@@ -483,7 +483,7 @@ function TakeposOrderNotes() {
 }
 
 function Refresh() {
-	console.log("Refresh");
+	console.log("Refresh by reloading place="+place);
 	$("#poslines").load("invoice.php?place="+place, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
@@ -491,9 +491,10 @@ function Refresh() {
 
 function New() {
 	// If we go here,it means $conf->global->TAKEPOS_BAR_RESTAURANT is not defined
-	console.log("New with place = <?php echo $place; ?>, js place="+place);
-
 	invoiceid = $("#invoiceid").val();
+
+	console.log("New with place = <?php echo $place; ?>, js place="+place+", invoiceid="+invoiceid);
+
 	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getInvoice&id='+invoiceid, function(data) {
 		var r;
 
@@ -686,7 +687,10 @@ function OpenDrawer(){
 	console.log("OpenDrawer call ajax url http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print");
 	$.ajax({
 		type: "POST",
-		url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print',
+		<?php
+		if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) echo "url: '".$conf->global->TAKEPOS_PRINT_SERVER."/printer/drawer.php',";
+		else echo "url: 'http://".$conf->global->TAKEPOS_PRINT_SERVER.":8111/print',";
+		?>
 		data: "opendrawer"
 	});
 }
@@ -813,7 +817,9 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			</a>
 			<?php
 			if (!empty($conf->multicurrency->enabled)) {
-				print '<a class="valignmiddle tdoverflowmax100 minwidth75" id="multicurrency" onclick="ModalBox(\'ModalCurrency\');" title=""><span class="fas fa-coins paddingrightonly"></span>'.$langs->trans("Currency").'</a>';
+				print '<a class="valignmiddle tdoverflowmax100" id="multicurrency" onclick="ModalBox(\'ModalCurrency\');" title=""><span class="fas fa-coins paddingrightonly"></span>';
+				print '<span class="hideonsmartphone">'.$langs->trans("Currency").'</span>';
+				print '</a>';
 			}
 			?>
 			</div>
@@ -826,11 +832,11 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			</div>
 			<div class="topnav-right">
 				<div class="login_block_other">
-				<input type="text" id="search" name="search" onkeyup="Search2(<?php echo $keyCodeForEnter; ?>);"  placeholder="<?php echo $langs->trans("Search"); ?>" autofocus>
+				<input type="text" id="search" name="search" onkeyup="Search2(<?php echo $keyCodeForEnter; ?>);" placeholder="<?php echo $langs->trans("Search"); ?>" autofocus>
 				<a onclick="ClearSearch();"><span class="fa fa-backspace"></span></a>
 				<a onclick="window.location.href='<?php echo DOL_URL_ROOT.'/'; ?>';"><span class="fas fa-home"></span></a>
 				<?php if (empty($conf->dol_use_jmobile)) { ?>
-				<a onclick="FullScreen();"><span class="fa fa-expand-arrows-alt"></span></a>
+				<a class="hideonsmartphone" onclick="FullScreen();"><span class="fa fa-expand-arrows-alt"></span></a>
 				<?php } ?>
 				</div>
 				<div class="login_block_user">

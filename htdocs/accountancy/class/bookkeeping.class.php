@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2017  Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2015-2020  Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -825,6 +825,10 @@ class BookKeeping extends CommonObject
 					$sqlwhere[] = $key.'\''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.credit' || $key == 't.debit') {
 					$sqlwhere[] = natural_search($key, $value, 1, 1);
+                } elseif ($key == 't.reconciled_option') {
+                    $sqlwhere[] = 't.lettering_code IS NULL';
+                } elseif ($key == 't.code_journal' && !empty($value)) {
+                    $sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
 				} else {
 					$sqlwhere[] = natural_search($key, $value, 0, 1);
 				}
@@ -1898,23 +1902,22 @@ class BookKeeping extends CommonObject
 		return $out;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Description of a root accounting account
+	 * Return id and description of a root accounting account.
+	 * This function takes the parent of parent to get the root account !
 	 *
 	 * @param 	string 	$account	Accounting account
 	 * @return 	string 				Root account
 	 */
-	public function get_compte_racine($account = null)
+	public function getRootAccount($account = null)
 	{
-		// phpcs:enable
 		global $conf;
 		$pcgver = $conf->global->CHARTOFACCOUNTS;
 
-		$sql  = "SELECT root.account_number, root.label as label";
+		$sql  = "SELECT root.rowid, root.account_number, root.label as label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
-		$sql .= " AND asy.rowid = ".$pcgver;
+		$sql .= " AND asy.rowid = ".((int) $pcgver);
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as parent ON aa.account_parent = parent.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as root ON parent.account_parent = root.rowid";
 		$sql .= " WHERE aa.account_number = '".$this->db->escape($account)."'";
@@ -1930,7 +1933,7 @@ class BookKeeping extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 			}
 
-			return $obj->label;
+			return array('id'=>$obj->rowid, 'account_number'=>$obj->account_number, 'label'=>$obj->label);
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(__METHOD__." ".$this->error, LOG_ERR);

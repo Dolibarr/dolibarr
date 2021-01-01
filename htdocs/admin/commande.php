@@ -111,11 +111,9 @@ if ($action == 'updateMask')
 }
 
 // Activate a model
-elseif ($action == 'set')
-{
+elseif ($action == 'set') {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
-} elseif ($action == 'del')
-{
+} elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
 	{
@@ -124,8 +122,7 @@ elseif ($action == 'set')
 }
 
 // Set default model
-elseif ($action == 'setdoc')
-{
+elseif ($action == 'setdoc') {
 	if (dolibarr_set_const($db, "COMMANDE_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
 	{
 		// The constant that was read before the new set
@@ -139,8 +136,7 @@ elseif ($action == 'setdoc')
 	{
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
-} elseif ($action == 'setmod')
-{
+} elseif ($action == 'setmod') {
 	// TODO Check if numbering module chosen can be activated
 	// by calling method canBeActivated
 
@@ -254,6 +250,7 @@ print dol_get_fiche_head($head, 'general', $langs->trans("Orders"), -1, 'order')
 
 print load_fiche_titre($langs->trans("OrdersNumberingModules"), '', '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
@@ -297,8 +294,10 @@ foreach ($dirmodels as $reldir)
 						// Show example of numbering model
 						print '<td class="nowrap">';
 						$tmp = $module->getExample();
-						if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
-						elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
+						if (preg_match('/^Error/', $tmp)) {
+							$langs->load("errors");
+							print '<div class="error">'.$langs->trans($tmp).'</div>';
+						} elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
 						else print $tmp;
 						print '</td>'."\n";
 
@@ -344,7 +343,7 @@ foreach ($dirmodels as $reldir)
 		}
 	}
 }
-print "</table><br>\n";
+print "</table></div><br>\n";
 
 
 /*
@@ -375,6 +374,7 @@ if ($resql)
 }
 
 
+print '<div class="div-table-responsive-no-min">';
 print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
 print '<td>'.$langs->trans("Name").'</td>';
@@ -482,7 +482,7 @@ foreach ($dirmodels as $reldir)
 								print '<td class="center">';
 								if ($module->type == 'pdf')
 								{
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
 									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 								}
@@ -499,6 +499,7 @@ foreach ($dirmodels as $reldir)
 }
 
 print '</table>';
+print '</div>';
 
 
 /*

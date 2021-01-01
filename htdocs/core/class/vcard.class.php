@@ -85,10 +85,19 @@ function dol_quoted_printable_encode($input, $line_max = 76)
  */
 class vCard
 {
+	/**
+	 * @var array array of properties
+	 */
 	public $properties;
+
+	/**
+	 * @var string filename
+	 */
 	public $filename;
 
-	//var $encoding="UTF-8";
+	/**
+	 * @var string encoding
+	 */
 	public $encoding = "ISO-8859-1;ENCODING=QUOTED-PRINTABLE";
 
 

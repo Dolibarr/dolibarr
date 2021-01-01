@@ -42,7 +42,9 @@ $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
-$backtourl = GETPOST('backtourl', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+
 $securitykey = GETPOST('securitykey', 'alpha');
 
 
@@ -62,13 +64,13 @@ if (!empty($id))
 
 if (!empty($cancel))
 {
-	if (!empty($id) && empty($backtourl))
+	if (!empty($id) && empty($backtopage))
 	{
 		$action = '';
 	} else {
-		if ($backtourl)
+		if ($backtopage)
 		{
-			header("Location: ".$backtourl);
+			header("Location: ".$backtopage);
 			exit;
 		} else {
 			header("Location: ".DOL_URL_ROOT.'/cron/list.php');
@@ -297,7 +299,7 @@ if (($action == "create") || ($action == "edit"))
 {
 	print '<form name="cronform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
-	print '<input type="hidden" name="backtourl" value="'.GETPOST('backtourl').'">'."\n";
+	print '<input type="hidden" name="backtopage" value="'.GETPOST('backtopage').'">'."\n";
 	if (!empty($object->id)) {
 		print '<input type="hidden" name="action" value="update">'."\n";
 		print '<input type="hidden" name="id" value="'.$object->id.'">'."\n";
@@ -513,9 +515,9 @@ if (($action == "create") || ($action == "edit"))
 	print dol_get_fiche_end();
 
 	print '<div align="center">';
-	print '<input type="submit" name="save" class="button" value="'.$langs->trans("Save").'">';
+	print '<input type="submit" name="save" class="button button-save" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+	print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
 	print "</div>";
 
 	print "</form>\n";
@@ -621,12 +623,12 @@ if (($action == "create") || ($action == "edit"))
 
 	print '<tr><td>';
 	print $langs->trans('CronDtStart')."</td><td>";
-	if (!empty($object->datestart)) {print dol_print_date($object->datestart, 'dayhoursec'); }
+	if (!empty($object->datestart)) {print $form->textwithpicto(dol_print_date($object->datestart, 'dayhoursec'), $langs->trans("CurrentTimeZone")); }
 	print "</td></tr>";
 
 	print "<tr><td>";
 	print $langs->trans('CronDtEnd')."</td><td>";
-	if (!empty($object->dateend)) {print dol_print_date($object->dateend, 'dayhoursec'); }
+	if (!empty($object->dateend)) {print $form->textwithpicto(dol_print_date($object->dateend, 'dayhoursec'), $langs->trans("CurrentTimeZone")); }
 	print "</td></tr>";
 
 	print "<tr><td>";
@@ -651,7 +653,7 @@ if (($action == "create") || ($action == "edit"))
 	print ' ('.$langs->trans('CronFrom').')';
 	print "</td><td>";
 	if (!$object->status) print $langs->trans("Disabled");
-	elseif (!empty($object->datenextrun)) { print img_picto('', 'object_calendarday').' '.dol_print_date($object->datenextrun, 'dayhoursec'); } else { print $langs->trans('CronNone'); }
+	elseif (!empty($object->datenextrun)) { print img_picto('', 'object_calendarday').' '.$form->textwithpicto(dol_print_date($object->datenextrun, 'dayhoursec'), $langs->trans("CurrentTimeZone")); } else { print $langs->trans('CronNone'); }
 	if ($object->status == Cronjob::STATUS_ENABLED)
 	{
 		if ($object->maxrun && $object->nbrun >= $object->maxrun) print img_warning($langs->trans("MaxRunReached"));
@@ -670,12 +672,12 @@ if (($action == "create") || ($action == "edit"))
 
 	print '<tr><td class="titlefield">';
 	print $langs->trans('CronDtLastLaunch')."</td><td>";
-	if (!empty($object->datelastrun)) {print dol_print_date($object->datelastrun, 'dayhoursec'); } else {print $langs->trans('CronNone'); }
+	if (!empty($object->datelastrun)) {print $form->textwithpicto(dol_print_date($object->datelastrun, 'dayhoursec'), $langs->trans("CurrentTimeZone")); } else {print $langs->trans('CronNone'); }
 	print "</td></tr>";
 
 	print '<tr><td>';
 	print $langs->trans('CronDtLastResult')."</td><td>";
-	if (!empty($object->datelastresult)) {print dol_print_date($object->datelastresult, 'dayhoursec'); } else {print $langs->trans('CronNone'); }
+	if (!empty($object->datelastresult)) {print $form->textwithpicto(dol_print_date($object->datelastresult, 'dayhoursec'), $langs->trans("CurrentTimeZone")); } else {print $langs->trans('CronNone'); }
 	print "</td></tr>";
 
 	print '<tr><td>';

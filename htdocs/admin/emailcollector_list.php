@@ -131,9 +131,12 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->emailcollector->read;
+/*$permissiontoread = $user->rights->emailcollector->read;
 $permissiontoadd = $user->rights->emailcollector->write;
-$permissiontodelete = $user->rights->emailcollector->delete;
+$permissiontodelete = $user->rights->emailcollector->delete;*/
+$permissiontoread = $user->admin;
+$permissiontoadd = $user->admin;
+$permissiontodelete = $user->admin;
 
 if (!$user->admin) accessforbidden();
 if (empty($conf->emailcollector->enabled)) accessforbidden('Module not enabled');
@@ -175,8 +178,6 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass = 'EmailCollector';
 	$objectlabel = 'EmailCollector';
-	$permissiontoread = $user->rights->emailcollector->read;
-	$permissiontodelete = $user->rights->emailcollector->delete;
 	$uploaddir = $conf->emailcollector->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
