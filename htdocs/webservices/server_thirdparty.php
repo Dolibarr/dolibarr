@@ -468,12 +468,12 @@ function createThirdParty($authentication, $thirdparty)
 
 		$newobject->capital = $thirdparty['capital'];
 
-		$newobject->barcode = $thirdparty['barcode'];
-		$newobject->tva_assuj = $thirdparty['vat_used'];
-		$newobject->tva_intra = $thirdparty['vat_number'];
+		$newobject->barcode = empty($thirdparty['barcode']) ? '' : $thirdparty['barcode'];
+		$newobject->tva_assuj = empty($thirdparty['vat_used']) ? 0 : $thirdparty['vat_used'];
+		$newobject->tva_intra = empty($thirdparty['vat_number']) ? '' : $thirdparty['vat_number'];
 
-		$newobject->canvas = $thirdparty['canvas'];
-		$newobject->particulier = $thirdparty['individual'];
+		$newobject->canvas = empty($thirdparty['canvas']) ? '' : $thirdparty['canvas'];
+		$newobject->particulier = empty($thirdparty['individual']) ? 0 : $thirdparty['individual'];
 
 		$elementtype = 'societe';
 
