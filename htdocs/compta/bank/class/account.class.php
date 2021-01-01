@@ -612,8 +612,6 @@ class Account extends CommonObject
 		// Clean parameters
 		if (!$this->min_allowed) $this->min_allowed = 0;
 		if (!$this->min_desired) $this->min_desired = 0;
-		$this->state_id = ($this->state_id ? $this->state_id : $this->state_id);
-		$this->country_id = ($this->country_id ? $this->country_id : $this->country_id);
 
 		// Check parameters
 		if (empty($this->country_id))
@@ -691,7 +689,7 @@ class Account extends CommonObject
 		$sql .= ", ".price2num($this->min_desired);
 		$sql .= ", '".$this->db->escape($this->comment)."'";
 		$sql .= ", ".($this->state_id > 0 ? $this->state_id : "null");
-		$sql .= ", ".($this->country_id > 0 ? $this->country_id : 0);
+		$sql .= ", ".($this->country_id > 0 ? $this->country_id : "null");
 		$sql .= ", '".$this->db->escape($this->ics)."'";
 		$sql .= ", '".$this->db->escape($this->ics_transfer)."'";
 		$sql .= ")";
@@ -773,10 +771,6 @@ class Account extends CommonObject
 
 		$this->db->begin();
 
-		// Clean parameters
-		$this->state_id = ($this->state_id ? $this->state_id : $this->state_id);
-		$this->country_id = ($this->country_id ? $this->country_id : $this->country_id);
-
 		// Check parameters
 		if (empty($this->country_id))
 		{
@@ -821,7 +815,7 @@ class Account extends CommonObject
 		$sql .= ",comment     = '".$this->db->escape($this->comment)."'";
 
 		$sql .= ",state_id = ".($this->state_id > 0 ? $this->state_id : "null");
-		$sql .= ",fk_pays = ".$this->country_id;
+		$sql .= ",fk_pays = ".($this->country_id > 0 ? $this->country_id : "null");
 		$sql .= ",ics = '".$this->db->escape($this->ics)."'";
 		$sql .= ",ics_transfer = '".$this->db->escape($this->ics_transfer)."'";
 
@@ -874,11 +868,7 @@ class Account extends CommonObject
 		// phpcs:enable
 		global $conf, $langs;
 
-		// Clean parameters
-		$this->state_id = ($this->state_id ? $this->state_id : $this->state_id);
-		$this->country_id = ($this->country_id ? $this->country_id : $this->country_id);
-
-		// Chargement librairie pour acces fonction controle RIB
+		// Load library to get BAN control function
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
 		dol_syslog(get_class($this)."::update_bban $this->code_banque,$this->code_guichet,$this->number,$this->cle_rib,$this->iban");
@@ -902,7 +892,7 @@ class Account extends CommonObject
 		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",state_id = ".($this->state_id > 0 ? $this->state_id : "null");
-		$sql .= ",fk_pays = ".$this->country_id;
+		$sql .= ",fk_pays = ".($this->country_id > 0 ? $this->country_id : "null");
 		$sql .= " WHERE rowid = ".$this->id;
 		$sql .= " AND entity = ".$conf->entity;
 
