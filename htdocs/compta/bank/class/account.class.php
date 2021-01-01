@@ -8,6 +8,7 @@
  * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2016		Ferran Marcet   		<fmarcet@2byte.es>
+ * Copyright (C) 2019		JC Prieto				<jcprieto@virtual20.com><prietojc@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -213,6 +214,19 @@ class Account extends CommonObject
 	 * @var int
 	 */
 	public $date_solde;
+
+	/**
+	 * Creditor Identifier CI. Some banks use different ICS for direct debit and bank tranfer
+	 * @var string
+	 */
+	public $ics;
+
+	/**
+	 * Creditor Identifier for Bank Transfer.
+	 * @var string
+	 */
+	public $ics_transfer;
+
 
 
 	/**
@@ -652,6 +666,8 @@ class Account extends CommonObject
 		$sql .= ", comment";
 		$sql .= ", state_id";
 		$sql .= ", fk_pays";
+		$sql .= ", ics";
+		$sql .= ", ics_transfer";
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->idate($now)."'";
 		$sql .= ", '".$this->db->escape($this->ref)."'";
@@ -676,6 +692,8 @@ class Account extends CommonObject
 		$sql .= ", '".$this->db->escape($this->comment)."'";
 		$sql .= ", ".($this->state_id > 0 ? $this->state_id : "null");
 		$sql .= ", ".$this->country_id;
+		$sql .= ", ".$this->db->escape($this->ics);
+		$sql .= ", ".$this->db->escape($this->ics_transfer);
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -804,6 +822,8 @@ class Account extends CommonObject
 
 		$sql .= ",state_id = ".($this->state_id > 0 ? $this->state_id : "null");
 		$sql .= ",fk_pays = ".$this->country_id;
+		$sql .= ",ics='".$this->db->escape($this->ics)."'";
+		$sql .= ",ics_transfer='".$this->db->escape($this->ics_transfer)."'";
 
 		$sql .= " WHERE rowid = ".$this->id;
 
@@ -922,7 +942,7 @@ class Account extends CommonObject
 		$sql .= " ba.domiciliation, ba.proprio, ba.owner_address, ba.state_id, ba.fk_pays as country_id,";
 		$sql .= " ba.account_number, ba.fk_accountancy_journal, ba.currency_code,";
 		$sql .= " ba.min_allowed, ba.min_desired, ba.comment,";
-		$sql .= " ba.datec as date_creation, ba.tms as date_update,";
+		$sql .= " ba.datec as date_creation, ba.tms as date_update, ba.ics, ba.ics_transfer,";
 		$sql .= ' c.code as country_code, c.label as country,';
 		$sql .= ' d.code_departement as state_code, d.nom as state';
 		$sql .= ' , aj.code as accountancy_journal';
@@ -983,6 +1003,9 @@ class Account extends CommonObject
 
 				$this->date_creation  = $this->db->jdate($obj->date_creation);
 				$this->date_update    = $this->db->jdate($obj->date_update);
+
+				$this->ics           = $obj->ics;
+				$this->ics_transfer  = $obj->ics_transfer;
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
