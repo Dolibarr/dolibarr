@@ -92,7 +92,15 @@ $date_endday = $tmp['mday'];
 $date_endmonth = $tmp['mon'];
 $date_endyear = $tmp['year'];
 
-$arrayfields = array();
+// Add prefix session
+$arrayfields = array(
+	'e.prefix_session' => array(
+		'label'=>'UserAgent',
+		'checked'=>(empty($conf->global->AUDIT_ENABLE_PREFIX_SESSION) ? 0 : 1),
+		'enabled'=>(empty($conf->global->AUDIT_ENABLE_PREFIX_SESSION) ? 0 : 1),
+		'position'=>110
+	)
+);
 
 
 /*
