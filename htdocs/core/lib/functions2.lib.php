@@ -1252,7 +1252,7 @@ function check_value($mask, $value)
 	//print "masktri=".$masktri." maskcounter=".$maskcounter." maskwithonlyymcode=".$maskwithonlyymcode." maskwithnocode=".$maskwithnocode." maskraz=".$maskraz." maskoffset=".$maskoffset."<br>\n";
 
 	if (function_exists('mb_strrpos')) {
-		$posnumstart = mb_strrpos($maskwithnocode, $maskcounter, 'UTF-8');
+		$posnumstart = mb_strrpos($maskwithnocode, $maskcounter, 0, 'UTF-8');
 	}
 	else {
 		$posnumstart = strrpos($maskwithnocode, $maskcounter);

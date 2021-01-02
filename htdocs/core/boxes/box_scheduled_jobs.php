@@ -103,7 +103,7 @@ class box_scheduled_jobs extends ModeleBoxes
 						$nextrun = $this->db->jdate($objp->datenextrun);
 						if (empty($nextrun)) $nextrun = $this->db->jdate($objp->datestart);
 
-						if ($line == 0 || ($nextrun < $cronstatic->datenextrun && (empty($objp->nbrun) || empty($objp->maxrun) || $objp->nbrun < $obj->maxrun))) {
+						if ($line == 0 || ($nextrun < $cronstatic->datenextrun && (empty($objp->nbrun) || empty($objp->maxrun) || $objp->nbrun < $objp->maxrun))) {
 							$cronstatic->id = $objp->rowid;
 							$cronstatic->ref = $objp->rowid;
 							$cronstatic->label = $langs->trans($objp->label);

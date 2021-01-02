@@ -491,14 +491,15 @@ class FichinterRec extends Fichinter
 			if (!$info_bits) $info_bits = 0;
 			$pu_ht = price2num($pu_ht);
 			$pu_ttc = price2num($pu_ttc);
-			$txtva = price2num($txtva);
+			if (!preg_match('/\((.*)\)/', $txtva)) {
+				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
+			}
 
 			if ($price_base_type == 'HT') {
 				$pu = $pu_ht;
 			} else {
 				$pu = $pu_ttc;
 			}
-
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva

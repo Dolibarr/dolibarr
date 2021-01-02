@@ -6125,7 +6125,7 @@ class wsdl extends nusoap_base {
 				$rows = sizeof($value);
 				$contents = '';
 				foreach($value as $k => $v) {
-					$this->debug("serializing array element: $k, $v of type: $typeDef[arrayType]");
+					$this->debug("serializing array element: $k of type: ".$typeDef['arrayType']);
 					//if (strpos($typeDef['arrayType'], ':') ) {
 					if (!in_array($typeDef['arrayType'],$this->typemap['http://www.w3.org/2001/XMLSchema'])) {
 					    $contents .= $this->serializeType('item', $typeDef['arrayType'], $v, $use);

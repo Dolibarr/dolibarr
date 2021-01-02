@@ -3032,7 +3032,7 @@ function dol_print_address($address, $htmlid, $element, $id, $noprint = 0, $char
 /**
  *	Return true if email syntax is ok.
  *
- *	@param	    string		$address    			email (Ex: "toto@examle.com", "John Do <johndo@example.com>")
+ *	@param	    string		$address    			email (Ex: "toto@examle.com". Long form "John Do <johndo@example.com>" will be false)
  *  @param		int			$acceptsupervisorkey	If 1, the special string '__SUPERVISOREMAIL__' is also accepted as valid
  *	@return     boolean     						true if email syntax is OK, false if KO or empty string
  *  @see isValidMXRecord()
@@ -4810,7 +4810,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  * 											'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
  *											'MT'=Round to Max for totals with Tax (MAIN_MAX_DECIMALS_TOT)
  *											'MS'=Round to Max for stock quantity (MAIN_MAX_DECIMALS_STOCK)
- *      		                            'CR'=Currency rate
+ *      		                            'CR'=Foreign currency accurancy
  *											Numeric = Nb of digits for rounding
  * 	@param	int				$option			Put 1 if you know that content is already universal format number (so no correction on decimal will be done)
  * 											Put 2 if you know that number is a user input (so we know we don't have to fix decimal separator).
@@ -4871,10 +4871,18 @@ function price2num($amount, $rounding = '', $option = 0)
 	if ($rounding)
 	{
 		$nbofdectoround = '';
-		if ($rounding == 'MU')     $nbofdectoround = $conf->global->MAIN_MAX_DECIMALS_UNIT;
-		elseif ($rounding == 'MT') $nbofdectoround = $conf->global->MAIN_MAX_DECIMALS_TOT;
-		elseif ($rounding == 'MS') $nbofdectoround = empty($conf->global->MAIN_MAX_DECIMALS_STOCK) ? 5 : $conf->global->MAIN_MAX_DECIMALS_STOCK;
-		elseif ($rounding == 'CR') $nbofdectoround = 8;
+		if ($rounding == 'MU') {
+			$nbofdectoround = $conf->global->MAIN_MAX_DECIMALS_UNIT;
+		}
+		elseif ($rounding == 'MT') {
+			$nbofdectoround = $conf->global->MAIN_MAX_DECIMALS_TOT;
+		}
+		elseif ($rounding == 'MS') {
+			$nbofdectoround = empty($conf->global->MAIN_MAX_DECIMALS_STOCK) ? 5 : $conf->global->MAIN_MAX_DECIMALS_STOCK;
+		}
+		elseif ($rounding == 'CR') {
+			$nbofdectoround = max($conf->global->MAIN_MAX_DECIMALS_TOT, 8);
+		}
 		elseif (is_numeric($rounding))  $nbofdectoround = $rounding;
 		//print "RR".$amount.' - '.$nbofdectoround.'<br>';
 		if (dol_strlen($nbofdectoround)) $amount = round(is_string($amount) ? (float) $amount : $amount, $nbofdectoround); // $nbofdectoround can be 0.
@@ -7123,9 +7131,9 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
 			foreach (array_keys($array) as $key)
 			{
 				if (is_object($array[$key])) {
-					$temp[$key] = $array[$key]->$index;
+					$temp[$key] = empty($array[$key]->$index) ? 0 : $array[$key]->$index;
 				} else {
-					$temp[$key] = $array[$key][$index];
+					$temp[$key] = empty($array[$key][$index]) ? 0 : $array[$key][$index];
 				}
 			}
 
