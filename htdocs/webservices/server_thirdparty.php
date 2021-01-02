@@ -468,12 +468,12 @@ function createThirdParty($authentication, $thirdparty)
 
 		$newobject->capital = $thirdparty['capital'];
 
-		$newobject->barcode = $thirdparty['barcode'];
-		$newobject->tva_assuj = $thirdparty['vat_used'];
-		$newobject->tva_intra = $thirdparty['vat_number'];
+		$newobject->barcode = empty($thirdparty['barcode']) ? '' : $thirdparty['barcode'];
+		$newobject->tva_assuj = empty($thirdparty['vat_used']) ? 0 : $thirdparty['vat_used'];
+		$newobject->tva_intra = empty($thirdparty['vat_number']) ? '' : $thirdparty['vat_number'];
 
-		$newobject->canvas = $thirdparty['canvas'];
-		$newobject->particulier = $thirdparty['individual'];
+		$newobject->canvas = empty($thirdparty['canvas']) ? '' : $thirdparty['canvas'];
+		$newobject->particulier = empty($thirdparty['individual']) ? 0 : $thirdparty['individual'];
 
 		$elementtype = 'societe';
 
@@ -486,7 +486,9 @@ function createThirdParty($authentication, $thirdparty)
 			foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 			{
 				$key = 'options_'.$key;
-				$newobject->array_options[$key] = $thirdparty[$key];
+				if (isset($thirdparty[$key])) {
+					$newobject->array_options[$key] = $thirdparty[$key];
+				}
 			}
 		}
 
@@ -508,7 +510,7 @@ function createThirdParty($authentication, $thirdparty)
 			$db->commit();
 
 			// Patch to add capability to associate (one) sale representative
-			if ($thirdparty['commid'] && $thirdparty['commid'] > 0)
+			if (!empty($thirdparty['commid']) && $thirdparty['commid'] > 0)
 				$newobject->add_commercial($fuser, $thirdparty["commid"]);
 
 			$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id, 'ref'=>$newobject->ref);

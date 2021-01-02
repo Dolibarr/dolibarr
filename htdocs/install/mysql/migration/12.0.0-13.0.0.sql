@@ -387,6 +387,9 @@ ALTER TABLE llx_bank ADD COLUMN origin_id integer;
 ALTER TABLE llx_bank ADD COLUMN origin_type varchar(64) NULL;
 ALTER TABLE llx_bank ADD COLUMN import_key varchar(14);
 
+ALTER TABLE llx_bank_account ADD COLUMN ics varchar(32) NULL;
+ALTER TABLE llx_bank_account ADD COLUMN ics_transfer varchar(32) NULL;
+
 ALTER TABLE llx_menu MODIFY COLUMN enabled text;
 
 CREATE TABLE llx_ecm_files_extrafields
@@ -547,7 +550,7 @@ CREATE TABLE llx_session(
   fk_user integer NOT NULL,
   remote_ip varchar(64) NULL,
   user_agent varchar(128) NULL
-)ENGINE=innodb;
+) ENGINE=innodb;
 
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'github', 'Github', 'https://github.com/{socialid}', 'fa-github', 1);
 

@@ -74,21 +74,23 @@ if ($action == "set")
         */
 	} else $error++;
 
-	$res = dolibarr_set_const($db, "PRELEVEMENT_ICS", GETPOST("PRELEVEMENT_ICS"), 'chaine', 0, '', $conf->entity);
-	if (! ($res > 0)) $error++;
+	/* Moved to account
 
-    if (GETPOST("PRELEVEMENT_USER") > 0) {
-        $res = dolibarr_set_const($db, "PRELEVEMENT_USER", GETPOST("PRELEVEMENT_USER"), 'chaine', 0, '', $conf->entity);
-        if (! ($res > 0)) $error++;
-    }
-    if (GETPOST("PRELEVEMENT_END_TO_END") || GETPOST("PRELEVEMENT_END_TO_END") == "") {
-        $res = dolibarr_set_const($db, "PRELEVEMENT_END_TO_END", GETPOST("PRELEVEMENT_END_TO_END"), 'chaine', 0, '', $conf->entity);
-        if (! ($res > 0)) $error++;
-    }
-    if (GETPOST("PRELEVEMENT_USTRD") || GETPOST("PRELEVEMENT_USTRD") == "") {
-        $res = dolibarr_set_const($db, "PRELEVEMENT_USTRD", GETPOST("PRELEVEMENT_USTRD"), 'chaine', 0, '', $conf->entity);
-        if (! ($res > 0)) $error++;
-    }
+	$res = dolibarr_set_const($db, "PRELEVEMENT_ICS", GETPOST("PRELEVEMENT_ICS"), 'chaine', 0, '', $conf->entity);
+	if (!$res > 0) $error++;
+	*/
+	if (GETPOST("PRELEVEMENT_USER") > 0) {
+		$res = dolibarr_set_const($db, "PRELEVEMENT_USER", GETPOST("PRELEVEMENT_USER"), 'chaine', 0, '', $conf->entity);
+		if (!$res > 0) $error++;
+	}
+	if (GETPOST("PRELEVEMENT_END_TO_END") || GETPOST("PRELEVEMENT_END_TO_END") == "") {
+		$res = dolibarr_set_const($db, "PRELEVEMENT_END_TO_END", GETPOST("PRELEVEMENT_END_TO_END"), 'chaine', 0, '', $conf->entity);
+		if (!$res > 0) $error++;
+	}
+	if (GETPOST("PRELEVEMENT_USTRD") || GETPOST("PRELEVEMENT_USTRD") == "") {
+		$res = dolibarr_set_const($db, "PRELEVEMENT_USTRD", GETPOST("PRELEVEMENT_USTRD"), 'chaine', 0, '', $conf->entity);
+		if (!$res > 0) $error++;
+	}
 
     $res = dolibarr_set_const($db, "PRELEVEMENT_ADDDAYS", GETPOST("PRELEVEMENT_ADDDAYS"), 'chaine', 0, '', $conf->entity);
     if (! ($res > 0)) $error++;
@@ -146,13 +148,16 @@ print '<td class="titlefieldcreate">'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>";
 
+
 // Bank account (from Banks module)
 print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("BankToReceiveWithdraw").'</td>';
 print '<td class="left">';
 $form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT, 'PRELEVEMENT_ID_BANKACCOUNT', 0, "courant=1", 1);
 print '</td></tr>';
 
+/* Moved to bank account data
 // ICS
+
 print '<tr class="oddeven"><td class="fieldrequired">';
 $htmltext = $langs->trans("AskThisIDToYourBank");
 print $form->textwithpicto($langs->trans("ICS"), $htmltext);
@@ -161,6 +166,7 @@ print '<td class="left">';
 print '<input type="text" name="PRELEVEMENT_ICS" value="'.$conf->global->PRELEVEMENT_ICS.'" size="15" >';
 print '</td>';
 print '</td></tr>';
+*/
 
 //User
 print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("ResponsibleUser").'</td>';

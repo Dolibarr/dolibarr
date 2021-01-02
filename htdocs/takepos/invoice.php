@@ -173,11 +173,13 @@ if ($action == 'valid' && $user->rights->facture->creer)
 
 	if ($invoice->total_ttc < 0) {
 		$invoice->type = $invoice::TYPE_CREDIT_NOTE;
+
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE";
 		$sql .= " fk_soc = ".((int) $invoice->socid);
 		$sql .= " AND type <> ".Facture::TYPE_CREDIT_NOTE;
 		$sql .= " AND fk_statut >= ".$invoice::STATUS_VALIDATED;
 		$sql .= " ORDER BY rowid DESC";
+
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
@@ -572,16 +574,9 @@ if ($action == "deleteline") {
 	}
 }
 
+// Action to delete or discard an invoice
 if ($action == "delete") {
 	// $placeid is the invoice id (it differs from place) and is defined if the place is set and the ref of invoice is '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')', so the fetch at begining of page works.
-
-	/*$reg = array();
-	if (preg_match('/^(\d+)-(\d+)$/', $place, $reg)) {
-
-		$place = $reg[1];
-		var_dump($place);
-	}*/
-
 	if ($placeid > 0) {
 		$result = $invoice->fetch($placeid);
 
@@ -599,7 +594,9 @@ if ($action == "delete") {
 				}
 			}
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]};
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
+			$sql .= " SET fk_soc=".$conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]}.", ";
+			$sql .= " datec = '".$db->idate(dol_now())."'";
 			$sql .= " WHERE ref='(PROV-POS".$db->escape($_SESSION["takeposterminal"]."-".$place).")'";
 			$resql1 = $db->query($sql);
 
@@ -1024,13 +1021,13 @@ $( document ).ready(function() {
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
 			echo '$("#customerandsales").append(\'';
-			echo '<a class="valignmiddle" onclick="place=\\\'';
+			echo '<a class="valignmiddle" title="'.dol_escape_js($langs->trans("SaleStartedAt", dol_print_date($db->jdate($obj->datec), '%H:%M', 'tzuser'))).'" onclick="place=\\\'';
 			$num_sale = str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $obj->ref));
 			echo $num_sale;
 			if (str_replace("-", "", $num_sale) > $max_sale) $max_sale = str_replace("-", "", $num_sale);
 			echo '\\\';Refresh();">';
 			if ($placeid == $obj->rowid) echo "<b>";
-			echo date('H:i', strtotime($obj->datec));
+			echo dol_print_date($db->jdate($obj->datec), '%H:%M', 'tzuser');
 			if ($placeid == $obj->rowid) echo "</b>";
 			echo '</a>\');';
 		}

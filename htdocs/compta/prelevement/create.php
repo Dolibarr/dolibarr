@@ -49,6 +49,7 @@ $type = GETPOST('type', 'aZ09');
 $action = GETPOST('action', 'aZ09');
 $mode = GETPOST('mode', 'alpha') ?GETPOST('mode', 'alpha') : 'real';
 $format = GETPOST('format', 'aZ09');
+$id_bankaccount = GETPOST('id_bankaccount', 'int');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
@@ -77,11 +78,27 @@ if (empty($reshook))
 	}
 	if ($action == 'create')
 	{
+		$default_account=($type == 'bank-transfer' ? 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT' : 'PRELEVEMENT_ID_BANKACCOUNT');
+
+		if ($id_bankaccount != $conf->global->{$default_account}){
+			$res = dolibarr_set_const($db, $default_account, $id_bankaccount, 'chaine', 0, '', $conf->entity);	//Set as default
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+		$bank = new Account($db);
+		$bank->fetch($conf->global->{$default_account});
+		if (empty($bank->ics) || empty($bank->ics_transfer)){
+			setEventMessages($langs->trans("ErrorICSmissing", $bank->getNomUrl(1)), null, 'errors');
+			header("Location: ".DOL_URL_ROOT.'/compta/prelevement/create.php');
+			exit;
+		}
+
+
 		$delayindays = 0;
 		if ($type != 'bank-transfer') {
-			$conf->global->PRELEVEMENT_ADDDAYS;
+			$delayindays = $conf->global->PRELEVEMENT_ADDDAYS;
 		} else {
-			$conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS;
+			$delayindays = $conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS;
 		}
 		$bprev = new BonPrelevement($db);
 		$executiondate = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), (GETPOST('reday', 'int') + $delayindays), GETPOST('reyear', 'int'));
@@ -128,11 +145,12 @@ $bprev = new BonPrelevement($db);
 
 llxHeader('', $langs->trans("NewStandingOrder"));
 
-if (prelevement_check_config() < 0)
+if (prelevement_check_config($type) < 0)
 {
 	$langs->load("errors");
 	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Withdraw")), null, 'errors');
 }
+
 
 /*$h=0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/create.php';
@@ -188,10 +206,15 @@ print '<form action="'.$_SERVER['PHP_SELF'].'?action=create" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 if ($nb) {
-	if ($pricetowithdraw) {
-		print $langs->trans('ExecutionDate').' ';
-		$datere = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-		print $form->selectDate($datere, 're');
+    if ($pricetowithdraw) {
+    	print $langs->trans('BankToReceiveWithdraw').': ';
+    	$form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT, 'id_bankaccount', 0, "courant=1");
+    	print ' - ';
+
+        print $langs->trans('ExecutionDate').' ';
+        $datere = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+        print $form->selectDate($datere, 're');
+
 
 		if ($mysoc->isInEEC()) {
 			$title = $langs->trans("CreateForSepa");

@@ -64,7 +64,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	print '<input type="hidden" name="year" value="'.$year.'">';
 	print '<input type="hidden" name="month" value="'.$month.'">';
 	print '<input type="hidden" name="day" value="'.$day.'">';
-	if ($massaction != 'predelete') {		// When $massaction == 'predelete', action may be already output to 'delete' by the mass action system.
+	if ($massaction != 'predelete' && $massaction != 'preaffecttag') {		// When $massaction == 'predelete', action may be already output to 'delete' by the mass action system.
 		print '<input type="hidden" name="action" value="'.$action.'">';
 	}
 	print '<input type="hidden" name="search_showbirthday" value="'.$showbirthday.'">';
