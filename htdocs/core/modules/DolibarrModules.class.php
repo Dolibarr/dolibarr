@@ -1157,16 +1157,19 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$note  = isset($this->boxes[$key]['note']) ? $this->boxes[$key]['note'] : '';
 				$enabledbydefaulton = isset($this->boxes[$key]['enabledbydefaulton']) ? $this->boxes[$key]['enabledbydefaulton'] : 'Home';
 
-				if (empty($file)) { $file  = isset($this->boxes[$key][1]) ? $this->boxes[$key][1] : ''; // For backward compatibility
+				if (empty($file)) {
+					$file  = isset($this->boxes[$key][1]) ? $this->boxes[$key][1] : ''; // For backward compatibility
 				}
-				if (empty($note)) { $note  = isset($this->boxes[$key][2]) ? $this->boxes[$key][2] : ''; // For backward compatibility
+				if (empty($note)) {
+					$note  = isset($this->boxes[$key][2]) ? $this->boxes[$key][2] : ''; // For backward compatibility
 				}
 
 				// Search if boxes def already present
 				$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."boxes_def";
 				$sql .= " WHERE file = '".$this->db->escape($file)."'";
 				$sql .= " AND entity = ".$conf->entity;
-				if ($note) { $sql .= " AND note ='".$this->db->escape($note)."'";
+				if ($note) {
+					$sql .= " AND note ='".$this->db->escape($note)."'";
 				}
 
 				$result = $this->db->query($sql);
@@ -1192,8 +1195,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 							foreach ($pos_name as $key2 => $val2)
 							{
-									//print 'key2='.$key2.'-val2='.$val2."<br>\n";
-								if ($enabledbydefaulton && $val2 != $enabledbydefaulton) { continue; // Not enabled by default onto this page.
+								//print 'key2='.$key2.'-val2='.$val2."<br>\n";
+								if ($enabledbydefaulton && $val2 != $enabledbydefaulton) {
+									continue; // Not enabled by default onto this page.
 								}
 
 								$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id,position,box_order,fk_user,entity)";
@@ -1201,7 +1205,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 								dol_syslog(get_class($this)."::insert_boxes onto page ".$key2."=".$val2."", LOG_DEBUG);
 								$resql = $this->db->query($sql);
-								if (!$resql) { $err++;
+								if (!$resql) {
+									$err++;
 								}
 							}
 						}
@@ -1209,8 +1214,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						if (!$err) {
 							$this->db->commit();
 						} else {
-								  $this->error = $this->db->lasterror();
-								  $this->db->rollback();
+							$this->error = $this->db->lasterror();
+							$this->db->rollback();
 						}
 					}
 					// else box already registered into database

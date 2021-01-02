@@ -89,7 +89,7 @@ class box_members extends ModeleBoxes
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedMembers", $max));
 
 		if ($user->rights->adherent->lire) {
-			$sql = "SELECT a.rowid, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
+			$sql = "SELECT a.rowid, a.ref, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
 			$sql .= " a.datec, a.tms, a.statut as status, a.datefin as date_end_subscription,";
 			$sql .= ' a.photo, a.email, a.gender, a.morphy,';
 			$sql .= " t.subscription, t.libelle as label";
@@ -112,7 +112,7 @@ class box_members extends ModeleBoxes
 					$memberstatic->lastname = $objp->lastname;
 					$memberstatic->firstname = $objp->firstname;
 					$memberstatic->id = $objp->rowid;
-					$memberstatic->ref = $objp->rowid;
+					$memberstatic->ref = $objp->ref;
 					$memberstatic->photo = $objp->photo;
 					$memberstatic->gender = $objp->gender;
 					$memberstatic->email = $objp->email;

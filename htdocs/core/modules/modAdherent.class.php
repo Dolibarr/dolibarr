@@ -195,6 +195,7 @@ class modAdherent extends DolibarrModules
 			0=>array('file'=>'box_members.php', 'enabledbydefaulton'=>'Home'),
 			2=>array('file'=>'box_birthdays_members.php', 'enabledbydefaulton'=>'Home'),
 			3=>array('file'=>'box_last_modified_members', 'enabledbydefaulton'=>'membersindex'),
+			4=>array('file'=>'box_last_members_subscriptions', 'enabledbydefaulton'=>'membersindex'),
 		);
 
 		// Permissions
