@@ -378,6 +378,7 @@ if ($resql) {
 /*
  * Last modified subscriptions
  */
+/*
 $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 $sql = "SELECT a.rowid, a.statut as status, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
@@ -443,7 +444,7 @@ if ($resql) {
 } else {
 	dol_print_error($db);
 }
-
+*/
 
 // Summary of members by type
 print '<div class="div-table-responsive-no-min">';
