@@ -1000,7 +1000,7 @@ function CreditNote() {
 
 
 $( document ).ready(function() {
-	console.log("Set customer info and sales in header");
+	console.log("Set customer info and sales in header placeid=<?php echo $placeid; ?> status=<?php echo $invoice->statut; ?>");
 
     <?php
 	$s = $langs->trans("Customer");
@@ -1015,7 +1015,16 @@ $( document ).ready(function() {
 
 	<?php
 	$sql = "SELECT rowid, datec, ref FROM ".MAIN_DB_PREFIX."facture";
-	$sql .= " WHERE ref LIKE '(PROV-POS".$_SESSION["takeposterminal"]."-0%' AND entity IN (".getEntity('invoice').")";
+	if (empty($conf->global->TAKEPOS_CAN_EDIT_IF_ALREADY_VALIDATED)) {
+		// By default, only invoices with a ref not already defined can in list of open invoice we can edit.
+		$sql .= " WHERE ref LIKE '(PROV-POS".$db->escape($_SESSION["takeposterminal"])."-0%' AND entity IN (".getEntity('invoice').")";
+	} else {
+		// If TAKEPOS_CAN_EDIT_IF_ALREADY_VALIDATED set, we show also draft invoice that already has a reference defined
+		$sql .= " WHERE pos_source = '".$db->escape($_SESSION["takeposterminal"])."'";
+		$sql .= " AND module_source = 'takepos'";
+		$sql .= " AND entity IN (".getEntity('invoice').")";
+	}
+
 	$sql .= $db->order('datec', 'ASC');
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -1025,7 +1034,9 @@ $( document ).ready(function() {
 			$num_sale = str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $obj->ref));
 			echo $num_sale;
 			if (str_replace("-", "", $num_sale) > $max_sale) $max_sale = str_replace("-", "", $num_sale);
-			echo '\\\';Refresh();">';
+			echo '\\\'; invoiceid=\\\'';
+			echo $obj->rowid;
+			echo '\\\'; Refresh();">';
 			if ($placeid == $obj->rowid) echo "<b>";
 			echo dol_print_date($db->jdate($obj->datec), '%H:%M', 'tzuser');
 			if ($placeid == $obj->rowid) echo "</b>";
@@ -1033,7 +1044,7 @@ $( document ).ready(function() {
 		}
 		echo '$("#customerandsales").append(\'<a onclick="place=\\\'0-';
 		echo $max_sale + 1;
-		echo '\\\';Refresh();"><span class="fa fa-plus-square" title="'.dol_escape_htmltag($langs->trans("StartAParallelSale")).'"></a>\');';
+		echo '\\\'; invoiceid=0; Refresh();"><span class="fa fa-plus-square" title="'.dol_escape_htmltag($langs->trans("StartAParallelSale")).'"></a>\');';
 	} else {
 		dol_print_error($db);
 	}
