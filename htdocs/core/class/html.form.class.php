@@ -6668,8 +6668,7 @@ class Form
 			});
 			</script>';
 
-		if ($acceptdelayedhtml)
-		{
+		if ($acceptdelayedhtml) {
 			$delayedhtmlcontent .= $outdelayed;
 		} else {
 			$out .= $outdelayed;
