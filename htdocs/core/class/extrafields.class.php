@@ -991,32 +991,23 @@ class ExtraFields
 			else return '';
 		}
 
-		if (empty($morecss))
-		{
-			if ($type == 'date')
-			{
+		if (empty($morecss)) {
+			if ($type == 'date') {
 				$morecss = 'minwidth100imp';
-			} elseif ($type == 'datetime' || $type == 'link')
-			{
+			} elseif ($type == 'datetime' || $type == 'link') {
 				$morecss = 'minwidth200imp';
-			} elseif (in_array($type, array('int', 'integer', 'double', 'price')))
-			{
+			} elseif (in_array($type, array('int', 'integer', 'double', 'price'))) {
 				$morecss = 'maxwidth75';
-			} elseif ($type == 'password')
-			{
+			} elseif ($type == 'password') {
 				$morecss = 'maxwidth100';
-			} elseif ($type == 'url')
-			{
+			} elseif ($type == 'url') {
 				$morecss = 'minwidth400';
-			} elseif ($type == 'boolean')
-			{
+			} elseif ($type == 'boolean') {
 				$morecss = '';
 			} else {
-				if (round($size) < 12)
-				{
+				if (empty($size) || round($size) < 12) {
 					$morecss = 'minwidth100';
-				} elseif (round($size) <= 48)
-				{
+				} elseif (round($size) <= 48) {
 					$morecss = 'minwidth200';
 				} else {
 					$morecss = 'minwidth400';
@@ -1024,8 +1015,7 @@ class ExtraFields
 			}
 		}
 
-		if (in_array($type, array('date', 'datetime')))
-		{
+		if (in_array($type, array('date', 'datetime'))) {
 			$tmp = explode(',', $size);
 			$newsize = $tmp[0];
 

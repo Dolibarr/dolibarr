@@ -127,7 +127,7 @@ $extrafield_array = null;
 if (is_array($extrafields) && count($extrafields) > 0) {
 	$extrafield_array = array();
 }
-if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 {
 	foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 	{
@@ -270,10 +270,10 @@ function getContact($authentication, $id, $ref_ext)
 		if ($result > 0)
 		{
 			// Only internal user who have contact read permission
-			// Or for external user who have contact read permission, with restrict on societe_id
+			// Or for external user who have contact read permission, with restrict on socid
 			if (
-				$fuser->rights->societe->contact->lire && !$fuser->societe_id
-				|| ($fuser->rights->societe->contact->lire && ($fuser->societe_id == $contact->socid))
+				$fuser->rights->societe->contact->lire && !$fuser->socid
+				|| ($fuser->rights->societe->contact->lire && ($fuser->socid == $contact->socid))
 			) {
 				$contact_result_fields = array(
 					'id' => $contact->id,
@@ -319,7 +319,7 @@ function getContact($authentication, $id, $ref_ext)
 				//Get extrafield values
 				$contact->fetch_optionals();
 
-				if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+				if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 				{
 					foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 					{
@@ -424,7 +424,7 @@ function createContact($authentication, $contact)
 		// fetch optionals attributes and labels
 		$extrafields = new ExtraFields($db);
 		$extrafields->fetch_name_optionals_label($elementtype, true);
-		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+		if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
 			foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 			{
@@ -671,7 +671,7 @@ function updateContact($authentication, $contact)
 			// fetch optionals attributes and labels
 			$extrafields = new ExtraFields($db);
 			$extrafields->fetch_name_optionals_label($elementtype, true);
-			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+			if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 			{
 				foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 				{

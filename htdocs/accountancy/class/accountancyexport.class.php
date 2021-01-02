@@ -840,17 +840,19 @@ class AccountancyExport
 		print "DateLet".$separator;
 		print "ValidDate".$separator;
 		print "Montantdevise".$separator;
-		print "Idevise";
+		print "Idevise".$separator;
+		print "DateLimitReglmt";
 		print $end_line;
 
 		foreach ($objectLines as $line) {
-			if ($line->debit == 0 && $line->credit == 0) {
+            if ($line->debit == 0 && $line->credit == 0) {
                 unset($array[$line]);
             } else {
-				$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
-				$date_document = dol_print_date($line->doc_date, '%Y%m%d');
-				$date_lettering = dol_print_date($line->date_lettering, '%Y%m%d');
-				$date_validation = dol_print_date($line->date_validated, '%Y%m%d');
+                $date_creation = dol_print_date($line->date_creation, '%Y%m%d');
+                $date_document = dol_print_date($line->doc_date, '%Y%m%d');
+                $date_lettering = dol_print_date($line->date_lettering, '%Y%m%d');
+                $date_validation = dol_print_date($line->date_validated, '%Y%m%d');
+                $date_limit_payment = dol_print_date($line->date_lim_reglement, '%Y%m%d');
 
 				// FEC:JournalCode
 				print $line->code_journal.$separator;
@@ -865,13 +867,13 @@ class AccountancyExport
 				print $date_document.$separator;
 
 				// FEC:CompteNum
-				print $line->numero_compte.$separator;
+				print length_accountg($line->numero_compte).$separator;
 
 				// FEC:CompteLib
 				print dol_string_unaccent($line->label_compte).$separator;
 
 				// FEC:CompAuxNum
-				print $line->subledger_account.$separator;
+				print length_accounta($line->subledger_account).$separator;
 
 				// FEC:CompAuxLib
 				print dol_string_unaccent($line->subledger_label).$separator;
@@ -880,7 +882,7 @@ class AccountancyExport
 				print $line->doc_ref.$separator;
 
 				// FEC:PieceDate
-				print dol_string_unaccent($date_creation).$separator;
+				print $date_creation.$separator;
 
 				// FEC:EcritureLib
 				print dol_string_unaccent($line->label_operation).$separator;
@@ -904,7 +906,10 @@ class AccountancyExport
 				print $line->multicurrency_amount.$separator;
 
 				// FEC:Idevise
-				print $line->multicurrency_code;
+				print $line->multicurrency_code.$separator;
+
+				// FEC_suppl:DateLimitReglmt
+				print $date_limit_payment;
 
 				print $end_line;
 			}
@@ -939,7 +944,8 @@ class AccountancyExport
 		print "DateLet".$separator;
 		print "ValidDate".$separator;
 		print "Montantdevise".$separator;
-		print "Idevise";
+		print "Idevise".$separator;
+		print "DateLimitReglmt";
 		print $end_line;
 
 		foreach ($objectLines as $line) {
@@ -950,6 +956,7 @@ class AccountancyExport
 				$date_document = dol_print_date($line->doc_date, '%Y%m%d');
 				$date_lettering = dol_print_date($line->date_lettering, '%Y%m%d');
 				$date_validation = dol_print_date($line->date_validated, '%Y%m%d');
+				$date_limit_payment = dol_print_date($line->date_lim_reglement, '%Y%m%d');
 
 				// FEC:JournalCode
 				print $line->code_journal . $separator;
@@ -964,13 +971,13 @@ class AccountancyExport
 				print $date_creation . $separator;
 
 				// FEC:CompteNum
-				print $line->numero_compte . $separator;
+				print length_accountg($line->numero_compte) . $separator;
 
 				// FEC:CompteLib
 				print dol_string_unaccent($line->label_compte) . $separator;
 
 				// FEC:CompAuxNum
-				print $line->subledger_account . $separator;
+				print length_accounta($line->subledger_account) . $separator;
 
 				// FEC:CompAuxLib
 				print dol_string_unaccent($line->subledger_label) . $separator;
@@ -1003,7 +1010,10 @@ class AccountancyExport
 				print $line->multicurrency_amount . $separator;
 
 				// FEC:Idevise
-				print $line->multicurrency_code;
+				print $line->multicurrency_code . $separator;
+
+				// FEC_suppl:DateLimitReglmt
+				print $date_limit_payment;
 
 				print $end_line;
 			}

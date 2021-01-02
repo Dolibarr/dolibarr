@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016       Neil Orley          <neil.orley@oeris.fr>
  * Copyright (C) 2013-2016  Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2013-2016  Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2020  Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2020  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -62,7 +62,7 @@ $search_doc_ref = GETPOST('search_doc_ref', 'alpha');
 $search_label_operation = GETPOST('search_label_operation', 'alpha');
 $search_mvt_num = GETPOST('search_mvt_num', 'int');
 $search_direction = GETPOST('search_direction', 'alpha');
-$search_ledger_code = GETPOST('search_ledger_code', 'alpha');
+$search_ledger_code = GETPOST('search_ledger_code', 'array');
 $search_debit = GETPOST('search_debit', 'alpha');
 $search_credit = GETPOST('search_credit', 'alpha');
 $search_lettering_code = GETPOST('search_lettering_code', 'alpha');
@@ -171,7 +171,7 @@ if (empty($reshook))
 		$search_label_operation = '';
 		$search_mvt_num = '';
 		$search_direction = '';
-		$search_ledger_code = '';
+		$search_ledger_code = array();
 		$search_date_start = '';
 		$search_date_end = '';
 		$search_date_startyear = '';
@@ -232,7 +232,9 @@ if (empty($reshook))
 	}
 	if (!empty($search_ledger_code)) {
 		$filter['t.code_journal'] = $search_ledger_code;
-		$param .= '&search_ledger_code='.urlencode($search_ledger_code);
+		foreach ($search_ledger_code as $code) {
+			$param .= '&search_ledger_code[]='.urlencode($code);
+		}
 	}
 	if (!empty($search_debit)) {
 		$filter['t.debit'] = $search_debit;
@@ -452,7 +454,9 @@ print '<tr class="liste_titre_filter">';
 
 // Code journal
 if (!empty($arrayfields['t.code_journal']['checked'])) {
-	print '<td class="liste_titre center"><input type="text" name="search_ledger_code" size="3" value="'.dol_escape_htmltag($search_ledger_code).'"></td>';
+	print '<td class="liste_titre center">';
+	print $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1);
+	print '</td>';
 }
 // Date document
 if (!empty($arrayfields['t.doc_date']['checked'])) {
@@ -679,6 +683,11 @@ while ($i < min($num, $limit))
 			$filedir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
 			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
+		} elseif ($line->doc_type == 'bank')
+		{
+			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+			$objectstatic = new AccountLine($db);
+			$objectstatic->fetch($line->fk_doc);
 		} else {
 			// Other type
 		}
@@ -693,6 +702,10 @@ while ($i < min($num, $limit))
 		{
 			print $objectstatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
 			print $documentlink;
+		} elseif ($line->doc_type == 'bank') {
+			print $objectstatic->getNomUrl(1);
+			$bank_ref = strstr($line->doc_ref, '-');
+			print " " . $bank_ref;
 		} else {
 			print $line->doc_ref;
 		}
@@ -761,40 +774,42 @@ while ($i < min($num, $limit))
 	$i++;
 }
 
-// Show sub-total of last shown account
-if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING) || empty($arrayfields['t.lettering_code']['checked'])) {
-    $colnumber = 3;
-    $colnumberend = 7;
-} else {
-    $colnumber = 4;
-    $colnumberend = 7;
+if ($num > 0) {
+	// Show sub-total of last shown account
+	if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING) || empty($arrayfields['t.lettering_code']['checked'])) {
+	    $colnumber = 3;
+	    $colnumberend = 7;
+	} else {
+	    $colnumber = 4;
+	    $colnumberend = 7;
+	}
+	$colspan = $totalarray['nbfield'] - $colnumber;
+	$colspanend = $totalarray['nbfield'] - $colnumberend;
+	print '<tr class="liste_total">';
+	print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("TotalForAccount").' '.$accountg.':</td>';
+	print '<td class="nowrap right">'.price($sous_total_debit).'</td>';
+	print '<td class="nowrap right">'.price($sous_total_credit).'</td>';
+	print '<td colspan="'.$colspanend.'"></td>';
+	print '</tr>';
+	// Show balance of last shown account
+	$balance = $sous_total_debit - $sous_total_credit;
+	print '<tr class="liste_total">';
+	print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("Balance").':</td>';
+	if ($balance > 0)
+	{
+		print '<td class="nowraponall right">';
+		print price($sous_total_debit - $sous_total_credit);
+		print '</td>';
+		print '<td></td>';
+	} else {
+		print '<td></td>';
+		print '<td class="nowraponall right">';
+		print price($sous_total_credit - $sous_total_debit);
+		print '</td>';
+	}
+	print '<td colspan="'.$colspanend.'"></td>';
+	print '</tr>';
 }
-$colspan = $totalarray['nbfield'] - $colnumber;
-$colspanend = $totalarray['nbfield'] - $colnumberend;
-print '<tr class="liste_total">';
-print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("TotalForAccount").' '.$accountg.':</td>';
-print '<td class="nowrap right">'.price($sous_total_debit).'</td>';
-print '<td class="nowrap right">'.price($sous_total_credit).'</td>';
-print '<td colspan="'.$colspanend.'"></td>';
-print '</tr>';
-// Show balance of last shown account
-$balance = $sous_total_debit - $sous_total_credit;
-print '<tr class="liste_total">';
-print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("Balance").':</td>';
-if ($balance > 0)
-{
-	print '<td class="nowraponall right">';
-	print price($sous_total_debit - $sous_total_credit);
-	print '</td>';
-	print '<td></td>';
-} else {
-	print '<td></td>';
-	print '<td class="nowraponall right">';
-	print price($sous_total_credit - $sous_total_debit);
-	print '</td>';
-}
-print '<td colspan="'.$colspanend.'"></td>';
-print '</tr>';
 
 // Show total line
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';

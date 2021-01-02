@@ -112,6 +112,7 @@ class Notify
 
 		$listofnotiftodo = $this->getNotificationsArray($action, $socid, $object, 0);
 
+		$texte = '';
 		$nb = -1;
 		if (is_array($listofnotiftodo)) {
 			$nb = count($listofnotiftodo);
@@ -128,7 +129,7 @@ class Notify
 
 		if (is_array($listofnotiftodo)) {
 			$i = 0;
-			foreach ($listofnotiftodo as $key => $val) {
+			foreach ($listofnotiftodo as $val) {
 				if ($i) {
 					$texte .= ', ';
 				} else {
@@ -170,6 +171,8 @@ class Notify
 		if (is_object($object)) {
 			$valueforthreshold = $object->total_ht;
 		}
+
+		$sqlnotifcode = '';
 		if ($notifcode) {
 			if (is_numeric($notifcode)) {
 				$sqlnotifcode = " AND n.fk_action = ".$notifcode; // Old usage

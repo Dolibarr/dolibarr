@@ -12,7 +12,7 @@ namespace Luracast\Restler {
  * @subpackage helper
  * @author     Nick Lombard <github@jigsoft.co.za>
  * @copyright  2012 Luracast
- * @version    3.0.0rc6
+ *
  */
 class AutoLoader
 {

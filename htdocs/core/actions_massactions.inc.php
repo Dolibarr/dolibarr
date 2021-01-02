@@ -1291,6 +1291,64 @@ if (!$error && $massaction == 'generate_doc' && $permissiontoread)
 	}
 }
 
+if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd) {
+	$db->begin();
+
+	$affecttag_type=GETPOST('affecttag_type', 'alpha');
+	if (!empty($affecttag_type)) {
+		$affecttag_type_array=explode(',', $affecttag_type);
+	} else {
+		setEventMessage('CategTypeNotFound', 'errors');
+	}
+	if (!empty($affecttag_type_array)) {
+		//check if tag type submited exists into Tag Map categorie class
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		$categ = new Categorie($db);
+		$to_affecttag_type_array=array();
+		$categ_type_array=$categ->getMapList();
+		foreach ($categ_type_array as $categdef) {
+			if (in_array($categdef['code'],  $affecttag_type_array)) {
+				$to_affecttag_type_array[] = $categdef['code'];
+			}
+		}
+
+		//For each valid categ type set common categ
+		$nbok = 0;
+		if (!empty($to_affecttag_type_array)) {
+			foreach ($to_affecttag_type_array as $categ_type) {
+				$contcats = GETPOST('contcats_' . $categ_type, 'array');
+				//var_dump($toselect);exit;
+				foreach ($toselect as $toselectid) {
+					$result = $object->fetch($toselectid);
+					//var_dump($contcats);exit;
+					if ($result > 0) {
+						$result = $object->setCategoriesCommon($contcats, $categ_type, false);
+						if ($result > 0) {
+							$nbok++;
+						} else {
+							setEventMessages($object->error, $object->errors, 'errors');
+						}
+					} else {
+						setEventMessages($object->error, $object->errors, 'errors');
+						$error++;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	if (!$error)
+	{
+		if ($nbok > 1) setEventMessages($langs->trans("RecordsModified", $nbok), null);
+		else setEventMessages($langs->trans("RecordsModified", $nbok), null);
+		$db->commit();
+		$toselect=array();
+	} else {
+		$db->rollback();
+	}
+}
+
 $parameters['toselect'] = $toselect;
 $parameters['uploaddir'] = $uploaddir;
 $parameters['massaction'] = $massaction;

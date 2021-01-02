@@ -3534,7 +3534,7 @@ if ($action == 'create')
 	print $form->textwithpicto($langs->trans('NotePublic'), $htmltext);
 	print '</td>';
 	print '<td valign="top" colspan="2">';
-	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
 	print $doleditor->Create(1);
 
 	// Private note
@@ -3545,7 +3545,7 @@ if ($action == 'create')
 		print $form->textwithpicto($langs->trans('NotePrivate'), $htmltext);
 		print '</td>';
 		print '<td valign="top" colspan="2">';
-		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		// print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'.</textarea>
 		print '</td></tr>';
@@ -4738,7 +4738,15 @@ if ($action == 'create')
 				print '<tr class="oddeven"><td>';
 				print $paymentstatic->getNomUrl(1);
 				print '</td>';
-				print '<td>'.dol_print_date($db->jdate($objp->dp), 'dayhour').'</td>';
+				print '<td>';
+				$dateofpayment = $db->jdate($objp->dp);
+				$tmparray = dol_getdate($dateofpayment);
+				if ($tmparray['seconds'] == 0 && $tmparray['minutes'] == 0 && ($tmparray['hours'] == 0 || $tmparray['hours'] == 12)) {	// We set hours to 0:00 or 12:00 because we don't know it
+					print dol_print_date($dateofpayment, 'day');
+				} else {	// Hours was set to real date of payment (special case for POS for example)
+					print dol_print_date($dateofpayment, 'dayhour', 'tzuser');
+				}
+				print '</td>';
 				$label = ($langs->trans("PaymentType".$objp->payment_code) != ("PaymentType".$objp->payment_code)) ? $langs->trans("PaymentType".$objp->payment_code) : $objp->payment_label;
 				print '<td>'.$label.' '.$objp->num_payment.'</td>';
 				if (!empty($conf->banque->enabled))

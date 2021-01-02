@@ -56,7 +56,7 @@ class EmailCollector extends CommonObject
 	/**
 	 * @var string String with name of icon for emailcollector. Must be the part after the 'object_' into object_emailcollector.png
 	 */
-	public $picto = 'generic';
+	public $picto = 'email';
 
 	/**
 	 * @var string    Field with ID of parent key if this field has a parent

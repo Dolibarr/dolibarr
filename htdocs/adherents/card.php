@@ -1064,7 +1064,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<table class="border centpercent">';
 
 		// Ref
-		print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td class="valeur">'.$object->id.'</td></tr>';
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td class="valeur">'.$object->ref.'</td></tr>';
 
 		// Login
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
@@ -1761,7 +1761,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			 if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
 			 */
 
-			// Shon online payment link
+			// Show online payment link
 			$useonlinepayment = (!empty($conf->paypal->enabled) || !empty($conf->stripe->enabled) || !empty($conf->paybox->enabled));
 
 			if ($useonlinepayment) {

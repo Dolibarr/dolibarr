@@ -135,12 +135,13 @@ if ($action == 'deletefilter')
 {
 	$emailcollectorfilter = new EmailCollectorFilter($db);
 	$emailcollectorfilter->fetch(GETPOST('filterid', 'int'));
-	$result = $emailcollectorfilter->delete($user);
-	if ($result > 0)
-	{
-		$object->fetchFilters();
-	} else {
-		setEventMessages($emailcollectorfilter->errors, $emailcollectorfilter->error, 'errors');
+	if ($emailcollectorfilter->id > 0) {
+		$result = $emailcollectorfilter->delete($user);
+		if ($result > 0) {
+			$object->fetchFilters();
+		} else {
+			setEventMessages($emailcollectorfilter->errors, $emailcollectorfilter->error, 'errors');
+		}
 	}
 }
 
@@ -152,6 +153,11 @@ if (GETPOST('addoperation', 'alpha'))
 	$emailcollectoroperation->fk_emailcollector = $object->id;
 	$emailcollectoroperation->status = 1;
 	$emailcollectoroperation->position = 50;
+
+	if ($emailcollectoroperation->type == '-1') {
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Operation")), null, 'errors');
+	}
 
 	if (in_array($emailcollectoroperation->type, array('loadthirdparty', 'loadandcreatethirdparty'))
 		&& empty($emailcollectoroperation->actionparam)) {
@@ -200,12 +206,13 @@ if ($action == 'deleteoperation')
 {
 	$emailcollectoroperation = new EmailCollectorAction($db);
 	$emailcollectoroperation->fetch(GETPOST('operationid', 'int'));
-	$result = $emailcollectoroperation->delete($user);
-	if ($result > 0)
-	{
-		$object->fetchActions();
-	} else {
-		setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
+	if ($emailcollectoroperation->id > 0) {
+		$result = $emailcollectoroperation->delete($user);
+		if ($result > 0) {
+			$object->fetchActions();
+		} else {
+			setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
+		}
 	}
 }
 

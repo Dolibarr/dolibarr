@@ -119,14 +119,8 @@ if ($object->usage_bill_time) {
 }
 
 // Extra fields
-if (is_array($extrafields->attributes[$taskstatic->table_element]['label']) && count($extrafields->attributes[$taskstatic->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$taskstatic->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$taskstatic->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$taskstatic->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$taskstatic->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$taskstatic->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$taskstatic->table_element]['list'][$key]) != 3 && $extrafields->attributes[$taskstatic->table_element]['perms'][$key]));
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
