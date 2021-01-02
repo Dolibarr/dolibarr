@@ -29,6 +29,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $hookmanager = new HookManager($db);
 
@@ -40,7 +41,24 @@ $langs->loadLangs(array("companies", "members"));
 
 // Security check
 $result = restrictedArea($user, 'adherent');
+if (!isset($form) || !is_object($form)) {
+	$form = new Form($db);
+}
+// Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
+$resultboxes = FormOther::getBoxesArea($user, "2");
 
+if (GETPOST('addbox')) {
+	// Add box (when submit is done from a form when ajax disabled)
+	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
+	$zone = GETPOST('areacode', 'aZ09');
+	$userid = GETPOST('userid', 'int');
+	$boxorder = GETPOST('boxorder', 'aZ09');
+	$boxorder .= GETPOST('boxcombo', 'aZ09');
+	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
+	if ($result > 0) {
+		setEventMessages($langs->trans("BoxAdded"), null);
+	}
+}
 
 /*
  * View
@@ -52,7 +70,7 @@ $staticmember = new Adherent($db);
 $statictype = new AdherentType($db);
 $subscriptionstatic = new Subscription($db);
 
-print load_fiche_titre($langs->trans("MembersArea"), '', 'members');
+print load_fiche_titre($langs->trans("MembersArea"), $resultboxes['selectboxlist'], 'members');
 
 $Adherents = array();
 $AdherentsAValider = array();
@@ -85,9 +103,15 @@ if ($result) {
 		$adhtype->label = $objp->label;
 		$AdherentType[$objp->rowid] = $adhtype;
 
-		if ($objp->statut == -1) { $MemberToValidate[$objp->rowid] = $objp->somme; }
-		if ($objp->statut == 1) { $MembersValidated[$objp->rowid] = $objp->somme; }
-		if ($objp->statut == 0) { $MembersResiliated[$objp->rowid] = $objp->somme; }
+		if ($objp->statut == -1) {
+			$MemberToValidate[$objp->rowid] = $objp->somme;
+		}
+		if ($objp->statut == 1) {
+			$MembersValidated[$objp->rowid] = $objp->somme;
+		}
+		if ($objp->statut == 0) {
+			$MembersResiliated[$objp->rowid] = $objp->somme;
+		}
 
 		$i++;
 	}
@@ -136,10 +160,14 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is usel
 		print '<table class="noborder nohover centpercent">';
 		$i = 0;
 		foreach ($listofsearchfields as $key => $value) {
-			if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+			if ($i == 0) {
+				print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+			}
 			print '<tr class="oddeven">';
 			print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
-			if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+			if ($i == 0) {
+				print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+			}
 			print '</tr>';
 			$i++;
 		}
@@ -247,7 +275,7 @@ print "</tr>\n";
 
 krsort($Total);
 $i = 0;
-foreach ($Total as $key=>$value) {
+foreach ($Total as $key => $value) {
 	if ($i >= 8) {
 		print '<tr class="oddeven">';
 		print "<td>...</td>";
@@ -448,6 +476,42 @@ print "</table>\n";
 print "</div>";
 
 print '</div></div></div>';
+
+// boxes
+print '<div class="clearboth"></div>';
+
+print '<div class="fichecenter fichecenterbis">';
+
+
+/*
+ * Show widgets (boxes)
+ */
+
+$boxlist .= '<div class="twocolumns">';
+
+$boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+if (!empty($nbworkboardcount)) {
+	$boxlist .= $boxwork;
+}
+
+$boxlist .= $resultboxes['boxlista'];
+
+$boxlist .= '</div>';
+
+$boxlist .= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
+
+$boxlist .= $boxstat;
+$boxlist .= $resultboxes['boxlistb'];
+
+$boxlist .= '</div>';
+$boxlist .= "\n";
+
+$boxlist .= '</div>';
+
+
+print $boxlist;
+
+print '</div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardMembers', $parameters, $object); // Note that $action and $object may have been modified by hook
