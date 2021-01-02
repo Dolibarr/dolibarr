@@ -479,35 +479,19 @@ print '</div></div></div>';
 
 // boxes
 print '<div class="clearboth"></div>';
-
 print '<div class="fichecenter fichecenterbis">';
 
-
-/*
- * Show widgets (boxes)
- */
-
-$boxlist .= '<div class="twocolumns">';
+$boxlist = '<div class="twocolumns">';
 
 $boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
-if (!empty($nbworkboardcount)) {
-	$boxlist .= $boxwork;
-}
-
 $boxlist .= $resultboxes['boxlista'];
-
-$boxlist .= '</div>';
+$boxlist .= '</div>'."\n";
 
 $boxlist .= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
-
-$boxlist .= $boxstat;
 $boxlist .= $resultboxes['boxlistb'];
+$boxlist .= '</div>'."\n";
 
 $boxlist .= '</div>';
-$boxlist .= "\n";
-
-$boxlist .= '</div>';
-
 
 print $boxlist;
 
