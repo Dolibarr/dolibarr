@@ -155,6 +155,7 @@ var pageactions=0;
 var place="<?php echo $place; ?>";
 var editaction="qty";
 var editnumber="";
+var invoiceid=0;
 
 /*
 var app = this;
@@ -448,8 +449,8 @@ function TakeposOrderNotes() {
 }
 
 function Refresh() {
-	console.log("Refresh by reloading place="+place);
-	$("#poslines").load("invoice.php?place="+place, function() {
+	console.log("Refresh by reloading place="+place+" invoiceid="+invoiceid);
+	$("#poslines").load("invoice.php?place="+place+"&invoiceid="+invoiceid, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 }
