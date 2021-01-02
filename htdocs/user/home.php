@@ -24,11 +24,11 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userhome'; // To manage different context of search
 
-if (!$user->rights->user->user->lire && !$user->admin)
-{
+if (!$user->rights->user->user->lire && !$user->admin) {
 	// Redirection vers la page de l'utilisateur
 	header("Location: card.php?id=".$user->id);
 	exit;
@@ -38,21 +38,39 @@ if (!$user->rights->user->user->lire && !$user->admin)
 $langs->load("users");
 
 $canreadperms = true;
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS))
-{
+if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 	$canreadperms = ($user->admin || $user->rights->user->group_advance->read);
 }
 
 // Security check (for external users)
 $socid = 0;
-if ($user->socid > 0) $socid = $user->socid;
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
 
 $companystatic = new Societe($db);
 $fuserstatic = new User($db);
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('userhome'));
+if (!isset($form) || !is_object($form)) {
+	$form = new Form($db);
+}
+// Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
+$resultboxes = FormOther::getBoxesArea($user, "1");
 
+if (GETPOST('addbox')) {
+	// Add box (when submit is done from a form when ajax disabled)
+	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
+	$zone = GETPOST('areacode', 'aZ09');
+	$userid = GETPOST('userid', 'int');
+	$boxorder = GETPOST('boxorder', 'aZ09');
+	$boxorder .= GETPOST('boxcombo', 'aZ09');
+	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
+	if ($result > 0) {
+		setEventMessages($langs->trans("BoxAdded"), null);
+	}
+}
 
 /*
  * View
@@ -61,7 +79,7 @@ $hookmanager->initHooks(array('userhome'));
 llxHeader();
 
 
-print load_fiche_titre($langs->trans("MenuUsersAndGroups"), '', 'user');
+print load_fiche_titre($langs->trans("MenuUsersAndGroups"), $resultboxes['selectboxlist'], 'user');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -77,8 +95,7 @@ print '<tr><td>';
 print $langs->trans("User").':</td><td><input class="flat inputsearch" type="text" name="search_user" size="18"></td></tr>';
 
 // Search Group
-if ($canreadperms)
-{
+if ($canreadperms) {
 	print '<tr><td>';
 	print $langs->trans("Group").':</td><td><input class="flat inputsearch" type="text" name="search_group" size="18"></td></tr>';
 }
@@ -115,13 +132,14 @@ if ($reshook > 0) {
 } else {
 	$sql .= " WHERE u.entity IN (".getEntity('user').")";
 }
-if (!empty($socid)) $sql .= " AND u.fk_soc = ".$socid;
+if (!empty($socid)) {
+	$sql .= " AND u.fk_soc = ".$socid;
+}
 $sql .= $db->order("u.datec", "DESC");
 $sql .= $db->plimit($max);
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 
 	print '<div class="div-table-responsive-no-min">';
@@ -131,8 +149,7 @@ if ($resql)
 	print '</tr>';
 	$i = 0;
 
-	while ($i < $num && $i < $max)
-	{
+	while ($i < $num && $i < $max) {
 		$obj = $db->fetch_object($resql);
 
 		$fuserstatic->id = $obj->rowid;
@@ -153,34 +170,28 @@ if ($resql)
 		print '<tr class="oddeven">';
 		print '<td class="nowraponall">';
 		print $fuserstatic->getNomUrl(-1);
-		if (!empty($conf->multicompany->enabled) && $obj->admin && !$obj->entity)
-		{
+		if (!empty($conf->multicompany->enabled) && $obj->admin && !$obj->entity) {
 			print img_picto($langs->trans("SuperAdministrator"), 'redstar');
-		} elseif ($obj->admin)
-		{
+		} elseif ($obj->admin) {
 			print img_picto($langs->trans("Administrator"), 'star');
 		}
 		print "</td>";
 		print '<td>'.$obj->login.'</td>';
 		print "<td>";
-		if ($obj->fk_soc)
-		{
+		if ($obj->fk_soc) {
 			print $companystatic->getNomUrl(1);
 		} else {
 			print $langs->trans("InternalUser");
 		}
-		if ($obj->ldap_sid)
-		{
+		if ($obj->ldap_sid) {
 			print ' ('.$langs->trans("DomainUser").')';
 		}
 
 		$entity = $obj->entity;
 		$entitystring = '';
 		// TODO Set of entitystring should be done with a hook
-		if (!empty($conf->multicompany->enabled) && is_object($mc))
-		{
-			if (empty($entity))
-			{
+		if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+			if (empty($entity)) {
 				$entitystring = $langs->trans("AllEntities");
 			} else {
 				$mc->getInfo($entity);
@@ -210,14 +221,12 @@ if ($resql)
 /*
  * Last groups created
  */
-if ($canreadperms)
-{
+if ($canreadperms) {
 	$max = 5;
 
 	$sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec";
 	$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
-	if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && !$user->entity)))
-	{
+	if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && !$user->entity))) {
 		$sql .= " WHERE g.entity IS NOT NULL";
 	} else {
 		$sql .= " WHERE g.entity IN (0,".$conf->entity.")";
@@ -226,10 +235,11 @@ if ($canreadperms)
 	$sql .= $db->plimit($max);
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$colspan = 1;
-		if (!empty($conf->multicompany->enabled)) $colspan++;
+		if (!empty($conf->multicompany->enabled)) {
+			$colspan++;
+		}
 		$num = $db->num_rows($resql);
 
 		print '<div class="div-table-responsive-no-min">';
@@ -241,8 +251,7 @@ if ($canreadperms)
 
 		$grouptemp = new UserGroup($db);
 
-		while ($i < $num && (!$max || $i < $max))
-		{
+		while ($i < $num && (!$max || $i < $max)) {
 			$obj = $db->fetch_object($resql);
 
 			$grouptemp->id = $obj->rowid;
@@ -252,13 +261,11 @@ if ($canreadperms)
 			print '<tr class="oddeven">';
 			print '<td>';
 			print $grouptemp->getNomUrl(1);
-			if (!$obj->entity)
-			{
+			if (!$obj->entity) {
 				print img_picto($langs->trans("GlobalGroup"), 'redstar');
 			}
 			print "</td>";
-			if (!empty($conf->multicompany->enabled) && is_object($mc))
-			{
+			if (!empty($conf->multicompany->enabled) && is_object($mc)) {
 				$mc->getInfo($obj->entity);
 				print '<td>';
 				print $mc->label;
@@ -279,6 +286,26 @@ if ($canreadperms)
 
 //print '</td></tr></table>';
 print '</div></div></div>';
+
+// boxes
+print '<div class="clearboth"></div>';
+print '<div class="fichecenter fichecenterbis">';
+
+$boxlist = '<div class="twocolumns">';
+
+$boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+$boxlist .= $resultboxes['boxlista'];
+$boxlist .= '</div>'."\n";
+
+$boxlist .= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
+$boxlist .= $resultboxes['boxlistb'];
+$boxlist .= '</div>'."\n";
+
+$boxlist .= '</div>';
+
+print $boxlist;
+
+print '</div>';
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $parameters = array('user' => $user);
