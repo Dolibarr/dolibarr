@@ -310,9 +310,10 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 /*
  * Latest modified members
  */
+/*
 $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
-$sql = "SELECT a.rowid, a.statut as status, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
+$sql = "SELECT a.rowid, a.ref, a.statut as status, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
 $sql .= " a.gender, a.email, a.photo, a.morphy,";
 $sql .= " a.tms as datem, a.datefin as date_end_subscription,";
 $sql .= " ta.rowid as typeid, ta.libelle as label, ta.subscription as need_subscription";
@@ -336,7 +337,7 @@ if ($resql) {
 			$obj = $db->fetch_object($resql);
 
 			$staticmember->id = $obj->rowid;
-			$staticmember->ref = $obj->rowid;
+			$staticmember->ref = $obj->ref;
 			$staticmember->lastname = $obj->lastname;
 			$staticmember->firstname = $obj->firstname;
 			$staticmember->gender = $obj->gender;
@@ -372,7 +373,7 @@ if ($resql) {
 } else {
 	dol_print_error($db);
 }
-
+*/
 
 /*
  * Last modified subscriptions
