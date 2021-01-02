@@ -2633,7 +2633,9 @@ class CommandeFournisseur extends CommonOrder
             if (!$qty) $qty = 1;
             $pu = price2num($pu);
         	$pu_ht_devise = price2num($pu_ht_devise);
-        	$txtva = price2num($txtva);
+        	if (!preg_match('/\((.*)\)/', $txtva)) {
+        		$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
+        	}
         	$txlocaltax1 = price2num($txlocaltax1);
         	$txlocaltax2 = price2num($txlocaltax2);
 
