@@ -192,7 +192,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 				} elseif ($val == 'contact') { // Key selected means current contact
 					$tmparray[] = dol_string_nospecial($contact->getFullName($langs), ' ', array(",")).' <'.$contact->email.'>';
 					$sendtoid[] = $contact->id;
-				} elseif (((int) $val) > 0) {	// $val is the Id of a contact
+				} elseif (is_numeric($val) && $val > 0) {	// $val is the Id of a contact
 					$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 					$sendtoid[] = ((int) $val);
 				} else {
@@ -236,10 +236,9 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 					// Recipient was provided from combo list
 					$tmparray[] = dol_string_nospecial($contact->name, ' ', array(",")).' <'.$contact->email.'>';
 					//$sendtoid[] = $contact->id;  TODO Add also id of contact in CC ?
-				} elseif (((int) $val) > 0) {				// $val is the Id of a contact
+				} elseif (is_numeric($val) && $val > 0) {	// $val is the Id of a contact
 					$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
-					//$sendtoid[] = ((int) $val);  TODO Add also id of contact
-					//in CC ?
+					//$sendtoid[] = ((int) $val);  TODO Add also id of contact in CC ?
 				} else {
 					$tmparray[] = $val;
 				}
