@@ -383,9 +383,9 @@ if (empty($reshook))
 	{
 		// Set if we used free entry or predefined product
 		$predef = '';
-		$product_desc = (GETPOST('dp_desc') ?GETPOST('dp_desc') : '');
-		$price_ht = price2num(GETPOST('price_ht'));
-		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'));
+		$product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
+		$price_ht = price2num(GETPOST('price_ht'), 'MU');
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht', 'CR');
 		if (GETPOST('prod_entry_mode', 'alpha') == 'free')
 		{
 			$idprod = 0;
@@ -395,7 +395,7 @@ if (empty($reshook))
 			$tva_tx = '';
 		}
 
-		$qty = price2num(GETPOST('qty'.$predef));
+		$qty = price2num(GETPOST('qty'.$predef), 'alpha');
 		$remise_percent = ((GETPOST('remise_percent'.$predef) != '') ? GETPOST('remise_percent'.$predef) : 0);
 
 		if ($qty == '')

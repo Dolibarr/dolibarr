@@ -631,9 +631,9 @@ if (empty($reshook))
 
 		// Set if we used free entry or predefined product
 		$predef = '';
-		$product_desc = (GETPOST('dp_desc') ?GETPOST('dp_desc') : '');
-		$price_ht = GETPOST('price_ht');
-		$price_ht_devise = GETPOST('multicurrency_price_ht');
+		$product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
+		$price_ht = price2num(GETPOST('price_ht'), 'MU');
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CR');
 		$prod_entry_mode = GETPOST('prod_entry_mode');
 		if ($prod_entry_mode == 'free')
 		{
