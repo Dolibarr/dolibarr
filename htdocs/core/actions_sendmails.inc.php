@@ -187,14 +187,12 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 		if (count($receiver) > 0) {
 			// Recipient was provided from combo list
 			foreach ($receiver as $key => $val) {
-				if ($val == 'thirdparty') {
-					// Key selected means current third party ('thirdparty' may be used for current member or current user too)
+				if ($val == 'thirdparty') { // Key selected means current third party ('thirdparty' may be used for current member or current user too)
 					$tmparray[] = dol_string_nospecial($thirdparty->getFullName($langs), ' ', array(",")).' <'.$thirdparty->email.'>';
 				} elseif ($val == 'contact') { // Key selected means current contact
 					$tmparray[] = dol_string_nospecial($contact->getFullName($langs), ' ', array(",")).' <'.$contact->email.'>';
 					$sendtoid[] = $contact->id;
-				} elseif (((int) $val) > 0) {
-					// $val is the Id of a contact
+				} elseif (((int) $val) > 0) {	// $val is the Id of a contact
 					$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 					$sendtoid[] = ((int) $val);
 				} else {
@@ -231,17 +229,14 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 		}
 		if (count($receivercc) > 0) {
 			foreach ($receivercc as $key => $val) {
-				// Recipient was provided from combo list
-				if ($val == 'thirdparty') {
-					// Key selected means current thirdparty (may be usd for current member or current user too)
-					$tmparray[] = dol_string_nospecial($thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
-				} elseif ($val == 'contact') {
+				if ($val == 'thirdparty') {	// Key selected means current thirdparty (may be usd for current member or current user too)
 					// Recipient was provided from combo list
-					// Key selected means current contact
+					$tmparray[] = dol_string_nospecial($thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
+				} elseif ($val == 'contact') {	// Key selected means current contact
+					// Recipient was provided from combo list
 					$tmparray[] = dol_string_nospecial($contact->name, ' ', array(",")).' <'.$contact->email.'>';
 					//$sendtoid[] = $contact->id;  TODO Add also id of contact in CC ?
-				} elseif (((int) $val) > 0) {
-					// $val is the Id of a contact
+				} elseif (((int) $val) > 0) {				// $val is the Id of a contact
 					$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 					//$sendtoid[] = ((int) $val);  TODO Add also id of contact
 					//in CC ?
@@ -341,50 +336,6 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 			$filepath = $attachedfiles['paths'];
 			$filename = $attachedfiles['names'];
 			$mimetype = $attachedfiles['mimes'];
-
-			// Feature to push mail sent into Sent folder
-			/* This code must be now included into the hook mail, method sendMailAfter
-			if (! empty($conf->dolimail->enabled))
-			{
-				$mailfromid = explode("#", $_POST['frommail'],3);	// $_POST['frommail'] = 'aaa#Sent# <aaa@aaa.com>'	// TODO Use a better way to define Sent dir.
-				if (count($mailfromid)==0) $from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
-				else
-				{
-					$mbid = $mailfromid[1];
-
-					// IMAP Postbox
-					$mailboxconfig = new IMAP($db);
-					$mailboxconfig->fetch($mbid);
-					if ($mailboxconfig->mailbox_imap_host) $ref=$mailboxconfig->get_ref();
-
-					$mailboxconfig->folder_id=$mailboxconfig->mailbox_imap_outbox;
-					$mailboxconfig->userfolder_fetch();
-
-					if ($mailboxconfig->mailbox_save_sent_mails == 1)
-					{
-
-						$folder=str_replace($ref, '', $mailboxconfig->folder_cache_key);
-						if (!$folder) $folder = "Sent";	// Default Sent folder
-
-						$mailboxconfig->mbox = imap_open($mailboxconfig->get_connector_url().$folder, $mailboxconfig->mailbox_imap_login, $mailboxconfig->mailbox_imap_password);
-						if (false === $mailboxconfig->mbox)
-						{
-							$info = false;
-							$err = $langs->trans('Error3_Imap_Connection_Error');
-							setEventMessages($err,$mailboxconfig->element, null, 'errors');
-						}
-						else
-						{
-							$mailboxconfig->mailboxid=$_POST['frommail'];
-							$mailboxconfig->foldername=$folder;
-							$from = $mailfromid[0] . $mailfromid[2];
-							$imap=1;
-						}
-
-					}
-				}
-			}
-			*/
 
 			// Make substitution in email content
 			$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $object);

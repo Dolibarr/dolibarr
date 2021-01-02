@@ -4810,7 +4810,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  * 											'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
  *											'MT'=Round to Max for totals with Tax (MAIN_MAX_DECIMALS_TOT)
  *											'MS'=Round to Max for stock quantity (MAIN_MAX_DECIMALS_STOCK)
- *      		                            'CR'=Currency rate
+ *      		                            'CR'=Foreign currency accurancy
  *											Numeric = Nb of digits for rounding
  * 	@param	int				$option			Put 1 if you know that content is already universal format number (so no correction on decimal will be done)
  * 											Put 2 if you know that number is a user input (so we know we don't have to fix decimal separator).
@@ -4871,10 +4871,18 @@ function price2num($amount, $rounding = '', $option = 0)
 	if ($rounding)
 	{
 		$nbofdectoround = '';
-		if ($rounding == 'MU')     $nbofdectoround = $conf->global->MAIN_MAX_DECIMALS_UNIT;
-		elseif ($rounding == 'MT') $nbofdectoround = $conf->global->MAIN_MAX_DECIMALS_TOT;
-		elseif ($rounding == 'MS') $nbofdectoround = empty($conf->global->MAIN_MAX_DECIMALS_STOCK) ? 5 : $conf->global->MAIN_MAX_DECIMALS_STOCK;
-		elseif ($rounding == 'CR') $nbofdectoround = 8;
+		if ($rounding == 'MU') {
+			$nbofdectoround = $conf->global->MAIN_MAX_DECIMALS_UNIT;
+		}
+		elseif ($rounding == 'MT') {
+			$nbofdectoround = $conf->global->MAIN_MAX_DECIMALS_TOT;
+		}
+		elseif ($rounding == 'MS') {
+			$nbofdectoround = empty($conf->global->MAIN_MAX_DECIMALS_STOCK) ? 5 : $conf->global->MAIN_MAX_DECIMALS_STOCK;
+		}
+		elseif ($rounding == 'CR') {
+			$nbofdectoround = max($conf->global->MAIN_MAX_DECIMALS_TOT, 8);
+		}
 		elseif (is_numeric($rounding))  $nbofdectoround = $rounding;
 		//print "RR".$amount.' - '.$nbofdectoround.'<br>';
 		if (dol_strlen($nbofdectoround)) $amount = round(is_string($amount) ? (float) $amount : $amount, $nbofdectoround); // $nbofdectoround can be 0.

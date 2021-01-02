@@ -120,8 +120,16 @@ class FormMail extends Form
 	public $withtocc;
 	public $withtoccc;
 	public $withtopic;
-	public $withfile; // 0=No attaches files, 1=Show attached files, 2=Can add new attached files
-	public $withmaindocfile; // 1=Add a checkbox "Attach also main document" for mass actions (checked by default), -1=Add checkbox (not checked by default)
+
+	/**
+	 * @var int 0=No attaches files, 1=Show attached files, 2=Can add new attached files
+	 */
+	public $withfile;
+
+	/**
+	 * @var int 1=Add a checkbox "Attach also main document" for mass actions (checked by default), -1=Add checkbox (not checked by default)
+	 */
+	public $withmaindocfile;
 	public $withbody;
 
 	public $withfromreadonly;
