@@ -370,7 +370,9 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 				{
 					foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 					{
-						$thirdparty_result_fields = array_merge($thirdparty_result_fields, array('options_'.$key => $thirdparty->array_options['options_'.$key]));
+						if (isset($thirdparty->array_options['options_'.$key])) {
+							$thirdparty_result_fields = array_merge($thirdparty_result_fields, array('options_'.$key => $thirdparty->array_options['options_'.$key]));
+						}
 					}
 				}
 
@@ -623,7 +625,9 @@ function updateThirdParty($authentication, $thirdparty)
 				foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 				{
 					$key = 'options_'.$key;
-					$object->array_options[$key] = $thirdparty[$key];
+					if (isset($thirdparty[$key])) {
+						$object->array_options[$key] = $thirdparty[$key];
+					}
 				}
 			}
 
@@ -728,7 +732,9 @@ function getListOfThirdParties($authentication, $filterthirdparty)
 				{
 					foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 					{
-						$extrafieldsOptions['options_'.$key] = $obj->{$key};
+						if (isset($obj->{$key})) {
+							$extrafieldsOptions['options_'.$key] = $obj->{$key};
+						}
 					}
 				}
 
