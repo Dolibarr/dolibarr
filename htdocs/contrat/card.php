@@ -373,8 +373,7 @@ if (empty($reshook))
 				$action = 'create';
 			}
 		}
-	} elseif ($action == 'classin' && $user->rights->contrat->creer)
-	{
+	} elseif ($action == 'classin' && $user->rights->contrat->creer) {
 		$object->setProject(GETPOST('projectid'));
 	}
 
@@ -385,7 +384,7 @@ if (empty($reshook))
 		$predef = '';
 		$product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
 		$price_ht = price2num(GETPOST('price_ht'), 'MU');
-		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht', 'CR');
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht', 'CR'));
 		if (GETPOST('prod_entry_mode', 'alpha') == 'free')
 		{
 			$idprod = 0;
