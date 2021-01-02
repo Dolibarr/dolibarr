@@ -1761,7 +1761,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			 if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
 			 */
 
-			// Shon online payment link
+			// Show online payment link
 			$useonlinepayment = (!empty($conf->paypal->enabled) || !empty($conf->stripe->enabled) || !empty($conf->paybox->enabled));
 
 			if ($useonlinepayment) {
