@@ -80,7 +80,7 @@ if ($action == 'addcontact' && $user->rights->expedition->creer)
 {
 	if ($result > 0 && $id > 0)
 	{
-  		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 		$result = $objectsrc->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 	}
