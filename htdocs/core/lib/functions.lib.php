@@ -2183,14 +2183,14 @@ function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
  *	@param	int			$day			Day (1 to 31)
  *	@param	int			$year			Year
  *	@param	mixed		$gm				True or 1 or 'gmt'=Input informations are GMT values
- *										False or 0 or 'server' = local to server TZ
- *										'user' = local to user TZ
+ *										False or 0 or 'tzserver' = local to server TZ
+ *										'tzuser' = local to user TZ
  *										'tz,TimeZone' = use specified timezone
  *	@param	int			$check			0=No check on parameters (Can use day 32, etc...)
  *	@return	int|string					Date as a timestamp, '' or false if error
  * 	@see 								dol_print_date(), dol_stringtotime(), dol_getdate()
  */
-function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = false, $check = 1)
+function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'tzserver', $check = 1)
 {
 	global $conf;
 	//print "- ".$hour.",".$minute.",".$second.",".$month.",".$day.",".$year.",".$_SERVER["WINDIR"]." -";
@@ -2211,11 +2211,11 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = false, $
 		if ($second < 0 || $second > 60) return '';
 	}
 
-	if (empty($gm) || $gm === 'server')
+	if (empty($gm) || ($gm === 'server' || $gm === 'tzserver'))
 	{
 		$default_timezone = @date_default_timezone_get(); // Example 'Europe/Berlin'
 		$localtz = new DateTimeZone($default_timezone);
-	} elseif ($gm === 'user')
+	} elseif ($gm === 'user' || $gm === 'tzuser')
 	{
 		// We use dol_tz_string first because it is more reliable.
 		$default_timezone = (empty($_SESSION["dol_tz_string"]) ? @date_default_timezone_get() : $_SESSION["dol_tz_string"]); // Example 'Europe/Berlin'
