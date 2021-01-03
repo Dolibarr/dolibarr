@@ -1382,7 +1382,14 @@ function complete_elementList_with_modules(&$elementList)
 
                             if (!empty($objMod->module_parts['contactelement']))
                             {
-                            	$elementList[$objMod->name] = $langs->trans($objMod->name);
+                            	if(is_array($objMod->module_parts['contactelement'])) {
+									foreach ($objMod->module_parts['contactelement'] as $elem => $title) {
+										$elementList[$elem] = $langs->trans($title);
+									}
+								}
+                            	else {
+									$elementList[$objMod->name] = $langs->trans($objMod->name);
+								}
                             }
 
                             $j++;
