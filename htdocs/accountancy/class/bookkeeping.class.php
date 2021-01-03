@@ -795,7 +795,7 @@ class BookKeeping extends CommonObject
 		$sql .= " t.label_operation,";
 		$sql .= " t.debit,";
 		$sql .= " t.credit,";
-		$sql .= " t.montant,";
+		$sql .= " t.montant as amount,";
 		$sql .= " t.sens,";
 		$sql .= " t.multicurrency_amount,";
 		$sql .= " t.multicurrency_code,";
@@ -806,7 +806,8 @@ class BookKeeping extends CommonObject
 		$sql .= " t.code_journal,";
 		$sql .= " t.journal_label,";
 		$sql .= " t.piece_num,";
-		$sql .= " t.date_creation";
+		$sql .= " t.date_creation,";
+		$sql .= " t.date_export";
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
@@ -822,6 +823,8 @@ class BookKeeping extends CommonObject
 				} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
 					$sqlwhere[] = $key.' LIKE \''.$this->db->escape($value).'%\'';
 				} elseif ($key == 't.date_creation>=' || $key == 't.date_creation<=') {
+					$sqlwhere[] = $key.'\''.$this->db->idate($value).'\'';
+				} elseif ($key == 't.date_export>=' || $key == 't.date_export<=') {
 					$sqlwhere[] = $key.'\''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.credit' || $key == 't.debit') {
 					$sqlwhere[] = natural_search($key, $value, 1, 1);
@@ -878,7 +881,8 @@ class BookKeeping extends CommonObject
 				$line->label_operation = $obj->label_operation;
 				$line->debit = $obj->debit;
 				$line->credit = $obj->credit;
-				$line->montant = $obj->montant;
+				$line->montant = $obj->amount; // deprecated
+				$line->amount = $obj->amount;
 				$line->sens = $obj->sens;
 				$line->multicurrency_amount = $obj->multicurrency_amount;
 				$line->multicurrency_code = $obj->multicurrency_code;
@@ -889,7 +893,8 @@ class BookKeeping extends CommonObject
 				$line->code_journal = $obj->code_journal;
 				$line->journal_label = $obj->journal_label;
 				$line->piece_num = $obj->piece_num;
-				$line->date_creation = $obj->date_creation;
+				$line->date_creation = $this->db->jdate($obj->date_creation);
+				$line->date_export = $this->db->jdate($obj->date_export);
 
 				$this->lines[] = $line;
 
@@ -941,7 +946,7 @@ class BookKeeping extends CommonObject
 		$sql .= " t.credit,";
 		$sql .= " t.lettering_code,";
 		$sql .= " t.date_lettering,";
-		$sql .= " t.montant,";
+		$sql .= " t.montant as amount,";
 		$sql .= " t.sens,";
 		$sql .= " t.fk_user_author,";
 		$sql .= " t.import_key,";
@@ -1019,7 +1024,8 @@ class BookKeeping extends CommonObject
 				$line->label_operation = $obj->label_operation;
 				$line->debit = $obj->debit;
 				$line->credit = $obj->credit;
-				$line->montant = $obj->montant;
+				$line->montant = $obj->amount;	// deprecated
+				$line->amount = $obj->amount;
 				$line->sens = $obj->sens;
 				$line->lettering_code = $obj->lettering_code;
 				$line->date_lettering = $obj->date_lettering;
