@@ -70,8 +70,9 @@ $duration_value = isset($argv[2]) ? $argv[2] : 'none';
 
 print $script_file." launched with mode ".$mode." default lang=".$langs->defaultlang.(is_numeric($duration_value) ? " delay=".$duration_value : "")."\n";
 
-if ($mode != 'confirm')
+if ($mode != 'confirm') {
 	$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
+}
 
 $sql = "SELECT f.ref, f.total_ttc, f.date_lim_reglement as due_date, s.nom as name, s.email, s.default_lang,";
 $sql .= " u.rowid as uid, u.lastname, u.firstname, u.email, u.lang";
@@ -196,17 +197,17 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldsalerepre
 
 	$subject = (empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_SUBJECT) ? $newlangs->trans("ListOfYourUnpaidInvoices") : $conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_SUBJECT);
 	$sendto = $oldemail;
-	$from = $conf->global->MAIN_MAIL_EMAIL_FROM;
-	$errorsto = $conf->global->MAIN_MAIL_ERRORS_TO;
+	$from = empty($conf->global->MAIN_MAIL_EMAIL_FROM) ? '' : $conf->global->MAIN_MAIL_EMAIL_FROM;
+	$errorsto = empty($conf->global->MAIN_MAIL_ERRORS_TO) ? '' : $conf->global->MAIN_MAIL_ERRORS_TO;
 	$msgishtml = - 1;
 
 	print "- Send email for ".$oldsalerepresentative." (".$oldemail."), total: ".$total."\n";
 	dol_syslog("email_unpaid_invoices_to_representatives.php: send mail to ".$oldemail);
 
 	$usehtml = 0;
-	if (dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER))
+	if (!empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER) && dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER))
 		$usehtml += 1;
-	if (dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_HEADER))
+	if (!empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_HEADER) && dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_HEADER))
 		$usehtml += 1;
 
 	$allmessage = '';

@@ -233,6 +233,7 @@ if (empty($reshook))
 	$uploaddir = true;
 	// Only users that can delete any event can remove records.
 	$permissiontodelete = $user->rights->agenda->allactions->delete;
+	$permissiontoadd = $user->rights->agenda->myactions->create;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -296,7 +297,8 @@ if ($user->rights->agenda->allactions->delete)
 {
 	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
+if ($user->rights->agenda->myactions->create) $arrayofmassactions['preaffecttag'] = '<span class="fa fa-tag paddingrightonly"></span>'.$langs->trans("AffectTag");
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete','preaffecttag'))) $arrayofmassactions = array();
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $sql = "SELECT";
@@ -532,6 +534,7 @@ if ($resql)
 
 	print $s;
 
+	$objecttmp = new ActionComm($db);
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 	$moreforfilter = '';

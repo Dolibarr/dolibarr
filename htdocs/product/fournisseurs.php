@@ -490,9 +490,9 @@ if ($id > 0 || $ref)
 				if ($rowid)
 				{
 					print '<input type="hidden" name="ref_fourn_old" value="'.$object->ref_supplier.'">';
-					print '<input class="flat" name="ref_fourn" size="12" value="'.$object->ref_supplier.'">';
+					print '<input class="flat width150" maxlength="30" name="ref_fourn" value="'.$object->ref_supplier.'">';
 				} else {
-					print '<input class="flat" name="ref_fourn" size="12" value="'.(GETPOST("ref_fourn") ?GETPOST("ref_fourn") : '').'">';
+					print '<input class="flat width150" maxlength="30" name="ref_fourn" value="'.(GETPOST("ref_fourn") ? GETPOST("ref_fourn") : '').'">';
 				}
 				print '</td>';
 				print '</tr>';

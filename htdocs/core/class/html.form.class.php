@@ -15,7 +15,7 @@
  * Copyright (C) 2012-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2014       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2014-2020  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
@@ -2652,14 +2652,14 @@ class Form
 		if (!empty($conf->stock->enabled) && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)))
 		{
 			if (!empty($user->rights->stock->lire)) {
-				$opt .= ' - '.$langs->trans("Stock").':'.$objp->stock;
+				$opt .= ' - '.$langs->trans("Stock").': '.price(price2num($objp->stock, 'MS'));
 
 				if ($objp->stock > 0) {
 					$outval .= ' - <span class="product_line_stock_ok">';
 				} elseif ($objp->stock <= 0) {
 					$outval .= ' - <span class="product_line_stock_too_low">';
 				}
-				$outval .= $langs->transnoentities("Stock").':'.$objp->stock;
+				$outval .= $langs->transnoentities("Stock").': '.price(price2num($objp->stock, 'MS'));
 				$outval .= '</span>';
 				if (empty($novirtualstock) && !empty($conf->global->STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO))  // Warning, this option may slow down combo list generation
 				{
@@ -2989,14 +2989,14 @@ class Form
 					$novirtualstock = ($showstockinlist == 2);
 
 					if (!empty($user->rights->stock->lire)) {
-						$outvallabel .= ' - '.$langs->trans("Stock").':'.$objp->stock;
+						$outvallabel .= ' - '.$langs->trans("Stock").': '.price(price2num($objp->stock, 'MS'));
 
 						if ($objp->stock > 0) {
 							$optlabel .= ' - <span class="product_line_stock_ok">';
 						} elseif ($objp->stock <= 0) {
 							$optlabel .= ' - <span class="product_line_stock_too_low">';
 						}
-						$optlabel .= $langs->transnoentities("Stock").':'.$objp->stock;
+						$optlabel .= $langs->transnoentities("Stock").':'.price(price2num($objp->stock, 'MS'));
 						$optlabel .= '</span>';
 						if (empty($novirtualstock) && !empty($conf->global->STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO))  // Warning, this option may slow down combo list generation
 						{
@@ -3291,7 +3291,7 @@ class Form
 
 		$langs->load('propal');
 
-		$sql = "SELECT rowid, code, label";
+		$sql = "SELECT rowid, code, label, position";
 		$sql .= " FROM ".MAIN_DB_PREFIX.'c_availability';
 		$sql .= " WHERE active > 0";
 
@@ -3308,10 +3308,11 @@ class Form
 				$label = ($langs->trans("AvailabilityType".$obj->code) != ("AvailabilityType".$obj->code) ? $langs->trans("AvailabilityType".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
 				$this->cache_availability[$obj->rowid]['code'] = $obj->code;
 				$this->cache_availability[$obj->rowid]['label'] = $label;
+				$this->cache_availability[$obj->rowid]['position'] = $obj->position;
 				$i++;
 			}
 
-			$this->cache_availability = dol_sort_array($this->cache_availability, 'label', 'asc', 0, 0, 1);
+			$this->cache_availability = dol_sort_array($this->cache_availability, 'position', 'asc', 0, 0, 1);
 
 			return $num;
 		} else {
@@ -6667,8 +6668,7 @@ class Form
 			});
 			</script>';
 
-		if ($acceptdelayedhtml)
-		{
+		if ($acceptdelayedhtml) {
 			$delayedhtmlcontent .= $outdelayed;
 		} else {
 			$out .= $outdelayed;
@@ -6706,24 +6706,20 @@ class Form
 		}
 
 		// Add code for jquery to use multiselect
-		if (!empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))
-		{
+		if (!empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT')) {
 			$out .= "\n".'<!-- JS CODE TO ENABLE select for id '.$htmlname.' -->
 						<script>'."\n";
-			if ($addjscombo == 1)
-			{
+			if ($addjscombo == 1) {
 				$tmpplugin = empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) ?constant('REQUIRE_JQUERY_MULTISELECT') : $conf->global->MAIN_USE_JQUERY_MULTISELECT;
 				$out .= 'function formatResult(record) {'."\n";
-				if ($elemtype == 'category')
-				{
+				if ($elemtype == 'category') {
 					$out .= 'return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png"> \'+record.text+\'</span>\';';
 				} else {
 					$out .= 'return record.text;';
 				}
 				$out .= '};'."\n";
 				$out .= 'function formatSelection(record) {'."\n";
-				if ($elemtype == 'category')
-				{
+				if ($elemtype == 'category') {
 					$out .= 'return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png"> \'+record.text+\'</span>\';';
 				} else {
 					$out .= 'return record.text;';
@@ -6740,8 +6736,7 @@ class Form
 							 	templateSelection: formatSelection		/* For 4.0 */
 							});
 						});'."\n";
-			} elseif ($addjscombo == 2 && !defined('DISABLE_MULTISELECT'))
-			{
+			} elseif ($addjscombo == 2 && !defined('DISABLE_MULTISELECT')) {
 				// Add other js lib
 				// TODO external lib multiselect/jquery.multi-select.js must have been loaded to use this multiselect plugin
 				// ...
@@ -6762,20 +6757,18 @@ class Form
 
 		// Try also magic suggest
 		$out .= '<select id="'.$htmlname.'" class="multiselect'.($morecss ? ' '.$morecss : '').'" multiple name="'.$htmlname.'[]"'.($moreattrib ? ' '.$moreattrib : '').($width ? ' style="width: '.(preg_match('/%/', $width) ? $width : $width.'px').'"' : '').'>'."\n";
-		if (is_array($array) && !empty($array))
-		{
-			if ($value_as_key) $array = array_combine($array, $array);
+		if (is_array($array) && !empty($array)) {
+			if ($value_as_key) {
+				$array = array_combine($array, $array);
+			}
 
-			if (!empty($array))
-			{
-				foreach ($array as $key => $value)
-				{
+			if (!empty($array)) {
+				foreach ($array as $key => $value) {
 					$newval = ($translate ? $langs->trans($value) : $value);
 					$newval = ($key_in_label ? $key.' - '.$newval : $newval);
 
 					$out .= '<option value="'.$key.'"';
-					if (is_array($selected) && !empty($selected) && in_array((string) $key, $selected) && ((string) $key != ''))
-					{
+					if (is_array($selected) && !empty($selected) && in_array((string) $key, $selected) && ((string) $key != '')) {
 						$out .= ' selected';
 					}
 					$out .= ' data-html="'.dol_escape_htmltag($newval).'"';
@@ -6804,36 +6797,36 @@ class Form
 	{
 		global $conf, $langs, $user, $extrafields;
 
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) return '';
+		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			return '';
+		}
 
 		$tmpvar = "MAIN_SELECTEDFIELDS_".$varpage; // To get list of saved seleteced properties
-		if (!empty($user->conf->$tmpvar))
-		{
+		if (!empty($user->conf->$tmpvar)) {
 			$tmparray = explode(',', $user->conf->$tmpvar);
-			foreach ($array as $key => $val)
-			{
+			foreach ($array as $key => $val) {
 				//var_dump($key);
 				//var_dump($tmparray);
-				if (in_array($key, $tmparray)) $array[$key]['checked'] = 1;
-				else $array[$key]['checked'] = 0;
+				if (in_array($key, $tmparray)) {
+					$array[$key]['checked'] = 1;
+				} else {
+					$array[$key]['checked'] = 0;
+				}
 			}
 		}
 
 		$lis = '';
 		$listcheckedstring = '';
 
-		foreach ($array as $key => $val)
-		{
+		foreach ($array as $key => $val) {
 			/* var_dump($val);
             var_dump(array_key_exists('enabled', $val));
             var_dump(!$val['enabled']);*/
-			if (array_key_exists('enabled', $val) && isset($val['enabled']) && !$val['enabled'])
-			{
+			if (array_key_exists('enabled', $val) && isset($val['enabled']) && !$val['enabled']) {
 				unset($array[$key]); // We don't want this field
 				continue;
 			}
-			if ($val['label'])
-			{
+			if ($val['label']) {
 				if (!empty($val['langfile']) && is_object($langs)) {
 					$langs->load($val['langfile']);
 				}
