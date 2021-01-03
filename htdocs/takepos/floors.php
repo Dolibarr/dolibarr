@@ -32,6 +32,7 @@ if (!defined('NOREQUIREHTML'))	define('NOREQUIREHTML', '1');
 if (!defined('NOREQUIREAJAX'))	define('NOREQUIREAJAX', '1');
 
 require '../main.inc.php'; // Load $user and permissions
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk"));
 
@@ -62,6 +63,9 @@ if ($action == "getTables")
 	$resql = $db->query($sql);
 	$rows = array();
 	while ($row = $db->fetch_array($resql)) {
+		$invoice = new Facture($db);
+		$result = $invoice->fetch('', '(PROV-POS'.$_SESSION['takeposterminal'].'-'.$row['rowid'].')');
+		if ($result > 0) $row['occupied'] = "red";
 		$rows[] = $row;
 	}
 	echo json_encode($rows);
@@ -112,6 +116,9 @@ width:10%;
 text-align: center;
 font-size:300%;
 color:white;
+}
+div.red{
+color:red;
 }
 html, body
 {
@@ -172,7 +179,7 @@ $( document ).ready(function() {
 				$(this).focus();
 			})
 			<?php } else {?>
-			$('body').append('<div class="tablediv" onclick="LoadPlace('+val.rowid+');" style="position: absolute; left: '+val.leftpos+'%; top: '+val.toppos+'%;" id="tablename'+val.rowid+'">'+val.label+'</div>');
+			$('body').append('<div class="tablediv '+val.occupied+'" onclick="LoadPlace('+val.rowid+');" style="position: absolute; left: '+val.leftpos+'%; top: '+val.toppos+'%;" id="tablename'+val.rowid+'">'+val.label+'</div>');
 			<?php } ?>
 		});
 	});

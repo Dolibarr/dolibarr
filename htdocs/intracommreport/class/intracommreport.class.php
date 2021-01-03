@@ -40,7 +40,7 @@ class IntracommReport extends CommonObject
 	public $table_element = 'intracommreport';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_intracommreport';
 
@@ -65,9 +65,9 @@ class IntracommReport extends CommonObject
 	 */
 	const TYPE_DES = 1;
 
-	static $type = array(
-		'introduction'=>'Introduction'
-		,'expedition'=>'Expédition'
+	public static $type = array(
+		'introduction'=>'Introduction',
+		'expedition'=>'Expédition'
 	);
 
 	/**
@@ -82,12 +82,45 @@ class IntracommReport extends CommonObject
 	}
 
 	/**
+	 * Fonction create
+	 * @param 	User 	$user 		User
+	 * @param 	int 	$notrigger 	notrigger
+	 * @return 	int
+	 */
+	public function create($user, $notrigger = 0)
+	{
+		return 1;
+	}
+
+	/**
+	 * Fonction fetch
+	 * @param 	int 	$id 	object ID
+	 * @return 	int
+	 */
+	public function fetch($id)
+	{
+		return 1;
+	}
+
+	/**
+	 * Fonction delete
+	 * @param 	int 	$id 		object ID
+	 * @param 	User 	$user 		User
+	 * @param 	int 	$notrigger 	notrigger
+	 * @return 	int
+	 */
+	public function delete($id, $user, $notrigger = 0)
+	{
+		return 1;
+	}
+
+	/**
 	 * Generate XML file
 	 *
-	 * @param int		$mode 				O for create, R for regenerate (Look always 0 ment toujours 0 within the framework of XML exchanges according to documentation)
-	 * @param string	$type 				Declaration type by default - introduction or expedition (always 'expedition' for Des)
-	 * @param string	$period_reference	Period of reference
-	 * @return void
+	 * @param int			$mode 				O for create, R for regenerate (Look always 0 ment toujours 0 within the framework of XML exchanges according to documentation)
+	 * @param string		$type 				Declaration type by default - introduction or expedition (always 'expedition' for Des)
+	 * @param string		$period_reference	Period of reference
+	 * @return SimpleXMLElement|int
 	 */
 	public function getXML($mode = 'O', $type = 'introduction', $period_reference = '')
 	{
@@ -109,7 +142,7 @@ class IntracommReport extends CommonObject
 		$date_time->addChild('date', date('Y-m-d'));
 		$date_time->addChild('time', date('H:i:s'));
 		$party = $enveloppe->addChild('Party');
-		$party->addAttribute('partType', $conf->global->INTRACOMMREPORT_TYPE_ACTEUR);
+		$party->addAttribute('partyType', $conf->global->INTRACOMMREPORT_TYPE_ACTEUR);
 		$party->addAttribute('partyRole', $conf->global->INTRACOMMREPORT_ROLE_ACTEUR);
 		$party->addChild('partyId', $party_id);
 		$party->addChild('partyName', $declarant);
@@ -117,8 +150,11 @@ class IntracommReport extends CommonObject
 		$declaration = $enveloppe->addChild('Declaration');
 		$declaration->addChild('declarationId', $id_declaration);
 		$declaration->addChild('referencePeriod', $period_reference);
-		if ($conf->global->INTRACOMMREPORT_TYPE_ACTEUR === 'PSI') $psiId = $party_id;
-		else $psiId = 'NA';
+		if ($conf->global->INTRACOMMREPORT_TYPE_ACTEUR === 'PSI') {
+			$psiId = $party_id;
+		} else {
+			$psiId = 'NA';
+		}
 		$declaration->addChild('PSIId', $psiId);
 		$function = $declaration->addChild('Function');
 		$functionCode = $function->addChild('functionCode', $mode);
@@ -128,13 +164,16 @@ class IntracommReport extends CommonObject
 		/********************************************************************/
 
 		/**************Ajout des lignes de factures**************************/
-		$res = self::addItemsFact($declaration, $type, $period_reference);
+		$res = $this->addItemsFact($declaration, $type, $period_reference);
 		/********************************************************************/
 
 		$this->errors = array_unique($this->errors);
 
-		if (!empty($res)) return $e->asXML();
-		else return 0;
+		if (!empty($res)) {
+			return $e->asXML();
+		} else {
+			return 0;
+		}
 	}
 
 	/**
@@ -143,7 +182,7 @@ class IntracommReport extends CommonObject
 	 * @param int		$period_year		Year of declaration
 	 * @param int		$period_month		Month of declaration
 	 * @param string	$type_declaration	Declaration type by default - introduction or expedition (always 'expedition' for Des)
-	 * @return void
+	 * @return SimpleXMLElement|int
 	 */
 	public function getXMLDes($period_year, $period_month, $type_declaration = 'expedition')
 	{
@@ -163,18 +202,21 @@ class IntracommReport extends CommonObject
 
 		$this->errors = array_unique($this->errors);
 
-		if (!empty($res)) return $e->asXML();
-		else return 0;
+		if (!empty($res)) {
+			return $e->asXML();
+		} else {
+			return 0;
+		}
 	}
 
 	/**
 	 *  Add line from invoice
 	 *
-	 *  @param      int		$declaration		Reference declaration
-	 *  @param      string	$type				Declaration type by default - introduction or expedition (always 'expedition' for Des)
-	 *  @param      int		$period_reference	Reference period
-	 *  @param      string	$exporttype	    	deb=DEB, des=DES
-	 *  @return     int       			  		<0 if KO, >0 if OK
+	 *  @param	SimpleXMLElement	$declaration		Reference declaration
+	 *  @param	string				$type				Declaration type by default - introduction or expedition (always 'expedition' for Des)
+	 *  @param	int					$period_reference	Reference period
+	 *  @param	string				$exporttype	    	deb=DEB, des=DES
+	 *  @return	int       			  					<0 if KO, >0 if OK
 	 */
 	public function addItemsFact(&$declaration, $type, $period_reference, $exporttype = 'deb')
 	{
@@ -201,8 +243,7 @@ class IntracommReport extends CommonObject
 			}
 
 			while ($res = $this->db->fetch_object($resql)) {
-				if ($exporttype == 'des')
-				{
+				if ($exporttype == 'des') {
 					$this->addItemXMlDes($declaration, $res, $i);
 				} else {
 					if (empty($res->fk_pays)) {
@@ -211,16 +252,22 @@ class IntracommReport extends CommonObject
 					} else {
 						if ($conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT > 0 && $categ_fraisdeport->containsObject('product', $res->id_prod)) {
 							$TLinesFraisDePort[] = $res;
-						} else $this->addItemXMl($declaration, $res, $i, '');
+						} else {
+							$this->addItemXMl($declaration, $res, $i, '');
+						}
 					}
 				}
 
 				$i++;
 			}
 
-			if (!empty($TLinesFraisDePort)) $this->addItemFraisDePort($declaration, $TLinesFraisDePort, $type, $categ_fraisdeport, $i);
+			if (!empty($TLinesFraisDePort)) {
+				$this->addItemFraisDePort($declaration, $TLinesFraisDePort, $type, $categ_fraisdeport, $i);
+			}
 
-			if (count($this->errors) > 0) return 0;
+			if (count($this->errors) > 0) {
+				return 0;
+			}
 		}
 
 		return 1;
@@ -232,21 +279,20 @@ class IntracommReport extends CommonObject
 	 *  @param      string	$type				Declaration type by default - introduction or expedition (always 'expedition' for Des)
 	 *  @param      int		$period_reference	Reference declaration
 	 *  @param      string	$exporttype	    	deb=DEB, des=DES
-	 *  @return     int       			  		<0 if KO, >0 if OK
+	 *  @return     string       			  		<0 if KO, >0 if OK
 	 */
 	public function getSQLFactLines($type, $period_reference, $exporttype = 'deb')
 	{
 		global $mysoc, $conf;
 
 		if ($type == 'expedition' || $exporttype == 'des') {
-			$sql = 'SELECT f.facnumber, f.total as total_ht';
+			$sql = 'SELECT f.ref as refinvoice, f.total as total_ht';
 			$table = 'facture';
 			$table_extraf = 'facture_extrafields';
 			$tabledet = 'facturedet';
 			$field_link = 'fk_facture';
-		}
-		else { // Introduction
-			$sql = 'SELECT f.ref_supplier as facnumber, f.total_ht';
+		} else { // Introduction
+			$sql = 'SELECT f.ref_supplier as refinvoice, f.total_ht';
 			$table = 'facture_fourn';
 			$table_extraf = 'facture_fourn_extrafields';
 			$tabledet = 'facture_fourn_det';
@@ -275,26 +321,32 @@ class IntracommReport extends CommonObject
 	/**
 	 *	Add item for DEB
 	 *
-	 * 	@param      int		$declaration		Reference declaration
-	 * 	@param      int		$res				Result of request SQL
-	 *  @param      int		$i					Line Id
-	 * 	@param      string	$code_douane_spe	Specific customs authorities code
-	 *  @return     void
+	 * 	@param	SimpleXMLElement	$declaration		Reference declaration
+	 * 	@param	Resource			$res				Result of request SQL
+	 *  @param	int					$i					Line Id
+	 * 	@param	string				$code_douane_spe	Specific customs authorities code
+	 *  @return	void
 	 */
 	public function addItemXMl(&$declaration, &$res, $i, $code_douane_spe = '')
 	{
 		$item = $declaration->addChild('Item');
-		$item->addChild('ItemNumber', $i);
+		$item->addChild('itemNumber', $i);
 		$cn8 = $item->addChild('CN8');
-		if (empty($code_douane_spe)) $code_douane = $res->customcode;
-		else $code_douane = $code_douane_spe;
+		if (empty($code_douane_spe)) {
+			$code_douane = $res->customcode;
+		} else {
+			$code_douane = $code_douane_spe;
+		}
 		$cn8->addChild('CN8Code', $code_douane);
-		if (!empty($res->tva_intra)) $item->addChild('partnerId', $res->tva_intra);
 		$item->addChild('MSConsDestCode', $res->code); // code iso pays client
-		$item->addChild('netMass', $res->weight * $res->qty); // Poids du produit
+		$item->addChild('countryOfOriginCode', substr($res->zip, 0, 2)); // code iso pays d'origine
+		$item->addChild('netMass', round($res->weight * $res->qty)); // Poids du produit
 		$item->addChild('quantityInSU', $res->qty); // Quantité de produit dans la ligne
 		$item->addChild('invoicedAmount', round($res->total_ht)); // Montant total ht de la facture (entier attendu)
-		$item->addChild('invoicedNumber', $res->facnumber); // Numéro facture
+		// $item->addChild('invoicedNumber', $res->refinvoice); // Numéro facture
+		if (!empty($res->tva_intra)) {
+			$item->addChild('partnerId', $res->tva_intra);
+		}
 		$item->addChild('statisticalProcedureCode', '11');
 		$nature_of_transaction = $item->addChild('NatureOfTransaction');
 		$nature_of_transaction->addChild('natureOfTransactionACode', 1);
@@ -306,10 +358,10 @@ class IntracommReport extends CommonObject
 	/**
 	 *	Add item for DES
 	 *
-	 * 	@param      int		$declaration		Reference declaration
-	 * 	@param      int		$res				Result of request SQL
-	 *  @param      int		$i					Line Id
-	 *  @return     void
+	 * 	@param	SimpleXMLElement	$declaration		Reference declaration
+	 * 	@param	Resource				$res				Result of request SQL
+	 *  @param	int					$i					Line Id
+	 *  @return	void
 	 */
 	public function addItemXMlDes($declaration, &$res, $i)
 	{
@@ -322,12 +374,12 @@ class IntracommReport extends CommonObject
 	/**
 	 *	This function adds an item by retrieving the customs code of the product with the highest amount in the invoice
 	 *
-	 * 	@param      int		    $declaration		Reference declaration
-	 * 	@param      int		    $TLinesFraisDePort	Data of shipping costs line
-	 *  @param      string	    $type				Declaration type by default - introduction or expedition (always 'expedition' for Des)
-	 *  @param      Categorie	$categ_fraisdeport	category of shipping costs
-	 *  @param      int		    $i					Line Id
-	 *  @return     void
+	 * 	@param	SimpleXMLElement	$declaration		Reference declaration
+	 * 	@param	array				$TLinesFraisDePort	Data of shipping costs line
+	 *  @param	string	    		$type				Declaration type by default - introduction or expedition (always 'expedition' for Des)
+	 *  @param	Categorie			$categ_fraisdeport	category of shipping costs
+	 *  @param	int		    		$i					Line Id
+	 *  @return	void
 	 */
 	public function addItemFraisDePort(&$declaration, &$TLinesFraisDePort, $type, &$categ_fraisdeport, $i)
 	{
@@ -338,7 +390,7 @@ class IntracommReport extends CommonObject
 			$table = 'facture';
 			$tabledet = 'facturedet';
 			$field_link = 'fk_facture';
-			$more_sql = 'f.facnumber';
+			$more_sql = 'f.ref';
 		} else { // Introduction
 			$table = 'facture_fourn';
 			$tabledet = 'facture_fourn_det';
@@ -353,14 +405,14 @@ class IntracommReport extends CommonObject
 					INNER JOIN '.MAIN_DB_PREFIX.'product p ON (p.rowid = d.fk_product)
 					WHERE d.fk_product IS NOT NULL
 					AND f.entity = '.$conf->entity.'
-					AND '.$more_sql.' = "'.$res->facnumber.'"
+					AND '.$more_sql.' = "'.$res->refinvoice.'"
 					AND d.total_ht =
 					(
 						SELECT MAX(d.total_ht)
 						FROM '.MAIN_DB_PREFIX.$tabledet.' d
 						INNER JOIN '.MAIN_DB_PREFIX.$table.' f ON (f.rowid = d.'.$field_link.')
 						WHERE d.fk_product IS NOT NULL
-						AND '.$more_sql.' = "'.$res->facnumber.'"
+						AND '.$more_sql.' = "'.$res->refinvoice.'"
 						AND d.fk_product NOT IN
 						(
 							SELECT fk_product
@@ -386,7 +438,9 @@ class IntracommReport extends CommonObject
 	public function getNextDeclarationNumber()
 	{
 		$resql = $this->db->query('SELECT MAX(numero_declaration) as max_declaration_number FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE exporttype="'.$this->exporttype.'"');
-		if ($resql) $res = $this->db->fetch_object($resql);
+		if ($resql) {
+			$res = $this->db->fetch_object($resql);
+		}
 
 		return ($res->max_declaration_number + 1);
 	}

@@ -16,3 +16,4 @@ DictionaryFunction=HRM - Posisi pekerjaan
 Employees=karyawan
 Employee=karyawan
 NewEmployee=Karyawan Baru
+ListOfEmployees=Daftar Karyawan

@@ -94,8 +94,11 @@ class box_factures extends ModeleBoxes
 			$sql .= ", f.total_ttc";
 			$sql .= ", f.datef as df";
 			$sql .= ", f.paye, f.fk_statut, f.datec, f.tms";
-			$sql .= ", s.rowid as socid, s.nom as name, s.code_client, s.email, s.tva_intra, s.code_compta, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
 			$sql .= ", f.date_lim_reglement as datelimite";
+			$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+			$sql .= ", s.code_client, s.code_compta, s.client";
+			$sql .= ", s.logo, s.email, s.entity";
+			$sql .= ", s.tva_intra, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
 			$sql .= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql .= ")";
@@ -133,9 +136,14 @@ class box_factures extends ModeleBoxes
 
 					$societestatic->id = $objp->socid;
 					$societestatic->name = $objp->name;
+					//$societestatic->name_alias = $objp->name_alias;
 					$societestatic->code_client = $objp->code_client;
-					$societestatic->tva_intra = $objp->tva_intra;
+					$societestatic->code_compta = $objp->code_compta;
+					$societestatic->client = $objp->client;
+					$societestatic->logo = $objp->logo;
 					$societestatic->email = $objp->email;
+					$societestatic->entity = $objp->entity;
+					$societestatic->tva_intra = $objp->tva_intra;
 					$societestatic->idprof1 = $objp->idprof1;
 					$societestatic->idprof2 = $objp->idprof2;
 					$societestatic->idprof3 = $objp->idprof3;

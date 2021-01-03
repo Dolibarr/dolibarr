@@ -40,7 +40,7 @@ class ExpenseReportRule extends CoreObject
 	public $table_element = 'expensereport_rules';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Fieldname with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_expense_rule';
 

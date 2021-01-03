@@ -1314,6 +1314,7 @@ PHPModuleLoaded=بخش %s در PHP بارگذاری شده است
 PreloadOPCode=OPCode از پیش بارگذاری شده مورد استفاده است
 AddRefInList=نمایش فهرست اطلاعات مرجع -ref. فروشنده/مشتری (فهرست انتخابی یا ترکیبی) و اکثر ابَرپیوند. <br> نام طرف‌های سوم به شکل  " CC12345 - SC45678 - شرکت بزرگ سازمانی " به جای "شرکت بزرگ سازمانی" نمایش داده خواهد شد.
 AddAdressInList=نمایش فهرست اطلاعات نشانی‌های فروشنده/مشتری (فهرست انتخابی یا ترکیبی) <br>شخص سوم‌ها به شکل "شرکت بزرگ سازمانی - شمارۀ 21 خیابان 123456 شهر بزرگ ایران" به جای "شرکت بزرگ سازمانی" نمایش داده خواهند شد.
+AddEmailPhoneTownInContactList=Display Contact email (or phones if not defined) and town info list (select list or combobox)<br>Contacts will appear with a name format of "Dupond Durand - dupond.durand@email.com - Paris" or "Dupond Durand - 06 07 59 65 66 - Paris" instead of "Dupond Durand".
 AskForPreferredShippingMethod=پرسش برای روش ارسال ترجیحی برای اشخاص سوم
 FieldEdition=ویرایش بخش %s
 FillThisOnlyIfRequired=مثال: +2 (تنها در صورتی که با مشکل ناحیۀ زمانی مواجه شوید)
@@ -1420,6 +1421,7 @@ AdherentMailRequired=برای ساخت یک عضو یک رایانامه لاز�
 MemberSendInformationByMailByDefault=کادرتائید برای ارسال تصدیق رایانامه برای اعضا (اعتباردهی یا عضویت جدید) به شکل پیش‌فرض فعال است
 VisitorCanChooseItsPaymentMode=کاربر می‌تواند از انواع روش پرداخت موجود استفاده نماید
 MEMBER_REMINDER_EMAIL=فعال‌کردن یادآور خودکار <b>توسط رایانامه</b> برای عضویت‌های منقضی‌شده. توجه: واحد <strong>%s</strong> برای ارسال صحیح یادآورها نیازمند فعال‌سازی و پیکربندی صحیح است.
+MembersDocModules=Document templates for documents generated from member record
 ##### LDAP setup #####
 LDAPSetup=برپاسازی LDAP
 LDAPGlobalParameters=مقادیر سراسری
@@ -1670,7 +1672,7 @@ AdvancedEditor=ویرایشگر پیشرفته
 ActivateFCKeditor=فعال کردن ویرایشگر پیشرفته برای:
 FCKeditorForCompany=ساخت/ویرایش عناصر توضیح و یادآوری به شکل WYSIWIG (باستثناء محصولات/خدمات)
 FCKeditorForProduct=ساخت/ویرایش عناصر توضیح و یادآوری به شکل WYSIWIG
-FCKeditorForProductDetails=ساخت/ویرایش سطور جزئیات برای همۀ موجودیت‌های محصولات (پیشنهادها، سفارش‌ها، صورت‌حساب‌ها و غیره) با WYSIWIG. <font class="warning">هشدار: استفده از این گزینه برای این مورد اساسا توصیه نمی‌شود زیرا ممکن است در هنگام ساخت فایل‌های PDF در خصوص نویسه‌های خاص در هنگام شکل‌دهی صفحه مشکل ایجاد نماید.</font>
+FCKeditorForProductDetails=WYSIWIG creation/edition of products details lines for all entities (proposals, orders, invoices, etc...). <span class="warning">Warning: Using this option for this case is seriously not recommended as it can create problems with special characters and page formatting when building PDF files.</span>
 FCKeditorForMailing= ساخت/ویرایش WYSIWIG برای ارسال رایانامۀ انبوه (ابزار->ارسال رایانامه)
 FCKeditorForUserSignature=ساخت/ویرایش امضای کاربر توسط WYSIWIG
 FCKeditorForMail=ساخت/ویرایش همۀ رایانامه‌ها با WYSIWIG (منهای ابزار->ارسال رایانامه)
@@ -1736,9 +1738,10 @@ AGENDA_USE_EVENT_TYPE_DEFAULT=ثبت خودکار این مقدار پیش‌ف�
 AGENDA_DEFAULT_FILTER_TYPE=ثبت خودکار این نوع از رخداد در صافی جستجوی نمای جلسات
 AGENDA_DEFAULT_FILTER_STATUS=ثبت خودکار این وضعیت جلسه در صافی جستجوی نمای جلسات
 AGENDA_DEFAULT_VIEW=Which view do you want to open by default when selecting menu Agenda
-AGENDA_REMINDER_EMAIL=فعال‌کردن یادآوری رخدادها <b>توسط رایانامه</b> (توجه داشته بشید در خصوص هر رخداد گزینه‌ها/تاخیر قابل تعریف هستند). نکته:  برای ارسال با بسامد صحیح رایانامه‌های یادآوری واحد <strong>%s</strong> باید فعال بوده و به‌‌درستی پیکربندی شده باشد.
-AGENDA_REMINDER_BROWSER=فعال‌کردن یادآوری رخداد <b>روی مرورگر کاربر</b> (در هنگامی که رخداد سررسید، هر کاربر می‌تواند این کار را از طریق سوال تائید مرورگر نفی کند)
+AGENDA_REMINDER_BROWSER=Enable event reminder <b>on user's browser</b> (When remind date is reached, a popup is shown by the browser. Each user can disable such notifications from its browser notification setup).
 AGENDA_REMINDER_BROWSER_SOUND=فعال‌کردن آگاهی‌رسانی صوتی
+AGENDA_REMINDER_EMAIL=Enable event reminder <b>by emails</b> (remind option/delay can be defined on each event).
+AGENDA_REMINDER_EMAIL_NOTE=Note: The frequency of the task %s must be enough to be sure that the remind are sent at the correct moment.
 AGENDA_SHOW_LINKED_OBJECT=نمایش شیء پیوند شده به نمای جلسه
 ##### Clicktodial #####
 ClickToDialSetup=برپاسازی واحد کلیک برای شماره‌گیری

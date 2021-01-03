@@ -128,7 +128,7 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters
 $offset = $limit * $page;
 if (!$sortorder && !empty($conf->global->INVOICE_DEFAULT_UNPAYED_SORT_ORDER) && $search_status == '1') $sortorder = $conf->global->INVOICE_DEFAULT_UNPAYED_SORT_ORDER;
 if (!$sortorder) $sortorder = 'DESC';
@@ -223,7 +223,7 @@ if ($conf->global->INVOICE_USE_SITUATION && $conf->global->INVOICE_USE_RETAINED_
 }
 
 // Extra fields
-include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_array_fields.tpl.php';
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -307,12 +307,10 @@ if ($massaction == 'makepayment') {
 
 	header('Location: '.$loc);
 	exit;
-} elseif ($massaction == 'withdrawrequest')
-{
+} elseif ($massaction == 'withdrawrequest') {
 	$langs->load("withdrawals");
 
-	if (!$user->rights->prelevement->bons->creer)
-	{
+	if (!$user->rights->prelevement->bons->creer) {
 		$error++;
 		setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
 	} else {
@@ -325,8 +323,7 @@ if ($massaction == 'makepayment') {
 		{
 			$objecttmp = new Facture($db);
 			$result = $objecttmp->fetch($toselectid);
-			if ($result > 0)
-			{
+			if ($result > 0) {
 				$totalpaye = $objecttmp->getSommePaiement();
 				$totalcreditnotes = $objecttmp->getSumCreditNotesUsed();
 				$totaldeposits = $objecttmp->getSumDepositsUsed();
@@ -667,7 +664,7 @@ if ($resql)
 		'presend'=>$langs->trans("SendByMail"),
 		//'makepayment'=>$langs->trans("InvoicePaymentsLimits"),   TODO Blank page when using this
 	);
-	if ($conf->prelevement->enabled) {
+	if ($conf->prelevement->enabled && !empty($user->rights->prelevement->bons->creer)) {
 			$langs->load("withdrawals");
 			$arrayofmassactions['withdrawrequest'] = $langs->trans("MakeWithdrawRequest");
 	}
@@ -1587,6 +1584,8 @@ if ($resql)
 			{
 				print '<td class="right nowrap">'.price($marginInfo['total_margin']).'</td>';
 				if (!$i) $totalarray['nbfield']++;
+				if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'total_margin';
+				$totalarray['val']['total_margin'] += $marginInfo['total_margin'];
 			}
 			// Total margin rate
 			if (!empty($arrayfields['total_margin_rate']['checked']))

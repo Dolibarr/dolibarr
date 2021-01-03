@@ -53,7 +53,7 @@ then
 	DIALOG="$DIALOG --ascii-lines"
 	fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 	trap "rm -f $fichtemp" 0 1 2 5 15
-	$DIALOG --title "Init Dolibarr with demo values" --clear \
+	$DIALOG --title "Reset login password" --clear \
 	        --inputbox "Mysql database name :" 16 55 dolibarrdemo 2> $fichtemp
 	valret=$?
 	case $valret in
@@ -70,7 +70,7 @@ then
 	DIALOG=${DIALOG=dialog}
 	fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 	trap "rm -f $fichtemp" 0 1 2 5 15
-	$DIALOG --title "Init Dolibarr with demo values" --clear \
+	$DIALOG --title "Reset login password" --clear \
 	        --inputbox "Mysql port (ex: 3306):" 16 55 3306 2> $fichtemp
 	
 	valret=$?
@@ -128,7 +128,7 @@ then
 
 	# ---------------------------- confirmation
 	DIALOG=${DIALOG=dialog}
-	$DIALOG --title "Init demo login with demo values" --clear \
+	$DIALOG --title "Reset login password" --clear \
 	        --yesno "Do you confirm ? \n Mysql database : '$base' \n Mysql port : '$port' \n Demo login: '$demologin' \n Demo password : '$demopass'" 15 55
 	
 	case $? in

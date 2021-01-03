@@ -90,28 +90,28 @@ print '<table class="border centpercent">';
 
 print '<tr class="border"><td style="padding: 4px">';
 
-if (!empty($conf->syslog->enabled))
-{
-	print '<input type="radio" name="choice" value="logfile"';
+if (!empty($conf->syslog->enabled)) {
+	print '<input type="radio" name="choice" id="choicelogfile" value="logfile"';
 	print ($choice && $choice == 'logfile') ? ' checked' : '';
 	$filelogparam = $filelog;
-	if ($user->admin && preg_match('/^dolibarr.*\.log$/', basename($filelog)))
-	{
+	if ($user->admin && preg_match('/^dolibarr.*\.log$/', basename($filelog))) {
 		$filelogparam = '<a class="wordbreak" href="'.DOL_URL_ROOT.'/document.php?modulepart=logs&file=';
 		$filelogparam .= basename($filelog);
 		$filelogparam .= '">'.$filelog.'</a>';
 	}
-	print '> '.$langs->trans("PurgeDeleteLogFile", $filelogparam);
+	$desc = $langs->trans("PurgeDeleteLogFile", '{filelogparam}');
+	$desc = str_replace('{filelogparam}', $filelogparam, $desc);
+	print '> <label for="choicelogfile">'.$desc.'</label>';
 	print '<br><br>';
 }
 
-print '<input type="radio" name="choice" value="tempfiles"';
+print '<input type="radio" name="choice" id="choicetempfiles" value="tempfiles"';
 print (!$choice || $choice == 'tempfiles' || $choice == 'allfiles') ? ' checked' : '';
-print '> '.$langs->trans("PurgeDeleteTemporaryFiles").'<br><br>';
+print '> <label for="choicetempfiles">'.$langs->trans("PurgeDeleteTemporaryFiles").'</label><br><br>';
 
-print '<input type="radio" name="choice" value="confirm_allfiles"';
+print '<input type="radio" name="choice" id="choiceallfiles" value="confirm_allfiles"';
 print ($choice && $choice == 'confirm_allfiles') ? ' checked' : '';
-print '> '.$langs->trans("PurgeDeleteAllFilesInDocumentsDir", $dolibarr_main_data_root).'<br>';
+print '> <label for="choiceallfiles">'.$langs->trans("PurgeDeleteAllFilesInDocumentsDir", $dolibarr_main_data_root).'</label><br>';
 
 print '</td></tr></table>';
 
@@ -123,8 +123,7 @@ print '</td></tr></table>';
 
 print '</form>';
 
-if (preg_match('/^confirm/i', $choice))
-{
+if (preg_match('/^confirm/i', $choice)) {
 	print '<br>';
 	$formquestion = array();
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?choice=allfiles', $langs->trans('Purge'), $langs->trans('ConfirmPurge').img_warning().' ', 'purge', $formquestion, 'no', 2);

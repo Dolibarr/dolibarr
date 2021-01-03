@@ -179,3 +179,4 @@ BankColorizeMovement=Bewegungen färben
 BankColorizeMovementDesc=Wenn diese Funktion aktiviert ist, können Sie eine bestimmte Hintergrundfarbe für Debit- oder Kreditbewegungen auswählen
 BankColorizeMovementName1=Hintergrundfarbe für Debit-Bewegung
 BankColorizeMovementName2=Hintergrundfarbe für Kredit-Bewegung
+IfYouDontReconcileDisableProperty=If you don't make the bank reconciliations on some bank accounts, disable the property "%s" on them to remove this warning.

@@ -38,7 +38,7 @@ window.locale = {
         },
         "error": "<?php echo $langs->trans('Error'); ?>",
         "start": "<?php echo $langs->trans('Start'); ?>",
-        "cancel": "<?php echo $langs->trans('Cancel'); ?>",
+        "cancel": "<?php echo $langs->trans("Cancel"); ?>",
         "destroy": "<?php echo $langs->trans('Delete'); ?>"
     }
 };
@@ -82,7 +82,7 @@ $(function () {
 							});
 						}
 					},
-					"<?php echo $langs->trans('Cancel'); ?>": function() {
+					"<?php echo $langs->trans("Cancel"); ?>": function() {
 						$( "#confirm-delete" ).dialog( "close" );
 					}
 				}

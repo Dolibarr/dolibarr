@@ -212,7 +212,7 @@ if (empty($reshook))
 				$_POST["price"] = 0;
 			}
 		}
-		if ($conf->multicurrency->enabled) {
+		if (!empty($conf->multicurrency->enabled)) {
 			if (empty($_POST["multicurrency_code"])) {
 				$error++;
 				$langs->load("errors");
@@ -294,7 +294,7 @@ if (empty($reshook))
 				if ($packaging < $quantity) $packaging = $quantity;
 				$object->packaging = $packaging;
 
-				if ($conf->multicurrency->enabled)
+				if (!empty($conf->multicurrency->enabled))
 				{
 					$multicurrency_tx = price2num(GETPOST("multicurrency_tx", 'alpha'));
 					$multicurrency_price = price2num(GETPOST("multicurrency_price", 'alpha'));
@@ -365,7 +365,7 @@ if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
 	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
 
-llxHeader('', $title, $helpurl);
+llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'classforhorizontalscrolloftabs');
 
 $form = new Form($db);
 
@@ -490,9 +490,9 @@ if ($id > 0 || $ref)
 				if ($rowid)
 				{
 					print '<input type="hidden" name="ref_fourn_old" value="'.$object->ref_supplier.'">';
-					print '<input class="flat" name="ref_fourn" size="12" value="'.$object->ref_supplier.'">';
+					print '<input class="flat width150" maxlength="30" name="ref_fourn" value="'.$object->ref_supplier.'">';
 				} else {
-					print '<input class="flat" name="ref_fourn" size="12" value="'.(GETPOST("ref_fourn") ?GETPOST("ref_fourn") : '').'">';
+					print '<input class="flat width150" maxlength="30" name="ref_fourn" value="'.(GETPOST("ref_fourn") ? GETPOST("ref_fourn") : '').'">';
 				}
 				print '</td>';
 				print '</tr>';
@@ -519,7 +519,7 @@ if ($id > 0 || $ref)
 					print '<input class="flat" name="qty" size="5" value="'.$quantity.'">';
 				}
 				// Units
-				if ($conf->global->PRODUCT_USE_UNITS) {
+				if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 					$unit = $object->getLabelOfUnit();
 					if ($unit !== '') {
 						print '&nbsp;&nbsp;'.$langs->trans($unit);
@@ -537,7 +537,7 @@ if ($id > 0 || $ref)
 					print '<input class="flat" name="packaging" size="5" value="'.$packaging.'">';
 
 					// Units
-					if ($conf->global->PRODUCT_USE_UNITS) {
+					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 						$unit = $object->getLabelOfUnit();
 						if ($unit !== '') {
 							print '&nbsp;&nbsp;'.$langs->trans($unit);
@@ -610,17 +610,17 @@ if ($id > 0 || $ref)
 					</script>';
 				}
 
-                if ($conf->multicurrency->enabled) {
-                    // Currency
-                    print '<tr><td class="fieldrequired">'.$langs->trans("Currency").'</td>';
-                    print '<td>';
-                    $currencycodetouse = GETPOST('multicurrency_code') ?GETPOST('multicurrency_code') : (isset($object->fourn_multicurrency_code) ? $object->fourn_multicurrency_code : '');
-                    if (empty($currencycodetouse) && $object->fourn_multicurrency_tx == 1) $currencycodetouse = $conf->currency;
-                    print $form->selectMultiCurrency($currencycodetouse, "multicurrency_code", 1);
-                    print ' &nbsp; '.$langs->trans("CurrencyRate").' ';
-                    print '<input class="flat" name="multicurrency_tx" size="4" value="'.vatrate(GETPOST('multicurrency_tx') ? GETPOST('multicurrency_tx') : (isset($object->fourn_multicurrency_tx) ? $object->fourn_multicurrency_tx : '')).'">';
-                    print '</td>';
-                    print '</tr>';
+				if (!empty($conf->multicurrency->enabled)) {
+					// Currency
+					print '<tr><td class="fieldrequired">'.$langs->trans("Currency").'</td>';
+					print '<td>';
+					$currencycodetouse = GETPOST('multicurrency_code') ?GETPOST('multicurrency_code') : (isset($object->fourn_multicurrency_code) ? $object->fourn_multicurrency_code : '');
+					if (empty($currencycodetouse) && $object->fourn_multicurrency_tx == 1) $currencycodetouse = $conf->currency;
+					print $form->selectMultiCurrency($currencycodetouse, "multicurrency_code", 1);
+					print ' &nbsp; '.$langs->trans("CurrencyRate").' ';
+					print '<input class="flat" name="multicurrency_tx" size="4" value="'.vatrate(GETPOST('multicurrency_tx') ? GETPOST('multicurrency_tx') : (isset($object->fourn_multicurrency_tx) ? $object->fourn_multicurrency_tx : '')).'">';
+					print '</td>';
+					print '</tr>';
 
 					// Currency price qty min
 					print '<tr><td class="fieldrequired">'.$langs->trans("PriceQtyMinCurrency").'</td>';
@@ -725,7 +725,7 @@ END;
 					// Option to define a transport cost on supplier price
 					print '<tr>';
 					print '<td>'.$langs->trans('BarcodeValue').'</td>';
-					print '<td><input class="flat" name="barcode"  value="'.($rowid ? $object->fourn_barcode : '').'"></td>';
+					print '<td><input class="flat" name="barcode"  value="'.($rowid ? $object->supplier_barcode : '').'"></td>';
 					print '</tr>';
 					$formbarcode = new FormBarCode($db);
 
@@ -733,7 +733,7 @@ END;
 					print '<tr>';
 					print '<td>'.$langs->trans('BarcodeType').'</td>';
 					print '<td>';
-					print $formbarcode->selectBarcodeType(($rowid ? $object->fourn_fk_barcode_type : $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE), 'fk_barcode_type', 1);
+					print $formbarcode->selectBarcodeType(($rowid ? $object->supplier_fk_barcode_type : $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE), 'fk_barcode_type', 1);
 					print '</td>';
 					print '</tr>';
 				}
@@ -824,9 +824,9 @@ END;
 				print dol_get_fiche_end();
 
 				print '<div class="center">';
-				print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+				print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
 				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-				print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+				print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</div>';
 
 				print '</form>';
@@ -920,24 +920,24 @@ END;
 				$param = "&id=".$object->id;
 
 				print '<tr class="liste_titre">';
-				if (!empty($arrayfields['pfp.datec']['checked']))					print_liste_field_titre("AppliedPricesFrom", $_SERVER["PHP_SELF"], "pfp.datec", "", $param, "", $sortfield, $sortorder);
-				if (!empty($arrayfields['s.nom']['checked']))						print_liste_field_titre("Suppliers", $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
-				print_liste_field_titre("SupplierRef", $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder);
+				if (!empty($arrayfields['pfp.datec']['checked']))					print_liste_field_titre("AppliedPricesFrom", $_SERVER["PHP_SELF"], "pfp.datec", "", $param, "", $sortfield, $sortorder, '', '', 1);
+				if (!empty($arrayfields['s.nom']['checked']))						print_liste_field_titre("Suppliers", $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder, '', '', 1);
+				print_liste_field_titre("SupplierRef", $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder, '', '', 1);
 				if (!empty($arrayfields['pfp.fk_availability']['checked']))			print_liste_field_titre("Availability", $_SERVER["PHP_SELF"], "pfp.fk_availability", "", $param, "", $sortfield, $sortorder);
 				if (!empty($arrayfields['pfp.quantity']['checked']))				print_liste_field_titre("QtyMin", $_SERVER["PHP_SELF"], "pfp.quantity", "", $param, '', $sortfield, $sortorder, 'right ');
 				print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 				print_liste_field_titre("PriceQtyMinHT", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
-				if ($conf->multicurrency->enabled)									print_liste_field_titre("PriceQtyMinHTCurrency", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+				if (!empty($conf->multicurrency->enabled))									print_liste_field_titre("PriceQtyMinHTCurrency", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 				if (!empty($arrayfields['pfp.unitprice']['checked']))				print_liste_field_titre("UnitPriceHT", $_SERVER["PHP_SELF"], "pfp.unitprice", "", $param, '', $sortfield, $sortorder, 'right ');
 				if (!empty($arrayfields['pfp.multicurrency_unitprice']['checked']))	print_liste_field_titre("UnitPriceHTCurrency", $_SERVER["PHP_SELF"], "pfp.multicurrency_unitprice", "", $param, '', $sortfield, $sortorder, 'right ');
-				if ($conf->multicurrency->enabled)									print_liste_field_titre("Currency", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
+				if (!empty($conf->multicurrency->enabled))									print_liste_field_titre("Currency", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
 				print_liste_field_titre("DiscountQtyMin", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 				if (!empty($arrayfields['pfp.delivery_time_days']['checked']))		print_liste_field_titre("NbDaysToDelivery", $_SERVER["PHP_SELF"], "pfp.delivery_time_days", "", $param, '', $sortfield, $sortorder, 'right ');
 				if (!empty($arrayfields['pfp.supplier_reputation']['checked']))		print_liste_field_titre("ReputationForThisProduct", $_SERVER["PHP_SELF"], "pfp.supplier_reputation", "", $param, '', $sortfield, $sortorder, 'center ');
 				if (!empty($arrayfields['pfp.barcode']['checked']))					print_liste_field_titre("BarcodeValue", $_SERVER["PHP_SELF"], "pfp.barcode", "", $param, '', $sortfield, $sortorder, 'center ');
 				if (!empty($arrayfields['pfp.fk_barcode_type']['checked']))			print_liste_field_titre("BarcodeType", $_SERVER["PHP_SELF"], "pfp.fk_barcode_type", "", $param, '', $sortfield, $sortorder, 'center ');
 				if (!empty($arrayfields['pfp.packaging']['checked']))				print_liste_field_titre("PackagingForThisProduct", $_SERVER["PHP_SELF"], "pfp.packaging", "", $param, 'align="center"', $sortfield, $sortorder);
-				if (!empty($arrayfields['pfp.tms']['checked']))						print_liste_field_titre("DateModification", $_SERVER["PHP_SELF"], "pfp.tms", "", $param, '', $sortfield, $sortorder, 'right ');
+				if (!empty($arrayfields['pfp.tms']['checked']))						print_liste_field_titre("DateModification", $_SERVER["PHP_SELF"], "pfp.tms", "", $param, '', $sortfield, $sortorder, 'right ', '', 1);
 
 				// fetch optionals attributes and labels
 				$extrafields->fetch_name_optionals_label("product_fournisseur_price");
@@ -976,12 +976,11 @@ END;
 
 						// Supplier
 						if (!empty($arrayfields['s.nom']['checked'])) {
-							print '<td>'.$productfourn->getSocNomUrl(1, 'supplier').'</td>';
+							print '<td class="tdoverflowmax200">'.$productfourn->getSocNomUrl(1, 'supplier').'</td>';
 						}
 
 						// Supplier ref
-						if ($usercancreate) // change required right here
-						{
+						if ($usercancreate) { // change required right here
 							print '<td class="left">'.$productfourn->getNomUrl().'</td>';
 						} else {
 							print '<td class="left">'.$productfourn->fourn_ref.'</td>';
@@ -1000,7 +999,7 @@ END;
 							print '<td class="right">';
 							print $productfourn->fourn_qty;
 							// Units
-							if ($conf->global->PRODUCT_USE_UNITS) {
+							if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 								$unit = $object->getLabelOfUnit();
 								if ($unit !== '') {
 									print '&nbsp;&nbsp;'.$langs->trans($unit);
@@ -1019,7 +1018,7 @@ END;
 						print $productfourn->fourn_price ?price($productfourn->fourn_price) : "";
 						print '</td>';
 
-						if ($conf->multicurrency->enabled) {
+						if (!empty($conf->multicurrency->enabled)) {
 							// Price for the quantity in currency
 							print '<td class="right">';
 							print $productfourn->fourn_multicurrency_price ? price($productfourn->fourn_multicurrency_price) : "";
@@ -1041,7 +1040,7 @@ END;
 							print '</td>'; }
 
 						// Currency
-						if ($conf->multicurrency->enabled) {
+						if (!empty($conf->multicurrency->enabled)) {
 							print '<td class="right">';
 							print $productfourn->fourn_multicurrency_code ? currency_name($productfourn->fourn_multicurrency_code) : '';
 							print '</td>';
@@ -1071,16 +1070,16 @@ END;
 						// Barcode
 						if (!empty($arrayfields['pfp.barcode']['checked'])) {
 							print '<td align="right">';
-							print $productfourn->barcode;
+							print $productfourn->supplier_barcode;
 							print '</td>';
 						}
 
 						// Barcode type
 						if (!empty($arrayfields['pfp.fk_barcode_type']['checked'])) {
 							print '<td class="center">';
-							$productfourn->barcode_type = !empty($productfourn->fk_barcode_type) ? $productfourn->fk_barcode_type : 0;
+							$productfourn->barcode_type = !empty($productfourn->supplier_fk_barcode_type) ? $productfourn->supplier_fk_barcode_type : 0;
 							$productfourn->fetch_barcode();
-							print $productfourn->barcode_type_label ? $productfourn->barcode_type_label : ($productfourn->barcode ? '<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>' : '');
+							print $productfourn->barcode_type_label ? $productfourn->barcode_type_label : ($productfourn->supplier_barcode ? '<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>' : '');
 							print '</td>';
 						}
 
@@ -1138,7 +1137,7 @@ END;
 
 						if ($usercancreate)
 						{
-							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=update_price&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_edit()."</a>";
+							print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=update_price&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_edit()."</a>";
 							print ' &nbsp; ';
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=ask_remove_pf&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_picto($langs->trans("Remove"), 'delete').'</a>';
 						}

@@ -71,14 +71,26 @@ class Bookmark extends CommonObject
 	 */
 	public $datec;
 
+	/**
+	 * @var string url
+	 */
 	public $url;
 
 	public $target; // 0=replace, 1=new window
 
+	/**
+	 * @var string title
+	 */
 	public $title;
 
+	/**
+	 * @var int position of bookmark
+	 */
 	public $position;
 
+	/**
+	 * @var string favicon
+	 */
 	public $favicon;
 
 
@@ -110,8 +122,7 @@ class Bookmark extends CommonObject
 
 		dol_syslog("Bookmark::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
 
 			$this->id = $obj->rowid;
@@ -145,7 +156,9 @@ class Bookmark extends CommonObject
 		// Clean parameters
 		$this->url = trim($this->url);
 		$this->title = trim($this->title);
-		if (empty($this->position)) $this->position = 0;
+		if (empty($this->position)) {
+			$this->position = 0;
+		}
 
 		$now = dol_now();
 
@@ -158,17 +171,15 @@ class Bookmark extends CommonObject
 		$sql .= ($this->fk_user > 0 ? $this->fk_user : "0").",";
 		$sql .= " '".$this->db->idate($now)."',";
 		$sql .= " '".$this->db->escape($this->url)."', '".$this->db->escape($this->target)."',";
-		$sql .= " '".$this->db->escape($this->title)."', '".$this->db->escape($this->favicon)."', '".$this->db->escape($this->position)."'";
-		$sql .= ", ".$this->db->escape($conf->entity);
+		$sql .= " '".$this->db->escape($this->title)."', '".$this->db->escape($this->favicon)."', ".(int) $this->position;
+		$sql .= ", ".(int) $conf->entity;
 		$sql .= ")";
 
 		dol_syslog("Bookmark::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."bookmark");
-			if ($id > 0)
-			{
+			if ($id > 0) {
 				$this->id = $id;
 				$this->db->commit();
 				return $id;
@@ -196,7 +207,9 @@ class Bookmark extends CommonObject
 		// Clean parameters
 		$this->url = trim($this->url);
 		$this->title = trim($this->title);
-		if (empty($this->position)) $this->position = 0;
+		if (empty($this->position)) {
+			$this->position = 0;
+		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bookmark";
 		$sql .= " SET fk_user = ".($this->fk_user > 0 ? $this->fk_user : "0");
@@ -205,12 +218,11 @@ class Bookmark extends CommonObject
 		$sql .= " ,target = '".$this->db->escape($this->target)."'";
 		$sql .= " ,title = '".$this->db->escape($this->title)."'";
 		$sql .= " ,favicon = '".$this->db->escape($this->favicon)."'";
-		$sql .= " ,position = '".$this->db->escape($this->position)."'";
+		$sql .= " ,position = ".(int) $this->position;
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog("Bookmark::update", LOG_DEBUG);
-		if ($this->db->query($sql))
-		{
+		if ($this->db->query($sql)) {
 			return 1;
 		} else {
 			$this->error = $this->db->lasterror();
@@ -231,8 +243,7 @@ class Bookmark extends CommonObject
 
 		dol_syslog("Bookmark::remove", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			return 1;
 		} else {
 			$this->error = $this->db->lasterror();
@@ -282,7 +293,9 @@ class Bookmark extends CommonObject
 	{
 		global $conf, $langs, $hookmanager;
 
-		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
 		$result = '';
 
@@ -292,33 +305,40 @@ class Bookmark extends CommonObject
 
 		$url = DOL_URL_ROOT.'/bookmarks/card.php?id='.$this->id;
 
-		if ($option != 'nolink')
-		{
+		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
 		}
 
 		$linkclose = '';
-		if (empty($notooltip))
-		{
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-			{
+		if (empty($notooltip)) {
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowBookmark");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		}
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
 		$result .= $linkstart;
-		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-		if ($withpicto != 2) $result .= $this->ref;
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		}
+		if ($withpicto != 2) {
+			$result .= $this->ref;
+		}
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
@@ -326,8 +346,11 @@ class Bookmark extends CommonObject
 		$hookmanager->initHooks(array('mybookmarkdao'));
 		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) $result = $hookmanager->resPrint;
-		else $result .= $hookmanager->resPrint;
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 
 		return $result;
 	}

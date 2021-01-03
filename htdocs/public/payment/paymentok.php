@@ -471,8 +471,10 @@ if ($ispaymentok)
 						$thirdparty = new Societe($db);
 						$thirdparty->fetch($thirdparty_id);
 
-						include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+						include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';	// This also set $stripearrayofkeysbyenv
 						$stripe = new Stripe($db);
+						//$stripeacc = $stripe->getStripeAccount($service);		Already defined previously
+
 						$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 0);
 
 						if (!$customer && $TRANSACTIONID)	// Not linked to a stripe customer, we make the link
@@ -480,22 +482,51 @@ if ($ispaymentok)
 							dol_syslog("No stripe profile found, so we add it for TRANSACTIONID = ".$TRANSACTIONID, LOG_DEBUG, 0, '_payment');
 
 							try {
-								$ch = \Stripe\Charge::retrieve($TRANSACTIONID); // contains the charge id
-								$stripecu = $ch->customer; // value 'cus_....'
+								global $stripearrayofkeysbyenv;
+								\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$servicestatus]['secret_key']);
 
-								$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_account (fk_soc, login, key_account, site, status, entity, date_creation, fk_user_creat)";
-								$sql .= " VALUES (".$object->fk_soc.", '', '".$db->escape($stripecu)."', 'stripe', ".$servicestatus.", ".$conf->entity.", '".$db->idate(dol_now())."', 0)";
-								$resql = $db->query($sql);
-								if (!$resql)
-								{
+								if (preg_match('/^pi_/', $TRANSACTIONID)) {
+									// This may throw an error if not found.
+									$chpi = \Stripe\PaymentIntent::retrieve($TRANSACTIONID);	// payment_intent (pi_...)
+								} else {
+									// This throw an error if not found
+									$chpi = \Stripe\Charge::retrieve($TRANSACTIONID); // old method, contains the charge id (ch_...)
+								}
+
+								if ($chpi) {
+									$stripecu = $chpi->customer; // value 'cus_....'. WARNING: This property may be empty if first payment was recorded before the stripe customer was created.
+
+									if (empty($stripecu)) {
+										// This include the INSERT
+										$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 1);
+
+										// Link this customer to the payment intent
+										if (preg_match('/^pi_/', $TRANSACTIONID) && $customer) {
+											\Stripe\PaymentIntent::update($chpi->id, array('customer' => $customer->id));
+										}
+									} else {
+										$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_account (fk_soc, login, key_account, site, site_account, status, entity, date_creation, fk_user_creat)";
+										$sql .= " VALUES (".$object->fk_soc.", '', '".$db->escape($stripecu)."', 'stripe', '".$db->escape($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])."', ".$servicestatus.", ".$conf->entity.", '".$db->idate(dol_now())."', 0)";
+										$resql = $db->query($sql);
+										if (!$resql) {	// should not happen
+											$error++;
+											$errmsg = 'Failed to insert customer stripe id in database : '.$db->lasterror();
+											dol_syslog($errmsg, LOG_ERR, 0, '_payment');
+											$postactionmessages[] = $errmsg;
+											$ispostactionok = -1;
+										}
+									}
+								} else {	// should not happen
 									$error++;
-									$errmsg = 'Failed to save customer stripe id in database ; '.$db->lasterror();
+									$errmsg = 'Failed to retreive paymentintent or charge from id';
+									dol_syslog($errmsg, LOG_ERR, 0, '_payment');
 									$postactionmessages[] = $errmsg;
 									$ispostactionok = -1;
 								}
-							} catch (Exception $e) {
+							} catch (Exception $e) {	// should not happen
 								$error++;
-								$errmsg = 'Failed to save customer stripe id in database ; '.$e->getMessage();
+								$errmsg = 'Failed to get or save customer stripe id in database : '.$e->getMessage();
+								dol_syslog($errmsg, LOG_ERR, 0, '_payment');
 								$postactionmessages[] = $errmsg;
 								$ispostactionok = -1;
 							}
@@ -503,8 +534,7 @@ if ($ispaymentok)
 					}
 				}
 
-				if (!$error)
-				{
+				if (!$error) {
 					$db->commit();
 				} else {
 					$db->rollback();

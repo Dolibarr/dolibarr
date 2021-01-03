@@ -869,14 +869,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 		$arrayfields['value'] = array('label'=>$langs->trans("Value"), 'checked'=>1, 'enabled'=>(empty($conf->salaries->enabled) ? 0 : 1));
 		$arrayfields['valuebilled'] = array('label'=>$langs->trans("Billed"), 'checked'=>1, 'enabled'=>(((!empty($conf->global->PROJECT_HIDE_TASKS) || empty($conf->global->PROJECT_BILL_TIME_SPENT)) ? 0 : 1) && $projectstatic->usage_bill_time));
 		// Extra fields
-		if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-		{
-			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-			{
-				if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-					$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-			}
-		}
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 		$arrayfields = dol_sort_array($arrayfields, 'position');
 
 		$param = '';
@@ -962,7 +956,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 				print $langs->trans('InvoiceToUse');
 				print '</td>';
 				print '<td>';
-	            $form->selectInvoice('invoice', '', 'invoiceid', 24, 0, $langs->trans('NewInvoice'), 1, 0, 0, 'maxwidth500', '', 'all');
+				$form->selectInvoice('invoice', '', 'invoiceid', 24, 0, $langs->trans('NewInvoice'), 1, 0, 0, 'maxwidth500', '', 'all');
 				print '</td>';
 				print '</tr>';
 				/*print '<tr>';
@@ -978,13 +972,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 				print '<br>';
 				print '<div class="center">';
 				print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('GenerateBill').'">  ';
-				print '<input type="submit" class="button" id="cancel" name="cancel" value="'.$langs->trans('Cancel').'">';
+				print '<input type="submit" class="button button-cancel" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</div>';
 				print '<br>';
 			} else {
 				print '<div class="warning">'.$langs->trans("ThirdPartyRequiredToGenerateInvoice").'</div>';
 				print '<div class="center">';
-				print '<input type="submit" class="button" id="cancel" name="cancel" value="'.$langs->trans('Cancel').'">';
+				print '<input type="submit" class="button button-cancel" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</div>';
 				$massaction = '';
 			}
@@ -1163,7 +1157,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 
 			print '<td class="center">';
 			print '<input type="submit" name="save" class="button buttongen marginleftonly margintoponlyshort marginbottomonlyshort" value="'.$langs->trans("Add").'">';
-			print '<input type="submit" name="cancel" class="button buttongen marginleftonly margintoponlyshort marginbottomonlyshort" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" name="cancel" class="button buttongen marginleftonly margintoponlyshort marginbottomonlyshort button-cancel" value="'.$langs->trans("Cancel").'">';
 			print '</td></tr>';
 
 			print '</table>';
@@ -1397,7 +1391,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			if (!empty($arrayfields['value']['checked']))
 			{
 				print '<td class="nowraponall right">';
-				$value = price2num($task_time->thm * $task_time->task_duration / 3600, 'MT');
+				$value = price2num($task_time->thm * $task_time->task_duration / 3600, 'MT', 1);
 				print price($value, 1, $langs, 1, -1, -1, $conf->currency);
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
@@ -1431,8 +1425,6 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 				}
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
-				if (!$i) $totalarray['totalvaluebilledfield'] = $totalarray['nbfield'];
-				$totalarray['totalvaluebilled'] += $valuebilled;
 			}
 
 			/*
@@ -1450,9 +1442,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			if (($action == 'editline' || $action == 'splitline') && $_GET['lineid'] == $task_time->rowid)
 			{
 				print '<input type="hidden" name="lineid" value="'.$_GET['lineid'].'">';
-				print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort" name="save" value="'.$langs->trans("Save").'">';
+				print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort button-save" name="save" value="'.$langs->trans("Save").'">';
 				print '<br>';
-				print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort" name="cancel" value="'.$langs->trans('Cancel').'">';
+				print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			} elseif ($user->rights->projet->lire || $user->rights->projet->all->creer)	 // Read project and enter time consumed on assigned tasks
 			{
 				if ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids) || $user->rights->projet->all->creer)
@@ -1599,7 +1591,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 				if (!empty($arrayfields['value']['checked']))
 				{
 					print '<td class="right">';
-					$value = price2num($task_time->thm * $task_time->task_duration / 3600);
+					$value = price2num($task_time->thm * $task_time->task_duration / 3600, 'MT', 1);
 					print price($value, 1, $langs, 1, -1, -1, $conf->currency);
 					print '</td>';
 				}
@@ -1608,7 +1600,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 				if (!empty($arrayfields['valuebilled']['checked']))
 				{
 					print '<td class="right">';
-					$valuebilled = price2num($task_time->total_ht);
+					$valuebilled = price2num($task_time->total_ht, '', 1);
 					if (isset($task_time->total_ht)) print price($valuebilled, 1, $langs, 1, -1, -1, $conf->currency);
 					print '</td>';
 				}
@@ -1746,7 +1738,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 				if (!empty($arrayfields['valuebilled']['checked']))
 				{
 					print '<td class="right">';
-					$valuebilled = price2num($task_time->total_ht);
+					$valuebilled = price2num($task_time->total_ht, '', 1);
 					if (isset($task_time->total_ht)) print price($valuebilled, 1, $langs, 1, -1, -1, $conf->currency);
 					print '</td>';
 				}

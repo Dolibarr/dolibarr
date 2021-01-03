@@ -117,8 +117,8 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 $TRemindTypes = array();
-if (!empty($conf->global->AGENDA_REMINDER_EMAIL)) $TRemindTypes['email'] = $langs->trans('EMail');
-if (!empty($conf->global->AGENDA_REMINDER_BROWSER)) $TRemindTypes['browser'] = $langs->trans('BrowserPush');
+if (!empty($conf->global->AGENDA_REMINDER_BROWSER)) $TRemindTypes['browser'] = array('label'=>$langs->trans('BrowserPush'), 'disabled'=>(empty($conf->global->AGENDA_REMINDER_BROWSER) ? 1 : 0));
+if (!empty($conf->global->AGENDA_REMINDER_EMAIL)) $TRemindTypes['email'] = array('label'=>$langs->trans('EMail'), 'disabled'=>(empty($conf->global->AGENDA_REMINDER_EMAIL) ? 1 : 0));
 
 $TDurationTypes = array('y'=>$langs->trans('Years'), 'm'=>$langs->trans('Month'), 'w'=>$langs->trans('Weeks'), 'd'=>$langs->trans('Days'), 'h'=>$langs->trans('Hours'), 'i'=>$langs->trans('Minutes'));
 
@@ -280,7 +280,7 @@ if (empty($reshook) && $action == 'add')
 				}
 			}
 		}
-		$object->fk_project = isset($_POST["projectid"]) ? $_POST["projectid"] : 0;
+		$object->fk_project = GETPOSTISSET("projectid") ? GETPOST("projectid", 'int') : 0;
 
 		$taskid = GETPOST('taskid', 'int');
 		if (!empty($taskid)) {
@@ -324,7 +324,7 @@ if (empty($reshook) && $action == 'add')
 
 	$object->note_private = trim(GETPOST("note", "restricthtml"));
 
-	if (isset($_POST["contactid"])) $object->contact = $contact;
+	if (GETPOSTISSET("contactid")) $object->contact = $contact;
 
 	if (GETPOST('socid', 'int') > 0)
 	{
@@ -503,7 +503,6 @@ if (empty($reshook) && $action == 'update')
 		$object->note_private = trim(GETPOST("note", "restricthtml"));
 		$object->fk_element	 = GETPOST("fk_element", "int");
 		$object->elementtype = GETPOST("elementtype", "alphanohtml");
-
 		if (!$datef && $percentage == 100)
 		{
 			$error++; $donotclearsession = 1;
@@ -1052,8 +1051,8 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
 	print '<td>';
 	$percent = -1;
-	if (isset($_GET['status']) || isset($_POST['status'])) $percent = GETPOST('status');
-	elseif (isset($_GET['percentage']) || isset($_POST['percentage'])) $percent = GETPOST('percentage');
+	if (GETPOSTISSET('status')) $percent = GETPOST('status');
+	elseif (GETPOSTISSET('percentage')) $percent = GETPOST('percentage');
 	else {
 		if (GETPOST('complete') == '0' || GETPOST("afaire") == 1) $percent = '0';
 		elseif (GETPOST('complete') == 100 || GETPOST("afaire") == 2) $percent = 100;
@@ -1105,7 +1104,7 @@ if ($action == 'create')
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 1);
-		print $form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'minwidth300 quatrevingtpercent', 0, 0);
+		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'minwidth300 quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print "</td></tr>";
 	}
 
@@ -1247,22 +1246,18 @@ if ($action == 'create')
 
 		//Reminder
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
-		print '<input type="number" name="offsetvalue" value="10" size="5">';
-		print '</td></tr>';
-
-		//Time Type
-		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("TimeType").'</td><td colspan="3">';
-		print $form->selectTypeDuration('offsetunit', 'i');
+		print '<input class="width50" type="number" name="offsetvalue" value="'.(GETPOSTISSET('offsetvalue') ? GETPOST('offsetvalue', 'int') : '15').'"> ';
+		print $form->selectTypeDuration('offsetunit', 'i', array('y', 'm'));
 		print '</td></tr>';
 
 		//Reminder Type
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderType").'</td><td colspan="3">';
-		print $form->selectarray('selectremindertype', $TRemindTypes);
+		print $form->selectarray('selectremindertype', $TRemindTypes, '', 0, 0, 0, '', 0, 0, 0, '', 'mimnwidth200', 1);
 		print '</td></tr>';
 
 		//Mail Model
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
-		print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1);
+		print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1, 1);
 		print '</td></tr>';
 
 
@@ -1297,9 +1292,9 @@ if ($action == 'create')
 	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Add").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	if (empty($backtopage)) {
-		print '<input type="button" class="button" name="cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+		print '<input type="button" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 	} else {
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	}
 	print '</div>';
 
@@ -1584,7 +1579,7 @@ if ($id > 0)
 			foreach ($cats as $cat) {
 				$arrayselected[] = $cat->id;
 			}
-			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 			print "</td></tr>";
 		}
 
@@ -1725,36 +1720,31 @@ if ($id > 0)
 				$actionCommReminder->typeremind = 'email';
 			}
 
-			print '<tr><td>'.$langs->trans("AddReminder").'</td><td colspan="3"><input type="checkbox" id="addreminder" name="addreminder" '.$checked.'></td></tr>';
+			print '<label for="addreminder">'.$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder" '.$checked.'><br>';
 
 			print '<div class="reminderparameters" '.(empty($checked) ? 'style="display: none;"' : '').'>';
 
+			print '<br>';
+
 			print '<table class="border centpercent">';
 
-			//Reminder
+			// Reminder
 			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
-			print '<input type="number" name="offsetvalue" value="'.$actionCommReminder->offsetvalue.'" size="5">';
+			print '<input type="number" name="offsetvalue" class="width50" value="'.$actionCommReminder->offsetvalue.'"> ';
+			print $form->selectTypeDuration('offsetunit', $actionCommReminder->offsetunit, array('y', 'm'));
 			print '</td></tr>';
 
-			//Time Type
-			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("TimeType").'</td><td colspan="3">';
-			print $form->selectTypeDuration('offsetunit', $actionCommReminder->offsetunit);
-			print '</td></tr>';
-
-			//Reminder Type
-			$TRemindTypes = array();
-			if (!empty($conf->global->AGENDA_REMINDER_EMAIL)) $TRemindTypes['email'] = $langs->trans('EMail');
-			if (!empty($conf->global->AGENDA_REMINDER_BROWSER)) $TRemindTypes['browser'] = $langs->trans('BrowserPush');
+			// Reminder Type
 			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderType").'</td><td colspan="3">';
-			print $form->selectarray('selectremindertype', $TRemindTypes, $actionCommReminder->typeremind);
+			print $form->selectarray('selectremindertype', $TRemindTypes, $actionCommReminder->typeremind, 0, 0, 0, '', 0, 0, 0, '', 'minwidth200', 1);
 			print '</td></tr>';
 
 			$hide = '';
 			if ($actionCommReminder->typeremind == 'browser') $hide = 'style="display:none;"';
 
-			//Mail Model
+			// Mail Model
 			print '<tr '.$hide.'><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
-			print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1);
+			print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1, 1);
 			print '</td></tr>';
 
 			print '</table>';
@@ -1780,14 +1770,16 @@ if ($id > 0)
 
                    })';
 			print '</script>'."\n";
+
+			print '</div>';		// End of div for reminderparameters
 		}
 
 		print dol_get_fiche_end();
 
 		print '<div class="center">';
-		print '<input type="submit" class="button" name="edit" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button button-save" name="edit" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		print '</form>';

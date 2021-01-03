@@ -1314,6 +1314,7 @@ PHPModuleLoaded=Thành phần PHP %s được tải
 PreloadOPCode=Tải sẵn OPCode được sử dụng
 AddRefInList=Hiển thị danh sách thông tin tham chiếu khách hàng/nhà cung cấp (chọn danh sách hoặc combobox) và hầu hết các siêu liên kết. <br> Các bên thứ ba sẽ xuất hiện với định dạng tên là "CC12345 - SC45678 - Công ty lớn." thay vì "Công ty lớn".
 AddAdressInList=Hiển thị danh sách thông tin địa chỉ khách hàng/nhà cung cấp (chọn danh sách hoặc hộp tổ hợp) <br> Các bên thứ ba sẽ xuất hiện với định dạng tên là "The Big Company corp. - 21 jump street 123456 Big town - USA" thay vì "The Big Company corp".
+AddEmailPhoneTownInContactList=Display Contact email (or phones if not defined) and town info list (select list or combobox)<br>Contacts will appear with a name format of "Dupond Durand - dupond.durand@email.com - Paris" or "Dupond Durand - 06 07 59 65 66 - Paris" instead of "Dupond Durand".
 AskForPreferredShippingMethod=Yêu cầu phương thức vận chuyển ưa thích cho bên thứ ba.
 FieldEdition=Biên soạn của trường %s
 FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
@@ -1420,6 +1421,7 @@ AdherentMailRequired=Yêu cầu email để tạo thành viên mới
 MemberSendInformationByMailByDefault=Hộp kiểm để gửi thư xác nhận cho các thành viên (xác nhận hoặc đăng ký mới) là theo mặc định
 VisitorCanChooseItsPaymentMode=Khách truy cập có thể chọn từ các chế độ thanh toán có sẵn
 MEMBER_REMINDER_EMAIL=Cho phép nhắc nhở tự động <b>qua email</b> của các thuê bao đã hết hạn. Lưu ý: Mô-đun <strong>%s</strong> phải được bật và thiết lập chính xác để gửi lời nhắc.
+MembersDocModules=Document templates for documents generated from member record
 ##### LDAP setup #####
 LDAPSetup=Thiết lập LDAP
 LDAPGlobalParameters=Các thông số toàn cầu
@@ -1670,7 +1672,7 @@ AdvancedEditor=Trình soạn thảo nâng cao
 ActivateFCKeditor=Kích hoạt trình soạn thảo nâng cao cho:
 FCKeditorForCompany=WYSIWIG tạo / sửa của các yếu tố mô tả và ghi chú (trừ các sản phẩm / dịch vụ)
 FCKeditorForProduct=WYSIWIG tạo / sửa của sản phẩm / dịch vụ mô tả và ghi chú
-FCKeditorForProductDetails=WYSIWIG tạo/soạn sản phẩm cho tất cả các thực thể (đề xuất, đơn đặt hàng, hóa đơn, v.v ...). <font class="warning">Cảnh báo: Không nên sử dụng tùy chọn này cho trường hợp này vì nó có thể gây ra sự cố với các ký tự đặc biệt và định dạng trang khi xây dựng tệp PDF.</font>
+FCKeditorForProductDetails=WYSIWIG creation/edition of products details lines for all entities (proposals, orders, invoices, etc...). <span class="warning">Warning: Using this option for this case is seriously not recommended as it can create problems with special characters and page formatting when building PDF files.</span>
 FCKeditorForMailing= WYSIWIG creation/edition for mass eMailings (Công cụ->eMailing)
 FCKeditorForUserSignature=WYSIWIG tạo / sửa chữ ký người sử dụng
 FCKeditorForMail=WYSIWIG tạo/soạn thảo cho tất cả thư (ngoại trừ Công cụ-> Gửi thư điện tử)
@@ -1736,9 +1738,10 @@ AGENDA_USE_EVENT_TYPE_DEFAULT=Tự động đặt giá trị mặc định này 
 AGENDA_DEFAULT_FILTER_TYPE=Tự động đặt loại sự kiện này trong bộ lọc tìm kiếm của chế độ xem chương trình nghị sự
 AGENDA_DEFAULT_FILTER_STATUS=Tự động đặt trạng thái này cho các sự kiện trong bộ lọc tìm kiếm của chế độ xem chương trình nghị sự
 AGENDA_DEFAULT_VIEW=Which view do you want to open by default when selecting menu Agenda
-AGENDA_REMINDER_EMAIL=Bật nhắc nhở sự kiện <b>bằng email</b> (tùy chọn nhắc nhở / trì hoãn có thể được xác định trên mỗi sự kiện). Lưu ý: Mô-đun <strong>%s</strong> phải được bật và thiết lập chính xác để có lời nhắc được gửi ở tần số chính xác.
-AGENDA_REMINDER_BROWSER=Bật nhắc nhở sự kiện <b>trên trình duyệt của người dùng</b> (khi đạt đến ngày sự kiện, mỗi người dùng có thể từ chối câu hỏi này từ câu hỏi xác nhận trình duyệt)
+AGENDA_REMINDER_BROWSER=Enable event reminder <b>on user's browser</b> (When remind date is reached, a popup is shown by the browser. Each user can disable such notifications from its browser notification setup).
 AGENDA_REMINDER_BROWSER_SOUND=Bật thông báo âm thanh
+AGENDA_REMINDER_EMAIL=Enable event reminder <b>by emails</b> (remind option/delay can be defined on each event).
+AGENDA_REMINDER_EMAIL_NOTE=Note: The frequency of the task %s must be enough to be sure that the remind are sent at the correct moment.
 AGENDA_SHOW_LINKED_OBJECT=Hiển thị đối tượng được liên kết vào chế độ xem chương trình nghị sự
 ##### Clicktodial #####
 ClickToDialSetup=Click To Dial module setup

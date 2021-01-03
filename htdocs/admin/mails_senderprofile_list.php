@@ -381,9 +381,9 @@ if ($action != 'create') {
 		print '</table>';
 		print '<br>';
 		print '<div class="center">';
-		print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
+		print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';
 		print ' &nbsp; ';
-		print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 	}
 } else {
@@ -414,9 +414,9 @@ if ($action != 'create') {
 	print '</table>';
 	print '<br>';
 	print '<div class="center">';
-	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
+	print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';
 	print ' &nbsp; ';
-	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 	//print '</form>';
 }

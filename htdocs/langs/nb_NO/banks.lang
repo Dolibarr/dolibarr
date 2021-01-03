@@ -179,3 +179,4 @@ BankColorizeMovement=Fargelegg bevegelser
 BankColorizeMovementDesc=Hvis denne funksjonen er aktivert, kan du velge spesifikk bakgrunnsfarge for debet- eller kredittbevegelser
 BankColorizeMovementName1=Bakgrunnsfarge for debetbevegelse
 BankColorizeMovementName2=Bakgrunnsfarge for kredittbevegelse
+IfYouDontReconcileDisableProperty=If you don't make the bank reconciliations on some bank accounts, disable the property "%s" on them to remove this warning.

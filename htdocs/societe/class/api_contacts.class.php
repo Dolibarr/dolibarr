@@ -64,11 +64,12 @@ class Contacts extends DolibarrApi
 	 *
 	 * @param 	int    $id                  ID of contact
 	 * @param   int    $includecount        Count and return also number of elements the contact is used as a link for
+	 * @param   int    $includeroles        Includes roles of the contact
 	 * @return 	array|mixed data without useless information
 	 *
 	 * @throws 	RestException
 	 */
-	public function get($id, $includecount = 0)
+	public function get($id, $includecount = 0, $includeroles = 0)
 	{
 		if (!DolibarrApiAccess::$user->rights->societe->contact->lire)
 		{
@@ -95,6 +96,11 @@ class Contacts extends DolibarrApi
 			$this->contact->load_ref_elements();
 		}
 
+		if ($includeroles)
+		{
+			$this->contact->fetchRoles();
+		}
+
 		return $this->_cleanObjectDatas($this->contact);
 	}
 
@@ -103,6 +109,7 @@ class Contacts extends DolibarrApi
 	 *
 	 * @param 	string 	$email 					Email of contact
 	 * @param   int    $includecount        Count and return also number of elements the contact is used as a link for
+	 * @param   int    $includeroles        Includes roles of the contact
 	 * @return 	array|mixed data without useless information
 	 *
 	 * @url GET email/{email}
@@ -110,7 +117,7 @@ class Contacts extends DolibarrApi
 	 * @throws RestException 401     Insufficient rights
 	 * @throws RestException 404     User or group not found
 	 */
-	public function getByEmail($email, $includecount = 0)
+	public function getByEmail($email, $includecount = 0, $includeroles = 0)
 	{
 		if (!DolibarrApiAccess::$user->rights->societe->contact->lire)
 		{
@@ -137,6 +144,11 @@ class Contacts extends DolibarrApi
 			$this->contact->load_ref_elements();
 		}
 
+		if ($includeroles)
+		{
+			$this->contact->fetchRoles();
+		}
+
 		return $this->_cleanObjectDatas($this->contact);
 	}
 
@@ -150,14 +162,15 @@ class Contacts extends DolibarrApi
 	 * @param int		$limit		        Limit for list
 	 * @param int		$page		        Page number
 	 * @param string   	$thirdparty_ids	    Thirdparty ids to filter contacts of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param  int    	$category   Use this param to filter list by category
+	 * @param int    	$category   Use this param to filter list by category
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param int       $includecount       Count and return also number of elements the contact is used as a link for
+	 * @param int    	$includeroles        Includes roles of the contact
 	 * @return array                        Array of contact objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $includecount = 0)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $includecount = 0, $includeroles = 0)
 	{
 		global $db, $conf;
 
@@ -241,10 +254,16 @@ class Contacts extends DolibarrApi
 				$contact_static = new Contact($this->db);
 				if ($contact_static->fetch($obj->rowid))
 				{
+					$contact_static->fetchRoles();
 					if ($includecount)
 					{
 						$contact_static->load_ref_elements();
 					}
+					if ($includeroles)
+					{
+						$contact_static->fetchRoles();
+					}
+
 					$obj_ret[] = $this->_cleanObjectDatas($contact_static);
 				}
 

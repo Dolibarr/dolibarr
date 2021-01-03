@@ -879,22 +879,21 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			if (!empty($backtopage))
 			{
 				print ' &nbsp; &nbsp; ';
-				print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+				print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			} else {
 				print ' &nbsp; &nbsp; ';
-				print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+				print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 			}
 			print '</div>';
 
 			print "</form>";
-		} elseif ($action == 'edit' && !empty($id))
-		{
+		} elseif ($action == 'edit' && !empty($id)) {
 			/*
              * Fiche en mode edition
              */
 
 			// We set country_id, and country_code label of the chosen country
-			if (isset($_POST["country_id"]) || $object->country_id)
+			if (GETPOSTISSET("country_id") || $object->country_id)
 			{
 				$tmparray = getCountry($object->country_id, 'all');
 				$object->country_code = $tmparray['code'];
@@ -1130,13 +1129,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 			// Note Public
 			print '<tr><td class="tdtop"><label for="note_public">'.$langs->trans("NotePublic").'</label></td><td colspan="3">';
-			$doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+			$doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			print '</td></tr>';
 
 			// Note Private
 			print '<tr><td class="tdtop"><label for="note_private">'.$langs->trans("NotePrivate").'</label></td><td colspan="3">';
-			$doleditor = new DolEditor('note_private', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+			$doleditor = new DolEditor('note_private', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			print '</td></tr>';
 
@@ -1239,9 +1238,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print dol_get_fiche_end();
 
 			print '<div class="center">';
-			print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+			print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 			print ' &nbsp; &nbsp; ';
-			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 
 			print "</form>";

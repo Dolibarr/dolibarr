@@ -113,6 +113,7 @@ class DolibarrApi
 
 		unset($object->error);
 		unset($object->errors);
+		unset($object->errorhidden);
 
 		unset($object->ref_previous);
 		unset($object->ref_next);
@@ -166,7 +167,13 @@ class DolibarrApi
 		unset($object->libelle_statut);
 		unset($object->libelle_paiement);
 
-		if ($object->table_element != 'ticket') {
+		unset($object->prefix_comm);
+
+		unset($object->sendtoid);
+		unset($object->name_bis);
+		unset($object->newref);
+
+		if (!isset($object->table_element) || $object->table_element != 'ticket') {
 			unset($object->comments);
 		}
 

@@ -85,7 +85,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 		if (!empty($extrafields->attributes[$object->table_element]['langfile'][$tmpkeyextra])) $langs->load($extrafields->attributes[$object->table_element]['langfile'][$tmpkeyextra]);
 		if ($action == 'edit_extras')
 		{
-			$value = (isset($_POST["options_".$tmpkeyextra]) ? $_POST["options_".$tmpkeyextra] : $object->array_options["options_".$tmpkeyextra]);
+			$value = (GETPOSTISSET("options_".$tmpkeyextra) ? GETPOST("options_".$tmpkeyextra) : $object->array_options["options_".$tmpkeyextra]);
 		} else {
 			$value = $object->array_options["options_".$tmpkeyextra];
 			//var_dump($tmpkeyextra.' - '.$value);
@@ -128,8 +128,13 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			print '<td class="';
 			if ((!empty($action) && ($action == 'create' || $action == 'edit')) && !empty($extrafields->attributes[$object->table_element]['required'][$tmpkeyextra])) print ' fieldrequired';
 			print '">';
-			if (!empty($extrafields->attributes[$object->table_element]['help'][$tmpkeyextra])) print $form->textwithpicto($langs->trans($tmplabelextra), $langs->trans($extrafields->attributes[$object->table_element]['help'][$tmpkeyextra]));
-			else print $langs->trans($tmplabelextra);
+			if (!empty($extrafields->attributes[$object->table_element]['help'][$tmpkeyextra])) {
+				// You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
+				$tmptooltip = explode(':', $extrafields->attributes[$object->table_element]['help'][$tmpkeyextra]);
+				print $form->textwithpicto($langs->trans($tmplabelextra), $langs->trans($tmptooltip[0]), 1, 'help', '', 0, 3, (empty($tmptooltip[1]) ? '' : 'extra_'.$tmpkeyextra.'_'.$tmptooltip[1]));
+			} else {
+				print $langs->trans($tmplabelextra);
+			}
 			print '</td>';
 
 			//TODO Improve element and rights detection
@@ -172,7 +177,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 					$datenotinstring = $db->jdate($datenotinstring);
 				}
 				//print 'x'.$object->array_options['options_' . $tmpkeyextra].'-'.$datenotinstring.' - '.dol_print_date($datenotinstring, 'dayhour');
-				$value = isset($_POST["options_".$tmpkeyextra]) ? dol_mktime($_POST["options_".$tmpkeyextra."hour"], $_POST["options_".$tmpkeyextra."min"], 0, $_POST["options_".$tmpkeyextra."month"], $_POST["options_".$tmpkeyextra."day"], $_POST["options_".$tmpkeyextra."year"]) : $datenotinstring;
+				$value = GETPOSTISSET("options_".$tmpkeyextra) ? dol_mktime(GETPOST("options_".$tmpkeyextra."hour", 'int'), GETPOST("options_".$tmpkeyextra."min", 'int'), 0, GETPOST("options_".$tmpkeyextra."month", 'int'), GETPOST("options_".$tmpkeyextra."day", 'int'), GETPOST("options_".$tmpkeyextra."year", 'int')) : $datenotinstring;
 			}
 
 			//TODO Improve element and rights detection

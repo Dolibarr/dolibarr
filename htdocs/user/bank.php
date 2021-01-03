@@ -40,6 +40,7 @@ if (!empty($conf->salaries->enabled)) require_once DOL_DOCUMENT_ROOT.'/salaries/
 $langs->loadLangs(array('companies', 'commercial', 'banks', 'bills', 'trips', 'holiday', 'salaries'));
 
 $id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alphanohtml');
 $bankid = GETPOST('bankid', 'int');
 $action = GETPOST("action", 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
@@ -217,6 +218,8 @@ if ($action == 'setdefault_range') {
  *	View
  */
 
+$form = new Form($db);
+
 $childids = $user->getAllChildIds(1);
 
 llxHeader(null, $langs->trans("BankAccounts"));
@@ -293,7 +296,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 			$ret .= '<input type="hidden" name="id" value="'.$object->id.'">';
 			$ret .= $form->selectExpenseCategories($object->default_c_exp_tax_cat, 'default_c_exp_tax_cat', 1);
 			$ret .= '<input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'"> ';
-			$ret .= '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			$ret .= '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			$ret .= '</form>';
 			print $ret;
 		} else {
@@ -315,7 +318,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 			$maxRangeNum = ExpenseReportIk::getMaxRangeNumber($object->default_c_exp_tax_cat);
 			$ret .= $form->selectarray('default_range', range(0, $maxRangeNum), $object->default_range);
 			$ret .= '<input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'"> ';
-			$ret .= '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			$ret .= '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			$ret .= '</form>';
 			print $ret;
 		} else {
@@ -332,9 +335,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	// Nbre max d'elements des petites listes
 	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
-	/*
-	 * Latest salary payments
-	 */
+	// Latest payments of salaries
 	if (!empty($conf->salaries->enabled) &&
 		$user->rights->salaries->read && (in_array($object->id, $childids) || $object->id == $user->id)
 		)
@@ -365,14 +366,17 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 				$objp = $db->fetch_object($resql);
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
+				print '<td class="nowraponall">';
 				$salary->id = $objp->rowid;
 				$salary->ref = $objp->rowid;
-
 				print $salary->getNomUrl(1);
-				print '</td><td class="right" width="80px">'.dol_print_date($db->jdate($objp->datesp), 'day')."</td>\n";
+				print '</td>';
+
+				print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->datesp), 'day')."</td>\n";
 				print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->dateep), 'day')."</td>\n";
-				print '<td class="right" style="min-width: 60px">'.price($objp->amount).'</td></tr>';
+				print '<td class="right" style="min-width: 60px">'.price($objp->amount).'</td>';
+
+				print '</tr>';
 				$i++;
 			}
 			$db->free($resql);
@@ -671,7 +675,7 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->rights->user->us
 	print '<div class="center">';
 	print '<input class="button" value="'.$langs->trans("Modify").'" type="submit">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
+	print '<input class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 	print '</div>';
 }
 

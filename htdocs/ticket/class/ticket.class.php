@@ -217,7 +217,7 @@ class Ticket extends CommonObject
 	const STATUS_ASSIGNED = 2;
 	const STATUS_IN_PROGRESS = 3;
 	const STATUS_NEED_MORE_INFO = 5;
-	const STATUS_WAITING = 7;
+	const STATUS_WAITING = 7;			// on hold
 	const STATUS_CLOSED = 8;
 	const STATUS_CANCELED = 9;
 
@@ -292,8 +292,8 @@ class Ticket extends CommonObject
 			self::STATUS_READ => 'Read',
 			self::STATUS_ASSIGNED => 'Assigned',
 			self::STATUS_IN_PROGRESS => 'InProgress',
+			self::STATUS_WAITING => 'OnHold',
 			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation',
-			self::STATUS_WAITING => 'Suspended',
 			self::STATUS_CLOSED => 'Closed',
 			self::STATUS_CANCELED => 'Canceled'
 		);
@@ -302,8 +302,8 @@ class Ticket extends CommonObject
 			self::STATUS_READ => 'Read',
 			self::STATUS_ASSIGNED => 'Assigned',
 			self::STATUS_IN_PROGRESS => 'InProgress',
+			self::STATUS_WAITING => 'OnHold',
 			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation',
-			self::STATUS_WAITING => 'Suspended',
 			self::STATUS_CLOSED => 'Closed',
 			self::STATUS_CANCELED => 'Canceled'
 		);
@@ -1244,8 +1244,8 @@ class Ticket extends CommonObject
 	/**
 	 * Return status label of object
 	 *
-	 * @param      int		$mode     0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 * @return     string    			  Label
+	 * @param      int		$mode     	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @return     string    			Label
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -1259,9 +1259,10 @@ class Ticket extends CommonObject
 	 *
 	 *    @param      string 	$status      Id status
 	 *    @param      int		$mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *    @param	  int		$notooltip	 1=No tooltip
 	 *    @return     string     			 Label
 	 */
-	public function LibStatut($status, $mode = 0)
+	public function LibStatut($status, $mode = 0, $notooltip = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -1274,13 +1275,13 @@ class Ticket extends CommonObject
 		} elseif ($status == self::STATUS_READ) {
 			$statusType = 'status1';
 		} elseif ($status == self::STATUS_ASSIGNED) {
-			$statusType = 'status3';
+			$statusType = 'status2';
 		} elseif ($status == self::STATUS_IN_PROGRESS) {
 			$statusType = 'status4';
 		} elseif ($status == self::STATUS_WAITING) {
-			$statusType = 'status3';
+			$statusType = 'status7';
 		} elseif ($status == self::STATUS_NEED_MORE_INFO) {
-			$statusType = 'status9';
+			$statusType = 'status3';
 		} elseif ($status == self::STATUS_CANCELED) {
 			$statusType = 'status9';
 		} elseif ($status == self::STATUS_CLOSED) {
@@ -1292,7 +1293,12 @@ class Ticket extends CommonObject
 			$mode = 0;
 		}
 
-		return dolGetStatus($langs->trans($labelStatus), $langs->trans($labelStatusShort), '', $statusType, $mode);
+		$params = array();
+		if ($notooltip) {
+			$params = array('tooltip' => 'no');
+		}
+
+		return dolGetStatus($langs->trans($labelStatus), $langs->trans($labelStatusShort), '', $statusType, $mode, '', $params);
 	}
 
 

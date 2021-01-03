@@ -292,7 +292,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 						print $form->textwithpicto('', $htmltooltip, 1, 0);
 						print '</td>';
 						print '<td class="center">';
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"), 'order').'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 						print '</td>';
 
 						print "</tr>\n";
@@ -378,7 +378,7 @@ print '</table>';
 
 print dol_get_fiche_end();
 
-print '<div class="center"><input class="button" type="submit" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
+print '<div class="center"><input class="button button-save" type="submit" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
 
 print '</form>';
 

@@ -93,7 +93,18 @@ class PaymentVarious extends CommonObject
 	public $fk_project;
 
 	/**
-	 * @var int ID
+	 * @var int Bank account ID
+	 */
+	public $fk_account;
+
+	/**
+	 * @var int Bank account ID
+	 * @deprecated See fk_account
+	 */
+	public $accountid;
+
+	/**
+	 * @var int ID record into llx_bank
 	 */
 	public $fk_bank;
 
@@ -101,11 +112,6 @@ class PaymentVarious extends CommonObject
 	 * @var int transaction category
 	 */
 	public $categorie_transaction;
-
-	/**
-	 * @var int Account ID
-	 */
-	public $accountid;
 
 	/**
 	 * @var int ID
@@ -194,7 +200,7 @@ class PaymentVarious extends CommonObject
 		$sql .= " datev='".$this->db->idate($this->datev)."',";
 		$sql .= " sens=".(int) $this->sens.",";
 		$sql .= " amount=".price2num($this->amount).",";
-		$sql .= " fk_typepayment=".(int) $this->fk_typepayment.",";
+		$sql .= " fk_typepayment=".(int) $this->type_payment.",";
 		$sql .= " num_payment='".$this->db->escape($this->num_payment)."',";
 		$sql .= " label='".$this->db->escape($this->label)."',";
 		$sql .= " note='".$this->db->escape($this->note)."',";
@@ -397,6 +403,10 @@ class PaymentVarious extends CommonObject
 		$this->fk_bank = (int) $this->fk_bank;
 		$this->fk_user_author = (int) $this->fk_user_author;
 		$this->fk_user_modif = (int) $this->fk_user_modif;
+		$this->fk_account = (int) $this->fk_account;
+		if (empty($this->fk_account) && isset($this->accountid)) {	// For compatibility
+			$this->fk_account = $this->accountid;
+		}
 
 		// Check parameters
 		if (!$this->label)
@@ -409,9 +419,9 @@ class PaymentVarious extends CommonObject
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			return -5;
 		}
-		if (!empty($conf->banque->enabled) && (empty($this->accountid) || $this->accountid <= 0))
+		if (!empty($conf->banque->enabled) && (empty($this->fk_account) || $this->fk_account <= 0))
 		{
-			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Account"));
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("BankAccount"));
 			return -6;
 		}
 		if (!empty($conf->banque->enabled) && (empty($this->type_payment) || $this->type_payment <= 0))
@@ -454,7 +464,7 @@ class PaymentVarious extends CommonObject
 		$sql .= ", ".($this->fk_project > 0 ? $this->fk_project : 0);
 		$sql .= ", ".$user->id;
 		$sql .= ", '".$this->db->idate($now)."'";
-		$sql .= ", NULL";
+		$sql .= ", NULL";	// Filled later
 		$sql .= ", ".$conf->entity;
 		$sql .= ")";
 
@@ -473,7 +483,7 @@ class PaymentVarious extends CommonObject
 					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 					$acc = new Account($this->db);
-					$result = $acc->fetch($this->accountid);
+					$result = $acc->fetch($this->fk_account);
 					if ($result <= 0) dol_print_error($this->db);
 
 					// Insert payment into llx_bank
@@ -495,7 +505,7 @@ class PaymentVarious extends CommonObject
 						$this->datev
 					);
 
-					// Update fk_bank into llx_paiement.
+					// Update fk_bank into llx_payment_various
 					// So we know the payment which has generate the banking ecriture
 					if ($bank_line_id > 0) {
 						$this->update_fk_bank($bank_line_id);
