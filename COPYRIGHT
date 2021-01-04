@@ -32,7 +32,7 @@ PSR/simple-cache	   ?										                 Library for cache (used by PHPSp
 Restler                3.1.1         LGPL-3+                     Yes             Library to develop REST Web services (+ swagger-ui js lib into dir explorer)
 Sabre                  3.2.2         BSD                         Yes             DAV support
 Swift Mailer           5.4.2-DEV     MIT license                 Yes             Comprehensive mailing tools for PHP
-Stripe                 6.43.1        MIT licence                 Yes             Library for Stripe module
+Stripe                 7.67.0        MIT licence                 Yes             Library for Stripe module
 TCPDF                  6.3.2         LGPL-3+                     Yes             PDF generation
 TCPDI                  1.0.0         LGPL-3+ / Apache 2.0        Yes             FPDI replacement
 
