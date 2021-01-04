@@ -460,6 +460,8 @@ class BankAccounts extends DolibarrApi
      * @param string $cheque_number Cheque numberl {@from body}
      * @param string $cheque_writer Name of cheque writer {@from body}
      * @param string $cheque_bank   Bank of cheque writer {@from body}
+     * @param int    $datev         Payment date value (timestamp) {@from body} {@type timestamp}
+     * @param string $num_releve    Bank statement number {@from body}
      * @return int  ID of line
      *
      * @url POST {id}/lines
