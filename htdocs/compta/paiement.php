@@ -710,10 +710,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					// Price
 					print '<td class="right">'.price($sign * $objp->total_ttc).'</td>';
 
-					// Received or paid back
+					// Received + already paid
 					print '<td class="right">'.price($sign * $paiement);
-					if ($creditnotes) print '+'.price($creditnotes);
-					if ($deposits) print '+'.price($deposits);
+					if ($creditnotes) print '<span class="opacitymedium">+'.price($creditnotes).'</span>';
+					if ($deposits) print '<span class="opacitymedium">+'.price($deposits).'</span>';
 					print '</td>';
 
 					// Remain to take or to pay back
