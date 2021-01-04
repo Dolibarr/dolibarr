@@ -155,11 +155,12 @@ if ($action == 'add_payment')
 			$payment->chid = $chid;
 			$payment->datep             = $datepaid;
 			$payment->label             = $loan->label;
-			$payment->amount_capital = $pay_amount_capital;
-			$payment->amount_insurance = $pay_amount_interest;
-			$payment->amount_interest = $pay_amount_insurance;
+			$payment->amount_capital	= $pay_amount_capital;
+			$payment->amount_insurance	= $pay_amount_insurance;
+			$payment->amount_interest	= $pay_amount_interest;
+			$payment->fk_bank           = GETPOST('accountid', 'int');
 			$payment->paymenttype       = GETPOST('paymenttype', 'int');
-			$payment->num_payment = GETPOST('num_payment');
+			$payment->num_payment		= GETPOST('num_payment');
 			$payment->note_private      = GETPOST('note_private', 'restricthtml');
 			$payment->note_public       = GETPOST('note_public', 'restricthtml');
 
