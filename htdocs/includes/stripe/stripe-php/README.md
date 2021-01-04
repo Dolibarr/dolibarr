@@ -14,7 +14,7 @@ API.
 
 ## Requirements
 
-PHP 5.6.0 and later.
+PHP 5.4.0 and later.
 
 ## Composer
 
@@ -42,9 +42,9 @@ require_once('/path/to/stripe-php/init.php');
 
 The bindings require the following extensions in order to work properly:
 
--   [`curl`](https://secure.php.net/manual/en/book.curl.php), although you can use your own non-cURL client if you prefer
--   [`json`](https://secure.php.net/manual/en/book.json.php)
--   [`mbstring`](https://secure.php.net/manual/en/book.mbstring.php) (Multibyte String)
+- [`curl`](https://secure.php.net/manual/en/book.curl.php), although you can use your own non-cURL client if you prefer
+- [`json`](https://secure.php.net/manual/en/book.json.php)
+- [`mbstring`](https://secure.php.net/manual/en/book.mbstring.php) (Multibyte String)
 
 If you use Composer, these dependencies should be handled automatically. If you install manually, you'll want to make sure that these extensions are available.
 
@@ -53,18 +53,10 @@ If you use Composer, these dependencies should be handled automatically. If you 
 Simple usage looks like:
 
 ```php
-$stripe = new \Stripe\StripeClient('sk_test_BQokikJOvBiI2HlWgH4olfQ2');
-$customer = $stripe->customers->create([
-    'description' => 'example customer',
-    'email' => 'email@example.com',
-    'payment_method' => 'pm_card_visa',
-]);
-echo $customer;
+\Stripe\Stripe::setApiKey('sk_test_BQokikJOvBiI2HlWgH4olfQ2');
+$charge = \Stripe\Charge::create(['amount' => 2000, 'currency' => 'usd', 'source' => 'tok_189fqt2eZvKYlo2CTGBeg6Uq']);
+echo $charge;
 ```
-
-### Client/service patterns vs legacy patterns
-
-You can continue to use the legacy integration patterns used prior to version [7.33.0](https://github.com/stripe/stripe-php/blob/master/CHANGELOG.md#7330---2020-05-14). Review the [migration guide](https://github.com/stripe/stripe-php/wiki/Migration-to-StripeClient-and-services-in-7.33.0) for the backwards-compatible client/services pattern changes.
 
 ## Documentation
 
@@ -72,17 +64,25 @@ See the [PHP API docs](https://stripe.com/docs/api/php#intro).
 
 ## Legacy Version Support
 
-### PHP 5.4 & 5.5
-
-If you are using PHP 5.4 or 5.5, you can download v6.21.1 ([zip](https://github.com/stripe/stripe-php/archive/v6.21.1.zip), [tar.gz](https://github.com/stripe/stripe-php/archive/v6.21.1.tar.gz)) from our [releases page](https://github.com/stripe/stripe-php/releases). This version will continue to work with new versions of the Stripe API for all common uses.
-
 ### PHP 5.3
 
 If you are using PHP 5.3, you can download v5.9.2 ([zip](https://github.com/stripe/stripe-php/archive/v5.9.2.zip), [tar.gz](https://github.com/stripe/stripe-php/archive/v5.9.2.tar.gz)) from our [releases page](https://github.com/stripe/stripe-php/releases). This version will continue to work with new versions of the Stripe API for all common uses.
 
+### PHP 5.2
+
+If you are using PHP 5.2, you can download v1.18.0 ([zip](https://github.com/stripe/stripe-php/archive/v1.18.0.zip), [tar.gz](https://github.com/stripe/stripe-php/archive/v1.18.0.tar.gz)) from our [releases page](https://github.com/stripe/stripe-php/releases). This version will continue to work with new versions of the Stripe API for all common uses.
+
+This legacy version may be included via `require_once("/path/to/stripe-php/lib/Stripe.php");`, and used like:
+
+```php
+Stripe::setApiKey('d8e8fca2dc0f896fd7cb4cb0031ba249');
+$charge = Stripe_Charge::create(array('source' => 'tok_XXXXXXXX', 'amount' => 2000, 'currency' => 'usd'));
+echo $charge;
+```
+
 ## Custom Request Timeouts
 
-_NOTE:_ We do not recommend decreasing the timeout for non-read-only calls (e.g. charge creation), since even if you locally timeout, the request on Stripe's side can still complete. If you are decreasing timeouts on these calls, make sure to use [idempotency tokens](https://stripe.com/docs/api/php#idempotent_requests) to avoid executing the same transaction twice as a result of timeout retry logic.
+*NOTE:* We do not recommend decreasing the timeout for non-read-only calls (e.g. charge creation), since even if you locally timeout, the request on Stripe's side can still complete. If you are decreasing timeouts on these calls, make sure to use [idempotency tokens](https://stripe.com/docs/api/php#idempotent_requests) to avoid executing the same transaction twice as a result of timeout retry logic.
 
 To modify request timeouts (connect or total, in seconds) you'll need to tell the API client to use a CurlClient other than its default. You'll set the timeouts in that CurlClient.
 
@@ -129,10 +129,8 @@ end up there instead of `error_log`:
 You can access the data from the last API response on any object via `getLastResponse()`.
 
 ```php
-$customer = $stripe->customers->create([
-    'description' => 'example customer',
-]);
-echo $customer->getLastResponse()->headers['Request-Id'];
+$charge = \Stripe\Charge::create(['amount' => 2000, 'currency' => 'usd', 'source' => 'tok_visa']);
+echo $charge->getLastResponse()->headers['Request-Id'];
 ```
 
 ### SSL / TLS compatibility issues
@@ -153,12 +151,12 @@ one that uses [Stripe Connect][connect], it's also possible to set a
 per-request key and/or account:
 
 ```php
-$customers = $stripe->customers->all([],[
+\Stripe\Charge::all([], [
     'api_key' => 'sk_test_...',
     'stripe_account' => 'acct_...'
 ]);
 
-$stripe->customers->retrieve('cus_123456789', [], [
+\Stripe\Charge::retrieve("ch_18atAXCdGbJFKhCuBAa4532Z", [
     'api_key' => 'sk_test_...',
     'stripe_account' => 'acct_...'
 ]);
@@ -237,12 +235,6 @@ Update bundled CA certificates from the [Mozilla cURL release][curl]:
 ./update_certs.php
 ```
 
-The library uses [PHP CS Fixer][php-cs-fixer] for code formatting. Code must be formatted before PRs are submitted, otherwise CI will fail. Run the formatter with:
-
-```bash
-./vendor/bin/php-cs-fixer fix -v .
-```
-
 ## Attention plugin developers
 
 Are you writing a plugin that integrates Stripe and embeds our library? Then please use the `setAppInfo` function to identify your plugin. For example:
@@ -260,7 +252,6 @@ See the "SSL / TLS compatibility issues" paragraph above for full context. If yo
 [composer]: https://getcomposer.org/
 [connect]: https://stripe.com/connect
 [curl]: http://curl.haxx.se/docs/caextract.html
-[idempotency-keys]: https://stripe.com/docs/api/php#idempotent_requests
-[php-cs-fixer]: https://github.com/FriendsOfPHP/PHP-CS-Fixer
 [psr3]: http://www.php-fig.org/psr/psr-3/
+[idempotency-keys]: https://stripe.com/docs/api/php#idempotent_requests
 [stripe-mock]: https://github.com/stripe/stripe-mock
