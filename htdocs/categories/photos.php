@@ -38,6 +38,7 @@ $langs->loadlangs(array('categories', 'bills'));
 
 $id      = GETPOST('id', 'int');
 $label   = GETPOST('label', 'alpha');
+$type    = GETPOST('type');
 $action  = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
 
@@ -51,15 +52,17 @@ if ($id == '' && $label == '')
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
-$result = $object->fetch($id, $label);
+$result = $object->fetch($id, $label, $type);
 if ($result <= 0) {
 	dol_print_error($db, $object->error); exit;
 }
-
-$type = $object->type;
-if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
-
+$object->fetch_optionals();
+if ($result <= 0) {
+	dol_print_error($db, $object->error); exit;
+}
 $upload_dir = $conf->categorie->multidir_output[$object->entity];
+
+if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
 
 /*
  * Actions
@@ -112,6 +115,8 @@ if ($object->id)
 	$title = Categorie::$MAP_TYPE_TITLE_AREA[$type];
 
 	$head = categories_prepare_head($object, $type);
+
+
 	print dol_get_fiche_head($head, 'photos', $langs->trans($title), -1, 'category');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("BackToList").'</a>';

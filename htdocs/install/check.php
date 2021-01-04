@@ -439,8 +439,7 @@ if (!file_exists($conffile))
 								array('from'=>'9.0.0', 'to'=>'10.0.0'),
 								array('from'=>'10.0.0', 'to'=>'11.0.0'),
 								array('from'=>'11.0.0', 'to'=>'12.0.0'),
-								array('from'=>'12.0.0', 'to'=>'13.0.0'),
-								array('from'=>'13.0.0', 'to'=>'14.0.0')
+								array('from'=>'12.0.0', 'to'=>'13.0.0')
 		);
 
 		$count = 0;

@@ -180,10 +180,7 @@ class AdherentTest extends PHPUnit\Framework\TestCase
         $localobject->initAsSpecimen();
         $localobject->typeid=$fk_adherent_type;
         $result=$localobject->create($user);
-		print __METHOD__." result=".$result."\n";
-		if ($result < 0) {
-			print $localobject->error;
-		}
+        print __METHOD__." result=".$result."\n";
         $this->assertLessThan($result, 0);
 
         return $result;

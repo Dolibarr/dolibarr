@@ -21,7 +21,7 @@
 /**
  *  \file       htdocs/admin/fckeditor.php
  *  \ingroup    fckeditor
- *  \brief      Activation page for the FCKeditor module in the other modules
+ *  \brief      Page d'activation du module FCKeditor dans les autres modules
  */
 
 require '../main.inc.php';
@@ -43,41 +43,35 @@ $mode = GETPOST('mode') ?GETPOST('mode', 'alpha') : 'dolibarr_notes';
 
 if (!$user->admin) accessforbidden();
 
-// Constant and translation of the module description
+// Constante et traduction de la description du module
 $modules = array(
-	'SOCIETE' => 'FCKeditorForCompany',
-	'PRODUCTDESC' => 'FCKeditorForProduct',
-	'DETAILS' => 'FCKeditorForProductDetails',
-	'USERSIGN' => 'FCKeditorForUserSignature',
-	'MAILING' => 'FCKeditorForMailing',
-	'MAIL' => 'FCKeditorForMail',
-	'TICKET' => 'FCKeditorForTicket',
-	'NOTE_PUBLIC' => 'FCKeditorForNotePublic',
-	'NOTE_PRIVATE' => 'FCKeditorForNotePrivate',
+'SOCIETE' => 'FCKeditorForCompany',
+'PRODUCTDESC' => 'FCKeditorForProduct',
+'DETAILS' => 'FCKeditorForProductDetails',
+'USERSIGN' => 'FCKeditorForUserSignature',
+'MAILING' => 'FCKeditorForMailing',
+'MAIL' => 'FCKeditorForMail',
+'TICKET' => 'FCKeditorForTicket'
 );
-// Conditions for the option to be offered
+// Conditions pour que l'option soit proposee
 $conditions = array(
-	'SOCIETE' => 1,
-	'PRODUCTDESC' => (!empty($conf->product->enabled) || !empty($conf->service->enabled)),
-	'DETAILS' => (!empty($conf->facture->enabled) || !empty($conf->propal->enabled) || !empty($conf->commande->enabled) || !empty($conf->supplier_proposal->enabled) || !empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)),
-	'USERSIGN' => 1,
-	'MAILING' => !empty($conf->mailing->enabled),
-	'MAIL' => (!empty($conf->facture->enabled) || !empty($conf->propal->enabled) || !empty($conf->commande->enabled)),
-	'TICKET' => !empty($conf->ticket->enabled),
-	'NOTE_PUBLIC' => 1,
-	'NOTE_PRIVATE' => 1,
+'SOCIETE' => 1,
+'PRODUCTDESC' => (!empty($conf->product->enabled) || !empty($conf->service->enabled)),
+'DETAILS' => (!empty($conf->facture->enabled) || !empty($conf->propal->enabled) || !empty($conf->commande->enabled) || !empty($conf->supplier_proposal->enabled) || !empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)),
+'USERSIGN' => 1,
+'MAILING' => !empty($conf->mailing->enabled),
+'MAIL' => (!empty($conf->facture->enabled) || !empty($conf->propal->enabled) || !empty($conf->commande->enabled)),
+'TICKET' => !empty($conf->ticket->enabled)
 );
 // Picto
 $picto = array(
-	'SOCIETE' => 'generic',
-	'PRODUCTDESC' => 'product',
-	'DETAILS' => 'product',
-	'USERSIGN' => 'user',
-	'MAILING' => 'email',
-	'MAIL' => 'email',
-	'TICKET' => 'ticket',
-	'NOTE_PUBLIC' => 'generic',
-	'NOTE_PRIVATE' => 'generic',
+'SOCIETE' => 'generic',
+'PRODUCTDESC' => 'product',
+'DETAILS' => 'product',
+'USERSIGN' => 'user',
+'MAILING' => 'email',
+'MAIL' => 'email',
+'TICKET' => 'ticket'
 );
 
 
@@ -91,7 +85,7 @@ foreach ($modules as $const => $desc)
 	if ($action == 'activate_'.strtolower($const))
 	{
 		dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "1", 'chaine', 0, '', $conf->entity);
-		// If fckeditor is active in the product/service description, it is activated in the forms
+		// Si fckeditor est active dans la description produit/service, on l'active dans les formulaires
 		if ($const == 'PRODUCTDESC' && !empty($conf->global->PRODUIT_DESC_IN_FORM))
 		{
 			dolibarr_set_const($db, "FCKEDITOR_ENABLE_DETAILS", "1", 'chaine', 0, '', $conf->entity);
@@ -160,7 +154,7 @@ if (empty($conf->use_javascript_ajax))
 	// Modules
 	foreach ($modules as $const => $desc)
 	{
-		// If this condition is not met, the option is not offered
+		// Si condition non remplie, on ne propose pas l'option
 		if (!$conditions[$const]) continue;
 
 		print '<tr class="oddeven">';
