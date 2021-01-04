@@ -321,7 +321,7 @@ if ($nolinesbefore) {
 		}
 		if (is_object($objectline)) {
 			print '<div style="padding-top: 10px" id="extrafield_lines_area_create" name="extrafield_lines_area_create">';
-			print $objectline->showOptionals($extrafields, 'edit', array(), '', '', 1);
+			print $objectline->showOptionals($extrafields, 'edit', array(), '', '', 1, 'line');
 			print '</div>';
 		}
 		echo '</td>';

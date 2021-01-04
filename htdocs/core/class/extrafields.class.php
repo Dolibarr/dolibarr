@@ -1902,19 +1902,20 @@ class ExtraFields
 	 * @param   string	$key            Key of attribute
 	 * @param	string	$object			Object
 	 * @param	int		$colspan		Value of colspan to use (it must includes the first column with title)
-	 * @param	string	$typeform		"card" for from display, "line" for docuement line display (exstraiedls on propal line, order line, etc...)
+	 * @param	string	$display_type	"card" for form display, "line" for document line display (extrafields on propal line, order line, etc...)
 	 * @return 	string					HTML code with line for separator
 	 */
-	public function showSeparator($key, $object, $colspan = 2, $typeform='card')
+	public function showSeparator($key, $object, $colspan = 2, $display_type = 'card')
 	{
 		global $langs;
 
-		if ($typeform=='card') {
+		if ($display_type=='card') {
 			$tagtype='tr';
 			$tagtype_dyn='td';
-		}elseif ($typeform=='line') {
+		}elseif ($display_type=='line') {
 			$tagtype='div';
 			$tagtype_dyn='span';
+			$colspan=0;
 		}
 
 		$out = '<'.$tagtype.' id="trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'" class="trextrafieldseparator trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'">';

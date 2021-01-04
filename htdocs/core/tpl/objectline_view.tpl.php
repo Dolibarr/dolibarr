@@ -162,7 +162,7 @@ if (($line->info_bits & 2) == 2) {
 	if (!empty($extrafields))
 	{
 		print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
-		print $line->showOptionals($extrafields, 'view', array(), '', '', 1);
+		print $line->showOptionals($extrafields, 'view', array(), '', '', 1, 'line');
 		print '</div>';
 	}
 }
