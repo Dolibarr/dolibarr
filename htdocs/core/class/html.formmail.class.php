@@ -1110,14 +1110,30 @@ class FormMail extends Form
 		}
 
 		$showinfobcc = '';
-		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO) && !empty($this->param['models']) && $this->param['models'] == 'propal_send') $showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO;
-		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO) && !empty($this->param['models']) && $this->param['models'] == 'order_send') $showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO;
-		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO) && !empty($this->param['models']) && $this->param['models'] == 'facture_send') $showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO;
-		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO) && !empty($this->param['models']) && $this->param['models'] == 'supplier_proposal_send') $showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO;
-		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO) && !empty($this->param['models']) && $this->param['models'] == 'order_supplier_send') $showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO;
-		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO) && !empty($this->param['models']) && $this->param['models'] == 'invoice_supplier_send') $showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO;
-		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_PROJECT_TO) && !empty($this->param['models']) && $this->param['models'] == 'project') $showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_PROJECT_TO;
-		if ($showinfobcc) $out .= ' + '.$showinfobcc;
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO) && !empty($this->param['models']) && $this->param['models'] == 'propal_send') {
+			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO;
+		}
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO) && !empty($this->param['models']) && $this->param['models'] == 'order_send') {
+			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO;
+		}
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO) && !empty($this->param['models']) && $this->param['models'] == 'facture_send') {
+			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO;
+		}
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO) && !empty($this->param['models']) && $this->param['models'] == 'supplier_proposal_send') {
+			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO;
+		}
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO) && !empty($this->param['models']) && $this->param['models'] == 'order_supplier_send') {
+			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO;
+		}
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO) && !empty($this->param['models']) && $this->param['models'] == 'invoice_supplier_send') {
+			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO;
+		}
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_PROJECT_TO) && !empty($this->param['models']) && $this->param['models'] == 'project') {
+			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_PROJECT_TO;
+		}
+		if ($showinfobcc) {
+			$out .= ' + '.$showinfobcc;
+		}
 		$out .= "</td></tr>\n";
 		return $out;
 	}
@@ -1212,7 +1228,7 @@ class FormMail extends Form
 	 *
 	 *  @param	DoliDB		$db				Database handler
 	 *  @param	string		$type_template	Get message for model/type=$type_template, type='all' also included.
-	 *  @param	string		$user			Get template public or limited to this user
+	 *  @param	User		$user			Get template public or limited to this user
 	 *  @param	Translate	$outputlangs	Output lang object
 	 *  @param	int			$id				Id of template to find, or -1 for first found with position 0, or 0 for first found whatever is position (priority order depends on lang provided or not) or -2 for exact match with label (no answer if not found)
 	 *  @param  int         $active         1=Only active template, 0=Only disabled, -1=All
@@ -1232,7 +1248,9 @@ class FormMail extends Form
 		// Define $languagetosearchmain to fall back on main language (for example to get 'es_ES' for 'es_MX')
 		$tmparray = explode('_', $languagetosearch);
 		$languagetosearchmain = $tmparray[0].'_'.strtoupper($tmparray[0]);
-		if ($languagetosearchmain == $languagetosearch) $languagetosearchmain = '';
+		if ($languagetosearchmain == $languagetosearch) {
+			$languagetosearchmain = '';
+		}
 
 		$sql = "SELECT rowid, label, topic, joinfiles, content, content_lines, lang";
 		$sql .= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
@@ -1244,14 +1262,16 @@ class FormMail extends Form
 		if (!($id > 0) && $languagetosearch) $sql .= " AND (lang = '".$db->escape($languagetosearch)."'".($languagetosearchmain ? " OR lang = '".$db->escape($languagetosearchmain)."'" : "")." OR lang IS NULL OR lang = '')";
 		if ($id > 0)   $sql .= " AND rowid=".$id;
 		if ($id == -1) $sql .= " AND position=0";
-		if ($languagetosearch) $sql .= $db->order("position,lang,label", "ASC,DESC,ASC"); // We want line with lang set first, then with lang null or ''
-		else $sql .= $db->order("position,lang,label", "ASC,ASC,ASC"); // If no language provided, we give priority to lang not defined
+		if ($languagetosearch) {
+			$sql .= $db->order("position,lang,label", "ASC,DESC,ASC"); // We want line with lang set first, then with lang null or ''
+		} else {
+			$sql .= $db->order("position,lang,label", "ASC,ASC,ASC"); // If no language provided, we give priority to lang not defined
+		}
 		$sql .= $db->plimit(1);
 		//print $sql;
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			// Get first found
 			$obj = $db->fetch_object($resql);
 
@@ -1321,7 +1341,7 @@ class FormMail extends Form
 	 *      Search into table c_email_templates
 	 *
 	 * 		@param	string		$type_template	Get message for key module
-	 *      @param	string		$user			Use template public or limited to this user
+	 *      @param	User		$user			Use template public or limited to this user
 	 *      @param	Translate	$outputlangs	Output lang object
 	 *      @return	int		<0 if KO,
 	 */
@@ -1332,13 +1352,14 @@ class FormMail extends Form
 		$sql .= " WHERE type_template='".$this->db->escape($type_template)."'";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
 		$sql .= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".$user->id.")";
-		if (is_object($outputlangs)) $sql .= " AND (lang = '".$this->db->escape($outputlangs->defaultlang)."' OR lang IS NULL OR lang = '')";
+		if (is_object($outputlangs)) {
+			$sql .= " AND (lang = '".$this->db->escape($outputlangs->defaultlang)."' OR lang IS NULL OR lang = '')";
+		}
 		$sql .= $this->db->order("lang,label", "ASC");
 		//print $sql;
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$this->db->free($resql);
 			return $num;
@@ -1353,7 +1374,7 @@ class FormMail extends Form
 	 *      Search into table c_email_templates
 	 *
 	 * 		@param	string		$type_template	Get message for key module
-	 *      @param	string		$user			Use template public or limited to this user
+	 *      @param	User		$user			Use template public or limited to this user
 	 *      @param	Translate	$outputlangs	Output lang object
 	 *      @param  int         $active         1=Only active template, 0=Only disabled, -1=All
 	 *      @return	int		                    <0 if KO, nb of records found if OK
@@ -1365,18 +1386,18 @@ class FormMail extends Form
 		$sql .= " WHERE type_template IN ('".$this->db->escape($type_template)."', 'all')";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
 		$sql .= " AND (private = 0 OR fk_user = ".$user->id.")"; // See all public templates or templates I own.
-		if ($active >= 0) $sql .= " AND active = ".$active;
+		if ($active >= 0) {
+			$sql .= " AND active = ".$active;
+		}
 		//if (is_object($outputlangs)) $sql.= " AND (lang = '".$this->db->escape($outputlangs->defaultlang)."' OR lang IS NULL OR lang = '')";	// Return all languages
 		$sql .= $this->db->order("position,lang,label", "ASC");
 		//print $sql;
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$this->lines_model = array();
-			while ($obj = $this->db->fetch_object($resql))
-			{
+			while ($obj = $this->db->fetch_object($resql)) {
 				$line = new ModelMail();
 				$line->id = $obj->rowid;
 				$line->label = $obj->label;
@@ -1419,10 +1440,8 @@ class FormMail extends Form
 		$this->substit = $tmparray;
 
 		// Fill substit_lines with each object lines content
-		if (is_array($object->lines))
-		{
-			foreach ($object->lines as $line)
-			{
+		if (is_array($object->lines)) {
+			foreach ($object->lines as $line) {
 				$substit_line = array(
 					'__PRODUCT_REF__' => isset($line->product_ref) ? $line->product_ref : '',
 					'__PRODUCT_LABEL__' => isset($line->product_label) ? $line->product_label : '',
@@ -1438,15 +1457,13 @@ class FormMail extends Form
 				);
 
 				// Create dynamic tags for __PRODUCT_EXTRAFIELD_FIELD__
-				if (!empty($line->fk_product))
-				{
+				if (!empty($line->fk_product)) {
 					if (!is_object($extrafields)) $extrafields = new ExtraFields($this->db);
 					$extrafields->fetch_name_optionals_label('product', true);
 					$product = new Product($this->db);
 					$product->fetch($line->fk_product, '', '', 1);
 					$product->fetch_optionals();
-					if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-					{
+					if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
 						foreach ($extrafields->attributes[$product->table_element]['label'] as $key => $label) {
 							$substit_line['__PRODUCT_EXTRAFIELD_'.strtoupper($key).'__'] = $product->array_options['options_'.$key];
 						}
@@ -1470,24 +1487,20 @@ class FormMail extends Form
 		global $conf, $langs;
 
 		$tmparray = array();
-		if ($mode == 'formemail' || $mode == 'formemailwithlines' || $mode == 'formemailforlines')
-		{
+		if ($mode == 'formemail' || $mode == 'formemailwithlines' || $mode == 'formemailforlines') {
 			$parameters = array('mode'=>$mode);
 			$tmparray = getCommonSubstitutionArray($langs, 2, null, $object); // Note: On email templated edition, this is null because it is related to all type of objects
 			complete_substitutions_array($tmparray, $langs, null, $parameters);
 
-			if ($mode == 'formwithlines')
-			{
+			if ($mode == 'formwithlines') {
 				$tmparray['__LINES__'] = '__LINES__'; // Will be set by the get_form function
 			}
-			if ($mode == 'formforlines')
-			{
+			if ($mode == 'formforlines') {
 				$tmparray['__QUANTITY__'] = '__QUANTITY__'; // Will be set by the get_form function
 			}
 		}
 
-		if ($mode == 'emailing')
-		{
+		if ($mode == 'emailing') {
 			$parameters = array('mode'=>$mode);
 			$tmparray = getCommonSubstitutionArray($langs, 2, array('object', 'objectamount'), $object); // Note: On email templated edition, this is null because it is related to all type of objects
 			complete_substitutions_array($tmparray, $langs, null, $parameters);
@@ -1512,11 +1525,9 @@ class FormMail extends Form
 			if (!empty($conf->paypal->enabled)) $onlinepaymentenabled++;
 			if (!empty($conf->paybox->enabled)) $onlinepaymentenabled++;
 			if (!empty($conf->stripe->enabled)) $onlinepaymentenabled++;
-			if ($onlinepaymentenabled && !empty($conf->global->PAYMENT_SECURITY_TOKEN))
-			{
+			if ($onlinepaymentenabled && !empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 				$tmparray['__SECUREKEYPAYMENT__'] = $conf->global->PAYMENT_SECURITY_TOKEN;
-				if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
-				{
+				if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
 					if ($conf->adherent->enabled) $tmparray['__SECUREKEYPAYMENT_MEMBER__'] = 'SecureKeyPAYMENTUniquePerMember';
 					if ($conf->facture->enabled)  $tmparray['__SECUREKEYPAYMENT_INVOICE__'] = 'SecureKeyPAYMENTUniquePerInvoice';
 					if ($conf->commande->enabled) $tmparray['__SECUREKEYPAYMENT_ORDER__'] = 'SecureKeyPAYMENTUniquePerOrder';
@@ -1533,8 +1544,7 @@ class FormMail extends Form
 			}
 		}
 
-		foreach ($tmparray as $key => $val)
-		{
+		foreach ($tmparray as $key => $val) {
 			if (empty($val)) $tmparray[$key] = $key;
 		}
 

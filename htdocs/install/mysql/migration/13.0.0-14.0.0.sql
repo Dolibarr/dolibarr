@@ -41,3 +41,5 @@ ALTER TABLE llx_adherent ADD UNIQUE INDEX uk_adherent_ref (ref, entity);
 
 ALTER TABLE llx_bank_account ADD COLUMN ics varchar(32) NULL;
 ALTER TABLE llx_bank_account ADD COLUMN ics_transfer varchar(32) NULL;
+
+ALTER TABLE llx_facture MODIFY COLUMN date_valid DATETIME NULL DEFAULT NULL;
