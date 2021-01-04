@@ -464,7 +464,7 @@ class BankAccounts extends DolibarrApi
      *
      * @url POST {id}/lines
      */
-    public function addLine($id, $date, $type, $label, $amount, $category = 0, $cheque_number = '', $cheque_writer = '', $cheque_bank = '')
+    public function addLine($id, $date, $type, $label, $amount, $category = 0, $cheque_number = '', $cheque_writer = '', $cheque_bank = '', $accountancycode = '', $datev = null, $num_releve = '')
     {
         if (! DolibarrApiAccess::$user->rights->banque->modifier) {
             throw new RestException(401);
@@ -484,7 +484,8 @@ class BankAccounts extends DolibarrApi
             $cheque_number,
             $category,
             DolibarrApiAccess::$user,
-            $cheque_writer, $cheque_bank
+            $cheque_writer, $cheque_bank, $accountancycode,
+            $datev, $num_releve
         );
         if ($result < 0) {
             throw new RestException(503, 'Error when adding line to account: ' . $account->error);

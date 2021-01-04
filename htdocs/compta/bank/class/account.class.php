@@ -416,7 +416,7 @@ class Account extends CommonObject
 	 *  @param	int			$datev			Date value
 	 *  @return	int							Rowid of added entry, <0 if KO
 	 */
-    public function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur = '', $banque = '', $accountancycode = '', $datev = null)
+    public function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur = '', $banque = '', $accountancycode = '', $datev = null, $num_releve = '')
 	{
 		// Deprecation warning
 		if (is_numeric($oper)) {
@@ -478,6 +478,7 @@ class Account extends CommonObject
 		$accline->fk_account = $this->rowid;
 		$accline->fk_type = $oper;
 		$accline->numero_compte = $accountancycode;
+		$accline->num_releve = $num_releve;
 
 		if ($num_chq) {
 			$accline->num_chq = $num_chq;
@@ -1853,6 +1854,7 @@ class AccountLine extends CommonObject
 		$sql .= ", emetteur,banque";
 		$sql .= ", rappro";
 		$sql .= ", numero_compte";
+		$sql .= ", num_releve";
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->idate($this->datec)."'";
 		$sql .= ", '".$this->db->idate($this->dateo)."'";
@@ -1867,6 +1869,7 @@ class AccountLine extends CommonObject
 		$sql .= ", ".($this->bank_chq ? "'".$this->db->escape($this->bank_chq)."'" : "null");
 		$sql .= ", ".(int) $this->rappro;
 		$sql .= ", ".($this->numero_compte ? "'".$this->db->escape($this->numero_compte)."'" : "''");
+		$sql .= ", ".($this->num_releve ? "'".$this->db->escape($this->num_releve)."'" : "null");
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::insert", LOG_DEBUG);
