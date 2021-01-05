@@ -253,9 +253,9 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$toselect = '';
 	$search_array_options = array();
 	$search_categ_cus = 0;
-	$search_cond_reglement_id = '';
-	$search_shipping_method_id = '';
-	$search_mode_reglement_id = '';
+	$search_fk_cond_reglement = '';
+	$search_fk_shipping_method = '';
+	$search_fk_mode_reglement = '';
 }
 if ($object_statut != '') $search_status = $object_statut;
 
@@ -1308,7 +1308,7 @@ if ($resql)
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
-
+		//Shipping Method
 		if (!empty($conf->expedition->enabled) && !empty($arrayfields['p.fk_shipping_method']['checked']))
 		{
 			print '<td>';
@@ -1325,7 +1325,6 @@ if ($resql)
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
-
 		// Status
 		if (!empty($arrayfields['p.fk_statut']['checked']))
 		{

@@ -95,7 +95,9 @@ $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_project = GETPOST('search_project', 'alpha');
 $search_shippable = GETPOST('search_shippable', 'aZ09');
-
+$search_fk_cond_reglement = GETPOST("search_fk_cond_reglement", 'int');
+$search_fk_shipping_method = GETPOST("search_fk_shipping_method", 'int');
+$search_fk_mode_reglement = GETPOST("search_fk_mode_reglement", 'int');
 
 // Security check
 $id = (GETPOST('orderid') ?GETPOST('orderid', 'int') : GETPOST('id', 'int'));
@@ -170,8 +172,13 @@ $arrayfields = array(
 	'c.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'position'=>511, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES)), 'position'=>140),
 	'c.facture'=>array('label'=>"Billed", 'checked'=>1, 'position'=>990, 'enabled'=>(empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)), 'position'=>145),
 	'shippable'=>array('label'=>"Shippable", 'checked'=>1, 'position'=>995, 'enabled'=>(!empty($conf->expedition->enabled)), 'position'=>150),
+	'c.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>0, 'position'=>151),
+	'c.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>0, 'position'=>153),
 	'c.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000, 'position'=>155)
 );
+if (!empty($conf->expedition->enabled)) {
+	$arrayfields['c.fk_shipping_method']=array('label'=>"SendingMethod", 'checked'=>0, 'position'=>152);
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -235,6 +242,9 @@ if (empty($reshook))
 		$search_categ_cus = 0;
 		$search_datecloture_start = '';
 		$search_datecloture_end = '';
+		$search_fk_cond_reglement = '';
+		$search_fk_shipping_method = '';
+		$search_fk_mode_reglement = '';
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
 	 || GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha'))
@@ -280,7 +290,8 @@ $sql .= ' c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multic
 $sql .= ' c.date_valid, c.date_commande, c.note_public, c.note_private, c.date_livraison as date_delivery, c.fk_statut, c.facture as billed,';
 $sql .= ' c.date_creation as date_creation, c.tms as date_update, c.date_cloture as date_cloture,';
 $sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
-$sql .= " u.login";
+$sql .= " u.login,";
+$sql .= ' c.fk_cond_reglement,c.fk_mode_reglement,c.fk_shipping_method';
 if ($search_categ_cus) $sql .= ", cc.fk_categorie, cc.fk_soc";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label']))
@@ -369,6 +380,9 @@ if ($search_project_ref != '')               $sql .= natural_search("p.ref", $se
 if ($search_project != '')                   $sql .= natural_search("p.title", $search_project);
 if ($search_categ_cus > 0)                   $sql .= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
 if ($search_categ_cus == -2)                 $sql .= " AND cc.fk_categorie IS NULL";
+if ($search_fk_cond_reglement > 0) $sql .= " AND c.fk_cond_reglement = ".$db->escape($search_fk_cond_reglement);
+if ($search_fk_shipping_method > 0) $sql .= " AND c.fk_shipping_method = ".$db->escape($search_fk_shipping_method);
+if ($search_fk_mode_reglement > 0) $sql .= " AND c.fk_mode_reglement = ".$db->escape($search_fk_mode_reglement);
 
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -478,6 +492,9 @@ if ($resql)
 	if ($show_files)            	$param .= '&show_files='.urlencode($show_files);
 	if ($optioncss != '')       	$param .= '&optioncss='.urlencode($optioncss);
 	if ($search_billed != '')		$param .= '&search_billed='.urlencode($search_billed);
+	if ($search_fk_cond_reglement > 0) $param .= '&search_fk_cond_reglement='.$search_fk_cond_reglement;
+	if ($search_fk_shipping_method > 0) $param .= '&search_fk_shipping_method='.$search_fk_shipping_method;
+	if ($search_fk_mode_reglement > 0) $param .= '&search_fk_mode_reglement='.$search_fk_mode_reglement;
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -851,6 +868,29 @@ if ($resql)
 		print $form->selectyesno('search_billed', $search_billed, 1, 0, 1, 1);
 		print '</td>';
 	}
+	if (!empty($arrayfields['c.fk_cond_reglement']['checked']))
+	{
+		// Payment term
+		print '<td class="liste_titre">';
+		$form->select_conditions_paiements($search_fk_cond_reglement, 'search_fk_cond_reglement', -1, 1);
+		print '</td>';
+	}
+
+	if (!empty($conf->expedition->enabled) && !empty($arrayfields['c.fk_shipping_method']['checked']))
+	{
+		// Shipping Method
+		print '<td class="liste_titre">';
+		$form->selectShippingMethod($search_fk_shipping_method, 'search_fk_shipping_method', '', 1);
+		print '</td>';
+	}
+
+	if (!empty($arrayfields['c.fk_mode_reglement']['checked']))
+	{
+		// Payment mode
+		print '<td class="liste_titre">';
+		$form->select_types_paiements($search_fk_mode_reglement, 'search_fk_mode_reglement', '', 0, 1, 0, 0, -1);
+		print '</td>';
+	}
 	// Status
 	if (!empty($arrayfields['c.fk_statut']['checked']))
 	{
@@ -911,6 +951,9 @@ if ($resql)
 	if (!empty($arrayfields['c.note_private']['checked'])) print_liste_field_titre($arrayfields['c.note_private']['label'], $_SERVER["PHP_SELF"], "c.note_private", "", $param, '', $sortfield, $sortorder, 'right ');
 	if (!empty($arrayfields['shippable']['checked']))   print_liste_field_titre($arrayfields['shippable']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['c.facture']['checked']))   print_liste_field_titre($arrayfields['c.facture']['label'], $_SERVER["PHP_SELF"], 'c.facture', '', $param, '', $sortfield, $sortorder, 'center ');
+	if (!empty($arrayfields['c.fk_cond_reglement']['checked']))			print_liste_field_titre($arrayfields['c.fk_cond_reglement']['label'], $_SERVER["PHP_SELF"], "c.fk_cond_reglement", "", $param, '', $sortfield, $sortorder);
+	if (!empty($conf->expedition->enabled) && !empty($arrayfields['c.fk_shipping_method']['checked']))	print_liste_field_titre($arrayfields['c.fk_shipping_method']['label'], $_SERVER["PHP_SELF"], "c.fk_shipping_method", "", $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['c.fk_mode_reglement']['checked']))			print_liste_field_titre($arrayfields['c.fk_mode_reglement']['label'], $_SERVER["PHP_SELF"], "c.fk_mode_reglement", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['c.fk_statut']['checked'])) print_liste_field_titre($arrayfields['c.fk_statut']['label'], $_SERVER["PHP_SELF"], "c.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	print '</tr>'."\n";
@@ -1324,6 +1367,32 @@ if ($resql)
 		if (!empty($arrayfields['c.facture']['checked']))
 		{
 			print '<td class="center">'.yn($obj->billed).'</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+
+		// Payment terms
+		if (!empty($arrayfields['c.fk_cond_reglement']['checked']))
+		{
+			print '<td>';
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'], $obj->fk_cond_reglement, 'none');
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+		//Shipping Method
+		if (!empty($conf->expedition->enabled) && !empty($arrayfields['c.fk_shipping_method']['checked']))
+		{
+			print '<td>';
+			$form->formSelectShippingMethod('', $obj->fk_shipping_method, 'none', 1);
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+
+		// Payment mode
+		if (!empty($arrayfields['c.fk_mode_reglement']['checked']))
+		{
+			print '<td>';
+			$form->form_modes_reglement($_SERVER['PHP_SELF'], $obj->fk_mode_reglement, 'none', '', -1);
+			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
 
