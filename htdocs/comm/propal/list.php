@@ -47,6 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'propal', 'compta', 'bills', 'orders', 'products', 'deliveries', 'categories'));
+if (!empty($conf->expedition->enabled)) $langs->loadLangs(array('sendings'));
 
 $socid = GETPOST('socid', 'int');
 
@@ -89,6 +90,9 @@ $search_datedelivery_start = dol_mktime(0, 0, 0, GETPOST('search_datedelivery_st
 $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOST('search_datedelivery_endmonth', 'int'), GETPOST('search_datedelivery_endday', 'int'), GETPOST('search_datedelivery_endyear', 'int'));
 $search_availability = GETPOST('search_availability', 'int');
 $search_categ_cus = GETPOST("search_categ_cus", 'int');
+$search_fk_cond_reglement = GETPOST("search_fk_cond_reglement", 'int');
+$search_fk_shipping_method = GETPOST("search_fk_shipping_method", 'int');
+$search_fk_mode_reglement = GETPOST("search_fk_mode_reglement", 'int');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 
@@ -185,8 +189,14 @@ $arrayfields = array(
 	'p.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>500),
 	'p.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'position'=>510, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES))),
 	'p.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'position'=>511, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES))),
+	'p.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>0, 'position'=>512),
+	'p.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>0, 'position'=>514),
 	'p.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
+
 );
+if (!empty($conf->expedition->enabled)) {
+	$arrayfields['p.fk_shipping_method']=array('label'=>"SendingMethod", 'checked'=>0, 'position'=>513);
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -243,6 +253,9 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$toselect = '';
 	$search_array_options = array();
 	$search_categ_cus = 0;
+	$search_cond_reglement_id = '';
+	$search_shipping_method_id = '';
+	$search_mode_reglement_id = '';
 }
 if ($object_statut != '') $search_status = $object_statut;
 
@@ -286,6 +299,7 @@ $sql .= ' p.rowid, p.entity, p.note_private, p.total_ht, p.tva as total_vat, p.t
 $sql .= ' p.fk_multicurrency, p.multicurrency_code, p.multicurrency_tx, p.multicurrency_total_ht, p.multicurrency_total_tva as multicurrency_total_vat, p.multicurrency_total_ttc,';
 $sql .= ' p.datec as date_creation, p.tms as date_update, p.date_cloture as date_cloture,';
 $sql .= ' p.note_public, p.note_private,';
+$sql .= ' p.fk_cond_reglement,p.fk_mode_reglement,p.fk_shipping_method,';
 $sql .= " pr.rowid as project_id, pr.ref as project_ref, pr.title as project_label,";
 $sql .= ' u.login';
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
@@ -351,6 +365,10 @@ if ($sall) {
 }
 if ($search_categ_cus > 0)			$sql .= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
 if ($search_categ_cus == -2)		$sql .= " AND cc.fk_categorie IS NULL";
+
+if ($search_fk_cond_reglement > 0) $sql .= " AND p.fk_cond_reglement = ".$db->escape($search_fk_cond_reglement);
+if ($search_fk_shipping_method > 0) $sql .= " AND p.fk_shipping_method = ".$db->escape($search_fk_shipping_method);
+if ($search_fk_mode_reglement > 0) $sql .= " AND p.fk_mode_reglement = ".$db->escape($search_fk_mode_reglement);
 
 if ($search_product_category > 0)	$sql .= " AND cp.fk_categorie = ".$db->escape($search_product_category);
 if ($socid > 0) $sql .= ' AND s.rowid = '.$socid;
@@ -458,6 +476,9 @@ if ($resql)
 	if ($optioncss != '')    			$param .= '&optioncss='.urlencode($optioncss);
 	if ($search_categ_cus > 0)          $param .= '&search_categ_cus='.urlencode($search_categ_cus);
 	if ($search_product_category != '') $param .= '&search_product_category='.$search_product_category;
+	if ($search_fk_cond_reglement > 0) $param .= '&search_fk_cond_reglement='.$search_fk_cond_reglement;
+	if ($search_fk_shipping_method > 0) $param .= '&search_fk_shipping_method='.$search_fk_shipping_method;
+	if ($search_fk_mode_reglement > 0) $param .= '&search_fk_mode_reglement='.$search_fk_mode_reglement;
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -798,6 +819,31 @@ if ($resql)
 		print '<td class="liste_titre">';
 		print '</td>';
 	}
+
+	if (!empty($arrayfields['p.fk_cond_reglement']['checked']))
+	{
+		// Payment term
+		print '<td class="liste_titre">';
+		$form->select_conditions_paiements($search_fk_cond_reglement, 'search_fk_cond_reglement', -1, 1);
+		print '</td>';
+	}
+
+	if (!empty($conf->expedition->enabled) && !empty($arrayfields['p.fk_shipping_method']['checked']))
+	{
+		// Shipping Method
+		print '<td class="liste_titre">';
+		$form->selectShippingMethod($search_fk_shipping_method, 'search_fk_shipping_method', '', 1);
+		print '</td>';
+	}
+
+	if (!empty($arrayfields['p.fk_mode_reglement']['checked']))
+	{
+		// Payment mode
+		print '<td class="liste_titre">';
+		$form->select_types_paiements($search_fk_mode_reglement, 'search_fk_mode_reglement', '', 0, 1, 0, 0, -1);
+		print '</td>';
+	}
+
 	// Status
 	if (!empty($arrayfields['p.fk_statut']['checked']))
 	{
@@ -855,6 +901,9 @@ if ($resql)
 	if (!empty($arrayfields['p.date_cloture']['checked']))		print_liste_field_titre($arrayfields['p.date_cloture']['label'], $_SERVER["PHP_SELF"], "p.date_cloture", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 	if (!empty($arrayfields['p.note_public']['checked']))       print_liste_field_titre($arrayfields['p.note_public']['label'], $_SERVER["PHP_SELF"], "p.note_public", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	if (!empty($arrayfields['p.note_private']['checked']))      print_liste_field_titre($arrayfields['p.note_private']['label'], $_SERVER["PHP_SELF"], "p.note_private", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	if (!empty($arrayfields['p.fk_cond_reglement']['checked']))			print_liste_field_titre($arrayfields['p.fk_cond_reglement']['label'], $_SERVER["PHP_SELF"], "p.fk_cond_reglement", "", $param, '', $sortfield, $sortorder);
+	if (!empty($conf->expedition->enabled) && !empty($arrayfields['p.fk_shipping_method']['checked']))	print_liste_field_titre($arrayfields['p.fk_shipping_method']['label'], $_SERVER["PHP_SELF"], "p.fk_shipping_method", "", $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['p.fk_mode_reglement']['checked']))			print_liste_field_titre($arrayfields['p.fk_mode_reglement']['label'], $_SERVER["PHP_SELF"], "p.fk_mode_reglement", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['p.fk_statut']['checked']))			print_liste_field_titre($arrayfields['p.fk_statut']['label'], $_SERVER["PHP_SELF"], "p.fk_statut", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 	print '</tr>'."\n";
@@ -1251,6 +1300,32 @@ if ($resql)
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
+		// Payment terms
+		if (!empty($arrayfields['p.fk_cond_reglement']['checked']))
+		{
+			print '<td>';
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'], $obj->fk_cond_reglement, 'none');
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+
+		if (!empty($conf->expedition->enabled) && !empty($arrayfields['p.fk_shipping_method']['checked']))
+		{
+			print '<td>';
+			$form->formSelectShippingMethod('', $obj->fk_shipping_method, 'none', 1);
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+
+		// Payment mode
+		if (!empty($arrayfields['p.fk_mode_reglement']['checked']))
+		{
+			print '<td>';
+			$form->form_modes_reglement($_SERVER['PHP_SELF'], $obj->fk_mode_reglement, 'none', '', -1);
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+
 		// Status
 		if (!empty($arrayfields['p.fk_statut']['checked']))
 		{
