@@ -177,9 +177,6 @@ $arrayfields = array(
 	'shippable'=>array('label'=>"Shippable", 'checked'=>1, 'position'=>995, 'enabled'=>(!empty($conf->expedition->enabled)), 'position'=>150),
 	'c.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000, 'position'=>155)
 );
-if (!empty($conf->expedition->enabled)) {
-
-}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -1160,7 +1157,6 @@ if ($resql)
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
-
 		// Amount HT
 		if (!empty($arrayfields['c.total_ht']['checked']))
 		{

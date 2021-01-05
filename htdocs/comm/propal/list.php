@@ -838,7 +838,6 @@ if ($resql)
 		print '<td class="liste_titre">';
 		print '</td>';
 	}
-
 	// Status
 	if (!empty($arrayfields['p.fk_statut']['checked']))
 	{
