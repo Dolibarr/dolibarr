@@ -116,7 +116,12 @@ class FormMail extends Form
 	 */
 	public $withto; // Show recipient emails
 
-	public $withtofree; // Show free text for recipient emails
+	/**
+	 * @var int|string 0 = Do not Show free text for recipient emails
+	 *                 1 = Show free text for recipient emails
+	 *                 or a free email
+	 */
+	public $withtofree;
 	public $withtocc;
 	public $withtoccc;
 	public $withtopic;
@@ -762,7 +767,7 @@ class FormMail extends Form
 					foreach ($tmparray as $key => $val) {
 						$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 					}
-					$withtoccselected = GETPOST("receivercc", 'array'); // Array of selected value
+					$withtoccselected = GETPOST("receivercc", 'array:none'); // Array of selected value
 					$out .= $form->multiselectarray("receivercc", $tmparray, $withtoccselected, null, null, 'quatrevingtpercent', 0, '', '', 'email', '', -1, !empty($this->withtofree) ? 1 : 0);
 				}
 				$out .= "</td></tr>\n";
