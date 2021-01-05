@@ -16,7 +16,7 @@ NEW: Accountancy - add options to disable binding on sales, purchases & expense 
 NEW: Accountancy balance - add a menu entry to show subtotal by group
 NEW: Accountancy - change menu disposition
 NEW: Accountancy - on transfers, select the periodicity by default
-NEW: Accountancy - Add export for Gestinum (v3 & v5)
+NEW: Accountancy - Add export for Gestinum (v3 & v5) #15180
 NEW: new currency rate editor
 NEW: Solve blocking feature. Can increase stock of a Kit without changing subproduct stock.
 NEW: add a widget to show the customers with outstanding limits reached
@@ -163,7 +163,7 @@ NEW: Support for Samba4 AD
 NEW: TakePOS connector compatibility with RECEIPT PRINTERS module
 NEW: TakePOS Gift Receipt
 NEW: TakePOS Multicurrency compatibility
-NEW: the global header of a website can also have dynamic content
+NEW: TakePOS Weighing Scale compatibility with TakePOS connector #14725
 NEW: Third-Party Import new fields: mother company,outstanding debt limit,bank account,incoterms
 NEW: Thirdparty module : box on customer/supplier tab for invoice outsantding amount late
 NEW: ticket classification on create from email collector
@@ -173,11 +173,11 @@ NEW: VAT rate for Angola #15606
 NEW: VAT and juridical status for Algeria
 NEW: VAT report - Invert constant to show by default zero VAT in reports
 NEW: website page fields selection
-NEW: Weighing Scale compatibility with TakePOS connector
+NEW: website - global header of a website can also have dynamic content
 NEW: when creating a user from a member linked to a thirdparty, you can choose to create it as external or internal user
-NEW: add clone button on miscellaneous payment
-NEW: #15065 Add option to put the product label in bold in the PDF templates if configured
-NEW: Add option "If the feature to manage kits of module Stock is used, show details of subproducts of a kit on PDF."
+NEW: add clone button on miscellaneous payment 
+NEW: add option to put the product label in bold in the PDF templates if configured #15065 
+NEW: add option "If the feature to manage kits of module Stock is used, show details of subproducts of a kit on PDF."
 
 
 For developers:
