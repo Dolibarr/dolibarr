@@ -252,6 +252,9 @@ ErrorValueLength=Length of field '<b>%s</b>' must be higher than '<b>%s</b>'
 ErrorReservedKeyword=The word '<b>%s</b>' is a reserved keyword
 ErrorNotAvailableWithThisDistribution=Not available with this distribution
 ErrorPublicInterfaceNotEnabled=Public interface was not enabled
+ErrorLanguageRequiredIfPageIsTranslationOfAnother=The language of new page must be defined if it is set as a translation of another page
+ErrorLanguageMustNotBeSourceLanguageIfPageIsTranslationOfAnother=The language of new page must not be the source language if it is set as a translation of another page
+ErrorAParameterIsRequiredForThisOperation=A parameter is mandatory for this operation
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
@@ -283,3 +286,4 @@ WarningSomeBankTransactionByChequeWereRemovedAfter=Some bank transaction were re
 WarningFailedToAddFileIntoDatabaseIndex=Warning, failed to add file entry into ECM database index table
 WarningTheHiddenOptionIsOn=Warning, the hidden option <b>%s</b> is on.
 WarningCreateSubAccounts=Warning, you can't create directly a sub account, you must create a third party or an user and assign them an accounting code to find them in this list
+WarningAvailableOnlyForHTTPSServers=Available only if using HTTPS secured connection.

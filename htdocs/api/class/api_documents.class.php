@@ -535,13 +535,14 @@ class Documents extends DolibarrApi
 	 * Test sample for supplier invoice: { "filename": "mynewfile.txt", "modulepart": "supplier_invoice", "ref": "FA1701-001", "subdir": "", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
 	 * Test sample for medias file: { "filename": "mynewfile.txt", "modulepart": "medias", "ref": "", "subdir": "image/mywebsite", "filecontent": "Y29udGVudCB0ZXh0Cg==", "fileencoding": "base64", "overwriteifexists": "0" }.
 	 *
-	 * @param   string  $filename           Name of file to create ('FA1705-0123.txt')
-	 * @param   string  $modulepart         Name of module or area concerned by file upload ('facture', 'project', 'project_task', ...)
-	 * @param   string  $ref                Reference of object (This will define subdir automatically and store submited file into it)
-	 * @param   string  $subdir       		Subdirectory (Only if ref not provided)
-	 * @param   string  $filecontent        File content (string with file content. An empty file will be created if this parameter is not provided)
-	 * @param   string  $fileencoding       File encoding (''=no encoding, 'base64'=Base 64)
-	 * @param   int 	$overwriteifexists  Overwrite file if exists (1 by default)
+	 * @param   string  $filename           	Name of file to create ('FA1705-0123.txt')
+	 * @param   string  $modulepart         	Name of module or area concerned by file upload ('facture', 'project', 'project_task', ...)
+	 * @param   string  $ref                	Reference of object (This will define subdir automatically and store submited file into it)
+	 * @param   string  $subdir       			Subdirectory (Only if ref not provided)
+	 * @param   string  $filecontent        	File content (string with file content. An empty file will be created if this parameter is not provided)
+	 * @param   string  $fileencoding       	File encoding (''=no encoding, 'base64'=Base 64)
+	 * @param   int 	$overwriteifexists  	Overwrite file if exists (1 by default)
+	 * @param   int 	$createdirifnotexists  	Create subdirectories if the doesn't exists (1 by default)
 	 * @return  string
 	 *
 	 * @throws RestException 400
@@ -551,7 +552,7 @@ class Documents extends DolibarrApi
 	 *
 	 * @url POST /upload
 	 */
-	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0)
+	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0, $createdirifnotexists = 1)
 	{
 		global $db, $conf;
 
@@ -578,6 +579,8 @@ class Documents extends DolibarrApi
 		// Define $uploadir
 		$object = null;
 		$entity = DolibarrApiAccess::$user->entity;
+		if (empty($entity)) $entity = 1;
+
 		if ($ref)
 		{
 			$tmpreldir = '';
@@ -663,8 +666,7 @@ class Documents extends DolibarrApi
 				}
 			}
 
-			if (!($object->id > 0))
-			{
+			if (!($object->id > 0)) {
    				throw new RestException(404, 'The object '.$modulepart." with ref '".$ref."' was not found.");
 			}
 
@@ -681,29 +683,32 @@ class Documents extends DolibarrApi
 
 			if (empty($upload_dir) || $upload_dir == '/')
 			{
-				throw new RestException(500, 'This value of modulepart does not support yet usage of ref. Check modulepart parameter or try to use subdir parameter instead of ref.');
+				throw new RestException(500, 'This value of modulepart ('.$modulepart.') does not support yet usage of ref. Check modulepart parameter or try to use subdir parameter instead of ref.');
 			}
 		} else {
 			if ($modulepart == 'invoice') $modulepart = 'facture';
 			if ($modulepart == 'member') $modulepart = 'adherent';
 
 			$relativefile = $subdir;
-
 			$tmp = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, '', 'write');
 			$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
 
-			if (empty($upload_dir) || $upload_dir == '/')
-			{
-				throw new RestException(500, 'This value of modulepart does not support yet usage of ref. Check modulepart parameter or try to use subdir parameter instead of ref.');
+			if (empty($upload_dir) || $upload_dir == '/') {
+				if (!empty($tmp['error'])) {
+					throw new RestException(401, 'Error returned by dol_check_secure_access_document: '.$tmp['error']);
+				} else {
+					throw new RestException(500, 'This value of modulepart ('.$modulepart.') is not allowed with this value of subdir ('.$relativefile.')');
+				}
 			}
 		}
 		// $original_file here is still value of filename without any dir.
 
 		$upload_dir = dol_sanitizePathName($upload_dir);
 
-		if (dol_mkdir($upload_dir) < 0) // needed by products
-		{
-			throw new RestException(500, 'Error while trying to create directory.');
+		if (!empty($createdirifnotexists)) {
+			if (dol_mkdir($upload_dir) < 0) { // needed by products
+				throw new RestException(500, 'Error while trying to create directory '.$upload_dir);
+			}
 		}
 
 		$destfile = $upload_dir.'/'.$original_file;
@@ -715,8 +720,7 @@ class Documents extends DolibarrApi
 			throw new RestException(401, 'Directory not exists : '.dirname($destfile));
 		}
 
-		if (!$overwriteifexists && dol_is_file($destfile))
-		{
+		if (!$overwriteifexists && dol_is_file($destfile)) {
 			throw new RestException(500, "File with name '".$original_file."' already exists.");
 		}
 

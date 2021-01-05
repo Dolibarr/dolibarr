@@ -193,7 +193,7 @@ class ActionsTicket
 		print '<div class="underbanner clearboth"></div>';
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table class="noborder centpercent margintable">';
-		print '<tr class="liste_titre"><td class="nowrap titlefield">';
+		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
 		print $langs->trans("InitialMessage");
 		print '</td><td>';
 		if ($user->rights->ticket->manage) {
@@ -404,15 +404,16 @@ class ActionsTicket
 			if (!in_array($status, $exclude_status)) {
 				print '<div class="inline-block center marginbottomonly">';
 
-				if ($status == 1)
-				{
+				if ($status == 1) {
 					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=mark_ticket_read'; // To set as read, we use a dedicated action
 				} else {
 					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=set_status&token='.newToken().'&new_status='.$status;
 				}
 
-				print '<a class="butAction buttonticket marginbottomonly" href="'.$urlforbutton.'">';
-				print img_picto($langs->trans($object->statuts_short[$status]), 'statut'.$status.'.png@ticket').' '.$langs->trans($object->statuts_short[$status]);
+				print '<a class="butAction butStatus marginbottomonly" href="'.$urlforbutton.'">';
+				print $object->LibStatut($status, 3, 1).' ';
+				//print img_picto($langs->trans($object->statuts_short[$status]), 'statut'.$status.'.png@ticket', '', false, 0, 0, '', 'valignmiddle').' ';
+				print $langs->trans($object->statuts_short[$status]);
 				print '</a>';
 				print '</div>';
 			}

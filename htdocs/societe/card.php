@@ -109,7 +109,7 @@ if ($object->id > 0) {
 
 $permissiontoread = $user->rights->societe->lire;
 $permissiontoadd = $user->rights->societe->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->societe->delete || ($permissiontoadd && isset($object->status) && $object->status == 0);
+$permissiontodelete = $user->rights->societe->supprimer || ($permissiontoadd && isset($object->status) && $object->status == 0);
 $permissionnote = $user->rights->societe->creer; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->societe->creer; // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->societe->multidir_output[isset($object->entity) ? $object->entity : 1];
@@ -631,26 +631,32 @@ if (empty($reshook))
 								$errors[] = "ErrorFilePartiallyUploaded";
 								break;
 						}
-					}
-					// Gestion du logo de la société
+	                }
 				} else {
-					if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') // TODO Sometime errors on duplicate on profid and not on code, so we must manage this case
+					if ($result == -3 && in_array('ErrorCustomerCodeAlreadyUsed', $object->errors))
+					{
+						$duplicate_code_error = true;
+						$object->code_client = null;
+					}
+
+					if ($result == -3 && in_array('ErrorSupplierCodeAlreadyUsed', $object->errors))
 					{
 						$duplicate_code_error = true;
 						$object->code_fournisseur = null;
-						$object->code_client = null;
+					}
+
+					if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {	// TODO Sometime errors on duplicate on profid and not on code, so we must manage this case
+						$duplicate_code_error = true;
 					}
 
 					setEventMessages($object->error, $object->errors, 'errors');
 				   	$error++;
 				}
 
-				if ($result >= 0 && !$error)
-				{
+				if ($result >= 0 && !$error) {
 					$db->commit();
 
-					if (!empty($backtopage))
-					{
+					if (!empty($backtopage)) {
 						$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
 						if (preg_match('/\?/', $backtopage)) $backtopage .= '&socid='.$object->id; // Old method
 			   			header("Location: ".$backtopage);
@@ -1349,7 +1355,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning_fax').' <input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('fax') ?GETPOST('fax', 'alpha') : $object->fax).'"></td></tr>';
 
 		// Email / Web
-		print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', $conf->global->SOCIETE_EMAIL_MANDATORY).'</td>';
+		print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', empty($conf->global->SOCIETE_EMAIL_MANDATORY) ? '' : $conf->global->SOCIETE_EMAIL_MANDATORY).'</td>';
 		print '<td colspan="3">'.img_picto('', 'object_email').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="email" id="email" value="'.$object->email.'"></td></tr>';
 		print '<tr><td>'.$form->editfieldkey('Web', 'url', '', $object, 0).'</td>';
 		print '<td colspan="3">'.img_picto('', 'globe').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="url" id="url" value="'.$object->url.'"></td></tr>';
@@ -1360,7 +1366,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 					print '<tr>';
 					print '<td><label for="'.$value['label'].'">'.$form->editfieldkey($value['label'], $key, '', $object, 0).'</label></td>';
 					print '<td colspan="3">';
-					print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key) ?GETPOST($key, 'alphanohtml') : $object->socialnetworks[$key]).'">';
+					print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key) ? GETPOST($key, 'alphanohtml') : (empty($object->socialnetworks[$key]) ? '' : $object->socialnetworks[$key])).'">';
 					print '</td>';
 					print '</tr>';
 				} elseif (!empty($object->socialnetworks[$key])) {
@@ -2216,10 +2222,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 		print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), -1, 'company');
 
+		$formconfirm = '';
+
 		// Confirm delete third party
 		if ($action == 'delete' || ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)))
 		{
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("DeleteACompany"), $langs->trans("ConfirmDeleteCompany"), "confirm_delete", '', 0, "action-delete");
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("DeleteACompany"), $langs->trans("ConfirmDeleteCompany"), "confirm_delete", '', 0, "action-delete");
 		}
 
 		if ($action == 'merge')
@@ -2233,8 +2241,17 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				)
 			);
 
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1, 250);
+			$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1, 250);
 		}
+
+		// Call Hook formConfirm
+		$parameters = array('formConfirm' => $formconfirm);
+		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
+		elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
+
+		// Print form confirm
+		print $formconfirm;
 
 		dol_htmloutput_mesg(is_numeric($error) ? '' : $error, $errors, 'error');
 
@@ -2275,7 +2292,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print '<tr><td>';
 			print $langs->trans('CustomerCode').'</td><td>';
 			print $object->code_client;
-			if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+			$tmpcheck = $object->check_codeclient();
+			if ($tmpcheck != 0 && $tmpcheck != -5) {
+				print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+			}
 			print '</td>';
 			print '</tr>';
 		}
@@ -2286,7 +2306,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print '<tr><td>';
 			print $langs->trans('SupplierCode').'</td><td>';
 			print $object->code_fournisseur;
-			if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+			$tmpcheck = $object->check_codefournisseur();
+			if ($tmpcheck != 0 && $tmpcheck != -5) {
+				print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+			}
 			print '</td>';
 			print '</tr>';
 		}

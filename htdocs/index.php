@@ -769,7 +769,7 @@ function showWeather($totallate, $text, $options, $morecss = '')
  *  $conf->global->MAIN_METEO_LEVELx
  *
  *  @param      int     $totallate      Nb of element late
- *  @return     string                  Return img tag of weather
+ *  @return     stdClass                Return img tag of weather
  */
 function getWeatherStatus($totallate)
 {
@@ -804,20 +804,16 @@ function getWeatherStatus($totallate)
 	if ($totallate <= $level0) {
 		$weather->picto = 'weather-clear.png';
 		$weather->level = 0;
-	}
-	elseif ($totallate <= $level1) {
+	} elseif ($totallate <= $level1) {
 		$weather->picto = 'weather-few-clouds.png';
 		$weather->level = 1;
-	}
-	elseif ($totallate <= $level2) {
+	} elseif ($totallate <= $level2) {
 		$weather->picto = 'weather-clouds.png';
 		$weather->level = 2;
-	}
-	elseif ($totallate <= $level3) {
+	} elseif ($totallate <= $level3) {
 		$weather->picto = 'weather-many-clouds.png';
 		$weather->level = 3;
-	}
-	else {
+	} else {
 		$weather->picto = 'weather-storm.png';
 		$weather->level = 4;
 	}

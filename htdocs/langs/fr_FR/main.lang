@@ -672,6 +672,7 @@ Email=Email
 NoEMail=Pas d'email
 AlreadyRead=Déjà lu
 NotRead=Non lu
+Unread=Non lu
 NoMobilePhone=Pas de téléphone portable
 Owner=Propriétaire
 FollowingConstantsWillBeSubstituted=Les constantes suivantes seront substituées par leur valeur correspondante.

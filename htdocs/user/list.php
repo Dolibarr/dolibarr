@@ -345,7 +345,7 @@ if ($catid > 0)     $sql .= " AND cu.fk_categorie = ".((int) $catid);
 if ($catid == -2)   $sql .= " AND cu.fk_categorie IS NULL";
 if ($search_categ > 0)   $sql .= " AND cu.fk_categorie = ".$db->escape($search_categ);
 if ($search_categ == -2) $sql .= " AND cu.fk_categorie IS NULL";
-if ($mode == 'employee' && empty($user->rights->salaries->readall)) $sql .= " AND s.fk_user IN (".join(',', $childids).")";
+if ($mode == 'employee' && empty($user->rights->salaries->readall)) $sql .= " AND u.fk_user IN (".join(',', $childids).")";
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
@@ -422,9 +422,10 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 $arrayofmassactions = array();
 if ($permissiontoadd) $arrayofmassactions['disable'] = $langs->trans("DisableUser");
 if ($permissiontoadd) $arrayofmassactions['reactivate'] = $langs->trans("Reactivate");
+if ($permissiontoadd) $arrayofmassactions['preaffecttag'] = '<span class="fa fa-tag paddingrightonly"></span>'.$langs->trans("AffectTag");
 //if ($permissiontodelete) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) $arrayofmassactions = array();
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -647,7 +648,7 @@ if (is_array($extrafields->attributes[$object->table_element]['computed']) && co
 // --------------------------------------------------------------------
 $i = 0;
 $totalarray = array();
-$arrayofselected = array();
+$arrayofselected = is_array($toselect) ? $toselect : array();
 while ($i < ($limit ? min($num, $limit) : $num))
 {
 	$obj = $db->fetch_object($resql);

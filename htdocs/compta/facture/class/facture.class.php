@@ -868,7 +868,7 @@ class Facture extends CommonInvoice
 							$line->situation_percent,
 							$line->fk_prev_id,
 							$line->fk_unit,
-							$line->pu_ht_devise,
+							$line->multicurrency_subprice,
 							$line->ref_ext
 						);
 						if ($result < 0)
@@ -968,7 +968,7 @@ class Facture extends CommonInvoice
 						$_facrec->lines[$i]->situation_percent,
 						'',
 						$_facrec->lines[$i]->fk_unit,
-						$_facrec->lines[$i]->pu_ht_devise
+						$_facrec->lines[$i]->multicurrency_subprice
 					);
 
 					if ($result_insert < 0)
@@ -2971,7 +2971,7 @@ class Facture extends CommonInvoice
 	 *  @param      int         $situation_percent  Situation advance percentage
 	 *  @param      int         $fk_prev_id         Previous situation line id reference
 	 *  @param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
-	 *  @param		double		$pu_ht_devise		Unit price in currency
+	 *  @param		double		$pu_ht_devise		Unit price in foreign currency
 	 *  @param		string		$ref_ext		    External reference of the line
 	 *  @return    	int             				<0 if KO, Id of line if OK
 	 */
@@ -3136,8 +3136,8 @@ class Facture extends CommonInvoice
 			$this->line->tva_tx = $txtva;
 			$this->line->localtax1_tx = ($total_localtax1 ? $localtaxes_type[1] : 0);
 			$this->line->localtax2_tx = ($total_localtax2 ? $localtaxes_type[3] : 0);
-			$this->line->localtax1_type = isset($localtaxes_type[0]) ? $localtaxes_type[0] : '';
-			$this->line->localtax2_type = isset($localtaxes_type[2]) ? $localtaxes_type[2] : '';
+			$this->line->localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
+			$this->line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 
 			$this->line->total_ht = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_ht) : $total_ht); // For credit note and if qty is negative, total is negative
 			$this->line->total_ttc = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_ttc) : $total_ttc); // For credit note and if qty is negative, total is negative
@@ -3283,7 +3283,9 @@ class Facture extends CommonInvoice
 			$pu 			= price2num($pu);
 			$pu_ht_devise = price2num($pu_ht_devise);
 			$pa_ht			= price2num($pa_ht);
-			$txtva			= price2num($txtva);
+			if (!preg_match('/\((.*)\)/', $txtva)) {
+				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
+			}
 			$txlocaltax1	= price2num($txlocaltax1);
 			$txlocaltax2	= price2num($txlocaltax2);
 
@@ -3375,8 +3377,8 @@ class Facture extends CommonInvoice
 			$this->line->tva_tx = $txtva;
 			$this->line->localtax1_tx		= $txlocaltax1;
 			$this->line->localtax2_tx		= $txlocaltax2;
-			$this->line->localtax1_type		= $localtaxes_type[0];
-			$this->line->localtax2_type		= $localtaxes_type[2];
+			$this->line->localtax1_type		= empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
+			$this->line->localtax2_type		= empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 
 			$this->line->remise_percent		= $remise_percent;
 			$this->line->subprice			= ($this->type == self::TYPE_CREDIT_NOTE ?-abs($pu_ht) : $pu_ht); // For credit note, unit price always negative, always positive otherwise

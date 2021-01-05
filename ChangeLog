@@ -18,6 +18,7 @@ NEW: Accountancy - change menu disposition
 NEW: Accountancy - on transfers, select the periodicity by default
 NEW: Accountancy - Add export for Gestinum (v3 & v5)
 NEW: new currency rate editor
+NEW: Solve blocking feature. Can increase stock of a Kit without changing subproduct stock.
 NEW: add a widget to show the customers with outstanding limits reached
 NEW: add 2 rules for emailcollector: Message send/not sent from Dolibarr
 NEW: add a counter of number of words for pages in website module
@@ -56,7 +57,6 @@ NEW: add option TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT
 NEW: add option to define a default warehouse at user level
 NEW: add option to include products without alert in replenish
 NEW: add order by lastname and firstname by default in get sales representatives
-NEW: add param to not show links when output tags
 NEW: add PDF document templates for warehouses (list of stock)
 NEW: add a prospect status for the contact with managment of custom icon
 NEW: add public note on products ; this also partially fix the #14342
@@ -79,7 +79,7 @@ NEW: appearance tab in TakePOS with more visual parameters
 NEW: better currency rate editor
 NEW: can build vendor invoice from vendor orders
 NEW: can change a product in lines of a recurring invoice or contract
-NEW: can change size of logo on PDF documents
+NEW: can set the size of the logo on PDF documents
 NEW: can change VAT rate of all lines of a draft object in one step
 NEW: can define date range of validity of a login during creation
 NEW: can disable, from edit page, the whole web site
@@ -181,25 +181,20 @@ NEW: Add option "If the feature to manage kits of module Stock is used, show det
 
 For developers:
 ---------------
-NEW: add __MEMBER_TYPE__ substitution key
-NEW: add __TYPE__ substitution key
+NEW: add substitution key  __MEMBER_TYPE__ 
+NEW: add substitution key  __TYPE__ 
 NEW: add function dolButtonToOpenUrlInDialogPopup() to be able to open page into a popup
 NEW: show line number on intervention card (via MAIN_VIEW_LINE_NUMBER)
 NEW: Add some fields to link website page to an other object
 NEW: fill ECM src object fields in dol_add_file_process
 NEW: conf to allow to show the full tree in warehouse popup
-NEW: can use THEME_DARKMODEENABLED=2 for a preview of theme in dark mode
+NEW: can use parameter ?THEME_DARKMODEENABLED=2 for a preview of theme in dark mode
 NEW: can force the antivirus from conf file or autoprepend ini setup
 NEW: can add event to log into blockedlog module with a constant
 NEW: add property cssview when declaring fields of an object
-NEW: Can use dynamic code into the 'enabled' property of DAO fields
-NEW: allow to edit "demand reason" field though API
-NEW: fetch contact by email with REST API
+NEW: can use dynamic code into the 'enabled' property of DAO fields
 NEW: field ref_ext in llx_commandedet
-NEW: fields ref_ext for Attributes and Combinations
-NEW: get state by REST API
-NEW: get state dictionnary by REST API
-NEW: improve Product API for variant products
+NEW: field ref_ext for Attributes and Combinations
 NEW: OAuth SCOPE for Admin SDK
 NEW: retrieve discount from invoice from API
 NEW: standardizes API thirdparties by email like other object
@@ -212,6 +207,7 @@ NEW: add a message in error_log after detection of SQL or script injection
 NEW: add validation of MX domain for emails
 NEW: calculate the virtual stock in transverse mode ( not on getEntity('commande'), ... but on getEntity('stock') )
 NEW: Graphics can be horizontal bars
+NEW: add param to not show links when output tags
 
 APIs
 NEW: API get contacts list of a given order
@@ -220,6 +216,11 @@ NEW: API can update a payment
 NEW: API get member by thirdparty
 NEW: API get thirdparty by barcode
 NEW: API get users by email / login
+NEW: allow to edit field "demand reason" through API
+NEW: fetch contact by email with REST API
+NEW: get state by REST API
+NEW: get state dictionary by REST API
+NEW: improve Product API for product variants
 
 HOOKs
 NEW: Hook on propal card

@@ -227,7 +227,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		$db->commit();
 		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 	}
-} elseif ($valueid > 0) {
+} elseif ($action === 'update' && $valueid > 0) {
 	if ($prodcomb->fetch($valueid) < 0) {
 		dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
 		exit();

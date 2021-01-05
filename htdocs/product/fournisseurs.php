@@ -365,7 +365,7 @@ if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
 	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
 
-llxHeader('', $title, $helpurl);
+llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'classforhorizontalscrolloftabs');
 
 $form = new Form($db);
 
@@ -490,9 +490,9 @@ if ($id > 0 || $ref)
 				if ($rowid)
 				{
 					print '<input type="hidden" name="ref_fourn_old" value="'.$object->ref_supplier.'">';
-					print '<input class="flat" name="ref_fourn" size="12" value="'.$object->ref_supplier.'">';
+					print '<input class="flat width150" maxlength="30" name="ref_fourn" value="'.$object->ref_supplier.'">';
 				} else {
-					print '<input class="flat" name="ref_fourn" size="12" value="'.(GETPOST("ref_fourn") ?GETPOST("ref_fourn") : '').'">';
+					print '<input class="flat width150" maxlength="30" name="ref_fourn" value="'.(GETPOST("ref_fourn") ? GETPOST("ref_fourn") : '').'">';
 				}
 				print '</td>';
 				print '</tr>';
@@ -920,9 +920,9 @@ END;
 				$param = "&id=".$object->id;
 
 				print '<tr class="liste_titre">';
-				if (!empty($arrayfields['pfp.datec']['checked']))					print_liste_field_titre("AppliedPricesFrom", $_SERVER["PHP_SELF"], "pfp.datec", "", $param, "", $sortfield, $sortorder);
-				if (!empty($arrayfields['s.nom']['checked']))						print_liste_field_titre("Suppliers", $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
-				print_liste_field_titre("SupplierRef", $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder);
+				if (!empty($arrayfields['pfp.datec']['checked']))					print_liste_field_titre("AppliedPricesFrom", $_SERVER["PHP_SELF"], "pfp.datec", "", $param, "", $sortfield, $sortorder, '', '', 1);
+				if (!empty($arrayfields['s.nom']['checked']))						print_liste_field_titre("Suppliers", $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder, '', '', 1);
+				print_liste_field_titre("SupplierRef", $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder, '', '', 1);
 				if (!empty($arrayfields['pfp.fk_availability']['checked']))			print_liste_field_titre("Availability", $_SERVER["PHP_SELF"], "pfp.fk_availability", "", $param, "", $sortfield, $sortorder);
 				if (!empty($arrayfields['pfp.quantity']['checked']))				print_liste_field_titre("QtyMin", $_SERVER["PHP_SELF"], "pfp.quantity", "", $param, '', $sortfield, $sortorder, 'right ');
 				print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
@@ -937,7 +937,7 @@ END;
 				if (!empty($arrayfields['pfp.barcode']['checked']))					print_liste_field_titre("BarcodeValue", $_SERVER["PHP_SELF"], "pfp.barcode", "", $param, '', $sortfield, $sortorder, 'center ');
 				if (!empty($arrayfields['pfp.fk_barcode_type']['checked']))			print_liste_field_titre("BarcodeType", $_SERVER["PHP_SELF"], "pfp.fk_barcode_type", "", $param, '', $sortfield, $sortorder, 'center ');
 				if (!empty($arrayfields['pfp.packaging']['checked']))				print_liste_field_titre("PackagingForThisProduct", $_SERVER["PHP_SELF"], "pfp.packaging", "", $param, 'align="center"', $sortfield, $sortorder);
-				if (!empty($arrayfields['pfp.tms']['checked']))						print_liste_field_titre("DateModification", $_SERVER["PHP_SELF"], "pfp.tms", "", $param, '', $sortfield, $sortorder, 'right ');
+				if (!empty($arrayfields['pfp.tms']['checked']))						print_liste_field_titre("DateModification", $_SERVER["PHP_SELF"], "pfp.tms", "", $param, '', $sortfield, $sortorder, 'right ', '', 1);
 
 				// fetch optionals attributes and labels
 				$extrafields->fetch_name_optionals_label("product_fournisseur_price");
@@ -976,7 +976,7 @@ END;
 
 						// Supplier
 						if (!empty($arrayfields['s.nom']['checked'])) {
-							print '<td>'.$productfourn->getSocNomUrl(1, 'supplier').'</td>';
+							print '<td class="tdoverflowmax200">'.$productfourn->getSocNomUrl(1, 'supplier').'</td>';
 						}
 
 						// Supplier ref

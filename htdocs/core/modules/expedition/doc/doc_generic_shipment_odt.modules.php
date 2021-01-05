@@ -169,10 +169,10 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 		}
 		if ($nbofiles)
 		{
-   			$texte .= '<div id="div_'.get_class($this).'" class="hidden">';
-   			foreach ($listoffiles as $file)
-   			{
-				$texte .= $file['name'].'<br>';
+   			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
+   			// Show list of found files
+   			foreach ($listoffiles as $file) {
+   				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=shipments/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a><br>';
    			}
    			$texte .= '</div>';
 		}

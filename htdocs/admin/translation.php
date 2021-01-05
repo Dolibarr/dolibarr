@@ -190,7 +190,7 @@ $formadmin = new FormAdmin($db);
 $wikihelp = 'EN:Setup Translation|FR:Paramétrage traduction|ES:Configuración';
 llxHeader('', $langs->trans("Setup"), $wikihelp);
 
-$param = '&mode='.$mode;
+$param = '&mode='.urlencode($mode);
 
 $enabledisablehtml = '';
 $enabledisablehtml .= $langs->trans("EnableOverwriteTranslation").' ';
@@ -246,7 +246,7 @@ if ($mode == 'overwrite')
 	print '<div class="justify"><span class="opacitymedium">';
 	print img_info().' '.$langs->trans("SomeTranslationAreUncomplete");
 	$urlwikitranslatordoc = 'https://wiki.dolibarr.org/index.php/Translator_documentation';
-	print ' ('.$langs->trans("SeeAlso", '<a href="'.$urlwikitranslatordoc.'" target="_blank">'.$langs->trans("Here").'</a>').')<br>';
+	print ' ('.str_replace('{s1}', '<a href="'.$urlwikitranslatordoc.'" target="_blank">'.$langs->trans("Here").'</a>', $langs->trans("SeeAlso", '{s1}')).')<br>';
 	print $langs->trans("TranslationOverwriteDesc", $langs->transnoentitiesnoconv("Language"), $langs->transnoentitiesnoconv("Key"), $langs->transnoentitiesnoconv("NewTranslationStringToShow"))."\n";
 	print ' ('.$langs->trans("TranslationOverwriteDesc2").').'."<br>\n";
 	print '</span></div>';
@@ -338,16 +338,15 @@ if ($mode == 'overwrite')
 			print '</td>';
 
 			print '<td class="center">';
-			if ($action == 'edit' && $obj->rowid == GETPOST('rowid', 'int'))
-			{
+			if ($action == 'edit' && $obj->rowid == GETPOST('rowid', 'int')) {
 				print '<input type="hidden" class="button" name="rowid" value="'.$obj->rowid.'">';
 				print '<input type="submit" class="button buttongen button-save" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 				print ' &nbsp; ';
 				print '<input type="submit" class="button buttongen button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 			} else {
-				print '<a class="reposition editfielda paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=edit'.((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_edit().'</a>';
+				print '<a class="reposition editfielda paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.urlencode($mode).'&action=edit'.((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_edit().'</a>';
 				print ' &nbsp; ';
-				print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=delete&token='.newToken().((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_delete().'</a>';
+				print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.urlencode($mode).'&action=delete&token='.newToken().((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_delete().'</a>';
 			}
 			print '</td>';
 
@@ -493,14 +492,12 @@ if ($mode == 'searchkey')
 		print '<tr class="oddeven"><td>'.$langcode.'</td><td>'.$key.'</td><td>';
 		print dol_escape_htmltag($val);
 		print '</td><td class="right nowraponall">';
-		if (!empty($newlangfileonly->tab_translate[$key]))
-		{
-			if ($val != $newlangfileonly->tab_translate[$key])
-			{
+		if (!empty($newlangfileonly->tab_translate[$key])) {
+			if ($val != $newlangfileonly->tab_translate[$key]) {
 				// retrieve rowid
 				$sql = "SELECT rowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."overwrite_trans";
-				$sql .= " WHERE transkey = '".$key."'";
+				$sql .= " WHERE transkey = '".$db->escape($key)."'";
 				$sql .= " AND entity IN (".getEntity('overwrite_trans').")";
 				dol_syslog("translation::select from table", LOG_DEBUG);
 				$result = $db->query($sql);
@@ -508,16 +505,15 @@ if ($mode == 'searchkey')
 				{
 					$obj = $db->fetch_object($result);
 				}
-				print '<a class="editfielda reposition paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$conf->entity.'&action=edit">'.img_edit().'</a>';
+				print '<a class="editfielda reposition marginrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$conf->entity.'&mode=overwrite&action=edit">'.img_edit().'</a>';
 				print ' ';
-				print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$conf->entity.'&action=delete&token='.newToken().'">'.img_delete().'</a>';
+				print '<a class="marginleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$conf->entity.'&mode='.urlencode($mode).'&action=delete&mode='.urlencode($mode).'&token='.newToken().'">'.img_delete().'</a>';
 				print '&nbsp;&nbsp;';
 				$htmltext = $langs->trans("OriginalValueWas", '<i>'.$newlangfileonly->tab_translate[$key].'</i>');
 				print $form->textwithpicto('', $htmltext, 1, 'info');
-			} elseif (!empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
-			{
+			} elseif (!empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) {
 				//print $key.'-'.$val;
-				print '<a class="reposition paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=overwrite&amp;langcode='.$langcode.'&amp;transkey='.$key.'">'.img_edit_add($langs->trans("Overwrite")).'</a>';
+				print '<a class="reposition paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=overwrite&langcode='.urlencode($langcode).'&transkey='.urlencode($key).'">'.img_edit_add($langs->trans("Overwrite")).'</a>';
 			}
 
 			if (!empty($conf->global->MAIN_FEATURES_LEVEL))

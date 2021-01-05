@@ -110,15 +110,10 @@ $arrayfields = array(
 	'e.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 	'e.billed'=>array('label'=>$langs->trans("Billed"), 'checked'=>1, 'position'=>1000, 'enabled'=>(!empty($conf->global->WORKFLOW_BILL_ON_RECEPTION)))
 );
+
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -510,7 +505,7 @@ if ($resql)
 	if ($search_town)  $param .= "&amp;search_town=".urlencode($search_town);
 	if ($search_zip)  $param .= "&amp;search_zip=".urlencode($search_zip);
 	if ($search_state) $param .= "&amp;search_state=".urlencode($search_state);
-	if ($search_status) $param .= "&amp;search_status=".urlencode($search_status);
+	if ($search_status != '') $param .= "&amp;search_status=".urlencode($search_status);
 	if ($search_country) $param .= "&amp;search_country=".urlencode($search_country);
 	if ($search_type_thirdparty) $param .= "&amp;search_type_thirdparty=".urlencode($search_type_thirdparty);
 	if ($search_ref_supplier) $param .= "&amp;search_ref_supplier=".urlencode($search_ref_supplier);

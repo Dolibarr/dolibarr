@@ -35,7 +35,7 @@
 	--oddevencolor: #202020;
 	--colorboxstatsborder: #e0e0e0;
 	--dolgraphbg: rgba(255,255,255,0);
-	--fieldrequiredcolor: #804000;
+	--fieldrequiredcolor: #400030;
 	--colortextbacktab: #<?php print $colortextbacktab; ?>;
 	--colorboxiconbg: #eee;
 	--refidnocolor:#444;
@@ -136,7 +136,7 @@ select.vmenusearchselectcombo {
 table.liste th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), table.liste td.wrapcolumntitle.liste_titre:not(.maxwidthsearch) {
     overflow: hidden;
     white-space: nowrap;
-    max-width: 120px;
+    max-width: 100px;
     text-overflow: ellipsis;
 }
 .liste_titre input[name=month_date_when], .liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
@@ -319,10 +319,13 @@ input.buttonpaymentstripe {
 	max-width: 320px;
 }
 
-a.buttonticket {
+a.butStatus {
 	padding-left: 5px;
 	padding-right: 5px;
-    /* height: 40px; */
+    background-color: transparent;
+    color: var(--colortext) !important;
+    border: 2px solid var( --butactionbg);
+    margin: 0 0.45em !important;
 }
 
 /* Used by timesheets */
@@ -766,7 +769,8 @@ span.fa.fa-plus-circle.paddingleft {
     padding-bottom: 2px;
 }
 
-.fa-toggle-on, .fa-toggle-off { font-size: 2em; }
+.size15x { font-size: 1.5em !important; }
+.fa-toggle-on, .fa-toggle-off, .size2x { font-size: 2em; }
 .websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
 .asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off,
 .tdwebsitesearchresult .fa-toggle-on, .tdwebsitesearchresult .fa-toggle-off
@@ -1498,7 +1502,7 @@ select.widthcentpercentminusxx, input.widthcentpercentminusxx {
 }
 .linkobject { cursor: pointer; }
 
-table.tableforfield tr>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
+table.tableforfield tr>td:first-of-type, tr.trforfield>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
 	color: var(--tableforfieldcolor);
 }
 
@@ -3695,8 +3699,8 @@ table.noborder.paymenttable {
 	box-shadow: 0px 0px 0px #DDD !important;
 }
 .shadow {
-	-webkit-box-shadow: 2px 2px 5px #CCC !important;
-	box-shadow: 2px 2px 5px #CCC !important;
+	-webkit-box-shadow: 1px 1px 7px #CCC !important;
+	box-shadow: 1px 1px 7px #CCC !important;
 }
 
 div.tabBar .noborder {
@@ -6759,6 +6763,24 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 	}
 }
 
+@media only screen and (max-width: 320px)
+{
+	.dropdown dd ul {
+		max-width: 270px;	/* must always be 50 slower than width */
+	}
+}
+@media only screen and (max-width: 300px)
+{
+	.dropdown dd ul {
+		max-width: 250px;
+	}
+}
+@media only screen and (max-width: 280px)
+{
+	.dropdown dd ul {
+		max-width: 230px;
+	}
+}
 
 
 <?php

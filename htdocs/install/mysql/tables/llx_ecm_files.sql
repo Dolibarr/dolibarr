@@ -38,5 +38,7 @@ CREATE TABLE llx_ecm_files
   tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_c			integer,
   fk_user_m			integer,
+  note_private		text,
+  note_public		text,
   acl				text							-- for future permission 'per file'
 ) ENGINE=innodb;

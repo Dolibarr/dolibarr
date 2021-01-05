@@ -2433,22 +2433,22 @@ if (empty($reshook))
 	{
 		$object->fetch($id, '', '', '', true);
 
-		if ($object->statut == Facture::STATUS_VALIDATED
-			&& $object->type == Facture::TYPE_SITUATION
-			&& $usercancreate
-			&& !$objectidnext
-			&& $object->is_last_in_cycle()
-			&& $usercanunvalidate
-			)
-		{
-			$outingError = 0;
-			$newCycle = $object->newCycle(); // we need to keep the "situation behavior" so we place it on a new situation cycle
-			if ($newCycle > 1)
-			{
-				// Search credit notes
-				$lastCycle = $object->situation_cycle_ref;
-				$lastSituationCounter = $object->situation_counter;
-				$linkedCreditNotesList = array();
+	    if (in_array($object->statut, array(Facture::STATUS_CLOSED, Facture::STATUS_VALIDATED))
+	        && $object->type == Facture::TYPE_SITUATION
+	        && $usercancreate
+	        && !$objectidnext
+	        && $object->is_last_in_cycle()
+	    	&& $usercanunvalidate
+	        )
+	    {
+	        $outingError = 0;
+	        $newCycle = $object->newCycle(); // we need to keep the "situation behavior" so we place it on a new situation cycle
+	        if ($newCycle > 1)
+	        {
+	            // Search credit notes
+	            $lastCycle = $object->situation_cycle_ref;
+	            $lastSituationCounter = $object->situation_counter;
+	            $linkedCreditNotesList = array();
 
 				if (count($object->tab_next_situation_invoice) > 0) {
 					foreach ($object->tab_next_situation_invoice as $next_invoice) {
@@ -3534,7 +3534,7 @@ if ($action == 'create')
 	print $form->textwithpicto($langs->trans('NotePublic'), $htmltext);
 	print '</td>';
 	print '<td valign="top" colspan="2">';
-	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
 	print $doleditor->Create(1);
 
 	// Private note
@@ -3545,7 +3545,7 @@ if ($action == 'create')
 		print $form->textwithpicto($langs->trans('NotePrivate'), $htmltext);
 		print '</td>';
 		print '<td valign="top" colspan="2">';
-		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		// print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'.</textarea>
 		print '</td></tr>';
@@ -3764,18 +3764,18 @@ if ($action == 'create')
 
 	// Confirmation to remove invoice from cycle
 	if ($action == 'situationout') {
-		$text = $langs->trans('ConfirmRemoveSituationFromCycle', $object->ref);
-		$label = $langs->trans("ConfirmOuting");
-		$formquestion = array();
-		// remove situation from cycle
-		if ($object->statut == Facture::STATUS_VALIDATED
-			&& $usercancreate
-			&& !$objectidnext
-			&& $object->is_last_in_cycle()
-			&& $usercanunvalidate
-			)
-		{
-			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id, $label, $text, 'confirm_situationout', $formquestion, "yes", 1);
+	    $text = $langs->trans('ConfirmRemoveSituationFromCycle', $object->ref);
+	    $label = $langs->trans("ConfirmOuting");
+	    $formquestion = array();
+	    // remove situation from cycle
+	    if (in_array($object->statut, array(Facture::STATUS_CLOSED, Facture::STATUS_VALIDATED))
+	        && $usercancreate
+	        && !$objectidnext
+	        && $object->is_last_in_cycle()
+	    	&& $usercanunvalidate
+	        )
+	    {
+	        $formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id, $label, $text, 'confirm_situationout', $formquestion, "yes", 1);
 		}
 	}
 
@@ -4738,7 +4738,15 @@ if ($action == 'create')
 				print '<tr class="oddeven"><td>';
 				print $paymentstatic->getNomUrl(1);
 				print '</td>';
-				print '<td>'.dol_print_date($db->jdate($objp->dp), 'dayhour').'</td>';
+				print '<td>';
+				$dateofpayment = $db->jdate($objp->dp);
+				$tmparray = dol_getdate($dateofpayment);
+				if ($tmparray['seconds'] == 0 && $tmparray['minutes'] == 0 && ($tmparray['hours'] == 0 || $tmparray['hours'] == 12)) {	// We set hours to 0:00 or 12:00 because we don't know it
+					print dol_print_date($dateofpayment, 'day');
+				} else {	// Hours was set to real date of payment (special case for POS for example)
+					print dol_print_date($dateofpayment, 'dayhour', 'tzuser');
+				}
+				print '</td>';
 				$label = ($langs->trans("PaymentType".$objp->payment_code) != ("PaymentType".$objp->payment_code)) ? $langs->trans("PaymentType".$objp->payment_code) : $objp->payment_label;
 				print '<td>'.$label.' '.$objp->num_payment.'</td>';
 				if (!empty($conf->banque->enabled))
@@ -5278,12 +5286,12 @@ if ($action == 'create')
 			}
 
 			// Remove situation from cycle
-			if ($object->statut > Facture::STATUS_DRAFT
-				&& $object->type == Facture::TYPE_SITUATION
-				&& $usercancreate
-				&& !$objectidnext
-				&& $object->situation_counter > 1
-				&& $object->is_last_in_cycle()
+			if (in_array($object->statut, array(Facture::STATUS_CLOSED, Facture::STATUS_VALIDATED))
+			    && $object->type == Facture::TYPE_SITUATION
+			    && $usercancreate
+			    && !$objectidnext
+			    && $object->situation_counter > 1
+			    && $object->is_last_in_cycle()
 				&& $usercanunvalidate
 				)
 			{

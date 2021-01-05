@@ -1332,13 +1332,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				}
 
 				// Closure
-				if (!empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 2) {
-					$newmenu->add("/accountancy/closure/index.php?mainmenu=accountancy&amp;leftmenu=accountancy_closure", $langs->trans("MenuAccountancyClosure"), 1, $user->rights->accounting->fiscalyear->write, '', $mainmenu, 'closure');
-
-					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_closure/', $leftmenu)) {
-						$newmenu->add("/accountancy/closure/validate.php?leftmenu=accountancy_closure", $langs->trans("MenuAccountancyValidationMovements"), 2, $user->rights->accounting->fiscalyear->write);
-					}
-				}
+				$newmenu->add("/accountancy/closure/index.php?mainmenu=accountancy&amp;leftmenu=accountancy_closure", $langs->trans("MenuAccountancyClosure"), 1, $user->rights->accounting->fiscalyear->write, '', $mainmenu, 'closure');
 
 				// Reports
 				$newmenu->add("/accountancy/index.php?leftmenu=accountancy_report", $langs->trans("Reportings"), 1, $user->rights->accounting->comptarapport->lire, '', $mainmenu, 'ca');
