@@ -53,7 +53,7 @@
 		"ext-gd" : "Image manipulation (Required but maybe built-in PHP)",
 		"ext-imagick" : "Generation of thumbs from PDF",
 		"ext-mcrypt" : "(Required but maybe built-in PHP)",
-		"ext-openssl" : "Secure connections (Emails, SOAP)",
+		"ext-openssl" : "Secure connections (Emails, SOAP\u2026)",
 		"ext-mbstring" : "Handle non UTF-8 characters",
 		"ext-soap" : "Native SOAP",
 		"ext-zip" : "ODT, Excel and file compression support",
