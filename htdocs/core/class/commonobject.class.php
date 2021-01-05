@@ -6973,7 +6973,7 @@ abstract class CommonObject
 
 						if (!empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && (($e % 2) == 1)) {
 							$out .= ($display_type=='card' ? '</tr>' : '</div>');
-						} else  {
+						} else {
 							$out .= ($display_type=='card' ? '</tr>' : '</div>');
 						}
 						$e++;
