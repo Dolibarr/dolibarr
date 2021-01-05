@@ -30,9 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/holiday/modules_holiday.php';
 class mod_holiday_madonna extends ModelNumRefHolidays
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr';
 
 	public $prefix = 'HL';
@@ -65,11 +65,11 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	 *
 	 *	@return     string      text description
 	 */
-    public function info()
-    {
-    	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
-    }
+	public function info()
+	{
+		global $langs;
+	  	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+	}
 
 
 	/**
@@ -139,9 +139,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 			$obj = $db->fetch_object($resql);
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
-		}
-		else
-		{
+		} else {
 			dol_syslog("mod_holiday_madonna::getNextValue", LOG_DEBUG);
 			return -1;
 		}
@@ -157,7 +155,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return next value
 	 *
@@ -167,7 +165,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	 */
 	public function holiday_get_num($fuser, $objforref)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		return $this->getNextValue($fuser, $objforref);
 	}
 }

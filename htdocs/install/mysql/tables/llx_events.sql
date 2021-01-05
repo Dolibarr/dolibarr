@@ -24,7 +24,7 @@
 create table llx_events
 (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
-  tms            timestamp,                   -- date creation/modification
+  tms            timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,                   -- last modification date
   type           varchar(32)  NOT NULL,       -- action type
   entity         integer DEFAULT 1 NOT NULL,	-- multi company id
   prefix_session varchar(255) NULL,				  -- prefix of session, obtained with dol_getprefix

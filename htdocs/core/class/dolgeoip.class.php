@@ -33,7 +33,7 @@
  */
 class DolGeoIP
 {
-    public $gi;
+	public $gi;
 
 	/**
 	 * Constructor
@@ -50,21 +50,19 @@ class DolGeoIP
 
 		if ($type == 'country')
 		{
-		    // geoip may have been already included with PEAR
+			// geoip may have been already included with PEAR
 			if ($geoipversion == '2' || ($geoipversion != 'php' && !function_exists('geoip_country_code_by_name')))
-		    {
-		    	require_once DOL_DOCUMENT_ROOT.'/includes/geoip2/geoip2.phar';
-		    }
-		}
-		elseif ($type == 'city')
+			{
+				require_once DOL_DOCUMENT_ROOT.'/includes/geoip2/geoip2.phar';
+			}
+		} elseif ($type == 'city')
 		{
-		    // geoip may have been already included with PEAR
+			// geoip may have been already included with PEAR
 			if ($geoipversion == '2' || ($geoipversion != 'php' && !function_exists('geoip_country_code_by_name')))
-		    {
-		    	require_once DOL_DOCUMENT_ROOT.'/includes/geoip2/geoip2.phar';
-		    }
-		}
-		else { print 'ErrorBadParameterInConstructor'; return 0; }
+			{
+				require_once DOL_DOCUMENT_ROOT.'/includes/geoip2/geoip2.phar';
+			}
+		} else { print 'ErrorBadParameterInConstructor'; return 0; }
 
 		// Here, function exists (embedded into PHP or exists because we made include)
 		if (empty($type) || empty($datfile))
@@ -85,23 +83,22 @@ class DolGeoIP
 		{
 			try {
 				$this->gi = new GeoIp2\Database\Reader($datfile); // '/usr/local/share/GeoIP/GeoIP2-City.mmdb'
-			}
-			catch (Exception $e)
+			} catch (Exception $e)
 			{
 				$this->error = $e->getMessage();
 				dol_syslog('DolGeoIP '.$this->errorlabel, LOG_ERR);
 				return 0;
 			}
-		}
-		elseif (function_exists('geoip_open'))
+		} elseif (function_exists('geoip_open'))
 		{
 			$this->gi = geoip_open($datfile, GEOIP_STANDARD);
 		}
-		else
-		{
-		    $this->gi = 'NOGI'; // We are using embedded php geoip functions
-		    //print 'function_exists(geoip_country_code_by_name))='.function_exists('geoip_country_code_by_name');
-		    //print geoip_database_info();
+		elseif (function_exists('geoip_country_code_by_name')) {
+			$this->gi = 'NOGI'; // We are using embedded php geoip functions
+			//print 'function_exists(geoip_country_code_by_name))='.function_exists('geoip_country_code_by_name');
+			//print geoip_database_info();
+		} else {
+			$this->gi = ''; // For avoid error
 		}
 	}
 
@@ -124,11 +121,9 @@ class DolGeoIP
 		}
 		if ($this->gi == 'NOGI')
 		{
-		    // geoip_country_code_by_addr does not exists
-    		return strtolower(geoip_country_code_by_name($ip));
-		}
-		else
-		{
+			// geoip_country_code_by_addr does not exists
+			return strtolower(geoip_country_code_by_name($ip));
+		} else {
 			if (preg_match('/^[0-9]+.[0-9]+\.[0-9]+\.[0-9]+/', $ip))
 			{
 				if ($geoipversion == '2')
@@ -136,33 +131,25 @@ class DolGeoIP
 					try {
 						$record = $this->gi->country($ip);
 						return strtolower($record->country->isoCode);
-					}
-					catch (Exception $e) {
+					} catch (Exception $e) {
 						//return $e->getMessage();
 						return '';
 					}
+				} else {
+					if (!function_exists('geoip_country_code_by_addr')) return strtolower(geoip_country_code_by_name($this->gi, $ip));
+					return strtolower(geoip_country_code_by_addr($this->gi, $ip));
 				}
-				else
-				{
-			    	if (!function_exists('geoip_country_code_by_addr')) return strtolower(geoip_country_code_by_name($this->gi, $ip));
-			    	return strtolower(geoip_country_code_by_addr($this->gi, $ip));
-				}
-			}
-			else
-			{
+			} else {
 				if ($geoipversion == '2')
 				{
 					try {
 						$record = $this->gi->country($ip);
 						return strtolower($record->country->isoCode);
-					}
-					catch (Exception $e) {
+					} catch (Exception $e) {
 						//return $e->getMessage();
 						return '';
 					}
-				}
-				else
-				{
+				} else {
 					if (!function_exists('geoip_country_code_by_addr_v6')) return strtolower(geoip_country_code_by_name_v6($this->gi, $ip));
 					return strtolower(geoip_country_code_by_addr_v6($this->gi, $ip));
 				}
@@ -193,49 +180,46 @@ class DolGeoIP
 			try {
 				$record = $this->gi->country($name);
 				return $record->country->isoCode;
-			}
-			catch (Exception $e) {
+			} catch (Exception $e) {
 				//return $e->getMessage();
 				return '';
 			}
-		}
-		else
-		{
+		} else {
 			return geoip_country_code_by_name($this->gi, $name);
 		}
 	}
 
-    /**
-     * Return verion of data file
-     *
-     * @return  string      Version of datafile
-     */
-    public function getVersion()
-    {
-    	global $conf;
+	/**
+	 * Return verion of data file
+	 *
+	 * @return  string      Version of datafile
+	 */
+	public function getVersion()
+	{
+		global $conf;
 
-    	$geoipversion = '2'; // 'php', or '2'
-    	if (!empty($conf->global->GEOIP_VERSION)) $geoipversion = $conf->global->GEOIP_VERSION;
+		$geoipversion = '2'; // 'php', or '2'
+		if (!empty($conf->global->GEOIP_VERSION)) $geoipversion = $conf->global->GEOIP_VERSION;
 
-    	if ($geoipversion == 'php')
-    	{
-        	if ($this->gi == 'NOGI') return geoip_database_info();
-        	else return 'geoip_database_info() function not available';
-    	}
+		if ($geoipversion == 'php')
+		{
+			if ($this->gi == 'NOGI') return geoip_database_info();
+			else return 'geoip_database_info() function not available';
+		}
 
-    	return 'Not available (not using PHP internal geo functions - We are using embedded Geoip v'.$geoipversion.')';
-    }
+		return 'Not available (not using PHP internal geo functions - We are using embedded Geoip v'.$geoipversion.')';
+	}
 
-    /**
-     * Close geoip object
-     *
-     * @return	void
-     */
-    public function close()
-    {
-        if (function_exists('geoip_close')) {
-            // With some geoip with PEAR, geoip_close function may not exists
-            geoip_close($this->gi);
-        }
-    }
+	/**
+	 * Close geoip object
+	 *
+	 * @return	void
+	 */
+	public function close()
+	{
+		if (function_exists('geoip_close')) {
+			// With some geoip with PEAR, geoip_close function may not exists
+			geoip_close($this->gi);
+		}
+	}
 }

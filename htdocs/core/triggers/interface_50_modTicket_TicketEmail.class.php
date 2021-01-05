@@ -31,11 +31,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 class InterfaceTicketEmail extends DolibarrTriggers
 {
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	/**
 	 *   Constructor
 	 *
 	 *   @param DoliDB $db Database handler
@@ -47,51 +42,8 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "ticket";
 		$this->description = "Triggers of the module ticket to send notifications to internal users and to third-parties";
-		$this->version = 'dolibarr'; // 'development', 'experimental', 'dolibarr' or version
+		$this->version = self::VERSION_DOLIBARR; // 'development', 'experimental', 'dolibarr' or version
 		$this->picto = 'ticket';
-	}
-
-	/**
-	 *   Return name of trigger file
-	 *
-	 *   @return string      Name of trigger file
-	 */
-	public function getName()
-	{
-		return $this->name;
-	}
-
-	/**
-	 *   Return description of trigger file
-	 *
-	 *   @return string      Description of trigger file
-	 */
-	public function getDesc()
-	{
-		return $this->description;
-	}
-
-	/**
-	 *   Return version of trigger file
-	 *
-	 *   @return string      Version of trigger file
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("Development");
-		} elseif ($this->version == 'experimental') {
-			return $langs->trans("Experimental");
-		} elseif ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		} elseif ($this->version) {
-			return $this->version;
-		} else {
-			return $langs->trans("Unknown");
-		}
 	}
 
 	/**
@@ -115,16 +67,13 @@ class InterfaceTicketEmail extends DolibarrTriggers
 			case 'TICKET_ASSIGNED':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-				if ($object->fk_user_assign > 0 && $object->fk_user_assign != $user->id)
-				{
+				if ($object->fk_user_assign > 0 && $object->fk_user_assign != $user->id) {
 					$userstat = new User($this->db);
 					$res = $userstat->fetch($object->fk_user_assign);
-					if ($res > 0)
-					{
+					if ($res > 0) {
 						// Send email to notification email
 
-						if (empty($conf->global->TICKET_DISABLE_ALL_MAILS))
-						{
+						if (empty($conf->global->TICKET_DISABLE_ALL_MAILS)) {
 							// Init to avoid errors
 							$filepath = array();
 							$filename = array();
@@ -170,9 +119,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						}
 
 						$ok = 1;
-					}
-					else
-					{
+					} else {
 						$this->error = $userstat->error;
 						$this->errors = $userstat->errors;
 					}
@@ -184,15 +131,11 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 				$langs->load('ticket');
 
-				$object->fetch('', $object->track_id); // Should be useless
-
-
 				// Send email to notification email
-				$sendto = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
-				if (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) && empty($object->context['disableticketemail']))
-				{
-					if ($sendto)
-					{
+				if (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) && empty($object->context['disableticketemail'])) {
+					$sendto = empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) ? '' : $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+
+					if ($sendto) {
 						// Init to avoid errors
 						$filepath = array();
 						$filename = array();
@@ -200,16 +143,19 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 						/* Send email to admin */
 						$subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubjectAdmin');
-						$message_admin = $langs->transnoentities('TicketNewEmailBodyAdmin', $object->track_id)."\n\n";
+						$message_admin = $langs->transnoentities('TicketNewEmailBodyAdmin', $object->track_id).'<br><br>';
 						$message_admin .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
-						$message_admin .= '<li>'.$langs->trans('Type').' : '.$object->type_label.'</li>';
-						$message_admin .= '<li>'.$langs->trans('Category').' : '.$object->category_label.'</li>';
-						$message_admin .= '<li>'.$langs->trans('Severity').' : '.$object->severity_label.'</li>';
+						$message_admin .= '<li>'.$langs->trans('Type').' : '.$langs->getLabelFromKey($this->db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code).'</li>';
+						$message_admin .= '<li>'.$langs->trans('Category').' : '.$langs->getLabelFromKey($this->db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code).'</li>';
+						$message_admin .= '<li>'.$langs->trans('Severity').' : '.$langs->getLabelFromKey($this->db, 'TicketSeverityShort'.$object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code).'</li>';
 						$message_admin .= '<li>'.$langs->trans('From').' : '.($object->email_from ? $object->email_from : ($object->fk_user_create > 0 ? $langs->trans('Internal') : '')).'</li>';
 						// Extrafields
+						$extraFields = new ExtraFields($this->db);
+						$extraFields->fetch_name_optionals_label($object->table_element);
 						if (is_array($object->array_options) && count($object->array_options) > 0) {
 							foreach ($object->array_options as $key => $value) {
-								  $message_admin .= '<li>'.$langs->trans($key).' : '.$value.'</li>';
+								$key = substr($key, 8); // remove "options_"
+								$message_admin .= '<li>'.$langs->trans($extraFields->attributes[$object->element]['label'][$key]).' : '.$extraFields->showOutputField($key, $value).'</li>';
 							}
 						}
 						$message_admin .= '</ul>';
@@ -219,13 +165,15 @@ class InterfaceTicketEmail extends DolibarrTriggers
 								  $message_admin .= '<p>'.$langs->trans('Company').' : '.$object->thirdparty->name.'</p>';
 						}
 
-						$message_admin .= '<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
+						$message = $object->message;
+						if (!dol_textishtml($message)) {
+							$message = dol_nl2br($message);
+						}
+						$message_admin .= '<p>'.$langs->trans('Message').' : <br>'.$message.'</p>';
 						$message_admin .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
 
 						$from = $conf->global->MAIN_INFO_SOCIETE_NOM.'<'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
 						$replyto = $from;
-
-						$message_admin = dol_nl2br($message_admin);
 
 						$trackid = 'tic'.$object->id;
 
@@ -234,7 +182,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 							$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 						}
 						include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-						$mailfile = new CMailFile($subject, $sendto, $from, $message_admin, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1);
+						$mailfile = new CMailFile($subject, $sendto, $from, $message_admin, $filepath, $mimetype, $filename, '', '', 0, -1, '', '', $trackid, '', 'ticket');
 						if ($mailfile->error) {
 							dol_syslog($mailfile->error, LOG_DEBUG);
 						} else {
@@ -248,8 +196,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 				// Send email to customer
 
-				if (empty($conf->global->TICKET_DISABLE_CUSTOMER_MAILS) && empty($object->context['disableticketemail']) && $object->notify_tiers_at_create)
-				{
+				if (empty($conf->global->TICKET_DISABLE_CUSTOMER_MAILS) && empty($object->context['disableticketemail']) && $object->notify_tiers_at_create) {
 					$sendto = '';
 					if (empty($user->socid) && empty($user->email)) {
 							  $object->fetch_thirdparty();
@@ -265,23 +212,20 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						$mimetype = array();
 
 						$subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubjectCustomer');
-						$message_customer = $langs->transnoentities('TicketNewEmailBodyCustomer', $object->track_id)."\n\n";
+						$message_customer = $langs->transnoentities('TicketNewEmailBodyCustomer', $object->track_id).'<br><br>';
 						$message_customer .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
-						$message_customer .= '<li>'.$langs->trans('Type').' : '.$object->type_label.'</li>';
-						$message_customer .= '<li>'.$langs->trans('Category').' : '.$object->category_label.'</li>';
-						$message_customer .= '<li>'.$langs->trans('Severity').' : '.$object->severity_label.'</li>';
+						$message_customer .= '<li>'.$langs->trans('Type').' : '.$langs->getLabelFromKey($this->db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code).'</li>';
+						$message_customer .= '<li>'.$langs->trans('Category').' : '.$langs->getLabelFromKey($this->db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code).'</li>';
+						$message_customer .= '<li>'.$langs->trans('Severity').' : '.$langs->getLabelFromKey($this->db, 'TicketSeverityShort'.$object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code).'</li>';
 
 						// Extrafields
-						foreach ($this->attributes[$object->table_element]['label'] as $key => $value)
-						{
+						foreach ($this->attributes[$object->table_element]['label'] as $key => $value) {
 							$enabled = 1;
-							if ($enabled && isset($this->attributes[$object->table_element]['list'][$key]))
-							{
+							if ($enabled && isset($this->attributes[$object->table_element]['list'][$key])) {
 								$enabled = dol_eval($this->attributes[$object->table_element]['list'][$key], 1);
 							}
 							$perms = 1;
-							if ($perms && isset($this->attributes[$object->table_element]['perms'][$key]))
-							{
+							if ($perms && isset($this->attributes[$object->table_element]['perms'][$key])) {
 								$perms = dol_eval($this->attributes[$object->table_element]['perms'][$key], 1);
 							}
 
@@ -293,15 +237,18 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						}
 
 						$message_customer .= '</ul>';
-						$message_customer .= '<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
+
+						$message = $object->message;
+						if (!dol_textishtml($message)) {
+							$message = dol_nl2br($message);
+						}
+						$message_customer .= '<p>'.$langs->trans('Message').' : <br>'.$message.'</p>';
 						$url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE.'/' : dol_buildpath('/public/ticket/view.php', 2)).'?track_id='.$object->track_id;
 						$message_customer .= '<p>'.$langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer').' : <a href="'.$url_public_ticket.'">'.$url_public_ticket.'</a></p>';
 						$message_customer .= '<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmail').'</p>';
 
-						$from = $conf->global->MAIN_INFO_SOCIETE_NOM.'<'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
+						$from = (empty($conf->global->MAIN_INFO_SOCIETE_NOM) ? '' : $conf->global->MAIN_INFO_SOCIETE_NOM.' ').'<'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
 						$replyto = $from;
-
-						$message_customer = dol_nl2br($message_customer);
 
 						$trackid = 'tic'.$object->id;
 
@@ -310,7 +257,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 							$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 						}
 						include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-						$mailfile = new CMailFile($subject, $sendto, $from, $message_customer, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', $trackid);
+						$mailfile = new CMailFile($subject, $sendto, $from, $message_customer, $filepath, $mimetype, $filename, '', '', 0, -1, '', '', $trackid, '', 'ticket');
 						if ($mailfile->error) {
 							dol_syslog($mailfile->error, LOG_DEBUG);
 						} else {

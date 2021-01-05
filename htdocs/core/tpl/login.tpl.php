@@ -20,10 +20,12 @@
 // Caller can also set 	$morelogincontent = array(['options']=>array('js'=>..., 'table'=>...);
 
 
+if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', 1);
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
-    print "Error, template page can't be called as URL";
-    exit;
+	print "Error, template page can't be called as URL";
+	exit;
 }
 
 
@@ -50,7 +52,14 @@ $arrayofjs = array(
 	'/includes/jstz/jstz.min.js'.(empty($conf->dol_use_jmobile) ? '' : '?version='.urlencode(DOL_VERSION)),
 	'/core/js/dst.js'.(empty($conf->dol_use_jmobile) ? '' : '?version='.urlencode(DOL_VERSION))
 );
-$titleofloginpage = $langs->trans('Login').' @ '.$titletruedolibarrversion; // $titletruedolibarrversion is defined by dol_loginfunction in security2.lib.php. We must keep the @, some tools use it to know it is login page and find true dolibarr version.
+
+// We display application title instead Login term
+if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+	$titleofloginpage = $conf->global->MAIN_APPLICATION_TITLE;
+} else {
+	$titleofloginpage = $langs->trans('Login');
+}
+$titleofloginpage .= ' @ '.$titletruedolibarrversion; // $titletruedolibarrversion is defined by dol_loginfunction in security2.lib.php. We must keep the @, some tools use it to know it is login page and find true dolibarr version.
 
 $disablenofollow = 1;
 if (!preg_match('/'.constant('DOL_APPLICATION_TITLE').'/', $title)) $disablenofollow = 0;
@@ -79,7 +88,7 @@ if (!empty($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND)) {
 ?>
 
 <?php if (empty($conf->dol_use_jmobile)) { ?>
-<script type="text/javascript">
+<script>
 $(document).ready(function () {
 	/* Set focus on correct field */
 	<?php if ($focus_element) { ?>$('#<?php echo $focus_element; ?>').focus(); <?php } ?>		// Warning to use this only on visible element
@@ -140,8 +149,7 @@ if ($disablenofollow) echo '</a>';
 <div class="tagtd nowraponall center valignmiddle tdinputlogin">
 <?php if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?><label for="username" class="hidden"><?php echo $langs->trans("Login"); ?></label><?php } ?>
 <!-- <span class="span-icon-user">-->
-<span class="fa fa-user">
-</span>
+<span class="fa fa-user"></span>
 <input type="text" id="username" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" />
 </div>
 </div>
@@ -151,28 +159,11 @@ if ($disablenofollow) echo '</a>';
 <div class="tagtd nowraponall center valignmiddle tdinputlogin">
 <?php if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?><label for="password" class="hidden"><?php echo $langs->trans("Password"); ?></label><?php } ?>
 <!--<span class="span-icon-password">-->
-<span class="fa fa-key">
-</span>
+<span class="fa fa-key"></span>
 <input id="password" placeholder="<?php echo $langs->trans("Password"); ?>" name="password" class="flat input-icon-password minwidth150" type="password" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="<?php echo empty($conf->global->MAIN_LOGIN_ENABLE_PASSWORD_AUTOCOMPLETE) ? 'off' : 'on'; ?>" />
 </div></div>
 
 <?php
-if (!empty($morelogincontent)) {
-	if (is_array($morelogincontent)) {
-		foreach ($morelogincontent as $format => $option)
-		{
-			if ($format == 'table') {
-				echo '<!-- Option by hook -->';
-				echo $option;
-			}
-		}
-	}
-	else {
-		echo '<!-- Option by hook -->';
-		echo $morelogincontent;
-	}
-}
-
 if ($captcha) {
 	// Add a variable param to force not using cache (jmobile)
 	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self); // Remove param time
@@ -182,22 +173,37 @@ if ($captcha) {
 	?>
 	<!-- Captcha -->
 	<div class="trinputlogin">
-	<div class="tagtd nowraponall none center valignmiddle tdinputlogin">
+	<div class="tagtd none valignmiddle tdinputlogin">
 
-	<table class="login_table_securitycode centpercent">
-	<tr class="valignmiddle">
-	<td>
-	<span class="span-icon-security">
-	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width100" type="text" maxlength="5" name="code" tabindex="3" />
+	<span class="fa fa-unlock"></span>
+	<span class="span-icon-security inline-block">
+	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width150" type="text" maxlength="5" name="code" tabindex="3" />
 	</span>
-	</td>
-	<td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" /></td>
-	<td><a href="<?php echo $php_self; ?>" tabindex="4" data-role="button"><?php echo $captcha_refresh; ?></a></td>
-	</tr>
-	</table>
+	<span class="nowrap inline-block">
+	<img class="inline-block valignmiddle" src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />
+	<a class="inline-block valignmiddle" href="<?php echo $php_self; ?>" tabindex="4" data-role="button"><?php echo $captcha_refresh; ?></a>
+	</span>
 
 	</div></div>
-<?php } ?>
+	<?php
+}
+
+if (!empty($morelogincontent)) {
+	if (is_array($morelogincontent)) {
+		foreach ($morelogincontent as $format => $option)
+		{
+			if ($format == 'table') {
+				echo '<!-- Option by hook -->';
+				echo $option;
+			}
+		}
+	} else {
+		echo '<!-- Option by hook -->';
+		echo $morelogincontent;
+	}
+}
+
+?>
 
 </div>
 
@@ -255,8 +261,7 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->fil
 
 	$url = $conf->global->MAIN_AUTHENTICATION_OPENID_URL;
 	if (!empty($url)) print '<a class="alogin" href="'.$url.'">'.$langs->trans("LoginUsingOpenID").'</a>';
-	else
-	{
+	else {
 		$langs->load("errors");
 		print '<font class="warning">'.$langs->trans("ErrorOpenIDSetupNotComplete", 'MAIN_AUTHENTICATION_OPENID_URL').'</font>';
 	}
@@ -288,18 +293,18 @@ if (!empty($_SESSION['dol_loginmesg']))
 
 // Add commit strip
 if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
-    include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 	if (substr($langs->defaultlang, 0, 2) == 'fr') {
-		$resgetcommitstrip = getURLContent("http://www.commitstrip.com/fr/feed/");
+		$resgetcommitstrip = getURLContent("https://www.commitstrip.com/fr/feed/");
 	} else {
-		$resgetcommitstrip = getURLContent("http://www.commitstrip.com/en/feed/");
+		$resgetcommitstrip = getURLContent("https://www.commitstrip.com/en/feed/");
 	}
-    if ($resgetcommitstrip && $resgetcommitstrip['http_code'] == '200')
-    {
-        $xml = simplexml_load_string($resgetcommitstrip['content']);
-        $little = $xml->channel->item[0]->children('content', true);
-        print preg_replace('/width="650" height="658"/', '', $little->encoded);
-    }
+	if ($resgetcommitstrip && $resgetcommitstrip['http_code'] == '200')
+	{
+		$xml = simplexml_load_string($resgetcommitstrip['content']);
+		$little = $xml->channel->item[0]->children('content', true);
+		print preg_replace('/width="650" height="658"/', '', $little->encoded);
+	}
 }
 
 ?>
@@ -331,8 +336,7 @@ if (!empty($morelogincontent) && is_array($morelogincontent)) {
 			echo $option."\n";
 		}
 	}
-}
-elseif (!empty($moreloginextracontent)) {
+} elseif (!empty($moreloginextracontent)) {
 	echo '<!-- Javascript by hook -->';
 	echo $moreloginextracontent;
 }
@@ -342,7 +346,7 @@ elseif (!empty($moreloginextracontent)) {
 if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID))
 {
 	$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
-	foreach($tmptagarray as $tmptag) {
+	foreach ($tmptagarray as $tmptag) {
 		print "\n";
 		print "<!-- JS CODE TO ENABLE for google analtics tag -->\n";
 		print "
@@ -359,23 +363,22 @@ if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID))
 	}
 }
 
-// Google Adsense
+// TODO Replace this with a hook
+// Google Adsense (need Google module)
 if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && !empty($conf->global->MAIN_GOOGLE_AD_SLOT))
 {
 	if (empty($conf->dol_use_jmobile))
 	{
 		?>
 	<div class="center"><br>
-		<script type="text/javascript"><!--
+		<script><!--
 			google_ad_client = "<?php echo $conf->global->MAIN_GOOGLE_AD_CLIENT ?>";
 			google_ad_slot = "<?php echo $conf->global->MAIN_GOOGLE_AD_SLOT ?>";
 			google_ad_width = <?php echo $conf->global->MAIN_GOOGLE_AD_WIDTH ?>;
 			google_ad_height = <?php echo $conf->global->MAIN_GOOGLE_AD_HEIGHT ?>;
 			//-->
 		</script>
-		<script type="text/javascript"
-			src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-		</script>
+		<script src="//pagead2.googlesyndication.com/pagead/show_ads.js"></script>
 	</div>
 		<?php
 	}

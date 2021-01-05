@@ -12,10 +12,10 @@ if (empty($extrafieldsobjectkey) && is_object($object)) $extrafieldsobjectkey = 
 // Loop to complete the sql search criterias from extrafields
 if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($search_array_options))	// $extrafieldsobject is the $object->table_element like 'societe', 'socpeople', ...
 {
-    if (empty($extrafieldsobjectprefix)) $extrafieldsobjectprefix = 'ef.';
-    if (empty($search_options_pattern)) $search_options_pattern = 'search_options_';
+	if (empty($extrafieldsobjectprefix)) $extrafieldsobjectprefix = 'ef.';
+	if (empty($search_options_pattern)) $search_options_pattern = 'search_options_';
 
-    foreach ($search_array_options as $key => $val)
+	foreach ($search_array_options as $key => $val)
 	{
 		$crit = $val;
 		$tmpkey = preg_replace('/'.$search_options_pattern.'/', '', $key);
@@ -24,16 +24,14 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 		if ($crit != '' && in_array($typ, array('date', 'datetime', 'timestamp')))
 		{
 			$sql .= " AND ".$extrafieldsobjectprefix.$tmpkey." = '".$db->idate($crit)."'";
-		}
-		elseif (in_array($typ, array('boolean')))
+		} elseif (in_array($typ, array('boolean')))
 		{
 			if ($crit !== '-1' && $crit !== '') {
 				$sql .= " AND (".$extrafieldsobjectprefix.$tmpkey." = '".$db->escape($crit)."'";
 				if ($crit == '0') $sql .= " OR ".$extrafieldsobjectprefix.$tmpkey." IS NULL";
 				$sql .= ")";
 			}
-		}
-		elseif ($crit != '' && (!in_array($typ, array('select', 'sellist')) || $crit != '0') && (!in_array($typ, array('link')) || $crit != '-1'))
+		} elseif ($crit != '' && (!in_array($typ, array('select', 'sellist')) || $crit != '0') && (!in_array($typ, array('link')) || $crit != '-1'))
 		{
 			$mode_search = 0;
 			if (in_array($typ, array('int', 'double', 'real', 'price'))) $mode_search = 1; // Search on a numeric

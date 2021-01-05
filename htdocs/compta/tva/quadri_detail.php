@@ -66,14 +66,11 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 	$q = GETPOST("q", "int");
 	if (empty($q))
 	{
-		if (GETPOST("month", "int")) { $date_start = dol_get_first_day($year_start, GETPOST("month", "int"), false); $date_end = dol_get_last_day($year_start, GETPOST("month", "int"), false); }
-		else
-		{
+		if (GETPOST("month", "int")) { $date_start = dol_get_first_day($year_start, GETPOST("month", "int"), false); $date_end = dol_get_last_day($year_start, GETPOST("month", "int"), false); } else {
 			if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) { // quaterly vat, we take last past complete quarter
 				$date_start = dol_time_plus_duree(dol_get_first_day($year_start, $current_date['mon'], false), -3 - (($current_date['mon'] - $conf->global->SOCIETE_FISCAL_MONTH_START) % 3), 'm');
 				$date_end = dol_time_plus_duree($date_start, 3, 'm') - 1;
-			}
-			elseif ($conf->global->MAIN_INFO_VAT_RETURN == 3) { // yearly vat
+			} elseif ($conf->global->MAIN_INFO_VAT_RETURN == 3) { // yearly vat
 				if ($current_date['mon'] < $conf->global->SOCIETE_FISCAL_MONTH_START) {
 					if (($conf->global->SOCIETE_FISCAL_MONTH_START - $current_date['mon']) > 6) {	// If period started from less than 6 years, we show past year
 						$year_start--;
@@ -85,15 +82,12 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 				}
 				$date_start = dol_get_first_day($year_start, $conf->global->SOCIETE_FISCAL_MONTH_START, false);
 				$date_end = dol_time_plus_duree($date_start, 1, 'y') - 1;
-			}
-			elseif ($conf->global->MAIN_INFO_VAT_RETURN == 1) {	// monthly vat, we take last past complete month
+			} elseif ($conf->global->MAIN_INFO_VAT_RETURN == 1) {	// monthly vat, we take last past complete month
 				$date_start = dol_time_plus_duree(dol_get_first_day($year_start, $current_date['mon'], false), -1, 'm');
 				$date_end = dol_time_plus_duree($date_start, 1, 'm') - 1;
 			}
 		}
-	}
-	else
-	{
+	} else {
 		if ($q == 1) { $date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false); }
 		if ($q == 2) { $date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false); }
 		if ($q == 3) { $date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false); }
@@ -158,23 +152,23 @@ $calcmode = '';
 if ($modetax == 0) $calcmode = $langs->trans('OptionVATDefault');
 if ($modetax == 1) $calcmode = $langs->trans('OptionVATDebitOption');
 if ($modetax == 2) $calcmode = $langs->trans('OptionPaymentForProductAndServices');
-$calcmode .= '<br>('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')';
+$calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')</span>';
 // Set period
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 $prevyear = $year_start; $prevquarter = $q;
 if ($prevquarter > 1) {
 	$prevquarter--;
 } else {
-    $prevquarter = 4;
-    $prevyear--;
+	$prevquarter = 4;
+	$prevyear--;
 }
 $nextyear = $year_start;
 $nextquarter = $q;
 if ($nextquarter < 4) {
 	$nextquarter++;
 } else {
-    $nextquarter = 1;
-    $nextyear++;
+	$nextquarter = 1;
+	$nextyear++;
 }
 $description .= $fsearch;
 $builddate = dol_now();
@@ -219,6 +213,7 @@ $vatexpensereport = $langs->trans("VATPaid");
 
 
 // VAT Received and paid
+print '<div class="div-table-responsive">';
 print '<table class="noborder centpercent">';
 
 $y = $year_current;
@@ -315,9 +310,7 @@ if (!is_array($x_coll) || !is_array($x_paye))
 				'vat'				=>$x_paye[$my_paye_rate]['vat_list'][$id],
 				'link'				=>$expensereport->getNomUrl(1)
 				);
-			}
-			else
-			{
+			} else {
 				$invoice_supplier->id = $x_paye[$my_paye_rate]['facid'][$id];
 				$invoice_supplier->ref = $x_paye[$my_paye_rate]['facnum'][$id];
 				$invoice_supplier->type = $x_paye[$my_paye_rate]['type'][$id];
@@ -439,9 +432,7 @@ if (!is_array($x_coll) || !is_array($x_paye))
 					if (dol_string_nohtmltag($fields['descr'])) {
 						print ' - '.dol_trunc(dol_string_nohtmltag($fields['descr']), 24);
 					}
-				}
-				else
-				{
+				} else {
 					if ($type) {
 						$text = img_object($langs->trans('Service'), 'service');
 					} else {
@@ -620,9 +611,7 @@ if (!is_array($x_coll) || !is_array($x_paye))
 					if (dol_string_nohtmltag($fields['descr'])) {
 						print ' - '.dol_trunc(dol_string_nohtmltag($fields['descr']), 24);
 					}
-				}
-				else
-				{
+				} else {
 					if ($type) {
 						$text = img_object($langs->trans('Service'), 'service');
 					} else {
@@ -673,9 +662,7 @@ if (!is_array($x_coll) || !is_array($x_paye))
 						|| ($type == 1 && $conf->global->TAX_MODE_BUY_SERVICE == 'invoice'))
 					{
 						print $langs->trans("NA");
-					}
-					else
-					{
+					} else {
 						if (isset($fields['payment_amount']) && $fields['ftotal_ttc']) {
 							$ratiopaymentinvoice = ($fields['payment_amount'] / $fields['ftotal_ttc']);
 						}
@@ -733,6 +720,7 @@ if (!is_array($x_coll) || !is_array($x_paye))
 	}
 
 	print '</table>';
+	print '</div>';
 
 	// Total to pay
 	print '<br><br>';

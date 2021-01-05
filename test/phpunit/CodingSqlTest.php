@@ -158,7 +158,7 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
             print 'Process dir '.$dir."\n";
             $filesarray = scandir($dir);
 
-            foreach($filesarray as $key => $file)
+            foreach ($filesarray as $key => $file)
             {
                 if (! preg_match('/\.sql$/', $file))
                     continue;
@@ -170,7 +170,7 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
                 $filecontent = str_replace('`rank`', '_rank_', $filecontent);
 
                 $result=strpos($filecontent, '`');
-                print __METHOD__." Result for checking we don't have back quote = ".$result."\n";
+                //print __METHOD__." Result for checking we don't have back quote = ".$result."\n";
                 $this->assertTrue($result===false, 'Found back quote into '.$file.'. Bad.');
 
                 $result=strpos($filecontent, '"');
@@ -178,52 +178,47 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
                 {
                 	$result=(! strpos($filecontent, '["') && ! strpos($filecontent, '{"'));
                 }
-                print __METHOD__." Result for checking we don't have double quote = ".$result."\n";
+                //print __METHOD__." Result for checking we don't have double quote = ".$result."\n";
                 $this->assertTrue($result===false, 'Found double quote that is not [" neither {" (used for json content) into '.$file.'. Bad.');
 
                 $result=strpos($filecontent, 'int(');
-                print __METHOD__." Result for checking we don't have 'int(' instead of 'integer' = ".$result."\n";
+                //print __METHOD__." Result for checking we don't have 'int(' instead of 'integer' = ".$result."\n";
                 $this->assertTrue($result===false, 'Found int(x) or tinyint(x) instead of integer or tinyint into '.$file.'. Bad.');
 
                 $result=strpos($filecontent, 'ON DELETE CASCADE');
-                print __METHOD__." Result for checking we don't have 'ON DELETE CASCADE' = ".$result."\n";
+                //print __METHOD__." Result for checking we don't have 'ON DELETE CASCADE' = ".$result."\n";
                 $this->assertTrue($result===false, 'Found ON DELETE CASCADE into '.$file.'. Bad.');
 
                 $result=strpos($filecontent, 'NUMERIC(');
-                print __METHOD__." Result for checking we don't have 'NUMERIC(' = ".$result."\n";
+                //print __METHOD__." Result for checking we don't have 'NUMERIC(' = ".$result."\n";
                 $this->assertTrue($result===false, 'Found NUMERIC( into '.$file.'. Bad.');
 
                 $result=strpos($filecontent, 'NUMERIC(');
-                print __METHOD__." Result for checking we don't have 'curdate(' = ".$result."\n";
+                //print __METHOD__." Result for checking we don't have 'curdate(' = ".$result."\n";
                 $this->assertTrue($result===false, 'Found curdate( into '.$file.'. Bad. Current date must be generated with PHP.');
 
                 $result=strpos($filecontent, 'integer(');
-                print __METHOD__." Result for checking we don't have 'integer(' = ".$result."\n";
+                //print __METHOD__." Result for checking we don't have 'integer(' = ".$result."\n";
                 $this->assertTrue($result===false, 'Found value in parenthesis after the integer. It must be integer not integer(x) into '.$file.'. Bad.');
 
                 if ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/migration')
                 {
                     // Test for migration files only
-                }
-                elseif ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/data')
+                } elseif ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/data')
                 {
                     // Test for data files only
-                }
-                else
-                {
+                } else {
                     if (preg_match('/\.key\.sql$/', $file))
                     {
                         // Test for key files only
-                    }
-                    else
-                    {
+                    } else {
                         // Test for non key files only
                         $result=(strpos($filecontent, 'KEY ') && strpos($filecontent, 'PRIMARY KEY') == 0);
-                        print __METHOD__." Result for checking we don't have ' KEY ' instead of a sql file to create index = ".$result."\n";
+                        //print __METHOD__." Result for checking we don't have ' KEY ' instead of a sql file to create index = ".$result."\n";
                         $this->assertTrue($result===false, 'Found KEY into '.$file.'. Bad.');
 
                         $result=stripos($filecontent, 'ENGINE=innodb');
-                        print __METHOD__." Result for checking we have the ENGINE=innodb string = ".$result."\n";
+                        //print __METHOD__." Result for checking we have the ENGINE=innodb string = ".$result."\n";
                         $this->assertGreaterThan(0, $result, 'The ENGINE=innodb was not found into '.$file.'. Add it or just fix syntax to match case.');
                     }
                 }
@@ -247,7 +242,7 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
         $db=$this->savdb;
 
         $filesarray = scandir(DOL_DOCUMENT_ROOT.'/../dev/initdemo');
-        foreach($filesarray as $key => $file) {
+        foreach ($filesarray as $key => $file) {
             if (! preg_match('/\.sql$/', $file))
                 continue;
 

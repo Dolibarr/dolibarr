@@ -18,12 +18,14 @@ DefaultForService=Padrão para o serviço
 DefaultForProduct=Padrão para o produto
 CantSuggest=Não pode sugerir
 AccountancySetupDoneFromAccountancyMenu=A maioria da configuração da contabilidade é efetuada a partir do menu %s
-ConfigAccountingExpert=Configuração do módulo "Contabilidade (avançada)"
+ConfigAccountingExpert=Configuration of the module accounting (double entry)
 Journalization=Registo em diário contabilístico
-Journaux=Diários
+Journals=Diários
 JournalFinancial=Diários financeiros
 BackToChartofaccounts=Voltar ao plano de contas
 Chartofaccounts=Gráfico de contas
+ChartOfSubaccounts=Chart of individual accounts
+ChartOfIndividualAccountsOfSubsidiaryLedger=Chart of individual accounts of the subsidiary ledger
 CurrentDedicatedAccountingAccount=Conta dedicada atual
 AssignDedicatedAccountingAccount=Nova conta para atribuir
 InvoiceLabel=Etiqueta da fatura
@@ -33,8 +35,8 @@ OtherInfo=Outra informação
 DeleteCptCategory=Remover conta contabilistica do grupo
 ConfirmDeleteCptCategory=Are you sure you want to remove this accounting account from the accounting account group?
 JournalizationInLedgerStatus=Status da jornalização
-AlreadyInGeneralLedger=Já foi registado nos diários contabilísticos
-NotYetInGeneralLedger=Ainda não é publicado em livros
+AlreadyInGeneralLedger=Already transferred in accounting journals and ledger
+NotYetInGeneralLedger=Not yet transferred in accouting journals and ledger
 GroupIsEmptyCheckSetup=Grupo está vazio, verifique a configuração do grupo de contabilidade personalizado
 DetailByAccount=Mostrar detalhes por conta
 AccountWithNonZeroValues=Contas com valores diferentes de zero
@@ -43,7 +45,9 @@ CountriesInEEC=Países da CEE
 CountriesNotInEEC=Países não na CEE
 CountriesInEECExceptMe=Países na CEE, exceto %s
 CountriesExceptMe=Todos os países, exceto %s
-AccountantFiles=Export accounting documents
+AccountantFiles=Export source documents
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
+VueByAccountAccounting=View by accounting account
 
 MainAccountForCustomersNotDefined=Principal conta contábil para clientes não definidos na configuração
 MainAccountForSuppliersNotDefined=Conta contábil principal para fornecedores não definidos na configuração
@@ -79,7 +83,7 @@ AccountancyAreaDescAnalyze=PASSO %s: Adicionar ou editar transações e gerar re
 
 AccountancyAreaDescClosePeriod=PASSO %s: Fechar período para que não seja possível modificar no futuro.
 
-TheJournalCodeIsNotDefinedOnSomeBankAccount=Uma etapa obrigatória na configuração não foi concluída (o diário do código contábil não foi definido para todas as contas bancárias)
+TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup has not been completed (accounting code journal not defined for all bank accounts)
 Selectchartofaccounts=Selecione gráfico de contas ativo 
 ChangeAndLoad=Mudar e carregar
 Addanaccount=Adicione uma conta contabilística
@@ -89,6 +93,8 @@ SubledgerAccount=Subledger account
 SubledgerAccountLabel=Subledger account label
 ShowAccountingAccount=Mostrar conta contabilística
 ShowAccountingJournal=Mostrar diário contabilistico
+ShowAccountingAccountInLedger=Show accounting account in ledger
+ShowAccountingAccountInJournals=Show accounting account in journals
 AccountAccountingSuggest=Conta contabilística sugerida
 MenuDefaultAccounts=Contas padrão
 MenuBankAccounts=Contas Bancárias
@@ -110,8 +116,9 @@ ExpenseReportsVentilation=Vinculação do relatório de despesas
 CreateMvts=Criar nova transação
 UpdateMvts=Modificação de uma transação
 ValidTransaction=Validar transação
-WriteBookKeeping=Register transactions in Ledger
+WriteBookKeeping=Register transactions in accounting
 Bookkeeping=Livro Razão
+BookkeepingSubAccount=Subledger
 AccountBalance=Saldo da conta
 ObjectsRef=Ref de objeto de origem
 CAHTF=Total purchase vendor before tax
@@ -149,6 +156,8 @@ ACCOUNTING_MANAGE_ZERO=Allow to manage different number of zeros at the end of a
 BANK_DISABLE_DIRECT_INPUT=Desactivar a gravação direta de transação na conta bancária
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Ativar exportação de rascunho em diário
 ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties)
+ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, select period show by default
 
 ACCOUNTING_SELL_JOURNAL=Diário de vendas
 ACCOUNTING_PURCHASE_JOURNAL=Diário de compras
@@ -167,6 +176,8 @@ TransitionalAccount=Transitional bank transfer account
 ACCOUNTING_ACCOUNT_SUSPENSE=Conta contabilística de espera
 DONATION_ACCOUNTINGACCOUNT=Conta contabilística para registar donativos
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Accounting account to register subscriptions
+
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Accounting account by default to register customer deposit
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for the bought products (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Accounting account by default for the bought products in EEC (used if not defined in the product sheet)
@@ -202,16 +213,16 @@ ByPredefinedAccountGroups=Por grupos predefinidos
 ByPersonalizedAccountGroups=Por grupos personalizados
 ByYear=por ano
 NotMatch=Não configurado
-DeleteMvt=Eliminar as linhas do Livro Razão
+DeleteMvt=Delete some operation lines from accounting
 DelMonth=Month to delete
 DelYear=Ano a apagar
 DelJournal=Diário a apagar
-ConfirmDeleteMvt=This will delete all lines of the Ledger for the year/month and/or from a specific journal (At least one criterion is required). You will have to reuse the feature 'Registration in accounting' to have the deleted record back in the ledger.
-ConfirmDeleteMvtPartial=Isso excluirá a transação do razão (todas as linhas relacionadas à mesma transação serão excluídas)
+ConfirmDeleteMvt=This will delete all operation lines of the accounting for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
+ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all operation lines related to the same transaction will be deleted)
 FinanceJournal=Diário financeiro
 ExpenseReportsJournal=Diário de relatórios de despesas
 DescFinanceJournal=Diário financeiro incluindo todos os tipos de pagamentos por conta bancária
-DescJournalOnlyBindedVisible=Esta é uma visão do registro que está vinculada a uma conta contábil e pode ser registrada no Ledger.
+DescJournalOnlyBindedVisible=This is a view of record that are bound to an accounting account and can be recorded into the Journals and Ledger.
 VATAccountNotDefined=Conta para efeitos de IVA não definido
 ThirdpartyAccountNotDefined=Conta para terceiros não definido
 ProductAccountNotDefined=Conta para o produto não definido
@@ -284,6 +295,7 @@ ShowTutorial=Show Tutorial
 NotReconciled=Not reconciled
 
 ## Admin
+BindingOptions=Binding options
 ApplyMassCategories=Aplicar categorias em massa
 AddAccountFromBookKeepingWithNoCategories=Available account not yet in the personalized group
 CategoryDeleted=Categoria para a conta contabilística foi removida
@@ -303,6 +315,9 @@ ErrorAccountingJournalIsAlreadyUse=Este diário já está a ser utilizado
 AccountingAccountForSalesTaxAreDefinedInto=Nota: A conta de contabilidade para imposto sobre vendas é definida no menu <b> %s </ b> - <b> %s </ b>
 NumberOfAccountancyEntries=Number of entries
 NumberOfAccountancyMovements=Number of movements
+ACCOUNTING_DISABLE_BINDING_ON_SALES=Disable binding & transfer in accountancy on sales (customer invoices will not be taken into account in accounting)
+ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountancy on purchases (vendor invoices will not be taken into account in accounting)
+ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
 ExportDraftJournal=Exportar o diário rascunho
@@ -324,6 +339,8 @@ Modelcsv_configurable=Exportar CSV configurável
 Modelcsv_FEC=Export FEC
 Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
 Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
+Modelcsv_Gestinumv3=Export for Gestinum (v3)
+Modelcsv_Gestinumv5Export for Gestinum (v5)
 ChartofaccountsId=ID de plano de contas
 
 ## Tools - Init accounting account on product / service

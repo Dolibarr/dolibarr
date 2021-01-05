@@ -21,26 +21,6 @@
  *		\brief      Page to show tock movements of a MO
  */
 
-//if (! defined('NOREQUIREDB'))              define('NOREQUIREDB','1');					// Do not create database handler $db
-//if (! defined('NOREQUIREUSER'))            define('NOREQUIREUSER','1');				// Do not load object $user
-//if (! defined('NOREQUIRESOC'))             define('NOREQUIRESOC','1');				// Do not load object $mysoc
-//if (! defined('NOREQUIRETRAN'))            define('NOREQUIRETRAN','1');				// Do not load object $langs
-//if (! defined('NOSCANGETFORINJECTION'))    define('NOSCANGETFORINJECTION','1');		// Do not check injection attack on GET parameters
-//if (! defined('NOSCANPOSTFORINJECTION'))   define('NOSCANPOSTFORINJECTION','1');		// Do not check injection attack on POST parameters
-//if (! defined('NOCSRFCHECK'))              define('NOCSRFCHECK','1');					// Do not check CSRF attack (test on referer + on token if option MAIN_SECURITY_CSRF_WITH_TOKEN is on).
-//if (! defined('NOTOKENRENEWAL'))           define('NOTOKENRENEWAL','1');				// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
-//if (! defined('NOSTYLECHECK'))             define('NOSTYLECHECK','1');				// Do not check style html tag into posted data
-//if (! defined('NOREQUIREMENU'))            define('NOREQUIREMENU','1');				// If there is no need to load and show top and left menu
-//if (! defined('NOREQUIREHTML'))            define('NOREQUIREHTML','1');				// If we don't need to load the html.form.class.php
-//if (! defined('NOREQUIREAJAX'))            define('NOREQUIREAJAX','1');       	  	// Do not load ajax.lib.php library
-//if (! defined("NOLOGIN"))                  define("NOLOGIN",'1');						// If this page is public (can be called outside logged session). This include the NOIPCHECK too.
-//if (! defined('NOIPCHECK'))                define('NOIPCHECK','1');					// Do not check IP defined into conf $dolibarr_main_restrict_ip
-//if (! defined("MAIN_LANG_DEFAULT"))        define('MAIN_LANG_DEFAULT','auto');					// Force lang to a particular value
-//if (! defined("MAIN_AUTHENTICATION_MODE")) define('MAIN_AUTHENTICATION_MODE','aloginmodule');		// Force authentication handler
-//if (! defined("NOREDIRECTBYMAINTOLOGIN"))  define('NOREDIRECTBYMAINTOLOGIN',1);		// The main.inc.php does not make a redirect if not logged, instead show simple error message
-//if (! defined("FORCECSP"))                 define('FORCECSP','none');					// Disable all Content Security Policies
-
-
 // Load Dolibarr environment
 require '../main.inc.php';
 
@@ -125,24 +105,30 @@ $objectlist = new MouvementStock($db);
 
 // Definition of fields for list
 $arrayfields = array(
-	'm.rowid'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-	'm.datem'=>array('label'=>$langs->trans("Date"), 'checked'=>1),
-	'p.ref'=>array('label'=>$langs->trans("ProductRef"), 'checked'=>1, 'css'=>'maxwidth100'),
-	'p.label'=>array('label'=>$langs->trans("ProductLabel"), 'checked'=>1),
-	'm.batch'=>array('label'=>$langs->trans("BatchNumberShort"), 'checked'=>1, 'enabled'=>(!empty($conf->productbatch->enabled))),
-	'pl.eatby'=>array('label'=>$langs->trans("EatByDate"), 'checked'=>0, 'position'=>10, 'enabled'=>(!empty($conf->productbatch->enabled))),
-	'pl.sellby'=>array('label'=>$langs->trans("SellByDate"), 'checked'=>0, 'position'=>10, 'enabled'=>(!empty($conf->productbatch->enabled))),
-	'e.ref'=>array('label'=>$langs->trans("Warehouse"), 'checked'=>1),
-	'm.fk_user_author'=>array('label'=>$langs->trans("Author"), 'checked'=>0),
-	'm.inventorycode'=>array('label'=>$langs->trans("InventoryCodeShort"), 'checked'=>1),
-	'm.label'=>array('label'=>$langs->trans("MovementLabel"), 'checked'=>1),
-	'm.type_mouvement'=>array('label'=>$langs->trans("TypeMovement"), 'checked'=>1),
-	'origin'=>array('label'=>$langs->trans("Origin"), 'enabled'=>0, 'checked'=>0),
-	'm.value'=>array('label'=>$langs->trans("Qty"), 'checked'=>1),
-	'm.price'=>array('label'=>$langs->trans("UnitPurchaseValue"), 'enabled'=>0, 'checked'=>0),
+	'm.rowid'=>array('label'=>$langs->trans("Ref"), 'checked'=>1, 'position'=>1),
+	'm.datem'=>array('label'=>$langs->trans("Date"), 'checked'=>1, 'position'=>2),
+	'p.ref'=>array('label'=>$langs->trans("ProductRef"), 'checked'=>1, 'css'=>'maxwidth100', 'position'=>10),
+	'p.label'=>array('label'=>$langs->trans("ProductLabel"), 'checked'=>1, 'position'=>15),
+	'm.batch'=>array('label'=>$langs->trans("BatchNumberShort"), 'checked'=>1, 'enabled'=>(!empty($conf->productbatch->enabled)), 'position'=>20),
+	'pl.eatby'=>array('label'=>$langs->trans("EatByDate"), 'checked'=>0, 'position'=>10, 'enabled'=>(!empty($conf->productbatch->enabled)), 'position'=>21),
+	'pl.sellby'=>array('label'=>$langs->trans("SellByDate"), 'checked'=>0, 'position'=>10, 'enabled'=>(!empty($conf->productbatch->enabled)), 'position'=>22),
+	'e.ref'=>array('label'=>$langs->trans("Warehouse"), 'checked'=>1, 'position'=>30),
+	'm.fk_user_author'=>array('label'=>$langs->trans("Author"), 'checked'=>0, 'position'=>40),
+	'm.inventorycode'=>array('label'=>$langs->trans("InventoryCodeShort"), 'checked'=>1, 'position'=>42),
+	'm.label'=>array('label'=>$langs->trans("MovementLabel"), 'checked'=>1, 'position'=>45),
+	'm.type_mouvement'=>array('label'=>$langs->trans("TypeMovement"), 'checked'=>1, 'position'=>48),
+	'origin'=>array('label'=>$langs->trans("Origin"), 'enabled'=>0, 'checked'=>0, 'position'=>50),
+	'm.value'=>array('label'=>$langs->trans("Qty"), 'checked'=>1, 'position'=>60),
+	'm.price'=>array('label'=>$langs->trans("UnitPurchaseValue"), 'enabled'=>0, 'checked'=>0, 'position'=>62),
 	//'m.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	//'m.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500)
 );
+if (!empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+	unset($arrayfields['pl.eatby']);
+}
+if (!empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+	unset($arrayfields['pl.sellby']);
+}
 $objectlist->fields = dol_sort_array($objectlist->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -190,47 +176,47 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 
 if (empty($reshook))
 {
-    $error = 0;
+	$error = 0;
 
-    $backurlforlist = dol_buildpath('/mrp/mo_list.php', 1);
+	$backurlforlist = dol_buildpath('/mrp/mo_list.php', 1);
 
-    if (empty($backtopage) || ($cancel && empty($id))) {
-    	//var_dump($backurlforlist);exit;
-    	if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) $backtopage = $backurlforlist;
-    	else $backtopage = DOL_URL_ROOT.'/mrp/mo_production.php?id='.($id > 0 ? $id : '__ID__');
-    }
-    $triggermodname = 'MRP_MO_MODIFY'; // Name of trigger action code to execute when we modify record
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		//var_dump($backurlforlist);exit;
+		if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) $backtopage = $backurlforlist;
+		else $backtopage = DOL_URL_ROOT.'/mrp/mo_production.php?id='.($id > 0 ? $id : '__ID__');
+	}
+	$triggermodname = 'MRP_MO_MODIFY'; // Name of trigger action code to execute when we modify record
 
-    // Actions cancel, add, update, delete or clone
-    include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
+	// Actions cancel, add, update, delete or clone
+	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
-    // Actions when linking object each other
-    include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';
+	// Actions when linking object each other
+	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';
 
-    // Actions when printing a doc from card
-    include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+	// Actions when printing a doc from card
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
-    // Actions to send emails
-    $triggersendname = 'MO_SENTBYMAIL';
-    $autocopy = 'MAIN_MAIL_AUTOCOPY_MO_TO';
-    $trackid = 'mo'.$object->id;
-    include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+	// Actions to send emails
+	$triggersendname = 'MO_SENTBYMAIL';
+	$autocopy = 'MAIN_MAIL_AUTOCOPY_MO_TO';
+	$trackid = 'mo'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
-    // Action to move up and down lines of object
-    //include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
+	// Action to move up and down lines of object
+	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
 
-    if ($action == 'set_thirdparty' && $permissiontoadd)
-    {
-    	$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, 'MO_MODIFY');
-    }
-    if ($action == 'classin' && $permissiontoadd)
-    {
-    	$object->setProject(GETPOST('projectid', 'int'));
-    }
+	if ($action == 'set_thirdparty' && $permissiontoadd)
+	{
+		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, 'MO_MODIFY');
+	}
+	if ($action == 'classin' && $permissiontoadd)
+	{
+		$object->setProject(GETPOST('projectid', 'int'));
+	}
 
-    if ($action == 'confirm_reopen') {
-    	$result = $object->setStatut($object::STATUS_INPROGRESS, 0, '', 'MRP_REOPEN');
-    }
+	if ($action == 'confirm_reopen') {
+		$result = $object->setStatut($object::STATUS_INPROGRESS, 0, '', 'MRP_REOPEN');
+	}
 }
 
 
@@ -256,14 +242,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_optionals();
 
 	$head = moPrepareHead($object);
-	dol_fiche_head($head, 'stockmovement', $langs->trans("ManufacturingOrder"), -1, $object->picto);
+
+	print dol_get_fiche_head($head, 'stockmovement', $langs->trans("ManufacturingOrder"), -1, $object->picto);
 
 	$formconfirm = '';
 
 	// Confirmation to delete
 	if ($action == 'delete')
 	{
-	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteMo'), $langs->trans('ConfirmDeleteMo'), 'confirm_delete', '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteMo'), $langs->trans('ConfirmDeleteMo'), 'confirm_delete', '', 0, 1);
 	}
 	// Confirmation to delete line
 	if ($action == 'deleteline')
@@ -281,7 +268,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action == 'xxx')
 	{
 		$formquestion = array();
-	    /*
+		/*
 		$forcecombo=0;
 		if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
 	    $formquestion = array(
@@ -291,7 +278,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	        // array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
         );
 	    */
-	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
 	}
 
 	// Call Hook formConfirm
@@ -318,32 +305,32 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Project
 	if (!empty($conf->projet->enabled))
 	{
-	    $langs->load("projects");
-	    $morehtmlref .= '<br>'.$langs->trans('Project').' ';
-	    if ($permissiontoadd)
-	    {
-	        if ($action != 'classify')
-	            $morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
-            if ($action == 'classify') {
-            	//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_soc, $object->fk_project, 'projectid', 0, 0, 1, 1);
-                $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-                $morehtmlref .= '<input type="hidden" name="action" value="classin">';
-                $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-                $morehtmlref .= $formproject->select_projects($object->fk_soc, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
-                $morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-                $morehtmlref .= '</form>';
-            } else {
-            	$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_soc, $object->fk_project, 'none', 0, 0, 0, 1);
-	        }
-	    } else {
-	        if (!empty($object->fk_project)) {
-	            $proj = new Project($db);
-	            $proj->fetch($object->fk_project);
-	            $morehtmlref .= $proj->getNomUrl();
-	        } else {
-	            $morehtmlref .= '';
-	        }
-	    }
+		$langs->load("projects");
+		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
+		if ($permissiontoadd)
+		{
+			if ($action != 'classify')
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+			if ($action == 'classify') {
+				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_soc, $object->fk_project, 'projectid', 0, 0, 1, 1);
+				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
+				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+				$morehtmlref .= $formproject->select_projects($object->fk_soc, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
+				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				$morehtmlref .= '</form>';
+			} else {
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_soc, $object->fk_project, 'none', 0, 0, 0, 1);
+			}
+		} else {
+			if (!empty($object->fk_project)) {
+				$proj = new Project($db);
+				$proj->fetch($object->fk_project);
+				$morehtmlref .= $proj->getNomUrl();
+			} else {
+				$morehtmlref .= '';
+			}
+		}
 	}
 	$morehtmlref .= '</div>';
 
@@ -371,7 +358,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '<div class="clearboth"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	/*
 		print '<div class="tabsAction">';
@@ -609,7 +596,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<td class="liste_titre center">';
 		//print '<input class="flat" type="text" size="3" name="search_type_mouvement" value="'.dol_escape_htmltag($search_type_mouvement).'">';
 		print '<select id="search_type_mouvement" name="search_type_mouvement" class="maxwidth150">';
-		print '<option value="" '.(($search_type_mouvement == "") ? 'selected="selected"' : '').'></option>';
+		print '<option value="" '.(($search_type_mouvement == "") ? 'selected="selected"' : '').'>&nbsp;</option>';
 		print '<option value="0" '.(($search_type_mouvement == "0") ? 'selected="selected"' : '').'>'.$langs->trans('StockIncreaseAfterCorrectTransfer').'</option>';
 		print '<option value="1" '.(($search_type_mouvement == "1") ? 'selected="selected"' : '').'>'.$langs->trans('StockDecreaseAfterCorrectTransfer').'</option>';
 		print '<option value="2" '.(($search_type_mouvement == "2") ? 'selected="selected"' : '').'>'.$langs->trans('StockDecrease').'</option>';
@@ -790,8 +777,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<td class="center nowraponall">';
 			if ($productlot->id > 0)
 				print $productlot->getNomUrl(1);
-			else
-				print $productlot->batch; // the id may not be defined if movement was entered when lot was not saved or if lot was removed after movement.
+			else print $productlot->batch; // the id may not be defined if movement was entered when lot was not saved or if lot was removed after movement.
 			print '</td>';
 		}
 		if (!empty($arrayfields['pl.eatby']['checked'])) {

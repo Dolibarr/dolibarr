@@ -34,7 +34,7 @@ require '../../main.inc.php';
 $htmlname = GETPOST('htmlname', 'alpha');
 $filter = GETPOST('filter', 'alpha');
 $outjson = (GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 $showtype = GETPOST('showtype', 'int');
 
@@ -67,9 +67,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id))
 	}
 
 	echo json_encode($outjson);
-}
-else
-{
+} else {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 	$langs->load("companies");

@@ -92,42 +92,83 @@ class BOM extends CommonObject
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=> 1, 'default'=>1, 'index'=>1, 'position'=>5),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'noteditable'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of BOM", 'showoncombobox'=>'1',),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'notnull'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'autofocusoncreate'=>1),
+		//'bomtype' => array('type'=>'integer', 'label'=>'Type', 'enabled'=>1, 'visible'=>1, 'position'=>10, 'notnull'=>1, 'default'=>'0', 'arrayofkeyval'=>array(0=>'Manufacturing', 1=>'Disassembly')),
+		'bomtype' => array('type'=>'integer', 'label'=>'Type', 'enabled'=>1, 'visible'=>-1, 'position'=>32, 'notnull'=>1, 'default'=>'0', 'arrayofkeyval'=>array(0=>'Manufacturing')),
+		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:1:(finished IS NULL or finished <> 0)', 'label'=>'Product', 'picto'=>'product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'help'=>'ProductBOMHelp', 'css'=>'maxwidth500'),
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'notnull'=>-1,),
-		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:1:(finished IS NULL or finished <> 0)', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'help'=>'ProductBOMHelp'),
-	    'qty' => array('type'=>'real', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'default'=>1, 'position'=>55, 'notnull'=>1, 'isameasure'=>'1', 'css'=>'maxwidth75imp'),
+		'qty' => array('type'=>'real', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'default'=>1, 'position'=>55, 'notnull'=>1, 'isameasure'=>'1', 'css'=>'maxwidth75imp'),
 		//'efficiency' => array('type'=>'real', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>-1, 'default'=>1, 'position'=>100, 'notnull'=>0, 'css'=>'maxwidth50imp', 'help'=>'ValueOfMeansLossForProductProduced'),
 		'duration' => array('type'=>'duration', 'label'=>'EstimatedDuration', 'enabled'=>1, 'visible'=>-1, 'position'=>101, 'notnull'=>-1, 'css'=>'maxwidth50imp', 'help'=>'EstimatedDurationDesc'),
-		'fk_warehouse' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label'=>'WarehouseForProduction', 'enabled'=>1, 'visible'=>-1, 'position'=>102),
+		'fk_warehouse' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label'=>'WarehouseForProduction', 'picto'=>'stock', 'enabled'=>1, 'visible'=>-1, 'position'=>102, 'css'=>'maxwidth500'),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>-2, 'position'=>161, 'notnull'=>-1,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>-2, 'position'=>162, 'notnull'=>-1,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>300, 'notnull'=>1,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'position'=>501, 'notnull'=>1,),
 		'date_valid' => array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-2, 'position'=>502, 'notnull'=>0,),
-		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>510, 'notnull'=>1, 'foreignkey'=>'user.rowid',),
-		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'position'=>511, 'notnull'=>-1,),
-		'fk_user_valid' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-2, 'position'=>512, 'notnull'=>0,),
+		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserCreation', 'picto'=>'user', 'enabled'=>1, 'visible'=>-2, 'position'=>510, 'notnull'=>1, 'foreignkey'=>'user.rowid',),
+		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'picto'=>'user', 'enabled'=>1, 'visible'=>-2, 'position'=>511, 'notnull'=>-1,),
+		'fk_user_valid' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'picto'=>'user', 'enabled'=>1, 'visible'=>-2, 'position'=>512, 'notnull'=>0,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>1010),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>2, 'position'=>1000, 'notnull'=>1, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Enabled', 9=>'Disabled')),
 	);
-	public $rowid;
-	public $ref;
-	public $label;
-	public $description;
-	public $note_public;
-	public $note_private;
 
 	/**
-     * @var integer|string date_creation
-     */
+	 * @var int rowid
+	 */
+	public $rowid;
+
+	/**
+	 * @var string ref
+	 */
+	public $ref;
+
+	/**
+	 * @var string label
+	 */
+	public $label;
+
+	/**
+	 * @var int bomtype
+	 */
+	public $bomtype;
+
+	/**
+	 * @var string description
+	 */
+	public $description;
+
+	/**
+	 * @var integer|string date_creation
+	 */
 	public $date_creation;
 
 
 	public $tms;
+
+	/**
+	 * @var int Id User creator
+	 */
 	public $fk_user_creat;
+
+	/**
+	 * @var int Id User modifying
+	 */
 	public $fk_user_modif;
+
+	/**
+	 * @var string import key
+	 */
 	public $import_key;
+
+	/**
+	 * @var int status
+	 */
 	public $status;
+
+	/**
+	 * @var int product Id
+	 */
 	public $fk_product;
 	public $qty;
 	public $efficiency;
@@ -142,19 +183,19 @@ class BOM extends CommonObject
 	public $table_element_line = 'bom_bomline';
 
 	/**
-	 * @var int    Field with ID of parent key if this field has a parent
+	 * @var string    Fieldname with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_bom';
 
 	/**
-	 * @var int    Name of subtable class that manage subtable lines
+	 * @var string    Name of subtable class that manage subtable lines
 	 */
 	public $class_element_line = 'BOMLine';
 
-	/**
-	 * @var array	List of child tables. To test if we can delete object.
-	 */
-	//protected $childtables=array();
+	// /**
+	//  * @var array	List of child tables. To test if we can delete object.
+	//  */
+	// protected $childtables=array();
 
 	/**
 	 * @var array	List of child tables. To know object to delete on cascade.
@@ -204,7 +245,7 @@ class BOM extends CommonObject
 		// Translate some data of arrayofkeyval
 		foreach ($this->fields as $key => $val)
 		{
-			if (is_array($val['arrayofkeyval']))
+			if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval']))
 			{
 				foreach ($val['arrayofkeyval'] as $key2 => $val2)
 				{
@@ -238,89 +279,89 @@ class BOM extends CommonObject
 	public function createFromClone(User $user, $fromid)
 	{
 		global $langs, $hookmanager, $extrafields;
-	    $error = 0;
+		$error = 0;
 
-	    dol_syslog(__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
-	    $object = new self($this->db);
+		$object = new self($this->db);
 
-	    $this->db->begin();
+		$this->db->begin();
 
-	    // Load source object
-	    $result = $object->fetchCommon($fromid);
-	    if ($result > 0 && !empty($object->table_element_line)) $object->fetchLines();
+		// Load source object
+		$result = $object->fetchCommon($fromid);
+		if ($result > 0 && !empty($object->table_element_line)) $object->fetchLines();
 
-	    // Get lines so they will be clone
-	    //foreach($object->lines as $line)
-	    //	$line->fetch_optionals();
+		// Get lines so they will be clone
+		//foreach ($object->lines as $line)
+		//	$line->fetch_optionals();
 
-	    // Reset some properties
-	    unset($object->id);
-	    unset($object->fk_user_creat);
-	    unset($object->import_key);
+		// Reset some properties
+		unset($object->id);
+		unset($object->fk_user_creat);
+		unset($object->import_key);
 
-	    // Clear fields
-	    $object->ref = empty($this->fields['ref']['default']) ? $langs->trans("copy_of_").$object->ref : $this->fields['ref']['default'];
-	    $object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
-	    $object->status = self::STATUS_DRAFT;
-	    // ...
-	    // Clear extrafields that are unique
-	    if (is_array($object->array_options) && count($object->array_options) > 0)
-	    {
-	    	$extrafields->fetch_name_optionals_label($object->table_element);
-	    	foreach ($object->array_options as $key => $option)
-	    	{
-	    		$shortkey = preg_replace('/options_/', '', $key);
-	    		if (!empty($extrafields->attributes[$this->element]['unique'][$shortkey]))
-	    		{
-	    			//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
-	    			unset($object->array_options[$key]);
-	    		}
-	    	}
-	    }
+		// Clear fields
+		$object->ref = empty($this->fields['ref']['default']) ? $langs->trans("copy_of_").$object->ref : $this->fields['ref']['default'];
+		$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
+		$object->status = self::STATUS_DRAFT;
+		// ...
+		// Clear extrafields that are unique
+		if (is_array($object->array_options) && count($object->array_options) > 0)
+		{
+			$extrafields->fetch_name_optionals_label($object->table_element);
+			foreach ($object->array_options as $key => $option)
+			{
+				$shortkey = preg_replace('/options_/', '', $key);
+				if (!empty($extrafields->attributes[$this->element]['unique'][$shortkey]))
+				{
+					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
+					unset($object->array_options[$key]);
+				}
+			}
+		}
 
-	    // Create clone
+		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
-	    $result = $object->createCommon($user);
-	    if ($result < 0) {
-	        $error++;
-	        $this->error = $object->error;
-	        $this->errors = $object->errors;
-	    }
+		$result = $object->createCommon($user);
+		if ($result < 0) {
+			$error++;
+			$this->error = $object->error;
+			$this->errors = $object->errors;
+		}
 
-	    if (!$error)
-	    {
-	    	// copy internal contacts
-	    	if ($this->copy_linked_contact($object, 'internal') < 0)
-	    	{
-	    		$error++;
-	    	}
-	    }
+		if (!$error)
+		{
+			// copy internal contacts
+			if ($this->copy_linked_contact($object, 'internal') < 0)
+			{
+				$error++;
+			}
+		}
 
-	    if (!$error)
-	    {
-	    	// copy external contacts if same company
-	    	if (property_exists($this, 'socid') && $this->socid == $object->socid)
-	    	{
-	    		if ($this->copy_linked_contact($object, 'external') < 0)
-	    			$error++;
-	    	}
-	    }
+		if (!$error)
+		{
+			// copy external contacts if same company
+			if (property_exists($this, 'socid') && $this->socid == $object->socid)
+			{
+				if ($this->copy_linked_contact($object, 'external') < 0)
+					$error++;
+			}
+		}
 
-	    // If there is lines, create lines too
+		// If there is lines, create lines too
 
 
 
-	    unset($object->context['createfromclone']);
+		unset($object->context['createfromclone']);
 
-	    // End
-	    if (!$error) {
-	        $this->db->commit();
-	        return $object;
-	    } else {
-	        $this->db->rollback();
-	        return -1;
-	    }
+		// End
+		if (!$error) {
+			$this->db->commit();
+			return $object;
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
 	}
 
 	/**
@@ -383,14 +424,11 @@ class BOM extends CommonObject
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
 					$sqlwhere[] = $key.'='.$value;
-				}
-				elseif (strpos($key, 'date') !== false) {
+				} elseif (strpos($key, 'date') !== false) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
-				}
-				elseif ($key == 'customsql') {
+				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
-				}
-				else {
+				} else {
 					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
 			}
@@ -483,51 +521,47 @@ class BOM extends CommonObject
 	 */
 	public function getNextNumRef($prod)
 	{
-	    global $langs, $conf;
-	    $langs->load("mrp");
+		global $langs, $conf;
+		$langs->load("mrp");
 
-	    if (!empty($conf->global->BOM_ADDON))
-	    {
-	        $mybool = false;
+		if (!empty($conf->global->BOM_ADDON))
+		{
+			$mybool = false;
 
-	        $file = $conf->global->BOM_ADDON.".php";
-	        $classname = $conf->global->BOM_ADDON;
+			$file = $conf->global->BOM_ADDON.".php";
+			$classname = $conf->global->BOM_ADDON;
 
-	        // Include file with class
-	        $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-	        foreach ($dirmodels as $reldir)
-	        {
-	            $dir = dol_buildpath($reldir."core/modules/bom/");
+			// Include file with class
+			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+			foreach ($dirmodels as $reldir)
+			{
+				$dir = dol_buildpath($reldir."core/modules/bom/");
 
-	            // Load file with numbering class (if found)
-	            $mybool |= @include_once $dir.$file;
-	        }
+				// Load file with numbering class (if found)
+				$mybool |= @include_once $dir.$file;
+			}
 
-	        if ($mybool === false)
-	        {
-	            dol_print_error('', "Failed to include file ".$file);
-	            return '';
-	        }
+			if ($mybool === false)
+			{
+				dol_print_error('', "Failed to include file ".$file);
+				return '';
+			}
 
-	        $obj = new $classname();
-	        $numref = $obj->getNextValue($prod, $this);
+			$obj = new $classname();
+			$numref = $obj->getNextValue($prod, $this);
 
-	        if ($numref != "")
-	        {
-	            return $numref;
-	        }
-	        else
-	        {
-	            $this->error = $obj->error;
-	            //dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
-	            return "";
-	        }
-	    }
-	    else
-	    {
-	        print $langs->trans("Error")." ".$langs->trans("Error_BOM_ADDON_NotDefined");
-	        return "";
-	    }
+			if ($numref != "")
+			{
+				return $numref;
+			} else {
+				$this->error = $obj->error;
+				//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
+				return "";
+			}
+		} else {
+			print $langs->trans("Error")." ".$langs->trans("Error_BOM_ADDON_NotDefined");
+			return "";
+		}
 	}
 
 	/**
@@ -539,20 +573,20 @@ class BOM extends CommonObject
 	 */
 	public function validate($user, $notrigger = 0)
 	{
-	    global $conf, $langs;
+		global $conf, $langs;
 
-	    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-	    $error = 0;
+		$error = 0;
 
-	    // Protection
-	    if ($this->status == self::STATUS_VALIDATED)
-	    {
-	        dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
-	        return 0;
-	    }
+		// Protection
+		if ($this->status == self::STATUS_VALIDATED)
+		{
+			dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
+			return 0;
+		}
 
-	    /*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->create))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->create))
 	        || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
 	    {
 	        $this->error='NotEnoughPermissions';
@@ -560,104 +594,100 @@ class BOM extends CommonObject
 	        return -1;
 	    }*/
 
-	    $now = dol_now();
+		$now = dol_now();
 
-	    $this->db->begin();
+		$this->db->begin();
 
-	    // Define new ref
-	    if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
-	    {
-	        $this->fetch_product();
-	        $num = $this->getNextNumRef($this->product);
-	    }
-	    else
-	    {
-	        $num = $this->ref;
-	    }
-	    $this->newref = dol_sanitizeFileName($num);
+		// Define new ref
+		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
+		{
+			$this->fetch_product();
+			$num = $this->getNextNumRef($this->product);
+		} else {
+			$num = $this->ref;
+		}
+		$this->newref = dol_sanitizeFileName($num);
 
-	    // Validate
-	    $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-	    $sql .= " SET ref = '".$this->db->escape($num)."',";
-	    $sql .= " status = ".self::STATUS_VALIDATED.",";
-	    $sql .= " date_valid='".$this->db->idate($now)."',";
-	    $sql .= " fk_user_valid = ".$user->id;
-	    $sql .= " WHERE rowid = ".$this->id;
+		// Validate
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " SET ref = '".$this->db->escape($num)."',";
+		$sql .= " status = ".self::STATUS_VALIDATED.",";
+		$sql .= " date_valid='".$this->db->idate($now)."',";
+		$sql .= " fk_user_valid = ".$user->id;
+		$sql .= " WHERE rowid = ".$this->id;
 
-	    dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
-	    $resql = $this->db->query($sql);
-	    if (!$resql)
-	    {
-	        dol_print_error($this->db);
-	        $this->error = $this->db->lasterror();
-	        $error++;
-	    }
+		dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql)
+		{
+			dol_print_error($this->db);
+			$this->error = $this->db->lasterror();
+			$error++;
+		}
 
-	    if (!$error && !$notrigger)
-	    {
-	        // Call trigger
-	        $result = $this->call_trigger('BOM_VALIDATE', $user);
-	        if ($result < 0) $error++;
-	        // End call triggers
-	    }
+		if (!$error && !$notrigger)
+		{
+			// Call trigger
+			$result = $this->call_trigger('BOM_VALIDATE', $user);
+			if ($result < 0) $error++;
+			// End call triggers
+		}
 
-	    if (!$error)
-	    {
-	        $this->oldref = $this->ref;
+		if (!$error)
+		{
+			$this->oldref = $this->ref;
 
-	        // Rename directory if dir was a temporary ref
-	        if (preg_match('/^[\(]?PROV/i', $this->ref))
-	        {
-	        	// Now we rename also files into index
-	        	$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'bom/".$this->db->escape($this->newref)."'";
-	        	$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'bom/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
-	        	$resql = $this->db->query($sql);
-	        	if (!$resql) { $error++; $this->error = $this->db->lasterror(); }
+			// Rename directory if dir was a temporary ref
+			if (preg_match('/^[\(]?PROV/i', $this->ref))
+			{
+				// Now we rename also files into index
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'bom/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'bom/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) { $error++; $this->error = $this->db->lasterror(); }
 
-	        	// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
-	        	$oldref = dol_sanitizeFileName($this->ref);
-	            $newref = dol_sanitizeFileName($num);
-	            $dirsource = $conf->bom->dir_output.'/'.$oldref;
-	            $dirdest = $conf->bom->dir_output.'/'.$newref;
-	            if (!$error && file_exists($dirsource))
-	            {
-	                dol_syslog(get_class($this)."::validate() rename dir ".$dirsource." into ".$dirdest);
+				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
+				$oldref = dol_sanitizeFileName($this->ref);
+				$newref = dol_sanitizeFileName($num);
+				$dirsource = $conf->bom->dir_output.'/'.$oldref;
+				$dirdest = $conf->bom->dir_output.'/'.$newref;
+				if (!$error && file_exists($dirsource))
+				{
+					dol_syslog(get_class($this)."::validate() rename dir ".$dirsource." into ".$dirdest);
 
-	                if (@rename($dirsource, $dirdest))
-	                {
-	                    dol_syslog("Rename ok");
-	                    // Rename docs starting with $oldref with $newref
-	                    $listoffiles = dol_dir_list($conf->bom->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
-	                    foreach ($listoffiles as $fileentry)
-	                    {
-	                        $dirsource = $fileentry['name'];
-	                        $dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
-	                        $dirsource = $fileentry['path'].'/'.$dirsource;
-	                        $dirdest = $fileentry['path'].'/'.$dirdest;
-	                        @rename($dirsource, $dirdest);
-	                    }
-	                }
-	            }
-	        }
-	    }
+					if (@rename($dirsource, $dirdest))
+					{
+						dol_syslog("Rename ok");
+						// Rename docs starting with $oldref with $newref
+						$listoffiles = dol_dir_list($conf->bom->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
+						foreach ($listoffiles as $fileentry)
+						{
+							$dirsource = $fileentry['name'];
+							$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
+							$dirsource = $fileentry['path'].'/'.$dirsource;
+							$dirdest = $fileentry['path'].'/'.$dirdest;
+							@rename($dirsource, $dirdest);
+						}
+					}
+				}
+			}
+		}
 
-	    // Set new ref and current status
-	    if (!$error)
-	    {
-	        $this->ref = $num;
-	        $this->status = self::STATUS_VALIDATED;
-	    }
+		// Set new ref and current status
+		if (!$error)
+		{
+			$this->ref = $num;
+			$this->status = self::STATUS_VALIDATED;
+		}
 
-	    if (!$error)
-	    {
-	        $this->db->commit();
-	        return 1;
-	    }
-	    else
-	    {
-	        $this->db->rollback();
-	        return -1;
-	    }
+		if (!$error)
+		{
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
 	}
 
 	/**
@@ -741,57 +771,54 @@ class BOM extends CommonObject
 	 *
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *	@param	string	$option						On what the link point to ('nolink', ...)
-     *  @param	int  	$notooltip					1=Disable tooltip
-     *  @param  string  $morecss            		Add more css on link
-     *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param	int  	$notooltip					1=Disable tooltip
+	 *  @param  string  $morecss            		Add more css on link
+	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $db, $conf, $langs, $hookmanager;
-        global $dolibarr_main_authentication, $dolibarr_main_demo;
-        global $menumanager;
 
-        if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
+		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
-        $result = '';
+		$result = '';
 
-        $label = '<u>'.$langs->trans("BillOfMaterials").'</u>';
-        $label .= '<br>';
-        $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
-        if (isset($this->status)) {
-        	$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
-        }
+		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("BillOfMaterials").'</u>';
+		if (isset($this->status)) {
+			$label .= ' '.$this->getLibStatut(5);
+		}
+		$label .= '<br>';
+		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
-        $url = dol_buildpath('/bom/bom_card.php', 1).'?id='.$this->id;
+		$url = dol_buildpath('/bom/bom_card.php', 1).'?id='.$this->id;
 
-        if ($option != 'nolink')
-        {
-	        // Add param to save lastsearch_values or not
-	        $add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-	        if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-	        if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
-        }
+		if ($option != 'nolink')
+		{
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
+			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+		}
 
-        $linkclose = '';
-        if (empty($notooltip))
-        {
-            if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-            {
-                $label = $langs->trans("ShowBillOfMaterials");
-                $linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
-            }
-            $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-            $linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+		$linkclose = '';
+		if (empty($notooltip))
+		{
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			{
+				$label = $langs->trans("ShowBillOfMaterials");
+				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 
-            /*
+			/*
              $hookmanager->initHooks(array('bomdao'));
              $parameters=array('id'=>$this->id);
              $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
              if ($reshook > 0) $linkclose = $hookmanager->resPrint;
              */
-        }
-        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -824,7 +851,7 @@ class BOM extends CommonObject
 		return $this->LibStatut($this->status, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -839,9 +866,9 @@ class BOM extends CommonObject
 		{
 			global $langs;
 			//$langs->load("mrp");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
 		}
 
 		$statusType = 'status'.$status;
@@ -897,9 +924,7 @@ class BOM extends CommonObject
 			}
 
 			$this->db->free($result);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 	}
@@ -911,22 +936,20 @@ class BOM extends CommonObject
 	 */
 	public function getLinesArray()
 	{
-	    $this->lines = array();
+		$this->lines = array();
 
-	    $objectline = new BOMLine($this->db);
-	    $result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_bom = '.$this->id));
+		$objectline = new BOMLine($this->db);
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_bom = '.$this->id));
 
-	    if (is_numeric($result))
-	    {
-	        $this->error = $this->error;
-	        $this->errors = $this->errors;
-	        return $result;
-	    }
-	    else
-	    {
-	        $this->lines = $result;
-	        return $this->lines;
-	    }
+		if (is_numeric($result))
+		{
+			$this->error = $this->error;
+			$this->errors = $this->errors;
+			return $result;
+		} else {
+			$this->lines = $result;
+			return $this->lines;
+		}
 	}
 
 	/**
@@ -950,8 +973,8 @@ class BOM extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'standard';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->BOM_ADDON_PDF)) {
 				$modele = $conf->global->BOM_ADDON_PDF;
 			}
@@ -970,9 +993,9 @@ class BOM extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-	    $this->initAsSpecimenCommon();
-	    $this->ref = 'BOM-123';
-	    $this->date = $this->date_creation;
+		$this->initAsSpecimenCommon();
+		$this->ref = 'BOM-123';
+		$this->date = $this->date_creation;
 	}
 
 
@@ -1021,7 +1044,11 @@ class BOM extends CommonObject
 
 		foreach ($this->lines as &$line) {
 			$tmpproduct = new Product($this->db);
-			$tmpproduct->fetch($line->fk_product);
+			$result = $tmpproduct->fetch($line->fk_product);
+			if ($result < 0) {
+				$this->error = $tmpproduct->error;
+				return -1;
+			}
 			$line->unit_cost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
 			if (empty($line->unit_cost)) {
 				if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0)
@@ -1103,20 +1130,48 @@ class BOMLine extends CommonObjectLine
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'notnull'=>-1,),
 		'qty' => array('type'=>'double(24,8)', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'position'=>100, 'notnull'=>1, 'isameasure'=>'1',),
 		'qty_frozen' => array('type'=>'smallint', 'label'=>'QuantityFrozen', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'position'=>105, 'css'=>'maxwidth50imp', 'help'=>'QuantityConsumedInvariable'),
-	    'disable_stock_change' => array('type'=>'smallint', 'label'=>'DisableStockChange', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'position'=>108, 'css'=>'maxwidth50imp', 'help'=>'DisableStockChangeHelp'),
-	    'efficiency' => array('type'=>'double(24,8)', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'position'=>110, 'notnull'=>1, 'css'=>'maxwidth50imp', 'help'=>'ValueOfEfficiencyConsumedMeans'),
+		'disable_stock_change' => array('type'=>'smallint', 'label'=>'DisableStockChange', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'position'=>108, 'css'=>'maxwidth50imp', 'help'=>'DisableStockChangeHelp'),
+		'efficiency' => array('type'=>'double(24,8)', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'position'=>110, 'notnull'=>1, 'css'=>'maxwidth50imp', 'help'=>'ValueOfEfficiencyConsumedMeans'),
 		'position' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>1, 'visible'=>0, 'default'=>0, 'position'=>200, 'notnull'=>1,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
 	);
+
+	/**
+	 * @var int rowid
+	 */
 	public $rowid;
+
+	/**
+	 * @var int fk_bom
+	 */
 	public $fk_bom;
+
+	/**
+	 * @var int Id of product
+	 */
 	public $fk_product;
+
+	/**
+	 * @var string description
+	 */
 	public $description;
 	public $qty;
+
+	/**
+	 * @var int qty frozen
+	 */
 	public $qty_frozen;
 	public $disable_stock_change;
 	public $efficiency;
+
+	/**
+	 * @var int position of line
+	 */
 	public $position;
+
+	/**
+	 * @var string import key
+	 */
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
 
@@ -1157,7 +1212,7 @@ class BOMLine extends CommonObjectLine
 		// Translate some data of arrayofkeyval
 		foreach ($this->fields as $key => $val)
 		{
-			if (is_array($val['arrayofkeyval']))
+			if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval']))
 			{
 				foreach ($val['arrayofkeyval'] as $key2 => $val2)
 				{
@@ -1225,14 +1280,11 @@ class BOMLine extends CommonObjectLine
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
 					$sqlwhere[] = $key.'='.$value;
-				}
-				elseif (strpos($key, 'date') !== false) {
+				} elseif (strpos($key, 'date') !== false) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
-				}
-				elseif ($key == 'customsql') {
+				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
-				}
-				else {
+				} else {
 					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
 			}
@@ -1302,52 +1354,51 @@ class BOMLine extends CommonObjectLine
 	 *
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *	@param	string	$option						On what the link point to ('nolink', ...)
-     *  @param	int  	$notooltip					1=Disable tooltip
-     *  @param  string  $morecss            		Add more css on link
-     *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-     *  @return	string								String with URL
-     */
-    public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
-    {
-        global $db, $conf, $langs, $hookmanager;
+	 *  @param	int  	$notooltip					1=Disable tooltip
+	 *  @param  string  $morecss            		Add more css on link
+	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @return	string								String with URL
+	 */
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+	{
+		global $db, $conf, $langs, $hookmanager;
 
-        if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
+		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
-        $result = '';
+		$result = '';
 
-        $label = '<u>'.$langs->trans("BillOfMaterialsLine").'</u>';
-        $label .= '<br>';
-        $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$label = '<u>'.$langs->trans("BillOfMaterialsLine").'</u>';
+		$label .= '<br>';
+		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
-        $url = dol_buildpath('/bom/bomline_card.php', 1).'?id='.$this->id;
+		$url = dol_buildpath('/bom/bomline_card.php', 1).'?id='.$this->id;
 
-        if ($option != 'nolink')
-        {
-	        // Add param to save lastsearch_values or not
-	        $add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-	        if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-	        if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
-        }
+		if ($option != 'nolink')
+		{
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
+			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+		}
 
-        $linkclose = '';
-        if (empty($notooltip))
-        {
-            if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-            {
-                $label = $langs->trans("ShowBillOfMaterialsLine");
-                $linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
-            }
-            $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-            $linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+		$linkclose = '';
+		if (empty($notooltip))
+		{
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			{
+				$label = $langs->trans("ShowBillOfMaterialsLine");
+				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 
-            /*
+			/*
              $hookmanager->initHooks(array('bomlinedao'));
              $parameters=array('id'=>$this->id);
              $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
              if ($reshook > 0) $linkclose = $hookmanager->resPrint;
              */
-        }
-        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -1367,7 +1418,7 @@ class BOMLine extends CommonObjectLine
 		else $result .= $hookmanager->resPrint;
 
 		return $result;
-    }
+	}
 
 	/**
 	 *  Return label of the status
@@ -1380,7 +1431,7 @@ class BOMLine extends CommonObjectLine
 		return $this->LibStatut($this->status, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -1440,9 +1491,7 @@ class BOMLine extends CommonObjectLine
 			}
 
 			$this->db->free($result);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 	}

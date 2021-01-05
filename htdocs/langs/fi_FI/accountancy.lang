@@ -18,12 +18,14 @@ DefaultForService=Oletusarvo palvelulle
 DefaultForProduct=Oletusarvo tuotteelle
 CantSuggest=Ei ehdotuksia
 AccountancySetupDoneFromAccountancyMenu=Kirjanpidon asetukset tehdään pääasiassa valikosta %s
-ConfigAccountingExpert=Moduulin kirjanpitoasiantuntijan määrittäminen
+ConfigAccountingExpert=Configuration of the module accounting (double entry)
 Journalization=Journalization
-Journaux=Päiväkirjat
+Journals=Päiväkirjat
 JournalFinancial=Rahoituspäiväkirjat
 BackToChartofaccounts=Palauta tilikartta
 Chartofaccounts=Tilikartta
+ChartOfSubaccounts=Chart of individual accounts
+ChartOfIndividualAccountsOfSubsidiaryLedger=Chart of individual accounts of the subsidiary ledger
 CurrentDedicatedAccountingAccount=Current dedicated account
 AssignDedicatedAccountingAccount=New account to assign
 InvoiceLabel=Laskun etiketti
@@ -33,8 +35,8 @@ OtherInfo=Other information
 DeleteCptCategory=Poista kirjanpitotili ryhmästä
 ConfirmDeleteCptCategory=Are you sure you want to remove this accounting account from the accounting account group?
 JournalizationInLedgerStatus=Status of journalization
-AlreadyInGeneralLedger=Already journalized in ledgers
-NotYetInGeneralLedger=Not yet journalized in ledgers
+AlreadyInGeneralLedger=Already transferred in accounting journals and ledger
+NotYetInGeneralLedger=Not yet transferred in accouting journals and ledger
 GroupIsEmptyCheckSetup=Group is empty, check setup of the personalized accounting group
 DetailByAccount=Yksityiskohtaiset tiedot tileittäin
 AccountWithNonZeroValues=Accounts with non-zero values
@@ -43,7 +45,9 @@ CountriesInEEC=EU-alueen maat
 CountriesNotInEEC=EU: n ulkopuoliset maat
 CountriesInEECExceptMe=EU-alueen maat, poislukien %s
 CountriesExceptMe=Kaikki maat, poislukien %s
-AccountantFiles=Kirjanpitodokumenttien vienti
+AccountantFiles=Export source documents
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
+VueByAccountAccounting=View by accounting account
 
 MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
 MainAccountForSuppliersNotDefined=Main accounting account for vendors not defined in setup
@@ -79,7 +83,7 @@ AccountancyAreaDescAnalyze=STEP %s: Add or edit existing transactions and genera
 
 AccountancyAreaDescClosePeriod=STEP %s: Close period so we can't make modification in a future.
 
-TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup was not complete (accounting code journal not defined for all bank accounts)
+TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup has not been completed (accounting code journal not defined for all bank accounts)
 Selectchartofaccounts=Valitse aktiivinen tilikartta
 ChangeAndLoad=Change and load
 Addanaccount=Lisää kirjanpitotili
@@ -89,6 +93,8 @@ SubledgerAccount=Subledger account
 SubledgerAccountLabel=Subledger account label
 ShowAccountingAccount=Show accounting account
 ShowAccountingJournal=Show accounting journal
+ShowAccountingAccountInLedger=Show accounting account in ledger
+ShowAccountingAccountInJournals=Show accounting account in journals
 AccountAccountingSuggest=Ehdotettu kirjanpitotili
 MenuDefaultAccounts=Oletustilit
 MenuBankAccounts=Pankkitilit
@@ -110,8 +116,9 @@ ExpenseReportsVentilation=Kuluraportin kiinnittäminen
 CreateMvts=Luo uusi transaktio
 UpdateMvts=Transaktion muuttaminen
 ValidTransaction=Hyväksy transaktio
-WriteBookKeeping=Register transactions in Ledger
+WriteBookKeeping=Register transactions in accounting
 Bookkeeping=Pääkirjanpito
+BookkeepingSubAccount=Subledger
 AccountBalance=Tilin saldo
 ObjectsRef=Source object ref
 CAHTF=Total purchase vendor before tax
@@ -149,6 +156,8 @@ ACCOUNTING_MANAGE_ZERO=Allow to manage different number of zeros at the end of a
 BANK_DISABLE_DIRECT_INPUT=Disable direct recording of transaction in bank account
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Enable draft export on journal
 ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties)
+ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, select period show by default
 
 ACCOUNTING_SELL_JOURNAL=Myyntipäiväkirja
 ACCOUNTING_PURCHASE_JOURNAL=Ostopäiväkirja
@@ -167,6 +176,8 @@ TransitionalAccount=Transitional bank transfer account
 ACCOUNTING_ACCOUNT_SUSPENSE=Accounting account of wait
 DONATION_ACCOUNTINGACCOUNT=Accounting account to register donations
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Accounting account to register subscriptions
+
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Accounting account by default to register customer deposit
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for the bought products (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Accounting account by default for the bought products in EEC (used if not defined in the product sheet)
@@ -202,16 +213,16 @@ ByPredefinedAccountGroups=By predefined groups
 ByPersonalizedAccountGroups=By personalized groups
 ByYear=Vuoden mukaan
 NotMatch=Not Set
-DeleteMvt=Poista pääkirjan rivit
+DeleteMvt=Delete some operation lines from accounting
 DelMonth=Month to delete
 DelYear=Poistettava vuosi
 DelJournal=Poistettava päiväkirja
-ConfirmDeleteMvt=This will delete all lines of the Ledger for the year/month and/or from a specific journal (At least one criterion is required). You will have to reuse the feature 'Registration in accounting' to have the deleted record back in the ledger.
-ConfirmDeleteMvtPartial=This will delete the transaction from the Ledger (all lines related to same transaction will be deleted)
+ConfirmDeleteMvt=This will delete all operation lines of the accounting for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
+ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all operation lines related to the same transaction will be deleted)
 FinanceJournal=Finance journal
 ExpenseReportsJournal=Expense reports journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
-DescJournalOnlyBindedVisible=This is a view of record that are bound to an accounting account and can be recorded into the Ledger.
+DescJournalOnlyBindedVisible=This is a view of record that are bound to an accounting account and can be recorded into the Journals and Ledger.
 VATAccountNotDefined=ALV tiliä ei ole määritelty
 ThirdpartyAccountNotDefined=Sidosryhmän tiliä ei ole määritetty
 ProductAccountNotDefined=Tuotteen tiliä ei ole määritetty
@@ -284,6 +295,7 @@ ShowTutorial=Show Tutorial
 NotReconciled=Täsmäyttämätön
 
 ## Admin
+BindingOptions=Binding options
 ApplyMassCategories=Apply mass categories
 AddAccountFromBookKeepingWithNoCategories=Available account not yet in the personalized group
 CategoryDeleted=Category for the accounting account has been removed
@@ -303,6 +315,9 @@ ErrorAccountingJournalIsAlreadyUse=This journal is already use
 AccountingAccountForSalesTaxAreDefinedInto=Note: Accounting account for Sales tax are defined into menu <b>%s</b> - <b>%s</b>
 NumberOfAccountancyEntries=Number of entries
 NumberOfAccountancyMovements=Number of movements
+ACCOUNTING_DISABLE_BINDING_ON_SALES=Disable binding & transfer in accountancy on sales (customer invoices will not be taken into account in accounting)
+ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountancy on purchases (vendor invoices will not be taken into account in accounting)
+ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
 ExportDraftJournal=Export draft journal
@@ -324,6 +339,8 @@ Modelcsv_configurable=Export CSV Configurable
 Modelcsv_FEC=Export FEC
 Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
 Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
+Modelcsv_Gestinumv3=Export for Gestinum (v3)
+Modelcsv_Gestinumv5Export for Gestinum (v5)
 ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service

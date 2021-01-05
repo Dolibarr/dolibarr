@@ -19,7 +19,7 @@
  */
 
 /**
- * \file       cashcontrol/class/cashcontrol.class.php
+ * \file       htdocs/compta/cashcontrol/class/cashcontrol.class.php
  * \ingroup    cashdesk|takepos
  * \brief      This file is CRUD class file (Create/Read/Update/Delete) for cash fence table
  */
@@ -66,8 +66,8 @@ class CashControl extends CommonObject
 	'cash' =>array('type'=>'price', 'label'=>'Cash', 'enabled'=>1, 'visible'=>1, 'position'=>30),
 	'cheque' =>array('type'=>'price', 'label'=>'Cheque', 'enabled'=>1, 'visible'=>1, 'position'=>33),
 	'card' =>array('type'=>'price', 'label'=>'CreditCard', 'enabled'=>1, 'visible'=>1, 'position'=>36),
-    'year_close' =>array('type'=>'integer', 'label'=>'Year close', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>50, 'css'=>'center'),
-    'month_close' =>array('type'=>'integer', 'label'=>'Month close', 'enabled'=>1, 'visible'=>1, 'position'=>55, 'css'=>'center'),
+	'year_close' =>array('type'=>'integer', 'label'=>'Year close', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>50, 'css'=>'center'),
+	'month_close' =>array('type'=>'integer', 'label'=>'Month close', 'enabled'=>1, 'visible'=>1, 'position'=>55, 'css'=>'center'),
 	'day_close' =>array('type'=>'integer', 'label'=>'Day close', 'enabled'=>1, 'visible'=>1, 'position'=>60, 'css'=>'center'),
 	'date_valid' =>array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>490),
 	'date_creation' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
@@ -76,6 +76,9 @@ class CashControl extends CommonObject
 	'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Brouillon', '1'=>'Validated')),
 	);
 
+	/**
+	 * @var int Object Id
+	 */
 	public $id;
 	public $opening;
 	public $status;
@@ -94,8 +97,8 @@ class CashControl extends CommonObject
 	public $date_valid;
 
 	/**
-     * @var integer|string date_creation
-     */
+	 * @var integer|string date_creation
+	 */
 	public $date_creation;
 
 	/**
@@ -286,7 +289,7 @@ class CashControl extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
+		//if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
 		return $result;
 	}
 
@@ -311,8 +314,8 @@ class CashControl extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
-	    return $this->deleteCommon($user, $notrigger);
-	    //return $this->deleteCommon($user, $notrigger, 1);
+		return $this->deleteCommon($user, $notrigger);
+		//return $this->deleteCommon($user, $notrigger, 1);
 	}
 
 	/**
@@ -357,10 +360,10 @@ class CashControl extends CommonObject
 	 *  Return clicable link of object (with eventually picto)
 	 *
 	 *  @param  int     $withpicto                  Add picto into link
-     *  @param  string  $option                     On what the link point to ('nolink', ...)
-     *  @param  int     $notooltip                  1=Disable tooltip
-     *  @param  string  $morecss                    Add more css on link
-     *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param  string  $option                     On what the link point to ('nolink', ...)
+	 *  @param  int     $notooltip                  1=Disable tooltip
+	 *  @param  string  $morecss                    Add more css on link
+	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *  @return string                              String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
@@ -381,31 +384,30 @@ class CashControl extends CommonObject
 
 		if ($option != 'nolink')
 		{
-		    // Add param to save lastsearch_values or not
-		    $add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-		    if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-		    if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
+			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
 		}
 
 		$linkclose = '';
 		if (empty($notooltip))
 		{
-		    if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-		    {
-		        $label = $langs->trans("ShowMyObject");
-		        $linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
-		    }
-		    $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-		    $linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			{
+				$label = $langs->trans("ShowMyObject");
+				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 
-		    /*
+			/*
 		     $hookmanager->initHooks(array('myobjectdao'));
 		     $parameters=array('id'=>$this->id);
 		     $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 		     if ($reshook > 0) $linkclose = $hookmanager->resPrint;
 		     */
-		}
-		else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -421,8 +423,10 @@ class CashControl extends CommonObject
 		$hookmanager->initHooks(array('cashfencedao'));
 		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) { $result = $hookmanager->resPrint;
-		} else { $result .= $hookmanager->resPrint;
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
 		}
 
 		return $result;

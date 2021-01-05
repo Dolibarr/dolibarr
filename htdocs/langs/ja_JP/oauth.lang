@@ -1,18 +1,18 @@
 # Dolibarr language file - Source file is en_US - oauth
-ConfigOAuth=OAuth Configuration
-OAuthServices=OAuth Services
+ConfigOAuth=OAuth構成
+OAuthServices=OAuthサービス
 ManualTokenGeneration=手動トークン生成
-TokenManager=Token Manager
-IsTokenGenerated=トークンは生成されましたか？
-NoAccessToken=アクセストークンはローカルデータベースに保存されていません
-HasAccessToken=トークンを生成し、ローカルデータベースに保存されました
-NewTokenStored=トークンを受け取り、保存しました
-ToCheckDeleteTokenOnProvider=ここをクリックすると %s OAuth プロバイダによって保存された承認を確認/削除します
-TokenDeleted=トークンを削除しました
-RequestAccess=ここをクリックすると、アクセスをリクエスト/更新し、新しいトークンを受け取って保存します
-DeleteAccess=ここをクリックするとトークンを削除します
-UseTheFollowingUrlAsRedirectURI=Use the following URL as the Redirect URI when creating your credentials with your OAuth provider:
-ListOfSupportedOauthProviders=Enter the credentials provided by your OAuth2 provider. Only supported OAuth2 providers are listedd here. These services may be used by other modules that need OAuth2 authentication.
+TokenManager=トークンマネージャ
+IsTokenGenerated=トークンは生成されたか？
+NoAccessToken=アクセストークンはローカルデータベースに保存されていない
+HasAccessToken=トークンを生成し、ローカルデータベースに保存された
+NewTokenStored=トークンを受け取り、保存した
+ToCheckDeleteTokenOnProvider=ここをクリックすると %s OAuth プロバイダによって保存された承認を確認/削除する
+TokenDeleted=トークンを削除した
+RequestAccess=ここをクリックすると、アクセスをリクエスト/更新し、新規トークンを受け取って保存する
+DeleteAccess=ここをクリックするとトークンを削除する
+UseTheFollowingUrlAsRedirectURI=OAuthプロバイダーで認証情報を作成するときは、リダイレクトURIとして次のURLを使用する。
+ListOfSupportedOauthProviders=OAuth2プロバイダーから提供された資格情報を入力する。サポートされているOAuth2プロバイダーのみがここにリストされている。これらのサービスは、OAuth2認証を必要とする他のモジュールによって使用される場合がある。
 OAuthSetupForLogin=OAuth トークンを生成するページ
 SeePreviousTab=前のタブを表示
 OAuthIDSecret=OAuth ID とシークレット
@@ -20,13 +20,13 @@ TOKEN_REFRESH=現在のトークンを更新
 TOKEN_EXPIRED=トークンの有効期限切れ
 TOKEN_EXPIRE_AT=トークンの有効期限
 TOKEN_DELETE=保存されたトークンを削除
-OAUTH_GOOGLE_NAME=OAuth Google service
+OAUTH_GOOGLE_NAME=OAuthGoogleサービス
 OAUTH_GOOGLE_ID=OAuth Google Id
-OAUTH_GOOGLE_SECRET=OAuth Google Secret
-OAUTH_GOOGLE_DESC=Go to <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">this page</a> then "Credentials" to create OAuth credentials
-OAUTH_GITHUB_NAME=OAuth GitHub service
+OAUTH_GOOGLE_SECRET=OAuthGoogleシークレット
+OAUTH_GOOGLE_DESC=<a class="notasortlink" href="https://console.developers.google.com/" target="_blank">このページ</a>に移動し、次に「資格情報」に移動してOAuth資格情報を作成する
+OAUTH_GITHUB_NAME=OAuthGitHubサービス
 OAUTH_GITHUB_ID=OAuth GitHub Id
-OAUTH_GITHUB_SECRET=OAuth GitHub Secret
-OAUTH_GITHUB_DESC=Go to <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">this page</a> then "Register a new application" to create OAuth credentials
-OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
+OAUTH_GITHUB_SECRET=OAuthGitHubシークレット
+OAUTH_GITHUB_DESC=<a class="notasortlink" href="https://github.com/settings/developers" target="_blank">このページ</a>に移動し、"新規アプリケーションを登録" してOAuth認証情報を作成する
+OAUTH_STRIPE_TEST_NAME=OAuthストライプテスト
 OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live

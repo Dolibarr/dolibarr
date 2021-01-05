@@ -1,0 +1,40 @@
+Module68000Name = Informe intracomunitario
+Module68000Desc = Gestión de informes intracomm (soporte para formato francés DEB / DES)
+IntracommReportSetup = Configuración del módulo de intracommreport
+IntracommReportAbout = Acerca de intracommreport
+
+# Setup
+INTRACOMMREPORT_NUM_AGREMENT=Número de aprobación (emitido por el CISD de adjunto)
+INTRACOMMREPORT_TYPE_ACTEUR=Tipo de actor
+INTRACOMMREPORT_ROLE_ACTEUR=Papel interpretado por el actor
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Nivel de obligación sobre presentaciones
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Nivel de obligación sobre envíos
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Categoría de servicio del tipo "Franqueo"
+
+INTRACOMMREPORT_NUM_DECLARATION=Número de declarante
+
+# Menu
+MenuIntracommReport=Informe intracomunitario
+MenuIntracommReportNew=Nueva declaracion
+MenuIntracommReportList=Listado
+
+# View
+NewDeclaration=Nueva declaracion
+Declaration=Declaración
+AnalysisPeriod=Periodo de análisis
+TypeOfDeclaration=Tipo de declaración
+DEB=Declaración de intercambio de mercancías (DEB)
+DES=Declaración de intercambio de servicios (DES)
+
+# Export page
+IntracommReportTitle=Preparación de un archivo XML en formato ProDouane
+
+# List
+IntracommReportList=Lista de declaraciones generadas
+IntracommReportNumber=Número de declaración
+IntracommReportPeriod=Período de análisis
+IntracommReportTypeDeclaration=Tipo de declaración
+IntracommReportDownload=descargar archivo XML
+
+# Invoice
+IntracommReportTransportMode=Modo de transporte

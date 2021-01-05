@@ -39,11 +39,11 @@ $bankaccountid = GETPOST('cashdeskbank');
 switch ($action)
 {
 	default:
-	    $redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=validation';
+		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=validation';
 		break;
 
-	case 'valide_achat':
-	    $thirdpartyid = $_SESSION['CASHDESK_ID_THIRDPARTY'];
+	case 'validate_sell':
+		$thirdpartyid = $_SESSION['CASHDESK_ID_THIRDPARTY'];
 
 		$company = new Societe($db);
 		$company->fetch($thirdpartyid);
@@ -83,25 +83,23 @@ switch ($action)
 		// Si paiement autre qu'en especes, montant encaisse = prix total
 		$mode_reglement = $obj_facturation->getSetPaymentMode();
 		if ($mode_reglement != 'ESP') {
-			$montant = $obj_facturation->prixTotalTtc();
+			$montant = $obj_facturation->amountWithTax();
 		} else {
 			$montant = $_POST['txtEncaisse'];
 		}
 
 		if ($mode_reglement != 'DIF') {
-			$obj_facturation->montantEncaisse($montant);
+			$obj_facturation->amountCollected($montant);
 
 			//Determination de la somme rendue
-			$total = $obj_facturation->prixTotalTtc();
-			$encaisse = $obj_facturation->montantEncaisse();
+			$total = $obj_facturation->amountWithTax();
+			$encaisse = $obj_facturation->amountCollected();
 
-			$obj_facturation->montantRendu($encaisse - $total);
-		}
-		else
-		{
-		    //$txtDatePaiement=$_POST['txtDatePaiement'];
-		    $datePaiement = dol_mktime(0, 0, 0, $_POST['txtDatePaiementmonth'], $_POST['txtDatePaiementday'], $_POST['txtDatePaiementyear']);
-		    $txtDatePaiement = dol_print_date($datePaiement, 'dayrfc');
+			$obj_facturation->amountReturned($encaisse - $total);
+		} else {
+			//$txtDatePaiement=$_POST['txtDatePaiement'];
+			$datePaiement = dol_mktime(0, 0, 0, $_POST['txtDatePaiementmonth'], $_POST['txtDatePaiementday'], $_POST['txtDatePaiementyear']);
+			$txtDatePaiement = dol_print_date($datePaiement, 'dayrfc');
 			$obj_facturation->paiementLe($txtDatePaiement);
 		}
 
@@ -114,7 +112,7 @@ switch ($action)
 		break;
 
 
-	case 'valide_facture':
+	case 'validate_invoice':
 		$now = dol_now();
 
 		// Recuperation de la date et de l'heure
@@ -139,8 +137,8 @@ switch ($action)
 				$mode_reglement_id = dol_getIdFromCode($db, 'LIQ', 'c_paiement', 'code', 'id', 1);
 				$cond_reglement_id = 0;
 				$note .= $langs->trans("Cash")."\n";
-				$note .= $langs->trans("Received").' : '.$obj_facturation->montantEncaisse()." ".$conf->currency."\n";
-				$note .= $langs->trans("Rendu").' : '.$obj_facturation->montantRendu()." ".$conf->currency."\n";
+				$note .= $langs->trans("Received").' : '.$obj_facturation->amountCollected()." ".$conf->currency."\n";
+				$note .= $langs->trans("Rendu").' : '.$obj_facturation->amountReturned()." ".$conf->currency."\n";
 				$note .= "\n";
 				$note .= '--------------------------------------'."\n\n";
 				break;
@@ -209,9 +207,9 @@ switch ($action)
 		$invoice->date_creation = $now;
 		$invoice->date = $now;
 		$invoice->date_lim_reglement = 0;
-		$invoice->total_ht = $obj_facturation->prixTotalHt();
-		$invoice->total_tva = $obj_facturation->montantTva();
-		$invoice->total_ttc = $obj_facturation->prixTotalTtc();
+		$invoice->total_ht = $obj_facturation->amountWithoutTax();
+		$invoice->total_tva = $obj_facturation->amountVat();
+		$invoice->total_ttc = $obj_facturation->amountWithTax();
 		$invoice->note_private = $note;
 		$invoice->cond_reglement_id = $cond_reglement_id;
 		$invoice->mode_reglement_id = $mode_reglement_id;
@@ -252,18 +250,14 @@ switch ($action)
 						}
 					}
 				}
-			}
-			else
-			{
+			} else {
 				setEventMessages($invoice->error, $invoice->errors, 'errors');
-			    $error++;
+				$error++;
 			}
 
 			$id = $invoice->id;
-		}
-		else
-		{
-		    $resultcreate = $invoice->create($user, 0, 0);
+		} else {
+			$resultcreate = $invoice->create($user, 0, 0);
 			if ($resultcreate > 0)
 			{
 				$warehouseidtodecrease = (isset($_SESSION["CASHDESK_ID_WAREHOUSE"]) ? $_SESSION["CASHDESK_ID_WAREHOUSE"] : 0);
@@ -288,8 +282,8 @@ switch ($action)
 							if ($invoice->type == $invoice::TYPE_CREDIT_NOTE) $result = $mouvP->reception($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos", $invoice->newref));
 							else $result = $mouvP->livraison($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos", $invoice->newref));
 							if ($result < 0) {
-							    setEventMessages($mouvP->error, $mouvP->errors, 'errors');
-							    $error++;
+								setEventMessages($mouvP->error, $mouvP->errors, 'errors');
+								$error++;
 							}
 						}
 					}
@@ -300,9 +294,8 @@ switch ($action)
 				// Add the payment
 				$payment = new Paiement($db);
 				$payment->datepaye = $now;
-				$payment->bank_account = $conf_fkaccount;
-				$payment->amounts[$invoice->id] = $obj_facturation->prixTotalTtc();
-				$payment->note = $langs->trans("Payment").' '.$langs->trans("Invoice").' '.$obj_facturation->numInvoice();
+				$payment->amounts[$invoice->id] = $obj_facturation->amountWithTax();
+				$payment->note_public = $langs->trans("Payment").' '.$langs->trans("Invoice").' '.$obj_facturation->numInvoice();
 				$payment->paiementid = $invoice->mode_reglement_id;
 				$payment->num_paiement = '';
 				$payment->num_payment = '';
@@ -310,37 +303,33 @@ switch ($action)
 				$paiement_id = $payment->create($user);
 				if ($paiement_id > 0)
 				{
-                    if (!$error)
-                    {
-                        $result = $payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccountid, '', '');
-                        if (!$result > 0)
-                        {
-                            $errmsg = $paiement->error;
-                            $error++;
-                        }
-                    }
+					if (!$error)
+					{
+						$result = $payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccountid, '', '');
+						if (!$result > 0)
+						{
+							$errmsg = $paiement->error;
+							$error++;
+						}
+					}
 
-                    if (!$error)
-                    {
-                    	if ($invoice->total_ttc == $obj_facturation->prixTotalTtc()
-                    		&& $obj_facturation->getSetPaymentMode() != 'DIFF')
-                    	{
-                    		// We set status to payed
-                    		$result = $invoice->set_paid($user);
-                  			//print 'set paid';exit;
-                    	}
-                    }
+					if (!$error)
+					{
+						if ($invoice->total_ttc == $obj_facturation->amountWithTax()
+							&& $obj_facturation->getSetPaymentMode() != 'DIFF')
+						{
+							// We set status to payed
+							$result = $invoice->set_paid($user);
+				  			//print 'set paid';exit;
+						}
+					}
+				} else {
+					setEventMessages($invoice->error, $invoice->errors, 'errors');
+					$error++;
 				}
-				else
-				{
-				    setEventMessages($invoice->error, $invoice->errors, 'errors');
-				    $error++;
-				}
-			}
-			else
-			{
+			} else {
 				setEventMessages($invoice->error, $invoice->errors, 'errors');
-			    $error++;
+				$error++;
 			}
 		}
 
@@ -349,15 +338,13 @@ switch ($action)
 		{
 			$db->commit();
 			$redirection = 'affIndex.php?menutpl=validation_ok&facid='.$id; // Ajout de l'id de la facture, pour l'inclure dans un lien pointant directement vers celle-ci dans Dolibarr
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 			$redirection = 'affIndex.php?facid='.$id.'&error=1&mesg=ErrorFailedToCreateInvoice'; // Ajout de l'id de la facture, pour l'inclure dans un lien pointant directement vers celle-ci dans Dolibarr
 		}
 		break;
 
-		// End of case: valide_facture
+		// End of case: validate_invoice
 }
 
 unset($_SESSION['serObjFacturation']);

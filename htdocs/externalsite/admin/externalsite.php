@@ -40,7 +40,7 @@ $langs->loadLangs(array('admin', 'other', 'externalsite'));
 
 $def = array();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Sauvegardes parametres
 if ($action == 'update')
@@ -50,7 +50,7 @@ if ($action == 'update')
 	$db->begin();
 
 	$label  = GETPOST('EXTERNALSITE_LABEL', 'alpha');
-	$exturl = GETPOST('EXTERNALSITE_URL', 'none');
+	$exturl = GETPOST('EXTERNALSITE_URL', 'restricthtml');
 
 	$i += dolibarr_set_const($db, 'EXTERNALSITE_LABEL', trim($label), 'chaine', 0, '', $conf->entity);
 	$i += dolibarr_set_const($db, 'EXTERNALSITE_URL', trim($exturl), 'chaine', 0, '', $conf->entity);
@@ -59,9 +59,7 @@ if ($action == 'update')
 	{
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 		setEventMessages($db->lasterror(), null, 'errors');
 	}
@@ -103,7 +101,7 @@ print "</tr>";
 print '<tr class="oddeven">';
 print '<td class="fieldrequired">'.$langs->trans("ExternalSiteURL")."</td>";
 print '<td><textarea class="flat minwidth500" name="EXTERNALSITE_URL">';
-print (GETPOST('EXTERNALSITE_URL', 'none') ?GETPOST('EXTERNALSITE_URL', 'none') : (empty($conf->global->EXTERNALSITE_URL) ? '' : $conf->global->EXTERNALSITE_URL));
+print (GETPOST('EXTERNALSITE_URL', 'restricthtml') ?GETPOST('EXTERNALSITE_URL', 'restricthtml') : (empty($conf->global->EXTERNALSITE_URL) ? '' : $conf->global->EXTERNALSITE_URL));
 print '</textarea></td>';
 print "<td>http://localhost/myurl/";
 print "<br>https://wikipedia.org/";
@@ -115,7 +113,7 @@ print "</table>";
 
 
 print '<br><div class="center">';
-print '<input type="submit" name="save" class="button" value="'.$langs->trans("Save").'">';
+print '<input type="submit" name="save" class="button button-save" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print "</form>\n";

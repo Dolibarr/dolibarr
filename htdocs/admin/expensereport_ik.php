@@ -35,13 +35,11 @@ $langs->loadLangs(array("admin", "trips", "errors", "other", "dict"));
 
 if (!$user->admin) accessforbidden();
 
-//Init error
-$error = false;
-$message = false;
+$error = 0;
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
-$offset = GETPOST('offset', 'int');
+$ikoffset = GETPOST('ikoffset', 'int');
 $coef = GETPOST('coef', 'int');
 
 $fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat');
@@ -59,12 +57,14 @@ if ($action == 'updateik')
 	$expIk->setValues($_POST);
 	$result = $expIk->create($user);
 
-	if ($result > 0) setEventMessages('SetupSaved', null, 'mesgs');
-
-	header('Location: '.$_SERVER['PHP_SELF']);
-	exit;
-}
-elseif ($action == 'delete') // TODO add confirm
+	if ($result > 0) {
+		setEventMessages('SetupSaved', null, 'mesgs');
+		header('Location: '.$_SERVER['PHP_SELF']);
+		exit;
+	} else {
+		setEventMessages($expIk->error, $expIk->errors, 'errors');
+	}
+} elseif ($action == 'delete') // TODO add confirm
 {
 	$expIk = new ExpenseReportIk($db);
 	if ($id > 0)
@@ -82,6 +82,7 @@ elseif ($action == 'delete') // TODO add confirm
 
 $rangesbycateg = ExpenseReportIk::getAllRanges();
 
+
 /*
  * View
  */
@@ -91,12 +92,13 @@ llxHeader('', $langs->trans("ExpenseReportsSetup"));
 $form = new Form($db);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("ExpenseReportsIkSetup"), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans("ExpenseReportsSetup"), $linkback, 'title_setup');
 
 $head = expensereport_admin_prepare_head();
-dol_fiche_head($head, 'expenseik', $langs->trans("ExpenseReportsIk"), -1, 'trip');
+print dol_get_fiche_head($head, 'expenseik', $langs->trans("ExpenseReportsIk"), -1, 'trip');
 
-echo $langs->trans('ExpenseReportIkDesc');
+echo '<span class="opacitymedium">'.$langs->trans('ExpenseReportIkDesc').'</span>';
+print '<br><br>';
 
 echo '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
 
@@ -137,21 +139,23 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 		echo '<tr class="oddeven">';
 
 		// Label
-		echo '<td width="20%"><b>['.$langs->trans('RangeNum', $tranche++).']</b> - '.$label.'</td>';
+		echo '<td class="nowraponall"><b>['.$langs->trans('RangeNum', $tranche++).']</b> - '.$label.'</td>';
 
 		// Offset
-		echo '<td width="20%">';
-		if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat) echo '<input type="text" name="offset" value="'.$range->ik->offset.'" />';
-		else echo $range->ik->offset;
+		echo '<td class="nowraponall">';
+		if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat) echo '<input type="text" class="maxwidth100" name="ikoffset" value="'.$range->ik->ikoffset.'" />';
+		else {
+			echo $range->ik->ikoffset;
+		}
 		echo '</td>';
 		// Coef
-		echo '<td width="20%">';
-		if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat) echo '<input type="text" name="coef" value="'.$range->ik->coef.'" />';
+		echo '<td class="nowraponall">';
+		if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat) echo '<input type="text" class="maxwidth100" name="coef" value="'.$range->ik->coef.'" />';
 		else echo ($range->ik->id > 0 ? $range->ik->coef : $langs->trans('expenseReportCoefUndefined'));
 		echo '</td>';
 
 		// Total for one
-		echo '<td width="30%">'.$langs->trans('expenseReportPrintExample', price($range->ik->offset + 5 * $range->ik->coef)).'</td>';
+		echo '<td class="nowraponall">'.$langs->trans('expenseReportPrintExample', price($range->ik->ikoffset + 5 * $range->ik->coef)).'</td>';
 
 		// Action
 		echo '<td class="right">';
@@ -159,13 +163,11 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 		{
 			if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat)
 			{
-				echo '<input id="" class="button" name="save" value="'.$langs->trans('Save').'" type="submit" />';
-				echo '<input class="button" value="'.$langs->trans('Cancel').'" onclick="javascript:history.go(-1)" type="button" />';
-			}
-			else
-			{
-				echo '<a href="'.$_SERVER['PHP_SELF'].'?action=edit&id='.$range->ik->id.'&fk_c_exp_tax_cat='.$range->fk_c_exp_tax_cat.'&fk_range='.$range->rowid.'">'.img_edit().'</a>';
-				if (!empty($range->ik->id)) echo '<a href="'.$_SERVER['PHP_SELF'].'?action=delete&id='.$range->ik->id.'">'.img_delete().'</a>';
+				echo '<input id="" class="button button-save" name="save" value="'.$langs->trans("Save").'" type="submit" />';
+				echo '<input class="button button-cancel" value="'.$langs->trans("Cancel").'" onclick="javascript:history.go(-1)" type="button" />';
+			} else {
+				echo '<a class="editfielda marginrightonly paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$range->ik->id.'&fk_c_exp_tax_cat='.$range->fk_c_exp_tax_cat.'&fk_range='.$range->rowid.'">'.img_edit().'</a>';
+				if (!empty($range->ik->id)) echo '<a class="paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$range->ik->id.'">'.img_delete().'</a>';
 				// TODO add delete link
 			}
 		}
@@ -178,7 +180,7 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 echo '</table>';
 echo '</form>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

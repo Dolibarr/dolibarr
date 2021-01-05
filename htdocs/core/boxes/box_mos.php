@@ -32,143 +32,143 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_mos extends ModeleBoxes
 {
-    public $boxcode = "lastmos";
-    public $boximg = "object_mrp";
-    public $boxlabel = "BoxTitleLatestModifiedMos";
-    public $depends = array("mrp");
+	public $boxcode = "lastmos";
+	public $boximg = "object_mrp";
+	public $boxlabel = "BoxTitleLatestModifiedMos";
+	public $depends = array("mrp");
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $param;
+	public $param;
 
-    public $info_box_head = array();
-    public $info_box_contents = array();
+	public $info_box_head = array();
+	public $info_box_contents = array();
 
 
-    /**
-     *  Constructor
-     *
-     *  @param  DoliDB  $db         Database handler
-     *  @param  string  $param      More parameters
-     */
-    public function __construct($db, $param)
-    {
-        global $user;
+	/**
+	 *  Constructor
+	 *
+	 *  @param  DoliDB  $db         Database handler
+	 *  @param  string  $param      More parameters
+	 */
+	public function __construct($db, $param)
+	{
+		global $user;
 
-        $this->db = $db;
+		$this->db = $db;
 
-        $this->hidden = !($user->rights->bom->read);
-    }
+		$this->hidden = !($user->rights->bom->read);
+	}
 
-    /**
-     *  Load data for box to show them later
-     *
-     *  @param	int		$max        Maximum number of records to load
-     *  @return	void
-     */
-    public function loadBox($max = 5)
-    {
-        global $user, $langs, $conf;
+	/**
+	 *  Load data for box to show them later
+	 *
+	 *  @param	int		$max        Maximum number of records to load
+	 *  @return	void
+	 */
+	public function loadBox($max = 5)
+	{
+		global $user, $langs, $conf;
 
-        $this->max = $max;
+		$this->max = $max;
 
-        include_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
-        include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-        $mostatic = new Mo($this->db);
-        $productstatic = new Product($this->db);
-        $userstatic = new User($this->db);
+		$mostatic = new Mo($this->db);
+		$productstatic = new Product($this->db);
+		$userstatic = new User($this->db);
 
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleLatestModifiedMos", $max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLatestModifiedMos", $max));
 
-        if ($user->rights->mrp->read)
-        {
-            $sql = "SELECT p.ref as product_ref";
-            $sql .= ", c.rowid";
-            $sql .= ", c.date_creation";
-            $sql .= ", c.tms";
-            $sql .= ", c.ref";
-            $sql .= ", c.status";
-            //$sql.= ", c.fk_user_valid";
-            $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-            $sql .= ", ".MAIN_DB_PREFIX."mrp_mo as c";
-            $sql .= " WHERE c.fk_product = p.rowid";
-            $sql .= " AND c.entity = ".$conf->entity;
-            $sql .= " ORDER BY c.tms DESC, c.ref DESC";
-            $sql .= " ".$this->db->plimit($max, 0);
+		if ($user->rights->mrp->read)
+		{
+			$sql = "SELECT p.ref as product_ref";
+			$sql .= ", c.rowid";
+			$sql .= ", c.date_creation";
+			$sql .= ", c.tms";
+			$sql .= ", c.ref";
+			$sql .= ", c.status";
+			//$sql.= ", c.fk_user_valid";
+			$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+			$sql .= ", ".MAIN_DB_PREFIX."mrp_mo as c";
+			$sql .= " WHERE c.fk_product = p.rowid";
+			$sql .= " AND c.entity = ".$conf->entity;
+			$sql .= " ORDER BY c.tms DESC, c.ref DESC";
+			$sql .= " ".$this->db->plimit($max, 0);
 
-            $result = $this->db->query($sql);
-            if ($result) {
-                $num = $this->db->num_rows($result);
+			$result = $this->db->query($sql);
+			if ($result) {
+				$num = $this->db->num_rows($result);
 
-                $line = 0;
+				$line = 0;
 
-                while ($line < $num) {
-                    $objp = $this->db->fetch_object($result);
-                    $datem = $this->db->jdate($objp->tms);
-                    $mostatic->id = $objp->rowid;
-                    $mostatic->ref = $objp->ref;
-                    $mostatic->id = $objp->socid;
-                    $mostatic->status = $objp->status;
-                    $productstatic->ref = $objp->product_ref;
+				while ($line < $num) {
+					$objp = $this->db->fetch_object($result);
+					$datem = $this->db->jdate($objp->tms);
+					$mostatic->id = $objp->rowid;
+					$mostatic->ref = $objp->ref;
+					$mostatic->id = $objp->socid;
+					$mostatic->status = $objp->status;
+					$productstatic->ref = $objp->product_ref;
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="nowraponall"',
-                        'text' => $mostatic->getNomUrl(1),
-                        'asis' => 1,
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="nowraponall"',
+						'text' => $mostatic->getNomUrl(1),
+						'asis' => 1,
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-                        'text' => $productstatic->getNomUrl(1),
-                        'asis' => 1,
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+						'text' => $productstatic->getNomUrl(1),
+						'asis' => 1,
+					);
 
-                    if (!empty($conf->global->MRP_BOX_LAST_MOS_SHOW_VALIDATE_USER)) {
-                        if ($objp->fk_user_valid > 0) $userstatic->fetch($objp->fk_user_valid);
-                        $this->info_box_contents[$line][] = array(
-                            'td' => 'class="right"',
-                            'text' => (($objp->fk_user_valid > 0) ? $userstatic->getNomUrl(1) : ''),
-                            'asis' => 1,
-                        );
-                    }
+					if (!empty($conf->global->MRP_BOX_LAST_MOS_SHOW_VALIDATE_USER)) {
+						if ($objp->fk_user_valid > 0) $userstatic->fetch($objp->fk_user_valid);
+						$this->info_box_contents[$line][] = array(
+							'td' => 'class="right"',
+							'text' => (($objp->fk_user_valid > 0) ? $userstatic->getNomUrl(1) : ''),
+							'asis' => 1,
+						);
+					}
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right"',
-                        'text' => dol_print_date($datem, 'day'),
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right"',
+						'text' => dol_print_date($datem, 'day'),
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right" width="18"',
-                        'text' => $mostatic->LibStatut($objp->status, 3),
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right" width="18"',
+						'text' => $mostatic->LibStatut($objp->status, 3),
+					);
 
-                    $line++;
-                }
+					$line++;
+				}
 
-                if ($num == 0) $this->info_box_contents[$line][0] = array(
-                	'td' => 'class="center opacitymedium"',
-                	'text'=>$langs->trans("NoRecordedOrders")
-                );
+				if ($num == 0) $this->info_box_contents[$line][0] = array(
+					'td' => 'class="center"',
+					'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedOrders").'</span>'
+				);
 
-                $this->db->free($result);
-            } else {
-                $this->info_box_contents[0][0] = array(
-                    'td' => '',
-                    'maxlength'=>500,
-                    'text' => ($this->db->error().' sql='.$sql),
-                );
-            }
-        } else {
-            $this->info_box_contents[0][0] = array(
-                'td' => 'class="nohover opacitymedium left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed")
-            );
-        }
-    }
+				$this->db->free($result);
+			} else {
+				$this->info_box_contents[0][0] = array(
+					'td' => '',
+					'maxlength'=>500,
+					'text' => ($this->db->error().' sql='.$sql),
+				);
+			}
+		} else {
+			$this->info_box_contents[0][0] = array(
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
+			);
+		}
+	}
 
 	/**
 	 *	Method to show box
@@ -178,8 +178,8 @@ class box_mos extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    public function showBox($head = null, $contents = null, $nooutput = 0)
-    {
-        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
-    }
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+	}
 }

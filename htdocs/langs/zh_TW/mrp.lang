@@ -1,4 +1,5 @@
 Mrp=製造訂單
+MOs=製造訂單
 ManufacturingOrder=製造訂單
 MRPDescription=管理生產和製造訂單（MO）的模組。
 MRPArea=MRP區域
@@ -75,3 +76,5 @@ ProductsToProduce=生產的產品
 UnitCost=單位成本
 TotalCost=總計花費
 BOMTotalCost=根據每個要消耗的數量和產品的成本產生此BOM的成本（如果定義則使用“成本價”，如果定義則使用“平均加權價格”，否則使用“最佳採購價”）
+GoOnTabProductionToProduceFirst=您必須先開始生產才能關閉生產訂單（請參見分頁“ %s”）。但是您可以取消它。
+ErrorAVirtualProductCantBeUsedIntoABomOrMo=A kit can't be used into a BOM or a MO

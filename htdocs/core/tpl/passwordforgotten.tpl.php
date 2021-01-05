@@ -16,6 +16,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+
+if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', 1);
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf))
 {
@@ -58,7 +61,7 @@ $colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1)); // Normalize
 <body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode('logos/'.$conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
 
 <?php if (empty($conf->dol_use_jmobile)) { ?>
-<script type="text/javascript">
+<script>
 $(document).ready(function () {
 	// Set focus on correct field
 	<?php if ($focus_element) { ?>$('#<?php echo $focus_element; ?>').focus(); <?php } ?>		// Warning to use this only on visible element
@@ -104,13 +107,36 @@ if ($disablenofollow) echo '</a>';
 <div class="trinputlogin">
 <div class="tagtd nowraponall center valignmiddle tdinputlogin">
 <!-- <span class="span-icon-user">-->
-<span class="fa fa-user">
-</span>
+<span class="fa fa-user"></span>
 <input type="text" placeholder="<?php echo $langs->trans("Login"); ?>" <?php echo $disabled; ?> id="username" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($username); ?>" tabindex="1" />
 </div>
 </div>
 
 <?php
+if ($captcha) {
+	// Add a variable param to force not using cache (jmobile)
+	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self); // Remove param time
+	if (preg_match('/\?/', $php_self)) $php_self .= '&time='.dol_print_date(dol_now(), 'dayhourlog');
+	else $php_self .= '?time='.dol_print_date(dol_now(), 'dayhourlog');
+	// TODO: provide accessible captcha variants
+	?>
+	<!-- Captcha -->
+	<div class="trinputlogin">
+	<div class="tagtd tdinputlogin nowraponall none valignmiddle">
+
+	<span class="fa fa-unlock"></span>
+	<span class="nofa inline-block">
+	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width150" type="text" maxlength="5" name="code" tabindex="3" />
+	</span>
+	<span class="nowrap inline-block">
+	<img class="inline-block valignmiddle" src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />
+	<a class="inline-block valignmiddle" href="<?php echo $php_self; ?>" tabindex="4"><?php echo $captcha_refresh; ?></a>
+	</span>
+
+	</div></div>
+	<?php
+}
+
 if (!empty($morelogincontent)) {
 	if (is_array($morelogincontent)) {
 		foreach ($morelogincontent as $format => $option)
@@ -120,38 +146,12 @@ if (!empty($morelogincontent)) {
 				echo $option;
 			}
 		}
-	}
-	else {
+	} else {
 		echo '<!-- Option by hook -->';
 		echo $morelogincontent;
 	}
 }
 ?>
-
-<?php if ($captcha) {
-	// Add a variable param to force not using cache (jmobile)
-	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self); // Remove param time
-	if (preg_match('/\?/', $php_self)) $php_self .= '&time='.dol_print_date(dol_now(), 'dayhourlog');
-	else $php_self .= '?time='.dol_print_date(dol_now(), 'dayhourlog');
-	?>
-	<!-- Captcha -->
-	<div class="trinputlogin">
-	<div class="tdinputlogin nowraponall none center valignmiddle tdinputlogin">
-
-	<table class="login_table_securitycode centpercent">
-	<tr class="valignmiddle">
-	<td>
-	<!-- <span class="span-icon-security"> -->
-	<span class="nofa">
-	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width100" type="text" maxlength="5" name="code" tabindex="3" />
-	</span>
-	</td>
-	<td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" /></td>
-	<td><a href="<?php echo $php_self; ?>" tabindex="4"><?php echo $captcha_refresh; ?></a></td>
-	</tr></table>
-
-	</div></div>
-<?php } ?>
 
 </div>
 
@@ -220,8 +220,7 @@ if (!empty($morelogincontent) && is_array($morelogincontent)) {
 			echo $option."\n";
 		}
 	}
-}
-elseif (!empty($moreloginextracontent)) {
+} elseif (!empty($moreloginextracontent)) {
 	echo '<!-- Javascript by hook -->';
 	echo $moreloginextracontent;
 }
@@ -231,7 +230,7 @@ elseif (!empty($moreloginextracontent)) {
 if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID))
 {
 	$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
-	foreach($tmptagarray as $tmptag) {
+	foreach ($tmptagarray as $tmptag) {
 		print "\n";
 		print "<!-- JS CODE TO ENABLE for google analtics tag -->\n";
 		print "
@@ -248,23 +247,22 @@ if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID))
 	}
 }
 
-// Google Adsense
+// TODO Replace this with a hook
+// Google Adsense (need Google module)
 if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && !empty($conf->global->MAIN_GOOGLE_AD_SLOT))
 {
 	if (empty($conf->dol_use_jmobile))
 	{
 		?>
 	<div class="center"><br>
-		<script type="text/javascript"><!--
+		<script><!--
 			google_ad_client = "<?php echo $conf->global->MAIN_GOOGLE_AD_CLIENT ?>";
 			google_ad_slot = "<?php echo $conf->global->MAIN_GOOGLE_AD_SLOT ?>";
 			google_ad_width = <?php echo $conf->global->MAIN_GOOGLE_AD_WIDTH ?>;
 			google_ad_height = <?php echo $conf->global->MAIN_GOOGLE_AD_HEIGHT ?>;
 			//-->
 		</script>
-		<script type="text/javascript"
-			src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-		</script>
+		<script	src="//pagead2.googlesyndication.com/pagead/show_ads.js"></script>
 	</div>
 		<?php
 	}

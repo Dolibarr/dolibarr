@@ -33,9 +33,9 @@
 class Ccountry // extends CommonObject
 {
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
 	/**
 	 * @var string Error code (or message)
@@ -50,7 +50,7 @@ class Ccountry // extends CommonObject
 	public $element = 'ccountry'; //!< Id that identify managed objects
 	public $table_element = 'c_country'; //!< Name of table without prefix where object is stored
 
-    /**
+	/**
 	 * @var int ID
 	 */
 	public $id;
@@ -59,9 +59,9 @@ class Ccountry // extends CommonObject
 	public $code_iso;
 
 	/**
-     * @var string Countries label
-     */
-    public $label;
+	 * @var string Countries label
+	 */
+	public $label;
 
 	public $active;
 
@@ -70,27 +70,27 @@ class Ccountry // extends CommonObject
 	);
 
 
-    /**
-     *  Constructor
-     *
-     *  @param      DoliDb		$db      Database handler
-     */
-    public function __construct($db)
-    {
-        $this->db = $db;
-    }
+	/**
+	 *  Constructor
+	 *
+	 *  @param      DoliDb		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
 
 
-    /**
-     *  Create object into database
-     *
-     *  @param      User	$user        User that create
-     *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
-     *  @return     int      		   	 <0 if KO, Id of created object if OK
-     */
-    public function create($user, $notrigger = 0)
-    {
-    	global $conf, $langs;
+	/**
+	 *  Create object into database
+	 *
+	 *  @param      User	$user        User that create
+	 *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
+	 *  @return     int      		   	 <0 if KO, Id of created object if OK
+	 */
+	public function create($user, $notrigger = 0)
+	{
+		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -102,14 +102,14 @@ class Ccountry // extends CommonObject
 		// Check parameters
 		// Put here code to add control on parameters values
 
-        // Insert request
+		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_country(";
 		$sql .= "rowid,";
 		$sql .= "code,";
 		$sql .= "code_iso,";
 		$sql .= "label,";
 		$sql .= "active";
-        $sql .= ") VALUES (";
+		$sql .= ") VALUES (";
 		$sql .= " ".(!isset($this->rowid) ? 'NULL' : "'".$this->db->escape($this->rowid)."'").",";
 		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
 		$sql .= " ".(!isset($this->code_iso) ? 'NULL' : "'".$this->db->escape($this->code_iso)."'").",";
@@ -120,93 +120,90 @@ class Ccountry // extends CommonObject
 		$this->db->begin();
 
 	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		$resql = $this->db->query($sql);
+		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
 		if (!$error)
-        {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_country");
-        }
+		{
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_country");
+		}
 
-        // Commit or rollback
-        if ($error)
+		// Commit or rollback
+		if ($error)
 		{
 			foreach ($this->errors as $errmsg)
 			{
-	            dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
-            return $this->id;
+			return $this->id;
 		}
-    }
+	}
 
 
-    /**
-     *  Load object in memory from database
-     *
-     *  @param      int		$id    	  Id object
-     *  @param		string	$code	    Code
-     *  @param		string	$code_iso	Code ISO
-     *  @return     int          	>0 if OK, 0 if not found, <0 if KO
-     */
-    public function fetch($id, $code = '', $code_iso = '')
-    {
-        $sql = "SELECT";
+	/**
+	 *  Load object in memory from database
+	 *
+	 *  @param      int		$id    	  Id object
+	 *  @param		string	$code	    Code
+	 *  @param		string	$code_iso	Code ISO
+	 *  @return     int          	>0 if OK, 0 if not found, <0 if KO
+	 */
+	public function fetch($id, $code = '', $code_iso = '')
+	{
+		$sql = "SELECT";
   		$sql .= " t.rowid,";
   		$sql .= " t.code,";
   		$sql .= " t.code_iso,";
   		$sql .= " t.label,";
   		$sql .= " t.active";
-        $sql .= " FROM ".MAIN_DB_PREFIX."c_country as t";
-        if ($id) $sql .= " WHERE t.rowid = ".$id;
-        elseif ($code) $sql .= " WHERE t.code = '".$this->db->escape($code)."'";
-        elseif ($code_iso) $sql .= " WHERE t.code_iso = '".$this->db->escape($code_iso)."'";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_country as t";
+		if ($id) $sql .= " WHERE t.rowid = ".((int) $id);
+		elseif ($code) $sql .= " WHERE t.code = '".$this->db->escape(strtoupper($code))."'";
+		elseif ($code_iso) $sql .= " WHERE t.code_iso = '".$this->db->escape(strtoupper($code_iso))."'";
 
-    	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
-                $obj = $this->db->fetch_object($resql);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			if ($this->db->num_rows($resql))
+			{
+				$obj = $this->db->fetch_object($resql);
 
-                $this->id = $obj->rowid;
-				$this->code = $obj->code;
-				$this->code_iso = $obj->code_iso;
-				$this->label = $obj->label;
-				$this->active = $obj->active;
+				if ($obj) {
+					$this->id = $obj->rowid;
+					$this->code = $obj->code;
+					$this->code_iso = $obj->code_iso;
+					$this->label = $obj->label;
+					$this->active = $obj->active;
+				}
 
-                $this->db->free($resql);
-                return 1;
-            }
-            else {
-                return 0;
-            }
-        }
-        else
-        {
-      	    $this->error = "Error ".$this->db->lasterror();
-            return -1;
-        }
-    }
+				$this->db->free($resql);
+				return 1;
+			} else {
+				return 0;
+			}
+		} else {
+	  		$this->error = "Error ".$this->db->lasterror();
+			return -1;
+		}
+	}
 
 
-    /**
-     *  Update object into database
-     *
-     *  @param      User	$user        User that modify
-     *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
-     *  @return     int     		   	 <0 if KO, >0 if OK
-     */
-    public function update($user = null, $notrigger = 0)
-    {
-    	global $conf, $langs;
+	/**
+	 *  Update object into database
+	 *
+	 *  @param      User	$user        User that modify
+	 *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
+	 *  @return     int     		   	 <0 if KO, >0 if OK
+	 */
+	public function update($user = null, $notrigger = 0)
+	{
+		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -219,46 +216,44 @@ class Ccountry // extends CommonObject
 		// Check parameters
 		// Put here code to add control on parameters values
 
-        // Update request
-        $sql = "UPDATE ".MAIN_DB_PREFIX."c_country SET";
+		// Update request
+		$sql = "UPDATE ".MAIN_DB_PREFIX."c_country SET";
 		$sql .= " code=".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").",";
 		$sql .= " code_iso=".(isset($this->code_iso) ? "'".$this->db->escape($this->code_iso)."'" : "null").",";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " active=".(isset($this->active) ? $this->active : "null")."";
-        $sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		$resql = $this->db->query($sql);
+		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-        // Commit or rollback
+		// Commit or rollback
 		if ($error)
 		{
 			foreach ($this->errors as $errmsg)
 			{
-	            dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
-    }
+	}
 
 
  	/**
  	 *  Delete object in database
-	 *
-     *	@param  User	$user        User that delete
-     *  @param	int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
-	 */
+ 	 *
+ 	 *	@param  User	$user        User that delete
+ 	 *  @param	int		$notrigger	 0=launch triggers after, 1=disable triggers
+ 	 *  @return	int					 <0 if KO, >0 if OK
+ 	 */
 	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
@@ -271,39 +266,37 @@ class Ccountry // extends CommonObject
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-        // Commit or rollback
+		// Commit or rollback
 		if ($error)
 		{
 			foreach ($this->errors as $errmsg)
 			{
-	            dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
 	}
 
-    /**
-     *  Return a link to the object card (with optionaly the picto)
-     *
-     *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-     *	@param	string	$option						On what the link point to ('nolink', ...)
-     *  @param	int  	$notooltip					1=Disable tooltip
-     *  @param  string  $morecss            		Add more css on link
-     *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-     *	@return	string								String with URL
-     */
-    public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
-    {
-    	global $langs;
-        return $langs->trans($this->label);
-    }
+	/**
+	 *  Return a link to the object card (with optionaly the picto)
+	 *
+	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *	@param	string	$option						On what the link point to ('nolink', ...)
+	 *  @param	int  	$notooltip					1=Disable tooltip
+	 *  @param  string  $morecss            		Add more css on link
+	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return	string								String with URL
+	 */
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+	{
+		global $langs;
+		return $langs->trans($this->label);
+	}
 }

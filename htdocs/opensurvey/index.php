@@ -52,8 +52,7 @@ if ($resql)
 {
 	$obj = $db->fetch_object($resql);
 	$nbsondages = $obj->nb;
-}
-else dol_print_error($db, '');
+} else dol_print_error($db, '');
 
 
 $title = $langs->trans("OpenSurveyArea");

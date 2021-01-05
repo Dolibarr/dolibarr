@@ -108,18 +108,18 @@ class SupplierOrders extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
+		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) $search_sale = DolibarrApiAccess::$user->id;
 
 		$sql = "SELECT t.rowid";
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as t";
 
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 
   		if (!empty($product_ids)) $sql .= ", ".MAIN_DB_PREFIX."commande_fournisseurdet as cd"; // We need this table joined to the select in order to filter by product
 
 		$sql .= ' WHERE t.entity IN ('.getEntity('supplier_order').')';
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= " AND t.fk_soc = sc.fk_soc";
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= " AND t.fk_soc = sc.fk_soc";
 		if (!empty($product_ids)) $sql .= " AND cd.fk_commande = t.rowid AND cd.fk_product IN (".$product_ids.")";
 		if ($socids) $sql .= " AND t.fk_soc IN (".$socids.")";
 		if ($search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
@@ -149,7 +149,7 @@ class SupplierOrders extends DolibarrApi
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
-		$sql .= $db->order($sortfield, $sortorder);
+		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0)
 			{
@@ -157,27 +157,26 @@ class SupplierOrders extends DolibarrApi
 			}
 			$offset = $limit * $page;
 
-			$sql .= $db->plimit($limit + 1, $offset);
+			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
 
-		$result = $db->query($sql);
+		$result = $this->db->query($sql);
 		if ($result)
 		{
 			$i = 0;
-			$num = $db->num_rows($result);
+			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			while ($i < $min)
 			{
-				$obj = $db->fetch_object($result);
-				$order_static = new CommandeFournisseur($db);
+				$obj = $this->db->fetch_object($result);
+				$order_static = new CommandeFournisseur($this->db);
 				if ($order_static->fetch($obj->rowid)) {
 					$obj_ret[] = $this->_cleanObjectDatas($order_static);
 				}
 				$i++;
 			}
-		}
-		else {
-			throw new RestException(503, 'Error when retrieve supplier order list : '.$db->lasterror());
+		} else {
+			throw new RestException(503, 'Error when retrieve supplier order list : '.$this->db->lasterror());
 		}
 		if (!count($obj_ret)) {
 			throw new RestException(404, 'No supplier order found');
@@ -187,6 +186,8 @@ class SupplierOrders extends DolibarrApi
 
 	/**
 	 * Create supplier order object
+	 *
+	 * Example: {"ref": "auto", "ref_supplier": "1234", "socid": "1", "multicurrency_code": "SEK", "multicurrency_tx": 1, "tva_tx": 25, "note": "Imported via the REST API"}
 	 *
 	 * @param array $request_data   Request datas
 	 * @return int  ID of supplier order
@@ -338,8 +339,8 @@ class SupplierOrders extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
-	 * @param   Object  $object    Object to clean
-	 * @return  array              Array of cleaned object properties
+	 * @param   Object  $object     Object to clean
+	 * @return  Object              Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{

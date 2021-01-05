@@ -46,8 +46,7 @@ $taskid = GETPOST('taskid', 'int');
 $mine = 0;
 if ($mode == 'mine') $mine = 1;
 
-$projectid = '';
-$projectid = isset($_GET["id"]) ? $_GET["id"] : $_POST["projectid"];
+$projectid = isset($_GET["id"]) ? GETPOST("id", "int", 1) : GETPOST("projectid", "int");
 
 // Security check
 $socid = 0;
@@ -96,15 +95,12 @@ if (empty($search_usertoprocessid) || $search_usertoprocessid == $user->id)
 {
 	$usertoprocess = $user;
 	$search_usertoprocessid = $usertoprocess->id;
-}
-elseif ($search_usertoprocessid > 0)
+} elseif ($search_usertoprocessid > 0)
 {
 	$usertoprocess = new User($db);
 	$usertoprocess->fetch($search_usertoprocessid);
 	$search_usertoprocessid = $usertoprocess->id;
-}
-else
-{
+} else {
 	$usertoprocess = new User($db);
 }
 
@@ -149,9 +145,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 	{
 		$result = $object->fetch($taskid, $ref);
 		if ($result < 0) $error++;
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Task")), '', 'errors');
 		$error++;
 	}
@@ -188,9 +182,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 						$result = $project->add_contact($idfortaskuser, $typeforprojectcontact, 'internal');
 					}
 				}
-			}
-			else
-			{
+			} else {
 				dol_print_error($db);
 			}
 		}
@@ -203,9 +195,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 		{
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorTaskAlreadyAssigned"), null, 'warnings');
-		}
-		else
-		{
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -225,9 +215,7 @@ if ($action == 'addtime' && $user->rights->projet->lire)
 	if (empty($timetoadd))
 	{
 		setEventMessages($langs->trans("ErrorTimeSpentIsEmpty"), null, 'errors');
-	}
-	else
-	{
+	} else {
 		foreach ($timetoadd as $taskid => $value)     // Loop on each task
 		{
 			$updateoftaskdone = 0;
@@ -376,7 +364,7 @@ $nav .= ' <button type="submit" name="button_search_x" value="x" class="bordertr
 $picto = 'calendarweek';
 
 print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="addtime">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 print '<input type="hidden" name="day" value="'.$day.'">';
@@ -384,13 +372,12 @@ print '<input type="hidden" name="month" value="'.$month.'">';
 print '<input type="hidden" name="year" value="'.$year.'">';
 
 $head = project_timesheet_prepare_head($mode, $usertoprocess);
-dol_fiche_head($head, 'inputpermonth', $langs->trans('TimeSpent'), -1, 'task');
+print dol_get_fiche_head($head, 'inputpermonth', $langs->trans('TimeSpent'), -1, 'projecttask');
 
 // Show description of content
 print '<div class="hideonsmartphone opacitymedium">';
 if ($mine || ($usertoprocess->id == $user->id)) print $langs->trans("MyTasksDesc").'.'.($onlyopenedproject ? ' '.$langs->trans("OnlyOpenedProject") : '').'<br>';
-else
-{
+else {
 	if (empty($usertoprocess->id) || $usertoprocess->id < 0)
 	{
 		if ($user->rights->projet->all->lire && !$socid) print $langs->trans("ProjectsDesc").'.'.($onlyopenedproject ? ' '.$langs->trans("OnlyOpenedProject") : '').'<br>';
@@ -400,14 +387,12 @@ else
 if ($mine || ($usertoprocess->id == $user->id))
 {
 	print $langs->trans("OnlyYourTaskAreVisible").'<br>';
-}
-else
-{
+} else {
 	print $langs->trans("AllTaskVisibleButEditIfYouAreAssigned").'<br>';
 }
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="floatright right'.($conf->dol_optimize_smallscreen ? ' centpercent' : '').'">'.$nav.'</div>'; // We move this before the assign to components so, the default submit button is not the assign to.
 
@@ -516,7 +501,10 @@ $colspan = 5;
 // By default, we can edit only tasks we are assigned to
 $restrictviewformytask = (empty($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED) ? 1 : 0);
 
+// Get if user is available or not for each day
 $isavailable = array();
+// TODO See code into perweek.php to initialize isavailable array
+
 
 if (count($tasksarray) > 0)
 {
@@ -609,9 +597,7 @@ if (count($tasksarray) > 0)
 		print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>
     	</tr>';
 	}
-}
-else
-{
+} else {
 	print '<tr><td colspan="15"><span class="opacitymedium">'.$langs->trans("NoAssignedTasks").'</span></td></tr>';
 }
 print "</table>";
@@ -621,7 +607,7 @@ print '<input type="hidden" id="numberOfLines" name="numberOfLines" value="'.cou
 print '<input type="hidden" id="numberOfFirstLine" name="numberOfFirstLine" value="'.(reset($TWeek)).'"/>'."\n";
 
 print '<div class="center">';
-print '<input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+print '<input type="submit" class="button button-save" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 print '</div>';
 
 print '</form>'."\n\n";

@@ -43,10 +43,10 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	public $emetteur;
 
 	/**
-     * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.5 = array(5, 5)
-     */
-	public $phpmin = array(5, 5);
+	 * @var array Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 */
+	public $phpmin = array(5, 6);
 
 
 	/**
@@ -59,7 +59,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		global $conf, $langs, $mysoc;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array("main", "companies"));
+		$langs->loadLangs(array("main", "companies"));
 
 		$this->db = $db;
 		$this->name = "ODT templates";
@@ -117,8 +117,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			$tmpdir = preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
 			if (!$tmpdir) { unset($listofdir[$key]); continue; }
 			if (!is_dir($tmpdir)) $texttitle .= img_warning($langs->trans("ErrorDirNotFound", $tmpdir), 0);
-			else
-			{
+			else {
 				$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0, true); // Disable hook for the moment
 				if (count($tmpfiles)) $listoffiles = array_merge($listoffiles, $tmpfiles);
 			}
@@ -129,16 +128,16 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
 
 		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1);
-        $texte .= '<table><tr><td>';
+		$texte .= '<table><tr><td>';
 		$texte .= '<textarea class="flat" cols="60" name="value1">';
 		$texte .= $conf->global->COMPANY_ADDON_PDF_ODT_PATH;
 		$texte .= '</textarea>';
-        $texte .= '</td>';
-        $texte .= '<td class="center">&nbsp; ';
-        $texte .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button">';
-        $texte .= '</td>';
-        $texte .= '</tr>';
-        $texte .= '</table>';
+		$texte .= '</td>';
+		$texte .= '<td class="center">&nbsp; ';
+		$texte .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button">';
+		$texte .= '</td>';
+		$texte .= '</tr>';
+		$texte .= '</table>';
 
 		// Scan directories
 		$nbofiles = count($listoffiles);
@@ -153,18 +152,18 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 		if ($nbofiles)
 		{
-   			$texte .= '<div id="div_'.get_class($this).'" class="hidden">';
-   			foreach ($listoffiles as $file)
-   			{
-                $texte .= $file['name'].'<br>';
+   			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
+   			// Show list of found files
+   			foreach ($listoffiles as $file) {
+   				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=thirdparties/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a><br>';
    			}
    			$texte .= '</div>';
 		}
-        // Add input to upload a new template file.
-        $texte .= '<div>'.$langs->trans("UploadNewTemplate").' <input type="file" name="uploadfile">';
-        $texte .= '<input type="hidden" value="COMPANY_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
-        $texte .= '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
-        $texte .= '</div>';
+		// Add input to upload a new template file.
+		$texte .= '<div>'.$langs->trans("UploadNewTemplate").' <input type="file" name="uploadfile">';
+		$texte .= '<input type="hidden" value="COMPANY_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
+		$texte .= '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+		$texte .= '</div>';
 		$texte .= '</td>';
 
 		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
@@ -178,22 +177,22 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		return $texte;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
 	 *	@param		Societe		$object				Object source to build document
 	 *	@param		Translate	$outputlangs		Lang output object
 	 * 	@param		string		$srctemplatepath	Full path of source filename for generator using a template file
-     *  @param		int			$hidedetails		Do not show line details
-     *  @param		int			$hidedesc			Do not show desc
-     *  @param		int			$hideref			Do not show ref
+	 *  @param		int			$hidedetails		Do not show line details
+	 *  @param		int			$hidedesc			Do not show desc
+	 *  @param		int			$hideref			Do not show ref
 	 *	@return		int         					1 if OK, <=0 if KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-        // phpcs:enable
-        global $user, $langs, $conf, $mysoc, $hookmanager;
+		// phpcs:enable
+		global $user, $langs, $conf, $mysoc, $hookmanager;
 
 		if (empty($srctemplatepath))
 		{
@@ -201,13 +200,13 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			return -1;
 		}
 
-        // Add odtgeneration hook
-        if (!is_object($hookmanager)) {
-            include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-            $hookmanager = new HookManager($this->db);
-        }
-        $hookmanager->initHooks(array('odtgeneration'));
-        global $action;
+		// Add odtgeneration hook
+		if (!is_object($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('odtgeneration'));
+		global $action;
 
 		if (!is_object($outputlangs)) $outputlangs = $langs;
 		$sav_charset_output = $outputlangs->charset_output;
@@ -242,16 +241,14 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
 				if (!empty($conf->global->MAIN_DOC_USE_OBJECT_THIRDPARTY_NAME))
 				{
-				    $newfiletmp = dol_sanitizeFileName(dol_string_nospecial($object->name)).'-'.$newfiletmp;
+					$newfiletmp = dol_sanitizeFileName(dol_string_nospecial($object->name)).'-'.$newfiletmp;
 				}
 				if (!empty($conf->global->MAIN_DOC_USE_TIMING))
 				{
-				    $format = $conf->global->MAIN_DOC_USE_TIMING;
-				    if ($format == '1') $format = '%Y%m%d%H%M%S';
+					$format = $conf->global->MAIN_DOC_USE_TIMING;
+					if ($format == '1') $format = '%Y%m%d%H%M%S';
 					$filename = $newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
-				}
-				else
-				{
+				} else {
 					$filename = $newfiletmp.'.'.$newfileformat;
 				}
 				$file = $dir.'/'.$filename;
@@ -268,17 +265,16 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-                    $odfHandler = new odf(
-					    $srctemplatepath,
-					    array(
-	    					'PATH_TO_TMP'	  => $conf->societe->multidir_temp[$object->entity],
-	    					'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
-	    					'DELIMITER_LEFT'  => '{',
-	    					'DELIMITER_RIGHT' => '}'
+					$odfHandler = new odf(
+						$srctemplatepath,
+						array(
+							'PATH_TO_TMP'	  => $conf->societe->multidir_temp[$object->entity],
+							'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+							'DELIMITER_LEFT'  => '{',
+							'DELIMITER_RIGHT' => '}'
 						)
 					);
-				}
-				catch (Exception $e)
+				} catch (Exception $e)
 				{
 					$this->error = $e->getMessage();
 					dol_syslog($e->getMessage(), LOG_INFO);
@@ -286,82 +282,77 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				}
 				//print $odfHandler->__toString()."\n";
 
-                // Replace tags of lines for contacts
-                $contact_arrray = array();
+				// Replace tags of lines for contacts
+				$contact_arrray = array();
 
-                $sql = "SELECT p.rowid";
-                $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
-                $sql .= " WHERE p.fk_soc = ".$object->id;
+				$sql = "SELECT p.rowid";
+				$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
+				$sql .= " WHERE p.fk_soc = ".$object->id;
 
-                $result = $this->db->query($sql);
-                $num = $this->db->num_rows($result);
+				$result = $this->db->query($sql);
+				$num = $this->db->num_rows($result);
 
-                if ($num)
-                {
-                    require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+				if ($num)
+				{
+					require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
-                	$i = 0;
-                	$contactstatic = new Contact($this->db);
+					$i = 0;
+					$contactstatic = new Contact($this->db);
 
-                	while ($i < $num)
-                	{
-                		$obj = $this->db->fetch_object($result);
+					while ($i < $num)
+					{
+						$obj = $this->db->fetch_object($result);
 
-                		$contact_arrray[$i] = $obj->rowid;
-                		$i++;
-                	}
-                }
-                if ((is_array($contact_arrray) && count($contact_arrray) > 0))
-                {
-                	try
-                	{
-                		$listlines = $odfHandler->setSegment('companycontacts');
+						$contact_arrray[$i] = $obj->rowid;
+						$i++;
+					}
+				}
+				if ((is_array($contact_arrray) && count($contact_arrray) > 0))
+				{
+					try {
+						$listlines = $odfHandler->setSegment('companycontacts');
 
-                		foreach ($contact_arrray as $array_key => $contact_id)
-                		{
-                			$res_contact = $contactstatic->fetch($contact_id);
-                			$tmparray = $this->get_substitutionarray_contact($contactstatic, $outputlangs, 'contact');
-                			foreach ($tmparray as $key => $val)
-                			{
-                				try
-                				{
-                					$listlines->setVars($key, $val, true, 'UTF-8');
-                				}
-                				catch (OdfException $e)
-                				{
+						foreach ($contact_arrray as $array_key => $contact_id)
+						{
+							$res_contact = $contactstatic->fetch($contact_id);
+							$tmparray = $this->get_substitutionarray_contact($contactstatic, $outputlangs, 'contact');
+							foreach ($tmparray as $key => $val)
+							{
+								try {
+									$listlines->setVars($key, $val, true, 'UTF-8');
+								} catch (OdfException $e)
+								{
 									dol_syslog($e->getMessage(), LOG_INFO);
-                				}
-                				catch (SegmentException $e)
-                				{
+								} catch (SegmentException $e)
+								{
 									dol_syslog($e->getMessage(), LOG_INFO);
-                				}
-                			}
-                			$listlines->merge();
-                		}
-                		$odfHandler->mergeSegment($listlines);
-                	}
-                	catch (OdfException $e)
-                	{
-                		$this->error = $e->getMessage();
-                		dol_syslog($this->error, LOG_WARNING);
-                		//return -1;
-                	}
-                }
+								}
+							}
+							$listlines->merge();
+						}
+						$odfHandler->mergeSegment($listlines);
+					} catch (OdfException $e)
+					{
+						$this->error = $e->getMessage();
+						dol_syslog($this->error, LOG_WARNING);
+						//return -1;
+					}
+				}
 
-                // Make substitutions into odt
-                $array_user = $this->get_substitutionarray_user($user, $outputlangs);
-                $array_soc = $this->get_substitutionarray_mysoc($mysoc, $outputlangs);
-                $array_thirdparty = $this->get_substitutionarray_thirdparty($object, $outputlangs);
-                $array_other = $this->get_substitutionarray_other($outputlangs);
+				// Make substitutions into odt
+				$array_user = $this->get_substitutionarray_user($user, $outputlangs);
+				$array_soc = $this->get_substitutionarray_mysoc($mysoc, $outputlangs);
+				$array_thirdparty = $this->get_substitutionarray_thirdparty($object, $outputlangs);
+				$array_other = $this->get_substitutionarray_other($outputlangs);
 
-                $tmparray = array_merge($array_user, $array_soc, $array_thirdparty, $array_other);
-                complete_substitutions_array($tmparray, $outputlangs, $object);
+				$tmparray = array_merge($array_user, $array_soc, $array_thirdparty, $array_other);
+				complete_substitutions_array($tmparray, $outputlangs, $object);
 
-                // Call the ODTSubstitution hook
-                $parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
+				// Call the ODTSubstitution hook
+				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
 				$reshook = $hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
-                // Replace variables into document
+				// Replace variables into document
 				foreach ($tmparray as $key=>$value)
 				{
 					try {
@@ -369,16 +360,14 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 						{
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
 							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
-						}
-						else	// Text
+						} else // Text
 						{
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
-					}
-					catch (OdfException $e)
+					} catch (OdfException $e)
 					{
 						// setVars failed, probably because key not found
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 
@@ -388,10 +377,9 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				{
 					try {
 						$odfHandler->setVars($key, $value, true, 'UTF-8');
-					}
-					catch (OdfException $e)
+					} catch (OdfException $e)
 					{
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 
@@ -405,25 +393,24 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 						$odfHandler->exportAsAttachedPDF($file);
 					} catch (Exception $e) {
 						$this->error = $e->getMessage();
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
-				}
-				else {
-				    try {
-                        $odfHandler->creator = $user->getFullName($outputlangs);
-                        $odfHandler->title = $object->builddoc_filename;
-                        $odfHandler->subject = $object->builddoc_filename;
+				} else {
+					try {
+						$odfHandler->creator = $user->getFullName($outputlangs);
+						$odfHandler->title = $object->builddoc_filename;
+						$odfHandler->subject = $object->builddoc_filename;
 
-                        if (!empty($conf->global->ODT_ADD_DOLIBARR_ID)) {
-                            $odfHandler->userdefined['dol_id'] = $object->id;
-                            $odfHandler->userdefined['dol_element'] = $object->element;
-                        }
+						if (!empty($conf->global->ODT_ADD_DOLIBARR_ID)) {
+							$odfHandler->userdefined['dol_id'] = $object->id;
+							$odfHandler->userdefined['dol_element'] = $object->element;
+						}
 
-                        $odfHandler->saveToDisk($file);
+						$odfHandler->saveToDisk($file);
 					} catch (Exception $e) {
 						$this->error = $e->getMessage();
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}
@@ -438,9 +425,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				$this->result = array('fullpath'=>$file);
 
 				return 1; // Success
-			}
-			else
-			{
+			} else {
 				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
 				return -1;
 			}

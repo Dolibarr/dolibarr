@@ -31,9 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/expensereport/modules_expenserepor
 class mod_expensereport_sand extends ModeleNumRefExpenseReport
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
@@ -54,14 +54,14 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 	public $name = 'Sand';
 
 
-    /**
-     *  Returns the description of the numbering model
-     *
-     *  @return     string      Texte descripif
-     */
-    public function info()
-    {
-    	global $db, $conf, $langs;
+	/**
+	 *  Returns the description of the numbering model
+	 *
+	 *  @return     string      Texte descripif
+	 */
+	public function info()
+	{
+		global $db, $conf, $langs;
 
 		$langs->load("bills");
 
@@ -92,39 +92,39 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 		$texte .= '</form>';
 
 		return $texte;
-    }
+	}
 
-    /**
-     *  Return an example of numbering
-     *
-     *  @return     string      Example
-     */
-    public function getExample()
-    {
-     	global $db, $conf, $langs, $user;
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	public function getExample()
+	{
+	 	global $db, $conf, $langs, $user;
 
-     	$exp = new ExpenseReport($db);
-     	$exp->initAsSpecimen();
-     	$exp->fk_user_author = $user->id;
+	 	$exp = new ExpenseReport($db);
+	 	$exp->initAsSpecimen();
+	 	$exp->fk_user_author = $user->id;
 
-     	$numExample = $this->getNextValue($exp);
+	 	$numExample = $this->getNextValue($exp);
 
 		if (!$numExample)
 		{
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
-    }
+	}
 
-    /**
-     *  Return next free value
-     *
-     *  @param  Object      $object     Object we need next value for
-     *  @return string                  Value if KO, <0 if KO
-     */
-    public function getNextValue($object)
-    {
-        global $db, $conf;
+	/**
+	 *  Return next free value
+	 *
+	 *  @param  Object      $object     Object we need next value for
+	 *  @return string                  Value if KO, <0 if KO
+	 */
+	public function getNextValue($object)
+	{
+		global $db, $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -154,5 +154,5 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 		$numFinal = get_next_value($db, $mask, 'expensereport', 'ref', '', null, $date, 'next', true, $fuser);
 
 		return $numFinal;
-    }
+	}
 }

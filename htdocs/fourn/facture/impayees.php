@@ -116,26 +116,26 @@ if ($user->rights->fournisseur->facture->lire)
 
 	if ($search_ref)
 	{
-		$sql .= " AND f.ref LIKE '%".$search_ref."%'";
+		$sql .= " AND f.ref LIKE '%".$db->escape($search_ref)."%'";
 	}
 	if ($search_ref_supplier)
 	{
-		$sql .= " AND f.ref_supplier LIKE '%".$search_ref_supplier."%'";
+		$sql .= " AND f.ref_supplier LIKE '%".$db->escape($search_ref_supplier)."%'";
 	}
 
 	if ($search_company)
 	{
-		$sql .= " AND s.nom LIKE '%".$search_company."%'";
+		$sql .= " AND s.nom LIKE '%".$db->escape($search_company)."%'";
 	}
 
 	if ($search_amount_no_tax)
 	{
-		$sql .= " AND f.total_ht = '".$search_amount_no_tax."'";
+		$sql .= " AND f.total_ht = '".$db->escape($search_amount_no_tax)."'";
 	}
 
 	if ($search_amount_all_tax)
 	{
-		$sql .= " AND f.total_ttc = '".$search_amount_all_tax."'";
+		$sql .= " AND f.total_ttc = '".$db->escape($search_amount_all_tax)."'";
 	}
 
 	if (dol_strlen(GETPOST('sf_re')) > 0)
@@ -175,7 +175,7 @@ if ($user->rights->fournisseur->facture->lire)
 		$titre = ($socid ? $langs->trans("BillsSuppliersUnpaidForCompany", $soc->name) : $langs->trans("BillsSuppliersUnpaid"));
 
 		if ($option == 'late') $titre .= ' ('.$langs->trans("Late").')';
-	    else $titre .= ' ('.$langs->trans("All").')';
+		else $titre .= ' ('.$langs->trans("All").')';
 
 		$link = '';
 		if (empty($option)) $link = '<a href="'.$_SERVER["PHP_SELF"].'?option=late'.($socid ? '&socid='.$socid : '').'">'.$langs->trans("ShowUnpaidLateOnly").'</a>';
@@ -214,10 +214,10 @@ if ($user->rights->fournisseur->facture->lire)
 		print '</td><td class="liste_titre right">';
 		print '<input class="flat" type="text" size="8" name="search_amount_all_tax" value="'.$search_amount_all_tax.'">';
 		print '</td>';
-        print '<td class="liste_titre maxwidthsearch">';
-        $searchpicto = $form->showFilterAndCheckAddButtons(0);
-        print $searchpicto;
-        print '</td>';
+		print '<td class="liste_titre maxwidthsearch">';
+		$searchpicto = $form->showFilterAndCheckAddButtons(0);
+		print $searchpicto;
+		print '</td>';
 		print "</tr>\n";
 
 		if ($num > 0)
@@ -290,9 +290,7 @@ if ($user->rights->fournisseur->facture->lire)
 		print '</form>';
 
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

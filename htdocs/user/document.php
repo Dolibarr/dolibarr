@@ -49,17 +49,17 @@ $canreadgroup = $canreaduser;
 $caneditgroup = $canedituser;
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
-    $canreadgroup = (!empty($user->admin) || $user->rights->user->group_advance->read);
-    $caneditgroup = (!empty($user->admin) || $user->rights->user->group_advance->write);
+	$canreadgroup = (!empty($user->admin) || $user->rights->user->group_advance->read);
+	$caneditgroup = (!empty($user->admin) || $user->rights->user->group_advance->write);
 }
 // Define value to know what current user can do on properties of edited user
 if ($id)
 {
-    // $user est le user qui edite, $id est l'id de l'utilisateur edite
-    $caneditfield = ((($user->id == $id) && $user->rights->user->self->creer)
-    || (($user->id != $id) && $user->rights->user->user->creer));
-    $caneditpassword = ((($user->id == $id) && $user->rights->user->self->password)
-    || (($user->id != $id) && $user->rights->user->user->password));
+	// $user est le user qui edite, $id est l'id de l'utilisateur edite
+	$caneditfield = ((($user->id == $id) && $user->rights->user->self->creer)
+	|| (($user->id != $id) && $user->rights->user->user->creer));
+	$caneditpassword = ((($user->id == $id) && $user->rights->user->self->password)
+	|| (($user->id != $id) && $user->rights->user->user->password));
 }
 
 // Security check
@@ -128,17 +128,17 @@ if ($object->id)
 
 	$form = new Form($db);
 
-	dol_fiche_head($head, 'document', $langs->trans("User"), -1, 'user');
+	print dol_get_fiche_head($head, 'document', $langs->trans("User"), -1, 'user');
 
 	$linkback = '';
 	if ($user->rights->user->user->lire || $user->admin) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
-    dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
-    print '<div class="fichecenter">';
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 
 	// Build file list
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
@@ -151,19 +151,19 @@ if ($object->id)
 
 	print '<table class="border tableforfield centpercent">';
 
-    // Login
-    print '<tr><td class="titlefield">'.$langs->trans("Login").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+	// Login
+	print '<tr><td class="titlefield">'.$langs->trans("Login").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
 
-	// Nbre files
+	// Nunber of files
 	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td>'.count($filearray).'</td></tr>';
 
-	//Total taille
+	// Total size
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.dol_print_size($totalsize, 1, 1).'</td></tr>';
 
 	print '</table>';
-    print '</div>';
+	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	$modulepart = 'user';
@@ -171,9 +171,7 @@ if ($object->id)
 	$permtoedit = $user->rights->user->user->creer;
 	$param = '&id='.$object->id;
 	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-}
-else
-{
+} else {
 	accessforbidden('', 0, 1);
 }
 

@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("mymodule@mymodule"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 // Security check
@@ -106,7 +106,7 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
 
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("DraftOrders").($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th></tr>';
+		print '<th colspan="3">'.$langs->trans("DraftMyObjects").($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th></tr>';
 
 		$var = true;
 		if ($num > 0)
@@ -117,22 +117,17 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
 
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven"><td class="nowrap">';
-				$orderstatic->id=$obj->rowid;
-				$orderstatic->ref=$obj->ref;
-				$orderstatic->ref_client=$obj->ref_client;
-				$orderstatic->total_ht = $obj->total_ht;
-				$orderstatic->total_tva = $obj->total_tva;
-				$orderstatic->total_ttc = $obj->total_ttc;
-				print $orderstatic->getNomUrl(1);
+
+				$myobjectstatic->id=$obj->rowid;
+				$myobjectstatic->ref=$obj->ref;
+				$myobjectstatic->ref_client=$obj->ref_client;
+				$myobjectstatic->total_ht = $obj->total_ht;
+				$myobjectstatic->total_tva = $obj->total_tva;
+				$myobjectstatic->total_ttc = $obj->total_ttc;
+
+				print $myobjectstatic->getNomUrl(1);
 				print '</td>';
 				print '<td class="nowrap">';
-				$companystatic->id=$obj->socid;
-				$companystatic->name=$obj->name;
-				$companystatic->client=$obj->client;
-				$companystatic->code_client = $obj->code_client;
-				$companystatic->code_fournisseur = $obj->code_fournisseur;
-				$companystatic->canvas=$obj->canvas;
-				print $companystatic->getNomUrl(1,'customer',16);
 				print '</td>';
 				print '<td class="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
 				$i++;
@@ -164,21 +159,19 @@ END MODULEBUILDER DRAFT MYOBJECT */
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
-$NBMAX = 3;
-$max = 3;
+$NBMAX = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
+$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 /* BEGIN MODULEBUILDER LASTMODIFIED MYOBJECT
 // Last modified myobject
 if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
 {
-	$sql = "SELECT s.rowid, s.nom as name, s.client, s.datec, s.tms, s.canvas";
-	$sql.= ", s.code_client";
-	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE s.client IN (1, 2, 3)";
-	$sql.= " AND s.entity IN (".getEntity($companystatic->element).")";
-	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	if ($socid)	$sql.= " AND s.rowid = $socid";
+	$sql = "SELECT s.rowid, s.ref, s.label, s.date_creation, s.tms";
+	$sql.= " FROM ".MAIN_DB_PREFIX."mymodule_myobject as s";
+	//if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= " WHERE s.entity IN (".getEntity($myobjectstatic->element).")";
+	//if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	//if ($socid)	$sql.= " AND s.rowid = $socid";
 	$sql .= " ORDER BY s.tms DESC";
 	$sql .= $db->plimit($max, 0);
 
@@ -191,9 +184,7 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">';
-		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastCustomersOrProspects",$max);
-		else if (! empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastModifiedProspects",$max);
-		else print $langs->trans("BoxTitleLastModifiedCustomers",$max);
+		print $langs->trans("BoxTitleLatestModifiedMyObjects", $max);
 		print '</th>';
 		print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
 		print '</tr>';
@@ -202,28 +193,23 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($resql);
-				$companystatic->id=$objp->rowid;
-				$companystatic->name=$objp->name;
-				$companystatic->client=$objp->client;
-				$companystatic->code_client = $objp->code_client;
-				$companystatic->code_fournisseur = $objp->code_fournisseur;
-				$companystatic->canvas=$objp->canvas;
+
+				$myobjectstatic->id=$objp->rowid;
+				$myobjectstatic->ref=$objp->ref;
+				$myobjectstatic->label=$objp->label;
+				$myobjectstatic->status = $objp->status;
+
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">'.$companystatic->getNomUrl(1,'customer',48).'</td>';
+				print '<td class="nowrap">'.$myobjectstatic->getNomUrl(1).'</td>';
 				print '<td class="right nowrap">';
-				print $companystatic->getLibCustProspStatut();
 				print "</td>";
-				print '<td class="right nowrap">'.dol_print_date($db->jdate($objp->tms),'day')."</td>";
+				print '<td class="right nowrap">'.dol_print_date($db->jdate($objp->tms), 'day')."</td>";
 				print '</tr>';
 				$i++;
-
-
 			}
 
 			$db->free($resql);
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print "</table><br>";

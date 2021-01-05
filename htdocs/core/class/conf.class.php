@@ -32,61 +32,63 @@
  */
 class Conf
 {
-    /** \public */
-    //! To store properties found in conf file
-    public $file;
+	/** \public */
+	//! To store properties found in conf file
+	public $file;
 
-    /**
-     * @var Object 	Associative array with some properties ->type, ->db, ...
-     */
-    public $db;
+	/**
+	 * @var Object 	Associative array with some properties ->type, ->db, ...
+	 */
+	public $db;
 
-    //! To store properties found into database
-    public $global;
-    //! To store browser info
-    public $browser;
+	//! To store properties found into database
+	public $global;
+	//! To store browser info
+	public $browser;
 
-    //! To store if javascript/ajax is enabked
-    public $use_javascript_ajax;
-    //! To store if javascript/ajax is enabked
-    public $disable_compute;
+	//! To store if javascript/ajax is enabked
+	public $use_javascript_ajax;
+	//! To store if javascript/ajax is enabked
+	public $disable_compute;
 	//! Used to store current currency (ISO code like 'USD', 'EUR', ...)
 	public $currency;
+
 	//! Used to store current css (from theme)
 	public $theme; // Contains current theme ("eldy", "auguria", ...)
 	public $css; // Contains full path of css page ("/theme/eldy/style.css.php", ...)
-    //! Used to store current menu handler
+
+	//! Used to store current menu handler
 	public $standard_menu;
-    // List of activated modules
-    public $modules = array();
-    public $modules_parts = array(
-        'css' => array(),
-        'js' => array(),
-        'tabs' => array(),
-        'triggers' => array(),
-        'login' => array(),
-        'substitutions' => array(),
-        'menus' => array(),
-        'theme' => array(),
-        'sms' => array(),
-        'tpl' => array(),
-        'barcode' => array(),
-        'models' => array(),
-        'societe' => array(),
-        'hooks' => array(),
-        'dir' => array(),
-        'syslog' => array(),
-    );
+	// List of activated modules
+	public $modules = array();
+	public $modules_parts = array(
+		'css' => array(),
+		'js' => array(),
+		'tabs' => array(),
+		'triggers' => array(),
+		'login' => array(),
+		'substitutions' => array(),
+		'menus' => array(),
+		'theme' => array(),
+		'sms' => array(),
+		'tpl' => array(),
+		'barcode' => array(),
+		'models' => array(),
+		'societe' => array(),
+		'hooks' => array(),
+		'dir' => array(),
+		'syslog' => array(),
+	);
 
-    public $logbuffer = array();
+	public $logbuffer = array();
 
-    /**
-     * @var LogHandlerInterface[]
-     */
-    public $loghandlers = array();
+	/**
+	 * @var LogHandlerInterface[]
+	 */
+	public $loghandlers = array();
 
-    //! To store properties of multi-company
-    public $multicompany;
+	//! To store properties of multi-company
+	public $multicompany;
 	//! Used to store running instance for multi-company (default 1)
 	public $entity = 1;
 	//! Used to store list of entities to use for each element
@@ -97,6 +99,10 @@ class Conf
 	public $dol_optimize_smallscreen; // Set if we force param dol_optimize_smallscreen into login url or if browser is smartphone
 	public $dol_no_mouse_hover; // Set if we force param dol_no_mouse_hover into login url or if browser is smartphone
 	public $dol_use_jmobile; // Set if we force param dol_use_jmobile into login url
+
+	public $liste_limit;
+
+	public $tzuserinputkey = 'tzserver';		// Use 'tzuserrel' to always store date in GMT and show date in time zone of user.
 
 
 	/**
@@ -122,7 +128,7 @@ class Conf
 		// First level object
 		// TODO Remove this part.
 		$this->expedition_bon = new stdClass();
-		$this->livraison_bon = new stdClass();
+		$this->delivery_note = new stdClass();
 		$this->fournisseur = new stdClass();
 		$this->product			= new stdClass();
 		$this->service			= new stdClass();
@@ -183,7 +189,7 @@ class Conf
 					//if (! defined("$key")) define("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_HANDLERS during install)
 					$this->global->$key = $value;
 
-					if ($value && preg_match('/^MAIN_MODULE_/', $key))
+					if ($value && strpos($key, 'MAIN_MODULE_') === 0)
 					{
 						$reg = array();
 						// If this is constant for a new tab page activated by a module. It initializes modules_parts['tabs'].
@@ -191,7 +197,7 @@ class Conf
 						{
 							$partname = 'tabs';
 							$params = explode(':', $value, 2);
-							if (!isset($this->modules_parts[$partname]) || !is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
+							if (!is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
 							$this->modules_parts[$partname][$params[0]][] = $value; // $value may be a string or an array
 						}
 						// If this is constant for all generic part activated by a module. It initializes
@@ -212,7 +218,7 @@ class Conf
 							elseif ($value == 1) $value = '/'.$modulename.'/core/modules/'.$partname.'/'; // ex: partname = societe
 							$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $value)); // $value may be a string or an array
 						}
-                        // If this is a module constant (must be at end)
+						// If this is a module constant (must be at end)
 						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)$/i', $key, $reg))
 						{
 							$modulename = strtolower($reg[1]);
@@ -227,20 +233,20 @@ class Conf
 				$i++;
 			}
 
-            $db->free($resql);
-        }
+			$db->free($resql);
+		}
 
-        // Include other local consts.php files and fetch their values to the corresponding database constants.
-        if (!empty($this->global->LOCAL_CONSTS_FILES)) {
-            $filesList = explode(":", $this->global->LOCAL_CONSTS_FILES);
-            foreach ($filesList as $file) {
-                $file = dol_sanitizeFileName($file);
-                include_once DOL_DOCUMENT_ROOT."/".$file."/".$file."_consts.php"; // This file can run code like setting $this->global->XXX vars.
-            }
-        }
+		// Include other local consts.php files and fetch their values to the corresponding database constants.
+		if (!empty($this->global->LOCAL_CONSTS_FILES)) {
+			$filesList = explode(":", $this->global->LOCAL_CONSTS_FILES);
+			foreach ($filesList as $file) {
+				$file = dol_sanitizeFileName($file);
+				dol_include_once($file."/".$file."_consts.php"); // This file can run code like setting $this->global->XXX vars.
+			}
+		}
 
-        //var_dump($this->modules);
-        //var_dump($this->modules_parts['theme']);
+		//var_dump($this->modules);
+		//var_dump($this->modules_parts['theme']);
 
 		// If you can't set timezone of your PHP, set this constant. Better is to set it to UTC.
 		// In future, this constant will be forced to 'UTC' so PHP server timezone will not have effect anymore.
@@ -249,8 +255,7 @@ class Conf
 		{
 			try {
 				date_default_timezone_set($this->global->MAIN_SERVER_TZ);
-			}
-			catch (Exception $e)
+			} catch (Exception $e)
 			{
 				dol_syslog("Error: Bad value for parameter MAIN_SERVER_TZ=".$this->global->MAIN_SERVER_TZ, LOG_ERR);
 			}
@@ -271,14 +276,7 @@ class Conf
 		if (empty($this->global->MAIN_MENUFRONT_STANDARD)) $this->global->MAIN_MENUFRONT_STANDARD = "eldy_menu.php";
 		if (empty($this->global->MAIN_MENU_SMARTPHONE)) $this->global->MAIN_MENU_SMARTPHONE = "eldy_menu.php"; // Use eldy by default because smartphone does not work on all phones
 		if (empty($this->global->MAIN_MENUFRONT_SMARTPHONE)) $this->global->MAIN_MENUFRONT_SMARTPHONE = "eldy_menu.php"; // Use eldy by default because smartphone does not work on all phones
-		// Clean var use vat for company
 		if (!isset($this->global->FACTURE_TVAOPTION)) $this->global->FACTURE_TVAOPTION = 1;
-		elseif (!empty($this->global->FACTURE_TVAOPTION) && !is_numeric($this->global->FACTURE_TVAOPTION))
-		{
-			// Old value of option, we clean to use new value (0 or 1)
-			if ($this->global->FACTURE_TVAOPTION != "franchise") $this->global->FACTURE_TVAOPTION = 1;
-			else $this->global->FACTURE_TVAOPTION = 0;
-		}
 
 		// Variable globales LDAP
 		if (empty($this->global->LDAP_FIELD_FULLNAME)) $this->global->LDAP_FIELD_FULLNAME = '';
@@ -304,7 +302,7 @@ class Conf
 		// Define default dir_output and dir_temp for directories of modules
 		foreach ($this->modules as $module)
 		{
-		    //var_dump($module);
+			//var_dump($module);
 			// For multicompany sharings
 			$this->$module->multidir_output = array($this->entity => $rootfordata."/".$module);
 			$this->$module->multidir_temp = array($this->entity => $rootfortemp."/".$module."/temp");
@@ -332,9 +330,7 @@ class Conf
 
 							// For backward compatibility
 							$this->$module->$dirname = $rootfordata."/".$name;
-						}
-						else
-						{
+						} else {
 							// For multicompany sharings
 							$this->$module->$multidirname = array($this->entity => $rootfortemp."/".$name."/temp");
 
@@ -380,8 +376,8 @@ class Conf
 
 		// Sous module bons d'expedition
 		$this->expedition_bon->enabled = (!empty($this->global->MAIN_SUBMODULE_EXPEDITION) ? $this->global->MAIN_SUBMODULE_EXPEDITION : 0);
-		// Sous module bons de livraison
-		$this->livraison_bon->enabled = (!empty($this->global->MAIN_SUBMODULE_LIVRAISON) ? $this->global->MAIN_SUBMODULE_LIVRAISON : 0);
+		// Sub module delivery note  Sous module bons de livraison
+		$this->delivery_note->enabled = (!empty($this->global->MAIN_SUBMODULE_DELIVERY) ? $this->global->MAIN_SUBMODULE_DELIVERY : 0);
 
 		// Module fournisseur
 		if (!empty($this->fournisseur))
@@ -410,28 +406,22 @@ class Conf
 			$this->fournisseur->payment->dir_output = $rootfordata."/fournisseur/payment"; // For backward compatibility
 			$this->fournisseur->payment->dir_temp = $rootfortemp."/fournisseur/payment/temp"; // For backward compatibility
 
-			// To prepare split of module fournisseur into fournisseur + supplier_order + supplier_invoice
-			if (!empty($this->fournisseur->enabled) && empty($this->global->MAIN_USE_NEW_SUPPLIERMOD))  // By default, if module supplier is on, we set new properties
+			// To prepare split of module fournisseur into module 'fournisseur' + supplier_order + supplier_invoice
+			if (!empty($this->fournisseur->enabled) && empty($this->global->MAIN_USE_NEW_SUPPLIERMOD))  // By default, if module supplier is on, and we don't use yet the new modules, we set artificialy the module properties
 			{
-				if (empty($this->global->MAIN_USE_NEW_SUPPLIERMOD))	// This can be set to 1 once modules purchase order and supplier invoice exists
-				{
-					$this->supplier_order = new stdClass();
-					$this->supplier_order->enabled = 1;
-					$this->supplier_order->multidir_output = array($this->entity => $rootfordata."/fournisseur/commande");
-					$this->supplier_order->multidir_temp = array($this->entity => $rootfortemp."/fournisseur/commande/temp");
-					$this->supplier_order->dir_output = $rootfordata."/fournisseur/commande"; // For backward compatibility
-					$this->supplier_order->dir_temp = $rootfortemp."/fournisseur/commande/temp"; // For backward compatibility
-				}
+				$this->supplier_order = new stdClass();
+				$this->supplier_order->enabled = 1;
+				$this->supplier_order->multidir_output = array($this->entity => $rootfordata."/fournisseur/commande");
+				$this->supplier_order->multidir_temp = array($this->entity => $rootfortemp."/fournisseur/commande/temp");
+				$this->supplier_order->dir_output = $rootfordata."/fournisseur/commande"; // For backward compatibility
+				$this->supplier_order->dir_temp = $rootfortemp."/fournisseur/commande/temp"; // For backward compatibility
 
-				if (empty($this->global->MAIN_USE_NEW_SUPPLIERMOD))	// This can be set to 1 once modules purchase order and supplier invoice exists
-				{
-					$this->supplier_invoice = new stdClass();
-					$this->supplier_invoice->enabled = 1;
-					$this->supplier_invoice->multidir_output = array($this->entity => $rootfordata."/fournisseur/facture");
-					$this->supplier_invoice->multidir_temp = array($this->entity => $rootfortemp."/fournisseur/facture/temp");
-					$this->supplier_invoice->dir_output = $rootfordata."/fournisseur/facture"; // For backward compatibility
-					$this->supplier_invoice->dir_temp = $rootfortemp."/fournisseur/facture/temp"; // For backward compatibility
-				}
+				$this->supplier_invoice = new stdClass();
+				$this->supplier_invoice->enabled = 1;
+				$this->supplier_invoice->multidir_output = array($this->entity => $rootfordata."/fournisseur/facture");
+				$this->supplier_invoice->multidir_temp = array($this->entity => $rootfortemp."/fournisseur/facture/temp");
+				$this->supplier_invoice->dir_output = $rootfordata."/fournisseur/facture"; // For backward compatibility
+				$this->supplier_invoice->dir_temp = $rootfortemp."/fournisseur/facture/temp"; // For backward compatibility
 			}
 		}
 
@@ -466,7 +456,7 @@ class Conf
 
 		// Set some default values
 		//$this->global->MAIN_LIST_FILTER_ON_DAY=1;		// On filter that show date, we must show input field for day before or after month
-        $this->global->MAIN_MAIL_USE_MULTI_PART = 1;
+		$this->global->MAIN_MAIL_USE_MULTI_PART = 1;
 
 		// societe
 		if (empty($this->global->SOCIETE_CODECLIENT_ADDON))		$this->global->SOCIETE_CODECLIENT_ADDON = "mod_codeclient_leopard";
@@ -475,9 +465,9 @@ class Conf
 		if (empty($this->global->CHEQUERECEIPTS_ADDON))			$this->global->CHEQUERECEIPTS_ADDON = 'mod_chequereceipt_mint';
 		if (empty($this->global->TICKET_ADDON))				    $this->global->TICKET_ADDON = 'mod_ticket_simple';
 
-        // Security
+		// Security
 		if (empty($this->global->USER_PASSWORD_GENERATED)) $this->global->USER_PASSWORD_GENERATED = 'standard'; // Default password generator
-        if (empty($this->global->MAIN_UMASK)) $this->global->MAIN_UMASK = '0664'; // Default mask
+		if (empty($this->global->MAIN_UMASK)) $this->global->MAIN_UMASK = '0664'; // Default mask
 
 		// conf->use_javascript_ajax
 		$this->use_javascript_ajax = 1;
@@ -499,7 +489,9 @@ class Conf
 			$this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE = 0;
 			$this->global->STOCK_CALCULATE_ON_SUPPLIER_BILL = 0;
 			$this->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER = 0;
-			if (empty($this->reception->enabled))$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER = 1;
+			if (empty($this->reception->enabled)) {
+				$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER = 1;
+			}
 			else {
 				$this->global->STOCK_CALCULATE_ON_RECEPTION = 1;
 				$this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE = 0;
@@ -513,16 +505,16 @@ class Conf
 		if (empty($this->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY)) $this->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY = 30; // Less than 1 minutes to be sure
 
 		// conf->global->ACCOUNTING_MODE = Option des modules Comptabilites (simple ou expert). Defini le mode de calcul des etats comptables (CA,...)
-        if (empty($this->global->ACCOUNTING_MODE)) $this->global->ACCOUNTING_MODE = 'RECETTES-DEPENSES'; // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
+		if (empty($this->global->ACCOUNTING_MODE)) $this->global->ACCOUNTING_MODE = 'RECETTES-DEPENSES'; // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
 
-        // By default, suppliers objects can be linked to all projects
-        if (!isset($this->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)) $this->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS = 1;
+		// By default, suppliers objects can be linked to all projects
+		if (!isset($this->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)) $this->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS = 1;
 
-        // By default we enable feature to bill time spent
-        if (!isset($this->global->PROJECT_BILL_TIME_SPENT)) $this->global->PROJECT_BILL_TIME_SPENT = 1;
+		// By default we enable feature to bill time spent
+		if (!isset($this->global->PROJECT_BILL_TIME_SPENT)) $this->global->PROJECT_BILL_TIME_SPENT = 1;
 
-        // MAIN_HTML_TITLE
-        if (!isset($this->global->MAIN_HTML_TITLE)) $this->global->MAIN_HTML_TITLE = 'noapp,thirdpartynameonly,contactnameonly,projectnameonly';
+		// MAIN_HTML_TITLE
+		if (!isset($this->global->MAIN_HTML_TITLE)) $this->global->MAIN_HTML_TITLE = 'noapp,thirdpartynameonly,contactnameonly,projectnameonly';
 
 		// conf->liste_limit = constante de taille maximale des listes
 		if (empty($this->global->MAIN_SIZE_LISTE_LIMIT)) $this->global->MAIN_SIZE_LISTE_LIMIT = 25;
@@ -534,7 +526,7 @@ class Conf
 
 		// conf->theme et $this->css
 		if (empty($this->global->MAIN_THEME)) $this->global->MAIN_THEME = "eldy";
-        if (!empty($this->global->MAIN_FORCETHEME)) $this->global->MAIN_THEME = $this->global->MAIN_FORCETHEME;
+		if (!empty($this->global->MAIN_FORCETHEME)) $this->global->MAIN_THEME = $this->global->MAIN_FORCETHEME;
 		$this->theme = $this->global->MAIN_THEME;
 		$this->css = "/theme/".$this->theme."/style.css.php";
 
@@ -551,20 +543,22 @@ class Conf
 		if (!empty($this->global->MAILING_EMAIL_FROM))	$this->mailing->email_from = $this->global->MAILING_EMAIL_FROM;
 		if (!isset($this->global->MAIN_EMAIL_ADD_TRACK_ID)) $this->global->MAIN_EMAIL_ADD_TRACK_ID = 1;
 
-        // Format for date (used by default when not found or not searched in lang)
-        $this->format_date_short = "%d/%m/%Y"; // Format of day with PHP/C tags (strftime functions)
-        $this->format_date_short_java = "dd/MM/yyyy"; // Format of day with Java tags
-        $this->format_hour_short = "%H:%M";
-        $this->format_hour_short_duration = "%H:%M";
-        $this->format_date_text_short = "%d %b %Y";
-        $this->format_date_text = "%d %B %Y";
-        $this->format_date_hour_short = "%d/%m/%Y %H:%M";
-        $this->format_date_hour_sec_short = "%d/%m/%Y %H:%M:%S";
-        $this->format_date_hour_text_short = "%d %b %Y %H:%M";
-        $this->format_date_hour_text = "%d %B %Y %H:%M";
+		if (!isset($this->global->MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP)) $this->global->MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP = 1;
 
-        // Duration of workday
-        if (!isset($this->global->MAIN_DURATION_OF_WORKDAY)) $this->global->MAIN_DURATION_OF_WORKDAY = 86400;
+		// Format for date (used by default when not found or not searched in lang)
+		$this->format_date_short = "%d/%m/%Y"; // Format of day with PHP/C tags (strftime functions)
+		$this->format_date_short_java = "dd/MM/yyyy"; // Format of day with Java tags
+		$this->format_hour_short = "%H:%M";
+		$this->format_hour_short_duration = "%H:%M";
+		$this->format_date_text_short = "%d %b %Y";
+		$this->format_date_text = "%d %B %Y";
+		$this->format_date_hour_short = "%d/%m/%Y %H:%M";
+		$this->format_date_hour_sec_short = "%d/%m/%Y %H:%M:%S";
+		$this->format_date_hour_text_short = "%d %b %Y %H:%M";
+		$this->format_date_hour_text = "%d %B %Y %H:%M";
+
+		// Duration of workday
+		if (!isset($this->global->MAIN_DURATION_OF_WORKDAY)) $this->global->MAIN_DURATION_OF_WORKDAY = 86400;
 
 		// Limites decimales si non definie (peuvent etre egale a 0)
 		if (!isset($this->global->MAIN_MAX_DECIMALS_UNIT))  $this->global->MAIN_MAX_DECIMALS_UNIT = 5;
@@ -604,76 +598,76 @@ class Conf
 		if (empty($this->global->MAIN_USE_JQUERY_MULTISELECT) || $this->global->MAIN_USE_JQUERY_MULTISELECT == '1') $this->global->MAIN_USE_JQUERY_MULTISELECT = 'select2';
 
 		// Timeouts
-        if (empty($this->global->MAIN_USE_CONNECT_TIMEOUT)) $this->global->MAIN_USE_CONNECT_TIMEOUT = 10;
-        if (empty($this->global->MAIN_USE_RESPONSE_TIMEOUT)) $this->global->MAIN_USE_RESPONSE_TIMEOUT = 30;
+		if (empty($this->global->MAIN_USE_CONNECT_TIMEOUT)) $this->global->MAIN_USE_CONNECT_TIMEOUT = 10;
+		if (empty($this->global->MAIN_USE_RESPONSE_TIMEOUT)) $this->global->MAIN_USE_RESPONSE_TIMEOUT = 30;
 
 		// Set default variable to calculate VAT as if option tax_mode was 0 (standard)
-        if (empty($this->global->TAX_MODE_SELL_PRODUCT)) $this->global->TAX_MODE_SELL_PRODUCT = 'invoice';
-        if (empty($this->global->TAX_MODE_BUY_PRODUCT))  $this->global->TAX_MODE_BUY_PRODUCT = 'invoice';
-        if (empty($this->global->TAX_MODE_SELL_SERVICE)) $this->global->TAX_MODE_SELL_SERVICE = 'payment';
-        if (empty($this->global->TAX_MODE_BUY_SERVICE))  $this->global->TAX_MODE_BUY_SERVICE = 'payment';
+		if (empty($this->global->TAX_MODE_SELL_PRODUCT)) $this->global->TAX_MODE_SELL_PRODUCT = 'invoice';
+		if (empty($this->global->TAX_MODE_BUY_PRODUCT))  $this->global->TAX_MODE_BUY_PRODUCT = 'invoice';
+		if (empty($this->global->TAX_MODE_SELL_SERVICE)) $this->global->TAX_MODE_SELL_SERVICE = 'payment';
+		if (empty($this->global->TAX_MODE_BUY_SERVICE))  $this->global->TAX_MODE_BUY_SERVICE = 'payment';
 
 		// Delay before warnings
 		// Avoid strict errors. TODO: Replace xxx->warning_delay with a property ->warning_delay_xxx
 		if (isset($this->agenda)) {
-		    $this->adherent->subscription = new stdClass();
-            $this->adherent->subscription->warning_delay = (isset($this->global->MAIN_DELAY_MEMBERS) ? $this->global->MAIN_DELAY_MEMBERS : 0) * 24 * 60 * 60;
+			$this->adherent->subscription = new stdClass();
+			$this->adherent->subscription->warning_delay = (isset($this->global->MAIN_DELAY_MEMBERS) ? $this->global->MAIN_DELAY_MEMBERS : 0) * 86400;
 		}
 		if (isset($this->agenda)) {
-            $this->agenda->warning_delay = (isset($this->global->MAIN_DELAY_ACTIONS_TODO) ? $this->global->MAIN_DELAY_ACTIONS_TODO : 7) * 24 * 60 * 60;
-        }
+			$this->agenda->warning_delay = (isset($this->global->MAIN_DELAY_ACTIONS_TODO) ? $this->global->MAIN_DELAY_ACTIONS_TODO : 7) * 86400;
+		}
 		if (isset($this->projet))
 		{
-		    $this->projet->warning_delay = (isset($this->global->MAIN_DELAY_PROJECT_TO_CLOSE) ? $this->global->MAIN_DELAY_PROJECT_TO_CLOSE : 7) * 24 * 60 * 60;
-		    $this->projet->task = new StdClass();
-		    $this->projet->task->warning_delay = (isset($this->global->MAIN_DELAY_TASKS_TODO) ? $this->global->MAIN_DELAY_TASKS_TODO : 7) * 24 * 60 * 60;
+			$this->projet->warning_delay = (isset($this->global->MAIN_DELAY_PROJECT_TO_CLOSE) ? $this->global->MAIN_DELAY_PROJECT_TO_CLOSE : 7) * 86400;
+			$this->projet->task = new StdClass();
+			$this->projet->task->warning_delay = (isset($this->global->MAIN_DELAY_TASKS_TODO) ? $this->global->MAIN_DELAY_TASKS_TODO : 7) * 86400;
 		}
 
-        if (isset($this->commande)) {
-            $this->commande->client = new stdClass();
-    		$this->commande->fournisseur = new stdClass();
-    		$this->commande->client->warning_delay = (isset($this->global->MAIN_DELAY_ORDERS_TO_PROCESS) ? $this->global->MAIN_DELAY_ORDERS_TO_PROCESS : 2) * 24 * 60 * 60;
-    		$this->commande->fournisseur->warning_delay = (isset($this->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS) ? $this->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS : 7) * 24 * 60 * 60;
+		if (isset($this->commande)) {
+			$this->commande->client = new stdClass();
+			$this->commande->fournisseur = new stdClass();
+			$this->commande->client->warning_delay = (isset($this->global->MAIN_DELAY_ORDERS_TO_PROCESS) ? $this->global->MAIN_DELAY_ORDERS_TO_PROCESS : 2) * 86400;
+			$this->commande->fournisseur->warning_delay = (isset($this->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS) ? $this->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS : 7) * 86400;
 		}
 		if (isset($this->propal)) {
-		    $this->propal->cloture = new stdClass();
-    		$this->propal->facturation = new stdClass();
-	        $this->propal->cloture->warning_delay = (isset($this->global->MAIN_DELAY_PROPALS_TO_CLOSE) ? $this->global->MAIN_DELAY_PROPALS_TO_CLOSE : 0) * 24 * 60 * 60;
-            $this->propal->facturation->warning_delay = (isset($this->global->MAIN_DELAY_PROPALS_TO_BILL) ? $this->global->MAIN_DELAY_PROPALS_TO_BILL : 0) * 24 * 60 * 60;
+			$this->propal->cloture = new stdClass();
+			$this->propal->facturation = new stdClass();
+			$this->propal->cloture->warning_delay = (isset($this->global->MAIN_DELAY_PROPALS_TO_CLOSE) ? $this->global->MAIN_DELAY_PROPALS_TO_CLOSE : 0) * 86400;
+			$this->propal->facturation->warning_delay = (isset($this->global->MAIN_DELAY_PROPALS_TO_BILL) ? $this->global->MAIN_DELAY_PROPALS_TO_BILL : 0) * 86400;
 		}
 		if (isset($this->facture)) {
-		    $this->facture->client = new stdClass();
-    		$this->facture->fournisseur = new stdClass();
-            $this->facture->client->warning_delay = (isset($this->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED) ? $this->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED : 0) * 24 * 60 * 60;
-		    $this->facture->fournisseur->warning_delay = (isset($this->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY) ? $this->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY : 0) * 24 * 60 * 60;
+			$this->facture->client = new stdClass();
+			$this->facture->fournisseur = new stdClass();
+			$this->facture->client->warning_delay = (isset($this->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED) ? $this->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED : 0) * 86400;
+			$this->facture->fournisseur->warning_delay = (isset($this->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY) ? $this->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY : 0) * 86400;
 		}
 		if (isset($this->contrat)) {
-		    $this->contrat->services = new stdClass();
-    		$this->contrat->services->inactifs = new stdClass();
-	   	    $this->contrat->services->expires = new stdClass();
-		    $this->contrat->services->inactifs->warning_delay = (isset($this->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES) ? $this->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES : 0) * 24 * 60 * 60;
-            $this->contrat->services->expires->warning_delay = (isset($this->global->MAIN_DELAY_RUNNING_SERVICES) ? $this->global->MAIN_DELAY_RUNNING_SERVICES : 0) * 24 * 60 * 60;
+			$this->contrat->services = new stdClass();
+			$this->contrat->services->inactifs = new stdClass();
+	   		$this->contrat->services->expires = new stdClass();
+	   		$this->contrat->services->inactifs->warning_delay = (isset($this->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES) ? $this->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES : 0) * 86400;
+	   		$this->contrat->services->expires->warning_delay = (isset($this->global->MAIN_DELAY_RUNNING_SERVICES) ? $this->global->MAIN_DELAY_RUNNING_SERVICES : 0) * 86400;
 		}
 		if (isset($this->commande)) {
-		    $this->bank->rappro					= new stdClass();
-    		$this->bank->cheque					= new stdClass();
-            $this->bank->rappro->warning_delay = (isset($this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE) ? $this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE : 0) * 24 * 60 * 60;
-		    $this->bank->cheque->warning_delay = (isset($this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT) ? $this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT : 0) * 24 * 60 * 60;
+			$this->bank->rappro					= new stdClass();
+			$this->bank->cheque					= new stdClass();
+			$this->bank->rappro->warning_delay = (isset($this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE) ? $this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE : 0) * 86400;
+			$this->bank->cheque->warning_delay = (isset($this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT) ? $this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT : 0) * 86400;
 		}
 		if (isset($this->expensereport)) {
-		    $this->expensereport->approve = new stdClass();
-		    $this->expensereport->approve->warning_delay = (isset($this->global->MAIN_DELAY_EXPENSEREPORTS) ? $this->global->MAIN_DELAY_EXPENSEREPORTS : 0) * 24 * 60 * 60;
-		    $this->expensereport->payment = new stdClass();
-		    $this->expensereport->payment->warning_delay = (isset($this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY) ? $this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY : 0) * 24 * 60 * 60;
+			$this->expensereport->approve = new stdClass();
+			$this->expensereport->approve->warning_delay = (isset($this->global->MAIN_DELAY_EXPENSEREPORTS) ? $this->global->MAIN_DELAY_EXPENSEREPORTS : 0) * 86400;
+			$this->expensereport->payment = new stdClass();
+			$this->expensereport->payment->warning_delay = (isset($this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY) ? $this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY : 0) * 86400;
 		}
-        if (isset($this->holiday)) {
-            $this->holiday->approve = new stdClass();
-            $this->holiday->approve->warning_delay = (isset($this->global->MAIN_DELAY_HOLIDAYS) ? $this->global->MAIN_DELAY_HOLIDAYS : 0) * 24 * 60 * 60;
-        }
+		if (isset($this->holiday)) {
+			$this->holiday->approve = new stdClass();
+			$this->holiday->approve->warning_delay = (isset($this->global->MAIN_DELAY_HOLIDAYS) ? $this->global->MAIN_DELAY_HOLIDAYS : 0) * 86400;
+		}
 
 		if (!empty($this->global->PRODUIT_MULTIPRICES) && empty($this->global->PRODUIT_MULTIPRICES_LIMIT))
 		{
-		    $this->global->PRODUIT_MULTIPRICES_LIMIT = 5;
+			$this->global->PRODUIT_MULTIPRICES_LIMIT = 5;
 		}
 
 		// For modules that want to disable top or left menu
@@ -698,6 +692,11 @@ class Conf
 		// If we are in develop mode, we activate the option MAIN_SECURITY_CSRF_WITH_TOKEN to 1 if not already defined.
 		if (!isset($this->global->MAIN_SECURITY_CSRF_WITH_TOKEN) && $this->global->MAIN_FEATURES_LEVEL >= 2) $this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 1;
 
+		if (defined('MAIN_ANTIVIRUS_COMMAND')) $this->global->MAIN_ANTIVIRUS_COMMAND = constant('MAIN_ANTIVIRUS_COMMAND');
+		if (defined('MAIN_ANTIVIRUS_PARAM')) $this->global->MAIN_ANTIVIRUS_PARAM = constant('MAIN_ANTIVIRUS_PARAM');
+
+		if (!empty($this->global->MAIN_TZUSERINPUTKEY)) $this->tzuserinputkey = $this->global->MAIN_TZUSERINPUTKEY;	// 'tzserver' or 'tzuserrel'
+
 		// For backward compatibility
 		if (isset($this->product))   $this->produit = $this->product;
 		if (isset($this->facture))   $this->invoice = $this->facture;
@@ -706,45 +705,50 @@ class Conf
 		if (isset($this->categorie)) $this->category = $this->categorie;
 		if (isset($this->project))   $this->project = $this->projet;
 
-        // Object $mc
-        if (!defined('NOREQUIREMC') && !empty($this->multicompany->enabled))
-        {
-        	if (is_object($mc)) $mc->setValues($this);
-        }
-
-		// We init log handlers
-		if (!empty($this->global->SYSLOG_HANDLERS)) {
-			$handlers = json_decode($this->global->SYSLOG_HANDLERS);
-		} else {
-			$handlers = array();
+		// Object $mc
+		if (!defined('NOREQUIREMC') && !empty($this->multicompany->enabled))
+		{
+			if (is_object($mc)) $mc->setValues($this);
 		}
-		foreach ($handlers as $handler) {
-			$handler_files = array();
-			$dirsyslogs = array_merge(array('/core/modules/syslog/'), $this->modules_parts['syslog']);
-			foreach ($dirsyslogs as $reldir) {
-				$dir = dol_buildpath($reldir, 0);
-				$newdir = dol_osencode($dir);
-				if (is_dir($newdir)) {
-					$file = $newdir.$handler.'.php';
-					if (file_exists($file)) {
-						$handler_files[] = $file;
+
+		if (!empty($this->syslog->enabled)) {
+			// We init log handlers
+			if (!empty($this->global->SYSLOG_HANDLERS)) {
+				$handlers = json_decode($this->global->SYSLOG_HANDLERS);
+			} else {
+				$handlers = array();
+			}
+			foreach ($handlers as $handler) {
+				$handler_file_found = '';
+				$dirsyslogs = array_merge(array('/core/modules/syslog/'), $this->modules_parts['syslog']);
+				foreach ($dirsyslogs as $reldir) {
+					$dir = dol_buildpath($reldir, 0);
+					$newdir = dol_osencode($dir);
+					if (is_dir($newdir)) {
+						$file = $newdir.$handler.'.php';
+						if (file_exists($file)) {
+							$handler_file_found = $file;
+							break;
+						}
 					}
 				}
-			}
 
-			if (empty($handler_files)) {
-				throw new Exception('Missing log handler file '.$handler.'.php');
-			}
+				if (empty($handler_file_found)) {
+					throw new Exception('Missing log handler file '.$handler.'.php');
+				}
 
-			require_once $handler_files[0];
-			$loghandlerinstance = new $handler();
-			if (!$loghandlerinstance instanceof LogHandlerInterface) {
-				throw new Exception('Log handler does not extend LogHandlerInterface');
-			}
+				require_once $handler_file_found;
+				$loghandlerinstance = new $handler();
+				if (!$loghandlerinstance instanceof LogHandlerInterface) {
+					throw new Exception('Log handler does not extend LogHandlerInterface');
+				}
 
-			if (empty($this->loghandlers[$handler])) {
-				$this->loghandlers[$handler] = $loghandlerinstance;
+				if (empty($this->loghandlers[$handler])) {
+					$this->loghandlers[$handler] = $loghandlerinstance;
+				}
 			}
 		}
+
+		return 0;
 	}
 }

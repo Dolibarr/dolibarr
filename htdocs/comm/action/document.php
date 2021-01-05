@@ -40,7 +40,7 @@ if (!empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/clas
 $langs->loadLangs(array('companies', 'commercial', 'other', 'bills'));
 
 $id = GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
@@ -120,10 +120,10 @@ if ($object->id > 0)
 	$now = dol_now();
 	$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
 
-	dol_fiche_head($head, 'documents', $langs->trans("Action"), -1, 'action');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("Action"), -1, 'action');
 
 	$linkback = img_picto($langs->trans("BackToList"), 'object_list', 'class="hideonsmartphone pictoactionview"');
-	$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list">'.$langs->trans("BackToList").'</a>';
 
 	// Link to other agenda views
 	$out = '';
@@ -208,16 +208,14 @@ if ($object->id > 0)
 		if (!empty($object->userassigned))	// Now concat assigned users
 		{
 			// Restore array with key with same value than param 'id'
-			$tmplist1 = $object->userassigned; $tmplist2 = array();
+			$tmplist1 = $object->userassigned;
 			foreach ($tmplist1 as $key => $val)
 			{
 				if ($val['id'] && $val['id'] != $object->userownerid) $listofuserid[$val['id']] = $val;
 			}
 		}
 		$_SESSION['assignedtouser'] = json_encode($listofuserid);
-	}
-	else
-	{
+	} else {
 		if (!empty($_SESSION['assignedtouser']))
 		{
 			$listofuserid = json_decode($_SESSION['assignedtouser'], true);
@@ -256,16 +254,14 @@ if ($object->id > 0)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	$modulepart = 'actions';
 	$permission = $user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create;
 	$param = '&id='.$object->id;
 	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-}
-else
-{
+} else {
 	print $langs->trans("ErrorUnknown");
 }
 

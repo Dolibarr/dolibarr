@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014-2015 Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2007-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  */
 
 /**
- *       \file       htdocs/product/ajax/products.php
+ *       \file       htdocs/projet/ajax/projects.php
  *       \brief      File to return Ajax response on product list request
  */
 
@@ -33,10 +33,8 @@ if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML'))  define('NOREQUIREHT
 
 require '../../main.inc.php';
 
-$htmlname = GETPOST('htmlname', 'alpha');
+$htmlname = GETPOST('htmlname', 'aZ09');
 $socid = GETPOST('socid', 'int');
-$action = GETPOST('action', 'alpha');
-$id = GETPOST('id', 'int');
 $discard_closed = GETPOST('discardclosed', 'int');
 
 
@@ -44,28 +42,31 @@ $discard_closed = GETPOST('discardclosed', 'int');
  * View
  */
 
-dol_syslog(join(',', $_GET));
+dol_syslog("Call ajax projet/ajax/projects.php");
+//dol_syslog(join(',', $_GET));
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
-// Load translation files required by the page
-$langs->load("main");
-
 top_httphead();
 
-if (empty($htmlname)) return;
+if (empty($htmlname) && !GETPOST('mode', 'aZ09')) return;
 
-$match = preg_grep('/('.$htmlname.'[0-9]+)/', array_keys($_GET));
-sort($match);
-$idprod = (!empty($match[0]) ? $match[0] : '');
+// Mode to get list of projects
+if (!GETPOST('mode', 'aZ09') || GETPOST('mode', 'aZ09') != 'gettasks') {
+	// When used from jQuery, the search term is added as GET param "term".
+	$searchkey = (GETPOSTISSET($htmlname) ? GETPOST($htmlname, 'aZ09') : '');
 
-if (!GETPOST($htmlname) && !GETPOST($idprod)) return;
+	$formproject = new FormProjets($db);
+	$arrayresult = $formproject->select_projects_list($socid, '', $htmlname, 0, 0, 1, $discard_closed, 0, 0, 1, $searchkey);
+}
 
-// When used from jQuery, the search term is added as GET param "term".
-$searchkey = ((!empty($idprod) && GETPOST($idprod)) ?GETPOST($idprod) : (GETPOST($htmlname) ?GETPOST($htmlname) : ''));
+// Mode to get list of tasks
+if (GETPOST('mode', 'aZ09') == 'gettasks') {
+	$formproject = new FormProjets($db);
+	$formproject->selectTasks((!empty($$socid) ? $socid : -1), 0, 'taskid', 24, 1, '1', 1, 0, 0, 'maxwidth500', GETPOST('projectid', 'int'), '');
+	return;
+}
 
-$form = new FormProjets($db);
-$arrayresult = $form->select_projects_list($socid, '', $htmlname, 0, 0, 1, $discard_closed, 0, 0, 1, $searchkey);
 
 $db->close();
 

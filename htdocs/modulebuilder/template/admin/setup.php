@@ -50,10 +50,13 @@ $langs->loadLangs(array("admin", "mymodule@mymodule"));
 if (!$user->admin) accessforbidden();
 
 // Parameters
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $value = GETPOST('value', 'alpha');
+$label = GETPOST('label', 'alpha');
+$scandir = GETPOST('scan_dir', 'alpha');
+$type = 'myobject';
 
 $arrayofparameters = array(
 	'MYMODULE_MYPARAM1'=>array('css'=>'minwidth200', 'enabled'=>1),
@@ -130,47 +133,52 @@ if ($action == 'updateMask')
 	}
 }
 
-// Activate a model
-elseif ($action == 'set')
-{
-	$ret = addDocumentModel($value, $type, $label, $scandir);
-} elseif ($action == 'del')
-{
+elseif ($action == 'setmod') {
+	// TODO Check if numbering module chosen can be activated by calling method canBeActivated
 	$tmpobjectkey = GETPOST('object');
-
-	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
-		$constforval = strtoupper($tmpobjectkey).'_ADDON_PDF';
-		if ($conf->global->$constforval == "$value") dolibarr_del_const($db, $constforval, $conf->entity);
+	if (!empty($tmpobjectkey)) {
+		$constforval = 'MYMODULE_'.strtoupper($tmpobjectkey)."_ADDON";
+		dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity);
 	}
 }
 
-// Set default model
-elseif ($action == 'setdoc')
-{
-	$tmpobjectkey = GETPOST('object');
-	$constforval = strtoupper($tmpobjectkey).'_ADDON_PDF';
-	if (dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity))
-	{
-		// The constant that was read before the new set
-		// We therefore requires a variable to have a coherent view
-		$conf->global->$constforval = $value;
-	}
-
-	// On active le modele
+// Activate a model
+elseif ($action == 'set') {
+	$ret = addDocumentModel($value, $type, $label, $scandir);
+} elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
-		$ret = addDocumentModel($value, $type, $label, $scandir);
+	if ($ret > 0) {
+		$tmpobjectkey = GETPOST('object');
+		if (!empty($tmpobjectkey)) {
+			$constforval = 'MYMODULE_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
+			if ($conf->global->$constforval == "$value") dolibarr_del_const($db, $constforval, $conf->entity);
+		}
 	}
-} elseif ($action == 'setmod')
-{
-	// TODO Check if numbering module chosen can be activated
-	// by calling method canBeActivated
+}
+
+// Set or unset default model
+elseif ($action == 'setdoc') {
 	$tmpobjectkey = GETPOST('object');
-	$constforval = 'MYMODULE_'.strtoupper($tmpobjectkey)."_ADDON";
-	dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity);
+	if (!empty($tmpobjectkey)) {
+		$constforval = 'MYMODULE_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
+		if (dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity)) {
+			// The constant that was read before the new set
+			// We therefore requires a variable to have a coherent view
+			$conf->global->$constforval = $value;
+		}
+
+		// We disable/enable the document template (into llx_document_model table)
+		$ret = delDocumentModel($value, $type);
+		if ($ret > 0) {
+			$ret = addDocumentModel($value, $type, $label, $scandir);
+		}
+	}
+} elseif ($action == 'unsetdoc') {
+	$tmpobjectkey = GETPOST('object');
+	if (!empty($tmpobjectkey)) {
+		$constforval = 'MYMODULE_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
+		dolibarr_del_const($db, $constforval, $conf->entity);
+	}
 }
 
 
@@ -193,7 +201,7 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'object_mymodule@my
 
 // Configuration header
 $head = mymoduleAdminPrepareHead();
-dol_fiche_head($head, 'settings', '', -1, "mymodule@mymodule");
+print dol_get_fiche_head($head, 'settings', '', -1, "mymodule@mymodule");
 
 // Setup page goes here
 echo '<span class="opacitymedium">'.$langs->trans("MyModuleSetupPage").'</span><br><br>';
@@ -218,7 +226,7 @@ if ($action == 'edit')
 	print '</table>';
 
 	print '<br><div class="center">';
-	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+	print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
 	print '</div>';
 
 	print '</form>';
@@ -244,9 +252,7 @@ if ($action == 'edit')
 		print '<div class="tabsAction">';
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
 		print '</div>';
-	}
-	else
-	{
+	} else {
 		print '<br>'.$langs->trans("NothingToSetup");
 	}
 }
@@ -254,7 +260,7 @@ if ($action == 'edit')
 
 $moduledir = 'mymodule';
 $myTmpObjects = array();
-$myTmpObjects['MyObject']=array('includerefgeneration'=>0, 'includedocgeneration'=>0);
+$myTmpObjects['MyObject'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
 
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
@@ -312,8 +318,10 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								// Show example of numbering model
 								print '<td class="nowrap">';
 								$tmp = $module->getExample();
-								if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
-								elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
+								if (preg_match('/^Error/', $tmp)) {
+									$langs->load("errors");
+									print '<div class="error">'.$langs->trans($tmp).'</div>';
+								} elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
 								else print $tmp;
 								print '</td>'."\n";
 
@@ -323,7 +331,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								{
 									print img_picto($langs->trans("Activated"), 'switch_on');
 								} else {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&object='.strtolower($myTmpObjectKey).'&value='.$file.'">';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&object='.strtolower($myTmpObjectKey).'&value='.urlencode($file).'">';
 									print img_picto($langs->trans("Disabled"), 'switch_off');
 									print '</a>';
 								}
@@ -376,7 +384,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		$def = array();
 		$sql = "SELECT nom";
 		$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-		$sql .= " WHERE type = '".$type."'";
+		$sql .= " WHERE type = '".$db->escape($type)."'";
 		$sql .= " AND entity = ".$conf->entity;
 		$resql = $db->query($sql);
 		if ($resql)
@@ -453,24 +461,25 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										if (in_array($name, $def))
 										{
 											print '<td class="center">'."\n";
-											print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
+											print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;token='.newToken().'&amp;value='.$name.'">';
 											print img_picto($langs->trans("Enabled"), 'switch_on');
 											print '</a>';
 											print '</td>';
 										} else {
 											print '<td class="center">'."\n";
-											print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+											print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.urlencode($module->scandir).'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 											print "</td>";
 										}
 
 										// Default
 										print '<td class="center">';
 										$constforvar = 'MYMODULE_'.strtoupper($myTmpObjectKey).'_ADDON';
-										if ($conf->global->$constforvar == $name)
-										{
-											print img_picto($langs->trans("Default"), 'on');
+										if ($conf->global->$constforvar == $name) {
+											//print img_picto($langs->trans("Default"), 'on');
+											// Even if choice is the default value, we allow to disable it. Replace this with previous line if you need to disable unset
+											print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetdoc&amp;token='.newToken().'&amp;object='.urlencode(strtolower($myTmpObjectKey)).'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type='.urlencode($type).'" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 										} else {
-											print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+											print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;object='.urlencode(strtolower($myTmpObjectKey)).'&amp;value='.$name.'&amp;scan_dir='.urlencode($module->scandir).'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 										}
 										print '</td>';
 
@@ -495,7 +504,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										print '<td class="center">';
 										if ($module->type == 'pdf')
 										{
-											print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'&object='.$myTmpObjectKey.'">'.img_object($langs->trans("Preview"), 'generic').'</a>';
+											print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'&object='.$myTmpObjectKey.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 										} else {
 											print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 										}
@@ -520,7 +529,7 @@ if (empty($setupnotempty)) {
 }
 
 // Page end
-dol_fiche_end();
+print dol_get_fiche_end();
 
 llxFooter();
 $db->close();

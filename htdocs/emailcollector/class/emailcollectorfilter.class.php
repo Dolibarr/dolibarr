@@ -99,8 +99,8 @@ class EmailCollectorFilter extends CommonObject
 	public $rulevalue;
 
 	/**
-     * @var integer|string date_creation
-     */
+	 * @var integer|string date_creation
+	 */
 	public $date_creation;
 
 
@@ -139,7 +139,7 @@ class EmailCollectorFilter extends CommonObject
 		// Translate some data of arrayofkeyval
 		foreach ($this->fields as $key => $val)
 		{
-			if (is_array($val['arrayofkeyval']))
+			if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval']))
 			{
 				foreach ($val['arrayofkeyval'] as $key2 => $val2)
 				{
@@ -165,11 +165,11 @@ class EmailCollectorFilter extends CommonObject
 			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"));
 			return -1;
 		}
-		if (!in_array($this->type, array('seen', 'unseen', 'unanswered', 'answered', 'withtrackingid', 'withouttrackingid')) && empty($this->rulevalue))
+		if (!in_array($this->type, array('seen', 'unseen', 'unanswered', 'answered', 'withtrackingidinmsgid', 'withouttrackingidinmsgid', 'withtrackingid', 'withouttrackingid', 'isanswer', 'isnotanswer')) && empty($this->rulevalue))
 		{
 			$langs->load("errors");
 			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("SearchString"));
-			return -1;
+			return -2;
 		}
 
 		return $this->createCommon($user, $notrigger);
@@ -185,59 +185,59 @@ class EmailCollectorFilter extends CommonObject
 	public function createFromClone(User $user, $fromid)
 	{
 		global $langs, $hookmanager, $extrafields;
-	    $error = 0;
+		$error = 0;
 
-	    dol_syslog(__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
-	    $object = new self($this->db);
+		$object = new self($this->db);
 
-	    $this->db->begin();
+		$this->db->begin();
 
-	    // Load source object
-	    $object->fetchCommon($fromid);
-	    // Reset some properties
-	    unset($object->id);
-	    unset($object->fk_user_creat);
-	    unset($object->import_key);
+		// Load source object
+		$object->fetchCommon($fromid);
+		// Reset some properties
+		unset($object->id);
+		unset($object->fk_user_creat);
+		unset($object->import_key);
 
-	    // Clear fields
-	    $object->ref = "copy_of_".$object->ref;
-	    $object->title = $langs->trans("CopyOf")." ".$object->title;
-	    // ...
-	    // Clear extrafields that are unique
-	    if (is_array($object->array_options) && count($object->array_options) > 0)
-	    {
-	    	$extrafields->fetch_name_optionals_label($this->table_element);
-	    	foreach ($object->array_options as $key => $option)
-	    	{
-	    		$shortkey = preg_replace('/options_/', '', $key);
-	    		if (!empty($extrafields->attributes[$this->element]['unique'][$shortkey]))
-	    		{
-	    			//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
-	    			unset($object->array_options[$key]);
-	    		}
-	    	}
-	    }
+		// Clear fields
+		$object->ref = "copy_of_".$object->ref;
+		$object->title = $langs->trans("CopyOf")." ".$object->title;
+		// ...
+		// Clear extrafields that are unique
+		if (is_array($object->array_options) && count($object->array_options) > 0)
+		{
+			$extrafields->fetch_name_optionals_label($this->table_element);
+			foreach ($object->array_options as $key => $option)
+			{
+				$shortkey = preg_replace('/options_/', '', $key);
+				if (!empty($extrafields->attributes[$this->element]['unique'][$shortkey]))
+				{
+					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
+					unset($object->array_options[$key]);
+				}
+			}
+		}
 
-	    // Create clone
+		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
-	    $result = $object->createCommon($user);
-	    if ($result < 0) {
-	        $error++;
-	        $this->error = $object->error;
-	        $this->errors = $object->errors;
-	    }
+		$result = $object->createCommon($user);
+		if ($result < 0) {
+			$error++;
+			$this->error = $object->error;
+			$this->errors = $object->errors;
+		}
 
-	    unset($object->context['createfromclone']);
+		unset($object->context['createfromclone']);
 
-	    // End
-	    if (!$error) {
-	        $this->db->commit();
-	        return $object;
-	    } else {
-	        $this->db->rollback();
-	        return -1;
-	    }
+		// End
+		if (!$error) {
+			$this->db->commit();
+			return $object;
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
 	}
 
 	/**
@@ -297,55 +297,54 @@ class EmailCollectorFilter extends CommonObject
 	 *
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *	@param	string	$option						On what the link point to ('nolink', ...)
-     *  @param	int  	$notooltip					1=Disable tooltip
-     *  @param  string  $morecss            		Add more css on link
-     *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param	int  	$notooltip					1=Disable tooltip
+	 *  @param  string  $morecss            		Add more css on link
+	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								String with URL
 	 */
-    public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $db, $conf, $langs, $hookmanager;
-        global $dolibarr_main_authentication, $dolibarr_main_demo;
-        global $menumanager;
+		global $dolibarr_main_authentication, $dolibarr_main_demo;
+		global $menumanager;
 
-        if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
+		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
-        $result = '';
-        $companylink = '';
+		$result = '';
+		$companylink = '';
 
-        $label = '<u>'.$langs->trans("EmailcollectorFilter").'</u>';
-        $label .= '<br>';
-        $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$label = '<u>'.$langs->trans("EmailcollectorFilter").'</u>';
+		$label .= '<br>';
+		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
-        $url = dol_buildpath('/emailcollector/emailcollectorfilter_card.php', 1).'?id='.$this->id;
+		$url = dol_buildpath('/emailcollector/emailcollectorfilter_card.php', 1).'?id='.$this->id;
 
-        if ($option != 'nolink')
-        {
-	        // Add param to save lastsearch_values or not
-	        $add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-	        if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-	        if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
-        }
+		if ($option != 'nolink')
+		{
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
+			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+		}
 
-        $linkclose = '';
-        if (empty($notooltip))
-        {
-            if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-            {
-                $label = $langs->trans("ShowEmailcollectorFilter");
-                $linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
-            }
-            $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-            $linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+		$linkclose = '';
+		if (empty($notooltip))
+		{
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			{
+				$label = $langs->trans("ShowEmailcollectorFilter");
+				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 
-            /*
+			/*
              $hookmanager->initHooks(array('emailcollectorfilterdao'));
              $parameters=array('id'=>$this->id);
              $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
              if ($reshook > 0) $linkclose = $hookmanager->resPrint;
              */
-        }
-        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -378,7 +377,7 @@ class EmailCollectorFilter extends CommonObject
 		return $this->LibStatut($this->status, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -400,32 +399,26 @@ class EmailCollectorFilter extends CommonObject
 		if ($mode == 0)
 		{
 			return $this->labelStatus[$status];
-		}
-		elseif ($mode == 1)
+		} elseif ($mode == 1)
 		{
 			return $this->labelStatus[$status];
-		}
-		elseif ($mode == 2)
+		} elseif ($mode == 2)
 		{
 			if ($status == 1) return img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
 			elseif ($status == 0) return img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
-		}
-		elseif ($mode == 3)
+		} elseif ($mode == 3)
 		{
 			if ($status == 1) return img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
 			elseif ($status == 0) return img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
-		}
-		elseif ($mode == 4)
+		} elseif ($mode == 4)
 		{
 			if ($status == 1) return img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
 			elseif ($status == 0) return img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
-		}
-		elseif ($mode == 5)
+		} elseif ($mode == 5)
 		{
 			if ($status == 1) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
 			elseif ($status == 0) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
-		}
-		elseif ($mode == 6)
+		} elseif ($mode == 6)
 		{
 			if ($status == 1) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
 			elseif ($status == 0) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
@@ -478,9 +471,7 @@ class EmailCollectorFilter extends CommonObject
 			}
 
 			$this->db->free($result);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 	}

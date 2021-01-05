@@ -18,12 +18,14 @@ DefaultForService=Výchozí nastavení pro službu
 DefaultForProduct=Výchozí produkt
 CantSuggest=Nelze navrhnout
 AccountancySetupDoneFromAccountancyMenu=Většina nastavení účetnictví se provádí z nabídky %s
-ConfigAccountingExpert=Konfigurace modulu účetního experta
+ConfigAccountingExpert=Configuration of the module accounting (double entry)
 Journalization=Jurnálizace
-Journaux=Deníky
+Journals=Deníky
 JournalFinancial=Finanční deníky
 BackToChartofaccounts=Vrátit schéma účtů
 Chartofaccounts=Graf účtů
+ChartOfSubaccounts=Chart of individual accounts
+ChartOfIndividualAccountsOfSubsidiaryLedger=Chart of individual accounts of the subsidiary ledger
 CurrentDedicatedAccountingAccount=Aktuální vyhrazený účet
 AssignDedicatedAccountingAccount=Nový účet, který chcete přiřadit
 InvoiceLabel=faktura štítek
@@ -33,8 +35,8 @@ OtherInfo=Jiná informace
 DeleteCptCategory=Odstraňte účetní účet ze skupiny
 ConfirmDeleteCptCategory=Opravdu chcete tento účtovací účet odstranit ze skupiny účetních účtů?
 JournalizationInLedgerStatus=Stav žurnalizace
-AlreadyInGeneralLedger=Již v deníku do hlavní knihy
-NotYetInGeneralLedger=Zatím nebyl zaznamenán v knihách
+AlreadyInGeneralLedger=Already transferred in accounting journals and ledger
+NotYetInGeneralLedger=Not yet transferred in accouting journals and ledger
 GroupIsEmptyCheckSetup=Skupina je prázdná, zkontrolujte nastavení personalizované účetní skupiny
 DetailByAccount=Zobrazit detail podle účtu
 AccountWithNonZeroValues=Účty s nenulovými hodnotami
@@ -43,7 +45,9 @@ CountriesInEEC=Země v EHS
 CountriesNotInEEC=Země, které nejsou v EHS
 CountriesInEECExceptMe=Země v EHS kromě %s
 CountriesExceptMe=Všechny země kromě %s
-AccountantFiles=Exportní účetní doklady
+AccountantFiles=Export source documents
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
+VueByAccountAccounting=View by accounting account
 
 MainAccountForCustomersNotDefined=Hlavní účetní účetnictví pro zákazníky, které nejsou definovány v nastavení
 MainAccountForSuppliersNotDefined=Hlavní účty účetnictví pro dodavatele, které nejsou definovány v nastavení
@@ -79,7 +83,7 @@ AccountancyAreaDescAnalyze=KROK %s: Přidání nebo úprava stávajících trans
 
 AccountancyAreaDescClosePeriod=KROK %s: Zavřete období, takže nemůžeme v budoucnu provádět změny.
 
-TheJournalCodeIsNotDefinedOnSomeBankAccount=Povinný krok v nastavení nebyl úplný (časopis pro účetní záznamy není definován pro všechny bankovní účty)
+TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup has not been completed (accounting code journal not defined for all bank accounts)
 Selectchartofaccounts=Vybrat aktivní účtové osnovy
 ChangeAndLoad=Změna a načtení
 Addanaccount=Přidat účetní účet
@@ -89,6 +93,8 @@ SubledgerAccount=Podřízený účet
 SubledgerAccountLabel=Označení podřízeného účtu
 ShowAccountingAccount=Zobrazit účetní účet
 ShowAccountingJournal=Zobrazit účetní deník
+ShowAccountingAccountInLedger=Show accounting account in ledger
+ShowAccountingAccountInJournals=Show accounting account in journals
 AccountAccountingSuggest=Účetní účet navrhl
 MenuDefaultAccounts=výchozí účty
 MenuBankAccounts=Bankovní účty
@@ -110,8 +116,9 @@ ExpenseReportsVentilation=Záväzná zpráva o výdajích
 CreateMvts=Vytvořit novou transakci
 UpdateMvts=Modifikace transakce
 ValidTransaction=Ověřte transakci
-WriteBookKeeping=Zaregistrujte transakce v knize
+WriteBookKeeping=Register transactions in accounting
 Bookkeeping=účetní kniha
+BookkeepingSubAccount=Subledger
 AccountBalance=Zůstatek na účtu
 ObjectsRef=Zdrojový objekt ref
 CAHTF=Celkový prodejce před zdaněním
@@ -149,6 +156,8 @@ ACCOUNTING_MANAGE_ZERO=Umožňuje spravovat různé počty nul na konci účetn�
 BANK_DISABLE_DIRECT_INPUT=Zakázat přímé nahrávání transakce v bankovním účtu
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Povolit návrh exportu v žurnálu
 ACCOUNTANCY_COMBO_FOR_AUX=Povolit seznam combo pro pomocný účet (může být pomalý, pokud máte spoustu třetích stran)
+ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, select period show by default
 
 ACCOUNTING_SELL_JOURNAL=Prodejní deník
 ACCOUNTING_PURCHASE_JOURNAL=Nákupní deník
@@ -167,6 +176,8 @@ TransitionalAccount=Účet přechodného bankovního převodu
 ACCOUNTING_ACCOUNT_SUSPENSE=Čekající účet
 DONATION_ACCOUNTINGACCOUNT=Účtování účet registrovaných darů
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Účtovací účet pro registraci předplatného
+
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Accounting account by default to register customer deposit
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Účetní účet ve výchozím nastavení pro zakoupené produkty (používá se, pokud není definováno v produktovém listu)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Účetní účet ve výchozím nastavení u zakoupených produktů v EHS (používá se, pokud není definováno v produktovém listu)
@@ -202,16 +213,16 @@ ByPredefinedAccountGroups=Podle předdefinovaných skupin
 ByPersonalizedAccountGroups=Individuálními skupinami
 ByYear=Podle roku
 NotMatch=Nenastaveno
-DeleteMvt=Odstraňte řádky knihy
+DeleteMvt=Delete some operation lines from accounting
 DelMonth=Měsíc k odstranění
 DelYear=Odstrannění roku
 DelJournal=Journal, který chcete smazat
-ConfirmDeleteMvt=Tím vymažete všechny řádky knihy pro rok / měsíc a / nebo z konkrétního deníku (je vyžadováno alespoň jedno kritérium). Budete muset znovu použít funkci 'Registrace v účetnictví', aby se vymazaný záznam vrátil do knihy.
-ConfirmDeleteMvtPartial=Tímto bude smazána transakce z Ledger (všechny řádky související se stejnou transakcí budou smazány)
+ConfirmDeleteMvt=This will delete all operation lines of the accounting for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
+ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all operation lines related to the same transaction will be deleted)
 FinanceJournal=Finanční deník
 ExpenseReportsJournal=Výdajové zprávy journal
 DescFinanceJournal=Finanční deník včetně všech typů plateb prostřednictvím bankovního účtu
-DescJournalOnlyBindedVisible=Toto je pohled na záznam, který je vázán na účet a může být zaznamenán do knihy.
+DescJournalOnlyBindedVisible=This is a view of record that are bound to an accounting account and can be recorded into the Journals and Ledger.
 VATAccountNotDefined=Účet pro DPH není definován
 ThirdpartyAccountNotDefined=Účet subjektu není definován
 ProductAccountNotDefined=Účet pro výrobek není definován
@@ -284,6 +295,7 @@ ShowTutorial=Zobrazit výuku
 NotReconciled=Nesladěno
 
 ## Admin
+BindingOptions=Binding options
 ApplyMassCategories=Aplikovat hmotnostní kategorie
 AddAccountFromBookKeepingWithNoCategories=Dostupný účet ještě není v personalizované skupině
 CategoryDeleted=Kategorie účetního účtu byla odstraněna
@@ -303,6 +315,9 @@ ErrorAccountingJournalIsAlreadyUse=Tento deník se již používá
 AccountingAccountForSalesTaxAreDefinedInto=Poznámka: Účtovací účet pro daň z prodeje je definován v menu <b> %s </b> - <b> %s </b>
 NumberOfAccountancyEntries=Počet vstupů
 NumberOfAccountancyMovements=Počet pohybů
+ACCOUNTING_DISABLE_BINDING_ON_SALES=Disable binding & transfer in accountancy on sales (customer invoices will not be taken into account in accounting)
+ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountancy on purchases (vendor invoices will not be taken into account in accounting)
+ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
 ExportDraftJournal=Exportovat deník návrhu
@@ -324,6 +339,8 @@ Modelcsv_configurable=Export CSV konfigurovatelný
 Modelcsv_FEC=Export FEC
 Modelcsv_Sage50_Swiss=Export pro Sage 50 Švýcarsko
 Modelcsv_winfic=Exportovat Winfic - eWinfic - WinSis Compta
+Modelcsv_Gestinumv3=Export for Gestinum (v3)
+Modelcsv_Gestinumv5Export for Gestinum (v5)
 ChartofaccountsId=Schéma Id účtů
 
 ## Tools - Init accounting account on product / service

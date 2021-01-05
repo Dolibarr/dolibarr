@@ -49,7 +49,7 @@ $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
-    $page = 0;
+	$page = 0;
 }
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -85,9 +85,9 @@ if ($object->id)
 {
 	$totalpaid = $object->getSumPayment();
 
-    $head = loan_prepare_head($object);
+	$head = loan_prepare_head($object);
 
-    dol_fiche_head($head, 'documents', $langs->trans("Loan"), -1, 'bill');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("Loan"), -1, 'bill');
 
 	$morehtmlref = '<div class="refidno">';
 	// Ref loan
@@ -135,33 +135,31 @@ if ($object->id)
 	print '<div class="underbanner clearboth"></div>';
 
 
-    // Build file list
-    $filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
-    $totalsize = 0;
-    foreach ($filearray as $key => $file)
-    {
-        $totalsize += $file['size'];
-    }
+	// Build file list
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$totalsize = 0;
+	foreach ($filearray as $key => $file)
+	{
+		$totalsize += $file['size'];
+	}
 
 
-    print '<table class="border tableforfield centpercent">';
-    print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td>'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.dol_print_size($totalsize, 1, 1).'</td></tr>';
-    print "</table>\n";
+	print '<table class="border tableforfield centpercent">';
+	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td>'.count($filearray).'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.dol_print_size($totalsize, 1, 1).'</td></tr>';
+	print "</table>\n";
 
-    print "</div>\n";
+	print "</div>\n";
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 
-    $modulepart = 'loan';
-    $permission = $user->rights->loan->write;
-    $permtoedit = $user->rights->loan->write;
-    $param = '&id='.$object->id;
-    include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-}
-else
-{
-    print $langs->trans("ErrorUnknown");
+	$modulepart = 'loan';
+	$permission = $user->rights->loan->write;
+	$permtoedit = $user->rights->loan->write;
+	$param = '&id='.$object->id;
+	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+} else {
+	print $langs->trans("ErrorUnknown");
 }
 
 // End of page

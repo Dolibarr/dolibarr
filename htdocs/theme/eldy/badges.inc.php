@@ -24,6 +24,18 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet');
     font-size: 0.95em;
     padding: .19em .35em;			/* more than 0.19 generate a change into heigth of lines */
 }
+.tabBar .arearef .statusref .badge-status, .tabBar .arearefnobottom .statusref .badge-status {
+    font-size: 1.1em;
+    padding: .4em .4em;
+}
+/* Force values for small screen 767 */
+@media only screen and (max-width: 767px)
+{
+	.tabBar .arearef .statusref .badge-status, .tabBar .arearefnobottom .statusref .badge-status {
+	    font-size: 0.95em;
+	    padding: .3em .2em;
+	}
+}
 
 .badge-pill, .tabs .badge {
     padding-right: .5em;
@@ -45,6 +57,13 @@ a.badge:focus, a.badge:hover {
 .liste_titre .badge:not(.nochangebackground) {
     background-color: <?php print $badgeSecondary; ?>;
     color: #fff;
+}
+
+span.badgeneutral {
+    padding: 2px 7px 2px 7px;
+    background-color: #e4e4e4;
+    color: #666;
+    border-radius: 10px;
 }
 
 
@@ -169,6 +188,16 @@ a.badge-dark.focus, a.badge-dark:focus {
 a.badge-dark:focus, a.badge-dark:hover {
     color: #fff !important;
     background-color: <?php print colorDarker($badgeDark, 10); ?>;
+}
+
+
+@media only screen and (max-width: 570px)
+{
+	span.badge.badge-status {
+	    overflow: hidden;
+	    max-width: 130px;
+	    text-overflow: ellipsis;
+	}
 }
 
 

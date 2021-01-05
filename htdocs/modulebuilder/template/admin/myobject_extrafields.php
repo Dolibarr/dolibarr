@@ -21,17 +21,30 @@
  */
 
 /**
- *      \file       htdocs/modulebuilder/tempalte/admin/myobject_extrafields.php
+ *      \file       htdocs/modulebuilder/template/admin/myobject_extrafields.php
  *		\ingroup    mymodule
  *		\brief      Page to setup extra fields of myobject
  */
 
-require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/bom.lib.php';
+// Load Dolibarr environment
+$res = 0;
+// Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
+if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
+// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
+$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
+while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) { $i--; $j--; }
+if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) $res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
+if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php")) $res = @include dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php";
+// Try main.inc.php using relative path
+if (!$res && file_exists("../../main.inc.php")) $res = @include "../../main.inc.php";
+if (!$res && file_exists("../../../main.inc.php")) $res = @include "../../../main.inc.php";
+if (!$res) die("Include of main fails");
+
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once '../lib/mymodule.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('mrp@mrp', 'admin'));
+$langs->loadLangs(array('mymodule@mymodule', 'admin'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -41,7 +54,7 @@ $tmptype2label = ExtraFields::$type2label;
 $type2label = array('');
 foreach ($tmptype2label as $key => $val) $type2label[$key] = $langs->transnoentitiesnoconv($val);
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'mymodule_myobject'; //Must be the $table_element of the class that manage extrafield
 
@@ -70,19 +83,19 @@ print load_fiche_titre($langs->trans("MyModuleSetup"), $linkback, 'title_setup')
 
 $head = mymoduleAdminPrepareHead();
 
-dol_fiche_head($head, 'myobject_extrafields', $langs->trans("MyObjectExtraFields"), -1, 'account');
+print dol_get_fiche_head($head, 'myobject_extrafields', $langs->trans("MyObjectExtraFields"), -1, 'account');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 // Buttons
 if ($action != 'create' && $action != 'edit')
 {
-    print '<div class="tabsAction">';
-    print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create#newattrib\">".$langs->trans("NewAttribute")."</a>";
-    print "</div>";
+	print '<div class="tabsAction">';
+	print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create#newattrib\">".$langs->trans("NewAttribute")."</a>";
+	print "</div>";
 }
 
 
@@ -92,9 +105,9 @@ if ($action != 'create' && $action != 'edit')
 if ($action == 'create')
 {
 	print '<br><div id="newattrib"></div>';
-    print load_fiche_titre($langs->trans('NewAttribute'));
+	print load_fiche_titre($langs->trans('NewAttribute'));
 
-    require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
+	require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
 }
 
 /*
@@ -102,10 +115,10 @@ if ($action == 'create')
  */
 if ($action == 'edit' && !empty($attrname))
 {
-    print "<br>";
-    print load_fiche_titre($langs->trans("FieldEdition", $attrname));
+	print "<br>";
+	print load_fiche_titre($langs->trans("FieldEdition", $attrname));
 
-    require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
+	require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }
 
 // End of page

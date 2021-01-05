@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
  * Copyright (C) 2005-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012-2016 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2020      Stéphane Lesage		<stephane.lesage@ateis.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,7 @@
  *      \brief      Fichier de description et activation du module Categorie
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 
 /**
@@ -39,7 +41,7 @@ class modCategorie extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-	    global $conf;
+		global $conf;
 
 		$this->db = $db;
 		$this->numero = 1780;
@@ -64,7 +66,7 @@ class modCategorie extends DolibarrModules
 
 		// Config pages
 		$this->config_page_url = array('categorie.php@categories');
-		$this->langfiles = array("products", "companies", "categories", "members");
+		$this->langfiles = array("products", "companies", "categories", "members", "stocks", "website");
 
 		// Constants
 		$this->const = array();
@@ -116,290 +118,320 @@ class modCategorie extends DolibarrModules
 		//--------
 		$r = 0;
 
+		// All Categories List
 		$r++;
-		$this->export_code[$r] = 'category_'.$r;
-		$this->export_label[$r] = 'CatSupList';
-		$this->export_icon[$r] = 'category';
-		$this->export_enabled[$r] = '!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)';
-		$this->export_permission[$r] = array(array("categorie", "lire"), array("fournisseur", "lire"));
-		$this->export_fields_array[$r] = array(
-			'u.rowid'=>"CategId", 'u.label'=>"Label", 'u.description'=>"Description", 's.rowid'=>'IdThirdParty', 's.nom'=>'Name', 's.prefix_comm'=>"Prefix",
-			's.client'=>"Customer", 's.datec'=>"DateCreation", 's.tms'=>"DateLastModification", 's.code_client'=>"CustomerCode", 's.address'=>"Address",
-			's.zip'=>"Zip", 's.town'=>"Town", 'c.label'=>"Country", 'c.code'=>"CountryCode", 's.phone'=>"Phone", 's.fax'=>"Fax", 's.url'=>"Url", 's.email'=>"Email",
-			's.siret'=>"ProfId1", 's.siren'=>"ProfId2", 's.ape'=>"ProfId3", 's.idprof4'=>"ProfId4", 's.tva_intra'=>"VATIntraShort", 's.capital'=>"Capital",
-			's.note_public'=>"NotePublic"
-		);
-		$this->export_TypeFields_array[$r] = array(
-			'u.label'=>"Text", 'u.description'=>"Text", 's.rowid'=>'List:societe:nom', 's.nom'=>'Text', 's.prefix_comm'=>"Text", 's.client'=>"Text", 's.datec'=>"Date",
-			's.tms'=>"Date", 's.code_client'=>"Text", 's.address'=>"Text", 's.zip'=>"Text", 's.town'=>"Text", 'c.label'=>"List:c_country:label:label", 'c.code'=>"Text",
-			's.phone'=>"Text", 's.fax'=>"Text", 's.url'=>"Text", 's.email'=>"Text", 's.siret'=>"Text", 's.siren'=>"Text", 's.ape'=>"Text", 's.idprof4'=>"Text",
-			's.tva_intra'=>"Text", 's.capital'=>"Numeric", 's.note_public'=>"Text"
-		);
-		$this->export_entities_array[$r] = array(
-			's.rowid'=>'company', 's.nom'=>'company', 's.prefix_comm'=>"company", 's.client'=>"company", 's.datec'=>"company", 's.tms'=>"company",
-			's.code_client'=>"company", 's.address'=>"company", 's.zip'=>"company", 's.town'=>"company", 'c.label'=>"company", 'c.code'=>"company",
-			's.phone'=>"company", 's.fax'=>"company", 's.url'=>"company", 's.email'=>"company", 's.siret'=>"company", 's.siren'=>"company", 's.ape'=>"company",
-			's.idprof4'=>"company", 's.tva_intra'=>"company", 's.capital'=>"company", 's.note_public'=>"company"
-		); // We define here only fields that use another picto
+		$this->export_code[$r] = $this->rights_class.'_list';
+		$this->export_label[$r] = 'CatListAll';
+		$this->export_icon[$r] = $this->picto;
+        $this->export_enabled[$r] = 'true';
+		$this->export_permission[$r] = array(array("categorie", "lire"));
+
+		$typeexample = "";
+		if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) { $typeexample .= ($typeexample ? " / " : "")."0=Product-Service"; }
+		if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) { $typeexample .= ($typeexample ? "/" : "")."1=Supplier"; }
+		if (!empty($conf->societe->enabled)) { $typeexample .= ($typeexample ? " / " : "")."2=Customer-Prospect"; }
+		if (!empty($conf->adherent->enabled)) { $typeexample .= ($typeexample ? " / " : "")."3=Member"; }
+		if (!empty($conf->societe->enabled)) { $typeexample .= ($typeexample ? " / " : "")."4=Contact"; }
+		if (!empty($conf->bank->enabled)) { $typeexample .= ($typeexample ? " / " : "")."5=Bank account"; }
+		if (!empty($conf->projet->enabled)) { $typeexample .= ($typeexample ? " / " : "")."6=Project"; }
+		if (!empty($conf->user->enabled)) { $typeexample .= ($typeexample ? " / " : "")."7=User"; }
+		if (!empty($conf->bank->enabled)) { $typeexample .= ($typeexample ? " / " : "")."8=Bank line"; }
+		if (!empty($conf->stock->enabled)) { $typeexample .= ($typeexample ? " / " : "")."9=Warehouse"; }
+		if (!empty($conf->agenda->enabled)) { $typeexample .= ($typeexample ? " / " : "")."10=Agenda event"; }
+		if (!empty($conf->website->enabled)) { $typeexample .= ($typeexample ? " / " : "")."11=Website page"; }
+
+		$this->export_fields_array[$r] = array('cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.type'=>"Type", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategory", 'pcat.label'=>"ParentCategoryLabel" );
+		$this->export_TypeFields_array[$r] = array('cat.label'=>"Text", 'cat.type'=>"Numeric", 'cat.description'=>"Text", 'cat.fk_parent'=>'List:categorie:label:rowid', 'pcat.label'=>'Text' );
+		$this->export_entities_array[$r] = array(); // We define here only fields that use another picto
+		$this->export_help_array[$r] = array('cat.type'=>$typeexample);
+
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
-		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'categorie as u, ';
-		$this->export_sql_end[$r] .= MAIN_DB_PREFIX.'categorie_fournisseur as cf, ';
-		$this->export_sql_end[$r] .= MAIN_DB_PREFIX.'societe as s LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as ce ON s.fk_effectif = ce.id LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as cfj ON s.fk_forme_juridique = cfj.code';
-		$this->export_sql_end[$r] .= ' WHERE u.rowid = cf.fk_categorie AND cf.fk_soc = s.rowid';
-		$this->export_sql_end[$r] .= ' AND u.entity IN ('.getEntity('category').')';
-		$this->export_sql_end[$r] .= ' AND u.type = 1'; // Supplier categories
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'categorie as cat';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as pcat ON pcat.rowid = cat.fk_parent';
+		$this->export_sql_end[$r] .= ' WHERE cat.entity IN ('.getEntity('category').')';
 
+		// 0 Products
 		$r++;
-		$this->export_code[$r] = 'category_'.$r;
-		$this->export_label[$r] = 'CatCusList';
-		$this->export_icon[$r] = 'category';
-        $this->export_enabled[$r] = '$conf->societe->enabled';
-		$this->export_permission[$r] = array(array("categorie", "lire"), array("societe", "lire"));
-		$this->export_fields_array[$r] = array(
-			'u.rowid'=>"CategId", 'u.label'=>"Label", 'u.description'=>"Description", 's.rowid'=>'IdThirdParty', 's.nom'=>'Name', 's.prefix_comm'=>"Prefix",
-			's.client'=>"Customer", 's.datec'=>"DateCreation", 's.tms'=>"DateLastModification", 's.code_client'=>"CustomerCode", 's.address'=>"Address",
-			's.zip'=>"Zip", 's.town'=>"Town", 'c.label'=>"Country", 'c.code'=>"CountryCode", 's.phone'=>"Phone", 's.fax'=>"Fax", 's.url'=>"Url", 's.email'=>"Email",
-			's.siret'=>"ProfId1", 's.siren'=>"ProfId2", 's.ape'=>"ProfId3", 's.idprof4'=>"ProfId4", 's.tva_intra'=>"VATIntraShort", 's.capital'=>"Capital",
-			's.note_public'=>"NotePublic", 's.fk_prospectlevel'=>'ProspectLevel', 's.fk_stcomm'=>'ProspectStatus'
-		);
-		$this->export_TypeFields_array[$r] = array(
-			'u.label'=>"Text", 'u.description'=>"Text", 's.rowid'=>'List:societe:nom', 's.nom'=>'Text', 's.prefix_comm'=>"Text", 's.client'=>"Text",
-			's.datec'=>"Date", 's.tms'=>"Date", 's.code_client'=>"Text", 's.address'=>"Text", 's.zip'=>"Text", 's.town'=>"Text", 'c.label'=>"List:c_country:label:label",
-			'c.code'=>"Text", 's.phone'=>"Text", 's.fax'=>"Text", 's.url'=>"Text", 's.email'=>"Text", 's.siret'=>"Text", 's.siren'=>"Text", 's.ape'=>"Text",
-			's.idprof4'=>"Text", 's.tva_intra'=>"Text", 's.capital'=>"Numeric", 's.note_public'=>"Text", 's.fk_prospectlevel'=>'List:c_prospectlevel:label:code',
-			's.fk_stcomm'=>'List:c_stcomm:libelle:code'
-		);
-		$this->export_entities_array[$r] = array(
-			's.rowid'=>'company', 's.nom'=>'company', 's.prefix_comm'=>"company", 's.client'=>"company", 's.datec'=>"company", 's.tms'=>"company",
-			's.code_client'=>"company", 's.address'=>"company", 's.zip'=>"company", 's.town'=>"company", 'c.label'=>"company", 'c.code'=>"company",
-			's.phone'=>"company", 's.fax'=>"company", 's.url'=>"company", 's.email'=>"company", 's.siret'=>"company", 's.siren'=>"company", 's.ape'=>"company",
-			's.idprof4'=>"company", 's.tva_intra'=>"company", 's.capital'=>"company", 's.note_public'=>"company", 's.fk_prospectlevel'=>'company',
-			's.fk_stcomm'=>'company'
-		); // We define here only fields that use another picto
+		$this->export_code[$r] = $this->rights_class.'_0_'.Categorie::$MAP_ID_TO_CODE[0];
+		$this->export_label[$r] = 'CatProdList';
+		$this->export_icon[$r] = $this->picto;
+		$this->export_enabled[$r] = '!empty($conf->product->enabled) || !empty($conf->service->abled)';
+		$this->export_permission[$r] = array(array("categorie", "lire"), array("produit", "export"));
+		$this->export_fields_array[$r] = array('cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategory", 'p.rowid'=>'ProductId', 'p.ref'=>'Ref', 'p.label'=>'Label');
+		$this->export_TypeFields_array[$r] = array('cat.label'=>"Text", 'cat.description'=>"Text", 'cat.fk_parent'=>'List:categorie:label:rowid', 'p.ref'=>'Text', 'p.label'=>'Text');
+		$this->export_entities_array[$r] = array('p.rowid'=>'product', 'p.ref'=>'product', 'p.label'=>'product'); // We define here only fields that use another picto
 
-		$keyforselect = 'societe'; $keyforelement = 'company'; $keyforaliasextra = 'extrasoc';
+		$keyforselect = 'product'; $keyforelement = 'product'; $keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
-		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'categorie as u, ';
-		$this->export_sql_end[$r] .= MAIN_DB_PREFIX.'categorie_societe as cf, ';
-		$this->export_sql_end[$r] .= MAIN_DB_PREFIX.'societe as s';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as ce ON s.fk_effectif = ce.id LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as cfj ON s.fk_forme_juridique = cfj.code';
-	 	$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extrasoc ON s.rowid = extrasoc.fk_object ';
-		$this->export_sql_end[$r] .= ' WHERE u.rowid = cf.fk_categorie AND cf.fk_soc = s.rowid';
-		$this->export_sql_end[$r] .= ' AND u.entity IN ('.getEntity('category').')';
-		$this->export_sql_end[$r] .= ' AND u.type = 2'; // Customer/Prospect categories
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'categorie as cat';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_categorie = cat.rowid';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'product as p ON p.rowid = cp.fk_product';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra ON extra.fk_object = p.rowid';
+		$this->export_sql_end[$r] .= ' WHERE cat.entity IN ('.getEntity('category').')';
+		$this->export_sql_end[$r] .= ' AND cat.type = 0';
 
+		// 1 Suppliers
 		$r++;
-		$this->export_code[$r] = 'category_'.$r;
-		$this->export_label[$r] = 'CatProdList';
-		$this->export_icon[$r] = 'category';
-        $this->export_enabled[$r] = '$conf->product->enabled || $conf->service->enabled';
-		$this->export_permission[$r] = array(array("categorie", "lire"), array("produit", "lire"));
-		$this->export_fields_array[$r] = array('u.rowid'=>"CategId", 'u.label'=>"Label", 'u.description'=>"Description", 'p.rowid'=>'ProductId', 'p.ref'=>'Ref');
-		$this->export_TypeFields_array[$r] = array('u.label'=>"Text", 'u.description'=>"Text", 'p.ref'=>'Text');
-		$this->export_entities_array[$r] = array('p.rowid'=>'product', 'p.ref'=>'product'); // We define here only fields that use another picto
-		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
-		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_product as cp, '.MAIN_DB_PREFIX.'product as p';
-		$this->export_sql_end[$r] .= ' WHERE u.rowid = cp.fk_categorie AND cp.fk_product = p.rowid';
-		$this->export_sql_end[$r] .= ' AND u.entity IN ('.getEntity('category').')';
-		$this->export_sql_end[$r] .= ' AND u.type = 0'; // Supplier categories
-
-		$r++;
-		$this->export_code[$r] = 'category_'.$r;
-		$this->export_label[$r] = 'CatMemberList';
-		$this->export_icon[$r] = 'category';
-        $this->export_enabled[$r] = '$conf->adherent->enabled';
-		$this->export_permission[$r] = array(array("categorie", "lire"), array("adherent", "lire"));
-		$this->export_fields_array[$r] = array('u.rowid'=>"CategId", 'u.label'=>"Label", 'u.description'=>"Description", 'p.rowid'=>'MemberId', 'p.lastname'=>'LastName', 'p.firstname'=>'Firstname');
-		$this->export_TypeFields_array[$r] = array('u.label'=>"Text", 'u.description'=>"Text", 'p.lastname'=>'Text', 'p.firstname'=>'Text');
-		$this->export_entities_array[$r] = array('p.rowid'=>'member', 'p.lastname'=>'member', 'p.firstname'=>'member'); // We define here only fields that use another picto
-		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
-		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_member as cp, '.MAIN_DB_PREFIX.'adherent as p';
-		$this->export_sql_end[$r] .= ' WHERE u.rowid = cp.fk_categorie AND cp.fk_member = p.rowid';
-		$this->export_sql_end[$r] .= ' AND u.entity IN ('.getEntity('category').')';
-		$this->export_sql_end[$r] .= ' AND u.type = 3'; // Member categories
-
-		$r++;
-		$this->export_code[$r] = 'category_'.$r;
-		$this->export_label[$r] = 'CatContactList';
-		$this->export_icon[$r] = 'category';
-		$this->export_enabled[$r] = '$conf->societe->enabled';
-		$this->export_permission[$r] = array(array("categorie", "lire"), array("societe", "lire"));
+		$this->export_code[$r] = $this->rights_class.'_1_'.Categorie::$MAP_ID_TO_CODE[1];
+		$this->export_label[$r] = 'CatSupList';
+		$this->export_icon[$r] = $this->picto;
+		$this->export_enabled[$r] = '!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)';
+		$this->export_permission[$r] = array(array("categorie", "lire"), array("fournisseur", "lire"));
 		$this->export_fields_array[$r] = array(
-			'u.rowid' => "CategId",
-			'u.label' => "Label",
-			'u.description' => "Description",
-			'p.rowid' => 'ContactId',
-			'p.civility' => 'UserTitle',
-			'p.lastname' => 'LastName',
-			'p.firstname' => 'Firstname',
-			'p.address' => 'Address',
-			'p.zip' => 'Zip',
-			'p.town' => 'Town',
-			'country.code' => 'CountryCode',
-			'country.label' => 'Country',
-			'p.birthday' => 'DateToBirth',
-			'p.poste' => 'PostOrFunction',
-			'p.phone' => 'Phone',
-			'p.phone_perso' => 'PhonePerso',
-			'p.phone_mobile' => 'PhoneMobile',
-			'p.fax' => 'Fax',
-			'p.email' => 'Email',
-			'p.note_private' => 'NotePrivate',
-			'p.note_public' => 'NotePublic',
-            'p.statut' => 'Status',
-			's.nom'=>"Name",
-			's.client'=>"Customer",
-			's.fournisseur'=>"Supplier",
-			's.status'=>"Status",
-			's.address'=>"Address",
-			's.zip'=>"Zip",
-			's.town'=>"Town",
-			's.phone'=>"Phone",
-			's.fax'=>"Fax",
-			's.url'=>"Url",
-			's.email'=>"Email"
+			'cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategory",
+			's.rowid'=>'IdThirdParty', 's.nom'=>'Name', 's.prefix_comm'=>"Prefix", 's.fournisseur'=>"Supplier", 's.datec'=>"DateCreation", 's.tms'=>"DateLastModification", 's.code_fournisseur'=>"SupplierCode",
+			's.address'=>"Address", 's.zip'=>"Zip", 's.town'=>"Town", 'c.label'=>"Country", 'c.code'=>"CountryCode",
+			's.phone'=>"Phone", 's.fax'=>"Fax", 's.url'=>"Url", 's.email'=>"Email",
+			's.siret'=>"ProfId1", 's.siren'=>"ProfId2", 's.ape'=>"ProfId3", 's.idprof4'=>"ProfId4", 's.tva_intra'=>"VATIntraShort", 's.capital'=>"Capital", 's.note_public'=>"NotePublic",
+			't.libelle'=>'ThirdPartyType'
 		);
 		$this->export_TypeFields_array[$r] = array(
-			'u.label' => "Text",
-			'u.description' => "Text",
-			'p.lastname' => 'Text',
-			'p.firstname' => 'Text',
-            'p.statut'=>"Numeric",
-			's.nom'=>"Text",
-			's.status'=>"Text",
-			's.address'=>"Text",
-			's.zip'=>"Text",
-			's.town'=>"Text",
-			's.phone'=>"Text",
-			's.fax'=>"Text",
-			's.url'=>"Text",
-			's.email'=>"Text"
+			'cat.label'=>"Text", 'cat.description'=>"Text", 'cat.fk_parent'=>'List:categorie:label:rowid',
+			's.rowid'=>'List:societe:nom', 's.nom'=>'Text', 's.prefix_comm'=>"Text", 's.fournisseur'=>"Text", 's.datec'=>"Date", 's.tms'=>"Date", 's.code_fournisseur'=>"Text",
+			's.address'=>"Text", 's.zip'=>"Text", 's.town'=>"Text", 'c.label'=>"List:c_country:label:label", 'c.code'=>"Text",
+			's.phone'=>"Text", 's.fax'=>"Text", 's.url'=>"Text", 's.email'=>"Text",
+			's.siret'=>"Text", 's.siren'=>"Text", 's.ape'=>"Text", 's.idprof4'=>"Text", 's.tva_intra'=>"Text", 's.capital'=>"Numeric", 's.note_public'=>"Text",
+			't.libelle'=>'List:c_typent:libelle:code'
 		);
 		$this->export_entities_array[$r] = array(
-			'u.rowid' => "category",
-			'u.label' => "category",
-			'u.description' => "category",
-			'p.rowid' => 'contact',
-			'p.civility' => 'contact',
-			'p.lastname' => 'contact',
-			'p.firstname' => 'contact',
-			'p.address' => 'contact',
-			'p.zip' => 'contact',
-			'p.town' => 'contact',
-			'country.code' => 'contact',
-			'country.label' => 'contact',
-			'p.birthday' => 'contact',
-			'p.poste' => 'contact',
-			'p.phone' => 'contact',
-			'p.phone_perso' => 'contact',
-			'p.phone_mobile' => 'contact',
-			'p.fax' => 'contact',
-			'p.email' => 'contact',
-			'p.note_private' => 'contact',
-			'p.note_public' => 'contact',
-            'p.statut' => 'contact',
-			's.nom'=>"company",
-			's.client'=>"company",
-			's.fournisseur'=>"company",
-			's.status'=>"company",
-			's.address'=>"company",
-			's.zip'=>"company",
-			's.town'=>"company",
-			's.phone'=>"company",
-			's.fax'=>"company",
-			's.url'=>"company",
-			's.email'=>"company"
+			's.rowid'=>'company', 's.nom'=>'company', 's.prefix_comm'=>"company", 's.fournisseur'=>"company", 's.datec'=>"company", 's.tms'=>"company", 's.code_fournisseur'=>"company",
+			's.address'=>"company", 's.zip'=>"company", 's.town'=>"company", 'c.label'=>"company", 'c.code'=>"company",
+			's.phone'=>"company", 's.fax'=>"company", 's.url'=>"company", 's.email'=>"company",
+			's.siret'=>"company", 's.siren'=>"company", 's.ape'=>"company", 's.idprof4'=>"company", 's.tva_intra'=>"company", 's.capital'=>"company", 's.note_public'=>"company",
+			't.libelle'=>'company'
 		); // We define here only fields that use another picto
 
-        // Add extra fields
-        $sql = "SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'socpeople' AND entity IN (0, ".$conf->entity.")";
-        $resql = $this->db->query($sql);
-        if ($resql)    // This can fail when class is used on old database (during migration for example)
-        {
-        	while ($obj = $this->db->fetch_object($resql))
-        	{
-        		$fieldname = 'extra.'.$obj->name;
-        		$fieldlabel = ucfirst($obj->label);
-        		$typeFilter = "Text";
-        		switch ($obj->type)
-        		{
-        			case 'int':
-        			case 'double':
-        			case 'price':
-        				$typeFilter = "Numeric";
-        				break;
-        			case 'date':
-        			case 'datetime':
-        				$typeFilter = "Date";
-        				break;
-        			case 'boolean':
-        				$typeFilter = "Boolean";
-        				break;
-        			case 'sellist':
-        				$typeFilter = "List:".$obj->param;
-        				break;
-					case 'select':
-						$typeFilter = "Select:".$obj->param;
-						break;
-        		}
-        		$this->export_fields_array[$r][$fieldname] = $fieldlabel;
-        		$this->export_TypeFields_array[$r][$fieldname] = $typeFilter;
-        		$this->export_entities_array[$r][$fieldname] = 'contact';
-        	}
-        }
-        // End add axtra fields
+		$keyforselect = 'societe'; $keyforelement = 'company'; $keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
-		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_contact as cp, '.MAIN_DB_PREFIX.'socpeople as p';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as country ON p.fk_pays = country.rowid';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'categorie as cat';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'categorie_fournisseur as cf ON cf.fk_categorie = cat.rowid';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = cf.fk_soc';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extra ON s.rowid = extra.fk_object';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id';
+		$this->export_sql_end[$r] .= ' WHERE cat.entity IN ('.getEntity('category').')';
+		$this->export_sql_end[$r] .= ' AND cat.type = 1';
+
+		// 2 Customers/Prospects
+		$r++;
+		$this->export_code[$r] = $this->rights_class.'_2_'.Categorie::$MAP_ID_TO_CODE[2];
+		$this->export_label[$r] = 'CatCusList';
+		$this->export_icon[$r] = $this->picto;
+		$this->export_enabled[$r] = '!empty($conf->societe->enabled)';
+		$this->export_permission[$r] = array(array("categorie", "lire"), array("societe", "export"));
+		$this->export_fields_array[$r] = array(
+			'cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategory",
+			's.rowid'=>'IdThirdParty', 's.nom'=>'Name', 's.prefix_comm'=>"Prefix", 's.client'=>"Customer", 's.datec'=>"DateCreation", 's.tms'=>"DateLastModification", 's.code_client'=>"CustomerCode",
+			's.address'=>"Address", 's.zip'=>"Zip", 's.town'=>"Town", 'c.label'=>"Country", 'c.code'=>"CountryCode",
+			's.phone'=>"Phone", 's.fax'=>"Fax", 's.url'=>"Url", 's.email'=>"Email",
+			's.siret'=>"ProfId1", 's.siren'=>"ProfId2", 's.ape'=>"ProfId3", 's.idprof4'=>"ProfId4", 's.tva_intra'=>"VATIntraShort", 's.capital'=>"Capital", 's.note_public'=>"NotePublic",
+			't.libelle'=>'ThirdPartyType', 'pl.code'=>'ProspectLevel', 'st.code'=>'ProspectStatus'
+		);
+		$this->export_TypeFields_array[$r] = array(
+			'cat.label'=>"Text", 'cat.description'=>"Text", 'cat.fk_parent'=>'List:categorie:label:rowid',
+			's.rowid'=>'List:societe:nom', 's.nom'=>'Text', 's.prefix_comm'=>"Text", 's.client'=>"Text", 's.datec'=>"Date", 's.tms'=>"Date", 's.code_client'=>"Text",
+			's.address'=>"Text", 's.zip'=>"Text", 's.town'=>"Text", 'c.label'=>"List:c_country:label:label", 'c.code'=>"Text",
+			's.phone'=>"Text", 's.fax'=>"Text", 's.url'=>"Text", 's.email'=>"Text",
+			's.siret'=>"Text", 's.siren'=>"Text", 's.ape'=>"Text", 's.idprof4'=>"Text", 's.tva_intra'=>"Text", 's.capital'=>"Numeric", 's.note_public'=>"Text",
+			't.libelle'=>'List:c_typent:libelle:code', 'pl.code'=>'List:c_prospectlevel:label:code', 'st.code'=>'List:c_stcomm:libelle:code'
+		);
+		$this->export_entities_array[$r] = array(
+			's.rowid'=>'company', 's.nom'=>'company', 's.prefix_comm'=>"company", 's.client'=>"company", 's.datec'=>"company", 's.tms'=>"company", 's.code_client'=>"company",
+			's.address'=>"company", 's.zip'=>"company", 's.town'=>"company", 'c.label'=>"company", 'c.code'=>"company",
+			's.phone'=>"company", 's.fax'=>"company", 's.url'=>"company", 's.email'=>"company",
+			's.siret'=>"company", 's.siren'=>"company", 's.ape'=>"company", 's.idprof4'=>"company", 's.tva_intra'=>"company", 's.capital'=>"company", 's.note_public'=>"company",
+			't.libelle'=>'company', 'pl.code'=>'company', 'st.code'=>'company'
+		); // We define here only fields that use another picto
+
+		$keyforselect = 'societe'; $keyforelement = 'company'; $keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'categorie as cat';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'categorie_societe as cs ON cs.fk_categorie = cat.rowid';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = cs.fk_soc';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extra ON s.rowid = extra.fk_object';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_prospectlevel as pl ON s.fk_prospectlevel = pl.code';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_stcomm as st ON s.fk_stcomm = st.id';
+		$this->export_sql_end[$r] .= ' WHERE cat.entity IN ('.getEntity('category').')';
+		$this->export_sql_end[$r] .= ' AND cat.type = 2';
+
+		// 3 Members
+		$r++;
+		$this->export_code[$r] = $this->rights_class.'_3_'.Categorie::$MAP_ID_TO_CODE[3];
+		$this->export_label[$r] = 'CatMemberList';
+		$this->export_icon[$r] = $this->picto;
+		$this->export_enabled[$r] = '!empty($conf->adherent->enabled)';
+		$this->export_permission[$r] = array(array("categorie", "lire"), array("adherent", "export"));
+		$this->export_fields_array[$r] = array('cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategory", 'p.rowid'=>'MemberId', 'p.lastname'=>'LastName', 'p.firstname'=>'Firstname');
+		$this->export_TypeFields_array[$r] = array('cat.label'=>"Text", 'cat.description'=>"Text", 'cat.fk_parent'=>'List:categorie:label:rowid', 'p.lastname'=>'Text', 'p.firstname'=>'Text');
+		$this->export_entities_array[$r] = array('p.rowid'=>'member', 'p.lastname'=>'member', 'p.firstname'=>'member'); // We define here only fields that use another picto
+
+		$keyforselect = 'adherent'; $keyforelement = 'member'; $keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'categorie as cat';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'categorie_member as cm ON cm.fk_categorie = cat.rowid';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'adherent as p ON p.rowid = cm.fk_member';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'adherent_extrafields as extra ON cat.rowid = extra.fk_object ';
+		$this->export_sql_end[$r] .= ' WHERE cat.entity IN ('.getEntity('category').')';
+		$this->export_sql_end[$r] .= ' AND cat.type = 3';
+
+		// 4 Contacts
+		$r++;
+		$this->export_code[$r] = $this->rights_class.'_4_'.Categorie::$MAP_ID_TO_CODE[4];
+		$this->export_label[$r] = 'CatContactList';
+		$this->export_icon[$r] = $this->picto;
+		$this->export_enabled[$r] = '!empty($conf->societe->enabled)';
+		$this->export_permission[$r] = array(array("categorie", "lire"), array("societe", "contact", "export"));
+		$this->export_fields_array[$r] = array(
+			'cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategory",
+			'p.rowid' => 'ContactId', 'civ.label' => 'UserTitle', 'p.lastname' => 'LastName', 'p.firstname' => 'Firstname',
+			'p.address' => 'Address', 'p.zip' => 'Zip', 'p.town' => 'Town', 'c.code' => 'CountryCode', 'c.label' => 'Country',
+			'p.birthday' => 'DateOfBirth', 'p.poste' => 'PostOrFunction',
+			'p.phone' => 'Phone', 'p.phone_perso' => 'PhonePerso', 'p.phone_mobile' => 'PhoneMobile', 'p.fax' => 'Fax', 'p.email' => 'Email',
+			'p.note_private' => 'NotePrivate', 'p.note_public' => 'NotePublic', 'p.statut' => 'Status',
+			's.nom'=>"Name", 's.client'=>"Customer", 's.fournisseur'=>"Supplier", 's.status'=>"Status",
+			's.address'=>"Address", 's.zip'=>"Zip", 's.town'=>"Town",
+			's.phone'=>"Phone", 's.fax'=>"Fax", 's.url'=>"Url", 's.email'=>"Email"
+		);
+		$this->export_TypeFields_array[$r] = array(
+			'cat.label'=>"Text", 'cat.description'=>"Text", 'cat.fk_parent'=>'List:categorie:label:rowid',
+			'civ.label' => 'List:c_civility:label:label', 'p.lastname' => 'Text', 'p.firstname' => 'Text',
+			'p.address' => 'Text', 'p.zip' => 'Text', 'p.town' => 'Text', 'c.code' => 'Text', 'c.label' => 'List:c_country:label:label',
+			'p.birthday' => 'Date', 'p.poste' => 'Text',
+			'p.phone' => 'Text', 'p.phone_perso' => 'Text', 'p.phone_mobile' => 'Text', 'p.fax' => 'Text', 'p.email' => 'Text',
+			'p.note_private' => 'Text', 'p.note_public' => 'Text', 'p.statut' => 'Boolean',
+			's.nom'=>"Text", 's.client'=>"Boolean", 's.fournisseur'=>"Boolean", 's.status'=>"Boolean",
+			's.address'=>"Text", 's.zip'=>"Text", 's.town'=>"Text",
+			's.phone'=>"Text", 's.fax'=>"Text", 's.url'=>"Text", 's.email'=>"Text"
+		);
+		$this->export_entities_array[$r] = array(
+			'p.rowid' => 'contact', 'civ.label' => 'contact', 'p.lastname' => 'contact', 'p.firstname' => 'contact',
+			'p.address' => 'contact', 'p.zip' => 'contact', 'p.town' => 'contact', 'c.code' => 'contact', 'c.label' => 'contact',
+			'p.birthday' => 'contact', 'p.poste' => 'contact',
+			'p.phone' => 'contact', 'p.phone_perso' => 'contact', 'p.phone_mobile' => 'contact', 'p.fax' => 'contact', 'p.email' => 'contact',
+			'p.note_private' => 'contact', 'p.note_public' => 'contact', 'p.statut' => 'contact',
+			's.nom'=>"company", 's.client'=>"company", 's.fournisseur'=>"company", 's.status'=>"company",
+			's.address'=>"company", 's.zip'=>"company", 's.town'=>"company",
+			's.phone'=>"company", 's.fax'=>"company", 's.url'=>"company", 's.email'=>"company"
+		); // We define here only fields that use another picto
+
+		$keyforselect = 'socpeople'; $keyforelement = 'contact'; $keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'categorie as cat';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'categorie_contact as cc ON cc.fk_categorie = cat.rowid';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'socpeople as p ON p.rowid = cc.fk_socpeople';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra ON extra.fk_object = p.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_civility as civ ON civ.code = p.civility';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON c.rowid = p.fk_pays';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = p.fk_soc';
-        $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra ON extra.fk_object = p.rowid';
-		$this->export_sql_end[$r] .= ' WHERE u.rowid = cp.fk_categorie AND cp.fk_socpeople = p.rowid AND u.entity IN ('.getEntity('category').')';
-		$this->export_sql_end[$r] .= ' AND u.type = 4'; // contact categories
+		$this->export_sql_end[$r] .= ' WHERE cat.entity IN ('.getEntity('category').')';
+		$this->export_sql_end[$r] .= ' AND cat.type = 4';
+
+		// 5 Bank accounts, TODO ?
+
+		// 6 Projects
+		$r++;
+		$this->export_code[$r] = $this->rights_class.'_6_'.Categorie::$MAP_ID_TO_CODE[6];
+		$this->export_label[$r] = 'CatProjectsList';
+		$this->export_icon[$r] = $this->picto;
+		$this->export_enabled[$r] = '!empty($conf->projet->enabled)';
+		$this->export_permission[$r] = array(array("categorie", "lire"), array("projet", "export"));
+		$this->export_fields_array[$r] = array('cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategory", 'p.rowid'=>'ProjectId', 'p.ref'=>'Ref', 's.rowid'=>"IdThirdParty", 's.nom'=>"Name");
+		$this->export_TypeFields_array[$r] = array('cat.label'=>"Text", 'cat.description'=>"Text", 'cat.fk_parent'=>'List:categorie:label:rowid', 'p.ref'=>'Text', 's.rowid'=>"List:societe:nom:rowid", 's.nom'=>"Text");
+		$this->export_entities_array[$r] = array('p.rowid'=>'project', 'p.ref'=>'project', 's.rowid'=>"company", 's.nom'=>"company"); // We define here only fields that use another picto
+
+		$keyforselect = 'projet'; $keyforelement = 'project'; $keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'categorie as cat';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'categorie_project as cp ON cp.fk_categorie = cat.rowid';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'projet as p ON p.rowid = cp.fk_project';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_extrafields as extra ON extra.fk_object = p.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = p.fk_soc';
+		$this->export_sql_end[$r] .= ' WHERE cat.entity IN ('.getEntity('category').')';
+		$this->export_sql_end[$r] .= ' AND cat.type = 6';
+
+		// 7 Users
+		$r++;
+		$this->export_code[$r] = $this->rights_class.'_7_'.Categorie::$MAP_ID_TO_CODE[7];
+		$this->export_label[$r] = 'CatUsersList';
+		$this->export_icon[$r] = $this->picto;
+		$this->export_enabled[$r] = '!empty($conf->user->enabled)';
+		$this->export_permission[$r] = array(array("categorie", "lire"), array("user", "export"));
+		$this->export_fields_array[$r] = array('cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategory", 'p.rowid'=>'TechnicalID', 'p.login'=>'Login', 'p.lastname'=>'Lastname', 'p.firstname'=>'Firstname');
+		$this->export_TypeFields_array[$r] = array('cat.label'=>"Text", 'cat.description'=>"Text", 'cat.fk_parent'=>'List:categorie:label:rowid', 'p.login'=>'Text', 'p.lastname'=>'Text', 'p.firstname'=>'Text');
+		$this->export_entities_array[$r] = array('p.rowid'=>'user', 'p.login'=>'user', 'p.lastname'=>'user', 'p.firstname'=>'user'); // We define here only fields that use another picto
+
+		$keyforselect = 'user'; $keyforelement = 'user'; $keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'categorie as cat';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'categorie_user as cu ON cu.fk_categorie = cat.rowid';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'user as p ON p.rowid = cu.fk_user';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user_extrafields as extra ON extra.fk_object = p.rowid';
+		$this->export_sql_end[$r] .= ' WHERE cat.entity IN ('.getEntity('category').')';
+		$this->export_sql_end[$r] .= ' AND cat.type = 7';
+
+		// 8 Bank Lines, TODO ?
+
+		// 9 Warehouses, TODO ?
+
+		// 10 Agenda Events, TODO ?
+
+		// 11 Website Pages, TODO ?
 
 		// Imports
 		//--------
 
 		$r = 0;
 
+		// Categories
 		$r++;
-		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_code[$r] = $this->rights_class.'_list';
 		$this->import_label[$r] = "CatList"; // Translation key
 		$this->import_icon[$r] = $this->picto;
 		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r] = array('ca'=>MAIN_DB_PREFIX.'categorie');
-        $this->import_fields_array[$r] = array(
-            'ca.label'=>"Label*", 'ca.type'=>"Type*", 'ca.description'=>"Description",
-            'ca.fk_parent' => 'Parent'
-        );
+		$this->import_fields_array[$r] = array(
+			'ca.label'=>"Label*", 'ca.type'=>"Type*", 'ca.description'=>"Description",
+			'ca.fk_parent' => 'ParentCategory'
+		);
 		$this->import_regex_array[$r] = array('ca.type'=>'^(0|1|2|3|4|5|6|7|8|9|10|11)$');
-        $this->import_convertvalue_array[$r] = array(
-            'ca.fk_parent' => array(
-                'rule'          => 'fetchidfromcodeandlabel',
-                'classfile'     => '/categories/class/categorie.class.php',
-                'class'         => 'Categorie',
-                'method'        => 'fetch',
-                'element'       => 'category',
-                'codefromfield' => 'ca.type'
-            )
-        );
-		$typeexample = "";
-		if ($conf->product->enabled) { $typeexample .= ($typeexample ? "/" : "")."0=Product"; }
-		if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) { $typeexample .= ($typeexample ? "/" : "")."1=Supplier"; }
-		if ($conf->societe->enabled) { $typeexample .= ($typeexample ? "/" : "")."2=Customer-Prospect"; }
-		if ($conf->adherent->enabled) { $typeexample .= ($typeexample ? "/" : "")."3=Member"; }
-        $this->import_examplevalues_array[$r] = array(
-            'ca.label'=>"Supplier Category", 'ca.type'=>$typeexample, 'ca.description'=>"My Category description",
-            'ca.fk_parent' => '0'
-        );
+		$this->import_convertvalue_array[$r] = array(
+			'ca.fk_parent' => array(
+				'rule'          => 'fetchidfromcodeandlabel',
+				'classfile'     => '/categories/class/categorie.class.php',
+				'class'         => 'Categorie',
+				'method'        => 'fetch',
+				'element'       => 'category',
+				'codefromfield' => 'ca.type'
+			)
+		);
 
+		$this->import_examplevalues_array[$r] = array(
+			'ca.label'=>"My Category Label", 'ca.type'=>$typeexample, 'ca.description'=>"My Category description",		// $typeexample built above in exports
+			'ca.fk_parent' => 'rowid or label'
+		);
+		$this->import_updatekeys_array[$r] = array('ca.label'=>'Label');
+
+		// 0 Products
 		if (!empty($conf->product->enabled))
 		{
-			//Products
 			$r++;
-			$this->import_code[$r] = $this->rights_class.'_'.$r;
+			$this->import_code[$r] = $this->rights_class.'_0_'.Categorie::$MAP_ID_TO_CODE[0];
 			$this->import_label[$r] = "CatProdLinks"; // Translation key
 			$this->import_icon[$r] = $this->picto;
 			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
@@ -409,57 +441,16 @@ class modCategorie extends DolibarrModules
 
 			$this->import_convertvalue_array[$r] = array(
 					'cp.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
-					'cp.fk_product'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/class/product.class.php', 'class'=>'Product', 'method'=>'fetch', 'element'=>'product')
+					'cp.fk_product'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/class/product.class.php', 'class'=>'Product', 'method'=>'fetch', 'element'=>'Product')
 			);
-			$this->import_examplevalues_array[$r] = array('cp.fk_categorie'=>"Imported category", 'cp.fk_product'=>"PREF123456");
+			$this->import_examplevalues_array[$r] = array('cp.fk_categorie'=>"rowid or label", 'cp.fk_product'=>"rowid or ref");
 		}
 
-		if (!empty($conf->societe->enabled))
-		{
-			// Customers
-			$r++;
-			$this->import_code[$r] = $this->rights_class.'_'.$r;
-			$this->import_label[$r] = "CatCusLinks"; // Translation key
-			$this->import_icon[$r] = $this->picto;
-			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
-			$this->import_tables_array[$r] = array('cs'=>MAIN_DB_PREFIX.'categorie_societe');
-			$this->import_fields_array[$r] = array('cs.fk_categorie'=>"Category*", 'cs.fk_soc'=>"ThirdParty*");
-			$this->import_regex_array[$r] = array(
-				'cs.fk_categorie'=>'rowid@'.MAIN_DB_PREFIX.'categorie:type=2',
-				'cs.fk_soc'=>'rowid@'.MAIN_DB_PREFIX.'societe:client>0'
-			);
-
-			$this->import_convertvalue_array[$r] = array(
-					'cs.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
-					'cs.fk_soc'=>array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty')
-			);
-			$this->import_examplevalues_array[$r] = array('cs.fk_categorie'=>"Imported category", 'cs.fk_soc'=>"MyBigCompany");
-
-			// Contacts/Addresses
-			$r++;
-			$this->import_code[$r] = $this->rights_class.'_'.$r;
-			$this->import_label[$r] = "CatContactsLinks"; // Translation key
-			$this->import_icon[$r] = $this->picto;
-			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
-			$this->import_tables_array[$r] = array('cs'=>MAIN_DB_PREFIX.'categorie_contact');
-			$this->import_fields_array[$r] = array('cs.fk_categorie'=>"Category*", 'cs.fk_socpeople'=>"Contact ID*");
-			$this->import_regex_array[$r] = array(
-				'cs.fk_categorie'=>'rowid@'.MAIN_DB_PREFIX.'categorie:type=4'
-				//'cs.fk_socpeople'=>'rowid@'.MAIN_DB_PREFIX.'socpeople'
-			);
-
-			$this->import_convertvalue_array[$r] = array(
-				'cs.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category')
-				//'cs.fk_socpeople'=>array('rule'=>'fetchidfromref','classfile'=>'/contact/class/contact.class.php','class'=>'Contact','method'=>'fetch','element'=>'Contact')
-			);
-			$this->import_examplevalues_array[$r] = array('cs.fk_categorie'=>"Imported category", 'cs.fk_socpeople'=>"123");
-		}
-
+		// 1 Suppliers
 		if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
 		{
-			// Suppliers
 			$r++;
-			$this->import_code[$r] = $this->rights_class.'_'.$r;
+			$this->import_code[$r] = $this->rights_class.'_1_'.Categorie::$MAP_ID_TO_CODE[1];
 			$this->import_label[$r] = "CatSupLinks"; // Translation key
 			$this->import_icon[$r] = $this->picto;
 			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
@@ -474,19 +465,130 @@ class modCategorie extends DolibarrModules
 					'cs.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
 					'cs.fk_soc'=>array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty')
 			);
-			$this->import_examplevalues_array[$r] = array('cs.fk_categorie'=>"Imported category", 'cs.fk_soc'=>"MyBigCompany");
+			$this->import_examplevalues_array[$r] = array('cs.fk_categorie'=>"rowid or label", 'cs.fk_soc'=>"rowid or ref");
 		}
+
+		// 2 Customers
+		if (!empty($conf->societe->enabled))
+		{
+			$r++;
+			$this->import_code[$r] = $this->rights_class.'_2_'.Categorie::$MAP_ID_TO_CODE[2];
+			$this->import_label[$r] = "CatCusLinks"; // Translation key
+			$this->import_icon[$r] = $this->picto;
+			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+			$this->import_tables_array[$r] = array('cs'=>MAIN_DB_PREFIX.'categorie_societe');
+			$this->import_fields_array[$r] = array('cs.fk_categorie'=>"Category*", 'cs.fk_soc'=>"Customer*");
+			$this->import_regex_array[$r] = array(
+				'cs.fk_categorie'=>'rowid@'.MAIN_DB_PREFIX.'categorie:type=2',
+				'cs.fk_soc'=>'rowid@'.MAIN_DB_PREFIX.'societe:client>0'
+			);
+
+			$this->import_convertvalue_array[$r] = array(
+					'cs.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
+					'cs.fk_soc'=>array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty')
+			);
+			$this->import_examplevalues_array[$r] = array('cs.fk_categorie'=>"rowid or label", 'cs.fk_soc'=>"rowid or ref");
+		}
+
+		// 3 Members
+		if (!empty($conf->adherent->enabled))
+		{
+			$r++;
+			$this->import_code[$r] = $this->rights_class.'_3_'.Categorie::$MAP_ID_TO_CODE[3];
+			$this->import_label[$r] = "CatMembersLinks"; // Translation key
+			$this->import_icon[$r] = $this->picto;
+			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+			$this->import_tables_array[$r] = array('cm'=>MAIN_DB_PREFIX.'categorie_contact');
+			$this->import_fields_array[$r] = array('cm.fk_categorie'=>"Category*", 'cm.fk_member'=>"Member*");
+			$this->import_regex_array[$r] = array('cm.fk_categorie'=>'rowid@'.MAIN_DB_PREFIX.'categorie:type=3');
+
+			$this->import_convertvalue_array[$r] = array(
+				'cs.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
+				'cs.fk_member'=>array('rule'=>'fetchidfromref','classfile'=>'/adherents/class/adherent.class.php','class'=>'Adherent','method'=>'fetch','element'=>'Member')
+			);
+			$this->import_examplevalues_array[$r] = array('cs.fk_categorie'=>"rowid or label", 'cs.fk_member'=>"rowid or ref");
+		}
+
+		// 4 Contacts/Addresses
+		if (!empty($conf->societe->enabled))
+		{
+			$r++;
+			$this->import_code[$r] = $this->rights_class.'_4_'.Categorie::$MAP_ID_TO_CODE[4];
+			$this->import_label[$r] = "CatContactsLinks"; // Translation key
+			$this->import_icon[$r] = $this->picto;
+			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+			$this->import_tables_array[$r] = array('cc'=>MAIN_DB_PREFIX.'categorie_contact');
+			$this->import_fields_array[$r] = array('cc.fk_categorie'=>"Category*", 'cc.fk_socpeople'=>"IdContact*");
+			$this->import_regex_array[$r] = array(
+				'cc.fk_categorie'=>'rowid@'.MAIN_DB_PREFIX.'categorie:type=4'
+				//'cc.fk_socpeople'=>'rowid@'.MAIN_DB_PREFIX.'socpeople'
+			);
+
+			$this->import_convertvalue_array[$r] = array(
+				'cc.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
+				//'cc.fk_socpeople'=>array('rule'=>'fetchidfromref','classfile'=>'/contact/class/contact.class.php','class'=>'Contact','method'=>'fetch','element'=>'Contact')
+			);
+			$this->import_examplevalues_array[$r] = array('cc.fk_categorie'=>"rowid or label", 'cc.fk_socpeople'=>"rowid");
+		}
+
+		// 5 Bank accounts, TODO ?
+
+		// 6 Projects
+		if (!empty($conf->projet->enabled))
+		{
+			$r++;
+			$this->import_code[$r] = $this->rights_class.'_6_'.Categorie::$MAP_ID_TO_CODE[6];
+			$this->import_label[$r] = "CatProjectsLinks"; // Translation key
+			$this->import_icon[$r] = $this->picto;
+			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+			$this->import_tables_array[$r] = array('cp'=>MAIN_DB_PREFIX.'categorie_project');
+			$this->import_fields_array[$r] = array('cp.fk_categorie'=>"Category*", 'cp.fk_project'=>"Project*");
+			$this->import_regex_array[$r] = array('cp.fk_categorie'=>'rowid@'.MAIN_DB_PREFIX.'categorie:type=6');
+
+			$this->import_convertvalue_array[$r] = array(
+				'cs.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
+				'cs.fk_project'=>array('rule'=>'fetchidfromref','classfile'=>'/projet/class/project.class.php','class'=>'Project','method'=>'fetch','element'=>'Project')
+			);
+			$this->import_examplevalues_array[$r] = array('cp.fk_categorie'=>"rowid or label", 'cp.fk_project'=>"rowid or ref");
+		}
+
+		// 7 Users
+		if (!empty($conf->user->enabled))
+		{
+			$r++;
+			$this->import_code[$r] = $this->rights_class.'_7_'.Categorie::$MAP_ID_TO_CODE[7];
+			$this->import_label[$r] = "CatUsersLinks"; // Translation key
+			$this->import_icon[$r] = $this->picto;
+			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+			$this->import_tables_array[$r] = array('cu'=>MAIN_DB_PREFIX.'categorie_user');
+			$this->import_fields_array[$r] = array('cu.fk_categorie'=>"Category*", 'cu.fk_user'=>"User*");
+			$this->import_regex_array[$r] = array('cu.fk_categorie'=>'rowid@'.MAIN_DB_PREFIX.'categorie:type=7');
+
+			$this->import_convertvalue_array[$r] = array(
+				'cu.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
+				'cu.fk_user'=>array('rule'=>'fetchidfromref','classfile'=>'/user/class/user.class.php','class'=>'User','method'=>'fetch','element'=>'User')
+			);
+			$this->import_examplevalues_array[$r] = array('cu.fk_categorie'=>"rowid or label", 'cu.fk_user'=>"rowid or login");
+		}
+
+		// 8 Bank Lines, TODO ?
+
+		// 9 Warehouses, TODO ?
+
+		// 10 Agenda Events, TODO ?
+
+		// 11 Website Pages, TODO ?
 	}
 
 
-    /**
+	/**
 	 *		Function called when module is enabled.
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
-     */
+	 */
 	public function init($options = '')
 	{
 		// Permissions

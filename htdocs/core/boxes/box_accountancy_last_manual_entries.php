@@ -32,78 +32,78 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_accountancy_last_manual_entries extends ModeleBoxes
 {
-    public $boxcode = "accountancy_last_manual_entries";
-    public $boximg = "object_invoice";
-    public $boxlabel = "BoxLastManualEntries";
-    public $depends = array("accounting");
+	public $boxcode = "accountancy_last_manual_entries";
+	public $boximg = "object_invoice";
+	public $boxlabel = "BoxLastManualEntries";
+	public $depends = array("accounting");
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $param;
+	public $param;
 
-    public $info_box_head = array();
-    public $info_box_contents = array();
+	public $info_box_head = array();
+	public $info_box_contents = array();
 
 
-    /**
-     *  Constructor
-     *
-     *  @param  DoliDB  $db         Database handler
-     *  @param  string  $param      More parameters
-     */
-    public function __construct($db, $param)
-    {
-        global $user;
+	/**
+	 *  Constructor
+	 *
+	 *  @param  DoliDB  $db         Database handler
+	 *  @param  string  $param      More parameters
+	 */
+	public function __construct($db, $param)
+	{
+		global $user;
 
-        $this->db = $db;
+		$this->db = $db;
 
-        $this->hidden = !($user->rights->accounting->mouvements->lire);
-    }
+		$this->hidden = !($user->rights->accounting->mouvements->lire);
+	}
 
-    /**
-     *  Load data for box to show them later
-     *
-     *  @param	int		$max        Maximum number of records to load
-     *  @return	void
-     */
-    public function loadBox($max = 5)
-    {
-        global $user, $langs, $conf;
+	/**
+	 *  Load data for box to show them later
+	 *
+	 *  @param	int		$max        Maximum number of records to load
+	 *  @return	void
+	 */
+	public function loadBox($max = 5)
+	{
+		global $user, $langs, $conf;
 
-        include_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 
-        $bookkeepingstatic = new BookKeeping($this->db);
+		$bookkeepingstatic = new BookKeeping($this->db);
 
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastManualEntries", $max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastManualEntries", $max));
 
-        if ($user->rights->accounting->mouvements->lire)
-        {
-            $sql = "SELECT DISTINCT b.piece_num";
-            $sql .= ", b.doc_date as date_movement";
-            $sql .= ", b.label_operation";
-            $sql .= ", b.montant";
-            $sql .= ", b.code_journal";
-            $sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b";
-            $sql .= " WHERE b.fk_doc = 0";
-            $sql .= " AND b.entity = ".$conf->entity;
-            $sql .= " ORDER BY b.piece_num DESC ";
-            $sql .= $this->db->plimit($max, 0);
+		if ($user->rights->accounting->mouvements->lire)
+		{
+			$sql = "SELECT DISTINCT b.piece_num";
+			$sql .= ", b.doc_date as date_movement";
+			$sql .= ", b.label_operation";
+			$sql .= ", b.montant as amount";
+			$sql .= ", b.code_journal";
+			$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b";
+			$sql .= " WHERE b.fk_doc = 0";
+			$sql .= " AND b.entity = ".$conf->entity;
+			$sql .= " ORDER BY b.piece_num DESC ";
+			$sql .= $this->db->plimit($max, 0);
 
-            $result = $this->db->query($sql);
-            if ($result) {
-                $num = $this->db->num_rows($result);
+			$result = $this->db->query($sql);
+			if ($result) {
+				$num = $this->db->num_rows($result);
 
-                $line = 0;
+				$line = 0;
 
-                while ($line < $num) {
-                    $objp		= $this->db->fetch_object($result);
-                    $date		= $this->db->jdate($objp->date_movement);
+				while ($line < $num) {
+					$objp		= $this->db->fetch_object($result);
+					$date		= $this->db->jdate($objp->date_movement);
 					$journal	= $objp->code_journal;
-                    $label		= $objp->label_operation;
-					$amount		= $objp->montant;
+					$label = $objp->label_operation;
+					$amount		= $objp->amount;
 
 					$bookkeepingstatic->id = $objp->id;
 					$bookkeepingstatic->piece_num = $objp->piece_num;
@@ -114,11 +114,11 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
 						'asis' => 1,
 					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right"',
-                        'text' => dol_print_date($date, 'day'),
-                        'asis' => 1,
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right"',
+						'text' => dol_print_date($date, 'day'),
+						'asis' => 1,
+					);
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="center"',
@@ -132,34 +132,34 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
 						'asis' => 1,
 					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="nowraponall right"',
-                        'text' => price($amount, 0, $langs, 0, -1, -1, $conf->currency),
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="nowraponall right"',
+						'text' => price($amount, 0, $langs, 0, -1, -1, $conf->currency),
+					);
 
-                    $line++;
-                }
+					$line++;
+				}
 
-                if ($num == 0) $this->info_box_contents[$line][0] = array(
-                	'td' => 'class="center opacitymedium"',
-                	'text'=>$langs->trans("NoRecordedManualEntries")
-                );
+				if ($num == 0) $this->info_box_contents[$line][0] = array(
+					'td' => 'class="center"',
+					'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedManualEntries").'</span>'
+				);
 
-                $this->db->free($result);
-            } else {
-                $this->info_box_contents[0][0] = array(
-                    'td' => '',
-                    'maxlength'=>500,
-                    'text' => ($this->db->error().' sql='.$sql),
-                );
-            }
-        } else {
-            $this->info_box_contents[0][0] = array(
-                'td' => 'class="nohover opacitymedium left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed")
-            );
-        }
-    }
+				$this->db->free($result);
+			} else {
+				$this->info_box_contents[0][0] = array(
+					'td' => '',
+					'maxlength'=>500,
+					'text' => ($this->db->error().' sql='.$sql),
+				);
+			}
+		} else {
+			$this->info_box_contents[0][0] = array(
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
+			);
+		}
+	}
 
 	/**
 	 *	Method to show box
@@ -169,8 +169,8 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    public function showBox($head = null, $contents = null, $nooutput = 0)
-    {
-        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
-    }
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+	}
 }

@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2004-2017  Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2020  Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Bahfir Abbes		<bafbes@gmail.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if (!$user->admin)
 	accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
@@ -46,8 +46,8 @@ $langs->loadLangs(array("companies", "admin", "users", "other"));
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -60,8 +60,8 @@ $search_code = GETPOST("search_code", "alpha");
 $search_ip   = GETPOST("search_ip", "alpha");
 $search_user = GETPOST("search_user", "alpha");
 $search_desc = GETPOST("search_desc", "alpha");
-$search_ua   = GETPOST("search_ua", "none");
-$search_prefix_session = GETPOST("search_prefix_session", "none");
+$search_ua   = GETPOST("search_ua", "restricthtml");
+$search_prefix_session = GETPOST("search_prefix_session", "restricthtml");
 
 if (GETPOST("date_startmonth") == '' || GETPOST("date_startmonth") > 0) $date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
 else $date_start = -1;
@@ -76,11 +76,11 @@ $nowarray = dol_getdate($now);
 
 if (empty($date_start)) // We define date_start and date_end
 {
-    $date_start = dol_get_first_day($nowarray['year'], $nowarray['mon'], false);
+	$date_start = dol_get_first_day($nowarray['year'], $nowarray['mon'], false);
 }
 if (empty($date_end))
 {
-    $date_end = dol_mktime(23, 59, 59, $nowarray['mon'], $nowarray['mday'], $nowarray['year']);
+	$date_end = dol_mktime(23, 59, 59, $nowarray['mon'], $nowarray['mday'], $nowarray['year']);
 }
 // Set $date_startmonth...
 $tmp = dol_getdate($date_start);
@@ -92,7 +92,15 @@ $date_endday = $tmp['mday'];
 $date_endmonth = $tmp['mon'];
 $date_endyear = $tmp['year'];
 
-$arrayfields = array();
+// Add prefix session
+$arrayfields = array(
+	'e.prefix_session' => array(
+		'label'=>'UserAgent',
+		'checked'=>(empty($conf->global->AUDIT_ENABLE_PREFIX_SESSION) ? 0 : 1),
+		'enabled'=>(empty($conf->global->AUDIT_ENABLE_PREFIX_SESSION) ? 0 : 1),
+		'position'=>110
+	)
+);
 
 
 /*
@@ -104,14 +112,14 @@ $now = dol_now();
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
-    $date_start = -1;
-    $date_end = -1;
-    $search_code = '';
-    $search_ip = '';
-    $search_user = '';
-    $search_desc = '';
-    $search_ua = '';
-    $search_prefix_session = '';
+	$date_start = -1;
+	$date_end = -1;
+	$search_code = '';
+	$search_ip = '';
+	$search_user = '';
+	$search_desc = '';
+	$search_ua = '';
+	$search_prefix_session = '';
 }
 
 // Purge audit events
@@ -144,11 +152,9 @@ if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin)
 	$result = $securityevent->create($user);
 	if ($result > 0)
 	{
-	    $db->commit();
+		$db->commit();
 		dol_syslog($text, LOG_WARNING);
-	}
-	else
-	{
+	} else {
 		$error++;
 		dol_syslog($securityevent->error, LOG_ERR);
 		$db->rollback();
@@ -169,7 +175,7 @@ $usefilter = 0;
 
 $sql = "SELECT e.rowid, e.type, e.ip, e.user_agent, e.dateevent,";
 $sql .= " e.fk_user, e.description, e.prefix_session,";
-$sql .= " u.login";
+$sql .= " u.login, u.admin, u.entity, u.firstname, u.lastname, u.statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."events as e";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = e.fk_user";
 $sql .= " WHERE e.entity IN (".getEntity('event').")";
@@ -213,7 +219,7 @@ if ($result)
 	if ($search_user) $param .= '&search_user='.urlencode($search_user);
 	if ($search_desc) $param .= '&search_desc='.urlencode($search_desc);
 	if ($search_ua)   $param .= '&search_ua='.urlencode($search_ua);
-	if ($search_prefix_sessiona)   $param .= '&search_prefix_session='.urlencode($search_prefix_session);
+	if ($search_prefix_session)   $param .= '&search_prefix_session='.urlencode($search_prefix_session);
 	if ($date_startmonth) $param .= "&date_startmonth=".urlencode($date_startmonth);
 	if ($date_startday)   $param .= "&date_startday=".urlencode($date_startday);
 	if ($date_startyear)  $param .= "&date_startyear=".urlencode($date_startyear);
@@ -221,21 +227,36 @@ if ($result)
 	if ($date_endday)     $param .= "&date_endday=".urlencode($date_endday);
 	if ($date_endyear)    $param .= "&date_endyear=".urlencode($date_endyear);
 
-    $langs->load('withdrawals');
-    if ($num)
-    {
-        $center = '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("Purge").'</a>';
-    }
+	$langs->load('withdrawals');
+	if ($num)
+	{
+		$center = '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("Purge").'</a>';
+	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 
-    print_barre_liste($langs->trans("ListOfSecurityEvents"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $nbtotalofrecords, 'setup', 0, '', '', $limit);
+	print_barre_liste($langs->trans("ListOfSecurityEvents"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $nbtotalofrecords, 'setup', 0, '', '', $limit);
 
 	if ($action == 'purge')
 	{
 		$formquestion = array();
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeAuditEvents'), $langs->trans('ConfirmPurgeAuditEvents'), 'confirm_purge', $formquestion, 'no', 1);
 	}
+
+	// Check some parameters
+	// TODO Add a tab with this and other information
+	/*
+	global $dolibarr_main_prod, $dolibarr_nocsrfcheck;
+	if (empty($dolibarr_main_prod)) {
+		print $langs->trans("Warning").' dolibarr_main_prod = '.$dolibarr_main_prod;
+		print ' '.img_warning($langs->trans('SwitchThisForABetterSecurity', 1)).'<br>';
+	}
+	if (!empty($dolibarr_nocsrfcheck)) {
+		print $langs->trans("Warning").' dolibarr_nocsrfcheck = '.$dolibarr_nocsrfcheck;
+		print ' '.img_warning($langs->trans('SwitchThisForABetterSecurity', 0)).'<br>';
+	}
+	*/
 
 	print '<div class="div-table-responsive">';
 	print '<table class="liste centpercent">';
@@ -324,9 +345,19 @@ if ($result)
 		{
 			$userstatic->id = $obj->fk_user;
 			$userstatic->login = $obj->login;
+			$userstatic->admin = $obj->admin;
+			$userstatic->entity = $obj->entity;
+			$userstatic->status = $obj->status;
+
 			print $userstatic->getLoginUrl(1);
-		}
-		else print '&nbsp;';
+			if (!empty($conf->multicompany->enabled) && $userstatic->admin && !$userstatic->entity)
+			{
+				print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
+			} elseif ($userstatic->admin)
+			{
+				print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
+			}
+		} else print '&nbsp;';
 		print '</td>';
 
 		// Description
@@ -379,9 +410,7 @@ if ($result)
 
 	print "</form>";
 	$db->free($result);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

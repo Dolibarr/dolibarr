@@ -23,9 +23,9 @@ AddLoan=Opprett lån
 FinancialCommitment=Finansiell forpliktelse
 InterestAmount=Rente
 CapitalRemain=Gjenstående kapital
-TermPaidAllreadyPaid = This term is allready paid
-CantUseScheduleWithLoanStartedToPaid = Can't use scheduler for a loan with payment started
-CantModifyInterestIfScheduleIsUsed = You can't modify interest if you use schedule
+TermPaidAllreadyPaid = Denne terminen er allerede betalt
+CantUseScheduleWithLoanStartedToPaid = Kan ikke bruke planlegger for et lån med startet betaling 
+CantModifyInterestIfScheduleIsUsed = Du kan ikke endre rente hvis du bruker tidsplan
 # Admin
 ConfigLoan=Oppset av lån-modulen
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Standard regnskapskonto kapital

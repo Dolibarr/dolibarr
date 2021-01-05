@@ -36,7 +36,7 @@ $id     = GETPOST('id', 'int');
 $ref    = GETPOST('ref', 'alpha');
 $lineid = GETPOST('lineid', 'int');
 $socid  = GETPOST('socid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 $mine   = GETPOST('mode') == 'mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
@@ -63,45 +63,40 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
 	$result = 0;
 	$result = $object->fetch($id);
 
-    if ($result > 0 && $id > 0)
-    {
+	if ($result > 0 && $id > 0)
+	{
   		$contactid = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
-  		$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
-    }
+  		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+  		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
+	}
 
 	if ($result >= 0)
 	{
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	}
-	else
-	{
+	} else {
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
-		}
-		else
-		{
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 }
 
-// bascule du statut d'un contact
+// Change contact's status
 if ($action == 'swapstatut' && $user->rights->projet->creer)
 {
 	if ($object->fetch($id))
 	{
-	    $result = $object->swapContactStatus(GETPOST('ligne', 'int'));
-	}
-	else
-	{
+		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
+	} else {
 		dol_print_error($db);
 	}
 }
 
-// Efface un contact
+// Delete a contact
 if (($action == 'deleteline' || $action == 'deletecontact') && $user->rights->projet->creer)
 {
 	$object->fetch($id);
@@ -111,9 +106,7 @@ if (($action == 'deleteline' || $action == 'deletecontact') && $user->rights->pr
 	{
 		header("Location: contact.php?id=".$object->id);
 		exit;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -136,7 +129,7 @@ $userstatic = new User($db);
 
 /* *************************************************************************** */
 /*                                                                             */
-/* Mode vue et edition                                                         */
+/* Edition and view mode                                                       */
 /*                                                                             */
 /* *************************************************************************** */
 
@@ -150,66 +143,66 @@ if ($id > 0 || !empty($ref))
 	//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
 	$head = project_prepare_head($object);
-	dol_fiche_head($head, 'contact', $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
+	print dol_get_fiche_head($head, 'contact', $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
 
 
-    // Project card
+	// Project card
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    $morehtmlref = '<div class="refidno">';
-    // Title
-    $morehtmlref .= $object->title;
-    // Thirdparty
-    if ($object->thirdparty->id > 0)
-    {
-        $morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
-    }
-    $morehtmlref .= '</div>';
+	$morehtmlref = '<div class="refidno">';
+	// Title
+	$morehtmlref .= $object->title;
+	// Thirdparty
+	if ($object->thirdparty->id > 0)
+	{
+		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
+	}
+	$morehtmlref .= '</div>';
 
-    // Define a complementary filter for search of next/prev ref.
-    if (!$user->rights->projet->all->lire)
-    {
-        $objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-        $object->next_prev_filter = " rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
-    }
+	// Define a complementary filter for search of next/prev ref.
+	if (!$user->rights->projet->all->lire)
+	{
+		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
+		$object->next_prev_filter = " rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+	}
 
-    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 
-    print '<div class="fichecenter">';
-    print '<div class="fichehalfleft">';
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
+	print '<div class="fichehalfleft">';
+	print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border tableforfield centpercent">';
+	print '<table class="border tableforfield centpercent">';
 
-    // Usage
-    print '<tr><td class="tdtop">';
-    print $langs->trans("Usage");
-    print '</td>';
-    print '<td>';
-    if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-    {
-    	print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
-    	$htmltext = $langs->trans("ProjectFollowOpportunity");
-    	print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
-    	print '<br>';
-    }
-    if (empty($conf->global->PROJECT_HIDE_TASKS))
-    {
-    	print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
-    	$htmltext = $langs->trans("ProjectFollowTasks");
-    	print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
-    	print '<br>';
-    }
-    if (!empty($conf->global->PROJECT_BILL_TIME_SPENT))
-    {
-    	print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
-    	$htmltext = $langs->trans("ProjectBillTimeDescription");
-    	print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
-    	print '<br>';
-    }
-    print '</td></tr>';
+	// Usage
+	print '<tr><td class="tdtop">';
+	print $langs->trans("Usage");
+	print '</td>';
+	print '<td>';
+	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+	{
+		print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+		$htmltext = $langs->trans("ProjectFollowOpportunity");
+		print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+		print '<br>';
+	}
+	if (empty($conf->global->PROJECT_HIDE_TASKS))
+	{
+		print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
+		$htmltext = $langs->trans("ProjectFollowTasks");
+		print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+		print '<br>';
+	}
+	if (!empty($conf->global->PROJECT_BILL_TIME_SPENT))
+	{
+		print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+		$htmltext = $langs->trans("ProjectBillTimeDescription");
+		print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+		print '<br>';
+	}
+	print '</td></tr>';
 
 	// Visibility
 	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
@@ -217,36 +210,36 @@ if ($id > 0 || !empty($ref))
 	else print $langs->trans('PrivateProject');
 	print '</td></tr>';
 
-    if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) && $object->opp_status)
-    {
-    	// Opportunity status
-    	print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
-    	$code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
-    	if ($code) print $langs->trans("OppStatus".$code);
-    	print '</td></tr>';
+	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) && $object->opp_status)
+	{
+		// Opportunity status
+		print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
+		$code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
+		if ($code) print $langs->trans("OppStatus".$code);
+		print '</td></tr>';
 
-        // Opportunity percent
-        print '<tr><td>'.$langs->trans("OpportunityProbability").'</td><td>';
-        if (strcmp($object->opp_percent, '')) print price($object->opp_percent, '', $langs, 1, 0).' %';
-        print '</td></tr>';
+		// Opportunity percent
+		print '<tr><td>'.$langs->trans("OpportunityProbability").'</td><td>';
+		if (strcmp($object->opp_percent, '')) print price($object->opp_percent, '', $langs, 1, 0).' %';
+		print '</td></tr>';
 
-    	// Opportunity Amount
-    	print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
-    	if (strcmp($object->opp_amount, '')) print price($object->opp_amount, '', $langs, 0, 0, 0, $conf->currency);
-    	print '</td></tr>';
-    }
+		// Opportunity Amount
+		print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
+		if (strcmp($object->opp_amount, '')) print price($object->opp_amount, '', $langs, 0, 0, 0, $conf->currency);
+		print '</td></tr>';
+	}
 
-    // Date start - end
-    print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+	// Date start - end
+	print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
 	$start = dol_print_date($object->date_start, 'day');
 	print ($start ? $start : '?');
 	$end = dol_print_date($object->date_end, 'day');
 	print ' - ';
 	print ($end ? $end : '?');
 	if ($object->hasDelay()) print img_warning("Late");
-    print '</td></tr>';
+	print '</td></tr>';
 
-    // Budget
+	// Budget
 	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 	if (strcmp($object->budget_amount, '')) print price($object->budget_amount, '', $langs, 0, 0, 0, $conf->currency);
 	print '</td></tr>';
@@ -257,36 +250,36 @@ if ($id > 0 || !empty($ref))
 
 	print "</table>";
 
-    print '</div>';
-    print '<div class="fichehalfright">';
-    print '<div class="ficheaddleft">';
-    print '<div class="underbanner clearboth"></div>';
+	print '</div>';
+	print '<div class="fichehalfright">';
+	print '<div class="ficheaddleft">';
+	print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border tableforfield" width="100%">';
+	print '<table class="border tableforfield" width="100%">';
 
-    // Description
-    print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-    print nl2br($object->description);
-    print '</td></tr>';
+	// Description
+	print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
+	print nl2br($object->description);
+	print '</td></tr>';
 
-    // Categories
-    if ($conf->categorie->enabled) {
-        print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
-        print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
-        print "</td></tr>";
-    }
+	// Categories
+	if ($conf->categorie->enabled) {
+		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
+		print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
+		print "</td></tr>";
+	}
 
-    print '</table>';
+	print '</table>';
 
-    print '</div>';
-    print '</div>';
-    print '</div>';
+	print '</div>';
+	print '</div>';
+	print '</div>';
 
-    print '<div class="clearboth"></div>';
+	print '<div class="clearboth"></div>';
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 
-    print '<br>';
+	print '<br>';
 
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
 	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));

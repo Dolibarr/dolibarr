@@ -38,7 +38,7 @@ $langs->loadLangs(array("bills", "other", "companies"));
 
 $id		= (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int'));
 $ref	= GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Security check
 if ($user->socid) $socid = $user->socid;
@@ -55,26 +55,23 @@ if ($action == 'addcontact' && $user->rights->fournisseur->facture->creer)
 {
 	$result = $object->fetch($id, $ref);
 
-    if ($result > 0 && $id > 0)
-    {
-    	$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
-  		$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
-    }
+	if ($result > 0 && $id > 0)
+	{
+		$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
+		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
+	}
 
 	if ($result >= 0)
 	{
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	}
-	else
-	{
+	} else {
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
-		}
-		else
-		{
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -85,10 +82,8 @@ elseif ($action == 'swapstatut' && $user->rights->fournisseur->facture->creer)
 {
 	if ($object->fetch($id))
 	{
-	    $result = $object->swapContactStatus(GETPOST('ligne'));
-	}
-	else
-	{
+		$result = $object->swapContactStatus(GETPOST('ligne'));
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -103,8 +98,7 @@ elseif ($action == 'deletecontact' && $user->rights->fournisseur->facture->creer
 	{
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	}
-	else {
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -140,18 +134,18 @@ if ($id > 0 || !empty($ref))
 
 		$head = facturefourn_prepare_head($object);
 
-		dol_fiche_head($head, 'contact', $langs->trans('SupplierInvoice'), -1, 'bill');
+		print dol_get_fiche_head($head, 'contact', $langs->trans('SupplierInvoice'), -1, 'supplier_invoice');
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 		$morehtmlref = '<div class="refidno">';
-    	// Ref supplier
-    	$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
-    	$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
-    	// Thirdparty
-    	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
-    	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
-    	// Project
+		// Ref supplier
+		$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
+		$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
+		// Thirdparty
+		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
+		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
+		// Project
 		if (!empty($conf->projet->enabled))
 		{
 			$langs->load("projects");
@@ -239,37 +233,35 @@ if ($id > 0 || !empty($ref))
 		print $form->editfieldval("Label", 'label', $object->label, $object, 0);
 		print '</td></tr>';
 
-        // Amount
-        print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($object->total_ht, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
-        print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($object->total_tva, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
+		// Amount
+		print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($object->total_ht, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
+		print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($object->total_tva, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
 
-        // Amount Local Taxes
-        //TODO: Place into a function to control showing by country or study better option
-        if ($societe->localtax1_assuj == "1") //Localtax1
-        {
-            print '<tr><td>'.$langs->transcountry("AmountLT1", $societe->country_code).'</td>';
-            print '<td>'.price($object->total_localtax1, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
-            print '</tr>';
-        }
-        if ($societe->localtax2_assuj == "1") //Localtax2
-        {
-            print '<tr><td>'.$langs->transcountry("AmountLT2", $societe->country_code).'</td>';
-            print '<td>'.price($object->total_localtax2, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
-            print '</tr>';
-        }
-        print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($object->total_ttc, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
+		// Amount Local Taxes
+		//TODO: Place into a function to control showing by country or study better option
+		if ($societe->localtax1_assuj == "1") //Localtax1
+		{
+			print '<tr><td>'.$langs->transcountry("AmountLT1", $societe->country_code).'</td>';
+			print '<td>'.price($object->total_localtax1, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
+			print '</tr>';
+		}
+		if ($societe->localtax2_assuj == "1") //Localtax2
+		{
+			print '<tr><td>'.$langs->transcountry("AmountLT2", $societe->country_code).'</td>';
+			print '<td>'.price($object->total_localtax2, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
+			print '</tr>';
+		}
+		print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($object->total_ttc, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
 
 		print "</table>";
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<br>';
 
 		// Contacts lines
 		include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';
-	}
-	else
-	{
+	} else {
 		print "ErrorRecordNotFound";
 	}
 }

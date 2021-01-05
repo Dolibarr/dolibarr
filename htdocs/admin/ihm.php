@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2005	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
@@ -122,7 +122,7 @@ if ($action == 'update')
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTTITLE', $conf->entity);
 	else dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLE', $val, 'chaine', 0, '', $conf->entity);
 
-	$val=(implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLELINK'), array()))));
+	$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLELINK'), array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTTITLELINK', $conf->entity);
 	else dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLELINK', $val, 'chaine', 0, '', $conf->entity);
 
@@ -156,7 +156,8 @@ if ($action == 'update')
 	dolibarr_set_const($db, "MAIN_SIZE_SHORTLIST_LIMIT", GETPOST("main_size_shortliste_limit", 'int'), 'chaine', 0, '', $conf->entity);
 
 	//dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", GETPOST("MAIN_DISABLE_JAVASCRIPT", 'aZ09'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED", GETPOST("MAIN_BUTTON_HIDE_UNAUTHORIZED", 'aZ09'), 'chaine', 0, '', $conf->entity);
+	//dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED", GETPOST("MAIN_BUTTON_HIDE_UNAUTHORIZED", 'aZ09'), 'chaine', 0, '', $conf->entity);
+	//dolibarr_set_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED", GETPOST("MAIN_MENU_HIDE_UNAUTHORIZED", 'aZ09'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_START_WEEK", GETPOST("MAIN_START_WEEK", 'int'), 'chaine', 0, '', $conf->entity);
 
 	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_DAYS", GETPOST("MAIN_DEFAULT_WORKING_DAYS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
@@ -164,8 +165,8 @@ if ($action == 'update')
 
 	dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION", GETPOST("MAIN_FIRSTNAME_NAME_POSITION", 'aZ09'), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_MOTD", dol_htmlcleanlastbr(GETPOST("main_motd", 'none')), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_HOME", dol_htmlcleanlastbr(GETPOST("main_home", 'none')), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_MOTD", dol_htmlcleanlastbr(GETPOST("main_motd", 'restricthtml')), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_HOME", dol_htmlcleanlastbr(GETPOST("main_home", 'restricthtml')), 'chaine', 0, '', $conf->entity);
 	//dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK", GETPOST('MAIN_BUGTRACK_ENABLELINK', 'aZ09'), 'chaine', 0, '', $conf->entity);
 	//dolibarr_set_const($db, "MAIN_HELP_DISABLELINK", GETPOST("MAIN_HELP_DISABLELINK", 'aZ09'), 'chaine', 0, '', 0); // Param for all entities
 
@@ -189,22 +190,17 @@ if ($action == 'update')
 				if ($result > 0)
 				{
 					dolibarr_set_const($db, "MAIN_LOGIN_BACKGROUND", $original_file, 'chaine', 0, '', $conf->entity);
-				}
-				elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/', $result))
+				} elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/', $result))
 				{
 					$error++;
 					$langs->load("errors");
 					$tmparray = explode(':', $result);
 					setEventMessages($langs->trans('ErrorFileIsInfectedWithAVirus', $tmparray[1]), null, 'errors');
-				}
-				else
-				{
+				} else {
 					$error++;
 					setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
 				}
-			}
-			else
-			{
+			} else {
 				$error++;
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
@@ -246,33 +242,33 @@ print '<input type="hidden" name="action" value="update">';
 clearstatcache();
 
 print '<br>';
-print '<table summary="edit" class="noborder centpercent editmode">';
-print '<tr class="liste_titre"><th>'.$langs->trans("Language").'</th><th></th>';
-print '<th width="20">&nbsp;</td>';
+print '<div class="div-table-responsive-no-min">';
+print '<table summary="edit" class="noborder centpercent editmode tableforfield">';
+print '<tr class="liste_titre"><th>'.img_picto('', 'language').' '.$langs->trans("Language").'</th><th></th>';
 print '</tr>';
 
 // Default language
-print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DefaultLanguage").'</td><td>';
-print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'MAIN_LANG_DEFAULT', 1, 0, 0, 0, 0, 'minwidth300', 2);
-print '<input class="button" type="submit" name="submit" value="'.$langs->trans("Save").'">';
+print '<tr class="oddeven"><td>'.$langs->trans("DefaultLanguage").'</td><td>';
+print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'MAIN_LANG_DEFAULT', 1, null, '', 0, 0, 'minwidth300', 2);
+print '<input class="button button-save" type="submit" name="submit" value="'.$langs->trans("Save").'">';
 print '</td>';
-print '<td width="20">&nbsp;</td>';
 print '</tr>';
 
 // Multilingual GUI
-print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("EnableMultilangInterface").'</td><td>';
+print '<tr class="oddeven"><td>'.$langs->trans("EnableMultilangInterface").'</td><td>';
 print ajax_constantonoff("MAIN_MULTILANGS", array(), $conf->entity, 0, 0, 1, 0);
 print '</td>';
-print '<td width="20">&nbsp;</td>';
 print '</tr>';
 
 print '</table><br>'."\n";
+print '</div>';
 
 // Themes and themes options
 showSkins(null, 1);
 print '<br>';
 
 // Other
+print '<div class="div-table-responsive-no-min">';
 print '<table summary="otherparameters" class="noborder centpercent editmode">';
 print '<tr class="liste_titre"><th>'.$langs->trans("Miscellaneous").'</th><th></th>';
 print '<th width="20">&nbsp;</tg>';
@@ -307,37 +303,46 @@ print '</tr>';
  */
 
 // First day for weeks
-print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("WeekStartOnDay").'</td><td>';
+print '<tr class="oddeven"><td>'.$langs->trans("WeekStartOnDay").'</td><td>';
 print $formother->select_dayofweek((isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : '1'), 'MAIN_START_WEEK', 0);
 print '</td>';
 print '<td width="20">&nbsp;</td>';
 print '</tr>';
 
 // DefaultWorkingDays
-print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DefaultWorkingDays").'</td><td>';
+print '<tr class="oddeven"><td>'.$langs->trans("DefaultWorkingDays").'</td><td>';
 print '<input type="text" name="MAIN_DEFAULT_WORKING_DAYS" size="5" value="'.(isset($conf->global->MAIN_DEFAULT_WORKING_DAYS) ? $conf->global->MAIN_DEFAULT_WORKING_DAYS : '1-5').'">';
 print '</td>';
 print '<td width="20">&nbsp;</td>';
 print '</tr>';
 
 // DefaultWorkingHours
-print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DefaultWorkingHours").'</td><td>';
+print '<tr class="oddeven"><td>'.$langs->trans("DefaultWorkingHours").'</td><td>';
 print '<input type="text" name="MAIN_DEFAULT_WORKING_HOURS" size="5" value="'.(isset($conf->global->MAIN_DEFAULT_WORKING_HOURS) ? $conf->global->MAIN_DEFAULT_WORKING_HOURS : '9-18').'">';
 print '</td>';
 print '<td width="20">&nbsp;</td>';
 print '</tr>';
 
 // Firstname/Name
-print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("FirstnameNamePosition").'</td><td>';
+print '<tr class="oddeven"><td>'.$langs->trans("FirstnameNamePosition").'</td><td>';
 $array = array(0=>$langs->trans("Firstname").' '.$langs->trans("Lastname"), 1=>$langs->trans("Lastname").' '.$langs->trans("Firstname"));
 print $form->selectarray('MAIN_FIRSTNAME_NAME_POSITION', $array, (isset($conf->global->MAIN_FIRSTNAME_NAME_POSITION) ? $conf->global->MAIN_FIRSTNAME_NAME_POSITION : 0));
 print '</td>';
 print '<td width="20">&nbsp;</td>';
 print '</tr>';
 
+// Hide unauthorized menus
+print '<tr class="oddeven"><td>'.$langs->trans("HideUnauthorizedMenu").'</td><td>';
+//print $form->selectyesno('MAIN_MENU_HIDE_UNAUTHORIZED', isset($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED) ? $conf->global->MAIN_MENU_HIDE_UNAUTHORIZED : 0, 1);
+print ajax_constantonoff("MAIN_MENU_HIDE_UNAUTHORIZED", array(), $conf->entity, 0, 0, 1, 0);
+print '</td>';
+print '<td width="20">&nbsp;</td>';
+print '</tr>';
+
 // Hide unauthorized button
-print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("ButtonHideUnauthorized").'</td><td>';
-print $form->selectyesno('MAIN_BUTTON_HIDE_UNAUTHORIZED', isset($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) ? $conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED : 0, 1);
+print '<tr class="oddeven"><td>'.$langs->trans("ButtonHideUnauthorized").'</td><td>';
+//print $form->selectyesno('MAIN_BUTTON_HIDE_UNAUTHORIZED', isset($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) ? $conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED : 0, 1);
+print ajax_constantonoff("MAIN_BUTTON_HIDE_UNAUTHORIZED", array(), $conf->entity, 0, 0, 1, 0);
 print '</td>';
 print '<td width="20">&nbsp;</td>';
 print '</tr>';
@@ -345,7 +350,7 @@ print '</tr>';
 // Hide version link
 /*
 
-print '<tr><td class="titlefield">'.$langs->trans("HideVersionLink").'</td><td>';
+print '<tr><td>'.$langs->trans("HideVersionLink").'</td><td>';
 print $form->selectyesno('MAIN_HIDE_VERSION',$conf->global->MAIN_HIDE_VERSION,1);
 print '</td>';
 print '<td width="20">&nbsp;</td>';
@@ -353,7 +358,7 @@ print '</tr>';
 */
 
 // Show bugtrack link
-print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")).'</td><td>';
+print '<tr class="oddeven"><td>'.$langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")).'</td><td>';
 print ajax_constantonoff("MAIN_BUGTRACK_ENABLELINK", array(), $conf->entity, 0, 0, 1, 0);
 //print $form->selectyesno('MAIN_BUGTRACK_ENABLELINK', $conf->global->MAIN_BUGTRACK_ENABLELINK, 1);
 print '</td>';
@@ -362,7 +367,7 @@ print '</tr>';
 
 // Hide wiki link on login page
 $pictohelp = '<span class="fa fa-question-circle"></span>';
-print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DisableLinkToHelp", $pictohelp).'</td><td>';
+print '<tr class="oddeven"><td>'.str_replace('{picto}', $pictohelp, $langs->trans("DisableLinkToHelp", '{picto}')).'</td><td>';
 print ajax_constantonoff("MAIN_HELP_DISABLELINK", array(), $conf->entity, 0, 0, 1, 0);
 //print $form->selectyesno('MAIN_HELP_DISABLELINK', isset($conf->global->MAIN_HELP_DISABLELINK) ? $conf->global->MAIN_HELP_DISABLELINK : 0, 1);
 print '</td>';
@@ -373,7 +378,7 @@ print '</tr>';
 $substitutionarray = getCommonSubstitutionArray($langs, 0, array('object', 'objectamount'));
 complete_substitutions_array($substitutionarray, $langs);
 
-print '<tr class="oddeven"><td class="titlefield">';
+print '<tr class="oddeven"><td>';
 $texthelp = $langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
 foreach ($substitutionarray as $key => $val)
 {
@@ -389,18 +394,19 @@ $doleditor->Create();
 print '</td></tr>'."\n";
 
 print '</table>'."\n";
+print '</div>';
 
 print '<br>';
 
 // Other
 print '<div class="div-table-responsive-no-min">';
 print '<table summary="edit" class="noborder centpercent editmode">';
-print '<tr class="liste_titre"><th class="titlefield">'.$langs->trans("LoginPage").'</th><th></th>';
+print '<tr class="liste_titre"><th>'.$langs->trans("LoginPage").'</th><th></th>';
 print '<th width="20">&nbsp;</th>';
 print '</tr>';
 
 // Hide helpcenter link on login page
-print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DisableLinkToHelpCenter").'</td><td>';
+print '<tr class="oddeven"><td>'.$langs->trans("DisableLinkToHelpCenter").'</td><td>';
 print ajax_constantonoff("MAIN_HELPCENTER_DISABLELINK", array(), $conf->entity, 0, 0, 0, 0);
 print '</td>';
 print '<td width="20">&nbsp;</td>';
@@ -448,7 +454,7 @@ print '</div>';
 
 print '<br>';
 print '<div class="center">';
-print '<input class="button" type="submit" name="submit" value="'.$langs->trans("Save").'">';
+print '<input class="button button-save" type="submit" name="submit" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';

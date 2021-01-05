@@ -81,14 +81,14 @@ class modStock extends DolibarrModules
 		$r++;
 		$this->const[$r][0] = "STOCK_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "Standard";
+		$this->const[$r][2] = "standard";
 		$this->const[$r][3] = 'Name of PDF model of stock';
 		$this->const[$r][4] = 0;
 
 		$r++;
 		$this->const[$r][0] = "MOUVEMENT_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "StdMouvement";
+		$this->const[$r][2] = "stdmovement";
 		$this->const[$r][3] = 'Name of PDF model of stock mouvement';
 		$this->const[$r][4] = 0;
 
@@ -150,29 +150,29 @@ class modStock extends DolibarrModules
 
 		if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 		{
-    		$this->rights[5][0] = 1011;
-    		$this->rights[5][1] = 'inventoryReadPermission'; // Permission label
-    		$this->rights[5][3] = 0; // Permission by default for new user (0/1)
-    		$this->rights[5][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-    		$this->rights[5][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+			$this->rights[5][0] = 1011;
+			$this->rights[5][1] = 'inventoryReadPermission'; // Permission label
+			$this->rights[5][3] = 0; // Permission by default for new user (0/1)
+			$this->rights[5][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+			$this->rights[5][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 
-    		$this->rights[6][0] = 1012;
-    		$this->rights[6][1] = 'inventoryCreatePermission'; // Permission label
-    		$this->rights[6][3] = 0; // Permission by default for new user (0/1)
-    		$this->rights[6][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-    		$this->rights[6][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+			$this->rights[6][0] = 1012;
+			$this->rights[6][1] = 'inventoryCreatePermission'; // Permission label
+			$this->rights[6][3] = 0; // Permission by default for new user (0/1)
+			$this->rights[6][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+			$this->rights[6][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 
-    		$this->rights[8][0] = 1014;
-    		$this->rights[8][1] = 'inventoryValidatePermission'; // Permission label
-    		$this->rights[8][3] = 0; // Permission by default for new user (0/1)
-    		$this->rights[8][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-    		$this->rights[8][5] = 'validate'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+			$this->rights[8][0] = 1014;
+			$this->rights[8][1] = 'inventoryValidatePermission'; // Permission label
+			$this->rights[8][3] = 0; // Permission by default for new user (0/1)
+			$this->rights[8][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+			$this->rights[8][5] = 'validate'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 
-    		$this->rights[9][0] = 1015;
-    		$this->rights[9][1] = 'inventoryChangePMPPermission'; // Permission label
-    		$this->rights[9][3] = 0; // Permission by default for new user (0/1)
-    		$this->rights[9][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-    		$this->rights[9][5] = 'changePMP'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+			$this->rights[9][0] = 1015;
+			$this->rights[9][1] = 'inventoryChangePMPPermission'; // Permission label
+			$this->rights[9][3] = 0; // Permission by default for new user (0/1)
+			$this->rights[9][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+			$this->rights[9][5] = 'changePMP'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		}
 
 		// Main menu entries
@@ -188,9 +188,38 @@ class modStock extends DolibarrModules
 		//--------
 		$r = 0;
 
+		// Export warehouses
+		$r++;
+		$this->export_code[$r] = $this->rights_class.'_emplacement';
+		$this->export_label[$r] = "Warehouses"; // Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_icon[$r] = "warehouse";
+		$this->export_permission[$r] = array(array("stock", "lire"));
+		$this->export_fields_array[$r] = array(
+			'e.rowid'=>'IdWarehouse', 'e.ref'=>'LocationSummary', 'e.description'=>'DescWareHouse', 'e.lieu'=>'LieuWareHouse', 'e.address'=>'Address', 'e.zip'=>'Zip', 'e.town'=>'Town',
+			'd.code_departement'=>'Departement', 'c.code'=>'CountryCode',
+			'e.phone'=>'Phone', 'e.fax'=>'Fax', 'e.statut'=>'Status', 'pe.rowid'=>'ParentWarehouse', 'pe.ref'=>'LocationSummary'
+		);
+		$this->export_TypeFields_array[$r] = array(
+			'e.ref'=>'Text', 'e.description'=>'Text', 'e.lieu'=>'Text', 'e.address'=>'Text', 'e.zip'=>'Text', 'e.town'=>'Text',
+			'd.code_departement'=>'List:c_departements:code_departement:code_departement:', 'c.code'=>'List:c_country:code:code:',
+			'e.phone'=>'Text', 'e.fax'=>'Text', 'e.statut'=>'Text', 'pe.rowid'=>'List:entrepot:ref:rowid:stock', 'pe.ref'=>'Text'
+		);
+		$this->export_entities_array[$r] = array();	// We define here only fields that use another icon that the one defined into export_icon
+		$this->export_aggregate_array[$r] = array();
+		$keyforselect = 'warehouse'; $keyforelement = 'warehouse'; $keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'entrepot as e';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON d.rowid = e.fk_departement';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON c.rowid = e.fk_pays';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot as pe ON pe.rowid = e.fk_parent';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot_extrafields as extra ON extra.fk_object = e.rowid';
+		$this->export_sql_end[$r] .= ' WHERE e.entity IN ('.getEntity('stock').')';
+
 		// Export stock (without batch number)
 		$r++;
-		$this->export_code[$r] = $this->rights_class;
+		$this->export_code[$r] = $this->rights_class.'_emplacement_product';
 		$this->export_label[$r] = "Stocks"; // Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_icon[$r] = "warehouse";
 		$this->export_permission[$r] = array(array("stock", "lire"));
@@ -232,7 +261,7 @@ class modStock extends DolibarrModules
 			// This request is same than previous but without field ps.stock (real stock in warehouse) and with link to subtable productbatch
 			$r++;
 
-			$this->export_code[$r] = $this->rights_class.'_lot';
+			$this->export_code[$r] = $this->rights_class.'_emplacement_product_lot';
 			$this->export_label[$r] = "StocksWithBatch"; // Translation key (used only if key ExportDataset_xxx_z not found)
 			$this->export_icon[$r] = "warehouse";
 			$this->export_permission[$r] = array(array("stock", "lire"));
@@ -265,12 +294,15 @@ class modStock extends DolibarrModules
 			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 			$this->export_sql_start[$r] = 'SELECT DISTINCT ';
-			$this->export_sql_end[$r]  = ' FROM ('.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'product_stock as ps, '.MAIN_DB_PREFIX.'product_batch as pb)';
+			$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'product_batch as pb';
+			$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_stock as ps ON ps.rowid = pb.fk_product_stock';
+			$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'product as p ON p.rowid = ps.fk_product';
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lot as pl ON pl.fk_product = p.rowid AND pl.batch = pb.batch';
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lot_extrafields as extra ON extra.fk_object = pl.rowid,';
 			$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'entrepot as e';
-			$this->export_sql_end[$r] .= ' WHERE p.rowid = ps.fk_product AND ps.fk_entrepot = e.rowid AND ps.rowid = pb.fk_product_stock';
-			$this->export_sql_end[$r] .= ' AND e.entity IN ('.getEntity('stock').')';		}
+			$this->export_sql_end[$r] .= ' WHERE ps.fk_entrepot = e.rowid';
+			$this->export_sql_end[$r] .= ' AND e.entity IN ('.getEntity('stock').')';
+		}
 
 		// Export of stock movements
 		$r++;
@@ -332,13 +364,13 @@ class modStock extends DolibarrModules
 				'e.phone'=>'Phone',
 				'e.fax'=>'Fax',
 				'e.statut'=>'Status',
-                'e.fk_parent'=>'ParentWarehouse'
+				'e.fk_parent'=>'ParentWarehouse'
 		);
 
 		$this->import_convertvalue_array[$r] = array(
 				'e.fk_departement'=>array('rule'=>'fetchidfromcodeid', 'classfile'=>'/core/class/cstate.class.php', 'class'=>'Cstate', 'method'=>'fetch', 'dict'=>'DictionaryStateCode'),
 				'e.fk_pays'=>array('rule'=>'fetchidfromcodeid', 'classfile'=>'/core/class/ccountry.class.php', 'class'=>'Ccountry', 'method'=>'fetch', 'dict'=>'DictionaryCountry'),
-                'e.fk_parent'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/stock/class/entrepot.class.php', 'class'=>'Entrepot', 'method'=>'fetch', 'element'=>'ref')
+				'e.fk_parent'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/stock/class/entrepot.class.php', 'class'=>'Entrepot', 'method'=>'fetch', 'element'=>'ref')
 		);
 		$this->import_regex_array[$r] = array('e.statut'=>'^[0|1]');
 		$this->import_examplevalues_array[$r] = array('e.ref'=>"ALM001",
@@ -351,7 +383,7 @@ class modStock extends DolibarrModules
 				'e.phone'=>'(+33)(0)123456789',
 				'e.fax'=>'(+33)(0)123456790',
 				'e.statut'=>'1',
-                'e.fk_parent'=>'id or ref in this table'
+                'e.fk_parent'=>'id or ref of warehouse'
         );
         $this->import_updatekeys_array[$r] = array('p.ref'=>'Ref');
 
@@ -369,11 +401,11 @@ class modStock extends DolibarrModules
 			'ps.fk_entrepot'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/stock/class/entrepot.class.php', 'class'=>'Entrepot', 'method'=>'fetch', 'element'=>'ref')
 		  );
 		$this->import_examplevalues_array[$r] = array(
-		    'ps.fk_product'=>"id or ref", 'ps.fk_entrepot'=>"id or ref", 'ps.reel'=>"10"
+		    'ps.fk_product'=>"id or ref of product", 'ps.fk_entrepot'=>"id or ref of warehouse", 'ps.reel'=>"10"
 		);
 		$this->import_updatekeys_array[$r] = array('ps.fk_product'=>'Product', 'ps.fk_entrepot'=>"Warehouse");
 		$this->import_run_sql_after_array[$r] = array(    // Because we may change data that are denormalized, we must update dernormalized data after.
-		    'UPDATE '.MAIN_DB_PREFIX.'product p SET p.stock= (SELECT SUM(ps.reel) FROM '.MAIN_DB_PREFIX.'product_stock ps WHERE ps.fk_product = p.rowid);'
+			'UPDATE '.MAIN_DB_PREFIX.'product p SET p.stock= (SELECT SUM(ps.reel) FROM '.MAIN_DB_PREFIX.'product_stock ps WHERE ps.fk_product = p.rowid);'
 		);
 	}
 
@@ -394,9 +426,9 @@ class modStock extends DolibarrModules
 		$this->remove($options);
 
 		//ODT template
-		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/stock/template_stock.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/stock';
-		$dest = $dirodt.'/template_stock.odt';
+		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/stocks/template_warehouse.odt';
+		$dirodt = DOL_DATA_ROOT.'/doctemplates/stocks';
+		$dest = $dirodt.'/template_warehouse.odt';
 
 		if (file_exists($src) && !file_exists($dest))
 		{

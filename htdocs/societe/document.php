@@ -105,7 +105,7 @@ if ($object->id)
 
 	$form = new Form($db);
 
-	dol_fiche_head($head, 'document', $langs->trans("ThirdParty"), -1, 'company');
+	print dol_get_fiche_head($head, 'document', $langs->trans("ThirdParty"), -1, 'company');
 
 
 	// Build file list
@@ -116,13 +116,13 @@ if ($object->id)
 		$totalsize += $file['size'];
 	}
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
+	dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
-    print '<div class="fichecenter">';
+	print '<div class="fichecenter">';
 
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border tableforfield centpercent">';
 
 	// Prefix
@@ -165,16 +165,14 @@ if ($object->id)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	$modulepart = 'societe';
 	$permission = $user->rights->societe->creer;
 	$permtoedit = $user->rights->societe->creer;
 	$param = '&id='.$object->id;
 	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-}
-else
-{
+} else {
 	accessforbidden('', 0, 0);
 }
 

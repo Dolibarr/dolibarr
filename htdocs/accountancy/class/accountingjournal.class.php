@@ -37,7 +37,7 @@ class AccountingJournal extends CommonObject
 	public $table_element = 'accounting_journal';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Fieldname with ID of parent key if this field has a parent
 	 */
 	public $fk_element = '';
 
@@ -56,29 +56,29 @@ class AccountingJournal extends CommonObject
 	 */
 	public $rowid;
 
-    /**
-     * @var string Accounting journal code
-     */
+	/**
+	 * @var string Accounting journal code
+	 */
 	public $code;
 
 	/**
-     * @var string Accounting Journal label
-     */
-    public $label;
+	 * @var string Accounting Journal label
+	 */
+	public $label;
 
-    /**
-     * @var int 1:various operations, 2:sale, 3:purchase, 4:bank, 5:expense-report, 8:inventory, 9: has-new
-     */
-    public $nature;
+	/**
+	 * @var int 1:various operations, 2:sale, 3:purchase, 4:bank, 5:expense-report, 8:inventory, 9: has-new
+	 */
+	public $nature;
 
-    /**
-     * @var int is active or not
-     */
+	/**
+	 * @var int is active or not
+	 */
 	public $active;
 
-    /**
-     * @var array array of lines
-     */
+	/**
+	 * @var array array of lines
+	 */
 	public $lines;
 
 	/**
@@ -86,10 +86,10 @@ class AccountingJournal extends CommonObject
 	 *
 	 * @param DoliDB $db Database handle
 	 */
-    public function __construct($db)
-    {
-        $this->db = $db;
-    }
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
 
 	/**
 	 * Load an object from database
@@ -108,9 +108,8 @@ class AccountingJournal extends CommonObject
 			$sql .= " FROM ".MAIN_DB_PREFIX."accounting_journal";
 			$sql .= " WHERE";
 			if ($rowid) {
-				$sql .= " rowid = ".(int) $rowid;
-			}
-			elseif ($journal_code)
+				$sql .= " rowid = ".((int) $rowid);
+			} elseif ($journal_code)
 			{
 				$sql .= " code = '".$this->db->escape($journal_code)."'";
 				$sql .= " AND entity  = ".$conf->entity;
@@ -136,9 +135,7 @@ class AccountingJournal extends CommonObject
 				} else {
 					return 0;
 				}
-			}
-			else
-			{
+			} else {
 				$this->error = "Error ".$this->db->lasterror();
 				$this->errors[] = "Error ".$this->db->lasterror();
 			}
@@ -158,8 +155,8 @@ class AccountingJournal extends CommonObject
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-    public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
-    {
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	{
 		$sql = "SELECT rowid, code, label, nature, active";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		// Manage filter
@@ -287,7 +284,7 @@ class AccountingJournal extends CommonObject
 		return $this->LibType($this->nature, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return type of an accounting journal
 	 *
@@ -297,7 +294,7 @@ class AccountingJournal extends CommonObject
 	 */
 	public function LibType($nature, $mode = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 
 		$langs->loadLangs(array("accountancy"));
@@ -311,8 +308,7 @@ class AccountingJournal extends CommonObject
 			elseif ($nature == 3) return $langs->trans('AccountingJournalType3');
 			elseif ($nature == 2) return $langs->trans('AccountingJournalType2');
 			elseif ($nature == 1) return $langs->trans('AccountingJournalType1');
-		}
-		elseif ($mode == 1)
+		} elseif ($mode == 1)
 		{
 			if ($nature == 9) return $langs->trans('AccountingJournalType9');
 			elseif ($nature == 5) return $langs->trans('AccountingJournalType5');

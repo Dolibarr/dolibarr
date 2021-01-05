@@ -17,8 +17,10 @@
 
 // TODO Do we really need this page. We alread have a ipn.php page !
 
-define("NOLOGIN", 1); // This means this output page does not require to be logged.
-define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+if (!defined('NOLOGIN'))		define("NOLOGIN", 1); // This means this output page does not require to be logged.
+if (!defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
 
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) define("DOLENTITY", $entity);
@@ -48,23 +50,18 @@ if (isset($_GET['connect']))
 		$endpoint_secret = $conf->global->STRIPE_TEST_WEBHOOK_CONNECT_KEY;
 		$service = 'StripeTest';
 		$servicestatus = 0;
-	}
-	else
-	{
+	} else {
 		$endpoint_secret = $conf->global->STRIPE_LIVE_WEBHOOK_CONNECT_KEY;
 		$service = 'StripeLive';
-        $servicestatus = 1;
+		$servicestatus = 1;
 	}
-}
-else {
+} else {
 	if (isset($_GET['test']))
 	{
 		$endpoint_secret = $conf->global->STRIPE_TEST_WEBHOOK_KEY;
 		$service = 'StripeTest';
 		$servicestatus = 0;
-	}
-	else
-	{
+	} else {
 		$endpoint_secret = $conf->global->STRIPE_LIVE_WEBHOOK_KEY;
 		$service = 'StripeLive';
 		$servicestatus = 1;
@@ -105,28 +102,28 @@ $json_obj = json_decode($json_str);
 
 $intent = null;
 try {
-    if (isset($json_obj->payment_method_id)) {
-        // Create the PaymentIntent
-        $intent = \Stripe\PaymentIntent::create(array(
-            'payment_method' => $json_obj->payment_method_id,
-            'amount' => 1099,
-            'currency' => 'eur',
-            'confirmation_method' => 'manual',
-            'confirm' => true,
-        ));
-    }
-    if (isset($json_obj->payment_intent_id)) {
-        $intent = \Stripe\PaymentIntent::retrieve(
-            $json_obj->payment_intent_id
-            );
-        $intent->confirm();
-    }
-    generatePaymentResponse($intent);
+	if (isset($json_obj->payment_method_id)) {
+		// Create the PaymentIntent
+		$intent = \Stripe\PaymentIntent::create(array(
+			'payment_method' => $json_obj->payment_method_id,
+			'amount' => 1099,
+			'currency' => 'eur',
+			'confirmation_method' => 'manual',
+			'confirm' => true,
+		));
+	}
+	if (isset($json_obj->payment_intent_id)) {
+		$intent = \Stripe\PaymentIntent::retrieve(
+			$json_obj->payment_intent_id
+			);
+		$intent->confirm();
+	}
+	generatePaymentResponse($intent);
 } catch (\Stripe\Error\Base $e) {
-    // Display error on client
-    echo json_encode(array(
-        'error' => $e->getMessage()
-    ));
+	// Display error on client
+	echo json_encode(array(
+		'error' => $e->getMessage()
+	));
 }
 
 /**
@@ -137,25 +134,25 @@ try {
  */
 function generatePaymentResponse($intent)
 {
-    if ($intent->status == 'requires_source_action' &&
-        $intent->next_action->type == 'use_stripe_sdk') {
-        // Tell the client to handle the action
-        echo json_encode(array(
-            'requires_action' => true,
-            'payment_intent_client_secret' => $intent->client_secret
-        ));
-    } elseif ($intent->status == 'succeeded') {
-        // The payment didn’t need any additional actions and completed!
-        // Handle post-payment fulfillment
+	if ($intent->status == 'requires_source_action' &&
+		$intent->next_action->type == 'use_stripe_sdk') {
+		// Tell the client to handle the action
+		echo json_encode(array(
+			'requires_action' => true,
+			'payment_intent_client_secret' => $intent->client_secret
+		));
+	} elseif ($intent->status == 'succeeded') {
+		// The payment didn’t need any additional actions and completed!
+		// Handle post-payment fulfillment
 
-        // TODO
+		// TODO
 
-        echo json_encode(array(
-            "success" => true
-        ));
-    } else {
-        // Invalid status
-        http_response_code(500);
-        echo json_encode(array('error' => 'Invalid PaymentIntent status'));
-    }
+		echo json_encode(array(
+			"success" => true
+		));
+	} else {
+		// Invalid status
+		http_response_code(500);
+		echo json_encode(array('error' => 'Invalid PaymentIntent status'));
+	}
 }

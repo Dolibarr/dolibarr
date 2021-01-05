@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2020  Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2018  Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2020       Maxime DEMAREST      <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,63 +41,63 @@ class PaymentLoan extends CommonObject
 	 */
 	public $table_element = 'payment_loan';
 
-    /**
-     * @var string String with name of icon for PaymentLoan
-     */
-    public $picto = 'money-bill-alt';
+	/**
+	 * @var string String with name of icon for PaymentLoan
+	 */
+	public $picto = 'money-bill-alt';
 
-    /**
-     * @var int Loan ID
-     */
-    public $fk_loan;
+	/**
+	 * @var int Loan ID
+	 */
+	public $fk_loan;
 
-    /**
-     * @var string Create date
-     */
-    public $datec = '';
+	/**
+	 * @var string Create date
+	 */
+	public $datec = '';
 
-    public $tms = '';
+	public $tms = '';
 
-    /**
-     * @var string Payment date
-     */
-    public $datep = '';
+	/**
+	 * @var string Payment date
+	 */
+	public $datep = '';
 
-    public $amounts = array(); // Array of amounts
+	public $amounts = array(); // Array of amounts
 
-    public $amount_capital; // Total amount of payment
+	public $amount_capital; // Total amount of payment
 
-    public $amount_insurance;
+	public $amount_insurance;
 
-    public $amount_interest;
+	public $amount_interest;
 
-    /**
-     * @var int Payment type ID
-     */
-    public $fk_typepayment;
+	/**
+	 * @var int Payment mode ID
+	 */
+	public $fk_typepayment;
 
-    /**
-     * @var int Payment ID
-     */
-    public $num_payment;
+	/**
+	 * @var int Payment ID
+	 */
+	public $num_payment;
 
-    /**
-     * @var int Bank ID
-     */
-    public $fk_bank;
+	/**
+	 * @var int Bank ID
+	 */
+	public $fk_bank;
 
-    /**
-     * @var int User ID
-     */
-    public $fk_user_creat;
+	/**
+	 * @var int User ID
+	 */
+	public $fk_user_creat;
 
-    /**
-     * @var int user ID
-     */
-    public $fk_user_modif;
+	/**
+	 * @var int user ID
+	 */
+	public $fk_user_modif;
 
-    public $type_code;
-    public $type_label;
+	public $type_code;
+	public $type_label;
 
 
 	/**
@@ -170,9 +171,7 @@ class PaymentLoan extends CommonObject
 			if ($resql)
 			{
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_loan");
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->lasterror();
 				$error++;
 			}
@@ -183,9 +182,7 @@ class PaymentLoan extends CommonObject
 			$this->amount_capital = $totalamount;
 			$this->db->commit();
 			return $this->id;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -259,9 +256,7 @@ class PaymentLoan extends CommonObject
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -331,9 +326,7 @@ class PaymentLoan extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -374,6 +367,40 @@ class PaymentLoan extends CommonObject
 			if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 		}
 
+		// Set loan unpaid if loan has no other payment
+		if (!$error)
+		{
+			require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+			$loan = new Loan($this->db);
+			$loan->fetch($this->fk_loan);
+			$sum_payment = $loan->getSumPayment();
+			if ($sum_payment == 0)
+			{
+				dol_syslog(get_class($this)."::delete : set loan to unpaid", LOG_DEBUG);
+				if ($loan->set_unpaid($user) < 1)
+				{
+					$error++;
+					dol_print_error($this->db);
+				}
+			}
+		}
+
+		//if (! $error)
+		//{
+		//	if (! $notrigger)
+		//	{
+				// Uncomment this and change MYOBJECT to your own tag if you
+				// want this action call a trigger.
+
+				//// Call triggers
+				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+				//$interface=new Interfaces($this->db);
+				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
+				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				//// End call triggers
+		//	}
+		//}
+
 		// Commit or rollback
 		if ($error)
 		{
@@ -384,12 +411,35 @@ class PaymentLoan extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
+	}
+
+	/**
+	 * Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 *
+	 * @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * @return  string				Libelle
+	 */
+	public function getLibStatut($mode = 0)
+	{
+		return $this->LibStatut($this->statut, $mode);
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Renvoi le libelle d'un statut donne
+	 *
+	 * @param   int		$status     Statut
+	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * @return	string  		    Libelle du statut
+	 */
+	public function LibStatut($status, $mode = 0)
+	{
+		// phpcs:enable
+		return '';
 	}
 
 	/**
@@ -410,6 +460,7 @@ class PaymentLoan extends CommonObject
 		global $conf;
 
 		$error = 0;
+		$this->db->begin();
 
 		if (!empty($conf->banque->enabled))
 		{
@@ -422,9 +473,9 @@ class PaymentLoan extends CommonObject
 			if ($mode == 'payment_loan') $total = -$total;
 
 			// Insert payment into llx_bank
-            $bank_line_id = $acc->addline(
+			$bank_line_id = $acc->addline(
 				$this->datep,
-				$this->paymenttype, // Payment mode id or code ("CHQ or VIR for example")
+				$this->paymenttype, // Payment mode ID or code ("CHQ or VIR for example")
 				$label,
 				$total,
 				$this->num_payment,
@@ -458,32 +509,50 @@ class PaymentLoan extends CommonObject
 					}
 				}
 
+
 				// Add link 'loan' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
 				if ($mode == 'payment_loan')
 				{
 					$result = $acc->add_url_line($bank_line_id, $fk_loan, DOL_URL_ROOT.'/loan/card.php?id=', ($this->label ? $this->label : ''), 'loan');
 					if ($result <= 0) dol_print_error($this->db);
 				}
-			}
-			else
-			{
+			} else {
 				$this->error = $acc->error;
 				$error++;
 			}
 		}
 
+
+		// Set loan payment started if no set
 		if (!$error)
 		{
+			require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+			$loan = new Loan($this->db);
+			$loan->fetch($fk_loan);
+			if ($loan->paid == $loan::STATUS_UNPAID)
+			{
+				dol_syslog(get_class($this)."::addPaymentToBank : set loan payment to started", LOG_DEBUG);
+				if ($loan->set_started($user) < 1)
+				{
+					$error++;
+					dol_print_error($this->db);
+				}
+			}
+		}
+
+		if (!$error)
+		{
+			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
+			$this->db->rollback();
 			return -1;
 		}
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Update link between loan's payment and the line generate in llx_bank
 	 *
@@ -492,18 +561,16 @@ class PaymentLoan extends CommonObject
 	 */
 	public function update_fk_bank($id_bank)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_loan SET fk_bank = ".$id_bank." WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update_fk_bank", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-		    $this->fk_bank = $id_bank;
+			$this->fk_bank = $id_bank;
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return 0;
 		}
@@ -514,9 +581,9 @@ class PaymentLoan extends CommonObject
 	 *
 	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=No picto
 	 * 	@param	int		$maxlen						Max length label
-     *	@param	int  	$notooltip					1=Disable tooltip
-     *	@param	string	$moretitle					Add more text to title tooltip
-     *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@param	int  	$notooltip					1=Disable tooltip
+	 *	@param	string	$moretitle					Add more text to title tooltip
+	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0, $moretitle = '', $save_lastsearch_value = -1)

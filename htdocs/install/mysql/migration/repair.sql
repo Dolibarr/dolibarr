@@ -91,8 +91,8 @@ delete from llx_commandedet where fk_commande in (select rowid from llx_commande
 delete from llx_commande where ref = '';
 delete from llx_propaldet where fk_propal in (select rowid from llx_propal where ref = '');
 delete from llx_propal where ref = '';
-delete from llx_livraisondet where fk_livraison in (select rowid from llx_livraison where ref = '');
-delete from llx_livraison where ref = '';
+delete from llx_deliverydet where fk_delivery in (select rowid from llx_delivery where ref = '');
+delete from llx_delivery where ref = '';
 delete from llx_expeditiondet where fk_expedition in (select rowid from llx_expedition where ref = '');
 delete from llx_expedition where ref = '';
 delete from llx_holiday_logs where fk_user_update not IN (select rowid from llx_user);
@@ -188,8 +188,8 @@ delete from llx_ecm_files where src_object_type = 'expensereport' and src_object
 delete from llx_ecm_files where (src_object_type = 'contrat' OR src_object_type = 'contract') and src_object_id NOT IN (select rowid from llx_contrat);
 
 -- Fix: delete orphelin deliveries. Note: deliveries are linked to shipment by llx_element_element only. No other links.
-delete from llx_livraisondet where fk_livraison not in (select fk_target from llx_element_element where targettype = 'delivery') AND fk_livraison not in (select fk_source from llx_element_element where sourcetype = 'delivery');
-delete from llx_livraison    where rowid not in (select fk_target from llx_element_element where targettype = 'delivery') AND rowid not in (select fk_source from llx_element_element where sourcetype = 'delivery');
+delete from llx_deliverydet where fk_delivery not in (select fk_target from llx_element_element where targettype = 'delivery') AND fk_delivery not in (select fk_source from llx_element_element where sourcetype = 'delivery');
+delete from llx_delivery    where rowid not in (select fk_target from llx_element_element where targettype = 'delivery') AND rowid not in (select fk_source from llx_element_element where sourcetype = 'delivery');
 
 
 -- Fix delete element_element orphelins (right side)
@@ -384,6 +384,7 @@ delete from llx_commande_fournisseur_dispatch where fk_commandefourndet = 0 or f
 delete from llx_menu where menu_handler = 'smartphone';
 
 update llx_expedition set date_valid = date_creation where fk_statut = 1 and date_valid IS NULL;
+update llx_expedition set date_valid = NOW() where fk_statut = 1 and date_valid IS NULL;
 
 -- Detect bad consistency between duraction_effective of a task and sum of time of tasks
 -- select pt.rowid, pt.duration_effective, SUM(ptt.task_duration) as y from llx_projet_task as pt, llx_projet_task_time as ptt where ptt.fk_task = pt.rowid group by pt.rowid, pt.duration_effective having pt.duration_effective <> y;
@@ -468,6 +469,14 @@ UPDATE llx_chargesociales SET date_creation = tms WHERE date_creation IS NULL;
 -- VMYSQL4.1 update llx_facture_fourn set date_lim_reglement = null where DATE(STR_TO_DATE(date_lim_reglement, '%Y-%m-%d')) IS NULL;
 -- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
 -- VMYSQL4.1 update llx_facture_fourn set date_lim_reglement = null where DATE(STR_TO_DATE(date_lim_reglement, '%Y-%m-%d')) IS NULL;
+
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_inventory set date_cre = null where DATE(STR_TO_DATE(date_cre, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_inventory set date_cre = null where DATE(STR_TO_DATE(date_cre, '%Y-%m-%d')) IS NULL;
+
+-- Note that you can manually set the default value of a date or datetime to CURRENT_TIMESTAMP with:
+--ALTER TABLE llx_table modify column columnname datetime DEFAULT CURRENT_TIMESTAMP;
 
 
 -- Backport a change of value into the hourly rate. 

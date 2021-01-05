@@ -141,8 +141,24 @@ class Odf
 			//}
 		}
 
+		$this->vars[$tag] = $this->convertVarToOdf($value, $encode, $charset);
+
+		return $this;
+	}
+
+	/**
+     * Replaces html tags in odt tags and returns a compatible string
+     * @param string   $key        Name of the variable within the template
+	 * @param string   $value      Replacement value
+	 * @param bool     $encode     If true, special XML characters are encoded
+	 * @param string   $charset    Charset
+     * @return string
+     */
+	public function convertVarToOdf($value, $encode = true, $charset = 'ISO-8859')
+	{
 		$value = $encode ? htmlspecialchars($value) : $value;
 		$value = ($charset == 'ISO-8859') ? utf8_encode($value) : $value;
+		$convertedValue = $value;
 
 		// Check if the value includes html tags
 		if ($this->_hasHtmlTag($value) === true) {
@@ -155,9 +171,9 @@ class Odf
 				'<style:style style:name="subText" style:family="text"><style:text-properties style:text-position="sub 58%" /></style:style>',
 				'<style:style style:name="supText" style:family="text"><style:text-properties style:text-position="super 58%" /></style:style>'
 			);
-	
-			$this->vars[$tag] = $this->_replaceHtmlWithOdtTag($this->_getDataFromHtml($value), $customStyles, $fontDeclarations);
-	
+
+			$convertedValue = $this->_replaceHtmlWithOdtTag($this->_getDataFromHtml($value), $customStyles, $fontDeclarations);
+
 			foreach ($customStyles as $key => $val) {
 				array_push($automaticStyles, '<style:style style:name="customStyle' . $key . '" style:family="text">' . $val . '</style:style>');
 			}
@@ -180,9 +196,9 @@ class Odf
 			}
 			$this->contentXml = str_replace('</office:font-face-decls>', $fonts . '</office:font-face-decls>', $this->contentXml);
 		}
-		else $this->vars[$tag] = preg_replace('/(\r\n|\r|\n)/i', "<text:line-break/>", $value);
-		
-		return $this;
+		else $convertedValue = preg_replace('/(\r\n|\r|\n)/i', "<text:line-break/>", $value);
+
+		return $convertedValue;
 	}
 
 	/**
@@ -321,7 +337,7 @@ class Odf
                     $tempHtml = substr($tempHtml, $tagOffset);
                 }
                 // Extract the attribute data from the html tag
-                preg_match_all('/([0-9A-Za-z]+(?:="[0-9A-Za-z\:\-\s\,\;]*")?)+/', $matches[2][0], $explodedAttributes);
+                preg_match_all('/([0-9A-Za-z]+(?:="[0-9A-Za-z\:\-\s\,\;\#]*")?)+/', $matches[2][0], $explodedAttributes);
                 $explodedAttributes = array_filter($explodedAttributes[0]);
                 $attributes = array();
                 // Store each attribute with its name in the $attributes array
@@ -384,7 +400,7 @@ class Odf
 	public function htmlToUTFAndPreOdf($value)
 	{
 		// We decode into utf8, entities
-		$value=dol_html_entity_decode($value, ENT_QUOTES);
+		$value=dol_html_entity_decode($value, ENT_QUOTES|ENT_HTML5);
 
 		// We convert html tags
 		$ishtml=dol_textishtml($value);

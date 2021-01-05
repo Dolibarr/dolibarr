@@ -36,23 +36,23 @@ class pdf_standardlabel extends CommonStickerGenerator
 	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
 	 *
-	 * @param	PDF			$pdf			PDF reference
+	 * @param	TCPDF		$pdf			PDF reference
 	 * @param	Translate	$outputlangs	Output langs
 	 * @param	array		$param			Associative array containing label content and optional parameters
 	 * @return	void
 	 */
-    public function addSticker(&$pdf, $outputlangs, $param)
-    {
+	public function addSticker(&$pdf, $outputlangs, $param)
+	{
 		// use this method in future refactoring
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
 	 * - %LOGO% is replace with company logo
 	 * - %PHOTO% is replace with photo provided as parameter
 	 *
-	 * @param	PDF			$pdf			PDF reference
+	 * @param	TCPDF		$pdf			PDF reference
 	 * @param	string		$textleft		Text left
 	 * @param	string		$header			Header
 	 * @param	string		$footer			Footer
@@ -63,7 +63,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 	 */
 	public function Add_PDF_label(&$pdf, $textleft, $header, $footer, $outputlangs, $textright = '', $photo = '')
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $mysoc, $conf, $langs;
 		global $forceimgscalewidth, $forceimgscaleheight;
 
@@ -86,8 +86,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 			if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
 			{
 				$logo = $conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
-			}
-			elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
+			} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
 			{
 				$logo = $conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
 			}
@@ -142,8 +141,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 		if ($tmp['height'])
 		{
 			$imgratio = $tmp['width'] / $tmp['height'];
-			if ($imgratio >= $defaultratio) { $widthtouse = $maxwidthtouse; $heighttouse = round($widthtouse / $imgratio); }
-			else { $heightouse = $maxheighttouse; $widthtouse = round($heightouse * $imgratio); }
+			if ($imgratio >= $defaultratio) { $widthtouse = $maxwidthtouse; $heighttouse = round($widthtouse / $imgratio); } else { $heightouse = $maxheighttouse; $widthtouse = round($heightouse * $imgratio); }
 		}
 		//var_dump($this->_Width.'x'.$this->_Height.' with border and scale '.$imgscale.' => max '.$maxwidthtouse.'x'.$maxheighttouse.' => We use '.$widthtouse.'x'.$heighttouse);exit;
 
@@ -153,13 +151,11 @@ class pdf_standardlabel extends CommonStickerGenerator
 			// Output left area
 			if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX + $xleft, $_PosY + $ytop, $widthtouse, $heighttouse);
 			elseif ($textleft == '%PHOTO%' && $photo) $pdf->Image($photo, $_PosX + $xleft, $_PosY + $ytop, $widthtouse, $heighttouse);
-			else
-			{
+			else {
 				$pdf->SetXY($_PosX + $xleft, $_PosY + $ytop);
 				$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
 			}
-		}
-		elseif ($textleft != '' && $textright != '')	//
+		} elseif ($textleft != '' && $textright != '')	//
 		{
 			if ($textleft == '%LOGO%' || $textleft == '%PHOTO%')
 			{
@@ -167,29 +163,25 @@ class pdf_standardlabel extends CommonStickerGenerator
 				elseif ($textleft == '%PHOTO%' && $photo) $pdf->Image($photo, $_PosX + $xleft, $_PosY + $ytop, $widthtouse, $heighttouse);
 				$pdf->SetXY($_PosX + $xleft + $widthtouse + 1, $_PosY + $ytop);
 				$pdf->MultiCell($this->_Width - $xleft - $xleft - $widthtouse - 1, $this->_Line_Height, $outputlangs->convToOutputCharset($textright), 0, 'R');
-			}
-			elseif ($textright == '%LOGO%' || $textright == '%PHOTO%')
+			} elseif ($textright == '%LOGO%' || $textright == '%PHOTO%')
 			{
 				if ($textright == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX + $this->_Width - $widthtouse - $xleft, $_PosY + $ytop, $widthtouse, $heighttouse);
 				elseif ($textright == '%PHOTO%' && $photo) $pdf->Image($photo, $_PosX + $this->_Width - $widthtouse - $xleft, $_PosY + $ytop, $widthtouse, $heighttouse);
 				$pdf->SetXY($_PosX + $xleft, $_PosY + $ytop);
 				$pdf->MultiCell($this->_Width - $widthtouse - $xleft - $xleft - 1, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
-			}
-			else	// text on halft left and text on half right
+			} else // text on halft left and text on half right
 			{
 				$pdf->SetXY($_PosX + $xleft, $_PosY + $ytop);
 				$pdf->MultiCell(round($this->_Width / 2), $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
 				$pdf->SetXY($_PosX + round($this->_Width / 2), $_PosY + $ytop);
 				$pdf->MultiCell(round($this->_Width / 2) - 2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright), 0, 'R');
 			}
-		}
-		else	// Only a right part
+		} else // Only a right part
 		{
 			// Output right area
 			if ($textright == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX + $this->_Width - $widthtouse - $xleft, $_PosY + $ytop, $widthtouse, $heighttouse);
 			elseif ($textright == '%PHOTO%' && $photo) $pdf->Image($photo, $_PosX + $this->_Width - $widthtouse - $xleft, $_PosY + $ytop, $widthtouse, $heighttouse);
-			else
-			{
+			else {
 				$pdf->SetXY($_PosX + $xleft, $_PosY + $ytop);
 				$pdf->MultiCell($this->_Width - $xleft, $this->_Line_Height, $outputlangs->convToOutputCharset($textright), 0, 'R');
 			}
@@ -227,7 +219,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Function to build PDF on disk, then output on HTTP strem.
 	 *
@@ -240,21 +232,21 @@ class pdf_standardlabel extends CommonStickerGenerator
 	 */
 	public function write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir = '', $filename = 'tmp_address_sheet.pdf')
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $user, $conf, $langs, $mysoc, $_Avery_Labels;
 
 		$this->code = $srctemplatepath;
 		$this->Tformat = $_Avery_Labels[$this->code];
 		if (empty($this->Tformat)) { dol_print_error('', 'ErrorBadTypeForCard'.$this->code); exit; }
 		$this->type = 'pdf';
-        // standard format or custom
-        if ($this->Tformat['paper-size'] != 'custom') {
-            $this->format = $this->Tformat['paper-size'];
-        } else {
-            //custom
-            $resolution = array($this->Tformat['custom_x'], $this->Tformat['custom_y']);
-            $this->format = $resolution;
-        }
+		// standard format or custom
+		if ($this->Tformat['paper-size'] != 'custom') {
+			$this->format = $this->Tformat['paper-size'];
+		} else {
+			//custom
+			$resolution = array($this->Tformat['custom_x'], $this->Tformat['custom_y']);
+			$this->format = $resolution;
+		}
 
 		if (!is_object($outputlangs)) $outputlangs = $langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO

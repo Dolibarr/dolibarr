@@ -94,7 +94,7 @@ print '<input type="hidden" name="action" value="set_proxy">';
 
 $head = security_prepare_head();
 
-dol_fiche_head($head, 'proxy', $langs->trans("Security"), -1);
+print dol_get_fiche_head($head, 'proxy', '', -1);
 
 
 if ($conf->use_javascript_ajax)
@@ -135,7 +135,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ConnectionTimeout").'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_USE_CONNECT_TIMEOUT" type="text" size="4" value="'.(isset($_POST["MAIN_USE_CONNECT_TIMEOUT"]) ?GETPOST("MAIN_USE_CONNECT_TIMEOUT") : $conf->global->MAIN_USE_CONNECT_TIMEOUT).'">';
+print '<input class="flat" name="MAIN_USE_CONNECT_TIMEOUT" type="text" size="4" value="'.(GETPOSTISSET("MAIN_USE_CONNECT_TIMEOUT") ? GETPOST("MAIN_USE_CONNECT_TIMEOUT") : $conf->global->MAIN_USE_CONNECT_TIMEOUT).'">';
 print ' '.strtolower($langs->trans("Seconds"));
 print '</td>';
 print '</tr>';
@@ -197,7 +197,7 @@ print '</tr>';
 
 print '</table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center">';
 print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';

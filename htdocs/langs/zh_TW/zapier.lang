@@ -26,3 +26,4 @@ ModuleZapierForDolibarrDesc = Zapier的Dolibarr模組
 # Admin page
 #
 ZapierForDolibarrSetup = Zapier的設定
+ZapierDescription=Interface with Zapier

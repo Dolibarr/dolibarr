@@ -24,7 +24,7 @@
 		"vendor-dir" : "htdocs/includes"
 	},
 	"require" : {
-		"php" : ">=5.5.0",
+		"php" : ">=5.6.0",
 		"ext-curl" : "*",
 		"ckeditor/ckeditor" : "4.12.1",
 		"mike42/escpos-php" : "2.2",
@@ -33,11 +33,13 @@
 		"restler/framework" : "3.0.0-RC6",
 		"tecnickcom/tcpdf" : "6.3.2",
 		"nnnick/chartjs" : "^2.9",
-		"stripe/stripe-php" : "6.43.1"
+		"stripe/stripe-php" : "6.43.1",
+		"maximebf/debugbar" : "1.15.1",
+		"symfony/var-dumper" : "3"
 	},
 	"require-dev" : {
-		"jakub-onderka/php-parallel-lint" : "^0",
-		"jakub-onderka/php-console-highlighter" : "^0",
+		"php-parallel-lint/php-parallel-lint" : "^0",
+		"php-parallel-lint/php-console-highlighter" : "^0",
 		"phpunit/phpunit" : "^4",
 		"squizlabs/php_codesniffer" : "^2",
 		"phpunit/phpunit-selenium" : "^2"

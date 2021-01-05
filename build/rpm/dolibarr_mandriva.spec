@@ -177,6 +177,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/custom
 %_datadir/dolibarr/htdocs/datapolicy
 %_datadir/dolibarr/htdocs/dav
+%_datadir/dolibarr/htdocs/delivery
 %_datadir/dolibarr/htdocs/debugbar
 %_datadir/dolibarr/htdocs/don
 %_datadir/dolibarr/htdocs/ecm
@@ -193,8 +194,8 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/imports
 %_datadir/dolibarr/htdocs/includes
 %_datadir/dolibarr/htdocs/install
+%_datadir/dolibarr/htdocs/intracommreport
 %_datadir/dolibarr/htdocs/langs/HOWTO-Translation.txt
-%_datadir/dolibarr/htdocs/livraison
 %_datadir/dolibarr/htdocs/loan
 %_datadir/dolibarr/htdocs/mailmanspip
 %_datadir/dolibarr/htdocs/margin
@@ -208,6 +209,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/product
 %_datadir/dolibarr/htdocs/projet
 %_datadir/dolibarr/htdocs/public
+%_datadir/dolibarr/htdocs/recruitment
 %_datadir/dolibarr/htdocs/reception
 %_datadir/dolibarr/htdocs/resource
 %_datadir/dolibarr/htdocs/salaries
@@ -270,7 +272,6 @@ then
   #grep -q -c "dolibarr_lib_GEOIP_PATH" $config    || echo "<?php \$dolibarr_lib_GEOIP_PATH=''; ?>" >> $config
   grep -q -c "dolibarr_lib_NUSOAP_PATH" $config    || [ ! -d "/usr/share/php/nusoap" ] || echo "<?php \$dolibarr_lib_NUSOAP_PATH='/usr/share/php/nusoap'; ?>" >> $config
   grep -q -c "dolibarr_lib_ODTPHP_PATHTOPCLZIP" $config || [ ! -d "/usr/share/php/libphp-pclzip" ]  || echo "<?php \$dolibarr_lib_ODTPHP_PATHTOPCLZIP='/usr/share/php/libphp-pclzip'; ?>" >> $config
-  #grep -q -c "dolibarr_lib_PHPEXCEL_PATH" $config || echo "<?php \$dolibarr_lib_PHPEXCEL_PATH=''; ?>" >> $config
   #grep -q -c "dolibarr_lib_TCPDF_PATH" $config    || echo "<?php \$dolibarr_lib_TCPDF_PATH=''; ?>" >> $config
   grep -q -c "dolibarr_js_CKEDITOR" $config        || [ ! -d "/usr/share/javascript/ckeditor" ]  || echo "<?php \$dolibarr_js_CKEDITOR='/javascript/ckeditor'; ?>" >> $config
   grep -q -c "dolibarr_js_JQUERY" $config          || [ ! -d "/usr/share/javascript/jquery" ]    || echo "<?php \$dolibarr_js_JQUERY='/javascript/jquery'; ?>" >> $config

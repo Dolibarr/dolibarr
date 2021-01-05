@@ -83,6 +83,8 @@ BoxTitleLatestModifiedSupplierOrders=Pesanan Vendor: %s terakhir dimodifikasi
 BoxTitleLastModifiedCustomerBills=Faktur Pelanggan: %s terakhir dimodifikasi
 BoxTitleLastModifiedCustomerOrders=Pesanan Penjualan: %s terakhir dimodifikasi
 BoxTitleLastModifiedPropals=Proposal dimodifikasi %s terbaru
+BoxTitleLatestModifiedJobPositions=Latest %s modified jobs
+BoxTitleLatestModifiedCandidatures=Latest %s modified candidatures
 ForCustomersInvoices=Tagihan pelanggan
 ForCustomersOrders=Pesanan pelanggan
 ForProposals=Proposal
@@ -100,3 +102,5 @@ SuspenseAccountNotDefined=Akun penangguhan tidak ditentukan
 BoxLastCustomerShipments=Pengiriman pelanggan terakhir
 BoxTitleLastCustomerShipments=Pengiriman pelanggan %s terbaru
 NoRecordedShipments=Tidak ada pengiriman pelanggan yang direkam
+# Pages
+AccountancyHome=Akuntansi

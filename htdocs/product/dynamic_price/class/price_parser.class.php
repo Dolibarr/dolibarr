@@ -32,38 +32,38 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
  */
 class PriceParser
 {
-    protected $db;
-    // Limit of expressions per price
-    public $limit = 100;
-    // The error that occurred when parsing price
-    public $error_parser;
-    // The expression that caused the error
-    public $error_expr;
-    //The special char
-    public $special_chr = "#";
-    //The separator char
-    public $separator_chr = ";";
+	protected $db;
+	// Limit of expressions per price
+	public $limit = 100;
+	// The error that occurred when parsing price
+	public $error_parser;
+	// The expression that caused the error
+	public $error_expr;
+	//The special char
+	public $special_chr = "#";
+	//The separator char
+	public $separator_chr = ";";
 
-    /**
-     *  Constructor
-     *
-     *  @param      DoliDB		$db      Database handler
-     */
-    public function __construct($db)
-    {
-        $this->db = $db;
-    }
+	/**
+	 *  Constructor
+	 *
+	 *  @param      DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
 
-    /**
-     *	Returns translated error
-     *
-     *	@return string      Translated error
-     */
-    public function translatedError()
-    {
-        global $langs;
-        $langs->load("errors");
-        /*
+	/**
+	 *	Returns translated error
+	 *
+	 *	@return string      Translated error
+	 */
+	public function translatedError()
+	{
+		global $langs;
+		$langs->load("errors");
+		/*
         -No arg
          9, an unexpected error occured
         14, division by zero
@@ -96,76 +96,72 @@ class PriceParser
         16, internal error
         18, internal error
         */
-        if (empty($this->error_parser)) {
-            return $langs->trans("ErrorPriceExpressionUnknown", 0); //this is not supposed to happen
-        }
-        list($code, $info) = $this->error_parser;
-        if (in_array($code, array(9, 14, 19, 20))) //Errors which have 0 arg
-        {
-            return $langs->trans("ErrorPriceExpression".$code);
-        }
-        elseif (in_array($code, array(1, 2, 3, 4, 5, 8, 10, 11, 17, 21, 22))) //Errors which have 1 arg
-        {
-            return $langs->trans("ErrorPriceExpression".$code, $info);
-        }
-        elseif (in_array($code, array(6, 23))) //Errors which have 2 args
-        {
-            return $langs->trans("ErrorPriceExpression".$code, $info[0], $info[1]);
-        }
-        elseif (in_array($code, array(7, 12, 13, 15, 16, 18))) //Internal errors
-        {
-            return $langs->trans("ErrorPriceExpressionInternal", $code);
-        }
-        else //Unknown errors
-        {
-            return $langs->trans("ErrorPriceExpressionUnknown", $code);
-        }
-    }
+		if (empty($this->error_parser)) {
+			return $langs->trans("ErrorPriceExpressionUnknown", 0); //this is not supposed to happen
+		}
+		list($code, $info) = $this->error_parser;
+		if (in_array($code, array(9, 14, 19, 20))) //Errors which have 0 arg
+		{
+			return $langs->trans("ErrorPriceExpression".$code);
+		} elseif (in_array($code, array(1, 2, 3, 4, 5, 8, 10, 11, 17, 21, 22))) //Errors which have 1 arg
+		{
+			return $langs->trans("ErrorPriceExpression".$code, $info);
+		} elseif (in_array($code, array(6, 23))) //Errors which have 2 args
+		{
+			return $langs->trans("ErrorPriceExpression".$code, $info[0], $info[1]);
+		} elseif (in_array($code, array(7, 12, 13, 15, 16, 18))) //Internal errors
+		{
+			return $langs->trans("ErrorPriceExpressionInternal", $code);
+		} else //Unknown errors
+		{
+			return $langs->trans("ErrorPriceExpressionUnknown", $code);
+		}
+	}
 
-    /**
-     *	Calculates price based on expression
-     *
-     *	@param	Product	$product    	The Product object to get information
-     *	@param	String 	$expression     The expression to parse
-     *	@param	array  	$values     	Strings to replaces
-     *  @return int 					> 0 if OK, < 1 if KO
-     */
-    public function parseExpression($product, $expression, $values)
-    {
-        global $user;
-        global $hookmanager;
-        $action = 'PARSEEXPRESSION';
-        if ($result = $hookmanager->executeHooks('doDynamiPrice', array(
+	/**
+	 *	Calculates price based on expression
+	 *
+	 *	@param	Product	$product    	The Product object to get information
+	 *	@param	String 	$expression     The expression to parse
+	 *	@param	array  	$values     	Strings to replaces
+	 *  @return int 					> 0 if OK, < 1 if KO
+	 */
+	public function parseExpression($product, $expression, $values)
+	{
+		global $user;
+		global $hookmanager;
+		$action = 'PARSEEXPRESSION';
+		if ($result = $hookmanager->executeHooks('doDynamiPrice', array(
 								'expression' =>$expression,
 								'product' => $product,
 								'values' => $values
-        ), $this, $action)) {
+		), $this, $action)) {
 			return $result;
-        }
-        //Check if empty
-        $expression = trim($expression);
-        if (empty($expression))
-        {
-            $this->error_parser = array(20, null);
-            return -2;
-        }
+		}
+		//Check if empty
+		$expression = trim($expression);
+		if (empty($expression))
+		{
+			$this->error_parser = array(20, null);
+			return -2;
+		}
 
-        //Accessible product values by expressions
-        $values = array_merge($values, array(
-            "tva_tx" => $product->tva_tx,
-            "localtax1_tx" => $product->localtax1_tx,
-            "localtax2_tx" => $product->localtax2_tx,
-            "weight" => $product->weight,
-            "length" => $product->length,
-            "surface" => $product->surface,
-            "price_min" => $product->price_min,
-        ));
+		//Accessible product values by expressions
+		$values = array_merge($values, array(
+			"tva_tx" => $product->tva_tx,
+			"localtax1_tx" => $product->localtax1_tx,
+			"localtax2_tx" => $product->localtax2_tx,
+			"weight" => $product->weight,
+			"length" => $product->length,
+			"surface" => $product->surface,
+			"price_min" => $product->price_min,
+		));
 
-        //Retrieve all extrafield for product and add it to values
-        $extrafields = new ExtraFields($this->db);
-        $extrafields->fetch_name_optionals_label('product', true);
-        $product->fetch_optionals();
-        if (is_array($extrafields->attributes[$product->table_element]['label']))
+		//Retrieve all extrafield for product and add it to values
+		$extrafields = new ExtraFields($this->db);
+		$extrafields->fetch_name_optionals_label('product', true);
+		$product->fetch_optionals();
+		if (is_array($extrafields->attributes[$product->table_element]['label']))
 		{
 			foreach ($extrafields->attributes[$product->table_element]['label'] as $key=>$label)
 			{
@@ -173,102 +169,102 @@ class PriceParser
 			}
 		}
 
-        //Process any pending updaters
-        $price_updaters = new PriceGlobalVariableUpdater($this->db);
-        foreach ($price_updaters->listPendingUpdaters() as $entry) {
-            //Schedule the next update by adding current timestamp (secs) + interval (mins)
-            $entry->update_next_update(dol_now() + ($entry->update_interval * 60), $user);
-            //Do processing
-            $res = $entry->process();
-            //Store any error or clear status if OK
-            $entry->update_status($res < 1 ? $entry->error : '', $user);
-        }
+		//Process any pending updaters
+		$price_updaters = new PriceGlobalVariableUpdater($this->db);
+		foreach ($price_updaters->listPendingUpdaters() as $entry) {
+			//Schedule the next update by adding current timestamp (secs) + interval (mins)
+			$entry->update_next_update(dol_now() + ($entry->update_interval * 60), $user);
+			//Do processing
+			$res = $entry->process();
+			//Store any error or clear status if OK
+			$entry->update_status($res < 1 ? $entry->error : '', $user);
+		}
 
-        //Get all global values
-        $price_globals = new PriceGlobalVariable($this->db);
-        foreach ($price_globals->listGlobalVariables() as $entry)
-        {
-            $values["global_".$entry->code] = $entry->value;
-        }
+		//Get all global values
+		$price_globals = new PriceGlobalVariable($this->db);
+		foreach ($price_globals->listGlobalVariables() as $entry)
+		{
+			$values["global_".$entry->code] = $entry->value;
+		}
 
-        //Remove internal variables
-        unset($values["supplier_id"]);
+		//Remove internal variables
+		unset($values["supplier_id"]);
 
-        //Prepare the lib, parameters and values
-        $em = new EvalMath();
-        $em->suppress_errors = true; //Don't print errors on page
-        $this->error_expr = null;
-        $last_result = null;
+		//Prepare the lib, parameters and values
+		$em = new EvalMath();
+		$em->suppress_errors = true; //Don't print errors on page
+		$this->error_expr = null;
+		$last_result = null;
 
-        //Fill each variable in expression from values
-        $expression = str_replace("\n", $this->separator_chr, $expression);
-        foreach ($values as $key => $value)
-        {
-            if ($value === null && strpos($expression, $key) !== false) {
-                $this->error_parser = array(24, $key);
-                return -7;
-            }
-            $expression = str_replace($this->special_chr.$key.$this->special_chr, strval($value), $expression);
-        }
+		//Fill each variable in expression from values
+		$expression = str_replace("\n", $this->separator_chr, $expression);
+		foreach ($values as $key => $value)
+		{
+			if ($value === null && strpos($expression, $key) !== false) {
+				$this->error_parser = array(24, $key);
+				return -7;
+			}
+			$expression = str_replace($this->special_chr.$key.$this->special_chr, strval($value), $expression);
+		}
 
-        //Check if there is unfilled variable
-        if (strpos($expression, $this->special_chr) !== false)
-        {
-            $data = explode($this->special_chr, $expression);
-            $variable = $this->special_chr.$data[1];
-            if (isset($data[2])) $variable .= $this->special_chr;
-            $this->error_parser = array(23, array($variable, $expression));
-            return -6;
-        }
+		//Check if there is unfilled variable
+		if (strpos($expression, $this->special_chr) !== false)
+		{
+			$data = explode($this->special_chr, $expression);
+			$variable = $this->special_chr.$data[1];
+			if (isset($data[2])) $variable .= $this->special_chr;
+			$this->error_parser = array(23, array($variable, $expression));
+			return -6;
+		}
 
-        //Iterate over each expression splitted by $separator_chr
-        $expressions = explode($this->separator_chr, $expression);
-        $expressions = array_slice($expressions, 0, $this->limit);
-        foreach ($expressions as $expr) {
-            $expr = trim($expr);
-            if (!empty($expr))
-            {
-                $last_result = $em->evaluate($expr);
-                $this->error_parser = $em->last_error_code;
-                if ($this->error_parser !== null) { //$em->last_error_code is null if no error happened, so just check if error_parser is not null
-                    $this->error_expr = $expr;
-                    return -3;
-                }
-            }
-        }
-        $vars = $em->vars();
-        if (empty($vars["price"])) {
-            $vars["price"] = $last_result;
-        }
-        if (!isset($vars["price"]))
-        {
-            $this->error_parser = array(21, $expression);
-            return -4;
-        }
-        if ($vars["price"] < 0)
-        {
-            $this->error_parser = array(22, $expression);
-            return -5;
-        }
-        return $vars["price"];
-    }
+		//Iterate over each expression splitted by $separator_chr
+		$expressions = explode($this->separator_chr, $expression);
+		$expressions = array_slice($expressions, 0, $this->limit);
+		foreach ($expressions as $expr) {
+			$expr = trim($expr);
+			if (!empty($expr))
+			{
+				$last_result = $em->evaluate($expr);
+				$this->error_parser = $em->last_error_code;
+				if ($this->error_parser !== null) { //$em->last_error_code is null if no error happened, so just check if error_parser is not null
+					$this->error_expr = $expr;
+					return -3;
+				}
+			}
+		}
+		$vars = $em->vars();
+		if (empty($vars["price"])) {
+			$vars["price"] = $last_result;
+		}
+		if (!isset($vars["price"]))
+		{
+			$this->error_parser = array(21, $expression);
+			return -4;
+		}
+		if ($vars["price"] < 0)
+		{
+			$this->error_parser = array(22, $expression);
+			return -5;
+		}
+		return $vars["price"];
+	}
 
-    /**
-     *	Calculates product price based on product id and associated expression
-     *
-     *	@param	Product				$product    	The Product object to get information
-     *	@param	array 				$extra_values   Any aditional values for expression
-     *	@return int 						> 0 if OK, < 1 if KO
-     */
-    public function parseProduct($product, $extra_values = array())
-    {
-        //Get the expression from db
-        $price_expression = new PriceExpression($this->db);
-        $res = $price_expression->fetch($product->fk_price_expression);
-        if ($res < 1) {
-            $this->error_parser = array(19, null);
-            return -1;
-        }
+	/**
+	 *	Calculates product price based on product id and associated expression
+	 *
+	 *	@param	Product				$product    	The Product object to get information
+	 *	@param	array 				$extra_values   Any aditional values for expression
+	 *	@return int 						> 0 if OK, < 1 if KO
+	 */
+	public function parseProduct($product, $extra_values = array())
+	{
+		//Get the expression from db
+		$price_expression = new PriceExpression($this->db);
+		$res = $price_expression->fetch($product->fk_price_expression);
+		if ($res < 1) {
+			$this->error_parser = array(19, null);
+			return -1;
+		}
 
 		//Get the supplier min price
 		$productFournisseur = new ProductFournisseur($this->db);
@@ -276,13 +272,13 @@ class PriceParser
 		if ($res < 0) {
 			$this->error_parser = array(25, null);
 			return -1;
-		}  elseif ($res == 0) {
+		} elseif ($res == 0) {
 			$supplier_min_price = 0;
 		} else {
 			 $supplier_min_price = $productFournisseur->fourn_unitprice;
 		}
 
-        //Accessible values by expressions
+		//Accessible values by expressions
 		$extra_values = array_merge($extra_values, array(
 			"supplier_min_price" => $supplier_min_price,
 		));
@@ -297,61 +293,61 @@ class PriceParser
 		return $result;
 	}
 
-    /**
-     *	Calculates supplier product price based on product supplier price and associated expression
-     *
-     *	@param	ProductFournisseur	$product_supplier   The Product supplier object to get information
-     *	@param	array 				$extra_values       Any aditional values for expression
-     *  @return int 				> 0 if OK, < 1 if KO
-     */
-    public function parseProductSupplier($product_supplier, $extra_values = array())
-    {
-        //Get the expression from db
-        $price_expression = new PriceExpression($this->db);
-        $res = $price_expression->fetch($product_supplier->fk_supplier_price_expression);
-        if ($res < 1)
-        {
-            $this->error_parser = array(19, null);
-            return -1;
-        }
+	/**
+	 *	Calculates supplier product price based on product supplier price and associated expression
+	 *
+	 *	@param	ProductFournisseur	$product_supplier   The Product supplier object to get information
+	 *	@param	array 				$extra_values       Any aditional values for expression
+	 *  @return int 				> 0 if OK, < 1 if KO
+	 */
+	public function parseProductSupplier($product_supplier, $extra_values = array())
+	{
+		//Get the expression from db
+		$price_expression = new PriceExpression($this->db);
+		$res = $price_expression->fetch($product_supplier->fk_supplier_price_expression);
+		if ($res < 1)
+		{
+			$this->error_parser = array(19, null);
+			return -1;
+		}
 
-        //Get the product data (use ignore_expression to avoid possible recursion)
-        $product_supplier->fetch($product_supplier->id, '', '', '', 1);
+		//Get the product data (use ignore_expression to avoid possible recursion)
+		$product_supplier->fetch($product_supplier->id, '', '', '', 1);
 
-        //Accessible values by expressions
-        $extra_values = array_merge($extra_values, array(
-            "supplier_quantity" => $product_supplier->fourn_qty,
-            "supplier_tva_tx" => $product_supplier->fourn_tva_tx,
-        ));
+		//Accessible values by expressions
+		$extra_values = array_merge($extra_values, array(
+			"supplier_quantity" => $product_supplier->fourn_qty,
+			"supplier_tva_tx" => $product_supplier->fourn_tva_tx,
+		));
 
-        //Parse the expression and return the price
-        return $this->parseExpression($product_supplier, $price_expression->expression, $extra_values);
-    }
+		//Parse the expression and return the price
+		return $this->parseExpression($product_supplier, $price_expression->expression, $extra_values);
+	}
 
-    /**
-     *  Tests string expression for validity
-     *
-     *  @param  int					$product_id    	The Product id to get information
-     *  @param  string 				$expression     The expression to parse
-     *  @param  array 				$extra_values   Any aditional values for expression
-     *  @return int 				> 0 if OK, < 1 if KO
-     */
-    public function testExpression($product_id, $expression, $extra_values = array())
-    {
-        //Get the product data
-        $product = new Product($this->db);
-        $product->fetch($product_id, '', '', 1);
+	/**
+	 *  Tests string expression for validity
+	 *
+	 *  @param  int					$product_id    	The Product id to get information
+	 *  @param  string 				$expression     The expression to parse
+	 *  @param  array 				$extra_values   Any aditional values for expression
+	 *  @return int 				> 0 if OK, < 1 if KO
+	 */
+	public function testExpression($product_id, $expression, $extra_values = array())
+	{
+		//Get the product data
+		$product = new Product($this->db);
+		$product->fetch($product_id, '', '', 1);
 
-        //Values for product expressions
-        $extra_values = array_merge($extra_values, array(
-            "supplier_min_price" => 1,
-        ));
+		//Values for product expressions
+		$extra_values = array_merge($extra_values, array(
+			"supplier_min_price" => 1,
+		));
 
-        //Values for supplier product expressions
-        $extra_values = array_merge($extra_values, array(
-            "supplier_quantity" => 2,
-            "supplier_tva_tx" => 3,
-        ));
-        return $this->parseExpression($product, $expression, $extra_values);
-    }
+		//Values for supplier product expressions
+		$extra_values = array_merge($extra_values, array(
+			"supplier_quantity" => 2,
+			"supplier_tva_tx" => 3,
+		));
+		return $this->parseExpression($product, $expression, $extra_values);
+	}
 }

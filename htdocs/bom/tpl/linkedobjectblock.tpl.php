@@ -41,34 +41,41 @@ $total = 0;
 $ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink)
 {
-    $ilink++;
-    $product_static = new Product($db);
-    $trclass = 'oddeven';
-    if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass .= ' liste_sub_total';
-    echo '<tr class="'.$trclass.'" >';
-    echo '<td class="linkedcol-element" >'.$langs->trans("Bom");
-    if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) {
-        print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines" data-element="'.$objectlink->element.'" data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';
-    }
-    echo '</td>';
-    echo '<td class="linkedcol-name nowraponall" >'.$objectlink->getNomUrl(1).'</td>';
-    $product_static->fetch($objectlink->fk_product);
-    echo '<td class="linkedcol-ref" align="center">'.$product_static->getNomUrl(1).'</td>';
-    echo '<td class="linkedcol-date" align="center">'.dol_print_date($objectlink->date_creation, 'day').'</td>';
-    echo '<td class="linkedcol-amount right">';
-    if ($user->rights->commande->lire) {
-        $total = $total + $objectlink->total_ht;
-        echo price($objectlink->total_ht);
-    }
-    echo '</td>';
-    echo '<td class="linkedcol-statut right">'.$objectlink->getLibStatut(3).'</td>';
-    echo '<td class="linkedcol-action right">';
-    // For now, shipments must stay linked to order, so link is not deletable
-    if ($object->element != 'shipping') {
-        echo '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a>';
-    }
-    echo '</td>';
-    echo "</tr>\n";
+	$ilink++;
+	$product_static = new Product($db);
+	$trclass = 'oddeven';
+	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass .= ' liste_sub_total';
+	echo '<tr class="'.$trclass.'" >';
+	echo '<td class="linkedcol-element" >'.$langs->trans("Bom");
+	if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) {
+		print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines" data-element="'.$objectlink->element.'" data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';
+	}
+	echo '</td>';
+	echo '<td class="linkedcol-name nowraponall" >'.$objectlink->getNomUrl(1).'</td>';
+
+	echo '<td class="linkedcol-ref" align="center">';
+	$result = $product_static->fetch($objectlink->fk_product);
+	if ($result < 0) {
+		setEventMessage($product_static->error, 'errors');
+	} elseif ($result > 0) {
+		$product_static->getNomUrl(1);
+	}
+	print '</td>';
+	echo '<td class="linkedcol-date" align="center">'.dol_print_date($objectlink->date_creation, 'day').'</td>';
+	echo '<td class="linkedcol-amount right">';
+	if ($user->rights->commande->lire) {
+		$total = $total + $objectlink->total_ht;
+		echo price($objectlink->total_ht);
+	}
+	echo '</td>';
+	echo '<td class="linkedcol-statut right">'.$objectlink->getLibStatut(3).'</td>';
+	echo '<td class="linkedcol-action right">';
+	// For now, shipments must stay linked to order, so link is not deletable
+	if ($object->element != 'shipping') {
+		echo '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a>';
+	}
+	echo '</td>';
+	echo "</tr>\n";
 }
 
 echo "<!-- END PHP TEMPLATE -->\n";

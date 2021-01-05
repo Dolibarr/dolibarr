@@ -50,7 +50,7 @@ $tmptype2label = ExtraFields::$type2label;
 $type2label = array('');
 foreach ($tmptype2label as $key => $val) $type2label[$key] = $langs->trans($val);
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'reception'; //Must be the $table_element of the class that manage extrafield
 
@@ -79,11 +79,11 @@ print "<br>\n";
 
 $head = reception_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes_reception', $langs->trans("Receptions"), -1, 'sending');
+print dol_get_fiche_head($head, 'attributes_reception', $langs->trans("Receptions"), -1, 'sending');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 // Buttons

@@ -39,7 +39,7 @@ $langs->loadLangs(array("companies", "website"));
 
 $action     = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $show_files = GETPOST('show_files', 'int');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'myobjectlist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'websitelist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
@@ -76,7 +76,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($objectwebsiteaccount
 unset($objectwebsiteaccount->fields['fk_soc']); // Remove this field, we are already on the thirdparty
 
 // Initialize array of search criterias
-$search_all = trim(GETPOST("search_all", 'alpha'));
+$search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($objectwebsiteaccount->fields as $key => $val)
 {
@@ -99,14 +99,8 @@ foreach ($objectwebsiteaccount->fields as $key => $val)
 }
 
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -127,39 +121,39 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    // Cancel
-    if (GETPOST('cancel', 'alpha') && !empty($backtopage))
-    {
-        header("Location: ".$backtopage);
-        exit;
-    }
+	// Cancel
+	if (GETPOST('cancel', 'alpha') && !empty($backtopage))
+	{
+		header("Location: ".$backtopage);
+		exit;
+	}
 
-    // Selection of new fields
-    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+	// Selection of new fields
+	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-    // Purge search criteria
-    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
-    {
-    	foreach ($objectwebsiteaccount->fields as $key => $val)
-    	{
-    		$search[$key] = '';
-    	}
-    	$toselect = '';
-    	$search_array_options = array();
-    }
-    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
-    	|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha'))
-    {
-    	$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
-    }
+	// Purge search criteria
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
+	{
+		foreach ($objectwebsiteaccount->fields as $key => $val)
+		{
+			$search[$key] = '';
+		}
+		$toselect = '';
+		$search_array_options = array();
+	}
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
+		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha'))
+	{
+		$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
+	}
 
-    // Mass actions
-    $objectclass = 'WebsiteAccount';
-    $objectlabel = 'WebsiteAccount';
-    $permissiontoread = $user->rights->societe->lire;
-    $permissiontodelete = $user->rights->societe->supprimer;
-    $uploaddir = $conf->societe->dir_output;
-    include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+	// Mass actions
+	$objectclass = 'WebsiteAccount';
+	$objectlabel = 'WebsiteAccount';
+	$permissiontoread = $user->rights->societe->lire;
+	$permissiontodelete = $user->rights->societe->supprimer;
+	$uploaddir = $conf->societe->dir_output;
+	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 
@@ -191,7 +185,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 $head = societe_prepare_head($object);
 
-dol_fiche_head($head, 'website', $langs->trans("ThirdParty"), - 1, 'company');
+print dol_get_fiche_head($head, 'website', $langs->trans("ThirdParty"), - 1, 'company');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -235,14 +229,14 @@ print '</table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 $newcardbutton = '';
 if (!empty($conf->website->enabled)) {
 	if (!empty($user->rights->societe->lire)) {
 		$newcardbutton .= dolGetButtonTitle($langs->trans("AddWebsiteAccount"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&fk_soc='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id));
-    } else {
-    	$newcardbutton .= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&fk_soc='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', 0);
+	} else {
+		$newcardbutton .= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&fk_soc='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', 0);
 	}
 }
 

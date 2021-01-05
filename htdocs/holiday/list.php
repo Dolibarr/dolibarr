@@ -32,12 +32,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
-require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('users', 'holiday', 'hrm'));
+$langs->loadLangs(array('users', 'other', 'holiday', 'hrm'));
 
 // Protection if external user
 if ($user->socid > 0) accessforbidden();
@@ -68,14 +68,14 @@ $result = restrictedArea($user, 'holiday', '', '');
 // If we are on the view of a specific user
 if ($id > 0)
 {
-    $canread = 0;
-    if ($id == $user->id) $canread = 1;
-    if (!empty($user->rights->holiday->read_all)) $canread = 1;
-    if (!empty($user->rights->holiday->read) && in_array($id, $childids)) $canread = 1;
-    if (!$canread)
-    {
-        accessforbidden();
-    }
+	$canread = 0;
+	if ($id == $user->id) $canread = 1;
+	if (!empty($user->rights->holiday->readall)) $canread = 1;
+	if (!empty($user->rights->holiday->read) && in_array($id, $childids)) $canread = 1;
+	if (!$canread)
+	{
+		accessforbidden();
+	}
 }
 
 $diroutputmassaction = $conf->holiday->dir_output.'/temp/massgeneration/'.$user->id;
@@ -83,8 +83,8 @@ $diroutputmassaction = $conf->holiday->dir_output.'/temp/massgeneration/'.$user-
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -106,7 +106,7 @@ $search_month_end    = GETPOST('search_month_end', 'int');
 $search_year_end     = GETPOST('search_year_end', 'int');
 $search_employee     = GETPOST('search_employee', 'int');
 $search_valideur     = GETPOST('search_valideur', 'int');
-$search_statut       = GETPOST('search_statut', 'int');
+$search_status       = GETPOST('search_status', 'int');
 $search_type         = GETPOST('search_type', 'int');
 
 // Initialize technical objects
@@ -122,9 +122,9 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
 	'cp.ref'=>'Ref',
-    'cp.description'=>'Description',
-    'uu.lastname'=>'EmployeeLastname',
-    'uu.firstname'=>'EmployeeFirstname',
+	'cp.description'=>'Description',
+	'uu.lastname'=>'EmployeeLastname',
+	'uu.firstname'=>'EmployeeFirstname',
 	'uu.login'=>'Login'
 );
 
@@ -143,15 +143,17 @@ $arrayfields = array(
 	'cp.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
+if (empty($conf->holiday->enabled))
+{
+	llxHeader('', $langs->trans('CPTitreMenu'));
+	print '<div class="tabBar">';
+	print '<span style="color: #FF0000;">'.$langs->trans('NotActiveModCP').'</span>';
+	print '</div>';
+	llxFooter();
+	exit();
+}
 
 
 /*
@@ -176,13 +178,13 @@ if (empty($reshook))
 		$search_ref = "";
 		$search_month_create = "";
 		$search_year_create = "";
-	    $search_month_start = "";
+		$search_month_start = "";
 		$search_year_start = "";
 		$search_month_end = "";
 		$search_year_end = "";
 		$search_employee = "";
 		$search_valideur = "";
-		$search_statut = "";
+		$search_status = "";
 		$search_type = '';
 		$toselect = '';
 		$search_array_options = array();
@@ -253,7 +255,7 @@ $sql .= " cp.description,";
 $sql .= " cp.date_debut,";
 $sql .= " cp.date_fin,";
 $sql .= " cp.halfday,";
-$sql .= " cp.statut,";
+$sql .= " cp.statut as status,";
 $sql .= " cp.fk_validator,";
 $sql .= " cp.date_valid,";
 $sql .= " cp.fk_user_valid,";
@@ -268,7 +270,7 @@ $sql .= " uu.firstname as user_firstname,";
 $sql .= " uu.admin as user_admin,";
 $sql .= " uu.email as user_email,";
 $sql .= " uu.login as user_login,";
-$sql .= " uu.statut as user_statut,";
+$sql .= " uu.statut as user_status,";
 $sql .= " uu.photo as user_photo,";
 
 $sql .= " ua.lastname as validator_lastname,";
@@ -276,7 +278,7 @@ $sql .= " ua.firstname as validator_firstname,";
 $sql .= " ua.admin as validator_admin,";
 $sql .= " ua.email as validator_email,";
 $sql .= " ua.login as validator_login,";
-$sql .= " ua.statut as validator_statut,";
+$sql .= " ua.statut as validator_status,";
 $sql .= " ua.photo as validator_photo";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -311,14 +313,14 @@ if (!empty($search_valideur) && $search_valideur != -1) {
 }
 // Type
 if (!empty($search_type) && $search_type != -1) {
-	$sql .= ' AND cp.fk_type IN ('.$db->escape($search_type).')';
+	$sql .= ' AND cp.fk_type IN ('.$db->sanitize($db->escape($search_type)).')';
 }
 // Status
-if (!empty($search_statut) && $search_statut != -1) {
-	$sql .= " AND cp.statut = '".$db->escape($search_statut)."'\n";
+if (!empty($search_status) && $search_status != -1) {
+	$sql .= " AND cp.statut = '".$db->escape($search_status)."'\n";
 }
 
-if (empty($user->rights->holiday->read_all)) $sql .= ' AND cp.fk_user IN ('.join(',', $childids).')';
+if (empty($user->rights->holiday->readall)) $sql .= ' AND cp.fk_user IN ('.join(',', $childids).')';
 if ($id > 0) $sql .= " AND cp.fk_user IN (".$id.")";
 
 // Add where from extra fields
@@ -371,7 +373,7 @@ if ($resql)
 	if ($search_employee > 0) $param .= '&search_employee='.urlencode($search_employee);
 	if ($search_valideur > 0) $param .= '&search_valideur='.urlencode($search_valideur);
 	if ($search_type > 0)     $param .= '&search_type='.urlencode($search_type);
-	if ($search_statut > 0)   $param .= '&search_statut='.urlencode($search_statut);
+	if ($search_status > 0)   $param .= '&search_status='.urlencode($search_status);
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -402,43 +404,37 @@ if ($resql)
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 		$head = user_prepare_head($fuser);
 
-		dol_fiche_head($head, 'paidholidays', $title, -1, 'user');
+		print dol_get_fiche_head($head, 'paidholidays', $title, -1, 'user');
 
-	    dol_banner_tab($fuser, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+		dol_banner_tab($fuser, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
 		if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
 		{
-		    print '<div class="underbanner clearboth"></div>';
+			print '<div class="underbanner clearboth"></div>';
 
-		    print '<br>';
+			print '<br>';
 
-		    showMyBalance($object, $user_id);
+			showMyBalance($object, $user_id);
 		}
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		// Buttons for actions
 
 		print '<div class="tabsAction">';
 
-		$canedit = (($user->id == $user_id && $user->rights->holiday->write) || ($user->id != $user_id && $user->rights->holiday->write_all));
+		$canedit = (($user->id == $user_id && $user->rights->holiday->write) || ($user->id != $user_id && (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall_advance))));
 
 		if ($canedit)
 		{
-			print '<a href="'.DOL_URL_ROOT.'/holiday/card.php?action=request&fuserid='.$user_id.'" class="butAction">'.$langs->trans("AddCP").'</a>';
+			print '<a href="'.DOL_URL_ROOT.'/holiday/card.php?action=create&fuserid='.$user_id.'" class="butAction">'.$langs->trans("AddCP").'</a>';
 		}
 
 		print '</div>';
-	}
-	else
-	{
+	} else {
 		$title = $langs->trans("ListeCP");
 
-		$newcardbutton = '';
-		if ($user->rights->holiday->write)
-		{
-			$newcardbutton .= dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=request');
-	    }
+		$newcardbutton = dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=create', '', $user->rights->holiday->write);
 
 		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_hrm', 0, $newcardbutton, '', $limit, 0, 0, 1);
 	}
@@ -451,8 +447,8 @@ if ($resql)
 
 	if ($sall)
 	{
-	    foreach ($fieldstosearchall as $key => $val) $fieldstosearchall[$key] = $langs->trans($val);
-	    print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
+		foreach ($fieldstosearchall as $key => $val) $fieldstosearchall[$key] = $langs->trans($val);
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
 	}
 
 	$moreforfilter = '';
@@ -475,7 +471,7 @@ if ($resql)
 
 
 	$include = '';
-	if (empty($user->rights->holiday->read_all)) $include = 'hierarchyme'; // Can see only its hierarchyl
+	if (empty($user->rights->holiday->readall)) $include = 'hierarchyme'; // Can see only its hierarchyl
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
@@ -493,8 +489,8 @@ if ($resql)
 
 	if (!empty($arrayfields['cp.fk_user']['checked']))
 	{
-		$morefilter = 'AND employee = 1';
-		if (!empty($conf->global->HOLIDAY_FOR_NON_SALARIES_TOO)) $morefilter = '';
+		$morefilter = '';
+		if (!empty($conf->global->HOLIDAY_HIDE_FOR_NON_SALARIES)) $morefilter = 'AND employee = 1';
 
 		// User
 		$disabled = 0;
@@ -506,27 +502,25 @@ if ($resql)
 		}
 
 		print '<td class="liste_titre maxwidthonsmartphone left">';
-		print $form->select_dolusers($search_employee, "search_employee", 1, "", $disabled, $include, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth200');
+		print $form->select_dolusers($search_employee, "search_employee", 1, "", $disabled, $include, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth150');
 		print '</td>';
 	}
 
 	// Approver
 	if (!empty($arrayfields['cp.fk_validator']['checked']))
 	{
-		if ($user->rights->holiday->read_all)
+		if ($user->rights->holiday->readall)
 		{
-		    print '<td class="liste_titre maxwidthonsmartphone left">';
-		    $validator = new UserGroup($db);
-		    $excludefilter = $user->admin ? '' : 'u.rowid <> '.$user->id;
-		    $valideurobjects = $validator->listUsersForGroup($excludefilter);
-		    $valideurarray = array();
-		    foreach ($valideurobjects as $val) $valideurarray[$val->id] = $val->id;
-		    print $form->select_dolusers($search_valideur, "search_valideur", 1, "", 0, $valideurarray, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth200');
-		    print '</td>';
-		}
-		else
-		{
-		    print '<td class="liste_titre">&nbsp;</td>';
+			print '<td class="liste_titre maxwidthonsmartphone left">';
+			$validator = new UserGroup($db);
+			$excludefilter = $user->admin ? '' : 'u.rowid <> '.$user->id;
+			$valideurobjects = $validator->listUsersForGroup($excludefilter);
+			$valideurarray = array();
+			foreach ($valideurobjects as $val) $valideurarray[$val->id] = $val->id;
+			print $form->select_dolusers($search_valideur, "search_valideur", 1, "", 0, $valideurarray, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth150');
+			print '</td>';
+		} else {
+			print '<td class="liste_titre">&nbsp;</td>';
 		}
 	}
 
@@ -545,7 +539,7 @@ if ($resql)
 				//$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')':'');
 				$arraytypeleaves[$val['rowid']] = $labeltoshow;
 			}
-			print $form->selectarray('search_type', $arraytypeleaves, $search_type, 1);
+			print $form->selectarray('search_type', $arraytypeleaves, $search_type, 1, 0, 0, '', 0, 0, 0, '', '', 1);
 		}
 		print '</td>';
 	}
@@ -603,7 +597,7 @@ if ($resql)
 	if (!empty($arrayfields['cp.statut']['checked']))
 	{
 		print '<td class="liste_titre maxwidthonsmartphone maxwidth200 right">';
-		$object->selectStatutCP($search_statut, 'search_statut');
+		$object->selectStatutCP($search_status, 'search_status');
 		print '</td>';
 	}
 
@@ -620,7 +614,7 @@ if ($resql)
 	if (!empty($arrayfields['cp.fk_user']['checked']))              print_liste_field_titre($arrayfields['cp.fk_user']['label'], $_SERVER["PHP_SELF"], "cp.fk_user", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['cp.fk_validator']['checked']))         print_liste_field_titre($arrayfields['cp.fk_validator']['label'], $_SERVER["PHP_SELF"], "cp.fk_validator", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['cp.fk_type']['checked']))              print_liste_field_titre($arrayfields['cp.fk_type']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
-	if (!empty($arrayfields['duration']['checked']))                print_liste_field_titre($arrayfields['duration']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+	if (!empty($arrayfields['duration']['checked']))                print_liste_field_titre($arrayfields['duration']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right maxwidth100');
 	if (!empty($arrayfields['cp.date_debut']['checked']))           print_liste_field_titre($arrayfields['cp.date_debut']['label'], $_SERVER["PHP_SELF"], "cp.date_debut", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['cp.date_fin']['checked']))             print_liste_field_titre($arrayfields['cp.date_fin']['label'], $_SERVER["PHP_SELF"], "cp.date_fin", "", $param, '', $sortfield, $sortorder, 'center ');
 	// Extra fields
@@ -639,16 +633,15 @@ if ($resql)
 
 
 	// If we ask a dedicated card and not allow to see it, we force on user.
-	if ($id && empty($user->rights->holiday->read_all) && !in_array($id, $childids)) {
+	if ($id && empty($user->rights->holiday->readall) && !in_array($id, $childids)) {
 		$langs->load("errors");
 		print '<tr class="oddeven opacitymediuem"><td colspan="10">'.$langs->trans("NotEnoughPermissions").'</td></tr>';
 		$result = 0;
-	}
-	elseif ($num > 0 && !empty($mysoc->country_id))
+	} elseif ($num > 0 && !empty($mysoc->country_id))
 	{
-	    // Lines
-	    $userstatic = new User($db);
-	    $approbatorstatic = new User($db);
+		// Lines
+		$userstatic = new User($db);
+		$approbatorstatic = new User($db);
 
 		$typeleaves = $object->getTypes(1, -1);
 
@@ -661,6 +654,7 @@ if ($resql)
 			// Leave request
 			$holidaystatic->id = $obj->rowid;
 			$holidaystatic->ref = ($obj->ref ? $obj->ref : $obj->rowid);
+			$holidaystatic->statut = $obj->status;
 
 			// User
 			$userstatic->id = $obj->fk_user;
@@ -669,7 +663,7 @@ if ($resql)
 			$userstatic->admin = $obj->user_admin;
 			$userstatic->email = $obj->user_email;
 			$userstatic->login = $obj->user_login;
-			$userstatic->statut = $obj->user_statut;
+			$userstatic->statut = $obj->user_status;
 			$userstatic->photo = $obj->user_photo;
 
 			// Validator
@@ -679,7 +673,7 @@ if ($resql)
 			$approbatorstatic->admin = $obj->validator_admin;
 			$approbatorstatic->email = $obj->validator_email;
 			$approbatorstatic->login = $obj->validator_login;
-			$approbatorstatic->statut = $obj->validator_statut;
+			$approbatorstatic->statut = $obj->validator_status;
 			$approbatorstatic->photo = $obj->validator_photo;
 
 			$date = $obj->date_create;
@@ -699,12 +693,12 @@ if ($resql)
 			}
 			if (!empty($arrayfields['cp.fk_user']['checked']))
 			{
-				print '<td>'.$userstatic->getNomUrl(-1, 'leave').'</td>';
+				print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}
 			if (!empty($arrayfields['cp.fk_validator']['checked']))
 			{
-				print '<td>'.$approbatorstatic->getNomUrl(-1).'</td>';
+				print '<td class="tdoverflowmax150">'.$approbatorstatic->getNomUrl(-1).'</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}
 			if (!empty($arrayfields['cp.fk_type']['checked']))
@@ -727,7 +721,7 @@ if ($resql)
 			{
 				print '<td class="center">';
 				print dol_print_date($db->jdate($obj->date_debut), 'day');
-				print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$starthalfday]).')</span>';
+				print ' <span class="opacitymedium nowraponall">('.$langs->trans($listhalfday[$starthalfday]).')</span>';
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}
@@ -735,7 +729,7 @@ if ($resql)
 			{
 				print '<td class="center">';
 				print dol_print_date($db->jdate($obj->date_fin), 'day');
-				print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$endhalfday]).')</span>';
+				print ' <span class="opacitymedium nowraponall">('.$langs->trans($listhalfday[$endhalfday]).')</span>';
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}
@@ -760,18 +754,18 @@ if ($resql)
 			}
 			if (!empty($arrayfields['cp.statut']['checked']))
 			{
-				print '<td class="right nowrap">'.$holidaystatic->LibStatut($obj->statut, 5).'</td>';
+				print '<td class="right nowrap">'.$holidaystatic->getLibStatut(5).'</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}
 
-		    // Action column
-		    print '<td class="nowrap center">';
+			// Action column
+			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-		    {
-			    $selected = 0;
+			{
+				$selected = 0;
 				if (in_array($obj->rowid, $arrayofselected)) $selected = 1;
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
-		    }
+			}
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 
@@ -793,9 +787,7 @@ if ($resql)
 	print '</div>';
 
 	print '</form>';
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

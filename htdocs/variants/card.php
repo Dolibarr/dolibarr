@@ -22,7 +22,7 @@ require 'class/ProductAttributeValue.class.php';
 
 $id = GETPOST('id', 'int');
 $valueid = GETPOST('valueid', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $label = GETPOST('label', 'alpha');
 $ref = GETPOST('ref', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
@@ -43,8 +43,8 @@ if ($object->fetch($id) < 1) {
 
 if ($cancel) $action = '';
 
-if ($_POST) {
-	if ($action == 'edit') {
+if ($action) {
+	if ($action == 'update') {
 		$object->ref = $ref;
 		$object->label = $label;
 
@@ -55,7 +55,7 @@ if ($_POST) {
 			header('Location: '.dol_buildpath('/variants/card.php?id='.$id, 2));
 			exit();
 		}
-	} elseif ($action == 'update') {
+	} elseif ($action == 'update_value') {
 		if ($objectval->fetch($valueid) > 0) {
 			$objectval->ref = $ref;
 			$objectval->value = GETPOST('value', 'alpha');
@@ -90,9 +90,9 @@ if ($confirm == 'yes') {
 	if ($action == 'confirm_delete') {
 		$db->begin();
 
-		$res = $objectval->deleteByFkAttribute($object->id);
+		$res = $objectval->deleteByFkAttribute($object->id, $user);
 
-		if ($res < 1 || ($object->delete() < 1)) {
+		if ($res < 1 || ($object->delete($user) < 1)) {
 			$db->rollback();
 			setEventMessages($langs->trans('CoreErrorMessage'), $object->errors, 'errors');
 			header('Location: '.dol_buildpath('/variants/card.php?id='.$object->id, 2));
@@ -102,11 +102,10 @@ if ($confirm == 'yes') {
 			header('Location: '.dol_buildpath('/variants/list.php', 2));
 		}
 		exit();
-	}
-	elseif ($action == 'confirm_deletevalue')
+	} elseif ($action == 'confirm_deletevalue')
 	{
 		if ($objectval->fetch($valueid) > 0) {
-			if ($objectval->delete() < 1) {
+			if ($objectval->delete($user) < 1) {
 				setEventMessages($langs->trans('CoreErrorMessage'), $objectval->errors, 'errors');
 			} else {
 				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
@@ -137,16 +136,21 @@ $head[$h][1] = $langs->trans("ProductAttributeName");
 $head[$h][2] = 'variant';
 $h++;
 
-dol_fiche_head($head, 'variant', $langs->trans('ProductAttributeName'), -1, 'generic');
+print dol_get_fiche_head($head, 'variant', $langs->trans('ProductAttributeName'), -1, 'generic');
 
 if ($action == 'edit') {
-    print '<form method="POST">';
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="action" value="update">';
+		print '<input type="hidden" name="id" value="'.$id.'">';
+		print '<input type="hidden" name="valueid" value="'.$valueid.'">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 }
 
 
 if ($action != 'edit') {
-    print '<div class="fichecenter">';
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 }
 print '<table class="border centpercent tableforfield">';
 print '<tr>';
@@ -174,17 +178,17 @@ print '</table>';
 
 
 if ($action != 'edit') {
-    print '</div>';
+	print '</div>';
 }
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 if ($action == 'edit') {
 	print '<div style="text-align: center;">';
 	print '<div class="inline-block divButAction">';
-	print '<input type="submit" class="button" value="'.$langs->trans('Save').'">';
+	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 	print '&nbsp; &nbsp;';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 	print '</div></form>';
 } else {
@@ -220,8 +224,8 @@ if ($action == 'edit') {
 
 	<div class="tabsAction">
 		<div class="inline-block divButAction">
-			<a href="card.php?id=<?php echo $object->id ?>&action=edit" class="butAction"><?php echo $langs->trans('Modify') ?></a>
-			<a href="card.php?id=<?php echo $object->id ?>&action=delete" class="butAction"><?php echo $langs->trans('Delete') ?></a>
+			<a href="card.php?id=<?php echo $object->id ?>&action=edit&token=<?php echo newToken(); ?>" class="butAction"><?php echo $langs->trans('Modify') ?></a>
+			<a href="card.php?id=<?php echo $object->id ?>&action=delete&token=<?php echo newToken(); ?>" class="butAction"><?php echo $langs->trans('Delete') ?></a>
 		</div>
 	</div>
 
@@ -233,7 +237,7 @@ if ($action == 'edit') {
 	if ($action == 'edit_value') {
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="hidden" name="action" value="update">';
+		print '<input type="hidden" name="action" value="update_value">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="valueid" value="'.$valueid.'">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
@@ -253,9 +257,9 @@ if ($action == 'edit') {
 				<td><input type="text" name="ref" value="<?php echo $attrval->ref ?>"></td>
 				<td><input type="text" name="value" value="<?php echo $attrval->value ?>"></td>
 				<td class="right">
-					<input type="submit" value="<?php echo $langs->trans('Save') ?>" class="button">
+					<input type="submit" value="<?php echo $langs->trans("Save") ?>" class="button button-save">
 					&nbsp; &nbsp;
-					<input type="submit" name="cancel" value="<?php echo $langs->trans('Cancel') ?>" class="button">
+					<input type="submit" name="cancel" value="<?php echo $langs->trans("Cancel") ?>" class="button button-cancel">
 				</td>
 			<?php
 		} else {
@@ -264,7 +268,7 @@ if ($action == 'edit') {
 				<td><?php echo dol_htmlentities($attrval->value) ?></td>
 				<td class="right">
 					<a class="editfielda marginrightonly" href="card.php?id=<?php echo $object->id ?>&action=edit_value&valueid=<?php echo $attrval->id ?>"><?php echo img_edit() ?></a>
-					<a href="card.php?id=<?php echo $object->id ?>&action=delete_value&valueid=<?php echo $attrval->id ?>"><?php echo img_delete() ?></a>
+					<a href="card.php?id=<?php echo $object->id ?>&action=delete_value&token=<?php echo newToken(); ?>&valueid=<?php echo $attrval->id ?>"><?php echo img_delete() ?></a>
 				</td>
 			<?php
 		}

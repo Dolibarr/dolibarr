@@ -26,20 +26,20 @@
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/security2.lib.php';
 
-if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
-if (! defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
 if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no menu to show
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
 if (! defined("NOLOGIN"))        define("NOLOGIN", '1');       // If this page is public (can be called outside logged session)
+if (! defined("NOSESSION"))      define("NOSESSION", '1');
+
+require_once dirname(__FILE__).'/../../htdocs/main.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/security2.lib.php';
+
 
 if (empty($user->id))
 {
@@ -157,6 +157,112 @@ class SecurityTest extends PHPUnit\Framework\TestCase
     }
 
     /**
+     * testSqlAndScriptInjectWithPHPUnit
+     *
+     * @return  void
+     */
+    public function testSqlAndScriptInjectWithPHPUnit()
+    {
+    	// Run tests
+    	// More on https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet
+
+    	// Should be OK
+    	$expectedresult=0;
+
+    	$_SERVER["PHP_SELF"]='/DIR WITH SPACE/htdocs/admin/index.php?mainmenu=home&leftmenu=setup&username=weservices';
+    	$result=testSqlAndScriptInject($_SERVER["PHP_SELF"], 2);
+    	$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject 1a');
+
+    	// Should detect XSS
+    	$expectedresult=1;
+
+    	$_SERVER["PHP_SELF"]='/DIR WITH SPACE/htdocs/admin/index.php?mainmenu=home&leftmenu=setup&username=weservices;badaction';
+    	$result=testSqlAndScriptInject($_SERVER["PHP_SELF"], 2);
+    	$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject 1b');
+
+    	$test="<img src='1.jpg' onerror =javascript:alert('XSS')>";
+    	$result=testSqlAndScriptInject($test, 0);
+    	$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject aaa');
+
+    	$test="<img src='1.jpg' onerror =javascript:alert('XSS')>";
+    	$result=testSqlAndScriptInject($test, 2);
+    	$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject aaa2');
+
+    	$test='<IMG SRC=# onmouseover="alert(1)">';
+    	$result=testSqlAndScriptInject($test, 0);
+    	$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject aaa3');
+    	$test='<IMG SRC onmouseover="alert(1)">';
+    	$result=testSqlAndScriptInject($test, 0);
+    	$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject aaa4');
+    	$test='<IMG onmouseover="alert(1)">';
+    	$result=testSqlAndScriptInject($test, 0);
+    	$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject aaa5');
+    	$test='<IMG SRC=/ onerror="alert(1)">';
+    	$result=testSqlAndScriptInject($test, 0);
+    	$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject aaa6');
+    	$test='<IMG SRC=" &#14;  javascript:alert(1);">';
+    	$result=testSqlAndScriptInject($test, 0);
+    	$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject aaa7');
+
+    	$test='<IMG SRC=&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;&#58;&#97;&#108;&#101;&#114;&#116;&#40;&#39;&#88;&#83;&#83;&#39;&#41;>';
+    	$result=testSqlAndScriptInject($test, 0);
+    	$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject bbb');
+
+    	$test='<SCRIPT SRC=http://xss.rocks/xss.js></SCRIPT>';
+    	$result=testSqlAndScriptInject($test, 0);
+    	$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject ccc');
+
+    	$test='<IMG SRC="javascript:alert(\'XSS\');">';
+    	$result=testSqlAndScriptInject($test, 1);
+    	$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject ddd');
+
+    	$test='<IMG """><SCRIPT>alert("XSS")</SCRIPT>">';
+    	$result=testSqlAndScriptInject($test, 0);
+    	$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject eee');
+
+    	$test='<!-- Google analytics -->
+			<script>
+			  (function(i,s,o,g,r,a,m){i[\'GoogleAnalyticsObject\']=r;i[r]=i[r]||function(){
+			  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			  })(window,document,\'script\',\'https://www.google-analytics.com/analytics.js\',\'ga\');
+
+			  ga(\'create\',\'UA-99999999-9\', \'auto\');
+			  ga(\'send\', \'pageview\');
+
+			</script>';
+    	$result=testSqlAndScriptInject($test, 0);
+    	$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject eee');
+
+    	$test="<IMG SRC=\"jav\tascript:alert('XSS');\">";		// Is locked by some browser like chrome because the default directive no-referrer-when-downgrade is sent when requesting the SRC and then refused because of browser protection on img src load without referrer.
+    	$test="<IMG SRC=\"jav&#x0D;ascript:alert('XSS');\">";	// Same
+
+    	$test='<SCRIPT/XSS SRC="http://xss.rocks/xss.js"></SCRIPT>';
+    	$result=testSqlAndScriptInject($test, 0);
+    	$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject fff1');
+    	$test='<SCRIPT/SRC="http://xss.rocks/xss.js"></SCRIPT>';
+    	$result=testSqlAndScriptInject($test, 0);
+    	$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject fff2');
+
+    	// This case seems to be filtered by browsers now.
+    	$test='<BODY onload!#$%&()*~+-_.,:;?@[/|\]^`=alert(1)>';
+    	//$result=testSqlAndScriptInject($test, 0);
+    	//$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject ggg');
+
+    	$test='<iframe src=http://xss.rocks/scriptlet.html <';
+    	$result=testSqlAndScriptInject($test, 0);
+    	$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject hhh');
+
+    	$test='Set.constructor`alert\x281\x29```';
+    	$result=testSqlAndScriptInject($test, 0);
+    	$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject iii');
+
+    	$test="on<!-- ab\nc -->error=alert(1)";
+    	$result=testSqlAndScriptInject($test, 0);
+    	$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject jjj');
+    }
+
+    /**
      * testGETPOST
      *
      * @return string
@@ -173,12 +279,16 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_GET["param1"]="222";
         $_POST["param1"]="333";
 		$_GET["param2"]='a/b#e(pr)qq-rr\cc';
-        $_GET["param3"]='"a/b#e(pr)qq-rr\cc';    // Same than param2 + "
+        $_GET["param3"]='"&#110;a/b#e(pr)qq-rr\cc';    // Same than param2 + " and &#110;
         $_GET["param4"]='../dir';
         $_GET["param5"]="a_1-b";
+        $_POST["param6"]="&quot;&gt;<svg o&#110;load='console.log(&quot;123&quot;)'&gt;";
+        $_GET["param7"]='"c:\this is a path~1\aaa&#110;" abc<bad>def</bad>';
+        $_POST["param8"]="Hacker<svg o&#110;load='console.log(&quot;123&quot;)'";	// html tag is not closed so it is not detected as html tag but is still harmfull
+		$_POST["param9"]='is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : \'objnotdefined\'';
+		$_POST["param10"]='is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : \'<abc>objnotdefined\'';
 
-        // Test int
-        $result=GETPOST('id', 'int');              // Must return nothing
+		$result=GETPOST('id', 'int');              // Must return nothing
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, '');
 
@@ -197,7 +307,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
         $result=GETPOST("param3", 'alpha');  // Must return string sanitized from char "
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, 'a/b#e(pr)qq-rr\cc');
+        $this->assertEquals($result, 'na/b#e(pr)qq-rr\cc');
 
         $result=GETPOST("param4", 'alpha');  // Must return string sanitized from ../
         print __METHOD__." result=".$result."\n";
@@ -218,11 +328,33 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
         $result=GETPOST("param4", 'aZ09');  // Must return '' as string contains car not in aZ09 definition
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, '');
+        $this->assertEquals('', $result);
 
         $result=GETPOST("param5", 'aZ09');
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, $_GET["param5"]);
+        $this->assertEquals($_GET["param5"], $result);
+
+        $result=GETPOST("param6", 'nohtml');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('">', $result);
+
+        // With restricthtml we must remove html open/close tag and content but not htmlentities like &#110;
+        $result=GETPOST("param7", 'restricthtml');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('"c:\this is a path~1\aaa&#110;" abcdef', $result);
+
+        // With alphanohtml, we must convert the html entities like &#110;
+        $result=GETPOST("param8", 'alphanohtml');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals("Hacker<svg onload='console.log(123)'", $result);
+
+        $result=GETPOST("param9", 'alphanohtml');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($_POST["param9"], $result);
+
+        $result=GETPOST("param10", 'alphanohtml');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($_POST["param9"], $result, 'We should get param9 after processing param10');
 
         return $result;
     }
@@ -278,6 +410,46 @@ class SecurityTest extends PHPUnit\Framework\TestCase
     }
 
     /**
+     * testDolStringOnlyTheseHtmlTags
+     *
+     * @return number
+     */
+    public function testDolHTMLEntityDecode()
+    {
+    	$stringtotest = 'a &colon; b &quot; c &#039; d &apos; e &eacute;';
+    	$decodedstring = dol_html_entity_decode($stringtotest, ENT_QUOTES);
+    	$this->assertEquals('a &colon; b " c \' d &apos; e é', $decodedstring, 'Function did not sanitize correclty');
+
+    	$stringtotest = 'a &colon; b &quot; c &#039; d &apos; e &eacute;';
+    	$decodedstring = dol_html_entity_decode($stringtotest, ENT_QUOTES|ENT_HTML5);
+    	$this->assertEquals('a : b " c \' d \' e é', $decodedstring, 'Function did not sanitize correclty');
+
+    	return 0;
+    }
+
+    /**
+     * testDolStringOnlyTheseHtmlTags
+     *
+     * @return number
+     */
+    public function testDolStringOnlyTheseHtmlTags()
+    {
+    	$stringtotest = '<a href="javascript:aaa">bbbڴ';
+    	$decodedstring = dol_string_onlythesehtmltags($stringtotest, 1, 1, 1);
+        $this->assertEquals('<a href="aaa">bbbڴ', $decodedstring, 'Function did not sanitize correclty with test 1');
+
+        $stringtotest = '<a href="java'.chr(0).'script:aaa">bbbڴ';
+        $decodedstring = dol_string_onlythesehtmltags($stringtotest, 1, 1, 1);
+        $this->assertEquals('<a href="aaa">bbbڴ', $decodedstring, 'Function did not sanitize correclty with test 2');
+
+        $stringtotest = '<a href="javascript&colon;aaa">bbbڴ';
+        $decodedstring = dol_string_onlythesehtmltags($stringtotest, 1, 1, 1);
+        $this->assertEquals('<a href="aaa">bbbڴ', $decodedstring, 'Function did not sanitize correclty with test 3');
+
+        return 0;
+    }
+
+    /**
      * testGetRandomPassword
      *
      * @return number
@@ -300,9 +472,9 @@ class SecurityTest extends PHPUnit\Framework\TestCase
         $this->assertEquals($genpass2, '');
 
         $conf->global->USER_PASSWORD_GENERATED='Standard';
-        $genpass3=getRandomPassword(false);				// Should return a password of 8 chars
+        $genpass3=getRandomPassword(false);				// Should return a password of 10 chars
         print __METHOD__." genpass3=".$genpass3."\n";
-        $this->assertEquals(strlen($genpass3), 8);
+        $this->assertEquals(strlen($genpass3), 10);
 
         return 0;
     }
@@ -325,6 +497,61 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$result=restrictedArea($user, 'societe');
 		$this->assertEquals(1, $result);
+    }
+
+
+    /**
+     * testGetRandomPassword
+     *
+     * @return number
+     */
+    public function testGetURLContent()
+    {
+    	global $conf;
+    	include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+
+    	$url = 'ftp://mydomain.com';
+    	$tmp = getURLContent($url);
+    	print __METHOD__." url=".$url."\n";
+    	$this->assertGreaterThan(0, strpos($tmp['curl_error_msg'], 'not supported'));	// Test error if return does not contains 'not supported'
+
+    	$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
+    	$tmp = getURLContent($url, 'GET', '', 0);	// We do NOT follow
+    	print __METHOD__." url=".$url."\n";
+    	$this->assertEquals(301, $tmp['http_code'], 'GET url 301 without following -> 301');
+
+    	$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
+    	$tmp = getURLContent($url);		// We DO follow
+    	print __METHOD__." url=".$url."\n";
+    	$this->assertEquals(200, $tmp['http_code'], 'GET url 301 with following -> 200');	// Test error if return does not contains 'not supported'
+
+    	$url = 'http://localhost';
+    	$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+    	print __METHOD__." url=".$url."\n";
+    	$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that resolves to a local URL');	// Test we receive an error because localtest.me is not an external URL
+
+    	$url = 'http://127.0.0.1';
+    	$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+    	print __METHOD__." url=".$url."\n";
+    	$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because localtest.me is not an external URL
+
+    	$url = 'https://169.254.0.1';
+    	$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+    	print __METHOD__." url=".$url."\n";
+    	$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because localtest.me is not an external URL
+
+    	$url = 'http://[::1]';
+    	$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+    	print __METHOD__." url=".$url."\n";
+    	$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because localtest.me is not an external URL
+
+    	/*$url = 'localtest.me';
+    	$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+    	print __METHOD__." url=".$url."\n";
+    	$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that resolves to a local URL');	// Test we receive an error because localtest.me is not an external URL
+		*/
+
+    	return 0;
     }
 
     /**

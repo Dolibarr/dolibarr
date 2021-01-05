@@ -41,8 +41,8 @@ if (!$user->rights->mailing->lire || $user->socid > 0) accessforbidden();
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -78,13 +78,13 @@ if ($action == 'add')
 
 	foreach ($modulesdir as $dir)
 	{
-	    // Load modules attributes in arrays (name, numero, orders) from dir directory
-	    //print $dir."\n<br>";
-	    dol_syslog("Scan directory ".$dir." for modules");
+		// Load modules attributes in arrays (name, numero, orders) from dir directory
+		//print $dir."\n<br>";
+		dol_syslog("Scan directory ".$dir." for modules");
 
-	    // Loading Class
-	    $file = $dir."/".$module.".modules.php";
-	    $classname = "mailing_".$module;
+		// Loading Class
+		$file = $dir."/".$module.".modules.php";
+		$classname = "mailing_".$module;
 
 		if (file_exists($file))
 		{
@@ -131,8 +131,8 @@ if (GETPOST('exportcsv', 'int'))
 	header('Content-Disposition: attachment;filename='.$completefilename);
 
 	// List of selected targets
-	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut, mc.date_envoi, mc.tms,";
-	$sql .= " mc.source_url, mc.source_id, mc.source_type, mc.error_text";
+	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut as status, mc.date_envoi, mc.tms,";
+	$sql .= " mc.source_id, mc.source_type, mc.error_text";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 	$sql .= " WHERE mc.fk_mailing=".$object->id;
 	$sql .= $db->order($sortfield, $sortorder);
@@ -146,23 +146,21 @@ if (GETPOST('exportcsv', 'int'))
 		while ($obj = $db->fetch_object($resql))
 		{
 			print $obj->rowid.$sep;
-			print $obj->lastname.$sep;
-			print $obj->firstname.$sep;
+			print '"'.$obj->lastname.'"'.$sep;
+			print '"'.$obj->firstname.'"'.$sep;
 			print $obj->email.$sep;
 			print $obj->other.$sep;
-			print $obj->date_envoi.$sep;
 			print $obj->tms.$sep;
-			print $obj->source_url.$sep;
-			print $obj->source_id.$sep;
 			print $obj->source_type.$sep;
-			print $obj->error_text.$sep;
+			print $obj->source_id.$sep;
+			print $obj->date_envoi.$sep;
+			print $obj->status.$sep;
+			print '"'.$obj->error_text.'"'.$sep;
 			print "\n";
 		}
 
 		exit;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 	exit;
@@ -181,15 +179,11 @@ if ($action == 'delete')
 			$obj->update_nb($id);
 
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-		}
-		else
-		{
+		} else {
 			header("Location: list.php");
 			exit;
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -219,7 +213,7 @@ if ($object->fetch($id) >= 0)
 {
 	$head = emailing_prepare_head($object);
 
-	dol_fiche_head($head, 'targets', $langs->trans("Mailing"), -1, 'email');
+	print dol_get_fiche_head($head, 'targets', $langs->trans("Mailing"), -1, 'email');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -243,7 +237,7 @@ if ($object->fetch($id) >= 0)
 
 	print '<table class="border centpercent tableforfield">';
 
-	print '<tr><td class="titlefield">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';
+	print '<tr><td class="titlefield">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->title.'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("MailFrom").'</td><td colspan="3">';
 	$emailarray = CMailFile::getArrayAddress($object->email_from);
@@ -293,9 +287,7 @@ if ($object->fetch($id) >= 0)
 			if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0)
 			{
 				$text .= $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
-			}
-			else
-			{
+			} else {
 				$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
 			}
 		}
@@ -303,9 +295,7 @@ if ($object->fetch($id) >= 0)
 		if ($text)
 		{
 			print $form->textwithpicto($nbemail, $text, 1, 'warning');
-		}
-		else
-		{
+		} else {
 			print $nbemail;
 		}
 	}
@@ -315,7 +305,7 @@ if ($object->fetch($id) >= 0)
 
 	print "</div>";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<br>';
 
@@ -347,12 +337,12 @@ if ($object->fetch($id) >= 0)
 
 		foreach ($modulesdir as $dir)
 		{
-		    $modulenames = array();
+			$modulenames = array();
 
-		    // Load modules attributes in arrays (name, numero, orders) from dir directory
-		    //print $dir."\n<br>";
-		    dol_syslog("Scan directory ".$dir." for modules");
-		    $handle = @opendir($dir);
+			// Load modules attributes in arrays (name, numero, orders) from dir directory
+			//print $dir."\n<br>";
+			dol_syslog("Scan directory ".$dir." for modules");
+			$handle = @opendir($dir);
 			if (is_resource($handle))
 			{
 				while (($file = readdir($handle)) !== false)
@@ -405,10 +395,8 @@ if ($object->fetch($id) >= 0)
 					{
 						print '<form '.$bctag[$var].' name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
 						print '<input type="hidden" name="token" value="'.newToken().'">';
-					}
-					else
-					{
-					    print '<div '.$bctag[$var].'>';
+					} else {
+						print '<div '.$bctag[$var].'>';
 					}
 
 					print '<div class="tagtd">';
@@ -420,8 +408,7 @@ if ($object->fetch($id) >= 0)
 
 					try {
 						$nbofrecipient = $obj->getNbOfRecipients('');
-					}
-					catch (Exception $e)
+					} catch (Exception $e)
 					{
 						dol_syslog($e->getMessage(), LOG_ERR);
 					}
@@ -430,9 +417,7 @@ if ($object->fetch($id) >= 0)
 					if ($nbofrecipient >= 0)
 					{
 						print $nbofrecipient;
-					}
-					else
-					{
+					} else {
 						print $langs->trans("Error").' '.img_error($obj->error);
 					}
 					print '</div>';
@@ -440,15 +425,14 @@ if ($object->fetch($id) >= 0)
 					print '<div class="tagtd left">';
 					if ($allowaddtarget)
 					{
-    					try {
-    						$filter = $obj->formFilter();
-    					}
-    					catch (Exception $e)
-    					{
-    						dol_syslog($e->getMessage(), LOG_ERR);
-    					}
-    					if ($filter) print $filter;
-    					else print $langs->trans("None");
+						try {
+							$filter = $obj->formFilter();
+						} catch (Exception $e)
+						{
+							dol_syslog($e->getMessage(), LOG_ERR);
+						}
+						if ($filter) print $filter;
+						else print $langs->trans("None");
 					}
 					print '</div>';
 
@@ -456,10 +440,8 @@ if ($object->fetch($id) >= 0)
 					if ($allowaddtarget)
 					{
 						print '<input type="submit" class="button" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
-					}
-					else
-					{
-					    print '<input type="submit" class="button disabled" disabled="disabled" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
+					} else {
+						print '<input type="submit" class="button disabled" disabled="disabled" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
 						//print $langs->trans("MailNoChangePossible");
 						print "&nbsp;";
 					}
@@ -510,15 +492,14 @@ if ($object->fetch($id) >= 0)
 	{
 	    $result = $db->query($sql);
 	    $nbtotalofrecords = $db->num_rows($result);
-	    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-	    {
+	    if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 	    	$page = 0;
 	    	$offset = 0;
 	    }
 
 	    // Fix/update nbemail on emailing record if it differs (may happen if user edit lines from database directly)
 	    if (empty($asearchcriteriahasbeenset)) {
-	    	if ($nbtotalofrecords != $object->email) {
+	    	if ($nbtotalofrecords != $object->nbemail) {
 	    		dol_syslog("We found a difference in nb of record in target table and the property ->nbemail, we fix ->nbemail");
 	    		//print "nbemail=".$object->nbemail." nbtotalofrecords=".$nbtotalofrecords;
 	    		$resultrefresh = $object->refreshNbOfTargets();
@@ -549,7 +530,7 @@ if ($object->fetch($id) >= 0)
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-        print '<input type="hidden" name="page" value="'.$page.'">';
+		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
 		$morehtmlcenter = '';
@@ -567,7 +548,7 @@ if ($object->fetch($id) >= 0)
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-        print '<input type="hidden" name="page" value="'.$page.'">';
+		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 		print '<input type="hidden" name="limit" value="'.$limit.'">';
 
@@ -657,37 +638,30 @@ if ($object->fetch($id) >= 0)
 				print '<td>'.$obj->firstname.'</td>';
 				print '<td>'.$obj->other.'</td>';
 				print '<td class="center">';
-                if (empty($obj->source_id) || empty($obj->source_type))
-                {
-                    print empty($obj->source_url) ? '' : $obj->source_url; // For backward compatibility
-                }
-                else
-                {
-                    if ($obj->source_type == 'member')
-                    {
+				if (empty($obj->source_id) || empty($obj->source_type))
+				{
+					print empty($obj->source_url) ? '' : $obj->source_url; // For backward compatibility
+				} else {
+					if ($obj->source_type == 'member')
+					{
 						$objectstaticmember->fetch($obj->source_id);
-                        print $objectstaticmember->getNomUrl(1);
-                    }
-                    elseif ($obj->source_type == 'user')
-                    {
+						print $objectstaticmember->getNomUrl(1);
+					} elseif ($obj->source_type == 'user')
+					{
 						$objectstaticuser->fetch($obj->source_id);
-                        print $objectstaticuser->getNomUrl(1);
-                    }
-                    elseif ($obj->source_type == 'thirdparty')
-                    {
+						print $objectstaticuser->getNomUrl(1);
+					} elseif ($obj->source_type == 'thirdparty')
+					{
 						$objectstaticcompany->fetch($obj->source_id);
-                        print $objectstaticcompany->getNomUrl(1);
-                    }
-                    elseif ($obj->source_type == 'contact')
-                    {
-                    	$objectstaticcontact->fetch($obj->source_id);
-                    	print $objectstaticcontact->getNomUrl(1);
-                    }
-                    else
-                    {
-                        print $obj->source_url;
-                    }
-                }
+						print $objectstaticcompany->getNomUrl(1);
+					} elseif ($obj->source_type == 'contact')
+					{
+						$objectstaticcontact->fetch($obj->source_id);
+						print $objectstaticcontact->getNomUrl(1);
+					} else {
+						print $obj->source_url;
+					}
+				}
 				print '</td>';
 
 				// Date last update
@@ -704,9 +678,7 @@ if ($object->fetch($id) >= 0)
 					print '<td class="nowrap right">';
 					print $object::libStatutDest($obj->statut, 2, '');
 					print '</td>';
-				}
-				else
-				{
+				} else {
 					// Date sent
 					print '<td class="center">'.$obj->date_envoi.'</td>';
 
@@ -720,7 +692,7 @@ if ($object->fetch($id) >= 0)
 				if ($obj->statut == 0)	// Not sent yet
 				{
 					if ($user->rights->mailing->creer && $allowaddtarget) {
-						print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$obj->rowid.$param.'">'.img_delete($langs->trans("RemoveRecipient")).'</a>';
+						print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.$obj->rowid.$param.'">'.img_delete($langs->trans("RemoveRecipient")).'</a>';
 					}
 				}
 				/*if ($obj->statut == -1)	// Sent with error
@@ -732,14 +704,12 @@ if ($object->fetch($id) >= 0)
 
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			if ($object->statut < 2)
 			{
-			    print '<tr><td colspan="9" class="opacitymedium">';
-    			print $langs->trans("NoTargetYet");
-    			print '</td></tr>';
+				print '<tr><td colspan="9" class="opacitymedium">';
+				print $langs->trans("NoTargetYet");
+				print '</td></tr>';
 			}
 		}
 		print "</table><br>";
@@ -748,9 +718,7 @@ if ($object->fetch($id) >= 0)
 		print '</form>';
 
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 

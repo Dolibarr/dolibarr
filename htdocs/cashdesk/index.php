@@ -75,9 +75,7 @@ if (is_array($hookmanager->resArray) && !empty($hookmanager->resArray)) {
 if (!empty($mysoc->logo_small))
 {
 	print '<img class="logopos" alt="Logo company" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small).'">';
-}
-else
-{
+} else {
 	print '<div class="logopos">'.$mysoc->name.'</div>';
 }
 ?>
@@ -113,8 +111,7 @@ if (!empty($morelogincontent)) {
 				echo $option;
 			}
 		}
-	}
-	else {
+	} else {
 		echo '<!-- Option by hook -->';
 		echo $morelogincontent;
 	}
@@ -203,9 +200,7 @@ if ($_GET['err'] < 0)
 	echo ('<script type="text/javascript">');
 	echo ('	document.getElementById(\'frmLogin\').pwdPassword.focus();');
 	echo ('</script>');
-}
-else
-{
+} else {
 	echo ('<script type="text/javascript">');
 	echo ('	document.getElementById(\'frmLogin\').txtUsername.focus();');
 	echo ('</script>');

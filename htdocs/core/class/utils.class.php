@@ -28,12 +28,12 @@
 class Utils
 {
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $output; // Used by Cron method to return message
-    public $result; // Used by Cron method to return data
+	public $output; // Used by Cron method to return message
+	public $result; // Used by Cron method to return data
 
 	/**
 	 *	Constructor
@@ -50,11 +50,11 @@ class Utils
 	 *  Purge files into directory of data files.
 	 *  CAN BE A CRON TASK
 	 *
-	 *  @param	string      $choice		   Choice of purge mode ('tempfiles', '' or 'tempfilesold' to purge temp older than $nbsecondsold seconds, 'allfiles', 'logfile')
+	 *  @param	string      $choices	   Choice of purge mode ('tempfiles', '' or 'tempfilesold' to purge temp older than $nbsecondsold seconds, 'allfiles', 'logfile')
 	 *  @param  int         $nbsecondsold  Nb of seconds old to accept deletion of a directory if $choice is 'tempfilesold'
 	 *  @return	int						   0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function purgeFiles($choice = 'tempfilesold', $nbsecondsold = 86400)
+	public function purgeFiles($choices = 'tempfilesold,logfile', $nbsecondsold = 86400)
 	{
 		global $conf, $langs, $dolibarr_main_data_root;
 
@@ -62,117 +62,118 @@ class Utils
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		$filesarray = array();
-		if (empty($choice)) $choice = 'tempfilesold';
+		if (empty($choices)) $choices = 'tempfilesold,logfile';
 
-		dol_syslog("Utils::purgeFiles choice=".$choice, LOG_DEBUG);
-
-		if ($choice == 'tempfiles' || $choice == 'tempfilesold')
-		{
-			// Delete temporary files
-			if ($dolibarr_main_data_root)
-			{
-			    $filesarray = dol_dir_list($dolibarr_main_data_root, "directories", 1, '^temp$', '', 'name', SORT_ASC, 2, 0, '', 1); // Do not follow symlinks
-
-			    if ($choice == 'tempfilesold')
-				{
-					$now = dol_now();
-					foreach ($filesarray as $key => $val)
-					{
-					    if ($val['date'] > ($now - ($nbsecondsold))) unset($filesarray[$key]); // Discard temp dir not older than $nbsecondsold
-					}
-				}
-			}
-		}
-
-		if ($choice == 'allfiles')
-		{
-			// Delete all files (except install.lock, do not follow symbolic links)
-			if ($dolibarr_main_data_root)
-			{
-				$filesarray = dol_dir_list($dolibarr_main_data_root, "all", 0, '', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);
-			}
-		}
-
-		if ($choice == 'logfile')
-		{
-			// Define files log
-			if ($dolibarr_main_data_root)
-			{
-				$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*(\.gz)?$', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);
-			}
-
-			$filelog = '';
-			if (!empty($conf->syslog->enabled))
-			{
-				$filelog = $conf->global->SYSLOG_FILE;
-				$filelog = preg_replace('/DOL_DATA_ROOT/i', DOL_DATA_ROOT, $filelog);
-
-				$alreadyincluded = false;
-				foreach ($filesarray as $tmpcursor)
-				{
-					if ($tmpcursor['fullname'] == $filelog) { $alreadyincluded = true; }
-				}
-				if (!$alreadyincluded) $filesarray[] = array('fullname'=>$filelog, 'type'=>'file');
-			}
-		}
+		dol_syslog("Utils::purgeFiles choice=".$choices, LOG_DEBUG);
 
 		$count = 0;
 		$countdeleted = 0;
 		$counterror = 0;
-		if (count($filesarray))
-		{
-		    foreach ($filesarray as $key => $value)
-			{
-				//print "x ".$filesarray[$key]['fullname']."-".$filesarray[$key]['type']."<br>\n";
-			    if ($filesarray[$key]['type'] == 'dir')
-				{
-					$startcount = 0;
-					$tmpcountdeleted = 0;
 
-					$result = dol_delete_dir_recursive($filesarray[$key]['fullname'], $startcount, 1, 0, $tmpcountdeleted);
-					$count += $result;
-					$countdeleted += $tmpcountdeleted;
-				}
-				elseif ($filesarray[$key]['type'] == 'file')
+		$choicesarray = explode(',', $choices);
+		foreach ($choicesarray as $choice) {
+			$filesarray = array();
+
+			if ($choice == 'tempfiles' || $choice == 'tempfilesold')
+			{
+				// Delete temporary files
+				if ($dolibarr_main_data_root)
 				{
-					// If (file that is not logfile) or (if mode is logfile)
-					if ($filesarray[$key]['fullname'] != $filelog || $choice == 'logfile')
+					$filesarray = dol_dir_list($dolibarr_main_data_root, "directories", 1, '^temp$', '', 'name', SORT_ASC, 2, 0, '', 1); // Do not follow symlinks
+
+					if ($choice == 'tempfilesold')
 					{
-						$result = dol_delete_file($filesarray[$key]['fullname'], 1, 1);
-						if ($result)
+						$now = dol_now();
+						foreach ($filesarray as $key => $val)
 						{
-							$count++;
-							$countdeleted++;
-						}
-						else
-						{
-							$counterror++;
+							if ($val['date'] > ($now - ($nbsecondsold))) unset($filesarray[$key]); // Discard temp dir not older than $nbsecondsold
 						}
 					}
 				}
 			}
 
-			// Update cachenbofdoc
-			if (!empty($conf->ecm->enabled) && $choice == 'allfiles')
+			if ($choice == 'allfiles')
 			{
-				require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
-				$ecmdirstatic = new EcmDirectory($this->db);
-				$result = $ecmdirstatic->refreshcachenboffile(1);
+				// Delete all files (except install.lock, do not follow symbolic links)
+				if ($dolibarr_main_data_root)
+				{
+					$filesarray = dol_dir_list($dolibarr_main_data_root, "all", 0, '', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);
+				}
+			}
+
+			if ($choice == 'logfile')
+			{
+				// Define files log
+				if ($dolibarr_main_data_root)
+				{
+					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*(\.gz)?$', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);
+				}
+
+				$filelog = '';
+				if (!empty($conf->syslog->enabled))
+				{
+					$filelog = $conf->global->SYSLOG_FILE;
+					$filelog = preg_replace('/DOL_DATA_ROOT/i', DOL_DATA_ROOT, $filelog);
+
+					$alreadyincluded = false;
+					foreach ($filesarray as $tmpcursor)
+					{
+						if ($tmpcursor['fullname'] == $filelog) { $alreadyincluded = true; }
+					}
+					if (!$alreadyincluded) $filesarray[] = array('fullname'=>$filelog, 'type'=>'file');
+				}
+			}
+
+			if (is_array($filesarray) && count($filesarray)) {
+				foreach ($filesarray as $key => $value)
+				{
+					//print "x ".$filesarray[$key]['fullname']."-".$filesarray[$key]['type']."<br>\n";
+					if ($filesarray[$key]['type'] == 'dir') {
+						$startcount = 0;
+						$tmpcountdeleted = 0;
+
+						$result = dol_delete_dir_recursive($filesarray[$key]['fullname'], $startcount, 1, 0, $tmpcountdeleted);
+
+						if (!in_array($filesarray[$key]['fullname'], array($conf->api->dir_temp, $conf->user->dir_temp))) {		// The 2 directories $conf->api->dir_temp and $conf->user->dir_temp are recreated at end, so we do not count them
+							$count += $result;
+							$countdeleted += $tmpcountdeleted;
+						}
+					} elseif ($filesarray[$key]['type'] == 'file') {
+						// If (file that is not logfile) or (if mode is logfile)
+						if ($filesarray[$key]['fullname'] != $filelog || $choice == 'logfile')
+						{
+							$result = dol_delete_file($filesarray[$key]['fullname'], 1, 1);
+							if ($result)
+							{
+								$count++;
+								$countdeleted++;
+							} else {
+								$counterror++;
+							}
+						}
+					}
+				}
+
+				// Update cachenbofdoc
+				if (!empty($conf->ecm->enabled) && $choice == 'allfiles')
+				{
+					require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
+					$ecmdirstatic = new EcmDirectory($this->db);
+					$result = $ecmdirstatic->refreshcachenboffile(1);
+				}
 			}
 		}
 
-		if ($count > 0)
-		{
+		if ($count > 0) {
 			$this->output = $langs->trans("PurgeNDirectoriesDeleted", $countdeleted);
 			if ($count > $countdeleted) $this->output .= '<br>'.$langs->trans("PurgeNDirectoriesFailed", ($count - $countdeleted));
+		} else {
+			$this->output = $langs->trans("PurgeNothingToDelete").(in_array('tempfilesold', $choicesarray) ? ' (older than 24h for temp files)' : '');
 		}
-		else $this->output = $langs->trans("PurgeNothingToDelete").($choice == 'tempfilesold' ? ' (older than 24h)' : '');
 
 		// Recreate temp dir that are not automatically recreated by core code for performance purpose, we need them
-		if (!empty($conf->api->enabled))
-		{
-		    dol_mkdir($conf->api->dir_temp);
+		if (!empty($conf->api->enabled)) {
+			dol_mkdir($conf->api->dir_temp);
 		}
 		dol_mkdir($conf->user->dir_temp);
 
@@ -212,7 +213,7 @@ class Utils
 		}
 
 		// Check type parameter
-		if ($type == 'auto') $type = $db->type;
+		if ($type == 'auto') $type = $this->db->type;
 		if (!in_array($type, array('postgresql', 'pgsql', 'mysql', 'mysqli', 'mysqlnobin')))
 		{
 			$langs->load("errors");
@@ -266,10 +267,8 @@ class Utils
 			if (GETPOST("sql_structure", "alpha") || $usedefault)
 			{
 				if (GETPOST("drop", "alpha") || $usedefault)	$param .= " --add-drop-table=TRUE";
-				else 				       	         		    $param .= " --add-drop-table=FALSE";
-			}
-			else
-			{
+				else $param .= " --add-drop-table=FALSE";
+			} else {
 				$param .= " -t";
 			}
 			if (GETPOST("disable-add-locks", "alpha")) $param .= " --add-locks=FALSE";
@@ -282,9 +281,7 @@ class Utils
 				if (GETPOST("delayed", "alpha"))	 	 $param .= " --delayed-insert";
 				if (GETPOST("sql_ignore", "alpha"))	 $param .= " --insert-ignore";
 				if (GETPOST("hexforbinary", "alpha") || $usedefault) $param .= " --hex-blob";
-			}
-			else
-			{
+			} else {
 				$param .= " -d"; // No row information (no data)
 			}
 			$param .= " --default-character-set=utf8"; // We always save output into utf8 charset
@@ -325,9 +322,7 @@ class Utils
 						dol_syslog("Datadump retval after exec=".$retval, LOG_ERR);
 						$errormsg = 'Error '.$retval;
 						$ok = 0;
-					}
-					else
-					{
+					} else {
 						$i = 0;
 						if (!empty($output_arr))
 						{
@@ -366,9 +361,7 @@ class Utils
 
 				if (!empty($conf->global->MAIN_UMASK))
 					@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-			}
-			else
-			{
+			} else {
 				$langs->load("errors");
 				dol_syslog("Failed to open file ".$outputfile, LOG_ERR);
 				$errormsg = $langs->trans("ErrorFailedToWriteInDir");
@@ -390,9 +383,7 @@ class Utils
 				if ($compression == 'bz')   bzclose($handle);
 				if ($ok && preg_match('/^-- (MySql|MariaDB)/i', $errormsg)) {	// No error
 					$errormsg = '';
-				}
-				else
-				{
+				} else {
 					// Renommer fichier sortie en fichier erreur
 					//print "$outputfile -> $outputerror";
 					@dol_delete_file($outputerror, 1, 0, 0, null, false, 0);
@@ -430,9 +421,7 @@ class Utils
 				$this->backupTables($outputfiletemp);
 				dol_compress_file($outputfiletemp, $outputfile, $compression);
 				unlink($outputfiletemp);
-			}
-			else
-			{
+			} else {
 				$this->backupTables($outputfile);
 			}
 
@@ -612,15 +601,12 @@ class Utils
 		{
 			try {
 				$moduleobj = new $class($this->db);
-			}
-			catch (Exception $e)
+			} catch (Exception $e)
 			{
 				$error++;
 				dol_print_error($e->getMessage());
 			}
-		}
-		else
-		{
+		} else {
 			$error++;
 			$langs->load("errors");
 			dol_print_error($langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
@@ -650,8 +636,8 @@ class Utils
 
 				if (empty($conf->global->MODULEBUILDER_ASCIIDOCTOR) && empty($conf->global->MODULEBUILDER_ASCIIDOCTORPDF))
 				{
-				    $this->error = 'Setup of module ModuleBuilder not complete';
-				    return -1;
+					$this->error = 'Setup of module ModuleBuilder not complete';
+					return -1;
 				}
 
 				// Copy some files into temp directory, so instruction include::ChangeLog.md[] will works inside the asciidoc file.
@@ -689,9 +675,7 @@ class Utils
 						if ($filecursor)
 						{
 							fwrite($fhandle, ($i ? "\n<<<\n\n" : "").$filecursor."\n");
-						}
-						else
-						{
+						} else {
 							$this->error = 'Failed to concat content of file '.$spec['fullname'];
 							return -1;
 						}
@@ -708,36 +692,36 @@ class Utils
 
 					//var_dump($phpfileval['fullname']);
 					$arrayreplacement = array(
-					    'mymodule'=>strtolower($module),
-					    'MyModule'=>$module,
-					    'MYMODULE'=>strtoupper($module),
-					    'My module'=>$module,
-					    'my module'=>$module,
-					    'Mon module'=>$module,
-					    'mon module'=>$module,
-					    'htdocs/modulebuilder/template'=>strtolower($module),
-					    '__MYCOMPANY_NAME__'=>$mysoc->name,
-					    '__KEYWORDS__'=>$module,
-					    '__USER_FULLNAME__'=>$user->getFullName($langs),
-					    '__USER_EMAIL__'=>$user->email,
-					    '__YYYY-MM-DD__'=>dol_print_date($now, 'dayrfc'),
-					    '---Put here your own copyright and developer email---'=>dol_print_date($now, 'dayrfc').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : ''),
-					    '__DATA_SPECIFICATION__'=>'Not yet available',
-					    '__README__'=>dolMd2Asciidoc($contentreadme),
-					    '__CHANGELOG__'=>dolMd2Asciidoc($contentchangelog),
+						'mymodule'=>strtolower($module),
+						'MyModule'=>$module,
+						'MYMODULE'=>strtoupper($module),
+						'My module'=>$module,
+						'my module'=>$module,
+						'Mon module'=>$module,
+						'mon module'=>$module,
+						'htdocs/modulebuilder/template'=>strtolower($module),
+						'__MYCOMPANY_NAME__'=>$mysoc->name,
+						'__KEYWORDS__'=>$module,
+						'__USER_FULLNAME__'=>$user->getFullName($langs),
+						'__USER_EMAIL__'=>$user->email,
+						'__YYYY-MM-DD__'=>dol_print_date($now, 'dayrfc'),
+						'---Put here your own copyright and developer email---'=>dol_print_date($now, 'dayrfc').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : ''),
+						'__DATA_SPECIFICATION__'=>'Not yet available',
+						'__README__'=>dolMd2Asciidoc($contentreadme),
+						'__CHANGELOG__'=>dolMd2Asciidoc($contentchangelog),
 					);
 
 					dolReplaceInFile($destfile, $arrayreplacement);
 				}
 
 				// Launch doc generation
-                $currentdir = getcwd();
-                chdir($dirofmodule);
+				$currentdir = getcwd();
+				chdir($dirofmodule);
 
-                require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
-                $utils = new Utils($this->db);
+				require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+				$utils = new Utils($this->db);
 
-                // Build HTML doc
+				// Build HTML doc
 				$command = $conf->global->MODULEBUILDER_ASCIIDOCTOR.' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOC;
 				$outfile = $dirofmoduletmp.'/out.tmp';
 
@@ -754,30 +738,24 @@ class Utils
 				$resarray = $utils->executeCLI($command, $outfile);
 				if ($resarray['result'] != '0')
 				{
-				    $this->error = $resarray['error'].' '.$resarray['output'];
+					$this->error = $resarray['error'].' '.$resarray['output'];
 				}
 				$result = ($resarray['result'] == 0) ? 1 : 0;
 
 				chdir($currentdir);
-			}
-			else
-			{
+			} else {
 				$result = 0;
 			}
 
 			if ($result > 0)
 			{
 				return 1;
-			}
-			else
-			{
+			} else {
 				$error++;
 				$langs->load("errors");
 				$this->error = $langs->trans("ErrorFailToGenerateFile", $outputfiledoc);
 			}
-		}
-		else
-		{
+		} else {
 			$error++;
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorCheckVersionIsDefined");
@@ -793,8 +771,8 @@ class Utils
 	 *
 	 * @return	int						0 if OK, < 0 if KO
 	 */
-    public function compressSyslogs()
-    {
+	public function compressSyslogs()
+	{
 		global $conf;
 
 		if (empty($conf->loghandlers['mod_syslog_file'])) { // File Syslog disabled
@@ -898,7 +876,7 @@ class Utils
 
 		$this->output = 'Archive log files (keeping last SYSLOG_FILE_SAVES='.$nbSaves.' files) done.';
 		return 0;
-    }
+	}
 
 	/**	Backup the db OR just a table without mysqldump binary, with PHP only (does not require any exec permission)
 	 *	Author: David Walsh (http://davidwalsh.name/backup-mysql-database-php)
@@ -934,9 +912,7 @@ class Utils
 			{
 				$tables[] = $row[0];
 			}
-		}
-		else
-		{
+		} else {
 			$tables = is_array($tables) ? $tables : explode(',', $tables);
 		}
 
@@ -996,9 +972,7 @@ class Utils
 			if (empty($row2[1]))
 			{
 				fwrite($handle, "\n-- WARNING: Show create table ".$table." return empy string when it should not.\n");
-			}
-			else
-			{
+			} else {
 				fwrite($handle, $row2[1].";\n");
 				//fwrite($handle,"/*!40101 SET character_set_client = @saved_cs_client */;\n\n");
 
