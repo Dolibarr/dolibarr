@@ -61,12 +61,12 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expensere
 	$result = $object->delete($user);
 	if ($result > 0)
 	{
-        $db->commit();
-        header("Location: ".DOL_URL_ROOT."/expensereport/index.php");
-        exit;
+		$db->commit();
+		header("Location: ".DOL_URL_ROOT."/expensereport/index.php");
+		exit;
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
-        $db->rollback();
+		$db->rollback();
 	}
 }
 
@@ -120,39 +120,39 @@ $disable_delete = 0;
 // Bank account
 if (!empty($conf->banque->enabled))
 {
-    if ($object->bank_account)
-    {
-    	$bankline = new AccountLine($db);
-    	$bankline->fetch($object->bank_line);
-        if ($bankline->rappro)
-        {
-            $disable_delete = 1;
-            $title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemoveConciliatedPayment"));
-        }
+	if ($object->bank_account)
+	{
+		$bankline = new AccountLine($db);
+		$bankline->fetch($object->bank_line);
+		if ($bankline->rappro)
+		{
+			$disable_delete = 1;
+			$title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemoveConciliatedPayment"));
+		}
 
-    	print '<tr>';
-    	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
+		print '<tr>';
+		print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 		print '<td colspan="3">';
 		print $bankline->getNomUrl(1, 0, 'showconciliated');
-    	print '</td>';
-    	print '</tr>';
+		print '</td>';
+		print '</tr>';
 
-    	print '<tr>';
-    	print '<td>'.$langs->trans('BankAccount').'</td>';
+		print '<tr>';
+		print '<td>'.$langs->trans('BankAccount').'</td>';
 		print '<td colspan="3">';
 		$accountstatic = new Account($db);
 		$accountstatic->fetch($bankline->fk_account);
-        print $accountstatic->getNomUrl(1);
-    	print '</td>';
-    	print '</tr>';
-    }
+		print $accountstatic->getNomUrl(1);
+		print '</td>';
+		print '</tr>';
+	}
 }
 
 print '</table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 /*

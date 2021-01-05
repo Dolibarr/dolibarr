@@ -18,53 +18,58 @@
 #
 
 # Module label 'ModuleRecruitmentName'
-ModuleRecruitmentName = Recruitment
+ModuleRecruitmentName = 採用
 # Module description 'ModuleRecruitmentDesc'
-ModuleRecruitmentDesc = Manage and follow recruitment campaigns for new job positions
+ModuleRecruitmentDesc = 新規職種の採用キャンペーンを管理およびフォローする
 
 #
 # Admin page
 #
-RecruitmentSetup = Recruitment setup
-Settings = Settings
-RecruitmentSetupPage = Enter here the setup of main options for the recruitment module
-RecruitmentArea=Recruitement area
-PublicInterfaceRecruitmentDesc=Public pages of jobs are public URLs to show and answer to open jobs. There is one different link for each open job, found on each job record.
-EnablePublicRecruitmentPages=Enable public pages of open jobs
+RecruitmentSetup = 採用設定
+Settings = 設定
+RecruitmentSetupPage = 採用モジュールの主なオプションの設定をここに入力する
+RecruitmentArea=採用エリア
+PublicInterfaceRecruitmentDesc=求人の公開ページは、開いている求人を表示して回答するための公開URLである。開いているジョブごとに1つの異なるリンクがあり、各ジョブレコードごとにある。
+EnablePublicRecruitmentPages=開いている求人の公開ページを有効にする
 
 #
 # About page
 #
 About = 約
-RecruitmentAbout = About Recruitment
-RecruitmentAboutPage = Recruitment about page
-NbOfEmployeesExpected=Expected nb of employees
-JobLabel=Label of job position
-WorkPlace=Work place
-DateExpected=Expected date
-FutureManager=Future manager
-ResponsibleOfRecruitement=Responsible of recruitment
-IfJobIsLocatedAtAPartner=If job is located at a partner place
-PositionToBeFilled=Job offer to be filled
-PositionsToBeFilled=Job offers to be filled
-ListOfPositionsToBeFilled=List of job offers to be filled
-NewPositionToBeFilled=New job offers to be filled
+RecruitmentAbout = 採用について
+RecruitmentAboutPage = 採用に関してページ
+NbOfEmployeesExpected=予想される従業員数
+JobLabel=職位のラベル
+WorkPlace=職場
+DateExpected=予定日
+FutureManager=将来のマネージャー
+ResponsibleOfRecruitement=採用の担当
+IfJobIsLocatedAtAPartner=仕事がパートナーの場所にある場合
+PositionToBeFilled=職位
+PositionsToBeFilled=職位
+ListOfPositionsToBeFilled=職位一覧
+NewPositionToBeFilled=新規職種
 
-JobOfferToBeFilled=Job offer to be filled
-ThisIsInformationOnJobPosition=Information of the job position to be filled
-ContactForRecruitment=Contact for recruitment
-EmailRecruiter=Email recruiter
-ToUseAGenericEmail=To use a generic email. If not defined, the email of the responsible of recruitment will be used
-NewCandidature=New candidature
-ListOfCandidatures=List of candidatures
-RequestedRemuneration=Requested remuneration
-ProposedRemuneration=Proposed remuneration
-ContractProposed=Contract proposed
-ContractSigned=Contract signed
-RecruitmentCandidature=Candidature
-JobPositions=Job positions
-RecruitmentCandidatures=Candidatures
-InterviewToDo=Interview to do
-AnswerCandidature=Candidature answer
-YourCandidature=Your candidature
-YourCandidatureAnswerMessage=Thanks you for your candidature.<br>...
+JobOfferToBeFilled=埋められる職位
+ThisIsInformationOnJobPosition=記入する職種の情報
+ContactForRecruitment=採用担当者
+EmailRecruiter=メール勧誘担当
+ToUseAGenericEmail=一般的な電子メールを使用するには。定義されていない場合は、採用担当者のメールが使用される
+NewCandidature=新規アプリ
+ListOfCandidatures=アプリケーションのリスト
+RequestedRemuneration=要求された報酬
+ProposedRemuneration=提案された報酬
+ContractProposed=提案された契約
+ContractSigned=契約締結
+ContractRefused=契約は拒否された
+RecruitmentCandidature=応用
+JobPositions=職位
+RecruitmentCandidatures=アプリケーション
+InterviewToDo=する面接
+AnswerCandidature=アプリケーションの回答
+YourCandidature=あなたの申請
+YourCandidatureAnswerMessage=お申し込みいただきありがとうございます。 <br>..。
+JobClosedTextCandidateFound=求人はクローズされている。ポジションが埋まった。
+JobClosedTextCanceled=求人はクローズされている。
+ExtrafieldsJobPosition=補完的な属性（職位）
+ExtrafieldsCandidatures=補完的な属性（求人応募）

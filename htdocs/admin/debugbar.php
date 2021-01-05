@@ -50,9 +50,9 @@ if ($action == 'set')
 	$result1 = dolibarr_set_const($db, "DEBUGBAR_LOGS_LINES_NUMBER", GETPOST('DEBUGBAR_LOGS_LINES_NUMBER', 'int'), 'chaine', 0, '', 0);
 	$result2 = dolibarr_set_const($db, "DEBUGBAR_USE_LOG_FILE", GETPOST('DEBUGBAR_USE_LOG_FILE', 'int'), 'chaine', 0, '', 0);
 	if ($result1 < 0 || $result2 < 0)
-    {
-        $error++;
-    }
+	{
+		$error++;
+	}
 
 	if (!$error)
 	{
@@ -78,8 +78,8 @@ print load_fiche_titre($langs->trans("DebugBarSetup"), $linkback, 'title_setup')
 
 if (!function_exists('mb_check_encoding'))
 {
-    $langs->load("errors");
-    print info_admin($langs->trans("ErrorPHPNeedModule", 'mbstring'), 0, 0, 'error');
+	$langs->load("errors");
+	print info_admin($langs->trans("ErrorPHPNeedModule", 'mbstring'), 0, 0, 'error');
 }
 
 print '<br>';

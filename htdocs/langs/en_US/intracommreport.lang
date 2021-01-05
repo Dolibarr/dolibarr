@@ -31,10 +31,10 @@ IntracommReportTitle=Preparation of an XML file in ProDouane format
 
 # List
 IntracommReportList=List of generated declarations
-IntracommReportNumber=Numéro déclaration
-IntracommReportPeriod=Période d'analyse
-IntracommReportTypeDeclaration=Type de déclaration
-IntracommReportDownload=Télécharger fichier XML
+IntracommReportNumber=Numero of declaration
+IntracommReportPeriod=Period of analysis
+IntracommReportTypeDeclaration=Type of declaration
+IntracommReportDownload=download XML file
 
 # Invoice
 IntracommReportTransportMode=Transport mode

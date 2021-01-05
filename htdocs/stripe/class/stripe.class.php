@@ -90,6 +90,7 @@ class Stripe extends CommonObject
 	{
 		global $conf;
 
+		$key = '';
 		if ($entity < 0) $entity = $conf->entity;
 
 		$sql = "SELECT tokenstring";
@@ -103,14 +104,15 @@ class Stripe extends CommonObject
 		}
 		$sql .= " AND fk_user IS NULL AND fk_adherent IS NULL";
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		dol_syslog(get_class($this)."::getStripeAccount", LOG_DEBUG);
+
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$tokenstring = $obj->tokenstring;
 
-				$tmparray = dol_json_decode($tokenstring);
+				$tmparray = json_decode($tokenstring);
 				$key = $tmparray->stripe_user_id;
 			} else {
 				$tokenstring = '';
@@ -140,7 +142,7 @@ class Stripe extends CommonObject
 
 
 	/**
-	 * Get the Stripe customer of a thirdparty (with option to create it if not linked yet).
+	 * Get the Stripe customer of a thirdparty (with option to create it in Stripe if not linked yet).
 	 * Search on site_account = 0 or = $stripearrayofkeysbyenv[$status]['publishable_key']
 	 *
 	 * @param	Societe	$object							Object thirdparty to check, or create on stripe (create on stripe also update the stripe_account table for current entity)
@@ -177,8 +179,7 @@ class Stripe extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
-			if ($num)
-			{
+			if ($num) {
 				$obj = $this->db->fetch_object($resql);
 				$tiers = $obj->key_account;
 
@@ -186,17 +187,18 @@ class Stripe extends CommonObject
 
 				try {
 					if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
-						$customer = \Stripe\Customer::retrieve("$tiers");
+						//$customer = \Stripe\Customer::retrieve("$tiers");
+						$customer = \Stripe\Customer::retrieve(array('id'=>"$tiers", 'expand[]'=>'sources'));
 					} else {
-						$customer = \Stripe\Customer::retrieve("$tiers", array("stripe_account" => $key));
+						//$customer = \Stripe\Customer::retrieve("$tiers", array("stripe_account" => $key));
+						$customer = \Stripe\Customer::retrieve(array('id'=>"$tiers", 'expand[]'=>'sources'), array("stripe_account" => $key));
 					}
 				} catch (Exception $e)
 				{
 					// For exemple, we may have error: 'No such customer: cus_XXXXX; a similar object exists in live mode, but a test mode key was used to make this request.'
 					$this->error = $e->getMessage();
 				}
-			} elseif ($createifnotlinkedtostripe)
-			{
+			} elseif ($createifnotlinkedtostripe) {
 				$ipaddress = getUserRemoteIP();
 
 				$dataforcustomer = array(
@@ -680,7 +682,7 @@ class Stripe extends CommonObject
 	/**
 	 * Get the Stripe card of a company payment mode (option to create it on Stripe if not linked yet is no more available on new Stripe API)
 	 *
-	 * @param	\Stripe\StripeCustomer	$cu								Object stripe customer
+	 * @param	\Stripe\StripeCustomer	$cu								Object stripe customer.
 	 * @param	CompanyPaymentMode		$object							Object companypaymentmode to check, or create on stripe (create on stripe also update the societe_rib table for current entity)
 	 * @param	string					$stripeacc						''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int						$status							Status (0=test, 1=live)
@@ -711,14 +713,14 @@ class Stripe extends CommonObject
 				{
 					try {
 						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
-							if (!preg_match('/^pm_/', $cardref))
+							if (!preg_match('/^pm_/', $cardref) && !empty($cu->sources))
 							{
 								$card = $cu->sources->retrieve($cardref);
 							} else {
 								$card = \Stripe\PaymentMethod::retrieve($cardref);
 							}
 						} else {
-							if (!preg_match('/^pm_/', $cardref))
+							if (!preg_match('/^pm_/', $cardref) && !empty($cu->sources))
 							{
 								//$card = $cu->sources->retrieve($cardref, array("stripe_account" => $stripeacc));		// this API fails when array stripe_account is provided
 								$card = $cu->sources->retrieve($cardref);
@@ -740,9 +742,11 @@ class Stripe extends CommonObject
 					$cvc = $obj->cvn; // cvn in database, cvc for stripe
 					$cardholdername = $obj->proprio;
 
+					$ipaddress = getUserRemoteIP();
+
 					$dataforcard = array(
 						"source" => array('object'=>'card', 'exp_month'=>$exp_date_month, 'exp_year'=>$exp_date_year, 'number'=>$number, 'cvc'=>$cvc, 'name'=>$cardholdername),
-						"metadata" => array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']))
+						"metadata" => array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>$ipaddress)
 					);
 
 					//$a = \Stripe\Stripe::getApiKey();
@@ -887,6 +891,8 @@ class Stripe extends CommonObject
 			$description = "INV=".$ref.".CUS=".$societe->id.".PM=stripe";
 		}
 
+		$ipaddress = getUserRemoteIP();
+
 		$metadata = array(
 			"dol_id" => "".$item."",
 			"dol_type" => "".$origin."",
@@ -894,7 +900,7 @@ class Stripe extends CommonObject
 			'dol_thirdparty_name' => $societe->name,
 			'dol_version'=>DOL_VERSION,
 			'dol_entity'=>$conf->entity,
-			'ipaddress'=>(empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR'])
+			'ipaddress'=>$ipaddress
 		);
 		$return = new Stripe($this->db);
 		try {

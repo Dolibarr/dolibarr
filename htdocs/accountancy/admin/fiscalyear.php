@@ -113,7 +113,7 @@ if ($result)
 	$i = 0;
 
 
-    $addbutton .= dolGetButtonTitle($langs->trans('NewFiscalYear'), '', 'fa fa-plus-circle', 'fiscalyear_card.php?action=create', '', $user->rights->accounting->fiscalyear->write);
+	$addbutton .= dolGetButtonTitle($langs->trans('NewFiscalYear'), '', 'fa fa-plus-circle', 'fiscalyear_card.php?action=create', '', $user->rights->accounting->fiscalyear->write);
 
 
 	$title = $langs->trans('AccountingPeriods');

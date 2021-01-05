@@ -31,15 +31,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
 class mod_task_universal extends ModeleNumRefTask
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
-     * @var string Error code (or message)
-     */
-    public $error = '';
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
 
 	/**
 	 * @var string
@@ -54,17 +54,17 @@ class mod_task_universal extends ModeleNumRefTask
 	public $name = 'Universal';
 
 
-    /**
-     *  Returns the description of the numbering model
-     *
-     *  @return     string      Texte descripif
-     */
-    public function info()
-    {
-    	global $conf, $langs, $db;
+	/**
+	 *  Returns the description of the numbering model
+	 *
+	 *  @return     string      Texte descripif
+	 */
+	public function info()
+	{
+		global $conf, $langs, $db;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array("projects", "admin"));
+		$langs->loadLangs(array("projects", "admin"));
 
 		$form = new Form($db);
 
@@ -93,37 +93,37 @@ class mod_task_universal extends ModeleNumRefTask
 		$texte .= '</form>';
 
 		return $texte;
-    }
+	}
 
-    /**
-     *  Return an example of numbering
-     *
-     *  @return     string      Example
-     */
-    public function getExample()
-    {
-    	global $conf, $langs, $mysoc;
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	public function getExample()
+	{
+		global $conf, $langs, $mysoc;
 
-    	$old_code_client = $mysoc->code_client;
-    	$mysoc->code_client = 'CCCCCCCCCC';
-    	$numExample = $this->getNextValue($mysoc, '');
+		$old_code_client = $mysoc->code_client;
+		$mysoc->code_client = 'CCCCCCCCCC';
+		$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client = $old_code_client;
 
 		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
-    }
+	}
 
-    /**
-     *  Return next value
-     *
-     *  @param	Societe		$objsoc		Object third party
-     *  @param   Task		$object	    Object task
-     *  @return  string					Value if OK, 0 if KO
-     */
-    public function getNextValue($objsoc, $object)
-    {
+	/**
+	 *  Return next value
+	 *
+	 *  @param	Societe		$objsoc		Object third party
+	 *  @param   Task		$object	    Object task
+	 *  @return  string					Value if OK, 0 if KO
+	 */
+	public function getNextValue($objsoc, $object)
+	{
 		global $db, $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -143,17 +143,17 @@ class mod_task_universal extends ModeleNumRefTask
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Return next reference not yet used as a reference
-     *
-     *  @param	Societe		$objsoc     Object third party
-     *  @param  Task		$object	    Object task
-     *  @return string      			Next not used reference
-     */
-    public function project_get_num($objsoc = 0, $object = '')
-    {
-        // phpcs:enable
-        return $this->getNextValue($objsoc, $object);
-    }
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return next reference not yet used as a reference
+	 *
+	 *  @param	Societe		$objsoc     Object third party
+	 *  @param  Task		$object	    Object task
+	 *  @return string      			Next not used reference
+	 */
+	public function project_get_num($objsoc = 0, $object = '')
+	{
+		// phpcs:enable
+		return $this->getNextValue($objsoc, $object);
+	}
 }

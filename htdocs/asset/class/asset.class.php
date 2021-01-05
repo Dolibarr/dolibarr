@@ -84,9 +84,9 @@ class Asset extends CommonObject
 		'ref' => array('type'=>'varchar(10)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'showoncombobox'=>1),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>20, 'notnull'=>1, 'index'=>1,),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'notnull'=>-1, 'searchall'=>1),
+		'fk_asset_type' => array('type'=>'integer:AssetType:asset/class/asset_type.class.php', 'label'=>'AssetsType', 'visible'=>1, 'enabled'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'searchall'=>1),
 		'amount_ht' => array('type'=>'double(24,8)', 'label'=>'AmountHTShort', 'visible'=>1, 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'isameasure'=>'1', 'help'=>"Help text",),
-		'amount_vat' => array('type'=>'double(24,8)', 'label'=>'AmountVAT', 'visible'=>1, 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'isameasure'=>'1', 'help'=>"Help text",),
-		'fk_asset_type' => array('type'=>'integer:AssetType:asset/class/asset_type.class.php', 'label'=>'AssetsType', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>1, 'index'=>1, 'searchall'=>1),
+		'amount_vat' => array('type'=>'double(24,8)', 'label'=>'AmountVAT', 'visible'=>1, 'enabled'=>1, 'position'=>41, 'notnull'=>-1, 'isameasure'=>'1', 'help'=>"Help text",),
 		'description' => array('type'=>'text', 'label'=>'Description', 'visible'=>-1, 'enabled'=>1, 'position'=>90, 'notnull'=>-1,),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'visible'=>-1, 'enabled'=>1, 'position'=>91, 'notnull'=>-1,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'visible'=>-1, 'enabled'=>1, 'position'=>92, 'notnull'=>-1,),
@@ -113,44 +113,44 @@ class Asset extends CommonObject
 	 */
 	public $entity;
 
-    /**
-     * @var string Asset label
-     */
-    public $label;
+	/**
+	 * @var string Asset label
+	 */
+	public $label;
 
 	public $amount;
 
 	/**
 	 * @var int Thirdparty ID
 	 */
-    public $fk_soc;
+	public $fk_soc;
 
 	/**
 	 * @var string description
 	 */
 	public $description;
 
-	public $note_public;
-	public $note_private;
-
 	/**
-     * @var integer|string date_creation
-     */
+	 * @var integer|string date_creation
+	 */
 	public $date_creation;
 
 
 	public $tms;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_creat;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_modif;
 
+	/**
+	 * @var string import key
+	 */
 	public $import_key;
 
 	/**
@@ -158,28 +158,6 @@ class Asset extends CommonObject
 	 */
 	public $status;
 
-	// If this object has a subtable with lines
-
-	/**
-	 * @var int    Name of subtable line
-	 */
-	//public $table_element_line = 'assetdet';
-	/**
-	 * @var int    Field with ID of parent key if this field has a parent
-	 */
-	//public $fk_element = 'fk_asset';
-	/**
-	 * @var int    Name of subtable class that manage subtable lines
-	 */
-	//public $class_element_line = 'Assetline';
-	/**
-	 * @var array	List of child tables. To test if we can delete object.
-	 */
-	//protected $childtables=array();
-	/**
-	 * @var AssetLine[]     Array of subtable lines
-	 */
-	//public $lines = array();
 
 	/**
 	 * Constructor
@@ -381,7 +359,7 @@ class Asset extends CommonObject
 		return $this->LibStatut($this->status, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -391,14 +369,14 @@ class Asset extends CommonObject
 	 */
 	public static function LibStatut($status, $mode = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 
 		$langs->load("contracts");
-        $labelStatus = array();
+		$labelStatus = array();
 		$labelStatus[self::STATUS_DRAFT] = $langs->trans('Disabled');
 		$labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
-        $labelStatusShort = array();
+		$labelStatusShort = array();
 		$labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Disabled');
 		$labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Enabled');
 

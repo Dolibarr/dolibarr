@@ -38,6 +38,7 @@ MenuOrdersSupplierToBill=Indkøbsordrer til faktura
 NbDaysToDelivery=Leveringsforsinkelse (dage)
 DescNbDaysToDelivery=Den længste leveringsforsinkelse af produkterne fra denne ordre
 SupplierReputation=Leverandør ry
+ReferenceReputation=Reference reputation
 DoNotOrderThisProductToThisSupplier=Bestil ikke
 NotTheGoodQualitySupplier=Lav kvalitet
 ReputationForThisProduct=Omdømme

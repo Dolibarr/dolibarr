@@ -6,7 +6,7 @@
 
 	<exclude-pattern type="relative">build/html</exclude-pattern>
 	<exclude-pattern type="relative">build/aps</exclude-pattern>
-	<exclude-pattern type="relative">dev/namespacemig</exclude-pattern>
+	<exclude-pattern type="relative">dev/tools/test/namespacemig</exclude-pattern>
 	<exclude-pattern type="relative">dev/initdata/dbf/includes</exclude-pattern>
 	<exclude-pattern type="relative">documents</exclude-pattern>
 	<exclude-pattern type="relative">htdocs/core/class/lessc.class.php</exclude-pattern>
@@ -17,6 +17,7 @@
 	<exclude-pattern type="relative">*/nltechno*</exclude-pattern>
 	<exclude-pattern type="relative">*/htdocs/includes</exclude-pattern>
 	<exclude-pattern type="relative">*/htdocs/includes</exclude-pattern>
+	<exclude-pattern type="relative">.git</exclude-pattern>
 
 	<!-- List of all tests -->
 

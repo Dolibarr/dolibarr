@@ -50,15 +50,15 @@ if ($action == 'setRECRUITMENT_ENABLE_PUBLIC_INTERFACE') {
 if ($action == 'update') {
 	$public = GETPOST('RECRUITMENT_ENABLE_PUBLIC_INTERFACE');
 
-    $res = dolibarr_set_const($db, "RECRUITMENT_ENABLE_PUBLIC_INTERFACE", $public, 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "RECRUITMENT_ENABLE_PUBLIC_INTERFACE", $public, 'chaine', 0, '', $conf->entity);
 
-    if (!$res > 0) $error++;
+	if (!$res > 0) $error++;
 
  	if (!$error) {
-	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-	    setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 
@@ -165,7 +165,7 @@ if (!empty($conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE)) {
 }
 */
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '</form>';
 

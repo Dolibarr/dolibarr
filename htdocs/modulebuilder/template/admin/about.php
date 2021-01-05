@@ -82,6 +82,6 @@ $tmpmodule = new modMyModule($db);
 print $tmpmodule->getDescLong();
 
 // Page end
-dol_fiche_end();
+print dol_get_fiche_end();
 llxFooter();
 $db->close();

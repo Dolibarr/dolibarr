@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - other
 Tools=Ferramentas
 Birthday=Aniversário
-DateToBirth=Data de nascimento
 BirthdayAlertOn=Alerta de aniversário ativo
 BirthdayAlertOff=Alerta de aniversário desativado
 PreviousMonthOfInvoice=Mês anterior (número 1-12) da data da fatura

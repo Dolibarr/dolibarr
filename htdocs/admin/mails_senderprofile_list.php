@@ -381,9 +381,9 @@ if ($action != 'create') {
 		print '</table>';
 		print '<br>';
 		print '<div class="center">';
-		print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
+		print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';
 		print ' &nbsp; ';
-		print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 	}
 } else {
@@ -414,9 +414,9 @@ if ($action != 'create') {
 	print '</table>';
 	print '<br>';
 	print '<div class="center">';
-	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
+	print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';
 	print ' &nbsp; ';
-	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 	//print '</form>';
 }
@@ -427,7 +427,7 @@ print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorde
 $topicmail = "Information";
 //$modelmail="subscription";
 $objecttmp = new EmailSenderProfile($db);
-//$trackid='sub'.$object->id;
+//$trackid = (($action == 'testhtml') ? "testhtml" : "test");
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($search_all)
@@ -474,7 +474,7 @@ foreach ($object->fields as $key => $val)
 	if (!empty($arrayfields['t.'.$key]['checked']))
 	{
 		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-		if (is_array($val['arrayofkeyval'])) print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
+		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
 		elseif (strpos($val['type'], 'integer:') === 0) {
 			print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth150', 1);
 		} elseif (!preg_match('/^(date|timestamp)/', $val['type'])) print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
@@ -645,7 +645,7 @@ if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $n
 	print $formfile->showdocuments('massfilesarea_emailsenderprofile', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

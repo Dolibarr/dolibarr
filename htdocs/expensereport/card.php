@@ -230,7 +230,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans("NotEnoughPermission"), null, 'errors');
 		} else {
 			if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)) {
-				if (! in_array($object->fk_user_author, $childids)) {
+				if (!in_array($object->fk_user_author, $childids)) {
 					$error++;
 					setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
 				}
@@ -1457,7 +1457,7 @@ if ($action == 'create')
 	print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
 
-	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
@@ -1467,7 +1467,7 @@ if ($action == 'create')
 		print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
 		print '<td>';
 
-		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 	}
@@ -1483,11 +1483,11 @@ if ($action == 'create')
 	print '<tbody>';
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" value="'.$langs->trans("AddTrip").'" name="bouton" class="button" />';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="'.$langs->trans("Cancel").'" class="button" onclick="history.go(-1)" />';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="'.$langs->trans("Cancel").'" class="button button-cancel" onclick="history.go(-1)" />';
 	print '</div>';
 
 	print '</form>';
@@ -1616,11 +1616,11 @@ if ($action == 'create')
 
 				print '</table>';
 
-				dol_fiche_end();
+				print dol_get_fiche_end();
 
 				print '<div class="center">';
 				print '<input type="submit" value="'.$langs->trans("Modify").'" name="bouton" class="button">';
-				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="'.$langs->trans("Cancel").'" class="button" onclick="history.go(-1)" />';
+				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="'.$langs->trans("Cancel").'" class="button button-cancel" onclick="history.go(-1)" />';
 				print '</div>';
 
 				print '</form>';
@@ -2353,8 +2353,8 @@ if ($action == 'create')
 
 							print '<td class="center">';
 							print '<input type="hidden" name="rowid" value="'.$line->rowid.'">';
-							print '<input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
-							print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+							print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
+							print '<br><input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 							print '</td>';
 
 							print '</tr>';
@@ -2543,7 +2543,7 @@ if ($action == 'create')
 
 				print '</form>';
 
-				dol_fiche_end();
+				print dol_get_fiche_end();
 			} // end edit or not edit
 		}	// end of if result
 		else {
@@ -2648,7 +2648,7 @@ if ($action != 'create' && $action != 'edit')
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
 		{
 			// Cancel
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$object->id.'">'.$langs->trans('Cancel').'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$object->id.'">'.$langs->trans("Cancel").'</a></div>';
 		}
 	}
 
@@ -2686,14 +2686,14 @@ if ($action != 'create' && $action != 'edit')
 	if ($user->rights->expensereport->creer && ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) && $object->status == ExpenseReport::STATUS_APPROVED)
 	{
 		// Cancel
-   		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Cancel').'</a></div>';
+   		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Cancel").'</a></div>';
 	}
 
 	// TODO Replace this. It should be SetUnpaid and should go back to status unpaid not canceled.
 	if (($user->rights->expensereport->approve || $user->rights->expensereport->to_paid) && $object->status == ExpenseReport::STATUS_CLOSED)
 	{
 		// Cancel
-		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Cancel').'</a></div>';
+		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Cancel").'</a></div>';
 	}
 
 	if ($user->rights->expensereport->to_paid && $object->paid && $object->status == ExpenseReport::STATUS_CLOSED)

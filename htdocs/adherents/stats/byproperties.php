@@ -34,8 +34,8 @@ $mode = GETPOST('mode') ?GETPOST('mode') : '';
 
 // Security check
 if ($user->socid > 0) {
-    $action = '';
-    $socid = $user->socid;
+	$action = '';
+	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'adherent', '', '', 'cotisation');
 
@@ -69,7 +69,7 @@ $sql .= " d.morphy as code";
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
 $sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-$sql .= " AND d.statut != -1";	// Not draft
+$sql .= " AND d.statut != -1"; // Not draft
 $sql .= " GROUP BY d.morphy";
 $foundphy = $foundmor = 0;
 
@@ -100,7 +100,7 @@ $sql .= " d.morphy as code";
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
 $sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-$sql .= " AND d.statut >= 1";	// Active (not draft=-1, not resiliated=0)
+$sql .= " AND d.statut >= 1"; // Active (not draft=-1, not resiliated=0)
 $sql .= " GROUP BY d.morphy";
 $foundphy = $foundmor = 0;
 
@@ -173,7 +173,7 @@ foreach ($data as $val) {
 print '</table>';
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

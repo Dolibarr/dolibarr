@@ -74,7 +74,7 @@ print dol_get_fiche_head($head, 'attributes', $langs->trans("Members"), -1, 'use
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 // Buttons
@@ -95,7 +95,7 @@ if ($action == 'create') {
 	print '<div name="topofform"></div><br>';
 	print load_fiche_titre($langs->trans('NewAttribute'));
 
-    require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
+	require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
 }
 
 /* ************************************************************************** */
@@ -107,7 +107,7 @@ if ($action == 'edit' && !empty($attrname)) {
 	print '<div name="topofform"></div><br>';
 	print load_fiche_titre($langs->trans("FieldEdition", $attrname));
 
-    require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
+	require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }
 
 // End of page

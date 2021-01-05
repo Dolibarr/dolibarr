@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
@@ -136,8 +136,8 @@ if ($action == 'search')
 {
 	$current_lang = $langs->getDefaultLang();
 
-    $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.fk_product_type as type, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
-    $sql .= ' p.fk_product_type, p.tms as datem';
+	$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.fk_product_type as type, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
+	$sql .= ' p.fk_product_type, p.tms as datem, p.tobatch';
 	if (!empty($conf->global->MAIN_MULTILANGS)) $sql .= ', pl.label as labelm, pl.description as descriptionm';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON p.rowid = cp.fk_product';
@@ -197,58 +197,58 @@ if ($id > 0 || !empty($ref))
 	 */
 	if ($user->rights->produit->lire || $user->rights->service->lire)
 	{
-        $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-        $shownav = 1;
-        if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
+		$shownav = 1;
+		if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
 
-        dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', '', '', '', 0, '', '', 0);
+		dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', '', '', '', 0, '', '', 0);
 
-        if ($object->type != Product::TYPE_SERVICE || empty($conf->global->PRODUIT_MULTIPRICES))
-        {
-            print '<div class="fichecenter">';
-    	    print '<div class="underbanner clearboth"></div>';
+		if ($object->type != Product::TYPE_SERVICE || !empty($conf->global->STOCK_SUPPORTS_SERVICES) || empty($conf->global->PRODUIT_MULTIPRICES))
+		{
+			print '<div class="fichecenter">';
+			print '<div class="underbanner clearboth"></div>';
 
-    	    print '<table class="border centpercent tableforfield">';
+			print '<table class="border centpercent tableforfield">';
 
-    		// Nature
-    		if ($object->type != Product::TYPE_SERVICE)
-    		{
-    			print '<tr><td class="titlefield">'.$langs->trans("Nature").'</td><td>';
-    			print $object->getLibFinished();
-    			print '</td></tr>';
-    		}
+			// Nature
+			if ($object->type != Product::TYPE_SERVICE)
+			{
+				print '<tr><td class="titlefield">'.$langs->trans("Nature").'</td><td>';
+				print $object->getLibFinished();
+				print '</td></tr>';
+			}
 
-    		if (empty($conf->global->PRODUIT_MULTIPRICES))
-    		{
-    		    // Price
-    			print '<tr><td class="titlefield">'.$langs->trans("SellingPrice").'</td><td>';
-    			if ($object->price_base_type == 'TTC')
-    			{
-    				print price($object->price_ttc).' '.$langs->trans($object->price_base_type);
-    			} else {
-    				print price($object->price).' '.$langs->trans($object->price_base_type ? $object->price_base_type : 'HT');
-    			}
-    			print '</td></tr>';
+			if (empty($conf->global->PRODUIT_MULTIPRICES))
+			{
+				// Price
+				print '<tr><td class="titlefield">'.$langs->trans("SellingPrice").'</td><td>';
+				if ($object->price_base_type == 'TTC')
+				{
+					print price($object->price_ttc).' '.$langs->trans($object->price_base_type);
+				} else {
+					print price($object->price).' '.$langs->trans($object->price_base_type ? $object->price_base_type : 'HT');
+				}
+				print '</td></tr>';
 
-    			// Price minimum
-    			print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
-    			if ($object->price_base_type == 'TTC')
-    			{
-    				print price($object->price_min_ttc).' '.$langs->trans($object->price_base_type);
-    			} else {
-    				print price($object->price_min).' '.$langs->trans($object->price_base_type ? $object->price_base_type : 'HT');
-    			}
-    			print '</td></tr>';
-    		}
+				// Price minimum
+				print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
+				if ($object->price_base_type == 'TTC')
+				{
+					print price($object->price_min_ttc).' '.$langs->trans($object->price_base_type);
+				} else {
+					print price($object->price_min).' '.$langs->trans($object->price_base_type ? $object->price_base_type : 'HT');
+				}
+				print '</td></tr>';
+			}
 
-            print '</table>';
-            print '</div>';
-        }
+			print '</table>';
+			print '</div>';
+		}
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
-        print '<br>';
+		print '<br>';
 
 		$prodsfather = $object->getFather(); // Parent Products
 		$object->get_sousproduits_arbo(); // Load $object->sousprods
@@ -320,14 +320,11 @@ if ($id > 0 || !empty($ref))
 		print '</tr>'."\n";
 
 		$totalsell = 0;
-		if (count($prods_arbo))
-		{
-			foreach ($prods_arbo as $value)
-			{
+		if (count($prods_arbo))	{
+			foreach ($prods_arbo as $value)	{
 				$productstatic->fetch($value['id']);
 
-				if ($value['level'] <= 1)
-				{
+				if ($value['level'] <= 1) {
 					print '<tr class="oddeven">';
 
 					$notdefined = 0;
@@ -341,8 +338,8 @@ if ($id > 0 || !empty($ref))
 					if ($product_fourn->find_min_price_product_fournisseur($productstatic->id) > 0)
 					{
 						print $langs->trans("BuyingPriceMinShort").': ';
-				    	if ($product_fourn->product_fourn_price_id > 0) print $product_fourn->display_price_product_fournisseur(0, 0);
-				    	else { print $langs->trans("NotDefined"); $notdefined++; $atleastonenotdefined++; }
+						if ($product_fourn->product_fourn_price_id > 0) print $product_fourn->display_price_product_fournisseur(0, 0);
+						else { print $langs->trans("NotDefined"); $notdefined++; $atleastonenotdefined++; }
 					}
 					print '</td>';
 
@@ -380,7 +377,7 @@ if ($id > 0 || !empty($ref))
 					// Qty + IncDec
 					if ($user->rights->produit->creer || $user->rights->service->creer)
 					{
-						print '<td class="center"><input type="text" value="'.$nb_of_subproduct.'" name="TProduct['.$productstatic->id.'][qty]" size="4" /></td>';
+						print '<td class="center"><input type="text" value="'.$nb_of_subproduct.'" name="TProduct['.$productstatic->id.'][qty]" size="4" class="right" /></td>';
 						print '<td class="center"><input type="checkbox" name="TProduct['.$productstatic->id.'][incdec]" value="1" '.($value['incdec'] == 1 ? 'checked' : '').' /></td>';
 					} else {
 						print '<td>'.$nb_of_subproduct.'</td>';
@@ -446,7 +443,7 @@ if ($id > 0 || !empty($ref))
 			print '<td class="right" colspan="2">';
 			if ($user->rights->produit->creer || $user->rights->service->creer)
 			{
-				print '<input type="submit" class="button" value="'.$langs->trans('Save').'">';
+				print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 			}
 			print '</td>';
 			print '</tr>'."\n";
@@ -462,7 +459,7 @@ if ($id > 0 || !empty($ref))
 		print '</table>';
 
 		/*if($user->rights->produit->creer || $user->rights->service->creer) {
-			print '<input type="submit" class="button" value="'.$langs->trans('Save').'">';
+			print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 		}*/
 
 		print '</form>';
@@ -478,7 +475,7 @@ if ($id > 0 || !empty($ref))
 			$rowspan = 1;
 			if (!empty($conf->categorie->enabled)) $rowspan++;
 
-	        print load_fiche_titre($langs->trans("ProductToAddSearch"), '', '');
+			print load_fiche_titre($langs->trans("ProductToAddSearch"), '', '');
 			print '<form action="'.DOL_URL_ROOT.'/product/composition/card.php?id='.$id.'" method="POST">';
 			print '<input type="hidden" name="action" value="search">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
@@ -566,6 +563,7 @@ if ($id > 0 || !empty($ref))
 						$productstatic->label = $objp->label;
 						$productstatic->type = $objp->type;
 						$productstatic->entity = $objp->entity;
+						$productstatic->status_batch = $objp->tobatch;
 
 						print '<td>'.$productstatic->getNomUrl(1, '', 24).'</td>';
 						$labeltoshow = $objp->label;
@@ -623,7 +621,7 @@ if ($id > 0 || !empty($ref))
 				print '<br><div class="center">';
 				print '<input type="submit" class="button" name="save" value="'.$langs->trans("Add").'/'.$langs->trans("Update").'">';
 				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-				print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+				print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</div>';
 			}
 

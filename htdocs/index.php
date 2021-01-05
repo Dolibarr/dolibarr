@@ -68,7 +68,7 @@ if (GETPOST('addbox'))	// Add box (when submit is done from a form when ajax dis
  * View
  */
 
-if (!is_object($form)) $form = new Form($db);
+if (!isset($form) || !is_object($form)) $form = new Form($db);
 
 // Title
 $title = $langs->trans("HomeArea").' - Dolibarr '.DOL_VERSION;
@@ -98,8 +98,6 @@ if (!empty($conf->global->MAIN_MOTD))
 		print "\n<!-- End of welcome text -->\n";
 	}
 }
-
-
 
 
 
@@ -295,7 +293,7 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 				$class = $classes[$val];
 				// Search in cache if load_state_board is already realized
 				$classkeyforcache = $class;
-				if ($classkeyforcache == 'ProductService') $classkeyforcache = 'Product';	// ProductService use same load_state_board than Product
+				if ($classkeyforcache == 'ProductService') $classkeyforcache = 'Product'; // ProductService use same load_state_board than Product
 
 				if (!isset($boardloaded[$classkeyforcache]) || !is_object($boardloaded[$classkeyforcache]))
 				{
@@ -593,9 +591,10 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	//Remove any invalid response
 	//load_board can return an integer if failed or WorkboardResponse if OK
 	$valid_dashboardlines = array();
-	foreach ($dashboardlines as $infoKey => $tmp) {
+	foreach ($dashboardlines as $workboardid => $tmp) {
 		if ($tmp instanceof WorkboardResponse) {
-			$valid_dashboardlines[$infoKey] = $tmp;
+			$tmp->id = $workboardid; // Complete the object to add its id into its name
+			$valid_dashboardlines[$workboardid] = $tmp;
 		}
 	}
 
@@ -651,7 +650,6 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 
 		foreach ($dashboardgroup as $groupKey => $groupElement) {
 			$boards = array();
-
 			if (empty($conf->global->MAIN_DISABLE_NEW_OPENED_DASH_BOARD)) {
 				foreach ($groupElement['stats'] as $infoKey) {
 					if (!empty($valid_dashboardlines[$infoKey])) {
@@ -719,9 +717,13 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 					$textLateTitle = $langs->trans("NActionsLate", $board->nbtodolate);
 					$textLateTitle .= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';
 
+					if ($board->id == 'bank_account') {
+						$textLateTitle .= '<br><span class="opacitymedium">'.$langs->trans("IfYouDontReconcileDisableProperty", $langs->transnoentitiesnoconv("Conciliable")).'</span>';
+					}
+
 					$textLate = '';
 					if ($board->nbtodolate > 0) {
-						$textLate .= '<span title="'.dol_htmlentities($textLateTitle).'" class="classfortooltip badge badge-warning">';
+						$textLate .= '<span title="'.dol_escape_htmltag($textLateTitle).'" class="classfortooltip badge badge-warning">';
 						$textLate .= '<i class="fa fa-exclamation-triangle"></i> '.$board->nbtodolate;
 						$textLate .= '</span>';
 					}
@@ -884,7 +886,7 @@ print '<div class="fichecenter fichecenterbis">';
 
 
 /*
- * Show boxes
+ * Show widgets (boxes)
  */
 
 $boxlist .= '<div class="twocolumns">';
@@ -916,7 +918,7 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 		$boxstat .= '<div class="box">';
 		$boxstat .= '<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable boxtablenobottom nohover widgetstats" width="100%">';
 		$boxstat .= '<tr class="liste_titre box_titre">';
-		$boxstat .= '<td class="liste_titre">';
+		$boxstat .= '<td>';
 		$boxstat .= '<div class="inline-block valignmiddle">'.$langs->trans("DolibarrStateBoard").'</div>';
 		$boxstat .= '</td>';
 		$boxstat .= '</tr>';
@@ -1026,7 +1028,7 @@ function showWeather($totallate, $text, $options, $morecss = '')
  *  $conf->global->MAIN_METEO_LEVELx
  *
  *  @param      int     $totallate      Nb of element late
- *  @return     string                  Return img tag of weather
+ *  @return     stdClass                Return img tag of weather
  */
 function getWeatherStatus($totallate)
 {
@@ -1061,20 +1063,16 @@ function getWeatherStatus($totallate)
 	if ($totallate <= $level0) {
 		$weather->picto = 'weather-clear.png';
 		$weather->level = 0;
-	}
-	elseif ($totallate <= $level1) {
+	} elseif ($totallate <= $level1) {
 		$weather->picto = 'weather-few-clouds.png';
 		$weather->level = 1;
-	}
-	elseif ($totallate <= $level2) {
+	} elseif ($totallate <= $level2) {
 		$weather->picto = 'weather-clouds.png';
 		$weather->level = 2;
-	}
-	elseif ($totallate <= $level3) {
+	} elseif ($totallate <= $level3) {
 		$weather->picto = 'weather-many-clouds.png';
 		$weather->level = 3;
-	}
-	else {
+	} else {
 		$weather->picto = 'weather-storm.png';
 		$weather->level = 4;
 	}

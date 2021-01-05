@@ -382,25 +382,6 @@ class SocieteTest extends PHPUnit\Framework\TestCase
         return $result;
     }
 
-    /**
-     * testSocieteStatic
-     *
-     * @return  void
-     */
-    public function testSocieteStatic()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-
-        $localobject=new Societe($db);
-
-
-        return;
-    }
-
 
     /**
      * testSocieteGetFullAddress

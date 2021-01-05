@@ -35,7 +35,7 @@ $langs->loadLangs(array('admin', 'cron'));
 if (!$user->admin)
 	accessforbidden();
 
-$actionsave = GETPOST("save");
+$actionsave = GETPOST("save", 'alphanohtml');
 
 // Save parameters
 if (!empty($actionsave))
@@ -75,6 +75,8 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print dol_get_fiche_head($head, 'setup', $langs->trans("Module2300Name"), -1, 'cron');
 
+print '<span class="opacitymedium">'.$langs->trans('CronInfo').'</span><br>';
+
 print "<br>\n";
 
 print '<table class="noborder centpercent">';
@@ -92,12 +94,12 @@ if (!empty($conf->global->CRON_DISABLE_KEY_CHANGE)) $disabled = ' disabled="disa
 print '<td>';
 if (empty($conf->global->CRON_DISABLE_KEY_CHANGE))
 {
-    print '<input type="text" class="flat minwidth300"'.$disabled.' id="CRON_KEY" name="CRON_KEY" value="'.(GETPOST('CRON_KEY') ?GETPOST('CRON_KEY') : (!empty($conf->global->CRON_KEY) ? $conf->global->CRON_KEY : '')).'">';
-    if (!empty($conf->use_javascript_ajax))
-    	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+	print '<input type="text" class="flat minwidth300"'.$disabled.' id="CRON_KEY" name="CRON_KEY" value="'.(GETPOST('CRON_KEY') ?GETPOST('CRON_KEY') : (!empty($conf->global->CRON_KEY) ? $conf->global->CRON_KEY : '')).'">';
+	if (!empty($conf->use_javascript_ajax))
+		print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 } else {
-    print (!empty($conf->global->CRON_KEY) ? $conf->global->CRON_KEY : '');
-    print '<input type="hidden" id="CRON_KEY" name="CRON_KEY" value="'.(GETPOST('CRON_KEY') ?GETPOST('CRON_KEY') : (!empty($conf->global->CRON_KEY) ? $conf->global->CRON_KEY : '')).'">';
+	print (!empty($conf->global->CRON_KEY) ? $conf->global->CRON_KEY : '');
+	print '<input type="hidden" id="CRON_KEY" name="CRON_KEY" value="'.(GETPOST('CRON_KEY') ?GETPOST('CRON_KEY') : (!empty($conf->global->CRON_KEY) ? $conf->global->CRON_KEY : '')).'">';
 }
 print '</td>';
 print '<td>&nbsp;</td>';
@@ -105,10 +107,10 @@ print '</tr>';
 
 print '</table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center">';
-print '<input type="submit" name="save" class="button" value="'.$langs->trans("Save").'">';
+print '<input type="submit" name="save" class="button button-save" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';
@@ -116,7 +118,7 @@ print '</form>';
 
 print '<br><br><br>';
 
-print $langs->trans("UseMenuModuleToolsToAddCronJobs", dol_buildpath('/cron/list.php?leftmenu=admintools', 1)).'<br>';
+//print $langs->trans("UseMenuModuleToolsToAddCronJobs", dol_buildpath('/cron/list.php?leftmenu=admintools', 1)).'<br>';
 if (!empty($conf->global->CRON_WARNING_DELAY_HOURS)) print info_admin($langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS)).'<br>';
 
 print '<br>';

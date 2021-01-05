@@ -67,7 +67,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortfield) $sortfield = "v.datep,v.rowid";
-if (!$sortorder) $sortorder = "DESC";
+if (!$sortorder) $sortorder = "DESC,DESC";
 
 $filtre = GETPOST("filtre", 'alpha');
 
@@ -466,14 +466,18 @@ if ($result)
 
 		// Project
 		if ($arrayfields['project']['checked']) {
-			$proj->fetch($obj->fk_project);
-			print '<td class="nowraponall">'.$proj->getNomUrl(1).'</td>';
+			print '<td class="nowraponall">';
+			if ($obj->fk_project > 0) {
+				$proj->fetch($obj->fk_project);
+				print $proj->getNomUrl(1);
+			}
+			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Bank account
 		if ($arrayfields['bank']['checked']) {
-			print '<td>';
+			print '<td class="nowraponall">';
 			if ($obj->bid > 0)
 			{
 				$accountstatic->id = $obj->bid;

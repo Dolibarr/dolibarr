@@ -73,7 +73,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'inv
 
 if ($contextpage == 'poslist')
 {
-    $_GET['optioncss'] = 'print';
+	$_GET['optioncss'] = 'print';
 }
 
 $lineid = GETPOST('lineid', 'int');
@@ -128,7 +128,7 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters
 $offset = $limit * $page;
 if (!$sortorder && !empty($conf->global->INVOICE_DEFAULT_UNPAYED_SORT_ORDER) && $search_status == '1') $sortorder = $conf->global->INVOICE_DEFAULT_UNPAYED_SORT_ORDER;
 if (!$sortorder) $sortorder = 'DESC';
@@ -206,10 +206,10 @@ $arrayfields = array(
 	'f.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>200),
 	'multicurrency_dynamount_payed'=>array('label'=>'MulticurrencyAlreadyPaid', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>210),
 	'multicurrency_rtp'=>array('label'=>'MulticurrencyRemainderToPay', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>220), // Not enabled by default because slow
-	'total_pa' => array('label' => ($conf->global->MARGIN_TYPE == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous?0:1)),
-	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous?0:1)),
-	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARGIN_RATES)?0:1)),
-	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARK_RATES)?0:1)),
+	'total_pa' => array('label' => ($conf->global->MARGIN_TYPE == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous ? 0 : 1)),
+	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous ? 0 : 1)),
+	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARGIN_RATES) ? 0 : 1)),
+	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARK_RATES) ? 0 : 1)),
 	'f.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
 	'f.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'position'=>510, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES))),
@@ -223,14 +223,8 @@ if ($conf->global->INVOICE_USE_SITUATION && $conf->global->INVOICE_USE_RETAINED_
 }
 
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -306,19 +300,17 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
-if ($massaction == 'makepayment'){
-	$arrayofselected=is_array($toselect)?$toselect:array();
+if ($massaction == 'makepayment') {
+	$arrayofselected = is_array($toselect) ? $toselect : array();
 
 	$loc = dol_buildpath('/compta/paiement.php', 2).'?action=create&facids='.implode(',', $arrayofselected);
 
 	header('Location: '.$loc);
 	exit;
-} elseif ($massaction == 'withdrawrequest')
-{
+} elseif ($massaction == 'withdrawrequest') {
 	$langs->load("withdrawals");
 
-	if (!$user->rights->prelevement->bons->creer)
-	{
+	if (!$user->rights->prelevement->bons->creer) {
 		$error++;
 		setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
 	} else {
@@ -331,8 +323,7 @@ if ($massaction == 'makepayment'){
 		{
 			$objecttmp = new Facture($db);
 			$result = $objecttmp->fetch($toselectid);
-			if ($result > 0)
-			{
+			if ($result > 0) {
 				$totalpaye = $objecttmp->getSommePaiement();
 				$totalcreditnotes = $objecttmp->getSumCreditNotesUsed();
 				$totaldeposits = $objecttmp->getSumDepositsUsed();
@@ -673,17 +664,17 @@ if ($resql)
 		'presend'=>$langs->trans("SendByMail"),
 		//'makepayment'=>$langs->trans("InvoicePaymentsLimits"),   TODO Blank page when using this
 	);
-	if ($conf->prelevement->enabled) {
-        	$langs->load("withdrawals");
-        	$arrayofmassactions['withdrawrequest'] = $langs->trans("MakeWithdrawRequest");
+	if ($conf->prelevement->enabled && !empty($user->rights->prelevement->bons->creer)) {
+			$langs->load("withdrawals");
+			$arrayofmassactions['withdrawrequest'] = $langs->trans("MakeWithdrawRequest");
 	}
 	if ($user->rights->facture->supprimer) {
 		if (!empty($conf->global->INVOICE_CAN_REMOVE_DRAFT_ONLY)) {
-        	$arrayofmassactions['predeletedraft'] = $langs->trans("Deletedraft");
+			$arrayofmassactions['predeletedraft'] = $langs->trans("Deletedraft");
 		} elseif (!empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED)) {	// mass deletion never possible on invoices on such situation
-            $arrayofmassactions['predelete'] = $langs->trans("Delete");
-        }
-    }
+			$arrayofmassactions['predelete'] = $langs->trans("Delete");
+		}
+	}
 	if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
@@ -863,7 +854,7 @@ if ($resql)
 	// Project label
 	if (!empty($arrayfields['p.title']['checked']))
 	{
-	    print '<td class="liste_titre"><input class="flat maxwidth50imp" type="text" name="search_project" value="'.$search_project.'"></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth50imp" type="text" name="search_project" value="'.$search_project.'"></td>';
 	}
 	// Thirdparty
 	if (!empty($arrayfields['s.nom']['checked']))
@@ -967,8 +958,8 @@ if ($resql)
 	}
 	if (!empty($arrayfields['f.retained_warranty']['checked']))
 	{
-	    print '<td class="liste_titre" align="right">';
-	    print '</td>';
+		print '<td class="liste_titre" align="right">';
+		print '</td>';
 	}
 	if (!empty($arrayfields['dynamount_payed']['checked']))
 	{
@@ -1170,9 +1161,9 @@ if ($resql)
 			$facturestatic->ref = $obj->ref;
 			$facturestatic->ref_client = $obj->ref_client;
 			$facturestatic->type = $obj->type;
-            $facturestatic->total_ht = $obj->total_ht;
-            $facturestatic->total_tva = $obj->total_vat;
-            $facturestatic->total_ttc = $obj->total_ttc;
+			$facturestatic->total_ht = $obj->total_ht;
+			$facturestatic->total_tva = $obj->total_vat;
+			$facturestatic->total_ttc = $obj->total_ttc;
 			$facturestatic->multicurrency_code = $obj->multicurrency_code;
 			$facturestatic->multicurrency_tx = $obj->multicurrency_tx;
 			$facturestatic->multicurrency_total_ht = $obj->multicurrency_total_ht;
@@ -1181,23 +1172,23 @@ if ($resql)
 			$facturestatic->statut = $obj->fk_statut;
 			$facturestatic->close_code = $obj->close_code;
 			$facturestatic->total_ttc = $obj->total_ttc;
-            $facturestatic->paye = $obj->paye;
-            $facturestatic->fk_soc = $obj->fk_soc;
+			$facturestatic->paye = $obj->paye;
+			$facturestatic->fk_soc = $obj->fk_soc;
 
-            $facturestatic->date = $db->jdate($obj->df);
-            $facturestatic->date_valid = $db->jdate($obj->date_valid);
-            $facturestatic->date_lim_reglement = $db->jdate($obj->datelimite);
+			$facturestatic->date = $db->jdate($obj->df);
+			$facturestatic->date_valid = $db->jdate($obj->date_valid);
+			$facturestatic->date_lim_reglement = $db->jdate($obj->datelimite);
 
-            $facturestatic->note_public = $obj->note_public;
+			$facturestatic->note_public = $obj->note_public;
 			$facturestatic->note_private = $obj->note_private;
 			if ($conf->global->INVOICE_USE_SITUATION && $conf->global->INVOICE_USE_RETAINED_WARRANTY)
 			{
-			     $facturestatic->retained_warranty = $obj->retained_warranty;
-			     $facturestatic->retained_warranty_date_limit = $obj->retained_warranty_date_limit;
-			     $facturestatic->situation_final = $obj->retained_warranty_date_limit;
-			     $facturestatic->situation_final = $obj->retained_warranty_date_limit;
-			     $facturestatic->situation_cycle_ref = $obj->situation_cycle_ref;
-			     $facturestatic->situation_counter = $obj->situation_counter;
+				 $facturestatic->retained_warranty = $obj->retained_warranty;
+				 $facturestatic->retained_warranty_date_limit = $obj->retained_warranty_date_limit;
+				 $facturestatic->situation_final = $obj->retained_warranty_date_limit;
+				 $facturestatic->situation_final = $obj->retained_warranty_date_limit;
+				 $facturestatic->situation_cycle_ref = $obj->situation_cycle_ref;
+				 $facturestatic->situation_counter = $obj->situation_counter;
 			}
 			$thirdpartystatic->id = $obj->socid;
 			$thirdpartystatic->name = $obj->name;
@@ -1246,19 +1237,19 @@ if ($resql)
 				$marginInfo = $formmargin->getMarginInfosArray($facturestatic);
 			}
 
-            print '<tr class="oddeven"';
-            if ($contextpage == 'poslist')
-            {
-                print ' onclick="parent.$(\'#poslines\').load(\'invoice.php?action=history&placeid='.$obj->id.'\', function() {parent.$.colorbox.close();});"';
-            }
-            print '>';
+			print '<tr class="oddeven"';
+			if ($contextpage == 'poslist')
+			{
+				print ' onclick="parent.$(\'#poslines\').load(\'invoice.php?action=history&placeid='.$obj->id.'\', function() {parent.$.colorbox.close();});"';
+			}
+			print '>';
 
-            // No
-            if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
-            	print '<td>'.(($offset * $limit) + $i).'</td>';
-            }
+			// No
+			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+				print '<td>'.(($offset * $limit) + $i).'</td>';
+			}
 
-            // Ref
+			// Ref
 			if (!empty($arrayfields['f.ref']['checked']))
 			{
 				print '<td class="nowraponall">';
@@ -1266,12 +1257,12 @@ if ($resql)
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 
 				print '<td class="nobordernopadding nowraponall">';
-                if ($contextpage == 'poslist')
-                {
-                    print $obj->ref;
-                } else {
-                    print $facturestatic->getNomUrl(1, '', 200, 0, '', 0, 1);
-                }
+				if ($contextpage == 'poslist')
+				{
+					print $obj->ref;
+				} else {
+					print $facturestatic->getNomUrl(1, '', 200, 0, '', 0, 1);
+				}
 
 				$filename = dol_sanitizeFileName($obj->ref);
 				$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($obj->ref);
@@ -1327,7 +1318,7 @@ if ($resql)
 				print '<td align="center" class="nowraponall">'.dol_print_date($datelimit, 'day');
 				if ($facturestatic->hasDelay())
 				{
-				    print img_warning($langs->trans('Alert').' - '.$langs->trans('Late'));
+					print img_warning($langs->trans('Alert').' - '.$langs->trans('Late'));
 				}
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
@@ -1348,24 +1339,24 @@ if ($resql)
 			// Project title
 			if (!empty($arrayfields['p.title']['checked']))
 			{
-			    print '<td class="nowraponall">';
-			    if ($obj->project_id > 0)
-			    {
-			        print $projectstatic->title;
-			    }
-			    print '</td>';
-			    if (!$i) $totalarray['nbfield']++;
+				print '<td class="nowraponall">';
+				if ($obj->project_id > 0)
+				{
+					print $projectstatic->title;
+				}
+				print '</td>';
+				if (!$i) $totalarray['nbfield']++;
 			}
 
 			// Third party
 			if (!empty($arrayfields['s.nom']['checked']))
 			{
 				print '<td class="tdoverflowmax200">';
-		        if ($contextpage == 'poslist')
+				if ($contextpage == 'poslist')
 				{
-				    print $thirdpartystatic->name;
+					print $thirdpartystatic->name;
 				} else {
-				    print $thirdpartystatic->getNomUrl(1, 'customer');
+					print $thirdpartystatic->getNomUrl(1, 'customer');
 				}
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
@@ -1511,7 +1502,7 @@ if ($resql)
 
 			if (!empty($arrayfields['f.retained_warranty']['checked']))
 			{
-			    print '<td align="right">'.(!empty($obj->retained_warranty) ?price($obj->retained_warranty).'%' : '&nbsp;').'</td>';
+				print '<td align="right">'.(!empty($obj->retained_warranty) ?price($obj->retained_warranty).'%' : '&nbsp;').'</td>';
 			}
 
 			if (!empty($arrayfields['dynamount_payed']['checked']))
@@ -1585,25 +1576,27 @@ if ($resql)
 			// Total buying or cost price
 			if (!empty($arrayfields['total_pa']['checked']))
 			{
-				print '<td class="right nowrap">' . price($marginInfo['pa_total']) . '</td>';
+				print '<td class="right nowrap">'.price($marginInfo['pa_total']).'</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}
 			// Total margin
 			if (!empty($arrayfields['total_margin']['checked']))
 			{
-				print '<td class="right nowrap">' . price($marginInfo['total_margin']) . '</td>';
+				print '<td class="right nowrap">'.price($marginInfo['total_margin']).'</td>';
 				if (!$i) $totalarray['nbfield']++;
+				if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'total_margin';
+				$totalarray['val']['total_margin'] += $marginInfo['total_margin'];
 			}
 			// Total margin rate
 			if (!empty($arrayfields['total_margin_rate']['checked']))
 			{
-				print '<td class="right nowrap">' . (($marginInfo['total_margin_rate'] == '')?'':price($marginInfo['total_margin_rate'], null, null, null, null, 2).'%') . '</td>';
+				print '<td class="right nowrap">'.(($marginInfo['total_margin_rate'] == '') ? '' : price($marginInfo['total_margin_rate'], null, null, null, null, 2).'%').'</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}
 			// total mark rate
 			if (!empty($arrayfields['total_mark_rate']['checked']))
 			{
-				print '<td class="right nowrap">' . (($marginInfo['total_mark_rate'] == '')?'':price($marginInfo['total_mark_rate'], null, null, null, null, 2).'%') . '</td>';
+				print '<td class="right nowrap">'.(($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], null, null, null, null, 2).'%').'</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}
 

@@ -46,8 +46,7 @@ $taskid = GETPOST('taskid', 'int');
 $mine = 0;
 if ($mode == 'mine') $mine = 1;
 
-$projectid = '';
-$projectid = isset($_GET["id"]) ? $_GET["id"] : $_POST["projectid"];
+$projectid = isset($_GET["id"]) ? GETPOST("id", "int", 1) : GETPOST("projectid", "int");
 
 // Security check
 $socid = 0;
@@ -393,7 +392,7 @@ if ($mine || ($usertoprocess->id == $user->id))
 }
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="floatright right'.($conf->dol_optimize_smallscreen ? ' centpercent' : '').'">'.$nav.'</div>'; // We move this before the assign to components so, the default submit button is not the assign to.
 
@@ -502,7 +501,10 @@ $colspan = 5;
 // By default, we can edit only tasks we are assigned to
 $restrictviewformytask = (empty($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED) ? 1 : 0);
 
+// Get if user is available or not for each day
 $isavailable = array();
+// TODO See code into perweek.php to initialize isavailable array
+
 
 if (count($tasksarray) > 0)
 {
@@ -605,7 +607,7 @@ print '<input type="hidden" id="numberOfLines" name="numberOfLines" value="'.cou
 print '<input type="hidden" id="numberOfFirstLine" name="numberOfFirstLine" value="'.(reset($TWeek)).'"/>'."\n";
 
 print '<div class="center">';
-print '<input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+print '<input type="submit" class="button button-save" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 print '</div>';
 
 print '</form>'."\n\n";

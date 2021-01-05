@@ -77,13 +77,13 @@ if (empty($reshook))
 	}
 
 	if ($action == 'add_customer_price_confirm' && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer)) {
-		if (! (GETPOST('prodid', 'int') > 0)) {
+		if (!(GETPOST('prodid', 'int') > 0)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Product")), null, 'errors');
 			$action = 'add_customer_price';
 		}
 
-		if (! $error) {
+		if (!$error) {
 			$update_child_soc = GETPOST('updatechildprice');
 
 			// add price by customer
@@ -137,7 +137,7 @@ if (empty($reshook))
 			if ($result < 0) {
 				setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 			} else {
-				setEventMessages($langs->trans('Save'), null, 'mesgs');
+				setEventMessages($langs->trans("Save"), null, 'mesgs');
 			}
 
 			$action = '';
@@ -174,7 +174,7 @@ if (empty($reshook))
 		if ($result < 0) {
 			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 		} else {
-			setEventMessages($langs->trans('Save'), null, 'mesgs');
+			setEventMessages($langs->trans("Save"), null, 'mesgs');
 		}
 
 		$action = '';
@@ -217,8 +217,10 @@ if ($object->client) {
 	print '<tr><td class="titlefield">';
 	print $langs->trans('CustomerCode').'</td><td colspan="3">';
 	print $object->code_client;
-	if ($object->check_codeclient() != 0)
+	$tmpcheck = $object->check_codeclient();
+	if ($tmpcheck != 0 && $tmpcheck != -5) {
 		print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+	}
 	print '</td></tr>';
 }
 
@@ -226,8 +228,10 @@ if ($object->fournisseur) {
 	print '<tr><td class="titlefield">';
 	print $langs->trans('SupplierCode').'</td><td colspan="3">';
 	print $object->code_fournisseur;
-	if ($object->check_codefournisseur() != 0)
+	$tmpcheck = $object->check_codefournisseur();
+	if ($tmpcheck != 0 && $tmpcheck != -5) {
 		print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+	}
 	print '</td></tr>';
 }
 
@@ -235,7 +239,7 @@ print '</table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 
@@ -297,7 +301,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '</tr>';
 
 		// Ref. Customer
-		print '<tr><td>' . $langs->trans('RefCustomer') . '</td>';
+		print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
 		print '<td><input name="ref_customer" size="12"></td></tr>';
 
 		// VAT
@@ -349,9 +353,9 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '</table>';
 
 		print '<br><div class="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		print '<br></form>';
@@ -379,7 +383,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '</tr>';
 
 		// Ref. Customer
-		print '<tr><td>' . $langs->trans('RefCustomer') . '</td>';
+		print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
 		print '<td><input name="ref_customer" size="12" value="' . dol_escape_htmltag($prodcustprice->ref_customer) . '"></td></tr>';
 
 		// VAT
@@ -432,9 +436,9 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '</table>';
 
 		print '<br><div class="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		print '<br></form>';
@@ -471,7 +475,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Product").'</td>';
-			print '<td>' . $langs->trans('RefCustomer') . '</td>';
+			print '<td>'.$langs->trans('RefCustomer').'</td>';
 			print '<td>'.$langs->trans("AppliedPricesFrom").'</td>';
 			print '<td class="center">'.$langs->trans("PriceBase").'</td>';
 			print '<td class="right">'.$langs->trans("VAT").'</td>';
@@ -489,7 +493,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				$staticprod->fetch($line->fk_product);
 
 				print "<td>".$staticprod->getNomUrl(1)."</td>";
-				print '<td>' . $line->ref_customer . '</td>';
+				print '<td>'.$line->ref_customer.'</td>';
 				print "<td>".dol_print_date($line->datec, "dayhour")."</td>";
 
 				print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";
@@ -544,7 +548,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 		}
 
-		$option = '&search_prod=' . $search_prod . '&id=' . $object->id . '&label=' . $search_label .'&price=' . $search_price . '&price_ttc=' . $search_price_ttc;
+		$option = '&search_prod='.$search_prod.'&id='.$object->id.'&label='.$search_label.'&price='.$search_price.'&price_ttc='.$search_price_ttc;
 
 		print '<!-- view specific price for each product -->'."\n";
 
@@ -557,9 +561,9 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<table class="noborder centpercent">';
 
 		print '<tr class="liste_titre">';
-		print '<td>' . $langs->trans("Ref") . '</td>';
-		print '<td>' . $langs->trans("Product") . '</td>';
-		print '<td>' . $langs->trans('RefCustomer') . '</td>';
+		print '<td>'.$langs->trans("Ref").'</td>';
+		print '<td>'.$langs->trans("Product").'</td>';
+		print '<td>'.$langs->trans('RefCustomer').'</td>';
 		print '<td>'.$langs->trans("AppliedPricesFrom").'</td>';
 		print '<td class="center">'.$langs->trans("PriceBase").'</td>';
 		print '<td class="right">'.$langs->trans("VAT").'</td>';
@@ -575,10 +579,10 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		{
 			print '<tr class="liste_titre">';
 			print '<td class="liste_titre"><input type="text" class="flat" name="search_prod" value="'.$search_prod.'" size="20"></td>';
-			print '<td class="liste_titre" ><input type="text" class="flat" name="search_label" value="' . $search_label . '" size="20"></td>';
+			print '<td class="liste_titre" ><input type="text" class="flat" name="search_label" value="'.$search_label.'" size="20"></td>';
 			print '<td class="liste_titre" colspan="4">&nbsp;</td>';
-			print '<td class="liste_titre" align="right"><input type="text" class="flat" name="search_price" value="' . $search_price . '" size="10"></td>';
-			print '<td class="liste_titre" align="right"><input type="text" class="flat" name="search_price_ttc" value="' . $search_price_ttc . '" size="10"></td>';
+			print '<td class="liste_titre" align="right"><input type="text" class="flat" name="search_price" value="'.$search_price.'" size="10"></td>';
+			print '<td class="liste_titre" align="right"><input type="text" class="flat" name="search_price_ttc" value="'.$search_price_ttc.'" size="10"></td>';
 			print '<td class="liste_titre" colspan="3">&nbsp;</td>';
 			// Print the search button
 			print '<td class="liste_titre maxwidthsearch">';
@@ -598,8 +602,8 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				$staticprod->fetch($line->fk_product);
 
 				print "<td>".$staticprod->getNomUrl(1)."</td>";
-				print "<td>" . $staticprod->label ."</td>";
-				print '<td>' . $line->ref_customer .'</td>';
+				print "<td>".$staticprod->label."</td>";
+				print '<td>'.$line->ref_customer.'</td>';
 				print "<td>".dol_print_date($line->datec, "dayhour")."</td>";
 
 				print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";

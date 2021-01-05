@@ -16,3 +16,4 @@ DictionaryFunction=HRM - Jobbstillinger
 Employees=Ansatte
 Employee=Ansatt
 NewEmployee=Ny ansatt
+ListOfEmployees=Liste over ansatte

@@ -36,8 +36,8 @@ $socid = GETPOST('socid', 'int'); if ($socid < 0) $socid = 0;
 
 // Security check
 if ($user->socid > 0) {
-    $action = '';
-    $socid = $user->socid;
+	$action = '';
+	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'adherent', '', '', 'cotisation');
 
@@ -79,24 +79,24 @@ $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=memberstats&file=subscripti
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
 if (!$mesg) {
-    $px1->SetData($data);
-    $i = $startyear;
-    while ($i <= $endyear) {
-        $legend[] = $i;
-        $i++;
-    }
-    $px1->SetLegend($legend);
-    $px1->SetMaxValue($px1->GetCeilMaxValue());
-    $px1->SetMinValue(min(0, $px1->GetFloorMinValue()));
-    $px1->SetWidth($WIDTH);
-    $px1->SetHeight($HEIGHT);
-    $px1->SetYLabel($langs->trans("NbOfSubscriptions"));
-    $px1->SetShading(3);
-    $px1->SetHorizTickIncrement(1);
-    $px1->mode = 'depth';
-    $px1->SetTitle($langs->trans("NbOfSubscriptions"));
+	$px1->SetData($data);
+	$i = $startyear;
+	while ($i <= $endyear) {
+		$legend[] = $i;
+		$i++;
+	}
+	$px1->SetLegend($legend);
+	$px1->SetMaxValue($px1->GetCeilMaxValue());
+	$px1->SetMinValue(min(0, $px1->GetFloorMinValue()));
+	$px1->SetWidth($WIDTH);
+	$px1->SetHeight($HEIGHT);
+	$px1->SetYLabel($langs->trans("NbOfSubscriptions"));
+	$px1->SetShading(3);
+	$px1->SetHorizTickIncrement(1);
+	$px1->mode = 'depth';
+	$px1->SetTitle($langs->trans("NbOfSubscriptions"));
 
-    $px1->draw($filenamenb, $fileurlnb);
+	$px1->draw($filenamenb, $fileurlnb);
 }
 
 // Build graphic amount of object
@@ -110,24 +110,24 @@ $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=memberstats&file=subscr
 $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
 if (!$mesg) {
-    $px2->SetData($data);
-    $i = $startyear;
-    while ($i <= $endyear) {
-        $legend[] = $i;
-        $i++;
-    }
-    $px2->SetLegend($legend);
-    $px2->SetMaxValue($px2->GetCeilMaxValue());
-    $px2->SetMinValue(min(0, $px2->GetFloorMinValue()));
-    $px2->SetWidth($WIDTH);
-    $px2->SetHeight($HEIGHT);
-    $px2->SetYLabel($langs->trans("AmountOfSubscriptions"));
-    $px2->SetShading(3);
-    $px2->SetHorizTickIncrement(1);
-    $px2->mode = 'depth';
-    $px2->SetTitle($langs->trans("AmountOfSubscriptions"));
+	$px2->SetData($data);
+	$i = $startyear;
+	while ($i <= $endyear) {
+		$legend[] = $i;
+		$i++;
+	}
+	$px2->SetLegend($legend);
+	$px2->SetMaxValue($px2->GetCeilMaxValue());
+	$px2->SetMinValue(min(0, $px2->GetFloorMinValue()));
+	$px2->SetWidth($WIDTH);
+	$px2->SetHeight($HEIGHT);
+	$px2->SetYLabel($langs->trans("AmountOfSubscriptions"));
+	$px2->SetShading(3);
+	$px2->SetHorizTickIncrement(1);
+	$px2->mode = 'depth';
+	$px2->SetTitle($langs->trans("AmountOfSubscriptions"));
 
-    $px2->draw($filenameamount, $fileurlamount);
+	$px2->draw($filenameamount, $fileurlamount);
 }
 
 
@@ -171,31 +171,31 @@ print '</tr>';
 
 $oldyear = 0;
 foreach ($data as $val) {
-    $year = $val['year'];
-    while ($oldyear > $year + 1) {	// If we have empty year
-        $oldyear--;
-        print '<tr class="oddeven" height="24">';
-        print '<td class="center">';
-        //print '<a href="month.php?year='.$oldyear.'&amp;mode='.$mode.'">';
-        print $oldyear;
-        //print '</a>';
-        print '</td>';
-        print '<td class="right">0</td>';
-        print '<td class="right">0</td>';
-        print '<td class="right">0</td>';
-        print '</tr>';
-    }
-    print '<tr class="oddeven" height="24">';
-    print '<td class="center">';
-    //print '<a href="month.php?year='.$year.'">';
-    print $year;
-    //print '</a>';
-    print '</td>';
-    print '<td class="right">'.$val['nb'].'</td>';
-    print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
-    print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
-    print '</tr>';
-    $oldyear = $year;
+	$year = $val['year'];
+	while ($oldyear > $year + 1) {	// If we have empty year
+		$oldyear--;
+		print '<tr class="oddeven" height="24">';
+		print '<td class="center">';
+		//print '<a href="month.php?year='.$oldyear.'&amp;mode='.$mode.'">';
+		print $oldyear;
+		//print '</a>';
+		print '</td>';
+		print '<td class="right">0</td>';
+		print '<td class="right">0</td>';
+		print '<td class="right">0</td>';
+		print '</tr>';
+	}
+	print '<tr class="oddeven" height="24">';
+	print '<td class="center">';
+	//print '<a href="month.php?year='.$year.'">';
+	print $year;
+	//print '</a>';
+	print '</td>';
+	print '<td class="right">'.$val['nb'].'</td>';
+	print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
+	print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
+	print '</tr>';
+	$oldyear = $year;
 }
 
 print '</table>';
@@ -208,9 +208,9 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 // Show graphs
 print '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
 if ($mesg) { print $mesg; } else {
-    print $px1->show();
-    print "<br>\n";
-    print $px2->show();
+	print $px1->show();
+	print "<br>\n";
+	print $px2->show();
 }
 print '</td></tr></table>';
 
@@ -219,7 +219,7 @@ print '</div></div></div>';
 print '<div style="clear:both"></div>';
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

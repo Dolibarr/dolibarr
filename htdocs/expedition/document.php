@@ -101,7 +101,7 @@ if ($id > 0 || !empty($ref)) {
 		$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
 		$totalsize = 0;
 		foreach ($filearray as $key => $file) {
-		    $totalsize += $file['size'];
+			$totalsize += $file['size'];
 		}
 
 		// Shipment card
@@ -169,7 +169,7 @@ if ($id > 0 || !empty($ref)) {
 
 		print "</div>\n";
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		$modulepart = 'expedition';
 		$permission = $user->rights->expedition->creer;

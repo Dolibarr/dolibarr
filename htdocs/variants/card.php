@@ -43,8 +43,8 @@ if ($object->fetch($id) < 1) {
 
 if ($cancel) $action = '';
 
-if ($_POST) {
-	if ($action == 'edit') {
+if ($action) {
+	if ($action == 'update') {
 		$object->ref = $ref;
 		$object->label = $label;
 
@@ -55,7 +55,7 @@ if ($_POST) {
 			header('Location: '.dol_buildpath('/variants/card.php?id='.$id, 2));
 			exit();
 		}
-	} elseif ($action == 'update') {
+	} elseif ($action == 'update_value') {
 		if ($objectval->fetch($valueid) > 0) {
 			$objectval->ref = $ref;
 			$objectval->value = GETPOST('value', 'alpha');
@@ -139,13 +139,18 @@ $h++;
 print dol_get_fiche_head($head, 'variant', $langs->trans('ProductAttributeName'), -1, 'generic');
 
 if ($action == 'edit') {
-    print '<form method="POST">';
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="action" value="update">';
+		print '<input type="hidden" name="id" value="'.$id.'">';
+		print '<input type="hidden" name="valueid" value="'.$valueid.'">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 }
 
 
 if ($action != 'edit') {
-    print '<div class="fichecenter">';
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 }
 print '<table class="border centpercent tableforfield">';
 print '<tr>';
@@ -173,17 +178,17 @@ print '</table>';
 
 
 if ($action != 'edit') {
-    print '</div>';
+	print '</div>';
 }
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 if ($action == 'edit') {
 	print '<div style="text-align: center;">';
 	print '<div class="inline-block divButAction">';
-	print '<input type="submit" class="button" value="'.$langs->trans('Save').'">';
+	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 	print '&nbsp; &nbsp;';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 	print '</div></form>';
 } else {
@@ -232,7 +237,7 @@ if ($action == 'edit') {
 	if ($action == 'edit_value') {
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="hidden" name="action" value="update">';
+		print '<input type="hidden" name="action" value="update_value">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="valueid" value="'.$valueid.'">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
@@ -252,9 +257,9 @@ if ($action == 'edit') {
 				<td><input type="text" name="ref" value="<?php echo $attrval->ref ?>"></td>
 				<td><input type="text" name="value" value="<?php echo $attrval->value ?>"></td>
 				<td class="right">
-					<input type="submit" value="<?php echo $langs->trans('Save') ?>" class="button">
+					<input type="submit" value="<?php echo $langs->trans("Save") ?>" class="button button-save">
 					&nbsp; &nbsp;
-					<input type="submit" name="cancel" value="<?php echo $langs->trans('Cancel') ?>" class="button">
+					<input type="submit" name="cancel" value="<?php echo $langs->trans("Cancel") ?>" class="button button-cancel">
 				</td>
 			<?php
 		} else {

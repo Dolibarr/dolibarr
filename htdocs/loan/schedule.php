@@ -36,7 +36,7 @@ $action = GETPOST('action', 'aZ09');
 // Security check
 $socid = 0;
 if (GETPOSTISSET('socid')) $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 if (empty($user->rights->loan->calc)) accessforbidden();
 
 // Load translation files required by the page
@@ -55,69 +55,69 @@ if ($object->paid > 0 && count($echeances->lines) == 0) $pay_without_schedule = 
  */
 
 if ($action == 'createecheancier' && empty($pay_without_schedule)) {
-    $db->begin();
-    $i = 1;
-    while ($i < $object->nbterm + 1) {
-        $date = GETPOST('hi_date'.$i, 'int');
-        $mens = price2num(GETPOST('mens'.$i));
-        $int = price2num(GETPOST('hi_interets'.$i));
-        $insurance = price2num(GETPOST('hi_insurance'.$i));
+	$db->begin();
+	$i = 1;
+	while ($i < $object->nbterm + 1) {
+		$date = GETPOST('hi_date'.$i, 'int');
+		$mens = price2num(GETPOST('mens'.$i));
+		$int = price2num(GETPOST('hi_interets'.$i));
+		$insurance = price2num(GETPOST('hi_insurance'.$i));
 
-        $new_echeance = new LoanSchedule($db);
+		$new_echeance = new LoanSchedule($db);
 
-        $new_echeance->fk_loan = $object->id;
-        $new_echeance->datec = dol_now();
-        $new_echeance->tms = dol_now();
-        $new_echeance->datep = $date;
-        $new_echeance->amount_capital = $mens - $int;
-        $new_echeance->amount_insurance = $insurance;
-        $new_echeance->amount_interest = $int;
-        $new_echeance->fk_typepayment = 3;
-        $new_echeance->fk_bank = 0;
-        $new_echeance->fk_user_creat = $user->id;
-        $new_echeance->fk_user_modif = $user->id;
-        $result = $new_echeance->create($user);
-        if ($result < 0) {
-            setEventMessages($new_echeance->error, $echeance->errors, 'errors');
-            $db->rollback();
-            unset($echeances->lines);
-            break;
-        }
-        $echeances->lines[] = $new_echeance;
-        $i++;
-    }
-    var_dump($result);
-    if ($result > 0) $db->commit();
+		$new_echeance->fk_loan = $object->id;
+		$new_echeance->datec = dol_now();
+		$new_echeance->tms = dol_now();
+		$new_echeance->datep = $date;
+		$new_echeance->amount_capital = $mens - $int;
+		$new_echeance->amount_insurance = $insurance;
+		$new_echeance->amount_interest = $int;
+		$new_echeance->fk_typepayment = 3;
+		$new_echeance->fk_bank = 0;
+		$new_echeance->fk_user_creat = $user->id;
+		$new_echeance->fk_user_modif = $user->id;
+		$result = $new_echeance->create($user);
+		if ($result < 0) {
+			setEventMessages($new_echeance->error, $echeance->errors, 'errors');
+			$db->rollback();
+			unset($echeances->lines);
+			break;
+		}
+		$echeances->lines[] = $new_echeance;
+		$i++;
+	}
+	var_dump($result);
+	if ($result > 0) $db->commit();
 }
 
 if ($action == 'updateecheancier' && empty($pay_without_schedule)) {
-    $db->begin();
-    $i = 1;
-    while ($i < $object->nbterm + 1) {
-        $mens = price2num(GETPOST('mens'.$i));
-        $int = price2num(GETPOST('hi_interets'.$i));
-        $id = GETPOST('hi_rowid'.$i);
-        $insurance = price2num(GETPOST('hi_insurance'.$i));
+	$db->begin();
+	$i = 1;
+	while ($i < $object->nbterm + 1) {
+		$mens = price2num(GETPOST('mens'.$i));
+		$int = price2num(GETPOST('hi_interets'.$i));
+		$id = GETPOST('hi_rowid'.$i);
+		$insurance = price2num(GETPOST('hi_insurance'.$i));
 
-        $new_echeance = new LoanSchedule($db);
-        $new_echeance->fetch($id);
-        $new_echeance->tms = dol_now();
-        $new_echeance->amount_capital = $mens - $int;
-        $new_echeance->amount_insurance = $insurance;
-        $new_echeance->amount_interest = $int;
-        $new_echeance->fk_user_modif = $user->id;
-        $result = $new_echeance->update($user, 0);
-        if ($result < 0) {
-            setEventMessages(null, $new_echeance->errors, 'errors');
-            $db->rollback();
-            $echeances->fetchAll($object->id);
-            break;
-        }
+		$new_echeance = new LoanSchedule($db);
+		$new_echeance->fetch($id);
+		$new_echeance->tms = dol_now();
+		$new_echeance->amount_capital = $mens - $int;
+		$new_echeance->amount_insurance = $insurance;
+		$new_echeance->amount_interest = $int;
+		$new_echeance->fk_user_modif = $user->id;
+		$result = $new_echeance->update($user, 0);
+		if ($result < 0) {
+			setEventMessages(null, $new_echeance->errors, 'errors');
+			$db->rollback();
+			$echeances->fetchAll($object->id);
+			break;
+		}
 
-        $echeances->lines[$i-1] = $new_echeance;
-        $i++;
-    }
-    if ($result > 0) $db->commit();
+		$echeances->lines[$i - 1] = $new_echeance;
+		$i++;
+	}
+	if ($result > 0) $db->commit();
 }
 
 /*
@@ -210,7 +210,7 @@ $(document).ready(function() {
 <?php
 
 if ($pay_without_schedule == 1)
-    print '<div class="warning">'.$langs->trans('CantUseScheduleWithLoanStartedToPaid').'</div>'."\n";
+	print '<div class="warning">'.$langs->trans('CantUseScheduleWithLoanStartedToPaid').'</div>'."\n";
 
 print '<form name="createecheancier" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -298,15 +298,15 @@ if ($object->nbterm > 0 && count($echeances->lines) == 0)
 		print '<td class="center" id="capital'.$i.'">'.price($cap_rest, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_capital'.$i.'" id ="hi_capital'.$i.'" value="'.$cap_rest.'">';
 		print '<td class="center">';
 		if (!empty($line->fk_bank))
-        {
-            print $langs->trans('Paid');
-            if (!empty($line->fk_payment_loan))
-                print '&nbsp;<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$line->fk_payment_loan.'">('.img_object($langs->trans("Payment"), "payment").' '.$line->fk_payment_loan.')</a>';
-        }
+		{
+			print $langs->trans('Paid');
+			if (!empty($line->fk_payment_loan))
+				print '&nbsp;<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$line->fk_payment_loan.'">('.img_object($langs->trans("Payment"), "payment").' '.$line->fk_payment_loan.')</a>';
+		}
 		elseif (!$printed)
 		{
-		    print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a>';
-		    $printed = true;
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a>';
+			$printed = true;
 		}
 		print '</td>';
 		print '</tr>'."\n";
@@ -322,7 +322,7 @@ print '</br>';
 
 if (count($echeances->lines) == 0) $label = $langs->trans("Create");
 else $label = $langs->trans("Save");
-print '<div class="center"><input class="button" type="submit" value="'.$label.'" '.(($pay_without_schedule == 1)?'disabled title="'.$langs->trans('CantUseScheduleWithLoanStartedToPaid').'"':'').'title=""></div>';
+print '<div class="center"><input class="button" type="submit" value="'.$label.'" '.(($pay_without_schedule == 1) ? 'disabled title="'.$langs->trans('CantUseScheduleWithLoanStartedToPaid').'"' : '').'title=""></div>';
 print '</form>';
 
 // End of page

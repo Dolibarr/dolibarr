@@ -18,53 +18,58 @@
 #
 
 # Module label 'ModuleRecruitmentName'
-ModuleRecruitmentName = Recruitment
+ModuleRecruitmentName = Rekruttering
 # Module description 'ModuleRecruitmentDesc'
-ModuleRecruitmentDesc = Manage and follow recruitment campaigns for new job positions
+ModuleRecruitmentDesc = Administrer og følg rekrutteringskampanjer for nye stillinger
 
 #
 # Admin page
 #
-RecruitmentSetup = Recruitment setup
+RecruitmentSetup = Rekrutteringsoppsett
 Settings = innstillinger
-RecruitmentSetupPage = Enter here the setup of main options for the recruitment module
-RecruitmentArea=Recruitement area
-PublicInterfaceRecruitmentDesc=Public pages of jobs are public URLs to show and answer to open jobs. There is one different link for each open job, found on each job record.
-EnablePublicRecruitmentPages=Enable public pages of open jobs
+RecruitmentSetupPage = Fyll inn oppsettet av hovedalternativene for rekrutteringsmodulen her
+RecruitmentArea=Rekrutteringsområde
+PublicInterfaceRecruitmentDesc=Offentlige sider med jobber er offentlige nettadresser for å vise og svare på åpne jobber. Det finnes en lenke for hver åpen jobb, funnet på hver jobbpost.
+EnablePublicRecruitmentPages=Aktiver offentlige sider med åpne jobber
 
 #
 # About page
 #
 About = Om
-RecruitmentAbout = About Recruitment
-RecruitmentAboutPage = Recruitment about page
-NbOfEmployeesExpected=Expected nb of employees
-JobLabel=Label of job position
-WorkPlace=Work place
-DateExpected=Expected date
-FutureManager=Future manager
-ResponsibleOfRecruitement=Responsible of recruitment
-IfJobIsLocatedAtAPartner=If job is located at a partner place
-PositionToBeFilled=Job offer to be filled
-PositionsToBeFilled=Job offers to be filled
-ListOfPositionsToBeFilled=List of job offers to be filled
-NewPositionToBeFilled=New job offers to be filled
+RecruitmentAbout = Om rekruttering
+RecruitmentAboutPage = Om rekrutteringssiden
+NbOfEmployeesExpected=Forventet antall ansatte
+JobLabel=Etikett for stillingen
+WorkPlace=Arbeidssted
+DateExpected=Forventet dato
+FutureManager=Fremtidig leder
+ResponsibleOfRecruitement=Ansvarlig for rekruttering
+IfJobIsLocatedAtAPartner=Hvis jobben ligger på et partnersted
+PositionToBeFilled=Stilling
+PositionsToBeFilled=Stillinger
+ListOfPositionsToBeFilled=List of job positions
+NewPositionToBeFilled=New job positions
 
-JobOfferToBeFilled=Job offer to be filled
-ThisIsInformationOnJobPosition=Information of the job position to be filled
-ContactForRecruitment=Contact for recruitment
-EmailRecruiter=Email recruiter
-ToUseAGenericEmail=To use a generic email. If not defined, the email of the responsible of recruitment will be used
-NewCandidature=New candidature
-ListOfCandidatures=List of candidatures
-RequestedRemuneration=Requested remuneration
-ProposedRemuneration=Proposed remuneration
-ContractProposed=Contract proposed
-ContractSigned=Contract signed
-RecruitmentCandidature=Candidature
-JobPositions=Job positions
-RecruitmentCandidatures=Candidatures
-InterviewToDo=Interview to do
-AnswerCandidature=Candidature answer
-YourCandidature=Your candidature
-YourCandidatureAnswerMessage=Thanks you for your candidature.<br>...
+JobOfferToBeFilled=Job position to be filled
+ThisIsInformationOnJobPosition=Informasjon om stillingen som skal besettes
+ContactForRecruitment=Kontakt for rekruttering
+EmailRecruiter=E-postrekruttering
+ToUseAGenericEmail=For å bruke en generisk e-post. Hvis ikke definert, vil e-posten til rekrutteringsansvarlig bli brukt
+NewCandidature=New application
+ListOfCandidatures=List of applications
+RequestedRemuneration=Ønsket godtgjørelse
+ProposedRemuneration=Tilbudt godtgjørelse
+ContractProposed=Kontraktforslag
+ContractSigned=Kontrakt signert
+ContractRefused=Contract refused
+RecruitmentCandidature=Application
+JobPositions=Stillinger
+RecruitmentCandidatures=Applications
+InterviewToDo=Intervju som skal gjennomføres
+AnswerCandidature=Application answer
+YourCandidature=Your application
+YourCandidatureAnswerMessage=Thanks you for your application.<br>...
+JobClosedTextCandidateFound=The job position is closed. The position has been filled.
+JobClosedTextCanceled=The job position is closed.
+ExtrafieldsJobPosition=Complementary attributes (job positions)
+ExtrafieldsCandidatures=Complementary attributes (job applications)

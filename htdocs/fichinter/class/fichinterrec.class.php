@@ -41,6 +41,10 @@ class FichinterRec extends Fichinter
 	public $element = 'fichinterrec';
 	public $table_element = 'fichinter_rec';
 	public $table_element_line = 'fichinter_rec';
+
+	/**
+	 * @var string Fieldname with ID of parent key if this field has a parent
+	 */
 	public $fk_element = 'fk_fichinter';
 
 	/**
@@ -53,6 +57,9 @@ class FichinterRec extends Fichinter
 	 */
 	public $picto = 'intervention';
 
+	/**
+	 * @var string title
+	 */
 	public $title;
 	public $number;
 	public $date;
@@ -60,14 +67,28 @@ class FichinterRec extends Fichinter
 	public $remise;
 	public $tva;
 	public $total;
-	public $db_table;
+
+	/**
+	 * @var int Proposal Id
+	 */
 	public $propalid;
 
 	public $date_last_gen;
 	public $date_when;
+
+	/**
+	 * @var int number of generation done
+	 */
 	public $nb_gen_done;
+
+	/**
+	 * @var int number of maximum generation
+	 */
 	public $nb_gen_max;
 
+	/**
+	 * int rank
+	 */
 	public $rang;
 	public $special_code;
 
@@ -281,7 +302,7 @@ class FichinterRec extends Fichinter
 				$this->note_public			= $obj->note_public;
 				$this->user_author			= $obj->fk_user_author;
 				$this->model_pdf			= $obj->model_pdf;
-				$this->modelpdf				= $obj->model_pdf;
+				$this->modelpdf				= $obj->model_pdf; // deprecated
 				$this->rang = $obj->rang;
 				$this->special_code = $obj->special_code;
 				$this->frequency			= $obj->frequency;
@@ -470,14 +491,15 @@ class FichinterRec extends Fichinter
 			if (!$info_bits) $info_bits = 0;
 			$pu_ht = price2num($pu_ht);
 			$pu_ttc = price2num($pu_ttc);
-			$txtva = price2num($txtva);
+			if (!preg_match('/\((.*)\)/', $txtva)) {
+				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
+			}
 
 			if ($price_base_type == 'HT') {
 				$pu = $pu_ht;
 			} else {
 				$pu = $pu_ttc;
 			}
-
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva

@@ -56,29 +56,29 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'banks', 'compta'));
 
-$action					= GETPOST('action', 'alpha');
+$action = GETPOST('action', 'alpha');
 $massaction				= GETPOST('massaction', 'alpha');
-$optioncss				= GETPOST('optioncss', 'alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
 $contextpage			= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'vendorpaymentlist';
 
-$socid					= GETPOST('socid', 'int');
+$socid = GETPOST('socid', 'int');
 
 $search_ref				= GETPOST('search_ref', 'alpha');
 $search_day				= GETPOST('search_day', 'int');
-$search_month			= GETPOST('search_month', 'int');
+$search_month = GETPOST('search_month', 'int');
 $search_year			= GETPOST('search_year', 'int');
-$search_company			= GETPOST('search_company', 'alpha');
+$search_company = GETPOST('search_company', 'alpha');
 $search_payment_type	= GETPOST('search_payment_type');
-$search_cheque_num		= GETPOST('search_cheque_num', 'alpha');
+$search_cheque_num = GETPOST('search_cheque_num', 'alpha');
 $search_bank_account	= GETPOST('search_bank_account', 'int');
-$search_amount			= GETPOST('search_amount', 'alpha');		// alpha because we must be able to search on '< x'
+$search_amount = GETPOST('search_amount', 'alpha'); // alpha because we must be able to search on '< x'
 
-$limit					= GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield				= GETPOST('sortfield', 'alpha');
 $sortorder				= GETPOST('sortorder', 'alpha');
-$page					= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST('page', 'int');
 
-if (empty($page) || $page == -1) $page = 0;		// If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) $page = 0; // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -86,7 +86,7 @@ $pagenext = $page + 1;
 if (!$sortorder) $sortorder = "DESC";
 if (!$sortfield) $sortfield = "p.datep";
 
-$search_all = trim(GETPOSTISSET("search_all") ? GETPOSTISSET("search_all", 'alpha') : GETPOST('sall'));
+$search_all = trim(GETPOSTISSET("search_all") ? GETPOST("search_all", 'alpha') : GETPOST('sall'));
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(

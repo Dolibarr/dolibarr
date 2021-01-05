@@ -32,152 +32,155 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_shipments extends ModeleBoxes
 {
-    public $boxcode = "lastcustomershipments";
-    public $boximg = "sending";
-    public $boxlabel = "BoxLastCustomerShipments";
-    public $depends = array("expedition");
+	public $boxcode = "lastcustomershipments";
+	public $boximg = "sending";
+	public $boxlabel = "BoxLastCustomerShipments";
+	public $depends = array("expedition");
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $param;
+	public $param;
 
-    public $info_box_head = array();
-    public $info_box_contents = array();
+	public $info_box_head = array();
+	public $info_box_contents = array();
 
 
-    /**
-     *  Constructor
-     *
-     *  @param  DoliDB  $db         Database handler
-     *  @param  string  $param      More parameters
-     */
-    public function __construct($db, $param)
-    {
-        global $user;
+	/**
+	 *  Constructor
+	 *
+	 *  @param  DoliDB  $db         Database handler
+	 *  @param  string  $param      More parameters
+	 */
+	public function __construct($db, $param)
+	{
+		global $user;
 
-        $this->db = $db;
+		$this->db = $db;
 
-        $this->hidden = !($user->rights->expedition->lire);
-    }
+		$this->hidden = !($user->rights->expedition->lire);
+	}
 
-    /**
-     *  Load data for box to show them later
-     *
-     *  @param	int		$max        Maximum number of records to load
-     *  @return	void
-     */
-    public function loadBox($max = 5)
-    {
-        global $user, $langs, $conf;
-        $langs->loadLangs(array('orders', 'sendings'));
+	/**
+	 *  Load data for box to show them later
+	 *
+	 *  @param	int		$max        Maximum number of records to load
+	 *  @return	void
+	 */
+	public function loadBox($max = 5)
+	{
+		global $user, $langs, $conf;
+		$langs->loadLangs(array('orders', 'sendings'));
 
-        $this->max = $max;
+		$this->max = $max;
 
-        include_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-        include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-        include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-        $shipmentstatic = new Expedition($this->db);
-        $orderstatic = new Commande($this->db);
-        $societestatic = new Societe($this->db);
+		$shipmentstatic = new Expedition($this->db);
+		$orderstatic = new Commande($this->db);
+		$societestatic = new Societe($this->db);
 
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastCustomerShipments", $max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastCustomerShipments", $max));
 
-        if ($user->rights->expedition->lire)
-        {
-            $sql = "SELECT s.nom as name";
-            $sql .= ", s.rowid as socid";
-            $sql .= ", s.code_client";
-            $sql .= ", s.logo, s.email";
-            $sql .= ", e.ref, e.tms";
-            $sql .= ", e.rowid";
-            $sql .= ", e.ref_customer";
-            $sql .= ", e.fk_statut";
-            $sql .= ", e.fk_user_valid";
-            $sql .= ", c.ref as commande_ref";
-            $sql .= ", c.rowid as commande_id";
-            $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
-            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'shipping' AND el.sourcetype IN ('commande')";
-            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid AND el.sourcetype IN ('commande') AND el.targettype = 'shipping'";
-            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
-            if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
-            $sql .= " WHERE e.entity IN (".getEntity('expedition').")";
-            if (!empty($conf->global->ORDER_BOX_LAST_SHIPMENTS_VALIDATED_ONLY)) $sql .= " AND e.fk_statut = 1";
-            if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND sc.fk_user = ".$user->id;
-            else $sql .= " ORDER BY e.date_delivery, e.ref DESC ";
-            $sql .= $this->db->plimit($max, 0);
+		if ($user->rights->expedition->lire)
+		{
+			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
+			$sql .= ", s.code_client, s.code_compta, s.client";
+			$sql .= ", s.logo, s.email, s.entity";
+			$sql .= ", e.ref, e.tms";
+			$sql .= ", e.rowid";
+			$sql .= ", e.ref_customer";
+			$sql .= ", e.fk_statut";
+			$sql .= ", e.fk_user_valid";
+			$sql .= ", c.ref as commande_ref";
+			$sql .= ", c.rowid as commande_id";
+			$sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'shipping' AND el.sourcetype IN ('commande')";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid AND el.sourcetype IN ('commande') AND el.targettype = 'shipping'";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
+			$sql .= " WHERE e.entity IN (".getEntity('expedition').")";
+			if (!empty($conf->global->ORDER_BOX_LAST_SHIPMENTS_VALIDATED_ONLY)) $sql .= " AND e.fk_statut = 1";
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND sc.fk_user = ".$user->id;
+			else $sql .= " ORDER BY e.date_delivery, e.ref DESC ";
+			$sql .= $this->db->plimit($max, 0);
 
-            $result = $this->db->query($sql);
-            if ($result) {
-                $num = $this->db->num_rows($result);
+			$result = $this->db->query($sql);
+			if ($result) {
+				$num = $this->db->num_rows($result);
 
-                $line = 0;
+				$line = 0;
 
-                while ($line < $num) {
-                    $objp = $this->db->fetch_object($result);
+				while ($line < $num) {
+					$objp = $this->db->fetch_object($result);
 
-                    $shipmentstatic->id = $objp->rowid;
-                    $shipmentstatic->ref = $objp->ref;
-                    $shipmentstatic->ref_customer = $objp->ref_customer;
+					$shipmentstatic->id = $objp->rowid;
+					$shipmentstatic->ref = $objp->ref;
+					$shipmentstatic->ref_customer = $objp->ref_customer;
 
-                    $orderstatic->id = $objp->commande_id;
-                    $orderstatic->ref = $objp->commande_ref;
+					$orderstatic->id = $objp->commande_id;
+					$orderstatic->ref = $objp->commande_ref;
 
-                    $societestatic->id = $objp->socid;
-                    $societestatic->name = $objp->name;
-                    $societestatic->email = $objp->email;
-                    $societestatic->code_client = $objp->code_client;
-                    $societestatic->logo = $objp->logo;
+					$societestatic->id = $objp->socid;
+					$societestatic->name = $objp->name;
+					//$societestatic->name_alias = $objp->name_alias;
+					$societestatic->code_client = $objp->code_client;
+					$societestatic->code_compta = $objp->code_compta;
+					$societestatic->client = $objp->client;
+					$societestatic->logo = $objp->logo;
+					$societestatic->email = $objp->email;
+					$societestatic->entity = $objp->entity;
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="nowraponall"',
-                        'text' => $shipmentstatic->getNomUrl(1),
-                        'asis' => 1,
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="nowraponall"',
+						'text' => $shipmentstatic->getNomUrl(1),
+						'asis' => 1,
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-                        'text' => $societestatic->getNomUrl(1),
-                        'asis' => 1,
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+						'text' => $societestatic->getNomUrl(1),
+						'asis' => 1,
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="nowraponall"',
-                        'text' => $orderstatic->getNomUrl(1),
-                        'asis' => 1,
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="nowraponall"',
+						'text' => $orderstatic->getNomUrl(1),
+						'asis' => 1,
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right" width="18"',
-                        'text' => $shipmentstatic->LibStatut($objp->fk_statut, 3),
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right" width="18"',
+						'text' => $shipmentstatic->LibStatut($objp->fk_statut, 3),
+					);
 
-                    $line++;
-                }
+					$line++;
+				}
 
-                if ($num == 0) $this->info_box_contents[$line][0] = array(
-                	'td' => 'class="center opacitymedium"',
-                	'text'=>$langs->trans("NoRecordedShipments")
-                );
+				if ($num == 0) $this->info_box_contents[$line][0] = array(
+					'td' => 'class="center opacitymedium"',
+					'text'=>$langs->trans("NoRecordedShipments")
+				);
 
-                $this->db->free($result);
-            } else {
-                $this->info_box_contents[0][0] = array(
-                    'td' => '',
-                    'maxlength'=>500,
-                    'text' => ($this->db->error().' sql='.$sql),
-                );
-            }
-        } else {
-            $this->info_box_contents[0][0] = array(
-                'td' => 'class="nohover opacitymedium left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed")
-            );
-        }
-    }
+				$this->db->free($result);
+			} else {
+				$this->info_box_contents[0][0] = array(
+					'td' => '',
+					'maxlength'=>500,
+					'text' => ($this->db->error().' sql='.$sql),
+				);
+			}
+		} else {
+			$this->info_box_contents[0][0] = array(
+				'td' => 'class="nohover opacitymedium left"',
+				'text' => $langs->trans("ReadPermissionNotAllowed")
+			);
+		}
+	}
 
 	/**
 	 *	Method to show box
@@ -187,8 +190,8 @@ class box_shipments extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    public function showBox($head = null, $contents = null, $nooutput = 0)
-    {
-        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
-    }
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+	}
 }

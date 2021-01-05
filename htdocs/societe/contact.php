@@ -80,9 +80,9 @@ $canvas = $object->canvas ? $object->canvas : GETPOST("canvas");
 $objcanvas = null;
 if (!empty($canvas))
 {
-    require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
-    $objcanvas = new Canvas($db, $action);
-    $objcanvas->getCanvas('thirdparty', 'card', $canvas);
+	require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
+	$objcanvas = new Canvas($db, $action);
+	$objcanvas->getCanvas('thirdparty', 'card', $canvas);
 }
 
 // Security check
@@ -101,17 +101,17 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if (empty($reshook))
 {
 	if ($cancel)
-    {
-        $action = '';
-        if (!empty($backtopage))
-        {
-            header("Location: ".$backtopage);
-            exit;
-        }
-    }
+	{
+		$action = '';
+		if (!empty($backtopage))
+		{
+			header("Location: ".$backtopage);
+			exit;
+		}
+	}
 
-    // Selection of new fields
-    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+	// Selection of new fields
+	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 }
 
 
@@ -126,7 +126,7 @@ $formcompany = new FormCompany($db);
 
 if ($socid > 0 && empty($object->id))
 {
-    $result = $object->fetch($socid);
+	$result = $object->fetch($socid);
 	if ($result <= 0) dol_print_error('', $object->error);
 }
 
@@ -150,7 +150,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_value
 
 dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom', '', '', 0, '', '', 'arearefnobottom');
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<br>';
 

@@ -60,7 +60,10 @@ if ($action == 'add' && !empty($permissiontoadd))
 			if (!GETPOSTISSET($key)) continue; // The field was not submited to be edited
 		}
 		// Ignore special fields
-		if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
+		if (in_array($key, array('rowid', 'entity', 'import_key'))) continue;
+		if (in_array($key, array('date_creation', 'tms', 'fk_user_creat', 'fk_user_modif'))) {
+			if (!in_array(abs($val['visible']), array(1, 3))) continue; // Only 1 and 3 that are case to create
+		}
 
 		// Set value to insert
 		if (in_array($object->fields[$key]['type'], array('text', 'html'))) {
@@ -141,7 +144,10 @@ if ($action == 'update' && !empty($permissiontoadd))
 			if (!GETPOSTISSET($key)) continue; // The field was not submited to be edited
 		}
 		// Ignore special fields
-		if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
+		if (in_array($key, array('rowid', 'entity', 'import_key'))) continue;
+		if (in_array($key, array('date_creation', 'tms', 'fk_user_creat', 'fk_user_modif'))) {
+			if (!in_array(abs($val['visible']), array(1, 3, 4))) continue; // Only 1 and 3 and 4 that are case to update
+		}
 
 		// Set value to update
 		if (preg_match('/^(text|html)/', $object->fields[$key]['type'])) {
@@ -255,7 +261,7 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete))
 // Remove a line
 if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissiontoadd))
 {
-	if (method_exists('deleteline', $object)) {
+	if (method_exists($object, 'deleteline')) {
 		$result = $object->deleteline($user, $lineid); // For backward compatibility
 	} else {
 		$result = $object->deleteLine($user, $lineid);
@@ -309,10 +315,15 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd)
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$model = $object->model_pdf;
+
 				$ret = $object->fetch($id); // Reload to get new records
 
-				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$model = $object->model_pdf;
+
+				$retgen = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				if ($retgen < 0) {
+					setEventMessages($object->error, $object->errors, 'warnings');
+				}
 			}
 		}
 	} else {

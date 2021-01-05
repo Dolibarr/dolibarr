@@ -57,18 +57,18 @@ $object = new Paiement($db);
 
 if ($action == 'setnote' && $user->rights->facture->paiement)
 {
-    $db->begin();
+	$db->begin();
 
-    $object->fetch($id);
-    $result = $object->update_note(GETPOST('note', 'restricthtml'));
-    if ($result > 0)
-    {
-        $db->commit();
-        $action = '';
-    } else {
-	    setEventMessages($object->error, $object->errors, 'errors');
-        $db->rollback();
-    }
+	$object->fetch($id);
+	$result = $object->update_note(GETPOST('note', 'restricthtml'));
+	if ($result > 0)
+	{
+		$db->commit();
+		$action = '';
+	} else {
+		setEventMessages($object->error, $object->errors, 'errors');
+		$db->rollback();
+	}
 }
 
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->paiement)
@@ -79,20 +79,20 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->
 	$result = $object->delete();
 	if ($result > 0)
 	{
-        $db->commit();
+		$db->commit();
 
-        if ($backtopage)
-        {
-        	header("Location: ".$backtopage);
-        	exit;
-        } else {
-        	header("Location: list.php");
-        	exit;
-        }
+		if ($backtopage)
+		{
+			header("Location: ".$backtopage);
+			exit;
+		} else {
+			header("Location: list.php");
+			exit;
+		}
 	} else {
-	    $langs->load("errors");
+		$langs->load("errors");
 		setEventMessages($object->error, $object->errors, 'errors');
-        $db->rollback();
+		$db->rollback();
 	}
 }
 
@@ -100,7 +100,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
 {
 	$db->begin();
 
-    $object->fetch($id);
+	$object->fetch($id);
 	if ($object->validate($user) > 0)
 	{
 		$db->commit();
@@ -126,7 +126,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
 		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
 		exit;
 	} else {
-	    $langs->load("errors");
+		$langs->load("errors");
 		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 	}
@@ -135,7 +135,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
 if ($action == 'setnum_paiement' && !empty($_POST['num_paiement']))
 {
 	$object->fetch($id);
-    $res = $object->update_num($_POST['num_paiement']);
+	$res = $object->update_num($_POST['num_paiement']);
 	if ($res === 0)
 	{
 		setEventMessages($langs->trans('PaymentNumberUpdateSucceeded'), null, 'mesgs');
@@ -299,7 +299,7 @@ print '</table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 /*
@@ -332,9 +332,9 @@ if ($resql)
 	print '<td>'.$langs->trans('Company').'</td>';
 	if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) print '<td>'.$langs->trans('Entity').'</td>';
 	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
-    print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
-    print '<td class="right">'.$langs->trans('RemainderToPay').'</td>';
-    print '<td class="right">'.$langs->trans('Status').'</td>';
+	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
+	print '<td class="right">'.$langs->trans('RemainderToPay').'</td>';
+	print '<td class="right">'.$langs->trans('Status').'</td>';
 	print "</tr>\n";
 
 	if ($num > 0)
@@ -356,7 +356,7 @@ if ($resql)
 
 			print '<tr class="oddeven">';
 
-            // Invoice
+			// Invoice
 			print '<td>';
 			print $invoice->getNomUrl(1);
 			print "</td>\n";
@@ -376,11 +376,11 @@ if ($resql)
 			// Expected to pay
 			print '<td class="right">'.price($objp->total_ttc).'</td>';
 
-            // Amount payed
-            print '<td class="right">'.price($objp->amount).'</td>';
+			// Amount payed
+			print '<td class="right">'.price($objp->amount).'</td>';
 
-            // Remain to pay
-            print '<td class="right">'.price($remaintopay).'</td>';
+			// Remain to pay
+			print '<td class="right">'.price($remaintopay).'</td>';
 
 			// Status
 			print '<td class="right">'.$invoice->getLibStatut(5, $alreadypayed).'</td>';

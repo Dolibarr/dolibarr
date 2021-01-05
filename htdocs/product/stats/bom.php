@@ -87,36 +87,36 @@ if ($id > 0 || !empty($ref))
 		print dol_get_fiche_head($head, 'referers', $titre, -1, $picto);
 
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $product, $action); // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
+		print $hookmanager->resPrint;
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-        $shownav = 1;
-        if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
+		$shownav = 1;
+		if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
 
-        dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
+		dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
-        print '<div class="fichecenter">';
+		print '<div class="fichecenter">';
 
-        print '<div class="underbanner clearboth"></div>';
-        print '<table class="border tableforfield" width="100%">';
+		print '<div class="underbanner clearboth"></div>';
+		print '<table class="border tableforfield" width="100%">';
 
-        $nboflines = show_stats_for_company($product, $socid);
+		$nboflines = show_stats_for_company($product, $socid);
 
 		print "</table>";
 
-        print '</div>';
-        print '<div style="clear:both"></div>';
+		print '</div>';
+		print '<div style="clear:both"></div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		$now = dol_now();
 
 		//Calcul total qty and amount for global if full scan list
 		$total_qty_toconsume = 0;
 		$total_qty_toproduce = 0;
-		$bom_data_result=array();
+		$bom_data_result = array();
 
 
 		//Qauntity  to produce
@@ -155,14 +155,14 @@ if ($id > 0 || !empty($ref))
 					$bomtmp->id = $objp->rowid;
 					$bomtmp->ref = $objp->ref;
 					$bom_data_result[$objp->rowid]['link'] = $bomtmp->getNomUrl(1, 'production');
-					$bom_data_result[$objp->rowid]['qty_toproduce']+=($objp->qty_toproduce > 0 ? $objp->qty_toproduce : 0);
-					$bom_data_result[$objp->rowid]['qty_toconsume']=0;
-					$bom_data_result[$objp->rowid]['date_valid']=dol_print_date($db->jdate($objp->date_valid), 'dayhour');
-					$bom_data_result[$objp->rowid]['status']=$bomtmp->LibStatut($objp->status, 5);
+					$bom_data_result[$objp->rowid]['qty_toproduce'] += ($objp->qty_toproduce > 0 ? $objp->qty_toproduce : 0);
+					$bom_data_result[$objp->rowid]['qty_toconsume'] = 0;
+					$bom_data_result[$objp->rowid]['date_valid'] = dol_print_date($db->jdate($objp->date_valid), 'dayhour');
+					$bom_data_result[$objp->rowid]['status'] = $bomtmp->LibStatut($objp->status, 5);
 					$i++;
 				}
 			}
-		}else {
+		} else {
 			dol_print_error($db);
 		}
 		$db->free($result);
@@ -207,17 +207,17 @@ if ($id > 0 || !empty($ref))
 
 					if (!array_key_exists($objp->rowid, $bom_data_result)) {
 						$bom_data_result[$objp->rowid]['link'] = $bomtmp->getNomUrl(1, 'production');
-						$bom_data_result[$objp->rowid]['qty_toproduce']=0;
-						$bom_data_result[$objp->rowid]['qty_toconsume']+=($objp->qty_toconsume > 0 ? $objp->qty_toconsume : 0);
-						$bom_data_result[$objp->rowid]['date_valid']=dol_print_date($db->jdate($objp->date_valid), 'dayhour');
-						$bom_data_result[$objp->rowid]['status']=$bomtmp->LibStatut($objp->status, 5);
+						$bom_data_result[$objp->rowid]['qty_toproduce'] = 0;
+						$bom_data_result[$objp->rowid]['qty_toconsume'] += ($objp->qty_toconsume > 0 ? $objp->qty_toconsume : 0);
+						$bom_data_result[$objp->rowid]['date_valid'] = dol_print_date($db->jdate($objp->date_valid), 'dayhour');
+						$bom_data_result[$objp->rowid]['status'] = $bomtmp->LibStatut($objp->status, 5);
 					} else {
-						$bom_data_result[$objp->rowid]['qty_toconsume']+=($objp->qty_toconsume > 0 ? $objp->qty_toconsume : 0);
+						$bom_data_result[$objp->rowid]['qty_toconsume'] += ($objp->qty_toconsume > 0 ? $objp->qty_toconsume : 0);
 					}
 					$i++;
 				}
 			}
-		}else {
+		} else {
 			dol_print_error($db);
 		}
 		$db->free($result);

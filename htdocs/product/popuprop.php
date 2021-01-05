@@ -132,7 +132,7 @@ if ($type !== '') {
 }
 $sql .= " GROUP BY p.rowid, p.label, p.ref, p.fk_product_type";
 
-if (! empty($mode) && $mode != '-1') {
+if (!empty($mode) && $mode != '-1') {
 	$result = $db->query($sql);
 	if ($result)
 	{
@@ -236,7 +236,7 @@ print "</table>";
 
 print '</form>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

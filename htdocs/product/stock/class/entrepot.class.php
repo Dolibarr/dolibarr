@@ -166,8 +166,7 @@ class Entrepot extends CommonObject
 		$this->db = $db;
 
 		$this->statuts[self::STATUS_CLOSED] = 'Closed2';
-		if ($conf->global->ENTREPOT_EXTRA_STATUS)
-		{
+		if (!empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
 			$this->statuts[self::STATUS_OPEN_ALL] = 'OpenAll';
 			$this->statuts[self::STATUS_OPEN_INTERNAL] = 'OpenInternal';
 		} else {
@@ -707,13 +706,13 @@ class Entrepot extends CommonObject
 
 		$result = '';
 
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Warehouse").'</u>';
+		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Warehouse").'</u>';
+		if (isset($this->statut)) {
+			$label .= ' '.$this->getLibStatut(5);
+		}
 		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.(empty($this->ref) ? (empty($this->label) ? $this->libelle : $this->label) : $this->ref);
 		if (!empty($this->lieu)) {
 			$label .= '<br><b>'.$langs->trans('LocationSummary').':</b> '.$this->lieu;
-		}
-		if (isset($this->statut)) {
-			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
 		}
 
 		$url = DOL_URL_ROOT.'/product/stock/card.php?id='.$this->id;
@@ -891,39 +890,7 @@ class Entrepot extends CommonObject
 	 */
 	public function setCategories($categories)
 	{
-		$type_categ = Categorie::TYPE_WAREHOUSE;
-
-		// Handle single category
-		if (!is_array($categories)) {
-			$categories = array($categories);
-		}
-
-		// Get current categories
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-		$c = new Categorie($this->db);
-		$existing = $c->containing($this->id, $type_categ, 'id');
-
-		// Diff
-		if (is_array($existing)) {
-			$to_del = array_diff($existing, $categories);
-			$to_add = array_diff($categories, $existing);
-		} else {
-			$to_del = array(); // Nothing to delete
-			$to_add = $categories;
-		}
-
-		// Process
-		foreach ($to_del as $del) {
-			if ($c->fetch($del) > 0) {
-				$c->del_type($this, $type_categ);
-			}
-		}
-		foreach ($to_add as $add) {
-			if ($c->fetch($add) > 0) {
-				$c->add_type($this, $type_categ);
-			}
-		}
-
-		return;
+		return parent::setCategoriesCommon($categories, Categorie::TYPE_WAREHOUSE);
 	}
 }

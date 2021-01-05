@@ -126,7 +126,7 @@ class Hook extends CommonObject
 		),
 		'module' => array(
 			'type' => 'varchar(128)',
-			'label' => 'Url',
+			'label' => 'Module',
 			'enabled' => 1,
 			'visible' => 1,
 			'position' => 30,
@@ -137,7 +137,7 @@ class Hook extends CommonObject
 		),
 		'action' => array(
 			'type' => 'varchar(128)',
-			'label' => 'Url',
+			'label' => 'Action',
 			'enabled' => 1,
 			'visible' => 1,
 			'position' => 30,
@@ -212,9 +212,14 @@ class Hook extends CommonObject
 	public $label;
 
 	/**
-	 * @var string amount
+	 * @var string url of webhook
 	 */
-	public $amount;
+	public $url;
+
+	/**
+	 * @var int ID of user owner webhook
+	 */
+	public $fk_user;
 
 	/**
 	 * @var int Status
@@ -245,35 +250,6 @@ class Hook extends CommonObject
 	 * @var string import_key
 	 */
 	public $import_key;
-
-
-	// If this object has a subtable with lines
-
-	/**
-	 * @var int    Name of subtable line
-	 */
-	//public $table_element_line = 'hookdet';
-
-	/**
-	 * @var int    Field with ID of parent key if this field has a parent
-	 */
-	//public $fk_element = 'fk_hook';
-
-	/**
-	 * @var int    Name of subtable class that manage subtable lines
-	 */
-	//public $class_element_line = 'MyObjectline';
-
-	/**
-	 * @var array  Array of child tables (child tables to delete before deleting a record)
-	 */
-	//protected $childtables=array('hookdet');
-
-	/**
-	 * @var MyObjectLine[]     Array of subtable lines
-	 */
-	//public $lines = array();
-
 
 
 	/**

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015		Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,12 +40,12 @@ class Establishment extends CommonObject
 	public $table_element = 'establishment';
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = '';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_establishment';
 
@@ -75,6 +75,9 @@ class Establishment extends CommonObject
 	 */
 	public $rowid;
 
+	/**
+	 * @var string Label
+	 */
 	public $label;
 
 	/**
@@ -82,8 +85,20 @@ class Establishment extends CommonObject
 	 */
 	public $address;
 
+	/**
+	 * @var string Zip
+	 */
 	public $zip;
+
+	/**
+	 * @var string Town
+	 */
 	public $town;
+
+	/**
+	 * @var int country id
+	 */
+	public $country_id;
 
 	/**
 	 * @var int Status 0=open, 1=closed
@@ -95,8 +110,20 @@ class Establishment extends CommonObject
 	 */
 	public $entity;
 
-	public $country_id;
+	/**
+	 * @var int user mod id
+	 */
+	public $fk_user_mod;
 
+	/**
+	 * @var int user author id
+	 */
+	public $fk_user_author;
+
+	/**
+	 * @var int date create
+	 */
+	public $datec;
 
 	const STATUS_OPEN = 1;
 	const STATUS_CLOSED = 0;
@@ -148,6 +175,7 @@ class Establishment extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
+		$this->label = trim($this->label);
 		$this->address = trim($this->address);
 		$this->zip = trim($this->zip);
 		$this->town = trim($this->town);
@@ -187,10 +215,6 @@ class Establishment extends CommonObject
 		if (!$resql) {
 			$error++;
 			$this->errors[] = "Error ".$this->db->lasterror();
-		}
-
-		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."establishment");
 		}
 
 		// Commit or rollback
