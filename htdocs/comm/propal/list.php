@@ -170,6 +170,9 @@ $arrayfields = array(
 	'p.fin_validite'=>array('label'=>"DateEnd", 'checked'=>1),
 	'p.date_livraison'=>array('label'=>"DeliveryDate", 'checked'=>0),
 	'ava.rowid'=>array('label'=>"AvailabilityPeriod", 'checked'=>0),
+	'p.fk_shipping_method'=>array('label'=>"SendingMethod", 'checked'=>0, 'enabled'=>!empty($conf->expedition->enabled)),
+	'p.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>0),
+	'p.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>0),
 	'p.total_ht'=>array('label'=>"AmountHT", 'checked'=>1),
 	'p.total_vat'=>array('label'=>"AmountVAT", 'checked'=>0),
 	'p.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0),
@@ -189,14 +192,9 @@ $arrayfields = array(
 	'p.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>500),
 	'p.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'position'=>510, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES))),
 	'p.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'position'=>511, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES))),
-	'p.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>0, 'position'=>512),
-	'p.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>0, 'position'=>514),
 	'p.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
-
 );
-if (!empty($conf->expedition->enabled)) {
-	$arrayfields['p.fk_shipping_method']=array('label'=>"SendingMethod", 'checked'=>0, 'position'=>513);
-}
+
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -691,6 +689,27 @@ if ($resql)
 		print ajax_combobox('search_availability');
 		print '</td>';
 	}
+	// Shipping Method
+	if (!empty($arrayfields['p.fk_shipping_method']['checked']))
+	{
+		print '<td class="liste_titre">';
+		$form->selectShippingMethod($search_fk_shipping_method, 'search_fk_shipping_method', '', 1, '', 1);
+		print '</td>';
+	}
+	// Payment term
+	if (!empty($arrayfields['p.fk_cond_reglement']['checked']))
+	{
+		print '<td class="liste_titre">';
+		$form->select_conditions_paiements($search_fk_cond_reglement, 'search_fk_cond_reglement', -1, 1, 1);
+		print '</td>';
+	}
+	// Payment mode
+	if (!empty($arrayfields['p.fk_mode_reglement']['checked']))
+	{
+		print '<td class="liste_titre">';
+		$form->select_types_paiements($search_fk_mode_reglement, 'search_fk_mode_reglement', '', 0, 1, 1, 0, -1);
+		print '</td>';
+	}
 	if (!empty($arrayfields['p.total_ht']['checked']))
 	{
 		// Amount
@@ -820,30 +839,6 @@ if ($resql)
 		print '</td>';
 	}
 
-	if (!empty($arrayfields['p.fk_cond_reglement']['checked']))
-	{
-		// Payment term
-		print '<td class="liste_titre">';
-		$form->select_conditions_paiements($search_fk_cond_reglement, 'search_fk_cond_reglement', -1, 1);
-		print '</td>';
-	}
-
-	if (!empty($conf->expedition->enabled) && !empty($arrayfields['p.fk_shipping_method']['checked']))
-	{
-		// Shipping Method
-		print '<td class="liste_titre">';
-		$form->selectShippingMethod($search_fk_shipping_method, 'search_fk_shipping_method', '', 1);
-		print '</td>';
-	}
-
-	if (!empty($arrayfields['p.fk_mode_reglement']['checked']))
-	{
-		// Payment mode
-		print '<td class="liste_titre">';
-		$form->select_types_paiements($search_fk_mode_reglement, 'search_fk_mode_reglement', '', 0, 1, 0, 0, -1);
-		print '</td>';
-	}
-
 	// Status
 	if (!empty($arrayfields['p.fk_statut']['checked']))
 	{
@@ -876,6 +871,9 @@ if ($resql)
 	if (!empty($arrayfields['p.fin_validite']['checked']))		print_liste_field_titre($arrayfields['p.fin_validite']['label'], $_SERVER["PHP_SELF"], 'dfv', '', $param, 'align="center"', $sortfield, $sortorder);
 	if (!empty($arrayfields['p.date_livraison']['checked']))	print_liste_field_titre($arrayfields['p.date_livraison']['label'], $_SERVER["PHP_SELF"], 'ddelivery', '', $param, 'align="center"', $sortfield, $sortorder);
 	if (!empty($arrayfields['ava.rowid']['checked']))			print_liste_field_titre($arrayfields['ava.rowid']['label'], $_SERVER["PHP_SELF"], 'availability', '', $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['p.fk_shipping_method']['checked']))	print_liste_field_titre($arrayfields['p.fk_shipping_method']['label'], $_SERVER["PHP_SELF"], "p.fk_shipping_method", "", $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['p.fk_cond_reglement']['checked']))		print_liste_field_titre($arrayfields['p.fk_cond_reglement']['label'], $_SERVER["PHP_SELF"], "p.fk_cond_reglement", "", $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['p.fk_mode_reglement']['checked']))		print_liste_field_titre($arrayfields['p.fk_mode_reglement']['label'], $_SERVER["PHP_SELF"], "p.fk_mode_reglement", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['p.total_ht']['checked']))			print_liste_field_titre($arrayfields['p.total_ht']['label'], $_SERVER["PHP_SELF"], 'p.total_ht', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (!empty($arrayfields['p.total_vat']['checked']))			print_liste_field_titre($arrayfields['p.total_vat']['label'], $_SERVER["PHP_SELF"], 'p.tva', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (!empty($arrayfields['p.total_ttc']['checked']))			print_liste_field_titre($arrayfields['p.total_ttc']['label'], $_SERVER["PHP_SELF"], 'p.total', '', $param, 'class="right"', $sortfield, $sortorder);
@@ -901,9 +899,6 @@ if ($resql)
 	if (!empty($arrayfields['p.date_cloture']['checked']))		print_liste_field_titre($arrayfields['p.date_cloture']['label'], $_SERVER["PHP_SELF"], "p.date_cloture", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 	if (!empty($arrayfields['p.note_public']['checked']))       print_liste_field_titre($arrayfields['p.note_public']['label'], $_SERVER["PHP_SELF"], "p.note_public", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	if (!empty($arrayfields['p.note_private']['checked']))      print_liste_field_titre($arrayfields['p.note_private']['label'], $_SERVER["PHP_SELF"], "p.note_private", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
-	if (!empty($arrayfields['p.fk_cond_reglement']['checked']))			print_liste_field_titre($arrayfields['p.fk_cond_reglement']['label'], $_SERVER["PHP_SELF"], "p.fk_cond_reglement", "", $param, '', $sortfield, $sortorder);
-	if (!empty($conf->expedition->enabled) && !empty($arrayfields['p.fk_shipping_method']['checked']))	print_liste_field_titre($arrayfields['p.fk_shipping_method']['label'], $_SERVER["PHP_SELF"], "p.fk_shipping_method", "", $param, '', $sortfield, $sortorder);
-	if (!empty($arrayfields['p.fk_mode_reglement']['checked']))			print_liste_field_titre($arrayfields['p.fk_mode_reglement']['label'], $_SERVER["PHP_SELF"], "p.fk_mode_reglement", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['p.fk_statut']['checked']))			print_liste_field_titre($arrayfields['p.fk_statut']['label'], $_SERVER["PHP_SELF"], "p.fk_statut", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 	print '</tr>'."\n";
@@ -1113,7 +1108,30 @@ if ($resql)
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
-
+		//Shipping Method
+		if (!empty($arrayfields['p.fk_shipping_method']['checked']))
+		{
+			print '<td>';
+			$form->formSelectShippingMethod('', $obj->fk_shipping_method, 'none', 1);
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+		// Payment terms
+		if (!empty($arrayfields['p.fk_cond_reglement']['checked']))
+		{
+			print '<td>';
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'], $obj->fk_cond_reglement, 'none');
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+		// Payment mode
+		if (!empty($arrayfields['p.fk_mode_reglement']['checked']))
+		{
+			print '<td>';
+			$form->form_modes_reglement($_SERVER['PHP_SELF'], $obj->fk_mode_reglement, 'none', '', -1);
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
 		// Amount HT
 		if (!empty($arrayfields['p.total_ht']['checked']))
 		{
@@ -1154,7 +1172,6 @@ if ($resql)
 			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'p.total_invoiced';
 			$totalarray['val']['p.total_invoiced'] += $totalInvoicedTTC;
 		}
-
 		// Currency
 		if (!empty($arrayfields['p.multicurrency_code']['checked']))
 		{
@@ -1297,31 +1314,6 @@ if ($resql)
 		{
 			print '<td class="center">';
 			print dol_escape_htmltag($obj->note_private);
-			print '</td>';
-			if (!$i) $totalarray['nbfield']++;
-		}
-		// Payment terms
-		if (!empty($arrayfields['p.fk_cond_reglement']['checked']))
-		{
-			print '<td>';
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'], $obj->fk_cond_reglement, 'none');
-			print '</td>';
-			if (!$i) $totalarray['nbfield']++;
-		}
-		//Shipping Method
-		if (!empty($conf->expedition->enabled) && !empty($arrayfields['p.fk_shipping_method']['checked']))
-		{
-			print '<td>';
-			$form->formSelectShippingMethod('', $obj->fk_shipping_method, 'none', 1);
-			print '</td>';
-			if (!$i) $totalarray['nbfield']++;
-		}
-
-		// Payment mode
-		if (!empty($arrayfields['p.fk_mode_reglement']['checked']))
-		{
-			print '<td>';
-			$form->form_modes_reglement($_SERVER['PHP_SELF'], $obj->fk_mode_reglement, 'none', '', -1);
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
