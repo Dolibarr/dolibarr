@@ -3749,9 +3749,10 @@ class Form
 	 *  @param  string	$filtre            To filter list
 	 *  @param  int		$useempty          1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 *  @param  string	$moreattrib        To add more attribute on select
+	 *	@param	int		$noinfoadmin		0=Add admin info, 1=Disable admin info
 	 * 	@return	void
 	 */
-	public function selectShippingMethod($selected = '', $htmlname = 'shipping_method_id', $filtre = '', $useempty = 0, $moreattrib = '')
+	public function selectShippingMethod($selected = '', $htmlname = 'shipping_method_id', $filtre = '', $useempty = 0, $moreattrib = '', $noinfoadmin = 0)
 	{
 		global $langs, $conf, $user;
 
@@ -3786,7 +3787,7 @@ class Form
 					$i++;
 				}
 				print "</select>";
-				if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+				if ($user->admin  && empty($noinfoadmin)) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 
 				print ajax_combobox('select'.$htmlname);
 			} else {
