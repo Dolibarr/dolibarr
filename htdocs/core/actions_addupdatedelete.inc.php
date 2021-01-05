@@ -261,7 +261,7 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete))
 // Remove a line
 if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissiontoadd))
 {
-	if (method_exists('deleteline', $object)) {
+	if (method_exists($object, 'deleteline')) {
 		$result = $object->deleteline($user, $lineid); // For backward compatibility
 	} else {
 		$result = $object->deleteLine($user, $lineid);
@@ -315,11 +315,15 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd)
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$model = $object->model_pdf;
 
 				$ret = $object->fetch($id); // Reload to get new records
 
-				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$model = $object->model_pdf;
+
+				$retgen = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				if ($retgen < 0) {
+					setEventMessages($object->error, $object->errors, 'warnings');
+				}
 			}
 		}
 	} else {

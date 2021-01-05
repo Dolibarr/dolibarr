@@ -1438,9 +1438,15 @@ function complete_elementList_with_modules(&$elementList)
 							$dirmod[$i] = $dir;
 							//print "x".$modName." ".$orders[$i]."\n<br>";
 
-							if (!empty($objMod->module_parts['contactelement'])) {
-								$elementList[$objMod->name] = $langs->trans($objMod->name);
-							}
+                            if (!empty($objMod->module_parts['contactelement'])) {
+                            	if (is_array($objMod->module_parts['contactelement'])) {
+									foreach ($objMod->module_parts['contactelement'] as $elem => $title) {
+										$elementList[$elem] = $langs->trans($title);
+									}
+								} else {
+									$elementList[$objMod->name] = $langs->trans($objMod->name);
+								}
+                            }
 
 							$j++;
 							$i++;
@@ -1817,6 +1823,11 @@ function company_admin_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT."/admin/accountant.php";
 	$head[$h][1] = $langs->trans("Accountant");
 	$head[$h][2] = 'accountant';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/company_socialnetworks.php";
+	$head[$h][1] = $langs->trans("SocialNetworksInformation");
+	$head[$h][2] = 'socialnetworks';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'mycompany_admin', 'add');

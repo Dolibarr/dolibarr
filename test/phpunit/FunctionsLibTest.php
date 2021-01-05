@@ -131,6 +131,35 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
         print __METHOD__."\n";
     }
 
+    /**
+     * testIsValidEmail
+     *
+     * @return void
+     */
+    public function testIsValidEmail()
+    {
+    	// Nb of line is same than entry text
+
+    	$input="bidon@bademail";
+    	$result=isValidEmail($input);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertFalse($result, 'Check isValidEmail '.$input);
+
+    	$input="test@yahoo.com";
+    	$result=isValidEmail($input);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertTrue($result, 'Check isValidEmail '.$input);
+
+    	$input="The name of sender <test@yahoo.com>";
+    	$result=isValidEmail($input);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertFalse($result, 'Check isValidEmail '.$input);
+
+    	$input="1234.abcdefg@domainame.com.br";
+    	$result=isValidEmail($input);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertTrue($result, 'Check isValidEmail '.$input);
+    }
 
     /**
      * testIsValidMXRecord

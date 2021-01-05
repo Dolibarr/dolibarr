@@ -196,6 +196,11 @@ abstract class CommonObject
 	public $ref;
 
 	/**
+	 * @var string An external reference for the object
+	 */
+	public $ref_ext;
+
+	/**
 	 * @var string The object's previous reference
 	 */
 	public $ref_previous;
@@ -206,9 +211,9 @@ abstract class CommonObject
 	public $ref_next;
 
 	/**
-	 * @var string An external reference for the object
+	 * @var string Ref to store on object to save the new ref to use for example when making a validate() of an object
 	 */
-	public $ref_ext;
+	public $newref;
 
 	/**
 	 * @var int The object's status
@@ -350,7 +355,7 @@ abstract class CommonObject
 	public $last_main_doc;
 
 	/**
-	 * @var int Bank account ID
+	 * @var int Bank account ID sometimes, ID of record into llx_bank sometimes
 	 * @deprecated
 	 * @see $fk_account
 	 */
@@ -468,6 +473,12 @@ abstract class CommonObject
 	 * @var int 1 if object is specimen
 	 */
 	public $specimen = 0;
+
+	/**
+	 * @var	int	Id of contact to send object (used by the trigger of module Agenda)
+	 */
+	public $sendtoid;
+
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
@@ -694,17 +705,14 @@ abstract class CommonObject
 		$contactid = 0;
 		$thirdpartyid = 0;
 		$elementforaltlanguage = $this->element;
-		if ($this->element == 'societe')
-		{
+		if ($this->element == 'societe') {
 			$thirdpartyid = $this->id;
 		}
-		if ($this->element == 'contact')
-		{
+		if ($this->element == 'contact') {
 			$contactid = $this->id;
 			$thirdpartyid = $object->fk_soc;
 		}
-		if ($this->element == 'user')
-		{
+		if ($this->element == 'user') {
 			$contactid = $this->contact_id;
 			$thirdpartyid = $object->fk_soc;
 		}
@@ -773,54 +781,62 @@ abstract class CommonObject
 
 		if (!empty($this->phone) || !empty($this->phone_pro) || !empty($this->phone_mobile) || !empty($this->phone_perso) || !empty($this->fax) || !empty($this->office_phone) || !empty($this->user_mobile) || !empty($this->office_fax)) $out .= ($outdone ? '<br>' : '');
 		if (!empty($this->phone) && empty($this->phone_pro)) {		// For objects that store pro phone into ->phone
-			$out .= dol_print_phone($this->phone, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePro")); $outdone++;
+			$out .= dol_print_phone($this->phone, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePro"));
+			$outdone++;
 		}
 		if (!empty($this->phone_pro)) {
-			$out .= dol_print_phone($this->phone_pro, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePro")); $outdone++;
+			$out .= dol_print_phone($this->phone_pro, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePro"));
+			$outdone++;
 		}
 		if (!empty($this->phone_mobile)) {
-			$out .= dol_print_phone($this->phone_mobile, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'mobile', $langs->trans("PhoneMobile")); $outdone++;
+			$out .= dol_print_phone($this->phone_mobile, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'mobile', $langs->trans("PhoneMobile"));
+			$outdone++;
 		}
 		if (!empty($this->phone_perso)) {
-			$out .= dol_print_phone($this->phone_perso, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePerso")); $outdone++;
+			$out .= dol_print_phone($this->phone_perso, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePerso"));
+			$outdone++;
 		}
 		if (!empty($this->office_phone)) {
-			$out .= dol_print_phone($this->office_phone, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePro")); $outdone++;
+			$out .= dol_print_phone($this->office_phone, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePro"));
+			$outdone++;
 		}
 		if (!empty($this->user_mobile)) {
-			$out .= dol_print_phone($this->user_mobile, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'mobile', $langs->trans("PhoneMobile")); $outdone++;
+			$out .= dol_print_phone($this->user_mobile, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'mobile', $langs->trans("PhoneMobile"));
+			$outdone++;
 		}
 		if (!empty($this->fax)) {
-			$out .= dol_print_phone($this->fax, $this->country_code, $contactid, $thirdpartyid, 'AC_FAX', '&nbsp;', 'fax', $langs->trans("Fax")); $outdone++;
+			$out .= dol_print_phone($this->fax, $this->country_code, $contactid, $thirdpartyid, 'AC_FAX', '&nbsp;', 'fax', $langs->trans("Fax"));
+			$outdone++;
 		}
 		if (!empty($this->office_fax)) {
-			$out .= dol_print_phone($this->office_fax, $this->country_code, $contactid, $thirdpartyid, 'AC_FAX', '&nbsp;', 'fax', $langs->trans("Fax")); $outdone++;
+			$out .= dol_print_phone($this->office_fax, $this->country_code, $contactid, $thirdpartyid, 'AC_FAX', '&nbsp;', 'fax', $langs->trans("Fax"));
+			$outdone++;
 		}
 
 		if ($out) $out .= '<div style="clear: both;"></div>';
 		$outdone = 0;
-		if (!empty($this->email))
-		{
+		if (!empty($this->email)) {
 			$out .= dol_print_email($this->email, $this->id, $object->id, 'AC_EMAIL', 0, 0, 1);
 			$outdone++;
 		}
-		if (!empty($this->url))
-		{
+		if (!empty($this->url)) {
 			//$out.=dol_print_url($this->url,'_goout',0,1);//steve changed to blank
 			$out .= dol_print_url($this->url, '_blank', 0, 1);
 			$outdone++;
 		}
 
-		if (!empty($conf->socialnetworks->enabled))
-		{
+		if (!empty($conf->socialnetworks->enabled)) {
 			$outsocialnetwork = '';
 
 			if (is_array($this->socialnetworks) && count($this->socialnetworks) > 0) {
+				$socialnetworksdict = getArrayOfSocialNetworks();
 				foreach ($this->socialnetworks as $key => $value) {
-					$outsocialnetwork .= dol_print_socialnetworks($value, $this->id, $object->id, $key);
+					if ($value) {
+						$outsocialnetwork .= dol_print_socialnetworks($value, $this->id, $object->id, $key, $socialnetworksdict);
+					}
 					$outdone++;
 				}
-			} else {
+			} else {	// Old code to remove
 				if ($this->skype) $outsocialnetwork .= dol_print_socialnetworks($this->skype, $this->id, $object->id, 'skype');
 				$outdone++;
 				if ($this->jabberid) $outsocialnetwork .= dol_print_socialnetworks($this->jabberid, $this->id, $object->id, 'jabber');
@@ -2938,18 +2954,25 @@ abstract class CommonObject
 
 		// Special cas
 		if ($this->table_element == 'product' && $newsuffix == '_private') $newsuffix = '';
-
+		if (in_array($this->table_element, array('actioncomm', 'adherent', 'advtargetemailing', 'cronjob', 'establishment'))) {
+			$fieldusermod =  "fk_user_mod";
+		} elseif ($this->table_element == 'ecm_files') {
+			$fieldusermod = "fk_user_m";
+		} else {
+			$fieldusermod = "fk_user_modif";
+		}
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET note".$newsuffix." = ".(!empty($note) ? ("'".$this->db->escape($note)."'") : "NULL");
-		$sql .= " ,".(in_array($this->table_element, array('actioncomm', 'adherent', 'advtargetemailing', 'cronjob', 'establishment')) ? "fk_user_mod" : "fk_user_modif")." = ".$user->id;
+		$sql .= " ,".$fieldusermod." = ".$user->id;
 		$sql .= " WHERE rowid =".$this->id;
 
 		dol_syslog(get_class($this)."::update_note", LOG_DEBUG);
-		if ($this->db->query($sql))
-		{
-			if ($suffix == '_public') $this->note_public = $note;
-			elseif ($suffix == '_private') $this->note_private = $note;
-			else {
+		if ($this->db->query($sql)) {
+			if ($suffix == '_public') {
+				$this->note_public = $note;
+			} elseif ($suffix == '_private') {
+				$this->note_private = $note;
+			} else {
 				$this->note = $note; // deprecated
 				$this->note_private = $note;
 			}
@@ -3276,7 +3299,7 @@ abstract class CommonObject
 
 	/**
 	 *	Fetch array of objects linked to current object (object of enabled modules only). Links are loaded into
-	 *		this->linkedObjectsIds array and
+	 *		this->linkedObjectsIds array +
 	 *		this->linkedObjects array if $loadalsoobjects = 1
 	 *  Possible usage for parameters:
 	 *  - all parameters empty -> we look all link to current object (current object can be source or target)
@@ -3389,6 +3412,7 @@ abstract class CommonObject
 				{
 					// Parse element/subelement (ex: project_task, cabinetmed_consultation, ...)
 					$module = $element = $subelement = $objecttype;
+					$regs = array();
 					if ($objecttype != 'supplier_proposal' && $objecttype != 'order_supplier' && $objecttype != 'invoice_supplier'
 						&& preg_match('/^([^_]+)_([^_]+)/i', $objecttype, $regs))
 					{
@@ -4554,6 +4578,11 @@ abstract class CommonObject
 		if (empty($reshook))
 		{
 			dol_syslog("commonGenerateDocument modele=".$modele." outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'));
+
+			if (empty($modele)) {
+				$this->error = 'BadValueForParameterModele';
+				return -1;
+			}
 
 			// Increase limit for PDF build
 			$err = error_reporting();
@@ -7138,20 +7167,20 @@ abstract class CommonObject
 		$dir = $sdir.'/';
 		$pdir = '/';
 
-		$dir .= get_exdir(0, 0, 0, 0, $this, $modulepart).$this->ref.'/';
-		$pdir .= get_exdir(0, 0, 0, 0, $this, $modulepart).$this->ref.'/';
+		$dir .= get_exdir(0, 0, 0, 0, $this, $modulepart);
+		$pdir .= get_exdir(0, 0, 0, 0, $this, $modulepart);
 
 		// For backward compatibility
-		if ($modulepart == 'product' && !empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
-		{
-			$dir = $sdir.'/'.get_exdir($this->id, 2, 0, 0, $this, $modulepart).$this->id."/photos/";
-			$pdir = '/'.get_exdir($this->id, 2, 0, 0, $this, $modulepart).$this->id."/photos/";
+		if ($modulepart == 'product') {
+			if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
+				$dir = $sdir.'/'.get_exdir($this->id, 2, 0, 0, $this, $modulepart).$this->id."/photos/";
+				$pdir = '/'.get_exdir($this->id, 2, 0, 0, $this, $modulepart).$this->id."/photos/";
+			}
 		}
 
 		// Defined relative dir to DOL_DATA_ROOT
 		$relativedir = '';
-		if ($dir)
-		{
+		if ($dir) {
 			$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $dir);
 			$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
 			$relativedir = preg_replace('/[\\/]$/', '', $relativedir);
@@ -7173,23 +7202,19 @@ abstract class CommonObject
 
 		completeFileArrayWithDatabaseInfo($filearray, $relativedir);
 
-		if (count($filearray))
-		{
-			if ($sortfield && $sortorder)
-			{
+		if (count($filearray)) {
+			if ($sortfield && $sortorder) {
 				$filearray = dol_sort_array($filearray, $sortfield, $sortorder);
 			}
 
-			foreach ($filearray as $key => $val)
-			{
+			foreach ($filearray as $key => $val) {
 				$photo = '';
 				$file = $val['name'];
 
 				//if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure file is stored in UTF8 in memory
 
 				//if (dol_is_file($dir.$file) && image_format_supported($file) >= 0)
-				if (image_format_supported($file) >= 0)
-				{
+				if (image_format_supported($file) >= 0) {
 					$nbphoto++;
 					$photo = $file;
 					$viewfilename = $file;
@@ -7226,12 +7251,9 @@ abstract class CommonObject
 						$alt .= ' - '.$langs->transnoentitiesnoconv('Size').': '.$imgarray['width'].'x'.$imgarray['height'];
 						if ($notitle) $alt = '';
 
-						if ($usesharelink)
-						{
-							if ($val['share'])
-							{
-								if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight)
-								{
+						if ($usesharelink) {
+							if ($val['share']) {
+								if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight) {
 									$return .= '<!-- Show original file (thumb not yet available with shared links) -->';
 									$return .= '<img class="photo photowithmargin" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).'" title="'.dol_escape_htmltag($alt).'">';
 								} else {
@@ -7243,10 +7265,9 @@ abstract class CommonObject
 								$return .= '<img class="photo photowithmargin" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png" title="'.dol_escape_htmltag($alt).'">';
 							}
 						} else {
-							if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight)
-							{
+							if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight) {
 								$return .= '<!-- Show thumb -->';
-								$return .= '<img class="photo photowithmargin"  height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
+								$return .= '<img class="photo photowithmargin maxwidth150onsmartphone" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
 							} else {
 								$return .= '<!-- Show original file -->';
 								$return .= '<img class="photo photowithmargin" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
@@ -8363,17 +8384,25 @@ abstract class CommonObject
 	/**
 	 * Sets object to given categories.
 	 *
-	 * Deletes object from existing categories not supplied.
 	 * Adds it to non existing supplied categories.
+	 * Deletes object from existing categories not supplied (if remove_existing==true).
 	 * Existing categories are left untouch.
 	 *
-	 * @param 	int[]|int 	$categories 	Category ID or array of Categories IDs
-	 * @param 	string 		$type_categ 	Category type ('customer', 'supplier', 'website_page', ...)
+	 * @param 	int[]|int 	$categories 		Category ID or array of Categories IDs
+	 * @param 	string 		$type_categ 		Category type ('customer', 'supplier', 'website_page', ...) definied into const class Categorie type
+	 * @param 	boolean		$remove_existing 	True: Remove existings categories from Object if not supplies by $categories, False: let them
 	 * @return	int							<0 if KO, >0 if OK
 	 */
-	public function setCategoriesCommon($categories, $type_categ)
+	public function setCategoriesCommon($categories, $type_categ = '', $remove_existing = true)
 	{
+		dol_syslog(get_class($this)."::setCategoriesCommon Oject Id:".$this->id.' type_categ:'.$type_categ.' nb tag add:'.count($categories), LOG_DEBUG);
+
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+
+		if (empty($type_categ)) {
+			dol_syslog(__METHOD__.': Type '.$type_categ.'is an unknown category type. Done nothing.', LOG_ERR);
+			return -1;
+		}
 
 		// Handle single category
 		if (!is_array($categories)) {
@@ -8383,22 +8412,36 @@ abstract class CommonObject
 		// Get current categories
 		$c = new Categorie($this->db);
 		$existing = $c->containing($this->id, $type_categ, 'id');
-
-		// Diff
-		if (is_array($existing)) {
-			$to_del = array_diff($existing, $categories);
-			$to_add = array_diff($categories, $existing);
+		if ($remove_existing) {
+			// Diff
+			if (is_array($existing)) {
+				$to_del = array_diff($existing, $categories);
+				$to_add = array_diff($categories, $existing);
+			} else {
+				$to_del = array(); // Nothing to delete
+				$to_add = $categories;
+			}
 		} else {
 			$to_del = array(); // Nothing to delete
-			$to_add = $categories;
+			$to_add = array_diff($categories, $existing);
 		}
 
 		$error = 0;
+		$ok=0;
 
 		// Process
 		foreach ($to_del as $del) {
 			if ($c->fetch($del) > 0) {
-				$c->del_type($this, $type_categ);
+				$result=$c->del_type($this, $type_categ);
+				if ($result < 0)
+				{
+					$error++;
+					$this->error = $c->error;
+					$this->errors = $c->errors;
+					break;
+				} else {
+					$ok+=$result;
+				}
 			}
 		}
 		foreach ($to_add as $add) {
@@ -8411,11 +8454,13 @@ abstract class CommonObject
 					$this->error = $c->error;
 					$this->errors = $c->errors;
 					break;
+				} else {
+					$ok+=$result;
 				}
 			}
 		}
 
-		return $error ? -1 : 1;
+		return $error ? -1 * $error : $ok;
 	}
 
 	/**

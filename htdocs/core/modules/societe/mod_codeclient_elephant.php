@@ -212,8 +212,8 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 		// Get Mask value
 		$mask = '';
-		if ($type == 0) $mask = $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
-		if ($type == 1) $mask = $conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER;
+		if ($type == 0) $mask = empty($conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER) ? '' : $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
+		if ($type == 1) $mask = empty($conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER) ? '' : $conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER;
 		if (!$mask)
 		{
 			$this->error = 'NotConfigured';
@@ -272,7 +272,8 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 * 								-2 ErrorCustomerCodeRequired
 	 * 								-3 ErrorCustomerCodeAlreadyUsed
 	 * 								-4 ErrorPrefixRequired
-	 * 								-5 Other (see this->error)
+	 * 								-5 NotConfigured - Setup empty so any value may be ok or not
+	 * 								-6 Other (see this->error)
 	 */
 	public function verif($db, &$code, $soc, $type)
 	{
@@ -299,12 +300,11 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 				$this->error = 'NotConfigured';
 				return -5;
 			}
-
 			$result = check_value($mask, $code);
 			if (is_string($result))
 			{
 				$this->error = $result;
-				return -5;
+				return -6;
 			}
 		}
 

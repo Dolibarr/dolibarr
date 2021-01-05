@@ -91,7 +91,9 @@ class modCron extends DolibarrModules
 
 		// Boxes
 		//------
-		$this->boxes = array();
+		$this->boxes = array(
+			0 => array('file' => 'box_scheduled_jobs.php', 'enabledbydefaulton' => 'Home')
+		);
 
 		// Cronjobs
 		$this->cronjobs = array(

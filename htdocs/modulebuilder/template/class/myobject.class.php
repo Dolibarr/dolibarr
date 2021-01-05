@@ -697,7 +697,7 @@ class MyObject extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'MYOBJECT_CLOSE');
+		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'MYOBJECT_CANCEL');
 	}
 
 	/**
@@ -744,11 +744,11 @@ class MyObject extends CommonObject
 		$result = '';
 
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans("MyObject").'</u>';
+		if (isset($this->status)) {
+			$label .= ' '.$this->getLibStatut(5);
+		}
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		if (isset($this->status)) {
-			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
-		}
 
 		$url = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.$this->id;
 
@@ -1028,7 +1028,7 @@ class MyObject extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'standard_myobject';
 
-			if ($this->model_pdf) {
+			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->MYOBJECT_ADDON_PDF)) {
 				$modele = $conf->global->MYOBJECT_ADDON_PDF;
@@ -1037,7 +1037,7 @@ class MyObject extends CommonObject
 
 		$modelpath = "core/modules/mymodule/doc/";
 
-		if ($includedocgeneration) {
+		if ($includedocgeneration && !empty($modele)) {
 			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
 

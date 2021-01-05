@@ -315,6 +315,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	if ($foruserprofile) $colspan = 4;
 
 	$thumbsbyrow = 6;
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent'.($edit ? ' editmode' : '').' tableforfield">';
 
 	// Title
@@ -911,4 +912,5 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	} else {
 	}
 	print '</table>';
+	print '</div>';
 }

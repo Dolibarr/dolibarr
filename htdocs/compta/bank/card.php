@@ -95,6 +95,9 @@ if ($action == 'add')
 	$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
 	$object->owner_address   = trim(GETPOST("owner_address", 'nohtml'));
 
+	$object->ics             = trim(GETPOST("ics", 'alpha'));
+	$object->ics_transfer    = trim(GETPOST("ics_transfer", 'alpha'));
+
 	$account_number = GETPOST('account_number', 'alphanohtml');
 	if (empty($account_number) || $account_number == '-1')
 	{
@@ -195,6 +198,9 @@ if ($action == 'update')
 
 	$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
 	$object->owner_address   = trim(GETPOST("owner_address", 'nohtml'));
+
+	$object->ics             = trim(GETPOST("ics", 'alpha'));
+	$object->ics_transfer    = trim(GETPOST("ics_transfer", 'alpha'));
 
 	$account_number = GETPOST('account_number', 'alpha');
 	if (empty($account_number) || $account_number == '-1')
@@ -730,6 +736,18 @@ if ($action == 'create')
 			}
 			print '</td></tr>';
 
+			if ($conf->prelevement->enabled){
+				print '<tr><td>'.$langs->trans("ICS").'</td>';
+				print '<td>'.$object->ics.'</td>';
+				print '</tr>';
+			}
+
+			if ($conf->paymentbybanktransfer->enabled){
+				print '<tr><td>'.$langs->trans("ICSTransfer").'</td>';
+				print '<td>'.$object->ics_transfer.'</td>';
+				print '</tr>';
+			}
+
 			print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
 			print nl2br($object->domiciliation);
 			print "</td></tr>\n";
@@ -1009,6 +1027,16 @@ if ($action == 'create')
 
 			print '<tr><td>'.$langs->trans($bickey).'</td>';
 			print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="11" type="text" class="flat" name="bic" value="'.$object->bic.'"></td></tr>';
+
+			if ($conf->prelevement->enabled){
+				print '<tr><td>'.$langs->trans("ICS").'</td>';
+				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics" value="'.$object->ics.'"></td></tr>';
+			}
+
+			if ($conf->paymentbybanktransfer->enabled){
+				print '<tr><td>'.$langs->trans("ICSTransfer").'</td>';
+				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics_transfer" value="'.$object->ics_transfer.'"></td></tr>';
+			}
 
 			print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
 			print '<textarea class="flat quatrevingtpercent" name="domiciliation" rows="'.ROWS_2.'">';
