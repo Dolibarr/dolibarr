@@ -74,8 +74,9 @@ $duration_value2 = isset($argv[4]) ? $argv[4] : 'none';
 $error = 0;
 print $script_file." launched with mode ".$mode." default lang=".$langs->defaultlang.(is_numeric($duration_value) ? " delay=".$duration_value : "").(is_numeric($duration_value2) ? " after=".$duration_value2 : "")."\n";
 
-if ($mode != 'confirm')
+if ($mode != 'confirm') {
 	$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
+}
 
 $sql = "SELECT c.ref, cd.date_fin_validite, cd.total_ttc, cd.description as description, p.label as plabel,";
 $sql .= " s.rowid as sid, s.nom as name, s.email, s.default_lang";
@@ -115,6 +116,7 @@ if ($resql) {
 	print "We found ".$num." couples (services to expire-".$targettype.") qualified\n";
 	dol_syslog("We found ".$num." couples (services to expire-".$targettype.") qualified");
 	$message = '';
+	$oldtarget = '';
 
 	if ($num) {
 		while ($i < $num) {
@@ -124,12 +126,17 @@ if ($resql) {
 
 			// Check if this record is a break after previous one
 			$startbreak = false;
-			if ($newemail != $oldemail || $oldemail == 'none')
+			if ($newemail != $oldemail || $oldemail == 'none') {
 				$startbreak = true;
-			if ($obj->sid && $obj->sid != $oldsid)
+			}
+			if ($obj->sid && $obj->sid != $oldsid) {
 				$startbreak = true;
-			if ($obj->cid && $obj->cid != $oldcid)
-				$startbreak = true;
+			}
+			if ($targettype == 'contacts') {
+				if ($obj->cid && $obj->cid != $oldcid) {
+					$startbreak = true;
+				}
+			}
 
 			if ($startbreak) {
 				// Break onto sales representative (new email or cid)
@@ -145,13 +152,14 @@ if ($resql) {
 				}
 				$oldemail = $newemail;
 				$oldsid = $obj->sid;
-				$oldcid = $obj->cid;
-				$oldlang = $obj->lang;
+				if ($targettype == 'contacts') {
+					$oldcid = $obj->cid;
+				}
+				$oldlang = $obj->default_lang;
 				$oldtarget = (empty($obj->cfirstname) && empty($obj->clastname)) ? $obj->name : ($obj->clastname." ".$obj->cfirstname);
 				$message = '';
 				$total = 0;
 				$foundtoprocess = 0;
-				$target = (empty($obj->cfirstname) && empty($obj->clastname)) ? $obj->name : ($obj->clastname." ".$obj->cfirstname);
 				// if (empty($newemail)) print "Warning: Customer ".$target." has no email. Notice disabled.\n";
 			}
 
@@ -167,7 +175,7 @@ if ($resql) {
 				dol_syslog("email_expire_services_to_customers.php: ".$newemail." ".$message);
 				$foundtoprocess++;
 			}
-			print "Service to expire ".$obj->ref.", label ".dol_concatdesc($obj->plabel, $obj->description).", due date ".dol_print_date($db->jdate($obj->date_fin_validite), 'day').", customer id ".$obj->sid." ".$obj->name.", ".($obj->cid ? "contact id ".$obj->cid." ".$obj->clastname." ".$obj->cfirstname.", " : "")."email ".$newemail.", lang ".$outputlangs->defaultlang.": ";
+			print "Service to expire ".$obj->ref.", label ".dol_concatdesc($obj->plabel, $obj->description).", due date ".dol_print_date($db->jdate($obj->date_fin_validite), 'day').", customer id ".$obj->sid." ".$obj->name.", ".(isset($obj->cid) ? "contact id ".$obj->cid." ".$obj->clastname." ".$obj->cfirstname.", " : "")."email ".$newemail.", lang ".$outputlangs->defaultlang.": ";
 			if (dol_strlen($newemail))
 				print "qualified.";
 			else print "disqualified (no email).";
