@@ -36,12 +36,12 @@ $langs->loadLangs(array("admin", "zapier@zapier"));
 if (!$user->admin) accessforbidden();
 
 // Parameters
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $arrayofparameters = array(
-    'ZAPIERFORDOLIBARR_MYPARAM1'=>array('css'=>'minwidth200', 'enabled'=>1),
-    'ZAPIERFORDOLIBARR_MYPARAM2'=>array('css'=>'minwidth500', 'enabled'=>1)
+	'ZAPIERFORDOLIBARR_MYPARAM1'=>array('css'=>'minwidth200', 'enabled'=>1),
+	'ZAPIERFORDOLIBARR_MYPARAM2'=>array('css'=>'minwidth500', 'enabled'=>1)
 );
 
 
@@ -49,7 +49,7 @@ $arrayofparameters = array(
  * Actions
  */
 if ((float) DOL_VERSION >= 6) {
-    include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+	include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 }
 
 
@@ -67,58 +67,57 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'object_zapier@zapi
 
 // Configuration header
 $head = zapierAdminPrepareHead();
-dol_fiche_head($head, 'settings', '', -1, "zapier@zapier");
+print dol_get_fiche_head($head, 'settings', '', -1, "zapier@zapier");
 
 // Setup page goes here
 echo $langs->trans("ZapierSetupPage").'<br><br>';
 
 
 if ($action == 'edit') {
-    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
-    print '<input type="hidden" name="action" value="update">';
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="update">';
 
-    print '<table class="noborder centpercent">';
-    print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-    foreach ($arrayofparameters as $key => $val) {
-        print '<tr class="oddeven"><td>';
-        print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
-        print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->$key.'"></td></tr>';
-    }
-    print '</table>';
+	foreach ($arrayofparameters as $key => $val) {
+		print '<tr class="oddeven"><td>';
+		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
+		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->$key.'"></td></tr>';
+	}
+	print '</table>';
 
-    print '<br><div class="center">';
-    print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
-    print '</div>';
+	print '<br><div class="center">';
+	print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
+	print '</div>';
 
-    print '</form>';
-    print '<br>';
+	print '</form>';
+	print '<br>';
 } else {
-    if (!empty($arrayofparameters)) {
-        print '<table class="noborder centpercent">';
-        print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	if (!empty($arrayofparameters)) {
+		print '<table class="noborder centpercent">';
+		print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-        foreach ($arrayofparameters as $key => $val) {
-            print '<tr class="oddeven"><td>';
-            print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
-            print '</td><td>'.$conf->global->$key.'</td></tr>';
-        }
+		foreach ($arrayofparameters as $key => $val) {
+			print '<tr class="oddeven"><td>';
+			print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
+			print '</td><td>'.$conf->global->$key.'</td></tr>';
+		}
 
-        print '</table>';
+		print '</table>';
 
-        print '<div class="tabsAction">';
-        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
-        print '</div>';
-    } else
-    {
-        print '<br>'.$langs->trans("NothingToSetup");
-    }
+		print '<div class="tabsAction">';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
+		print '</div>';
+	} else {
+		print '<br>'.$langs->trans("NothingToSetup");
+	}
 }
 
 
 // Page end
-dol_fiche_end();
+print dol_get_fiche_end();
 
 llxFooter();
 $db->close();

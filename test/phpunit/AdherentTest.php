@@ -75,7 +75,11 @@ class AdherentTest extends PHPUnit\Framework\TestCase
         print "\n";
     }
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -91,7 +95,11 @@ class AdherentTest extends PHPUnit\Framework\TestCase
         print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
         global $conf,$user,$langs,$db;
@@ -172,7 +180,10 @@ class AdherentTest extends PHPUnit\Framework\TestCase
         $localobject->initAsSpecimen();
         $localobject->typeid=$fk_adherent_type;
         $result=$localobject->create($user);
-        print __METHOD__." result=".$result."\n";
+		print __METHOD__." result=".$result."\n";
+		if ($result < 0) {
+			print $localobject->error;
+		}
         $this->assertLessThan($result, 0);
 
         return $result;
@@ -325,13 +336,13 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 
         $conf->global->MAIN_FIRSTNAME_NAME_POSITION = 0;	// Force setup for firstname+lastname
 
-        $template = '__CIVILITY__,__FIRSTNAME__,__LASTNAME__,__FULLNAME__,__COMPANY__,'.
-                    '__ADDRESS__,__ZIP__,__TOWN__,__COUNTRY__,__EMAIL__,__BIRTH__,__PHOTO__,__LOGIN__';
+        $template = '__CIVILITY__,__FIRSTNAME__,__LASTNAME__,__FULLNAME__,__COMPANY__,';
+        $template .= '__ADDRESS__,__ZIP__,__TOWN__,__COUNTRY__,__EMAIL__,__BIRTH__,__PHOTO__,__LOGIN__';
 
         // If option to store clear password has been set, we get 'dolibspec' into PASSWORD field.
-        $expected = ',New firstname,New name,New firstname New name,'.
-                    'New company label,New address,New zip,New town,Belgium,newemail@newemail.com,'.dol_print_date($localobject->birth, 'day').',,'.
-                    'newlogin';
+        $expected = ',New firstname,New name,New firstname New name,';
+        $expected .= 'New company label,New address,New zip,New town,Belgium,newemail@newemail.com,'.dol_print_date($localobject->birth, 'day').',,';
+        $expected .= 'newlogin';
 
         $result = $localobject->makeSubstitution($template);
         print __METHOD__." result=".$result."\n";
@@ -403,30 +414,30 @@ class AdherentTest extends PHPUnit\Framework\TestCase
         $thirdparty = new Societe($db);
         $thirdparty->initAsSpecimen();
         $result = $thirdparty->create($user);
-        print __METHOD__." id=".$localobject->id." third party id=".$thirdparty->id." result=".$result."\n";
-        $this->assertTrue($result > 0);
+        print __METHOD__." third party id=".$thirdparty->id." result=".$result."\n";
+        $this->assertTrue($result > 0, 'Test to create a thirdparty specimen to use it to set as thirdparty of a member');
 
         //Set Third Party ID
         $result = $localobject->setThirdPartyId($thirdparty->id);
-        $this->assertEquals($result, 1);
+        $this->assertEquals($result, 1, 'Set thirdparty');
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
         //Adherent is updated with new data
         $localobject->fetch($localobject->id);
-        $this->assertEquals($localobject->fk_soc, $thirdparty->id);
+        $this->assertEquals($localobject->fk_soc, $thirdparty->id, 'Fetch member');
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
         //We remove the third party association
         $result = $localobject->setThirdPartyId(0);
-        $this->assertEquals($result, 1);
+        $this->assertEquals($result, 1, 'Removed the link with thirdparty');
 
         //And check if it has been updated
         $localobject->fetch($localobject->id);
-        $this->assertNull($localobject->fk_soc);
+        $this->assertNull($localobject->fk_soc, 'Check field is null');
 
         //Now we remove the third party
         $result = $thirdparty->delete($thirdparty->id, $user);
-        $this->assertEquals($result, 1);
+        $this->assertEquals($result, 1, 'Delete thirdparty');
 
         return $localobject;
     }

@@ -23,6 +23,22 @@ background: #f9f9f9;
 margin: 5px 5px;
 }
 
+.center {
+	text-align: center;	
+}
+
+.centpercent {
+	width: 100%;	
+}
+
+.valignmiddle {
+	vertical-align: middle;	
+}
+
+inline-block {
+	display: inline-block;	
+}
+
 div.titre {
 padding: 5px 5px 5px 5px;
 margin: 0 0 0 0;
@@ -147,10 +163,10 @@ padding: 4px 4px 4px 4px;
 
 tr.title
 {
-background: #DDDFDD;
+background: #EEEEEE;
 }
 
-table.login {  border: 1px solid #C0C0C0; background: #FFF; }
+table.login {  border: 1px solid #E0E0E0; background: #FFF; }
 
 .tablesupport {
 	padding: 6px;

@@ -25,7 +25,7 @@ CREATE TABLE llx_menu
 	rowid         integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
 	menu_handler  varchar(16) NOT NULL,						-- Menu handler name
 	entity        integer DEFAULT 1 NOT NULL,				-- Multi company id
-	module        varchar(64),								-- Module name if record is added by a module
+	module        varchar(255),								-- Module name if record is added by a module
 	type          varchar(4) NOT NULL,						-- Menu top or left
 	mainmenu      varchar(100) NOT NULL,					-- Name family/module for top menu (home, companies, ...)
     leftmenu      varchar(100) NULL,						-- Name family/module for left menu (setup, info, ...)
@@ -39,8 +39,8 @@ CREATE TABLE llx_menu
 	langs         varchar(100),								-- Lang file to load for translation
 	level         smallint,									-- Deprecated. Not used.
 	perms         text,										-- Condition to show enabled or disabled
-	enabled       varchar(255) NULL default '1', 		    -- Condition to show or hide
+	enabled       text NULL, 					            -- Condition to show or hide
 	usertype      integer NOT NULL DEFAULT 0,				-- 0 if menu for all users, 1 for external only, 2 for internal only
-	tms           timestamp
+	tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 	
 ) ENGINE=innodb;

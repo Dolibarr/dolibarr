@@ -16,24 +16,24 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
+if (empty($conf) || !is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
 }
 
 
-$object=$GLOBALS['object'];
+$object = $GLOBALS['object'];
 
-$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
+$statutarray = array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
 ?>
 
 <!-- BEGIN PHP TEMPLATE EDIT.TPL -->
 
 <?php
-$head=product_prepare_head($object);
-$titre=$langs->trans("CardProduct".$object->type);
-dol_fiche_head($head, 'card', $titre, 0, 'service');
+$head = product_prepare_head($object);
+$titre = $langs->trans("CardProduct".$object->type);
+print dol_get_fiche_head($head, 'card', $titre, 0, 'service');
 
 dol_htmloutput_errors($object->error, $object->errors);
 ?>
@@ -79,8 +79,8 @@ dol_htmloutput_errors($object->error, $object->errors);
 
 <br>
 
-<div align="center"><input type="submit" class="button" value="<?php echo $langs->trans("Save"); ?>"> &nbsp; &nbsp;
-<input type="submit" class="button" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>"></div>
+<div align="center"><input type="submit" class="button button-save" value="<?php echo $langs->trans("Save"); ?>"> &nbsp; &nbsp;
+<input type="submit" class="button button-cancel" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>"></div>
 
 </form>
 

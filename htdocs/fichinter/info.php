@@ -28,27 +28,27 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
-if (! empty($conf->projet->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+if (!empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'interventions'));
 
-$socid=0;
+$socid = 0;
 $id = GETPOST('id', 'int');
-$ref=GETPOST('ref', 'alpha');
+$ref = GETPOST('ref', 'alpha');
 
 // Security check
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 $object = new Fichinter($db);
 
-if (! $object->fetch($id, $ref) > 0)
+if (!$object->fetch($id, $ref) > 0)
 {
-    dol_print_error($db);
-    exit;
+	dol_print_error($db);
+	exit;
 }
 
 
@@ -64,7 +64,7 @@ $object->fetch_thirdparty();
 $object->info($object->id);
 
 $head = fichinter_prepare_head($object);
-dol_fiche_head($head, 'info', $langs->trans('InterventionCard'), -1, 'intervention');
+print dol_get_fiche_head($head, 'info', $langs->trans('InterventionCard'), -1, 'intervention');
 
 // Intervention card
 $linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
@@ -124,7 +124,7 @@ print '</td></tr></table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 llxFooter();
 $db->close();

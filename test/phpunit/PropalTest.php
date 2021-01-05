@@ -74,7 +74,11 @@ class PropalTest extends PHPUnit\Framework\TestCase
 		print "\n";
 	}
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -83,7 +87,11 @@ class PropalTest extends PHPUnit\Framework\TestCase
         print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
     	global $conf,$user,$langs,$db;
@@ -182,11 +190,11 @@ class PropalTest extends PHPUnit\Framework\TestCase
     	$langs=$this->savlangs;
     	$db=$this->savdb;
 
-    	$localobject->note_private='New note private after update';
-    	$result=$localobject->update($user);
+    	$localobject->note_private = 'New note private after update';
+    	$result = $localobject->update($user);
 
     	$this->assertLessThan($result, 0);
-    	print __METHOD__." id=".$id." result=".$result."\n";
+    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	return $localobject;
     }
 

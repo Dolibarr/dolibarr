@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - workflow
-WorkflowSetup=Workflow Moduleinstellungen
+WorkflowSetup=Einstellungen Modul Workflow
 WorkflowDesc=Dieses Modul liefert verschiedene, automatisierte Aktionen. Standardmäßig ist der Workflow flexibel (d.h. Sie sind frei in der Reihenfolge der Abarbeitung) aber über diesen Modul können Sie einige Aktionen automatisiert ablaufen lassen.
 ThereIsNoWorkflowToModify=Es sind keine Workflow-Änderungen möglich mit den aktivierten Modulen.
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Erstellt automatisch eine Bestellung, nachdem ein Angebot als "unterzeichnet" markiert wurde. Die neue Bestellung hat dann den selben Wert wie das Angebot.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Erstelle automatisch einen Kundenauftrag, nachdem ein Angebot auf "unterzeichnet" gesetzt wurde. Die neue Bestellung hat dann den selben Wert wie das Angebot.
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Erstellt automatisch eine Kundenrechnung, nachdem ein Angebot als "unterzeichnet" markiert wurde. Diese neue Kundenrechnung lautet über den selben Betrag wie das Angebot.
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Erstelle automatisch eine Kundenrechnung, nachdem der Vertrag bestätigt wurde.
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Erstellt automatisch eine Kundenrechnung, nachdem eine Bestellung geschlossen wurde. Die neue Kundenrechnung lautet über den selben Betrag wie die Bestellung.
@@ -16,5 +16,8 @@ descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Kennzeichne die verknüpften Auftr�
 # Autoclassify purchase order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Setzt das verknüpfte Lieferantenangebot auf "abgerechnet", sofern die Lieferanrenrechnung erstellt wurde und sofern der Rechnungsbetrag identisch zur Angebotsumme ist. 
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Kennzeichne die verknüpfte Einkaufsbestellung als abgerechnet wenn die Lieferantenrechnung erstellt wurde und wenn die Beträge überein stimmen.
+descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
 AutomaticCreation=automatische Erstellung
 AutomaticClassification=Automatische Klassifikation

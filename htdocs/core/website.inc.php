@@ -19,7 +19,7 @@
 /**
  *	\file			htdocs/core/website.inc.php
  *  \brief			Common file loaded by all website pages (after master.inc.php). It set the new object $weblangs, using parameter 'l'.
- *  				This file is included in top of all container pages.
+ *  				This file is included in top of all container pages and is run only when a web page is called.
  *  			    The global variable $websitekey must be defined.
  */
 
@@ -27,16 +27,23 @@
 include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 
+// Detection browser (copy of code from main.inc.php)
+if (isset($_SERVER["HTTP_USER_AGENT"]) && is_object($conf) && empty($conf->browser->name))
+{
+	$tmp = getBrowserInfo($_SERVER["HTTP_USER_AGENT"]);
+	$conf->browser->name = $tmp['browsername'];
+	$conf->browser->os = $tmp['browseros'];
+	$conf->browser->version = $tmp['browserversion'];
+	$conf->browser->layout = $tmp['layout']; // 'classic', 'phone', 'tablet'
+	//var_dump($conf->browser);
+
+	if ($conf->browser->layout == 'phone') $conf->dol_no_mouse_hover = 1;
+}
 // Define $website
 if (!is_object($website))
 {
 	$website = new Website($db);
 	$website->fetch(0, $websitekey);
-}
-// Define $weblangs
-if (!is_object($weblangs))
-{
-	$weblangs = dol_clone($langs); // TODO Use an object lang from a language set into $website object instead of backoffice
 }
 // Define $websitepage if we have $websitepagefile defined
 if (!$pageid && !empty($websitepagefile))
@@ -46,28 +53,38 @@ if (!$pageid && !empty($websitepagefile))
 }
 if (!is_object($websitepage))
 {
-    $websitepage = new WebsitePage($db);
+	$websitepage = new WebsitePage($db);
+}
+// Define $weblangs
+if (!is_object($weblangs))
+{
+	$weblangs = new Translate('', $conf);
+}
+if (!is_object($pagelangs))
+{
+	$pagelangs = new Translate('', $conf);
 }
 if ($pageid > 0)
 {
 	$websitepage->fetch($pageid);
 
-	if (!defined('USEDOLIBARREDITOR') && in_array($websitepage->type_container, array('menu', 'other')))
+	$weblangs->setDefaultLang(GETPOSTISSET('lang') ? GETPOST('lang', 'aZ09') : (empty($_COOKIE['weblangs-shortcode']) ? 'auto' : preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE['weblangs-shortcode'])));
+	$pagelangs->setDefaultLang($websitepage->lang ? $websitepage->lang : $weblangs->shortlang);
+
+	if (!defined('USEDOLIBARREDITOR') && (in_array($websitepage->type_container, array('menu', 'other')) || empty($websitepage->status)))
 	{
 		$weblangs->load("website");
 		http_response_code(404);
-		print '<center><br><br>'.$weblangs->trans("YouTryToAccessToAFileThatIsNotAWebsitePage").'</center>';
+		print '<center><br><br>'.$weblangs->trans("YouTryToAccessToAFileThatIsNotAWebsitePage", $websitepage->pageurl, $websitepage->type_container, $websitepage->status).'</center>';
 		exit;
 	}
 }
 
 if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 	header("X-Content-Type-Options: nosniff");
-	/* TODO Manage allow_frames flag on websitepage.
-	if (empty($websitepage->allow_frames) && empty($conf->global->WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES)) {
+	if (empty($websitepage->allowed_in_frames) && empty($conf->global->WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES)) {
 		header("X-Frame-Options: SAMEORIGIN");
 	}
-	*/
 }
 
 // A lang was forced, so we change weblangs init
@@ -98,11 +115,9 @@ if ($_SERVER['PHP_SELF'] != DOL_URL_ROOT.'/website/index.php')	// If we browsing
 					if (defined('USEDOLIBARRSERVER')) {
 						header("Location: ".DOL_URL_ROOT.'/public/website/index.php?website='.$websitekey.'&pageid='.$newpageid.'&l='.GETPOST('l', 'aZ09'));
 						exit;
-					}
-					else
-					{
+					} else {
 						$newpageref = $obj->pageurl;
-						header("Location: ".$newpageref.'.php?l='.GETPOST('l', 'aZ09'));
+						header("Location: ".(($obj->lang && $obj->lang != $website->lang) ? '/'.$obj->lang.'/' : '/').$newpageref.'.php?l='.GETPOST('l', 'aZ09'));
 						exit;
 					}
 				}

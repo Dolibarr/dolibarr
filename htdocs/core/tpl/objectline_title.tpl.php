@@ -34,7 +34,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || ! is_object($object))
+if (empty($object) || !is_object($object))
 {
 	print "Error, template page can't be called as URL";
 	exit;
@@ -48,7 +48,7 @@ print "<thead>\n";
 print '<tr class="liste_titre nodrag nodrop">';
 
 // Adds a line numbering column
-if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td class="linecolnum center">&nbsp;</td>';
+if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td class="linecolnum center">&nbsp;</td>';
 
 // Description
 print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
@@ -59,7 +59,24 @@ if ($this->element == 'supplier_proposal' || $this->element == 'order_supplier' 
 }
 
 // VAT
-print '<td class="linecolvat right" style="width: 80px">'.$langs->trans('VAT').'</td>';
+print '<td class="linecolvat right" style="width: 80px">';
+if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) || !empty($conf->global->FACTURE_LOCAL_TAX2_OPTION)) {
+	print $langs->trans('Taxes');
+} else {
+	print $langs->trans('VAT');
+}
+if (in_array($object->element, array('propal', 'commande', 'facture')) && $object->status == $object::STATUS_DRAFT)
+{
+	global $mysoc;
+	print img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickvatforalllines opacitymedium paddingleft cursorpointer"');
+	print '<script>$(document).ready(function() { $(".clickvatforalllines").click(function() { jQuery(".classvatforalllines").toggle(); }); });</script>';
+	print '<div class="classvatforalllines hidden inline-block nowraponall">';
+	//print '<input class="inline-block maxwidth50" type="text" name="vatforalllines" id="vatforalllines" value="">';
+	print $form->load_tva('vatforalllines', '', $mysoc, $object->thirdparty, 0, 0, '', false, 1);
+	print '<input class="inline-block button smallpaddingimp" type="submit" name="submitforalllines" value="'.$langs->trans("Update").'">';
+	print '</div>';
+}
+print '</td>';
 
 // Price HT
 print '<td class="linecoluht right" style="width: 80px">'.$langs->trans('PriceUHT').'</td>';
@@ -72,7 +89,7 @@ if ($inputalsopricewithtax) print '<td class="right" style="width: 80px">'.$lang
 // Qty
 print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 
-if($conf->global->PRODUCT_USE_UNITS)
+if (!empty($conf->global->PRODUCT_USE_UNITS))
 {
 	print '<td class="linecoluseunit left">'.$langs->trans('Unit').'</td>';
 }
@@ -82,11 +99,11 @@ print '<td class="linecoldiscount right">'.$langs->trans('ReductionShort').'</td
 
 // Fields for situation invoice
 if ($this->situation_cycle_ref) {
-	print '<td class="linecolcycleref right">' . $langs->trans('Progress') . '</td>';
-	print '<td class="linecolcycleref2 right">' . $langs->trans('TotalHT100Short') . '</td>';
+	print '<td class="linecolcycleref right">'.$langs->trans('Progress').'</td>';
+	print '<td class="linecolcycleref2 right">'.$form->textwithpicto($langs->trans('TotalHT100Short'), $langs->trans('UnitPriceXQtyLessDiscount')).'</td>';
 }
 
-if ($usemargins && ! empty($conf->margin->enabled) && empty($user->socid))
+if ($usemargins && !empty($conf->margin->enabled) && empty($user->socid))
 {
 	if (!empty($user->rights->margins->creer))
 	{
@@ -97,10 +114,10 @@ if ($usemargins && ! empty($conf->margin->enabled) && empty($user->socid))
 		}
 	}
 
-	if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) {
+	if (!empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) {
 		print '<td class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarginRate').'</td>';
 	}
-	if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {
+	if (!empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {
 		print '<td class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarkRate').'</td>';
 	}
 }
@@ -113,13 +130,13 @@ if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf-
 
 if ($outputalsopricetotalwithtax) print '<td class="right" style="width: 80px">'.$langs->trans('TotalTTCShort').'</td>';
 
-print '<td class="linecoledit"></td>';  // No width to allow autodim
+print '<td class="linecoledit"></td>'; // No width to allow autodim
 
 print '<td class="linecoldelete" style="width: 10px"></td>';
 
 print '<td class="linecolmove" style="width: 10px"></td>';
 
-if($action == 'selectlines')
+if ($action == 'selectlines')
 {
 	print '<td class="linecolcheckall center">';
 	print '<input type="checkbox" class="linecheckboxtoggle" />';

@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/ImportTest.php
+ *      \file       test/phpunit/ExportTest.php
  *		\ingroup    test
  *      \brief      PHPUnit test
  *		\remarks	To run this script as CLI:  phpunit filename.php
@@ -78,7 +78,11 @@ class ExportTest extends PHPUnit\Framework\TestCase
 		print "\n";
 	}
 
-	// Static methods
+	/**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
@@ -87,7 +91,11 @@ class ExportTest extends PHPUnit\Framework\TestCase
     	print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
     	global $conf,$user,$langs,$db;
@@ -133,12 +141,15 @@ class ExportTest extends PHPUnit\Framework\TestCase
 
         $model='csv';
 
+        $conf->global->EXPORT_CSV_SEPARATOR_TO_USE = ',';
+        print 'EXPORT_CSV_SEPARATOR_TO_USE = '.$conf->global->EXPORT_CSV_SEPARATOR_TO_USE;
+
         // Creation of class to export using model ExportXXX
         $dir = DOL_DOCUMENT_ROOT . "/core/modules/export/";
         $file = "export_".$model.".modules.php";
         $classname = "Export".$model;
         require_once $dir.$file;
-        $objmodel = new $classname($this->db);
+        $objmodel = new $classname($db);
 
         // First test without option USE_STRICT_CSV_RULES
         unset($conf->global->USE_STRICT_CSV_RULES);
@@ -153,7 +164,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
         print __METHOD__." valtotest=".$valtotest."\n";
         $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, '"A string with , and ; inside"');
+        $this->assertEquals($result, '"A string with , and ; inside"', 'Error in csvClean for '.$file);
 
         $valtotest='A string with " inside';
         print __METHOD__." valtotest=".$valtotest."\n";
@@ -174,7 +185,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
         $this->assertEquals($result, '"A string with <a href=""aaa""><strong>html<br>content</strong></a> inside"');
 
         // Same tests with strict mode
-        $conf->global->USE_STRICT_CSV_RULES=1;
+        $conf->global->USE_STRICT_CSV_RULES = 1;
 
         $valtotest='A simple string';
         print __METHOD__." valtotest=".$valtotest."\n";
@@ -235,23 +246,28 @@ class ExportTest extends PHPUnit\Framework\TestCase
         $model='csv';
 
         // Build export file
+        print "Process build_file for model = ".$model."\n";
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
-		$expectedresult=1;
-        $this->assertEquals($expectedresult, $result);
+		$expectedresult = 1;
+        $this->assertEquals($expectedresult, $result, 'Error in CSV export');
 
         $model='tsv';
 
         // Build export file
+        print "Process build_file for model = ".$model."\n";
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 		$expectedresult=1;
-        $this->assertEquals($expectedresult, $result);
+        $this->assertEquals($expectedresult, $result, 'Error in TSV export');
 
-        $model='excel';
+        $model='excel2007new';
 
         // Build export file
+        /* ko on php 7.4 on travis (zip not available) */
+        print "Process build_file for model = ".$model."\n";
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 		$expectedresult=1;
-        $this->assertEquals($expectedresult, $result);
+        $this->assertEquals($expectedresult, $result, 'Error in Excel2007new export');
+
 
         return true;
     }
@@ -304,6 +320,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
     	$expectedresult=1;
     	$this->assertEquals($expectedresult,$result);
         */
+    	$this->assertEquals(true, true);
     	return true;
     }
 
@@ -328,7 +345,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
         $result=$objexport->load_arrays($user, $filterdatatoexport);	// This load ->array_export_xxx properties for datatoexport
 
         // Loop on each dataset
-        foreach($objexport->array_export_code as $key => $datatoexport)
+        foreach ($objexport->array_export_code as $key => $datatoexport)
         {
         	$exportfile=$conf->export->dir_temp.'/'.$user->id.'/export_'.$datatoexport.'.csv';
 	        print "Process export for dataset ".$datatoexport." into ".$exportfile."\n";
@@ -337,7 +354,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
 	        // Generate $array_selected
 	        $i=0;
 	        $array_selected=array();
-			foreach($objexport->array_export_fields[$key] as $key => $val)
+			foreach ($objexport->array_export_fields[$key] as $key => $val)
 			{
 				$array_selected[$key]=$i++;
 			}
@@ -346,8 +363,8 @@ class ExportTest extends PHPUnit\Framework\TestCase
 	        // Build export file
         	$sql = "";
 			$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
-			$expectedresult=1;
-	        $this->assertEquals($expectedresult, $result, "Call build_file() to export ".$exportfile.' failed');
+			$expectedresult = 1;
+	        $this->assertEquals($expectedresult, $result, "Call build_file() to export ".$exportfile.' failed: '.$objexport->error);
 	        $result=dol_is_file($exportfile);
 	        $this->assertTrue($result, 'File '.$exportfile.' not found');
         }

@@ -2,24 +2,24 @@
 
 if (empty($keyforclass) || empty($keyforclassfile) || empty($keyforelement))
 {
-    //print $keyforclass.' - '.$keyforclassfile.' - '.$keyforelement;
-    dol_print_error('', 'include of file commonfieldsinexport.inc.php was done but var $keyforclass or $keyforclassfile or $keyforelement was not set');
-    exit;
+	//print $keyforclass.' - '.$keyforclassfile.' - '.$keyforelement;
+	dol_print_error('', 'include of file commonfieldsinexport.inc.php was done but var $keyforclass or $keyforclassfile or $keyforelement was not set');
+	exit;
 }
 if (empty($keyforalias)) $keyforalias = 't';
 
 dol_include_once($keyforclassfile);
 if (class_exists($keyforclass))
 {
-	$tmpobject=new $keyforclass($this->db);
+	$tmpobject = new $keyforclass($this->db);
 
 	// Add common fields
-	foreach($tmpobject->fields as $keyfield => $valuefield)
+	foreach ($tmpobject->fields as $keyfield => $valuefield)
 	{
-		$fieldname = $keyforalias . '.' . $keyfield;
+		$fieldname = $keyforalias.'.'.$keyfield;
 		$fieldlabel = ucfirst($valuefield['label']);
 		$typeFilter = "Text";
-		$typefield = preg_replace('/\(.*$/', '', $valuefield['type']);	// double(24,8) -> double
+		$typefield = preg_replace('/\(.*$/', '', $valuefield['type']); // double(24,8) -> double
 		switch ($typefield) {
 			case 'int':
 			case 'integer':
@@ -48,7 +48,7 @@ if (class_exists($keyforclass))
 			 */
 		}
 		$helpfield = '';
-		if (! empty($valuefield['help'])) {
+		if (!empty($valuefield['help'])) {
 			$helpfield = preg_replace('/\(.*$/', '', $valuefield['help']);
 		}
 		if ($valuefield['enabled']) {
@@ -58,9 +58,7 @@ if (class_exists($keyforclass))
 			$this->export_help_array[$r][$fieldname] = $helpfield;
 		}
 	}
-}
-else
-{
+} else {
 	dol_print_error($this->db, 'Failed to find class '.$keyforclass.', even after the include of '.$keyforclassfile);
 }
 // End add common fields

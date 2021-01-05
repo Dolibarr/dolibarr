@@ -29,9 +29,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php'
 class mod_expedition_safor extends ModelNumRefExpedition
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr';
 
 	public $prefix = 'SH';
@@ -59,11 +59,11 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *
 	 *	@return     string      text description
 	 */
-    public function info()
-    {
-    	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
-    }
+	public function info()
+	{
+		global $langs;
+	  	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+	}
 
 
 	/**
@@ -71,7 +71,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *
 	 *	@return     string      Example
 	 */
-    public function getExample()
+	public function getExample()
 	{
 		return $this->prefix."0501-0001";
 	}
@@ -82,13 +82,13 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *
 	 *	@return     boolean     false if conflit, true if ok
 	 */
-    public function canBeActivated()
+	public function canBeActivated()
 	{
 		global $conf, $langs, $db;
 
 		$coyymm = ''; $max = '';
 
-		$posindice = 8;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expedition";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
@@ -117,11 +117,11 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *	@param	Object		$shipment	Shipment object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-    public function getNextValue($objsoc, $shipment)
+	public function getNextValue($objsoc, $shipment)
 	{
 		global $db, $conf;
 
-		$posindice = 8;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expedition";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
@@ -133,9 +133,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 			$obj = $db->fetch_object($resql);
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
-		}
-		else
-		{
+		} else {
 			dol_syslog("mod_expedition_safor::getNextValue", LOG_DEBUG);
 			return -1;
 		}
@@ -150,7 +148,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 		return $this->prefix.$yymm."-".$num;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return next free value
 	 *
@@ -158,9 +156,9 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *	@param	Object		$objforref	Shipment object
 	 *	@return string      			Next free value
 	 */
-    public function expedition_get_num($objsoc, $objforref)
+	public function expedition_get_num($objsoc, $objforref)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		return $this->getNextValue($objsoc, $objforref);
 	}
 }

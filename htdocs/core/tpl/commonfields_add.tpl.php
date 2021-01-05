@@ -35,12 +35,12 @@ if (empty($conf) || !is_object($conf))
 
 $object->fields = dol_sort_array($object->fields, 'position');
 
-foreach($object->fields as $key => $val)
+foreach ($object->fields as $key => $val)
 {
 	// Discard if extrafield is a hidden field on form
 	if (abs($val['visible']) != 1 && abs($val['visible']) != 3) continue;
 
-	if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! verifCond($val['enabled'])) continue;	// We don't want this field
+	if (array_key_exists('enabled', $val) && isset($val['enabled']) && !verifCond($val['enabled'])) continue; // We don't want this field
 
 	print '<tr id="field_'.$key.'">';
 	print '<td';
@@ -53,10 +53,12 @@ foreach($object->fields as $key => $val)
 	else print $langs->trans($val['label']);
 	print '</td>';
 	print '<td>';
+	if (!empty($val['picto'])) { print img_picto('', $val['picto']); }
 	if (in_array($val['type'], array('int', 'integer'))) $value = GETPOST($key, 'int');
-	elseif ($val['type'] == 'text' || $val['type'] == 'html') $value = GETPOST($key, 'none');
+	elseif ($val['type'] == 'text' || $val['type'] == 'html') $value = GETPOST($key, 'restricthtml');
 	else $value = GETPOST($key, 'alpha');
-	print $object->showInputField($val, $key, $value, '', '', '', 0, $object->table_element);
+	if ($val['noteditable']) print $object->showOutputField($val, $key, $value, '', '', '', 0);
+	else print $object->showInputField($val, $key, $value, '', '', '', 0);
 	print '</td>';
 	print '</tr>';
 }

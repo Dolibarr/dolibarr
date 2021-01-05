@@ -32,46 +32,46 @@
  */
 function printingAdminPrepareHead($mode)
 {
-    global $langs, $conf;
+	global $langs, $conf;
 
-    $h = 0;
-    $head = array();
+	$h = 0;
+	$head = array();
 
-    $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=config";
-    $head[$h][1] = $langs->trans("ListDrivers");
-    $head[$h][2] = 'config';
-    $h++;
+	$head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=config";
+	$head[$h][1] = $langs->trans("ListDrivers");
+	$head[$h][2] = 'config';
+	$h++;
 
-    if ($mode == 'setup') {
-        $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=setup&driver=".GETPOST('driver', 'alpha');
-        $head[$h][1] = $langs->trans("SetupDriver");
-        $head[$h][2] = 'setup';
-        $h++;
-    }
+	if ($mode == 'setup') {
+		$head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=setup&driver=".GETPOST('driver', 'alpha');
+		$head[$h][1] = $langs->trans("SetupDriver");
+		$head[$h][2] = 'setup';
+		$h++;
+	}
 
-    if ($mode == 'test') {
-        $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=test&driver=".GETPOST('driver', 'alpha');
-        $head[$h][1] = $langs->trans("TargetedPrinter");
-        $head[$h][2] = 'test';
-        $h++;
-    }
+	if ($mode == 'test') {
+		$head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=test&driver=".GETPOST('driver', 'alpha');
+		$head[$h][1] = $langs->trans("TargetedPrinter");
+		$head[$h][2] = 'test';
+		$h++;
+	}
 
-    /** TODO This feature seem to be not ready yet.
+	/** TODO This feature seem to be not ready yet.
     $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=userconf";
     $head[$h][1] = $langs->trans("UserConf");
     $head[$h][2] = 'userconf';
     $h++;
-    */
+	 */
 
-    //$object=new stdClass();
+	//$object=new stdClass();
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);                                                   to remove a tab
-    //complete_head_from_modules($conf,$langs,$object,$head,$h,'printingadmin');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);                                                   to remove a tab
+	//complete_head_from_modules($conf,$langs,$object,$head,$h,'printingadmin');
 
-    //complete_head_from_modules($conf,$langs,$object,$head,$h,'printing','remove');
+	//complete_head_from_modules($conf,$langs,$object,$head,$h,'printing','remove');
 
-    return $head;
+	return $head;
 }

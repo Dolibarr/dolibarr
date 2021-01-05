@@ -19,7 +19,7 @@
 create table llx_contratdet_log
 (
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
-  tms                   timestamp,
+  tms                   timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_contratdet         integer NOT NULL,
   date                  datetime NOT NULL,
   statut                smallint NOT NULL,

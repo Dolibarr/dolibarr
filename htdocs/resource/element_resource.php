@@ -29,11 +29,11 @@ require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 if (!empty($conf->projet->enabled)) {
-    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
-    require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 }
 
 // Load translation files required by the page
@@ -46,7 +46,7 @@ $page                           = GETPOST('page','int');
 */
 
 if (!$user->rights->resource->read)
-        accessforbidden();
+		accessforbidden();
 
 $object = new Dolresource($db);
 
@@ -71,8 +71,8 @@ $socid                  = GETPOST('socid', 'int');
 
 if ($socid > 0) // Special for thirdparty
 {
-    $element_id = $socid;
-    $element = 'societe';
+	$element_id = $socid;
+	$element = 'societe';
 }
 
 
@@ -87,7 +87,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    $error = 0;
+	$error = 0;
 
 	if ($action == 'add_element_resource' && !$cancel)
 	{
@@ -97,71 +97,69 @@ if (empty($reshook))
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Resource")), null, 'errors');
 			$action = '';
-		}
-		else
-		{
+		} else {
 			$objstat = fetchObjectByElement($element_id, $element, $element_ref);
 			$objstat->element = $element; // For externals module, we need to keep @xx
 
-            // TODO : add this check at update_linked_resource and when modifying event start or end date
-            // check if an event resource is already in use
-            if (!empty($conf->global->RESOURCE_USED_IN_EVENT_CHECK) && $objstat->element == 'action' && $resource_type == 'dolresource' && intval($busy) == 1) {
-                $eventDateStart = $objstat->datep;
-                $eventDateEnd   = $objstat->datef;
-                $isFullDayEvent = intval($objstat->fulldayevent);
-                if (empty($eventDateEnd)) {
-                    if ($isFullDayEvent) {
-                        $eventDateStartArr = dol_getdate($eventDateStart);
-                        $eventDateStart = dol_mktime(0, 0, 0, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
-                        $eventDateEnd   = dol_mktime(23, 59, 59, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
-                    }
-                }
+			// TODO : add this check at update_linked_resource and when modifying event start or end date
+			// check if an event resource is already in use
+			if (!empty($conf->global->RESOURCE_USED_IN_EVENT_CHECK) && $objstat->element == 'action' && $resource_type == 'dolresource' && intval($busy) == 1) {
+				$eventDateStart = $objstat->datep;
+				$eventDateEnd   = $objstat->datef;
+				$isFullDayEvent = intval($objstat->fulldayevent);
+				if (empty($eventDateEnd)) {
+					if ($isFullDayEvent) {
+						$eventDateStartArr = dol_getdate($eventDateStart);
+						$eventDateStart = dol_mktime(0, 0, 0, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
+						$eventDateEnd   = dol_mktime(23, 59, 59, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
+					}
+				}
 
-                $sql  = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
-                $sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
-                $sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = '".$db->escape($resource_type)."'";
-                $sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$db->escape($objstat->element)."'";
-                $sql .= " WHERE er.resource_id = ".$resource_id;
-                $sql .= " AND er.busy = 1";
-                $sql .= " AND (";
+				$sql  = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
+				$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = '".$db->escape($resource_type)."'";
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$db->escape($objstat->element)."'";
+				$sql .= " WHERE er.resource_id = ".$resource_id;
+				$sql .= " AND er.busy = 1";
+				$sql .= " AND (";
 
-                // event date start between ac.datep and ac.datep2 (if datep2 is null we consider there is no end)
-                $sql .= " (ac.datep <= '".$db->idate($eventDateStart)."' AND (ac.datep2 IS NULL OR ac.datep2 >= '".$db->idate($eventDateStart)."'))";
-                // event date end between ac.datep and ac.datep2
-                if (!empty($eventDateEnd)) {
-                    $sql .= " OR (ac.datep <= '".$db->idate($eventDateEnd)."' AND (ac.datep2 >= '".$db->idate($eventDateEnd)."'))";
-                }
-                // event date start before ac.datep and event date end after ac.datep2
-                $sql .= " OR (";
-                $sql .= "ac.datep >= '".$db->idate($eventDateStart)."'";
-                if (!empty($eventDateEnd)) {
-                    $sql .= " AND (ac.datep2 IS NOT NULL AND ac.datep2 <= '".$db->idate($eventDateEnd)."')";
-                }
-                $sql .= ")";
+				// event date start between ac.datep and ac.datep2 (if datep2 is null we consider there is no end)
+				$sql .= " (ac.datep <= '".$db->idate($eventDateStart)."' AND (ac.datep2 IS NULL OR ac.datep2 >= '".$db->idate($eventDateStart)."'))";
+				// event date end between ac.datep and ac.datep2
+				if (!empty($eventDateEnd)) {
+					$sql .= " OR (ac.datep <= '".$db->idate($eventDateEnd)."' AND (ac.datep2 >= '".$db->idate($eventDateEnd)."'))";
+				}
+				// event date start before ac.datep and event date end after ac.datep2
+				$sql .= " OR (";
+				$sql .= "ac.datep >= '".$db->idate($eventDateStart)."'";
+				if (!empty($eventDateEnd)) {
+					$sql .= " AND (ac.datep2 IS NOT NULL AND ac.datep2 <= '".$db->idate($eventDateEnd)."')";
+				}
+				$sql .= ")";
 
-                $sql .= ")";
-                $resql = $db->query($sql);
-                if (!$resql) {
-                    $error++;
-                    $objstat->error    = $db->lasterror();
-                    $objstat->errors[] = $objstat->error;
-                } else {
-                    if ($db->num_rows($resql) > 0) {
-                        // already in use
-                        $error++;
-                        $objstat->error = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
-                        while ($obj = $db->fetch_object($resql)) {
-                            $objstat->error .= '<br> - '.$langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label.' ['.$obj->ac_id.']');
-                        }
-                        $objstat->errors[] = $objstat->error;
-                    }
-                    $db->free($resql);
-                }
-            }
+				$sql .= ")";
+				$resql = $db->query($sql);
+				if (!$resql) {
+					$error++;
+					$objstat->error    = $db->lasterror();
+					$objstat->errors[] = $objstat->error;
+				} else {
+					if ($db->num_rows($resql) > 0) {
+						// already in use
+						$error++;
+						$objstat->error = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
+						while ($obj = $db->fetch_object($resql)) {
+							$objstat->error .= '<br> - '.$langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label.' ['.$obj->ac_id.']');
+						}
+						$objstat->errors[] = $objstat->error;
+					}
+					$db->free($resql);
+				}
+			}
 
-            if (!$error) {
-                $res = $objstat->add_element_resource($resource_id, $resource_type, $busy, $mandatory);
-            }
+			if (!$error) {
+				$res = $objstat->add_element_resource($resource_id, $resource_type, $busy, $mandatory);
+			}
 		}
 
 		if (!$error && $res > 0)
@@ -169,8 +167,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans('ResourceLinkedWithSuccess'), null, 'mesgs');
 			header("Location: ".$_SERVER['PHP_SELF'].'?element='.$element.'&element_id='.$objstat->id);
 			exit;
-		}
-		elseif ($objstat)
+		} elseif ($objstat)
 		{
 			setEventMessages($objstat->error, $objstat->errors, 'errors');
 		}
@@ -185,68 +182,68 @@ if (empty($reshook))
 			$object->busy = $busy;
 			$object->mandatory = $mandatory;
 
-            if (!empty($conf->global->RESOURCE_USED_IN_EVENT_CHECK) && $object->element_type == 'action' && $object->resource_type == 'dolresource' && intval($object->busy) == 1) {
-                $eventDateStart = $object->objelement->datep;
-                $eventDateEnd   = $object->objelement->datef;
-                $isFullDayEvent = intval($objstat->fulldayevent);
-                if (empty($eventDateEnd)) {
-                    if ($isFullDayEvent) {
-                        $eventDateStartArr = dol_getdate($eventDateStart);
-                        $eventDateStart = dol_mktime(0, 0, 0, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
-                        $eventDateEnd   = dol_mktime(23, 59, 59, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
-                    }
-                }
+			if (!empty($conf->global->RESOURCE_USED_IN_EVENT_CHECK) && $object->element_type == 'action' && $object->resource_type == 'dolresource' && intval($object->busy) == 1) {
+				$eventDateStart = $object->objelement->datep;
+				$eventDateEnd   = $object->objelement->datef;
+				$isFullDayEvent = intval($objstat->fulldayevent);
+				if (empty($eventDateEnd)) {
+					if ($isFullDayEvent) {
+						$eventDateStartArr = dol_getdate($eventDateStart);
+						$eventDateStart = dol_mktime(0, 0, 0, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
+						$eventDateEnd   = dol_mktime(23, 59, 59, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
+					}
+				}
 
-                $sql  = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
-                $sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
-                $sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = '".$db->escape($object->resource_type)."'";
-                $sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$db->escape($object->element_type)."'";
-                $sql .= " WHERE er.resource_id = ".$object->resource_id;
-                $sql .= " AND ac.id != ".$object->element_id;
-                $sql .= " AND er.busy = 1";
-                $sql .= " AND (";
+				$sql  = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
+				$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = '".$db->escape($object->resource_type)."'";
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$db->escape($object->element_type)."'";
+				$sql .= " WHERE er.resource_id = ".$object->resource_id;
+				$sql .= " AND ac.id != ".$object->element_id;
+				$sql .= " AND er.busy = 1";
+				$sql .= " AND (";
 
-                // event date start between ac.datep and ac.datep2 (if datep2 is null we consider there is no end)
-                $sql .= " (ac.datep <= '".$db->idate($eventDateStart)."' AND (ac.datep2 IS NULL OR ac.datep2 >= '".$db->idate($eventDateStart)."'))";
-                // event date end between ac.datep and ac.datep2
-                if (!empty($eventDateEnd)) {
-                    $sql .= " OR (ac.datep <= '".$db->idate($eventDateEnd)."' AND (ac.datep2 IS NULL OR ac.datep2 >= '".$db->idate($eventDateEnd)."'))";
-                }
-                // event date start before ac.datep and event date end after ac.datep2
-                $sql .= " OR (";
-                $sql .= "ac.datep >= '".$db->idate($eventDateStart)."'";
-                if (!empty($eventDateEnd)) {
-                    $sql .= " AND (ac.datep2 IS NOT NULL AND ac.datep2 <= '".$db->idate($eventDateEnd)."')";
-                }
-                $sql .= ")";
+				// event date start between ac.datep and ac.datep2 (if datep2 is null we consider there is no end)
+				$sql .= " (ac.datep <= '".$db->idate($eventDateStart)."' AND (ac.datep2 IS NULL OR ac.datep2 >= '".$db->idate($eventDateStart)."'))";
+				// event date end between ac.datep and ac.datep2
+				if (!empty($eventDateEnd)) {
+					$sql .= " OR (ac.datep <= '".$db->idate($eventDateEnd)."' AND (ac.datep2 IS NULL OR ac.datep2 >= '".$db->idate($eventDateEnd)."'))";
+				}
+				// event date start before ac.datep and event date end after ac.datep2
+				$sql .= " OR (";
+				$sql .= "ac.datep >= '".$db->idate($eventDateStart)."'";
+				if (!empty($eventDateEnd)) {
+					$sql .= " AND (ac.datep2 IS NOT NULL AND ac.datep2 <= '".$db->idate($eventDateEnd)."')";
+				}
+				$sql .= ")";
 
-                $sql .= ")";
-                $resql = $db->query($sql);
-                if (!$resql) {
-                    $error++;
-                    $object->error    = $db->lasterror();
-                    $object->errors[] = $object->error;
-                } else {
-                    if ($db->num_rows($resql) > 0) {
-                        // already in use
-                        $error++;
-                        $object->error = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
-                        while ($obj = $db->fetch_object($resql)) {
-                            $object->error .= '<br> - '.$langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label.' ['.$obj->ac_id.']');
-                        }
-                        $object->errors[] = $objstat->error;
-                    }
-                    $db->free($resql);
-                }
-            }
+				$sql .= ")";
+				$resql = $db->query($sql);
+				if (!$resql) {
+					$error++;
+					$object->error    = $db->lasterror();
+					$object->errors[] = $object->error;
+				} else {
+					if ($db->num_rows($resql) > 0) {
+						// already in use
+						$error++;
+						$object->error = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
+						while ($obj = $db->fetch_object($resql)) {
+							$object->error .= '<br> - '.$langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label.' ['.$obj->ac_id.']');
+						}
+						$object->errors[] = $objstat->error;
+					}
+					$db->free($resql);
+				}
+			}
 
-            if (!$error) {
-			    $result = $object->update_element_resource($user);
-                if ($result < 0)    $error++;
-            }
+			if (!$error) {
+				$result = $object->update_element_resource($user);
+				if ($result < 0)    $error++;
+			}
 
 			if ($error) {
-                setEventMessages($object->error, $object->errors, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
 				setEventMessages($langs->trans('RessourceLineSuccessfullyUpdated'), null, 'mesgs');
 				header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
@@ -265,9 +262,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans('RessourceLineSuccessfullyDeleted'), null, 'mesgs');
 			header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
 			exit;
-		}
-		else
-		{
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -292,14 +287,12 @@ llxHeader('', $pagetitle, '');
 // Load available resource, declared by modules
 $ret = count($object->available_resources);
 if ($ret == -1) {
-    dol_print_error($db, $object->error);
-    exit;
+	dol_print_error($db, $object->error);
+	exit;
 }
 if (!$ret) {
-    print '<div class="warning">'.$langs->trans('NoResourceInDatabase').'</div>';
-}
-else
-{
+	print '<div class="warning">'.$langs->trans('NoResourceInDatabase').'</div>';
+} else {
 	// Confirmation suppression resource line
 	if ($action == 'delete_resource')
 	{
@@ -317,10 +310,10 @@ else
 		{
 			$head = actions_prepare_head($act);
 
-			dol_fiche_head($head, 'resources', $langs->trans("Action"), -1, 'action');
+			print dol_get_fiche_head($head, 'resources', $langs->trans("Action"), -1, 'action');
 
 			$linkback = img_picto($langs->trans("BackToList"), 'object_list', 'class="hideonsmartphone pictoactionview"');
-			$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php">'.$langs->trans("BackToList").'</a>';
+			$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list">'.$langs->trans("BackToList").'</a>';
 
 			// Link to other agenda views
 			$out = '';
@@ -341,19 +334,19 @@ else
 			// Project
 			if (!empty($conf->projet->enabled))
 			{
-			    $langs->load("projects");
-			    //$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-			    $morehtmlref .= $langs->trans('Project').': ';
-		        if (!empty($act->fk_project)) {
-		            $proj = new Project($db);
-		            $proj->fetch($act->fk_project);
-		            $morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$act->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-		            $morehtmlref .= $proj->ref;
-		            $morehtmlref .= '</a>';
-		            if ($proj->title) $morehtmlref .= ' - '.$proj->title;
-		        } else {
-		            $morehtmlref .= '';
-		        }
+				$langs->load("projects");
+				//$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+				$morehtmlref .= $langs->trans('Project').': ';
+				if (!empty($act->fk_project)) {
+					$proj = new Project($db);
+					$proj->fetch($act->fk_project);
+					$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$act->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+					$morehtmlref .= $proj->ref;
+					$morehtmlref .= '</a>';
+					if ($proj->title) $morehtmlref .= ' - '.$proj->title;
+				} else {
+					$morehtmlref .= '';
+				}
 			}
 			$morehtmlref .= '</div>';
 
@@ -411,9 +404,7 @@ else
 					}
 				}
 				$_SESSION['assignedtouser'] = json_encode($listofuserid);
-			}
-			else
-			{
+			} else {
 				if (!empty($_SESSION['assignedtouser']))
 				{
 					$listofuserid = json_decode($_SESSION['assignedtouser'], true);
@@ -436,11 +427,11 @@ else
 
 			print '</div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 		}
 	}
 
-    // Specific to thirdparty module
+	// Specific to thirdparty module
 	if (($element_id || $element_ref) && $element == 'societe')
 	{
 		$socstatic = fetchObjectByElement($element_id, $element, $element_ref);
@@ -451,7 +442,7 @@ else
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 			$head = societe_prepare_head($socstatic);
 
-			dol_fiche_head($head, 'resources', $langs->trans("ThirdParty"), -1, 'company');
+			print dol_get_fiche_head($head, 'resources', $langs->trans("ThirdParty"), -1, 'company');
 
 			dol_banner_tab($socstatic, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom', '', '&element='.$element);
 
@@ -469,7 +460,7 @@ else
 
 			print '</div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			$object = $savobject;
 		}
@@ -480,14 +471,14 @@ else
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 
-        $fichinter = new Fichinter($db);
-        $fichinter->fetch($element_id, $element_ref);
-        $fichinter->fetch_thirdparty();
+		$fichinter = new Fichinter($db);
+		$fichinter->fetch($element_id, $element_ref);
+		$fichinter->fetch_thirdparty();
 
 		if (is_object($fichinter))
 		{
 			$head = fichinter_prepare_head($fichinter);
-			dol_fiche_head($head, 'resource', $langs->trans("InterventionCard"), -1, 'intervention');
+			print dol_get_fiche_head($head, 'resource', $langs->trans("InterventionCard"), -1, 'intervention');
 
 			// Intervention card
 			$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
@@ -536,17 +527,17 @@ else
 
 			dol_banner_tab($fichinter, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '&element='.$element, 0, '', '', 1);
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 		}
 	}
 
 	// Specific to product/service module
 	if (($element_id || $element_ref) && ($element == 'product' || $element == 'service'))
 	{
-        require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
-        $product = new Product($db);
-        $product->fetch($element_id, $element_ref);
+		$product = new Product($db);
+		$product->fetch($element_id, $element_ref);
 
 		if (is_object($product))
 		{
@@ -554,14 +545,14 @@ else
 			$titre = $langs->trans("CardProduct".$product->type);
 			$picto = ($product->type == Product::TYPE_SERVICE ? 'service' : 'product');
 
-			dol_fiche_head($head, 'resources', $titre, -1, $picto);
+			print dol_get_fiche_head($head, 'resources', $titre, -1, $picto);
 
-            $shownav = 1;
-            if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
+			$shownav = 1;
+			if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
 			dol_banner_tab($product, 'ref', '', $shownav, 'ref', 'ref', '', '&element='.$element);
 
-			dol_fiche_end();
-        }
+			print dol_get_fiche_end();
+		}
 	}
 
 
@@ -600,9 +591,7 @@ else
 				if (file_exists(dol_buildpath($reldir.'/resource_'.$element_prop['element'].'_add.tpl.php')))
 				{
 					$tpl = dol_buildpath($reldir.'/resource_'.$element_prop['element'].'_add.tpl.php');
-				}
-				else
-				{
+				} else {
 					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/resource_add.tpl.php';
 				}
 				if (empty($conf->file->strict_mode)) {
@@ -620,9 +609,7 @@ else
 					if (file_exists(dol_buildpath($reldir.'/resource_'.$element_prop['element'].'_view.tpl.php')))
 					{
 						$tpl = dol_buildpath($reldir.'/resource_'.$element_prop['element'].'_view.tpl.php');
-					}
-					else
-					{
+					} else {
 						$tpl = DOL_DOCUMENT_ROOT.$reldir.'/resource_view.tpl.php';
 					}
 					if (empty($conf->file->strict_mode)) {

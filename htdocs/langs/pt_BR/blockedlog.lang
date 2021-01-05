@@ -8,7 +8,6 @@ BrowseBlockedLog=Logs nao modificaveis
 ShowAllFingerPrintsMightBeTooLong=Mostrar todos os Logs Arquivados (pode ser demorado)
 ShowAllFingerPrintsErrorsMightBeTooLong=Mostrar todos os arquivos de log inválidos (pode demorar)
 DownloadBlockChain=Baixar impressoes digitais
-KoCheckFingerprintValidity=A entrada de log arquivada não é válida. Isso significa que alguém (um hacker?) Modificou alguns dados desse arquivo depois que foi gravado ou apagou o registro arquivado anterior (verifique se a linha com o número anterior existe).
 OkCheckFingerprintValidity=O registro de log arquivado é válido. Os dados nesta linha não foram modificados e a entrada segue a anterior.
 OkCheckFingerprintValidityButChainIsKo=O log arquivado parece válido em comparação com o anterior, mas a cadeia foi previamente corrompida.
 AddedByAuthority=Salvo na autoridade remota

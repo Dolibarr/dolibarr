@@ -6,7 +6,7 @@ Permission23102 = Crea / Aggiornamento processo pianificato
 Permission23103 = Elimina processo pianificato
 Permission23104 = Esegui processo pianificato
 # Admin
-CronSetup= Impostazione delle azioni pianificate
+CronSetup=Impostazione delle azioni pianificate
 URLToLaunchCronJobs=URL per controllare ed eseguire i processi in cron
 OrToLaunchASpecificJob=O per lanciare un processo specifico
 KeyForCronAccess=Chiave di sicurezza per l'URL che lancia i processi pianificati
@@ -81,3 +81,4 @@ JobDisabled=Processo disabilitato
 MakeLocalDatabaseDumpShort=Backup del database locale
 MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql' or 'pgsql'), 1, 'auto' or filename to build, number of backup files to keep
 WarningCronDelayed=Attenzione, per motivi di performance, qualunque sia la data della prossima esecuzione dei processi attivi, i tuoi processi possono essere ritardati di un massimo di %s ore prima di essere eseguiti
+DATAPOLICYJob=Pulizia dei dati e anonimizzatore

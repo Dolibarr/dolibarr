@@ -76,7 +76,11 @@ class HolidayTest extends PHPUnit\Framework\TestCase
         print "\n";
     }
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -86,7 +90,11 @@ class HolidayTest extends PHPUnit\Framework\TestCase
         print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
         global $conf,$user,$langs,$db;
@@ -247,21 +255,17 @@ class HolidayTest extends PHPUnit\Framework\TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        //$localobject->fetch($localobject->id);
+        $result = $localobject->fetchUsers(true, true, '');
+        $this->assertNotEquals($result, -1);
 
-        /*
-        $result=$localobject->getNomUrl(1);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertNotEquals($result, '');
+        $result = $localobject->fetchUsers(true, false, '');
+        $this->assertNotEquals($result, -1);
 
-        $result=$localobject->getFullAddress(1);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertContains("New address\nNew zip New town\nBelgium", $result);
+        $result = $localobject->fetchUsers(false, true, '');
+        $this->assertNotEquals($result, -1);
 
-        $localobject->info($localobject->id);
-        print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
-        $this->assertNotEquals($localobject->date_creation, '');
-        */
+        $result = $localobject->fetchUsers(false, false, '');
+        $this->assertNotEquals($result, -1);
 
         return $localobject->id;
     }
@@ -362,7 +366,7 @@ class HolidayTest extends PHPUnit\Framework\TestCase
     	$localobjecta=new Holiday($this->savdb);
 
     	$localobjecta->updateConfCP('lastUpdate', '20100101120000');
-
-    	$localobjecta->updateBalance();
+    	$result = $localobjecta->updateBalance();
+    	$this->assertEquals($result, 1);
     }
 }

@@ -29,12 +29,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","members","bills","users"));
+$langs->loadLangs(array("companies", "members", "bills", "users"));
 
 if (!$user->rights->adherent->lire)
 	accessforbidden();
 
-$rowid=GETPOST("rowid", 'int');
+$rowid = GETPOST("rowid", 'int');
 
 
 
@@ -51,7 +51,7 @@ $result = $object->fetch($rowid);
 
 $head = subscription_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("Subscription"), -1, 'payment');
+print dol_get_fiche_head($head, 'info', $langs->trans("Subscription"), -1, 'payment');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -72,7 +72,7 @@ print '</td></tr></table>';
 print '</div>';
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

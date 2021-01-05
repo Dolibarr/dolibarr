@@ -25,7 +25,7 @@
  * 	\ingroup	resource
  * 	\brief		Description and activation file for module Resource
  */
-include_once DOL_DOCUMENT_ROOT . "/core/modules/DolibarrModules.class.php";
+include_once DOL_DOCUMENT_ROOT."/core/modules/DolibarrModules.class.php";
 
 /**
  * Description and activation class for module Resource
@@ -68,7 +68,7 @@ class modResource extends DolibarrModules
 		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled
 		// (where MYMODULE is value of property name of module in uppercase)
-		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
+		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png
 		// use this->picto='pictovalue'
@@ -176,7 +176,7 @@ class modResource extends DolibarrModules
 
 		// Menus
 		//-------
-		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
 
 
 		// Main menu entries
@@ -184,7 +184,7 @@ class modResource extends DolibarrModules
 		$r = 0;
 
 		// Menus declaration
-		$this->menu[$r]=array(
+		$this->menu[$r] = array(
 			'fk_menu'=>'fk_mainmenu=tools',
 			'type'=>'left',
 			'titre'=> 'MenuResourceIndex',
@@ -199,7 +199,7 @@ class modResource extends DolibarrModules
 		);
 		$r++;
 
-		$this->menu[$r++]=array(
+		$this->menu[$r++] = array(
 			'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
 			'type'=> 'left', // Toujours un menu gauche
 			'titre'=> 'MenuResourceAdd',
@@ -214,7 +214,7 @@ class modResource extends DolibarrModules
 			'user'=> 0
 		);
 
-		$this->menu[$r++]=array(
+		$this->menu[$r++] = array(
 			'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
 			'type'=> 'left', // Toujours un menu gauche
 			'titre'=> 'List',
@@ -232,59 +232,59 @@ class modResource extends DolibarrModules
 
 		// Exports
 		//--------
-		$r=0;
+		$r = 0;
 
 		$r++;
-		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]="ResourceSingular";	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->export_permission[$r]=array(array("resource","read"));
-		$this->export_fields_array[$r]=array('r.rowid'=>'IdResource','r.ref'=>'ResourceFormLabel_ref','c.code'=>'ResourceTypeCode','c.label'=>'ResourceType','r.description'=>'ResourceFormLabel_description','r.note_private'=>"NotePrivate",'r.note_public'=>"NotePublic",'r.asset_number'=>'AssetNumber','r.datec'=>"DateCreation",'r.tms'=>"DateLastModification");
-		$this->export_TypeFields_array[$r]=array('r.rowid'=>'List:resource:ref','r.ref'=>'Text','r.asset_number'=>'Text','r.description'=>'Text','c.code'=>'Text','c.label'=>'List:c_type_resource:label','r.datec'=>'Date','r.tms'=>'Date','r.note_private'=>'Text','r.note_public'=>'Text');
-		$this->export_entities_array[$r]=array('r.rowid'=>'resource','r.ref'=>'resource','c.code'=>'resource','c.label'=>'resource','r.description'=>'resource','r.note_private'=>"resource",'r.resource'=>"resource",'r.asset_number'=>'resource','r.datec'=>"resource",'r.tms'=>"resource");
-		$keyforselect='resource'; $keyforelement='resource'; $keyforaliasextra='extra';
+		$this->export_code[$r] = $this->rights_class.'_'.$r;
+		$this->export_label[$r] = "ResourceSingular"; // Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_permission[$r] = array(array("resource", "read"));
+		$this->export_fields_array[$r] = array('r.rowid'=>'IdResource', 'r.ref'=>'ResourceFormLabel_ref', 'c.code'=>'ResourceTypeCode', 'c.label'=>'ResourceType', 'r.description'=>'ResourceFormLabel_description', 'r.note_private'=>"NotePrivate", 'r.note_public'=>"NotePublic", 'r.asset_number'=>'AssetNumber', 'r.datec'=>"DateCreation", 'r.tms'=>"DateLastModification");
+		$this->export_TypeFields_array[$r] = array('r.rowid'=>'List:resource:ref', 'r.ref'=>'Text', 'r.asset_number'=>'Text', 'r.description'=>'Text', 'c.code'=>'Text', 'c.label'=>'List:c_type_resource:label', 'r.datec'=>'Date', 'r.tms'=>'Date', 'r.note_private'=>'Text', 'r.note_public'=>'Text');
+		$this->export_entities_array[$r] = array('r.rowid'=>'resource', 'r.ref'=>'resource', 'c.code'=>'resource', 'c.label'=>'resource', 'r.description'=>'resource', 'r.note_private'=>"resource", 'r.resource'=>"resource", 'r.asset_number'=>'resource', 'r.datec'=>"resource", 'r.tms'=>"resource");
+		$keyforselect = 'resource'; $keyforelement = 'resource'; $keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
-		$this->export_dependencies_array[$r]=array('resource'=>array('r.rowid')); // We must keep this until the aggregate_array is used. To add unique key if we ask a field of a child to avoid the DISTINCT to discard them.
-		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'resource as r ';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_resource as c ON c.rowid=r.fk_code_type_resource';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'resource_extrafields as extra ON extra.fk_object = c.rowid';
-		$this->export_sql_end[$r] .=' AND r.entity IN ('.getEntity('resource').')';
+		$this->export_dependencies_array[$r] = array('resource'=>array('r.rowid')); // We must keep this until the aggregate_array is used. To add unique key if we ask a field of a child to avoid the DISTINCT to discard them.
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'resource as r';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_resource as c ON c.rowid=r.fk_code_type_resource';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'resource_extrafields as extra ON extra.fk_object = r.rowid';
+		$this->export_sql_end[$r] .= ' AND r.entity IN ('.getEntity('resource').')';
 
 
 		// Imports
 		//--------
-		$r=0;
+		$r = 0;
 
 		// Import list of third parties and attributes
 		$r++;
-		$this->import_code[$r]=$this->rights_class.'_'.$r;
-		$this->import_label[$r]='ImportDataset_resource_1';
-		$this->import_icon[$r]='resource';
-		$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
-		$this->import_tables_array[$r]=array('r'=>MAIN_DB_PREFIX.'resource','extra'=>MAIN_DB_PREFIX.'resource_extrafields');	// List of tables to insert into (insert done in same order)
-		$this->import_fields_array[$r]=array('r.ref'=>"ResourceFormLabel_ref*",'r.fk_code_type_resource'=>'ResourceTypeCode','r.description'=>'ResourceFormLabel_description','r.note_private'=>"NotePrivate",'r.note_public'=>"NotePublic",'r.asset_number'=>'AssetNumber','r.datec'=>'DateCreation');
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = 'ImportDataset_resource_1';
+		$this->import_icon[$r] = 'resource';
+		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+		$this->import_tables_array[$r] = array('r'=>MAIN_DB_PREFIX.'resource', 'extra'=>MAIN_DB_PREFIX.'resource_extrafields'); // List of tables to insert into (insert done in same order)
+		$this->import_fields_array[$r] = array('r.ref'=>"ResourceFormLabel_ref*", 'r.fk_code_type_resource'=>'ResourceTypeCode', 'r.description'=>'ResourceFormLabel_description', 'r.note_private'=>"NotePrivate", 'r.note_public'=>"NotePublic", 'r.asset_number'=>'AssetNumber', 'r.datec'=>'DateCreation');
 		// Add extra fields
-		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'resource' AND entity IN (0,".$conf->entity.")";
-		$resql=$this->db->query($sql);
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'resource' AND entity IN (0,".$conf->entity.")";
+		$resql = $this->db->query($sql);
 		if ($resql)    // This can fail when class is used on old database (during migration for example)
 		{
-			while ($obj=$this->db->fetch_object($resql))
+			while ($obj = $this->db->fetch_object($resql))
 			{
-				$fieldname='extra.'.$obj->name;
-				$fieldlabel=ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname]=$fieldlabel.($obj->fieldrequired?'*':'');
+				$fieldname = 'extra.'.$obj->name;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
 			}
 		}
 		// End add extra fields
-		$this->import_fieldshidden_array[$r]=array('r.fk_user_author'=>'user->id','extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'resource');    // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
-		$this->import_convertvalue_array[$r]=array(
-				'r.fk_code_type_resource'=>array('rule'=>'fetchidfromcodeorlabel','classfile'=>'/core/class/ctyperesource.class.php','class'=>'Ctyperesource','method'=>'fetch','dict'=>'DictionaryResourceType'),
+		$this->import_fieldshidden_array[$r] = array('r.fk_user_author'=>'user->id', 'extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'resource'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
+		$this->import_convertvalue_array[$r] = array(
+				'r.fk_code_type_resource'=>array('rule'=>'fetchidfromcodeorlabel', 'classfile'=>'/core/class/ctyperesource.class.php', 'class'=>'Ctyperesource', 'method'=>'fetch', 'dict'=>'DictionaryResourceType'),
 		);
 		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
-		$this->import_regex_array[$r]=array('s.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$');
-		$this->import_examplevalues_array[$r]=array('r.ref'=>"REF1",'r.fk_code_type_resource'=>"Code from dictionary resource type",'r.datec'=>"2017-01-01 or 2017-01-01 12:30:00");
-		$this->import_updatekeys_array[$r]=array('r.rf'=>'ResourceFormLabel_ref');
+		$this->import_regex_array[$r] = array('s.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$');
+		$this->import_examplevalues_array[$r] = array('r.ref'=>"REF1", 'r.fk_code_type_resource'=>"Code from dictionary resource type", 'r.datec'=>"2017-01-01 or 2017-01-01 12:30:00");
+		$this->import_updatekeys_array[$r] = array('r.rf'=>'ResourceFormLabel_ref');
 	}
 
 	/**

@@ -265,7 +265,7 @@ ALTER TABLE llx_menu MODIFY fk_leftmenu varchar(100);
 CREATE TABLE llx_website_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -285,7 +285,7 @@ CREATE TABLE llx_website_account(
     date_last_login     datetime,
     date_previous_login datetime,
 	date_creation       datetime NOT NULL, 
-	tms                 timestamp, 
+	tms                 timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 	fk_user_creat       integer NOT NULL, 
 	fk_user_modif       integer, 
 	import_key          varchar(14), 
@@ -307,7 +307,7 @@ ALTER TABLE llx_website_account ADD CONSTRAINT llx_website_account_fk_website FO
 CREATE TABLE llx_website_account_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -326,7 +326,7 @@ alter table llx_user add column pass_encoding varchar(24) NULL;
 CREATE TABLE IF NOT EXISTS llx_expensereport_ik (
     rowid           integer  AUTO_INCREMENT PRIMARY KEY,
     datec           datetime  DEFAULT NULL,
-    tms             timestamp,
+    tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_c_exp_tax_cat integer DEFAULT 0 NOT NULL,
     fk_range        integer DEFAULT 0 NOT NULL,
     coef            double DEFAULT 0 NOT NULL,
@@ -441,7 +441,7 @@ INSERT INTO llx_c_exp_tax_range (rowid,fk_c_exp_tax_cat,range_ik, entity, active
 CREATE TABLE llx_expensereport_rules (
     rowid integer AUTO_INCREMENT PRIMARY KEY,
     datec datetime  DEFAULT NULL,
-    tms timestamp,
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     dates datetime NOT NULL,
     datee datetime NOT NULL,
     amount numeric(24,8) NOT NULL,
@@ -464,7 +464,7 @@ ALTER TABLE llx_extrafields ADD COLUMN fk_user_author integer;
 ALTER TABLE llx_extrafields ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_extrafields ADD COLUMN datec datetime;
 ALTER TABLE llx_extrafields ADD COLUMN enabled varchar(255) DEFAULT '1';
-ALTER TABLE llx_extrafields ADD COLUMN tms timestamp;
+ALTER TABLE llx_extrafields ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 -- We fix value of 'list' from 0 to 1 for all extrafields created before this migration
 --VMYSQL4.1 UPDATE llx_extrafields SET list = 1 WHERE list = 0 AND fk_user_author IS NULL and fk_user_modif IS NULL and datec IS NULL;		
@@ -528,7 +528,7 @@ DROP TABLE llx_projet_task_comment;
 CREATE TABLE llx_comment (
     rowid integer AUTO_INCREMENT PRIMARY KEY,
     datec datetime  DEFAULT NULL,
-    tms timestamp,
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     description text NOT NULL,
     fk_user_author integer DEFAULT NULL,
     fk_element integer DEFAULT NULL,
@@ -572,7 +572,7 @@ create table llx_c_email_senderprofile
   entity		  integer DEFAULT 1 NOT NULL,	  -- multi company id
   private         smallint DEFAULT 0 NOT NULL,    -- Template public or private
   date_creation   datetime,
-  tms             timestamp,
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   label           varchar(255),					  -- Label of predefined email
   email           varchar(255),					  -- Email
   signature		  text,                           -- Predefined signature
@@ -655,7 +655,7 @@ create table llx_onlinesignature
   object_type               varchar(32) NOT NULL,
   object_id					integer NOT NULL,
   datec                     datetime NOT NULL,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   name						varchar(255) NOT NULL,
   ip						varchar(128),
   pathoffile				varchar(255)
@@ -709,7 +709,7 @@ ALTER TABLE llx_resource ADD CONSTRAINT fk_resource_fk_country FOREIGN KEY (fk_c
 create table llx_facture_rec_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;

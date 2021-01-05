@@ -29,7 +29,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
  */
 class BankAccounts extends DolibarrApi
 {
-
     /**
      * array $FIELDS Mandatory fields, checked when creating an object
      */

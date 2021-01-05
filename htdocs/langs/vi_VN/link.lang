@@ -1,10 +1,11 @@
 # Dolibarr language file - Source file is en_US - languages
-LinkANewFile=Link a new file/document
-LinkedFiles=Linked files and documents
-NoLinkFound=No registered links
-LinkComplete=The file has been linked successfully
-ErrorFileNotLinked=The file could not be linked
-LinkRemoved=The link %s has been removed
-ErrorFailedToDeleteLink= Failed to remove link '<b>%s</b>'
-ErrorFailedToUpdateLink= Failed to update link '<b>%s</b>'
-URLToLink=URL to link
+LinkANewFile=Liên kết một tập tin / tài liệu mới
+LinkedFiles=Các tập tin và tài liệu được liên kết
+NoLinkFound=Không có liên kết đã đăng ký
+LinkComplete=Các tập tin đã được liên kết thành công
+ErrorFileNotLinked=Các tập tin không thể được liên kết
+LinkRemoved=Liên kết %s đã bị xóa
+ErrorFailedToDeleteLink= Không thể xóa liên kết ' <b>%s</b> '
+ErrorFailedToUpdateLink= Không thể cập nhật liên kết ' <b>%s</b> '
+URLToLink=URL để liên kết
+OverwriteIfExists=Overwrite file if exists

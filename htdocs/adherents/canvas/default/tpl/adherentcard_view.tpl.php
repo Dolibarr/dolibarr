@@ -17,8 +17,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -30,8 +29,8 @@ echo "<!-- BEGIN PHP TEMPLATE ADHERENTCARD_VIEW.TPL.PHP DEFAULT -->\n";
 echo $this->control->tpl['showhead'];
 
 dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']);
-if (! empty($this->control->tpl['action_create_user'])) echo $this->control->tpl['action_create_user'];
-if (! empty($this->control->tpl['action_delete'])) echo $this->control->tpl['action_delete']; ?>
+if (!empty($this->control->tpl['action_create_user'])) echo $this->control->tpl['action_create_user'];
+if (!empty($this->control->tpl['action_delete'])) echo $this->control->tpl['action_delete']; ?>
 
 <table class="border allwidth">
 
@@ -119,21 +118,21 @@ if (! empty($this->control->tpl['action_delete'])) echo $this->control->tpl['act
 <?php echo $this->control->tpl['showend'];
 
 if (empty($user->socid)) {
-    echo '<div class="tabsAction">';
+	echo '<div class="tabsAction">';
 
-    if ($user->rights->adherent->creer) {
-        echo '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&amp;action=edit&amp;canvas='.$canvas.'">'.$langs->trans('Modify').'</a>';
-    }
+	if ($user->rights->adherent->creer) {
+		echo '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&amp;action=edit&amp;canvas='.$canvas.'">'.$langs->trans('Modify').'</a>';
+	}
 
-    if (! $this->control->tpl['user_id'] && $user->rights->user->user->creer) {
-        echo '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&amp;action=create_user&amp;canvas='.$canvas.'">'.$langs->trans("CreateDolibarrLogin").'</a>';
-    }
+	if (!$this->control->tpl['user_id'] && $user->rights->user->user->creer) {
+		echo '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&amp;action=create_user&amp;canvas='.$canvas.'">'.$langs->trans("CreateDolibarrLogin").'</a>';
+	}
 
-    if ($user->rights->adherent->supprimer) {
-        echo '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&amp;action=delete&amp;canvas='.$canvas.'">'.$langs->trans('Delete').'</a>';
-    }
+	if ($user->rights->adherent->supprimer) {
+		echo '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&amp;action=delete&amp;canvas='.$canvas.'">'.$langs->trans('Delete').'</a>';
+	}
 
-    echo '</div><br>';
+	echo '</div><br>';
 }
 
 echo $this->control->tpl['actionstodo'];

@@ -34,20 +34,20 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/propale/modules_propale.php';
 class mod_propale_saphir extends ModeleNumRefPropales
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
-     * @var string Error code (or message)
-     */
-    public $error = '';
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
 
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom = 'Saphir';
 
@@ -57,14 +57,14 @@ class mod_propale_saphir extends ModeleNumRefPropales
 	public $name = 'Saphir';
 
 
-    /**
-     *  Return description of module
-     *
-     *  @return     string      Texte descripif
-     */
+	/**
+	 *  Return description of module
+	 *
+	 *  @return     string      Texte descripif
+	 */
 	public function info()
-    {
-    	global $conf, $langs, $db;
+	{
+		global $conf, $langs, $db;
 
 		$langs->load("bills");
 
@@ -95,22 +95,22 @@ class mod_propale_saphir extends ModeleNumRefPropales
 		$texte .= '</form>';
 
 		return $texte;
-    }
+	}
 
-    /**
-     *  Return an example of numbering
-     *
-     *  @return     string      Example
-     */
-    public function getExample()
-    {
-     	global $conf, $langs, $mysoc;
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	public function getExample()
+	{
+	 	global $conf, $langs, $mysoc;
 
-    	$old_code_client = $mysoc->code_client;
-    	$old_code_type = $mysoc->typent_code;
-    	$mysoc->code_client = 'CCCCCCCCCC';
-    	$mysoc->typent_code = 'TTTTTTTTTT';
-     	$numExample = $this->getNextValue($mysoc, '');
+		$old_code_client = $mysoc->code_client;
+		$old_code_type = $mysoc->typent_code;
+		$mysoc->code_client = 'CCCCCCCCCC';
+		$mysoc->typent_code = 'TTTTTTTTTT';
+	 	$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client = $old_code_client;
 		$mysoc->typent_code = $old_code_type;
 
@@ -119,7 +119,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 			$numExample = 'NotConfigured';
 		}
 		return $numExample;
-    }
+	}
 
 	/**
 	 *  Return next value

@@ -36,13 +36,13 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'errors', 'other', 'bills'));
 
-if (! $user->admin) accessforbidden();
+if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
-$type='invoice';
+$type = 'invoice';
 
 
 /*
@@ -57,21 +57,21 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
  * View
  */
 
-$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 llxHeader(
-    "", $langs->trans("BillsSetup"),
-    'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:ConfiguracionFactura'
+	"", $langs->trans("BillsSetup"),
+	'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:ConfiguracionFactura'
 );
 
-$form=new Form($db);
+$form = new Form($db);
 
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("BillsSetup"), $linkback, 'title_setup');
 
 $head = invoice_admin_prepare_head();
-dol_fiche_head($head, 'situation', $langs->trans("InvoiceSituation"), -1, 'invoice');
+print dol_get_fiche_head($head, 'situation', $langs->trans("InvoiceSituation"), -1, 'invoice');
 
 
 print '<span class="opacitymedium">'.$langs->trans("InvoiceFirstSituationDesc").'</span><br><br>';
@@ -96,18 +96,32 @@ print "</tr>\n";
 
 _printOnOff('INVOICE_USE_SITUATION', $langs->trans('UseSituationInvoices'));
 _printOnOff('INVOICE_USE_SITUATION_CREDIT_NOTE', $langs->trans('UseSituationInvoicesCreditNote'));
-_printOnOff('INVOICE_USE_SITUATION_RETAINED_WARRANTY', $langs->trans('Retainedwarranty'));
+//_printOnOff('INVOICE_USE_RETAINED_WARRANTY', $langs->trans('Retainedwarranty'));
+
+$confkey = 'INVOICE_USE_RETAINED_WARRANTY';
+
+$arrayAvailableType = array(
+	Facture::TYPE_SITUATION => $langs->trans("InvoiceSituation"),
+	Facture::TYPE_STANDARD.'+'.Facture::TYPE_SITUATION => $langs->trans("InvoiceSituation").' + '.$langs->trans("InvoiceStandard"),
+);
+$selected = $conf->global->$confkey;
+$curentInput = (empty($inputCount) ? 1 : ($inputCount + 1));
+$formSelectInvoiceType = $form->selectarray('value'.$curentInput, $arrayAvailableType, $selected, 1);
+_printInputFormPart($confkey, $langs->trans('AllowedInvoiceForRetainedWarranty'), '', array(), $formSelectInvoiceType);
+
+//_printOnOff('INVOICE_RETAINED_WARRANTY_LIMITED_TO_SITUATION', $langs->trans('RetainedwarrantyOnlyForSituation'));
+_printOnOff('INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION', $langs->trans('RetainedwarrantyOnlyForSituationFinal'));
 
 $metas = array(
-    'type' => 'number',
-    'step' => '0.01',
-    'min' => 0,
-    'max' => 100
+	'type' => 'number',
+	'step' => '0.01',
+	'min' => 0,
+	'max' => 100
 );
 _printInputFormPart('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT', $langs->trans('RetainedwarrantyDefaultPercent'), '', $metas);
 
 // Conditions paiements
-$inputCount = empty($inputCount)?1:($inputCount+1);
+$inputCount = empty($inputCount) ? 1 : ($inputCount + 1);
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans('PaymentConditionsShortRetainedWarranty').'</td>';
 print '<td class="center" width="20">&nbsp;</td>';
@@ -126,7 +140,7 @@ _updateBtn();
 
 print '</form>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();
@@ -139,10 +153,10 @@ $db->close();
  */
 function _updateBtn()
 {
-    global $langs;
-    print '<div class="center">';
-    print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-    print '</div>';
+	global $langs;
+	print '<div class="center">';
+	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
+	print '</div>';
 }
 
 /**
@@ -156,18 +170,18 @@ function _updateBtn()
  */
 function _printOnOff($confkey, $title = false, $desc = '')
 {
-    global $langs;
+	global $langs;
 
-    print '<tr class="oddeven">';
-    print '<td>'.($title?$title:$langs->trans($confkey));
-    if (!empty($desc)) {
-        print '<br><small>'.$langs->trans($desc).'</small>';
-    }
-    print '</td>';
-    print '<td class="center" width="20">&nbsp;</td>';
-    print '<td class="right" width="300">';
-    print ajax_constantonoff($confkey);
-    print '</td></tr>';
+	print '<tr class="oddeven">';
+	print '<td>'.($title ? $title : $langs->trans($confkey));
+	if (!empty($desc)) {
+		print '<br><small>'.$langs->trans($desc).'</small>';
+	}
+	print '</td>';
+	print '<td class="center" width="20">&nbsp;</td>';
+	print '<td class="right" width="300">';
+	print ajax_constantonoff($confkey);
+	print '</td></tr>';
 }
 
 
@@ -185,50 +199,53 @@ function _printOnOff($confkey, $title = false, $desc = '')
  */
 function _printInputFormPart($confkey, $title = false, $desc = '', $metas = array(), $type = 'input', $help = false)
 {
-    global $langs, $conf, $db, $inputCount;
+	global $langs, $conf, $db, $inputCount;
 
-    $inputCount = empty($inputCount)?1:($inputCount+1);
-    $form=new Form($db);
+	$inputCount = empty($inputCount) ? 1 : ($inputCount + 1);
+	$form = new Form($db);
 
-    $defaultMetas = array(
-        'name' => 'value'.$inputCount
-    );
+	$defaultMetas = array(
+		'name' => 'value'.$inputCount
+	);
 
-    if ($type!='textarea') {
-        $defaultMetas['type']   = 'text';
-        $defaultMetas['value']  = $conf->global->{$confkey};
-    }
+	if ($type != 'textarea') {
+		$defaultMetas['type']   = 'text';
+		$defaultMetas['value']  = $conf->global->{$confkey};
+	}
 
 
-    $metas = array_merge($defaultMetas, $metas);
-    $metascompil = '';
-    foreach ($metas as $key => $values) {
-        $metascompil .= ' '.$key.'="'.$values.'" ';
-    }
+	$metas = array_merge($defaultMetas, $metas);
+	$metascompil = '';
+	foreach ($metas as $key => $values) {
+		$metascompil .= ' '.$key.'="'.$values.'" ';
+	}
 
-    print '<tr class="oddeven">';
-    print '<td>';
+	print '<tr class="oddeven">';
+	print '<td>';
 
-    if (!empty($help)) {
-        print $form->textwithtooltip(($title?$title:$langs->trans($confkey)), $langs->trans($help), 2, 1, img_help(1, ''));
-    } else {
-        print $title?$title:$langs->trans($confkey);
-    }
+	if (!empty($help)) {
+		print $form->textwithtooltip(($title ? $title : $langs->trans($confkey)), $langs->trans($help), 2, 1, img_help(1, ''));
+	} else {
+		print $title ? $title : $langs->trans($confkey);
+	}
 
-    if (!empty($desc)) {
-        print '<br><small>'.$langs->trans($desc).'</small>';
-    }
+	if (!empty($desc)) {
+		print '<br><small>'.$langs->trans($desc).'</small>';
+	}
 
-    print '</td>';
-    print '<td class="center" width="20">&nbsp;</td>';
-    print '<td class="right" width="300">';
-    print '<input type="hidden" name="param'.$inputCount.'" value="'.$confkey.'">';
+	print '</td>';
+	print '<td class="center" width="20">&nbsp;</td>';
+	print '<td class="right" width="300">';
+	print '<input type="hidden" name="param'.$inputCount.'" value="'.$confkey.'">';
 
-    print '<input type="hidden" name="action" value="setModuleOptions">';
-    if ($type=='textarea') {
-        print '<textarea '.$metascompil.'  >'.dol_htmlentities($conf->global->{$confkey}).'</textarea>';
-    } else {
-        print '<input '.$metascompil.'  />';
-    }
-    print '</td></tr>';
+	print '<input type="hidden" name="action" value="setModuleOptions">';
+	if ($type == 'textarea') {
+		print '<textarea '.$metascompil.'  >'.dol_htmlentities($conf->global->{$confkey}).'</textarea>';
+	} elseif ($type == 'input') {
+		print '<input '.$metascompil.'  />';
+	} else {
+		// custom
+		print $type;
+	}
+	print '</td></tr>';
 }

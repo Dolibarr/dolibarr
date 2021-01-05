@@ -18,7 +18,6 @@
 require '../main.inc.php';
 require DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 
-$id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $object = new ProductAttribute($db);
 
@@ -56,17 +55,17 @@ $variants = $object->fetchAll();
 
 llxHeader('', $title);
 
-$newcardbutton='';
+$newcardbutton = '';
 if ($user->rights->produit->creer)
 {
-    $newcardbutton.= dolGetButtonTitle($langs->trans('Create'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/variants/create.php');
+	$newcardbutton .= dolGetButtonTitle($langs->trans('Create'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/variants/create.php');
 }
 
-print load_fiche_titre($title, $newcardbutton, 'products');
+print load_fiche_titre($title, $newcardbutton, 'product');
 
-$forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
+$forcereloadpage = empty($conf->global->MAIN_FORCE_RELOAD_PAGE) ? 0 : 1;
 ?>
-	<script type="text/javascript">
+	<script>
 		$(document).ready(function(){
 			$(".imgupforline, .imgdownforline").hide();
 			$(".lineupdown").removeAttr('href');
@@ -126,14 +125,14 @@ foreach ($variants as $key => $attribute) {
 	print '<td class="right">'.$attribute->countChildValues().'</td>';
 	print '<td class="right">'.$attribute->countChildProducts().'</td>';
 	print '<td class="right">';
-	print '<a href="card.php?id='.$attribute->id.'&action=edit">'.img_edit().'</a>';
-	print '<a href="card.php?id='.$attribute->id.'&action=delete">'.img_delete().'</a>';
+	print '<a class="editfielda marginrightonly paddingleftonly" href="card.php?id='.$attribute->id.'&action=edit">'.img_edit().'</a>';
+	print '<a class="marginrightonly paddingleftonlyhref="card.php?id='.$attribute->id.'&action=delete&token='.newToken().'">'.img_delete().'</a>';
 	print '</td>';
 	print '<td class="center linecolmove tdlineupdown">';
 	if ($key > 0) {
 		print '<a class="lineupdown" href="'.$_SERVER['PHP_SELF'].'?action=up&amp;rowid='.$attribute->id.'">'.img_up('default', 0, 'imgupforline').'</a>';
 	}
-	if ($key < count($variants)-1) {
+	if ($key < count($variants) - 1) {
 		print '<a class="lineupdown" href="'.$_SERVER['PHP_SELF'].'?action=down&amp;rowid='.$attribute->id.'">'.img_down('default', 0, 'imgdownforline').'</a>';
 	}
 	print '</td>';

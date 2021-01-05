@@ -30,20 +30,22 @@ require_once DOL_DOCUMENT_ROOT.'/asset/class/asset.class.php';
 $langs->loadLangs(array("asset"));
 
 $id = GETPOST('id', 'int');
-$ref=GETPOST('ref', 'alpha');
-$action=GETPOST('action', 'alpha');
+$ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Security check
-if ($user->socid) $socid=$user->socid;
-$result = restrictedArea($user, 'asset', $id, '');
+if ($user->socid) $socid = $user->socid;
+$result = restrictedArea($user, 'asset', $id);
 
 $object = new Asset($db);
 $object->fetch($id);
+
 
 /*
  * Actions
  */
 
+// None
 
 
 /*
@@ -52,7 +54,7 @@ $object->fetch($id);
 
 $form = new Form($db);
 
-$title = $langs->trans('Asset') . " - " . $langs->trans('Info');
+$title = $langs->trans('Asset')." - ".$langs->trans('Info');
 $helpurl = "";
 llxHeader('', $title, $helpurl);
 
@@ -60,12 +62,12 @@ $object->info($id);
 
 $head = asset_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("Asset"), -1, 'generic');
+print dol_get_fiche_head($head, 'info', $langs->trans("Asset"), -1, 'generic');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/don/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/don/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-$morehtmlref='<div class="refidno">';
-$morehtmlref.='</div>';
+$morehtmlref = '<div class="refidno">';
+$morehtmlref .= '</div>';
 
 dol_banner_tab($object, 'rowid', $linkback, 1, 'rowid', 'ref', $morehtmlref);
 
@@ -80,7 +82,7 @@ print '</td></tr></table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

@@ -30,13 +30,14 @@ Permission56005=Δείτε τα εισιτήρια όλων των τρίτων 
 TicketDictType=Τύπος εισιτηρίου
 TicketDictCategory=Εισιτήριο - Ομαδοποιεί
 TicketDictSeverity=Εισιτήριο - Βαρύτητα
+TicketDictResolution=Εισιτήριο - Ανάλυση
 TicketTypeShortBUGSOFT=Λογική δυσλειτουργίας
 TicketTypeShortBUGHARD=Dysfonctionnement υλικά
 TicketTypeShortCOM=Εμπορική ερώτηση
 
-TicketTypeShortHELP=Request for functionnal help
-TicketTypeShortISSUE=Issue, bug or problem
-TicketTypeShortREQUEST=Change or enhancement request
+TicketTypeShortHELP=Αίτημα για λειτουργική βοήθεια
+TicketTypeShortISSUE=Θέμα, σφάλμα ή πρόβλημα
+TicketTypeShortREQUEST=Αίτημα αλλαγής ή βελτίωσης
 TicketTypeShortPROJET=Έργο
 TicketTypeShortOTHER=Άλλο
 
@@ -71,7 +72,6 @@ Deleted=Διαγράφηκε
 
 # Dict
 Type=Τύπος
-Category=Αναλυτικός κώδικας
 Severity=Δριμύτητα
 
 # Email templates
@@ -127,12 +127,15 @@ TicketsAutoAssignTicket=Ορίστε αυτόματα τον χρήστη που
 TicketsAutoAssignTicketHelp=Κατά τη δημιουργία ενός εισιτηρίου, ο χρήστης μπορεί να αντιστοιχιστεί αυτόματα στο εισιτήριο.
 TicketNumberingModules=Μονάδα αρίθμησης εισιτηρίων
 TicketNotifyTiersAtCreation=Ειδοποιήστε τρίτο μέρος στη δημιουργία
-TicketGroup=Ομάδα
 TicketsDisableCustomerEmail=Πάντα να απενεργοποιείτε τα μηνύματα ηλεκτρονικού ταχυδρομείου όταν δημιουργείται ένα εισιτήριο από τη δημόσια διασύνδεση
+TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
+TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
+TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
 #
 # Index & list page
 #
-TicketsIndex=Εισιτήριο - σπίτι
+TicketsIndex=Περιοχή εισιτηρίων
 TicketList=Λίστα εισιτηρίων
 TicketAssignedToMeInfos=Αυτή η σελίδα εμφανίζει τη λίστα εισιτηρίων που έχει δημιουργηθεί ή έχει εκχωρηθεί στον τρέχοντα χρήστη
 NoTicketsFound=Δεν βρέθηκε εισιτήριο
@@ -142,7 +145,7 @@ TicketViewNonClosedOnly=Δείτε μόνο ανοιχτά εισιτήρια
 TicketStatByStatus=Εισιτήρια ανά κατάσταση
 OrderByDateAsc=Ταξινόμηση κατά αύξουσα ημερομηνία
 OrderByDateDesc=Ταξινόμηση κατά φθίνουσα ημερομηνία
-ShowAsConversation=Show as conversation list
+ShowAsConversation=Εμφάνιση ως λίστα συνομιλιών
 MessageListViewType=Εμφάνιση ως λίστα πίνακα
 
 #
@@ -157,7 +160,7 @@ CreatedBy=Δημιουργήθηκε από
 NewTicket=Νέο εισιτήριο
 SubjectAnswerToTicket=Απάντηση εισιτηρίου
 TicketTypeRequest=Τύπος αιτήματος
-TicketCategory=Αναλυτικός κώδικας
+TicketCategory=Ομάδα
 SeeTicket=Δείτε εισιτήριο
 TicketMarkedAsRead=Το εισιτήριο έχει επισημανθεί ως αναγνωσμένο
 TicketReadOn=Συνέχισε να διαβάζεις
@@ -231,7 +234,7 @@ TicketNotNotifyTiersAtCreate=Μην ειδοποιείτε την εταιρεί
 Unread=Αδιάβαστος
 TicketNotCreatedFromPublicInterface=Μη διαθέσιμος. Το εισιτήριο δεν δημιουργήθηκε από το δημόσιο περιβάλλον.
 PublicInterfaceNotEnabled=Η δημόσια διεπαφή δεν ήταν ενεργοποιημένη
-ErrorTicketRefRequired=Ticket reference name is required
+ErrorTicketRefRequired=Το όνομα αναφοράς Eισιτηρίου είναι υποχρεωτικό
 
 #
 # Logs
@@ -241,7 +244,7 @@ NoLogForThisTicket=Δεν υπάρχει αρχείο για αυτό το ει�
 TicketLogAssignedTo=Το εισιτήριο %s εκχωρήθηκε στο %s
 TicketLogPropertyChanged=Εισιτήριο %s τροποποιήθηκε: ταξινόμηση από %s σε %s
 TicketLogClosedBy=Το εισιτήριο %s έκλεισε με %s
-TicketLogReopen=Το εισιτήριο %s άνοιξε ξανά
+TicketLogReopen=Το Eισιτήριο %s άνοιξε ξανά
 
 #
 # Public pages
@@ -251,9 +254,9 @@ ShowListTicketWithTrackId=Εμφάνιση λίστας εισιτηρίων α�
 ShowTicketWithTrackId=Εμφάνιση εισιτηρίου από αναγνωριστικό κομματιού
 TicketPublicDesc=Μπορείτε να δημιουργήσετε ένα εισιτήριο υποστήριξης ή να ελέγξετε από ένα υπάρχον αναγνωριστικό.
 YourTicketSuccessfullySaved=Το εισιτήριο αποθηκεύτηκε με επιτυχία!
-MesgInfosPublicTicketCreatedWithTrackId=Δημιουργήθηκε ένα νέο εισιτήριο με το αναγνωριστικό %s.
+MesgInfosPublicTicketCreatedWithTrackId=Eνα νέο εισιτήριο δημιουργήθηκε με το αναγνωριστικό %sκαι αναφ %s
 PleaseRememberThisId=Παρακαλούμε να διατηρήσετε τον αριθμό παρακολούθησης που σας ζητάμε αργότερα.
-TicketNewEmailSubject=Δημιουργία εισιτηρίου
+TicketNewEmailSubject=Δημιουργία εισιτηρίου - Ref %s (δημόσιο εισιτήριο ID %s)
 TicketNewEmailSubjectCustomer=Νέο εισιτήριο υποστήριξης
 TicketNewEmailBody=Αυτό είναι ένα αυτόματο μήνυμα ηλεκτρονικού ταχυδρομείου για να επιβεβαιώσετε ότι έχετε καταχωρήσει ένα νέο εισιτήριο.
 TicketNewEmailBodyCustomer=Αυτό είναι ένα αυτόματο μήνυμα ηλεκτρονικού ταχυδρομείου για να επιβεβαιώσετε ότι μόλις δημιουργήθηκε νέο εισιτήριο στο λογαριασμό σας.
@@ -272,7 +275,7 @@ Subject=Αντικείμενο
 ViewTicket=Προβολή εισιτηρίου
 ViewMyTicketList=Δείτε τη λίστα εισιτηρίων μου
 ErrorEmailMustExistToCreateTicket=Σφάλμα: η διεύθυνση ηλεκτρονικού ταχυδρομείου δεν βρέθηκε στη βάση δεδομένων μας
-TicketNewEmailSubjectAdmin=Δημιουργήθηκε νέο εισιτήριο
+TicketNewEmailSubjectAdmin=Δημιουργήθηκε νέο εισιτήριο - Ref %s (δημόσιο εισιτήριο ID %s)
 TicketNewEmailBodyAdmin=<p> Το εισιτήριο μόλις δημιουργήθηκε με την ταυτότητα # %s, δείτε τις πληροφορίες: </p>
 SeeThisTicketIntomanagementInterface=Δείτε το εισιτήριο στη διεπαφή διαχείρισης
 TicketPublicInterfaceForbidden=Η δημόσια διεπαφή για τα εισιτήρια δεν ήταν ενεργοποιημένη

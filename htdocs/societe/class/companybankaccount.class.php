@@ -41,18 +41,18 @@ class CompanyBankAccount extends Account
 	public $date_rum;
 
 	/**
-     * Date creation record (datec)
-     *
-     * @var integer
-     */
-    public $datec;
+	 * Date creation record (datec)
+	 *
+	 * @var integer
+	 */
+	public $datec;
 
 	/**
-     * Date modification record (tms)
-     *
-     * @var integer
-     */
-    public $datem;
+	 * Date modification record (tms)
+	 *
+	 * @var integer
+	 */
+	public $datem;
 
 
 	/**
@@ -78,7 +78,7 @@ class CompanyBankAccount extends Account
 	 * @param   int    $notrigger   1=Disable triggers
 	 * @return	int					<0 if KO, >= 0 if OK
 	 */
-    public function create(User $user = null, $notrigger = 0)
+	public function create(User $user = null, $notrigger = 0)
 	{
 		$now	= dol_now();
 		$error = 0;
@@ -111,20 +111,14 @@ class CompanyBankAccount extends Account
 					if (!$error)
 					{
 						return 1;
-					}
-					else
-					{
+					} else {
 						return 0;
 					}
-				}
-				else
-				{
+				} else {
 					return 1;
 				}
 			}
-		}
-		else
-		{
+		} else {
 			print $this->db->error();
 			return 0;
 		}
@@ -137,65 +131,58 @@ class CompanyBankAccount extends Account
 	 *  @param  int     $notrigger   1=Disable triggers
 	 *	@return	int				     <=0 if KO, >0 if OK
 	 */
-    public function update(User $user = null, $notrigger = 0)
+	public function update(User $user = null, $notrigger = 0)
 	{
 		global $conf;
 		$error = 0;
 
-		if (! $this->id) return -1;
+		if (!$this->id) return -1;
 
 		if (dol_strlen($this->domiciliation) > 255) $this->domiciliation = dol_trunc($this->domiciliation, 254, 'right', 'UTF-8', 1);
 		if (dol_strlen($this->owner_address) > 255) $this->owner_address = dol_trunc($this->owner_address, 254, 'right', 'UTF-8', 1);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET";
-		$sql.= " bank = '" .$this->db->escape($this->bank)."'";
-		$sql.= ",code_banque='".$this->db->escape($this->code_banque)."'";
-		$sql.= ",code_guichet='".$this->db->escape($this->code_guichet)."'";
-		$sql.= ",number='".$this->db->escape($this->number)."'";
-		$sql.= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
-		$sql.= ",bic='".$this->db->escape($this->bic)."'";
-		$sql.= ",iban_prefix = '".$this->db->escape($this->iban)."'";
-		$sql.= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
-		$sql.= ",proprio = '".$this->db->escape($this->proprio)."'";
-		$sql.= ",owner_address = '".$this->db->escape($this->owner_address)."'";
-		$sql.= ",default_rib = ".$this->default_rib;
+		$sql .= " bank = '".$this->db->escape($this->bank)."'";
+		$sql .= ",code_banque='".$this->db->escape($this->code_banque)."'";
+		$sql .= ",code_guichet='".$this->db->escape($this->code_guichet)."'";
+		$sql .= ",number='".$this->db->escape($this->number)."'";
+		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
+		$sql .= ",bic='".$this->db->escape($this->bic)."'";
+		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
+		$sql .= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
+		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
+		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
+		$sql .= ",default_rib = ".$this->default_rib;
 		if ($conf->prelevement->enabled)
 		{
-			$sql.= ",frstrecur = '".$this->db->escape($this->frstrecur)."'";
-			$sql.= ",rum = '".$this->db->escape($this->rum)."'";
-			$sql.= ",date_rum = ".($this->date_rum ? "'".$this->db->idate($this->date_rum)."'" : "null");
+			$sql .= ",frstrecur = '".$this->db->escape($this->frstrecur)."'";
+			$sql .= ",rum = '".$this->db->escape($this->rum)."'";
+			$sql .= ",date_rum = ".($this->date_rum ? "'".$this->db->idate($this->date_rum)."'" : "null");
 		}
 		if (trim($this->label) != '')
-			$sql.= ",label = '".$this->db->escape($this->label)."'";
-		else
-			$sql.= ",label = NULL";
-		$sql.= " WHERE rowid = ".$this->id;
+			$sql .= ",label = '".$this->db->escape($this->label)."'";
+		else $sql .= ",label = NULL";
+		$sql .= " WHERE rowid = ".$this->id;
 
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-			if (! $notrigger)
+			if (!$notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('COMPANY_RIB_MODIFY', $user);
+				$result = $this->call_trigger('COMPANY_RIB_MODIFY', $user);
 				if ($result < 0) $error++;
 				// End call triggers
-				if(! $error )
+				if (!$error)
 				{
 					return 1;
-				}
-				else
-				{
+				} else {
 					return -1;
 				}
-			}
-			else
-			{
+			} else {
 				return 1;
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -210,7 +197,7 @@ class CompanyBankAccount extends Account
 	 *  @param	int		$type		If id of company filled, we say if we want record of this type only
 	 * 	@return	int					<0 if KO, >0 if OK
 	 */
-    public function fetch($id, $socid = 0, $default = 1, $type = 'ban')
+	public function fetch($id, $socid = 0, $default = 1, $type = 'ban')
 	{
 		if (empty($id) && empty($socid)) return -1;
 
@@ -258,9 +245,7 @@ class CompanyBankAccount extends Account
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -273,7 +258,7 @@ class CompanyBankAccount extends Account
 	 *	@param  	int		$notrigger	1=Disable triggers
 	 *  @return		int		            <0 if KO, >0 if OK
 	 */
-    public function delete(User $user = null, $notrigger = 0)
+	public function delete(User $user = null, $notrigger = 0)
 	{
 		global $conf;
 
@@ -307,9 +292,7 @@ class CompanyBankAccount extends Account
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1 * $error;
 		}
@@ -342,7 +325,7 @@ class CompanyBankAccount extends Account
 	 * @param   int     $rib    RIB id
 	 * @return  int             0 if KO, 1 if OK
 	 */
-    public function setAsDefault($rib = 0)
+	public function setAsDefault($rib = 0)
 	{
 		$sql1 = "SELECT rowid as id, fk_soc  FROM ".MAIN_DB_PREFIX."societe_rib";
 		$sql1 .= " WHERE rowid = ".($rib ? $rib : $this->id);
@@ -354,9 +337,7 @@ class CompanyBankAccount extends Account
 			if ($this->db->num_rows($result1) == 0)
 			{
 				return 0;
-			}
-			else
-			{
+			} else {
 				$obj = $this->db->fetch_object($result1);
 
 				$this->db->begin();
@@ -376,16 +357,12 @@ class CompanyBankAccount extends Account
 					dol_print_error($this->db);
 					$this->db->rollback();
 					return -1;
-				}
-				else
-				{
+				} else {
 					$this->db->commit();
 					return 1;
 				}
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -398,7 +375,7 @@ class CompanyBankAccount extends Account
 	 *
 	 *  @return	void
 	 */
-    public function initAsSpecimen()
+	public function initAsSpecimen()
 	{
 		$this->specimen        = 1;
 		$this->ref             = 'CBA';

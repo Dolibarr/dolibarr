@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - workflow
-WorkflowSetup=工作流程模組設置
+WorkflowSetup=工作流程模組設定
 WorkflowDesc=此模組提供了一些自動程序。默認情況下，工作流程是開啟的（您可以按想要的順序執行操作），但是在這裡您可以開啟一些自動程序。
 ThereIsNoWorkflowToModify=已啟動的模組無法可修改的工作流程。
 # Autocreate
@@ -16,5 +16,8 @@ descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=當已確認裝運後（並且如�
 # Autoclassify purchase order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=當供應商發票已確認時（如果發票金額與連接提案的總金額相同），將連接供應商提案分類為開票
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=當供應商發票已確認時（如果發票金額與連接訂單的總金額相同），將連接的採購訂單分類為開票
+descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
 AutomaticCreation=自動建立
 AutomaticClassification=自動分類

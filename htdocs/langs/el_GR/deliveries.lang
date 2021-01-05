@@ -2,7 +2,7 @@
 Delivery=Παράδοση
 DeliveryRef=Ref Delivery
 DeliveryCard=Receipt card
-DeliveryOrder=Delivery receipt
+DeliveryOrder=Αποδεικτικό παράδοσης
 DeliveryDate=Ημερ. παράδοσης
 CreateDeliveryOrder=Generate delivery receipt
 DeliveryStateSaved=Αποθηκεύτηκε η κατάσταση παράδοσης

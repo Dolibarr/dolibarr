@@ -2,7 +2,7 @@
 Delivery=Livrare
 DeliveryRef=Ref Livrare
 DeliveryCard=Chitanta card
-DeliveryOrder=Delivery receipt
+DeliveryOrder=Bon de livrare
 DeliveryDate=Data de livrare
 CreateDeliveryOrder=Generați chitanța de livrare
 DeliveryStateSaved=Stare livrare salvata

@@ -74,7 +74,11 @@ class ExpenseReportTest extends PHPUnit\Framework\TestCase
         print "\n";
     }
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -83,7 +87,11 @@ class ExpenseReportTest extends PHPUnit\Framework\TestCase
         print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
         global $conf,$user,$langs,$db;
@@ -273,15 +281,9 @@ class ExpenseReportTest extends PHPUnit\Framework\TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        /*$result=$localobject->setstatus(0);
+        $result=$localobject->getSumPayments();
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        */
-
-        /*$localobject->info($localobject->id);
-        print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
-        $this->assertNotEquals($localobject->date_creation, '');
-        */
+        $this->assertGreaterThanOrEqual(0, $result);
 
         return $localobject->id;
     }
@@ -308,7 +310,7 @@ class ExpenseReportTest extends PHPUnit\Framework\TestCase
         $result=$localobject->delete($user);
 
         print __METHOD__." id=".$id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
+        $this->assertGreaterThan(0, $result);
         return $result;
     }
 }

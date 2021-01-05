@@ -32,9 +32,9 @@ global $conf;
 if (!$user->admin) accessforbidden();
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin","other"));
+$langs->loadLangs(array("admin", "other"));
 
-$error=0;
+$error = 0;
 $action = GETPOST('action', 'aZ09');
 
 
@@ -50,17 +50,15 @@ if ($action == 'set')
 	$result1 = dolibarr_set_const($db, "DEBUGBAR_LOGS_LINES_NUMBER", GETPOST('DEBUGBAR_LOGS_LINES_NUMBER', 'int'), 'chaine', 0, '', 0);
 	$result2 = dolibarr_set_const($db, "DEBUGBAR_USE_LOG_FILE", GETPOST('DEBUGBAR_USE_LOG_FILE', 'int'), 'chaine', 0, '', 0);
 	if ($result1 < 0 || $result2 < 0)
-    {
-        $error++;
-    }
+	{
+		$error++;
+	}
 
-	if (! $error)
+	if (!$error)
 	{
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 		setEventMessages($error, null, 'errors');
 	}
@@ -73,17 +71,15 @@ if ($action == 'set')
 
 llxHeader();
 
-$form=new Form($db);
+$form = new Form($db);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("DebugBarSetup"), $linkback, 'title_setup');
 
-//print load_fiche_titre($langs->trans("DebugBar"));
-
-if (! function_exists('mb_check_encoding'))
+if (!function_exists('mb_check_encoding'))
 {
-    $langs->load("errors");
-    print info_admin($langs->trans("ErrorPHPNeedModule", 'mbstring'), 0, 0, 'error');
+	$langs->load("errors");
+	print info_admin($langs->trans("ErrorPHPNeedModule", 'mbstring'), 0, 0, 'error');
 }
 
 print '<br>';
@@ -100,7 +96,7 @@ print '<td class="right"><input type="submit" class="button" '.$option.' value="
 print "</tr>\n";
 
 print '<tr class="oddeven"><td>'.$langs->trans("DEBUGBAR_LOGS_LINES_NUMBER").'</td>';
-print '<td colspan="2"><input type="text" class="flat" name="DEBUGBAR_LOGS_LINES_NUMBER" value="'.(empty($conf->global->DEBUGBAR_LOGS_LINES_NUMBER) ? 250 : $conf->global->DEBUGBAR_LOGS_LINES_NUMBER).'">';   // This slow seriously output
+print '<td colspan="2"><input type="text" class="flat" name="DEBUGBAR_LOGS_LINES_NUMBER" value="'.(empty($conf->global->DEBUGBAR_LOGS_LINES_NUMBER) ? 250 : $conf->global->DEBUGBAR_LOGS_LINES_NUMBER).'">'; // This slow seriously output
 print ' '.$langs->trans("WarningValueHigherSlowsDramaticalyOutput");
 print '</td></tr>';
 

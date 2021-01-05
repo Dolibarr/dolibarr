@@ -40,7 +40,7 @@ class modBom extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs,$conf;
+		global $langs, $conf;
 
 		$this->db = $db;
 
@@ -54,7 +54,7 @@ class modBom extends DolibarrModules
 		// It is used to group modules by family in module setup page
 		$this->family = "products";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
-		$this->module_position = '60';
+		$this->module_position = '65';
 		// Gives the possibility for the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
 
@@ -169,7 +169,7 @@ class modBom extends DolibarrModules
 
 
 		// Dictionaries
-		$this->dictionaries=array();
+		$this->dictionaries = array();
 		/* Example:
         $this->dictionaries=array(
             'langs'=>'mylangfile@bom',
@@ -204,33 +204,33 @@ class modBom extends DolibarrModules
 
 
 		// Permissions provided by this module
-		$this->rights = array();		// Permission array used by this module
+		$this->rights = array(); // Permission array used by this module
 
-		$r=0;
-		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Read bom of Bom';	// Permission label
-		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->bom->level1->level2)
-		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->bom->level1->level2)
-
-		$r++;
-		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/Update bom of Bom';	// Permission label
-		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'write';				// In php code, permission will be checked by test if ($user->rights->bom->level1->level2)
-		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->bom->level1->level2)
+		$r = 0;
+		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read bom of Bom'; // Permission label
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'read'; // In php code, permission will be checked by test if ($user->rights->bom->level1->level2)
+		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->bom->level1->level2)
 
 		$r++;
-		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Delete bom of Bom';	// Permission label
-		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'delete';				// In php code, permission will be checked by test if ($user->rights->bom->level1->level2)
-		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->bom->level1->level2)
+		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Create/Update bom of Bom'; // Permission label
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'write'; // In php code, permission will be checked by test if ($user->rights->bom->level1->level2)
+		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->bom->level1->level2)
+
+		$r++;
+		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Delete bom of Bom'; // Permission label
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'delete'; // In php code, permission will be checked by test if ($user->rights->bom->level1->level2)
+		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->bom->level1->level2)
 
 
 		// Main menu entries to add
-		$this->menu = array();			// List of menus to add
-		$r=0;
+		$this->menu = array(); // List of menus to add
+		$r = 0;
 
 		// Add here entries to declare new menus
 
@@ -300,6 +300,7 @@ class modBom extends DolibarrModules
 		$this->export_dependencies_array[$r] = array('bomline'=>'tl.rowid'); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'bom_bom as t';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bom_bom_extrafields as extra on (t.rowid = extra.fk_object)';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bom_bomline as tl ON tl.fk_bom = t.rowid';
 		$this->export_sql_end[$r] .= ' WHERE 1 = 1';
 		$this->export_sql_end[$r] .= ' AND t.entity IN ('.getEntity('bom').')';
@@ -338,19 +339,19 @@ class modBom extends DolibarrModules
 		$sql = array();
 
 		// ODT template
-		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/boms/template_bom.odt';
-		$dirodt=DOL_DATA_ROOT.'/doctemplates/boms';
-		$dest=$dirodt.'/template_bom.odt';
+		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/boms/template_bom.odt';
+		$dirodt = DOL_DATA_ROOT.'/doctemplates/boms';
+		$dest = $dirodt.'/template_bom.odt';
 
-		if (file_exists($src) && ! file_exists($dest))
+		if (file_exists($src) && !file_exists($dest))
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result=dol_copy($src, $dest, 0, 0);
+			$result = dol_copy($src, $dest, 0, 0);
 			if ($result < 0)
 			{
 				$langs->load("errors");
-				$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
+				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;
 			}
 		}

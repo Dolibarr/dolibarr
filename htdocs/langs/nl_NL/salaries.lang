@@ -12,10 +12,10 @@ ShowSalaryPayment=Toon salarisbetaling
 THM=Gemiddeld uurtarief
 TJM=Gemiddeld dagtarief
 CurrentSalary=Huidig salaris
-THMDescription=This value may be used to calculate the cost of time consumed on a project entered by users if module project is used
-TJMDescription=This value is currently for information only and is not used for any calculation
+THMDescription=Deze waarde kan worden gebruikt om de kosten te berekenen van de tijd die wordt besteed aan een project dat door gebruikers is ingevoerd als het moduleproject wordt gebruikt
+TJMDescription=Deze waarde is momenteel alleen ter informatie en wordt niet gebruikt voor enige berekening
 LastSalaries=Laatste %s salaris betalingen
 AllSalaries=Alle salarisbetalingen
 SalariesStatistics=Salarisstatistieken
 # Export
-SalariesAndPayments=Salaries and payments
+SalariesAndPayments=Lonen en betalingen

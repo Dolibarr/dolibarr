@@ -35,17 +35,15 @@ require_once '../main.inc.php';
 // This can happen only with a bookmark or forged url call.
 if (!empty($_SESSION["dol_authmode"]) && ($_SESSION["dol_authmode"] == 'forceuser' || $_SESSION["dol_authmode"] == 'http'))
 {
-    unset($_SESSION["dol_login"]);
+	unset($_SESSION["dol_login"]);
 	die("Applicative disconnection should be useless when connection was made in mode ".$_SESSION["dol_authmode"]);
 }
 
 global $conf, $langs, $user;
 
-// Call triggers for the "security events" log
-include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-$interface = new Interfaces($db);
-$result = $interface->run_triggers('USER_LOGOUT', $user, $user, $langs, $conf);
-if ($result < 0) { $error++; }
+// Call trigger
+$result = $user->call_trigger('USER_LOGOUT', $user);
+if ($result < 0) $error++;
 // End call triggers
 
 // Hooks on logout

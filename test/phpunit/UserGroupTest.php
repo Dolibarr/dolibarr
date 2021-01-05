@@ -73,7 +73,11 @@ class UserGroupTest extends PHPUnit\Framework\TestCase
         print "\n";
     }
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -82,7 +86,11 @@ class UserGroupTest extends PHPUnit\Framework\TestCase
         print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
         global $conf,$user,$langs,$db;
@@ -249,15 +257,10 @@ class UserGroupTest extends PHPUnit\Framework\TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        /*$result=$localobject->setstatus(0);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        */
+        $result = $localobject->generateDocument('templatenamethadoesnotexist', $langs);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(-1, $result, 'Calling generateDocument with a not existing template should return 0');
 
-        /*$localobject->info($localobject->id);
-        print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
-        $this->assertNotEquals($localobject->date_creation, '');
-        */
         return $localobject->id;
     }
 

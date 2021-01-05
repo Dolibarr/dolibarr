@@ -75,7 +75,11 @@ class PaypalTest extends PHPUnit\Framework\TestCase
 		print "\n";
 	}
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
@@ -87,7 +91,11 @@ class PaypalTest extends PHPUnit\Framework\TestCase
     	print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
     	global $conf,$user,$langs,$db;
@@ -123,7 +131,7 @@ class PaypalTest extends PHPUnit\Framework\TestCase
     }
 
     /**
-     * testProductCreate
+     * testPaypalOk
      *
      * @return	void
      */
@@ -135,13 +143,13 @@ class PaypalTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$urltotest=getPaypalPaymentUrl(1, 'free');
+		$urltotest=getOnlinePaymentUrl(0, 'free');
 		print "urltotest=".$urltotest."\n";
 
-		$result=getURLContent($urltotest, 'GET');
+		$result=getURLContent($urltotest, 'GET', '', 1, array(), array('http', 'https'), 2);
 
-        print __METHOD__." result=".$result."\n";
-    	$this->assertLessThanOrEqual($result, 0);
+        print __METHOD__." result=".$result['http_code']."\n";
+        $this->assertEquals(200, $result['http_code']);
 
     	return $result;
     }

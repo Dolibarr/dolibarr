@@ -45,7 +45,7 @@ class modAsset extends DolibarrModules
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-		$this->numero = 51000;		// TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve id number for your module
+		$this->numero = 51000; // TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve id number for your module
 
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','interface','other'
 		// It is used to group modules by family in module setup page
@@ -69,7 +69,7 @@ class modAsset extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto = 'generic';
+		$this->picto = 'accounting';
 
 		// Defined all module parts (triggers, login, substitutions, menus, css, etc...)
 		// for default path (eg: /asset/core/xxxxx) (0=disable, 1=enable)
@@ -81,7 +81,7 @@ class modAsset extends DolibarrModules
 		// Example: this->dirs = array("/asset/temp","/asset/subdir");
 		$this->dirs = array();
 
-		// Config pages. Put here list of php page, stored into assets/admin directory, to use to setup module.
+		// Config pages. Put here list of php page, stored into asset/admin directory, to use to setup module.
 		$this->config_page_url = array("setup.php@asset");
 
 		// Dependencies
@@ -102,9 +102,7 @@ class modAsset extends DolibarrModules
 		// Example: $this->const=array(0=>array('ASSETS_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
 		//                             1=>array('ASSETS_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
 		// );
-		$this->const = array(
-			1=>array('ASSET_MYCONSTANT', 'chaine', 'avalue', 'This is a constant to add', 1, 'allentities', 1)
-		);
+		$this->const = array();
 
 
 		if (!isset($conf->asset) || !isset($conf->asset->enabled))
@@ -117,8 +115,8 @@ class modAsset extends DolibarrModules
 		// Array to add new pages in new tabs
 		$this->tabs = array();
 		// Example:
-		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@assets:$user->rights->assets->read:/assets/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
-		// $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@assets:$user->rights->othermodule->read:/assets/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
+		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@assets:$user->rights->assets->read:/asset/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
+		// $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@assets:$user->rights->othermodule->read:/asset/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
 		// $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
 		//
 		// Where objecttype can be
@@ -144,11 +142,11 @@ class modAsset extends DolibarrModules
 
 
 		// Dictionaries
-		$this->dictionaries=array();
+		$this->dictionaries = array();
 
 
 		// Boxes/Widgets
-		// Add here list of php file(s) stored in assets/core/boxes that contains class to show a widget.
+		// Add here list of php file(s) stored in asset/core/boxes that contains class to show a widget.
 		$this->boxes = array(
 			//0=>array('file'=>'assetswidget1.php@asset','note'=>'Widget provided by Assets','enabledbydefaulton'=>'Home'),
 			//1=>array('file'=>'assetswidget2.php@asset','note'=>'Widget provided by Assets'),
@@ -167,45 +165,45 @@ class modAsset extends DolibarrModules
 
 
 		// Permissions
-		$this->rights = array();		// Permission array used by this module
-        $this->rights_class = 'asset';
-        $r=0;
-
-        $r++;
-        $this->rights[$r][0] = 51001;	            // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Read assets';		// Permission label
-        $this->rights[$r][2] = 'r';
-        $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
-		$this->rights[$r][5] = '';					// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
+		$this->rights = array(); // Permission array used by this module
+		$this->rights_class = 'asset';
+		$r = 0;
 
 		$r++;
-		$this->rights[$r][0] = 51002;               // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/Update assets';	// Permission label
-        $this->rights[$r][2] = 'w';
-        $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'write';				// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
-		$this->rights[$r][5] = '';					// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
+		$this->rights[$r][0] = 51001; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read assets'; // Permission label
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'read'; // In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
+		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
 
 		$r++;
-		$this->rights[$r][0] = 51003;               // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Delete assets';		// Permission label
-        $this->rights[$r][2] = 'd';
-        $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'delete';			// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
-		$this->rights[$r][5] = '';					// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
+		$this->rights[$r][0] = 51002; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Create/Update assets'; // Permission label
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'write'; // In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
+		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
 
-        $r++;
-        $this->rights[$r][0] = 51005;               // Permission id (must not be already used)
-        $this->rights[$r][1] = 'Setup types of asset';  // Permission label
-        $this->rights[$r][2] = 'w';
-        $this->rights[$r][3] = 0;                   // Permission by default for new user (0/1)
-        $this->rights[$r][4] = 'advanced_configurer';        // In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
-        $this->rights[$r][5] = '';					// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
+		$r++;
+		$this->rights[$r][0] = 51003; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Delete assets'; // Permission label
+		$this->rights[$r][2] = 'd';
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'delete'; // In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
+		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
 
-        // Menus
-        //-------
-        $this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		$r++;
+		$this->rights[$r][0] = 51005; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Setup types of asset'; // Permission label
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'setup_advance'; // In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
+		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
+
+		// Menus
+		//-------
+		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
 	}
 
 	/**
@@ -216,13 +214,13 @@ class modAsset extends DolibarrModules
 	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *  @return     int             	1 if OK, 0 if KO
 	 */
-    public function init($options = '')
-    {
-        // Permissions
-        $this->remove($options);
+	public function init($options = '')
+	{
+		// Permissions
+		$this->remove($options);
 
-        $sql = array();
+		$sql = array();
 
-        return $this->_init($sql, $options);
-    }
+		return $this->_init($sql, $options);
+	}
 }

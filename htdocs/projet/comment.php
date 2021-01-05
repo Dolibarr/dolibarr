@@ -41,7 +41,7 @@ $id = GETPOST('id', 'int');
 $idcomment = GETPOST('idcomment', 'int');
 $ref = GETPOST("ref", 'alpha', 1); // task ref
 $objectref = GETPOST("taskref", 'alpha'); // task ref
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $withproject = GETPOST('withproject', 'int');
 $project_ref = GETPOST('project_ref', 'alpha');
@@ -89,7 +89,7 @@ $formfile = new FormFile($db);
 // Tabs for project
 $tab = 'project_comment';
 $head = project_prepare_head($object);
-dol_fiche_head($head, $tab, $langs->trans("Project"), - 1, ($object->public ? 'projectpub' : 'project'));
+print dol_get_fiche_head($head, $tab, $langs->trans("Project"), - 1, ($object->public ? 'projectpub' : 'project'));
 
 $param = ($mode == 'mine' ? '&mode=mine' : '');
 
@@ -123,8 +123,7 @@ print '<table class="border centpercent">';
 // Visibility
 print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 if ($object->public) print $langs->trans('SharedProject');
-else
-	print $langs->trans('PrivateProject');
+else print $langs->trans('PrivateProject');
 print '</td></tr>';
 
 // Date start - end
@@ -160,7 +159,7 @@ print '</td></tr>';
 // Categories
 if ($conf->categorie->enabled) {
 	print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
-	print $form->showCategories($object->id, 'project', 1);
+	print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 	print "</td></tr>";
 }
 
@@ -177,7 +176,7 @@ print '</div>';
 
 print '<div class="clearboth"></div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<br>';
 

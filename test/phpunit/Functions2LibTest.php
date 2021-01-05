@@ -77,7 +77,11 @@ class Functions2LibTest extends PHPUnit\Framework\TestCase
         print "\n";
     }
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -86,7 +90,11 @@ class Functions2LibTest extends PHPUnit\Framework\TestCase
         print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
         global $conf,$user,$langs,$db;
@@ -140,6 +148,13 @@ class Functions2LibTest extends PHPUnit\Framework\TestCase
      */
     public function testIsValidMailDomain()
     {
+    	$mail = 'bidon@unvalid.unvalid';
+    	$result = isValidMailDomain($mail);
+    	$this->assertEquals(0, $result, 'Email isValidMailDomain('.$mail.') should return 0 (not valid) but returned '.$result);
+
+    	$mail = 'bidon@dolibarr.org';
+    	$result = isValidMailDomain($mail);
+    	$this->assertEquals(1, $result, 'Email isValidMailDomain('.$mail.') should return 1 (valid) but returned '.$result);
     }
 
     /**

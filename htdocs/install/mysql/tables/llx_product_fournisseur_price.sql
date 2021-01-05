@@ -24,7 +24,7 @@ create table llx_product_fournisseur_price
   rowid					integer AUTO_INCREMENT PRIMARY KEY,
   entity				integer DEFAULT 1 NOT NULL,	   -- multi company id
   datec					datetime,
-  tms					timestamp,
+  tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_product			integer,
   fk_soc				integer,
   ref_fourn				varchar(30),
@@ -50,6 +50,7 @@ create table llx_product_fournisseur_price
   import_key			varchar(14),                -- Import key
   delivery_time_days    integer,
   supplier_reputation varchar(10),
+  packaging			    varchar(64),
   
   fk_multicurrency		integer,
   multicurrency_code	varchar(255),

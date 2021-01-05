@@ -56,8 +56,7 @@ class WebservicesThirdpartyTest extends PHPUnit\Framework\TestCase
     protected $savdb;
     protected $soapclient;
 
-    private $_WS_DOL_URL;
-    private $_ns='http://www.dolibarr.org/ns/';
+    private $ns='http://www.dolibarr.org/ns/';
 
 
 
@@ -79,11 +78,11 @@ class WebservicesThirdpartyTest extends PHPUnit\Framework\TestCase
         $this->savlangs=$langs;
         $this->savdb=$db;
 
-        $this->_WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_thirdparty.php';
+        $WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_thirdparty.php';
 
         // Set the WebService URL
-        print __METHOD__." create nusoap_client for URL=".$this->_WS_DOL_URL."\n";
-        $this->soapclient = new nusoap_client($this->_WS_DOL_URL);
+        print __METHOD__." create nusoap_client for URL=".$WS_DOL_URL."\n";
+        $this->soapclient = new nusoap_client($WS_DOL_URL);
         if ($this->soapclient) {
         	$this->soapclient->soap_defencoding='UTF-8';
         	$this->soapclient->decodeUTF8(false);
@@ -94,7 +93,11 @@ class WebservicesThirdpartyTest extends PHPUnit\Framework\TestCase
         print "\n";
     }
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -103,7 +106,11 @@ class WebservicesThirdpartyTest extends PHPUnit\Framework\TestCase
         print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
         global $conf,$user,$langs,$db;
@@ -206,7 +213,7 @@ class WebservicesThirdpartyTest extends PHPUnit\Framework\TestCase
     	print __METHOD__." call method ".$WS_METHOD."\n";
     	try {
     		$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
-    	} catch(SoapFault $exception) {
+    	} catch (SoapFault $exception) {
     		echo $exception;
     		$result=0;
     	}
@@ -259,8 +266,8 @@ class WebservicesThirdpartyTest extends PHPUnit\Framework\TestCase
         $parameters = array('authentication'=>$authentication, 'id'=>$id);
         print __METHOD__." call method ".$WS_METHOD."\n";
         try {
-            $result = $this->soapclient->call($WS_METHOD, $parameters, $this->_ns, '');
-        } catch(SoapFault $exception) {
+            $result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
+        } catch (SoapFault $exception) {
             echo $exception;
             $result=0;
         }
@@ -321,8 +328,8 @@ class WebservicesThirdpartyTest extends PHPUnit\Framework\TestCase
     	$parameters = array('authentication'=>$authentication, 'id'=>'', 'ref'=>'', 'ref_ext'=>'12');
     	print __METHOD__." call method ".$WS_METHOD."\n";
     	try {
-    		$result = $this->soapclient->call($WS_METHOD, $parameters, $this->_ns, '');
-    	} catch(SoapFault $exception) {
+    		$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
+    	} catch (SoapFault $exception) {
     		echo $exception;
     		$result=0;
     	}
@@ -381,8 +388,8 @@ class WebservicesThirdpartyTest extends PHPUnit\Framework\TestCase
     	$parameters = array('authentication'=>$authentication, 'id'=>$id, 'ref'=>'', 'ref_ext'=>'');
     	print __METHOD__." call method ".$WS_METHOD."\n";
     	try {
-    		$result = $this->soapclient->call($WS_METHOD, $parameters, $this->_ns, '');
-    	} catch(SoapFault $exception) {
+    		$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
+    	} catch (SoapFault $exception) {
     		echo $exception;
     		$result=0;
     	}

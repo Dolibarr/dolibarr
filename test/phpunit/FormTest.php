@@ -74,7 +74,11 @@ class FormTest extends PHPUnit\Framework\TestCase
 		print "\n";
 	}
 
-	// Static methods
+	/**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
   	public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
@@ -83,7 +87,11 @@ class FormTest extends PHPUnit\Framework\TestCase
     	print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
     	global $conf,$user,$langs,$db;
@@ -135,14 +143,14 @@ class FormTest extends PHPUnit\Framework\TestCase
 		$result=$localobject->select_produits_list('', 'productid', '', 5, 0, '', 1, 2, 1);
 
     	$this->assertEquals(count($result), 5);
-    	print __METHOD__." result=".$result."\n";
+    	print __METHOD__." count result=".count($result)."\n";
 
     	$conf->global->ENTREPOT_EXTRA_STATUS = 1;
 
     	// Exclude stock in warehouseinternal
     	$result=$localobject->select_produits_list('', 'productid', '', 5, 0, '', 1, 2, 1, 0, '1', 0, '', 0, 'warehouseclosed,warehouseopen');
     	$this->assertEquals(count($result), 5);
-    	print __METHOD__." result=".$result."\n";
+    	print __METHOD__." count result=".count($result)."\n";
 
     	return $result;
     }

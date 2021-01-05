@@ -54,9 +54,7 @@ if ($action == 'setproductionmode')
 				setEventMessages($langs->trans("ErrorFailedToCreateDir", $conf->api->dir_temp), null, 'errors');
 				$error++;
 			}
-		}
-		else
-		{
+		} else {
 			// Delete the cache file otherwise it does not update
 			$result = dol_delete_file($conf->api->dir_temp.'/routes.php');
 			if ($result < 0)
@@ -66,14 +64,12 @@ if ($action == 'setproductionmode')
 			}
 		}
 
-	    if (!$error)
-	    {
-    		header("Location: ".$_SERVER["PHP_SELF"]);
-	   	    exit;
-	    }
-	}
-	else
-	{
+		if (!$error)
+		{
+			header("Location: ".$_SERVER["PHP_SELF"]);
+	   		exit;
+		}
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -96,7 +92,7 @@ llxHeader();
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ApiSetup"), $linkback, 'title_setup');
 
-print $langs->trans("ApiDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("ApiDesc")."</span><br>\n";
 print "<br>\n";
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -116,24 +112,24 @@ print '<td>'.$langs->trans("ApiProductionMode").'</td>';
 $production_mode = (empty($conf->global->API_PRODUCTION_MODE) ?false:true);
 if ($production_mode)
 {
-    print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&value='.($i + 1).'&status=0">';
-    print img_picto($langs->trans("Activated"), 'switch_on');
-    print '</a></td>';
-}
-else
-{
-    print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&value='.($i + 1).'&status=1">';
-    print img_picto($langs->trans("Disabled"), 'switch_off');
-    print '</a></td>';
+	print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&token='.newToken().'&value='.($i + 1).'&status=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&token='.newToken().'&value='.($i + 1).'&status=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
 }
 print '<td>&nbsp;</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("RESTRICT_API_ON_IP").'</td>';
+print '<td>'.$langs->trans("RESTRICT_ON_IP");
+print ' '.$langs->trans("Example").': '.$langs->trans("IPListExample");
+print '</td>';
 print '<td><input type="text" name="API_RESTRICT_ON_IP" value="'.dol_escape_htmltag($conf->global->API_RESTRICT_ON_IP).'"></td>';
 print '<td>';
-print '<input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></td>';
+print '<input type="submit" class="button button-save" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></td>';
 print '</td>';
 print '</tr>';
 
@@ -151,7 +147,7 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 // Show message
 $message = '';
 $url = $urlwithroot.'/api/index.php/login?login=<strong>auserlogin</strong>&password=<strong>thepassword</strong>[&reset=1]';
-$message .= $langs->trans("UrlToGetKeyToUseAPIs").':<br>';
+$message .= '<span class="opacitymedium">'.$langs->trans("UrlToGetKeyToUseAPIs").':</span><br>';
 $message .= img_picto('', 'globe').' '.$url;
 print $message;
 print '<br>';
@@ -161,12 +157,11 @@ print '<br>';
 print '<u>'.$langs->trans("ApiExporerIs").':</u><br>';
 if (dol_is_dir(DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/explorer'))
 {
-    $url = DOL_MAIN_URL_ROOT.'/api/index.php/explorer';
-    print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-}
-else
-{
-    print $langs->trans("NotAvailableWithThisDistribution");
+	$url = DOL_MAIN_URL_ROOT.'/api/index.php/explorer';
+	print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+} else {
+	$langs->load("errors");
+	print info_admin($langs->trans("ErrorNotAvailableWithThisDistribution"), 0, 0, 'error');
 }
 
 llxFooter();

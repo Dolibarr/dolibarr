@@ -1,5 +1,7 @@
 <?php
+
 namespace Luracast\Restler;
+
 /**
  * Describe the purpose of this class/interface/trait
  *
@@ -9,7 +11,7 @@ namespace Luracast\Restler;
  * @copyright  2010 Luracast
  * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link       http://luracast.com/products/restler/
- * @version    3.0.0rc6
+ *
  */
 class Util
 {
@@ -50,8 +52,8 @@ class Util
      * When the deeply nested property is found its value is returned, otherwise
      * false is returned.
      *
-     * @param array $from array to extract the value from
-     * @param string|array $key ... pass more to go deeply inside the array
+     * @param array|object $from    array to extract the value from
+     * @param string|array $key     ... pass more to go deeply inside the array
      *                              alternatively you can pass a single array
      *
      * @return null|mixed null when not found, value otherwise
@@ -77,24 +79,29 @@ class Util
         return $from;
     }
 
-    public static function getResourcePath($className,
-                                           $resourcePath = null,
-                                           $prefix = '')
-    {
+    public static function getResourcePath(
+        $className,
+        $resourcePath = null,
+        $prefix = ''
+    ) {
         if (is_null($resourcePath)) {
             if (Defaults::$autoRoutingEnabled) {
                 $resourcePath = strtolower($className);
-                if (false !== ($index = strrpos($className, '\\')))
+                if (false !== ($index = strrpos($className, '\\'))) {
                     $resourcePath = substr($resourcePath, $index + 1);
-                if (false !== ($index = strrpos($resourcePath, '_')))
+                }
+                if (false !== ($index = strrpos($resourcePath, '_'))) {
                     $resourcePath = substr($resourcePath, $index + 1);
+                }
             } else {
                 $resourcePath = '';
             }
-        } else
+        } else {
             $resourcePath = trim($resourcePath, '/');
-        if (strlen($resourcePath) > 0)
+        }
+        if (strlen($resourcePath) > 0) {
             $resourcePath .= '/';
+        }
         return $prefix . $resourcePath;
     }
 
@@ -114,8 +121,9 @@ class Util
      */
     public static function removeCommonPath($fromPath, $usingPath, $char = '/')
     {
-        if (empty($fromPath))
+        if (empty($fromPath)) {
             return '';
+        }
         $fromPath = explode($char, $fromPath);
         $usingPath = explode($char, $usingPath);
         while (count($usingPath)) {
@@ -145,8 +153,9 @@ class Util
      */
     public static function splitCommonPath($fromPath, $usingPath, $char = '/')
     {
-        if (empty($fromPath))
+        if (empty($fromPath)) {
             return array('', '');
+        }
         $fromPath = explode($char, $fromPath);
         $usingPath = explode($char, $usingPath);
         $commonPath = array();
@@ -213,11 +222,18 @@ class Util
             $accepts = array($accepts);
         }
         foreach ($accepts as $pos => $accept) {
-            $parts = explode(';q=', trim($accept));
-            $type = array_shift($parts);
-            $quality = count($parts) ?
-                floatval(array_shift($parts)) :
-                (1000 - $pos) / 1000;
+            $parts = explode(';', $accept);
+            $type = trim(array_shift($parts));
+            $parameters = [];
+            foreach ($parts as $part) {
+                $part = explode('=', $part);
+                if (2 !== count($part)) {
+                    continue;
+                }
+                $key = strtolower(trim($part[0]));
+                $parameters[$key] = trim($part[1], ' "');
+            }
+            $quality = isset($parameters['q']) ? (float)$parameters['q'] : (1000 - $pos) / 1000;
             $acceptList[$type] = $quality;
         }
         arsort($acceptList);
@@ -227,8 +243,7 @@ class Util
     public static function getShortName($className)
     {
     	// @CHANGE LDR
-    	if (! is_string($className)) return '';
-    	//var_dump($className);
+    	if (!is_string($className)) return;
     	
     	$className = explode('\\', $className);
         return end($className);

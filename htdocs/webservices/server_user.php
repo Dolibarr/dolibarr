@@ -38,11 +38,11 @@ $langs->load("main");
 // Enable and test if module web services is enabled
 if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 {
-    $langs->load("admin");
-    dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
-    print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
-    print $langs->trans("ToActivateModule");
-    exit;
+	$langs->load("admin");
+	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
+	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
+	print $langs->trans("ToActivateModule");
+	exit;
 }
 
 // Create the soap Object
@@ -56,70 +56,70 @@ $server->wsdl->schemaTargetNamespace = $ns;
 
 // Define WSDL Authentication object
 $server->wsdl->addComplexType(
-    'authentication',
-    'complexType',
-    'struct',
-    'all',
-    '',
-    array(
-        'dolibarrkey' => array('name'=>'dolibarrkey', 'type'=>'xsd:string'),
-    	'sourceapplication' => array('name'=>'sourceapplication', 'type'=>'xsd:string'),
-    	'login' => array('name'=>'login', 'type'=>'xsd:string'),
-    	'password' => array('name'=>'password', 'type'=>'xsd:string'),
-        'entity' => array('name'=>'entity', 'type'=>'xsd:string'),
-    )
+	'authentication',
+	'complexType',
+	'struct',
+	'all',
+	'',
+	array(
+		'dolibarrkey' => array('name'=>'dolibarrkey', 'type'=>'xsd:string'),
+		'sourceapplication' => array('name'=>'sourceapplication', 'type'=>'xsd:string'),
+		'login' => array('name'=>'login', 'type'=>'xsd:string'),
+		'password' => array('name'=>'password', 'type'=>'xsd:string'),
+		'entity' => array('name'=>'entity', 'type'=>'xsd:string'),
+	)
 );
 
 // Define WSDL Return object
 $server->wsdl->addComplexType(
-    'result',
-    'complexType',
-    'struct',
-    'all',
-    '',
-    array(
-        'result_code' => array('name'=>'result_code', 'type'=>'xsd:string'),
-        'result_label' => array('name'=>'result_label', 'type'=>'xsd:string'),
-    )
+	'result',
+	'complexType',
+	'struct',
+	'all',
+	'',
+	array(
+		'result_code' => array('name'=>'result_code', 'type'=>'xsd:string'),
+		'result_label' => array('name'=>'result_label', 'type'=>'xsd:string'),
+	)
 );
 
 // Define other specific objects
 $server->wsdl->addComplexType(
-    'user',
-    'complexType',
-    'struct',
-    'all',
-    '',
-    array(
-        'element' => array('name'=>'element', 'type'=>'xsd:string'),
-        'id' => array('name'=>'id', 'type'=>'xsd:string'),
-        'lastname' => array('name'=>'lastname', 'type'=>'xsd:string'),
-        'firstname' => array('name'=>'firstname', 'type'=>'xsd:string'),
-        'note' => array('name'=>'note', 'type'=>'xsd:string'),
-        'email' => array('name'=>'email', 'type'=>'xsd:string'),
-        'signature' => array('name'=>'signature', 'type'=>'xsd:string'),
-        'office_phone' => array('name'=>'office_phone', 'type'=>'xsd:string'),
-        'office_fax' => array('name'=>'office_fax', 'type'=>'xsd:string'),
-        'user_mobile' => array('name'=>'user_mobile', 'type'=>'xsd:string'),
-        'admin' => array('name'=>'admin', 'type'=>'xsd:string'),
-        'login' => array('name'=>'login', 'type'=>'xsd:string'),
-        'entity' => array('name'=>'entity', 'type'=>'xsd:string'),
-        'pass_indatabase' => array('name'=>'pass_indatabase', 'type'=>'xsd:string'),
-        'pass_indatabase_crypted' => array('name'=>'pass_indatabase_crypted', 'type'=>'xsd:string'),
-        'datec' => array('name'=>'datec', 'type'=>'xsd:dateTime'),
-        'datem' => array('name'=>'datem', 'type'=>'xsd:dateTime'),
-        'fk_thirdparty' => array('name'=>'fk_thirdparty', 'type'=>'xsd:string'),
-        'fk_contact' => array('name'=>'fk_contact', 'type'=>'xsd:string'),
-        'fk_member' => array('name'=>'fk_member', 'type'=>'xsd:string'),
-        'datelastlogin' => array('name'=>'datelastlogin', 'type'=>'xsd:dateTime'),
-        'datepreviouslogin' => array('name'=>'datepreviouslogin', 'type'=>'xsd:dateTime'),
-        'statut' => array('name'=>'statut', 'type'=>'xsd:string'),
-        'photo' => array('name'=>'photo', 'type'=>'xsd:string'),
-        'lang' => array('name'=>'lang', 'type'=>'xsd:string'),
-        'entrepots' => array('name'=>'entrepots', 'type'=>'xsd:string'),
-        //'rights' => array('name'=>'rights','type'=>'xsd:string'),
-        'canvas' => array('name'=>'canvas', 'type'=>'xsd:string')
-    )
+	'user',
+	'complexType',
+	'struct',
+	'all',
+	'',
+	array(
+		'element' => array('name'=>'element', 'type'=>'xsd:string'),
+		'id' => array('name'=>'id', 'type'=>'xsd:string'),
+		'lastname' => array('name'=>'lastname', 'type'=>'xsd:string'),
+		'firstname' => array('name'=>'firstname', 'type'=>'xsd:string'),
+		'note' => array('name'=>'note', 'type'=>'xsd:string'),
+		'email' => array('name'=>'email', 'type'=>'xsd:string'),
+		'signature' => array('name'=>'signature', 'type'=>'xsd:string'),
+		'office_phone' => array('name'=>'office_phone', 'type'=>'xsd:string'),
+		'office_fax' => array('name'=>'office_fax', 'type'=>'xsd:string'),
+		'user_mobile' => array('name'=>'user_mobile', 'type'=>'xsd:string'),
+		'admin' => array('name'=>'admin', 'type'=>'xsd:string'),
+		'login' => array('name'=>'login', 'type'=>'xsd:string'),
+		'entity' => array('name'=>'entity', 'type'=>'xsd:string'),
+		'pass_indatabase' => array('name'=>'pass_indatabase', 'type'=>'xsd:string'),
+		'pass_indatabase_crypted' => array('name'=>'pass_indatabase_crypted', 'type'=>'xsd:string'),
+		'datec' => array('name'=>'datec', 'type'=>'xsd:dateTime'),
+		'datem' => array('name'=>'datem', 'type'=>'xsd:dateTime'),
+		'fk_thirdparty' => array('name'=>'fk_thirdparty', 'type'=>'xsd:string'),
+		'fk_contact' => array('name'=>'fk_contact', 'type'=>'xsd:string'),
+		'fk_member' => array('name'=>'fk_member', 'type'=>'xsd:string'),
+		'datelastlogin' => array('name'=>'datelastlogin', 'type'=>'xsd:dateTime'),
+		'datepreviouslogin' => array('name'=>'datepreviouslogin', 'type'=>'xsd:dateTime'),
+		'statut' => array('name'=>'statut', 'type'=>'xsd:string'),
+		'photo' => array('name'=>'photo', 'type'=>'xsd:string'),
+		'lang' => array('name'=>'lang', 'type'=>'xsd:string'),
+		'entrepots' => array('name'=>'entrepots', 'type'=>'xsd:string'),
+		//'rights' => array('name'=>'rights','type'=>'xsd:string'),
+		'canvas' => array('name'=>'canvas', 'type'=>'xsd:string')
+	)
 );
 
 // Define other specific objects
@@ -185,7 +185,7 @@ $thirdpartywithuser_fields = array(
 
 $elementtype = 'socpeople';
 
-//Retreive all extrafield for contact
+//Retrieve all extrafield for contact
 // fetch optionals attributes and labels
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($elementtype, true);
@@ -193,9 +193,9 @@ $extrafield_array = null;
 if (is_array($extrafields) && count($extrafields) > 0) {
 	$extrafield_array = array();
 }
-if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 {
-	foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 	{
 		$type = $extrafields->attributes[$elementtype]['type'][$key];
 		if ($type == 'date' || $type == 'datetime') {$type = 'xsd:dateTime'; }
@@ -243,16 +243,16 @@ $styleuse = 'encoded'; // encoded/literal/literal wrapped
 
 // Register WSDL
 $server->register(
-    'getUser',
-    // Entry values
-    array('authentication'=>'tns:authentication', 'id'=>'xsd:string', 'ref'=>'xsd:string', 'ref_ext'=>'xsd:string'),
-    // Exit values
-    array('result'=>'tns:result', 'user'=>'tns:user'),
-    $ns,
-    $ns.'#getUser',
-    $styledoc,
-    $styleuse,
-    'WS to get user'
+	'getUser',
+	// Entry values
+	array('authentication'=>'tns:authentication', 'id'=>'xsd:string', 'ref'=>'xsd:string', 'ref_ext'=>'xsd:string'),
+	// Exit values
+	array('result'=>'tns:result', 'user'=>'tns:user'),
+	$ns,
+	$ns.'#getUser',
+	$styledoc,
+	$styleuse,
+	'WS to get user'
 );
 
 $server->register(
@@ -308,41 +308,41 @@ $server->register(
  */
 function getUser($authentication, $id, $ref = '', $ref_ext = '')
 {
-    global $db, $conf, $langs;
+	global $db, $conf;
 
-    dol_syslog("Function: getUser login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
+	dol_syslog("Function: getUser login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
-    if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
-    // Init and check authentication
-    $objectresp = array();
-    $errorcode = ''; $errorlabel = '';
-    $error = 0;
-    $fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
-    // Check parameters
-    if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
-    {
-        $error++;
-        $errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
-    }
+	// Init and check authentication
+	$objectresp = array();
+	$errorcode = ''; $errorlabel = '';
+	$error = 0;
+	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
+	// Check parameters
+	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
+	{
+		$error++;
+		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
+	}
 
-    if (!$error)
-    {
-        $fuser->getrights();
+	if (!$error)
+	{
+		$fuser->getrights();
 
-        if ($fuser->rights->user->user->lire
-        	|| ($fuser->rights->user->self->creer && $id && $id == $fuser->id)
-        	|| ($fuser->rights->user->self->creer && $ref && $ref == $fuser->login)
-        	|| ($fuser->rights->user->self->creer && $ref_ext && $ref_ext == $fuser->ref_ext))
-        {
-            $user = new User($db);
-            $result = $user->fetch($id, $ref, $ref_ext);
-            if ($result > 0)
-            {
-                // Create
-                $objectresp = array(
-			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
-			        'user'=>array(
+		if ($fuser->rights->user->user->lire
+			|| ($fuser->rights->user->self->creer && $id && $id == $fuser->id)
+			|| ($fuser->rights->user->self->creer && $ref && $ref == $fuser->login)
+			|| ($fuser->rights->user->self->creer && $ref_ext && $ref_ext == $fuser->ref_ext))
+		{
+			$user = new User($db);
+			$result = $user->fetch($id, $ref, $ref_ext);
+			if ($result > 0)
+			{
+				// Create
+				$objectresp = array(
+					'result'=>array('result_code'=>'OK', 'result_label'=>''),
+					'user'=>array(
 						'id' => $user->id,
 						'lastname' => $user->lastname,
 						'firstname' => $user->firstname,
@@ -369,28 +369,26 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
 						'lang' => $user->lang,
 						//'rights' => $user->rights,
 						'canvas' => $user->canvas
-                    )
-                );
-            }
-            else
-            {
-                $error++;
-                $errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
-            }
-        }
-        else
-        {
-            $error++;
-            $errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
-        }
-    }
+					)
+				);
+			}
+			else {
+				$error++;
+				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
+			}
+		}
+		else {
+			$error++;
+			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+		}
+	}
 
-    if ($error)
-    {
-        $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
-    }
+	if ($error)
+	{
+		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+	}
 
-    return $objectresp;
+	return $objectresp;
 }
 
 /**
@@ -401,9 +399,7 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
  */
 function getListOfGroups($authentication)
 {
-	global $db, $conf, $langs;
-
-	$now = dol_now();
+	global $db, $conf;
 
 	dol_syslog("Function: getListOfGroups login=".$authentication['login']);
 
@@ -426,8 +422,7 @@ function getListOfGroups($authentication)
 		{
 			$sql .= " WHERE g.entity IS NOT NULL";
 		}
-		else
-		{
+		else {
 			$sql .= " WHERE g.entity IN (0,".$conf->entity.")";
 		}
 		$sql .= " GROUP BY g.rowid, g.nom, g.entity, g.datec";
@@ -444,8 +439,7 @@ function getListOfGroups($authentication)
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			$error++;
 			$errorcode = $db->lasterrno();
 			$errorlabel = $db->lasterror();
@@ -459,8 +453,7 @@ function getListOfGroups($authentication)
 		'groups'=>$arraygroups
 		);
 	}
-	else
-	{
+	else {
 		$objectresp = array(
 		'result'=>array('result_code' => 'OK', 'result_label' => ''),
 		'groups'=>$arraygroups
@@ -482,7 +475,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 {
 	global $db, $conf, $langs;
 
-	dol_syslog("Function: createUserFromThirdparty login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
+	dol_syslog("Function: createUserFromThirdparty login=".$authentication['login']);
 
 	if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
@@ -492,7 +485,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
-	if ($fuser->societe_id) $socid = $fuser->societe_id;
+	if ($fuser->socid) $socid = $fuser->socid;
 
 	if (!$error && !$thirdpartywithuser)
 	{
@@ -509,7 +502,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 			$thirdparty = new Societe($db);
 
 			// If a contact / company already exists with the email, return the corresponding socid
-			$sql = "SELECT s.rowid as societe_id FROM ".MAIN_DB_PREFIX."societe as s";
+			$sql = "SELECT s.rowid as socid FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON sp.fk_soc = s.rowid";
 			$sql .= " WHERE s.entity=".$conf->entity;
 			$sql .= " AND s.email='".$db->escape($thirdpartywithuser['email'])."'";
@@ -526,8 +519,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 					$error++;
 					$errorcode = 'ALREADY_EXIST'; $errorlabel = 'Object not create : company or contact exists '.$thirdpartywithuser['email'];
 				}
-				else
-				{
+				else {
 					$db->begin();
 					/*
 					 * Company creation
@@ -546,7 +538,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 					$sql = "SELECT rowid";
 					$sql .= " FROM ".MAIN_DB_PREFIX."c_country";
 					$sql .= " WHERE active = 1";
-					$sql .= " AND code='".$thirdparty->country_code."'";
+					$sql .= " AND code='".$db->escape($thirdparty->country_code)."'";
 
 					$resql = $db->query($sql);
 					if ($resql)
@@ -601,13 +593,13 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 
 						$elementtype = 'socpeople';
 
-						//Retreive all extrafield for thirdsparty
+						//Retrieve all extrafield for thirdsparty
 						// fetch optionals attributes and labels
 						$extrafields = new ExtraFields($db);
 						$extrafields->fetch_name_optionals_label($elementtype, true);
-						if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+						if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 						{
-							foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+							foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 							{
 								$key = 'contact_options_'.$key;
 								$key = substr($key, 8); // Remove 'contact_' prefix
@@ -633,14 +625,12 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 								if ($thirdpartywithuser['group_id'] > 0)
 									$edituser->SetInGroup($thirdpartywithuser['group_id'], $conf->entity);
 							}
-							else
-							{
+							else {
 								$error++;
 								$errorcode = 'NOT_CREATE'; $errorlabel = 'Object not create : '.$edituser->error;
 							}
 						}
-						else
-						{
+						else {
 							$error++;
 							$errorcode = 'NOT_CREATE'; $errorlabel = 'Object not create : '.$contact->error;
 						}
@@ -650,23 +640,17 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 							$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>'SUCCESS'), 'id'=>$socid_return);
 							$error = 0;
 						}
-					}
-					else
-					{
+					} else {
 						$error++;
-						$errors = ($thirdparty->error ? array($thirdparty->error) : $thirdparty->errors);
+						$errorcode = join(', ', ($thirdparty->error ? array($thirdparty->error) : $thirdparty->errors));
 					}
 				}
-			}
-			else
-			{
+			} else {
 				// retour creation KO
 				$error++;
 				$errorcode = 'NOT_CREATE'; $errorlabel = 'Object not create';
 			}
-		}
-		else
-		{
+		} else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 		}
@@ -676,7 +660,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 	{
 		$db->rollback();
 		$objectresp = array(
-		'result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel)
+			'result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel)
 		);
 	}
 
@@ -694,9 +678,9 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 function setUserPassword($authentication, $shortuser)
 {
 
-	global $db, $conf, $langs;
+	global $db, $conf;
 
-	dol_syslog("Function: setUserPassword login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
+	dol_syslog("Function: setUserPassword login=".$authentication['login']);
 
 	if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
@@ -706,7 +690,7 @@ function setUserPassword($authentication, $shortuser)
 
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
-	if ($fuser->societe_id) $socid = $fuser->societe_id;
+	if ($fuser->socid) $socid = $fuser->socid;
 
 	if (!$error && !$shortuser)
 	{
@@ -729,23 +713,19 @@ function setUserPassword($authentication, $shortuser)
 				{
 					$objectresp = array(
 						'result'=>array('result_code' => 'OK', 'result_label' => ''),
-						'groups'=>$arraygroups
 					);
 				}
-				else
-				{
+				else {
 					$error++;
 					$errorcode = 'NOT_MODIFIED'; $errorlabel = 'Error when changing password';
 				}
 			}
-			else
-			{
+			else {
 				$error++;
 				$errorcode = 'NOT_FOUND'; $errorlabel = 'User not found';
 			}
 		}
-		else
-		{
+		else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 		}

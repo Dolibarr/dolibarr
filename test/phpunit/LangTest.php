@@ -86,7 +86,11 @@ class LangTest extends PHPUnit\Framework\TestCase
 		print "\n";
 	}
 
-	// Static methods
+	/**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
@@ -95,7 +99,11 @@ class LangTest extends PHPUnit\Framework\TestCase
     	print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
     	global $conf,$user,$langs,$db;
@@ -146,7 +154,7 @@ class LangTest extends PHPUnit\Framework\TestCase
         include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 
 		$filesarray = scandir(DOL_DOCUMENT_ROOT.'/langs');
-		foreach($filesarray as $key => $code)
+		foreach ($filesarray as $key => $code)
 		{
 			if (! preg_match('/^[a-z]+_[A-Z]+$/', $code)) continue;
 
@@ -173,8 +181,49 @@ class LangTest extends PHPUnit\Framework\TestCase
 			$this->assertRegExp('/^[dMy\/\-\.]+$/', $result, 'FormatDateShortJavaInput KO for lang code '.$code);
 
 			unset($tmplangs);
+
+			$filesarray2 = scandir(DOL_DOCUMENT_ROOT.'/langs/'.$code);
+			foreach ($filesarray2 as $key => $file) {
+				if (! preg_match('/\.lang$/', $file)) {
+					continue;
+				}
+
+				print 'Check lang file '.$file."\n";
+				$filecontent=file_get_contents(DOL_DOCUMENT_ROOT.'/langs/'.$code.'/'.$file);
+
+				$result=preg_match('/=--$/m', $filecontent);	// A special % char we don't want. We want the common one.
+				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
+				$this->assertTrue($result == 0, 'Found a translation KEY=-- into file '.$code.'/'.$file.'. We probably want Key=- instead.');
+
+				$result=strpos($filecontent, '％');	// A special % char we don't want. We want the common one.
+				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
+				$this->assertTrue($result === false, 'Found a bad percent char ％ instead of % into file '.$code.'/'.$file);
+			}
 		}
 
         return;
+    }
+
+    /**
+     * testTrans
+     *
+     * @return string
+     */
+    public function testTrans()
+    {
+    	global $conf,$user,$langs,$db;
+    	$conf=$this->savconf;
+    	$user=$this->savuser;
+    	$langs=$this->savlangs;
+    	$db=$this->savdb;
+
+    	$tmplangs=new Translate('', $conf);
+    	$langcode='en_US';
+    	$tmplangs->setDefaultLang($langcode);
+    	$tmplangs->load("main");
+
+    	$result = $tmplangs->trans("FilterOnInto", "<input autofocus onfocus='alert(1337)' <--!");
+    	print __METHOD__." result trans FilterOnInto = ".$result."\n";
+    	$this->assertEquals($result, "Search criteria '<b>&lt;input autofocus onfocus='alert(1337)' &lt;--!</b>' into fields ", 'Result of lang->trans must have original translation string with its original HTML tag, but inserted values must be fully encoded.');
     }
 }

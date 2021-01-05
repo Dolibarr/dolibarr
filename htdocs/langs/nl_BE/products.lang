@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - products
 Reference=Artikelcode
-Movements=Mutaties
 OnSell=Te koop
 OnBuy=Te koop
 NotOnSell=Niet meer beschikbaar
 ProductStatusNotOnSell=Niet meer verkrijgbaar
 ProductStatusOnSellShort=Te koop
 ListOfStockMovements=Voorradenlijst
+CustomCode=Customs / Commodity / HS code
 ProductSellByQuarterHT=Bruto omzetcijfer per trimester
 ServiceSellByQuarterHT=Bruto omzetcijfer per trimester

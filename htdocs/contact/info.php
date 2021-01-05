@@ -34,7 +34,7 @@ $langs->load("companies");
 
 // Security check
 $id = GETPOST("id", 'int');
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 $object = new Contact($db);
@@ -45,9 +45,9 @@ $object = new Contact($db);
  * 	View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
-$title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
 llxHeader('', $title, 'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
 
@@ -60,7 +60,7 @@ if ($id > 0)
 
 	$head = contact_prepare_head($object);
 
-	dol_fiche_head($head, 'info', $title, -1, 'contact');
+	print dol_get_fiche_head($head, 'info', $title, -1, 'contact');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -77,7 +77,7 @@ if ($id > 0)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 llxFooter();
