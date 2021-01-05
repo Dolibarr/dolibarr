@@ -164,7 +164,7 @@ if (empty($conf->mymodule->enabled)) {
 }
 $socid = 0;
 if ($user->socid > 0) {	// Protection if external user
-//$socid = $user->socid;
+	//$socid = $user->socid;
 	accessforbidden();
 }
 //$result = restrictedArea($user, 'mymodule', $id, '');
