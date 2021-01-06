@@ -55,7 +55,7 @@ foreach ($object->fields as $key => $val)
 	print '<td>';
 	if (in_array($val['type'], array('int', 'integer'))) $value = GETPOST($key, 'int');
 	elseif ($val['type'] == 'text' || $val['type'] == 'html') $value = GETPOST($key, 'none');
-	elseif ($val['type'] == 'date') $value = dol_mktime(12, 0, 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'));
+	elseif ($val['type'] == 'date') $value = dol_mktime(0, 0, 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'));
 	elseif ($val['type'] == 'datetime') $value = dol_mktime(GETPOST($key.'hour', 'int'), GETPOST($key.'min', 'int'), 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'));
 	else $value = GETPOST($key, 'alpha');
 	if ($val['noteditable']) print $object->showOutputField($val, $key, $value, '', '', '', 0);
