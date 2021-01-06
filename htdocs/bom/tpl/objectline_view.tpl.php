@@ -82,7 +82,7 @@ print '</td>';
 if ($conf->global->PRODUCT_USE_UNITS)
 {
 	print '<td class="linecoluseunit nowrap left">';
-	$label = $line->getLabelOfUnit('short');
+	$label = $tmpproduct->getLabelOfUnit('short');
 	if ($label !== '') {
 		print $langs->trans($label);
 	}
