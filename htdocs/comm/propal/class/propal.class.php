@@ -602,6 +602,7 @@ class Propal extends CommonObject
 
 			// Clean vat code
 			$vat_src_code = '';
+			$reg = array();
 			if (preg_match('/\((.*)\)/', $txtva, $reg))
 			{
 				$vat_src_code = $reg[1];
@@ -779,7 +780,9 @@ class Propal extends CommonObject
 		$qty = price2num($qty);
 		$pu = price2num($pu);
 		$pu_ht_devise = price2num($pu_ht_devise);
-		$txtva = price2num($txtva);
+		if (!preg_match('/\((.*)\)/', $txtva)) {
+			$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
+		}
 		$txlocaltax1 = price2num($txlocaltax1);
 		$txlocaltax2 = price2num($txlocaltax2);
 		$pa_ht = price2num($pa_ht);

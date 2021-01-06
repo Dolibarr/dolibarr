@@ -155,6 +155,7 @@ var pageactions=0;
 var place="<?php echo $place; ?>";
 var editaction="qty";
 var editnumber="";
+var invoiceid=0;
 
 /*
 var app = this;
@@ -448,17 +449,18 @@ function TakeposOrderNotes() {
 }
 
 function Refresh() {
-	console.log("Refresh");
-	$("#poslines").load("invoice.php?place="+place, function() {
+	console.log("Refresh by reloading place="+place+" invoiceid="+invoiceid);
+	$("#poslines").load("invoice.php?place="+place+"&invoiceid="+invoiceid, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 }
 
 function New() {
 	// If we go here,it means $conf->global->TAKEPOS_BAR_RESTAURANT is not defined
-	console.log("New with place = <?php echo $place; ?>, js place="+place);
-
 	invoiceid = $("#invoiceid").val();
+
+	console.log("New with place = <?php echo $place; ?>, js place="+place+", invoiceid="+invoiceid);
+
 	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getInvoice&id='+invoiceid, function(data) {
 		var r;
 
@@ -777,7 +779,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			</div>
 			<div class="topnav-right">
 				<div class="login_block_other">
-				<input type="text" id="search" name="search" onkeyup="Search2(<?php echo $keyCodeForEnter; ?>);"  placeholder="<?php echo $langs->trans("Search"); ?>" autofocus>
+				<input type="text" id="search" name="search" onkeyup="Search2(<?php echo $keyCodeForEnter; ?>);" placeholder="<?php echo $langs->trans("Search"); ?>" autofocus>
 				<a onclick="ClearSearch();"><span class="fa fa-backspace"></span></a>
 				<a onclick="window.location.href='<?php echo DOL_URL_ROOT; ?>';"><span class="fas fa-home"></span></a>
 				<?php if (empty($conf->dol_use_jmobile)) { ?>

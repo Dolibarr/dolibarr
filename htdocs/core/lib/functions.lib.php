@@ -867,8 +867,9 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 	// List of special chars for filenames in windows are defined on page https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file
 	// Char '>' '<' '|' '$' and ';' are special chars for shells.
 	// Char '/' and '\' are file delimiters.
-	$filesystem_forbidden_chars = array('<', '>', '/', '\\', '?', '*', '|', '"', ':', '°', '$', ';');
-	return dol_string_nospecial($unaccent ?dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
+	// -- car can be used into filename to inject special paramaters like --use-compress-program to make command with file as parameter making remote execution of command
+	$filesystem_forbidden_chars = array('<', '>', '/', '\\', '?', '*', '|', '"', ':', '°', '$', ';', '--');
+	return dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 }
 
 /**
@@ -6626,6 +6627,7 @@ function complete_substitutions_array(&$substitutionarray, $outputlangs, $object
 		$substitfiles = dol_dir_list($dir, 'files', 0, 'functions_');
 		foreach ($substitfiles as $substitfile)
 		{
+			$reg = array();
 			if (preg_match('/functions_(.*)\.lib\.php/i', $substitfile['name'], $reg))
 			{
 				$module = $reg[1];
@@ -6635,7 +6637,9 @@ function complete_substitutions_array(&$substitutionarray, $outputlangs, $object
 				require_once $dir.$substitfile['name'];
 				// Call the user's function, and only if it is defined
 				$function_name = $module."_".$callfunc;
-				if (function_exists($function_name)) $function_name($substitutionarray, $outputlangs, $object, $parameters);
+				if (function_exists($function_name)) {
+					$function_name($substitutionarray, $outputlangs, $object, $parameters);
+				}
 			}
 		}
 	}

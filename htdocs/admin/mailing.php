@@ -125,7 +125,7 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MailingDelay").'</td><td>';
-print '<input size="32" type="text" name="MAILING_DELAY" value="'.$conf->global->MAILING_DELAY.'">';
+print '<input class="width75" type="text" name="MAILING_DELAY" value="'.$conf->global->MAILING_DELAY.'">';
 print '</td></tr>';
 
 
