@@ -900,9 +900,10 @@ class Societe extends CommonObject
 	 * Create a contact/address from thirdparty
 	 *
 	 * @param 	User	$user		Object user
+	 * @param 	array	$tags		Array of tag to affect to contact
 	 * @return 	int					<0 if KO, >0 if OK
 	 */
-	public function create_individual(User $user)
+	public function create_individual(User $user, $tags=array())
 	{
 		// phpcs:enable
 		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -923,14 +924,23 @@ class Societe extends CommonObject
 		$contact->town              = $this->town;
 		$contact->phone_pro         = $this->phone;
 
-		$result = $contact->create($user);
-		if ($result < 0) {
+		$contactId = $contact->create($user);
+		if ($contactId < 0) {
 			$this->error = $contact->error;
 			$this->errors = $contact->errors;
 			dol_syslog(get_class($this)."::create_individual ERROR:".$this->error, LOG_ERR);
+		} elseif (is_array($tags) && !empty($tags)) {
+			$result = $contact->setCategories($tags);
+			if ($result < 0)
+			{
+				$this->error = $contact->error;
+				$this->errors = array_merge($this->errors, $contact->errors);
+				dol_syslog(get_class($this)."::create_individual Affect Tag ERROR:".$this->error, LOG_ERR);
+				$contactId = $result;
+			}
 		}
 
-		return $result;
+		return $contactId;
 	}
 
 	/**
