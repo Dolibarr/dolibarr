@@ -58,11 +58,15 @@ if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'banque', $fieldvalue, 'bank_account', '', '', $fieldtype);
 if (!$user->rights->banque->lire && !$user->rights->banque->consolidate) accessforbidden();
 
+$hookmanager->initHooks(array('bankline'));
+
 
 /*
  * Actions
  */
-
+$parameters = array('socid' => $socid);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 if ($cancel)
 {
 	if ($backtopage)
