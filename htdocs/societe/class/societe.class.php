@@ -3699,6 +3699,7 @@ class Societe extends CommonObject
 				if ($result < 0)
 				{
 					setEventMessages($this->error, $this->errors, 'errors');
+					$this->db->rollback();
 					return -1;
 				}
 			}
