@@ -194,10 +194,10 @@ $coldisplay++;
 		$unit_type = false;
 		// limit unit select to unit type
 		if(!empty($line->fk_unit) && empty($conf->global->MAIN_EDIT_LINE_ALLOW_ALL_UNIT_TYPE)){
-			if(!class_exists('CUnits')) include_once DOL_DOCUMENT_ROOT . '/core/class/cunits.class.php';
+			if (!class_exists('CUnits')) include_once DOL_DOCUMENT_ROOT . '/core/class/cunits.class.php';
 			$cUnit = new CUnits($line->db);
-			if($cUnit->fetch($line->fk_unit) > 0){
-				if(!empty($cUnit->unit_type)){
+			if ($cUnit->fetch($line->fk_unit) > 0){
+				if (!empty($cUnit->unit_type)){
 					$unit_type = $cUnit->unit_type;
 				}
 			}

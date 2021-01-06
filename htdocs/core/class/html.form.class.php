@@ -3902,7 +3902,7 @@ class Form
 
 		$sql = 'SELECT rowid, label, code from '.MAIN_DB_PREFIX.'c_units';
 		$sql .= ' WHERE active > 0';
-		if(!empty($unit_type)){
+		if (!empty($unit_type)){
 			$sql .= ' AND unit_type = "'.$this->db->escape($unit_type).'" ';
 		}
 
