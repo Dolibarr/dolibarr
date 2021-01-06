@@ -87,6 +87,7 @@ if (empty($search_date_start) && !GETPOSTISSET('formfilteraction'))
 	} else {
 		$month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
 		$year_start = dol_print_date(dol_now(), '%Y');
+		if (dol_print_date(dol_now(), '%m') < $month_start) $year_start--; // If current month is lower that starting fiscal month, we start last year
 		$year_end = $year_start + 1;
 		$month_end = $month_start - 1;
 		if ($month_end < 1)
