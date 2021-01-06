@@ -350,6 +350,7 @@ class BOM extends CommonObject
 		$this->lines = array();
 
 		$result = $this->fetchLinesCommon();
+		$this->calculateCosts();
 		return $result;
 	}
 
