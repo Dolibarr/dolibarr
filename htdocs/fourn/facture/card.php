@@ -1107,7 +1107,7 @@ if (empty($reshook))
 
         $tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 
-		if (GETPOST('price_ht') != '')
+		if (GETPOST('price_ht') != '' || GETPOST('multicurrency_subprice') != '')
 		{
 			$up = price2num(GETPOST('price_ht'));
 			$price_base_type = 'HT';
