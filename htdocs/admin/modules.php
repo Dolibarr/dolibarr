@@ -495,13 +495,19 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	dol_set_focus('#search_keyword');
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
-	if ($optioncss != '') {
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	if (isset($optioncss) && $optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	}
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
+	if (isset($sortfield) && $sortfield != '') {
+	    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	}
+	if (isset($sortorder) && $sortorder != '') {
+	    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	}
+	if (isset($page) && $page != '') {
+	    print '<input type="hidden" name="page" value="'.$page.'">';
+	}
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 	print dol_get_fiche_head($head, 'modules', '', -1);
@@ -999,7 +1005,7 @@ if ($mode == 'marketplace') {
 			<div id="listing-content">
 				<table summary="list_of_modules" id="list_of_modules" class="productlist centpercent">
 					<tbody id="listOfModules">
-						<?php echo $dolistore->get_products($categorie); ?>
+						<?php echo $dolistore->get_products(!empty($categorie) ? $categorie: ''); ?>
 					</tbody>
 				</table>
 			</div>
@@ -1080,28 +1086,36 @@ if ($mode == 'deploy') {
 			$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
 			$maxphp = @ini_get('upload_max_filesize'); // In unknown
 			if (preg_match('/k$/i', $maxphp)) {
+			    $maxphp = preg_replace('/k$/i', '', $maxphp);
 				$maxphp = $maxphp * 1;
 			}
 			if (preg_match('/m$/i', $maxphp)) {
+			    $maxphp = preg_replace('/m$/i', '', $maxphp);
 				$maxphp = $maxphp * 1024;
 			}
 			if (preg_match('/g$/i', $maxphp)) {
+			    $maxphp = preg_replace('/g$/i', '', $maxphp);
 				$maxphp = $maxphp * 1024 * 1024;
 			}
 			if (preg_match('/t$/i', $maxphp)) {
+			    $maxphp = preg_replace('/t$/i', '', $maxphp);
 				$maxphp = $maxphp * 1024 * 1024 * 1024;
 			}
 			$maxphp2 = @ini_get('post_max_size'); // In unknown
 			if (preg_match('/k$/i', $maxphp2)) {
+			    $maxphp2 = preg_replace('/k$/i', '', $maxphp2);
 				$maxphp2 = $maxphp2 * 1;
 			}
 			if (preg_match('/m$/i', $maxphp2)) {
+			    $maxphp2 = preg_replace('/m$/i', '', $maxphp2);
 				$maxphp2 = $maxphp2 * 1024;
 			}
 			if (preg_match('/g$/i', $maxphp2)) {
+			    $maxphp2 = preg_replace('/g$/i', '', $maxphp2);
 				$maxphp2 = $maxphp2 * 1024 * 1024;
 			}
 			if (preg_match('/t$/i', $maxphp2)) {
+			    $maxphp2 = preg_replace('/t$/i', '', $maxphp2);
 				$maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
 			}
 			// Now $max and $maxphp and $maxphp2 are in Kb

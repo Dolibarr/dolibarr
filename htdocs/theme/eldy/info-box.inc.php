@@ -25,7 +25,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 .info-box.info-box-sm {
     min-height: 80px;
     margin-bottom: 10px;
-	/* background: #fff; */
+    /* background: #fff; */
 }
 .opened-dash-board-wrap .info-box.info-box-sm {
     border-radius: 0 0 0 20px;

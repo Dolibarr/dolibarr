@@ -111,7 +111,8 @@ class InfoBox
 				$sql .= " AND b.fk_user = 0";
 			}
 			$sql .= " ORDER BY b.box_order";
-		} else // available
+		}
+		else // available
 		{
 			$sql = "SELECT d.rowid as box_id, d.file, d.note, d.tms";
 			$sql .= " FROM ".MAIN_DB_PREFIX."boxes_def as d";
@@ -150,7 +151,7 @@ class InfoBox
 						// box properties
 						$box->rowid = (empty($obj->rowid) ? '' : $obj->rowid);
 						$box->id = (empty($obj->box_id) ? '' : $obj->box_id);
-						$box->position = ($obj->position == '' ? '' : $obj->position); // '0' must stay '0'
+						$box->position = ((isset($obj->position) && $obj->position == '') ? '' : (isset($obj->position) ? $obj->position : '')); // '0' must stay '0'
 						$box->box_order	= (empty($obj->box_order) ? '' : $obj->box_order);
 						$box->fk_user = (empty($obj->fk_user) ? 0 : $obj->fk_user);
 						$box->sourcefile = $relsourcefile;

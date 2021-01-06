@@ -148,7 +148,7 @@ if ($object->client)
 	if ($conf->contrat->enabled && $user->rights->contrat->lire) $elementTypeArray['contract'] = $langs->transnoentitiesnoconv('Contracts');
 }
 
-if ($conf->ficheinter->enabled && $user->rights->ficheinter->lire) $elementTypeArray['fichinter'] = $langs->transnoentitiesnoconv('Interventions');
+if (!empty($conf->ficheinter->enabled) && !empty($user->rights->ficheinter->lire)) $elementTypeArray['fichinter'] = $langs->transnoentitiesnoconv('Interventions');
 
 if ($object->fournisseur)
 {
@@ -606,9 +606,10 @@ if ($sql_select)
 		print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
 	}
 	$db->free($resql);
-} elseif (empty($type_element) || $type_element == -1)
+}
+elseif (empty($type_element) || $type_element == -1)
 {
-	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
+	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', (!empty($num) ? $num : 0), '', '');
 
 	print '<table class="liste centpercent">'."\n";
 	// Titles with sort buttons

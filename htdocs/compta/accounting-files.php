@@ -549,16 +549,17 @@ if (!empty($conf->multicompany->enabled) && is_object($mc))
 print '<br>';
 
 $listofchoices = array(
-	'selectinvoices'=>array('label'=>'Invoices', 'lang'=>'bills'),
-	'selectsupplierinvoices'=>array('label'=>'BillsSuppliers', 'lang'=>'bills'),
-	'selectexpensereports'=>array('label'=>'ExpenseReports', 'lang'=>'trips'),
-	'selectdonations'=>array('label'=>'Donations', 'lang'=>'donation'),
-	'selectpaymentsofsalaries'=>array('label'=>'SalariesPayments', 'lang'=>'salaries'),
-	'selectsocialcontributions'=>array('label'=>'SocialContributions'),
-	'selectvariouspayment'=>array('label'=>'VariousPayment'),
-	'selectloanspayment'=>array('label'=>'PaymentLoan'),
+	'selectinvoices'=>array('label'=>'Invoices', 'lang'=>'bills', 'enabled' => !empty($conf->facture->enabled)),
+	'selectsupplierinvoices'=>array('label'=>'BillsSuppliers', 'lang'=>'bills', 'enabled' => !empty($conf->supplier_invoice->enabled)),
+	'selectexpensereports'=>array('label'=>'ExpenseReports', 'lang'=>'trips', 'enabled' => !empty($conf->expensereport->enabled)),
+	'selectdonations'=>array('label'=>'Donations', 'lang'=>'donation', 'enabled' => !empty($conf->don->enabled)),
+	'selectsocialcontributions'=>array('label'=>'SocialContributions', 'enabled' => !empty($conf->tax->enabled)),
+	'selectpaymentsofsalaries'=>array('label'=>'SalariesPayments', 'lang'=>'salaries', 'enabled' => !empty($conf->salaries->enabled)),
+	'selectvariouspayment'=>array('label'=>'VariousPayment', 'enabled' => !empty($conf->banque->enabled)),
+	'selectloanspayment'=>array('label'=>'PaymentLoan', 'enabled' => !empty($conf->loan->enabled)),
 );
 foreach ($listofchoices as $choice => $val) {
+	if (empty($val['enabled'])) continue;		// list not qualified
 	$checked = (((!GETPOSTISSET('search') && $action != 'searchfiles') || GETPOST($choice)) ? ' checked="checked"' : '');
 	print '<div class="paddingleft inline-block marginrightonly"><input type="checkbox" id="'.$choice.'" name="'.$choice.'" value="1"'.$checked.'> <label for="'.$choice.'">'.$langs->trans($val['label']).'</label></div>';
 }
