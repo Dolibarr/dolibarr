@@ -109,13 +109,14 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 				$shownb = GETPOST($param_shownb, 'alpha');
 				$showtot = GETPOST($param_showtot, 'alpha');
 			} else {
-				$tmparray = json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode], true);
-				$endyear = $tmparray['year'];
-				$shownb = $tmparray['shownb'];
-				$showtot = $tmparray['showtot'];
+			    $tmparray = (!empty($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode]) ? json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode], true) : array());
+			    $endyear = (!empty($tmparray['year']) ? $tmparray['year'] : '');
+			    $shownb = (!empty($tmparray['shownb']) ? $tmparray['shownb'] : '');
+			    $showtot = (!empty($tmparray['showtot']) ? $tmparray['showtot'] : '');
 			}
 			if (empty($shownb) && empty($showtot)) { $shownb = 1; $showtot = 1; }
 			$nowarray = dol_getdate(dol_now(), true);
+			if (empty($year)) $year = $nowarray['year'];
 			if (empty($endyear)) $endyear = $nowarray['year'];
 			$startyear = $endyear - 1;
 			$mode = 'supplier';
