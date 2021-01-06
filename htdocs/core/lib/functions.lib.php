@@ -602,6 +602,7 @@ function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $opti
 				$out = trim($out);
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
+				$out = str_replace('"', "''", trim($out));
 				if (preg_match('/"/', $out)) $out = '';
 				elseif (preg_match('/\.\.\//', $out)) $out = '';
 				$out = dol_string_nohtmltag($out);
