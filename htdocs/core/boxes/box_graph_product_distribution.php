@@ -95,11 +95,11 @@ class box_graph_product_distribution extends ModeleBoxes
 			$showpropalnb = GETPOST($param_showpropalnb, 'alpha');
 			$showordernb = GETPOST($param_showordernb, 'alpha');
 		} else {
-			$tmparray = json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode], true);
-			$year = $tmparray['year'];
-			$showinvoicenb = $tmparray['showinvoicenb'];
-			$showpropalnb = $tmparray['showpropalnb'];
-			$showordernb = $tmparray['showordernb'];
+		    $tmparray = (!empty($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode]) ? json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode], true) : array());
+		    $year = (!empty($tmparray['year']) ? $tmparray['year'] : '');
+		    $showinvoicenb = (!empty($tmparray['showinvoicenb']) ? $tmparray['showinvoicenb'] : '');
+		    $showpropalnb = (!empty($tmparray['showpropalnb']) ? $tmparray['showpropalnb'] : '');
+		    $showordernb = (!empty($tmparray['showordernb']) ? $tmparray['showordernb'] : '');
 		}
 		if (empty($showinvoicenb) && empty($showpropalnb) && empty($showordernb)) { $showpropalnb = 1; $showinvoicenb = 1; $showordernb = 1; }
 		if (empty($conf->facture->enabled) || empty($user->rights->facture->lire)) $showinvoicenb = 0;

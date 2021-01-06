@@ -290,6 +290,11 @@ if ($action == 'create') {
 
 	// Id
 	$parent_rowid = GETPOST('menuId', 'int');
+	$parent_mainmenu = '';
+	$parent_leftmenu = '';
+	$parent_langs = '';
+	$parent_level = '';
+
 	if (GETPOST('menuId', 'int')) {
 		$sql = "SELECT m.rowid, m.mainmenu, m.leftmenu, m.level, m.langs FROM ".MAIN_DB_PREFIX."menu as m WHERE m.rowid = ".GETPOST('menuId', 'int');
 		$res = $db->query($sql);
@@ -328,8 +333,8 @@ if ($action == 'create') {
 	} else {
 		print '<select name="type" class="flat" id="topleft">';
 		print '<option value="">&nbsp;</option>';
-		print '<option value="top"'.($_POST["type"] && $_POST["type"] == 'top' ? ' selected' : '').'>'.$langs->trans('Top').'</option>';
-		print '<option value="left"'.($_POST["type"] && $_POST["type"] == 'left' ? ' selected' : '').'>'.$langs->trans('Left').'</option>';
+		print '<option value="top"'.(!empty($_POST["type"]) && $_POST["type"] == 'top' ? ' selected' : '').'>'.$langs->trans('Top').'</option>';
+		print '<option value="left"'.(!empty($_POST["type"]) && $_POST["type"] == 'left' ? ' selected' : '').'>'.$langs->trans('Left').'</option>';
 		print '</select>';
 	}
 	print '</td><td>'.$langs->trans('DetailType').'</td></tr>';
@@ -370,8 +375,8 @@ if ($action == 'create') {
 
 	// Target
 	print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target">';
-	print '<option value=""'.($menu->target == "" ? ' selected' : '').'>&nbsp;</option>';
-	print '<option value="_blank"'.($menu->target == "_blank" ? ' selected' : '').'>'.$langs->trans('_blank').'</option>';
+	print '<option value=""'.(isset($menu->target) && $menu->target == "" ? ' selected' : '').'>&nbsp;</option>';
+	print '<option value="_blank"'.(isset($menu->target) && $menu->target == "_blank" ? ' selected' : '').'>'.$langs->trans('_blank').'</option>';
 	print '</select></td></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
 
 	// Enabled

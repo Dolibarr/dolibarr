@@ -601,7 +601,7 @@ abstract class CommonObject
 		if (empty($lastname))  $lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (isset($this->nom) ? $this->nom : (isset($this->societe) ? $this->societe : (isset($this->company) ? $this->company : '')))));
 
 		$ret = '';
-		if ($option && $this->civility_code)
+		if (!empty($option) && !empty($this->civility_code))
 		{
 			if ($langs->transnoentitiesnoconv("Civility".$this->civility_code) != "Civility".$this->civility_code) $ret .= $langs->transnoentitiesnoconv("Civility".$this->civility_code).' ';
 			else $ret .= $this->civility_code.' ';
@@ -720,7 +720,7 @@ abstract class CommonObject
 		$out = '';
 
 		$outdone = 0;
-		$coords = $this->getFullAddress(1, ', ', $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT);
+		$coords = $this->getFullAddress(1, ', ', (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) ? $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT : 0));
 		if ($coords)
 		{
 			if (!empty($conf->use_javascript_ajax))
@@ -1407,7 +1407,7 @@ abstract class CommonObject
 					} elseif (strpos($obj->element, 'supplier') !== false && $obj->element != 'supplier_proposal') {
 						$modulename = 'fournisseur';
 					}
-					if ($conf->{$modulename}->enabled) {
+					if (!empty($conf->{$modulename}->enabled)) {
 						$libelle_element = $langs->trans('ContactDefault_'.$obj->element);
 						$transkey = "TypeContact_".$obj->element."_".$source."_".$obj->code;
 						$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->libelle);
@@ -6846,7 +6846,7 @@ abstract class CommonObject
 									$value = $getposttemp;
 								}
 							} else {
-								$value = $this->array_options["options_".$key]; // No GET, no POST, no default value, so we take value of object.
+							    $value = (!empty($this->array_options["options_".$key]) ? $this->array_options["options_".$key] : ''); // No GET, no POST, no default value, so we take value of object.
 							}
 							//var_dump($keyprefix.' - '.$key.' - '.$keysuffix.' - '.$keyprefix.'options_'.$key.$keysuffix.' - '.$this->array_options["options_".$key.$keysuffix].' - '.$getposttemp.' - '.$value);
 							break;

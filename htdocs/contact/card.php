@@ -1382,7 +1382,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		if (!empty($object->socid)) {
 			print '<tr><td class="titlefield">'.$langs->trans("ContactByDefaultFor").'</td>';
 			print '<td colspan="3">';
-			print $formcompany->showRoles("roles", $object, 'view');
+			print $formcompany->showRoles("roles", $object, 'view', $object->roles);
 			print '</td></tr>';
 		}
 
