@@ -381,7 +381,7 @@ class pdf_rouget extends ModelePdfExpedition
 					{
 						$pdf->writeHTMLCell(60, 4, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("TrackingNumber")." : ".$object->tracking_number, 0, 1, false, true, 'L');
 						$tab_top_alt = $pdf->GetY();
-						
+
 						$object->getUrlTrackingStatus($object->tracking_number);
 						if (!empty($object->tracking_url))
 						{
