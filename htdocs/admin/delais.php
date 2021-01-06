@@ -179,10 +179,10 @@ if ($action == 'update')
             }
         }
     }
-    
+
     dolibarr_set_const($db, "MAIN_DISABLE_METEO", $_POST["MAIN_DISABLE_METEO"], 'chaine', 0, '', $conf->entity);
     dolibarr_set_const($db, "MAIN_USE_METEO_WITH_PERCENTAGE", GETPOST("MAIN_USE_METEO_WITH_PERCENTAGE"), 'chaine', 0, '', $conf->entity);
-    
+
     // For update value with percentage
     $plus = '';
     if (!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $plus = '_PERCENTAGE';
@@ -212,10 +212,10 @@ if ($action == 'edit')
     print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" name="form_index">';
     print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="update">';
-    
+
     print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
-    
+
     foreach ($modules as $module => $delays)
     {
         if (!empty($conf->$module->enabled))
@@ -230,29 +230,29 @@ if ($action == 'edit')
             }
         }
     }
-    
+
     print '</table>';
-    
+
     print '<br>';
-    
+
     // Show if meteo is enabled
     print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
-    
+
     print '<tr class="oddeven">';
     print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td class="center">';
     print $form->selectarray('MAIN_DISABLE_METEO', $labelmeteo, (empty($conf->global->MAIN_DISABLE_METEO) ? 0 : $conf->global->MAIN_DISABLE_METEO));
     print '</td></tr>';
-    
+
     print '</table>';
 } else {
     /*
      * Show parameters
      */
-    
+
     print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
-    
+
     foreach ($modules as $module => $delays)
     {
         if (!empty($conf->$module->enabled))
@@ -267,20 +267,20 @@ if ($action == 'edit')
             }
         }
     }
-    
+
     print '</table>';
-    
+
     print '<br>';
-    
+
     // Show if meteo is enabled
     print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
-    
+
     print '<tr class="oddeven">';
     print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td class="center">';
     print $labelmeteo[$conf->global->MAIN_DISABLE_METEO];
     print '</td></tr>';
-    
+
     print '</table>';
 }
 
@@ -290,7 +290,7 @@ print '<br>';
 if ($conf->global->MAIN_DISABLE_METEO != 1) {
     // Show logo for weather
     print '<span class="opacitymedium">'.$langs->trans("DescWeather").'</span> ';
-    
+
     if ($action == 'edit') {
         $str_mode_std = $langs->trans('MeteoStdModEnabled').' : '.$langs->trans('MeteoUseMod', $langs->transnoentitiesnoconv('MeteoPercentageMod'));
         $str_mode_percentage = $langs->trans('MeteoPercentageModEnabled').' : '.$langs->trans('MeteoUseMod', $langs->transnoentitiesnoconv('MeteoStdMod'));
@@ -298,14 +298,14 @@ if ($conf->global->MAIN_DISABLE_METEO != 1) {
         else $str_mode_enabled = $str_mode_percentage;
         print '<a href="#" onclick="return false;" id="change_mode">'.$str_mode_enabled.'</a>';
         print '<input type="hidden" id="MAIN_USE_METEO_WITH_PERCENTAGE" name="MAIN_USE_METEO_WITH_PERCENTAGE" value="'.$conf->global->MAIN_USE_METEO_WITH_PERCENTAGE.'" />';
-        
+
         print '<br><br>';
     } else {
         if (empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) print $langs->trans('MeteoStdModEnabled');
         else print $langs->trans('MeteoPercentageModEnabled');
         print '<br><br>';
     }
-    
+
     $offset = 0;
     $cursor = 10; // By default
     //if (! empty($conf->global->MAIN_METEO_OFFSET)) $offset=$conf->global->MAIN_METEO_OFFSET;
@@ -315,11 +315,11 @@ if ($conf->global->MAIN_DISABLE_METEO != 1) {
     $level2 = $offset + 2 * $cursor; if (!empty($conf->global->MAIN_METEO_LEVEL2)) $level2 = $conf->global->MAIN_METEO_LEVEL2;
     $level3 = $offset + 3 * $cursor; if (!empty($conf->global->MAIN_METEO_LEVEL3)) $level3 = $conf->global->MAIN_METEO_LEVEL3;
     $text = ''; $options = 'class="valignmiddle" height="60px"';
-    
-    
+
+
     if ($action == 'edit') {
         print '<div id="standard" '.(empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? '' : 'style="display:none;"').'>';
-        
+
         print '<div>';
         print '<div class="inline-block" style="padding-right: 20px">';
         print img_weather($text, 0, $options);
@@ -335,11 +335,11 @@ if ($conf->global->MAIN_DISABLE_METEO != 1) {
         print ' &lt;= <input type="text" size="2" name="MAIN_METEO_LEVEL3" value="'.$level3.'"/></td>';
         print '</div>';
         print '</div>';
-        
+
         print '</div>';
-        
+
         print '<div id="percentage" '.(empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? 'style="display:none;"' : '').'>';
-        
+
         print '<div>';
         print '<div class="inline-block" style="padding-right: 20px">';
         print img_weather($text, 0, $options);
@@ -355,9 +355,9 @@ if ($conf->global->MAIN_DISABLE_METEO != 1) {
         print ' &lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL3" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL3.'"/>&nbsp;%</td>';
         print '</div>';
         print '</div>';
-        
+
         print '</div>';
-        
+
         ?>
 
 		<script type="text/javascript">
