@@ -6845,6 +6845,7 @@ abstract class CommonObject
 							break;
 					}
 
+					// Output value of the current field
 					if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate')
 					{
 						$extrafields_collapse_num = '';

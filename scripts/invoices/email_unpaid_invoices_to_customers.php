@@ -153,7 +153,7 @@ if ($resql) {
 				if ($targettype == 'contacts') {
 					$oldcid = $obj->cid;
 				}
-				$oldlang = $obj->lang;
+				$oldlang = $obj->default_lang;
 				$oldtarget = (empty($obj->cfirstname) && empty($obj->clastname)) ? $obj->name : ($obj->clastname." ".$obj->cfirstname);
 				$message = '';
 				$total = 0;
