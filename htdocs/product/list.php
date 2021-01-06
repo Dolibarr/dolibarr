@@ -469,7 +469,7 @@ if ($resql)
     foreach ($searchCategoryProductList as $searchCategoryProduct) {
         $paramsCat .= "&search_category_product_list[]=".urlencode($searchCategoryProduct);
     }
-    llxHeader('', $title, $helpurl, '',0,0,"","",$paramsCat);
+    llxHeader('', $title, $helpurl, '', 0, 0, "", "", $paramsCat);
 
 
 	// Displays product removal confirmation
