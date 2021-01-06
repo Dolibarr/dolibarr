@@ -865,7 +865,7 @@ class Product extends CommonObject
             $this->surface = $this->length * $this->width;
             $this->surface_units = measuring_units_squared($this->length_units);
         }
-        if (empty($this->volume) && !empty($this->surface_units) && !empty($this->height) && $this->length_units == $this->height_units) {
+        if (empty($this->volume) && !empty($this->surface) && !empty($this->height) && $this->length_units == $this->height_units) {
             $this->volume = $this->surface * $this->height;
             $this->volume_units = measuring_units_cubed($this->height_units);
         }
@@ -934,6 +934,7 @@ class Product extends CommonObject
             if ($this->hasbatch() && !$this->oldcopy->hasbatch()) {
                 //$valueforundefinedlot = 'Undefined';  // In previous version, 39 and lower
                 $valueforundefinedlot = '000000';
+				if (!empty($conf->global->STOCK_DEFAULT_BATCH)) $valueforundefinedlot = $conf->global->STOCK_DEFAULT_BATCH;
 
                 dol_syslog("Flag batch of product id=".$this->id." is set to ON, so we will create missing records into product_batch");
 
@@ -1240,6 +1241,16 @@ class Product extends CommonObject
                 }
             }
 
+            // Remove extrafields
+            if (!$error)
+            {
+            	$result = $this->deleteExtraFields();
+            	if ($result < 0) {
+            		$error++;
+            		dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
+            	}
+            }
+
             // Delete product
             if (!$error) {
                 $sqlz = "DELETE FROM ".MAIN_DB_PREFIX."product";
@@ -1264,16 +1275,6 @@ class Product extends CommonObject
                             $error++;
                         }
                     }
-                }
-            }
-
-            // Remove extrafields
-            if (!$error)
-            {
-                $result = $this->deleteExtraFields();
-                if ($result < 0) {
-                    $error++;
-                    dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
                 }
             }
 

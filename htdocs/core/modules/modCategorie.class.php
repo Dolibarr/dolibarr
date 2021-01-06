@@ -374,7 +374,7 @@ class modCategorie extends DolibarrModules
             'ca.label'=>"Label*", 'ca.type'=>"Type*", 'ca.description'=>"Description",
             'ca.fk_parent' => 'Parent'
         );
-		$this->import_regex_array[$r] = array('ca.type'=>'^[0|1|2|3]');
+		$this->import_regex_array[$r] = array('ca.type'=>'^(0|1|2|3|4|5|6|7|8|9|10|11)$');
         $this->import_convertvalue_array[$r] = array(
             'ca.fk_parent' => array(
                 'rule'          => 'fetchidfromcodeandlabel',
