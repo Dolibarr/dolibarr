@@ -2071,6 +2071,47 @@ class Product extends CommonObject
         return $this->update($this->id, $user);
     }
 
+	/**
+	 * Computes $this->price and $this->price_ttc using the expression designated by $this->fk_price_expression.
+	 * If alsoUpdate is true, the computed price will be saved into the database.
+	 *
+	 * @param false $alsoUpdate  Whether to save the price into db when it is different from the existing db price
+	 */
+	public function computePriceFromExpression($alsoUpdate = false)
+	{
+		global $user, $conf;
+		if (!empty($conf->dynamicprices->enabled) && !empty($this->fk_price_expression)) {
+			include_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
+			$priceparser = new PriceParser($this->db);
+			$price_result = $priceparser->parseProduct($this);
+			if ($price_result >= 0) {
+				$this->price = $price_result;
+				// Calculate the VAT
+				$this->price_ttc = price2num($this->price) * (1 + ($this->tva_tx / 100));
+				$this->price_ttc = price2num($this->price_ttc, 'MU');
+				// save computed price if different from stored price
+				if ($alsoUpdate) {
+					// check if the stored price is different
+					$sql = 'SELECT price, price_ttc FROM ' . MAIN_DB_PREFIX . $this->table_element . ' WHERE rowid = ' . $this->id;
+					if ($resql = $this->db->query($sql)) {
+						$obj = $this->db->fetch_object($resql);
+						if ($obj && $obj->price != $this->price) {
+							$this->updatePrice($this->price, $this->price_base_type, $user, $this->tva_tx, $this->price_min);
+						}
+					}
+				}
+			}
+		}
+	}
+	/**
+	 * If the dynamic price module is enabled, this method recomputes the price using the selected expression and
+	 * saves the new selling price of the product into the database.
+	 */
+	public function updatePriceFromExpression()
+	{
+		$this->computePriceFromExpression(true);
+	}
+
     /**
      *  Load a product in memory from database
      *
@@ -2409,17 +2450,9 @@ class Product extends CommonObject
                     }
                 }
 
-                if (!empty($conf->dynamicprices->enabled) && !empty($this->fk_price_expression) && empty($ignore_expression)) {
-                       include_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
-                    $priceparser = new PriceParser($this->db);
-                       $price_result = $priceparser->parseProduct($this);
-                    if ($price_result >= 0) {
-                        $this->price = $price_result;
-                        // Calculate the VAT
-                        $this->price_ttc = price2num($this->price) * (1 + ($this->tva_tx / 100));
-                        $this->price_ttc = price2num($this->price_ttc, 'MU');
-                    }
-                }
+				if (!empty($conf->dynamicprices->enabled) && !empty($this->fk_price_expression) && empty($ignore_expression)) {
+					$this->computePriceFromExpression(!empty($conf->global->DYNAMIC_PRICE_UPDATE_ON_FETCH));
+				}
 
                 // We should not load stock during the fetch. If someone need stock of product, he must call load_stock after fetching product.
                 // Instead we just init the stock_warehouse array

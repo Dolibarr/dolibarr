@@ -291,6 +291,20 @@ class PriceExpression
         //     }
         // }
 
+		// Force re-computation of all prices that use this expression
+		$sql = 'SELECT rowid FROM ' . MAIN_DB_PREFIX . 'product WHERE fk_price_expression = ' . $this->id;
+		$resql = $this->db->query($sql);
+		$product = new Product($this->db);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				if ($obj->rowid) {
+					// Fetching the product and recompute its price.
+					if ($product->fetch($obj->rowid) > 0)
+						$product->updatePriceFromExpression();
+				}
+			}
+		}
+
         // Commit or rollback
         if ($error)
         {

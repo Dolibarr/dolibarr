@@ -378,6 +378,7 @@ if (empty($reshook))
 			$action = '';
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			$db->commit();
+			$object->updatePriceFromExpression();
 		} else {
 			$action = 'edit_price';
 			$db->rollback();
