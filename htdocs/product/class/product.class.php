@@ -2077,6 +2077,7 @@ class Product extends CommonObject
 	 * If alsoUpdate is true, the computed price will be saved into the database.
 	 *
 	 * @param false $alsoUpdate  Whether to save the price into db when it is different from the existing db price
+	 * @return void
 	 */
 	public function computePriceFromExpression($alsoUpdate = false)
 	{
@@ -2107,6 +2108,7 @@ class Product extends CommonObject
 	/**
 	 * If the dynamic price module is enabled, this method recomputes the price using the selected expression and
 	 * saves the new selling price of the product into the database.
+	 * @return void
 	 */
 	public function updatePriceFromExpression()
 	{
