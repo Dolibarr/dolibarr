@@ -249,8 +249,8 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON e.fk_user_author = u.rowid';
 if ($search_sale > 0 || (!$user->rights->societe->client->voir && !$socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 if ($search_user > 0)
 {
-	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
-	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
+	$sql .= " LEFT JOIN  ".MAIN_DB_PREFIX."element_contact as ec ON u.rowid = ec.element_id";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as tc ON tc.rowid = ec.fk_c_type_contact";
 }
 $sql .= " WHERE e.entity IN (".getEntity('expedition').")";
 if ($search_product_category > 0) $sql .= " AND cp.fk_categorie = ".$search_product_category;
