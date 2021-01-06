@@ -577,6 +577,7 @@ if ($id == 11)
         // 'contract' => $langs->trans('Contract'),
         'project' => $langs->trans('Project'),
         'project_task' => $langs->trans('Task'),
+        'ticket' => $langs->trans('Ticket'),
         'agenda' => $langs->trans('Agenda'),
         'dolresource' => $langs->trans('Resource'),
         // old deprecated
@@ -1454,6 +1455,7 @@ if ($id)
                         foreach ($fieldlist as $field => $value)
                         {
                         	//var_dump($fieldlist);
+
                         	$class = '';
                         	$showfield = 1;
                         	$valuetoshow = $obj->{$fieldlist[$field]};
