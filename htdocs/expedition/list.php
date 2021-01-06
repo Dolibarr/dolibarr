@@ -340,7 +340,7 @@ if ($resql)
 
 	if ($search_product_category != '') $param .= '&search_product_category='.urlencode($search_product_category);
 	if ($search_categ_cus > 0)      $param .= '&search_categ_cus='.urlencode($search_categ_cus);
-	if ($search_status != '') $param .= '&viewstatut='.urlencode($search_status);
+	if ($search_status != '') $param .= '&search_status='.urlencode($search_status);
 	if ($optioncss != '')  $param .= '&optioncss='.urlencode($optioncss);
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
