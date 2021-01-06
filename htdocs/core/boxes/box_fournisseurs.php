@@ -137,10 +137,13 @@ class box_fournisseurs extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) $this->info_box_contents[$line][0] = array(
-					'td' => 'class="center opacitymedium"',
-					'text'=>$langs->trans("NoRecordedSuppliers"),
-				);
+				if ($num == 0) {
+					$langs->load("suppliers");
+					$this->info_box_contents[$line][0] = array(
+						'td' => 'class="center opacitymedium"',
+						'text'=>$langs->trans("NoRecordedSuppliers"),
+					);
+				}
 
 				$this->db->free($result);
 			} else {

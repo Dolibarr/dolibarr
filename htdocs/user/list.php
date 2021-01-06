@@ -345,7 +345,7 @@ if ($catid > 0)     $sql .= " AND cu.fk_categorie = ".((int) $catid);
 if ($catid == -2)   $sql .= " AND cu.fk_categorie IS NULL";
 if ($search_categ > 0)   $sql .= " AND cu.fk_categorie = ".$db->escape($search_categ);
 if ($search_categ == -2) $sql .= " AND cu.fk_categorie IS NULL";
-if ($mode == 'employee' && empty($user->rights->salaries->readall)) $sql .= " AND s.fk_user IN (".join(',', $childids).")";
+if ($mode == 'employee' && empty($user->rights->salaries->readall)) $sql .= " AND u.fk_user IN (".join(',', $childids).")";
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks

@@ -152,7 +152,7 @@ if ($action == 'add_payment')
 
 			// Create a line of payments
 			$payment = new PaymentLoan($db);
-			$payment->chid = $chid;
+			$payment->chid				= $chid;
 			$payment->datep             = $datepaid;
 			$payment->label             = $loan->label;
 			$payment->amount_capital	= $pay_amount_capital;
@@ -176,7 +176,7 @@ if ($action == 'add_payment')
 
 			if (!$error)
 			{
-				$result = $payment->addPaymentToBank($user, $chid, 'payment_loan', '(LoanPayment)', GETPOST('accountid', 'int'), '', '');
+				$result = $payment->addPaymentToBank($user, $chid, 'payment_loan', '(LoanPayment)', $payment->fk_bank, '', '');
 				if (!$result > 0)
 				{
 					setEventMessages($payment->error, $payment->errors, 'errors');
