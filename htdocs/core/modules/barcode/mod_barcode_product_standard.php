@@ -99,9 +99,9 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("BarCode"), $langs->transnoentities("BarCode"));
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= '<strong>'.$langs->trans("Example").':</strong><br>';
-		$tooltip .= '020{000000000} (for internal use)<br>';
-		$tooltip .= '9771234{00000} (example of ISSN code with prefix 1234)<br>';
-		$tooltip .= '9791234{00000} (example of ISMN code with prefix 1234)<br>';
+		$tooltip .= '020{000000000}* (for internal use)<br>';
+		$tooltip .= '9771234{00000}* (example of ISSN code with prefix 1234)<br>';
+		$tooltip .= '9791234{00000}* (example of ISMN code with prefix 1234)<br>';
 		//$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Mask parameter
@@ -153,7 +153,8 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		global $db, $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php'; // to be able to call function barcode_gen_ean_sum($ean)
+		
 		// TODO
 
 		// Get Mask value
@@ -171,7 +172,22 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		$now = dol_now();
 
 		$numFinal = get_next_value($db, $mask, 'product', $field, $where, '', $now);
-
+		//if EAN13 calculate and substitute the last 13th character (* or ?) used in the mask by the EAN13 key
+		$type=$conf->global->PRODUIT_DEFAULT_BARCODE_TYPE; //get barcode type configuration for products
+		if ($type==2) //2 = EAN13
+		{
+			if (strlen($numFinal)==13)
+			{
+				if ((substr($numFinal, -1)=='*') or (substr($numFinal, -1)=='?')) // if last mask character is * or ?
+				{
+					$ean = substr($numFinal, 0, 12); //take first 12 digits
+					$eansum = barcode_gen_ean_sum($ean);
+					$ean .= $eansum; //substitute the last character by the key
+					$numFinal = $ean;
+				}
+			}
+		}
+		//EAN13 end
 		return  $numFinal;
 	}
 
