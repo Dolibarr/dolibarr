@@ -40,11 +40,14 @@ if (!$user->rights->banque->transfer)
 $action = GETPOST('action', 'aZ09');
 $error = 0;
 
+$hookmanager->initHooks(array('banktransfer'));
 
 /*
  * Actions
  */
-
+$parameters = array('socid' => $socid);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 if ($action == 'add')
 {
 	$langs->load("errors");
