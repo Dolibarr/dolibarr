@@ -3658,8 +3658,8 @@ class Societe extends CommonObject
 	 */
 	public function create_from_member(Adherent $member, $socname = '', $socalias = '', $customercode = '')
 	{
-		// phpcs:enable
-		global $user, $langs;
+        // phpcs:enable
+		global $conf, $user, $langs;
 
 		dol_syslog(get_class($this)."::create_from_member", LOG_DEBUG);
 
@@ -3693,6 +3693,23 @@ class Societe extends CommonObject
 		// Cree et positionne $this->id
 		$result = $this->create($user);
 		if ($result >= 0) {
+			// Auto-create contact on thirdparty creation
+			if (!empty($conf->global->THIRDPARTY_DEFAULT_CREATE_CONTACT)) {
+				// Fill fields needed by contact
+				$this->name_bis = $member->lastname;
+				$this->firstname = $member->firstname;
+				$this->civility_id = $member->civility_id;
+
+				dol_syslog("We ask to create a contact/address too", LOG_DEBUG);
+				$result = $this->create_individual($user);
+				if ($result < 0)
+				{
+					setEventMessages($this->error, $this->errors, 'errors');
+					$this->db->rollback();
+					return -1;
+				}
+			}
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
 			$sql .= " SET fk_soc=".$this->id;
 			$sql .= " WHERE rowid=".$member->id;

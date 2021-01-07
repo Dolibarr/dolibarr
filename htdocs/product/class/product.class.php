@@ -5428,7 +5428,6 @@ class Product extends CommonObject
 		$langs->load('products');
 
 		$label_type = 'label';
-
 		if ($type == 'short') {
 			$label_type = 'short_label';
 		}
