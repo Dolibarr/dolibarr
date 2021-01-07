@@ -203,12 +203,12 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 					$contactid = GETPOST('contactid', 'alpha');
 
-					if(!empty($contactid)) {
+					if (!empty($contactid)) {
 						$contact = new Contact($this->db);
 						$res = $contact->fetch($contactid);
 					}
 
-					if($res > 0 && !empty($contact->email) && !empty($contact->statut)) {
+					if ($res > 0 && !empty($contact->email) && !empty($contact->statut)) {
 						$sendto = $contact->email;
 					} elseif (!empty($object->fk_soc)) {
 						$object->fetch_thirdparty();

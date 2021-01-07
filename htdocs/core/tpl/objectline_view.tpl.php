@@ -119,8 +119,7 @@ if (($line->info_bits & 2) == 2) {
 } else {
 	$format = $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE ? 'dayhour' : 'day';
 
-	if ($line->fk_product > 0)
-	{
+	if ($line->fk_product > 0) {
 		print $form->textwithtooltip($text, $description, 3, '', '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
 	} else {
 		$type = (!empty($line->product_type) ? $line->product_type : $line->fk_product_type);

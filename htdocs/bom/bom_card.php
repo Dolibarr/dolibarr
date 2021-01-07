@@ -181,8 +181,10 @@ if (empty($reshook))
 				unset($_POST['qty_frozen']);
 				unset($_POST['disable_stock_change']);
 
-				$object->fetchLines();
-			}
+    		    $object->fetchLines();
+
+    		    $object->calculateCosts();
+    		}
 		}
 	}
 
@@ -221,7 +223,9 @@ if (empty($reshook))
 			unset($_POST['qty_frozen']);
 			unset($_POST['disable_stock_change']);
 
-			$object->fetchLines();
+		    $object->fetchLines();
+
+		    $object->calculateCosts();
 		}
 	}
 }

@@ -413,7 +413,10 @@ if (empty($reshook))
 
 				$object->ref                    = $ref;
 				$object->label                  = GETPOST('label', $label_security_check);
-				$object->description            = dol_htmlcleanlastbr(GETPOST('desc', 'restricthtml'));
+
+				$desc = dol_htmlcleanlastbr(preg_replace('/&nbsp;$/', '', GETPOST('desc', 'restricthtml')));
+				$object->description            = $desc;
+
 				$object->url = GETPOST('url');
 				if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB))
 				{
@@ -426,8 +429,8 @@ if (empty($reshook))
 				$object->status                 = GETPOST('statut', 'int');
 				$object->status_buy             = GETPOST('statut_buy', 'int');
 				$object->status_batch = GETPOST('status_batch', 'aZ09');
-				// removed from update view so GETPOST always empty
 				$object->fk_default_warehouse   = GETPOST('fk_default_warehouse');
+				// removed from update view so GETPOST always empty
 				/*
                 $object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
                 $object->desiredstock           = GETPOST('desiredstock');

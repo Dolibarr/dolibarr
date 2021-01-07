@@ -189,11 +189,21 @@ $coldisplay++;
 	</td>
 
 	<?php
-	if (!empty($conf->global->PRODUCT_USE_UNITS))
-	{
+	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		$unit_type = false;
+		// limit unit select to unit type
+		if (!empty($line->fk_unit) && empty($conf->global->MAIN_EDIT_LINE_ALLOW_ALL_UNIT_TYPE)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+			$cUnit = new CUnits($line->db);
+			if ($cUnit->fetch($line->fk_unit) > 0) {
+				if (!empty($cUnit->unit_type)) {
+					$unit_type = $cUnit->unit_type;
+				}
+			}
+		}
 		$coldisplay++;
 		print '<td class="left">';
-		print $form->selectUnits($line->fk_unit, "units");
+		print $form->selectUnits($line->fk_unit, "units", 0, $unit_type);
 		print '</td>';
 	}
 	?>
