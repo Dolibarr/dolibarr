@@ -135,7 +135,11 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 										}
 										return { label: label, value: item.value, id: item.key, disabled: item.disabled,
 												 update: update, textarea: textarea,
-												 pbq: item.pbq, type: item.type, qty: item.qty, discount: item.discount, pricebasetype: item.pricebasetype, price_ht: item.price_ht, price_ttc: item.price_ttc }
+												 pbq: item.pbq,
+												 type: item.type, qty: item.qty, discount: item.discount,
+												 pricebasetype: item.pricebasetype, price_ht: item.price_ht,
+												 price_ttc: item.price_ttc,
+												 up: item.up, description : item.description}
 									}));
 								}
 								else console.error("Error: Ajax url '.$url.($urloption ? '?'.$urloption : '').' has returned an empty page. Should be an empty json array.");
@@ -148,13 +152,33 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     					    console.log("Selected id = "+ui.item.id+" - If this value is null, it means you select a record with key that is null so selection is not effective");
 
 							//console.log(ui.item);
-							$("#'.$htmlname.'").attr("data-pbq", ui.item.pbq);
-							$("#'.$htmlname.'").attr("data-pbqup", ui.item.price_ht);
-							$("#'.$htmlname.'").attr("data-pbqbase", ui.item.pricebasetype);
-							$("#'.$htmlname.'").attr("data-pbqqty", ui.item.qty);
-							$("#'.$htmlname.'").attr("data-pbqpercent", ui.item.discount);
+							//For supplier price
+							$("#'.$htmlname.'").attr("data-up", ui.item.up);
+							$("#'.$htmlname.'").attr("data-discount", ui.item.discount);
+							$("#'.$htmlname.'").attr("data-qty", ui.item.qty);
+							$("#'.$htmlname.'").attr("data-description", ui.item.description);
 
-    						$("#'.$htmlname.'").val(ui.item.id).trigger("change");	// Select new value
+							//For customer price
+		';
+
+	if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) {
+		$script .= '
+							$("#' . $htmlname . '").attr("data-pbq", ui.item.pbq);
+							$("#' . $htmlname . '").attr("data-pbqup", ui.item.price_ht);
+							$("#' . $htmlname . '").attr("data-pbqbase", ui.item.pricebasetype);
+							$("#' . $htmlname . '").attr("data-pbqqty", ui.item.qty);
+							$("#' . $htmlname . '").attr("data-pbqpercent", ui.item.discount);
+		';
+	} else {
+		$script .= '
+							$("#' . $htmlname . '").attr("data-up", ui.item.price_ht);
+							$("#' . $htmlname . '").attr("data-base", ui.item.pricebasetype);
+							$("#' . $htmlname . '").attr("data-qty", ui.item.qty);
+							$("#' . $htmlname . '").attr("data-discount", ui.item.discount);
+		';
+	}
+	$script .= '
+							$("#'.$htmlname.'").val(ui.item.id).trigger("change");	// Select new value
     						// Disable an element
     						if (options.option_disabled) {
     							console.log("Make action option_disabled on #"+options.option_disabled+" with disabled="+ui.item.disabled)

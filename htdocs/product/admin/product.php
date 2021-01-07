@@ -145,6 +145,12 @@ if ($action == 'other')
 	$value = GETPOST('activate_useProdFournDesc', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_FOURN_TEXTS", $value, 'chaine', 0, '', $conf->entity);
 
+	$value = GETPOST('activate_FillProductDescAuto', 'alpha');
+	$res = dolibarr_set_const($db, "PRODUIT_AUTOFILL_DESC", $value, 'chaine', 0, '', $conf->entity);
+
+	$value = GETPOST('activate_DoNotAddStdProductDescOnAddLine', 'alpha');
+	$res = dolibarr_set_const($db, "MAIN_NO_CONCAT_DESCRIPTION", $value, 'chaine', 0, '', $conf->entity);
+
 	if ($value) {
 		$sql_test = "SELECT count(desc_fourn) as cpt FROM ".MAIN_DB_PREFIX."product_fournisseur_price WHERE 1";
 		$resql = $db->query($sql_test);
@@ -636,6 +642,23 @@ print '<td class="right">';
 print $form->selectyesno("activate_viewProdDescInForm", $conf->global->PRODUIT_DESC_IN_FORM, 1);
 print '</td>';
 print '</tr>';
+
+// Do Not Add Product description on add lines
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("DoNotAddProductDescAtAddLines").'</td>';
+print '<td class="right">';
+print $form->selectyesno("activate_DoNotAddStdProductDescOnAddLine", $conf->global->MAIN_NO_CONCAT_DESCRIPTION, 1);
+print '</td>';
+print '</tr>';
+
+// Do Not Add Product description on add lines
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("OnProductSelectAddProductDesc").'</td>';
+print '<td class="right">';
+print $form->selectyesno("activate_FillProductDescAuto", $conf->global->PRODUIT_AUTOFILL_DESC, 1);
+print '</td>';
+print '</tr>';
+
 
 // Activate propal merge produt card
 /* Kept as hidden feature only. PRODUIT_PDF_MERGE_PROPAL can be added manually. Still did not understand how this feature works.
