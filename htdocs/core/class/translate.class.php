@@ -731,7 +731,7 @@ class Translate
 	 */
 	public function transcountry($str, $countrycode)
 	{
-		if ($this->tab_translate["$str$countrycode"]) return $this->trans("$str$countrycode");
+		if (!empty($this->tab_translate["$str$countrycode"])) return $this->trans("$str$countrycode");
 		else return $this->trans($str);
 	}
 
