@@ -3257,14 +3257,18 @@ abstract class CommonObject
 	 *
 	 *	@param		string	$origin		Linked element type
 	 *	@param		int		$origin_id	Linked element id
+	 * 	@param		User	$f_user		User that create
+	 * 	@param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int					<=0 if KO, >0 if OK
 	 *	@see		fetchObjectLinked(), updateObjectLinked(), deleteObjectLinked()
 	 */
-	public function add_object_linked($origin = null, $origin_id = null)
+	public function add_object_linked($origin = null, $origin_id = null, $f_user = null, $notrigger = 0)
 	{
 		// phpcs:enable
+		global $user;
 		$origin = (!empty($origin) ? $origin : $this->origin);
 		$origin_id = (!empty($origin_id) ? $origin_id : $this->origin_id);
+		$f_user = isset($f_user) ? $f_user : $user;
 
 		// Special case
 		if ($origin == 'order') $origin = 'commande';
@@ -3272,26 +3276,41 @@ abstract class CommonObject
 		if ($origin == 'invoice_template') $origin = 'facturerec';
 		if ($origin == 'supplierorder') $origin = 'order_supplier';
 		$this->db->begin();
+		$error = 0;
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_element (";
+		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "element_element (";
 		$sql .= "fk_source";
 		$sql .= ", sourcetype";
 		$sql .= ", fk_target";
 		$sql .= ", targettype";
 		$sql .= ") VALUES (";
 		$sql .= $origin_id;
-		$sql .= ", '".$this->db->escape($origin)."'";
-		$sql .= ", ".$this->id;
-		$sql .= ", '".$this->db->escape($this->element)."'";
+		$sql .= ", '" . $this->db->escape($origin) . "'";
+		$sql .= ", " . $this->id;
+		$sql .= ", '" . $this->db->escape($this->element) . "'";
 		$sql .= ")";
 
-		dol_syslog(get_class($this)."::add_object_linked", LOG_DEBUG);
-		if ($this->db->query($sql))
-		{
+		dol_syslog(get_class($this) . "::add_object_linked", LOG_DEBUG);
+		if ($this->db->query($sql)) {
+			if (!$notrigger) {
+				// Call trigger
+				$this->context['link_origin'] = $origin;
+				$this->context['link_origin_id'] = $origin_id;
+				$result = $this->call_trigger('OBJECT_LINK_INSERT', $f_user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			$error++;
+		}
+
+		if (!$error) {
 			$this->db->commit();
 			return 1;
 		} else {
-			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return 0;
 		}
@@ -3502,38 +3521,61 @@ abstract class CommonObject
 	 *	@param  string	$sourcetype		Object source type
 	 *	@param  int		$targetid		Object target id
 	 *	@param  string	$targettype		Object target type
+	 * 	@param	User	$f_user			User that create
+	 * 	@param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@return							int	>0 if OK, <0 if KO
 	 *	@see	add_object_linked(), fetObjectLinked(), deleteObjectLinked()
 	 */
-	public function updateObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '')
+	public function updateObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $f_user = null, $notrigger = 0)
 	{
+		global $user;
 		$updatesource = false;
 		$updatetarget = false;
+		$f_user = isset($f_user) ? $f_user : $user;
 
 		if (!empty($sourceid) && !empty($sourcetype) && empty($targetid) && empty($targettype)) $updatesource = true;
 		elseif (empty($sourceid) && empty($sourcetype) && !empty($targetid) && !empty($targettype)) $updatetarget = true;
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."element_element SET ";
-		if ($updatesource)
-		{
-			$sql .= "fk_source = ".$sourceid;
-			$sql .= ", sourcetype = '".$this->db->escape($sourcetype)."'";
-			$sql .= " WHERE fk_target = ".$this->id;
-			$sql .= " AND targettype = '".$this->db->escape($this->element)."'";
-		} elseif ($updatetarget)
-		{
-			$sql .= "fk_target = ".$targetid;
-			$sql .= ", targettype = '".$this->db->escape($targettype)."'";
-			$sql .= " WHERE fk_source = ".$this->id;
-			$sql .= " AND sourcetype = '".$this->db->escape($this->element)."'";
+		$this->db->begin();
+		$error = 0;
+
+		$sql = "UPDATE " . MAIN_DB_PREFIX . "element_element SET ";
+		if ($updatesource) {
+			$sql .= "fk_source = " . $sourceid;
+			$sql .= ", sourcetype = '" . $this->db->escape($sourcetype) . "'";
+			$sql .= " WHERE fk_target = " . $this->id;
+			$sql .= " AND targettype = '" . $this->db->escape($this->element) . "'";
+		} elseif ($updatetarget) {
+			$sql .= "fk_target = " . $targetid;
+			$sql .= ", targettype = '" . $this->db->escape($targettype) . "'";
+			$sql .= " WHERE fk_source = " . $this->id;
+			$sql .= " AND sourcetype = '" . $this->db->escape($this->element) . "'";
 		}
 
-		dol_syslog(get_class($this)."::updateObjectLinked", LOG_DEBUG);
-		if ($this->db->query($sql))
-		{
-			return 1;
+		dol_syslog(get_class($this) . "::updateObjectLinked", LOG_DEBUG);
+		if ($this->db->query($sql)) {
+			if (!$notrigger) {
+				// Call trigger
+				$this->context['link_source_id'] = $sourceid;
+				$this->context['link_source_type'] = $sourcetype;
+				$this->context['link_target_id'] = $targetid;
+				$this->context['link_target_type'] = $targettype;
+				$result = $this->call_trigger('OBJECT_LINK_UPDATE', $f_user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
 		} else {
 			$this->error = $this->db->lasterror();
+			$error++;
+		}
+
+		if (!$error) {
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->db->rollback();
 			return -1;
 		}
 	}
@@ -3546,13 +3588,17 @@ abstract class CommonObject
 	 *	@param  int		$targetid		Object target id
 	 *	@param  string	$targettype		Object target type
 	 *  @param	int		$rowid			Row id of line to delete. If defined, other parameters are not used.
+	 * 	@param	User	$f_user			User that create
+	 * 	@param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@return     					int	>0 if OK, <0 if KO
 	 *	@see	add_object_linked(), updateObjectLinked(), fetchObjectLinked()
 	 */
-	public function deleteObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $rowid = '')
+	public function deleteObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $rowid = '', $f_user = null, $notrigger = 0)
 	{
+		global $user;
 		$deletesource = false;
 		$deletetarget = false;
+		$f_user = isset($f_user) ? $f_user : $user;
 
 		if (!empty($sourceid) && !empty($sourcetype) && empty($targetid) && empty($targettype)) $deletesource = true;
 		elseif (empty($sourceid) && empty($sourcetype) && !empty($targetid) && !empty($targettype)) $deletetarget = true;
@@ -3561,36 +3607,56 @@ abstract class CommonObject
 		$sourcetype = (!empty($sourcetype) ? $sourcetype : $this->element);
 		$targetid = (!empty($targetid) ? $targetid : $this->id);
 		$targettype = (!empty($targettype) ? $targettype : $this->element);
+		$this->db->begin();
+		$error = 0;
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
-		$sql .= " WHERE";
-		if ($rowid > 0)
-		{
-			$sql .= " rowid = ".$rowid;
-		} else {
-			if ($deletesource)
-			{
-				$sql .= " fk_source = ".$sourceid." AND sourcetype = '".$this->db->escape($sourcetype)."'";
-				$sql .= " AND fk_target = ".$this->id." AND targettype = '".$this->db->escape($this->element)."'";
-			} elseif ($deletetarget)
-			{
-				$sql .= " fk_target = ".$targetid." AND targettype = '".$this->db->escape($targettype)."'";
-				$sql .= " AND fk_source = ".$this->id." AND sourcetype = '".$this->db->escape($this->element)."'";
+		if (!$notrigger) {
+			// Call trigger
+			$this->context['link_id'] = $rowid;
+			$this->context['link_source_id'] = $sourceid;
+			$this->context['link_source_type'] = $sourcetype;
+			$this->context['link_target_id'] = $targetid;
+			$this->context['link_target_type'] = $targettype;
+			$result = $this->call_trigger('OBJECT_LINK_DELETE', $f_user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
+		if (!$error) {
+			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "element_element";
+			$sql .= " WHERE";
+			if ($rowid > 0) {
+				$sql .= " rowid = " . $rowid;
 			} else {
-				$sql .= " (fk_source = ".$this->id." AND sourcetype = '".$this->db->escape($this->element)."')";
-				$sql .= " OR";
-				$sql .= " (fk_target = ".$this->id." AND targettype = '".$this->db->escape($this->element)."')";
+				if ($deletesource) {
+					$sql .= " fk_source = " . $sourceid . " AND sourcetype = '" . $this->db->escape($sourcetype) . "'";
+					$sql .= " AND fk_target = " . $this->id . " AND targettype = '" . $this->db->escape($this->element) . "'";
+				} elseif ($deletetarget) {
+					$sql .= " fk_target = " . $targetid . " AND targettype = '" . $this->db->escape($targettype) . "'";
+					$sql .= " AND fk_source = " . $this->id . " AND sourcetype = '" . $this->db->escape($this->element) . "'";
+				} else {
+					$sql .= " (fk_source = " . $this->id . " AND sourcetype = '" . $this->db->escape($this->element) . "')";
+					$sql .= " OR";
+					$sql .= " (fk_target = " . $this->id . " AND targettype = '" . $this->db->escape($this->element) . "')";
+				}
+			}
+
+			dol_syslog(get_class($this) . "::deleteObjectLinked", LOG_DEBUG);
+			if (!$this->db->query($sql)) {
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+				$error++;
 			}
 		}
 
-		dol_syslog(get_class($this)."::deleteObjectLinked", LOG_DEBUG);
-		if ($this->db->query($sql))
-		{
+		if (!$error) {
+			$this->db->commit();
 			return 1;
 		} else {
-			$this->error = $this->db->lasterror();
-			$this->errors[] = $this->error;
-			return -1;
+			$this->db->rollback();
+			return 0;
 		}
 	}
 
