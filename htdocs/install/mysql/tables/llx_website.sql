@@ -37,7 +37,7 @@ CREATE TABLE llx_website
     date_creation datetime,
     position      integer DEFAULT 0,
     lastaccess    datetime NULL,
-    pageviews_month integer DEFAULT 0,
+    pageviews_month BIGINT UNSIGNED DEFAULT 0,
     pageviews_total BIGINT UNSIGNED DEFAULT 0,
 	tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     import_key    varchar(14)      -- import key	
