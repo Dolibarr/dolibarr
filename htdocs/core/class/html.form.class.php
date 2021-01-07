@@ -3890,9 +3890,10 @@ class Form
 	 *      @param	string	$selected       Preselected Unit ID
 	 *      @param  string	$htmlname       Select name
 	 *      @param	int		$showempty		Add a nempty line
+	 *      @param  string  $unit_type      Restrict to one given unit type
 	 * 		@return	string                  HTML select
 	 */
-	public function selectUnits($selected = '', $htmlname = 'units', $showempty = 0)
+	public function selectUnits($selected = '', $htmlname = 'units', $showempty = 0, $unit_type = '')
 	{
 		global $langs;
 
@@ -3902,6 +3903,9 @@ class Form
 
 		$sql = 'SELECT rowid, label, code from '.MAIN_DB_PREFIX.'c_units';
 		$sql .= ' WHERE active > 0';
+		if (!empty($unit_type)) {
+			$sql .= " AND unit_type = '".$this->db->escape($unit_type)."'";
+		}
 
 		$resql = $this->db->query($sql);
 		if ($resql && $this->db->num_rows($resql) > 0)
