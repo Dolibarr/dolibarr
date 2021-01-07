@@ -99,9 +99,9 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("BarCode"), $langs->transnoentities("BarCode"));
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= '<strong>'.$langs->trans("Example").':</strong><br>';
-		$tooltip .= '020{000000000}* (for internal use)<br>';
-		$tooltip .= '9771234{00000}* (example of ISSN code with prefix 1234)<br>';
-		$tooltip .= '9791234{00000}* (example of ISMN code with prefix 1234)<br>';
+		$tooltip .= '020{000000000}? (for internal use)<br>';
+		$tooltip .= '9771234{00000}? (example of ISSN code with prefix 1234)<br>';
+		$tooltip .= '9791234{00000}? (example of ISMN code with prefix 1234)<br>';
 		//$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Mask parameter
