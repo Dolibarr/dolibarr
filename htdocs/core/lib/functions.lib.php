@@ -680,7 +680,8 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 			if (!is_array($out)) {
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
-				$out = str_replace(array('&quot;', '"', '../'), '', trim($out));
+				$out = str_replace(array('&quot;', '"'), "''", trim($out));
+				$out = str_replace(array('../'), '', $out);
 				// keep lines feed
 				$out = dol_string_nohtmltag($out, 0);
 			}
@@ -1971,9 +1972,13 @@ function dol_strftime($fmt, $ts = false, $is_gmt = false)
  *
  *  @see        dol_mktime(), dol_stringtotime(), dol_getdate()
  */
-function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlangs = '', $encodetooutput = false)
+function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = '', $encodetooutput = false)
 {
 	global $conf, $langs;
+
+	if ($tzoutput == 'auto') {
+		$tzoutput = $conf->tzuserinputkey;
+	}
 
 	// Clean parameters
 	$to_gmt = false;
@@ -2183,17 +2188,23 @@ function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
  *	@param	int			$day			Day (1 to 31)
  *	@param	int			$year			Year
  *	@param	mixed		$gm				True or 1 or 'gmt'=Input informations are GMT values
- *										False or 0 or 'server' = local to server TZ
- *										'user' = local to user TZ
+ *										False or 0 or 'tzserver' = local to server TZ
+ *										'auto'
+ *										'tzuser' = local to user TZ taking dst into account at the current date. Not yet implemented.
+ *										'tzuserrel' = local to user TZ taking dst into account at the given date. Use this one to convert date input from user.
  *										'tz,TimeZone' = use specified timezone
  *	@param	int			$check			0=No check on parameters (Can use day 32, etc...)
  *	@return	int|string					Date as a timestamp, '' or false if error
  * 	@see 								dol_print_date(), dol_stringtotime(), dol_getdate()
  */
-function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = false, $check = 1)
+function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', $check = 1)
 {
 	global $conf;
 	//print "- ".$hour.",".$minute.",".$second.",".$month.",".$day.",".$year.",".$_SERVER["WINDIR"]." -";
+
+	if ($gm == 'auto') {
+		$gm = $conf->tzuserinputkey;
+	}
 
 	// Clean parameters
 	if ($hour == -1 || empty($hour)) $hour = 0;
@@ -2211,11 +2222,11 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = false, $
 		if ($second < 0 || $second > 60) return '';
 	}
 
-	if (empty($gm) || $gm === 'server')
+	if (empty($gm) || ($gm === 'server' || $gm === 'tzserver'))
 	{
 		$default_timezone = @date_default_timezone_get(); // Example 'Europe/Berlin'
 		$localtz = new DateTimeZone($default_timezone);
-	} elseif ($gm === 'user')
+	} elseif ($gm === 'user' || $gm === 'tzuser' || $gm === 'tzuserrel')
 	{
 		// We use dol_tz_string first because it is more reliable.
 		$default_timezone = (empty($_SESSION["dol_tz_string"]) ? @date_default_timezone_get() : $_SESSION["dol_tz_string"]); // Example 'Europe/Berlin'
@@ -2254,15 +2265,20 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = false, $
 /**
  *  Return date for now. In most cases, we use this function without parameters (that means GMT time).
  *
- *  @param	string		$mode	'gmt' => we return GMT timestamp,
+ *  @param	string		$mode	'auto'
+ *  							'gmt' => we return GMT timestamp,
  * 								'tzserver' => we add the PHP server timezone
- *  							'tzref' => we add the company timezone
- * 								'tzuser' => we add the user timezone
+ *  							'tzref' => we add the company timezone. Not implemented.
+ * 								'tzuser' or 'tzuserrel' => we add the user timezone
  *	@return int   $date	Timestamp
  */
-function dol_now($mode = 'gmt')
+function dol_now($mode = 'auto')
 {
 	$ret = 0;
+
+	if ($mode == 'auto') {
+		$mode = 'tzserver';
+	}
 
 	if ($mode == 'gmt') $ret = time(); // Time for now at greenwich.
 	elseif ($mode == 'tzserver')		// Time for now with PHP server timezone added
@@ -2276,7 +2292,7 @@ function dol_now($mode = 'gmt')
 		$tzsecond=getParentCompanyTimeZoneInt();    // Contains tz+dayling saving time
 		$ret=dol_now('gmt')+($tzsecond*3600);
 	}*/
-	elseif ($mode == 'tzuser')				// Time for now with user timezone added
+	elseif ($mode == 'tzuser' || $mode == 'tzuserrel')				// Time for now with user timezone added
 	{
 		//print 'time: '.time();
 		$offsettz = (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) * 60 * 60;
@@ -4600,7 +4616,7 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 	}
 	if ((int) $limit > 0 && empty($hideselectlimit))
 	{
-		$pagesizechoices = '10:10,15:15,20:20,30:30,40:40,50:50,100:100,250:250,500:500,1000:1000,5000:5000';
+		$pagesizechoices = '10:10,15:15,20:20,30:30,40:40,50:50,100:100,250:250,500:500,1000:1000,5000:5000,25000:25000';
 		//$pagesizechoices.=',0:'.$langs->trans("All");     // Not yet supported
 		//$pagesizechoices.=',2:2';
 		if (!empty($conf->global->MAIN_PAGESIZE_CHOICES)) $pagesizechoices = $conf->global->MAIN_PAGESIZE_CHOICES;

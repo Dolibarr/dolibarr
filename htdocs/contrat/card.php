@@ -374,8 +374,7 @@ if (empty($reshook))
 				$action = 'create';
 			}
 		}
-	} elseif ($action == 'classin' && $user->rights->contrat->creer)
-	{
+	} elseif ($action == 'classin' && $user->rights->contrat->creer) {
 		$object->setProject(GETPOST('projectid'));
 	}
 

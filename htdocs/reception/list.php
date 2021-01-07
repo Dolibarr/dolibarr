@@ -505,7 +505,7 @@ if ($resql)
 	if ($search_town)  $param .= "&amp;search_town=".urlencode($search_town);
 	if ($search_zip)  $param .= "&amp;search_zip=".urlencode($search_zip);
 	if ($search_state) $param .= "&amp;search_state=".urlencode($search_state);
-	if ($search_status) $param .= "&amp;search_status=".urlencode($search_status);
+	if ($search_status != '') $param .= "&amp;search_status=".urlencode($search_status);
 	if ($search_country) $param .= "&amp;search_country=".urlencode($search_country);
 	if ($search_type_thirdparty) $param .= "&amp;search_type_thirdparty=".urlencode($search_type_thirdparty);
 	if ($search_ref_supplier) $param .= "&amp;search_ref_supplier=".urlencode($search_ref_supplier);

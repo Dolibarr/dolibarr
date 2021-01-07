@@ -5531,12 +5531,17 @@ class Form
 	 *  @param  int         $stepminutes    Specify step for minutes between 1 and 30
 	 *  @param	string		$labeladddateof Label to use for the $adddateof parameter.
 	 *  @param	string 		$placeholder    Placeholder
+	 *  @param	mixed		$gm				'auto', 'gmt' or 'tzserver' or 'tzuserrel'
 	 * 	@return string                      Html for selectDate
 	 *  @see    form_date(), select_month(), select_year(), select_dayofweek()
 	 */
-	public function selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '', $openinghours = '', $stepminutes = 1, $labeladddateof = '', $placeholder = '')
+	public function selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '', $openinghours = '', $stepminutes = 1, $labeladddateof = '', $placeholder = '', $gm = 'auto')
 	{
 		global $conf, $langs;
+
+		if ($gm == 'auto') {
+			$gm = $conf->tzuserinputkey;
+		}
 
 		$retstring = '';
 
@@ -5553,7 +5558,11 @@ class Form
 		if ($set_time === '' && $emptydate == 0)
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-			$set_time = dol_now('tzuser') - (getServerTimeZoneInt('now') * 3600); // set_time must be relative to PHP server timezone
+			if ($gm == 'tzuser' || $gm == 'tzuserrel') {
+				$set_time = dol_now($gm);
+			} else {
+				$set_time = dol_now('tzuser') - (getServerTimeZoneInt('now') * 3600); // set_time must be relative to PHP server timezone
+			}
 		}
 
 		// Analysis of the pre-selection date
@@ -5569,14 +5578,14 @@ class Form
 		} elseif (strval($set_time) != '' && $set_time != -1)
 		{
 			// set_time est un timestamps (0 possible)
-			$syear = dol_print_date($set_time, "%Y");
-			$smonth = dol_print_date($set_time, "%m");
-			$sday = dol_print_date($set_time, "%d");
+			$syear = dol_print_date($set_time, "%Y", $gm);
+			$smonth = dol_print_date($set_time, "%m", $gm);
+			$sday = dol_print_date($set_time, "%d", $gm);
 			if ($orig_set_time != '')
 			{
-				$shour = dol_print_date($set_time, "%H");
-				$smin = dol_print_date($set_time, "%M");
-				$ssec = dol_print_date($set_time, "%S");
+				$shour = dol_print_date($set_time, "%H", $gm);
+				$smin = dol_print_date($set_time, "%M", $gm);
+				$ssec = dol_print_date($set_time, "%S", $gm);
 			} else {
 				$shour = '';
 				$smin = '';

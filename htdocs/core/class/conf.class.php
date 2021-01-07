@@ -102,6 +102,8 @@ class Conf
 
 	public $liste_limit;
 
+	public $tzuserinputkey = 'tzserver';		// Use 'tzuserrel' to always store date in GMT and show date in time zone of user.
+
 
 	/**
 	 * Constructor
@@ -692,6 +694,8 @@ class Conf
 
 		if (defined('MAIN_ANTIVIRUS_COMMAND')) $this->global->MAIN_ANTIVIRUS_COMMAND = constant('MAIN_ANTIVIRUS_COMMAND');
 		if (defined('MAIN_ANTIVIRUS_PARAM')) $this->global->MAIN_ANTIVIRUS_PARAM = constant('MAIN_ANTIVIRUS_PARAM');
+
+		if (!empty($this->global->MAIN_TZUSERINPUTKEY)) $this->tzuserinputkey = $this->global->MAIN_TZUSERINPUTKEY;	// 'tzserver' or 'tzuserrel'
 
 		// For backward compatibility
 		if (isset($this->product))   $this->produit = $this->product;

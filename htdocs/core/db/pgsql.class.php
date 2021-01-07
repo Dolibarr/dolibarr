@@ -686,18 +686,6 @@ class DoliDBPgsql extends DoliDB
 	}
 
 	/**
-	 *   Convert (by PHP) a GM Timestamp date into a GM string date to insert into a date field.
-	 *   Function to use to build INSERT, UPDATE or WHERE predica
-	 *
-	 *   @param	    string	$param      Date TMS to convert
-	 *   @return	string   			Date in a string YYYY-MM-DD HH:MM:SS
-	 */
-	public function idate($param)
-	{
-		return dol_print_date($param, "%Y-%m-%d %H:%M:%S");
-	}
-
-	/**
 	 *  Format a SQL IF
 	 *
 	 *  @param	string	$test           Test string (example: 'cd.statut=0', 'field IS NULL')
