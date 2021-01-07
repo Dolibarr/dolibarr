@@ -191,6 +191,16 @@ a.badge-dark:focus, a.badge-dark:hover {
 }
 
 
+@media only screen and (max-width: 570px)
+{
+	span.badge.badge-status {
+	    overflow: hidden;
+	    max-width: 130px;
+	    text-overflow: ellipsis;
+	}
+}
+
+
 /* STATUS BADGES */
 <?php
 for ($i = 0; $i <= 9; $i++) {

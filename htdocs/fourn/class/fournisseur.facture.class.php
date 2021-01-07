@@ -57,12 +57,12 @@ class FactureFournisseur extends CommonInvoice
 	public $table_element = 'facture_fourn';
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = 'facture_fourn_det';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_facture_fourn';
 
@@ -336,7 +336,7 @@ class FactureFournisseur extends CommonInvoice
 	/**
 	 *    Create supplier invoice into database
 	 *
-	 *    @param      User		$user       object utilisateur qui cree
+	 *    @param      User		$user       user object that creates
 	 *    @return     int    	     		Id invoice created if OK, < 0 if KO
 	 */
 	public function create($user)
@@ -398,7 +398,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= ", '".$this->db->escape($this->ref_supplier)."'";
 		$sql .= ", ".$conf->entity;
 		$sql .= ", '".$this->db->escape($this->type)."'";
-		$sql .= ", '".$this->db->escape($this->label ? $this->label : $this->libelle)."'";
+		$sql .= ", '".$this->db->escape(isset($this->label) ? $this->label : (isset($this->libelle) ? $this->libelle : ''))."'";
 		$sql .= ", ".$this->socid;
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", '".$this->db->idate($this->date)."'";
@@ -438,7 +438,7 @@ class FactureFournisseur extends CommonInvoice
 			}
 
 			// Add object linked
-			if (!$error && $this->id && is_array($this->linked_objects) && !empty($this->linked_objects))
+			if (!$error && $this->id && !empty($this->linked_objects) && is_array($this->linked_objects))
 			{
 				foreach ($this->linked_objects as $origin => $tmp_origin_id)
 				{
@@ -497,7 +497,7 @@ class FactureFournisseur extends CommonInvoice
 							$this->lines[$i]->date_end,
 							$this->lines[$i]->array_options,
 							$this->lines[$i]->fk_unit,
-							$this->lines[$i]->pu_ht_devise
+							$this->lines[$i]->multicurrency_subprice
 						);
 					} else {
 						$this->error = $this->db->lasterror();
@@ -1251,8 +1251,8 @@ class FactureFournisseur extends CommonInvoice
 	 *  Tag invoice as a payed invoice
 	 *
 	 *	@param  User	$user       Object user
-	 *	@param  string	$close_code	Code renseigne si on classe a payee completement alors que paiement incomplet. Not implementd yet.
-	 *	@param  string	$close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet. Not implementd yet.
+	 *	@param  string	$close_code	Code indicates whether the class has paid in full while payment is incomplete. Not implementd yet.
+	 *	@param  string	$close_note	Comment informs if the class has been paid while payment is incomplete. Not implementd yet.
 	 *	@return int         		<0 si ko, >0 si ok
 	 */
 	public function set_paid($user, $close_code = '', $close_note = '')
@@ -1294,9 +1294,9 @@ class FactureFournisseur extends CommonInvoice
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Tag la facture comme non payee completement + appel trigger BILL_UNPAYED
-	 *	Fonction utilisee quand un paiement prelevement est refuse,
-	 *	ou quand une facture annulee et reouverte.
+	 *	Tag the invoice as not fully paid + trigger call BILL_UNPAYED
+	 *	Function used when a direct debit payment is refused,
+	 *	or when the invoice was canceled and reopened.
 	 *
 	 *	@param      User	$user       Object user that change status
 	 *	@return     int         		<0 si ok, >0 si ok
@@ -1579,25 +1579,25 @@ class FactureFournisseur extends CommonInvoice
 
 
 	/**
-	 *	Ajoute une ligne de facture (associe a aucun produit/service predefini)
-	 *	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
-	 *	de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
-	 *	par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,idprod)
-	 *	et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue).
+	 *	Adds an invoice line (associated with no predefined product/service)
+	 *	The parameters are already supposed to be correct and with final values when calling
+	 *	this method. Also, for the VAT rate, it must already have been defined by the caller by
+	 *	by the get_default_tva method(vendor_company, buying company, idprod) and the desc must
+	 *	already have the right value (the caller has to manage the multilanguage).
 	 *
-	 *	@param    	string	$desc            	Description de la ligne
-	 *	@param    	double	$pu              	Prix unitaire (HT ou TTC selon price_base_type, > 0 even for credit note)
+	 *	@param    	string	$desc            	Description of the line
+	 *	@param    	double	$pu              	Unit price (HT or TTC according to price_base_type, > 0 even for credit note)
 	 *	@param    	double	$txtva           	Force Vat rate to use, -1 for auto.
 	 *	@param		double	$txlocaltax1		LocalTax1 Rate
 	 *	@param		double	$txlocaltax2		LocalTax2 Rate
-	 *	@param    	double	$qty             	Quantite
+	 *	@param    	double	$qty             	Quantity
 	 *	@param    	int		$fk_product      	Product/Service ID predefined
 	 *	@param    	double	$remise_percent  	Percentage discount of the line
-	 *	@param    	integer	$date_start      	Date de debut de validite du service
-	 * 	@param    	integer	$date_end        	Date de fin de validite du service
-	 * 	@param    	string	$ventil          	Code de ventilation comptable
-	 *	@param    	int		$info_bits			Bits de type de lines
-	 *	@param    	string	$price_base_type 	HT ou TTC
+	 *	@param    	integer	$date_start      	Service start date
+	 * 	@param    	integer	$date_end        	Service expiry date
+	 * 	@param    	string	$ventil          	Accounting breakdown code
+	 *	@param    	int		$info_bits			Line type bits
+	 *	@param    	string	$price_base_type 	HT or TTC
 	 *	@param		int		$type				Type of line (0=product, 1=service)
 	 *  @param      int		$rang            	Position of line
 	 *  @param		int		$notrigger			Disable triggers
@@ -1765,8 +1765,8 @@ class FactureFournisseur extends CommonInvoice
 			$this->line->tva_tx = $txtva;
 			$this->line->localtax1_tx = ($total_localtax1 ? $localtaxes_type[1] : 0);
 			$this->line->localtax2_tx = ($total_localtax2 ? $localtaxes_type[3] : 0);
-			$this->line->localtax1_type = $localtaxes_type[0];
-			$this->line->localtax2_type = $localtaxes_type[2];
+			$this->line->localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
+			$this->line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 
 			$this->line->total_ht = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_ht) : $total_ht); // For credit note and if qty is negative, total is negative
 			$this->line->total_tva = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_tva) : $total_tva);
@@ -1856,6 +1856,7 @@ class FactureFournisseur extends CommonInvoice
 	public function updateline($id, $desc, $pu, $vatrate, $txlocaltax1 = 0, $txlocaltax2 = 0, $qty = 1, $idproduct = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $remise_percent = 0, $notrigger = false, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $ref_supplier = '')
 	{
 		global $mysoc, $langs;
+
 		dol_syslog(get_class($this)."::updateline $id,$desc,$pu,$vatrate,$qty,$idproduct,$price_base_type,$info_bits,$type,$remise_percent,$notrigger,$date_start,$date_end,$fk_unit,$pu_ht_devise,$ref_supplier", LOG_DEBUG);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
@@ -1951,8 +1952,8 @@ class FactureFournisseur extends CommonInvoice
 		$line->tva_tx = $vatrate;
 		$line->localtax1_tx = $txlocaltax1;
 		$line->localtax2_tx = $txlocaltax2;
-		$line->localtax1_type = $localtaxes_type[0];
-		$line->localtax2_type = $localtaxes_type[2];
+		$line->localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
+		$line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 		$line->total_ht = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_ht) : $total_ht);
 		$line->total_tva = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_tva) : $total_tva);
 		$line->total_localtax1 = $total_localtax1;
@@ -2046,9 +2047,9 @@ class FactureFournisseur extends CommonInvoice
 
 
 	/**
-	 *	Charge les informations d'ordre info dans l'objet facture
+	 *	Loads the info order information into the invoice object
 	 *
-	 *	@param  int		$id       	Id de la facture a charger
+	 *	@param  int		$id       	Id of the invoice to load
 	 *	@return	void
 	 */
 	public function info($id)
@@ -2095,11 +2096,11 @@ class FactureFournisseur extends CommonInvoice
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Renvoi liste des factures remplacables
-	 *	Statut validee ou abandonnee pour raison autre + non payee + aucun paiement + pas deja remplacee
+	 *	Return list of replaceable invoices
+	 *	Status valid or abandoned for other reason + not paid + no payment + not already replaced
 	 *
-	 *	@param      int		$socid		Id societe
-	 *	@return    	array|int			Tableau des factures ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
+	 *	@param      int		$socid		Thirdparty id
+	 *	@return    	array|int			Table of invoices ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
 	 *                                  <0 if error
 	 */
 	public function list_replacable_supplier_invoices($socid = 0)
@@ -2144,12 +2145,12 @@ class FactureFournisseur extends CommonInvoice
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Renvoi liste des factures qualifiables pour correction par avoir
-	 *	Les factures qui respectent les regles suivantes sont retournees:
-	 *	(validee + paiement en cours) ou classee (payee completement ou payee partiellement) + pas deja remplacee + pas deja avoir
+	 *	Return list of qualifying invoices for correction by credit note
+	 *	Invoices that respect the following rules are returned:
+	 *	(validated + payment in progress) or classified (paid in full or paid in part) + not already replaced + not already having
 	 *
-	 *	@param		int		$socid		Id societe
-	 *	@return    	array|int			Tableau des factures ($id => array('ref'=>,'paymentornot'=>,'status'=>,'paye'=>)
+	 *	@param		int		$socid		Thirdparty id
+	 *	@return    	array|int			Table of invoices ($id => array('ref'=>,'paymentornot'=>,'status'=>,'paye'=>)
 	 *                                  <0 if error
 	 */
 	public function list_qualified_avoir_supplier_invoices($socid = 0)
@@ -2467,7 +2468,7 @@ class FactureFournisseur extends CommonInvoice
 			$xnbp = 0;
 			while ($xnbp < $nbp)
 			{
-				$line = new FactureLigne($this->db);
+				$line = new SupplierInvoiceLine($this->db);
 				$line->desc = $langs->trans("Description")." ".$xnbp;
 				$line->qty = 1;
 				$line->subprice = 100;
@@ -2807,9 +2808,9 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $fk_facture_fourn;
 
 	/**
-	 * Product label
-	 * This field may contains label of product (when invoice create from order)
+	 * This field may contains label of line (when invoice create from order)
 	 * @var string
+	 * @deprecated
 	 */
 	public $label;
 
@@ -2961,6 +2962,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
 
+
 	/**
 	 *	Constructor
 	 *
@@ -3010,17 +3012,17 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->date_end = $obj->date_end;
 		$this->product_ref		= $obj->product_ref;
 		$this->ref_supplier		= $obj->ref_supplier;
-		$this->libelle			= $obj->label;
-		$this->label  			= $obj->label;
 		$this->product_desc		= $obj->product_desc;
-		$this->subprice = $obj->pu_ht;
-		$this->pu_ht				= $obj->pu_ht;
+
+		$this->subprice 		= $obj->pu_ht;
+		$this->pu_ht			= $obj->pu_ht;
 		$this->pu_ttc			= $obj->pu_ttc;
 		$this->tva_tx			= $obj->tva_tx;
 		$this->localtax1_tx		= $obj->localtax1_tx;
 		$this->localtax2_tx		= $obj->localtax2_tx;
-		$this->localtax1_type		= $obj->localtax1_type;
-		$this->localtax2_type		= $obj->localtax2_type;
+		$this->localtax1_type	= $obj->localtax1_type;
+		$this->localtax2_type	= $obj->localtax2_type;
+
 		$this->qty				= $obj->qty;
 		$this->remise_percent = $obj->remise_percent;
 		$this->tva				= $obj->total_tva; // deprecated

@@ -240,7 +240,7 @@ if (empty($reshook))
 			$stockLocation = "ent1".$i."_0";
 			$qty = "qtyl".$i;
 
-			if ($objectsrc->lines[$i]->product_tobatch)      // If product need a batch number
+			if (!empty($conf->productbatch->enabled) && $objectsrc->lines[$i]->product_tobatch)      // If product need a batch number
 			{
 				if (GETPOSTISSET($batch))
 				{
@@ -275,27 +275,26 @@ if (empty($reshook))
 						setEventMessages($langs->trans("StockIsRequiredToChooseWhichLotToUse"), null, 'errors');
 					}
 				}
-			} elseif (GETPOSTISSET($stockLocation))
-			{
+			} elseif (GETPOSTISSET($stockLocation)) {
 				//shipment line from multiple stock locations
 				$qty .= '_'.$j;
 				while (GETPOSTISSET($stockLocation))
 				{
 					// save sub line of warehouse
-					$stockLine[$i][$j]['qty'] = GETPOST($qty, 'int');
+					$stockLine[$i][$j]['qty'] = price2num(GETPOST($qty, 'alpha'), 'MS');
 					$stockLine[$i][$j]['warehouse_id'] = GETPOST($stockLocation, 'int');
 					$stockLine[$i][$j]['ix_l'] = GETPOST($idl, 'int');
 
-					$totalqty += GETPOST($qty, 'int');
+					$totalqty += price2num(GETPOST($qty, 'alpha'), 'MS');
 
 					$j++;
 					$stockLocation = "ent1".$i."_".$j;
 					$qty = "qtyl".$i.'_'.$j;
 				}
 			} else {
-				//var_dump(GETPOST($qty,'int')); var_dump($_POST); var_dump($batch);exit;
+				//var_dump(GETPOST($qty,'alpha')); var_dump($_POST); var_dump($batch);exit;
 				//shipment line for product with no batch management and no multiple stock location
-				if (GETPOST($qty, 'int') > 0) $totalqty += GETPOST($qty, 'int');
+				if (GETPOST($qty, 'int') > 0) $totalqty += price2num(GETPOST($qty, 'alpha'), 'MS');
 			}
 
 			// Extrafields
@@ -942,7 +941,7 @@ if ($action == 'create')
 			// Note Public
 			print '<tr><td>'.$langs->trans("NotePublic").'</td>';
 			print '<td colspan="3">';
-			$doleditor = new DolEditor('note_public', $object->note_public, '', 60, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+			$doleditor = new DolEditor('note_public', $object->note_public, '', 60, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			print "</td></tr>";
 
@@ -951,7 +950,7 @@ if ($action == 'create')
 			{
 				print '<tr><td>'.$langs->trans("NotePrivate").'</td>';
 				print '<td colspan="3">';
-				$doleditor = new DolEditor('note_private', $object->note_private, '', 60, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+				$doleditor = new DolEditor('note_private', $object->note_private, '', 60, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
 				print $doleditor->Create(1);
 				print "</td></tr>";
 			}

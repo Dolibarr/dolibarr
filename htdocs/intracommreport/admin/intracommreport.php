@@ -159,9 +159,8 @@ print "</tr>\n";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("INTRACOMMREPORT_CATEG_FRAISDEPORT").'</td>';
-$arraychoices = array(3=>'Seuil de 460 000 €', 4=>'En dessous de 460 000 €');
 print '<td>';
-print $formother->select_categories(0, $conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT, 'INTRACOMMREPORT_CATEG_FRAISDEPORT');
+print $formother->select_categories('product', $conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT, 'INTRACOMMREPORT_CATEG_FRAISDEPORT');
 print '</td>';
 print "</tr>\n";
 
@@ -193,10 +192,8 @@ foreach ($list_DES as $key)
 
 print '</table>';
 
-print '<div class="tabsAction">';
-print '<div class="inline-block divButAction">';
-print '<input type="submit" name="bt_save" class="butAction button-save" value="'.$langs->trans("Save").'" />';
-print '</div>';
+print '<div class="center">';
+print '<input type="submit" name="bt_save" class="butAction button-save" value="'.$langs->trans("Update").'" />';
 print '</div>';
 
 print '</form>';

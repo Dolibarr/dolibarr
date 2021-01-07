@@ -991,32 +991,23 @@ class ExtraFields
 			else return '';
 		}
 
-		if (empty($morecss))
-		{
-			if ($type == 'date')
-			{
+		if (empty($morecss)) {
+			if ($type == 'date') {
 				$morecss = 'minwidth100imp';
-			} elseif ($type == 'datetime' || $type == 'link')
-			{
+			} elseif ($type == 'datetime' || $type == 'link') {
 				$morecss = 'minwidth200imp';
-			} elseif (in_array($type, array('int', 'integer', 'double', 'price')))
-			{
+			} elseif (in_array($type, array('int', 'integer', 'double', 'price'))) {
 				$morecss = 'maxwidth75';
-			} elseif ($type == 'password')
-			{
+			} elseif ($type == 'password') {
 				$morecss = 'maxwidth100';
-			} elseif ($type == 'url')
-			{
+			} elseif ($type == 'url') {
 				$morecss = 'minwidth400';
-			} elseif ($type == 'boolean')
-			{
+			} elseif ($type == 'boolean') {
 				$morecss = '';
 			} else {
-				if (round($size) < 12)
-				{
+				if (empty($size) || round($size) < 12) {
 					$morecss = 'minwidth100';
-				} elseif (round($size) <= 48)
-				{
+				} elseif (round($size) <= 48) {
 					$morecss = 'minwidth200';
 				} else {
 					$morecss = 'minwidth400';
@@ -1024,8 +1015,7 @@ class ExtraFields
 			}
 		}
 
-		if (in_array($type, array('date', 'datetime')))
-		{
+		if (in_array($type, array('date', 'datetime'))) {
 			$tmp = explode(',', $size);
 			$newsize = $tmp[0];
 
@@ -1107,7 +1097,12 @@ class ExtraFields
 			foreach ($param['options'] as $key => $val)
 			{
 				if ((string) $key == '') continue;
-				list($val, $parent) = explode('|', $val);
+				$valarray = explode('|', $val);
+				$val = $valarray[0];
+				$parent = '';
+				if (!empty($valarray[1])) {
+				    $parent = $valarray[1];
+				}
 				$out .= '<option value="'.$key.'"';
 				$out .= (((string) $value == (string) $key) ? ' selected' : '');
 				$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
@@ -1937,10 +1932,10 @@ class ExtraFields
 					$out .= '<script type="text/javascript">';
 					$out .= 'jQuery(document).ready(function(){';
 					if ($collapse_display === false) {
-						$out .= '   jQuery("#trextrafieldseparator'.$key.' td").prepend("<span class=\"cursorpointer fa fa-plus-square\"></span>&nbsp;");'."\n";
+						$out .= '   jQuery("#trextrafieldseparator'.$key.' td").prepend("<span class=\"cursorpointer far fa-plus-square\"></span>&nbsp;");'."\n";
 						$out .= '   jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").hide();'."\n";
 					} else {
-						$out .= '   jQuery("#trextrafieldseparator'.$key.' td").prepend("<span class=\"cursorpointer fa fa-minus-square\"></span>&nbsp;");'."\n";
+						$out .= '   jQuery("#trextrafieldseparator'.$key.' td").prepend("<span class=\"cursorpointer far fa-minus-square\"></span>&nbsp;");'."\n";
 						$out .= '   document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
 					}
 					$out .= '   jQuery("#trextrafieldseparator'.$key.'").click(function(){'."\n";
@@ -2073,7 +2068,7 @@ class ExtraFields
 	{
 		global $_POST;
 
-		if (is_string($extrafieldsobjectkey) && is_array($this->attributes[$extrafieldsobjectkey]['label']))
+		if (is_string($extrafieldsobjectkey) && !empty($this->attributes[$extrafieldsobjectkey]['label']) && is_array($this->attributes[$extrafieldsobjectkey]['label']))
 		{
 			$extralabels = $this->attributes[$extrafieldsobjectkey]['label'];
 		} else {

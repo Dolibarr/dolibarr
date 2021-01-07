@@ -62,7 +62,11 @@ if ($absolute_discount > 0) {
 			$text .= ' ('.$addabsolutediscount.')';
 		}
 
-		print '<div class="inline-block clearboth">'.$text.'</div>';
+		if ($isNewObject) {
+			print '<br>'.$text;
+		} else {
+			print '<div class="inline-block clearboth">'.$text.'</div>';
+		}
 	} else {
 		// Discount available of type fixed amount (not credit note)
 		$more = '('.$addabsolutediscount.')';
@@ -85,7 +89,11 @@ if ($absolute_creditnote > 0) {
 			$text .= '('.$addabsolutediscount.')';
 		}
 
-		print '<div class="inline-block clearboth">'.$text.'</div>';
+		if ($isNewObject) {
+			print '<br>'.$text;
+		} else {
+			print '<div class="inline-block clearboth">'.$text.'</div>';
+		}
 	} else {  // We can add a credit note on a down payment or standard invoice or situation invoice
 		// There is credit notes discounts available
 		$more = $isInvoice && !$isNewObject ? ' ('.$viewabsolutediscount.')' : '';

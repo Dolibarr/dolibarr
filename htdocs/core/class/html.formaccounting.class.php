@@ -59,7 +59,7 @@ class FormAccounting extends Form
 	/**
 	 * Return list of journals with label by nature
 	 *
-	 * @param	string	$selectid	Preselected pcg_type
+	 * @param	string	$selectid	Preselected journal code
 	 * @param	string	$htmlname	Name of field in html form
 	 * @param	int		$nature		Limit the list to a particular type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)
 	 * @param	int		$showempty	Add an empty field
@@ -132,6 +132,86 @@ class FormAccounting extends Form
 		}
 
 		$out .= Form::selectarray($htmlname, $options, $selected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, ($disabledajaxcombo ? 0 : 1));
+
+		return $out;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Return list of journals with label by nature
+	 *
+	 * @param	array	$selectedIds	Preselected journal code array
+	 * @param	string	$htmlname	Name of field in html form
+	 * @param	int		$nature		Limit the list to a particular type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)
+	 * @param	int		$showempty	Add an empty field
+	 * @param	int		$select_in	0=selectid value is the journal rowid (default) or 1=selectid is journal code
+	 * @param	int		$select_out	Set value returned by select. 0=rowid (default), 1=code
+	 * @param	string	$morecss	More css non HTML object
+	 * @param	string	$usecache	Key to use to store result into a cache. Next call with same key will reuse the cache.
+	 * @param   int     $disabledajaxcombo Disable ajax combo box.
+	 * @return	string				String with HTML select
+	 */
+	public function multi_select_journal($selectedIds = array(), $htmlname = 'journal', $nature = 0, $showempty = 0, $select_in = 0, $select_out = 0, $morecss = '', $usecache = '', $disabledajaxcombo = 0)
+	{
+		// phpcs:enable
+		global $conf, $langs;
+
+		$out = '';
+
+		$options = array();
+		if ($usecache && !empty($this->options_cache[$usecache]))
+		{
+			$options = $this->options_cache[$usecache];
+			$selected = $selectedIds;
+		} else {
+			$sql = "SELECT rowid, code, label, nature, entity, active";
+			$sql .= " FROM ".MAIN_DB_PREFIX."accounting_journal";
+			$sql .= " WHERE active = 1";
+			$sql .= " AND entity = ".$conf->entity;
+			if ($nature && is_numeric($nature))   $sql .= " AND nature = ".$nature;
+			$sql .= " ORDER BY code";
+
+			dol_syslog(get_class($this)."::multi_select_journal", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+
+			if (!$resql) {
+				$this->error = "Error ".$this->db->lasterror();
+				dol_syslog(get_class($this)."::multi_select_journal ".$this->error, LOG_ERR);
+				return -1;
+			}
+
+			$selected = array();
+			$langs->load('accountancy');
+			while ($obj = $this->db->fetch_object($resql))
+			{
+				$label = $langs->trans($obj->label);
+
+				$select_value_in = $obj->rowid;
+				$select_value_out = $obj->rowid;
+
+				// Try to guess if we have found default value
+				if ($select_in == 1) {
+					$select_value_in = $obj->code;
+				}
+				if ($select_out == 1) {
+					$select_value_out = $obj->code;
+				}
+				// Remember guy's we store in database llx_accounting_bookkeeping the code of accounting_journal and not the rowid
+				if (!empty($selectedIds) && in_array($select_value_in, $selectedIds)) {
+					//var_dump("Found ".$selectid." ".$select_value_in);
+					$selected[] = $select_value_out;
+				}
+				$options[$select_value_out] = $label;
+			}
+			$this->db->free($resql);
+
+			if ($usecache)
+			{
+				$this->options_cache[$usecache] = $options;
+			}
+		}
+
+		$out .= Form::multiselectarray($htmlname, $options, $selected, $showempty, 0, $morecss, 0, 0, 0, 'code_journal', '', ($disabledajaxcombo ? 0 : 1));
 
 		return $out;
 	}

@@ -23,7 +23,7 @@ if (!empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_e
 					'label'    => $extrafields->attributes[$extrafieldsobjectkey]['label'][$key],
 					'checked'  => (($extrafields->attributes[$extrafieldsobjectkey]['list'][$key] < 0) ? 0 : 1),
 					'position' => $extrafields->attributes[$extrafieldsobjectkey]['pos'][$key],
-					'enabled'  => (abs($extrafields->attributes[$extrafieldsobjectkey]['list'][$key]) != 3 && $extrafields->attributes[$extrafieldsobjectkey]['perms'][$key]),
+					'enabled'  => (abs((int) $extrafields->attributes[$extrafieldsobjectkey]['list'][$key]) != 3 && $extrafields->attributes[$extrafieldsobjectkey]['perms'][$key]),
 					'langfile' => $extrafields->attributes[$extrafieldsobjectkey]['langfile'][$key],
 					'help'     => $extrafields->attributes[$extrafieldsobjectkey]['help'][$key],
 				);

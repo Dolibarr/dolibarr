@@ -771,11 +771,11 @@ print '<table class="notopnoleftnoright" width="100%">';
 print '<tr><td class="right">'.$morehtml.' &nbsp; &nbsp; ';
 if ($mode == 'showalltime')
 {
-	print '<a href="'.$_SERVER["PHP_SELF"].'?account='.$account.'">';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?account='.$account.(GETPOST("option") != 'all' ? '' : '&option=all').'">';
 	print $langs->trans("GoBack");
 	print '</a>';
 } else {
-	print '<a href="'.$_SERVER["PHP_SELF"].'?mode=showalltime&account='.$account.'">';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?mode=showalltime&account='.$account.(GETPOST("option") != 'all' ? '' : '&option=all').'">';
 	print $langs->trans("ShowAllTimeBalance");
 	print '</a>';
 }
@@ -793,7 +793,7 @@ if ($mode == 'standard')
 	if ($nextmonth > 12) { $nextmonth = 1; $nextyear++; }
 
 	// For month
-	$link = "<a href='".$_SERVER["PHP_SELF"]."?account=".$account.(GETPOST("option") != 'all' ? '' : '&option=all')."&year=".$prevyear."&month=".$prevmonth."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Month")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account."&year=".$nextyear."&month=".$nextmonth."'>".img_next('', 'class="valignbottom"')."</a>";
+	$link = "<a href='".$_SERVER["PHP_SELF"]."?account=".$account.(GETPOST("option") != 'all' ? '' : '&option=all')."&year=".$prevyear."&month=".$prevmonth."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Month")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account.(GETPOST("option") != 'all' ? '' : '&option=all')."&year=".$nextyear."&month=".$nextmonth."'>".img_next('', 'class="valignbottom"')."</a>";
 	print '<div class="right clearboth">'.$link.'</div>';
 
 	print '<div class="center clearboth margintoponly">';
@@ -807,7 +807,7 @@ if ($mode == 'standard')
 
 	// For year
 	$prevyear = $year - 1; $nextyear = $year + 1;
-	$link = "<a href='".$_SERVER["PHP_SELF"]."?account=".$account.(GETPOST("option") != 'all' ? '' : '&option=all')."&year=".($prevyear)."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account."&year=".($nextyear)."'>".img_next('', 'class="valignbottom"')."</a>";
+	$link = "<a href='".$_SERVER["PHP_SELF"]."?account=".$account.(GETPOST("option") != 'all' ? '' : '&option=all')."&year=".($prevyear)."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account.(GETPOST("option") != 'all' ? '' : '&option=all')."&year=".($nextyear)."'>".img_next('', 'class="valignbottom"')."</a>";
 
 	print '<div class="right clearboth margintoponly">'.$link.'</div>';
 

@@ -199,7 +199,7 @@ if ($conf->browser->layout == 'phone') $nbtopmenuentries = max($nbtopmenuentries
 
 
 $minwidthtmenu = 66; /* minimum width for one top menu entry */
-$heightmenu = 48; /* height of top menu, part with image */
+$heightmenu = 50; /* height of top menu, part with image */
 $heightmenu2 = 49; /* height of top menu, part with login  */
 $disableimages = 0;
 $maxwidthloginblock = 180;

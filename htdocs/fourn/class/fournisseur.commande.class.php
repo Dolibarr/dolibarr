@@ -53,12 +53,12 @@ class CommandeFournisseur extends CommonOrder
 	public $table_element = 'commande_fournisseur';
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = 'commande_fournisseurdet';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_commande';
 
@@ -1380,7 +1380,7 @@ class CommandeFournisseur extends CommonOrder
 						}
 
 						// Add object linked
-						if (!$error && $this->id && is_array($this->linked_objects) && !empty($this->linked_objects))
+						if (!$error && $this->id && !empty($this->linked_objects) && is_array($this->linked_objects))
 						{
 							foreach ($this->linked_objects as $origin => $tmp_origin_id)
 							{
@@ -1607,21 +1607,22 @@ class CommandeFournisseur extends CommonOrder
 
 			$this->db->begin();
 
-			if ($fk_product > 0)
-			{
-				if (!empty($conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY))
-				{
+			$product_type = $type;
+			$label = '';	// deprecated
+
+			if ($fk_product > 0) {
+				if (!empty($conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY)) {
 					// Check quantity is enough
 					dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." fk_prod_fourn_price=".$fk_prod_fourn_price." qty=".$qty." ref_supplier=".$ref_supplier);
 					$prod = new Product($this->db);
-					if ($prod->fetch($fk_product) > 0)
-					{
+					if ($prod->fetch($fk_product) > 0) {
 						$product_type = $prod->type;
 						$label = $prod->label;
 
 						// We use 'none' instead of $ref_supplier, because fourn_ref may not exists anymore. So we will take the first supplier price ok.
 						// If we want a dedicated supplier price, we must provide $fk_prod_fourn_price.
-						$result = $prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc ? $this->fk_soc : $this->socid)); // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$ref_supplier/$this->fk_soc
+						$result = $prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', (isset($this->fk_soc) ? $this->fk_soc : $this->socid)); // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$ref_supplier/$this->fk_soc
+
 						// If supplier order created from customer order, we take best supplier price
 						// If $pu (defined previously from pu_ht or pu_ttc) is not defined at all, we also take the best supplier price
 						if ($result > 0 && ($origin == 'commande' || $pu === ''))
@@ -1663,25 +1664,20 @@ class CommandeFournisseur extends CommonOrder
 					}
 				}
 
-				// redefine quantity according to packaging
-				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING))
-				{
+				// Predefine quantity according to packaging
+				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
 					$prod = new Product($this->db, $fk_product);
 					$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc ? $this->fk_soc : $this->socid));
-					if ($qty < $prod->packaging)
-					{
+					if ($qty < $prod->packaging) {
 						$qty = $prod->packaging;
 					} else {
-						if (!empty($prod->packaging) && ($qty % $prod->packaging) > 0)
-						{
+						if (!empty($prod->packaging) && ($qty % $prod->packaging) > 0) {
 							$coeff = intval($qty / $prod->packaging) + 1;
 							$qty = $prod->packaging * $coeff;
 						}
 					}
 					setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
 				}
-			} else {
-				$product_type = $type;
 			}
 
 			if (!empty($conf->multicurrency->enabled) && $pu_ht_devise > 0) {
@@ -1718,8 +1714,8 @@ class CommandeFournisseur extends CommonOrder
 			$multicurrency_total_ttc = $tabprice[18];
 			$pu_ht_devise = $tabprice[19];
 
-			$localtax1_type = $localtaxes_type[0];
-			$localtax2_type = $localtaxes_type[2];
+			$localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
+			$localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 
 			$rangmax = $this->line_max();
 			$rang = $rangmax + 1;
@@ -1738,8 +1734,8 @@ class CommandeFournisseur extends CommonOrder
 			$this->line->tva_tx = $txtva;
 			$this->line->localtax1_tx = ($total_localtax1 ? $localtaxes_type[1] : 0);
 			$this->line->localtax2_tx = ($total_localtax2 ? $localtaxes_type[3] : 0);
-			$this->line->localtax1_type = $localtaxes_type[0];
-			$this->line->localtax2_type = $localtaxes_type[2];
+			$this->line->localtax1_type = $localtax1_type;
+			$this->line->localtax2_type = $localtax2_type;
 			$this->line->fk_product = $fk_product;
 			$this->line->product_type = $product_type;
 			$this->line->remise_percent = $remise_percent;
@@ -2550,9 +2546,12 @@ class CommandeFournisseur extends CommonOrder
 
 			$remise_percent = price2num($remise_percent);
 			$qty = price2num($qty);
+			if (!$qty) $qty = 1;
 			$pu = price2num($pu);
 			$pu_ht_devise = price2num($pu_ht_devise);
-			$txtva = price2num($txtva);
+        	if (!preg_match('/\((.*)\)/', $txtva)) {
+        		$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
+        	}
 			$txlocaltax1 = price2num($txlocaltax1);
 			$txlocaltax2 = price2num($txlocaltax2);
 
@@ -2598,8 +2597,8 @@ class CommandeFournisseur extends CommonOrder
 			$multicurrency_total_ttc = $tabprice[18];
 			$pu_ht_devise = $tabprice[19];
 
-			$localtax1_type = $localtaxes_type[0];
-			$localtax2_type = $localtaxes_type[2];
+			$localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
+			$localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 
 			//Fetch current line from the database and then clone the object and set it in $oldline property
 			$this->line = new CommandeFournisseurLigne($this->db);
@@ -2637,8 +2636,8 @@ class CommandeFournisseur extends CommonOrder
 			$this->line->tva_tx         = $txtva;
 			$this->line->localtax1_tx   = $txlocaltax1;
 			$this->line->localtax2_tx   = $txlocaltax2;
-			$this->line->localtax1_type = $localtaxes_type[0];
-			$this->line->localtax2_type = $localtaxes_type[2];
+			$this->line->localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
+			$this->line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 			$this->line->remise_percent = $remise_percent;
 			$this->line->subprice       = $pu_ht;
 			$this->line->rang           = $this->rang;

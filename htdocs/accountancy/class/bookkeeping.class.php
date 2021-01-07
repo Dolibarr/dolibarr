@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2017  Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2015-2020  Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -825,6 +825,10 @@ class BookKeeping extends CommonObject
 					$sqlwhere[] = $key.'\''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.credit' || $key == 't.debit') {
 					$sqlwhere[] = natural_search($key, $value, 1, 1);
+                } elseif ($key == 't.reconciled_option') {
+                    $sqlwhere[] = 't.lettering_code IS NULL';
+                } elseif ($key == 't.code_journal' && !empty($value)) {
+                    $sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
 				} else {
 					$sqlwhere[] = natural_search($key, $value, 0, 1);
 				}

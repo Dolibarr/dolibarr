@@ -28,8 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 
 /**
- *	\class      ModeleThirdPartyDoc
- *	\brief      Parent class for third parties models of doc generators
+ *	Parent class for third parties models of doc generators
  */
 abstract class ModeleThirdPartyDoc extends CommonDocGenerator
 {
@@ -62,8 +61,7 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
 }
 
 /**
- *	    \class      ModeleThirdPartyCode
- *		\brief  	Parent class for third parties code generators
+ *		Parent class for third parties code generators
  */
 abstract class ModeleThirdPartyCode
 {
@@ -71,6 +69,12 @@ abstract class ModeleThirdPartyCode
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
+
+	/**
+	 * @var array Error code (or message) array
+	 */
+	public $errors;
+
 
 	/**     Renvoi la description par defaut du modele de numerotation
 	 *

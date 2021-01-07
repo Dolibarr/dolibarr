@@ -113,7 +113,6 @@ if (!empty($conf->global->PRODUCT_USE_UNITS))
 {
 	$coldisplay++;
 	print '<td class="nobottom linecoluseunit left">';
-	// print $form->selectUnits(empty($line->fk_unit) ? $conf->global->PRODUCT_USE_UNITS : $line->fk_unit, "units");
 	print '</td>';
 }
 

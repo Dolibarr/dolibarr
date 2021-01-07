@@ -535,7 +535,7 @@ while ($compteur < $num)
 	// Button edit at end of line
 	if ($compteur != $ligneamodifier && $mod_ok)
 	{
-		print '<td class="casevide"><input type="submit" class="button" name="modifierligne'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Edit")).'"></td>'."\n";
+		print '<td class="casevide"><input type="submit" class="button smallpaddingimp" name="modifierligne'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Edit")).'"></td>'."\n";
 	}
 
 	//demande de confirmation pour modification de ligne
@@ -729,7 +729,7 @@ if ($comments)
 
 // Form to add comment
 if ($object->allow_comments) {
-	print '<div class="addcomment"><span class="opacitymedium">'.$langs->trans("AddACommentForPoll")."</span><br>\n";
+	print '<br><div class="addcomment"><span class="opacitymedium">'.$langs->trans("AddACommentForPoll")."</span><br>\n";
 
 	print '<textarea name="comment" rows="'.ROWS_2.'" class="quatrevingtpercent">'.dol_escape_htmltag(GETPOST('comment', 'restricthtml'), 0, 1).'</textarea><br>'."\n";
 	print $langs->trans("Name").': ';

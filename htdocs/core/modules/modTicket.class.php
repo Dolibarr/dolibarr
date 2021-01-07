@@ -105,8 +105,10 @@ class modTicket extends DolibarrModules
 		// Example:
 		$this->const = array(
 			1 => array('TICKET_ENABLE_PUBLIC_INTERFACE', 'chaine', '0', 'Enable ticket public interface', 0),
-			2 => array('TICKET_ADDON', 'chaine', 'mod_ticket_simple', 'Ticket ref module', 0)
+			2 => array('TICKET_ADDON', 'chaine', 'mod_ticket_simple', 'Ticket ref module', 0),
+			3 => array('TICKET_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT/doctemplates/tickets', 'Ticket templates ODT/ODS directory for templates', 0)
 		);
+
 
 		$this->tabs = array(
 			'thirdparty:+ticket:Tickets:@ticket:$user->rights->ticket->read:/ticket/list.php?socid=__ID__',
@@ -139,15 +141,10 @@ class modTicket extends DolibarrModules
 
 		// Boxes
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
-		$this->boxes = array(); // Boxes list
-		$r = 0;
-		// Example:
-
-		$this->boxes[$r][1] = "box_last_ticket";
-		$r++;
-
-		$this->boxes[$r][1] = "box_last_modified_ticket";
-		$r++;
+		$this->boxes = array(
+			0=>array('file'=>'box_last_ticket.php', 'enabledbydefaulton'=>'Home'),
+			1=>array('file'=>'box_last_modified_ticket.php', 'enabledbydefaulton'=>'Home')
+		); // Boxes list
 
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
@@ -285,12 +282,36 @@ class modTicket extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
+		global $conf, $langs;
+
+		// Permissions
+		$this->remove($options);
+
+		//ODT template
+		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/tickets/template_ticket.odt';
+		$dirodt = DOL_DATA_ROOT.'/doctemplates/tickets';
+		$dest = $dirodt.'/template_order.odt';
+
+		if (file_exists($src) && !file_exists($dest))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			dol_mkdir($dirodt);
+			$result = dol_copy($src, $dest, 0, 0);
+			if ($result < 0)
+			{
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
+				return 0;
+			}
+		}
 
 		$sql = array(
 			array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110120, 'ticket',  'internal', 'SUPPORTTEC', 'Utilisateur assigné au ticket', 1);", "ignoreerror" => 1),
 			array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110121, 'ticket',  'internal', 'CONTRIBUTOR', 'Intervenant', 1);", "ignoreerror" => 1),
 			array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110122, 'ticket',  'external', 'SUPPORTCLI', 'Contact client suivi incident', 1);", "ignoreerror" => 1),
 			array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110123, 'ticket',  'external', 'CONTRIBUTOR', 'Intervenant', 1);", "ignoreerror" => 1),
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'TICKET_ADDON_PDF_ODT_PATH' AND type = 'ticket' AND entity = ".$conf->entity,
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('TICKET_ADDON_PDF_ODT_PATH','ticket',".$conf->entity.")"
 		);
 
 		return $this->_init($sql, $options);

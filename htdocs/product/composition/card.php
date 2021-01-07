@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
@@ -137,7 +137,7 @@ if ($action == 'search')
 	$current_lang = $langs->getDefaultLang();
 
 	$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.fk_product_type as type, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
-	$sql .= ' p.fk_product_type, p.tms as datem';
+	$sql .= ' p.fk_product_type, p.tms as datem, p.tobatch';
 	if (!empty($conf->global->MAIN_MULTILANGS)) $sql .= ', pl.label as labelm, pl.description as descriptionm';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON p.rowid = cp.fk_product';
@@ -204,7 +204,7 @@ if ($id > 0 || !empty($ref))
 
 		dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', '', '', '', 0, '', '', 0);
 
-		if ($object->type != Product::TYPE_SERVICE || empty($conf->global->PRODUIT_MULTIPRICES))
+		if ($object->type != Product::TYPE_SERVICE || !empty($conf->global->STOCK_SUPPORTS_SERVICES) || empty($conf->global->PRODUIT_MULTIPRICES))
 		{
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
@@ -320,14 +320,11 @@ if ($id > 0 || !empty($ref))
 		print '</tr>'."\n";
 
 		$totalsell = 0;
-		if (count($prods_arbo))
-		{
-			foreach ($prods_arbo as $value)
-			{
+		if (count($prods_arbo))	{
+			foreach ($prods_arbo as $value)	{
 				$productstatic->fetch($value['id']);
 
-				if ($value['level'] <= 1)
-				{
+				if ($value['level'] <= 1) {
 					print '<tr class="oddeven">';
 
 					$notdefined = 0;
@@ -380,7 +377,7 @@ if ($id > 0 || !empty($ref))
 					// Qty + IncDec
 					if ($user->rights->produit->creer || $user->rights->service->creer)
 					{
-						print '<td class="center"><input type="text" value="'.$nb_of_subproduct.'" name="TProduct['.$productstatic->id.'][qty]" size="4" /></td>';
+						print '<td class="center"><input type="text" value="'.$nb_of_subproduct.'" name="TProduct['.$productstatic->id.'][qty]" size="4" class="right" /></td>';
 						print '<td class="center"><input type="checkbox" name="TProduct['.$productstatic->id.'][incdec]" value="1" '.($value['incdec'] == 1 ? 'checked' : '').' /></td>';
 					} else {
 						print '<td>'.$nb_of_subproduct.'</td>';
@@ -566,6 +563,7 @@ if ($id > 0 || !empty($ref))
 						$productstatic->label = $objp->label;
 						$productstatic->type = $objp->type;
 						$productstatic->entity = $objp->entity;
+						$productstatic->status_batch = $objp->tobatch;
 
 						print '<td>'.$productstatic->getNomUrl(1, '', 24).'</td>';
 						$labeltoshow = $objp->label;

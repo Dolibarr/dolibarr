@@ -60,7 +60,6 @@ ALTER TABLE llx_mrp_mo_extrafields ADD INDEX idx_mrp_mo_fk_object(fk_object);
 
 
 -- For v13
-
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (111,11,     '0','0','No Sales Tax',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (112,11,     '4','0','Sales Tax 4%',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (113,11,     '6','0','Sales Tax 6%',1);
@@ -340,6 +339,7 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTACT_SENTBYMAIL','Mails sent from third party card','Executed when you send email from contact adress card','contact',51);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTACT_DELETE','Contact address deleted','Executed when a contact is deleted','contact',52);
 
+ALTER TABLE llx_opensurvey_sondage CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 ALTER TABLE llx_ecm_directories CHANGE COLUMN date_m tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 ALTER TABLE llx_ecm_files CHANGE COLUMN date_m tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
@@ -375,7 +375,7 @@ ALTER TABLE llx_facturedet ADD COLUMN ref_ext varchar(255) AFTER multicurrency_t
 ALTER TABLE llx_c_ticket_category ADD COLUMN fk_parent integer DEFAULT 0 NOT NULL;
 ALTER TABLE llx_c_ticket_category ADD COLUMN force_severity varchar(32) NULL;
 
-ALTER TABLE llx_c_ticket_severity CHANGE color color VARCHAR(10) NULL; 
+ALTER TABLE llx_c_ticket_severity CHANGE color color VARCHAR(10) NULL;
 
 ALTER TABLE llx_expensereport ADD COLUMN fk_user_creat integer NULL;
 
@@ -398,6 +398,8 @@ CREATE TABLE llx_ecm_files_extrafields
 ) ENGINE=innodb;
 
 ALTER TABLE llx_ecm_files_extrafields ADD INDEX idx_ecm_files_extrafields (fk_object);
+ALTER TABLE llx_ecm_files ADD COLUMN note_private text AFTER fk_user_m;
+ALTER TABLE llx_ecm_files ADD COLUMN note_public text AFTER note_private;
 
 CREATE TABLE llx_ecm_directories_extrafields
 (
@@ -408,6 +410,9 @@ CREATE TABLE llx_ecm_directories_extrafields
 ) ENGINE=innodb;
 
 ALTER TABLE llx_ecm_directories_extrafields ADD INDEX idx_ecm_directories_extrafields (fk_object);
+ALTER TABLE llx_ecm_directories ADD COLUMN note_private text AFTER fk_user_m;
+ALTER TABLE llx_ecm_directories ADD COLUMN note_public text AFTER note_private;
+
 ALTER TABLE llx_website_page ADD COLUMN allowed_in_frames integer DEFAULT 0;
 ALTER TABLE llx_website_page ADD COLUMN object_type varchar(255);
 ALTER TABLE llx_website_page ADD COLUMN fk_object varchar(255);
@@ -420,7 +425,7 @@ ALTER TABLE llx_projet_task_time MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIM
 ALTER TABLE llx_projet_task_time MODIFY COLUMN datec datetime;
 
 
-DELETE FROM llx_user_rights WHERE fk_id IN (SELECT id FROM llx_rights_def where module = 'holiday' and perms = 'lire_tous'); 
+DELETE FROM llx_user_rights WHERE fk_id IN (SELECT id FROM llx_rights_def where module = 'holiday' and perms = 'lire_tous');
 DELETE FROM llx_rights_def where module = 'holiday' and perms = 'lire_tous';
 UPDATE llx_rights_def set perms = 'readall' WHERE perms = 'read_all' and module = 'holiday';
 
@@ -438,7 +443,6 @@ INSERT INTO llx_c_product_nature (code, label, active) VALUES (1, 'Finished', 1)
 
 ALTER TABLE llx_product MODIFY COLUMN finished tinyint DEFAULT NULL;
 ALTER TABLE llx_product ADD CONSTRAINT fk_product_finished FOREIGN KEY (finished) REFERENCES llx_c_product_nature (code);
-
 
 -- MIGRATION TO DO AFTER RENAMING AN OBJECT
 
@@ -517,6 +521,9 @@ UPDATE llx_rights_def set perms = 'delivery' WHERE perms = 'livraison' and modul
 UPDATE llx_rights_def set perms = 'delivery_advance' WHERE perms = 'livraison_advance' and module = 'expedition';
 
 
+ALTER TABLE llx_commande_fournisseurdet ADD INDEX idx_commande_fournisseurdet_fk_commande (fk_commande);
+ALTER TABLE llx_commande_fournisseurdet ADD INDEX idx_commande_fournisseurdet_fk_product (fk_product);
+
 
 CREATE TABLE llx_zapier_hook(
     rowid integer AUTO_INCREMENT PRIMARY KEY,
@@ -540,5 +547,15 @@ CREATE TABLE llx_session(
   fk_user integer NOT NULL,
   remote_ip varchar(64) NULL,
   user_agent varchar(128) NULL
-)ENGINE=innodb;
+) ENGINE=innodb;
+
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'github', 'Github', 'https://github.com/{socialid}', 'fa-github', 1);
+
+-- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_funnel_of_prospection.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_funnel_of_prospection.php' AND entity = 1);
+-- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_customers_outstanding_bill_reached.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_customers_outstanding_bill_reached.php' AND entity = 1);
+-- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_scheduled_jobs.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_scheduled_jobs.php' AND entity = 1);
+
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging varchar(64);
+
+ALTER TABLE llx_projet ADD COLUMN fk_opp_status_end integer DEFAULT NULL;
 

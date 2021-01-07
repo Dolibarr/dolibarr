@@ -118,35 +118,47 @@ class Mailing extends CommonObject
 
 	/**
 	 * @var int id of user create
-	 * @deprecated
 	 */
 	public $user_creation;
 
 	/**
 	 * @var int id of user create
+	 * @deprecated
 	 */
 	public $user_creat;
 
 	/**
 	 * @var int id of user validate
-	 * @deprecated
 	 */
 	public $user_validation;
 
 	/**
 	 * @var int id of user validate
+	 * @deprecated
 	 */
 	public $user_valid;
 
 	/**
 	 * @var integer|string date_creation
+	 * @deprecated
 	 */
 	public $date_creat;
 
 	/**
+	 * @var integer|string date_creation
+	 */
+	public $date_creation;
+
+	/**
 	 * @var int date validate
+	 * @deprecated
 	 */
 	public $date_valid;
+
+	/**
+	 * @var int date validate
+	 */
+	public $date_validation;
 
 	/**
 	 * @var array extraparams
@@ -314,10 +326,14 @@ class Mailing extends CommonObject
 				$this->email_errorsto = $obj->email_errorsto;
 
 				$this->user_creat = $obj->fk_user_creat;
+				$this->user_creation = $obj->fk_user_creat;
 				$this->user_valid = $obj->fk_user_valid;
+				$this->user_validation = $obj->fk_user_valid;
 
 				$this->date_creat = $this->db->jdate($obj->date_creat);
+				$this->date_creation = $this->db->jdate($obj->date_creat);
 				$this->date_valid = $this->db->jdate($obj->date_valid);
+				$this->date_validation = $this->db->jdate($obj->date_valid);
 				$this->date_envoi = $this->db->jdate($obj->date_envoi);
 
 				$this->extraparams = (array) json_decode($obj->extraparams, true);
@@ -510,6 +526,8 @@ class Mailing extends CommonObject
 		dol_syslog("Mailing::delete_targets", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
+			$this->refreshNbOfTargets();
+
 			return 1;
 		} else {
 			$this->error = $this->db->lasterror();
@@ -577,6 +595,41 @@ class Mailing extends CommonObject
 		return 0;
 	}
 
+	/**
+	 *  Refresh denormalized value ->nbemail into emailing record
+	 *  Note: There is also the method update_nb into modules_mailings that is used for this.
+	 *
+	 *  @return int        		<0 if KO, >0 if OK
+	 */
+	public function refreshNbOfTargets()
+	{
+		$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."mailing_cibles";
+		$sql .= " WHERE fk_mailing = ".$this->id;
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$nbforupdate = $obj->nb;
+
+				$sql = 'UPDATE '.MAIN_DB_PREFIX.'mailing SET nbemail = '.((int) $nbforupdate);
+				$sql .= ' WHERE rowid = '.$this->id;
+
+				$resqlupdate = $this->db->query($sql);
+				if (! $resqlupdate) {
+					$this->error = $this->db->lasterror();
+					return -1;
+				} else {
+					$this->nbemail = (int) $nbforupdate;
+				}
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		return 1;
+	}
 
 	/**
 	 *  Return a link to the object card (with optionally the picto)

@@ -138,14 +138,12 @@ class modProjet extends DolibarrModules
 		$r++;
 
 		// Boxes
-		$this->boxes = array();
-		$r = 0;
-		$this->boxes[$r][1] = "box_project.php";
-		$r++;
-		$this->boxes[$r][1] = "box_task.php";
-		$r++;
-		$this->boxes[$r][1] = "box_validated_projects.php";
-		$r++;
+		$this->boxes = array(
+			0=>array('file'=>'box_project.php', 'enabledbydefaulton'=>'Home'),
+			1=>array('file'=>'box_task.php', 'enabledbydefaulton'=>'Home'),
+			2=>array('file'=>'box_validated_projects.php', 'enabledbydefaulton'=>'Home'),
+			3=>array('file'=>'box_funnel_of_prospection.php', 'enabledbydefaulton'=>'Home'),
+		);
 
 		// Permissions
 		$this->rights = array();

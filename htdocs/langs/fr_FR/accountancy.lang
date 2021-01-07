@@ -144,7 +144,7 @@ NotVentilatedinAccount=Non lié au compte comptable
 XLineSuccessfullyBinded=%s produits/service correctement liés à un compte comptable
 XLineFailedToBeBinded=%s produits/services n'ont pu être liés à un compte comptable
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Nombre d'éléments à lier représentés par page (maximum recommandé: 50)
+ACCOUNTING_LIMIT_LIST_VENTILATION=Nombre de ligne des listes et d'éléments à lier représentés par page (maximum recommandé: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Commencez le tri de la page "Lien à réaliser" par les éléments les plus récents
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Commencez le tri de la page "Liens réalisés" par les éléments les plus récents
 

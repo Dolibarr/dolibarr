@@ -20,7 +20,6 @@
 create table llx_intracommreport
 (
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
-  
   ref				varchar(30)        NOT NULL,			-- report reference number
   entity			integer  DEFAULT 1 NOT NULL,			-- multi company id
   type_declaration	varchar(32),

@@ -67,11 +67,10 @@ if (!$user->rights->projet->lire) accessforbidden();
 $diroutputmassaction = $conf->projet->dir_output.'/temp/massgeneration/'.$user->id;
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", "alpha");
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST("sortfield", "aZ09comma");
+$sortorder = GETPOST("sortorder", 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-$page = is_numeric($page) ? $page : 0;
-$page = $page == -1 ? 0 : $page;
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters
 if (!$sortfield) $sortfield = "p.ref";
 if (!$sortorder) $sortorder = "ASC";
 $offset = $limit * $page;
@@ -137,39 +136,33 @@ foreach ($object->fields as $key => $val) {
 	$fieldstosearchall['p.'.$key] = $val['label'];
 }
 
-// Add none object fields to "search in all"
+// Add name object fields to "search in all"
 $fieldstosearchall['s.nom'] = "ThirdPartyName";
 
-// Definition of fields for list
+// Definition of array of fields for columns
 $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
-	if (empty($val['visible'])) {
-		continue;
+	if (!empty($val['visible'])) {
+		$visible = dol_eval($val['visible'], 1);
+		$arrayfields['p.'.$key] = array(
+			'label'=>$val['label'],
+			'checked'=>(($visible < 0) ? 0 : 1),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+			'position'=>$val['position'],
+			'help'=>$val['help']
+		);
 	}
-
-	$arrayfields['p.'.$key] = array(
-		'label'=>$val['label'],
-		'checked'=>(($val['visible'] < 0) ? 0 : 1),
-		'enabled'=>($val['enabled'] && ($val['visible'] != 3)),
-		'position'=>$val['position']);
 }
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 // Add none object fields to fields for list
-$arrayfields['s.nom'] = array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'enabled'=>(empty($conf->societe->enabled) ? 0 : 1));
-$arrayfields['commercial'] = array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>0);
-$arrayfields['opp_weighted_amount'] = array('label'=>$langs->trans('OpportunityWeightedAmountShort'), 'checked'=>0, 'enabled'=>(empty($conf->global->PROJECT_USE_OPPORTUNITIES) ? 0 : 1), 'position'=>106);
+$arrayfields['s.nom'] = array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'position'=>21, 'enabled'=>(empty($conf->societe->enabled) ? 0 : 1));
+$arrayfields['commercial'] = array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>0, 'position'=>23);
+$arrayfields['opp_weighted_amount'] = array('label'=>$langs->trans('OpportunityWeightedAmountShort'), 'checked'=>0, 'position'=> 116, 'enabled'=>(empty($conf->global->PROJECT_USE_OPPORTUNITIES) ? 0 : 1), 'position'=>106);
 
-// Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-	}
-}
-
+$object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 
@@ -225,6 +218,7 @@ if (empty($reshook))
 	$objectlabel = 'Project';
 	$permissiontoread = $user->rights->projet->lire;
 	$permissiontodelete = $user->rights->projet->supprimer;
+	$permissiontoadd = $user->rights->projet->creer;
 	$uploaddir = $conf->projet->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
@@ -281,6 +275,7 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $formproject = new FormProjets($db);
 
+$help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 $title = $langs->trans("Projects");
 
 
@@ -314,9 +309,10 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 }
 // Add fields from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
-$sql .= $hookmanager->resPrint;
-$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql = preg_replace('/,\s*$/', '', $sql);
+$sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as p";
 if (!empty($conf->categorie->enabled))
 {
 	$sql .= Categorie::getFilterJoinQuery(Categorie::TYPE_PROJECT, "p.rowid");
@@ -377,37 +373,36 @@ if ($search_usage_bill_time != '' && $search_usage_bill_time >= 0)     $sql .= n
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= $db->order($sortfield, $sortorder);
 
+// Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-{
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller than paging size (filtering), goto and load page 0
-	{
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	$resql = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($resql);
+	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
 }
+// if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
+if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit))) {
+	$num = $nbtotalofrecords;
+} else {
+	if ($limit) $sql .= $db->plimit($limit + 1, $offset);
 
-$sql .= $db->plimit($limit + 1, $offset);
+	$resql = $db->query($sql);
+	if (!$resql) {
+		dol_print_error($db);
+		exit;
+	}
 
-dol_syslog("list allowed project", LOG_DEBUG);
-
-$resql = $db->query($sql);
-if (!$resql)
-{
-	dol_print_error($db);
-	exit;
+	$num = $db->num_rows($resql);
 }
 
-$num = $db->num_rows($resql);
-
-$arrayofselected = is_array($toselect) ? $toselect : array();
-
+// Direct jump if only one record found
 if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all)
 {
 	$obj = $db->fetch_object($resql);
@@ -415,8 +410,15 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 	exit;
 }
 
-$help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
-llxHeader("", $title, $help_url);
+
+// Output page
+// --------------------------------------------------------------------
+
+dol_syslog("list allowed project", LOG_DEBUG);
+
+llxHeader('', $title, $help_url);
+
+$arrayofselected = is_array($toselect) ? $toselect : array();
 
 $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
@@ -453,8 +455,9 @@ $arrayofmassactions = array(
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
 if ($user->rights->projet->creer) $arrayofmassactions['close'] = $langs->trans("Close");
-if ($user->rights->societe->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
-if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
+if ($user->rights->projet->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+if ($user->rights->projet->creer) $arrayofmassactions['preaffecttag'] = '<span class="fa fa-tag paddingrightonly"></span>'.$langs->trans("AffectTag");
+if (in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) $arrayofmassactions = array();
 
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
@@ -534,11 +537,13 @@ if (!empty($moreforfilter))
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
-if ($massactionbutton) $selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
+$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
+// Fields title search
+// --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Project ref
 if (!empty($arrayfields['p.ref']['checked']))
@@ -671,7 +676,7 @@ if (!empty($arrayfields['p.fk_statut']['checked']))
 	$arrayofstatus = array();
 	foreach ($object->statuts_short as $key => $val) $arrayofstatus[$key] = $langs->trans($val);
 	$arrayofstatus['99'] = $langs->trans("NotClosed").' ('.$langs->trans('Draft').' + '.$langs->trans('Opened').')';
-	print $form->selectarray('search_status', $arrayofstatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100 selectarrowonleft');
+	print $form->selectarray('search_status', $arrayofstatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'minwidth75imp maxwidth150 selectarrowonleft');
 	print ajax_combobox('search_status');
 	print '</td>';
 }
@@ -743,7 +748,7 @@ while ($i < min($num, $limit))
 		// Project url
 		if (!empty($arrayfields['p.ref']['checked']))
 		{
-			print '<td class="nowrap">';
+			print '<td class="nowraponall">';
 			print $object->getNomUrl(1);
 			if ($object->hasDelay()) print img_warning($langs->trans('Late'));
 			print '</td>';
@@ -796,8 +801,8 @@ while ($i < min($num, $limit))
 						$userstatic->statut = $val['statut'];
 						$userstatic->entity = $val['entity'];
 						$userstatic->photo = $val['photo'];
-						//print $userstatic->getNomUrl(1, '', 0, 0, 12);
-						print $userstatic->getNomUrl(-2);
+						print $userstatic->getNomUrl(1, '', 0, 0, 12);
+						//print $userstatic->getNomUrl(-2);
 						$j++;
 						if ($j < $nbofsalesrepresentative) print ' ';
 					}

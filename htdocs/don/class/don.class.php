@@ -47,7 +47,7 @@ class Don extends CommonObject
 	public $table_element = 'don';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_donation';
 

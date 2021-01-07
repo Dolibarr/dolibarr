@@ -214,6 +214,7 @@ llxHeader('', $langs->trans("Agenda"), $help_url);
 $form = new Form($db);
 $companystatic = new Societe($db);
 $contactstatic = new Contact($db);
+$userstatic = new User($db);
 
 $now = dol_now();
 $nowarray = dol_getdate($now);
@@ -272,17 +273,17 @@ if (empty($action) || $action == 'show_month')
 	$next_year  = $next['year'];
 	$next_month = $next['month'];
 
-	$max_day_in_prev_month = date("t", dol_mktime(0, 0, 0, $prev_month, 1, $prev_year)); // Nb of days in previous month
+	$max_day_in_prev_month = date("t", dol_mktime(0, 0, 0, $prev_month, 1, $prev_year, 'gmt')); // Nb of days in previous month
 	$max_day_in_month = date("t", dol_mktime(0, 0, 0, $month, 1, $year)); // Nb of days in next month
 	// tmpday is a negative or null cursor to know how many days before the 1st to show on month view (if tmpday=0, 1st is monday)
-	$tmpday = -date("w", dol_mktime(12, 0, 0, $month, 1, $year, true)) + 2; // date('w') is 0 fo sunday
+	$tmpday = -date("w", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')) + 2; // date('w') is 0 fo sunday
 	$tmpday += ((isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1) - 1);
 	if ($tmpday >= 1) $tmpday -= 7; // If tmpday is 0 we start with sunday, if -6, we start with monday of previous week.
 	// Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
-	$firstdaytoshow = dol_mktime(0, 0, 0, $prev_month, $max_day_in_prev_month + $tmpday, $prev_year);
+	$firstdaytoshow = dol_mktime(0, 0, 0, $prev_month, $max_day_in_prev_month + $tmpday, $prev_year, 'gmt');
 	$next_day = 7 - ($max_day_in_month + 1 - $tmpday) % 7;
 	if ($next_day < 6) $next_day += 7;
-	$lastdaytoshow = dol_mktime(0, 0, 0, $next_month, $next_day, $next_year);
+	$lastdaytoshow = dol_mktime(0, 0, 0, $next_month, $next_day, $next_year, 'gmt');
 }
 if ($action == 'show_week')
 {
@@ -303,7 +304,7 @@ if ($action == 'show_week')
 	$next_day   = $next['day'];
 
 	// Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
-	$firstdaytoshow = dol_mktime(0, 0, 0, $first_month, $first_day, $first_year);
+	$firstdaytoshow = dol_mktime(0, 0, 0, $first_month, $first_day, $first_year, 'gmt');
 	$lastdaytoshow = dol_time_plus_duree($firstdaytoshow, 7, 'd');
 
 	$max_day_in_month = date("t", dol_mktime(0, 0, 0, $month, 1, $year));
@@ -322,8 +323,8 @@ if ($action == 'show_day')
 	$next_day   = $next['day'];
 
 	// Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
-	$firstdaytoshow = dol_mktime(0, 0, 0, $prev_month, $prev_day, $prev_year);
-	$lastdaytoshow = dol_mktime(0, 0, 0, $next_month, $next_day, $next_year);
+	$firstdaytoshow = dol_mktime(0, 0, 0, $prev_month, $prev_day, $prev_year, 'gmt');
+	$lastdaytoshow = dol_mktime(0, 0, 0, $next_month, $next_day, $next_year, 'gmt');
 }
 //print 'xx'.$prev_year.'-'.$prev_month.'-'.$prev_day;
 //print 'xx'.$next_year.'-'.$next_month.'-'.$next_day;
@@ -399,13 +400,14 @@ $param .= '&year='.$year.'&month='.$month.($day ? '&day='.$day : '');
 
 
 
-$tabactive = '';
+/*$tabactive = '';
 if ($action == 'show_month') $tabactive = 'cardmonth';
 if ($action == 'show_week') $tabactive = 'cardweek';
 if ($action == 'show_day')  $tabactive = 'cardday';
 if ($action == 'show_list') $tabactive = 'cardlist';
 if ($action == 'show_pertuser') $tabactive = 'cardperuser';
 if ($action == 'show_pertype') $tabactive = 'cardpertype';
+*/
 
 $paramnoaction = preg_replace('/action=[a-z_]+/', '', $param);
 
@@ -518,7 +520,7 @@ if (!empty($conf->use_javascript_ajax))	// If javascript on
 	}
 
 	// Birthdays
-	$s .= '<div class="nowrap inline-block"><input type="checkbox" id="check_birthday" name="check_birthday" class="check_birthday"> <span class="check_birthday_text">'.$langs->trans("AgendaShowBirthdayEvents").'</span> &nbsp; </div>';
+	$s .= '<div class="nowrap inline-block"><input type="checkbox" id="check_birthday" name="check_birthday" class="check_birthday"><label for="check_birthday"> <span class="check_birthday_text">'.$langs->trans("AgendaShowBirthdayEvents").'</span></label> &nbsp; </div>';
 
 	// Calendars from hooks
 	$parameters = array(); $object = null;
@@ -704,9 +706,7 @@ if ($resql)
 		}
 
 		// Check values
-		if ($event->date_end_in_calendar < $firstdaytoshow ||
-		$event->date_start_in_calendar >= $lastdaytoshow)
-		{
+		if ($event->date_end_in_calendar < $firstdaytoshow || $event->date_start_in_calendar >= $lastdaytoshow)	{
 			// This record is out of visible range
 		} else {
 			if ($event->date_start_in_calendar < $firstdaytoshow) $event->date_start_in_calendar = $firstdaytoshow;
@@ -714,13 +714,15 @@ if ($resql)
 
 			// Add an entry in actionarray for each day
 			$daycursor = $event->date_start_in_calendar;
-			$annee = date('Y', $daycursor);
-			$mois = date('m', $daycursor);
-			$jour = date('d', $daycursor);
+			$annee = dol_print_date($daycursor, '%Y');
+			$mois = dol_print_date($daycursor, '%m');
+			$jour = dol_print_date($daycursor, '%d');
+			//var_dump(dol_print_date($event->date_start_in_calendar, 'dayhour', 'gmt'));
+			//var_dump($annee.'-'.$mois.'-'.$jour);
 
 			// Loop on each day covered by action to prepare an index to show on calendar
 			$loop = true; $j = 0;
-			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee);
+			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
 			do {
 				//if ($event->id==408) print 'daykey='.$daykey.' '.$event->datep.' '.$event->datef.'<br>';
 
@@ -787,9 +789,9 @@ if ($showbirthday)
 
 			// Add an entry in actionarray for each day
 			$daycursor = $event->date_start_in_calendar;
-			$annee = date('Y', $daycursor);
-			$mois = date('m', $daycursor);
-			$jour = date('d', $daycursor);
+			$annee = dol_print_date($daycursor, '%Y');
+			$mois = dol_print_date($daycursor, '%m');
+			$jour = dol_print_date($daycursor, '%d');
 
 			$loop = true;
 			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee);
@@ -870,9 +872,11 @@ if ($conf->global->AGENDA_SHOW_HOLIDAYS)
 				$event->label = $obj->lastname;
 			}
 
-			$annee  = date('Y', $event->date_start_in_calendar);
-			$mois   = date('m', $event->date_start_in_calendar);
-			$jour   = date('d', $event->date_start_in_calendar);
+			$daycursor = $event->date_start_in_calendar;
+			$annee = dol_print_date($daycursor, '%Y');
+			$mois = dol_print_date($daycursor, '%m');
+			$jour = dol_print_date($daycursor, '%d');
+
 			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee);
 
 			do {
@@ -1068,7 +1072,6 @@ if (count($listofextcals))
 				{
 					$event->id = $icalevent['UID'];
 					$event->ref = $event->id;
-
 					$userId = $userstatic->findUserIdByEmail($namecal);
 					if (!empty($userId) && $userId > 0)
 					{
@@ -1492,19 +1495,19 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
 	if ($nonew <= 0)
 	{
-		print '<div class="tagtr"><div class="nowrap tagtd">';
+		print '<div class="tagtr"><div class="nowrap tagtd"><div class="left inline-block">';
 		print '<a class="dayevent-aday" style="color: #666" href="'.$urltoshow.'">';
 		if ($showinfo) print dol_print_date($curtime, 'daytextshort');
 		else print dol_print_date($curtime, '%d');
 		print '</a>';
-		print '</div><div class="nowrap tagtd right">';
+		print '</div><div class="nowrap floatright inline-block marginrightonly">';
 		if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create)
 		{
 			print '<a class="cursoradd" href="'.$urltocreate.'">'; // Explicit link, usefull for nojs interfaces
 			print img_picto($langs->trans("NewAction"), 'edit_add.png');
 			print '</a>';
 		}
-		print '</div></div>'."\n";
+		print '</div></div></div>'."\n";
 	}
 
 	if ($nonew < 0)
@@ -1530,6 +1533,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 		$annee = date('Y', $daykey);
 		$mois = date('m', $daykey);
 		$jour = date('d', $daykey);
+
 		if ($day == $jour && $month == $mois && $year == $annee)
 		{
 			foreach ($eventarray[$daykey] as $index => $event)
@@ -1696,6 +1700,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 							$tmpyearend    = date('Y', $event->date_end_in_calendar);
 							$tmpmonthend   = date('m', $event->date_end_in_calendar);
 							$tmpdayend     = date('d', $event->date_end_in_calendar);
+							/*var_dump($tmpyearstart.' '.$tmpmonthstart.' '.$tmpdaystart);
+							var_dump($tmpyearend.' '.$tmpmonthend.' '.$tmpdayend);
+							var_dump($annee.' '.$mois.' '.$jour);*/
+
 							// Hour start
 							if ($tmpyearstart == $annee && $tmpmonthstart == $mois && $tmpdaystart == $jour)
 							{

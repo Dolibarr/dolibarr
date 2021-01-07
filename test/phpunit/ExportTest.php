@@ -149,7 +149,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
         $file = "export_".$model.".modules.php";
         $classname = "Export".$model;
         require_once $dir.$file;
-        $objmodel = new $classname($this->db);
+        $objmodel = new $classname($db);
 
         // First test without option USE_STRICT_CSV_RULES
         unset($conf->global->USE_STRICT_CSV_RULES);
@@ -364,7 +364,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
         	$sql = "";
 			$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 			$expectedresult = 1;
-	        $this->assertEquals($expectedresult, $result, "Call build_file() to export ".$exportfile.' failed');
+	        $this->assertEquals($expectedresult, $result, "Call build_file() to export ".$exportfile.' failed: '.$objexport->error);
 	        $result=dol_is_file($exportfile);
 	        $this->assertTrue($result, 'File '.$exportfile.' not found');
         }

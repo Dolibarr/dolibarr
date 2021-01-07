@@ -172,13 +172,14 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 
 		if ($nbofiles)
 		{
-   			$texte .= '<div id="div_'.get_class($this).'" class="hidden">';
-   			foreach ($listoffiles as $file)
-   			{
-				$texte .= $file['name'].'<br>';
+   			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
+   			// Show list of found files
+   			foreach ($listoffiles as $file) {
+				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=proposals/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a><br>';
    			}
    			$texte .= '</div>';
 
+   			// Set default template for different status of proposal
 			if ($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT > 0)
 			{
 				// Model for creation
@@ -334,9 +335,9 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				$contactobject = null;
 				if (!empty($usecontact))
 				{
-					// On peut utiliser le nom de la societe du contact
-					if (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socobject = $object->contact;
-					else {
+					if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
+						$socobject = $object->contact;
+					} else {
 						$socobject = $object->thirdparty;
 						// if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
 						$contactobject = $object->contact;

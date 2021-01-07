@@ -78,6 +78,7 @@ Notify_EXPENSE_REPORT_VALIDATE=Expense report validated (approval required)
 Notify_EXPENSE_REPORT_APPROVE=Expense report approved
 Notify_HOLIDAY_VALIDATE=Leave request validated (approval required)
 Notify_HOLIDAY_APPROVE=Leave request approved
+Notify_ACTION_CREATE=Added action to Agenda
 SeeModuleSetup=See setup of module %s
 NbOfAttachedFiles=Number of attached files/documents
 TotalSizeOfAttachedFiles=Total size of attached files/documents
@@ -138,7 +139,7 @@ Right=Right
 CalculatedWeight=Calculated weight
 CalculatedVolume=Calculated volume
 Weight=Weight
-WeightUnitton=tonne
+WeightUnitton=ton
 WeightUnitkg=kg
 WeightUnitg=g
 WeightUnitmg=mg
@@ -215,6 +216,7 @@ EMailTextExpenseReportValidated=Expense report %s has been validated.
 EMailTextExpenseReportApproved=Expense report %s has been approved.
 EMailTextHolidayValidated=Leave request %s has been validated.
 EMailTextHolidayApproved=Leave request %s has been approved.
+EMailTextActionAdded=The action %s has been added to the Agenda.
 ImportedWithSet=Importation data set
 DolibarrNotification=Automatic notification
 ResizeDesc=Enter new width <b>OR</b> new height. Ratio will be kept during resizing...
@@ -259,7 +261,8 @@ ContactCreatedByEmailCollector=Contact/address created by email collector from e
 ProjectCreatedByEmailCollector=Project created by email collector from email MSGID %s
 TicketCreatedByEmailCollector=Ticket created by email collector from email MSGID %s
 OpeningHoursFormatDesc=Use a - to separate opening and closing hours.<br>Use a space to enter different ranges.<br>Example: 8-12 14-18
- 
+PrefixSession=Prefix for session ID
+
 ##### Export #####
 ExportsArea=Exports area
 AvailableFormats=Available formats

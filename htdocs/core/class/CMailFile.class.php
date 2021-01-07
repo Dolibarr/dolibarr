@@ -6,7 +6,7 @@
  * Copyright (C) 2003       Jean-Louis Bergamo      <jlb@j1b.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,8 +146,10 @@ class CMailFile
 			}
 		}
 
-		// Add autocopy to (Note: Adding bcc for specific modules are also done from pages)
-		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) $addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
+		// Add autocopy to if not already in $to (Note: Adding bcc for specific modules are also done from pages)
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO) && !preg_match('/'.preg_quote($conf->global->MAIN_MAIL_AUTOCOPY_TO, '/').'/i', $to)) {
+		    $addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
+		}
 
 		$this->subject = $subject;
 		$this->addr_to = $to;
@@ -242,6 +244,7 @@ class CMailFile
 		{
 			$this->html = $msg;
 
+			$findimg = 0;
 			if (!empty($conf->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS))
 			{
 				$findimg = $this->findHtmlImages($dolibarr_main_data_root.'/medias');
@@ -274,6 +277,11 @@ class CMailFile
 			}
 		}
 
+		// Add autocopy to if not already in $to (Note: Adding bcc for specific modules are also done from pages)
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO) && !preg_match('/'.preg_quote($conf->global->MAIN_MAIL_AUTOCOPY_TO, '/').'/i', $to)) {
+		    $addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
+		}
+
 		$this->addr_to = $to;
 		$this->addr_cc = $addr_cc;
 		$this->addr_bcc = $addr_bcc;
@@ -289,11 +297,6 @@ class CMailFile
 			$this->addr_to = $conf->global->MAIN_MAIL_FORCE_SENDTO;
 			$this->addr_cc = '';
 			$this->addr_bcc = '';
-		}
-
-		// Add autocopy to (Note: Adding bcc for specific modules are also done from pages)
-		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) {
-			$addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
 		}
 
 		$keyforsslseflsigned = 'MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED';
@@ -724,7 +727,11 @@ class CMailFile
 
 					if (!empty($conf->global->MAIN_MAIL_SENDMAIL_FORCE_ADDPARAM)) $additionnalparam .= ($additionnalparam ? ' ' : '').'-U '.$additionnalparam; // Use -U to add additionnal params
 
-					dol_syslog("CMailFile::sendfile: mail start HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port').", additionnal_parameters=".$additionnalparam, LOG_DEBUG);
+					$linuxlike = 1;
+					if (preg_match('/^win/i', PHP_OS)) $linuxlike = 0;
+					if (preg_match('/^mac/i', PHP_OS)) $linuxlike = 0;
+
+					dol_syslog("CMailFile::sendfile: mail start".($linuxlike ? '' : " HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port')).", additionnal_parameters=".$additionnalparam, LOG_DEBUG);
 
 					$this->message = stripslashes($this->message);
 
@@ -743,11 +750,7 @@ class CMailFile
 					{
 						$langs->load("errors");
 						$this->error = "Failed to send mail with php mail";
-						$linuxlike = 1;
-						if (preg_match('/^win/i', PHP_OS)) $linuxlike = 0;
-						if (preg_match('/^mac/i', PHP_OS)) $linuxlike = 0;
-						if (!$linuxlike)
-						{
+						if (!$linuxlike) {
 							$this->error .= " to HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port'); // This values are value used only for non linuxlike systems
 						}
 						$this->error .= ".<br>";
@@ -947,15 +950,14 @@ class CMailFile
 	 * Read a file on disk and return encoded content for emails (mode = 'mail')
 	 *
 	 * @param	string	$sourcefile		Path to file to encode
-	 * @return 	int					    <0 if KO, encoded string if OK
+	 * @return 	int|string			    <0 if KO, encoded string if OK
 	 */
 	private function _encode_file($sourcefile)
 	{
 		// phpcs:enable
 		$newsourcefile = dol_osencode($sourcefile);
 
-		if (is_readable($newsourcefile))
-		{
+		if (is_readable($newsourcefile)) {
 			$contents = file_get_contents($newsourcefile); // Need PHP 4.3
 			$encoded = chunk_split(base64_encode($contents), 76, $this->eol); // 76 max is defined into http://tools.ietf.org/html/rfc2047
 			return $encoded;
@@ -980,27 +982,24 @@ class CMailFile
 		// phpcs:enable
 		global $conf, $dolibarr_main_data_root;
 
-		if (@is_writeable($dolibarr_main_data_root))	// Avoid fatal error on fopen with open_basedir
-		{
+		if (@is_writeable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
 			$outputfile = $dolibarr_main_data_root."/dolibarr_mail.log";
 			$fp = fopen($outputfile, "w");
 
-			if ($this->sendmode == 'mail')
-			{
+			if ($this->sendmode == 'mail') {
 				fputs($fp, $this->headers);
 				fputs($fp, $this->eol); // This eol is added by the mail function, so we add it in log
 				fputs($fp, $this->message);
-			} elseif ($this->sendmode == 'smtps')
-			{
+			} elseif ($this->sendmode == 'smtps') {
 				fputs($fp, $this->smtps->log); // this->smtps->log is filled only if MAIN_MAIL_DEBUG was set to on
-			} elseif ($this->sendmode == 'swiftmailer')
-			{
+			} elseif ($this->sendmode == 'swiftmailer') {
 				fputs($fp, $this->logger->dump()); // this->logger is filled only if MAIN_MAIL_DEBUG was set to on
 			}
 
 			fclose($fp);
-			if (!empty($conf->global->MAIN_UMASK))
+			if (!empty($conf->global->MAIN_UMASK)) {
 				@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
+			}
 		}
 	}
 
@@ -1013,8 +1012,7 @@ class CMailFile
 	 */
 	public function checkIfHTML($msg)
 	{
-		if (!preg_match('/^[\s\t]*<html/i', $msg))
-		{
+		if (!preg_match('/^[\s\t]*<html/i', $msg)) {
 			$out = "<html><head><title></title>";
 			if (!empty($this->styleCSS)) $out .= $this->styleCSS;
 			$out .= "</head><body";
@@ -1036,19 +1034,16 @@ class CMailFile
 	 */
 	public function buildCSS()
 	{
-		if (!empty($this->css))
-		{
+		if (!empty($this->css)) {
 			// Style CSS
 			$this->styleCSS = '<style type="text/css">';
 			$this->styleCSS .= 'body {';
 
-			if ($this->css['bgcolor'])
-			{
+			if ($this->css['bgcolor']) {
 				$this->styleCSS .= '  background-color: '.$this->css['bgcolor'].';';
 				$this->bodyCSS .= ' bgcolor="'.$this->css['bgcolor'].'"';
 			}
-			if ($this->css['bgimage'])
-			{
+			if ($this->css['bgimage']) {
 				// TODO recuperer cid
 				$this->styleCSS .= ' background-image: url("cid:'.$this->css['bgimage_cid'].'");';
 			}

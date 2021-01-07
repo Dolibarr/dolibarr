@@ -620,15 +620,17 @@ class FormOther
 						if ($i > 0) print '<option value="0" disabled>----------</option>';
 						print '<option value="'.$lines[$i]->fk_project.'_0"';
 						if ($selectedproject == $lines[$i]->fk_project) print ' selected';
-						print '>'; // Project -> Task
-						print $langs->trans("Project").' '.$lines[$i]->projectref;
-						if (empty($lines[$i]->public))
-						{
-							print ' ('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')';
+
+						$labeltoshow = $langs->trans("Project").' '.$lines[$i]->projectref;
+						if (empty($lines[$i]->public)) {
+							$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')</span>';
 						} else {
-							print ' ('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')';
+							$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')</span>';
 						}
-						//print '-'.$parent.'-'.$lines[$i]->fk_project.'-'.$lastprojectid;
+
+						print ' data-html="'.dol_escape_htmltag($labeltoshow).'"';
+						print '>'; // Project -> Task
+						print $labeltoshow;
 						print "</option>\n";
 
 						$lastprojectid = $lines[$i]->fk_project;
@@ -652,21 +654,26 @@ class FormOther
 					print '<option value="'.$lines[$i]->fk_project.'_'.$lines[$i]->id.'"';
 					if (($lines[$i]->id == $selectedtask) || ($lines[$i]->fk_project.'_'.$lines[$i]->id == $selectedtask)) print ' selected';
 					if ($disabled) print ' disabled';
-					print '>';
-					print $langs->trans("Project").' '.$lines[$i]->projectref;
-					print ' '.$lines[$i]->projectlabel;
+
+					$labeltoshow = $langs->trans("Project").' '.$lines[$i]->projectref;
+					$labeltoshow .= ' '.$lines[$i]->projectlabel;
 					if (empty($lines[$i]->public))
 					{
-						print ' ('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')';
+						$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')</span>';
 					} else {
-						print ' ('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')';
+						$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')</span>';
 					}
-					if ($lines[$i]->id) print ' > ';
+					if ($lines[$i]->id) $labeltoshow .= ' > ';
 					for ($k = 0; $k < $level; $k++)
 					{
-						print "&nbsp;&nbsp;&nbsp;";
+						$labeltoshow .= "&nbsp;&nbsp;&nbsp;";
 					}
-					print $lines[$i]->ref.' '.$lines[$i]->label."</option>\n";
+					$labeltoshow .= $lines[$i]->ref.' '.$lines[$i]->label;
+
+					print ' data-html="'.dol_escape_htmltag($labeltoshow).'"';
+					print '>';
+					print $labeltoshow;
+					print "</option>\n";
 					$inc++;
 				}
 
@@ -918,9 +925,10 @@ class FormOther
 	 *      @param  int         $useempty          	Show empty in list
 	 *      @param  int         $longlabel         	Show long label
 	 *      @param	string		$morecss			More Css
+	 *  	@param  bool		$addjscombo			Add js combo
 	 *      @return string
 	 */
-	public function select_month($selected = '', $htmlname = 'monthid', $useempty = 0, $longlabel = 0, $morecss = 'maxwidth50imp valignmiddle')
+	public function select_month($selected = '', $htmlname = 'monthid', $useempty = 0, $longlabel = 0, $morecss = 'minwidth50 maxwidth75imp valignmiddle', $addjscombo = false)
 	{
 		// phpcs:enable
 		global $langs;
@@ -947,6 +955,15 @@ class FormOther
 			$select_month .= '</option>';
 		}
 		$select_month .= '</select>';
+
+		// Add code for jquery to use multiselect
+		if ($addjscombo)
+		{
+			// Enhance with select2
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+			$select_month .= ajax_combobox($htmlname);
+		}
+
 		return $select_month;
 	}
 
@@ -986,17 +1003,9 @@ class FormOther
 	 *  @param  bool	$addjscombo		Add js combo
 	 *  @return	string
 	 */
-	public function selectyear($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle maxwidth75imp', $addjscombo = false)
+	public function selectyear($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle width75', $addjscombo = false)
 	{
 		$out = '';
-
-		// Add code for jquery to use multiselect
-		if ($addjscombo)
-		{
-			// Enhance with select2
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-			$out .= ajax_combobox($htmlname);
-		}
 
 		$currentyear = date("Y") + $offset;
 		$max_year = $currentyear + $max_year;
@@ -1027,6 +1036,14 @@ class FormOther
 			}
 		}
 		$out .= "</select>\n";
+
+		// Add code for jquery to use multiselect
+		if ($addjscombo)
+		{
+			// Enhance with select2
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+			$out .= ajax_combobox($htmlname);
+		}
 
 		return $out;
 	}
@@ -1354,9 +1371,10 @@ class FormOther
 	 * @param 	mixed	$object				Object analyzed
 	 * @param	array	$search_groupby		Array of preselected fields
 	 * @param	array	$arrayofgroupby		Array of groupby to fill
+	 * @param	string	$morecss			More CSS
 	 * @return string						HTML string component
 	 */
-	public function selectGroupByField($object, $search_groupby, &$arrayofgroupby)
+	public function selectGroupByField($object, $search_groupby, &$arrayofgroupby, $morecss = 'minwidth200 maxwidth250')
 	{
 		global $langs, $extrafields, $form;
 
@@ -1378,9 +1396,9 @@ class FormOther
 				if (preg_match('/^pass/', $key)) continue;
 				if (in_array($val['type'], array('html', 'text'))) continue;
 				if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
-					$arrayofgroupby['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.')', 'position' => $val['position'].'-y');
-					$arrayofgroupby['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.')', 'position' => $val['position'].'-m');
-					$arrayofgroupby['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.'-'.$DD.')', 'position' => $val['position'].'-d');
+					$arrayofgroupby['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.')</span>', 'position' => $val['position'].'-y');
+					$arrayofgroupby['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>', 'position' => $val['position'].'-m');
+					$arrayofgroupby['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.'-'.$DD.')</span>', 'position' => $val['position'].'-d');
 				} else {
 					$arrayofgroupby['t.'.$key] = array('label' => $langs->trans($val['label']), 'position' => (int) $val['position']);
 				}
@@ -1400,7 +1418,7 @@ class FormOther
 		foreach ($arrayofgroupby as $key => $val) {
 			$arrayofgroupbylabel[$key] = $val['label'];
 		}
-		$result = $form->selectarray('search_groupby', $arrayofgroupbylabel, $search_groupby, 1, 0, 0, '', 0, 0, 0, '', 'minwidth250', 1);
+		$result = $form->selectarray('search_groupby', $arrayofgroupbylabel, $search_groupby, 1, 0, 0, '', 0, 0, 0, '', $morecss, 1);
 
 		return $result;
 	}

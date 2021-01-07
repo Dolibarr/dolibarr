@@ -41,7 +41,11 @@ $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm    = GETPOST('confirm', 'alpha');
 $toselect   = GETPOST('toselect', 'array');
-$socid      = GETPOST('socid', 'int') ? ((int) GETPOST('socid', 'int')) : ((int) GETPOST('id', 'int'));
+// $socid = GETPOST('socid', 'int') ? ((int) GETPOST('socid', 'int')) : ((int) GETPOST('id', 'int'));
+// Security check
+$socid = GETPOSTINT("socid");
+// if ($user->socid) $socid=$user->socid;
+
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -53,10 +57,12 @@ if (empty($page) || $page == - 1) {
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if ($sortorder == "")
+if ($sortorder == "") {
 	$sortorder = "ASC";
-if ($sortfield == "")
+}
+if ($sortfield == "") {
 	$sortfield = "bk.doc_date";
+}
 
 /*
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
@@ -73,24 +79,18 @@ if (!empty($lettering)) {
 /*
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
-    $search_date_start = '';
-    $search_date_end = '';
+	$search_date_start = '';
+	$search_date_end = '';
 	//$search_doc_type='';
 	$search_doc_ref='';
 }
 */
 
-
-// Security check
-$socid = GETPOST("socid", 'int');
-// if ($user->socid) $socid=$user->socid;
-
 $lettering = new Lettering($db);
 $object = new Societe($db);
 $object->id = $socid;
 $result = $object->fetch($socid);
-if ($result < 0)
-{
+if ($result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
 }
 
@@ -159,8 +159,7 @@ $solde = 0;
 // Count total nb of records and calc total sum
 $nbtotalofrecords = '';
 $resql = $db->query($sql);
-if (!$resql)
-{
+if (!$resql) {
 	dol_print_error($db);
 	exit;
 }
@@ -206,30 +205,30 @@ if ($resql) {
 	print '<table class="liste centpercent">'."\n";
 
 	/*
-    print '<tr class="liste_titre">';
-    //print '<td><input type="text" name="search_doc_type" value="' . $search_doc_type . '"></td>';
+	print '<tr class="liste_titre">';
+	//print '<td><input type="text" name="search_doc_type" value="' . $search_doc_type . '"></td>';
 
-    // Date
-    print '<td class="liste_titre center">';
-    print '<div class="nowrap">';
-    print $langs->trans('From') . ' ';
-    print $form->selectDate($search_date_start, 'date_creation_start', 0, 0, 1);
-    print '</div>';
-    print '<div class="nowrap">';
-    print $langs->trans('to') . ' ';
-    print $form->selectDate($search_date_end, 'date_creation_end', 0, 0, 1);
-    print '</div>';
-    print '</td>';
+	// Date
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $langs->trans('From') . ' ';
+	print $form->selectDate($search_date_start, 'date_creation_start', 0, 0, 1);
+	print '</div>';
+	print '<div class="nowrap">';
+	print $langs->trans('to') . ' ';
+	print $form->selectDate($search_date_end, 'date_creation_end', 0, 0, 1);
+	print '</div>';
+	print '</td>';
 
-    // Piece
-    print '<td><input type="text" name="search_doc_ref" value="' . $search_doc_ref . '"></td>';
+	// Piece
+	print '<td><input type="text" name="search_doc_ref" value="' . $search_doc_ref . '"></td>';
 
-    print '<td colspan="6">&nbsp;</td>';
-    print '<td class="right">';
-    $searchpicto = $form->showFilterButtons();
-    print $searchpicto;
-    print '</td>';
-    print '</tr>';
+	print '<td colspan="6">&nbsp;</td>';
+	print '<td class="right">';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+	print '</tr>';
 	*/
 
 	print '<tr class="liste_titre">';
@@ -248,7 +247,9 @@ if ($resql) {
 	$solde = 0;
 	$tmp = '';
 	while ($obj = $db->fetch_object($resql)) {
-		if ($tmp != $obj->lettering_code || empty($tmp))						$tmp = $obj->lettering_code;
+		if ($tmp != $obj->lettering_code || empty($tmp)) {
+			$tmp = $obj->lettering_code;
+		}
 		/*if ($tmp != $obj->lettering_code || empty($obj->lettering_code))*/	$solde += ($obj->credit - $obj->debit);
 
 		print '<tr class="oddeven">';

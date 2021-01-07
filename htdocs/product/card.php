@@ -88,6 +88,9 @@ $accountancy_code_buy = GETPOST('accountancy_code_buy', 'alpha');
 $accountancy_code_buy_intra = GETPOST('accountancy_code_buy_intra', 'alpha');
 $accountancy_code_buy_export = GETPOST('accountancy_code_buy_export', 'alpha');
 
+// by default 'alphanohtml' (better security); hidden conf MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML allows basic html
+$label_security_check = empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML) ? 'alphanohtml' : 'restricthtml';
+
 if (!empty($user->socid)) $socid = $user->socid;
 
 $object = new Product($db);
@@ -201,32 +204,32 @@ if (empty($reshook))
 	{
 		$error = 0;
 
-		if (!GETPOST('label', 'alphanohtml'))
-		{
-			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Label')), null, 'errors');
-			$action = "create";
-			$error++;
-		}
-		if (empty($ref))
-		{
-			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Ref')), null, 'errors');
-			$action = "create";
-			$error++;
-		}
-		if (!empty($duration_value) && empty($duration_unit))
-		{
-			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Unit')), null, 'errors');
-			$action = "create";
-			$error++;
-		}
+        if (!GETPOST('label', $label_security_check))
+        {
+            setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Label')), null, 'errors');
+            $action = "create";
+            $error++;
+        }
+        if (empty($ref))
+        {
+            setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Ref')), null, 'errors');
+            $action = "create";
+            $error++;
+        }
+        if (!empty($duration_value) && empty($duration_unit))
+        {
+            setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Unit')), null, 'errors');
+            $action = "create";
+            $error++;
+        }
 
 		if (!$error)
 		{
 			$units = GETPOST('units', 'int');
 
-			$object->ref                   = $ref;
-			$object->label                 = GETPOST('label', 'alphanohtml');
-			$object->price_base_type       = GETPOST('price_base_type', 'aZ09');
+            $object->ref                   = $ref;
+            $object->label                 = GETPOST('label', $label_security_check);
+            $object->price_base_type       = GETPOST('price_base_type', 'aZ09');
 
 			if ($object->price_base_type == 'TTC')
 				$object->price_ttc = GETPOST('price');
@@ -409,8 +412,11 @@ if (empty($reshook))
 				$object->oldcopy = clone $object;
 
 				$object->ref                    = $ref;
-				$object->label                  = GETPOST('label', 'alphanohtml');
-				$object->description            = dol_htmlcleanlastbr(GETPOST('desc', 'restricthtml'));
+				$object->label                  = GETPOST('label', $label_security_check);
+
+				$desc = dol_htmlcleanlastbr(preg_replace('/&nbsp;$/', '', GETPOST('desc', 'restricthtml')));
+				$object->description            = $desc;
+
 				$object->url = GETPOST('url');
 				if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB))
 				{
@@ -423,8 +429,8 @@ if (empty($reshook))
 				$object->status                 = GETPOST('statut', 'int');
 				$object->status_buy             = GETPOST('statut_buy', 'int');
 				$object->status_batch = GETPOST('status_batch', 'aZ09');
-				// removed from update view so GETPOST always empty
 				$object->fk_default_warehouse   = GETPOST('fk_default_warehouse');
+				// removed from update view so GETPOST always empty
 				/*
                 $object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
                 $object->desiredstock           = GETPOST('desiredstock');
@@ -1005,7 +1011,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '</td></tr>';
 
 		// Label
-		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="label" class="minwidth300 maxwidth400onsmartphone" maxlength="255" value="'.dol_escape_htmltag(GETPOST('label', 'alphanohtml')).'"></td></tr>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="label" class="minwidth300 maxwidth400onsmartphone" maxlength="255" value="'.dol_escape_htmltag(GETPOST('label', $label_security_check)).'"></td></tr>';
 
 		// On sell
 		print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="3">';
@@ -1214,7 +1220,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			// Categories
 			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
-			print $form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, '', 0, '100%');
+			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 			print "</td></tr>";
 		}
 
@@ -1666,7 +1672,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 						$arrayselected[] = $cat->id;
 					}
 				}
-				print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+				print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 				print "</td></tr>";
 			}
 

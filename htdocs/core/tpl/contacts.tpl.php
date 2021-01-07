@@ -239,8 +239,8 @@ foreach (array('internal', 'external') as $source)
 }
 
 
-$sortfield = GETPOST("sortfield", "alpha");
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST("sortfield", "aZ09comma");
+$sortorder = GETPOST("sortorder", 'aZ09comma');
 
 if (!$sortfield) $sortfield = "nature";
 if (!$sortorder) $sortorder = "asc";

@@ -294,7 +294,7 @@ class Paiement extends CommonObject
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, ref_ext, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, ext_payment_id, ext_payment_site, fk_user_creat, pos_change)";
 		$sql .= " VALUES (".$conf->entity.", '".$this->db->escape($this->ref)."', '".$this->db->escape($this->ref_ext)."', '".$this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', ".$total.", ".$mtotal.", ".$this->paiementid.", ";
-		$sql .= "'".$this->db->escape($num_payment)."', '".$this->db->escape($note)."', ".($this->ext_payment_id ? "'".$this->db->escape($this->ext_payment_id)."'" : "null").", ".($this->ext_payment_site ? "'".$this->db->escape($this->ext_payment_site)."'" : "null").", ".$user->id.", ".((int) $this->pos_change).")";
+		$sql .= "'".$this->db->escape($num_payment)."', '".$this->db->escape($note)."', ".($this->ext_payment_id ? "'".$this->db->escape($this->ext_payment_id)."'" : "null").", ".($this->ext_payment_site ? "'".$this->db->escape($this->ext_payment_site)."'" : "null").", ".$user->id.", ".((float) $this->pos_change).")";
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -1171,9 +1171,19 @@ class Paiement extends CommonObject
 		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
 		$result = '';
+
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Payment").'</u><br>';
 		$label .= '<strong>'.$langs->trans("Ref").':</strong> '.$this->ref;
-		if ($this->datepaye ? $this->datepaye : $this->date) $label .= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour');
+        $dateofpayment = ($this->datepaye ? $this->datepaye : $this->date);
+        if ($dateofpayment) {
+        	$label .= '<br><strong>'.$langs->trans("Date").':</strong> ';
+        	$tmparray = dol_getdate($dateofpayment);
+        	if ($tmparray['seconds'] == 0 && $tmparray['minutes'] == 0 && ($tmparray['hours'] == 0 || $tmparray['hours'] == 12)) {	// We set hours to 0:00 or 12:00 because we don't know it
+        		$label .= dol_print_date($dateofpayment, 'day');
+        	} else {	// Hours was set to real date of payment (special case for POS for example)
+        		$label .= dol_print_date($dateofpayment, 'dayhour', 'tzuser');
+        	}
+        }
 		if ($mode == 'withlistofinvoices')
 		{
 			$arraybill = $this->getBillsArray();

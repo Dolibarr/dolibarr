@@ -169,9 +169,9 @@ if (session_id() && !empty($_SESSION["dol_entity"])) {
 } elseif (GETPOSTISSET("loginfunction") && GETPOST("entity", 'int')) {
 	// Just after a login page
 	$conf->entity = GETPOST("entity", 'int');
-} elseif (defined('DOLENTITY') && is_numeric(DOLENTITY)) {
+} elseif (defined('DOLENTITY') && is_numeric(constant('DOLENTITY'))) {
 	// For public page with MultiCompany module
-	$conf->entity = DOLENTITY;
+	$conf->entity = constant('DOLENTITY');
 }
 
 // Sanitize entity
@@ -186,47 +186,14 @@ if (!defined('NOREQUIREDB'))
 }
 
 // Overwrite database value
-if (!empty($conf->file->mailing_limit_sendbyweb))
-{
+if (!empty($conf->file->mailing_limit_sendbyweb)) {
 	$conf->global->MAILING_LIMIT_SENDBYWEB = $conf->file->mailing_limit_sendbyweb;
 }
-if (empty($conf->global->MAILING_LIMIT_SENDBYWEB))
-{
+if (empty($conf->global->MAILING_LIMIT_SENDBYWEB)) {
 	$conf->global->MAILING_LIMIT_SENDBYWEB = 25;
 }
-if (!empty($conf->file->mailing_limit_sendbycli))
-{
+if (!empty($conf->file->mailing_limit_sendbycli)) {
 	$conf->global->MAILING_LIMIT_SENDBYCLI = $conf->file->mailing_limit_sendbycli;
-}
-if (empty($conf->global->MAILING_LIMIT_SENDBYCLI))
-{
-	$conf->global->MAILING_LIMIT_SENDBYCLI = 0;
-}
-
-// If software has been locked. Only login $conf->global->MAIN_ONLY_LOGIN_ALLOWED is allowed.
-if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
-{
-	$ok = 0;
-	if ((!session_id() || !isset($_SESSION["dol_login"])) && !isset($_POST["username"]) && !empty($_SERVER["GATEWAY_INTERFACE"])) $ok = 1; // We let working pages if not logged and inside a web browser (login form, to allow login by admin)
-	elseif (isset($_POST["username"]) && $_POST["username"] == $conf->global->MAIN_ONLY_LOGIN_ALLOWED) $ok = 1; // We let working pages that is a login submission (login submit, to allow login by admin)
-	elseif (defined('NOREQUIREDB'))   $ok = 1; // We let working pages that don't need database access (xxx.css.php)
-	elseif (defined('EVEN_IF_ONLY_LOGIN_ALLOWED')) $ok = 1; // We let working pages that ask to work even if only login enabled (logout.php)
-	elseif (session_id() && isset($_SESSION["dol_login"]) && $_SESSION["dol_login"] == $conf->global->MAIN_ONLY_LOGIN_ALLOWED) $ok = 1; // We let working if user is allowed admin
-	if (!$ok)
-	{
-		if (session_id() && isset($_SESSION["dol_login"]) && $_SESSION["dol_login"] != $conf->global->MAIN_ONLY_LOGIN_ALLOWED)
-		{
-			print 'Sorry, your application is offline.'."\n";
-			print 'You are logged with user "'.$_SESSION["dol_login"].'" and only administrator user "'.$conf->global->MAIN_ONLY_LOGIN_ALLOWED.'" is allowed to connect for the moment.'."\n";
-			$nexturl = DOL_URL_ROOT.'/user/logout.php';
-			print 'Please try later or <a href="'.$nexturl.'">click here to disconnect and change login user</a>...'."\n";
-		} else {
-			print 'Sorry, your application is offline. Only administrator user "'.$conf->global->MAIN_ONLY_LOGIN_ALLOWED.'" is allowed to connect for the moment.'."\n";
-			$nexturl = DOL_URL_ROOT.'/';
-			print 'Please try later or <a href="'.$nexturl.'">click here to change login user</a>...'."\n";
-		}
-		exit;
-	}
 }
 
 // Create object $mysoc (A thirdparty object that contains properties of companies managed by Dolibarr.
@@ -245,7 +212,7 @@ if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC'))
 // Set default language (must be after the setValues setting global $conf->global->MAIN_LANG_DEFAULT. Page main.inc.php will overwrite langs->defaultlang with user value later)
 if (!defined('NOREQUIRETRAN'))
 {
-	$langcode = (GETPOST('lang', 'aZ09') ?GETPOST('lang', 'aZ09', 1) : (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
+	$langcode = (GETPOST('lang', 'aZ09') ? GETPOST('lang', 'aZ09', 1) : (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
 	if (defined('MAIN_LANG_DEFAULT')) $langcode = constant('MAIN_LANG_DEFAULT');
 	$langs->setDefaultLang($langcode);
 }

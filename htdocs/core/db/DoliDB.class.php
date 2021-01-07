@@ -84,13 +84,14 @@ abstract class DoliDB implements Database
 	 *   Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
 	 *   Function to use to build INSERT, UPDATE or WHERE predica
 	 *
-	 *   @param	    int		$param      	Date TMS to convert
-	 *   @return	string      			Date in a string YYYY-MM-DD HH:MM:SS
+	 *   @param	    int		$param      Date TMS to convert
+	 *	 @param		mixed	$gm			'gmt'=Input informations are GMT values, 'tzserver'=Local to server TZ
+	 *   @return	string      		Date in a string YYYY-MM-DD HH:MM:SS
 	 */
-	public function idate($param)
+	public function idate($param, $gm = 'tzserver')
 	{
-		// TODO GMT $param should be gmt, so we should add tzouptut to 'gmt'
-		return dol_print_date($param, "%Y-%m-%d %H:%M:%S", 'tzserver');
+		// TODO $param should be gmt, so we should add $gm to 'gmt' instead of default 'tzserver'
+		return dol_print_date($param, "%Y-%m-%d %H:%M:%S", $gm);
 	}
 
 	/**
@@ -285,12 +286,12 @@ abstract class DoliDB implements Database
 	 * 	19700101020000 -> 7200 whaterver is TZ if gmt=1
 	 *
 	 * 	@param	string				$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 *	@param	bool				$gm			1=Input informations are GMT values, otherwise local to server TZ
+	 *	@param	mixed				$gm			'gmt'=Input informations are GMT values, 'tzserver'=Local to server TZ
 	 *	@return	int|string						Date TMS or ''
 	 */
-	public function jdate($string, $gm = false)
+	public function jdate($string, $gm = 'tzserver')
 	{
-		// TODO GMT must set param gm to true by default
+		// TODO $string should be converted into a GMT timestamp, so param gm should be set to true by default instead of false
 		if ($string == 0 || $string == "0000-00-00 00:00:00") return '';
 		$string = preg_replace('/([^0-9])/i', '', $string);
 		$tmp = $string.'000000';
