@@ -76,7 +76,7 @@ $cancel     = GETPOST('cancel', 'alpha'); // We click on a Cancel button
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectlist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
-$optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $id = GETPOST('id', 'int');
 
@@ -128,9 +128,7 @@ foreach ($object->fields as $key => $val) {
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
 foreach ($object->fields as $key => $val) {
-	if ($val['searchall']) {
-		$fieldstosearchall['t.'.$key] = $val['label'];
-	}
+	if ($val['searchall']) $fieldstosearchall['t.'.$key] = $val['label'];
 }
 
 // Definition of array of fields for columns
@@ -163,8 +161,8 @@ if (empty($conf->mymodule->enabled)) {
 	accessforbidden('Module not enabled');
 }
 $socid = 0;
-if ($user->socid > 0) {	// Protection if external user
-//$socid = $user->socid;
+if ($user->socid > 0) { // Protection if external user
+	//$socid = $user->socid;
 	accessforbidden();
 }
 //$result = restrictedArea($user, 'mymodule', $id, '');
@@ -177,7 +175,8 @@ if ($user->socid > 0) {	// Protection if external user
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -257,11 +256,8 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-if ($object->ismultientitymanaged == 1) {
-	$sql .= " WHERE t.entity IN (".getEntity($object->element).")";
-} else {
-	$sql .= " WHERE 1 = 1";
-}
+if ($object->ismultientitymanaged == 1) $sql .= " WHERE t.entity IN (".getEntity($object->element).")";
+else $sql .= " WHERE 1 = 1";
 foreach ($search as $key => $val) {
 	if (in_array($key, $object->fields)) {
 		if ($key == 'status' && $search[$key] == -1) {
@@ -304,8 +300,7 @@ $sql .= $hookmanager->resPrint;
 
 /* If a group by is required
 $sql.= " GROUP BY ";
-foreach($object->fields as $key => $val)
-{
+foreach($object->fields as $key => $val) {
 	$sql.='t.'.$key.', ';
 }
 // Add fields from extrafields
@@ -557,9 +552,7 @@ print '</tr>'."\n";
 $needToFetchEachLine = 0;
 if (is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
-		if (preg_match('/\$object/', $val)) {
-			$needToFetchEachLine++; // There is at least one compute field that use $object
-		}
+		if (preg_match('/\$object/', $val)) $needToFetchEachLine++; // There is at least one compute field that use $object
 	}
 }
 
@@ -625,7 +618,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	print $hookmanager->resPrint;
 	// Action column
 	print '<td class="nowrap center">';
-	if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+	if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 		$selected = 0;
 		if (in_array($object->id, $arrayofselected)) {
 			$selected = 1;

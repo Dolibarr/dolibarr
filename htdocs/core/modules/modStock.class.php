@@ -254,7 +254,7 @@ class modStock extends DolibarrModules
 		$this->export_sql_end[$r] .= ' AND e.entity IN ('.getEntity('stock').')';
 
 		// Export stock including batch number
-		if ($conf->productbatch->enabled)
+		if (!empty($conf->productbatch->enabled))
 		{
 			$langs->load("productbatch");
 
@@ -327,7 +327,7 @@ class modStock extends DolibarrModules
 			'p.rowid'=>"product", 'p.ref'=>"product", 'p.fk_product_type'=>"product", 'p.label'=>"product", 'p.description'=>"product", 'p.note'=>"product",
 			'p.price'=>"product", 'p.tva_tx'=>'product', 'p.tosell'=>"product", 'p.tobuy'=>"product", 'p.duration'=>"product", 'p.datec'=>'product', 'p.tms'=>'product'
 		);	// We define here only fields that use another icon that the one defined into export_icon
-		if ($conf->productbatch->enabled)
+		if (!empty($conf->productbatch->enabled))
 		{
 			$this->export_fields_array[$r]['sm.batch'] = 'Batch';
 			$this->export_TypeFields_array[$r]['sm.batch'] = 'Text';

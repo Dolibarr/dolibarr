@@ -37,7 +37,9 @@ $action = GETPOST('action', 'aZ09');
 
 
 // Security check
-//if (! $user->rights->mymodule->myobject->read) accessforbidden();
+// if (! $user->rights->mymodule->myobject->read) {
+// 	accessforbidden();
+// }
 $socid = GETPOST('socid', 'int');
 if (isset($user->socid) && $user->socid > 0) {
 	$action = '';

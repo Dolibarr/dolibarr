@@ -621,6 +621,7 @@ if ($id == 11)
 		// 'contract' => $langs->trans('Contract'),
 		'project' => $langs->trans('Project'),
 		'project_task' => $langs->trans('Task'),
+        'ticket' => $langs->trans('Ticket'),
 		'agenda' => $langs->trans('Agenda'),
 		'dolresource' => $langs->trans('Resource'),
 		// old deprecated
@@ -1492,11 +1493,9 @@ if ($id)
 								continue;
 							}
 
-							if ($value == 'element')
-							{
+							if ($value == 'element') {
 								$valuetoshow = isset($elementList[$valuetoshow]) ? $elementList[$valuetoshow] : $valuetoshow;
-							} elseif ($value == 'source')
-							{
+							} elseif ($value == 'source') {
 								$valuetoshow = isset($sourceList[$valuetoshow]) ? $sourceList[$valuetoshow] : $valuetoshow;
 							} elseif ($valuetoshow == 'all') {
 								$valuetoshow = $langs->trans('All');
