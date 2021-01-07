@@ -1513,12 +1513,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			//}
 
 			// Supplier
-			//if ($object->fournisseur) {
-			print '<tr class="visibleifsupplier"><td class="toptd">'.$form->editfieldkey('SuppliersCategoriesShort', 'suppcats', '', $object, 0).'</td><td colspan="3">';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, 'parent', null, null, 1);
-			print img_picto('', 'category').$form->multiselectarray('suppcats', $cate_arbo, GETPOST('suppcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
-			print "</td></tr>";
-			//}
+			if (!empty($conf->fournisseur->enabled)) {
+				print '<tr class="visibleifsupplier"><td class="toptd">'.$form->editfieldkey('SuppliersCategoriesShort', 'suppcats', '', $object, 0).'</td><td colspan="3">';
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, 'parent', null, null, 1);
+				print img_picto('', 'category').$form->multiselectarray('suppcats', $cate_arbo, GETPOST('suppcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+				print "</td></tr>";
+			}
 		}
 
 		// Multicurrency
@@ -2133,17 +2133,19 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				print "</td></tr>";
 
 				// Supplier
-				print '<tr class="visibleifsupplier"><td>'.$form->editfieldkey('SuppliersCategoriesShort', 'suppcats', '', $object, 0).'</td>';
-				print '<td colspan="3">';
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, null, null, null, 1);
-				$c = new Categorie($db);
-				$cats = $c->containing($object->id, Categorie::TYPE_SUPPLIER);
-				$arrayselected = array();
-				foreach ($cats as $cat) {
-					$arrayselected[] = $cat->id;
+				if (!empty($conf->fournisseur->enabled)) {
+					print '<tr class="visibleifsupplier"><td>'.$form->editfieldkey('SuppliersCategoriesShort', 'suppcats', '', $object, 0).'</td>';
+					print '<td colspan="3">';
+					$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, null, null, null, 1);
+					$c = new Categorie($db);
+					$cats = $c->containing($object->id, Categorie::TYPE_SUPPLIER);
+					$arrayselected = array();
+					foreach ($cats as $cat) {
+						$arrayselected[] = $cat->id;
+					}
+					print img_picto('', 'category').$form->multiselectarray('suppcats', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+					print "</td></tr>";
 				}
-				print img_picto('', 'category').$form->multiselectarray('suppcats', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
-				print "</td></tr>";
 			}
 
 			// Multicurrency
@@ -2509,7 +2511,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			}
 
 			// Supplier
-			if ($object->fournisseur) {
+			if (!empty($conf->fournisseur->enabled) && $object->fournisseur) {
 				print '<tr><td>'.$langs->trans("SuppliersCategoriesShort").'</td>';
 				print '<td>';
 				print $form->showCategories($object->id, Categorie::TYPE_SUPPLIER, 1);
