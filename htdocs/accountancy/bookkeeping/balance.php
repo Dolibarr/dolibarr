@@ -323,7 +323,7 @@ if ($action != 'export_csv')
 		$root_account_number = $tmparrayforrootaccount['account_number'];
 
 		if (empty($accountingaccountstatic->label) && $accountingaccountstatic->id > 0) {
-			$link = '<a href="' . DOL_URL_ROOT . '/accountancy/admin/card.php?action=update&token=' . newToken() . '&id=' . $accountingaccountstatic->id . '">' . img_edit() . '</a>';
+			$link = '<a class="editfielda reposition" href="' . DOL_URL_ROOT . '/accountancy/admin/card.php?action=update&token=' . newToken() . '&id=' . $accountingaccountstatic->id . '">' . img_edit() . '</a>';
 		} elseif (empty($tmparrayforrootaccount['label'])) {
 			$link = '<a href="' . DOL_URL_ROOT . '/accountancy/admin/card.php?action=create&token=' . newToken() . '&accountingaccount=' . length_accountg($line->numero_compte) . '">' . img_edit_add() . '</a>';
 		}
