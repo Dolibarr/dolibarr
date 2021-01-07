@@ -2140,7 +2140,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 					$c = new Categorie($db);
 					$cats = $c->containing($object->id, Categorie::TYPE_SUPPLIER);
 					$arrayselected = array();
-					foreach($cats as $cat) {
+					foreach ($cats as $cat) {
 						$arrayselected[] = $cat->id;
 					}
 					print img_picto('', 'category').$form->multiselectarray('suppcats', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
