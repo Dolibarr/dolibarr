@@ -677,7 +677,7 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 						console.log("Load unit price end, we got value "+data.price_ht);
 						jQuery("#price_ht").val(data.price_ht);
 						<?php
-						if (!empty($conf->global->PRODUIT_AUTOFILL_DESC)) {
+						if (!empty($conf->global->PRODUIT_AUTOFILL_DESC) && $conf->global->PRODUIT_AUTOFILL_DESC == 1) {
 							if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) { ?>
 						var proddesc = data.desc_trans;
 								<?php
@@ -875,7 +875,7 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 			}
 
 			<?php
-			if (!empty($conf->global->PRODUIT_AUTOFILL_DESC)) {
+			if (!empty($conf->global->PRODUIT_AUTOFILL_DESC) && $conf->global->PRODUIT_AUTOFILL_DESC == 1) {
 				?>
 			var description = $('option:selected', this).attr('data-description');
 			if (typeof description == 'undefined') { description = jQuery('#idprodfournprice').attr('data-description');	}
@@ -898,7 +898,7 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 			}?>
 		} else if (jQuery('#idprodfournprice').length > 0) {
 			<?php
-			if (!empty($conf->global->PRODUIT_AUTOFILL_DESC)) {
+			if (!empty($conf->global->PRODUIT_AUTOFILL_DESC) && $conf->global->PRODUIT_AUTOFILL_DESC == 1) {
 				if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) { ?>
 			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
 			{

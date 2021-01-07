@@ -148,9 +148,6 @@ if ($action == 'other')
 	$value = GETPOST('activate_FillProductDescAuto', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_AUTOFILL_DESC", $value, 'chaine', 0, '', $conf->entity);
 
-	$value = GETPOST('activate_DoNotAddStdProductDescOnAddLine', 'alpha');
-	$res = dolibarr_set_const($db, "MAIN_NO_CONCAT_DESCRIPTION", $value, 'chaine', 0, '', $conf->entity);
-
 	if ($value) {
 		$sql_test = "SELECT count(desc_fourn) as cpt FROM ".MAIN_DB_PREFIX."product_fournisseur_price WHERE 1";
 		$resql = $db->query($sql_test);
@@ -583,7 +580,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES)) $current_rule = 'PRODUIT_MULTIPR
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) $current_rule = 'PRODUIT_CUSTOMER_PRICES_BY_QTY';
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) $current_rule = 'PRODUIT_CUSTOMER_PRICES';
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) $current_rule = 'PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES';
-print $form->selectarray("princingrule", $select_pricing_rules, $current_rule);
+print $form->selectarray("princingrule", $select_pricing_rules, $current_rule, 0, 0, 0, '', 1, 0, 0, '', 'maxwidth400', 1);
 print '</td>';
 print '</tr>';
 
@@ -635,6 +632,28 @@ if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
 	print '</tr>';
 }
 
+// Do Not Add Product description on add lines
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("OnProductSelectAddProductDesc").'</td>';
+print '<td class="right">';
+print $form->selectarray(
+	"activate_FillProductDescAuto",
+	array(1=>'AutoFillFormFieldBeforeSubmit', 0=>'DoNotAutofillButAutoConcat', -1=>'DoNotUseDescriptionOfProdut'),
+	empty($conf->global->PRODUIT_AUTOFILL_DESC) ? 0 : $conf->global->PRODUIT_AUTOFILL_DESC,
+	0,
+	0,
+	0,
+	'',
+	1,
+	0,
+	0,
+	'',
+	'maxwidth400',
+	1
+);
+print '</td>';
+print '</tr>';
+
 // Visualiser description produit dans les formulaires activation/desactivation
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
@@ -642,23 +661,6 @@ print '<td class="right">';
 print $form->selectyesno("activate_viewProdDescInForm", $conf->global->PRODUIT_DESC_IN_FORM, 1);
 print '</td>';
 print '</tr>';
-
-// Do Not Add Product description on add lines
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("DoNotAddProductDescAtAddLines").'</td>';
-print '<td class="right">';
-print $form->selectyesno("activate_DoNotAddStdProductDescOnAddLine", $conf->global->MAIN_NO_CONCAT_DESCRIPTION, 1);
-print '</td>';
-print '</tr>';
-
-// Do Not Add Product description on add lines
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("OnProductSelectAddProductDesc").'</td>';
-print '<td class="right">';
-print $form->selectyesno("activate_FillProductDescAuto", $conf->global->PRODUIT_AUTOFILL_DESC, 1);
-print '</td>';
-print '</tr>';
-
 
 // Activate propal merge produt card
 /* Kept as hidden feature only. PRODUIT_PDF_MERGE_PROPAL can be added manually. Still did not understand how this feature works.
