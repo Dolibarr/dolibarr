@@ -394,6 +394,11 @@ if (empty($reshook))
 			$error++;
 		}
 
+		if (!empty($conf->mailing->enabled) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS==-1 && GETPOST('contact_no_email', 'int')==-1 && !empty(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL))) {
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("No_Email")), null, 'errors');
+		}
+
 		if (!$error)
 		{
 			if ($action == 'update')
@@ -563,7 +568,8 @@ if (empty($reshook))
 					{
 						dol_syslog("We ask to create a contact/address too", LOG_DEBUG);
 						$contcats = GETPOST('contcats', 'array');
-						$result = $object->create_individual($user, $contcats);
+						$no_email = GETPOST('contact_no_email', 'int');
+						$result = $object->create_individual($user, $no_email, $contcats);
 						if ($result < 0)
 						{
 							setEventMessages($object->error, $object->errors, 'errors');
@@ -1147,8 +1153,24 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
                         $("#selectcountry_id").change(function() {
                         	document.formsoc.action.value="create";
                         	document.formsoc.submit();
-                        });
-                     });';
+                        });';
+				if ($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS==-1) {
+
+					print '
+						function init_check_no_email(input) {
+							if (input.val()!="") {
+								$(".noemail").addClass("fieldrequired");
+							} else {
+								$(".noemail").removeClass("fieldrequired");
+							}
+						}
+						$("#email").keyup(function() {
+							init_check_no_email($(this));
+						});
+					init_check_no_email($("#email"));
+					});';
+				}
+				print '});';
 				print '</script>'."\n";
 
 				print '<div id="selectthirdpartytype">';
@@ -1357,7 +1379,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 		// Email / Web
 		print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', empty($conf->global->SOCIETE_EMAIL_MANDATORY) ? '' : $conf->global->SOCIETE_EMAIL_MANDATORY).'</td>';
-		print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_email').' <input type="text" class="maxwidth200 widthcentpercentminusx" name="email" id="email" value="'.$object->email.'"></td></tr>';
+		print '<td'.(($conf->browser->layout == 'phone') || empty($conf->mailing->enabled) ? ' colspan="3"' : '').'>'.img_picto('', 'object_email').' <input type="text" class="maxwidth200 widthcentpercentminusx" name="email" id="email" value="'.$object->email.'"></td>';
+		if (!empty($conf->mailing->enabled) && !empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION)) {
+			if ($conf->browser->layout == 'phone') print '</tr><tr>';
+			print '<td class="individualline noemail">'.$form->editfieldkey($langs->trans('No_Email') .' ('.$langs->trans('Contact').')', 'contact_no_email', '', $object, 0).'</td>';
+			print '<td class="individualline" '.(($conf->browser->layout == 'phone') || empty($conf->mailing->enabled) ? ' colspan="3"' : '').'>'.$form->selectyesno('contact_no_email', (GETPOSTISSET("contact_no_email") ?GETPOST("contact_no_email", 'alpha') : $object->no_email), 1, false, 1).'</td>';
+		}
+		print '</tr>';
 		print '<tr><td>'.$form->editfieldkey('Web', 'url', '', $object, 0).'</td>';
 		print '<td colspan="3">'.img_picto('', 'globe').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="url" id="url" value="'.$object->url.'"></td></tr>';
 
