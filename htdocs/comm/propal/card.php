@@ -1003,8 +1003,7 @@ if (empty($reshook))
 				} else {
 					$desc = $prod->description;
 				}
-var_dump($desc);
-var_dump($product_desc);exit;
+
 				//If text set in desc is the same as product description (as now it's preloaded) whe add it only one time
 				if ($product_desc==$desc && !empty($conf->global->PRODUIT_AUTOFILL_DESC)) {
 					$product_desc='';
