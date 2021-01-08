@@ -1679,11 +1679,11 @@ class FactureFournisseur extends CommonInvoice
 			$remise_percent = price2num($remise_percent);
 			$qty = price2num($qty);
 			$pu = price2num($pu);
-			$txlocaltax1 = price2num($txlocaltax1);
-			$txlocaltax2 = price2num($txlocaltax2);
 			if (!preg_match('/\((.*)\)/', $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5,1' or '5.1' or '5.1(XXX)', we must clean only if '5,1'
 			}
+			$txlocaltax1 = price2num($txlocaltax1);
+			$txlocaltax2 = price2num($txlocaltax2);
 
 			if ($date_start && $date_end && $date_start > $date_end) {
 				$langs->load("errors");
@@ -1938,8 +1938,6 @@ class FactureFournisseur extends CommonInvoice
 
         $txlocaltax1 = price2num($txlocaltax1);
         $txlocaltax2 = price2num($txlocaltax2);
-
-        $localtaxes_type = array($txlocaltax1, $txlocaltax2);
 
         // Calcul du total TTC et de la TVA pour la ligne a partir de
         // qty, pu, remise_percent et txtva

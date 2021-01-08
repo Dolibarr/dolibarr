@@ -320,7 +320,7 @@ SELECT2
 Edit CSS to restore line removed between 4.0.5 and 4.0.6. It generates this bug: https://github.com/select2/select2/issues/5832
 
 .select2-hidden-accessible {
-  margin: -1px !important;                /* line to restore */
+  margin: -10000px !important;                /* line to restore */
 }
 
 

@@ -481,11 +481,27 @@ if ($object->fetch($id) >= 0)
 	$sql .= " mc.source_url, mc.source_id, mc.source_type, mc.error_text";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 	$sql .= " WHERE mc.fk_mailing=".$object->id;
-	if ($search_lastname)  $sql .= natural_search("mc.lastname", $search_lastname);
-	if ($search_firstname) $sql .= natural_search("mc.firstname", $search_firstname);
-	if ($search_email)     $sql .= natural_search("mc.email", $search_email);
-	if ($search_other)     $sql .= natural_search("mc.other", $search_other);
-	if ($search_dest_status != '' && $search_dest_status >= -1) $sql .= " AND mc.statut=".$db->escape($search_dest_status)." ";
+	$asearchcriteriahasbeenset = 0;
+	if ($search_lastname)  {
+		$sql .= natural_search("mc.lastname", $search_lastname);
+		$asearchcriteriahasbeenset++;
+	}
+	if ($search_firstname) {
+		$sql .= natural_search("mc.firstname", $search_firstname);
+		$asearchcriteriahasbeenset++;
+	}
+	if ($search_email)     {
+		$sql .= natural_search("mc.email", $search_email);
+		$asearchcriteriahasbeenset++;
+	}
+	if ($search_other)     {
+		$sql .= natural_search("mc.other", $search_other);
+		$asearchcriteriahasbeenset++;
+	}
+	if ($search_dest_status != '' && $search_dest_status >= -1) {
+		$sql .= " AND mc.statut=".$db->escape($search_dest_status)." ";
+		$asearchcriteriahasbeenset++;
+	}
 	$sql .= $db->order($sortfield, $sortorder);
 
 	// Count total nb of records
@@ -498,6 +514,18 @@ if ($object->fetch($id) >= 0)
 	    {
 	    	$page = 0;
 	    	$offset = 0;
+	    }
+
+	    // Fix/update nbemail on emailing record if it differs (may happen if user edit lines from database directly)
+	    if (empty($asearchcriteriahasbeenset)) {
+	    	if ($nbtotalofrecords != $object->email) {
+	    		dol_syslog("We found a difference in nb of record in target table and the property ->nbemail, we fix ->nbemail");
+	    		//print "nbemail=".$object->nbemail." nbtotalofrecords=".$nbtotalofrecords;
+	    		$resultrefresh = $object->refreshNbOfTargets();
+	    		if ($resultrefresh < 0) {
+	    			dol_print_error($db, $object->error, $object->errors);
+	    		}
+	    	}
 	    }
 	}
 

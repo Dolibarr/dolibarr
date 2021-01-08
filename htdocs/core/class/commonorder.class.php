@@ -72,6 +72,18 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $product_desc;
 
 	/**
+	 * Product use lot
+	 * @var string
+	 */
+	public $product_tobatch;
+
+	/**
+	 * Product barcode
+	 * @var string
+	 */
+	public $product_barcode;
+
+	/**
 	 * Quantity
 	 * @var float
 	 */

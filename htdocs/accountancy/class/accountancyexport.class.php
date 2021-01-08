@@ -386,6 +386,7 @@ class AccountancyExport
 
 		foreach ($objectLines as $line) {
 			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
+
 			print $date.$separator;
 			print $line->code_journal.$separator;
 			print length_accountg($line->numero_compte).$separator;
@@ -394,7 +395,7 @@ class AccountancyExport
 			print price($line->debit).$separator;
 			print price($line->credit).$separator;
 			print 'E'.$separator;
-			print length_accountg($line->subledger_account).$separator;
+			print length_accounta($line->subledger_account).$separator;
 			print $end_line;
 		}
 	}
@@ -784,7 +785,7 @@ class AccountancyExport
 	public function exportFEC($objectLines)
 	{
 		$separator = "\t";
-		$end_line = "\n";
+		$end_line = "\r\n";
 
 		print "JournalCode".$separator;
 		print "JournalLib".$separator;
@@ -807,65 +808,70 @@ class AccountancyExport
 		print $end_line;
 
 		foreach ($objectLines as $line) {
-			$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
-			$date_document = dol_print_date($line->doc_date, '%Y%m%d');
-			$date_validation = dol_print_date($line->date_validated, '%Y%m%d');
+			if ($line->debit == 0 && $line->credit == 0) {
+                unset($array[$line]);
+            } else {
+				$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
+				$date_document = dol_print_date($line->doc_date, '%Y%m%d');
+				$date_lettering = dol_print_date($line->date_lettering, '%Y%m%d');
+				$date_validation = dol_print_date($line->date_validated, '%Y%m%d');
 
-			// FEC:JournalCode
-			print $line->code_journal.$separator;
+				// FEC:JournalCode
+				print $line->code_journal.$separator;
 
-			// FEC:JournalLib
-			print $line->journal_label.$separator;
+				// FEC:JournalLib
+				print $line->journal_label.$separator;
 
-			// FEC:EcritureNum
-			print $line->piece_num.$separator;
+				// FEC:EcritureNum
+				print $line->piece_num.$separator;
 
-			// FEC:EcritureDate
-			print $date_document . $separator;
+				// FEC:EcritureDate
+				print $date_document . $separator;
 
-			// FEC:CompteNum
-			print $line->numero_compte.$separator;
+				// FEC:CompteNum
+				print $line->numero_compte.$separator;
 
-			// FEC:CompteLib
-			print dol_string_unaccent($line->label_compte) . $separator;
+				// FEC:CompteLib
+				print dol_string_unaccent($line->label_compte) . $separator;
 
-			// FEC:CompAuxNum
-			print $line->subledger_account.$separator;
+				// FEC:CompAuxNum
+				print $line->subledger_account.$separator;
 
-			// FEC:CompAuxLib
-			print dol_string_unaccent($line->subledger_label) . $separator;
+				// FEC:CompAuxLib
+				print dol_string_unaccent($line->subledger_label).$separator;
 
-			// FEC:PieceRef
-			print $line->doc_ref.$separator;
+				// FEC:PieceRef
+				print $line->doc_ref.$separator;
 
-			// FEC:PieceDate
-			print dol_string_unaccent($date_creation) . $separator;
+				// FEC:PieceDate
+				print $date_creation.$separator;
 
-			// FEC:EcritureLib
-			print $line->label_operation.$separator;
+				// FEC:EcritureLib
+				print dol_string_unaccent($line->label_operation).$separator;
 
-			// FEC:Debit
-			print price2fec($line->debit).$separator;
+				// FEC:Debit
+				print price2fec($line->debit).$separator;
 
-			// FEC:Credit
-			print price2fec($line->credit).$separator;
+				// FEC:Credit
+				print price2fec($line->credit).$separator;
 
-			// FEC:EcritureLet
-			print $line->lettering_code.$separator;
+				// FEC:EcritureLet
+				print $line->lettering_code.$separator;
 
-			// FEC:DateLet
-			print $line->date_lettering.$separator;
+				// FEC:DateLet
+				print $date_lettering.$separator;
 
-			// FEC:ValidDate
-			print $date_validation . $separator;
+				// FEC:ValidDate
+				print $date_validation.$separator;
 
-			// FEC:Montantdevise
-			print $line->multicurrency_amount.$separator;
+				// FEC:Montantdevise
+				print $line->multicurrency_amount.$separator;
 
-			// FEC:Idevise
-			print $line->multicurrency_code;
+				// FEC:Idevise
+				print $line->multicurrency_code;
 
-			print $end_line;
+				print $end_line;
+			}
 		}
 	}
 

@@ -1201,7 +1201,16 @@ class Paiement extends CommonObject
 		$result = '';
         $label = '<u>'.$langs->trans("ShowPayment").'</u><br>';
         $label .= '<strong>'.$langs->trans("Ref").':</strong> '.$this->ref;
-        if ($this->datepaye ? $this->datepaye : $this->date) $label .= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour');
+        $dateofpayment = ($this->datepaye ? $this->datepaye : $this->date);
+        if ($dateofpayment) {
+        	$label .= '<br><strong>'.$langs->trans("Date").':</strong> ';
+        	$tmparray = dol_getdate($dateofpayment);
+        	if ($tmparray['seconds'] == 0 && $tmparray['minutes'] == 0 && ($tmparray['hours'] == 0 || $tmparray['hours'] == 12)) {	// We set hours to 0:00 or 12:00 because we don't know it
+        		$label .= dol_print_date($dateofpayment, 'day');
+        	} else {	// Hours was set to real date of payment (special case for POS for example)
+        		$label .= dol_print_date($dateofpayment, 'dayhour', 'tzuser');
+        	}
+        }
         if ($mode == 'withlistofinvoices')
         {
             $arraybill = $this->getBillsArray();

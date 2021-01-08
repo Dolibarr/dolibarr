@@ -158,7 +158,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	if ($invoice->total_ttc < 0) {
 		$invoice->type = $invoice::TYPE_CREDIT_NOTE;
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE ";
-		$sql .= "fk_soc = '".$invoice->socid."' ";
+		$sql .= "fk_soc = ".((int) $invoice->socid)." ";
 		$sql .= "AND type <> ".Facture::TYPE_CREDIT_NOTE." ";
 		$sql .= "AND fk_statut >= ".$invoice::STATUS_VALIDATED." ";
 		$sql .= "ORDER BY rowid DESC";
@@ -395,16 +395,9 @@ if ($action == "deleteline") {
     }
 }
 
+// Action to delete or discard an invoice
 if ($action == "delete") {
 	// $placeid is the invoice id (it differs from place) and is defined if the place is set and the ref of invoice is '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')', so the fetch at begining of page works.
-
-	/*$reg = array();
-	if (preg_match('/^(\d+)-(\d+)$/', $place, $reg)) {
-
-		$place = $reg[1];
-		var_dump($place);
-	}*/
-
 	if ($placeid > 0) {
         $result = $invoice->fetch($placeid);
 
@@ -412,16 +405,23 @@ if ($action == "delete") {
         {
         	$db->begin();
 
-        	// We delete the lines
-        	$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_extrafields where fk_object = ".$placeid;
-        	$resql1 = $db->query($sql);
-        	$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet where fk_facture = ".$placeid;
-            $resql2 = $db->query($sql);
-			$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]};
-			$sql .= " WHERE ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
-			$resql3 = $db->query($sql);
+			// We delete the lines
+			$resdeletelines = 1;
+			foreach($invoice->lines as $line){
+				$tmpres = $invoice->deleteline($line->id);
+				if ($tmpres < 0) {
+					$resdeletelines = 0;
+					break;
+				}
+			}
 
-            if ($resql1 && $resql2 && $resql3)
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
+			$sql .= " SET fk_soc=".$conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]}.", ";
+			$sql .= " datec = '".$db->idate(dol_now())."'";
+			$sql .= " WHERE ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+			$resql1 = $db->query($sql);
+
+			if ($resdeletelines && $resql1)
             {
             	$db->commit();
             }
@@ -430,7 +430,7 @@ if ($action == "delete") {
             	$db->rollback();
             }
 
-            $invoice->fetch($placeid);
+			$invoice->fetch($placeid);
         }
     }
 }
@@ -742,7 +742,7 @@ function DolibarrTakeposPrinting(id) {
 
 
 $( document ).ready(function() {
-	console.log("Set customer info and sales in header");
+	console.log("Set customer info and sales in header placeid=<?php echo $placeid; ?> status=<?php echo $invoice->statut; ?>");
 
     <?php
     $s = $langs->trans("Customer");
@@ -757,25 +757,34 @@ $( document ).ready(function() {
 
 	<?php
 	$sql = "SELECT rowid, datec, ref FROM ".MAIN_DB_PREFIX."facture";
-	$sql .= " WHERE ref LIKE '(PROV-POS".$_SESSION["takeposterminal"]."-0%'";
+	if (empty($conf->global->TAKEPOS_CAN_EDIT_IF_ALREADY_VALIDATED)) {
+		// By default, only invoices with a ref not already defined can in list of open invoice we can edit.
+		$sql .= " WHERE ref LIKE '(PROV-POS".$_SESSION["takeposterminal"]."-0%'";
+	} else {
+		// If TAKEPOS_CAN_EDIT_IF_ALREADY_VALIDATED set, we show also draft invoice that already has a reference defined
+		$sql .= " WHERE pos_source = ".$_SESSION["takeposterminal"];
+		$sql .= " AND module_source = 'takepos'";
+	}
 	$sql .= $db->order('datec', 'ASC');
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
 			echo '$("#customerandsales").append(\'';
-			echo '<a class="valignmiddle" onclick="place=\\\'';
+			echo '<a class="valignmiddle" title="'.dol_escape_js($langs->trans("SaleStartedAt", dol_print_date($db->jdate($obj->datec), '%H:%M', 'tzuser'))).'" onclick="place=\\\'';
 			$num_sale = str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $obj->ref));
 			echo $num_sale;
 			if (str_replace("-", "", $num_sale) > $max_sale) $max_sale = str_replace("-", "", $num_sale);
-			echo '\\\';Refresh();">';
+			echo '\\\'; invoiceid=\\\'';
+			echo $obj->rowid;
+			echo '\\\'; Refresh();">';
 			if ($placeid == $obj->rowid) echo "<b>";
-			echo date('H:i', strtotime($obj->datec));
+			echo dol_print_date($db->jdate($obj->datec), '%H:%M', 'tzuser');
 			if ($placeid == $obj->rowid) echo "</b>";
 			echo '</a>\');';
 		}
 		echo '$("#customerandsales").append(\'<a onclick="place=\\\'0-';
 		echo $max_sale + 1;
-		echo '\\\';Refresh();"><span class="fa fa-plus-square" title="'.dol_escape_htmltag($langs->trans("StartAParallelSale")).'"></a>\');';
+		echo '\\\'; invoiceid=0; Refresh();"><span class="fa fa-plus-square" title="'.dol_escape_htmltag($langs->trans("StartAParallelSale")).'"></a>\');';
 	} else {
 		dol_print_error($db);
 	}

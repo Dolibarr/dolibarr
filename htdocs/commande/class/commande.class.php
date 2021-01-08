@@ -2033,7 +2033,7 @@ class Commande extends CommonOrder
 		$sql .= ' l.total_ht, l.total_ttc, l.total_tva, l.total_localtax1, l.total_localtax2, l.date_start, l.date_end,';
 		$sql .= ' l.fk_unit,';
 		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
-		$sql .= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label, p.tobatch as product_tobatch,';
+		$sql .= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label, p.tobatch as product_tobatch, p.barcode as product_barcode,';
 		$sql .= ' p.weight, p.weight_units, p.volume, p.volume_units';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
@@ -2091,11 +2091,14 @@ class Commande extends CommonOrder
 				$line->fk_parent_line = $objp->fk_parent_line;
 
 				$line->ref = $objp->product_ref;
-				$line->product_ref = $objp->product_ref;
 				$line->libelle = $objp->product_label;
+
+				$line->product_ref = $objp->product_ref;
 				$line->product_label = $objp->product_label;
 				$line->product_desc     = $objp->product_desc;
 				$line->product_tobatch  = $objp->product_tobatch;
+				$line->product_barcode  = $objp->product_barcode;
+
 				$line->fk_product_type  = $objp->fk_product_type; // Produit ou service
 				$line->fk_unit          = $objp->fk_unit;
 
@@ -3117,7 +3120,9 @@ class Commande extends CommonOrder
 			$pu = price2num($pu);
 			$pa_ht = price2num($pa_ht);
 			$pu_ht_devise = price2num($pu_ht_devise);
-			$txtva = price2num($txtva);
+			if (!preg_match('/\((.*)\)/', $txtva)) {
+				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
+			}
 			$txlocaltax1 = price2num($txlocaltax1);
 			$txlocaltax2 = price2num($txlocaltax2);
 
@@ -3132,6 +3137,7 @@ class Commande extends CommonOrder
 
 			// Clean vat code
 			$vat_src_code = '';
+			$reg = array();
 			if (preg_match('/\((.*)\)/', $txtva, $reg))
 			{
 				$vat_src_code = $reg[1];

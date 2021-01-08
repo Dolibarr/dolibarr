@@ -427,6 +427,25 @@ a.top-menu-dropdown-link {
 	}
 }
 
+@media only screen and (max-width: 320px)
+{
+	.dropdown dd ul {
+		max-width: 270px;	/* must always be 50 slower than width */
+	}
+}
+@media only screen and (max-width: 300px)
+{
+	.dropdown dd ul {
+		max-width: 250px;
+	}
+}
+@media only screen and (max-width: 280px)
+{
+	.dropdown dd ul {
+		max-width: 230px;
+	}
+}
+
 
 .dropdown-search-input::placeholder {
     color: color(#575756 a(0.8));

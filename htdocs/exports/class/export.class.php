@@ -102,6 +102,7 @@ class Export
                 // Search module files
 			    while (($file = readdir($handle)) !== false)
 				{
+					$reg = array();
 					if (is_readable($dir.$file) && preg_match("/^(mod.*)\.class\.php$/i", $file, $reg))
 					{
 						$modulename = $reg[1];

@@ -269,7 +269,10 @@ if ($object->id > 0)
 		print '<tr><td>';
 		print $langs->trans('CustomerCode').'</td><td>';
 		print $object->code_client;
-		if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+		$tmpcheck = $object->check_codeclient();
+		if ($tmpcheck != 0 && $tmpcheck != -5) {
+			print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+		}
 		print '</td></tr>';
 
 		print '<tr>';

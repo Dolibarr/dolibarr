@@ -257,13 +257,18 @@ class Subscription extends CommonObject
     {
         $error = 0;
 
+        if (!is_numeric($this->amount)) {
+        	$this->error = 'BadValueForParameterAmount';
+        	return -1;
+        }
+
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."subscription SET ";
         $sql .= " fk_type = ".$this->fk_type.",";
         $sql .= " fk_adherent = ".$this->fk_adherent.",";
         $sql .= " note=".($this->note ? "'".$this->db->escape($this->note)."'" : 'null').",";
-        $sql .= " subscription = '".price2num($this->amount)."',";
+        $sql .= " subscription = ".price2num($this->amount).",";
         $sql .= " dateadh='".$this->db->idate($this->dateh)."',";
         $sql .= " datef='".$this->db->idate($this->datef)."',";
         $sql .= " datec='".$this->db->idate($this->datec)."',";

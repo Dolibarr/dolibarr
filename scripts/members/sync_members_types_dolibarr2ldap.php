@@ -85,7 +85,7 @@ if ($resql) {
 			$membertype->id = $obj->rowid;
 			$membertype->fetch($membertype->id);
 
-			print $langs->trans("UpdateMemberType")." rowid=".$membertype->id." ".$membertype - label;
+			print $langs->trans("UpdateMemberType")." rowid=".$membertype->id." ".$membertype->label;
 
 			$oldobject = $membertype;
 

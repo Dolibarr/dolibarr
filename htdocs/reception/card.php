@@ -1804,7 +1804,7 @@ elseif ($id || $ref)
 
 			if ($action == 'editline' && $lines[$i]->id == $line_id)
 			{
-				print '<td ><textarea name="comment'.$line_id.'" id="comment'.$line_id.'" /> '.$lines[$i]->comment.'</textarea></td>';
+				print '<td><textarea name="comment'.$line_id.'" id="comment'.$line_id.'" /> '.$lines[$i]->comment.'</textarea></td>';
 			}
 			else
 			{

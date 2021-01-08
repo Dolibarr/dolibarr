@@ -274,7 +274,7 @@ class ProductFournisseur extends Product
 		$charges = price2num($charges, 'MU');
         $qty = price2num($qty, 'MS');
 		$unitBuyPrice = price2num($buyprice / $qty, 'MU');
-		$packaging = ($this->packaging < $qty) ? $qty : $this->packaging;
+		$packaging = price2num((($this->packaging < $qty) ? $qty : $this->packaging), 'MS');
 
 		$error = 0;
 		$now = dol_now();

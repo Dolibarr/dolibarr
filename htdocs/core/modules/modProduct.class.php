@@ -194,7 +194,7 @@ class modProduct extends DolibarrModules
 		);
 		if (is_object($mysoc) && $mysoc->useNPR()) $this->export_fields_array[$r]['p.recuperableonly'] = 'NPR';
 		if (!empty($conf->fournisseur->enabled) || !empty($conf->margin->enabled)) $this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.cost_price'=>'CostPrice'));
-		if (!empty($conf->stock->enabled)) $this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.stock'=>'Stock', 'p.seuil_stock_alerte'=>'StockLimit', 'p.desiredstock'=>'DesiredStock', 'p.pmp'=>'PMPValue'));
+		if (!empty($conf->stock->enabled)) $this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.tobatch'=>'ManageLotSerial', 'p.stock'=>'Stock', 'p.seuil_stock_alerte'=>'StockLimit', 'p.desiredstock'=>'DesiredStock', 'p.pmp'=>'PMPValue'));
 		if (!empty($conf->barcode->enabled)) $this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.barcode'=>'BarCode'));
 		$keyforselect = 'product'; $keyforelement = 'product'; $keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
@@ -216,7 +216,7 @@ class modProduct extends DolibarrModules
 			'p.price_base_type'=>"Text", 'p.price'=>"Numeric", 'p.price_ttc'=>"Numeric", 'p.tva_tx'=>'Numeric',
 			'p.datec'=>'Date', 'p.tms'=>'Date'
 		);
-		if (!empty($conf->stock->enabled)) $this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.stock'=>'Numeric', 'p.seuil_stock_alerte'=>'Numeric', 'p.desiredstock'=>'Numeric', 'p.pmp'=>'Numeric', 'p.cost_price'=>'Numeric'));
+		if (!empty($conf->stock->enabled)) $this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.tobatch'=>'Numeric', 'p.stock'=>'Numeric', 'p.seuil_stock_alerte'=>'Numeric', 'p.desiredstock'=>'Numeric', 'p.pmp'=>'Numeric', 'p.cost_price'=>'Numeric'));
 		if (!empty($conf->barcode->enabled)) $this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.barcode'=>'Text'));
 		if (!empty($conf->fournisseur->enabled)) $this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('s.nom'=>'Text', 'pf.ref_fourn'=>'Text', 'pf.unitprice'=>'Numeric', 'pf.quantity'=>'Numeric', 'pf.remise_percent'=>'Numeric', 'pf.delivery_time_days'=>'Numeric'));
 		if (!empty($conf->global->MAIN_MULTILANGS)) $this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('l.lang'=>'Text', 'l.label'=>'Text', 'l.description'=>'Text', 'l.note'=>'Text'));
@@ -559,6 +559,7 @@ class modProduct extends DolibarrModules
         );
         //clauses copied from import_fields_array
         if (!empty($conf->stock->enabled)) $import_sample = array_merge($import_sample, array(
+        		'p.tobatch'=>"0 (don't use) / 1 (use batch/serial number)",
                 'p.seuil_stock_alerte' => '',
                 'p.pmp' => '0',
                 'p.desiredstock' => ''

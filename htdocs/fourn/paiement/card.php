@@ -274,10 +274,10 @@ if ($result > 0)
 
 		$i = 0;
 		$total = 0;
-		print '<b>'.$langs->trans("Invoices").'</b><br>';
+
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans('Ref').'</td>';
+		print '<td>'.$langs->trans('Invoice').'</td>';
 		print '<td>'.$langs->trans('RefSupplier').'</td>';
 		print '<td>'.$langs->trans('Company').'</td>';
 		print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';

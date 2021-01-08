@@ -44,7 +44,7 @@ $mode = GETPOST("mode") ?GETPOST("mode") : 'customer';
 if ($mode == 'customer' && !$user->rights->facture->lire) accessforbidden();
 if ($mode == 'supplier' && !$user->rights->fournisseur->facture->lire) accessforbidden();
 
-$object_status = GETPOST('object_status');
+$object_status = GETPOST('object_status', 'intcomma');
 $typent_id = GETPOST('typent_id', 'int');
 $categ_id = GETPOST('categ_id', 'categ_id');
 
@@ -59,7 +59,7 @@ if ($user->socid > 0)
 }
 
 $nowyear = strftime("%Y", dol_now());
-$year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
+$year = GETPOST('year') > 0 ? GETPOST('year', 'int') : $nowyear;
 if(!empty($conf->global->INVOICE_STATS_GRAPHS_SHOW_2_YEARS)) $startyear=$year-2;
 else $startyear=$year-1;
 $endyear = $year;

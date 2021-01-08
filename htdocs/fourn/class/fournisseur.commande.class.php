@@ -1729,9 +1729,9 @@ class CommandeFournisseur extends CommonOrder
 						{
 							$coeff = intval($qty / $prod->packaging) + 1;
 							$qty = $prod->packaging * $coeff;
-							setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
 						}
 					}
+					setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
 				}
             }
             else
@@ -1775,8 +1775,6 @@ class CommandeFournisseur extends CommonOrder
 
             $localtax1_type = $localtaxes_type[0];
 			$localtax2_type = $localtaxes_type[2];
-
-            $subprice = price2num($pu, 'MU');
 
             $rangmax = $this->line_max();
             $rang = $rangmax + 1;
@@ -2635,9 +2633,11 @@ class CommandeFournisseur extends CommonOrder
             if (!$qty) $qty = 1;
             $pu = price2num($pu);
         	$pu_ht_devise = price2num($pu_ht_devise);
-            $txtva = price2num($txtva);
-            $txlocaltax1 = price2num($txlocaltax1);
-            $txlocaltax2 = price2num($txlocaltax2);
+        	if (!preg_match('/\((.*)\)/', $txtva)) {
+        		$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
+        	}
+        	$txlocaltax1 = price2num($txlocaltax1);
+        	$txlocaltax2 = price2num($txlocaltax2);
 
             // Check parameters
             if ($type < 0) return -1;
@@ -2658,6 +2658,7 @@ class CommandeFournisseur extends CommonOrder
 
             // Clean vat code
             $vat_src_code = '';
+			$reg = array();
             if (preg_match('/\((.*)\)/', $txtva, $reg))
             {
                 $vat_src_code = $reg[1];
@@ -2682,8 +2683,6 @@ class CommandeFournisseur extends CommonOrder
 
             $localtax1_type = $localtaxes_type[0];
 			$localtax2_type = $localtaxes_type[2];
-
-            $subprice = price2num($pu_ht, 'MU');
 
             //Fetch current line from the database and then clone the object and set it in $oldline property
             $this->line = new CommandeFournisseurLigne($this->db);
@@ -2987,7 +2986,7 @@ class CommandeFournisseur extends CommonOrder
         }
         $sql .= $clause." c.entity = ".$conf->entity;
         if ($mode === 'awaiting') {
-            $sql .= " AND c.fk_statut = ".self::STATUS_ORDERSENT;
+            $sql .= " AND c.fk_statut IN (".self::STATUS_ORDERSENT.", ".self::STATUS_RECEIVED_PARTIALLY.")";
         }
         else {
             $sql .= " AND c.fk_statut IN (".self::STATUS_VALIDATED.", ".self::STATUS_ACCEPTED.")";
@@ -3009,14 +3008,15 @@ class CommandeFournisseur extends CommonOrder
             if ($mode === 'awaiting') {
                 $response->label = $langs->trans("SuppliersOrdersAwaitingReception");
                 $response->labelShort = $langs->trans("AwaitingReception");
-                $response->url = DOL_URL_ROOT.'/fourn/commande/list.php?statut=3&mainmenu=commercial&leftmenu=orders_suppliers';
+                $response->url = DOL_URL_ROOT.'/fourn/commande/list.php?statut=3,4&mainmenu=commercial&leftmenu=orders_suppliers';
             }
 
             while ($obj = $this->db->fetch_object($resql))
             {
                 $response->nbtodo++;
 
-                $commandestatic->date_livraison = $this->db->jdate($obj->delivery_date);
+                $commandestatic->date_livraison = $this->db->jdate($obj->delivery_date);	// deprecated
+                $commandestatic->date_delivery = $this->db->jdate($obj->delivery_date);
                 $commandestatic->date_commande = $this->db->jdate($obj->date_commande);
                 $commandestatic->statut = $obj->fk_statut;
 
@@ -3177,7 +3177,7 @@ class CommandeFournisseur extends CommonOrder
         $now = dol_now();
         $date_to_test = empty($this->date_delivery) ? $this->date_commande : $this->date_delivery;
 
-        return ($this->statut > 0 && $this->statut < 4) && $date_to_test && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
+        return ($this->statut > 0 && $this->statut < 5) && $date_to_test && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
     }
 
     /**

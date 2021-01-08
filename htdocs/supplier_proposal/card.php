@@ -554,8 +554,8 @@ if (empty($reshook))
 		}
 		else
 		{
-			$idprod = GETPOST('idprod', 'int');
-			$price_ht = '';
+		    $idprod = GETPOST('idprod', 'int');
+		    $price_ht = GETPOST('price_ht');
 			$tva_tx = '';
 		}
 
@@ -589,8 +589,8 @@ if (empty($reshook))
 			$error++;
 		}
 		if (!$error && ($qty >= 0)) {
-			$pu_ht = 0;
-			$pu_ttc = 0;
+		    $pu_ht = price2num($price_ht, 'MU');
+		    $pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
 			$price_min = 0;
 			$price_base_type = (GETPOST('price_base_type', 'alpha') ? GETPOST('price_base_type', 'alpha') : 'HT');
 
@@ -658,41 +658,41 @@ if (empty($reshook))
 					$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
 					$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
 
-					$pu_ht = $productsupplier->fourn_pu;
 					if (empty($pu_ht)) $pu_ht = 0; // If pu is '' or null, we force to have a numeric value
 
 					// If GETPOST('idprodfournprice') is a numeric, we can use it. If it is empty or if it is 'idprod_123', we should use -1 (not used)
 					$fournprice = (is_numeric(GETPOST('idprodfournprice', 'alpha')) ? GETPOST('idprodfournprice', 'alpha') : -1);
 					$buyingprice = 0;
+					$pu_ht_devise = price2num($price_ht_devise, 'MU');
 
 					$result = $object->addline(
-						$desc,
-						$pu_ht,
-						$qty,
-						$tva_tx,
-						$localtax1_tx,
-						$localtax2_tx,
-						$productsupplier->id,
-						$remise_percent,
-						$price_base_type,
-						$pu_ttc,
-						$tva_npr,
-						$type,
-						-1,
-						0,
-						GETPOST('fk_parent_line'),
-						$fournprice,
-						$buyingprice,
-						$label,
-						$array_options,
-						$ref_supplier,
-						$productsupplier->fk_unit,
-						'',
-						0,
-						$productsupplier->fourn_multicurrency_unitprice,
-						$date_start,
-						$date_end
-                    );
+					    $desc,
+					    $pu_ht,
+					    $qty,
+					    $tva_tx,
+					    $localtax1_tx,
+					    $localtax2_tx,
+					    $productsupplier->id,
+					    $remise_percent,
+					    $price_base_type,
+					    $pu_ttc,
+					    $tva_npr,
+					    $type,
+					    -1,
+					    0,
+					    GETPOST('fk_parent_line'),
+					    $fournprice,
+					    $buyingprice,
+					    $label,
+					    $array_options,
+					    $ref_supplier,
+					    $productsupplier->fk_unit,
+					    '',
+					    0,
+					    $pu_ht_devise,
+					    $date_start,
+					    $date_end
+					    );
 
 					//var_dump($tva_tx);var_dump($productsupplier->fourn_pu);var_dump($price_base_type);exit;
 					if ($result < 0)

@@ -137,7 +137,7 @@ class PaymentVarious extends CommonObject
 		$sql .= " datev='".$this->db->idate($this->datev)."',";
 		$sql .= " sens=".(int) $this->sens.",";
 		$sql .= " amount=".price2num($this->amount).",";
-		$sql .= " fk_typepayment=".(int) $this->fk_typepayment.",";
+		$sql .= " fk_typepayment=".(int) $this->type_payment.",";
 		$sql .= " num_payment='".$this->db->escape($this->num_payment)."',";
 		$sql .= " label='".$this->db->escape($this->label)."',";
 		$sql .= " note='".$this->db->escape($this->note)."',";

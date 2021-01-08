@@ -139,7 +139,7 @@ class box_task extends ModeleBoxes
 	            $boxcontent .= '<script>date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "'.$cookie_name.'='.$filterValue.'; expires= " + date.toGMTString() + "; path=/ "; </script>';
             }
             $this->info_box_contents[0][] = array(
-                'tr'=>'class="nohover showiffilter'.$this->boxcode.' hideobject"',
+                'tr' => 'class="nohover showiffilter'.$this->boxcode.' hideobject"',
                 'td' => 'class="nohover"',
                 'textnoformat' => $boxcontent,
             );

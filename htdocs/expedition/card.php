@@ -240,7 +240,7 @@ if (empty($reshook))
 			$stockLocation = "ent1".$i."_0";
 	    	$qty = "qtyl".$i;
 
-			if ($objectsrc->lines[$i]->product_tobatch)      // If product need a batch number
+	    	if (!empty($conf->productbatch->enabled) && $objectsrc->lines[$i]->product_tobatch)      // If product need a batch number
 			{
 			    if (GETPOSTISSET($batch))
 			    {
@@ -435,16 +435,11 @@ if (empty($reshook))
 
 	    $result = $object->valid($user);
 
-	    if ($result < 0)
-	    {
-			$langs->load("errors");
-			setEventMessages($langs->trans($object->error), $object->errors, 'errors');
-	    }
-	    else
-	    {
+	    if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+	    } else {
 	    	// Define output language
-	    	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-	    	{
+	    	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 	    		$outputlangs = $langs;
 	    		$newlang = '';
 	    		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
@@ -1599,7 +1594,7 @@ if ($action == 'create')
 						$srcLine = new OrderLine($db);
 						$srcLine->id = $line->id;
 						$srcLine->fetch_optionals(); // fetch extrafields also available in orderline
-						$line->array_options = array_merge($line->array_options, $srcLine->array_options);
+						$expLine->array_options = array_merge($expLine->array_options, $srcLine->array_options);
 
 						print $expLine->showOptionals($extrafields, 'edit', array('style'=>'class="drag drop oddeven"', 'colspan'=>$colspan), $indiceAsked, '', 1);
 					}

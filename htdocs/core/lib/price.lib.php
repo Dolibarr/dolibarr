@@ -103,9 +103,13 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		$seller = $mysoc; // If sell is done to a customer, $seller is not provided, we use $mysoc
 		//var_dump($seller->country_id);exit;
 	}
-	if (empty($localtaxes_array) || !is_array($localtaxes_array))
-	{
+	if (empty($localtaxes_array) || !is_array($localtaxes_array)) {
 		dol_syslog("Price.lib::calcul_price_total Warning: function is called with parameter localtaxes_array that is missing", LOG_WARNING);
+	}
+	if (!is_numeric($txtva)) {
+		dol_syslog("Price.lib::calcul_price_total Warning: function was called with a parameter vat rate that is not a real numeric value. There is surely a bug.", LOG_ERR);
+	} elseif ($txtva >= 1000) {
+		dol_syslog("Price.lib::calcul_price_total Warning: function was called with a bad value for vat rate (should be often < 100, always < 1000). There is surely a bug.", LOG_ERR);
 	}
 	// Too verbose. Enable for debug only
 	//dol_syslog("Price.lib::calcul_price_total qty=".$qty." pu=".$pu." remiserpercent_ligne=".$remise_percent_ligne." txtva=".$txtva." uselocaltax1_rate=".$uselocaltax1_rate." uselocaltax2_rate=".$uselocaltax2_rate.' remise_percent_global='.$remise_percent_global.' price_base_type='.$ice_base_type.' type='.$type.' progress='.$progress);

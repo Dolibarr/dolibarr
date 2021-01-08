@@ -188,28 +188,31 @@ class modStock extends DolibarrModules
 		//--------
 		$r = 0;
 
+		// Export stock (without batch number)
 		$r++;
 		$this->export_code[$r] = $this->rights_class;
-		$this->export_label[$r] = "WarehousesAndProducts"; // Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_label[$r] = "Stocks"; // Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_icon[$r] = "warehouse";
 		$this->export_permission[$r] = array(array("stock", "lire"));
 		$this->export_fields_array[$r] = array(
-			'e.rowid'=>'IdWarehouse', 'e.ref'=>'LocationSummary', 'e.description'=>'DescWareHouse', 'e.lieu'=>'LieuWareHouse', 'e.address'=>'Address',
-			'e.zip'=>'Zip', 'e.town'=>'Town', 'p.rowid'=>"ProductId", 'p.ref'=>"Ref", 'p.fk_product_type'=>"Type", 'p.label'=>"Label", 'p.description'=>"Description",
-			'p.note'=>"Note", 'p.price'=>"Price", 'p.tva_tx'=>'VAT', 'p.tosell'=>"OnSell", 'p.tobuy'=>'OnBuy', 'p.duration'=>"Duration", 'p.datec'=>'DateCreation',
-			'p.tms'=>'DateModification', 'p.pmp'=>'PMPValue', 'p.cost_price'=>'CostPrice'
+			'e.rowid'=>'IdWarehouse', 'e.ref'=>'LocationSummary', 'e.description'=>'DescWareHouse', 'e.lieu'=>'LieuWareHouse', 'e.address'=>'Address', 'e.zip'=>'Zip', 'e.town'=>'Town',
+			'p.rowid'=>"ProductId", 'p.ref'=>"Ref", 'p.fk_product_type'=>"Type", 'p.label'=>"Label", 'p.description'=>"Description", 'p.note'=>"Note",
+			'p.price'=>"Price", 'p.tva_tx'=>'VAT', 'p.tosell'=>"OnSell", 'p.tobuy'=>'OnBuy', 'p.duration'=>"Duration",
+			'p.datec'=>'DateCreation', 'p.tms'=>'DateModification', 'p.pmp'=>'PMPValue', 'p.cost_price'=>'CostPrice',
 		);
 		$this->export_TypeFields_array[$r] = array(
-			'e.rowid'=>'List:entrepot:ref::stock', 'e.ref'=>'Text', 'e.lieu'=>'Text', 'e.address'=>'Text', 'e.zip'=>'Text', 'e.town'=>'Text', 'p.rowid'=>"List:product:label::product",
-			'p.ref'=>"Text", 'p.fk_product_type'=>"Text", 'p.label'=>"Text", 'p.description'=>"Text", 'p.note'=>"Text", 'p.price'=>"Numeric", 'p.tva_tx'=>'Numeric',
-			'p.tosell'=>"Boolean", 'p.tobuy'=>"Boolean", 'p.duration'=>"Duree", 'p.datec'=>'Date', 'p.tms'=>'Date', 'p.pmp'=>'Numeric', 'p.cost_price'=>'Numeric',
+			'e.rowid'=>'List:entrepot:ref::stock', 'e.ref'=>'Text', 'e.lieu'=>'Text', 'e.address'=>'Text', 'e.zip'=>'Text', 'e.town'=>'Text',
+			'p.rowid'=>"List:product:label::product", 'p.ref'=>"Text", 'p.fk_product_type'=>"Text", 'p.label'=>"Text", 'p.description'=>"Text", 'p.note'=>"Text",
+			'p.price'=>"Numeric", 'p.tva_tx'=>'Numeric', 'p.tosell'=>"Boolean", 'p.tobuy'=>"Boolean", 'p.duration'=>"Duree",
+			'p.datec'=>'Date', 'p.tms'=>'Date', 'p.pmp'=>'Numeric', 'p.cost_price'=>'Numeric',
 			'ps.reel'=>'Numeric'
 		);
 		$this->export_entities_array[$r] = array(
-			'e.rowid'=>'warehouse', 'e.ref'=>'warehouse', 'e.description'=>'warehouse', 'e.lieu'=>'warehouse', 'e.address'=>'warehouse', 'e.zip'=>'warehouse',
-			'e.town'=>'warehouse', 'p.rowid'=>"product", 'p.ref'=>"product", 'p.fk_product_type'=>"product", 'p.label'=>"product", 'p.description'=>"product",
-			'p.note'=>"product", 'p.price'=>"product", 'p.tva_tx'=>'product', 'p.tosell'=>"product", 'p.tobuy'=>"product", 'p.duration'=>"product",
-			'p.datec'=>'product', 'p.tms'=>'product', 'p.pmp'=>'product', 'p.cost_price'=>'product', 'ps.reel'=>'stock'
-		);
+			'p.rowid'=>"product", 'p.ref'=>"product", 'p.fk_product_type'=>"product", 'p.label'=>"product", 'p.description'=>"product", 'p.note'=>"product",
+			'p.price'=>"product", 'p.tva_tx'=>'product', 'p.tosell'=>"product", 'p.tobuy'=>"product", 'p.duration'=>"product",
+			'p.datec'=>'product', 'p.tms'=>'product', 'p.pmp'=>'product', 'p.cost_price'=>'product',
+			'ps.reel'=>'stock'
+		);	// We define here only fields that use another icon that the one defined into export_icon
 		$this->export_aggregate_array[$r] = array('ps.reel'=>'SUM'); // TODO Not used yet
 		$this->export_dependencies_array[$r] = array('stock'=>array('p.rowid', 'e.rowid')); // We must keep this until the aggregate_array is used. To have a unique key, if we ask a field of a child, to avoid the DISTINCT to discard them.
 		$keyforselect = 'product'; $keyforelement = 'product'; $keyforaliasextra = 'extra';
@@ -220,73 +223,78 @@ class modStock extends DolibarrModules
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'product as p LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra ON extra.fk_object = p.rowid, '.MAIN_DB_PREFIX.'product_stock as ps, '.MAIN_DB_PREFIX.'entrepot as e';
 		$this->export_sql_end[$r] .= ' WHERE p.rowid = ps.fk_product AND ps.fk_entrepot = e.rowid';
 		$this->export_sql_end[$r] .= ' AND e.entity IN ('.getEntity('stock').')';
+
+		// Export stock including batch number
 		if ($conf->productbatch->enabled)
 		{
-			// Export of stock including lot number
 			$langs->load("productbatch");
 
 			// This request is same than previous but without field ps.stock (real stock in warehouse) and with link to subtable productbatch
 			$r++;
 
 			$this->export_code[$r] = $this->rights_class.'_lot';
-			$this->export_label[$r] = "WarehousesAndProductsBatchDetail"; // Translation key (used only if key ExportDataset_xxx_z not found)
+			$this->export_label[$r] = "StocksWithBatch"; // Translation key (used only if key ExportDataset_xxx_z not found)
+			$this->export_icon[$r] = "warehouse";
 			$this->export_permission[$r] = array(array("stock", "lire"));
 			$this->export_fields_array[$r] = array(
-				'e.rowid'=>'IdWarehouse', 'e.ref'=>'LocationSummary', 'e.description'=>'DescWareHouse', 'e.lieu'=>'LieuWareHouse', 'e.address'=>'Address',
-				'e.zip'=>'Zip', 'e.town'=>'Town', 'p.rowid'=>"ProductId", 'p.ref'=>"Ref", 'p.fk_product_type'=>"Type", 'p.label'=>"Label", 'p.description'=>"Description",
-				'p.note'=>"Note", 'p.price'=>"Price", 'p.tva_tx'=>'VAT', 'p.tosell'=>"OnSell", 'p.tobuy'=>'OnBuy', 'p.duration'=>"Duration", 'p.datec'=>'DateCreation',
-				'p.tms'=>'DateModification', 'pb.rowid'=>'Id', 'pb.batch'=>'Batch', 'pb.qty'=>'Qty', 'pl.eatby'=>'EatByDate', 'pl.sellby'=>'SellByDate'
+				'e.rowid'=>'IdWarehouse', 'e.ref'=>'LocationSummary', 'e.description'=>'DescWareHouse', 'e.lieu'=>'LieuWareHouse', 'e.address'=>'Address', 'e.zip'=>'Zip', 'e.town'=>'Town',
+				'p.rowid'=>"ProductId", 'p.ref'=>"Ref", 'p.fk_product_type'=>"Type", 'p.label'=>"Label", 'p.description'=>"Description", 'p.note'=>"Note",
+				'p.price'=>"Price", 'p.tva_tx'=>'VAT', 'p.tosell'=>"OnSell", 'p.tobuy'=>'OnBuy', 'p.duration'=>"Duration",
+				'p.datec'=>'DateCreation', 'p.tms'=>'DateModification', 'p.pmp'=>'PMPValue', 'p.cost_price'=>'CostPrice',
+				'pb.rowid'=>'Id', 'pb.batch'=>'Batch', 'pb.qty'=>'Qty',
+				'pl.eatby'=>'EatByDate', 'pl.sellby'=>'SellByDate'
 			);
 			$this->export_TypeFields_array[$r] = array(
 				'e.rowid'=>'List:entrepot:ref::stock', 'e.ref'=>'Text', 'e.lieu'=>'Text', 'e.description'=>'Text', 'e.address'=>'Text', 'e.zip'=>'Text', 'e.town'=>'Text',
 				'p.rowid'=>"List:product:label::product", 'p.ref'=>"Text", 'p.fk_product_type'=>"Text", 'p.label'=>"Text", 'p.description'=>"Text", 'p.note'=>"Text",
-				'p.price'=>"Numeric", 'p.tva_tx'=>'Numeric', 'p.tosell'=>"Boolean", 'p.tobuy'=>"Boolean", 'p.duration'=>"Duree", 'p.datec'=>'Date', 'p.tms'=>'Date',
-				'pb.batch'=>'Text', 'pb.qty'=>'Numeric', 'pl.eatby'=>'Date', 'pl.sellby'=>'Date'
+				'p.price'=>"Numeric", 'p.tva_tx'=>'Numeric', 'p.tosell'=>"Boolean", 'p.tobuy'=>"Boolean", 'p.duration'=>"Duree",
+				'p.datec'=>'DateCreation', 'p.tms'=>'DateModification', 'p.pmp'=>'PMPValue', 'p.cost_price'=>'CostPrice',
+				'pb.batch'=>'Text', 'pb.qty'=>'Numeric',
+				'pl.eatby'=>'Date', 'pl.sellby'=>'Date'
 			);
 			$this->export_entities_array[$r] = array(
-				'e.rowid'=>'warehouse', 'e.ref'=>'warehouse', 'e.description'=>'warehouse', 'e.lieu'=>'warehouse', 'e.address'=>'warehouse', 'e.zip'=>'warehouse',
-				'e.town'=>'warehouse', 'p.rowid'=>"product", 'p.ref'=>"product", 'p.fk_product_type'=>"product", 'p.label'=>"product", 'p.description'=>"product",
-				'p.note'=>"product", 'p.price'=>"product", 'p.tva_tx'=>'product', 'p.tosell'=>"product", 'p.tobuy'=>"product", 'p.duration'=>"product",
-				'p.datec'=>'product', 'p.tms'=>'product', 'pb.rowid'=>'stockbatch', 'pb.batch'=>'stockbatch', 'pb.qty'=>'stockbatch', 'pl.eatby'=>'batch',
-				'pl.sellby'=>'batch'
-			);
+				'p.rowid'=>"product", 'p.ref'=>"product", 'p.fk_product_type'=>"product", 'p.label'=>"product", 'p.description'=>"product", 'p.note'=>"product",
+				'p.price'=>"product", 'p.tva_tx'=>'product', 'p.tosell'=>"product", 'p.tobuy'=>"product", 'p.duration'=>"product",
+				'p.datec'=>'product', 'p.tms'=>'product', 'p.pmp'=>'product', 'p.cost_price'=>'product',
+				'pb.rowid'=>'batch', 'pb.batch'=>'batch', 'pb.qty'=>'batch',
+				'pl.eatby'=>'batch', 'pl.sellby'=>'batch'
+			);	// We define here only fields that use another icon that the one defined into export_icon
 			$this->export_aggregate_array[$r] = array('ps.reel'=>'SUM'); // TODO Not used yet
 			$this->export_dependencies_array[$r] = array('stockbatch'=>array('pb.rowid'), 'batch'=>array('pb.rowid')); // We must keep this until the aggregate_array is used. To add unique key if we ask a field of a child to avoid the DISTINCT to discard them.
 			$keyforselect = 'product_lot'; $keyforelement = 'batch'; $keyforaliasextra = 'extra';
 			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+
 			$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 			$this->export_sql_end[$r]  = ' FROM ('.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'product_stock as ps, '.MAIN_DB_PREFIX.'product_batch as pb)';
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lot as pl ON pl.fk_product = p.rowid AND pl.batch = pb.batch';
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lot_extrafields as extra ON extra.fk_object = pl.rowid,';
 			$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'entrepot as e';
 			$this->export_sql_end[$r] .= ' WHERE p.rowid = ps.fk_product AND ps.fk_entrepot = e.rowid AND ps.rowid = pb.fk_product_stock';
-			$this->export_sql_end[$r] .= ' AND e.entity IN ('.getEntity('stock').')';
-		}
+			$this->export_sql_end[$r] .= ' AND e.entity IN ('.getEntity('stock').')';		}
 
-		// Export of stock movement
+		// Export of stock movements
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_movement';
 		$this->export_label[$r] = "StockMovements"; // Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_icon[$r] = "movement";
 		$this->export_permission[$r] = array(array("stock", "lire"));
 		$this->export_fields_array[$r] = array(
-			'e.rowid'=>'IdWarehouse', 'e.ref'=>'LocationSummary', 'e.description'=>'DescWareHouse', 'e.lieu'=>'LieuWareHouse', 'e.address'=>'Address', 'e.zip'=>'Zip',
-			'e.town'=>'Town', 'p.rowid'=>"ProductId", 'p.ref'=>"Ref", 'p.fk_product_type'=>"Type", 'p.label'=>"Label", 'p.description'=>"Description", 'p.note'=>"Note",
-			'p.price'=>"Price", 'p.tva_tx'=>'VAT', 'p.tosell'=>"OnSell", 'p.tobuy'=>'OnBuy', 'p.duration'=>"Duration", 'p.datec'=>'DateCreation',
-			'p.tms'=>'DateModification', 'sm.rowid'=>'MovementId', 'sm.value'=>'Qty', 'sm.datem'=>'DateMovement', 'sm.label'=>'MovementLabel',
-			'sm.inventorycode'=>'InventoryCode'
+			'sm.rowid'=>'MovementId', 'sm.value'=>'Qty', 'sm.datem'=>'DateMovement', 'sm.label'=>'MovementLabel', 'sm.inventorycode'=>'InventoryCode',
+			'e.rowid'=>'IdWarehouse', 'e.ref'=>'LocationSummary', 'e.description'=>'DescWareHouse', 'e.lieu'=>'LieuWareHouse', 'e.address'=>'Address', 'e.zip'=>'Zip', 'e.town'=>'Town',
+			'p.rowid'=>"ProductId", 'p.ref'=>"Ref", 'p.fk_product_type'=>"Type", 'p.label'=>"Label", 'p.description'=>"Description", 'p.note'=>"Note",
+			'p.price'=>"Price", 'p.tva_tx'=>'VAT', 'p.tosell'=>"OnSell", 'p.tobuy'=>'OnBuy', 'p.duration'=>"Duration", 'p.datec'=>'DateCreation', 'p.tms'=>'DateModification'
 		);
 		$this->export_TypeFields_array[$r] = array(
+			'sm.rowid'=>'Numeric', 'sm.value'=>'Numeric', 'sm.datem'=>'Date', 'sm.batch'=>'Text', 'sm.label'=>'Text', 'sm.inventorycode'=>'Text',
 			'e.rowid'=>'List:entrepot:ref::stock', 'e.ref'=>'Text', 'e.description'=>'Text', 'e.lieu'=>'Text', 'e.address'=>'Text', 'e.zip'=>'Text', 'e.town'=>'Text',
 			'p.rowid'=>"List:product:label::product", 'p.ref'=>"Text", 'p.fk_product_type'=>"Text", 'p.label'=>"Text", 'p.description'=>"Text", 'p.note'=>"Text",
-			'p.price'=>"Numeric", 'p.tva_tx'=>'Numeric', 'p.tosell'=>"Boolean", 'p.tobuy'=>"Boolean", 'p.duration'=>"Duree", 'p.datec'=>'Date', 'p.tms'=>'Date',
-			'sm.rowid'=>'Numeric', 'sm.value'=>'Numeric', 'sm.datem'=>'Date', 'sm.batch'=>'Text', 'sm.label'=>'Text', 'sm.inventorycode'=>'Text'
+			'p.price'=>"Numeric", 'p.tva_tx'=>'Numeric', 'p.tosell'=>"Boolean", 'p.tobuy'=>"Boolean", 'p.duration'=>"Duree", 'p.datec'=>'Date', 'p.tms'=>'Date'
 		);
 		$this->export_entities_array[$r] = array(
-			'e.rowid'=>'warehouse', 'e.ref'=>'warehouse', 'e.description'=>'warehouse', 'e.lieu'=>'warehouse', 'e.address'=>'warehouse', 'e.zip'=>'warehouse',
-			'e.town'=>'warehouse', 'p.rowid'=>"product", 'p.ref'=>"product", 'p.fk_product_type'=>"product", 'p.label'=>"product", 'p.description'=>"product",
-			'p.note'=>"product", 'p.price'=>"product", 'p.tva_tx'=>'product', 'p.tosell'=>"product", 'p.tobuy'=>"product", 'p.duration'=>"product", 'p.datec'=>'product',
-			'p.tms'=>'product', 'sm.rowid'=>'movement', 'sm.value'=>'movement', 'sm.datem'=>'movement', 'sm.label'=>'movement', 'sm.inventorycode'=>'movement'
-		);
+			'e.rowid'=>'warehouse', 'e.ref'=>'warehouse', 'e.description'=>'warehouse', 'e.lieu'=>'warehouse', 'e.address'=>'warehouse', 'e.zip'=>'warehouse', 'e.town'=>'warehouse',
+			'p.rowid'=>"product", 'p.ref'=>"product", 'p.fk_product_type'=>"product", 'p.label'=>"product", 'p.description'=>"product", 'p.note'=>"product",
+			'p.price'=>"product", 'p.tva_tx'=>'product', 'p.tosell'=>"product", 'p.tobuy'=>"product", 'p.duration'=>"product", 'p.datec'=>'product', 'p.tms'=>'product'
+		);	// We define here only fields that use another icon that the one defined into export_icon
 		if ($conf->productbatch->enabled)
 		{
 			$this->export_fields_array[$r]['sm.batch'] = 'Batch';
@@ -295,6 +303,7 @@ class modStock extends DolibarrModules
 		}
 		$this->export_aggregate_array[$r] = array('sm.value'=>'SUM'); // TODO Not used yet
 		$this->export_dependencies_array[$r] = array('movement'=>array('sm.rowid')); // We must keep this until the aggregate_array is used. To add unique key if we ask a field of a child to avoid the DISTINCT to discard them.
+
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'stock_mouvement as sm, '.MAIN_DB_PREFIX.'entrepot as e';
 		$this->export_sql_end[$r] .= ' WHERE p.rowid = sm.fk_product AND sm.fk_entrepot = e.rowid';
@@ -309,34 +318,48 @@ class modStock extends DolibarrModules
 		$r++;
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
 		$this->import_label[$r] = "Warehouses"; // Translation key
-		$this->import_icon[$r] = $this->picto;
+		$this->import_icon[$r] = "warehouse";
 		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r] = array('e'=>MAIN_DB_PREFIX.'entrepot');
 		$this->import_tables_creator_array[$r] = array('e'=>'fk_user_author');
 		$this->import_fields_array[$r] = array('e.ref'=>"LocationSummary*",
-				'e.description'=>"DescWareHouse", 'e.lieu'=>"LieuWareHouse",
-				'e.address'=>"Address", 'e.zip'=>'Zip', 'e.fk_pays'=>'CountryCode',
+				'e.description'=>"DescWareHouse",
+				'e.lieu'=>"LieuWareHouse",
+				'e.address'=>"Address",
+				'e.zip'=>'Zip',
+				'e.fk_departement'=>'StateCode',
+				'e.fk_pays'=>'CountryCode',
+				'e.phone'=>'Phone',
+				'e.fax'=>'Fax',
 				'e.statut'=>'Status',
                 'e.fk_parent'=>'ParentWarehouse'
 		);
 
 		$this->import_convertvalue_array[$r] = array(
+				'e.fk_departement'=>array('rule'=>'fetchidfromcodeid', 'classfile'=>'/core/class/cstate.class.php', 'class'=>'Cstate', 'method'=>'fetch', 'dict'=>'DictionaryStateCode'),
 				'e.fk_pays'=>array('rule'=>'fetchidfromcodeid', 'classfile'=>'/core/class/ccountry.class.php', 'class'=>'Ccountry', 'method'=>'fetch', 'dict'=>'DictionaryCountry'),
                 'e.fk_parent'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/stock/class/entrepot.class.php', 'class'=>'Entrepot', 'method'=>'fetch', 'element'=>'ref')
 		);
 		$this->import_regex_array[$r] = array('e.statut'=>'^[0|1]');
 		$this->import_examplevalues_array[$r] = array('e.ref'=>"ALM001",
-				'e.description'=>"Central Warehouse", 'e.lieu'=>"Central",
-				'e.address'=>"Route 66", 'e.zip'=>'28080', 'e.fk_pays'=>'US',
+				'e.description'=>"Central Warehouse",
+				'e.lieu'=>"Central",
+				'e.address'=>"Route 66",
+				'e.zip'=>'28080',
+				'e.fk_departement'=>'matches field "code_departement" in table "'.MAIN_DB_PREFIX.'c_departements"',
+				'e.fk_pays'=>'US/FR/DE etc. matches field "code" in table "'.MAIN_DB_PREFIX.'c_country"',
+				'e.phone'=>'(+33)(0)123456789',
+				'e.fax'=>'(+33)(0)123456790',
 				'e.statut'=>'1',
-                'e.fk_parent'=>''
+                'e.fk_parent'=>'id or ref in this table'
         );
+        $this->import_updatekeys_array[$r] = array('p.ref'=>'Ref');
 
 		// Import stocks
 		$r++;
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
 		$this->import_label[$r] = "Stocks"; // Translation key
-		$this->import_icon[$r] = $this->picto;
+		$this->import_icon[$r] = "stock";
 		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r] = array('ps'=>MAIN_DB_PREFIX.'product_stock');
 		$this->import_fields_array[$r] = array('ps.fk_product'=>"Product*", 'ps.fk_entrepot'=>"Warehouse*", 'ps.reel'=>"Stock*");
@@ -346,7 +369,7 @@ class modStock extends DolibarrModules
 			'ps.fk_entrepot'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/stock/class/entrepot.class.php', 'class'=>'Entrepot', 'method'=>'fetch', 'element'=>'ref')
 		  );
 		$this->import_examplevalues_array[$r] = array(
-		    'ps.fk_product'=>"PREF123456", 'ps.fk_entrepot'=>"ALM001", 'ps.reel'=>"10"
+		    'ps.fk_product'=>"id or ref", 'ps.fk_entrepot'=>"id or ref", 'ps.reel'=>"10"
 		);
 		$this->import_updatekeys_array[$r] = array('ps.fk_product'=>'Product', 'ps.fk_entrepot'=>"Warehouse");
 		$this->import_run_sql_after_array[$r] = array(    // Because we may change data that are denormalized, we must update dernormalized data after.

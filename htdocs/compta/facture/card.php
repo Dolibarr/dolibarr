@@ -345,15 +345,6 @@ if (empty($reshook))
 		}
 	}
 
-	elseif ($action == 'set_thirdparty' && $usercancreate)
-	{
-		$object->fetch($id);
-		$object->setValueFrom('fk_soc', $socid, '', null, 'int', '', $user, 'BILL_MODIFY');
-
-		header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
-		exit();
-	}
-
 	elseif ($action == 'classin' && $usercancreate)
 	{
 		$object->fetch($id);
@@ -2543,7 +2534,7 @@ if (empty($reshook))
 	{
 	    $object->fetch($id, '', '', '', true);
 
-	    if ($object->statut == Facture::STATUS_VALIDATED
+	    if (in_array($object->statut, array(Facture::STATUS_CLOSED, Facture::STATUS_VALIDATED))
 	        && $object->type == Facture::TYPE_SITUATION
 	        && $usercancreate
 	        && !$objectidnext
@@ -3572,7 +3563,7 @@ if ($action == 'create')
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (empty($reshook)) {
-		if (!empty($conf->global->THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_INVOICE)) {
+		if (!empty($conf->global->THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_INVOICE) && !empty($soc->id)) {
 			// copy from thirdparty
 			$tpExtrafields = new Extrafields($db);
 			$tpExtrafieldLabels = $tpExtrafields->fetch_name_optionals_label($soc->table_element);
@@ -3881,7 +3872,7 @@ elseif ($id > 0 || !empty($ref))
 	    $label = $langs->trans("ConfirmOuting");
 	    $formquestion = array();
 	    // remove situation from cycle
-	    if ($object->statut == Facture::STATUS_VALIDATED
+	    if (in_array($object->statut, array(Facture::STATUS_CLOSED, Facture::STATUS_VALIDATED))
 	        && $usercancreate
 	        && !$objectidnext
 	        && $object->is_last_in_cycle()
@@ -4857,7 +4848,15 @@ elseif ($id > 0 || !empty($ref))
 				print '<tr class="oddeven"><td>';
 				print $paymentstatic->getNomUrl(1);
 				print '</td>';
-				print '<td>'.dol_print_date($db->jdate($objp->dp), 'dayhour').'</td>';
+				print '<td>';
+				$dateofpayment = $db->jdate($objp->dp);
+				$tmparray = dol_getdate($dateofpayment);
+				if ($tmparray['seconds'] == 0 && $tmparray['minutes'] == 0 && ($tmparray['hours'] == 0 || $tmparray['hours'] == 12)) {	// We set hours to 0:00 or 12:00 because we don't know it
+					print dol_print_date($dateofpayment, 'day');
+				} else {	// Hours was set to real date of payment (special case for POS for example)
+					print dol_print_date($dateofpayment, 'dayhour', 'tzuser');
+				}
+				print '</td>';
 				$label = ($langs->trans("PaymentType".$objp->payment_code) != ("PaymentType".$objp->payment_code)) ? $langs->trans("PaymentType".$objp->payment_code) : $objp->payment_label;
 				print '<td>'.$label.' '.$objp->num_payment.'</td>';
 				if (!empty($conf->banque->enabled))
@@ -5396,7 +5395,7 @@ elseif ($id > 0 || !empty($ref))
 			}
 
 			// Remove situation from cycle
-			if ($object->statut > Facture::STATUS_DRAFT
+			if (in_array($object->statut, array(Facture::STATUS_CLOSED, Facture::STATUS_VALIDATED))
 			    && $object->type == Facture::TYPE_SITUATION
 			    && $usercancreate
 			    && !$objectidnext

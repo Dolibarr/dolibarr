@@ -954,33 +954,36 @@ class Expedition extends CommonObject
 		{
 			$fk_product = $orderline->fk_product;
 
-			if (!($entrepot_id > 0) && empty($conf->global->STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS))
-			{
+			if (!($entrepot_id > 0) && empty($conf->global->STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS)) {
 				$langs->load("errors");
 				$this->error = $langs->trans("ErrorWarehouseRequiredIntoShipmentLine");
 				return -1;
 			}
 
-			if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT)
-			{
-				// Check must be done for stock of product into warehouse if $entrepot_id defined
+			if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT) {
 				$product = new Product($this->db);
-				$result = $product->fetch($fk_product);
+				$product->fetch($fk_product);
 
+				// Check must be done for stock of product into warehouse if $entrepot_id defined
 				if ($entrepot_id > 0) {
 					$product->load_stock('warehouseopen');
 					$product_stock = $product->stock_warehouse[$entrepot_id]->real;
-				}
-				else
+				} else {
 					$product_stock = $product->stock_reel;
+				}
 
 				$product_type = $product->type;
-				if ($product_type == 0 && $product_stock < $qty)
-				{
-					$langs->load("errors");
-					$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnShipment', $product->ref);
-					$this->db->rollback();
-					return -3;
+				if ($product_type == 0 || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+					$isavirtualproduct = ($product->hasFatherOrChild(1) > 0);
+					// The product is qualified for a check of quantity (must be enough in stock to be added into shipment).
+					if (!$isavirtualproduct || empty($conf->global->PRODUIT_SOUSPRODUITS) || ($isavirtualproduct && empty($conf->global->STOCK_EXCLUDE_VIRTUAL_PRODUCTS))) {  // If STOCK_EXCLUDE_VIRTUAL_PRODUCTS is set, we do not manage stock for kits/virtual products.
+						if ($product_stock < $qty) {
+							$langs->load("errors");
+							$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnShipment', $product->ref);
+							$this->db->rollback();
+							return -3;
+						}
+					}
 				}
 			}
 		}

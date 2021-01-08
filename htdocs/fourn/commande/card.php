@@ -2065,9 +2065,9 @@ elseif (!empty($object->id))
 	if ($object->methode_commande_id > 0)
 	{
 		print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>';
-		if ($object->date_commande)
-		{
-			print dol_print_date($object->date_commande, "dayhour")."\n";
+		print $object->date_commande ? dol_print_date($object->date_commande, $usehourmin) : '&nbsp;';
+		if ($object->hasDelay() && empty($object->date_livraison) && !empty($object->date_commande)) {
+			print ' '.img_picto($langs->trans("Late").' : '.$object->showDelay(), "warning");
 		}
 		print "</td></tr>";
 

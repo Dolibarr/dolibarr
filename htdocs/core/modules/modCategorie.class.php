@@ -176,55 +176,19 @@ class modCategorie extends DolibarrModules
 			's.idprof4'=>"company", 's.tva_intra'=>"company", 's.capital'=>"company", 's.note_public'=>"company", 's.fk_prospectlevel'=>'company',
 			's.fk_stcomm'=>'company'
 		); // We define here only fields that use another picto
+
+		$keyforselect = 'societe'; $keyforelement = 'company'; $keyforaliasextra = 'extrasoc';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'categorie as u, ';
 		$this->export_sql_end[$r] .= MAIN_DB_PREFIX.'categorie_societe as cf, ';
-		$this->export_sql_end[$r] .= MAIN_DB_PREFIX.'societe as s LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as ce ON s.fk_effectif = ce.id LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as cfj ON s.fk_forme_juridique = cfj.code LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extra ON s.rowid = extra.fk_object ';
+		$this->export_sql_end[$r] .= MAIN_DB_PREFIX.'societe as s';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as ce ON s.fk_effectif = ce.id LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as cfj ON s.fk_forme_juridique = cfj.code';
+	 	$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extrasoc ON s.rowid = extrasoc.fk_object ';
 		$this->export_sql_end[$r] .= ' WHERE u.rowid = cf.fk_categorie AND cf.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .= ' AND u.entity IN ('.getEntity('category').')';
 		$this->export_sql_end[$r] .= ' AND u.type = 2'; // Customer/Prospect categories
-
-        // Add extra fields
-        $sql = "SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'societe' AND entity IN (0, ".$conf->entity.")";
-        $resql = $this->db->query($sql);
-        if ($resql)    // This can fail when class is used on old database (during migration for example)
-        {
-            while ($obj = $this->db->fetch_object($resql))
-            {
-                $fieldname = 'extra.'.$obj->name;
-                $fieldlabel = ucfirst($obj->label);
-                $typeFilter = "Text";
-                switch ($obj->type)
-                {
-                    case 'int':
-                    case 'double':
-                    case 'price':
-                        $typeFilter = "Numeric";
-                        break;
-                    case 'date':
-                    case 'datetime':
-                        $typeFilter = "Date";
-                        break;
-                    case 'boolean':
-                        $typeFilter = "Boolean";
-                        break;
-                    case 'sellist':
-                        $typeFilter = "List:".$obj->param;
-                        break;
-                    case 'select':
-                        $typeFilter = "Select:".$obj->param;
-                        break;
-                }
-                $this->export_fields_array[$r][$fieldname] = $fieldlabel;
-                $this->export_TypeFields_array[$r][$fieldname] = $typeFilter;
-                $this->export_entities_array[$r][$fieldname] = 'company';
-            }
-        }
-        // End add axtra fields
-
-
-
-
 
 		$r++;
 		$this->export_code[$r] = 'category_'.$r;
@@ -410,7 +374,7 @@ class modCategorie extends DolibarrModules
             'ca.label'=>"Label*", 'ca.type'=>"Type*", 'ca.description'=>"Description",
             'ca.fk_parent' => 'Parent'
         );
-		$this->import_regex_array[$r] = array('ca.type'=>'^[0|1|2|3]');
+		$this->import_regex_array[$r] = array('ca.type'=>'^(0|1|2|3|4|5|6|7|8|9|10|11)$');
         $this->import_convertvalue_array[$r] = array(
             'ca.fk_parent' => array(
                 'rule'          => 'fetchidfromcodeandlabel',

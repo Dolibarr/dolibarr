@@ -445,8 +445,8 @@ if (empty($reshook) && $action == 'update')
 		$object->fetch_userassigned();
 		$object->oldcopy = clone $object;
 
-		$datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
-		$datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
+		$datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'));
+		$datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'));
 
 		$object->type_id     = dol_getIdFromCode($db, GETPOST("actioncode", 'aZ09'), 'c_actioncomm');
 		$object->label       = GETPOST("label", "alphanohtml");
@@ -469,7 +469,6 @@ if (empty($reshook) && $action == 'update')
 		$object->note_private = trim(GETPOST("note", "none"));
 		$object->fk_element	 = GETPOST("fk_element", "int");
 		$object->elementtype = GETPOST("elementtype", "alphanohtml");
-
 		if (!$datef && $percentage == 100)
 		{
 			$error++; $donotclearsession = 1;

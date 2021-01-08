@@ -1052,7 +1052,10 @@ class Cronjob extends CommonObject
 				$object = new $this->objectname($this->db);
 				if ($this->entity > 0) $object->entity = $this->entity; // We work on a dedicated entity
 
-				$params_arr = array_map('trim', explode(",", $this->params));
+				$params_arr = array();
+				if (!empty($this->params) || $this->params === '0'){
+					$params_arr = array_map('trim', explode(",", $this->params));
+				}
 
 				if (!is_array($params_arr))
 				{

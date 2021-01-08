@@ -849,7 +849,9 @@ class FactureRec extends CommonInvoice
 			$qty = price2num($qty);
 			$pu_ht = price2num($pu_ht);
 			$pu_ttc = price2num($pu_ttc);
-			$txtva = price2num($txtva);
+			if (!preg_match('/\((.*)\)/', $txtva)) {
+				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
+			}
 			$txlocaltax1 = price2num($txlocaltax1);
 			$txlocaltax2 = price2num($txlocaltax2);
 			if (empty($txtva)) $txtva = 0;
@@ -1031,8 +1033,10 @@ class FactureRec extends CommonInvoice
 	        $pu_ht          = price2num($pu_ht);
 	        $pu_ttc         = price2num($pu_ttc);
 	        $pu_ht_devise = price2num($pu_ht_devise);
-	        $txtva = price2num($txtva);
-		    $txlocaltax1	= price2num($txlocaltax1);
+	        if (!preg_match('/\((.*)\)/', $txtva)) {
+	        	$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
+	        }
+	        $txlocaltax1	= price2num($txlocaltax1);
 		    $txlocaltax2	= price2num($txlocaltax2);
 		    if (empty($txlocaltax1)) $txlocaltax1 = 0;
 		    if (empty($txlocaltax2)) $txlocaltax2 = 0;
@@ -1059,6 +1063,7 @@ class FactureRec extends CommonInvoice
 
 	        // Clean vat code
 	        $vat_src_code = '';
+	        $reg = array();
 	        if (preg_match('/\((.*)\)/', $txtva, $reg))
 	        {
 	        	$vat_src_code = $reg[1];

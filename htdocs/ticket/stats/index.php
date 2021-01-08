@@ -32,7 +32,7 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 if (!$user->rights->ticket->read) accessforbidden();
 
-$object_status = GETPOST('object_status');
+$object_status = GETPOST('object_status', 'intcomma');
 
 $userid = GETPOST('userid', 'int');
 $socid = GETPOST('socid', 'int');
@@ -44,7 +44,7 @@ if ($user->socid > 0)
 }
 
 $nowyear = strftime("%Y", dol_now());
-$year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
+$year = GETPOST('year') > 0 ? GETPOST('year', 'int') : $nowyear;
 //$startyear=$year-2;
 $startyear = $year - 1;
 $endyear = $year;
@@ -241,7 +241,7 @@ print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0
 // Status
 print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
 $liststatus = $object->fields['fk_statut']['arrayofkeyval'];
-print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'int'), -4, 0, 0, '', 1);
+print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'intcomma'), -4, 0, 0, '', 1);
 print '</td></tr>';
 // Year
 print '<tr><td class="left">'.$langs->trans("Year").'</td><td class="left">';

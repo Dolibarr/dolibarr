@@ -460,26 +460,15 @@ if (empty($reshook))
 				if (!$error)
 				{
 					$object_id = $object->create($user);
-
-					// If some invoice's lines already known
-					$NBLINES = 8;
-					for ($i = 1; $i <= $NBLINES; $i++) {
-						if ($_POST['idprod'.$i]) {
-							$xid = 'idprod'.$i;
-							$xqty = 'qty'.$i;
-							$xremise = 'remise_percent'.$i;
-							$object->add_product($_POST[$xid], $_POST[$xqty], $_POST[$xremise]);
-						}
-					}
 				}
 			}
 
 			// Insert default contacts if defined
 			if ($object_id > 0)
 			{
-				if (GETPOST('contactid'))
+				if (GETPOST('contactid', 'int'))
 				{
-					$result = $object->add_contact(GETPOST('contactid'), 'CUSTOMER', 'external');
+					$result = $object->add_contact(GETPOST('contactid', 'int'), 'CUSTOMER', 'external');
 					if ($result < 0) {
 						setEventMessages($langs->trans("ErrorFailedToAddContact"), null, 'errors');
 						$error++;
@@ -681,8 +670,8 @@ if (empty($reshook))
 			$tva_tx = '';
 		}
 
-		$qty = GETPOST('qty'.$predef);
-		$remise_percent = (GETPOST('remise_percent'.$predef) != '' ? GETPOST('remise_percent'.$predef) : 0);
+		$qty = price2num(GETPOST('qty'.$predef, 'alpha'));
+		$remise_percent = (GETPOSTISSET('remise_percent'.$predef) ? price2num(GETPOST('remise_percent'.$predef, 'alpha')) : 0);
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -964,6 +953,7 @@ if (empty($reshook))
 
 				if ($result > 0) {
 					$ret = $object->fetch($object->id); // Reload to get new records
+					$object->fetch_thirdparty();
 
 					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 						// Define output language
@@ -1772,7 +1762,7 @@ if ($action == 'create' && $usercancreate)
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);
 	print $hookmanager->resPrint;
 	if (empty($reshook)) {
-		if (!empty($conf->global->THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_ORDER)) {
+		if (!empty($conf->global->THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_ORDER) && !empty($soc->id)) {
 			// copy from thirdparty
 			$tpExtrafields = new Extrafields($db);
 			$tpExtrafieldLabels = $tpExtrafields->fetch_name_optionals_label($soc->table_element);
