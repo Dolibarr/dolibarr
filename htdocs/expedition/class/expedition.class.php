@@ -671,7 +671,7 @@ class Expedition extends CommonObject
 		// Protection
 		if ($this->statut)
 		{
-			dol_syslog(get_class($this)."::valid no draft status", LOG_WARNING);
+			dol_syslog(get_class($this)."::valid not in draft status", LOG_WARNING);
 			return 0;
 		}
 
@@ -757,7 +757,7 @@ class Expedition extends CommonObject
 
 					//var_dump($this->lines[$i]);
 					$mouvS = new MouvementStock($this->db);
-					$mouvS->origin = &$this;
+					$mouvS->origin = dol_clone($this, 1);
 
 					if (empty($obj->edbrowid))
 					{
@@ -765,6 +765,7 @@ class Expedition extends CommonObject
 
 						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record.
 						$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr", $numref));
+
 						if ($result < 0) {
 							$error++;
 							$this->error = $mouvS->error;
@@ -794,7 +795,6 @@ class Expedition extends CommonObject
 
 		// Change status of order to "shipment in process"
 		$ret = $this->setStatut(Commande::STATUS_SHIPMENTONPROCESS, $this->origin_id, $this->origin);
-
 		if (!$ret)
 		{
 			$error++;

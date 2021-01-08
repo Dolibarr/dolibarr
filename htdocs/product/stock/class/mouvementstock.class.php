@@ -666,7 +666,6 @@ class MouvementStock extends CommonObject
 			}
 
 			// Retrieve all extrafield
-			// fetch optionals attributes and labels
 			$this->fetch_optionals();
 
 			// $this->fetch_lines();
