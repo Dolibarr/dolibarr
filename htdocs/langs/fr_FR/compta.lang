@@ -69,6 +69,7 @@ SocialContribution=Charge sociale ou fiscale
 SocialContributions=Charges fiscales ou sociales
 SocialContributionsDeductibles=Charge ou taxe déductible
 SocialContributionsNondeductibles=Charge ou taxe non déductible
+DateOfSocialContribution=Date de la charge fiscale ou sociale
 LabelContrib=Libellé de la dépense
 TypeContrib=Type de la charge
 MenuSpecialExpenses=Dépenses spéciales

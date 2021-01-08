@@ -168,3 +168,7 @@ OutGoingEmailSetupForEmailing=Configuració del correu sortint (per al mòdul %s
 DefaultOutgoingEmailSetup=Configuració per defecte del correu electrònic sortint 
 Information=Informació
 ContactsWithThirdpartyFilter=Contactes amb filtre de tercers
+Unanswered=Unanswered
+Answered=Respost
+IsNotAnAnswer=Is not answer (initial email)
+IsAnAnswer=Is an answer of an initial email

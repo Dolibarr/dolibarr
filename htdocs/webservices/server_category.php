@@ -93,16 +93,16 @@ $server->wsdl->addComplexType(
  * Les catégories filles, sous tableau dez la catégorie
  */
 $server->wsdl->addComplexType(
-    'FillesArray',
-    'complexType',
-    'array',
-    '',
-    'SOAP-ENC:Array',
-    array(),
-    array(
-        array('ref'=>'SOAP-ENC:arrayType', 'wsdl:arrayType'=>'tns:categorie[]')
-    ),
-    'tns:categorie'
+	'FillesArray',
+	'complexType',
+	'array',
+	'',
+	'SOAP-ENC:Array',
+	array(),
+	array(
+		array('ref'=>'SOAP-ENC:arrayType', 'wsdl:arrayType'=>'tns:categorie[]')
+	),
+	'tns:categorie'
 );
 
  /*
@@ -172,10 +172,10 @@ $server->register(
 	// Exit values
 	array('result'=>'tns:result', 'categorie'=>'tns:categorie'),
 	$ns,
-    $ns.'#getCategory',
-    $styledoc,
-    $styleuse,
-    'WS to get category'
+	$ns.'#getCategory',
+	$styledoc,
+	$styleuse,
+	'WS to get category'
 );
 
 
@@ -232,7 +232,7 @@ function getCategory($authentication, $id)
 					'type' => $categorie->type,
 					'dir' => $pdir,
 					'photos' => $categorie->liste_photos($dir, $nbmax)
-		    	);
+				);
 
 				$cats = $categorie->get_filles();
 				if (count($cats) > 0)
@@ -256,20 +256,18 @@ function getCategory($authentication, $id)
 					}
 				}
 
-			    // Create
-			    $objectresp = array(
+				// Create
+				$objectresp = array(
 					'result'=>array('result_code'=>'OK', 'result_label'=>''),
 					'categorie'=> $cat
-			    );
+				);
 			}
-			else
-			{
+			else {
 				$error++;
 				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id;
 			}
 		}
-		else
-		{
+		else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 		}

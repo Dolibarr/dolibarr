@@ -97,16 +97,16 @@ class modLabel extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-    public function init($options = '')
-    {
+	public function init($options = '')
+	{
 		// Permissions
 		$this->remove($options);
 
 		$sql = array();
 
 		return $this->_init($sql, $options);
-    }
+	}
 }

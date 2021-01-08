@@ -31,10 +31,8 @@ TicketDictType=Tiquet - Tipus
 TicketDictCategory=Tiquet - Grups
 TicketDictSeverity=Tiquet - Severitats
 TicketDictResolution=Tiquet - Resolució
-TicketTypeShortBUGSOFT=Disfunció de la lògica
-TicketTypeShortBUGHARD=Disfunció de matèries
-TicketTypeShortCOM=Qüestió comercial
 
+TicketTypeShortCOM=Qüestió comercial
 TicketTypeShortHELP=Sol·licitud d'ajuda funcional
 TicketTypeShortISSUE=Incidència, error o problema
 TicketTypeShortREQUEST=Sol·licitud de canvi o millora
@@ -44,7 +42,7 @@ TicketTypeShortOTHER=Altres
 TicketSeverityShortLOW=Baix
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Alt
-TicketSeverityShortBLOCKING=Crucial/Bloqueig
+TicketSeverityShortBLOCKING=Crític, bloqueig
 
 ErrorBadEmailAddress=Camp '%s' incorrecte
 MenuTicketMyAssign=Els meus tiquets
@@ -72,7 +70,6 @@ Deleted=Esborrat
 
 # Dict
 Type=Tipus
-Category=Codi analític
 Severity=Gravetat
 
 # Email templates
@@ -115,9 +112,9 @@ TicketsLogEnableEmail=Activa el 'log' (registre d'activitat) per correu electrò
 TicketsLogEnableEmailHelp=En cada canvi, s'enviarà un correu ** a cada contacte ** associat al tiquet.
 TicketParams=Paràmetres
 TicketsShowModuleLogo=Mostra el logotip del mòdul a la interfície pública
-TicketsShowModuleLogoHelp=Activeu aquesta opció per ocultar el mòdul de logotip a les pàgines de la interfície pública
+TicketsShowModuleLogoHelp=Activeu aquesta opció per a ocultar el mòdul de logotip a les pàgines de la interfície pública
 TicketsShowCompanyLogo=Mostra el logotip de l'empresa en la interfície pública
-TicketsShowCompanyLogoHelp=Activeu aquesta opció per ocultar el logotip de l'empresa principal a les pàgines de la interfície pública
+TicketsShowCompanyLogoHelp=Activeu aquesta opció per a ocultar el logotip de l'empresa principal a les pàgines de la interfície pública
 TicketsEmailAlsoSendToMainAddress=També envieu notificacions a l'adreça electrònica principal
 TicketsEmailAlsoSendToMainAddressHelp=Activar aquesta opció per enviar un correu electrònic a l'adreça "Correu electrònic de notificació procedent de" (consulteu la configuració a continuació)
 TicketsLimitViewAssignedOnly=Restringir la visualització als tiquets assignats a l'usuari actual (no és efectiu per als usuaris externs, sempre estarà limitat al tercer de qui depengui)
@@ -128,7 +125,6 @@ TicketsAutoAssignTicket=Assigna automàticament l'usuari que va crear el tiquet
 TicketsAutoAssignTicketHelp=Quan es crea un tiquet, l'usuari pot assignar-se automàticament al tiquet.
 TicketNumberingModules=Mòdul de numeració de tiquets
 TicketNotifyTiersAtCreation=Notifica la creació de tercers
-TicketGroup=Grup
 TicketsDisableCustomerEmail=Desactiveu sempre els correus electrònics quan es crea un tiquet des de la interfície pública
 TicketsPublicNotificationNewMessage=Enviar correu(s) electonic(s) quan s'afegeix un nou missatge
 TicketsPublicNotificationNewMessageHelp=Enviar correu(s) electrònic(s) quan un nou missatge s'afegeix des d'una interfície pública (cap a l'usuari assignat o la notificació del correu electrònic cap a (actualitzar) i/o les notificacions del correu electrònic cap a)
@@ -162,7 +158,7 @@ CreatedBy=Creat per
 NewTicket=Nou tiquet
 SubjectAnswerToTicket=Resposta de tiquet
 TicketTypeRequest=Tipus de sol·licitud
-TicketCategory=Codi analític
+TicketCategory=Grup
 SeeTicket=Consultar tiquet
 TicketMarkedAsRead=Tiquet ha estat marcat com llegit
 TicketReadOn=Segueix llegint
@@ -288,7 +284,7 @@ NumberOfTicketsByMonth=Nombre d’entrades mensuals
 NbOfTickets=Nombre d’entrades
 # notifications
 TicketNotificationEmailSubject=Tiquet %s actualitzat
-TicketNotificationEmailBody=Aquest és un missatge automàtic per notificar-vos que el tiquet %s acaba d'estar actualitzat
+TicketNotificationEmailBody=Aquest és un missatge automàtic per a notificar-vos que el tiquet %s s'acaba d'actualitzar
 TicketNotificationRecipient=Destinatari de la notificació
 TicketNotificationLogMessage=Missatges de 'log' (registre d'activitat)
 TicketNotificationEmailBodyInfosTrackUrlinternal=Veure el tiquet a la interfície

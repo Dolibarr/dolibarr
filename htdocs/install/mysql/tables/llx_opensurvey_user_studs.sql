@@ -20,5 +20,5 @@ CREATE TABLE llx_opensurvey_user_studs (
     nom VARCHAR(64) NOT NULL,
     id_sondage VARCHAR(16) NOT NULL,
     reponses VARCHAR(100) NOT NULL,		-- Not used for 'F' surveys
-    tms timestamp
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=innodb;

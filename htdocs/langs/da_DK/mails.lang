@@ -168,3 +168,7 @@ OutGoingEmailSetupForEmailing=Udgående e-mail opsætning (til modul%s)
 DefaultOutgoingEmailSetup=Standard udgående e-mail opsætning
 Information=Information
 ContactsWithThirdpartyFilter=Kontakter med tredjepart filter
+Unanswered=Unanswered
+Answered=Besvaret
+IsNotAnAnswer=Is not answer (initial email)
+IsAnAnswer=Is an answer of an initial email

@@ -187,7 +187,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br>';
 	    }*/
 	}
-	if (isset($_POST["country"]) && ($_POST["country"] == '0') && ($id != 2))
+	if (GETPOSTISSET("country") && (GETPOST("country") == '0') && ($id != 2))
 	{
 		$ok = 0;
 		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities("Country")), null, 'errors');
@@ -228,8 +228,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 		{
 			if ($value == 'price' || preg_match('/^amount/i', $value) || $value == 'taux') {
 				$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]], 'MU');
-			}
-			elseif ($value == 'entity') {
+			} elseif ($value == 'entity') {
 				$_POST[$listfieldvalue[$i]] = $conf->entity;
 			}
 			if ($i) $sql .= ",";
@@ -245,13 +244,10 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 		{
 			setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
 			$_POST = array('id'=>$id); // Clean $_POST array, we keep only
-		}
-		else
-		{
+		} else {
 			if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
-			}
-			else {
+			} else {
 				dol_print_error($db);
 			}
 		}
@@ -260,8 +256,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 	// Si verif ok et action modify, on modifie la ligne
 	if ($ok && GETPOST('actionmodify', 'alpha'))
 	{
-		if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; }
-		else { $rowidcol = "rowid"; }
+		if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; } else { $rowidcol = "rowid"; }
 
 		// Modify entry
 		$sql = "UPDATE ".$tabname[$id]." SET ";
@@ -276,8 +271,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 		{
 			if ($field == 'price' || preg_match('/^amount/i', $field) || $field == 'taux') {
 				$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]], 'MU');
-			}
-			elseif ($field == 'entity') {
+			} elseif ($field == 'entity') {
 				$_POST[$listfieldvalue[$i]] = $conf->entity;
 			}
 			if ($i) $sql .= ",";
@@ -286,7 +280,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 			else $sql .= "'".$db->escape($_POST[$listfieldvalue[$i]])."'";
 			$i++;
 		}
-		$sql .= " WHERE ".$rowidcol." = '".$rowid."'";
+		$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
 
 		dol_syslog("actionmodify", LOG_DEBUG);
 		//print $sql;
@@ -306,10 +300,9 @@ if (GETPOST('actioncancel', 'alpha'))
 
 if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 {
-	if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; }
-	else { $rowidcol = "rowid"; }
+	if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; } else { $rowidcol = "rowid"; }
 
-	$sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol."='".$rowid."'";
+	$sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol." = ".((int) $rowid);
 
 	dol_syslog("delete", LOG_DEBUG);
 	$result = $db->query($sql);
@@ -318,9 +311,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 		if ($db->errno() == 'DB_ERROR_CHILD_EXISTS')
 		{
 			setEventMessages($langs->transnoentities("ErrorRecordIsUsedByChild"), null, 'errors');
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 	}
@@ -329,14 +320,12 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 // activate
 if ($action == $acts[0])
 {
-	if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; }
-	else { $rowidcol = "rowid"; }
+	if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; } else { $rowidcol = "rowid"; }
 
 	if ($rowid) {
-		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol."='".$rowid."'";
-	}
-	elseif ($code) {
-		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".$code."'";
+		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol." = ".((int) $rowid);
+	} elseif ($code) {
+		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".$db->escape($code)."'";
 	}
 
 	$result = $db->query($sql);
@@ -349,14 +338,12 @@ if ($action == $acts[0])
 // disable
 if ($action == $acts[1])
 {
-	if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; }
-	else { $rowidcol = "rowid"; }
+	if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; } else { $rowidcol = "rowid"; }
 
 	if ($rowid) {
-		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol."='".$rowid."'";
-	}
-	elseif ($code) {
-		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".$code."'";
+		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol." = ".((int) $rowid);
+	} elseif ($code) {
+		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".$db->escape($code)."'";
 	}
 
 	$result = $db->query($sql);
@@ -369,14 +356,12 @@ if ($action == $acts[1])
 // favorite
 if ($action == 'activate_favorite')
 {
-	if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; }
-	else { $rowidcol = "rowid"; }
+	if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; } else { $rowidcol = "rowid"; }
 
 	if ($rowid) {
-		$sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE ".$rowidcol."='".$rowid."'";
-	}
-	elseif ($code) {
-		$sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE code='".$code."'";
+		$sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE ".$rowidcol." = ".((int) $rowid);
+	} elseif ($code) {
+		$sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE code='".$db->escape($code)."'";
 	}
 
 	$result = $db->query($sql);
@@ -389,14 +374,12 @@ if ($action == 'activate_favorite')
 // disable favorite
 if ($action == 'disable_favorite')
 {
-	if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; }
-	else { $rowidcol = "rowid"; }
+	if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; } else { $rowidcol = "rowid"; }
 
 	if ($rowid) {
-		$sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE ".$rowidcol."='".$rowid."'";
-	}
-	elseif ($code) {
-		$sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE code='".$code."'";
+		$sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE ".$rowidcol." = ".((int) $rowid);
+	} elseif ($code) {
+		$sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE code='".$db->escape($code)."'";
 	}
 
 	$result = $db->query($sql);
@@ -489,13 +472,13 @@ if ($id)
 
 			if ($valuetoshow != '') {
 				print '<td class="'.$class.'">';
-                if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
-                    print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
-                } elseif (!empty($tabhelp[$id][$value])) {
-                    print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
-                } else {
-                    print $valuetoshow;
-                }
+				if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
+					print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+				} elseif (!empty($tabhelp[$id][$value])) {
+					print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
+				} else {
+					print $valuetoshow;
+				}
 				print '</td>';
 			}
 			if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') $alabelisused = 1;
@@ -581,9 +564,7 @@ if ($id)
 					print '<td class="liste_titre">';
 					print $form->select_country($search_country_id, 'search_country_id', '', 28, 'maxwidth200 maxwidthonsmartphone');
 					print '</td>';
-				}
-				else
-				{
+				} else {
 					print '<td class="liste_titre"></td>';
 				}
 			}
@@ -628,10 +609,8 @@ if ($id)
 					if (empty($reshook)) fieldListAccountModel($fieldlist, $obj, $tabname[$id], 'edit');
 
 					print '<td colspan="3" class="right"><a name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
-					print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
-				}
-				else
-				{
+					print '&nbsp;<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
+				} else {
 				  	$tmpaction = 'view';
 					$parameters = array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
 					$reshook = $hookmanager->executeHooks('viewDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
@@ -652,26 +631,20 @@ if ($id)
 							if ($value == 'element')
 							{
 								$valuetoshow = isset($elementList[$valuetoshow]) ? $elementList[$valuetoshow] : $valuetoshow;
-							}
-							elseif ($value == 'source')
+							} elseif ($value == 'source')
 							{
 								$valuetoshow = isset($sourceList[$valuetoshow]) ? $sourceList[$valuetoshow] : $valuetoshow;
-							}
-							elseif ($valuetoshow == 'all') {
+							} elseif ($valuetoshow == 'all') {
 								$valuetoshow = $langs->trans('All');
-							}
-							elseif ($fieldlist[$field] == 'country') {
+							} elseif ($fieldlist[$field] == 'country') {
 								if (empty($obj->country_code))
 								{
 									$valuetoshow = '-';
-								}
-								else
-								{
+								} else {
 									$key = $langs->trans("Country".strtoupper($obj->country_code));
 									$valuetoshow = ($key != "Country".strtoupper($obj->country_code) ? $obj->country_code." - ".$key : $obj->country);
 								}
-							}
-							elseif ($fieldlist[$field] == 'country_id') {
+							} elseif ($fieldlist[$field] == 'country_id') {
 								$showfield = 0;
 							}
 
@@ -696,11 +669,11 @@ if ($id)
 					print "</td>";
 
 					// Modify link
-					if ($canbemodified) print '<td class="center"><a class="reposition editfielda" href="'.$url.'action=edit">'.img_edit().'</a></td>';
+					if ($canbemodified) print '<td class="center"><a class="reposition editfielda" href="'.$url.'action=edit&token='.newToken().'">'.img_edit().'</a></td>';
 					else print '<td>&nbsp;</td>';
 
 					// Delete link
-					if ($iserasable) print '<td class="center"><a href="'.$url.'action=delete">'.img_delete().'</a></td>';
+					if ($iserasable) print '<td class="center"><a href="'.$url.'action=delete&token='.newToken().'">'.img_delete().'</a></td>';
 					else print '<td>&nbsp;</td>';
 
 					print "</tr>\n";
@@ -708,8 +681,7 @@ if ($id)
 				$i++;
 			}
 		}
-	}
-	else {
+	} else {
 		dol_print_error($db);
 	}
 
@@ -761,8 +733,7 @@ function fieldListAccountModel($fieldlist, $obj = '', $tabname = '', $context = 
 			$fieldname = 'country';
 			print $form->select_country((!empty($obj->country_code) ? $obj->country_code : (!empty($obj->country) ? $obj->country : '')), $fieldname, '', 28, 'maxwidth200 maxwidthonsmartphone');
 			print '</td>';
-		}
-		elseif ($fieldlist[$field] == 'country_id')
+		} elseif ($fieldlist[$field] == 'country_id')
 		{
 			if (!in_array('country', $fieldlist))	// If there is already a field country, we don't show country_id (avoid duplicate)
 			{
@@ -771,8 +742,7 @@ function fieldListAccountModel($fieldlist, $obj = '', $tabname = '', $context = 
 				print '<input type="hidden" name="'.$fieldlist[$field].'" value="'.$country_id.'">';
 				print '</td>';
 			}
-		}
-		elseif ($fieldlist[$field] == 'type_cdr') {
+		} elseif ($fieldlist[$field] == 'type_cdr') {
 			if ($fieldlist[$field] == 'type_cdr') print '<td class="center">';
 			else print '<td>';
 			if ($fieldlist[$field] == 'type_cdr') {
@@ -781,12 +751,9 @@ function fieldListAccountModel($fieldlist, $obj = '', $tabname = '', $context = 
 				print $form->selectyesno($fieldlist[$field], (!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]}:''), 1);
 			}
 			print '</td>';
-		}
-		elseif ($fieldlist[$field] == 'code' && isset($obj->{$fieldlist[$field]})) {
+		} elseif ($fieldlist[$field] == 'code' && isset($obj->{$fieldlist[$field]})) {
 			print '<td><input type="text" class="flat" value="'.(!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]}:'').'" size="10" name="'.$fieldlist[$field].'"></td>';
-		}
-		else
-		{
+		} else {
 			print '<td>';
 			$size = ''; $class = '';
 			if ($fieldlist[$field] == 'code') $size = 'size="8" ';

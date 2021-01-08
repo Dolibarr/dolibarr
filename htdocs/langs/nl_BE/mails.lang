@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - mails
 MailCard=EMailings kaart
-MailingStatusSentPartialy=Gedeeltelijk verzonden
 SearchAMailing=Zoek een E-mailing
 SendMailing=Verzend E-mailing

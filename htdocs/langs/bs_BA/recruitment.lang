@@ -1,0 +1,75 @@
+# Copyright (C) 2020 Laurent Destailleur
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+# Module label 'ModuleRecruitmentName'
+ModuleRecruitmentName = Recruitment
+# Module description 'ModuleRecruitmentDesc'
+ModuleRecruitmentDesc = Manage and follow recruitment campaigns for new job positions
+
+#
+# Admin page
+#
+RecruitmentSetup = Recruitment setup
+Settings = Settings
+RecruitmentSetupPage = Enter here the setup of main options for the recruitment module
+RecruitmentArea=Recruitement area
+PublicInterfaceRecruitmentDesc=Public pages of jobs are public URLs to show and answer to open jobs. There is one different link for each open job, found on each job record.
+EnablePublicRecruitmentPages=Enable public pages of open jobs
+
+#
+# About page
+#
+About = O programu
+RecruitmentAbout = About Recruitment
+RecruitmentAboutPage = Recruitment about page
+NbOfEmployeesExpected=Expected nb of employees
+JobLabel=Label of job position
+WorkPlace=Work place
+DateExpected=Expected date
+FutureManager=Future manager
+ResponsibleOfRecruitement=Responsible of recruitment
+IfJobIsLocatedAtAPartner=If job is located at a partner place
+PositionToBeFilled=Pozicija
+PositionsToBeFilled=Job positions
+ListOfPositionsToBeFilled=List of job positions
+NewPositionToBeFilled=New job positions
+
+JobOfferToBeFilled=Job position to be filled
+ThisIsInformationOnJobPosition=Information of the job position to be filled
+ContactForRecruitment=Contact for recruitment
+EmailRecruiter=Email recruiter
+ToUseAGenericEmail=To use a generic email. If not defined, the email of the responsible of recruitment will be used
+NewCandidature=New application
+ListOfCandidatures=List of applications
+RequestedRemuneration=Requested remuneration
+ProposedRemuneration=Proposed remuneration
+ContractProposed=Contract proposed
+ContractSigned=Contract signed
+ContractRefused=Contract refused
+RecruitmentCandidature=Application
+JobPositions=Job positions
+RecruitmentCandidatures=Applications
+InterviewToDo=Interview to do
+AnswerCandidature=Application answer
+YourCandidature=Your application
+YourCandidatureAnswerMessage=Thanks you for your application.<br>...
+JobClosedTextCandidateFound=The job position is closed. The position has been filled.
+JobClosedTextCanceled=The job position is closed.
+ExtrafieldsJobPosition=Complementary attributes (job positions)
+ExtrafieldsCandidatures=Complementary attributes (job applications)

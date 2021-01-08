@@ -38,10 +38,10 @@ $linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1)
 $ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink)
 {
-    $ilink++;
+	$ilink++;
 
-    $trclass = 'oddeven';
-    if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass .= ' liste_sub_total';
+	$trclass = 'oddeven';
+	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass .= ' liste_sub_total';
 	?>
     <tr class="<?php echo $trclass; ?>">
 		<td><?php echo $langs->trans("Intervention"); ?></td>

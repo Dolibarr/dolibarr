@@ -85,3 +85,7 @@ ProposalCustomerSignature=Written acceptance, company stamp, date and signature
 ProposalsStatisticsSuppliers=Vendor proposals statistics
 CaseFollowedBy=Case followed by
 SignedOnly=Signed only
+IdProposal=Proposal ID
+IdProduct=Product ID
+PrParentLine=Proposal Parent Line
+LineBuyPriceHT=Buy Price Amount net of tax for line

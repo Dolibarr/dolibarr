@@ -1,4 +1,0 @@
-# Dolibarr language file - Source file is en_US - withdrawals
-BankTransferReceipts=Credit transfer order
-DoStandingOrdersBeforePayments=This tab allows you to request a direct debit payment order. Once done, go into menu Bank->Direct Debit orders to generate and manage the direct debit payment order. When direct debit order is closed, payment on invoices will be automatically recorded, and invoices closed if remainder to pay is null.
-DoCreditTransferBeforePayments=This tab allows you to request a credit transfer order. Once done, go into menu Bank->Credit transfer orders to generate and manage the credit transfer order. When credit transfer order is closed, payment on invoices will be automatically recorded, and invoices closed if remainder to pay is null.

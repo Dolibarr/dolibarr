@@ -72,7 +72,6 @@ Deleted=Verwijderd
 
 # Dict
 Type=Type
-Category=Analisten code
 Severity=Prioriteit
 
 # Email templates
@@ -128,7 +127,6 @@ TicketsAutoAssignTicket=Wijs automatisch de gebruiker toe die het ticket heeft a
 TicketsAutoAssignTicketHelp=Bij het maken van een ticket kan de gebruiker automatisch aan het ticket worden toegewezen.
 TicketNumberingModules=Nummering module voor tickets
 TicketNotifyTiersAtCreation=Breng relatie op de hoogte bij het aanmaken
-TicketGroup=Groep
 TicketsDisableCustomerEmail=Schakel e-mails altijd uit wanneer een ticket wordt gemaakt vanuit de openbare interface
 TicketsPublicNotificationNewMessage=Stuur e-mail (s) wanneer een nieuw bericht is toegevoegd
 TicketsPublicNotificationNewMessageHelp=Stuur e-mail (s) wanneer een nieuw bericht is toegevoegd vanuit de openbare interface (naar de toegewezen gebruiker of de e-mail met meldingen naar (update) en / of de e-mail met meldingen naar)
@@ -162,7 +160,7 @@ CreatedBy=Aangemaakt door
 NewTicket=Nieuw Ticket
 SubjectAnswerToTicket=Ticket antwoord
 TicketTypeRequest=Aanvraag type
-TicketCategory=Analisten code
+TicketCategory=Groep
 SeeTicket=Bekijk ticket
 TicketMarkedAsRead=Ticket is gemarkeerd als gelezen
 TicketReadOn=Lees verder

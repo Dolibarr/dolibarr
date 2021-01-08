@@ -18,23 +18,25 @@ DefaultForService=服務的預設
 DefaultForProduct=產品的預設
 CantSuggest=無法建議
 AccountancySetupDoneFromAccountancyMenu=從%s選單的大部分會計設定已完成
-ConfigAccountingExpert=會計專家模組的組態
+ConfigAccountingExpert=Configuration of the module accounting (double entry)
 Journalization=註冊到日記帳
-Journaux=日記帳
+Journals=日記帳
 JournalFinancial=財務日記帳
 BackToChartofaccounts=回到會計科目表
 Chartofaccounts=會計科目表
+ChartOfSubaccounts=Chart of individual accounts
+ChartOfIndividualAccountsOfSubsidiaryLedger=Chart of individual accounts of the subsidiary ledger
 CurrentDedicatedAccountingAccount=目前的專用帳戶
 AssignDedicatedAccountingAccount=新帳戶指派給
 InvoiceLabel=發票標籤
-OverviewOfAmountOfLinesNotBound=行數金額的概述未綁定到會計帳戶
-OverviewOfAmountOfLinesBound=行數金額的概述已綁定到會計帳戶
+OverviewOfAmountOfLinesNotBound=行金額的總攬未綁定到會計帳戶
+OverviewOfAmountOfLinesBound=行金額的總攬已綁定到會計帳戶
 OtherInfo=其他資訊
 DeleteCptCategory=從群組移除會計帳戶
 ConfirmDeleteCptCategory=您確定要從會計帳戶組中刪除此會計帳戶嗎？
 JournalizationInLedgerStatus=日誌狀態
-AlreadyInGeneralLedger=已經記錄在分類帳了
-NotYetInGeneralLedger=尚未記錄至分類帳
+AlreadyInGeneralLedger=Already transferred in accounting journals and ledger
+NotYetInGeneralLedger=Not yet transferred in accouting journals and ledger
 GroupIsEmptyCheckSetup=群組是空的，檢查個人化會計群組的設定
 DetailByAccount=依帳戶顯示細節
 AccountWithNonZeroValues=非零值的帳戶
@@ -43,7 +45,9 @@ CountriesInEEC=歐盟國家
 CountriesNotInEEC=非歐盟國家
 CountriesInEECExceptMe=除了%s以外的歐盟國家
 CountriesExceptMe=除了%s以外的所有國家
-AccountantFiles=輸出會計文件
+AccountantFiles=Export source documents
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
+VueByAccountAccounting=View by accounting account
 
 MainAccountForCustomersNotDefined=在設定中客戶的主要會計帳戶尚未定義
 MainAccountForSuppliersNotDefined=在設定中供應商的主要會計帳戶尚未定義
@@ -79,7 +83,7 @@ AccountancyAreaDescAnalyze=步驟%s：新增或編輯現有交易並生成報告
 
 AccountancyAreaDescClosePeriod=步驟%s：關帳期，因此我們之後無法進行修改。
 
-TheJournalCodeIsNotDefinedOnSomeBankAccount=設定中的強制性步驟尚未完成（未為所有銀行帳戶定義會計代碼日記帳）
+TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup has not been completed (accounting code journal not defined for all bank accounts)
 Selectchartofaccounts=選擇有效的會計科目表
 ChangeAndLoad=修改並載入
 Addanaccount=新增會計科目
@@ -89,6 +93,8 @@ SubledgerAccount=子帳帳戶
 SubledgerAccountLabel=子帳帳戶標籤
 ShowAccountingAccount=顯示會計項目
 ShowAccountingJournal=顯示會計日記帳
+ShowAccountingAccountInLedger=Show accounting account in ledger
+ShowAccountingAccountInJournals=Show accounting account in journals
 AccountAccountingSuggest=建議的會計項目
 MenuDefaultAccounts=預設會計項目
 MenuBankAccounts=銀行帳戶
@@ -110,8 +116,9 @@ ExpenseReportsVentilation=費用報表的關聯
 CreateMvts=建立新的交易
 UpdateMvts=交易的修改
 ValidTransaction=驗證交易
-WriteBookKeeping=在總帳中記錄交易
+WriteBookKeeping=Register transactions in accounting
 Bookkeeping=總帳
+BookkeepingSubAccount=Subledger
 AccountBalance=帳戶餘額
 ObjectsRef=參考的來源物件
 CAHTF=稅前總採購供應商
@@ -149,6 +156,8 @@ ACCOUNTING_MANAGE_ZERO=允許在會計帳戶末尾管理不同數量的零。一
 BANK_DISABLE_DIRECT_INPUT=停用銀行帳戶中直接記錄交易
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=在日記帳上啟用草稿匯出
 ACCOUNTANCY_COMBO_FOR_AUX=為子公司帳戶啟用組合列表（如果您有很多合作方，可能會很慢）
+ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, select period show by default
 
 ACCOUNTING_SELL_JOURNAL=銷售日記帳
 ACCOUNTING_PURCHASE_JOURNAL=採購日記帳
@@ -167,6 +176,8 @@ TransitionalAccount=過渡銀行轉帳帳戶
 ACCOUNTING_ACCOUNT_SUSPENSE=等待的會計科目
 DONATION_ACCOUNTINGACCOUNT=註冊捐款的會計科目
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=用於註冊訂閱的會計科目
+
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Accounting account by default to register customer deposit
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=所購買產品的預設會計科目（如果在產品表中未定義則使用）
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=預設情況下，在EEC中所購買產品的會計帳戶（如果未在產品單中定義則使用）
@@ -202,16 +213,16 @@ ByPredefinedAccountGroups=依大類
 ByPersonalizedAccountGroups=依個人化大類
 ByYear=依年度
 NotMatch=未設定
-DeleteMvt=刪除總帳行
+DeleteMvt=Delete some operation lines from accounting
 DelMonth=刪除月份
 DelYear=刪除年度
 DelJournal=刪除日記帳
-ConfirmDeleteMvt=這將刪特定日記帳中所有分類帳行的年/月（至少需要一個條件）。您將必須重新使用“註冊未會計”功能，才能將已刪除的記錄重新存入分類帳。
-ConfirmDeleteMvtPartial=這將從總帳中刪除交易（與同一交易相關的所有行都將被刪除）
+ConfirmDeleteMvt=This will delete all operation lines of the accounting for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
+ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all operation lines related to the same transaction will be deleted)
 FinanceJournal=財務日記帳
 ExpenseReportsJournal=費用報表日記帳
 DescFinanceJournal=財務日記帳包含由銀行帳戶支出的全部付款資料。
-DescJournalOnlyBindedVisible=檢視此記錄的已關聯的會計項目及總帳的記錄
+DescJournalOnlyBindedVisible=This is a view of record that are bound to an accounting account and can be recorded into the Journals and Ledger.
 VATAccountNotDefined=營業稅帳戶未定義
 ThirdpartyAccountNotDefined=未定義的合作方科目
 ProductAccountNotDefined=產品會計科目未定義
@@ -284,6 +295,7 @@ ShowTutorial=顯示教程
 NotReconciled=未對帳
 
 ## Admin
+BindingOptions=Binding options
 ApplyMassCategories=套用大量分類
 AddAccountFromBookKeepingWithNoCategories=個性化組中尚未有可用帳戶
 CategoryDeleted=會計項目的類別已移除
@@ -303,6 +315,9 @@ ErrorAccountingJournalIsAlreadyUse=此日記帳已使用
 AccountingAccountForSalesTaxAreDefinedInto=注意：銷項稅額的會計項目定義到選單 <b>%s</b> - <b>%s</b>
 NumberOfAccountancyEntries=條目數
 NumberOfAccountancyMovements=移動次數
+ACCOUNTING_DISABLE_BINDING_ON_SALES=Disable binding & transfer in accountancy on sales (customer invoices will not be taken into account in accounting)
+ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountancy on purchases (vendor invoices will not be taken into account in accounting)
+ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
 ExportDraftJournal=匯出日記帳草稿
@@ -324,6 +339,8 @@ Modelcsv_configurable=匯出為可設置CSV
 Modelcsv_FEC=匯出為FEC
 Modelcsv_Sage50_Swiss=匯出為Sage 50 Switzerland
 Modelcsv_winfic=匯出Winfic-eWinfic-WinSis Compta
+Modelcsv_Gestinumv3=Export for Gestinum (v3)
+Modelcsv_Gestinumv5Export for Gestinum (v5)
 ChartofaccountsId=會計項目表ID
 
 ## Tools - Init accounting account on product / service

@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/cashdesk/class/Facturation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 $obj_facturation = unserialize($_SESSION['serObjFacturation']);
 unset($_SESSION['serObjFacturation']);
@@ -50,8 +50,7 @@ switch ($action)
 			if ($_POST['hdnSource'] == 'LISTE')
 			{
 				$sql .= " AND p.rowid = ".((int) GETPOST('selProduit', 'int'));
-			}
-			elseif ($_POST['hdnSource'] == 'REF')
+			} elseif ($_POST['hdnSource'] == 'REF')
 			{
 				$sql .= " AND p.ref = '".$db->escape(GETPOST('txtRef', 'alpha'))."'";
 			}
@@ -68,15 +67,15 @@ switch ($action)
 					{
 						$ret[$key] = $value;
 					}
-                    // Here $ret['tva_tx'] is vat rate of product but we want to not use the one into table but found by function
+					// Here $ret['tva_tx'] is vat rate of product but we want to not use the one into table but found by function
 
 					$productid = $ret['rowid'];
 					$product = new Product($db);
-                    $product->fetch($productid);
-                    $prod = $product;
+					$product->fetch($productid);
+					$prod = $product;
 
 					$thirdpartyid = $_SESSION['CASHDESK_ID_THIRDPARTY'];
-                    $societe = new Societe($db);
+					$societe = new Societe($db);
 					$societe->fetch($thirdpartyid);
 
 					// Update if prices fields are defined
@@ -92,42 +91,39 @@ switch ($action)
 					// multiprix
 					if (!empty($conf->global->PRODUIT_MULTIPRICES) && !empty($societe->price_level))
 					{
-					    $pu_ht = $prod->multiprices[$societe->price_level];
-					    $pu_ttc = $prod->multiprices_ttc[$societe->price_level];
-					    $price_min = $prod->multiprices_min[$societe->price_level];
-					    $price_base_type = $prod->multiprices_base_type[$societe->price_level];
-					    if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
-					    {
-					        if (isset($prod->multiprices_tva_tx[$societe->price_level])) $tva_tx = $prod->multiprices_tva_tx[$societe->price_level];
-					        if (isset($prod->multiprices_recuperableonly[$societe->price_level])) $tva_npr = $prod->multiprices_recuperableonly[$societe->price_level];
-					    }
-					}
-					elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+						$pu_ht = $prod->multiprices[$societe->price_level];
+						$pu_ttc = $prod->multiprices_ttc[$societe->price_level];
+						$price_min = $prod->multiprices_min[$societe->price_level];
+						$price_base_type = $prod->multiprices_base_type[$societe->price_level];
+						if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
+						{
+							if (isset($prod->multiprices_tva_tx[$societe->price_level])) $tva_tx = $prod->multiprices_tva_tx[$societe->price_level];
+							if (isset($prod->multiprices_recuperableonly[$societe->price_level])) $tva_npr = $prod->multiprices_recuperableonly[$societe->price_level];
+						}
+					} elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 					{
-					    require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
+						require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
-					    $prodcustprice = new Productcustomerprice($db);
+						$prodcustprice = new Productcustomerprice($db);
 
-					    $filter = array('t.fk_product' => $prod->id, 't.fk_soc' => $societe->id);
+						$filter = array('t.fk_product' => $prod->id, 't.fk_soc' => $societe->id);
 
-					    $result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
-					    if ($result >= 0)
-					    {
-					        if (count($prodcustprice->lines) > 0)
-					        {
-					            $pu_ht = price($prodcustprice->lines[0]->price);
-					            $pu_ttc = price($prodcustprice->lines[0]->price_ttc);
-					            $price_base_type = $prodcustprice->lines[0]->price_base_type;
-					            $tva_tx = $prodcustprice->lines[0]->tva_tx;
-					            if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) $tva_tx .= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
-					            $tva_npr = $prodcustprice->lines[0]->recuperableonly;
-					            if (empty($tva_tx)) $tva_npr = 0;
-					        }
-					    }
-					    else
-					    {
-					        setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
-					    }
+						$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+						if ($result >= 0)
+						{
+							if (count($prodcustprice->lines) > 0)
+							{
+								$pu_ht = price($prodcustprice->lines[0]->price);
+								$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
+								$price_base_type = $prodcustprice->lines[0]->price_base_type;
+								$tva_tx = $prodcustprice->lines[0]->tva_tx;
+								if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) $tva_tx .= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
+								$tva_npr = $prodcustprice->lines[0]->recuperableonly;
+								if (empty($tva_tx)) $tva_npr = 0;
+							}
+						} else {
+							setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
+						}
 					}
 
 					$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
@@ -135,17 +131,17 @@ switch ($action)
 
 					// if price ht is forced (ie: calculated by margin rate and cost price). TODO Why this ?
 					if (!empty($price_ht)) {
-					    $pu_ht = price2num($price_ht, 'MU');
-					    $pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
+						$pu_ht = price2num($price_ht, 'MU');
+						$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
 					}
 					// On reevalue prix selon taux tva car taux tva transaction peut etre different
 					// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
 					elseif ($tmpvat != $tmpprodvat) {
-					    if ($price_base_type != 'HT') {
-					        $pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
-					    } else {
-					        $pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
-					    }
+						if ($price_base_type != 'HT') {
+							$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
+						} else {
+							$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
+						}
 					}
 
 					$obj_facturation->id($ret['rowid']);
@@ -162,35 +158,26 @@ switch ($action)
 					if ($_POST['hdnSource'] == 'LISTE')
 					{
 						$filtre = $ret['ref'];
-					}
-					elseif ($_POST['hdnSource'] == 'REF')
+					} elseif ($_POST['hdnSource'] == 'REF')
 					{
 						$filtre = $_POST['txtRef'];
 					}
 
 					$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation&filtre='.$filtre;
-				}
-				else
-				{
+				} else {
 					$obj_facturation->raz();
 
 					if ($_POST['hdnSource'] == 'REF')
 					{
 						$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation&filtre='.$_POST['txtRef'];
-					}
-					else
-					{
+					} else {
 						$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation';
 					}
 				}
-			}
-			else
-			{
+			} else {
 				dol_print_error($db);
 			}
-		}
-		else
-		{
+		} else {
 			$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation';
 		}
 
@@ -200,17 +187,17 @@ switch ($action)
 		$newthirdpartyid = GETPOST('CASHDESK_ID_THIRDPARTY', 'int');
 		if ($newthirdpartyid > 0)
 		{
-		    $_SESSION["CASHDESK_ID_THIRDPARTY"] = $newthirdpartyid;
+			$_SESSION["CASHDESK_ID_THIRDPARTY"] = $newthirdpartyid;
 		}
 
 		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation';
-        break;
+		break;
 
 	case 'ajout_article':	// We have clicked on button "Add product"
 
 		if (!empty($obj_facturation->id))	// A product was previously selected and stored in session, so we can add it
 		{
-		    dol_syslog("facturation_verif save vat ".$_POST['selTva']);
+			dol_syslog("facturation_verif save vat ".$_POST['selTva']);
 			$obj_facturation->qte($_POST['txtQte']);
 			$obj_facturation->tva($_POST['selTva']); // id of vat. Saved so we can use it for next product
 			$obj_facturation->remisePercent($_POST['txtRemise']);

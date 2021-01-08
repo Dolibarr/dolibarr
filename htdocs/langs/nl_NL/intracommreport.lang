@@ -1,0 +1,40 @@
+Module68000Name = intracommunautaire rapportage
+Module68000Desc = Intracomm rapportbeheer (ondersteuning voor Franse DEB / DES-indeling)
+IntracommReportSetup = Instelling module voor intracommunautair rapport
+IntracommReportAbout = Over intracommunautair rapport
+
+# Setup
+INTRACOMMREPORT_NUM_AGREMENT=Goedkeuringsnummer (afgegeven door de CISD van bijlage)
+INTRACOMMREPORT_TYPE_ACTEUR=Type acteur
+INTRACOMMREPORT_ROLE_ACTEUR=Rol gespeeld door acteur
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Verplichtingsniveau bij introducties
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau van verplichting op zendingen
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Servicecategorie verzendkosten
+
+INTRACOMMREPORT_NUM_DECLARATION=Aangiftenummer
+
+# Menu
+MenuIntracommReport=intracommunautaire rapportage
+MenuIntracommReportNew=Nieuwe aangifte
+MenuIntracommReportList=Lijstoverzicht
+
+# View
+NewDeclaration=Nieuwe aangifte
+Declaration=Aangifte
+AnalysisPeriod=Analyseperiode
+TypeOfDeclaration=Type aangifte
+DEB=Aangifte goederenuitwisseling (DEB)
+DES=Uitwisseling van diensten (DES)
+
+# Export page
+IntracommReportTitle=Voorbereiding van een XML-bestand in ProDouane formaat
+
+# List
+IntracommReportList=Lijst met gegenereerde aangiften
+IntracommReportNumber=Numero of declaration
+IntracommReportPeriod=Period of nalysis
+IntracommReportTypeDeclaration=Type aangifte
+IntracommReportDownload=download XML file
+
+# Invoice
+IntracommReportTransportMode=Transport methode

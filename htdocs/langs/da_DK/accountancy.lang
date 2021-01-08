@@ -11,19 +11,21 @@ ACCOUNTING_EXPORT_DEVISE=Eksporter valuta
 Selectformat=Vælg formatet til filen
 ACCOUNTING_EXPORT_FORMAT=Vælg formatet til filen
 ACCOUNTING_EXPORT_ENDLINE=Vælg linjeskift type
-ACCOUNTING_EXPORT_PREFIX_SPEC=Angiv præfiks for filnavn
+ACCOUNTING_EXPORT_PREFIX_SPEC=Angiv præfiks for filnavnet
 ThisService=Denne ydelse
 ThisProduct=Dette produkt
 DefaultForService=forvalg ydelse
 DefaultForProduct=Forvalg produkt
 CantSuggest=Kan ikke foreslå
 AccountancySetupDoneFromAccountancyMenu=Hovedparten af opsætningen for regnskabet sker fra menuen %s
-ConfigAccountingExpert=Konfiguration af ekspert Regnskabsmodulet
+ConfigAccountingExpert=Konfiguration af modulregnskabet (dobbelt indtastning)
 Journalization=Bogføring
-Journaux=Kladder
+Journals=Kladder
 JournalFinancial=Finanskladde
 BackToChartofaccounts=Tilbage til kontoplan
 Chartofaccounts=Kontoplan
+ChartOfSubaccounts=Diagram over individuelle konti
+ChartOfIndividualAccountsOfSubsidiaryLedger=Diagram over underregnskabets individuelle konti
 CurrentDedicatedAccountingAccount=Aktuel tildelt konto
 AssignDedicatedAccountingAccount=Ny konto, der skal tildeles
 InvoiceLabel=Fakturaetiket
@@ -33,8 +35,8 @@ OtherInfo=Anden information
 DeleteCptCategory=Fjern regnskabskonto fra gruppe
 ConfirmDeleteCptCategory=Er du sikker på, du vil fjerne denne regnskabskonto fra gruppen?
 JournalizationInLedgerStatus=Status for bogføring
-AlreadyInGeneralLedger=Allerede bogført
-NotYetInGeneralLedger=Kladder der ikke er bogført endnu
+AlreadyInGeneralLedger=Allerede overført i regnskabsjournaler og hovedbog
+NotYetInGeneralLedger=Endnu ikke overført i accouting tidsskrifter og hovedbog
 GroupIsEmptyCheckSetup=Gruppen er tom, kontroller opsætningen af ​​den brugerdefinerede regnskabsgruppe
 DetailByAccount=Vis detaljer efter konto
 AccountWithNonZeroValues=Konti med ikke-nul-værdier
@@ -43,7 +45,9 @@ CountriesInEEC=Lande i EØF
 CountriesNotInEEC=Lande ikke i EØF
 CountriesInEECExceptMe=Lande i EØF undtagen %s
 CountriesExceptMe=Alle lande undtagen %s
-AccountantFiles=Eksporter regnskabs dokumenter
+AccountantFiles=Eksporter kildedokumenter
+ExportAccountingSourceDocHelp=Med dette værktøj kan du eksportere de kildehændelser (liste og PDF-filer), der blev brugt til at generere din regnskab. For at eksportere dine tidsskrifter skal du bruge menuindgangen %s - %s.
+VueByAccountAccounting=Vis efter regnskabskonto
 
 MainAccountForCustomersNotDefined=Standardkonto for kunder, der ikke er defineret i opsætningen
 MainAccountForSuppliersNotDefined=Hoved kontokort for leverandører, der ikke er defineret i opsætningen
@@ -58,7 +62,7 @@ AccountancyAreaDescActionOnceBis=Næste skridt skal gøres for at spare tid i fr
 AccountancyAreaDescActionFreq=Følgende handlinger udføres normalt hver måned, uge ​​eller dag for meget store virksomheder ...
 
 AccountancyAreaDescJournalSetup=Trin %s: Opret eller tjek indholdet af din list med kladder fra menuen %s
-AccountancyAreaDescChartModel=TRIN: %s Kontroller, at der findes en model af kontoplan, eller opret en fra menuen %s
+AccountancyAreaDescChartModel=Trin %s: Kontroller, at der findes en skabelon til en kontoplan eller opret en fra menuen %s
 AccountancyAreaDescChart=TRIN %s:Vælg og/eller udfyld dit kontoplan fra menuen %s
 
 AccountancyAreaDescVat=Trin %s: Definer regnskabskonto for hver momssats. Til dette skal du bruge menupunktet %s.
@@ -79,7 +83,7 @@ AccountancyAreaDescAnalyze=Trin %s: Tilføj eller rediger eksisterende transakti
 
 AccountancyAreaDescClosePeriod=Trin %s: Luk periode, så vi kan ikke foretage ændringer i fremtiden.
 
-TheJournalCodeIsNotDefinedOnSomeBankAccount=Et obligatorisk trin i opsætningen er ikke gennemført (regnskabskode ikke defineret for alle bankkonti)
+TheJournalCodeIsNotDefinedOnSomeBankAccount=Et obligatorisk trin i opsætningen er ikke afsluttet (regnskabskodejournal ikke defineret for alle bankkonti)
 Selectchartofaccounts=Vælg aktiv kontoplan
 ChangeAndLoad=Ret og indlæs
 Addanaccount=Tilføj en regnskabskonto
@@ -89,6 +93,8 @@ SubledgerAccount=Subledger-konto
 SubledgerAccountLabel=Subledger-kontoetiket
 ShowAccountingAccount=Vis regnskabskonto
 ShowAccountingJournal=Vis kontokladde
+ShowAccountingAccountInLedger=Vis regnskabskonto i hovedbog
+ShowAccountingAccountInJournals=Vis regnskabskonto i tidsskrifter
 AccountAccountingSuggest=Forelslået regnskabskonto
 MenuDefaultAccounts=Standardkonti
 MenuBankAccounts=Bankkonti
@@ -110,8 +116,9 @@ ExpenseReportsVentilation=Bogfør Udgiftsrapport
 CreateMvts=Opret ny transaktion
 UpdateMvts=Rediger en transaktion
 ValidTransaction=Bekræft transaktion
-WriteBookKeeping=Registrer transaktioner i Ledger
+WriteBookKeeping=Registrer transaktioner i regnskab
 Bookkeeping=Hovedbog
+BookkeepingSubAccount=Underleverandør
 AccountBalance=Kontobalance
 ObjectsRef=Objektreference
 CAHTF=Samlet købeleverandør før skat
@@ -149,6 +156,8 @@ ACCOUNTING_MANAGE_ZERO=Tillad at administrere forskellige antal nuller i slutnin
 BANK_DISABLE_DIRECT_INPUT=Deaktiver direkte registrering af transaktionen på bankkonto
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Aktivér udkast til eksport på Journal
 ACCOUNTANCY_COMBO_FOR_AUX=Aktivér kombinationsliste for subsidiær konto (kan være langsom, hvis du har en masse tredjeparter)
+ACCOUNTING_DATE_START_BINDING=Definer en dato for start af binding og overførsel i regnskab. Under denne dato overføres transaktionerne ikke til regnskab.
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Ved regnskabsoverførsel skal du vælge periode som standard
 
 ACCOUNTING_SELL_JOURNAL=Salgskladde
 ACCOUNTING_PURCHASE_JOURNAL=Indkøbskladde
@@ -167,6 +176,8 @@ TransitionalAccount=Overgangsbankoverførselskonto
 ACCOUNTING_ACCOUNT_SUSPENSE=Regnskabskonto for afventning
 DONATION_ACCOUNTINGACCOUNT=Regnskabskonto til registrering af donationer
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Regnskabskonto for at registrere abonnementer
+
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Regnskabskonto er som standard for at registrere kundeindbetaling
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Regnskabskonto som standard for de købte produkter (bruges hvis ikke defineret i produktarket)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Regnskabskonto som standard for de købte produkter i EØF (brugt, hvis ikke defineret i produktarket)
@@ -202,16 +213,16 @@ ByPredefinedAccountGroups=Efter foruddefinerede grupper
 ByPersonalizedAccountGroups=Efter brugerdefinerede grupper
 ByYear=År
 NotMatch=Ikke angivet
-DeleteMvt=Slet posteringer i hovedbogen
+DeleteMvt=Slet nogle operationslinjer fra regnskabet
 DelMonth=Måned at slette
 DelYear=År, der skal slettes
 DelJournal=Kladde, der skal slettes
-ConfirmDeleteMvt=Dette vil slette alle linjer i hovedbogen for året / måneden og / eller fra en bestemt journal (Der kræves mindst et kriterium). Du bliver nødt til at genbruge funktionen 'Registrering i regnskab' for at få den slettede post tilbage i hovedbogen.
-ConfirmDeleteMvtPartial=Dette vil slette transaktionen fra Ledger (alle linjer, der er relateret til samme transaktion vil blive slettet)
+ConfirmDeleteMvt=Dette sletter alle driftslinjer i regnskabet for året / måneden og / eller for en bestemt journal (mindst et kriterium er påkrævet). Du bliver nødt til at genbruge funktionen '%s' for at få den slettede post tilbage i hovedbogen.
+ConfirmDeleteMvtPartial=Dette sletter transaktionen fra regnskabet (alle driftslinjer relateret til den samme transaktion slettes)
 FinanceJournal=Finanskladde
 ExpenseReportsJournal=Udgiftskladder
 DescFinanceJournal=Regnskabskladde inkl. alle betalingstyper med bankkonto
-DescJournalOnlyBindedVisible=Dette er en opfattelse af post, der er bundet til en regnskabsmæssig betragtning og kan være registreret i Regnskabet.
+DescJournalOnlyBindedVisible=Dette er en oversigt over poster, der er bundet til en regnskabskonto og kan registreres i tidsskrifterne og hovedbogen.
 VATAccountNotDefined=Momskonto ikke defineret
 ThirdpartyAccountNotDefined=Tredjepartskonto ikke defineret
 ProductAccountNotDefined=Varekonto ikke defineret
@@ -284,6 +295,7 @@ ShowTutorial=Vis selvstudie
 NotReconciled=Ikke afstemt
 
 ## Admin
+BindingOptions=Bindende muligheder
 ApplyMassCategories=Anvend massekategorier
 AddAccountFromBookKeepingWithNoCategories=Tilgængelig konto endnu ikke i den personaliserede gruppe
 CategoryDeleted=Kategori for regnskabskonto er blevet slettet
@@ -303,6 +315,9 @@ ErrorAccountingJournalIsAlreadyUse=Denne kladde er allerede i brug
 AccountingAccountForSalesTaxAreDefinedInto=Bemærk: Regnskabskonto for salgsmoms er defineret i menuen <b> %s </b> - <b> %s </b>
 NumberOfAccountancyEntries=Antal poster
 NumberOfAccountancyMovements=Antal bevægelser
+ACCOUNTING_DISABLE_BINDING_ON_SALES=Deaktiver binding og overførsel i regnskab ved salg (kundefakturaer tages ikke med i regnskabet)
+ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Deaktiver binding og overførsel i regnskab ved køb (leverandørfakturaer tages ikke med i regnskabet)
+ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Deaktiver binding og overførsel i regnskab på udgiftsrapporter (udgiftsrapporter tages ikke med i regnskabet)
 
 ## Export
 ExportDraftJournal=Eksporter udkast til kladde
@@ -324,6 +339,8 @@ Modelcsv_configurable=Eksporter CSV Konfigurerbar
 Modelcsv_FEC=Eksport FEC
 Modelcsv_Sage50_Swiss=Eksport til Sage 50 Schweiz
 Modelcsv_winfic=Eksport Winfic - eWinfic - WinSis Compta
+Modelcsv_Gestinumv3=Eksport til Gestinum (v3)
+Modelcsv_Gestinumv5Export til Gestinum (v5)
 ChartofaccountsId=ID for kontoplan
 
 ## Tools - Init accounting account on product / service

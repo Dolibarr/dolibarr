@@ -67,9 +67,7 @@ if ($action == 'dolibarr2ldap')
 	{
 		setEventMessages($langs->trans("ContactSynchronized"), null, 'mesgs');
 		$db->commit();
-	}
-	else
-	{
+	} else {
 		setEventMessages($ldap->error, $ldap->errors, 'errors');
 		$db->rollback();
 	}
@@ -88,7 +86,7 @@ llxHeader('', $title, 'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_
 
 $head = contact_prepare_head($object);
 
-dol_fiche_head($head, 'ldap', $title, -1, 'contact');
+print dol_get_fiche_head($head, 'ldap', $title, -1, 'contact');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -106,9 +104,7 @@ if ($object->socid > 0)
 	$thirdparty->fetch($object->socid);
 
 	print '<tr><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td colspan="3">'.$thirdparty->getNomUrl(1).'</td></tr>';
-}
-else
-{
+} else {
 	print '<tr><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td colspan="3">';
 	print $langs->trans("ContactNotLinkedToCompany");
 	print '</td></tr>';
@@ -134,7 +130,7 @@ print '</table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 /*
@@ -178,27 +174,21 @@ if ($result > 0)
 	//var_dump($records);
 
 	// Show tree
-    if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0))
+	if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0))
 	{
 		if (!is_array($records))
 		{
 			print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
-		}
-		else
-		{
+		} else {
 			$result = show_ldap_content($records, 0, $records['count'], true);
 		}
-	}
-	else
-	{
+	} else {
 		print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
 	}
 
 	$ldap->unbind();
 	$ldap->close();
-}
-else
-{
+} else {
 	setEventMessages($ldap->error, $ldap->errors, 'errors');
 }
 

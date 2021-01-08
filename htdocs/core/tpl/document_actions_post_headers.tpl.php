@@ -59,7 +59,7 @@ if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticket
 if ($action == 'delete')
 {
 	$langs->load("companies"); // Need for string DeleteFile+ConfirmDeleteFiles
-    print $form->formconfirm(
+	print $form->formconfirm(
 			$_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode(GETPOST("urlfile")).'&linkid='.GETPOST('linkid', 'int').(empty($param) ? '' : $param),
 			$langs->trans('DeleteFile'),
 			$langs->trans('ConfirmDeleteFile'),
@@ -112,13 +112,13 @@ if (!isset($savingdocmask) || !empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_
 
 // Show upload form (document and links)
 $formfile->form_attach_new_file(
-    $_SERVER["PHP_SELF"].'?id='.$object->id.(empty($withproject) ? '' : '&withproject=1').(empty($moreparam) ? '' : $moreparam),
-    '',
-    0,
-    0,
-    $permission,
-    $conf->browser->layout == 'phone' ? 40 : 60,
-    $object,
+	$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($withproject) ? '' : '&withproject=1').(empty($moreparam) ? '' : $moreparam),
+	'',
+	0,
+	0,
+	$permission,
+	$conf->browser->layout == 'phone' ? 40 : 60,
+	$object,
 	'',
 	1,
 	$savingdocmask
@@ -126,24 +126,24 @@ $formfile->form_attach_new_file(
 
 // List of document
 $formfile->list_of_documents(
-    $filearray,
-    $object,
-    $modulepart,
-    $param,
-    0,
-    $relativepathwithnofile, // relative path with no file. For example "0/1"
-    $permission,
-    0,
-    '',
-    0,
-    '',
-    '',
-    0,
-    $permtoedit,
-    $upload_dir,
-    $sortfield,
-    $sortorder,
-    $disablemove
+	$filearray,
+	$object,
+	$modulepart,
+	$param,
+	0,
+	$relativepathwithnofile, // relative path with no file. For example "0/1"
+	$permission,
+	0,
+	'',
+	0,
+	'',
+	'',
+	0,
+	$permtoedit,
+	$upload_dir,
+	$sortfield,
+	$sortorder,
+	$disablemove
 );
 
 print "<br>";

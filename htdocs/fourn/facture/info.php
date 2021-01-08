@@ -65,7 +65,7 @@ $alreadypaid = $object->getSommePaiement();
 
 $head = facturefourn_prepare_head($object);
 $titre = $langs->trans('SupplierInvoice');
-dol_fiche_head($head, 'info', $langs->trans('SupplierInvoice'), -1, 'bill');
+print dol_get_fiche_head($head, 'info', $langs->trans('SupplierInvoice'), -1, 'supplier_invoice');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 

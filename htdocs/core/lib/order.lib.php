@@ -50,8 +50,8 @@ function commande_prepare_head(Commande $object)
 
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
-	    $nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
-	    $head[$h][0] = DOL_URL_ROOT.'/commande/contact.php?id='.$object->id;
+		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
+		$head[$h][0] = DOL_URL_ROOT.'/commande/contact.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('ContactsAddresses');
 		if ($nbContact > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
 		$head[$h][2] = 'contact';
@@ -59,33 +59,33 @@ function commande_prepare_head(Commande $object)
 	}
 
 	if (($conf->expedition_bon->enabled && $user->rights->expedition->lire)
-	|| ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->lire))
+	|| ($conf->delivery_note->enabled && $user->rights->expedition->delivery->lire))
 	{
 		$nbShipments = $object->getNbOfShipments(); $nbReceiption = 0;
 		$head[$h][0] = DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id;
 		$text = '';
 		if ($conf->expedition_bon->enabled) $text .= $langs->trans("Shipments");
-		if ($conf->expedition_bon->enabled && $conf->livraison_bon->enabled) $text .= ' - ';
-		if ($conf->livraison_bon->enabled)  $text .= $langs->trans("Receivings");
+		if ($conf->expedition_bon->enabled && $conf->delivery_note->enabled) $text .= ' - ';
+		if ($conf->delivery_note->enabled)  $text .= $langs->trans("Receivings");
 		if ($nbShipments > 0 || $nbReceiption > 0) $text .= '<span class="badge marginleftonlyshort">'.($nbShipments ? $nbShipments : 0);
-		if ($conf->expedition_bon->enabled && $conf->livraison_bon->enabled && ($nbShipments > 0 || $nbReceiption > 0)) $text .= ' - ';
-		if ($conf->expedition_bon->enabled && $conf->livraison_bon->enabled && ($nbShipments > 0 || $nbReceiption > 0)) $text .= ($nbReceiption ? $nbReceiption : 0);
+		if ($conf->expedition_bon->enabled && $conf->delivery_note->enabled && ($nbShipments > 0 || $nbReceiption > 0)) $text .= ' - ';
+		if ($conf->expedition_bon->enabled && $conf->delivery_note->enabled && ($nbShipments > 0 || $nbReceiption > 0)) $text .= ($nbReceiption ? $nbReceiption : 0);
 		if ($nbShipments > 0 || $nbReceiption > 0) $text .= '</span>';
 		$head[$h][1] = $text;
 		$head[$h][2] = 'shipping';
 		$h++;
 	}
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'order');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'order');
 
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
 	{
 		$nbNote = 0;
-        if (!empty($object->note_private)) $nbNote++;
+		if (!empty($object->note_private)) $nbNote++;
 		if (!empty($object->note_public)) $nbNote++;
 		$head[$h][0] = DOL_URL_ROOT.'/commande/note.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
@@ -95,10 +95,10 @@ function commande_prepare_head(Commande $object)
 	}
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->commande->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-    $nbLinks = Link::count($db, $object->element, $object->id);
+	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/commande/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
 	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
@@ -110,9 +110,9 @@ function commande_prepare_head(Commande $object)
 	$head[$h][2] = 'info';
 	$h++;
 
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'order', 'remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'order', 'remove');
 
-    return $head;
+	return $head;
 }
 
 /**

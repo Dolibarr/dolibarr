@@ -1,0 +1,2 @@
+# Dolibarr language file - Source file is en_US - compta
+BalanceVisibilityDependsOnSortAndFilters=Balance is visible in this list only if table is sorted ascending on %s and filtered for 1 bank account

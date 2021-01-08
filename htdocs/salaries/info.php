@@ -52,7 +52,7 @@ $object->info($id);
 
 $head = salaries_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("SalaryPayment"), -1, 'payment');
+print dol_get_fiche_head($head, 'info', $langs->trans("SalaryPayment"), -1, 'payment');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/salaries/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
@@ -77,7 +77,7 @@ print '</td></tr></table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

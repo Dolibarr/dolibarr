@@ -76,14 +76,12 @@ function getfieldname($l)
 	if (preg_match("/`(.*)`/", $l, $regs)) {
 		if ($regs[1])
 			return $regs[1];
-		else
-			return null;
+		else return null;
 	} // if its not in quotes, then it should (we hope!) be the first "word" on the line, up to the first space.
 	elseif (preg_match("/([^\ ]*)/", trim($l), $regs)) {
 		if ($regs[1])
 			return $regs[1];
-		else
-			return null;
+		else return null;
 	}
 }
 
@@ -102,8 +100,7 @@ function formatsize($s)
 		return sprintf("%.1f", round($s / 1024, 1)) . "K";
 	elseif ($s < pow(2, 30))
 		return sprintf("%.1f", round($s / 1024 / 1024, 1)) . "M";
-	else
-		return sprintf("%.1f", round($s / 1024 / 1024 / 1024, 1)) . "G";
+	else return sprintf("%.1f", round($s / 1024 / 1024 / 1024, 1)) . "G";
 }
 
 /**
@@ -146,8 +143,7 @@ function pg2mysql_large($infilename, $outfilename)
 		if ($c % 2 != 0) {
 			if ($inquotes)
 				$inquotes = false;
-			else
-				$inquotes = true;
+			else $inquotes = true;
 		}
 
 		if ($linenum % 10000 == 0) {
@@ -329,8 +325,7 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 				$num = $regs[1];
 				if ($num <= 255)
 					$line = preg_replace("/ character varying\([0-9]*\)/", " varchar($num)", $line);
-				else
-					$line = preg_replace("/ character varying\([0-9]*\)/", " text", $line);
+				else $line = preg_replace("/ character varying\([0-9]*\)/", " text", $line);
 			}
 			// character varying with no size, we will default to varchar(255)
 			if (preg_match("/ character varying/", $line)) {
@@ -352,8 +347,7 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 				$num = $regs[1];
 				if ($num <= 255)
 					$line = preg_replace("/ character\([0-9]*\)/", " varchar($num)", $line);
-				else
-					$line = preg_replace("/ character\([0-9]*\)/", " text", $line);
+				else $line = preg_replace("/ character\([0-9]*\)/", " text", $line);
 			}
 			// timestamps
 			$line = str_replace(" timestamp with time zone", " datetime", $line);
@@ -363,8 +357,8 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 			$line = str_replace(" time with time zone", " time", $line);
 			$line = str_replace(" time without time zone", " time", $line);
 
-			$line = str_replace(" timestamp DEFAULT now()", " timestamp DEFAULT CURRENT_TIMESTAMP", $line);
-			$line = str_replace(" timestamp without time zone DEFAULT now()", " timestamp DEFAULT CURRENT_TIMESTAMP", $line);
+			$line = str_replace(" timestamp DEFAULT now()", " timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", $line);
+			$line = str_replace(" timestamp without time zone DEFAULT now()", " timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", $line);
 
 			if (strstr($line, "auto_increment") || preg_match('/ rowid int/', $line) || preg_match('/ id int/', $line)) {
 				$field = getfieldname($line);
@@ -465,8 +459,7 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 					if ($c % 2 != 0) {
 						if ($inquotes)
 							$inquotes = false;
-						else
-							$inquotes = true;
+						else $inquotes = true;
 						// echo "inquotes=$inquotes\n";
 					}
 				} while (substr($lines[$linenumber], - 3, - 1) != ");" || $inquotes);

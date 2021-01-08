@@ -33,7 +33,7 @@ $langs->loadLangs(array("mymodule@mymodule", "companies"));
 // Get parameters
 $id = GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -77,13 +77,12 @@ $form = new Form($db);
 $help_url = '';
 llxHeader('', $langs->trans('MyObject'), $help_url);
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();
 
 	$head = myobjectPrepareHead($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("MyObject"), -1, 'myobject@mymodule');
+	print dol_get_fiche_head($head, 'note', $langs->trans("MyObject"), -1, 'myobject@mymodule');
 
 	// Object card
 	// ------------------------------------------------------------
@@ -144,7 +143,7 @@ if ($id > 0 || !empty($ref))
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

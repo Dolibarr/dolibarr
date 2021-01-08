@@ -95,14 +95,12 @@ class Fournisseur extends Societe
 		{
 			$obj = $this->db->fetch_object($resql);
 			return $obj->nb;
-		}
-		else
-		{
+		} else {
 			return -1;
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Load statistics indicators
 	 *
@@ -110,7 +108,7 @@ class Fournisseur extends Societe
 	 */
 	public function load_state_board()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $user;
 
 		$this->nb = array();
@@ -134,18 +132,16 @@ class Fournisseur extends Societe
 			{
 				$this->nb["suppliers"] = $obj->nb;
 			}
-            $this->db->free($resql);
+			$this->db->free($resql);
 			return 1;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			$this->error = $this->db->error();
 			return -1;
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Create a supplier category
 	 *
@@ -155,7 +151,7 @@ class Fournisseur extends Societe
 	 */
 	public function CreateCategory($user, $name)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label,visible,type)";
 		$sql .= " VALUES ";
 		$sql .= " ('".$this->db->escape($name)."',1,1)";
@@ -166,16 +162,14 @@ class Fournisseur extends Societe
 		{
 			dol_syslog("Fournisseur::CreateCategory : Success");
 			return 0;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			dol_syslog("Fournisseur::CreateCategory : Failed (".$this->error.")");
 			return -1;
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Return the suppliers list
 	 *
@@ -183,7 +177,7 @@ class Fournisseur extends Societe
 	 */
 	public function ListArray()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 		global $user;
 
@@ -204,9 +198,7 @@ class Fournisseur extends Societe
 			{
 				$arr[$obj->rowid] = $obj->name;
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			$this->error = $this->db->lasterror();
 		}

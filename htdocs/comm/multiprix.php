@@ -80,7 +80,7 @@ if ($_socid > 0)
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="setpricelevel">';
 
-	dol_fiche_head($head, $tabchoice, $langs->trans("ThirdParty"), 0, 'company');
+	print dol_get_fiche_head($head, $tabchoice, $langs->trans("ThirdParty"), 0, 'company');
 
 	print '<table class="border centpercent tableforfield">';
 
@@ -105,9 +105,9 @@ if ($_socid > 0)
 
 	print "</table>";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
-	print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
+	print '<div align="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
 
 	print "</form>";
 
@@ -152,9 +152,7 @@ if ($_socid > 0)
 		}
 		$db->free($resql);
 		print "</table>";
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

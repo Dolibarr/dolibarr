@@ -53,7 +53,7 @@ if (!$pageid && !empty($websitepagefile))
 }
 if (!is_object($websitepage))
 {
-    $websitepage = new WebsitePage($db);
+	$websitepage = new WebsitePage($db);
 }
 // Define $weblangs
 if (!is_object($weblangs))
@@ -68,25 +68,23 @@ if ($pageid > 0)
 {
 	$websitepage->fetch($pageid);
 
-	$weblangs->setDefaultLang(GETPOSTISSET('lang') ? GETPOST('lang', 'aZ09') : (empty($_COOKIE['weblangs-shortcode']) ? 'auto' : $_COOKIE['weblangs-shortcode']));
+	$weblangs->setDefaultLang(GETPOSTISSET('lang') ? GETPOST('lang', 'aZ09') : (empty($_COOKIE['weblangs-shortcode']) ? 'auto' : preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE['weblangs-shortcode'])));
 	$pagelangs->setDefaultLang($websitepage->lang ? $websitepage->lang : $weblangs->shortlang);
 
-	if (!defined('USEDOLIBARREDITOR') && in_array($websitepage->type_container, array('menu', 'other')))
+	if (!defined('USEDOLIBARREDITOR') && (in_array($websitepage->type_container, array('menu', 'other')) || empty($websitepage->status)))
 	{
 		$weblangs->load("website");
 		http_response_code(404);
-		print '<center><br><br>'.$weblangs->trans("YouTryToAccessToAFileThatIsNotAWebsitePage").'</center>';
+		print '<center><br><br>'.$weblangs->trans("YouTryToAccessToAFileThatIsNotAWebsitePage", $websitepage->pageurl, $websitepage->type_container, $websitepage->status).'</center>';
 		exit;
 	}
 }
 
 if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 	header("X-Content-Type-Options: nosniff");
-	/* TODO Manage allow_frames flag on websitepage.
-	if (empty($websitepage->allow_frames) && empty($conf->global->WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES)) {
+	if (empty($websitepage->allowed_in_frames) && empty($conf->global->WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES)) {
 		header("X-Frame-Options: SAMEORIGIN");
 	}
-	*/
 }
 
 // A lang was forced, so we change weblangs init
@@ -117,9 +115,7 @@ if ($_SERVER['PHP_SELF'] != DOL_URL_ROOT.'/website/index.php')	// If we browsing
 					if (defined('USEDOLIBARRSERVER')) {
 						header("Location: ".DOL_URL_ROOT.'/public/website/index.php?website='.$websitekey.'&pageid='.$newpageid.'&l='.GETPOST('l', 'aZ09'));
 						exit;
-					}
-					else
-					{
+					} else {
 						$newpageref = $obj->pageurl;
 						header("Location: ".(($obj->lang && $obj->lang != $website->lang) ? '/'.$obj->lang.'/' : '/').$newpageref.'.php?l='.GETPOST('l', 'aZ09'));
 						exit;

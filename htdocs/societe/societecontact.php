@@ -36,7 +36,7 @@ $langs->loadLangs(array("orders", "companies"));
 
 $id = GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -68,26 +68,23 @@ if ($action == 'addcontact' && $user->rights->societe->creer)
 {
 	$result = $object->fetch($id);
 
-    if ($result > 0 && $id > 0)
-    {
-    	$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
-  		$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
-    }
+	if ($result > 0 && $id > 0)
+	{
+		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
+	}
 
 	if ($result >= 0)
 	{
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	}
-	else
-	{
+	} else {
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
 			$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
-		}
-		else
-		{
+		} else {
 			$mesg = '<div class="error">'.$object->error.'</div>';
 		}
 	}
@@ -98,10 +95,8 @@ elseif ($action == 'swapstatut' && $user->rights->societe->creer)
 {
 	if ($object->fetch($id))
 	{
-	    $result = $object->swapContactStatus(GETPOST('ligne'));
-	}
-	else
-	{
+		$result = $object->swapContactStatus(GETPOST('ligne'));
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -116,8 +111,7 @@ elseif ($action == 'deletecontact' && $user->rights->societe->creer)
 	{
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	}
-	else {
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -159,22 +153,22 @@ if ($id > 0 || !empty($ref))
 		$soc->fetch($object->socid);
 
 		$head = societe_prepare_head($object);
-		dol_fiche_head($head, 'contact', $langs->trans("ThirdParty"), -1, 'company');
+		print dol_get_fiche_head($head, 'contact', $langs->trans("ThirdParty"), -1, 'company');
 
 		print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-        dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
+		dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
-    	print '<div class="fichecenter">';
+		print '<div class="fichecenter">';
 
-        print '<div class="underbanner clearboth"></div>';
+		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border centpercent">';
 
-    	// Prospect/Customer
-    	/*print '<tr><td class="titlefield">'.$langs->trans('ProspectCustomer').'</td><td>';
+		// Prospect/Customer
+		/*print '<tr><td class="titlefield">'.$langs->trans('ProspectCustomer').'</td><td>';
     	print $object->getLibCustProspStatut();
     	print '</td></tr>';
 
@@ -185,7 +179,7 @@ if ($id > 0 || !empty($ref))
 
 		if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 		{
-		    print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
+			print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 		}
 
 		if ($object->client)
@@ -333,17 +327,13 @@ if ($id > 0 || !empty($ref))
 								print " ".img_warning($langs->trans("SubscriptionLate"));
 							}
 							print '</td>';
-						}
-						else
-						{
+						} else {
 							print '<td class="left nowrap">';
 							if ($objp->subscription == 'yes')
 							{
 								print $langs->trans("SubscriptionNotReceived");
 								if ($objp->statut > 0) print " ".img_warning();
-							}
-							else
-							{
+							} else {
 								print '&nbsp;';
 							}
 							print '</td>';
@@ -356,9 +346,7 @@ if ($id > 0 || !empty($ref))
 				}
 			}
 		}
-	}
-	else
-	{
+	} else {
 		// Contrat non trouve
 		print "ErrorRecordNotFound";
 	}

@@ -168,3 +168,7 @@ OutGoingEmailSetupForEmailing=Настройка на изходяща елек�
 DefaultOutgoingEmailSetup=Настройка на изходящата поща по подразбиране
 Information=Информация
 ContactsWithThirdpartyFilter=Контакти с филтър за контрагент
+Unanswered=Unanswered
+Answered=Отговорен
+IsNotAnAnswer=Is not answer (initial email)
+IsAnAnswer=Is an answer of an initial email

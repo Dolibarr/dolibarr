@@ -31,8 +31,8 @@
 
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
-    print "Error: this template page cannot be called directly as an URL";
-    exit;
+	print "Error: this template page cannot be called directly as an URL";
+	exit;
 }
 
 
@@ -52,35 +52,34 @@ print "<!-- BEGIN PHP TEMPLATE objectline_create.tpl.php -->\n";
 
 $nolinesbefore = (count($this->lines) == 0 || $forcetoshowtitlelines);
 if ($nolinesbefore) {
-    print '<tr class="liste_titre nodrag nodrop">';
-    if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-        print '<td class="linecolnum center"></td>';
-    }
-    print '<td class="linecoldescription minwidth500imp">';
+	print '<tr class="liste_titre nodrag nodrop">';
+	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+		print '<td class="linecolnum center"></td>';
+	}
+	print '<td class="linecoldescription minwidth500imp">';
 	print '<div id="add"></div><span class="hideonsmartphone">'.$langs->trans('AddNewLine').'</span>';
-	// echo $langs->trans("FreeZone");
 	print '</td>';
 	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
-	if ($conf->global->PRODUCT_USE_UNITS)
+	if (!empty($conf->global->PRODUCT_USE_UNITS))
 	{
-	    print '<td class="linecoluseunit left">';
-	    print '<span id="title_units">';
-	    print $langs->trans('Unit');
-	    print '</span></td>';
+		print '<td class="linecoluseunit left">';
+		print '<span id="title_units">';
+		print $langs->trans('Unit');
+		print '</span></td>';
 	}
 	print '<td class="linecolqtyfrozen right">'.$form->textwithpicto($langs->trans('QtyFrozen'), $langs->trans("QuantityConsumedInvariable")).'</td>';
 	print '<td class="linecoldisablestockchange right">'.$form->textwithpicto($langs->trans('DisableStockChange'), $langs->trans('DisableStockChangeHelp')).'</td>';
 	print '<td class="linecollost right">'.$form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')).'</td>';
 	print '<td class="linecoledit" colspan="'.$colspan.'">&nbsp;</td>';
-    print '</tr>';
+	print '</tr>';
 }
 print '<tr class="pair nodrag nodrop nohoverpair'.(($nolinesbefore || $object->element == 'contrat') ? '' : ' liste_titre_create').'">';
 $coldisplay = 0;
 
 // Adds a line numbering column
 if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-    $coldisplay++;
-    echo '<td class="bordertop nobottom linecolnum center"></td>';
+	$coldisplay++;
+	echo '<td class="bordertop nobottom linecolnum center"></td>';
 }
 
 $coldisplay++;
@@ -99,9 +98,7 @@ if (!empty($conf->product->enabled) || !empty($conf->service->enabled))
 	{
 		// hide products in closed warehouse, but show products for internal transfer
 		$form->select_produits(GETPOST('idprod', 'int'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'));
-	}
-	else
-	{
+	} else {
 		$form->select_produits(GETPOST('idprod', 'int'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, '', GETPOST('combinations', 'array'));
 	}
 
@@ -112,11 +109,10 @@ $coldisplay++;
 print '<td class="bordertop nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="'.(GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : 1).'">';
 print '</td>';
 
-if ($conf->global->PRODUCT_USE_UNITS)
+if (!empty($conf->global->PRODUCT_USE_UNITS))
 {
-    $coldisplay++;
+	$coldisplay++;
 	print '<td class="nobottom linecoluseunit left">';
-	print $form->selectUnits($line->fk_unit, "units");
 	print '</td>';
 }
 

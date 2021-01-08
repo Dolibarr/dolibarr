@@ -18,12 +18,14 @@ DefaultForService=Mặc định cho dịch vụ
 DefaultForProduct=Mặc định cho sản phẩm
 CantSuggest=Không thể gợi ý
 AccountancySetupDoneFromAccountancyMenu=Hầu hết các thiết lập của kế toán được thực hiện từ menu %s
-ConfigAccountingExpert=Cấu hình của các chuyên gia kế toán mô-đun
+ConfigAccountingExpert=Configuration of the module accounting (double entry)
 Journalization=Ghi sổ nhật ký
-Journaux=Sổ nhật ký kế toán
+Journals=Sổ nhật ký kế toán
 JournalFinancial=Nhật ký tài chính
 BackToChartofaccounts=Quay trở lại hệ thống tài khoản
 Chartofaccounts=Hệ thống tài khoản
+ChartOfSubaccounts=Chart of individual accounts
+ChartOfIndividualAccountsOfSubsidiaryLedger=Chart of individual accounts of the subsidiary ledger
 CurrentDedicatedAccountingAccount=Tài khoản vãng lai chuyên dụng
 AssignDedicatedAccountingAccount=Tài khoản mới để chỉ định
 InvoiceLabel=Nhãn hóa đơn
@@ -33,8 +35,8 @@ OtherInfo=Thông tin khác
 DeleteCptCategory=Xóa tài khoản kế toán khỏi nhóm
 ConfirmDeleteCptCategory=Bạn có chắc chắn muốn xóa tài khoản kế toán này khỏi nhóm tài khoản kế toán không?
 JournalizationInLedgerStatus=Tình trạng của sổ nhật ký
-AlreadyInGeneralLedger=Đã được ghi nhật ký trong sổ cái
-NotYetInGeneralLedger=Chưa được ghi nhật ký trong sổ cải
+AlreadyInGeneralLedger=Already transferred in accounting journals and ledger
+NotYetInGeneralLedger=Not yet transferred in accouting journals and ledger
 GroupIsEmptyCheckSetup=Nhóm trống rỗng, kiểm tra thiết lập nhóm kế toán đã được cá nhân hóa
 DetailByAccount=Hiển thị chi tiết theo tài khoản
 AccountWithNonZeroValues=Tài khoản có giá trị khác không
@@ -43,7 +45,9 @@ CountriesInEEC=Các nước trong EEC
 CountriesNotInEEC=Các nước không thuộc EEC
 CountriesInEECExceptMe=Các quốc gia trong EEC ngoại trừ %s
 CountriesExceptMe=Tất cả các quốc gia trừ %s
-AccountantFiles=Xuât dữ các chứng từ kế toán
+AccountantFiles=Export source documents
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
+VueByAccountAccounting=View by accounting account
 
 MainAccountForCustomersNotDefined=Tài khoản kế toán chính cho khách hàng không được định nghĩa trong thiết lập
 MainAccountForSuppliersNotDefined=Tài khoản kế toán chính cho các nhà cung cấp không được định nghĩa trong thiết lập
@@ -79,7 +83,7 @@ AccountancyAreaDescAnalyze=BƯỚC %s: Thêm hoặc chỉnh sửa các giao dị
 
 AccountancyAreaDescClosePeriod=BƯỚC %s: Đóng khoảng thời gian để chúng ta không thể sửa đổi trong tương lai.
 
-TheJournalCodeIsNotDefinedOnSomeBankAccount=Một bắt buộc trong thiết lập chưa hoàn tất (mã nhật ký kế toán không được xác định cho tất cả các tài khoản ngân hàng)
+TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup has not been completed (accounting code journal not defined for all bank accounts)
 Selectchartofaccounts=Chọn biểu đồ tài khoản đang hoạt động
 ChangeAndLoad=Thay đổi và tải
 Addanaccount=Thêm một tài khoản kế toán
@@ -89,6 +93,8 @@ SubledgerAccount=Tài khoản sổ phụ
 SubledgerAccountLabel=Nhãn tài khoản sổ phụ
 ShowAccountingAccount=Hiển thị tài khoản kế toán
 ShowAccountingJournal=Hiển thị nhật ký kế toán
+ShowAccountingAccountInLedger=Show accounting account in ledger
+ShowAccountingAccountInJournals=Show accounting account in journals
 AccountAccountingSuggest=Đề xuất tài khoản kế toán
 MenuDefaultAccounts=Tài khoản mặc định
 MenuBankAccounts=Tài khoản ngân hàng
@@ -110,8 +116,9 @@ ExpenseReportsVentilation=Ràng buộc báo cáo chi phí
 CreateMvts=Tạo giao dịch mới
 UpdateMvts=Sửa đổi giao dịch
 ValidTransaction=Xác nhận giao dịch
-WriteBookKeeping=Đăng ký giao dịch trong Sổ Cái
+WriteBookKeeping=Register transactions in accounting
 Bookkeeping=Sổ cái
+BookkeepingSubAccount=Subledger
 AccountBalance=Số dư tài khoản
 ObjectsRef=Tham chiếu đối tượng nguồn
 CAHTF=Tổng số mua từ nhà cung cấp trước thuế
@@ -149,6 +156,8 @@ ACCOUNTING_MANAGE_ZERO=Cho phép quản lý các số không khác nhau ở cu�
 BANK_DISABLE_DIRECT_INPUT=Vô hiệu hóa ghi trực tiếp giao dịch trong tài khoản ngân hàng
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Cho phép xuất dữ liệu bản nháp trong nhật ký
 ACCOUNTANCY_COMBO_FOR_AUX=Bật danh sách kết hợp cho tài khoản công ty con (có thể chậm nếu bạn có nhiều bên thứ ba)
+ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, select period show by default
 
 ACCOUNTING_SELL_JOURNAL=Nhật ký bán hàng
 ACCOUNTING_PURCHASE_JOURNAL=Nhật ký mua hàng
@@ -167,6 +176,8 @@ TransitionalAccount=Tài khoản chuyển khoản ngân hàng chuyển tiếp
 ACCOUNTING_ACCOUNT_SUSPENSE=Tài khoản kế toán chờ
 DONATION_ACCOUNTINGACCOUNT=Tài khoản kế toán cho đăng ký quyên góp.
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Tài khoản kế toán để đăng ký tham gia
+
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Accounting account by default to register customer deposit
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Tài khoản kế toán theo mặc định cho các sản phẩm đã mua (được sử dụng nếu không được xác định trong bảng sản phẩm)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Tài khoản kế toán theo mặc định cho các sản phẩm đã mua trong EEC (được sử dụng nếu không được xác định trong bảng sản phẩm)
@@ -202,16 +213,16 @@ ByPredefinedAccountGroups=Theo nhóm được xác định trước
 ByPersonalizedAccountGroups=Theo nhóm đã cá nhân hóa
 ByYear=Theo năm
 NotMatch=Không được thiết lập
-DeleteMvt=Xóa các dòng Sổ cái
+DeleteMvt=Delete some operation lines from accounting
 DelMonth=Tháng cần xóa
 DelYear=Năm cần xóa
 DelJournal=Nhật ký cần xóa
-ConfirmDeleteMvt=Điều này sẽ xóa tất cả các dòng của Sổ cái cho năm / tháng và / hoặc từ một nhật ký cụ thể (Ít nhất một tiêu chí là bắt buộc). Bạn sẽ phải sử dụng lại tính năng 'Đăng ký trong kế toán' để có bản ghi bị xóa trong sổ cái.
-ConfirmDeleteMvtPartial=Điều này sẽ xóa giao dịch khỏi Sổ Cái (tất cả các dòng liên quan đến cùng một giao dịch sẽ bị xóa)
+ConfirmDeleteMvt=This will delete all operation lines of the accounting for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
+ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all operation lines related to the same transaction will be deleted)
 FinanceJournal=Nhật ký tài chính
 ExpenseReportsJournal=Nhật ký báo cáo chi phí
 DescFinanceJournal=Nhật ký tài chính bao gồm tất cả các loại thanh toán bằng tài khoản ngân hàng
-DescJournalOnlyBindedVisible=Đây là chế độ xem bản ghi được ràng buộc với tài khoản kế toán và có thể được ghi vào Sổ Cái.
+DescJournalOnlyBindedVisible=This is a view of record that are bound to an accounting account and can be recorded into the Journals and Ledger.
 VATAccountNotDefined=Tài khoản cho thuế VAT chưa được xác định
 ThirdpartyAccountNotDefined=Tài khoản cho bên thứ ba chưa được xác định
 ProductAccountNotDefined=Tài khoản cho sản phẩm chưa được xác định
@@ -284,6 +295,7 @@ ShowTutorial=Chương trình hướng dẫn
 NotReconciled=Chưa đối chiếu
 
 ## Admin
+BindingOptions=Binding options
 ApplyMassCategories=Áp dụng cho số một lớn các danh mục
 AddAccountFromBookKeepingWithNoCategories=Tài khoản khả dụng chưa có trong nhóm được cá nhân hóa
 CategoryDeleted=Danh mục cho tài khoản kế toán đã bị xóa
@@ -303,6 +315,9 @@ ErrorAccountingJournalIsAlreadyUse=Nhật ký này đã được sử dụng
 AccountingAccountForSalesTaxAreDefinedInto=Lưu ý: Tài khoản kế toán thuế VAT được xác định trong menu <b>%s</b> - <b>%s</b>
 NumberOfAccountancyEntries=Số lượng mục
 NumberOfAccountancyMovements=Số lượng kết chuyển
+ACCOUNTING_DISABLE_BINDING_ON_SALES=Disable binding & transfer in accountancy on sales (customer invoices will not be taken into account in accounting)
+ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountancy on purchases (vendor invoices will not be taken into account in accounting)
+ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
 ExportDraftJournal=Xuất dữ liệu bản nháp nhật ký
@@ -324,6 +339,8 @@ Modelcsv_configurable=Xuất dữ liệu cấu hình CSV
 Modelcsv_FEC=Xuất dữ liệu FEC
 Modelcsv_Sage50_Swiss=Xuất dữ liệu cho Sage 50 Thụy Sĩ
 Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
+Modelcsv_Gestinumv3=Export for Gestinum (v3)
+Modelcsv_Gestinumv5Export for Gestinum (v5)
 ChartofaccountsId=ID Hệ thống tài khoản
 
 ## Tools - Init accounting account on product / service

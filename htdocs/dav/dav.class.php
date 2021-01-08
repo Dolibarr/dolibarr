@@ -34,14 +34,14 @@ class CdavLib
 
 	private $langs;
 
-    /**
-     * Constructor
-     *
-     * @param   User        $user   user
-     * @param   DoliDB      $db     Database handler
-     * @param   Translate   $langs  translation
-     */
-    public function __construct($user, $db, $langs)
+	/**
+	 * Constructor
+	 *
+	 * @param   User        $user   user
+	 * @param   DoliDB      $db     Database handler
+	 * @param   Translate   $langs  translation
+	 */
+	public function __construct($user, $db, $langs)
 	{
 		$this->user = $user;
 		$this->db = $db;
@@ -88,9 +88,7 @@ class CdavLib
 					LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON (s.rowid = sc.fk_soc)
 					LEFT JOIN '.MAIN_DB_PREFIX.'socpeople AS sp ON (sp.fk_soc = sc.fk_soc AND sp.rowid = a.fk_contact)
 					LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_cdav AS ac ON (a.id = ac.fk_object)';
-		}
-		else
-		{
+		} else {
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON (s.rowid = a.fk_soc)
 					LEFT JOIN '.MAIN_DB_PREFIX.'socpeople AS sp ON (sp.rowid = a.fk_contact)
 					LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_cdav AS ac ON (a.id = ac.fk_object)';
@@ -105,9 +103,7 @@ class CdavLib
 			if ($ouri === false)
 			{
 				$sql .= ' AND a.id = '.intval($oid);
-			}
-			else
-			{
+			} else {
 				$sql .= ' AND (a.id = '.intval($oid).' OR ac.uuidext = \''.$this->db->escape($ouri).'\')';
 			}
 		}
@@ -161,8 +157,7 @@ class CdavLib
 
 		if ($obj->percent == -1 && trim($obj->datep) != '')
 			$type = 'VEVENT';
-		else
-			$type = 'VTODO';
+		else $type = 'VTODO';
 
 		$timezone = date_default_timezone_get();
 
@@ -176,8 +171,7 @@ class CdavLib
 		$caldata .= "DTSTAMP:".gmdate('Ymd\THis', strtotime($obj->lastupd))."Z\n";
 		if ($obj->sourceuid == '')
 			$caldata .= "UID:".$obj->id.'-ev-'.$calid.'-cal-'.constant('CDAV_URI_KEY')."\n";
-		else
-			$caldata .= "UID:".$obj->sourceuid."\n";
+		else $caldata .= "UID:".$obj->sourceuid."\n";
 		$caldata .= "SUMMARY:".$obj->label."\n";
 		$caldata .= "LOCATION:".$location."\n";
 		$caldata .= "PRIORITY:".$obj->priority."\n";
@@ -188,30 +182,23 @@ class CdavLib
 			{
 				if (trim($obj->datep2) != '')
 					$caldata .= "DTEND;VALUE=DATE:".date('Ymd', strtotime($obj->datep2) + 1)."\n";
-				else
-					$caldata .= "DTEND;VALUE=DATE:".date('Ymd', strtotime($obj->datep) + (25 * 3600))."\n";
-			}
-			elseif (trim($obj->datep2) != '')
+				else $caldata .= "DTEND;VALUE=DATE:".date('Ymd', strtotime($obj->datep) + (25 * 3600))."\n";
+			} elseif (trim($obj->datep2) != '')
 				$caldata .= "DUE;VALUE=DATE:".date('Ymd', strtotime($obj->datep2) + 1)."\n";
-		}
-		else
-		{
+		} else {
 			$caldata .= "DTSTART;TZID=".$timezone.":".strtr($obj->datep, array(" "=>"T", ":"=>"", "-"=>""))."\n";
 			if ($type == 'VEVENT')
 			{
 				if (trim($obj->datep2) != '')
 					$caldata .= "DTEND;TZID=".$timezone.":".strtr($obj->datep2, array(" "=>"T", ":"=>"", "-"=>""))."\n";
-				else
-					$caldata .= "DTEND;TZID=".$timezone.":".strtr($obj->datep, array(" "=>"T", ":"=>"", "-"=>""))."\n";
-			}
-			elseif (trim($obj->datep2) != '')
+				else $caldata .= "DTEND;TZID=".$timezone.":".strtr($obj->datep, array(" "=>"T", ":"=>"", "-"=>""))."\n";
+			} elseif (trim($obj->datep2) != '')
 				$caldata .= "DUE;TZID=".$timezone.":".strtr($obj->datep2, array(" "=>"T", ":"=>"", "-"=>""))."\n";
 		}
 		$caldata .= "CLASS:PUBLIC\n";
 		if ($obj->transparency == 1)
 			$caldata .= "TRANSP:TRANSPARENT\n";
-		else
-			$caldata .= "TRANSP:OPAQUE\n";
+		else $caldata .= "TRANSP:OPAQUE\n";
 
 		if ($type == 'VEVENT')
 			$caldata .= "STATUS:CONFIRMED\n";
@@ -219,8 +206,7 @@ class CdavLib
 			$caldata .= "STATUS:NEEDS-ACTION\n";
 		elseif ($obj->percent == 100)
 			$caldata .= "STATUS:COMPLETED\n";
-		else
-		{
+		else {
 			$caldata .= "STATUS:IN-PROCESS\n";
 			$caldata .= "PERCENT-COMPLETE:".$obj->percent."\n";
 		}
@@ -245,15 +231,15 @@ class CdavLib
 		return $caldata;
 	}
 
-    /**
-     * getFullCalendarObjects
-     *
-     * @param int	 	$calendarId			Calendar id
-     * @param int		$bCalendarData		Add calendar data
-     * @return array|string[][]
-     */
-    public function getFullCalendarObjects($calendarId, $bCalendarData)
-    {
+	/**
+	 * getFullCalendarObjects
+	 *
+	 * @param int	 	$calendarId			Calendar id
+	 * @param int		$bCalendarData		Add calendar data
+	 * @return array|string[][]
+	 */
+	public function getFullCalendarObjects($calendarId, $bCalendarData)
+	{
 		$calid = ($calendarId * 1);
 		$calevents = array();
 
@@ -284,9 +270,7 @@ class CdavLib
 						'size' => strlen($calendardata),
 						'component' => strpos($calendardata, 'BEGIN:VEVENT') > 0 ? 'vevent' : 'vtodo',
 					);
-				}
-				else
-				{
+				} else {
 					$calevents[] = array(
 						// 'calendardata' => $calendardata,  not necessary because etag+size are present
 						'uri' => $obj->id.'-ev-'.constant('CDAV_URI_KEY'),

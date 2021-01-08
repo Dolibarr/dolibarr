@@ -83,6 +83,8 @@ BoxTitleLatestModifiedSupplierOrders=Orders van leveranciers: laatste %s gewijzi
 BoxTitleLastModifiedCustomerBills=Klantfacturen: laatste %s gewijzigd
 BoxTitleLastModifiedCustomerOrders=Klantorders: laatste %s gewijzigd
 BoxTitleLastModifiedPropals=Laatste %s aangepaste offertes
+BoxTitleLatestModifiedJobPositions=Latest %s modified jobs
+BoxTitleLatestModifiedCandidatures=Latest %s modified candidatures
 ForCustomersInvoices=Afnemersfacturen
 ForCustomersOrders=Klantenbestellingen
 ForProposals=Zakelijke voorstellen / Offertes
@@ -100,3 +102,5 @@ SuspenseAccountNotDefined=Suspense-account is niet gedefinieerd
 BoxLastCustomerShipments=Laatste klantzendingen
 BoxTitleLastCustomerShipments=Laatste %s klantverzendingen
 NoRecordedShipments=Geen geregistreerde klantverzending
+# Pages
+AccountancyHome=Boekhouden

@@ -168,3 +168,7 @@ OutGoingEmailSetupForEmailing=Outgoing email setup (for module %s)
 DefaultOutgoingEmailSetup=Varsayılan giden e-posta kurulumu
 Information=Bilgi
 ContactsWithThirdpartyFilter=Üçüncü parti filtreli kişiler
+Unanswered=Unanswered
+Answered=Cevaplandı
+IsNotAnAnswer=Is not answer (initial email)
+IsAnAnswer=Is an answer of an initial email

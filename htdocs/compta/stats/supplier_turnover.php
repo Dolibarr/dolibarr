@@ -59,7 +59,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 	{
 		// We define date_start and date_end
 		$year_end = $year_start + ($nbofyear - 1);
-		$month_start = GETPOST("month") ?GETPOST("month") : ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
+		$month_start = GETPOST("month") ? GETPOST("month", 'int') : ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
 		if (!GETPOST('month'))
 		{
 			if (!GETPOST("year") && $month_start > $month_current)
@@ -69,8 +69,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 			}
 			$month_end = $month_start - 1;
 			if ($month_end < 1) $month_end = 12;
-		}
-		else $month_end = $month_start;
+		} else $month_end = $month_start;
 		$date_start = dol_get_first_day($year_start, $month_start, false); $date_end = dol_get_last_day($year_end, $month_end, false);
 	}
 	if ($q == 1) { $date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false); }
@@ -114,32 +113,30 @@ if ($modecompta == "CREANCES-DETTES")
 {
 	$name = $langs->trans("PurchaseTurnover");
 	$calcmode = $langs->trans("CalcModeDebt");
-	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
-	$calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">', '</a>').')';
+	$calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '{link1}', '{link2}').')';
+	$calcmode = str_replace('{link1}', '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">', $calcmode);
+	$calcmode = str_replace('{link2}', '</a>', $calcmode);
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesPurchaseTurnoverDue");
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
-}
-elseif ($modecompta == "RECETTES-DEPENSES")
+} elseif ($modecompta == "RECETTES-DEPENSES")
 {
 	$name = $langs->trans("PurchaseTurnoverCollected");
 	$calcmode = $langs->trans("CalcModeEngagement");
-	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
-	//$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPINGCOLLECTED">','</a>').')';
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesPurchaseTurnoverIn");
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
-}
-elseif ($modecompta == "BOOKKEEPING")
+} elseif ($modecompta == "BOOKKEEPING")
 {
 	$name = $langs->trans("PurchaseTurnover");
 	$calcmode = $langs->trans("CalcModeBookkeeping");
-	$calcmode .= '<br>('.$langs->trans("SeeReportInDueDebtMode", '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">', '</a>').')';
-	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
+	$calcmode .= '<br>('.$langs->trans("SeeReportInDueDebtMode", '{link1}', '{link2}').')';
+	$calcmode = str_replace('{link1}', '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">', $calcmode);
+	$calcmode = str_replace('{link2}', '</a>', $calcmode);
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesPurchaseTurnoverTotalPurchaseJournal");
@@ -153,7 +150,7 @@ report_header($name, $namelink, $period, $periodlink, $description, $builddate, 
 
 if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
-    print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 
 
@@ -165,8 +162,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql .= " AND f.type IN (0,2)";
 	$sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 	if ($socid) $sql .= " AND f.fk_soc = ".$socid;
-}
-elseif ($modecompta == "RECETTES-DEPENSES")
+} elseif ($modecompta == "RECETTES-DEPENSES")
 {
 	$sql = "SELECT date_format(p.datep,'%Y-%m') as dm, sum(pf.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
@@ -176,8 +172,7 @@ elseif ($modecompta == "RECETTES-DEPENSES")
 	$sql .= " AND pf.fk_facturefourn = f.rowid";
 	$sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 	if ($socid) $sql .= " AND f.fk_soc = ".$socid;
-}
-elseif ($modecompta == "BOOKKEEPING")
+} elseif ($modecompta == "BOOKKEEPING")
 {
 	$sql = "SELECT date_format(b.doc_date,'%Y-%m') as dm, sum(b.debit) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b, ".MAIN_DB_PREFIX."accounting_journal as aj";
@@ -211,8 +206,7 @@ if ($result)
 		$i++;
 	}
 	$db->free($result);
-}
-else {
+} else {
 	dol_print_error($db);
 }
 
@@ -229,9 +223,9 @@ for ($annee = $year_start; $annee <= $year_end; $annee++)
 	else print '<td align="center" width="10%" colspan="2" class="borderrightlight">';
 	if ($modecompta != 'BOOKKEEPING') print '<a href="supplier_turnover_by_thirdparty.php?year='.$annee.($modecompta ? '&modecompta='.$modecompta : '').'">';
 	print $annee;
-    if ($conf->global->SOCIETE_FISCAL_MONTH_START > 1) print '-'.($annee + 1);
-    if ($modecompta != 'BOOKKEEPING') print '</a>';
-    print '</td>';
+	if ($conf->global->SOCIETE_FISCAL_MONTH_START > 1) print '-'.($annee + 1);
+	if ($modecompta != 'BOOKKEEPING') print '</a>';
+	print '</td>';
 	if ($annee != $year_end) print '<td width="15">&nbsp;</td>';
 }
 print '</tr>';
@@ -289,11 +283,8 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++)
 				{
 					$now_show_delta = 1; // On a trouve le premier mois de la premiere annee generant du chiffre.
 					print '<a href="supplier_turnover_by_thirdparty.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price($cum_ht[$case], 1).'</a>';
-				}
-				else
-				{
-					if ($minyearmonth < $case && $case <= max($maxyearmonth, $nowyearmonth)) { print '0'; }
-					else { print '&nbsp;'; }
+				} else {
+					if ($minyearmonth < $case && $case <= max($maxyearmonth, $nowyearmonth)) { print '0'; } else { print '&nbsp;'; }
 				}
 				print "</td>";
 			}
@@ -306,11 +297,8 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++)
 				if ($modecompta != 'BOOKKEEPING') print '<a href="supplier_turnover_by_thirdparty.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">';
 				print price($cum[$case], 1);
 				if ($modecompta != 'BOOKKEEPING') print '</a>';
-			}
-			else
-			{
-				if ($minyearmonth < $case && $case <= max($maxyearmonth, $nowyearmonth)) { print '0'; }
-				else { print '&nbsp;'; }
+			} else {
+				if ($minyearmonth < $case && $case <= max($maxyearmonth, $nowyearmonth)) { print '0'; } else { print '&nbsp;'; }
 			}
 			print "</td>";
 
@@ -340,12 +328,9 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++)
 				{
 					print '<td class="borderrightlight right">-</td>';
 				}
-			}
-			else
-			{
+			} else {
 				print '<td class="borderrightlight right">';
-				if ($minyearmonth <= $case && $case <= $maxyearmonth) { print '-'; }
-				else { print '&nbsp;'; }
+				if ($minyearmonth <= $case && $case <= $maxyearmonth) { print '-'; } else { print '&nbsp;'; }
 				print '</td>';
 			}
 
@@ -368,9 +353,7 @@ for ($annee = $year_start; $annee <= $year_end; $annee++)
 		if ($total_ht[$annee] || ($annee >= $minyear && $annee <= max($nowyear, $maxyear)))
 		{
 			print '<td class="nowrap right">'.($total_ht[$annee] ?price($total_ht[$annee]) : "0")."</td>";
-		}
-		else
-		{
+		} else {
 			print '<td>&nbsp;</td>';
 		}
 	}
@@ -379,9 +362,7 @@ for ($annee = $year_start; $annee <= $year_end; $annee++)
 	if ($total[$annee] || ($annee >= $minyear && $annee <= max($nowyear, $maxyear)))
 	{
 		print '<td class="nowrap right">'.($total[$annee] ?price($total[$annee]) : "0")."</td>";
-	}
-	else
-	{
+	} else {
 		print '<td>&nbsp;</td>';
 	}
 
@@ -404,12 +385,9 @@ for ($annee = $year_start; $annee <= $year_end; $annee++)
 		{
 			print '<td class="borderrightlight right">+0%</td>';
 		}
-	}
-	else
-	{
+	} else {
 		print '<td class="borderrightlight right">';
-		if ($total[$annee] || ($minyear <= $annee && $annee <= max($nowyear, $maxyear))) { print '-'; }
-		else { print '&nbsp;'; }
+		if ($total[$annee] || ($minyear <= $annee && $annee <= max($nowyear, $maxyear))) { print '-'; } else { print '&nbsp;'; }
 		print '</td>';
 	}
 

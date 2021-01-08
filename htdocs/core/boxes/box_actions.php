@@ -32,20 +32,20 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_actions extends ModeleBoxes
 {
-    public $boxcode = "lastactions";
-    public $boximg = "object_action";
-    public $boxlabel = "BoxLastActions";
-    public $depends = array("agenda");
+	public $boxcode = "lastactions";
+	public $boximg = "object_action";
+	public $boxlabel = "BoxLastActions";
+	public $depends = array("agenda");
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $param;
+	public $enabled = 1;
 
-    public $info_box_head = array();
-    public $info_box_contents = array();
+	public $info_box_head = array();
+	public $info_box_contents = array();
 
 
 	/**
@@ -54,20 +54,22 @@ class box_actions extends ModeleBoxes
 	 *  @param  DoliDB	$db      	Database handler
 	 *  @param	string	$param		More parameters
 	 */
-	public function __construct($db, $param = '')
+	public function __construct($db, $param)
 	{
-	    global $user;
+		global $conf, $user;
 
-	    $this->db = $db;
+		$this->db = $db;
 
-	    $this->hidden = !($user->rights->agenda->myactions->read);
+		$this->enabled = $conf->agenda->enabled;
+
+		$this->hidden = !($user->rights->agenda->myactions->read);
 	}
 
 	/**
-     *  Load data for box to show them later
-     *
-     *  @param	int		$max        Maximum number of records to load
-     *  @return	void
+	 *  Load data for box to show them later
+	 *
+	 *  @param	int		$max        Maximum number of records to load
+	 *  @return	void
 	 */
 	public function loadBox($max = 5)
 	{
@@ -75,25 +77,25 @@ class box_actions extends ModeleBoxes
 
 		$this->max = $max;
 
-        include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-        include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-        $societestatic = new Societe($this->db);
-        $actionstatic = new ActionComm($this->db);
+		include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+		$societestatic = new Societe($this->db);
+		$actionstatic = new ActionComm($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastActionsToDo", $max));
 
-        if ($user->rights->agenda->myactions->read) {
+		if ($user->rights->agenda->myactions->read) {
 			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage";
-            $sql .= ", ta.code";
-            $sql .= ", ta.libelle as type_label";
-            $sql .= ", s.nom as name";
-            $sql .= ", s.rowid as socid";
-            $sql .= ", s.code_client";
+			$sql .= ", ta.code";
+			$sql .= ", ta.libelle as type_label";
+			$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+			$sql .= ", s.code_client, s.code_compta, s.client";
+			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm AS ta, ".MAIN_DB_PREFIX."actioncomm AS a";
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 			$sql .= " WHERE a.fk_action = ta.id";
-			$sql .= " AND a.entity = ".$conf->entity;
+			$sql .= " AND a.entity IN (".getEntity('actioncomm').")";
 			$sql .= " AND a.percent >= 0 AND a.percent < 100";
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".$user->id.")";
 			if ($user->socid)   $sql .= " AND s.rowid = ".$user->socid;
@@ -101,82 +103,94 @@ class box_actions extends ModeleBoxes
 			$sql .= " ORDER BY a.datec DESC";
 			$sql .= $this->db->plimit($max, 0);
 
-			dol_syslog("Box_actions::loadBox", LOG_DEBUG);
+			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
 			$result = $this->db->query($sql);
-            if ($result) {
+			if ($result) {
 				$now = dol_now();
 				$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
 
 				$num = $this->db->num_rows($result);
+
 				$line = 0;
-                while ($line < $num) {
+				while ($line < $num) {
 					$late = '';
 					$objp = $this->db->fetch_object($result);
 					$datelimite = $this->db->jdate($objp->dp);
-                    $actionstatic->id = $objp->id;
-                    $actionstatic->label = $objp->label;
-                    $actionstatic->type_label = $objp->type_label;
-                    $actionstatic->code = $objp->code;
-                    $societestatic->id = $objp->socid;
-                    $societestatic->name = $objp->name;
-                    $societestatic->code_client = $objp->code_client;
 
-                    if ($objp->percentage >= 0 && $objp->percentage < 100 && $datelimite < ($now - $delay_warning))
-                        $late = img_warning($langs->trans("Late"));
+					$actionstatic->id = $objp->id;
+					$actionstatic->label = $objp->label;
+					$actionstatic->type_label = $objp->type_label;
+					$actionstatic->code = $objp->code;
+
+					$societestatic->id = $objp->socid;
+					$societestatic->name = $objp->name;
+					//$societestatic->name_alias = $objp->name_alias;
+					$societestatic->code_client = $objp->code_client;
+					$societestatic->code_compta = $objp->code_compta;
+					$societestatic->client = $objp->client;
+					$societestatic->logo = $objp->logo;
+					$societestatic->email = $objp->email;
+					$societestatic->entity = $objp->entity;
+
+					if ($objp->percentage >= 0 && $objp->percentage < 100 && $datelimite < ($now - $delay_warning))
+						$late = img_warning($langs->trans("Late"));
 
 					//($langs->transnoentities("Action".$objp->code)!=("Action".$objp->code) ? $langs->transnoentities("Action".$objp->code) : $objp->label)
 					$label = empty($objp->label) ? $objp->type_label : $objp->label;
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => '',
-                        'text' => $actionstatic->getNomUrl(1),
-                        'text2'=> $late,
-                        'asis' => 1,
-                    );
+					$this->info_box_contents[$line][0] = array(
+						'td' => '',
+						'text' => $actionstatic->getNomUrl(1),
+						'text2'=> $late,
+						'asis' => 1
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => '',
-                        'text' => ($societestatic->id > 0 ? $societestatic->getNomUrl(1) : ''),
-                        'asis' => 1,
-                    );
+					$this->info_box_contents[$line][1] = array(
+						'td' => '',
+						'text' => ($societestatic->id > 0 ? $societestatic->getNomUrl(1) : ''),
+						'asis' => 1
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="nowrap left"',
-                        'text' => dol_print_date($datelimite, "dayhour"),
-                    );
+					$this->info_box_contents[$line][2] = array(
+						'td' => 'class="nowrap left"',
+						'text' => dol_print_date($datelimite, "dayhour"),
+						'asis' => 1
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right"',
-                        'text' => ($objp->percentage >= 0 ? $objp->percentage.'%' : ''),
-                    );
+					$this->info_box_contents[$line][3] = array(
+						'td' => 'class="right"',
+						'text' => ($objp->percentage >= 0 ? $objp->percentage.'%' : ''),
+						'asis' => 1
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right" width="18"',
-                        'text' => $actionstatic->LibStatut($objp->percentage, 3),
-                    );
+					$this->info_box_contents[$line][4] = array(
+						'td' => 'class="right" width="18"',
+						'text' => $actionstatic->LibStatut($objp->percentage, 3),
+						'asis' => 1
+					);
 
-                    $line++;
-                }
+					$line++;
+				}
 
-                if ($num == 0)
-                    $this->info_box_contents[$line][0] = array(
-                        'td' => 'class="center"',
-                        'text'=>$langs->trans("NoActionsToDo"),
-                    );
+				if ($num == 0)
+					$this->info_box_contents[$line][0] = array(
+						'td' => 'class="center opacitymedium"',
+						'text'=>$langs->trans("NoActionsToDo")
+					);
 
-                $this->db->free($result);
-            } else {
-                $this->info_box_contents[0][0] = array(
-                    'td' => '',
-                    'maxlength'=>500,
-                    'text' => ($this->db->error().' sql='.$sql),
-                );
-            }
-        } else {
-            $this->info_box_contents[0][0] = array(
-                'td' => 'class="nohover opacitymedium left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed")
-            );
+				$this->db->free($result);
+			} else {
+				$this->info_box_contents[0][0] = array(
+					'td' => '',
+					'maxlength'=>500,
+					'text' => ($this->db->error().' sql='.$sql)
+				);
+			}
+		} else {
+			$this->info_box_contents[0][0] = array(
+				'td' => 'class="nohover opacitymedium left"',
+				'text' => $langs->trans("ReadPermissionNotAllowed")
+			);
 		}
 	}
 
@@ -188,13 +202,13 @@ class box_actions extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    public function showBox($head = null, $contents = null, $nooutput = 0)
-    {
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
 		global $langs, $conf;
-		$out = parent::showBox($this->info_box_head, $this->info_box_contents);
+		$out = parent::showBox($this->info_box_head, $this->info_box_contents, 1);
 
-        if (!empty($conf->global->SHOW_DIALOG_HOMEPAGE))
-        {
+		if (!empty($conf->global->SHOW_DIALOG_HOMEPAGE))
+		{
 			$actioncejour = false;
 			$contents = $this->info_box_contents;
 			$nblines = count($contents);
@@ -244,9 +258,7 @@ class box_actions extends ModeleBoxes
 					$out .= '}, '.($conf->global->SHOW_DIALOG_HOMEPAGE * 1000).');';
 				}
 				$out .= '</script>';
-			}
-			else
-			{
+			} else {
 				$out .= '<script>';
 				$out .= '$("#dialogboxaction").dialog({ autoOpen: false });';
 				$out .= '</script>';
@@ -257,5 +269,5 @@ class box_actions extends ModeleBoxes
 		else print $out;
 
 		return '';
-    }
+	}
 }

@@ -37,9 +37,9 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	public $name = 'Aquarium';
 
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	public $prefixcustomeraccountancycode;
@@ -54,11 +54,11 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 */
 	public function __construct()
 	{
-	    global $conf;
+		global $conf;
 		if (!isset($conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER) || trim($conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER) == '') $conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER = '411';
-        if (!isset($conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER) || trim($conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER) == '') $conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER = '401';
+		if (!isset($conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER) || trim($conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER) == '') $conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER = '401';
 		$this->prefixcustomeraccountancycode = $conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER;
-	    $this->prefixsupplieraccountancycode = $conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER;
+		$this->prefixsupplieraccountancycode = $conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER;
 	}
 
 
@@ -70,12 +70,12 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 */
 	public function info($langs)
 	{
-	    global $conf;
-	    global $form;
+		global $conf;
+		global $form;
 
 		$langs->load("companies");
 
-        $tooltip = '';
+		$tooltip = '';
 		$texte = '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
@@ -85,16 +85,18 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		$s1 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value1" value="'.$conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER.'">', $tooltip, 1, 1);
 		$s2 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value2" value="'.$conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER.'">', $tooltip, 1, 1);
 		$texte .= '<tr><td>';
-		$texte .= $langs->trans("ModuleCompanyCodeCustomer".$this->name, $s2)."<br>\n";
-		$texte .= $langs->trans("ModuleCompanyCodeSupplier".$this->name, $s1)."<br>\n";
+		// trans remove html entities
+		$texte .= $langs->trans("ModuleCompanyCodeCustomer".$this->name, '{s2}')."<br>\n";
+		$texte .= $langs->trans("ModuleCompanyCodeSupplier".$this->name, '{s1}')."<br>\n";
+		$texte = str_replace(array('{s1}', '{s2}'), array($s1, $s2), $texte);
 		$texte .= "<br>\n";
 		if (!isset($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL) || !empty($conf->global->$conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL)) $texte .= $langs->trans('RemoveSpecialChars').' = '.yn(1)."<br>\n";
 		//if (! empty($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA)) $texte.=$langs->trans('COMPANY_AQUARIUM_REMOVE_ALPHA').' = '.yn($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA)."<br>\n";
 		if (!empty($conf->global->COMPANY_AQUARIUM_CLEAN_REGEX))  $texte .= $langs->trans('COMPANY_AQUARIUM_CLEAN_REGEX').' = '.$conf->global->COMPANY_AQUARIUM_CLEAN_REGEX."<br>\n";
 		$texte .= '</td>';
 		$texte .= '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
-        $texte .= '</tr></table>';
-        $texte .= '</form>';
+		$texte .= '</tr></table>';
+		$texte .= '</form>';
 
 		return $texte;
 	}
@@ -111,13 +113,13 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	{
 		$s = '';
 		$s .= $this->prefixcustomeraccountancycode.'CUSTCODE';
-	    $s .= "<br>\n";
-	    $s .= $this->prefixsupplieraccountancycode.'SUPPCODE';
-	    return $s;
+		$s .= "<br>\n";
+		$s .= $this->prefixsupplieraccountancycode.'SUPPCODE';
+		return $s;
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Set accountancy account code for a third party into this->code
 	 *
@@ -128,7 +130,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 */
 	public function get_code($db, $societe, $type = '')
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		$i = 0;
@@ -141,14 +143,11 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		{
 			$codetouse = (!empty($societe->code_client) ? $societe->code_client : 'CUSTCODE');
 			$prefix = $this->prefixcustomeraccountancycode;
-		}
-		elseif ($type == 'supplier')
+		} elseif ($type == 'supplier')
 		{
 			$codetouse = (!empty($societe->code_fournisseur) ? $societe->code_fournisseur : 'SUPPCODE');
 			$prefix = $this->prefixsupplieraccountancycode;
-		}
-		else
-		{
+		} else {
 			$this->error = 'Bad value for parameter type';
 			return -1;
 		}
@@ -171,9 +170,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		if (!$is_dispo)
 		{
 			$this->code = $codetouse;
-		}
-		else
-		{
+		} else {
 			// Pour retour
 			$this->code = $codetouse;
 		}
@@ -210,15 +207,11 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 			{
 				dol_syslog("mod_codecompta_aquarium::verif code '".$code."' available");
 				return 1; // Dispo
-			}
-			else
-			{
+			} else {
 				dol_syslog("mod_codecompta_aquarium::verif code '".$code."' not available");
 				return 0; // Non dispo
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $db->error()." sql=".$sql;
 			return -1; // Erreur
 		}

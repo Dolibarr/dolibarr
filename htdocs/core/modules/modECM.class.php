@@ -32,12 +32,12 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 class modECM extends DolibarrModules
 {
 
-    /**
-     *   Constructor. Define names, constants, directories, boxes, permissions
-     *
-     *   @param      DoliDB		$db      Database handler
-    */
-    public function __construct($db)
+	/**
+	 *   Constructor. Define names, constants, directories, boxes, permissions
+	 *
+	 *   @param      DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
 	{
 		$this->db = $db;
 
@@ -86,10 +86,10 @@ class modECM extends DolibarrModules
 
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
 		// Example:
-        //$this->boxes[$r][1] = "myboxa.php";
-    	//$r++;
-        //$this->boxes[$r][1] = "myboxb.php";
-    	//$r++;
+		//$this->boxes[$r][1] = "myboxa.php";
+		//$r++;
+		//$this->boxes[$r][1] = "myboxb.php";
+		//$r++;
 
 		// Permissions
 		$this->rights_class = 'ecm'; // Permission key
@@ -117,7 +117,7 @@ class modECM extends DolibarrModules
 		$this->rights[$r][4] = 'setup';
 
 
-        // Menus
+		// Menus
 		//------
 		$this->menus = array(); // List of menus to add
 		$r = 0;

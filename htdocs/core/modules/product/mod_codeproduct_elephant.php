@@ -55,9 +55,9 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	public $code_null; // Code facultatif
 
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
@@ -86,14 +86,14 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	}
 
 
-    /**
-     *  Return description of module
-     *
-     *  @param	Translate	$langs		Object langs
-     *  @return string      			Description of module
-     */
-    public function info($langs)
-    {
+	/**
+	 *  Return description of module
+	 *
+	 *  @param	Translate	$langs		Object langs
+	 *  @return string      			Description of module
+	 */
+	public function info($langs)
+	{
 		global $conf, $mc;
 		global $form;
 
@@ -131,7 +131,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		$texte .= '</form>';
 
 		return $texte;
-    }
+	}
 
 
 	/**
@@ -142,7 +142,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return string example
 	 */
-    public function getExample($langs, $objproduct = 0, $type = -1)
+	public function getExample($langs, $objproduct = 0, $type = -1)
 	{
 		if ($type == 0 || $type == -1)
 		{
@@ -207,13 +207,11 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		{
 			$field = 'ref';
 			//$where = ' AND client in (1,2)';
-		}
-		elseif ($type == 1)
+		} elseif ($type == 1)
 		{
 			$field = 'ref';
 			//$where = ' AND fournisseur = 1';
-		}
-		else return -1;
+		} else return -1;
 
 		$now = dol_now();
 
@@ -228,7 +226,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *   Check if mask/numbering use prefix
 	 *
@@ -236,7 +234,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 */
 	public function verif_prefixIsUsed()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		$mask = $conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT;
@@ -275,13 +273,10 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))
 		{
 			$result = 0;
-		}
-		elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)))
+		} elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)))
 		{
 			$result = -2;
-		}
-		else
-		{
+		} else {
 			// Get Mask value
 			$mask = '';
 			if ($type == 0) $mask = empty($conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT) ? '' : $conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT;
@@ -305,7 +300,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Renvoi si un code est pris ou non (par autre tiers)
 	 *
@@ -316,9 +311,9 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 */
 	public function verif_dispo($db, $code, $product)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$sql = "SELECT ref FROM ".MAIN_DB_PREFIX."product";
-		$sql .= " WHERE ref = '".$code."'";
+		$sql .= " WHERE ref = '".$db->escape($code)."'";
 		if ($product->id > 0) $sql .= " AND rowid <> ".$product->id;
 
 		$resql = $db->query($sql);
@@ -327,14 +322,10 @@ class mod_codeproduct_elephant extends ModeleProductCode
 			if ($db->num_rows($resql) == 0)
 			{
 				return 0;
-			}
-			else
-			{
+			} else {
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			return -2;
 		}
 	}

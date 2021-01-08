@@ -48,7 +48,6 @@ DisableJavascript=Deshabilitar funciones JavaScript y Ajax
 DisableJavascriptNote=Nota: Para propósito de prueba o depuración. Para optimización para una persona invidente o navegadores de texto, tu podrías  preferir usar el ajuste en el perfil de usuario
 UseSearchToSelectCompanyTooltip=Asi mismo si tu tienes un gran número de terceras partes (> 100 000), puedes incrementar la velocidad al establecer la constante COMPANY_DONOTSEARCH_ANYWHERE to 1 en Configuración->Otro. La búsqueda entonces será limitada al inicio de la cadena.
 DelaiedFullListToSelectCompany=Esperar hasta que una tecla sea presionada antes de cargar contenido del listado desplegable de terceros.<br>Esto podria incrementar el desempeño si tu tienes un gran numero de terceros, pero no se recomienda.
-DelaiedFullListToSelectContact=Esperar hasta que una tecla sea presionada antes de cargar contenido del listado desplegable de contactos.<br>Esto podria incrementar el desempeño si tu tienes un gran numero de contactos, pero no se recomienda)
 NumberOfKeyToSearch=Numero de caracteres para activar la búsqueda %s
 NumberOfBytes=Numero de Octetos
 SearchString=Cadena de búsqueda
@@ -159,6 +158,7 @@ DOLISTOREdescriptionLong=En vez de cambiar al sitio <a href="https://www.dolisto
 NotCompatible=Este módulo no parece ser compatible con tu Dolibarr %s (Min %s- Max %s).
 CompatibleAfterUpdate=Este  módulo requiere una actualización de tu Dolibarr %s (Min %s - Max %s).
 SeeInMarkerPlace=Ver en Market place
+SeeSetupOfModule=Ver configuración del módulo %s
 AchatTelechargement=Comprar / Descargar
 GoModuleSetupArea=Para implementar/instalar un nuevo módulo, vaya al área de configuración del Módulo: <a href="%s"> %s </a>.
 DoliStoreDesc=DoliStore, el lugar oficial para módulos externos Dolibarr ERP / CRM
@@ -188,7 +188,6 @@ HelpCenterDesc2=Algunos de estos recursos solo están disponibles en <b>inglés<
 CurrentMenuHandler=Administrador de menú actual
 Emails=Correos electrónicos
 EMailsSetup=Configuración de correos electrónicos
-EMailsDesc=Esta página le permite sobrescribir sus parámetros PHP predeterminados para el envío de correo electrónico. En la mayoría de los casos en el sistema operativo Unix / Linux, la configuración de PHP es correcta y estos parámetros son innecesarios.
 MAIN_MAIL_SMTP_PORT=Puerto SMTP / SMTPS (valor predeterminado en php.ini: <b>%s</b> )
 MAIN_MAIL_SMTP_SERVER=Host SMTP / SMTPS (valor predeterminado en php.ini: <b>%s</b> )
 MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike=Puerto SMTP / SMTPS (no definido en PHP en sistemas tipo Unix)
@@ -224,16 +223,17 @@ DisableLinkToHelpCenter=Ocultar enlace &quot; <b>Necesita ayuda o soporte</b> &q
 DisableLinkToHelp=Ocultar enlace a ayuda en línea &quot; <b>%s</b> &quot;
 WarningSettingSortOrder=Advertencia, establecer un orden predeterminado puede resultar en un error técnico al pasar a la página de lista si "campo" es un campo desconocido. Si experimenta un error de este tipo, vuelva a esta página para eliminar el orden predeterminado y restaurar el comportamiento predeterminado.
 Module20Name=Propuestas
+Module25Name=Ordenes de venta
 Module30Name=Facturas
 Module40Name=Vendedores
 DictionaryAccountancyJournal=Diarios de contabilidad
 DictionarySocialNetworks=Redes Sociales
-DictionaryProspectStatus=Estatus del cliente potencial
 Upgrade=Actualizar
 LDAPFieldFirstName=Nombre(s)
 AGENDA_SHOW_LINKED_OBJECT=Mostrar objeto vinculado en la vista de agenda
 ConfFileMustContainCustom=Instalar o construir un módulo externo desde la aplicación necesita guardar los archivos del módulo en el directorio <strong> %s </strong>. Para que este directorio sea procesado por Dolibarr, debe configurar su <strong> conf/conf.php </strong> para agregar las 2 líneas de directiva: <strong> $dolibarr_main_url_root_alt='/custom'; </strong> <br> <strong> $dolibarr_main_document_root_alt='%s/custom'; </strong>
 MailToSendProposal=Propuestas de clientes
 MailToSendInvoice=Facturas de clientes
+MailToSendSupplierOrder=Ordenes de compra
 OperationParamDesc=Define the values to use for the object of the action, or how to extract values. For example:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
 EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing thirdparty in your database. The found (or created) thirdparty will be used for following actions that need it. In the parameter field you can use for example 'EXTRACT:BODY:Name:\\s([^\\s]*)' if you want to extract the name of the thirdparty from a string 'Name: name to find' found into the body.

@@ -200,8 +200,10 @@ class BankAccountTest extends PHPUnit\Framework\TestCase
         */
 
         $localobject->info($localobject->id);
+
+        $result = $localobject->needIBAN();
         //print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
-        //$this->assertNotEquals($localobject->date_creation, '');
+        $this->assertEquals(1, $result);
 
         return $localobject->id;
     }

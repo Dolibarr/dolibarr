@@ -57,7 +57,7 @@ if ($_GET["id"])
 
 	$head = stock_prepare_head($entrepot);
 
-	dol_fiche_head($head, 'value', $langs->trans("Warehouse"), 0, 'stock');
+	print dol_get_fiche_head($head, 'value', $langs->trans("Warehouse"), 0, 'stock');
 
 
 	print '<table class="border centpercent">';
@@ -130,9 +130,7 @@ if ($_GET["id"])
 			$url = DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.$entrepot->id.'-'.($year - 1).'.png';
 			print '<br><img src="'.$url.'" alt="Valorisation du stock annee '.($year - 1).'">';
 		}
-	}
-	else
-	{
+	} else {
 		$langs->load("errors");
 		print $langs->trans("FeatureNotYetAvailable");
 	}

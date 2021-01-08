@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
 NumberingShort=N °
-BirthdayDate=Date d'anniversaire
 BirthdayAlertOn=Alerte d'anniversaire active
 BirthdayAlertOff=Alerte d'anniversaire inactive
 PreviousMonthOfInvoice=Mois précédent (numéro 1-12) de la date de facturation

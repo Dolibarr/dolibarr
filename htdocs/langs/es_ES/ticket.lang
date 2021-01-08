@@ -72,7 +72,6 @@ Deleted=Eliminado
 
 # Dict
 Type=Tasa
-Category=Código analítico
 Severity=Gravedad
 
 # Email templates
@@ -128,7 +127,6 @@ TicketsAutoAssignTicket=Asignar automáticamente al usuario que creó el ticket
 TicketsAutoAssignTicketHelp=Al crear un ticket, el usuario puede asignarse automáticamente al ticket.
 TicketNumberingModules=Módulo de numeración de tickets
 TicketNotifyTiersAtCreation=Notificar a los terceros en la creación
-TicketGroup=Grupo
 TicketsDisableCustomerEmail=Desactivar siempre los e-mails al crear tickets desde la interfaz pública
 TicketsPublicNotificationNewMessage=Enviar e-mail(s) cuando se añade un nuevo mensaje
 TicketsPublicNotificationNewMessageHelp=Enviar e-mail(s) cuando se añade un nuevo mensaje desde la interfaz pública (al usuario asignado o al e-mail de notificaciones (actualización) y o el e-mail de notificaciones a)
@@ -162,7 +160,7 @@ CreatedBy=Creado por
 NewTicket=Nuevo ticket
 SubjectAnswerToTicket=Respuesta
 TicketTypeRequest=Tipo de solicitud
-TicketCategory=Código analítico
+TicketCategory=Grupo
 SeeTicket=Ver ticket
 TicketMarkedAsRead=El ticket ha sido marcado como leído
 TicketReadOn=Leído el

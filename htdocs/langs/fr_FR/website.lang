@@ -31,7 +31,7 @@ AddWebsite=Ajouter site web
 Webpage=Page/container Web
 AddPage=Ajouter une page/container
 HomePage=Page d'accueil
-PageContainer=Page/container
+PageContainer=Page
 PreviewOfSiteNotYetAvailable=La prévisualisation de votre site web <strong>%s</strong> n'est pas disponible actuellement. Vous devez d'abord '<strong>Importer un modèle de site web complet</strong>' ou juste '<strong>Ajouter une page/container</strong>.
 RequestedPageHasNoContentYet=La page demandée avec l'id=%s ne présente encore aucun contenu ou le fichier cache .tpl.php a été supprimé. Ajoutez du contenu à la page pour résoudre cela.
 SiteDeleted=Site Web '%s' supprimé
@@ -135,3 +135,5 @@ ReplacementDoneInXPages=Remplacement effectué dans %s pages ou des conteneurs
 RSSFeed=Flux RSS
 RSSFeedDesc=Vous pouvez obtenir un flux RSS des derniers articles de type 'blogpost' en utilisant cette URL
 PagesRegenerated=%s page(s)/conteneur(s) régénéré(s)
+RegenerateWebsiteContent=Régénérer les fichiers de cache du site Web
+AllowedInFrames=Autorisé dans les cadres

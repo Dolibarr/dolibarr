@@ -67,22 +67,18 @@ if (GETPOST('fk_projet') != '')
 	{
 		while ($row = $db->fetch_array($resql))
 		{
-		    $label = $row['ref'].' - '.$row['title'];
-		    $row_array['label'] = $label;
+			$label = $row['ref'].' - '.$row['title'];
+			$row_array['label'] = $label;
 			$row_array['value'] = $label;
-	        $row_array['key'] = $row['rowid'];
+			$row_array['key'] = $row['rowid'];
 
-	        array_push($return_arr, $row_array);
-	    }
+			array_push($return_arr, $row_array);
+		}
 
-	    echo json_encode($return_arr);
+		echo json_encode($return_arr);
+	} else {
+		echo json_encode(array('nom'=>'Error', 'label'=>'Error', 'key'=>'Error', 'value'=>'Error'));
 	}
-	else
-	{
-	    echo json_encode(array('nom'=>'Error', 'label'=>'Error', 'key'=>'Error', 'value'=>'Error'));
-	}
-}
-else
-{
-    echo json_encode(array('nom'=>'ErrorBadParameter', 'label'=>'ErrorBadParameter', 'key'=>'ErrorBadParameter', 'value'=>'ErrorBadParameter'));
+} else {
+	echo json_encode(array('nom'=>'ErrorBadParameter', 'label'=>'ErrorBadParameter', 'key'=>'ErrorBadParameter', 'value'=>'ErrorBadParameter'));
 }

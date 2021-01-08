@@ -30,14 +30,14 @@ Permission56005=Vedeți tichetele tuturor terților (nu sunt eficiente pentru ut
 TicketDictType=Tipuri de tichete
 TicketDictCategory=Tichet - Grupuri
 TicketDictSeverity=Tichet - Severități
-TicketDictResolution=Ticket - Resolution
+TicketDictResolution=Tichet - Rezoluție
 TicketTypeShortBUGSOFT=Logică disfuncţională
 TicketTypeShortBUGHARD=Material disfuncţional
 TicketTypeShortCOM=Întrebare comercială
 
-TicketTypeShortHELP=Request for functionnal help
-TicketTypeShortISSUE=Issue, bug or problem
-TicketTypeShortREQUEST=Change or enhancement request
+TicketTypeShortHELP=Solicitare funcţionalitate
+TicketTypeShortISSUE=Solicitare, eroare sau problemă
+TicketTypeShortREQUEST=Solicitare de modificare sau îmbunătăţire
 TicketTypeShortPROJET=Proiect
 TicketTypeShortOTHER=Altele
 
@@ -57,14 +57,14 @@ TypeContact_ticket_external_SUPPORTCLI=Urmărirea contactului/incidentului cu cl
 TypeContact_ticket_external_CONTRIBUTOR=Contribuitor extern
 
 OriginEmail=Sursa emailului
-Notify_TICKET_SENTBYMAIL=Send ticket message by email
+Notify_TICKET_SENTBYMAIL=Trimite mesaj tichet pe email
 
 # Status
 NotRead=Necitit
 Read=Citit
 Assigned=Atribuit
 InProgress=In progres
-NeedMoreInformation=Waiting for information
+NeedMoreInformation=În aşteptarea de informaţii
 Answered=Răspuns
 Waiting=Aşteptare
 Closed=Închis
@@ -72,7 +72,6 @@ Deleted=Șters
 
 # Dict
 Type=Tip
-Category=Codul analitic
 Severity=Gravitate
 
 # Email templates
@@ -128,27 +127,26 @@ TicketsAutoAssignTicket=Desemnați automat utilizatorul care a creat tichetul
 TicketsAutoAssignTicketHelp=La crearea unui tichet, utilizatorul poate fi automat alocat tichetului.
 TicketNumberingModules=Modul de numerotare a tichetelor
 TicketNotifyTiersAtCreation=Notificați terțul la creare
-TicketGroup=Grup
-TicketsDisableCustomerEmail=Always disable emails when a ticket is created from public interface
-TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
-TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
-TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
+TicketsDisableCustomerEmail=Dezactivați întotdeauna email-urile atunci când un tichet este creat din interfața publică 
+TicketsPublicNotificationNewMessage=Trimite email(uri) când un mesaj nou este adăugat
+TicketsPublicNotificationNewMessageHelp=Trimiteți email(uri) când un nou mesaj este adăugat din interfața publică (utilizatorului atribuit sau adreselor de notificări la (actualizare) și/sau email-ului de notificări către)
+TicketPublicNotificationNewMessageDefaultEmail=Notificări email  către (actualizare)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Trimiteți email-urile referitoare la noile notificări la această adresă dacă tichetul nu are un utilizator alocat sau dacă utilizatorul nu are e-mail.
 #
 # Index & list page
 #
-TicketsIndex=Tickets area
+TicketsIndex=Tichete
 TicketList=Lista de tichete
 TicketAssignedToMeInfos=Această pagină afișează lista de tichete creată de utilizatorul curent sau atribuită acestuia
 NoTicketsFound=Nu a fost găsit un tichet
-NoUnreadTicketsFound=No unread ticket found
+NoUnreadTicketsFound=Nici un tichet necitit
 TicketViewAllTickets=Vezi toate tichetele
 TicketViewNonClosedOnly=Vedeți numai tichetele deschise
 TicketStatByStatus=Tichete după statut
-OrderByDateAsc=Sort by ascending date
-OrderByDateDesc=Sort by descending date
-ShowAsConversation=Show as conversation list
-MessageListViewType=Show as table list
+OrderByDateAsc=Sortare după dată ascendent
+OrderByDateDesc=Sortare după dată descendent
+ShowAsConversation=Afişare ca listă de conversaţie
+MessageListViewType=Afişare listă ca tabel
 
 #
 # Ticket card
@@ -162,7 +160,7 @@ CreatedBy=Creat de
 NewTicket=Tichet nou
 SubjectAnswerToTicket=Tichet de răspuns
 TicketTypeRequest=Tip de solicitare
-TicketCategory=Codul analitic
+TicketCategory=Grup
 SeeTicket=Vedeți tichetul
 TicketMarkedAsRead=Tichetul a fost marcat ca citit
 TicketReadOn=Citește mai departe
@@ -234,9 +232,9 @@ TicketConfirmChangeStatus=Confirmați modificarea stării: %s?
 TicketLogStatusChanged=Starea modificată: %s la %s
 TicketNotNotifyTiersAtCreate=Nu notificați compania la crearea
 Unread=Necitită
-TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
-PublicInterfaceNotEnabled=Public interface was not enabled
-ErrorTicketRefRequired=Ticket reference name is required
+TicketNotCreatedFromPublicInterface=Indisponibil. Tichetul nu a fost creat din interfaţa publică.
+PublicInterfaceNotEnabled=Interfaţa publică nu a fost activată
+ErrorTicketRefRequired=Denumirea de referință al tichetului este necesară
 
 #
 # Logs
@@ -246,7 +244,7 @@ NoLogForThisTicket=Nu există jurnal pentru acest bilet încă
 TicketLogAssignedTo=Tichet %s alocat la %s
 TicketLogPropertyChanged=Tichet %s modificat: clasificarea de la %s la %s
 TicketLogClosedBy=Tichet %s închis de %s
-TicketLogReopen=Ticket %s re-open
+TicketLogReopen=Tichetul %s re-deschis 
 
 #
 # Public pages
@@ -256,9 +254,9 @@ ShowListTicketWithTrackId=Afișați lista de tichete din ID-ul piesei
 ShowTicketWithTrackId=Afișați tichetul din ID-ul piesei
 TicketPublicDesc=Puteți crea un tichet de asistență sau un cec de la un ID existent.
 YourTicketSuccessfullySaved=Tichetul a fost salvat cu succes!
-MesgInfosPublicTicketCreatedWithTrackId=A new ticket has been created with ID %s and Ref %s.
+MesgInfosPublicTicketCreatedWithTrackId=Un nou tichet a fost creat cu ID %s şi Ref %s.
 PleaseRememberThisId=Păstrați numărul de urmărire pe care l-am putea întreba mai târziu.
-TicketNewEmailSubject=Ticket creation confirmation - Ref %s (public ticket ID %s)
+TicketNewEmailSubject=Confirmare creare tichet - Ref %s (ID tichet public %s) 
 TicketNewEmailSubjectCustomer=Tichet de asistență nou
 TicketNewEmailBody=Acesta este un email automat pentru a confirma că ați înregistrat un nou tichet.
 TicketNewEmailBodyCustomer=Acesta este un email automat pentru a confirma că un nou tichet a fost creat în contul dvs.
@@ -270,22 +268,22 @@ TicketEmailPleaseDoNotReplyToThisEmail=Nu răspundeți direct la acest email! Ut
 TicketPublicInfoCreateTicket=Acest formular vă permite să înregistrați un tichet de asistență în sistemul nostru de management.
 TicketPublicPleaseBeAccuratelyDescribe=Descrieți cu precizie problema. Furnizați cât mai multe informații posibile pentru a ne permite să identificăm corect solicitarea dvs.
 TicketPublicMsgViewLogIn=Introduceți codul de urmărire a tichetului
-TicketTrackId=Public Tracking ID
-OneOfTicketTrackId=One of your tracking ID
+TicketTrackId=ID tracking public
+OneOfTicketTrackId=Unul dintre ID-urile tale de tracking
 ErrorTicketNotFound=Tichetul cu codul de urmărire %s nu a fost găsit!
 Subject=Subiect
 ViewTicket=Vedeți tichetul
 ViewMyTicketList=Vedeți lista mea de tichete
 ErrorEmailMustExistToCreateTicket=Eroare: adresa de email nu a fost găsită în baza noastră de date
-TicketNewEmailSubjectAdmin=New ticket created - Ref %s (public ticket ID %s)
+TicketNewEmailSubjectAdmin=Un nou tichet creat - Ref %s(ID tichet public %s) 
 TicketNewEmailBodyAdmin=<p> Tichetul tocmai a fost creat cu ID # %s, vezi informațiile: </p>
 SeeThisTicketIntomanagementInterface=Vedeți tichetul în interfața de gestionare
 TicketPublicInterfaceForbidden=Interfața publică pentru tichete nu a fost activată
-ErrorEmailOrTrackingInvalid=Bad value for tracking ID or email
-OldUser=Old user
+ErrorEmailOrTrackingInvalid=Valoare incorectă pentru ID tracking sau email
+OldUser=Utilizator anterior
 NewUser=Utilizator nou
-NumberOfTicketsByMonth=Number of tickets per month
-NbOfTickets=Number of tickets
+NumberOfTicketsByMonth=Număr de tichete pe lună
+NbOfTickets=Număr de tichete
 # notifications
 TicketNotificationEmailSubject=Tichet %s actualizat
 TicketNotificationEmailBody=Acesta este un mesaj automat care vă anunță că tichetul%s tocmai a fost actualizat

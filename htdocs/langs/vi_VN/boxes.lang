@@ -83,6 +83,8 @@ BoxTitleLatestModifiedSupplierOrders=Đơn đặt hàng của nhà cung cấp: %
 BoxTitleLastModifiedCustomerBills=Hóa đơn khách hàng: %s được sửa đổi lần cuối
 BoxTitleLastModifiedCustomerOrders=Đơn đặt hàng bán: %s được sửa đổi lần cuối
 BoxTitleLastModifiedPropals=Đề xuất sửa đổi %s mới nhất
+BoxTitleLatestModifiedJobPositions=Latest %s modified jobs
+BoxTitleLatestModifiedCandidatures=Latest %s modified candidatures
 ForCustomersInvoices=Khách hàng hoá đơn
 ForCustomersOrders=Khách hàng đặt hàng
 ForProposals=Đề xuất
@@ -100,3 +102,5 @@ SuspenseAccountNotDefined=Tài khoản bị đình chỉ không được xác đ
 BoxLastCustomerShipments=Lô hàng cuối cùng của khách hàng
 BoxTitleLastCustomerShipments=Lô hàng mới nhất của khách hàng %s
 NoRecordedShipments=Không ghi nhận lô hàng của khách hàng
+# Pages
+AccountancyHome=Kế toán

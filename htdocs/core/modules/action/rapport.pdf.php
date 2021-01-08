@@ -36,9 +36,9 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 class CommActionRapport
 {
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
 	/**
 	 * @var string description
@@ -76,7 +76,7 @@ class CommActionRapport
 		global $conf, $langs;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array("commercial", "projects"));
+		$langs->loadLangs(array("commercial", "projects"));
 
 		$this->db = $db;
 		$this->description = "";
@@ -95,22 +95,22 @@ class CommActionRapport
 		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
 		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
 
-        $this->title = $langs->transnoentitiesnoconv("ActionsReport").' '.$this->year."-".$this->month;
-        $this->subject = $langs->transnoentitiesnoconv("ActionsReport").' '.$this->year."-".$this->month;
+		$this->title = $langs->transnoentitiesnoconv("ActionsReport").' '.$this->year."-".$this->month;
+		$this->subject = $langs->transnoentitiesnoconv("ActionsReport").' '.$this->year."-".$this->month;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *      Write the object to document file to disk
-     *
-     *      @param	int			$socid			Thirdparty id
-     *      @param  int			$catid			Cat id
-     *      @param  Translate	$outputlangs    Lang object for output language
-     *      @return int             			1=OK, 0=KO
-     */
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *      Write the object to document file to disk
+	 *
+	 *      @param	int			$socid			Thirdparty id
+	 *      @param  int			$catid			Cat id
+	 *      @param  Translate	$outputlangs    Lang object for output language
+	 *      @return int             			1=OK, 0=KO
+	 */
 	public function write_file($socid = 0, $catid = 0, $outputlangs = '')
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $user, $conf, $langs, $hookmanager;
 
 		if (!is_object($outputlangs)) $outputlangs = $langs;
@@ -120,7 +120,7 @@ class CommActionRapport
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products"));
 
-        $dir = $conf->agenda->dir_temp."/";
+		$dir = $conf->agenda->dir_temp."/";
 		$file = $dir."actions-".$this->month."-".$this->year.".pdf";
 
 		if (!file_exists($dir))
@@ -148,18 +148,18 @@ class CommActionRapport
 			$parameters = array('file'=>$file, 'outputlangs'=>$outputlangs);
 			$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
-            $pdf = pdf_getInstance($this->format);
-            $heightforinfotot = 50; // Height reserved to output the info and total part
-            $heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
-            $heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-            $pdf->SetAutoPageBreak(1, 0);
+			$pdf = pdf_getInstance($this->format);
+			$heightforinfotot = 50; // Height reserved to output the info and total part
+			$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+			$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
+			$pdf->SetAutoPageBreak(1, 0);
 
-            if (class_exists('TCPDF'))
-            {
-                $pdf->setPrintHeader(false);
-                $pdf->setPrintFooter(false);
-            }
-            $pdf->SetFont(pdf_getPDFFont($outputlangs));
+			if (class_exists('TCPDF'))
+			{
+				$pdf->setPrintHeader(false);
+				$pdf->setPrintFooter(false);
+			}
+			$pdf->SetFont(pdf_getPDFFont($outputlangs));
 
 			$pdf->Open();
 			$pagenb = 0;
@@ -193,8 +193,8 @@ class CommActionRapport
 			$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 			if ($reshook < 0)
 			{
-			    $this->error = $hookmanager->error;
-			    $this->errors = $hookmanager->errors;
+				$this->error = $hookmanager->error;
+				$this->errors = $hookmanager->errors;
 			}
 
 			if (!empty($conf->global->MAIN_UMASK))
@@ -210,7 +210,7 @@ class CommActionRapport
 	 * Write content of pages
 	 *
 	 * @param   PDF			$pdf			Object pdf
-     * @param	Translate   $outputlangs	Object langs
+	 * @param	Translate   $outputlangs	Object langs
 	 * @return  int							1
 	 */
 	private function _pages(&$pdf, $outputlangs)
@@ -230,7 +230,7 @@ class CommActionRapport
 		$sql .= " c.code, c.libelle,";
 		$sql .= " u.login";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
-        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 		$sql .= " WHERE c.id=a.fk_action AND a.fk_user_author = u.rowid";
 		$sql .= " AND a.datep BETWEEN '".$this->db->idate(dol_get_first_day($this->year, $this->month, false))."'";
 		$sql .= " AND '".$this->db->idate(dol_get_last_day($this->year, $this->month, false))."'";
@@ -295,8 +295,7 @@ class CommActionRapport
 				if ($obj->dp2) {
 					if (dol_print_date($this->db->jdate($obj->dp), "day") != dol_print_date($this->db->jdate($obj->dp2), "day"))
 						$textdate .= " -> ".dol_print_date($this->db->jdate($obj->dp2), "day")." - ".dol_print_date($this->db->jdate($obj->dp2), "hour");
-					else
-						$textdate .= " -> ".dol_print_date($this->db->jdate($obj->dp2), "hour");
+					else $textdate .= " -> ".dol_print_date($this->db->jdate($obj->dp2), "hour");
 				}
 				$textdate = $outputlangs->trans("ID").' '.$obj->id.' - '.$textdate;
 				$pdf->MultiCell(45 - $this->marge_gauche, $height, $textdate, 0, 'L', 0);
@@ -354,12 +353,12 @@ class CommActionRapport
 		$pdf->SetFont('', 'B', 10);
 		$pdf->SetXY($this->marge_gauche, $this->marge_haute);
 		$pdf->MultiCell(120, 1, $outputlangs->convToOutputCharset($this->title), 0, 'L', 0);
-        // Show page nb only on iso languages (so default Helvetica font)
-        if (pdf_getPDFFont($outputlangs) == 'Helvetica')
-        {
-		    $pdf->SetXY($this->page_largeur - $this->marge_droite - 40, $this->marge_haute);
-            $pdf->MultiCell(40, 1, $pagenb.'/'.$pdf->getAliasNbPages(), 0, 'R', 0);
-        }
+		// Show page nb only on iso languages (so default Helvetica font)
+		if (pdf_getPDFFont($outputlangs) == 'Helvetica')
+		{
+			$pdf->SetXY($this->page_largeur - $this->marge_droite - 40, $this->marge_haute);
+			$pdf->MultiCell(40, 1, $pagenb.'/'.$pdf->getAliasNbPages(), 0, 'R', 0);
+		}
 
 		$y = $pdf->GetY() + 2;
 

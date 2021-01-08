@@ -40,17 +40,17 @@ class ModelePDFLabels
 	public $error = '';
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
-     *  @param  DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
+	 *  @param  DoliDB	$db     			Database handler
+	 *  @param  integer	$maxfilenamelength  Max length of value to show
+	 *  @return	array						List of templates
 	 */
 	public function liste_modeles($db, $maxfilenamelength = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		$type = 'members_labels';
@@ -79,7 +79,7 @@ class ModelePDFLabels
  */
 function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outputdir = '', $template = 'standardlabel', $filename = 'tmp_address_sheet.pdf')
 {
-    // phpcs:enable
+	// phpcs:enable
 	global $conf, $langs;
 	$langs->load("members");
 
@@ -100,13 +100,10 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 		if (!empty($conf->global->ADHERENT_ETIQUETTE_TYPE))
 		{
 			$code = $conf->global->ADHERENT_ETIQUETTE_TYPE;
-		}
-		else
-		{
+		} else {
 			$code = $modele;
 		}
-	}
-	else $code = $modele;
+	} else $code = $modele;
 
 	// If selected modele is a filename template (then $modele="modelname:filename")
 	$tmp = explode(':', $template, 2);
@@ -114,8 +111,7 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 	{
 		$template = $tmp[0];
 		$srctemplatepath = $tmp[1];
-	}
-	else $srctemplatepath = $code;
+	} else $srctemplatepath = $code;
 
 	dol_syslog("modele=".$modele." outputdir=".$outputdir." template=".$template." code=".$code." srctemplatepath=".$srctemplatepath." filename=".$filename, LOG_DEBUG);
 
@@ -155,16 +151,12 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 		{
 			$outputlangs->charset_output = $sav_charset_output;
 			return 1;
-		}
-		else
-		{
+		} else {
 			$outputlangs->charset_output = $sav_charset_output;
 			dol_print_error($db, "doc_label_pdf_create Error: ".$obj->error);
 			return -1;
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error('', $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file));
 		return -1;
 	}

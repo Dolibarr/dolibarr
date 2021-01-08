@@ -30,20 +30,20 @@ class BankCateg // extends CommonObject
 {
 	//public $element='bank_categ';			//!< Id that identify managed objects
 	//public $table_element='bank_categ';	//!< Name of table without prefix where object is stored
-    /**
+	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'generic';
 
 	/**
-     * @var int ID
-     */
-    public $id;
+	 * @var int ID
+	 */
+	public $id;
 
 	/**
-     * @var string bank categories label
-     */
-    public $label;
+	 * @var string bank categories label
+	 */
+	public $label;
 
 
 	/**
@@ -213,46 +213,46 @@ class BankCateg // extends CommonObject
 		// Delete link between tag and bank account
 		if (!$error)
 		{
-		    $sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_account";
-    		$sql .= " WHERE fk_categorie = ".$this->id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_account";
+			$sql .= " WHERE fk_categorie = ".$this->id;
 
-    		$resql = $this->db->query($sql);
-    		if (!$resql)
-    		{
-    		    $error++;
-    		    $this->errors[] = "Error ".$this->db->lasterror();
-    		}
+			$resql = $this->db->query($sql);
+			if (!$resql)
+			{
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
 		// Delete link between tag and bank lines
 		if (!$error)
 		{
-		    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class";
-		    $sql .= " WHERE fk_categ = ".$this->id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class";
+			$sql .= " WHERE fk_categ = ".$this->id;
 
-		    $resql = $this->db->query($sql);
-		    if (!$resql)
-		    {
-		        $error++;
-		        $this->errors[] = "Error ".$this->db->lasterror();
-		    }
+			$resql = $this->db->query($sql);
+			if (!$resql)
+			{
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
 		// Delete bank categ
 		if (!$error)
 		{
-    		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_categ";
-    		$sql .= " WHERE rowid=".$this->id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_categ";
+			$sql .= " WHERE rowid=".$this->id;
 
-    		$resql = $this->db->query($sql);
-    		if (!$resql)
-    		{
-    			$error++;
-    			$this->errors[] = "Error ".$this->db->lasterror();
-    		}
+			$resql = $this->db->query($sql);
+			if (!$resql)
+			{
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
-    	// Commit or rollback
+		// Commit or rollback
 		if ($error) {
 			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);

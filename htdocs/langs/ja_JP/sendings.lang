@@ -56,7 +56,7 @@ ShipmentCreationIsDoneFromOrder=現時点では、新たな出荷の作成は、
 ShipmentLine=Shipment line
 ProductQtyInCustomersOrdersRunning=Product quantity from open sales orders
 ProductQtyInSuppliersOrdersRunning=Product quantity from open purchase orders
-ProductQtyInShipmentAlreadySent=Product quantity from open sales order already sent
+ProductQtyInShipmentAlreadySent=未処理の受注からの製品数量はすでに送信された
 ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open purchase orders already received
 NoProductToShipFoundIntoStock=No product to ship found in warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
 WeightVolShort=Weight/Vol.
@@ -65,6 +65,7 @@ ValidateOrderFirstBeforeShipment=You must first validate the order before being 
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=配信確認のために、より完全なドキュメントモデル（logo. ..）
+DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=定数EXPEDITION_ADDON_NUMBERが定義されていません
 SumOfProductVolumes=Sum of product volumes
 SumOfProductWeights=Sum of product weights

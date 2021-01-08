@@ -28,26 +28,26 @@
  */
 class FormMargin
 {
-    /**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    /**
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
 
 
-    /**
-     *	Constructor
-     *
-     *	@param	DoliDB		$db      Database handler
-     */
-    public function __construct($db)
-    {
-        $this->db = $db;
-    }
+	/**
+	 *	Constructor
+	 *
+	 *	@param	DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
 
 
 
@@ -87,7 +87,7 @@ class FormMargin
 			if (empty($line->pa_ht) && isset($line->fk_fournprice) && !$force_price)
 			{
 				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
-				$product = new ProductFournisseur($db);
+				$product = new ProductFournisseur($this->db);
 				if ($product->fetch_product_fournisseur_price($line->fk_fournprice))
 					$line->pa_ht = $product->fourn_unitprice * (1 - $product->fourn_remise_percent / 100);
 			}
@@ -118,8 +118,7 @@ class FormMargin
 					//}
 					//else
 						$marginInfos['margin_on_products'] += $pv - $pa;
-				}
-				elseif ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '2') { // remise globale considérée comme service
+				} elseif ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '2') { // remise globale considérée comme service
 					$marginInfos['pa_services'] += $pa;
 					$marginInfos['pv_services'] += $pv;
 					$marginInfos['pa_total'] += $pa;
@@ -129,13 +128,11 @@ class FormMargin
 					//	$marginInfos['margin_on_services'] += -1 * (abs($pv) - $pa);
 					//else
 						$marginInfos['margin_on_services'] += $pv - $pa;
-				}
-				elseif ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '3') { // remise globale prise en compte uniqt sur total
+				} elseif ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '3') { // remise globale prise en compte uniqt sur total
 					$marginInfos['pa_total'] += $pa;
 					$marginInfos['pv_total'] += $pv;
 				}
-			}
-			else {
+			} else {
 				$type = $line->product_type ? $line->product_type : $line->fk_product_type;
 				if ($type == 0) {  // product
 					$marginInfos['pa_products'] += $pa;
@@ -149,10 +146,9 @@ class FormMargin
 					//}
 					//else
 					//{
-					    $marginInfos['margin_on_products'] += $pv - $pa;
+						$marginInfos['margin_on_products'] += $pv - $pa;
 					//}
-				}
-				elseif ($type == 1) {  // service
+				} elseif ($type == 1) {  // service
 					$marginInfos['pa_services'] += $pa;
 					$marginInfos['pv_services'] += $pv;
 					$marginInfos['pa_total'] += $pa;
@@ -199,24 +195,24 @@ class FormMargin
 	{
 		global $langs, $conf, $user;
 
-    	if (!empty($user->socid)) return;
+		if (!empty($user->socid)) return;
 
-    	if (!$user->rights->margins->liretous) return;
+		if (!$user->rights->margins->liretous) return;
 
 		$marginInfo = $this->getMarginInfosArray($object, $force_price);
 
 		if (!empty($conf->global->MARGIN_ADD_SHOWHIDE_BUTTON))	// TODO Warning this feature rely on an external js file that may be removed. Using native js function document.cookie should be better
 		{
 			print $langs->trans('ShowMarginInfos').' : ';
-	        $hidemargininfos = $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW'];
-	    	print '<span id="showMarginInfos" class="linkobject '.(!empty($hidemargininfos) ? '' : 'hideobject').'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</span>';
-	    	print '<span id="hideMarginInfos" class="linkobject '.(!empty($hidemargininfos) ? 'hideobject' : '').'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</span>';
+			$hidemargininfos = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW']); // Clean cookie
+			print '<span id="showMarginInfos" class="linkobject '.(!empty($hidemargininfos) ? '' : 'hideobject').'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</span>';
+			print '<span id="hideMarginInfos" class="linkobject '.(!empty($hidemargininfos) ? 'hideobject' : '').'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</span>';
 
-    	    print '<script>$(document).ready(function() {
+			print '<script>$(document).ready(function() {
         	    $("span#showMarginInfos").click(function() { $.getScript( "'.dol_buildpath('/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js', 1).'", function( data, textStatus, jqxhr ) { $.cookie("DOLUSER_MARGININFO_HIDE_SHOW", 0); $(".margininfos").show(); $("span#showMarginInfos").addClass("hideobject"); $("span#hideMarginInfos").removeClass("hideobject");})});
         	    $("span#hideMarginInfos").click(function() { $.getScript( "'.dol_buildpath('/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js', 1).'", function( data, textStatus, jqxhr ) { $.cookie("DOLUSER_MARGININFO_HIDE_SHOW", 1); $(".margininfos").hide(); $("span#hideMarginInfos").addClass("hideobject"); $("span#showMarginInfos").removeClass("hideobject");})});
       	        });</script>';
-    	    if (!empty($hidemargininfos)) print '<script>$(document).ready(function() {$(".margininfos").hide();});</script>';
+			if (!empty($hidemargininfos)) print '<script>$(document).ready(function() {$(".margininfos").hide();});</script>';
 		}
 
 		print '<div class="div-table-responsive-no-min">';
@@ -228,8 +224,7 @@ class FormMargin
 		print '<td class="liste_titre right">'.$langs->trans('SellingPrice').'</td>';
 		if ($conf->global->MARGIN_TYPE == "1")
 			print '<td class="liste_titre right">'.$langs->trans('BuyingPrice').'</td>';
-		else
-			print '<td class="liste_titre right">'.$langs->trans('CostPrice').'</td>';
+		else print '<td class="liste_titre right">'.$langs->trans('CostPrice').'</td>';
 		print '<td class="liste_titre right">'.$langs->trans('Margin').'</td>';
 		if (!empty($conf->global->DISPLAY_MARGIN_RATES))
 			print '<td class="liste_titre right">'.$langs->trans('MarginRate').'</td>';

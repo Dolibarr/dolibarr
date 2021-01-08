@@ -60,7 +60,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-    'm.titre'=>'Ref',
+	'm.titre'=>'Ref',
 );
 
 
@@ -130,9 +130,7 @@ if ($filteremail)
 	if ($search_all) $sql .= " AND (m.titre like '%".$db->escape($search_all)."%' OR m.sujet like '%".$db->escape($search_all)."%' OR m.body like '%".$db->escape($search_all)."%')";
 	if (!$sortorder) $sortorder = "ASC";
 	if (!$sortfield) $sortfield = "m.rowid";
-}
-else
-{
+} else {
 	$sql = "SELECT m.rowid, m.titre, m.nbemail, m.statut, m.date_creat as datec, m.date_envoi as date_envoi";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
 	$sql .= " WHERE m.entity = ".$conf->entity;
@@ -171,7 +169,7 @@ if ($resql)
 	$newcardbutton = '';
 	if ($user->rights->mailing->creer)
 	{
-        $newcardbutton .= dolGetButtonTitle($langs->trans('NewMailing'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/mailing/card.php?action=create');
+		$newcardbutton .= dolGetButtonTitle($langs->trans('NewMailing'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/mailing/card.php?action=create');
 	}
 
 	$i = 0;
@@ -192,8 +190,8 @@ if ($resql)
 
 	$moreforfilter = '';
 
-    print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<div class="div-table-responsive">';
+	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre">';
@@ -240,7 +238,7 @@ if ($resql)
 		print $email->getNomUrl(1);
 		print '</td>';
 
-		print '<td>'.$obj->titre.'</td>';
+		print '<td>'.$obj->title.'</td>';
 		// Date creation
 
 		print '<td class="center">';
@@ -274,9 +272,7 @@ if ($resql)
 		if ($filteremail)
 		{
 			print $email::libStatutDest($obj->sendstatut, 2);
-		}
-		else
-		{
+		} else {
 			print $email->LibStatut($obj->statut, 5);
 		}
 		print '</td>';
@@ -297,9 +293,7 @@ if ($resql)
 	print '</form>';
 
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

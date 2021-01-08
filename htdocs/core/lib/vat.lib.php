@@ -31,39 +31,39 @@
  */
 function vat_prepare_head($object)
 {
-    global $db, $langs, $conf;
+	global $db, $langs, $conf;
 
-    $tab = 0;
-    $head = array();
+	$tab = 0;
+	$head = array();
 
 	$head[$tab][0] = DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id;
 	$head[$tab][1] = $langs->trans('VATPayment');
 	$head[$tab][2] = 'card';
 	$tab++;
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf, $langs, $object, $head, $tab, 'vat');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'vat');
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->tax->dir_output."/vat/".dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-    $nbLinks = Link::count($db, $object->element, $object->id);
+	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$tab][0] = DOL_URL_ROOT.'/compta/tva/document.php?id='.$object->id;
 	$head[$tab][1] = $langs->trans("Documents");
 	if (($nbFiles + $nbLinks) > 0) $head[$tab][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
 	$head[$tab][2] = 'documents';
 	$tab++;
 
-    $head[$tab][0] = DOL_URL_ROOT.'/compta/tva/info.php?id='.$object->id;
-    $head[$tab][1] = $langs->trans("Info");
-    $head[$tab][2] = 'info';
-    $tab++;
+	$head[$tab][0] = DOL_URL_ROOT.'/compta/tva/info.php?id='.$object->id;
+	$head[$tab][1] = $langs->trans("Info");
+	$head[$tab][2] = 'info';
+	$tab++;
 
-    complete_head_from_modules($conf, $langs, $object, $head, $tab, 'vat', 'remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'vat', 'remove');
 
-    return $head;
+	return $head;
 }

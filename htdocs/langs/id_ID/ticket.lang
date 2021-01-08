@@ -72,7 +72,6 @@ Deleted=Dihapus
 
 # Dict
 Type=Tipe
-Category=Kode analitik
 Severity=Kerasnya
 
 # Email templates
@@ -128,7 +127,6 @@ TicketsAutoAssignTicket=Secara otomatis menetapkan pengguna yang membuat tiket
 TicketsAutoAssignTicketHelp=Saat membuat tiket, pengguna dapat secara otomatis ditugaskan ke tiket.
 TicketNumberingModules=Modul penomoran tiket
 TicketNotifyTiersAtCreation=Beri tahu pihak ketiga saat membuat
-TicketGroup=Kelompok
 TicketsDisableCustomerEmail=Selalu nonaktifkan email saat tiket dibuat dari antarmuka publik
 TicketsPublicNotificationNewMessage=Kirim email saat pesan baru ditambahkan
 TicketsPublicNotificationNewMessageHelp=Kirim email ketika pesan baru ditambahkan dari antarmuka publik (ke pengguna yang ditetapkan atau email notifikasi ke (pembaruan) dan/atau email notifikasi ke)
@@ -162,7 +160,7 @@ CreatedBy=Dibuat oleh
 NewTicket=Tiket Baru
 SubjectAnswerToTicket=Jawaban tiket
 TicketTypeRequest=Jenis permintaan
-TicketCategory=Kode analitik
+TicketCategory=Group
 SeeTicket=Lihat tiket
 TicketMarkedAsRead=Tiket telah ditandai sebagai sudah dibaca
 TicketReadOn=Baca terus

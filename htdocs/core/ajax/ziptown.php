@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2010     Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2011-204 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2010      Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,8 +75,7 @@ if (!empty($_GET['zipcode']) || !empty($_GET['town']))
 		if ($town)    $sql .= " AND z.town LIKE '%".$db->escape($town)."%'";
 		$sql .= " ORDER BY z.zip, z.town";
 		$sql .= $db->plimit(100); // Avoid pb with bad criteria
-	}
-	else                                               // Use table of third parties
+	} else // Use table of third parties
 	{
 		$sql = "SELECT DISTINCT s.zip, s.town, s.fk_departement as fk_county, s.fk_pays as fk_country";
 		$sql .= ", c.code as country_code, c.label as country";
@@ -128,9 +127,7 @@ if (!empty($_GET['zipcode']) || !empty($_GET['town']))
 	}
 
 	echo json_encode($return_arr);
-}
-else
-{
+} else {
 }
 
 $db->close();

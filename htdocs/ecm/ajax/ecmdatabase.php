@@ -28,7 +28,7 @@ if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $element = GETPOST('element', 'alpha');
 
 /*
@@ -114,15 +114,11 @@ if (isset($action) && !empty($action))
 						//print "Yes with id ".$parentdirisindatabase."<br>\n";
 						$fk_parent = $parentdirisindatabase;
 						//break;  // We found parent, we can stop the while loop
-					}
-					else
-					{
+					} else {
 						dol_syslog("No");
 						//print "No<br>\n";
 					}
-				}
-				else
-				{
+				} else {
 					dol_syslog("Parent is root");
 					$fk_parent = 0; // Parent is root
 				}
@@ -148,13 +144,10 @@ if (isset($action) && !empty($action))
 						$sqltree[] = $newdirsql; // We complete fulltree for following loops
 						//var_dump($sqltree);
 						$adirwascreated = 1;
-					}
-					else
-					{
+					} else {
 						dol_syslog("Failed to create directory ".$ecmdirtmp->label, LOG_ERR);
 					}
-				}
-				else {
+				} else {
 					$txt = "Parent of ".$dirdesc['fullname']." not found";
 					dol_syslog($txt);
 					//print $txt."<br>\n";

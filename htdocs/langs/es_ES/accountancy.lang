@@ -18,12 +18,14 @@ DefaultForService=Predeterminado para el servicio
 DefaultForProduct=Predeterminado para el producto
 CantSuggest=No se puede sugerir
 AccountancySetupDoneFromAccountancyMenu=La mayor parte de la configuración de la contabilidad se realiza desde el menú %s
-ConfigAccountingExpert=Configuración del módulo contable
+ConfigAccountingExpert=Configuración de la contabilidad del módulo (doble entrada)
 Journalization=Procesar diarios
-Journaux=Diarios
+Journals=Diarios
 JournalFinancial=Diarios financieros
 BackToChartofaccounts=Volver al plan contable
 Chartofaccounts=Plan contable
+ChartOfSubaccounts=Plan de cuentas individuales
+ChartOfIndividualAccountsOfSubsidiaryLedger=Plan de cuentas individuales del libro auxiliar
 CurrentDedicatedAccountingAccount=Cuenta contable dedicada
 AssignDedicatedAccountingAccount=Nueva cuenta a asignar
 InvoiceLabel=Etiqueta factura
@@ -33,8 +35,8 @@ OtherInfo=Otra información
 DeleteCptCategory=Eliminar la cuenta contable del grupo
 ConfirmDeleteCptCategory=¿Está seguro de querer eliminar esta cuenta contable del grupo de cuentas contables?
 JournalizationInLedgerStatus=Estado de diario
-AlreadyInGeneralLedger=Registrado en el Libro Mayor
-NotYetInGeneralLedger=No se ha registrado en el Libro Mayor
+AlreadyInGeneralLedger=Ya transferido en diarios contables y libro mayor
+NotYetInGeneralLedger=Aún no se ha transferido a los diarios y al libro mayor
 GroupIsEmptyCheckSetup=El grupo está vacío, compruebe la configuración de grupos contables
 DetailByAccount=Ver detalles por cuenta
 AccountWithNonZeroValues=Cuentas con valores no cero
@@ -43,7 +45,9 @@ CountriesInEEC=Países en la CEE
 CountriesNotInEEC=Países no incluidos en la CEE
 CountriesInEECExceptMe=Países en la CEE excepto %s
 CountriesExceptMe=Todos los países excepto %s
-AccountantFiles=Exportar documentos contables
+AccountantFiles=Exportar documentos de origen
+ExportAccountingSourceDocHelp=Con esta herramienta, puede exportar los eventos de origen (lista y PDF) que se utilizaron para generar su contabilidad. Para exportar sus diarios, use la entrada de menú %s - %s.
+VueByAccountAccounting=Ver por cuenta contable
 
 MainAccountForCustomersNotDefined=Cuenta contable para clientes no definida en la configuración
 MainAccountForSuppliersNotDefined=Cuenta contable para proveedores no definida en la configuración
@@ -79,7 +83,7 @@ AccountancyAreaDescAnalyze=PASO %s: Añadir o editar transacciones existentes, g
 
 AccountancyAreaDescClosePeriod=PASO %s: Cerrar periodo, por lo que no podrá hacer modificaciones en un futuro.
 
-TheJournalCodeIsNotDefinedOnSomeBankAccount=No se ha completado un paso obligatorio en la configuración (cuenta contable no definida en todas las cuentas bancarias)
+TheJournalCodeIsNotDefinedOnSomeBankAccount=No se ha completado un paso obligatorio en la configuración (el diario de códigos de contabilidad no está definido para todas las cuentas bancarias)
 Selectchartofaccounts=Seleccione un plan contable activo
 ChangeAndLoad=Cambiar y cargar
 Addanaccount=Añadir una cuenta contable
@@ -89,6 +93,8 @@ SubledgerAccount=Subcuenta contable
 SubledgerAccountLabel=Etiqueta subcuenta contable
 ShowAccountingAccount=Mostrar diario de cuentas
 ShowAccountingJournal=Mostrar diario contable
+ShowAccountingAccountInLedger=Mostrar cuenta contable en el libro mayor
+ShowAccountingAccountInJournals=Mostrar cuenta contable en diarios
 AccountAccountingSuggest=Cuenta contable sugerida
 MenuDefaultAccounts=Cuentas contables por defecto
 MenuBankAccounts=Cuentas Bancarias
@@ -110,8 +116,9 @@ ExpenseReportsVentilation=Contabilizar informes de gastos
 CreateMvts=Crear nuevo movimiento
 UpdateMvts=Modificar transacción
 ValidTransaction=Transacción validada
-WriteBookKeeping=Registrar movimientos en el Libro Mayor
+WriteBookKeeping=Registrar transacciones en contabilidad
 Bookkeeping=Libro Mayor
+BookkeepingSubAccount=Libro mayor auxiliar
 AccountBalance=Saldo de la cuenta
 ObjectsRef=Referencia de objeto origen
 CAHTF=Total compras a proveedor antes de impuestos
@@ -149,6 +156,8 @@ ACCOUNTING_MANAGE_ZERO=Gestiona el cero al final de una cuenta contable. Necesar
 BANK_DISABLE_DIRECT_INPUT=Desactivar transacciones directas en cuenta bancaria
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Habilitar exportación de borradores al diario
 ACCOUNTANCY_COMBO_FOR_AUX=Habilitar la lista combinada para la cuenta subsidiaria (puede ser lento si tiene muchos terceros)
+ACCOUNTING_DATE_START_BINDING=Defina una fecha para comenzar a vincular y transferir en contabilidad. Por debajo de esta fecha, las transacciones no se transferirán a contabilidad.
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=En la transferencia de contabilidad, seleccione el período que se muestra de forma predeterminada
 
 ACCOUNTING_SELL_JOURNAL=Diario de ventas
 ACCOUNTING_PURCHASE_JOURNAL=Diario de compras
@@ -167,6 +176,8 @@ TransitionalAccount=Cuenta de transferencia bancaria de transición
 ACCOUNTING_ACCOUNT_SUSPENSE=Cuenta operaciones pendientes de asignar
 DONATION_ACCOUNTINGACCOUNT=Cuenta contable para registrar donaciones
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Cuenta contable para registrar subscripciones
+
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Cuenta contable por defecto para registrar el depósito del cliente
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cuenta contable predeterminada para los productos comprados (si no se define en el producto)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Cuenta contable por defecto para los productos comprados en EEC (se usa si no se define en la hoja de productos)
@@ -202,16 +213,16 @@ ByPredefinedAccountGroups=Por grupos predefinidos
 ByPersonalizedAccountGroups=Por grupos personalizados
 ByYear=Por año
 NotMatch=No establecido
-DeleteMvt=Eliminar líneas del Libro Mayor
+DeleteMvt=Eliminar algunas líneas de operación de la contabilidad
 DelMonth=Mes a eliminar
 DelYear=Año a eliminar
 DelJournal=Diario a eliminar
-ConfirmDeleteMvt=Esto eliminará todas las líneas del Libro mayor para el año/mes y/o de un diario específico (se requiere al menos un criterio). Deberá volver a utilizar la función 'Registro en contabilidad' para que el registro eliminado vuelva al libro mayor.
-ConfirmDeleteMvtPartial=Esto eliminará la transacción del libro mayor (se eliminarán todas las líneas relacionadas con la misma transacción)
+ConfirmDeleteMvt=Esto eliminará todas las líneas de operación de la contabilidad para el año / mes y / o para un diario específico (se requiere al menos un criterio). Tendrá que reutilizar la función '%s' para que el registro eliminado vuelva al libro mayor.
+ConfirmDeleteMvtPartial=Esto eliminará la transacción de la contabilidad (se eliminarán todas las líneas de operación relacionadas con la misma transacción)
 FinanceJournal=Diario financiero
 ExpenseReportsJournal=Diario informe de gastos
 DescFinanceJournal=El diario financiero incluye todos los tipos de pagos por cuenta bancaria
-DescJournalOnlyBindedVisible=Esta es una vista del registro vinculado a una cuenta contable y que se puede registrar en el Libro Mayor.
+DescJournalOnlyBindedVisible=Esta es una vista de registro que está vinculada a una cuenta de contabilidad y se puede registrar en Diarios y Libro mayor.
 VATAccountNotDefined=Cuenta contable para IVA no definida
 ThirdpartyAccountNotDefined=Cuenta contable de tercero no definida
 ProductAccountNotDefined=Cuenta contable de producto no definida
@@ -284,6 +295,7 @@ ShowTutorial=Ver Tutorial
 NotReconciled=No reconciliado
 
 ## Admin
+BindingOptions=Opciones de enlace
 ApplyMassCategories=Aplicar categorías en masa
 AddAccountFromBookKeepingWithNoCategories=Cuenta disponible sin grupo personalizado
 CategoryDeleted=La categoría para la cuenta contable ha sido eliminada
@@ -303,6 +315,9 @@ ErrorAccountingJournalIsAlreadyUse=Este diario ya esta siendo usado
 AccountingAccountForSalesTaxAreDefinedInto=Nota: La cuenta contable del IVA a las ventas se define en el menú <b> %s</b> - <b> %s</b>
 NumberOfAccountancyEntries=Número de entradas
 NumberOfAccountancyMovements=Número de movimientos
+ACCOUNTING_DISABLE_BINDING_ON_SALES=Deshabilitar la vinculación y la transferencia en la contabilidad de ventas (las facturas de los clientes no se tendrán en cuenta en la contabilidad)
+ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Deshabilitar la vinculación y transferencia en contabilidad en compras (las facturas de proveedores no se tendrán en cuenta en la contabilidad)
+ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Desactive la vinculación y transferencia en contabilidad en informes de gastos (los informes de gastos no se tendrán en cuenta en la contabilidad)
 
 ## Export
 ExportDraftJournal=Exportar libro borrador
@@ -324,6 +339,8 @@ Modelcsv_configurable=Exportación CSV Configurable
 Modelcsv_FEC=Exportación FEC
 Modelcsv_Sage50_Swiss=Exportación a Sage 50 Suiza
 Modelcsv_winfic=Exportar Winfic - eWinfic - WinSis Compta
+Modelcsv_Gestinumv3=Export for Gestinum (v3)
+Modelcsv_Gestinumv5Export for Gestinum (v5)
 ChartofaccountsId=Id plan contable
 
 ## Tools - Init accounting account on product / service

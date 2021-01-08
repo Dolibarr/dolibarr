@@ -18,12 +18,14 @@ DefaultForService=默认服务
 DefaultForProduct=默认产品
 CantSuggest=无法建议
 AccountancySetupDoneFromAccountancyMenu=大多数会计设置都是从​​菜单%s完成的
-ConfigAccountingExpert=会计专家模块的配置
+ConfigAccountingExpert=Configuration of the module accounting (double entry)
 Journalization=记帐
-Journaux=日记帐
+Journals=日记帐
 JournalFinancial=财务总监日记帐
 BackToChartofaccounts=返回会计科目表
 Chartofaccounts=会计科目表
+ChartOfSubaccounts=Chart of individual accounts
+ChartOfIndividualAccountsOfSubsidiaryLedger=Chart of individual accounts of the subsidiary ledger
 CurrentDedicatedAccountingAccount=当前专用帐户
 AssignDedicatedAccountingAccount=要分配的新帐户
 InvoiceLabel=发票标签
@@ -33,8 +35,8 @@ OtherInfo=其他信息
 DeleteCptCategory=从组中删除会计帐户
 ConfirmDeleteCptCategory=Are you sure you want to remove this accounting account from the accounting account group?
 JournalizationInLedgerStatus=记帐状态
-AlreadyInGeneralLedger=已经在分类账中记录
-NotYetInGeneralLedger=尚未在分类账中记录
+AlreadyInGeneralLedger=Already transferred in accounting journals and ledger
+NotYetInGeneralLedger=Not yet transferred in accouting journals and ledger
 GroupIsEmptyCheckSetup=组为空，检查个性化会计组的设置
 DetailByAccount=按帐户显示详细信息
 AccountWithNonZeroValues=具有非零值的帐户
@@ -43,7 +45,9 @@ CountriesInEEC=欧共体国家
 CountriesNotInEEC=非欧共体国家
 CountriesInEECExceptMe=欧共体国家除了%s
 CountriesExceptMe=除%s以外的所有国家/地区
-AccountantFiles=Export accounting documents
+AccountantFiles=Export source documents
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
+VueByAccountAccounting=View by accounting account
 
 MainAccountForCustomersNotDefined=未在设置中定义的顾客的主要会计科目
 MainAccountForSuppliersNotDefined=未在设置中定义的供应商的主要会计科目
@@ -79,7 +83,7 @@ AccountancyAreaDescAnalyze=步骤%s：添加或编辑现有交易并生成报告
 
 AccountancyAreaDescClosePeriod=STEP %s：关闭期间，以便禁止修改。
 
-TheJournalCodeIsNotDefinedOnSomeBankAccount=设置中的必要步骤未完成（未为所有银行帐户定义会计代码日记帐）
+TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup has not been completed (accounting code journal not defined for all bank accounts)
 Selectchartofaccounts=选择活动的会计科目表
 ChangeAndLoad=改变和加载
 Addanaccount=添加一个会计科目
@@ -89,6 +93,8 @@ SubledgerAccount=Subledger account
 SubledgerAccountLabel=Subledger account label
 ShowAccountingAccount=显示会计科目
 ShowAccountingJournal=显示会计日常报表
+ShowAccountingAccountInLedger=Show accounting account in ledger
+ShowAccountingAccountInJournals=Show accounting account in journals
 AccountAccountingSuggest=建议会计科目
 MenuDefaultAccounts=默认帐户
 MenuBankAccounts=银行帐户
@@ -110,8 +116,9 @@ ExpenseReportsVentilation=费用报告绑定
 CreateMvts=创建新交易
 UpdateMvts=修改交易
 ValidTransaction=验证交易
-WriteBookKeeping=Register transactions in Ledger
+WriteBookKeeping=Register transactions in accounting
 Bookkeeping=分类帐
+BookkeepingSubAccount=Subledger
 AccountBalance=账目平衡
 ObjectsRef=源对象引用
 CAHTF=Total purchase vendor before tax
@@ -149,6 +156,8 @@ ACCOUNTING_MANAGE_ZERO=Allow to manage different number of zeros at the end of a
 BANK_DISABLE_DIRECT_INPUT=禁止在银行帐户中直接记录交易
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=在日记帐上启用草稿导出
 ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties)
+ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, select period show by default
 
 ACCOUNTING_SELL_JOURNAL=销售日记帐
 ACCOUNTING_PURCHASE_JOURNAL=采购日记帐
@@ -167,6 +176,8 @@ TransitionalAccount=Transitional bank transfer account
 ACCOUNTING_ACCOUNT_SUSPENSE=会计科目-等待
 DONATION_ACCOUNTINGACCOUNT=会计科目-登记捐款
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Accounting account to register subscriptions
+
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Accounting account by default to register customer deposit
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for the bought products (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Accounting account by default for the bought products in EEC (used if not defined in the product sheet)
@@ -202,16 +213,16 @@ ByPredefinedAccountGroups=按预定义的组
 ByPersonalizedAccountGroups=通过个性化团体
 ByYear=在今年
 NotMatch=未设定
-DeleteMvt=删除分类帐行
+DeleteMvt=Delete some operation lines from accounting
 DelMonth=Month to delete
 DelYear=删除整年
 DelJournal=日记帐删除
-ConfirmDeleteMvt=This will delete all lines of the Ledger for the year/month and/or from a specific journal (At least one criterion is required). You will have to reuse the feature 'Registration in accounting' to have the deleted record back in the ledger.
-ConfirmDeleteMvtPartial=这将从分类帐中删除该交易（将删除与同一交易相关的所有行）
+ConfirmDeleteMvt=This will delete all operation lines of the accounting for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
+ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all operation lines related to the same transaction will be deleted)
 FinanceJournal=财务账
 ExpenseReportsJournal=费用报告日常报表
 DescFinanceJournal=财务账包括全部银行账户付款类型
-DescJournalOnlyBindedVisible=这是记录的视图，它绑定到会计帐户并可以记录到分类帐中。
+DescJournalOnlyBindedVisible=This is a view of record that are bound to an accounting account and can be recorded into the Journals and Ledger.
 VATAccountNotDefined=未定义增值税的帐户
 ThirdpartyAccountNotDefined=未定义的第三方帐户
 ProductAccountNotDefined=未定义产品的帐户
@@ -284,6 +295,7 @@ ShowTutorial=Show Tutorial
 NotReconciled=未调解
 
 ## Admin
+BindingOptions=Binding options
 ApplyMassCategories=应用批量类别
 AddAccountFromBookKeepingWithNoCategories=Available account not yet in the personalized group
 CategoryDeleted=会计科目的类别已被删除
@@ -303,6 +315,9 @@ ErrorAccountingJournalIsAlreadyUse=该日常报表已经使用
 AccountingAccountForSalesTaxAreDefinedInto=注意：销售税的会计科目已定义到菜单<b> %s </b>  -  <b> %s</b>
 NumberOfAccountancyEntries=Number of entries
 NumberOfAccountancyMovements=Number of movements
+ACCOUNTING_DISABLE_BINDING_ON_SALES=Disable binding & transfer in accountancy on sales (customer invoices will not be taken into account in accounting)
+ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountancy on purchases (vendor invoices will not be taken into account in accounting)
+ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
 ExportDraftJournal=导出日常报表草稿
@@ -324,6 +339,8 @@ Modelcsv_configurable=导出CSV可配置
 Modelcsv_FEC=Export FEC
 Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
 Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
+Modelcsv_Gestinumv3=Export for Gestinum (v3)
+Modelcsv_Gestinumv5Export for Gestinum (v5)
 ChartofaccountsId=会计科目表ID
 
 ## Tools - Init accounting account on product / service

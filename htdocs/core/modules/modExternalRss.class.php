@@ -83,7 +83,7 @@ class modExternalRss extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')
@@ -118,21 +118,21 @@ class modExternalRss extends DolibarrModules
 		return $this->_init($sql, $options);
 	}
 
-    /**
+	/**
 	 *		Function called when module is disabled.
 	 *      Remove from database constants, boxes and permissions from Dolibarr database.
 	 *		Data directories are not deleted
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
-     */
-    public function remove($options = '')
-    {
+	 */
+	public function remove($options = '')
+	{
 		$sql = array();
 
 		// Delete old declarations of RSS box
 		$this->boxes[0]['file'] = "box_external_rss.php";
 
 		return $this->_remove($sql, $options);
-    }
+	}
 }

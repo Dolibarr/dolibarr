@@ -16,3 +16,4 @@ DictionaryFunction=HRM - Functies
 Employees=Werknemers
 Employee=Werknemer
 NewEmployee=Nieuwe werknemer
+ListOfEmployees=List of employees

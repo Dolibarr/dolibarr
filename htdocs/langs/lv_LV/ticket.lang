@@ -72,7 +72,6 @@ Deleted=Dzēsts
 
 # Dict
 Type=Veids
-Category=Analītiskais kods
 Severity=Smagums
 
 # Email templates
@@ -128,7 +127,6 @@ TicketsAutoAssignTicket=Automātiski piešķirt lietotāju, kas izveidojis biļe
 TicketsAutoAssignTicketHelp=Veidojot biļeti, lietotājs var automātiski piešķirt biļeti.
 TicketNumberingModules=Čeku numerācijas modulis
 TicketNotifyTiersAtCreation=Paziņot trešajai pusei radīšanas laikā
-TicketGroup=Grupa
 TicketsDisableCustomerEmail=Vienmēr atspējojiet e-pasta ziņojumus, ja biļete tiek veidota no publiskās saskarnes
 TicketsPublicNotificationNewMessage=Sūtiet e-pastu (s), kad tiek pievienots jauns ziņojums
 TicketsPublicNotificationNewMessageHelp=Sūtiet e-pastu (s), kad no publiskās saskarnes tiek pievienots jauns ziņojums (piešķirtajam lietotājam vai paziņojumu e-pastu uz (atjaunināt) un / vai paziņojumu e-pastu uz)
@@ -162,7 +160,7 @@ CreatedBy=Izveidojis
 NewTicket=Jauns notikums
 SubjectAnswerToTicket=Pieteikuma atbilde
 TicketTypeRequest=Pieprasījuma veids
-TicketCategory=Analītiskais kods
+TicketCategory=Grupa
 SeeTicket=Apskatīt pieteikumu
 TicketMarkedAsRead=Pieteikums ir atzīmēts kā lasīts
 TicketReadOn=Izlasīts

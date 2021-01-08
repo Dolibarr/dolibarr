@@ -37,16 +37,16 @@ $langs->loadLangs(array('errors', 'users', 'companies', 'ldap', 'other'));
 // Security check
 if (!empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
 {
-    header("Location: ".DOL_URL_ROOT.'/');
-    exit;
+	header("Location: ".DOL_URL_ROOT.'/');
+	exit;
 }
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $mode = $dolibarr_main_authentication;
 if (!$mode) $mode = 'http';
 
-$username = trim(GETPOST('username', 'alpha'));
-$passwordhash = trim(GETPOST('passwordhash', 'alpha'));
+$username = GETPOST('username', 'alphanohtml');
+$passwordhash = GETPOST('passwordhash', 'alpha');
 $conf->entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : 1);
 
 // Instantiate hooks of thirdparty module only if not already define
@@ -64,85 +64,94 @@ if (GETPOST('dol_use_jmobile', 'alpha') || !empty($_SESSION['dol_use_jmobile']))
  * Actions
  */
 
-// Validate new password
-if ($action == 'validatenewpassword' && $username && $passwordhash)
-{
-    $edituser = new User($db);
-    $result = $edituser->fetch('', $_GET["username"]);
-    if ($result < 0)
-    {
-        $message = '<div class="error">'.$langs->trans("ErrorLoginDoesNotExists", $username).'</div>';
-    }
-    else
-    {
-        if (dol_verifyHash($edituser->pass_temp, $passwordhash))
-        {
-        	// Clear session
-        	unset($_SESSION['dol_login']);
-        	$_SESSION['dol_loginmesg'] = $langs->trans('NewPasswordValidated');	// Save message for the session page
-
-        	$newpassword = $edituser->setPassword($user, $edituser->pass_temp, 0);
-            dol_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
-            header("Location: ".DOL_URL_ROOT.'/');
-            exit;
-        }
-        else
-        {
-        	$langs->load("errors");
-            $message = '<div class="error">'.$langs->trans("ErrorFailedToValidatePasswordReset").'</div>';
-        }
-    }
+$parameters = array('username' => $username);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+    $message = $hookmanager->error;
 }
-// Action modif mot de passe
-if ($action == 'buildnewpassword' && $username)
-{
-    $sessionkey = 'dol_antispam_value';
-    $ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
 
-    // Verify code
-    if (!$ok)
-    {
-        $message = '<div class="error">'.$langs->trans("ErrorBadValueForCode").'</div>';
-    }
-    else
+if (empty($reshook)) {
+    // Validate new password
+    if ($action == 'validatenewpassword' && $username && $passwordhash)
     {
         $edituser = new User($db);
-        $result = $edituser->fetch('', $username, '', 1);
-        if ($result == 0 && preg_match('/@/', $username))
+        $result = $edituser->fetch('', $_GET["username"]);
+        if ($result < 0)
         {
-        	$result = $edituser->fetch('', '', '', 1, -1, $username);
-        }
+            $message = '<div class="error">'.dol_escape_htmltag($langs->trans("ErrorLoginDoesNotExists", $username)).'</div>';
+        } else {
+            if (dol_verifyHash($edituser->pass_temp, $passwordhash))
+            {
+                // Clear session
+                unset($_SESSION['dol_login']);
+                $_SESSION['dol_loginmesg'] = $langs->trans('NewPasswordValidated'); // Save message for the session page
 
-        if ($result <= 0 && $edituser->error == 'USERNOTFOUND')
-        {
-            $message = '<div class="error">'.$langs->trans("ErrorLoginDoesNotExists", $username).'</div>';
-            $username = '';
-        }
-        else
-        {
-            if (!$edituser->email)
-            {
-                $message = '<div class="error">'.$langs->trans("ErrorLoginHasNoEmail").'</div>';
+                $newpassword = $edituser->setPassword($user, $edituser->pass_temp, 0);
+                dol_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
+                header("Location: ".DOL_URL_ROOT.'/');
+                exit;
+            } else {
+                $langs->load("errors");
+                $message = '<div class="error">'.$langs->trans("ErrorFailedToValidatePasswordReset").'</div>';
             }
-            else
+        }
+    }
+    // Action modif mot de passe
+    if ($action == 'buildnewpassword' && $username)
+    {
+        $sessionkey = 'dol_antispam_value';
+        $ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
+
+        // Verify code
+        if (!$ok)
+        {
+            $message = '<div class="error">'.$langs->trans("ErrorBadValueForCode").'</div>';
+        } else {
+            $isanemail = preg_match('/@/', $username);
+
+            $edituser = new User($db);
+            $result = $edituser->fetch('', $username, '', 1);
+            if ($result == 0 && $isanemail)
             {
-                $newpassword = $edituser->setPassword($user, '', 1);
-                if ($newpassword < 0)
-                {
-                    // Failed
-                    $message = '<div class="error">'.$langs->trans("ErrorFailedToChangePassword").'</div>';
+                $result = $edituser->fetch('', '', '', 1, -1, $username);
+            }
+
+            if ($result <= 0 && $edituser->error == 'USERNOTFOUND')
+            {
+                $message = '<div class="warning paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent').'">';
+                if (!$isanemail) {
+                    $message .= $langs->trans("IfLoginExistPasswordRequestSent");
+                } else {
+                    $message .= $langs->trans("IfEmailExistPasswordRequestSent");
                 }
-                else
+                $message .= '</div>';
+                $username = '';
+            } else {
+                if (!$edituser->email)
                 {
-                    // Success
-                    if ($edituser->send_password($user, $newpassword, 1) > 0)
+                    $message = '<div class="error">'.$langs->trans("ErrorLoginHasNoEmail").'</div>';
+                } else {
+                    $newpassword = $edituser->setPassword($user, '', 1);
+                    if ($newpassword < 0)
                     {
-                    	$message = '<div class="ok'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent').'">'.$langs->trans("PasswordChangeRequestSent", $edituser->login, dolObfuscateEmail($edituser->email)).'</div>';
-                        $username = '';
-                    }
-                    else
-                    {
-                        $message .= '<div class="error">'.$edituser->error.'</div>';
+                        // Failed
+                        $message = '<div class="error">'.$langs->trans("ErrorFailedToChangePassword").'</div>';
+                    } else {
+                        // Success
+                        if ($edituser->send_password($user, $newpassword, 1) > 0)
+                        {
+                            $message = '<div class="warning paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent').'">';
+                            if (!$isanemail) {
+                                $message .= $langs->trans("IfLoginExistPasswordRequestSent");
+                            } else {
+                                $message .= $langs->trans("IfEmailExistPasswordRequestSent");
+                            }
+                            //$message .= $langs->trans("PasswordChangeRequestSent", $edituser->login, dolObfuscateEmail($edituser->email));
+                            $message .= '</div>';
+                            $username = '';
+                        } else {
+                            $message .= '<div class="error">'.$edituser->error.'</div>';
+                        }
                     }
                 }
             }
@@ -164,11 +173,9 @@ if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $title = $conf->global->MAIN_
 // Select templates
 if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/passwordforgotten.tpl.php"))
 {
-    $template_dir = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/";
-}
-else
-{
-    $template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
+	$template_dir = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/";
+} else {
+	$template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
 }
 
 if (!$username) $focus_element = 'username';
@@ -186,17 +193,14 @@ $urllogo = DOL_URL_ROOT.'/theme/common/login_logo.png';
 if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
 {
 	$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
-}
-elseif (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
+} elseif (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
 {
 	$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo);
 	$width = 128;
-}
-elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/dolibarr_logo.svg'))
+} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/dolibarr_logo.svg'))
 {
 	$urllogo = DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/dolibarr_logo.svg';
-}
-elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg'))
+} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg'))
 {
 	$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
 }

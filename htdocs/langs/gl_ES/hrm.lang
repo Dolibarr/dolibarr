@@ -14,5 +14,6 @@ DictionaryDepartment=HRM - Department list
 DictionaryFunction=HRM - Job positions
 # Module
 Employees=Empregados
-Employee=Employee
+Employee=Empregado
 NewEmployee=New employee
+ListOfEmployees=List of employees

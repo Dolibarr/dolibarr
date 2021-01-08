@@ -69,6 +69,7 @@ then
 	  255)
 	exit;;
 	esac
+	rm $fichtemp
 	
 	# ----------------------------- database name
 	DIALOG=${DIALOG=dialog}
@@ -86,6 +87,7 @@ then
 	  255)
 	exit;;
 	esac
+	rm $fichtemp
 	
 	# ---------------------------- database port
 	DIALOG=${DIALOG=dialog}
@@ -104,6 +106,7 @@ then
 	  255)
 	exit;;
 	esac
+	rm $fichtemp
 	
 	# ---------------------------- compte admin mysql
 	DIALOG=${DIALOG=dialog}
@@ -122,6 +125,7 @@ then
 	  255)
 	exit;;
 	esac
+	rm $fichtemp
 	
 	# ---------------------------- mot de passe admin mysql
 	DIALOG=${DIALOG=dialog}
@@ -140,6 +144,7 @@ then
 	  255)
 	exit;;
 	esac
+	rm $fichtemp
 	
 	
 	export documentdir=`cat $mydir/../../htdocs/conf/conf.php | grep '^\$dolibarr_main_data_root' | sed -e 's/$dolibarr_main_data_root=//' | sed -e 's/;//' | sed -e "s/'//g" | sed -e 's/"//g' `
@@ -184,8 +189,8 @@ export res=$?
 export documentdir=`cat $mydir/../../htdocs/conf/conf.php | grep '^\$dolibarr_main_data_root' | sed -e 's/$dolibarr_main_data_root=//' | sed -e 's/;//' | sed -e "s/'//g" | sed -e 's/"//g' `
 if [ "x$documentdir" != "x" ]
 then
-	$DIALOG --title "Reset document directory tpp" --clear \
-	        --inputbox "Delete and recreate document directory $documentdir/:" 16 55 n 2> $fichtemp
+	$DIALOG --title "Reset document directory" --clear \
+	        --inputbox "DELETE and recreate document directory $documentdir/:" 16 55 n 2> $fichtemp
 	
 	valret=$?
 	

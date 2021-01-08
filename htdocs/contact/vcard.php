@@ -66,7 +66,7 @@ $v->setPhoneNumber($contact->phone_pro, "TYPE=WORK;VOICE");
 $v->setPhoneNumber($contact->phone_mobile, "TYPE=CELL;VOICE");
 $v->setPhoneNumber($contact->fax, "TYPE=WORK;FAX");
 
-$country = $contact->country_code ? $contact->country : '' ;
+$country = $contact->country_code ? $contact->country : '';
 
 $v->setAddress("", "", $contact->address, $contact->town, $contact->state, $contact->zip, $country, "TYPE=WORK;POSTAL");
 $v->setLabel("", "", $contact->address, $contact->town, $contact->state, $contact->zip, $country, "TYPE=WORK");
@@ -79,9 +79,9 @@ $v->setTitle($contact->poste);
 if ($company->id)
 {
 	$v->setURL($company->url, "TYPE=WORK");
-	if (! $contact->phone_pro) $v->setPhoneNumber($company->phone, "TYPE=WORK;VOICE");
-	if (! $contact->fax)       $v->setPhoneNumber($company->fax, "TYPE=WORK;FAX");
-	if (! $contact->zip)       $v->setAddress("", "", $company->address, $company->town, $company->state, $company->zip, $company->country, "TYPE=WORK;POSTAL");
+	if (!$contact->phone_pro) $v->setPhoneNumber($company->phone, "TYPE=WORK;VOICE");
+	if (!$contact->fax)       $v->setPhoneNumber($company->fax, "TYPE=WORK;FAX");
+	if (!$contact->zip)       $v->setAddress("", "", $company->address, $company->town, $company->state, $company->zip, $company->country, "TYPE=WORK;POSTAL");
 
 	// when company e-mail is empty, use only contact e-mail
 	if (empty(trim($company->email)))
@@ -102,8 +102,7 @@ if ($company->id)
 		$v->setEmail($company->email, 'INTERNET');
 	}
 	// when e-mail of contact and company complete different use company e-mail at first (and contact e-mail at second)
-	else
-	{
+	else {
 		$v->setEmail($company->email);
 
 		// support by Microsoft Outlook (2019 and possible earlier)
@@ -125,7 +124,7 @@ $db->close();
 
 $output = $v->getVCard();
 
-$filename = trim(urldecode($v->getFileName()));      // "Nom prenom.vcf"
+$filename = trim(urldecode($v->getFileName())); // "Nom prenom.vcf"
 $filenameurlencoded = dol_sanitizeFileName(urlencode($filename));
 //$filename = dol_sanitizeFileName($filename);
 

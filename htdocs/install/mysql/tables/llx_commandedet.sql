@@ -57,6 +57,7 @@ create table llx_commandedet
   rang							integer      DEFAULT 0,
   fk_unit						integer      DEFAULT NULL,       -- lien vers table des unités
   import_key					varchar(14),
+  ref_ext                       varchar(255) DEFAULT NULL,
   
   fk_commandefourndet			integer DEFAULT NULL,            -- link to detail line of commande fourn (resplenish)
   

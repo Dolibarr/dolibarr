@@ -16,7 +16,7 @@ WEBSITE_ROBOT=Soubor pro roboty (soubor robots.txt)
 WEBSITE_HTACCESS=Soubor .htaccess
 WEBSITE_MANIFEST_JSON=Soubor manifest.json webové stránky
 WEBSITE_README=Soubor README.md
-WEBSITE_KEYWORDSDesc=Use a comma to separate values
+WEBSITE_KEYWORDSDesc=Hodnoty oddělte čárkou
 EnterHereLicenseInformation=Sem zadejte metadata nebo licenční informace a vyplňte soubor README.md. Pokud distribuujete svůj web jako šablonu, bude soubor zahrnut do temptátového balíčku.
 HtmlHeaderPage=Záhlaví HTML (pouze pro tuto stránku)
 PageNameAliasHelp=Název nebo alias stránky. <br> Tento alias je také používán k vytvoření adresy URL při běhu webových stránek z virtuálního hostitele webového serveru (jako Apacke, Nginx, ...). Pomocí tlačítka "<strong> %s </strong>" upravte tento alias.
@@ -31,7 +31,7 @@ AddWebsite=Přidat webovou stránku
 Webpage=Webová stránka / kontejner
 AddPage=Přidat stránku / kontejner
 HomePage=Domovská stránka
-PageContainer=Stránka / kontejner
+PageContainer=Strana
 PreviewOfSiteNotYetAvailable=Náhled vašeho webu <strong> %s </strong> zatím není k dispozici. Nejprve musíte '<strong> Importovat celou šablonu webových stránek </strong>' nebo jen '<strong> Přidat stránku / kontejner </strong>'.
 RequestedPageHasNoContentYet=Požadovaná stránka s ID %s nemá dosud žádný obsah nebo byl odstraněn soubor cache .tpl.php. Upravte obsah stránky pro vyřešení tohoto problému.
 SiteDeleted=Webová stránka '%s' byla smazána
@@ -60,8 +60,8 @@ SyntaxHelp=Nápověda ke konkrétním tipům pro syntaxi
 YouCanEditHtmlSourceckeditor=Zdrojový kód HTML můžete upravit pomocí tlačítka "Zdroj" v editoru.
 YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper:<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
 #YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
-YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
-YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank">the wiki documentation</a><br>.
+YouCanEditHtmlSource2=Pro obraz sdílený pomocí sdíleného odkazu (otevřený přístup pomocí klíče sdílení hash souboru) je syntaxe: <br> <strong> &lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSourceMore= <br> Další příklady HTML nebo dynamického kódu jsou k dispozici na <a href="%s" target="_blank"> wiki dokumentaci </a> <br>.
 ClonePage=Klonovat stránku / kontejner
 CloneSite=Kopie stránky
 SiteAdded=Webová stránka byla přidána
@@ -124,7 +124,7 @@ ShowSubContainersOnOff=Režim provádění „dynamického obsahu“ je %s
 GlobalCSSorJS=Globální soubor CSS / JS / Header na webové stránce
 BackToHomePage=Zpět na domovskou stránku...
 TranslationLinks=Překladové odkazy
-YouTryToAccessToAFileThatIsNotAWebsitePage=You try to access to a page that is not available.<br>(ref=%s, type=%s, status=%s)
+YouTryToAccessToAFileThatIsNotAWebsitePage=Pokusíte se o přístup na stránku, která není k dispozici. <br> (ref = %s, typ = %s, status = %s)
 UseTextBetween5And70Chars=Pro osvědčené postupy SEO použijte text mezi 5 a 70 znaky
 MainLanguage=Hlavní jazyk
 OtherLanguages=Jiné jazyky
@@ -134,4 +134,6 @@ AvailableLanguagesAreDefinedIntoWebsiteProperties=Dostupné jazyky jsou definov�
 ReplacementDoneInXPages=Výměna se provádí na stránkách nebo kontejnerech %s
 RSSFeed=RSS Feed
 RSSFeedDesc=Pomocí této adresy URL můžete získat RSS kanál nejnovějších článků typu blogpost
-PagesRegenerated=%s page(s)/container(s) regenerated
+PagesRegenerated=%s regenerováno stránky / kontejnery
+RegenerateWebsiteContent=Regenerate web site cache files
+AllowedInFrames=Allowed in Frames

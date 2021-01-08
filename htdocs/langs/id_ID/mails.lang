@@ -168,3 +168,7 @@ OutGoingEmailSetupForEmailing=Pengaturan Email Keluar (untuk modul %s)
 DefaultOutgoingEmailSetup=Pengaturan email keluar standar
 Information=Informasi
 ContactsWithThirdpartyFilter=Kontak dengan filter pihak ketiga
+Unanswered=Unanswered
+Answered=Answered
+IsNotAnAnswer=Is not answer (initial email)
+IsAnAnswer=Is an answer of an initial email

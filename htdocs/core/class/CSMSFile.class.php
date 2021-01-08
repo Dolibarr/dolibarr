@@ -34,7 +34,7 @@
  */
 class CSMSFile
 {
-    /**
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
@@ -76,21 +76,21 @@ class CSMSFile
 		// If ending method not defined
 		if (empty($conf->global->MAIN_SMS_SENDMODE))
 		{
-		    $this->error = 'No SMS Engine defined';
-		    return -1;
+			$this->error = 'No SMS Engine defined';
+			return -1;
 		}
 
 		dol_syslog("CSMSFile::CSMSFile: MAIN_SMS_SENDMODE=".$conf->global->MAIN_SMS_SENDMODE." charset=".$conf->file->character_set_client." from=".$from.", to=".$to.", msg length=".count($msg), LOG_DEBUG);
 		dol_syslog("CSMSFile::CSMSFile: deferred=".$deferred." priority=".$priority." class=".$class, LOG_DEBUG);
 
 		// Action according to choosed sending method
-	    $this->addr_from = $from;
-	    $this->addr_to = $to;
-        $this->deferred = $deferred;
-        $this->priority = $priority;
-        $this->class = $class;
-        $this->message = $msg;
-        $this->nostop = false;
+		$this->addr_from = $from;
+		$this->addr_to = $to;
+		$this->deferred = $deferred;
+		$this->priority = $priority;
+		$this->class = $class;
+		$this->message = $msg;
+		$this->nostop = false;
 	}
 
 
@@ -108,17 +108,17 @@ class CSMSFile
 
 		$res = false;
 
-        dol_syslog("CSMSFile::sendfile addr_to=".$this->addr_to, LOG_DEBUG);
-        dol_syslog("CSMSFile::sendfile message=\n".$this->message);
+		dol_syslog("CSMSFile::sendfile addr_to=".$this->addr_to, LOG_DEBUG);
+		dol_syslog("CSMSFile::sendfile message=\n".$this->message);
 
-        $this->message = stripslashes($this->message);
+		$this->message = stripslashes($this->message);
 
-        if (!empty($conf->global->MAIN_SMS_DEBUG)) $this->dump_sms();
+		if (!empty($conf->global->MAIN_SMS_DEBUG)) $this->dump_sms();
 
 		if (empty($conf->global->MAIN_DISABLE_ALL_SMS))
 		{
-		    // Action according to choosed sending method
-		    if ($conf->global->MAIN_SMS_SENDMODE == 'ovh')    // Backward compatibility    @deprecated
+			// Action according to choosed sending method
+			if ($conf->global->MAIN_SMS_SENDMODE == 'ovh')    // Backward compatibility    @deprecated
 			{
 				dol_include_once('/ovh/class/ovhsms.class.php');
 				$sms = new OvhSms($this->db);
@@ -127,78 +127,67 @@ class CSMSFile
 				$sms->message = $this->message;
 				$sms->deferred = $this->deferred;
 				$sms->priority = $this->priority;
-                $sms->class = $this->class;
-                $sms->nostop = $this->nostop;
+				$sms->class = $this->class;
+				$sms->nostop = $this->nostop;
 
-                $sms->socid = $this->socid;
-                $sms->contactid = $this->contactid;
-                $sms->project = $this->fk_project;
+				$sms->socid = $this->socid;
+				$sms->contact_id = $this->contact_id;
+				$sms->project = $this->fk_project;
 
-                $res = $sms->SmsSend();
+				$res = $sms->SmsSend();
 
 				if ($res <= 0)
 				{
 					$this->error = $sms->error;
 					dol_syslog("CSMSFile::sendfile: sms send error=".$this->error, LOG_ERR);
-				}
-				else
-				{
+				} else {
 					dol_syslog("CSMSFile::sendfile: sms send success with id=".$res, LOG_DEBUG);
 					//var_dump($res);        // 1973128
 					if (!empty($conf->global->MAIN_SMS_DEBUG)) $this->dump_sms_result($res);
 				}
-			}
-		    elseif (!empty($conf->global->MAIN_SMS_SENDMODE))    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
-		    {
-		        $tmp = explode('@', $conf->global->MAIN_SMS_SENDMODE);
-		        $classfile = $tmp[0]; $module = (empty($tmp[1]) ? $tmp[0] : $tmp[1]);
-		        dol_include_once('/'.$module.'/class/'.$classfile.'.class.php');
-		        try
-		        {
-		            $classname = ucfirst($classfile);
-		            $sms = new $classname($this->db);
-		            $sms->expe = $this->addr_from;
-		            $sms->dest = $this->addr_to;
-		            $sms->deferred = $this->deferred;
-		            $sms->priority = $this->priority;
-		            $sms->class = $this->class;
-		            $sms->message = $this->message;
-		            $sms->nostop = $this->nostop;
-
-		            $sms->socid = $this->socid;
-		            $sms->contactid = $this->contactid;
-		            $sms->fk_project = $this->fk_project;
-
-                    $res = $sms->SmsSend();
-
-                    $this->error = $sms->error;
-                    $this->errors = $sms->errors;
-    				if ($res <= 0)
-    				{
-    					dol_syslog("CSMSFile::sendfile: sms send error=".$this->error, LOG_ERR);
-    				}
-    				else
-    				{
-    					dol_syslog("CSMSFile::sendfile: sms send success with id=".$res, LOG_DEBUG);
-    					//var_dump($res);        // 1973128
-    					if (!empty($conf->global->MAIN_SMS_DEBUG)) $this->dump_sms_result($res);
-    				}
-		        }
-		        catch (Exception $e)
-		        {
-		            dol_print_error('', 'Error to get list of senders: '.$e->getMessage());
-		        }
-		    }
-			else
+			} elseif (!empty($conf->global->MAIN_SMS_SENDMODE))    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
 			{
+				$tmp = explode('@', $conf->global->MAIN_SMS_SENDMODE);
+				$classfile = $tmp[0]; $module = (empty($tmp[1]) ? $tmp[0] : $tmp[1]);
+				dol_include_once('/'.$module.'/class/'.$classfile.'.class.php');
+				try {
+					$classname = ucfirst($classfile);
+					$sms = new $classname($this->db);
+					$sms->expe = $this->addr_from;
+					$sms->dest = $this->addr_to;
+					$sms->deferred = $this->deferred;
+					$sms->priority = $this->priority;
+					$sms->class = $this->class;
+					$sms->message = $this->message;
+					$sms->nostop = $this->nostop;
+
+					$sms->socid = $this->socid;
+					$sms->contact_id = $this->contact_id;
+					$sms->fk_project = $this->fk_project;
+
+					$res = $sms->SmsSend();
+
+					$this->error = $sms->error;
+					$this->errors = $sms->errors;
+					if ($res <= 0)
+					{
+						dol_syslog("CSMSFile::sendfile: sms send error=".$this->error, LOG_ERR);
+					} else {
+						dol_syslog("CSMSFile::sendfile: sms send success with id=".$res, LOG_DEBUG);
+						//var_dump($res);        // 1973128
+						if (!empty($conf->global->MAIN_SMS_DEBUG)) $this->dump_sms_result($res);
+					}
+				} catch (Exception $e)
+				{
+					dol_print_error('', 'Error to get list of senders: '.$e->getMessage());
+				}
+			} else {
 				// Send sms method not correctly defined
 				// --------------------------------------
 
 				return 'Bad value for MAIN_SMS_SENDMODE constant';
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = 'No sms sent. Feature is disabled by option MAIN_DISABLE_ALL_SMS';
 			dol_syslog("CSMSFile::sendfile: ".$this->error, LOG_WARNING);
 		}
@@ -209,17 +198,17 @@ class CSMSFile
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Write content of a SendSms request into a dump file (mode = all)
-     *  Used for debugging.
-     *
-     *  @return	void
-     */
-    public function dump_sms()
-    {
-        // phpcs:enable
-        global $conf, $dolibarr_main_data_root;
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Write content of a SendSms request into a dump file (mode = all)
+	 *  Used for debugging.
+	 *
+	 *  @return	void
+	 */
+	public function dump_sms()
+	{
+		// phpcs:enable
+		global $conf, $dolibarr_main_data_root;
 
 		if (@is_writeable($dolibarr_main_data_root))	// Avoid fatal error on fopen with open_basedir
 		{
@@ -240,29 +229,29 @@ class CSMSFile
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Write content of a SendSms result into a dump file (mode = all)
-     *  Used for debugging.
-     *
-     *  @param	int		$result		Result of sms sending
-     *  @return	void
-     */
-    public function dump_sms_result($result)
-    {
-        // phpcs:enable
-        global $conf, $dolibarr_main_data_root;
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Write content of a SendSms result into a dump file (mode = all)
+	 *  Used for debugging.
+	 *
+	 *  @param	int		$result		Result of sms sending
+	 *  @return	void
+	 */
+	public function dump_sms_result($result)
+	{
+		// phpcs:enable
+		global $conf, $dolibarr_main_data_root;
 
-        if (@is_writeable($dolibarr_main_data_root))    // Avoid fatal error on fopen with open_basedir
-        {
-        	$outputfile = $dolibarr_main_data_root."/dolibarr_sms.log";
-            $fp = fopen($outputfile, "a+");
+		if (@is_writeable($dolibarr_main_data_root))    // Avoid fatal error on fopen with open_basedir
+		{
+			$outputfile = $dolibarr_main_data_root."/dolibarr_sms.log";
+			$fp = fopen($outputfile, "a+");
 
-            fputs($fp, "\nResult id=".$result);
+			fputs($fp, "\nResult id=".$result);
 
-            fclose($fp);
-            if (!empty($conf->global->MAIN_UMASK))
-            @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-        }
-    }
+			fclose($fp);
+			if (!empty($conf->global->MAIN_UMASK))
+			@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
+		}
+	}
 }

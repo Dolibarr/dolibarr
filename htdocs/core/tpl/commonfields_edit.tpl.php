@@ -45,15 +45,24 @@ foreach ($object->fields as $key => $val)
 	print '<tr><td';
 	print ' class="titlefieldcreate';
 	if ($val['notnull'] > 0) print ' fieldrequired';
-	if ($val['type'] == 'text' || $val['type'] == 'html') print ' tdtop';
+	if (preg_match('/^(text|html)/', $val['type'])) print ' tdtop';
 	print '">';
 	if (!empty($val['help'])) print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
 	else print $langs->trans($val['label']);
 	print '</td>';
 	print '<td>';
+	if (!empty($val['picto'])) { print img_picto('', $val['picto']); }
 	if (in_array($val['type'], array('int', 'integer'))) $value = GETPOSTISSET($key) ?GETPOST($key, 'int') : $object->$key;
-	elseif ($val['type'] == 'text' || $val['type'] == 'html') $value = GETPOSTISSET($key) ?GETPOST($key, 'none') : $object->$key;
-	else $value = GETPOSTISSET($key) ?GETPOST($key, 'alpha') : $object->$key;
+	elseif (preg_match('/^(text|html)/', $val['type'])) {
+		$tmparray = explode(':', $val['type']);
+		if (!empty($tmparray[1])) {
+			$check = $tmparray[1];
+		} else {
+			$check = 'restricthtml';
+		}
+		$value = GETPOSTISSET($key) ? GETPOST($key, $check) : $object->$key;
+	}
+	else $value = GETPOSTISSET($key) ? GETPOST($key, 'alpha') : $object->$key;
 	//var_dump($val.' '.$key.' '.$value);
 	if ($val['noteditable']) print $object->showOutputField($val, $key, $value, '', '', '', 0);
 	else print $object->showInputField($val, $key, $value, '', '', '', 0);
