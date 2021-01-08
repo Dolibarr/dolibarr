@@ -96,7 +96,13 @@ if (GETPOSTISSET('search_category_customer_list')) {
 	$searchCategoryCustomerOperator = $conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT;
 }
 $searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array');
-$search_categ_sup = trim(GETPOST("search_categ_sup", 'int'));
+$searchCategorySupplierOperator = 0;
+if (GETPOSTISSET('search_category_supplier_list')) {
+	$searchCategorySupplierOperator = GETPOST('search_category_supplier_operator', 'int');
+} elseif (!empty($conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT)) {
+	$searchCategorySupplierOperator = $conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT;
+}
+$searchCategorySupplierList = GETPOST('search_category_supplier_list', 'array');
 $search_country = GETPOST("search_country", 'intcomma');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_staff = GETPOST("search_staff", 'int');
@@ -291,7 +297,8 @@ if (empty($reshook))
 		$search_alias = '';
 		$searchCategoryCustomerOperator = 0;
 		$searchCategoryCustomerList = array();
-		$search_categ_sup = 0;
+		$searchCategorySupplierOperator = 0;
+		$searchCategorySupplierList = array();
 		$search_sale = '';
 		$search_barcode = "";
 		$search_customer_code = '';
@@ -412,8 +419,24 @@ if (!empty($conf->global->MAIN_USE_WITH_INSTEAD_OF_INNER_JOIN)) {
 		}
 		$sql .= " WHERE (" . implode(" OR ", $sqlWhere) . ")";
 		$sql .= " GROUP BY s.rowid";
-		//$sql .= " HAVING COUNT(DISTINCT IF(cc.fk_categorie IS NULL, 0, cc.fk_categorie)) = " . count($searchCategoryCustomerList);
 		$sql .= " HAVING COUNT(DISTINCT " . $db->ifsql('cc.fk_categorie IS NULL', 0, 'cc.fk_categorie') . ") = " . count($searchCategoryCustomerList);
+		$sql .= ")";
+	}
+
+	// AND search suppliers categories for WITH statement
+	if (!empty($searchCategorySupplierList) && $searchCategorySupplierOperator != 1) {
+		$sql .= "WITH supplier_categories (societe_id) AS (";
+		$sql .= " SELECT s.rowid";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "categorie_fournisseur as cs ON cs.fk_soc = s.rowid";
+		$sqlWhere = array();
+		foreach ($searchCategorySupplierList as $categoryId) {
+			if ($categoryId == -2) $sqlWhere[] = "cs.fk_categorie IS NULL";
+			else $sqlWhere[] = "cs.fk_categorie = " . $categoryId;
+		}
+		$sql .= " WHERE (" . implode(" OR ", $sqlWhere) . ")";
+		$sql .= " GROUP BY s.rowid";
+		$sql .= " HAVING COUNT(DISTINCT " . $db->ifsql('cs.fk_categorie IS NULL', 0, 'cs.fk_categorie') . ") = " . count($searchCategorySupplierList);
 		$sql .= ")";
 	}
 }
@@ -431,8 +454,6 @@ $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " region.code_region as region_code, region.nom as region_name";
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
 if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
-// We'll need these fields in order to filter by categ
-if ($search_categ_sup) $sql .= ", cs.fk_categorie, cs.fk_soc";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
@@ -451,28 +472,13 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = 
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as region on (region.	code_region = state.fk_region)";
 // We'll need this table joined to the select in order to filter by categ
 if (!empty($searchCategoryCustomerList)) {
-	if ($searchCategoryCustomerOperator == 1) {
-		// OR search categories
-		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "categorie_societe as cc ON s.rowid = cc.fk_soc";
-	} elseif (empty($conf->global->MAIN_USE_WITH_INSTEAD_OF_INNER_JOIN)) {
-		// AND search categories for INNER JOIN statement
-		$sql .= " LEFT JOIN (";
-		$sql .= " SELECT s2.rowid as societe_id";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s2";
-		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "categorie_societe as cc2 ON cc2.fk_soc = s2.rowid";
-		$sqlWhere = array();
-		foreach ($searchCategoryCustomerList as $categoryId) {
-			if ($categoryId == -2) $sqlWhere[] = "cc2.fk_categorie IS NULL";
-			else $sqlWhere[] = "cc2.fk_categorie = " . $categoryId;
-		}
-		$sql .= " WHERE (" . implode(" OR ", $sqlWhere) . ")";
-		$sql .= " GROUP BY s2.rowid";
-		//$sql .= " HAVING COUNT(DISTINCT IF(cc2.fk_categorie IS NULL, 0, cc2.fk_categorie)) = " . count($searchCategoryCustomerList);
-		$sql .= " HAVING COUNT(DISTINCT " . $db->ifsql('cc2.fk_categorie IS NULL', 0, 'cc2.fk_categorie') . ") = "  . count($searchCategoryCustomerList);
-		$sql .= ") as ccsa ON ccsa.societe_id = s.rowid";
-	}
+	// search customer categories
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "categorie_societe as cc ON s.rowid = cc.fk_soc";
 }
-if (!empty($search_categ_sup)) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs ON s.rowid = cs.fk_soc"; // We'll need this table joined to the select in order to filter by categ
+if (!empty($searchCategorySupplierList)) {
+	// search supplier categories
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "categorie_fournisseur as cs ON s.rowid = cs.fk_soc";
+}
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."c_stcomm as st ON s.fk_stcomm = st.id";
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -499,12 +505,43 @@ if (!empty($searchCategoryCustomerList)) {
 		// AND search categories for WITH statement
 		$sql .= " AND s.rowid IN (SELECT societe_id FROM societe_categories)";
 	} else {
-		// AND search categories for INNER JOIN statement
-		$sql .= " AND ccsa.societe_id IS NOT NULL";
+		// AND search categories for JOIN statement
+		$searchCategoryCustomerNb = count($searchCategoryCustomerList);
+		if (in_array(-2, $searchCategoryCustomerList)) {
+			unset($searchCategoryCustomerList[-2]);
+			$searchCategoryCustomerNb = $searchCategoryCustomerNb - 1;
+			$sql .= " AND cc.fk_categorie IS NULL";
+		}
+		if ($searchCategoryCustomerNb > 0) {
+			$sql .= " AND (SELECT COUNT(*) FROM " . MAIN_DB_PREFIX . "categorie_societe as cc1 WHERE cc1.fk_categorie IN (" . implode(',', $searchCategoryCustomerList) . ") AND cc1.fk_soc = s.rowid) = " . $searchCategoryCustomerNb;
+		}
 	}
 }
-if ($search_categ_sup > 0) $sql .= " AND cs.fk_categorie = ".$db->escape($search_categ_sup);
-if ($search_categ_sup == -2)   $sql .= " AND cs.fk_categorie IS NULL";
+if (!empty($searchCategorySupplierList)) {
+	if ($searchCategorySupplierOperator == 1) {
+		// OR search categories
+		$sqlWhere = array();
+		foreach ($searchCategorySupplierList as $categoryId) {
+			if ($categoryId == -2) $sqlWhere[] = "cs.fk_categorie IS NULL";
+			else $sqlWhere[] = "cs.fk_categorie = " . $categoryId;
+		}
+		$sql .= " AND (" . implode(" OR ", $sqlWhere) . ")";
+	} elseif (!empty($conf->global->MAIN_USE_WITH_INSTEAD_OF_INNER_JOIN)) {
+		// AND search categories for WITH statement
+		$sql .= " AND s.rowid IN (SELECT societe_id FROM supplier_categories)";
+	} else {
+		// AND search categories for JOIN statement
+		$searchCategorySupplierNb = count($searchCategorySupplierList);
+		if (in_array(-2, $searchCategorySupplierList)) {
+			unset($searchCategorySupplierList[-2]);
+			$searchCategorySupplierNb = $searchCategorySupplierNb - 1;
+			$sql .= " AND cs.fk_categorie IS NULL";
+		}
+		if ($searchCategorySupplierNb > 0) {
+			$sql .= " AND (SELECT COUNT(*) FROM " . MAIN_DB_PREFIX . "categorie_fournisseur as cs1 WHERE cs1.fk_categorie IN (" . implode(',', $searchCategorySupplierList) . ") AND cs1.fk_soc = s.rowid) = " . $searchCategorySupplierNb;
+		}
+	}
+}
 
 if ($search_all)           $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 if (strlen($search_cti))   $sql .= natural_search('s.phone', $search_cti);
@@ -613,7 +650,10 @@ if ($searchCategoryCustomerOperator == 1) $param .= '&search_category_customer_o
 foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
 	$param .= '&search_category_customer_list[]=' . urlencode($searchCategoryCustomer);
 }
-if ($search_categ_sup > 0) $param .= '&search_categ_sup='.urlencode($search_categ_sup);
+if ($searchCategorySupplierOperator == 1) $param .= '&search_category_supplier_operator=' . urlencode($searchCategorySupplierOperator);
+foreach ($searchCategorySupplierList as $searchCategorySupplier) {
+	$param .= '&search_category_supplier_list[]=' . urlencode($searchCategorySupplier);
+}
 if ($search_sale > 0)	   $param .= '&search_sale='.urlencode($search_sale);
 if ($search_id > 0)        $param .= "&search_id=".urlencode($search_id);
 if ($search_nom != '')     $param .= "&search_nom=".urlencode($search_nom);
@@ -754,7 +794,10 @@ if (empty($type) || $type == 'f')
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
 		$moreforfilter .= $langs->trans('SuppliersCategoriesShort').': ';
-		$moreforfilter .= $formother->select_categories('supplier', $search_categ_sup, 'search_categ_sup', 1);
+		$categoriesSupplierArr = $form->select_all_categories(Categorie::TYPE_SUPPLIER, '', '', 64, 0, 1);
+		$categoriesSupplierArr[-2] = '- ' . $langs->trans('NotCategorized') . ' -';
+		$moreforfilter .= Form::multiselectarray('search_category_supplier_list', $categoriesSupplierArr, $searchCategorySupplierList, 0, 0, 'minwidth300');
+		$moreforfilter .= '<input type="checkbox" class="valignmiddle" name="search_category_supplier_operator" value="1"' . ($searchCategorySupplierOperator==1 ? ' checked="checked"' : '') . '/> ' . $langs->trans('UseOrOperatorForCategories');
 		$moreforfilter .= '</div>';
 	}
 }
