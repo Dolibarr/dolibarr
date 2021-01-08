@@ -65,6 +65,7 @@ $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
 if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
+/** @var Product $object */
 if ($id > 0 || !empty($ref))
 {
 	$object = new Product($db);
@@ -369,6 +370,8 @@ if (empty($reshook))
 			}
 		}
 
+		if ($object->updatePriceFromExpression() < 0) $error++;
+
 		if (!$error && $object->update($object->id, $user) < 0) {
 			$error++;
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -378,7 +381,6 @@ if (empty($reshook))
 			$action = '';
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			$db->commit();
-			$object->updatePriceFromExpression();
 		} else {
 			$action = 'edit_price';
 			$db->rollback();

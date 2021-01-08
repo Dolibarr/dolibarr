@@ -2077,10 +2077,11 @@ class Product extends CommonObject
 	 * If alsoUpdate is true, the computed price will be saved into the database.
 	 *
 	 * @param false $alsoUpdate  Whether to save the price into db when it is different from the existing db price
+	 * @return int < 0 if error, > 0 if OK
 	 */
 	public function computePriceFromExpression($alsoUpdate = false)
 	{
-		global $user, $conf;
+		global $user, $conf, $langs;
 		if (!empty($conf->dynamicprices->enabled) && !empty($this->fk_price_expression)) {
 			include_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 			$priceparser = new PriceParser($this->db);
@@ -2096,10 +2097,21 @@ class Product extends CommonObject
 					$sql = 'SELECT price, price_ttc FROM ' . MAIN_DB_PREFIX . $this->table_element . ' WHERE rowid = ' . $this->id;
 					if ($resql = $this->db->query($sql)) {
 						$obj = $this->db->fetch_object($resql);
-						if ($obj && $obj->price != $this->price) {
-							$this->updatePrice($this->price, $this->price_base_type, $user, $this->tva_tx, $this->price_min);
+						if (!$obj) {
+							return -1;
+						} elseif ($obj->price == $this->price)
+						{
+							return 1;
+						} elseif ($obj->price != $this->price)
+						{
+							return $this->updatePrice($this->price, $this->price_base_type, $user, $this->tva_tx, $this->price_min);
 						}
+					} else {
+						// SQL error
+						return -1;
 					}
+				} else {
+					return 1;
 				}
 			}
 		}
@@ -2107,10 +2119,11 @@ class Product extends CommonObject
 	/**
 	 * If the dynamic price module is enabled, this method recomputes the price using the selected expression and
 	 * saves the new selling price of the product into the database.
+	 * @return < 0 if error, > 0 if OK
 	 */
 	public function updatePriceFromExpression()
 	{
-		$this->computePriceFromExpression(true);
+		return $this->computePriceFromExpression(true);
 	}
 
     /**

@@ -380,15 +380,16 @@ class ProductFournisseur extends Product
                         $error++;
                     }
                 }
+
+				if (!empty($conf->dynamicprices->enabled) && !empty($this->fk_price_expression)) {
+					// Computed selling prices may depend on the purchase price. By re-fetching the product, we
+					// force it to re-compute the selling price and to save it if it has changed.
+					if ($this->updatePriceFromExpression() < 0) $error++;
+				}
+
 				if (empty($error))
 				{
 					$this->db->commit();
-					if (!empty($conf->dynamicprices->enabled) && !empty($this->fk_price_expression)) {
-						// Computed selling prices may depend on the purchase price. By re-fetching the product, we
-						// force it to re-compute the selling price and to save it if it has changed.
-						$product = new Product($this->db);
-						if ($product->fetch($this->id) > 0) $product->updatePriceFromExpression();
-					}
 					return $this->product_fourn_price_id;
 				}
 				else

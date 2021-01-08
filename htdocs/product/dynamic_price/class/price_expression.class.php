@@ -298,9 +298,10 @@ class PriceExpression
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
 				if ($obj->rowid) {
-					// Fetching the product and recompute its price.
-					if ($product->fetch($obj->rowid) > 0)
-						$product->updatePriceFromExpression();
+					// Fetch the product and recompute its price.
+					if ($product->fetch($obj->rowid) <= 0 || $product->updatePriceFromExpression() < 0) {
+						$error++;
+					}
 				}
 			}
 		}
