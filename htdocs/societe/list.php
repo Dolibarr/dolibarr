@@ -406,9 +406,10 @@ if ($resql)
 
 $sql = "";
 if (!empty($conf->global->MAIN_USE_WITH_INSTEAD_OF_INNER_JOIN)) {
+	$hasWith = false;
 	// AND search customers categories for WITH statement
 	if (!empty($searchCategoryCustomerList) && $searchCategoryCustomerOperator != 1) {
-		$sql .= "WITH societe_categories (societe_id) AS (";
+		$sql .= ($hasWith === false ? " WITH" : ", ") . " societe_categories (societe_id) AS (";
 		$sql .= " SELECT s.rowid";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "categorie_societe as cc ON cc.fk_soc = s.rowid";
@@ -421,11 +422,12 @@ if (!empty($conf->global->MAIN_USE_WITH_INSTEAD_OF_INNER_JOIN)) {
 		$sql .= " GROUP BY s.rowid";
 		$sql .= " HAVING COUNT(DISTINCT " . $db->ifsql('cc.fk_categorie IS NULL', 0, 'cc.fk_categorie') . ") = " . count($searchCategoryCustomerList);
 		$sql .= ")";
+		$hasWith = true;
 	}
 
 	// AND search suppliers categories for WITH statement
 	if (!empty($searchCategorySupplierList) && $searchCategorySupplierOperator != 1) {
-		$sql .= "WITH supplier_categories (societe_id) AS (";
+		$sql .= ($hasWith === false ? " WITH" : ", ") . " supplier_categories (societe_id) AS (";
 		$sql .= " SELECT s.rowid";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "categorie_fournisseur as cs ON cs.fk_soc = s.rowid";
@@ -438,9 +440,10 @@ if (!empty($conf->global->MAIN_USE_WITH_INSTEAD_OF_INNER_JOIN)) {
 		$sql .= " GROUP BY s.rowid";
 		$sql .= " HAVING COUNT(DISTINCT " . $db->ifsql('cs.fk_categorie IS NULL', 0, 'cs.fk_categorie') . ") = " . count($searchCategorySupplierList);
 		$sql .= ")";
+		$hasWith = true;
 	}
 }
-$sql .= "SELECT DISTINCT s.rowid, s.nom as name, s.name_alias, s.barcode, s.address, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, s.logo,";
+$sql .= " SELECT DISTINCT s.rowid, s.nom as name, s.name_alias, s.barcode, s.address, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, s.logo,";
 $sql .= " s.entity,";
 $sql .= " st.libelle as stcomm, st.picto as stcomm_picto, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
 $sql .= " s.email, s.phone, s.fax, s.url, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4 as idprof4, s.idprof5 as idprof5, s.idprof6 as idprof6, s.tva_intra, s.fk_pays,";
