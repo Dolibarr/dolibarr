@@ -188,7 +188,6 @@ if (empty($reshook))
 	if ($action == 'add' && $user->rights->expedition->creer)
 	{
 		$error = 0;
-		$predef = '';
 
 		$db->begin();
 
@@ -215,7 +214,6 @@ if (empty($reshook))
 		$object->fk_delivery_address	= $objectsrc->fk_delivery_address;
 		$object->shipping_method_id		= GETPOST('shipping_method_id', 'int');
 		$object->tracking_number = GETPOST('tracking_number', 'alpha');
-		$object->ref_int = GETPOST('ref_int', 'alpha');
 		$object->note_private = GETPOST('note_private', 'restricthtml');
 		$object->note_public = GETPOST('note_public', 'restricthtml');
 		$object->fk_incoterms = GETPOST('incoterm_id', 'int');
