@@ -30,6 +30,7 @@ if (!empty($search_array_options) && is_array($search_array_options))	// $extraf
 			$param .= '&' . $search_options_pattern.$tmpkey.'_endday='   . dol_print_date($val['end'], '%d');
 			$param .= '&' . $search_options_pattern.$tmpkey.'_endhour='  . dol_print_date($val['end'], '%H');
 			$param .= '&' . $search_options_pattern.$tmpkey.'_endmin='   . dol_print_date($val['end'], '%M');
+			$val = '';
 		}
 		if ($val != '') $param .= '&'.$search_options_pattern.$tmpkey.'='.urlencode($val);
 	}
