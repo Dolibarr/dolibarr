@@ -2081,7 +2081,7 @@ class Product extends CommonObject
 	 */
 	public function computePriceFromExpression($alsoUpdate = false)
 	{
-		global $user, $conf, $langs;
+		global $user, $conf;
 		if (!empty($conf->dynamicprices->enabled) && !empty($this->fk_price_expression)) {
 			include_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 			$priceparser = new PriceParser($this->db);
