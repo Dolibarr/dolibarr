@@ -7,8 +7,8 @@ Permission23103 = スケジュールされたジョブを削除する
 Permission23104 = スケジュールされたジョブを実行する
 # Admin
 CronSetup=スケジュールされたジョブ管理のセットアップ
-URLToLaunchCronJobs=修飾されたcronジョブを確認して起動するためのURL
-OrToLaunchASpecificJob=または、特定のジョブを確認して起動する
+URLToLaunchCronJobs=ブラウザから修飾されたcronジョブを確認して起動するためのURL
+OrToLaunchASpecificJob=または、ブラウザから特定のジョブを確認して起動する
 KeyForCronAccess=cronジョブを起動するためのURLのセキュリティキー
 FileToLaunchCronJobs=修飾されたcronジョブをチェックして起動するコマンドライン
 CronExplainHowToRunUnix=Unix環境では、次のcrontabエントリを使用して、5分ごとにコマンドラインを実行する必要がある。
@@ -84,3 +84,8 @@ MakeLocalDatabaseDumpShort=ローカルデータベースのバックアップ
 MakeLocalDatabaseDump=ローカルデータベースダンプを作成する。パラメータは次のもの: 圧縮 ('gz' or 'bz' or 'none')、バックアップ種別 ('mysql', 'pgsql', 'auto')、1、 'auto' またはビルドするファイル名、保持するバックアップファイルの数
 WarningCronDelayed=注意、パフォーマンスの目的で、有効なジョブの次の実行日が何であれ、ジョブは実行される前に最大%s時間まで遅延する可能性がある。
 DATAPOLICYJob=データクリーナとアノニマイザ
+JobXMustBeEnabled=ジョブ%sを有効にする必要がある
+# Cron Boxes
+LastExecutedScheduledJob=最後に実行されたスケジュールジョブ
+NextScheduledJobExecute=次に実行する予定のジョブ
+NumberScheduledJobError=エラーのあるスケジュールジョブの数

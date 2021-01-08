@@ -13,4 +13,5 @@ WithdrawalFileNotCapable=Unable to generate Payment receipt file for your countr
 WithdrawRequestAmount=The amount of Direct Debit request:
 WithdrawRequestErrorNilAmount=Unable to create a Direct Debit request for an empty amount.
 SEPALegalText=By signing this mandate form, you authorise (A) %s to send instructions to your bank to debit your account and (B) your bank to debit your account in accordance with the instructions from %s. As part of your rights, you are entitled to a refund from your bank under the terms and conditions of your agreement with your bank. A refund must be claimed within 8 weeks starting from the date on which your account was debited. Your rights regarding the above mandate are explained in a statement that you can obtain from your bank.
+ICS=Creditor Identifier CI for direct debit
 InfoRejectMessage=Hello,<br><br>the direct debit payment order for invoice %s related to the company %s, for an amount of %s has been refused by the bank.<br><br>--<br>%s

@@ -30,6 +30,7 @@ OtherSendingsForSameOrder=Tämän tilauksen muut toimitukset
 SendingsAndReceivingForSameOrder=Tämän tilauksen toimitukset ja kuittaukset
 SendingsToValidate=Toimitu
 StatusSendingCanceled=Peruttu
+StatusSendingCanceledShort=Peruttu
 StatusSendingDraft=Vedos
 StatusSendingValidated=Validoidut (lähetettävät tai lähetetyt tuotteet)
 StatusSendingProcessed=Jalostettu
@@ -65,6 +66,7 @@ ValidateOrderFirstBeforeShipment=You must first validate the order before being 
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Täydellisempi mallin toimitusten kuitit (logo. ..)
+DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Jatkuva EXPEDITION_ADDON_NUMBER ei määritelty
 SumOfProductVolumes=Sum of product volumes
 SumOfProductWeights=Sum of product weights
