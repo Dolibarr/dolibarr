@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2012 Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2016 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2020 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,10 +27,14 @@ if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
 
 require '../../main.inc.php';
 
-$id = GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$id = GETPOST('id', 'int'); // id of thirdparty
+$action = GETPOST('action', 'aZ09');
 $htmlname = GETPOST('htmlname', 'alpha');
 $showempty = GETPOST('showempty', 'int');
+
+// Security check
+$result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
+
 
 /*
  * View

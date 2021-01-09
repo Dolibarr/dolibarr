@@ -38,71 +38,71 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functionsnumtoword.lib.php';
  */
 class pdf_standard extends ModelePDFSuppliersPayments
 {
-    /**
-     * @var DoliDb Database handler
-     */
-    public $db;
+	/**
+	 * @var DoliDb Database handler
+	 */
+	public $db;
 
 	/**
-     * @var string model name
-     */
-    public $name;
+	 * @var string model name
+	 */
+	public $name;
 
 	/**
-     * @var string model description (short text)
-     */
-    public $description;
+	 * @var string model description (short text)
+	 */
+	public $description;
 
 	/**
-     * @var string document type
-     */
-    public $type;
-
-    /**
-     * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.5 = array(5, 5)
-     */
-	public $phpmin = array(5, 5);
+	 * @var string document type
+	 */
+	public $type;
 
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * @var array Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 */
+	public $phpmin = array(5, 6);
+
+	/**
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr';
 
 	/**
-     * @var int page_largeur
-     */
-    public $page_largeur;
+	 * @var int page_largeur
+	 */
+	public $page_largeur;
 
 	/**
-     * @var int page_hauteur
-     */
-    public $page_hauteur;
+	 * @var int page_hauteur
+	 */
+	public $page_hauteur;
 
 	/**
-     * @var array format
-     */
-    public $format;
+	 * @var array format
+	 */
+	public $format;
 
 	/**
-     * @var int marge_gauche
-     */
+	 * @var int marge_gauche
+	 */
 	public $marge_gauche;
 
 	/**
-     * @var int marge_droite
-     */
+	 * @var int marge_droite
+	 */
 	public $marge_droite;
 
 	/**
-     * @var int marge_haute
-     */
+	 * @var int marge_haute
+	 */
 	public $marge_haute;
 
 	/**
-     * @var int marge_basse
-     */
+	 * @var int marge_basse
+	 */
 	public $marge_basse;
 
 	/**
@@ -139,10 +139,10 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
 		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
 
-		$this->option_logo = 1; // Affiche logo
-		$this->option_multilang = 1; // Dispo en plusieurs langues
+		$this->option_logo = 1; // Display logo
+		$this->option_multilang = 1; // Available in several languages
 
-        // Define column position
+		// Define column position
 		$this->posxdate = $this->marge_gauche + 1;
 		$this->posxreffacturefourn = 30;
 		$this->posxreffacture = 65;
@@ -163,32 +163,32 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		}
 
 		$this->tva = array();
-        $this->localtax1 = array();
-        $this->localtax2 = array();
+		$this->localtax1 = array();
+		$this->localtax2 = array();
 		$this->atleastoneratenotnull = 0;
 		$this->atleastonediscount = 0;
 
-		// Recupere emetteur
+		// Get source company
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) $this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Function to build pdf onto disk
-     *
-     *  @param		PaiementFourn		$object				Id of object to generate
-     *  @param		Translate			$outputlangs		Lang output object
-     *  @param		string				$srctemplatepath	Full path of source filename for generator using a template file
-     *  @param		int					$hidedetails		Do not show line details
-     *  @param		int					$hidedesc			Do not show desc
-     *  @param		int					$hideref			Do not show ref
-     *  @return		int										1=OK, 0=KO
-     */
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Function to build pdf onto disk
+	 *
+	 *  @param		PaiementFourn		$object				Id of object to generate
+	 *  @param		Translate			$outputlangs		Lang output object
+	 *  @param		string				$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param		int					$hidedetails		Do not show line details
+	 *  @param		int					$hidedesc			Do not show desc
+	 *  @param		int					$hideref			Do not show ref
+	 *  @return		int										1=OK, 0=KO
+	 */
 	public function write_file($object, $outputlangs = '', $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;
 
 		if (!is_object($outputlangs)) $outputlangs = $langs;
@@ -223,7 +223,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 				}
 			}
 
-			$total = $object->montant;
+			$total = $object->amount;
 
 			// Definition of $dir and $file
 			if ($object->specimen)
@@ -233,7 +233,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
 				$objectrefsupplier = dol_sanitizeFileName($object->ref_supplier);
-                $dir = $conf->fournisseur->payment->dir_output.'/'.$objectref;
+				$dir = $conf->fournisseur->payment->dir_output.'/'.$objectref;
 				$file = $dir."/".$objectref.".pdf";
 				if (!empty($conf->global->SUPPLIER_REF_IN_NAME)) $file = $dir."/".$objectref.($objectrefsupplier ? "_".$objectrefsupplier : "").".pdf";
 			}
@@ -262,26 +262,26 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 				$nblines = count($object->lines);
 
-                $pdf = pdf_getInstance($this->format);
-                $default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
-                $heightforinfotot = 50; // Height reserved to output the info and total part
-		        $heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
-	            $heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-	            if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS > 0) $heightforfooter += 6;
-                $pdf->SetAutoPageBreak(1, 0);
+				$pdf = pdf_getInstance($this->format);
+				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
+				$heightforinfotot = 50; // Height reserved to output the info and total part
+				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
+				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) $heightforfooter += 6;
+				$pdf->SetAutoPageBreak(1, 0);
 
-                if (class_exists('TCPDF'))
-                {
-                    $pdf->setPrintHeader(false);
-                    $pdf->setPrintFooter(false);
-                }
-                $pdf->SetFont(pdf_getPDFFont($outputlangs));
-                // Set path to the background PDF File
-                if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
-                {
-                    $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
-                    $tplidx = $pdf->importPage(1);
-                }
+				if (class_exists('TCPDF'))
+				{
+					$pdf->setPrintHeader(false);
+					$pdf->setPrintFooter(false);
+				}
+				$pdf->SetFont(pdf_getPDFFont($outputlangs));
+				// Set path to the background PDF File
+				if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
+				{
+					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+					$tplidx = $pdf->importPage(1);
+				}
 
 				$pdf->Open();
 				$pagenb = 0;
@@ -297,7 +297,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 
-                // New page
+				// New page
 				$pdf->AddPage();
 				if (!empty($tplidx)) $pdf->useTemplate($tplidx);
 				$pagenb++;
@@ -370,7 +370,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 					}
 
 					$nexY = $pdf->GetY();
-                    $pageposafter = $pdf->getPage();
+					$pageposafter = $pdf->getPage();
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
 					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
@@ -403,8 +403,8 @@ class pdf_standard extends ModelePDFSuppliersPayments
 					$pdf->MultiCell($this->posxtva - $this->posxup - 0.8, 3, price($object->lines[$i]->total_tva), 0, 'R', 0);
 
 					// Total TTC line
-                    $pdf->SetXY($this->posxtotalttc, $curY);
-                    $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxtotalttc, 3, price($object->lines[$i]->total_ttc), 0, 'R', 0);
+					$pdf->SetXY($this->posxtotalttc, $curY);
+					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxtotalttc, 3, price($object->lines[$i]->total_ttc), 0, 'R', 0);
 
 
 					// Add line
@@ -462,13 +462,13 @@ class pdf_standard extends ModelePDFSuppliersPayments
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
 
-				// Affiche zone cheèque
+				// Display check zone
 				$posy = $this->_tableau_cheque($pdf, $object, $bottomlasttab, $outputlangs);
 
 				// Affiche zone totaux
 				//$posy=$this->_tableau_tot($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
 
-				// Pied de page
+				// Footer page
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
 
@@ -483,8 +483,8 @@ class pdf_standard extends ModelePDFSuppliersPayments
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0)
 				{
-				    $this->error = $hookmanager->error;
-				    $this->errors = $hookmanager->errors;
+					$this->error = $hookmanager->error;
+					$this->errors = $hookmanager->errors;
 				}
 
 				if (!empty($conf->global->MAIN_UMASK))
@@ -508,7 +508,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	/**
 	 *	Show total to pay
 	 *
-	 *	@param	PDF				$pdf			Object PDF
+	 *	@param	TCPDF			$pdf			Object PDF
 	 *	@param  PaiementFourn	$object         Object PaiementFourn
 	 *	@param	int				$posy			Position depart
 	 *	@param	Translate		$outputlangs	Objet langs
@@ -516,10 +516,10 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 */
 	protected function _tableau_cheque(&$pdf, $object, $posy, $outputlangs)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $mysoc;
 
-        $default_font_size = pdf_getPDFFontSize($outputlangs);
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$pdf->SetFont('', '', $default_font_size - 1);
 		$pdf->SetFillColor(255, 255, 255);
@@ -534,12 +534,12 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 		// Total payments
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - 50, $posy);
-		$pdf->MultiCell(50, 4, price($object->montant), 0, 'R', 1);
+		$pdf->MultiCell(50, 4, price($object->amount), 0, 'R', 1);
 		$posy += 20;
 
 		// translate amount
 		$currency = $conf->currency;
-		$translateinletter = strtoupper(dol_convertToWord($object->montant, $outputlangs, $currency));
+		$translateinletter = strtoupper(dol_convertToWord($object->amount, $outputlangs, $currency));
 		$pdf->SetXY($this->marge_gauche + 50, $posy);
 		$pdf->MultiCell(90, 8, $translateinletter, 0, 'L', 1);
 		$posy += 8;
@@ -549,9 +549,8 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$pdf->MultiCell(150, 4, $object->thirdparty->nom, 0, 'L', 1);
 
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - 30, $posy);
-		$pdf->MultiCell(35, 4, str_pad(price($object->montant).' '.$currency, 18, '*', STR_PAD_LEFT), 0, 'R', 1);
+		$pdf->MultiCell(35, 4, str_pad(price($object->amount).' '.$currency, 18, '*', STR_PAD_LEFT), 0, 'R', 1);
 		$posy += 10;
-
 
 		// City
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - 30, $posy);
@@ -567,7 +566,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		PDF			$pdf     		Object PDF
+	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		integer		$tab_top		Top position of table
 	 *   @param		integer		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
@@ -588,13 +587,13 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$currency = !empty($currency) ? $currency : $conf->currency;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-        // Amount in (at tab_top - 1)
+		// Amount in (at tab_top - 1)
 		$pdf->SetTextColor(0, 0, 0);
 		$pdf->SetFont('', '', $default_font_size - 2);
 
-		$titre = strtoupper($mysoc->town).', le '.date("d").' '.$outputlangs->transnoentitiesnoconv(date("F")).' '.date("Y");
+		/*$titre = strtoupper($mysoc->town).' - '.dol_print_date(dol_now(), 'day', 'tzserver', $outputlangs);
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3) - 60, $tab_top - 6);
-		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
+		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);*/
 
 		$titre = $outputlangs->transnoentities("AmountInCurrency", $outputlangs->transnoentitiesnoconv("Currency".$currency));
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top);
@@ -612,7 +611,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	PDF			$pdf     		Object PDF
+	 *  @param	TCPDF		$pdf     		Object PDF
 	 *  @param  FactureFournisseur		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
@@ -644,8 +643,8 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		{
 			if (is_readable($logo))
 			{
-			    $height = pdf_getHeightForLogo($logo);
-			    $pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
+				$height = pdf_getHeightForLogo($logo);
+				$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
 			} else {
 				$pdf->SetTextColor(200, 0, 0);
 				$pdf->SetFont('', 'B', $default_font_size - 2);
@@ -656,7 +655,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 			$text = $this->emetteur->name;
 			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
-        /*
+		/*
 		$pdf->SetFont('','B', $default_font_size + 3);
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
@@ -754,7 +753,9 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 			$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $mysoc, ((!empty($object->contact)) ? $object->contact : null), $usecontact, 'target', $object);
+			$usecontact = 0;
+
+			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ((!empty($object->contact)) ? $object->contact : null), $usecontact, 'target', $object);
 
 			// Show recipient
 			$widthrecbox = 90;
@@ -787,8 +788,8 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   	Show footer of page. Need this->emetteur object
-     *
-	 *   	@param	PDF			$pdf     			PDF
+	 *
+	 *   	@param	TCPDF		$pdf     			PDF
 	 * 		@param	FactureFournisseur		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
@@ -797,7 +798,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
-		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf, $outputlangs, 'SUPPLIER_INVOICE_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 }

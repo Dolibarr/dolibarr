@@ -25,7 +25,7 @@ create table llx_product_price
 (
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
   entity			integer   DEFAULT 1 NOT NULL,		-- Multi company id
-  tms				timestamp,
+  tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_product		integer NOT NULL,
   date_price		datetime NOT NULL,
   price_level		smallint NULL DEFAULT 1,

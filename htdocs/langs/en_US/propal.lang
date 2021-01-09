@@ -47,7 +47,6 @@ SendPropalByMail=Send commercial proposal by mail
 DatePropal=Date of proposal
 DateEndPropal=Validity ending date
 ValidityDuration=Validity duration
-CloseAs=Set status to
 SetAcceptedRefused=Set accepted/refused
 ErrorPropalNotFound=Propal %s not found
 AddToDraftProposals=Add to draft proposal
@@ -84,3 +83,9 @@ DefaultModelPropalClosed=Default template when closing a business proposal (unbi
 ProposalCustomerSignature=Written acceptance, company stamp, date and signature
 ProposalsStatisticsSuppliers=Vendor proposals statistics
 CaseFollowedBy=Case followed by
+SignedOnly=Signed only
+IdProposal=Proposal ID
+IdProduct=Product ID
+PrParentLine=Proposal Parent Line
+LineBuyPriceHT=Buy Price Amount net of tax for line
+

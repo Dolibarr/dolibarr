@@ -197,8 +197,8 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 	$sFileName = '';
 
 	if (isset($_FILES['NewFile']) && !is_null($_FILES['NewFile']['tmp_name'])
-       // This is for the QuickUpload tab box
-        or (isset($_FILES['upload']) && !is_null($_FILES['upload']['tmp_name'])))
+	   // This is for the QuickUpload tab box
+		or (isset($_FILES['upload']) && !is_null($_FILES['upload']['tmp_name'])))
 	{
 		global $Config;
 
@@ -298,16 +298,16 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 	// @CHANGE
 	//SendUploadResults( $sErrorNumber, $sFileUrl, $sFileName );
 	if ($CKEcallback == '')
-    {
-        // this line already exists so wrap the if block around it
-        SendUploadResults($sErrorNumber, $sFileUrl, $sFileName);
-    } else {
-	    //issue the CKEditor Callback
-        SendCKEditorResults(
+	{
+		// this line already exists so wrap the if block around it
+		SendUploadResults($sErrorNumber, $sFileUrl, $sFileName);
+	} else {
+		//issue the CKEditor Callback
+		SendCKEditorResults(
 			$CKEcallback,
 			$sFileUrl,
 			($sErrorNumber != 0 ? 'Error '.$sErrorNumber.' upload failed.' : 'Upload Successful')
-    	);
+		);
 	}
 
 	exit;

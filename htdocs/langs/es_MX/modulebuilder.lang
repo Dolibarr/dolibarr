@@ -3,7 +3,6 @@ ObjectKey=Clave de objeto
 ModuleBuilderDeschooks=Esta pestaña está dedicada a los ganchos.
 ModuleBuilderDescwidgets=Esta pestaña está dedicada a administrar / crear widgets.
 BuildDocumentation=Crear documentación
-ModuleIsNotActive=This module is not activated yet. Go to %s to make it live or click here:
 DescriptorFile=Archivo descriptor del módulo
 ApiClassFile=Archivo para la clase API de PHP
 PageForList=Página PHP para la lista de registro

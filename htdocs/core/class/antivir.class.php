@@ -45,9 +45,9 @@ class AntiVir
 	public $output;
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
 	/**
 	 *  Constructor
@@ -59,7 +59,7 @@ class AntiVir
 		$this->db = $db;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Scan a file with antivirus.
 	 *  This function runs the command defined in setup. This antivirus command must return 0 if OK.
@@ -70,24 +70,24 @@ class AntiVir
 	 */
 	public function dol_avscan_file($file)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		$return = 0;
 
 		if (preg_match('/\.virus$/i', $file))
 		{
-		    $this->errors[] = 'File has an extension saying file is a virus';
-		    return -97;
+			$this->errors[] = 'File has an extension saying file is a virus';
+			return -97;
 		}
 
 		$fullcommand = $this->getCliCommand($file);
 		//$fullcommand='"c:\Program Files (x86)\ClamWin\bin\clamscan.exe" --database="C:\Program Files (x86)\ClamWin\lib" "c:\temp\aaa.txt"';
-        $fullcommand .= ' 2>&1'; // This is to get error output
+		$fullcommand .= ' 2>&1'; // This is to get error output
 
 		$output = array();
 		$return_var = 0;
-        $safemode = ini_get("safe_mode");
+		$safemode = ini_get("safe_mode");
 		// Create a clean fullcommand
 		dol_syslog("AntiVir::dol_avscan_file Run command=".$fullcommand." with safe_mode ".($safemode ? "on" : "off"));
 		// Run CLI command. If run of Windows, you can get return with echo %ERRORLEVEL%
@@ -95,7 +95,7 @@ class AntiVir
 
 		if (is_null($output)) $output = array();
 
-        //print "x".$lastline." - ".join(',',$output)." - ".$return_var."y";exit;
+		//print "x".$lastline." - ".join(',',$output)." - ".$return_var."y";exit;
 
 		/*
         $outputfile=$conf->admin->dir_temp.'/dol_avscan_file.out.'.session_id();
@@ -181,7 +181,7 @@ class AntiVir
 
 		$ret = $command.' '.$param;
 		//$ret=$command.' '.$param.' 2>&1';
-        //print "xx".$ret."xx";exit;
+		//print "xx".$ret."xx";exit;
 
 		return $ret;
 	}

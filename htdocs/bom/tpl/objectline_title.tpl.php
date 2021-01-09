@@ -54,7 +54,7 @@ print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
 // Qty
 print '<td class="linecolqty right">'.$form->textwithpicto($langs->trans('Qty'), $langs->trans("QtyRequiredIfNoLoss")).'</td>';
 
-if ($conf->global->PRODUCT_USE_UNITS)
+if (!empty($conf->global->PRODUCT_USE_UNITS))
 {
 	print '<td class="linecoluseunit left">'.$langs->trans('Unit').'</td>';
 }
@@ -69,7 +69,7 @@ print '<td class="linecoldisablestockchange right">'.$form->textwithpicto($langs
 print '<td class="linecolefficiency right">'.$form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')).'</td>';
 
 // Cost
-print '<td class="linecolcost right">'.$langs->trans('CostPrice').'</td>';
+print '<td class="linecolcost right">'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCost")).'</td>';
 
 print '<td class="linecoledit"></td>'; // No width to allow autodim
 

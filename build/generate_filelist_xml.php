@@ -125,6 +125,11 @@ $checksumconcat=array();
 
 $outputfile=$outputdir.'/filelist-'.$release.'.xml';
 $fp = fopen($outputfile, 'w');
+if (empty($fp)) {
+	print 'Failed to open file '.$outputfile."\n";
+	exit(-1);
+}
+
 fputs($fp, '<?xml version="1.0" encoding="UTF-8" ?>'."\n");
 fputs($fp, '<checksum_list version="'.$release.'" date="'.dol_print_date(dol_now(), 'dayhourrfc').'" generator="'.$script_file.'">'."\n");
 

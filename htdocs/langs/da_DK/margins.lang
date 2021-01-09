@@ -16,6 +16,7 @@ MarginDetails=Margen detaljer
 ProductMargins=Produktmargener
 CustomerMargins=Kundemargener
 SalesRepresentativeMargins=Salgsrepræsentantmargener
+ContactOfInvoice=Kontakt med faktura
 UserMargins=Brugermargener
 ProductService=Produkt eller Service
 AllProducts=Alle produkter og tjenester
@@ -31,14 +32,14 @@ MARGIN_TYPE=Køb / Omkostningspris foreslået som standard for margenberegning
 MargeType1=Margin på bedste sælgerpris
 MargeType2=Margin på vejet gennemsnitspris (WAP)
 MargeType3=Margin på omkostningspris
-MarginTypeDesc=* Margin på bedst købspris = Salgspris - Bedste leverandørpris defineret på produktkortet. <br>* Margin på vægtet gennemsnitspris (WAP) = Salgspris - Produktvægtet gennemsnitspris (WAP) eller bedste leverandørpris, hvis WAP endnu ikke er defineret <br> * Margen på omkostningspris = Salgspris - Omkostningspris defineret på produktkort eller WAP, hvis omkostningspris ikke er defineret eller bedste leverandørpris, hvis WAP endnu ikke er defineret
+MarginTypeDesc=* Margen på bedste købspris = Salgspris - Bedste sælgerpris defineret på produktkort<br> * Marginal på vægtet gennemsnitspris (WAP) = Salgspris - Produktvægtet gennemsnitspris (WAP) eller bedste sælgerpris, hvis WAP endnu ikke er defineret <br>* Margin on Cost pris = Salgspris - Omkostningspris defineret på produktkort eller WAP, hvis kostpris ikke er defineret, eller bedste leverandørpris, hvis WAP endnu ikke er defineret
 CostPrice=Omkostning
 UnitCharges=Enhedsafgifter
 Charges=Afgifter
 AgentContactType=Kommerciel agentkontaktype
-AgentContactTypeDetails=Definer, hvilken kontakttype (knyttet til fakturaer) vil blive brugt til marginalrapport pr. Salgsrepræsentant
+AgentContactTypeDetails=Definer hvilken kontakttype (der er knyttet til fakturaer), der skal bruges til marginrapport pr. Kontakt / adresse. Bemærk, at læsning af statistik om en kontakt ikke er pålidelig, da kontakten i de fleste tilfælde muligvis ikke er defineret eksplicit på fakturaerne.
 rateMustBeNumeric=Satsen skal være en numerisk værdi
 markRateShouldBeLesserThan100=Markrate bør være lavere end 100
 ShowMarginInfos=Vis marginoplysninger
 CheckMargins=Margen detaljer
-MarginPerSaleRepresentativeWarning=Rapporten om margen pr. Bruger bruger linket mellem tredjeparter og salgsrepræsentanter til at beregne margenen for hver salgsrepræsentant. Da nogle tredjeparter muligvis ikke har nogen ddiated salgsrepræsentant og nogle tredjeparter kan være knyttet til flere, kan nogle beløb måske ikke medtages i denne rapport (hvis der ikke er salgsrepræsentant), og nogle kan vises på forskellige linjer (for hver salgsrepræsentant).
+MarginPerSaleRepresentativeWarning=Rapporten om margen pr. Bruger bruger linket mellem tredjeparter og salgsrepræsentanter til at beregne margenen for hver salgsrepræsentant. Da nogle tredjeparter muligvis ikke har nogen dedikeret salgsrepræsentant, og nogle tredjeparter kan være knyttet til flere, kan nogle beløb måske ikke medtages i denne rapport (hvis der ikke er salgsrepræsentant), og nogle kan forekomme på forskellige linjer (for hver salgsrepræsentant) .

@@ -21,10 +21,13 @@
  */
 
 /**
- * \file scripts/emailings/mailing-send.php
+ * \file 	scripts/emailings/mailing-send.php
  * \ingroup mailing
- * \brief Script d'envoi d'un mailing prepare et valide
+ * \brief 	Script to send a prepared and validated emaling from command line
  */
+
+if (!defined('NOSESSION')) define('NOSESSION', '1');
+
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = __DIR__.'/';
@@ -36,13 +39,19 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 if (!isset($argv[1]) || !$argv[1]) {
-	print "Usage: ".$script_file." (ID_MAILING|all)\n";
+	print "Usage: ".$script_file." (ID_MAILING|all) [userloginforsignature] [maxnbofemails]\n";
 	exit(-1);
 }
+
 $id = $argv[1];
-if (isset($argv[2]) || !empty($argv[2]))
-	$login = $argv[2];
+
+if (isset($argv[2]) || !empty($argv[2])) $login = $argv[2];
 else $login = '';
+
+$max = 0;
+
+if (isset($argv[3]) || !empty($argv[3])) $max = $argv[3];
+
 
 require_once $path."../../htdocs/master.inc.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php";
@@ -52,12 +61,22 @@ require_once DOL_DOCUMENT_ROOT."/comm/mailing/class/mailing.class.php";
 $version = DOL_VERSION;
 $error = 0;
 
+if (empty($conf->global->MAILING_LIMIT_SENDBYCLI))
+{
+	$conf->global->MAILING_LIMIT_SENDBYCLI = 0;
+}
+
+
 /*
  * Main
  */
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
+
+if (!empty($conf->global->MAILING_DELAY)) {
+	print 'A delay of '.((float) $conf->global->MAILING_DELAY * 1000000).' millisecond has been set between each email'."\n";
+}
 
 if ($conf->global->MAILING_LIMIT_SENDBYCLI == '-1') {}
 
@@ -110,9 +129,13 @@ if ($resql) {
 			// ou envoyes en erreur (statut=-1)
 			$sql2 = "SELECT mc.rowid, mc.fk_mailing, mc.lastname, mc.firstname, mc.email, mc.other, mc.source_url, mc.source_id, mc.source_type, mc.tag";
 			$sql2 .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
-			$sql2 .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".$id;
-			if ($conf->global->MAILING_LIMIT_SENDBYCLI > 0) {
+			$sql2 .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".((int) $id);
+			if ($conf->global->MAILING_LIMIT_SENDBYCLI > 0 && empty($max)) {
 				$sql2 .= " LIMIT ".$conf->global->MAILING_LIMIT_SENDBYCLI;
+			} elseif ($conf->global->MAILING_LIMIT_SENDBYCLI > 0 && $max > 0) {
+				$sql2 .= " LIMIT ".min($conf->global->MAILING_LIMIT_SENDBYCLI, $max);
+			} elseif ($max > 0) {
+				$sql2 .= " LIMIT ".$max;
 			}
 
 			$resql2 = $db->query($sql2);
@@ -125,7 +148,7 @@ if ($resql) {
 					$now = dol_now();
 
 					// Positionne date debut envoi
-					$sqlstartdate = "UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi='".$db->idate($now)."' WHERE rowid=".$id;
+					$sqlstartdate = "UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi='".$db->idate($now)."' WHERE rowid=".((int) $id);
 					$resqlstartdate = $db->query($sqlstartdate);
 					if (!$resqlstartdate) {
 						dol_print_error($db);
@@ -313,7 +336,7 @@ if ($resql) {
 								}
 
 								if (!empty($conf->global->MAILING_DELAY)) {
-									sleep($conf->global->MAILING_DELAY);
+									usleep((float) $conf->global->MAILING_DELAY * 1000000);
 								}
 							}
 						} else {

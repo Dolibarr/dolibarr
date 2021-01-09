@@ -36,6 +36,7 @@ insert into llx_c_actioncomm (id, code, type, libelle, module, active, position)
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 2,'AC_FAX','system','Send Fax',NULL, 1, 3);
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 4,'AC_EMAIL','system','Send Email',NULL, 1, 4);
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 5,'AC_RDV','system','Rendez-vous',NULL, 1, 1);
+insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 6,'AC_EMAIL_IN','system','reception Email',NULL, 1, 4);
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values (11,'AC_INT','system','Intervention on site',NULL, 1, 4);
 -- Code kept for backward compatibility < 3.3 
 --insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 3,'AC_PROP','systemauto', 'Send commercial proposal by email','propal',0,10);

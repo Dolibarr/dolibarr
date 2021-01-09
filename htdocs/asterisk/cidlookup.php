@@ -35,8 +35,8 @@ $notfound = $langs->trans("Unknown");
 // Security check
 if (empty($conf->clicktodial->enabled))
 {
-    print "Error: Module Click to dial is not enabled.\n";
-    exit;
+	print "Error: Module Click to dial is not enabled.\n";
+	exit;
 }
 
 // Check parameters

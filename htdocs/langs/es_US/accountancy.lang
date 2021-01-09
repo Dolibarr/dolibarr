@@ -1,3 +1,2 @@
 # Dolibarr language file - Source file is en_US - accountancy
-AccountancyAreaDescChartModel=STEP %s: Create a model of chart of account from menu %s
-AccountancyAreaDescChart=STEP %s: Create or check content of your chart of account from menu %s
+ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)

@@ -43,3 +43,5 @@ ProductQtyInSuppliersReceptionAlreadyRecevied=Produktkvantitet från öppen leve
 ValidateOrderFirstBeforeReception=Du måste först validera ordern innan du kan göra mottagningar.
 ReceptionsNumberingModules=Numbering module for receptions
 ReceptionsReceiptModel=Document templates for receptions
+NoMorePredefinedProductToDispatch=No more predefined products to dispatch
+

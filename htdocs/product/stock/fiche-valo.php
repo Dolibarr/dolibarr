@@ -57,7 +57,7 @@ if ($_GET["id"])
 
 	$head = stock_prepare_head($entrepot);
 
-	dol_fiche_head($head, 'value', $langs->trans("Warehouse"), 0, 'stock');
+	print dol_get_fiche_head($head, 'value', $langs->trans("Warehouse"), 0, 'stock');
 
 
 	print '<table class="border centpercent">';

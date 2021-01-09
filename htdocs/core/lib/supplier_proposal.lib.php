@@ -34,7 +34,7 @@ function supplier_proposal_prepare_head($object)
 	global $db, $langs, $conf, $user;
 
 	// Load translation files required by the page
-    $langs->loadLangs(array("supplier_proposal", "compta"));
+	$langs->loadLangs(array("supplier_proposal", "compta"));
 
 	$h = 0;
 	$head = array();
@@ -54,29 +54,29 @@ function supplier_proposal_prepare_head($object)
 		$h++;
 	}
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_proposal');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_proposal');
 
-    if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
-    {
-    	$nbNote = 0;
-        if (!empty($object->note_private)) $nbNote++;
+	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+	{
+		$nbNote = 0;
+		if (!empty($object->note_private)) $nbNote++;
 		if (!empty($object->note_public)) $nbNote++;
-	    $head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/note.php?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/note.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
 		$head[$h][2] = 'note';
 		$h++;
-    }
+	}
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->supplier_proposal->dir_output."/".dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-    $nbLinks = Link::count($db, $object->element, $object->id);
+	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
 	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
@@ -118,13 +118,13 @@ function supplier_proposal_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/admin/supplier_proposal_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
-    $head[$h][2] = 'attributes';
-    $h++;
+	$head[$h][2] = 'attributes';
+	$h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/admin/supplier_proposaldet_extrafields.php';
-    $head[$h][1] = $langs->trans("ExtraFieldsLines");
-    $head[$h][2] = 'attributeslines';
-    $h++;
+	$head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/admin/supplier_proposaldet_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFieldsLines");
+	$head[$h][2] = 'attributeslines';
+	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'supplier_proposal_admin', 'remove');
 

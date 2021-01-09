@@ -32,7 +32,7 @@ if (isset($object->extraparams[$blocname]['showhide'])) $hide = (empty($object->
 <!-- BEGIN PHP TEMPLATE bloc_showhide.tpl.php -->
 
 <?php
-print '<script type="text/javascript">'."\n";
+print '<script>'."\n";
 print '$(document).ready(function() {'."\n";
 print '$("#hide-'.$blocname.'").click(function(){'."\n";
 print '		setShowHide(0);'."\n";

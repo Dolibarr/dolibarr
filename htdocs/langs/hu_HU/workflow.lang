@@ -16,5 +16,8 @@ descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=A kapcsolt forrásból származó �
 # Autoclassify purchase order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=A kapcsolt forrásból származó szállítói javaslatot számlázottként minősíti, ha a szállítói számla érvényesítve lesz (és ha a számla összege megegyezik a kapcsolódó ajánlat teljes összegével)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=A kapcsolt forrásból származó megrendelést számlázottra minősíti, ha a szállítói számla érvényesítve lesz (és ha a számla összege megegyezik a kapcsolódó rendelés teljes összegével)
+descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
 AutomaticCreation=Automatikus létrehozás
 AutomaticClassification=Automatikus minősítés

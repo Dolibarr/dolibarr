@@ -34,14 +34,14 @@ class CdavLib
 
 	private $langs;
 
-    /**
-     * Constructor
-     *
-     * @param   User        $user   user
-     * @param   DoliDB      $db     Database handler
-     * @param   Translate   $langs  translation
-     */
-    public function __construct($user, $db, $langs)
+	/**
+	 * Constructor
+	 *
+	 * @param   User        $user   user
+	 * @param   DoliDB      $db     Database handler
+	 * @param   Translate   $langs  translation
+	 */
+	public function __construct($user, $db, $langs)
 	{
 		$this->user = $user;
 		$this->db = $db;
@@ -231,15 +231,15 @@ class CdavLib
 		return $caldata;
 	}
 
-    /**
-     * getFullCalendarObjects
-     *
-     * @param int	 	$calendarId			Calendar id
-     * @param int		$bCalendarData		Add calendar data
-     * @return array|string[][]
-     */
-    public function getFullCalendarObjects($calendarId, $bCalendarData)
-    {
+	/**
+	 * getFullCalendarObjects
+	 *
+	 * @param int	 	$calendarId			Calendar id
+	 * @param int		$bCalendarData		Add calendar data
+	 * @return array|string[][]
+	 */
+	public function getFullCalendarObjects($calendarId, $bCalendarData)
+	{
 		$calid = ($calendarId * 1);
 		$calevents = array();
 

@@ -11,6 +11,7 @@ ApprovedCP=Aprobado
 CancelCP=Cancelado
 RefuseCP=Rechazado
 ListeCP=Lista de licencia
+Leave=Dejar petición
 LeaveId=ID de Salida
 ReviewedByCP=Será aprobado por
 UserForApprovalID=ID de aprobación del usuario

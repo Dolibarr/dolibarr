@@ -41,20 +41,22 @@ $confirm    = GETPOST('confirm', 'alpha');
 $module  = GETPOST('module', 'alpha');
 $website = GETPOST('website', 'alpha');
 $pageid  = GETPOST('pageid', 'int');
-if (empty($module)) $module = 'ecm';
+if (empty($module)) {
+	$module = 'ecm';
+}
 
 // Security check
-if ($user->socid > 0)
-{
-    $action = '';
-    $socid = $user->socid;
+if ($user->socid > 0) {
+	$action = '';
+	$socid = $user->socid;
 }
 
 $section = $urlsection = GETPOST('section', 'alpha');
-if (empty($urlsection)) $urlsection = 'misc';
+if (empty($urlsection)) {
+	$urlsection = 'misc';
+}
 
-if ($module == 'ecm')
-{
+if ($module == 'ecm') {
 	$upload_dir = $conf->ecm->dir_output.'/'.$urlsection;
 } else // For example $module == 'medias'
 {
@@ -65,19 +67,23 @@ $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "ASC";
-if (!$sortfield) $sortfield = "label";
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
+if (!$sortfield) {
+	$sortfield = "label";
+}
 
 $ecmdir = new EcmDirectory($db);
-if (!empty($section))
-{
+if (!empty($section)) {
 	$result = $ecmdir->fetch($section);
-	if (!$result > 0)
-	{
+	if (!$result > 0) {
 		dol_print_error($db, $ecmdir->error);
 		exit;
 	}
@@ -86,18 +92,18 @@ if (!empty($section))
 // Permissions
 $permtoadd = 0;
 $permtoupload = 0;
-if ($module == 'ecm')
-{
+if ($module == 'ecm') {
 	$permtoadd = $user->rights->ecm->setup;
 	$permtoupload = $user->rights->ecm->upload;
 }
-if ($module == 'medias')
-{
+if ($module == 'medias') {
 	$permtoadd = ($user->rights->mailing->creer || $user->rights->website->write);
 	$permtoupload = ($user->rights->mailing->creer || $user->rights->website->write);
 }
 
-if (!$permtoadd) accessforbidden();
+if (!$permtoadd) {
+	accessforbidden();
+}
 
 
 
@@ -106,12 +112,9 @@ if (!$permtoadd) accessforbidden();
  */
 
 // Action ajout d'un produit ou service
-if ($action == 'add' && $permtoadd)
-{
-	if ($cancel)
-	{
-		if (!empty($backtopage))
-		{
+if ($action == 'add' && $permtoadd) {
+	if ($cancel) {
+		if (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
 		} else {
@@ -120,33 +123,31 @@ if ($action == 'add' && $permtoadd)
 		}
 	}
 
-	$ref = trim(GETPOST("ref", 'alpha'));
-	$label = trim(GETPOST("label", 'alpha'));
-	$desc = trim(GETPOST("desc", 'alpha'));
+	$ref = (string) GETPOST("ref", 'alpha');
+	$label = (string) GETPOST("label", 'alpha');
+	$desc = (string) GETPOST("desc", 'alpha');
 	$catParent = GETPOST("catParent", 'alpha'); // Can be an int (with ECM) or a string (with generic filemanager)
-	if ($catParent == '-1') $catParent = 0;
+	if ($catParent == '-1') {
+		$catParent = 0;
+	}
 
 	$error = 0;
 
-	if (empty($label))
-	{
+	if (empty($label)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 		$action = 'create';
 		$error++;
 	}
 
-	if (!$error)
-	{
-		if ($module == 'ecm')
-		{
+	if (!$error) {
+		if ($module == 'ecm') {
 			$ecmdir->ref            = $ref;
 			$ecmdir->label          = $label;
 			$ecmdir->description    = $desc;
 			$ecmdir->fk_parent      = (int) $catParent;
 
 			$id = $ecmdir->create($user);
-			if ($id <= 0)
-			{
+			if ($id <= 0) {
 				$error++;
 				$langs->load("errors");
 				setEventMessages($ecmdir->error, $ecmdir->errors, 'errors');
@@ -155,22 +156,18 @@ if ($action == 'add' && $permtoadd)
 		} else // For example $module == 'medias'
 		{
 			$dirfornewdir = '';
-			if ($module == 'medias')
-			{
+			if ($module == 'medias') {
 				$dirfornewdir = $conf->medias->multidir_output[$conf->entity];
 			}
-			if (empty($dirfornewdir))
-			{
+			if (empty($dirfornewdir)) {
 				$error++;
 				dol_print_error('', 'Bad value for module. Not supported.');
 			}
 
-			if (!$error)
-			{
+			if (!$error) {
 				$fullpathofdir = $dirfornewdir.'/'.($catParent ? $catParent.'/' : '').$label;
 				$result = dol_mkdir($fullpathofdir, DOL_DATA_ROOT);
-				if ($result < 0)
-				{
+				if ($result < 0) {
 					setEventMessages($langs->trans('ErrorFailToCreateDir', $label), null, 'errors');
 					$error++;
 				} else {
@@ -180,10 +177,8 @@ if ($action == 'add' && $permtoadd)
 		}
 	}
 
-	if (!$error)
-	{
-		if (!empty($backtopage))
-		{
+	if (!$error) {
+		if (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
 		} else {
@@ -194,8 +189,7 @@ if ($action == 'add' && $permtoadd)
 }
 
 // Deleting file
-elseif ($action == 'confirm_deletesection' && $confirm == 'yes')
-{
+elseif ($action == 'confirm_deletesection' && $confirm == 'yes') {
 	$result = $ecmdir->delete($user);
 	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
 }
@@ -212,8 +206,7 @@ llxHeader('', $langs->trans("ECMNewSection"));
 $form = new Form($db);
 $formecm = new FormEcm($db);
 
-if ($action == 'create')
-{
+if ($action == 'create') {
 	//***********************
 	// Create
 	//***********************
@@ -222,13 +215,17 @@ if ($action == 'create')
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
 	print '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($backtopage).'">';
-	if ($website) print '<input type="hidden" name="website" value="'.dol_escape_htmltag($website).'">';
-	if ($pageid)  print '<input type="hidden" name="pageid" value="'.dol_escape_htmltag($pageid).'">';
+	if ($website) {
+		print '<input type="hidden" name="website" value="'.dol_escape_htmltag($website).'">';
+	}
+	if ($pageid) {
+		print '<input type="hidden" name="pageid" value="'.dol_escape_htmltag($pageid).'">';
+	}
 
 	$title = $langs->trans("ECMNewSection");
 	print load_fiche_titre($title);
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -240,8 +237,7 @@ if ($action == 'create')
 	print '</td></tr>'."\n";
 
 	// Description
-	if ($module == 'ecm')
-	{
+	if ($module == 'ecm') {
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		print '<textarea name="desc" rows="4" class="quatrevingtpercent">';
 		print $ecmdir->description;
@@ -251,48 +247,43 @@ if ($action == 'create')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="create" value="'.$langs->trans("Create").'">';
 	print ' &nbsp; &nbsp; ';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 	print '</form>';
 }
 
 
-if (empty($action) || $action == 'delete_section')
-{
+if (empty($action) || $action == 'delete_section') {
 	//***********************
 	// List
 	//***********************
 	print load_fiche_titre($langs->trans("ECMSectionOfDocuments"));
 	print '<br>';
 
-    /*
+	/*
 	$ecmdir->ref=$ecmdir->label;
 	print $langs->trans("ECMSection").': ';
 	print img_picto('','object_dir').' ';
 	print '<a href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php">'.$langs->trans("ECMRoot").'</a>';
 	//print ' -> <b>'.$ecmdir->getNomUrl(1).'</b><br>';
 	print "<br><br>";
-    */
+	*/
 
 	// Confirmation de la suppression d'une ligne categorie
-	if ($action == 'delete_section')
-	{
+	if ($action == 'delete_section') {
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $ecmdir->label), 'confirm_deletesection');
 	}
-
-	// Construit fiche  rubrique
 
 
 	// Actions buttons
 	print '<div class="tabsAction">';
-	if ($user->rights->ecm->setup)
-	{
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_section">'.$langs->trans('Delete').'</a>';
+	if ($user->rights->ecm->setup) {
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_section&token='.newToken().'">'.$langs->trans('Delete').'</a>';
 	} else {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
 	}

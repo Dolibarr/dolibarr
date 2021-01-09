@@ -111,6 +111,16 @@ function ecm_file_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
+	// Notes
+	$head[$h][0] = DOL_URL_ROOT.'/ecm/file_note.php?section='.$object->section_id.'&urlfile='.urlencode($object->label);
+	$head[$h][1] = $langs->trans("Notes");
+	$nbNote = 0;
+	if (!empty($object->note_private)) $nbNote++;
+	if (!empty($object->note_public)) $nbNote++;
+	if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+	$head[$h][2] = 'note';
+	$h++;
+
 	return $head;
 }
 
@@ -135,6 +145,41 @@ function ecm_prepare_head_fm($object)
 	$head[$h][1] = $langs->trans('Search');
 	$head[$h][2] = 'search_form';
 	$h++;
+
+	return $head;
+}
+
+/**
+ *  Return array head with list of tabs to view object informations.
+ *
+ *  @return	array               head array with tabs
+ */
+function ecm_admin_prepare_head()
+{
+	global $langs, $conf;
+	$langs->load("ecm");
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/ecm.php";
+	$head[$h][1] = $langs->trans("Setup");
+	$head[$h][2] = 'ecm';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/admin/ecm_files_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFieldsEcmFiles");
+	$head[$h][2] = 'attributes_ecm_files';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/admin/ecm_directories_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFieldsEcmDirectories");
+	$head[$h][2] = 'attributes_ecm_directories';
+	$h++;
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'ecm_admin');
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'ecm_admin', 'remove');
 
 	return $head;
 }

@@ -39,6 +39,8 @@ $block = new BlockedLog($db);
 
 if ((!$user->admin && !$user->rights->blockedlog->read) || empty($conf->blockedlog->enabled)) accessforbidden();
 
+$langs->loadLangs(array("admin"));
+
 
 /*
  * View

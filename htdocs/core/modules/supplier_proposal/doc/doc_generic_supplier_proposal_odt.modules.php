@@ -45,15 +45,15 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 	public $emetteur;
 
 	/**
-     * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.5 = array(5, 5)
-     */
-	public $phpmin = array(5, 5);
+	 * @var array Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 */
+	public $phpmin = array(5, 6);
 
 	/**
-   * Dolibarr version of the loaded document
-   * @var string
-   */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr';
 
 
@@ -67,7 +67,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 		global $conf, $langs, $mysoc;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array("main", "companies"));
+		$langs->loadLangs(array("main", "companies"));
 
 		$this->db = $db;
 		$this->name = "ODT templates";
@@ -112,7 +112,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 		global $conf, $langs;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array('companies', 'errors'));
+		$langs->loadLangs(array('companies', 'errors'));
 
 		$form = new Form($this->db);
 
@@ -174,10 +174,10 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 
 		if ($nbofiles)
 		{
-   			$texte .= '<div id="div_'.get_class($this).'" class="hidden">';
-   			foreach ($listoffiles as $file)
-   			{
-                $texte .= $file['name'].'<br>';
+   			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
+   			// Show list of found files
+   			foreach ($listoffiles as $file) {
+   				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=supplier_proposal/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a><br>';
    			}
    			$texte .= '</div>';
 
@@ -220,7 +220,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 		return $texte;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
@@ -234,7 +234,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;
 
 		if (empty($srctemplatepath))
@@ -274,6 +274,8 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				}
 			}
 
+			$object->fetch_thirdparty();
+
 			$dir = $conf->supplier_proposal->dir_output;
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) $dir .= "/".$objectref;
@@ -302,8 +304,8 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
 				if (!empty($conf->global->MAIN_DOC_USE_TIMING))
 				{
-				    $format = $conf->global->MAIN_DOC_USE_TIMING;
-				    if ($format == '1') $format = '%Y%m%d%H%M%S';
+					$format = $conf->global->MAIN_DOC_USE_TIMING;
+					if ($format == '1') $format = '%Y%m%d%H%M%S';
 					$filename = $newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
 				} else {
 					$filename = $newfiletmp.'.'.$newfileformat;
@@ -328,15 +330,12 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 
 				// Recipient name
 				$contactobject = null;
-				if (!empty($usecontact))
-				{
-					// On peut utiliser le nom de la societe du contact
-					if (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT))
-					{
+				if (!empty($usecontact)) {
+					if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 						$socobject = $object->contact;
 					} else {
 						$socobject = $object->thirdparty;
-						// if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
+						// if we have a BILLING contact and we dont use it as recipient we store the contact object for later use
 						$contactobject = $object->contact;
 					}
 				} else {
@@ -349,7 +348,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				'__FROM_EMAIL__' => $this->emetteur->email,
 				'__TOTAL_TTC__' => $object->total_ttc,
 				'__TOTAL_HT__' => $object->total_ht,
-				'__TOTAL_VAT__' => $object->total_vat
+				'__TOTAL_VAT__' => $object->total_tva
 				);
 				complete_substitutions_array($substitutionarray, $langs, $object);
 				// Call the ODTSubstitution hook
@@ -367,7 +366,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-                    $odfHandler = new odf(
+					$odfHandler = new odf(
 						$srctemplatepath,
 						array(
 							'PATH_TO_TMP'	  => $conf->supplier_proposal->dir_temp,
@@ -428,7 +427,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 						}
 					} catch (OdfException $e)
 					{
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 				// Replace tags of lines
@@ -484,7 +483,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 						$odfHandler->setVars($key, $value, true, 'UTF-8');
 					} catch (OdfException $e)
 					{
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 
@@ -498,7 +497,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 						$odfHandler->exportAsAttachedPDF($file);
 					} catch (Exception $e) {
 						$this->error = $e->getMessage();
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				} else {
@@ -506,7 +505,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 						$odfHandler->saveToDisk($file);
 					} catch (Exception $e) {
 						$this->error = $e->getMessage();
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}

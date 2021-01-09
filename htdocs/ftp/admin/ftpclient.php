@@ -33,7 +33,7 @@ if (!$user->admin) accessforbidden();
 $def = array();
 $lastftpentry = 0;
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $entry = GETPOST('numero_entry', 'alpha');
 
 
@@ -114,16 +114,16 @@ if (GETPOST('delete', 'alpha'))
 		if ($result4) $result5 = dolibarr_del_const($db, "FTP_NAME_".$entry, $conf->entity);
 		if ($result4) $result6 = dolibarr_del_const($db, "FTP_PASSIVE_".$entry, $conf->entity);
 
-        if ($result1 && $result2 && $result3 && $result4 && $result5 && $result6)
-        {
-            $db->commit();
-            header("Location: ".$_SERVER["PHP_SELF"]);
-            exit;
-        } else {
-            $db->rollback();
-            dol_print_error($db);
-        }
-    }
+		if ($result1 && $result2 && $result3 && $result4 && $result5 && $result6)
+		{
+			$db->commit();
+			header("Location: ".$_SERVER["PHP_SELF"]);
+			exit;
+		} else {
+			$db->rollback();
+			dol_print_error($db);
+		}
+	}
 }
 
 

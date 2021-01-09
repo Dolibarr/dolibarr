@@ -46,7 +46,7 @@ if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 }
 
 $id = GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 $socid = 0;
 if ($user->socid > 0) $socid = $user->socid;
@@ -99,7 +99,7 @@ llxHeader();
 
 $head = group_prepare_head($object);
 
-dol_fiche_head($head, 'ldap', $langs->trans("Group"), -1, 'group');
+print dol_get_fiche_head($head, 'ldap', $langs->trans("Group"), -1, 'group');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -113,13 +113,13 @@ print '<table class="border centpercent">';
 // Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
 if (!empty($conf->mutlicompany->enabled))
 {
-    print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
-    print '<td class="valeur">'.$object->name;
-    if (!$object->entity)
-    {
-    	print img_picto($langs->trans("GlobalGroup"), 'redstar');
-    }
-    print "</td></tr>\n";
+	print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
+	print '<td class="valeur">'.$object->name;
+	if (!$object->entity)
+	{
+		print img_picto($langs->trans("GlobalGroup"), 'redstar');
+	}
+	print "</td></tr>\n";
 }
 
 // Note
@@ -144,7 +144,7 @@ print "</table>\n";
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 /*
@@ -188,7 +188,7 @@ if ($result > 0)
 	//var_dump($records);
 
 	// Show tree
-    if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0))
+	if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0))
 	{
 		if (!is_array($records))
 		{

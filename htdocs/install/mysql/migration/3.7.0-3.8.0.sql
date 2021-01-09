@@ -49,7 +49,7 @@ create table llx_loan
   rowid							integer AUTO_INCREMENT PRIMARY KEY,
   entity						integer DEFAULT 1 NOT NULL,
   datec							datetime,
-  tms							timestamp,
+  tms							timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   label							varchar(80) NOT NULL,
   fk_bank						integer,
   capital						real     DEFAULT 0 NOT NULL,
@@ -75,7 +75,7 @@ create table llx_payment_loan
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
   fk_loan			integer,
   datec				datetime,
-  tms				timestamp,
+  tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datep				datetime,
   amount_capital	real DEFAULT 0,
   amount_insurance	real DEFAULT 0,
@@ -145,7 +145,7 @@ ALTER TABLE llx_product ADD COLUMN lifo double(24,8) AFTER fifo;
 CREATE TABLE llx_printing
 (
  rowid integer AUTO_INCREMENT PRIMARY KEY,
- tms timestamp,
+ tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
  datec datetime,
  printer_name text NOT NULL,
  printer_location text NOT NULL,
@@ -177,7 +177,7 @@ DELETE from llx_const where name = 'MAIN_USE_JQUERY_MULTISELECT' and value = '1'
 create table llx_bank_account_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -198,7 +198,7 @@ ALTER TABLE llx_bank_account_extrafields ADD INDEX idx_bank_account_extrafields 
 create table llx_contratdet_extrafields
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  tms              timestamp,
+  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object        integer NOT NULL,    -- object id
   import_key       varchar(14)      	-- import key
 )ENGINE=innodb;
@@ -210,7 +210,7 @@ ALTER TABLE llx_product_fournisseur_price ADD COLUMN delivery_time_days integer;
 
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN comment	varchar(255);
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN status integer;
-ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN tms timestamp;
+ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN batch varchar(30) DEFAULT NULL;
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN eatby date DEFAULT NULL;
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN sellby date DEFAULT NULL;
@@ -240,7 +240,7 @@ CREATE TABLE llx_expensereport (
   date_approve		datetime,
   date_refuse 		datetime,
   date_cancel 		datetime,
-  tms 		 		timestamp,
+  tms 		 		timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_author 	integer NOT NULL,
   fk_user_modif 	integer DEFAULT NULL,
   fk_user_valid 	integer DEFAULT NULL,
@@ -297,7 +297,7 @@ create table llx_payment_expensereport
   rowid                   integer AUTO_INCREMENT PRIMARY KEY,
   fk_expensereport        integer,
   datec                   datetime,           -- date de creation
-  tms                     timestamp,
+  tms                     timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datep                   datetime,           -- payment date
   amount                  real DEFAULT 0,
   fk_typepayment          integer NOT NULL,
@@ -316,7 +316,7 @@ ALTER TABLE llx_societe ADD COLUMN name_alias varchar(128) NULL;
 create table llx_commande_fournisseurdet_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)
 ) ENGINE=innodb;
@@ -327,7 +327,7 @@ ALTER TABLE llx_commande_fournisseurdet_extrafields ADD INDEX idx_commande_fourn
 create table llx_facture_fourn_det_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -357,7 +357,7 @@ CREATE TABLE llx_askpricesupplier (
   ref_int varchar(255) DEFAULT NULL,
   fk_soc integer DEFAULT NULL,
   fk_projet integer DEFAULT NULL,
-  tms timestamp,
+  tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datec datetime DEFAULT NULL,
   date_valid datetime DEFAULT NULL,
   date_cloture datetime DEFAULT NULL,
@@ -422,14 +422,14 @@ CREATE TABLE llx_askpricesupplierdet (
 
 CREATE TABLE llx_askpricesupplier_extrafields (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
-  tms timestamp,
+  tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object integer NOT NULL,
   import_key varchar(14) DEFAULT NULL
 ) ENGINE=innodb;
 
 CREATE TABLE llx_askpricesupplierdet_extrafields (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
-  tms timestamp,
+  tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object integer NOT NULL,
   import_key varchar(14) DEFAULT NULL
 ) ENGINE=innodb;
@@ -491,7 +491,7 @@ ALTER TABLE llx_don CHANGE COLUMN fk_project fk_projet integer NULL;
 create table llx_don_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -503,7 +503,7 @@ create table llx_payment_donation
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   fk_donation     integer,
   datec           datetime,           -- date de creation
-  tms             timestamp,
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datep           datetime,           -- payment date
   amount          real DEFAULT 0,
   fk_typepayment  integer NOT NULL,
@@ -585,7 +585,7 @@ CREATE TABLE IF NOT EXISTS llx_propal_merge_pdf_product (
   fk_user_author integer DEFAULT NULL,
   fk_user_mod integer NOT NULL,
   datec datetime NOT NULL,
-  tms timestamp NOT NULL,
+  tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   import_key varchar(14) DEFAULT NULL
 ) ENGINE=InnoDB;
 

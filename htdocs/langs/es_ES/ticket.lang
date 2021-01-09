@@ -31,10 +31,8 @@ TicketDictType=Tipo de tickets
 TicketDictCategory=Categorías de tickets
 TicketDictSeverity=Gravedad de los tickets
 TicketDictResolution=Ticket - Resolución
-TicketTypeShortBUGSOFT=Mal funcionamiento del software
-TicketTypeShortBUGHARD=Mal funcionamiento del hardware
-TicketTypeShortCOM=Pregunta comercial
 
+TicketTypeShortCOM=Pregunta comercial
 TicketTypeShortHELP=Solicitud de ayuda funcional
 TicketTypeShortISSUE=Asunto, error o problema
 TicketTypeShortREQUEST=Solicitud de cambio o mejora
@@ -44,7 +42,7 @@ TicketTypeShortOTHER=Otro
 TicketSeverityShortLOW=Bajo
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Alto
-TicketSeverityShortBLOCKING=Crítico / Bloqueo
+TicketSeverityShortBLOCKING=Crítico, Bloqueo
 
 ErrorBadEmailAddress=El campo '%s' es incorrecto
 MenuTicketMyAssign=Mis tickets
@@ -60,7 +58,6 @@ OriginEmail=Origen E-Mail
 Notify_TICKET_SENTBYMAIL=Enviar mensaje de ticket por e-mail
 
 # Status
-NotRead=No lleído
 Read=Leido
 Assigned=Asignado
 InProgress=En progreso
@@ -72,7 +69,6 @@ Deleted=Eliminado
 
 # Dict
 Type=Tasa
-Category=Código analítico
 Severity=Gravedad
 
 # Email templates
@@ -127,13 +123,17 @@ TicketsActivatePublicInterfaceHelp=La interfaz pública permite a cualquier visi
 TicketsAutoAssignTicket=Asignar automáticamente al usuario que creó el ticket
 TicketsAutoAssignTicketHelp=Al crear un ticket, el usuario puede asignarse automáticamente al ticket.
 TicketNumberingModules=Módulo de numeración de tickets
+TicketsModelModule=Plantillas de documentos para tickets
 TicketNotifyTiersAtCreation=Notificar a los terceros en la creación
-TicketGroup=Grupo
 TicketsDisableCustomerEmail=Desactivar siempre los e-mails al crear tickets desde la interfaz pública
+TicketsPublicNotificationNewMessage=Enviar e-mail(s) cuando se añade un nuevo mensaje
+TicketsPublicNotificationNewMessageHelp=Enviar e-mail(s) cuando se añade un nuevo mensaje desde la interfaz pública (al usuario asignado o al e-mail de notificaciones (actualización) y o el e-mail de notificaciones a)
+TicketPublicNotificationNewMessageDefaultEmail=Notificaciones por e-mail a (actualización)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Envíe notificaciones de mensajes nuevos por e-mail a esta dirección si el ticket no tiene un usuario asignado o si el usuario no tiene un e-mail.
 #
 # Index & list page
 #
-TicketsIndex=Ticket - Inicio
+TicketsIndex=Área de tickets
 TicketList=Listado de tickets
 TicketAssignedToMeInfos=Esta página muestra el listado de tickets que están asignados al usuario actual
 NoTicketsFound=Ningún ticket encontrado
@@ -158,7 +158,7 @@ CreatedBy=Creado por
 NewTicket=Nuevo ticket
 SubjectAnswerToTicket=Respuesta
 TicketTypeRequest=Tipo de solicitud
-TicketCategory=Código analítico
+TicketCategory=Grupo
 SeeTicket=Ver ticket
 TicketMarkedAsRead=El ticket ha sido marcado como leído
 TicketReadOn=Leído el
@@ -231,7 +231,6 @@ TicketLogStatusChanged=Estado cambiado: %s a %s
 TicketNotNotifyTiersAtCreate=No notificar a la compañía al crear
 Unread=No leído
 TicketNotCreatedFromPublicInterface=No disponible. El ticket no se creó desde la interfaz pública.
-PublicInterfaceNotEnabled=La interfaz pública no estaba habilitada
 ErrorTicketRefRequired=La referencia del ticket es obligatoria
 
 #
@@ -254,7 +253,7 @@ TicketPublicDesc=Puede crear un ticket de soporte o comprobar un ID existente.
 YourTicketSuccessfullySaved=¡Ticket guardado con éxito!
 MesgInfosPublicTicketCreatedWithTrackId=Se ha creado un nuevo ticket con ID %s y Ref %s.
 PleaseRememberThisId=Por favor, mantenga el número de seguimiento ya que podríamos solicitarlo más adelante.
-TicketNewEmailSubject=Ticket creation confirmation - Ref %s (public ticket ID %s)
+TicketNewEmailSubject=Confirmación de creación de ticket - Ref. %s (ID de ticket público %s)
 TicketNewEmailSubjectCustomer=Nuevo ticket de soporte
 TicketNewEmailBody=Este es un e-mail automático para confirmar que ha registrado un nuevo ticket.
 TicketNewEmailBodyCustomer=Este es un e-mail automático para confirmar que se acaba de crear un nuevo ticket en su cuenta.
@@ -273,7 +272,7 @@ Subject=Asunto
 ViewTicket=Ver ticket
 ViewMyTicketList=Ver mi lista de tickets
 ErrorEmailMustExistToCreateTicket=Error: dirección de e-mail no encontrada en nuestra base de datos
-TicketNewEmailSubjectAdmin=New ticket created - Ref %s (public ticket ID %s)
+TicketNewEmailSubjectAdmin=Nuevo ticket creado - Ref. %s (ID de ticket público %s)
 TicketNewEmailBodyAdmin=<p> El ticket acaba de crearse con ID # %s, ver información: </p>
 SeeThisTicketIntomanagementInterface=Ver Ticket en la interfaz de administración
 TicketPublicInterfaceForbidden=La interfaz pública para los tickets no estaba habilitada.
