@@ -92,6 +92,7 @@ MailingModuleDescEmailsFromUser=E-mails door gebruiker opgemaakt
 MailingModuleDescDolibarrUsers=Gebruikers met e-mails
 MailingModuleDescThirdPartiesByCategories=Derden (op categorieën)
 SendingFromWebInterfaceIsNotAllowed=Verzenden vanuit de web interface is niet toegestaan.
+EmailCollectorFilterDesc=Alle filters moeten overeenkomen om een e-mail te kunnen verzamelen
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Regel %s in bestand
@@ -129,8 +130,8 @@ NotificationsAuto=Automatisch meldingen
 NoNotificationsWillBeSent=Er staan geen e-mail kennisgevingen gepland voor dit type evenement en bedrijf
 ANotificationsWillBeSent=1 automatische notificatie zal worden verstuurd per e-mail
 SomeNotificationsWillBeSent=%s automatische notificatie zal per e-mail worden verstuurd
-AddNewNotification=Activeer een nieuw doel / evenement voor e-mailmeldingen
-ListOfActiveNotifications=Lijst met alle actieve doelen / evenementen voor e-mail melding
+AddNewNotification=Abonneer u op een nieuwe automatische e-mailmelding (doel/gebeurtenis)
+ListOfActiveNotifications=Lijst van alle actieve abonnementen (doelen/evenementen) voor automatische e-mailmelding
 ListOfNotificationsDone=Lijst met alle automatisch verstuurde e-mail kennisgevingen
 MailSendSetupIs=Configuratie van e-mailverzending is ingesteld op '%s'. Deze modus kan niet worden gebruikt om bulk e-mails te verzenden.
 MailSendSetupIs2=Ga eerst met een beheerdersaccount naar menu %s Home - Set-up - E-mails%s om de parameter <strong>'%s'</strong> te wijzigen om de modus '%s' te gebruiken. Met deze modus kunt u de installatie van de SMTP-server van uw internetprovider openen en de functie Bulk e-mails gebruiken.
@@ -141,7 +142,7 @@ UseFormatFileEmailToTarget=Het geïmporteerde bestand moet de indeling <strong>e
 UseFormatInputEmailToTarget=Voer een string in met het formaat <strong>e-mail; naam; voornaam; andere</strong>
 MailAdvTargetRecipients=Ontvangers (geavanceerde selectie)
 AdvTgtTitle=Vul invoervelden in om de derde partijen of contacten / adressen voor te selecteren
-AdvTgtSearchTextHelp=Gebruik %% als jokertekens. Om bijvoorbeeld alle items zoals <b>jean, joe, jim te vinden</b> , kun je <b>j%% invoeren</b> , je kunt ook  ; gebruiken als scheidingsteken voor waarde en gebruik ! voor behalve deze waarde. Voorbeeld <b>jean; joe; jim%%;! Jimo;! Jima%</b> richt zich op alle jean, joe, start met jim maar niet jimo en niet alles wat met jima begint
+AdvTgtSearchTextHelp=Gebruik %% als joker-teken. Om bijvoorbeeld alle items zoals <b>jean, joe, jim</b> te vinden, kun je <b> j%%</b> invoeren Je kunt ook een ; gebruiken als scheidingsteken voor de waarde, en gebruik ! alleen hiervoor. Voorbeeld<b>jean;joe;jim%%;!Jimo;!Jima%%</b> zal alle jean, joe, beginnen met jim maar niet met jimo en niet alles dat begint met jima
 AdvTgtSearchIntHelp=Gebruik interval om de waarde int of float te selecteren
 AdvTgtMinVal=Minimum waarde
 AdvTgtMaxVal=Maximum waarde

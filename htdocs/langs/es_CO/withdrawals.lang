@@ -4,3 +4,4 @@ WithdrawalsReceipts=Órdenes de débito directo
 WithdrawalReceipt=Orden de domiciliación bancaria
 StatusPaid=Pagado
 StatusRefused=Rechazado
+ICS=Creditor Identifier CI for direct debit

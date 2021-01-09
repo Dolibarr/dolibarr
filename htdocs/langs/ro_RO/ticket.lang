@@ -31,10 +31,8 @@ TicketDictType=Tipuri de tichete
 TicketDictCategory=Tichet - Grupuri
 TicketDictSeverity=Tichet - Severități
 TicketDictResolution=Tichet - Rezoluție
-TicketTypeShortBUGSOFT=Logică disfuncţională
-TicketTypeShortBUGHARD=Material disfuncţional
-TicketTypeShortCOM=Întrebare comercială
 
+TicketTypeShortCOM=Întrebare comercială
 TicketTypeShortHELP=Solicitare funcţionalitate
 TicketTypeShortISSUE=Solicitare, eroare sau problemă
 TicketTypeShortREQUEST=Solicitare de modificare sau îmbunătăţire
@@ -44,7 +42,7 @@ TicketTypeShortOTHER=Altele
 TicketSeverityShortLOW=Scăzut
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Mare
-TicketSeverityShortBLOCKING=Critic / Blocaj
+TicketSeverityShortBLOCKING=Critic, blocant
 
 ErrorBadEmailAddress=Câmpul "%s" este incorect
 MenuTicketMyAssign=Tichetele mele
@@ -60,7 +58,6 @@ OriginEmail=Sursa emailului
 Notify_TICKET_SENTBYMAIL=Trimite mesaj tichet pe email
 
 # Status
-NotRead=Necitit
 Read=Citit
 Assigned=Atribuit
 InProgress=In progres
@@ -126,6 +123,7 @@ TicketsActivatePublicInterfaceHelp=Interfața publică permite vizitatorilor să
 TicketsAutoAssignTicket=Desemnați automat utilizatorul care a creat tichetul
 TicketsAutoAssignTicketHelp=La crearea unui tichet, utilizatorul poate fi automat alocat tichetului.
 TicketNumberingModules=Modul de numerotare a tichetelor
+TicketsModelModule=Şabloane documente pentru tichete
 TicketNotifyTiersAtCreation=Notificați terțul la creare
 TicketsDisableCustomerEmail=Dezactivați întotdeauna email-urile atunci când un tichet este creat din interfața publică 
 TicketsPublicNotificationNewMessage=Trimite email(uri) când un mesaj nou este adăugat
@@ -233,7 +231,6 @@ TicketLogStatusChanged=Starea modificată: %s la %s
 TicketNotNotifyTiersAtCreate=Nu notificați compania la crearea
 Unread=Necitită
 TicketNotCreatedFromPublicInterface=Indisponibil. Tichetul nu a fost creat din interfaţa publică.
-PublicInterfaceNotEnabled=Interfaţa publică nu a fost activată
 ErrorTicketRefRequired=Denumirea de referință al tichetului este necesară
 
 #

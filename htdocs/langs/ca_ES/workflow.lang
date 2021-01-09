@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - workflow
-WorkflowSetup=Configuració del mòdul workflow
+WorkflowSetup=Configuració del mòdul de flux de treball
 WorkflowDesc=Aquest mòdul ofereix algunes accions automàtiques. Per defecte, el flux de treball està obert (podeu fer les coses en l'ordre que vulgueu), però aquí podeu activar algunes accions automàtiques.
-ThereIsNoWorkflowToModify=No hi ha modificacions disponibles del fluxe de treball amb els mòduls activats.
+ThereIsNoWorkflowToModify=No hi ha disponibles modificacions del flux de treball amb els mòduls activats.
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Crea automàticament una comanda de client després de signar un pressupost (la nova comanda tindrà el mateix import que el pressupost)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Crea automàticament una comanda de client després de signar un pressupost (la comanda nova tindrà el mateix import que el pressupost)
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Crea automàticament una factura del client després de signar un pressupost (la nova factura tindrà el mateix import que el pressupost)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Crear automàticament una factura a client després de validar un contracte
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Crea automàticament una factura de client després de tancar una comanda de client (la nova factura tindrà el mateix import que la comanda)

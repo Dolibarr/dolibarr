@@ -32,7 +32,7 @@ IntracommReportTitle=Preparación de un archivo XML en formato ProDouane
 # List
 IntracommReportList=Lista de declaraciones generadas
 IntracommReportNumber=Número de declaración
-IntracommReportPeriod=Período de análisis
+IntracommReportPeriod=Periodo de análisis
 IntracommReportTypeDeclaration=Tipo de declaración
 IntracommReportDownload=descargar archivo XML
 
