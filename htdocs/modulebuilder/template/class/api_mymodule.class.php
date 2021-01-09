@@ -64,7 +64,8 @@ class MyModuleApi extends DolibarrApi
 	 *
 	 * @url	GET myobjects/{id}
 	 *
-	 * @throws 	RestException
+	 * @throws RestException 401 Not allowed
+	 * @throws RestException 404 Not found
 	 */
 	public function get($id)
 	{
@@ -106,9 +107,9 @@ class MyModuleApi extends DolibarrApi
 		global $db, $conf;
 
 		$obj_ret = array();
-		$tmpobject = new MyObject($db);
+		$tmpobject = new MyObject($this->db);
 
-		if (!DolibarrApiAccess::$user->rights->bbb->read) {
+		if (!DolibarrApiAccess::$user->rights->mymodule->myobject->read) {
 			throw new RestException(401);
 		}
 
@@ -131,7 +132,7 @@ class MyModuleApi extends DolibarrApi
 		//if ($mode == 1) $sql.= " AND s.client IN (1, 3)";
 		//if ($mode == 2) $sql.= " AND s.client IN (2, 3)";
 
-		if ($tmpobject->ismultientitymanaged) $sql .= ' AND t.entity IN ('.getEntity('myobject').')';
+		if ($tmpobject->ismultientitymanaged) $sql .= ' AND t.entity IN ('.getEntity($tmpobject->element).')';
 		if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= " AND t.fk_soc = sc.fk_soc";
 		if ($restrictonsocid && $socid) $sql .= " AND t.fk_soc = ".$socid;
 		if ($restrictonsocid && $search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
@@ -148,32 +149,32 @@ class MyModuleApi extends DolibarrApi
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
-		$sql .= $db->order($sortfield, $sortorder);
+		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
 				$page = 0;
 			}
 			$offset = $limit * $page;
 
-			$sql .= $db->plimit($limit + 1, $offset);
+			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
 
-		$result = $db->query($sql);
+		$result = $this->db->query($sql);
 		$i = 0;
 		if ($result)
 		{
-			$num = $db->num_rows($result);
+			$num = $this->db->num_rows($result);
 			while ($i < $num)
 			{
-				$obj = $db->fetch_object($result);
-				$myobject_static = new MyObject($db);
-				if ($myobject_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($myobject_static);
+				$obj = $this->db->fetch_object($result);
+				$tmp_object = new MyObject($this->db);
+				if ($tmp_object->fetch($obj->rowid)) {
+					$obj_ret[] = $this->_cleanObjectDatas($tmp_object);
 				}
 				$i++;
 			}
 		} else {
-			throw new RestException(503, 'Error when retrieving myobject list: '.$db->lasterror());
+			throw new RestException(503, 'Error when retrieving myobject list: '.$this->db->lasterror());
 		}
 		if (!count($obj_ret)) {
 			throw new RestException(404, 'No myobject found');
@@ -289,8 +290,8 @@ class MyModuleApi extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
-	 * @param   object  $object    Object to clean
-	 * @return    array    Array of cleaned object properties
+	 * @param   Object  $object     Object to clean
+	 * @return  Object              Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{

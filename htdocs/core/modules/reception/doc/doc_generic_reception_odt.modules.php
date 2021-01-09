@@ -36,20 +36,20 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
  */
 class doc_generic_reception_odt extends ModelePdfReception
 {
-    /**
-     * @var Societe Issuer object that emits
-     */
-    public $emetteur; // Objet societe qui emet
+	/**
+	 * @var Societe Issuer object that emits
+	 */
+	public $emetteur; // Objet societe qui emet
 
-    /**
-     * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.5 = array(5, 5)
-     */
-	public $phpmin = array(5, 5);
+	/**
+	 * @var array Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 */
+	public $phpmin = array(5, 6);
 
-    /**
-     * @var string Dolibarr version of the loaded document
-     */
+	/**
+	 * @var string Dolibarr version of the loaded document
+	 */
 	public $version = 'dolibarr';
 
 
@@ -58,8 +58,8 @@ class doc_generic_reception_odt extends ModelePdfReception
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-    public function __construct($db)
-    {
+	public function __construct($db)
+	{
 		global $conf, $langs, $mysoc;
 
 		$langs->load("main");
@@ -94,18 +94,18 @@ class doc_generic_reception_odt extends ModelePdfReception
 		// Recupere emetteur
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) $this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
-    }
+	}
 
 
-    /**
-     *  Return description of a module
-     *
-     *  @param	Translate	$langs      Lang object to use for output
-     *  @return string       			Description
-     */
-    public function info($langs)
-    {
-        global $conf, $langs;
+	/**
+	 *  Return description of a module
+	 *
+	 *  @param	Translate	$langs      Lang object to use for output
+	 *  @return string       			Description
+	 */
+	public function info($langs)
+	{
+		global $conf, $langs;
 
 		$langs->load("companies");
 		$langs->load("errors");
@@ -163,11 +163,11 @@ class doc_generic_reception_odt extends ModelePdfReception
 		}
 		if ($nbofiles)
 		{
-   			$texte .= '<div id="div_'.get_class($this).'" class="hidden">';
-   			foreach ($listoffiles as $file)
-   			{
-                $texte .= $file['name'].'<br>';
-   			}
+			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
+			// Show list of found files
+			foreach ($listoffiles as $file) {
+				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=receptions/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a><br>';
+			}
    			$texte .= '</div>';
 		}
 
@@ -182,7 +182,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 		$texte .= '</form>';
 
 		return $texte;
-    }
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -196,8 +196,8 @@ class doc_generic_reception_odt extends ModelePdfReception
 	 *  @param		int			$hideref			Do not show ref
 	 *	@return		int         					1 if OK, <=0 if KO
 	 */
-    public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
-    {
+	public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	{
 		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;
 
@@ -240,6 +240,8 @@ class doc_generic_reception_odt extends ModelePdfReception
 				}
 			}
 
+			$object->fetch_thirdparty();
+
 			$dir = $conf->reception->dir_output."/reception";
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) $dir .= "/".$objectref;
@@ -267,8 +269,8 @@ class doc_generic_reception_odt extends ModelePdfReception
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
 				if (!empty($conf->global->MAIN_DOC_USE_TIMING))
 				{
-				    $format = $conf->global->MAIN_DOC_USE_TIMING;
-				    if ($format == '1') $format = '%Y%m%d%H%M%S';
+					$format = $conf->global->MAIN_DOC_USE_TIMING;
+					if ($format == '1') $format = '%Y%m%d%H%M%S';
 					$filename = $newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
 				} else {
 					$filename = $newfiletmp.'.'.$newfileformat;
@@ -292,11 +294,14 @@ class doc_generic_reception_odt extends ModelePdfReception
 				}
 
 				// Recipient name
-				if (!empty($usecontact))
-				{
-					// On peut utiliser le nom de la societe du contact
-					if (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socobject = $object->contact;
-					else $socobject = $object->thirdparty;
+				if (!empty($usecontact)) {
+					if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
+						$socobject = $object->contact;
+					} else {
+						$socobject = $object->thirdparty;
+						// if we have a BILLING contact and we dont use it as recipient we store the contact object for later use
+						$contactobject = $object->contact;
+					}
 				} else {
 					$socobject = $object->thirdparty;
 				}
@@ -325,7 +330,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-                    $odfHandler = new odf(
+					$odfHandler = new odf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->reception->dir_temp,
@@ -351,7 +356,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 					$odfHandler->setVars('free_text', $newfreetext, true, 'UTF-8');
 				} catch (OdfException $e) {
 					dol_syslog($e->getMessage(), LOG_INFO);
-                }
+				}
 
 				// Make substitutions into odt of user info
 				$tmparray = $this->get_substitutionarray_user($user, $outputlangs);
@@ -369,7 +374,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					} catch (OdfException $e) {
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 				// Make substitutions into odt of mysoc
@@ -388,7 +393,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					} catch (OdfException $e) {
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 				// Make substitutions into odt of thirdparty
@@ -405,7 +410,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					} catch (OdfException $e) {
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 				// Replace tags of object + external modules
@@ -426,7 +431,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					} catch (OdfException $e) {
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 				// Replace tags of lines
@@ -444,9 +449,9 @@ class doc_generic_reception_odt extends ModelePdfReception
 							try {
 								$listlines->setVars($key, $val, true, 'UTF-8');
 							} catch (OdfException $e) {
-                                dol_syslog($e->getMessage(), LOG_INFO);
+								dol_syslog($e->getMessage(), LOG_INFO);
 							} catch (SegmentException $e) {
-                                dol_syslog($e->getMessage(), LOG_INFO);
+								dol_syslog($e->getMessage(), LOG_INFO);
 							}
 						}
 						$listlines->merge();
@@ -466,7 +471,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 					try {
 						$odfHandler->setVars($key, $value, true, 'UTF-8');
 					} catch (OdfException $e) {
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 
@@ -484,7 +489,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 					}
 				} else {
 					try {
-					    $odfHandler->saveToDisk($file);
+						$odfHandler->saveToDisk($file);
 					} catch (Exception $e) {
 						$this->error = $e->getMessage();
 						return -1;

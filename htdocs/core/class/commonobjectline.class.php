@@ -19,7 +19,7 @@
 /**
  *	\file       htdocs/core/class/commonobjectline.class.php
  *  \ingroup    core
- *  \brief      File of the superclass of classes of lines of business objects (invoice, contract, PROPAL, commands, etc. ...)
+ *  \brief      File of the superclass of classes of lines of business objects (invoice, contract, proposal, orders, etc. ...)
  */
 
 
@@ -51,11 +51,21 @@ abstract class CommonObjectLine extends CommonObject
 
 
 	/**
-	 *	Returns the translation key from units dictionary.
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
+
+	/**
+	 *	Returns the label, shot_label or code found in units dictionary from ->fk_unit.
 	 *  A langs->trans() must be called on result to get translated value.
 	 *
-	 * 	@param	string $type 	Label type (long or short). This can be a translation key.
-	 *	@return	string|int 		<0 if ko, label if ok
+	 * 	@param	string $type 	Label type ('long', 'short' or 'code'). This can be a translation key.
+	 *	@return	string|int 		<0 if KO, label if OK (Example: 'long', 'short' or 'unitCODE')
 	 */
 	public function getLabelOfUnit($type = 'long')
 	{
@@ -69,17 +79,16 @@ abstract class CommonObjectLine extends CommonObject
 
 		$label_type = 'label';
 
-		if ($type == 'short')
-		{
-			$label_type = 'short_label';
-		}
+		$label_type = 'label';
+		if ($type == 'short') $label_type = 'short_label';
+		elseif ($type == 'code') $label_type = 'code';
 
-		$sql = 'select '.$label_type.' from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
+		$sql = 'select '.$label_type.', code from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
 		$resql = $this->db->query($sql);
-		if ($resql && $this->db->num_rows($resql) > 0)
-		{
+		if ($resql && $this->db->num_rows($resql) > 0) {
 			$res = $this->db->fetch_array($resql);
-			$label = $res[$label_type];
+			if ($label_type == 'code') $label = 'unit'.$res['code'];
+			else $label = $res[$label_type];
 			$this->db->free($resql);
 			return $label;
 		} else {

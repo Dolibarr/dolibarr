@@ -53,20 +53,20 @@ foreach ($linkedObjectBlock as $key => $objectlink)
     	<td class="linkedcol-ref center"><?php echo $objectlink->ref_client; ?></td>
     	<td class="linkedcol-date center"><?php echo dol_print_date($objectlink->datec, 'day'); ?></td>
 	    <?php
-	    //$objectlink->socid = $objectlink->fk_soc;
-	    //$objectlink->fetch_thirdparty();
-	    ?>
+		//$objectlink->socid = $objectlink->fk_soc;
+		//$objectlink->fetch_thirdparty();
+		?>
     	<td class="linkedcol-amount right"><?php //echo $objectlink->thirdparty->getNomUrl(1); ?></td>
     	<td class="linkedcol-statut right"><?php echo $objectlink->getLibStatut(3); ?></td>
     	<td class="linkedcol-action right">
     		<?php
-    		// For now, shipments must stay linked to order, so link is not deletable
-    		if ($object->element != 'shipping') {
-    			?>
+			// For now, shipments must stay linked to order, so link is not deletable
+			if ($object->element != 'shipping') {
+				?>
     			<a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a>
     			<?php
-    		}
-    		?>
+			}
+			?>
     	</td>
 </tr>
 	<?php

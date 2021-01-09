@@ -126,12 +126,12 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 			{
 				$i++;
 				$texttoinsert .= "\t\t'".$key."' => array('type'=>'".$val['type']."', 'label'=>'".$val['label']."',";
-				$texttoinsert .= " 'enabled'=>".($val['enabled'] !== '' ? $val['enabled'] : 1).",";
+				$texttoinsert .= " 'enabled'=>'".($val['enabled'] !== '' ? $val['enabled'] : 1)."',";
 				$texttoinsert .= " 'position'=>".($val['position'] !== '' ? $val['position'] : 50).",";
 				$texttoinsert .= " 'notnull'=>".(empty($val['notnull']) ? 0 : $val['notnull']).",";
 				$texttoinsert .= " 'visible'=>".($val['visible'] !== '' ? $val['visible'] : -1).",";
 				if ($val['noteditable'])    $texttoinsert .= " 'noteditable'=>'".$val['noteditable']."',";
-				if ($val['default'])        $texttoinsert .= " 'default'=>'".$val['default']."',";
+				if ($val['default'] || $val['default'] === '0')        $texttoinsert .= " 'default'=>'".$val['default']."',";
 				if ($val['index'])          $texttoinsert .= " 'index'=>".$val['index'].",";
 				if ($val['foreignkey'])     $texttoinsert .= " 'foreignkey'=>'".$val['foreignkey']."',";
 				if ($val['searchall'])      $texttoinsert .= " 'searchall'=>".$val['searchall'].",";
@@ -140,6 +140,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 				if ($val['help'])           $texttoinsert .= " 'help'=>\"".preg_replace('/"/', '', $val['help'])."\",";
 				if ($val['showoncombobox']) $texttoinsert .= " 'showoncombobox'=>'".$val['showoncombobox']."',";
 				if ($val['disabled'])       $texttoinsert .= " 'disabled'=>'".$val['disabled']."',";
+				if ($val['autofocusoncreate']) $texttoinsert .= " 'autofocusoncreate'=>'".$val['autofocusoncreate']."',";
 				if ($val['arrayofkeyval'])
 				{
 					$texttoinsert .= " 'arrayofkeyval'=>array(";
@@ -206,11 +207,12 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
  *  @param	string      $objectname		Name of object
  * 	@param	string		$newmask		New mask
  *  @param	string      $readdir		Directory source (use $destdir when not defined)
- *  @param	Object		$object			If object was already loaded/known, it is pass to avaoid another include and new.
+ *  @param	Object		$object			If object was already loaded/known, it is pass to avoid another include and new.
+ *  @param	string		$moduletype		'external' or 'internal'
  * 	@return	int							<=0 if KO, >0 if OK
  *  @see rebuildObjectClass()
  */
-function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '', $object = null)
+function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '', $object = null, $moduletype = 'external')
 {
 	global $db, $langs;
 
@@ -222,8 +224,14 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	$pathoffiletoclasssrc = $readdir.'/class/'.strtolower($objectname).'.class.php';
 
 	// Edit .sql file
-	$pathoffiletoeditsrc = $readdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql';
-	$pathoffiletoedittarget = $destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql'.($readdir != $destdir ? '.new' : '');
+	if ($moduletype == 'internal') {
+		$pathoffiletoeditsrc = $readdir.'/../install/mysql/tables/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql';
+		$pathoffiletoedittarget = $destdir.'/../install/mysql/tables/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql'.($readdir != $destdir ? '.new' : '');
+	} else {
+		$pathoffiletoeditsrc = $readdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql';
+		$pathoffiletoedittarget = $destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql'.($readdir != $destdir ? '.new' : '');
+	}
+
 	if (!dol_is_file($pathoffiletoeditsrc))
 	{
 		$langs->load("errors");
@@ -292,8 +300,13 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	}
 
 	// Edit .key.sql file
-	$pathoffiletoeditsrc = $destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql';
-	$pathoffiletoedittarget = $destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql'.($readdir != $destdir ? '.new' : '');
+	if ($moduletype == 'internal') {
+		$pathoffiletoeditsrc = $readdir.'/../install/mysql/tables/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql';
+		$pathoffiletoedittarget = $destdir.'/../install/mysql/tables/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql'.($readdir != $destdir ? '.new' : '');
+	} else {
+		$pathoffiletoeditsrc = $destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql';
+		$pathoffiletoedittarget = $destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql'.($readdir != $destdir ? '.new' : '');
+	}
 
 	$contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
 

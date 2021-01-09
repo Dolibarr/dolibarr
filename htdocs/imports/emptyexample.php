@@ -21,6 +21,9 @@
  *      \brief      Show example of import file
  */
 
+if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
+
+
 /**
  * This file is a wrapper, so empty header
  *
@@ -29,7 +32,7 @@
  */
 function llxHeader()
 {
-    print '<html><title>Build an import example file</title><body>';
+	print '<html><title>Build an import example file</title><body>';
 }
 
 /**
@@ -40,7 +43,7 @@ function llxHeader()
  */
 function llxFooter()
 {
-    print '</body></html>';
+	print '</body></html>';
 }
 
 require '../main.inc.php';

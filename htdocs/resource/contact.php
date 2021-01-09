@@ -36,7 +36,7 @@ $langs->loadLangs(array('resource', 'sendings', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Security check
 if ($user->socid) $socid = $user->socid;
@@ -55,7 +55,8 @@ if ($action == 'addcontact' && $user->rights->resource->write)
 	if ($result > 0 && $id > 0)
 	{
 		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
-  		$result = $object->add_contact($contactid, GETPOST('type', 'int'), GETPOST('source', 'alpha'));
+		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 	}
 
 	if ($result >= 0)
@@ -115,7 +116,7 @@ if ($id > 0 || !empty($ref))
 
 
 	$head = resource_prepare_head($object);
-	dol_fiche_head($head, 'contact', $langs->trans("ResourceSingular"), -1, 'resource');
+	print dol_get_fiche_head($head, 'contact', $langs->trans("ResourceSingular"), -1, 'resource');
 
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/resource/list.php'.(!empty($socid) ? '?id='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
@@ -147,7 +148,7 @@ if ($id > 0 || !empty($ref))
 	print '</table>';
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<br>';
 

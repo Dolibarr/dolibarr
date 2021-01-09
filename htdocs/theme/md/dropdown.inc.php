@@ -147,7 +147,7 @@ button.dropdown-item.global-search-item {
 * MENU Dropdown
 */
 .login_block.usedropdown .logout-btn{
-    display: none;
+    /* display: none; */
 }
 
 .tmenu .open.dropdown, .tmenu .open.dropdown {
@@ -218,7 +218,7 @@ a.top-menu-dropdown-link {
 
 
 .dropdown-menu .dropdown-header{
-    padding: 5px 10px 10px 10px;
+    padding: 8px 10px 10px 10px;
 }
 
 .dropdown-menu > .user-footer {
@@ -232,6 +232,8 @@ a.top-menu-dropdown-link {
 
 
 .dropdown-menu > .bookmark-footer{
+    border-top: 1px solid #f0f0f0;
+    background-color: #f9f9f9;
     padding: 10px;
 }
 
@@ -424,6 +426,25 @@ a.top-menu-dropdown-link {
 
 	ul.tmenu {
 	    margin-right: 2px;
+	}
+}
+
+@media only screen and (max-width: 320px)
+{
+	.dropdown dd ul {
+		max-width: 270px;	/* must always be 50 slower than width */
+	}
+}
+@media only screen and (max-width: 300px)
+{
+	.dropdown dd ul {
+		max-width: 250px;
+	}
+}
+@media only screen and (max-width: 280px)
+{
+	.dropdown dd ul {
+		max-width: 230px;
 	}
 }
 

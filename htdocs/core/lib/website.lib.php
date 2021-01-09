@@ -534,7 +534,7 @@ function includeContainer($containerref)
  * Return HTML content to add structured data for an article, news or Blog Post.
  * Use the json-ld format.
  *
- * @param 	string		$type				'blogpost', 'product', 'software', 'organization', ...
+ * @param 	string		$type				'blogpost', 'product', 'software', 'organization', 'qa',  ...
  * @param	array		$data				Array of data parameters for structured data
  * @return  string							HTML content
  */
@@ -542,21 +542,27 @@ function getStructuredData($type, $data = array())
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs; // Very important. Required to have var available when running inluded containers.
 
+	$type = strtolower($type);
+
 	if ($type == 'software')
 	{
-		$ret = '<!-- Add structured data for software post -->'."\n";
+		$ret = '<!-- Add structured data for entry in a software annuary -->'."\n";
 		$ret .= '<script type="application/ld+json">'."\n";
 		$ret .= '{
 			"@context": "https://schema.org",
 			"@type": "SoftwareApplication",
 			"name": "'.dol_escape_json($data['name']).'",
 			"operatingSystem": "'.dol_escape_json($data['os']).'",
-			"applicationCategory": "https://schema.org/'.$data['applicationCategory'].'",
-			"aggregateRating": {
-				"@type": "AggregateRating",
-				"ratingValue": "'.$data['ratingvalue'].'",
-				"ratingCount": "'.$data['ratingcount'].'"
-			},
+			"applicationCategory": "https://schema.org/'.$data['applicationCategory'].'",';
+		if (!empty($data['ratingcount'])) {
+			$ret .= '
+				"aggregateRating": {
+					"@type": "AggregateRating",
+					"ratingValue": "'.$data['ratingvalue'].'",
+					"ratingCount": "'.$data['ratingcount'].'"
+				},';
+		}
+		$ret .= '
 			"offers": {
 				"@type": "Offer",
 				"price": "'.$data['price'].'",
@@ -588,11 +594,11 @@ function getStructuredData($type, $data = array())
 			$i = 0;
 			foreach ($mysoc->socialnetworks as $key => $value) {
 				if ($key == 'linkedin') {
-					$ret.= '"https://www.'.$key.'.com/company/'.dol_escape_json($value).'"';
+					$ret .= '"https://www.'.$key.'.com/company/'.dol_escape_json($value).'"';
 				} elseif ($key == 'youtube') {
-					$ret.= '"https://www.'.$key.'.com/user/'.dol_escape_json($value).'"';
+					$ret .= '"https://www.'.$key.'.com/user/'.dol_escape_json($value).'"';
 				} else {
-					$ret.= '"https://www.'.$key.'.com/'.dol_escape_json($value).'"';
+					$ret .= '"https://www.'.$key.'.com/'.dol_escape_json($value).'"';
 				}
 				$i++;
 				if ($i < count($mysoc->socialnetworks)) $ret .= ', ';
@@ -617,7 +623,7 @@ function getStructuredData($type, $data = array())
 
 			$pageurl = str_replace('__WEBSITE_KEY__', $website->ref, $pageurl);
 			$title = str_replace('__WEBSITE_KEY__', $website->ref, $title);
-			$image = 'medias/'.str_replace('__WEBSITE_KEY__', $website->ref, $image);
+			$image = '/medias/'.str_replace('__WEBSITE_KEY__', $website->ref, $image);
 			$companyname = str_replace('__WEBSITE_KEY__', $website->ref, $companyname);
 			$description = str_replace('__WEBSITE_KEY__', $website->ref, $description);
 
@@ -654,7 +660,7 @@ function getStructuredData($type, $data = array())
 				$i = 0;
 				$arrayofkeywords = explode(',', $websitepage->keywords);
 				foreach ($arrayofkeywords as $keyword) {
-					$ret.= '"'.dol_escape_json($keyword).'"';
+					$ret .= '"'.dol_escape_json($keyword).'"';
 					$i++;
 					if ($i < count($arrayofkeywords)) $ret .= ', ';
 				}
@@ -700,6 +706,33 @@ function getStructuredData($type, $data = array())
 				}
 			}'."\n";
 		$ret .= '</script>'."\n";
+	} elseif ($type == 'qa')
+	{
+		$ret = '<!-- Add structured data for QA -->'."\n";
+		$ret .= '<script type="application/ld+json">'."\n";
+		$ret .= '{
+				"@context": "https://schema.org/",
+				"@type": "QAPage",
+				"mainEntity": {
+					"@type": "Question",
+					"name": "'.dol_escape_json($data['name']).'",
+					"text": "'.dol_escape_json($data['name']).'",
+					"answerCount": 1,
+					"author": {
+						"@type": "Person",
+						"name": "'.dol_escape_json($data['author']).'"
+					}
+					"acceptedAnswer": {
+						"@type": "Answer",
+						"text": "'.dol_escape_json(dol_string_nohtmltag(dolStripPhpCode($data['description']))).'",
+						"author": {
+							"@type": "Person",
+							"name": "'.dol_escape_json($data['author']).'"
+						}
+					}
+				}
+			}'."\n";
+		$ret .= '</script>'."\n";
 	}
 	return $ret;
 }
@@ -713,45 +746,52 @@ function getSocialNetworkSharingLinks()
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
 
-	$fullurl = $website->alias.'/'.$websitepage->pageurl.'.php';
-	$hashtags = trim(join(' #', array_map('trim', explode(',', $websitepage->keywords))));
-
 	$out = '<!-- section for social network sharing of page -->'."\n";
-	$out .= '<div class="dol-social-share">'."\n";
 
-	// Twitter
-	$out .= '<div class="dol-social-share-tw">'."\n";
-	$out .= '<a href="https://twitter.com/share" class="twitter-share-button" data-url="'.$fullurl.'" data-text="'.dol_escape_htmltag($websitepage->description).'" data-lang="'.$websitepage->lang.'" data-size="small" data-related="" data-hashtags="'.preg_replace('/^#/', '', $hashtags).'" data-count="horizontal">Tweet</a>';
-	$out .= '<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\'://platform.twitter.com/widgets.js\';fjs.parentNode.insertBefore(js,fjs);}}(document, \'script\', \'twitter-wjs\');</script>';
-	$out .= '</div>'."\n";
+	if ($website->virtualhost) {
+		$fullurl = $website->virtualhost.'/'.$websitepage->pageurl.'.php';
+		$hashtags = trim(join(' #', array_map('trim', explode(',', $websitepage->keywords))));
 
-	// Reddit
-	$out .= '<div class="dol-social-share-reddit">'."\n";
-	$out .= '<a href="https://www.reddit.com/submit" target="_blank" onclick="window.location = \'https://www.reddit.com/submit?url='.$fullurl.'\'; return false">';
-	$out .= '<img src="https://www.reddit.com/static/spreddit7.gif" alt="Submit to reddit" border="0" /> </a>';
-	$out .= '</div>'."\n";
+		$out .= '<div class="dol-social-share">'."\n";
 
-	// Facebook
-	$out .= '<div class="dol-social-share-fbl">'."\n";
-	$out .= '<div id="fb-root"></div>'."\n";
-	$out .= '<script>(function(d, s, id) {
-			  var js, fjs = d.getElementsByTagName(s)[0];
-			  if (d.getElementById(id)) return;
-			  js = d.createElement(s); js.id = id;
-			  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0&amp;appId=dolibarr.org";
-			  fjs.parentNode.insertBefore(js, fjs);
-			}(document, \'script\', \'facebook-jssdk\'));</script>
-			        <fb:like
-			        href="'.$fullurl.'"
-			        layout="button_count"
-			        show_faces="false"
-			        width="90"
-			        colorscheme="light"
-			        share="1"
-			        action="like" ></fb:like>'."\n";
-	$out .= '</div>'."\n";
+		// Twitter
+		$out .= '<div class="dol-social-share-tw">'."\n";
+		$out .= '<a href="https://twitter.com/share" class="twitter-share-button" data-url="'.$fullurl.'" data-text="'.dol_escape_htmltag($websitepage->description).'" data-lang="'.$websitepage->lang.'" data-size="small" data-related="" data-hashtags="'.preg_replace('/^#/', '', $hashtags).'" data-count="horizontal">Tweet</a>';
+		$out .= '<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\'://platform.twitter.com/widgets.js\';fjs.parentNode.insertBefore(js,fjs);}}(document, \'script\', \'twitter-wjs\');</script>';
+		$out .= '</div>'."\n";
 
-	$out .= "\n</div>\n";
+		// Reddit
+		$out .= '<div class="dol-social-share-reddit">'."\n";
+		$out .= '<a href="https://www.reddit.com/submit" target="_blank" onclick="window.location = \'https://www.reddit.com/submit?url='.$fullurl.'\'; return false">';
+		$out .= '<span class="dol-social-share-reddit-span">Reddit</span>';
+		$out .= '</a>';
+		$out .= '</div>'."\n";
+
+		// Facebook
+		$out .= '<div class="dol-social-share-fbl">'."\n";
+		$out .= '<div id="fb-root"></div>'."\n";
+		$out .= '<script>(function(d, s, id) {
+				  var js, fjs = d.getElementsByTagName(s)[0];
+				  if (d.getElementById(id)) return;
+				  js = d.createElement(s); js.id = id;
+				  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0&amp;appId=dolibarr.org";
+				  fjs.parentNode.insertBefore(js, fjs);
+				}(document, \'script\', \'facebook-jssdk\'));</script>
+				        <fb:like
+				        href="'.$fullurl.'"
+				        layout="button_count"
+				        show_faces="false"
+				        width="90"
+				        colorscheme="light"
+				        share="1"
+				        action="like" ></fb:like>'."\n";
+		$out .= '</div>'."\n";
+
+		$out .= "\n</div>\n";
+	}
+	else {
+		$out .= '<!-- virtual host not defined in CMS. No way to add sharing buttons -->'."\n";
+	}
 	$out .= '<!-- section end for social network sharing of page -->'."\n";
 
 	return $out;
@@ -769,9 +809,10 @@ function getSocialNetworkSharingLinks()
  * @param	string		$sortorder			Sort order ('DESC' or 'ASC')
  * @param	string		$langcode			Language code ('' or 'en', 'fr', 'es', ...)
  * @param	array		$otherfilters		Other filters
+ * @param	int			$status				0 or 1, or -1 for both
  * @return  string							HTML content
  */
-function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '', $otherfilters = 'null')
+function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '', $otherfilters = 'null', $status = 1)
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
 
@@ -808,10 +849,13 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 	if (!$error && (empty($max) || ($found < $max)) && (preg_match('/meta/', $algo) || preg_match('/content/', $algo)))
 	{
 		$sql = 'SELECT wp.rowid FROM '.MAIN_DB_PREFIX.'website_page as wp';
-		if (is_array($otherfilters) && ! empty($otherfilters['category'])) {
+		if (is_array($otherfilters) && !empty($otherfilters['category'])) {
 			$sql .= ', '.MAIN_DB_PREFIX.'categorie_website_page as cwp';
 		}
 		$sql .= " WHERE wp.fk_website = ".$website->id;
+		if ($status >= 0) {
+			$sql .= " AND wp.status = ".$status;
+		}
 		if ($langcode) {
 			$sql .= " AND wp.lang ='".$db->escape($langcode)."'";
 		}
@@ -835,7 +879,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.content LIKE '%".$db->escape($searchstring)."%'";
 		}
 		$sql .= $searchalgo;
-		if (is_array($otherfilters) && ! empty($otherfilters['category'])) {
+		if (is_array($otherfilters) && !empty($otherfilters['category'])) {
 			$sql .= ' AND cwp.fk_website_page = wp.rowid AND cwp.fk_categorie = '.((int) $otherfilters['category']);
 		}
 		$sql .= ")";

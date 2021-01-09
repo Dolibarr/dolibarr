@@ -21,7 +21,7 @@
 CREATE TABLE llx_cronjob 
 (
 	rowid 			integer AUTO_INCREMENT PRIMARY KEY,
-	tms 			timestamp,
+	tms 			timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	datec 			datetime,
 	jobtype			varchar(10) NOT NULL,
   	label 			text NOT NULL,

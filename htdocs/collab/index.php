@@ -39,7 +39,7 @@ $error = 0;
 $website = GETPOST('website', 'alpha');
 $page = GETPOST('page', 'alpha');
 $pageid = GETPOST('pageid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 if (GETPOST('delete')) { $action = 'delete'; }
 if (GETPOST('preview')) $action = 'preview';

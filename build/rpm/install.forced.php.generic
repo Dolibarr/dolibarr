@@ -17,6 +17,7 @@ $force_install_databaserootpass='__SUPERUSERPASSWORD__';
 $force_install_dolibarrlogin='admin';
 $force_install_nophpinfo='1';
 $force_install_lockinstall='444';
+$force_install_distrib='rpmgeneric';
 
 // Value to overwrite path to use shared libraries/fonts instead of embedded one
 // We don't force any external lib with generic package

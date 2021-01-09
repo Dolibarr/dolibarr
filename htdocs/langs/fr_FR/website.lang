@@ -16,6 +16,7 @@ WEBSITE_ROBOT=Fichier robot (robots.txt)
 WEBSITE_HTACCESS=Fichier .htaccess du site web
 WEBSITE_MANIFEST_JSON=Fichier manifest.json de site Web
 WEBSITE_README=Fichier README.md
+WEBSITE_KEYWORDSDesc=Utiliser une virgule pour séparer les valeurs
 EnterHereLicenseInformation=Entrez ici les métadonnées ou les informations de licence pour créer un fichier README.md. Si vous distribuez votre site Web en tant que modèle, le fichier sera inclus dans le package.
 HtmlHeaderPage=En-tête HTML (spécifique pour la page uniquement)
 PageNameAliasHelp=Nom ou alias de la page. <br>Cet alias est également utilisé pour forger une URL SEO lorsque le site Web est exécuté à partir d'un hôte virtuel d'un serveur Web (comme Apache, Nginx, ...). Utilisez le bouton "<strong>%s</strong>" pour modifier cet alias.
@@ -29,8 +30,7 @@ EditInLine=Editer en ligne
 AddWebsite=Ajouter site web
 Webpage=Page/container Web
 AddPage=Ajouter une page/container
-HomePage=Page d'accueil
-PageContainer=Page/container
+PageContainer=Page
 PreviewOfSiteNotYetAvailable=La prévisualisation de votre site web <strong>%s</strong> n'est pas disponible actuellement. Vous devez d'abord '<strong>Importer un modèle de site web complet</strong>' ou juste '<strong>Ajouter une page/container</strong>.
 RequestedPageHasNoContentYet=La page demandée avec l'id=%s ne présente encore aucun contenu ou le fichier cache .tpl.php a été supprimé. Ajoutez du contenu à la page pour résoudre cela.
 SiteDeleted=Site Web '%s' supprimé
@@ -57,7 +57,10 @@ NoPageYet=Pas de page pour l'instant
 YouCanCreatePageOrImportTemplate=Vous pouvez créer une nouvelle page ou importer un modèle de site Web complet.
 SyntaxHelp=Aide sur quelques astuces spécifiques de syntaxe 
 YouCanEditHtmlSourceckeditor=Vous pouvez éditer le code source en activant l'éditeur HTML avec le bouton "Source".
-YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper:<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br><br>More examples of HTML or dynamic code available on <a href="%s" target="_blank">the wiki documentation</a><br>.
+YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> Vous pouvez inclure du code PHP dans cette source en utilisant les balises <strong>&lt;?php ?&gt;</strong>. Les variables globales suivantes sont disponibles: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs. <br><br><span class="fa fa-bug"></span> Vous pouvez également inclure le contenu d'une autre page / conteneur avec la syntaxe suivante: <br> <strong>&lt;?php includeContainer ('alias_of_container_to_include'); ?&gt;</strong> <br><br><span class="fa fa-bug"></span> Vous pouvez créer une redirection vers une autre page / conteneur avec la syntaxe suivante (Remarque: ne pas afficher de contenu avant une redirection): <br> <strong>&lt;?php redirectToContainer ('alias_of_container_to_redirect_to'); ?&gt;</strong> <br><br><span class="fa fa-link"></span> Pour ajouter un lien vers une autre page, utilisez la syntaxe: <br> <strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong> <br><br><span class="fa fa-download"></span> Pour inclure un <strong>lien pour télécharger</strong> un fichier stocké dans le répertoire des <strong>documents</strong> , utilisez l'encapsuleur <strong>document.php</strong> : <br> Exemple, pour un fichier dans documents/ecm (besoin d'être loggué), la syntaxe est: <br> <strong>&lt;a href="/document.php?modulepart=ecm&amp;file=[relative_dir/]filename.ext"&gt;</strong> <br> Pour un fichier dans des documents/medias (répertoire ouvert pour accès public), la syntaxe est: <br> <strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong> <br> Pour un fichier partagé avec un lien de partage (accès ouvert en utilisant la clé de partage du fichier), la syntaxe est la suivante: <br> <strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong> <br><br><span class="fa fa-picture-o"></span> Pour inclure une <strong>image</strong> stockée dans le répertoire <strong>documents</strong>, utilisez le wrapper <strong>viewimage.php</strong> : <br> Exemple, pour une image dans des documents/medias (répertoire ouvert), la syntaxe est: <br> <strong>&lt;img src = "/viewimage.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
+#YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSource2=Pour une image partagée avec un lien de partage (accès ouvert à l'aide de la clé de partage du fichier), la syntaxe est la suivante: <br> <strong> &lt;img src = "/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSourceMore=<br> Plus d'exemples de code HTML ou dynamique disponibles sur <a href="%s" target="_blank"> la documentation wiki </a> <br>.
 ClonePage=Cloner la page/container
 CloneSite=Cloner le site
 SiteAdded=Site web ajouté
@@ -120,7 +123,7 @@ ShowSubContainersOnOff=Mode 'exécution dynamique' est %s
 GlobalCSSorJS=Fichier CSS/JS/Header global du site Web
 BackToHomePage=Retour à la page d'accueil...
 TranslationLinks=Liens de traduction
-YouTryToAccessToAFileThatIsNotAWebsitePage=Vous tentez d'accéder à une page qui n'est pas une page du site web
+YouTryToAccessToAFileThatIsNotAWebsitePage=Vous essayez d’accéder à une page qui n’est pas disponible.<br>(ref=%s, type=%s, status=%s)
 UseTextBetween5And70Chars=Pour les bonnes pratiques de référencement, utilisez un texte de 5 à 70 caractères
 MainLanguage=Langage principal
 OtherLanguages=Autres langues
@@ -128,3 +131,9 @@ UseManifest=Fournir un fichier manifest.json
 PublicAuthorAlias=Alias publique de l'auteur
 AvailableLanguagesAreDefinedIntoWebsiteProperties=Les langues disponibles sont définies dans les propriétés du site Web
 ReplacementDoneInXPages=Remplacement effectué dans %s pages ou des conteneurs
+RSSFeed=Flux RSS
+RSSFeedDesc=Vous pouvez obtenir un flux RSS des derniers articles de type 'blogpost' en utilisant cette URL
+PagesRegenerated=%s page(s)/conteneur(s) régénéré(s)
+RegenerateWebsiteContent=Régénérer les fichiers de cache du site Web
+AllowedInFrames=Autorisé dans les Frames
+DefineListOfAltLanguagesInWebsiteProperties=Définir la liste des langues disponibles dans les propriétés du site web.

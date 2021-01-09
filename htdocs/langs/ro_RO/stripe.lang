@@ -12,17 +12,17 @@ YourEMail=E-mail de confirmare de plată
 STRIPE_PAYONLINE_SENDEMAIL=Email de notificare după o încercare de plată (succes sau eșec)
 Creditor=Creditor
 PaymentCode=Cod Plata
-StripeDoPayment=Pay with Stripe
+StripeDoPayment=Plăteşte cu Stripe
 YouWillBeRedirectedOnStripe=Veți fi redirecționat pe pagina Stripe securizată pentru a vă introduce informațiile despre cardul de credit
 Continue=Următor
 ToOfferALinkForOnlinePayment=URL-ul pentru plata %s
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment page for a sales order
-ToOfferALinkForOnlinePaymentOnInvoice=URL to offer a %s online payment page for a customer invoice
-ToOfferALinkForOnlinePaymentOnContractLine=URL to offer a %s online payment page for a contract line
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL to offer a %s online payment page of any amount with no existing object
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL to offer a %s online payment page for a member subscription
-ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment page for payment of a donation
-YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+ToOfferALinkForOnlinePaymentOnOrder=URL oferit pentru %s plată online pentru o comandă de vânzare
+ToOfferALinkForOnlinePaymentOnInvoice= URL oferit pentru %s plată online pentru factură client
+ToOfferALinkForOnlinePaymentOnContractLine= URL oferit pentru %s plată online pentru o linie de contract
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL oferit pentru %s plată online pentru orice sumă fără un produs/serviciu existent
+ToOfferALinkForOnlinePaymentOnMemberSubscription= URL oferit pentru %s plată online pentru o cotizaţie de membru
+ToOfferALinkForOnlinePaymentOnDonation= URL oferit pentru %s plată online pentru o achitare sau donaţie
+YouCanAddTagOnUrl=Puteți adăuga, de asemenea, parametrul url <b>& tag<i> = valoare</i></b> la oricare dintre respectivele URL (obligatoriu numai pentru plata care nu este legată de un obiect) pentru a adăuga motivul efectuării.<br> Pentru adresa URL a plăților fără obiect existent, puteți adăuga și parametrul <strong>& noidempotency = 1</strong> pentru ca aceeași legătură cu aceeași etichetă să poată fi folosită de mai multe ori (anumite moduri de plată pot plafona plata la 1 pentru fiecare link diferit fără acest parametru) 
 SetupStripeToHavePaymentCreatedAutomatically=Configurați-vă Stripe cu URL <b> %s </b> pentru a avea o plată creată automat când este validată de Stripe.
 AccountParameter=Parametri Cont
 UsageParameter=Utilizarea parametrilor
@@ -32,7 +32,7 @@ VendorName=Numele vânzătorului
 CSSUrlForPaymentForm=CSS foaie de URL-ul de stil pentru forma de plată
 NewStripePaymentReceived=Plata noua Stripe incasata
 NewStripePaymentFailed=Plata noua Stripe incercata dar esuata
-FailedToChargeCard=Failed to charge card
+FailedToChargeCard=Nu s-a putut încasa de pe card
 STRIPE_TEST_SECRET_KEY=Cheie de testare secreta
 STRIPE_TEST_PUBLISHABLE_KEY=Cheia de test publicabilă
 STRIPE_TEST_WEBHOOK_KEY=Cheia de test Webhook
@@ -42,7 +42,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Cheie in direct Webhook
 ONLINE_PAYMENT_WAREHOUSE=Stoc de utilizat pentru scăderea stocului atunci când se efectuează plata online <br> (TODO Când opțiunea de a reduce stocul se face printr-o acțiune pe factură, iar plata online generează factura?)
 StripeLiveEnabled=Stripe live activat (altfel test / modul sandbox)
 StripeImportPayment=Plățile pentru importul Stripe
-ExampleOfTestCreditCard=Example of credit card for test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestCreditCard=Exemplu de card de credit pentru test: %s=> valid,%s => eroare CVC, %s=> expirat, %s=> retragere eşuată
 StripeGateways=Iesiri Stripe
 OAUTH_STRIPE_TEST_ID=ID-ul de conectare Stripe a clientului (ca _...)
 OAUTH_STRIPE_LIVE_ID=ID-ul de conectare Stripe a clientului (ca _...)
@@ -65,8 +65,8 @@ CreateCardOnStripe=Creați un card pe Stripe
 ShowInStripe=Arată în Stripe
 StripeUserAccountForActions=Cont utilizator pe care să îl utilizați pentru notificarea prin email a anumitor evenimente Stripe (plăți Stripe)
 StripePayoutList=Listă de plăți Stripe
-ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mode)
-ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
-PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
-ClickHereToTryAgain=<a href="%s">Click here to try again...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s
+ToOfferALinkForTestWebhook=Link de configurare Stripe WebHook pentru a apel IPN (mod de test) 
+ToOfferALinkForLiveWebhook=Link de configurare Stripe WebHook pentru a apel IPN (mod live)
+PaymentWillBeRecordedForNextPeriod=Plata va fi înregistrată pentru perioada următoare.
+ClickHereToTryAgain=<a href="%s">Clic aici pentru a încerca din nou...</a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Datorită regulilor de autentificare securizată a clienților, crearea unui card trebuie făcută din backoffice-ul Stripe. Puteți face clic aici pentru a activa înregistrarea clienților Stripe: %s 

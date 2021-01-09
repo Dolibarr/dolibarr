@@ -30,10 +30,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
  */
 class mod_pacific extends ModeleNumRefFicheinter
 {
-    /**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	/**
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	public $prefix = 'FI';
@@ -59,13 +59,13 @@ class mod_pacific extends ModeleNumRefFicheinter
 	/**
 	 *  Return description of numbering module
 	 *
-     *  @return     string      Text with description
-     */
-    public function info()
-    {
-    	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
-    }
+	 *  @return     string      Text with description
+	 */
+	public function info()
+	{
+		global $langs;
+	  	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+	}
 
 	/**
 	 *  Return an example of numbering
@@ -91,7 +91,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 
 		$fayymm = ''; $max = '';
 
-		$posindice = 8;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
@@ -124,8 +124,8 @@ class mod_pacific extends ModeleNumRefFicheinter
 	{
 		global $db, $conf;
 
-		// D'abord on recupere la valeur max
-		$posindice = 8;
+		// First, we get the max value
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
@@ -143,8 +143,8 @@ class mod_pacific extends ModeleNumRefFicheinter
 		$date = $object->datec;
 		$yymm = strftime("%y%m", $date);
 
-    	if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
-    	else $num = sprintf("%04s", $max + 1);
+		if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
+		else $num = sprintf("%04s", $max + 1);
 
 		return $this->prefix.$yymm."-".$num;
 	}

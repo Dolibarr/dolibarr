@@ -102,7 +102,6 @@ $sql .= ", u.ldap_sid";
 $sql .= ", u.photo";
 $sql .= ", u.admin";
 $sql .= ", u.email";
-$sql .= ", u.skype";
 $sql .= ", s.nom as name";
 $sql .= ", s.code_client";
 $sql .= ", s.canvas";
@@ -144,7 +143,6 @@ if ($resql)
 		$fuserstatic->photo = $obj->photo;
 		$fuserstatic->admin = $obj->admin;
 		$fuserstatic->email = $obj->email;
-		$fuserstatic->skype = $obj->skype;
 		$fuserstatic->socid = $obj->fk_soc;
 
 		$companystatic->id = $obj->fk_soc;
@@ -154,7 +152,7 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 		print '<td class="nowraponall">';
-        print $fuserstatic->getNomUrl(-1);
+		print $fuserstatic->getNomUrl(-1);
 		if (!empty($conf->multicompany->enabled) && $obj->admin && !$obj->entity)
 		{
 			print img_picto($langs->trans("SuperAdministrator"), 'redstar');
@@ -167,7 +165,7 @@ if ($resql)
 		print "<td>";
 		if ($obj->fk_soc)
 		{
-            print $companystatic->getNomUrl(1);
+			print $companystatic->getNomUrl(1);
 		} else {
 			print $langs->trans("InternalUser");
 		}
@@ -178,7 +176,7 @@ if ($resql)
 
 		$entity = $obj->entity;
 		$entitystring = '';
-        // TODO Set of entitystring should be done with a hook
+		// TODO Set of entitystring should be done with a hook
 		if (!empty($conf->multicompany->enabled) && is_object($mc))
 		{
 			if (empty($entity))
@@ -189,13 +187,13 @@ if ($resql)
 				$entitystring = $mc->label;
 			}
 		}
-        print ($entitystring ? ' ('.$entitystring.')' : '');
+		print ($entitystring ? ' ('.$entitystring.')' : '');
 
 		print '</td>';
 		print '<td class="center nowrap">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
-        print '<td class="right">';
-        print $fuserstatic->getLibStatut(3);
-        print '</td>';
+		print '<td class="right">';
+		print $fuserstatic->getLibStatut(3);
+		print '</td>';
 
 		print '</tr>';
 		$i++;
@@ -261,10 +259,10 @@ if ($canreadperms)
 			print "</td>";
 			if (!empty($conf->multicompany->enabled) && is_object($mc))
 			{
-	        	$mc->getInfo($obj->entity);
-	        	print '<td>';
-	        	print $mc->label;
-	        	print '</td>';
+				$mc->getInfo($obj->entity);
+				print '<td>';
+				print $mc->label;
+				print '</td>';
 			}
 			print '<td class="nowrap right">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
 			print "</tr>";

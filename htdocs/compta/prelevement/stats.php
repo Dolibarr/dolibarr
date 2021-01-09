@@ -36,20 +36,32 @@ $socid = GETPOST('socid', 'int');
 if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
+$type = GETPOST('type', 'aZ09');
+
 
 /*
  * View
  */
 
-llxHeader('', $langs->trans("WithdrawStatistics"));
+$title = $langs->trans("WithdrawStatistics");
+if ($type == 'bank-transfer') {
+	$title = $langs->trans("CreditTransferStatistics");
+}
 
-print load_fiche_titre($langs->trans("Statistics"));
+llxHeader('', $title);
+
+print load_fiche_titre($title);
 
 // Define total and nbtotal
 $sql = "SELECT sum(pl.amount), count(pl.amount)";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
 $sql .= " WHERE pl.fk_prelevement_bons = pb.rowid";
+if ($type == 'bank-transfer') {
+	$sql .= " AND pb.type = 'bank-transfer'";
+} else {
+	$sql .= " AND pb.type = 'debit-order'";
+}
 $sql .= " AND pb.entity = ".$conf->entity;
 $resql = $db->query($sql);
 if ($resql)
@@ -71,7 +83,7 @@ if ($resql)
  */
 
 print '<br>';
-print load_fiche_titre($langs->trans("WithdrawStatistics"), '', '');
+print load_fiche_titre($langs->trans("ByStatus"), '', '');
 
 $ligne = new LignePrelevement($db);
 
@@ -80,6 +92,11 @@ $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
 $sql .= " WHERE pl.fk_prelevement_bons = pb.rowid";
 $sql .= " AND pb.entity = ".$conf->entity;
+if ($type == 'bank-transfer') {
+	$sql .= " AND pb.type = 'bank-transfer'";
+} else {
+	$sql .= " AND pb.type = 'debit-order'";
+}
 $sql .= " GROUP BY pl.statut";
 
 $resql = $db->query($sql);
@@ -135,7 +152,7 @@ if ($resql)
  */
 
 print '<br>';
-print load_fiche_titre($langs->trans("WithdrawRejectStatistics"), '', '');
+print load_fiche_titre($langs->trans("Rejects"), '', '');
 
 
 // Define total and nbtotal
@@ -145,6 +162,11 @@ $sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
 $sql .= " WHERE pl.fk_prelevement_bons = pb.rowid";
 $sql .= " AND pb.entity = ".$conf->entity;
 $sql .= " AND pl.statut = 3";
+if ($type == 'bank-transfer') {
+	$sql .= " AND pb.type = 'bank-transfer'";
+} else {
+	$sql .= " AND pb.type = 'debit-order'";
+}
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -162,6 +184,7 @@ if ($resql)
 /*
  * Stats sur les rejets
  */
+
 $sql = "SELECT sum(pl.amount), count(pl.amount) as cc, pr.motif";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
@@ -170,6 +193,11 @@ $sql .= " WHERE pl.fk_prelevement_bons = pb.rowid";
 $sql .= " AND pb.entity = ".$conf->entity;
 $sql .= " AND pl.statut = 3";
 $sql .= " AND pr.fk_prelevement_lignes = pl.rowid";
+if ($type == 'bank-transfer') {
+	$sql .= " AND pb.type = 'bank-transfer'";
+} else {
+	$sql .= " AND pb.type = 'debit-order'";
+}
 $sql .= " GROUP BY pr.motif";
 $sql .= " ORDER BY cc DESC";
 
@@ -186,7 +214,7 @@ if ($resql)
 	print '<td class="right">%</td><td class="right">'.$langs->trans("Amount").'</td><td class="right">%</td></tr>';
 
 	require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class.php';
-	$Rejet = new RejetPrelevement($db, $user);
+	$Rejet = new RejetPrelevement($db, $user, $type);
 
 	while ($i < $num)
 	{

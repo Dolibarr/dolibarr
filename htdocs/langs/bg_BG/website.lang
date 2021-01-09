@@ -16,6 +16,7 @@ WEBSITE_ROBOT=Съдържание на robots файл (robots.txt)
 WEBSITE_HTACCESS=Съдържание на .htaccess файл
 WEBSITE_MANIFEST_JSON=Съдържание на manifest.json файл
 WEBSITE_README=Съдържание на readme.md файл
+WEBSITE_KEYWORDSDesc=Use a comma to separate values
 EnterHereLicenseInformation=Въведете тук мета данни или информация за лиценз, за да попълните README.md файла. Ако разпространявате уебсайта си като шаблон, файлът ще бъде включен в пакета на шаблона.
 HtmlHeaderPage=HTML заглавие (само за тази страница)
 PageNameAliasHelp=Име или псевдоним на страницата.<br>Този псевдоним се използва и за измисляне на SEO URL адрес, когато уебсайтът се управлява от виртуален хост на уеб сървър (като Apacke, Nginx, ...). Използвайте бутона "<strong>%s</strong>", за да редактирате този псевдоним.
@@ -29,8 +30,7 @@ EditInLine=Редактиране в движение
 AddWebsite=Добавяне на уебсайт
 Webpage=Уеб страница / контейнер
 AddPage=Добавяне на страница / контейнер
-HomePage=Начална страница
-PageContainer=Страница / контейнер
+PageContainer=Страница
 PreviewOfSiteNotYetAvailable=Преглед на вашия уебсайт <strong>%s</strong> все още не е наличен. Първо трябва да '<strong>Импортирате пълен шаблон за уебсайт</strong>' или просто да '<strong>Добавите страница / контейнер</strong>'.
 RequestedPageHasNoContentYet=Заявената страница с id %s все още няма съдържание или кеш файлът .tpl.php е бил премахнат. Редактирайте съдържанието на страницата, за да коригирате това.
 SiteDeleted=Уебсайта '%s' е изтрит
@@ -57,7 +57,10 @@ NoPageYet=Все още няма страници
 YouCanCreatePageOrImportTemplate=Може да създадете нова страница или да импортирате пълен шаблон на уебсайт
 SyntaxHelp=Помощ с конкретни съвети за синтаксиса
 YouCanEditHtmlSourceckeditor=Може да редактирате изходния HTML код с помощта на бутона 'Код' в редактора.
-YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper:<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br><br>More examples of HTML or dynamic code available on <a href="%s" target="_blank">the wiki documentation</a><br>.
+YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper:<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
+#YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank">the wiki documentation</a><br>.
 ClonePage=Клониране на страница / контейнер
 CloneSite=Клониране на сайт
 SiteAdded=Уебсайтът е добавен
@@ -97,7 +100,7 @@ EmptyPage=Празна страница
 ExternalURLMustStartWithHttp=Външният URL адрес трябва да започва с http:// или https://
 ZipOfWebsitePackageToImport=Качете Zip файла на пакета с шаблон на уебсайта
 ZipOfWebsitePackageToLoad=или Изберете наличен пакет с вграден шаблон за уебсайт
-ShowSubcontainers=Вмъкване на динамично съдържание
+ShowSubcontainers=Show dynamic content
 InternalURLOfPage=Вътрешен URL адрес на страница
 ThisPageIsTranslationOf=Тази страница / контейнер е превод на
 ThisPageHasTranslationPages=Тази страница / контейнер има превод
@@ -120,7 +123,7 @@ ShowSubContainersOnOff=Режимът за изпълнение на „дина
 GlobalCSSorJS=Общ CSS / JS / заглавен файл на уебсайт
 BackToHomePage=Обратно към началната страница ...
 TranslationLinks=Преводни връзки
-YouTryToAccessToAFileThatIsNotAWebsitePage=Опитвате се да получите достъп до страница, която не е страница на уебсайта
+YouTryToAccessToAFileThatIsNotAWebsitePage=You try to access to a page that is not available.<br>(ref=%s, type=%s, status=%s)
 UseTextBetween5And70Chars=Като добра SEO практика използвайте текст между 5 и 70 знака
 MainLanguage=Основен език
 OtherLanguages=Други езици
@@ -128,3 +131,9 @@ UseManifest=Въведете manifest.json файл
 PublicAuthorAlias=Публичен псевдоним на автора
 AvailableLanguagesAreDefinedIntoWebsiteProperties=Наличните езици сa дефинирани в свойствата на уебсайта
 ReplacementDoneInXPages=Replacement done in %s pages or containers
+RSSFeed=RSS емисия
+RSSFeedDesc=You can get a RSS feed of latest articles with type 'blogpost' using this URL
+PagesRegenerated=%s page(s)/container(s) regenerated
+RegenerateWebsiteContent=Regenerate web site cache files
+AllowedInFrames=Allowed in Frames
+DefineListOfAltLanguagesInWebsiteProperties=Define list of all available languages into web site properties.

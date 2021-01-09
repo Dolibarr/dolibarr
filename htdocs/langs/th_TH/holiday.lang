@@ -15,6 +15,7 @@ CancelCP=ยกเลิก
 RefuseCP=ปฏิเสธ
 ValidatorCP=Approbator
 ListeCP=List of leave
+Leave=คำขอฝาก
 LeaveId=Leave ID
 ReviewedByCP=Will be approved by
 UserID=User ID

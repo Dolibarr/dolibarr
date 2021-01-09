@@ -15,6 +15,7 @@ CancelCP=Atcelts
 RefuseCP=Atteikts
 ValidatorCP=Asistents
 ListeCP=Atvaļinājuma saraksts
+Leave=Atstāt pieprasījumu
 LeaveId=Atvaļinājuma ID
 ReviewedByCP=To apstiprinās
 UserID=Lietotāja ID

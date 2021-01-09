@@ -21,8 +21,8 @@
  *		\ingroup    dev
  * 		\brief      This script uses google language ajax api as the translator engine
  *                  The main translator function can be found at:
- *                  http://code.google.com/intl/fr/apis/language/translate/overview.html
- *                  http://translate.google.com/translate_tools
+ *                  defunct -http://code.google.com/intl/fr/apis/language/translate/overview.html-
+ *                  defunct -http://translate.google.com/translate_tools-
  *                  https://code.google.com/apis/console
  */
 
@@ -58,7 +58,7 @@ $dir=DOL_DOCUMENT_ROOT."/langs";
 if (! isset($argv[3])) {
     print "Usage:   ".$script_file."  lang_code_src lang_code_dest|all APIKEY [langfile.lang]\n";
     print "Example: ".$script_file."  en_US         pt_PT              123456\n";
-    print "Rem:     lang_code to use can be found on http://www.google.com/language_tools\n";
+    print "Rem:     lang_code to use can be found on https://translate.google.com\n";
     exit;
 }
 

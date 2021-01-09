@@ -42,7 +42,7 @@ fk_user_cancel integer DEFAULT NULL,
 detail_refuse  varchar( 250 ) DEFAULT NULL,
 note_private   text,
 note_public    text,
-tms            timestamp,
+tms            timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 import_key			varchar(14),
 extraparams			varchar(255)				-- for other parameters with json format
 ) 

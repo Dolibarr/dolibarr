@@ -20,5 +20,5 @@ CREATE TABLE llx_opensurvey_formquestions (
 	id_sondage VARCHAR(16),
 	question TEXT,
     available_answers TEXT								-- List of available answers
-) ENGINE=InnoDB;
+) ENGINE=innodb;
 

@@ -22,6 +22,8 @@
  * \brief Regenerate all pages of a web site
  */
 
+if (!defined('NOSESSION')) define('NOSESSION', '1');
+
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = __DIR__.'/';
@@ -67,7 +69,7 @@ $websitepagestatic = new WebsitePage($db);
 
 $db->begin();
 
-$listofpages = $websitepagestatic->fetchAll($website->id, '', $max);
+$listofpages = $websitepagestatic->fetchAll($website->id, '', '', $max);
 
 global $dolibarr_main_data_root;
 $pathofwebsite = $dolibarr_main_data_root.'/website/'.$websiteref;

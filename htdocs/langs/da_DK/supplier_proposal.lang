@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=Leverandørens kommercielle forslag
-supplier_proposalDESC=Manage price requests to suppliers
+supplier_proposalDESC=Administrer prisanmodninger til leverandører
 SupplierProposalNew=Ny prisanmodning
 CommRequest=Prisforespørgsel
 CommRequests=Prisforespørgsler
@@ -32,7 +32,7 @@ SupplierProposalStatusValidatedShort=Bekræftet
 SupplierProposalStatusClosedShort=Lukket
 SupplierProposalStatusSignedShort=Accepteret
 SupplierProposalStatusNotSignedShort=Afviste
-CopyAskFrom=Opret pris anmodning ved at kopiere eksisterende en anmodning
+CopyAskFrom=Opret en prisanmodning ved at kopiere en eksisterende anmodning
 CreateEmptyAsk=Opret blank forespørgsel
 ConfirmCloneAsk=Er du sikker på, at du vil klone prisanmodningen <b> %s </ b>?
 ConfirmReOpenAsk=Er du sikker på, at du vil åbne prisforespørgslen <b> %s </ b> igen?

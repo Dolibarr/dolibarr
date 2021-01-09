@@ -17,6 +17,8 @@
 --
 -- ========================================================================
 
+--  This is the dictionary of sales orders origin
+
 create table llx_c_input_reason
 (
   rowid		integer AUTO_INCREMENT PRIMARY KEY,

@@ -34,8 +34,8 @@ $langs->loadLangs(array('trips', 'companies'));
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
-$mode = GETPOST("mode") ?GETPOST("mode") : 'customer';
-$object_status = GETPOST('object_status');
+$mode = GETPOSTISSET("mode") ? GETPOST("mode", 'aZ09') : 'customer';
+$object_status = GETPOST('object_status', 'intcomma');
 
 $userid = GETPOST('userid', 'int');
 $socid = GETPOST('socid', 'int'); if ($socid < 0) $socid = 0;
@@ -51,7 +51,7 @@ if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'expensereport', $id, '');
 
 $nowyear = strftime("%Y", dol_now());
-$year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
+$year = GETPOST('year') > 0 ? GETPOST('year', 'int') : $nowyear;
 //$startyear=$year-2;
 $startyear = $year - 1;
 $endyear = $year;
@@ -75,7 +75,7 @@ print load_fiche_titre($title, '', 'trip');
 dol_mkdir($dir);
 
 $stats = new ExpenseReportStats($db, $socid, $userid);
-if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND e.fk_statut IN ('.$db->escape($object_status).')';
+if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND e.fk_statut IN ('.$db->sanitize($db->escape($object_status)).')';
 
 // Build graphic number of object
 // $data = array(array('Lib',val1,val2,val3),...)
@@ -148,38 +148,38 @@ $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
 if (!$user->rights->societe->client->voir || $user->socid)
 {
-    $filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$user->id.'-'.$year.'.png';
+	$filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
+	if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
+	if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$user->id.'-'.$year.'.png';
 } else {
-    $filename_avg = $dir.'/ordersaverage-'.$year.'.png';
-    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$year.'.png';
-    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$year.'.png';
+	$filename_avg = $dir.'/ordersaverage-'.$year.'.png';
+	if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$year.'.png';
+	if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$year.'.png';
 }
 
 $px3 = new DolGraph();
 $mesg = $px3->isGraphKo();
 if (!$mesg)
 {
-    $px3->SetData($data);
-    $i = $startyear; $legend = array();
-    while ($i <= $endyear)
-    {
-        $legend[] = $i;
-        $i++;
-    }
-    $px3->SetLegend($legend);
-    $px3->SetYLabel($langs->trans("AmountAverage"));
-    $px3->SetMaxValue($px3->GetCeilMaxValue());
-    $px3->SetMinValue($px3->GetFloorMinValue());
-    $px3->SetWidth($WIDTH);
-    $px3->SetHeight($HEIGHT);
-    $px3->SetShading(3);
-    $px3->SetHorizTickIncrement(1);
-    $px3->mode = 'depth';
-    $px3->SetTitle($langs->trans("AmountAverage"));
+	$px3->SetData($data);
+	$i = $startyear; $legend = array();
+	while ($i <= $endyear)
+	{
+		$legend[] = $i;
+		$i++;
+	}
+	$px3->SetLegend($legend);
+	$px3->SetYLabel($langs->trans("AmountAverage"));
+	$px3->SetMaxValue($px3->GetCeilMaxValue());
+	$px3->SetMinValue($px3->GetFloorMinValue());
+	$px3->SetWidth($WIDTH);
+	$px3->SetHeight($HEIGHT);
+	$px3->SetShading(3);
+	$px3->SetHorizTickIncrement(1);
+	$px3->mode = 'depth';
+	$px3->SetTitle($langs->trans("AmountAverage"));
 
-    $px3->draw($filename_avg, $fileurl_avg);
+	$px3->draw($filename_avg, $fileurl_avg);
 }
 
 
@@ -187,7 +187,7 @@ if (!$mesg)
 $data = $stats->getAllByYear();
 $arrayyears = array();
 foreach ($data as $val) {
-    $arrayyears[$val['year']] = $val['year'];
+	$arrayyears[$val['year']] = $val['year'];
 }
 if (!count($arrayyears)) $arrayyears[$nowyear] = $nowyear;
 
@@ -201,7 +201,7 @@ $h++;
 
 complete_head_from_modules($conf, $langs, null, $head, $h, 'trip_stats');
 
-dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
+print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -229,7 +229,7 @@ print '</td></tr>';
 // Status
 print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
 $liststatus = $tmpexpensereport->statuts;
-print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'int'), -4, 0, 0, '', 1);
+print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'intcomma'), -4, 0, 0, '', 1);
 print '</td></tr>';
 // Year
 print '<tr><td>';
@@ -288,11 +288,11 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 // Show graphs
 print '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
 if ($mesg) { print $mesg; } else {
-    print $px1->show();
+	print $px1->show();
 	print "<br>\n";
 	print $px2->show();
-    print "<br>\n";
-    print $px3->show();
+	print "<br>\n";
+	print $px3->show();
 }
 print '</td></tr></table>';
 
@@ -301,7 +301,7 @@ print '</div></div></div>';
 print '<div style="clear:both"></div>';
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

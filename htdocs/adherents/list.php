@@ -44,8 +44,6 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'mem
 // Security check
 $result = restrictedArea($user, 'adherent');
 
-$filter = GETPOST("filter", 'alpha');
-$statut = GETPOST("statut", 'intcomma');
 $search = GETPOST("search", 'alpha');
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_lastname = GETPOST("search_lastname", 'alpha');
@@ -65,12 +63,19 @@ $search_phone_mobile = GETPOST("search_phone_mobile", 'alpha');
 $search_type = GETPOST("search_type", 'alpha');
 $search_email = GETPOST("search_email", 'alpha');
 $search_categ = GETPOST("search_categ", 'int');
+$search_filter = GETPOST("search_filter", 'alpha');
+$search_status = GETPOST("search_status", 'intcomma');
 $catid        = GETPOST("catid", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
 
+$filter = GETPOST("filter", 'alpha');
+if ($filter) $search_filter = $filter; // For backward compatibility
+$statut = GETPOST("statut", 'alpha');
+if ($statut != '') $search_status = $statut; // For backward compatibility
+
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 
-if ($statut < -1) $statut = '';
+if ($search_status < -1) $search_status = '';
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -96,7 +101,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	'd.rowid'=>'Ref',
+	'd.ref'=>'Ref',
 	'd.login'=>'Login',
 	'd.lastname'=>'Lastname',
 	'd.firstname'=>'Firstname',
@@ -121,7 +126,7 @@ $arrayfields = array(
 	'd.gender'=>array('label'=>$langs->trans("Gender"), 'checked'=>0),
 	'd.company'=>array('label'=>$langs->trans("Company"), 'checked'=>1),
 	'd.login'=>array('label'=>$langs->trans("Login"), 'checked'=>1),
-	'd.morphy'=>array('label'=>$langs->trans("MorPhy"), 'checked'=>1),
+	'd.morphy'=>array('label'=>$langs->trans("MemberNature"), 'checked'=>1),
 	't.libelle'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
 	'd.email'=>array('label'=>$langs->trans("Email"), 'checked'=>1),
 	'd.address'=>array('label'=>$langs->trans("Address"), 'checked'=>0),
@@ -141,12 +146,7 @@ $arrayfields = array(
 	'd.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000)
 );
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 
 /*
@@ -166,6 +166,9 @@ if (empty($reshook)) {
 
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+		$statut = '';
+		$filter = '';
+
 		$search = "";
 		$search_ref = "";
 		$search_lastname = "";
@@ -186,39 +189,40 @@ if (empty($reshook)) {
 		$search_phone_mobile = '';
 		$search_morphy = "";
 		$search_categ = "";
+		$search_filter = "";
+		$search_status = "";
 		$catid = "";
 		$sall = "";
-		$statut = '';
 		$toselect = '';
 		$search_array_options = array();
 	}
 
 	// Close
 	if ($massaction == 'close' && $user->rights->adherent->creer) {
-	    $tmpmember = new Adherent($db);
-	    $error = 0;
-	    $nbclose = 0;
+		$tmpmember = new Adherent($db);
+		$error = 0;
+		$nbclose = 0;
 
-	    $db->begin();
+		$db->begin();
 
-        foreach ($toselect as $idtoclose) {
-            $tmpmember->fetch($idtoclose);
-            $result = $tmpmember->resiliate($user);
+		foreach ($toselect as $idtoclose) {
+			$tmpmember->fetch($idtoclose);
+			$result = $tmpmember->resiliate($user);
 
-            if ($result < 0 && !count($tmpmember->errors)) {
-    	        setEventMessages($tmpmember->error, $tmpmember->errors, 'errors');
-    	    } else {
-    	        if ($result > 0) $nbclose++;
-    	    }
-        }
+			if ($result < 0 && !count($tmpmember->errors)) {
+				setEventMessages($tmpmember->error, $tmpmember->errors, 'errors');
+			} else {
+				if ($result > 0) $nbclose++;
+			}
+		}
 
-        if (!$error) {
-            setEventMessages($langs->trans("XMembersClosed", $nbclose), null, 'mesgs');
+		if (!$error) {
+			setEventMessages($langs->trans("XMembersClosed", $nbclose), null, 'mesgs');
 
-            $db->commit();
-        } else {
-            $db->rollback();
-        }
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
 	}
 
 	// Mass actions
@@ -226,6 +230,7 @@ if (empty($reshook)) {
 	$objectlabel = 'Members';
 	$permissiontoread = $user->rights->adherent->lire;
 	$permissiontodelete = $user->rights->adherent->supprimer;
+	$permissiontoadd = $user->rights->adherent->creer;
 	$uploaddir = $conf->adherent->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -242,7 +247,7 @@ $memberstatic = new Adherent($db);
 
 $now = dol_now();
 
-$sql = "SELECT d.rowid, d.login, d.lastname, d.firstname, d.gender, d.societe as company, d.fk_soc,";
+$sql = "SELECT d.rowid, d.ref, d.login, d.lastname, d.firstname, d.gender, d.societe as company, d.fk_soc,";
 $sql .= " d.civility, d.datefin, d.address, d.zip, d.town, d.state_id, d.country,";
 $sql .= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.skype, d.birth, d.public, d.photo,";
 $sql .= " d.fk_adherent_type as type_id, d.morphy, d.statut, d.datec as date_creation, d.tms as date_update,";
@@ -259,8 +264,13 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (d.rowid = ef.fk_object)";
-if (!empty($search_categ) || !empty($catid)) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_member as cm ON d.rowid = cm.fk_member"; // We need this table joined to the select in order to filter by categ
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (d.rowid = ef.fk_object)";
+}
+if (!empty($search_categ) || !empty($catid)) {
+	// We need this table joined to the select in order to filter by categ
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_member as cm ON d.rowid = cm.fk_member";
+}
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = d.country)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = d.state_id)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on (s.rowid = d.fk_soc)";
@@ -273,18 +283,24 @@ if ($search_categ == -2) $sql .= " AND cm.fk_categorie IS NULL";
 $sql .= " AND d.entity IN (".getEntity('adherent').")";
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if ($search_type > 0) $sql .= " AND t.rowid=".$db->escape($search_type);
-if ($statut != '') $sql .= " AND d.statut in (".$db->escape($statut).")"; // Peut valoir un nombre ou liste de nombre separes par virgules
+if ($search_filter == 'withoutsubscription') $sql .= " AND (datefin IS NULL OR t.subscription = 0)";
+if ($search_filter == 'uptodate') $sql .= " AND (datefin >= '".$db->idate($now)."' OR t.subscription = 0)";
+if ($search_filter == 'outofdate') $sql .= " AND (datefin < '".$db->idate($now)."' AND t.subscription = 1)";
+if ($search_status != '') {
+	// Peut valoir un nombre ou liste de nombre separes par virgules
+	$sql .= " AND d.statut in (".$db->sanitize($db->escape($search_status)).")";
+}
 if ($search_ref) {
-	if (is_numeric($search_ref)) $sql .= " AND (d.rowid = ".$db->escape($search_ref).")";
-	else $sql .= " AND 1 = 2"; // Always wrong
+	$sql .= natural_search("d.ref", $search_ref);
 }
 if ($search_civility) $sql .= natural_search("d.civility", $search_civility);
 if ($search_firstname) $sql .= natural_search("d.firstname", $search_firstname);
 if ($search_lastname) $sql .= natural_search(array("d.firstname", "d.lastname", "d.societe"), $search_lastname);
-if ($search_gender != '' && $search_gender != '-1') $sql .= " AND d.gender = '".$search_gender."'";
+if ($search_gender != '' && $search_gender != '-1') $sql .= natural_search("d.gender", $search_gender);
 if ($search_login) $sql .= natural_search("d.login", $search_login);
 if ($search_company) $sql .= natural_search("s.nom", $search_company);
 if ($search_email) $sql .= natural_search("d.email", $search_email);
+if ($search_address) $sql .= natural_search("d.address", $search_address);
 if ($search_town)     $sql .= natural_search("d.town", $search_town);
 if ($search_zip)      $sql .= natural_search("d.zip", $search_zip);
 if ($search_state)    $sql .= natural_search("state.nom", $search_state);
@@ -292,8 +308,6 @@ if ($search_phone)      $sql .= natural_search("d.phone", $search_phone);
 if ($search_phone_perso)      $sql .= natural_search("d.phone_perso", $search_phone_perso);
 if ($search_phone_mobile)      $sql .= natural_search("d.phone_mobile", $search_phone_mobile);
 if ($search_country) $sql .= " AND d.country IN (".$search_country.')';
-if ($filter == 'uptodate') $sql .= " AND (datefin >= '".$db->idate($now)."' OR t.subscription = 0)";
-if ($filter == 'outofdate') $sql .= " AND ((datefin IS NULL OR datefin < '".$db->idate($now)."') AND t.subscription = 1)";
 
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -340,13 +354,14 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 llxHeader('', $langs->trans("Member"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 $titre = $langs->trans("MembersList");
-if (GETPOSTISSET("statut")) {
-	if ($statut == '-1,1') { $titre = $langs->trans("MembersListQualified"); }
-	if ($statut == '-1') { $titre = $langs->trans("MembersListToValid"); }
-	if ($statut == '1' && !$filter) { $titre = $langs->trans("MembersListValid"); }
-	if ($statut == '1' && $filter == 'uptodate') { $titre = $langs->trans("MembersListUpToDate"); }
-	if ($statut == '1' && $filter == 'outofdate') { $titre = $langs->trans("MembersListNotUpToDate"); }
-	if ($statut == '0') { $titre = $langs->trans("MembersListResiliated"); }
+if (GETPOSTISSET("search_status")) {
+	if ($search_status == '-1,1') { $titre = $langs->trans("MembersListQualified"); }
+	if ($search_status == '-1') { $titre = $langs->trans("MembersListToValid"); }
+	if ($search_status == '1' && $filter == '') { $titre = $langs->trans("MembersValidated"); }
+	if ($search_status == '1' && $filter == 'withoutsubscription') { $titre = $langs->trans("MembersWithSubscriptionToReceive"); }
+	if ($search_status == '1' && $filter == 'uptodate') { $titre = $langs->trans("MembersListUpToDate"); }
+	if ($search_status == '1' && $filter == 'outofdate') { $titre = $langs->trans("MembersListNotUpToDate"); }
+	if ($search_status == '0') { $titre = $langs->trans("MembersListResiliated"); }
 } elseif ($action == 'search') {
 	$titre = $langs->trans("MembersListQualified");
 }
@@ -361,7 +376,6 @@ $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 if ($sall != "") $param .= "&sall=".urlencode($sall);
-if ($statut != "") $param .= "&statut=".urlencode($statut);
 if ($search_ref)   $param .= "&search_ref=".urlencode($search_ref);
 if ($search_civility) $param .= "&search_civility=".urlencode($search_civility);
 if ($search_firstname) $param .= "&search_firstname=".urlencode($search_firstname);
@@ -369,6 +383,7 @@ if ($search_lastname)  $param .= "&search_lastname=".urlencode($search_lastname)
 if ($search_gender)  $param .= "&search_gender=".urlencode($search_gender);
 if ($search_login)   $param .= "&search_login=".urlencode($search_login);
 if ($search_email)   $param .= "&search_email=".urlencode($search_email);
+if ($search_categ)   $param .= "&search_categ=".urlencode($search_categ);
 if ($search_company) $param .= "&search_company=".urlencode($search_company);
 if ($search_address != '') $param .= "&search_address=".urlencode($search_address);
 if ($search_town != '') $param .= "&search_town=".urlencode($search_town);
@@ -378,7 +393,8 @@ if ($search_country != '') $param .= "&search_country=".urlencode($search_countr
 if ($search_phone != '') $param .= "&search_phone=".urlencode($search_phone);
 if ($search_phone_perso != '') $param .= "&search_phone_perso=".urlencode($search_phone_perso);
 if ($search_phone_mobile != '') $param .= "&search_phone_mobile=".urlencode($search_phone_mobile);
-if ($filter)         $param .= "&filter=".urlencode($filter);
+if ($search_filter && $search_filter != '-1') $param .= "&search_filter=".urlencode($search_filter);
+if ($search_status != "" && $search_status != '-1') $param .= "&search_status=".urlencode($search_status);
 if ($search_type > 0)       $param .= "&search_type=".urlencode($search_type);
 if ($optioncss != '')       $param .= '&optioncss='.urlencode($optioncss);
 // Add $param from extra fields
@@ -391,12 +407,13 @@ $arrayofmassactions = array(
 );
 if ($user->rights->adherent->creer) $arrayofmassactions['close'] = $langs->trans("Resiliate");
 if ($user->rights->adherent->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
-if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
+if ($user->rights->societe->creer) $arrayofmassactions['preaffecttag'] = '<span class="fa fa-tag paddingrightonly"></span>'.$langs->trans("AffectTag");
+if (in_array($massaction, array('presend', 'predelete','preaffecttag'))) $arrayofmassactions = array();
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $newcardbutton = '';
 if ($user->rights->adherent->creer) {
-    $newcardbutton .= dolGetButtonTitle($langs->trans('NewMember'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/card.php?action=create');
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewMember'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/card.php?action=create');
 }
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -423,7 +440,7 @@ if ($sall) {
 
 // Filter on categories
 $moreforfilter = '';
-if (!empty($conf->categorie->enabled)) {
+if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('Categories').': ';
@@ -476,7 +493,7 @@ if (!empty($arrayfields['d.lastname']['checked'])) {
 }
 if (!empty($arrayfields['d.gender']['checked'])) {
 	print '<td class="liste_titre">';
-	$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"));
+	$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"), 'other'=>$langs->trans("Genderother"));
 	print $form->selectarray('search_gender', $arraygender, $search_gender, 1);
 	print '</td>';
 }
@@ -501,16 +518,16 @@ if (!empty($arrayfields['t.libelle']['checked'])) {
 
 if (!empty($arrayfields['d.address']['checked'])) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat maxwidth75imp" type="text" name="search_address" value="'.$search_address.'"></td>';
+	print '<input class="flat maxwidth75imp" type="text" name="search_address" value="'.dol_escape_htmltag($search_address).'"></td>';
 }
 
 if (!empty($arrayfields['d.zip']['checked'])) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat maxwidth50imp" type="text" name="search_zip" value="'.$search_zip.'"></td>';
+	print '<input class="flat maxwidth50imp" type="text" name="search_zip" value="'.dol_escape_htmltag($search_zip).'"></td>';
 }
 if (!empty($arrayfields['d.town']['checked'])) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat maxwidth75imp" type="text" name="search_town" value="'.$search_town.'"></td>';
+	print '<input class="flat maxwidth75imp" type="text" name="search_town" value="'.dol_escape_htmltag($search_town).'"></td>';
 }
 // State
 if (!empty($arrayfields['state.nom']['checked'])) {
@@ -527,26 +544,28 @@ if (!empty($arrayfields['country.code_iso']['checked'])) {
 // Phone pro
 if (!empty($arrayfields['d.phone']['checked'])) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat maxwidth75imp" type="text" name="search_phone" value="'.$search_phone.'"></td>';
+	print '<input class="flat maxwidth75imp" type="text" name="search_phone" value="'.dol_escape_htmltag($search_phone).'"></td>';
 }
 // Phone perso
 if (!empty($arrayfields['d.phone_perso']['checked'])) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat maxwidth50" type="text" name="search_phone_perso" value="'.$search_phone_perso.'"></td>';
+	print '<input class="flat maxwidth50" type="text" name="search_phone_perso" value="'.dol_escape_htmltag($search_phone_perso).'"></td>';
 }
 // Phone mobile
 if (!empty($arrayfields['d.phone_mobile']['checked'])) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat maxwidth75imp" type="text" name="search_phone_mobile" value="'.$search_phone_mobile.'"></td>';
+	print '<input class="flat maxwidth75imp" type="text" name="search_phone_mobile" value="'.dol_escape_htmltag($search_phone_mobile).'"></td>';
 }
 // Email
 if (!empty($arrayfields['d.email']['checked'])) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat maxwidth75imp" type="text" name="search_email" value="'.$search_email.'"></td>';
+	print '<input class="flat maxwidth75imp" type="text" name="search_email" value="'.dol_escape_htmltag($search_email).'"></td>';
 }
-
+// End of subscription date
 if (!empty($arrayfields['d.datefin']['checked'])) {
 	print '<td class="liste_titre left">';
+	$selectarray = array('-1'=>'', 'withoutsubscription'=>$langs->trans("WithoutSubscription"), 'uptodate'=>$langs->trans("UpToDate"), 'outofdate'=>$langs->trans("OutOfDate"));
+	print $form->selectarray('search_filter', $selectarray, $search_filter);
 	print '</td>';
 }
 // Extra fields
@@ -561,7 +580,7 @@ if (!empty($arrayfields['d.datec']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
-//Birthday
+// Birthday
 if (!empty($arrayfields['d.birth']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
@@ -579,7 +598,7 @@ if (!empty($arrayfields['d.statut']['checked'])) {
 		'1'=>$langs->trans("Validated"),
 		'0'=>$langs->trans("Resiliated")
 	);
-	print $form->selectarray('statut', $liststatus, $statut, -2);
+	print $form->selectarray('search_status', $liststatus, $search_status, -2);
 	print '</td>';
 }
 // Action column
@@ -592,7 +611,7 @@ print "</tr>\n";
 
 print '<tr class="liste_titre">';
 if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID))       print_liste_field_titre("ID", $_SERVER["PHP_SELF"], '', '', $param, 'align="center"', $sortfield, $sortorder);
-if (!empty($arrayfields['d.ref']['checked']))            print_liste_field_titre($arrayfields['d.ref']['label'], $_SERVER["PHP_SELF"], 'd.rowid', '', $param, '', $sortfield, $sortorder);
+if (!empty($arrayfields['d.ref']['checked']))            print_liste_field_titre($arrayfields['d.ref']['label'], $_SERVER["PHP_SELF"], 'd.ref', '', $param, '', $sortfield, $sortorder);
 if (!empty($arrayfields['d.civility']['checked']))       print_liste_field_titre($arrayfields['d.civility']['label'], $_SERVER["PHP_SELF"], 'd.civility', '', $param, '', $sortfield, $sortorder);
 if (!empty($arrayfields['d.firstname']['checked']))      print_liste_field_titre($arrayfields['d.firstname']['label'], $_SERVER["PHP_SELF"], 'd.firstname', '', $param, '', $sortfield, $sortorder);
 if (!empty($arrayfields['d.lastname']['checked']))       print_liste_field_titre($arrayfields['d.lastname']['label'], $_SERVER["PHP_SELF"], 'd.lastname', '', $param, '', $sortfield, $sortorder);
@@ -632,7 +651,7 @@ while ($i < min($num, $limit)) {
 
 	$datefin = $db->jdate($obj->datefin);
 	$memberstatic->id = $obj->rowid;
-	$memberstatic->ref = $obj->rowid;
+	$memberstatic->ref = $obj->ref;
 	$memberstatic->civility_id = $obj->civility;
 	$memberstatic->lastname = $obj->lastname;
 	$memberstatic->firstname = $obj->firstname;
@@ -641,6 +660,7 @@ while ($i < min($num, $limit)) {
 	$memberstatic->datefin = $datefin;
 	$memberstatic->socid = $obj->fk_soc;
 	$memberstatic->photo = $obj->photo;
+	$memberstatic->email = $obj->email;
 	$memberstatic->morphy = $obj->morphy;
 	$memberstatic->note_public = $obj->note_public;
 	$memberstatic->note_private = $obj->note_private;
@@ -706,9 +726,18 @@ while ($i < min($num, $limit)) {
 		print "<td>".$obj->login."</td>\n";
 		if (!$i) $totalarray['nbfield']++;
 	}
-	// Moral/Physique
+	// Nature (Moral/Physical)
 	if (!empty($arrayfields['d.morphy']['checked'])) {
-		print "<td>".$memberstatic->getmorphylib($obj->morphy)."</td>\n";
+		print '<td class="center">';
+		$s = '';
+		if ($obj->morphy == 'phy') {
+			$s .= '<span class="customer-back" title="'.$langs->trans("Physical").'">'.dol_substr($langs->trans("Physical"), 0, 1).'</span>';
+		}
+		if ($obj->morphy == 'mor') {
+			$s .= '<span class="vendor-back" title="'.$langs->trans("Moral").'">'.dol_substr($langs->trans("Moral"), 0, 1).'</span>';
+		}
+		print $s;
+		print "</td>\n";
 		if (!$i) $totalarray['nbfield']++;
 	}
 	// Type label
