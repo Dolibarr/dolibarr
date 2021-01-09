@@ -173,7 +173,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 		$numFinal = get_next_value($db, $mask, 'product', $field, $where, '', $now);
 		//if EAN13 calculate and substitute the last 13th character (* or ?) used in the mask by the EAN13 key
-		$type=$conf->global->PRODUIT_DEFAULT_BARCODE_TYPE; //get barcode type configuration for products
+		if ($type=='') {$type=$conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;} //get barcode type configuration for products if $type not set
 		if ($type==2) //2 = EAN13
 		{
 			if (strlen($numFinal)==13)
