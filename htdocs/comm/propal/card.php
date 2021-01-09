@@ -128,6 +128,10 @@ $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc
 $permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
 $permissiontoedit = $usercancreate; // Used by the include of actions_lineupdown.inc.php
 
+if (!empty($conf->expedition->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL) && ($action == 'create' || $action == 'edit')) {
+	if (empty($object->warehouse_id) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) $object->warehouse_id = $conf->global->MAIN_DEFAULT_WAREHOUSE;
+	if (empty($object->warehouse_id) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) $object->warehouse_id = $user->fk_warehouse;
+}
 
 /*
  * Actions
@@ -238,6 +242,7 @@ if (empty($reshook))
 	} // Validation
 	elseif ($action == 'confirm_validate' && $confirm == 'yes' && $usercanvalidate)
 	{
+		$idwarehouse = GETPOST('idwarehouse');
 		$result = $object->valid($user);
 		if ($result >= 0)
 		{
@@ -340,6 +345,7 @@ if (empty($reshook))
 					$object->demand_reason_id = GETPOST('demand_reason_id');
 					$object->fk_delivery_address = GETPOST('fk_address', 'int');
 					$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
+					$object->warehouse_id = GETPOST('warehouse_id', 'int');
 					$object->duree_validite = $duration;
 					$object->cond_reglement_id = GETPOST('cond_reglement_id');
 					$object->mode_reglement_id = GETPOST('mode_reglement_id');
@@ -371,6 +377,7 @@ if (empty($reshook))
 				$object->demand_reason_id = GETPOST('demand_reason_id');
 				$object->fk_delivery_address = GETPOST('fk_address');
 				$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
+				$object->Warehouse_id = GETPOST('warehouse_id', 'int');
 				$object->duree_validite = GETPOST('duree_validite');
 				$object->cond_reglement_id = GETPOST('cond_reglement_id');
 				$object->mode_reglement_id = GETPOST('mode_reglement_id');
@@ -1295,6 +1302,9 @@ if (empty($reshook))
 	} // shipping method
 	elseif ($action == 'setshippingmethod' && $usercancreate) {
 		$result = $object->setShippingMethod(GETPOST('shipping_method_id', 'int'));
+	}// warehouse
+	elseif ($action == 'setwarehouse' && $usercancreate) {
+		$result = $object->setWarehouse(GETPOST('warehouse_id', 'int'));
 	} elseif ($action == 'update_extras') {
 		$object->oldcopy = dol_clone($object);
 
@@ -1489,6 +1499,7 @@ if ($action == 'create')
 		if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD) && !empty($soc->shipping_method_id)) {
 			$shipping_method_id = $soc->shipping_method_id;
 		}
+		//$warehouse_id       = $soc->warehouse_id;
 	} else {
 		print '<td>';
 		print $form->select_company('', 'socid', '(s.client = 1 OR s.client = 2 OR s.client = 3) AND status=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
@@ -1568,6 +1579,15 @@ if ($action == 'create')
 	if (!empty($conf->expedition->enabled)) {
 		print '<tr><td>'.$langs->trans('SendingMethod').'</td><td>';
 		print $form->selectShippingMethod($shipping_method_id, 'shipping_method_id', '', 1);
+		print '</td></tr>';
+	}
+
+	// Warehouse
+	if (!empty($conf->expedition->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL)) {
+		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+		$formproduct = new FormProduct($db);
+		print '<tr><td>'.$langs->trans('Warehouse').'</td><td>';
+		print $formproduct->selectWarehouses($warehouse_id, 'warehouse_id', '', 1);
 		print '</td></tr>';
 	}
 
@@ -2063,6 +2083,24 @@ if ($action == 'create')
 			$form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->shipping_method_id, 'shipping_method_id', 1);
 		} else {
 			$form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->shipping_method_id, 'none');
+		}
+		print '</td>';
+		print '</tr>';
+	}
+
+	// Warehouse
+	if (!empty($conf->expedition->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL)) {
+		$langs->load('stocks');
+		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+		$formproduct = new FormProduct($db);
+		print '<tr><td>';
+		$editenable = $usercancreate;
+		print $form->editfieldkey("Warehouse", 'warehouse', '', $object, $editenable);
+		print '</td><td>';
+		if ($action == 'editwarehouse') {
+			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->warehouse_id, 'warehouse_id', 1);
+		} else {
+			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->warehouse_id, 'none');
 		}
 		print '</td>';
 		print '</tr>';
