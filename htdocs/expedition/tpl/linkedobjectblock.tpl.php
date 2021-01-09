@@ -39,36 +39,36 @@ $total = 0;
 $ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink)
 {
-    $ilink++;
+	$ilink++;
 
-    $trclass = 'oddeven';
-    if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass .= ' liste_sub_total';
-    ?>
+	$trclass = 'oddeven';
+	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass .= ' liste_sub_total';
+	?>
     <tr class="<?php echo $trclass; ?>">
         <td><?php echo $langs->trans("Shipment"); ?></td>
         <td><?php echo $objectlink->getNomUrl(1); ?></td>
         <td></td>
     	<td class="center"><?php echo dol_print_date($objectlink->date_delivery, 'day'); ?></td>
     	<td class="right"><?php
-    	if ($user->rights->expedition->lire) {
-    		$total = $total + $objectlink->total_ht;
-    		echo price($objectlink->total_ht);
-    	} ?></td>
+		if ($user->rights->expedition->lire) {
+			$total = $total + $objectlink->total_ht;
+			echo price($objectlink->total_ht);
+		} ?></td>
     	<td class="right"><?php echo $objectlink->getLibStatut(3); ?></td>
     	<td class="right">
     		<?php
-    		// For now, shipments must stay linked to order, so link is not deletable
-    		if ($object->element != 'commande') {
-    			?>
+			// For now, shipments must stay linked to order, so link is not deletable
+			if ($object->element != 'commande') {
+				?>
     			<a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
     			<?php
-    		}
-    		?>
+			}
+			?>
     </tr>
     <?php
 }
 if (count($linkedObjectBlock) > 1) {
-    ?>
+	?>
     <tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : ''); ?>">
         <td><?php echo $langs->trans("Total"); ?></td>
         <td></td>

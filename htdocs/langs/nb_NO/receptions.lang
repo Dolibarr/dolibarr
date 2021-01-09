@@ -43,3 +43,5 @@ ProductQtyInSuppliersReceptionAlreadyRecevied=Varekvantitet fra åpen leverandø
 ValidateOrderFirstBeforeReception=Du må først validere ordren før du kan gjøre mottak.
 ReceptionsNumberingModules=Nummereringsmodul for mottak
 ReceptionsReceiptModel=Dokumentmaler for mottak
+NoMorePredefinedProductToDispatch=Ingen flere forhåndsdefinerte varer som skal sendes
+

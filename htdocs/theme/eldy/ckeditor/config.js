@@ -73,7 +73,7 @@ CKEDITOR.editorConfig = function( config )
 	 	['Maximize'],
 	 	['SpellChecker', 'Scayt'],		// 'Cut','Copy','Paste','-', are useless, can be done with right click, even on smarpthone
 	 	['Undo','Redo','-','Find','Replace'],
-	    ['Format','Font','FontSize'],
+	    ['Font','FontSize'],
 	 	['Bold','Italic','Underline','Strike','Superscript','-','TextColor','RemoveFormat'],
 	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],

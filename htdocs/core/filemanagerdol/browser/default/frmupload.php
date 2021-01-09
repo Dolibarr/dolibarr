@@ -3,7 +3,7 @@
  * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  *
  * Source modified from part of fckeditor (http://www.fckeditor.net)
- * retreived as GPL v2 or later
+ * retrieved as GPL v2 or later
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,6 +122,7 @@ window.onload = function()
 	</head>
 	<body>
 		<form id="frmUpload" action="" target="frmUploadWorker" method="post" enctype="multipart/form-data" onsubmit="return OnSubmit();">
+			<input type="hidden" name="token" value="<?php echo newToken(); ?>" />
 			<table class="fullHeight" cellspacing="0" cellpadding="0" width="100%" border="0">
 				<tr>
 					<td class="nowrap">

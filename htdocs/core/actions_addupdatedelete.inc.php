@@ -60,11 +60,14 @@ if ($action == 'add' && !empty($permissiontoadd))
 			if (!GETPOSTISSET($key)) continue; // The field was not submited to be edited
 		}
 		// Ignore special fields
-		if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
+		if (in_array($key, array('rowid', 'entity', 'import_key'))) continue;
+		if (in_array($key, array('date_creation', 'tms', 'fk_user_creat', 'fk_user_modif'))) {
+			if (!in_array(abs($val['visible']), array(1, 3))) continue; // Only 1 and 3 that are case to create
+		}
 
 		// Set value to insert
 		if (in_array($object->fields[$key]['type'], array('text', 'html'))) {
-			$value = GETPOST($key, 'none');
+			$value = GETPOST($key, 'restricthtml');
 		} elseif ($object->fields[$key]['type'] == 'date') {
 			$value = dol_mktime(12, 0, 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'));
 		} elseif ($object->fields[$key]['type'] == 'datetime') {
@@ -72,9 +75,12 @@ if ($action == 'add' && !empty($permissiontoadd))
 		} elseif ($object->fields[$key]['type'] == 'duration') {
 			$value = 60 * 60 * GETPOST($key.'hour', 'int') + 60 * GETPOST($key.'min', 'int');
 		} elseif (preg_match('/^(integer|price|real|double)/', $object->fields[$key]['type'])) {
-			$value = price2num(GETPOST($key, 'none')); // To fix decimal separator according to lang setup
+			$value = price2num(GETPOST($key, 'alphanohtml')); // To fix decimal separator according to lang setup
 		} elseif ($object->fields[$key]['type'] == 'boolean') {
-			$value = (GETPOST($key) == 'on' ? 1 : 0);
+			$value = ((GETPOST($key) == '1' || GETPOST($key) == 'on') ? 1 : 0);
+		} elseif ($object->fields[$key]['type'] == 'reference') {
+			$tmparraykey = array_keys($object->param_list);
+			$value = $tmparraykey[GETPOST($key)].','.GETPOST($key.'2');
 		} else {
 			$value = GETPOST($key, 'alphanohtml');
 		}
@@ -85,7 +91,7 @@ if ($action == 'add' && !empty($permissiontoadd))
 		$object->$key = $value;
 		if ($val['notnull'] > 0 && $object->$key == '' && !is_null($val['default']) && $val['default'] == '(PROV)')
 		{
-		    $object->$key = '(PROV)';
+			$object->$key = '(PROV)';
 		}
 		if ($val['notnull'] > 0 && $object->$key == '' && is_null($val['default']))
 		{
@@ -94,12 +100,18 @@ if ($action == 'add' && !empty($permissiontoadd))
 		}
 	}
 
+	// Fill array 'array_options' with data from add form
+	if (!$error) {
+		$ret = $extrafields->setOptionalsFromPost(null, $object);
+		if ($ret < 0) $error++;
+	}
+
 	if (!$error)
 	{
 		$result = $object->create($user);
 		if ($result > 0)
 		{
-		    // Creation OK
+			// Creation OK
 			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
 			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
 			header("Location: ".$urltogo);
@@ -132,11 +144,19 @@ if ($action == 'update' && !empty($permissiontoadd))
 			if (!GETPOSTISSET($key)) continue; // The field was not submited to be edited
 		}
 		// Ignore special fields
-		if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
+		if (in_array($key, array('rowid', 'entity', 'import_key'))) continue;
+		if (in_array($key, array('date_creation', 'tms', 'fk_user_creat', 'fk_user_modif'))) {
+			if (!in_array(abs($val['visible']), array(1, 3, 4))) continue; // Only 1 and 3 and 4 that are case to update
+		}
 
 		// Set value to update
-		if (in_array($object->fields[$key]['type'], array('text', 'html'))) {
-			$value = GETPOST($key, 'none');
+		if (preg_match('/^(text|html)/', $object->fields[$key]['type'])) {
+			$tmparray = explode(':', $object->fields[$key]['type']);
+			if (!empty($tmparray[1])) {
+				$value = GETPOST($key, $tmparray[1]);
+			} else {
+				$value = GETPOST($key, 'restricthtml');
+			}
 		} elseif ($object->fields[$key]['type'] == 'date') {
 			$value = dol_mktime(12, 0, 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
 		} elseif ($object->fields[$key]['type'] == 'datetime') {
@@ -148,9 +168,11 @@ if ($action == 'update' && !empty($permissiontoadd))
 				$value = '';
 			}
 		} elseif (preg_match('/^(integer|price|real|double)/', $object->fields[$key]['type'])) {
-            $value = price2num(GETPOST($key, 'none')); // To fix decimal separator according to lang setup
+			$value = price2num(GETPOST($key, 'alphanohtml')); // To fix decimal separator according to lang setup
 		} elseif ($object->fields[$key]['type'] == 'boolean') {
-			$value = (GETPOST($key) == 'on' ? 1 : 0);
+			$value = ((GETPOST($key, 'aZ09') == 'on' || GETPOST($key, 'aZ09') == '1') ? 1 : 0);
+		} elseif ($object->fields[$key]['type'] == 'reference') {
+			$value = array_keys($object->param_list)[GETPOST($key)].','.GETPOST($key.'2');
 		} else {
 			$value = GETPOST($key, 'alpha');
 		}
@@ -163,6 +185,12 @@ if ($action == 'update' && !empty($permissiontoadd))
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
 		}
+	}
+
+	// Fill array 'array_options' with data from add form
+	if (!$error) {
+		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
+		if ($ret < 0) $error++;
 	}
 
 	if (!$error)
@@ -188,7 +216,14 @@ if ($action == "update_extras" && !empty($permissiontoadd))
 
 	$attributekey = GETPOST('attribute', 'alpha');
 	$attributekeylong = 'options_'.$attributekey;
-	$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong, ' alpha');
+
+	if (GETPOSTISSET($attributekeylong.'day') && GETPOSTISSET($attributekeylong.'month') && GETPOSTISSET($attributekeylong.'year')) {
+		// This is properties of a date
+		$object->array_options['options_'.$attributekey] = dol_mktime(GETPOST($attributekeylong.'hour', 'int'), GETPOST($attributekeylong.'min', 'int'), GETPOST($attributekeylong.'sec', 'int'), GETPOST($attributekeylong.'month', 'int'), GETPOST($attributekeylong.'day', 'int'), GETPOST($attributekeylong.'year', 'int'));
+		//var_dump(dol_print_date($object->array_options['options_'.$attributekey]));exit;
+	} else {
+		$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong, 'alpha');
+	}
 
 	$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
 	if ($result > 0)
@@ -204,11 +239,11 @@ if ($action == "update_extras" && !empty($permissiontoadd))
 // Action to delete
 if ($action == 'confirm_delete' && !empty($permissiontodelete))
 {
-    if (!($object->id > 0))
-    {
-        dol_print_error('', 'Error, object must be fetched before being deleted');
-        exit;
-    }
+	if (!($object->id > 0))
+	{
+		dol_print_error('', 'Error, object must be fetched before being deleted');
+		exit;
+	}
 
 	$result = $object->delete($user);
 	if ($result > 0)
@@ -226,7 +261,11 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete))
 // Remove a line
 if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissiontoadd))
 {
-	$result = $object->deleteline($user, $lineid);
+	if (method_exists($object, 'deleteline')) {
+		$result = $object->deleteline($user, $lineid); // For backward compatibility
+	} else {
+		$result = $object->deleteLine($user, $lineid);
+	}
 	if ($result > 0)
 	{
 		// Define output language
@@ -245,8 +284,10 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissionto
 			$outputlangs->setDefaultLang($newlang);
 		}
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-			$ret = $object->fetch($object->id); // Reload to get new records
-			$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			if (method_exists($object, 'generateDocument')) {
+				$ret = $object->fetch($object->id); // Reload to get new records
+				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
 		}
 
 		setEventMessages($langs->trans('RecordDeleted'), null, 'mesgs');
@@ -264,20 +305,26 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd)
 	if ($result >= 0)
 	{
 		// Define output language
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-		{
-			$outputlangs = $langs;
-			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
-			if (!empty($newlang)) {
-				$outputlangs = new Translate("", $conf);
-				$outputlangs->setDefaultLang($newlang);
-			}
-			$model = $object->modelpdf;
-			$ret = $object->fetch($id); // Reload to get new records
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (method_exists($object, 'generateDocument')) {
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
 
-			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$ret = $object->fetch($id); // Reload to get new records
+
+				$model = $object->model_pdf;
+
+				$retgen = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				if ($retgen < 0) {
+					setEventMessages($object->error, $object->errors, 'warnings');
+				}
+			}
 		}
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -291,20 +338,21 @@ if ($action == 'confirm_close' && $confirm == 'yes' && $permissiontoadd)
 	if ($result >= 0)
 	{
 		// Define output language
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-		{
-			$outputlangs = $langs;
-			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
-			if (!empty($newlang)) {
-				$outputlangs = new Translate("", $conf);
-				$outputlangs->setDefaultLang($newlang);
-			}
-			$model = $object->modelpdf;
-			$ret = $object->fetch($id); // Reload to get new records
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (method_exists($object, 'generateDocument')) {
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$model = $object->model_pdf;
+				$ret = $object->fetch($id); // Reload to get new records
 
-			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
 		}
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -330,20 +378,21 @@ if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd)
 	if ($result >= 0)
 	{
 		// Define output language
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-		{
-			$outputlangs = $langs;
-			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
-			if (!empty($newlang)) {
-				$outputlangs = new Translate("", $conf);
-				$outputlangs->setDefaultLang($newlang);
-			}
-			$model = $object->modelpdf;
-			$ret = $object->fetch($id); // Reload to get new records
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (method_exists($object, 'generateDocument')) {
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$model = $object->model_pdf;
+				$ret = $object->fetch($id); // Reload to get new records
 
-			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
 		}
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -357,11 +406,11 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && !empty($permissiontoadd))
 	{
 		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 	} else {
-	    $objectutil = dol_clone($object, 1); // To avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object. We use native clone to keep this->db valid.
+		$objectutil = dol_clone($object, 1); // To avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object. We use native clone to keep this->db valid.
 		//$objectutil->date = dol_mktime(12, 0, 0, GETPOST('newdatemonth', 'int'), GETPOST('newdateday', 'int'), GETPOST('newdateyear', 'int'));
-        // ...
-	    $result = $objectutil->createFromClone($user, (($object->id > 0) ? $object->id : $id));
-	    if (is_object($result) || $result > 0)
+		// ...
+		$result = $objectutil->createFromClone($user, (($object->id > 0) ? $object->id : $id));
+		if (is_object($result) || $result > 0)
 		{
 			$newid = 0;
 			if (is_object($result)) $newid = $result->id;
@@ -369,7 +418,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && !empty($permissiontoadd))
 			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$newid); // Open record of new object
 			exit;
 		} else {
-		    setEventMessages($objectutil->error, $objectutil->errors, 'errors');
+			setEventMessages($objectutil->error, $objectutil->errors, 'errors');
 			$action = '';
 		}
 	}

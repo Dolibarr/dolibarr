@@ -60,7 +60,7 @@ if ($id > 0)
 
 	$head = contact_prepare_head($object);
 
-	dol_fiche_head($head, 'info', $title, -1, 'contact');
+	print dol_get_fiche_head($head, 'info', $title, -1, 'contact');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -77,7 +77,7 @@ if ($id > 0)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 llxFooter();

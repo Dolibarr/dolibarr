@@ -48,7 +48,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "categories", "companies", "bills", "trips", "donations", "loan"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $id = GETPOST('account', 'int') ? GETPOST('account', 'int') : GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $dvid = GETPOST('dvid', 'alpha');
@@ -93,8 +93,8 @@ if (!$sortfield) $sortfield = "s.nom";
 $object = new Account($db);
 if ($id > 0 || !empty($ref))
 {
-    $result = $object->fetch($id, $ref);
-    $account = $object->id; // Force the search field on id of account
+	$result = $object->fetch($id, $ref);
+	$account = $object->id; // Force the search field on id of account
 }
 
 
@@ -243,13 +243,15 @@ if (empty($numref))
 
 		// Onglets
 		$head = bank_prepare_head($object);
-		dol_fiche_head($head, 'statement', $langs->trans("FinancialAccount"), 0, 'account');
+		print dol_get_fiche_head($head, 'statement', $langs->trans("FinancialAccount"), 0, 'account');
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
+		$morehtmlref = '';
+
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 
 		print '<div class="tabsAction">';
@@ -303,7 +305,7 @@ if (empty($numref))
 					print '<input type="hidden" name="oldbankreceipt" value="'.$objp->numr.'">';
 					print '<input type="text" name="newbankreceipt" value="'.$objp->numr.'">';
 					print '<input type="submit" class="button" name="actionnewbankreceipt" value="'.$langs->trans("Rename").'">';
-					print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+					print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				}
 				print '</td>';
 
@@ -359,27 +361,25 @@ if (empty($numref))
 
 	// Onglets
 	$head = account_statement_prepare_head($object, $numref);
-	dol_fiche_head($head, 'statement', $langs->trans("AccountStatement"), -1, 'account');
+	print dol_get_fiche_head($head, 'statement', $langs->trans("AccountStatement"), -1, 'account');
 
 
-	$mesprevnext = '';
-	$mesprevnext .= '<div class="pagination"><ul>';
-	$mesprevnext .= '<li class="pagination"><a class="paginationnext" href="'.$_SERVER["PHP_SELF"].'?rel=prev&amp;num='.$numref.'&amp;ve='.$ve.'&amp;account='.$object->id.'"><i class="fa fa-chevron-left" title="'.dol_escape_htmltag($langs->trans("Previous")).'"></i></a></li>';
-	//$mesprevnext.=' &nbsp; ';
-	$mesprevnext .= '<li class="pagination"><span class="active">'.$langs->trans("AccountStatement")." ".$numref.'</span></li>';
-	//$mesprevnext.=' &nbsp; ';
-    $mesprevnext .= '<li class="pagination"><a class="paginationnext" href="'.$_SERVER["PHP_SELF"].'?rel=next&amp;num='.$numref.'&amp;ve='.$ve.'&amp;account='.$object->id.'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
-    $mesprevnext .= '</ul></div>';
+	$morehtmlright = '';
+	$morehtmlright .= '<div class="pagination"><ul>';
+	$morehtmlright .= '<li class="pagination"><a class="paginationnext" href="'.$_SERVER["PHP_SELF"].'?rel=prev&amp;num='.$numref.'&amp;ve='.$ve.'&amp;account='.$object->id.'"><i class="fa fa-chevron-left" title="'.dol_escape_htmltag($langs->trans("Previous")).'"></i></a></li>';
+	$morehtmlright .= '<li class="pagination"><span class="active">'.$langs->trans("AccountStatement")." ".$numref.'</span></li>';
+	$morehtmlright .= '<li class="pagination"><a class="paginationnext" href="'.$_SERVER["PHP_SELF"].'?rel=next&amp;num='.$numref.'&amp;ve='.$ve.'&amp;account='.$object->id.'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
+	$morehtmlright .= '</ul></div>';
 
-    $title = $langs->trans("AccountStatement").' '.$numref.' - '.$langs->trans("BankAccount").' '.$object->getNomUrl(1, 'receipts');
-	print load_fiche_titre($title, $mesprevnext, '');
+	$title = $langs->trans("AccountStatement").' '.$numref.' - '.$langs->trans("BankAccount").' '.$object->getNomUrl(1, 'receipts');
+	print load_fiche_titre($title, $morehtmlright, '');
 	//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, 0, $nbtotalofrecords, 'bank_account', 0, '', '', 0, 1);
 
 	print "<form method=\"post\" action=\"releve.php\">";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-    print '<div class="div-table-responsive">';
+	print '<div class="div-table-responsive">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td class="center">'.$langs->trans("DateOperationShort").'</td>';
@@ -407,7 +407,7 @@ if (empty($numref))
 	}
 
 	// Recherche les ecritures pour le releve
-    $sql = $sqlrequestforbankline;
+	$sql = $sqlrequestforbankline;
 
 	$result = $db->query($sql);
 	if ($result)
@@ -441,17 +441,17 @@ if (empty($numref))
 			print "</td>\n";
 
 			// Type and num
-            if ($objp->fk_type == 'SOLD') {
-                $type_label = '&nbsp;';
-            } else {
-                $type_label = ($langs->trans("PaymentTypeShort".$objp->fk_type) != "PaymentTypeShort".$objp->fk_type) ? $langs->trans("PaymentTypeShort".$objp->fk_type) : $objp->fk_type;
-            }
-            $link = '';
-            if ($objp->fk_bordereau > 0) {
-                $remisestatic->id = $objp->fk_bordereau;
-                $remisestatic->ref = $objp->ref;
-                $link = ' '.$remisestatic->getNomUrl(1);
-            }
+			if ($objp->fk_type == 'SOLD') {
+				$type_label = '&nbsp;';
+			} else {
+				$type_label = ($langs->trans("PaymentTypeShort".$objp->fk_type) != "PaymentTypeShort".$objp->fk_type) ? $langs->trans("PaymentTypeShort".$objp->fk_type) : $objp->fk_type;
+			}
+			$link = '';
+			if ($objp->fk_bordereau > 0) {
+				$remisestatic->id = $objp->fk_bordereau;
+				$remisestatic->ref = $objp->ref;
+				$link = ' '.$remisestatic->getNomUrl(1);
+			}
 			print '<td class="nowrap">'.$type_label.' '.($objp->num_chq ? $objp->num_chq : '').$link.'</td>';
 
 			// Description
@@ -548,9 +548,9 @@ if (empty($numref))
 						print ')';
 					}
 				} elseif ($links[$key]['type'] == 'company') {
-                    $societestatic->id = $links[$key]['url_id'];
-                    $societestatic->name = $links[$key]['label'];
-                    print $societestatic->getNomUrl(1, 'company', 24);
+					$societestatic->id = $links[$key]['url_id'];
+					$societestatic->name = $links[$key]['label'];
+					print $societestatic->getNomUrl(1, 'company', 24);
 					$newline = 0;
 				} elseif ($links[$key]['type'] == 'member') {
 					print '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$links[$key]['url_id'].'">';
@@ -620,7 +620,7 @@ if (empty($numref))
 
 			if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
 			{
-				print '<td class="center"><a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$objp->rowid.'&account='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?account='.$object->id.'&num='.$numref).'">';
+				print '<td class="center"><a class="editfielda reposition" href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$objp->rowid.'&account='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?account='.$object->id.'&num='.$numref).'">';
 				print img_edit();
 				print "</a></td>";
 			} else {

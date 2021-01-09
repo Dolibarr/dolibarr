@@ -16,7 +16,6 @@ ErrorIDFicheCP=Une erreur s'est produite, la demande de congé n'existe pas.
 ReturnCP=Retourner à la page précédente
 ErrorUserViewCP=Vous n'êtes pas autorisé à lire cette demande de congé.
 InfosWorkflowCP=Flux de travail d'information
-RequestByCP=Demandé par
 TitreRequestCP=Demande de congé
 NbUseDaysCP=Nombre de jours de vacances consommés
 EditCP=Éditer

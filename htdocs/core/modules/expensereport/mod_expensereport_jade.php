@@ -89,7 +89,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 
 		$coyymm = ''; $max = '';
 
-		$posindice = 8;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
@@ -122,7 +122,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 		global $db, $conf;
 
 		// For backward compatibility and restore old behavior to get ref of expense report
-		if ($conf->global->EXPENSEREPORT_USE_OLD_NUMBERING_RULE)
+		if (!empty($conf->global->EXPENSEREPORT_USE_OLD_NUMBERING_RULE))
 		{
 			$fuser = null;
 			if ($object->fk_user_author > 0)
@@ -174,7 +174,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 		}
 
 		// First we get the max value
-		$posindice = 8;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";

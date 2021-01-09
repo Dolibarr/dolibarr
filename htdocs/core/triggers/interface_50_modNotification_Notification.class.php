@@ -30,20 +30,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceNotification extends DolibarrTriggers
 {
-	public $family = 'notification';
-	public $description = "Triggers of this module send email notifications according to Notification module setup.";
-
-	/**
-	 * Version of the trigger
-	 * @var string
-	 */
-	public $version = self::VERSION_DOLIBARR;
-
-	/**
-	 * @var string Image of the trigger
-	 */
-	public $picto = 'email';
-
 	// @todo Defined also into notify.class.php)
 	public $listofmanagedevents = array(
 		'BILL_VALIDATE',
@@ -60,8 +46,26 @@ class InterfaceNotification extends DolibarrTriggers
 		'EXPENSE_REPORT_VALIDATE',
 		'EXPENSE_REPORT_APPROVE',
 		'HOLIDAY_VALIDATE',
-		'HOLIDAY_APPROVE'
+		'HOLIDAY_APPROVE',
+        'ACTION_CREATE'
 	);
+
+	/**
+	 * Constructor
+	 *
+	 * @param DoliDB $db Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+
+		$this->name = preg_replace('/^Interface/i', '', get_class($this));
+		$this->family = "notification";
+		$this->description = "Triggers of this module send email notifications according to Notification module setup.";
+		// 'development', 'experimental', 'dolibarr' or version
+		$this->version = self::VERSION_DOLIBARR;
+		$this->picto = 'email';
+	}
 
 	/**
 	 * Function called when a Dolibarrr business event is done.
@@ -107,20 +111,17 @@ class InterfaceNotification extends DolibarrTriggers
 		$sql .= $this->db->order("rang, elementtype, code");
 		dol_syslog("getListOfManagedEvents Get list of notifications", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
 				$qualified = 0;
 				// Check is this event is supported by notification module
 				if (in_array($obj->code, $this->listofmanagedevents)) $qualified = 1;
 				// Check if module for this event is active
-				if ($qualified)
-				{
+				if ($qualified) {
 					//print 'xx'.$obj->code;
 					$element = $obj->elementtype;
 
@@ -133,8 +134,7 @@ class InterfaceNotification extends DolibarrTriggers
 					elseif (!in_array($element, array('order_supplier', 'invoice_supplier', 'withdraw', 'shipping', 'member', 'expensereport')) && empty($conf->$element->enabled)) $qualified = 0;
 				}
 
-				if ($qualified)
-				{
+				if ($qualified) {
 					$ret[] = array('rowid'=>$obj->rowid, 'code'=>$obj->code, 'label'=>$obj->label, 'description'=>$obj->description, 'elementtype'=>$obj->elementtype);
 				}
 

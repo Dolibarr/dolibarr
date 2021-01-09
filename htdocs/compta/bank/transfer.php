@@ -37,14 +37,17 @@ $langs->loadLangs(array("banks", "categories", "multicurrency"));
 if (!$user->rights->banque->transfer)
   accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $error = 0;
 
+$hookmanager->initHooks(array('banktransfer'));
 
 /*
  * Actions
  */
-
+$parameters = array('socid' => $socid);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 if ($action == 'add')
 {
 	$langs->load("errors");
@@ -118,9 +121,9 @@ if ($action == 'add')
 			if (!$error) $bank_line_id_to = $accountto->addline($dateo, $typeto, $label, $amountto, '', '', $user);
 			if (!($bank_line_id_to > 0)) $error++;
 
-		    if (!$error) $result = $accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
+			if (!$error) $result = $accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
 			if (!($result > 0)) $error++;
-		    if (!$error) $result = $accountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
+			if (!$error) $result = $accountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
 			if (!($result > 0)) $error++;
 
 			if (!$error)
@@ -133,7 +136,7 @@ if ($action == 'add')
 				$db->rollback();
 			}
 		} else {
-		    $error++;
+			$error++;
 			setEventMessages($langs->trans("ErrorFromToAccountsMustDiffers"), null, 'errors');
 		}
 	}

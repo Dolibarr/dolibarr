@@ -4,5 +4,4 @@ ProjectId=ID de Proyecto
 ProjectLabel=Etiqueta de Proyecto
 ProjectsArea=Area de Proyectos
 SharedProject=Todos
-CantRemoveProject=This project can't be removed as it is referenced by some other objects (invoice, orders or other). See referers tab.
 OppStatusPROPO=Propuesta

@@ -31,8 +31,8 @@ if (!defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
 //if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled because need to do translations
 if (!defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
 if (!defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
-if (!defined('NOLOGIN'))         define('NOLOGIN', 1); // File must be accessed by logon page so without login
-//if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);  // We need top menu content
+if (!defined('NOLOGIN'))         define('NOLOGIN', 1); // File must be accessed by logon page so without login.
+//if (!defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);  	// We load menu manager class (note that object loaded may have wrong content because NOLOGIN is set and some values depends on login)
 if (!defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
 if (!defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
 
@@ -53,8 +53,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // and permission, so we can later calculate number of top menu ($nbtopmenuentries) according to user profile.
 if (empty($user->id) && !empty($_SESSION['dol_login']))
 {
-    $user->fetch('', $_SESSION['dol_login'], '', 1);
-    $user->getrights();
+	$user->fetch('', $_SESSION['dol_login'], '', 1);
+	$user->getrights();
+
+	// Reload menu now we have the good user (and we need the good menu to have ->showmenu('topnb') correct.
+	$menumanager = new MenuManager($db, empty($user->socid) ? 0 : 1);
+	$menumanager->loadMenu();
 }
 
 
@@ -66,6 +70,7 @@ else header('Cache-Control: no-cache');
 
 if (GETPOST('theme', 'alpha')) $conf->theme = GETPOST('theme', 'alpha'); // If theme was forced on URL
 if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL
+if (GETPOST('THEME_DARKMODEENABLED', 'int')) $conf->global->THEME_DARKMODEENABLED = GETPOST('THEME_DARKMODEENABLED', 'int'); // If darkmode was forced on URL
 
 $langs->load("main", 0, 1);
 $right = ($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right');
@@ -76,7 +81,7 @@ $theme = 'eldy'; // Value of theme
 if (!empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path = '/'.$conf->global->MAIN_OVERWRITE_THEME_RES; $theme = $conf->global->MAIN_OVERWRITE_THEME_RES; }
 
 // Define image path files and other constants
-$fontlist = 'roboto,arial,tahoma,verdana,helvetica'; //$fontlist='helvetica, verdana, arial, sans-serif';
+$fontlist = 'arial,tahoma,verdana,helvetica'; //$fontlist='helvetica, verdana, arial, sans-serif';
 //$fontlist='"open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;';
 $img_head = '';
 $img_button = dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png', 1);
@@ -106,11 +111,11 @@ if (!isset($conf->global->THEME_ELDY_TEXTLINK)) $conf->global->THEME_ELDY_TEXTLI
 // Case of option editable only if option THEME_ELDY_ENABLE_PERSONALIZED is on
 if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
 {
-    $conf->global->THEME_ELDY_BACKTABCARD1 = '255,255,255'; // card
-    $conf->global->THEME_ELDY_BACKTABACTIVE = '234,234,234';
-    $conf->global->THEME_ELDY_TEXT = '0,0,0';
-    $conf->global->THEME_ELDY_FONT_SIZE1 = $fontsize;
-    $conf->global->THEME_ELDY_FONT_SIZE2 = '0.75em';
+	$conf->global->THEME_ELDY_BACKTABCARD1 = '255,255,255'; // card
+	$conf->global->THEME_ELDY_BACKTABACTIVE = '234,234,234';
+	$conf->global->THEME_ELDY_TEXT = '0,0,0';
+	$conf->global->THEME_ELDY_FONT_SIZE1 = $fontsize;
+	$conf->global->THEME_ELDY_FONT_SIZE2 = '0.75em';
 }
 
 // Case of option availables only if THEME_ELDY_ENABLE_PERSONALIZED is on
@@ -139,8 +144,8 @@ $colorbacklinepairhover = ((!isset($conf->global->THEME_ELDY_USE_HOVER) || (stri
 $colorbacklinepairchecked = ((!isset($conf->global->THEME_ELDY_USE_CHECKED) || (string) $conf->global->THEME_ELDY_USE_CHECKED === '255,255,255') ? '' : ($conf->global->THEME_ELDY_USE_CHECKED === '1' ? 'e6edf0' : $conf->global->THEME_ELDY_USE_CHECKED));
 if (!empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
 {
-    $colorbacklinepairhover = ((!isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '0') ? '' : ($user->conf->THEME_ELDY_USE_HOVER === '1' ? 'e6edf0' : $user->conf->THEME_ELDY_USE_HOVER));
-    $colorbacklinepairchecked = ((!isset($user->conf->THEME_ELDY_USE_CHECKED) || $user->conf->THEME_ELDY_USE_CHECKED === '0') ? '' : ($user->conf->THEME_ELDY_USE_CHECKED === '1' ? 'e6edf0' : $user->conf->THEME_ELDY_USE_CHECKED));
+	$colorbacklinepairhover = ((!isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '0') ? '' : ($user->conf->THEME_ELDY_USE_HOVER === '1' ? 'e6edf0' : $user->conf->THEME_ELDY_USE_HOVER));
+	$colorbacklinepairchecked = ((!isset($user->conf->THEME_ELDY_USE_CHECKED) || $user->conf->THEME_ELDY_USE_CHECKED === '0') ? '' : ($user->conf->THEME_ELDY_USE_CHECKED === '1' ? 'e6edf0' : $user->conf->THEME_ELDY_USE_CHECKED));
 }
 
 
@@ -160,8 +165,8 @@ $colorbacktitle1 = join(',', colorStringToArray($colorbacktitle1)); // Normalize
 $tmppart = explode(',', $colorbacktitle1);
 if ($colortexttitle == '')
 {
-    $tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
-    if ($tmpval <= 460) { $colortexttitle = 'FFFFFF'; $colorshadowtitle = '888888'; } else { $colortexttitle = '000000'; $colorshadowtitle = 'FFFFFF'; }
+	$tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
+	if ($tmpval <= 460) { $colortexttitle = 'FFFFFF'; $colorshadowtitle = '888888'; } else { $colortexttitle = '000000'; $colorshadowtitle = 'FFFFFF'; }
 } else $colorshadowtitle = '888888';
 
 $colorbacktabcard1 = join(',', colorStringToArray($colorbacktabcard1)); // Normalize value to 'x,y,z'
@@ -189,11 +194,12 @@ $colortext = join(',', colorStringToArray($colortext));
 $colortextlink = join(',', colorStringToArray($colortextlink));
 
 $nbtopmenuentries = $menumanager->showmenu('topnb');
+
 if ($conf->browser->layout == 'phone') $nbtopmenuentries = max($nbtopmenuentries, 10);
 
 
 $minwidthtmenu = 66; /* minimum width for one top menu entry */
-$heightmenu = 48; /* height of top menu, part with image */
+$heightmenu = 50; /* height of top menu, part with image */
 $heightmenu2 = 49; /* height of top menu, part with login  */
 $disableimages = 0;
 $maxwidthloginblock = 180;
@@ -233,7 +239,7 @@ print 'fontsizesmaller='.$fontsizesmaller."\n";
 print 'topMenuFontSize='.$topMenuFontSize."\n";
 print 'toolTipBgColor='.$toolTipBgColor."\n";
 print 'toolTipFontColor='.$toolTipFontColor."\n";
-print 'conf->global->THEME_SATURATE_RATIO='.$conf->global->THEME_SATURATE_RATIO." (must be between 0 and 1)\n";
+print 'conf->global->THEME_SATURATE_RATIO='.(empty($conf->global->THEME_SATURATE_RATIO) ? '' : $conf->global->THEME_SATURATE_RATIO)." (must be between 0 and 1)\n";
 print '*/'."\n";
 
 

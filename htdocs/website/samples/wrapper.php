@@ -61,7 +61,7 @@ if (!empty($hashp))
 // Define attachment (attachment=true to force choice popup 'open'/'save as')
 $attachment = true;
 if (preg_match('/\.(html|htm)$/i', $original_file)) $attachment = false;
-if (isset($_GET["attachment"])) $attachment = GETPOST("attachment", 'none') ?true:false;
+if (isset($_GET["attachment"])) $attachment = (GETPOST("attachment", 'alphanohtml') ? true : false);
 if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS_WEBSITE)) $attachment = false;
 
 // Define mime type
@@ -73,7 +73,7 @@ else $type = dol_mimetype($original_file);
 $original_file = str_replace("../", "/", $original_file);
 
 // Cache or not
-if (GETPOST("cache", 'none') || image_format_supported($original_file) >= 0)
+if (GETPOST("cache", 'aZ09') || image_format_supported($original_file) >= 0)
 {
 	// Important: Following code is to avoid page request by browser and PHP CPU at
 	// each Dolibarr page access.

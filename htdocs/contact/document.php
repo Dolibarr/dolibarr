@@ -45,14 +45,14 @@ $objcanvas = null;
 $canvas = (!empty($object->canvas) ? $object->canvas : GETPOST("canvas"));
 if (!empty($canvas))
 {
-    require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
-    $objcanvas = new Canvas($db, $action);
-    $objcanvas->getCanvas('contact', 'contactcard', $canvas);
+	require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
+	$objcanvas = new Canvas($db, $action);
+	$objcanvas->getCanvas('contact', 'contactcard', $canvas);
 }
 
 // Security check
 if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
+$result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', 0); // If we create a contact with no company (shared contacts), no check on write permission
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -96,43 +96,43 @@ llxHeader('', $title, $helpurl);
 
 if ($object->id)
 {
-    $head = contact_prepare_head($object);
+	$head = contact_prepare_head($object);
 	$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
-    dol_fiche_head($head, 'documents', $title, -1, 'contact');
+	print dol_get_fiche_head($head, 'documents', $title, -1, 'contact');
 
 
-    // Build file list
-    $filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
-    $totalsize = 0;
-    foreach ($filearray as $key => $file)
-    {
-        $totalsize += $file['size'];
-    }
+	// Build file list
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$totalsize = 0;
+	foreach ($filearray as $key => $file)
+	{
+		$totalsize += $file['size'];
+	}
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    $morehtmlref = '<div class="refidno">';
-    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
-    {
-        $objsoc = new Societe($db);
-        $objsoc->fetch($object->socid);
-        // Thirdparty
-        $morehtmlref .= $langs->trans('ThirdParty').' : ';
-        if ($objsoc->id > 0) $morehtmlref .= $objsoc->getNomUrl(1);
-        else $morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
-    }
-    $morehtmlref .= '</div>';
+	$morehtmlref = '<div class="refidno">';
+	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+	{
+		$objsoc = new Societe($db);
+		$objsoc->fetch($object->socid);
+		// Thirdparty
+		$morehtmlref .= $langs->trans('ThirdParty').' : ';
+		if ($objsoc->id > 0) $morehtmlref .= $objsoc->getNomUrl(1);
+		else $morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
+	}
+	$morehtmlref .= '</div>';
 
-    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
 
-    print '<div class="fichecenter">';
+	print '<div class="fichecenter">';
 
-    print '<div class="underbanner clearboth"></div>';
-    print '<table class="border tableforfield centpercent">';
+	print '<div class="underbanner clearboth"></div>';
+	print '<table class="border tableforfield centpercent">';
 
-    // Company
-    /*
+	// Company
+	/*
     if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
     {
     	if ($object->socid > 0)
@@ -151,26 +151,26 @@ if ($object->id)
     	}
     }*/
 
-    // Civility
-    print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td colspan="3">';
-    print $object->getCivilityLabel();
-    print '</td></tr>';
+	// Civility
+	print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td colspan="3">';
+	print $object->getCivilityLabel();
+	print '</td></tr>';
 
-    print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
-    print '</table>';
+	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
+	print '</table>';
 
-    print '</div>';
+	print '</div>';
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 
-    $modulepart = 'contact';
-    $permission = $user->rights->societe->contact->creer;
-    $permtoedit = $user->rights->societe->contact->creer;
-    $param = '&id='.$object->id;
-    include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	$modulepart = 'contact';
+	$permission = $user->rights->societe->contact->creer;
+	$permtoedit = $user->rights->societe->contact->creer;
+	$param = '&id='.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
-    print $langs->trans("ErrorUnknown");
+	print $langs->trans("ErrorUnknown");
 }
 
 

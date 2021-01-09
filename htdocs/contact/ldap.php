@@ -86,7 +86,7 @@ llxHeader('', $title, 'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_
 
 $head = contact_prepare_head($object);
 
-dol_fiche_head($head, 'ldap', $title, -1, 'contact');
+print dol_get_fiche_head($head, 'ldap', $title, -1, 'contact');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -130,7 +130,7 @@ print '</table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 /*
@@ -174,7 +174,7 @@ if ($result > 0)
 	//var_dump($records);
 
 	// Show tree
-    if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0))
+	if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0))
 	{
 		if (!is_array($records))
 		{

@@ -36,17 +36,22 @@ class Fiscalyear extends CommonObject
 	public $element = 'fiscalyear';
 
 	/**
+	 * @var string picto
+	 */
+	public $picto = 'technic';
+
+	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'accounting_fiscalyear';
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = '';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = '';
 
@@ -67,25 +72,25 @@ class Fiscalyear extends CommonObject
 	public $label;
 
 	/**
-     * Date start (date_start)
-     *
-     * @var integer
-     */
+	 * Date start (date_start)
+	 *
+	 * @var integer
+	 */
 	public $date_start;
 
 	/**
-     * Date end (date_end)
-     *
-     * @var integer
-     */
+	 * Date end (date_end)
+	 *
+	 * @var integer
+	 */
 	public $date_end;
 
 	/**
-     * Date creation record (datec)
-     *
-     * @var integer
-     */
-    public $datec;
+	 * Date creation record (datec)
+	 *
+	 * @var integer
+	 */
+	public $datec;
 
 	public $statut; // 0=open, 1=closed
 
@@ -96,6 +101,7 @@ class Fiscalyear extends CommonObject
 
 	public $statuts = array();
 	public $statuts_short = array();
+
 
 	/**
 	 * Constructor
@@ -211,11 +217,11 @@ class Fiscalyear extends CommonObject
 	}
 
 	/**
-	* Load an object from database
-	*
-	* @param	int		$id		Id of record to load
-	* @return	int				<0 if KO, >0 if OK
-	*/
+	 * Load an object from database
+	 *
+	 * @param	int		$id		Id of record to load
+	 * @return	int				<0 if KO, >0 if OK
+	 */
 	public function fetch($id)
 	{
 		$sql = "SELECT rowid, label, date_start, date_end, statut";
@@ -242,7 +248,7 @@ class Fiscalyear extends CommonObject
 		}
 	}
 
-    /**
+	/**
 	 *	Delete record
 	 *
 	 *	@param	int		$id		Id of record to delete
@@ -265,6 +271,78 @@ class Fiscalyear extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
+	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      int			$withpicto                Add picto into link
+	 *  @param	    int   	    $notooltip		          1=Disable tooltip
+	 *  @param      int         $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return     string          			          String with URL
+	 */
+	public function getNomUrl($withpicto = 0, $notooltip = 0, $save_lastsearch_value = -1)
+	{
+		global $conf, $langs, $user;
+
+		if (empty($this->ref)) $this->ref = $this->id;
+
+		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
+
+		$result = '';
+
+		$url = DOL_URL_ROOT.'/accountancy/admin/fiscalyear_card.php?id='.$this->id;
+
+		if (!$user->rights->accounting->fiscalyear->write)
+			$option = 'nolink';
+
+		if ($option !== 'nolink')
+		{
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
+			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+		}
+
+		if ($short) return $url;
+
+		$label = '';
+
+		if ($user->rights->accounting->fiscalyear->write) {
+			$label = '<u>'.$langs->trans("FiscalPeriod").'</u>';
+			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->id;
+			if (isset($this->statut)) {
+				$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
+			}
+		}
+
+		$linkclose = '';
+		if (empty($notooltip) && $user->rights->accounting->fiscalyear->write)
+		{
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			{
+				$label = $langs->trans("FiscalYear");
+				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' class="classfortooltip"';
+		}
+
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart .= $linkclose.'>';
+		$linkend = '</a>';
+
+		if ($option === 'nolink') {
+			$linkstart = '';
+			$linkend = '';
+		}
+
+		$result .= $linkstart;
+		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		if ($withpicto != 2) $result .= $this->ref;
+		$result .= $linkend;
+
+		return $result;
 	}
 
 	/**

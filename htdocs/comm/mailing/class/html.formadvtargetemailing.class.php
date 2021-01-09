@@ -28,9 +28,9 @@
 class FormAdvTargetEmailing extends Form
 {
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
 	/**
 	 * @var string Error code (or message)
@@ -42,12 +42,12 @@ class FormAdvTargetEmailing extends Form
 	 *
 	 * @param DoliDB $db handler
 	 */
-    public function __construct($db)
-    {
-        global $langs;
+	public function __construct($db)
+	{
+		global $langs;
 
-        $this->db = $db;
-    }
+		$this->db = $db;
+	}
 
 	/**
 	 * Affiche un champs select contenant une liste
@@ -56,8 +56,8 @@ class FormAdvTargetEmailing extends Form
 	 * @param string $htmlname select field
 	 * @return string select field
 	 */
-    public function multiselectProspectionStatus($selected_array = array(), $htmlname = 'cust_prospect_status')
-    {
+	public function multiselectProspectionStatus($selected_array = array(), $htmlname = 'cust_prospect_status')
+	{
 		global $conf, $langs;
 		$options_array = array();
 
@@ -84,7 +84,7 @@ class FormAdvTargetEmailing extends Form
 			dol_print_error($this->db);
 		}
 		return $this->advMultiselectarray($htmlname, $options_array, $selected_array);
-    }
+	}
 
 	/**
 	 * Return combo list of activated countries, into language of user
@@ -93,8 +93,8 @@ class FormAdvTargetEmailing extends Form
 	 * @param array $selected_array or Code or Label of preselected country
 	 * @return string HTML string with select
 	 */
-    public function multiselectCountry($htmlname = 'country_id', $selected_array = array())
-    {
+	public function multiselectCountry($htmlname = 'country_id', $selected_array = array())
+	{
 		global $conf, $langs;
 
 		$langs->load("dict");
@@ -142,7 +142,7 @@ class FormAdvTargetEmailing extends Form
 		}
 
 		return $this->advMultiselectarray($htmlname, $options_array, $selected_array);
-    }
+	}
 
 	/**
 	 * Return select list for categories (to use in form search selectors)
@@ -152,14 +152,14 @@ class FormAdvTargetEmailing extends Form
 	 * @param User $user User action
 	 * @return string combo list code
 	 */
-    public function multiselectselectSalesRepresentatives($htmlname, $selected_array, $user)
-    {
+	public function multiselectselectSalesRepresentatives($htmlname, $selected_array, $user)
+	{
 
 		global $conf;
 
 		$options_array = array();
 
-        $sql_usr = '';
+		$sql_usr = '';
 		$sql_usr .= "SELECT DISTINCT u2.rowid, u2.lastname as name, u2.firstname, u2.login";
 		$sql_usr .= " FROM ".MAIN_DB_PREFIX."user as u2, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql_usr .= " WHERE u2.entity IN (0,".$conf->entity.")";
@@ -183,7 +183,7 @@ class FormAdvTargetEmailing extends Form
 		}
 
 		return $this->advMultiselectarray($htmlname, $options_array, $selected_array);
-    }
+	}
 
 	/**
 	 * Return select list for categories (to use in form search selectors)
@@ -192,8 +192,8 @@ class FormAdvTargetEmailing extends Form
 	 * @param array $selected_array selected array
 	 * @return string combo list code
 	 */
-    public function multiselectselectLanguage($htmlname = '', $selected_array = array())
-    {
+	public function multiselectselectLanguage($htmlname = '', $selected_array = array())
+	{
 
 		global $conf, $langs;
 
@@ -208,7 +208,7 @@ class FormAdvTargetEmailing extends Form
 		}
 		asort($options_array);
 		return $this->advMultiselectarray($htmlname, $options_array, $selected_array);
-    }
+	}
 
 	/**
 	 * Return multiselect list of entities for extrafeild type sellist
@@ -330,79 +330,13 @@ class FormAdvTargetEmailing extends Form
 	 * @param int $showempty show empty
 	 * @return string HTML combo
 	 */
-    public function advMultiselectarray($htmlname, $options_array = array(), $selected_array = array(), $showempty = 0)
-    {
+	public function advMultiselectarray($htmlname, $options_array = array(), $selected_array = array(), $showempty = 0)
+	{
 		global $conf, $langs;
 
 		$form = new Form($this->db);
 		$return = $form->multiselectarray($htmlname, $options_array, $selected_array, 0, 0, '', 0, 295);
 		return $return;
-    }
-
-	/**
-	 *  Return combo list with customer categories
-	 *
-	 *  @param  string	$htmlname   Name of categorie
-	 * 	@param	array	$selected_array	value selected
-	 *  @return	string HTML combo
-	 */
-	public function multiselectCustomerCategories($htmlname = 'cust_cat', $selected_array = array())
-	{
-		return $this->multiselectCategories($htmlname, $selected_array, 2);
-	}
-
-	/**
-	 *  Return combo list with customer contact
-	 *
-	 *  @param  string	$htmlname   Name of categorie
-	 * 	@param	array	$selected_array	value selected
-	 *  @return	string HTML combo
-	 */
-	public function multiselectContactCategories($htmlname = 'contact_cat', $selected_array = array())
-	{
-		return $this->multiselectCategories($htmlname, $selected_array, 4);
-	}
-
-	/**
-	 *  Return combo list of categories
-	 *
-	 *  @param  string	$htmlname  		Name of categorie
-	 * 	@param	array	$selected_array	Value selected
-	 * 	@param	int		$type			Type
-	 *  @return	string 					HTML combo
-	 */
-	public function multiselectCategories($htmlname = '', $selected_array = array(), $type = 0)
-	{
-		global $conf, $langs, $user;
-		$langs->load("dict");
-
-		$options_array = array();
-
-		$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."categorie";
-		$sql .= " WHERE type=".$type;
-
-		dol_syslog(__METHOD__, LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			if ($num)
-			{
-				while ($i < $num)
-				{
-					$obj = $this->db->fetch_object($resql);
-
-					$options_array[$obj->rowid] = $obj->label;
-
-					$i++;
-				}
-			}
-		} else {
-			dol_print_error($this->db);
-		}
-
-		return $this->advMultiselectarray($htmlname, $options_array, $selected_array);
 	}
 
 	/**
@@ -415,8 +349,8 @@ class FormAdvTargetEmailing extends Form
 	 * @param	string		$morecss		More CSS
 	 * @return	string 						HTML combo
 	 */
-    public function selectAdvtargetemailingTemplate($htmlname = 'template_id', $selected = 0, $showempty = 0, $type_element = 'mailing', $morecss = '')
-    {
+	public function selectAdvtargetemailingTemplate($htmlname = 'template_id', $selected = 0, $showempty = 0, $type_element = 'mailing', $morecss = '')
+	{
 		global $conf, $user, $langs;
 
 		$out = '';
@@ -456,5 +390,5 @@ class FormAdvTargetEmailing extends Form
 		}
 		$this->db->free($resql);
 		return $out;
-    }
+	}
 }

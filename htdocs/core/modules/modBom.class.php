@@ -54,7 +54,7 @@ class modBom extends DolibarrModules
 		// It is used to group modules by family in module setup page
 		$this->family = "products";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
-		$this->module_position = '60';
+		$this->module_position = '65';
 		// Gives the possibility for the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
 
@@ -300,6 +300,7 @@ class modBom extends DolibarrModules
 		$this->export_dependencies_array[$r] = array('bomline'=>'tl.rowid'); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'bom_bom as t';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bom_bom_extrafields as extra on (t.rowid = extra.fk_object)';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bom_bomline as tl ON tl.fk_bom = t.rowid';
 		$this->export_sql_end[$r] .= ' WHERE 1 = 1';
 		$this->export_sql_end[$r] .= ' AND t.entity IN ('.getEntity('bom').')';

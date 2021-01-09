@@ -39,7 +39,6 @@ SendPropalByMail=Enviar propuesta comercial por correo
 DatePropal=Fecha de la propuesta
 DateEndPropal=Fecha de finalización de la validez
 ValidityDuration=Duración de la validez
-CloseAs=Establecer el estado en
 ErrorPropalNotFound=Propal%s no encontrado
 AddToDraftProposals=Añadir a proyecto de propuesta
 NoDraftProposals=Ningún proyecto de propuesta

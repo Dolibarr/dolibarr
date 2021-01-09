@@ -15,6 +15,7 @@ CancelCP=已取消
 RefuseCP=已拒絕
 ValidatorCP=批准人
 ListeCP=休假清單
+Leave=休假申請
 LeaveId=休假編號
 ReviewedByCP=批准人為
 UserID=用戶編號

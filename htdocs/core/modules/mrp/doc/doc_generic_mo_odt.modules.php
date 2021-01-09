@@ -47,14 +47,14 @@ class doc_generic_mo_odt extends ModelePDFMo
 	public $emetteur;
 
 	/**
-     * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.5 = array(5, 5)
-     */
-	public $phpmin = array(5, 5);
+	 * @var array Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 */
+	public $phpmin = array(5, 6);
 
 	/**
-     * @var string Dolibarr version of the loaded document
-     */
+	 * @var string Dolibarr version of the loaded document
+	 */
 	public $version = 'dolibarr';
 
 
@@ -63,12 +63,12 @@ class doc_generic_mo_odt extends ModelePDFMo
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-    public function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $langs, $mysoc;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array("main", "companies"));
+		$langs->loadLangs(array("main", "companies"));
 
 		$this->db = $db;
 		$this->name = "ODT templates";
@@ -108,12 +108,12 @@ class doc_generic_mo_odt extends ModelePDFMo
 	 *	@param	Translate	$langs      Lang object to use for output
 	 *	@return string       			Description
 	 */
-    public function info($langs)
+	public function info($langs)
 	{
 		global $conf, $langs;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array("errors", "companies"));
+		$langs->loadLangs(array("errors", "companies"));
 
 		$form = new Form($this->db);
 
@@ -169,10 +169,10 @@ class doc_generic_mo_odt extends ModelePDFMo
 
 		if ($nbofiles)
 		{
-   			$texte .= '<div id="div_'.get_class($this).'" class="hidden">';
-   			foreach ($listoffiles as $file)
-   			{
-                $texte .= $file['name'].'<br>';
+   			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
+   			// Show list of found files
+   			foreach ($listoffiles as $file) {
+   				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=mrps&file=invoices/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a><br>';
    			}
    			$texte .= '</div>';
 		}
@@ -190,7 +190,7 @@ class doc_generic_mo_odt extends ModelePDFMo
 		return $texte;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Function to build a document on disk using the generic odt module.
 	 *
@@ -202,9 +202,9 @@ class doc_generic_mo_odt extends ModelePDFMo
 	 *  @param		int			$hideref			Do not show ref
 	 *	@return		int         					1 if OK, <=0 if KO
 	 */
-    public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;
 
 		if (empty($srctemplatepath))
@@ -243,6 +243,8 @@ class doc_generic_mo_odt extends ModelePDFMo
 				}
 			}
 
+			$object->fetch_thirdparty();
+
 			$dir = $conf->mrp->multidir_output[isset($object->entity) ? $object->entity : 1];
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) $dir .= "/".$objectref;
@@ -270,8 +272,8 @@ class doc_generic_mo_odt extends ModelePDFMo
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
 				if (!empty($conf->global->MAIN_DOC_USE_TIMING))
 				{
-				    $format = $conf->global->MAIN_DOC_USE_TIMING;
-				    if ($format == '1') $format = '%Y%m%d%H%M%S';
+					$format = $conf->global->MAIN_DOC_USE_TIMING;
+					if ($format == '1') $format = '%Y%m%d%H%M%S';
 					$filename = $newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
 				} else {
 					$filename = $newfiletmp.'.'.$newfileformat;
@@ -296,15 +298,14 @@ class doc_generic_mo_odt extends ModelePDFMo
 
 				// Recipient name
 				$contactobject = null;
-				if (!empty($usecontact))
-				{
-					// On peut utiliser le nom de la societe du contact
-					if (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socobject = $object->contact;
-					else {
-                        $socobject = $object->thirdparty;
-               			// if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
-            			$contactobject = $object->contact;
-                    }
+				if (!empty($usecontact)) {
+					if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
+						$socobject = $object->contact;
+					} else {
+						$socobject = $object->thirdparty;
+			   			// if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
+						$contactobject = $object->contact;
+					}
 				} else {
 					$socobject = $object->thirdparty;
 				}
@@ -329,7 +330,7 @@ class doc_generic_mo_odt extends ModelePDFMo
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-                    $odfHandler = new odf(
+					$odfHandler = new odf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->mrp->dir_temp,
@@ -356,7 +357,7 @@ class doc_generic_mo_odt extends ModelePDFMo
 					$odfHandler->setVars('free_text', $newfreetext, true, 'UTF-8');
 				} catch (OdfException $e)
 				{
-                    dol_syslog($e->getMessage(), LOG_INFO);
+					dol_syslog($e->getMessage(), LOG_INFO);
 				}
 
 				// Define substitution array
@@ -391,7 +392,7 @@ class doc_generic_mo_odt extends ModelePDFMo
 						}
 					} catch (OdfException $e)
 					{
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 				// Replace tags of lines
@@ -422,10 +423,10 @@ class doc_generic_mo_odt extends ModelePDFMo
 									$listlines->setVars($key, $val, true, 'UTF-8');
 								} catch (OdfException $e)
 								{
-                                    dol_syslog($e->getMessage(), LOG_INFO);
+									dol_syslog($e->getMessage(), LOG_INFO);
 								} catch (SegmentException $e)
 								{
-                                    dol_syslog($e->getMessage(), LOG_INFO);
+									dol_syslog($e->getMessage(), LOG_INFO);
 								}
 							}
 							$listlines->merge();
@@ -447,7 +448,7 @@ class doc_generic_mo_odt extends ModelePDFMo
 						$odfHandler->setVars($key, $value, true, 'UTF-8');
 					} catch (OdfException $e)
 					{
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 
@@ -461,16 +462,16 @@ class doc_generic_mo_odt extends ModelePDFMo
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
 					} catch (Exception $e) {
-                        $this->error = $e->getMessage();
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						$this->error = $e->getMessage();
+						dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				} else {
 					try {
 						$odfHandler->saveToDisk($file);
 					} catch (Exception $e) {
-                        $this->error = $e->getMessage();
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						$this->error = $e->getMessage();
+						dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}

@@ -30,7 +30,7 @@ if (!defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 $value = GETPOST('value', 'int');
 $field = GETPOST('field', 'alpha');

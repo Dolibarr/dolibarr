@@ -49,7 +49,7 @@ llxHeader();
 
 print load_fiche_titre($langs->trans("PerfDolibarr"), '', 'title_setup');
 
-print $langs->trans("YouMayFindPerfAdviceHere", 'https://wiki.dolibarr.org/index.php/FAQ_Increase_Performance').' (<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Reload").'</a>)<br>';
+print '<span class="opacitymedium">'.$langs->trans("YouMayFindPerfAdviceHere", 'https://wiki.dolibarr.org/index.php/FAQ_Increase_Performance').'</span> (<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Reload").'</a>)<br>';
 
 // Recupere la version de PHP
 $phpversion = version_php();
@@ -62,7 +62,7 @@ print "<br><strong>Web server</strong> - ".$langs->trans("Version").": ".$_SERVE
 print '<br>';
 print '<strong>'.$langs->trans("XDebug").'</strong>: ';
 $test = !function_exists('xdebug_is_enabled');
-if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled");
+if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotSlowedDownByThis");
 else {
 	print img_picto('', 'warning').' '.$langs->trans("ModuleActivated", $langs->transnoentities("XDebug"));
 	print ' - '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php">XDebug admin page</a>';
@@ -73,7 +73,7 @@ print '<br>';
 print '<br>';
 print '<strong>'.$langs->trans("Syslog").'</strong>: ';
 $test = empty($conf->syslog->enabled);
-if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled");
+if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotSlowedDownByThis");
 else {
 	print img_picto('', 'warning').' '.$langs->trans("ModuleActivated", $langs->transnoentities("Syslog"));
 	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
@@ -84,10 +84,10 @@ print '<br>';
 print '<br>';
 print '<strong>'.$langs->trans("DebugBar").'</strong>: ';
 $test = empty($conf->debugbar->enabled);
-if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled");
+if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotSlowedDownByThis");
 else {
 	print img_picto('', 'warning').' '.$langs->trans("ModuleActivated", $langs->transnoentities("DebugBar"));
-    //print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
+	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
 }
 print '<br>';
 
@@ -431,7 +431,6 @@ print '<br>';
 print '<strong>';
 print $form->textwithpicto($langs->trans("CompressionOfResources"), $langs->trans("CompressionOfResourcesDesc"));
 print '</strong>: ';
-//$tmp=getURLContent(DOL_URL_ROOT.'/index.php','GET');var_dump($tmp);
 print '<br>';
 // on PHP
 print '<div id="httpcompphpok">'.img_picto('', 'tick.png').' '.$langs->trans("FilesOfTypeCompressed", 'php (.php)').'</div>';
@@ -529,13 +528,6 @@ if (!in_array($conf->browser->name, array('chrome', 'opera', 'safari', 'firefox'
 	print img_picto('', 'tick.png').' '.$langs->trans("BrowserIsOK", $conf->browser->name);
 }
 print '<br>';
-
-// Database statistics update
-/*
-print '<br>';
-print '<strong>'.$langs->trans("DatabaseStatistics").'</strong>: ';
-print '<br>';
-*/
 
 // End of page
 llxFooter();

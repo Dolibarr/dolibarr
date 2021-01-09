@@ -21,6 +21,8 @@
  *  \brief			Library for common stripe functions
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+
 /**
  *  Define head array for tabs of stripe tools setup pages
  *
@@ -40,96 +42,15 @@ function stripeadmin_prepare_head()
 
 	$object = new stdClass();
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'stripeadmin');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'stripeadmin', 'remove');
 
-    return $head;
-}
-
-
-
-/**
- * Return string with full Url
- *
- * @param   string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'membersubscription' ...)
- * @param	string	$ref		Ref of object
- * @return	string				Url string
- */
-function showStripePaymentUrl($type, $ref)
-{
-	global $conf, $langs;
-
-	$langs->load("paypal");
-    $langs->load("paybox");
-	$langs->load("stripe");
-
-    $servicename = 'Stripe';
-    $out = '<br><br>';
-    $out .= img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'<br>';
-    $url = getStripePaymentUrl(0, $type, $ref);
-    $out .= '<input type="text" id="stripeurl" class="quatrevingtpercent" value="'.$url.'"><br>';
-    $out .= ajax_autoselect("stripeurl", 0);
-    return $out;
-}
-
-/**
- * Return string with full Url
- *
- * @param   int		$mode		0=True url, 1=Url formated with colors
- * @param   string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'membersubscription' ...)
- * @param	string	$ref		Ref of object
- * @param	int		$amount		Amount
- * @param	string	$freetag	Free tag
- * @return	string				Url string
- */
-function getStripePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag = 'your_tag')
-{
-	global $conf;
-
-	$ref = str_replace(' ', '', $ref);
-
-    if ($type == 'free')
-    {
-	    $out = DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?amount='.($mode ? '<font color="#666666">' : '').$amount.($mode ? '</font>' : '').'&tag='.($mode ? '<font color="#666666">' : '').$freetag.($mode ? '</font>' : '');
-    }
-    if ($type == 'order')
-    {
-        $out = DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?source=order&ref='.($mode ? '<font color="#666666">' : '');
-        if ($mode == 1) $out .= 'order_ref';
-        if ($mode == 0) $out .= urlencode($ref);
-	    $out .= ($mode ? '</font>' : '');
-    }
-    if ($type == 'invoice')
-    {
-        $out = DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?source=invoice&ref='.($mode ? '<font color="#666666">' : '');
-        if ($mode == 1) $out .= 'invoice_ref';
-        if ($mode == 0) $out .= urlencode($ref);
-	    $out .= ($mode ? '</font>' : '');
-    }
-    if ($type == 'contractline')
-    {
-        $out = DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?source=contractline&ref='.($mode ? '<font color="#666666">' : '');
-        if ($mode == 1) $out .= 'contractline_ref';
-        if ($mode == 0) $out .= urlencode($ref);
-	    $out .= ($mode ? '</font>' : '');
-    }
-    if ($type == 'membersubscription')
-    {
-        $out = DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?source=membersubscription&ref='.($mode ? '<font color="#666666">' : '');
-        if ($mode == 1) $out .= 'member_ref';
-        if ($mode == 0) $out .= urlencode($ref);
-	    $out .= ($mode ? '</font>' : '');
-    }
-
-    // For multicompany
-    $out .= "&entity=".$conf->entity; // Check the entity because He may be the same reference in several entities
-
-    return $out;
+	return $head;
 }
 
 

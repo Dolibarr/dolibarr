@@ -68,7 +68,7 @@ $object->info($id);
 
 $head = vat_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("VATPayment"), -1, 'payment');
+print dol_get_fiche_head($head, 'info', $langs->trans("VATPayment"), -1, 'payment');
 
 $morehtmlref = '<div class="refidno">';
 // Label of social contribution
@@ -89,7 +89,7 @@ print '</td></tr></table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 llxFooter();
 

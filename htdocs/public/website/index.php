@@ -36,6 +36,8 @@ if (!defined('NOCSRFCHECK'))    define("NOCSRFCHECK", 1); // We accept to go on 
 if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
 if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
 if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
 
 /**
  * Header empty

@@ -11,8 +11,9 @@ CloseEtablishment=Cerrar establecimiento
 # Dictionary
 DictionaryPublicHolidays=RRHH: días festivos
 DictionaryDepartment=R.R.H.H. Listado departamentos
-DictionaryFunction=R.R.H.H. Listado funciones
+DictionaryFunction=R.R.H.H. - Puestos de trabajo
 # Module
 Employees=Empleados
 Employee=Empleado
 NewEmployee=Nuevo empleado
+ListOfEmployees=Listado de empleados

@@ -37,9 +37,9 @@ class LignePrelevement
 	public $id;
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
 	public $statuts = array();
 
@@ -59,21 +59,21 @@ class LignePrelevement
 
 		$langs->load("withdrawals");
 		$this->statuts[0] = $langs->trans("StatusWaiting");
-		$this->statuts[2] = $langs->trans("StatusCredited");
+		$this->statuts[2] = $langs->trans("StatusPaid");
 		$this->statuts[3] = $langs->trans("StatusRefused");
 	}
 
 	/**
 	 *  Recupere l'objet prelevement
 	 *
-	 *  @param	int		$rowid       id de la facture a recuperer
-	 *  @return	integer
+	 *  @param	int		$rowid      Id de la facture a recuperer
+	 *  @return	integer				<0 if KO, >=0 if OK
 	 */
 	public function fetch($rowid)
 	{
 		global $conf;
 
-		$result = 0;
+		$error = 0;
 
 		$sql = "SELECT pl.rowid, pl.amount, p.ref, p.rowid as bon_rowid";
 		$sql .= ", pl.statut, pl.fk_soc";
@@ -97,21 +97,21 @@ class LignePrelevement
 				$this->bon_ref         = $obj->ref;
 				$this->bon_rowid       = $obj->bon_rowid;
 			} else {
-				$result++;
+				$error++;
 				dol_syslog("LignePrelevement::Fetch rowid=$rowid numrows=0");
 			}
 
 			$this->db->free($resql);
 		} else {
-			$result++;
+			$error++;
 			dol_syslog("LignePrelevement::Fetch rowid=$rowid");
 			dol_syslog($this->db->error());
 		}
 
-		return $result;
+		return $error;
 	}
 
-    /**
+	/**
 	 *    Return status label of object
 	 *
 	 *    @param	int		$mode       0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
@@ -122,7 +122,7 @@ class LignePrelevement
 		return $this->LibStatut($this->statut, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Return status label for a status
 	 *
@@ -132,7 +132,7 @@ class LignePrelevement
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 
 		if ($mode == 0)

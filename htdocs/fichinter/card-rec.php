@@ -51,7 +51,7 @@ $langs->loadLangs(array("interventions", "admin", "compta", "bills"));
 
 // Security check
 $id = (GETPOST('fichinterid', 'int') ?GETPOST('fichinterid', 'int') : GETPOST('id', 'int'));
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 if ($user->socid) $socid = $user->socid;
 $objecttype = 'fichinter_rec';
 if ($action == "create" || $action == "add") $objecttype = '';
@@ -131,7 +131,7 @@ if ($action == 'add') {
 	if (!$error) {
 		$object->id_origin = $id;
 		$object->title			= GETPOST('titre', 'alpha');
-		$object->description	= GETPOST('description', 'alpha');
+		$object->description	= GETPOST('description', 'restricthtml');
 		$object->socid			= GETPOST('socid', 'alpha');
 		$object->fk_project		= GETPOST('projectid', 'int');
 		$object->fk_contract	= GETPOST('contractid', 'int');
@@ -256,7 +256,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="fichinterid" value="'.$object->id.'">';
 
-		dol_fiche_head();
+		print dol_get_fiche_head();
 
 		$rowspan = 4;
 		if (!empty($conf->projet->enabled) && $object->fk_project > 0) $rowspan++;
@@ -277,7 +277,7 @@ if ($action == 'create') {
 
 		// Title
 		print '<tr><td class="fieldrequired">'.$langs->trans("Title").'</td><td>';
-		print '<input class="flat" type="text" name="titre" size="24" value="'.$_POST["titre"].'">';
+		print '<input class="flat quatrevingtpercent" type="text" name="titre" value="'.dol_escape_htmltag(GETPOST("titre", "alphanohtml")).'">';
 		print '</td>';
 
 		// Note
@@ -417,11 +417,11 @@ if ($action == 'create') {
 
 		print "</table>\n";
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+		print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 		print '</div>';
 		print "</form>\n";
 	} else {
@@ -429,7 +429,7 @@ if ($action == 'create') {
 	}
 } elseif ($action == 'selsocforcreatefrommodel') {
 	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'intervention');
-	dol_fiche_head('');
+	print dol_get_fiche_head('');
 
 	print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<table class="border centpercent">';
@@ -438,7 +438,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="hidden" name="action" value="createfrommodel">';
@@ -461,7 +461,7 @@ if ($action == 'create') {
 
 			$head = fichinter_rec_prepare_head($object);
 
-			dol_fiche_head($head, 'card', $langs->trans("PredefinedInterventional"), 0, 'intervention');
+			print dol_get_fiche_head($head, 'card', $langs->trans("PredefinedInterventional"), 0, 'intervention');
 
 			// Intervention card
 			$linkback = '<a href="card-rec.php">'.$langs->trans("BackToList").'</a>';
@@ -484,11 +484,11 @@ if ($action == 'create') {
 						$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 						$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 						$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-                        $morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+						$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 						$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 						$morehtmlref .= '</form>';
 					} else {
-                        $morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 					}
 				} else {
 					if (!empty($object->fk_project)) {
@@ -543,15 +543,15 @@ if ($action == 'create') {
 				print '</td><td>';
 				if ($action == 'contrat') {
 					$formcontract = new Formcontract($db);
-                    $formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contrat, 'contratid', 0, 1);
+					$formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contrat, 'contratid', 0, 1);
 				} else {
 					if ($object->fk_contrat) {
 						$contratstatic = new Contrat($db);
 						$contratstatic->fetch($object->fk_contrat);
 						print $contratstatic->getNomUrl(0, '', 1);
 					} else {
-                        print "&nbsp;";
-                    }
+						print "&nbsp;";
+					}
 				}
 				print '</td>';
 				print '</tr>';
@@ -633,7 +633,7 @@ if ($action == 'create') {
 			if ($object->frequency > 0) {
 				print '<br>';
 				if (empty($conf->cron->enabled)) {
-    				$txtinfoadmin = $langs->trans("EnableAndSetupModuleCron", $langs->transnoentitiesnoconv("Module2300Name"));
+					$txtinfoadmin = $langs->trans("EnableAndSetupModuleCron", $langs->transnoentitiesnoconv("Module2300Name"));
 					print info_admin($txtinfoadmin);
 				}
 				print '<div class="underbanner clearboth"></div>';
@@ -714,14 +714,14 @@ if ($action == 'create') {
 
 			if ($user->rights->ficheinter->creer) {
 				print '<div class="inline-block divButAction">';
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=createfrommodel';
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=createfrommodel&token='.newToken().'';
 				print '&socid='.$object->thirdparty->id.'&id='.$object->id.'">';
 				print $langs->trans("CreateFichInter").'</a></div>';
 			}
 
 			if ($user->rights->ficheinter->supprimer) {
 				print '<div class="inline-block divButAction">';
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&id='.$object->id.'">';
+				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id.'">';
 				print $langs->trans('Delete').'</a></div>';
 			}
 			print '</div>';
@@ -765,20 +765,20 @@ if ($action == 'create') {
 			$i = 0;
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
-            print_liste_field_titre("Ref", $_SERVER['PHP_SELF'], "f.titre", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');
-            print_liste_field_titre("Company", $_SERVER['PHP_SELF'], "s.nom", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');
-            if (!empty($conf->contrat->enabled)) {
-                print_liste_field_titre("Contract", $_SERVER['PHP_SELF'], "f.fk_contrat", "", "", 'width="100px"', $sortfield, $sortorder, 'left ');
-            }
-            if (!empty($conf->projet->enabled)) {
-                print_liste_field_titre("Project", $_SERVER['PHP_SELF'], "f.fk_project", "", "", 'width="100px"', $sortfield, $sortorder, 'left ');
-            }
-            print_liste_field_titre("Duration", $_SERVER['PHP_SELF'], 'f.duree', '', '', 'width="50px"', $sortfield, $sortorder, 'right ');
-            // Recurring or not
-            print_liste_field_titre("Frequency", $_SERVER['PHP_SELF'], "f.frequency", "", "", 'width="100px"', $sortfield, $sortorder, 'center ');
-            print_liste_field_titre("NbOfGenerationDone", $_SERVER['PHP_SELF'], "f.nb_gen_done", "", "", 'width="100px"', $sortfield, $sortorder, 'center ');
-            print_liste_field_titre("DateLastGeneration", $_SERVER['PHP_SELF'], "f.date_last_gen", "", "", 'width="100px"', $sortfield, $sortorder, 'center ');
-            print_liste_field_titre("NextDateToIntervention", $_SERVER['PHP_SELF'], "f.date_when", "", "", 'width="100px"', $sortfield, $sortorder, 'center ');
+			print_liste_field_titre("Ref", $_SERVER['PHP_SELF'], "f.titre", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');
+			print_liste_field_titre("Company", $_SERVER['PHP_SELF'], "s.nom", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');
+			if (!empty($conf->contrat->enabled)) {
+				print_liste_field_titre("Contract", $_SERVER['PHP_SELF'], "f.fk_contrat", "", "", 'width="100px"', $sortfield, $sortorder, 'left ');
+			}
+			if (!empty($conf->projet->enabled)) {
+				print_liste_field_titre("Project", $_SERVER['PHP_SELF'], "f.fk_project", "", "", 'width="100px"', $sortfield, $sortorder, 'left ');
+			}
+			print_liste_field_titre("Duration", $_SERVER['PHP_SELF'], 'f.duree', '', '', 'width="50px"', $sortfield, $sortorder, 'right ');
+			// Recurring or not
+			print_liste_field_titre("Frequency", $_SERVER['PHP_SELF'], "f.frequency", "", "", 'width="100px"', $sortfield, $sortorder, 'center ');
+			print_liste_field_titre("NbOfGenerationDone", $_SERVER['PHP_SELF'], "f.nb_gen_done", "", "", 'width="100px"', $sortfield, $sortorder, 'center ');
+			print_liste_field_titre("DateLastGeneration", $_SERVER['PHP_SELF'], "f.date_last_gen", "", "", 'width="100px"', $sortfield, $sortorder, 'center ');
+			print_liste_field_titre("NextDateToIntervention", $_SERVER['PHP_SELF'], "f.date_when", "", "", 'width="100px"', $sortfield, $sortorder, 'center ');
 			print '<th width="100px"></th>';
 			print "</tr>\n";
 

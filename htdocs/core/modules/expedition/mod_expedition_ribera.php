@@ -31,9 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php'
 class mod_expedition_ribera extends ModelNumRefExpedition
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr';
 
 	/**
@@ -58,9 +58,9 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 	 *
 	 *	@return     string      text description
 	 */
-    public function info()
-    {
-    	global $conf, $langs, $db;
+	public function info()
+	{
+		global $conf, $langs, $db;
 
 		$langs->load("bills");
 
@@ -87,22 +87,22 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 		$texte .= '</form>';
 
 		return $texte;
-    }
+	}
 
 	/**
 	 *	Return numbering example
 	 *
 	 *	@return     string      Example
 	 */
-    public function getExample()
-    {
-     	global $conf, $langs, $mysoc;
+	public function getExample()
+	{
+	 	global $conf, $langs, $mysoc;
 
-    	$old_code_client = $mysoc->code_client;
-    	$old_code_type = $mysoc->typent_code;
-    	$mysoc->code_client = 'CCCCCCCCCC';
-    	$mysoc->typent_code = 'TTTTTTTTTT';
-     	$numExample = $this->getNextValue($mysoc, '');
+		$old_code_client = $mysoc->code_client;
+		$old_code_type = $mysoc->typent_code;
+		$mysoc->code_client = 'CCCCCCCCCC';
+		$mysoc->typent_code = 'TTTTTTTTTT';
+	 	$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client = $old_code_client;
 		$mysoc->typent_code = $old_code_type;
 
@@ -111,7 +111,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
-    }
+	}
 
 	/**
 	 *	Return next value
@@ -120,8 +120,8 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 	 *	@param	Object		$shipment	Shipment object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-    public function getNextValue($objsoc, $shipment)
-    {
+	public function getNextValue($objsoc, $shipment)
+	{
 		global $db, $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -141,7 +141,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 		return  $numFinal;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return next free value
 	 *
@@ -149,9 +149,9 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 	 *	@param	Object		$objforref	Shipment object
 	 *	@return string      			Next free value
 	 */
-    public function expedition_get_num($objsoc, $objforref)
-    {
-        // phpcs:enable
-        return $this->getNextValue($objsoc, $objforref);
-    }
+	public function expedition_get_num($objsoc, $objforref)
+	{
+		// phpcs:enable
+		return $this->getNextValue($objsoc, $objforref);
+	}
 }

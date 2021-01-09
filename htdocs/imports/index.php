@@ -45,67 +45,16 @@ llxHeader('', $langs->trans("ImportArea"), 'EN:Module_Imports_En|FR:Module_Impor
 print load_fiche_titre($langs->trans("ImportArea"));
 
 print $langs->trans("FormatedImportDesc1").'<br>';
-//print $langs->trans("FormatedImportDesc2").'<br>';
 print '<br>';
 
-
-//print '<div class="fichecenter"><div class="fichehalfleft">';
-
-
-// List of import set
-/*
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Module").'</td>';
-print '<td>'.$langs->trans("ImportableDatas").'</td>';
-//print '<td>&nbsp;</td>';
-print '</tr>';
-
-if (count($import->array_import_code))
-{
-	foreach ($import->array_import_code as $key => $value)
-	{
-		print '<tr class="oddeven"><td>';
-		print img_object($import->array_import_module[$key]->getName(),$import->array_import_module[$key]->picto).' ';
-		print $import->array_import_module[$key]->getName();
-		print '</td><td>';
-		$string=$langs->trans($import->array_import_label[$key]);
-		print ($string!=$import->array_import_label[$key]?$string:$import->array_import_label[$key]);
-		print '</td>';
-		//        print '<td width="24">';
-		//        print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=2&amp;datatoimport='.$import->array_import_code[$key].'&amp;action=cleanselect">'.img_picto($langs->trans("NewImport"),'filenew').'</a>';
-		//        print '</td>';
-		print '</tr>';
-
-	}
-}
-else
-{
-	print '<tr><td '.$bc[false].' colspan="2">'.$langs->trans("NoImportableData").'</td></tr>';
-}
-print '</table>';
-print '</div>';
-print '<br>';
-*/
 
 print '<div class="center">';
 if (count($import->array_import_code))
 {
-	//if ($user->rights->import->run)
-	//{
-    print dolGetButtonTitle($langs->trans('NewImport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/imports/import.php?leftmenu=import');
-	//}
-	//else
-	//{
-	//	print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("NewImport").'</a>';
-	//}
+	print dolGetButtonTitle($langs->trans('NewImport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/imports/import.php?leftmenu=import');
 }
 print '</div>';
 print '<br>';
-
-
-//print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 
 // List of available import format
@@ -135,8 +84,6 @@ foreach ($liste as $key)
 print '</table>';
 print '</div>';
 
-
-//print '</div></div></div>';
 
 // End of page
 llxFooter();

@@ -93,7 +93,7 @@ if (!function_exists("ldap_connect"))
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
-dol_fiche_head($head, 'memberstypes', $langs->trans("LDAPSetup"), -1);
+print dol_get_fiche_head($head, 'memberstypes', $langs->trans("LDAPSetup"), -1);
 
 
 print $langs->trans("LDAPDescMembersTypes").'<br>';
@@ -162,7 +162,7 @@ print '</table>';
 
 print info_admin($langs->trans("LDAPDescValues"));
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 

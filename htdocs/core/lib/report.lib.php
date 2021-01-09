@@ -56,7 +56,7 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].$varlink.'">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 
-	dol_fiche_head($head, 'report');
+	print dol_get_fiche_head($head, 'report');
 
 	foreach ($moreparam as $key => $value)
 	{
@@ -69,7 +69,7 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 
 	// Ligne de titre
 	print '<tr>';
-	print '<td width="110">'.$langs->trans("ReportName").'</td>';
+	print '<td width="150">'.$langs->trans("ReportName").'</td>';
 	print '<td>';
 	print $reportname;
 	print '</td>';
@@ -80,7 +80,7 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 	if ($calcmode)
 	{
 		print '<tr>';
-		print '<td width="110">'.$langs->trans("CalculationMode").'</td>';
+		print '<td width="150">'.$langs->trans("CalculationMode").'</td>';
 		print '<td>';
 		print $calcmode;
 		if ($variante) print '<td></td>';
@@ -115,7 +115,7 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 
 	print '</table>'."\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></div>';
 

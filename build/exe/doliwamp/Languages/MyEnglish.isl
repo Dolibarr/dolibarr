@@ -32,6 +32,7 @@ PortAlreadyInUse=Port %1 seems to be already in use. You should cancel to go bac
 
 FirefoxDetected=Firefox has been detected on your computer. Would you like to use it as the default browser for Dolibarr ?
 ChromeDetected=Chrome has been detected on your computer. Would you like to use it as the default browser for Dolibarr ?
+MicrosoftEdgeDetected=Microsoft Edge has been detected on your computer. Would you like to use it as the default browser for Dolibarr ?
 ChooseDefaultBrowser=Please choose your default browser (iexplore.exe, firefox.exe, chrome.exe, MicrosoftEdge.exe...). If you are not sure, just click Open :
 
 LaunchNow=Launch Dolibarr now

@@ -94,8 +94,8 @@ class nusoap_client extends nusoap_base  {
 	* @param	string $portName optional portName in WSDL document
 	* @access   public
 	*/
-	function nusoap_client($endpoint,$wsdl = false,$proxyhost = false,$proxyport = false,$proxyusername = false, $proxypassword = false, $timeout = 0, $response_timeout = 30, $portName = ''){
-		parent::nusoap_base();
+	function __construct($endpoint,$wsdl = false,$proxyhost = false,$proxyport = false,$proxyusername = false, $proxypassword = false, $timeout = 0, $response_timeout = 30, $portName = ''){
+		parent::__construct();
 		$this->endpoint = $endpoint;
 		$this->proxyhost = $proxyhost;
 		$this->proxyport = $proxyport;
@@ -163,7 +163,7 @@ class nusoap_client extends nusoap_base  {
 		$this->faultstring = '';
 		$this->faultcode = '';
 		$this->opData = array();
-		
+
 		$this->debug("call: operation=$operation, namespace=$namespace, soapAction=$soapAction, rpcParams=$rpcParams, style=$style, use=$use, endpointType=$this->endpointType");
 		$this->appendDebug('params=' . $this->varDump($params));
 		$this->appendDebug('headers=' . $this->varDump($headers));
@@ -234,7 +234,7 @@ class nusoap_client extends nusoap_base  {
 			// no WSDL
 			//$this->namespaces['ns1'] = $namespace;
 			$nsPrefix = 'ns' . rand(1000, 9999);
-			// serialize 
+			// serialize
 			$payload = '';
 			if (is_string($params)) {
 				$this->debug("serializing param string for operation $operation");
@@ -294,7 +294,7 @@ class nusoap_client extends nusoap_base  {
 			$this->return = $return;
 			$this->debug('sent message successfully and got a(n) '.gettype($return));
            	$this->appendDebug('return=' . $this->varDump($return));
-			
+
 			// fault?
 			if(is_array($return) && isset($return['faultcode'])){
 				$this->debug('got fault');
@@ -463,7 +463,7 @@ class nusoap_client extends nusoap_base  {
 						$this->persistentConnection = $http;
 					}
 				}
-				
+
 				if($err = $http->getError()){
 					$this->setError('HTTP Error: '.$err);
 					return false;
@@ -627,7 +627,7 @@ class nusoap_client extends nusoap_base  {
 		$this->authtype = $authtype;
 		$this->certRequest = $certRequest;
 	}
-	
+
 	/**
 	* use HTTP encoding
 	*
@@ -638,7 +638,7 @@ class nusoap_client extends nusoap_base  {
 		$this->debug("setHTTPEncoding(\"$enc\")");
 		$this->http_encoding = $enc;
 	}
-	
+
 	/**
 	* Set whether to try to use cURL connections if possible
 	*
@@ -659,7 +659,7 @@ class nusoap_client extends nusoap_base  {
 		$this->debug("useHTTPPersistentConnection");
 		$this->persistentConnection = true;
 	}
-	
+
 	/**
 	* gets the default RPC parameter setting.
 	* If true, default is that call params are like RPC even for document style.
@@ -689,7 +689,7 @@ class nusoap_client extends nusoap_base  {
 	function setDefaultRpcParams($rpcParams) {
 		$this->defaultRpcParams = $rpcParams;
 	}
-	
+
 	/**
 	* dynamically creates an instance of a proxy class,
 	* allowing user to directly call methods from wsdl
@@ -819,7 +819,7 @@ class nusoap_client extends nusoap_base  {
 	function getHTTPBody($soapmsg) {
 		return $soapmsg;
 	}
-	
+
 	/**
 	* gets the HTTP content type for the current request.
 	*
@@ -831,7 +831,7 @@ class nusoap_client extends nusoap_base  {
 	function getHTTPContentType() {
 		return 'text/xml';
 	}
-	
+
 	/**
 	* gets the HTTP content type charset for the current request.
 	* returns false for non-text content types.

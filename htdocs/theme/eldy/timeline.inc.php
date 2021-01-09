@@ -112,7 +112,7 @@ a.timeline-btn:hover
 {
     background-color: #e7e7e7;
     color: #333;
-    border-color: #adadad;;
+    border-color: #adadad;
 }
 
 

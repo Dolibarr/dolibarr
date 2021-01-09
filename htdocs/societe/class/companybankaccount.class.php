@@ -41,18 +41,18 @@ class CompanyBankAccount extends Account
 	public $date_rum;
 
 	/**
-     * Date creation record (datec)
-     *
-     * @var integer
-     */
-    public $datec;
+	 * Date creation record (datec)
+	 *
+	 * @var integer
+	 */
+	public $datec;
 
 	/**
-     * Date modification record (tms)
-     *
-     * @var integer
-     */
-    public $datem;
+	 * Date modification record (tms)
+	 *
+	 * @var integer
+	 */
+	public $datem;
 
 
 	/**
@@ -78,7 +78,7 @@ class CompanyBankAccount extends Account
 	 * @param   int    $notrigger   1=Disable triggers
 	 * @return	int					<0 if KO, >= 0 if OK
 	 */
-    public function create(User $user = null, $notrigger = 0)
+	public function create(User $user = null, $notrigger = 0)
 	{
 		$now	= dol_now();
 		$error = 0;
@@ -131,7 +131,7 @@ class CompanyBankAccount extends Account
 	 *  @param  int     $notrigger   1=Disable triggers
 	 *	@return	int				     <=0 if KO, >0 if OK
 	 */
-    public function update(User $user = null, $notrigger = 0)
+	public function update(User $user = null, $notrigger = 0)
 	{
 		global $conf;
 		$error = 0;
@@ -197,7 +197,7 @@ class CompanyBankAccount extends Account
 	 *  @param	int		$type		If id of company filled, we say if we want record of this type only
 	 * 	@return	int					<0 if KO, >0 if OK
 	 */
-    public function fetch($id, $socid = 0, $default = 1, $type = 'ban')
+	public function fetch($id, $socid = 0, $default = 1, $type = 'ban')
 	{
 		if (empty($id) && empty($socid)) return -1;
 
@@ -258,7 +258,7 @@ class CompanyBankAccount extends Account
 	 *	@param  	int		$notrigger	1=Disable triggers
 	 *  @return		int		            <0 if KO, >0 if OK
 	 */
-    public function delete(User $user = null, $notrigger = 0)
+	public function delete(User $user = null, $notrigger = 0)
 	{
 		global $conf;
 
@@ -325,7 +325,7 @@ class CompanyBankAccount extends Account
 	 * @param   int     $rib    RIB id
 	 * @return  int             0 if KO, 1 if OK
 	 */
-    public function setAsDefault($rib = 0)
+	public function setAsDefault($rib = 0)
 	{
 		$sql1 = "SELECT rowid as id, fk_soc  FROM ".MAIN_DB_PREFIX."societe_rib";
 		$sql1 .= " WHERE rowid = ".($rib ? $rib : $this->id);
@@ -375,7 +375,7 @@ class CompanyBankAccount extends Account
 	 *
 	 *  @return	void
 	 */
-    public function initAsSpecimen()
+	public function initAsSpecimen()
 	{
 		$this->specimen        = 1;
 		$this->ref             = 'CBA';

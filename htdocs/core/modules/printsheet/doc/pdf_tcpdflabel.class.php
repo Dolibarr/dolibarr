@@ -69,7 +69,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 	/**
 	 * write barcode to pdf
 	 *
-	 * @param PDF	  $pdf		  PDF reference
+	 * @param TCPDF	  $pdf		   PDF reference
 	 * @param string  $code		   code to print
 	 * @param string  $encoding	   type of barcode
 	 * @param boolean $is2d		   true if 2d barcode
@@ -91,7 +91,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
 	 *
-	 * @param	PDF			$pdf			PDF reference
+	 * @param	TCPDF		$pdf			PDF reference
 	 * @param	Translate	$outputlangs	Output langs
 	 * @param	array		$param			Associative array containing label content and optional parameters
 	 * @return	void
@@ -257,7 +257,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Function to build PDF on disk, then output on HTTP strem.
 	 *
@@ -270,21 +270,21 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 	 */
 	public function write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir = '', $filename = 'tmp_address_sheet.pdf')
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $user, $conf, $langs, $mysoc, $_Avery_Labels;
 
 		$this->code = $srctemplatepath;
 		$this->Tformat = $_Avery_Labels[$this->code];
 		if (empty($this->Tformat)) { dol_print_error('', 'ErrorBadTypeForCard'.$this->code); exit; }
 		$this->type = 'pdf';
-        // standard format or custom
-        if ($this->Tformat['paper-size'] != 'custom') {
-            $this->format = $this->Tformat['paper-size'];
-        } else {
-            //custom
-            $resolution = array($this->Tformat['custom_x'], $this->Tformat['custom_y']);
-            $this->format = $resolution;
-        }
+		// standard format or custom
+		if ($this->Tformat['paper-size'] != 'custom') {
+			$this->format = $this->Tformat['paper-size'];
+		} else {
+			//custom
+			$resolution = array($this->Tformat['custom_x'], $this->Tformat['custom_y']);
+			$this->format = $resolution;
+		}
 
 		if (!is_object($outputlangs)) $outputlangs = $langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO

@@ -28,18 +28,18 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_graph_invoices_permonth extends ModeleBoxes
 {
-    public $boxcode = "invoicespermonth";
-    public $boximg = "object_bill";
-    public $boxlabel = "BoxCustomersInvoicesPerMonth";
-    public $depends = array("facture");
+	public $boxcode = "invoicespermonth";
+	public $boximg = "object_bill";
+	public $boxlabel = "BoxCustomersInvoicesPerMonth";
+	public $depends = array("facture");
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $info_box_head = array();
-    public $info_box_contents = array();
+	public $info_box_head = array();
+	public $info_box_contents = array();
 
 
 	/**
@@ -61,7 +61,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 	 *  Load data into info_box_contents array to show array later.
 	 *
 	 *  @param	int		$max        Maximum number of records to load
-     *  @return	void
+	 *  @return	void
 	 */
 	public function loadBox($max = 5)
 	{
@@ -112,15 +112,16 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				$shownb = GETPOST($param_shownb, 'alpha');
 				$showtot = GETPOST($param_showtot, 'alpha');
 			} else {
-				$tmparray = json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode], true);
-				$endyear = $tmparray['year'];
-				$shownb = $tmparray['shownb'];
-				$showtot = $tmparray['showtot'];
+			    $tmparray = (!empty($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode]) ? json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode], true) : array());
+			    $endyear = (!empty($tmparray['year']) ? $tmparray['year'] : '');
+			    $shownb = (!empty($tmparray['shownb']) ? $tmparray['shownb'] : '');
+			    $showtot = (!empty($tmparray['showtot']) ? $tmparray['showtot'] : '');
 			}
 			if (empty($shownb) && empty($showtot)) { $shownb = 1; $showtot = 1; }
 			$nowarray = dol_getdate(dol_now(), true);
 			if (empty($endyear)) $endyear = $nowarray['year'];
-			$startyear = $endyear - 1;
+			$startyear = $endyear - (empty($conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH) ? 1 : $conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH);
+
 			$mode = 'customer';
 			$WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '256' : '320';
 			$HEIGHT = '192';
@@ -141,9 +142,9 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				$mesg = $px1->isGraphKo();
 				if (!$mesg)
 				{
-				    $langs->load("bills");
+					$langs->load("bills");
 
-				    $px1->SetData($data1);
+					$px1->SetData($data1);
 					unset($data1);
 					$i = $startyear; $legend = array();
 					while ($i <= $endyear)
@@ -186,7 +187,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				$mesg = $px2->isGraphKo();
 				if (!$mesg)
 				{
-				    $langs->load("bills");
+					$langs->load("bills");
 
 					$px2->SetData($data2);
 					unset($data2);
@@ -269,8 +270,8 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-			    'td' => 'class="nohover opacitymedium left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}
@@ -283,8 +284,8 @@ class box_graph_invoices_permonth extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    public function showBox($head = null, $contents = null, $nooutput = 0)
-    {
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }

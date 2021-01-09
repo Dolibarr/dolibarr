@@ -173,15 +173,15 @@ class modAccounting extends DolibarrModules
 		$this->rights = array(); // Permission array used by this module
 		$r = 0;
 
-        $this->rights[$r][0] = 50440;
-        $this->rights[$r][1] = 'Manage chart of accounts, setup of accountancy';
-        $this->rights[$r][2] = 'r';
-        $this->rights[$r][3] = 0;
-        $this->rights[$r][4] = 'chartofaccount';
-        $this->rights[$r][5] = '';
-        $r++;
+		$this->rights[$r][0] = 50440;
+		$this->rights[$r][1] = 'Manage chart of accounts, setup of accountancy';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'chartofaccount';
+		$this->rights[$r][5] = '';
+		$r++;
 
-        $this->rights[$r][0] = 50401;
+		$this->rights[$r][0] = 50401;
 		$this->rights[$r][1] = 'Bind products and invoices with accounting accounts';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
@@ -205,29 +205,29 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][5] = 'creer';
 		$r++;
 
-        $this->rights[$r][0] = 50414;
-        $this->rights[$r][1] = 'Delete operations in Ledger';
-        $this->rights[$r][2] = 'd';
-        $this->rights[$r][3] = 0;
-        $this->rights[$r][4] = 'mouvements';
-        $this->rights[$r][5] = 'supprimer';
-        $r++;
+		$this->rights[$r][0] = 50414;
+		$this->rights[$r][1] = 'Delete operations in Ledger';
+		$this->rights[$r][2] = 'd';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'mouvements';
+		$this->rights[$r][5] = 'supprimer';
+		$r++;
 
-        $this->rights[$r][0] = 50415;
-        $this->rights[$r][1] = 'Delete all operations by year and journal in Ledger';
-        $this->rights[$r][2] = 'd';
-        $this->rights[$r][3] = 0;
-        $this->rights[$r][4] = 'mouvements';
-        $this->rights[$r][5] = 'supprimer_tous';
-        $r++;
+		$this->rights[$r][0] = 50415;
+		$this->rights[$r][1] = 'Delete all operations by year and journal in Ledger';
+		$this->rights[$r][2] = 'd';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'mouvements';
+		$this->rights[$r][5] = 'supprimer_tous';
+		$r++;
 
-        $this->rights[$r][0] = 50418;
-        $this->rights[$r][1] = 'Export operations of the Ledger';
-        $this->rights[$r][2] = 'r';
-        $this->rights[$r][3] = 0;
-        $this->rights[$r][4] = 'mouvements';
-        $this->rights[$r][5] = 'export';
-        $r++;
+		$this->rights[$r][0] = 50418;
+		$this->rights[$r][1] = 'Export operations of the Ledger';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'mouvements';
+		$this->rights[$r][5] = 'export';
+		$r++;
 
 		$this->rights[$r][0] = 50420;
 		$this->rights[$r][1] = 'Report and export reports (turnover, balance, journals, ledger)';
@@ -258,13 +258,13 @@ class modAccounting extends DolibarrModules
 		$this->export_label[$r] = 'Chartofaccounts';
 		$this->export_icon[$r] = 'accounting';
 		$this->export_permission[$r] = array(array("accounting", "chartofaccount"));
-		$this->export_fields_array[$r] = array('ac.rowid'=>'ChartofaccountsId', 'ac.pcg_version'=>'Chartofaccounts', 'aa.rowid'=>'Id', 'aa.account_number'=>"AccountAccounting", 'aa.label'=>"Label", 'aa.account_parent'=>"Accountparent", 'aa.pcg_type'=>"Pcgtype", 'aa.active'=>'Status');
-		$this->export_TypeFields_array[$r] = array('ac.rowid'=>'List:accounting_system:pcg_version', 'aa.account_number'=>"Text", 'aa.label'=>"Text", 'aa.account_parent'=>"Text", 'aa.pcg_type'=>'Text', 'aa.active'=>'Status');
+		$this->export_fields_array[$r] = array('ac.rowid'=>'ChartofaccountsId', 'ac.pcg_version'=>'Chartofaccounts', 'aa.rowid'=>'ID', 'aa.account_number'=>"AccountAccounting", 'aa.label'=>"Label", 'aa.account_parent'=>"Accountparent", 'aa.pcg_type'=>"Pcgtype", 'aa.active'=>'Status');
+		$this->export_TypeFields_array[$r] = array('ac.rowid'=>'List:accounting_system:pcg_version', 'ac.pcg_version'=>'Text', 'aa.rowid'=>'Numeric', 'aa.account_number'=>"Text", 'aa.label'=>"Text", 'aa.account_parent'=>"Text", 'aa.pcg_type'=>'Text', 'aa.active'=>'Status');
 		$this->export_entities_array[$r] = array('ac.rowid'=>"Accounting", 'ac.pcg_version'=>"Accounting", 'aa.rowid'=>'Accounting', 'aa.account_number'=>"Accounting", 'aa.label'=>"Accounting", 'aa.accountparent'=>"Accounting", 'aa.pcg_type'=>"Accounting", 'aa_active'=>"Accounting");
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'accounting_account as aa';
-        $this->export_sql_end[$r] .= ' ,'.MAIN_DB_PREFIX.'accounting_system as ac';
+		$this->export_sql_end[$r] .= ' ,'.MAIN_DB_PREFIX.'accounting_system as ac';
 		$this->export_sql_end[$r] .= ' WHERE ac.pcg_version = aa.fk_pcg_version AND aa.entity IN ('.getEntity('accounting').') ';
 
 
@@ -284,33 +284,33 @@ class modAccounting extends DolibarrModules
 			'b.doc_date'=>"Docdate",
 			//'b.doc_type'=>'Doctype',
 			'b.doc_ref'=>'Piece',
-            'b.code_journal'=>'Codejournal',
-            //'b.journal_label'=>'JournalLabel',
-            'b.numero_compte'=>'AccountAccounting',
-            //'b.label_compte'=>'LabelAccount',
-            'b.subledger_account'=>'SubledgerAccount',
-            'b.subledger_label'=>'SubledgerAccountLabel',
-            'b.label_operation'=>'LabelOperation',
-            'b.debit'=>"Debit",
-            'b.credit'=>"Credit"
-        );
+			'b.code_journal'=>'Codejournal',
+			//'b.journal_label'=>'JournalLabel',
+			'b.numero_compte'=>'AccountAccounting',
+			//'b.label_compte'=>'LabelAccount',
+			'b.subledger_account'=>'SubledgerAccount',
+			'b.subledger_label'=>'SubledgerAccountLabel',
+			'b.label_operation'=>'LabelOperation',
+			'b.debit'=>"Debit",
+			'b.credit'=>"Credit"
+		);
 		$this->import_fieldshidden_array[$r] = array('b.doc_type'=>'const-import_from_external', 'b.fk_doc'=>'const-0', 'b.fk_docdet'=>'const-0', 'b.fk_user_author'=>'user->id', 'b.date_creation'=>'const-'.dol_print_date(dol_now(), 'standard')); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_regex_array[$r] = array('b.doc_date'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
 		$this->import_examplevalues_array[$r] = array(
-		    'b.piece_num'=>'123 (!!! use next value not already used)',
+			'b.piece_num'=>'123 (!!! use next value not already used)',
 			'b.doc_date'=>dol_print_date(dol_now(), "%Y-%m-%d"),
 			//'b.doc_type'=>'import',
 			'b.doc_ref'=>'My document ABC',
-            'b.code_journal'=>"VTE",
-            //'b.journal_label'=>"Sale journal",
-            'b.numero_compte'=>"707",
-            //'b.label_compte'=>'Product account 707',
-            'b.subledger_account'=>'',
-            'b.subledger_label'=>'',
-            'b.label_operation'=>"Sale of ABC",
-            'b.debit'=>"0",
-            'b.credit'=>"100"
-        );
+			'b.code_journal'=>"VTE",
+			//'b.journal_label'=>"Sale journal",
+			'b.numero_compte'=>"707",
+			//'b.label_compte'=>'Product account 707',
+			'b.subledger_account'=>'',
+			'b.subledger_label'=>'',
+			'b.label_operation'=>"Sale of ABC",
+			'b.debit'=>"0",
+			'b.credit'=>"100"
+		);
 
 		// Chart of accounts
 		$r++;
@@ -323,8 +323,8 @@ class modAccounting extends DolibarrModules
 		$this->import_fields_array[$r] = array('aa.fk_pcg_version'=>"Chartofaccounts*", 'aa.account_number'=>"AccountAccounting*", 'aa.label'=>"Label*", 'aa.account_parent'=>"Accountparent", "aa.fk_accounting_category"=>"AccountingCategory", "aa.pcg_type"=>"Pcgtype*", 'aa.active'=>'Status*', 'aa.datec'=>"DateCreation");
 		$this->import_regex_array[$r] = array('aa.fk_pcg_version'=>'pcg_version@'.MAIN_DB_PREFIX.'accounting_system', 'aa.account_number'=>'^.{1,32}$', 'aa.label'=>'^.{1,255}$', 'aa.account_parent'=>'^.{0,32}$', 'aa.fk_accounting_category'=>'rowid@'.MAIN_DB_PREFIX.'c_accounting_category', 'aa.pcg_type'=>'^.{1,20}$', 'aa.active'=>'^0|1$', 'aa.datec'=>'^\d{4}-\d{2}-\d{2}$');
 		$this->import_convertvalue_array[$r] = array(
-		    'aa.account_parent'=>array('rule'=>'fetchidfromref', 'classfile'=>'/accountancy/class/accountingaccount.class.php', 'class'=>'AccountingAccount', 'method'=>'fetch', 'element'=>'AccountingAccount'),
-		    'aa.fk_accounting_category'=>array('rule'=>'fetchidfromcodeorlabel', 'classfile'=>'/accountancy/class/accountancycategory.class.php', 'class'=>'AccountancyCategory', 'method'=>'fetch', 'dict'=>'DictionaryAccountancyCategory'),
+			'aa.account_parent'=>array('rule'=>'fetchidfromref', 'classfile'=>'/accountancy/class/accountingaccount.class.php', 'class'=>'AccountingAccount', 'method'=>'fetch', 'element'=>'AccountingAccount'),
+			'aa.fk_accounting_category'=>array('rule'=>'fetchidfromcodeorlabel', 'classfile'=>'/accountancy/class/accountancycategory.class.php', 'class'=>'AccountancyCategory', 'method'=>'fetch', 'dict'=>'DictionaryAccountancyCategory'),
 		);
 		$this->import_examplevalues_array[$r] = array('aa.fk_pcg_version'=>"PCG99-ABREGE", 'aa.account_number'=>"707", 'aa.label'=>"Product sales", 'aa.account_parent'=>"ref:7 or id:1407", "aa.fk_accounting_category"=>"", "aa.pcg_type"=>"PROD", 'aa.active'=>'1', 'aa.datec'=>"2017-04-28");
 		$this->import_updatekeys_array[$r] = array('aa.fk_pcg_version'=>'Chartofaccounts', 'aa.account_number'=>'AccountAccounting');

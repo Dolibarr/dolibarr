@@ -30,9 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/holiday/modules_holiday.php';
 class mod_holiday_madonna extends ModelNumRefHolidays
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr';
 
 	public $prefix = 'HL';
@@ -65,11 +65,11 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	 *
 	 *	@return     string      text description
 	 */
-    public function info()
-    {
-    	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
-    }
+	public function info()
+	{
+		global $langs;
+	  	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+	}
 
 
 	/**
@@ -94,7 +94,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 
 		$coyymm = ''; $max = '';
 
-		$posindice = 8;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
@@ -127,7 +127,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	{
 		global $db, $conf;
 
-		$posindice = 8;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
@@ -155,7 +155,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return next value
 	 *
@@ -165,7 +165,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	 */
 	public function holiday_get_num($fuser, $objforref)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		return $this->getNextValue($fuser, $objforref);
 	}
 }
