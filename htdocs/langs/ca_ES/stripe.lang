@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Configuració del mòdul Stripe
-StripeDesc=Ofereix als clients una pàgina de pagament en línia de Stripe per als pagaments amb targetes credit / cebit a través de <a href="http://www.stripe.com" target="_blank"> Stripe </a>. Això es pot utilitzar per permetre als vostres clients fer pagaments ad-hoc o pagaments relacionats amb un objecte particular de Dolibarr (factura, comanda ...)
+StripeDesc=Ofereix als clients una pàgina de pagaments en línia de Stripe per als pagaments amb targetes de crèdit/dèbit mitjançant <a href="http://www.stripe.com" target="_blank">Stripe</a>. Es pot utilitzar per a permetre als clients fer pagaments ad-hoc o per a pagaments relacionats amb un objecte Dolibarr concret (factura, comanda, ...)
 StripeOrCBDoPayment=Pagar amb targeta de crèdit o Stripe
 FollowingUrlAreAvailableToMakePayments=Les següents URL estan disponibles per a permetre a un client fer un cobrament en objectes de Dolibarr
 PaymentForm=Formulari de pagament
@@ -22,24 +22,24 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL per oferir una pàgina de pagamen
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL per oferir una pàgina de pagament en línia %s de qualsevol quantitat sense cap objecte associat
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL per oferir una pàgina de pagament en línia %s per a una subscripció per membres
 ToOfferALinkForOnlinePaymentOnDonation=URL per oferir una pàgina de pagament en línia %s per al pagament d’una donació
-YouCanAddTagOnUrl=També podeu afegir el paràmetre URL <b>&tag= <i>valor</i> </b> a qualsevol d'aquestes URLs (obligatori només per al pagament no vinculat a cap objecte) per afegir la vostra pròpia etiqueta de comentari de pagament. <br> Per a la URL de pagaments no vinculta a cap objecte existent, també podeu afegir el paràmetre <strong>&noidempotency=1</strong> de manera que el mateix enllaç amb una mateixa etiqueta es pot utilitzar diverses vegades (alguns modes de pagament poden limitar els intents de pagament a 1 per a cada enllaç si no s'utilitza aquest paràmetre)
+YouCanAddTagOnUrl=També podeu afegir el paràmetre URL <b> &tag=<i>valor</i></b> a qualsevol d’aquests URL (obligatori només per al pagament que no estigui vinculat a un objecte) per a afegir la vostra pròpia etiqueta de comentari de pagament. <br>Per a l'URL de pagaments sense objecte existent, també podeu afegir el paràmetre <strong> &noidempotency=1 </strong>, de manera que es pot utilitzar el mateix enllaç amb la mateixa etiqueta diverses vegades (alguns modes de pagament poden limitar el pagament a 1 per a cada enllaç diferent sense aquest paràmetre)
 SetupStripeToHavePaymentCreatedAutomatically=Configureu el vostre Stripe amb l'URL <b>%s</b> per fer que el pagament es creï automàticament quan es valide mitjançant Stripe.
 AccountParameter=Paràmetres del compte
 UsageParameter=Paràmetres d'ús
 InformationToFindParameters=Informació per trobar la seva configuració de compte %s
 STRIPE_CGI_URL_V2=URL CGI del mòdul Stripe per al pagament
 CSSUrlForPaymentForm=Url del full d'estil CSS per al formulari de pagament
-NewStripePaymentReceived=S'ha rebut un nou pagament de Stripe
-NewStripePaymentFailed=S'ha intentat el pagament de Stripe però, ha fallat
+NewStripePaymentReceived=S'ha rebut un pagament nou de Stripe
+NewStripePaymentFailed=S'ha intentat el pagament nou de Stripe, però ha fallat
 FailedToChargeCard=No s'ha pogut fer el càrrec a la targeta
 STRIPE_TEST_SECRET_KEY=Clau secreta de test
 STRIPE_TEST_PUBLISHABLE_KEY=Clau de test publicable
 STRIPE_TEST_WEBHOOK_KEY=Clau de prova de Webhook
 STRIPE_LIVE_SECRET_KEY=Clau secreta
-STRIPE_LIVE_PUBLISHABLE_KEY=Clau pubicable
+STRIPE_LIVE_PUBLISHABLE_KEY=Clau publicable
 STRIPE_LIVE_WEBHOOK_KEY=Webhook clau en directe
 ONLINE_PAYMENT_WAREHOUSE=Les existències per utilitzar per disminuir les existències quan es fa el pagament en línia <br> (Pendent de fer Quan es fa una opció per reduir l'estoc en una acció a la factura i es genera la factura el pagament en línia?)
-StripeLiveEnabled=Stripe live activat (del contrari en mode test/sandbox)
+StripeLiveEnabled=Stripe live activat (en cas contrari, mode de prova/sandbox)
 StripeImportPayment=Importar pagaments per Stripe
 ExampleOfTestCreditCard=Exemple de targeta de crèdit per a la prova: %s => vàlid, %s => error CVC, %s => caducat, %s => falla la càrrega
 StripeGateways=Passarel·les Stripe

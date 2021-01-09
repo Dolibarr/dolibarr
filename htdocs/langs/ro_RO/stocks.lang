@@ -240,3 +240,4 @@ InventoryRealQtyHelp=Setați valoarea la 0 pentru a reseta câmpul cantitate<br>
 UpdateByScaning=Actualizare prin scanare
 UpdateByScaningProductBarcode=Actualizare prin scanare (cod de bare produs)
 UpdateByScaningLot=Actualizare prin scanare (cod de bare lot|serie)
+DisableStockChangeOfSubProduct= Dezactivare modificare de stoc pentru toate subprodusele acestui kit în timpul acestei mișcări.

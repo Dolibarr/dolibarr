@@ -97,7 +97,6 @@ TicketChangeStatus=Alterar status
 TicketConfirmChangeStatus=Confirma alteração de situação %s ?
 TicketLogStatusChanged=Situação modificada  de%s para %s
 TicketNotCreatedFromPublicInterface=Não disponível. O ticket não foi criado a partir da interface pública.
-PublicInterfaceNotEnabled=A interface pública não foi ativada
 ErrorTicketRefRequired=O nome de referência do ticket é obrigatório
 TicketLogMesgReadBy=Tíquete %s lido por %s
 TicketLogAssignedTo=Tíquete %s assinalado para %s

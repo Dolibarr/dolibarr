@@ -30,6 +30,7 @@ OtherSendingsForSameOrder=Other shipments for this order
 SendingsAndReceivingForSameOrder=Shipments and receipts for this order
 SendingsToValidate=Shipments to validate
 StatusSendingCanceled=Canceled
+StatusSendingCanceledShort=Canceled
 StatusSendingDraft=Draft
 StatusSendingValidated=Validated (products to ship or already shipped)
 StatusSendingProcessed=Processed
@@ -65,6 +66,7 @@ ValidateOrderFirstBeforeShipment=You must first validate the order before being 
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=More complete document model for delivery receipts (logo...)
+DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER not defined
 SumOfProductVolumes=Sum of product volumes
 SumOfProductWeights=Sum of product weights
