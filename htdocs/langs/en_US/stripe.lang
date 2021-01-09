@@ -28,7 +28,6 @@ AccountParameter=Account parameters
 UsageParameter=Usage parameters
 InformationToFindParameters=Help to find your %s account information
 STRIPE_CGI_URL_V2=Url of Stripe CGI module for payment
-VendorName=Name of vendor
 CSSUrlForPaymentForm=CSS style sheet url for payment form
 NewStripePaymentReceived=New Stripe payment received
 NewStripePaymentFailed=New Stripe payment tried but failed

@@ -28,13 +28,13 @@
 class ExtraLanguages
 {
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
 	/**
-     * @var array New array to store extralanguages definition
-     */
+	 * @var array New array to store extralanguages definition
+	 */
 	public $attributes;
 
 	/**
@@ -47,7 +47,7 @@ class ExtraLanguages
 	 */
 	public $errors = array();
 
-    /**
+	/**
 	 * @var string DB Error number
 	 */
 	public $errno;
@@ -57,7 +57,7 @@ class ExtraLanguages
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
-	*/
+	 */
 	public function __construct($db)
 	{
 		$this->db = $db;
@@ -67,11 +67,11 @@ class ExtraLanguages
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Load array this->attributes with list of fields per object that need an alternate translation. The object and field must be managed with
 	 *  the widgetForTranslation() method.
-	 *  You can set variable MAIN_USE_ALTERNATE_TRANSLATION_FOR=elementA:fieldname,fieldname2;elementB:...
+	 *  You must set variable MAIN_USE_ALTERNATE_TRANSLATION_FOR=elementA:fieldname,fieldname2;elementB:...
 	 *  Example: MAIN_USE_ALTERNATE_TRANSLATION_FOR=societe:name,town;contact:firstname,lastname
 	 *
 	 * 	@param	string		$elementtype		Type of element ('' = all, 'adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
@@ -80,7 +80,7 @@ class ExtraLanguages
 	 */
 	public function fetch_name_extralanguages($elementtype, $forceload = false)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		if (empty($elementtype)) return array();

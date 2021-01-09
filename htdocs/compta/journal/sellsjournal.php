@@ -109,7 +109,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = fd.fk_product";
 $sql .= " JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 $sql .= " JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva ct ON fd.tva_tx = ct.taux AND fd.info_bits = ct.recuperableonly AND ct.fk_pays = '".$idpays."'";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva ct ON fd.tva_tx = ct.taux AND fd.info_bits = ct.recuperableonly AND ct.fk_pays = ".((int) $idpays);
 $sql .= " WHERE f.entity IN (".getEntity('invoice').")";
 $sql .= " AND f.fk_statut > 0";
 if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
@@ -143,10 +143,10 @@ if ($result)
    	$resligne = array();
    	while ($i < $num)
    	{
-   	    $obj = $db->fetch_object($result);
-   	    // les variables
-   	    $cptcli = (($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER != "") ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : $langs->trans("CodeNotDef"));
-   	    $compta_soc = (!empty($obj->code_compta) ? $obj->code_compta : $cptcli);
+   		$obj = $db->fetch_object($result);
+   		// les variables
+   		$cptcli = (($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER != "") ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : $langs->trans("CodeNotDef"));
+   		$compta_soc = (!empty($obj->code_compta) ? $obj->code_compta : $cptcli);
 		$compta_prod = $obj->accountancy_code_sell;
 		if (empty($compta_prod))
 		{
@@ -170,14 +170,14 @@ if ($result)
 			if ($obj->situation_percent == 0) {
 				$situation_ratio = 0;
 			} else {
-		        $prev_progress = $line->get_prev_progress($obj->rowid); // id on invoice
-			    $situation_ratio = ($obj->situation_percent - $prev_progress) / $obj->situation_percent;
+				$prev_progress = $line->get_prev_progress($obj->rowid); // id on invoice
+				$situation_ratio = ($obj->situation_percent - $prev_progress) / $obj->situation_percent;
 			}
 		} else {
 			$situation_ratio = 1;
 		}
 
-    	//la ligne facture
+		//la ligne facture
    		$tabfac[$obj->rowid]["date"] = $obj->datef;
    		$tabfac[$obj->rowid]["ref"] = $obj->ref;
    		$tabfac[$obj->rowid]["type"] = $obj->type;
@@ -195,7 +195,7 @@ if ($result)
    		$i++;
    	}
 } else {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 
@@ -268,7 +268,7 @@ foreach ($tabfac as $key => $val)
 					print '<td class="right">'.($mt < 0 ?price(-$mt) : '')."</td>";
 				} else {
 					print '<td class="right">'.($mt < 0 ?price(-$mt) : '')."</td>";
-	    			print '<td class="right">'.($mt >= 0 ?price($mt) : '')."</td>";
+					print '<td class="right">'.($mt >= 0 ?price($mt) : '')."</td>";
 				}
 
 				print "</tr>";

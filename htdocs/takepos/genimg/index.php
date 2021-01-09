@@ -83,7 +83,7 @@ if ($query == "cat")
 		}
 	}
 } else {
-    // TODO We don't need this. Size of image must be defined on HTML page, image must NOT be resize when downloaded.
+	// TODO We don't need this. Size of image must be defined on HTML page, image must NOT be resize when downloaded.
 
 	// The file
 	$filename = $query.".jpg";

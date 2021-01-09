@@ -22,6 +22,9 @@
  * \ingroup facture
  * \brief Script to rebuild PDF and merge PDF files into one
  */
+
+if (!defined('NOSESSION')) define('NOSESSION', '1');
+
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = __DIR__.'/';

@@ -114,7 +114,7 @@ if ($this->control->tpl['fournisseur']) {
 	<td colspan="3"><?php echo $this->control->tpl['select_suppliercategory']; ?></td>
 </tr>
 		<?php
-    }
+	}
 }
 ?>
 
@@ -179,9 +179,9 @@ if ($this->control->tpl['fournisseur']) {
 <br>
 
 <div class="center">
-<input type="submit" class="button" name="save" value="<?php echo $langs->trans("Save"); ?>">
+<input type="submit" class="button button-save" name="save" value="<?php echo $langs->trans("Save"); ?>">
 &nbsp; &nbsp;
-<input type="submit" class="button" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
+<input type="submit" class="button button-cancel" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
 </div>
 
 </form>

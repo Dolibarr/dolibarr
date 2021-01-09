@@ -43,5 +43,5 @@ create table llx_extrafields
 	fk_user_author	integer,									-- user making creation
 	fk_user_modif	integer,	                                -- user making last change
 	datec			datetime,									-- date de creation
-	tms             timestamp									-- date of last update
+	tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP									-- last modification date
 )ENGINE=innodb;

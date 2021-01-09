@@ -216,6 +216,8 @@ class AllTests
 
         require_once dirname(__FILE__).'/RestAPIUserTest.php';
         $suite->addTestSuite('RestAPIUserTest');
+        require_once dirname(__FILE__).'/RestAPIDocumentTest.php';
+        $suite->addTestSuite('RestAPIDocumentTest');
 
         // Test only with php7.2 or less
         //if ((float) phpversion() < 7.3)
@@ -242,11 +244,6 @@ class AllTests
         require_once dirname(__FILE__).'/ScriptsTest.php';
         $suite->addTestSuite('ScriptsTest');
 
-        require_once dirname(__FILE__).'/FormAdminTest.php';
-        $suite->addTestSuite('FormAdminTest');
-        require_once dirname(__FILE__).'/FormTest.php';
-        $suite->addTestSuite('FormTest');
-
         require_once dirname(__FILE__).'/ModulesTest.php';  // At end because it's the longer
         $suite->addTestSuite('ModulesTest');
 
@@ -254,10 +251,15 @@ class AllTests
         // GUI
         require_once dirname(__FILE__).'/FormAdminTest.php';
         $suite->addTestSuite('FormAdminTest');
+        require_once dirname(__FILE__).'/FormTest.php';
+        $suite->addTestSuite('FormTest');
 
 
+        // Payment services
         require_once dirname(__FILE__).'/PaypalTest.php';
         $suite->addTestSuite('PaypalTest');
+        require_once dirname(__FILE__).'/StripeTest.php';
+        $suite->addTestSuite('StripeTest');
 
         return $suite;
     }

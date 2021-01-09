@@ -32,7 +32,7 @@ create table llx_commande
   fk_soc					integer NOT NULL,
   fk_projet					integer DEFAULT NULL,			-- projet auquel est rattache la commande
 
-  tms						timestamp,
+  tms						timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   date_creation				datetime,						-- date de creation 
   date_valid				datetime,						-- date de validation
   date_cloture				datetime,						-- date de cloture

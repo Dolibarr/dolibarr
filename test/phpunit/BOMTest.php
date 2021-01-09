@@ -148,4 +148,30 @@ class BOMTest extends PHPUnit\Framework\TestCase
 
 		return $result;
 	}
+
+	/**
+	 * testBOMDelete
+	 *
+	 * @param	int		$id		Id of object
+	 * @return	void
+	 *
+	 * @depends	testBOMCreate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testBOMDelete($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$localobject=new BOM($this->savdb);
+		$result=$localobject->fetch($id);
+		$result=$localobject->delete($user);
+
+		print __METHOD__." id=".$id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		return $result;
+	}
 }

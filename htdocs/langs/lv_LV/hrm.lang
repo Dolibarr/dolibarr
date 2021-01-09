@@ -9,9 +9,11 @@ ConfirmDeleteEstablishment=Vai tiešām vēlaties dzēst šo uzņēmumu?
 OpenEtablishment=Atvērts uzņēmums
 CloseEtablishment=Aizvērt uzņēmumu
 # Dictionary
+DictionaryPublicHolidays=HRM - svētku dienas
 DictionaryDepartment=HRM - Department list
-DictionaryFunction=HRM - Function list
+DictionaryFunction=HRM - darba vietas
 # Module
 Employees=Darbinieki
 Employee=Darbinieks
 NewEmployee=Jauns darbinieks
+ListOfEmployees=Darbinieku saraksts

@@ -35,11 +35,11 @@ $langs->loadLangs(array('resource', 'companies', 'other', 'main'));
 
 // Get parameters
 $id						= GETPOST('id', 'int');
-$action					= GETPOST('action', 'alpha');
+$action					= GETPOST('action', 'aZ09');
 $cancel					= GETPOST('cancel', 'alpha');
 $ref					= GETPOST('ref', 'alpha');
-$description			= GETPOST('description');
-$confirm				= GETPOST('confirm');
+$description			= GETPOST('description', 'restricthtml');
+$confirm				= GETPOST('confirm', 'aZ09');
 $fk_code_type_resource = GETPOST('fk_code_type_resource', 'alpha');
 $country_id				= GETPOST('country_id', 'int');
 
@@ -212,10 +212,10 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0)
 	if ($action == 'create')
 	{
 		print load_fiche_titre($title, '', 'object_resource');
-		dol_fiche_head('');
+		print dol_get_fiche_head('');
 	} else {
 		$head = resource_prepare_head($object);
-		dol_fiche_head($head, 'resource', $title, -1, 'resource');
+		print dol_get_fiche_head($head, 'resource', $title, -1, 'resource');
 	}
 
 	if ($action == 'create' || $action == 'edit')
@@ -257,7 +257,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0)
 		// Other attributes
 		$parameters = array('objectsrc' => $objectsrc);
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
+		print $hookmanager->resPrint;
 		if (empty($reshook))
 		{
 			print $object->showOptionals($extrafields, 'edit');
@@ -265,12 +265,12 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0)
 
 		print '</table>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" class="button" name="save" value="'.$langs->trans($action == "create" ? "Create" : "Modify").'">';
 		print ' &nbsp; &nbsp; ';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 		print '</div>';
 
@@ -279,27 +279,27 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0)
 		$formconfirm = '';
 
 		// Confirm deleting resource line
-	    if ($action == 'delete')
-	    {
-	        $formconfirm = $form->formconfirm("card.php?&id=".$object->id, $langs->trans("DeleteResource"), $langs->trans("ConfirmDeleteResource"), "confirm_delete_resource", '', '', 1);
-	    }
+		if ($action == 'delete')
+		{
+			$formconfirm = $form->formconfirm("card.php?&id=".$object->id, $langs->trans("DeleteResource"), $langs->trans("ConfirmDeleteResource"), "confirm_delete_resource", '', '', 1);
+		}
 
-	    // Print form confirm
-	    print $formconfirm;
-
-
-	    $linkback = '<a href="'.DOL_URL_ROOT.'/resource/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&id='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+		// Print form confirm
+		print $formconfirm;
 
 
-	    $morehtmlref = '<div class="refidno">';
-	    $morehtmlref .= '</div>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/resource/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&id='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 
-	    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+		$morehtmlref = '<div class="refidno">';
+		$morehtmlref .= '</div>';
 
 
-	    print '<div class="fichecenter">';
-	    print '<div class="underbanner clearboth"></div>';
+		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+
+
+		print '<div class="fichecenter">';
+		print '<div class="underbanner clearboth"></div>';
 
 		/*---------------------------------------
 		 * View object
@@ -340,7 +340,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0)
 
 		print '<div class="clearboth"></div><br>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 	}
 
 
@@ -365,13 +365,13 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0)
 		}
 		if ($action != "delete" && $action != "create" && $action != "edit")
 		{
-		    // Delete resource
-		    if ($user->rights->resource->delete)
-		    {
-		        print '<div class="inline-block divButAction">';
-		        print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=delete" class="butActionDelete">'.$langs->trans('Delete').'</a>';
-		        print '</div>';
-		    }
+			// Delete resource
+			if ($user->rights->resource->delete)
+			{
+				print '<div class="inline-block divButAction">';
+				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=delete&amp;token='.newToken().'" class="butActionDelete">'.$langs->trans('Delete').'</a>';
+				print '</div>';
+			}
 		}
 	}
 	print '</div>';

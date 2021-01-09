@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - contracts
-ContractsArea=Секция за договори
+ContractsArea=Секция с договори
 ListOfContracts=Списък на договори
 AllContracts=Всички договори
 ContractCard=Договор
@@ -28,7 +28,7 @@ MenuRunningServices=Активни услуги
 MenuExpiredServices=Изтекли услуги
 MenuClosedServices=Прекратени услуги
 NewContract=Нов договор
-NewContractSubscription=Нов договор / абонамент
+NewContractSubscription=New contract or subscription
 AddContract=Създаване на договор
 DeleteAContract=Изтриване на договор
 ActivateAllOnContract=Активиране на всички услуги
@@ -99,3 +99,6 @@ TypeContact_contrat_internal_SALESREPFOLL=Търговски представи�
 TypeContact_contrat_external_BILLING=Контакт на клиента за фактуриране
 TypeContact_contrat_external_CUSTOMER=Контакт на клиента (проследяващ)
 TypeContact_contrat_external_SALESREPSIGN=Контакт на клиента (подписващ)
+HideClosedServiceByDefault=Hide closed services by default
+ShowClosedServices=Show Closed Services
+HideClosedServices=Hide Closed Services

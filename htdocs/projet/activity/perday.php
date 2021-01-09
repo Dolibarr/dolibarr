@@ -48,8 +48,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'per
 $mine = 0;
 if ($mode == 'mine') $mine = 1;
 
-$projectid = '';
-$projectid = isset($_GET["id"]) ? $_GET["id"] : $_POST["projectid"];
+$projectid = isset($_GET["id"]) ? GETPOST("id", "int", 1) : GETPOST("projectid", "int");
 
 $hookmanager->initHooks(array('timesheetperdaycard'));
 
@@ -128,10 +127,10 @@ $arrayfields['t.progress'] = array('label'=>'ProgressDeclared', 'checked'=>1, 'e
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-    {
-    	if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-    		$arrayfields["efpt.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-    }
+	{
+		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["efpt.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs((int) $extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+	}
 }
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -159,8 +158,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_thirdparty = '';
 	$search_declared_progress = '';
 
-    $search_array_options_project = array();
-    $search_array_options_task = array();
+	$search_array_options_project = array();
+	$search_array_options_task = array();
 
 	// We redefine $usertoprocess
 	$usertoprocess = $user;
@@ -263,6 +262,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 		{
 			if (intval($time) > 0)
 			{
+				$matches = array();
 				// Hours or minutes of duration
 				if (preg_match("/([0-9]+)duration(hour|min)/", $key, $matches))
 				{
@@ -285,6 +285,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 		foreach ($timespent_duration as $key => $val)
 		{
 			$object->fetch($key);
+			$taskid = $object->id;
 
 			if (GETPOSTISSET($taskid.'progress')) $object->progress = GETPOST($taskid.'progress', 'int');
 			else unset($object->progress);
@@ -292,9 +293,9 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 			$object->timespent_duration = $val;
 			$object->timespent_fk_user = $usertoprocess->id;
 			$object->timespent_note = GETPOST($key.'note');
-			if (GETPOST($key."hour") != '' && GETPOST($key."hour") >= 0)	// If hour was entered
+			if (GETPOST($key."hour", 'int') != '' && GETPOST($key."hour", 'int') >= 0)	// If hour was entered
 			{
-				$object->timespent_datehour = dol_mktime(GETPOST($key."hour"), GETPOST($key."min"), 0, $monthofday, $dayofday, $yearofday);
+				$object->timespent_datehour = dol_mktime(GETPOST($key."hour", 'int'), GETPOST($key."min", 'int'), 0, $monthofday, $dayofday, $yearofday);
 				$object->timespent_withhour = 1;
 			} else {
 				$object->timespent_datehour = dol_mktime(12, 0, 0, $monthofday, $dayofday, $yearofday);
@@ -446,7 +447,7 @@ print '<input type="hidden" name="addtimemonth" value="'.$tmp['mon'].'">';
 print '<input type="hidden" name="addtimeday" value="'.$tmp['mday'].'">';
 
 $head = project_timesheet_prepare_head($mode, $usertoprocess);
-dol_fiche_head($head, 'inputperday', $langs->trans('TimeSpent'), -1, 'task');
+print dol_get_fiche_head($head, 'inputperday', $langs->trans('TimeSpent'), -1, 'projecttask');
 
 // Show description of content
 print '<div class="hideonsmartphone opacitymedium">';
@@ -466,7 +467,7 @@ if ($mine || ($usertoprocess->id == $user->id))
 }
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 print '<div class="floatright right'.($conf->dol_optimize_smallscreen ? ' centpercent' : '').'">'.$nav.'</div>'; // We move this before the assign to components so, the default submit button is not the assign to.
@@ -537,7 +538,7 @@ if (!empty($arrayfields['t.planned_workload']['checked'])) $addcolspan++;
 if (!empty($arrayfields['t.progress']['checked'])) $addcolspan++;
 foreach ($arrayfields as $key => $val)
 {
-    if ($val['checked'] && substr($key, 0, 5) == 'efpt.') $addcolspan++;
+	if ($val['checked'] && substr($key, 0, 5) == 'efpt.') $addcolspan++;
 }
 
 print '<div class="div-table-responsive">';
@@ -555,11 +556,11 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 print '<td class="liste_titre"></td>';
 if (!empty($arrayfields['t.planned_workload']['checked']))
 {
-    print '<td class="liste_titre right"><input type="text" size="4" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
+	print '<td class="liste_titre right"><input type="text" size="4" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
 }
 if (!empty($arrayfields['t.progress']['checked']))
 {
-    print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"></td>';
 }
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
@@ -582,11 +583,11 @@ $extrafieldsobjectprefix = 'efpt.';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 if (!empty($arrayfields['t.planned_workload']['checked']))
 {
-    print '<th class="right leftborder plannedworkload maxwidth100">'.$langs->trans("PlannedWorkload").'</th>';
+	print '<th class="right leftborder plannedworkload maxwidth100">'.$langs->trans("PlannedWorkload").'</th>';
 }
 if (!empty($arrayfields['t.progress']['checked']))
 {
-    print '<th class="right maxwidth100">'.$langs->trans("ProgressDeclared").'</th>';
+	print '<th class="right maxwidth100">'.$langs->trans("ProgressDeclared").'</th>';
 }
 /*print '<td class="right maxwidth100">'.$langs->trans("TimeSpent").'</td>';
 if ($usertoprocess->id == $user->id) print '<td class="right maxwidth100">'.$langs->trans("TimeSpentByYou").'</td>';
@@ -610,20 +611,24 @@ if (!empty($conf->global->MAIN_DEFAULT_WORKING_DAYS))
 	}
 }
 
-$statusofholidaytocheck = '3';
+$statusofholidaytocheck = Holiday::STATUS_APPROVED;
 $isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $daytoparse, $statusofholidaytocheck); // $daytoparse is a date with hours = 0
 $isavailable[$daytoparse] = $isavailablefordayanduser; // in projectLinesPerWeek later, we are using $firstdaytoshow and dol_time_plus_duree to loop on each day
 
-$tmparray = dol_getdate($daytoparse, true); // detail of current day
-$idw = $tmparray['wday'];
+$test = num_public_holiday($daytoparse, $daytoparse + 86400, $mysoc->country_code);
+if ($test) $isavailable[$daytoparse] = array('morning'=>false, 'afternoon'=>false, 'morning_reason'=>'public_holiday', 'afternoon_reason'=>'public_holiday');
 
+$tmparray = dol_getdate($daytoparse, true); // detail of current day
+// For monday, must be 0 for monday if MAIN_START_WEEK = 1, must be 1 for monday if MAIN_START_WEEK = 0
+$idw = ($tmparray['wday'] - (empty($conf->global->MAIN_START_WEEK) ? 0 : 1));
+// numstartworkingday and numendworkingday are default start and end date of working days (1 means sunday if MAIN_START_WEEK is 0, 1 means monday if MAIN_START_WEEK is 1)
 $cssweekend = '';
-if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+if ((($idw + 1) < $numstartworkingday) || (($idw + 1) > $numendworkingday))	// This is a day is not inside the setup of working days, so we use a week-end css.
 {
 	$cssweekend = 'weekend';
 }
 
-$tmpday = dol_time_plus_duree($firstdaytoshow, $idw, 'd');
+$tmpday = dol_time_plus_duree($daytoparse, $idw, 'd');
 
 $cssonholiday = '';
 if (!$isavailable[$daytoparse]['morning'] && !$isavailable[$daytoparse]['afternoon'])   $cssonholiday .= 'onholidayallday ';
@@ -649,25 +654,11 @@ if ($conf->use_javascript_ajax)
 	//print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
 	print '</td>';
 
-	$tmparray = dol_getdate($daytoparse, true); // detail of current day
-	$idw = $tmparray['wday'];
-
-	$cssweekend = '';
-	if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
-	{
-		$cssweekend = 'weekend';
-	}
-
-	$cssonholiday = '';
-	if (!$isavailable[$daytoparse]['morning'] && !$isavailable[$daytoparse]['afternoon'])   $cssonholiday .= 'onholidayallday ';
-	elseif (!$isavailable[$daytoparse]['morning'])   $cssonholiday .= 'onholidaymorning ';
-	elseif (!$isavailable[$daytoparse]['afternoon']) $cssonholiday .= 'onholidayafternoon ';
-
 	print '<td class="liste_total center'.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'"><div class="totalDay0">&nbsp;</div></td>';
 
 	print '<td class="liste_total"></td>';
-    print '<td class="liste_total"></td>';
-    print '</tr>';
+	print '<td class="liste_total"></td>';
+	print '</tr>';
 }
 
 
@@ -750,20 +741,6 @@ if (count($tasksarray) > 0)
 		//print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
 		print '</td>';
 
-		$tmparray = dol_getdate($daytoparse, true); // detail of current day
-		$idw = $tmparray['wday'];
-
-		$cssweekend = '';
-		if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
-		{
-			$cssweekend = 'weekend';
-		}
-
-		$cssonholiday = '';
-		if (!$isavailable[$daytoparse]['morning'] && !$isavailable[$daytoparse]['afternoon'])   $cssonholiday .= 'onholidayallday ';
-		elseif (!$isavailable[$daytoparse]['morning'])   $cssonholiday .= 'onholidaymorning ';
-		elseif (!$isavailable[$daytoparse]['afternoon']) $cssonholiday .= 'onholidayafternoon ';
-
 		print '<td class="liste_total center'.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'"><div class="totalDay0">&nbsp;</div></td>';
 
 		print '<td class="liste_total"></td>
@@ -779,7 +756,7 @@ print '</div>';
 print '<input type="hidden" id="numberOfLines" name="numberOfLines" value="'.count($tasksarray).'"/>'."\n";
 
 print '<div class="center">';
-print '<input type="submit" class="button"'.($disabledtask ? ' disabled' : '').' value="'.$langs->trans("Save").'">';
+print '<input type="submit" class="button button-save"'.($disabledtask ? ' disabled' : '').' value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';

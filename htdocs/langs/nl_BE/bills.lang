@@ -36,7 +36,6 @@ PaymentTypeTRA=Bank cheque
 ChequeMaker=Cheque / Transfer uitvoerder
 DepositId=Id storting
 ShowUnpaidAll=Bekijk alle onbetaalde facturen
-PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template
 TypeContact_facture_external_BILLING=Klant contact
 NotLastInCycle=Deze factuur is niet de laatste in de rij en mag niet worden aangepast.
 PDFCrevetteSituationInvoiceLineDecompte=Situatie factuur - AANTAL

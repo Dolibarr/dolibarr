@@ -39,7 +39,7 @@ foreach ($tmptype2label as $key => $val) {
 	$type2label[$key] = $langs->trans($val);
 }
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'ticket'; //Must be the $table_element of the class that manage extrafield
 
@@ -71,11 +71,11 @@ print load_fiche_titre($langs->trans("TicketSetup"), $linkback, 'title_setup');
 
 $head = ticketAdminPrepareHead();
 
-dol_fiche_head($head, 'attributes', $langs->trans("Module56000Name"), -1, "ticket");
+print dol_get_fiche_head($head, 'attributes', $langs->trans("Module56000Name"), -1, "ticket");
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // Buttons
 if ($action != 'create' && $action != 'edit') {

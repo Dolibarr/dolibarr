@@ -76,7 +76,7 @@ TypeContact_propal_external_BILLING=الزبون فاتورة الاتصال
 TypeContact_propal_external_CUSTOMER=اتصل العملاء اقتراح متابعة
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
-DocModelAzurDescription=A complete proposal model 
+DocModelAzurDescription=A complete proposal model (old implementation of Cyan template)
 DocModelCyanDescription=A complete proposal model
 DefaultModelPropalCreate=إنشاء نموذج افتراضي
 DefaultModelPropalToBill=القالب الافتراضي عند إغلاق الأعمال المقترح (أن الفاتورة)
@@ -84,3 +84,4 @@ DefaultModelPropalClosed=القالب الافتراضي عند إغلاق ال�
 ProposalCustomerSignature=قبول كتابي، ختم الشركة والتاريخ والتوقيع
 ProposalsStatisticsSuppliers=Vendor proposals statistics
 CaseFollowedBy=Case followed by
+SignedOnly=Signed only

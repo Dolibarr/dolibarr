@@ -1,2 +1,18 @@
 # Dolibarr language file - Source file is en_US - receptions
+RefReception=Ref. ontvangst
+Receptions=Ontvangen
+ShowReception=Ontvangsten weergeven
+ReceptionsArea=Ontvangsten gedeelte
+ListOfReceptions=Lijst van ontvangsten
+StatisticsOfReceptions=Statistieken voor ontvangsten
+CreateReception=Creëer ontvangst
+QtyInOtherReceptions=Aantal in andere ontvangsten
+ReceptionsAndReceivingForSameOrder=Ontvangsten en bonnen voor deze bestelling
+ReceptionSheet=Ontvangst blad
+StatsOnReceptionsOnlyValidated=Statistieken uitgevoerd op ontvangsten alleen gevalideerd. De gebruikte datum is de datum van ontvangst van de ontvangstbon (geplande leverdatum is niet altijd bekend).
+ActionsOnReception=Evenementen bij de receptie
+ReceptionCreationIsDoneFromOrder=Momenteel wordt een nieuwe ontvangst gemaakt vanaf de bestelkaart.
 ProductQtyInSuppliersReceptionAlreadyRecevied=Ontvangen hoeveelheid producten uit geopende leveranciersbestelling
+ValidateOrderFirstBeforeReception=Je moet eerst de bestelling valideren voordat je recepties kunt maken.
+ReceptionsNumberingModules=Nummeringsmodule voor recepties
+ReceptionsReceiptModel=Documentsjablonen voor recepties

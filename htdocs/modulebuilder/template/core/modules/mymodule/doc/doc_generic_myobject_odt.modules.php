@@ -27,7 +27,7 @@
  *	\brief      File of class to build ODT documents for myobjects
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/myobject/modules_myobject.php';
+dol_include_once('/mymodule/core/modules/mymodule/modules_myobject.php');
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -48,9 +48,9 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 
 	/**
 	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.5 = array(5, 5)
+	 * e.g.: PHP ≥ 5.6 = array(5, 6)
 	 */
-	public $phpmin = array(5, 5);
+	public $phpmin = array(5, 6);
 
 	/**
 	 * @var string Dolibarr version of the loaded document
@@ -299,9 +299,9 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 				$contactobject = null;
 				if (!empty($usecontact))
 				{
-					// On peut utiliser le nom de la societe du contact
-					if (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socobject = $object->contact;
-					else {
+					if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
+						$socobject = $object->contact;
+					} else {
 						$socobject = $object->thirdparty;
 						// if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
 						$contactobject = $object->contact;
@@ -316,7 +316,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 					'__FROM_EMAIL__' => $this->emetteur->email,
 					'__TOTAL_TTC__' => $object->total_ttc,
 					'__TOTAL_HT__' => $object->total_ht,
-					'__TOTAL_VAT__' => $object->total_vat
+					'__TOTAL_VAT__' => $object->total_tva
 				);
 				complete_substitutions_array($substitutionarray, $langs, $object);
 				// Call the ODTSubstitution hook

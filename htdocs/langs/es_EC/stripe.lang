@@ -11,7 +11,6 @@ YouCanAddTagOnUrl=También puede agregar el parámetro de URL <b>&tag=<i>valor</
 SetupStripeToHavePaymentCreatedAutomatically=Configure su Stripe con URL <b>%s</b> para que el pago se cree automáticamente cuando sea validado por Stripe.
 STRIPE_CGI_URL_V2=Módulo URL de Stripe CGI para el pago
 NewStripePaymentFailed=Nuevo pago de Stripe probado pero fallido
-FailedToChargeCard=Error al cargar la tarjeta
 STRIPE_TEST_SECRET_KEY=Clave de prueba secreta
 STRIPE_TEST_PUBLISHABLE_KEY=Clave de prueba publicable
 STRIPE_LIVE_SECRET_KEY=Clave secreta en vivo
@@ -34,4 +33,3 @@ StripeUserAccountForActions=Cuenta de usuario para usar para la notificación po
 ToOfferALinkForTestWebhook=Enlace para configurar Stripe WebHook para llamar a IPN (modo de prueba)
 ToOfferALinkForLiveWebhook=Enlace para configurar Stripe WebHook para llamar a IPN (modo en vivo)
 ClickHereToTryAgain=<a href="%s">Haga clic aquí para volver a intentarlo...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Debido a las fuertes reglas de autenticación del cliente, la creación de una tarjeta debe hacerse desde la oficina administrativa de Stripe. Puede hacer clic aquí para activar el registro de cliente de Stripe: %s

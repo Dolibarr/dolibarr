@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
+ * add german links 2020    Udo Tamm            <dev@dolibit.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,6 +88,7 @@ print '<tr><td align="center">';
 $urlwiki = 'https://wiki.dolibarr.org';
 if (preg_match('/fr/i', $langs->defaultlang)) $urlwiki = 'https://wiki.dolibarr.org/index.php/Accueil';
 if (preg_match('/es/i', $langs->defaultlang)) $urlwiki = 'https://wiki.dolibarr.org/index.php/Portada';
+if (preg_match('/de/i', $langs->defaultlang)) $urlwiki = 'https://wiki.dolibarr.org/index.php/Hauptseite';
 print '<br>'.$langs->trans("ForDocumentationSeeWiki", $urlwiki, $urlwiki);
 print '<br>';
 $urlforum = 'https://www.dolibarr.org/forum/';
@@ -95,6 +97,7 @@ if (preg_match('/fr/i', $langs->defaultlang)) $urlforumlocal = 'https://www.doli
 if (preg_match('/es/i', $langs->defaultlang)) $urlforumlocal = 'https://www.dolibarr.es/foro/';
 if (preg_match('/it/i', $langs->defaultlang)) $urlforumlocal = 'http://www.dolibarr.it/forum/';
 if (preg_match('/gr/i', $langs->defaultlang)) $urlforumlocal = 'https://www.dolibarr.gr/forum/';
+if (preg_match('/de/i', $langs->defaultlang)) $urlforumlocal = 'https://www.dolibarr.de/forum/';
 print '<br>'.$langs->trans("ForAnswersSeeForum", $urlforumlocal, $urlforumlocal).'<br>';
 if ($urlforumlocal != $urlforum) print '<b><a href="'.$urlforum.'">'.$urlforum.'</a></b>';
 print '</td></tr></table>';

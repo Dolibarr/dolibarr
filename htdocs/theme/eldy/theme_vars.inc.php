@@ -59,19 +59,19 @@ $colorbacktabcard1 = '255,255,255'; // card
 $colorbacktabactive = '234,234,234';
 $colorbacklineimpair1 = '255,255,255'; // line impair
 $colorbacklineimpair2 = '255,255,255'; // line impair
-$colorbacklinepair1 = '251,251,251'; // line pair
-$colorbacklinepair2 = '251,251,251'; // line pair
+$colorbacklinepair1 = '250,250,250'; // line pair
+$colorbacklinepair2 = '250,250,250'; // line pair
 $colorbacklinepairhover = '230,237,244'; // line hover
 $colorbacklinepairchecked = '230,237,244'; // line checked
 $colorbacklinebreak = '248,247,244'; // line break
 $colorbackbody = '255,255,255';
-$colortexttitlenotab = '0,123,140'; // 150,90,121 140,80,10 or 10,140,80  #875a7b  green=0,113,120, violet: 0,50,120
-$colortexttitlenotab2 = '100,0,100'; // 150,90,121 140,80,10 or 10,140,80  #875a7b  green=0,113,120, violet: 0,50,120
-$colortexttitle = '0,0,0';
+$colortexttitlenotab = '35,135,140'; // 150,90,121 140,80,10 or 10,140,80  #875a7b  green=0,123,140, violet: 0,50,120
+$colortexttitlenotab2 = '100,0,100'; // 150,90,121 140,80,10 or 10,140,80  #875a7b  green=0,123,140, violet: 0,50,120
+$colortexttitle = '40, 40, 60';
 $colortexttitlelink = '10, 20, 100';
 $colortext = '0,0,0';
 $colortextlink = '10, 20, 100';
-$fontsize = '0.86em';
+$fontsize = '0.90em';
 $fontsizesmaller = '0.75em';
 $topMenuFontSize = '1.1em';
 $toolTipBgColor = 'rgba(255, 255, 255, 0.96)';
@@ -81,17 +81,17 @@ $toolTipFontColor = '#333';
 $textSuccess   = '#28a745';
 $colorblind_deuteranopes_textSuccess = '#37de5d';
 $textWarning   = '#bc9526'; // See $badgeWarning
-$textDanger    = '#9f4705'; // See $badgeDanger
+$textDanger    = '#af4705'; // See $badgeDanger
 $colorblind_deuteranopes_textWarning = $textWarning; // currently not tested with a color blind people so use default color
 
 
 // Badges colors
 $badgePrimary   = '#007bff';
-$badgeSecondary = '#cccccc';
+$badgeSecondary = '#aaaabb';
+$badgeInfo      = '#aaaabb';
 $badgeSuccess   = '#55a580';
 $badgeWarning   = '#bc9526'; // See $textWarning bc9526
-$badgeDanger    = '#9f4705'; // See $textDanger
-$badgeInfo      = '#aaaabb';
+$badgeDanger    = '#af4705'; // See $textDanger
 $badgeDark      = '#343a40';
 $badgeLight     = '#f8f9fa';
 
@@ -110,11 +110,11 @@ $badgeStatus1 = '#bc9526'; // validated
 $badgeStatus1b = '#bc9526'; // validated
 $badgeStatus2 = '#9c9c26'; // approved
 $badgeStatus3 = '#bca52b';
-$badgeStatus4 = '#55a580'; // Color ok
-$badgeStatus4b = '#55a580'; // Color ok
+$badgeStatus4 = '#25a580'; // Color ok
+$badgeStatus4b = '#25a580'; // Color ok
 $badgeStatus5 = '#cad2d2';
 $badgeStatus6 = '#cad2d2';
-$badgeStatus7 = '#baa32b';
+$badgeStatus7 = '#25a580';
 $badgeStatus8 = '#993013';
 $badgeStatus9 = '#e7f0f0';
 

@@ -29,7 +29,7 @@ $langs->loadLangs(array('admin', 'companies', 'members', 'datapolicy'));
 
 
 // Parameters
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 $formadmin = new FormAdmin($db);
 
@@ -88,7 +88,7 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'object_datapolicy@
 
 // Configuration header
 $head = datapolicyAdminPrepareHead();
-dol_fiche_head($head, 'settings', '', -1, "datapolicy@datapolicy");
+print dol_get_fiche_head($head, 'settings', '', -1, "datapolicy@datapolicy");
 
 
 print "<script type='text/javascript'>
@@ -101,7 +101,7 @@ print "<script type='text/javascript'>
 </script>";
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?l='.$l.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 print '<table>';
 if ($conf->global->MAIN_MULTILANGS) {
@@ -153,7 +153,7 @@ print '<br><center><input type="submit" class="button" value="'.$langs->trans("M
 
 print '</form>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<br><br>';
 

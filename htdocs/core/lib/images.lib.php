@@ -23,7 +23,7 @@
  */
 
 // Define size of logo small and mini
-$maxwidthsmall = 350; $maxheightsmall = 200; // Near 16/9eme
+$maxwidthsmall = 480; $maxheightsmall = 270; // Near 16/9eme
 $maxwidthmini = 128; $maxheightmini = 72; // 16/9eme
 $quality = 80;
 
@@ -33,37 +33,46 @@ $quality = 80;
  *      Return if a filename is file name of a supported image format
  *
  *      @param	string	$file       Filename
+ *      @param	int		$acceptsvg	0=Default (depends on setup), 1=Always accept SVG as image files
  *      @return int         		-1=Not image filename, 0=Image filename but format not supported for conversion by PHP, 1=Image filename with format supported by this PHP
  */
-function image_format_supported($file)
+function image_format_supported($file, $acceptsvg = 0)
 {
-    $regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.xpm|\.xbm|\.svg'; // See also into product.class.php
+	global $conf;
 
-    // Case filename is not a format image
-    $reg = array();
-    if (!preg_match('/('.$regeximgext.')$/i', $file, $reg)) return -1;
+	$regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.webp|\.xpm|\.xbm'; // See also into product.class.php
+	if ($acceptsvg || !empty($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES)) {
+		$regeximgext .= '|\.svg'; // Not allowed by default. SVG can contains javascript
+	}
 
-    // Case filename is a format image but not supported by this PHP
-    $imgfonction = '';
-    if (strtolower($reg[1]) == '.gif')  $imgfonction = 'imagecreatefromgif';
-    if (strtolower($reg[1]) == '.png')  $imgfonction = 'imagecreatefrompng';
-    if (strtolower($reg[1]) == '.jpg')  $imgfonction = 'imagecreatefromjpeg';
-    if (strtolower($reg[1]) == '.jpeg') $imgfonction = 'imagecreatefromjpeg';
-    if (strtolower($reg[1]) == '.bmp')  $imgfonction = 'imagecreatefromwbmp';
-    if (strtolower($reg[1]) == '.xpm')  $imgfonction = 'imagecreatefromxpm';
-    if (strtolower($reg[1]) == '.xbm')  $imgfonction = 'imagecreatefromxbm';
-    if (strtolower($reg[1]) == '.svg')  $imgfonction = 'imagecreatefromsvg'; // Never available
-    if ($imgfonction)
-    {
-        if (!function_exists($imgfonction))
-        {
-            // Fonctions of conversion not available in this PHP
-            return 0;
-        }
-    }
+	// Case filename is not a format image
+	$reg = array();
+	if (!preg_match('/('.$regeximgext.')$/i', $file, $reg)) return -1;
 
-    // Filename is a format image and supported for conversion by this PHP
-    return 1;
+	// Case filename is a format image but not supported by this PHP
+	$imgfonction = '';
+	if (strtolower($reg[1]) == '.gif')  $imgfonction = 'imagecreatefromgif';
+	if (strtolower($reg[1]) == '.jpg')  $imgfonction = 'imagecreatefromjpeg';
+	if (strtolower($reg[1]) == '.jpeg') $imgfonction = 'imagecreatefromjpeg';
+	if (strtolower($reg[1]) == '.png')  $imgfonction = 'imagecreatefrompng';
+	if (strtolower($reg[1]) == '.bmp')  $imgfonction = 'imagecreatefromwbmp';
+	if (strtolower($reg[1]) == '.webp')  $imgfonction = 'imagecreatefromwebp';
+	if (strtolower($reg[1]) == '.xpm')  $imgfonction = 'imagecreatefromxpm';
+	if (strtolower($reg[1]) == '.xbm')  $imgfonction = 'imagecreatefromxbm';
+	if (strtolower($reg[1]) == '.svg')  $imgfonction = 'imagecreatefromsvg'; // Never available
+	if ($imgfonction)
+	{
+		if (!function_exists($imgfonction))
+		{
+			// Fonctions of conversion not available in this PHP
+			return 0;
+		}
+
+		// Filename is a format image and supported for conversion by this PHP
+		return 1;
+	}
+
+	return 0;
 }
 
 
@@ -88,9 +97,9 @@ function dol_getImageSize($file, $url = false)
 
 	if ($filetoread)
 	{
-    	$infoImg = getimagesize($filetoread); // Recuperation des infos de l'image
-    	$ret['width'] = $infoImg[0]; // Largeur de l'image
-    	$ret['height'] = $infoImg[1]; // Hauteur de l'image
+		$infoImg = getimagesize($filetoread); // Recuperation des infos de l'image
+		$ret['width'] = $infoImg[0]; // Largeur de l'image
+		$ret['height'] = $infoImg[1]; // Hauteur de l'image
 	}
 
 	return $ret;
@@ -175,6 +184,9 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 		case 4:	// IMG_WBMP
 			$imgfonction = 'imagecreatefromwbmp';
 			break;
+		case 17:	// IMG_WBMP
+			$imgfonction = 'imagecreatefromwebp';
+			break;
 	}
 	if ($imgfonction)
 	{
@@ -207,6 +219,11 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 			$img = imagecreatefromwbmp($filetoread);
 			$extImg = '.bmp';
 			$newquality = 'NU'; // Quality is not used for this format
+			break;
+		case 18: // Webp
+			$img = imagecreatefromwebp($filetoread);
+			$extImg = '.webp';
+			$newquality = '100'; // % quality maximum
 			break;
 	}
 
@@ -248,6 +265,9 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 		case 4:	// Bmp
 			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 0);
 			break;
+		case 18: // Webp
+			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 127);
+			break;
 	}
 	if (function_exists("imagefill")) imagefill($imgThumb, 0, 0, $trans_colour);
 
@@ -276,13 +296,16 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 		case 4:	// Bmp
 			imagewbmp($imgThumb, $imgThumbName);
 			break;
+		case 18: // Webp
+			imagewebp($imgThumb, $imgThumbName, $newquality);
+			break;
 	}
 
 	// Set permissions on file
 	if (!empty($conf->global->MAIN_UMASK)) @chmod($imgThumbName, octdec($conf->global->MAIN_UMASK));
 
 	// Free memory. This does not delete image.
-    imagedestroy($img);
+	imagedestroy($img);
 	imagedestroy($imgThumb);
 
 	clearstatcache(); // File was replaced by a modified one, so we clear file caches.
@@ -418,20 +441,20 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	} elseif (!file_exists($file))
 	{
 		// Si le fichier passe en parametre n'existe pas
-        dol_syslog($langs->trans("ErrorFileNotFound", $file), LOG_ERR);
-	    return $langs->trans("ErrorFileNotFound", $file);
+		dol_syslog($langs->trans("ErrorFileNotFound", $file), LOG_ERR);
+		return $langs->trans("ErrorFileNotFound", $file);
 	} elseif (image_format_supported($file) < 0)
 	{
-        dol_syslog('This file '.$file.' does not seem to be an image format file name.', LOG_WARNING);
-	    return 'ErrorBadImageFormat';
+		dol_syslog('This file '.$file.' does not seem to be an image format file name.', LOG_WARNING);
+		return 'ErrorBadImageFormat';
 	} elseif (!is_numeric($maxWidth) || empty($maxWidth) || $maxWidth < -1) {
 		// Si la largeur max est incorrecte (n'est pas numerique, est vide, ou est inferieure a 0)
-        dol_syslog('Wrong value for parameter maxWidth', LOG_ERR);
-	    return 'Error: Wrong value for parameter maxWidth';
+		dol_syslog('Wrong value for parameter maxWidth', LOG_ERR);
+		return 'Error: Wrong value for parameter maxWidth';
 	} elseif (!is_numeric($maxHeight) || empty($maxHeight) || $maxHeight < -1) {
 		// Si la hauteur max est incorrecte (n'est pas numerique, est vide, ou est inferieure a 0)
-        dol_syslog('Wrong value for parameter maxHeight', LOG_ERR);
-	    return 'Error: Wrong value for parameter maxHeight';
+		dol_syslog('Wrong value for parameter maxHeight', LOG_ERR);
+		return 'Error: Wrong value for parameter maxHeight';
 	}
 
 	$filetoread = realpath(dol_osencode($file)); // Chemin canonique absolu de l'image
@@ -472,7 +495,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			$imgfonction = 'imagecreatefrompng';
 			break;
 		case IMAGETYPE_BMP:	    // 6
-            // Not supported by PHP GD
+			// Not supported by PHP GD
 			break;
 		case IMAGETYPE_WBMP:	// 15
 			$imgfonction = 'imagecreatefromwbmp';
@@ -508,7 +531,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			$extImg = '.png';
 			break;
 		case IMAGETYPE_BMP:	    // 6
-            // Not supported by PHP GD
+			// Not supported by PHP GD
 			$extImg = '.bmp';
 			break;
 		case IMAGETYPE_WBMP:	// 15
@@ -517,14 +540,14 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			break;
 	}
 
-    if (!is_resource($img))
-    {
-        dol_syslog('Failed to detect type of image. We found infoImg[2]='.$infoImg[2], LOG_WARNING);
-        return 0;
-    }
+	if (!is_resource($img))
+	{
+		dol_syslog('Failed to detect type of image. We found infoImg[2]='.$infoImg[2], LOG_WARNING);
+		return 0;
+	}
 
 	$exifAngle = false;
-    if ($ort && !empty($conf->global->MAIN_USE_EXIF_ROTATION)) {
+	if ($ort && !empty($conf->global->MAIN_USE_EXIF_ROTATION)) {
 		switch ($ort)
 		{
 			case 3: // 180 rotate left
@@ -545,12 +568,12 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 		}
 	}
 
-    if ($exifAngle)
-    {
+	if ($exifAngle)
+	{
 		$rotated = false;
 
-    	if ($infoImg[2] === 'IMAGETYPE_PNG') // In fact there is no exif on PNG but just in case
-    	{
+		if ($infoImg[2] === 'IMAGETYPE_PNG') // In fact there is no exif on PNG but just in case
+		{
 			imagealphablending($img, false);
 			imagesavealpha($img, true);
 			$rotated = imagerotate($img, $exifAngle, imageColorAllocateAlpha($img, 0, 0, 0, 127));
@@ -560,9 +583,9 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			$rotated = imagerotate($img, $exifAngle, 0);
 		}
 
-    	// replace image with good orientation
-    	if (!empty($rotated)) {
-    		$img = $rotated;
+		// replace image with good orientation
+		if (!empty($rotated)) {
+			$img = $rotated;
 			$imgWidth = $trueImgWidth;
 			$imgHeight = $trueImgHeight;
 		}
@@ -589,8 +612,8 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	$thumbHeight = round($thumbHeight);
 	$thumbWidth = round($thumbWidth);
 
-    // Define target format
-    if (empty($targetformat)) $targetformat = $infoImg[2];
+	// Define target format
+	if (empty($targetformat)) $targetformat = $infoImg[2];
 
 	// Create empty image
 	if ($targetformat == IMAGETYPE_GIF)
@@ -620,31 +643,31 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 		case IMAGETYPE_GIF:	    // 1
 			$trans_colour = imagecolorallocate($imgThumb, 255, 255, 255); // On procede autrement pour le format GIF
 			imagecolortransparent($imgThumb, $trans_colour);
-            $extImgTarget = '.gif';
-            $newquality = 'NU';
-            break;
+			$extImgTarget = '.gif';
+			$newquality = 'NU';
+			break;
 		case IMAGETYPE_JPEG:    // 2
-            $trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 0);
-            $extImgTarget = (preg_match('/\.jpeg$/i', $file) ? '.jpeg' : '.jpg');
-            $newquality = $quality;
-            break;
+			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 0);
+			$extImgTarget = (preg_match('/\.jpeg$/i', $file) ? '.jpeg' : '.jpg');
+			$newquality = $quality;
+			break;
 		case IMAGETYPE_PNG:	    // 3
 			imagealphablending($imgThumb, false); // Pour compatibilite sur certain systeme
 			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 127); // Keep transparent channel
-            $extImgTarget = '.png';
-            $newquality = $quality - 100;
-            $newquality = round(abs($quality - 100) * 9 / 100);
-            break;
+			$extImgTarget = '.png';
+			$newquality = $quality - 100;
+			$newquality = round(abs($quality - 100) * 9 / 100);
+			break;
 		case IMAGETYPE_BMP:	    // 6
-            // Not supported by PHP GD
-            $extImgTarget = '.bmp';
-            $newquality = 'NU';
-            break;
+			// Not supported by PHP GD
+			$extImgTarget = '.bmp';
+			$newquality = 'NU';
+			break;
 		case IMAGETYPE_WBMP:	// 15
 			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 0);
-            $extImgTarget = '.bmp';
-            $newquality = 'NU';
-            break;
+			$extImgTarget = '.bmp';
+			$newquality = 'NU';
+			break;
 	}
 	if (function_exists("imagefill")) imagefill($imgThumb, 0, 0, $trans_colour);
 
@@ -675,7 +698,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			imagepng($imgThumb, $imgThumbName, $newquality);
 			break;
 		case IMAGETYPE_BMP:	    // 6
-            // Not supported by PHP GD
+			// Not supported by PHP GD
 			break;
 		case IMAGETYPE_WBMP:    // 15
 			imagewbmp($imgThumb, $imgThumbName);
@@ -685,9 +708,9 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	// Set permissions on file
 	if (!empty($conf->global->MAIN_UMASK)) @chmod($imgThumbName, octdec($conf->global->MAIN_UMASK));
 
-    // Free memory. This does not delete image.
-    imagedestroy($img);
-    imagedestroy($imgThumb);
+	// Free memory. This does not delete image.
+	imagedestroy($img);
+	imagedestroy($imgThumb);
 
 	return $imgThumbName;
 }

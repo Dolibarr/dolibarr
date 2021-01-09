@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,12 +32,12 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 class modECM extends DolibarrModules
 {
 
-    /**
-     *   Constructor. Define names, constants, directories, boxes, permissions
-     *
-     *   @param      DoliDB		$db      Database handler
-    */
-    public function __construct($db)
+	/**
+	 *   Constructor. Define names, constants, directories, boxes, permissions
+	 *
+	 *   @param      DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
 	{
 		$this->db = $db;
 
@@ -86,10 +86,10 @@ class modECM extends DolibarrModules
 
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
 		// Example:
-        //$this->boxes[$r][1] = "myboxa.php";
-    	//$r++;
-        //$this->boxes[$r][1] = "myboxb.php";
-    	//$r++;
+		//$this->boxes[$r][1] = "myboxa.php";
+		//$r++;
+		//$this->boxes[$r][1] = "myboxb.php";
+		//$r++;
 
 		// Permissions
 		$this->rights_class = 'ecm'; // Permission key
@@ -97,27 +97,27 @@ class modECM extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 2501;
-		$this->rights[$r][1] = 'Consulter/Télécharger les documents';
+		$this->rights[$r][1] = 'Read or download documents';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'read';
 
 		$r++;
 		$this->rights[$r][0] = 2503;
-		$this->rights[$r][1] = 'Soumettre ou supprimer des documents';
+		$this->rights[$r][1] = 'Upload a document';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'upload';
 
 		$r++;
 		$this->rights[$r][0] = 2515;
-		$this->rights[$r][1] = 'Administrer les rubriques de documents';
+		$this->rights[$r][1] = 'Administer directories of documents';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'setup';
 
 
-        // Menus
+		// Menus
 		//------
 		$this->menus = array(); // List of menus to add
 		$r = 0;

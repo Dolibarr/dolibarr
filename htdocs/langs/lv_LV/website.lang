@@ -16,12 +16,13 @@ WEBSITE_ROBOT=Robotfails (robots.txt)
 WEBSITE_HTACCESS=Tīmekļa vietne .htaccess fails
 WEBSITE_MANIFEST_JSON=Vietnes manifest.json fails
 WEBSITE_README=Fails README.md
+WEBSITE_KEYWORDSDesc=Lai atdalītu vērtības, izmantojiet komatu
 EnterHereLicenseInformation=Ievadiet šeit meta datus vai licences informāciju, lai aizpildītu README.md failu. ja jūs izplatīsit savu vietni kā veidni, fails tiks iekļauts veidņu paketē.
 HtmlHeaderPage=HTML virsraksts (tikai šai lapai)
 PageNameAliasHelp=Lapas nosaukums vai pseidonīms. <br> Šis aizstājvārds tiek izmantots arī, lai izveidotu SEO vietrādi, ja vietne tiek izmantota no Web servera virtuālās saimniekdatora (piemēram, Apacke, Nginx, ...). Izmantojiet pogu "<strong> %s </strong>, lai rediģētu šo aizstājvārdu.
 EditTheWebSiteForACommonHeader=Piezīme: ja vēlaties norādīt personalizētu galveni visām lapām, rediģējiet virsrakstu vietnes līmenī, nevis lapā / konteinerā.
 MediaFiles=Mediju bibliotēka
-EditCss=Rediģēt vietnes rekvizīt
+EditCss=Rediģēt vietnes rekvizītus
 EditMenu=Labot izvēlni
 EditMedias=Rediģēt medijus
 EditPageMeta=Rediģējiet lapas / konteinera īpašības
@@ -29,9 +30,8 @@ EditInLine=Rediģēt inline
 AddWebsite=Pievienot vietni
 Webpage=Web lapa / konteiners
 AddPage=Pievienot lapu / konteineru
-HomePage=Mājas lapa
-PageContainer=Lapa / konteiners
-PreviewOfSiteNotYetAvailable=Jūsu vietnes <strong> %s </ strong> priekšskatījums vēl nav pieejams. Vispirms jums ir jāievieto <strong> Importēt pilnu vietnes veidni </ strong> vai vienkārši <strong> Pievienot lapu / konteineru </ strong> ".
+PageContainer=Lappuse
+PreviewOfSiteNotYetAvailable=Jūsu vietnes <strong> %s </strong>priekšskatījums vēl nav pieejams. Vispirms jums ir <strong> Jāimportē pilnu vietnes veidni</strong> vai vienkārši <strong>Pievienot lapu/konteineru</strong>".
 RequestedPageHasNoContentYet=Pieprasītā lapa ar id %s vēl nav ievietota, vai kešatmiņas fails .tpl.php tika noņemts. Rediģējiet lapas saturu, lai to atrisinātu.
 SiteDeleted=Tīmekļa vietne '%s' dzēsta
 PageContent=Lapa / Konteiners
@@ -57,7 +57,10 @@ NoPageYet=Vēl nav nevienas lapas
 YouCanCreatePageOrImportTemplate=Jūs varat izveidot jaunu lapu vai importēt pilnu vietnes veidni
 SyntaxHelp=Palīdzība par konkrētiem sintakses padomiem
 YouCanEditHtmlSourceckeditor=Jūs varat rediģēt HTML avota kodu, izmantojot redaktorā pogu "Avots".
-YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper:<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br><br>More examples of HTML or dynamic code available on <a href="%s" target="_blank">the wiki documentation</a><br>.
+YouCanEditHtmlSource= <br> <span class="fa fa-bug"> </span> Varat šajā avotā iekļaut PHP kodu, izmantojot tagus <strong> &lt;? php? &gt; a0a65d06. Ir pieejami šādi globālie mainīgie: $ conf, $ db, $ mysoc, $ user, $ website, $ websitepage, $ weblangs, $ pagelangs. <br> <br> <span class="fa fa-bug"> </span> Varat arī iekļaut citas lappuses / konteinera saturu ar šādu sintakse: <br> a0e7843947c0er0e03_04_03 ? &gt; </strong> <br> <br> <span class="fa fa-bug"> </span> Jūs varat veikt novirzīšanu uz citu lapu / Container ar šādu sintaksi (piezīme: nav izejas kādu saturu pirms novirzīšanas):? <br> <strong> &lt; php redirectToContainer ( "alias_of_container_to_redirect_to '); ? &gt; </strong> <br> <br> <span class="fa fa-link"> </span> Lai pievienotu saiti uz citu lapu, izmantojiet sintaksi: <br> <strong> &lt;a href = "alias_of_page_to_link_to.php" &gt;mylink&lt;a&gt; </strong> <br> <br> <span class="fa fa-download"> </span> Lai iekļautu <strong> saiti uz lejupielādēt </strong> saglabātu failu vērā <strong> dokumentos </strong> katalogs, izmantojiet <strong> document.php </strong> iesaiņojuma: <br> Piemēram, failu stāšanās dokumentu / ECM (nepieciešams pieteicies), sintakse ir:? <br> <strong> &lt;a href = "/ document.php modulepart = ECM & file = [relative_dir / ] filename.ext "&gt; </strong> <br>. Failā dokumentos / plašsaziņas līdzekļos (atvērts direktorijs publiskai piekļuvei) sintakse ir: <br> <strong> a03900df70b030000 "/document.php?modulepart=medias&file=[relative_dir/ ]faila nosaukums.ext"&gt; </strong> <br> failam, kas koplietots ar koplietošanas saiti (atvērta piekļuve, izmantojot faila koplietošanas hash atslēgu04_04_04_04_04_04_04_04_04_04 /document.php?hashp=publicsharekeyoffile"&gt; </strong> <br> <br> <span class="fa fa-picture-o"> </span> Lai iekļautu <strong> attēla </strong> saglabāto vērā <strong> dokumentos </strong> direktorijā, izmantot <strong> viewimage.php </strong> iesaiņojuma: <br> Piemērs, par attēlu dokumentos / plašsaziņas (open publiskās piekļuves direktorijs), sintakse ir: <br> <strong> &lt;img src = "/ viewimage.php? modulepart = medias&amp;file = a [santykis_dir /] faila nosaukuma.ext"
+#YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSource2=Attēlam, kas tiek koplietots ar koplietošanas saiti (atvērta piekļuve, izmantojot faila koplietošanas hash atslēgu), sintakse ir: <br> <strong> &lt;img src = "/ viewimage.php? Hashp = 123456790120f0f0f0f0f0f0c0f0fcfcfcfcfcfcfcfcfcfcfcflcflcfcflcflcfl0f0flffcfcfcflflfcflflflflflflflflflflflflflflflflflflflflflflfcflflflflflflflflflflflflflrlxlrg" "
+YouCanEditHtmlSourceMore= <br>. Citi HTML vai dinamiskā koda piemēri, kas pieejami vietnē <a href="%s" target="_blank">, wiki dokumentācija </a> <br>.
 ClonePage=Klonēt lapu / konteineru
 CloneSite=Klonēt vietni
 SiteAdded=Tīmekļa vietne ir pievienota
@@ -97,7 +100,7 @@ EmptyPage=Tukša lapa
 ExternalURLMustStartWithHttp=Ārējam URL ir jāsākas ar http: // vai https: //
 ZipOfWebsitePackageToImport=Augšupielādējiet vietnes veidņu pakotnes ZIP failu
 ZipOfWebsitePackageToLoad=vai izvēlieties pieejamo iegultās vietnes veidņu paketi
-ShowSubcontainers=Iekļaut dinamisko saturu
+ShowSubcontainers=Show dynamic content
 InternalURLOfPage=Lapas iekšējais URL
 ThisPageIsTranslationOf=Šī lapa / konteiners ir tulkojums
 ThisPageHasTranslationPages=Šajā lapā / konteinerā ir tulkojums
@@ -120,7 +123,7 @@ ShowSubContainersOnOff='Dinamiskā satura' izpildes režīms ir %s
 GlobalCSSorJS=Vietnes globālais CSS / JS / galvenes fails
 BackToHomePage=Atpakaļ uz sākumlapu ...
 TranslationLinks=Tulkošanas saites
-YouTryToAccessToAFileThatIsNotAWebsitePage=Jūs mēģināt piekļūt lapai, kas nav vietnes lapa
+YouTryToAccessToAFileThatIsNotAWebsitePage=Jūs mēģināt piekļūt lapai, kas nav pieejama. <br> (ref = %s, type = %s, status = %s)
 UseTextBetween5And70Chars=Lai iegūtu labu SEO praksi, izmantojiet tekstu no 5 līdz 70 rakstzīmēm
 MainLanguage=Galvenā valoda
 OtherLanguages=Citas valodas
@@ -128,3 +131,9 @@ UseManifest=Norādiet failu manifest.json
 PublicAuthorAlias=Publiskā autora pseidonīms
 AvailableLanguagesAreDefinedIntoWebsiteProperties=Pieejamās valodas tiek definētas vietņu īpašumos
 ReplacementDoneInXPages=Aizvietošana veikta %s lappusēs vai konteineros
+RSSFeed=RSS barotne
+RSSFeedDesc=Izmantojot šo URL, varat iegūt RSS plūsmu no jaunākajiem rakstiem ar veidu “blogpost”
+PagesRegenerated=reģenerēta %s lapa (s) / konteiners (-i)
+RegenerateWebsiteContent=Atjaunojiet tīmekļa vietnes kešatmiņas failus
+AllowedInFrames=Allowed in Frames
+DefineListOfAltLanguagesInWebsiteProperties=Define list of all available languages into web site properties.

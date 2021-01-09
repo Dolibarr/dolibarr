@@ -8,4 +8,4 @@ LinkRemoved=Linket %s er blevet fjernet
 ErrorFailedToDeleteLink= Kunne ikke fjerne linket '<b> %s </b>'
 ErrorFailedToUpdateLink= Kunne ikke opdatere linket '<b> %s </b>'
 URLToLink=URL til link
-OverwriteIfExists=Overwrite file if exists
+OverwriteIfExists=Overskriv fil, hvis den findes

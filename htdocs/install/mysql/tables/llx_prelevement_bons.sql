@@ -26,6 +26,7 @@
 create table llx_prelevement_bons
 (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
+  type           varchar(16) DEFAULT 'debit-order',				-- 'debit-order' or 'bank-transfer'
   ref            varchar(12),        -- reference
   entity         integer DEFAULT 1 NOT NULL, -- multi company id
   datec          datetime,           -- date de creation

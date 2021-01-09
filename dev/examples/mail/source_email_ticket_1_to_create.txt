@@ -1,0 +1,89 @@
+Delivered-To: testldrdev@gmail.com
+Received: by 2002:a2e:9b9a:0:0:0:0:0 with SMTP id z26csp1425223lji;
+        Thu, 20 Aug 2020 08:29:02 -0700 (PDT)
+X-Received: by 2002:a05:620a:1292:: with SMTP id w18mr2938234qki.158.1597937342304;
+        Thu, 20 Aug 2020 08:29:02 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1597937342; cv=none;
+        d=google.com; s=arc-20160816;
+        b=FhT/+rJ/zNYgVQ5Nt/rLZJycGd/Ntkhm6LwI16YUfmEmxeGrP/cXXQULrqQ1LhBr9B
+         oRKweltTdnpyA14gm0kzbs1vUkf5HxLUuGk8IqqJWAPMUZoN8oUPkzq2BuKNQGxPiE+y
+         Hsg/fnYp8WzcAlZOLsEP2kcFIdA95Dyy5LkM8HgphI1jSS1d6gkx6nDGIMIpDD9D+w4X
+         ISxRUXp5JlDwFCUMOPoAvHIBUdJ3jpLsjesbMEnU4ssFqhxU21pBq+Fc+csSPeY5DL0M
+         HR1o+ChEAXIdDOrDqa0ohHfqR216juGCzH8YuEQ88LT0Qbst9IkOYWiAQv4TIh7vHtvQ
+         TMvA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=to:subject:message-id:date:from:mime-version:dkim-signature;
+        bh=sojOjnIKAXmsZ9zvMk5MGvY3qyOaFgnpRe6YPMYutOI=;
+        b=CRlrRPfoGkfmz6iXKy4HdxKQ4SeJTiIxjC2jNkgQPSnIDFJgDkJcwASJVpcjTmlVmH
+         Z9WnHKVUPRIHGDEoMRlx6eUx9QfelWqPYu3BBQGFry9sgth0BR/1s6tmQ+P+bAj23ryo
+         aL3UkF6KCSx4GhEk3MfHA5Ex81YDFHvHL3BZ2kb3XCVSlPiBq2szw1ETmRAsDdS5Gbu+
+         ZlzBbl4pRtUWgi1fB5H4Wcv7e90F4Et1SBP8IKSCa23qu2nV9xefgjfMw2ndxCj1zgCL
+         c3l7Ul6pw32nqf6+vxfZTstwIwgu6dXZXCHDqJqesI2g8RGxeba+LfKZEDpBuSeINS9r
+         GMvw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@destailleur.fr header.s=google header.b=IPMz90Yj;
+       spf=pass (google.com: domain of contact@destailleur.fr designates 209.85.220.41 as permitted sender) smtp.mailfrom=contact@destailleur.fr;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=destailleur.fr
+Return-Path: <contact@destailleur.fr>
+Received: from mail-sor-f41.google.com (mail-sor-f41.google.com. [209.85.220.41])
+        by mx.google.com with SMTPS id w14sor2138230qtb.9.2020.08.20.08.29.00
+        for <testldrdev@gmail.com>
+        (Google Transport Security);
+        Thu, 20 Aug 2020 08:29:01 -0700 (PDT)
+Received-SPF: pass (google.com: domain of contact@destailleur.fr designates 209.85.220.41 as permitted sender) client-ip=209.85.220.41;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@destailleur.fr header.s=google header.b=IPMz90Yj;
+       spf=pass (google.com: domain of contact@destailleur.fr designates 209.85.220.41 as permitted sender) smtp.mailfrom=contact@destailleur.fr;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=destailleur.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=destailleur.fr; s=google;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=sojOjnIKAXmsZ9zvMk5MGvY3qyOaFgnpRe6YPMYutOI=;
+        b=IPMz90Yjw1Mf57/rYWUYGtpc+IazEWcy6/bqxf1j0h6rxDH/wjhxsCWzfARgqqlfVj
+         ACg4IbPpZZlKFIYDSCbfMlWF65rbKfNre56HldfQgy0Tq3LC434zHz2ZZMOVCM52w3J9
+         VGBpASUlSL1o+YRmzOpRtHVu7I9aNwGxHuA070Yka8XLV76vV3P0vdL8PcoHq0jUUEoi
+         +dCZ9NCPuAFtGK2IavNoM2qQrLdfYIi+RwgWBtqjTwzyvDEJR+p5fIPK142ynMbHgWYO
+         RVtMqAgxjvL4sfyKZ5KuzKXkQNM3zyzMinWK89scBl+QLFCcWA4Qqc0dJjqLCBhh8lmq
+         n67g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=sojOjnIKAXmsZ9zvMk5MGvY3qyOaFgnpRe6YPMYutOI=;
+        b=H0GsrFAi9JmRTKQ2budtDeLBqCaTisHKYCVVziyxmv+/tIcrSZBA4tdKwm+wR80r50
+         zMJXmyVS2DMDWfnIlOv39wcwQjYN3WK1aRJfV0bVuEWrQuzt5MMWbskf6xbzo201nhr9
+         ZlqATsEV7v1u5EHmfYwRhR8+AOmENdnm0g9RXPJVrFS58WNEJUSotS5Y5rZPjnT943y0
+         62Kf4Bd6uWvXhPFXWQoZLtWrPpkbcYPWIBmpftKhD0PD9c6rKaVduV0WhbigYsDoxb3F
+         iIafGPOyq91hiHR2gTLHiMmTDm+IDQ4n6gSkS7HKpZlLQhHoBMnpqJZYoxMJTxdpAbSy
+         mY+A==
+X-Gm-Message-State: AOAM5325RcN4/ThWbYCO3vWRMFFBrfzJUHC1bd1Z9VB3/2Q3RuF9lmIJ +SjshEErhK68Of2pHDZQ3aPU4rzDfV8ozbvRsgChdfZg8aA=
+X-Google-Smtp-Source: ABdhPJxUOUdurKEQfLldtiQGRkgC/h8gKQG1zhS+8k93p6N1SsOn517+GeRyT3E+/Uw536pmReO29la3EIAS6VT33SE=
+X-Received: by 2002:aed:3e8e:: with SMTP id n14mr3191190qtf.67.1597937340509; Thu, 20 Aug 2020 08:29:00 -0700 (PDT)
+MIME-Version: 1.0
+From: John Tester <customer@customercompany.fr>
+Date: Thu, 20 Aug 2020 17:28:34 +0200
+Message-ID: <CALeEO_kij-ogXKzrjV_pTgqVbUB9j=287VkX34iVSWgDHFA8eg@mail.gmail.com>
+Subject: Support besoin
+To: testldrdev@gmail.com
+Content-Type: multipart/alternative; boundary="0000000000008e099705ad50c772"
+
+--0000000000008e099705ad50c772
+Content-Type: text/plain; charset="UTF-8"
+
+adfsdfsdfds
+
+-- 
+Laurent.
+------------------------------------------------------------------------------------
+Twitter: https://www.twitter.com/eldy10
+
+--0000000000008e099705ad50c772
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">adfsdfsdfds<br clear=3D"all"><div><br></div>-- <br><div di=
+r=3D"ltr" class=3D"gmail_signature" data-smartmail=3D"gmail_signature">Laur=
+ent.<br>-------------------------------------------------------------------=
+-----------------<br>Twitter: <a href=3D"https://www.twitter.com/eldy10" ta=
+rget=3D"_blank">https://www.twitter.com/eldy10</a></div></div>
+
+--0000000000008e099705ad50c772--

@@ -34,7 +34,7 @@ ConfirmValidateReception=Möchten Sie diesen Wareneingang mit der Referenz <b> %
 ConfirmCancelReception=Möchten Sie diesen Wareneingang wirklich abbrechen?
 StatsOnReceptionsOnlyValidated=Statistics wurde nur für empfangsdaten durchgeführt: validated. Das verwendete Datum ist date von validation des Empfangs (geplantes delivery date ist nicht immer bekannt).
 SendReceptionByEMail=Senden Sie den Empfang mit email
-SendReceptionRef=Einreichung des Wareneinganges %s
+SendReceptionRef=Wareneingang %s
 ActionsOnReception=Veranstaltungen an der Rezeption
 ReceptionCreationIsDoneFromOrder=Zur Zeit wird ein neuer Empfang von der Karte order erstellt.
 ReceptionLine=Empfang line
@@ -43,3 +43,5 @@ ProductQtyInSuppliersReceptionAlreadyRecevied=Bereits erhaltene Produktmenge aus
 ValidateOrderFirstBeforeReception=Sie müssen zunächst die order validate validieren, bevor Sie Empfänge erstellen können.
 ReceptionsNumberingModules=Nummerierungsmodul für Empfänge
 ReceptionsReceiptModel=Dokumentvorlagen für Empfänge
+NoMorePredefinedProductToDispatch=No more predefined products to dispatch
+

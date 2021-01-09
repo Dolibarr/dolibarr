@@ -21,13 +21,27 @@
  * \brief      File that include javascript functions (included if option use_javascript activated)
  */
 
-if (!defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
-if (!defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
-if (!defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
-if (!defined('NOLOGIN'))         define('NOLOGIN', 1);
-if (!defined('NOREQUIREMENU'))   define('NOREQUIREMENU', 1);
-if (!defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
-if (!defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', 1);
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1);
+}
+if (!defined('NOLOGIN')) {
+	define('NOLOGIN', 1);
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', 1);
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', 1);
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
 
 session_cache_limiter('public');
 
@@ -36,8 +50,11 @@ require_once '../../main.inc.php';
 // Define javascript type
 top_httphead('text/javascript; charset=UTF-8');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) header('Cache-Control: max-age=10800, public, must-revalidate');
-else header('Cache-Control: no-cache');
+if (empty($dolibarr_nocache)) {
+	header('Cache-Control: max-age=10800, public, must-revalidate');
+} else {
+	header('Cache-Control: no-cache');
+}
 
 //var_dump($conf);
 
@@ -46,15 +63,14 @@ else header('Cache-Control: no-cache');
 print "\n/* JS CODE TO ENABLE Tooltips on all object with class classfortooltip */\n";
 print "jQuery(document).ready(function () {\n";
 
-if (empty($conf->dol_no_mouse_hover))
-{
+if (empty($conf->dol_no_mouse_hover)) {
 	print 'jQuery(".classfortooltip").tooltip({
-				show: { collision: "flipfit", effect:\'toggle\', delay:50 },
-				hide: { delay: 250 },
+				show: { collision: "flipfit", effect:"toggle", delay:75, duration:150 },
+				hide: { delay: 250, duration: 20 },
 				tooltipClass: "mytooltip",
 				content: function () {
                     console.log("Return title for popup");
-            		return $(this).prop(\'title\');		/* To force to get title as is */
+            		return $(this).prop("title");		/* To force to get title as is */
           		}
 			});'."\n";
 }
@@ -79,8 +95,7 @@ print "});\n";
 
 
 // Wrapper to manage dropdown
-if (!defined('JS_JQUERY_DISABLE_DROPDOWN'))
-{
+if (!defined('JS_JQUERY_DISABLE_DROPDOWN')) {
 	print "\n/* JS CODE TO ENABLE dropdown (hamburger, linkto, ...) */\n";
 	print '
               jQuery(document).ready(function () {
@@ -149,8 +164,7 @@ if (!defined('JS_JQUERY_DISABLE_DROPDOWN'))
 }
 
 // Wrapper to manage document_preview
-if ($conf->browser->layout != 'phone')
-{
+if ($conf->browser->layout != 'phone') {
 	print "\n/* JS CODE TO ENABLE document_preview */\n"; // Function document_preview is into header
 	print '
                 jQuery(document).ready(function () {
@@ -184,7 +198,8 @@ print '
 					{
 						if (this.href)
 						{
-							this.href=this.href+\'&page_y=\'+page_y;
+							var hrefarray = this.href.split("#", 2);
+							this.href=hrefarray[0]+\'&page_y=\'+page_y;
 							console.log("We click on tag with .reposition class. this.ref is now "+this.href);
 						}
 						else

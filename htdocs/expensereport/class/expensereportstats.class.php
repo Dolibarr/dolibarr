@@ -30,19 +30,19 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
  */
 class ExpenseReportStats extends Stats
 {
-    /**
+	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element;
 
-    public $socid;
-    public $userid;
+	public $socid;
+	public $userid;
 
-    public $from;
-    public $field;
-    public $where;
+	public $from;
+	public $field;
+	public $where;
 
-    private $datetouse = 'date_valid';
+	private $datetouse = 'date_valid';
 
 
 	/**
@@ -50,7 +50,7 @@ class ExpenseReportStats extends Stats
 	 *
 	 * @param 	DoliDB		$db		   Database handler
 	 * @param 	int			$socid	   Id third party
-     * @param   int			$userid    Id user for filter
+	 * @param   int			$userid    Id user for filter
 	 * @return 	void
 	 */
 	public function __construct($db, $socid = 0, $userid = 0)
@@ -58,8 +58,8 @@ class ExpenseReportStats extends Stats
 		global $conf, $user;
 
 		$this->db = $db;
-        $this->socid = $socid;
-        $this->userid = $userid;
+		$this->socid = $socid;
+		$this->userid = $userid;
 
 		$object = new ExpenseReport($this->db);
 		$this->from = MAIN_DB_PREFIX.$object->table_element." as e";
@@ -107,7 +107,7 @@ class ExpenseReportStats extends Stats
 	 * 	Renvoie le nombre de facture par mois pour une annee donnee
 	 *
 	 *	@param	string	$year		Year to scan
-     *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 *	@return	array				Array of values
 	 */
 	public function getNbByMonth($year, $format = 0)
@@ -117,7 +117,7 @@ class ExpenseReportStats extends Stats
 		$sql .= " WHERE YEAR(e.".$this->datetouse.") = ".$year;
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
-        $sql .= $this->db->order('dm', 'DESC');
+		$sql .= $this->db->order('dm', 'DESC');
 
 		$res = $this->_getNbByMonth($year, $sql, $format);
 		//var_dump($res);print '<br>';
@@ -129,14 +129,14 @@ class ExpenseReportStats extends Stats
 	 * 	Renvoie le montant de facture par mois pour une annee donnee
 	 *
 	 *	@param	int		$year		Year to scan
-     *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 *	@return	array				Array of values
 	 */
 	public function getAmountByMonth($year, $format = 0)
 	{
 		$sql = "SELECT date_format(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).",'%m') as dm, sum(".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE date_format(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).",'%Y') = '".$year."'";
+		$sql .= " WHERE date_format(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).",'%Y') = '".$this->db->escape($year)."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
@@ -156,10 +156,10 @@ class ExpenseReportStats extends Stats
 	{
 		$sql = "SELECT date_format(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).",'%m') as dm, avg(".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE date_format(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).",'%Y') = '".$year."'";
+		$sql .= " WHERE date_format(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).",'%Y') = '".$this->db->escape($year)."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
-        $sql .= $this->db->order('dm', 'DESC');
+		$sql .= $this->db->order('dm', 'DESC');
 
 		return $this->_getAverageByMonth($year, $sql);
 	}
@@ -175,8 +175,8 @@ class ExpenseReportStats extends Stats
 		$sql .= " FROM ".$this->from;
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY year";
-        $sql .= $this->db->order('year', 'DESC');
+		$sql .= $this->db->order('year', 'DESC');
 
-        return $this->_getAllByYear($sql);
-    }
+		return $this->_getAllByYear($sql);
+	}
 }

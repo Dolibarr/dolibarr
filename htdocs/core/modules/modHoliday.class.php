@@ -140,14 +140,14 @@ class modHoliday extends DolibarrModules
 		$r = 0;
 
 		$this->rights[$r][0] = 20001; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Read your own leave requests'; // Permission label
+		$this->rights[$r][1] = 'Read leave requests (yours and your subordinates)'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'read'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
 		$this->rights[$r][0] = 20002; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/modify your own leave requests'; // Permission label
+		$this->rights[$r][1] = 'Create/modify leave requests'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'write'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
@@ -170,14 +170,14 @@ class modHoliday extends DolibarrModules
 		$this->rights[$r][0] = 20004; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read leave requests for everybody'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'read_all'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][4] = 'readall'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
 		$this->rights[$r][0] = 20005; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Create/modify leave requests for everybody'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'write_all'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][4] = 'writeall_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
@@ -201,7 +201,7 @@ class modHoliday extends DolibarrModules
 		$this->export_code[$r] = 'leaverequest_'.$r;
 		$this->export_label[$r] = 'ListeCP';
 		$this->export_icon[$r] = 'holiday';
-		$this->export_permission[$r] = array(array("holiday", "read_all"));
+		$this->export_permission[$r] = array(array("holiday", "readall"));
 		$this->export_fields_array[$r] = array(
 			'd.rowid'=>"LeaveId", 'd.fk_type'=>'TypeOfLeaveId', 't.code'=>'TypeOfLeaveCode', 't.label'=>'TypeOfLeaveLabel', 'd.fk_user'=>'UserID',
 			'u.lastname'=>'Lastname', 'u.firstname'=>'Firstname', 'u.login'=>"Login", 'd.date_debut'=>'DateStart', 'd.date_fin'=>'DateEnd', 'd.halfday'=>'HalfDay', 'none.num_open_days'=>'NbUseDaysCP',

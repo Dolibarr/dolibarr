@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal modul de configurare
 PaypalDesc=Acest modul permite plata de către clienți prin intermediul  <a href="http://www.paypal.com" target="_blank">PayPal </a> . Aceasta poate fi utilizată pentru o plată ad-hoc sau pentru o plată aferentă unui obiect Dolibarr (factură, comandă, ...)
-PaypalOrCBDoPayment=Pay with PayPal (Card or PayPal)
+PaypalOrCBDoPayment=Plăteşte cu PayPal (Card sau PayPal)
 PaypalDoPayment=Plătiți cu PayPal
 PAYPAL_API_SANDBOX=Mod de încercare / sandbox
 PAYPAL_API_USER=API numele de utilizator
@@ -32,5 +32,5 @@ PaypalImportPayment=Importați plăți PayPal
 PostActionAfterPayment=Acțiuni postate după plăți
 ARollbackWasPerformedOnPostActions=A fost efectuată o revocare a tuturor acțiunilor Post. Trebuie să finalizați manual acțiunile postate dacă acestea sunt necesare.
 ValidationOfPaymentFailed=Validarea plății a eșuat
-CardOwner=Card holder
-PayPalBalance=Paypal credit
+CardOwner=Deţinătorul cardului
+PayPalBalance=Credit Paypal

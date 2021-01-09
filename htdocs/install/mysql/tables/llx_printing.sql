@@ -20,7 +20,7 @@
 CREATE TABLE llx_printing 
 (
  rowid integer AUTO_INCREMENT PRIMARY KEY,
- tms timestamp,
+ tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
  datec datetime,
  printer_name text NOT NULL, 
  printer_location text NOT NULL,

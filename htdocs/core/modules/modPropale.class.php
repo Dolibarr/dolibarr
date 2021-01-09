@@ -5,6 +5,7 @@
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2020		Ahmad Jamaly Rabib		<rabib@metroworks.co.jp>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,8 +113,8 @@ class modPropale extends DolibarrModules
 
 		// Boxes
 		$this->boxes = array(
-           	0=>array('file'=>'box_graph_propales_permonth.php', 'enabledbydefaulton'=>'Home'),
-           	1=>array('file'=>'box_propales.php', 'enabledbydefaulton'=>'Home'),
+		   	0=>array('file'=>'box_graph_propales_permonth.php', 'enabledbydefaulton'=>'Home'),
+		   	1=>array('file'=>'box_propales.php', 'enabledbydefaulton'=>'Home'),
 		);
 
 		// Permissions
@@ -149,7 +150,7 @@ class modPropale extends DolibarrModules
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'propal_advance';
-        $this->rights[$r][5] = 'send';
+		$this->rights[$r][5] = 'send';
 
 		$r++;
 		$this->rights[$r][0] = 26; // id de la permission
@@ -198,11 +199,11 @@ class modPropale extends DolibarrModules
 		);
 		if (!empty($conf->multicurrency->enabled))
 		{
-		    $this->export_fields_array[$r]['c.multicurrency_code'] = 'Currency';
-		    $this->export_fields_array[$r]['c.multicurrency_tx'] = 'CurrencyRate';
-		    $this->export_fields_array[$r]['c.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
-		    $this->export_fields_array[$r]['c.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
-		    $this->export_fields_array[$r]['c.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
+			$this->export_fields_array[$r]['c.multicurrency_code'] = 'Currency';
+			$this->export_fields_array[$r]['c.multicurrency_tx'] = 'CurrencyRate';
+			$this->export_fields_array[$r]['c.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
+			$this->export_fields_array[$r]['c.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
+			$this->export_fields_array[$r]['c.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
 		}
 		//$this->export_TypeFields_array[$r]=array(
 		//	's.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.code'=>'Text','s.phone'=>'Text',
@@ -240,7 +241,7 @@ class modPropale extends DolibarrModules
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s ';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extra4 ON s.rowid = extra4.fk_object';
 
-		if (!$user->rights->societe->client->voir) $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON s.fk_pays = co.rowid,';
 		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'propal as c';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pj ON c.fk_projet = pj.rowid';
@@ -253,7 +254,175 @@ class modPropale extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra3 on p.rowid = extra3.fk_object';
 		$this->export_sql_end[$r] .= ' WHERE c.fk_soc = s.rowid AND c.rowid = cd.fk_propal';
 		$this->export_sql_end[$r] .= ' AND c.entity IN ('.getEntity('propal').')';
-		if (!$user->rights->societe->client->voir) $this->export_sql_end[$r] .= ' AND sc.fk_user = '.$user->id;
+		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
+
+		// Imports
+		//--------
+		$r = 0;
+
+		$r++;
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = 'Proposals'; // Translation key
+		$this->import_icon[$r] = $this->picto;
+		$this->import_entities_array[$r] = []; // We define here only fields that use another icon that the one defined into import_icon
+		$this->import_tables_array[$r] = ['c' => MAIN_DB_PREFIX.'propal', 'extra' => MAIN_DB_PREFIX.'propal_extrafields'];
+		$this->import_tables_creator_array[$r] = ['c'=>'fk_user_author']; // Fields to store import user id
+		$this->import_fields_array[$r] = [
+			'c.ref' => 'Document Ref*',
+			'c.ref_client' => 'RefCustomer',
+			'c.fk_soc' => 'ThirdPartyName*',
+			'c.datec' => 'DateCreation',
+			'c.datep' => 'DatePropal',
+			'c.fin_validite' => 'DateEndPropal',
+			'c.remise_percent' => 'GlobalDiscount',
+			'c.total_ht' => 'TotalHT',
+			'c.total' => 'TotalTTC',
+			'c.fk_statut' => 'Status*',
+			'c.note_public' => 'Note',
+			'c.date_livraison' => 'DeliveryDate',
+			'c.fk_user_valid' => 'ValidatedById'
+		];
+		if (!empty($conf->multicurrency->enabled)) {
+			$this->import_fields_array[$r]['c.multicurrency_code'] = 'Currency';
+			$this->import_fields_array[$r]['c.multicurrency_tx'] = 'CurrencyRate';
+			$this->import_fields_array[$r]['c.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
+			$this->import_fields_array[$r]['c.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
+			$this->import_fields_array[$r]['c.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
+		}
+		// Add extra fields
+		$import_extrafield_sample = [];
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'propal' AND entity IN (0, ".$conf->entity.")";
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$fieldname = 'extra.'.$obj->name;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+				$import_extrafield_sample[$fieldname] = $fieldlabel;
+			}
+		}
+		// End add extra fields
+		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'propal'];
+		$this->import_regex_array[$r] = ['c.ref' => '[^ ]'];
+		$import_sample = [
+			'c.ref' => 'PROV0077',
+			'c.ref_client' => 'Client1',
+			'c.fk_soc' => 'MyBigCompany',
+			'c.datec' => '2020-01-01',
+			'c.datep' => '2020-01-01',
+			'c.fin_validite' => '2020-01-01',
+			'c.remise_percent' => '',
+			'c.total_ht' => '0',
+			'c.total' => '0',
+			'c.fk_statut' => '1',
+			'c.note_public' => '',
+			'c.date_livraison' => '2020-01-01',
+			'c.fk_user_valid' => '1',
+			'c.multicurrency_code' => '',
+			'c.multicurrency_tx' => '1',
+			'c.multicurrency_total_ht' => '0',
+			'c.multicurrency_total_tva' => '0',
+			'c.multicurrency_total_ttc' => '0'
+		];
+		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
+		$this->import_updatekeys_array[$r] = ['c.ref'=>'Ref'];
+		$this->import_convertvalue_array[$r] = [
+			'c.fk_soc' => [
+				'rule' => 'fetchidfromref',
+				'file' => '/societe/class/societe.class.php',
+				'class' => 'Societe',
+				'method' => 'fetch',
+				'element' => 'ThirdParty'
+			]
+		];
+
+		//Import Proposal Lines
+		$r++;
+		$this->import_code[$r] = $this->rights_class.'line_'.$r;
+		$this->import_label[$r] = "ProposalLine"; // Translation key
+		$this->import_icon[$r] = $this->picto;
+		$this->import_entities_array[$r] = []; // We define here only fields that use another icon that the one defined into import_icon
+		$this->import_tables_array[$r] = [
+			'cd' => MAIN_DB_PREFIX.'propaldet',
+			'extra' => MAIN_DB_PREFIX.'propaldet_extrafields'
+		];
+		$this->import_fields_array[$r] = [
+			'cd.fk_propal' => 'Document Ref*',
+			'cd.fk_parent_line' => 'PrParentLine',
+			'cd.fk_product' => 'IdProduct',
+			'cd.label' => 'Label',
+			'cd.description' => 'LineDescription',
+			'cd.product_type' => 'TypeOfLineServiceOrProduct',
+			'cd.tva_tx' => 'LineVATRate',
+			'cd.qty' => 'LineQty',
+			'cd.remise_percent' => 'Reduc. Percent',
+			'cd.remise' => 'Reduc.',
+			'cd.price' => 'Price',
+			'cd.subprice' => 'Sub Price',
+			'cd.total_ht' => 'LineTotalHT',
+			'cd.total_tva' => 'LineTotalVAT',
+			'cd.total_ttc' => 'LineTotalTTC',
+			'cd.date_start' => 'Start Date',
+			'cd.date_end' => 'End Date',
+			'cd.buy_price_ht' => 'LineBuyPriceHT'
+		];
+		if (!empty($conf->multicurrency->enabled)) {
+			$this->import_fields_array[$r]['cd.multicurrency_code'] = 'Currency';
+			$this->import_fields_array[$r]['cd.multicurrency_subprice'] = 'CurrencyRate';
+			$this->import_fields_array[$r]['cd.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
+			$this->import_fields_array[$r]['cd.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
+			$this->import_fields_array[$r]['cd.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
+		}
+		// Add extra fields
+		$import_extrafield_sample = [];
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'propaldet' AND entity IN (0, ".$conf->entity.")";
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$fieldname = 'extra.'.$obj->name;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+				$import_extrafield_sample[$fieldname] = $fieldlabel;
+			}
+		}
+		// End add extra fields
+		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'propaldet'];
+		$this->import_regex_array[$r] = ['cd.product_type' => '[0|1]$'];
+		$import_sample = [
+			'cd.fk_propal' => 'PROV(0001)',
+			'cd.fk_parent_line' => '',
+			'cd.fk_product' => '',
+			'cd.label' => '',
+			'cd.description' => 'Line description',
+			'cd.product_type' => '1',
+			'cd.tva_tx' => '0',
+			'cd.qty' => '2',
+			'cd.remise_percent' => '0',
+			'cd.remise' => '0',
+			'cd.price' => '',
+			'cd.subprice' => '5000',
+			'cd.total_ht' => '10000',
+			'cd.total_tva' => '0',
+			'cd.total_ttc' => '10100',
+			'cd.date_start' => '',
+			'cd.date_end' => '',
+			'cd.buy_price_ht' => '7000',
+			'cd.multicurrency_code' => 'JPY',
+			'cd.multicurrency_tx' => '1',
+			'cd.multicurrency_total_ht' => '10000',
+			'cd.multicurrency_total_tva' => '0',
+			'cd.multicurrency_total_ttc' => '10100'
+		];
+		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
+		$this->import_updatekeys_array[$r] = ['cd.fk_propal' => 'Quotation Id', 'cd.fk_product' => 'Product Id'];
+		$this->import_convertvalue_array[$r] = [
+			'cd.fk_propal' => [
+				'rule'=>'fetchidfromref',
+				'file'=>'/comm/propal/class/propal.class.php',
+				'class'=>'Propal',
+				'method'=>'fetch'
+			]
+		];
 	}
 
 
@@ -262,7 +431,7 @@ class modPropale extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')

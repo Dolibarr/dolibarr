@@ -24,7 +24,7 @@ create table llx_usergroup
   nom           varchar(180) NOT NULL,
   entity        integer DEFAULT 1 NOT NULL,	-- multi company id
   datec         datetime,
-  tms           timestamp,
+  tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   note          text,
   model_pdf     varchar(255) DEFAULT NULL
 )ENGINE=innodb;

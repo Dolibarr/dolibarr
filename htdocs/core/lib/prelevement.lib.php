@@ -39,8 +39,13 @@ function prelevement_prepare_head(BonPrelevement $object)
 	$h = 0;
 	$head = array();
 
+	$titleoftab = "WithdrawalsReceipts";
+	if ($object->type == 'bank-transfer') {
+		$titleoftab = "BankTransferReceipts";
+	}
+
 	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("WithdrawalsReceipts");
+	$head[$h][1] = $langs->trans($titleoftab);
 	$head[$h][2] = 'prelevement';
 	$h++;
 
@@ -73,13 +78,21 @@ function prelevement_prepare_head(BonPrelevement $object)
 /**
  *	Check need data to create standigns orders receipt file
  *
+ *	@param	string	$type		'bank-transfer' or 'direct-debit'
+ *
  *	@return    	int		-1 if ko 0 if ok
  */
-function prelevement_check_config()
+function prelevement_check_config($type = 'direct-debit')
 {
-	global $conf;
-	if (empty($conf->global->PRELEVEMENT_ID_BANKACCOUNT)) return -1;
-	if (empty($conf->global->PRELEVEMENT_ICS)) return -1;
-	if (empty($conf->global->PRELEVEMENT_USER)) return -1;
+	global $conf, $db;
+	if ($type == 'bank-transfer'){
+		if (empty($conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT)) return -1;
+		//if (empty($conf->global->PRELEVEMENT_ICS)) return -1;
+		if (empty($conf->global->PAYMENTBYBANKTRANSFER_USER)) return -1;
+	}else {
+		if (empty($conf->global->PRELEVEMENT_ID_BANKACCOUNT)) return -1;
+		//if (empty($conf->global->PRELEVEMENT_ICS)) return -1;
+		if (empty($conf->global->PRELEVEMENT_USER)) return -1;
+	}
 	return 0;
 }

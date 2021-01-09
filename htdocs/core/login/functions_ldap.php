@@ -56,7 +56,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 		sleep(1);
 
 		// Load translation files required by the page
-        $langs->loadLangs(array('main', 'other'));
+		$langs->loadLangs(array('main', 'other'));
 
 		$_SESSION["dol_loginmesg"] = $langs->trans("ErrorLDAPFunctionsAreDisabledOnThisPHP").' '.$langs->trans("TryAnotherConnectionMode");
 		return;
@@ -151,6 +151,27 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 				dol_syslog("functions_ldap::check_user_password_ldap Authentification ok");
 				$login = $usertotest;
 
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+				$tmpuser = new User($db);
+				$tmpuser->fetch('', $login, '', 1, ($entitytotest > 0 ? $entitytotest : -1));
+
+				$now = dol_now();
+				if ($tmpuser->datestartvalidity && $db->jdate($tmpuser->datestartvalidity) >= $now) {
+					$ldap->close();
+					// Load translation files required by the page
+					$langs->loadLangs(array('main', 'errors'));
+					$_SESSION["dol_loginmesg"] = $langs->trans("ErrorLoginDateValidity");
+					return '--bad-login-validity--';
+				}
+				if ($tmpuser->dateendvalidity && $db->jdate($tmpuser->dateendvalidity) <= dol_get_first_hour($now)) {
+					$ldap->close();
+					// Load translation files required by the page
+					$langs->loadLangs(array('main', 'errors'));
+					$_SESSION["dol_loginmesg"] = $langs->trans("ErrorLoginDateValidity");
+					return '--bad-login-validity--';
+				}
+
 				// ldap2dolibarr synchronisation
 				if ($login && !empty($conf->ldap->enabled) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')	// ldap2dolibarr synchronisation
 				{
@@ -188,6 +209,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 						//$resultUpdate = $usertmp->update_ldap2dolibarr($ldap);
 					}
+
 					unset($usertmp);
 				}
 
@@ -212,7 +234,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 				sleep(1);
 
 				// Load translation files required by the page
-                $langs->loadLangs(array('main', 'other'));
+				$langs->loadLangs(array('main', 'other'));
 
 				$_SESSION["dol_loginmesg"] = $langs->trans("ErrorBadLoginPassword");
 			}
@@ -235,7 +257,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 			sleep(2); // Anti brut force protection
 
 			// Load translation files required by the page
-            $langs->loadLangs(array('main', 'other', 'errors'));
+			$langs->loadLangs(array('main', 'other', 'errors'));
 			$_SESSION["dol_loginmesg"] = ($ldap->error ? $ldap->error : $langs->trans("ErrorBadLoginPassword"));
 		}
 
