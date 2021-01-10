@@ -933,7 +933,6 @@ if ($resql)
 
 		$companystatic->id = $obj->socid;
 		$companystatic->name = $obj->name;
-		//$companystatic->name_alias = $obj->name_alias;
 		$companystatic->client = $obj->client;
 		$companystatic->code_client = $obj->code_client;
 		$companystatic->email = $obj->email;
