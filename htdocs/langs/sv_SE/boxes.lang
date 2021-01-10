@@ -46,9 +46,12 @@ BoxTitleLastModifiedDonations=Senast %s ändrade donationer
 BoxTitleLastModifiedExpenses=Senaste %s modifierade kostnadsrapporterna
 BoxTitleLatestModifiedBoms=Latest %s modified BOMs
 BoxTitleLatestModifiedMos=Latest %s modified Manufacturing Orders
+BoxTitleLastOutstandingBillReached=Customers with maximum outstanding exceeded
 BoxGlobalActivity=Global aktivitet (fakturor, förslag, order)
 BoxGoodCustomers=Bra kunder
 BoxTitleGoodCustomers=%s Bra kunder
+BoxScheduledJobs=Schemalagda jobb
+BoxTitleFunnelOfProspection=Lead funnel
 FailedToRefreshDataInfoNotUpToDate=Misslyckades med att uppdatera RSS-flöde. Senaste framgångsrika uppdateringsdatum: %s
 LastRefreshDate=Senaste uppdateringsdatum
 NoRecordedBookmarks=Inga bokmärken definieras. Klicka <a href="%s">här</a> för att lägga till bokmärken.
@@ -102,5 +105,7 @@ SuspenseAccountNotDefined=Suspense account isn't defined
 BoxLastCustomerShipments=Last customer shipments
 BoxTitleLastCustomerShipments=Latest %s customer shipments
 NoRecordedShipments=No recorded customer shipment
+BoxCustomersOutstandingBillReached=Customers with oustanding limit reached
 # Pages
 AccountancyHome=Redovisning
+ValidatedProjects=Validated projects

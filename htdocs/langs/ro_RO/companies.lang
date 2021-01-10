@@ -358,7 +358,7 @@ VATIntraCheckableOnEUSite=Verificați codul TV intracomunitar pe site-ul web al 
 VATIntraManualCheck=De asemenea, puteți verifica manual pe site-ul web al UE <a href="%s" target="_blank"> %s </a>
 ErrorVATCheckMS_UNAVAILABLE=Verificare imposibilă. Verificaţi dacă serviciul este furnizat de către statul membru ( %s).
 NorProspectNorCustomer=Nici prospect, nici client
-JuridicalStatus=Tip entitate juridică
+JuridicalStatus=Tipul entității comerciale
 Workforce=Forţa de muncă
 Staff=Angajati
 ProspectLevelShort=Potenţial

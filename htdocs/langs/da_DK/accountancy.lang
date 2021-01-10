@@ -48,6 +48,7 @@ CountriesExceptMe=Alle lande undtagen %s
 AccountantFiles=Eksporter kildedokumenter
 ExportAccountingSourceDocHelp=Med dette værktøj kan du eksportere de kildehændelser (liste og PDF-filer), der blev brugt til at generere din regnskab. For at eksportere dine tidsskrifter skal du bruge menuindgangen %s - %s.
 VueByAccountAccounting=Vis efter regnskabskonto
+VueBySubAccountAccounting=Vis efter regnskabsmæssig underkonto
 
 MainAccountForCustomersNotDefined=Standardkonto for kunder, der ikke er defineret i opsætningen
 MainAccountForSuppliersNotDefined=Hoved kontokort for leverandører, der ikke er defineret i opsætningen
@@ -144,7 +145,7 @@ NotVentilatedinAccount=Ikke bundet til regnskabskontoen
 XLineSuccessfullyBinded=%s varer/ydelser blev bundet til en regnskabskonto
 XLineFailedToBeBinded=%s varer/ydelser blev ikke bundet til en regnskabskonto
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Antal elementer, der skal bindes vist efter side (maks. Anbefalet: 50)
+ACCOUNTING_LIMIT_LIST_VENTILATION=Maksimalt antal linjer på listen og bind siden (anbefales: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Vis siden "Ikke bogførte linjer" med de nyeste poster først
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Vis siden "Ikke bogførte linjer" med de nyeste poster først
 
@@ -198,7 +199,8 @@ Docdate=Dato
 Docref=Reference
 LabelAccount=Kontonavn
 LabelOperation=Bilagstekst
-Sens=Sens
+Sens=Retning
+AccountingDirectionHelp=For en kundes regnskabskonto skal du bruge kredit til at registrere en betaling, du har modtaget <br>. For en leverandørs regnskabskonto skal du bruge Debet til at registrere en betaling, du foretager
 LetteringCode=Bogstaver kode
 Lettering=Skrift
 Codejournal=Kladde
@@ -206,7 +208,8 @@ JournalLabel=Journalmærke
 NumPiece=Partsnummer
 TransactionNumShort=Transaktionsnr.
 AccountingCategory=Regnskabskontogrupper
-GroupByAccountAccounting=Gruppér efter regnskabskonto
+GroupByAccountAccounting=Gruppér efter hovedkontokonto
+GroupBySubAccountAccounting=Gruppér efter underkonto konto
 AccountingAccountGroupsDesc=Du kan definere her nogle grupper af regnskabskonto. De vil blive brugt til personlige regnskabsrapporter.
 ByAccounts=Konti
 ByPredefinedAccountGroups=Efter foruddefinerede grupper
@@ -248,7 +251,7 @@ PaymentsNotLinkedToProduct=Betaling er ikke knyttet til noget produkt / tjeneste
 OpeningBalance=Åbnings balance
 ShowOpeningBalance=Vis åbningsbalance
 HideOpeningBalance=Skjul åbningsbalancen
-ShowSubtotalByGroup=Vis subtotal efter grupper
+ShowSubtotalByGroup=Vis subtotal efter niveau
 
 Pcgtype=Kontoens gruppe
 PcgtypeDesc=Kontogruppe bruges som foruddefinerede 'filter' og 'gruppering' kriterier for nogle regnskabsrapporter. For eksempel bruges 'INKOMST' eller 'UDGIFT' som grupper til regnskabsmæssige regnskaber for produkter til at oprette omkostnings- / indkomstrapporten.
@@ -271,11 +274,13 @@ DescVentilExpenseReport=Her vises listen over udgiftsrapporter linjer bundet (el
 DescVentilExpenseReportMore=Hvis du opsætter regnskabskonto på typen af ​​udgiftsrapporter, vil applikationen kunne foretage hele bindingen mellem dine udgiftsrapporter og kontoen for dit kontoplan, kun med et klik med knappen <strong> "%s" </strong>. Hvis kontoen ikke var angivet i gebyrordbog, eller hvis du stadig har nogle linjer, der ikke er bundet til nogen konto, skal du lave en manuel binding fra menuen "<strong> %s</strong>".
 DescVentilDoneExpenseReport=Her vises listen over linjerne for udgiftsrapporter og deres gebyrkonto
 
+Closure=Årlig lukning
 DescClosure=Se her antallet af bevægelser pr. Måned, der ikke er valideret og regnskabsår, der allerede er åbent
 OverviewOfMovementsNotValidated=Trin 1 / Oversigt over bevægelser, der ikke er valideret. (Nødvendigt at lukke et regnskabsår)
+AllMovementsWereRecordedAsValidated=Alle bevægelser blev registreret som godkendt
+NotAllMovementsCouldBeRecordedAsValidated=Ikke alle bevægelser kunne registreres som godkendt
 ValidateMovements=Valider bevægelser
 DescValidateMovements=Enhver ændring eller sletning af skrivning, bogstaver og sletning er forbudt. Alle poster til en øvelse skal valideres, ellers er lukning ikke mulig
-SelectMonthAndValidate=Vælg måned og valider bevægelser
 
 ValidateHistory=Automatisk Bogføring
 AutomaticBindingDone=Automatisk Bogføring
@@ -293,6 +298,7 @@ Accounted=Regnskab i hovedbog
 NotYetAccounted=Endnu ikke indregnet i hovedbog
 ShowTutorial=Vis selvstudie
 NotReconciled=Ikke afstemt
+WarningRecordWithoutSubledgerAreExcluded=Advarsel, alle handlinger uden underskrevet konto defineret filtreres og udelukkes fra denne visning
 
 ## Admin
 BindingOptions=Bindende muligheder
@@ -337,6 +343,7 @@ Modelcsv_LDCompta10=Eksport til LD Compta (v10 og nyere)
 Modelcsv_openconcerto=Eksport til OpenConcerto (Test)
 Modelcsv_configurable=Eksporter CSV Konfigurerbar
 Modelcsv_FEC=Eksport FEC
+Modelcsv_FEC2=Eksport FEC (med datagenereringsskrivning / omvendt dokument)
 Modelcsv_Sage50_Swiss=Eksport til Sage 50 Schweiz
 Modelcsv_winfic=Eksport Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Eksport til Gestinum (v3)

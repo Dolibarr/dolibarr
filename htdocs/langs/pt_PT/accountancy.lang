@@ -48,6 +48,7 @@ CountriesExceptMe=Todos os países, exceto %s
 AccountantFiles=Export source documents
 ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
 VueByAccountAccounting=View by accounting account
+VueBySubAccountAccounting=View by accounting subaccount
 
 MainAccountForCustomersNotDefined=Principal conta contábil para clientes não definidos na configuração
 MainAccountForSuppliersNotDefined=Conta contábil principal para fornecedores não definidos na configuração
@@ -144,7 +145,7 @@ NotVentilatedinAccount=Não vinculado à conta contabilística
 XLineSuccessfullyBinded=produtos / serviços %s vinculados com êxito a uma conta contábil
 XLineFailedToBeBinded=%s produtos/serviços não foram vinculados a uma conta contabilística
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to bind shown by page (maximum recommended: 50)
+ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Comece a ordenação da página "Vinculação a efetuar" pelos elementos mais recentes
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Comece a ordenação da página "Vinculação efetuada" pelos elementos mais recentes
 
@@ -198,7 +199,8 @@ Docdate=Data
 Docref=Referência
 LabelAccount=Etiqueta de conta
 LabelOperation=Operação de etiqueta
-Sens=Sentido
+Sens=Direction
+AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you received<br>For an accounting account of a supplier, use Debit to record a payment you make
 LetteringCode=Código de rotulação
 Lettering=Lettering
 Codejournal=Diário
@@ -206,7 +208,8 @@ JournalLabel=Journal label
 NumPiece=Número da peça
 TransactionNumShort=Núm. de transação
 AccountingCategory=Grupos personalizados
-GroupByAccountAccounting=Agrupar por conta contabilística
+GroupByAccountAccounting=Group by general ledger account
+GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=Você pode definir aqui alguns grupos de conta contábil. Eles serão usados ​​para relatórios contábeis personalizados.
 ByAccounts=Por contas
 ByPredefinedAccountGroups=Por grupos predefinidos
@@ -248,7 +251,7 @@ PaymentsNotLinkedToProduct=Pagamento não vinculado a nenhum produto / serviço
 OpeningBalance=Opening balance
 ShowOpeningBalance=Show opening balance
 HideOpeningBalance=Hide opening balance
-ShowSubtotalByGroup=Show subtotal by group
+ShowSubtotalByGroup=Show subtotal by level
 
 Pcgtype=Grupo de conta
 PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
@@ -271,11 +274,13 @@ DescVentilExpenseReport=Consulte aqui a lista de linhas do relatório de despesa
 DescVentilExpenseReportMore=Se você configurar uma conta contábil no tipo de linhas de relatório de despesas, o aplicativo poderá fazer toda a ligação entre suas linhas de relatório de despesas e a conta contábil do seu plano de contas, em apenas um clique com o botão <strong> "%s" </ strong>. Se a conta não foi definida no dicionário de taxas ou se você ainda tiver algumas linhas não vinculadas a nenhuma conta, será necessário fazer uma ligação manual no menu "<strong> %s </ strong>".
 DescVentilDoneExpenseReport=Consulte aqui a lista das linhas de relatórios de despesas e os seus honorários da conta contabilística
 
+Closure=Annual closure
 DescClosure=Consult here the number of movements by month who are not validated & fiscal years already open
 OverviewOfMovementsNotValidated=Step 1/ Overview of movements not validated. (Necessary to close a fiscal year)
+AllMovementsWereRecordedAsValidated=All movements were recorded as validated
+NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated
 ValidateMovements=Validate movements
 DescValidateMovements=Any modification or deletion of writing, lettering and deletes will be prohibited. All entries for an exercise must be validated otherwise closing will not be possible
-SelectMonthAndValidate=Select month and validate movements
 
 ValidateHistory=Vincular automaticamente
 AutomaticBindingDone=Vinculação automática efetuada
@@ -293,6 +298,7 @@ Accounted=Contabilizado no ledger
 NotYetAccounted=Ainda não contabilizado no razão
 ShowTutorial=Show Tutorial
 NotReconciled=Not reconciled
+WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
 
 ## Admin
 BindingOptions=Binding options
@@ -337,6 +343,7 @@ Modelcsv_LDCompta10=Export for LD Compta (v10 & higher)
 Modelcsv_openconcerto=Export for OpenConcerto (Test)
 Modelcsv_configurable=Exportar CSV configurável
 Modelcsv_FEC=Export FEC
+Modelcsv_FEC2=Export FEC (With dates generation writing / document reversed)
 Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
 Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Export for Gestinum (v3)

@@ -43,3 +43,7 @@ ALTER TABLE llx_bank_account ADD COLUMN ics varchar(32) NULL;
 ALTER TABLE llx_bank_account ADD COLUMN ics_transfer varchar(32) NULL;
 
 ALTER TABLE llx_facture MODIFY COLUMN date_valid DATETIME NULL DEFAULT NULL;
+
+ALTER TABLE llx_website ADD COLUMN lastaccess datetime NULL;
+ALTER TABLE llx_website ADD COLUMN pageviews_month BIGINT UNSIGNED DEFAULT 0;
+ALTER TABLE llx_website ADD COLUMN pageviews_total BIGINT UNSIGNED DEFAULT 0;

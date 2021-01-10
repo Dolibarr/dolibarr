@@ -36,7 +36,7 @@ if (!$user->rights->user->user->lire && !$user->admin) {
 }
 
 // Load translation files required by page
-$langs->loadLangs(array('users', 'companies', 'hrm'));
+$langs->loadLangs(array('users', 'companies', 'hrm', 'salaries'));
 
 $action     = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)

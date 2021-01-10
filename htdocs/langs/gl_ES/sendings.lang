@@ -30,8 +30,9 @@ OtherSendingsForSameOrder=Other shipments for this order
 SendingsAndReceivingForSameOrder=Shipments and receipts for this order
 SendingsToValidate=Shipments to validate
 StatusSendingCanceled=Anulado
+StatusSendingCanceledShort=Anulada
 StatusSendingDraft=Borrador
-StatusSendingValidated=Validated (products to ship or already shipped)
+StatusSendingValidated=Validado (produtos a enviar ou enviados)
 StatusSendingProcessed=Procesado
 StatusSendingDraftShort=Borrador
 StatusSendingValidatedShort=Validado
@@ -56,7 +57,7 @@ ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is do
 ShipmentLine=Shipment line
 ProductQtyInCustomersOrdersRunning=Product quantity from open sales orders
 ProductQtyInSuppliersOrdersRunning=Product quantity from open purchase orders
-ProductQtyInShipmentAlreadySent=Product quantity from open sales order already sent
+ProductQtyInShipmentAlreadySent=Cantidade de produto do pedimento de cliente aberto xa enviado
 ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open purchase orders already received
 NoProductToShipFoundIntoStock=No product to ship found in warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
 WeightVolShort=Weight/Vol.
@@ -65,6 +66,7 @@ ValidateOrderFirstBeforeShipment=You must first validate the order before being 
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=More complete document model for delivery receipts (logo...)
+DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER not defined
 SumOfProductVolumes=Sum of product volumes
 SumOfProductWeights=Sum of product weights
