@@ -1493,7 +1493,7 @@ if ($action == 'create')
 	} else {
 		if (!empty($conf->multicurrency->enabled) && !empty($soc->multicurrency_code)) $currency_code = $soc->multicurrency_code;
 	}
-	
+
 	//Warehouse default if null
 	if (!empty($conf->stock->enabled) && empty($warehouse_id) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER))
 	{

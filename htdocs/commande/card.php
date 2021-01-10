@@ -1499,7 +1499,7 @@ if ($action == 'create' && $usercancreate)
 			$remise_percent		= (!empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (!empty($soc->remise_percent) ? $soc->remise_percent : 0));
 			$remise_absolue		= (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
 			$dateorder = empty($conf->global->MAIN_AUTOFILL_DATE_ORDER) ?-1 : '';
-			
+
 			$date_delivery = (!empty($objectsrc->delivery_date) ? $objectsrc->delivery_date : '');
 			if (empty($date_delivery)) $date_delivery = (!empty($objectsrc->date_livraison) ? $objectsrc->date_livraison : '');
 
@@ -1532,7 +1532,7 @@ if ($action == 'create' && $usercancreate)
 		$note_private = $object->getDefaultCreateValueFor('note_private');
 		$note_public = $object->getDefaultCreateValueFor('note_public');
 	}
-	
+
 	//Warehouse default if null
 	if (!empty($conf->stock->enabled) && empty($warehouse_id) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER))
 	{
