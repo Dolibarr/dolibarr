@@ -53,8 +53,11 @@ if (!$res) die("Include of main fails");
 header('Content-Type: application/javascript');
 // Important: Following code is to cache this file to avoid page request by browser at each Dolibarr page access.
 // You can use CTRL+F5 to refresh your browser cache.
-if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
-else header('Cache-Control: no-cache');
+if (empty($dolibarr_nocache)) {
+	header('Cache-Control: max-age=3600, public, must-revalidate');
+} else {
+	header('Cache-Control: no-cache');
+}
 ?>
 
 /* Javascript library of module MyModule */
