@@ -848,6 +848,7 @@ Permission773=Supprimer les notes de frais
 Permission774=Lire toutes les notes de frais (même pour les utilisateurs en dehors de ma hierarchie)
 Permission775=Approuver les notes de frais
 Permission776=Payer les notes de frais
+Permission777=Lire les notes de frais de tout le monde
 Permission779=Exporter les notes de frais
 Permission1001=Consulter les stocks
 Permission1002=Créer/modifier entrepôts
