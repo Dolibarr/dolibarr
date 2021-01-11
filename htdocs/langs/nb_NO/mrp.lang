@@ -77,4 +77,4 @@ UnitCost=Enhetskostnad
 TotalCost=Totalkostnad
 BOMTotalCost=Kostnaden for å produsere denne stykklisten basert på kostnadene for hver mengde og vare som skal konsumeres (bruk kostpris hvis definert, ellers gjennomsnittlig vektet pris hvis definert, ellers den beste kjøpesummen)
 GoOnTabProductionToProduceFirst=Du må først ha startet produksjonen for å lukke en produksjonsordre (se fanen '%s'). Men du kan kansellere den.
-ErrorAVirtualProductCantBeUsedIntoABomOrMo=A kit can't be used into a BOM or a MO
+ErrorAVirtualProductCantBeUsedIntoABomOrMo=Et sett kan ikke brukes i en BOM eller en MO

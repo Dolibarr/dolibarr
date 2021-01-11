@@ -240,3 +240,4 @@ InventoryRealQtyHelp=Définissez la valeur sur 0 pour réinitialiser la quantit�
 UpdateByScaning=Mise à jour par scan
 UpdateByScaningProductBarcode=Mettre à jour par scan (code-barres produit)
 UpdateByScaningLot=Mise à jour par scan (code barres lot/série)
+DisableStockChangeOfSubProduct=Désactiver les mouvements de stock des composants pour tout mouvement de stock de ce kit

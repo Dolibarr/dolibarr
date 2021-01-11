@@ -240,3 +240,4 @@ InventoryRealQtyHelp=Iestatiet vērtību 0, lai atiestatītu daudzumu <br>. Sagl
 UpdateByScaning=Atjauniniet, skenējot
 UpdateByScaningProductBarcode=Atjaunināšana, skenējot (produkta svītrkods)
 UpdateByScaningLot=Atjaunināt, skenējot (partija | sērijas svītrkods)
+DisableStockChangeOfSubProduct=Deactivate the stock change for all the subproducts of this Kit during this movement.

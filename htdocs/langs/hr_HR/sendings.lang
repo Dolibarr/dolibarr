@@ -30,6 +30,7 @@ OtherSendingsForSameOrder=Ostale isporuke za ovu narudžbu
 SendingsAndReceivingForSameOrder=Shipments and receipts for this order
 SendingsToValidate=Isporuke za ovjeru
 StatusSendingCanceled=Poništeno
+StatusSendingCanceledShort=Poništeno
 StatusSendingDraft=Skica
 StatusSendingValidated=Ovjereno (proizvodi za isporuku ili su isporučeni)
 StatusSendingProcessed=Obrađen
@@ -65,6 +66,7 @@ ValidateOrderFirstBeforeShipment=Prvo morate ovjeriti narudžbu prije izrade otp
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Kompletan model dokumenta za dostavnu primku (logo...)
+DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstanta EXPEDITION_ADDON_NUMBER nije definirana
 SumOfProductVolumes=Ukupni volumen proizvoda
 SumOfProductWeights=Ukupna masa proizvoda

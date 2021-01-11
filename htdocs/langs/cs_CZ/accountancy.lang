@@ -48,6 +48,7 @@ CountriesExceptMe=Všechny země kromě %s
 AccountantFiles=Export source documents
 ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
 VueByAccountAccounting=View by accounting account
+VueBySubAccountAccounting=View by accounting subaccount
 
 MainAccountForCustomersNotDefined=Hlavní účetní účetnictví pro zákazníky, které nejsou definovány v nastavení
 MainAccountForSuppliersNotDefined=Hlavní účty účetnictví pro dodavatele, které nejsou definovány v nastavení
@@ -144,7 +145,7 @@ NotVentilatedinAccount=Neprověřeno v účetním účtu
 XLineSuccessfullyBinded=%s Produkty / služby úspěšně spojené s účtem účetnictví
 XLineFailedToBeBinded=%s produkty / služby nebyly vázány na žádný účetní účet
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Počet prvků pro vazbu zobrazených na stránce (maximální doporučeno: 50)
+ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Začněte třídění stránky "Vazba na pověření" pomocí nejnovějších prvků
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Zahájit třídění na stránce „Prověření hotovo“ od nejnovějších prvků
 
@@ -198,7 +199,8 @@ Docdate=Datum
 Docref=Reference
 LabelAccount=Štítek účtu
 LabelOperation=Operace štítků
-Sens=Sens
+Sens=Direction
+AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you received<br>For an accounting account of a supplier, use Debit to record a payment you make
 LetteringCode=Písmenový kód
 Lettering=Nápis
 Codejournal=Deník
@@ -206,7 +208,8 @@ JournalLabel=Označení časopisu
 NumPiece=počet kusů
 TransactionNumShort=Num. transakce
 AccountingCategory=Personalizované skupiny
-GroupByAccountAccounting=Seskupte účetní účet
+GroupByAccountAccounting=Group by general ledger account
+GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=Zde můžete definovat některé skupiny účetních účtů. Budou se používat pro personalizované účetní výkazy.
 ByAccounts=Podle účtů
 ByPredefinedAccountGroups=Podle předdefinovaných skupin
@@ -248,7 +251,7 @@ PaymentsNotLinkedToProduct=Platba není spojena s žádným produktem / službou
 OpeningBalance=Počáteční zůstatek
 ShowOpeningBalance=Zobrazit počáteční zůstatek
 HideOpeningBalance=Skrýt počáteční zůstatek
-ShowSubtotalByGroup=Zobrazit mezisoučet podle skupiny
+ShowSubtotalByGroup=Show subtotal by level
 
 Pcgtype=Skupina účtů
 PcgtypeDesc=Skupina účtů se používá jako předdefinovaná kritéria pro filtrování a seskupování pro některé účetní výkazy. Například „PŘÍJMY“ nebo „VÝDAJE“ se používají jako skupiny pro účetní účty produktů k sestavení výkazu nákladů / výnosů.
@@ -271,11 +274,13 @@ DescVentilExpenseReport=Zde si přečtěte seznam výkazů výdajů vázaných (
 DescVentilExpenseReportMore=Pokud nastavíte účetní účet na řádcích výkazu druhů výdajů, aplikace bude schopna provést veškerou vazbu mezi řádky výkazu výdajů a účetním účtem vašeho účtovacího schématu, a to jedním kliknutím tlačítkem <strong> "%s" </strong>. Pokud účet nebyl nastaven na slovník poplatků nebo máte stále nějaké řádky, které nejsou vázány na žádný účet, budete muset provést ruční vazbu z nabídky "<strong> %s </strong>".
 DescVentilDoneExpenseReport=Poraďte se zde seznam v souladu se zprávami výdajů a jejich poplatků účtování účtu
 
+Closure=Annual closure
 DescClosure=Zde se podívejte na počet pohybů za měsíc, kteří nejsou validováni a fiskální roky již otevřeny
 OverviewOfMovementsNotValidated=Krok 1 / Přehled pohybů neověřených. (Nezbytné uzavřít fiskální rok)
+AllMovementsWereRecordedAsValidated=All movements were recorded as validated
+NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated
 ValidateMovements=Ověřte pohyby
 DescValidateMovements=Jakékoli úpravy nebo vymazání písem, nápisů a vymazání budou zakázány. Všechny přihlášky na cvičení musí být validovány, jinak nebude možné uzavřít
-SelectMonthAndValidate=Vyberte měsíc a potvrďte pohyby
 
 ValidateHistory=Ověřit automaticky
 AutomaticBindingDone=Automatické vázání provedeno
@@ -293,6 +298,7 @@ Accounted=Účtováno v knize
 NotYetAccounted=Zatím nebyl zaznamenán v knize
 ShowTutorial=Zobrazit výuku
 NotReconciled=Nesladěno
+WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
 
 ## Admin
 BindingOptions=Binding options
@@ -337,6 +343,7 @@ Modelcsv_LDCompta10=Export pro LD Compta (v10 a vyšší)
 Modelcsv_openconcerto=Export pro OpenConcerto (Test)
 Modelcsv_configurable=Export CSV konfigurovatelný
 Modelcsv_FEC=Export FEC
+Modelcsv_FEC2=Export FEC (With dates generation writing / document reversed)
 Modelcsv_Sage50_Swiss=Export pro Sage 50 Švýcarsko
 Modelcsv_winfic=Exportovat Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Export for Gestinum (v3)

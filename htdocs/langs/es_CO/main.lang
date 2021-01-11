@@ -21,6 +21,7 @@ FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
 NoTemplateDefined=No hay plantilla disponible para este tipo de correo electrónico.
 AvailableVariables=Variables de sustitución disponibles
+CurrentTimeZone=Zona horaria de PHP (servidor)
 NoRecordFound=No se encontraron registros
 NoRecordDeleted=Ningún registro eliminado
 Errors=Los errores

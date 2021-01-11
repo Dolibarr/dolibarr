@@ -48,6 +48,7 @@ CountriesExceptMe=Visas valstis, izņemot %s
 AccountantFiles=Eksportēt pirmdokumentus
 ExportAccountingSourceDocHelp=Izmantojot šo rīku, varat eksportēt avota notikumus (sarakstu un PDF failus), kas tika izmantoti grāmatvedības ģenerēšanai. Lai eksportētu žurnālus, izmantojiet izvēlnes ierakstu %s - %s.
 VueByAccountAccounting=Skatīt pēc grāmatvedības konta
+VueBySubAccountAccounting=View by accounting subaccount
 
 MainAccountForCustomersNotDefined=Galvenais grāmatvedības konts klientiem, kas nav definēti iestatījumos
 MainAccountForSuppliersNotDefined=Galvenais grāmatvedības konts piegādātājiem, kas nav definēti iestatījumos
@@ -144,7 +145,7 @@ NotVentilatedinAccount=Nav saistošs grāmatvedības kontam
 XLineSuccessfullyBinded=%s produkti/pakalpojumi, kas veiksmīgi piesaistīti grāmatvedības kontam
 XLineFailedToBeBinded=%s produkti/pakalpojumi nav saistīti ar nevienu grāmatvedības kontu
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Saistīto elementu skaits, kas redzams lapā (maksimāli ieteicams: 50)
+ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Sāciet lappuses "Saistīšanu darīt" šķirošanu ar jaunākajiem elementiem
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Sāciet lappuses "Saistīšana pabeigta" šķirošanu ar jaunākajiem elementiem
 
@@ -198,7 +199,8 @@ Docdate=Datums
 Docref=Atsauce
 LabelAccount=Konta nosaukums
 LabelOperation=Etiķetes darbība
-Sens=Sens
+Sens=Direction
+AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you received<br>For an accounting account of a supplier, use Debit to record a payment you make
 LetteringCode=Burtu kods
 Lettering=Burti
 Codejournal=Žurnāls
@@ -206,7 +208,8 @@ JournalLabel=Žurnāla etiķete
 NumPiece=Gabala numurs
 TransactionNumShort=Num. darījums
 AccountingCategory=Personalizētas grupas
-GroupByAccountAccounting=Grupēt pēc grāmatvedības konta
+GroupByAccountAccounting=Group by general ledger account
+GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=Šeit jūs varat definēt dažas grāmatvedības kontu grupas. Tie tiks izmantoti personificētiem grāmatvedības pārskatiem.
 ByAccounts=Pēc kontiem
 ByPredefinedAccountGroups=Iepriekš definētās grupas
@@ -248,7 +251,7 @@ PaymentsNotLinkedToProduct=Maksājums nav saistīts ar kādu produktu / pakalpoj
 OpeningBalance=Sākuma bilance
 ShowOpeningBalance=Rādīt sākuma atlikumu
 HideOpeningBalance=Slēpt sākuma atlikumu
-ShowSubtotalByGroup=Rādīt starpsummu pa grupām
+ShowSubtotalByGroup=Show subtotal by level
 
 Pcgtype=Kontu grupa
 PcgtypeDesc=Kontu grupa tiek izmantota kā iepriekš definēti “filtra” un “grupēšanas” kritēriji dažiem grāmatvedības pārskatiem. Piemēram, “IENĀKUMS” vai “IZDEVUMI” tiek izmantoti kā produktu uzskaites kontu grupas, lai izveidotu izdevumu / ienākumu pārskatu.
@@ -271,11 +274,13 @@ DescVentilExpenseReport=Konsultējieties šeit ar izdevumu pārskatu rindiņu sa
 DescVentilExpenseReportMore=Ja jūs izveidojat grāmatvedības kontu uz izdevumu pārskata rindiņu veida, programma varēs visu saistību starp jūsu rēķina pārskatu rindiņām un jūsu kontu diagrammas grāmatvedības kontu veikt tikai ar vienu klikšķi, izmantojot pogu <strong> "%s" </strong>. Ja kontam nav iestatīta maksu vārdnīca vai ja jums joprojām ir dažas rindiņas, kurām nav saistības ar kādu kontu, izvēlnē "<strong> %s </ strong>" būs jāveic manuāla piesaistīšana.
 DescVentilDoneExpenseReport=Konsultējieties šeit ar izdevumu pārskatu rindu sarakstu un to maksu grāmatvedības kontu
 
+Closure=Annual closure
 DescClosure=Šeit apskatiet neapstiprināto kustību skaitu mēnesī, un fiskālie gadi jau ir atvērti
 OverviewOfMovementsNotValidated=1. solis / Nepārvērtēts kustību pārskats. (Nepieciešams, lai slēgtu fiskālo gadu)
+AllMovementsWereRecordedAsValidated=All movements were recorded as validated
+NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated
 ValidateMovements=Apstipriniet kustības
 DescValidateMovements=Jebkādas rakstīšanas, burtu un izdzēsto tekstu izmaiņas vai dzēšana būs aizliegtas. Visi vingrinājumu ieraksti ir jāapstiprina, pretējā gadījumā aizvēršana nebūs iespējama
-SelectMonthAndValidate=Izvēlieties mēnesi un apstipriniet kustības
 
 ValidateHistory=Piesaistiet automātiski
 AutomaticBindingDone=Automātiskā piesaistīšana pabeigta
@@ -293,6 +298,7 @@ Accounted=Uzskaitīts virsgrāmatā
 NotYetAccounted=Vēl nav uzskaitīti virsgrāmatā
 ShowTutorial=Rādīt apmācību
 NotReconciled=Nesaskaņots
+WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
 
 ## Admin
 BindingOptions=Iesiešanas iespējas
@@ -337,6 +343,7 @@ Modelcsv_LDCompta10=Eksports LD Compta (v10 un jaunākiem)
 Modelcsv_openconcerto=Eksportēt OpenConcerto (tests)
 Modelcsv_configurable=Eksportēt CSV konfigurējamu
 Modelcsv_FEC=Eksporta FEC
+Modelcsv_FEC2=Export FEC (With dates generation writing / document reversed)
 Modelcsv_Sage50_Swiss=Eksports uz Sage 50 Šveici
 Modelcsv_winfic=Eksportēt Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Export for Gestinum (v3)
