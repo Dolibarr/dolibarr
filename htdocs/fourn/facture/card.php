@@ -1193,7 +1193,7 @@ if (empty($reshook))
 
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
 		$remise_percent = GETPOST('remise_percent'.$predef);
-		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CR');
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU');
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -1297,10 +1297,10 @@ if (empty($reshook))
 				if (!empty($product_desc) && trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
 
 				$type = $productsupplier->type;
-				if ($price_ht != '' || $price_ht_devise != '') {
+				if (GETPOST('price_ht') != '' || GETPOST('price_ht_devise') != '') {
 					$price_base_type = 'HT';
 					$pu = price2num($price_ht, 'MU');
-					$pu_ht_devise = price2num($price_ht_devise, 'MU');
+					$pu_ht_devise = price2num($price_ht_devise, 'CU');
 				} else {
 					$price_base_type = ($productsupplier->fourn_price_base_type ? $productsupplier->fourn_price_base_type : 'HT');
 					if (empty($object->multicurrency_code) || ($productsupplier->fourn_multicurrency_code != $object->multicurrency_code)) {	// If object is in a different currency and price not in this currency
@@ -1378,15 +1378,14 @@ if (empty($reshook))
 			$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $object->thirdparty);
 			$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty);
 
-			if ($price_ht !== '')
-			{
+			if (GETPOST('price_ht') != '' || GETPOST('price_ht_devise') != '') {
 				$pu_ht = price2num($price_ht, 'MU'); // $pu_ht must be rounded according to settings
 			} else {
 				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
 				$pu_ht = price2num($pu_ttc / (1 + ($tva_tx / 100)), 'MU'); // $pu_ht must be rounded according to settings
 			}
 			$price_base_type = 'HT';
-			$pu_ht_devise = price2num($price_ht_devise, 'MU');
+			$pu_ht_devise = price2num($price_ht_devise, 'CU');
 
 			$result = $object->addline($product_desc, $pu_ht, $tva_tx, $localtax1_tx, $localtax2_tx, $qty, 0, $remise_percent, $date_start, $date_end, 0, $tva_npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit, 0, $pu_ht_devise, $ref_supplier);
 		}
