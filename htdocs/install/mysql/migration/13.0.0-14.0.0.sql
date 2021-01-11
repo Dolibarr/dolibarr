@@ -47,3 +47,8 @@ ALTER TABLE llx_facture MODIFY COLUMN date_valid DATETIME NULL DEFAULT NULL;
 ALTER TABLE llx_website ADD COLUMN lastaccess datetime NULL;
 ALTER TABLE llx_website ADD COLUMN pageviews_month BIGINT UNSIGNED DEFAULT 0;
 ALTER TABLE llx_website ADD COLUMN pageviews_total BIGINT UNSIGNED DEFAULT 0;
+
+ALTER TABLE llx_propal ADD COLUMN fk_warehouse integer DEFAULT NULL AFTER fk_shipping_method;
+ALTER TABLE llx_propal ADD CONSTRAINT llx_propal_fk_warehouse FOREIGN KEY (fk_warehouse) REFERENCES llx_entrepot(rowid);
+ALTER TABLE llx_propal ADD INDEX idx_propal_fk_warehouse(fk_warehouse);
+
