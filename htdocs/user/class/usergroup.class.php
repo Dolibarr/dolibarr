@@ -675,6 +675,10 @@ class UserGroup extends CommonObject
 	{
 		global $user, $conf;
 
+		if (empty($this->nom) && !empty($this->name)) {
+			$this->nom = $this->name;
+		}
+
 		$entity = $conf->entity;
 		if (!empty($conf->multicompany->enabled) && $conf->entity == 1)
 		{
