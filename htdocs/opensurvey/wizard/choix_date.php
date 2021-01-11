@@ -46,6 +46,7 @@ if (GETPOST('confirmation'))
 	if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true && issetAndNoEmpty('nbrecaseshoraires', $_SESSION) === true)
 	{
 		$nbofchoice = count($_SESSION["totalchoixjour"]);
+		$errheure = array();
 
 		for ($i = 0; $i < $nbofchoice; $i++)
 		{
@@ -54,16 +55,18 @@ if (GETPOST('confirmation'))
 			{
 				$_SESSION["horaires$i"][$j] = $_POST["horaires$i"][$j];
 
-				$case = $j + 1;
+				$tmphorairesi = GETPOST('horaires'.$i, 'array');
 
-				if (isset($_POST['horaires'.$i]) === false || isset($_POST['horaires'.$i][$j]) === false) {
+				if (!is_array($tmphorairesi) || empty($tmphorairesi[$j])) {
 					$errheure[$i][$j] = true;
 					$erreur = true;
 					continue;
 				}
 
-				//si c'est un creneau type 8:00-11:00
-				if (preg_match("/(\d{1,2}:\d{2})-(\d{1,2}:\d{2})/", $_POST["horaires$i"][$j], $creneaux)) {
+				// A range like 8:00-11:00
+				$creneaux = array();
+				$heures = array();
+				if (preg_match("/(\d{1,2}:\d{2})-(\d{1,2}:\d{2})/", $tmphorairesi[$j], $creneaux)) {
 					//on recupere les deux parties du preg_match qu'on redécoupe autour des ":"
 					$debutcreneau = explode(":", $creneaux[1]);
 					$fincreneau = explode(":", $creneaux[2]);
@@ -76,7 +79,7 @@ if (GETPOST('confirmation'))
 						$errheure[$i][$j] = true;
 						$erreur = true;
 					}
-				} elseif (preg_match(";^(\d{1,2}h\d{0,2})-(\d{1,2}h\d{0,2})$;i", $_POST["horaires$i"][$j], $creneaux)) { //si c'est un creneau type 8h00-11h00
+				} elseif (preg_match(";^(\d{1,2}h\d{0,2})-(\d{1,2}h\d{0,2})$;i", $tmphorairesi[$j], $creneaux)) { //si c'est un creneau type 8h00-11h00
 					//on recupere les deux parties du preg_match qu'on redécoupe autour des "H"
 					$debutcreneau = preg_split("/h/i", $creneaux[1]);
 					$fincreneau = preg_split("/h/i", $creneaux[2]);
@@ -89,7 +92,7 @@ if (GETPOST('confirmation'))
 						$errheure[$i][$j] = true;
 						$erreur = true;
 					}
-				} elseif (preg_match(";^(\d{1,2}):(\d{2})$;", $_POST["horaires$i"][$j], $heures)) { //si c'est une heure simple type 8:00
+				} elseif (preg_match(";^(\d{1,2}):(\d{2})$;", $tmphorairesi[$j], $heures)) { //si c'est une heure simple type 8:00
 					//si valeures correctes, on entre les données dans la variables de session
 					if ($heures[1] < 24 && $heures[2] < 60) {
 						$_SESSION["horaires$i"][$j] = $heures[0];
@@ -97,7 +100,7 @@ if (GETPOST('confirmation'))
 						$errheure[$i][$j] = true;
 						$erreur = true;
 					}
-				} elseif (preg_match(";^(\d{1,2})h(\d{0,2})$;i", $_POST["horaires$i"][$j], $heures)) { //si c'est une heure encore plus simple type 8h
+				} elseif (preg_match(";^(\d{1,2})h(\d{0,2})$;i", $tmphorairesi[$j], $heures)) { //si c'est une heure encore plus simple type 8h
 					//si valeures correctes, on entre les données dans la variables de session
 					if ($heures[1] < 24 && $heures[2] < 60) {
 						$_SESSION["horaires$i"][$j] = $heures[0];
@@ -105,7 +108,7 @@ if (GETPOST('confirmation'))
 						$errheure[$i][$j] = true;
 						$erreur = true;
 					}
-				} elseif (preg_match(";^(\d{1,2})-(\d{1,2})$;", $_POST["horaires$i"][$j], $heures)) { //si c'est un creneau simple type 8-11
+				} elseif (preg_match(";^(\d{1,2})-(\d{1,2})$;", $tmphorairesi[$j], $heures)) { //si c'est un creneau simple type 8-11
 					//si valeures correctes, on entre les données dans la variables de session
 					if ($heures[1] < $heures[2] && $heures[1] < 24 && $heures[2] < 24) {
 						$_SESSION["horaires$i"][$j] = $heures[0];
@@ -113,7 +116,7 @@ if (GETPOST('confirmation'))
 						$errheure[$i][$j] = true;
 						$erreur = true;
 					}
-				} elseif (preg_match(";^(\d{1,2})h-(\d{1,2})h$;", $_POST["horaires$i"][$j], $heures)) { //si c'est un creneau H type 8h-11h
+				} elseif (preg_match(";^(\d{1,2})h-(\d{1,2})h$;", $tmphorairesi[$j], $heures)) { //si c'est un creneau H type 8h-11h
 					//si valeures correctes, on entre les données dans la variables de session
 					if ($heures[1] < $heures[2] && $heures[1] < 24 && $heures[2] < 24) {
 						$_SESSION["horaires$i"][$j] = $heures[0];
@@ -121,7 +124,7 @@ if (GETPOST('confirmation'))
 						$errheure[$i][$j] = true;
 						$erreur = true;
 					}
-				} elseif ($_POST["horaires$i"][$j] == "") { //Si la case est vide
+				} elseif ($tmphorairesi[$j] == "") { //Si la case est vide
 					unset($_SESSION["horaires$i"][$j]);
 				} else { //pour tout autre format, message d'erreur
 					$errheure[$i][$j] = true;
@@ -160,7 +163,8 @@ if (GETPOST('confirmation'))
 	}
 
 	//If just one day and no other time options, error message
-	if (count($_SESSION["totalchoixjour"]) == "1" && $_POST["horaires0"][0] == "" && $_POST["horaires0"][1] == "" && $_POST["horaires0"][2] == "" && $_POST["horaires0"][3] == "" && $_POST["horaires0"][4] == "") {
+	$tmphoraires0 = GETPOST('horaires0', 'array');
+	if (count($_SESSION["totalchoixjour"]) == "1" && $tmphoraires0[0] == "" && $tmphoraires0[1] == "" && $tmphoraires0[2] == "" && $tmphoraires0[3] == "" && $tmphoraires0[4] == "") {
 		setEventMessages($langs->trans("MoreChoices"), null, 'errors');
 		$erreur = true;
 	}
@@ -195,7 +199,7 @@ if (GETPOST('reset'))
  * View
  */
 
-if (!isset($_SESSION['commentaires']) && !isset($_SESSION['mail']))
+if (!isset($_SESSION['description']) && !isset($_SESSION['mail']))
 {
 	dol_print_error('', $langs->trans('ErrorOpenSurveyFillFirstSection'));
 	exit;
@@ -209,8 +213,7 @@ llxHeader('', $langs->trans("OpenSurvey"), "", '', 0, 0, $arrayofjs, $arrayofcss
 if (!isset($_SESSION["nbrecaseshoraires"]))
 {
 	$_SESSION["nbrecaseshoraires"] = 5;
-}
-elseif (GETPOST('ajoutcases') && $_SESSION["nbrecaseshoraires"] == 5)
+} elseif (GETPOST('ajoutcases') && $_SESSION["nbrecaseshoraires"] == 5)
 {
 	$_SESSION["nbrecaseshoraires"] = 10;
 }
@@ -319,9 +322,7 @@ $premierjourmois = date("N", mktime(0, 0, 0, $_SESSION["mois"], 1, $_SESSION["an
 if (is_integer($_SESSION["mois"]) && $_SESSION["mois"] > 0 && $_SESSION["mois"] < 13)
 {
 	$motmois = dol_print_date(mktime(0, 0, 0, $_SESSION["mois"], 10), '%B');
-}
-else
-{
+} else {
 	$motmois = dol_print_date(dol_now(), '%B');
 }
 
@@ -350,7 +351,7 @@ print '</td></tr>'."\n";
 print '</table>'."\n";
 print '</div>'."\n";
 
-print '<div class="center">'."\n";
+print '<div class="center calendrier">'."\n";
 print '<table align="center">'."\n"; // The div class=center has no effect on table, so we must keep the align=center for table
 print '<tr>'."\n";
 
@@ -485,7 +486,7 @@ for ($i = 0; $i < $nbrejourmois + $premierjourmois; $i++) {
 			if (($numerojour >= $jourAJ && $_SESSION["mois"] == $moisAJ && $_SESSION["annee"] == $anneeAJ) || ($_SESSION["mois"] > $moisAJ && $_SESSION["annee"] == $anneeAJ) || $_SESSION["annee"] > $anneeAJ) {
 				print '<td align="center" class="libre"><input type="submit" class="bouton ON" name="choixjourajout[]" value="'.$numerojour.'"></td>'."\n";
 			} else {
-                // grey button
+				// grey button
 				print '<td align="center" class="avant">'.$numerojour.'</td>'."\n";
 			}
 		}

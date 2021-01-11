@@ -1,0 +1,76 @@
+# Copyright (C) 2020 Laurent Destailleur
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+# Module label 'ModuleRecruitmentName'
+ModuleRecruitmentName = Rekruttering
+# Module description 'ModuleRecruitmentDesc'
+ModuleRecruitmentDesc = Administrer og følg rekrutteringskampanjer for nye stillinger
+
+#
+# Admin page
+#
+RecruitmentSetup = Rekrutteringsoppsett
+Settings = innstillinger
+RecruitmentSetupPage = Fyll inn oppsettet av hovedalternativene for rekrutteringsmodulen her
+RecruitmentArea=Rekrutteringsområde
+PublicInterfaceRecruitmentDesc=Offentlige sider med jobber er offentlige nettadresser for å vise og svare på åpne jobber. Det finnes en lenke for hver åpen jobb, funnet på hver jobbpost.
+EnablePublicRecruitmentPages=Aktiver offentlige sider med åpne jobber
+
+#
+# About page
+#
+About = Om
+RecruitmentAbout = Om rekruttering
+RecruitmentAboutPage = Om rekrutteringssiden
+NbOfEmployeesExpected=Forventet antall ansatte
+JobLabel=Etikett for stillingen
+WorkPlace=Arbeidssted
+DateExpected=Forventet dato
+FutureManager=Fremtidig leder
+ResponsibleOfRecruitement=Ansvarlig for rekruttering
+IfJobIsLocatedAtAPartner=Hvis jobben ligger på et partnersted
+PositionToBeFilled=Stilling
+PositionsToBeFilled=Stillinger
+ListOfPositionsToBeFilled=Liste over stillinger
+NewPositionToBeFilled=Nye stillinger
+
+JobOfferToBeFilled=Jobbstilling som skal besettes
+ThisIsInformationOnJobPosition=Informasjon om stillingen som skal besettes
+ContactForRecruitment=Kontakt for rekruttering
+EmailRecruiter=E-postrekruttering
+ToUseAGenericEmail=For å bruke en generisk e-post. Hvis ikke definert, vil e-posten til rekrutteringsansvarlig bli brukt
+NewCandidature=Ny applikasjon
+ListOfCandidatures=Liste over applikasjoner
+RequestedRemuneration=Ønsket godtgjørelse
+ProposedRemuneration=Tilbudt godtgjørelse
+ContractProposed=Kontraktforslag
+ContractSigned=Kontrakt signert
+ContractRefused=Kontrakten avvist
+RecruitmentCandidature=Applikasjon
+JobPositions=Stillinger
+RecruitmentCandidatures=Applikasjoner
+InterviewToDo=Intervju som skal gjennomføres
+AnswerCandidature=Søknadssvar
+YourCandidature=Din søknad
+YourCandidatureAnswerMessage=Takk for søknaden. <br> ...
+JobClosedTextCandidateFound=Stillingen er stengt. Stillingen er besatt.
+JobClosedTextCanceled=Stillingen er stengt.
+ExtrafieldsJobPosition=Utfyllende attributter (stillinger)
+ExtrafieldsCandidatures=Utfyllende attributter (jobbsøknader)
+MakeOffer=Gi et tilbud

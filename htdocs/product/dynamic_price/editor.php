@@ -33,7 +33,7 @@ $langs->loadLangs(array('products', 'accountancy')); //"Back" translation is on 
 
 $id = GETPOST('id', 'int');
 $eid = GETPOST('eid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $title = GETPOST('expression_title', 'alpha');
 $expression = GETPOST('expression');
 $tab = GETPOST('tab', 'alpha');
@@ -54,8 +54,7 @@ $price_globals = new PriceGlobalVariable($db);
 if (empty($eid)) //This also disables fetch when eid == 0
 {
 	$eid = 0;
-}
-elseif ($action != 'delete')
+} elseif ($action != 'delete')
 {
 	$price_expression->fetch($eid);
 }
@@ -77,9 +76,7 @@ if ($action == 'add')
 			$price_result = $priceparser->testExpression($id, $expression);
 			if ($price_result < 0) { //Expression is not valid
 				setEventMessages($priceparser->translatedError(), null, 'errors');
-			}
-			else
-			{
+			} else {
 				$price_expression->title = $title;
 				$price_expression->expression = $expression;
 				$result = $price_expression->create($user);
@@ -87,19 +84,14 @@ if ($action == 'add')
 				{
 					$eid = $price_expression->id;
 					setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
-				}
-				else
-				{
+				} else {
 					setEventMessages("add: ".$price_expression->error, $price_expression->errors, 'errors');
 				}
 			}
-		}
-		elseif ($result < 0)
+		} elseif ($result < 0)
 		{
 			setEventMessages("add find: ".$price_expression->error, $price_expression->errors, 'errors');
-		}
-		else
-		{
+		} else {
 			setEventMessages($langs->trans("ErrorRecordAlreadyExists"), null, 'errors');
 		}
 	}
@@ -117,9 +109,7 @@ if ($action == 'update')
 			$price_result = $priceparser->testExpression($id, $expression);
 			if ($price_result < 0) { //Expression is not valid
 				setEventMessages($priceparser->translatedError(), null, 'errors');
-			}
-			else
-			{
+			} else {
 				$price_expression->id = $eid;
 				$price_expression->title = $title;
 				$price_expression->expression = $expression;
@@ -127,19 +117,14 @@ if ($action == 'update')
 				if ($result < 0)
 				{
 					setEventMessages("update: ".$price_expression->error, $price_expression->errors, 'errors');
-				}
-				else
-				{
+				} else {
 					setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 				}
 			}
-		}
-		elseif ($result < 0)
+		} elseif ($result < 0)
 		{
 			setEventMessages("update find: ".$price_expression->error, $price_expression->errors, 'errors');
-		}
-		else
-		{
+		} else {
 			setEventMessages($langs->trans("ErrorRecordAlreadyExists"), null, 'errors');
 		}
 	}
@@ -175,7 +160,7 @@ print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;tab='.$tab.'&amp;ei
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value='.($eid == 0 ? 'add' : 'update').'>';
 
-dol_fiche_head();
+print dol_get_fiche_head();
 
 print '<table class="border centpercent">';
 
@@ -211,19 +196,17 @@ $doleditor->Create();
 print '</td></tr>';
 print '</table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 //Buttons
 print '<div class="center">';
-print '<input type="submit" class="butAction" value="'.$langs->trans("Save").'">';
+print '<input type="submit" class="butAction button-save" value="'.$langs->trans("Save").'">';
 print '<span id="back" class="butAction">'.$langs->trans("Back").'</span>';
 if ($eid == 0)
 {
 	print '<div class="inline-block divButAction"><span id="action-delete" class="butActionRefused classfortooltip">'.$langs->trans('Delete').'</span></div>'."\n";
-}
-else
-{
-	print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;tab='.$tab.'&amp;eid='.$eid.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
+} else {
+	print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;tab='.$tab.'&amp;eid='.$eid.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
 }
 print '</div>';
 

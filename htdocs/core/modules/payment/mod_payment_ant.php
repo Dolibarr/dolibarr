@@ -31,9 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/payment/modules_payment.php';
 class mod_payment_ant extends ModeleNumRefPayments
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
@@ -54,14 +54,14 @@ class mod_payment_ant extends ModeleNumRefPayments
 	public $name = 'Ant';
 
 
-    /**
-     *  Returns the description of the numbering model
-     *
-     *  @return     string      Texte descripif
-     */
-    public function info()
-    {
-    	global $db, $conf, $langs;
+	/**
+	 *  Returns the description of the numbering model
+	 *
+	 *  @return     string      Texte descripif
+	 */
+	public function info()
+	{
+		global $db, $conf, $langs;
 
 		$langs->load("bills");
 
@@ -92,20 +92,20 @@ class mod_payment_ant extends ModeleNumRefPayments
 		$texte .= '</form>';
 
 		return $texte;
-    }
+	}
 
-    /**
-     *  Return an example of numbering
-     *
-     *  @return     string      Example
-     */
-    public function getExample()
-    {
-     	global $conf, $langs, $mysoc;
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	public function getExample()
+	{
+	 	global $conf, $langs, $mysoc;
 
-    	$old_code_client = $mysoc->code_client;
-    	$mysoc->code_client = 'CCCCCCCCCC';
-     	$numExample = $this->getNextValue($mysoc, '');
+		$old_code_client = $mysoc->code_client;
+		$mysoc->code_client = 'CCCCCCCCCC';
+	 	$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client = $old_code_client;
 
 		if (!$numExample)
@@ -113,7 +113,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
-    }
+	}
 
 	/**
 	 * 	Return next free value
@@ -122,8 +122,8 @@ class mod_payment_ant extends ModeleNumRefPayments
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-    public function getNextValue($objsoc, $object)
-    {
+	public function getNextValue($objsoc, $object)
+	{
 		global $db, $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -143,17 +143,17 @@ class mod_payment_ant extends ModeleNumRefPayments
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return next free value
 	 *
 	 *  @param	Societe		$objsoc     Object third party
 	 * 	@param	string		$objforref	Object for number to search
 	 *  @return string      			Next free value
-     */
-    public function commande_get_num($objsoc, $objforref)
-    {
-        // phpcs:enable
-        return $this->getNextValue($objsoc, $objforref);
-    }
+	 */
+	public function commande_get_num($objsoc, $objforref)
+	{
+		// phpcs:enable
+		return $this->getNextValue($objsoc, $objforref);
+	}
 }

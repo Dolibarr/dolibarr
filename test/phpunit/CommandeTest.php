@@ -196,7 +196,7 @@ class CommandeTest extends PHPUnit\Framework\TestCase
     	$result=$localobject->update($user);
 
     	$this->assertLessThan($result, 0);
-    	print __METHOD__." id=".$id." result=".$result."\n";
+    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	return $localobject;
     }
 

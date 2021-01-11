@@ -35,20 +35,20 @@ include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
  */
 class box_contacts extends ModeleBoxes
 {
-    public $boxcode = "lastcontacts";
-    public $boximg = "object_contact";
-    public $boxlabel = "BoxLastContacts";
-    public $depends = array("societe");
+	public $boxcode = "lastcontacts";
+	public $boximg = "object_contact";
+	public $boxlabel = "BoxLastContacts";
+	public $depends = array("societe");
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $param;
+	public $param;
 
-    public $info_box_head = array();
-    public $info_box_contents = array();
+	public $info_box_head = array();
+	public $info_box_contents = array();
 
 
 	/**
@@ -59,18 +59,18 @@ class box_contacts extends ModeleBoxes
 	 */
 	public function __construct($db, $param)
 	{
-	    global $user;
+		global $user;
 
-	    $this->db = $db;
+		$this->db = $db;
 
-	    $this->hidden = !($user->rights->societe->lire && $user->rights->societe->contact->lire);
+		$this->hidden = !($user->rights->societe->lire && $user->rights->societe->contact->lire);
 	}
 
 	/**
 	 *  Load data into info_box_contents array to show array later.
 	 *
 	 *  @param	int		$max        Maximum number of records to load
-     *  @return	void
+	 *  @return	void
 	 */
 	public function loadBox($max = 5)
 	{
@@ -86,8 +86,10 @@ class box_contacts extends ModeleBoxes
 			$sql = "SELECT sp.rowid as id, sp.lastname, sp.firstname, sp.civility as civility_id, sp.datec, sp.tms, sp.fk_soc, sp.statut as status";
 
 			$sql .= ", sp.address, sp.zip, sp.town, sp.phone, sp.phone_perso, sp.phone_mobile, sp.email as spemail";
-			$sql .= ", s.nom as socname, s.name_alias, s.email as semail";
-			$sql .= ", s.client, s.fournisseur, s.code_client, s.code_fournisseur";
+			$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+			$sql .= ", s.code_client, s.code_compta, s.client";
+			$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
+			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= ", co.label as country, co.code as country_code";
 			$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON sp.fk_pays = co.rowid";
@@ -121,21 +123,25 @@ class box_contacts extends ModeleBoxes
 					$contactstatic->phone_pro = $objp->phone;
 					$contactstatic->phone_perso = $objp->phone_perso;
 					$contactstatic->phone_mobile = $objp->phone_mobile;
-                    $contactstatic->email = $objp->spemail;
+					$contactstatic->email = $objp->spemail;
 					$contactstatic->address = $objp->address;
 					$contactstatic->zip = $objp->zip;
 					$contactstatic->town = $objp->town;
 					$contactstatic->country = $objp->country;
 					$contactstatic->country_code = $objp->country_code;
 
-					$societestatic->id = $objp->fk_soc;
-					$societestatic->name = $objp->socname;
-                    $societestatic->email = $objp->semail;
-					$societestatic->name_alias = $objp->name_alias;
+					$societestatic->id = $objp->socid;
+					$societestatic->name = $objp->name;
+					//$societestatic->name_alias = $objp->name_alias;
 					$societestatic->code_client = $objp->code_client;
-					$societestatic->code_fournisseur = $objp->code_fournisseur;
+					$societestatic->code_compta = $objp->code_compta;
 					$societestatic->client = $objp->client;
+					$societestatic->code_fournisseur = $objp->code_fournisseur;
+					$societestatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
 					$societestatic->fournisseur = $objp->fournisseur;
+					$societestatic->logo = $objp->logo;
+					$societestatic->email = $objp->email;
+					$societestatic->entity = $objp->entity;
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
@@ -145,7 +151,7 @@ class box_contacts extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-						'text' => ($objp->fk_soc > 0 ? $societestatic->getNomUrl(1) : ''),
+						'text' => ($societestatic->id > 0 ? $societestatic->getNomUrl(1) : ''),
 						'asis' => 1,
 					);
 
@@ -180,8 +186,8 @@ class box_contacts extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

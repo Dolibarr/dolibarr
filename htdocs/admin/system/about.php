@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("help", "members", "other", "admin"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 if (!$user->admin) accessforbidden();
 
@@ -83,6 +83,7 @@ print '<li>';
 print '<a target="_blank" href="https://www.dolibarr.org/" rel="external">'.$langs->trans("OfficialWebSite").'</a>';
 print '</li>';
 // Show local site
+/*
 if (preg_match('/^fr_/i', $langs->getDefaultLang()))
 {
 	print '<li>';
@@ -112,7 +113,7 @@ if (preg_match('/^de_/i', $langs->getDefaultLang()))
 	print '<li>';
 	print '<a target="_blank" href="https://www.dolibarr.de/" rel="external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("Germany")).'</a>';
 	print '</li>';
-}
+}*/
 print '<li>';
 print '<a target="_blank" href="https://wiki.dolibarr.org/" rel="external">'.$langs->trans("OfficialWiki").'</a>';
 print '</li>';
@@ -168,7 +169,7 @@ print $langs->trans("OtherResources").':';
 print '<ul>';
 
 $url = 'https://saas.dolibarr.org'; $title = $langs->trans("OfficialWebHostingService");
-if (preg_match('/^fr_/i', $langs->getDefaultLang())) $url = 'https://wiki.dolibarr.org/index.php/Solutions_de_Cloud';
+if (preg_match('/^fr_/i', $langs->getDefaultLang())) $url = 'https://wiki.dolibarr.org/index.php/Solutions_Cloud_pour_Dolibarr_ERP_CRM';
 if (preg_match('/^es_/i', $langs->getDefaultLang())) $url = 'https://wiki.dolibarr.org/index.php/Soluciones_en_la_Nube';
 print '<li>';
 print '<a target="_blank" href="'.$url.'" rel="external">'.$title.'</a>';
@@ -188,27 +189,25 @@ print '<div class="clearboth"></div>';
 $showpromotemessage = 1;
 if ($showpromotemessage)
 {
-    $tmp = versiondolibarrarray();
-    if (is_numeric($tmp[2]))    // Not alpha, beta or rc
-    {
-        print '<br>';
-        print '<br>';
+	$tmp = versiondolibarrarray();
+	if (is_numeric($tmp[2]))    // Not alpha, beta or rc
+	{
+		print '<br>';
+		print '<br>';
 
-        if ((empty($tmp[2]) && (strpos($tmp[1], '0') === 0)) || (strpos($tmp[2], '0') === 0))
-        {
-            print $langs->trans("TitleExampleForMajorRelease").':<br>';
-            print '<textarea style="width:80%; min-height: 60px">';
-            print $langs->trans("ExampleOfNewsMessageForMajorRelease", DOL_VERSION, DOL_VERSION);
-            print '</textarea>';
-        }
-        else
-        {
-            print $langs->trans("TitleExampleForMaintenanceRelease").':<br>';
-            print '<textarea style="width:80%; min-height: 60px">';
-            print $langs->trans("ExampleOfNewsMessageForMaintenanceRelease", DOL_VERSION, DOL_VERSION);
-            print '</textarea>';
-        }
-    }
+		if ((empty($tmp[2]) && (strpos($tmp[1], '0') === 0)) || (strpos($tmp[2], '0') === 0))
+		{
+			print $langs->trans("TitleExampleForMajorRelease").':<br>';
+			print '<textarea style="width:80%; min-height: 60px">';
+			print $langs->trans("ExampleOfNewsMessageForMajorRelease", DOL_VERSION, DOL_VERSION);
+			print '</textarea>';
+		} else {
+			print $langs->trans("TitleExampleForMaintenanceRelease").':<br>';
+			print '<textarea style="width:80%; min-height: 60px">';
+			print $langs->trans("ExampleOfNewsMessageForMaintenanceRelease", DOL_VERSION, DOL_VERSION);
+			print '</textarea>';
+		}
+	}
 }
 
 // End of page

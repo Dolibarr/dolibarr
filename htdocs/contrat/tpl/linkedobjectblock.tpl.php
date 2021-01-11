@@ -39,10 +39,10 @@ $langs->load("contracts");
 $total = 0; $ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink)
 {
-    $ilink++;
+	$ilink++;
 
-    $trclass = 'oddeven';
-    if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass .= ' liste_sub_total';
+	$trclass = 'oddeven';
+	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass .= ' liste_sub_total';
 	?>
 <tr class="<?php echo $trclass; ?>">
     <td><?php echo $langs->trans("Contract"); ?></td>
@@ -58,7 +58,7 @@ foreach ($linkedObjectBlock as $key => $objectlink)
 		$totalcontrat = 0;
 		foreach ($objectlink->lines as $linecontrat) {
 			$totalcontrat = $totalcontrat + $linecontrat->total_ht;
-		    $total = $total + $linecontrat->total_ht;
+			$total = $total + $linecontrat->total_ht;
 		}
 		echo price($totalcontrat);
 	} ?></td>

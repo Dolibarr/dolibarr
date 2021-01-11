@@ -52,9 +52,7 @@ if (!empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox', 'alpha'
 {
 	$API_Endpoint = "https://api-3t.sandbox.paypal.com/nvp";
 	$API_Url = "https://www.sandbox.paypal.com/webscr?cmd=_express-checkout&token=";
-}
-else
-{
+} else {
 	$API_Endpoint = "https://api-3t.paypal.com/nvp";
 	$API_Url = "https://www.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=";
 }

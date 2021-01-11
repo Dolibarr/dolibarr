@@ -38,9 +38,9 @@ if ((array) $linked_resources && count($linked_resources) > 0)
 
 		if ($mode == 'edit' && $linked_resource['rowid'] == GETPOST('lineid'))
 		{
-		    print '<div class="tagtr oddeven">';
-		    print '<input type="hidden" name="lineid" value="'.$linked_resource['rowid'].'" />';
-		    print '<input type="hidden" name="element" value="'.$element.'" />';
+			print '<div class="tagtr oddeven">';
+			print '<input type="hidden" name="lineid" value="'.$linked_resource['rowid'].'" />';
+			print '<input type="hidden" name="element" value="'.$element.'" />';
 			print '<input type="hidden" name="element_id" value="'.$element_id.'" />';
 
 			print '<div class="tagtd">'.$object_resource->getNomUrl(1).'</div>';
@@ -49,9 +49,7 @@ if ((array) $linked_resources && count($linked_resources) > 0)
 			print '<div class="tagtd center">'.$form->selectyesno('mandatory', $linked_resource['mandatory'] ? 1 : 0, 1).'</div>';
 			print '<div class="tagtd right"><input type="submit" class="button" value="'.$langs->trans("Update").'"></div>';
 			print '</div>';
-		}
-		else
-		{
+		} else {
 			$class = '';
 			if ($linked_resource['rowid'] == GETPOST('lineid'))
 				$class = 'highlight';
@@ -75,11 +73,11 @@ if ((array) $linked_resources && count($linked_resources) > 0)
 			print '</div>';
 
 			print '<div class="tagtd right">';
-			print '<a href="'.$_SERVER['PHP_SELF'].'?mode=edit&resource_type='.$linked_resource['resource_type'].'&element='.$element.'&element_id='.$element_id.'&lineid='.$linked_resource['rowid'].'">';
+			print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=edit&token='.newToken().'&resource_type='.$linked_resource['resource_type'].'&element='.$element.'&element_id='.$element_id.'&lineid='.$linked_resource['rowid'].'">';
 			print img_edit();
 			print '</a>';
 			print '&nbsp;';
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=delete_resource&id='.$linked_resource['resource_id'].'&element='.$element.'&element_id='.$element_id.'&lineid='.$linked_resource['rowid'].'">';
+			print '<a class="marginleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?action=delete_resource&token='.newToken().'&id='.$linked_resource['resource_id'].'&element='.$element.'&element_id='.$element_id.'&lineid='.$linked_resource['rowid'].'">';
 			print img_picto($langs->trans("Unlink"), 'unlink');
 			print '</a>';
 			print '</div>';
@@ -87,8 +85,7 @@ if ((array) $linked_resources && count($linked_resources) > 0)
 			print '</div>';
 		}
 	}
-}
-else {
+} else {
 	print '<div class="tagtr oddeven">';
 	print '<div class="tagtd opacitymedium">'.$langs->trans('NoResourceLinked').'</div>';
 	print '<div class="tagtd opacitymedium"></div>';

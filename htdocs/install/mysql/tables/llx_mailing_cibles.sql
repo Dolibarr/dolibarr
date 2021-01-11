@@ -34,6 +34,6 @@ create table llx_mailing_cibles
   source_id			integer,
   source_type		varchar(16),
   date_envoi		datetime,
-  tms				timestamp,
+  tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   error_text		varchar(255)						-- text with error if statut is -1
 )ENGINE=innodb;

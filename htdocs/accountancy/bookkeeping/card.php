@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2017  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,11 +114,13 @@ if ($action == "confirm_update") {
 			$object->credit = $credit;
 
 			if (floatval($debit) != 0.0) {
-				$object->montant = $debit;
+				$object->montant = $debit; // deprecated
+				$object->amount = $debit;
 				$object->sens = 'D';
 			}
 			if (floatval($credit) != 0.0) {
-				$object->montant = $credit;
+				$object->montant = $credit; // deprecated
+				$object->amount = $credit;
 				$object->sens = 'C';
 			}
 
@@ -126,8 +128,7 @@ if ($action == "confirm_update") {
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
-				if ($mode != '_tmp')
-				{
+				if ($mode != '_tmp') {
 					setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 				}
 
@@ -138,9 +139,7 @@ if ($action == "confirm_update") {
 			}
 		}
 	}
-}
-
-elseif ($action == "add") {
+} elseif ($action == "add") {
 	$error = 0;
 
 	if ((floatval($debit) != 0.0) && (floatval($credit) != 0.0))
@@ -165,22 +164,24 @@ elseif ($action == "add") {
 		$object->label_operation = $label_operation;
 		$object->debit = $debit;
 		$object->credit = $credit;
-		$object->doc_date = GETPOST('doc_date', 'alpha');
-		$object->doc_type = GETPOST('doc_type', 'alpha');
+		$object->doc_date = (string) GETPOST('doc_date', 'alpha');
+		$object->doc_type = (string) GETPOST('doc_type', 'alpha');
 		$object->piece_num = $piece_num;
-		$object->doc_ref = GETPOST('doc_ref', 'alpha');
+		$object->doc_ref = (string) GETPOST('doc_ref', 'alpha');
 		$object->code_journal = $journal_code;
 		$object->journal_label = $journal_label;
-		$object->fk_doc = (int) GETPOST('fk_doc', 'int');
-		$object->fk_docdet = (int) GETPOST('fk_docdet', 'int');
+		$object->fk_doc = GETPOSTINT('fk_doc');
+		$object->fk_docdet = GETPOSTINT('fk_docdet');
 
 		if (floatval($debit) != 0.0) {
-			$object->montant = $debit;
+			$object->montant = $debit; // deprecated
+			$object->amount = $debit;
 			$object->sens = 'D';
 		}
 
 		if (floatval($credit) != 0.0) {
-			$object->montant = $credit;
+			$object->montant = $credit; // deprecated
+			$object->amount = $credit;
 			$object->sens = 'C';
 		}
 
@@ -188,8 +189,7 @@ elseif ($action == "add") {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
-			if ($mode != '_tmp')
-			{
+			if ($mode != '_tmp') {
 				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			}
 
@@ -199,9 +199,7 @@ elseif ($action == "add") {
 			$action = '';
 		}
 	}
-}
-
-elseif ($action == "confirm_delete") {
+} elseif ($action == "confirm_delete") {
 	$object = new BookKeeping($db);
 
 	$result = $object->fetch($id, null, $mode);
@@ -216,9 +214,7 @@ elseif ($action == "confirm_delete") {
 		}
 	}
 	$action = '';
-}
-
-elseif ($action == "confirm_create") {
+} elseif ($action == "confirm_create") {
 	$error = 0;
 
 	$object = new BookKeeping($db);
@@ -247,7 +243,8 @@ elseif ($action == "confirm_create") {
 		$object->journal_label = $journal_label;
 		$object->fk_doc = 0;
 		$object->fk_docdet = 0;
-		$object->montant = 0;
+		$object->montant = 0; // deprecated
+		$object->amount = 0;
 
 		$result = $object->createStd($user, 0, $mode);
 		if ($result < 0) {
@@ -293,7 +290,7 @@ if ($action == 'setjournal') {
 }
 
 if ($action == 'setdocref') {
-	$refdoc = trim(GETPOST('doc_ref', 'alpha'));
+	$refdoc = GETPOST('doc_ref', 'alpha');
 	$result = $object->updateByMvt($piece_num, 'doc_ref', $refdoc, $mode);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -329,7 +326,7 @@ llxHeader('', $langs->trans("CreateMvts"));
 
 // Confirmation to delete the command
 if ($action == 'delete') {
-	$formconfirm = $html->formconfirm($_SERVER["PHP_SELF"].'?id='.$id.'&mode='.$mode, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'confirm_delete', '', 0, 1);
+	$formconfirm = $html->formconfirm($_SERVER["PHP_SELF"].'?id='.$id.'&mode='.$mode, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt', $langs->transnoentitiesnoconv("RegistrationInAccounting")), 'confirm_delete', '', 0, 1);
 	print $formconfirm;
 }
 
@@ -352,7 +349,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="next_num_mvt" value="'.$next_num_mvt.'">'."\n";
 	print '<input type="hidden" name="mode" value="_tmp">'."\n";
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -387,12 +384,12 @@ if ($action == 'create')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" value="'.$langs->trans("Cancel").'" class="button" onclick="history.go(-1)" />';
+	print '<input type="button" value="'.$langs->trans("Cancel").'" class="button button-cancel" onclick="history.go(-1)" />';
 	print '</div>';
 
 	print '</form>';
@@ -416,7 +413,7 @@ if ($action == 'create')
 		$head[$h][2] = 'transaction';
 		$h++;
 
-		dol_fiche_head($head, 'transaction', '', -1);
+		print dol_get_fiche_head($head, 'transaction', '', -1);
 
 		//dol_banner_tab($object, '', $backlink);
 
@@ -574,7 +571,7 @@ if ($action == 'create')
 
 		print '</div></div><!-ee-->';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div style="clear:both"></div>';
 
@@ -628,9 +625,7 @@ if ($action == 'create')
 						if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
 						{
 							print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1);
-						}
-						else
-						{
+						} else {
 							print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'">';
 						}
 						print '</td>';
@@ -685,9 +680,7 @@ if ($action == 'create')
 					if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
 					{
 						print $formaccounting->select_auxaccount('', 'subledger_account', 1);
-					}
-					else
-					{
+					} else {
 						print '<input type="text" class="maxwidth150" name="subledger_account" value="">';
 					}
 					print '</td>';
@@ -707,14 +700,12 @@ if ($action == 'create')
 					if ($total_debit == $total_credit)
 					{
 						print '<a class="button" href="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'&action=valid">'.$langs->trans("ValidTransaction").'</a>';
-					}
-					else
-					{
+					} else {
 						print '<input type="submit" class="button" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("MvtNotCorrectlyBalanced", $debit, $credit)).'" value="'.dol_escape_htmltag($langs->trans("ValidTransaction")).'">';
 					}
 
 					print ' &nbsp; ';
-					print '<a class="button" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php">'.$langs->trans("Cancel").'</a>';
+					print '<a class="button button-cancel" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php">'.$langs->trans("Cancel").'</a>';
 
 					print "</div>";
 				}
@@ -726,7 +717,7 @@ if ($action == 'create')
 	}
 }
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

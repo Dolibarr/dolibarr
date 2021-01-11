@@ -35,7 +35,7 @@ create table llx_facture_fourn
   datef					date,                          -- date de la facture
   date_pointoftax		date DEFAULT NULL,			   -- date point of tax (for GB)
   date_valid			date,						   -- date validation
-  tms					timestamp,                     -- date creation/modification
+  tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,                     -- last modification date
   libelle				varchar(255),
   paye					smallint         DEFAULT 0 NOT NULL,
   amount				double(24,8)     DEFAULT 0 NOT NULL,
@@ -70,6 +70,9 @@ create table llx_facture_fourn
   note_public			text,
   fk_incoterms          integer,						-- for incoterms
   location_incoterms    varchar(255),					-- for incoterms
+
+  fk_mode_transport     integer,						-- for intracomm report
+
   model_pdf				varchar(255),
   last_main_doc			varchar(255),					-- relative filepath+filename of last main generated document
 

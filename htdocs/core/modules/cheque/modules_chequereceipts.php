@@ -178,9 +178,7 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 		if (!empty($conf->global->CHEQUERECEIPT_ADDON_PDF))
 		{
 			$modele = $conf->global->CHEQUERECEIPT_ADDON_PDF;
-		}
-		else
-		{
+		} else {
 			//print $langs->trans("Error")." ".$langs->trans("Error_FACTURE_ADDON_PDF_NotDefined");
 			//return 0;
 			$modele = 'blochet';
@@ -203,16 +201,12 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 		{
 			$outputlangs->charset_output = $sav_charset_output;
 			return 1;
-		}
-		else
-		{
+		} else {
 			$outputlangs->charset_output = $sav_charset_output;
 			dol_print_error($db, "chequereceipt_pdf_create Error: ".$obj->error);
 			return -1;
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error('', $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $dir.$file));
 		return -1;
 	}

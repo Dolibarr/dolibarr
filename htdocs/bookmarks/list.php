@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2012 Laurent Destailleur       <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2020 Laurent Destailleur       <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,12 +27,12 @@ require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('bookmarks', 'admin'));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'myobjectlist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'bookmarklist'; // To manage different context of search
 
 // Security check
 if (!$user->rights->bookmark->lire) {
@@ -42,8 +42,8 @@ $optioncss = GETPOST('optioncss', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
@@ -72,9 +72,7 @@ if ($action == 'delete')
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
@@ -115,9 +113,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
 {
 	$num = $nbtotalofrecords;
-}
-else
-{
+} else {
 	$sql .= $db->plimit($limit + 1, $offset);
 
 	$resql = $db->query($sql);
@@ -201,14 +197,14 @@ while ($i < min($num, $limit))
 	// Title
 	print "<td>";
 	$linkintern = 1;
-	if ($linkintern) print "<a href=\"".$obj->url."\">";
+	if ($linkintern) print '<a href="'.$obj->url.'">';
 	print $title;
 	if ($linkintern) print "</a>";
 	print "</td>\n";
 
 	// Url
 	print '<td class="tdoverflowmax200">';
-	if (!$linkintern) print '<a href="'.$obj->url.'"'.($obj->target ? ' target="newlink"' : '').'>';
+	if (!$linkintern) print '<a href="'.$obj->url.'"'.($obj->target ? ' target="newlink" rel="noopener"' : '').'>';
 	print $link;
 	if (!$linkintern) print '</a>';
 	print "</td>\n";
@@ -230,9 +226,7 @@ while ($i < min($num, $limit))
 		}
 		$tmpuser = $cacheOfUsers[$obj->fk_user];
 		print $tmpuser->getNomUrl(1);
-	}
-	else
-	{
+	} else {
 		print $langs->trans("Public");
 	}
 	print "</td>\n";
@@ -247,14 +241,12 @@ while ($i < min($num, $limit))
 	print '<td class="nowrap right">';
 	if ($user->rights->bookmark->creer)
 	{
-		print '<a class="editfielda" href="'.DOL_URL_ROOT."/bookmarks/card.php?action=edit&id=".$obj->rowid."&backtopage=".urlencode($_SERVER["PHP_SELF"]).'">'.img_edit()."</a>";
+		print '<a class="editfielda" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit()."</a>";
 	}
 	if ($user->rights->bookmark->supprimer)
 	{
-		print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$obj->rowid.'">'.img_delete().'</a>';
-	}
-	else
-	{
+		print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$obj->rowid.'">'.img_delete().'</a>';
+	} else {
 		print "&nbsp;";
 	}
 	print "</td>";

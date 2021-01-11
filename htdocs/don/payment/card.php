@@ -30,12 +30,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 if (!empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("bills", "banks", "companies"));
+$langs->loadLangs(array("bills", "banks", "companies", "donations"));
 
 // Security check
-$id = GETPOST('rowid') ?GETPOST('rowid', 'int') : GETPOST('id', 'int');
+$id = GETPOST('rowid') ? GETPOST('rowid', 'int') : GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
-$confirm = GETPOST('confirm');
+$confirm = GETPOST('confirm', 'alpha');
 if ($user->socid) $socid = $user->socid;
 // TODO Add rule to restrict access payment
 //$result = restrictedArea($user, 'facture', $id,'');
@@ -60,54 +60,15 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->don->supp
 	$result = $object->delete($user);
 	if ($result > 0)
 	{
-        $db->commit();
-        header("Location: ".DOL_URL_ROOT."/don/index.php");
-        exit;
-	}
-	else
-	{
-		setEventMessages($object->error, $object->errors, 'errors');
-        $db->rollback();
-	}
-}
-
-// Create payment
-if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->don->creer)
-{
-	$db->begin();
-
-	$result = $object->valide();
-
-	if ($result > 0)
-	{
 		$db->commit();
-
-		$factures = array(); // TODO Get all id of invoices linked to this payment
-		foreach ($factures as $id)
-		{
-			$fac = new Facture($db);
-			$fac->fetch($id);
-
-			$outputlangs = $langs;
-			if (!empty($_REQUEST['lang_id']))
-			{
-				$outputlangs = new Translate("", $conf);
-				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-			}
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-				$fac->generateDocument($fac->modelpdf, $outputlangs);
-			}
-		}
-
-		header('Location: card.php?id='.$object->id);
+		header("Location: ".DOL_URL_ROOT."/don/index.php");
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 	}
 }
+
 
 
 /*
@@ -121,12 +82,13 @@ $form = new Form($db);
 
 $h = 0;
 
+$head = array();
 $head[$h][0] = DOL_URL_ROOT.'/don/payment/card.php?id='.$id;
 $head[$h][1] = $langs->trans("DonationPayment");
 $hselected = $h;
 $h++;
 
-dol_fiche_head($head, $hselected, $langs->trans("DonationPayment"), -1, 'payment');
+print dol_get_fiche_head($head, $hselected, $langs->trans("DonationPayment"), -1, 'payment');
 
 /*
  * Confirm deleting of the payment
@@ -134,15 +96,6 @@ dol_fiche_head($head, $hselected, $langs->trans("DonationPayment"), -1, 'payment
 if ($action == 'delete')
 {
 	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete', '', 0, 2);
-}
-
-/*
- * Confirm validation of the payment
- */
-if ($action == 'valide')
-{
-	$facid = GETPOST('facid', 'int');
-	print $form->formconfirm('card.php?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide', '', 0, 2);
 }
 
 
@@ -153,13 +106,6 @@ print '<div class="underbanner clearboth"></div>';
 
 print '<table class="border centpercent">';
 
-// Ref
-/*print '<tr><td class=">'.$langs->trans('Ref').'</td>';
-print '<td colspan="3">';
-print $form->showrefnav($object,'id','',1,'rowid','id');
-print '</td></tr>';
-*/
-
 // Date
 print '<tr><td class="titlefield">'.$langs->trans('Date').'</td><td>'.dol_print_date($object->datep, 'day').'</td></tr>';
 
@@ -167,7 +113,7 @@ print '<tr><td class="titlefield">'.$langs->trans('Date').'</td><td>'.dol_print_
 print '<tr><td>'.$langs->trans('Mode').'</td><td>'.$langs->trans("PaymentType".$object->type_code).'</td></tr>';
 
 // Number
-print '<tr><td>'.$langs->trans('Number').'</td><td>'.$object->num_payment.'</td></tr>';
+print '<tr><td>'.$langs->trans('Numero').'</td><td>'.$object->num_payment.'</td></tr>';
 
 // Amount
 print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
@@ -178,18 +124,18 @@ print '<tr><td>'.$langs->trans('Note').'</td><td>'.nl2br($object->note_public).'
 // Bank account
 if (!empty($conf->banque->enabled))
 {
-    if ($object->bank_account)
-    {
-    	$bankline = new AccountLine($db);
-    	$bankline->fetch($object->bank_line);
+	if ($object->bank_account)
+	{
+		$bankline = new AccountLine($db);
+		$bankline->fetch($object->bank_line);
 
-    	print '<tr>';
-    	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
+		print '<tr>';
+		print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 		print '<td>';
 		print $bankline->getNomUrl(1, 0, 'showall');
-    	print '</td>';
-    	print '</tr>';
-    }
+		print '</td>';
+		print '</tr>';
+	}
 }
 
 print '</table>';
@@ -217,7 +163,7 @@ if ($resql)
 	print '<br><table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Donation').'</td>';
-    print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
+	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
 	print '<td class="center">'.$langs->trans('Status').'</td>';
 	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
 	print "</tr>\n";
@@ -242,7 +188,7 @@ if ($resql)
 			print '<td class="right">'.price($objp->amount).'</td>';
 			print "</tr>\n";
 			if ($objp->paid == 1) {
-                // If at least one invoice is paid, disable delete
+				// If at least one invoice is paid, disable delete
 				$disable_delete = 1;
 			}
 			$total = $total + $objp->amount;
@@ -253,15 +199,13 @@ if ($resql)
 
 	print "</table>\n";
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 /*
@@ -269,29 +213,14 @@ dol_fiche_end();
  */
 print '<div class="tabsAction">';
 
-/*
-if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
-{
-	if ($user->socid == 0 && $object->statut == 0 && $_GET['action'] == '')
-	{
-		if ($user->rights->facture->paiement)
-		{
-			print '<a class="butAction" href="card.php?id='.$_GET['id'].'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
-		}
-	}
-}
-*/
-
 if (empty($action))
 {
 	if ($user->rights->don->supprimer)
 	{
 		if (!$disable_delete)
 		{
-			print '<a class="butActionDelete" href="card.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-		}
-		else
-		{
+			print '<a class="butActionDelete" href="card.php?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>';
+		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
 		}
 	}

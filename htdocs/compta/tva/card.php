@@ -73,32 +73,32 @@ if ($action == 'setlib' && $user->rights->tax->charges->creer)
 
 if ($action == 'setdatev' && $user->rights->tax->charges->creer)
 {
-    $object->fetch($id);
-    $object->datev = $datev;
-    $result = $object->update($user);
-    if ($result < 0) dol_print_error($db, $object->error);
+	$object->fetch($id);
+	$object->datev = $datev;
+	$result = $object->update($user);
+	if ($result < 0) dol_print_error($db, $object->error);
 
-    $action = '';
+	$action = '';
 }
 
 if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
-    $error = 0;
+	$error = 0;
 
-    $object->accountid = GETPOST("accountid", 'int');
-    $object->type_payment = GETPOST("type_payment", 'alphanohtml');
+	$object->accountid = GETPOST("accountid", 'int');
+	$object->type_payment = GETPOST("type_payment", 'alphanohtml');
 	$object->num_payment = GETPOST("num_payment", 'alphanohtml');
 
 	$object->datev = $datev;
-    $object->datep = $datep;
+	$object->datep = $datep;
 
 	$amount = price2num(GETPOST("amount", 'alpha'));
 	if ($refund == 1) {
 		$amount = -$amount;
 	}
-    $object->amount = $amount;
+	$object->amount = $amount;
 	$object->label = GETPOST("label", 'alpha');
-	$object->note = GETPOST("note", 'none');
+	$object->note_private = GETPOST("note", 'restricthtml');
 
 	if (empty($object->datep))
 	{
@@ -125,15 +125,13 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	{
 		$db->begin();
 
-    	$ret = $object->addPayment($user);
+		$ret = $object->addPayment($user);
 		if ($ret > 0)
 		{
 			$db->commit();
 			header("Location: list.php");
 			exit;
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = "create";
@@ -145,15 +143,15 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 
 if ($action == 'delete')
 {
-    $result = $object->fetch($id);
+	$result = $object->fetch($id);
 
 	if ($object->rappro == 0)
 	{
-	    $db->begin();
+		$db->begin();
 
-	    $ret = $object->delete($user);
-	    if ($ret > 0)
-	    {
+		$ret = $object->delete($user);
+		if ($ret > 0)
+		{
 			if ($object->fk_bank)
 			{
 				$accountline = new AccountLine($db);
@@ -166,22 +164,16 @@ if ($action == 'delete')
 				$db->commit();
 				header("Location: ".DOL_URL_ROOT.'/compta/tva/list.php');
 				exit;
-			}
-			else
-			{
+			} else {
 				$object->error = $accountline->error;
 				$db->rollback();
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
-	    }
-	    else
-	    {
-	        $db->rollback();
-	        setEventMessages($object->error, $object->errors, 'errors');
-	    }
-	}
-	else
-	{
+		} else {
+			$db->rollback();
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	} else {
 		$mesg = 'Error try do delete a line linked to a conciliated bank transaction';
 		setEventMessages($mesg, null, 'errors');
 	}
@@ -215,9 +207,9 @@ if ($action == 'create')
 	print load_fiche_titre($langs->trans("VAT").' - '.$langs->trans("New"));
 
 	if (!empty($conf->use_javascript_ajax))
-    {
-        print "\n".'<script type="text/javascript" language="javascript">';
-        print '$(document).ready(function () {
+	{
+		print "\n".'<script type="text/javascript" language="javascript">';
+		print '$(document).ready(function () {
                 $("#radiopayment").click(function() {
                     $("#label").val($(this).data("label"));
 
@@ -230,40 +222,40 @@ if ($action == 'create')
 		print '</script>'."\n";
 	}
 
-    print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" name="formvat" method="post">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
-    print '<input type="hidden" name="action" value="add">';
+	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" name="formvat" method="post">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="add">';
 
-    print '<div id="selectmethod">';
-    print '<div class="hideonsmartphone float">';
-    print $langs->trans("Type").':&nbsp;&nbsp;&nbsp;';
-    print '</div>';
-    print '<label for="radiopayment">';
-    print '<input type="radio" id="radiopayment" data-label="'.$langs->trans('VATPayment').'" class="flat" name="refund" value="0"'.($refund ? '' : ' checked="checked"').'>';
-    print '&nbsp;';
-    print $langs->trans("Payment");
-    print '</label>';
-    print '&nbsp;&nbsp;&nbsp;';
-    print '<label for="radiorefund">';
-    print '<input type="radio" id="radiorefund" data-label="'.$langs->trans('VATRefund').'" class="flat" name="refund" value="1"'.($refund ? ' checked="checked"' : '').'>';
-    print '&nbsp;';
-    print $langs->trans("Refund");
-    print '</label>';
-    print '</div>';
-    print "<br>\n";
+	print '<div id="selectmethod">';
+	print '<div class="hideonsmartphone float">';
+	print $langs->trans("Type").':&nbsp;&nbsp;&nbsp;';
+	print '</div>';
+	print '<label for="radiopayment">';
+	print '<input type="radio" id="radiopayment" data-label="'.$langs->trans('VATPayment').'" class="flat" name="refund" value="0"'.($refund ? '' : ' checked="checked"').'>';
+	print '&nbsp;';
+	print $langs->trans("Payment");
+	print '</label>';
+	print '&nbsp;&nbsp;&nbsp;';
+	print '<label for="radiorefund">';
+	print '<input type="radio" id="radiorefund" data-label="'.$langs->trans('VATRefund').'" class="flat" name="refund" value="1"'.($refund ? ' checked="checked"' : '').'>';
+	print '&nbsp;';
+	print $langs->trans("PaymentBack");
+	print '</label>';
+	print '</div>';
+	print "<br>\n";
 
-    dol_fiche_head();
+	print dol_get_fiche_head();
 
-    print '<table class="border centpercent">';
+	print '<table class="border centpercent">';
 
-    print "<tr>";
-    print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-    print $form->selectDate($datep, "datep", '', '', '', 'add', 1, 1);
-    print '</td></tr>';
+	print "<tr>";
+	print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
+	print $form->selectDate($datep, "datep", '', '', '', 'add', 1, 1);
+	print '</td></tr>';
 
-    print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")).'</td><td>';
-    print $form->selectDate((GETPOST("datevmonth", 'int') ? $datev : -1), "datev", '', '', '', 'add', 1, 1);
-    print '</td></tr>';
+	print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")).'</td><td>';
+	print $form->selectDate((GETPOST("datevmonth", 'int') ? $datev : -1), "datev", '', '', '', 'add', 1, 1);
+	print '</td></tr>';
 
 	// Label
 	if ($refund == 1) {
@@ -276,14 +268,14 @@ if ($action == 'create')
 	// Amount
 	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount", "alpha").'"></td></tr>';
 
-    if (!empty($conf->banque->enabled))
-    {
+	if (!empty($conf->banque->enabled))
+	{
 		print '<tr><td class="fieldrequired">'.$langs->trans("BankAccount").'</td><td>';
 		$form->select_comptes(GETPOST("accountid", 'int'), "accountid", 0, "courant=1", 2); // List of bank account available
-        print '</td></tr>';
-    }
+		print '</td></tr>';
+	}
 
-    // Type payment
+	// Type payment
 	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
 	$form->select_types_paiements(GETPOST("type_payment"), "type_payment");
 	print "</td>\n";
@@ -294,22 +286,22 @@ if ($action == 'create')
 	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 	print '<td><input name="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
 
-    // Other attributes
-    $parameters = array();
-    $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
+	// Other attributes
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
-    print '</table>';
+	print '</table>';
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
-    print '</form>';
+	print '</form>';
 }
 
 // View mode
@@ -317,7 +309,7 @@ if ($id)
 {
 	$head = vat_prepare_head($object);
 
-	dol_fiche_head($head, 'card', $langs->trans("VATPayment"), -1, 'payment');
+	print dol_get_fiche_head($head, 'card', $langs->trans("VATPayment"), -1, 'payment');
 
 	$morehtmlref = '<div class="refidno">';
 	// Label of social contribution
@@ -377,7 +369,7 @@ if ($id)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	/*
 	 * Action buttons
@@ -387,15 +379,11 @@ if ($id)
 	{
 		if (!empty($user->rights->tax->charges->supprimer))
 		{
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a></div>';
-		}
-		else
-		{
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
+		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a></div>';
 		}
-	}
-	else
-	{
+	} else {
 		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a></div>';
 	}
 	print "</div>";

@@ -84,6 +84,8 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'19','Perso
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'21','Indivision');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'22','Société créée de fait');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'23','Société en participation');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'24','Société coopérative d''interet collectif (SCIC)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'25','Société coopérative de production à responsabilité limitée (SCOP)');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'27','Paroisse hors zone concordataire');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'29','Groupement de droit privé non doté de la personnalité morale');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'31','Personne morale de droit étranger, immatriculée au RCS');
@@ -325,4 +327,15 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (178, 
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (178, '17803', 'Sociedad de Responsabilidad Limitada', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (178, '17804', 'Sociedad Civil', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (178, '17805', 'Sociedad Anónima', 1);
+
+-- Algeria (id country=13)
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1300','Personne physique');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1301','Société à responsabilité limitée (SARL)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1302','Entreprise unipersonnelle à responsabilité limitée (EURL)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1303','Société en Nom Collectif (SNC)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1304','société par actions (SPA)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1305','Société en Commandite Simple (SCS)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1306','Société en commandite par actions (SCA)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1307','Société en participation');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1308','Groupe de sociétés');
 

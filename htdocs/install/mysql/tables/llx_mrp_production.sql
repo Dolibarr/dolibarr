@@ -28,7 +28,7 @@ CREATE TABLE llx_mrp_production(
 	fk_mrp_production integer,		-- if role = 'consumed', id of line with role 'toconsume', if role = 'produced' id of line with role 'toproduce'
 	fk_stock_movement integer,		-- id of stock movement when movements are validated
 	date_creation datetime NOT NULL, 
-	tms timestamp, 
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
 	import_key varchar(14)

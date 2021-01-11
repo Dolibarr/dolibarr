@@ -35,7 +35,7 @@ $langs->loadLangs(array("admin", "assets"));
 if (!$user->admin) accessforbidden();
 
 // Parameters
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $arrayofparameters = array('FIXEDASSETS_MYPARAM1'=>array('css'=>'minwidth200'), 'FIXEDASSETS_MYPARAM2'=>array('css'=>'minwidth500'));
@@ -60,7 +60,7 @@ print load_fiche_titre($langs->trans("AssetsSetup"), $linkback, 'title_setup');
 
 $head = asset_admin_prepare_head();
 
-dol_fiche_head($head, 'settings', $langs->trans("Assets"), -1, 'generic');
+print dol_get_fiche_head($head, 'settings', $langs->trans("Assets"), -1, 'generic');
 
 
 if ($action == 'edit')
@@ -82,14 +82,12 @@ if ($action == 'edit')
 	print '</table>';
 
 	print '<br><div class="center">';
-	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+	print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
 	print '</div>';
 
 	print '</form>';
 	print '<br>';
-}
-else
-{
+} else {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
@@ -107,7 +105,7 @@ else
 	print '</div>';
 }
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

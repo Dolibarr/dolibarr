@@ -33,18 +33,24 @@ if ($action == 'print_file' && $user->rights->printing->read) {
 	require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
 	$objectprint = new PrintingDriver($db);
 	$list = $objectprint->listDrivers($db, 10);
+	$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
 	if (!empty($list)) {
 		$errorprint = 0;
 		$printerfound = 0;
 		foreach ($list as $driver) {
-			require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
-			$langs->load($driver);
+			foreach ($dirmodels as $dir) {
+				if (file_exists(dol_buildpath($dir, 0).$driver.'.modules.php')) {
+					$classfile = dol_buildpath($dir, 0).$driver.'.modules.php';
+					break;
+				}
+			}
+			require_once $classfile;
 			$classname = 'printing_'.$driver;
 			$printer = new $classname($db);
+			$langs->load($printer::LANGFILE);
 			//print '<pre>'.print_r($printer, true).'</pre>';
 
-			if (!empty($conf->global->{$printer->active}))
-			{
+			if (!empty($conf->global->{$printer->active})) {
 				$printerfound++;
 
 				$subdir = '';
@@ -75,8 +81,7 @@ if ($action == 'print_file' && $user->rights->printing->read) {
 						setEventMessages($printer->error, $printer->errors);
 						setEventMessages($langs->transnoentitiesnoconv("FileWasSentToPrinter", basename(GETPOST('file', 'alpha'))).' '.$langs->transnoentitiesnoconv("ViaModule").' '.$printer->name, null);
 					}
-				}
-				catch (Exception $e)
+				} catch (Exception $e)
 				{
 					$ret = 1;
 					setEventMessages($e->getMessage(), null, 'errors');

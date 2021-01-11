@@ -194,8 +194,8 @@ $server->addPlugin($lockPlugin);
 // Support for html frontend
 if (empty($conf->global->DAV_DISABLE_BROWSER))
 {
-    $browser = new \Sabre\DAV\Browser\Plugin();
-    $server->addPlugin($browser);
+	$browser = new \Sabre\DAV\Browser\Plugin();
+	$server->addPlugin($browser);
 }
 
 // Automatically guess (some) contenttypes, based on extension

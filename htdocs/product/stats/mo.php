@@ -85,32 +85,32 @@ if ($id > 0 || !empty($ref))
 		$head = product_prepare_head($product);
 		$titre = $langs->trans("CardProduct".$product->type);
 		$picto = ($product->type == Product::TYPE_SERVICE ? 'service' : 'product');
-		dol_fiche_head($head, 'referers', $titre, -1, $picto);
+		print dol_get_fiche_head($head, 'referers', $titre, -1, $picto);
 
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $product, $action); // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
+		print $hookmanager->resPrint;
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-        $shownav = 1;
-        if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
+		$shownav = 1;
+		if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
 
-        dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
+		dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
-        print '<div class="fichecenter">';
+		print '<div class="fichecenter">';
 
-        print '<div class="underbanner clearboth"></div>';
-        print '<table class="border tableforfield" width="100%">';
+		print '<div class="underbanner clearboth"></div>';
+		print '<table class="border tableforfield" width="100%">';
 
-        $nboflines = show_stats_for_company($product, $socid);
+		$nboflines = show_stats_for_company($product, $socid);
 
 		print "</table>";
 
-        print '</div>';
-        print '<div style="clear:both"></div>';
+		print '</div>';
+		print '<div style="clear:both"></div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 
 		$now = dol_now();
@@ -156,18 +156,18 @@ if ($id > 0 || !empty($ref))
 			if (!empty($search_month)) $option .= '&search_month='.urlencode($search_month);
 			if (!empty($search_year)) $option .= '&search_year='.urlencode($search_year);
 
-            print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
-            if (!empty($sortfield))
-                print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
-            if (!empty($sortorder))
-                print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
+			print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
+			if (!empty($sortfield))
+				print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
+			if (!empty($sortorder))
+				print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
 
-            print_barre_liste($langs->trans("Mos"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);
+			print_barre_liste($langs->trans("Mos"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);
 
-            if (!empty($page)) $option .= '&page='.urlencode($page);
+			if (!empty($page)) $option .= '&page='.urlencode($page);
 
-            $i = 0;
-            print '<div class="div-table-responsive">';
+			$i = 0;
+			print '<div class="div-table-responsive">';
 			print '<table class="tagtable liste listwithfilterbefore" width="100%">';
 
 			print '<tr class="liste_titre">';
@@ -213,16 +213,12 @@ if ($id > 0 || !empty($ref))
 			print '</table>';
 			print '</div>';
 			print '</form>';
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 		$db->free($result);
 	}
-}
-else
-{
+} else {
 	dol_print_error();
 }
 

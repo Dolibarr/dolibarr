@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'companies'));
 
-$id = GETPOST("rowid");
+$id = GETPOST("rowid", 'int');
 
 
 /*
@@ -55,7 +55,7 @@ $hselected = $h;
 $h++;
 
 
-dol_fiche_head($head, $hselected, $langs->trans("LineRecord"), -1, 'account');
+print dol_get_fiche_head($head, $hselected, $langs->trans("LineRecord"), -1, 'accountline');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

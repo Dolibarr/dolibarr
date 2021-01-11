@@ -57,53 +57,15 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->loan->del
 	$sql = "UPDATE ".MAIN_DB_PREFIX."loan_schedule SET fk_bank = 0 WHERE fk_bank = ".$payment->fk_bank;
 	$db->query($sql);
 
+	$fk_loan = $payment->fk_loan;
+
 	$result = $payment->delete($user);
 	if ($result > 0)
 	{
 		$db->commit();
-		header("Location: ".DOL_URL_ROOT."/loan/list.php");
+		header("Location: ".DOL_URL_ROOT."/loan/card.php?id=".$fk_loan);
 		exit;
-	}
-	else
-	{
-		setEventMessages($payment->error, $payment->errors, 'errors');
-		$db->rollback();
-	}
-}
-
-// Create payment
-if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->loan->write)
-{
-	$db->begin();
-
-	$result = $payment->valide();
-
-	if ($result > 0)
-	{
-		$db->commit();
-
-		$factures = array(); // TODO Get all id of invoices linked to this payment
-		foreach ($factures as $id)
-		{
-			$fac = new Facture($db);
-			$fac->fetch($id);
-
-			$outputlangs = $langs;
-			if (!empty($_REQUEST['lang_id']))
-			{
-				$outputlangs = new Translate("", $conf);
-				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-			}
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-				$fac->generateDocument($fac->modelpdf, $outputlangs);
-			}
-		}
-
-		header('Location: card.php?id='.$payment->id);
-		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages($payment->error, $payment->errors, 'errors');
 		$db->rollback();
 	}
@@ -126,7 +88,7 @@ $head[$h][1] = $langs->trans("PaymentLoan");
 $hselected = $h;
 $h++;
 
-dol_fiche_head($head, $hselected, $langs->trans("PaymentLoan"), 0, 'payment');
+print dol_get_fiche_head($head, $hselected, $langs->trans("PaymentLoan"), -1, 'payment');
 
 /*
  * Confirm deletion of the payment
@@ -136,23 +98,16 @@ if ($action == 'delete')
 	print $form->formconfirm('card.php?id='.$payment->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete', '', 0, 2);
 }
 
-/*
- * Confirm validation of the payment
- */
-if ($action == 'valide')
-{
-	$facid = $_GET['facid'];
-	print $form->formconfirm('card.php?id='.$payment->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide', '', 0, 2);
-}
+$linkback = '';
+$morehtmlref = '';
+$morehtmlright = '';
 
+dol_banner_tab($payment, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+
+print '<div class="fichecenter">';
+print '<div class="underbanner clearboth"></div>';
 
 print '<table class="border centpercent">';
-
-// Ref
-print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td>';
-print '<td>';
-print $form->showrefnav($payment, 'id', '', 1, 'rowid', 'id');
-print '</td></tr>';
 
 // Date
 print '<tr><td>'.$langs->trans('Date').'</td><td>'.dol_print_date($payment->datep, 'day').'</td></tr>';
@@ -189,6 +144,8 @@ if (!empty($conf->banque->enabled))
 }
 
 print '</table>';
+
+print '</div>';
 
 
 /*
@@ -254,9 +211,7 @@ if ($resql)
 
 	print "</table>\n";
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -266,29 +221,15 @@ print '</div>';
 /*
  * Actions buttons
  */
-print '<div class="tabsAction">';
 
-/*
-if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
-{
-	if ($user->socid == 0 && $payment->statut == 0 && $_GET['action'] == '')
-	{
-		if ($user->rights->facture->paiement)
-		{
-			print '<a class="butAction" href="card.php?id='.$_GET['id'].'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
-		}
-	}
-}
-*/
+print '<div class="tabsAction">';
 
 if (empty($action) && !empty($user->rights->loan->delete))
 {
 	if (!$disable_delete)
 	{
-		print '<a class="butActionDelete" href="card.php?id='.$id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-	}
-	else
-	{
+		print '<a class="butActionDelete" href="card.php?id='.$id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>';
+	} else {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
 	}
 }

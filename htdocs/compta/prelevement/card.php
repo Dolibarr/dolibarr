@@ -37,7 +37,7 @@ $langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'withdrawal
 if ($user->socid > 0) accessforbidden();
 
 // Get supervariables
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
@@ -45,8 +45,8 @@ $type = GETPOST('type', 'aZ09');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -81,38 +81,38 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    if ($action == 'confirm_delete')
-    {
-        $res = $object->delete($user);
-        if ($res > 0)
-        {
-        	if ($object->type == 'bank-transfer') {
-        		header("Location: ".DOL_URL_ROOT.'/compta/paymentbybanktransfer/index.php');
-        	} else {
-        		header("Location: ".DOL_URL_ROOT.'/compta/prelevement/index.php');
-        	}
-            exit;
-        }
-    }
+	if ($action == 'confirm_delete')
+	{
+		$res = $object->delete($user);
+		if ($res > 0)
+		{
+			if ($object->type == 'bank-transfer') {
+				header("Location: ".DOL_URL_ROOT.'/compta/paymentbybanktransfer/index.php');
+			} else {
+				header("Location: ".DOL_URL_ROOT.'/compta/prelevement/index.php');
+			}
+			exit;
+		}
+	}
 
-    // Seems to no be used and replaced with $action == 'infocredit'
-    if ($action == 'confirm_credite' && GETPOST('confirm', 'alpha') == 'yes')
-    {
-        $res = $object->set_credite();
-        if ($res >= 0)
-        {
-            header("Location: card.php?id=".$id);
-            exit;
-        }
-    }
+	// Seems to no be used and replaced with $action == 'infocredit'
+	if ($action == 'confirm_credite' && GETPOST('confirm', 'alpha') == 'yes')
+	{
+		$res = $object->set_credite();
+		if ($res >= 0)
+		{
+			header("Location: card.php?id=".$id);
+			exit;
+		}
+	}
 
-    if ($action == 'infotrans' && $user->rights->prelevement->bons->send)
-    {
-        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	if ($action == 'infotrans' && $user->rights->prelevement->bons->send)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
-        /*
+		/*
         if ($_FILES['userfile']['name'] && basename($_FILES['userfile']['name'],".ps") == $object->ref)
         {
             $dir = $conf->prelevement->dir_output.'/receipts';
@@ -133,24 +133,24 @@ if (empty($reshook))
 
 		$error = $object->set_infotrans($user, $dt, GETPOST('methode', 'alpha'));
 
-        if ($error)
-        {
-            header("Location: card.php?id=".$id."&error=$error");
-            exit;
-        }
-    }
+		if ($error)
+		{
+			header("Location: card.php?id=".$id."&error=$error");
+			exit;
+		}
+	}
 
 	// Set direct debit order to credited, create payment and close invoices
 	if ($action == 'infocredit' && $user->rights->prelevement->bons->credit)
 	{
 		$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
-        $error = $object->set_infocredit($user, $dt);
-        if ($error)
-        {
-        	setEventMessages($object->error, $object->errors, 'errors');
-        }
-    }
+		$error = $object->set_infocredit($user, $dt);
+		if ($error)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
 }
 
 
@@ -166,7 +166,7 @@ llxHeader('', $langs->trans("WithdrawalsReceipts"));
 if ($id > 0 || $ref)
 {
 	$head = prelevement_prepare_head($object);
-	dol_fiche_head($head, 'prelevement', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
+	print dol_get_fiche_head($head, 'prelevement', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
 	if (GETPOST('error', 'alpha') != '')
 	{
@@ -179,7 +179,7 @@ if ($id > 0 || $ref)
 
 	}*/
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/bons.php'.($object->type != 'bank-transfer' ? '' : '?type=bank-transfer').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/orders_list.php?restore_lastsearch_values=1'.($object->type != 'bank-transfer' ? '' : '&type=bank-transfer').'">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
 
@@ -250,7 +250,7 @@ if ($id > 0 || $ref)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	$formconfirm = '';
@@ -317,15 +317,15 @@ if ($id > 0 || $ref)
 
 		if (empty($object->date_trans) && $user->rights->prelevement->bons->send)
 		{
-			print "<a class=\"butAction\" href=\"card.php?action=settransmitted&id=".$object->id."\">".$langs->trans("SetToStatusSent")."</a>";
+			print "<a class=\"butAction\" href=\"card.php?action=settransmitted&token='.newToken().'&id=".$object->id."\">".$langs->trans("SetToStatusSent")."</a>";
 		}
 
 		if (!empty($object->date_trans) && $object->date_credit == 0)
 		{
-			print "<a class=\"butAction\" href=\"card.php?action=setcredited&id=".$object->id."\">".$langs->trans("ClassCredited")."</a>";
+			print "<a class=\"butAction\" href=\"card.php?action=setcredited&token='.newToken().'&id=".$object->id."\">".$langs->trans("ClassCredited")."</a>";
 		}
 
-		print "<a class=\"butActionDelete\" href=\"card.php?action=delete&id=".$object->id."\">".$langs->trans("Delete")."</a>";
+		print "<a class=\"butActionDelete\" href=\"card.php?action=delete&token='.newToken().'&id=".$object->id."\">".$langs->trans("Delete")."</a>";
 
 		print "</div>";
 	}
@@ -421,9 +421,7 @@ if ($id > 0 || $ref)
 			if ($obj->statut == 3)
 			{
 		  		print '<b>'.$langs->trans("StatusRefused").'</b>';
-			}
-			else
-			{
+			} else {
 				if ($object->statut == BonPrelevement::STATUS_CREDITED)
 				{
 					if ($obj->statut == 2) {
@@ -431,15 +429,11 @@ if ($id > 0 || $ref)
 						{
 							//print '<a class="butActionDelete" href="line.php?action=rejet&id='.$obj->rowid.'">'.$langs->trans("StandingOrderReject").'</a>';
 							print '<a href="line.php?action=rejet&type='.$object->type.'&id='.$obj->rowid.'">'.$langs->trans("StandingOrderReject").'</a>';
-						}
-						else
-						{
+						} else {
 							//print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("StandingOrderReject").'</a>';
 						}
 					}
-				}
-				else
-				{
+				} else {
 					//print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotPossibleForThisStatusOfWithdrawReceiptORLine").'">'.$langs->trans("StandingOrderReject").'</a>';
 				}
 			}
@@ -472,9 +466,7 @@ if ($id > 0 || $ref)
 		print '</form>';
 
 		$db->free($result);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

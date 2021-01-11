@@ -37,7 +37,7 @@ $langs->loadLangs(array('admin', 'donations', 'accountancy', 'other'));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $value = GETPOST('value');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
@@ -51,37 +51,33 @@ $type = 'donation';
 
 if ($action == 'specimen')
 {
-    $modele = GETPOST('module', 'alpha');
+	$modele = GETPOST('module', 'alpha');
 
-    $don = new Don($db);
-    $don->initAsSpecimen();
+	$don = new Don($db);
+	$don->initAsSpecimen();
 
-    // Search template files
-    $dir = DOL_DOCUMENT_ROOT."/core/modules/dons/";
-    $file = $modele.".modules.php";
-    if (file_exists($dir.$file))
-    {
-        $classname = $modele;
-        require_once $dir.$file;
+	// Search template files
+	$dir = DOL_DOCUMENT_ROOT."/core/modules/dons/";
+	$file = $modele.".modules.php";
+	if (file_exists($dir.$file))
+	{
+		$classname = $modele;
+		require_once $dir.$file;
 
-        $obj = new $classname($db);
+		$obj = new $classname($db);
 
-        if ($obj->write_file($don, $langs) > 0)
-        {
-            header("Location: ".DOL_URL_ROOT."/document.php?modulepart=donation&file=SPECIMEN.html");
-            return;
-        }
-        else
-        {
-            setEventMessages($obj->error, $obj->errors, 'errors');
-            dol_syslog($obj->error, LOG_ERR);
-        }
-    }
-    else
-    {
-        setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
-        dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
-    }
+		if ($obj->write_file($don, $langs) > 0)
+		{
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=donation&file=SPECIMEN.html");
+			return;
+		} else {
+			setEventMessages($obj->error, $obj->errors, 'errors');
+			dol_syslog($obj->error, LOG_ERR);
+		}
+	} else {
+		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
+		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+	}
 }
 
 // Set default model
@@ -106,14 +102,12 @@ elseif ($action == 'setdoc')
 elseif ($action == 'set')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
-}
-
-elseif ($action == 'del')
+} elseif ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
 	{
-        if ($conf->global->DON_ADDON_MODEL == "$value") dolibarr_del_const($db, 'DON_ADDON_MODEL', $conf->entity);
+		if ($conf->global->DON_ADDON_MODEL == "$value") dolibarr_del_const($db, 'DON_ADDON_MODEL', $conf->entity);
 	}
 }
 
@@ -122,36 +116,32 @@ if ($action == 'set_DONATION_ACCOUNTINGACCOUNT')
 {
 	$account = GETPOST('DONATION_ACCOUNTINGACCOUNT', 'alpha');
 
-    $res = dolibarr_set_const($db, "DONATION_ACCOUNTINGACCOUNT", $account, 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "DONATION_ACCOUNTINGACCOUNT", $account, 'chaine', 0, '', $conf->entity);
 
 	if (!$res > 0) $error++;
 
  	if (!$error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 if ($action == 'set_DONATION_MESSAGE')
 {
-	$freemessage = GETPOST('DONATION_MESSAGE', 'none'); // No alpha here, we want exact string
+	$freemessage = GETPOST('DONATION_MESSAGE', 'restricthtml'); // No alpha here, we want exact string
 
-    $res = dolibarr_set_const($db, "DONATION_MESSAGE", $freemessage, 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "DONATION_MESSAGE", $freemessage, 'chaine', 0, '', $conf->entity);
 
 	if (!$res > 0) $error++;
 
  	if (!$error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 /*
@@ -159,30 +149,26 @@ if ($action == 'set_DONATION_MESSAGE')
  */
 if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 {
-    $code = $reg[1];
-    if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
-    {
-        header("Location: ".$_SERVER["PHP_SELF"]);
-        exit;
-    }
-    else
-    {
-        dol_print_error($db);
-    }
+	$code = $reg[1];
+	if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
+	{
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	} else {
+		dol_print_error($db);
+	}
 }
 
 if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 {
-    $code = $reg[1];
-    if (dolibarr_del_const($db, $code, $conf->entity) > 0)
-    {
-        header("Location: ".$_SERVER["PHP_SELF"]);
-        exit;
-    }
-    else
-    {
-        dol_print_error($db);
-    }
+	$code = $reg[1];
+	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
+	{
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	} else {
+		dol_print_error($db);
+	}
 }
 
 /*
@@ -199,7 +185,7 @@ print load_fiche_titre($langs->trans("DonationsSetup"), $linkback, 'title_setup'
 
 $head = donation_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("Donations"), -1, 'payment');
+print dol_get_fiche_head($head, 'general', $langs->trans("Donations"), -1, 'payment');
 
 
 // Document templates
@@ -210,7 +196,7 @@ $type = 'donation';
 $def = array();
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql .= " WHERE type = '".$type."'";
+$sql .= " WHERE type = '".$db->escape($type)."'";
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -222,9 +208,7 @@ if ($resql)
 		array_push($def, $array[0]);
 		$i++;
 	}
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -275,18 +259,14 @@ if (is_resource($handle))
 						print "<td class=\"center\">\n";
 						print img_picto($langs->trans("Enabled"), 'switch_on');
 						print '</td>';
-					}
-					else
-					{
+					} else {
 						print "<td class=\"center\">\n";
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 						print '</td>';
 					}
-				}
-				else
-				{
+				} else {
 					print "<td class=\"center\">\n";
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 					print "</td>";
 				}
 
@@ -296,11 +276,9 @@ if (is_resource($handle))
 					print "<td class=\"center\">";
 					print img_picto($langs->trans("Default"), 'on');
 					print '</td>';
-				}
-				else
-				{
+				} else {
 					print "<td class=\"center\">";
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 					print '</td>';
 				}
 
@@ -354,10 +332,10 @@ print $form->textwithpicto($langs->trans("DonationUserThirdparties"), $langs->tr
 print '</td>';
 print '<td class="center">';
 if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('DONATION_USE_THIRDPARTIES');
+	print ajax_constantonoff('DONATION_USE_THIRDPARTIES');
 } else {
-    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("DONATION_USE_THIRDPARTIES", $arrval, $conf->global->DONATION_USE_THIRDPARTIES);
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("DONATION_USE_THIRDPARTIES", $arrval, $conf->global->DONATION_USE_THIRDPARTIES);
 }
 print "</td>\n";
 print "</tr>\n";
@@ -370,9 +348,7 @@ print '<td class="center">';
 if (!empty($conf->accounting->enabled))
 {
 	print $formaccounting->select_account($conf->global->DONATION_ACCOUNTINGACCOUNT, 'DONATION_ACCOUNTINGACCOUNT', 1, '', 1, 1);
-}
-else
-{
+} else {
 	print '<input type="text" size="10" id="DONATION_ACCOUNTINGACCOUNT" name="DONATION_ACCOUNTINGACCOUNT" value="'.$conf->global->DONATION_ACCOUNTINGACCOUNT.'">';
 }
 print '</td><td class="center">';
@@ -411,34 +387,34 @@ if (preg_match('/fr/i', $conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 	print '<tr class="oddeven">';
 	print '<td width="80%">'.$langs->trans("DONATION_ART200").'</td>';
 	print '<td class="center">';
-    if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('DONATION_ART200');
-    } else {
-        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-        print $form->selectarray("DONATION_ART200", $arrval, $conf->global->DONATION_ART200);
-    }
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('DONATION_ART200');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("DONATION_ART200", $arrval, $conf->global->DONATION_ART200);
+	}
 	print '</td></tr>';
 
 	print '<tr class="oddeven">';
 	print '<td width="80%">'.$langs->trans("DONATION_ART238").'</td>';
 	print '<td class="center">';
-    if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('DONATION_ART238');
-    } else {
-        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-        print $form->selectarray("DONATION_ART238", $arrval, $conf->global->DONATION_ART238);
-    }
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('DONATION_ART238');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("DONATION_ART238", $arrval, $conf->global->DONATION_ART238);
+	}
 	print '</td></tr>';
 
 	print '<tr class="oddeven">';
 	print '<td width="80%">'.$langs->trans("DONATION_ART978").'</td>';
 	print '<td class="center">';
-    if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('DONATION_ART978');
-    } else {
-        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-        print $form->selectarray("DONATION_ART978", $arrval, $conf->global->DONATION_ART978);
-    }
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('DONATION_ART978');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("DONATION_ART978", $arrval, $conf->global->DONATION_ART978);
+	}
 	print '</td></tr>';
 	print "</table>\n";
 }

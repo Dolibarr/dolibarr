@@ -42,8 +42,8 @@ $type = GETPOST('type', 'aZ09');
 
 // Get supervariables
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortorder = GETPOST('sortorder', 'alpha');
-$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -65,7 +65,7 @@ llxHeader('', $title);
 if ($sortorder == "") $sortorder = "DESC";
 if ($sortfield == "") $sortfield = "p.datec";
 
-$rej = new RejetPrelevement($db, $user);
+$rej = new RejetPrelevement($db, $user, $type);
 $line = new LignePrelevement($db);
 
 $hookmanager->initHooks(array('withdrawalsreceiptsrejectedlist'));
@@ -137,9 +137,7 @@ if ($result)
 
 	print "</table>";
 	$db->free($result);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

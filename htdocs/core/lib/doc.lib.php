@@ -75,8 +75,7 @@ function doc_getlinedesc($line, $outputlangs, $hideref = 0, $hidedesc = 0, $issu
 			$discount->fetch($line->fk_remise_except);
 			$sourceref = !empty($discount->discount_type) ? $discount->ref_invoive_supplier_source : $discount->ref_facture_source;
 			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromCreditNote", $sourceref);
-		}
-		elseif ($desc == '(DEPOSIT)' && $line->fk_remise_except)
+		} elseif ($desc == '(DEPOSIT)' && $line->fk_remise_except)
 		{
 			$discount = new DiscountAbsolute($db);
 			$discount->fetch($line->fk_remise_except);
@@ -84,27 +83,21 @@ function doc_getlinedesc($line, $outputlangs, $hideref = 0, $hidedesc = 0, $issu
 			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromDeposit", $sourceref);
 			// Add date of deposit
 			if (!empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) $libelleproduitservice .= ' ('.dol_print_date($discount->datec, 'day', '', $outputlangs).')';
-		}
-		elseif ($desc == '(EXCESS RECEIVED)' && $line->fk_remise_except)
+		} elseif ($desc == '(EXCESS RECEIVED)' && $line->fk_remise_except)
 		{
 			$discount = new DiscountAbsolute($db);
 			$discount->fetch($line->fk_remise_except);
 			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromExcessReceived", $discount->ref_facture_source);
-		}
-		elseif ($desc == '(EXCESS PAID)' && $line->fk_remise_except)
+		} elseif ($desc == '(EXCESS PAID)' && $line->fk_remise_except)
 		{
 			$discount = new DiscountAbsolute($db);
 			$discount->fetch($line->fk_remise_except);
 			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromExcessPaid", $discount->ref_invoice_supplier_source);
-		}
-		else
-		{
+		} else {
 			if ($idprod)
 			{
 				if (empty($hidedesc)) $libelleproduitservice = dol_concatdesc($libelleproduitservice, $desc);
-			}
-			else
-			{
+			} else {
 				$libelleproduitservice = dol_concatdesc($libelleproduitservice, $desc);
 			}
 		}
@@ -123,9 +116,7 @@ function doc_getlinedesc($line, $outputlangs, $hideref = 0, $hidedesc = 0, $issu
 				if ($prodser->isService())
 				{
 					$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Service")." ";
-				}
-				else
-				{
+				} else {
 					$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Product")." ";
 				}
 			}

@@ -182,13 +182,16 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
                 'type'=>1,
                 'description'=>'This is a new product created from WS PHPUnit test case',
                 'barcode'=>'123456789012',
-                'barcode_type'=>2
+                'barcode_type'=>2,
+            	'price_net'=>10,
+            	'status_tosell'=>1,
+            	'status_tobuy'=>1
             )
         );
         print __METHOD__." call method ".$WS_METHOD."\n";
         try {
             $result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
-        } catch(SoapFault $exception) {
+        } catch (SoapFault $exception) {
             echo $exception;
             $result=0;
         }
@@ -201,8 +204,8 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
             print $soapclient->response;
             print "\n";
         }
-
-        print __METHOD__." result=".$result."\n";
+        print var_export($result, true);
+        print __METHOD__." count(result)=".(is_array($result) ? count($result) : '')."\n";
         $this->assertEquals('OK', $result['result']['result_code']);
 
         return $result['id'];
@@ -251,7 +254,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
         print __METHOD__." call method ".$WS_METHOD."\n";
         try {
             $result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
-        } catch(SoapFault $exception) {
+        } catch (SoapFault $exception) {
             echo $exception;
             $result=0;
         }
@@ -265,7 +268,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
             print "\n";
         }
 
-        print __METHOD__." result=".$result."\n";
+        print __METHOD__." count(result)=".count($result)."\n";
         $this->assertEquals('OK', $result['result']['result_code']);
 
         return $id;
@@ -314,7 +317,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
         print __METHOD__." call method ".$WS_METHOD."\n";
         try {
             $result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
-        } catch(SoapFault $exception) {
+        } catch (SoapFault $exception) {
             echo $exception;
             $result=0;
         }
@@ -328,7 +331,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
             print "\n";
         }
 
-        print __METHOD__." result=".$result."\n";
+        print __METHOD__." count(result)=".count($result)."\n";
         $this->assertEquals('OK', $result['result']['result_code']);
 
         return 0;

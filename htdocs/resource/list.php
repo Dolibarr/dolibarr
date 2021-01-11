@@ -39,7 +39,7 @@ $element_id     = GETPOST('element_id', 'int');
 $resource_id    = GETPOST('resource_id', 'int');
 
 $sortorder      = GETPOST('sortorder', 'alpha');
-$sortfield      = GETPOST('sortfield', 'alpha');
+$sortfield      = GETPOST('sortfield', 'aZ09comma');
 
 // Initialize context for list
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'resourcelist';
@@ -108,7 +108,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 if (!$user->rights->resource->read) {
-        accessforbidden();
+		accessforbidden();
 }
 $arrayfields = array(
 		't.ref' => array(
@@ -121,14 +121,8 @@ $arrayfields = array(
 		),
 );
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -201,8 +195,8 @@ if ($ret == -1) {
 	$newcardbutton = '';
 	if ($user->rights->resource->write)
 	{
-        $newcardbutton .= dolGetButtonTitle($langs->trans('MenuResourceAdd'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/resource/card.php?action=create');
-    }
+		$newcardbutton .= dolGetButtonTitle($langs->trans('MenuResourceAdd'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/resource/card.php?action=create');
+	}
 
 	print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret + 1, $nbtotalofrecords, 'object_resource', 0, $newcardbutton, '', $limit, 0, 0, 1);
 }
@@ -246,47 +240,45 @@ print "</tr>\n";
 if ($ret)
 {
 	foreach ($object->lines as $resource)
-    {
-        print '<tr class="oddeven">';
+	{
+		print '<tr class="oddeven">';
 
-        if (!empty($arrayfields['t.ref']['checked']))
-        {
-        	print '<td>';
-        	print $resource->getNomUrl(5);
-        	print '</td>';
-	        if (!$i) $totalarray['nbfield']++;
-        }
+		if (!empty($arrayfields['t.ref']['checked']))
+		{
+			print '<td>';
+			print $resource->getNomUrl(5);
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
 
-        if (!empty($arrayfields['ty.label']['checked']))
-        {
-        	print '<td>';
-        	print $resource->type_label;
-        	print '</td>';
-	        if (!$i) $totalarray['nbfield']++;
-        }
-        // Extra fields
-        $obj = (Object) $resource->array_options;
-        include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+		if (!empty($arrayfields['ty.label']['checked']))
+		{
+			print '<td>';
+			print $resource->type_label;
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+		// Extra fields
+		$obj = (Object) $resource->array_options;
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
-        print '<td class="center">';
-        print '<a class="editfielda" href="./card.php?action=edit&id='.$resource->id.'">';
-        print img_edit();
-        print '</a>';
-        print '&nbsp;';
-        print '<a href="./card.php?action=delete&id='.$resource->id.'">';
-        print img_delete('', 'class="marginleftonly"');
-        print '</a>';
-        print '</td>';
-        if (!$i) $totalarray['nbfield']++;
+		print '<td class="center">';
+		print '<a class="editfielda" href="./card.php?action=edit&token='.newToken().'&id='.$resource->id.'">';
+		print img_edit();
+		print '</a>';
+		print '&nbsp;';
+		print '<a href="./card.php?action=delete&token='.newToken().'&id='.$resource->id.'">';
+		print img_delete('', 'class="marginleftonly"');
+		print '</a>';
+		print '</td>';
+		if (!$i) $totalarray['nbfield']++;
 
-        print '</tr>';
-    }
-}
-else
-{
-    $colspan = 1;
-    foreach ($arrayfields as $key => $val) { if (!empty($val['checked'])) $colspan++; }
-    print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+		print '</tr>';
+	}
+} else {
+	$colspan = 1;
+	foreach ($arrayfields as $key => $val) { if (!empty($val['checked'])) $colspan++; }
+	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 
 print '</table>';

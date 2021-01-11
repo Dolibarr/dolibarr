@@ -61,14 +61,14 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
-    print '<form method="post" action="list.php">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
-    print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder nohover centpercent">';
-    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    print '<tr class="oddeven"><td>';
-    print $langs->trans("SupplierOrder").':</td><td><input type="text" class="flat" name="search_all" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-    print "</table></div></form><br>\n";
+	print '<form method="post" action="list.php">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder nohover centpercent">';
+	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("SupplierOrder").':</td><td><input type="text" class="flat" name="search_all" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+	print "</table></div></form><br>\n";
 }
 
 
@@ -160,9 +160,7 @@ if ($resql)
 	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
 
 	print "</table></div><br>";
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -226,9 +224,7 @@ if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_T
 	$sql .= " WHERE ((ug.fk_user = u.rowid";
 	$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
 	$sql .= " OR u.entity = 0)"; // Show always superadmin
-}
-else
-{
+} else {
 	$sql .= " WHERE (u.entity IN (".getEntity('user')."))";
 }
 $sql .= " AND u.fk_soc IS NULL"; // An external user can not approved
@@ -269,9 +265,7 @@ if ($resql)
 	}
 	print "</table></div><br>";
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -344,8 +338,7 @@ if ($resql)
 		}
 	}
 	print "</table></div><br>";
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 
 /*

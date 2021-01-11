@@ -29,8 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 if (!empty($conf->projet->enabled)) {
-    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
 // Load translation files required by the page
@@ -41,8 +41,8 @@ $id = GETPOST('id', 'int');
 // Security check
 if ($user->socid > 0)
 {
-    $action = '';
-    $socid = $user->socid;
+	$action = '';
+	$socid = $user->socid;
 }
 
 $result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
@@ -62,7 +62,7 @@ $object->fetch($id);
 $object->info($object->id);
 
 $head = actions_prepare_head($object);
-dol_fiche_head($head, 'info', $langs->trans("Action"), -1, 'action');
+print dol_get_fiche_head($head, 'info', $langs->trans("Action"), -1, 'action');
 
 $linkback = img_picto($langs->trans("BackToList"), 'object_list', 'class="hideonsmartphone pictoactionview"');
 $linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php">'.$langs->trans("BackToList").'</a>';
@@ -86,19 +86,19 @@ $morehtmlref = '<div class="refidno">';
 // Project
 if (!empty($conf->projet->enabled))
 {
-    $langs->load("projects");
-    //$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-    $morehtmlref .= $langs->trans('Project').': ';
-    if (!empty($object->fk_project)) {
-        $proj = new Project($db);
-        $proj->fetch($object->fk_project);
-        $morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-        $morehtmlref .= $proj->ref;
-        $morehtmlref .= '</a>';
-        if ($proj->title) $morehtmlref .= ' - '.$proj->title;
-    } else {
-        $morehtmlref .= '';
-    }
+	$langs->load("projects");
+	//$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+	$morehtmlref .= $langs->trans('Project').': ';
+	if (!empty($object->fk_project)) {
+		$proj = new Project($db);
+		$proj->fetch($object->fk_project);
+		$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+		$morehtmlref .= $proj->ref;
+		$morehtmlref .= '</a>';
+		if ($proj->title) $morehtmlref .= ' - '.$proj->title;
+	} else {
+		$morehtmlref .= '';
+	}
 }
 $morehtmlref .= '</div>';
 
@@ -112,7 +112,7 @@ print '<table width="100%"><tr><td>';
 dol_print_object_info($object);
 print '</td></tr></table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

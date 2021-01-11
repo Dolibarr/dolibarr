@@ -123,32 +123,32 @@ class modPrelevement extends DolibarrModules
 		$this->rights[$r][4] = 'bons';
 		$this->rights[$r][5] = 'credit';
 
-        // Menus
-        //-------
-        $this->menu = 1; // This module add menu entries. They are coded into menu manager.
-    }
+		// Menus
+		//-------
+		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
+	}
 
 
-    /**
-     *  Function called when module is enabled.
-     *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-     *  It also creates data directories
-     *
-     *  @param      string	$options    Options when enabling module ('', 'noboxes')
-     *  @return     int             	1 if OK, 0 if KO
-     */
-    public function init($options = '')
-    {
-        global $conf;
+	/**
+	 *  Function called when module is enabled.
+	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates data directories
+	 *
+	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *  @return     int             	1 if OK, 0 if KO
+	 */
+	public function init($options = '')
+	{
+		global $conf;
 
-        // Permissions
-        $this->remove($options);
+		// Permissions
+		$this->remove($options);
 
-        $sql = array(
-            "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'bankaccount' AND entity = ".$conf->entity,
-            "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','bankaccount',".$conf->entity.")",
-        );
+		$sql = array(
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'bankaccount' AND entity = ".$conf->entity,
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','bankaccount',".$conf->entity.")",
+		);
 
-        return $this->_init($sql, $options);
-    }
+		return $this->_init($sql, $options);
+	}
 }

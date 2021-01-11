@@ -9,12 +9,15 @@ descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Creare automaticamente una fattura atti
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Crea automaticamente una fattura cliente dopo che un ordine cliente è stato chiuso (la nuova fattura avrà lo stesso importo dell'ordine)
 # Autoclassify customer proposal or order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classifica come "da fatturare" la/e proposta/e commerciale/i quando l'ordine cliente collegato è impostato come da fatturare (e se l'ammontare dell'ordine è lo stesso ammontare della proposta commerciale firmata e collegata)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classifica "da fatturare" le proposte collegate quando la fattura cliente è validata (e se l'importo della fattura è uguale all'importo totale delle proposte collegate)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classifica "da fatturare" gli ordini cliente collegati quando la fattura cliente è validata (e se l'importo della fattura è uguale all'importo totale di ordini collegati)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classifica "fatturate" le proposte collegate quando la fattura cliente è validata (e se l'importo della fattura è uguale all'importo totale delle proposte collegate)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classifica "fatturato" gli ordini cliente collegati quando la fattura cliente è validata (e se l'importo della fattura è uguale all'importo totale di ordini collegati)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classifica "da fatturare" gli ordini cliente collegati quando la fattura cliente è impostata su pagamento (e se l'importo della fattura è uguale all'importo totale di ordini collegati)
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classifica "da spedire" l'ordine cliente collegato quando una spedizione viene convalidata (e se la quantità spedita da tutte le spedizioni è la stessa dell'ordine da aggiornare)
 # Autoclassify purchase order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked proposals)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked orders)
+descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
 AutomaticCreation=Creazione automatica
 AutomaticClassification=Classificazione automatica

@@ -409,9 +409,7 @@ class MultiCurrency extends CommonObject
 		{
 			$this->rate = $currencyRate;
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->rate = null;
 			$this->errors = $currencyRate->errors;
 			return -1;
@@ -425,15 +423,15 @@ class MultiCurrency extends CommonObject
 	 * @param	double	$rate	new rate
 	 * @return int -1 if KO, 1 if OK, 2 if label found and OK
 	 */
-    public function addRateFromDolibarr($code, $rate)
-    {
-        global $db, $user;
+	public function addRateFromDolibarr($code, $rate)
+	{
+		global $db, $user;
 
-		$currency = new MultiCurrency($db);
+		$currency = new MultiCurrency($this->db);
 		$currency->code = $code;
 		$currency->name = $code;
 
-	 	$sql = 'SELECT label FROM '.MAIN_DB_PREFIX.'c_currencies WHERE code_iso = \''.$db->escape($code).'\'';
+		$sql = 'SELECT label FROM '.MAIN_DB_PREFIX."c_currencies WHERE code_iso = '".$this->db->escape($code)."'";
 
 	 	dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $db->query($sql);
@@ -451,26 +449,26 @@ class MultiCurrency extends CommonObject
 		}
 
 		return -1;
-    }
+	}
 
 	 /**
-	 * Add new entry into llx_multicurrency_rate
-	 *
-	 * @param double	$rate	rate value
-	 * @return int <0 if KO, >0 if OK
-     */
-    public function updateRate($rate)
-    {
-        return $this->addRate($rate);
-    }
+	  * Add new entry into llx_multicurrency_rate
+	  *
+	  * @param double	$rate	rate value
+	  * @return int <0 if KO, >0 if OK
+	  */
+	public function updateRate($rate)
+	{
+		return $this->addRate($rate);
+	}
 
 	/**
 	 * Fetch CurrencyRate object in $this->rate
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
-    public function getRate()
-    {
+	public function getRate()
+	{
 	 	$sql = 'SELECT cr.rowid';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as cr';
 		$sql .= ' WHERE cr.fk_multicurrency = '.$this->id;
@@ -482,40 +480,40 @@ class MultiCurrency extends CommonObject
 			$this->rate = new CurrencyRate($this->db);
 			return $this->rate->fetch($obj->rowid);
 		}
-    }
+	}
 
 	 /**
-	 * Get id of currency from code
-	 *
-	 * @param  DoliDB	$db		    object db
-	 * @param  string	$code	   code value search
-	 *
-	 * @return int                 0 if not found, >0 if OK
-	 */
-    public static function getIdFromCode(&$db, $code)
-    {
+	  * Get id of currency from code
+	  *
+	  * @param  DoliDB	$db		    object db
+	  * @param  string	$code	    code value search
+	  *
+	  * @return int                 0 if not found, >0 if OK
+	  */
+	public static function getIdFromCode($db, $code)
+	{
 	 	global $conf;
 
-	 	$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'multicurrency WHERE code = \''.$db->escape($code).'\' AND entity = '.$conf->entity;
+	 	$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX."multicurrency WHERE code = '".$db->escape($code)."' AND entity = ".$conf->entity;
 
 	 	dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql && $obj = $db->fetch_object($resql)) return $obj->rowid;
 		else return 0;
-    }
+	}
 
 	 /**
-	 * Get id and rate of currency from code
-	 *
-	 * @param DoliDB	$db		        Object db
-	 * @param string	$code	        Code value search
-	 * @param integer	$date_document	Date from document (propal, order, invoice, ...)
-	 *
-	 * @return 	array	[0] => id currency
-	 *					[1] => rate
-	 */
-    public static function getIdAndTxFromCode(&$db, $code, $date_document = '')
-    {
+	  * Get id and rate of currency from code
+	  *
+	  * @param DoliDB	$db		        Object db
+	  * @param string	$code	        Code value search
+	  * @param integer	$date_document	Date from document (propal, order, invoice, ...)
+	  *
+	  * @return 	array	[0] => id currency
+	  *					[1] => rate
+	  */
+	public static function getIdAndTxFromCode($db, $code, $date_document = '')
+	{
 		global $conf;
 
 	 	$sql1 = 'SELECT m.rowid, mc.rate FROM '.MAIN_DB_PREFIX.'multicurrency m';
@@ -534,8 +532,7 @@ class MultiCurrency extends CommonObject
 		$resql = $db->query($sql1.$sql2.$sql3);
 
 		if ($resql && $obj = $db->fetch_object($resql)) return array($obj->rowid, $obj->rate);
-		else
-		{
+		else {
 			if (!empty($conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE))
 			{
 				$resql = $db->query($sql1.$sql3);
@@ -544,35 +541,34 @@ class MultiCurrency extends CommonObject
 
 			return array(0, 1);
 		}
-    }
+	}
 
-    /**
-     * Get the conversion of amount with invoice rate
-     *
-     * @param	int		$fk_facture		id of facture
-     * @param	double	$amount			amount to convert
-     * @param	string	$way			dolibarr mean the amount is in dolibarr currency
-     * @param	string	$table			facture or facture_fourn
-     * @return	double					amount converted
-     */
-    public static function getAmountConversionFromInvoiceRate($fk_facture, $amount, $way = 'dolibarr', $table = 'facture')
-    {
-        $multicurrency_tx = self::getInvoiceRate($fk_facture, $table);
+	/**
+	 * Get the conversion of amount with invoice rate
+	 *
+	 * @param	int		$fk_facture		id of facture
+	 * @param	double	$amount			amount to convert
+	 * @param	string	$way			'dolibarr' mean the amount is in dolibarr currency
+	 * @param	string	$table			facture or facture_fourn
+	 * @return	double					amount converted
+	 */
+	public static function getAmountConversionFromInvoiceRate($fk_facture, $amount, $way = 'dolibarr', $table = 'facture')
+	{
+		$multicurrency_tx = self::getInvoiceRate($fk_facture, $table);
 
-        if ($multicurrency_tx)
-        {
-            if ($way == 'dolibarr') return $amount * $multicurrency_tx;
-            else return $amount / $multicurrency_tx;
-        }
-        else return $amount;
-    }
+		if ($multicurrency_tx)
+		{
+			if ($way == 'dolibarr') return price2num($amount * $multicurrency_tx, 'MU');
+			else return price2num($amount / $multicurrency_tx, 'MU');
+		} else return $amount;
+	}
 
 	/**
 	 *  Get current invoite rate
 	 *
 	 *  @param	int 	$fk_facture 	id of facture
 	 *  @param 	string 	$table 			facture or facture_fourn
-     *  @return bool
+	 *  @return bool
 	 */
 	public static function getInvoiceRate($fk_facture, $table = 'facture')
 	{
@@ -603,7 +599,7 @@ class MultiCurrency extends CommonObject
 
 		if ($conf->currency != $conf->global->MULTICURRENCY_APP_SOURCE)
 		{
-		    $alternate_source = 'USD'.$conf->currency;
+			$alternate_source = 'USD'.$conf->currency;
 			if (!empty($TRate->{$alternate_source}))
 			{
 				$coef = $TRate->USDUSD / $TRate->{$alternate_source};
@@ -626,11 +622,13 @@ class MultiCurrency extends CommonObject
 	 *
 	 * @param 	string  $key                Key to use. Come from $conf->global->MULTICURRENCY_APP_ID.
 	 * @param   int     $addifnotfound      Add if not found
-     * @return  int							<0 if KO, >0 if OK
+	 * @return  int							<0 if KO, >0 if OK
 	 */
 	public static function syncRates($key, $addifnotfound = 0)
 	{
 		global $conf, $db, $langs;
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
 		$urlendpoint = 'http://apilayer.net/api/live?access_key='.$key;
 		//$urlendpoint.='&format=1';
@@ -638,43 +636,40 @@ class MultiCurrency extends CommonObject
 
 		dol_syslog("Call url endpoint ".$urlendpoint);
 
-		// TODO Use getURLContent() function instead.
-        $ch = curl_init($urlendpoint);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($ch);
-        curl_close($ch);
-        $response = json_decode($response);
+		$resget = getURLContent($urlendpoint, 'GET', '', 1, array(), array('http', 'https'), 1);
 
-        if ($response->success)
-        {
-			$TRate = $response->quotes;
-			$timestamp = $response->timestamp;
+		if ($resget['content']) {
+			$response = $resget['content'];
+			$response = json_decode($response);
 
-			if (self::recalculRates($TRate) >= 0)
+			if ($response->success)
 			{
-				foreach ($TRate as $currency_code => $rate)
+				$TRate = $response->quotes;
+				$timestamp = $response->timestamp;
+
+				if (self::recalculRates($TRate) >= 0)
 				{
-					$code = substr($currency_code, 3, 3);
-					$obj = new MultiCurrency($db);
-					if ($obj->fetch(null, $code) > 0)
+					foreach ($TRate as $currency_code => $rate)
 					{
-						$obj->updateRate($rate);
-					}
-					elseif ($addifnotfound)
-					{
-						self::addRateFromDolibarr($code, $rate);
+						$code = substr($currency_code, 3, 3);
+						$obj = new MultiCurrency($db);
+						if ($obj->fetch(null, $code) > 0)
+						{
+							$obj->updateRate($rate);
+						} elseif ($addifnotfound)
+						{
+							self::addRateFromDolibarr($code, $rate);
+						}
 					}
 				}
+
+				return 1;
+			} else {
+				dol_syslog("Failed to call endpoint ".$response->error->info, LOG_WARNING);
+				setEventMessages($langs->trans('multicurrency_syncronize_error', $response->error->info), null, 'errors');
+
+				return -1;
 			}
-
-			return 1;
-        }
-		else
-		{
-		    dol_syslog("Failed to call endpoint ".$response->error->info, LOG_WARNING);
-			setEventMessages($langs->trans('multicurrency_syncronize_error', $response->error->info), null, 'errors');
-
-			return -1;
 		}
 	}
 
@@ -693,6 +688,7 @@ class MultiCurrency extends CommonObject
 		else return false;
 	}
 }
+
 
 /**
  * Class CurrencyRate
@@ -734,6 +730,7 @@ class CurrencyRate extends CommonObjectLine
 	 */
 	public $entity;
 
+
 	/**
 	 * Constructor
 	 *
@@ -751,8 +748,7 @@ class CurrencyRate extends CommonObjectLine
 	 *
 	 * @param  int	$fk_multicurrency	Id of currency
 	 * @param  bool	$trigger			true=launch triggers after, false=disable triggers
-	 *
-	 * @return int <0 if KO, Id of created object if OK
+	 * @return int 						<0 if KO, Id of created object if OK
 	 */
 	public function create($fk_multicurrency, $trigger = true)
 	{
@@ -763,7 +759,7 @@ class CurrencyRate extends CommonObjectLine
 		$error = 0;
 		$this->rate = price2num($this->rate);
 		if (empty($this->entity) || $this->entity <= 0) $this->entity = $conf->entity;
-		$now = date('Y-m-d H:i:s');
+		$now = empty($this->date_sync) ? dol_now() : $this->date_sync;
 
 		// Insert request
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'(';
@@ -773,9 +769,9 @@ class CurrencyRate extends CommonObjectLine
 		$sql .= ' entity';
 		$sql .= ') VALUES (';
 		$sql .= ' '.$this->rate.',';
-		$sql .= ' \''.$now.'\',';
-		$sql .= ' \''.$fk_multicurrency.'\',';
-		$sql .= ' \''.$this->entity.'\'';
+		$sql .= " '".$this->db->idate($now)."',";
+		$sql .= " ".((int) $fk_multicurrency).",";
+		$sql .= " ".((int) $this->entity);
 		$sql .= ')';
 
 		$this->db->begin();
@@ -813,9 +809,8 @@ class CurrencyRate extends CommonObjectLine
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id  Id object
-	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @param 	int    $id  Id object
+	 * @return 	int 		<0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -834,7 +829,7 @@ class CurrencyRate extends CommonObjectLine
 
 				$this->id = $obj->rowid;
 				$this->rate = $obj->rate;
-				$this->date_sync = $obj->date_sync;
+				$this->date_sync = $this->db->jdate($obj->date_sync);
 				$this->fk_multicurrency = $obj->fk_multicurrency;
 				$this->entity = $obj->entity;
 			}
@@ -856,9 +851,8 @@ class CurrencyRate extends CommonObjectLine
 	/**
 	 * Update object into database
 	 *
-	 * @param  bool $trigger true=launch triggers after, false=disable triggers
-	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @param  bool $trigger	true=launch triggers after, false=disable triggers
+	 * @return int 				<0 if KO, >0 if OK
 	 */
 	public function update($trigger = true)
 	{
@@ -873,6 +867,8 @@ class CurrencyRate extends CommonObjectLine
 		// Update request
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
 		$sql .= ' rate='.$this->rate;
+		if (!empty($this->date_sync)) $sql .= ", date_sync='".$this->db->idate($this->date_sync)."'";
+		if (!empty($this->fk_multicurrency)) $sql .= ', fk_multicurrency='.$this->fk_multicurrency;
 		$sql .= ' WHERE rowid='.$this->id;
 
 		$this->db->begin();
@@ -905,9 +901,8 @@ class CurrencyRate extends CommonObjectLine
 	/**
 	 * Delete object in database
 	 *
-	 * @param bool $trigger true=launch triggers after, false=disable triggers
-	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @param 	bool $trigger 	true=launch triggers after, false=disable triggers
+	 * @return 	int 			<0 if KO, >0 if OK
 	 */
 	public function delete($trigger = true)
 	{

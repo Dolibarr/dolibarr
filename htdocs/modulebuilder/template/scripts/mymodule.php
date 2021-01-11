@@ -166,9 +166,7 @@ if (!$error)
 {
 	$db->commit();
 	print '--- end ok'."\n";
-}
-else
-{
+} else {
 	print '--- end error code='.$error."\n";
 	$db->rollback();
 }

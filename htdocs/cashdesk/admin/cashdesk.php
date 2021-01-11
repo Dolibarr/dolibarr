@@ -65,15 +65,13 @@ if (GETPOST('action', 'alpha') == 'set')
 	if (!$res > 0) $error++;
 
  	if (!$error)
-    {
-        $db->commit();
-	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        $db->rollback();
-	    setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	{
+		$db->commit();
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		$db->rollback();
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 /*
@@ -148,15 +146,13 @@ if (!empty($conf->stock->enabled))
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskDoNotDecreaseStock").'</td>'; // Force warehouse (this is not a default value)
 	print '<td colspan="2">';
 	if (empty($conf->productbatch->enabled)) {
-	    print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK', $conf->global->CASHDESK_NO_DECREASE_STOCK, 1);
-	}
-	else
-	{
-	    if (!$conf->global->CASHDESK_NO_DECREASE_STOCK) {
-	        $res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK", 1, 'chaine', 0, '', $conf->entity);
-	    }
-	    print $langs->trans("Yes").'<br>';
-	    print '<span class="opacitymedium">'.$langs->trans('StockDecreaseForPointOfSaleDisabledbyBatch').'</span>';
+		print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK', $conf->global->CASHDESK_NO_DECREASE_STOCK, 1);
+	} else {
+		if (!$conf->global->CASHDESK_NO_DECREASE_STOCK) {
+			$res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK", 1, 'chaine', 0, '', $conf->entity);
+		}
+		print $langs->trans("Yes").'<br>';
+		print '<span class="opacitymedium">'.$langs->trans('StockDecreaseForPointOfSaleDisabledbyBatch').'</span>';
 	}
 	print '</td></tr>';
 
@@ -169,9 +165,7 @@ if (!empty($conf->stock->enabled))
 	{
 		print $formproduct->selectWarehouses($conf->global->CASHDESK_ID_WAREHOUSE, 'CASHDESK_ID_WAREHOUSE', '', 1, $disabled);
 		print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">('.$langs->trans("Create").')</a>';
-	}
-	else
-	{
+	} else {
 		print '<span class="opacitymedium">'.$langs->trans("StockDecreaseForPointOfSaleDisabled").'</span>';
 	}
 	print '</td></tr>';
@@ -180,17 +174,17 @@ if (!empty($conf->stock->enabled))
 // Use Dolibarr Receipt Printer
 if (!empty($conf->receiptprinter->enabled))
 {
-    print '<tr class="oddeven"><td>';
-    print $langs->trans("DolibarrReceiptPrinter").' ('.$langs->trans("FeatureNotYetAvailable").')';
-    print '<td colspan="2">';
-    print $form->selectyesno("CASHDESK_DOLIBAR_RECEIPT_PRINTER", $conf->global->CASHDESK_DOLIBAR_RECEIPT_PRINTER, 1);
-    print "</td></tr>\n";
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("DolibarrReceiptPrinter").' ('.$langs->trans("FeatureNotYetAvailable").')';
+	print '<td colspan="2">';
+	print $form->selectyesno("CASHDESK_DOLIBAR_RECEIPT_PRINTER", $conf->global->CASHDESK_DOLIBAR_RECEIPT_PRINTER, 1);
+	print "</td></tr>\n";
 }
 
 print '</table>';
 print '<br>';
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
+print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
 
 print "</form>\n";
 

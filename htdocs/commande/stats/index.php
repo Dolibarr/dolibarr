@@ -51,8 +51,8 @@ $socid = GETPOST('socid', 'int');
 // Security check
 if ($user->socid > 0)
 {
-    $action = '';
-    $socid = $user->socid;
+	$action = '';
+	$socid = $user->socid;
 }
 
 $nowyear = strftime("%Y", dol_now());
@@ -81,8 +81,8 @@ $dir = $conf->commande->dir_temp;
 if ($mode == 'supplier')
 {
 	$picto = 'supplier_order';
-    $title = $langs->trans("OrdersStatisticsSuppliers").' ('.$langs->trans("SentToSuppliers").")";
-    $dir = $conf->fournisseur->commande->dir_temp;
+	$title = $langs->trans("OrdersStatisticsSuppliers");
+	$dir = $conf->fournisseur->commande->dir_temp;
 }
 
 llxHeader('', $title);
@@ -94,11 +94,11 @@ dol_mkdir($dir);
 $stats = new CommandeStats($db, $socid, $mode, ($userid > 0 ? $userid : 0), ($typent_id > 0 ? $typent_id : 0), ($categ_id > 0 ? $categ_id : 0));
 if ($mode == 'customer')
 {
-    if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND c.fk_statut IN ('.$db->escape($object_status).')';
+	if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND c.fk_statut IN ('.$db->sanitize($db->escape($object_status)).')';
 }
 if ($mode == 'supplier')
 {
-    if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND c.fk_statut IN ('.$db->escape($object_status).')';
+	if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND c.fk_statut IN ('.$db->sanitize($db->escape($object_status)).')';
 }
 
 
@@ -111,40 +111,38 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 
 if (!$user->rights->societe->client->voir || $user->socid)
 {
-    $filenamenb = $dir.'/ordersnbinyear-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersnbinyear-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersnbinyear-'.$user->id.'-'.$year.'.png';
-}
-else
-{
-    $filenamenb = $dir.'/ordersnbinyear-'.$year.'.png';
-    if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersnbinyear-'.$year.'.png';
-    if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersnbinyear-'.$year.'.png';
+	$filenamenb = $dir.'/ordersnbinyear-'.$user->id.'-'.$year.'.png';
+	if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersnbinyear-'.$user->id.'-'.$year.'.png';
+	if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersnbinyear-'.$user->id.'-'.$year.'.png';
+} else {
+	$filenamenb = $dir.'/ordersnbinyear-'.$year.'.png';
+	if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersnbinyear-'.$year.'.png';
+	if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersnbinyear-'.$year.'.png';
 }
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
 if (!$mesg)
 {
-    $px1->SetData($data);
-    $i = $startyear; $legend = array();
-    while ($i <= $endyear)
-    {
-        $legend[] = $i;
-        $i++;
-    }
-    $px1->SetLegend($legend);
-    $px1->SetMaxValue($px1->GetCeilMaxValue());
-    $px1->SetMinValue(min(0, $px1->GetFloorMinValue()));
-    $px1->SetWidth($WIDTH);
-    $px1->SetHeight($HEIGHT);
-    $px1->SetYLabel($langs->trans("NbOfOrder"));
-    $px1->SetShading(3);
-    $px1->SetHorizTickIncrement(1);
-    $px1->mode = 'depth';
-    $px1->SetTitle($langs->trans("NumberOfOrdersByMonth"));
+	$px1->SetData($data);
+	$i = $startyear; $legend = array();
+	while ($i <= $endyear)
+	{
+		$legend[] = $i;
+		$i++;
+	}
+	$px1->SetLegend($legend);
+	$px1->SetMaxValue($px1->GetCeilMaxValue());
+	$px1->SetMinValue(min(0, $px1->GetFloorMinValue()));
+	$px1->SetWidth($WIDTH);
+	$px1->SetHeight($HEIGHT);
+	$px1->SetYLabel($langs->trans("NbOfOrder"));
+	$px1->SetShading(3);
+	$px1->SetHorizTickIncrement(1);
+	$px1->mode = 'depth';
+	$px1->SetTitle($langs->trans("NumberOfOrdersByMonth"));
 
-    $px1->draw($filenamenb, $fileurlnb);
+	$px1->draw($filenamenb, $fileurlnb);
 }
 
 // Build graphic amount of object
@@ -154,40 +152,38 @@ $data = $stats->getAmountByMonthWithPrevYear($endyear, $startyear);
 
 if (!$user->rights->societe->client->voir || $user->socid)
 {
-    $filenameamount = $dir.'/ordersamountinyear-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'customer') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersamountinyear-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'supplier') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersamountinyear-'.$user->id.'-'.$year.'.png';
-}
-else
-{
-    $filenameamount = $dir.'/ordersamountinyear-'.$year.'.png';
-    if ($mode == 'customer') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersamountinyear-'.$year.'.png';
-    if ($mode == 'supplier') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersamountinyear-'.$year.'.png';
+	$filenameamount = $dir.'/ordersamountinyear-'.$user->id.'-'.$year.'.png';
+	if ($mode == 'customer') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersamountinyear-'.$user->id.'-'.$year.'.png';
+	if ($mode == 'supplier') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersamountinyear-'.$user->id.'-'.$year.'.png';
+} else {
+	$filenameamount = $dir.'/ordersamountinyear-'.$year.'.png';
+	if ($mode == 'customer') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersamountinyear-'.$year.'.png';
+	if ($mode == 'supplier') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersamountinyear-'.$year.'.png';
 }
 
 $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
 if (!$mesg)
 {
-    $px2->SetData($data);
-    $i = $startyear; $legend = array();
-    while ($i <= $endyear)
-    {
-        $legend[] = $i;
-        $i++;
-    }
-    $px2->SetLegend($legend);
-    $px2->SetMaxValue($px2->GetCeilMaxValue());
-    $px2->SetMinValue(min(0, $px2->GetFloorMinValue()));
-    $px2->SetWidth($WIDTH);
-    $px2->SetHeight($HEIGHT);
-    $px2->SetYLabel($langs->trans("AmountOfOrders"));
-    $px2->SetShading(3);
-    $px2->SetHorizTickIncrement(1);
-    $px2->mode = 'depth';
-    $px2->SetTitle($langs->trans("AmountOfOrdersByMonthHT"));
+	$px2->SetData($data);
+	$i = $startyear; $legend = array();
+	while ($i <= $endyear)
+	{
+		$legend[] = $i;
+		$i++;
+	}
+	$px2->SetLegend($legend);
+	$px2->SetMaxValue($px2->GetCeilMaxValue());
+	$px2->SetMinValue(min(0, $px2->GetFloorMinValue()));
+	$px2->SetWidth($WIDTH);
+	$px2->SetHeight($HEIGHT);
+	$px2->SetYLabel($langs->trans("AmountOfOrders"));
+	$px2->SetShading(3);
+	$px2->SetHorizTickIncrement(1);
+	$px2->mode = 'depth';
+	$px2->SetTitle($langs->trans("AmountOfOrdersByMonthHT"));
 
-    $px2->draw($filenameamount, $fileurlamount);
+	$px2->draw($filenameamount, $fileurlamount);
 }
 
 
@@ -195,40 +191,38 @@ $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
 if (!$user->rights->societe->client->voir || $user->socid)
 {
-    $filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$user->id.'-'.$year.'.png';
-}
-else
-{
-    $filename_avg = $dir.'/ordersaverage-'.$year.'.png';
-    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$year.'.png';
-    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$year.'.png';
+	$filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
+	if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
+	if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$user->id.'-'.$year.'.png';
+} else {
+	$filename_avg = $dir.'/ordersaverage-'.$year.'.png';
+	if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$year.'.png';
+	if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$year.'.png';
 }
 
 $px3 = new DolGraph();
 $mesg = $px3->isGraphKo();
 if (!$mesg)
 {
-    $px3->SetData($data);
-    $i = $startyear; $legend = array();
-    while ($i <= $endyear)
-    {
-        $legend[] = $i;
-        $i++;
-    }
-    $px3->SetLegend($legend);
-    $px3->SetYLabel($langs->trans("AmountAverage"));
-    $px3->SetMaxValue($px3->GetCeilMaxValue());
-    $px3->SetMinValue($px3->GetFloorMinValue());
-    $px3->SetWidth($WIDTH);
-    $px3->SetHeight($HEIGHT);
-    $px3->SetShading(3);
-    $px3->SetHorizTickIncrement(1);
-    $px3->mode = 'depth';
-    $px3->SetTitle($langs->trans("AmountAverage"));
+	$px3->SetData($data);
+	$i = $startyear; $legend = array();
+	while ($i <= $endyear)
+	{
+		$legend[] = $i;
+		$i++;
+	}
+	$px3->SetLegend($legend);
+	$px3->SetYLabel($langs->trans("AmountAverage"));
+	$px3->SetMaxValue($px3->GetCeilMaxValue());
+	$px3->SetMinValue($px3->GetFloorMinValue());
+	$px3->SetWidth($WIDTH);
+	$px3->SetHeight($HEIGHT);
+	$px3->SetShading(3);
+	$px3->SetHorizTickIncrement(1);
+	$px3->mode = 'depth';
+	$px3->SetTitle($langs->trans("AmountAverage"));
 
-    $px3->draw($filename_avg, $fileurl_avg);
+	$px3->draw($filename_avg, $fileurl_avg);
 }
 
 
@@ -255,7 +249,7 @@ if ($mode == 'supplier') $type = 'supplier_order_stats';
 
 complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
-dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
+print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -283,13 +277,13 @@ print '</td></tr>';
 // Category
 if ($mode == 'customer')
 {
-    $cat_type = Categorie::TYPE_CUSTOMER;
-    $cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Customer"));
+	$cat_type = Categorie::TYPE_CUSTOMER;
+	$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Customer"));
 }
 if ($mode == 'supplier')
 {
-    $cat_type = Categorie::TYPE_SUPPLIER;
-    $cat_label = $langs->trans("Supplier").' '.lcfirst($langs->trans("Customer"));
+	$cat_type = Categorie::TYPE_SUPPLIER;
+	$cat_label = $langs->trans("Supplier").' '.lcfirst($langs->trans("Customer"));
 }
 print '<tr><td>'.$cat_label.'</td><td>';
 print $formother->select_categories($cat_type, $categ_id, 'categ_id', true);
@@ -301,18 +295,18 @@ print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0
 print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
 if ($mode == 'customer')
 {
-    $liststatus = array(
-        Commande::STATUS_DRAFT=>$langs->trans("StatusOrderDraft"),
-        Commande::STATUS_VALIDATED=>$langs->trans("StatusOrderValidated"),
-        Commande::STATUS_SHIPMENTONPROCESS=>$langs->trans("StatusOrderSent"),
-        Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
-        Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceled")
-    );
-    print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'intcomma'), -4);
+	$liststatus = array(
+		Commande::STATUS_DRAFT=>$langs->trans("StatusOrderDraft"),
+		Commande::STATUS_VALIDATED=>$langs->trans("StatusOrderValidated"),
+		Commande::STATUS_SHIPMENTONPROCESS=>$langs->trans("StatusOrderSent"),
+		Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
+		Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceled")
+	);
+	print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'intcomma'), -4);
 }
 if ($mode == 'supplier')
 {
-    $formorder->selectSupplierOrderStatus((strstr($object_status, ',') ? -1 : $object_status), 0, 'object_status');
+	$formorder->selectSupplierOrderStatus((strstr($object_status, ',') ? -1 : $object_status), 0, 'object_status');
 }
 print '</td></tr>';
 // Year
@@ -381,13 +375,12 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Show graphs
 print '<table class="border centpercent"><tr class="pair nohover"><td align="center">';
-if ($mesg) { print $mesg; }
-else {
-    print $px1->show();
-    print "<br>\n";
-    print $px2->show();
-    print "<br>\n";
-    print $px3->show();
+if ($mesg) { print $mesg; } else {
+	print $px1->show();
+	print "<br>\n";
+	print $px2->show();
+	print "<br>\n";
+	print $px3->show();
 }
 print '</td></tr></table>';
 
@@ -395,7 +388,7 @@ print '</td></tr></table>';
 print '</div></div></div>';
 print '<div style="clear:both"></div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

@@ -87,7 +87,7 @@ while ($year <= $currentyear)
 
     if ($delta1)
     {
-        foreach($tables as $tablekey => $tableval)
+        foreach ($tables as $tablekey => $tableval)
         {
             print "Correct ".$tablekey." for year ".$year." and move them to current year ".$currentyear." ";
             $sql="select rowid from ".MAIN_DB_PREFIX.$tablekey." where ".$tableval[0]." between '".$year."-01-01' and '".$year."-12-31' and ".$tableval[0]." < DATE_ADD(NOW(), INTERVAL -1 YEAR)";
@@ -105,7 +105,7 @@ while ($year <= $currentyear)
                         print ".";
                         $sql2="UPDATE ".MAIN_DB_PREFIX.$tablekey." set ";
                         $j=0;
-                        foreach($tableval as $field)
+                        foreach ($tableval as $field)
                         {
                             if ($j) $sql2.=", ";
                             $sql2.= $field." = ".$db->ifsql("DATE_ADD(".$field.", INTERVAL ".$delta1." YEAR) > NOW()", "DATE_ADD(".$field.", INTERVAL ".$delta2." YEAR)", "DATE_ADD(".$field.", INTERVAL ".$delta1." YEAR)");

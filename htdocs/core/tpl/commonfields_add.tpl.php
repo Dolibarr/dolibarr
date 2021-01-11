@@ -53,9 +53,13 @@ foreach ($object->fields as $key => $val)
 	else print $langs->trans($val['label']);
 	print '</td>';
 	print '<td>';
+	if (!empty($val['picto'])) { print img_picto('', $val['picto']); }
 	if (in_array($val['type'], array('int', 'integer'))) $value = GETPOST($key, 'int');
-	elseif ($val['type'] == 'text' || $val['type'] == 'html') $value = GETPOST($key, 'none');
-	else $value = GETPOST($key, 'alpha');
+	elseif ($val['type'] == 'text' || $val['type'] == 'html') $value = GETPOST($key, 'restricthtml');
+	elseif ($val['type'] == 'date') $value = dol_mktime(12, 0, 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'));
+	elseif ($val['type'] == 'datetime') $value = dol_mktime(GETPOST($key.'hour', 'int'), GETPOST($key.'min', 'int'), 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'));
+	elseif ($val['type'] == 'boolean') $value = (GETPOST($key) == 'on' ? 1 : 0);
+	else $value = GETPOST($key, 'alphanohtml');
 	if ($val['noteditable']) print $object->showOutputField($val, $key, $value, '', '', '', 0);
 	else print $object->showInputField($val, $key, $value, '', '', '', 0);
 	print '</td>';

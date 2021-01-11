@@ -80,8 +80,8 @@ $aEnglish = array();
 if ($filesToProcess == 'all')
 {
 	$dir = new DirectoryIterator('htdocs/langs/'.$lPrimary);
-	while($dir->valid()) {
-		if(!$dir->isDot() && $dir->isFile() && ! preg_match('/^\./', $dir->getFilename())) {
+	while ($dir->valid()) {
+		if (!$dir->isDot() && $dir->isFile() && ! preg_match('/^\./', $dir->getFilename())) {
 			$files[] =  $dir->getFilename();
 		}
 		$dir->next();
@@ -94,7 +94,7 @@ else $filesToProcess=explode(',', $filesToProcess);
 
 
 // Loop on each file
-foreach($filesToProcess as $fileToProcess)
+foreach ($filesToProcess as $fileToProcess)
 {
 	$lPrimaryFile = 'htdocs/langs/'.$lPrimary.'/'.$fileToProcess;
 	$lSecondaryFile = 'htdocs/langs/'.$lSecondary.'/'.$fileToProcess;
@@ -285,8 +285,7 @@ foreach($filesToProcess as $fileToProcess)
 				print "Key $key is redundant in file $lPrimaryFile (line: $cnt) - Already found into ".$fileFirstFound[$key]." (line: ".$lineFirstFound[$key].").\n";
 				continue;
 			}
-			else
-			{
+			else {
 				$fileFirstFound[$key] = $fileToProcess;
 				$lineFirstFound[$key] = $cnt;
 			}

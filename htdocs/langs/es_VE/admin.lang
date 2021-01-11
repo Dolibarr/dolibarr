@@ -9,7 +9,6 @@ Permission255=Eliminar o desactivar otros usuarios
 Permission256=Consultar sus permisos
 Permission1321=Exportar facturas a clientes, atributos y cobros
 Permission20003=Eliminar peticiones de días libres retribuidos
-DictionaryProspectStatus=Estado prospección
 ExtraFields=Atributos adicionales
 ExtraFieldsLines=Atributos adicionales (líneas)
 ExtraFieldsSupplierOrdersLines=Atributos complementarios (líneas de pedido)

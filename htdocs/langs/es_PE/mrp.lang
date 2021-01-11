@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - mrp
 Mrp=Órdenes de Fabricación
+MOs=Órdenes de Fabricación
 ManufacturingOrder=Orden de Fabricación
 MRPDescription=Modulo para gestionar la producción y órdenes de fabricación (OF).
 MRPArea=Área PRM
@@ -58,3 +59,5 @@ ProductQtyToConsumeByMO=Cantidad de producto pendiente para consumir por MO abie
 ProductQtyToProduceByMO=Cantidad de producto pendiente para producir por MO abierto.
 AddNewConsumeLines=Agregar nueva linea para consumir
 TotalCost=Costo total
+BOMTotalCost=El costo a producir este BOM es basado sobre el costo de cantidad y producto a consumir (Se usa si el precio de costo está definido, de lo contario usa el precio promedio ponderado, o en todo caso el mejor precio de compra)
+GoOnTabProductionToProduceFirst=Debe primero empezar la producción para cerrar una orden de fabricación (Ver tab '%s'). Pero puede cancelarlo.

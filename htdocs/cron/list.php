@@ -36,7 +36,7 @@ $langs->loadLangs(array("admin", "cron", "bills", "members"));
 
 if (!$user->rights->cron->read) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $confirm = GETPOST('confirm', 'alpha');
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
@@ -55,10 +55,12 @@ $pagenext = $page + 1;
 if (!$sortfield) $sortfield = 't.status,t.priority';
 if (!$sortorder) $sortorder = 'DESC,ASC';
 
-$search_status = (GETPOSTISSET('search_status') ?GETPOST('search_status', 'int') : GETPOST('status', 'int'));
-
+$mode = GETPOST('mode', 'aZ09');
 //Search criteria
+$search_status = (GETPOSTISSET('search_status') ?GETPOST('search_status', 'int') : GETPOST('status', 'int'));
 $search_label = GETPOST("search_label", 'alpha');
+$search_module_name = GETPOST("search_module_name", 'alpha');
+$search_lastresult = GETPOST("search_lastresult", "alpha");
 $securitykey = GETPOST('securitykey', 'alpha');
 
 $diroutputmassaction = $conf->cronjob->dir_output.'/temp/massgeneration/'.$user->id;
@@ -97,6 +99,7 @@ if (empty($reshook))
 	{
 		$search_label = '';
 		$search_status = -1;
+		$search_lastresult = '';
 		$toselect = '';
 		$search_array_options = array();
 	}
@@ -128,51 +131,47 @@ if (empty($reshook))
 	// Execute jobs
 	if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->execute)
 	{
-	    if (!empty($conf->global->CRON_KEY) && $conf->global->CRON_KEY != $securitykey)
-	    {
-	        setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
-	        $action = '';
-	    }
-	    else
-	    {
-	        $object = new Cronjob($db);
-	    	$job = $object->fetch($id);
+		if (!empty($conf->global->CRON_KEY) && $conf->global->CRON_KEY != $securitykey)
+		{
+			setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
+			$action = '';
+		} else {
+			$object = new Cronjob($db);
+			$job = $object->fetch($id);
 
-	        $now = dol_now(); // Date we start
+			$now = dol_now(); // Date we start
 
-	        $resrunjob = $object->run_jobs($user->login); // Return -1 if KO, 1 if OK
-	    	if ($resrunjob < 0) {
-	    		setEventMessages($object->error, $object->errors, 'errors');
-	    	}
+			$resrunjob = $object->run_jobs($user->login); // Return -1 if KO, 1 if OK
+			if ($resrunjob < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 
-	    	// Programm next run
-	    	$res = $object->reprogram_jobs($user->login, $now);
-	    	if ($res > 0)
-	    	{
-	    		if ($resrunjob >= 0)	// We show the result of reprogram only if no error message already reported
-	    		{
-	    		    if ($object->lastresult >= 0) setEventMessages($langs->trans("JobFinished"), null, 'mesgs');
-	    		    else setEventMessages($langs->trans("JobFinished"), null, 'errors');
-	    		}
-	    		$action = '';
-	    	}
-	    	else
-	    	{
-	    		setEventMessages($object->error, $object->errors, 'errors');
-	    		$action = '';
-	    	}
+			// Programm next run
+			$res = $object->reprogram_jobs($user->login, $now);
+			if ($res > 0)
+			{
+				if ($resrunjob >= 0)	// We show the result of reprogram only if no error message already reported
+				{
+					if ($object->lastresult >= 0) setEventMessages($langs->trans("JobFinished"), null, 'mesgs');
+					else setEventMessages($langs->trans("JobFinished"), null, 'errors');
+				}
+				$action = '';
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$action = '';
+			}
 
-	    	$param = '&search_status='.urlencode($search_status);
-	    	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
-	    	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-	    	if ($search_label)	  $param .= '&search_label='.urlencode($search_label);
-	    	if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
-	    	// Add $param from extra fields
-	    	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+			$param = '&search_status='.urlencode($search_status);
+			if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+			if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+			if ($search_label)	  $param .= '&search_label='.urlencode($search_label);
+			if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
+			// Add $param from extra fields
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-	    	header("Location: ".DOL_URL_ROOT.'/cron/list.php?'.$param.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '')); // Make a redirect to avoid to run twice the job when using back
-	    	exit;
-	    }
+			header("Location: ".DOL_URL_ROOT.'/cron/list.php?'.$param.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '')); // Make a redirect to avoid to run twice the job when using back
+			exit;
+		}
 	}
 
 	// Mass actions
@@ -196,9 +195,7 @@ if (empty($reshook))
 				elseif ($massaction == 'enable') $result = $tmpcron->setStatut(Cronjob::STATUS_ENABLED);
 				//else dol_print_error($db, 'Bad value for massaction');
 				if ($result < 0) setEventMessages($tmpcron->error, $tmpcron->errors, 'errors');
-			}
-			else
-			{
+			} else {
 				$error++;
 			}
 		}
@@ -216,7 +213,6 @@ $cronjob = new Cronjob($db);
 $pagetitle = $langs->trans("CronList");
 
 llxHeader('', $pagetitle);
-
 
 $sql = "SELECT";
 $sql .= " t.rowid,";
@@ -253,6 +249,7 @@ $sql .= " t.test";
 $sql .= " FROM ".MAIN_DB_PREFIX."cronjob as t";
 $sql .= " WHERE entity IN (0,".$conf->entity.")";
 if ($search_status >= 0 && $search_status < 2 && $search_status != '') $sql .= " AND t.status = ".(empty($search_status) ? '0' : '1');
+if ($search_lastresult != '') $sql .= natural_search("t.lastresult", $search_lastresult, 1);
 //Manage filter
 if (is_array($filter) && count($filter) > 0) {
 	foreach ($filter as $key => $value) {
@@ -260,8 +257,8 @@ if (is_array($filter) && count($filter) > 0) {
 	}
 }
 $sqlwhere = array();
-if (!empty($module_name)) {
-	$sqlwhere[] = '(t.module_name='.$db->escape($module_name).')';
+if (!empty($search_module_name)) {
+	$sqlwhere[] = '(t.module_name='.$db->escape($search_module_name).')';
 }
 if (count($sqlwhere) > 0) {
 	$sql .= " WHERE ".implode(' AND ', $sqlwhere);
@@ -279,13 +276,13 @@ $sql .= $db->order($sortfield, $sortorder);
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-    $result = $db->query($sql);
-    $nbtotalofrecords = $db->num_rows($result);
-    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-    {
-    	$page = 0;
-    	$offset = 0;
-    }
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql .= $db->plimit($limit + 1, $offset);
@@ -302,6 +299,9 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&co
 if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 if ($search_status)   $param .= '&search_status='.urlencode($search_status);
 if ($search_label)	  $param .= '&search_label='.urlencode($search_label);
+if ($search_module_name) $param .= '&search_module_name='.urlencode($search_module_name);
+if ($search_lastresult) $param .= '&search_lastresult='.urlencode($search_lastresult);
+if ($mode) $param .= '&mode='.urlencode($mode);
 if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -328,6 +328,13 @@ if ($user->rights->mymodule->delete) $arrayofmassactions['predelete'] = '<span c
 if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
+if ($mode == 'modulesetup') {
+	$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+	print load_fiche_titre($langs->trans("CronSetup"), $linkback, 'title_setup');
+
+	// Configuration header
+	$head = cronadmin_prepare_head();
+}
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="search_form">'."\n";
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -338,22 +345,28 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 // Line with explanation and button new
-$newcardbutton = dolGetButtonTitle($langs->trans('New'), $langs->trans('CronCreateJob'), 'fa fa-plus-circle', DOL_URL_ROOT.'/cron/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $user->rights->cron->create);
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), $langs->trans('CronCreateJob'), 'fa fa-plus-circle', DOL_URL_ROOT.'/cron/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].'?mode=modulesetup'), '', $user->rights->cron->create);
 
 
-print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_setup', 0, $newcardbutton, '', $limit);
+if ($mode == 'modulesetup') {
+	print dol_get_fiche_head($head, 'jobs', $langs->trans("Module2300Name"), -1, 'cron');
+
+	//print '<span class="opacitymedium">'.$langs->trans('CronInfo').'</span><br>';
+}
 
 
-print '<span class="opacitymedium">'.$langs->trans('CronInfo').'</span><br>';
+print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, ($mode == 'modulesetup' ? '' : 'title_setup'), 0, $newcardbutton, '', $limit);
+
 
 $text = $langs->trans("HoursOnThisPageAreOnServerTZ").' '.$stringcurrentdate.'<br>';
 if (!empty($conf->global->CRON_WARNING_DELAY_HOURS)) $text .= $langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS);
 print info_admin($text);
 print '<br>';
 
-$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+//$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = '';
 //$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
@@ -364,7 +377,7 @@ print '<table class="noborder">';
 print '<tr class="liste_titre_filter">';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">';
-print '<input type="text" class="flat" name="search_label" value="'.$search_label.'" size="10">';
+print '<input type="text" class="flat" name="search_label" value="'.$search_label.'">';
 print '</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
@@ -374,12 +387,11 @@ print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre center"><input type="text" class="width50" name="search_lastresult" value="'.$search_lastresult.'"></td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre" align="center">';
-print $form->selectarray('search_status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Enabled")), $search_status, 1);
+print $form->selectarray('search_status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Scheduled")), $search_status, 1);
 print '</td><td class="liste_titre right">';
 $searchpicto = $form->showFilterButtons();
 print $searchpicto;
@@ -394,7 +406,6 @@ print_liste_field_titre("CronTask", '', '', "", $param, '', $sortfield, $sortord
 print_liste_field_titre("CronFrequency", '', "", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("CronDtStart", $_SERVER["PHP_SELF"], "t.datestart", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre("CronDtEnd", $_SERVER["PHP_SELF"], "t.dateend", "", $param, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre("CronMaxRun", $_SERVER["PHP_SELF"], "t.maxrun", "", $param, 'align="right"', $sortfield, $sortorder);
 print_liste_field_titre("CronNbRun", $_SERVER["PHP_SELF"], "t.nbrun", "", $param, 'align="right"', $sortfield, $sortorder);
 print_liste_field_titre("CronDtLastLaunch", $_SERVER["PHP_SELF"], "t.datelastrun", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre("Duration", $_SERVER["PHP_SELF"], "", "", $param, 'align="center"', $sortfield, $sortorder);
@@ -438,15 +449,13 @@ if ($num > 0)
 		print '</td>';
 
 		// Label
-		print '<td>';
+		print '<td class="tdoverflowmax300">';
 		if (!empty($obj->label))
 		{
 			$object->ref = $langs->trans($obj->label);
-			print $object->getNomUrl(0, '', 1);
+			print '<span title="'.dol_escape_htmltag($langs->trans($obj->label)).'">'.$object->getNomUrl(0, '', 1).'</span>';
 			$object->ref = $obj->rowid;
-		}
-		else
-		{
+		} else {
 			//print $langs->trans('CronNone');
 		}
 		print '</td>';
@@ -459,15 +468,14 @@ if ($num > 0)
 		print '<td>';
 		if ($obj->jobtype == 'method')
 		{
-		    $text = $langs->trans("CronClass");
+			$text = $langs->trans("CronClass");
 			$texttoshow = $langs->trans('CronModule').': '.$obj->module_name.'<br>';
 			$texttoshow .= $langs->trans('CronClass').': '.$obj->classesname.'<br>';
 			$texttoshow .= $langs->trans('CronObject').': '.$obj->objectname.'<br>';
 			$texttoshow .= $langs->trans('CronMethod').': '.$obj->methodename;
 			$texttoshow .= '<br>'.$langs->trans('CronArgs').': '.$obj->params;
 			$texttoshow .= '<br>'.$langs->trans('Comment').': '.$langs->trans($obj->note);
-		}
-		elseif ($obj->jobtype == 'command')
+		} elseif ($obj->jobtype == 'command')
 		{
 			$text = $langs->trans('CronCommand');
 			$texttoshow = $langs->trans('CronCommand').': '.dol_trunc($obj->command);
@@ -485,31 +493,28 @@ if ($num > 0)
 		print '</td>';
 
 		print '<td class="center">';
-		if (!empty($obj->datestart)) {print dol_print_date($db->jdate($obj->datestart), 'dayhour'); }
+		if (!empty($obj->datestart)) { print dol_print_date($db->jdate($obj->datestart), 'dayhour'); }
 		print '</td>';
 
 		print '<td class="center">';
-		if (!empty($obj->dateend)) {print dol_print_date($db->jdate($obj->dateend), 'dayhour'); }
+		if (!empty($obj->dateend)) { print dol_print_date($db->jdate($obj->dateend), 'dayhour'); }
 		print '</td>';
 
 		print '<td class="right">';
-		if (!empty($obj->maxrun)) {print $obj->maxrun; }
-		print '</td>';
-
-		print '<td class="right">';
-		if (!empty($obj->nbrun)) {print $obj->nbrun; } else {print '0'; }
+		if (!empty($obj->nbrun)) { print $obj->nbrun; } else {print '0'; }
+		if (!empty($obj->maxrun)) { print ' <span class="'.$langs->trans("Max").'">/ '.$obj->maxrun.'</span>'; }
 		print '</td>';
 
 		// Date start last run
 		print '<td class="center">';
-		if (!empty($datelastrun)) {print dol_print_date($datelastrun, 'dayhoursec'); }
+		if (!empty($datelastrun)) { print dol_print_date($datelastrun, 'dayhoursec'); }
 		print '</td>';
 
 		// Duration
 		print '<td class="center">';
 		if (!empty($datelastresult) && ($datelastresult >= $datelastrun)) {
-		    print convertSecondToTime(max($datelastresult - $datelastrun, 1), 'allhourminsec');
-		    //print '<br>'.($datelastresult - $datelastrun).' '.$langs->trans("seconds");
+			print convertSecondToTime(max($datelastresult - $datelastrun, 1), 'allhourminsec');
+			//print '<br>'.($datelastresult - $datelastrun).' '.$langs->trans("seconds");
 		}
 		print '</td>';
 
@@ -547,15 +552,15 @@ if ($num > 0)
 
 		print '<td class="nowraponall right">';
 
-		$backtourl = urlencode($_SERVER["PHP_SELF"].'?'.$param.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : ''));
+		$backtopage = urlencode($_SERVER["PHP_SELF"].'?'.$param.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : ''));
 		if ($user->rights->cron->create)
 		{
-			print '<a class="editfielda" href="'.DOL_URL_ROOT."/cron/card.php?id=".$obj->rowid."&action=edit".($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').$param;
-			print "&backtourl=".$backtourl."\" title=\"".dol_escape_htmltag($langs->trans('Edit'))."\">".img_picto($langs->trans('Edit'), 'edit')."</a> &nbsp;";
+			print '<a class="editfielda" href="'.DOL_URL_ROOT."/cron/card.php?id=".$obj->rowid.'&action=edit&token='.newToken().($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').$param;
+			print "&backtopage=".$backtopage."\" title=\"".dol_escape_htmltag($langs->trans('Edit'))."\">".img_picto($langs->trans('Edit'), 'edit')."</a> &nbsp;";
 		}
 		if ($user->rights->cron->delete)
 		{
-			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"]."?id=".$obj->rowid."&action=delete".($page ? '&page='.$page : '').($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').$param;
+			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"]."?id=".$obj->rowid.'&action=delete&token='.newToken().($page ? '&page='.$page : '').($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').$param;
 			print "\" title=\"".dol_escape_htmltag($langs->trans('CronDelete'))."\">".img_picto($langs->trans('CronDelete'), 'delete', '', false, 0, 0, '', 'marginleftonly')."</a> &nbsp; ";
 		} else {
 			print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('NotEnoughPermissions'))."\">".img_picto($langs->trans('NotEnoughPermissions'), 'delete', '', false, 0, 0, '', 'marginleftonly')."</a> &nbsp; ";
@@ -586,10 +591,8 @@ if ($num > 0)
 
 		$i++;
 	}
-}
-else
-{
-	print '<tr><td colspan="9" class="opacitymedium">'.$langs->trans('CronNoJobs').'</td></tr>';
+} else {
+	print '<tr><td colspan="15" class="opacitymedium">'.$langs->trans('CronNoJobs').'</td></tr>';
 }
 
 print '</table>';
@@ -597,11 +600,10 @@ print '</div>';
 
 print '</from>';
 
+if ($mode == 'modulesetup') {
+	print dol_get_fiche_end();
+}
 
-print '<br><br>';
-
-
-dol_print_cron_urls();
 
 llxFooter();
 

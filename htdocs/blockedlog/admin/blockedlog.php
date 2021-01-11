@@ -32,8 +32,10 @@ $langs->loadLangs(array("admin", "other", "blockedlog"));
 
 if (!$user->admin || empty($conf->blockedlog->enabled)) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
+
+$withtab = GETPOST('withtab', 'int');
 
 
 /*
@@ -49,11 +51,9 @@ if (preg_match('/set_(.*)/', $action, $reg))
 
 	if (dolibarr_set_const($db, $code, $values, 'chaine', 0, '', $conf->entity) > 0)
 	{
-		header("Location: ".$_SERVER["PHP_SELF"]);
+		header("Location: ".$_SERVER["PHP_SELF"].($withtab ? '?withtab='.$withtab : ''));
 		exit;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -63,11 +63,9 @@ if (preg_match('/del_(.*)/', $action, $reg))
 	$code = $reg[1];
 	if (dolibarr_del_const($db, $code, 0) > 0)
 	{
-		Header("Location: ".$_SERVER["PHP_SELF"]);
+		Header("Location: ".$_SERVER["PHP_SELF"].($withtab ? '?withtab='.$withtab : ''));
 		exit;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -83,17 +81,15 @@ $block_static = new BlockedLog($db);
 llxHeader('', $langs->trans("BlockedLogSetup"));
 
 $linkback = '';
-if (GETPOST('withtab', 'alpha'))
-{
+if ($withtab) {
 	$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
 }
 
 print load_fiche_titre($langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog'), $linkback);
 
-if (GETPOST('withtab', 'alpha'))
-{
+if ($withtab) {
 	$head = blockedlogadmin_prepare_head();
-	dol_fiche_head($head, 'blockedlog', '', -1);
+	print dol_get_fiche_head($head, 'blockedlog', '', -1);
 }
 
 
@@ -118,21 +114,26 @@ if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("BlockedLogAuthorityUrl").img_info($langs->trans('BlockedLogAuthorityNeededToStoreYouFingerprintsInNonAlterableRemote')).'</td>';
 	print '<td class="right" width="300">';
+
 	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="set_BLOCKEDLOG_AUTHORITY_URL">';
+	print '<input type="hidden" name="withtab" value="'.$withtab.'">';
 	print '<input type="text" name="BLOCKEDLOG_AUTHORITY_URL" value="'.$conf->global->BLOCKEDLOG_AUTHORITY_URL.'" size="40" />';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print '</form>';
+
 	print '</td></tr>';
 }
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("BlockedLogDisableNotAllowedForCountry").'</td>';
 print '<td>';
+
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY">';
+print '<input type="hidden" name="withtab" value="'.$withtab.'">';
 
 $sql = "SELECT rowid, code as code_iso, code_iso as code_iso3, label, favorite";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_country";
@@ -172,9 +173,9 @@ print '</tr>';
 
 print '</table>';
 
-if (GETPOST('withtab', 'alpha'))
+if ($withtab)
 {
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 print '<br><br>';

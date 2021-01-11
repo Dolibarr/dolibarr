@@ -43,11 +43,12 @@ $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $id = GETPOST('id', 'int');
+$rowid = GETPOST('rowid', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
@@ -79,7 +80,7 @@ if ($user->socid > 0)	// Protection if external user
 //$result = restrictedArea($user, 'mymodule', $id, '');
 
 // Initialize array of search criterias
-$search_all = trim(GETPOST("search_all", 'alpha'));
+$search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val)
 {
@@ -121,6 +122,10 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $permissiontoread = $user->admin;
 $permissiontoadd = $user->admin;
 $permissiontodelete = $user->admin;
+
+if ($id > 0) {
+	$object->fetch($id);
+}
 
 
 /*
@@ -171,8 +176,7 @@ if (empty($reshook))
 		$resql = $db->query($sql);
 		if ($resql) {
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-		}
-		else {
+		} else {
 			setEventMessages($langs->trans("Error").' '.$db->lasterror(), null, 'errors');
 		}
 	}
@@ -192,7 +196,6 @@ $now = dol_now();
 $help_url = '';
 $title = $langs->trans("EMailsSetup");
 
-
 llxHeader('', $title);
 
 $linkback = '';
@@ -202,7 +205,7 @@ print load_fiche_titre($title, $linkback, $titlepicto);
 
 $head = email_admin_prepare_head();
 
-dol_fiche_head($head, 'senderprofiles', '', -1);
+print dol_get_fiche_head($head, 'senderprofiles', '', -1);
 
 print '<span class="opacitymedium">'.$langs->trans("EMailsSenderProfileDesc")."</span><br>\n";
 print "<br>\n";
@@ -231,7 +234,7 @@ foreach ($search as $key => $val)
 {
 	if ($key == 'status' && $search[$key] == -1) continue;
 	$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
-	if (strpos($object->fields[$key]['type'], 'integer:') === 0) {
+	if (strpos($object->fields[$key]['type'], 'integer:') === 0 || $key == 'active') {
 		if ($search[$key] == '-1') $search[$key] = '';
 		$mode_search = 2;
 	}
@@ -281,9 +284,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit)))
 {
 	$num = $nbtotalofrecords;
-}
-else
-{
+} else {
 	if ($limit) $sql .= $db->plimit($limit + 1, $offset);
 
 	$resql = $db->query($sql);
@@ -350,15 +351,41 @@ print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'"
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-print '<input type="hidden" name="action" value="'.($action == 'create' ? 'add' : 'list').'">';
+print '<input type="hidden" name="action" value="'.($action == 'create' ? 'add' : ($action == 'edit' ? 'update' : 'list')).'">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
+print '<input type="hidden" name="id" value="'.$id.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $newcardbutton = '';
 if ($action != 'create') {
 	$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $_SERVER['PHP_SELF'].'?action=create', '', $permissiontoadd);
+
+	if ($action == 'edit') {
+		print '<table class="border centpercent tableforfield">';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" value="'.(GETPOSTISSET('label') ? GETPOST('label', 'alphanohtml') : $object->label).'"></td></tr>';
+		print '<tr><td>'.$langs->trans("Email").'</td><td><input type="text" name="email" value="'.(GETPOSTISSET('email') ? GETPOST('email', 'alphanohtml') : $object->email).'"></td></tr>';
+		print '<tr><td>'.$langs->trans("Signature").'</td><td>';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+		$doleditor = new DolEditor('signature', (GETPOSTISSET('signature') ? GETPOST('signature', 'restricthtml') : $object->signature), '', 138, 'dolibarr_notes', 'In', true, true, empty($conf->global->FCKEDITOR_ENABLE_USERSIGN) ? 0 : 1, ROWS_4, '90%');
+		print $doleditor->Create(1);
+		print '</td></tr>';
+		print '<tr><td>'.$langs->trans("User").'</td><td>';
+		print $form->select_dolusers((GETPOSTISSET('private') ? GETPOST('private', 'int') : $object->private), 'private', 1, null, 0, ($user->admin ? '' : $user->id));
+		print '</td></tr>';
+		print '<tr><td>'.$langs->trans("Position").'</td><td><input type="text" name="position" class="maxwidth50" value="'.(GETPOSTISSET('position') ? GETPOST('position', 'int') : $object->position).'"></td></tr>';
+		print '<tr><td>'.$langs->trans("Status").'</td><td>';
+		print $form->selectarray('active', $object->fields['active']['arrayofkeyval'], (GETPOSTISSET('active') ? GETPOST('active', 'int') : $object->active), 0, 0, 0, '', 1);
+		print '</td></tr>';
+		print '</table>';
+		print '<br>';
+		print '<div class="center">';
+		print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';
+		print ' &nbsp; ';
+		print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '</div>';
+	}
 } else {
 	/*print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -370,7 +397,7 @@ if ($action != 'create') {
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	*/
 	print '<table class="border centpercent tableforfield">';
-	print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="label" value="'.GETPOST('label', 'alphanohtml').'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" value="'.GETPOST('label', 'alphanohtml').'"></td></tr>';
 	print '<tr><td>'.$langs->trans("Email").'</td><td><input type="text" name="email" value="'.GETPOST('email', 'alphanohtml').'"></td></tr>';
 	print '<tr><td>'.$langs->trans("Signature").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -387,9 +414,9 @@ if ($action != 'create') {
 	print '</table>';
 	print '<br>';
 	print '<div class="center">';
-	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
+	print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';
 	print ' &nbsp; ';
-	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 	//print '</form>';
 }
@@ -400,7 +427,7 @@ print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorde
 $topicmail = "Information";
 //$modelmail="subscription";
 $objecttmp = new EmailSenderProfile($db);
-//$trackid='sub'.$object->id;
+//$trackid = (($action == 'testhtml') ? "testhtml" : "test");
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($search_all)
@@ -447,11 +474,10 @@ foreach ($object->fields as $key => $val)
 	if (!empty($arrayfields['t.'.$key]['checked']))
 	{
 		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-		if (is_array($val['arrayofkeyval'])) print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth75');
+		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
 		elseif (strpos($val['type'], 'integer:') === 0) {
 			print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth150', 1);
-		}
-		elseif (!preg_match('/^(date|timestamp)/', $val['type'])) print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
+		} elseif (!preg_match('/^(date|timestamp)/', $val['type'])) print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
 		print '</td>';
 	}
 }
@@ -535,7 +561,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		if (!empty($arrayfields['t.'.$key]['checked']))
 		{
 			print '<td'.($cssforfield ? ' class="'.$cssforfield.'"' : '').'>';
-			if ($key == 'status') print $object->getLibStatut(5);
+			if ($key == 'status' || $key == 'active') print $object->getLibStatut(5);
 			else print $object->showOutputField($val, $key, $object->$key, '');
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
@@ -554,14 +580,14 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	print $hookmanager->resPrint;
 	// Action column
 	print '<td class="nowrap center">';
-	$url = $_SERVER["PHP_SELF"].'?action=list&id='.$obj->rowid;
+	$url = $_SERVER["PHP_SELF"].'?id='.$obj->rowid;
 	if ($limit) $url .= '&limit='.urlencode($limit);
 	if ($page) $url .= '&page='.urlencode($page);
 	if ($sortfield) $url .= '&sortfield='.urlencode($sortfield);
 	if ($sortorder) $url .= '&page='.urlencode($sortorder);
-	//print '<a class="reposition" href="'.$url.'&action=edit">'.img_edit().'</a>';
+	print '<a class="editfielda reposition marginrightonly marginleftonly" href="'.$url.'&action=edit&rowid='.$obj->rowid.'">'.img_edit().'</a>';
 	//print ' &nbsp; ';
-	print '<a href="'.$url.'&action=delete">'.img_delete().'</a>  &nbsp; ';
+	print '<a class=" marginrightonly marginleftonly" href="'.$url.'&action=delete&token='.newToken().'">'.img_delete().'</a>  &nbsp; ';
 	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 	{
 		$selected = 0;
@@ -619,7 +645,7 @@ if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $n
 	print $formfile->showdocuments('massfilesarea_emailsenderprofile', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

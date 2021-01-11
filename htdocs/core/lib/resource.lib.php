@@ -37,13 +37,13 @@ function resource_prepare_head($object)
 
 	$head[$h][0] = dol_buildpath('/resource/card.php', 1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans("ResourceCard");
-    	$head[$h][2] = 'resource';
+	$head[$h][2] = 'resource';
 	$h++;
 
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && (empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_USER) || empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_THIPARTY)))
 	{
-	    $nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
-	    $head[$h][0] = DOL_URL_ROOT.'/resource/contact.php?id='.$object->id;
+		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
+		$head[$h][0] = DOL_URL_ROOT.'/resource/contact.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('ContactsAddresses');
 		if ($nbContact > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
 		$head[$h][2] = 'contact';

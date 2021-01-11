@@ -42,7 +42,7 @@ $langs->loadLangs(array('other', 'products'));
 
 $id     = GETPOST('id', 'int');
 $ref    = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
@@ -70,16 +70,16 @@ $modulepart = 'product_batch';
 $object = new Productlot($db);
 if ($id || $ref)
 {
-    if ($ref)
-    {
-        $tmp = explode('_', $ref);
-        $productid = $tmp[0];
-        $batch = $tmp[1];
-    }
-    $object->fetch($id, $productid, $batch);
-    $object->ref = $object->batch; // For document management ( it use $object->ref)
+	if ($ref)
+	{
+		$tmp = explode('_', $ref);
+		$productid = $tmp[0];
+		$batch = $tmp[1];
+	}
+	$object->fetch($id, $productid, $batch);
+	$object->ref = $object->batch; // For document management ( it use $object->ref)
 
-    if (!empty($conf->productbatch->enabled)) $upload_dir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, $modulepart).dol_sanitizeFileName($object->ref);
+	if (!empty($conf->productbatch->enabled)) $upload_dir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, $modulepart).dol_sanitizeFileName($object->ref);
 }
 
 
@@ -112,12 +112,12 @@ llxHeader('', $langs->trans('ProductLot'), '');
 if ($object->id)
 {
 	$head = productlot_prepare_head($object);
-	dol_fiche_head($head, 'documents', $langs->trans("Batch"), -1, 'barcode');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("Batch"), -1, 'barcode');
 
 
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
+	print $hookmanager->resPrint;
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 	// Build file list
@@ -130,33 +130,31 @@ if ($object->id)
 	}
 
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/productlot_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/productlot_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    $shownav = 1;
-    if ($user->socid && !in_array('batch', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
+	$shownav = 1;
+	if ($user->socid && !in_array('batch', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
 
 	dol_banner_tab($object, 'id', $linkback, $shownav, 'rowid', 'batch');
 
-    print '<div class="fichecenter">';
+	print '<div class="fichecenter">';
 
-    print '<div class="underbanner clearboth"></div>';
-    print '<table class="border tableforfield" width="100%">';
+	print '<div class="underbanner clearboth"></div>';
+	print '<table class="border tableforfield" width="100%">';
 
-    print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
-    print '</table>';
+	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
+	print '</table>';
 
-    print '</div>';
-    print '<div style="clear:both"></div>';
+	print '</div>';
+	print '<div style="clear:both"></div>';
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 
-    $permission = ($user->rights->produit->creer);
-    $param = '&id='.$object->id;
-    include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-}
-else
-{
+	$permission = ($user->rights->produit->creer);
+	$param = '&id='.$object->id;
+	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+} else {
 	print $langs->trans("ErrorUnknown");
 }
 

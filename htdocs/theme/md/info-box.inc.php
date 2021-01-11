@@ -19,6 +19,29 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 
 ?>
 
+.customer-back {
+	background-color: #99a17d !important;
+	color: #FFF !important;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
+}
+.vendor-back {
+	background-color: #599caf !important;
+	color: #FFF !important;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
+}
+.user-back {
+	background-color: #79633f !important;
+	color: #FFF !important;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
+}
+
+
 .bg-infobox-project{
 	<?php echo $prefix; ?>color: #6c6aa8 !important;
 }
@@ -267,6 +290,9 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	font-weight: bold;
 	margin-bottom: 6px;
 }
+.info-box-title {
+    width: calc(100% - 20px);
+}
 .info-box-text{
 	font-size: 0.92em;
 }
@@ -369,24 +395,25 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 }
 .fa-weather-level0:before{
 	content: "\f185";
-	color : #000000;
+	color : #cfbf00;
 }
 .fa-weather-level1:before{
 	content: "\f6c4";
-	color : #000000;
+	color : #bc9526;
 }
 .fa-weather-level2:before{
-	content: "\f0c2";
-	color : #000000;
+	content: "\f743";
+	color : #b16000;
 }
 .fa-weather-level3:before{
 	content: "\f740";
-	color : #000000;
+	color : #b04000;
 }
 .fa-weather-level4:before{
 	content: "\f0e7";
-	color : #000000;
+	color : #b01000;
 }
+
 
 /* USING IMAGES FOR WEATHER INTEAD OF FONT AWESOME */
 /* For other themes just uncomment this part */
@@ -446,6 +473,12 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	min-width: 350px;
     max-width: 350px;
 }
+
+.info-box-module .info-box-content {
+	height: 6.3em;
+}
+
+
 @media only screen and (max-width: 1740px) {
 	.info-box-module {
 	    min-width: 315px;
@@ -456,8 +489,11 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	.info-box-module {
 		min-width: 260px;
 	}
+	.info-box-sm .info-box-icon {
+		width: 60px;
+	}
+	.info-box-sm .info-box-content {
+		margin-left: 60px;
+	}
 }
 
-.info-box-module .info-box-content {
-	height: 6.3em;
-}

@@ -67,35 +67,34 @@ llxHeader('', $title, $help_url);
 
 if ($object->id > 0)
 {
-    /*
+	/*
      * Affichage onglets
      */
-    if (!empty($conf->notification->enabled)) $langs->load("mails");
+	if (!empty($conf->notification->enabled)) $langs->load("mails");
 
-    $head = societe_prepare_head($object);
+	$head = societe_prepare_head($object);
 
-    dol_fiche_head($head, 'note', $langs->trans("ThirdParty"), -1, 'company');
+	print dol_get_fiche_head($head, 'note', $langs->trans("ThirdParty"), -1, 'company');
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
+	dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
-    $cssclass = 'titlefield';
-    //if ($action == 'editnote_public') $cssclass='titlefieldcreate';
-    //if ($action == 'editnote_private') $cssclass='titlefieldcreate';
+	$cssclass = 'titlefield';
+	//if ($action == 'editnote_public') $cssclass='titlefieldcreate';
+	//if ($action == 'editnote_private') $cssclass='titlefieldcreate';
 
-    print '<div class="fichecenter">';
+	print '<div class="fichecenter">';
 
-    print '<div class="underbanner clearboth"></div>';
-    print '<table class="border centpercent tableforfield">';
+	print '<div class="underbanner clearboth"></div>';
+	print '<table class="border centpercent tableforfield">';
 
-    if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
-    {
-        print '<tr><td class="'.$cssclass.'">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
-    }
+	if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
+	{
+		print '<tr><td class="'.$cssclass.'">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
+	}
 
-    if ($object->client)
-    {
+    if ($object->client) {
         print '<tr><td class="'.$cssclass.'">';
         print $langs->trans('CustomerCode').'</td><td colspan="3">';
         print $object->code_client;
@@ -106,8 +105,7 @@ if ($object->id > 0)
         print '</td></tr>';
     }
 
-    if ($object->fournisseur)
-    {
+    if ($object->fournisseur) {
         print '<tr><td class="'.$cssclass.'">';
         print $langs->trans('SupplierCode').'</td><td colspan="3">';
         print $object->code_fournisseur;
@@ -118,19 +116,17 @@ if ($object->id > 0)
         print '</td></tr>';
     }
 
-    print "</table>";
+	print "</table>";
 
-    print '</div>';
+	print '</div>';
 
-    //print '<br>';
+	//print '<br>';
 
-    //print '<div class="underbanner clearboth"></div>';
-    include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
+	//print '<div class="underbanner clearboth"></div>';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-    dol_fiche_end();
-}
-else
-{
+	print dol_get_fiche_end();
+} else {
 	$langs->load("errors");
 	print $langs->trans("ErrorRecordNotFound");
 }

@@ -219,10 +219,10 @@ $dolibarr_main_authentication='dolibarr';
 // 1 = Force redirect to https, until SCRIPT_URI start with https into response
 // 2 = Force redirect to https, until SERVER["HTTPS"] is 'on' into response
 // 'https://my.domain.com' = Force redirect to https using this domain name.
-// Warning: If you enable this parameter, your web server must be configured to
-// respond URL with https protocol.
-// According to your web server setup, some values may works and other not. Try
-// different values (1,2 or 'https://my.domain.com') if you experience problems.
+// Warning: If you enable this parameter, your web server must be configured to respond URL with https protocol.
+// According to your web server setup, some values may works and other not. Try different values (1,2 or 'https://my.domain.com') if you experience problems.
+// Even if a redirect to HTTPS is forced by the webserver, it is recommanded to set this value to another value than 0, so your session cookies will be 
+// flagged as secured. 
 // Default value: 0
 // Possible values: 0, 1, 2 or 'https://my.domain.com'
 // Examples:
@@ -233,12 +233,12 @@ $dolibarr_main_force_https='0';
 // dolibarr_main_prod
 // When this parameter is defined, all errors messages are not reported.
 // This feature exists for production usage to avoid to give any information to hackers.
-// Default value: 0
+// Default value: 1
 // Possible values: 0 or 1
 // Examples:
-// $dolibarr_main_prod='0';
+// $dolibarr_main_prod='1';
 //
-$dolibarr_main_prod='0';
+$dolibarr_main_prod='1';
 
 // $dolibarr_main_restrict_os_commands
 // To restrict commands you can execute by the backup feature, enter allowed command here.
@@ -260,14 +260,20 @@ $dolibarr_main_restrict_ip='';
 
 // dolibarr_nocsrfcheck
 // This parameter can be used to disable CSRF protection.
-// This might be required if you access Dolibarr behind a proxy that make
-// URL rewriting, to avoid false alarms.
+// This might be required if you access Dolibarr behind a proxy that make bad URL rewriting, to avoid false alarms.
+// In most cases, you should always keep this to 0.
 // Default value: 0
 // Possible values: 0 or 1
 // Examples:
 // $dolibarr_nocsrfcheck='0';
 //
 $dolibarr_nocsrfcheck='0';
+
+// dolibarr_cron_allow_cli
+// If set to 1, you will be able to define some command line in the internale Job scheduler module.
+// Default value: '0'
+// Examples: '1'
+$dolibarr_cron_allow_cli='0';
 
 // dolibarr_mailing_limit_sendbyweb
 // Can set a limit for mailing send by web. This overwrite database value. Can be used to restrict on OS level.
@@ -280,6 +286,18 @@ $dolibarr_nocsrfcheck='0';
 // Default value: '0' (no hard limit, use soft database value if exists)
 // Examples: '-1' (sending by cli is forbidden)
 // $dolibarr_mailing_limit_sendbycli='0';
+
+// MAIN_ANTIVIRUS_COMMAND (as a constant)
+// Force a value for the antivirus command line tool so setup for admin user interface has no effect.
+// Default value: ''
+// Example: '/usr/bin/clamdscan';
+// define('MAIN_ANTIVIRUS_COMMAND', '/usr/bin/clamdscan');
+
+// MAIN_ANTIVIRUS_PARAM (as a constant)
+// Force a value for the antivirus parameters on command line so setup for admin user interface has no effect.
+// Default value: ''
+// Example: '--fdpass';
+// define('MAIN_ANTIVIRUS_PARAM', '--fdpass');
 
 
 //##################
@@ -317,7 +335,6 @@ $dolibarr_nocsrfcheck='0';
 //$dolibarr_lib_FPDF_PATH='/usr/share/php/fpdf';
 //$dolibarr_lib_GEOIP_PATH='';
 //$dolibarr_lib_NUSOAP_PATH='/usr/share/php/nusoap';
-//$dolibarr_lib_PHPEXCEL_PATH='';
 //$dolibarr_lib_ODTPHP_PATH='';
 //$dolibarr_lib_ODTPHP_PATHTOPCLZIP="/usr/share/php/libphp-pclzip";
 // Value to overwrite path to use shared javascript instead of embedded one

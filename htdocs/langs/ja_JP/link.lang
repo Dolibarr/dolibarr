@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - languages
-LinkANewFile=新しいファイル/ドキュメントをリンクする
-LinkedFiles=ファイルとドキュメントをリンクしました
+LinkANewFile=新規ファイル/ドキュメントをリンクする
+LinkedFiles=ファイルとドキュメントをリンクした
 NoLinkFound=リンクは登録されていません
-LinkComplete=ファイルを正常にリンクしました
-ErrorFileNotLinked=ファイルをリンクできませんでした
-LinkRemoved=リンク %s が削除されました
-ErrorFailedToDeleteLink= リンク '<b>%s</b>' を削除できませんでした
-ErrorFailedToUpdateLink= リンク '<b>%s</b>' を更新できませんでした
+LinkComplete=ファイルを正常にリンクした
+ErrorFileNotLinked=ファイルをリンクできなかった
+LinkRemoved=リンク %s が削除された
+ErrorFailedToDeleteLink= リンク '<b>%s</b>' を削除できなかった
+ErrorFailedToUpdateLink= リンク '<b>%s</b>' を更新できなかった
 URLToLink=リンクの URL
-OverwriteIfExists=Overwrite file if exists
+OverwriteIfExists=存在する場合はファイルを上書きする

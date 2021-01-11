@@ -129,6 +129,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 
 	$shortlangcode = '';
 	if ($objectpage->lang) $shortlangcode = substr($objectpage->lang, 0, 2); // en_US or en-US -> en
+	if (empty($shortlangcode)) $shortlangcode = substr($object->lang, 0, 2); // en_US or en-US -> en
 
 	$tplcontent = '';
 	$tplcontent .= "<?php // BEGIN PHP\n";
@@ -175,6 +176,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 			if ($tmppage->id > 0) {
 				$tmpshortlangcode = '';
 				if ($tmppage->lang) $tmpshortlangcode = preg_replace('/[_-].*$/', '', $tmppage->lang); // en_US or en-US -> en
+				if (empty($tmpshortlangcode)) $tmpshortlangcode = preg_replace('/[_-].*$/', '', $object->lang); // en_US or en-US -> en
 				if ($tmpshortlangcode != $shortlangcode) {
 					$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $tmppage->id ? '/' : (($tmpshortlangcode != substr($object->lang, 0, 2)) ? '/'.$tmpshortlangcode : '').'/'.$tmppage->pageurl.'.php').'" />'."\n";
 				}
@@ -197,18 +199,21 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 					}
 				}
 			}
+		} else {
+			dol_print_error($db);
 		}
-		else dol_print_error($db);
 		$tplcontent .= '<?php } ?>'."\n";
 	}
-	// Add manifest.json on homepage
+	// Add manifest.json. Do we have to add it only on home page ?
 	$tplcontent .= '<?php if ($website->use_manifest) { print \'<link rel="manifest" href="/manifest.json.php" />\'."\n"; } ?>'."\n";
 	$tplcontent .= '<!-- Include link to CSS file -->'."\n";
+	// Add js
 	$tplcontent .= '<link rel="stylesheet" href="/styles.css.php?website=<?php echo $websitekey; ?>" type="text/css" />'."\n";
 	$tplcontent .= '<!-- Include link to JS file -->'."\n";
 	$tplcontent .= '<script src="/javascript.js.php"></script>'."\n";
+	// Add headers
 	$tplcontent .= '<!-- Include HTML header from common file -->'."\n";
-	$tplcontent .= '<?php print preg_replace(\'/<\/?html>/ims\', \'\', file_get_contents(DOL_DATA_ROOT."/website/".$websitekey."/htmlheader.html")); ?>'."\n";
+	$tplcontent .= '<?php if (file_exists(DOL_DATA_ROOT."/website/".$websitekey."/htmlheader.html")) include DOL_DATA_ROOT."/website/".$websitekey."/htmlheader.html"; ?>'."\n";
 	$tplcontent .= '<!-- Include HTML header from page header block -->'."\n";
 	$tplcontent .= preg_replace('/<\/?html>/ims', '', $objectpage->htmlheader)."\n";
 	$tplcontent .= '</head>'."\n";
@@ -268,8 +273,7 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper)
 		if (!empty($conf->global->MAIN_UMASK)) {
 			@chmod($fileindex, octdec($conf->global->MAIN_UMASK));
 		}
-	}
-	else {
+	} else {
 		$result1 = true;
 	}
 
@@ -440,7 +444,7 @@ function dolSaveReadme($file, $content)
 /**
  * 	Show list of themes. Show all thumbs of themes/skins
  *
- *	@param	Website		$website		Object website to load the tempalte into
+ *	@param	Website		$website		Object website to load the template into
  * 	@return	void
  */
 function showWebsiteTemplates(Website $website)
@@ -532,8 +536,7 @@ function showWebsiteTemplates(Website $website)
 				}
 			}
 		}
-	}
-	else {
+	} else {
 		print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 	}
 

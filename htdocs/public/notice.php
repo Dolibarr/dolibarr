@@ -24,9 +24,11 @@
  *                /public/notice.php?transphrase=url_encoded_sentence_to_show
  */
 
-define('NOCSRFCHECK', 1);
-define('NOLOGIN', 1);
-define('NOSESSION', 1);
+if (!defined('NOLOGIN'))		define("NOLOGIN", 1); // This means this output page does not require to be logged.
+if (!defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined('NOSESSION'))		define('NOSESSION', '1');
+if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
 
 require '../main.inc.php';
 
@@ -39,11 +41,9 @@ if (!GETPOST('transkey', 'alphanohtml') && !GETPOST('transphrase', 'alphanohtml'
 {
 	print 'Sorry, it seems your internet connexion is off.<br>';
 	print 'You need to be connected to network to use this software.<br>';
-}
-else
-{
-    $langs->loadLangs(array("error", "other"));
+} else {
+	$langs->loadLangs(array("error", "other"));
 
-    if (GETPOST('transphrase', 'alphanohtml')) print dol_escape_htmltag(GETPOST('transphrase', 'alphanohtml'));
-    elseif (GETPOST('transkey', 'alphanohtml')) print dol_escape_htmltag($langs->trans(GETPOST('transkey', 'alphanohtml')));
+	if (GETPOST('transphrase', 'alphanohtml')) print dol_escape_htmltag(GETPOST('transphrase', 'alphanohtml'));
+	elseif (GETPOST('transkey', 'alphanohtml')) print dol_escape_htmltag($langs->trans(GETPOST('transkey', 'alphanohtml')));
 }

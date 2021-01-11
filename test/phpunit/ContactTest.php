@@ -335,25 +335,6 @@ class ContactTest extends PHPUnit\Framework\TestCase
     }
 
     /**
-	 *	testContactStatic
-	 *
-	 *	@return	void
-     */
-    public function testContactStatic()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-
-        $localobject=new Contact($db);
-
-
-        return;
-    }
-
-    /**
      * testContactGetFullAddress
      *
      * @return	int		$id				Id of company

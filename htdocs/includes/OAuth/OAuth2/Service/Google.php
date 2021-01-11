@@ -116,6 +116,11 @@ class Google extends AbstractService
     // Android Publisher
     const SCOPE_ANDROID_PUBLISHER           = 'https://www.googleapis.com/auth/androidpublisher';
 
+
+    // Google Gsuite
+	const SCOPE_ADMIN_DIRECTORY_USER =        "https://www.googleapis.com/auth/admin.directory.user";
+	const SCOPE_ADMIN_DIRECTORY_CUSTOMER =        "https://www.googleapis.com/auth/admin.directory.customer";
+
     protected $accessType = 'online';
 
     public function __construct(
@@ -150,7 +155,7 @@ class Google extends AbstractService
         }
         $this->approvalPrompt = $prompt;
     }
-    
+
     /**
      * {@inheritdoc}
      */
