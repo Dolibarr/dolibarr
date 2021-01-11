@@ -39,6 +39,9 @@ UPDATE llx_adherent SET ref = rowid WHERE ref = '' or ref IS NULL;
 ALTER TABLE llx_adherent MODIFY COLUMN ref varchar(30) NOT NULL;
 ALTER TABLE llx_adherent ADD UNIQUE INDEX uk_adherent_ref (ref, entity);
 
+ALTER TABLE llx_societe ADD COLUMN accountancy_code_sell varchar(32) AFTER webservices_key;
+ALTER TABLE llx_societe ADD COLUMN accountancy_code_buy varchar(32) AFTER accountancy_code_sell;
+
 ALTER TABLE llx_bank_account ADD COLUMN ics varchar(32) NULL;
 ALTER TABLE llx_bank_account ADD COLUMN ics_transfer varchar(32) NULL;
 

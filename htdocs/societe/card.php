@@ -46,6 +46,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 if (!empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 
 $langs->loadLangs(array("companies", "commercial", "bills", "banks", "users"));
 if (!empty($conf->adherent->enabled)) $langs->load("members");
@@ -476,6 +479,9 @@ if (empty($reshook))
 			$object->webservices_url		= GETPOST('webservices_url', 'custom', 0, FILTER_SANITIZE_URL);
 			$object->webservices_key		= GETPOST('webservices_key', 'san_alpha');
 
+			$object->accountancy_code_sell  = GETPOST('accountancy_code_sell', 'alpha');
+			$object->accountancy_code_buy   = GETPOST('accountancy_code_buy', 'alpha');
+
 			// Incoterms
 			if (!empty($conf->incoterm->enabled))
 			{
@@ -903,6 +909,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formadmin = new FormAdmin($db);
 $formcompany = new FormCompany($db);
+if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
 if ($socid > 0 && empty($object->id))
 {
@@ -1042,6 +1049,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 		$object->commercial_id = GETPOST('commercial_id', 'int');
 		$object->default_lang = GETPOST('default_lang');
+
+		$object->accountancy_code_sell  = GETPOST('accountancy_code_sell', 'alpha');
+		$object->accountancy_code_buy   = GETPOST('accountancy_code_buy', 'alpha');
 
 		$object->logo = (isset($_FILES['photo']) ?dol_sanitizeFileName($_FILES['photo']['name']) : '');
 
@@ -1555,6 +1565,39 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 		print '</table>'."\n";
 
+		// Accountancy codes
+		print '<table class="border" width="100%">';
+
+		if (! empty($conf->accounting->enabled))
+		{
+			// Accountancy_code_sell
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
+			print '<td>';
+			$accountancy_code_sell = GETPOST('accountancy_code_sell', 'alpha');
+			print $formaccounting->select_account($accountancy_code_sell, 'accountancy_code_sell', 1, null, 1, 1, '');
+			print '</td></tr>';
+
+			// Accountancy_code_buy
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
+			print '<td>';
+			$accountancy_code_buy = GETPOST('accountancy_code_buy', 'alpha');
+			print $formaccounting->select_account($accountancy_code_buy, 'accountancy_code_buy', 1, null, 1, 1, '');
+			print '</td></tr>';
+		}
+		else // For external software
+		{
+			// Accountancy_code_sell
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
+			print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code_sell" value="'.$object->accountancy_code_sell.'">';
+			print '</td></tr>';
+
+			// Accountancy_code_buy
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
+			print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code_buy" value="'.$object->accountancy_code_buy.'">';
+			print '</td></tr>';
+		}
+		print '</table>';
+
 		print dol_get_fiche_end();
 
 		print '<div class="center">';
@@ -1668,6 +1711,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				// Webservices url/key
 				$object->webservices_url        = GETPOST('webservices_url', 'custom', 0, FILTER_SANITIZE_URL);
 				$object->webservices_key        = GETPOST('webservices_key', 'san_alpha');
+
+				$object->accountancy_code_sell  = GETPOST('accountancy_code_sell', 'alpha');
+				$object->accountancy_code_buy   = GETPOST('accountancy_code_buy', 'alpha');
 
 				//Incoterms
 				if (!empty($conf->incoterm->enabled))
@@ -2199,9 +2245,41 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print '</td></tr>';
 
 			print '</table>';
+
+			print '<br>';
+
+			print '<table class="border" width="100%">';
+
+			if (! empty($conf->accounting->enabled))
+			{
+				// Accountancy_code_sell
+				print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellCode").'</td>';
+				print '<td>';
+				print $formaccounting->select_account($object->accountancy_code_sell, 'accountancy_code_sell', 1, '', 1, 1);
+				print '</td></tr>';
+
+				// Accountancy_code_buy
+				print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
+				print '<td>';
+				print $formaccounting->select_account($object->accountancy_code_buy, 'accountancy_code_buy', 1, '', 1, 1);
+				print '</td></tr>';
+			}
+			else // For external software
+			{
+				// Accountancy_code_sell
+				print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellCode").'</td>';
+				print '<td><input name="accountancy_code_sell" class="maxwidth200" value="'.$object->accountancy_code_sell.'">';
+				print '</td></tr>';
+
+				// Accountancy_code_buy
+				print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
+				print '<td><input name="accountancy_code_buy" class="maxwidth200" value="'.$object->accountancy_code_buy.'">';
+				print '</td></tr>';
+			}
+			print '</table>';
 			print '</div>';
 
-			  print dol_get_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
 			print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
@@ -2578,6 +2656,42 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print !empty($object->multicurrency_code) ? currency_name($object->multicurrency_code, 1) : '';
 			print '</td></tr>';
 		}
+
+		// Accountancy sell code
+		print '<tr><td class="nowrap">';
+		print $langs->trans("ProductAccountancySellCode");
+		print '</td><td colspan="2">';
+		if (! empty($conf->accounting->enabled))
+		{
+			if (! empty($object->accountancy_code_sell))
+			{
+				$accountingaccount = new AccountingAccount($db);
+				$accountingaccount->fetch('', $object->accountancy_code_sell, 1);
+
+				print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+			}
+		} else {
+			print $object->accountancy_code_sell;
+		}
+		print '</td></tr>';
+
+		// Accountancy buy code
+		print '<tr><td class="nowrap">';
+		print $langs->trans("ProductAccountancyBuyCode");
+		print '</td><td colspan="2">';
+		if (! empty($conf->accounting->enabled))
+		{
+			if (! empty($object->accountancy_code_buy))
+			{
+				$accountingaccount2 = new AccountingAccount($db);
+				$accountingaccount2->fetch('', $object->accountancy_code_buy, 1);
+
+				print $accountingaccount2->getNomUrl(0, 1, 1, '', 1);
+			}
+		} else {
+			print $object->accountancy_code_buy;
+		}
+		print '</td></tr>';
 
 		// Other attributes
 		$parameters = array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
