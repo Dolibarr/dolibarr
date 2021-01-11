@@ -244,7 +244,7 @@ if (empty($reshook))
 	} // Validation
 	elseif ($action == 'confirm_validate' && $confirm == 'yes' && $usercanvalidate)
 	{
-		$idwarehouse = GETPOST('idwarehouse');
+		$idwarehouse = GETPOST('idwarehouse', 'int');
 		$result = $object->valid($user);
 		if ($result >= 0)
 		{
