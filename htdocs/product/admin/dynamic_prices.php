@@ -74,6 +74,14 @@ if (!empty($action) && empty($cancel)) {
                     $save = null;
                 }
             }
+			if ($price_globals->code === '') {
+				setEventMessages($langs->trans('ErrorFieldRequired', $langs->trans('Variable')), null, 'errors');
+				$save = null;
+			}
+			if ($price_globals->value === '') {
+				setEventMessages($langs->trans('ErrorFieldRequired', $langs->trans('Value')), null, 'errors');
+				$save = null;
+			}
         }
     }
     if ($action == 'create_variable' && !empty($save)) {
