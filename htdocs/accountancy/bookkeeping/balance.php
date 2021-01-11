@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("accountancy"));
+$langs->loadLangs(array("accountancy", "compta"));
 
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 $sortorder = GETPOST("sortorder", 'alpha');
@@ -88,6 +88,7 @@ if (empty($search_date_start) && !GETPOSTISSET('formfilteraction'))
 	} else {
 		$month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
 		$year_start = dol_print_date(dol_now(), '%Y');
+		if (dol_print_date(dol_now(), '%m') < $month_start) $year_start--; // If current month is lower that starting fiscal month, we start last year
 		$year_end = $year_start + 1;
 		$month_end = $month_start - 1;
 		if ($month_end < 1)
@@ -322,7 +323,9 @@ if ($action != 'export_csv')
 		$root_account_number = $tmparrayforrootaccount['account_number'];
 
 		if (empty($accountingaccountstatic->label) && $accountingaccountstatic->id > 0) {
-			$link = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/card.php?action=update&token='.newToken().'&id='.$accountingaccountstatic->id.'">'.img_edit().'</a>';
+			$link = '<a class="editfielda reposition" href="' . DOL_URL_ROOT . '/accountancy/admin/card.php?action=update&token=' . newToken() . '&id=' . $accountingaccountstatic->id . '">' . img_edit() . '</a>';
+		} elseif (empty($tmparrayforrootaccount['label'])) {
+			$link = '<a href="' . DOL_URL_ROOT . '/accountancy/admin/card.php?action=create&token=' . newToken() . '&accountingaccount=' . length_accountg($line->numero_compte) . '">' . img_edit_add() . '</a>';
 		}
 
 		if (!empty($show_subgroup))

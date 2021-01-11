@@ -58,7 +58,6 @@ OriginEmail=メールソース
 Notify_TICKET_SENTBYMAIL=メールでチケットメッセージを送信する
 
 # Status
-NotRead=読んでいない
 Read=読む
 Assigned=割り当て済み
 InProgress=進行中
@@ -124,6 +123,7 @@ TicketsActivatePublicInterfaceHelp=パブリックインターフェイスによ
 TicketsAutoAssignTicket=チケットを作成したユーザーを自動的に割り当てる
 TicketsAutoAssignTicketHelp=チケットを作成するときに、ユーザーを自動的にチケットに割り当てることができる。
 TicketNumberingModules=チケット番号付けモジュール
+TicketsModelModule=チケットのドキュメントテンプレート
 TicketNotifyTiersAtCreation=作成時にサードパーティに通知する
 TicketsDisableCustomerEmail=パブリックインターフェイスからチケットを作成するときは、常にメールを無効にすること
 TicketsPublicNotificationNewMessage=新規メッセージが追加されたときにメール(s)を送信する
@@ -231,7 +231,6 @@ TicketLogStatusChanged=ステータスが変更された：%sから%s
 TicketNotNotifyTiersAtCreate=作成時に法人に通知しない
 Unread=未読
 TicketNotCreatedFromPublicInterface=利用不可。チケットはパブリックインターフェイスから作成されなかった。
-PublicInterfaceNotEnabled=パブリックインターフェイスが有効になっていない
 ErrorTicketRefRequired=チケット参照名が必要
 
 #

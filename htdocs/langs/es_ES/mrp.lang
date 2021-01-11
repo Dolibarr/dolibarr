@@ -77,4 +77,4 @@ UnitCost=Costo unitario
 TotalCost=Coste total
 BOMTotalCost=El costo para producir esta Lista de Materiales en función del costo de cada cantidad y producto a consumir (use el precio de costo si está definido, de lo contrario, el precio promedio ponderado si está definido, o el mejor precio de compra)
 GoOnTabProductionToProduceFirst=Primero debe haber iniciado la producción para cerrar una orden de fabricación (consulte la pestaña '%s'). Pero puedes cancelarlo.
-ErrorAVirtualProductCantBeUsedIntoABomOrMo=A kit can't be used into a BOM or a MO
+ErrorAVirtualProductCantBeUsedIntoABomOrMo=Un kit no se puede usar en una Lista de Materiales (BOM) o una Orden de Fabricación (MO)

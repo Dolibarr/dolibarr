@@ -48,6 +48,7 @@ CountriesExceptMe=Всички държави с изключение на %s
 AccountantFiles=Export source documents
 ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
 VueByAccountAccounting=View by accounting account
+VueBySubAccountAccounting=View by accounting subaccount
 
 MainAccountForCustomersNotDefined=Основна счетоводна сметка за клиенти, която не е дефинирана в настройката
 MainAccountForSuppliersNotDefined=Основна счетоводна сметка за доставчици, която не е дефинирана в настройката
@@ -144,7 +145,7 @@ NotVentilatedinAccount=Не е свързан със счетоводната с
 XLineSuccessfullyBinded=%s продукти / услуги успешно са свързани към счетоводна сметка
 XLineFailedToBeBinded=%s продукти / услуги, които не са свързани с нито една счетоводна сметка
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Брой елементи за свързване, показани на страница (препоръчително: 50)
+ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Започнете сортирането на страницата „За свързване“, използвайки най-новите елементи
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Започнете сортирането на страницата „Извършено свързване“, използвайки най-новите елементи
 
@@ -198,7 +199,8 @@ Docdate=Дата
 Docref=Референция
 LabelAccount=Име на сметка
 LabelOperation=Име на операция
-Sens=Значение
+Sens=Direction
+AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you received<br>For an accounting account of a supplier, use Debit to record a payment you make
 LetteringCode=Буквен код
 Lettering=Означение
 Codejournal=Журнал
@@ -206,7 +208,8 @@ JournalLabel=Име на журнал
 NumPiece=Пореден номер
 TransactionNumShort=Транзакция №
 AccountingCategory=Персонализирани групи
-GroupByAccountAccounting=Групиране по счетоводна сметка
+GroupByAccountAccounting=Group by general ledger account
+GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=Тук може да определите някои групи счетоводни сметки. Те ще бъдат използвани за персонализирани счетоводни отчети.
 ByAccounts=По сметки
 ByPredefinedAccountGroups=По предварително определени групи
@@ -248,7 +251,7 @@ PaymentsNotLinkedToProduct=Плащането не е свързано с нит
 OpeningBalance=Начално салдо
 ShowOpeningBalance=Показване на баланс при откриване
 HideOpeningBalance=Скриване на баланс при откриване
-ShowSubtotalByGroup=Показване на междинна сума по групи
+ShowSubtotalByGroup=Show subtotal by level
 
 Pcgtype=Група от сметки
 PcgtypeDesc=Групата от сметки се използва като предварително зададен критерий за филтриране и групиране за някои счетоводни отчети. Например 'Приход' или 'Разход' се използват като групи за счетоводни сметки на продукти за съставяне на отчет за разходи / приходи.
@@ -271,11 +274,13 @@ DescVentilExpenseReport=Преглед на списъка с редове на 
 DescVentilExpenseReportMore=Ако настроите счетоводна сметка за видовете разходен отчет, то системата ще може да извърши всички свързвания между редовете на разходния отчет и счетоводната сметка във вашия сметкоплан, просто с едно щракване с бутона <strong>"%s"</strong>. Ако сметката не е зададена в речника с таксите или ако все още имате някои редове, които не са свързани с нито една сметка ще трябва да направите ръчно свързване от менюто "<strong>%s</strong>".
 DescVentilDoneExpenseReport=Преглед на списъка с редове на разходни отчети и тяхната счетоводна сметка за такса
 
+Closure=Annual closure
 DescClosure=Преглед на броя движения за месец, които не са валидирани за активните фискални години
 OverviewOfMovementsNotValidated=Стъпка 1 / Преглед на движенията, които не са валидирани (необходимо за приключване на фискална година)
+AllMovementsWereRecordedAsValidated=All movements were recorded as validated
+NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated
 ValidateMovements=Валидиране на движения
 DescValidateMovements=Всякакви промени или изтриване на написаното ще бъдат забранени. Всички записи за изпълнение трябва да бъдат валидирани, в противен случай приключването няма да е възможно.
-SelectMonthAndValidate=Изберете месец и валидирайте движенията
 
 ValidateHistory=Автоматично свързване
 AutomaticBindingDone=Автоматичното свързване завърши
@@ -293,6 +298,7 @@ Accounted=Осчетоводено в книгата
 NotYetAccounted=Все още не е осчетоводено в книгата
 ShowTutorial=Показване на урок
 NotReconciled=Не е съгласувано
+WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
 
 ## Admin
 BindingOptions=Binding options
@@ -337,6 +343,7 @@ Modelcsv_LDCompta10=Експортиране за LD Compta (v10 и по-нов�
 Modelcsv_openconcerto=Експортиране за OpenConcerto (Тест)
 Modelcsv_configurable=Експортиране в конфигурируем CSV
 Modelcsv_FEC=Експортиране за FEC
+Modelcsv_FEC2=Export FEC (With dates generation writing / document reversed)
 Modelcsv_Sage50_Swiss=Експортиране за Sage 50 Швейцария
 Modelcsv_winfic=Експортиране за Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Export for Gestinum (v3)

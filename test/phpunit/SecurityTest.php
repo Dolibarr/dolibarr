@@ -294,20 +294,20 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
         $result=GETPOST("param1", 'int');
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, 222);
+        $this->assertEquals($result, 222, 'Test on param1 with no 3rd param');
 
         $result=GETPOST("param1", 'int', 2);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, 333);
+        $this->assertEquals($result, 333, 'Test on param1 with 3rd param = 2');
 
         // Test alpha
         $result=GETPOST("param2", 'alpha');
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, $_GET["param2"]);
+        $this->assertEquals($result, $_GET["param2"], 'Test on param2');
 
         $result=GETPOST("param3", 'alpha');  // Must return string sanitized from char "
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, 'na/b#e(pr)qq-rr\cc');
+        $this->assertEquals($result, '\'\'na/b#e(pr)qq-rr\cc', 'Test on param3');
 
         $result=GETPOST("param4", 'alpha');  // Must return string sanitized from ../
         print __METHOD__." result=".$result."\n";
@@ -346,7 +346,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
         // With alphanohtml, we must convert the html entities like &#110;
         $result=GETPOST("param8", 'alphanohtml');
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals("Hacker<svg onload='console.log(123)'", $result);
+        $this->assertEquals("Hacker<svg onload='console.log(''123'')'", $result);
 
         $result=GETPOST("param9", 'alphanohtml');
         print __METHOD__." result=".$result."\n";

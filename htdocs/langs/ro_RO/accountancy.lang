@@ -48,6 +48,7 @@ CountriesExceptMe=Toate țările, cu excepția %s
 AccountantFiles=Export documente sursă
 ExportAccountingSourceDocHelp=Cu acest instrument, puteți exporta evenimentele sursă (listă și PDF-uri) care au fost utilizate pentru a vă genera înregistrările contabile. Pentru a vă exporta jurnalele, utilizați intrarea din meniu %s-%s.
 VueByAccountAccounting=Vizualizare după contul contabil
+VueBySubAccountAccounting=Vizualizați după subcont contabil
 
 MainAccountForCustomersNotDefined=Contul contabil principal pentru clienții care nu sunt definiți în configurare
 MainAccountForSuppliersNotDefined=Contul contabil principal pentru furnizorii care nu sunt definiți în configurare
@@ -144,7 +145,7 @@ NotVentilatedinAccount=Nu este asociat cu contul contabil
 XLineSuccessfullyBinded=%s produse/servicii legate cu succes de un cont contabil
 XLineFailedToBeBinded=Produsele / serviciile %s nu au fost asociate niciunui cont contabil
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Număr de elemente de legat afișate de pagină (maximum recomandat: 50)
+ACCOUNTING_LIMIT_LIST_VENTILATION=Numărul maxim de linii în liste și pe pagina de legare (recomandat: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Începeți sortarea paginii "Asocieri de făcut" după cele mai recente elemente
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Începeți sortarea paginii "Asocieri făcute" după cele mai recente elemente
 
@@ -198,7 +199,8 @@ Docdate=Data
 Docref=Referinţă
 LabelAccount=Etichetă cont
 LabelOperation=Etichetarea operaţiei
-Sens=Sens
+Sens=Direcţie
+AccountingDirectionHelp=Pentru un cont contabil al unui client, utilizați Credit pentru a înregistra o plată pe care ați primit-o <br> Pentru un cont contabil al unui furnizor, utilizați Debit pentru a înregistra o plată pe care o efectuați
 LetteringCode=Codul de scriere
 Lettering=Numerotare
 Codejournal=Journal
@@ -206,7 +208,8 @@ JournalLabel=Eticheta jurnalului
 NumPiece=Număr nota contabila
 TransactionNumShort=Numărul tranzacţiei
 AccountingCategory=Grupuri personalizate
-GroupByAccountAccounting=Grupează după contul contabil
+GroupByAccountAccounting=Grupare după cont registru
+GroupBySubAccountAccounting=Grupare după cont de subregistru
 AccountingAccountGroupsDesc=Puteți defini aici câteva grupuri de conturi de contabilitate. Acestea vor fi utilizate pentru rapoarte contabile personalizate.
 ByAccounts=Prin conturi
 ByPredefinedAccountGroups=Prin grupuri predefinite
@@ -248,7 +251,7 @@ PaymentsNotLinkedToProduct=Plata nu legată de vreun produs/serviciu
 OpeningBalance=Sold iniţial de deschidere
 ShowOpeningBalance=Afişează  soldurile de deschidere
 HideOpeningBalance=Ascunde soldurile de deschidere
-ShowSubtotalByGroup=Afişare subtotal după grupă
+ShowSubtotalByGroup=Afișează subtotalul după nivel
 
 Pcgtype=Grup de conturi
 PcgtypeDesc=Grupele de conturi sunt utilizate ca criterii predefinite de 'filtrare' și 'grupare' pentru unele rapoarte contabile. De exemplu, 'VENITURI' sau 'CHELTUIELI' sunt utilizate ca grupe pentru conturile contabile ale produselor pentru a construi raportul de cheltuieli/venituri.
@@ -271,11 +274,13 @@ DescVentilExpenseReport=Consultați aici lista liniilor de raportare a cheltuiel
 DescVentilExpenseReportMore=Dacă configurați contul de contabilitate pe linii de raportare a tipurilor de cheltuieli, aplicația va putea face toate legătura între liniile dvs. de raportare a cheltuielilor și contul contabil al planului dvs. de conturi, într-un singur clic <strong> „%s“ </strong>. În cazul în care contul nu a fost stabilit în dicționar de taxe sau dacă aveți încă anumite linii care nu sunt legate de niciun cont, va trebui să faceți o legare manuală din meniu<strong> %s </strong>".
 DescVentilDoneExpenseReport=Consultați aici lista liniilor rapoartelor privind cheltuielile și contul contabil a taxelor lor
 
+Closure=Închidere anuală
 DescClosure=Consultați aici numărul de tranzacţii lunare care nu sunt validate și se află în anii fiscali deschişi
 OverviewOfMovementsNotValidated=Pasul 1 / Prezentarea generală a tranzacţiilor nevalidate. (Necesar pentru a închide un an fiscal)
+AllMovementsWereRecordedAsValidated=Toate mișcările au fost înregistrate ca validate
+NotAllMovementsCouldBeRecordedAsValidated=Nu toate mișcările au putut fi înregistrate ca validate
 ValidateMovements=Vallidare trasferuri
 DescValidateMovements= Orice modificare sau ștergere a înregistrărilor va fi interzisă. Toate intrările pentru un exercițiu financiar trebuie validate, altfel închiderea nu va fi posibilă
-SelectMonthAndValidate=Selectează luna şi validează trasferurile
 
 ValidateHistory=Asociază automat
 AutomaticBindingDone=Asociere automată făcută
@@ -293,6 +298,7 @@ Accounted=Contabilizat în jurnal - Cartea Mare
 NotYetAccounted=Nu a fost încă înregistrată în jurnal - Cartea Mare
 ShowTutorial=Arată tutorial
 NotReconciled=Nu este conciliat
+WarningRecordWithoutSubledgerAreExcluded=Atenție, toate operațiunile fără cont de subregistru definit sunt filtrate și excluse din această vizualizare
 
 ## Admin
 BindingOptions=Opțiuni de legare
@@ -337,6 +343,7 @@ Modelcsv_LDCompta10=Export pentru LD Compta (v10 & mai nou)
 Modelcsv_openconcerto=Export pentru OpenConcerto (Test)
 Modelcsv_configurable=Exportați CSV configurabil
 Modelcsv_FEC=Exportă fişier FEC
+Modelcsv_FEC2=Export FEC (cu scriere de date generate/document inversat)
 Modelcsv_Sage50_Swiss=Export pentru Sage 50 Switzerland
 Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Export pentru Gestinum (v3)

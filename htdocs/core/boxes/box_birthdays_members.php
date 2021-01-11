@@ -91,7 +91,7 @@ class box_birthdays_members extends ModeleBoxes
 			$sql .= " WHERE u.entity IN (".getEntity('adherent').")";
 	  		$sql .= " AND u.statut = 1";
 	  		$sql .= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], 0);
-			$sql .= " ORDER BY u.birth ASC";
+			$sql .= " ORDER BY DAY(u.birth) ASC";
 			$sql .= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
