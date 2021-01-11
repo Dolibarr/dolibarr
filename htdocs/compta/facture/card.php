@@ -984,39 +984,39 @@ if (empty($reshook))
 				$action = 'create';
 			}
 
-			if (!($_POST['fac_replacement'] > 0)) {
+			if (!(GETPOST('fac_replacement', 'int') > 0)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ReplaceInvoice")), null, 'errors');
 				$action = 'create';
 			}
 
-			$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
+			$date_pointoftax = dol_mktime(12, 0, 0, GETPOST('date_pointoftaxmonth', 'int'), GETPOST('date_pointoftaxday', 'int'), GETPOST('date_pointoftaxyear', 'int'));
 
 			if (!$error) {
 				// This is a replacement invoice
-				$result = $object->fetch($_POST['fac_replacement']);
+				$result = $object->fetch(GETPOST('fac_replacement', 'int'));
 				$object->fetch_thirdparty();
 
 				$object->date = $dateinvoice;
 				$object->date_pointoftax = $date_pointoftax;
 				$object->note_public		= trim(GETPOST('note_public', 'restricthtml'));
 				// We do not copy the private note
-				$object->ref_client			= $_POST['ref_client'];
-				$object->ref_int = $_POST['ref_int'];
-				$object->model_pdf = $_POST['model'];
-				$object->fk_project			= $_POST['projectid'];
-				$object->cond_reglement_id	= $_POST['cond_reglement_id'];
-				$object->mode_reglement_id	= $_POST['mode_reglement_id'];
+				$object->ref_client			= GETPOST('ref_client');
+				//$object->ref_int = $_POST['ref_int'];
+				$object->model_pdf = GETPOST('model');
+				$object->fk_project			= GETPOST('projectid', 'int');
+				$object->cond_reglement_id	= GETPOST('cond_reglement_id', 'int');
+				$object->mode_reglement_id	= GETPOST('mode_reglement_id', 'int');
 				$object->fk_account = GETPOST('fk_account', 'int');
-				$object->remise_absolue		= $_POST['remise_absolue'];
-				$object->remise_percent		= $_POST['remise_percent'];
+				$object->remise_absolue		= GETPOST('remise_absolue', 'alpha');
+				$object->remise_percent		= GETPOST('remise_percent', 'alpha');
 				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 				$object->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
 
 				// Proprietes particulieres a facture de remplacement
-				$object->fk_facture_source = $_POST['fac_replacement'];
+				$object->fk_facture_source = GETPOST('fac_replacement', 'int');
 				$object->type = Facture::TYPE_REPLACEMENT;
 
 				$id = $object->createFromCurrent($user);
