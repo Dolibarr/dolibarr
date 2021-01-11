@@ -30,6 +30,7 @@ OtherSendingsForSameOrder=Други пратки за тази поръчка
 SendingsAndReceivingForSameOrder=Пратки и разписки за тази поръчка
 SendingsToValidate=Пратки за валидиране
 StatusSendingCanceled=Анулирана
+StatusSendingCanceledShort=Анулирана
 StatusSendingDraft=Чернова
 StatusSendingValidated=Валидирана (продукти за изпращане или вече изпратени)
 StatusSendingProcessed=Обработена
@@ -65,6 +66,7 @@ ValidateOrderFirstBeforeShipment=Първо трябва да валидират
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Шаблон на разписка за доставка (лого, ...)
+DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Константата EXPEDITION_ADDON_NUMBER не е дефинирана
 SumOfProductVolumes=Общ обем на продуктите
 SumOfProductWeights=Общо тегло на продуктите

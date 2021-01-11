@@ -358,7 +358,7 @@ VATIntraCheckableOnEUSite=Überprüfungsergebnis des MwSt-Informationsaustauschs
 VATIntraManualCheck=Sie können die Überprüfung auch manuell auf der Internetseite der Europäische Kommission durchführen: <a href="%s" target="_blank">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Anfrage nicht möglich. Überprüfungsdienst wird vom Mitgliedsland nicht angeboten (%s).
 NorProspectNorCustomer=kein Interessent / kein Kunde
-JuridicalStatus=Rechtsform
+JuridicalStatus=Business entity type
 Workforce=Mitarbeiter/innen
 Staff=Mitarbeiter
 ProspectLevelShort=Potenzial

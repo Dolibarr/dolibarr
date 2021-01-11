@@ -172,7 +172,7 @@ ProfId1ES=職 Id 1 (CIF/NIF)
 ProfId2ES=職 Id 2 (Social security number)
 ProfId3ES=職 Id 3 (CNAE)
 ProfId4ES=職 Id 4 (Collegiate number)
-ProfId5ES=EORI number
+ProfId5ES=EORI番号
 ProfId6ES=-
 ProfId1FR=職 Id 1 (SIREN)
 ProfId2FR=職 Id 2 (SIRET)
@@ -358,7 +358,7 @@ VATIntraCheckableOnEUSite=欧州委員会のウェブサイトでコミュニテ
 VATIntraManualCheck=欧州委員会のウェブサイト<a href="%s" target="_blank">%s</a>で手動で確認可能
 ErrorVATCheckMS_UNAVAILABLE=ことはできませんを確認してください。サービスは加盟国（%s）によって提供されていません確認してください。
 NorProspectNorCustomer=見込客でない、顧客でない
-JuridicalStatus=法的組織種別
+JuridicalStatus=事業体種別
 Workforce=労働力
 Staff=従業員
 ProspectLevelShort=潜在的な

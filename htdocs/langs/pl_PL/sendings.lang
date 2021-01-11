@@ -30,6 +30,7 @@ OtherSendingsForSameOrder=Inne wysyłki do tego zamówienia
 SendingsAndReceivingForSameOrder=Shipments and receipts for this order
 SendingsToValidate=Transporty do zatwierdzenia
 StatusSendingCanceled=Anulowany
+StatusSendingCanceledShort=Anulowany
 StatusSendingDraft=Szkic
 StatusSendingValidated=Zatwierdzone (produkty do wysyłki lub już wysłane)
 StatusSendingProcessed=Przetwarzany
@@ -65,6 +66,7 @@ ValidateOrderFirstBeforeShipment=W pierwszej kolejności musisz zatwierdzić zam
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Więcej kompletny dokument model dostawy wpływy (logo. ..)
+DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Stała EXPEDITION_ADDON_NUMBER nie zdefiniowano
 SumOfProductVolumes=Suma wolumenów
 SumOfProductWeights=Suma wag produktów
