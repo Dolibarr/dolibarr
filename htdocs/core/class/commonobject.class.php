@@ -3661,6 +3661,56 @@ abstract class CommonObject
 	}
 
 	/**
+	 * Function used to get an array with all items linked to an object id in association table
+	 * @param	int		$fk_object_where		id of object we need to get linked items
+	 * @param	string	$field_select			name of field we need to get a list
+	 * @param	string	$field_where			name of field of object we need to get linked items
+	 * @param	string	$table_element			name of association table
+	 * @return array
+	 */
+	static public function getAllItemsLinkedByObjectID($fk_object_where, $field_select, $field_where, $table_element)
+	{
+		if(empty($fk_object_where) || empty($field_where) || empty($table_element)) return -1;
+
+		global $db;
+
+		$sql = 'SELECT '.$field_select.' FROM '.MAIN_DB_PREFIX.$table_element.' WHERE '.$field_where.' = '.$fk_object_where;
+		$resql = $db->query($sql);
+
+		$TRes = array();
+		if (!empty($resql)) {
+			while ($res = $db->fetch_object($resql)) {
+				$TRes[] = $res->{$field_select};
+			}
+		}
+
+		return $TRes;
+
+	}
+
+	/**
+	 * Function used to remove all items linked to an object id in association table
+	 * @param	int		$fk_object_where		id of object we need to remove linked items
+	 * @param	string	$field_where			name of field of object we need to delete linked items
+	 * @param	string	$table_element			name of association table
+	 * @return int
+	 */
+	static public function deleteAllItemsLinkedByObjectID($fk_object_where, $field_where, $table_element)
+	{
+		if(empty($fk_object_where) || empty($field_where) || empty($table_element)) return -1;
+
+		global $db;
+
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table_element.' WHERE '.$field_where.' = '.$fk_object_where;
+		$resql = $db->query($sql);
+
+		if (empty($resql)) return 0;
+
+		return 1;
+
+	}
+
+	/**
 	 *      Set status of an object
 	 *
 	 *      @param	int		$status			Status to set

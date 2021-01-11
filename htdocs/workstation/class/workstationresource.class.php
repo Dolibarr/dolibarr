@@ -79,21 +79,9 @@ class WorkstationResource extends CommonObject
 	 */
 	static public function getAllResourcesOfWorkstation($fk_workstation)
 	{
-
 		global $db;
-
 		$obj = new self($db);
-		$sql = 'SELECT fk_resource FROM '.MAIN_DB_PREFIX.$obj->table_element.' WHERE fk_workstation = '.$fk_workstation;
-		$resql = $db->query($sql);
-
-		$TRes = array();
-		if (!empty($resql)) {
-			while ($res = $db->fetch_object($resql)) {
-				$TRes[] = $res->fk_resource;
-			}
-		}
-
-		return $TRes;
+		return parent::getAllItemsLinkedByObjectID($fk_workstation, 'fk_resource', 'fk_workstation', $obj->table_element);
 	}
 
 	/**
@@ -103,15 +91,8 @@ class WorkstationResource extends CommonObject
 	 */
 	static public function deleteAllResourcesOfWorkstation($fk_workstation)
 	{
-
 		global $db;
-
 		$obj = new self($db);
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$obj->table_element.' WHERE fk_workstation = '.$fk_workstation;
-		$resql = $db->query($sql);
-
-		if (empty($resql)) return 0;
-
-		return 1;
+		return parent::deleteAllItemsLinkedByObjectID($fk_workstation, 'fk_workstation', $obj->table_element);
 	}
 }

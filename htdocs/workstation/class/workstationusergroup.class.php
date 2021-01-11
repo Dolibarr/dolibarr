@@ -79,21 +79,9 @@ class WorkstationUserGroup extends CommonObject
 	 */
 	static public function getAllGroupsOfWorkstation($fk_workstation)
 	{
-
 		global $db;
-
 		$obj = new self($db);
-		$sql = 'SELECT fk_usergroup FROM '.MAIN_DB_PREFIX.$obj->table_element.' WHERE fk_workstation = '.$fk_workstation;
-		$resql = $db->query($sql);
-
-		$TRes = array();
-		if (!empty($resql)) {
-			while ($res = $db->fetch_object($resql)) {
-				$TRes[] = $res->fk_usergroup;
-			}
-		}
-
-		return $TRes;
+		return parent::getAllItemsLinkedByObjectID($fk_workstation, 'fk_usergroup', 'fk_workstation', $obj->table_element);
 	}
 
 	/**
@@ -103,15 +91,8 @@ class WorkstationUserGroup extends CommonObject
 	 */
 	static public function deleteAllGroupsOfWorkstation($fk_workstation)
 	{
-
 		global $db;
-
 		$obj = new self($db);
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$obj->table_element.' WHERE fk_workstation = '.$fk_workstation;
-		$resql = $db->query($sql);
-
-		if (empty($resql)) return 0;
-
-		return 1;
+		return parent::deleteAllItemsLinkedByObjectID($fk_workstation, 'fk_workstation', $obj->table_element);
 	}
 }
