@@ -157,6 +157,13 @@ if (($line->info_bits & 2) == 2) {
 	{
 		print (!empty($line->description) && $line->description != $line->product_label) ? '<br>'.dol_htmlentitiesbr($line->description) : '';
 	}
+	//Line extrafield
+	if (!empty($extrafields))
+	{
+		print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
+		print $line->showOptionals($extrafields, 'view', array(), '', '', 1, 'line');
+		print '</div>';
+	}
 }
 
 if ($user->rights->fournisseur->lire && $line->fk_fournprice > 0)
@@ -359,11 +366,5 @@ if ($action == 'selectlines') { ?>
 <?php }
 
 print "</tr>\n";
-
-//Line extrafield
-if (!empty($extrafields))
-{
-	print $line->showOptionals($extrafields, 'view', array('style'=>'class="drag drop oddeven"', 'colspan'=>$coldisplay), '', '', 1);
-}
 
 print "<!-- END PHP TEMPLATE objectline_view.tpl.php -->\n";
