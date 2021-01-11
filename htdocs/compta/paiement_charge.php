@@ -224,8 +224,8 @@ if ($action == 'create')
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
 	$datepaye = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
-	$datepayment = empty($conf->global->MAIN_AUTOFILL_DATE) ? (empty($_POST["remonth"]) ?-1 : $datepaye) : 0;
-	print $form->selectDate($datepayment, '', '', '', '', "add_payment", 1, 1);
+	$datepaye = ($datepaye == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datepaye);
+	print $form->selectDate($datepaye, '', '', '', '', "add_payment", 1, 1);
 	print "</td>";
 	print '</tr>';
 
