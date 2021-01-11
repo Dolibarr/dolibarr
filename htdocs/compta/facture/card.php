@@ -1732,9 +1732,9 @@ if (empty($reshook))
 				setEventMessages($mesg, null, 'errors');
 			}
 
-			$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
+			$date_pointoftax = dol_mktime(12, 0, 0, GETPOST('date_pointoftaxmonth', 'int'), GETPOST('date_pointoftaxday', 'int'), GETPOST('date_pointoftaxyear', 'int'));
 
-			if (!($_POST['situations'] > 0)) {
+			if (!(GETPOST('situations', 'int') > 0)) {
 				$error++;
 				$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InvoiceSituation"));
 				setEventMessages($mesg, null, 'errors');
@@ -1742,8 +1742,8 @@ if (empty($reshook))
 			}
 
 			if (!$error) {
-				$result = $object->fetch($_POST['situations']);
-				$object->fk_facture_source = $_POST['situations'];
+				$result = $object->fetch(GETPOST('situations', 'int'));
+				$object->fk_facture_source = GETPOST('situations', 'int');
 				$object->type = Facture::TYPE_SITUATION;
 
 				if (!empty($origin) && !empty($originid))
