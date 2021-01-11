@@ -931,10 +931,18 @@ class Societe extends CommonObject
 	 * Create a contact/address from thirdparty
 	 *
 	 * @param 	User	$user		Object user
+	 * @param 	int		$no_email	1=Do not send mailing, 0=Ok to recieve mailling
+	 * @param 	array	$tags		Array of tag to affect to contact
 	 * @return 	int					<0 if KO, >0 if OK
 	 */
-	public function create_individual(User $user)
+	public function create_individual(User $user, $no_email, $tags = array())
 	{
+		global $conf;
+
+		$error = 0;
+
+		$this->db->begin();
+
 		// phpcs:enable
 		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 		$contact = new Contact($this->db);
@@ -954,14 +962,43 @@ class Societe extends CommonObject
 		$contact->town              = $this->town;
 		$contact->phone_pro         = $this->phone;
 
-		$result = $contact->create($user);
-		if ($result < 0) {
+		$contactId = $contact->create($user);
+		if ($contactId < 0) {
+			$error++;
 			$this->error = $contact->error;
 			$this->errors = $contact->errors;
 			dol_syslog(get_class($this)."::create_individual ERROR:".$this->error, LOG_ERR);
 		}
 
-		return $result;
+		if (empty($error) && is_array($tags) && !empty($tags)) {
+			$result = $contact->setCategories($tags);
+			if ($result < 0) {
+				$error++;
+				$this->error = $contact->error;
+				$this->errors = array_merge($this->errors, $contact->errors);
+				dol_syslog(get_class($this) . "::create_individual Affect Tag ERROR:" . $this->error, LOG_ERR);
+				$contactId = $result;
+			}
+		}
+
+		if (empty($error) && !empty($conf->mailing->enabled) && !empty($contact->email) && isset($no_email)) {
+			$result = $contact->setNoEmail($no_email);
+			if ($result < 0) {
+				$this->error = $contact->error;
+				$this->errors = array_merge($this->errors, $contact->errors);
+				dol_syslog(get_class($this) . "::create_individual set mailing status ERROR:" . $this->error, LOG_ERR);
+				$contactId = $result;
+			}
+		}
+
+		if (!empty($error)) {
+			dol_syslog(get_class($this)."::create_individual success");
+			$this->db->commit();
+		} else {
+			$this->db->rollback();
+		}
+
+		return $contactId;
 	}
 
 	/**
