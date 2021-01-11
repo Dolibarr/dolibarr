@@ -243,7 +243,8 @@ elseif ($action == 'setdoc')
 		$projectToSelect = GETPOST('projectToSelect', 'alpha');
 		dolibarr_set_const($db, 'PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY', $projectToSelect, 'chaine', 0, '', $conf->entity); //Allow to disable this configuration if empty value
 	}
-}elseif ($action == 'update_auto_assign_task') {
+
+}elseif ($action == 'update_auto_assign_user_to_task') {
 
 
     if (GETPOST('AUTO_ASSIGN_USER_CONTACT_ON_TASK'))
@@ -256,33 +257,33 @@ elseif ($action == 'setdoc')
         }
     }
 
-}elseif ($action == 'update_auto_assign_task') {
 
 
-    if (GETPOST('AUTO_ASSIGN_USER_CONTACT_ON_TASK'))
+
+}else if ($action == 'update_auto_assign_type_contact_task'){
+
+    if (GETPOST('AUTO_ASSIGN_TYPE_CONTACT_TO_TASK'))
     {
-        $autoAssignTaskValue = GETPOST('activate_AUTO_ASSIGN_USER_CONTACT_ON_TASK', 'alpha');
+        $autoAssignTypeValue = GETPOST('activate_AUTO_ASSIGN_TYPE_CONTACT_TO_TASK', 'alpha');
 
-        if (dolibarr_set_const($db, "AUTO_ASSIGN_USER_CONTACT_ON_TASK", $autoAssignTaskValue, 'chaine', 0, '', $conf->entity))
+        if (dolibarr_set_const($db, "AUTO_ASSIGN_TYPE_CONTACT_TO_TASK", $autoAssignTypeValue, 'chaine', 0, '', $conf->entity))
         {
-            $conf->global->AUTO_ASSIGN_USER_CONTACT_ON_TASK = $autoAssignTaskValue;
+            $conf->global->AUTO_ASSIGN_TYPE_CONTACT_TO_TASK = $autoAssignTypeValue;
         }
     }
+}else if ($action == 'update_auto_assign_type_contact_project'){
 
-}elseif ($action == 'update_auto_assign_type_contact') {
-
-
-    if (GETPOST('AUTO_ASSIGN_TYPE_CONTACT'))
+    if (GETPOST('AUTO_ASSIGN_TYPE_CONTACT_TO_PROJECT'))
     {
-        $autoAssignTypeValue = GETPOST('activate_AUTO_ASSIGN_TYPE_CONTACT', 'alpha');
+        $autoAssignTypeValue = GETPOST('activate_AUTO_ASSIGN_TYPE_CONTACT_TO_PROJECT', 'alpha');
 
-        if (dolibarr_set_const($db, "AUTO_ASSIGN_TYPE_CONTACT", $autoAssignTypeValue, 'chaine', 0, '', $conf->entity))
+        if (dolibarr_set_const($db, "AUTO_ASSIGN_TYPE_CONTACT_TO_PROJECT", $autoAssignTypeValue, 'chaine', 0, '', $conf->entity))
         {
-            $conf->global->AUTO_ASSIGN_TYPE_CONTACT = $autoAssignTypeValue;
+            $conf->global->AUTO_ASSIGN_TYPE_CONTACT_TO_PROJECT = $autoAssignTypeValue;
         }
     }
-
 }
+
 
 /*
  * View
@@ -881,7 +882,7 @@ print '<input type="submit" class="button" name="PROJECT_ALLOW_TO_LINK_FROM_OTHE
 print '</td>';
 print '</tr>';
 
-
+print '</form>';
 
 
 
@@ -892,11 +893,11 @@ $form = new Form($db);
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="update_auto_assign_task">';
+print '<input type="hidden" name="action" value="update_auto_assign_user_to_task">';
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print "<td>".$langs->trans("Parameters")."</td>\n";
+print "<td>".$langs->trans("ParametersAutoAssign")."</td>\n";
 print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
 print '<td width="80">&nbsp;</td></tr>'."\n";
 
@@ -915,6 +916,8 @@ print '<td width="80%">'.$langs->trans("AutoAssignToTask").'</td>';
     print "</td>";
 
 print '</tr>';
+print '</form>';
+
 
 
 // type contact auto
@@ -923,23 +926,38 @@ $form = new Form($db);
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="update_auto_assign_type_contact">';
-
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print "<td>".$langs->trans("Parameters")."</td>\n";
-print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
-print '<td width="80">&nbsp;</td></tr>'."\n";
+print '<input type="hidden" name="action" value="update_auto_assign_type_contact_task">';
 
 print '<tr class="oddeven">';
-print '<td width="80%">'.$langs->trans("autoAssignTypeContact").'</td>';
+print '<td width="80%">'.$langs->trans("autoAssignTypeContactToTask").'</td>';
 
 print '<td width="60" class="right">';
 
 $taskStatic = new Task($db);
-print $form->selectarray("activate_AUTO_ASSIGN_TYPE_CONTACT", $taskStatic->liste_type_contact(), $conf->global->AUTO_ASSIGN_TYPE_CONTACT);
+print $form->selectarray("activate_AUTO_ASSIGN_TYPE_CONTACT_TO_TASK", $taskStatic->liste_type_contact(), $conf->global->AUTO_ASSIGN_TYPE_CONTACT_TO_TASK);
 print '</td><td class="right">';
-print '<input type="submit" class="button" name="AUTO_ASSIGN_TYPE_CONTACT" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="button" name="AUTO_ASSIGN_TYPE_CONTACT_TO_TASK" value="'.$langs->trans("Modify").'">';
+print "</td>";
+
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td width="80%">'.$langs->trans("autoAssignTypeContactToProject").'</td>';
+
+print '<td width="60" class="right">';
+print '</form>';
+
+
+
+
+
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="update_auto_assign_type_contact_project">';
+$projectStatic = new Project($db);
+print $form->selectarray("activate_AUTO_ASSIGN_TYPE_CONTACT_TO_PROJECT", $projectStatic->liste_type_contact(), $conf->global->AUTO_ASSIGN_TYPE_CONTACT_TO_PROJECT);
+print '</td><td class="right">';
+print '<input type="submit" class="button" name="AUTO_ASSIGN_TYPE_CONTACT_TO_PROJECT" value="'.$langs->trans("Modify").'">';
 print "</td>";
 
 print '</tr>';
