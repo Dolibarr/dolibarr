@@ -266,8 +266,8 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->banque->m
 			$object->datev = $newdatepayment;
 		}
 
-        if (GETPOSTINT("clone_sens")) {
-            $object->sens = GETPOSTINT("clone_sens");
+        if (GETPOSTISSET("clone_sens")) {
+            $object->sens = GETPOST("clone_sens", 'int');
         } else {
             $object->sens = $object->sens;
         }
