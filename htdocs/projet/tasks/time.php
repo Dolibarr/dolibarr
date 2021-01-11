@@ -214,7 +214,7 @@ if ($action == 'addtimespent' && $user->rights->projet->lire)
                         $contactsofproject = $projectstatic->getListContactId('internal');
                         if(!empty($userid) && !in_array($userid, $contactsofproject)){
 
-                            $result = $projectstatic->add_contact($userid, $conf->global->AUTO_ASSIGN_TYPE_CONTACT_TO_PROJECT, 'inernal');
+                            $result = $projectstatic->add_contact($userid, $conf->global->AUTO_ASSIGN_TYPE_CONTACT_TO_PROJECT, 'internal');
                             if ($result > 0 ){
 
                             }else{
@@ -1155,25 +1155,21 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 				$nboftasks = $formproject->selectTasks(-1, GETPOST('taskid', 'int'), 'taskid', 0, 0, 1, 1, 0, 0, 'maxwidth300', $projectstatic->id, '');
 				print '</td>';
 			}
-           // var_dump($nboftasks,GETPOST('taskid', 'int'));
+
 			// Contributor
 			print '<td class="maxwidthonsmartphone nowraponall">';
 			$contactsofproject = $projectstatic->getListContactId('internal');
-			//var_dump($user->id,$conf->global->AUTO_ASSIGN_USER_CONTACT_ON_TASK);
+
 
 			// standard bahavior
-            // possible regroupement de 0 et 1. La diff dans le traitement plus haut
 			if ($conf->global->AUTO_ASSIGN_USER_CONTACT_ON_TASK < 2 ){
-                // si il y a des contacts au projet en cours
                 if (count($contactsofproject) > 0)
                 {
                     print img_object('', 'user', 'class="hideonsmartphone"');
-
                     if (in_array($user->id, $contactsofproject)) $userid = $user->id;
                     else $userid = $contactsofproject[0];
 
                     if ($projectstatic->public) $contactsofproject = array();
-                   // var_dump(GETPOST('userid', 'int'),$contactsofproject , $userid);
                     print $form->select_dolusers((GETPOST('userid', 'int') ? GETPOST('userid', 'int') : $userid), 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToProject"), 'maxwidth200');
                 } else {
                      if ($nboftasks) {
@@ -1183,15 +1179,12 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 
             // we assign user to task even if he 's not assigned to project
             }else if ($conf->global->AUTO_ASSIGN_USER_CONTACT_ON_TASK == 2){
-               // $allowMe = array (count($contactsofproject) => $user->id);
                 print img_object('', 'user', 'class="hideonsmartphone"');
-
                 if (in_array($user->id, $contactsofproject)){
                     $userid = $user->id;
                 } else{
                     $userid = $contactsofproject[0];
                 }
-
                 print $form->select_dolusers((GETPOST('userid', 'int') ? GETPOST('userid', 'int') : $userid), 'userid', 0, '', 0, '','', 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToProject"), 'maxwidth200');
 
             }
