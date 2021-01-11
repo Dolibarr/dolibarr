@@ -109,7 +109,7 @@ if ($action == "create") {
 
 		$currencyRate_static->fk_multicurrency = $fk_currency;
 		$currencyRate_static->entity = $conf->entity;
-		$currencyRate_static->date_sync = $db->idate($dateinput);
+		$currencyRate_static->date_sync = $dateinput;
 		$currencyRate_static->rate = $rateinput;
 
 		$result = $currencyRate_static->create(intval($fk_currency));
