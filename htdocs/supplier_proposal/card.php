@@ -869,7 +869,7 @@ if (empty($reshook))
 		}
 
 		$price_base_type = 'HT';
-		$pu_ht_devise = GETPOST('multicurrency_subprice', 'CU');
+		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), 'CU');
 
 		// Add buying price
 		$fournprice = (GETPOST('fournprice') ? GETPOST('fournprice') : '');

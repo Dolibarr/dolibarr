@@ -4826,7 +4826,8 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  * 											'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
  *											'MT'=Round to Max for totals with Tax (MAIN_MAX_DECIMALS_TOT)
  *											'MS'=Round to Max for stock quantity (MAIN_MAX_DECIMALS_STOCK)
- *      		                            'CR'=Foreign currency accurancy
+ *      		                            'CU'=Round to Max unit price of foreign currency accuracy
+ *      		                            'CT'=Round to Max for totals with Tax of foreign currency accuracy
  *											Numeric = Nb of digits for rounding
  * 	@param	int				$option			Put 1 if you know that content is already universal format number (so no correction on decimal will be done)
  * 											Put 2 if you know that number is a user input (so we know we don't have to fix decimal separator).
