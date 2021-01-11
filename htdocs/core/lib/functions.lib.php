@@ -4896,8 +4896,11 @@ function price2num($amount, $rounding = '', $option = 0)
 		elseif ($rounding == 'MS') {
 			$nbofdectoround = empty($conf->global->MAIN_MAX_DECIMALS_STOCK) ? 5 : $conf->global->MAIN_MAX_DECIMALS_STOCK;
 		}
-		elseif ($rounding == 'CR') {
-			$nbofdectoround = max($conf->global->MAIN_MAX_DECIMALS_TOT, 8);
+		elseif ($rounding == 'CU') {
+			$nbofdectoround = max($conf->global->MAIN_MAX_DECIMALS_UNIT, 8);	// TODO Use param of currency
+		}
+		elseif ($rounding == 'CT') {
+			$nbofdectoround = max($conf->global->MAIN_MAX_DECIMALS_TOT, 8);		// TODO Use param of currency
 		}
 		elseif (is_numeric($rounding))  $nbofdectoround = $rounding;
 		//print "RR".$amount.' - '.$nbofdectoround.'<br>';
