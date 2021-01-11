@@ -809,7 +809,7 @@ if (empty($reshook))
 			$tva_tx = '';
 		}
 
-		$qty = price2num(GETPOST('qty'.$predef), 'MS');
+		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
 		$remise_percent = GETPOST('remise_percent'.$predef);
 		if (empty($remise_percent)) $remise_percent = 0;
 
@@ -1239,7 +1239,7 @@ if (empty($reshook))
 				}
 			}
 
-			$qty = price2num(GETPOST('qty'), 'MS');
+			$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
 
 			$result = $object->updateline(GETPOST('lineid', 'int'), $pu_ht, $qty, GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, $description, 'HT', $info_bits, $special_code, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $type, $date_start, $date_end, $array_options, $_POST["units"], $pu_ht_devise);
 

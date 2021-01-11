@@ -264,7 +264,7 @@ if (!$error && $xml)
 				$out .= "</tr>\n";
 			}
 		} else {
-			$out .= '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			$out .= '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		$out .= '</table>';
 		$out .= '</div>';
@@ -317,7 +317,7 @@ if (!$error && $xml)
 			$out .= '<td class="right"></td>'."\n";
 			$out .= "</tr>\n";
 		} else {
-			$out .= '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			$out .= '<tr class="oddeven"><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		$out .= '</table>';
 		$out .= '</div>';
@@ -370,11 +370,10 @@ if (!$error && $xml)
 			$out .= '<td class="right"></td>'."\n";
 			$out .= "</tr>\n";
 		} else {
-			$out .= '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			$out .= '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		$out .= '</table>';
 		$out .= '</div>';
-
 
 		// Show warning
 		if (empty($tmpfilelist) && empty($tmpfilelist2) && empty($tmpfilelist3))
