@@ -51,7 +51,6 @@ UseSpecificEditorURL =Use um URL de editor específico
 UseSpecificFamily =Use uma família específica
 UseSpecificAuthor =Use um autor específico
 UseSpecificVersion =Use uma versão inicial específica
-ModuleMustBeEnabled=O módulo/aplicativo deve ser ativado primeiro
 IncludeRefGeneration=A referência do objeto deve ser gerada automaticamente
 IncludeRefGenerationHelp=Marque aqui se desejar incluir código para gerenciar a geração automaticamente da referência
 IncludeDocGeneration=Gerar alguns documentos a partir do objeto

@@ -46,10 +46,16 @@ $action = GETPOST('action', 'aZ09');
 $idproduct = GETPOST('idproduct', 'int');
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 $placeid = 0; // $placeid is ID of invoice
+// Terminal is stored into $_SESSION["takeposterminal"];
 
 if (empty($user->rights->takepos->run) && !defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	accessforbidden();
 }
+
+
+/*
+ * View
+ */
 
 if (($conf->global->TAKEPOS_PHONE_BASIC_LAYOUT == 1 && $conf->browser->layout == 'phone') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))
 {
@@ -110,9 +116,8 @@ $sql = "SELECT id FROM ".MAIN_DB_PREFIX."c_paiement";
 $sql .= " WHERE entity IN (".getEntity('c_paiement').")";
 $sql .= " AND code = '".$db->escape($paycode)."'";
 $resql = $db->query($sql);
-$codes = $db->fetch_array($resql);
-$paiementid = $codes[0];
-
+$obj = $db->fetch_object($resql);
+$paiementid = $obj->id;
 
 $invoice = new Facture($db);
 if ($invoiceid > 0)
@@ -145,8 +150,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 
 	if (!empty($conf->global->TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT)) {
 		$bankaccount = GETPOST('accountid', 'int');
-	}
-	else {
+	} else {
 		if ($pay == "cash") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$_SESSION["takeposterminal"]};            // For backward compatibility
 		elseif ($pay == "card") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$_SESSION["takeposterminal"]};          // For backward compatibility
 		elseif ($pay == "cheque") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$_SESSION["takeposterminal"]};    // For backward compatibility
@@ -169,11 +173,13 @@ if ($action == 'valid' && $user->rights->facture->creer)
 
 	if ($invoice->total_ttc < 0) {
 		$invoice->type = $invoice::TYPE_CREDIT_NOTE;
+
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE";
 		$sql .= " fk_soc = ".((int) $invoice->socid);
 		$sql .= " AND type <> ".Facture::TYPE_CREDIT_NOTE;
 		$sql .= " AND fk_statut >= ".$invoice::STATUS_VALIDATED;
 		$sql .= " ORDER BY rowid DESC";
+
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
@@ -226,6 +232,10 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		$conf->global->STOCK_CALCULATE_ON_BILL = $savconst;
 	} else {
 		$res = $invoice->validate($user);
+		if ($res < 0) {
+			$error++;
+			dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+		}
 	}
 
 	// Restore save values
@@ -564,16 +574,9 @@ if ($action == "deleteline") {
 	}
 }
 
+// Action to delete or discard an invoice
 if ($action == "delete") {
 	// $placeid is the invoice id (it differs from place) and is defined if the place is set and the ref of invoice is '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')', so the fetch at begining of page works.
-
-	/*$reg = array();
-	if (preg_match('/^(\d+)-(\d+)$/', $place, $reg)) {
-
-		$place = $reg[1];
-		var_dump($place);
-	}*/
-
 	if ($placeid > 0) {
 		$result = $invoice->fetch($placeid);
 
@@ -583,7 +586,7 @@ if ($action == "delete") {
 
 			// We delete the lines
 			$resdeletelines = 1;
-			foreach($invoice->lines as $line){
+			foreach ($invoice->lines as $line) {
 				$tmpres = $invoice->deleteline($line->id);
 				if ($tmpres < 0) {
 					$resdeletelines = 0;
@@ -591,16 +594,15 @@ if ($action == "delete") {
 				}
 			}
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]};
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
+			$sql .= " SET fk_soc=".$conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]}.", ";
+			$sql .= " datec = '".$db->idate(dol_now())."'";
 			$sql .= " WHERE ref='(PROV-POS".$db->escape($_SESSION["takeposterminal"]."-".$place).")'";
 			$resql1 = $db->query($sql);
 
-			if ($resdeletelines && $resql1)
-            {
+			if ($resdeletelines && $resql1) {
             	$db->commit();
-            }
-            else
-            {
+            } else {
             	$db->rollback();
             }
 
@@ -998,7 +1000,7 @@ function CreditNote() {
 
 
 $( document ).ready(function() {
-	console.log("Set customer info and sales in header");
+	console.log("Set customer info and sales in header placeid=<?php echo $placeid; ?> status=<?php echo $invoice->statut; ?>");
 
     <?php
 	$s = $langs->trans("Customer");
@@ -1009,29 +1011,40 @@ $( document ).ready(function() {
 
     $("#customerandsales").html('');
 
-	$("#customerandsales").append('<a class="valignmiddle tdoverflowmax100 minwidth75" id="customer" onclick="Customer();" title="<?php print dol_escape_js($s); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
+	$("#customerandsales").append('<a class="valignmiddle tdoverflowmax100 minwidth100" id="customer" onclick="Customer();" title="<?php print dol_escape_js($s); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
 
 	<?php
 	$sql = "SELECT rowid, datec, ref FROM ".MAIN_DB_PREFIX."facture";
-	$sql .= " WHERE ref LIKE '(PROV-POS".$_SESSION["takeposterminal"]."-0%'";
+	if (empty($conf->global->TAKEPOS_CAN_EDIT_IF_ALREADY_VALIDATED)) {
+		// By default, only invoices with a ref not already defined can in list of open invoice we can edit.
+		$sql .= " WHERE ref LIKE '(PROV-POS".$db->escape($_SESSION["takeposterminal"])."-0%' AND entity IN (".getEntity('invoice').")";
+	} else {
+		// If TAKEPOS_CAN_EDIT_IF_ALREADY_VALIDATED set, we show also draft invoice that already has a reference defined
+		$sql .= " WHERE pos_source = '".$db->escape($_SESSION["takeposterminal"])."'";
+		$sql .= " AND module_source = 'takepos'";
+		$sql .= " AND entity IN (".getEntity('invoice').")";
+	}
+
 	$sql .= $db->order('datec', 'ASC');
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
 			echo '$("#customerandsales").append(\'';
-			echo '<a class="valignmiddle" onclick="place=\\\'';
+			echo '<a class="valignmiddle" title="'.dol_escape_js($langs->trans("SaleStartedAt", dol_print_date($db->jdate($obj->datec), '%H:%M', 'tzuser'))).'" onclick="place=\\\'';
 			$num_sale = str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $obj->ref));
 			echo $num_sale;
 			if (str_replace("-", "", $num_sale) > $max_sale) $max_sale = str_replace("-", "", $num_sale);
-			echo '\\\';Refresh();">';
+			echo '\\\'; invoiceid=\\\'';
+			echo $obj->rowid;
+			echo '\\\'; Refresh();">';
 			if ($placeid == $obj->rowid) echo "<b>";
-			echo date('H:i', strtotime($obj->datec));
+			echo dol_print_date($db->jdate($obj->datec), '%H:%M', 'tzuser');
 			if ($placeid == $obj->rowid) echo "</b>";
 			echo '</a>\');';
 		}
 		echo '$("#customerandsales").append(\'<a onclick="place=\\\'0-';
 		echo $max_sale + 1;
-		echo '\\\';Refresh();"><span class="fa fa-plus-square" title="'.dol_escape_htmltag($langs->trans("StartAParallelSale")).'"></a>\');';
+		echo '\\\'; invoiceid=0; Refresh();"><span class="fa fa-plus-square" title="'.dol_escape_htmltag($langs->trans("StartAParallelSale")).'"></a>\');';
 	} else {
 		dol_print_error($db);
 	}
@@ -1237,7 +1250,7 @@ if ($placeid > 0)
 
 	if (is_array($invoice->lines) && count($invoice->lines))
 	{
-		print '<!-- Show lines of invoices -->'."\n";
+		print '<!-- invoice.php show lines of invoices -->'."\n";
 		$tmplines = array_reverse($invoice->lines);
 		foreach ($tmplines as $line)
 		{
@@ -1310,7 +1323,9 @@ if ($placeid > 0)
 				}
 			}
 			if (!empty($line->array_options['options_order_notes'])) $htmlforlines .= "<br>(".$line->array_options['options_order_notes'].")";
-			if ($_SESSION["basiclayout"] == 1) $htmlforlines .= '</td><td class="right phonetable"><button type="button" onclick="SetQty(place, '.$line->rowid.', '.($line->qty - 1).');" class="publicphonebutton2 phonered">-</button>&nbsp;&nbsp;<button type="button" onclick="SetQty(place, '.$line->rowid.', '.($line->qty + 1).');" class="publicphonebutton2 phonegreen">+</button>';
+			if ($_SESSION["basiclayout"] == 1) {
+				$htmlforlines .= '</td><td class="right phonetable"><button type="button" onclick="SetQty(place, '.$line->rowid.', '.($line->qty - 1).');" class="publicphonebutton2 phonered">-</button>&nbsp;&nbsp;<button type="button" onclick="SetQty(place, '.$line->rowid.', '.($line->qty + 1).');" class="publicphonebutton2 phonegreen">+</button>';
+			}
 			if ($_SESSION["basiclayout"] != 1)
 			{
 				$moreinfo = '';
@@ -1321,32 +1336,40 @@ if ($placeid > 0)
 				$moreinfo .= '<br>'.$langs->transcountry("TotalLT2", $mysoc->country_code).': '.price($line->total_localtax2);
 				$moreinfo .= '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).': '.price($line->total_ttc);
 				//$moreinfo .= $langs->trans("TotalHT").': '.$line->total_ht;
-				if ($line->date_start || $line->date_end) $htmlforlines .= '<br><div class="clearboth nowraponall">'.get_date_range($line->date_start, $line->date_end, $format).'</div>';
+				if ($line->date_start || $line->date_end) $htmlforlines .= '<br><div class="clearboth nowraponall">'.get_date_range($line->date_start, $line->date_end).'</div>';
 				$htmlforlines .= '</td>';
 				$htmlforlines .= '<td class="right">'.vatrate($line->remise_percent, true).'</td>';
 				$htmlforlines .= '<td class="right">';
 				if (!empty($conf->stock->enabled) && !empty($user->rights->stock->mouvement->lire))
 				{
 					$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
-					$sql = "SELECT e.rowid, e.ref, e.lieu, e.fk_parent, e.statut, ps.reel, ps.rowid as product_stock_id, p.pmp";
-					$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
-					$sql .= " ".MAIN_DB_PREFIX."product_stock as ps";
-					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = ps.fk_product";
-					$sql .= " WHERE ps.reel != 0";
-					$sql .= " AND ps.fk_entrepot = ".$conf->global->$constantforkey;
-					$sql .= " AND e.entity IN (".getEntity('stock').")";
-					$sql .= " AND ps.fk_product = ".$line->fk_product;
-					$resql = $db->query($sql);
-					if ($resql) {
-						$obj = $db->fetch_object($resql);
-						$stock_real = price2num($obj->reel, 'MS');
+					if (!empty($conf->global->$constantforkey) && $line->fk_product > 0) {
+						$sql = "SELECT e.rowid, e.ref, e.lieu, e.fk_parent, e.statut, ps.reel, ps.rowid as product_stock_id, p.pmp";
+						$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
+						$sql .= " ".MAIN_DB_PREFIX."product_stock as ps";
+						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = ps.fk_product";
+						$sql .= " WHERE ps.reel != 0";
+						$sql .= " AND ps.fk_entrepot = ".$conf->global->$constantforkey;
+						$sql .= " AND e.entity IN (".getEntity('stock').")";
+						$sql .= " AND ps.fk_product = ".$line->fk_product;
+						$resql = $db->query($sql);
+						if ($resql) {
+							$obj = $db->fetch_object($resql);
+							$stock_real = price2num($obj->reel, 'MS');
+							$htmlforlines .= $line->qty;
+							if ($line->qty && $line->qty > $stock_real) $htmlforlines .= '<span style="color: var(--amountremaintopaycolor)">';
+							$htmlforlines .= ' <span class="posstocktoolow">('.$langs->trans("Stock").' '.$stock_real.')</span>';
+							if ($line->qty && $line->qty > $stock_real) $htmlforlines .= "</span>";
+						} else {
+							dol_print_error($db);
+						}
+					} else {
 						$htmlforlines .= $line->qty;
-						if ($line->qty && $line->qty > $stock_real) $htmlforlines .= '<span style="color: var(--amountremaintopaycolor)">';
-						$htmlforlines .= ' <span class="posstocktoolow">('.$langs->trans("Stock").' '.$stock_real.')</span>';
-						if ($line->qty && $line->qty > $stock_real) $htmlforlines .= "</span>";
 					}
+				} else {
+					$htmlforlines .= $line->qty;
 				}
-				else $htmlforlines .= $line->qty;
+
 				$htmlforlines .= '</td>';
 				$htmlforlines .= '<td class="right classfortooltip" title="'.$moreinfo.'">';
 				$htmlforlines .= price($line->total_ttc, 1, '', 1, -1, -1, $conf->currency);

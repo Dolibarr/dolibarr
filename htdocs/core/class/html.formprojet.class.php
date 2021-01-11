@@ -608,9 +608,10 @@ class FormProjets
 	 *    @param   int         $showpercent        Show default probability for status
 	 *    @param   string      $morecss            Add more css
 	 * 	  @param   int	       $noadmininfo        0=Add admin info, 1=Disable admin info
+	 *    @param   int		   $addcombojs         1=Add a js combo
 	 *    @return  int|string                      The HTML select list of element or '' if nothing or -1 if KO
 	 */
-	public function selectOpportunityStatus($htmlname, $preselected = '-1', $showempty = 1, $useshortlabel = 0, $showallnone = 0, $showpercent = 0, $morecss = '', $noadmininfo = 0)
+	public function selectOpportunityStatus($htmlname, $preselected = '-1', $showempty = 1, $useshortlabel = 0, $showallnone = 0, $showpercent = 0, $morecss = '', $noadmininfo = 0, $addcombojs = 0)
 	{
 		global $conf, $langs, $user;
 
@@ -656,7 +657,10 @@ class FormProjets
 					$i++;
 				}
 				$sellist .= '</select>';
+
 				if ($user->admin && !$noadmininfo) $sellist .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+
+				if ($addcombojs) $sellist .= ajax_combobox($htmlname);
 			}
 			/*else
 			{

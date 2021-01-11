@@ -27,6 +27,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -300,7 +301,7 @@ if ($action == 'create')
 	print '<td class="titlefieldcreate fieldrequired">';
 	print $langs->trans("Label");
 	print '</td>';
-	print '<td><input type="text" size="34" name="label" class="flat" value="'.dol_escape_htmltag(GETPOST('label', 'alpha')).'" autofocus></td>';
+	print '<td><input type="text" name="label" class="flat minwidth300" value="'.dol_escape_htmltag(GETPOST('label', 'alpha')).'" autofocus></td>';
 	print '</tr>';
 	print '<tr>';
 
@@ -610,14 +611,22 @@ if ($id > 0)
 			print '<td class="right">'.$langs->trans("Amount").'</td>';
 			print '</tr>';
 
+			$paymentsocialcontributiontmp = new PaymentSocialContribution($db);
+
 			if ($num > 0)
 			{
 				while ($i < $num)
 				{
 					$objp = $db->fetch_object($resql);
 
+					$paymentsocialcontributiontmp->id = $objp->rowid;
+					$paymentsocialcontributiontmp->ref = $objp->rowid;
+					$paymentsocialcontributiontmp->datep = $db->jdate($objp->dp);
+
 					print '<tr class="oddeven"><td>';
-					print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"), "payment").' '.$objp->rowid.'</a></td>';
+					print $paymentsocialcontributiontmp->getNomUrl(1);
+					print '</td>';
+
 					print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
 					$labeltype = $langs->trans("PaymentType".$objp->type_code) != ("PaymentType".$objp->type_code) ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
 					print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";

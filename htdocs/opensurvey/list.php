@@ -155,7 +155,7 @@ $help_url = '';
 $title = $langs->trans('OpenSurveyArea');
 
 
-$sql = "SELECT p.id_sondage as rowid, p.fk_user_creat, p.format, p.date_fin, p.status, p.titre as title, p.nom_admin,";
+$sql = "SELECT p.id_sondage as rowid, p.fk_user_creat, p.format, p.date_fin, p.status, p.titre as title, p.nom_admin, p.tms,";
 $sql .= " u.login, u.firstname, u.lastname";
 $sql .= " FROM ".MAIN_DB_PREFIX."opensurvey_sondage as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user u ON u.rowid = p.fk_user_creat";
@@ -301,6 +301,7 @@ print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
 $arraystatus = array('-1'=>'&nbsp;', '0'=>$langs->trans("Draft"), '1'=>$langs->trans("Opened"), '2'=>$langs->trans("Closed"));
 print '<td class="liste_titre" align="center">'.$form->selectarray('search_status', $arraystatus, $search_status).'</td>';
 // Extra fields
@@ -327,6 +328,7 @@ print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "p.format", $param, "", ""
 print_liste_field_titre("Author", $_SERVER["PHP_SELF"], "u.".$fieldtosortuser, $param, "", "", $sortfield, $sortorder);
 print_liste_field_titre("NbOfVoters", $_SERVER["PHP_SELF"], "", $param, "", 'align="right"', $sortfield, $sortorder);
 print_liste_field_titre("ExpireDate", $_SERVER["PHP_SELF"], "p.date_fin", $param, "", 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre("DateLastModification", $_SERVER["PHP_SELF"], "p.tms", $param, "", 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "p.status", $param, "", 'align="center"', $sortfield, $sortorder);
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -406,6 +408,10 @@ while ($i < min($num, $limit))
 
 	print '<td class="center">'.dol_print_date($db->jdate($obj->date_fin), 'day');
 	if ($db->jdate($obj->date_fin) < $now && $obj->status == Opensurveysondage::STATUS_VALIDATED) { print img_warning($langs->trans("Expired")); }
+	print '</td>';
+	if (!$i) $totalarray['nbfield']++;
+
+	print '<td class="center">'.dol_print_date($db->jdate($obj->tms), 'dayhour');
 	print '</td>';
 	if (!$i) $totalarray['nbfield']++;
 

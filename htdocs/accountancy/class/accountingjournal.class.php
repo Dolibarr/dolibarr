@@ -37,7 +37,7 @@ class AccountingJournal extends CommonObject
 	public $table_element = 'accounting_journal';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Fieldname with ID of parent key if this field has a parent
 	 */
 	public $fk_element = '';
 

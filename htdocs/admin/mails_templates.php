@@ -1074,7 +1074,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			print '<td class="center">';
 			if ($context == 'edit' && !empty($obj->{$fieldlist[$field]}) && !in_array($obj->{$fieldlist[$field]}, array_keys($elementList)))
 			{
-				// Current tempalte type is an unknown type, so we must keep it as it is.
+				// Current template type is an unknown type, so we must keep it as it is.
 				print '<input type="hidden" name="type_template" value="'.$obj->{$fieldlist[$field]}.'">';
 				print $obj->{$fieldlist[$field]};
 			} else {

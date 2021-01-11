@@ -35,14 +35,15 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 	exit(-1);
 }
 
-if (!isset($argv[2]) || !$argv[2]) {
-	print "Usage: ".$script_file." inputfile-with-invalid-emails type\n";
+if (!isset($argv[3]) || !$argv[3]) {
+	print "Usage: ".$script_file." inputfile-with-invalid-emails type [test|confirm]\n";
 	print "- inputfile-with-invalid-emails is a file with list of invalid email\n";
 	print "- type can be 'all' or 'thirdparties', 'contacts', 'members', 'users'\n";
 	exit(-1);
 }
 $fileofinvalidemail = $argv[1];
 $type = $argv[2];
+$mode = $argv[3];
 
 require_once $path."../../htdocs/master.inc.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php";
@@ -56,15 +57,15 @@ $error = 0;
  * Main
  */
 
+$user = new User($db);
+
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 
-
-$user = new User($db);
-// for signature, we use user send as parameter
-if (!empty($login))
-	$user->fetch('', $login);
-
+if (!in_array($type, array('thirdparties', 'contacts', 'users', 'members'))) {
+	print "Bad value for parameter type.\n";
+	exit(-1);
+}
 
 $db->begin();
 
@@ -77,6 +78,9 @@ if (!$myfile)
 }
 
 $tmp = 1;
+$counter = 1;
+$numerasedtotal = 0;
+
 while ($tmp != null)
 {
 	$groupofemails = array();
@@ -90,49 +94,82 @@ while ($tmp != null)
 		$groupofemails[$i] = trim($tmp, "\n");
 	}
 
+	// Generate the string tp allow a mass update (with a limit of MAXEMAILS per request).
+	$emailsin = '';
+	foreach ($groupofemails as $email) {
+		$emailsin .= ($emailsin ? ", " : "")."'".$db->escape($email)."'";
+	}
+
 	// For each groupofemail, we update tables to set email field to empty
+	$nbingroup = count($groupofemails);
+
+	print "Process group of ".$nbingroup." emails (".$counter." - ".($counter + $nbingroup - 1)."), type = ".$type."\n";
+
+	$numerased = 0;
 
 	$sql_base = "UPDATE ".MAIN_DB_PREFIX;
-	foreach ($groupofemails as $email)
+
+	if ($type == 'all' || $type == 'users')
 	{
-		if ($type == 'all' || $type == 'thirdparty')
-		{
-			// Loop on each record and update the email to null if email into $groupofemails
-
-			$sql = $sql_base."societe as s SET s.email = NULL WHERE s.email = '".$db->escape($email)."';";
-			$db->query($sql);
+		// Loop on each record and update the email to null if email into $groupofemails
+		$sql = $sql_base."user as u SET u.email = NULL WHERE u.email IN (".$emailsin.");";
+		print "Try to update users, ";
+		$resql = $db->query($sql);
+		if (!$resql) {
+			dol_print_error($db);
 		}
-
-		if ($type == 'all' || $type == 'contact')
-		{
-			// Loop on each record and update the email to null if email into $groupofemails
-
-			$sql = $sql_base."socpeople as s SET s.email = NULL WHERE s.email = '".$db->escape($email)."';";
-			$db->query($sql);
-		}
-
-		if ($type == 'all' || $type == 'user')
-		{
-			// Loop on each record and update the email to null if email into $groupofemails
-
-			$sql = $sql_base."user as u SET u.email = NULL WHERE u.email = '".$db->escape($email)."';";
-			$db->query($sql);
-		}
-
-		if ($type == 'all' || $type == 'member')
-		{
-			// Loop on each record and update the email to null if email into $groupofemails
-
-			$sql = $sql_base."adherent as a SET a.email = NULL WHERE a.email = '".$db->escape($email)."';";
-			$resql = $db->query($sql);
-		}
-		echo $email;
+		$numerased += $db->affected_rows($resql);
 	}
+
+	if ($type == 'all' || $type == 'thirdparties')
+	{
+		// Loop on each record and update the email to null if email into $groupofemails
+		$sql = $sql_base."societe as s SET s.email = NULL WHERE s.email IN (".$emailsin.");";
+		print "Try to update thirdparties, ";
+		$resql = $db->query($sql);
+		if (!$resql) {
+			dol_print_error($db);
+		}
+		$numerased += $db->affected_rows($resql);
+	}
+
+	if ($type == 'all' || $type == 'contacts')
+	{
+		// Loop on each record and update the email to null if email into $groupofemails
+
+		$sql = $sql_base."socpeople as s SET s.email = NULL WHERE s.email IN (".$emailsin.");";
+		print "Try to update contacts, ";
+		$resql = $db->query($sql);
+		if (!$resql) {
+			dol_print_error($db);
+		}
+		$numerased += $db->affected_rows($resql);
+	}
+
+	if ($type == 'all' || $type == 'members')
+	{
+		// Loop on each record and update the email to null if email into $groupofemails
+
+		$sql = $sql_base."adherent as a SET a.email = NULL WHERE a.email IN (".$emailsin.");";
+		print "Try to update members, ";
+		$resql = $db->query($sql);
+		if (!$resql) {
+			dol_print_error($db);
+		}
+		$numerased += $db->affected_rows($resql);
+	}
+
+	$numerasedtotal += $numerased;
+
+	print $numerased." emails cleared.\n";
+	$counter = $counter + $nbingroup;
 }
 
-if (!$error) {
+if (!$error && $mode == 'confirm') {
+	print "Commit - ".$numerasedtotal." operations validated.\n";
 	$db->commit();
 } else {
+	print "Rollback - ".$numerasedtotal." Operations canceled.\n";
 	$db->rollback();
 }
 

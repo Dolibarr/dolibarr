@@ -34,7 +34,7 @@
  * @param string	$url 				Ajax Url to call for request: /path/page.php. Must return a json array ('key'=>id, 'value'=>String shown into input field once selected, 'label'=>String shown into combo list)
  * @param string	$urloption			More parameters on URL request
  * @param int		$minLength			Minimum number of chars to trigger that Ajax search
- * @param int		$autoselect			Automatic selection if just one value
+ * @param int		$autoselect			Automatic selection if just one value (trigger("change") on field is done is search return only 1 result)
  * @param array		$ajaxoptions		Multiple options array
  *                                      - Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
  *                                      - Ex: array('disabled'=> )
@@ -68,6 +68,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 					$("input#search_'.$htmlname.'").keydown(function(e) {
 						if (e.keyCode != 9)		/* If not "Tab" key */
 						{
+							if (e.keyCode == 13) { return false; } /* disable "ENTER" key useful for barcode readers */
 							console.log("Clear id previously selected for field '.$htmlname.'");
 							$("#'.$htmlname.'").val("");
 						}
@@ -134,7 +135,11 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 										}
 										return { label: label, value: item.value, id: item.key, disabled: item.disabled,
 												 update: update, textarea: textarea,
-												 pbq: item.pbq, type: item.type, qty: item.qty, discount: item.discount, pricebasetype: item.pricebasetype, price_ht: item.price_ht, price_ttc: item.price_ttc }
+												 pbq: item.pbq,
+												 type: item.type, qty: item.qty, discount: item.discount,
+												 pricebasetype: item.pricebasetype, price_ht: item.price_ht,
+												 price_ttc: item.price_ttc,
+												 up: item.up, description : item.description}
 									}));
 								}
 								else console.error("Error: Ajax url '.$url.($urloption ? '?'.$urloption : '').' has returned an empty page. Should be an empty json array.");
@@ -147,13 +152,33 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     					    console.log("Selected id = "+ui.item.id+" - If this value is null, it means you select a record with key that is null so selection is not effective");
 
 							//console.log(ui.item);
-							$("#'.$htmlname.'").attr("data-pbq", ui.item.pbq);
-							$("#'.$htmlname.'").attr("data-pbqup", ui.item.price_ht);
-							$("#'.$htmlname.'").attr("data-pbqbase", ui.item.pricebasetype);
-							$("#'.$htmlname.'").attr("data-pbqqty", ui.item.qty);
-							$("#'.$htmlname.'").attr("data-pbqpercent", ui.item.discount);
+							//For supplier price
+							$("#'.$htmlname.'").attr("data-up", ui.item.up);
+							$("#'.$htmlname.'").attr("data-discount", ui.item.discount);
+							$("#'.$htmlname.'").attr("data-qty", ui.item.qty);
+							$("#'.$htmlname.'").attr("data-description", ui.item.description);
 
-    						$("#'.$htmlname.'").val(ui.item.id).trigger("change");	// Select new value
+							//For customer price
+		';
+
+	if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) {
+		$script .= '
+							$("#' . $htmlname . '").attr("data-pbq", ui.item.pbq);
+							$("#' . $htmlname . '").attr("data-pbqup", ui.item.price_ht);
+							$("#' . $htmlname . '").attr("data-pbqbase", ui.item.pricebasetype);
+							$("#' . $htmlname . '").attr("data-pbqqty", ui.item.qty);
+							$("#' . $htmlname . '").attr("data-pbqpercent", ui.item.discount);
+		';
+	} else {
+		$script .= '
+							$("#' . $htmlname . '").attr("data-up", ui.item.price_ht);
+							$("#' . $htmlname . '").attr("data-base", ui.item.pricebasetype);
+							$("#' . $htmlname . '").attr("data-qty", ui.item.qty);
+							$("#' . $htmlname . '").attr("data-discount", ui.item.discount);
+		';
+	}
+	$script .= '
+							$("#'.$htmlname.'").val(ui.item.id).trigger("change");	// Select new value
     						// Disable an element
     						if (options.option_disabled) {
     							console.log("Make action option_disabled on #"+options.option_disabled+" with disabled="+ui.item.disabled)

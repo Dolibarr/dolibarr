@@ -39,6 +39,7 @@ $langs->loadlangs(array('admin', 'exports', 'other', 'users', 'companies', 'proj
 //if (! $user->admin)
 //  accessforbidden();
 
+// Map icons, array duplicated in import.php, was not synchronized, TODO put it somewhere only once
 $entitytoicon = array(
 	'invoice'      => 'bill',
 	'invoice_line' => 'bill',
@@ -53,14 +54,14 @@ $entitytoicon = array(
 	'subscription' => 'payment',
 	'payment'      => 'payment',
 	'tax'          => 'generic',
-	'tax_type'     => 'generic',
-	'stock'        => 'generic',
-	'other'        => 'generic',
+    'tax_type'     => 'generic',
+    'other'        => 'generic',
 	'account'      => 'account',
 	'product'      => 'product',
 	'virtualproduct'=>'product',
 	'subproduct'   => 'product',
 	'product_supplier_ref'      => 'product',
+    'stock'        => 'stock',
 	'warehouse'    => 'stock',
 	'batch'        => 'stock',
 	'stockbatch'   => 'stock',
@@ -78,7 +79,7 @@ $entitytoicon = array(
 	'bomline'      => 'bom'
 );
 
-// Translation code
+// Translation code, array duplicated in import.php, was not synchronized, TODO put it somewhere only once
 $entitytolang = array(
 	'user'         => 'User',
 	'company'      => 'Company',
@@ -428,8 +429,7 @@ if ($step == 1 || !$datatoexport)
 	$hselected = $h;
 	$h++;
 
-	print dol_get_fiche_head($head, $hselected, $langs->trans("NewExport"), -1);
-
+	print dol_get_fiche_head($head, $hselected, '', -1);
 
 	print '<div class="opacitymedium">'.$langs->trans("SelectExportDataSet").'</div><br>';
 
@@ -444,21 +444,23 @@ if ($step == 1 || !$datatoexport)
 
 	if (count($objexport->array_export_module))
 	{
-		$sortedarrayofmodules = dol_sort_array($objexport->array_export_module, 'module_position', 'asc', 0, 0, 1);
-		foreach ($sortedarrayofmodules as $key => $value)
+		asort($objexport->array_export_code_for_sort);
+		//var_dump($objexport->array_export_code_for_sort);
+		//$sortedarrayofmodules = dol_sort_array($objexport->array_export_module, 'module_position', 'asc', 0, 0, 1);
+		foreach ($objexport->array_export_code_for_sort as $key => $value)
 		{
 			print '<tr class="oddeven"><td nospan="nospan">';
 			//print img_object($objexport->array_export_module[$key]->getName(),$export->array_export_module[$key]->picto).' ';
 			print $objexport->array_export_module[$key]->getName();
 			print '</td><td>';
-			$icon = preg_replace('/:.*$/', '', $objexport->array_export_icon[$key]);
+			$entity = preg_replace('/:.*$/', '', $objexport->array_export_icon[$key]);
+			$entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
 			$label = $objexport->array_export_label[$key];
 			//print $value.'-'.$icon.'-'.$label."<br>";
-			print img_object($objexport->array_export_module[$key]->getName(), $icon).' ';
+			print img_object($objexport->array_export_module[$key]->getName(), $entityicon).' ';
 			print $label;
 			print '</td><td class="right">';
-			if ($objexport->array_export_perms[$key])
-			{
+			if ($objexport->array_export_perms[$key]) {
 				print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&module_position='.$objexport->array_export_module[$key]->module_position.'&datatoexport='.$objexport->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"), 'next', 'class="fa-15x"').'</a>';
 			} else {
 				print $langs->trans("NotEnoughPermissions");
@@ -489,7 +491,7 @@ if ($step == 2 && $datatoexport)
 	$hselected = $h;
 	$h++;
 
-	print dol_get_fiche_head($head, $hselected, $langs->trans("NewExport"), -2);
+	print dol_get_fiche_head($head, $hselected, '', -2);
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
@@ -499,19 +501,17 @@ if ($step == 2 && $datatoexport)
 	// Module
 	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
 	print '<td>';
-	//print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_module[0]->picto).' ';
 	print $objexport->array_export_module[0]->getName();
 	print '</td></tr>';
 
-	// Lot de donnees a exporter
-	print '<tr><td>'.$langs->trans("DatasetToExport").'</td>';
-	print '<td>';
-	$icon = preg_replace('/:.*$/', '', $objexport->array_export_icon[0]);
-	$label = $objexport->array_export_label[0];
-	//print $value.'-'.$icon.'-'.$label."<br>";
-	print img_object($objexport->array_export_module[0]->getName(), $icon).' ';
-	print $label;
-	print '</td></tr>';
+    // Lot de donnees a exporter
+    print '<tr><td>'.$langs->trans("DatasetToExport").'</td>';
+    print '<td>';
+    $entity = preg_replace('/:.*$/', '', $objexport->array_export_icon[0]);
+    $entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
+    print img_object($objexport->array_export_module[0]->getName(), $entityicon).' ';
+    print $objexport->array_export_label[0];
+    print '</td></tr>';
 
 	print '</table>';
 	print '</div>';
@@ -687,7 +687,7 @@ if ($step == 3 && $datatoexport)
 	$hselected = $h;
 	$h++;
 
-	print dol_get_fiche_head($head, $hselected, $langs->trans("NewExport"), -2);
+	print dol_get_fiche_head($head, $hselected, '', -2);
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
@@ -703,11 +703,10 @@ if ($step == 3 && $datatoexport)
 	// Lot de donnees a exporter
 	print '<tr><td>'.$langs->trans("DatasetToExport").'</td>';
 	print '<td>';
-	$icon = preg_replace('/:.*$/', '', $objexport->array_export_icon[0]);
-	$label = $objexport->array_export_label[0];
-	//print $value.'-'.$icon.'-'.$label."<br>";
-	print img_object($objexport->array_export_module[0]->getName(), $icon).' ';
-	print $label;
+	$entity = preg_replace('/:.*$/', '', $objexport->array_export_icon[0]);
+	$entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
+	print img_object($objexport->array_export_module[0]->getName(), $entityicon).' ';
+	print $objexport->array_export_label[0];
 	print '</td></tr>';
 
 	// Nbre champs exportes
@@ -875,7 +874,7 @@ if ($step == 4 && $datatoexport)
 	$hselected = $h;
 	$h++;
 
-	print dol_get_fiche_head($head, $hselected, $langs->trans("NewExport"), -2);
+	print dol_get_fiche_head($head, $hselected, '', -2);
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
@@ -888,13 +887,14 @@ if ($step == 4 && $datatoexport)
 	print $objexport->array_export_module[0]->getName();
 	print '</td></tr>';
 
-	// Lot de donnees a exporter
-	print '<tr><td>'.$langs->trans("DatasetToExport").'</td>';
-	print '<td>';
-	$icon = preg_replace('/:.*$/', '', $objexport->array_export_icon[0]);
-	print img_object($objexport->array_export_module[0]->getName(), $icon).' ';
-	print $objexport->array_export_label[0];
-	print '</td></tr>';
+    // Lot de donnees a exporter
+    print '<tr><td>'.$langs->trans("DatasetToExport").'</td>';
+    print '<td>';
+	$entity = preg_replace('/:.*$/', '', $objexport->array_export_icon[0]);
+	$entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
+    print img_object($objexport->array_export_module[0]->getName(), $entityicon).' ';
+    print $objexport->array_export_label[0];
+    print '</td></tr>';
 
 	// List of exported fields
 	print '<tr><td>'.$langs->trans("ExportedFields").'</td>';
@@ -1133,7 +1133,7 @@ if ($step == 5 && $datatoexport)
 	$hselected = $h;
 	$h++;
 
-	print dol_get_fiche_head($head, $hselected, $langs->trans("NewExport"), -2);
+	print dol_get_fiche_head($head, $hselected, '', -2);
 
 	/*
      * Confirmation suppression fichier
@@ -1155,13 +1155,14 @@ if ($step == 5 && $datatoexport)
 	print $objexport->array_export_module[0]->getName();
 	print '</td></tr>';
 
-	// Dataset to export
-	print '<tr><td>'.$langs->trans("DatasetToExport").'</td>';
-	print '<td>';
-	$icon = preg_replace('/:.*$/', '', $objexport->array_export_icon[0]);
-	print img_object($objexport->array_export_module[0]->getName(), $icon).' ';
-	print $objexport->array_export_label[0];
-	print '</td></tr>';
+    // Dataset to export
+    print '<tr><td>'.$langs->trans("DatasetToExport").'</td>';
+    print '<td>';
+    $entity = preg_replace('/:.*$/', '', $objexport->array_export_icon[0]);
+    $entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
+    print img_object($objexport->array_export_module[0]->getName(), $entityicon).' ';
+    print $objexport->array_export_label[0];
+    print '</td></tr>';
 
 	// List of exported fields
 	print '<tr><td>'.$langs->trans("ExportedFields").'</td>';

@@ -122,20 +122,14 @@ class modSociete extends DolibarrModules
 		$r++;
 
 		// Boxes
-		$this->boxes = array();
-		$r = 0;
-		$this->boxes[$r][1] = "box_clients.php";
-		$r++;
-		$this->boxes[$r][1] = "box_prospect.php";
-		$r++;
-		$this->boxes[$r][1] = "box_contacts.php";
-		$r++;
-		$this->boxes[$r][1] = "box_activity.php";
-		$this->boxes[$r][2] = '(WarningUsingThisBoxSlowDown)';
-		$r++;
-		$this->boxes[$r][1] = "box_goodcustomers.php";
-		$this->boxes[$r][2] = '(WarningUsingThisBoxSlowDown)';
-		$r++;
+		$this->boxes = array(
+			0=>array('file'=>'box_clients.php', 'enabledbydefaulton'=>'Home'),
+			1=>array('file'=>'box_prospect.php', 'enabledbydefaulton'=>'Home'),
+			2=>array('file'=>'box_contacts.php', 'enabledbydefaulton'=>'Home'),
+			3=>array('file'=>'box_activity.php', 'enabledbydefaulton'=>'Home', 'note'=>'(WarningUsingThisBoxSlowDown)'),
+			4=>array('file'=>'box_goodcustomers.php', 'enabledbydefaulton'=>'Home', 'note'=>'(WarningUsingThisBoxSlowDown)'),
+		);
+
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'societe';
@@ -496,7 +490,7 @@ class modSociete extends DolibarrModules
 				'classfile' => '/core/class/cstate.class.php',
 				'class' => 'Cstate',
 				'method' => 'fetch',
-				'dict' => 'DictionaryState'
+				'dict' => 'DictionaryStateCode'
 			),
 			's.fk_pays' => array(
 				'rule' => 'fetchidfromcodeid',
@@ -676,7 +670,7 @@ class modSociete extends DolibarrModules
 				'classfile' => '/core/class/cstate.class.php',
 				'class' => 'Cstate',
 				'method' => 'fetch',
-				'dict' => 'DictionaryState'
+				'dict' => 'DictionaryStateCode'
 			),
 			's.fk_pays' => array(
 				'rule' => 'fetchidfromcodeid',

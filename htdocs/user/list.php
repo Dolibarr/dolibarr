@@ -36,7 +36,7 @@ if (!$user->rights->user->user->lire && !$user->admin) {
 }
 
 // Load translation files required by page
-$langs->loadLangs(array('users', 'companies', 'hrm'));
+$langs->loadLangs(array('users', 'companies', 'hrm', 'salaries'));
 
 $action     = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
@@ -109,45 +109,32 @@ if (!empty($conf->api->enabled))
 
 // Definition of fields for list
 $arrayfields = array(
-	'u.login'=>array('label'=>$langs->trans("Login"), 'checked'=>1),
-	'u.lastname'=>array('label'=>$langs->trans("Lastname"), 'checked'=>1),
-	'u.firstname'=>array('label'=>$langs->trans("Firstname"), 'checked'=>1),
-	'u.gender'=>array('label'=>$langs->trans("Gender"), 'checked'=>0),
-	'u.employee'=>array('label'=>$langs->trans("Employee"), 'checked'=>($mode == 'employee' ? 1 : 0)),
-	'u.accountancy_code'=>array('label'=>$langs->trans("AccountancyCode"), 'checked'=>0),
-	'u.email'=>array('label'=>$langs->trans("EMail"), 'checked'=>1),
-	'u.api_key'=>array('label'=>$langs->trans("ApiKey"), 'checked'=>0, "enabled"=>($conf->api->enabled && $user->admin)),
-	'u.fk_soc'=>array('label'=>$langs->trans("Company"), 'checked'=>1),
-	'u.entity'=>array('label'=>$langs->trans("Entity"), 'checked'=>1, 'enabled'=>(!empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))),
-	'u.fk_user'=>array('label'=>$langs->trans("HierarchicalResponsible"), 'checked'=>1),
-	'u.datelastlogin'=>array('label'=>$langs->trans("LastConnexion"), 'checked'=>1, 'position'=>100),
-	'u.datepreviouslogin'=>array('label'=>$langs->trans("PreviousConnexion"), 'checked'=>0, 'position'=>110),
-	'u.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-	'u.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
-	'u.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
+	'u.login'=>array('label'=>"Login", 'checked'=>1, 'position'=>10),
+    'u.lastname'=>array('label'=>"Lastname", 'checked'=>1, 'position'=>15),
+    'u.firstname'=>array('label'=>"Firstname", 'checked'=>1, 'position'=>20),
+    'u.entity'=>array('label'=>"Entity", 'checked'=>1, 'position'=>50, 'enabled'=>(!empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))),
+    'u.gender'=>array('label'=>"Gender", 'checked'=>0, 'position'=>22),
+    'u.employee'=>array('label'=>"Employee", 'checked'=>($mode == 'employee' ? 1 : 0), 'position'=>25),
+    'u.fk_user'=>array('label'=>"HierarchicalResponsible", 'checked'=>1, 'position'=>27),
+    'u.accountancy_code'=>array('label'=>"AccountancyCode", 'checked'=>0, 'position'=>30),
+    'u.email'=>array('label'=>"EMail", 'checked'=>1, 'position'=>35),
+    'u.api_key'=>array('label'=>"ApiKey", 'checked'=>0, 'position'=>40, "enabled"=>($conf->api->enabled && $user->admin)),
+    'u.fk_soc'=>array('label'=>"Company", 'checked'=>($contextpage == 'employeelist' ? 0 : 1), 'position'=>45),
+    'u.salary'=>array('label'=>"Salary", 'checked'=>1, 'position'=>80, 'enabled'=>($conf->salaries->enabled && !empty($user->rights->salaries->readall))),
+    'u.datelastlogin'=>array('label'=>"LastConnexion", 'checked'=>1, 'position'=>100),
+	'u.datepreviouslogin'=>array('label'=>"PreviousConnexion", 'checked'=>0, 'position'=>110),
+	'u.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
+	'u.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
+	'u.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key])) {
-			$arrayfields["ef.".$key] = array(
-				'label'=>$extrafields->attributes[$object->table_element]['label'][$key],
-				'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1),
-				'position'=>$extrafields->attributes[$object->table_element]['pos'][$key],
-				'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]),
-				'langfile'=>$extrafields->attributes[$object->table_element]['langfile'][$key],
-				'help'=>$extrafields->attributes[$object->table_element]['help'][$key]
-			);
-		}
-	}
-}
+include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Init search fields
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_user = GETPOST('search_user', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
 $search_lastname = GETPOST('search_lastname', 'alpha');
@@ -182,6 +169,8 @@ if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 }
 
 $error = 0;
+
+$childids = $user->getAllChildIds(1);
 
 
 /*
@@ -308,7 +297,7 @@ if ($contextpage == 'employeelist' && $search_employee == 1) {
 $user2 = new User($db);
 
 $sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login, u.email, u.api_key, u.accountancy_code, u.gender, u.employee, u.photo,";
-$sql .= " u.datelastlogin, u.datepreviouslogin,";
+$sql .= " u.salary, u.datelastlogin, u.datepreviouslogin,";
 $sql .= " u.ldap_sid, u.statut, u.entity,";
 $sql .= " u.tms as date_update, u.datec as date_creation,";
 $sql .= " u2.rowid as id2, u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2, u2.admin as admin2, u2.fk_soc as fk_soc2, u2.email as email2, u2.gender as gender2, u2.photo as photo2, u2.entity as entity2, u2.statut as statut2,";
@@ -356,6 +345,7 @@ if ($catid > 0)     $sql .= " AND cu.fk_categorie = ".((int) $catid);
 if ($catid == -2)   $sql .= " AND cu.fk_categorie IS NULL";
 if ($search_categ > 0)   $sql .= " AND cu.fk_categorie = ".$db->escape($search_categ);
 if ($search_categ == -2) $sql .= " AND cu.fk_categorie IS NULL";
+if ($mode == 'employee' && empty($user->rights->salaries->readall)) $sql .= " AND u.fk_user IN (".join(',', $childids).")";
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
@@ -432,9 +422,10 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 $arrayofmassactions = array();
 if ($permissiontoadd) $arrayofmassactions['disable'] = $langs->trans("DisableUser");
 if ($permissiontoadd) $arrayofmassactions['reactivate'] = $langs->trans("Reactivate");
+if ($permissiontoadd) $arrayofmassactions['preaffecttag'] = '<span class="fa fa-tag paddingrightonly"></span>'.$langs->trans("AffectTag");
 //if ($permissiontodelete) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) $arrayofmassactions = array();
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -541,6 +532,13 @@ if (!empty($arrayfields['u.employee']['checked']))
 	print $form->selectyesno('search_employee', $search_employee, 1, false, 1);
 	print '</td>';
 }
+// Supervisor
+if (!empty($arrayfields['u.fk_user']['checked']))
+{
+    print '<td class="liste_titre">';
+    print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, array(), 0, '', 0, 0, 0, 0, '', 0, '', 'maxwidth200');
+    print '</td>';
+}
 if (!empty($arrayfields['u.accountancy_code']['checked']))
 {
 	print '<td class="liste_titre"><input type="text" name="search_accountancy_code" class="maxwidth50" value="'.$search_accountancy_code.'"></td>';
@@ -561,12 +559,9 @@ if (!empty($arrayfields['u.entity']['checked']))
 {
 	print '<td class="liste_titre"></td>';
 }
-// Supervisor
-if (!empty($arrayfields['u.fk_user']['checked']))
+if (!empty($arrayfields['u.salary']['checked']))
 {
-	print '<td class="liste_titre">';
-	print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, array(), 0, '', 0, 0, 0, 0, '', 0, '', 'maxwidth200');
-	print '</td>';
+    print '<td class="liste_titre"></td>';
 }
 if (!empty($arrayfields['u.datelastlogin']['checked']))
 {
@@ -615,12 +610,13 @@ if (!empty($arrayfields['u.lastname']['checked']))       print_liste_field_titre
 if (!empty($arrayfields['u.firstname']['checked']))      print_liste_field_titre("FirstName", $_SERVER['PHP_SELF'], "u.firstname", $param, "", "", $sortfield, $sortorder);
 if (!empty($arrayfields['u.gender']['checked']))         print_liste_field_titre("Gender", $_SERVER['PHP_SELF'], "u.gender", $param, "", "", $sortfield, $sortorder);
 if (!empty($arrayfields['u.employee']['checked']))       print_liste_field_titre("Employee", $_SERVER['PHP_SELF'], "u.employee", $param, "", "", $sortfield, $sortorder);
+if (!empty($arrayfields['u.fk_user']['checked']))        print_liste_field_titre("HierarchicalResponsible", $_SERVER['PHP_SELF'], "u.fk_user", $param, "", "", $sortfield, $sortorder);
 if (!empty($arrayfields['u.accountancy_code']['checked'])) print_liste_field_titre("AccountancyCode", $_SERVER['PHP_SELF'], "u.accountancy_code", $param, "", "", $sortfield, $sortorder);
 if (!empty($arrayfields['u.email']['checked']))          print_liste_field_titre("EMail", $_SERVER['PHP_SELF'], "u.email", $param, "", "", $sortfield, $sortorder);
 if (!empty($arrayfields['u.api_key']['checked']))        print_liste_field_titre("ApiKey", $_SERVER['PHP_SELF'], "u.api_key", $param, "", "", $sortfield, $sortorder);
 if (!empty($arrayfields['u.fk_soc']['checked']))         print_liste_field_titre("Company", $_SERVER['PHP_SELF'], "u.fk_soc", $param, "", "", $sortfield, $sortorder);
 if (!empty($arrayfields['u.entity']['checked']))         print_liste_field_titre("Entity", $_SERVER['PHP_SELF'], "u.entity", $param, "", "", $sortfield, $sortorder);
-if (!empty($arrayfields['u.fk_user']['checked']))        print_liste_field_titre("HierarchicalResponsible", $_SERVER['PHP_SELF'], "u.fk_user", $param, "", "", $sortfield, $sortorder);
+if (!empty($arrayfields['u.salary']['checked']))         print_liste_field_titre("Salary", $_SERVER['PHP_SELF'], "u.salary", $param, "", "", $sortfield, $sortorder, 'right ');
 if (!empty($arrayfields['u.datelastlogin']['checked']))  print_liste_field_titre("LastConnexion", $_SERVER['PHP_SELF'], "u.datelastlogin", $param, "", '', $sortfield, $sortorder, 'center ');
 if (!empty($arrayfields['u.datepreviouslogin']['checked'])) print_liste_field_titre("PreviousConnexion", $_SERVER['PHP_SELF'], "u.datepreviouslogin", $param, "", '', $sortfield, $sortorder, 'center ');
 // Extra fields
@@ -652,7 +648,7 @@ if (is_array($extrafields->attributes[$object->table_element]['computed']) && co
 // --------------------------------------------------------------------
 $i = 0;
 $totalarray = array();
-$arrayofselected = array();
+$arrayofselected = is_array($toselect) ? $toselect : array();
 while ($i < ($limit ? min($num, $limit) : $num))
 {
 	$obj = $db->fetch_object($resql);
@@ -713,6 +709,37 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		print '<td>'.yn($obj->employee).'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
+
+	// Supervisor
+	if (!empty($arrayfields['u.fk_user']['checked']))
+	{
+	    // Resp
+	    print '<td class="nowrap">';
+	    if ($obj->login2)
+	    {
+	        $user2->id = $obj->id2;
+	        $user2->login = $obj->login2;
+	        $user2->lastname = $obj->lastname2;
+	        $user2->firstname = $obj->firstname2;
+	        $user2->gender = $obj->gender2;
+	        $user2->photo = $obj->photo2;
+	        $user2->admin = $obj->admin2;
+	        $user2->email = $obj->email2;
+	        $user2->socid = $obj->fk_soc2;
+	        $user2->statut = $obj->statut2;
+	        print $user2->getNomUrl(-1, '', 0, 0, 24, 0, '', '', 1);
+	        if (!empty($conf->multicompany->enabled) && $obj->admin2 && !$obj->entity2)
+	        {
+	            print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
+	        } elseif ($obj->admin2)
+	        {
+	            print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
+	        }
+	    }
+	    print '</td>';
+	    if (!$i) $totalarray['nbfield']++;
+	}
+
 	if (!empty($arrayfields['u.accountancy_code']['checked']))
 	{
 		print '<td>'.$obj->accountancy_code.'</td>';
@@ -763,34 +790,12 @@ while ($i < ($limit ? min($num, $limit) : $num))
 			if (!$i) $totalarray['nbfield']++;
 		}
 	}
-	// Supervisor
-	if (!empty($arrayfields['u.fk_user']['checked']))
+
+	// Salary
+	if (!empty($arrayfields['u.salary']['checked']))
 	{
-		// Resp
-		print '<td class="nowrap">';
-		if ($obj->login2)
-		{
-			$user2->id = $obj->id2;
-			$user2->login = $obj->login2;
-			$user2->lastname = $obj->lastname2;
-			$user2->firstname = $obj->firstname2;
-			$user2->gender = $obj->gender2;
-			$user2->photo = $obj->photo2;
-			$user2->admin = $obj->admin2;
-			$user2->email = $obj->email2;
-			$user2->socid = $obj->fk_soc2;
-			$user2->statut = $obj->statut2;
-			print $user2->getNomUrl(-1, '', 0, 0, 24, 0, '', '', 1);
-			if (!empty($conf->multicompany->enabled) && $obj->admin2 && !$obj->entity2)
-			{
-			  	print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
-			} elseif ($obj->admin2)
-			{
-				print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
-			}
-		}
-		print '</td>';
-		if (!$i) $totalarray['nbfield']++;
+	    print '<td class="nowraponall right">'.($obj->salary ? price($obj->salary) : '').'</td>';
+	    if (!$i) $totalarray['nbfield']++;
 	}
 
 	// Date last login

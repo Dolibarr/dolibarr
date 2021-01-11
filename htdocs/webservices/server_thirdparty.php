@@ -130,9 +130,9 @@ $extrafield_array = null;
 if (is_array($extrafields) && count($extrafields) > 0) {
 	$extrafield_array = array();
 }
-if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 {
-	foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 	{
 		//$value=$object->array_options["options_".$key];
 		$type = $extrafields->attributes[$elementtype]['type'][$key];
@@ -290,7 +290,7 @@ $server->register(
  */
 function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	dol_syslog("Function: getThirdParty login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
@@ -329,8 +329,9 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 						'supplier_code' => $thirdparty->code_fournisseur,
 						'customer_code_accountancy' => $thirdparty->code_compta,
 						'supplier_code_accountancy' => $thirdparty->code_compta_fournisseur,
-						'fk_user_author' => $thirdparty->fk_user_author,
+						'user_creation' => $thirdparty->user_creation,
 						'date_creation' => dol_print_date($thirdparty->date_creation, 'dayhourrfc'),
+						'user_modification' => $thirdparty->user_modification,
 						'date_modification' => dol_print_date($thirdparty->date_modification, 'dayhourrfc'),
 						'address' => $thirdparty->address,
 						'zip' => $thirdparty->zip,
@@ -365,11 +366,13 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 				//Get extrafield values
 				$thirdparty->fetch_optionals();
 
-				if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+				if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 				{
-					foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+					foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 					{
-						$thirdparty_result_fields = array_merge($thirdparty_result_fields, array('options_'.$key => $thirdparty->array_options['options_'.$key]));
+						if (isset($thirdparty->array_options['options_'.$key])) {
+							$thirdparty_result_fields = array_merge($thirdparty_result_fields, array('options_'.$key => $thirdparty->array_options['options_'.$key]));
+						}
 					}
 				}
 
@@ -408,7 +411,7 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
  */
 function createThirdParty($authentication, $thirdparty)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	$now = dol_now();
 
@@ -468,12 +471,12 @@ function createThirdParty($authentication, $thirdparty)
 
 		$newobject->capital = $thirdparty['capital'];
 
-		$newobject->barcode = $thirdparty['barcode'];
-		$newobject->tva_assuj = $thirdparty['vat_used'];
-		$newobject->tva_intra = $thirdparty['vat_number'];
+		$newobject->barcode = empty($thirdparty['barcode']) ? '' : $thirdparty['barcode'];
+		$newobject->tva_assuj = empty($thirdparty['vat_used']) ? 0 : $thirdparty['vat_used'];
+		$newobject->tva_intra = empty($thirdparty['vat_number']) ? '' : $thirdparty['vat_number'];
 
-		$newobject->canvas = $thirdparty['canvas'];
-		$newobject->particulier = $thirdparty['individual'];
+		$newobject->canvas = empty($thirdparty['canvas']) ? '' : $thirdparty['canvas'];
+		$newobject->particulier = empty($thirdparty['individual']) ? 0 : $thirdparty['individual'];
 
 		$elementtype = 'societe';
 
@@ -481,12 +484,14 @@ function createThirdParty($authentication, $thirdparty)
 		// fetch optionals attributes and labels
 		$extrafields = new ExtraFields($db);
 		$extrafields->fetch_name_optionals_label($elementtype, true);
-		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+		if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
-			foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+			foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 			{
 				$key = 'options_'.$key;
-				$newobject->array_options[$key] = $thirdparty[$key];
+				if (isset($thirdparty[$key])) {
+					$newobject->array_options[$key] = $thirdparty[$key];
+				}
 			}
 		}
 
@@ -508,7 +513,7 @@ function createThirdParty($authentication, $thirdparty)
 			$db->commit();
 
 			// Patch to add capability to associate (one) sale representative
-			if ($thirdparty['commid'] && $thirdparty['commid'] > 0)
+			if (!empty($thirdparty['commid']) && $thirdparty['commid'] > 0)
 				$newobject->add_commercial($fuser, $thirdparty["commid"]);
 
 			$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id, 'ref'=>$newobject->ref);
@@ -538,7 +543,7 @@ function createThirdParty($authentication, $thirdparty)
  */
 function updateThirdParty($authentication, $thirdparty)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	$now = dol_now();
 
@@ -615,12 +620,14 @@ function updateThirdParty($authentication, $thirdparty)
 			// fetch optionals attributes and labels
 			$extrafields = new ExtraFields($db);
 			$extrafields->fetch_name_optionals_label($elementtype, true);
-			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+			if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 			{
-				foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+				foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 				{
 					$key = 'options_'.$key;
-					$object->array_options[$key] = $thirdparty[$key];
+					if (isset($thirdparty[$key])) {
+						$object->array_options[$key] = $thirdparty[$key];
+					}
 				}
 			}
 
@@ -672,9 +679,7 @@ function updateThirdParty($authentication, $thirdparty)
  */
 function getListOfThirdParties($authentication, $filterthirdparty)
 {
-	global $db, $conf, $langs;
-
-	$now = dol_now();
+	global $db, $conf;
 
 	dol_syslog("Function: getListOfThirdParties login=".$authentication['login']);
 
@@ -723,11 +728,13 @@ function getListOfThirdParties($authentication, $filterthirdparty)
 				$extrafieldsOptions = array();
 				$obj = $db->fetch_object($resql);
 
-				if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+				if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 				{
-					foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+					foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 					{
-						$extrafieldsOptions['options_'.$key] = $obj->{$key};
+						if (isset($obj->{$key})) {
+							$extrafieldsOptions['options_'.$key] = $obj->{$key};
+						}
 					}
 				}
 
@@ -782,7 +789,7 @@ function getListOfThirdParties($authentication, $filterthirdparty)
  */
 function deleteThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	dol_syslog("Function: deleteThirdParty login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 

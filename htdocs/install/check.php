@@ -77,7 +77,7 @@ if (!empty($useragent))
 
 // Check PHP version
 $arrayphpminversionerror = array(5, 5, 0);
-$arrayphpminversionwarning = array(5, 5, 0);
+$arrayphpminversionwarning = array(5, 6, 0);
 if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0)        // Minimum to use (error if lower)
 {
 	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
@@ -105,7 +105,7 @@ if (!isset($_GET["testget"]) && !isset($_POST["testpost"]))	// We must keep $_GE
 }
 
 
-// Check if sessions enabled
+// Check if session_id is enabled
 if (!function_exists("session_id"))
 {
 	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportSessions")."<br>\n";
@@ -115,7 +115,7 @@ if (!function_exists("session_id"))
 }
 
 
-// Check if GD supported (we need GD for image conversion)
+// Check if GD is supported (we need GD for image conversion)
 if (!function_exists("imagecreate"))
 {
 	$langs->load("errors");
@@ -126,7 +126,7 @@ if (!function_exists("imagecreate"))
 }
 
 
-// Check if Curl supported
+// Check if Curl is supported
 if (!function_exists("curl_init"))
 {
 	$langs->load("errors");
@@ -145,7 +145,7 @@ if (!function_exists("easter_date"))
 }
 
 
-// Check if UTF8 supported
+// Check if UTF8 is supported
 if (!function_exists("utf8_encode"))
 {
 	$langs->load("errors");
@@ -201,7 +201,7 @@ if ($memmaxorig != '')
 }
 
 
-// If config file present and filled
+// If that config file is present and filled
 clearstatcache();
 if (is_readable($conffile) && filesize($conffile) > 8)
 {
@@ -439,7 +439,8 @@ if (!file_exists($conffile))
 								array('from'=>'9.0.0', 'to'=>'10.0.0'),
 								array('from'=>'10.0.0', 'to'=>'11.0.0'),
 								array('from'=>'11.0.0', 'to'=>'12.0.0'),
-								array('from'=>'12.0.0', 'to'=>'13.0.0')
+								array('from'=>'12.0.0', 'to'=>'13.0.0'),
+								array('from'=>'13.0.0', 'to'=>'14.0.0')
 		);
 
 		$count = 0;

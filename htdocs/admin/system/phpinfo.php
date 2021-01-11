@@ -51,15 +51,39 @@ if (isset($title))
 
 // Check PHP setup is OK
 $maxphp = @ini_get('upload_max_filesize'); // In unknown
-if (preg_match('/k$/i', $maxphp)) $maxphp = $maxphp * 1;
-if (preg_match('/m$/i', $maxphp)) $maxphp = $maxphp * 1024;
-if (preg_match('/g$/i', $maxphp)) $maxphp = $maxphp * 1024 * 1024;
-if (preg_match('/t$/i', $maxphp)) $maxphp = $maxphp * 1024 * 1024 * 1024;
+if (preg_match('/k$/i', $maxphp)) {
+    $maxphp = preg_replace('/k$/i', '', $maxphp);
+    $maxphp = $maxphp * 1;
+}
+if (preg_match('/m$/i', $maxphp)) {
+    $maxphp = preg_replace('/m$/i', '', $maxphp);
+    $maxphp = $maxphp * 1024;
+}
+if (preg_match('/g$/i', $maxphp)) {
+    $maxphp = preg_replace('/g$/i', '', $maxphp);
+    $maxphp = $maxphp * 1024 * 1024;
+}
+if (preg_match('/t$/i', $maxphp)) {
+    $maxphp = preg_replace('/t$/i', '', $maxphp);
+    $maxphp = $maxphp * 1024 * 1024 * 1024;
+}
 $maxphp2 = @ini_get('post_max_size'); // In unknown
-if (preg_match('/k$/i', $maxphp2)) $maxphp2 = $maxphp2 * 1;
-if (preg_match('/m$/i', $maxphp2)) $maxphp2 = $maxphp2 * 1024;
-if (preg_match('/g$/i', $maxphp2)) $maxphp2 = $maxphp2 * 1024 * 1024;
-if (preg_match('/t$/i', $maxphp2)) $maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
+if (preg_match('/k$/i', $maxphp2)) {
+    $maxphp2 = preg_replace('/k$/i', '', $maxphp2);
+    $maxphp2 = $maxphp2 * 1;
+}
+if (preg_match('/m$/i', $maxphp2)) {
+    $maxphp2 = preg_replace('/m$/i', '', $maxphp2);
+    $maxphp2 = $maxphp2 * 1024;
+}
+if (preg_match('/g$/i', $maxphp2)) {
+    $maxphp2 = preg_replace('/g$/i', '', $maxphp2);
+    $maxphp2 = $maxphp2 * 1024 * 1024;
+}
+if (preg_match('/t$/i', $maxphp2)) {
+    $maxphp2 = preg_replace('/t$/i', '', $maxphp2);
+    $maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
+}
 if ($maxphp > 0 && $maxphp2 > 0 && $maxphp > $maxphp2)
 {
 	$langs->load("errors");
@@ -190,6 +214,16 @@ if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@loc
 	print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
 	print "</tr>";
 }
+
+$functions = ["imap_open"];
+$name      = "IMAP";
+
+print "<tr>";
+print "<td>".$name."</td>";
+print getTableColumn($name, $loadedExtensions);
+print getTableColumnFunction($functions);
+print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
+print "</tr>";
 
 $functions = array();
 $name      = "xDebug";
@@ -346,7 +380,7 @@ function getResultColumn($name, array $activated, array $loaded, array $function
 	}
 
 	$html = "<td>";
-	$html .= $result ? $langs->trans("PHPSupport", $name) : $langs->trans("ErrorPHPDoesNotSupport".$name);
+	$html .= $result ? $langs->trans("PHPSupport", $name) : $langs->trans("ErrorPHPDoesNotSupport", $name);
 	$html .= "</td>";
 
 	return $html;

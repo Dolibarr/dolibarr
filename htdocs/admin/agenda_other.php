@@ -292,7 +292,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 						print $form->textwithpicto('', $htmltooltip, 1, 0);
 						print '</td>';
 						print '<td class="center">';
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"), 'order').'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 						print '</td>';
 
 						print "</tr>\n";

@@ -20,7 +20,7 @@
 
 
 /**
- *      \file       htdocs/admin/expensereport_ik.php
+ *      \file       htdocs/admin/expensereport_rules.php
  *		\ingroup    expensereport
  *		\brief      Page to display expense tax ik
  */
@@ -34,7 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_rule.class.ph
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "trips", "errors", "dict"));
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 //Init error
 $error = false;
@@ -55,15 +57,15 @@ $amount = GETPOST('amount');
 $restrictive = GETPOST('restrictive');
 
 $object = new ExpenseReportRule($db);
-if (!empty($id))
-{
+if (!empty($id)) {
 	$result = $object->fetch($id);
-	if ($result < 0) dol_print_error('', $object->error, $object->errors);
+	if ($result < 0) {
+		dol_print_error('', $object->error, $object->errors);
+	}
 }
 
 // TODO do action
-if ($action == 'save')
-{
+if ($action == 'save') {
 	$error = 0;
 
 	// check parameters
@@ -92,8 +94,7 @@ if ($action == 'save')
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ExpenseReportLimitAmount")), null, 'errors');
 	}
 
-	if (empty($error))
-	{
+	if (empty($error)) {
 		$object->setValues($_POST);
 
 		if ($apply_to == 'U') {
@@ -116,18 +117,22 @@ if ($action == 'save')
 		$object->entity = $conf->entity;
 
 		$res = $object->create($user);
-		if ($res > 0) setEventMessages($langs->trans('ExpenseReportRuleSave'), null);
-		else dol_print_error($object->db);
+		if ($res > 0) {
+			setEventMessages($langs->trans('ExpenseReportRuleSave'), null);
+		} else {
+			dol_print_error($object->db);
+		}
 
 		header('Location: '.$_SERVER['PHP_SELF']);
 		exit;
 	}
-} elseif ($action == 'delete')
-{
+} elseif ($action == 'delete') {
 	// TODO add confirm
 	$res = $object->delete($user);
 
-	if ($res < 0) dol_print_error($object->db);
+	if ($res < 0) {
+		dol_print_error($object->db);
+	}
 
 	header('Location: '.$_SERVER['PHP_SELF']);
 	exit;
@@ -135,8 +140,17 @@ if ($action == 'save')
 
 $rules = ExpenseReportRule::getAllRule();
 
-$tab_apply = array('A' => $langs->trans('All'), 'G' => $langs->trans('Group'), 'U' => $langs->trans('User'));
-$tab_rules_type = array('EX_DAY' => $langs->trans('Day'), 'EX_MON' => $langs->trans('Month'), 'EX_YEA' => $langs->trans('Year'), 'EX_EXP' => $langs->trans('OnExpense'));
+$tab_apply = array(
+	'A' => $langs->trans('All'),
+	'G' => $langs->trans('Group'),
+	'U' => $langs->trans('User')
+);
+$tab_rules_type = array(
+	'EX_DAY' => $langs->trans('Day'),
+	'EX_MON' => $langs->trans('Month'),
+	'EX_YEA' => $langs->trans('Year'),
+	'EX_EXP' => $langs->trans('OnExpense')
+);
 
 
 /*
@@ -156,8 +170,7 @@ print dol_get_fiche_head($head, 'expenserules', $langs->trans("ExpenseReportsRul
 echo '<span class="opacitymedium">'.$langs->trans('ExpenseReportRulesDesc').'</span>';
 print '<br><br>';
 
-if ($action != 'edit')
-{
+if ($action != 'edit') {
 	echo '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
 	echo '<input type="hidden" name="token" value="'.newToken().'" />';
 	echo '<input type="hidden" name="action" value="save" />';
@@ -199,8 +212,7 @@ if ($action != 'edit')
 echo '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
 echo '<input type="hidden" name="token" value="'.newToken().'" />';
 
-if ($action == 'edit')
-{
+if ($action == 'edit') {
 	echo '<input type="hidden" name="id" value="'.$object->id.'" />';
 	echo '<input type="hidden" name="action" value="save" />';
 }
@@ -218,43 +230,47 @@ echo '<th>'.$langs->trans('ExpenseReportRestrictive').'</th>';
 echo '<th>&nbsp;</th>';
 echo '</tr>';
 
-foreach ($rules as $rule)
-{
+foreach ($rules as $rule) {
 	echo '<tr class="oddeven">';
 
 	echo '<td>';
-	if ($action == 'edit' && $object->id == $rule->id)
-	{
+	if ($action == 'edit' && $object->id == $rule->id) {
 		$selected = ($object->is_for_all > 0) ? 'A' : ($object->fk_usergroup > 0 ? 'G' : 'U');
 		echo '<div class="float">'.$form->selectarray('apply_to', $tab_apply, $selected, 0).'</div>';
 		echo '<div id="user" class="float">'.$form->select_dolusers($object->fk_user, 'fk_user').'</div>';
 		echo '<div id="group" class="float">'.$form->select_dolgroups($object->fk_usergroup, 'fk_usergroup').'</div>';
 	} else {
-		if ($rule->is_for_all > 0) echo $tab_apply['A'];
-		elseif ($rule->fk_usergroup > 0) echo $tab_apply['G'].' ('.$rule->getGroupLabel().')';
-		elseif ($rule->fk_user > 0) echo $tab_apply['U'].' ('.$rule->getUserName().')';
-	}
-	echo '</td>';
-
-
-	echo '<td>';
-	if ($action == 'edit' && $object->id == $rule->id)
-	{
-		echo $form->selectExpense($object->fk_c_type_fees, 'fk_c_type_fees', 0, 1, 1);
-	} else {
-		if ($rule->fk_c_type_fees == -1) echo $langs->trans('AllExpenseReport');
-		else {
-			$key = getDictvalue(MAIN_DB_PREFIX.'c_type_fees', 'code', $rule->fk_c_type_fees, false, 'id');
-			if ($key != $langs->trans($key)) echo $langs->trans($key);
-			else echo $langs->trans(getDictvalue(MAIN_DB_PREFIX.'c_type_fees', 'label', $rule->fk_c_type_fees, false, 'id')); // TODO check to return trans of 'code'
+		if ($rule->is_for_all > 0) {
+			echo $tab_apply['A'];
+		} elseif ($rule->fk_usergroup > 0) {
+			echo $tab_apply['G'].' ('.$rule->getGroupLabel().')';
+		} elseif ($rule->fk_user > 0) {
+			echo $tab_apply['U'].' ('.$rule->getUserName().')';
 		}
 	}
 	echo '</td>';
 
 
 	echo '<td>';
-	if ($action == 'edit' && $object->id == $rule->id)
-	{
+	if ($action == 'edit' && $object->id == $rule->id) {
+		echo $form->selectExpense($object->fk_c_type_fees, 'fk_c_type_fees', 0, 1, 1);
+	} else {
+		if ($rule->fk_c_type_fees == -1) {
+			echo $langs->trans('AllExpenseReport');
+		} else {
+			$key = getDictvalue(MAIN_DB_PREFIX.'c_type_fees', 'code', $rule->fk_c_type_fees, false, 'id');
+			if ($key != $langs->trans($key)) {
+				echo $langs->trans($key);
+			} else {
+				echo $langs->trans(getDictvalue(MAIN_DB_PREFIX.'c_type_fees', 'label', $rule->fk_c_type_fees, false, 'id')); // TODO check to return trans of 'code'
+			}
+		}
+	}
+	echo '</td>';
+
+
+	echo '<td>';
+	if ($action == 'edit' && $object->id == $rule->id) {
 		echo $form->selectarray('code_expense_rules_type', $tab_rules_type, $object->code_expense_rules_type, 0);
 	} else {
 		echo $tab_rules_type[$rule->code_expense_rules_type];
@@ -263,8 +279,7 @@ foreach ($rules as $rule)
 
 
 	echo '<td>';
-	if ($action == 'edit' && $object->id == $rule->id)
-	{
+	if ($action == 'edit' && $object->id == $rule->id) {
 		print $form->selectDate(strtotime(date('Y-m-d', $object->dates)), 'start', '', '', 0, '', 1, 0);
 	} else {
 		echo dol_print_date($rule->dates, 'day');
@@ -273,8 +288,7 @@ foreach ($rules as $rule)
 
 
 	echo '<td>';
-	if ($action == 'edit' && $object->id == $rule->id)
-	{
+	if ($action == 'edit' && $object->id == $rule->id) {
 		print $form->selectDate(strtotime(date('Y-m-d', $object->datee)), 'end', '', '', 0, '', 1, 0);
 	} else {
 		echo dol_print_date($rule->datee, 'day');
@@ -283,8 +297,7 @@ foreach ($rules as $rule)
 
 
 	echo '<td>';
-	if ($action == 'edit' && $object->id == $rule->id)
-	{
+	if ($action == 'edit' && $object->id == $rule->id) {
 		echo '<input type="text" value="'.price2num($object->amount).'" name="amount" class="amount" />'.$conf->currency;
 	} else {
 		echo price($rule->amount, 0, $langs, 1, -1, -1, $conf->currency);
@@ -293,8 +306,7 @@ foreach ($rules as $rule)
 
 
 	echo '<td>';
-	if ($action == 'edit' && $object->id == $rule->id)
-	{
+	if ($action == 'edit' && $object->id == $rule->id) {
 		echo $form->selectyesno('restrictive', $object->restrictive, 1);
 	} else {
 		echo yn($rule->restrictive, 1, 1);
@@ -303,8 +315,7 @@ foreach ($rules as $rule)
 
 
 	echo '<td class="center">';
-	if ($object->id != $rule->id)
-	{
+	if ($object->id != $rule->id) {
 		echo '<a class="editfielda paddingright paddingleft" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$rule->id.'">'.img_edit().'</a>&nbsp;';
 		echo '<a class="paddingright paddingleft" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$rule->id.'">'.img_delete().'</a>';
 	} else {

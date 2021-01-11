@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("accountancy"));
+$langs->loadLangs(array("accountancy", "compta"));
 
 $socid = GETPOST('socid', 'int');
 
@@ -85,7 +85,7 @@ $search_mvt_label = GETPOST('search_mvt_label', 'alpha');
 $search_direction = GETPOST('search_direction', 'alpha');
 $search_debit = GETPOST('search_debit', 'alpha');
 $search_credit = GETPOST('search_credit', 'alpha');
-$search_ledger_code = GETPOST('search_ledger_code', 'alpha');
+$search_ledger_code = GETPOST('search_ledger_code', 'array');
 $search_lettering_code = GETPOST('search_lettering_code', 'alpha');
 $search_not_reconciled = GETPOST('search_reconciled_option', 'alpha');
 
@@ -192,7 +192,7 @@ if (empty($reshook))
 		$search_accountancy_aux_code_end = '';
 		$search_mvt_label = '';
 		$search_direction = '';
-		$search_ledger_code = '';
+		$search_ledger_code = array();
 		$search_date_start = '';
 		$search_date_end = '';
 		$search_date_creation_start = '';
@@ -267,7 +267,9 @@ if (empty($reshook))
 	}
 	if (!empty($search_ledger_code)) {
 		$filter['t.code_journal'] = $search_ledger_code;
-		$param .= '&search_ledger_code='.urlencode($search_ledger_code);
+		foreach ($search_ledger_code as $code) {
+			$param .= '&search_ledger_code[]='.urlencode($code);
+		}
 	}
 	if (!empty($search_mvt_num)) {
 		$filter['t.piece_num'] = $search_mvt_num;
@@ -447,6 +449,8 @@ if (count($filter) > 0) {
 			$sqlwhere[] = natural_search($key, $value, 1, 1);
 		} elseif ($key == 't.reconciled_option') {
 			$sqlwhere[] = 't.lettering_code IS NULL';
+		} elseif ($key == 't.code_journal' && !empty($value)) {
+			$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
 		} else {
 			$sqlwhere[] = natural_search($key, $value, 0, 1);
 		}
@@ -467,7 +471,7 @@ if (!empty($sortfield)) {
 
 // Export into a file with format defined into setup (FEC, CSV, ...)
 // Must be after definition of $sql
-if ($action == 'export_file' && $user->rights->accounting->mouvements->export) {
+if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->export) {
 	// TODO Replace the fetchAll + ->export later that consume too much memory on large export with the query($sql) and loop on each line to export them.
 	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', $conf->global->ACCOUNTING_REEXPORT);
 
@@ -495,6 +499,7 @@ if ($action == 'export_file' && $user->rights->accounting->mouvements->export) {
 
 					$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
 					$sql .= " SET date_export = '".$db->idate($now)."'";
+					$sql .= " , date_validated = '".$db->idate($now)."'";
 					$sql .= " WHERE rowid = ".$movement->id;
 
 					dol_syslog("/accountancy/bookeeping/list.php Function export_file Specify movements as exported sql=".$sql, LOG_DEBUG);
@@ -566,7 +571,25 @@ if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
 
 llxHeader('', $title_page);
 
+if ($action == 'export_file') {
+	$form_question = array();
 
+	$form_question['notifiedexportdate'] = array(
+		'name' => 'notifiedexportdate',
+		'type' => 'checkbox',
+		'label' => $langs->trans('NotifiedExportDate'),
+		'value' => (!empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE) ? 'false' : 'true'),
+	);
+	$form_question['notifiedvalidationdate'] = array(
+		'name' => 'notifiedvalidationdate',
+		'type' => 'checkbox', // We don't use select here, the journal_array is already a select html component
+		'label' => $langs->trans('NotifiedValidationDate'),
+		'value' => (!empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE) ? 'false' : 'true'),
+	);
+
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 300);
+	print $formconfirm;
+}
 if ($action == 'delmouv') {
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?mvt_num='.GETPOST('mvt_num').$param, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvtPartial'), 'delmouvconfirm', '', 0, 1);
 	print $formconfirm;
@@ -642,6 +665,7 @@ if (empty($reshook)) {
 
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param, '', 1, array('morecss' => 'marginleftonly'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbysubaccount.php', '', 1, array('morecss' => 'marginleftonly'));
 
 	$url = './card.php?action=create';
 	if (!empty($socid)) $url .= '&socid='.$socid;
@@ -760,7 +784,9 @@ if (!empty($arrayfields['t.lettering_code']['checked']))
 // Code journal
 if (!empty($arrayfields['t.code_journal']['checked']))
 {
-	print '<td class="liste_titre center"><input type="text" name="search_ledger_code" size="3" value="'.$search_ledger_code.'"></td>';
+	print '<td class="liste_titre center">';
+	print $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1);
+	print '</td>';
 }
 
 // Fields from hook
@@ -936,6 +962,11 @@ while ($i < min($num, $limit))
 			$filedir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
 			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
+		} elseif ($line->doc_type == 'bank')
+		{
+			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+			$objectstatic = new AccountLine($db);
+			$objectstatic->fetch($line->fk_doc);
 		} else {
 			// Other type
 		}
@@ -950,6 +981,10 @@ while ($i < min($num, $limit))
 		{
 			print $objectstatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
 			print $documentlink;
+		} elseif ($line->doc_type == 'bank') {
+			print $objectstatic->getNomUrl(1);
+			$bank_ref = strstr($line->doc_ref, '-');
+			print " " . $bank_ref;
 		} else {
 			print $line->doc_ref;
 		}

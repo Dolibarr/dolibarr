@@ -54,6 +54,9 @@ $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $value = GETPOST('value', 'alpha');
+$label = GETPOST('label', 'alpha');
+$scandir = GETPOST('scan_dir', 'alpha');
+$type = 'recruitmentcandidature';
 
 $arrayofparameters = array(
 //	'RECRUITMENT_MYPARAM1'=>array('css'=>'minwidth200', 'enabled'=>1),
@@ -131,47 +134,49 @@ if ($action == 'updateMask')
 }
 
 // Activate a model
-elseif ($action == 'set')
-{
+elseif ($action == 'set') {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
-} elseif ($action == 'del')
-{
+} elseif ($action == 'del') {
 	$tmpobjectkey = GETPOST('object');
 
 	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
-		$constforval = strtoupper($tmpobjectkey).'_ADDON_PDF';
+	if ($ret > 0) {
+		$constforval = 'RECRUITMENT_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 		if ($conf->global->$constforval == "$value") dolibarr_del_const($db, $constforval, $conf->entity);
 	}
 }
 
-// Set default model
-elseif ($action == 'setdoc')
-{
+elseif ($action == 'setmod') {
+	// TODO Check if numbering module chosen can be activated by calling method canBeActivated
 	$tmpobjectkey = GETPOST('object');
-	$constforval = strtoupper($tmpobjectkey).'_ADDON_PDF';
-	if (dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity))
-	{
+	if (!empty($tmpobjectkey)) {
+		$constforval = 'RECRUITMENT_'.strtoupper($tmpobjectkey)."_ADDON";
+
+		dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity);
+	}
+}
+
+// Set default model
+elseif ($action == 'setdoc') {
+	$tmpobjectkey = GETPOST('object');
+	$constforval = 'RECRUITMENT_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
+	if (dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity)) {
 		// The constant that was read before the new set
 		// We therefore requires a variable to have a coherent view
 		$conf->global->$constforval = $value;
 	}
 
-	// On active le modele
+	// We disable/enable the document template (into llx_document_model table)
 	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
+	if ($ret > 0) {
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
-} elseif ($action == 'setmod')
-{
-	// TODO Check if numbering module chosen can be activated
-	// by calling method canBeActivated
+} elseif ($action == 'unsetdoc') {
 	$tmpobjectkey = GETPOST('object');
-	$constforval = 'RECRUITMENT_'.strtoupper($tmpobjectkey)."_ADDON";
-
-	dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity);
+	if (!empty($tmpobjectkey)) {
+		$constforval = 'RECRUITMENT_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
+		dolibarr_del_const($db, $constforval, $conf->entity);
+	}
 }
 
 
@@ -465,11 +470,12 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										// Default
 										print '<td class="center">';
 										$constforvar = 'RECRUITMENT_'.strtoupper($myTmpObjectKey).'_ADDON';
-										if ($conf->global->$constforvar == $name)
-										{
-											print img_picto($langs->trans("Default"), 'on');
+										if ($conf->global->$constforvar == $name) {
+											//print img_picto($langs->trans("Default"), 'on');
+											// Even if choice is the default value, we allow to disable it. Replace this with previous line if you need to disable unset
+											print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetdoc&amp;token='.newToken().'&amp;object='.urlencode(strtolower($myTmpObjectKey)).'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type='.urlencode($type).'" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 										} else {
-											print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+											print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;object='.urlencode(strtolower($myTmpObjectKey)).'&amp;value='.$name.'&amp;scan_dir='.urlencode($module->scandir).'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 										}
 										print '</td>';
 

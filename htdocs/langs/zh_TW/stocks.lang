@@ -240,3 +240,4 @@ InventoryRealQtyHelp=將值設定為0以重置數量<br>保持欄位為空或刪
 UpdateByScaning=以掃描更新
 UpdateByScaningProductBarcode=掃描更新（產品條碼）
 UpdateByScaningLot=掃描更新（批次|序列條碼）
+DisableStockChangeOfSubProduct=Deactivate the stock change for all the subproducts of this Kit during this movement.

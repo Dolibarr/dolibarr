@@ -52,13 +52,14 @@ class EmailCollector extends CommonObject
 	 * @var int  Does emailcollector support extrafields ? 0=No, 1=Yes
 	 */
 	public $isextrafieldmanaged = 0;
+
 	/**
 	 * @var string String with name of icon for emailcollector. Must be the part after the 'object_' into object_emailcollector.png
 	 */
-	public $picto = 'generic';
+	public $picto = 'email';
 
 	/**
-	 * @var int    Field with ID of parent key if this field has a parent
+	 * @var string    Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_emailcollector';
 
@@ -158,7 +159,9 @@ class EmailCollector extends CommonObject
 	 */
 	public $date_creation;
 
-
+	/**
+	 * @var int timestamp
+	 */
 	public $tms;
 
 	/**
@@ -171,6 +174,9 @@ class EmailCollector extends CommonObject
 	 */
 	public $fk_user_modif;
 
+	/**
+	 * @var string import key
+	 */
 	public $import_key;
 
 
@@ -1549,10 +1555,9 @@ class EmailCollector extends CommonObject
 					// Search and create thirdparty
 					if ($operation['type'] == 'loadthirdparty' || $operation['type'] == 'loadandcreatethirdparty')
 					{
-						if (empty($operation['actionparam']))
-						{
+						if (empty($operation['actionparam'])) {
 							$errorforactions++;
-							$this->error = "Action loadthirdparty or loadandcreatethirdparty has empty parameter. Must be 'SET:xxx' or 'EXTRACT:(body|subject):regex' to define how to extract data";
+							$this->error = "Action loadthirdparty or loadandcreatethirdparty has empty parameter. Must be a rule like 'SET:xxx' or 'EXTRACT:(body|subject):regex' to define how to set or extract data";
 							$this->errors[] = $this->error;
 						} else {
 							$actionparam = $operation['actionparam'];

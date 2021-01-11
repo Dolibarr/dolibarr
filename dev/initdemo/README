@@ -12,6 +12,11 @@ The script initdemo.sh will erase current database with data into mysqldump_doli
 Do a chmod 700 initdemo.sh
 then run ./initdemo.sh to launch Graphic User Interface.
 
+After loading the demo files, admin login may be:
+- admin / admin
+or
+- admin / adminadmin
+
 
 *** Save demo
 

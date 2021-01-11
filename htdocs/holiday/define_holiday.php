@@ -28,10 +28,10 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 
 // Load translation files required by the page
-$langs->loadlangs(array('users', 'hrm'));
+$langs->loadlangs(array('users', 'other', 'holiday', 'hrm'));
 
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'defineholidaylist';
@@ -56,7 +56,7 @@ if (!$sortorder) $sortorder = "ASC";
 if ($user->socid > 0) accessforbidden();
 
 // If the user does not have perm to read the page
-if (!$user->rights->holiday->read) accessforbidden();
+if (empty($user->rights->holiday->read)) accessforbidden();
 
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
@@ -64,6 +64,17 @@ $hookmanager->initHooks(array('defineholidaylist'));
 $extrafields = new ExtraFields($db);
 
 $holiday = new Holiday($db);
+
+if (empty($conf->holiday->enabled))
+{
+	llxHeader('', $langs->trans('CPTitreMenu'));
+	print '<div class="tabBar">';
+	print '<span style="color: #FF0000;">'.$langs->trans('NotActiveModCP').'</span>';
+	print '</div>';
+	llxFooter();
+	exit();
+}
+
 
 
 /*
@@ -349,7 +360,7 @@ if (count($typeleaves) == 0)
 		print '<td>';
 		if (!empty($user->rights->holiday->define_holiday))	// Allowed to set the balance of any user
 		{
-			print '<input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Update")).'" class="button"/>';
+			print '<input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Save")).'" class="button smallpaddingimp"/>';
 		}
 		print '</td>'."\n";
 		print '</tr>';

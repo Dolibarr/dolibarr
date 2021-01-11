@@ -622,6 +622,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
+		$content='';
 		$pathoffile = $this->getDescLongReadmeFound();
 
 		if ($pathoffile)     // Mostly for external modules
@@ -1250,12 +1251,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				//print "Remove box ".$file.'<br>';
 				if ($file == 'box_graph_product_distribution.php') {
 					if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
-						dol_syslog("We discard disabling of module ".$file." because another module still active require it.");
+						dol_syslog("We discard deleting module ".$file." because another module still active requires it.");
 						continue;
 					}
 				}
 
-				if (empty($file)) { $file = isset($this->boxes[$key][1]) ? $this->boxes[$key][1] : ''; // For backward compatibility
+				if (empty($file)) {
+					$file = isset($this->boxes[$key][1]) ? $this->boxes[$key][1] : ''; // For backward compatibility
 				}
 
 				if ($this->db->type == 'sqlite3') {
@@ -1284,7 +1286,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def";
 				$sql .= " WHERE file = '".$this->db->escape($file)."'";
-				$sql .= " AND entity = ".$conf->entity;
+				$sql .= " AND entity = ".$conf->entity;		// Do not use getEntity here, we want to delete only in current company
 
 				dol_syslog(get_class($this)."::delete_boxes", LOG_DEBUG);
 				$resql = $this->db->query($sql);

@@ -48,6 +48,7 @@ CountriesExceptMe=Tous les pays sauf %s
 AccountantFiles=Exporter les documents sources
 ExportAccountingSourceDocHelp=Avec cet outil, vous pouvez exporter les événements sources (liste et PDF) qui ont été utilisés pour générer votre comptabilité. Pour exporter vos journaux, utilisez l'entrée de menu %s - %s.
 VueByAccountAccounting=Vue par comptes comptables
+VueBySubAccountAccounting=Affichage par compte auxiliaire
 
 MainAccountForCustomersNotDefined=Compte comptable général pour les clients non défini dans la configuration
 MainAccountForSuppliersNotDefined=Compte comptable général pour les fournisseurs non défini dans la configuration
@@ -62,16 +63,16 @@ AccountancyAreaDescActionOnceBis=Les prochaines étapes doivent être faites pou
 AccountancyAreaDescActionFreq=Les actions suivantes sont habituellement exécutées chaque mois, semaine, ou jour pour les très grandes entreprises ...
 
 AccountancyAreaDescJournalSetup=Étape %s : Créer ou vérifier le contenu de la liste des journaux depuis le menu %s
-AccountancyAreaDescChartModel=ÉTAPE %s: Vérifiez qu'il existe un modèle de plan comptable ou créez-en un à partir du menu %s
-AccountancyAreaDescChart=ÉTAPE %s: Sélectionnez et | ou complétez votre plan de compte dans le menu %s
+AccountancyAreaDescChartModel=Étape %s : Vérifiez qu'il existe un modèle de plan comptable ou créez-en un à partir du menu %s
+AccountancyAreaDescChart=Étape %s : Sélectionnez et | ou complétez votre plan de compte dans le menu %s
 
 AccountancyAreaDescVat=Étape %s : Définissez les comptes comptables de chaque taux de TVA utilisé. Pour cela, suivez le menu suivant %s.
-AccountancyAreaDescDefault=Étape %s: Définir les comptes de comptabilité par défaut. Pour cela, utilisez l'entrée de menu %s.
+AccountancyAreaDescDefault=Étape %s : Définir les comptes de comptabilité par défaut. Pour cela, utilisez l'entrée de menu %s.
 AccountancyAreaDescExpenseReport=Étape %s : Définissez les comptes comptables par défaut des dépenses des notes de frais. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescSal=Étape %s : Définissez les comptes comptables de paiements de salaires. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescContrib=Étape %s : Définissez les comptes comptables des dépenses spéciales (taxes diverses). Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescDonation=Étape %s : Définissez le compte comptable par défaut des dons. Pour cela, suivez le menu suivant %s.
-AccountancyAreaDescSubscription=ÉTAPE %s: définissez les comptes de comptabilité par défaut pour les abonnements des membres. Pour cela, utilisez l’entrée de menu %s.
+AccountancyAreaDescSubscription=Étape %s : définissez les comptes de comptabilité par défaut pour les abonnements des membres. Pour cela, utilisez l’entrée de menu %s.
 AccountancyAreaDescMisc=Étape %s : Définissez le compte par défaut obligatoire et les comptes comptables par défaut pour les transactions diverses. Pour cela, utilisez l'entrée du menu suivant %s.
 AccountancyAreaDescLoan=Étape %s : Définissez les comptes comptables par défaut des emprunts. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescBank=Étape %s : Définissez les comptes comptables et les codes des journaux de chaque compte bancaire et financier. Vous pouvez commencer à partir de la page %s.
@@ -144,7 +145,7 @@ NotVentilatedinAccount=Non lié au compte comptable
 XLineSuccessfullyBinded=%s produits/service correctement liés à un compte comptable
 XLineFailedToBeBinded=%s produits/services n'ont pu être liés à un compte comptable
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Nombre d'éléments à lier représentés par page (maximum recommandé: 50)
+ACCOUNTING_LIMIT_LIST_VENTILATION=Nombre maximum de lignes pour les listes et les pages de liaison comptable (recommandé : 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Commencez le tri de la page "Lien à réaliser" par les éléments les plus récents
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Commencez le tri de la page "Liens réalisés" par les éléments les plus récents
 
@@ -199,6 +200,7 @@ Docref=Référence
 LabelAccount=Libellé du compte
 LabelOperation=Libellé opération
 Sens=Sens
+AccountingDirectionHelp=Pour le compte comptable d'un client, utilisez Crédit pour enregistrer un règlement reçu.<br>Pour le compte comptable d'un fournisseur, utilisez Débit pour enregistrer un règlement reçu.
 LetteringCode=Code de lettrage
 Lettering=Lettrage
 Codejournal=Journal
@@ -206,7 +208,8 @@ JournalLabel=Libellé journal
 NumPiece=Numéro de pièce
 TransactionNumShort=Num. transaction
 AccountingCategory=Groupes personnalisés
-GroupByAccountAccounting=Grouper par compte comptable
+GroupByAccountAccounting=Affichage par compte comptable
+GroupBySubAccountAccounting=Affichage par compte auxiliaire
 AccountingAccountGroupsDesc=Vous pouvez définir ici des groupes de comptes comptable. Il seront utilisés pour les reporting comptables personnalisés
 ByAccounts=Par compte comptable
 ByPredefinedAccountGroups=Par groupes prédéfinis
@@ -248,7 +251,7 @@ PaymentsNotLinkedToProduct=Paiement non lié à un produit / service
 OpeningBalance=Solde d'ouverture
 ShowOpeningBalance=Afficher balance d'ouverture
 HideOpeningBalance=Cacher balance d'ouverture
-ShowSubtotalByGroup=Afficher le sous-total par groupe
+ShowSubtotalByGroup=Afficher le sous-total par niveau
 
 Pcgtype=Groupe de comptes comptables
 PcgtypeDesc=Les groupes de comptes sont utilisés comme critères de filtre et de regroupement prédéfinis pour certains rapports de comptabilité. Par exemple, «INCOME» ou «EXPENSE» sont utilisés en tant que groupes pour la comptabilité afin de générer le rapport dépenses / revenus.
@@ -271,11 +274,13 @@ DescVentilExpenseReport=Consultez ici la liste des lignes de notes de frais lié
 DescVentilExpenseReportMore=Si vous avez défini des comptes comptables au niveau des types de lignes notes de frais, l'application sera capable de faire l'association automatiquement entre les lignes de notes de frais et le compte comptable de votre plan comptable, en un simple clic sur le bouton <strong>"%s"</strong>. Si aucun compte n'a été défini au niveau du dictionnaire de types de lignes de notes de frais ou si vous avez toujours des lignes de notes de frais non liables automatiquement à un compte comptable, vous devez faire l'association manuellement depuis le menu "<strong>%s</strong>".
 DescVentilDoneExpenseReport=Consultez ici la liste des lignes des notes de frais et leur compte comptable
 
+Closure=Clôture annuelle
 DescClosure=Consultez ici le nombre de mouvements par mois non validés et les périodes fiscales déjà ouvertes
 OverviewOfMovementsNotValidated=Etape 1/ Aperçu des mouvements non validés. (Nécessaire pour clôturer un exercice comptable)
+AllMovementsWereRecordedAsValidated=Tous les mouvements ont été enregistrés et validés
+NotAllMovementsCouldBeRecordedAsValidated=Tous les mouvements n'ont pas pu être enregistrés et validés
 ValidateMovements=Valider les mouvements
 DescValidateMovements=Toute modification ou suppression d'écriture, de lettrage et de suppression sera interdite. Toutes les entrées pour un exercice doivent être validées, sinon la fermeture ne sera pas possible
-SelectMonthAndValidate=Sélectionnez le mois et validez les mouvements
 
 ValidateHistory=Lier automatiquement
 AutomaticBindingDone=Liaison automatique faite
@@ -293,6 +298,7 @@ Accounted=En comptabilité
 NotYetAccounted=Pas encore en comptabilité
 ShowTutorial=Afficher le tutoriel
 NotReconciled=Non rapproché
+WarningRecordWithoutSubledgerAreExcluded=Attention : toutes les opérations sans compte auxiliaire défini sont filtrées et exclues de cet écran
 
 ## Admin
 BindingOptions=Options de liaisons avec les codes comptables
@@ -337,6 +343,7 @@ Modelcsv_LDCompta10=Export pour LD Compta (v10 et supérieure)
 Modelcsv_openconcerto=Export pour OpenConcerto (Test)
 Modelcsv_configurable=Export configurable
 Modelcsv_FEC=Export FEC
+Modelcsv_FEC2=Export FEC (avec dates enregistrement et document inversées)
 Modelcsv_Sage50_Swiss=Export pour Sage 50 Suisse
 Modelcsv_winfic=Export pour Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Export vers Gestinum (v3)

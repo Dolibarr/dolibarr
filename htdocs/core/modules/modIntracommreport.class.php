@@ -62,10 +62,10 @@ class modIntracommreport extends DolibarrModules
 		$this->config_page_url = array("intracommreport.php@intracommreport");
 
 		// Dependencies
-		$this->depends = array("modFacture", "modTax"); // List of modules id that must be enabled if this module is enabled
+		$this->depends = array("modFacture", "modTax", "modCategorie"); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array(); // List of modules id this module is in conflict with
-		$this->phpmin = array(5, 5); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(13, 0, -5); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("intracommreport");
 

@@ -41,7 +41,7 @@ CREATE TABLE llx_accounting_bookkeeping
   multicurrency_code    varchar(255),				-- FEC:Idevise
   lettering_code        varchar(255),				-- FEC:EcritureLet
   date_lettering        datetime,					-- FEC:DateLet
-  date_lim_reglement    datetime DEFAULT NULL,		-- 					| date limite de reglement
+  date_lim_reglement    datetime DEFAULT NULL,		-- FEC_suppl:DateLimitReglmt    | payment deadline
   fk_user_author        integer NOT NULL,			-- 					| user creating
   fk_user_modif         integer,					-- 					| user making last change
   date_creation         datetime,					-- FEC:EcritureDate	| creation date
