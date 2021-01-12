@@ -1311,8 +1311,6 @@ class FormMail extends Form
 					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendActionComm");
 				} elseif ($type_template == 'thirdparty') {
 					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentThirdparty");
-				} elseif ($type_template == 'user') {
-					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentUser");
 				} elseif (!empty($type_template)) {
 					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentGeneric");
 				}
