@@ -147,7 +147,6 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
      *  @param  int  		$type       Type of barcode (EAN, ISBN, ...) as rowid
      *  @return string
      */
-
     public function literalBarcodeType($db, $type = '')
     {
         global $conf;
