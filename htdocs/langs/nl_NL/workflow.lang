@@ -1,23 +1,23 @@
 # Dolibarr language file - Source file is en_US - workflow
-WorkflowSetup=Workflow module setup
+WorkflowSetup=Workflow module set-up
 WorkflowDesc=Deze module biedt enkele automatische acties. Standaard is de workflow open (u kunt dingen doen in de gewenste volgorde), maar hier kunt u enkele automatische acties activeren.
 ThereIsNoWorkflowToModify=Er zijn geen wijzigingen in de workflow beschikbaar met de geactiveerde modules.
 # Autocreate
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatisch een verkooporder maken nadat een offerte is ondertekend (de nieuwe bestelling heeft hetzelfde bedrag als offerte)
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Creëer automatisch een klantfactuur nadat een offerte is ondertekend (de nieuwe factuur heeft hetzelfde bedrag als de offerte)
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Maak automatisch een klant factuur aan nadat contract is gevalideerd.
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Maak automatisch een klant factuur aan nadat een contract is gevalideerd.
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Creëer automatisch een klantfactuur nadat een verkooporder is gesloten (de nieuwe factuur heeft hetzelfde bedrag als de bestelling)
 # Autoclassify customer proposal or order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classificeer gekoppeld bronvoorstel als gefactureerd wanneer verkooporder is ingesteld op gefactureerd (en als het bedrag van de bestelling gelijk is aan het totale bedrag van het ondertekende gekoppelde voorstel)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classificeer het gekoppelde bronvoorstel als gefactureerd wanneer de klantfactuur is gevalideerd (en als het factuurbedrag gelijk is aan het totale bedrag van het ondertekende gekoppelde voorstel)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classificeer gekoppelde bronverkooporder als gefactureerd wanneer klantfactuur is gevalideerd (en als het factuurbedrag gelijk is aan het totale bedrag van de gekoppelde bestelling)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classificeer gekoppelde bronverkooporder als gefactureerd wanneer klantfactuur is ingesteld op betaald (en als het factuurbedrag gelijk is aan het totale bedrag van de gekoppelde bestelling)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classificeer gekoppelde bronverkooporder zoals verzonden wanneer een zending is gevalideerd (en als de hoeveelheid die door alle zendingen is verzonden dezelfde is als in de te updaten bestelling)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classificeer gekoppelde bronverkooporder als verzonden wanneer een zending is gevalideerd (en als de hoeveelheid die door alle zendingen is verzonden dezelfde is als in de te updaten bestelling)
 # Autoclassify purchase order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classificeer het gekoppelde bronvoorstel als gefactureerd wanneer de leveranciersfactuur is gevalideerd (en als het factuurbedrag gelijk is aan het totale bedrag van het gekoppelde voorstel)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classificeer gekoppelde inkooporder als gefactureerd wanneer leveranciersfactuur is gevalideerd (en als het factuurbedrag gelijk is aan het totale bedrag van de gekoppelde order)
-descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
+descWORKFLOW_BILL_ON_RECEPTION=Classificeer ontvangsten als "gefactureerd" wanneer een gekoppelde leveranciersorder wordt gevalideerd
 # Autoclose intervention
-descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Sluit alle interventies die aan het ticket zijn gekoppeld wanneer een ticket is gesloten
 AutomaticCreation=Automatisch aanmaken
 AutomaticClassification=Automatisch classificeren

@@ -358,7 +358,7 @@ VATIntraCheckableOnEUSite=Tarkasta ALV-tunnus E.U: n sivuilta
 VATIntraManualCheck=Voit tehdä tarkastuksen myös käsin E.U: n sivuilla <a href="%s" target="_blank">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Tarkistaminen ei mahdollista. Jäsenvaltio ei toimita tarkastuspalvelua ( %s).
 NorProspectNorCustomer=Ei mahdollinen asiakas eikä asiakas
-JuridicalStatus=Yritysmuoto
+JuridicalStatus=Business entity type
 Workforce=Workforce
 Staff=Työntekijät
 ProspectLevelShort=Potenttiaali

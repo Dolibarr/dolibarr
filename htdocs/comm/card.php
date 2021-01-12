@@ -87,7 +87,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $hookmanager->initHooks(array('thirdpartycomm', 'globalcard'));
 
 // Security check
-$result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', 0);
+$result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
 
 if ($object->id > 0) {
 	if (!($object->client > 0) || empty($user->rights->societe->lire)) {
@@ -1265,6 +1265,12 @@ if ($object->id > 0)
 			dol_print_error($db);
 		}
 	}
+
+	// Allow external modules to add their own shortlist of recent objects
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addMoreRecentObjects', $parameters, $object, $action);
+	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	else print $hookmanager->resPrint;
 
 	print '</div></div></div>';
 	print '<div style="clear:both"></div>';

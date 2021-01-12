@@ -46,9 +46,12 @@ BoxTitleLastModifiedDonations=Τελευταία %s τροποποίηση δω�
 BoxTitleLastModifiedExpenses=Τελευταίες αναφορές τροποποιημένων δαπανών %s
 BoxTitleLatestModifiedBoms=Τα τελευταία %s τροποποιημένα BOMs
 BoxTitleLatestModifiedMos=Οι τελευταίες %s τροποποιημένες παραγγελίες κατασκευής
+BoxTitleLastOutstandingBillReached=Customers with maximum outstanding exceeded
 BoxGlobalActivity=Η γενική δραστηριότητα για (τιμολόγια, προσφορές, παραγγελίες)
 BoxGoodCustomers=Καλοί πελάτες
 BoxTitleGoodCustomers=%s καλών πελατών
+BoxScheduledJobs=Προγραμματισμένες εργασίες
+BoxTitleFunnelOfProspection=Lead funnel
 FailedToRefreshDataInfoNotUpToDate=Αποτυχία ανανέωσης ροής RSS. Τελευταία επιτυχημένη ημερομηνία ανανέωσης: %s
 LastRefreshDate=Ημερομηνία τελευταίας ανανέωσης
 NoRecordedBookmarks=Δεν υπάρχουν σελιδοδείκτες που ορίζονται. Κάντε κλικ <a href="%s">εδώ</a> για να προσθέσετε σελιδοδείκτες.
@@ -102,5 +105,7 @@ SuspenseAccountNotDefined=Ο λογαριασμός Suspense δεν έχει ο�
 BoxLastCustomerShipments=Τελευταίες αποστολές πελάτη
 BoxTitleLastCustomerShipments=Τελευταίες %s αποστολές πελάτη
 NoRecordedShipments=Καμία καταγεγραμμένη αποστολή πελάτη
+BoxCustomersOutstandingBillReached=Customers with oustanding limit reached
 # Pages
 AccountancyHome=Λογιστική
+ValidatedProjects=Validated projects

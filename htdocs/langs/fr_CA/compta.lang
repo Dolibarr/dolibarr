@@ -32,7 +32,6 @@ VATPayments=Paiements d'impôt sur les ventes
 VATRefund=Remboursement de la taxe de vente
 SocialContributionsPayments=Règlements charges sociales
 ShowVatPayment=Affiche paiement TPS/TVH
-BalanceVisibilityDependsOnSortAndFilters=La balance est visible dans cette liste uniquement si la table est triée en ascendant sur %s et filtrée pour 1 compte bancaire
 CustomerAccountancyCodeShort=Cust. Compte. code
 SupplierAccountancyCodeShort=Souper. Compte. code
 ByExpenseIncome=Par dépenses et revenus

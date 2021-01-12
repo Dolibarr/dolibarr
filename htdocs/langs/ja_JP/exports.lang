@@ -132,4 +132,5 @@ FormatControlRule=フォーマット制御ルール
 KeysToUseForUpdates=<b>が</b>の既存データを更新するために使用するキー（列）
 NbInsert=挿入された行数：%s
 NbUpdate=更新された行数：%s
-MultipleRecordFoundWithTheseFilters=これらのフィルターで複数のレコードが見つかった：%s
+MultipleRecordFoundWithTheseFilters=これらのフィルタで複数のレコードが見つかった：%s
+StocksWithBatch=バッチ/シリアル番号のある製品の在庫と場所（倉庫）
