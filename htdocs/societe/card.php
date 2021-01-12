@@ -1167,8 +1167,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 						$("#email").keyup(function() {
 							init_check_no_email($(this));
 						});
-					init_check_no_email($("#email"));
-					});';
+						init_check_no_email($("#email"));';
 				}
 				print '});';
 				print '</script>'."\n";
