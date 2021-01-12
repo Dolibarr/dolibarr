@@ -43,3 +43,8 @@ ALTER TABLE llx_bank_account ADD COLUMN ics varchar(32) NULL;
 ALTER TABLE llx_bank_account ADD COLUMN ics_transfer varchar(32) NULL;
 
 ALTER TABLE llx_facture MODIFY COLUMN date_valid DATETIME NULL DEFAULT NULL;
+
+
+ALTER TABLE llx_product_customer_price ADD COLUMN ref_customer varchar(30);
+ALTER TABLE llx_product_customer_price_log ADD COLUMN ref_customer varchar(30);
+
