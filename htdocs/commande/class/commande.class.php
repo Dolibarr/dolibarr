@@ -200,6 +200,8 @@ class Commande extends CommonOrder
 	public $special_code;
 	public $source; // Order mode. How we received order (by phone, by email, ...)
 
+	public $warehouse_id;
+
 	public $extraparams = array();
 
 	public $linked_objects = array();
@@ -230,11 +232,6 @@ class Commande extends CommonOrder
 	public $multicurrency_total_ht;
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
-
-	/**
-	 * @var Commande clone of order object
-	 */
-	public $oldcopy;
 
 	//! key of module source when order generated from a dedicated module ('cashdesk', 'takepos', ...)
 	public $module_source;

@@ -208,6 +208,8 @@ class Propal extends CommonObject
 	public $demand_reason_id;
 	public $demand_reason_code;
 
+	public $warehouse_id;
+
 	public $extraparams = array();
 
 	/**
@@ -230,8 +232,6 @@ class Propal extends CommonObject
 	public $multicurrency_total_ht;
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
-
-	public $oldcopy;
 
 
 	/**

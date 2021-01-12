@@ -38,8 +38,8 @@ env:
 
 jobs:
   fast_finish: true
-  allow_failures:
-  - php: nightly
+  #allow_failures:
+  #- php: nightly
   include:
     - if: type = push
       php: '5.6'
