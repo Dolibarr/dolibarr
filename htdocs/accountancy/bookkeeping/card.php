@@ -224,9 +224,10 @@ if ($action == "confirm_update") {
 		$action = 'create';
 		$error++;
 	}
-	if (!GETPOST('next_num_mvt', 'alpha'))
+	if (!GETPOST('doc_ref', 'alpha'))
 	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NumPiece")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Piece")), null, 'errors');
+		$action = 'create';
 		$error++;
 	}
 
@@ -371,7 +372,7 @@ if ($action == 'create')
 	print '</tr>';
 
 	print '<tr>';
-	print '<td>'.$langs->trans("Piece").'</td>';
+	print '<td class="fieldrequired">'.$langs->trans("Piece").'</td>';
 	print '<td><input type="text" class="minwidth200" name="doc_ref" value="'.GETPOST('doc_ref', 'alpha').'"></td>';
 	print '</tr>';
 
