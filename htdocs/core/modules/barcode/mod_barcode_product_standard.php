@@ -140,7 +140,37 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 		return $examplebarcode;
 	}
+    /**
+     *  Return literal barcode type code from numerical rowid type of barcode
+     * 
+	 *	@param	Database 	$db			Database		
+     *  @param  int  		$type       Type of barcode (EAN, ISBN, ...) as rowid
+     *  @return string  
+     */
 
+    public function literalBarcodeType($db, $type = '')
+    {
+        global $conf;
+        $out = '';
+		$this->db = $db;
+        $sql = "SELECT rowid, code, libelle";
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
+        $sql .= " WHERE rowid = '".$type."'";
+        $sql .= " AND entity = ".$conf->entity;
+        $result = $this->db->query($sql);
+        if ($result) {
+            $num = $this->db->num_rows($result);
+
+            if ($num > 0) {
+                $obj = $this->db->fetch_object($result);
+                $out .= $obj->code;
+            }
+        }
+        else {
+            dol_print_error($this->db);
+        }
+        return $out;
+    }
 	/**
 	 * Return next value
 	 *
@@ -177,7 +207,9 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 		$numFinal = get_next_value($db, $mask, 'product', $field, $where, '', $now);
 		//if EAN13 calculate and substitute the last 13th character (* or ?) used in the mask by the EAN13 key
-		if ($type==2) //2 = EAN13
+		$literaltype = '';
+		$literaltype = $this->literalBarcodeType($db,$type);//get literal_Barcode_Type
+		if ($literaltype=='EAN13') //EAN13 rowid = 2
 		{
 			if (strlen($numFinal)==13)
 			{
