@@ -162,7 +162,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
             if ($num > 0) {
                 $obj = $this->db->fetch_object($result);
-                $out .= $obj->code;
+                $out .= $obj->libelle; //take the libelle corresponding to the type rowid in the database
             }
         }
         else {
