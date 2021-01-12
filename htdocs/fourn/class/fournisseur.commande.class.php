@@ -3177,9 +3177,26 @@ class CommandeFournisseur extends CommonOrder
 
     				// Build array with quantity deliverd by product
     				foreach ($supplierorderdispatch->lines as $line) {
+    				    if (empty($line->fk_product)) {
+    				        continue;
+    				    }
+
+    				    if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+    				        $product = new Product($this->db);
+    				        $product->fetch($line->fk_product);
+
+    				        if ($product->type == Product::TYPE_SERVICE) {
+    				            continue;
+    				        }
+    				    }
+
     					$qtydelivered[$line->fk_product] += $line->qty;
     				}
     				foreach ($this->lines as $line) {
+    				    if (empty($line->fk_product) || (empty($conf->global->STOCK_SUPPORTS_SERVICES) && $line->product_type == Product::TYPE_SERVICE)) {
+    				        continue;
+    				    }
+
     					$qtywished[$line->fk_product] += $line->qty;
     				}
     				//Compare array
