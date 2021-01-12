@@ -1155,7 +1155,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
                         	document.formsoc.submit();
                         });';
 				if ($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS==-1) {
-
 					print '
 						function init_check_no_email(input) {
 							if (input.val()!="") {
