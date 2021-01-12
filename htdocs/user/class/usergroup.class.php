@@ -660,12 +660,6 @@ class UserGroup extends CommonObject
 			$this->nom = $this->name; // Field for 'name' is called 'nom' in database
 		}
 
-		$entity = $conf->entity;
-		if (!empty($conf->multicompany->enabled) && $conf->entity == 1)
-		{
-			$entity = $this->entity;
-		}
-
 		return $this->updateCommon($user, $notrigger);
 	}
 
