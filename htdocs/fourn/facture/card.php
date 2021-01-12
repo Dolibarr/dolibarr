@@ -655,19 +655,23 @@ if (empty($reshook))
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) $error++;
 
-		$datefacture = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+		$dateinvoice = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 		$datedue = dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']);
 
 		// Replacement invoice
 		if ($_POST['type'] == FactureFournisseur::TYPE_REPLACEMENT)
 		{
-			if ($datefacture == '')
-			{
+			if (empty($dateinvoice)) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('DateInvoice')), null, 'errors');
 				$action = 'create';
 				$_GET['socid'] = $_POST['socid'];
 				$error++;
+			} elseif ($dateinvoice > (dol_now() + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+				$error++;
+				setEventMessages($langs->trans("ErrorDateIsInFuture"), null, 'errors');
+				$action = 'create';
 			}
+
 			if (!(GETPOST('fac_replacement', 'int') > 0)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ReplaceInvoice")), null, 'errors');
@@ -682,7 +686,7 @@ if (empty($reshook))
 				$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
 				$object->socid = GETPOST('socid', 'int');
 				$object->libelle = GETPOST('label', 'nohtml');
-				$object->date = $datefacture;
+				$object->date = $dateinvoice;
 				$object->date_echeance = $datedue;
 				$object->note_public = GETPOST('note_public', 'restricthtml');
 				$object->note_private = GETPOST('note_private', 'restricthtml');
@@ -723,13 +727,18 @@ if (empty($reshook))
 				$action = 'create';
 				$error++;
 			}
-			if ($datefacture == '')
-			{
+
+			if (empty($dateinvoice)) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('DateInvoice')), null, 'errors');
 				$action = 'create';
 				$_GET['socid'] = $_POST['socid'];
 				$error++;
+			} elseif ($dateinvoice > (dol_now() + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+				$error++;
+				setEventMessages($langs->trans("ErrorDateIsInFuture"), null, 'errors');
+				$action = 'create';
 			}
+
 			if (!GETPOST('ref_supplier'))
 			{
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('RefSupplier')), null, 'errors');
@@ -748,7 +757,7 @@ if (empty($reshook))
 				$object->socid				= GETPOST('socid', 'int');
 				$object->libelle = GETPOST('label', 'nohtml');
 				$object->label				= GETPOST('label', 'nohtml');
-				$object->date = $datefacture;
+				$object->date = $dateinvoice;
 				$object->date_echeance = $datedue;
 				$object->note_public = GETPOST('note_public', 'restricthtml');
 				$object->note_private = GETPOST('note_private', 'restricthtml');
@@ -837,13 +846,17 @@ if (empty($reshook))
 				$error++;
 			}
 
-			if ($datefacture == '')
-			{
+			if (empty($dateinvoice)) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('DateInvoice')), null, 'errors');
 				$action = 'create';
 				$_GET['socid'] = $_POST['socid'];
 				$error++;
+			} elseif ($dateinvoice > (dol_now() + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+				$error++;
+				setEventMessages($langs->trans("ErrorDateIsInFuture"), null, 'errors');
+				$action = 'create';
 			}
+
 			if (!GETPOST('ref_supplier'))
 			{
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('RefSupplier')), null, 'errors');
@@ -861,7 +874,7 @@ if (empty($reshook))
 				$object->ref_supplier  = $_POST['ref_supplier'];
 				$object->socid         = $_POST['socid'];
 				$object->libelle       = $_POST['label'];
-				$object->date          = $datefacture;
+				$object->date          = $dateinvoice;
 				$object->date_echeance = $datedue;
 				$object->note_public   = GETPOST('note_public', 'restricthtml');
 				$object->note_private  = GETPOST('note_private', 'restricthtml');
@@ -1191,9 +1204,9 @@ if (empty($reshook))
 			$tva_tx = '';
 		}
 
-		$qty = price2num(GETPOST('qty'.$predef), 'alpha');
+		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
 		$remise_percent = GETPOST('remise_percent'.$predef);
-		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CR');
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU');
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -1289,13 +1302,18 @@ if (empty($reshook))
 					$desc = $productsupplier->desc_supplier;
 				} else $desc = $productsupplier->description;
 
-				if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
+				//If text set in desc is the same as product descpription (as now it's preloaded) whe add it only one time
+				if ($product_desc==$desc && !empty($conf->global->PRODUIT_AUTOFILL_DESC)) {
+					$product_desc='';
+				}
+				if (!empty($product_desc) && !empty($conf->global->MAIN_NO_CONCAT_DESCRIPTION)) $desc = $product_desc;
+				if (!empty($product_desc) && trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
 
 				$type = $productsupplier->type;
-				if ($price_ht != '' || $price_ht_devise != '') {
+				if (GETPOST('price_ht') != '' || GETPOST('price_ht_devise') != '') {
 					$price_base_type = 'HT';
 					$pu = price2num($price_ht, 'MU');
-					$pu_ht_devise = price2num($price_ht_devise, 'MU');
+					$pu_ht_devise = price2num($price_ht_devise, 'CU');
 				} else {
 					$price_base_type = ($productsupplier->fourn_price_base_type ? $productsupplier->fourn_price_base_type : 'HT');
 					if (empty($object->multicurrency_code) || ($productsupplier->fourn_multicurrency_code != $object->multicurrency_code)) {	// If object is in a different currency and price not in this currency
@@ -1373,15 +1391,14 @@ if (empty($reshook))
 			$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $object->thirdparty);
 			$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty);
 
-			if ($price_ht !== '')
-			{
+			if (GETPOST('price_ht') != '' || GETPOST('price_ht_devise') != '') {
 				$pu_ht = price2num($price_ht, 'MU'); // $pu_ht must be rounded according to settings
 			} else {
 				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
 				$pu_ht = price2num($pu_ttc / (1 + ($tva_tx / 100)), 'MU'); // $pu_ht must be rounded according to settings
 			}
 			$price_base_type = 'HT';
-			$pu_ht_devise = price2num($price_ht_devise, 'MU');
+			$pu_ht_devise = price2num($price_ht_devise, 'CU');
 
 			$result = $object->addline($product_desc, $pu_ht, $tva_tx, $localtax1_tx, $localtax2_tx, $qty, 0, $remise_percent, $date_start, $date_end, 0, $tva_npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit, 0, $pu_ht_devise, $ref_supplier);
 		}

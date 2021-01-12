@@ -40,4 +40,4 @@ NoDirectoriesFound=Keine Verzeichnisse gefunden
 FileNotYetIndexedInDatabase=Datei noch nicht in Datenbank indiziert (bitte Datei nochmals hochladen)
 ExtraFieldsEcmFiles=Extrafields Ecm Files
 ExtraFieldsEcmDirectories=Extrafields Ecm Directories
-ECMSetup=ECM Setup
+ECMSetup=DMS Einstellungen

@@ -358,7 +358,7 @@ VATIntraCheckableOnEUSite=Avrupa Komisyonu web sitesinden topluluk içi Vergi Nu
 VATIntraManualCheck=Avrupa Komisyonu'nun <a href="%s" target="_blank">%s</a> web adresinden de manuel olarak kontrol edebilirsiniz
 ErrorVATCheckMS_UNAVAILABLE=Denetlemiyor. Denetim hizmeti üye ülke (%s) tarafından sağlanmıyor.
 NorProspectNorCustomer=Ne aday ne de müşteri
-JuridicalStatus=Tüzel Kişilik Türü
+JuridicalStatus=Business entity type
 Workforce=Workforce
 Staff=Çalışan sayısı
 ProspectLevelShort=Potansiyel

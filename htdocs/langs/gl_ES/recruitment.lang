@@ -18,58 +18,59 @@
 #
 
 # Module label 'ModuleRecruitmentName'
-ModuleRecruitmentName = Recruitment
+ModuleRecruitmentName = Contratación
 # Module description 'ModuleRecruitmentDesc'
-ModuleRecruitmentDesc = Manage and follow recruitment campaigns for new job positions
+ModuleRecruitmentDesc = Xestionar e seguir campañas de contratación para novos postos de traballo
 
 #
 # Admin page
 #
-RecruitmentSetup = Recruitment setup
+RecruitmentSetup = Configuración da contratación
 Settings = Configuracións
-RecruitmentSetupPage = Enter here the setup of main options for the recruitment module
-RecruitmentArea=Recruitement area
-PublicInterfaceRecruitmentDesc=Public pages of jobs are public URLs to show and answer to open jobs. There is one different link for each open job, found on each job record.
-EnablePublicRecruitmentPages=Enable public pages of open jobs
+RecruitmentSetupPage = Introduza aquí a configuración das principais opcións para o módulo de contratación
+RecruitmentArea=Área de contratación
+PublicInterfaceRecruitmentDesc=As páxinas públicas dos traballos son URL públicas para mostrar e responder aos traballos dispoñibles. Hai un enlace diferente para cada traballo dispoñible, que se atopa en cada rexistro de traballo.
+EnablePublicRecruitmentPages=Activar páxinas públicas de traballos dispoñibles
 
 #
 # About page
 #
-About = Acerca de
-RecruitmentAbout = About Recruitment
-RecruitmentAboutPage = Recruitment about page
-NbOfEmployeesExpected=Expected nb of employees
-JobLabel=Label of job position
-WorkPlace=Work place
-DateExpected=Expected date
-FutureManager=Future manager
-ResponsibleOfRecruitement=Responsible of recruitment
-IfJobIsLocatedAtAPartner=If job is located at a partner place
+About = page
+RecruitmentAbout = Acerca de contratación
+RecruitmentAboutPage = Páxina acerca de contratación
+NbOfEmployeesExpected=Número esperado de empregados
+JobLabel=Etiqueta de posto de traballo
+WorkPlace=Lugar de traballo
+DateExpected=Data agardado
+FutureManager=Xestor de futuro
+ResponsibleOfRecruitement=Responsable da contratación
+IfJobIsLocatedAtAPartner=Se o traballo está situado nun lugar asociado
 PositionToBeFilled=Posto de traballo
-PositionsToBeFilled=Job positions
+PositionsToBeFilled=Listaxe de postos de traballo
 ListOfPositionsToBeFilled=List of job positions
-NewPositionToBeFilled=New job positions
+NewPositionToBeFilled=Novos postos de traballo
 
-JobOfferToBeFilled=Job position to be filled
-ThisIsInformationOnJobPosition=Information of the job position to be filled
-ContactForRecruitment=Contact for recruitment
-EmailRecruiter=Email recruiter
-ToUseAGenericEmail=To use a generic email. If not defined, the email of the responsible of recruitment will be used
-NewCandidature=New application
-ListOfCandidatures=List of applications
-RequestedRemuneration=Requested remuneration
-ProposedRemuneration=Proposed remuneration
-ContractProposed=Contract proposed
-ContractSigned=Contract signed
-ContractRefused=Contract refused
-RecruitmentCandidature=Application
-JobPositions=Job positions
-RecruitmentCandidatures=Applications
-InterviewToDo=Interview to do
-AnswerCandidature=Application answer
-YourCandidature=Your application
-YourCandidatureAnswerMessage=Thanks you for your application.<br>...
-JobClosedTextCandidateFound=The job position is closed. The position has been filled.
-JobClosedTextCanceled=The job position is closed.
-ExtrafieldsJobPosition=Complementary attributes (job positions)
-ExtrafieldsCandidatures=Complementary attributes (job applications)
+JobOfferToBeFilled=Posto de traballo a ocupar
+ThisIsInformationOnJobPosition=Información do posto de traballo a ocupar
+ContactForRecruitment=Contacto para a contratación
+EmailRecruiter=Correo electrónico do responsable de contratación
+ToUseAGenericEmail=Para usar un correo electrónico xenérico. Se non se define, utilizarase o correo electrónico do responsable de contratación
+NewCandidature=Nova aplicación
+ListOfCandidatures=Listaxe de aplicacións
+RequestedRemuneration=Remuneración solicitada
+ProposedRemuneration=Proposta de remuneración
+ContractProposed=Poroposta de contrato
+ContractSigned=Contrato asinado
+ContractRefused=Rexeitouse o contrato
+RecruitmentCandidature=Solicitude
+JobPositions=Postos de traballo
+RecruitmentCandidatures=Solicitudes
+InterviewToDo=Entrevista a realizar
+AnswerCandidature=Resposta da solicitude
+YourCandidature=A súa solicitude
+YourCandidatureAnswerMessage=Grazas pola túa solicitude.<br>...
+JobClosedTextCandidateFound=O posto de traballo está pechado. O posto foi cuberto.
+JobClosedTextCanceled=O posto de traballo está pechado
+ExtrafieldsJobPosition=Atributos complementarios (postos de traballo)
+ExtrafieldsCandidatures=Atributos complementarios (solicitudes de traballo)
+MakeOffer=Facer unha oferta

@@ -48,6 +48,7 @@ CountriesExceptMe=Όλες οι χώρες εκτός από το %s
 AccountantFiles=Export source documents
 ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
 VueByAccountAccounting=View by accounting account
+VueBySubAccountAccounting=View by accounting subaccount
 
 MainAccountForCustomersNotDefined=Κύριος λογαριασμός λογιστικής για πελάτες που δεν έχουν οριστεί στη ρύθμιση
 MainAccountForSuppliersNotDefined=Κύριος λογαριασμός λογιστικής για προμηθευτές που δεν καθορίζονται στη ρύθμιση
@@ -144,7 +145,7 @@ NotVentilatedinAccount=Δεν δεσμεύεται στον λογαριασμό
 XLineSuccessfullyBinded=%s προϊόντα / υπηρεσίες με επιτυχία δεσμεύεται σε λογιστικό λογαριασμό
 XLineFailedToBeBinded=%s προϊόντα / υπηρεσίες δεν δεσμεύονται σε κανένα λογιστικό λογαριασμό
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Αριθμός στοιχείων που δεσμεύονται με τη σελίδα (μέγιστη συνιστώμενη τιμή: 50)
+ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Ξεκινήστε τη διαλογή της σελίδας &quot;Δεσμευτική ενέργεια&quot; από τα πιο πρόσφατα στοιχεία
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Ξεκινήστε τη διαλογή της σελίδας &quot;Δεσμευτική πραγματοποίηση&quot; από τα πιο πρόσφατα στοιχεία
 
@@ -198,7 +199,8 @@ Docdate=Ημερομηνία
 Docref=Παραπομπή
 LabelAccount=Ετικέτα λογαριασμού
 LabelOperation=Λειτουργία ετικετών
-Sens=Σημασία
+Sens=Direction
+AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you received<br>For an accounting account of a supplier, use Debit to record a payment you make
 LetteringCode=Κωδικός γράμματος
 Lettering=Γράμματα
 Codejournal=Ημερολόγιο
@@ -206,7 +208,8 @@ JournalLabel=Ετικέτα περιοδικών
 NumPiece=Αριθμός τεμαχίου
 TransactionNumShort=Αριθ. συναλλαγή
 AccountingCategory=Προσωποποιημένες ομάδες
-GroupByAccountAccounting=Ομαδοποίηση κατά λογιστικό λογαριασμό
+GroupByAccountAccounting=Group by general ledger account
+GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=Μπορείτε να ορίσετε εδώ ορισμένες ομάδες λογιστικού λογαριασμού. Θα χρησιμοποιηθούν για εξατομικευμένες λογιστικές εκθέσεις.
 ByAccounts=Με λογαριασμούς
 ByPredefinedAccountGroups=Με προκαθορισμένες ομάδες
@@ -248,7 +251,7 @@ PaymentsNotLinkedToProduct=Πληρωμή που δεν συνδέεται με 
 OpeningBalance=Opening balance
 ShowOpeningBalance=Εμφάνιση αρχικού υπολοίπου
 HideOpeningBalance=Κρύψιμο αρχικού υπολοίπου
-ShowSubtotalByGroup=Show subtotal by group
+ShowSubtotalByGroup=Show subtotal by level
 
 Pcgtype=Ομάδα του λογαριασμού
 PcgtypeDesc=Η ομάδα λογαριασμού χρησιμοποιείται ως προκαθορισμένα κριτήρια «φίλτρου» και «ομαδοποίησης» για ορισμένες λογιστικές αναφορές. Για παράδειγμα, τα «ΕΙΣΟΔΗΜΑ» ή «ΕΞΟΔΑ» χρησιμοποιούνται ως ομάδες λογιστικών λογαριασμών προϊόντων για τη δημιουργία της αναφοράς εξόδων / εσόδων.
@@ -271,11 +274,13 @@ DescVentilExpenseReport=Συμβουλευτείτε εδώ τον κατάλο�
 DescVentilExpenseReportMore=Εάν ρυθμίσετε τον λογαριασμό λογαριασμών σε γραμμές αναφοράς τύπου εξόδων, η εφαρμογή θα είναι σε θέση να κάνει όλη τη δέσμευση μεταξύ των γραμμών αναφοράς δαπανών σας και του λογαριασμού λογιστικής του λογαριασμού σας, με ένα μόνο κλικ με το κουμπί <strong>&quot;%s&quot;</strong> . Εάν ο λογαριασμός δεν έχει οριστεί σε λεξικό τελών ή αν έχετε ακόμα ορισμένες γραμμές που δεν δεσμεύονται σε κανένα λογαριασμό, θα πρέπει να κάνετε μια χειροκίνητη σύνδεση από το μενού &quot; <strong>%s</strong> &quot;.
 DescVentilDoneExpenseReport=Συμβουλευτείτε εδώ τον κατάλογο των γραμμών των εκθέσεων δαπανών και του λογιστικού λογαριασμού τους
 
+Closure=Annual closure
 DescClosure=Συμβουλευτείτε εδώ τον αριθμό των κινήσεων ανά μήνα που δεν έχουν επικυρωθεί και τα οικονομικά έτη είναι ήδη ανοιχτά
 OverviewOfMovementsNotValidated=Βήμα 1 / Επισκόπηση των κινήσεων που δεν έχουν επικυρωθεί. (Είναι απαραίτητο να κλείσετε ένα οικονομικό έτος)
+AllMovementsWereRecordedAsValidated=All movements were recorded as validated
+NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated
 ValidateMovements=Επικυρώστε τις κινήσεις
 DescValidateMovements=Απαγορεύεται οποιαδήποτε τροποποίηση ή διαγραφή γραφής, γράμματος και διαγραφής. Όλες οι καταχωρήσεις για μια άσκηση πρέπει να επικυρωθούν, διαφορετικά το κλείσιμο δεν θα είναι δυνατό
-SelectMonthAndValidate=Επιλέξτε μήνα και επικυρώστε τις κινήσεις
 
 ValidateHistory=Δεσμεύστε αυτόματα
 AutomaticBindingDone=Έγινε αυτόματη σύνδεση
@@ -293,6 +298,7 @@ Accounted=Πληρώθηκε σε
 NotYetAccounted=Δεν έχει ακόμη καταλογιστεί στο βιβλίο
 ShowTutorial=Εμφάνιση εκπαιδευτικού προγράμματος
 NotReconciled=Δεν ταιριάζουν
+WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
 
 ## Admin
 BindingOptions=Binding options
@@ -337,6 +343,7 @@ Modelcsv_LDCompta10=Εξαγωγή για LD Compta (v10 και άνω)
 Modelcsv_openconcerto=Εξαγωγή για OpenConcerto (Test)
 Modelcsv_configurable=Εξαγωγή CSV εξαγωγής
 Modelcsv_FEC=Εξαγωγή FEC
+Modelcsv_FEC2=Export FEC (With dates generation writing / document reversed)
 Modelcsv_Sage50_Swiss=Εξαγωγή για Sage 50 Ελβετία
 Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Export for Gestinum (v3)

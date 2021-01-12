@@ -156,7 +156,6 @@ VATIntraCheckableOnEUSite=Compruebe la identificación del IVA intracomunitaria 
 VATIntraManualCheck=También puede consultar manualmente en el sitio web de la Comisión Europea <a href="%s" target="_blank">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=No es posible comprobar. El servicio de verificación no proporcionado por el estado miembro  (%s).
 NorProspectNorCustomer=No prospecto, ni cliente
-JuridicalStatus=Tipo de entidad jurídica
 ProspectLevel=Potencial prospectivo
 OthersNotLinkedToThirdParty=Otros, no vinculados a un tercero
 ProspectStatus=Estado de la perspectiva
