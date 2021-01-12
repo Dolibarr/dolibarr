@@ -174,7 +174,7 @@ before_script:
     if [ "$DB" = 'postgresql' ]; then
       echo "Check pgloader version"
       pgloader --version
-	fi
+    fi
     echo
 
   - |
