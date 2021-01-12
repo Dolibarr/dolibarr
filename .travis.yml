@@ -73,13 +73,6 @@ before_install:
   phpenv config-rm xdebug.ini
   echo
 
-- |
-  if [ "$DB" = 'postgresql' ]; then
-    echo "Check pgloader version"
-    pgloader --version
-    echo
-  fi
-
 install:
 - |
   echo "Updating Composer"
@@ -178,6 +171,10 @@ before_script:
     mysql --version | head -
     mysql -e "SELECT VERSION();"  | head -
     psql --version
+    if [ "$DB" = 'postgresql' ]; then
+      echo "Check pgloader version"
+      pgloader --version
+	fi
     echo
 
   - |
