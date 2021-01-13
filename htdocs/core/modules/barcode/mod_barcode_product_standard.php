@@ -151,23 +151,24 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
     {
         global $conf;
         $out = '';
-		$this->db = $db;
-        $sql = "SELECT rowid, code, libelle";
+		
+        $sql = "SELECT rowid, code, libelle as label";
         $sql .= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
-        $sql .= " WHERE rowid = '".$type."'";
-        $sql .= " AND entity = ".$conf->entity;
-        $result = $this->db->query($sql);
+        $sql .= " WHERE rowid = '".$db->escape($type)."'";
+        $sql .= " AND entity = ".((int) $conf->entity);
+        $result = $db->query($sql);
         if ($result) {
-            $num = $this->db->num_rows($result);
+            $num = $db->num_rows($result);
 
             if ($num > 0) {
-                $obj = $this->db->fetch_object($result);
-                $out .= $obj->libelle; //take the libelle corresponding to the type rowid in the database
+                $obj = $db->fetch_object($result);
+                $out .= $obj->label; //take the label corresponding to the type rowid in the database
             }
         }
         else {
-            dol_print_error($this->db);
+            dol_print_error($db);
         }
+		
         return $out;
     }
 	/**
