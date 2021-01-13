@@ -3699,14 +3699,18 @@ abstract class CommonObject
 	 */
 	static public function deleteAllItemsLinkedByObjectID($fk_object_where, $field_where, $table_element)
 	{
-		if (empty($fk_object_where) || empty($field_where) || empty($table_element)) return -1;
+		if (empty($fk_object_where) || empty($field_where) || empty($table_element)) {
+			return -1;
+		}
 
 		global $db;
 
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table_element.' WHERE '.$field_where.' = '.$fk_object_where;
 		$resql = $db->query($sql);
 
-		if (empty($resql)) return 0;
+		if (empty($resql)) {
+			return 0;
+		}
 
 		return 1;
 	}
