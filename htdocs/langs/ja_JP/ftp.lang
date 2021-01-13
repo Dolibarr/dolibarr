@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - ftp
 FTPClientSetup=FTPまたはSFTPクライアントモジュールの設定
-NewFTPClient=新しいFTP / FTPS接続の設定
+NewFTPClient=新規FTP / FTPS接続の設定
 FTPArea=FTP / FTPSエリア
 FTPAreaDesc=この画面には、FTPおよびSFTPサーバのビューが表示される。
 SetupOfFTPClientModuleNotComplete=FTPまたはSFTPクライアントモジュールの設定が不完全なようです

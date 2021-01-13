@@ -385,7 +385,7 @@ if (empty($reshook))
 		$predef = '';
 		$product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
 		$price_ht = price2num(GETPOST('price_ht'), 'MU');
-		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht', 'CR'));
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht', 'CU'));
 		if (GETPOST('prod_entry_mode', 'alpha') == 'free')
 		{
 			$idprod = 0;
@@ -395,7 +395,7 @@ if (empty($reshook))
 			$tva_tx = '';
 		}
 
-		$qty = price2num(GETPOST('qty'.$predef), 'alpha');
+		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
 		$remise_percent = ((GETPOST('remise_percent'.$predef) != '') ? GETPOST('remise_percent'.$predef) : 0);
 
 		if ($qty == '')
@@ -499,6 +499,12 @@ if (empty($reshook))
 				}
 
 			   	$desc = $prod->description;
+
+				//If text set in desc is the same as product descpription (as now it's preloaded) whe add it only one time
+				if ($product_desc==$desc && !empty($conf->global->PRODUIT_AUTOFILL_DESC)) {
+					$product_desc='';
+				}
+
 			   	if (!empty($product_desc) && !empty($conf->global->MAIN_NO_CONCAT_DESCRIPTION)) $desc = $product_desc;
 				else $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
 

@@ -499,8 +499,8 @@ class Expedition extends CommonObject
 		// create shipment lines
 		foreach ($stockLocationQty as $stockLocation => $qty)
 		{
-			if (($line_id = $this->create_line($stockLocation, $line_ext->origin_line_id, $qty, $line_ext->rang, $array_options)) < 0)
-			{
+			$line_id = $this->create_line($stockLocation, $line_ext->origin_line_id, $qty, $line_ext->rang, $array_options);
+			if ($line_id < 0) {
 				$error++;
 			} else {
 				// create shipment batch lines for stockLocation
@@ -629,7 +629,7 @@ class Expedition extends CommonObject
 				if (!empty($conf->multicurrency->enabled))
 				{
 					if (!empty($this->multicurrency_code)) $this->multicurrency_code = $this->thirdparty->multicurrency_code;
-					if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx))	$this->multicurrency_tx = $this->thirdparty->multicurrency_tx;
+					if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($this->thirdparty->multicurrency_tx))	$this->multicurrency_tx = $this->thirdparty->multicurrency_tx;
 				}
 
 				/*
@@ -671,7 +671,7 @@ class Expedition extends CommonObject
 		// Protection
 		if ($this->statut)
 		{
-			dol_syslog(get_class($this)."::valid no draft status", LOG_WARNING);
+			dol_syslog(get_class($this)."::valid not in draft status", LOG_WARNING);
 			return 0;
 		}
 
@@ -757,7 +757,7 @@ class Expedition extends CommonObject
 
 					//var_dump($this->lines[$i]);
 					$mouvS = new MouvementStock($this->db);
-					$mouvS->origin = &$this;
+					$mouvS->origin = dol_clone($this, 1);
 
 					if (empty($obj->edbrowid))
 					{
@@ -765,6 +765,7 @@ class Expedition extends CommonObject
 
 						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record.
 						$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr", $numref));
+
 						if ($result < 0) {
 							$error++;
 							$this->error = $mouvS->error;
@@ -794,7 +795,6 @@ class Expedition extends CommonObject
 
 		// Change status of order to "shipment in process"
 		$ret = $this->setStatut(Commande::STATUS_SHIPMENTONPROCESS, $this->origin_id, $this->origin);
-
 		if (!$ret)
 		{
 			$error++;
@@ -1081,8 +1081,8 @@ class Expedition extends CommonObject
 		if (isset($this->size_units)) $this->size_units = trim($this->size_units);
 		if (isset($this->weight_units)) $this->weight_units = trim($this->weight_units);
 		if (isset($this->trueWeight)) $this->weight = trim($this->trueWeight);
-		if (isset($this->note_private)) $this->note = trim($this->note_private);
-		if (isset($this->note_public)) $this->note = trim($this->note_public);
+		if (isset($this->note_private)) $this->note_private = trim($this->note_private);
+		if (isset($this->note_public)) $this->note_public = trim($this->note_public);
 		if (isset($this->model_pdf)) $this->model_pdf = trim($this->model_pdf);
 
 
@@ -1093,7 +1093,6 @@ class Expedition extends CommonObject
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET";
 
-		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
 		$sql .= " ref_customer=".(isset($this->ref_customer) ? "'".$this->db->escape($this->ref_customer)."'" : "null").",";
@@ -2751,7 +2750,7 @@ class ExpeditionLigne extends CommonObjectLine
 		$ranktouse = $this->rang;
 		if ($ranktouse == -1)
 		{
-			$rangmax = $this->line_max($fk_expedition);
+			$rangmax = $this->line_max($this->fk_expedition);
 			$ranktouse = $rangmax + 1;
 		}
 

@@ -14,7 +14,7 @@ if (empty($extrafieldsobjectkey) && is_object($object)) $extrafieldsobjectkey = 
 // Loop to show all columns of extrafields for the search title line
 if (!empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_element like 'societe', 'socpeople', ...
 {
-	if (is_array($extrafields->attributes[$extrafieldsobjectkey]['label']) && count($extrafields->attributes[$extrafieldsobjectkey]['label']))
+    if (!empty($extrafields->attributes[$extrafieldsobjectkey]['label']) && is_array($extrafields->attributes[$extrafieldsobjectkey]['label']) && count($extrafields->attributes[$extrafieldsobjectkey]['label']))
 	{
 		if (empty($extrafieldsobjectprefix)) $extrafieldsobjectprefix = 'ef.';
 		if (empty($search_options_pattern)) $search_options_pattern = 'search_options_';
@@ -35,8 +35,8 @@ if (!empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_e
 					print '<input class="flat'.($searchclass ? ' '.$searchclass : '').'" size="4" type="text" name="'.$search_options_pattern.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options[$search_options_pattern.$tmpkey]).'">';
 				} elseif (in_array($typeofextrafield, array('datetime', 'timestamp')))
 				{
-					// TODO
-					// Use showInputField in a particular manner to have input with a comparison operator, not input for a specific value date-hour-minutes
+					$morecss = '';
+					echo $extrafields->showInputField($key, $search_array_options[$search_options_pattern.$tmpkey], '', '', $search_options_pattern, $morecss, 0, $extrafieldsobjectkey, 1);
 				} else {
 					// for the type as 'checkbox', 'chkbxlst', 'sellist' we should use code instead of id (example: I declare a 'chkbxlst' to have a link with dictionnairy, I have to extend it with the 'code' instead 'rowid')
 					$morecss = '';

@@ -62,6 +62,7 @@ EnhancedValueOfWarehouses=Warehouses value
 UserWarehouseAutoCreate=Create a user warehouse automatically when creating a user
 AllowAddLimitStockByWarehouse=Manage also value for minimum and desired stock per pairing (product-warehouse) in addition to the value for minimum and desired stock per product
 RuleForWarehouse=Rule for warehouses
+WarehouseAskWarehouseDuringPropal=Set a warehouse on Sale propal
 WarehouseAskWarehouseDuringOrder=Set a warehouse on Sale orders
 UserDefaultWarehouse=Set a warehouse on Users
 MainDefaultWarehouse=Default warehouse

@@ -446,14 +446,14 @@ print '<td>';
 print $langs->trans("MaxNbOfLinesForBoxes");
 print '</td>'."\n";
 print '<td>';
-print '<input type="text" class="flat" size="6" name="MAIN_BOXES_MAXLINES" value="'.$conf->global->MAIN_BOXES_MAXLINES.'">';
+print '<input type="text" class="flat" size="6" name="MAIN_BOXES_MAXLINES" value="'.(!empty($conf->global->MAIN_BOXES_MAXLINES) ? $conf->global->MAIN_BOXES_MAXLINES : '').'">';
 print '</td>';
 print '</tr>';
 
 // Activate FileCache - Developement
 if ($conf->global->MAIN_FEATURES_LEVEL == 2 || !empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
 	print '<tr class="oddeven"><td width="35%">'.$langs->trans("EnableFileCache").'</td><td>';
-	print $form->selectyesno('MAIN_ACTIVATE_FILECACHE', $conf->global->MAIN_ACTIVATE_FILECACHE, 1);
+	print $form->selectyesno('MAIN_ACTIVATE_FILECACHE', (!empty($conf->global->MAIN_ACTIVATE_FILECACHE) ? $conf->global->MAIN_ACTIVATE_FILECACHE : 0), 1);
 	print '</td>';
 	print '</tr>';
 }

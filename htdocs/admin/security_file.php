@@ -116,7 +116,7 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td colspan="2">'.$langs->trans("MaxSizeForUploadedFiles").'.';
 $max = @ini_get('upload_max_filesize');
-if ($max) print ' '.$langs->trans("MustBeLowerThanPHPLimit", $max * 1024, $langs->trans("Kb")).'.';
+if (isset($max)) print ' '.$langs->trans("MustBeLowerThanPHPLimit", ((int) $max) * 1024, $langs->trans("Kb")).'.';
 else print ' '.$langs->trans("NoMaxSizeByPHPLimit").'.';
 print '</td>';
 print '<td class="nowrap">';

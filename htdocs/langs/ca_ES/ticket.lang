@@ -58,7 +58,6 @@ OriginEmail=Origen de correu electrònic
 Notify_TICKET_SENTBYMAIL=Envia el missatge del tiquet per correu electrònic
 
 # Status
-NotRead=No llegit
 Read=Llegit
 Assigned=Assignat
 InProgress=En progrés
@@ -107,7 +106,7 @@ TicketPublicInterfaceTextHelpMessageHelpAdmin=Aquest text apareixerà a sobre de
 ExtraFieldsTicket=Extra atributs
 TicketCkEditorEmailNotActivated=L'editor HTML no està activat. Poseu FCKEDITOR_ENABLE_MAIL contingut a 1 per obtenir-lo.
 TicketsDisableEmail=No enviïs missatges de correu electrònic per a la creació de bitllets o la gravació de missatges
-TicketsDisableEmailHelp=De manera predeterminada, s'envien correus electrònics quan es creen nous tiquets o missatges. Activeu aquesta opció per desactivar totes les *all* notificacions per correu electrònic
+TicketsDisableEmailHelp=De manera predeterminada, s'envien correus electrònics quan es creen nous tiquets o missatges. Activeu aquesta opció per a desactivar *totes* les notificacions per correu electrònic
 TicketsLogEnableEmail=Activa el 'log' (registre d'activitat) per correu electrònic
 TicketsLogEnableEmailHelp=En cada canvi, s'enviarà un correu ** a cada contacte ** associat al tiquet.
 TicketParams=Paràmetres
@@ -124,12 +123,13 @@ TicketsActivatePublicInterfaceHelp=La interfície pública permet qualsevol visi
 TicketsAutoAssignTicket=Assigna automàticament l'usuari que va crear el tiquet
 TicketsAutoAssignTicketHelp=Quan es crea un tiquet, l'usuari pot assignar-se automàticament al tiquet.
 TicketNumberingModules=Mòdul de numeració de tiquets
+TicketsModelModule=Plantilles de document per a tiquets
 TicketNotifyTiersAtCreation=Notifica la creació de tercers
 TicketsDisableCustomerEmail=Desactiveu sempre els correus electrònics quan es crea un tiquet des de la interfície pública
-TicketsPublicNotificationNewMessage=Enviar correu(s) electonic(s) quan s'afegeix un nou missatge
-TicketsPublicNotificationNewMessageHelp=Enviar correu(s) electrònic(s) quan un nou missatge s'afegeix des d'una interfície pública (cap a l'usuari assignat o la notificació del correu electrònic cap a (actualitzar) i/o les notificacions del correu electrònic cap a)
+TicketsPublicNotificationNewMessage=Envia correus electrònics quan s'afegeixi un missatge nou
+TicketsPublicNotificationNewMessageHelp=Envia correus electrònics quan s'afegeixi un missatge nou des de la interfície pública (a l'usuari assignat o al correu electrònic de notificacions a (actualitzar) i/o al correu electrònic de notificacions)
 TicketPublicNotificationNewMessageDefaultEmail=Notificar correu electrònic cap a (actualitzar)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Enviar un correu nou missatge de notificació cap a aquesta adreça si el tiquet no te usuari assignat o l'usuari no te correu electrònic.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Envia notificacions de missatges nous per correu electrònic a aquesta adreça si el tiquet no té assignat cap usuari o l’usuari no en té cap.
 #
 # Index & list page
 #
@@ -155,7 +155,7 @@ CreateTicket=Crea un tiquet
 EditTicket=Editar el tiquet
 TicketsManagement=Gestió de tiquets
 CreatedBy=Creat per
-NewTicket=Nou tiquet
+NewTicket=Tiquet nou
 SubjectAnswerToTicket=Resposta de tiquet
 TicketTypeRequest=Tipus de sol·licitud
 TicketCategory=Grup
@@ -192,7 +192,7 @@ TicketDurationAuto=Durada calculada
 TicketDurationAutoInfos=Durada calculada automàticament a partir de la intervenció relacionada
 TicketUpdated=Tiquet actualitzat
 SendMessageByEmail=Envia un missatge per correu electrònic
-TicketNewMessage=Mou missatge
+TicketNewMessage=Missatge nou
 ErrorMailRecipientIsEmptyForSendTicketMessage=El destinatari està buit. Email no enviat
 TicketGoIntoContactTab=Aneu a la pestanya "Contactes" per seleccionar-los
 TicketMessageMailIntro=Introducció
@@ -225,13 +225,12 @@ UnableToCreateInterIfNoSocid=No es pot crear una intervenció quan no s'hagi def
 TicketMailExchanges=Intercanvis de correus
 TicketInitialMessageModified=Missatge inicial modificat
 TicketMessageSuccesfullyUpdated=Missatge actualitzat amb èxit
-TicketChangeStatus=Canvi de estatus
-TicketConfirmChangeStatus=Confirmar el canvi d'estatus : %s ?
-TicketLogStatusChanged=Estatus canviat : %s a %s
+TicketChangeStatus=Canvia l'estat
+TicketConfirmChangeStatus=Confirmeu el canvi d'estat: %s?
+TicketLogStatusChanged=Estat canviat: %s a %s
 TicketNotNotifyTiersAtCreate=No es notifica a l'empresa a crear
 Unread=No llegit
 TicketNotCreatedFromPublicInterface=No disponible El tiquet no s'ha creat des de la interfície pública.
-PublicInterfaceNotEnabled=La interfície pública no s'ha activat
 ErrorTicketRefRequired=El nom de referència del tiquet és obligatori
 
 #
@@ -242,7 +241,7 @@ NoLogForThisTicket=Encara no hi ha 'log' per aquest tiquet
 TicketLogAssignedTo=Tiquet %s assignat a %s
 TicketLogPropertyChanged=Tiquet %s modificat: classificació de %s a %s
 TicketLogClosedBy=Tiquet %s tancat per %s
-TicketLogReopen=El tiquet %s s'ha re-obert
+TicketLogReopen=El tiquet %s s'ha reobert
 
 #
 # Public pages
@@ -252,14 +251,14 @@ ShowListTicketWithTrackId=Mostra la llista d'entrades a partir de l'identificado
 ShowTicketWithTrackId=Mostra tiquets de l'identificador de traça 
 TicketPublicDesc=Podeu crear un tiquet d'assistència o consultar des d'una identificació (ID) existent.
 YourTicketSuccessfullySaved=S'ha desat el tiquet amb èxit!
-MesgInfosPublicTicketCreatedWithTrackId=S'ha creat un nou tiquet amb l'ID %s i la ref. %s.
+MesgInfosPublicTicketCreatedWithTrackId=S'ha creat un tiquet nou amb l'ID %s i la ref. %s.
 PleaseRememberThisId=Guardeu el número de traça que us podríem demanar més tard.
 TicketNewEmailSubject=Confirmació de la creació de tiquet - Ref %s (ID de l’entrada pública %s)
-TicketNewEmailSubjectCustomer=Nou tiquet de suport
+TicketNewEmailSubjectCustomer=Tiquet de suport nou
 TicketNewEmailBody=Aquest és un correu electrònic automàtic per confirmar que heu registrat un nou tiquet.
 TicketNewEmailBodyCustomer=Aquest és un correu electrònic automàtic per confirmar que un nou tiquet acaba de ser creat al vostre compte.
 TicketNewEmailBodyInfosTicket=Informació per al seguiment del tiquet
-TicketNewEmailBodyInfosTrackId=Traça de tiquet numero: %s
+TicketNewEmailBodyInfosTrackId=Número de seguiment de tiquet: %s
 TicketNewEmailBodyInfosTrackUrl=Podeu veure el progrés del tiquet fent clic a l'enllaç de dalt.
 TicketNewEmailBodyInfosTrackUrlCustomer=Podeu veure el progrés del tiquet a la interfície específica fent clic al següent enllaç
 TicketEmailPleaseDoNotReplyToThisEmail=No respongueu directament a aquest correu electrònic. Utilitzeu l'enllaç per respondre des de la mateixa interfície.
@@ -273,13 +272,13 @@ Subject=Assumpte
 ViewTicket=Vista del tiquet
 ViewMyTicketList=Veure la meva llista de tiquets
 ErrorEmailMustExistToCreateTicket=Error: adreça de correu electrònic no trobada a la nostra base de dades
-TicketNewEmailSubjectAdmin=S'ha creat un nou tiquet: Ref %s (ID d'entrada pública %s)
+TicketNewEmailSubjectAdmin=S'ha creat un tiquet nou - Ref %s (ID de tiquet públic %s)
 TicketNewEmailBodyAdmin=<p>S'ha creat una entrada amb ID #%s, veure informació :</p>
 SeeThisTicketIntomanagementInterface=Consulteu el tiquet a la interfície de gestió
 TicketPublicInterfaceForbidden=La interfície pública de les entrades no estava habilitada
 ErrorEmailOrTrackingInvalid=Valor incorrecte per a identificació de seguiment o correu electrònic
 OldUser=Usuari antic
-NewUser=Nou usuari
+NewUser=Usuari nou
 NumberOfTicketsByMonth=Nombre d’entrades mensuals
 NbOfTickets=Nombre d’entrades
 # notifications

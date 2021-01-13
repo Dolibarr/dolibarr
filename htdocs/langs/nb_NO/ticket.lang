@@ -58,7 +58,6 @@ OriginEmail=Epostkilde
 Notify_TICKET_SENTBYMAIL=Send billettmelding via e-post
 
 # Status
-NotRead=Ikke lest
 Read=Les
 Assigned=Tildelt
 InProgress=Pågår
@@ -124,12 +123,13 @@ TicketsActivatePublicInterfaceHelp=Offentlig grensesnitt gjør det mulig for all
 TicketsAutoAssignTicket=Tilordne automatisk brukeren som opprettet supportseddelen
 TicketsAutoAssignTicketHelp=Når du lager en supportseddel, kan brukeren automatisk tildeles billetten.
 TicketNumberingModules=Supportseddel nummereringsmodul
+TicketsModelModule=Dokumentmaler for billetter
 TicketNotifyTiersAtCreation=Varsle tredjepart ved opprettelse
 TicketsDisableCustomerEmail=Slå alltid av e-post når en billett er opprettet fra det offentlige grensesnittet
 TicketsPublicNotificationNewMessage=Send e-post(er) når en ny melding legges til
-TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
+TicketsPublicNotificationNewMessageHelp=Send epost(er) når en ny melding legges til fra det offentlige grensesnittet (til tildelt bruker eller varslings-eposten til (oppdatering) og/eller varslings-eposten til)
 TicketPublicNotificationNewMessageDefaultEmail=E-postvarsler til (oppdatere)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send epost med ny melding til denne adressen hvis billetten ikke er tildelt en bruker eller brukeren ikke har epost.
 #
 # Index & list page
 #
@@ -202,7 +202,7 @@ TicketMessageMailIntroText=Hei, <br> Et nytt svar ble sendt på en billett som d
 TicketMessageMailIntroHelpAdmin=Denne teksten blir satt inn før teksten til svaret på en supportseddel.
 TicketMessageMailSignature=Signatur
 TicketMessageMailSignatureHelp=Denne teksten er bare lagt til i slutten av eposten og vil ikke bli lagret.
-TicketMessageMailSignatureText= <p> Med vennlig hilsen </p> <p> - </p>
+TicketMessageMailSignatureText=<p> Med vennlig hilsen </p> <p> - </p>
 TicketMessageMailSignatureLabelAdmin=Signatur på svar-epost
 TicketMessageMailSignatureHelpAdmin=Denne teksten vil bli satt inn etter svarmeldingen.
 TicketMessageHelp=Kun denne teksten blir lagret i meldingslisten på supportseddelen.
@@ -231,7 +231,6 @@ TicketLogStatusChanged=Status endret: %s til %s
 TicketNotNotifyTiersAtCreate=Ikke gi beskjed til firmaet ved opprettelse
 Unread=Ulest
 TicketNotCreatedFromPublicInterface=Ikke tilgjengelig. Billett ble ikke opprettet fra offentlig grensesnitt.
-PublicInterfaceNotEnabled=Offentlig grensesnitt var ikke aktivert
 ErrorTicketRefRequired=Billettreferansenavn kreves
 
 #

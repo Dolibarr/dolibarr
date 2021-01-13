@@ -81,7 +81,7 @@ class box_factures extends ModeleBoxes
 
 		$langs->load("bills");
 
-		$text = $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE ? "" : "Modified")."CustomerBills", $max);
+		$text = $langs->trans("BoxTitleLast".(!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) ? "" : "Modified")."CustomerBills", $max);
 		$this->info_box_head = array(
 			'text' => $text,
 			'limit'=> dol_strlen($text)
@@ -106,7 +106,7 @@ class box_factures extends ModeleBoxes
 			$sql .= " AND f.entity IN (".getEntity('invoice').")";
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 			if ($user->socid)	$sql .= " AND s.rowid = ".$user->socid;
-			if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql .= " ORDER BY f.datef DESC, f.ref DESC ";
+			if (!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) $sql .= " ORDER BY f.datef DESC, f.ref DESC ";
 			else $sql .= " ORDER BY f.tms DESC, f.ref DESC ";
 			$sql .= $this->db->plimit($max, 0);
 

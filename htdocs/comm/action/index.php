@@ -214,6 +214,7 @@ llxHeader('', $langs->trans("Agenda"), $help_url);
 $form = new Form($db);
 $companystatic = new Societe($db);
 $contactstatic = new Contact($db);
+$userstatic = new User($db);
 
 $now = dol_now();
 $nowarray = dol_getdate($now);
@@ -1071,7 +1072,6 @@ if (count($listofextcals))
 				{
 					$event->id = $icalevent['UID'];
 					$event->ref = $event->id;
-
 					$userId = $userstatic->findUserIdByEmail($namecal);
 					if (!empty($userId) && $userId > 0)
 					{

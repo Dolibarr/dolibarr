@@ -462,7 +462,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 						// get key index of stats used in $includes, $classes, $keys, $icons, $titres, $links
 						$keyIndex = array_search($globalStatsKey, $keys);
 
-						$classe = $classes[$keyIndex];
+						$classe = (!empty($classes[$keyIndex]) ? $classes[$keyIndex] : '');
 						if (isset($boardloaded[$classe]) && is_object($boardloaded[$classe]))
 						{
 							$groupElement['globalStats']['total'] = $boardloaded[$classe]->nb[$globalStatsKey] ? $boardloaded[$classe]->nb[$globalStatsKey] : 0;
@@ -549,7 +549,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 		}
 
 		if ($showweather && !empty($isIntopOpenedDashBoard)) {
-			$appendClass = $conf->global->MAIN_DISABLE_METEO == 2 ? ' hideonsmartphone' : '';
+		    $appendClass = (!empty($conf->global->MAIN_DISABLE_METEO) && $conf->global->MAIN_DISABLE_METEO == 2 ? ' hideonsmartphone' : '');
 			$weather = getWeatherStatus($totallate);
 
 			$text = '';
@@ -676,7 +676,7 @@ print '<div class="fichecenter fichecenterbis">';
  * Show widgets (boxes)
  */
 
-$boxlist .= '<div class="twocolumns">';
+$boxlist = '<div class="twocolumns">';
 
 $boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
 if (!empty($nbworkboardcount))

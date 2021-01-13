@@ -2169,8 +2169,8 @@ class Form
 		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid))
 		{
 			$sql .= ', pcp.rowid as idprodcustprice, pcp.price as custprice, pcp.price_ttc as custprice_ttc,';
-			$sql .= ' pcp.price_base_type as custprice_base_type, pcp.tva_tx as custtva_tx';
-			$selectFields .= ", idprodcustprice, custprice, custprice_ttc, custprice_base_type, custtva_tx";
+			$sql .= ' pcp.price_base_type as custprice_base_type, pcp.tva_tx as custtva_tx, pcp.ref_customer as custref';
+			$selectFields .= ", idprodcustprice, custprice, custprice_ttc, custprice_base_type, custtva_tx, custref";
 		}
 		// Units
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
@@ -2182,7 +2182,9 @@ class Form
 		if (!empty($conf->global->MAIN_MULTILANGS))
 		{
 			$sql .= ", pl.label as label_translated";
+			$sql .= ", pl.description as description_translated";
 			$selectFields .= ", label_translated";
+			$selectFields .= ", description_translated";
 		}
 		// Price by quantity
 		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
@@ -2222,7 +2224,18 @@ class Form
 		// Multilang : we add translation
 		if (!empty($conf->global->MAIN_MULTILANGS))
 		{
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang='".$this->db->escape($langs->getDefaultLang())."'";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid ";
+			if (!empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) && !empty($socid)) {
+				$soc = new Societe($db);
+				$result = $soc->fetch($socid);
+				if ($result > 0 && !empty($soc->default_lang)) {
+					$sql .= " AND pl.lang='" . $this->db->escape($soc->default_lang) . "'";
+				} else {
+					$sql .= " AND pl.lang='".$this->db->escape($langs->getDefaultLang())."'";
+				}
+			} else {
+				$sql .= " AND pl.lang='".$this->db->escape($langs->getDefaultLang())."'";
+			}
 		}
 
 		if (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
@@ -2267,6 +2280,7 @@ class Form
 				if ($i > 0) $sql .= " AND ";
 				$sql .= "(p.ref LIKE '".$this->db->escape($prefix.$crit)."%' OR p.label LIKE '".$this->db->escape($prefix.$crit)."%'";
 				if (!empty($conf->global->MAIN_MULTILANGS)) $sql .= " OR pl.label LIKE '".$this->db->escape($prefix.$crit)."%'";
+				if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES) && ! empty($socid)) $sql .= " OR pcp.ref_customer LIKE '".$this->db->escape($prefix.$crit)."%'";
 				if (!empty($conf->global->PRODUCT_AJAX_SEARCH_ON_DESCRIPTION))
 				{
 					$sql .= " OR p.description LIKE '".$this->db->escape($prefix.$crit)."%'";
@@ -2435,7 +2449,9 @@ class Form
 		$outval = '';
 		$outref = '';
 		$outlabel = '';
+		$outlabel_translated = '';
 		$outdesc = '';
+		$outdesc_translated = '';
 		$outbarcode = '';
 		$outorigin = '';
 		$outtype = '';
@@ -2454,8 +2470,14 @@ class Form
 
 		$outkey = $objp->rowid;
 		$outref = $objp->ref;
+		$outrefcust = empty($objp->custref) ? '' : $objp->custref;
 		$outlabel = $objp->label;
 		$outdesc = $objp->description;
+		if (!empty($conf->global->MAIN_MULTILANGS))
+		{
+			$outlabel_translated = $objp->label_translated;
+			$outdesc_translated = $objp->description_translated;
+		}
 		$outbarcode = $objp->barcode;
 		$outorigin = $objp->fk_country;
 		$outpbq = empty($objp->price_by_qty_rowid) ? '' : $objp->price_by_qty_rowid;
@@ -2517,13 +2539,19 @@ class Form
 		   		elseif ($objp->stock <= 0) $opt .= ' class="product_line_stock_too_low"';
 			}
 		}
+		if (!empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+			$opt .= ' data-labeltrans="'.$outlabel_translated.'"';
+			$opt .= ' data-desctrans="'.dol_escape_htmltag($outdesc_translated).'"';
+		}
 		$opt .= '>';
 		$opt .= $objp->ref;
+		if (! empty($objp->custref)) $opt.= ' (' . $objp->custref . ')';
 		if ($outbarcode) $opt .= ' ('.$outbarcode.')';
 		$opt .= ' - '.dol_trunc($label, $maxlengtharticle);
 		if ($outorigin && !empty($conf->global->PRODUCT_SHOW_ORIGIN_IN_COMBO)) $opt .= ' ('.getCountry($outorigin, 1).')';
 
 		$objRef = $objp->ref;
+		if (! empty($objp->custref)) $objRef .= ' (' . $objp->custref . ')';
 		if (!empty($filterkey) && $filterkey != '') $objRef = preg_replace('/('.preg_quote($filterkey, '/').')/i', '<strong>$1</strong>', $objRef, 1);
 		$outval .= $objRef;
 		if ($outbarcode) $outval .= ' ('.$outbarcode.')';
@@ -2687,7 +2715,25 @@ class Form
 		}
 
 		$opt .= "</option>\n";
-		$optJson = array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'label2'=>$outlabel, 'desc'=>$outdesc, 'type'=>$outtype, 'price_ht'=>price2num($outprice_ht), 'price_ttc'=>price2num($outprice_ttc), 'pricebasetype'=>$outpricebasetype, 'tva_tx'=>$outtva_tx, 'qty'=>$outqty, 'discount'=>$outdiscount, 'duration_value'=>$outdurationvalue, 'duration_unit'=>$outdurationunit, 'pbq'=>$outpbq);
+		$optJson = array(
+			'key'=>$outkey,
+			'value'=>$outref,
+			'label'=>$outval,
+			'label2'=>$outlabel,
+			'desc'=>$outdesc,
+			'type'=>$outtype,
+			'price_ht'=>price2num($outprice_ht),
+			'price_ttc'=>price2num($outprice_ttc),
+			'pricebasetype'=>$outpricebasetype,
+			'tva_tx'=>$outtva_tx, 'qty'=>$outqty,
+			'discount'=>$outdiscount,
+			'duration_value'=>$outdurationvalue,
+			'duration_unit'=>$outdurationunit,
+			'pbq'=>$outpbq,
+			'labeltrans'=>$outlabel_translated,
+			'desctrans'=>$outdesc_translated,
+			'ref_customer'=>$outrefcust
+		);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2770,6 +2816,12 @@ class Form
 		$sql .= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.remise_percent, pfp.remise, pfp.unitprice,";
 		$sql .= " pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, pfp.fk_soc, s.nom as name,";
 		$sql .= " pfp.supplier_reputation";
+		// if we use supplier description of the products
+		if (!empty($conf->global->PRODUIT_FOURN_TEXTS)) {
+			$sql .= " ,pfp.desc_fourn as description";
+		} else {
+			$sql .= " ,p.description";
+		}
 		// Units
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 			$sql .= ", u.label as unit_long, u.short_label as unit_short, p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units";
@@ -2799,7 +2851,11 @@ class Form
 			foreach ($scrit as $crit)
 			{
 				if ($i > 0) $sql .= " AND ";
-				$sql .= "(pfp.ref_fourn LIKE '".$this->db->escape($prefix.$crit)."%' OR p.ref LIKE '".$this->db->escape($prefix.$crit)."%' OR p.label LIKE '".$this->db->escape($prefix.$crit)."%')";
+				$sql .= "(pfp.ref_fourn LIKE '".$this->db->escape($prefix.$crit)."%' OR p.ref LIKE '".$this->db->escape($prefix.$crit)."%' OR p.label LIKE '".$this->db->escape($prefix.$crit)."%'";
+				if (!empty($conf->global->PRODUIT_FOURN_TEXTS)) {
+					$sql .= " OR pfp.desc_fourn LIKE '".$this->db->escape($prefix.$crit)."%'";
+				}
+				$sql .= ")";
 				$i++;
 			}
 			if (count($scrit) > 1) $sql .= ")";
@@ -3028,8 +3084,9 @@ class Form
 				if (empty($objp->idprodfournprice) && empty($alsoproductwithnosupplierprice)) $opt .= ' disabled';
 				if (!empty($objp->idprodfournprice) && $objp->idprodfournprice > 0)
 				{
-					$opt .= ' pbq="'.$objp->idprodfournprice.'" data-pbq="'.$objp->idprodfournprice.'" data-pbqqty="'.$objp->quantity.'" data-pbqup="'.$objp->unitprice.'" data-pbqpercent="'.$objp->remise_percent.'"';
+					$opt .= ' data-qty="'.$objp->quantity.'" data-up="'.$objp->unitprice.'" data-discount="'.$outdiscount.'"';
 				}
+				$opt .= ' data-description="'.dol_escape_htmltag($objp->description).'"';
 				$opt .= ' data-html="'.dol_escape_htmltag($optlabel).'"';
 				$opt .= '>';
 
@@ -3043,7 +3100,20 @@ class Form
 				// "key" value of json key array is used by jQuery automatically as selected value
 				// "label" value of json key array is used by jQuery automatically as text for combo box
 				$out .= $opt;
-				array_push($outarray, array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'qty'=>$outqty, 'up'=>$objp->unitprice, 'discount'=>$outdiscount, 'type'=>$outtype, 'duration_value'=>$outdurationvalue, 'duration_unit'=>$outdurationunit, 'disabled'=>(empty($objp->idprodfournprice) ?true:false)));
+				array_push($outarray,
+					array('key'=>$outkey,
+						'value'=>$outref,
+						'label'=>$outval,
+						'qty'=>$outqty,
+						'up'=>$objp->unitprice,
+						'discount'=>$outdiscount,
+						'type'=>$outtype,
+						'duration_value'=>$outdurationvalue,
+						'duration_unit'=>$outdurationunit,
+						'disabled'=>(empty($objp->idprodfournprice) ?true:false),
+						'description'=>$objp->description
+					)
+				);
 				// Exemple of var_dump $outarray
 				// array(1) {[0]=>array(6) {[key"]=>string(1) "2" ["value"]=>string(3) "ppp"
 				//           ["label"]=>string(76) "ppp (<strong>f</strong>ff2) - ppp - 20,00 Euros/1unité (20,00 Euros/unité)"
@@ -3749,9 +3819,10 @@ class Form
 	 *  @param  string	$filtre            To filter list
 	 *  @param  int		$useempty          1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 *  @param  string	$moreattrib        To add more attribute on select
+	 *	@param	int		$noinfoadmin		0=Add admin info, 1=Disable admin info
 	 * 	@return	void
 	 */
-	public function selectShippingMethod($selected = '', $htmlname = 'shipping_method_id', $filtre = '', $useempty = 0, $moreattrib = '')
+	public function selectShippingMethod($selected = '', $htmlname = 'shipping_method_id', $filtre = '', $useempty = 0, $moreattrib = '', $noinfoadmin = 0)
 	{
 		global $langs, $conf, $user;
 
@@ -3786,7 +3857,7 @@ class Form
 					$i++;
 				}
 				print "</select>";
-				if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+				if ($user->admin  && empty($noinfoadmin)) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 
 				print ajax_combobox('select'.$htmlname);
 			} else {
@@ -3890,9 +3961,10 @@ class Form
 	 *      @param	string	$selected       Preselected Unit ID
 	 *      @param  string	$htmlname       Select name
 	 *      @param	int		$showempty		Add a nempty line
+	 *      @param  string  $unit_type      Restrict to one given unit type
 	 * 		@return	string                  HTML select
 	 */
-	public function selectUnits($selected = '', $htmlname = 'units', $showempty = 0)
+	public function selectUnits($selected = '', $htmlname = 'units', $showempty = 0, $unit_type = '')
 	{
 		global $langs;
 
@@ -3902,6 +3974,9 @@ class Form
 
 		$sql = 'SELECT rowid, label, code from '.MAIN_DB_PREFIX.'c_units';
 		$sql .= ' WHERE active > 0';
+		if (!empty($unit_type)) {
+			$sql .= " AND unit_type = '".$this->db->escape($unit_type)."'";
+		}
 
 		$resql = $this->db->query($sql);
 		if ($resql && $this->db->num_rows($resql) > 0)
@@ -4882,7 +4957,7 @@ class Form
 			print '<form method="POST" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setmulticurrencyrate">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="text" class="maxwidth100" name="'.$htmlname.'" value="'.(!empty($rate) ? price(price2num($rate, 'CR')) : 1).'" /> ';
+			print '<input type="text" class="maxwidth100" name="'.$htmlname.'" value="'.(!empty($rate) ? price(price2num($rate, 'CU')) : 1).'" /> ';
 			print '<select name="calculation_mode">';
 			print '<option value="1">'.$currency.' > '.$conf->currency.'</option>';
 			print '<option value="2">'.$conf->currency.' > '.$currency.'</option>';

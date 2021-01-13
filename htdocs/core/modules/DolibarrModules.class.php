@@ -622,6 +622,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
+		$content='';
 		$pathoffile = $this->getDescLongReadmeFound();
 
 		if ($pathoffile)     // Mostly for external modules

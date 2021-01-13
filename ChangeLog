@@ -7,7 +7,8 @@ English Dolibarr ChangeLog
 
 For users:
 ----------
-NEW: Add module "Credit transfer SEPA" to manage payment of vendors using bank credit transfer SEPA files.
+NEW: Module "Credit transfer SEPA" to manage payment of vendors using bank credit transfer SEPA files.
+NEW: Module Intracomm report
 NEW: Module Reception (for a more accurate management of your receptions) moved from experimental to stable.
 NEW: Module Recruitment to manage Job position and applications.
 NEW: Several security issues after a private bug bounty campaign. 
@@ -16,13 +17,12 @@ NEW: Accountancy - add options to disable binding on sales, purchases & expense 
 NEW: Accountancy balance - add a menu entry to show subtotal by group
 NEW: Accountancy - change menu disposition
 NEW: Accountancy - on transfers, select the periodicity by default
-NEW: Accountancy - Add export for Gestinum (v3 & v5)
+NEW: Accountancy - Add export for Gestinum (v3 & v5) #15180
 NEW: new currency rate editor
 NEW: Solve blocking feature. Can increase stock of a Kit without changing subproduct stock.
 NEW: add a widget to show the customers with outstanding limits reached
 NEW: add 2 rules for emailcollector: Message send/not sent from Dolibarr
 NEW: add a counter of number of words for pages in website module
-NEW: add alert before changing thirdparty in TakePOS
 NEW: add a page to list Stock at a given date in the past
 NEW: add a start date to begin binding in accountancy
 NEW: add a statistics page to list popularity of products on invoices
@@ -34,12 +34,12 @@ NEW: add column vat rate in page to define accounting account on product/service
 NEW: add costprice in fields of products list
 NEW: add an import profile for CUSTOMER ORDER, PO, PROPOSAL MODULE, SUPPLIER INVOICE
 NEW: add employee link in expense report binding page
-NEW: add EORI No. as ProfID5
+NEW: add EORI No. as ProfID5  #15382
 NEW: add export for various payments
 NEW: add Extrafields labels and values in mail on create ticket
 NEW: add Extrafields support on ECM module
 NEW: add filter rules "is answer" and "is not answer" in email collector
-NEW: add focus when editing on product/stock/product.php Close #14548
+NEW: add focus when editing on product/stock/product.php  -> close #14548
 NEW: add free text on each terminal of cash desk
 NEW: add global search for customer payments and vendor payments
 NEW: add global search for miscellaneous payments
@@ -67,7 +67,6 @@ NEW: add search param for close date on order list
 NEW: add show preview for mail attachement on form mail
 NEW: add State/Province origin for products
 NEW: add the workflow interaction close intervention on closing ticket
-NEW: add third order printer to TakePOS
 NEW: add tracking number in list and search_all items
 NEW: add vcard for adherent and user
 NEW: add week number for month view in agenda
@@ -75,7 +74,6 @@ NEW: Algeria data (VAT and forme_juridique)
 NEW: allow click on all header numbers on commerce area
 NEW: allow to reopen interventions (green button)
 NEW: allow zero quantity on supplier/vendor order line
-NEW: appearance tab in TakePOS with more visual parameters
 NEW: better currency rate editor
 NEW: can build vendor invoice from vendor orders
 NEW: can change a product in lines of a recurring invoice or contract
@@ -88,16 +86,14 @@ NEW: can edit the list of sending email profiles
 NEW: can enable/disable users in bulk actions
 NEW: can filter on accounting system ref in export of chart of account
 NEW: can filter on container type, language and tags in the list of web pages
-NEW: can hide eatby, sellby dates with option PRODUCT_DISABLE_SELLBY and PRODUCT_DISABLE_EATBY
+NEW: can hide eatby, sellby dates with option PRODUCT_DISABLE_EATBY and PRODUCT_DISABLE_SELLBY
 NEW: can import proposals, sales orders, supplier invoices
 NEW: can set a dedicated SMTP config for sending email from public ticket interface
 NEW: can set tags/categories to website pages
 NEW: can set type of price without tax per default for new sale price creation
 NEW: can use desired stock of a given warehouse for replenishment
-NEW: change thirdparty with barcode scan in TakePOS
 NEW: common behavior for monthly leave list view
 NEW: convert all subscription in datetime
-NEW: can create a thirdparty customer from TakePOS
 NEW: date shipment from order accepts hours
 NEW: price level compatibility for variant
 NEW: delayed payment in TakePOS
@@ -124,29 +120,24 @@ NEW: link on balance to the ledger
 NEW: MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER const in email collector
 NEW: manage errors on update extra fields in ticket card
 NEW: mass-actions for the event list view
-NEW: Module Intracomm report
 NEW: more filter for "View change logs"
-NEW: multicurrency total in TakePOS
 NEW: multiselect type and date to date filter
-NEW: Nature of product is now a dictionay
 NEW: new line template: hidden conf to fill service dates from the last service line
 NEW: PDF model storm for delivery
 NEW: possibilty to group payments by mode and show their subtotal
-NEW: Print payment method and change in TakePOS
 NEW: Priority and transparency from external calendar events
+NEW: Products - Nature of product is now a dictionary   #13287
 NEW: Products Import/Export 'default warehouse' and 'use batch number' fields
 NEW: Purchase price table: added filterable table columns
 NEW: rate editor for multicurrency
 NEW: ref_ext field for Commande lines, order lines, Attributes and Combinations, Invoice lines, payments, order lines
 NEW: remove new lines in mail on add ticket message
-NEW: restrict thirdparty to customer in TakePOS
 NEW: Rule "email to" accept wildcard *
-NEW: Save filter of the project homepage
+NEW: save filter of the project homepage
 NEW: select-able columns on customer and supplier invoice paymnet list
 NEW: select-able columns on miscellaneous payments + more data columns
 NEW: select-able columns on social taxes list
 NEW: send context and remove new lines on create ticket
-NEW: show available stock in TakePOS
 NEW: show category filter on lists only when user have rights to read categories
 NEW: show header number and make it clickable in warehouse area, payment area, shipment area
 NEW: show image of user in the combo select of users
@@ -159,24 +150,33 @@ NEW: show tags and status in search list of website pages
 NEW: show user on external calender events (when found)
 NEW: subject title with company name instead of application title in ticket message
 NEW: Support for Samba4 AD
+NEW: TakePOS appearance tab with more visual parameters
+NEW: TakePOS add alert before changing thirdparty 
+NEW: TakePOS add third order printer
+NEW: TakePOS can change thirdparty with barcode scan
+NEW: TakePOS can create a thirdparty customer from TakePOS frontend
 NEW: TakePOS connector compatibility with RECEIPT PRINTERS module
 NEW: TakePOS Gift Receipt
-NEW: TakePOS Multicurrency compatibility
-NEW: the global header of a website can also have dynamic content
-NEW: Third-Party Import new fields: mother company,outstanding debt limit,bank account,incoterms
+NEW: TakePOS multicurrency compatibility
+NEW: TakePOS multicurrency total
+NEW: TakePOS print payment method and change 
+NEW: TakePOS restrict thirdparty to customer
+NEW: TakePOS show available stock 
+NEW: TakePOS Weighing Scale compatibility with TakePOS connector #14725
+NEW: Thirdparty Import new fields: mother company,outstanding debt limit,bank account,incoterms
 NEW: Thirdparty module : box on customer/supplier tab for invoice outsantding amount late
-NEW: ticket classification on create from email collector
+NEW: Ticket classification on create from email collector
 NEW: Ticket message notifications when edited from public interface
-NEW: translate classification labels in ticket
+NEW: Ticket translate classification labels in ticket
 NEW: VAT rate for Angola #15606
 NEW: VAT and juridical status for Algeria
 NEW: VAT report - Invert constant to show by default zero VAT in reports
 NEW: website page fields selection
-NEW: Weighing Scale compatibility with TakePOS connector
+NEW: website - global header of a website can also have dynamic content
 NEW: when creating a user from a member linked to a thirdparty, you can choose to create it as external or internal user
-NEW: add clone button on miscellaneous payment
-NEW: #15065 Add option to put the product label in bold in the PDF templates if configured
-NEW: Add option "If the feature to manage kits of module Stock is used, show details of subproducts of a kit on PDF."
+NEW: add clone button on miscellaneous payment 
+NEW: add option to put the product label in bold in the PDF templates if configured #15065 
+NEW: add option "If the feature to manage kits of module Stock is used, show details of subproducts of a kit on PDF."
 
 
 For developers:
@@ -185,7 +185,7 @@ NEW: add substitution key  __MEMBER_TYPE__
 NEW: add substitution key  __TYPE__ 
 NEW: add function dolButtonToOpenUrlInDialogPopup() to be able to open page into a popup
 NEW: show line number on intervention card (via MAIN_VIEW_LINE_NUMBER)
-NEW: Add some fields to link website page to an other object
+NEW: add some fields to link website page to an other object
 NEW: fill ECM src object fields in dol_add_file_process
 NEW: conf to allow to show the full tree in warehouse popup
 NEW: can use parameter ?THEME_DARKMODEENABLED=2 for a preview of theme in dark mode
@@ -201,7 +201,7 @@ NEW: standardizes API thirdparties by email like other object
 NEW: Thirdparty REST API: endpoint to set price level
 NEW: use new category API for project list view
 NEW: Triggers Attributes and Attributes values
-NEW: added incoterms data into the substitution array
+NEW: add incoterms data into the substitution array
 NEW: add send context for ticket
 NEW: add a message in error_log after detection of SQL or script injection
 NEW: add validation of MX domain for emails
@@ -211,7 +211,7 @@ NEW: add param to not show links when output tags
 
 APIs
 NEW: API get contacts list of a given order
-NEW: API endpoint getContacts and Clean results
+NEW: API endpoint getContacts and clean results
 NEW: API can update a payment
 NEW: API get member by thirdparty
 NEW: API get thirdparty by barcode
@@ -223,7 +223,7 @@ NEW: get state dictionary by REST API
 NEW: improve Product API for product variants
 
 HOOKs
-NEW: Hook on propal card
+NEW: add hook on propal card
 NEW: add hooks on newpayment page to allow external payment modules
 NEW: add hooks on stats pages
 NEW: add formConfirm hook on product page

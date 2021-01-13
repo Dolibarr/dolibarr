@@ -87,6 +87,7 @@ LineOfExpenseReport=Ligne de rapport de dépenses
 NoAccountSelected=Aucun compte comptable sélectionné
 VentilatedinAccount=Lié avec succès au compte comptable
 XLineFailedToBeBinded=%s produits / services n'étaient liés à aucun compte comptable
+ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Commencez le tri de la page "Reliure à faire" par les éléments les plus récents
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Commencez le tri de la page "Reliure faite" par les éléments les plus récents
 ACCOUNTING_LENGTH_DESCRIPTION=Tronquer la description des produits et services dans les listes après les caractères X (Best = 50)
@@ -97,7 +98,6 @@ ACCOUNTING_EXPENSEREPORT_JOURNAL=Note de frais
 DONATION_ACCOUNTINGACCOUNT=Compte comptable pour enregistrer des dons
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Compte comptable par défaut pour les services achetés (utilisé si non défini dans la fiche de service)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Compte comptable par défaut pour les services vendus (utilisé si non défini dans la fiche de service)
-GroupByAccountAccounting=Groupe par compte comptable
 NotMatch=Pas encore défini
 FinanceJournal=Journal des finances
 ExpenseReportsJournal=Journal des rapports de dépenses

@@ -621,6 +621,7 @@ if ($id == 11)
 		// 'contract' => $langs->trans('Contract'),
 		'project' => $langs->trans('Project'),
 		'project_task' => $langs->trans('Task'),
+        'ticket' => $langs->trans('Ticket'),
 		'agenda' => $langs->trans('Agenda'),
 		'dolresource' => $langs->trans('Resource'),
 		// old deprecated
@@ -692,7 +693,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 		if ($value == 'sortorder') continue; // For a column name 'sortorder', we use the field name 'position'
 		if ((!GETPOSTISSET($value) || GETPOST($value) == '')
 			&& (!in_array($listfield[$f], array('decalage', 'module', 'accountancy_code', 'accountancy_code_sell', 'accountancy_code_buy', 'tracking', 'picto'))  // Fields that are not mandatory
-			&& (!($id == 10 && $listfield[$f] == 'code')) // Code is mandatory fir table 10
+			&& ($id != 10 || ($listfield[$f] != 'code' && $listfield[$f] != 'note')) // Field code and note is not mandatory for dictionary table 10
 			)
 		) {
 			$ok = 0;
@@ -757,9 +758,9 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	if ($_POST["accountancy_code"] <= 0) $_POST["accountancy_code"] = ''; // If empty, we force to null
 	if ($_POST["accountancy_code_sell"] <= 0) $_POST["accountancy_code_sell"] = ''; // If empty, we force to null
 	if ($_POST["accountancy_code_buy"] <= 0) $_POST["accountancy_code_buy"] = ''; // If empty, we force to null
-	if ($id == 10 && GETPOSTISSET("code"))  // Spaces are not allowed into code
+	if ($id == 10 && GETPOSTISSET("code"))  // Spaces are not allowed into code for tax dictionary
 	{
-		$_POST["code"] = preg_replace('/\s/', '', $_POST["code"]);
+		$_POST["code"] = preg_replace('/[^a-zA-Z0-9\-\+]/', '', $_POST["code"]);
 	}
 
 	// If check ok and action add, add the line
@@ -826,8 +827,13 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 		$result = $db->query($sql);
 		if ($result)	// Add is ok
 		{
-			setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
-			$_POST = array('id'=>$id); // Clean $_POST array, we keep only
+			setEventMessages($langs->transnoentities("RecordCreatedSuccessfully"), null, 'mesgs');
+
+			// Clean $_POST array, we keep only id of dictionary
+			if ($id == 10 && GETPOST('country', 'int') > 0) {
+				$search_country_id = GETPOST('country', 'int');
+			}
+			$_POST = array('id'=>$id);
 		} else {
 			if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
@@ -1487,11 +1493,9 @@ if ($id)
 								continue;
 							}
 
-							if ($value == 'element')
-							{
+							if ($value == 'element') {
 								$valuetoshow = isset($elementList[$valuetoshow]) ? $elementList[$valuetoshow] : $valuetoshow;
-							} elseif ($value == 'source')
-							{
+							} elseif ($value == 'source') {
 								$valuetoshow = isset($sourceList[$valuetoshow]) ? $sourceList[$valuetoshow] : $valuetoshow;
 							} elseif ($valuetoshow == 'all') {
 								$valuetoshow = $langs->trans('All');

@@ -1,18 +1,18 @@
 # Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Compte comptable utilitzat per usuaris tercers
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=S'utilitzarà un compte comptable dedicat definit en la fitxa d'usuari per a omplir el Llibre Major, o com valor predeterminar de la comptabilitat del Llibre Major si no es defineix un compte comptable en la fitxa d'usuari.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=El compte comptable dedicat definit a la fitxa d'usuari només s’utilitzarà per a la comptabilitat auxiliar. Aquest s'utilitzarà per al llibre major i com a valor per defecte de la comptabilitat auxiliar si no es defineix un compte comptable d'usuari dedicat.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Compte comptable per defecte per als pagaments salarials
 Salary=Sou
 Salaries=Sous
-NewSalaryPayment=Nou pagament de sous
+NewSalaryPayment=Pagament de salari nou
 AddSalaryPayment=Afegeix pagament de sou
 SalaryPayment=Pagament de sous
 SalariesPayments=Pagaments de sous
 ShowSalaryPayment=Veure pagament de sous
 THM=Tarifa per hora mitjana
-TJM=Tarifa diaria mitjana
+TJM=Tarifa mitjana diària
 CurrentSalary=Salari actual
-THMDescription=Aquest valor es pot utilitzar per calcular el cost del temps consumit en un projecte introduït pels usuaris si s'utilitza el projecte de mòdul
+THMDescription=Aquest valor es pot utilitzar per a calcular el cost del temps consumit en un projecte introduït pels usuaris si s'utilitza el mòdul de projecte
 TJMDescription=Aquest valor només és informatiu i no s'utilitza en cap càlcul
 LastSalaries=Últims %s pagaments de salari
 AllSalaries=Tots els pagaments de salari
