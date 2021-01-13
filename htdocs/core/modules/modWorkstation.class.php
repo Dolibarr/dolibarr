@@ -60,9 +60,7 @@ class modWorkstation extends DolibarrModules
 		// Module description, used if translation string 'ModuleWorkstationDesc' not found (Workstation is name of module).
 		$this->description = "WorkstationsDescription";
 		// Used only if file README.md and README-LL.md not found.
-		$this->descriptionlong = "Workstation description (Long)";
-		$this->editor_name = 'Editor name';
-		$this->editor_url = 'https://www.example.com';
+		$this->descriptionlong = "WorkstationsDescription";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
 		$this->version = 'development';
 		// Url to the file with your last numberversion of this module
