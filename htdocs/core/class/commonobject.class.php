@@ -3663,6 +3663,7 @@ abstract class CommonObject
 
 	/**
 	 * Function used to get an array with all items linked to an object id in association table
+	 *
 	 * @param	int		$fk_object_where		id of object we need to get linked items
 	 * @param	string	$field_select			name of field we need to get a list
 	 * @param	string	$field_where			name of field of object we need to get linked items
@@ -3692,6 +3693,7 @@ abstract class CommonObject
 
 	/**
 	 * Function used to remove all items linked to an object id in association table
+	 *
 	 * @param	int		$fk_object_where		id of object we need to remove linked items
 	 * @param	string	$field_where			name of field of object we need to delete linked items
 	 * @param	string	$table_element			name of association table
