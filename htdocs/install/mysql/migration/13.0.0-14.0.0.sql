@@ -98,3 +98,5 @@ ALTER TABLE llx_propal ADD CONSTRAINT llx_propal_fk_warehouse FOREIGN KEY (fk_wa
 ALTER TABLE llx_propal ADD INDEX idx_propal_fk_warehouse(fk_warehouse);
 
 
+ALTER TABLE llx_product_customer_price ADD COLUMN ref_customer varchar(30);
+ALTER TABLE llx_product_customer_price_log ADD COLUMN ref_customer varchar(30);
