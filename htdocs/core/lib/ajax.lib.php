@@ -139,7 +139,8 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 												 type: item.type, qty: item.qty, discount: item.discount,
 												 pricebasetype: item.pricebasetype, price_ht: item.price_ht,
 												 price_ttc: item.price_ttc,
-												 up: item.up, description : item.description}
+												 up: item.up, description : item.description,
+												 ref_customer: item.ref_customer }
 									}));
 								}
 								else console.error("Error: Ajax url '.$url.($urloption ? '?'.$urloption : '').' has returned an empty page. Should be an empty json array.");
@@ -157,6 +158,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 							$("#'.$htmlname.'").attr("data-discount", ui.item.discount);
 							$("#'.$htmlname.'").attr("data-qty", ui.item.qty);
 							$("#'.$htmlname.'").attr("data-description", ui.item.description);
+							$("#'.$htmlname.'").attr("data-ref-customer", ui.item.ref_customer);
 
 							//For customer price
 		';

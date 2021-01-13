@@ -23,7 +23,15 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 
 		if ($crit != '' && in_array($typ, array('date', 'datetime', 'timestamp')))
 		{
-			$sql .= " AND ".$extrafieldsobjectprefix.$tmpkey." = '".$db->idate($crit)."'";
+			if (is_numeric($crit)) {
+				$sql .= " AND ".$extrafieldsobjectprefix.$tmpkey." = '".$db->idate($crit)."'";
+			} elseif (is_array($crit)) {
+				$sql .= ' AND (' . $extrafieldsobjectprefix.$tmpkey
+						.' BETWEEN "'
+						. $db->idate($crit['start'])
+						. '" AND "'
+						. $db->idate($crit['end']) . '")';
+			}
 		} elseif (in_array($typ, array('boolean')))
 		{
 			if ($crit !== '-1' && $crit !== '') {

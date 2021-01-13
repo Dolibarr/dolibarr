@@ -227,7 +227,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 		}
 		if (count($receivercc) > 0) {
 			foreach ($receivercc as $key => $val) {
-				if ($val == 'thirdparty') {	// Key selected means currentthird party (may be usd for current member or current user too)
+				if ($val == 'thirdparty') {	// Key selected means current thirdparty (may be usd for current member or current user too)
 					// Recipient was provided from combo list
 					$tmparray[] = dol_string_nospecial($thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
 				} elseif ($val == 'contact') {	// Key selected means current contact
@@ -399,7 +399,6 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 								$error++;
 							}
 							// End call triggers
-
 							if ($error) {
 								setEventMessages($object->error, $object->errors, 'errors');
 							}

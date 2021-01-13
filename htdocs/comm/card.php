@@ -1266,6 +1266,12 @@ if ($object->id > 0)
 		}
 	}
 
+	// Allow external modules to add their own shortlist of recent objects
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addMoreRecentObjects', $parameters, $object, $action);
+	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	else print $hookmanager->resPrint;
+
 	print '</div></div></div>';
 	print '<div style="clear:both"></div>';
 
