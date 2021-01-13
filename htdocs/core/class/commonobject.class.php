@@ -3671,7 +3671,9 @@ abstract class CommonObject
 	 */
 	static public function getAllItemsLinkedByObjectID($fk_object_where, $field_select, $field_where, $table_element)
 	{
-		if(empty($fk_object_where) || empty($field_where) || empty($table_element)) return -1;
+		if (empty($fk_object_where) || empty($field_where) || empty($table_element)) {
+			return -1;
+		}
 
 		global $db;
 
@@ -3686,7 +3688,6 @@ abstract class CommonObject
 		}
 
 		return $TRes;
-
 	}
 
 	/**
@@ -3698,7 +3699,7 @@ abstract class CommonObject
 	 */
 	static public function deleteAllItemsLinkedByObjectID($fk_object_where, $field_where, $table_element)
 	{
-		if(empty($fk_object_where) || empty($field_where) || empty($table_element)) return -1;
+		if (empty($fk_object_where) || empty($field_where) || empty($table_element)) return -1;
 
 		global $db;
 
@@ -3708,7 +3709,6 @@ abstract class CommonObject
 		if (empty($resql)) return 0;
 
 		return 1;
-
 	}
 
 	/**
