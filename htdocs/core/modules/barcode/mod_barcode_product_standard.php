@@ -151,7 +151,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
     {
         global $conf;
         $out = '';
-		
+
         $sql = "SELECT rowid, code, libelle as label";
         $sql .= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
         $sql .= " WHERE rowid = '".$db->escape($type)."'";
@@ -168,7 +168,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
         else {
             dol_print_error($db);
         }
-		
+
         return $out;
     }
 	/**
