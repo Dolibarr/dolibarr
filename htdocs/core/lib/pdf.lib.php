@@ -1236,6 +1236,10 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	} else {
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$prodser = new Product($db);
+
+		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+		    include_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
+		}
 	}
 
 	if ($idprod)
@@ -1375,6 +1379,32 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			}
 		} else {
 			$ref_prodserv = $prodser->ref; // Show local ref only
+
+			if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+                $productCustomerPriceStatic = new Productcustomerprice($db);
+			    $filter = array('fk_product' => $idprod, 'fk_soc' => $object->socid);
+
+			    $nbCustomerPrices = $productCustomerPriceStatic->fetch_all('', '', 1, 0, $filter);
+
+			    if ($nbCustomerPrices > 0) {
+			        $productCustomerPrice = $productCustomerPriceStatic->lines[0];
+
+			        if (! empty($productCustomerPrice->ref_customer)) {
+			            switch ($conf->global->PRODUIT_CUSTOMER_PRICES_PDF_REF_MODE) {
+			                case 1:
+			                    $ref_prodserv = $productCustomerPrice->ref_customer;
+			                    break;
+
+			                case 2:
+			                    $ref_prodserv = $productCustomerPrice->ref_customer . ' (' . $outputlangs->transnoentitiesnoconv('InternalRef') . ' ' . $ref_prodserv . ')';
+			                    break;
+
+			                default:
+			                    $ref_prodserv = $ref_prodserv . ' (' . $outputlangs->transnoentitiesnoconv('RefCustomer') . ' ' . $productCustomerPrice->ref_customer . ')';
+			            }
+			        }
+			    }
+			}
 		}
 
 		if (!empty($libelleproduitservice) && !empty($ref_prodserv)) $ref_prodserv .= " - ";

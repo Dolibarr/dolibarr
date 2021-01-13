@@ -529,7 +529,7 @@ class FormMail extends Form
 			foreach ($this->substit as $key => $val) {
 				$helpforsubstitution .= $key.' -> '.$langs->trans(dol_string_nohtmltag(dolGetFirstLineOfText($val))).'<br>';
 			}
-			if (!empty($this->withsubstit)) {		// Unset or set ->withsubstit=0 to disable this.
+			if (!empty($this->withsubstit)) {	// Unset or set ->withsubstit=0 to disable this.
 				$out .= '<tr><td colspan="2" class="right">';
 				//$out.='<div class="floatright">';
 				if (is_numeric($this->withsubstit)) {
@@ -1587,7 +1587,7 @@ class ModelMail
 	public $topic;
 
 	/**
-	 * @var string Model mail conten
+	 * @var string Model mail content
 	 */
 	public $content;
 	public $content_lines;
