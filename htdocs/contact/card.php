@@ -1044,15 +1044,21 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				if ($conf->use_javascript_ajax && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS==-1)
 				{
 					print "\n".'<script type="text/javascript" language="javascript">'."\n";
-					print 'jQuery(document).ready(function () {
-							jQuery("#email").keyup(function() {
-								if ($(this).val()!="") {
-									$(".noemail").addClass("fieldrequired");
-								} else {
-									$(".noemail").removeClass("fieldrequired");
-								}
-							})
-						})'."\n";
+
+					print '
+					jQuery(document).ready(function () {
+						function init_check_no_email(input) {
+							if (input.val()!="") {
+								$(".noemail").addClass("fieldrequired");
+							} else {
+								$(".noemail").removeClass("fieldrequired");
+							}
+						}
+						$("#email").keyup(function() {
+							init_check_no_email($(this));
+						});
+						init_check_no_email($("#email"));
+					})'."\n";
 					print '</script>'."\n";
 				}
 				if (!GETPOSTISSET("no_email") && !empty($object->email))
