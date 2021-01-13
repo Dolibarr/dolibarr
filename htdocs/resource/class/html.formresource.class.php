@@ -75,9 +75,10 @@ class FormResource
 	 *  @param	int		$outputmode		0=HTML select string, 1=Array, 2=without form tag
 	 *  @param	int		$limit			Limit number of answers
 	 *  @param	string	$morecss		More css
+	 * 	@param	bool	$multiple       add [] in the name of element and add 'multiple' attribut
 	 * 	@return	string					HTML string with
 	 */
-	public function select_resource_list($selected = '', $htmlname = 'fk_resource', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $event = array(), $filterkey = '', $outputmode = 0, $limit = 20, $morecss = '')
+	public function select_resource_list($selected = '', $htmlname = 'fk_resource', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $event = array(), $filterkey = '', $outputmode = 0, $limit = 20, $morecss = '', $multiple = false)
 	{
 		// phpcs:enable
 		global $conf, $user, $langs;
@@ -88,6 +89,8 @@ class FormResource
 		$resourcestat = new Dolresource($this->db);
 
 		$resources_used = $resourcestat->fetch_all('ASC', 't.rowid', $limit, 0, $filter);
+
+		if (!is_array($selected)) $selected = array($selected);
 
 		if ($outputmode != 2)
 		{
@@ -106,7 +109,7 @@ class FormResource
 			}
 
 			// Construct $out and $outarray
-			$out .= '<select id="'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">'."\n";
+			$out .= '<select id="'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').'>'."\n";
 			if ($showempty) $out .= '<option value="-1">&nbsp;</option>'."\n";
 
 			$num = 0;
@@ -123,7 +126,7 @@ class FormResource
 					$label = $resourcestat->lines[$i]->ref ? $resourcestat->lines[$i]->ref : ''.$resourcestat->lines[$i]->label;
 					if ($resourceclass != 'Dolresource') $label .= ' ('.$langs->trans($resourceclass).')';
 
-					if ($selected > 0 && $selected == $resourcestat->lines[$i]->id)
+					if ((is_object($selected[0]) && $selected[0]->id == $resourcestat->lines[$i]->id) || (!is_object($selected[0]) && in_array($resourcestat->lines[$i]->id, $selected)))
 					{
 						$out .= '<option value="'.$resourcestat->lines[$i]->id.'" selected>'.$label.'</option>';
 					} else {
