@@ -224,9 +224,10 @@ if ($action == "confirm_update") {
 		$action = 'create';
 		$error++;
 	}
-	if (!GETPOST('next_num_mvt', 'alpha'))
+	if (!GETPOST('doc_ref', 'alpha'))
 	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NumPiece")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Piece")), null, 'errors');
+		$action = 'create';
 		$error++;
 	}
 
@@ -371,7 +372,7 @@ if ($action == 'create')
 	print '</tr>';
 
 	print '<tr>';
-	print '<td>'.$langs->trans("Piece").'</td>';
+	print '<td class="fieldrequired">'.$langs->trans("Piece").'</td>';
 	print '<td><input type="text" class="minwidth200" name="doc_ref" value="'.GETPOST('doc_ref', 'alpha').'"></td>';
 	print '</tr>';
 
@@ -594,7 +595,8 @@ if ($action == 'create')
 			print '<input type="hidden" name="fk_docdet" value="'.$object->fk_docdet.'">'."\n";
 			print '<input type="hidden" name="mode" value="'.$mode.'">'."\n";
 
-			print "<table class=\"noborder\" width=\"100%\">";
+			print '<table class="noborder centpercent">';
+
 			if (count($object->linesmvt) > 0) {
 				$total_debit = 0;
 				$total_credit = 0;
@@ -616,18 +618,21 @@ if ($action == 'create')
 					$total_credit += $line->credit;
 
 					if ($action == 'update' && $line->id == $id) {
+						print '<!-- td columns in edit mode -->';
 						print '<td>';
 						print $formaccounting->select_account((GETPOSTISSET("accountingaccount_number") ? GETPOST("accountingaccount_number", "alpha") : $line->numero_compte), 'accountingaccount_number', 1, array(), 1, 1, '');
 						print '</td>';
 						print '<td>';
-						// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
-						// use setup of keypress to select thirdparty and this hang browser on large database.
-						if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
-						{
+						// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
+						// It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
+						// Also, it is not possible to use a value that is not in the list.
+						// Also, the label is not automatically filled when a value is selected.
+						if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
 							print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1);
 						} else {
 							print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'">';
 						}
+						// TODO Add also the label
 						print '</td>';
 						print '<td><input type="text" class="minwidth200" name="label_operation" value="'.(GETPOSTISSET("label_operation") ? GETPOST("label_operation", "alpha") : $line->label_operation).'"></td>';
 						print '<td class="right"><input type="text" size="6" class="right" name="debit" value="'.(GETPOSTISSET("debit") ? GETPOST("debit", "alpha") : price($line->debit)).'"></td>';
@@ -671,18 +676,21 @@ if ($action == 'create')
 
 				if ($action == "" || $action == 'add') {
 					print '<tr class="oddeven">';
+					print '<!-- td columns in add mode -->';
 					print '<td>';
 					print $formaccounting->select_account('', 'accountingaccount_number', 1, array(), 1, 1, '');
 					print '</td>';
 					print '<td>';
-					// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
-					// use setup of keypress to select thirdparty and this hang browser on large database.
-					if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
-					{
+					// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
+					// It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
+					// Also, it is not possible to use a value that is not in the list.
+					// Also, the label is not automatically filled when a value is selected.
+					if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
 						print $formaccounting->select_auxaccount('', 'subledger_account', 1);
 					} else {
 						print '<input type="text" class="maxwidth150" name="subledger_account" value="">';
 					}
+					// TODO Add also the label
 					print '</td>';
 					print '<td><input type="text" class="minwidth200" name="label_operation" value="'.$label_operation.'"/></td>';
 					print '<td class="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
