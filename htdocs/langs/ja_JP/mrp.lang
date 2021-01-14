@@ -77,4 +77,4 @@ UnitCost=単価
 TotalCost=総費用
 BOMTotalCost=消費する各数量と製品のコストに基づいてこのBOMを生成するためのコスト（定義されている場合は原価、定義されている場合は平均加重価格、それ以外の場合は最良の購入価格を使用）
 GoOnTabProductionToProduceFirst=製造指図を閉じるには、最初に製造を開始しておく必要がある（タブ '%s'を参照）。ただし、キャンセルすることはできる。
-ErrorAVirtualProductCantBeUsedIntoABomOrMo=A kit can't be used into a BOM or a MO
+ErrorAVirtualProductCantBeUsedIntoABomOrMo=キットをBOMまたはMOに使用することはできない

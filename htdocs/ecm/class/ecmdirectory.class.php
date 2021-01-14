@@ -345,7 +345,7 @@ class EcmDirectory extends CommonObject
 		$sql .= " t.date_c as date_c,";
 		$sql .= " t.tms as date_m";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ecm_directories as t";
-		$sql .= " WHERE t.rowid = ".$id;
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);

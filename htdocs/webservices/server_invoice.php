@@ -288,7 +288,7 @@ $server->register(
  */
 function getInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	dol_syslog("Function: getInvoice login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
@@ -363,7 +363,7 @@ function getInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 						'note_private' => $invoice->note_private ? $invoice->note_private : '',
 						'note_public' => $invoice->note_public ? $invoice->note_public : '',
 						'status' => $invoice->statut,
-					'project_id' => $invoic->fk_project,
+						'project_id' => $invoice->fk_project,
 						'close_code' => $invoice->close_code ? $invoice->close_code : '',
 						'close_note' => $invoice->close_note ? $invoice->close_note : '',
 						'payment_mode_id' => $invoice->mode_reglement_id ? $invoice->mode_reglement_id : '',
@@ -399,7 +399,7 @@ function getInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
  */
 function getInvoicesForThirdParty($authentication, $idthirdparty)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	dol_syslog("Function: getInvoicesForThirdParty login=".$authentication['login']." idthirdparty=".$idthirdparty);
 
@@ -482,7 +482,7 @@ function getInvoicesForThirdParty($authentication, $idthirdparty)
 						'fk_user_valid' => $invoice->user_valid ? $invoice->user_valid : '',
 						'date' => $invoice->date ?dol_print_date($invoice->date, 'dayrfc') : '',
 						'date_due' => $invoice->date_lim_reglement ?dol_print_date($invoice->date_lim_reglement, 'dayrfc') : '',
-										'date_creation' => $invoice->date_creation ?dol_print_date($invoice->date_creation, 'dayhourrfc') : '',
+						'date_creation' => $invoice->date_creation ?dol_print_date($invoice->date_creation, 'dayhourrfc') : '',
 						'date_validation' => $invoice->date_validation ?dol_print_date($invoice->date_creation, 'dayhourrfc') : '',
 						'date_modification' => $invoice->datem ?dol_print_date($invoice->datem, 'dayhourrfc') : '',
 						'type' => $invoice->type,
@@ -492,7 +492,7 @@ function getInvoicesForThirdParty($authentication, $idthirdparty)
 						'note_private' => $invoice->note_private ? $invoice->note_private : '',
 						'note_public' => $invoice->note_public ? $invoice->note_public : '',
 						'status'=> $invoice->statut,
-										'project_id' => $invoic->fk_project,
+						'project_id' => $invoice->fk_project,
 						'close_code' => $invoice->close_code ? $invoice->close_code : '',
 						'close_note' => $invoice->close_note ? $invoice->close_note : '',
 						'payment_mode_id' => $invoice->mode_reglement_id ? $invoice->mode_reglement_id : '',
@@ -528,17 +528,16 @@ function getInvoicesForThirdParty($authentication, $idthirdparty)
  * Create an invoice
  *
  * @param	array		$authentication		Array of authentication information
- * @param	Facture		$invoice			Invoice
+ * @param	array		$invoice			Invoice
  * @return	array							Array result
  */
 function createInvoice($authentication, $invoice)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	$now = dol_now();
 
-	dol_syslog("Function: createInvoice login=".$authentication['login']." id=".$invoice->id.
-			", ref=".$invoice->ref.", ref_ext=".$invoice->ref_ext);
+	dol_syslog("Function: createInvoice login=".$authentication['login']." id=".$invoice['id'].", ref=".$invoice['ref'].", ref_ext=".$invoice['ref_ext']);
 
 	if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
@@ -580,22 +579,22 @@ function createInvoice($authentication, $invoice)
 		if (isset($invoice['lines']['line'][0])) $arrayoflines = $invoice['lines']['line'];
 		else $arrayoflines = $invoice['lines'];
 
-		foreach ($arrayoflines as $key => $line)
+		foreach ($arrayoflines as $line)
 		{
 			// $key can be 'line' or '0','1',...
 			$newline = new FactureLigne($db);
 			$newline->product_type = $line['type'];
 			$newline->desc = $line['desc'];
-			$newline->fk_product = $line['fk_product'];
-			$newline->tva_tx = $line['vat_rate'];
+			$newline->fk_product = $line['product_id'];
+			$newline->tva_tx = isset($line['vat_rate']) ? $line['vat_rate'] : 0;
 			$newline->qty = $line['qty'];
-			$newline->subprice = $line['unitprice'];
+			$newline->subprice = isset($line['unitprice']) ? $line['unitprice'] : null;
 			$newline->total_ht = $line['total_net'];
 			$newline->total_tva = $line['total_vat'];
 			$newline->total_ttc = $line['total'];
 			$newline->date_start = dol_stringtotime($line['date_start']);
 			$newline->date_end = dol_stringtotime($line['date_end']);
-			$newline->fk_product = $line['product_id'];
+
 			$new_invoice->lines[] = $newline;
 		}
 		//var_dump($newobject->date_lim_reglement); exit;
@@ -654,10 +653,7 @@ function createInvoiceFromOrder($authentication, $id_order = '', $ref_order = ''
 {
 	global $db, $conf;
 
-	$now = dol_now();
-
-	dol_syslog("Function: createInvoiceFromOrder login=".$authentication['login']." id=".$id_order.
-			", ref=".$ref_order.", ref_ext=".$ref_ext_order);
+	dol_syslog("Function: createInvoiceFromOrder login=".$authentication['login']." id=".$id_order.", ref=".$ref_order.", ref_ext=".$ref_ext_order);
 
 	if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
@@ -781,12 +777,11 @@ function updateInvoice($authentication, $invoice)
 						$object->generateDocument($object->model_pdf, $outputlangs);
 					}
 				}
-				if ($invoice['status'] == Facture::STATUS_CLOSED)
-				{
-					$result = $object->set_paid($fuser, $invoice->close_code, $invoice->close_note);
+				if ($invoice['status'] == Facture::STATUS_CLOSED) {
+					$result = $object->set_paid($fuser, $invoice['close_code'], $invoice['close_note']);
 				}
 				if ($invoice['status'] == Facture::STATUS_ABANDONED)
-					$result = $object->set_canceled($fuser, $invoice->close_code, $invoice->close_note);
+					$result = $object->set_canceled($fuser, $invoice['close_code'], $invoice['close_note']);
 			}
 		}
 

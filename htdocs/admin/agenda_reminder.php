@@ -187,14 +187,14 @@ print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right">'."\n";
 
 if (empty($conf->global->AGENDA_REMINDER_BROWSER)) {
-	if (! getIsHTTPS()) {
+	if (!isHTTPS()) {
 		$langs->load("errors");
 		print img_warning($langs->trans("WarningAvailableOnlyForHTTPSServers"), '', 'valignmiddle size15x').' ';
 	}
 	print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER&amp;token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
 	print '</td></tr>'."\n";
 } else {
-	if (! getIsHTTPS()) {
+	if (!isHTTPS()) {
 		$langs->load("errors");
 		print img_warning($langs->trans("WarningAvailableOnlyForHTTPSServers"), '', 'valignmiddle size15x').' ';
 	}

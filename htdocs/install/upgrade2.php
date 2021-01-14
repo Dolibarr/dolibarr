@@ -4332,6 +4332,14 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 				$mod->remove('noboxes');
 				$mod->init($reloadmode);
 			}
+		} elseif ($moduletoreload == 'MAIN_MODULE_EXTERNALSITE') {
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate ExternalSite module");
+			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modExternalSite.class.php';
+			if ($res) {
+				$mod = new modExternalSite($db);
+				$mod->remove('noboxes');
+				$mod->init($reloadmode);
+			}
 		} elseif ($moduletoreload == 'MAIN_MODULE_SOCIETE') {
 			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Societe module");
 			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modSociete.class.php';

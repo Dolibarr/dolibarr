@@ -130,7 +130,10 @@ if ($object->client)
 	print '<tr><td class="titlefield">';
 	print $langs->trans('CustomerCode').'</td><td colspan="3">';
 	print $object->code_client;
-	if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+	$tmpcheck = $object->check_codeclient();
+	if ($tmpcheck != 0 && $tmpcheck != -5) {
+		print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+	}
 	print '</td></tr>';
 	$sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."facture where fk_soc = ".$socid;
 	$resql = $db->query($sql);
@@ -153,7 +156,10 @@ if ($object->fournisseur)
 	print '<tr><td class="titlefield">';
 	print $langs->trans('SupplierCode').'</td><td colspan="3">';
 	print $object->code_fournisseur;
-	if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+	$tmpcheck = $object->check_codefournisseur();
+	if ($tmpcheck != 0 && $tmpcheck != -5) {
+		print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+	}
 	print '</td></tr>';
 	$sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."commande_fournisseur where fk_soc = ".$socid;
 	$resql = $db->query($sql);

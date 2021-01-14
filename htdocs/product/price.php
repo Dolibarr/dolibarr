@@ -705,7 +705,7 @@ if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
 	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
 
-llxHeader('', $title, $helpurl);
+llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'classforhorizontalscrolloftabs');
 
 $head = product_prepare_head($object);
 $titre = $langs->trans("CardProduct".$object->type);
@@ -847,8 +847,8 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 				print '<input type="hidden" name="action" value="setlabelsellingprice">';
 				print '<input type="hidden" name="pricelevel" value="'.$i.'">';
 				print $langs->trans("SellingPrice").' '.$i.' - ';
-				print '<input size="10" class="maxwidthonsmartphone" type="text" name="labelsellingprice" value="'.$conf->global->$keyforlabel.'">';
-				print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+				print '<input class="maxwidthonsmartphone" type="text" name="labelsellingprice" value="'.$conf->global->$keyforlabel.'">';
+				print '&nbsp;<input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'">';
 				print '</form>';
 			} else {
 				print $langs->trans("SellingPrice").' '.$i;
@@ -1460,7 +1460,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
 			else print_barre_liste($langs->trans("PriceByCustomerLog"), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, $num, 'title_accountancy.png');
 
 			print '<div class="div-table-responsive">';
-			print '<table class="noborder centpercent">';
+			print '<table class="liste centpercent">';
 
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("AppliedPricesFrom").'</td>';
@@ -1659,7 +1659,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		print dol_get_fiche_head();
 
-		print '<table class="border centpercent">';
+		print '<table class="liste centpercent">';
 		print '<tr>';
 		print '<td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
 		print '<td>';
@@ -1745,7 +1745,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		print dol_get_fiche_head();
 
-		print '<table class="border centpercent">';
+		print '<table class="liste centpercent">';
 		print '<tr>';
 		print '<td class="titlefield">'.$langs->trans('ThirdParty').'</td>';
 		$staticsoc = new Societe($db);
@@ -1855,7 +1855,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-			print '<table class="noborder centpercent">';
+			print '<table class="liste centpercent">';
 
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("ThirdParty").'</td>';
@@ -1970,7 +1970,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-		print '<table class="noborder centpercent">';
+		print '<table class="liste centpercent">';
 
 		if (count($prodcustprice->lines) > 0 || $search_soc)
 		{

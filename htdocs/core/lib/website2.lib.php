@@ -129,6 +129,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 
 	$shortlangcode = '';
 	if ($objectpage->lang) $shortlangcode = substr($objectpage->lang, 0, 2); // en_US or en-US -> en
+	if (empty($shortlangcode)) $shortlangcode = substr($object->lang, 0, 2); // en_US or en-US -> en
 
 	$tplcontent = '';
 	$tplcontent .= "<?php // BEGIN PHP\n";
@@ -175,6 +176,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 			if ($tmppage->id > 0) {
 				$tmpshortlangcode = '';
 				if ($tmppage->lang) $tmpshortlangcode = preg_replace('/[_-].*$/', '', $tmppage->lang); // en_US or en-US -> en
+				if (empty($tmpshortlangcode)) $tmpshortlangcode = preg_replace('/[_-].*$/', '', $object->lang); // en_US or en-US -> en
 				if ($tmpshortlangcode != $shortlangcode) {
 					$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $tmppage->id ? '/' : (($tmpshortlangcode != substr($object->lang, 0, 2)) ? '/'.$tmpshortlangcode : '').'/'.$tmppage->pageurl.'.php').'" />'."\n";
 				}

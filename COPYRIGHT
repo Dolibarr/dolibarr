@@ -29,7 +29,7 @@ PHPoAuthLib            0.8.2         MIT License                 Yes            
 PHPPrintIPP            1.3           GPL-2+                      Yes             Library to send print IPP requests
 PSR/Logs			   1.0										                 Library for logs (used by DebugBar)
 PSR/simple-cache	   ?										                 Library for cache (used by PHPSpreadSheet)
-Restler                3.0.0RC6      LGPL-3+                     Yes             Library to develop REST Web services (+ swagger-ui js lib into dir explorer)
+Restler                3.1.1         LGPL-3+                     Yes             Library to develop REST Web services (+ swagger-ui js lib into dir explorer)
 Sabre                  3.2.2         BSD                         Yes             DAV support
 Swift Mailer           5.4.2-DEV     MIT license                 Yes             Comprehensive mailing tools for PHP
 Stripe                 6.43.1        MIT licence                 Yes             Library for Stripe module

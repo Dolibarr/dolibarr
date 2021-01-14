@@ -129,7 +129,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	$localtax1_type = 0;
 	$localtax2_type = 0;
 
-	if (is_array($localtaxes_array)) {
+	if (is_array($localtaxes_array) && count($localtaxes_array)) {
 		$localtax1_type = $localtaxes_array[0];
 		$localtax1_rate = $localtaxes_array[1];
 		$localtax2_type = $localtaxes_array[2];

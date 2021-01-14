@@ -386,10 +386,10 @@ if ($nolinesbefore) {
 			<td class="nobottom margininfos linecolmargin right">
 				<!-- For predef product -->
 				<?php if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) { ?>
-					<select id="fournprice_predef" name="fournprice_predef" class="flat minwidth75imp" style="display: none;"></select>
+					<select id="fournprice_predef" name="fournprice_predef" class="flat minwidth75imp maxwidth150" style="display: none;"></select>
 				<?php } ?>
 				<!-- For free product -->
-				<input type="text" id="buying_price" name="buying_price" class="flat maxwidth75 right" value="<?php echo (GETPOSTISSET("buying_price") ? GETPOST("buying_price", 'alpha', 2) : ''); ?>">
+				<input type="text" id="buying_price" name="buying_price" class="flat maxwidth75 maxwidth150 right" value="<?php echo (GETPOSTISSET("buying_price") ? GETPOST("buying_price", 'alpha', 2) : ''); ?>">
 			</td>
 			<?php
 			if (!empty($conf->global->DISPLAY_MARGIN_RATES))

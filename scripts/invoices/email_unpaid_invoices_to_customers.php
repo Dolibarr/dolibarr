@@ -74,8 +74,9 @@ $duration_value2 = isset($argv[4]) ? $argv[4] : 'none';
 $error = 0;
 print $script_file." launched with mode ".$mode." default lang=".$langs->defaultlang.(is_numeric($duration_value) ? " delay=".$duration_value : "").(is_numeric($duration_value2) ? " after=".$duration_value2 : "")."\n";
 
-if ($mode != 'confirm')
+if ($mode != 'confirm') {
 	$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
+}
 
 $sql = "SELECT f.ref, f.total_ttc, f.date_lim_reglement as due_date,";
 $sql .= " s.rowid as sid, s.nom as name, s.email, s.default_lang";
@@ -113,6 +114,7 @@ if ($resql) {
 	print "We found ".$num." couples (unpayed validated invoices-".$targettype.") qualified\n";
 	dol_syslog("We found ".$num." couples (unpayed validated invoices-".$targettype.") qualified");
 	$message = '';
+	$oldtarget = '';
 
 	if ($num) {
 		while ($i < $num) {
@@ -122,12 +124,17 @@ if ($resql) {
 
 			// Check if this record is a break after previous one
 			$startbreak = false;
-			if ($newemail != $oldemail || $oldemail == 'none')
+			if ($newemail != $oldemail || $oldemail == 'none') {
 				$startbreak = true;
-			if ($obj->sid && $obj->sid != $oldsid)
+			}
+			if ($obj->sid && $obj->sid != $oldsid) {
 				$startbreak = true;
-			if ($obj->cid && $obj->cid != $oldcid)
-				$startbreak = true;
+			}
+			if ($targettype == 'contacts') {
+				if ($obj->cid && $obj->cid != $oldcid) {
+					$startbreak = true;
+				}
+			}
 
 			if ($startbreak) {
 				// Break onto sales representative (new email or cid)
@@ -143,13 +150,14 @@ if ($resql) {
 				}
 				$oldemail = $newemail;
 				$oldsid = $obj->sid;
-				$oldcid = $obj->cid;
-				$oldlang = $obj->lang;
+				if ($targettype == 'contacts') {
+					$oldcid = $obj->cid;
+				}
+				$oldlang = $obj->default_lang;
 				$oldtarget = (empty($obj->cfirstname) && empty($obj->clastname)) ? $obj->name : ($obj->clastname." ".$obj->cfirstname);
 				$message = '';
 				$total = 0;
 				$foundtoprocess = 0;
-				$target = (empty($obj->cfirstname) && empty($obj->clastname)) ? $obj->name : ($obj->clastname." ".$obj->cfirstname);
 				// if (empty($newemail)) print "Warning: Customer ".$target." has no email. Notice disabled.\n";
 			}
 
@@ -165,7 +173,7 @@ if ($resql) {
 				dol_syslog("email_unpaid_invoices_to_customers.php: ".$newemail." ".$message);
 				$foundtoprocess++;
 			}
-			print "Unpaid invoice ".$obj->ref.", price ".price2num($obj->total_ttc).", due date ".dol_print_date($db->jdate($obj->due_date), 'day').", customer id ".$obj->sid." ".$obj->name.", ".($obj->cid ? "contact id ".$obj->cid." ".$obj->clastname." ".$obj->cfirstname.", " : "")."email ".$newemail.", lang ".$outputlangs->defaultlang.": ";
+			print "Unpaid invoice ".$obj->ref.", price ".price2num($obj->total_ttc).", due date ".dol_print_date($db->jdate($obj->due_date), 'day').", customer id ".$obj->sid." ".$obj->name.", ".(isset($obj->cid) ? "contact id ".$obj->cid." ".$obj->clastname." ".$obj->cfirstname.", " : "")."email ".$newemail.", lang ".$outputlangs->defaultlang.": ";
 			if (dol_strlen($newemail))
 				print "qualified.";
 			else print "disqualified (no email).";
@@ -229,17 +237,17 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget)
 
 	$subject = (empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_SUBJECT) ? $newlangs->trans("ListOfYourUnpaidInvoices") : $conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_SUBJECT);
 	$sendto = $oldemail;
-	$from = $conf->global->MAIN_MAIL_EMAIL_FROM;
-	$errorsto = $conf->global->MAIN_MAIL_ERRORS_TO;
+	$from = empty($conf->global->MAIN_MAIL_EMAIL_FROM) ? '' : $conf->global->MAIN_MAIL_EMAIL_FROM;
+	$errorsto = empty($conf->global->MAIN_MAIL_ERRORS_TO) ? '' : $conf->global->MAIN_MAIL_ERRORS_TO;
 	$msgishtml = - 1;
 
 	print "- Send email to '".$oldtarget."' (".$oldemail."), total: ".$total."\n";
 	dol_syslog("email_unpaid_invoices_to_customers.php: send mail to ".$oldemail);
 
 	$usehtml = 0;
-	if (dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_FOOTER))
+	if (!empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_FOOTER) && dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_FOOTER))
 		$usehtml += 1;
-	if (dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_HEADER))
+	if (!empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_HEADER) && dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_HEADER))
 		$usehtml += 1;
 
 	$allmessage = '';

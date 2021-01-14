@@ -141,14 +141,8 @@ $arrayfields = array(
 	'a.tms'=>array('label'=>'DateModification', 'checked'=>0)
 );
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -478,11 +472,9 @@ if ($resql)
 	// Calendars from hooks
 	$parameters = array(); $object = null;
 	$reshook = $hookmanager->executeHooks('addCalendarChoice', $parameters, $object, $action);
-	if (empty($reshook))
-	{
+	if (empty($reshook)) {
 		$s .= $hookmanager->resPrint;
-	} elseif ($reshook > 1)
-	{
+	} elseif ($reshook > 1) {
 		$s = $hookmanager->resPrint;
 	}
 
@@ -518,6 +510,15 @@ if ($resql)
 	$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewPerUser").'</span></a>';
 
 	$viewmode .= '<span class="marginrightonly"></span>';
+
+	// Add more views from hooks
+	$parameters = array(); $object = null;
+	$reshook = $hookmanager->executeHooks('addCalendarView', $parameters, $object, $action);
+	if (empty($reshook)) {
+		$viewmode .= $hookmanager->resPrint;
+	} elseif ($reshook > 1) {
+		$viewmode = $hookmanager->resPrint;
+	}
 
 	$tmpforcreatebutton = dol_getdate(dol_now(), true);
 

@@ -2647,7 +2647,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->accounting->dir_output.'/'.$original_file;
 	} // Wrapping pour les expedition
-	elseif ($modulepart == 'expedition' && !empty($conf->expedition->dir_output))
+	elseif (($modulepart == 'expedition' || $modulepart == 'shipment') && !empty($conf->expedition->dir_output))
 	{
 		if ($fuser->rights->expedition->{$lire} || preg_match('/^specimen/i', $original_file))
 		{
@@ -2655,7 +2655,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->expedition->dir_output."/sending/".$original_file;
 	} // Delivery Note Wrapping
-	elseif ($modulepart == 'delivery' && !empty($conf->expedition->dir_output))
+	elseif (($modulepart == 'livraison' || $modulepart == 'delivery') && !empty($conf->expedition->dir_output))
 	{
 		if ($fuser->rights->expedition->delivery->{$lire} || preg_match('/^specimen/i', $original_file))
 		{

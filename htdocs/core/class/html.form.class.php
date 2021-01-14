@@ -2652,14 +2652,14 @@ class Form
 		if (!empty($conf->stock->enabled) && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)))
 		{
 			if (!empty($user->rights->stock->lire)) {
-				$opt .= ' - '.$langs->trans("Stock").':'.$objp->stock;
+				$opt .= ' - '.$langs->trans("Stock").': '.price(price2num($objp->stock, 'MS'));
 
 				if ($objp->stock > 0) {
 					$outval .= ' - <span class="product_line_stock_ok">';
 				} elseif ($objp->stock <= 0) {
 					$outval .= ' - <span class="product_line_stock_too_low">';
 				}
-				$outval .= $langs->transnoentities("Stock").':'.$objp->stock;
+				$outval .= $langs->transnoentities("Stock").': '.price(price2num($objp->stock, 'MS'));
 				$outval .= '</span>';
 				if (empty($novirtualstock) && !empty($conf->global->STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO))  // Warning, this option may slow down combo list generation
 				{
@@ -2989,14 +2989,14 @@ class Form
 					$novirtualstock = ($showstockinlist == 2);
 
 					if (!empty($user->rights->stock->lire)) {
-						$outvallabel .= ' - '.$langs->trans("Stock").':'.$objp->stock;
+						$outvallabel .= ' - '.$langs->trans("Stock").': '.price(price2num($objp->stock, 'MS'));
 
 						if ($objp->stock > 0) {
 							$optlabel .= ' - <span class="product_line_stock_ok">';
 						} elseif ($objp->stock <= 0) {
 							$optlabel .= ' - <span class="product_line_stock_too_low">';
 						}
-						$optlabel .= $langs->transnoentities("Stock").':'.$objp->stock;
+						$optlabel .= $langs->transnoentities("Stock").':'.price(price2num($objp->stock, 'MS'));
 						$optlabel .= '</span>';
 						if (empty($novirtualstock) && !empty($conf->global->STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO))  // Warning, this option may slow down combo list generation
 						{
@@ -3939,12 +3939,15 @@ class Form
 	 *  @param  string	$moreattrib         To add more attribute on select
 	 *  @param	int		$showcurrency		Show currency in label
 	 *  @param	string	$morecss			More CSS
+	 *  @param	int		$nooutput			1=Return string, do not send to output
 	 * 	@return	int							<0 if error, Num of bank account found if OK (0, 1, 2, ...)
 	 */
-	public function select_comptes($selected = '', $htmlname = 'accountid', $status = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0, $morecss = '')
+	public function select_comptes($selected = '', $htmlname = 'accountid', $status = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0, $morecss = '', $nooutput = 0)
 	{
 		// phpcs:enable
 		global $langs, $conf;
+
+		$out = '';
 
 		$langs->load("admin");
 		$num = 0;
@@ -3964,10 +3967,10 @@ class Form
 			$i = 0;
 			if ($num)
 			{
-				print '<select id="select'.$htmlname.'" class="flat selectbankaccount'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
+				$out .= '<select id="select'.$htmlname.'" class="flat selectbankaccount'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
 				if ($useempty == 1 || ($useempty == 2 && $num > 1))
 				{
-					print '<option value="-1">&nbsp;</option>';
+					$out .= '<option value="-1">&nbsp;</option>';
 				}
 
 				while ($i < $num)
@@ -3975,25 +3978,29 @@ class Form
 					$obj = $this->db->fetch_object($result);
 					if ($selected == $obj->rowid || ($useempty == 2 && $num == 1 && empty($selected)))
 					{
-						print '<option value="'.$obj->rowid.'" selected>';
+						$out .= '<option value="'.$obj->rowid.'" selected>';
 					} else {
-						print '<option value="'.$obj->rowid.'">';
+						$out .= '<option value="'.$obj->rowid.'">';
 					}
-					print trim($obj->label);
-					if ($showcurrency) print ' ('.$obj->currency_code.')';
-					if ($status == 2 && $obj->status == 1) print ' ('.$langs->trans("Closed").')';
-					print '</option>';
+					$out .= trim($obj->label);
+					if ($showcurrency) $out .= ' ('.$obj->currency_code.')';
+					if ($status == 2 && $obj->status == 1) $out .= ' ('.$langs->trans("Closed").')';
+					$out .= '</option>';
 					$i++;
 				}
-				print "</select>";
-				print ajax_combobox('select'.$htmlname);
+				$out .= "</select>";
+				$out .= ajax_combobox('select'.$htmlname);
 			} else {
-				if ($status == 0) print '<span class="opacitymedium">'.$langs->trans("NoActiveBankAccountDefined").'</span>';
-				else print '<span class="opacitymedium">'.$langs->trans("NoBankAccountFound").'</span>';
+				if ($status == 0) $out .= '<span class="opacitymedium">'.$langs->trans("NoActiveBankAccountDefined").'</span>';
+				else $out .= '<span class="opacitymedium">'.$langs->trans("NoBankAccountFound").'</span>';
 			}
 		} else {
 			dol_print_error($this->db);
 		}
+
+		// Output or return
+		if (empty($nooutput)) print $out;
+		else return $out;
 
 		return $num;
 	}
@@ -4709,7 +4716,7 @@ class Form
 			$ret .= '<tr><td>';
 			$ret .= $this->selectDate($selected, $htmlname, $displayhour, $displaymin, 1, 'form'.$htmlname, 1, 0);
 			$ret .= '</td>';
-			$ret .= '<td class="left"><input type="submit smallpaddingimp" class="button" value="'.$langs->trans("Modify").'"></td>';
+			$ret .= '<td class="left"><input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'"></td>';
 			$ret .= '</tr></table></form>';
 		} else {
 			if ($displayhour) $ret .= dol_print_date($selected, 'dayhour');
@@ -4874,7 +4881,7 @@ class Form
 			print '<form method="POST" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setmulticurrencyrate">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="text" class="maxwidth100" name="'.$htmlname.'" value="'.(!empty($rate) ? price(price2num($rate, 'CR')) : 1).'" /> ';
+			print '<input type="text" class="maxwidth100" name="'.$htmlname.'" value="'.(!empty($rate) ? price(price2num($rate, 'CU')) : 1).'" /> ';
 			print '<select name="calculation_mode">';
 			print '<option value="1">'.$currency.' > '.$conf->currency.'</option>';
 			print '<option value="2">'.$conf->currency.' > '.$currency.'</option>';
@@ -5524,12 +5531,17 @@ class Form
 	 *  @param  int         $stepminutes    Specify step for minutes between 1 and 30
 	 *  @param	string		$labeladddateof Label to use for the $adddateof parameter.
 	 *  @param	string 		$placeholder    Placeholder
+	 *  @param	mixed		$gm				'auto', 'gmt' or 'tzserver' or 'tzuserrel'
 	 * 	@return string                      Html for selectDate
 	 *  @see    form_date(), select_month(), select_year(), select_dayofweek()
 	 */
-	public function selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '', $openinghours = '', $stepminutes = 1, $labeladddateof = '', $placeholder = '')
+	public function selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '', $openinghours = '', $stepminutes = 1, $labeladddateof = '', $placeholder = '', $gm = 'auto')
 	{
 		global $conf, $langs;
+
+		if ($gm == 'auto') {
+			$gm = $conf->tzuserinputkey;
+		}
 
 		$retstring = '';
 
@@ -5546,7 +5558,11 @@ class Form
 		if ($set_time === '' && $emptydate == 0)
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-			$set_time = dol_now('tzuser') - (getServerTimeZoneInt('now') * 3600); // set_time must be relative to PHP server timezone
+			if ($gm == 'tzuser' || $gm == 'tzuserrel') {
+				$set_time = dol_now($gm);
+			} else {
+				$set_time = dol_now('tzuser') - (getServerTimeZoneInt('now') * 3600); // set_time must be relative to PHP server timezone
+			}
 		}
 
 		// Analysis of the pre-selection date
@@ -5562,14 +5578,14 @@ class Form
 		} elseif (strval($set_time) != '' && $set_time != -1)
 		{
 			// set_time est un timestamps (0 possible)
-			$syear = dol_print_date($set_time, "%Y");
-			$smonth = dol_print_date($set_time, "%m");
-			$sday = dol_print_date($set_time, "%d");
+			$syear = dol_print_date($set_time, "%Y", $gm);
+			$smonth = dol_print_date($set_time, "%m", $gm);
+			$sday = dol_print_date($set_time, "%d", $gm);
 			if ($orig_set_time != '')
 			{
-				$shour = dol_print_date($set_time, "%H");
-				$smin = dol_print_date($set_time, "%M");
-				$ssec = dol_print_date($set_time, "%S");
+				$shour = dol_print_date($set_time, "%H", $gm);
+				$smin = dol_print_date($set_time, "%M", $gm);
+				$ssec = dol_print_date($set_time, "%S", $gm);
 			} else {
 				$shour = '';
 				$smin = '';
@@ -6405,8 +6421,7 @@ class Form
 					$value = $tmpvalue;
 					$disabled = ''; $style = '';
 				}
-				if (!empty($disablebademail))
-				{
+				if (!empty($disablebademail)) {
 					if (($disablebademail == 1 && !preg_match('/&lt;.+@.+&gt;/', $value))
 						|| ($disablebademail == 2 && preg_match('/---/', $value)))
 					{
@@ -6415,8 +6430,7 @@ class Form
 					}
 				}
 
-				if ($key_in_label)
-				{
+				if ($key_in_label) {
 					if (empty($nohtmlescape)) $selectOptionValue = dol_escape_htmltag($key.' - '.($maxlen ?dol_trunc($value, $maxlen) : $value));
 					else $selectOptionValue = $key.' - '.($maxlen ?dol_trunc($value, $maxlen) : $value);
 				} else {

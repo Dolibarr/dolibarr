@@ -35,6 +35,7 @@ create table llx_projet
   fk_statut        integer DEFAULT 0 NOT NULL,	-- open or close
   fk_opp_status    integer DEFAULT NULL,	        -- if project is used to manage opportunities
   opp_percent	   double(5,2),
+  fk_opp_status_end   integer DEFAULT NULL,	        -- if project is used to manage opportunities (the opportunity status the project has when set to lose)
   date_close       datetime DEFAULT NULL,    
   fk_user_close    integer DEFAULT NULL,
   note_private     text,

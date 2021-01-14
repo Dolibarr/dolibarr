@@ -946,10 +946,22 @@ if ($action == 'addcontainer')
 		$substitutionarray = array();
 		$substitutionarray['__WEBSITE_CREATE_BY__'] = $user->getFullName($langs);
 
+		// Define id of page the new page is translation of
+		$pageidfortranslation = (GETPOST('pageidfortranslation', 'int') > 0 ? GETPOST('pageidfortranslation', 'int') : 0);
+		if ($pageidfortranslation > 0) {
+			// Check if the page we are translation of is alreayd a translation of a source page. if yes, we will use source id instead
+			$objectpagetmp = new WebsitePage($db);
+			$objectpagetmp->fetch($pageidfortranslation);
+			if ($objectpagetmp->fk_page > 0) {
+				$pageidfortranslation = $objectpagetmp->fk_page;
+			}
+		}
+		$objectpage->fk_page = $pageidfortranslation;
+
 		$sample = GETPOST('sample', 'alpha');
 		if (empty($sample)) $sample = 'empty';
 
-		$pathtosample = DOL_DOCUMENT_ROOT.'/website/samples/page-sample-'.$sample.'.html';
+		$pathtosample = DOL_DOCUMENT_ROOT.'/website/samples/page-sample-'.dol_sanitizeFileName($sample).'.html';
 
 		// Init content with content into pagetemplate.html, blogposttempltate.html, ...
 		$objectpage->content = make_substitutions(@file_get_contents($pathtosample), $substitutionarray);
@@ -977,6 +989,22 @@ if ($action == 'addcontainer')
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WEBSITE_TITLE")), null, 'errors');
 			$error++;
 			$action = 'createcontainer';
+		}
+		if ($objectpage->fk_page > 0 && empty($objectpage->lang))
+		{
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorLanguageRequiredIfPageIsTranslationOfAnother"), null, 'errors');
+			$error++;
+			$action = 'createcontainer';
+		}
+		if ($objectpage->fk_page > 0 && !empty($objectpage->lang))
+		{
+			if ($objectpage->lang == $website->lang) {
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorLanguageMustNotBeSourceLanguageIfPageIsTranslationOfAnother"), null, 'errors');
+				$error++;
+				$action = 'createcontainer';
+			}
 		}
 	}
 
@@ -3231,14 +3259,16 @@ if ($action == 'createsite')
 	print '</td></tr>';
 
 	print '<tr><td>';
-	print $langs->trans('OtherLanguages');
+	$htmltext = $langs->trans("Example").': fr,de,sv,it,pt';
+	print $form->textwithpicto($langs->trans('OtherLanguages'), $htmltext, 1, 'help', '', 0, 2);
 	print '</td><td>';
 	print '<input type="text" class="flat minwidth300" name="WEBSITE_OTHERLANG" value="'.dol_escape_htmltag($siteotherlang).'">';
 	print '</td></tr>';
 
 	print '<tr><td>';
 
-	$htmltext = $langs->trans("SetHereVirtualHost", DOL_DATA_ROOT.'/website/<i>websiteref</i>');
+	$htmltext = $langs->trans("SetHereVirtualHost", '{s1}');
+	$htmltext = str_replace('{s1}', DOL_DATA_ROOT.'/website/<i>websiteref</i>', $htmltext);
 	$htmltext .= '<br>';
 	$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
 	$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), '{s1}');
@@ -3351,7 +3381,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')	// Edit properties of
 		print ' ';
 		print $langs->trans("ImagesShouldBeSavedInto").' ';
 		$arraygrabimagesinto = array('root'=>$langs->trans("WebsiteRootOfImages"), 'subpage'=>$langs->trans("SubdirOfPage"));
-		print $form->selectarray('grabimagesinto', $arraygrabimagesinto, GETPOSTISSET('grabimagesinto') ?GETPOST('grabimagesinto') : 'root');
+		print $form->selectarray('grabimagesinto', $arraygrabimagesinto, GETPOSTISSET('grabimagesinto') ? GETPOST('grabimagesinto') : 'root', 0, 0, 0, '', 0, 0, 0, '', '', 1);
 		print '<br>';
 		print '<input class="button" style="margin-top: 5px" type="submit" name="fetchexternalurl" value="'.dol_escape_htmltag($langs->trans("FetchAndCreate")).'">';
 		print '</td></tr>';
@@ -3433,7 +3463,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')	// Edit properties of
 	print $langs->trans('WEBSITE_TYPE_CONTAINER');
 	print '</td><td>';
 	print img_picto('', 'object_technic', 'class="paddingrightonly"').' ';
-	$formwebsite->selectTypeOfContainer('WEBSITE_TYPE_CONTAINER', (GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha') ?GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha') : $type_container));
+	$formwebsite->selectTypeOfContainer('WEBSITE_TYPE_CONTAINER', (GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha') ? GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha') : $type_container), 0, '', 1);
 	print '</td></tr>';
 
 	if ($action == 'createcontainer')
@@ -3441,7 +3471,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')	// Edit properties of
 		print '<tr><td class="titlefield fieldrequired">';
 		print $langs->trans('WEBSITE_PAGE_EXAMPLE');
 		print '</td><td>';
-		print $formwebsite->selectSampleOfContainer('sample', (GETPOSTISSET('sample') ?GETPOST('sample', 'alpha') : 'empty'));
+		print $formwebsite->selectSampleOfContainer('sample', (GETPOSTISSET('sample') ? GETPOST('sample', 'alpha') : 'empty'), 0, '', 1);
 		print '</td></tr>';
 	}
 
@@ -3561,7 +3591,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')	// Edit properties of
 			$translationof = $objectpage->fk_page;
 			print '<span class="opacitymedium">'.$langs->trans('ThisPageIsTranslationOf').'</span> ';
 			print $formwebsite->selectContainer($website, 'pageidfortranslation', ($translationof ? $translationof : -1), 1, $action, 'minwidth300', array($objectpage->id));
-			if ($translationof > 0) {
+			if ($translationof > 0 && $sourcepage->lang) {
 				print $sourcepage->getNomUrl(2).' ('.$sourcepage->lang.')';
 			}
 		}
@@ -3596,8 +3626,9 @@ if ($action == 'editmeta' || $action == 'createcontainer')	// Edit properties of
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, '', 'parent', null, null, 1);
 		}
 
-		print '<tr class="visibleifsupplier"><td class="toptd">'.$form->editfieldkey('Categories', 'categories', '', $objectpage, 0).'</td><td colspan="3">';
-		print img_picto('', 'category', 'class="paddingright"').$form->multiselectarray('categories', $cate_arbo, (GETPOSTISSET('categories') ? GETPOST('categories', 'array') : $arrayselected), null, null, 'quatrevingtpercent widthcentpercentminusx');
+		print '<tr><td class="toptd">'.$form->editfieldkey('Categories', 'categories', '', $objectpage, 0).'</td><td>';
+		print img_picto('', 'category', 'class="paddingright"');
+		print $form->multiselectarray('categories', $cate_arbo, (GETPOSTISSET('categories') ? GETPOST('categories', 'array') : $arrayselected), null, null, 'quatrevingtpercent widthcentpercentminusx');
 		print "</td></tr>";
 	}
 

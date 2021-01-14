@@ -142,7 +142,7 @@ $extrafield_array = null;
 if (is_array($extrafields) && count($extrafields) > 0) {
 	$extrafield_array = array();
 }
-if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 {
 	foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 	{
@@ -154,7 +154,7 @@ if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafie
 	}
 }
 
-if (is_array($extrafield_array)) $productorservice_fields = array_merge($productorservice_fields, $extrafield_array);
+if (!empty($extrafield_array) && is_array($extrafield_array)) $productorservice_fields = array_merge($productorservice_fields, $extrafield_array);
 
 // Define other specific objects
 $server->wsdl->addComplexType(
@@ -436,9 +436,9 @@ function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = ''
 				//Get extrafield values
 				$product->fetch_optionals();
 
-				if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+				if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 				{
-					foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+					foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 					{
 						$productorservice_result_fields = array_merge($productorservice_result_fields, array('options_'.$key => $product->array_options['options_'.$key]));
 					}
@@ -479,7 +479,7 @@ function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = ''
  */
 function createProductOrService($authentication, $product)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	$now = dol_now();
 
@@ -493,20 +493,20 @@ function createProductOrService($authentication, $product)
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
-	if ($product['price_net'] > 0) $product['price_base_type'] = 'HT';
-	if ($product['price'] > 0)     $product['price_base_type'] = 'TTC';
+	if (empty($product['price_base_type'])) {
+		if (isset($product['price_net']) && $product['price_net'] > 0) $product['price_base_type'] = 'HT';
+		if (isset($product['price']) && $product['price'] > 0)     $product['price_base_type'] = 'TTC';
+	}
 
-	if ($product['price_net'] > 0 && $product['price'] > 0)
+	if (isset($product['price_net']) && $product['price_net'] > 0 && isset($product['price']) && $product['price'] > 0)
 	{
 		$error++; $errorcode = 'KO'; $errorlabel = "You must choose between price or price_net to provide price.";
 	}
 
-	if ($product['barcode'] && !$product['barcode_type'])
+	if (!empty($product['barcode']) && empty($product['barcode_type']))
 	{
 		$error++; $errorcode = 'KO'; $errorlabel = "You must set a barcode type when setting a barcode.";
 	}
-
-
 
 	if (!$error)
 	{
@@ -514,35 +514,35 @@ function createProductOrService($authentication, $product)
 
 		$newobject = new Product($db);
 		$newobject->ref = $product['ref'];
-		$newobject->ref_ext = $product['ref_ext'];
-		$newobject->type = $product['type'];
-		$newobject->label = $product['label'];
-		$newobject->description = $product['description'];
-		$newobject->note_public = $product['note_public'];
-		$newobject->note_private = $product['note_private'];
-		$newobject->status = $product['status_tosell'];
-		$newobject->status_buy = $product['status_tobuy'];
-		$newobject->price = $product['price_net'];
-		$newobject->price_ttc = $product['price'];
-		$newobject->tva_tx = $product['vat_rate'];
+		$newobject->ref_ext = empty($product['ref_ext']) ? '' : $product['ref_ext'];
+		$newobject->type = empty($product['type']) ? 0 : $product['type'];
+		$newobject->label = empty($product['label']) ? '' : $product['label'];
+		$newobject->description = empty($product['description']) ? '' : $product['description'];
+		$newobject->note_public = empty($product['note_public']) ? '' : $product['note_public'];
+		$newobject->note_private = empty($product['note_private']) ? '' :$product['note_private'];
+		$newobject->status = empty($product['status_tosell']) ? 0 : $product['status_tosell'];
+		$newobject->status_buy = empty($product['status_tobuy']) ? 0 : $product['status_tobuy'];
+		$newobject->price = isset($product['price_net']) ? $product['price_net'] : 0;
+		$newobject->price_ttc = isset($product['price']) ? $product['price'] : 0;
+		$newobject->tva_tx = empty($product['vat_rate']) ? 0 : $product['vat_rate'];
 		$newobject->price_base_type = $product['price_base_type'];
 		$newobject->date_creation = $now;
 
-		if ($product['barcode'])
+		if (!empty($product['barcode']))
 		{
 			$newobject->barcode = $product['barcode'];
 			$newobject->barcode_type = $product['barcode_type'];
 		}
 
-		$newobject->stock_reel = $product['stock_real'];
-		$newobject->pmp = $product['pmp'];
-		$newobject->seuil_stock_alert = $product['stock_alert'];
+		$newobject->stock_reel = isset($product['stock_real']) ? $product['stock_real'] : null;
+		$newobject->pmp = isset($product['pmp']) ? $product['pmp'] : null;
+		$newobject->seuil_stock_alerte = isset($product['stock_alert']) ? $product['stock_alert'] : null;
 
-		$newobject->country_id = $product['country_id'];
-		if ($product['country_code']) $newobject->country_id = getCountry($product['country_code'], 3);
-		$newobject->customcode = $product['customcode'];
+		$newobject->country_id = isset($product['country_id']) ? $product['country_id'] : 0;
+		if (!empty($product['country_code'])) $newobject->country_id = getCountry($product['country_code'], 3);
+		$newobject->customcode = isset($product['customcode']) ? $product['customcode'] : '';
 
-		$newobject->canvas = $product['canvas'];
+		$newobject->canvas = isset($product['canvas']) ? $product['canvas'] : '';
 		/*foreach($product['lines'] as $line)
         {
             $newline=new FactureLigne($db);
@@ -563,9 +563,9 @@ function createProductOrService($authentication, $product)
 
 		$extrafields = new ExtraFields($db);
 		$extrafields->fetch_name_optionals_label($elementtype, true);
-		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+		if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
-			foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+			foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 			{
 				$key = 'options_'.$key;
 				$newobject->array_options[$key] = $product[$key];
@@ -650,7 +650,7 @@ function createProductOrService($authentication, $product)
  */
 function updateProductOrService($authentication, $product)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	$now = dol_now();
 
@@ -705,23 +705,23 @@ function updateProductOrService($authentication, $product)
 				$newobject->barcode_type = $product['barcode_type'];
 		}
 
-		$newobject->stock_reel = $product['stock_real'];
-		$newobject->pmp = $product['pmp'];
-		$newobject->seuil_stock_alert = $product['stock_alert'];
+		$newobject->stock_reel = isset($product['stock_real']) ? $product['stock_real'] : null;
+		$newobject->pmp = isset($product['pmp']) ? $product['pmp'] : null;
+		$newobject->seuil_stock_alerte = isset($product['stock_alert']) ? $product['stock_alert'] : null;
 
-		$newobject->country_id = $product['country_id'];
-		if ($product['country_code']) $newobject->country_id = getCountry($product['country_code'], 3);
-		$newobject->customcode = $product['customcode'];
+		$newobject->country_id = isset($product['country_id']) ? $product['country_id'] : 0;
+		if (!empty($product['country_code'])) $newobject->country_id = getCountry($product['country_code'], 3);
+		$newobject->customcode = isset($product['customcode']) ? $product['customcode'] : '';
 
-		$newobject->canvas = $product['canvas'];
+		$newobject->canvas = isset($product['canvas']) ? $product['canvas'] : '';
 
 		$elementtype = 'product';
 
 		$extrafields = new ExtraFields($db);
 		$extrafields->fetch_name_optionals_label($elementtype, true);
-		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+		if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
-			foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+			foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 			{
 				$key = 'options_'.$key;
 				$newobject->array_options[$key] = $product[$key];
@@ -824,7 +824,7 @@ function updateProductOrService($authentication, $product)
  */
 function deleteProductOrService($authentication, $listofidstring)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	dol_syslog("Function: deleteProductOrService login=".$authentication['login']);
 
@@ -855,7 +855,7 @@ function deleteProductOrService($authentication, $listofidstring)
 
 		$db->begin();
 
-		foreach ($listofid as $key => $id)
+		foreach ($listofid as $id)
 		{
 			$newobject = new Product($db);
 			$result = $newobject->fetch($id);
@@ -917,7 +917,7 @@ function deleteProductOrService($authentication, $listofidstring)
  */
 function getListOfProductsOrServices($authentication, $filterproduct)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	dol_syslog("Function: getListOfProductsOrServices login=".$authentication['login']);
 
@@ -1090,9 +1090,9 @@ function getProductsForCategory($authentication, $id, $lang = '')
 							//Get extrafield values
 							$tmpproduct->fetch_optionals();
 
-							if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+							if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 							{
-								foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+								foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
 								{
 									$products[$iProduct] = array_merge($products[$iProduct], array('options_'.$key => $tmpproduct->array_options['options_'.$key]));
 								}

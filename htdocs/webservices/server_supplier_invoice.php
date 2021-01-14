@@ -225,7 +225,7 @@ $server->register(
  */
 function getSupplierInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	dol_syslog("Function: getSupplierInvoice login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
@@ -333,7 +333,7 @@ function getSupplierInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
  */
 function getSupplierInvoicesForThirdParty($authentication, $idthirdparty)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	dol_syslog("Function: getSupplierInvoicesForThirdParty login=".$authentication['login']." idthirdparty=".$idthirdparty);
 
@@ -344,6 +344,7 @@ function getSupplierInvoicesForThirdParty($authentication, $idthirdparty)
 	$errorcode = ''; $errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
+
 	// Check parameters
 	if (!$error && empty($idthirdparty))
 	{

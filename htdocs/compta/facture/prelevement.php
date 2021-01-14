@@ -213,7 +213,7 @@ if ($object->id > 0)
 		$head = facture_prepare_head($object);
 	}
 
-	print dol_get_fiche_head($head, 'standingorders', $title, -1, 'bill');
+	print dol_get_fiche_head($head, 'standingorders', $title, -1, ($type == 'bank-transfer' ? 'supplier_invoice' : 'bill'));
 
 	// Invoice content
 	if ($type == 'bank-transfer') {

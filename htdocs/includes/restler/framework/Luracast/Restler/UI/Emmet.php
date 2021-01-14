@@ -8,7 +8,7 @@ use Luracast\Restler\Util;
  * Class Emmet
  * @package Luracast\Restler\UI
  *
- * @version 3.0.0rc6
+ * @version 3.1.0
  */
 class Emmet
 {

@@ -107,9 +107,10 @@ class FormWebsite
 	 *  @param	string	$selected			Selected value
 	 *  @param  int		$useempty          	1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 *  @param  string  $moreattrib         More attributes on HTML select tag
+	 *  @param	int		$addjscombo			Add js combo
 	 * 	@return	void
 	 */
-	public function selectTypeOfContainer($htmlname, $selected = '', $useempty = 0, $moreattrib = '')
+	public function selectTypeOfContainer($htmlname, $selected = '', $useempty = 0, $moreattrib = '', $addjscombo = 0)
 	{
 		global $langs, $conf, $user;
 
@@ -128,7 +129,7 @@ class FormWebsite
 			$i = 0;
 			if ($num)
 			{
-				print '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
+				print '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer minwidth200" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
 				if ($useempty == 1 || ($useempty == 2 && $num > 1))
 				{
 					print '<option value="-1">&nbsp;</option>';
@@ -149,6 +150,10 @@ class FormWebsite
 				}
 				print "</select>";
 				if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+
+				if ($addjscombo) {
+					print ajax_combobox('select'.$htmlname);
+				}
 			} else {
 				print $langs->trans("NoTypeOfPagePleaseEditDictionary");
 			}
@@ -165,9 +170,10 @@ class FormWebsite
 	 *  @param	string	$selected			Selected value
 	 *  @param  int		$useempty          	1=Add an empty value in list
 	 *  @param  string  $moreattrib         More attributes on HTML select tag
+	 *  @param	int		$addjscombo			Add js combo
 	 * 	@return	string						HTML select component with list of type of containers
 	 */
-	public function selectSampleOfContainer($htmlname, $selected = '', $useempty = 0, $moreattrib = '')
+	public function selectSampleOfContainer($htmlname, $selected = '', $useempty = 0, $moreattrib = '', $addjscombo = 0)
 	{
 		global $langs, $conf, $user;
 
@@ -190,7 +196,7 @@ class FormWebsite
 		}
 
 		$out = '';
-		$out .= '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
+		$out .= '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer minwidth200" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
 
 		if ($useempty == 1 || $useempty == 2)
 		{
@@ -209,6 +215,10 @@ class FormWebsite
 			$out .= '</option>';
 		}
 		$out .= "</select>";
+
+		if ($addjscombo) {
+			$out .= ajax_combobox('select'.$htmlname);
+		}
 
 		return $out;
 	}
