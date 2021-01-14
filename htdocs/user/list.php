@@ -773,17 +773,17 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	}
 	if (!empty($arrayfields['u.office_phone']['checked']))
 	{
-		print '<td>'.$obj->office_phone.'</td>';
+		print "<td>".dol_print_phone($obj->office_phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL')."</td>\n";
 		if (!$i) $totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['u.user_mobile']['checked']))
 	{
-		print '<td>'.$obj->user_mobile.'</td>';
+		print "<td>".dol_print_phone($obj->user_mobile, $obj->country_code, 0, $obj->rowid, 'AC_TEL')."</td>\n";
 		if (!$i) $totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['u.email']['checked']))
 	{
-		print '<td>'.$obj->email.'</td>';
+		print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->socid, 'AC_EMAIL', 0, 0, 1)."</td>\n";
 		if (!$i) $totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['u.api_key']['checked']))
