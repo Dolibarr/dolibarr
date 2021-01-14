@@ -2903,13 +2903,12 @@ class Commande extends CommonOrder
 	{
 		$error = 0;
 
-		$this->db->begin();
-
 		if ($this->billed)
 		{
 			return 0;
 		}
 
+		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET facture = 1';
 		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT;
