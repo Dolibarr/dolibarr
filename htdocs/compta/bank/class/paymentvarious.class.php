@@ -422,7 +422,11 @@ class PaymentVarious extends CommonObject
 						$sign * abs($this->amount),
 						$this->num_payment,
                         ($this->category_transaction > 0 ? $this->category_transaction : 0),
-						$user
+						$user,
+						'',
+						'',
+						'',
+						$this->datev
 					);
 
 					// Update fk_bank into llx_paiement.

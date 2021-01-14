@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,27 +35,30 @@ $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 // Get supervariables
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$page = GETPOST('page', 'int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $sortorder = GETPOST('sortorder', 'alpha');
 $sortfield = GETPOST('sortfield', 'alpha');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-$offset = $limit * $page;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
+
 /*
  * View
  */
 
 llxHeader('', $langs->trans("WithdrawsRefused"));
 
-if ($sortorder == "") $sortorder = "DESC";
-if ($sortfield == "") $sortfield = "p.datec";
+$offset = $conf->liste_limit * $page ;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
+if ($sortorder == "") $sortorder="DESC";
+if ($sortfield == "") $sortfield="p.datec";
 
 $rej = new RejetPrelevement($db, $user);
+$hookmanager->initHooks(array('withdrawalsreceiptsrejectedlist'));
 $ligne = new LignePrelevement($db, $user);
 
 /*
@@ -63,18 +66,18 @@ $ligne = new LignePrelevement($db, $user);
  *
  */
 $sql = "SELECT pl.rowid, pr.motif, p.ref, pl.statut";
-$sql .= " , s.rowid as socid, s.nom";
-$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-$sql .= " , ".MAIN_DB_PREFIX."prelevement_rejet as pr";
-$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql .= " , ".MAIN_DB_PREFIX."societe as s";
-$sql .= " WHERE pr.fk_prelevement_lignes = pl.rowid";
-$sql .= " AND pl.fk_prelevement_bons = p.rowid";
-$sql .= " AND pl.fk_soc = s.rowid";
-$sql .= " AND p.entity = ".$conf->entity;
-if ($socid) $sql .= " AND s.rowid = ".$socid;
-$sql .= " ".$db->order($sortfield, $sortorder);
-$sql .= " ".$db->plimit($conf->liste_limit + 1, $offset);
+$sql.= " , s.rowid as socid, s.nom";
+$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+$sql.= " , ".MAIN_DB_PREFIX."prelevement_rejet as pr";
+$sql.= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+$sql.= " , ".MAIN_DB_PREFIX."societe as s";
+$sql.= " WHERE pr.fk_prelevement_lignes = pl.rowid";
+$sql.= " AND pl.fk_prelevement_bons = p.rowid";
+$sql.= " AND pl.fk_soc = s.rowid";
+$sql.= " AND p.entity = ".$conf->entity;
+if ($socid) $sql.= " AND s.rowid = ".$socid;
+$sql.= " ".$db->order($sortfield, $sortorder);
+$sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
 if ($result)
@@ -84,7 +87,7 @@ if ($result)
 
 	print_barre_liste($langs->trans("WithdrawsRefused"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num);
 	print"\n<!-- debut table -->\n";
-	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+	print '<table class="noborder tagtable liste" width="100%" cellspacing="0" cellpadding="4">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Line", $_SERVER["PHP_SELF"], "p.ref", '', $urladd);
 	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $urladd);
@@ -99,7 +102,7 @@ if ($result)
 
 		print '<tr class="oddeven"><td>';
 		print $ligne->LibStatut($obj->statut, 2).'&nbsp;';
-		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'">';
+		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
 
 		print substr('000000'.$obj->rowid, -6)."</a></td>";
 

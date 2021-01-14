@@ -53,6 +53,8 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'inv
 
 $socid = GETPOST('socid', 'int');
 
+$socid = GETPOST('socid', 'int');
+
 // Security check
 $id = (GETPOST('facid', 'int') ?GETPOST('facid', 'int') : GETPOST('id', 'int'));
 $lineid = GETPOST('lineid', 'int');
@@ -151,6 +153,11 @@ if ($socid > 0) {
 }
 
 
+if ($socid > 0) {
+        $tmpthirdparty = new Societe($db);
+        $res = $tmpthirdparty->fetch($socid);
+        if ($res > 0) $search_societe = $tmpthirdparty->name;
+}
 
 /*
  * Actions

@@ -71,8 +71,6 @@
 UPDATE llx_user set api_key = null where api_key = '';
 
 UPDATE llx_c_email_templates SET position = 0 WHERE position IS NULL;
--- DELETE FROM llx_c_email_templates WHERE label = '(SendAnEMailToMember)';		-- Now it is '(SendingAnEMailToMemner)'
-
 
 -- delete foreign key that should never exists
 ALTER TABLE llx_propal DROP FOREIGN KEY fk_propal_fk_currency;
@@ -165,10 +163,6 @@ DELETE FROM llx_product_batch WHERE qty = 0;
 UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid);
 
 
--- Fix: delete orphelins in product_association
-delete from llx_product_association where fk_product_pere NOT IN (select rowid from llx_product);
-delete from llx_product_association where fk_product_fils NOT IN (select rowid from llx_product);
-
 -- Fix: delete category child with no category parent.
 drop table tmp_categorie;
 create table tmp_categorie as select * from llx_categorie; 
@@ -206,13 +200,6 @@ delete from llx_element_element where sourcetype='commande' and fk_source not in
 -- Fix: delete orphelin actioncomm_resources
 DELETE FROM llx_actioncomm_resources WHERE fk_actioncomm not in (select id from llx_actioncomm);
 
-
--- Fix: delete orphelin links in llx_bank_url
-DELETE from llx_bank_url where type = 'payment' and url_id not in (select rowid from llx_paiement);
-DELETE from llx_bank_url where type = 'payment_supplier' and url_id not in (select rowid from llx_paiementfourn);
-DELETE from llx_bank_url where type = 'company' and url_id not in (select rowid from llx_societe);
---SELECT * from llx_bank where rappro = 0 and label LIKE '(CustomerInvoicePayment%)' and rowid not in (select fk_bank from llx_bank_url where type = 'payment');
---SELECT * from llx_bank where rappro = 0 and label LIKE '(SupplierInvoicePayment%)' and rowid not in (select fk_bank from llx_bank_url where type = 'payment_supplier');
 
 -- Fix link on parent that were removed
 DROP table tmp_user;
@@ -480,10 +467,7 @@ update llx_facturedet set product_type = 1 where product_type = 0 AND fk_product
 update llx_facture_fourn_det set product_type = 0 where product_type = 1 AND fk_product > 0 AND fk_product IN (SELECT rowid FROM llx_product WHERE fk_product_type = 0);
 update llx_facture_fourn_det set product_type = 1 where product_type = 0 AND fk_product > 0 AND fk_product IN (SELECT rowid FROM llx_product WHERE fk_product_type = 1);
  
-
-DELETE FROM llx_mrp_production where qty = 0;
-
-
+ 
 UPDATE llx_accounting_bookkeeping set date_creation = tms where date_creation IS NULL;
 
  
@@ -491,13 +475,9 @@ UPDATE llx_accounting_bookkeeping set date_creation = tms where date_creation IS
 -- UPDATE llx_facturedet_rec set label = NULL WHERE label IS NOT NULL;
 
 
-UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NULL AND fk_prev_id IS NULL;
-
-
--- Note to make all deposit as payed when there is already a discount generated from it.
---drop table tmp_invoice_deposit_mark_as_available;
---create table tmp_invoice_deposit_mark_as_available as select * from llx_facture as f where f.type = 3 and f.paye = 0 and f.rowid in (select fk_facture_source from llx_societe_remise_except);
---update llx_facture set paye = 1, fk_statut = 2 where rowid in (select rowid from tmp_invoice_deposit_mark_as_available);
+-- Test inconsistency of data into situation invoices: If it differs, it may be the total_ht that is wrong and situation_percent that is good.
+-- select f.rowid, f.type, fd.qty, fd.subprice, fd.situation_percent, fd.total_ht, fd.total_ttc, fd.total_tva, fd.multicurrency_total_ht, fd.multicurrency_total_tva, fd.multicurrency_total_ttc, (situation_percent  / 100 * subprice * qty * (1 - (fd.remise_percent / 100)))
+-- from llx_facturedet as fd, llx_facture as f where fd.fk_facture = f.rowid AND (total_ht - situation_percent  / 100 * subprice * qty * (1 - (fd.remise_percent / 100))) > 0.01 and f.type = 5;
 
 
 

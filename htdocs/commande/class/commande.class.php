@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2010-2016 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2020 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2012-2014 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
@@ -3471,6 +3471,11 @@ class Commande extends CommonOrder
 
 		if (!$error)
 		{
+			// On delete ecm_files database info
+			if (!$this->deleteEcmFiles()) {
+				$this->db->rollback();
+				return 0;
+			}
 			// Remove directory with files
 			$comref = dol_sanitizeFileName($this->ref);
 			if ($conf->commande->multidir_output[$this->entity] && !empty($this->ref))

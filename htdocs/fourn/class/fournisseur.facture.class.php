@@ -4,7 +4,7 @@
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2010-2017	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2020	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013-2019	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016	Marcos García			<marcosgdf@gmail.com>
@@ -1217,6 +1217,12 @@ class FactureFournisseur extends CommonInvoice
 
         if (!$error)
         {
+			// On delete ecm_files database info
+			if (!$this->deleteEcmFiles()) {
+				$this->db->rollback();
+				return 0;
+			}
+
         	// We remove directory
         	if ($conf->fournisseur->facture->dir_output)
         	{

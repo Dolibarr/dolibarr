@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,7 +33,7 @@ class box_supplier_orders extends ModeleBoxes
 
     public $boxcode = "latestsupplierorders";
     public $boximg = "object_order";
-    public $boxlabel = "BoxLatestSupplierOrders";
+    public $boxlabel="BoxLatestSupplierOrders";
     public $depends = array("fournisseur");
 
     /**
@@ -56,9 +56,9 @@ class box_supplier_orders extends ModeleBoxes
     {
         global $user;
 
-        $this->db = $db;
+        $this->db=$db;
 
-        $this->hidden = !($user->rights->fournisseur->commande->lire);
+        $this->hidden=! ($user->rights->fournisseur->commande->lire);
     }
 
     /**
@@ -69,49 +69,49 @@ class box_supplier_orders extends ModeleBoxes
      */
     public function loadBox($max = 5)
     {
-        global $conf, $user, $langs;
+        global $conf, $user, $langs, $db;
         $langs->load("boxes");
 
         $this->max = $max;
 
         include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-        $supplierorderstatic = new CommandeFournisseur($this->db);
+        $supplierorderstatic=new CommandeFournisseur($db);
         include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-        $thirdpartytmp = new Fournisseur($this->db);
+        $thirdpartytmp = new Fournisseur($db);
 
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleLatest".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE ? "" : "Modified")."SupplierOrders", $max));
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleLatest".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."SupplierOrders", $max));
 
         if ($user->rights->fournisseur->commande->lire)
         {
             $sql = "SELECT s.nom as name, s.rowid as socid,";
-            $sql .= " s.code_client, s.code_fournisseur,";
-            $sql .= " s.logo, s.email,";
-            $sql .= " c.rowid, c.ref, c.tms, c.date_commande,";
-            $sql .= " c.total_ht,";
-            $sql .= " c.tva as total_tva,";
-            $sql .= " c.total_ttc,";
-            $sql .= " c.fk_statut";
-            $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-            $sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as c";
-            if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-            $sql .= " WHERE c.fk_soc = s.rowid";
-            $sql .= " AND c.entity = ".$conf->entity;
-            if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-            if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
-            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql .= " ORDER BY c.date_commande DESC, c.ref DESC ";
-            else $sql .= " ORDER BY c.tms DESC, c.ref DESC ";
-            $sql .= $this->db->plimit($max, 0);
+            $sql.= " s.code_client, s.code_fournisseur,";
+            $sql.= " s.logo, s.email,";
+            $sql.= " c.rowid, c.ref, c.tms, c.date_commande,";
+            $sql.= " c.total_ht,";
+            $sql.= " c.tva as total_tva,";
+            $sql.= " c.total_ttc,";
+            $sql.= " c.fk_statut";
+            $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+            $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as c";
+            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            $sql.= " WHERE c.fk_soc = s.rowid";
+            $sql.= " AND c.entity IN (".getEntity('supplier_order').")";
+            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+            if ($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
+            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY c.date_commande DESC, c.ref DESC ";
+            else $sql.= " ORDER BY c.tms DESC, c.ref DESC ";
+            $sql.= $db->plimit($max, 0);
 
-            $result = $this->db->query($sql);
+            $result = $db->query($sql);
             if ($result)
             {
-                $num = $this->db->num_rows($result);
+                $num = $db->num_rows($result);
 
                 $line = 0;
                 while ($line < $num) {
-                    $objp = $this->db->fetch_object($result);
-                    $date = $this->db->jdate($objp->date_commande);
-					$datem = $this->db->jdate($objp->tms);
+                    $objp = $db->fetch_object($result);
+                    $date=$db->jdate($objp->date_commande);
+					$datem=$db->jdate($objp->tms);
 
 					$supplierorderstatic->id = $objp->rowid;
 					$supplierorderstatic->ref = $objp->ref;
@@ -124,19 +124,19 @@ class box_supplier_orders extends ModeleBoxes
                     $thirdpartytmp->logo = $objp->logo;
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="nowraponall"',
+                        'td' => '',
                         'text' => $supplierorderstatic->getNomUrl(1),
                     	'asis' => 1
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+                        'td' => '',
                         'text' => $thirdpartytmp->getNomUrl(1, 'supplier'),
                         'asis' => 1,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right nowraponall"',
+                        'td' => 'class="right nowrap"',
                         'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
                     );
 
@@ -159,12 +159,12 @@ class box_supplier_orders extends ModeleBoxes
                         'text' => $langs->trans("NoSupplierOrder"),
                     );
 
-                $this->db->free($result);
+                $db->free($result);
             } else {
                 $this->info_box_contents[0][] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($this->db->error().' sql='.$sql),
+                    'text' => ($db->error().' sql='.$sql),
                 );
             }
         }
