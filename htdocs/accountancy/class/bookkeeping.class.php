@@ -956,8 +956,12 @@ class BookKeeping extends CommonObject
 		$sql .= " t.date_creation,";
 		$sql .= " t.date_lim_reglement,";
 		$sql .= " t.tms as date_modification,";
-		$sql .= " t.date_export";
+		$sql .= " t.date_export,";
+		$sql .= " c.nom as customer_name,";
+		$sql .= " s.nom as supplier_name";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql .= " LEFT JOIN llx_societe as c ON t.subledger_account = c.code_compta";
+		$sql .= " LEFT JOIN llx_societe as s ON t.subledger_account = s.code_compta_fournisseur";
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
@@ -1018,7 +1022,10 @@ class BookKeeping extends CommonObject
 				$line->fk_docdet = $obj->fk_docdet;
 				$line->thirdparty_code = $obj->thirdparty_code;
 				$line->subledger_account = $obj->subledger_account;
-				$line->subledger_label = $obj->subledger_label;
+
+				if (!empty($obj->customer_name)) $line->subledger_label = $obj->customer_name;
+				if (!empty($obj->supplier_name)) $line->subledger_label = $obj->supplier_name;
+
 				$line->numero_compte = $obj->numero_compte;
 				$line->label_compte = $obj->label_compte;
 				$line->label_operation = $obj->label_operation;
