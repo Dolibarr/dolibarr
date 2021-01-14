@@ -656,8 +656,8 @@ class UserGroup extends CommonObject
 	{
 		global $user, $conf;
 
-		if (!empty($this->name)) {
-			$this->nom = $this->name; // Field for 'name' is called 'nom' in database
+		if (empty($this->nom) && !empty($this->name)) {
+			$this->nom = $this->name;
 		}
 
 		return $this->updateCommon($user, $notrigger);
