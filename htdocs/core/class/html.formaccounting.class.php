@@ -427,7 +427,7 @@ class FormAccounting extends Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return list of auxilary thirdparty accounts
+	 * Return list of auxilary accounts. Cumulate list from customers, suppliers and users.
 	 *
 	 * @param string   $selectid       Preselected pcg_type
 	 * @param string   $htmlname       Name of field in html form
@@ -452,7 +452,7 @@ class FormAccounting extends Form
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
 				if (!empty($obj->code_compta)) {
-					$aux_account[$obj->code_compta] = $obj->code_compta.' ('.$obj->nom.')';
+					$aux_account[$obj->code_compta] = $obj->code_compta.' <span class="opacitymedium">('.$obj->nom.')</span>';
 				}
 			}
 		} else {
@@ -472,7 +472,7 @@ class FormAccounting extends Form
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
 				if ($obj->code_compta_fournisseur != "") {
-					$aux_account[$obj->code_compta_fournisseur] = $obj->code_compta_fournisseur.' ('.$obj->nom.')';
+					$aux_account[$obj->code_compta_fournisseur] = $obj->code_compta_fournisseur.' <span class="opacitymedium">('.$obj->nom.')</span>';
 				}
 			}
 		} else {
@@ -492,7 +492,7 @@ class FormAccounting extends Form
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
 				if (!empty($obj->accountancy_code)) {
-					$aux_account[$obj->accountancy_code] = $obj->accountancy_code.' ('.dolGetFirstLastname($obj->firstname, $obj->lastname).')';
+					$aux_account[$obj->accountancy_code] = $obj->accountancy_code.' <span class="opacitymedium">('.dolGetFirstLastname($obj->firstname, $obj->lastname).')</span>';
 				}
 			}
 		} else {
