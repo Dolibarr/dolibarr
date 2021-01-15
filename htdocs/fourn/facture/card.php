@@ -656,10 +656,10 @@ if (empty($reshook))
 		if ($ret < 0) $error++;
 
 		$dateinvoice = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-		$datedue = dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']);
+		$datedue = dol_mktime(12, 0, 0, GETPOST('echmonth', 'int'), GETPOST('echday', 'int'), GETPOST('echyear', 'int'));
 
 		// Replacement invoice
-		if ($_POST['type'] == FactureFournisseur::TYPE_REPLACEMENT)
+		if (GETPOST('type') == FactureFournisseur::TYPE_REPLACEMENT)
 		{
 			if (empty($dateinvoice)) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('DateInvoice')), null, 'errors');
@@ -713,7 +713,7 @@ if (empty($reshook))
 		}
 
 		// Credit note invoice
-		if ($_POST['type'] == FactureFournisseur::TYPE_CREDIT_NOTE)
+		if (GETPOST('type') == FactureFournisseur::TYPE_CREDIT_NOTE)
 		{
 			$sourceinvoice = GETPOST('fac_avoir', 'int');
 			if (!($sourceinvoice > 0) && empty($conf->global->INVOICE_CREDIT_NOTE_STANDALONE))
@@ -837,7 +837,7 @@ if (empty($reshook))
 		}
 
 		// Standard or deposit
-		if ($_POST['type'] == FactureFournisseur::TYPE_STANDARD || $_POST['type'] == FactureFournisseur::TYPE_DEPOSIT)
+		if (GETPOST('type') == FactureFournisseur::TYPE_STANDARD || GETPOST('type') == FactureFournisseur::TYPE_DEPOSIT)
 		{
 			if (GETPOST('socid', 'int') < 1)
 			{
@@ -869,11 +869,12 @@ if (empty($reshook))
 			{
 				$tmpproject = GETPOST('projectid', 'int');
 
-				// Creation facture
-				$object->ref           = $_POST['ref'];
-				$object->ref_supplier  = $_POST['ref_supplier'];
-				$object->socid         = $_POST['socid'];
-				$object->libelle       = $_POST['label'];
+				// Creation invoice
+				$object->ref           = GETPOST('ref', 'nohtml');
+				$object->ref_supplier  = GETPOST('ref_supplier', 'nohtml');
+				$object->socid         = GETPOST('socid', 'int');
+				$object->libelle       = GETPOST('label', 'nohtml');	// deprecated
+				$object->label         = GETPOST('label', 'nohtml');
 				$object->date          = $dateinvoice;
 				$object->date_echeance = $datedue;
 				$object->note_public   = GETPOST('note_public', 'restricthtml');
@@ -894,7 +895,7 @@ if (empty($reshook))
 				$object->fetch_thirdparty();
 
 				// If creation from another object of another module
-				if (!$error && $_POST['origin'] && $_POST['originid'])
+				if (!$error && GETPOST('origin', 'alpha') && GETPOST('originid'))
 				{
 					// Parse element/subelement (ex: project_task)
 					$element = $subelement = GETPOST('origin', 'alpha');
@@ -1385,7 +1386,9 @@ if (empty($reshook))
 
 			$fk_unit = GETPOST('units', 'alpha');
 
-			$tva_tx = price2num($tva_tx); // When vat is text input field
+			if (!preg_match('/\((.*)\)/', $tva_tx)) {
+				$tva_tx = price2num($tva_tx); // $txtva can have format '5,1' or '5.1' or '5.1(XXX)', we must clean only if '5,1'
+			}
 
 			// Local Taxes
 			$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $object->thirdparty);
