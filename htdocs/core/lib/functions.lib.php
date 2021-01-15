@@ -5488,6 +5488,10 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		$isacompany = $thirdparty_buyer->isACompany();
 		if ($isacompany)
 		{
+			if (!empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID) && !isValidVATID($thirdparty_buyer)) {
+				//print 'VATRULE 6';
+				return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+			}
 			//print 'VATRULE 3';
 			return 0;
 		} else {
