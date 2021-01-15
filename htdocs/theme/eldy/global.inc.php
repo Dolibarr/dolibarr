@@ -4372,7 +4372,7 @@ div.ui-tooltip.mytooltip {
 /* Calendar                                                                       */
 /* ============================================================================== */
 
-div.divfordateinput img.ui-datepicker-trigger {
+/*div.divfordateinput img.ui-datepicker-trigger {
     float: left;
     display: inline-block;
     vertical-align: middle;
@@ -4380,7 +4380,7 @@ div.divfordateinput img.ui-datepicker-trigger {
 }
 .hasDatepicker {
     padding-bottom: 6px;
-}
+}*/
 
 .ui-datepicker-calendar .ui-state-default, .ui-datepicker-calendar .ui-widget-content .ui-state-default,
 .ui-datepicker-calendar .ui-widget-header .ui-state-default, .ui-datepicker-calendar .ui-button,

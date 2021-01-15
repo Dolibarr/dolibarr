@@ -5747,7 +5747,7 @@ class Form
 						if (empty($conf->global->MAIN_POPUP_CALENDAR_ON_FOCUS))
 						{
 							$retstring .= "
-								showOn: 'both',
+								showOn: 'button',	/* both has problem with autocompletion */
 								buttonImage: '".DOL_URL_ROOT."/theme/".$conf->theme."/img/object_calendarday.png',
 								buttonImageOnly: true";
 						}
