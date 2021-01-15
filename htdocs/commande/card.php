@@ -1718,7 +1718,8 @@ if ($action == 'create' && $usercancreate)
 	print '<td>';
 	include_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
 	$liste = ModelePDFCommandes::liste_modeles($db);
-	print $form->selectarray('model', $liste, $conf->global->COMMANDE_ADDON_PDF);
+	$preselected = $conf->global->COMMANDE_ADDON_PDF;
+	print $form->selectarray('model', $liste, $preselected, 0, 0, 0, '', 0, 0, 0, '', '', 1);
 	print "</td></tr>";
 
 	// Multicurrency
