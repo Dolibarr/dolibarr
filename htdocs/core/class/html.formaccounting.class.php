@@ -365,6 +365,8 @@ class FormAccounting extends Form
 		$sql = "SELECT DISTINCT code_compta, nom ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql .= " WHERE entity IN (".getEntity('societe').")";
+		$sql .= " AND client = 1";	// only type customer
+		$sql .= " OR client = 3";	// or type customer and prospect
 		$sql .= " ORDER BY code_compta";
 
 		dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
@@ -386,6 +388,7 @@ class FormAccounting extends Form
 		$sql = "SELECT DISTINCT code_compta_fournisseur, nom ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql .= " WHERE entity IN (".getEntity('societe').")";
+		$sql .= " AND fournisseur = 1";	// only type supplier
 		$sql .= " ORDER BY code_compta_fournisseur";
 		dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
 		$resql = $this->db->query($sql);
