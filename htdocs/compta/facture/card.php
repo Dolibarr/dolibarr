@@ -768,7 +768,7 @@ if (empty($reshook))
 	} // Classify "abandoned"
 	elseif ($action == 'confirm_canceled' && $confirm == 'yes') {
 		$object->fetch($id);
-		$close_code = GETPOST("close_code");
+		$close_code = GETPOST("close_code", 'restricthtml');
 		$close_note = GETPOST("close_note", 'restricthtml');
 
 		if ($close_code) {
