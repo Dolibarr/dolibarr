@@ -1581,7 +1581,7 @@ if ($action == 'create')
 
 	// Date
 	print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
-	print img_picto('', 'object_calendarday').'&ensp;'.$form->selectDate('', '', '', '', '', "addprop", 1, 1);
+	print $form->selectDate('', '', '', '', '', "addprop", 1, 1);
 	print '</td></tr>';
 
 	// Validaty duration
@@ -1644,7 +1644,6 @@ if ($action == 'create')
 	// Delivery date (or manufacturing)
 	print '<tr><td>'.$langs->trans("DeliveryDate").'</td>';
 	print '<td>';
-	print img_picto('', 'object_calendarday').'&ensp;';
 	if ($conf->global->DATE_LIVRAISON_WEEK_DELAY != "") {
 		$tmpdte = time() + ((7 * $conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
 		$syear = date("Y", $tmpdte);

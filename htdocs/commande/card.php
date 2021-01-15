@@ -1616,14 +1616,14 @@ if ($action == 'create' && $usercancreate)
 
 	// Date
 	print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
-	print img_picto('', 'object_calendarday').'&ensp;'.$form->selectDate('', 're', '', '', '', "crea_commande", 1, 1); // Always autofill date with current date
+	print $form->selectDate('', 're', '', '', '', "crea_commande", 1, 1); // Always autofill date with current date
 	print '</td></tr>';
 
 	// Date delivery planned
 	print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
 	print '<td colspan="3">';
 	$date_delivery = ($date_delivery ? $date_delivery : $object->date_delivery);
-	print img_picto('', 'object_calendarday').'&ensp;'.$form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
+	print $form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
 	print "</td>\n";
 	print '</tr>';
 
