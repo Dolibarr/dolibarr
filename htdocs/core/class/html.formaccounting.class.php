@@ -441,38 +441,21 @@ class FormAccounting extends Form
 
 		$aux_account = array();
 
-		// Auxiliary customer account
-		$sql = "SELECT DISTINCT code_compta, nom ";
+		// Auxiliary thirdparties account
+		$sql = "SELECT code_compta, code_compta_fournisseur, nom as name";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql .= " WHERE entity IN (".getEntity('societe').")";
-		$sql .= " ORDER BY code_compta";
+		$sql .= " AND client IN (1,3) OR fournisseur = 1";
 
 		dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
 				if (!empty($obj->code_compta)) {
-					$aux_account[$obj->code_compta] = $obj->code_compta.' <span class="opacitymedium">('.$obj->nom.')</span>';
+					$aux_account[$obj->code_compta] = $obj->code_compta.' <span class="opacitymedium">('.$obj->name.')</span>';
 				}
-			}
-		} else {
-			$this->error = "Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::select_auxaccount ".$this->error, LOG_ERR);
-			return -1;
-		}
-		$this->db->free($resql);
-
-		// Auxiliary supplier account
-		$sql = "SELECT DISTINCT code_compta_fournisseur, nom ";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
-		$sql .= " WHERE entity IN (".getEntity('societe').")";
-		$sql .= " ORDER BY code_compta_fournisseur";
-		dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			while ($obj = $this->db->fetch_object($resql)) {
-				if ($obj->code_compta_fournisseur != "") {
-					$aux_account[$obj->code_compta_fournisseur] = $obj->code_compta_fournisseur.' <span class="opacitymedium">('.$obj->nom.')</span>';
+				if (!empty($obj->code_compta_fournisseur)) {
+					$aux_account[$obj->code_compta_fournisseur] = $obj->code_compta_fournisseur.' <span class="opacitymedium">('.$obj->name.')</span>';
 				}
 			}
 		} else {
