@@ -672,15 +672,15 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 				if (preg_match('/[^a-z0-9_\-\.,]+/i', $out)) $out = '';
 			}
 			break;
-		case 'nohtml':
+		case 'nohtml':		// No html
 			$out = dol_string_nohtmltag($out, 0);
 			break;
-		case 'alpha':		// No html and no ../ and " replaced with ''
+		case 'alpha':		// No html and no ../ and "
 		case 'alphanohtml':	// Recommended for most scalar parameters and search parameters
 			if (!is_array($out)) {
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
-				$out = str_replace(array('&quot;', '"'), "''", trim($out));
+				$out = str_replace(array('&quot;', '"'), '', trim($out));
 				$out = str_replace(array('../'), '', $out);
 				// keep lines feed
 				$out = dol_string_nohtmltag($out, 0);
@@ -690,7 +690,7 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 			if (!is_array($out)) {
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
-				$out = str_replace(array('&quot;', '"'), "", trim($out));
+				$out = str_replace(array('&quot;', '"'), '', trim($out));
 				$out = str_replace(array('../'), '', $out);
 			}
 			break;
