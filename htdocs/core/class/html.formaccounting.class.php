@@ -435,7 +435,7 @@ class FormAccounting extends Form
 	 * @param string   $morecss        More css
 	 * @return string                  String with HTML select
 	 */
-	public function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'maxwidth200')
+	public function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'maxwidth250')
 	{
 		// phpcs:enable
 
@@ -463,6 +463,9 @@ class FormAccounting extends Form
 			dol_syslog(get_class($this)."::select_auxaccount ".$this->error, LOG_ERR);
 			return -1;
 		}
+
+		ksort($aux_account);
+
 		$this->db->free($resql);
 
 		// Auxiliary user account
