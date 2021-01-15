@@ -1317,7 +1317,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 		// Zip / Town
 		print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
-		print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth100 quatrevingtpercent');
+		print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth100');
 		print '</td>';
 		if ($conf->browser->layout == 'phone') print '</tr><tr>';
 		print '<td class="tdtop">'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
@@ -1913,7 +1913,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 			// Zip / Town
 			print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
-			print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth50onsmartphone');
+			print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth100');
 			print '</td>';
 			if ($conf->browser->layout == 'phone') print '</tr><tr>';
 			print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';

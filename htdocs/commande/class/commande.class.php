@@ -2896,18 +2896,19 @@ class Commande extends CommonOrder
 	 * Classify the order as invoiced
 	 *
 	 * @param	User    $user       Object user making the change
-	 * @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 * @return	int                 <0 if KO, >0 if OK
+	 * @param	int		$notrigger	1=Does not execute triggers, 0=execute triggers
+	 * @return	int                 <0 if KO, 0 if already billed,  >0 if OK
 	 */
 	public function classifyBilled(User $user, $notrigger = 0)
 	{
 		$error = 0;
 
-		$this->db->begin();
 		if ($this->billed)
 		{
 			return 0;
 		}
+
+		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET facture = 1';
 		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT;

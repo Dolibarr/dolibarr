@@ -6421,8 +6421,7 @@ class Form
 					$value = $tmpvalue;
 					$disabled = ''; $style = '';
 				}
-				if (!empty($disablebademail))
-				{
+				if (!empty($disablebademail)) {
 					if (($disablebademail == 1 && !preg_match('/&lt;.+@.+&gt;/', $value))
 						|| ($disablebademail == 2 && preg_match('/---/', $value)))
 					{
@@ -6431,8 +6430,7 @@ class Form
 					}
 				}
 
-				if ($key_in_label)
-				{
+				if ($key_in_label) {
 					if (empty($nohtmlescape)) $selectOptionValue = dol_escape_htmltag($key.' - '.($maxlen ?dol_trunc($value, $maxlen) : $value));
 					else $selectOptionValue = $key.' - '.($maxlen ?dol_trunc($value, $maxlen) : $value);
 				} else {
