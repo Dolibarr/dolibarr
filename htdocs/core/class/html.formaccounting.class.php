@@ -365,8 +365,7 @@ class FormAccounting extends Form
 		$sql = "SELECT DISTINCT code_compta, nom ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql .= " WHERE entity IN (".getEntity('societe').")";
-		$sql .= " AND client = 1";	// only type customer
-		$sql .= " OR client = 3";	// or type customer and prospect
+		$sql .= " AND client IN (1 ,3)";	// only type customer or type customer/prospect
 		$sql .= " ORDER BY code_compta";
 
 		dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
