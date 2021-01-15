@@ -686,7 +686,7 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 				$out = dol_string_nohtmltag($out, 0);
 			}
 			break;
-		case 'alphawithlgt':		// No " and no ../ but we keep < > tags
+		case 'alphawithlgt':		// No " and no ../ but we keep < > tags. Can be used for email string like "Name <email>"
 			if (!is_array($out)) {
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
