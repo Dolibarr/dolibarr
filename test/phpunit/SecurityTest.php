@@ -337,7 +337,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
         $result=GETPOST("param6", 'alpha');
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals('\'\'>', $result);
+        $this->assertEquals('>', $result);
 
         $result=GETPOST("param6", 'nohtml');
         print __METHOD__." result=".$result."\n";
