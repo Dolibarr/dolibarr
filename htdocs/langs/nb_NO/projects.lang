@@ -85,6 +85,7 @@ ProgressCalculated=Progresjon på forbruk
 WhichIamLinkedTo=som jeg er knyttet til
 WhichIamLinkedToProject=som jeg er knyttet til prosjektet
 Time=Tid
+TimeConsumed=Forbrukt
 ListOfTasks=Oppgaveliste
 GoToListOfTimeConsumed=Gå til liste for tidsbruk
 GanttView=Gantt visning

@@ -1598,8 +1598,13 @@ ServiceSetup=Nastavení modulu služeb
 ProductServiceSetup=Nastavení modulů produktů a služeb
 NumberOfProductShowInSelect=Maximální počet produktů, které mají být zobrazeny v seznamu výběrových kombinací (0 = žádný limit)
 ViewProductDescInFormAbility=Zobrazovat popisy produktů ve formulářích (jinak se zobrazí v popupu popisků)
+DoNotAddProductDescAtAddLines=Do not add product description (from product card) on submit add lines on forms
+OnProductSelectAddProductDesc=How to use the description of the products when adding a product as a line of a document
+AutoFillFormFieldBeforeSubmit=Auto fill the description input field with the description of product
+DoNotAutofillButAutoConcat=Do not autofill the input field with description of product. Description of the product will be concatenated to the entered description automatically.
+DoNotUseDescriptionOfProdut=Description of the product will never be included into the description of lines of documents
 MergePropalProductCard=Aktivovat v servisním / Attached kartě výrobku Soubory možnost sloučit produkt PDF dokument k návrhu PDF Azur-li výrobek / služba je v návrhu
-ViewProductDescInThirdpartyLanguageAbility=Zobrazte popisy produktů v jazyce subjektu
+ViewProductDescInThirdpartyLanguageAbility=Display products descriptions in forms in the language of the third party (otherwise in the language of the user)
 UseSearchToSelectProductTooltip=Také, pokud máte velké množství produktů (> 100 000), můžete zvýšit rychlost nastavením konstantního PRODUCT_DONOTSEARCH_ANYWHERE na 1 v nabídce Setup-> Other. Hledání bude omezeno na začátek řetězce.
 UseSearchToSelectProduct=Počkejte, než stisknete klávesu před načtením obsahu seznamu combo produktu (Může se tím zvýšit výkon, pokud máte velké množství produktů, ale je méně vhodný)
 SetDefaultBarcodeTypeProducts=Výchozí typ čárového kódu použít pro produkty

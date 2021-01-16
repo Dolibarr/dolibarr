@@ -1,14 +1,14 @@
 # Dolibarr language file - Source file is en_US - ftp
-FTPClientSetup=FTP-Verbindungseinstellungen
-NewFTPClient=Neue FTP-Verbindung
-FTPArea=FTP-Verbindung(en)
-FTPAreaDesc=Diese Ansicht zeigt Ihnen den Inhalt eines FTP-Servers an.
-SetupOfFTPClientModuleNotComplete=Die Einstellungen des FTP-Verbindungsmoduls scheinen unvollständig zu sein.
-FTPFeatureNotSupportedByYourPHP=Ihre eingesetzte PHP-Version unterstützt keine FTP-Funktionen
-FailedToConnectToFTPServer=Fehler beim Verbindungsaufbau zum FTP-Server %s, Port %s
-FailedToConnectToFTPServerWithCredentials=Anmeldung am FTP-Server mit dem eingegebenen Benutzername / Passwort fehlgeschlagen
+FTPClientSetup=Einrichtung des FTP- oder SFTP-Client-Moduls
+NewFTPClient=Neue FTP / FTPS-Verbindungs-Konfiguration
+FTPArea=FTP / FTPS-Bereich
+FTPAreaDesc=Dieser Bildschirm zeigt eine Ansicht eines FTP- und SFTP-Servers.
+SetupOfFTPClientModuleNotComplete=Die Konfiguration des FTP- oder SFTP-Client-Moduls scheint unvollständig zu sein
+FTPFeatureNotSupportedByYourPHP=Ihr PHP unterstützt keine FTP- oder SFTP-Funktionen
+FailedToConnectToFTPServer=Verbindung zum Server fehlgeschlagen (Server %s, Port %s)
+FailedToConnectToFTPServerWithCredentials=Anmeldung am Server mit definiertem Login / Passwort fehlgeschlagen
 FTPFailedToRemoveFile=Konnte Datei <b>%s</b> nicht entfernen. Überprüfen Sie die Berechtigungen.
 FTPFailedToRemoveDir=Konnte Verzeichnis <b>%s</b> nicht entfernen. Überprüfen Sie die Berechtigungen und ob das Verzeichnis leer ist.
 FTPPassiveMode=Passives FTP
-ChooseAFTPEntryIntoMenu=Wählen Sie eine FTP-Adresse im Menü aus
+ChooseAFTPEntryIntoMenu=Wählen Sie eine FTP / SFTP-Seite aus dem Menü ...
 FailedToGetFile=Folgende Datei(en) konnte(n) nicht geladen werden: %s

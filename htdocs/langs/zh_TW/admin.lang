@@ -1173,7 +1173,7 @@ Delays_MAIN_DELAY_HOLIDAYS=休假申請批准
 SetupDescription1=在開始使用Dolibarr之前，必須定義一些初始參數並啟用/設定模組。
 SetupDescription2=以下兩個部分是必需的（“設定”選單中的前兩個項目）：
 SetupDescription3= <a href="%s"> %s-> %s </a> <br> <br>用於自訂您應用程式默認行為的基本參數（例如 跟國家相關的功能）。
-SetupDescription4= <a href="%s"> %s-> %s </a> <br> <br>此軟件是許多模塊/應用程序的套件。必須啟用和配置與您的需求相關的模塊。這些模塊的激活將顯示菜單條目。
+SetupDescription4= <a href="%s"> %s-> %s </a> <br> <br>此軟體是許多模組/應用程式的套件。必須啟用和配置與您的需求相關的模組。這些模組啟動後將會顯示在選單上。
 SetupDescription5=其他設定選單項目管理可選參數。
 LogEvents=安全稽核事件
 Audit=稽核
@@ -1598,8 +1598,13 @@ ServiceSetup=服務模組設定
 ProductServiceSetup=產品和服務模組設定
 NumberOfProductShowInSelect=組合選擇清單中可顯示的最大產品數量（0 =無限制）
 ViewProductDescInFormAbility=在表格中顯示產品描述（否則在工具提示彈出窗口中顯示）
+DoNotAddProductDescAtAddLines=Do not add product description (from product card) on submit add lines on forms
+OnProductSelectAddProductDesc=How to use the description of the products when adding a product as a line of a document
+AutoFillFormFieldBeforeSubmit=Auto fill the description input field with the description of product
+DoNotAutofillButAutoConcat=Do not autofill the input field with description of product. Description of the product will be concatenated to the entered description automatically.
+DoNotUseDescriptionOfProdut=Description of the product will never be included into the description of lines of documents
 MergePropalProductCard=若產品/服務在提案/建議書內，啟動產品/服務中附件檔分頁選項以將產品 PDF 文件整合成報價/建議書/提案的 azur 格式 PDF
-ViewProductDescInThirdpartyLanguageAbility=在合作方的語言中顯示產品描述
+ViewProductDescInThirdpartyLanguageAbility=Display products descriptions in forms in the language of the third party (otherwise in the language of the user)
 UseSearchToSelectProductTooltip=同樣，如果您有大量產品(> 100 000)，則可以通過在設定-其他中將PRODUCT_DONOTSEARCH_ANYWHERE常數變數變為1來提高速度。然後搜尋將僅限於字串開頭的。
 UseSearchToSelectProduct=等到您按下一個鍵，然後再載入產品組合清單的內容（如果您有很多產品，這可能會提高性能，但是使用起來不太方便）
 SetDefaultBarcodeTypeProducts=產品預設條碼類型
