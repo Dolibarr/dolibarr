@@ -1042,13 +1042,14 @@ class FormFile
 		if ($disablecrop == -1)
 		{
 			$disablecrop = 1;
-			if (in_array($modulepart, array('bank', 'bom', 'expensereport', 'holiday', 'medias', 'member', 'mrp', 'project', 'product', 'produit', 'propal', 'service', 'societe', 'tax', 'tax-vat', 'ticket', 'user'))) $disablecrop = 0;
+			// Values here must be supported by the photo_resize.php page.
+			if (in_array($modulepart, array('bank', 'bom', 'expensereport', 'facture', 'facture_fournisseur', 'holiday', 'medias', 'member', 'mrp', 'project', 'product', 'produit', 'propal', 'service', 'societe', 'tax', 'tax-vat', 'ticket', 'user'))) $disablecrop = 0;
 		}
 
 		// Define relative path used to store the file
 		if (empty($relativepath))
 		{
-			$relativepath = (!empty($object->ref) ?dol_sanitizeFileName($object->ref) : '').'/';
+			$relativepath = (!empty($object->ref) ? dol_sanitizeFileName($object->ref) : '').'/';
 			if ($object->element == 'invoice_supplier') $relativepath = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$relativepath; // TODO Call using a defined value for $relativepath
 			if ($object->element == 'project_task') $relativepath = 'Call_not_supported_._Call_function_using_a_defined_relative_path_.';
 		}
