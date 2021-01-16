@@ -66,18 +66,14 @@ $parameters = array('mode' => $mode, 'format' => $format, 'limit' => $limit, 'pa
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if (empty($reshook))
-{
+if (empty($reshook)) {
 	// Change customer bank information to withdraw
-	if ($action == 'modify')
-	{
-		for ($i = 1; $i < 9; $i++)
-		{
+	if ($action == 'modify') {
+		for ($i = 1; $i < 9; $i++) {
 			dolibarr_set_const($db, GETPOST("nom$i"), GETPOST("value$i"), 'chaine', 0, '', $conf->entity);
 		}
 	}
-	if ($action == 'create')
-	{
+	if ($action == 'create') {
 		$default_account=($type == 'bank-transfer' ? 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT' : 'PRELEVEMENT_ID_BANKACCOUNT');
 
 		if ($id_bankaccount != $conf->global->{$default_account}){
@@ -88,7 +84,8 @@ if (empty($reshook))
 		$bank = new Account($db);
 		$bank->fetch($conf->global->{$default_account});
 		if (empty($bank->ics) || empty($bank->ics_transfer)){
-			setEventMessages($langs->trans("ErrorICSmissing", $bank->getNomUrl(1)), null, 'errors');
+			$errormessage = str_replace('{url}', $bank->getNomUrl(1), $langs->trans("ErrorICSmissing", '{url}'));
+			setEventMessages($errormessage, null, 'errors');
 			header("Location: ".DOL_URL_ROOT.'/compta/prelevement/create.php');
 			exit;
 		}
@@ -111,8 +108,7 @@ if (empty($reshook))
 			$mesg = $langs->trans("NoInvoiceCouldBeWithdrawed", $format);
 			setEventMessages($mesg, null, 'errors');
 			$mesg .= '<br>'."\n";
-			foreach ($bprev->invoice_in_error as $key => $val)
-			{
+			foreach ($bprev->invoice_in_error as $key => $val) {
 				$mesg .= '<span class="warning">'.$val."</span><br>\n";
 			}
 		} else {
@@ -145,8 +141,7 @@ $bprev = new BonPrelevement($db);
 
 llxHeader('', $langs->trans("NewStandingOrder"));
 
-if (prelevement_check_config($type) < 0)
-{
+if (prelevement_check_config($type) < 0) {
 	$langs->load("errors");
 	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Withdraw")), null, 'errors');
 }
@@ -237,8 +232,7 @@ if ($nb) {
 			print '<a class="butAction" type="submit" href="create.php?action=create&format=ALL&type='.$type.'">'.$title."</a>\n";
 		}
 	} else {
-		if ($mysoc->isInEEC())
-		{
+		if ($mysoc->isInEEC()) {
 			$title = $langs->trans("CreateForSepaFRST");
 			if ($type == 'bank-transfer') {
 				$title = $langs->trans("CreateSepaFileForPaymentByBankTransfer");
@@ -289,8 +283,7 @@ $sql .= " ".MAIN_DB_PREFIX."societe as s,";
 $sql .= " ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 $sql .= " WHERE s.rowid = f.fk_soc";
 $sql .= " AND f.entity IN (".getEntity('invoice').")";
-if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS))
-{
+if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
 	$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
 }
 //$sql .= " AND pfd.amount > 0";
@@ -305,12 +298,11 @@ if ($type == 'bank-transfer') {
 if ($socid > 0) $sql .= " AND f.fk_soc = ".$socid;
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-{
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-	{
+	if (($page * $limit) > $nbtotalofrecords) {
+		// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -399,7 +391,7 @@ if ($resql)
 					if ($format) print ' ('.$format.')';
 				}
 			} else {
-				print img_warning($langs->trans("NoBankAccount"));
+				print img_warning($langs->trans("NoBankAccountDefined"));
 			}
 			print '</td>';
 			// Amount
