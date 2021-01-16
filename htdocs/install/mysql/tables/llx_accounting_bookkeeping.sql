@@ -51,6 +51,6 @@ CREATE TABLE llx_accounting_bookkeeping
   journal_label         varchar(255),				-- FEC:JournalLib
   date_validated        datetime,					-- FEC:ValidDate	| if empty: movement not validated / if not empty: movement validated (No deleting / No modification)
   date_export	      	datetime DEFAULT NULL,		--
-  import_key            varchar(14),
+  import_key            varchar(14),				-- ID of import when data was inserted by a mass import
   extraparams           varchar(255)				-- for other parameters with json format
 ) ENGINE=innodb;

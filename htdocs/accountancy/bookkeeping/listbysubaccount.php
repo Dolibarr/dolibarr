@@ -135,8 +135,8 @@ if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('searc
 
 $arrayfields = array(
 	// 't.subledger_account'=>array('label'=>$langs->trans("SubledgerAccount"), 'checked'=>1),
-	't.code_journal'=>array('label'=>$langs->trans("Codejournal"), 'checked'=>1),
 	't.piece_num'=>array('label'=>$langs->trans("TransactionNumShort"), 'checked'=>1),
+	't.code_journal'=>array('label'=>$langs->trans("Codejournal"), 'checked'=>1),
 	't.doc_date'=>array('label'=>$langs->trans("Docdate"), 'checked'=>1),
 	't.doc_ref'=>array('label'=>$langs->trans("Piece"), 'checked'=>1),
 	't.label_operation'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
@@ -442,8 +442,8 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	$newcardbutton = dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param);
-	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php', '', 1, array('morecss' => 'marginleftonly'));
-	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbysubaccount.php', '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param, '', 1, array('morecss' => 'marginleftonly'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbysubaccount.php?'.$param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=create');
 }
 
@@ -502,6 +502,11 @@ print '<table class="tagtable liste centpercent">';
 // Filters lines
 print '<tr class="liste_titre_filter">';
 
+// Movement number
+if (!empty($arrayfields['t.piece_num']['checked']))
+{
+	print '<td class="liste_titre"><input type="text" name="search_mvt_num" size="6" value="'.dol_escape_htmltag($search_mvt_num).'"></td>';
+}
 // Code journal
 if (!empty($arrayfields['t.code_journal']['checked'])) {
 	print '<td class="liste_titre center">';
@@ -518,10 +523,6 @@ if (!empty($arrayfields['t.doc_date']['checked'])) {
 	print $form->selectDate($search_date_end, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</div>';
 	print '</td>';
-}
-// Movement number
-if (!empty($arrayfields['t.piece_num']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_mvt_num" size="6" value="'.dol_escape_htmltag($search_mvt_num).'"></td>';
 }
 // Ref document
 if (!empty($arrayfields['t.doc_ref']['checked'])) {
@@ -571,14 +572,14 @@ print '</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
+if (!empty($arrayfields['t.piece_num']['checked'])) {
+	print_liste_field_titre($arrayfields['t.piece_num']['label'], $_SERVER['PHP_SELF'], "t.piece_num", "", $param, '', $sortfield, $sortorder);
+}
 if (!empty($arrayfields['t.code_journal']['checked'])) {
 	print_liste_field_titre($arrayfields['t.code_journal']['label'], $_SERVER['PHP_SELF'], "t.code_journal", "", $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['t.doc_date']['checked'])) {
 	print_liste_field_titre($arrayfields['t.doc_date']['label'], $_SERVER['PHP_SELF'], "t.doc_date", "", $param, '', $sortfield, $sortorder, 'center ');
-}
-if (!empty($arrayfields['t.piece_num']['checked'])) {
-	print_liste_field_titre($arrayfields['t.piece_num']['label'], $_SERVER['PHP_SELF'], "t.piece_num", "", $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['t.doc_ref']['checked'])) {
 	print_liste_field_titre($arrayfields['t.doc_ref']['label'], $_SERVER['PHP_SELF'], "t.doc_ref", "", $param, "", $sortfield, $sortorder);
@@ -673,8 +674,10 @@ while ($i < min($num, $limit)) {
 			print '<span class="error">'.$langs->trans("Unknown");
 			if ($line->subledger_label) {
 				print ' ('.$line->subledger_label.')';
+				$htmltext = 'EmptyStringForSubledgerAccountButSubledgerLabelDefined';
+			} else {
+				$htmltext = 'EmptyStringForSubledgerAccountAndSubledgerLabel';
 			}
-			$htmltext = 'EmptyStringForSubledgerAccountButSubledgerLabelDefined';
 			print $form->textwithpicto('', $htmltext);
 			print '</span>';
 		}
@@ -691,6 +694,17 @@ while ($i < min($num, $limit)) {
 
 	print '<tr class="oddeven">';
 
+	// Piece number
+	if (!empty($arrayfields['t.piece_num']['checked']))
+	{
+		print '<td>';
+		$object->id = $line->id;
+		$object->piece_num = $line->piece_num;
+		print $object->getNomUrl(1, '', 0, '', 1);
+		print '</td>';
+		if (!$i) $totalarray['nbfield']++;
+	}
+
 	// Journal code
 	if (!empty($arrayfields['t.code_journal']['checked'])) {
 		$accountingjournal = new AccountingJournal($db);
@@ -705,18 +719,6 @@ while ($i < min($num, $limit)) {
 	// Document date
 	if (!empty($arrayfields['t.doc_date']['checked'])) {
 		print '<td class="center">'.dol_print_date($line->doc_date, 'day').'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	// Piece number
-	if (!empty($arrayfields['t.piece_num']['checked'])) {
-		print '<td>';
-		$object->id = $line->id;
-		$object->piece_num = $line->piece_num;
-		print $object->getNomUrl(1, '', 0, '', 1);
-		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

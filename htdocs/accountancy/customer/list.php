@@ -532,10 +532,12 @@ if ($result) {
 		}
 
 		// Level 3: Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
-		if (!empty($objp->company_code_sell)) {
-			$objp->code_sell_t = $objp->company_code_sell;
-			$objp->aarowid_suggest = $objp->aarowid_thirdparty;
-			$suggestedaccountingaccountfor = '';
+		if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
+			if (!empty($objp->company_code_sell)) {
+				$objp->code_sell_t = $objp->company_code_sell;
+				$objp->aarowid_suggest = $objp->aarowid_thirdparty;
+				$suggestedaccountingaccountfor = '';
+			}
 		}
 
 		// Manage Deposit
@@ -616,25 +618,32 @@ if ($result) {
 		{
 			print '<br>';
 			$s = '<span class="small">2. '.(($objp->type_l == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': </span>';
-			$shelp = '';
+			$shelp = ''; $ttype = 'help';
 			if ($suggestedaccountingaccountfor == 'eec') $shelp = $langs->trans("SaleEEC");
 			elseif ($suggestedaccountingaccountfor == 'eecwithvat') $shelp = $langs->trans("SaleEECWithVAT");
-			elseif ($suggestedaccountingaccountfor == 'eecwithoutvatnumber') $shelp = $langs->trans("SaleEECWithoutVATNumber");
+			elseif ($suggestedaccountingaccountfor == 'eecwithoutvatnumber') {
+				$shelp = $langs->trans("SaleEECWithoutVATNumber");
+				$ttype = 'warning';
+			}
 			elseif ($suggestedaccountingaccountfor == 'export') $shelp = $langs->trans("SaleExport");
 			$s .= (empty($objp->code_sell_p) ? '<span style="'.$code_sell_p_notset.'">'.$langs->trans("NotDefined").'</span>' : length_accountg($objp->code_sell_p));
-			print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
+			print $form->textwithpicto($s, $shelp, 1, $ttype, '', 0, 2, '', 1);
 		} else {
+			if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
+				print '<br>';
+				$s = '<span class="small">2. '.(($objp->type_l == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': </span>';
+				$shelp = '';
+				$s .= $langs->trans("NotDefined");
+				print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
+			}
+		}
+		if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
 			print '<br>';
-			$s = '<span class="small">2. '.(($objp->type_l == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': </span>';
+			$s = '<span class="small">3. '.(($objp->type_l == 1) ? $langs->trans("ServiceForThisThirdparty") : $langs->trans("ProductForThisThirdparty")).': </span>';
 			$shelp = '';
-			$s .= $langs->trans("NotDefined");
+			$s .= ($objp->code_sell_t > 0 ? length_accountg($objp->code_sell_t) : '<span style="'.$code_sell_t_notset.'">'.$langs->trans("NotDefined").'</span>');
 			print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
 		}
-		print '<br>';
-		$s = '<span class="small">3. '.(($objp->type_l == 1) ? $langs->trans("ServiceForThisThirdparty") : $langs->trans("ProductForThisThirdparty")).': </span>';
-		$shelp = '';
-		$s .= ($objp->code_sell_t > 0 ? length_accountg($objp->code_sell_t) : '<span style="'.$code_sell_t_notset.'">'.$langs->trans("NotDefined").'</span>');
-		print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
 		print '</td>';
 
 		// Suggested accounting account
