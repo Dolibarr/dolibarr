@@ -34,13 +34,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         $salaryid = test_input($_POST["salaryid"]);
         // check if name only contains letters and whitespace
-
-       }}
-function test_input($data){
+	}}
+function test_input($data)
+{
     $data=trim($data);
     $data=stripcslashes($data);
     return $data;
-
 }
 ?>
 
@@ -66,20 +65,20 @@ function test_input($data){
                         <span class="error"> <?php echo $nameErr;?></span>
                     </form>
    <?php
-  $id=(int)$salaryid;
-   $_SESSION['LOAY']=$id;
+	$id=(int) $salaryid;
+	$_SESSION['LOAY']=$id;
     $workername="SELECT concat(firstname,'  ',lastname) as wholename FROM `llx_user` WHERE rowid IN ( SELECT fk_user FROM llx_payment_salary WHERE rowid =$id)";
-   $workeradress="SELECT address FROM `llx_user` WHERE rowid IN ( SELECT fk_user FROM llx_payment_salary WHERE rowid =$id)";
-   $workerZIP="SELECT zip FROM `llx_user` WHERE rowid IN ( SELECT fk_user FROM llx_payment_salary WHERE rowid =$id)";
-   $workerID="SELECT office_phone FROM `llx_user` WHERE rowid IN ( SELECT fk_user FROM llx_payment_salary WHERE rowid =$id)";
-   $paymenttype="SELECT concat(code,'  ',libelle) as wholename FROM `llx_c_paiement` WHERE id IN ( SELECT fk_typepayment FROM llx_payment_salary WHERE rowid =$id)";
-   $hourewage="SELECT thm FROM `llx_user` WHERE rowid IN ( SELECT fk_user FROM llx_payment_salary WHERE rowid =$id)";
-   $houreperW="SELECT weeklyhours FROM `llx_user` WHERE rowid IN ( SELECT fk_user FROM llx_payment_salary WHERE rowid =$id)";
-   $salaryamount="SELECT amount FROM llx_payment_salary where rowid =$id";
+	$workeradress="SELECT address FROM `llx_user` WHERE rowid IN ( SELECT fk_user FROM llx_payment_salary WHERE rowid =$id)";
+	$workerZIP="SELECT zip FROM `llx_user` WHERE rowid IN ( SELECT fk_user FROM llx_payment_salary WHERE rowid =$id)";
+	$workerID="SELECT office_phone FROM `llx_user` WHERE rowid IN ( SELECT fk_user FROM llx_payment_salary WHERE rowid =$id)";
+	$paymenttype="SELECT concat(code,'  ',libelle) as wholename FROM `llx_c_paiement` WHERE id IN ( SELECT fk_typepayment FROM llx_payment_salary WHERE rowid =$id)";
+	$hourewage="SELECT thm FROM `llx_user` WHERE rowid IN ( SELECT fk_user FROM llx_payment_salary WHERE rowid =$id)";
+	$houreperW="SELECT weeklyhours FROM `llx_user` WHERE rowid IN ( SELECT fk_user FROM llx_payment_salary WHERE rowid =$id)";
+	$salaryamount="SELECT amount FROM llx_payment_salary where rowid =$id";
     $DATE="SELECT datep FROM llx_payment_salary where rowid =$id";
 
 
-   ?>
+	?>
                 </div>
         <div CLASS="card-body">
             <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=635
@@ -95,7 +94,7 @@ function test_input($data){
                                     $result=$con->query($DATE);
                                     $row =$result->fetch_assoc();
                                     echo $row["datep"];
-                                    ?>
+	?>
 </span></b></p>
                     </td>
                     <td width=146 nowrap align="right" style='width:109.8pt;padding:0in 5.4pt 0in 5.4pt;
@@ -120,7 +119,7 @@ function test_input($data){
                                     echo  date("Y/m/d");
                                     echo "**";
                                     echo date("h:i");
-                                    ?></o:p></span></p>
+	?></o:p></span></p>
                     </td>
                 </tr>
                 <tr style='mso-yfti-irow:1;height:13.5pt'>
@@ -185,10 +184,10 @@ function test_input($data){
                                     style='font-size:10.0pt;font-family:"Arial",sans-serif;mso-fareast-font-family:
   "Times New Roman"'>
                                 <?php
-$result=$con->query($companyname);
-$row =$result->fetch_assoc();
-echo $row["value"];
-?>
+								$result=$con->query($companyname);
+								$row =$result->fetch_assoc();
+								echo $row["value"];
+								?>
 
 
                                 <o:p></o:p></span></p>
@@ -214,7 +213,7 @@ echo $row["value"];
                                 $result=$con->query($companyaddress);
                                 $row =$result->fetch_assoc();
                                 echo $row["value"];
-                                ?>
+	?>
                                 <o:p></o:p></span></p>
                     </td>
                 </tr>
@@ -237,7 +236,7 @@ echo $row["value"];
                                 $result=$con->query($companyzip);
                                 $row =$result->fetch_assoc();
                                 echo $row["value"];
-                                ?>
+	?>
                                 <o:p></o:p></span></p>
                     </td>
                 </tr>
@@ -344,10 +343,10 @@ echo $row["value"];
   "Times New Roman"'>
                                   <?php
 
-                                  $result=$con->query($workeradress);
-                                  $row =$result->fetch_assoc();
-                                  echo $row["address"];
-                                  ?><o:p></o:p></span></p>
+									$result=$con->query($workeradress);
+									$row =$result->fetch_assoc();
+									echo $row["address"];
+									?><o:p></o:p></span></p>
                     </td>
                 </tr>
                 <tr style='mso-yfti-irow:10;height:13.5pt'>
@@ -396,7 +395,7 @@ echo $row["value"];
                                 $result=$con->query($workerID);
                                 $row =$result->fetch_assoc();
                                 echo $row["office_phone"];
-                                ?><o:p></o:p></span></p>
+	?><o:p></o:p></span></p>
                     </td>
                 </tr>
                 <tr style='mso-yfti-irow:12;height:13.5pt'>
@@ -483,7 +482,7 @@ echo $row["value"];
                                 $result=$con->query($companytown);
                                 $row =$result->fetch_assoc();
                                 echo $row["value"];
-                                ?><o:p></o:p></span></p>
+	?><o:p></o:p></span></p>
                     </td>
                     <td width=146 nowrap style='width:109.8pt;border-top:none;border-left:none;
   border-bottom:solid #35629D 1.0pt;border-right:solid #35629D 1.0pt;
@@ -514,7 +513,7 @@ echo $row["value"];
                                 $result=$con->query($paymenttype);
                                 $row =$result->fetch_assoc();
                                 echo $row["wholename"];
-                                ?><o:p></o:p></span></p>
+	?><o:p></o:p></span></p>
                     </td>
                     <td width=146 nowrap style='width:109.8pt;border-top:none;border-left:none;
   border-bottom:solid #35629D 1.0pt;border-right:solid #35629D 1.0pt;
@@ -545,8 +544,8 @@ echo $row["value"];
                             $result=$con->query($hourewage);
                             $row =$result->fetch_assoc();
                             echo"$";
-                            echo (float)$row["thm"];
-                            ?>&nbsp;<o:p></o:p></span></p>
+                            echo (float) $row["thm"];
+	?>&nbsp;<o:p></o:p></span></p>
                     <td width=146  nowrap  style='width:109.8pt;border-top:none;border-left:none;
   border-bottom:solid #35629D 1.0pt;border-right:solid #35629D 1.0pt;
   mso-border-bottom-alt:solid #35629D .5pt;mso-border-right-alt:solid #35629D 1.0pt;
@@ -572,8 +571,8 @@ echo $row["value"];
 
                                 $result=$con->query($houreperW);
                                 $row =$result->fetch_assoc();
-                                echo (float)$row["weeklyhours"];
-                                ?>&nbsp;<o:p></o:p></span></p>
+                                echo (float) $row["weeklyhours"];
+	?>&nbsp;<o:p></o:p></span></p>
                     </td>
                     <td width=146 nowrap style='width:109.8pt;border-top:none;border-left:none;
   border-bottom:solid #35629D 1.0pt;border-right:solid #35629D 1.0pt;
@@ -677,8 +676,8 @@ echo $row["value"];
                         $result=$con->query($hourewage);
                         $row =$result->fetch_assoc();
                         echo"$";
-                        echo (float)$row["thm"];
-                        ?> </td>
+                        echo (float) $row["thm"];
+	?> </td>
                     <td width=146 style='width:109.8pt;border-top:none;border-left:none;
   border-bottom:solid #35629D 1.0pt;border-right:solid #35629D 1.0pt;
   mso-border-bottom-alt:solid #35629D .5pt;mso-border-right-alt:solid #35629D 1.0pt;
@@ -687,8 +686,8 @@ echo $row["value"];
                         $result=$con->query($salaryamount);
                         $row =$result->fetch_assoc();
                         echo"$";
-                        echo (float)$row["amount"];
-                        ?></td>
+                        echo (float) $row["amount"];
+	?></td>
                 </tr>
                 <tr style='mso-yfti-irow:21;height:12.75pt'>
                     <td width=195 style='width:146.6pt;border:solid #35629D 1.0pt;border-top:
@@ -715,7 +714,7 @@ echo $row["value"];
                         $result=$con->query($hourewage);
                         $row =$result->fetch_assoc();
                         echo"$";
-                        $hourewageaf= (float)$row["thm"]*.0833;
+                        $hourewageaf= (float) $row["thm"]*.0833;
                         echo $hourewageaf;
                         ?>                    </td>
 
@@ -727,9 +726,9 @@ echo $row["value"];
                         $result=$con->query($salaryamount);
                         $row =$result->fetch_assoc();
                         echo"$";
-                        $salaryamountaf= (float)$row["amount"]*.0833;
+                        $salaryamountaf= (float) $row["amount"]*.0833;
                         echo $salaryamountaf;
-                        ?></td>
+	?></td>
                 </tr>
                 <tr style='mso-yfti-irow:22;height:13.5pt'>
                     <td width=195 style='width:146.6pt;border:solid #35629D 1.0pt;border-top:
@@ -759,7 +758,7 @@ echo $row["value"];
                         $result=$con->query($hourewage);
                         $row =$result->fetch_assoc();
                         echo"$";
-                        $hourwagetotal= (float)$row["thm"]+ $hourewageaf;
+                        $hourwagetotal= (float) $row["thm"]+ $hourewageaf;
                         echo $hourwagetotal;
                         ?>
                     </td>
@@ -771,7 +770,7 @@ echo $row["value"];
                         $result=$con->query($salaryamount);
                         $row =$result->fetch_assoc();
                         echo"$";
-                        $slaryamounttotal=(float)$row["amount"]+$salaryamountaf;
+                        $slaryamounttotal=(float) $row["amount"]+$salaryamountaf;
                         echo $slaryamounttotal;
                         ?>
                     </td>
@@ -873,12 +872,12 @@ echo $row["value"];
   mso-fareast-font-family:"Times New Roman"'>
                                 <?php
 
-                        $result=$con->query($hourewage);
-                        $row =$result->fetch_assoc();
-                        echo"$";
-                        $hourewagetaxAHV=((float)$row["thm"]+ $hourewageaf)*.053;
-                        echo $hourewagetaxAHV;
-                        ?>
+								$result=$con->query($hourewage);
+								$row =$result->fetch_assoc();
+								echo"$";
+								$hourewagetaxAHV=((float) $row["thm"]+ $hourewageaf)*.053;
+								echo $hourewagetaxAHV;
+								?>
                         <o:p></o:p></span></p>
 
                     </td>
@@ -893,9 +892,9 @@ echo $row["value"];
                                 $result=$con->query($salaryamount);
                                 $row =$result->fetch_assoc();
                                 echo"$";
-                                $salaryamounttaxAHV= ((float)$row["amount"]+$salaryamountaf)*.053;
+                                $salaryamounttaxAHV= ((float) $row["amount"]+$salaryamountaf)*.053;
                                 echo $salaryamounttaxAHV;
-                                ?><o:p></o:p></span>
+	?><o:p></o:p></span>
 
                         </p>
                     </td>
@@ -928,9 +927,9 @@ echo $row["value"];
                                 $result=$con->query($hourewage);
                                 $row =$result->fetch_assoc();
                                 echo"$";
-                                $hourwagetaxalv = ((float)$row["thm"]+ $hourewageaf)*.011;
+                                $hourwagetaxalv = ((float) $row["thm"]+ $hourewageaf)*.011;
                                 echo $hourwagetaxalv;
-                                ?><o:p></o:p></span></p>
+	?><o:p></o:p></span></p>
                     </td>
                     <td width=146 style='width:109.8pt;border-top:none;border-left:none;
   border-bottom:solid #35629D 1.0pt;border-right:solid #35629D 1.0pt;
@@ -944,7 +943,7 @@ echo $row["value"];
                                 $result=$con->query($salaryamount);
                                 $row =$result->fetch_assoc();
                                 echo"$";
-                                $salaryamounttaxALV= ((float)$row["amount"]+$salaryamountaf)*.011;
+                                $salaryamounttaxALV= ((float) $row["amount"]+$salaryamountaf)*.011;
                                 echo $salaryamounttaxALV;
                                 ?>
                                 <o:p></o:p></span></p>
@@ -1083,7 +1082,7 @@ echo $row["value"];
   line-height:normal'><b><span style='font-size:10.0pt;font-family:"Arial",sans-serif;
   mso-fareast-font-family:"Times New Roman";color:black;mso-color-alt:windowtext'>
                                     <?php
-                              $hourtax=$hourewagetaxAHV+$hourwagetaxalv;
+									$hourtax=$hourewagetaxAHV+$hourwagetaxalv;
                                     echo $hourtax;
 
                                     ?>
@@ -1100,7 +1099,7 @@ echo $row["value"];
   mso-fareast-font-family:"Times New Roman";color:black;mso-color-alt:windowtext'><?php
                                     $slarytax=$salaryamounttaxAHV+$salaryamounttaxALV;
                                     echo $slarytax;
-                                    ?></span></b><b><span style='font-size:10.0pt;font-family:"Arial",sans-serif;
+	?></span></b><b><span style='font-size:10.0pt;font-family:"Arial",sans-serif;
   mso-fareast-font-family:"Times New Roman"'><o:p></o:p></span></b></p>
                     </td>
                 </tr>
