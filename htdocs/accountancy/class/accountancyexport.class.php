@@ -820,6 +820,8 @@ class AccountancyExport
 	 */
 	public function exportFEC($objectLines)
 	{
+		global $langs;
+
 		$separator = "\t";
 		$end_line = "\r\n";
 
@@ -855,55 +857,55 @@ class AccountancyExport
                 $date_limit_payment = dol_print_date($line->date_lim_reglement, '%Y%m%d');
 
 				// FEC:JournalCode
-				print $line->code_journal.$separator;
+				print $line->code_journal . $separator;
 
 				// FEC:JournalLib
-				print $line->journal_label.$separator;
+				print dol_string_unaccent($langs->transnoentities($line->journal_label)) . $separator;
 
 				// FEC:EcritureNum
-				print $line->piece_num.$separator;
+				print $line->piece_num . $separator;
 
 				// FEC:EcritureDate
-				print $date_document.$separator;
+				print $date_document . $separator;
 
 				// FEC:CompteNum
-				print length_accountg($line->numero_compte).$separator;
+				print $line->numero_compte . $separator;
 
 				// FEC:CompteLib
-				print dol_string_unaccent($line->label_compte).$separator;
+				print dol_string_unaccent($line->label_compte) . $separator;
 
 				// FEC:CompAuxNum
-				print length_accounta($line->subledger_account).$separator;
+				print $line->subledger_account . $separator;
 
 				// FEC:CompAuxLib
-				print dol_string_unaccent($line->subledger_label).$separator;
+				print dol_string_unaccent($line->subledger_label) . $separator;
 
 				// FEC:PieceRef
-				print $line->doc_ref.$separator;
+				print $line->doc_ref . $separator;
 
 				// FEC:PieceDate
-				print $date_creation.$separator;
+				print dol_string_unaccent($date_creation) . $separator;
 
 				// FEC:EcritureLib
-				print dol_string_unaccent($line->label_operation).$separator;
+				print dol_string_unaccent($line->label_operation) . $separator;
 
 				// FEC:Debit
-				print price2fec($line->debit).$separator;
+				print price2fec($line->debit) . $separator;
 
 				// FEC:Credit
-				print price2fec($line->credit).$separator;
+				print price2fec($line->credit) . $separator;
 
 				// FEC:EcritureLet
-				print $line->lettering_code.$separator;
+				print $line->lettering_code . $separator;
 
 				// FEC:DateLet
-				print $date_lettering.$separator;
+				print $date_lettering . $separator;
 
 				// FEC:ValidDate
-				print $date_validation.$separator;
+				print $date_validation . $separator;
 
 				// FEC:Montantdevise
-				print $line->multicurrency_amount.$separator;
+				print $line->multicurrency_amount . $separator;
 
 				// FEC:Idevise
 				print $line->multicurrency_code.$separator;
@@ -924,6 +926,8 @@ class AccountancyExport
 	 */
 	public function exportFEC2($objectLines)
 	{
+		global $langs;
+
 		$separator = "\t";
 		$end_line = "\r\n";
 
@@ -962,7 +966,7 @@ class AccountancyExport
 				print $line->code_journal . $separator;
 
 				// FEC:JournalLib
-				print $line->journal_label . $separator;
+				print dol_string_unaccent($langs->transnoentities($line->journal_label)) . $separator;
 
 				// FEC:EcritureNum
 				print $line->piece_num . $separator;
@@ -1644,15 +1648,15 @@ class AccountancyExport
 					($line->doc_type == 'supplier_invoice' && !isset($supplier_invoices_infos[$line->fk_doc]))) {
 					if ($line->doc_type == 'customer_invoice') {
 						// Get new customer invoice ref and company name
-						$sql = 'SELECT f.facnumber, s.nom FROM ' . MAIN_DB_PREFIX . 'facture as f';
+						$sql = 'SELECT f.ref, s.nom FROM ' . MAIN_DB_PREFIX . 'facture as f';
 						$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'societe AS s ON f.fk_soc = s.rowid';
 						$sql .= ' WHERE f.rowid = ' . $line->fk_doc;
 						$resql = $this->db->query($sql);
 						if ($resql) {
 							if ($obj = $this->db->fetch_object($resql)) {
 								// Save invoice infos
-								$invoices_infos[$line->fk_doc] = array('ref' => $obj->facnumber, 'company_name' => $obj->nom);
-								$invoice_ref = $obj->facnumber;
+								$invoices_infos[$line->fk_doc] = array('ref' => $obj->ref, 'company_name' => $obj->nom);
+								$invoice_ref = $obj->ref;
 								$company_name = $obj->nom;
 							}
 						}
