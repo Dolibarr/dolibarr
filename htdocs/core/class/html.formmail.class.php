@@ -1516,9 +1516,15 @@ class FormMail extends Form
 			//,'__PERSONALIZED__' => 'Personalized'	// Hidden because not used yet in mass emailing
 
 			$onlinepaymentenabled = 0;
-			if (!empty($conf->paypal->enabled)) $onlinepaymentenabled++;
-			if (!empty($conf->paybox->enabled)) $onlinepaymentenabled++;
-			if (!empty($conf->stripe->enabled)) $onlinepaymentenabled++;
+			if (!empty($conf->paypal->enabled)) {
+				$onlinepaymentenabled++;
+			}
+			if (!empty($conf->paybox->enabled)) {
+				$onlinepaymentenabled++;
+			}
+			if (!empty($conf->stripe->enabled)) {
+				$onlinepaymentenabled++;
+			}
 			if ($onlinepaymentenabled && !empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 				$tmparray['__SECUREKEYPAYMENT__'] = $conf->global->PAYMENT_SECURITY_TOKEN;
 				if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
