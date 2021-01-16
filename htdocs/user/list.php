@@ -99,6 +99,8 @@ $fieldstosearchall = array(
 	'u.lastname'=>"Lastname",
 	'u.firstname'=>"Firstname",
 	'u.accountancy_code'=>"AccountancyCode",
+	'u.office_phone'=>"PhonePro",
+	'u.user_mobile'=>"PhoneMobile",
 	'u.email'=>"EMail",
 	'u.note'=>"Note",
 );
@@ -117,6 +119,8 @@ $arrayfields = array(
     'u.employee'=>array('label'=>"Employee", 'checked'=>($mode == 'employee' ? 1 : 0), 'position'=>25),
     'u.fk_user'=>array('label'=>"HierarchicalResponsible", 'checked'=>1, 'position'=>27),
     'u.accountancy_code'=>array('label'=>"AccountancyCode", 'checked'=>0, 'position'=>30),
+	'u.office_phone'=>array('label'=>"PhonePro", 'checked'=>1, 'position'=>31),
+	'u.user_mobile'=>array('label'=>"PhoneMobile", 'checked'=>1, 'position'=>32),
     'u.email'=>array('label'=>"EMail", 'checked'=>1, 'position'=>35),
     'u.api_key'=>array('label'=>"ApiKey", 'checked'=>0, 'position'=>40, "enabled"=>($conf->api->enabled && $user->admin)),
     'u.fk_soc'=>array('label'=>"Company", 'checked'=>($contextpage == 'employeelist' ? 0 : 1), 'position'=>45),
@@ -142,6 +146,8 @@ $search_firstname = GETPOST('search_firstname', 'alpha');
 $search_gender = GETPOST('search_gender', 'alpha');
 $search_employee = GETPOST('search_employee', 'alpha');
 $search_accountancy_code = GETPOST('search_accountancy_code', 'alpha');
+$search_phonepro = GETPOST('search_phonepro', 'alpha');
+$search_phonemobile = GETPOST('search_phonemobile', 'alpha');
 $search_email = GETPOST('search_email', 'alpha');
 $search_api_key = GETPOST('search_api_key', 'alphanohtml');
 $search_statut = GETPOST('search_statut', 'intcomma');
@@ -199,6 +205,8 @@ if (empty($reshook))
 		$search_gender = "";
 		$search_employee = "";
 		$search_accountancy_code = "";
+		$search_phonepro = "";
+		$search_phonemobile = "";
 		$search_email = "";
 		$search_statut = "";
 		$search_thirdparty = "";
@@ -296,11 +304,11 @@ if ($contextpage == 'employeelist' && $search_employee == 1) {
 
 $user2 = new User($db);
 
-$sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login, u.email, u.api_key, u.accountancy_code, u.gender, u.employee, u.photo,";
+$sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login, u.office_phone, u.user_mobile, u.email, u.api_key, u.accountancy_code, u.gender, u.employee, u.photo,";
 $sql .= " u.salary, u.datelastlogin, u.datepreviouslogin,";
 $sql .= " u.ldap_sid, u.statut, u.entity,";
 $sql .= " u.tms as date_update, u.datec as date_creation,";
-$sql .= " u2.rowid as id2, u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2, u2.admin as admin2, u2.fk_soc as fk_soc2, u2.email as email2, u2.gender as gender2, u2.photo as photo2, u2.entity as entity2, u2.statut as statut2,";
+$sql .= " u2.rowid as id2, u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2, u2.admin as admin2, u2.fk_soc as fk_soc2, u2.office_phone as ofice_phone2, u2.user_mobile as user_mobile2, u2.email as email2, u2.gender as gender2, u2.photo as photo2, u2.entity as entity2, u2.statut as statut2,";
 $sql .= " s.nom as name, s.canvas";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -337,6 +345,8 @@ if (is_numeric($search_employee) && $search_employee >= 0) {
 	$sql .= ' AND u.employee = '.(int) $search_employee;
 }
 if ($search_accountancy_code != '')  $sql .= natural_search("u.accountancy_code", $search_accountancy_code);
+if ($search_phonepro != '')          $sql .= natural_search("u.office_phone", $search_phonepro);
+if ($search_phonemobile != '')       $sql .= natural_search("u.user_mobile", $search_phonemobile);
 if ($search_email != '')             $sql .= natural_search("u.email", $search_email);
 if ($search_api_key != '')           $sql .= natural_search("u.api_key", $search_api_key);
 if ($search_statut != '' && $search_statut >= 0) $sql .= " AND u.statut IN (".$db->sanitize($db->escape($search_statut)).")";
@@ -408,6 +418,8 @@ if ($search_firstname != '') $param .= "&amp;search_firstname=".urlencode($searc
 if ($search_gender != '') $param .= "&amp;search_gender=".urlencode($search_gender);
 if ($search_employee != '') $param .= "&amp;search_employee=".urlencode($search_employee);
 if ($search_accountancy_code != '') $param .= "&amp;search_accountancy_code=".urlencode($search_accountancy_code);
+if ($search_phonepro != '') $param .= "&amp;search_phonepro=".urlencode($search_phonepro);
+if ($search_phonemobile != '') $param .= "&amp;search_phonemobile=".urlencode($search_phonemobile);
 if ($search_email != '') $param .= "&amp;search_email=".urlencode($search_email);
 if ($search_api_key != '') $param .= "&amp;search_api_key=".urlencode($search_api_key);
 if ($search_supervisor > 0) $param .= "&amp;search_supervisor=".urlencode($search_supervisor);
@@ -543,6 +555,14 @@ if (!empty($arrayfields['u.accountancy_code']['checked']))
 {
 	print '<td class="liste_titre"><input type="text" name="search_accountancy_code" class="maxwidth50" value="'.$search_accountancy_code.'"></td>';
 }
+if (!empty($arrayfields['u.office_phone']['checked']))
+{
+	print '<td class="liste_titre"><input type="text" name="search_phonepro" class="maxwidth75" value="'.$search_phonepro.'"></td>';
+}
+if (!empty($arrayfields['u.user_mobile']['checked']))
+{
+	print '<td class="liste_titre"><input type="text" name="search_phonemobile" class="maxwidth75" value="'.$search_phonemobile.'"></td>';
+}
 if (!empty($arrayfields['u.email']['checked']))
 {
 	print '<td class="liste_titre"><input type="text" name="search_email" class="maxwidth75" value="'.$search_email.'"></td>';
@@ -612,6 +632,8 @@ if (!empty($arrayfields['u.gender']['checked']))         print_liste_field_titre
 if (!empty($arrayfields['u.employee']['checked']))       print_liste_field_titre("Employee", $_SERVER['PHP_SELF'], "u.employee", $param, "", "", $sortfield, $sortorder);
 if (!empty($arrayfields['u.fk_user']['checked']))        print_liste_field_titre("HierarchicalResponsible", $_SERVER['PHP_SELF'], "u.fk_user", $param, "", "", $sortfield, $sortorder);
 if (!empty($arrayfields['u.accountancy_code']['checked'])) print_liste_field_titre("AccountancyCode", $_SERVER['PHP_SELF'], "u.accountancy_code", $param, "", "", $sortfield, $sortorder);
+if (!empty($arrayfields['u.office_phone']['checked']))   print_liste_field_titre("PhonePro", $_SERVER['PHP_SELF'], "u.office_phone", $param, "", "", $sortfield, $sortorder);
+if (!empty($arrayfields['u.user_mobile']['checked']))    print_liste_field_titre("PhoneMobile", $_SERVER['PHP_SELF'], "u.user_mobile", $param, "", "", $sortfield, $sortorder);
 if (!empty($arrayfields['u.email']['checked']))          print_liste_field_titre("EMail", $_SERVER['PHP_SELF'], "u.email", $param, "", "", $sortfield, $sortorder);
 if (!empty($arrayfields['u.api_key']['checked']))        print_liste_field_titre("ApiKey", $_SERVER['PHP_SELF'], "u.api_key", $param, "", "", $sortfield, $sortorder);
 if (!empty($arrayfields['u.fk_soc']['checked']))         print_liste_field_titre("Company", $_SERVER['PHP_SELF'], "u.fk_soc", $param, "", "", $sortfield, $sortorder);
@@ -662,6 +684,8 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	$userstatic->ref = $obj->label;
 	$userstatic->login = $obj->login;
 	$userstatic->statut = $obj->statut;
+	$userstatic->office_phone = $obj->office_phone;
+	$userstatic->user_mobile = $obj->user_mobile;
 	$userstatic->email = $obj->email;
 	$userstatic->gender = $obj->gender;
 	$userstatic->socid = $obj->fk_soc;
@@ -724,6 +748,8 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	        $user2->gender = $obj->gender2;
 	        $user2->photo = $obj->photo2;
 	        $user2->admin = $obj->admin2;
+			$user2->office_phone = $obj->office_phone;
+			$user2->user_mobile = $obj->user_mobile;
 	        $user2->email = $obj->email2;
 	        $user2->socid = $obj->fk_soc2;
 	        $user2->statut = $obj->statut2;
@@ -745,9 +771,19 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		print '<td>'.$obj->accountancy_code.'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
+	if (!empty($arrayfields['u.office_phone']['checked']))
+	{
+		print "<td>".dol_print_phone($obj->office_phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
+		if (!$i) $totalarray['nbfield']++;
+	}
+	if (!empty($arrayfields['u.user_mobile']['checked']))
+	{
+		print "<td>".dol_print_phone($obj->user_mobile, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'mobile')."</td>\n";
+		if (!$i) $totalarray['nbfield']++;
+	}
 	if (!empty($arrayfields['u.email']['checked']))
 	{
-		print '<td>'.$obj->email.'</td>';
+		print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->socid, 'AC_EMAIL', 0, 0, 1)."</td>\n";
 		if (!$i) $totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['u.api_key']['checked']))
