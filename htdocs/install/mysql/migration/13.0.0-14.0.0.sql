@@ -47,6 +47,10 @@ ALTER TABLE llx_bank_account ADD COLUMN ics_transfer varchar(32) NULL;
 
 ALTER TABLE llx_facture MODIFY COLUMN date_valid DATETIME NULL DEFAULT NULL;
 
+
+-- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_dolibarr_state_board.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_dolibarr_state_board.php' AND entity = 1);
+
+
 ALTER TABLE llx_website ADD COLUMN lastaccess datetime NULL;
 ALTER TABLE llx_website ADD COLUMN pageviews_month BIGINT UNSIGNED DEFAULT 0;
 ALTER TABLE llx_website ADD COLUMN pageviews_total BIGINT UNSIGNED DEFAULT 0;
@@ -100,3 +104,4 @@ ALTER TABLE llx_propal ADD INDEX idx_propal_fk_warehouse(fk_warehouse);
 
 ALTER TABLE llx_product_customer_price ADD COLUMN ref_customer varchar(30);
 ALTER TABLE llx_product_customer_price_log ADD COLUMN ref_customer varchar(30);
+
