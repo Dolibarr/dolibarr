@@ -158,6 +158,18 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				}
 			}
 
+			if (! empty($conf->expedition->enabled) && ! empty($conf->workflow->enabled) && ! empty($conf->global->WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE)) {
+				/** @var Facture $object */
+				$object->fetchObjectLinked('', 'shipping', $object->id, $object->element);
+
+				if (! empty($object->linkedObjects)) {
+					/** @var Expedition $shipment */
+					$shipment = array_shift($object->linkedObjects['shipping']);
+
+					$ret = $shipment->setClosed();
+				}
+			}
+
 			return $ret;
 		}
 

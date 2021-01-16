@@ -116,6 +116,9 @@ create table llx_societe
   webservices_url          varchar(255),                            	-- supplier webservice url
   webservices_key          varchar(128),                            	-- supplier webservice key
 
+  accountancy_code_sell         varchar(32),                            -- Selling accountancy code
+  accountancy_code_buy          varchar(32),                            -- Buying accountancy code
+
   tms                      timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,									-- last modification date
   datec	                   datetime,                            		-- creation date
   fk_user_creat            integer NULL,                        		-- utilisateur qui a cree l'info

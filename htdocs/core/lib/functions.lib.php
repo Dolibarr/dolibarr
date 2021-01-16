@@ -672,18 +672,26 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 				if (preg_match('/[^a-z0-9_\-\.,]+/i', $out)) $out = '';
 			}
 			break;
-		case 'nohtml':
+		case 'nohtml':		// No html
 			$out = dol_string_nohtmltag($out, 0);
 			break;
-		case 'alpha':		// No html and no " and no ../
+		case 'alpha':		// No html and no ../ and "
 		case 'alphanohtml':	// Recommended for most scalar parameters and search parameters
 			if (!is_array($out)) {
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
-				$out = str_replace(array('&quot;', '"'), "''", trim($out));
+				$out = str_replace(array('&quot;', '"'), '', trim($out));
 				$out = str_replace(array('../'), '', $out);
 				// keep lines feed
 				$out = dol_string_nohtmltag($out, 0);
+			}
+			break;
+		case 'alphawithlgt':		// No " and no ../ but we keep < > tags. Can be used for email string like "Name <email>"
+			if (!is_array($out)) {
+				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
+				// '../' is dangerous because it allows dir transversals
+				$out = str_replace(array('&quot;', '"'), '', trim($out));
+				$out = str_replace(array('../'), '', $out);
 			}
 			break;
 		case 'restricthtml':		// Recommended for most html textarea
@@ -1976,7 +1984,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 {
 	global $conf, $langs;
 
-	if ($tzoutput == 'auto') {
+	if ($tzoutput == 'auto' && property_exists($conf, 'tzuserinputkey')) {
 		$tzoutput = $conf->tzuserinputkey;
 	}
 
@@ -4826,7 +4834,8 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  * 											'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
  *											'MT'=Round to Max for totals with Tax (MAIN_MAX_DECIMALS_TOT)
  *											'MS'=Round to Max for stock quantity (MAIN_MAX_DECIMALS_STOCK)
- *      		                            'CR'=Foreign currency accurancy
+ *      		                            'CU'=Round to Max unit price of foreign currency accuracy
+ *      		                            'CT'=Round to Max for totals with Tax of foreign currency accuracy
  *											Numeric = Nb of digits for rounding
  * 	@param	int				$option			Put 1 if you know that content is already universal format number (so no correction on decimal will be done)
  * 											Put 2 if you know that number is a user input (so we know we don't have to fix decimal separator).
@@ -4854,7 +4863,7 @@ function price2num($amount, $rounding = '', $option = 0)
 	if ($option != 1) {	// If not a PHP number or unknown, we change or clean format
 		//print 'PP'.$amount.' - '.$dec.' - '.$thousand.' - '.intval($amount).'<br>';
 		if (!is_numeric($amount)) {
-			$amount = preg_replace('/[a-zA-Z\/\\\*\(\)\<\>]/', '', $amount);
+			$amount = preg_replace('/[a-zA-Z\/\\\*\(\)\<\>\_]/', '', $amount);
 		}
 
 		if ($option == 2 && $thousand == '.' && preg_match('/\.(\d\d\d)$/', (string) $amount)) {	// It means the . is used as a thousand separator and string come frominput data, so 1.123 is 1123
@@ -4896,8 +4905,11 @@ function price2num($amount, $rounding = '', $option = 0)
 		elseif ($rounding == 'MS') {
 			$nbofdectoround = empty($conf->global->MAIN_MAX_DECIMALS_STOCK) ? 5 : $conf->global->MAIN_MAX_DECIMALS_STOCK;
 		}
-		elseif ($rounding == 'CR') {
-			$nbofdectoround = max($conf->global->MAIN_MAX_DECIMALS_TOT, 8);
+		elseif ($rounding == 'CU') {
+			$nbofdectoround = max($conf->global->MAIN_MAX_DECIMALS_UNIT, 8);	// TODO Use param of currency
+		}
+		elseif ($rounding == 'CT') {
+			$nbofdectoround = max($conf->global->MAIN_MAX_DECIMALS_TOT, 8);		// TODO Use param of currency
 		}
 		elseif (is_numeric($rounding))  $nbofdectoround = $rounding;
 		//print "RR".$amount.' - '.$nbofdectoround.'<br>';
@@ -5476,6 +5488,10 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		$isacompany = $thirdparty_buyer->isACompany();
 		if ($isacompany)
 		{
+			if (!empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID) && !isValidVATID($thirdparty_buyer)) {
+				//print 'VATRULE 6';
+				return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+			}
 			//print 'VATRULE 3';
 			return 0;
 		} else {

@@ -17,6 +17,7 @@ ProductStatusOnBuyShort=Verfügbar
 ProductStatusNotOnBuyShort=Veraltet
 SellingPriceTTC=Verkaufspreis (brutto)
 CantBeLessThanMinPrice=Der aktuelle Verkaufspreis unterschreitet die Preisuntergrenze dieses Produkts (%s ohne MwSt.)
+AssociatedProductsAbility=Enable Kits (set of several products)
 NoMatchFound=Keine Treffer gefunden
 DeleteProduct=Produkt/Service löschen
 ConfirmDeleteProduct=Möchten Sie dieses Produkt/Service wirklich löschen?

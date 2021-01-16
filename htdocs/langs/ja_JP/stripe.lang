@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Stripe モジュールのセットアップ
-StripeDesc=<a href="http://www.stripe.com" target="_blank"> Stripe </a>を介して、クレジット/セビットカードでの支払い用のStripeオンライン支払いページを顧客に提供します。これは、顧客が臨時の支払いを行えるようにするため、または特定のDolibarrオブジェクト（請求書、注文など）に関連する支払いのために使用できる。
+StripeDesc=<a href="http://www.stripe.com" target="_blank"> Stripe </a>を介して、クレジット/セビットカードでの支払い用のStripeオンライン支払いページを顧客に提供します。これは、顧客が臨時の支払いを行えるようにするため、または特定のDolibarrオブジェクト(請求書、注文など)に関連する支払いのために使用できる。
 StripeOrCBDoPayment=クレジットカードまたはStripeで支払う
 FollowingUrlAreAvailableToMakePayments=以下のURLはDolibarrオブジェクト上で支払いをするために顧客にページを提供するために利用可能です
 PaymentForm=支払い形態
@@ -9,7 +9,7 @@ ThisScreenAllowsYouToPay=この画面では、%sにオンライン決済を行�
 ThisIsInformationOnPayment=これは、実行する支払いに関する情報。
 ToComplete=完了する
 YourEMail=入金確認を受信する電子メール
-STRIPE_PAYONLINE_SENDEMAIL=支払い試行後の電子メール通知（成功または失敗）
+STRIPE_PAYONLINE_SENDEMAIL=支払い試行後の電子メール通知(成功または失敗)
 Creditor=債権者
 PaymentCode=支払いコード
 StripeDoPayment=Stripeで支払う
@@ -22,7 +22,7 @@ ToOfferALinkForOnlinePaymentOnContractLine=契約ラインの%sオンライン�
 ToOfferALinkForOnlinePaymentOnFreeAmount=既存のオブジェクトのない任意の金額の%sオンライン支払いページを提供するURL
 ToOfferALinkForOnlinePaymentOnMemberSubscription=メンバーサブスクリプションの%sオンライン支払いページを提供するURL
 ToOfferALinkForOnlinePaymentOnDonation=寄付の支払いのために%sオンライン支払いページを提供するURL
-YouCanAddTagOnUrl=また、URLパラメーター<b>&tag=<i>value</i></b>をこれらのURLのいずれかに追加して（オブジェクトにリンクされていない支払いにのみ必須）、独自の支払いコメントタグを追加することもできる。 <br>既存のオブジェクトがない支払いのURLの場合、パラメーター<strong>&noidempotency=1</strong>を追加して、同じタグを持つ同じリンクを複数回使用できるようにすることもできる（一部の支払いモードでは、このパラメータがないと、異なるリンクごとに支払いが1に制限される場合がある）
+YouCanAddTagOnUrl=また、URLパラメーター<b>&tag=<i>value</i></b>をこれらのURLのいずれかに追加して(オブジェクトにリンクされていない支払いにのみ必須)、独自の支払いコメントタグを追加することもできる。 <br>既存のオブジェクトがない支払いのURLの場合、パラメーター<strong>&noidempotency=1</strong>を追加して、同じタグを持つ同じリンクを複数回使用できるようにすることもできる(一部の支払いモードでは、このパラメータがないと、異なるリンクごとに支払いが1に制限される場合がある)
 SetupStripeToHavePaymentCreatedAutomatically=Stripeによって検証されたときに支払いが自動的に作成されるように、URL <b> %s</b>を使用してStripeをセットアップします。
 AccountParameter=アカウントのパラメータ
 UsageParameter=使用パラメータ
@@ -38,13 +38,13 @@ STRIPE_TEST_WEBHOOK_KEY=Webhookテストキー
 STRIPE_LIVE_SECRET_KEY=秘密のライブキー
 STRIPE_LIVE_PUBLISHABLE_KEY=公開可能なライブキー
 STRIPE_LIVE_WEBHOOK_KEY=Webhookライブキー
-ONLINE_PAYMENT_WAREHOUSE=オンライン支払いが行われるときに在庫減少に使用する在庫<br>（TODO請求書のアクションで在庫を減らすオプションが実行され、オンライン支払いがそれ自体で請求書を生成する場合？）
-StripeLiveEnabled=Stripe ライブが有効（それ以外の場合はテスト/サンドボックスモード）
+ONLINE_PAYMENT_WAREHOUSE=オンライン支払いが行われるときに在庫減少に使用する在庫<br>(TODO請求書のアクションで在庫を減らすオプションが実行され、オンライン支払いがそれ自体で請求書を生成する場合？)
+StripeLiveEnabled=Stripe ライブが有効(それ以外の場合はテスト/サンドボックスモード)
 StripeImportPayment=Stripe 支払いのインポート
 ExampleOfTestCreditCard=テスト用のクレジットカードの例：%s =>有効、%s =>エラーCVC、%s =>期限切れ、%s =>充電に失敗
 StripeGateways=Stripe ゲートウェイ
-OAUTH_STRIPE_TEST_ID=Stripe ConnectクライアントID（ca _...）
-OAUTH_STRIPE_LIVE_ID=Stripe ConnectクライアントID（ca _...）
+OAUTH_STRIPE_TEST_ID=Stripe ConnectクライアントID(ca _...)
+OAUTH_STRIPE_LIVE_ID=Stripe ConnectクライアントID(ca _...)
 BankAccountForBankTransfer=資金支払いのための銀行口座
 StripeAccount=Stripe アカウント
 StripeChargeList=Stripe 料金のリスト
@@ -62,10 +62,10 @@ ConfirmDeleteCard=このクレジットカードまたはデビットカード�
 CreateCustomerOnStripe=Stripeで顧客を作成する
 CreateCardOnStripe=Stripeでカードを作成する
 ShowInStripe=Stripe で表示
-StripeUserAccountForActions=一部のStripeイベントの電子メール通知に使用するユーザーアカウント（Stripeペイアウト）
+StripeUserAccountForActions=一部のStripeイベントの電子メール通知に使用するユーザーアカウント(Stripeペイアウト)
 StripePayoutList=Stripe ペイアウトのリスト
-ToOfferALinkForTestWebhook=IPNを呼び出すためのStripeWebHookのセットアップへのリンク（テストモード）
-ToOfferALinkForLiveWebhook=IPNを呼び出すためのStripeWebHookのセットアップへのリンク（ライブモード）
+ToOfferALinkForTestWebhook=IPNを呼び出すためのStripeWebHookのセットアップへのリンク(テストモード)
+ToOfferALinkForLiveWebhook=IPNを呼び出すためのStripeWebHookのセットアップへのリンク(ライブモード)
 PaymentWillBeRecordedForNextPeriod=支払いは次の期間に記録される。
 ClickHereToTryAgain= <a href="%s">ここをクリックして再試行すること... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=強力な顧客認証ルールにより、カードの作成はStripeバックオフィスから行う必要がある。 Stripeの顧客レコードをオンにするには、ここをクリックすること：%s

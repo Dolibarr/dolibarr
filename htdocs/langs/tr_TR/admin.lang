@@ -1598,8 +1598,13 @@ ServiceSetup=Hizmetler modülü kurulumu
 ProductServiceSetup=Ürünler ve Hizmetler modüllerinin kurulumu
 NumberOfProductShowInSelect=Aşağı açılan seçim listelerinde gösterilecek maksimum ürün sayısı (0=limit yok)
 ViewProductDescInFormAbility=Ürün açıklamalarını formlarda göster (aksi takdirde araç ipucu penceresinde gösterilir)
+DoNotAddProductDescAtAddLines=Do not add product description (from product card) on submit add lines on forms
+OnProductSelectAddProductDesc=How to use the description of the products when adding a product as a line of a document
+AutoFillFormFieldBeforeSubmit=Auto fill the description input field with the description of product
+DoNotAutofillButAutoConcat=Do not autofill the input field with description of product. Description of the product will be concatenated to the entered description automatically.
+DoNotUseDescriptionOfProdut=Description of the product will never be included into the description of lines of documents
 MergePropalProductCard=Eğer ürün/hizmet teklifte varsa Ekli Dosyalar sekmesinde ürün/hizmet seçeneğini etkinleştirin, böylece ürün PDF belgesini PDF azur teklifine birleştirirsiniz
-ViewProductDescInThirdpartyLanguageAbility=Ürün açıklamalarını üçün partinin dilinde görüntüle
+ViewProductDescInThirdpartyLanguageAbility=Display products descriptions in forms in the language of the third party (otherwise in the language of the user)
 UseSearchToSelectProductTooltip=Ayrıca çok fazla sayıda ürüne sahipseniz (>100.000), Ayarlar->Diğer Ayarlar menüsünden PRODUCT_DONOTSEARCH_ANYWHERE sabitini 1 olarak ayarlayarak hızı arttırabilirsiniz. Bu durumda, arama dizenin başlangıcıyla sınırlı olacaktır.
 UseSearchToSelectProduct=Aşağı açılır listeden ürün içeriği listelemeden önce bir tuşa basarak arama yapmanızı bekler (Çok sayıda ürününüz varsa bu performansı artırabilir, fakat daha az kullanışlıdır)
 SetDefaultBarcodeTypeProducts=Ürünler için kullanılacak varsayılan barkod türü

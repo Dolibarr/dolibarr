@@ -693,6 +693,15 @@ class Societe extends CommonObject
 	 */
 	public $logo_squarred_mini;
 
+	/**
+	 * @var string Accountancy account for sales
+	 */
+	public $accountancy_code_sell;
+
+	/**
+	 * @var string Accountancy account for bought
+	 */
+	public $accountancy_code_buy;
 
 	// Multicurrency
 	/**
@@ -798,6 +807,9 @@ class Societe extends CommonObject
 		}
 		$this->import_key = trim($this->import_key);
 
+		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
+		$this->accountancy_code_sell= trim($this->accountancy_code_sell);
+
 		if (!empty($this->multicurrency_code)) {
 			$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 		}
@@ -827,8 +839,24 @@ class Societe extends CommonObject
 		if ($result >= 0) {
 			$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
 
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, name_alias, entity, datec, fk_user_creat, canvas, status, ref_ext, fk_stcomm, fk_incoterms, location_incoterms ,import_key, fk_multicurrency, multicurrency_code)";
-			$sql .= " VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".$this->db->escape($this->entity).", '".$this->db->idate($now)."'";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (";
+			$sql .= "nom";
+			$sql .= ", name_alias";
+			$sql .= ", entity";
+			$sql .= ", datec";
+			$sql .= ", fk_user_creat";
+			$sql .= ", canvas";
+			$sql .= ", status";
+			$sql .= ", ref_ext";
+			$sql .= ", fk_stcomm";
+			$sql .= ", fk_incoterms";
+			$sql .= ", location_incoterms";
+			$sql .= ", import_key";
+			$sql .= ", fk_multicurrency";
+			$sql .= ", multicurrency_code";
+			$sql .= ", accountancy_code_buy";
+			$sql .= ", accountancy_code_sell";
+			$sql .= ") VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".$this->db->escape($this->entity).", '".$this->db->idate($now)."'";
 			$sql .= ", ".(!empty($user->id) ? ((int) $user->id) : "null");
 			$sql .= ", ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null");
 			$sql .= ", ".$this->status;
@@ -838,7 +866,10 @@ class Societe extends CommonObject
 			$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
 			$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 			$sql .= ", ".(int) $this->fk_multicurrency;
-			$sql .= ", '".$this->db->escape($this->multicurrency_code)."')";
+			$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
+			$sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
+			$sql .= ", '".$this->db->escape($this->accountancy_code_sell)."'";
+			$sql .= ")";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			$result = $this->db->query($sql);
@@ -900,10 +931,18 @@ class Societe extends CommonObject
 	 * Create a contact/address from thirdparty
 	 *
 	 * @param 	User	$user		Object user
+	 * @param 	int		$no_email	1=Do not send mailing, 0=Ok to recieve mailling
+	 * @param 	array	$tags		Array of tag to affect to contact
 	 * @return 	int					<0 if KO, >0 if OK
 	 */
-	public function create_individual(User $user)
+	public function create_individual(User $user, $no_email, $tags = array())
 	{
+		global $conf;
+
+		$error = 0;
+
+		$this->db->begin();
+
 		// phpcs:enable
 		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 		$contact = new Contact($this->db);
@@ -923,14 +962,43 @@ class Societe extends CommonObject
 		$contact->town              = $this->town;
 		$contact->phone_pro         = $this->phone;
 
-		$result = $contact->create($user);
-		if ($result < 0) {
+		$contactId = $contact->create($user);
+		if ($contactId < 0) {
+			$error++;
 			$this->error = $contact->error;
 			$this->errors = $contact->errors;
 			dol_syslog(get_class($this)."::create_individual ERROR:".$this->error, LOG_ERR);
 		}
 
-		return $result;
+		if (empty($error) && is_array($tags) && !empty($tags)) {
+			$result = $contact->setCategories($tags);
+			if ($result < 0) {
+				$error++;
+				$this->error = $contact->error;
+				$this->errors = array_merge($this->errors, $contact->errors);
+				dol_syslog(get_class($this) . "::create_individual Affect Tag ERROR:" . $this->error, LOG_ERR);
+				$contactId = $result;
+			}
+		}
+
+		if (empty($error) && !empty($conf->mailing->enabled) && !empty($contact->email) && isset($no_email)) {
+			$result = $contact->setNoEmail($no_email);
+			if ($result < 0) {
+				$this->error = $contact->error;
+				$this->errors = array_merge($this->errors, $contact->errors);
+				dol_syslog(get_class($this) . "::create_individual set mailing status ERROR:" . $this->error, LOG_ERR);
+				$contactId = $result;
+			}
+		}
+
+		if (!empty($error)) {
+			dol_syslog(get_class($this)."::create_individual success");
+			$this->db->commit();
+		} else {
+			$this->db->rollback();
+		}
+
+		return $contactId;
 	}
 
 	/**
@@ -1193,6 +1261,9 @@ class Societe extends CommonObject
 		$this->webservices_url = $this->webservices_url ?clean_url($this->webservices_url, 0) : '';
 		$this->webservices_key = trim($this->webservices_key);
 
+		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
+		$this->accountancy_code_sell= trim($this->accountancy_code_sell);
+
 		//Incoterms
 		$this->fk_incoterms = (int) $this->fk_incoterms;
 		$this->location_incoterms = trim($this->location_incoterms);
@@ -1317,6 +1388,9 @@ class Societe extends CommonObject
 			$sql .= ",order_min_amount= ".($this->order_min_amount != '' ? $this->order_min_amount : 'null');
 			$sql .= ",supplier_order_min_amount= ".($this->supplier_order_min_amount != '' ? $this->supplier_order_min_amount : 'null');
 			$sql .= ",fk_prospectlevel='".$this->db->escape($this->fk_prospectlevel)."'";
+
+			$sql.= ", accountancy_code_buy = '" . $this->db->escape($this->accountancy_code_buy)."'";
+			$sql.= ", accountancy_code_sell= '" . $this->db->escape($this->accountancy_code_sell)."'";
 
 			$sql .= ",webservices_url = ".(!empty($this->webservices_url) ? "'".$this->db->escape($this->webservices_url)."'" : "null");
 			$sql .= ",webservices_key = ".(!empty($this->webservices_key) ? "'".$this->db->escape($this->webservices_key)."'" : "null");
@@ -1489,6 +1563,7 @@ class Societe extends CommonObject
 		$sql .= ', s.fk_effectif as effectif_id';
 		$sql .= ', s.fk_forme_juridique as forme_juridique_code';
 		$sql .= ', s.webservices_url, s.webservices_key';
+		$sql .= ', s.accountancy_code_buy, s.accountancy_code_sell';
 		$sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
 		$sql .= ', s.fk_departement as state_id, s.fk_pays as country_id, s.fk_stcomm, s.remise_supplier, s.mode_reglement, s.cond_reglement, s.transport_mode';
 		$sql .= ', s.fk_account, s.tva_assuj';
@@ -1672,6 +1747,9 @@ class Societe extends CommonObject
 
 				$this->webservices_url = $obj->webservices_url;
 				$this->webservices_key = $obj->webservices_key;
+
+				$this->accountancy_code_buy     = $obj->accountancy_code_buy;
+				$this->accountancy_code_sell    = $obj->accountancy_code_sell;
 
 				$this->outstanding_limit		= $obj->outstanding_limit;
 				$this->order_min_amount			= $obj->order_min_amount;
@@ -3750,9 +3828,8 @@ class Societe extends CommonObject
 			if (!empty($tmp[1])) {   // If $conf->global->MAIN_INFO_SOCIETE_STATE is "id:code:label"
 				$state_code = $tmp[1];
 				$state_label = $tmp[2];
-			} else // For backward compatibility
-			{
-				dol_syslog("Your state setup use an old syntax. Reedit it using setup area.", LOG_ERR);
+			} else { // For backward compatibility
+				dol_syslog("Your state setup use an old syntax (entity=".$conf->entity."). Reedit it using setup area.", LOG_ERR);
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 				$state_code = getState($state_id, 2, $this->db); // This need a SQL request, but it's the old feature that should not be used anymore
 				$state_label = getState($state_id, 0, $this->db); // This need a SQL request, but it's the old feature that should not be used anymore
@@ -4489,5 +4566,58 @@ class Societe extends CommonObject
 		);
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 * Sets an accountancy code for a thirdparty.
+	 * Also calls COMPANY_MODIFY trigger when modified
+	 *
+	 * @param   string  $type   It can be only 'buy' or 'sell'
+	 * @param   string  $value  Accountancy code
+	 * @return  int             <0 KO >0 OK
+	 */
+	public function setAccountancyCode($type, $value)
+	{
+		global $user, $langs, $conf;
+
+		$this->db->begin();
+
+		if ($type == 'buy') {
+			$field = 'accountancy_code_buy';
+		} elseif ($type == 'sell') {
+			$field = 'accountancy_code_sell';
+		} else {
+			return -1;
+		}
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ";
+		$sql.= "$field = '".$this->db->escape($value)."'";
+		$sql.= " WHERE rowid = ".$this->id;
+
+		dol_syslog(get_class($this)."::".__FUNCTION__." sql=".$sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+
+		if ($resql) {
+			// Call triggers
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('COMPANY_MODIFY', $this, $user, $langs, $conf);
+			if ($result < 0) {
+				$this->errors=$interface->errors;
+				$this->db->rollback();
+				return -1;
+			}
+			// End call triggers
+
+			$this->$field = $value;
+
+			$this->db->commit();
+			return 1;
+		}
+		else {
+			$this->error=$this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
 	}
 }
