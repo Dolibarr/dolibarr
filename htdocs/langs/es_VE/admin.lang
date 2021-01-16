@@ -21,6 +21,7 @@ ExtraFieldsSupplierInvoices=Atributos adicionales (facturas)
 ExtraFieldsProject=Atributos adicionales (proyectos)
 ExtraFieldsProjectTask=Atributos adicionales (tareas)
 ExtraFieldHasWrongValue=El atributo %s tiene un valor no válido
+YouHaveXObjectUseSearchOptim=You have %s %s in the database. You should add the constant %s to 1 in Home-Setup-Other. Limit the search to the beginning of strings which makes it possible for the database to use indexes and you should get an immediate response.
 SupplierProposalSetup=Configuración del módulo Solicitudes a proveedor
 SupplierProposalNumberingModules=Modelos de numeración de solicitud de precios a proveedor
 SupplierProposalPDFModules=Modelos de documentos de solicitud de precios a proveedores
@@ -29,5 +30,6 @@ WatermarkOnDraftSupplierProposal=Marca de agua en solicitudes de precios a prove
 LDAPMemberObjectClassListExample=Lista de ObjectClass que definen los atributos de un registro (ej: top,inetOrgPerson o top,user for active directory)
 LDAPUserObjectClassListExample=Lista de ObjectClass que definen los atributos de un registro (ej: top,inetOrgPerson o top,user for active directory)
 LDAPContactObjectClassListExample=Lista de objectClass que definen los atributos de un registro (ej: top,inetOrgPerson o top,user for active directory)
+ViewProductDescInThirdpartyLanguageAbility=Display products descriptions in forms in the language of the third party (otherwise in the language of the user)
 OperationParamDesc=Define the values to use for the object of the action, or how to extract values. For example:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
 EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing thirdparty in your database. The found (or created) thirdparty will be used for following actions that need it. In the parameter field you can use for example 'EXTRACT:BODY:Name:\\s([^\\s]*)' if you want to extract the name of the thirdparty from a string 'Name: name to find' found into the body.

@@ -1181,17 +1181,17 @@ while ($i < min($num, $limit))
 	}
 	if (!empty($arrayfields['s.phone']['checked']))
 	{
-		print "<td>".dol_print_phone($obj->phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL')."</td>\n";
+		print "<td>".dol_print_phone($obj->phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
 		if (!$i) $totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['s.fax']['checked']))
 	{
-		print "<td>".dol_print_phone($obj->fax, $obj->country_code, 0, $obj->rowid, 'AC_TEL')."</td>\n";
+		print "<td>".dol_print_phone($obj->fax, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'fax')."</td>\n";
 		if (!$i) $totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['s.url']['checked']))
 	{
-		print "<td>".$obj->url."</td>\n";
+		print "<td>".dol_print_url($obj->url, '', '', 1)."</td>\n";
 		if (!$i) $totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['s.siren']['checked']))

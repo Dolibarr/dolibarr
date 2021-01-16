@@ -695,14 +695,15 @@ while ($i < min($num, $limit)) {
 	print '<tr class="oddeven">';
 
 	// Piece number
-	if (!empty($arrayfields['t.piece_num']['checked']))
-	{
+	if (!empty($arrayfields['t.piece_num']['checked'])) {
 		print '<td>';
 		$object->id = $line->id;
 		$object->piece_num = $line->piece_num;
 		print $object->getNomUrl(1, '', 0, '', 1);
 		print '</td>';
-		if (!$i) $totalarray['nbfield']++;
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	// Journal code

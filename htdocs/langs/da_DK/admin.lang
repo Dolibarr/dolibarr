@@ -1598,8 +1598,13 @@ ServiceSetup=Installation af servicemoduler
 ProductServiceSetup=Opsætning af Varer/ydelser-modul
 NumberOfProductShowInSelect=Maksimalt antal produkter, der skal vises i kombinationsvalglister (0 = ingen grænse)
 ViewProductDescInFormAbility=Vis produktbeskrivelser i formularer (ellers vist i en værktøjstip-popup)
+DoNotAddProductDescAtAddLines=Tilføj ikke produktbeskrivelse (fra produktkort) på indsend tilføjelseslinjer på formularer
+OnProductSelectAddProductDesc=Sådan bruges beskrivelsen af produkterne, når du tilføjer et produkt som en linje i et dokument
+AutoFillFormFieldBeforeSubmit=Udfyld automatisk indtastningsfeltet med beskrivelsen af produktet
+DoNotAutofillButAutoConcat=Udfyld ikke indtastningsfeltet automatisk med produktbeskrivelse. Produktbeskrivelsen sammenkædes automatisk med den indtastede beskrivelse.
+DoNotUseDescriptionOfProdut=Produktbeskrivelse vil aldrig blive inkluderet i beskrivelsen af dokumentlinjer
 MergePropalProductCard=Aktivér i produkt / tjeneste Vedhæftede filer fanen en mulighed for at fusionere produkt PDF-dokument til forslag PDF azur hvis produkt / tjeneste er i forslaget
-ViewProductDescInThirdpartyLanguageAbility=Vis produktbeskrivelser på tredjeparts sprog
+ViewProductDescInThirdpartyLanguageAbility=Vis produktbeskrivelser i formularer på tredjeparts sprog (ellers på brugerens sprog)
 UseSearchToSelectProductTooltip=Også hvis du har et stort antal produkter (> 100 000), kan du øge hastigheden ved at indstille konstant PRODUCT_DONOTSEARCH_ANYWHERE til 1 i Setup-> Other. Søgningen er så begrænset til starten af ​​strengen.
 UseSearchToSelectProduct=Vent, indtil du trykker på en tast, inden du læser indholdet af produktkombinationslisten (dette kan øge ydeevnen, hvis du har et stort antal produkter, men det er mindre praktisk)
 SetDefaultBarcodeTypeProducts=Standard stregkodetype, der skal bruges til varer

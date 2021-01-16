@@ -53,6 +53,7 @@ SetDefaultBarcodeType=Définir le type de code à barres
 BarcodeValue=Valeur du code à barres
 NoteNotVisibleOnBill=Note (non visible sur les factures, propositions ...)
 ServiceLimitedDuration=Si le produit est un service à durée limitée:
+AssociatedProductsAbility=Enable Kits (set of several products)
 ParentProductsNumber=Nombre de produits d'emballage pour les parents
 ParentProducts=Produits parentaux
 KeywordFilter=Filtre à mots clés
