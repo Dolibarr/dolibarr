@@ -1132,7 +1132,7 @@ class FormMail extends Form
 	}
 
 	/**
-	 * get Html For Asking for Deliveriy Receipt
+	 * get Html For Asking for Delivery Receipt
 	 *
 	 * @return string html
 	 */
@@ -1445,7 +1445,9 @@ class FormMail extends Form
 
 				// Create dynamic tags for __PRODUCT_EXTRAFIELD_FIELD__
 				if (!empty($line->fk_product)) {
-					if (!is_object($extrafields)) $extrafields = new ExtraFields($this->db);
+					if (!is_object($extrafields)) {
+						$extrafields = new ExtraFields($this->db);
+					}
 					$extrafields->fetch_name_optionals_label('product', true);
 					$product = new Product($this->db);
 					$product->fetch($line->fk_product, '', '', 1);
@@ -1509,9 +1511,15 @@ class FormMail extends Form
 			//,'__PERSONALIZED__' => 'Personalized'	// Hidden because not used yet in mass emailing
 
 			$onlinepaymentenabled = 0;
-			if (!empty($conf->paypal->enabled)) $onlinepaymentenabled++;
-			if (!empty($conf->paybox->enabled)) $onlinepaymentenabled++;
-			if (!empty($conf->stripe->enabled)) $onlinepaymentenabled++;
+			if (!empty($conf->paypal->enabled)) {
+				$onlinepaymentenabled++;
+			}
+			if (!empty($conf->paybox->enabled)) {
+				$onlinepaymentenabled++;
+			}
+			if (!empty($conf->stripe->enabled)) {
+				$onlinepaymentenabled++;
+			}
 			if ($onlinepaymentenabled && !empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 				$tmparray['__SECUREKEYPAYMENT__'] = $conf->global->PAYMENT_SECURITY_TOKEN;
 				if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
@@ -1540,7 +1548,9 @@ class FormMail extends Form
 		}
 
 		foreach ($tmparray as $key => $val) {
-			if (empty($val)) $tmparray[$key] = $key;
+			if (empty($val)) {
+				$tmparray[$key] = $key;
+			}
 		}
 
 		return $tmparray;
