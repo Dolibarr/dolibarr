@@ -156,6 +156,7 @@ class HookManager
 			$method,
 			array(
 				'addCalendarChoice',
+				'addCalendarView',
 				'addMoreActionsButtons',
 				'addMoreMassActions',
 				'addSearchEntry',

@@ -401,6 +401,7 @@ class Paiement extends CommonObject
 									if ($result < 0)
 									{
 										$this->error = $invoice->error;
+										$this->errors = $invoice->errors;
 										$error++;
 									}
 								}
@@ -578,9 +579,10 @@ class Paiement extends CommonObject
 	 *      @param  string	$emetteur_nom       Name of transmitter
 	 *      @param  string	$emetteur_banque    Name of bank
 	 *      @param	int		$notrigger			No trigger
+	 *  	@param	string	$accountancycode	When we record a free bank entry, we must provide accounting account if accountancy module is on.
 	 *      @return int                 		<0 if KO, bank_line_id if OK
 	 */
-	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque, $notrigger = 0)
+	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque, $notrigger = 0, $accountancycode = '')
 	{
 		global $conf, $langs, $user;
 
@@ -625,7 +627,8 @@ class Paiement extends CommonObject
 				'',
 				$user,
 				$emetteur_nom,
-				$emetteur_banque
+				$emetteur_banque,
+				$accountancycode
 			);
 
 			// Mise a jour fk_bank dans llx_paiement

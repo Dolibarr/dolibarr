@@ -2169,8 +2169,8 @@ class Form
 		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid))
 		{
 			$sql .= ', pcp.rowid as idprodcustprice, pcp.price as custprice, pcp.price_ttc as custprice_ttc,';
-			$sql .= ' pcp.price_base_type as custprice_base_type, pcp.tva_tx as custtva_tx';
-			$selectFields .= ", idprodcustprice, custprice, custprice_ttc, custprice_base_type, custtva_tx";
+			$sql .= ' pcp.price_base_type as custprice_base_type, pcp.tva_tx as custtva_tx, pcp.ref_customer as custref';
+			$selectFields .= ", idprodcustprice, custprice, custprice_ttc, custprice_base_type, custtva_tx, custref";
 		}
 		// Units
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
@@ -2280,6 +2280,7 @@ class Form
 				if ($i > 0) $sql .= " AND ";
 				$sql .= "(p.ref LIKE '".$this->db->escape($prefix.$crit)."%' OR p.label LIKE '".$this->db->escape($prefix.$crit)."%'";
 				if (!empty($conf->global->MAIN_MULTILANGS)) $sql .= " OR pl.label LIKE '".$this->db->escape($prefix.$crit)."%'";
+				if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES) && ! empty($socid)) $sql .= " OR pcp.ref_customer LIKE '".$this->db->escape($prefix.$crit)."%'";
 				if (!empty($conf->global->PRODUCT_AJAX_SEARCH_ON_DESCRIPTION))
 				{
 					$sql .= " OR p.description LIKE '".$this->db->escape($prefix.$crit)."%'";
@@ -2469,6 +2470,7 @@ class Form
 
 		$outkey = $objp->rowid;
 		$outref = $objp->ref;
+		$outrefcust = empty($objp->custref) ? '' : $objp->custref;
 		$outlabel = $objp->label;
 		$outdesc = $objp->description;
 		if (!empty($conf->global->MAIN_MULTILANGS))
@@ -2543,11 +2545,13 @@ class Form
 		}
 		$opt .= '>';
 		$opt .= $objp->ref;
+		if (! empty($objp->custref)) $opt.= ' (' . $objp->custref . ')';
 		if ($outbarcode) $opt .= ' ('.$outbarcode.')';
 		$opt .= ' - '.dol_trunc($label, $maxlengtharticle);
 		if ($outorigin && !empty($conf->global->PRODUCT_SHOW_ORIGIN_IN_COMBO)) $opt .= ' ('.getCountry($outorigin, 1).')';
 
 		$objRef = $objp->ref;
+		if (! empty($objp->custref)) $objRef .= ' (' . $objp->custref . ')';
 		if (!empty($filterkey) && $filterkey != '') $objRef = preg_replace('/('.preg_quote($filterkey, '/').')/i', '<strong>$1</strong>', $objRef, 1);
 		$outval .= $objRef;
 		if ($outbarcode) $outval .= ' ('.$outbarcode.')';
@@ -2727,7 +2731,8 @@ class Form
 			'duration_unit'=>$outdurationunit,
 			'pbq'=>$outpbq,
 			'labeltrans'=>$outlabel_translated,
-			'desctrans'=>$outdesc_translated
+			'desctrans'=>$outdesc_translated,
+			'ref_customer'=>$outrefcust
 		);
 	}
 
@@ -5702,14 +5707,17 @@ class Form
 					$retstring .= ' onChange="dpChangeDay(\''.$prefix.'\',\''.$langs->trans("FormatDateShortJavaInput").'\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 					$retstring .= '>';
 
-					// Icone calendrier
-					if (!$disabled)
-					{
-						$retstring .= '<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons"';
+					// Icone calendar
+					$retstringbuttom = '';
+					if (!$disabled) {
+						$retstringbuttom = '<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons"';
 						$base = DOL_URL_ROOT.'/core/';
-						$retstring .= ' onClick="showDP(\''.$base.'\',\''.$prefix.'\',\''.$langs->trans("FormatDateShortJavaInput").'\',\''.$langs->defaultlang.'\');"';
-						$retstring .= '>'.img_object($langs->trans("SelectDate"), 'calendarday', 'class="datecallink"').'</button>';
-					} else $retstring .= '<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons">'.img_object($langs->trans("Disabled"), 'calendarday', 'class="datecallink"').'</button>';
+						$retstringbuttom .= ' onClick="showDP(\''.$base.'\',\''.$prefix.'\',\''.$langs->trans("FormatDateShortJavaInput").'\',\''.$langs->defaultlang.'\');"';
+						$retstringbuttom .= '>'.img_object($langs->trans("SelectDate"), 'calendarday', 'class="datecallink"').'</button>';
+					} else {
+						$retstringbuttom = '<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons">'.img_object($langs->trans("Disabled"), 'calendarday', 'class="datecallink"').'</button>';
+					}
+					$retstring = $retstringbuttom.$retstring;
 
 					$retstring .= '<input type="hidden" id="'.$prefix.'day"   name="'.$prefix.'day"   value="'.$sday.'">'."\n";
 					$retstring .= '<input type="hidden" id="'.$prefix.'month" name="'.$prefix.'month" value="'.$smonth.'">'."\n";
@@ -5739,7 +5747,7 @@ class Form
 						if (empty($conf->global->MAIN_POPUP_CALENDAR_ON_FOCUS))
 						{
 							$retstring .= "
-								showOn: 'button',
+								showOn: 'button',	/* both has problem with autocompletion */
 								buttonImage: '".DOL_URL_ROOT."/theme/".$conf->theme."/img/object_calendarday.png',
 								buttonImageOnly: true";
 						}
@@ -5749,7 +5757,7 @@ class Form
 					}
 
 					// Zone de saisie manuelle de la date
-					$retstring .= '<div class="nowrap inline-block">';
+					$retstring .= '<div class="nowrap inline-block divfordateinput">';
 					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="text" class="maxwidthdate" maxlength="11" value="'.$formated_date.'"';
 					$retstring .= ($disabled ? ' disabled' : '');
 					$retstring .= ($placeholder ? ' placeholder="'.$placeholder.'"' : '');
@@ -5769,7 +5777,8 @@ class Form
                 		$retstring.='});';
                 		$retstring.="</script>";*/
 					} else {
-						$retstring .= '<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons">'.img_object($langs->trans("Disabled"), 'calendarday', 'class="datecallink"').'</button>';
+						$retstringbutton = '<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons">'.img_object($langs->trans("Disabled"), 'calendarday', 'class="datecallink"').'</button>';
+						$retsring = $retstringbutton.$retstring;
 					}
 
 					$retstring .= '</div>';
@@ -6492,8 +6501,7 @@ class Form
 					$value = $tmpvalue;
 					$disabled = ''; $style = '';
 				}
-				if (!empty($disablebademail))
-				{
+				if (!empty($disablebademail)) {
 					if (($disablebademail == 1 && !preg_match('/&lt;.+@.+&gt;/', $value))
 						|| ($disablebademail == 2 && preg_match('/---/', $value)))
 					{
@@ -6502,8 +6510,7 @@ class Form
 					}
 				}
 
-				if ($key_in_label)
-				{
+				if ($key_in_label) {
 					if (empty($nohtmlescape)) $selectOptionValue = dol_escape_htmltag($key.' - '.($maxlen ?dol_trunc($value, $maxlen) : $value));
 					else $selectOptionValue = $key.' - '.($maxlen ?dol_trunc($value, $maxlen) : $value);
 				} else {
