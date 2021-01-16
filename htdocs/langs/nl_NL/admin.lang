@@ -1598,8 +1598,13 @@ ServiceSetup=Services module setup
 ProductServiceSetup=Producten en Diensten modules setup
 NumberOfProductShowInSelect=Maximaal aantal producten om weer te geven in keuzelijsten met combo's (0 = geen limiet)
 ViewProductDescInFormAbility=Productbeschrijvingen weergeven in formulieren (anders weergegeven in een pop-up met knopinfo)
+DoNotAddProductDescAtAddLines=Do not add product description (from product card) on submit add lines on forms
+OnProductSelectAddProductDesc=How to use the description of the products when adding a product as a line of a document
+AutoFillFormFieldBeforeSubmit=Auto fill the description input field with the description of product
+DoNotAutofillButAutoConcat=Do not autofill the input field with description of product. Description of the product will be concatenated to the entered description automatically.
+DoNotUseDescriptionOfProdut=Description of the product will never be included into the description of lines of documents
 MergePropalProductCard=Activeer op het tabblad Bijgevoegde bestanden product / dienst een optie om product PDF-document samen te voegen met voorstel PDF azur als product / dienst in het voorstel staat
-ViewProductDescInThirdpartyLanguageAbility=Geef productbeschrijvingen weer in de taal van de derde partij
+ViewProductDescInThirdpartyLanguageAbility=Display products descriptions in forms in the language of the third party (otherwise in the language of the user)
 UseSearchToSelectProductTooltip=Als u een groot aantal producten (>100.000) hebt, kunt u de snelheid verhogen door constant PRODUCT_DONOTSEARCH_ANYWHERE in te stellen op 1 in Setup-> Other. Het zoeken is dan beperkt tot het begin van de reeks.
 UseSearchToSelectProduct=Wacht tot je op een toets drukt voordat je de inhoud van de productcombo-lijst laadt (dit kan de prestaties verbeteren als je een groot aantal producten hebt, maar het is minder handig)
 SetDefaultBarcodeTypeProducts=Standaard streepjescodetype voor produkten

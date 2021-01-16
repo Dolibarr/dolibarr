@@ -1598,8 +1598,13 @@ ServiceSetup=Servicii de modul de configurare
 ProductServiceSetup=Produse şi Servicii de module de configurare
 NumberOfProductShowInSelect=Numărul maxim de produse pentru a fi afișate în listele de selectare combo (0 = fără limită)
 ViewProductDescInFormAbility=Afișează descrierile produsului în formulare (altfel este afișat într-un pop-up de tip tooltip)
+DoNotAddProductDescAtAddLines=Nu adăuga descrierea produsului (din fișa produsului) la adăugarea de linii pe formulare
+OnProductSelectAddProductDesc=Cum se utilizează descrierea produselor atunci când se adaugă un produs ca linie a unui document
+AutoFillFormFieldBeforeSubmit=Completați automat câmpul de introducere a descrierii cu descrierea produsului
+DoNotAutofillButAutoConcat=Nu completa automat câmpul de introducere cu descrierea produsului. Descrierea produsului va fi concatenată automat cu descrierea introdusă. 
+DoNotUseDescriptionOfProdut=Descrierea produsului nu va fi niciodată inclusă în descrierea liniilor de pe documente
 MergePropalProductCard=Activați în fișier atașat la produs/serviciu o opțiune de îmbinare a produsului de tip document PDF la propunerea PDF azur dacă produsul/serviciul se află în propunere
-ViewProductDescInThirdpartyLanguageAbility=Afișați descrierile produselor în limba părții terțea 
+ViewProductDescInThirdpartyLanguageAbility=Afișați descrierile produselor în formulare în limba terțului (altfel în limba utilizatorului) 
 UseSearchToSelectProductTooltip=De asemenea, dacă aveți un număr mare de number de produse (> 100 000), puteți crește viteza prin configurarea constantă a PRODUCT_DONOTSEARCH_ANYWHERE la 1 în Configurare-> Altele. Căutarea va fi apoi limitată la începutul șirului.
 UseSearchToSelectProduct=Așteptați până când apăsați o tastă înainte de a încărca conținutul listei combo-ului de produse (aceasta poate crește performanța dacă aveți un număr mare de produse, dar este mai puțin convenabil)
 SetDefaultBarcodeTypeProducts=Implicit tip de cod de bare de a utiliza pentru produse

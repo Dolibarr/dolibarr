@@ -54,6 +54,7 @@ BarcodeValue=Valor de código de barras
 NoteNotVisibleOnBill=Nota (no visible en facturas, propuestas ...)
 ServiceLimitedDuration=Si el producto es un servicio con duración limitada:
 MultiPricesNumPrices=Numero de precios
+AssociatedProductsAbility=Enable Kits (set of several products)
 ParentProductsNumber=Número de producto de embalaje principal
 ParentProducts=Productos para padres
 KeywordFilter=Filtro de palabras clave

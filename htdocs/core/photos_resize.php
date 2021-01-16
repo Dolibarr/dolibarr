@@ -42,6 +42,7 @@ $file = GETPOST('file', 'alpha');
 $num = GETPOST('num', 'alpha'); // Used for document on bank statement
 $website = GETPOST('website', 'alpha');
 
+
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for modulepart');
 $accessallowed = 0;
@@ -84,6 +85,11 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 {
 	$permtoadd = ($user->rights->mailing->creer || $user->rights->website->write);
 	if (!$permtoadd) accessforbidden();
+	$accessallowed = 1;
+} elseif ($modulepart == 'facture_fourn' || $modulepart == 'facture_fournisseur')
+{
+	$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
+	if (!$user->rights->fournisseur->facture->lire) accessforbidden();
 	$accessallowed = 1;
 } else // ticket, holiday, expensereport, societe...
 {
@@ -230,10 +236,28 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		if ($result <= 0) dol_print_error($db, 'Failed to load object');
 		$dir = $conf->bank->dir_output; // By default
 	}
+} elseif ($modulepart == 'facture') {
+	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+	$object = new Facture($db);
+	if ($id > 0)
+	{
+		$result = $object->fetch($id);
+		if ($result <= 0) dol_print_error($db, 'Failed to load object');
+		$dir = $conf->$modulepart->dir_output; // By default
+	}
+} elseif ($modulepart == 'facture_fourn' || $modulepart == 'facture_fournisseur') {
+	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+	$object = new FactureFournisseur($db);
+	if ($id > 0)
+	{
+		$result = $object->fetch($id);
+		if ($result <= 0) dol_print_error($db, 'Failed to load object');
+		$dir = $conf->fournisseur->dir_output.'/facture'; // By default
+	}
 } elseif ($modulepart == 'medias') {
 	$dir = $dolibarr_main_data_root.'/'.$modulepart;
 } else {
-	print 'Action crop for modulepart = '.$modulepart.' is not supported yet by photos_resize.php.';
+	print 'Bug: Action crop for modulepart = '.$modulepart.' is not supported yet by photos_resize.php.';
 }
 
 if (empty($backtourl))
@@ -250,6 +274,8 @@ if (empty($backtourl))
 	elseif (in_array($modulepart, array('tax')))           $backtourl = DOL_URL_ROOT."/compta/sociales/document.php?id=".$id.'&file='.urldecode($file);
 	elseif (in_array($modulepart, array('ticket')))        $backtourl = DOL_URL_ROOT."/ticket/document.php?id=".$id.'&file='.urldecode($file);
 	elseif (in_array($modulepart, array('user')))          $backtourl = DOL_URL_ROOT."/user/document.php?id=".$id.'&file='.urldecode($file);
+	elseif (in_array($modulepart, array('facture')))       $backtourl = DOL_URL_ROOT."/compta/facture/document.php?id=".$id.'&file='.urldecode($file);
+	elseif (in_array($modulepart, array('facture_fourn', 'facture_fournisseur'))) $backtourl = DOL_URL_ROOT."/fourn/facture/document.php?id=".$id.'&file='.urldecode($file);
 	elseif (in_array($modulepart, array('bank')) && preg_match('/\/statement\/([^\/]+)\//', $file, $regs)) {
 		$num = $regs[1];
 		$backtourl = DOL_URL_ROOT."/compta/bank/account_statement_document.php?id=".$id.'&num='.urlencode($num).'&file='.urldecode($file);
@@ -269,10 +295,8 @@ if (empty($backtourl))
  * Actions
  */
 
-if ($cancel)
-{
-	if ($backtourl)
-	{
+if ($cancel) {
+	if ($backtourl) {
 		header("Location: ".$backtourl);
 		exit;
 	} else {
@@ -283,6 +307,10 @@ if ($cancel)
 
 if ($action == 'confirm_resize' && GETPOSTISSET("file") && GETPOSTISSET("sizex") && GETPOSTISSET("sizey"))
 {
+	if (empty($dir)) {
+		print 'Bug: Value for $dir could not be defined.';
+	}
+
 	$fullpath = $dir."/".$original_file;
 
 	$result = dol_imageResizeOrCrop($fullpath, 0, GETPOST('sizex', 'int'), GETPOST('sizey', 'int'));
@@ -350,9 +378,13 @@ if ($action == 'confirm_resize' && GETPOSTISSET("file") && GETPOSTISSET("sizex")
 // Crop d'une image
 if ($action == 'confirm_crop')
 {
+	if (empty($dir)) {
+		print 'Bug: Value for $dir could not be defined.';
+	}
+
 	$fullpath = $dir."/".$original_file;
 
-	//var_dump($_POST['w'].'x'.$_POST['h'].'-'.$_POST['x'].'x'.$_POST['y']);exit;
+	//var_dump($fullpath.' '.$_POST['w'].'x'.$_POST['h'].'-'.$_POST['x'].'x'.$_POST['y']);exit;
 	$result = dol_imageResizeOrCrop($fullpath, 1, GETPOST('w', 'int'), GETPOST('h', 'int'), GETPOST('x', 'int'), GETPOST('y', 'int'));
 
 	if ($result == $fullpath)
@@ -399,8 +431,7 @@ if ($action == 'confirm_crop')
 			$result = $ecmfile->create($user);
 		}
 
-		if ($backtourl)
-		{
+		if ($backtourl) {
 			header("Location: ".$backtourl);
 			exit;
 		} else {
@@ -419,10 +450,12 @@ if ($action == 'confirm_crop')
  * View
  */
 
-llxHeader($head, $langs->trans("Image"), '', '', 0, 0, array('/includes/jquery/plugins/jcrop/js/jquery.Jcrop.min.js', '/core/js/lib_photosresize.js'), array('/includes/jquery/plugins/jcrop/css/jquery.Jcrop.css'));
+$title= $langs->trans("ImageEditor");
+
+llxHeader($head, $title, '', '', 0, 0, array('/includes/jquery/plugins/jcrop/js/jquery.Jcrop.min.js', '/core/js/lib_photosresize.js'), array('/includes/jquery/plugins/jcrop/css/jquery.Jcrop.css'));
 
 
-print load_fiche_titre($langs->trans("ImageEditor"));
+print load_fiche_titre($title);
 
 $infoarray = dol_getImageSize($dir."/".GETPOST("file", 'alpha'));
 $height = $infoarray['height'];

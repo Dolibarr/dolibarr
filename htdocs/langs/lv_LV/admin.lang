@@ -1598,8 +1598,13 @@ ServiceSetup=Pakalpojumu moduļa uzstādīšana
 ProductServiceSetup=Produktu un pakalpojumu moduļu uzstādīšana
 NumberOfProductShowInSelect=Maksimālais produktu skaits, kas jāparāda kombinētajos atlases sarakstos (0 = bez ierobežojuma)
 ViewProductDescInFormAbility=Rādīt produktu aprakstus veidlapās (citādi tiek rādīts rīkjoslas uznirstošajā logā)
+DoNotAddProductDescAtAddLines=Do not add product description (from product card) on submit add lines on forms
+OnProductSelectAddProductDesc=How to use the description of the products when adding a product as a line of a document
+AutoFillFormFieldBeforeSubmit=Auto fill the description input field with the description of product
+DoNotAutofillButAutoConcat=Do not autofill the input field with description of product. Description of the product will be concatenated to the entered description automatically.
+DoNotUseDescriptionOfProdut=Description of the product will never be included into the description of lines of documents
 MergePropalProductCard=Activate in product/service Attached Files tab an option to merge product PDF document to proposal PDF azur if product/service is in the proposal
-ViewProductDescInThirdpartyLanguageAbility=Attēlot produktu aprakstus trešās puses valodā
+ViewProductDescInThirdpartyLanguageAbility=Display products descriptions in forms in the language of the third party (otherwise in the language of the user)
 UseSearchToSelectProductTooltip=Arī tad, ja jums ir liels produktu skaits (> 100 000), varat palielināt ātrumu, iestatot iestatījumu -> Cits iestatījumu konstante PRODUCT_DONOTSEARCH_ANYWHERE uz 1. Tad meklēšana būs tikai virknes sākums.
 UseSearchToSelectProduct=Pagaidiet, kamēr nospiedīsiet taustiņu, pirms ievietojat produktu kombinēto sarakstu saturu (tas var palielināt veiktspēju, ja jums ir daudz produktu, taču tas ir mazāk ērts).
 SetDefaultBarcodeTypeProducts=Noklusējuma svītrkoda veids izmantojams produktiem

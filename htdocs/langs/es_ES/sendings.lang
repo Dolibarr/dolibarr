@@ -66,7 +66,7 @@ ValidateOrderFirstBeforeShipment=Antes de poder realizar envíos debe validar el
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Modelo completo de nota de entrega / recepción (logo...)
-DocumentModelStorm=Modelo de documento más completo para recibos de entrega y compatibilidad de campos extra (logotipo ...)
+DocumentModelStorm=Modelo de documento más completo para recibos de entrega y compatibilidad de campos adicionales (logotipo ...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constante EXPEDITION_ADDON_NUMBER no definida
 SumOfProductVolumes=Suma del volumen de los productos
 SumOfProductWeights=Suma del peso de los productos

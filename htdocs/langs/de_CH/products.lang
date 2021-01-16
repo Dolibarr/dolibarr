@@ -38,6 +38,7 @@ ServicesArea=Leistungs-Übersicht
 SupplierCard=Anbieterkarte
 SetDefaultBarcodeType=Wählen Sie den standardmässigen Barcode-Typ
 MultiPricesAbility=Preisstufen pro Produkt / Dienstleistung\n(Kunden werden einem Segment zugewiesen)
+AssociatedProductsAbility=Enable Kits (set of several products)
 ParentProducts=Übergeordnetes Produkt
 ListOfProductsServices=Liste der Produkte und Dienstleistungen
 QtyMin=Mindestmenge
