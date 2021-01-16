@@ -1598,8 +1598,13 @@ ServiceSetup=Pengaturan modul layanan
 ProductServiceSetup=Pengaturan modul Produk dan Layanan
 NumberOfProductShowInSelect=Jumlah maksimum produk yang ditampilkan dalam daftar pilihan kombo (0 = tanpa batas)
 ViewProductDescInFormAbility=Tampilkan deskripsi produk dalam bentuk (jika tidak ditampilkan dalam popup tooltip)
+DoNotAddProductDescAtAddLines=Do not add product description (from product card) on submit add lines on forms
+OnProductSelectAddProductDesc=How to use the description of the products when adding a product as a line of a document
+AutoFillFormFieldBeforeSubmit=Auto fill the description input field with the description of product
+DoNotAutofillButAutoConcat=Do not autofill the input field with description of product. Description of the product will be concatenated to the entered description automatically.
+DoNotUseDescriptionOfProdut=Description of the product will never be included into the description of lines of documents
 MergePropalProductCard=Aktifkan di produk / layanan File Terlampir tab pilihan untuk menggabungkan dokumen PDF produk ke proposal PDF azur jika produk / layanan ada di proposal
-ViewProductDescInThirdpartyLanguageAbility=Tampilkan deskripsi produk dalam bahasa pihak ketiga
+ViewProductDescInThirdpartyLanguageAbility=Display products descriptions in forms in the language of the third party (otherwise in the language of the user)
 UseSearchToSelectProductTooltip=Juga jika Anda memiliki sejumlah besar produk (> 100.000), Anda dapat meningkatkan kecepatan dengan menetapkan konstan PRODUCT_DONOTSEARCH_ANYWHERE ke 1 di Pengaturan-> Lainnya. Pencarian kemudian akan dibatasi untuk memulai string.
 UseSearchToSelectProduct=Tunggu hingga Anda menekan tombol sebelum memuat konten dari daftar kombo produk (Ini dapat meningkatkan kinerja jika Anda memiliki sejumlah besar produk, tetapi itu kurang nyaman)
 SetDefaultBarcodeTypeProducts=Jenis barcode default untuk digunakan untuk produk

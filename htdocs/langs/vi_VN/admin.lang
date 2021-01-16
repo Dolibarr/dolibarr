@@ -1598,8 +1598,13 @@ ServiceSetup=Cài đặt module dịch vụ
 ProductServiceSetup=Cài đặt module Sản phẩm và Dịch vụ
 NumberOfProductShowInSelect=Số lượng sản phẩm tối đa được hiển thị trong danh sách chọn kết hợp (0 = không giới hạn)
 ViewProductDescInFormAbility=Hiển thị các mô tả sản phẩm trong biểu mẫu (được hiển thị trong cửa sổ bật lên chú giải công cụ)
+DoNotAddProductDescAtAddLines=Do not add product description (from product card) on submit add lines on forms
+OnProductSelectAddProductDesc=How to use the description of the products when adding a product as a line of a document
+AutoFillFormFieldBeforeSubmit=Auto fill the description input field with the description of product
+DoNotAutofillButAutoConcat=Do not autofill the input field with description of product. Description of the product will be concatenated to the entered description automatically.
+DoNotUseDescriptionOfProdut=Description of the product will never be included into the description of lines of documents
 MergePropalProductCard=Kích hoạt trong sản phẩm/dịch vụ Tệp tệp đính kèm một tùy chọn để hợp nhất tài liệu PDF của sản phẩm với đề xuất PDF azur nếu sản phẩm/dịch vụ nằm trong đề xuất
-ViewProductDescInThirdpartyLanguageAbility=Hiển thị mô tả sản phẩm bằng ngôn ngữ của bên thứ ba
+ViewProductDescInThirdpartyLanguageAbility=Display products descriptions in forms in the language of the third party (otherwise in the language of the user)
 UseSearchToSelectProductTooltip=Ngoài ra, nếu bạn có số lượng lớn sản phẩm (> 100 000), bạn có thể tăng tốc độ bằng cách đặt hằng số PRODUCT_DONOTSEARCH_ANYWHERE thành 1 trong Cài đặt-> Khác. Tìm kiếm sau đó sẽ được giới hạn để bắt đầu chuỗi tìm kiếm.
 UseSearchToSelectProduct=Đợi cho đến khi bạn nhấn một phím trước khi tải nội dung của danh sách kết hợp sản phẩm - combo list (Điều này có thể tăng hiệu suất nếu bạn có số lượng lớn sản phẩm, nhưng nó không thuận tiện)
 SetDefaultBarcodeTypeProducts=Loại mã vạch mặc định để sử dụng cho các sản phẩm

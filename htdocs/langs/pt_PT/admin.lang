@@ -1598,8 +1598,13 @@ ServiceSetup=Configuração do módulo "Serviços"
 ProductServiceSetup=Configuração do módulo "Produtos e Serviços"
 NumberOfProductShowInSelect=Número máximo de produtos a serem exibidos nas listas de seleção de combinação (0 = sem limite)
 ViewProductDescInFormAbility=Exibir descrições de produtos em formulários (caso contrário, mostrado em um pop-up de dica)
+DoNotAddProductDescAtAddLines=Do not add product description (from product card) on submit add lines on forms
+OnProductSelectAddProductDesc=How to use the description of the products when adding a product as a line of a document
+AutoFillFormFieldBeforeSubmit=Auto fill the description input field with the description of product
+DoNotAutofillButAutoConcat=Do not autofill the input field with description of product. Description of the product will be concatenated to the entered description automatically.
+DoNotUseDescriptionOfProdut=Description of the product will never be included into the description of lines of documents
 MergePropalProductCard=Ative no separador "Ficheiros Anexados" do produto/serviço uma opção para unir o documento em PDF ao orçamento em PDF, se o produto/serviço estiver no orçamento
-ViewProductDescInThirdpartyLanguageAbility=Exibir descrições de produtos no idioma do terceiro
+ViewProductDescInThirdpartyLanguageAbility=Display products descriptions in forms in the language of the third party (otherwise in the language of the user)
 UseSearchToSelectProductTooltip=Além disso, se você tiver um grande número de produtos (> 100 000), poderá aumentar a velocidade definindo PRODUCT_DONOTSEARCH_ANYWHERE como 1 em Setup-> Other. A pesquisa será limitada ao início da string.
 UseSearchToSelectProduct=Espere até pressionar uma tecla antes de carregar o conteúdo da lista de combinação de produtos (isso pode aumentar o desempenho se você tiver um grande número de produtos, mas for menos conveniente)
 SetDefaultBarcodeTypeProducts=Tipo de código de barras predefinido para produtos

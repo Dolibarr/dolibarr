@@ -12,7 +12,7 @@ OrToLaunchASpecificJob=または、ブラウザから特定のジョブを確認
 KeyForCronAccess=cronジョブを起動するためのURLのセキュリティキー
 FileToLaunchCronJobs=修飾されたcronジョブをチェックして起動するコマンドライン
 CronExplainHowToRunUnix=Unix環境では、次のcrontabエントリを使用して、5分ごとにコマンドラインを実行する必要がある。
-CronExplainHowToRunWin=Microsoft（tm）Windows環境では、スケジュールされたタスクツールを使用して、5分ごとにコマンドラインを実行できる。
+CronExplainHowToRunWin=Microsoft(tm)Windows環境では、スケジュールされたタスクツールを使用して、5分ごとにコマンドラインを実行できる。
 CronMethodDoesNotExists=クラス%sには、メソッド%sが含まれていない。
 CronMethodNotAllowed=クラス%sのメソッド%sは、禁止されているメソッドのブラックリストに含まれています
 CronJobDefDesc=cronジョブプロファイルは、モジュール記述子ファイルに定義されています。モジュールがアクティブ化されると、それらがロードされて使用可能になるため、管理ツールメニュー%sからジョブを管理できる。
@@ -76,7 +76,7 @@ CronFrom=から
 CronType=職種
 CronType_method=PHPクラスの呼び出しメソッド
 CronType_command=シェルコマンド
-CronCannotLoadClass=クラスファイル%sをロードできない（クラス%sを使用するため）
+CronCannotLoadClass=クラスファイル%sをロードできない(クラス%sを使用するため)
 CronCannotLoadObject=クラスファイル%sがロードされたが、オブジェクト%sが見つからなかった
 UseMenuModuleToolsToAddCronJobs=メニュー ”<a href="%s">ホーム - 管理ツール - スケジュールされたジョブ</a>" に移動して、スケジュールされたジョブを表示および編集する。
 JobDisabled=ジョブが無効 

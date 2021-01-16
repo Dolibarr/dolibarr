@@ -1,9 +1,9 @@
 # Language file - Source file is en_US - cashdesk
 CashDeskMenu=販売時点
 CashDesk=販売時点
-CashDeskBankCash=銀行口座（現金）
-CashDeskBankCB=銀行口座（カード）
-CashDeskBankCheque=銀行口座（チェック）
+CashDeskBankCash=銀行口座(現金)
+CashDeskBankCB=銀行口座(カード)
+CashDeskBankCheque=銀行口座(チェック)
 CashDeskWarehouse=倉庫
 CashdeskShowServices=販売サービス
 CashDeskProducts=製品
@@ -46,7 +46,7 @@ SearchProduct=製品を検索する
 Receipt=領収書
 Header=ヘッダ
 Footer=フッター
-AmountAtEndOfPeriod=期末の金額（日、月、または年）
+AmountAtEndOfPeriod=期末の金額(日、月、または年)
 TheoricalAmount=理論量
 RealAmount=実数
 CashFence=現金出納帳の締め

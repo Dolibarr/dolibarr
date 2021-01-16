@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=PayBoxモジュールの設定
-PayBoxDesc=このモジュールは、上の支払いを可能にするためにページを提供して<a href="http://www.paybox.com" target="_blank">切符売り場</a>の顧客によって。これはフリーの支払いのためにまたは特定のDolibarrオブジェクトの支払いに用いることができる（請求書、発注、...）
+PayBoxDesc=このモジュールは、上の支払いを可能にするためにページを提供して<a href="http://www.paybox.com" target="_blank">切符売り場</a>の顧客によって。これはフリーの支払いのためにまたは特定のDolibarrオブジェクトの支払いに用いることができる(請求書、発注、...)
 FollowingUrlAreAvailableToMakePayments=以下のURLはDolibarrオブジェクト上で支払いをするために顧客にページを提供するために利用可能 
 PaymentForm=支払い形態
 WelcomeOnPaymentPage=オンライン決済サービスへようこそ
@@ -23,7 +23,7 @@ PAYBOX_CGI_URL_V2=支払いのために切符売り場CGIモジュールのurl
 CSSUrlForPaymentForm=支払いフォームのCSSスタイルシートのURL
 NewPayboxPaymentReceived=新規Paybox支払を受け取った
 NewPayboxPaymentFailed=新規Paybox支払を試みましたが失敗した
-PAYBOX_PAYONLINE_SENDEMAIL=支払い試行後の電子メール通知（成功または失敗）
+PAYBOX_PAYONLINE_SENDEMAIL=支払い試行後の電子メール通知(成功または失敗)
 PAYBOX_PBX_SITE=PBX SITEの値
 PAYBOX_PBX_RANG=PBX Rangの値
 PAYBOX_PBX_IDENTIFIANT=PBX IDの値

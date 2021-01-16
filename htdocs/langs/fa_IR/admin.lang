@@ -1598,8 +1598,13 @@ ServiceSetup=برپاسازی واحد خدمات
 ProductServiceSetup=برپاسازی واحد محصولات و خدمات
 NumberOfProductShowInSelect=حداکثر تعداد قابل نمایش در فهرست ترکیبی انتخاب‌گر (0=بدون محدودیت)
 ViewProductDescInFormAbility=نمایش توضیحات محصول در برگه‌ها (در غیر این‌صورت طی یک‌نکتۀ در کادر کوچک توضیح نمایش داده خواهد شد)
+DoNotAddProductDescAtAddLines=Do not add product description (from product card) on submit add lines on forms
+OnProductSelectAddProductDesc=How to use the description of the products when adding a product as a line of a document
+AutoFillFormFieldBeforeSubmit=Auto fill the description input field with the description of product
+DoNotAutofillButAutoConcat=Do not autofill the input field with description of product. Description of the product will be concatenated to the entered description automatically.
+DoNotUseDescriptionOfProdut=Description of the product will never be included into the description of lines of documents
 MergePropalProductCard=فعال‌سازی یک گزینه در محصول/خدمات زبانۀ فایل‌های پیوست برای ترکیب یک سند PDF به سند پیشنهاد در صورتی‌که محصول/خدمات در پیشنهاد وجود داشته باشد
-ViewProductDescInThirdpartyLanguageAbility=نمایش توضیحات محصولات با زبان شخص‌سوم
+ViewProductDescInThirdpartyLanguageAbility=Display products descriptions in forms in the language of the third party (otherwise in the language of the user)
 UseSearchToSelectProductTooltip=در صورتی که شما تعداد بسیار زیادی محصول داشته باشید (>100000)، شما می‌توانید با استنفاده از تنظیم مقدار ثابت PRODUCT_DONOTSEARCH_ANYWHERE  به مقدار 1 در برپاسازی->سایر سرعت را افزایش دهید. جستجو در این حالت از شروع عبارت انجام خواهد شد.
 UseSearchToSelectProduct=قبل از این‌که شما کلیدی بفشارید محتوای محصول در فهرست ترکیبی بارگذاری نخواهد شد (در صورتی که شما تعداد زیادی محصول داشته باشید، این باعث افزایش کارآمدی خواهد شد، اما از راحتی کم‌تری برخوردار است)
 SetDefaultBarcodeTypeProducts=نوع بارکد پیش‌فرض برای استفادۀ محصولات

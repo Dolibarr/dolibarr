@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - admin
 VersionProgram=Versión del programa
 VersionLastInstall=Instalar la versión inicial
-VersionLastUpgrade=Actualizar a la Versión mâs reciente
+VersionLastUpgrade=Actualizar a la versión más reciente
 FileCheck=Comprobación de integridad del conjunto de archivos
 FileCheckDesc=Esta herramienta te permite comprobar la integridad de los archivos y la configuración de tu aplicación, comparando cada archivo con el archivo oficial. El valor de algunas constantes de la configuración también podria ser comprobado. Tu puedes usar esta herramienta para determinar si cualquiera de los archivos a sido modificado (ejem. por un hacker).
 FileIntegrityIsStrictlyConformedWithReference=La integridad de los archivos está estrictamente conformada con la referencia.
@@ -20,11 +20,11 @@ SessionSavePath=Ubicación para guardar la sesión
 PurgeSessions=Depuración de sesiones
 ConfirmPurgeSessions=¿Realmente desea depurar todas las sesiónes? Esto desconectara a todos los usuarios (excepto usted).
 NoSessionListWithThisHandler=El gestor para guardar la sesión configurado en tu PHP no permite enumerar todas las sesiones que se estan ejecutando.
-ConfirmLockNewSessions=¿Estas seguro de querer restringir cualquier nueva conexión Dolibarr? Unicamente el usuario <b>%s</b> podra conectarse posteriormente.
+ConfirmLockNewSessions=¿Estás seguro de querer restringir cualquier nueva conexión a Dolibarr? Únicamente el usuario <b>%s</b> podrá conectarse posteriormente.
 UnlockNewSessions=Remover bloqueo de conexión
 YourSession=Tu sesión
 WebUserGroup=Usuario/Grupo del servidor web
-NoSessionFound=La configuración de tu PHP parece no permitir listar las sesiones activas. El directorio usado para guardar las sesiones (<b>%s</b>) podria estar protegido (Por ejemplo, por permisos del SO o por la directiva PHP open_basedir).
+NoSessionFound=Tu configuración PHP no parece permitir listar sesiones activas. El directorio usado para guardar sesiones (<b>%s</b>) podría estar protegido (Por ejemplo, por permisos del SO o por la directiva PHP open_basedir).
 DBStoringCharset=Charset de la base de datos para almacenar información
 DBSortingCharset=Charset de la base de datos para clasificar información
 ClientCharset=Conjunto de caracteres del cliente
@@ -227,7 +227,9 @@ Module40Name=Vendedores
 DictionaryAccountancyJournal=Diarios de contabilidad
 DictionarySocialNetworks=Redes Sociales
 Upgrade=Actualizar
+YouHaveXObjectUseSearchOptim=You have %s %s in the database. You should add the constant %s to 1 in Home-Setup-Other. Limit the search to the beginning of strings which makes it possible for the database to use indexes and you should get an immediate response.
 LDAPFieldFirstName=Nombre(s)
+ViewProductDescInThirdpartyLanguageAbility=Display products descriptions in forms in the language of the third party (otherwise in the language of the user)
 AGENDA_SHOW_LINKED_OBJECT=Mostrar objeto vinculado en la vista de agenda
 ConfFileMustContainCustom=Instalar o construir un módulo externo desde la aplicación necesita guardar los archivos del módulo en el directorio <strong> %s </strong>. Para que este directorio sea procesado por Dolibarr, debe configurar su <strong> conf/conf.php </strong> para agregar las 2 líneas de directiva: <strong> $dolibarr_main_url_root_alt='/custom'; </strong> <br> <strong> $dolibarr_main_document_root_alt='%s/custom'; </strong>
 MailToSendProposal=Propuestas de clientes
