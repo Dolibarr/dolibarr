@@ -2230,11 +2230,9 @@ if ($action == 'create')
 	}
 } else {
 	if ($id > 0 || !empty($ref)) {
-		/* *************************************************************************** */
-		/*                                                                             */
-		/* Fiche en mode visu ou edition                                               */
-		/*                                                                             */
-		/* *************************************************************************** */
+		//
+		// View or edit mode
+		//
 
 		$now = dol_now();
 
@@ -3104,8 +3102,9 @@ if ($action == 'create')
 		if (!empty($conf->global->SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY)) $senderissupplier = 1;
 
 		// Show object lines
-		if (!empty($object->lines))
+		if (!empty($object->lines)) {
 			$ret = $object->printObjectLines($action, $societe, $mysoc, $lineid, 1);
+		}
 
 		$num = count($object->lines);
 

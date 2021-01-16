@@ -131,7 +131,7 @@ $coldisplay++;
 		$temps = $line->showOptionals($extrafields, 'edit', array('class'=>'tredited'), '', '', 1, 'line');
 		if (!empty($temps)) {
 			print '<div style="padding-top: 10px" id="extrafield_lines_area_edit" name="extrafield_lines_area_edit">';
-			print $temps
+			print $temps;
 			print '</div>';
 		}
 	}
