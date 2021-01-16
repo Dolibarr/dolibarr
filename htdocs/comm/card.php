@@ -226,6 +226,12 @@ if (empty($reshook))
 		}
 		if ($error) $action = 'edit_extras';
 	}
+
+	// warehouse
+	if ($action == 'setwarehouse' && $user->rights->societe->creer)
+	{
+		$result = $object->setWarehouse(GETPOST('warehouse_id', 'int'));
+	}
 }
 
 
@@ -480,7 +486,24 @@ if ($object->id > 0)
 		print "</td>";
 		print '</tr>';
 	}
-
+	// Warehouse
+	if (!empty($conf->stock->enabled))
+	{
+		$langs->load('stocks');
+		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+		$formproduct = new FormProduct($db);
+		print '<tr class="nowrap">';
+		print '<td>';
+		print $form->editfieldkey("Warehouse", 'warehouse', '', $object, $user->rights->societe->creer);
+		print '</td><td>';
+		if ($action == 'editwarehouse') {
+			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->warehouse_id, 'warehouse_id', 1);
+		} else {
+			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->warehouse_id, 'none');
+		}
+		print '</td>';
+		print '</tr>';
+	}
 	// Preferred shipping Method
 	if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD)) {
 		print '<tr><td class="nowrap">';
