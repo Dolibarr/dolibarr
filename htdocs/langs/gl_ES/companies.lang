@@ -358,7 +358,7 @@ VATIntraCheckableOnEUSite=Verificar o CIF/NIF intracomunitario na web da Comisi�
 VATIntraManualCheck=Pode tamén verificar manualmente na web da Comisión Europea <a href="%s" target="_blank">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Comprobación imposible. O servizo de comprobación non é fornecido polo Estado membro (%s).
 NorProspectNorCustomer=Nin cliente, nin cliente potencial
-JuridicalStatus=Tipo de entidade xurídica
+JuridicalStatus=Forma xurídica
 Workforce=TRaballadores
 Staff=Empregados
 ProspectLevelShort=Potencial
@@ -412,7 +412,7 @@ DeliveryAddress=Enderezo de envío
 AddAddress=Engadir enderezo
 SupplierCategory=Categoría de provedor
 JuridicalStatus200=Independente
-DeleteFile=Eliminación dun arquivo
+DeleteFile=Eliminación dun ficheiro
 ConfirmDeleteFile=¿Está certo de querer eliminar este ficheiro?
 AllocateCommercial=Asignado a comercial
 Organization=Organización

@@ -130,7 +130,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 
 					$thirdpartystatic->id = $objp->socid;
 					$thirdpartystatic->name = $objp->name;
-					//$thirdpartystatic->name_alias = $objp->name_alias;
+					$thirdpartystatic->name_alias = $objp->name_alias;
 					$thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
 					$thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
 					$thirdpartystatic->fournisseur = $objp->fournisseur;

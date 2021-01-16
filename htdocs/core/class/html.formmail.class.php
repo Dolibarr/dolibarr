@@ -855,9 +855,16 @@ class FormMail extends Form
 					$out .= '</script>'."\n";
 					if (count($listofpaths)) {
 						foreach ($listofpaths as $key => $val) {
+							$relativepathtofile = substr($val, (strlen(DOL_DATA_ROOT) - strlen($val)));
+							if ($conf->entity > 1) {
+								$relativepathtofile = str_replace($conf->entity.'/', '', $relativepathtofile);
+							}
+							// Try to extract data from full path
+							$formfile_params = array();
+							preg_match('#^(/)(\w+)(/)(.+)$#', $relativepathtofile, $formfile_params);
+
 							$out .= '<div id="attachfile_'.$key.'">';
 							// Preview of attachment
-							preg_match('#^(/)(\w+)(/)(.+)$#', substr($val, (strlen(DOL_DATA_ROOT) - strlen($val))), $formfile_params);
 							$out .= img_mime($listofnames[$key]).' '.$listofnames[$key];
 							$out .= $formfile->showPreview(array(), $formfile_params[2], $formfile_params[4]);
 							if (!$this->withfilereadonly) {

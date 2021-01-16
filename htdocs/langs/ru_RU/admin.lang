@@ -1598,8 +1598,13 @@ ServiceSetup=Настройка модуля Услуг
 ProductServiceSetup=Настройка модулей Продуктов и Услуг
 NumberOfProductShowInSelect=Максимальное количество товаров для отображения в комбинированных списках выбора (0 = без ограничений)
 ViewProductDescInFormAbility=Отображать описания продуктов в формах (в противном случае отображается во всплывающей подсказке)
+DoNotAddProductDescAtAddLines=Do not add product description (from product card) on submit add lines on forms
+OnProductSelectAddProductDesc=How to use the description of the products when adding a product as a line of a document
+AutoFillFormFieldBeforeSubmit=Auto fill the description input field with the description of product
+DoNotAutofillButAutoConcat=Do not autofill the input field with description of product. Description of the product will be concatenated to the entered description automatically.
+DoNotUseDescriptionOfProdut=Description of the product will never be included into the description of lines of documents
 MergePropalProductCard=Активировать в продукте/услуге Вложенные файлы вставить опцию объединить PDF-документ продукта в предложение PDF azur, если продукт/услуга находится в предложении
-ViewProductDescInThirdpartyLanguageAbility=Отображать описания продуктов на языке контрагентов
+ViewProductDescInThirdpartyLanguageAbility=Display products descriptions in forms in the language of the third party (otherwise in the language of the user)
 UseSearchToSelectProductTooltip=Также, если у вас есть большое количество продуктов (> 100 000), вы можете увеличить скорость, установив постоянное значение PRODUCT_DONOTSEARCH_ANYWHERE равное 1 в меню «Настройка» - «Другие настройки». Поиск будет ограничен началом строки.
 UseSearchToSelectProduct=Wait until you press a key before loading content of product combo list (This may increase performance if you have a large number of products, but it is less convenient)
 SetDefaultBarcodeTypeProducts=Стандартный вид штрих-кода, используемого для продуктов

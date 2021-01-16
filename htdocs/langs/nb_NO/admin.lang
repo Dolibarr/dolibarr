@@ -1598,8 +1598,13 @@ ServiceSetup=Oppsett av tjenester-modulen
 ProductServiceSetup=Oppsett av varer- og tjenester-modulen
 NumberOfProductShowInSelect=Maksimalt antall varer som skal vises i kombinasjonslister (0 = ingen grense)
 ViewProductDescInFormAbility=Vis produktbeskrivelser i skjemaer (ellers vist i en verktøytips-popup)
+DoNotAddProductDescAtAddLines=Ikke legg til varebeskrivelse (fra varekort) på send inn tilleggslinjer på skjemaer
+OnProductSelectAddProductDesc=Hvordan bruke varebeskrivelsen når du legger til en en vare som en linje i et dokument
+AutoFillFormFieldBeforeSubmit=Fyll ut beskrivelsesfeltet med varebeskrivelsen automatisk 
+DoNotAutofillButAutoConcat=Ikke fyll inn inndatafeltet med varebeskrivelse. Varebeskrivelsen blir automatisk sammenkoblet til den angitte beskrivelsen.
+DoNotUseDescriptionOfProdut=Varebeskrivelse vil aldri bli inkludert i beskrivelsen på dokumentlinjer
 MergePropalProductCard=I "Vedlagte filer"-fanen i "Varer og tjenester" kan du aktivere en opsjon for å flette PDF-varedokument til tilbud PDF-azur hvis varen/tjenesten er i tilbudet
-ViewProductDescInThirdpartyLanguageAbility=Vis produktbeskrivelser på språket til tredjepart
+ViewProductDescInThirdpartyLanguageAbility=Vis varebeskrivelser i skjemaer på tredjeparts språk (ellers på brukerens språk)
 UseSearchToSelectProductTooltip=Hvis du har mange varer (>100 000), kan du øke hastigeten ved å sette konstanten PRODUCT_DONOTSEARCH_ANYWHERE til 1 i Oppsett->Annet. Søket vil da begrenses til starten av søkestrengen
 UseSearchToSelectProduct=Vent til du trykker på en tast før du laster inn innholdet i produkt-kombinationslisten (dette kan øke ytelsen hvis du har et stort antall produkter, men det er mindre praktisk)
 SetDefaultBarcodeTypeProducts=Standard strekkodetype for varer
