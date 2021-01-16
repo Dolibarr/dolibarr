@@ -145,14 +145,32 @@ class Contact extends CommonObject
 	 */
 	public $town;
 
-	public $state_id; // Id of department
-	public $state_code; // Code of department
-	public $state; // Label of department
+	/**
+	 * @var int // Id of department
+	 */
+	public $state_id;
+
+	/**
+	 * @var string // Code of department
+	 */
+	public $state_code;
+
+	/**
+	 * @var string // Label of department
+	 */
+	public $state;
 
 	public $poste; // Position
 
-	public $socid; // fk_soc
-	public $statut; // 0=inactif, 1=actif
+	/**
+	 * @var int Thirdparty ID
+	 */
+	public $socid;
+
+	/**
+	 * @var int 0=inactive, 1=active
+	 */
+	public $statut;
 
 	public $code;
 
@@ -247,7 +265,14 @@ class Contact extends CommonObject
 	public $ref_commande; // Nb de reference commande pour lequel il est contact
 	public $ref_propal; // Nb de reference propal pour lequel il est contact
 
+	/**
+	 * @var int user ID
+	 */
 	public $user_id;
+
+	/**
+	 * @var string user login
+	 */
 	public $user_login;
 
 	// END MODULEBUILDER PROPERTIES
@@ -259,12 +284,19 @@ class Contact extends CommonObject
 	 */
 	public $oldcopy; // To contains a clone of this when we need to save old properties of object
 
+	/**
+	 * @var array roles
+	 */
 	public $roles = array();
 
 	public $cacheprospectstatus = array();
 	public $fk_prospectlevel;
 	public $stcomm_id;
 	public $statut_commercial;
+
+	/**
+	 * @var string picto
+	 */
 	public $stcomm_picto;
 
 	/**
@@ -335,8 +367,7 @@ class Contact extends CommonObject
 
 		$sql = "SELECT count(sp.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
-		if (!$user->rights->societe->client->voir && !$user->socid)
-		{
+		if (!$user->rights->societe->client->voir && !$user->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql .= " WHERE sp.fk_soc = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
@@ -344,13 +375,13 @@ class Contact extends CommonObject
 		}
 		$sql .= ' '.$clause.' sp.entity IN ('.getEntity($this->element).')';
 		$sql .= " AND (sp.priv='0' OR (sp.priv='1' AND sp.fk_user_creat=".$user->id."))";
-		if ($user->socid > 0) $sql .= " AND sp.fk_soc = ".$user->socid;
+		if ($user->socid > 0) {
+			$sql .= " AND sp.fk_soc = ".$user->socid;
+		}
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			while ($obj = $this->db->fetch_object($resql))
-			{
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
 				$this->nb["contacts"] = $obj->nb;
 			}
 			$this->db->free($resql);
@@ -402,8 +433,11 @@ class Contact extends CommonObject
 		$sql .= ", import_key";
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->idate($now)."',";
-		if ($this->socid > 0) $sql .= " ".$this->db->escape($this->socid).",";
-		else $sql .= "null,";
+		if ($this->socid > 0) {
+			$sql .= " ".$this->db->escape($this->socid).",";
+		} else {
+			$sql .= "null,";
+		}
 		$sql .= "'".$this->db->escape($this->lastname)."',";
 		$sql .= "'".$this->db->escape($this->firstname)."',";
 		$sql .= " ".($user->id > 0 ? "'".$this->db->escape($user->id)."'" : "null").",";
@@ -721,8 +755,7 @@ class Contact extends CommonObject
 		if ($this->firstname && !empty($conf->global->LDAP_CONTACT_FIELD_FIRSTNAME)) $info[$conf->global->LDAP_CONTACT_FIELD_FIRSTNAME] = $this->firstname;
 
 		if ($this->poste) $info["title"] = $this->poste;
-		if ($this->socid > 0)
-		{
+		if ($this->socid > 0) {
 			$soc = new Societe($this->db);
 			$soc->fetch($this->socid);
 
@@ -757,8 +790,7 @@ class Contact extends CommonObject
 			$info["phpgwContactCatId"] = 0;
 			$info["phpgwContactAccess"] = "public";
 
-			if (dol_strlen($this->egroupware_id) == 0)
-			{
+			if (dol_strlen($this->egroupware_id) == 0) {
 				$this->egroupware_id = 1;
 			}
 
@@ -1971,8 +2003,7 @@ class Contact extends CommonObject
 		{
 			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing').") AND email = '".$this->db->escape($this->email)."'";
 			$resql = $this->db->query($sql);
-			if ($resql)
-			{
+			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
 				$this->no_email = $obj->nb;
 				return 1;
