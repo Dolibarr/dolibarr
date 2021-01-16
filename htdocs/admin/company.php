@@ -256,6 +256,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 
 	if (!$error)
 	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 		$db->commit();
 	}
 	else
