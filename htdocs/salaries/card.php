@@ -479,6 +479,8 @@ if ($id)
 	// Action buttons
 
 	print '<div class="tabsAction">'."\n";
+	    print '<a href="salary pdf/Pdfindex.php" title="">Salary in Pdf</a>'."\n";
+
 	if ($object->rappro == 0)
 	{
 		if (!empty($user->rights->salaries->delete))
