@@ -308,7 +308,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
         $result=GETPOST("param3", 'alpha');  // Must return string sanitized from char "
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, '\'\'na/b#e(pr)qq-rr\cc', 'Test on param3');
+        $this->assertEquals($result, 'na/b#e(pr)qq-rr\cc', 'Test on param3');
 
         $result=GETPOST("param4", 'alpha');  // Must return string sanitized from ../
         print __METHOD__." result=".$result."\n";
