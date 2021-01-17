@@ -275,7 +275,6 @@ if ($search_dfyear > 0 && $search_op2df)
 	else $sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") <= '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."' AND MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") >= '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."'";
 }
 $sql .= $db->order($sortfield, $sortorder);
-//print $sql;
 
 $totalnboflines = 0;
 $result = $db->query($sql);
