@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Output</title>
+<link type="text/css" rel="stylesheet" href="../fpdf.css">
+</head>
+<body>
+<h1>Output</h1>
+<code><b>string</b> Output([<b>string</b> dest [, <b>string</b> name [, <b>boolean</b> isUTF8]]])</code>
+<h2>Description</h2>
+Send the document to a given destination: browser, file or string. In the case of a browser, the
+PDF viewer may be used or a download may be forced.
+<br>
+The method first calls Close() if necessary to terminate the document.
+<h2>Parameters</h2>
+<dl class="param">
+<dt><code>dest</code></dt>
+<dd>
+Destination where to send the document. It can be one of the following:
+<ul>
+<li><code>I</code>: send the file inline to the browser. The PDF viewer is used if available.</li>
+<li><code>D</code>: send to the browser and force a file download with the name given by <code>name</code>.</li>
+<li><code>F</code>: save to a local file with the name given by <code>name</code> (may include a path).</li>
+<li><code>S</code>: return the document as a string.</li>
+</ul>
+The default value is <code>I</code>.
+</dd>
+<dt><code>name</code></dt>
+<dd>
+The name of the file. It is ignored in case of destination <code>S</code>.<br>
+The default value is <code>doc.pdf</code>.
+</dd>
+<dt><code>isUTF8</code></dt>
+<dd>
+Indicates if <code>name</code> is encoded in ISO-8859-1 (<code>false</code>) or UTF-8 (<code>true</code>).
+Only used for destinations <code>I</code> and <code>D</code>.<br>
+The default value is <code>false</code>.
+</dd>
+</dl>
+<h2>See also</h2>
+<a href="close.htm">Close</a>
+<hr style="margin-top:1.5em">
+<div style="text-align:center"><a href="index.htm">Index</a></div>
+</body>
+</html>
