@@ -416,7 +416,7 @@ if ($result) {
 
 	$thirdpartystatic = new Societe($db);
 	$facturefourn_static = new FactureFournisseur($db);
-	$product_static = new Product($db);
+	$product_static = new ProductFournisseur($db);
 
 	$isBuyerInEEC = isInEEC($mysoc);
 
