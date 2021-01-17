@@ -1763,7 +1763,7 @@ class Societe extends CommonObject
 
 				// multiprix
 				$this->price_level = $obj->price_level;
-				
+
 				// warehouse
 				$this->fk_warehouse = $obj->fk_warehouse;
 
