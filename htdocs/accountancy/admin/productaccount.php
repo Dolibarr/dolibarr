@@ -372,26 +372,26 @@ if ($result)
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Options').'</td><td>'.$langs->trans('Description').'</td>';
 	print "</tr>\n";
-	print '<tr class="oddeven"><td class="titlefield"><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_SELL"'.($accounting_product_mode == 'ACCOUNTANCY_SELL' ? ' checked' : '').'> '.$langs->trans('OptionModeProductSell').'</td>';
+	print '<tr class="oddeven"><td><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_SELL"'.($accounting_product_mode == 'ACCOUNTANCY_SELL' ? ' checked' : '').'> '.$langs->trans('OptionModeProductSell').'</td>';
 	print '<td>'.$langs->trans('OptionModeProductSellDesc');
 	print "</td></tr>\n";
 	if ($mysoc->isInEEC())
 	{
-		print '<tr class="oddeven"><td class="titlefield"><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_SELL_INTRA"'.($accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA' ? ' checked' : '').'> '.$langs->trans('OptionModeProductSellIntra').'</td>';
+		print '<tr class="oddeven"><td><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_SELL_INTRA"'.($accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA' ? ' checked' : '').'> '.$langs->trans('OptionModeProductSellIntra').'</td>';
 		print '<td>'.$langs->trans('OptionModeProductSellIntraDesc');
 		print "</td></tr>\n";
 	}
-	print '<tr class="oddeven"><td class="titlefield"><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_SELL_EXPORT"'.($accounting_product_mode == 'ACCOUNTANCY_SELL_EXPORT' ? ' checked' : '').'> '.$langs->trans('OptionModeProductSellExport').'</td>';
+	print '<tr class="oddeven"><td><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_SELL_EXPORT"'.($accounting_product_mode == 'ACCOUNTANCY_SELL_EXPORT' ? ' checked' : '').'> '.$langs->trans('OptionModeProductSellExport').'</td>';
 	print '<td>'.$langs->trans('OptionModeProductSellExportDesc');
 	print "</td></tr>\n";
-	print '<tr class="oddeven"><td class="titlefield"><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_BUY"'.($accounting_product_mode == 'ACCOUNTANCY_BUY' ? ' checked' : '').'> '.$langs->trans('OptionModeProductBuy').'</td>';
+	print '<tr class="oddeven"><td><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_BUY"'.($accounting_product_mode == 'ACCOUNTANCY_BUY' ? ' checked' : '').'> '.$langs->trans('OptionModeProductBuy').'</td>';
 	print '<td>'.$langs->trans('OptionModeProductBuyDesc')."</td></tr>\n";
 	if ($mysoc->isInEEC())
 	{
-		print '<tr class="oddeven"><td class="titlefield"><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_BUY_INTRA"'.($accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA' ? ' checked' : '').'> '.$langs->trans('OptionModeProductBuyIntra').'</td>';
+		print '<tr class="oddeven"><td><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_BUY_INTRA"'.($accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA' ? ' checked' : '').'> '.$langs->trans('OptionModeProductBuyIntra').'</td>';
 		print '<td>'.$langs->trans('OptionModeProductBuyDesc')."</td></tr>\n";
 	}
-	print '<tr class="oddeven"><td class="titlefield"><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_BUY_EXPORT"'.($accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT' ? ' checked' : '').'> '.$langs->trans('OptionModeProductBuyExport').'</td>';
+	print '<tr class="oddeven"><td><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_BUY_EXPORT"'.($accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT' ? ' checked' : '').'> '.$langs->trans('OptionModeProductBuyExport').'</td>';
 	print '<td>'.$langs->trans('OptionModeProductBuyDesc')."</td></tr>\n";
 	print "</table>\n";
 
