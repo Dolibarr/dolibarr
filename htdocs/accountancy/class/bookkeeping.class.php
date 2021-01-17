@@ -384,7 +384,6 @@ class BookKeeping extends CommonObject
 				$sql .= ", ".(!isset($this->entity) ? $conf->entity : $this->entity);
 				$sql .= ")";
 
-				dol_syslog(get_class($this).":: create sql=".$sql, LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
