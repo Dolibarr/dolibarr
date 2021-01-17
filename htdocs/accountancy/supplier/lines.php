@@ -178,7 +178,8 @@ print '<script type="text/javascript">
 $sql = "SELECT f.rowid as facid, f.ref as ref, f.ref_supplier, f.libelle as invoice_label, f.datef, f.fk_soc,";
 $sql .= " l.rowid, l.fk_product, l.product_type as line_type, l.description, l.total_ht , l.qty, l.tva_tx, l.vat_src_code,";
 $sql .= " aa.label, aa.labelshort, aa.account_number,";
-$sql .= " p.rowid as product_id, p.fk_product_type as product_type, p.ref as product_ref, p.label as product_label, p.fk_product_type as type,";
+$sql .= " p.rowid as product_id, p.fk_product_type as product_type, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.tobuy, p.tosell,";
+$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
 $sql .= " co.code as country_code, co.label as country,";
 $sql .= " s.rowid as socid, s.nom as name, s.tva_intra, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur";
 $parameters = array();
@@ -376,6 +377,11 @@ if ($result) {
 		$productstatic->id = $objp->product_id;
 		$productstatic->label = $objp->product_label;
 		$productstatic->type = $objp->line_type;
+		$productstatic->status = $objp->tosell;
+		$productstatic->status_buy = $objp->tobuy;
+		$productstatic->accountancy_code_buy = $objp->accountancy_code_buy;
+		$productstatic->accountancy_code_buy_intra = $objp->accountancy_code_sell_buy;
+		$productstatic->accountancy_code_buy_export = $objp->accountancy_code_sell_buy;
 
 		$accountingaccountstatic->rowid = $objp->fk_compte;
 		$accountingaccountstatic->label = $objp->label;
