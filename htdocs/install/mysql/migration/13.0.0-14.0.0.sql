@@ -105,3 +105,7 @@ ALTER TABLE llx_propal ADD INDEX idx_propal_fk_warehouse(fk_warehouse);
 ALTER TABLE llx_product_customer_price ADD COLUMN ref_customer varchar(30);
 ALTER TABLE llx_product_customer_price_log ADD COLUMN ref_customer varchar(30);
 
+ALTER TABLE llx_societe CHANGE fk_entrepot fk_warehouse INT NULL DEFAULT '0';
+ALTER TABLE llx_societe ADD CONSTRAINT llx_propal_fk_warehouse FOREIGN KEY (fk_warehouse) REFERENCES llx_entrepot(rowid);
+ALTER TABLE llx_societe DROP INDEX idx_societe_entrepot;
+ALTER TABLE llx_societe ADD INDEX idx_societe_warehouse(fk_warehouse);

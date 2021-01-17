@@ -101,6 +101,17 @@ $now = dol_now();
 /*
  * Actions
  */
+$contactstatic = new Contact($db);
+$userstatic = new User($db);
+$form = new Form($db);
+$formcompany = new FormCompany($db);
+
+if ($id > 0 && empty($object->id))
+{
+	// Load data of third party
+	$res = $object->fetch($id);
+	if ($object->id < 0) dol_print_error($db, $object->error, $object->errors);
+}
 
 $parameters = array('id' => $id, 'socid' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some
@@ -230,7 +241,7 @@ if (empty($reshook))
 	// warehouse
 	if ($action == 'setwarehouse' && $user->rights->societe->creer)
 	{
-		$result = $object->setWarehouse(GETPOST('warehouse_id', 'int'));
+		$result = $object->setWarehouse(GETPOST('fk_warehouse', 'int'));
 	}
 }
 
@@ -238,18 +249,6 @@ if (empty($reshook))
 /*
  * View
  */
-
-$contactstatic = new Contact($db);
-$userstatic = new User($db);
-$form = new Form($db);
-$formcompany = new FormCompany($db);
-
-if ($id > 0 && empty($object->id))
-{
-	// Load data of third party
-	$res = $object->fetch($id);
-	if ($object->id < 0) dol_print_error($db, $object->error, $object->errors);
-}
 
 $title = $langs->trans("CustomerCard");
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->name;
@@ -497,9 +496,9 @@ if ($object->id > 0)
 		print $form->editfieldkey("Warehouse", 'warehouse', '', $object, $user->rights->societe->creer);
 		print '</td><td>';
 		if ($action == 'editwarehouse') {
-			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->warehouse_id, 'warehouse_id', 1);
+			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'fk_warehouse', 1);
 		} else {
-			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->warehouse_id, 'none');
+			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'none');
 		}
 		print '</td>';
 		print '</tr>';
