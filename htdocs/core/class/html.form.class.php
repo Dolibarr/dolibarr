@@ -1949,7 +1949,7 @@ class Form
 	 *  @param		string		$nooutput				No print, return the output into a string
 	 *  @return		void|string
 	 */
-	public function select_produits($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = array(), $nooutput = 0)
+	public function select_produits($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 0, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = array(), $nooutput = 0)
 	{
 		// phpcs:enable
 		global $langs, $conf;
@@ -4495,10 +4495,15 @@ class Form
                          	if (inputok.length>0) {
                          		$.each(inputok, function(i, inputname) {
                          			var more = "";
-                         			if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
-                         		    if ($("#" + inputname).attr("type") == "radio") { more = ":checked"; }
-                         			var inputvalue = $("#" + inputname + more).val();
+									var inputvalue;
+                         			if ($("input[name=\'" + inputname + "\']").attr("type") == "radio") {
+										inputvalue = $("input[name=\'" + inputname + "\']").val();
+									} else {
+                         		    	if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
+                         				inputvalue = $("#" + inputname + more).val();
+									}
                          			if (typeof inputvalue == "undefined") { inputvalue=""; }
+									console.log("check inputname="+inputname+" inputvalue="+inputvalue);
                          			options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
                          		});
                          	}
@@ -5760,7 +5765,7 @@ class Form
 					$retstring .= '<div class="nowrap inline-block divfordateinput">';
 					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="text" class="maxwidthdate" maxlength="11" value="'.$formated_date.'"';
 					$retstring .= ($disabled ? ' disabled' : '');
-					$retstring .= ($placeholder ? ' placeholder="'.$placeholder.'"' : '');
+					$retstring .= ($placeholder ? ' placeholder="'.dol_escape_htmltag($placeholder).'"' : '');
 					$retstring .= ' onChange="dpChangeDay(\''.$prefix.'\',\''.$langs->trans("FormatDateShortJavaInput").'\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 					$retstring .= '>';
 

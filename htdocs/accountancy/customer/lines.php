@@ -176,7 +176,8 @@ print '<script type="text/javascript">
 $sql = "SELECT f.rowid as facid, f.ref as ref, f.type, f.datef, f.ref_client,";
 $sql .= " fd.rowid, fd.description, fd.product_type as line_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.vat_src_code, fd.total_ttc,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_compta, s.code_client,";
-$sql .= " p.rowid as product_id, p.fk_product_type as product_type, p.ref as product_ref, p.label as product_label, p.accountancy_code_sell,";
+$sql .= " p.rowid as product_id, p.fk_product_type as product_type, p.ref as product_ref, p.label as product_label, p.tobuy, p.tosell,";
+$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
 $sql .= " aa.rowid as fk_compte, aa.account_number, aa.label, aa.labelshort,";
 $sql .= " fd.situation_percent,";
 $sql .= " co.code as country_code, co.label as country,";
@@ -326,7 +327,7 @@ if ($result) {
 	//print '<input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '">';
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_tvaintra" value="'.dol_escape_htmltag($search_tvaintra).'"></td>';
-	print '<td class="liste_titre center"><input type="text" class="flat maxwidth50" name="search_account" value="'.dol_escape_htmltag($search_account).'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_account" value="'.dol_escape_htmltag($search_account).'"></td>';
 	print '<td class="liste_titre center">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -377,6 +378,11 @@ if ($result) {
 		$productstatic->id = $objp->product_id;
 		$productstatic->label = $objp->product_label;
 		$productstatic->type = $objp->line_type;
+		$productstatic->status = $objp->tosell;
+		$productstatic->status_buy = $objp->tobuy;
+		$productstatic->accountancy_code_sell = $objp->accountancy_code_sell;
+		$productstatic->accountancy_code_sell_intra = $objp->accountancy_code_sell_intra;
+		$productstatic->accountancy_code_sell_export = $objp->accountancy_code_sell_export;
 
 		$accountingaccountstatic->rowid = $objp->fk_compte;
 		$accountingaccountstatic->label = $objp->label;
@@ -424,11 +430,12 @@ if ($result) {
 
 		print '<td>'.$objp->tva_intra.'</td>';
 
-		print '<td class="center">';
+		print '<td>';
 		print $accountingaccountstatic->getNomUrl(0, 1, 1, '', 1);
 		print ' <a class="editfielda" href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
 		print img_edit();
 		print '</a></td>';
+
 		print '<td class="center"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="'.$objp->rowid.'"/></td>';
 
 		print '</tr>';
