@@ -1028,13 +1028,12 @@ class ExtraFields
 				// search filter on a date extrafield shows two inputs to select a date range
 				$prefill = array(
 					'start' => isset($value['start']) ? $value['start'] : '',
-					'end'   => isset($value['end'])   ? $value['end']   : '');
+					'end'   => isset($value['end'])   ? $value['end']   : ''
+				);
 				$out = '<div ' . ($moreparam ? $moreparam : '') . '><div class="nowrap">'
-					. $langs->trans('From') . ' '
-					. $form->selectDate($prefill['start'], $keyprefix . $key . $keysuffix . '_start', 0, 0, 1)
+					. $form->selectDate($prefill['start'], $keyprefix.$key.$keysuffix.'_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"))
 					. '</div><div class="nowrap">'
-					. $langs->trans('to') . ' '
-					. $form->selectDate($prefill['end'], $keyprefix . $key . $keysuffix . '_end', 0, 0, 1)
+					. $form->selectDate($prefill['end'], $keyprefix.$key.$keysuffix.'_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"))
 					. '</div></div>';
 			} else {
 				// TODO Must also support $moreparam
