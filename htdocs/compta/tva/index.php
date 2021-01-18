@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
 
+$form = new Form($db);
 $now = dol_now();
 $current_date = dol_getdate($now);
 if (empty($conf->global->SOCIETE_FISCAL_MONTH_START)) $conf->global->SOCIETE_FISCAL_MONTH_START = 1;
@@ -114,7 +116,7 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
  */
 function pt($db, $sql, $date)
 {
-    global $conf, $bc, $langs;
+    global $conf, $bc, $langs, $form;
 
     $result = $db->query($sql);
     if ($result) {
@@ -126,7 +128,7 @@ function pt($db, $sql, $date)
         print '<tr class="liste_titre">';
         print '<td class="nowrap">'.$date.'</td>';
         print '<td class="right">'.$langs->trans("ClaimedForThisPeriod").'</td>';
-        print '<td class="right">'.$langs->trans("PaidDuringThisPeriod").'</td>';
+        print '<td class="right">'.$langs->trans("PaidDuringThisPeriod").$form->textwithpicto('', $langs->trans('PaidDuringThisPeriodDesc'), 1).'</td>';
         print "</tr>\n";
 
         $totalclaimed = 0;
@@ -218,7 +220,6 @@ function pt($db, $sql, $date)
  * View
  */
 
-$form = new Form($db);
 $company_static = new Societe($db);
 $tva = new Tva($db);
 
@@ -561,18 +562,19 @@ print load_fiche_titre($langs->trans("VATPaid"), '', '');
 
 $sql = '';
 
-$sql .= "SELECT SUM(amount) as mm, date_format(f.datev,'%Y-%m') as dm, 'claimed' as mode";
-$sql .= " FROM ".MAIN_DB_PREFIX."tva as f";
-$sql .= " WHERE f.entity = ".$conf->entity;
-$sql .= " AND (f.datev >= '".$db->idate($date_start)."' AND f.datev <= '".$db->idate($date_end)."')";
+$sql .= "SELECT SUM(amount) as mm, date_format(tva.datev,'%Y-%m') as dm, 'claimed' as mode";
+$sql .= " FROM ".MAIN_DB_PREFIX."tva as tva";
+$sql .= " WHERE tva.entity = ".$conf->entity;
+$sql .= " AND (tva.datev >= '".$db->idate($date_start)."' AND tva.datev <= '".$db->idate($date_end)."')";
 $sql .= " GROUP BY dm";
 
 $sql .= " UNION ";
 
-$sql .= "SELECT SUM(amount) as mm, date_format(f.datep,'%Y-%m') as dm, 'paid' as mode";
-$sql .= " FROM ".MAIN_DB_PREFIX."tva as f";
-$sql .= " WHERE f.entity = ".$conf->entity;
-$sql .= " AND (f.datep >= '".$db->idate($date_start)."' AND f.datep <= '".$db->idate($date_end)."')";
+$sql .= "SELECT SUM(ptva.amount) as mm, date_format(tva.datev,'%Y-%m') as dm, 'paid' as mode";
+$sql .= " FROM ".MAIN_DB_PREFIX."tva as tva";
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."paiementtva as ptva ON (tva.rowid = ptva.fk_tva)";
+$sql .= " WHERE tva.entity = ".$conf->entity;
+$sql .= " AND (tva.datev >= '".$db->idate($date_start)."' AND tva.datev <= '".$db->idate($date_end)."')";
 $sql .= " GROUP BY dm";
 
 $sql .= " ORDER BY dm ASC, mode ASC";

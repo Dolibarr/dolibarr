@@ -382,7 +382,6 @@ $loanstatic = new Loan($db);
 $memberstatic = new Adherent($db);
 $paymentstatic = new Paiement($db);
 $paymentsupplierstatic = new PaiementFourn($db);
-$paymentvatstatic = new TVA($db);
 $paymentsalstatic = new PaymentSalary($db);
 $paymentvariousstatic = new PaymentVarious($db);
 $donstatic = new Don($db);
@@ -1229,9 +1228,9 @@ if ($resql)
     	        }
     	        elseif ($links[$key]['type'] == 'payment_vat')
     	        {
-    	            $paymentvatstatic->id = $links[$key]['url_id'];
-    	            $paymentvatstatic->ref = $links[$key]['url_id'];
-    	            print ' '.$paymentvatstatic->getNomUrl(2);
+                    print '<a href="'.DOL_URL_ROOT.'/compta/payment_vat/card.php?id='.$links[$key]['url_id'].'">';
+                    print ' '.img_object($langs->trans('ShowPayment'), 'payment').' ';
+                    print '</a>';
     	        }
     	        elseif ($links[$key]['type'] == 'payment_salary')
     	        {
@@ -1306,6 +1305,9 @@ if ($resql)
     	        elseif ($links[$key]['type'] == 'sc')
     	        {
     	        }
+                elseif ($links[$key]['type'] == 'vat')
+                {
+                }
     	        else
     	        {
     	            // Show link with label $links[$key]['label']
