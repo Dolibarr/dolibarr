@@ -34,7 +34,7 @@ include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
 class box_dolibarr_state_board extends ModeleBoxes
 {
 	public $boxcode = "dolibarrstatebox";
-	public $boximg = "box_user";
+	public $boximg = "generic";
 	public $boxlabel = "BoxDolibarrStateBoard";
 	public $depends = array("user");
 
