@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2021 Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,9 @@ class box_dolibarr_state_board extends ModeleBoxes
 		$this->db = $db;
 
 		// disable box for such cases
-		if (!empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $this->enabled = 0; // disabled by this option
+		if (!empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
+			$this->enabled = 0; // disabled by this option
+		}
 
 		$this->hidden = !($user->rights->societe->lire && empty($user->socid));
 	}
@@ -81,8 +83,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 		$this->max = $max;
 		$this->info_box_head = array('text' => $langs->trans("DolibarrStateBoard"));
 
-		if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
-		{
+		if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS)) {
 			$hookmanager = new HookManager($this->db);
 			$hookmanager->initHooks(array('index'));
 			$boxstatItems = array();
@@ -242,18 +243,15 @@ class box_dolibarr_state_board extends ModeleBoxes
 			);
 			$boardloaded = array();
 
-			foreach ($keys as $val)
-			{
-				if ($conditions[$val])
-				{
+			foreach ($keys as $val) {
+				if ($conditions[$val]) {
 					$boxstatItem = '';
 					$class = $classes[$val];
 					// Search in cache if load_state_board is already realized
 					$classkeyforcache = $class;
 					if ($classkeyforcache == 'ProductService') $classkeyforcache = 'Product'; // ProductService use same load_state_board than Product
 
-					if (!isset($boardloaded[$classkeyforcache]) || !is_object($boardloaded[$classkeyforcache]))
-					{
+					if (!isset($boardloaded[$classkeyforcache]) || !is_object($boardloaded[$classkeyforcache])) {
 						include_once $includes[$val]; // Loading a class cost around 1Mb
 
 						$board = new $class($this->db);
@@ -277,12 +275,10 @@ class box_dolibarr_state_board extends ModeleBoxes
 				}
 			}
 
-			if (!empty($boxstatFromHook) || !empty($boxstatItems))
-			{
+			if (!empty($boxstatFromHook) || !empty($boxstatItems)) {
 				$boxstat .= $boxstatFromHook;
 
-				if (is_array($boxstatItems) && count($boxstatItems) > 0)
-				{
+				if (is_array($boxstatItems) && count($boxstatItems) > 0) {
 					$boxstat .= implode('', $boxstatItems);
 				}
 
@@ -301,12 +297,6 @@ class box_dolibarr_state_board extends ModeleBoxes
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
 					'textnoformat' => $boxstat
-				);
-			} else {
-				$this->info_box_contents[0][0] = array(
-					'td' => 'class="nohover center"',
-					'maxlength' => 500,
-					'text' => ($this->db->error() . ' sql=' . $sql)
 				);
 			}
 		} else {
