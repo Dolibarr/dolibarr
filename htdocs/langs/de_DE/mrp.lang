@@ -77,4 +77,4 @@ UnitCost=Kosten pro Einheit
 TotalCost=Gesamtsumme Kosten
 BOMTotalCost=Die Herstellungskosten dieser Stückliste, basierend auf den Kosten jeder Menge und jeden verbrauchten Produktes (nutzt den Selbstkostenpreis wenn er definiert ist, ansonsten den Durchschnittspreis sofern definiert oder den besten Einkaufspreis)
 GoOnTabProductionToProduceFirst=Die Produktion muss begonnen sein, um einen Produktionsauftrag zu schließen (siehe Tab '%s'). Alternativ kann er storniert werden.
-ErrorAVirtualProductCantBeUsedIntoABomOrMo=A kit can't be used into a BOM or a MO
+ErrorAVirtualProductCantBeUsedIntoABomOrMo=Ein Satz kann nicht in einer Stückliste oder einem Fertigungsauftrag verwendet werden

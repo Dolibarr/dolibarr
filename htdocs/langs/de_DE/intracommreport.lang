@@ -31,10 +31,10 @@ IntracommReportTitle=XML-Datei der Zollerklärung vorbereiten
 
 # List
 IntracommReportList=Liste der Erkärungen
-IntracommReportNumber=Numero of declaration
-IntracommReportPeriod=Period of nalysis
+IntracommReportNumber=Numero der Erklärung
+IntracommReportPeriod=Analysezeitraum
 IntracommReportTypeDeclaration=Art der Erklärung
-IntracommReportDownload=download XML file
+IntracommReportDownload=XML-Datei herunterladen
 
 # Invoice
 IntracommReportTransportMode=Versandweg

@@ -8,15 +8,15 @@ descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Crear automáticamente una factura a clie
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Crear unha factura a cliente automáticamente despois de validar un contrato
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Crear automáticamente unha factura a cliente despois de pechar o pedimento de cliente ( nova factura terá o mesmo importe que o pedimento)
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Clasificar orzamento(s) orixe como facturado cando o pedimento do cliente sexa marcado como facturado (e se o importe do pedimento é igual á suma dos importes dos orzamentos relacionados)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Clasificar os orzamento(s) orixe como facturados cando a factura ao cliente sexa validada (e se o importe da factura é igual á suma dos importes dos orzamentos relacionados)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Clasificar pedimento(s) de cliente orixe como facturado cando a factura ao cliente sexa validada (e se o importe da factura é igual á suma dos importes dos pedimentos relacionados)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Clasificar pedimento(s) de cliente orixe como facturado cando a factura ao cliente sexa marcada como pagada (e se o importe da factura é igual á suma dos importes dos pedimentos relacionados)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Clasificar orzamento orixe como facturado cando o pedimento do cliente sexa marcado como facturado (e se o importe do pedimento é igual á suma dos importes dos orzamentos ligados)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Clasificar o orzamento orixe como facturados cando a factura ao cliente sexa validada (e se o importe da factura é igual á suma dos importes dos orzamentos ligados)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Clasificar pedimento de cliente orixe como facturado cando a factura ao cliente sexa validada (e se o importe da factura é igual á suma dos importes dos pedimentos ligados)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Clasificar pedimento de cliente orixe como facturado cando a factura ao cliente sexa marcada como pagada (e se o importe da factura é igual á suma dos importes dos pedimentos ligados)
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Clasificar automáticamente o pedimento orixe como enviado cando o envío sexa validado (e se a cantidade enviada por todos os envíos é a mesma que o pedimento a actualizar)
 # Autoclassify purchase order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Clasificar os orzamento(s) de provedor orixe como facturado(s) cando a factura de provedor sexa validada (e se o importe da factura é igual á suma dos importes dos orzamentos relacionados)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Clasificar pedimento(s) a provedor orixe como facturado(s) cando a factura de provedor sexa validada (e se o importe da factura é igual á suma dos importes dos pedimentos relacionados)
-descWORKFLOW_BILL_ON_RECEPTION=Clasificar recepcións a "facturado" cando sexa validado un pedido de provedor relacionado
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Clasificar o orzamento ligado de provedor orixe como facturado cando a factura de provedor sexa validada (e se o importe da factura é igual á suma do importe dos orzamentos ligados)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Clasificar o pedimento orixe a provedor ligado como facturado cando a factura de provedor sexa validada (e se o importe da factura é igual á suma do importe dos pedimentos ligados)
+descWORKFLOW_BILL_ON_RECEPTION=Clasificar recepcións a "facturado" cando sexa validado un pedimento de provedor ligado
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Pecha todas as intervencións ligadas ao ticket cando o ticket está pechado
 AutomaticCreation=Creación automática

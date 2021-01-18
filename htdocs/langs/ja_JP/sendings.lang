@@ -32,7 +32,7 @@ SendingsToValidate=検査用に出荷
 StatusSendingCanceled=キャンセル
 StatusSendingCanceledShort=キャンセル
 StatusSendingDraft=下書き
-StatusSendingValidated=検査済（製品で出荷用または出荷済）
+StatusSendingValidated=検査済(製品で出荷用または出荷済)
 StatusSendingProcessed=処理
 StatusSendingDraftShort=下書き
 StatusSendingValidatedShort=検査
@@ -43,7 +43,7 @@ ConfirmValidateSending=この出荷を参照<b>%s </b>で検査してもよい�
 ConfirmCancelSending=この出荷をキャンセルしてもよいか？
 DocumentModelMerou=メロウA5モデル
 WarningNoQtyLeftToSend=警告、出荷待ちの製品はない。
-StatsOnShipmentsOnlyValidated=出荷に関して実施された統計は検査済みです。使用日は出荷の検査日です（飛行機の配達日は常にわかっているわけではない）。
+StatsOnShipmentsOnlyValidated=出荷に関して実施された統計は検査済みです。使用日は出荷の検査日です(飛行機の配達日は常にわかっているわけではない)。
 DateDeliveryPlanned=配達予定日
 RefDeliveryReceipt=参照納品書
 StatusReceipt=ステータス納品書
@@ -65,12 +65,12 @@ ValidateOrderFirstBeforeShipment=出荷を行う前に、まず注文を検査�
 
 # Sending methods
 # ModelDocument
-DocumentModelTyphon=配信確認のために、より完全なドキュメントモデル（logo. ..）
-DocumentModelStorm=入庫とフィールド外の互換性のためのより完全なドキュメントモデル（ロゴ...）
+DocumentModelTyphon=配信確認のために、より完全なドキュメントモデル(logo. ..)
+DocumentModelStorm=入庫とフィールド外の互換性のためのより完全なドキュメントモデル(ロゴ...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=定数EXPEDITION_ADDON_NUMBERが定義されていない
 SumOfProductVolumes=製品量の合計
 SumOfProductWeights=製品の重量の合計
 
 # warehouse details
 DetailWarehouseNumber= 倉庫の詳細
-DetailWarehouseFormat= W：%s（数量：%d）
+DetailWarehouseFormat= W：%s(数量：%d)
