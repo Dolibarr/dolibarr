@@ -512,13 +512,13 @@ class ChargeSociales extends CommonObject
 	 *  Return a link to the object card (with optionaly the picto)
 	 *
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 * 	@param	int		$maxlen						Max length of label
+	 *  @param  string  $option                     On what the link point to ('nolink', ...)
 	 *  @param	int  	$notooltip					1=Disable tooltip
 	 *  @param  int		$short           			1=Return just URL
 	 *  @param  int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								String with link
 	 */
-	public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0, $short = 0, $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $short = 0, $save_lastsearch_value = -1)
 	{
 		global $langs, $conf, $user, $form;
 
@@ -569,7 +569,7 @@ class ChargeSociales extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-		if ($withpicto != 2) $result .= ($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref);
+		if ($withpicto != 2) $result .= $this->ref;
 		$result .= $linkend;
 
 		return $result;

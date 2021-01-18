@@ -31,10 +31,8 @@ TicketDictType=برگه‌ها - انواع
 TicketDictCategory=برگه‌ها - دسته‌بندی‌ها
 TicketDictSeverity=برگه‌ها - سطح اهمیت
 TicketDictResolution=Ticket - Resolution
-TicketTypeShortBUGSOFT=اشکال نرم‌افزاری
-TicketTypeShortBUGHARD=اشکال نرم‌افزاری
-TicketTypeShortCOM=سوال تجاری
 
+TicketTypeShortCOM=سوال تجاری
 TicketTypeShortHELP=Request for functionnal help
 TicketTypeShortISSUE=Issue, bug or problem
 TicketTypeShortREQUEST=Change or enhancement request
@@ -44,7 +42,7 @@ TicketTypeShortOTHER=سایر
 TicketSeverityShortLOW=کم
 TicketSeverityShortNORMAL=عادی
 TicketSeverityShortHIGH=زیاد
-TicketSeverityShortBLOCKING=انتقادی/مسدودی
+TicketSeverityShortBLOCKING=Critical, Blocking
 
 ErrorBadEmailAddress=بخش '%s' نادرست است
 MenuTicketMyAssign=برگه‌ها من
@@ -60,7 +58,6 @@ OriginEmail=منبع رایانامه
 Notify_TICKET_SENTBYMAIL=ارسال پیام برگه با رایانامه
 
 # Status
-NotRead=خوانده نشده
 Read=خوانده‌شده
 Assigned=نسبت‌داده شده
 InProgress=در حال انجام
@@ -126,6 +123,7 @@ TicketsActivatePublicInterfaceHelp=رابط عمومی به کاربران ام�
 TicketsAutoAssignTicket=نسبت دادن خودکار کاربری که برگۀ‌پشتیبانی را ساخته است
 TicketsAutoAssignTicketHelp=در هنگام ساخت برگۀ‌پشتیبانی، کاربر می‌تواند به شکل خودکار به برگه نسبت داده شود
 TicketNumberingModules=واحد شماره‌دهی برگه‌های پشتیبانی
+TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=اطلاع‌رسانی به شخص‌سوم در هنگام ساخت
 TicketsDisableCustomerEmail=همواره در هنگامی که یک برگۀ‌پشتیبانی از طریق رابط عمومی ساخته می‌شود، قابلیت رایانامه غیرفعال شود
 TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
@@ -233,7 +231,6 @@ TicketLogStatusChanged=وضعیت تغییر پیدا کرد: %s به %s
 TicketNotNotifyTiersAtCreate=عدم اطلاع‌رسانی به شرکت در هنگام ساخت
 Unread=خوانده نشده
 TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
-PublicInterfaceNotEnabled=Public interface was not enabled
 ErrorTicketRefRequired=Ticket reference name is required
 
 #

@@ -48,6 +48,7 @@ CountriesExceptMe=除了%s以外的所有國家
 AccountantFiles=Export source documents
 ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
 VueByAccountAccounting=View by accounting account
+VueBySubAccountAccounting=View by accounting subaccount
 
 MainAccountForCustomersNotDefined=在設定中客戶的主要會計帳戶尚未定義
 MainAccountForSuppliersNotDefined=在設定中供應商的主要會計帳戶尚未定義
@@ -144,7 +145,7 @@ NotVentilatedinAccount=不受會計項目約束
 XLineSuccessfullyBinded=%s 產品/服務成功地指定會計項目
 XLineFailedToBeBinded=%s 產品/服務沒指定任何會計項目
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=頁面顯示要綁定的元件數（建議的最大值：50）
+ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=開始按最新元件對“待綁定”頁面進行排序
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=開始按最新元件對“完成綁定”頁面進行排序
 
@@ -198,7 +199,8 @@ Docdate=日期
 Docref=參考
 LabelAccount=標籤帳戶
 LabelOperation=標籤操作
-Sens=意義
+Sens=Direction
+AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you received<br>For an accounting account of a supplier, use Debit to record a payment you make
 LetteringCode=字元編碼
 Lettering=字元
 Codejournal=日記帳
@@ -206,7 +208,8 @@ JournalLabel=日記帳標籤
 NumPiece=件數
 TransactionNumShort=交易編號
 AccountingCategory=個人化群組
-GroupByAccountAccounting=按會計科目分組
+GroupByAccountAccounting=Group by general ledger account
+GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=您可定義某些會計科目大類。他們可以在個人化會計報表中使用。
 ByAccounts=依帳戶
 ByPredefinedAccountGroups=依大類
@@ -248,7 +251,7 @@ PaymentsNotLinkedToProduct=付款未連結到任何產品/服務
 OpeningBalance=初期餘額
 ShowOpeningBalance=顯示初期餘額
 HideOpeningBalance=隱藏初期餘額
-ShowSubtotalByGroup=依組顯示小計
+ShowSubtotalByGroup=Show subtotal by level
 
 Pcgtype=會計項目大類
 PcgtypeDesc=用作某些會計報告的預定義“過濾器”和“分組”標準的科目組。例如“ INCOME”或“ EXPENSE”用作產品的會計科目組，以建立費用/收入報告。
@@ -271,11 +274,13 @@ DescVentilExpenseReport=在此查閱費用報表行數是否關聯到費用會�
 DescVentilExpenseReportMore=如果您在費用報告類型上設定會計帳戶，則應用程序將能夠在費用報告和會計科目表的會計帳戶之間進行所有綁定，只需點擊按鈕<strong>“ %s”即可</strong> 。如果未在費用字典中設定帳戶，或者您仍有某些行未綁定到任何帳戶，則必須從選單“ <strong>%s</strong> ”進行手動綁定。
 DescVentilDoneExpenseReport=在此查閱費用報表的清單及其費用會計項目。
 
+Closure=Annual closure
 DescClosure=請在此處查詢依照月份的未經驗證活動數和已經開放的會計年度
 OverviewOfMovementsNotValidated=第1步/未驗證移動總覽。 （需要關閉一個會計年度）
+AllMovementsWereRecordedAsValidated=All movements were recorded as validated
+NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated
 ValidateMovements=驗證動作
 DescValidateMovements=禁止修改，刪除任何文字內容。所有條目都必須經過驗證，否則將無法結案
-SelectMonthAndValidate=選擇月份並驗證移動
 
 ValidateHistory=自動關聯
 AutomaticBindingDone=自動關聯已完成
@@ -293,6 +298,7 @@ Accounted=計入總帳
 NotYetAccounted=尚未記入總帳
 ShowTutorial=顯示教程
 NotReconciled=未對帳
+WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
 
 ## Admin
 BindingOptions=Binding options
@@ -337,6 +343,7 @@ Modelcsv_LDCompta10=LD Compta用之匯出（v10及更高版本）
 Modelcsv_openconcerto=匯出為OpenConcerto（測試）
 Modelcsv_configurable=匯出為可設置CSV
 Modelcsv_FEC=匯出為FEC
+Modelcsv_FEC2=Export FEC (With dates generation writing / document reversed)
 Modelcsv_Sage50_Swiss=匯出為Sage 50 Switzerland
 Modelcsv_winfic=匯出Winfic-eWinfic-WinSis Compta
 Modelcsv_Gestinumv3=Export for Gestinum (v3)

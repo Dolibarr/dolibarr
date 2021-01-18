@@ -48,6 +48,7 @@ CountriesExceptMe=Tutti i paesi eccetto %s
 AccountantFiles=Export source documents
 ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
 VueByAccountAccounting=View by accounting account
+VueBySubAccountAccounting=View by accounting subaccount
 
 MainAccountForCustomersNotDefined=Account principale di contabilità per i clienti non definito nel setup
 MainAccountForSuppliersNotDefined=Account principale di contabilità per fornitori non definito nel setup
@@ -144,7 +145,7 @@ NotVentilatedinAccount=Non collegato al piano dei conti
 XLineSuccessfullyBinded=%sprodotti/servizi correttamente collegato ad un piano dei conti
 XLineFailedToBeBinded=%sprodotti/servizi non collegato a nessun piano dei conti
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Numero di elementi da associare mostrato per pagina (massimo raccomandato: 50)
+ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Inizia ad ordinare la pagina "Associazioni da effettuare" dagli elementi più recenti
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Inizia ad ordinare la pagina "Associazioni effettuate" dagli elementi più recenti
 
@@ -198,7 +199,8 @@ Docdate=Data
 Docref=Riferimento
 LabelAccount=Etichetta conto
 LabelOperation=Etichetta operazione
-Sens=Verso
+Sens=Direction
+AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you received<br>For an accounting account of a supplier, use Debit to record a payment you make
 LetteringCode=Codice impressioni
 Lettering=Impressioni
 Codejournal=Giornale
@@ -206,7 +208,8 @@ JournalLabel=Etichetta del giornale
 NumPiece=Numero del pezzo
 TransactionNumShort=Num. transazione
 AccountingCategory=Gruppi personalizzati
-GroupByAccountAccounting=Raggruppamento piano dei conti
+GroupByAccountAccounting=Group by general ledger account
+GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=Qui puoi definire alcuni gruppi di conti contabili. Saranno utilizzati per rapporti contabili personalizzati.
 ByAccounts=Per conto
 ByPredefinedAccountGroups=Per gruppi predefiniti
@@ -248,7 +251,7 @@ PaymentsNotLinkedToProduct=Payment not linked to any product / service
 OpeningBalance=Saldo di apertura
 ShowOpeningBalance=Mostra bilancio di apertura
 HideOpeningBalance=Nascondi bilancio di apertura
-ShowSubtotalByGroup=Mostra totale parziale per gruppo
+ShowSubtotalByGroup=Show subtotal by level
 
 Pcgtype=Gruppo di conto
 PcgtypeDesc=Il gruppo di conti viene utilizzato come criterio 'filtro' e 'raggruppamento' predefiniti per alcuni report contabili. Ad esempio, "REDDITO" o "SPESA" sono utilizzati come gruppi per la contabilità dei prodotti per creare il rapporto spese / entrate.
@@ -271,11 +274,13 @@ DescVentilExpenseReport=Consult here the list of expense report lines bound (or 
 DescVentilExpenseReportMore=If you setup accounting account on type of expense report lines, the application will be able to make all the binding between your expense report lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on fees dictionary or if you still have some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneExpenseReport=Consult here the list of the lines of expenses reports and their fees accounting account
 
+Closure=Annual closure
 DescClosure=Consultare qui il numero di movimenti per mese che non sono stati convalidati e gli anni fiscali già aperti
 OverviewOfMovementsNotValidated=Passaggio 1 / Panoramica dei movimenti non convalidati. (Necessario per chiudere un anno fiscale)
+AllMovementsWereRecordedAsValidated=All movements were recorded as validated
+NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated
 ValidateMovements=Convalida i movimenti
 DescValidateMovements=Qualsiasi modifica o cancellazione di scrittura, lettura e cancellazione sarà vietata. Tutte le voci per un esercizio devono essere convalidate altrimenti la chiusura non sarà possibile
-SelectMonthAndValidate=Seleziona il mese e convalida i movimenti
 
 ValidateHistory=Collega automaticamente
 AutomaticBindingDone=Collegamento automatico fatto
@@ -293,6 +298,7 @@ Accounted=Accounted in ledger
 NotYetAccounted=Not yet accounted in ledger
 ShowTutorial=Mostra tutorial
 NotReconciled=Non conciliata
+WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
 
 ## Admin
 BindingOptions=Binding options
@@ -337,6 +343,7 @@ Modelcsv_LDCompta10=Esporta per LD Compta (v10 e successive)
 Modelcsv_openconcerto=Export for OpenConcerto (Test)
 Modelcsv_configurable=Export CSV Configurable
 Modelcsv_FEC=Export FEC
+Modelcsv_FEC2=Export FEC (With dates generation writing / document reversed)
 Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
 Modelcsv_winfic=Esporta Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Export for Gestinum (v3)
@@ -381,7 +388,7 @@ Formula=Formula
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Some mandatory steps of setup was not done, please complete them
-ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See Home - Setup - Dictionaries)
+ErrorNoAccountingCategoryForThisCountry=Nessun gruppo di piano dei conti disponibile per il paese %s ( Vedi Home - Impostazioni - Dizionari )
 ErrorInvoiceContainsLinesNotYetBounded=You try to journalize some lines of the invoice <strong>%s</strong>, but some other lines are not yet bounded to accounting account. Journalization of all invoice lines for this invoice are refused.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Alcune righe della fattura non sono collegato a un piano dei conti.
 ExportNotSupported=Il formato di esportazione configurato non è supportato in questa pagina

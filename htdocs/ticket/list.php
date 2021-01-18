@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2018	Jean-François FERRY	<hello@librethic.io>
  * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
  * Copyright (C) 2018		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2019		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2019-2021	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2019-2020  Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -57,6 +57,14 @@ $project_ref = GETPOST('project_ref', 'alpha');
 $search_societe = GETPOST('search_societe', 'alpha');
 $search_fk_project = GETPOST('search_fk_project', 'int') ?GETPOST('search_fk_project', 'int') : GETPOST('projectid', 'int');
 $search_fk_status = GETPOST('search_fk_statut', 'array');
+$search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
+$search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
+$search_dateread_start = dol_mktime(0, 0, 0, GETPOST('search_dateread_startmonth', 'int'), GETPOST('search_dateread_startday', 'int'), GETPOST('search_dateread_startyear', 'int'));
+$search_dateread_end = dol_mktime(23, 59, 59, GETPOST('search_dateread_endmonth', 'int'), GETPOST('search_dateread_endday', 'int'), GETPOST('search_dateread_endyear', 'int'));
+$search_dateclose_start = dol_mktime(0, 0, 0, GETPOST('search_dateclose_startmonth', 'int'), GETPOST('search_dateclose_startday', 'int'), GETPOST('search_dateclose_startyear', 'int'));
+$search_dateclose_end = dol_mktime(23, 59, 59, GETPOST('search_dateclose_endmonth', 'int'), GETPOST('search_dateclose_endday', 'int'), GETPOST('search_dateclose_endyear', 'int'));
+
+
 $mode = GETPOST('mode', 'alpha');
 
 // Load variable for pagination
@@ -170,6 +178,12 @@ if (empty($reshook))
 		}
 		$toselect = '';
 		$search_array_options = array();
+		$search_date_start = '';
+		$search_date_end = '';
+		$search_dateread_start = '';
+		$search_dateread_end = '';
+		$search_dateclose_start = '';
+		$search_dateclose_end = '';
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
 		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha'))
@@ -325,6 +339,7 @@ foreach ($search as $key => $val)
 		}
 		if ($search['fk_statut'] == 'openall' || in_array('openall', $search['fk_statut'])) {
 			$newarrayofstatus[] = Ticket::STATUS_NOT_READ;
+			$newarrayofstatus[] = Ticket::STATUS_READ;
 			$newarrayofstatus[] = Ticket::STATUS_ASSIGNED;
 			$newarrayofstatus[] = Ticket::STATUS_IN_PROGRESS;
 			$newarrayofstatus[] = Ticket::STATUS_NEED_MORE_INFO;
@@ -348,6 +363,14 @@ foreach ($search as $key => $val)
 if ($search_all) $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 if ($search_societe)     $sql .= natural_search('s.nom', $search_societe);
 if ($search_fk_project) $sql .= natural_search('fk_project', $search_fk_project, 2);
+if ($search_date_start)			$sql .= " AND t.datec >= '".$db->idate($search_date_start)."'";
+if ($search_date_end)			$sql .= " AND t.datec <= '".$db->idate($search_date_end)."'";
+if ($search_dateread_start)		$sql .= " AND t.date_read >= '".$db->idate($search_dateread_start)."'";
+if ($search_dateread_end)		$sql .= " AND t.date_read <= '".$db->idate($search_dateread_end)."'";
+if ($search_dateclose_start)	$sql .= " AND t.date_close >= '".$db->idate($search_dateclose_start)."'";
+if ($search_dateclose_end)		$sql .= " AND t.date_close <= '".$db->idate($search_dateclose_end)."'";
+
+
 if (!$user->socid && ($mode == "mine" || (!$user->admin && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY))) {
 	$sql .= " AND (t.fk_user_assign = ".$user->id;
 	if (empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) $sql .= " OR t.fk_user_create = ".$user->id;
@@ -426,30 +449,30 @@ if ($socid && !$projectid && !$project_ref && $user->rights->societe->lire) {
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border centpercent tableforfield">';
 
-		// Customer code
-		if ($socstat->client && !empty($socstat->code_client)) {
-			print '<tr><td class="titlefield">';
-			print $langs->trans('CustomerCode').'</td><td>';
-			print $socstat->code_client;
-			if ($socstat->check_codeclient() != 0) {
-				print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
-			}
-
-			print '</td>';
-			print '</tr>';
-		}
-		// Supplier code
-		if ($socstat->fournisseur && !empty($socstat->code_fournisseur)) {
-			print '<tr><td class="titlefield">';
-			print $langs->trans('SupplierCode').'</td><td>';
-			print $socstat->code_fournisseur;
-			if ($socstat->check_codefournisseur() != 0) {
-				print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
-			}
-
-			print '</td>';
-			print '</tr>';
-		}
+        // Customer code
+        if ($socstat->client && !empty($socstat->code_client)) {
+            print '<tr><td class="titlefield">';
+            print $langs->trans('CustomerCode').'</td><td>';
+            print $socstat->code_client;
+            $tmpcheck = $socstat->check_codeclient();
+            if ($tmpcheck != 0 && $tmpcheck != -5) {
+            	print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+            }
+            print '</td>';
+            print '</tr>';
+        }
+        // Supplier code
+        if ($socstat->fournisseur && !empty($socstat->code_fournisseur)) {
+        	print '<tr><td class="titlefield">';
+        	print $langs->trans('SupplierCode').'</td><td>';
+        	print $socstat->code_fournisseur;
+        	$tmpcheck = $socstat->check_codefournisseur();
+        	if ($tmpcheck != 0 && $tmpcheck != -5) {
+        		print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+        	}
+        	print '</td>';
+        	print '</tr>';
+        }
 
 		print '</table>';
 		print '</div>';
@@ -538,6 +561,13 @@ if ($optioncss != '')     $param .= '&optioncss='.urlencode($optioncss);
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 if ($socid)     $param .= '&socid='.urlencode($socid);
 if ($projectid) $param .= '&projectid='.urlencode($projectid);
+
+if ($search_date_start)			$param .= '&search_date_start='.urlencode($search_date_start);
+if ($search_date_end)			$param .= '&search_date_end='.urlencode($search_date_end);
+if ($search_dateread_start)		$param .= '&search_dateread_start='.urlencode($search_dateread_start);
+if ($search_dateread_end)		$param .= '&search_dateread_end='.urlencode($search_dateread_end);
+if ($search_dateclose_start)	$param .= '&search_dateclose_start='.urlencode($search_dateclose_start);
+if ($search_dateclose_end)		$param .= '&search_dateclose_end='.urlencode($search_dateclose_end);
 
 // List of mass actions available
 $arrayofmassactions = array(
@@ -655,7 +685,35 @@ foreach ($object->fields as $key => $val)
 			print '</td>';
 		} elseif ($key == "fk_soc") {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'"><input type="text" class="flat maxwidth75" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
-		} else {
+		} elseif ($key == "datec" || $key == 'date_read' || $key == 'date_close'){
+			print '<td class="liste_titre center">';
+			print '<div class="nowrap">';
+			switch ($key){
+				case 'datec':
+					print $form->selectDate($search_date_start ?: -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
+					break;
+				case 'date_read':
+					print $form->selectDate($search_dateread_start ?: -1, 'search_dateread_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
+					break;
+				case 'date_close':
+					print $form->selectDate($search_dateclose_start ?: -1, 'search_dateclose_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
+			}
+			print '</div>';
+			print '<div class="nowrap">';
+			switch ($key){
+				case 'datec':
+					print $form->selectDate($search_date_end ?: -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
+					break;
+				case 'date_read':
+					print $form->selectDate($search_dateread_end ?: -1, 'search_dateread_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
+					break;
+				case 'date_close':
+					print $form->selectDate($search_dateclose_end ?: -1, 'search_dateclose_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
+			}
+			print '</div>';
+			print '</td>';
+		}
+		else {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
 			if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
 			elseif (strpos($val['type'], 'integer:') === 0) {

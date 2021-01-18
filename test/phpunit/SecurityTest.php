@@ -287,6 +287,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
         $_POST["param8"]="Hacker<svg o&#110;load='console.log(&quot;123&quot;)'";	// html tag is not closed so it is not detected as html tag but is still harmfull
 		$_POST["param9"]='is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : \'objnotdefined\'';
 		$_POST["param10"]='is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : \'<abc>objnotdefined\'';
+		$_POST["param11"]=' Name <email@email.com> ';
 
 		$result=GETPOST('id', 'int');              // Must return nothing
         print __METHOD__." result=".$result."\n";
@@ -294,20 +295,20 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
         $result=GETPOST("param1", 'int');
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, 222);
+        $this->assertEquals($result, 222, 'Test on param1 with no 3rd param');
 
         $result=GETPOST("param1", 'int', 2);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, 333);
+        $this->assertEquals($result, 333, 'Test on param1 with 3rd param = 2');
 
         // Test alpha
         $result=GETPOST("param2", 'alpha');
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, $_GET["param2"]);
+        $this->assertEquals($result, $_GET["param2"], 'Test on param2');
 
         $result=GETPOST("param3", 'alpha');  // Must return string sanitized from char "
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, 'na/b#e(pr)qq-rr\cc');
+        $this->assertEquals($result, 'na/b#e(pr)qq-rr\cc', 'Test on param3');
 
         $result=GETPOST("param4", 'alpha');  // Must return string sanitized from ../
         print __METHOD__." result=".$result."\n";
@@ -334,6 +335,10 @@ class SecurityTest extends PHPUnit\Framework\TestCase
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($_GET["param5"], $result);
 
+        $result=GETPOST("param6", 'alpha');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('>', $result);
+
         $result=GETPOST("param6", 'nohtml');
         print __METHOD__." result=".$result."\n";
         $this->assertEquals('">', $result);
@@ -355,6 +360,14 @@ class SecurityTest extends PHPUnit\Framework\TestCase
         $result=GETPOST("param10", 'alphanohtml');
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($_POST["param9"], $result, 'We should get param9 after processing param10');
+
+        $result=GETPOST("param11", 'alphanohtml');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals("Name", $result, 'Test an email string with alphanohtml');
+
+        $result=GETPOST("param11", 'alphawithlgt');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(trim($_POST["param11"]), $result, 'Test an email string with alphawithlgt');
 
         return $result;
     }

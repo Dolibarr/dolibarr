@@ -7,13 +7,14 @@ Permission23103 = Delete Scheduled job
 Permission23104 = Execute Scheduled job
 # Admin
 CronSetup=Planlagt opsætning af jobstyring
-URLToLaunchCronJobs=URL to check and launch qualified cron jobs
-OrToLaunchASpecificJob=Or to check and launch a specific job
+URLToLaunchCronJobs=URL til at kontrollere og starte kvalificerede cron-job fra en browser
+OrToLaunchASpecificJob=Eller for at kontrollere og starte et bestemt job fra en browser
 KeyForCronAccess=Security key for URL to launch cron jobs
 FileToLaunchCronJobs=Kommandolinje for at kontrollere og starte kvalificerede cron-job
 CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
 CronExplainHowToRunWin=På Microsoft (tm) Windows-miljø kan du bruge Scheduled Task-værktøjer til at køre kommandolinjen hvert 5. minut
 CronMethodDoesNotExists=Class %s does not contains any method %s
+CronMethodNotAllowed=Metode %s af klasse %s er i sortliste over forbudte metoder
 CronJobDefDesc=Cron-jobprofiler er defineret i modulbeskrivelsesfilen. Når modulet er aktiveret, er de indlæst og tilgængeligt, så du kan administrere jobene fra adminværktøjsmenuen %s.
 CronJobProfiles=Liste over forud definerede cron jobprofiler
 # Menu
@@ -46,6 +47,7 @@ CronNbRun=Antal lanceringer
 CronMaxRun=Maksimalt antal lanceringer
 CronEach=Every
 JobFinished=Job startet og gennemført
+Scheduled=Planlagt
 #Page card
 CronAdd= Add jobs
 CronEvery=Execute job each
@@ -56,7 +58,7 @@ CronNote=Kommentar
 CronFieldMandatory=Fields %s is mandatory
 CronErrEndDateStartDt=End date cannot be before start date
 StatusAtInstall=Status ved modul installation
-CronStatusActiveBtn=Enable
+CronStatusActiveBtn=Tidsplan
 CronStatusInactiveBtn=Deaktivere
 CronTaskInactive=This job is disabled
 CronId=Id
@@ -82,3 +84,8 @@ MakeLocalDatabaseDumpShort=Local database backup
 MakeLocalDatabaseDump=Opret en lokal database dump. Parametre er: komprimering ('gz' eller 'bz' eller 'ingen'), backup type ('mysql', 'pgsql', 'auto'), 1, 'auto' eller filnavn til opbygning, antal backupfiler
 WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.
 DATAPOLICYJob=Datarenser og anonymizer
+JobXMustBeEnabled=Job %s skal være aktiveret
+# Cron Boxes
+LastExecutedScheduledJob=Sidste udførte planlagte job
+NextScheduledJobExecute=Næste planlagte job, der skal udføres
+NumberScheduledJobError=Antal planlagte job med fejl

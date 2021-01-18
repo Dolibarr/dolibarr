@@ -104,7 +104,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		//var_dump($seller->country_id);exit;
 	}
 	if (empty($localtaxes_array) || !is_array($localtaxes_array)) {
-		dol_syslog("Price.lib::calcul_price_total Warning: function is called with parameter localtaxes_array that is missing", LOG_WARNING);
+		dol_syslog("Price.lib::calcul_price_total Warning: function is called with parameter localtaxes_array that is missing or empty", LOG_WARNING);
 	}
 	if (!is_numeric($txtva)) {
 		dol_syslog("Price.lib::calcul_price_total Warning: function was called with a parameter vat rate that is not a real numeric value. There is surely a bug.", LOG_ERR);
@@ -129,7 +129,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	$localtax1_type = 0;
 	$localtax2_type = 0;
 
-	if (is_array($localtaxes_array)) {
+	if (is_array($localtaxes_array) && count($localtaxes_array)) {
 		$localtax1_type = $localtaxes_array[0];
 		$localtax1_rate = $localtaxes_array[1];
 		$localtax2_type = $localtaxes_array[2];

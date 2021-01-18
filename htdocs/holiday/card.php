@@ -1110,8 +1110,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 		print '</from>'."\n";
 	}
 } else {
-	if ($error)
-	{
+	if ($error) {
 		print '<div class="tabBar">';
 		print $error;
 		print '<br><br><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
@@ -1509,6 +1508,51 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 			print $langs->trans('ErrorIDFicheCP');
 			print '<br><br><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
 			print '</div>';
+		}
+
+
+		// Select mail models is same action as presend
+		if (GETPOST('modelselected')) {
+			$action = 'presend';
+		}
+
+		if ($action != 'presend')
+		{
+			print '<div class="fichecenter"><div class="fichehalfleft">';
+			print '<a name="builddoc"></a>'; // ancre
+
+			$includedocgeneration = 0;
+
+			// Documents
+			if ($includedocgeneration) {
+				$objref = dol_sanitizeFileName($object->ref);
+				$relativepath = $objref.'/'.$objref.'.pdf';
+				$filedir = $conf->holiday->dir_output.'/'.$object->element.'/'.$objref;
+				$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
+				$genallowed = ($user->rights->holiday->read && $object->fk_user == $user->id) || !empty($user->rights->holiday->readall); // If you can read, you can build the PDF to read content
+				$delallowed = ($user->rights->holiday->write && $object->fk_user == $user->id) || !empty($user->rights->holiday->writeall_advance); // If you can create/edit, you can remove a file on card
+				print $formfile->showdocuments('holiday:Holiday', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
+			}
+
+			// Show links to link elements
+			//$linktoelem = $form->showLinkToObjectBlock($object, null, array('myobject'));
+			//$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+
+
+			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+			$MAXEVENT = 10;
+
+			/*$morehtmlright = '<a href="'.dol_buildpath('/holiday/myobject_agenda.php', 1).'?id='.$object->id.'">';
+			$morehtmlright .= $langs->trans("SeeAll");
+			$morehtmlright .= '</a>';*/
+
+			// List of actions on element
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+			$formactions = new FormActions($db);
+			$somethingshown = $formactions->showactions($object, $object->element, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlright);
+
+			print '</div></div></div>';
 		}
 	}
 }

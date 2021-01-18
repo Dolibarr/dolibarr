@@ -131,14 +131,8 @@ $arrayfields = array(
 	'status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -208,7 +202,7 @@ $contracttmp = new Contrat($db);
 
 $sql = 'SELECT';
 $sql .= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_update, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public,";
-$sql .= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
+$sql .= ' s.rowid as socid, s.nom as name, s.name_alias, s.email, s.town, s.zip, s.fk_pays as country_id, s.client, s.code_client, s.status as company_status, s.logo as company_logo,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") as lower_planned_end_date,";
@@ -263,7 +257,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " GROUP BY c.rowid, c.ref, c.datec, c.tms, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public,";
-$sql .= ' s.rowid, s.nom, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
+$sql .= ' s.rowid, s.nom, s.name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client, s.status, s.logo,';
 $sql .= " typent.code,";
 $sql .= " state.code_departement, state.nom";
 // Add fields from extrafields
@@ -281,7 +275,6 @@ if ($search_dfyear > 0 && $search_op2df)
 	else $sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") <= '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."' AND MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") >= '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."'";
 }
 $sql .= $db->order($sortfield, $sortorder);
-//print $sql;
 
 $totalnboflines = 0;
 $result = $db->query($sql);
@@ -341,7 +334,7 @@ if ($socid > 0)
 
 $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
-if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
+if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 if ($sall != '')                $param .= '&sall='.urlencode($sall);
 if ($search_contract != '')     $param .= '&search_contract='.urlencode($search_contract);
 if ($search_name != '')         $param .= '&search_name='.urlencode($search_name);
@@ -596,6 +589,10 @@ if (!empty($arrayfields['status']['checked'])) {
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>\n";
 
+$totalarray = array();
+$typenArray = array();
+$cacheCountryIDCode = array();
+
 while ($i < min($num, $limit))
 {
 	$obj = $db->fetch_object($resql);
@@ -608,6 +605,24 @@ while ($i < min($num, $limit))
 	if ($obj->socid > 0) {
 		$result = $socstatic->fetch($obj->socid);
 	}
+	/*$socstatic->id = $obj->socid;
+	$socstatic->name = $obj->name;
+	$socstatic->name_alias = $obj->name_alias;
+	$socstatic->email = $obj->email;
+	$socstatic->status = $obj->company_status;
+	$socstatic->logo = $obj->logo;
+	$socstatic->country_id = $obj->country_id;
+	$socstatic->country_code = '';
+	$socstatic->country = '';*/
+	if ($obj->country_id > 0) {
+		if (!isset($cacheCountryIDCode[$obj->country_id]['code'])) {
+			$tmparray = getCountry($obj->country_id, 'all');
+			$cacheCountryIDCode[$obj->country_id] = array('code'=> empty($tmparray['code']) ? '' : $tmparray['code'], 'label' => empty($tmparray['label']) ? '' : $tmparray['label']);
+		}
+		$socstatic->country_code = $cacheCountryIDCode[$obj->country_id]['code'];
+		$socstatic->country = $cacheCountryIDCode[$obj->country_id]['label'];
+	}
+
 
 	print '<tr class="oddeven">';
 
@@ -643,9 +658,8 @@ while ($i < min($num, $limit))
 	if (!empty($arrayfields['s.nom']['checked']))
 	{
 		print '<td>';
-		//print '<a href="../comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a>';
-		if ($obj->socid > 0)
-		{
+		if ($obj->socid > 0) {
+			// TODO Use a cache for this string
 			print $socstatic->getNomUrl(1, '');
 		}
 		print '</td>';
@@ -680,8 +694,7 @@ while ($i < min($num, $limit))
 	if (!empty($arrayfields['country.code_iso']['checked']))
 	{
 		print '<td class="center">';
-		$tmparray = getCountry($obj->fk_pays, 'all');
-		print $tmparray['label'];
+		print $socstatic->country;
 		print '</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}

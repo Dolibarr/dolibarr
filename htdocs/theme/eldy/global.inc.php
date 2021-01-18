@@ -35,7 +35,7 @@
 	--oddevencolor: #202020;
 	--colorboxstatsborder: #e0e0e0;
 	--dolgraphbg: rgba(255,255,255,0);
-	--fieldrequiredcolor: #804000;
+	--fieldrequiredcolor: #400030;
 	--colortextbacktab: #<?php print $colortextbacktab; ?>;
 	--colorboxiconbg: #eee;
 	--refidnocolor:#444;
@@ -136,7 +136,7 @@ select.vmenusearchselectcombo {
 table.liste th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), table.liste td.wrapcolumntitle.liste_titre:not(.maxwidthsearch) {
     overflow: hidden;
     white-space: nowrap;
-    max-width: 120px;
+    max-width: 100px;
     text-overflow: ellipsis;
 }
 .liste_titre input[name=month_date_when], .liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
@@ -319,10 +319,13 @@ input.buttonpaymentstripe {
 	max-width: 320px;
 }
 
-a.buttonticket {
+a.butStatus {
 	padding-left: 5px;
 	padding-right: 5px;
-    /* height: 40px; */
+    background-color: transparent;
+    color: var(--colortext) !important;
+    border: 2px solid var( --butactionbg);
+    margin: 0 0.45em !important;
 }
 
 /* Used by timesheets */
@@ -394,6 +397,13 @@ input.pageplusone {
 }
 .colorblack {
 	color: #000;
+}
+
+.vmirror {
+    transform: scale(1, -1);
+}
+.hmirror {
+    transform: scale(-1, 1);
 }
 
 select:invalid {
@@ -759,7 +769,8 @@ span.fa.fa-plus-circle.paddingleft {
     padding-bottom: 2px;
 }
 
-.fa-toggle-on, .fa-toggle-off { font-size: 2em; }
+.size15x { font-size: 1.5em !important; }
+.fa-toggle-on, .fa-toggle-off, .size2x { font-size: 2em; }
 .websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
 .asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off,
 .tdwebsitesearchresult .fa-toggle-on, .tdwebsitesearchresult .fa-toggle-off
@@ -1293,11 +1304,11 @@ table[summary="list_of_modules"] .fa-cog {
     .minwidth500imp { min-width: 250px !important; }
 }
 
-select.widthcentpercentminusx, input.widthcentpercentminusx {
+select.widthcentpercentminusx, span.widthcentpercentminusx, input.widthcentpercentminusx {
 	width: calc(100% - 52px) !important;
 	display: inline-block;
 }
-select.widthcentpercentminusxx, input.widthcentpercentminusxx {
+select.widthcentpercentminusxx, span.widthcentpercentminusxx, input.widthcentpercentminusxx {
 	width: calc(100% - 70px) !important;
 	display: inline-block;
 }
@@ -1491,7 +1502,7 @@ select.widthcentpercentminusxx, input.widthcentpercentminusxx {
 }
 .linkobject { cursor: pointer; }
 
-table.tableforfield tr>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
+table.tableforfield tr>td:first-of-type, tr.trforfield>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
 	color: var(--tableforfieldcolor);
 }
 
@@ -3688,8 +3699,8 @@ table.noborder.paymenttable {
 	box-shadow: 0px 0px 0px #DDD !important;
 }
 .shadow {
-	-webkit-box-shadow: 2px 2px 5px #CCC !important;
-	box-shadow: 2px 2px 5px #CCC !important;
+	-webkit-box-shadow: 1px 1px 7px #CCC !important;
+	box-shadow: 1px 1px 7px #CCC !important;
 }
 
 div.tabBar .noborder {
@@ -4360,6 +4371,16 @@ div.ui-tooltip.mytooltip {
 /* ============================================================================== */
 /* Calendar                                                                       */
 /* ============================================================================== */
+
+/*div.divfordateinput img.ui-datepicker-trigger {
+    float: left;
+    display: inline-block;
+    vertical-align: middle;
+    padding-top: 10px;
+}
+.hasDatepicker {
+    padding-bottom: 6px;
+}*/
 
 .ui-datepicker-calendar .ui-state-default, .ui-datepicker-calendar .ui-widget-content .ui-state-default,
 .ui-datepicker-calendar .ui-widget-header .ui-state-default, .ui-datepicker-calendar .ui-button,
@@ -5095,17 +5116,30 @@ td.gminorheading {
 .glistlbl, .glistgrid {
 	width: 582px !important;
 }
-.gtaskname div, .gtaskname {
+/*.gtaskname div, .gtaskname {
     min-width: 250px !important;
     max-width: 250px !important;
     width: 250px !important;
+}*/
+.gtaskname div, .gtaskname {
+    min-width: 250px !important;
+    max-width: unset !important;
+    width: unset !important;
 }
 .gpccomplete div, .gpccomplete {
     min-width: 40px !important;
     max-width: 40px !important;
     width: 40px !important;
 }
-
+td.gtaskheading.gstartdate, td.gtaskheading.genddate {
+    white-space: break-spaces;
+}
+.gtasktableh tr:nth-child(2) td:nth-child(2), .gtasktableh tr:nth-child(2) td:nth-child(3), .gtasktableh tr:nth-child(2) td:nth-child(4), .gtasktableh tr:nth-child(2) td:nth-child(5), .gtasktableh tr:nth-child(2) td:nth-child(6), .gtasktableh tr:nth-child(2) td:nth-child(7) {
+    color: transparent !important;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+}
 
 /* ============================================================================== */
 /*  jFileTree                                                                     */
@@ -6739,6 +6773,24 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 	}
 }
 
+@media only screen and (max-width: 320px)
+{
+	.dropdown dd ul {
+		max-width: 270px;	/* must always be 50 slower than width */
+	}
+}
+@media only screen and (max-width: 300px)
+{
+	.dropdown dd ul {
+		max-width: 250px;
+	}
+}
+@media only screen and (max-width: 280px)
+{
+	.dropdown dd ul {
+		max-width: 230px;
+	}
+}
 
 
 <?php

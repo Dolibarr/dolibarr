@@ -18,7 +18,7 @@ DefaultForService=Predeterminado para el servicio
 DefaultForProduct=Predeterminado para el producto
 CantSuggest=No se puede sugerir
 AccountancySetupDoneFromAccountancyMenu=La mayor parte de la configuración de la contabilidad se realiza desde el menú %s
-ConfigAccountingExpert=Configuración de la contabilidad del módulo (doble entrada)
+ConfigAccountingExpert=Configuración del módulo contable (doble partida)
 Journalization=Procesar diarios
 Journals=Diarios
 JournalFinancial=Diarios financieros
@@ -48,6 +48,7 @@ CountriesExceptMe=Todos los países excepto %s
 AccountantFiles=Exportar documentos de origen
 ExportAccountingSourceDocHelp=Con esta herramienta, puede exportar los eventos de origen (lista y PDF) que se utilizaron para generar su contabilidad. Para exportar sus diarios, use la entrada de menú %s - %s.
 VueByAccountAccounting=Ver por cuenta contable
+VueBySubAccountAccounting=Ver por subcuenta contable
 
 MainAccountForCustomersNotDefined=Cuenta contable para clientes no definida en la configuración
 MainAccountForSuppliersNotDefined=Cuenta contable para proveedores no definida en la configuración
@@ -144,7 +145,7 @@ NotVentilatedinAccount=Cuenta sin contabilización en la contabilidad
 XLineSuccessfullyBinded=%s productos/servicios relacionada correctamente a una cuenta contable
 XLineFailedToBeBinded=%s productos/servicios sin cuenta contable
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Número de elementos a contabilizar que se muestran por página (máximo recomendado: 50)
+ACCOUNTING_LIMIT_LIST_VENTILATION=Número máximo de líneas en la lista y la página de enlace (recomendado: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Ordenar las páginas de contabilización "A contabilizar" por los elementos más recientes
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Ordenar las páginas de contabilización "Contabilizadas" por los elementos más recientes
 
@@ -177,28 +178,29 @@ ACCOUNTING_ACCOUNT_SUSPENSE=Cuenta operaciones pendientes de asignar
 DONATION_ACCOUNTINGACCOUNT=Cuenta contable para registrar donaciones
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Cuenta contable para registrar subscripciones
 
-ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Cuenta contable por defecto para registrar el depósito del cliente
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Cuenta contable por defecto para registrar el anticipo del cliente
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cuenta contable predeterminada para los productos comprados (si no se define en el producto)
-ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Cuenta contable por defecto para los productos comprados en EEC (se usa si no se define en la hoja de productos)
-ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Cuenta contable por defecto para los productos comprados e importados fuera de la EEC (usado si no está definido en la hoja de productos)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Cuenta contable predeterminada para los productos vendidos (si no se define en el producto)
-ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Cuenta contable predeterminada para los productos vendidos en la CEE (si no se define en el producto)
-ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Cuenta contable predeterminada para los productos vendidos fuera de la CEE (si no se define en el producto)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cuenta contable predeterminada para los productos comprados (usada si no se define en el producto)
+ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Cuenta contable por defecto para los productos comprados en CEE (usada si no se define en el producto)
+ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Cuenta contable por defecto para los productos comprados e importados fuera de la CEE (usada si no se define en el producto)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Cuenta contable predeterminada para los productos vendidos (usada si no se define en el producto)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Cuenta contable predeterminada para los productos vendidos en la CEE (usada si no se define en el producto)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Cuenta contable predeterminada para los productos vendidos fuera de la CEE (usada si no se define en el producto)
 
-ACCOUNTING_SERVICE_BUY_ACCOUNT=Cuenta contable predeterminada para los servicios comprados (si no se define en el servicio)
-ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Cuenta contable por defecto para los servicios comprados en EEC (utilizada si no está definida en la hoja de servicios)
-ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Cuenta contable por defecto para los servicios comprados e importados fuera de la CEE (se usa si no se define en la hoja de servicios)
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=Cuenta contable predeterminada para los servicios vendidos (si no se define en el servico)
-ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Cuenta contable predeterminada para los servicios vendidos en la CEE (si no se define en el servico)
-ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Cuenta contable predeterminada para los servicios vendidos fuera de la CEE (si no se define en el producto)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Cuenta contable predeterminada para los servicios comprados (usada si no se define en el servicio)
+ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Cuenta contable por defecto para los servicios comprados en CEE (usada si no se define en el servicio)
+ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Cuenta contable por defecto para los servicios comprados e importados fuera de la CEE (usada si no se define en el servicio)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Cuenta contable predeterminada para los servicios vendidos (usada si no se define en el servicio)
+ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Cuenta contable predeterminada para los servicios vendidos en la CEE (usada si no se define en el servicio)
+ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Cuenta contable predeterminada para los servicios vendidos fuera de la CEE (usada si no se define en el producto)
 
 Doctype=Tipo de documento
 Docdate=Fecha
 Docref=Referencia
 LabelAccount=Descripción
 LabelOperation=Etiqueta operación
-Sens=Sentido
+Sens=Dirección
+AccountingDirectionHelp=Para una cuenta contable de un cliente, use Crédito para registrar un pago que recibió <br> Para una cuenta contable de un proveedor, use Débito para registrar un pago que usted realice
 LetteringCode=Cogido de letras
 Lettering=Letras
 Codejournal=Diario
@@ -206,7 +208,8 @@ JournalLabel=Etiqueta del diario
 NumPiece=Apunte
 TransactionNumShort=Núm. transacción
 AccountingCategory=Grupos personalizados
-GroupByAccountAccounting=Agrupar por cuenta contable
+GroupByAccountAccounting=Agrupar por cuenta del Libro Mayor
+GroupBySubAccountAccounting=Agrupar por cuenta de libro mayor auxiliar
 AccountingAccountGroupsDesc=Puedes definir aquí algunos grupos de cuentas contables. Se usarán para informes de contabilidad personalizados.
 ByAccounts=Por cuentas
 ByPredefinedAccountGroups=Por grupos predefinidos
@@ -248,7 +251,7 @@ PaymentsNotLinkedToProduct=Pagos no vinculados a un producto/servicio
 OpeningBalance=Saldo inicial
 ShowOpeningBalance=Mostrar saldo inicial
 HideOpeningBalance=Ocultar saldo inicial
-ShowSubtotalByGroup=Mostrar subtotal por grupo
+ShowSubtotalByGroup=Mostrar subtotal por nivel
 
 Pcgtype=Grupo de cuenta
 PcgtypeDesc=Los grupos de cuentas se utilizan como criterios predefinidos de "filtro" y "agrupación" para algunos informes contables. Por ejemplo, 'INGRESOS' o 'GASTOS' se utilizan como grupos para las cuentas contables de productos para construir el informe de gastos / ingresos.
@@ -271,11 +274,13 @@ DescVentilExpenseReport=Consulte aquí la lista de líneas de informes de gastos
 DescVentilExpenseReportMore=Si configura la cuentas contables de los tipos de informes de gastos, la aplicación será capaz de hacer el enlace entre sus líneas de informes de gastos y las cuentas contables, simplemente con un clic en el botón <strong>"%s"</strong> , Si no se ha establecido la cuenta contable en el diccionario o si todavía tiene algunas líneas no contabilizadas a alguna cuenta, tendrá que hacer una contabilización manual desde el menú "<strong>%s</strong>".
 DescVentilDoneExpenseReport=Consulte aquí las líneas de informes de gastos y sus cuentas contables
 
+Closure=Cierre anual
 DescClosure=Consulte aquí el número de movimientos por mes que no están validados y los años fiscales ya abiertos
 OverviewOfMovementsNotValidated=Paso 1 / Resumen de movimientos no validados. (Necesario para cerrar un año fiscal)
+AllMovementsWereRecordedAsValidated=Todos los movimientos se registraron como validados
+NotAllMovementsCouldBeRecordedAsValidated=No todos los movimientos pueden registrarse como validados
 ValidateMovements=Validar movimientos
 DescValidateMovements=Se prohíbe cualquier modificación o eliminación de registros. Todas las entradas para un ejercicio deben validarse; de lo contrario, no será posible cerrarlo
-SelectMonthAndValidate=Seleccionar mes y validar movimientos
 
 ValidateHistory=Vincular automáticamente
 AutomaticBindingDone=Vinculación automática finalizada
@@ -293,6 +298,7 @@ Accounted=Contabilizada en el Libro Mayor
 NotYetAccounted=Aún no contabilizada en el Libro Mayor
 ShowTutorial=Ver Tutorial
 NotReconciled=No reconciliado
+WarningRecordWithoutSubledgerAreExcluded=Advertencia, todas las operaciones sin una cuenta de libro mayor auxiliar definida se filtran y excluyen de esta vista
 
 ## Admin
 BindingOptions=Opciones de enlace
@@ -332,15 +338,16 @@ Modelcsv_quadratus=Exportar a Quadratus QuadraCompta
 Modelcsv_ebp=Exportar a EBP
 Modelcsv_cogilog=Eportar a Cogilog
 Modelcsv_agiris=Exportar a Agiris
-Modelcsv_LDCompta=Exportar para LD Compta (v9 y superior) (En pruebas)
-Modelcsv_LDCompta10=Exportar para LD Compta (v10 & superior)
+Modelcsv_LDCompta=Exportar a LD Compta (v9 y superior) (En pruebas)
+Modelcsv_LDCompta10=Exportar a LD Compta (v10 & superior)
 Modelcsv_openconcerto=Exportar a OpenConcerto (En pruebas)
 Modelcsv_configurable=Exportación CSV Configurable
 Modelcsv_FEC=Exportación FEC
+Modelcsv_FEC2=Exportar a FEC (con escritura de generación de fechas / documento invertido)
 Modelcsv_Sage50_Swiss=Exportación a Sage 50 Suiza
-Modelcsv_winfic=Exportar Winfic - eWinfic - WinSis Compta
-Modelcsv_Gestinumv3=Export for Gestinum (v3)
-Modelcsv_Gestinumv5Export for Gestinum (v5)
+Modelcsv_winfic=Exportar a Winfic - eWinfic - WinSis Compta
+Modelcsv_Gestinumv3=Exportar a Gestinum (v3)
+Modelcsv_Gestinumv5Export para Gestinum (v5)
 ChartofaccountsId=Id plan contable
 
 ## Tools - Init accounting account on product / service

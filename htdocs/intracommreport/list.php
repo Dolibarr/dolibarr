@@ -121,8 +121,8 @@ $isInEEC = isInEEC($mysoc);
 
 // Definition of fields for lists
 $arrayfields = array(
-	'i.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-	'i.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
+	'i.ref' => array('label'=>$langs->trans("Ref"), 'checked'=>1),
+	'i.label' => array('label'=>$langs->trans("Label"), 'checked'=>1),
 	'i.fk_product_type'=>array('label'=>$langs->trans("Type"), 'checked'=>0, 'enabled'=>(!empty($conf->produit->enabled) && !empty($conf->service->enabled))),
 );
 /*
@@ -132,7 +132,7 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
 	{
 		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs((int) $extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
 	}
 }
 */

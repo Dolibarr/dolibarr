@@ -81,7 +81,7 @@ class box_factures_fourn extends ModeleBoxes
 		$thirdpartystatic = new Fournisseur($this->db);
 
 		$this->info_box_head = array(
-			'text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE ? "" : "Modified")."SupplierBills", $max)
+			'text' => $langs->trans("BoxTitleLast".(!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) ? "" : "Modified")."SupplierBills", $max)
 		);
 
 		if ($user->rights->fournisseur->facture->lire)
@@ -104,7 +104,7 @@ class box_factures_fourn extends ModeleBoxes
 			$sql .= " AND f.entity = ".$conf->entity;
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 			if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
-			if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql .= " ORDER BY f.datef DESC, f.ref DESC ";
+			if (!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) $sql .= " ORDER BY f.datef DESC, f.ref DESC ";
 			else $sql .= " ORDER BY f.tms DESC, f.ref DESC ";
 			$sql .= $this->db->plimit($max, 0);
 
@@ -133,7 +133,7 @@ class box_factures_fourn extends ModeleBoxes
 
 					$thirdpartystatic->id = $objp->socid;
 					$thirdpartystatic->name = $objp->name;
-					//$thirdpartystatic->name_alias = $objp->name_alias;
+					$thirdpartystatic->name_alias = $objp->name_alias;
 					$thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
 					$thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
 					$thirdpartystatic->fournisseur = $objp->fournisseur;

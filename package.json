@@ -1,7 +1,7 @@
 {
   "devDependencies": {
     "cucumber": "^6.0.5",
-    "nightwatch": "^1.4.3",
+    "nightwatch": "^1.5.1",
     "nightwatch-api": "^3.0.1"
   },
   "scripts": {

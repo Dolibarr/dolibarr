@@ -141,14 +141,8 @@ $arrayfields = array(
 	'a.tms'=>array('label'=>'DateModification', 'checked'=>0)
 );
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -239,6 +233,7 @@ if (empty($reshook))
 	$uploaddir = true;
 	// Only users that can delete any event can remove records.
 	$permissiontodelete = $user->rights->agenda->allactions->delete;
+	$permissiontoadd = $user->rights->agenda->myactions->create;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -302,7 +297,8 @@ if ($user->rights->agenda->allactions->delete)
 {
 	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
+if ($user->rights->agenda->myactions->create) $arrayofmassactions['preaffecttag'] = '<span class="fa fa-tag paddingrightonly"></span>'.$langs->trans("AffectTag");
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete','preaffecttag'))) $arrayofmassactions = array();
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $sql = "SELECT";
@@ -478,11 +474,9 @@ if ($resql)
 	// Calendars from hooks
 	$parameters = array(); $object = null;
 	$reshook = $hookmanager->executeHooks('addCalendarChoice', $parameters, $object, $action);
-	if (empty($reshook))
-	{
+	if (empty($reshook)) {
 		$s .= $hookmanager->resPrint;
-	} elseif ($reshook > 1)
-	{
+	} elseif ($reshook > 1) {
 		$s = $hookmanager->resPrint;
 	}
 
@@ -519,6 +513,15 @@ if ($resql)
 
 	$viewmode .= '<span class="marginrightonly"></span>';
 
+	// Add more views from hooks
+	$parameters = array(); $object = null;
+	$reshook = $hookmanager->executeHooks('addCalendarView', $parameters, $object, $action);
+	if (empty($reshook)) {
+		$viewmode .= $hookmanager->resPrint;
+	} elseif ($reshook > 1) {
+		$viewmode = $hookmanager->resPrint;
+	}
+
 	$tmpforcreatebutton = dol_getdate(dol_now(), true);
 
 	$newparam .= '&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
@@ -538,6 +541,7 @@ if ($resql)
 
 	print $s;
 
+	$objecttmp = new ActionComm($db);
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 	$moreforfilter = '';

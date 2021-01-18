@@ -135,15 +135,39 @@ class FormFile
 
 			$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
 			$maxphp = @ini_get('upload_max_filesize'); // In unknown
-			if (preg_match('/k$/i', $maxphp)) $maxphp = $maxphp * 1;
-			if (preg_match('/m$/i', $maxphp)) $maxphp = $maxphp * 1024;
-			if (preg_match('/g$/i', $maxphp)) $maxphp = $maxphp * 1024 * 1024;
-			if (preg_match('/t$/i', $maxphp)) $maxphp = $maxphp * 1024 * 1024 * 1024;
+			if (preg_match('/k$/i', $maxphp)) {
+			    $maxphp = preg_replace('/k$/i', '', $maxphp);
+			    $maxphp = $maxphp * 1;
+			}
+			if (preg_match('/m$/i', $maxphp)) {
+			    $maxphp = preg_replace('/m$/i', '', $maxphp);
+			    $maxphp = $maxphp * 1024;
+			}
+			if (preg_match('/g$/i', $maxphp)) {
+			    $maxphp = preg_replace('/g$/i', '', $maxphp);
+			    $maxphp = $maxphp * 1024 * 1024;
+			}
+			if (preg_match('/t$/i', $maxphp)) {
+			    $maxphp = preg_replace('/t$/i', '', $maxphp);
+			    $maxphp = $maxphp * 1024 * 1024 * 1024;
+			}
 			$maxphp2 = @ini_get('post_max_size'); // In unknown
-			if (preg_match('/k$/i', $maxphp2)) $maxphp2 = $maxphp2 * 1;
-			if (preg_match('/m$/i', $maxphp2)) $maxphp2 = $maxphp2 * 1024;
-			if (preg_match('/g$/i', $maxphp2)) $maxphp2 = $maxphp2 * 1024 * 1024;
-			if (preg_match('/t$/i', $maxphp2)) $maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
+			if (preg_match('/k$/i', $maxphp2)) {
+			    $maxphp2 = preg_replace('/k$/i', '', $maxphp2);
+			    $maxphp2 = $maxphp2 * 1;
+			}
+			if (preg_match('/m$/i', $maxphp2)) {
+			    $maxphp2 = preg_replace('/m$/i', '', $maxphp2);
+			    $maxphp2 = $maxphp2 * 1024;
+			}
+			if (preg_match('/g$/i', $maxphp2)) {
+			    $maxphp2 = preg_replace('/g$/i', '', $maxphp2);
+			    $maxphp2 = $maxphp2 * 1024 * 1024;
+			}
+			if (preg_match('/t$/i', $maxphp2)) {
+			    $maxphp2 = preg_replace('/t$/i', '', $maxphp2);
+			    $maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
+			}
 			// Now $max and $maxphp and $maxphp2 are in Kb
 			$maxmin = $max;
 			$maxphptoshow = $maxphptoshowparam = '';
@@ -1042,15 +1066,16 @@ class FormFile
 		if ($disablecrop == -1)
 		{
 			$disablecrop = 1;
-			if (in_array($modulepart, array('bank', 'bom', 'expensereport', 'holiday', 'medias', 'member', 'mrp', 'project', 'product', 'produit', 'propal', 'service', 'societe', 'tax', 'tax-vat', 'ticket', 'user'))) $disablecrop = 0;
+			// Values here must be supported by the photo_resize.php page.
+			if (in_array($modulepart, array('bank', 'bom', 'expensereport', 'facture', 'facture_fournisseur', 'holiday', 'medias', 'member', 'mrp', 'project', 'product', 'produit', 'propal', 'service', 'societe', 'tax', 'tax-vat', 'ticket', 'user'))) $disablecrop = 0;
 		}
 
 		// Define relative path used to store the file
 		if (empty($relativepath))
 		{
 			$relativepath = (!empty($object->ref) ?dol_sanitizeFileName($object->ref) : '').'/';
-			if ($object->element == 'invoice_supplier') $relativepath = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$relativepath; // TODO Call using a defined value for $relativepath
-			if ($object->element == 'project_task') $relativepath = 'Call_not_supported_._Call_function_using_a_defined_relative_path_.';
+			if (!empty($object->element) && $object->element == 'invoice_supplier') $relativepath = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$relativepath; // TODO Call using a defined value for $relativepath
+			if (!empty($object->element) && $object->element == 'project_task') $relativepath = 'Call_not_supported_._Call_function_using_a_defined_relative_path_.';
 		}
 		// For backward compatiblity, we detect file stored into an old path
 		if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO) && $filearray[0]['level1name'] == 'photos')
@@ -1254,7 +1279,7 @@ class FormFile
 							} else {
 								print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
 							}
-							print '<img class="photo maxwidth200 shadow" height="'.(($useinecm == 4 || $useinecm == 5 || $useinecm == 6) ? '12' : $maxheightmini).'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity) ? $object->entity : $conf->entity).'&file='.urlencode($relativepath.$smallfile).'" title="">';
+							print '<img class="photo maxwidth200 shadow valignmiddle" height="'.(($useinecm == 4 || $useinecm == 5 || $useinecm == 6) ? '12' : $maxheightmini).'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity) ? $object->entity : $conf->entity).'&file='.urlencode($relativepath.$smallfile).'" title="">';
 							print '</a>';
 						} else print '&nbsp;';
 						print '</td>';
@@ -1779,7 +1804,7 @@ class FormFile
 		print '<!-- listOfLinks -->'."\n";
 
 		// Show list of associated links
-		print load_fiche_titre($langs->trans("LinkedFiles"), '', 'external-link-square-alt', 0, '', 'table-list-of-links');
+		print load_fiche_titre($langs->trans("LinkedFiles"), '', 'link', 0, '', 'table-list-of-links');
 
 		print '<form action="'.$_SERVER['PHP_SELF'].($param ? '?'.$param : '').'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1913,11 +1938,12 @@ class FormFile
 			{
 				$out .= '<a class="pictopreview '.$urladvancedpreview['css'].'" href="'.$urladvancedpreview['url'].'"'.(empty($urladvancedpreview['mime']) ? '' : ' mime="'.$urladvancedpreview['mime'].'"').' '.(empty($urladvancedpreview['target']) ? '' : ' target="'.$urladvancedpreview['target'].'"').'>';
 				//$out.= '<a class="pictopreview">';
-				if (empty($ruleforpicto))
-				{
+				if (empty($ruleforpicto)) {
 					//$out.= img_picto($langs->trans('Preview').' '.$file['name'], 'detail');
 					$out .= '<span class="fa fa-search-plus" style="color: gray"></span>';
-				} else $out .= img_mime($relativepath, $langs->trans('Preview').' '.$file['name']);
+				} else {
+					$out .= img_mime($relativepath, $langs->trans('Preview').' '.$file['name']);
+				}
 				$out .= '</a>';
 			}
 		}

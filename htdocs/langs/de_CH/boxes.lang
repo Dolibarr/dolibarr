@@ -37,6 +37,7 @@ BoxTitleLatestModifiedBoms=Die neuesten %s geänderten Materiallisten (BOMs)
 BoxTitleLatestModifiedMos=Die neuesten %s geänderten Fertigungsaufträge
 BoxGoodCustomers=Guter Kunde
 LastRefreshDate=Datum der letzten Aktualisierung
+NoRecordedBookmarks=Keine Lesezeichen gesetzt. Klicken Sie <a href="%s">hier</a>, um ein Lesezeichen zu setzen.
 NoRecordedCustomers=Keine erfassten Kunden
 NoRecordedContacts=Keine erfassten Kontakte
 NoRecordedInterventions=Keine verzeichneten Einsätze

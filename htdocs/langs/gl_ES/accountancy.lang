@@ -18,14 +18,14 @@ DefaultForService=Predeterminado para o servizo
 DefaultForProduct=Predeterminado para o produto
 CantSuggest=Non pode suxerirse
 AccountancySetupDoneFromAccountancyMenu=A maior parte da configuración da contabilidade realizase dende o menú %s
-ConfigAccountingExpert=Configuration of the module accounting (double entry)
+ConfigAccountingExpert=Configuración do módulo contabilidade (entrada doble)
 Journalization=Procesar diarios
 Journals=Diarios
 JournalFinancial=Diarios financieiros
 BackToChartofaccounts=Voltar ao plan contable
 Chartofaccounts=Plan contable
-ChartOfSubaccounts=Chart of individual accounts
-ChartOfIndividualAccountsOfSubsidiaryLedger=Chart of individual accounts of the subsidiary ledger
+ChartOfSubaccounts=Gráficos de contas individuais
+ChartOfIndividualAccountsOfSubsidiaryLedger=Graficos de contas indivudais dependendets do libro maior
 CurrentDedicatedAccountingAccount=Conta contable adicada
 AssignDedicatedAccountingAccount=Nova conta a asignar
 InvoiceLabel=Etiqueta factura
@@ -35,8 +35,8 @@ OtherInfo=Outra información
 DeleteCptCategory=Eliminar a conta contable do grupo
 ConfirmDeleteCptCategory=¿Está certo de querer eliminar esta conta contable do grupo de contas contables?
 JournalizationInLedgerStatus=Estado de diario
-AlreadyInGeneralLedger=Already transferred in accounting journals and ledger
-NotYetInGeneralLedger=Not yet transferred in accouting journals and ledger
+AlreadyInGeneralLedger=Xa rexistrado en contas contables e no Libro Maior
+NotYetInGeneralLedger=Non foi rexistrado aínda en contas contables nin no Libro Maior
 GroupIsEmptyCheckSetup=O grupo está baleiro, comprobe a configuración da personalización de grupos contables
 DetailByAccount=Amosar detalles por conta
 AccountWithNonZeroValues=Contas con valores non cero
@@ -45,9 +45,10 @@ CountriesInEEC=Países na CEE
 CountriesNotInEEC=Países non CEE
 CountriesInEECExceptMe=Todos os paises incluidos na CEE excepto %s
 CountriesExceptMe=Todos os países excepto %s
-AccountantFiles=Export source documents
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
-VueByAccountAccounting=View by accounting account
+AccountantFiles=Exportar documentos contables
+ExportAccountingSourceDocHelp=Con esta utilidade, pode exportar os eventos de orixe (lista e PDFs) que foron empregados para xerar a súa contabilidade. Para exportar os seus diarios, use a entrada de menú% s -% s.
+VueByAccountAccounting=Ver por conta contable
+VueBySubAccountAccounting=Ver pos subconta contable
 
 MainAccountForCustomersNotDefined=Conta contable principal para clientes non definida na configuración
 MainAccountForSuppliersNotDefined=Conta contable principal para provedores non definida na configuración
@@ -83,7 +84,7 @@ AccountancyAreaDescAnalyze=PASO %s: Engadir ou editar transaccións existentes, 
 
 AccountancyAreaDescClosePeriod=PASO %s: Pechar periodo, polo que non poderá facer modificacións nun futuro.
 
-TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup has not been completed (accounting code journal not defined for all bank accounts)
+TheJournalCodeIsNotDefinedOnSomeBankAccount=Non foi completado un paso obrigatorio na configuración (conta contable non definida en todas as contas bancarias)
 Selectchartofaccounts=Seleccione un plan contable activo
 ChangeAndLoad=Cambiar e cargar
 Addanaccount=Engadir unha conta contable
@@ -93,8 +94,8 @@ SubledgerAccount=Subconta contable
 SubledgerAccountLabel=Etiqueta subconta contable
 ShowAccountingAccount=Amosar contabilidade
 ShowAccountingJournal=Amosar diario contable
-ShowAccountingAccountInLedger=Show accounting account in ledger
-ShowAccountingAccountInJournals=Show accounting account in journals
+ShowAccountingAccountInLedger=Amosar a conta contable no libro maior
+ShowAccountingAccountInJournals=Amosar a conta contable nos diarios
 AccountAccountingSuggest=Conta contable suxerida
 MenuDefaultAccounts=Contas contables por defecto
 MenuBankAccounts=Contas Bancarias
@@ -116,9 +117,9 @@ ExpenseReportsVentilation=Contabilizar informes de gastos
 CreateMvts=Crear nova transacción
 UpdateMvts=Modificación dunha transacción
 ValidTransaction=Transacción validada
-WriteBookKeeping=Register transactions in accounting
+WriteBookKeeping=Rexistrar movementos en contabilidade
 Bookkeeping=Libro Maior
-BookkeepingSubAccount=Subledger
+BookkeepingSubAccount=Librp maior auxiliar
 AccountBalance=Saldo da conta
 ObjectsRef=Referencia de obxecto orixe
 CAHTF=Total compras a provedor antes de impostos
@@ -128,7 +129,7 @@ InvoiceLinesDone=Liñas de facturas contabilizadas
 ExpenseReportLines=Liñas de informes de gastos a contabilizar
 ExpenseReportLinesDone=Liñas de informes de gastos contabilizadas
 IntoAccount=Contabilizar liña coa conta contable
-TotalForAccount=Total para a conta contable
+TotalForAccount=Total for accounting account
 
 
 Ventilate=Contabilizar
@@ -144,20 +145,20 @@ NotVentilatedinAccount=Conta sen contabilización na contabilidad
 XLineSuccessfullyBinded=%s produtos/servizos relacionados correctamente nunha conta contable
 XLineFailedToBeBinded=%s produtos/servizos sen conta contable
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Número de elementos a contabilizar que amósanse por páxina (máximo recomendado: 50)
+ACCOUNTING_LIMIT_LIST_VENTILATION=Número máximo de liñas na listaxe e na páxina de ligazón (recomendado: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Ordear as páxinas de contabilización "A contabilizar" polos elementos mais recentes
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Ordear as páxinas de contabilización "Contabilizadas" polos elementos mais recentes
 
-ACCOUNTING_LENGTH_DESCRIPTION=Truncate product & services description in listings after x chars (Best = 50)
-ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Truncate product & services account description form in listings after x chars (Best = 50)
-ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounting accounts (If you set value to 6 here, the account '706' will appear like '706000' on screen)
-ACCOUNTING_LENGTH_AACCOUNT=Length of the third-party accounting accounts (If you set value to 6 here, the account '401' will appear like '401000' on screen)
-ACCOUNTING_MANAGE_ZERO=Allow to manage different number of zeros at the end of an accounting account. Needed by some countries (like Switzerland). If set to off (default), you can set the following two parameters to ask the application to add virtual zeros.
+ACCOUNTING_LENGTH_DESCRIPTION=Acortar a descrición de produtoe e servizos nas listaxes despois de x caracteres (Mellor = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Acortar no formulario de descrición da conta de produtos e servizos nas listaxes despois de x caracteres (Mellor = 50)
+ACCOUNTING_LENGTH_GACCOUNT=Lonxitude das contas contables en xeral (Se define o valor 6 aquí, a conta "706" aparecerá como "706000" na pantalla)
+ACCOUNTING_LENGTH_AACCOUNT=Lonxitude das contas contables de terceiros (Se define o valor 6 aquí, a conta "401" aparecerá como "401000" na pantalla)
+ACCOUNTING_MANAGE_ZERO=Permitir xestionar un número diferente de ceros ao final dunha conta contable. Preciso por algúns países (como Suíza). Se está desactivado (predeterminado), pode configurar os seguintes dous parámetros  para solicitar á aplicación que engada ceros virtuais.
 BANK_DISABLE_DIRECT_INPUT=Desactivar transaccións directas en conta bancaria
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Habilitar exportación de borradores al diario
-ACCOUNTANCY_COMBO_FOR_AUX=Habilita a listaxe combinada para a conta subsidiaria (pode ser lento se ten moitos terceiros)
-ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, select period show by default
+ACCOUNTANCY_COMBO_FOR_AUX=Habilita a listaxe combinada para a conta contable subsidiaria (pode ser lento se ten moitos terceiros)
+ACCOUNTING_DATE_START_BINDING=Define unha data para comezar a ligar e transferir na contabilidade. Por debaixo desta data, as transaccións non se transferirán á contabilidade.
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Na transferencia de contabilidade, selecciona amosar o período por defecto
 
 ACCOUNTING_SELL_JOURNAL=Diario de vendas
 ACCOUNTING_PURCHASE_JOURNAL=Diario de compras
@@ -177,18 +178,18 @@ ACCOUNTING_ACCOUNT_SUSPENSE=Conta contable de operacións pendentes de asignar
 DONATION_ACCOUNTINGACCOUNT=Conta contable de rexistro de doacións/subvencións
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Conta contable de rexistro subscricións
 
-ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Accounting account by default to register customer deposit
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Conta contable por defecto para rexistrar os ingresos do cliente
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Conta contable predeterminada para produtos comprados (usada se non están definidos na folla de produtos)
-ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Accounting account by default for the bought products in EEC (used if not defined in the product sheet)
-ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Accounting account by default for the bought products and imported out of EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Conta contable predeterminada para os produtos comprados (usada se non están definidos na folla de produtos)
+ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Conta contable predeterminada para os produtos comprados na CEE (usados se non están definidos na folla de produto)
+ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Conta contable predeterminada para os produtos comprados e importados fóra da CEE (usada se non está definido na folla de produto)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Conta contable predeterminada para os produtos vendidos (usada se non están definidos na folla de produtos)
-ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Accounting account by default for the products sold in EEC (used if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Accounting account by default for the products sold and exported out of EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Conta contable predeterminada para os produtos vendidos na CEE (usados se non están definidos na folla de produto)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Conta contable predeterminada para os produtos vendidos e exportados fóra da CEE (usados se non están definidos na folla de produto)
 
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Conta contable predeterminada para os servizos comprados (usada se non están definidos na folla de servizos)
-ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Accounting account by default for the bought services in EEC (used if not defined in the service sheet)
-ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Accounting account by default for the bought services and imported out of EEC (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Conta contable predeterminada para os servizos comprados na CEE (usada se non está definido na folla de servizos)
+ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Conta contable predeterminada para os servizos comprados e importados fóra da CEE (úsase se non está definido na folla de servizos)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Conta contable predeterminada para os servizos vendidos (usada se non están definidos na folla de servizos)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Conta contable predeterminada para os servizos vendidos en EU (usada se non están definidos na folla de servizos)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=AConta contable predeterminada para os servizos vendidos e exportados fora da EU  (usada se non están definidos na folla de servizos)
@@ -199,6 +200,7 @@ Docref=Referencia
 LabelAccount=Etiqueta conta
 LabelOperation=Etiqueta operación
 Sens=Sentido
+AccountingDirectionHelp=Para unha conta contable dun cliente, use o crédito para rexistrar o pago recibido. <br>. Para unha conta contable dun provedor, use Débito para rexistrar o pago realizado
 LetteringCode=Codigo de letras
 Lettering=Letras
 Codejournal=Diario
@@ -207,22 +209,23 @@ NumPiece=Apunte
 TransactionNumShort=Núm. transacción
 AccountingCategory=Grupos persoalizados
 GroupByAccountAccounting=Agrupar por conta contable
+GroupBySubAccountAccounting=Agrupar por subconta contable
 AccountingAccountGroupsDesc=Pode definir aquí algúns grupos de contas contables. Serán usadas para informes de contabilidade personalizados.
 ByAccounts=Por contas
 ByPredefinedAccountGroups=Por grupos predefinidos
 ByPersonalizedAccountGroups=Por grupos persoalizados
 ByYear=Por ano
 NotMatch=Non establecido
-DeleteMvt=Delete some operation lines from accounting
+DeleteMvt=Eliminar liñas do Libro Maior
 DelMonth=Mes a eliminar
 DelYear=Ano a eliminar
 DelJournal=Diario a eliminar
-ConfirmDeleteMvt=This will delete all operation lines of the accounting for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
-ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all operation lines related to the same transaction will be deleted)
+ConfirmDeleteMvt=Isto eliminará todas as liñas da contabilidade do ano/mes e/ou dun diario específico. (Precísase alo menos un criterio). Terá que reutilizar a función '% s' para que o rexistro eliminado volte ao libro maior.
+ConfirmDeleteMvtPartial=Isto eliminará a transacción d da contabilidade (eliminaranse todas as liñas relacionadas coa mesma transacción)
 FinanceJournal=Diario financiero
 ExpenseReportsJournal=Diario informe de gastos
 DescFinanceJournal=O diario financiero inclúe todos os tipos de pagos por conta bancaria
-DescJournalOnlyBindedVisible=This is a view of record that are bound to an accounting account and can be recorded into the Journals and Ledger.
+DescJournalOnlyBindedVisible=Ista é una vista do rexistro ligada a unha conta contable e que pode ser rexistrada nos diarios e Libro Maior.
 VATAccountNotDefined=Conta contable para IVE non definida
 ThirdpartyAccountNotDefined=Conta contable para terceiro non definida
 ProductAccountNotDefined=Conta contable para produto non definida
@@ -241,19 +244,19 @@ ListAccounts=Listaxe de contas contables
 UnknownAccountForThirdparty=Conta contable de terceiro descoñecida, usaremos %s
 UnknownAccountForThirdpartyBlocking=Conta contable de terceiro descoñecida. Erro de bloqueo.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Conta contable de terceiro non definida ou terceiro descoñecido. Usaremos a %s
-ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Third-party unknown and subledger not defined on the payment. We will keep the subledger account value empty.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Terceiro descoñecido e conta vinculada non definidos no pago. Manteremos o valor da conta ligada baleiro.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Conta do terceiro descoñecida ou terceiro descoñecido. Erro de bloqueo
-UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Conta do terceiros descoñecida e conta de espera non definida. Erro de bloqueo
+UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Conta de terceiros descoñecida e conta de espera non definida. Erro de bloqueo
 PaymentsNotLinkedToProduct=Pagos non ligados a un produto/servizo
 OpeningBalance=Saldo de apertura
 ShowOpeningBalance=Amosar saldo de apertura
 HideOpeningBalance=Ocultar saldo de apertura
-ShowSubtotalByGroup=Amosar subtotal por grupo
+ShowSubtotalByGroup=Amosar subtotal por nivel
 
 Pcgtype=Grupo de conta
 PcgtypeDesc=Grupo e subgrupo de conta utilízanse como criterios predefinidos de "filtro" e "agrupación" para algúns informes de contabilidade. Por exemplo, "INGRESOS" ou "GASTOS" usanse como grupos para contas contables de produtos para construir o informe de gastos/ingresos.
 
-Reconcilable=Reconcilable
+Reconcilable=Reconciliable
 
 TotalVente=Total facturación antes de impostos
 TotalMarge=Total marxe vendas
@@ -271,11 +274,13 @@ DescVentilExpenseReport=Consulte aquí a listaxe de liñas de informes de gastos
 DescVentilExpenseReportMore=Se configura as contas contables dos tipos de informes de gastos, a aplicación será capaz de facer a ligazón entre as súas liñas de informes de gastos e as contas contables, simplemente cun clic no botón <strong>"%s"</strong> , Se non estableceu a conta contable no diccionario ou se aínda ten algunhas liñas non contabilizadas a alguna conta, terá que facer unha contabilización manual dende o menú "<strong>%s</strong>".
 DescVentilDoneExpenseReport=Consulte aquí as liñas de informes de gastos e as súas contas contables
 
+Closure=Peche anual
 DescClosure=Consult here the number of movements by month who are not validated & fiscal years already open
 OverviewOfMovementsNotValidated=Step 1/ Overview of movements not validated. (Necessary to close a fiscal year)
+AllMovementsWereRecordedAsValidated=Todos os movementos foron rexistrados e validados
+NotAllMovementsCouldBeRecordedAsValidated=Non todos os movementos puideron ser rexistrados e validados
 ValidateMovements=Validar os movementos
-DescValidateMovements=Any modification or deletion of writing, lettering and deletes will be prohibited. All entries for an exercise must be validated otherwise closing will not be possible
-SelectMonthAndValidate=Selecciona mes e valida movementos
+DescValidateMovements=Prohíbese calquera modificación ou eliminación de rexistros. Todas as entradas para un exercicio deben validarse doutro xeito ou non será posible pechalo
 
 ValidateHistory=Contabilizar automáticamente
 AutomaticBindingDone=Ligazón automática finalizada
@@ -293,9 +298,10 @@ Accounted=Contabilizada no Libro Maior
 NotYetAccounted=Aínda non contabilizada no Libro Maior
 ShowTutorial=Amosar Tutorial
 NotReconciled=Non reconciliado
+WarningRecordWithoutSubledgerAreExcluded=Aviso: todas as operacións sen subcontas contables defininidas están filtradas e excluídas desta vista
 
 ## Admin
-BindingOptions=Binding options
+BindingOptions=Opcións de ligazón
 ApplyMassCategories=Aplicar categorías en masa
 AddAccountFromBookKeepingWithNoCategories=Conta dispoñible sen grupo persoalizado
 CategoryDeleted=A categoría para a conta contable foi eliminada
@@ -315,9 +321,9 @@ ErrorAccountingJournalIsAlreadyUse=Este diario xa está a ser utilizado
 AccountingAccountForSalesTaxAreDefinedInto=Nota: A conta contable do IVE nas vendas defínese no menú <b> %s</b> - <b> %s</b>
 NumberOfAccountancyEntries=Número de entradas
 NumberOfAccountancyMovements=Número de movementos
-ACCOUNTING_DISABLE_BINDING_ON_SALES=Disable binding & transfer in accountancy on sales (customer invoices will not be taken into account in accounting)
-ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountancy on purchases (vendor invoices will not be taken into account in accounting)
-ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
+ACCOUNTING_DISABLE_BINDING_ON_SALES=Desactivar a ligazón e transferencia na contabilidade das vendas (as facturas do cliente non se terán en conta na contabilidade)
+ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Desactivar a ligazón e transferencia na contabilidade das compras (as facturas do provedor non se terán en conta na contabilidade)
+ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Desactivar a ligazón e transferencia na contabilidade dos informes de gastos (os informes de gastos non se terán en conta na contabilidade)
 
 ## Export
 ExportDraftJournal=Exportar libro borrador
@@ -335,12 +341,13 @@ Modelcsv_agiris=Exportar a Agiris
 Modelcsv_LDCompta=Exportar a LD Compta (v9 & maior) (En Probas)
 Modelcsv_LDCompta10=Exportar a LD Compta (v10 & maior)
 Modelcsv_openconcerto=Exportar a OpenConcerto (En probas)
-Modelcsv_configurable=Exportar a CSV Configurable
-Modelcsv_FEC=Exportar FEC (Art. L47 A)
-Modelcsv_Sage50_Swiss=Exportar a Sage 50 Suiza
+Modelcsv_configurable=Exportación CSV Configurable
+Modelcsv_FEC=Exportación FEC (Art. L47 A)
+Modelcsv_FEC2=Exportar FEC (con escritura de xeración de datas / documento inverso)
+Modelcsv_Sage50_Swiss=Exportación a Sage 50 Suiza
 Modelcsv_winfic=Exportar a Winfic - eWinfic - WinSis Conta
-Modelcsv_Gestinumv3=Export for Gestinum (v3)
-Modelcsv_Gestinumv5Export for Gestinum (v5)
+Modelcsv_Gestinumv3=Exportar a Gestinum (v3)
+Modelcsv_Gestinumv5Export para Gestinum (v5)
 ChartofaccountsId=Id do plan contable
 
 ## Tools - Init accounting account on product / service
@@ -353,16 +360,16 @@ OptionModeProductSell=Modo vendas
 OptionModeProductSellIntra=Modo Vendas exportación CEE
 OptionModeProductSellExport=Modo vendas exportación outros paises
 OptionModeProductBuy=Modo compras
-OptionModeProductBuyIntra=Mode purchases imported in EEC
-OptionModeProductBuyExport=Mode purchased imported from other countries
+OptionModeProductBuyIntra=Modo compras importadas importadas de EEC
+OptionModeProductBuyExport=Modo compras importadas doutros paises
 OptionModeProductSellDesc=Amosar todos os produtos con conta contable de vendas
 OptionModeProductSellIntraDesc=Amosar todos os produtos con conta contable para vendas na CEE.
 OptionModeProductSellExportDesc=Amosar todos os produtos con conta contable para outras vendas ao exterior.
 OptionModeProductBuyDesc=Amosar todos os produtos con conta contable de compras
-OptionModeProductBuyIntraDesc=Show all products with accounting account for purchases in EEC.
-OptionModeProductBuyExportDesc=Show all products with accounting account for other foreign purchases.
+OptionModeProductBuyIntraDesc=Amosar todos os produtos con conta contable para compras en CEE
+OptionModeProductBuyExportDesc=Amosar todos os produtos con conta contable para outras compras no extranxeiro.
 CleanFixHistory=Eliminar código contable das liñas que no existen no plan contable
-CleanHistory=Resetear todos os vínculos do ano seleccionado
+CleanHistory=Resetear todas as ligazóns do ano seleccionado
 PredefinedGroups=Grupos persoalizados
 WithoutValidAccount=Sen conta adicada válida
 WithValidAccount=Con conta adicada válida
@@ -371,8 +378,8 @@ AccountRemovedFromGroup=Conta eliminada do grupo
 SaleLocal=Venda local
 SaleExport=Venda de exportación
 SaleEEC=Venda na CEE
-SaleEECWithVAT=Sale in EEC with a VAT not null, so we suppose this is NOT an intracommunautary sale and the suggested account is the standard product account.
-SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fallback on the product account for standard sales. You can fix the VAT ID of thirdparty or the product account if needed.
+SaleEECWithVAT=Vendas na CEE con IVE non nulo, polo que supoñemos que isto non é unha venda intracomunitaria e a conta suxerida é a conta estandar de produto.
+SaleEECWithoutVATNumber=Venda na CEE sen IVE pero non se define o número de identificación do IVE de terceiros. Respondemos á conta do produto para as vendas estándar. Pode corrixir o ID de IVE de terceiros ou a conta do produto se é preciso.
 
 ## Dictionary
 Range=Rango de conta contable
@@ -380,7 +387,7 @@ Calculated=Calculado
 Formula=Fórmula
 
 ## Error
-SomeMandatoryStepsOfSetupWereNotDone=Algúns pasos precisoss da configuración non foron realizados, prégase completalos.
+SomeMandatoryStepsOfSetupWereNotDone=Algúns pasos precisos da configuración non foron realizados, prégase completalos.
 ErrorNoAccountingCategoryForThisCountry=Non hai grupos contables dispoñibles para %s (Vexa Inicio - Configuración - Diccionarios)
 ErrorInvoiceContainsLinesNotYetBounded=Tenta facer un diario de algunhas liñas da factura <strong>%s</strong>, pero algunhas outras liñas aínda non están ligadas a contas contables. Rexeitase a contabilización de todas as liñas de factura desta factura.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Algunhas liñas da factura non están ligadas a contas contables.

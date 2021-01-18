@@ -91,7 +91,7 @@ print '<table class="border centpercent">';
 print '<tr class="border"><td style="padding: 4px">';
 
 if (!empty($conf->syslog->enabled)) {
-	print '<input type="radio" name="choice" value="logfile"';
+	print '<input type="radio" name="choice" id="choicelogfile" value="logfile"';
 	print ($choice && $choice == 'logfile') ? ' checked' : '';
 	$filelogparam = $filelog;
 	if ($user->admin && preg_match('/^dolibarr.*\.log$/', basename($filelog))) {
@@ -101,17 +101,17 @@ if (!empty($conf->syslog->enabled)) {
 	}
 	$desc = $langs->trans("PurgeDeleteLogFile", '{filelogparam}');
 	$desc = str_replace('{filelogparam}', $filelogparam, $desc);
-	print '> '.$desc;
+	print '> <label for="choicelogfile">'.$desc.'</label>';
 	print '<br><br>';
 }
 
-print '<input type="radio" name="choice" value="tempfiles"';
+print '<input type="radio" name="choice" id="choicetempfiles" value="tempfiles"';
 print (!$choice || $choice == 'tempfiles' || $choice == 'allfiles') ? ' checked' : '';
-print '> '.$langs->trans("PurgeDeleteTemporaryFiles").'<br><br>';
+print '> <label for="choicetempfiles">'.$langs->trans("PurgeDeleteTemporaryFiles").'</label><br><br>';
 
-print '<input type="radio" name="choice" value="confirm_allfiles"';
+print '<input type="radio" name="choice" id="choiceallfiles" value="confirm_allfiles"';
 print ($choice && $choice == 'confirm_allfiles') ? ' checked' : '';
-print '> '.$langs->trans("PurgeDeleteAllFilesInDocumentsDir", $dolibarr_main_data_root).'<br>';
+print '> <label for="choiceallfiles">'.$langs->trans("PurgeDeleteAllFilesInDocumentsDir", $dolibarr_main_data_root).'</label><br>';
 
 print '</td></tr></table>';
 

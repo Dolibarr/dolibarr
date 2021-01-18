@@ -459,9 +459,13 @@ input.buttonpaymentstripe {
 .logopublicpayment #dolpaymentlogo {
 	max-height: 100px;
 }
-a.buttonticket {
+a.butStatus {
 	padding-left: 5px;
 	padding-right: 5px;
+	background-color: transparent;
+    color: var(--colortext) !important;
+    border: 2px solid var( --butactionbg);
+    margin: 0 0.45em !important;
 }
 
 /* Used by timesheets */
@@ -528,6 +532,13 @@ input.pageplusone {
 	color: #000;
 }
 
+.vmirror {
+    transform: scale(1, -1);
+}
+.hmirror {
+    transform: scale(-1, 1);
+}
+
 select:invalid {
 	color: gray;
 }
@@ -549,8 +560,8 @@ input.removedfile {
 }
 
 input[type=file ]    { background-color: transparent; border-top: none; border-left: none; border-right: none; box-shadow: none; }
-input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
-input[type=radio]    { background-color: transparent; border: none; box-shadow: none; }
+input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; vertical-align: middle; }
+input[type=radio]    { background-color: transparent; border: none; box-shadow: none; vertical-align: middle; }
 input[type=image]    { background-color: transparent; border: none; box-shadow: none; }
 input:-webkit-autofill {
 	background-color: #FBFFEA !important;
@@ -829,7 +840,8 @@ body[class*="colorblind-"] .text-success{
     color: rgb(<?php echo $colortexttitle; ?>) !important;
 }
 
-.fa-toggle-on, .fa-toggle-off { font-size: 2em; }
+.size15x { font-size: 1.5em !important; }
+.fa-toggle-on, .fa-toggle-off, .size2x { font-size: 2em; }
 .websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
 .asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off {
 	font-size: 1.5em; vertical-align: text-bottom;
@@ -1283,7 +1295,7 @@ table[summary="list_of_modules"] .fa-cog {
     .minwidth500imp { min-width: 250px !important; }
 }
 
-/* Set a width. Note: add also a max-width that will be used in priority */ 
+/* Set a width. Note: add also a max-width, for example maxwidth500, that will be used in priority */
 .widthcentpercentminusx {
 	width: calc(100% - 50px) !important;
 	display: inline-block;
@@ -1323,7 +1335,7 @@ table[summary="list_of_modules"] .fa-cog {
     	padding-left: 0;
     }
     .login_table input#username, .login_table input#password, .login_table input#securitycode {
-		margin-left: 5px !important;    
+		margin-left: 5px !important;
     }
 	div#login_left, div#login_right {
 	    min-width: 150px !important;
@@ -1446,7 +1458,7 @@ table[summary="list_of_modules"] .fa-cog {
 }
 .linkobject { cursor: pointer; }
 
-table.tableforfield tr>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
+table.tableforfield tr>td:first-of-type, tr.trforfield>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
 	color: #666;
 }
 
@@ -1899,6 +1911,11 @@ img.photoref, div.photoref {
 	width: 80px;
     object-fit: contain;
 }
+
+div.photoref .fa, div.photoref .fas, div.photoref .far {
+    font-size: 2.5em;
+}
+
 img.fitcontain {
     object-fit: contain;
 }
@@ -2366,7 +2383,7 @@ form#login {
     border-radius: 2px;
 }
 .login_table .tdinputlogin {
-	border-bottom: 1px solid #ccc; 
+	border-bottom: 1px solid #ccc;
 }
 .login_table .tdinputlogin .fa {
 	padding-left: 10px;
@@ -4071,7 +4088,6 @@ div.titre {
     padding-bottom: 5px;
     text-transform: uppercase;
 	/* text-shadow: 1px 1px 2px #FFFFFF; */
-	<?php print (empty($conf->dol_optimize_smallscreen) ? '' : 'margin-top: 4px;'); ?>
 }
 div.titre {
 	color: var(--colortexttitlenotab);
@@ -4997,7 +5013,15 @@ td.gminorheading {
     max-width: 40px !important;
     width: 40px !important;
 }
-
+td.gtaskheading.gstartdate, td.gtaskheading.genddate {
+    white-space: break-spaces;
+}
+.gtasktableh tr:nth-child(2) td:nth-child(2), .gtasktableh tr:nth-child(2) td:nth-child(3), .gtasktableh tr:nth-child(2) td:nth-child(4), .gtasktableh tr:nth-child(2) td:nth-child(5), .gtasktableh tr:nth-child(2) td:nth-child(6), .gtasktableh tr:nth-child(2) td:nth-child(7) {
+    color: transparent !important;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+}
 
 
 /* ============================================================================== */
@@ -6482,12 +6506,10 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 		padding-right: 5px;
 	}
     img.photoref, div.photoref {
-    	border: none;
+    	border: 1px solid rgba(0, 0, 0, 0.2);
     	-webkit-box-shadow: none;
         box-shadow: none;
         padding: 4px;
-    	height: 20px;
-    	width: 20px;
         object-fit: contain;
     }
 

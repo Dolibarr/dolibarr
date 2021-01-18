@@ -29,7 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "admin", "products", "sms", "other", "errors"));
 
-$cancel = GETPOST('cancel', 'alpha'); // We click on a Cancel button
+$action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'aZ09');
 
 if (!$user->admin) {
 	accessforbidden();
@@ -42,8 +43,6 @@ $substitutionarrayfortest = array(
 	'__LASTNAME__' => 'TESTLastname',
 	'__FIRSTNAME__' => 'TESTFirstname'
 );
-
-$action = GETPOST('action', 'aZ09');
 
 
 /*
@@ -62,9 +61,7 @@ if ($action == 'update' && !$cancel) {
 }
 
 
-/*
- * Send sms
- */
+// Send sms
 if ($action == 'send' && !$_POST['cancel']) {
 	$error = 0;
 
@@ -135,6 +132,8 @@ if ($action == 'send' && !$_POST['cancel']) {
  * View
  */
 
+$form = new Form($db);
+
 $linuxlike = 1;
 if (preg_match('/^win/i', PHP_OS)) {
 	$linuxlike = 0;
@@ -162,8 +161,6 @@ if (!count($listofmethods)) {
 }
 
 if ($action == 'edit') {
-	$form = new Form($db);
-
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
@@ -274,30 +271,6 @@ if ($action == 'edit') {
 	}
 	print '</div>';
 
-
-	// Run the test to connect
-	/*
-	if ($_GET["action"] == 'testconnect')
-	{
-		print '<br>';
-		print load_fiche_titre($langs->trans("DoTestServerAvailability"));
-
-		// If we use SSL/TLS
-		if (! empty($conf->global->MAIN_MAIL_EMAIL_TLS) && function_exists('openssl_open')) $server='ssl://'.$server;
-
-		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mail = new CSMSFile('','','','');
-		$result=$mail->check_server_port($server,$port);
-		if ($result) print '<div class="ok">'.$langs->trans("ServerAvailableOnIPOrPort",$server,$port).'</div>';
-		else
-		{
-			print '<div class="error">'.$langs->trans("ServerNotAvailableOnIPOrPort",$server,$port);
-			if ($mail->error) print ' - '.$mail->error;
-			print '</div>';
-		}
-		print '<br>';
-	}*/
-
 	// Affichage formulaire de TEST simple
 	if ($action == 'test') {
 		print '<br>';
@@ -308,12 +281,12 @@ if ($action == 'edit') {
 		$formsms = new FormSms($db);
 		$formsms->fromtype = 'user';
 		$formsms->fromid = $user->id;
-		$formsms->fromsms = (GETPOSTISSET('fromsms') ? $_POST['fromsms'] : ($conf->global->MAIN_MAIL_SMS_FROM ? $conf->global->MAIN_MAIL_SMS_FROM : $user->user_mobile));
+		$formsms->fromsms = (GETPOSTISSET('fromsms') ? GETPOST('fromsms') : ($conf->global->MAIN_MAIL_SMS_FROM ? $conf->global->MAIN_MAIL_SMS_FROM : $user->user_mobile));
 		$formsms->withfromreadonly = 0;
 		$formsms->withsubstit = 0;
 		$formsms->withfrom = 1;
-		$formsms->withto = (GETPOSTISSET('sendto') ? $_POST['sendto'] : ($user->user_mobile ? $user->user_mobile : 1));
-		$formsms->withbody = (GETPOSTISSET('message') ? (empty($_POST['message']) ? 1 : $_POST['message']) : $langs->trans("ThisIsATestMessage"));
+		$formsms->withto = (GETPOSTISSET('sendto') ? GETPOST('sendto') : ($user->user_mobile ? $user->user_mobile : 1));
+		$formsms->withbody = (GETPOSTISSET('message') ? (!GETPOST('message') ? 1 : GETPOST('message')) : $langs->trans("ThisIsATestMessage"));
 		$formsms->withbodyreadonly = 0;
 		$formsms->withcancel = 1;
 		// Tableau des substitutions

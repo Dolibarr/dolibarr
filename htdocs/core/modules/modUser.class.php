@@ -78,7 +78,8 @@ class modUser extends DolibarrModules
 		// Boxes
 		$this->boxes = array(
 			0=>array('file'=>'box_lastlogin.php', 'enabledbydefaulton'=>'Home'),
-			1=>array('file'=>'box_birthdays.php', 'enabledbydefaulton'=>'Home')
+			1=>array('file'=>'box_birthdays.php', 'enabledbydefaulton'=>'Home'),
+			2=>array('file'=>'box_dolibarr_state_board.php', 'enabledbydefaulton'=>'Home')
 		);
 
 		// Permissions

@@ -2526,13 +2526,15 @@ function getTaskProgressBadge($task, $label = '', $tooltip = '')
 
 			if (doubleval($progressCalculated) > doubleval($task->progress * $warningRatio)) {
 				$badgeClass .= 'badge-danger';
-				if (empty($tooltip)) $tooltip = $task->progress.'% < '.$langs->trans("Expected").' '.$progressCalculated.'%';
+				if (empty($tooltip)) {
+					$tooltip = $task->progress.'% < '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';
+				}
 			} elseif (doubleval($progressCalculated) > doubleval($task->progress)) { // warning if close at 10%
 				$badgeClass .= 'badge-warning';
-				if (empty($tooltip)) $tooltip = $task->progress.'% < '.$langs->trans("Expected").' '.$progressCalculated.'%';
+				if (empty($tooltip)) $tooltip = $task->progress.'% < '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';
 			} else {
 				$badgeClass .= 'badge-success';
-				if (empty($tooltip)) $tooltip = $task->progress.'% >= '.$langs->trans("Expected").' '.$progressCalculated.'%';
+				if (empty($tooltip)) $tooltip = $task->progress.'% >= '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';
 			}
 		}
 	}

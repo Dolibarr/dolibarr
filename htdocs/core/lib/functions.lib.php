@@ -672,17 +672,26 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 				if (preg_match('/[^a-z0-9_\-\.,]+/i', $out)) $out = '';
 			}
 			break;
-		case 'nohtml':
+		case 'nohtml':		// No html
 			$out = dol_string_nohtmltag($out, 0);
 			break;
-		case 'alpha':		// No html and no " and no ../
+		case 'alpha':		// No html and no ../ and "
 		case 'alphanohtml':	// Recommended for most scalar parameters and search parameters
 			if (!is_array($out)) {
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
-				$out = str_replace(array('&quot;', '"', '../'), '', trim($out));
+				$out = str_replace(array('&quot;', '"'), '', trim($out));
+				$out = str_replace(array('../'), '', $out);
 				// keep lines feed
 				$out = dol_string_nohtmltag($out, 0);
+			}
+			break;
+		case 'alphawithlgt':		// No " and no ../ but we keep < > tags. Can be used for email string like "Name <email>"
+			if (!is_array($out)) {
+				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
+				// '../' is dangerous because it allows dir transversals
+				$out = str_replace(array('&quot;', '"'), '', trim($out));
+				$out = str_replace(array('../'), '', $out);
 			}
 			break;
 		case 'restricthtml':		// Recommended for most html textarea
@@ -1620,6 +1629,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		$showimage = $object->is_photo_available($conf->ticket->multidir_output[$entity].'/'.$object->ref);
 		$maxvisiblephotos = (isset($conf->global->TICKET_MAX_VISIBLE_PHOTO) ? $conf->global->TICKET_MAX_VISIBLE_PHOTO : 2);
 		if ($conf->browser->layout == 'phone') $maxvisiblephotos = 1;
+
 		if ($showimage)
 		{
 			$showphoto = $object->show_photos('ticket', $conf->ticket->multidir_output[$entity], 'small', $maxvisiblephotos, 0, 0, 0, $width, 0);
@@ -1636,8 +1646,11 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 				$nophoto = '';
 				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"></div>';
 			} else {    // Show no photo link
-				$nophoto = '/public/theme/common/nophoto.png';
-				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="No photo" border="0"'.($width ? ' style="width: '.$width.'px"' : '').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
+				$nophoto = img_picto('No photo', 'object_ticket');
+				$morehtmlleft .= '<!-- No photo to show -->';
+				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
+				$morehtmlleft .= $nophoto;
+				$morehtmlleft .= '</div></div>';
 			}
 		}
 	} else {
@@ -1967,9 +1980,13 @@ function dol_strftime($fmt, $ts = false, $is_gmt = false)
  *
  *  @see        dol_mktime(), dol_stringtotime(), dol_getdate()
  */
-function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlangs = '', $encodetooutput = false)
+function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = '', $encodetooutput = false)
 {
 	global $conf, $langs;
+
+	if ($tzoutput == 'auto' && property_exists($conf, 'tzuserinputkey')) {
+		$tzoutput = $conf->tzuserinputkey;
+	}
 
 	// Clean parameters
 	$to_gmt = false;
@@ -2179,17 +2196,23 @@ function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
  *	@param	int			$day			Day (1 to 31)
  *	@param	int			$year			Year
  *	@param	mixed		$gm				True or 1 or 'gmt'=Input informations are GMT values
- *										False or 0 or 'server' = local to server TZ
- *										'user' = local to user TZ
+ *										False or 0 or 'tzserver' = local to server TZ
+ *										'auto'
+ *										'tzuser' = local to user TZ taking dst into account at the current date. Not yet implemented.
+ *										'tzuserrel' = local to user TZ taking dst into account at the given date. Use this one to convert date input from user.
  *										'tz,TimeZone' = use specified timezone
  *	@param	int			$check			0=No check on parameters (Can use day 32, etc...)
  *	@return	int|string					Date as a timestamp, '' or false if error
  * 	@see 								dol_print_date(), dol_stringtotime(), dol_getdate()
  */
-function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = false, $check = 1)
+function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', $check = 1)
 {
 	global $conf;
 	//print "- ".$hour.",".$minute.",".$second.",".$month.",".$day.",".$year.",".$_SERVER["WINDIR"]." -";
+
+	if ($gm == 'auto') {
+		$gm = $conf->tzuserinputkey;
+	}
 
 	// Clean parameters
 	if ($hour == -1 || empty($hour)) $hour = 0;
@@ -2207,11 +2230,11 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = false, $
 		if ($second < 0 || $second > 60) return '';
 	}
 
-	if (empty($gm) || $gm === 'server')
+	if (empty($gm) || ($gm === 'server' || $gm === 'tzserver'))
 	{
 		$default_timezone = @date_default_timezone_get(); // Example 'Europe/Berlin'
 		$localtz = new DateTimeZone($default_timezone);
-	} elseif ($gm === 'user')
+	} elseif ($gm === 'user' || $gm === 'tzuser' || $gm === 'tzuserrel')
 	{
 		// We use dol_tz_string first because it is more reliable.
 		$default_timezone = (empty($_SESSION["dol_tz_string"]) ? @date_default_timezone_get() : $_SESSION["dol_tz_string"]); // Example 'Europe/Berlin'
@@ -2250,15 +2273,20 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = false, $
 /**
  *  Return date for now. In most cases, we use this function without parameters (that means GMT time).
  *
- *  @param	string		$mode	'gmt' => we return GMT timestamp,
+ *  @param	string		$mode	'auto'
+ *  							'gmt' => we return GMT timestamp,
  * 								'tzserver' => we add the PHP server timezone
- *  							'tzref' => we add the company timezone
- * 								'tzuser' => we add the user timezone
+ *  							'tzref' => we add the company timezone. Not implemented.
+ * 								'tzuser' or 'tzuserrel' => we add the user timezone
  *	@return int   $date	Timestamp
  */
-function dol_now($mode = 'gmt')
+function dol_now($mode = 'auto')
 {
 	$ret = 0;
+
+	if ($mode == 'auto') {
+		$mode = 'tzserver';
+	}
 
 	if ($mode == 'gmt') $ret = time(); // Time for now at greenwich.
 	elseif ($mode == 'tzserver')		// Time for now with PHP server timezone added
@@ -2272,7 +2300,7 @@ function dol_now($mode = 'gmt')
 		$tzsecond=getParentCompanyTimeZoneInt();    // Contains tz+dayling saving time
 		$ret=dol_now('gmt')+($tzsecond*3600);
 	}*/
-	elseif ($mode == 'tzuser')				// Time for now with user timezone added
+	elseif ($mode == 'tzuser' || $mode == 'tzuserrel')				// Time for now with user timezone added
 	{
 		//print 'time: '.time();
 		$offsettz = (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) * 60 * 60;
@@ -2883,14 +2911,38 @@ function getUserRemoteIP()
 {
 	if (empty($_SERVER['HTTP_X_FORWARDED_FOR']) || preg_match('/[^0-9\.\:,\[\]]/', $_SERVER['HTTP_X_FORWARDED_FOR'])) {
 		if (empty($_SERVER['HTTP_CLIENT_IP']) || preg_match('/[^0-9\.\:,\[\]]/', $_SERVER['HTTP_CLIENT_IP'])) {
-			$ip = (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']);
+			if (empty($_SERVER["HTTP_CF_CONNECTING_IP"])) {
+				$ip = (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']);	// value may have been forged by client
+			} else {
+				$ip = $_SERVER["HTTP_CF_CONNECTING_IP"];	// value here may have been forged by client
+			}
 		} else {
-			$ip = $_SERVER['HTTP_CLIENT_IP']; // value is clean here
+			$ip = $_SERVER['HTTP_CLIENT_IP']; // value is clean here but may have been forged by proxy
 		}
 	} else {
-		$ip = $_SERVER['HTTP_X_FORWARDED_FOR']; // value is clean here
+		$ip = $_SERVER['HTTP_X_FORWARDED_FOR']; // value is clean here but may have been forged by proxy
 	}
 	return $ip;
+}
+
+/**
+ * Return if we are using a HTTPS connexion
+ * Check HTTPS (no way to be modified by user but may be empty or wrong if user is using a proxy)
+ * Take HTTP_X_FORWARDED_PROTO (defined when using proxy)
+ * Then HTTP_X_FORWARDED_SSL
+ *
+ * @return	boolean		True if user is using HTTPS
+ */
+function isHTTPS()
+{
+	$isSecure = false;
+	if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
+		$isSecure = true;
+	}
+	elseif (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' || !empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') {
+		$isSecure = true;
+	}
+	return $isSecure;
 }
 
 /**
@@ -3004,7 +3056,7 @@ function dol_print_address($address, $htmlid, $element, $id, $noprint = 0, $char
 /**
  *	Return true if email syntax is ok.
  *
- *	@param	    string		$address    			email (Ex: "toto@examle.com", "John Do <johndo@example.com>")
+ *	@param	    string		$address    			email (Ex: "toto@examle.com". Long form "John Do <johndo@example.com>" will be false)
  *  @param		int			$acceptsupervisorkey	If 1, the special string '__SUPERVISOREMAIL__' is also accepted as valid
  *	@return     boolean     						true if email syntax is OK, false if KO or empty string
  *  @see isValidMXRecord()
@@ -3210,10 +3262,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 				'accountancy', 'account', 'accountline', 'action', 'add', 'address', 'bank_account', 'barcode', 'bank', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'building',
 				'cash-register', 'category', 'check', 'clock', 'close_title', 'company', 'contact', 'contract', 'cron', 'cubes',
-				'delete', 'dolly', 'dollyrevert', 'donation', 'edit', 'ellipsis-h', 'email', 'eraser', 'external-link-alt', 'external-link-square-alt',
+				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'edit', 'ellipsis-h', 'email', 'eraser', 'external-link-alt', 'external-link-square-alt',
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'globe', 'globe-americas', 'grip', 'grip_title', 'group',
 				'help', 'holiday',
-				'intervention', 'label', 'language', 'list', 'listlight', 'lot',
+				'intervention', 'label', 'language', 'link', 'list', 'listlight', 'lot',
 				'map-marker-alt', 'member', 'money-bill-alt', 'mrp', 'note', 'next',
 				'object_accounting', 'object_account', 'object_accountline', 'object_action', 'object_barcode', 'object_bill', 'object_billa', 'object_billd', 'object_bom',
 				'object_category', 'object_conversation', 'object_bookmark', 'object_bug', 'object_dolly', 'object_dollyrevert', 'object_generic', 'object_folder',
@@ -4195,17 +4247,18 @@ function dol_print_error_email($prefixcode, $errormessage = '', $errormessages =
  *	@param  string	$sortorder   Current sort order
  *  @param	string	$prefix		 Prefix for css. Use space after prefix to add your own CSS tag.
  *  @param	string	$tooltip	 Tooltip
+ *  @param	string	$forcenowrapcolumntitle		No need for use 'wrapcolumntitle' css style
  *	@return	void
  */
-function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $moreparam = "", $moreattrib = "", $sortfield = "", $sortorder = "", $prefix = "", $tooltip = "")
+function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $moreparam = "", $moreattrib = "", $sortfield = "", $sortorder = "", $prefix = "", $tooltip = "", $forcenowrapcolumntitle = 0)
 {
-	print getTitleFieldOfList($name, 0, $file, $field, $begin, $moreparam, $moreattrib, $sortfield, $sortorder, $prefix, 0, $tooltip);
+	print getTitleFieldOfList($name, 0, $file, $field, $begin, $moreparam, $moreattrib, $sortfield, $sortorder, $prefix, 0, $tooltip, $forcenowrapcolumntitle);
 }
 
 /**
  *	Get title line of an array
  *
- *	@param	string	$name        		Translation key of field
+ *	@param	string	$name        		Translation key of field to show or complete HTML string to show
  *	@param	int		$thead		 		0=To use with standard table format, 1=To use inside <thead><tr>, 2=To use with <div>
  *	@param	string	$file        		Url used when we click on sort picto
  *	@param	string	$field       		Field to use for new sorting. Empty if this field is not sortable. Example "t.abc" or "t.abc,t.def"
@@ -4217,9 +4270,10 @@ function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $m
  *  @param	string	$prefix		 		Prefix for css. Use space after prefix to add your own CSS tag, for example 'mycss '.
  *  @param	string	$disablesortlink	1=Disable sort link
  *  @param	string	$tooltip	 		Tooltip
+ *  @param	string	$forcenowrapcolumntitle		No need for use 'wrapcolumntitle' css style
  *	@return	string
  */
-function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin = "", $moreparam = "", $moreattrib = "", $sortfield = "", $sortorder = "", $prefix = "", $disablesortlink = 0, $tooltip = '')
+function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin = "", $moreparam = "", $moreattrib = "", $sortfield = "", $sortorder = "", $prefix = "", $disablesortlink = 0, $tooltip = '', $forcenowrapcolumntitle = 0)
 {
 	global $conf, $langs, $form;
 	//print "$name, $file, $field, $begin, $options, $moreattrib, $sortfield, $sortorder<br>\n";
@@ -4238,9 +4292,10 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 	$tmpfield = explode(',', $field);
 	$field1 = trim($tmpfield[0]); // If $field is 'd.datep,d.id', it becomes 'd.datep'
 
-	if (empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE)) {
+	if (empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && empty($forcenowrapcolumntitle)) {
 		$prefix = 'wrapcolumntitle '.$prefix;
 	}
+
 	//var_dump('field='.$field.' field1='.$field1.' sortfield='.$sortfield.' sortfield1='.$sortfield1);
 	// If field is used as sort criteria we use a specific css class liste_titre_sel
 	// Example if (sortfield,field)=("nom","xxx.nom") or (sortfield,field)=("nom","nom")
@@ -4250,7 +4305,7 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 	}
 	$out .= '<'.$tag.' class="'.$prefix.$liste_titre.'" '.$moreattrib;
 	//$out .= (($field && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && preg_match('/^[a-zA-Z_0-9\s\.\-:&;]*$/', $name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
-	$out .= (($field && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
+	$out .= ($name && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && empty($forcenowrapcolumntitle) && !dol_textishtml($name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '';
 	$out .= '>';
 
 	if (empty($thead) && $field && empty($disablesortlink))    // If this is a sort field
@@ -4430,7 +4485,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 	$savlimit = $limit;
 	$savtotalnboflines = $totalnboflines;
-	$totalnboflines = abs($totalnboflines);
+	$totalnboflines = abs((int) $totalnboflines);
 
 	if ($picto == 'setup') $picto = 'title_setup.png';
 	if (($conf->browser->name == 'ie') && $picto == 'generic') $picto = 'title.gif';
@@ -4569,7 +4624,7 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 	}
 	if ((int) $limit > 0 && empty($hideselectlimit))
 	{
-		$pagesizechoices = '10:10,15:15,20:20,30:30,40:40,50:50,100:100,250:250,500:500,1000:1000,5000:5000';
+		$pagesizechoices = '10:10,15:15,20:20,30:30,40:40,50:50,100:100,250:250,500:500,1000:1000,5000:5000,25000:25000';
 		//$pagesizechoices.=',0:'.$langs->trans("All");     // Not yet supported
 		//$pagesizechoices.=',2:2';
 		if (!empty($conf->global->MAIN_PAGESIZE_CHOICES)) $pagesizechoices = $conf->global->MAIN_PAGESIZE_CHOICES;
@@ -4779,7 +4834,8 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  * 											'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
  *											'MT'=Round to Max for totals with Tax (MAIN_MAX_DECIMALS_TOT)
  *											'MS'=Round to Max for stock quantity (MAIN_MAX_DECIMALS_STOCK)
- *      		                            'CR'=Currency rate
+ *      		                            'CU'=Round to Max unit price of foreign currency accuracy
+ *      		                            'CT'=Round to Max for totals with Tax of foreign currency accuracy
  *											Numeric = Nb of digits for rounding
  * 	@param	int				$option			Put 1 if you know that content is already universal format number (so no correction on decimal will be done)
  * 											Put 2 if you know that number is a user input (so we know we don't have to fix decimal separator).
@@ -4807,7 +4863,7 @@ function price2num($amount, $rounding = '', $option = 0)
 	if ($option != 1) {	// If not a PHP number or unknown, we change or clean format
 		//print 'PP'.$amount.' - '.$dec.' - '.$thousand.' - '.intval($amount).'<br>';
 		if (!is_numeric($amount)) {
-			$amount = preg_replace('/[a-zA-Z\/\\\*\(\)\<\>]/', '', $amount);
+			$amount = preg_replace('/[a-zA-Z\/\\\*\(\)\<\>\_]/', '', $amount);
 		}
 
 		if ($option == 2 && $thousand == '.' && preg_match('/\.(\d\d\d)$/', (string) $amount)) {	// It means the . is used as a thousand separator and string come frominput data, so 1.123 is 1123
@@ -4840,13 +4896,24 @@ function price2num($amount, $rounding = '', $option = 0)
 	if ($rounding)
 	{
 		$nbofdectoround = '';
-		if ($rounding == 'MU')     $nbofdectoround = $conf->global->MAIN_MAX_DECIMALS_UNIT;
-		elseif ($rounding == 'MT') $nbofdectoround = $conf->global->MAIN_MAX_DECIMALS_TOT;
-		elseif ($rounding == 'MS') $nbofdectoround = empty($conf->global->MAIN_MAX_DECIMALS_STOCK) ? 5 : $conf->global->MAIN_MAX_DECIMALS_STOCK;
-		elseif ($rounding == 'CR') $nbofdectoround = 8;
+		if ($rounding == 'MU') {
+			$nbofdectoround = $conf->global->MAIN_MAX_DECIMALS_UNIT;
+		}
+		elseif ($rounding == 'MT') {
+			$nbofdectoround = $conf->global->MAIN_MAX_DECIMALS_TOT;
+		}
+		elseif ($rounding == 'MS') {
+			$nbofdectoround = empty($conf->global->MAIN_MAX_DECIMALS_STOCK) ? 5 : $conf->global->MAIN_MAX_DECIMALS_STOCK;
+		}
+		elseif ($rounding == 'CU') {
+			$nbofdectoround = max($conf->global->MAIN_MAX_DECIMALS_UNIT, 8);	// TODO Use param of currency
+		}
+		elseif ($rounding == 'CT') {
+			$nbofdectoround = max($conf->global->MAIN_MAX_DECIMALS_TOT, 8);		// TODO Use param of currency
+		}
 		elseif (is_numeric($rounding))  $nbofdectoround = $rounding;
 		//print "RR".$amount.' - '.$nbofdectoround.'<br>';
-		if (dol_strlen($nbofdectoround)) $amount = round($amount, $nbofdectoround); // $nbofdectoround can be 0.
+		if (dol_strlen($nbofdectoround)) $amount = round(is_string($amount) ? (float) $amount : $amount, $nbofdectoround); // $nbofdectoround can be 0.
 		else return 'ErrorBadParameterProvidedToFunction';
 		//print 'SS'.$amount.' - '.$nbofdec.' - '.$dec.' - '.$thousand.' - '.$nbofdectoround.'<br>';
 
@@ -4946,8 +5013,7 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = "", $thirdparty_sell
 
 	$vatratecleaned = $vatrate;
 	$reg = array();
-	if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "xx (yy)"
-	{
+	if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg)) {     // If vat is "xx (yy)"
 		$vatratecleaned = trim($reg[1]);
 		$vatratecode = $reg[2];
 	}
@@ -4958,25 +5024,20 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = "", $thirdparty_sell
 	}*/
 
 	// Some test to guess with no need to make database access
-	if ($mysoc->country_code == 'ES') // For spain localtaxes 1 and 2, tax is qualified if buyer use local tax
-	{
-		if ($local == 1)
-		{
+	if ($mysoc->country_code == 'ES') { // For spain localtaxes 1 and 2, tax is qualified if buyer use local tax
+		if ($local == 1) {
 			if (!$mysoc->localtax1_assuj || (string) $vatratecleaned == "0") return 0;
-			if ($thirdparty_seller->id == $mysoc->id)
-			{
+			if ($thirdparty_seller->id == $mysoc->id) {
 				if (!$thirdparty_buyer->localtax1_assuj) return 0;
 			} else {
 				if (!$thirdparty_seller->localtax1_assuj) return 0;
 			}
 		}
 
-		if ($local == 2)
-		{
+		if ($local == 2) {
 			//if (! $mysoc->localtax2_assuj || (string) $vatratecleaned == "0") return 0;
 			if (!$mysoc->localtax2_assuj) return 0; // If main vat is 0, IRPF may be different than 0.
-			if ($thirdparty_seller->id == $mysoc->id)
-			{
+			if ($thirdparty_seller->id == $mysoc->id) {
 				if (!$thirdparty_buyer->localtax2_assuj) return 0;
 			} else {
 				if (!$thirdparty_seller->localtax2_assuj) return 0;
@@ -4988,43 +5049,34 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = "", $thirdparty_sell
 	}
 
 	// For some country MAIN_GET_LOCALTAXES_VALUES_FROM_THIRDPARTY is forced to on.
-	if (in_array($mysoc->country_code, array('ES')))
-	{
+	if (in_array($mysoc->country_code, array('ES'))) {
 		$conf->global->MAIN_GET_LOCALTAXES_VALUES_FROM_THIRDPARTY = 1;
 	}
 
 	// Search local taxes
 	if (!empty($conf->global->MAIN_GET_LOCALTAXES_VALUES_FROM_THIRDPARTY))
 	{
-		if ($local == 1)
-		{
-			if ($thirdparty_seller != $mysoc)
-			{
+		if ($local == 1) {
+			if ($thirdparty_seller != $mysoc) {
 				if (!isOnlyOneLocalTax($local))  // TODO We should provide $vatrate to search on correct line and not always on line with highest vat rate
 				{
 					return $thirdparty_seller->localtax1_value;
 				}
-			} else // i am the seller
-			{
-				if (!isOnlyOneLocalTax($local))  // TODO If seller is me, why not always returning this, even if there is only one locatax vat.
-				{
+			} else { // i am the seller
+				if (!isOnlyOneLocalTax($local)) { // TODO If seller is me, why not always returning this, even if there is only one locatax vat.
 					return $conf->global->MAIN_INFO_VALUE_LOCALTAX1;
 				}
 			}
 		}
-		if ($local == 2)
-		{
-			if ($thirdparty_seller != $mysoc)
-			{
+		if ($local == 2) {
+			if ($thirdparty_seller != $mysoc) {
 				if (!isOnlyOneLocalTax($local))  // TODO We should provide $vatrate to search on correct line and not always on line with highest vat rate
 				// TODO We should also return value defined on thirdparty only if defined
 				{
 					return $thirdparty_seller->localtax2_value;
 				}
-			} else // i am the seller
-			{
-				if (in_array($mysoc->country_code, array('ES')))
-				{
+			} else { // i am the seller
+				if (in_array($mysoc->country_code, array('ES'))) {
 					return $thirdparty_buyer->localtax2_value;
 				} else {
 					return $conf->global->MAIN_INFO_VALUE_LOCALTAX2;
@@ -5046,8 +5098,10 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = "", $thirdparty_sell
    	if ($resql)
    	{
    		$obj = $db->fetch_object($resql);
-   		if ($local == 1) return $obj->localtax1;
-   		elseif ($local == 2) return $obj->localtax2;
+   		if ($obj) {
+	   		if ($local == 1) return $obj->localtax1;
+   			elseif ($local == 2) return $obj->localtax2;
+   		}
 	}
 
 	return 0;
@@ -5068,8 +5122,7 @@ function isOnlyOneLocalTax($local)
 
 	$valors = explode(":", $tax);
 
-	if (count($valors) > 1)
-	{
+	if (count($valors) > 1) {
 		return false;
 	} else {
 		return true;
@@ -5105,8 +5158,8 @@ function get_localtax_by_third($local)
 
 
 /**
- *  Get vat main information from Id.
- *  You can call getLocalTaxesFromRate after to get other fields.
+ *  Get tax (VAT) main information from Id.
+ *  You can also call getLocalTaxesFromRate() after to get only localtax fields.
  *
  *  @param	int|string  $vatrate		    VAT ID or Rate. Value can be value or the string with code into parenthesis or rowid if $firstparamisid is 1. Example: '8.5' or '8.5 (8.5NPR)' or 123.
  *  @param	Societe	    $buyer         		Company object
@@ -5122,12 +5175,15 @@ function getTaxesFromId($vatrate, $buyer = null, $seller = null, $firstparamisid
 	dol_syslog("getTaxesFromId vat id or rate = ".$vatrate);
 
 	// Search local taxes
-	$sql = "SELECT t.rowid, t.code, t.taux as rate, t.recuperableonly as npr, t.accountancy_code_sell, t.accountancy_code_buy";
+	$sql = "SELECT t.rowid, t.code, t.taux as rate, t.recuperableonly as npr, t.accountancy_code_sell, t.accountancy_code_buy,";
+	$sql .= " t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t";
-	if ($firstparamisid) $sql .= " WHERE t.rowid = ".(int) $vatrate;
-	else {
+	if ($firstparamisid) {
+		$sql .= " WHERE t.rowid = ".(int) $vatrate;
+	} else {
 		$vatratecleaned = $vatrate;
 		$vatratecode = '';
+		$reg = array();
 		if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "xx (yy)"
 		{
 			$vatratecleaned = $reg[1];
@@ -5143,10 +5199,20 @@ function getTaxesFromId($vatrate, $buyer = null, $seller = null, $firstparamisid
 	}
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$obj = $db->fetch_object($resql);
-		if ($obj) return array('rowid'=>$obj->rowid, 'code'=>$obj->code, 'rate'=>$obj->rate, 'npr'=>$obj->npr, 'accountancy_code_sell'=>$obj->accountancy_code_sell, 'accountancy_code_buy'=>$obj->accountancy_code_buy);
+		if ($obj) return array(
+			'rowid'=>$obj->rowid,
+			'code'=>$obj->code,
+			'rate'=>$obj->rate,
+			'localtax1'=>$obj->localtax1,
+			'localtax1_type'=>$obj->localtax1_type,
+			'localtax2'=>$obj->localtax2,
+			'localtax2_type'=>$obj->localtax2_type,
+			'npr'=>$obj->npr,
+			'accountancy_code_sell'=>$obj->accountancy_code_sell,
+			'accountancy_code_buy'=>$obj->accountancy_code_buy
+		);
 		else return array();
 	} else dol_print_error($db);
 
@@ -5191,7 +5257,7 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 
 		$sql .= ", ".MAIN_DB_PREFIX."c_country as c";
 		if ($mysoc->country_code == 'ES') $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($buyer->country_code)."'"; // local tax in spain use the buyer country ??
-		else $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($seller->country_code)."'";
+		else $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape(empty($seller->country_code) ? $mysoc->country_code : $seller->country_code)."'";
 		$sql .= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
 		if ($vatratecode) $sql .= " AND t.code = '".$db->escape($vatratecode)."'";
 	}
@@ -5213,7 +5279,7 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 		}
 	}
 
-	return 0;
+	return array();
 }
 
 /**
@@ -5422,6 +5488,10 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		$isacompany = $thirdparty_buyer->isACompany();
 		if ($isacompany)
 		{
+			if (!empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID) && !isValidVATID($thirdparty_buyer)) {
+				//print 'VATRULE 6';
+				return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+			}
 			//print 'VATRULE 3';
 			return 0;
 		} else {
@@ -5591,12 +5661,10 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 		if ($level == 3) $path = substr($num, 2, 1).'/'.substr($num, 1, 1).'/'.substr($num, 0, 1);
 	} else {
 		// We will enhance here a common way of forging path for document storage.
-		// In a future, we may distribut directories on several levels depending on setup and object.
+		// In a future, we may distribute directories on several levels depending on setup and object.
 		// Here, $object->id, $object->ref and $modulepart are required.
 		//var_dump($modulepart);
-		if (!in_array($modulepart, array('product'))) {	// Test to remove
-			$path = dol_sanitizeFileName(empty($object->ref) ? (string) $object->id : $object->ref);
-		}
+		$path = dol_sanitizeFileName(empty($object->ref) ? (string) $object->id : $object->ref);
 	}
 
 	if (empty($withoutslash) && !empty($path)) $path .= '/';
@@ -6698,6 +6766,7 @@ function complete_substitutions_array(&$substitutionarray, $outputlangs, $object
 		$substitfiles = dol_dir_list($dir, 'files', 0, 'functions_');
 		foreach ($substitfiles as $substitfile)
 		{
+			$reg = array();
 			if (preg_match('/functions_(.*)\.lib\.php/i', $substitfile['name'], $reg))
 			{
 				$module = $reg[1];
@@ -6707,7 +6776,9 @@ function complete_substitutions_array(&$substitutionarray, $outputlangs, $object
 				require_once $dir.$substitfile['name'];
 				// Call the user's function, and only if it is defined
 				$function_name = $module."_".$callfunc;
-				if (function_exists($function_name)) $function_name($substitutionarray, $outputlangs, $object, $parameters);
+				if (function_exists($function_name)) {
+					$function_name($substitutionarray, $outputlangs, $object, $parameters);
+				}
 			}
 		}
 	}
@@ -7092,9 +7163,9 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
 			foreach (array_keys($array) as $key)
 			{
 				if (is_object($array[$key])) {
-					$temp[$key] = $array[$key]->$index;
+					$temp[$key] = empty($array[$key]->$index) ? 0 : $array[$key]->$index;
 				} else {
-					$temp[$key] = $array[$key][$index];
+					$temp[$key] = empty($array[$key][$index]) ? 0 : $array[$key][$index];
 				}
 			}
 
@@ -8531,7 +8602,7 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
  * @param   string  $statusType        status0 status1 status2 status3 status4 status5 status6 status7 status8 status9 : image name or badge name
  * @param   int	    $displayMode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
  * @param   string  $url               The url for link
- * @param   array   $params            Various params. Example: array('tooltip'=>'...', 'badgeParams'=>...)
+ * @param   array   $params            Various params. Example: array('tooltip'=>'no|...', 'badgeParams'=>...)
  * @return  string                     Html status string
  */
 function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $statusType = 'status0', $displayMode = 0, $url = '', $params = array())
@@ -8600,7 +8671,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 		$statusLabelShort = (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
 
 		$dolGetBadgeParams['attr']['class'] = 'badge-status';
-		$dolGetBadgeParams['attr']['title'] = empty($params['tooltip']) ? $statusLabel : $params['tooltip'];
+		$dolGetBadgeParams['attr']['title'] = empty($params['tooltip']) ? $statusLabel : ($params['tooltip'] != 'no' ? $params['tooltip'] : '');
 
 		if ($displayMode == 3) {
 			$return = dolGetBadge((empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort)), '', $statusType, 'dot', $url, $dolGetBadgeParams);
@@ -8710,7 +8781,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 	}
 
 	$class = 'btnTitle';
-	if ($iconClass == 'fa fa-plus-circle') $class .= ' btnTitlePlus';
+	if (in_array($iconClass, array('fa fa-plus-circle', 'fa fa-comment-dots'))) $class .= ' btnTitlePlus';
 	$useclassfortooltip = 1;
 
 	if (!empty($params['morecss'])) $class .= ' '.$params['morecss'];

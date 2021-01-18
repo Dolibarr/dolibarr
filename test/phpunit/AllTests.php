@@ -216,6 +216,8 @@ class AllTests
 
         require_once dirname(__FILE__).'/RestAPIUserTest.php';
         $suite->addTestSuite('RestAPIUserTest');
+        require_once dirname(__FILE__).'/RestAPIDocumentTest.php';
+        $suite->addTestSuite('RestAPIDocumentTest');
 
         // Test only with php7.2 or less
         //if ((float) phpversion() < 7.3)

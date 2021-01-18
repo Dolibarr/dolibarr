@@ -358,7 +358,7 @@ VATIntraCheckableOnEUSite=Ελέγξτε το ενδοκοινοτικό ανα�
 VATIntraManualCheck=Μπορείτε επίσης να ελέγξετε χειροκίνητα στον ιστότοπο της Ευρωπαϊκής Επιτροπής <a href="%s" target="_blank">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Check not possible. Check service is not provided by the member state (%s).
 NorProspectNorCustomer=Δεν προοπτική, ούτε πελάτης
-JuridicalStatus=Τύπος νομικού προσώπου
+JuridicalStatus=Business entity type
 Workforce=Workforce
 Staff=Εργαζόμενοι
 ProspectLevelShort=Δυναμική

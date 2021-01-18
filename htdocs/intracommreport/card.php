@@ -27,28 +27,41 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/intracommreport/class/intracommreport.class.php';
 
 $langs->loadLangs(array("intracommreport"));
-
+var_dump($_POST);
 $action = GETPOST('action');
-$exporttype = GETPOST('exporttype'); // DEB ou DES
-if (empty($exporttype)) {
-	$exporttype = 'deb';
-}
-
-$form = new Form($db);
-$formother = new FormOther($db);
-$year = GETPOST('year');
-$month = GETPOST('month');
+$exporttype = GETPOSTISSET('exporttype') ? GETPOST('exporttype', 'alphanohtml') : 'deb'; // DEB ou DES
+$year = GETPOSTINT('year');
+$month = GETPOSTINT('month');
 $label = (string) GETPOST('label', 'alphanohtml');
-$type_declaration = GETPOSTINT('type');
+$type_declaration = (string) GETPOST('type_declaration', 'alphanohtml');
 $backtopage = GETPOST('backtopage', 'alpha');
 $declaration = array(
 	"deb" => $langs->trans("DEB"),
 	"des" => $langs->trans("DES"),
 );
+$typeOfDeclaration = array(
+	"introduction" => $langs->trans("Introduction"),
+	"expedition" => $langs->trans("Expedition"),
+);
+$object = new IntracommReport($db);
+if ($id > 0) {
+	$object->fetch($id);
+}
+$form = new Form($db);
+$formother = new FormOther($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('intracommcard', 'globalcard'));
 
 /*
  * 	Actions
  */
+$parameters = array('id' => $id);
+// Note that $action and $object may have been modified by some hooks
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 if ($user->rights->intracommreport->delete && $action == 'confirm_delete' && $confirm == 'yes') {
 	$result = $object->delete($id, $user);
@@ -72,16 +85,16 @@ if ($action == 'add' && $user->rights->intracommreport->write) {
 	$object->subscription = (int) $subscription;
 
 	// Fill array 'array_options' with data from add form
-	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-	if ($ret < 0) {
-		$error++;
-	}
+	// $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	// if ($ret < 0) {
+	// 	$error++;
+	// }
 
 	if (empty($object->label)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	} else {
-		$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."adherent_type WHERE libelle='".$db->escape($object->label)."'";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."intracommreport WHERE ref='".$db->escape($object->label)."'";
 		$result = $db->query($sql);
 		if ($result) {
 			$num = $db->num_rows($result);
@@ -96,7 +109,7 @@ if ($action == 'add' && $user->rights->intracommreport->write) {
 	if (!$error) {
 		$id = $object->create($user);
 		if ($id > 0) {
-			header("Location: ".$_SERVER["PHP_SELF"]);
+			header("Location: ".$_SERVER["PHP_SELF"].'?id='.$id);
 			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -145,10 +158,8 @@ if ($action == 'create') {
 	print '</tr>';
 
 	// Type of declaration
-	$typeOfDeclaration["introduction"] = $langs->trans("Introduction");
-	$typeOfDeclaration["expedition"] = $langs->trans("Expedition");
 	print '<tr><td class="fieldrequired">'.$langs->trans("TypeOfDeclaration")."</td><td>\n";
-	print $form->selectarray("type_declaration", $typeOfDeclaration, GETPOST('type_declaration', 'alpha') ?GETPOST('type_declaration', 'alpha') : $object->type_declaration, 0);
+	print $form->selectarray("type_declaration", $typeOfDeclaration, GETPOST('type_declaration', 'alpha') ? GETPOST('type_declaration', 'alpha') : $object->type_declaration, 0);
 	print "</td>\n";
 
 	print '</table>';
@@ -177,9 +188,9 @@ if ($id > 0 && $action != 'edit') {
 	/*
 	 * Show tabs
 	 */
-	$head = intracommreport_prepare_head($object);
+	//$head = intracommreport_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'general', $langs->trans("IntracommReport"), -1, 'user');
+	print dol_get_fiche_head("", 'general', $langs->trans("IntracommReport"), -1, 'user');
 
 	// Confirm remove report
 	if ($action == 'delete') {

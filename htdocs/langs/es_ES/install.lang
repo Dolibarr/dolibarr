@@ -87,7 +87,7 @@ GoToSetupArea=Acceso a Dolibarr (área de configuración)
 MigrationNotFinished=La versión de la base de datos no está completamente actualizada: vuelva a ejecutar el proceso de actualización.
 GoToUpgradePage=Acceder a la página de migración de nuevo
 WithNoSlashAtTheEnd=Sin el signo "/" al final
-DirectoryRecommendation= <span class="warning"> IMPORTANTE </span>: debe usar un directorio que esté fuera de las páginas web (por lo tanto, no use un subdirectorio del parámetro anterior).
+DirectoryRecommendation=<span class="warning"> IMPORTANTE </span>: debe usar un directorio que esté fuera de las páginas web (por lo tanto, no use un subdirectorio del parámetro anterior).
 LoginAlreadyExists=Ya existe
 DolibarrAdminLogin=Login del usuario administrador de Dolibarr
 AdminLoginAlreadyExists=La cuenta de administrador Dolibarr '<b>%s</b>' ya existe. Vuelva atrás si desea crear otra.

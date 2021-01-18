@@ -48,6 +48,7 @@ CountriesExceptMe=Tất cả các quốc gia trừ %s
 AccountantFiles=Export source documents
 ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
 VueByAccountAccounting=View by accounting account
+VueBySubAccountAccounting=View by accounting subaccount
 
 MainAccountForCustomersNotDefined=Tài khoản kế toán chính cho khách hàng không được định nghĩa trong thiết lập
 MainAccountForSuppliersNotDefined=Tài khoản kế toán chính cho các nhà cung cấp không được định nghĩa trong thiết lập
@@ -144,7 +145,7 @@ NotVentilatedinAccount=Không liên kết với tài khoản kế toán
 XLineSuccessfullyBinded=%s sản phẩm/ dịch vụ được liên kết thành công với tài khoản kế toán
 XLineFailedToBeBinded=%s sản phẩm/ dịch vụ không bị ràng buộc với bất kỳ tài khoản kế toán nào
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Số phần tử để liên kết được hiển thị theo trang (khuyến nghị tối đa: 50)
+ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Bắt đầu sắp xếp trang "Liên kết cần làm" theo các yếu tố gần đây nhất
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Bắt đầu sắp xếp trang "Liên kết" theo các yếu tố gần đây nhất
 
@@ -198,7 +199,8 @@ Docdate=Ngày
 Docref=Tham chiếu
 LabelAccount=Nhãn tài khoản
 LabelOperation=Nhãn hoạt động
-Sens=Ý nghĩa
+Sens=Direction
+AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you received<br>For an accounting account of a supplier, use Debit to record a payment you make
 LetteringCode=Mã sắp đặt chữ
 Lettering=Sắp đặt chữ
 Codejournal=Nhật ký
@@ -206,7 +208,8 @@ JournalLabel=Mã nhật ký
 NumPiece=Số lượng cái
 TransactionNumShort=Số Giao dịch
 AccountingCategory=Nhóm cá nhân hóa
-GroupByAccountAccounting=Nhóm theo tài khoản kế toán
+GroupByAccountAccounting=Group by general ledger account
+GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=Bạn có thể định nghĩa ở đây một số nhóm tài khoản kế toán. Chúng sẽ được sử dụng cho các báo cáo kế toán đã cá nhân hóa.
 ByAccounts=Theo tài khoản
 ByPredefinedAccountGroups=Theo nhóm được xác định trước
@@ -248,7 +251,7 @@ PaymentsNotLinkedToProduct=Thanh toán không được liên kết với bất k
 OpeningBalance=Opening balance
 ShowOpeningBalance=Xem số dư 
 HideOpeningBalance=Ẩn số dư
-ShowSubtotalByGroup=Show subtotal by group
+ShowSubtotalByGroup=Show subtotal by level
 
 Pcgtype=Nhóm tài khoản
 PcgtypeDesc=Nhóm tài khoản được sử dụng làm tiêu chí 'bộ lọc' và 'nhóm' được xác định trước cho một số báo cáo kế toán. Ví dụ: 'THU NHẬP' hoặc 'CHI PHÍ' được sử dụng làm nhóm cho tài khoản kế toán của các sản phẩm để xây dựng báo cáo chi phí / thu nhập.
@@ -271,11 +274,13 @@ DescVentilExpenseReport=Tham khảo tại đây danh sách các dòng báo cáo 
 DescVentilExpenseReportMore=Nếu bạn thiết lập tài khoản kế toán theo kiểu dòng báo cáo chi phí, ứng dụng sẽ có thể thực hiện tất cả các ràng buộc giữa các dòng báo cáo chi phí và tài khoản kế toán của hệ thống đồ tài khoản của bạn, chỉ bằng một cú nhấp chuột với nút <strong>"%s"</strong> . Nếu tài khoản không được đặt trong từ điển phí hoặc nếu bạn vẫn có một số dòng không bị ràng buộc với bất kỳ tài khoản nào, bạn sẽ phải thực hiện ràng buộc thủ công từ menu " <strong>%s</strong> ".
 DescVentilDoneExpenseReport=Tham khảo tại đây danh sách các dòng báo cáo chi phí và tài khoản kế toán phí của họ
 
+Closure=Annual closure
 DescClosure=Tham khảo tại đây số lượng kết chuyển theo tháng không được xác nhận và năm tài chính đã mở
 OverviewOfMovementsNotValidated=Bước 1 / Tổng quan về các kết chuyển không được xác nhận. (Cần thiết để đóng một năm tài chính)
+AllMovementsWereRecordedAsValidated=All movements were recorded as validated
+NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated
 ValidateMovements=Xác nhận các kết chuyển
 DescValidateMovements=Bất kỳ sửa đổi hoặc xóa viết, chữ và xóa sẽ bị cấm. Tất cả các mục cho một thi hành phải được xác nhận nếu không việc đóng sẽ không thể thực hiện được
-SelectMonthAndValidate=Chọn tháng và xác nhận các kết chuyển
 
 ValidateHistory=Tự động ràng buộc
 AutomaticBindingDone=Tự động ràng buộc thực hiện xong
@@ -293,6 +298,7 @@ Accounted=Tài khoản trên Sổ cái
 NotYetAccounted=Chưa hạch toán vào Sổ cái
 ShowTutorial=Chương trình hướng dẫn
 NotReconciled=Chưa đối chiếu
+WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
 
 ## Admin
 BindingOptions=Binding options
@@ -337,6 +343,7 @@ Modelcsv_LDCompta10=Xuất cho chuẩn LD Compta (v10 hoặc cao hơn)
 Modelcsv_openconcerto=Xuất dữ liệu cho OpenConcerto (Kiểm tra)
 Modelcsv_configurable=Xuất dữ liệu cấu hình CSV
 Modelcsv_FEC=Xuất dữ liệu FEC
+Modelcsv_FEC2=Export FEC (With dates generation writing / document reversed)
 Modelcsv_Sage50_Swiss=Xuất dữ liệu cho Sage 50 Thụy Sĩ
 Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Export for Gestinum (v3)

@@ -6,7 +6,7 @@
  * Copyright (C) 2003       Jean-Louis Bergamo      <jlb@j1b.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -950,15 +950,14 @@ class CMailFile
 	 * Read a file on disk and return encoded content for emails (mode = 'mail')
 	 *
 	 * @param	string	$sourcefile		Path to file to encode
-	 * @return 	int					    <0 if KO, encoded string if OK
+	 * @return 	int|string			    <0 if KO, encoded string if OK
 	 */
 	private function _encode_file($sourcefile)
 	{
 		// phpcs:enable
 		$newsourcefile = dol_osencode($sourcefile);
 
-		if (is_readable($newsourcefile))
-		{
+		if (is_readable($newsourcefile)) {
 			$contents = file_get_contents($newsourcefile); // Need PHP 4.3
 			$encoded = chunk_split(base64_encode($contents), 76, $this->eol); // 76 max is defined into http://tools.ietf.org/html/rfc2047
 			return $encoded;
@@ -983,27 +982,24 @@ class CMailFile
 		// phpcs:enable
 		global $conf, $dolibarr_main_data_root;
 
-		if (@is_writeable($dolibarr_main_data_root))	// Avoid fatal error on fopen with open_basedir
-		{
+		if (@is_writeable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
 			$outputfile = $dolibarr_main_data_root."/dolibarr_mail.log";
 			$fp = fopen($outputfile, "w");
 
-			if ($this->sendmode == 'mail')
-			{
+			if ($this->sendmode == 'mail') {
 				fputs($fp, $this->headers);
 				fputs($fp, $this->eol); // This eol is added by the mail function, so we add it in log
 				fputs($fp, $this->message);
-			} elseif ($this->sendmode == 'smtps')
-			{
+			} elseif ($this->sendmode == 'smtps') {
 				fputs($fp, $this->smtps->log); // this->smtps->log is filled only if MAIN_MAIL_DEBUG was set to on
-			} elseif ($this->sendmode == 'swiftmailer')
-			{
+			} elseif ($this->sendmode == 'swiftmailer') {
 				fputs($fp, $this->logger->dump()); // this->logger is filled only if MAIN_MAIL_DEBUG was set to on
 			}
 
 			fclose($fp);
-			if (!empty($conf->global->MAIN_UMASK))
+			if (!empty($conf->global->MAIN_UMASK)) {
 				@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
+			}
 		}
 	}
 
@@ -1016,8 +1012,7 @@ class CMailFile
 	 */
 	public function checkIfHTML($msg)
 	{
-		if (!preg_match('/^[\s\t]*<html/i', $msg))
-		{
+		if (!preg_match('/^[\s\t]*<html/i', $msg)) {
 			$out = "<html><head><title></title>";
 			if (!empty($this->styleCSS)) $out .= $this->styleCSS;
 			$out .= "</head><body";
@@ -1039,19 +1034,16 @@ class CMailFile
 	 */
 	public function buildCSS()
 	{
-		if (!empty($this->css))
-		{
+		if (!empty($this->css)) {
 			// Style CSS
 			$this->styleCSS = '<style type="text/css">';
 			$this->styleCSS .= 'body {';
 
-			if ($this->css['bgcolor'])
-			{
+			if ($this->css['bgcolor']) {
 				$this->styleCSS .= '  background-color: '.$this->css['bgcolor'].';';
 				$this->bodyCSS .= ' bgcolor="'.$this->css['bgcolor'].'"';
 			}
-			if ($this->css['bgimage'])
-			{
+			if ($this->css['bgimage']) {
 				// TODO recuperer cid
 				$this->styleCSS .= ' background-image: url("cid:'.$this->css['bgimage_cid'].'");';
 			}

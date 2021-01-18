@@ -31,10 +31,8 @@ TicketDictType=Ticket - Types
 TicketDictCategory=Ticket - Groupes
 TicketDictSeverity=Ticket - Severities
 TicketDictResolution=Ticket - Risoluzione
-TicketTypeShortBUGSOFT=Dysfonctionnement logiciel
-TicketTypeShortBUGHARD=Dysfonctionnement matériel
-TicketTypeShortCOM=Commercial question
 
+TicketTypeShortCOM=Commercial question
 TicketTypeShortHELP=Richiesta di aiuto funzionale
 TicketTypeShortISSUE=Issue, bug o problemi
 TicketTypeShortREQUEST=Richiesta di modifica o miglioramento
@@ -44,7 +42,7 @@ TicketTypeShortOTHER=Altro
 TicketSeverityShortLOW=Basso
 TicketSeverityShortNORMAL=Normale
 TicketSeverityShortHIGH=Alto
-TicketSeverityShortBLOCKING=Critical/Blocking
+TicketSeverityShortBLOCKING=Critico, bloccante
 
 ErrorBadEmailAddress=Campo '%s' non corretto
 MenuTicketMyAssign=My tickets
@@ -60,7 +58,6 @@ OriginEmail=Email source
 Notify_TICKET_SENTBYMAIL=Send ticket message by email
 
 # Status
-NotRead=Non letto
 Read=Da leggere
 Assigned=Assegnato
 InProgress=Avviato
@@ -126,6 +123,7 @@ TicketsActivatePublicInterfaceHelp=Public interface allow any visitors to create
 TicketsAutoAssignTicket=Automatically assign the user who created the ticket
 TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket.
 TicketNumberingModules=Tickets numbering module
+TicketsModelModule=Modelli di documenti per i ticket
 TicketNotifyTiersAtCreation=Notify third party at creation
 TicketsDisableCustomerEmail=Always disable emails when a ticket is created from public interface
 TicketsPublicNotificationNewMessage=Invia e-mail quando viene aggiunto un nuovo messaggio
@@ -233,7 +231,6 @@ TicketLogStatusChanged=Status changed: %s to %s
 TicketNotNotifyTiersAtCreate=Not notify company at create
 Unread=Unread
 TicketNotCreatedFromPublicInterface=Non disponibile. Il ticket non è stato creato dall'interfaccia pubblica.
-PublicInterfaceNotEnabled=L'interfaccia pubblica non è stata abilitata
 ErrorTicketRefRequired=È richiesto il nome di riferimento del biglietto
 
 #
@@ -265,7 +262,7 @@ TicketNewEmailBodyInfosTrackId=Ticket tracking number: %s
 TicketNewEmailBodyInfosTrackUrl=Puoi seguire l'avanzamento del ticket cliccando il link qui sopra
 TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the specific interface by clicking the following link
 TicketEmailPleaseDoNotReplyToThisEmail=Please do not reply directly to this email! Use the link to reply into the interface.
-TicketPublicInfoCreateTicket=This form allows you to record a support ticket in our management system.
+TicketPublicInfoCreateTicket=Questo modulo consente di registrare un ticket di supporto nel nostro sistema di gestione ticketing.
 TicketPublicPleaseBeAccuratelyDescribe=Descrivi il problema dettagliatamente. Fornisci più informazioni possibili per consentirci di identificare la tua richiesta.
 TicketPublicMsgViewLogIn=Please enter ticket tracking ID
 TicketTrackId=Public Tracking ID
