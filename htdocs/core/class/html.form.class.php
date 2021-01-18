@@ -6720,7 +6720,7 @@ class Form
 		// Add code for jquery to use multiselect
 		if (!empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))
 		{
-			$out .= "\n".'<!-- JS CODE TO ENABLE select for id '.$htmlname.' -->
+			$out .= "\n".'<!-- JS CODE TO ENABLE select for id '.$htmlname.', addjscombo='.$addjscombo.' -->
 						<script>'."\n";
 			if ($addjscombo == 1)
 			{
@@ -6751,6 +6751,10 @@ class Form
 								formatSelection: formatSelection,
 							 	templateSelection: formatSelection		/* For 4.0 */
 							});
+
+							/* Add also morecss to the css .select2 that is after the #htmlname, for component that are show dynamically after load, because select2 set
+								 the size only if component is not hidden by default on load */
+							$(\'#'.$htmlname.' + .select2\').addClass(\''.$morecss.'\');
 						});'."\n";
 			} elseif ($addjscombo == 2 && !defined('DISABLE_MULTISELECT'))
 			{

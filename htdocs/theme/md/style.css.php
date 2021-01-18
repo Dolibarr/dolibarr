@@ -1295,7 +1295,7 @@ table[summary="list_of_modules"] .fa-cog {
     .minwidth500imp { min-width: 250px !important; }
 }
 
-/* Set a width. Note: add also a max-width that will be used in priority */ 
+/* Set a width. Note: add also a max-width, for example maxwidth500, that will be used in priority */
 .widthcentpercentminusx {
 	width: calc(100% - 50px) !important;
 	display: inline-block;
@@ -1335,7 +1335,7 @@ table[summary="list_of_modules"] .fa-cog {
     	padding-left: 0;
     }
     .login_table input#username, .login_table input#password, .login_table input#securitycode {
-		margin-left: 5px !important;    
+		margin-left: 5px !important;
     }
 	div#login_left, div#login_right {
 	    min-width: 150px !important;
@@ -2383,7 +2383,7 @@ form#login {
     border-radius: 2px;
 }
 .login_table .tdinputlogin {
-	border-bottom: 1px solid #ccc; 
+	border-bottom: 1px solid #ccc;
 }
 .login_table .tdinputlogin .fa {
 	padding-left: 10px;
