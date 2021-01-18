@@ -483,7 +483,7 @@ class DolGraph
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Mirror Values of the graph
-	 * 
+	 *
 	 * @param	boolean 	$mirrorGraphValues	Mirror Values if true and doesn't if false
 	 * @return	void
 	 */
