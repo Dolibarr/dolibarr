@@ -77,7 +77,7 @@ class DolGraph
 	public $combine = 0; // 0.05 if you want to combine records < 5% into "other"
 	public $graph; // Objet Graph (Artichow, Phplot...)
 	/**
-	 * @var bool 					Mirrors graph values
+	 * @var boolean 					Mirrors graph values
 	 */
 	public $mirrorGraphValues = false; 
 	public $tooltipsTitles = null;
@@ -488,7 +488,7 @@ class DolGraph
 	 */
 	public function SetMirrorGraphValues($mirrorGraphValues)
 	{
-		$this->mirrorValues = $mirrorGraphValues;
+		$this->mirrorGraphValues = $mirrorGraphValues;
 	}
 
 	/**
