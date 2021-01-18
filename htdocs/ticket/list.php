@@ -346,11 +346,12 @@ foreach ($search as $key => $val)
 			$newarrayofstatus[] = $val2;
 		}
 	    if ($search['fk_statut'] == 'openall' || in_array('openall', $search['fk_statut'])) {
-	    	$newarrayofstatus[] = Ticket::STATUS_NOT_READ;
-	    	$newarrayofstatus[] = Ticket::STATUS_ASSIGNED;
-	    	$newarrayofstatus[] = Ticket::STATUS_IN_PROGRESS;
-	    	$newarrayofstatus[] = Ticket::STATUS_NEED_MORE_INFO;
-	    	$newarrayofstatus[] = Ticket::STATUS_WAITING;
+			$newarrayofstatus[] = Ticket::STATUS_NOT_READ;
+			$newarrayofstatus[] = Ticket::STATUS_READ;
+			$newarrayofstatus[] = Ticket::STATUS_ASSIGNED;
+			$newarrayofstatus[] = Ticket::STATUS_IN_PROGRESS;
+			$newarrayofstatus[] = Ticket::STATUS_NEED_MORE_INFO;
+			$newarrayofstatus[] = Ticket::STATUS_WAITING;
 	    }
 	    if ($search['fk_statut'] == 'closeall' || in_array('closeall', $search['fk_statut'])) {
 	    	$newarrayofstatus[] = Ticket::STATUS_CLOSED;
