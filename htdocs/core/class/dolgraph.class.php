@@ -971,7 +971,6 @@ class DolGraph
 			$color1 = sprintf("%02x%02x%02x", $this->bgcolorgrid[0], $this->bgcolorgrid[0], $this->bgcolorgrid[2]);
 			$color2 = sprintf("%02x%02x%02x", $this->bgcolorgrid[0], $this->bgcolorgrid[1], $this->bgcolorgrid[2]);
 			$this->stringtoshow .= ', grid: { hoverable: true, backgroundColor: { colors: ["#' . $color1 . '", "#' . $color2 . '"] }, borderWidth: 1, borderColor: \'#e6e6e6\', tickColor  : \'#e6e6e6\' }' . "\n";
-			//$this->stringtoshow.=', shadowSize: 20'."\n";    TODO Uncommet this
 			$this->stringtoshow .= '});' . "\n";
 			$this->stringtoshow .= '}' . "\n";
 		}
@@ -1045,7 +1044,7 @@ class DolGraph
 				$array_of_ykeys = array_keys($valarray);
 				$alabelexists = 1;
 				$tmpykey = explode('_', ($array_of_ykeys[$i + ($alabelexists ? 1 : 0)]), 3);
-				if (!empty($tmpykey[2]) || $tmpykey[2] == '0') {		// This is a 'Group by' array
+				if (isset($tmpykey[2]) && (!empty($tmpykey[2]) || $tmpykey[2] == '0')) {		// This is a 'Group by' array
 					$tmpvalue = (array_key_exists('y_' . $tmpykey[1] . '_' . $tmpykey[2], $valarray) ? $valarray['y_' . $tmpykey[1] . '_' . $tmpykey[2]] : $valarray[$i + 1]);
 					$values[$x] = (is_numeric($tmpvalue) ? $tmpvalue : null);
 					$arrayofgroupslegend[$i] = array(
@@ -1286,7 +1285,7 @@ class DolGraph
 				$foundnegativecolor = 0;
 				$usecolorvariantforgroupby = 0;
 				// We used a 'group by' and we have too many colors so we generated color variants per
-				if (is_array($arrayofgroupslegend[$i]) && count($arrayofgroupslegend[$i]) > 0) {	// If we used a group by.
+				if (!empty($arrayofgroupslegend) && is_array($arrayofgroupslegend[$i]) && count($arrayofgroupslegend[$i]) > 0) {	// If we used a group by.
 					$nbofcolorneeds = count($arrayofgroupslegend);
 					$nbofcolorsavailable = count($theme_datacolor);
 					if ($nbofcolorneeds > $nbofcolorsavailable) {
@@ -1342,7 +1341,7 @@ class DolGraph
 				$this->stringtoshow .= '{';
 				$this->stringtoshow .= 'dolibarrinfo: \'y_' . $i . '\', ';
 				$this->stringtoshow .= 'label: \'' . dol_escape_js(dol_string_nohtmltag($textoflegend)) . '\', ';
-				$this->stringtoshow .= 'pointStyle: \'' . ($this->type[$i] == 'linesnopoint' ? 'line' : 'circle') . '\', ';
+				$this->stringtoshow .= 'pointStyle: \'' . ((!empty($this->type[$i]) && $this->type[$i] == 'linesnopoint') ? 'line' : 'circle') . '\', ';
 				$this->stringtoshow .= 'fill: ' . ($type == 'bar' ? 'true' : 'false') . ', ';
 				if ($type == 'bar' || $type == 'horizontalBar') {
 					$this->stringtoshow .= 'borderWidth: \''.$this->borderwidth.'\', ';
