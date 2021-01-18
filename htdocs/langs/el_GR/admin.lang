@@ -1598,8 +1598,13 @@ ServiceSetup=Υπηρεσίες εγκατάστασης μονάδας
 ProductServiceSetup=Προϊόντα και Υπηρεσίες εγκατάστασης μονάδων
 NumberOfProductShowInSelect=Μέγιστος αριθμός προϊόντων που θα εμφανίζονται σε λίστες επιλογών συνδυασμού (0 = κανένα όριο)
 ViewProductDescInFormAbility=Εμφάνιση περιγραφών προϊόντων σε φόρμες (διαφορετικά εμφανίζεται σε αναδυόμενο παράθυρο εργαλείου)
+DoNotAddProductDescAtAddLines=Do not add product description (from product card) on submit add lines on forms
+OnProductSelectAddProductDesc=How to use the description of the products when adding a product as a line of a document
+AutoFillFormFieldBeforeSubmit=Auto fill the description input field with the description of product
+DoNotAutofillButAutoConcat=Do not autofill the input field with description of product. Description of the product will be concatenated to the entered description automatically.
+DoNotUseDescriptionOfProdut=Description of the product will never be included into the description of lines of documents
 MergePropalProductCard=Ενεργοποίηση στην καρτέλα Συνημμένα αρχεία προϊόντος / υπηρεσίας μια επιλογή για τη συγχώνευση προϊόντος PDF σε πρόταση PDF azur εάν το προϊόν / η υπηρεσία περιλαμβάνεται στην πρόταση
-ViewProductDescInThirdpartyLanguageAbility=Εμφάνιση των περιγραφών προϊόντων στη γλώσσα του τρίτου μέρους
+ViewProductDescInThirdpartyLanguageAbility=Display products descriptions in forms in the language of the third party (otherwise in the language of the user)
 UseSearchToSelectProductTooltip=Επίσης, αν έχετε μεγάλο αριθμό προϊόντων (&gt; 100.000), μπορείτε να αυξήσετε την ταχύτητα ρυθμίζοντας σταθερά το PRODUCT_DONOTSEARCH_ANYWHERE στο 1 στο Setup-&gt; Other. Η αναζήτηση θα περιορίζεται στην αρχή της συμβολοσειράς.
 UseSearchToSelectProduct=Περιμένετε έως ότου πιέσετε ένα κλειδί πριν φορτώσετε το περιεχόμενο της λίστας σύνθετων προϊόντων (Αυτό μπορεί να αυξήσει την απόδοση εάν έχετε μεγάλο αριθμό προϊόντων, αλλά είναι λιγότερο βολικό)
 SetDefaultBarcodeTypeProducts=Προεπιλεγμένος τύπος barcode για χρήση σε προϊόντα

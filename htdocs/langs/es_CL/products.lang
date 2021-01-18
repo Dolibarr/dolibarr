@@ -61,6 +61,7 @@ NoteNotVisibleOnBill=Nota (no visible en las facturas, cotizaciones, etc.)
 ServiceLimitedDuration=Si el producto es un servicio de duración limitada:
 MultiPricesAbility=Múltiples segmentos de precios por producto / servicio (cada cliente está en un segmento de precios)
 MultiPricesNumPrices=Cantidad de precios
+AssociatedProductsAbility=Enable Kits (set of several products)
 ParentProductsNumber=Número de producto de embalaje principal
 ParentProducts=Productos para padres
 KeywordFilter=Filtro de palabras clave

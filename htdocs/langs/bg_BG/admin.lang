@@ -1598,8 +1598,13 @@ ServiceSetup=Настройка на модулa за услуги
 ProductServiceSetup=Настройка на модула за продукти и услуги
 NumberOfProductShowInSelect=Максимален брой продукти за показване в комбинирани списъци за избор (0 = без ограничение)
 ViewProductDescInFormAbility=Показване на описанията на продуктите във формуляри (в противен случай се показват в изскачащи подсказки)
+DoNotAddProductDescAtAddLines=Do not add product description (from product card) on submit add lines on forms
+OnProductSelectAddProductDesc=How to use the description of the products when adding a product as a line of a document
+AutoFillFormFieldBeforeSubmit=Auto fill the description input field with the description of product
+DoNotAutofillButAutoConcat=Do not autofill the input field with description of product. Description of the product will be concatenated to the entered description automatically.
+DoNotUseDescriptionOfProdut=Description of the product will never be included into the description of lines of documents
 MergePropalProductCard=Активиране на опция за обединяване на продуктови PDF документи налични в секцията "Прикачени файлове и документи" в раздела "Свързани файлове"  на търговско предложение, ако се продукт / услуга в предложението и модел за документи Azur
-ViewProductDescInThirdpartyLanguageAbility=Показване на описанията на продуктите в езика на контрагента
+ViewProductDescInThirdpartyLanguageAbility=Display products descriptions in forms in the language of the third party (otherwise in the language of the user)
 UseSearchToSelectProductTooltip=Също така, ако имате голям брой продукти (> 100 000) може да увеличите скоростта като зададете константата PRODUCT_DONOTSEARCH_ANYWHERE да бъде със стойност "1" в Настройки - Други настройки. След това търсенето ще бъде ограничено до началото на низ.
 UseSearchToSelectProduct=Изчакване, докато бъде натиснат клавиш преди да се зареди съдържанието на комбинирания списък с продукти (това може да увеличи производителността, ако имате голям брой продукти, но е по-малко удобно)
 SetDefaultBarcodeTypeProducts=Тип баркод по подразбиране, който да се използва за продукти

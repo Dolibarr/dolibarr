@@ -63,6 +63,7 @@ PriceRemoved=Precio removido
 SetDefaultBarcodeType=Definir tipo de código de barras
 NoteNotVisibleOnBill=Nota (No visible en facturas, presupuestos...)
 ServiceLimitedDuration=Si un producto es un servicio con duración limitada:
+AssociatedProductsAbility=Enable Kits (set of several products)
 KeywordFilter=Filtro por Palabra Clave
 CategoryFilter=Filtro por Categoría
 ExportDataset_produit_1=Productos

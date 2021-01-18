@@ -85,6 +85,7 @@ ProgressCalculated=Vooruitgang in consumptie
 WhichIamLinkedTo=waaraan ik gekoppeld ben
 WhichIamLinkedToProject=die ik ben gekoppeld aan het project
 Time=Tijd
+TimeConsumed=Consumed
 ListOfTasks=Lijst met taken
 GoToListOfTimeConsumed=Ga naar de lijst met tijd die is verbruikt
 GanttView=Gantt-weergave
