@@ -1,31 +1,30 @@
 # Dolibarr language file - Source file is en_US - paybox
-PayBoxSetup=PayBoxモジュールのセットアップ
-PayBoxDesc=このモジュールは、上の支払いを可能にするためにページを提供して<a href="http://www.paybox.com" target="_blank">切符売り場</a>の顧客によって。これはフリーの支払いのためにまたは特定のDolibarrオブジェクトの支払いに用いることができる（請求書、発注、...）
-FollowingUrlAreAvailableToMakePayments=以下のURLはDolibarrオブジェクト上で支払いをするために顧客にページを提供するために利用可能です
+PayBoxSetup=PayBoxモジュールの設定
+PayBoxDesc=このモジュールは、上の支払いを可能にするためにページを提供して<a href="http://www.paybox.com" target="_blank">切符売り場</a>の顧客によって。これはフリーの支払いのためにまたは特定のDolibarrオブジェクトの支払いに用いることができる(請求書、発注、...)
+FollowingUrlAreAvailableToMakePayments=以下のURLはDolibarrオブジェクト上で支払いをするために顧客にページを提供するために利用可能 
 PaymentForm=支払い形態
-WelcomeOnPaymentPage=Welcome to our online payment service
+WelcomeOnPaymentPage=オンライン決済サービスへようこそ
 ThisScreenAllowsYouToPay=この画面では、%sにオンライン決済を行うことができます。
-ThisIsInformationOnPayment=これは、実行する支払いに関する情報です。
+ThisIsInformationOnPayment=これは、実行する支払いに関する情報。
 ToComplete=完了する
 YourEMail=入金確認を受信する電子メール
 Creditor=債権者
 PaymentCode=支払いコード
-PayBoxDoPayment=Pay with Paybox
-YouWillBeRedirectedOnPayBox=あなたが入力するクレジットカード情報をセキュリティで保護された切符売り場のページにリダイレクトされます。
+PayBoxDoPayment=Payboxで支払う
+YouWillBeRedirectedOnPayBox=あなたが入力するクレジットカード情報をセキュリティで保護された切符売り場のページにリダイレクトされる。
 Continue=次の
-SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
+SetupPayBoxToHavePaymentCreatedAutomatically=Payboxによる検証時に支払いが自動的に作成されるように、URL <b> %s</b>を使用してPayboxを設定します。
 YourPaymentHasBeenRecorded=このページでは、あなたの支払が記録されていることを確認します。ありがとうございます。
-YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
+YourPaymentHasNotBeenRecorded=お支払いは記録されておらず、取引はキャンセルされています。ありがとうございます。
 AccountParameter=アカウントのパラメータ
 UsageParameter=使用パラメータ
 InformationToFindParameters=あなたの%sアカウント情報を見つけるのを助ける
 PAYBOX_CGI_URL_V2=支払いのために切符売り場CGIモジュールのurl
-VendorName=ベンダーの名前
 CSSUrlForPaymentForm=支払いフォームのCSSスタイルシートのURL
-NewPayboxPaymentReceived=新しいPaybox支払を受け取りました
-NewPayboxPaymentFailed=新しいPaybox支払を試みましたが失敗しました
-PAYBOX_PAYONLINE_SENDEMAIL=Email notification after payment attempt (success or fail)
+NewPayboxPaymentReceived=新規Paybox支払を受け取った
+NewPayboxPaymentFailed=新規Paybox支払を試みましたが失敗した
+PAYBOX_PAYONLINE_SENDEMAIL=支払い試行後の電子メール通知(成功または失敗)
 PAYBOX_PBX_SITE=PBX SITEの値
 PAYBOX_PBX_RANG=PBX Rangの値
 PAYBOX_PBX_IDENTIFIANT=PBX IDの値
-PAYBOX_HMAC_KEY=HMAC key
+PAYBOX_HMAC_KEY=HMACキー

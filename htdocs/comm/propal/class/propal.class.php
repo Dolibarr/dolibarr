@@ -208,6 +208,8 @@ class Propal extends CommonObject
 	public $demand_reason_id;
 	public $demand_reason_code;
 
+	public $warehouse_id;
+
 	public $extraparams = array();
 
 	/**
@@ -230,8 +232,6 @@ class Propal extends CommonObject
 	public $multicurrency_total_ht;
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
-
-	public $oldcopy;
 
 
 	/**
@@ -298,6 +298,7 @@ class Propal extends CommonObject
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'PDFTemplate', 'enabled'=>1, 'visible'=>0, 'position'=>180),
 		'date_livraison' =>array('type'=>'date', 'label'=>'DateDeliveryPlanned', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
 		'fk_shipping_method' =>array('type'=>'integer', 'label'=>'ShippingMethod', 'enabled'=>1, 'visible'=>-1, 'position'=>190),
+		'fk_warehouse' =>array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Fk warehouse', 'enabled'=>1, 'visible'=>-1, 'position'=>191),
 		'fk_availability' =>array('type'=>'integer', 'label'=>'Availability', 'enabled'=>1, 'visible'=>-1, 'position'=>195),
 		'fk_delivery_address' =>array('type'=>'integer', 'label'=>'DeliveryAddress', 'enabled'=>1, 'visible'=>0, 'position'=>200), // deprecated
 		'fk_input_reason' =>array('type'=>'integer', 'label'=>'InputReason', 'enabled'=>1, 'visible'=>-1, 'position'=>205),
@@ -600,6 +601,7 @@ class Propal extends CommonObject
 			// Clean vat code
 			$reg = array();
 			$vat_src_code = '';
+			$reg = array();
 			if (preg_match('/\((.*)\)/', $txtva, $reg))
 			{
 				$vat_src_code = $reg[1];
@@ -771,7 +773,9 @@ class Propal extends CommonObject
 		$qty = price2num($qty);
 		$pu = price2num($pu);
 		$pu_ht_devise = price2num($pu_ht_devise);
-		$txtva = price2num($txtva);
+		if (!preg_match('/\((.*)\)/', $txtva)) {
+			$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
+		}
 		$txlocaltax1 = price2num($txlocaltax1);
 		$txlocaltax2 = price2num($txlocaltax2);
 		$pa_ht = price2num($pa_ht);
@@ -1048,6 +1052,7 @@ class Propal extends CommonObject
 		$sql .= ", ref_client";
 		$sql .= ", date_livraison";
 		$sql .= ", fk_shipping_method";
+		$sql .= ", fk_warehouse";
 		$sql .= ", fk_availability";
 		$sql .= ", fk_input_reason";
 		$sql .= ", fk_projet";
@@ -1080,6 +1085,7 @@ class Propal extends CommonObject
 		$sql .= ", '".$this->db->escape($this->ref_client)."'";
 		$sql .= ", ".(empty($delivery_date) ? "NULL" : "'".$this->db->idate($delivery_date)."'");
 		$sql .= ", ".($this->shipping_method_id > 0 ? $this->shipping_method_id : 'NULL');
+		$sql .= ", ".($this->warehouse_id > 0 ? $this->warehouse_id : 'NULL');
 		$sql .= ", ".$this->availability_id;
 		$sql .= ", ".$this->demand_reason_id;
 		$sql .= ", ".($this->fk_project ? $this->fk_project : "null");
@@ -1434,6 +1440,7 @@ class Propal extends CommonObject
 		$sql .= ", p.fk_mode_reglement";
 		$sql .= ', p.fk_account';
 		$sql .= ", p.fk_shipping_method";
+		$sql .= ", p.fk_warehouse";
 		$sql .= ", p.fk_incoterms, p.location_incoterms";
 		$sql .= ", p.fk_multicurrency, p.multicurrency_code, p.multicurrency_tx, p.multicurrency_total_ht, p.multicurrency_total_tva, p.multicurrency_total_ttc";
 		$sql .= ", p.tms as date_modification";
@@ -1507,6 +1514,7 @@ class Propal extends CommonObject
 				$this->date_livraison       = $this->db->jdate($obj->delivery_date); // deprecated
 				$this->delivery_date        = $this->db->jdate($obj->delivery_date);
 				$this->shipping_method_id   = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
+				$this->warehouse_id         = ($obj->fk_warehouse > 0) ? $obj->fk_warehouse : null;
 				$this->availability_id      = $obj->fk_availability;
 				$this->availability_code    = $obj->availability_code;
 				$this->availability         = $obj->availability;

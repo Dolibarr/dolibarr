@@ -40,9 +40,9 @@ $transkey = GETPOST('transkey', 'alphanohtml');
 $transvalue = GETPOST('transvalue', 'restricthtml');
 
 
-$mode = GETPOST('mode', 'aZ09') ?GETPOST('mode', 'aZ09') : 'searchkey';
+$mode = GETPOST('mode', 'aZ09') ? GETPOST('mode', 'aZ09') : 'searchkey';
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -62,9 +62,9 @@ $hookmanager->initHooks(array('admintranslation', 'globaladmin'));
  */
 
 if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction = ''; }
+if (!GETPOST('confirmmassaction', 'alpha') && !empty($massaction) && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction = ''; }
 
-$parameters = array('socid'=>$socid);
+$parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
@@ -217,14 +217,14 @@ print '<br>';
 
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
+if (isset($optioncss) && $optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
 if ($langcode)        $param .= '&langcode='.urlencode($langcode);
 if ($transkey)        $param .= '&transkey='.urlencode($transkey);
 if ($transvalue)      $param .= '&transvalue='.urlencode($transvalue);
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug) ? '?debug=1' : '').'" method="POST">';
-if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && !empty($debug)) ? '?debug=1' : '').'" method="POST">';
+if (isset($optioncss) && $optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -472,7 +472,7 @@ if ($mode == 'searchkey')
 	print '</td>';
 	// Action column
 	print '<td class="nowrap right">';
-	$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
+	$searchpicto = $form->showFilterAndCheckAddButtons(!empty($massactionbutton) ? 1 : 0, 'checkforselect', 1);
 	print $searchpicto;
 	print '</td>';
 	print '</tr>';

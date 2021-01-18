@@ -15,6 +15,9 @@ function faaa()
 	return 'faaa';
 }
 
+/**
+ * Class Aaa
+ */
 class Aaa
 {
 	const AAA='aaa';

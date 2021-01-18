@@ -182,8 +182,7 @@ if ($action == 'update' && !$_POST["cancel"] && $user->rights->tax->charges->cre
 
 	if (!$dateech)
 	{
-		setEventMessages($langs->trans("ErrorFieldReqrequire_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
-uired", $langs->transnoentities("Date")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$action = 'edit';
 	} elseif (!$dateperiod)
 	{

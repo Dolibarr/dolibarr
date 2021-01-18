@@ -46,9 +46,12 @@ BoxTitleLastModifiedDonations=Latest %s modified donations
 BoxTitleLastModifiedExpenses=Latest %s modified expense reports
 BoxTitleLatestModifiedBoms=Latest %s modified BOMs
 BoxTitleLatestModifiedMos=Latest %s modified Manufacturing Orders
+BoxTitleLastOutstandingBillReached=Customers with maximum outstanding exceeded
 BoxGlobalActivity=Global activity (invoices, proposals, orders)
 BoxGoodCustomers=Good customers
 BoxTitleGoodCustomers=%s Good customers
+BoxScheduledJobs=Időzített feladatok
+BoxTitleFunnelOfProspection=Lead funnel
 FailedToRefreshDataInfoNotUpToDate=Failed to refresh RSS flux. Latest successful refresh date: %s
 LastRefreshDate=Latest refresh date
 NoRecordedBookmarks=Nincs könyvjezlő. Kattintson <a href="%s">ide</a> könyvjelző hozzáadásához.
@@ -102,5 +105,7 @@ SuspenseAccountNotDefined=Suspense account isn't defined
 BoxLastCustomerShipments=Last customer shipments
 BoxTitleLastCustomerShipments=Latest %s customer shipments
 NoRecordedShipments=No recorded customer shipment
+BoxCustomersOutstandingBillReached=Customers with oustanding limit reached
 # Pages
 AccountancyHome=Accountancy
+ValidatedProjects=Validated projects

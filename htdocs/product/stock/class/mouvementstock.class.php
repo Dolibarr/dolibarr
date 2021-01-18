@@ -666,7 +666,6 @@ class MouvementStock extends CommonObject
 			}
 
 			// Retrieve all extrafield
-			// fetch optionals attributes and labels
 			$this->fetch_optionals();
 
 			// $this->fetch_lines();
@@ -980,6 +979,10 @@ class MouvementStock extends CommonObject
 			case 'user':
 				require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 				$origin = new User($this->db);
+				break;
+			case 'reception':
+				require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
+				$origin = new Reception($this->db);
 				break;
 
 			default:

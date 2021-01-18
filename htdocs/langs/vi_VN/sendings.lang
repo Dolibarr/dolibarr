@@ -30,6 +30,7 @@ OtherSendingsForSameOrder=Lô hàng khác về đơn hàng này
 SendingsAndReceivingForSameOrder=Lô hàng và biên nhận cho đơn đặt hàng này
 SendingsToValidate=Xác nhận lô hàng
 StatusSendingCanceled=Hủy bỏ
+StatusSendingCanceledShort=Đã hủy
 StatusSendingDraft=Dự thảo
 StatusSendingValidated=Xác nhận (sản phẩm để vận chuyển hoặc đã được vận chuyển)
 StatusSendingProcessed=Xử lý
@@ -65,6 +66,7 @@ ValidateOrderFirstBeforeShipment=Trước tiên, bạn phải xác nhận đơn 
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Mô hình tài liệu đầy đủ hơn cho hóa đơn giao hàng (logo ...)
+DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER liên tục không được xác định
 SumOfProductVolumes=Tổng khối lượng sản phẩm
 SumOfProductWeights=Tổng trọng lượng sản phẩm

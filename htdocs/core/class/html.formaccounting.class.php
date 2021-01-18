@@ -59,7 +59,7 @@ class FormAccounting extends Form
 	/**
 	 * Return list of journals with label by nature
 	 *
-	 * @param	string	$selectid	Preselected pcg_type
+	 * @param	string	$selectid	Preselected journal code
 	 * @param	string	$htmlname	Name of field in html form
 	 * @param	int		$nature		Limit the list to a particular type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)
 	 * @param	int		$showempty	Add an empty field
@@ -132,6 +132,86 @@ class FormAccounting extends Form
 		}
 
 		$out .= Form::selectarray($htmlname, $options, $selected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, ($disabledajaxcombo ? 0 : 1));
+
+		return $out;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Return list of journals with label by nature
+	 *
+	 * @param	array	$selectedIds	Preselected journal code array
+	 * @param	string	$htmlname	Name of field in html form
+	 * @param	int		$nature		Limit the list to a particular type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)
+	 * @param	int		$showempty	Add an empty field
+	 * @param	int		$select_in	0=selectid value is the journal rowid (default) or 1=selectid is journal code
+	 * @param	int		$select_out	Set value returned by select. 0=rowid (default), 1=code
+	 * @param	string	$morecss	More css non HTML object
+	 * @param	string	$usecache	Key to use to store result into a cache. Next call with same key will reuse the cache.
+	 * @param   int     $disabledajaxcombo Disable ajax combo box.
+	 * @return	string				String with HTML select
+	 */
+	public function multi_select_journal($selectedIds = array(), $htmlname = 'journal', $nature = 0, $showempty = 0, $select_in = 0, $select_out = 0, $morecss = '', $usecache = '', $disabledajaxcombo = 0)
+	{
+		// phpcs:enable
+		global $conf, $langs;
+
+		$out = '';
+
+		$options = array();
+		if ($usecache && !empty($this->options_cache[$usecache]))
+		{
+			$options = $this->options_cache[$usecache];
+			$selected = $selectedIds;
+		} else {
+			$sql = "SELECT rowid, code, label, nature, entity, active";
+			$sql .= " FROM ".MAIN_DB_PREFIX."accounting_journal";
+			$sql .= " WHERE active = 1";
+			$sql .= " AND entity = ".$conf->entity;
+			if ($nature && is_numeric($nature))   $sql .= " AND nature = ".$nature;
+			$sql .= " ORDER BY code";
+
+			dol_syslog(get_class($this)."::multi_select_journal", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+
+			if (!$resql) {
+				$this->error = "Error ".$this->db->lasterror();
+				dol_syslog(get_class($this)."::multi_select_journal ".$this->error, LOG_ERR);
+				return -1;
+			}
+
+			$selected = array();
+			$langs->load('accountancy');
+			while ($obj = $this->db->fetch_object($resql))
+			{
+				$label = $langs->trans($obj->label);
+
+				$select_value_in = $obj->rowid;
+				$select_value_out = $obj->rowid;
+
+				// Try to guess if we have found default value
+				if ($select_in == 1) {
+					$select_value_in = $obj->code;
+				}
+				if ($select_out == 1) {
+					$select_value_out = $obj->code;
+				}
+				// Remember guy's we store in database llx_accounting_bookkeeping the code of accounting_journal and not the rowid
+				if (!empty($selectedIds) && in_array($select_value_in, $selectedIds)) {
+					//var_dump("Found ".$selectid." ".$select_value_in);
+					$selected[] = $select_value_out;
+				}
+				$options[$select_value_out] = $label;
+			}
+			$this->db->free($resql);
+
+			if ($usecache)
+			{
+				$this->options_cache[$usecache] = $options;
+			}
+		}
+
+		$out .= Form::multiselectarray($htmlname, $options, $selected, $showempty, 0, $morecss, 0, 0, 0, 'code_journal', '', ($disabledajaxcombo ? 0 : 1));
 
 		return $out;
 	}
@@ -347,7 +427,7 @@ class FormAccounting extends Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return list of auxilary thirdparty accounts
+	 * Return list of auxilary accounts. Cumulate list from customers, suppliers and users.
 	 *
 	 * @param string   $selectid       Preselected pcg_type
 	 * @param string   $htmlname       Name of field in html form
@@ -355,24 +435,27 @@ class FormAccounting extends Form
 	 * @param string   $morecss        More css
 	 * @return string                  String with HTML select
 	 */
-	public function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'maxwidth200')
+	public function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'maxwidth250')
 	{
 		// phpcs:enable
 
 		$aux_account = array();
 
-		// Auxiliary customer account
-		$sql = "SELECT DISTINCT code_compta, nom ";
+		// Auxiliary thirdparties account
+		$sql = "SELECT code_compta, code_compta_fournisseur, nom as name";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql .= " WHERE entity IN (".getEntity('societe').")";
-		$sql .= " ORDER BY code_compta";
+		$sql .= " AND client IN (1,3) OR fournisseur = 1";
 
 		dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
 				if (!empty($obj->code_compta)) {
-					$aux_account[$obj->code_compta] = $obj->code_compta.' ('.$obj->nom.')';
+					$aux_account[$obj->code_compta] = $obj->code_compta.' <span class="opacitymedium">('.$obj->name.')</span>';
+				}
+				if (!empty($obj->code_compta_fournisseur)) {
+					$aux_account[$obj->code_compta_fournisseur] = $obj->code_compta_fournisseur.' <span class="opacitymedium">('.$obj->name.')</span>';
 				}
 			}
 		} else {
@@ -380,26 +463,9 @@ class FormAccounting extends Form
 			dol_syslog(get_class($this)."::select_auxaccount ".$this->error, LOG_ERR);
 			return -1;
 		}
-		$this->db->free($resql);
 
-		// Auxiliary supplier account
-		$sql = "SELECT DISTINCT code_compta_fournisseur, nom ";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
-		$sql .= " WHERE entity IN (".getEntity('societe').")";
-		$sql .= " ORDER BY code_compta_fournisseur";
-		dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			while ($obj = $this->db->fetch_object($resql)) {
-				if ($obj->code_compta_fournisseur != "") {
-					$aux_account[$obj->code_compta_fournisseur] = $obj->code_compta_fournisseur.' ('.$obj->nom.')';
-				}
-			}
-		} else {
-			$this->error = "Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::select_auxaccount ".$this->error, LOG_ERR);
-			return -1;
-		}
+		ksort($aux_account);
+
 		$this->db->free($resql);
 
 		// Auxiliary user account
@@ -412,7 +478,7 @@ class FormAccounting extends Form
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
 				if (!empty($obj->accountancy_code)) {
-					$aux_account[$obj->accountancy_code] = $obj->accountancy_code.' ('.dolGetFirstLastname($obj->firstname, $obj->lastname).')';
+					$aux_account[$obj->accountancy_code] = $obj->accountancy_code.' <span class="opacitymedium">('.dolGetFirstLastname($obj->firstname, $obj->lastname).')</span>';
 				}
 			}
 		} else {

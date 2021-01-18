@@ -35,7 +35,7 @@
 	--oddevencolor: #202020;
 	--colorboxstatsborder: #e0e0e0;
 	--dolgraphbg: rgba(255,255,255,0);
-	--fieldrequiredcolor: #804000;
+	--fieldrequiredcolor: #400030;
 	--colortextbacktab: #<?php print $colortextbacktab; ?>;
 	--colorboxiconbg: #eee;
 	--refidnocolor:#444;
@@ -4371,6 +4371,16 @@ div.ui-tooltip.mytooltip {
 /* ============================================================================== */
 /* Calendar                                                                       */
 /* ============================================================================== */
+
+/*div.divfordateinput img.ui-datepicker-trigger {
+    float: left;
+    display: inline-block;
+    vertical-align: middle;
+    padding-top: 10px;
+}
+.hasDatepicker {
+    padding-bottom: 6px;
+}*/
 
 .ui-datepicker-calendar .ui-state-default, .ui-datepicker-calendar .ui-widget-content .ui-state-default,
 .ui-datepicker-calendar .ui-widget-header .ui-state-default, .ui-datepicker-calendar .ui-button,

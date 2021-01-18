@@ -20,7 +20,7 @@
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Contractació
 # Module description 'ModuleRecruitmentDesc'
-ModuleRecruitmentDesc = Gestiona i segueix les campanyes de contractació de nous llocs de treball
+ModuleRecruitmentDesc = Gestiona i segueix les campanyes de contractació de llocs de treball nous
 
 #
 # Admin page
@@ -38,7 +38,7 @@ EnablePublicRecruitmentPages=Activa les pàgines públiques de treballs actius
 About = Sobre
 RecruitmentAbout = Quant a la contractació
 RecruitmentAboutPage = Pàgina quant a la contractació
-NbOfEmployeesExpected=Nº previst d'empleats
+NbOfEmployeesExpected=Nombre previst d'empleats
 JobLabel=Descripció del lloc de treball
 WorkPlace=Lloc de treball
 DateExpected=Data prevista
@@ -73,3 +73,4 @@ JobClosedTextCandidateFound=L’oferta de feina està tancada. El lloc s'ha cobe
 JobClosedTextCanceled=L’oferta de feina està tancada.
 ExtrafieldsJobPosition=Atributs complementaris (llocs de treball)
 ExtrafieldsCandidatures=Atributs complementaris (sol·licituds de feina)
+MakeOffer=Feu una oferta

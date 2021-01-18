@@ -475,7 +475,7 @@ UPDATE llx_chargesociales SET date_creation = tms WHERE date_creation IS NULL;
 -- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
 -- VMYSQL4.1 update llx_inventory set date_cre = null where DATE(STR_TO_DATE(date_cre, '%Y-%m-%d')) IS NULL;
 
--- Note that you can manually set the default value of a date to CURRENT_TIMESTAMP with:
+-- Note that you can manually set the default value of a date or datetime to CURRENT_TIMESTAMP with:
 --ALTER TABLE llx_table modify column columnname datetime DEFAULT CURRENT_TIMESTAMP;
 
 

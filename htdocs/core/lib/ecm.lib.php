@@ -111,6 +111,16 @@ function ecm_file_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
+	// Notes
+	$head[$h][0] = DOL_URL_ROOT.'/ecm/file_note.php?section='.$object->section_id.'&urlfile='.urlencode($object->label);
+	$head[$h][1] = $langs->trans("Notes");
+	$nbNote = 0;
+	if (!empty($object->note_private)) $nbNote++;
+	if (!empty($object->note_public)) $nbNote++;
+	if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+	$head[$h][2] = 'note';
+	$h++;
+
 	return $head;
 }
 

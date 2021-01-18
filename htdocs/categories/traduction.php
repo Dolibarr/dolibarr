@@ -39,7 +39,6 @@ $id     = GETPOST('id', 'int');
 $label  = GETPOST('label', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
-$type   = GETPOST('type', 'aZ09');
 
 if ($id == '' && $label == '')
 {
@@ -51,15 +50,12 @@ if ($id == '' && $label == '')
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
-$result = $object->fetch($id, $label, $type);
-if ($result <= 0) {
-	dol_print_error($db, $object->error); exit;
-}
-$object->fetch_optionals();
+$result = $object->fetch($id, $label);
 if ($result <= 0) {
 	dol_print_error($db, $object->error); exit;
 }
 
+$type = $object->type;
 if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
 
 /*

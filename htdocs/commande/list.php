@@ -46,7 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("orders", 'sendings', 'deliveries', 'companies', 'compta', 'bills', 'stocks'));
+$langs->loadLangs(array("orders", 'sendings', 'deliveries', 'companies', 'compta', 'bills', 'stocks', 'products'));
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
@@ -67,6 +67,7 @@ $search_product_category = GETPOST('search_product_category', 'int');
 $search_ref = GETPOST('search_ref', 'alpha') != '' ?GETPOST('search_ref', 'alpha') : GETPOST('sref', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
+$search_company_alias = GETPOST('search_company_alias', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state", 'alpha');
@@ -95,7 +96,9 @@ $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_project = GETPOST('search_project', 'alpha');
 $search_shippable = GETPOST('search_shippable', 'aZ09');
-
+$search_fk_cond_reglement = GETPOST("search_fk_cond_reglement", 'int');
+$search_fk_shipping_method = GETPOST("search_fk_shipping_method", 'int');
+$search_fk_mode_reglement = GETPOST("search_fk_mode_reglement", 'int');
 
 // Security check
 $id = (GETPOST('orderid') ?GETPOST('orderid', 'int') : GETPOST('id', 'int'));
@@ -147,6 +150,7 @@ $arrayfields = array(
 	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>1, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1), 'position'=>20),
 	'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1), 'position'=>25),
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1, 'position'=>30),
+	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>1, 'position'=>31),
 	's.town'=>array('label'=>"Town", 'checked'=>1, 'position'=>35),
 	's.zip'=>array('label'=>"Zip", 'checked'=>1, 'position'=>40),
 	'state.nom'=>array('label'=>"StateShort", 'checked'=>0, 'position'=>45),
@@ -154,6 +158,9 @@ $arrayfields = array(
 	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers, 'position'=>55),
 	'c.date_commande'=>array('label'=>"OrderDateShort", 'checked'=>1, 'position'=>60),
 	'c.date_delivery'=>array('label'=>"DateDeliveryPlanned", 'checked'=>1, 'enabled'=>empty($conf->global->ORDER_DISABLE_DELIVERY_DATE), 'position'=>65),
+	'c.fk_shipping_method'=>array('label'=>"SendingMethod", 'checked'=>0, 'position'=>66 , 'enabled'=>!empty($conf->expedition->enabled)),
+	'c.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>0, 'position'=>67),
+	'c.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>0, 'position'=>68),
 	'c.total_ht'=>array('label'=>"AmountHT", 'checked'=>1, 'position'=>75),
 	'c.total_vat'=>array('label'=>"AmountVAT", 'checked'=>0, 'position'=>80),
 	'c.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0, 'position'=>85),
@@ -206,6 +213,7 @@ if (empty($reshook))
 		$search_ref = '';
 		$search_ref_customer = '';
 		$search_company = '';
+		$search_company_alias = '';
 		$search_town = '';
 		$search_zip = "";
 		$search_state = "";
@@ -235,6 +243,9 @@ if (empty($reshook))
 		$search_categ_cus = 0;
 		$search_datecloture_start = '';
 		$search_datecloture_end = '';
+		$search_fk_cond_reglement = '';
+		$search_fk_shipping_method = '';
+		$search_fk_mode_reglement = '';
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
 	 || GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha'))
@@ -272,7 +283,7 @@ $help_url = "EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_P
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
-$sql .= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
+$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= ' c.rowid, c.ref, c.total_ht, c.tva as total_tva, c.total_ttc, c.ref_client, c.fk_user_author,';
@@ -280,7 +291,8 @@ $sql .= ' c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multic
 $sql .= ' c.date_valid, c.date_commande, c.note_public, c.note_private, c.date_livraison as date_delivery, c.fk_statut, c.facture as billed,';
 $sql .= ' c.date_creation as date_creation, c.tms as date_update, c.date_cloture as date_cloture,';
 $sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
-$sql .= " u.login";
+$sql .= " u.login,";
+$sql .= ' c.fk_cond_reglement,c.fk_mode_reglement,c.fk_shipping_method';
 if ($search_categ_cus) $sql .= ", cc.fk_categorie, cc.fk_soc";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label']))
@@ -353,6 +365,7 @@ if ($search_state)                           $sql .= natural_search("state.nom",
 if ($search_country)                         $sql .= " AND s.fk_pays IN (".$search_country.')';
 if ($search_type_thirdparty)                 $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 if ($search_company)                         $sql .= natural_search('s.nom', $search_company);
+if ($search_company_alias)                   $sql .= natural_search('s.name_alias', $search_company_alias);
 if ($search_sale > 0)                        $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$search_sale;
 if ($search_user > 0)                        $sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
 if ($search_total_ht != '')                  $sql .= natural_search('c.total_ht', $search_total_ht, 1);
@@ -369,6 +382,9 @@ if ($search_project_ref != '')               $sql .= natural_search("p.ref", $se
 if ($search_project != '')                   $sql .= natural_search("p.title", $search_project);
 if ($search_categ_cus > 0)                   $sql .= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
 if ($search_categ_cus == -2)                 $sql .= " AND cc.fk_categorie IS NULL";
+if ($search_fk_cond_reglement > 0) $sql .= " AND c.fk_cond_reglement = ".$db->escape($search_fk_cond_reglement);
+if ($search_fk_shipping_method > 0) $sql .= " AND c.fk_shipping_method = ".$db->escape($search_fk_shipping_method);
+if ($search_fk_mode_reglement > 0) $sql .= " AND c.fk_mode_reglement = ".$db->escape($search_fk_mode_reglement);
 
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -454,6 +470,7 @@ if ($resql)
 	if ($search_datedelivery_end) 	$param .= '&search_datedelivery_end_day='.dol_print_date($search_datedelivery_end, '%d').'&search_datedelivery_end_month='.dol_print_date($search_datedelivery_end, '%m').'&search_datedelivery_end_year='.dol_print_date($search_datedelivery_end, '%Y');
 	if ($search_ref)      			$param .= '&search_ref='.urlencode($search_ref);
 	if ($search_company)  			$param .= '&search_company='.urlencode($search_company);
+	if ($search_company_alias)  	$param .= '&search_company_alias='.urlencode($search_company_alias);
 	if ($search_ref_customer)		$param .= '&search_ref_customer='.urlencode($search_ref_customer);
 	if ($search_user > 0) 			$param .= '&search_user='.urlencode($search_user);
 	if ($search_sale > 0) 			$param .= '&search_sale='.urlencode($search_sale);
@@ -478,6 +495,9 @@ if ($resql)
 	if ($show_files)            	$param .= '&show_files='.urlencode($show_files);
 	if ($optioncss != '')       	$param .= '&optioncss='.urlencode($optioncss);
 	if ($search_billed != '')		$param .= '&search_billed='.urlencode($search_billed);
+	if ($search_fk_cond_reglement > 0) $param .= '&search_fk_cond_reglement='.$search_fk_cond_reglement;
+	if ($search_fk_shipping_method > 0) $param .= '&search_fk_shipping_method='.$search_fk_shipping_method;
+	if ($search_fk_mode_reglement > 0) $param .= '&search_fk_mode_reglement='.$search_fk_mode_reglement;
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -678,6 +698,13 @@ if ($resql)
 		print '<input class="flat maxwidth100" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
 		print '</td>';
 	}
+	// Alias
+	if (!empty($arrayfields['s.name_alias']['checked']))
+	{
+		print '<td class="liste_titre" align="left">';
+		print '<input class="flat maxwidth100" type="text" name="search_company_alias" value="'.dol_escape_htmltag($search_company_alias).'">';
+		print '</td>';
+	}
 	// Town
 	if (!empty($arrayfields['s.town']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="4" name="search_town" value="'.dol_escape_htmltag($search_town).'"></td>';
 	// Zip
@@ -724,6 +751,27 @@ if ($resql)
 		print '<div class="nowrap">';
 		print $form->selectDate($search_datedelivery_end ? $search_datedelivery_end : -1, 'search_datedelivery_end_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
+		print '</td>';
+	}
+	// Shipping Method
+	if (!empty($arrayfields['c.fk_shipping_method']['checked']))
+	{
+		print '<td class="liste_titre">';
+		$form->selectShippingMethod($search_fk_shipping_method, 'search_fk_shipping_method', '', 1, '', 1);
+		print '</td>';
+	}
+	// Payment term
+	if (!empty($arrayfields['c.fk_cond_reglement']['checked']))
+	{
+		print '<td class="liste_titre">';
+		$form->select_conditions_paiements($search_fk_cond_reglement, 'search_fk_cond_reglement', -1, 1, 1);
+		print '</td>';
+	}
+	// Payment mode
+	if (!empty($arrayfields['c.fk_mode_reglement']['checked']))
+	{
+		print '<td class="liste_titre">';
+		$form->select_types_paiements($search_fk_mode_reglement, 'search_fk_mode_reglement', '', 0, 1, 1, 0, -1);
 		print '</td>';
 	}
 	if (!empty($arrayfields['c.total_ht']['checked']))
@@ -881,6 +929,7 @@ if ($resql)
 	if (!empty($arrayfields['p.ref']['checked'])) 	         print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['p.title']['checked'])) 	     print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER["PHP_SELF"], "p.title", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['s.nom']['checked']))            print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], 's.nom', '', $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['s.name_alias']['checked']))     print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], 's.name_alias', '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['s.town']['checked']))           print_liste_field_titre($arrayfields['s.town']['label'], $_SERVER["PHP_SELF"], 's.town', '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['s.zip']['checked']))            print_liste_field_titre($arrayfields['s.zip']['label'], $_SERVER["PHP_SELF"], 's.zip', '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['state.nom']['checked']))        print_liste_field_titre($arrayfields['state.nom']['label'], $_SERVER["PHP_SELF"], "state.nom", "", $param, '', $sortfield, $sortorder);
@@ -888,6 +937,9 @@ if ($resql)
 	if (!empty($arrayfields['typent.code']['checked']))      print_liste_field_titre($arrayfields['typent.code']['label'], $_SERVER["PHP_SELF"], "typent.code", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['c.date_commande']['checked']))  print_liste_field_titre($arrayfields['c.date_commande']['label'], $_SERVER["PHP_SELF"], 'c.date_commande', '', $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['c.date_delivery']['checked']))  print_liste_field_titre($arrayfields['c.date_delivery']['label'], $_SERVER["PHP_SELF"], 'c.date_livraison', '', $param, '', $sortfield, $sortorder, 'center ');
+	if (!empty($arrayfields['c.fk_shipping_method']['checked']))	print_liste_field_titre($arrayfields['c.fk_shipping_method']['label'], $_SERVER["PHP_SELF"], "c.fk_shipping_method", "", $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['c.fk_cond_reglement']['checked']))		print_liste_field_titre($arrayfields['c.fk_cond_reglement']['label'], $_SERVER["PHP_SELF"], "c.fk_cond_reglement", "", $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['c.fk_mode_reglement']['checked']))		print_liste_field_titre($arrayfields['c.fk_mode_reglement']['label'], $_SERVER["PHP_SELF"], "c.fk_mode_reglement", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['c.total_ht']['checked']))       print_liste_field_titre($arrayfields['c.total_ht']['label'], $_SERVER["PHP_SELF"], 'c.total_ht', '', $param, '', $sortfield, $sortorder, 'right ');
 	if (!empty($arrayfields['c.total_vat']['checked']))      print_liste_field_titre($arrayfields['c.total_vat']['label'], $_SERVER["PHP_SELF"], 'c.tva', '', $param, '', $sortfield, $sortorder, 'right ');
 	if (!empty($arrayfields['c.total_ttc']['checked']))      print_liste_field_titre($arrayfields['c.total_ttc']['label'], $_SERVER["PHP_SELF"], 'c.total_ttc', '', $param, '', $sortfield, $sortorder, 'right ');
@@ -1038,6 +1090,14 @@ if ($resql)
 			if (!$i) $totalarray['nbfield']++;
 		}
 		// Town
+		if (!empty($arrayfields['s.name_alias']['checked']))
+		{
+			print '<td class="nocellnopadd">';
+			print $obj->alias;
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+		// Town
 		if (!empty($arrayfields['s.town']['checked']))
 		{
 			print '<td class="nocellnopadd">';
@@ -1091,6 +1151,30 @@ if ($resql)
 		{
 			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_delivery), 'dayhour');
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+		//Shipping Method
+		if (!empty($arrayfields['c.fk_shipping_method']['checked']))
+		{
+			print '<td>';
+			$form->formSelectShippingMethod('', $obj->fk_shipping_method, 'none', 1);
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+		// Payment terms
+		if (!empty($arrayfields['c.fk_cond_reglement']['checked']))
+		{
+			print '<td>';
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'], $obj->fk_cond_reglement, 'none');
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+		// Payment mode
+		if (!empty($arrayfields['c.fk_mode_reglement']['checked']))
+		{
+			print '<td>';
+			$form->form_modes_reglement($_SERVER['PHP_SELF'], $obj->fk_mode_reglement, 'none', '', -1);
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
@@ -1326,7 +1410,6 @@ if ($resql)
 			print '<td class="center">'.yn($obj->billed).'</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
-
 		// Status
 		if (!empty($arrayfields['c.fk_statut']['checked']))
 		{

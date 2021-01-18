@@ -891,11 +891,17 @@ class CommandeFournisseur extends CommonOrder
 	 *	Class invoiced the supplier order
 	 *
 	 *  @param      User        $user       Object user making the change
-	 *	@return     int     	            <0 if KO, >0 if KO
+	 *	@return     int     	            <0 if KO, 0 if already billed,  >0 if OK
 	 */
 	public function classifyBilled(User $user)
 	{
 		$error = 0;
+
+		if ($this->billed)
+		{
+			return 0;
+		}
+
 		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur SET billed = 1';
@@ -1714,8 +1720,8 @@ class CommandeFournisseur extends CommonOrder
 			$multicurrency_total_ttc = $tabprice[18];
 			$pu_ht_devise = $tabprice[19];
 
-			$localtax1_type = $localtaxes_type[0];
-			$localtax2_type = $localtaxes_type[2];
+			$localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
+			$localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 
 			$rangmax = $this->line_max();
 			$rang = $rangmax + 1;
@@ -1734,8 +1740,8 @@ class CommandeFournisseur extends CommonOrder
 			$this->line->tva_tx = $txtva;
 			$this->line->localtax1_tx = ($total_localtax1 ? $localtaxes_type[1] : 0);
 			$this->line->localtax2_tx = ($total_localtax2 ? $localtaxes_type[3] : 0);
-			$this->line->localtax1_type = $localtaxes_type[0];
-			$this->line->localtax2_type = $localtaxes_type[2];
+			$this->line->localtax1_type = $localtax1_type;
+			$this->line->localtax2_type = $localtax2_type;
 			$this->line->fk_product = $fk_product;
 			$this->line->product_type = $product_type;
 			$this->line->remise_percent = $remise_percent;
@@ -2546,9 +2552,12 @@ class CommandeFournisseur extends CommonOrder
 
 			$remise_percent = price2num($remise_percent);
 			$qty = price2num($qty);
+			if (!$qty) $qty = 1;
 			$pu = price2num($pu);
 			$pu_ht_devise = price2num($pu_ht_devise);
-			$txtva = price2num($txtva);
+        	if (!preg_match('/\((.*)\)/', $txtva)) {
+        		$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
+        	}
 			$txlocaltax1 = price2num($txlocaltax1);
 			$txlocaltax2 = price2num($txlocaltax2);
 
@@ -2594,8 +2603,8 @@ class CommandeFournisseur extends CommonOrder
 			$multicurrency_total_ttc = $tabprice[18];
 			$pu_ht_devise = $tabprice[19];
 
-			$localtax1_type = $localtaxes_type[0];
-			$localtax2_type = $localtaxes_type[2];
+			$localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
+			$localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 
 			//Fetch current line from the database and then clone the object and set it in $oldline property
 			$this->line = new CommandeFournisseurLigne($this->db);
@@ -2633,8 +2642,8 @@ class CommandeFournisseur extends CommonOrder
 			$this->line->tva_tx         = $txtva;
 			$this->line->localtax1_tx   = $txlocaltax1;
 			$this->line->localtax2_tx   = $txlocaltax2;
-			$this->line->localtax1_type = $localtaxes_type[0];
-			$this->line->localtax2_type = $localtaxes_type[2];
+			$this->line->localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
+			$this->line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 			$this->line->remise_percent = $remise_percent;
 			$this->line->subprice       = $pu_ht;
 			$this->line->rang           = $this->rang;

@@ -768,7 +768,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	   	print '<input type="hidden" name="action" value="adduserldap">';
 		if (is_array($liste) && count($liste))
 		{
-			print $form->selectarray('users', $liste, '', 1);
+			print $form->selectarray('users', $liste, '', 1, 0, 0, '', 0, 0, 0, '', 'maxwidth500');
 			print ajax_combobox('users');
 		}
 	   	print '</td><td class="center">';

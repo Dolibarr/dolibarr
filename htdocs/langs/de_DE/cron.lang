@@ -7,13 +7,14 @@ Permission23103 = Lösche geplanten Job
 Permission23104 = Führe geplanten Job aus
 # Admin
 CronSetup=Jobverwaltungs-Konfiguration
-URLToLaunchCronJobs=URL zum Prüfen und Starten von speziellen Jobs
-OrToLaunchASpecificJob=Oder zum Prüfen und Starten von speziellen Jobs
+URLToLaunchCronJobs=URL zum Überprüfen und Starten qualifizierter Cron-Jobs über einen Browser
+OrToLaunchASpecificJob=Oder um einen bestimmten Job über einen Browser zu überprüfen und zu starten
 KeyForCronAccess=Sicherheitsschlüssel für URL zum Starten von Cronjobs
 FileToLaunchCronJobs=Befehlszeile zum Überprüfen und Starten von qualifizierten Cron-Jobs
 CronExplainHowToRunUnix=In Unix-Umgebung sollten Sie die folgenden crontab-Eintrag verwenden, um die Befehlszeile alle 5 Minuten ausführen
 CronExplainHowToRunWin=In Microsoft™ Windows Umgebungen kannst Du die Aufgabenplanung benutzen, um die Kommandozeile alle 5 Minuten aufzurufen.
 CronMethodDoesNotExists=Klasse %s enthält keine Methode %s
+CronMethodNotAllowed=Die Methode %s der Klasse %s befindet sich in der schwarzen Liste der verbotenen Methoden
 CronJobDefDesc=Cron-Jobprofile sind in der Moduldeskriptordatei definiert. Wenn das Modul aktiviert ist, sind diese geladen und verfügbar, so dass Sie die Jobs über das Menü admin tools %s verwalten können.
 CronJobProfiles=Liste vordefinierter Cron-Jobprofile
 # Menu
@@ -46,6 +47,7 @@ CronNbRun=Anzahl Starts
 CronMaxRun=Maximale Anzahl von Starts
 CronEach=Jede
 JobFinished=Job gestartet und beendet
+Scheduled=Geplant
 #Page card
 CronAdd= Jobs hinzufügen
 CronEvery=Jeden Job ausführen
@@ -56,7 +58,7 @@ CronNote=Kommentar
 CronFieldMandatory=Feld %s ist zwingend nötig
 CronErrEndDateStartDt=Enddatum kann nicht vor dem Startdatum liegen
 StatusAtInstall=Status bei der Modulinstallation
-CronStatusActiveBtn=Aktivieren
+CronStatusActiveBtn=Zeitplan
 CronStatusInactiveBtn=Deaktivieren
 CronTaskInactive=Dieser Job ist deaktiviert
 CronId=ID
@@ -82,3 +84,8 @@ MakeLocalDatabaseDumpShort=lokales Datenbankbackup
 MakeLocalDatabaseDump=Erstellen Sie einen lokalen Datenbankspeicherauszug. Parameter sind: Komprimierung ('gz' oder 'bz' oder 'none'), Sicherungstyp ('mysql', 'pgsql', 'auto'), 1, 'auto' oder zu erstellender Dateiname, Anzahl der zu speichernden Sicherungsdateien
 WarningCronDelayed=Bitte beachten: Aus Leistungsgründen können Ihre Jobs um bis zu %s Stunden verzögert werden, unabhängig vom nächsten Ausführungstermin.
 DATAPOLICYJob=Datenbereiniger und Anonymisierer
+JobXMustBeEnabled=Job %s muss aktiviert sein
+# Cron Boxes
+LastExecutedScheduledJob=Zuletzt ausgeführter geplanter Job
+NextScheduledJobExecute=Nächster geplanter Job, der ausgeführt werden soll
+NumberScheduledJobError=Anzahl der fehlerhaften geplanten Jobs

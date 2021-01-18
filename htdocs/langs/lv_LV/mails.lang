@@ -92,6 +92,7 @@ MailingModuleDescEmailsFromUser=Lietotāja ievadītie e-pasti
 MailingModuleDescDolibarrUsers=Lietotāji ar e-pastu
 MailingModuleDescThirdPartiesByCategories=Trešās personas (pēc sadaļām)
 SendingFromWebInterfaceIsNotAllowed=Sūtīšana no tīmekļa saskarnes nav atļauta.
+EmailCollectorFilterDesc=All filters must match to have an email being collected
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Līnija %s failā
@@ -129,8 +130,8 @@ NotificationsAuto=Paziņojumi Automātiski.
 NoNotificationsWillBeSent=Šim notikuma veidam un uzņēmumam nav plānoti automātiski e-pasta paziņojumi
 ANotificationsWillBeSent=1 automātisks paziņojums tiks nosūtīts pa e-pastu
 SomeNotificationsWillBeSent=%s automātiskie paziņojumi tiks nosūtīti pa e-pastu
-AddNewNotification=Aktivizējiet jaunu automātisko e-pasta paziņojumu mērķi / notikumu
-ListOfActiveNotifications=Uzskaitiet visus aktīvos mērķus / notikumus automātiskai e-pasta paziņošanai
+AddNewNotification=Subscribe to a new automatic email notification (target/event)
+ListOfActiveNotifications=List all active subscriptions (targets/events) for automatic email notification
 ListOfNotificationsDone=Uzskaitiet visus nosūtītos automātiskos e-pasta paziņojumus
 MailSendSetupIs=Configuration of email sending has been setup to '%s'. This mode can't be used to send mass emailing.
 MailSendSetupIs2=You must first go, with an admin account, into menu %sHome - Setup - EMails%s to change parameter <strong>'%s'</strong> to use mode '%s'. With this mode, you can enter setup of the SMTP server provided by your Internet Service Provider and use Mass emailing feature.
@@ -141,7 +142,7 @@ UseFormatFileEmailToTarget=Importētajam failam jābūt formatētam <strong>e-pa
 UseFormatInputEmailToTarget=Ievadiet virkni ar formātu <strong>e-pasts;nosaukums;vārds;cits</strong>
 MailAdvTargetRecipients=Saņēmēji (papildu izvēle)
 AdvTgtTitle=Aizpildiet ievades laukus, lai iepriekš atlasītu mērķauditoriju trešajām personām vai kontaktpersonām / adresēm
-AdvTgtSearchTextHelp=Izmantojiet %% kā aizstājējzīmes. Piemēram, lai atrastu visu objektu, piemēram, <b> jean, joe, jim </ b>, jūs varat ievadīt <b> j%% </ b>, kuru varat arī izmantot; kā atdalītājs par vērtību, un izmantot! izņemot šo vērtību. Piemēram, <b> jean; joe; jim%%;! Jimo;! Jima% </ b> tiks mērķētas uz visiem jean, joe, sākt ar jim, bet ne jimo, un ne visu, kas sākas ar jima
+AdvTgtSearchTextHelp=Use %% as wildcards. For example to find all item like <b>jean, joe, jim</b>, you can input <b>j%%</b>, you can also use ; as separator for value, and use ! for except this value. For example  <b>jean;joe;jim%%;!jimo;!jima%%</b> will target all jean, joe, start with jim but not jimo and not everything that starts with jima
 AdvTgtSearchIntHelp=Izmantojiet intervālu, lai izvēlētos int vai float vērtību
 AdvTgtMinVal=Minimālā vērtība
 AdvTgtMaxVal=Maksimālā vērtība

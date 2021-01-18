@@ -135,15 +135,39 @@ class FormFile
 
 			$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
 			$maxphp = @ini_get('upload_max_filesize'); // In unknown
-			if (preg_match('/k$/i', $maxphp)) $maxphp = $maxphp * 1;
-			if (preg_match('/m$/i', $maxphp)) $maxphp = $maxphp * 1024;
-			if (preg_match('/g$/i', $maxphp)) $maxphp = $maxphp * 1024 * 1024;
-			if (preg_match('/t$/i', $maxphp)) $maxphp = $maxphp * 1024 * 1024 * 1024;
+			if (preg_match('/k$/i', $maxphp)) {
+			    $maxphp = preg_replace('/k$/i', '', $maxphp);
+			    $maxphp = $maxphp * 1;
+			}
+			if (preg_match('/m$/i', $maxphp)) {
+			    $maxphp = preg_replace('/m$/i', '', $maxphp);
+			    $maxphp = $maxphp * 1024;
+			}
+			if (preg_match('/g$/i', $maxphp)) {
+			    $maxphp = preg_replace('/g$/i', '', $maxphp);
+			    $maxphp = $maxphp * 1024 * 1024;
+			}
+			if (preg_match('/t$/i', $maxphp)) {
+			    $maxphp = preg_replace('/t$/i', '', $maxphp);
+			    $maxphp = $maxphp * 1024 * 1024 * 1024;
+			}
 			$maxphp2 = @ini_get('post_max_size'); // In unknown
-			if (preg_match('/k$/i', $maxphp2)) $maxphp2 = $maxphp2 * 1;
-			if (preg_match('/m$/i', $maxphp2)) $maxphp2 = $maxphp2 * 1024;
-			if (preg_match('/g$/i', $maxphp2)) $maxphp2 = $maxphp2 * 1024 * 1024;
-			if (preg_match('/t$/i', $maxphp2)) $maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
+			if (preg_match('/k$/i', $maxphp2)) {
+			    $maxphp2 = preg_replace('/k$/i', '', $maxphp2);
+			    $maxphp2 = $maxphp2 * 1;
+			}
+			if (preg_match('/m$/i', $maxphp2)) {
+			    $maxphp2 = preg_replace('/m$/i', '', $maxphp2);
+			    $maxphp2 = $maxphp2 * 1024;
+			}
+			if (preg_match('/g$/i', $maxphp2)) {
+			    $maxphp2 = preg_replace('/g$/i', '', $maxphp2);
+			    $maxphp2 = $maxphp2 * 1024 * 1024;
+			}
+			if (preg_match('/t$/i', $maxphp2)) {
+			    $maxphp2 = preg_replace('/t$/i', '', $maxphp2);
+			    $maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
+			}
 			// Now $max and $maxphp and $maxphp2 are in Kb
 			$maxmin = $max;
 			$maxphptoshow = $maxphptoshowparam = '';
@@ -1042,15 +1066,16 @@ class FormFile
 		if ($disablecrop == -1)
 		{
 			$disablecrop = 1;
-			if (in_array($modulepart, array('bank', 'bom', 'expensereport', 'holiday', 'medias', 'member', 'mrp', 'project', 'product', 'produit', 'propal', 'service', 'societe', 'tax', 'tax-vat', 'ticket', 'user'))) $disablecrop = 0;
+			// Values here must be supported by the photo_resize.php page.
+			if (in_array($modulepart, array('bank', 'bom', 'expensereport', 'facture', 'facture_fournisseur', 'holiday', 'medias', 'member', 'mrp', 'project', 'product', 'produit', 'propal', 'service', 'societe', 'tax', 'tax-vat', 'ticket', 'user'))) $disablecrop = 0;
 		}
 
 		// Define relative path used to store the file
 		if (empty($relativepath))
 		{
 			$relativepath = (!empty($object->ref) ?dol_sanitizeFileName($object->ref) : '').'/';
-			if ($object->element == 'invoice_supplier') $relativepath = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$relativepath; // TODO Call using a defined value for $relativepath
-			if ($object->element == 'project_task') $relativepath = 'Call_not_supported_._Call_function_using_a_defined_relative_path_.';
+			if (!empty($object->element) && $object->element == 'invoice_supplier') $relativepath = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$relativepath; // TODO Call using a defined value for $relativepath
+			if (!empty($object->element) && $object->element == 'project_task') $relativepath = 'Call_not_supported_._Call_function_using_a_defined_relative_path_.';
 		}
 		// For backward compatiblity, we detect file stored into an old path
 		if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO) && $filearray[0]['level1name'] == 'photos')

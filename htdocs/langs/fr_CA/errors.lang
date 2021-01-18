@@ -51,7 +51,6 @@ ErrorBadFormatValueList=La valeur de la liste ne peut pas contenir plus d'une vi
 ErrorExportDuplicateProfil=Ce nom de profil existe déjà pour ce jeu d'exportation.
 ErrorLDAPSetupNotComplete=La correspondance Dolibarr-LDAP n'est pas complète.
 ErrorLDAPMakeManualTest=Un fichier .ldif a été généré dans le répertoire %s. Essayez de le charger manuellement à partir de la ligne de commande pour avoir plus d'informations sur les erreurs.
-ErrorRefAlreadyExists=La référence utilisée pour la création existe déjà.
 ErrorModuleRequireJavascript=Javascript ne doit pas être désactivé pour que cette fonction fonctionne. Pour activer / désactiver Javascript, accédez au menu Accueil-> Configuration-> Affichage.
 ErrorPasswordsMustMatch=Les deux mots de passe dactylographiés doivent correspondre les uns aux autres
 ErrorFileIsInfectedWithAVirus=Le programme antivirus n'a pas pu valider le fichier (le fichier peut être infecté par un virus)

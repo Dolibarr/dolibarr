@@ -1182,6 +1182,20 @@ class Contact extends CommonObject
 
 		if (!$error)
 		{
+			// Remove Roles
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_contacts WHERE fk_socpeople = ".$this->id;
+			dol_syslog(__METHOD__, LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql)
+			{
+				$error++;
+				$this->error .= $this->db->lasterror();
+				$errorflag = -1;
+			}
+		}
+
+		if (!$error)
+		{
 			// Remove category
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_contact WHERE fk_socpeople = ".$this->id;
 			dol_syslog(__METHOD__, LOG_DEBUG);
@@ -1579,38 +1593,8 @@ class Contact extends CommonObject
 	 */
 	public function setCategories($categories)
 	{
-		// Handle single category
-		if (!is_array($categories)) {
-			$categories = array($categories);
-		}
-
-		// Get current categories
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-		$c = new Categorie($this->db);
-		$existing = $c->containing($this->id, Categorie::TYPE_CONTACT, 'id');
-
-		// Diff
-		if (is_array($existing)) {
-			$to_del = array_diff($existing, $categories);
-			$to_add = array_diff($categories, $existing);
-		} else {
-			$to_del = array(); // Nothing to delete
-			$to_add = $categories;
-		}
-
-		// Process
-		foreach ($to_del as $del) {
-			if ($c->fetch($del) > 0) {
-				$c->del_type($this, Categorie::TYPE_CONTACT);
-			}
-		}
-		foreach ($to_add as $add) {
-			if ($c->fetch($add) > 0) {
-				$c->add_type($this, Categorie::TYPE_CONTACT);
-			}
-		}
-
-		return;
+		return parent::setCategoriesCommon($categories, Categorie::TYPE_CONTACT);
 	}
 
 	/**
@@ -1909,5 +1893,95 @@ class Contact extends CommonObject
 		}
 
 		return "Error, mode/status not found";
+	}
+
+
+	/**
+	 *  Set "blacklist" mailing status
+	 *
+	 *  @param	int		$no_email	1=Do not send mailing, 0=Ok to recieve mailling
+	 *  @return int					<0 if KO, >0 if OK
+	 */
+	public function setNoEmail($no_email)
+	{
+		$error = 0;
+
+		// Update mass emailing flag into table mailing_unsubscribe
+		if ($this->email)
+		{
+			$this->db->begin();
+
+			if ($no_email)
+			{
+				$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing', 0).") AND email = '".$this->db->escape($this->email)."'";
+				$resql = $this->db->query($sql);
+				if ($resql)
+				{
+					$obj = $this->db->fetch_object($resql);
+					$noemail = $obj->nb;
+					if (empty($noemail))
+					{
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creat) VALUES ('".$this->db->escape($this->email)."', ".$this->db->escape(getEntity('mailing', 0)).", '".$this->db->idate(dol_now())."')";
+						$resql = $this->db->query($sql);
+						if (!$resql)
+						{
+							$error++;
+							$this->error = $this->db->lasterror();
+							$this->errors[] = $this->error;
+						}
+					}
+				} else {
+					$error++;
+					$this->error = $this->db->lasterror();
+					$this->errors[] = $this->error;
+				}
+			} else {
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = '".$this->db->escape($this->email)."' AND entity = ".$this->db->escape(getEntity('mailing', 0));
+				$resql = $this->db->query($sql);
+				if (!$resql)
+				{
+					$error++;
+					$this->error = $this->db->lasterror();
+					$this->errors[] = $this->error;
+				}
+			}
+
+			if (empty($error)) {
+				$this->no_email = $no_email;
+				$this->db->commit();
+				return 1;
+			} else {
+				$this->db->rollback();
+				return $error * -1;
+			}
+		}
+
+		return 0;
+	}
+
+	/**
+	 *  get "blacklist" mailing status
+	 * 	set no_email attribut to 1 or 0
+	 *
+	 *  @return int					<0 if KO, >0 if OK
+	 */
+	public function getNoEmail()
+	{
+		if ($this->email)
+		{
+			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing').") AND email = '".$this->db->escape($this->email)."'";
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$obj = $this->db->fetch_object($resql);
+				$this->no_email = $obj->nb;
+				return 1;
+			} else {
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+				return -1;
+			}
+		}
+		return 0;
 	}
 }
