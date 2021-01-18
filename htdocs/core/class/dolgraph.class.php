@@ -293,7 +293,7 @@ class DolGraph
 	/**
 	 * Set border width
 	 *
-	 * @param 	int     $borderwidth
+	 * @param 	int     $borderwidth 	Border Width
 	 * @return	void
 	 */
 	public function SetBorderWidth($borderwidth)
@@ -483,7 +483,8 @@ class DolGraph
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Mirror Values of the graph
-	 *
+	 * 
+	 * @param	boolean 	$mirrorGraphValues	Mirror Values if true and doesn't if false
 	 * @return	void
 	 */
 	public function SetMirrorGraphValues($mirrorGraphValues)
