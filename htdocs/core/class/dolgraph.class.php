@@ -79,7 +79,7 @@ class DolGraph
 	/**
 	 * @var boolean 					Mirrors graph values
 	 */
-	public $mirrorGraphValues = false; 
+	public $mirrorGraphValues = false;
 	public $tooltipsTitles = null;
 	public $tooltipsLabels = null;
 
