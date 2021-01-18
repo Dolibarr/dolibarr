@@ -6799,8 +6799,8 @@ class Form
 
 		// Add code for jquery to use multiselect
 		if (!empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT')) {
-			$out .= "\n".'<!-- JS CODE TO ENABLE select for id '.$htmlname.' -->
-						<script>'."\n";
+			$out .= "\n".'<!-- JS CODE TO ENABLE select for id '.$htmlname.', addjscombo='.$addjscombo.' -->';
+			$out .= "\n".'<script>'."\n";
 			if ($addjscombo == 1) {
 				$tmpplugin = empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) ?constant('REQUIRE_JQUERY_MULTISELECT') : $conf->global->MAIN_USE_JQUERY_MULTISELECT;
 				$out .= 'function formatResult(record) {'."\n";
@@ -6827,8 +6827,7 @@ class Form
 							 	templateResult: formatResult,
 								// Specify format function for selected item
 								formatSelection: formatSelection,
-								/* For 4.0 */
-								templateSelection: formatSelection';
+								templateSelection: formatSelection		/* For 4.0 */';
 				if ($enablefreetag && $elemtype == 'email') {
 					$out .= ',
 								createTag: function (params) {
@@ -6861,9 +6860,12 @@ class Form
 										}
 									}
 									return null;
-								}';
+								}'."\n";
 				}
-				$out .= '			});';
+				$out .= '			});'."\n";
+				$out .= '			/* Add also morecss to the css .select2 that is after the #htmlname, for component that are show dynamically after load, because select2 set
+								 the size only if component is not hidden by default on load */
+							$("#'.$htmlname.' + .select2").addClass("'.$morecss.'");'."\n";
 				$out .= '		});'."\n";
 			} elseif ($addjscombo == 2 && !defined('DISABLE_MULTISELECT')) {
 				// Add other js lib
