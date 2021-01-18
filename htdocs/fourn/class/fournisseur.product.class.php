@@ -280,13 +280,10 @@ class ProductFournisseur extends Product
 		}
 
 		// Multicurrency
-		$multicurrency_buyprice = null;
 		$multicurrency_unitBuyPrice = null;
 		$fk_multicurrency = null;
 		if (!empty($conf->multicurrency->enabled)) {
 			if (empty($multicurrency_tx)) $multicurrency_tx = 1;
-			if (empty($multicurrency_buyprice)) $multicurrency_buyprice = 0;
-
 			if (empty($multicurrency_buyprice)) $multicurrency_buyprice = 0;
 			if ($multicurrency_price_base_type == 'TTC')
 			{
