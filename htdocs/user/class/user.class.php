@@ -1425,7 +1425,7 @@ class User extends CommonObject
 			}
 			$sql .= ' WHERE rowid='.$this->id;
 			print var_dump($sql);
-			
+
 			$resql = $this->db->query($sql);
 
 			dol_syslog(get_class($this)."::create_from_contact", LOG_DEBUG);
