@@ -4864,19 +4864,19 @@ function price2num($amount, $rounding = '', $option = 0)
 		//print 'PP'.$amount.' - '.$dec.' - '.$thousand.' - '.intval($amount).'<br>';
 		if (!is_numeric($amount)) {
 			$amount = iconv('UTF-8', 'ASCII//IGNORE', $amount);//Eliminate non ascii characters 
-			$amount = substr( $amount, 0, strpos( $amount, ' (' ) );//if the string contains " (" it contains a code name, so eliminate the end of string including parenthesis, so 85NPR VAT code will work
+			$amount = substr($amount, 0, strpos( $amount, ' ('));//if the string contains " (" it contains a code name, so eliminate the end of string including parenthesis, so 85NPR VAT code will work
 			$amount = preg_replace('/[a-zA-Z\/\\\*\(\)\<\>\_\!\"\#\$\%\&\:\;\=\@\[\]\`\{\|\}\'\?]/', '', $amount);//Eliminate alphabetics and special characters, keep only 0-9 . , - + and spaces (eliminated after)
-			$lastpos=strrpos ( $amount,'+',0);//+ if exists, must be alone at first place, eliminate others
+			$lastpos=strrpos($amount,'+',0);//+ if exists, must be alone at first place, eliminate others
 			while (($lastpos<>false) and ($lastpos>0))
 			{
 				$amount=substr_replace($amount, '', $lastpos, 1);
-				$lastpos=strrpos ( $amount,'+',0);
+				$lastpos=strrpos($amount,'+',0);
 			}
-			$lastpos=strrpos ( $amount,'-',0);//- if exists, must be alone at first place, eliminate others
+			$lastpos=strrpos($amount,'-',0);//- if exists, must be alone at first place, eliminate others
 			while (($lastpos<>false) and ($lastpos>0))
 			{
 				$amount=substr_replace($amount, '', $lastpos, 1);
-				$lastpos=strrpos ( $amount,'-',0);
+				$lastpos=strrpos($amount,'-',0);
 			}
 		}
 
