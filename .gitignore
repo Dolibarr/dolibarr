@@ -16,6 +16,7 @@ default.properties
 .DS_Store
 .idea
 *.iml
+*.orig
 Thumbs.db
 /dolibarr_genesis.mp4
 # Log files
