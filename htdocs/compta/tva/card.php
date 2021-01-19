@@ -177,7 +177,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	if (!$error)
 	{
 		$ret = $object->create($user);
-		if($ret < 0) $error++;
+		if ($ret < 0) $error++;
 
 		// Auto create payment
 		if (!empty($auto_create_payment) && !$error)
@@ -195,7 +195,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 
 			if (!$error)
 			{
-				$paymentid = $paiement->create($user, (int)GETPOST('closepaidtva'));
+				$paymentid = $paiement->create($user, (int) GETPOST('closepaidtva'));
 				if ($paymentid < 0)
 				{
 					$error++;
@@ -218,12 +218,11 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 			{
 				$db->commit();
 			}
-			else
-			{
+			else {
 				$db->rollback();
 			}
 		}
-		if(empty($error)) {
+		if (empty($error)) {
 			header("Location: card.php?id=" . $object->id);
 			exit;
 		}
@@ -257,21 +256,18 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 				header("Location: ".DOL_URL_ROOT.'/compta/tva/list.php');
 				exit;
 			}
-			else
-			{
+			else {
 				$object->error = $accountline->error;
 				$db->rollback();
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 	    }
-	    else
-	    {
+	    else {
 	        $db->rollback();
 	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
-	else
-	{
+	else {
 		setEventMessages($langs->trans('DisabledBecausePayments'), null, 'errors');
 	}
 }
@@ -290,8 +286,7 @@ if ($action == 'update' && !$_POST["cancel"] && $user->rights->tax->charges->cre
 		setEventMessages($langs->trans("ErrorFieldMustBeANumeric", $langs->transnoentities("Amount")), null, 'errors');
 		$action = 'create';
 	}
-	else
-	{
+	else {
 		$result = $object->fetch($id);
 
 		$object->amount		= price2num($amount);
@@ -340,8 +335,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
 			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 			exit;
 		}
-		else
-		{
+		else {
 			$id = $originalId;
 			$db->rollback();
 
@@ -349,8 +343,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
 		}
 		//}
 	}
-	else
-	{
+	else {
 		$db->rollback();
 		dol_print_error($db, $object->error);
 	}
@@ -405,8 +398,8 @@ if ($action == 'create')
 					}
 				});';
 
-		if($_REQUEST['action'] === 'add') { // form has been send but there is at least one error
-			if(empty($auto_create_payment)) {
+		if ($_REQUEST['action'] === 'add') { // form has been send but there is at least one error
+			if (empty($auto_create_payment)) {
 				print '$("#label_fk_account").removeClass("fieldrequired");
 					   $("#label_type_payment").removeClass("fieldrequired");
 					   $(".hide_if_no_auto_create_payment").hide();';
@@ -727,8 +720,7 @@ if ($id)
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			print '<tr class="oddeven"><td><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
 			print '<td></td><td></td><td></td><td></td>';
 			print '</tr>';
@@ -748,8 +740,7 @@ if ($id)
 
 		$db->free($resql);
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 
@@ -816,8 +807,7 @@ if ($id)
 		{
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a></div>';
 		}
-		else
-		{
+		else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("DisabledBecausePayments"))).'">'.$langs->trans("Delete").'</a></div>';
 		}
 	}

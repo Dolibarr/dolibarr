@@ -68,8 +68,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->tax->char
         header("Location: ".DOL_URL_ROOT."/compta/tva/payments.php?mode=tvaonly");
         exit;
 	}
-	else
-	{
+	else {
 		setEventMessages($object->error, $object->errors, 'errors');
         $db->rollback();
 	}
@@ -262,7 +261,7 @@ if ($resql)
 			print $tva->getNomUrl(1);
 			print "</td>\n";
 			// Type
-           /* print '<td>';
+			/* print '<td>';
             print $tva->type_label;4
             print "</td>\n";*/
 			// Label
@@ -287,8 +286,7 @@ if ($resql)
 	print "</table>\n";
 	$db->free($resql);
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 
@@ -320,8 +318,7 @@ if ($action == '')
 		{
 			print '<a class="butActionDelete" href="card.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 		}
-		else
-		{
+		else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentVATPaid")).'">'.$langs->trans('Delete').'</a>';
 		}
 	}
