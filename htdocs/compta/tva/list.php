@@ -148,7 +148,7 @@ if (!empty($search_account) && $search_account > 0)	$sql .= ' AND b.fk_account='
 if (!empty($search_amount))							$sql .= natural_search('t.amount', price2num(trim($search_amount)), 1);
 if ($search_status != '' && $search_status >= 0) 	$sql .= " AND t.paye = ".$db->escape($search_status);
 
-$sql .= " GROUP BY t.rowid, t.amount, t.datev, t.label, t.paye";
+$sql .= " GROUP BY t.rowid, t.amount, t.datev, t.label, t.paye, pst.code";
 $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
