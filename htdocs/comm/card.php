@@ -97,17 +97,18 @@ if ($object->id > 0) {
 
 $now = dol_now();
 
-
-/*
- * Actions
- */
-
 if ($id > 0 && empty($object->id))
 {
 	// Load data of third party
 	$res = $object->fetch($id);
 	if ($object->id < 0) dol_print_error($db, $object->error, $object->errors);
 }
+
+
+
+/*
+ * Actions
+ */
 
 $parameters = array('id' => $id, 'socid' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some
