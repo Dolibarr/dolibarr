@@ -129,9 +129,6 @@ $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc
 $permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
 $permissiontoedit = $usercancreate; // Used by the include of actions_lineupdown.inc.php
 
-
-//if ($thirdparty->fk_warehouse > 0) $object->warehouse_id = $thirdparty->fk_warehouse;
-
 /*
  * Actions
  */
@@ -1495,6 +1492,7 @@ if ($action == 'create')
 	}
 
 	//Warehouse default if null
+	if ($soc->fk_warehouse > 0) $warehouse_id = $soc->fk_warehouse;
 	if (!empty($conf->stock->enabled) && empty($warehouse_id) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER))
 	{
 		if (empty($object->warehouse_id) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) $warehouse_id = $conf->global->MAIN_DEFAULT_WAREHOUSE;
