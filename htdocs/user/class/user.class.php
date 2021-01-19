@@ -1419,11 +1419,12 @@ class User extends CommonObject
 		if ($result > 0) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 			$sql .= " SET fk_socpeople=".$contact->id;
-			$sql .= ", civility=".$contact->civility_code;
+			$sql .= ", civility='".$this->db->escape($contact->civility_code)."'";
 			if ($contact->socid) {
 				$sql .= ", fk_soc=".$contact->socid;
 			}
 			$sql .= " WHERE rowid=".$this->id;
+
 			$resql = $this->db->query($sql);
 
 			dol_syslog(get_class($this)."::create_from_contact", LOG_DEBUG);
