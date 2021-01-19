@@ -101,10 +101,6 @@ $now = dol_now();
 /*
  * Actions
  */
-$contactstatic = new Contact($db);
-$userstatic = new User($db);
-$form = new Form($db);
-$formcompany = new FormCompany($db);
 
 if ($id > 0 && empty($object->id))
 {
@@ -249,6 +245,11 @@ if (empty($reshook))
 /*
  * View
  */
+
+$contactstatic = new Contact($db);
+$userstatic = new User($db);
+$form = new Form($db);
+$formcompany = new FormCompany($db);
 
 $title = $langs->trans("CustomerCard");
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->name;
