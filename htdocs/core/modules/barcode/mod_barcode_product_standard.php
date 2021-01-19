@@ -206,23 +206,28 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		$now = dol_now();
 
 		$numFinal = get_next_value($db, $mask, 'product', $field, $where, '', $now);
-		//if EAN13 calculate and substitute the last 13th character (* or ?) used in the mask by the EAN13 key
-		$literaltype = '';
-		$literaltype = $this->literalBarcodeType($db, $type);//get literal_Barcode_Type
-		if ($literaltype=='EAN13') //EAN13 rowid = 2
+		//Begin barcode with key: for barcode with key (EAN13...) calculate and substitute the last  character (* or ?) used in the mask by the key
+		if ((substr($numFinal, -1)=='*') or (substr($numFinal, -1)=='?')) // if last mask character is * or ? a joker, probably we have to calculate a key as last character (EAN13...)
 		{
-			if (strlen($numFinal)==13)
+			$literaltype = '';
+			$literaltype = $this->literalBarcodeType($db,$type);//get literal_Barcode_Type
+			switch ($literaltype)
 			{
-				if ((substr($numFinal, -1)=='*') or (substr($numFinal, -1)=='?')) // if last mask character is * or ?
-				{
-					$ean = substr($numFinal, 0, 12); //take first 12 digits
-					$eansum = barcode_gen_ean_sum($ean);
-					$ean .= $eansum; //substitute the last character by the key
-					$numFinal = $ean;
-				}
+				case 'EAN13': //EAN13 rowid = 2
+					if (strlen($numFinal)==13)// be sure that the mask length is correct for EAN13
+					{
+							$ean = substr($numFinal, 0, 12); //take first 12 digits
+							$eansum = barcode_gen_ean_sum($ean);
+							$ean .= $eansum; //substitute the las character by the key
+							$numFinal = $ean;
+					}
+					break;
+				// Other barcode cases with key could be written here 
+				default:
+					break;
 			}
 		}
-		//EAN13 end
+		//End barcode with key
 		return  $numFinal;
 	}
 
