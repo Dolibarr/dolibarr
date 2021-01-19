@@ -183,7 +183,6 @@ class DolGraph
 		return true;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Hide X Values
 	 *
@@ -277,7 +276,6 @@ class DolGraph
 		$this->datacolor = $datacolor;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set border color
 	 *
@@ -289,7 +287,6 @@ class DolGraph
 		$this->bordercolor = $bordercolor;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set border width
 	 *
@@ -301,7 +298,6 @@ class DolGraph
 		$this->borderwidth = $borderwidth;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set tooltips labels of the graph
 	 *
@@ -314,7 +310,6 @@ class DolGraph
 		$this->tooltipsLabels = $tooltipsLabels;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set tooltips titles of the graph
 	 *
@@ -480,7 +475,6 @@ class DolGraph
 		unset($this->bgcolorgrid);
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Mirror Values of the graph
 	 * 
