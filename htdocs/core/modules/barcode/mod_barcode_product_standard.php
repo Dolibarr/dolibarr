@@ -210,7 +210,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		if ((substr($numFinal, -1)=='*') or (substr($numFinal, -1)=='?')) // if last mask character is * or ? a joker, probably we have to calculate a key as last character (EAN13...)
 		{
 			$literaltype = '';
-			$literaltype = $this->literalBarcodeType($db,$type);//get literal_Barcode_Type
+			$literaltype = $this->literalBarcodeType($db, $type);//get literal_Barcode_Type
 			switch ($literaltype)
 			{
 				case 'EAN13': //EAN13 rowid = 2
@@ -222,7 +222,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 							$numFinal = $ean;
 					}
 					break;
-				// Other barcode cases with key could be written here 
+				// Other barcode cases with key could be written here
 				default:
 					break;
 			}
