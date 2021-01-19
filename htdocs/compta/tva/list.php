@@ -397,7 +397,7 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['t.status']['checked'])) {
 		print '<td class="nowrap right">' . $tva_static->LibStatut($obj->paye, 5, $obj->alreadypayed) . '</td>';
 		if (!$i) $totalarray['nbfield']++;
-		if(!empty($arrayfields['t.amount']['checked'])) $totalarray['pos'][$totalarray['nbfield']] = '';
+		if (!empty($arrayfields['t.amount']['checked'])) $totalarray['pos'][$totalarray['nbfield']] = '';
 	}
 
 	// Buttons
