@@ -1424,7 +1424,6 @@ class User extends CommonObject
 				$sql .= ", fk_soc=".$contact->socid;
 			}
 			$sql .= " WHERE rowid=".$this->id;
-			print var_dump($sql);
 
 			$resql = $this->db->query($sql);
 
