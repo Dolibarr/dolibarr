@@ -4863,7 +4863,7 @@ function price2num($amount, $rounding = '', $option = 0)
 	if ($option != 1) {	// If not a PHP number or unknown, we change or clean format
 		//print 'PP'.$amount.' - '.$dec.' - '.$thousand.' - '.intval($amount).'<br>';
 		if (!is_numeric($amount)) {
-			$amount = iconv('UTF-8', 'ASCII//IGNORE', $amount);//Eliminate non ascii characters 
+			$amount = iconv('UTF-8', 'ASCII//IGNORE', $amount);//Eliminate non ascii characters
 			$amount = substr($amount, 0, strpos($amount, ' ('));//if the string contains " (" it contains a code name, so eliminate the end of string including parenthesis, so 85NPR VAT code will work
 			$amount = preg_replace('/[a-zA-Z\/\\\*\(\)\<\>\_\!\"\#\$\%\&\:\;\=\@\[\]\`\{\|\}\'\?]/', '', $amount);//Eliminate alphabetics and special characters, keep only 0-9 . , - + and spaces (eliminated after)
 			$lastpos=strrpos($amount, '+', 0);//+ if exists, must be alone at first place, eliminate others
