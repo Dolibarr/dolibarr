@@ -477,7 +477,7 @@ class DolGraph
 
 	/**
 	 * Mirror Values of the graph
-	 * 
+	 *
 	 * @param	boolean 	$mirrorGraphValues	Mirror Values if true and doesn't if false
 	 * @return	void
 	 */
@@ -1348,7 +1348,7 @@ class DolGraph
 				$this->stringtoshow .= 'backgroundColor: \'' . $color . '\', ';
 				if ($arrayofgroupslegend[$i]) $this->stringtoshow .= 'stack: \'' . $arrayofgroupslegend[$i]['stacknum'] . '\', ';
 				$this->stringtoshow .= 'data: [';
-				
+
 				$this->stringtoshow .= $this->mirrorGraphValues ? '[' . -$serie[$i] . ',' . $serie[$i] . ']' : $serie[$i];
 				$this->stringtoshow .= ']';
 				$this->stringtoshow .= '}' . "\n";
