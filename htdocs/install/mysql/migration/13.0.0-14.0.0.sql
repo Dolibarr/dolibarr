@@ -105,3 +105,36 @@ ALTER TABLE llx_propal ADD INDEX idx_propal_fk_warehouse(fk_warehouse);
 ALTER TABLE llx_product_customer_price ADD COLUMN ref_customer varchar(30);
 ALTER TABLE llx_product_customer_price_log ADD COLUMN ref_customer varchar(30);
 
+
+create table llx_paiementtva
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  fk_tva          integer,
+  datec           datetime,           -- date de creation
+  tms             timestamp,
+  datep           datetime,           -- payment date
+  amount          double(24,8) DEFAULT 0,
+  fk_typepaiement integer NOT NULL,
+  num_paiement    varchar(50),
+  note            text,
+  fk_bank         integer NOT NULL,
+  fk_user_creat   integer,            -- creation user
+  fk_user_modif   integer             -- last modification user
+
+)ENGINE=innodb;
+
+ALTER TABLE llx_tva ADD paye smallint default 0 NOT NULL;
+ALTER TABLE llx_tva ADD fk_account integer;
+
+INSERT INTO `llx_paiementtva` (fk_tva, datec, datep, amount, fk_typepaiement, num_paiement, note, fk_bank, fk_user_creat, fk_user_modif)
+SELECT rowid, NOW(), datep, amount, COALESCE(fk_typepayment, 0), num_payment, '', fk_bank, fk_user_creat, fk_user_modif FROM llx_tva;
+
+UPDATE llx_bank_url url INNER JOIN llx_tva tva ON tva.rowid = url.url_id SET type = 'vat', url.label = CONCAT('(', tva.label, ')') WHERE type = 'payment_vat';
+
+INSERT INTO `llx_bank_url` (fk_bank, url_id, url, label, type)
+SELECT b.fk_bank, ptva.rowid, REPLACE(b.url, 'tva/card.php', 'payment_vat/card.php'), '(paiement)', 'payment_vat'
+FROM llx_bank_url b INNER JOIN llx_tva tva ON (tva.fk_bank = b.fk_bank) INNER JOIN llx_paiementtva ptva on (ptva.fk_bank = b.fk_bank)
+WHERE type = "vat";
+
+ALTER TABLE llx_tva DROP COLUMN fk_bank;
+UPDATE llx_tva SET paye = 1;
