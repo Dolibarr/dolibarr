@@ -96,9 +96,6 @@ NEW: common behavior for monthly leave list view
 NEW: convert all subscription in datetime
 NEW: date shipment from order accepts hours
 NEW: price level compatibility for variant
-NEW: delayed payment in TakePOS
-NEW: display date range if exist in TakePOS
-NEW: display resiliate status in TakePOS for member
 NEW: display stat for BOM on "object referent"/linked Object product tab
 NEW: Email configuration - allow auto signed certificate when smtp ssl activated
 NEW: enable free emails input with select2
@@ -156,6 +153,9 @@ NEW: TakePOS add third order printer
 NEW: TakePOS can change thirdparty with barcode scan
 NEW: TakePOS can create a thirdparty customer from TakePOS frontend
 NEW: TakePOS connector compatibility with RECEIPT PRINTERS module
+NEW: TakePOS add delayed payment
+NEW: TakePOS display date range if exist
+NEW: TakePOS display resiliate status for members
 NEW: TakePOS Gift Receipt
 NEW: TakePOS multicurrency compatibility
 NEW: TakePOS multicurrency total
