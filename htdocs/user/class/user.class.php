@@ -1420,10 +1420,10 @@ class User extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 			$sql .= " SET fk_socpeople=".$contact->id;
 			$sql .= ", civility='".$this->db->escape($contact->civility_code)."'";
-			if ($contact->socid) {
+			if ($contact->socid > 0) {
 				$sql .= ", fk_soc=".$contact->socid;
 			}
-			$sql .= " WHERE rowid=".$this->id;
+			$sql .= " WHERE rowid=".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 

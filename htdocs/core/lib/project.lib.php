@@ -476,6 +476,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				$projectstatic->public = $lines[$i]->public;
 				$projectstatic->title = $lines[$i]->projectlabel;
 				$projectstatic->usage_bill_time = $lines[$i]->usage_bill_time;
+				$projectstatic->status = $lines[$i]->projectstatus;
 
 				$taskstatic->id = $lines[$i]->id;
 				$taskstatic->ref = $lines[$i]->ref;
@@ -881,6 +882,7 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
 			$projectstatic->ref = $lines[$i]->project_ref;
 			$projectstatic->title = $lines[$i]->project_label;
 			$projectstatic->public = $lines[$i]->public;
+			$projectstatic->status = $lines[$i]->project_status;
 
 			$taskstatic->id = $lines[$i]->task_id;
 			$taskstatic->ref = ($lines[$i]->task_ref ? $lines[$i]->task_ref : $lines[$i]->task_id);
@@ -1843,6 +1845,7 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				$projectstatic->title = $lines[$i]->projectlabel;
 				$projectstatic->public = $lines[$i]->public;
 				$projectstatic->thirdparty_name = $lines[$i]->thirdparty_name;
+				$projectstatic->status = $lines[$i]->projectstatus;
 
 				$taskstatic->id = $lines[$i]->id;
 				$taskstatic->ref = ($lines[$i]->ref ? $lines[$i]->ref : $lines[$i]->id);
