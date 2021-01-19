@@ -4052,8 +4052,7 @@ class Form
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($result);
-					if ($selected == $obj->rowid || ($useempty == 2 && $num == 1 && empty($selected)))
-					{
+					if ($selected == $obj->rowid || ($useempty == 2 && $num == 1 && empty($selected))) {
 						$out .= '<option value="'.$obj->rowid.'" selected>';
 					} else {
 						$out .= '<option value="'.$obj->rowid.'">';
