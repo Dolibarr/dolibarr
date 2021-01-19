@@ -30,22 +30,41 @@ require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security2.lib.php';
 
-if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
-if (! defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no menu to show
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (! defined("NOLOGIN"))        define("NOLOGIN", '1');       // If this page is public (can be called outside logged session)
+if (! defined('NOREQUIREUSER')) {
+	define('NOREQUIREUSER', '1');
+}
+if (! defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
+if (! defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (! defined('NOREQUIRETRAN')) {
+	define('NOREQUIRETRAN', '1');
+}
+if (! defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1');
+}
+if (! defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1');
+}
+if (! defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1'); // If there is no menu to show
+}
+if (! defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+}
+if (! defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (! defined("NOLOGIN")) {
+	define("NOLOGIN", '1');       // If this page is public (can be called outside logged session)
+}
 
-if (empty($user->id))
-{
-    print "Load permissions for admin user nb 1\n";
-    $user->fetch(1);
-    $user->getrights();
+if (empty($user->id)) {
+	print "Load permissions for admin user nb 1\n";
+	$user->fetch(1);
+	$user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
@@ -87,92 +106,92 @@ class LesscTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-    	global $conf,$user,$langs,$db;
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass()
+	{
+		global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
+	public static function tearDownAfterClass()
+	{
+		global $conf,$user,$langs,$db;
 		$db->rollback();
 
 		print __METHOD__."\n";
-    }
+	}
 
 	/**
 	 * Init phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function setUp()
-    {
-    	global $conf,$user,$langs,$db;
+	protected function setUp()
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
 		print __METHOD__."\n";
-    }
+	}
 
 	/**
 	 * End phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function tearDown()
-    {
-    	print __METHOD__."\n";
-    }
+	protected function tearDown()
+	{
+		print __METHOD__."\n";
+	}
 
-    /**
-     * testLess
-     *
-     * @return string
-     */
-    public function testLessc()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * testLess
+	 *
+	 * @return string
+	 */
+	public function testLessc()
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-        include_once DOL_DOCUMENT_ROOT.'/core/class/lessc.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/class/lessc.class.php';
 
-        $lesscobj = new Lessc();
+		$lesscobj = new Lessc();
 
-        $cssfile = "
+		$cssfile = "
         a { font-size: 10px; }
         b .test {
         	font-size: 10px;
         }
         ";
 
-        try {
-        	$contentforlessc = ".bodywebsite {\n".$cssfile."\n}\n";
-        	//print '<pre>'.$contentforlessc.'</pre>';
-        	$result = $lesscobj->compile($contentforlessc);
-        	//var_dump($contentforlessc); exit;
-        } catch (exception $e) {
-        	//echo "failed to compile lessc";
-        	dol_syslog("Failed to compile the CSS with lessc: ".$e->getMessage(), LOG_WARNING);
-        }
+		try {
+			$contentforlessc = ".bodywebsite {\n".$cssfile."\n}\n";
+			//print '<pre>'.$contentforlessc.'</pre>';
+			$result = $lesscobj->compile($contentforlessc);
+			//var_dump($contentforlessc); exit;
+		} catch (exception $e) {
+			//echo "failed to compile lessc";
+			dol_syslog("Failed to compile the CSS with lessc: ".$e->getMessage(), LOG_WARNING);
+		}
 
-        $cssexpected = "
+		$cssexpected = "
 .bodywebsite a {
   font-size: 10px;
 }
@@ -184,6 +203,6 @@ class LesscTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." SeparatorDecimal=".$result."\n";
 		$this->assertEquals(trim($result), trim($cssexpected));
 
-        return;
-    }
+		return;
+	}
 }
