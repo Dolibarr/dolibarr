@@ -6,7 +6,7 @@
  * Copyright (C) 2012		Christophe Battarel	  <christophe.battarel@altairis.fr>
  * Copyright (C) 2015		Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2016		Charlie Benke         <charlie@patas-monkey.com>
- * Copyright (C) 2019       Frédéric France       <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France       <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Pierre Ardoin         <mapiolca@me.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -280,13 +280,10 @@ class ProductFournisseur extends Product
 		}
 
 		// Multicurrency
-		$multicurrency_buyprice = null;
 		$multicurrency_unitBuyPrice = null;
 		$fk_multicurrency = null;
 		if (!empty($conf->multicurrency->enabled)) {
 			if (empty($multicurrency_tx)) $multicurrency_tx = 1;
-			if (empty($multicurrency_buyprice)) $multicurrency_buyprice = 0;
-
 			if (empty($multicurrency_buyprice)) $multicurrency_buyprice = 0;
 			if ($multicurrency_price_base_type == 'TTC')
 			{
@@ -1071,9 +1068,12 @@ class ProductFournisseur extends Product
 	{
 		global $db, $conf, $langs;
 
-		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
 		$result = '';
+		$label = '';
 
 		if (!empty($this->entity)) {
 			$tmpphoto = $this->show_photos('product', $conf->product->multidir_output[$this->entity], 1, 1, 0, 0, 0, 80);
@@ -1112,8 +1112,7 @@ class ProductFournisseur extends Product
 			$label .= '<br><b>'.$langs->trans('BarCode').':</b> '.$this->barcode;
 		}
 
-		if ($this->type == Product::TYPE_PRODUCT)
-		{
+		if ($this->type == Product::TYPE_PRODUCT) {
 			if ($this->weight) {
 				$label .= "<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuringUnitString(0, "weight", $this->weight_units);
 			}
@@ -1161,33 +1160,40 @@ class ProductFournisseur extends Product
 
 		$url = dol_buildpath('/product/fournisseurs.php', 1).'?id='.$this->id.'&action=add_price&socid='.$this->fourn_id.'&rowid='.$this->product_fourn_price_id;
 
-		if ($option != 'nolink')
-		{
+		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
 		}
 
 		$linkclose = '';
-		if (empty($notooltip))
-		{
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-			{
+		if (empty($notooltip)) {
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("SupplierRef");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		}
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
 		$result .= $linkstart;
-		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-		if ($withpicto != 2) $result .= $this->ref.($this->ref_supplier ? ' ('.$this->ref_supplier.')' : '');
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		}
+		if ($withpicto != 2) {
+			$result .= $this->ref.($this->ref_supplier ? ' ('.$this->ref_supplier.')' : '');
+		}
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
