@@ -244,7 +244,7 @@ if (empty($reshook))
 	$uploaddir = $conf->fournisseur->commande->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	// TODO Move this into mass action include
+	// Mass action to generate vendor bills
 	if ($massaction == 'confirm_createsupplierbills')
 	{
 		$orders = GETPOST('toselect', 'array');
@@ -255,6 +255,8 @@ if (empty($reshook))
 		$TFactThird = array();
 
 		$nb_bills_created = 0;
+		$lastid = 0;
+		$lastref = '';
 
 		$db->begin();
 
@@ -263,8 +265,9 @@ if (empty($reshook))
 			if ($cmd->fetch($id_order) <= 0) continue;
 
 			$objecttmp = new FactureFournisseur($db);
-			if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) $objecttmp = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created order.
-			else {
+			if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) {
+				$objecttmp = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created order.
+			} else {
 				$objecttmp->socid = $cmd->socid;
 				$objecttmp->type = $objecttmp::TYPE_STANDARD;
 				$objecttmp->cond_reglement_id	= $cmd->cond_reglement_id;
@@ -285,7 +288,11 @@ if (empty($reshook))
 
 				$res = $objecttmp->create($user);
 
-				if ($res > 0) $nb_bills_created++;
+				if ($res > 0) {
+					$nb_bills_created++;
+					$lastref = $objecttmp->ref;
+					$lastid = $objecttmp->id;
+				}
 			}
 
 			if ($objecttmp->id > 0)
@@ -442,7 +449,14 @@ if (empty($reshook))
 		if (!$error)
 		{
 			$db->commit();
-			setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
+
+			if ($nb_bills_created == 1) {
+				$texttoshow = $langs->trans('BillXCreated', '{s1}');
+				$texttoshow = str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?id='.urlencode($lastid).'">'.$lastref.'</a>', $texttoshow);
+				setEventMessages($texttoshow, null, 'mesgs');
+			} else {
+				setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
+			}
 
 			// Make a redirect to avoid to bill twice if we make a refresh or back
 			$param = '';
@@ -459,7 +473,7 @@ if (empty($reshook))
 			if ($search_deliveryyear)    		$param .= '&search_deliveryyear='.urlencode($search_deliveryyear);
 			if ($search_ref)      		$param .= '&search_ref='.urlencode($search_ref);
 			if ($search_company)  		$param .= '&search_company='.urlencode($search_company);
-			if ($search_ref_customer)	$param .= '&search_ref_customer='.urlencode($search_ref_customer);
+			//if ($search_ref_customer)	$param .= '&search_ref_customer='.urlencode($search_ref_customer);
 			if ($search_user > 0) 		$param .= '&search_user='.urlencode($search_user);
 			if ($search_sale > 0) 		$param .= '&search_sale='.urlencode($search_sale);
 			if ($search_total_ht != '') $param .= '&search_total_ht='.urlencode($search_total_ht);
