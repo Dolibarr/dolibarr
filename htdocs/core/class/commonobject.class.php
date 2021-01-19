@@ -3672,7 +3672,9 @@ abstract class CommonObject
 	 */
 	static public function getAllItemsLinkedByObjectID($fk_object_where, $field_select, $field_where, $table_element)
 	{
-		if (empty($fk_object_where) || empty($field_where) || empty($table_element)) return -1;
+		if (empty($fk_object_where) || empty($field_where) || empty($table_element)) {
+			return -1;
+		}
 
 		global $db;
 
@@ -3699,14 +3701,18 @@ abstract class CommonObject
 	 */
 	static public function deleteAllItemsLinkedByObjectID($fk_object_where, $field_where, $table_element)
 	{
-		if (empty($fk_object_where) || empty($field_where) || empty($table_element)) return -1;
+		if (empty($fk_object_where) || empty($field_where) || empty($table_element)) {
+			return -1;
+		}
 
 		global $db;
 
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table_element.' WHERE '.$field_where.' = '.$fk_object_where;
 		$resql = $db->query($sql);
 
-		if (empty($resql)) return 0;
+		if (empty($resql)) {
+			return 0;
+		}
 
 		return 1;
 	}
@@ -5998,8 +6004,14 @@ abstract class CommonObject
 		} elseif (preg_match('/^(integer|link):(.*):(.*)/i', $val['type'], $reg)) {
 			$param['options'] = array($reg[2].':'.$reg[3] => 'N');
 			$type = 'link';
-		} elseif (preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
-			$param['options'] = array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4] => 'N');
+		} elseif (preg_match('/^(sellist):(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
+			$param['options'] = array($reg[2].':'.$reg[3].':'.$reg[4].':'.$reg[5] => 'N');
+			$type = 'sellist';
+		} elseif (preg_match('/^(sellist):(.*):(.*):(.*)/i', $val['type'], $reg)) {
+			$param['options'] = array($reg[2].':'.$reg[3].':'.$reg[4] => 'N');
+			$type = 'sellist';
+		} elseif (preg_match('/^(sellist):(.*):(.*)/i', $val['type'], $reg)) {
+			$param['options'] = array($reg[2].':'.$reg[3] => 'N');
 			$type = 'sellist';
 		} elseif (preg_match('/varchar\((\d+)\)/', $val['type'], $reg)) {
 			$param['options'] = array();
@@ -6166,24 +6178,20 @@ abstract class CommonObject
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
 
-				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4]))
-				{
-					if (strpos($InfoFieldList[4], 'extra.') !== false)
-					{
+				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
+					if (strpos($InfoFieldList[4], 'extra.') !== false) {
 						$keyList = 'main.'.$InfoFieldList[2].' as rowid';
 					} else {
 						$keyList = $InfoFieldList[2].' as rowid';
 					}
 				}
-				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3]))
-				{
+				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
 					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
 					$keyList .= ', '.$parentField;
 				}
 
 				$fields_label = explode('|', $InfoFieldList[1]);
-				if (is_array($fields_label))
-				{
+				if (is_array($fields_label)) {
 					$keyList .= ', ';
 					$keyList .= implode(', ', $fields_label);
 				}
@@ -6578,12 +6586,17 @@ abstract class CommonObject
 		$param['options'] = array();
 
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) $param['options'] = $val['arrayofkeyval'];
-		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg))
-		{
+		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
 			$type = 'link';
 			$param['options'] = array($reg[1].':'.$reg[2]=>$reg[1].':'.$reg[2]);
 		} elseif (preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
 			$param['options'] = array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4] => 'N');
+			$type = 'sellist';
+		} elseif (preg_match('/^sellist:(.*):(.*):(.*)/i', $val['type'], $reg)) {
+			$param['options'] = array($reg[1].':'.$reg[2].':'.$reg[3] => 'N');
+			$type = 'sellist';
+		} elseif (preg_match('/^sellist:(.*):(.*)/i', $val['type'], $reg)) {
+			$param['options'] = array($reg[1].':'.$reg[2] => 'N');
 			$type = 'sellist';
 		}
 
@@ -6675,8 +6688,7 @@ abstract class CommonObject
 			$selectkey = "rowid";
 			$keyList = 'rowid';
 
-			if (count($InfoFieldList) >= 3)
-			{
+			if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
 				$selectkey = $InfoFieldList[2];
 				$keyList = $InfoFieldList[2].' as rowid';
 			}

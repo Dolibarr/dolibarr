@@ -214,7 +214,7 @@ class Societe extends CommonObject
 		'fk_multicurrency' =>array('type'=>'integer', 'label'=>'Fk multicurrency', 'enabled'=>1, 'visible'=>-1, 'position'=>440),
 		'multicurrency_code' =>array('type'=>'varchar(255)', 'label'=>'Multicurrency code', 'enabled'=>1, 'visible'=>-1, 'position'=>445),
 		'fk_account' =>array('type'=>'integer', 'label'=>'Fk account', 'enabled'=>1, 'visible'=>-1, 'position'=>450),
-		'fk_entrepot' =>array('type'=>'integer', 'label'=>'Fk entrepot', 'enabled'=>1, 'visible'=>-1, 'position'=>455),
+		'fk_warehouse' =>array('type'=>'integer', 'label'=>'warehouse', 'enabled'=>1, 'visible'=>-1, 'position'=>455),
 		'logo' =>array('type'=>'varchar(255)', 'label'=>'Logo', 'enabled'=>1, 'visible'=>-1, 'position'=>400),
 		'logo_squarred' =>array('type'=>'varchar(255)', 'label'=>'Logo squarred', 'enabled'=>1, 'visible'=>-1, 'position'=>401),
 		'status' =>array('type'=>'tinyint(4)', 'label'=>'Status', 'enabled'=>1, 'visible'=>-1, 'position'=>500),
@@ -708,6 +708,12 @@ class Societe extends CommonObject
 	 * @var int ID
 	 */
 	public $fk_multicurrency;
+
+	// Warehouse
+	/**
+	 * @var int ID
+	 */
+	public $fk_warehouse;
 
 	/**
 	 * @var string Multicurrency code
@@ -1551,7 +1557,7 @@ class Societe extends CommonObject
 		}
 
 		$sql = 'SELECT s.rowid, s.nom as name, s.name_alias, s.entity, s.ref_ext, s.address, s.datec as date_creation, s.prefix_comm';
-		$sql .= ', s.status';
+		$sql .= ', s.status, s.fk_warehouse';
 		$sql .= ', s.price_level';
 		$sql .= ', s.tms as date_modification, s.fk_user_creat, s.fk_user_modif';
 		$sql .= ', s.phone, s.fax, s.email';
@@ -1757,6 +1763,9 @@ class Societe extends CommonObject
 
 				// multiprix
 				$this->price_level = $obj->price_level;
+
+				// warehouse
+				$this->fk_warehouse = $obj->fk_warehouse;
 
 				$this->import_key = $obj->import_key;
 
@@ -3828,9 +3837,8 @@ class Societe extends CommonObject
 			if (!empty($tmp[1])) {   // If $conf->global->MAIN_INFO_SOCIETE_STATE is "id:code:label"
 				$state_code = $tmp[1];
 				$state_label = $tmp[2];
-			} else // For backward compatibility
-			{
-				dol_syslog("Your state setup use an old syntax. Reedit it using setup area.", LOG_ERR);
+			} else { // For backward compatibility
+				dol_syslog("Your state setup use an old syntax (entity=".$conf->entity."). Reedit it using setup area.", LOG_ERR);
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 				$state_code = getState($state_id, 2, $this->db); // This need a SQL request, but it's the old feature that should not be used anymore
 				$state_label = getState($state_id, 0, $this->db); // This need a SQL request, but it's the old feature that should not be used anymore

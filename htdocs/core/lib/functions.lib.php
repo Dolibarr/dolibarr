@@ -672,25 +672,25 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 				if (preg_match('/[^a-z0-9_\-\.,]+/i', $out)) $out = '';
 			}
 			break;
-		case 'nohtml':
+		case 'nohtml':		// No html
 			$out = dol_string_nohtmltag($out, 0);
 			break;
-		case 'alpha':		// No html and no ../ and " replaced with ''
+		case 'alpha':		// No html and no ../ and "
 		case 'alphanohtml':	// Recommended for most scalar parameters and search parameters
 			if (!is_array($out)) {
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
-				$out = str_replace(array('&quot;', '"'), "''", trim($out));
+				$out = str_replace(array('&quot;', '"'), '', trim($out));
 				$out = str_replace(array('../'), '', $out);
 				// keep lines feed
 				$out = dol_string_nohtmltag($out, 0);
 			}
 			break;
-		case 'alphawithlgt':		// No " and no ../ but we keep < > tags
+		case 'alphawithlgt':		// No " and no ../ but we keep < > tags. Can be used for email string like "Name <email>"
 			if (!is_array($out)) {
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
-				$out = str_replace(array('&quot;', '"'), "", trim($out));
+				$out = str_replace(array('&quot;', '"'), '', trim($out));
 				$out = str_replace(array('../'), '', $out);
 			}
 			break;
@@ -3268,7 +3268,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'intervention', 'label', 'language', 'link', 'list', 'listlight', 'lot',
 				'map-marker-alt', 'member', 'money-bill-alt', 'mrp', 'note', 'next',
 				'object_accounting', 'object_account', 'object_accountline', 'object_action', 'object_barcode', 'object_bill', 'object_billa', 'object_billd', 'object_bom',
-				'object_category', 'object_conversation', 'object_bookmark', 'object_bug', 'object_dolly', 'object_dollyrevert', 'object_generic', 'object_folder',
+				'object_category', 'object_conversation', 'object_bookmark', 'object_bug', 'object_clock', 'object_dolly', 'object_dollyrevert', 'object_generic', 'object_folder',
 				'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
 				'object_cash-register', 'object_company', 'object_contact', 'object_contract', 'object_donation', 'object_dynamicprice',
 				'object_globe', 'object_holiday', 'object_hrm', 'object_invoice', 'object_intervention', 'object_label',
@@ -4863,7 +4863,7 @@ function price2num($amount, $rounding = '', $option = 0)
 	if ($option != 1) {	// If not a PHP number or unknown, we change or clean format
 		//print 'PP'.$amount.' - '.$dec.' - '.$thousand.' - '.intval($amount).'<br>';
 		if (!is_numeric($amount)) {
-			$amount = preg_replace('/[a-zA-Z\/\\\*\(\)\<\>]/', '', $amount);
+			$amount = preg_replace('/[a-zA-Z\/\\\*\(\)\<\>\_]/', '', $amount);
 		}
 
 		if ($option == 2 && $thousand == '.' && preg_match('/\.(\d\d\d)$/', (string) $amount)) {	// It means the . is used as a thousand separator and string come frominput data, so 1.123 is 1123
@@ -5488,6 +5488,10 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		$isacompany = $thirdparty_buyer->isACompany();
 		if ($isacompany)
 		{
+			if (!empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID) && !isValidVATID($thirdparty_buyer)) {
+				//print 'VATRULE 6';
+				return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+			}
 			//print 'VATRULE 3';
 			return 0;
 		} else {

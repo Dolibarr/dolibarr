@@ -174,7 +174,8 @@ if (empty($reshook))
 			if (!$error && $result > 0)
 			{
 				// Add myself as project leader
-				$result = $object->add_contact($user->id, 'PROJECTLEADER', 'internal');
+				$typeofcontact = 'PROJECTLEADER';	// TODO If use rename this code in dictionary, the add_contact will generate an error.
+				$result = $object->add_contact($user->id, $typeofcontact, 'internal');
 				if ($result < 0)
 				{
 					$langs->load("errors");

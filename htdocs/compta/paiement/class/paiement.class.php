@@ -401,6 +401,7 @@ class Paiement extends CommonObject
 									if ($result < 0)
 									{
 										$this->error = $invoice->error;
+										$this->errors = $invoice->errors;
 										$error++;
 									}
 								}

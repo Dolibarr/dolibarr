@@ -42,7 +42,7 @@ TicketTypeShortOTHER=Altro
 TicketSeverityShortLOW=Basso
 TicketSeverityShortNORMAL=Normale
 TicketSeverityShortHIGH=Alto
-TicketSeverityShortBLOCKING=Critical, Blocking
+TicketSeverityShortBLOCKING=Critico, bloccante
 
 ErrorBadEmailAddress=Campo '%s' non corretto
 MenuTicketMyAssign=My tickets
@@ -123,7 +123,7 @@ TicketsActivatePublicInterfaceHelp=Public interface allow any visitors to create
 TicketsAutoAssignTicket=Automatically assign the user who created the ticket
 TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket.
 TicketNumberingModules=Tickets numbering module
-TicketsModelModule=Document templates for tickets
+TicketsModelModule=Modelli di documenti per i ticket
 TicketNotifyTiersAtCreation=Notify third party at creation
 TicketsDisableCustomerEmail=Always disable emails when a ticket is created from public interface
 TicketsPublicNotificationNewMessage=Invia e-mail quando viene aggiunto un nuovo messaggio

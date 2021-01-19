@@ -933,31 +933,31 @@ while ($i < min($num, $limit))
 	// Phone
 	if (!empty($arrayfields['p.phone']['checked']))
 	{
-		print '<td>'.dol_print_phone($obj->phone_pro, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL').'</td>';
+		print '<td>'.dol_print_phone($obj->phone_pro, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'phone').'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 	// Phone perso
 	if (!empty($arrayfields['p.phone_perso']['checked']))
 	{
-		print '<td>'.dol_print_phone($obj->phone_perso, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL').'</td>';
+		print '<td>'.dol_print_phone($obj->phone_perso, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'phone').'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 	// Phone mobile
 	if (!empty($arrayfields['p.phone_mobile']['checked']))
 	{
-		print '<td>'.dol_print_phone($obj->phone_mobile, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL').'</td>';
+		print '<td>'.dol_print_phone($obj->phone_mobile, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'mobile').'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 	// Fax
 	if (!empty($arrayfields['p.fax']['checked']))
 	{
-		print '<td>'.dol_print_phone($obj->fax, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL').'</td>';
+		print '<td>'.dol_print_phone($obj->fax, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'fax').'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 	// EMail
 	if (!empty($arrayfields['p.email']['checked']))
 	{
-		print '<td>'.dol_print_email($obj->email, $obj->rowid, $obj->socid, 'AC_EMAIL', 18).'</td>';
+		print '<td>'.dol_print_email($obj->email, $obj->rowid, $obj->socid, 'AC_EMAIL', 18, 0, 1).'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 	// No EMail

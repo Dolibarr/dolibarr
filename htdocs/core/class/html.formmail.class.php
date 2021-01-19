@@ -855,9 +855,16 @@ class FormMail extends Form
 					$out .= '</script>'."\n";
 					if (count($listofpaths)) {
 						foreach ($listofpaths as $key => $val) {
+							$relativepathtofile = substr($val, (strlen(DOL_DATA_ROOT) - strlen($val)));
+							if ($conf->entity > 1) {
+								$relativepathtofile = str_replace($conf->entity.'/', '', $relativepathtofile);
+							}
+							// Try to extract data from full path
+							$formfile_params = array();
+							preg_match('#^(/)(\w+)(/)(.+)$#', $relativepathtofile, $formfile_params);
+
 							$out .= '<div id="attachfile_'.$key.'">';
 							// Preview of attachment
-							preg_match('#^(/)(\w+)(/)(.+)$#', substr($val, (strlen(DOL_DATA_ROOT) - strlen($val))), $formfile_params);
 							$out .= img_mime($listofnames[$key]).' '.$listofnames[$key];
 							$out .= $formfile->showPreview(array(), $formfile_params[2], $formfile_params[4]);
 							if (!$this->withfilereadonly) {
@@ -1132,7 +1139,7 @@ class FormMail extends Form
 	}
 
 	/**
-	 * get Html For Asking for Deliveriy Receipt
+	 * get Html For Asking for Delivery Receipt
 	 *
 	 * @return string html
 	 */
@@ -1445,7 +1452,9 @@ class FormMail extends Form
 
 				// Create dynamic tags for __PRODUCT_EXTRAFIELD_FIELD__
 				if (!empty($line->fk_product)) {
-					if (!is_object($extrafields)) $extrafields = new ExtraFields($this->db);
+					if (!is_object($extrafields)) {
+						$extrafields = new ExtraFields($this->db);
+					}
 					$extrafields->fetch_name_optionals_label('product', true);
 					$product = new Product($this->db);
 					$product->fetch($line->fk_product, '', '', 1);
@@ -1509,9 +1518,15 @@ class FormMail extends Form
 			//,'__PERSONALIZED__' => 'Personalized'	// Hidden because not used yet in mass emailing
 
 			$onlinepaymentenabled = 0;
-			if (!empty($conf->paypal->enabled)) $onlinepaymentenabled++;
-			if (!empty($conf->paybox->enabled)) $onlinepaymentenabled++;
-			if (!empty($conf->stripe->enabled)) $onlinepaymentenabled++;
+			if (!empty($conf->paypal->enabled)) {
+				$onlinepaymentenabled++;
+			}
+			if (!empty($conf->paybox->enabled)) {
+				$onlinepaymentenabled++;
+			}
+			if (!empty($conf->stripe->enabled)) {
+				$onlinepaymentenabled++;
+			}
 			if ($onlinepaymentenabled && !empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 				$tmparray['__SECUREKEYPAYMENT__'] = $conf->global->PAYMENT_SECURITY_TOKEN;
 				if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
@@ -1540,7 +1555,9 @@ class FormMail extends Form
 		}
 
 		foreach ($tmparray as $key => $val) {
-			if (empty($val)) $tmparray[$key] = $key;
+			if (empty($val)) {
+				$tmparray[$key] = $key;
+			}
 		}
 
 		return $tmparray;

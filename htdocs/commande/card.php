@@ -1534,6 +1534,7 @@ if ($action == 'create' && $usercancreate)
 	}
 
 	//Warehouse default if null
+	if ($soc->fk_warehouse > 0) $warehouse_id = $soc->fk_warehouse;
 	if (!empty($conf->stock->enabled) && empty($warehouse_id) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER))
 	{
 		if (empty($object->warehouse_id) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) $warehouse_id = $conf->global->MAIN_DEFAULT_WAREHOUSE;
@@ -1616,14 +1617,14 @@ if ($action == 'create' && $usercancreate)
 
 	// Date
 	print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
-	print img_picto('', 'object_calendarday').'&ensp;'.$form->selectDate('', 're', '', '', '', "crea_commande", 1, 1); // Always autofill date with current date
+	print $form->selectDate('', 're', '', '', '', "crea_commande", 1, 1); // Always autofill date with current date
 	print '</td></tr>';
 
 	// Date delivery planned
 	print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
 	print '<td colspan="3">';
 	$date_delivery = ($date_delivery ? $date_delivery : $object->date_delivery);
-	print img_picto('', 'object_calendarday').'&ensp;'.$form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
+	print $form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
 	print "</td>\n";
 	print '</tr>';
 
@@ -1731,7 +1732,8 @@ if ($action == 'create' && $usercancreate)
 	print img_picto('', 'pdf').'&ensp;';
 	include_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
 	$liste = ModelePDFCommandes::liste_modeles($db);
-	print $form->selectarray('model', $liste, $conf->global->COMMANDE_ADDON_PDF);
+	$preselected = $conf->global->COMMANDE_ADDON_PDF;
+	print $form->selectarray('model', $liste, $preselected, 0, 0, 0, '', 0, 0, 0, '', '', 1);
 	print "</td></tr>";
 
 	// Multicurrency

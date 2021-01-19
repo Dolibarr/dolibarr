@@ -16,8 +16,8 @@ descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Clasificar automáticamente el pedi
 # Autoclassify purchase order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Clasificar automáticamente el presupuestos de proveedor como facturado cuando la factura se valide (y si el importe de la factura sea la misma que el total del presupuesto)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Clasificar automáticamente el pedido a proveedor como facturado cuando la factura se valide (y si el importe de la factura sea la misma que el total del pedido enlazado)
-descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
+descWORKFLOW_BILL_ON_RECEPTION=Clasificar las recepciones como "facturadas" cuando se valida un pedido de proveedor vinculado
 # Autoclose intervention
-descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Cerrar todas las intervenciones vinculadas al ticket cuando se cierra un ticket
 AutomaticCreation=Creación automática
 AutomaticClassification=Clasificación automática

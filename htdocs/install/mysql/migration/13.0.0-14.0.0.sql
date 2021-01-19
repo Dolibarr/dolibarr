@@ -47,9 +47,18 @@ ALTER TABLE llx_bank_account ADD COLUMN ics_transfer varchar(32) NULL;
 
 ALTER TABLE llx_facture MODIFY COLUMN date_valid DATETIME NULL DEFAULT NULL;
 
+
+-- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_dolibarr_state_board.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_dolibarr_state_board.php' AND entity = 1);
+
+
 ALTER TABLE llx_website ADD COLUMN lastaccess datetime NULL;
 ALTER TABLE llx_website ADD COLUMN pageviews_month BIGINT UNSIGNED DEFAULT 0;
 ALTER TABLE llx_website ADD COLUMN pageviews_total BIGINT UNSIGNED DEFAULT 0;
+
+
+-- Drop foreign key with bad name or not required
+ALTER TABLE DROP FOREIGN KEY llx_workstation_workstation_fk_user_creat;
+ALTER TABLE DROP FOREIGN KEY llx_propal_fk_warehouse;
 
 
 CREATE TABLE llx_workstation_workstation(
@@ -75,7 +84,7 @@ CREATE TABLE llx_workstation_workstation(
 
 ALTER TABLE llx_workstation_workstation ADD INDEX idx_workstation_workstation_rowid (rowid);
 ALTER TABLE llx_workstation_workstation ADD INDEX idx_workstation_workstation_ref (ref);
-ALTER TABLE llx_workstation_workstation ADD CONSTRAINT llx_workstation_workstation_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
+ALTER TABLE llx_workstation_workstation ADD CONSTRAINT fk_workstation_workstation_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
 ALTER TABLE llx_workstation_workstation ADD INDEX idx_workstation_workstation_status (status);
 
 CREATE TABLE llx_workstation_workstation_resource(
@@ -93,10 +102,15 @@ CREATE TABLE llx_workstation_workstation_usergroup(
 ) ENGINE=innodb;
 
 
-ALTER TABLE llx_propal ADD COLUMN fk_warehouse integer DEFAULT NULL AFTER fk_shipping_method;
-ALTER TABLE llx_propal ADD CONSTRAINT llx_propal_fk_warehouse FOREIGN KEY (fk_warehouse) REFERENCES llx_entrepot(rowid);
-ALTER TABLE llx_propal ADD INDEX idx_propal_fk_warehouse(fk_warehouse);
-
-
 ALTER TABLE llx_product_customer_price ADD COLUMN ref_customer varchar(30);
 ALTER TABLE llx_product_customer_price_log ADD COLUMN ref_customer varchar(30);
+
+ALTER TABLE llx_propal ADD COLUMN fk_warehouse integer DEFAULT NULL AFTER fk_shipping_method;
+--ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_warehouse FOREIGN KEY (fk_warehouse) REFERENCES llx_entrepot(rowid);
+ALTER TABLE llx_propal ADD INDEX idx_propal_fk_warehouse(fk_warehouse);
+
+ALTER TABLE llx_societe DROP INDEX idx_societe_entrepot;
+ALTER TABLE llx_societe CHANGE fk_entrepot fk_warehouse INTEGER DEFAULT NULL;
+--ALTER TABLE llx_societe ADD CONSTRAINT fk_propal_fk_warehouse FOREIGN KEY (fk_warehouse) REFERENCES llx_entrepot(rowid);
+ALTER TABLE llx_societe ADD INDEX idx_societe_warehouse(fk_warehouse);
+

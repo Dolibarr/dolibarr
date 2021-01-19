@@ -128,9 +128,12 @@ $coldisplay++;
 	//Line extrafield
 	if (!empty($extrafields))
 	{
-		print '<div style="padding-top: 10px" id="extrafield_lines_area_edit" name="extrafield_lines_area_edit">';
-		print $line->showOptionals($extrafields, 'edit', array('class'=>'tredited'), '', '', 1, 'line');
-		print '</div>';
+		$temps = $line->showOptionals($extrafields, 'edit', array('class'=>'tredited'), '', '', 1, 'line');
+		if (!empty($temps)) {
+			print '<div style="padding-top: 10px" id="extrafield_lines_area_edit" name="extrafield_lines_area_edit">';
+			print $temps;
+			print '</div>';
+		}
 	}
 
 	// Show autofill date for recuring invoices

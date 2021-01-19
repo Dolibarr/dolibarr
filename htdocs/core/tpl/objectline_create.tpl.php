@@ -320,9 +320,12 @@ if ($nolinesbefore) {
 			echo '</div>';
 		}
 		if (is_object($objectline)) {
-			print '<div style="padding-top: 10px" id="extrafield_lines_area_create" name="extrafield_lines_area_create">';
-			print $objectline->showOptionals($extrafields, 'edit', array(), '', '', 1, 'line');
-			print '</div>';
+			$temps = $objectline->showOptionals($extrafields, 'create', array(), '', '', 1, 'line');;
+			if (!empty($temps)) {
+				print '<div style="padding-top: 10px" id="extrafield_lines_area_create" name="extrafield_lines_area_create">';
+				print $temps;
+				print '</div>';
+			}
 		}
 		echo '</td>';
 		if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines

@@ -695,14 +695,15 @@ while ($i < min($num, $limit)) {
 	print '<tr class="oddeven">';
 
 	// Piece number
-	if (!empty($arrayfields['t.piece_num']['checked']))
-	{
+	if (!empty($arrayfields['t.piece_num']['checked'])) {
 		print '<td>';
 		$object->id = $line->id;
 		$object->piece_num = $line->piece_num;
 		print $object->getNomUrl(1, '', 0, '', 1);
 		print '</td>';
-		if (!$i) $totalarray['nbfield']++;
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	// Journal code
@@ -724,21 +725,6 @@ while ($i < min($num, $limit)) {
 		}
 	}
 
-<<<<<<< HEAD
-	// Piece number
-	if (!empty($arrayfields['t.piece_num']['checked'])) {
-		print '<td>';
-		$object->id = $line->id;
-		$object->piece_num = $line->piece_num;
-		print $object->getNomUrl(1, '', 0, '', 1);
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-=======
->>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
 	// Document ref
 	if (!empty($arrayfields['t.doc_ref']['checked'])) {
 		if ($line->doc_type == 'customer_invoice') {
