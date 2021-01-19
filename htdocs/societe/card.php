@@ -252,7 +252,7 @@ if (empty($reshook))
 						'FactureFournisseur' => '/fourn/class/fournisseur.facture.class.php',
 						'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
 						'ProductFournisseur' => '/fourn/class/fournisseur.product.class.php',
-						'Livraison' => '/delivery/class/delivery.class.php',
+						'Delivery' => '/delivery/class/delivery.class.php',
 						'Product' => '/product/class/product.class.php',
 						'Project' => '/projet/class/project.class.php',
 						'Ticket' => '/ticket/class/ticket.class.php',

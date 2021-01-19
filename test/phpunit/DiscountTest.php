@@ -29,8 +29,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/discount.class.php';
 
-if (empty($user->id))
-{
+if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->getrights();
@@ -75,39 +74,39 @@ class DiscountTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-    	global $conf,$user,$langs,$db;
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass()
+	{
+		global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
+	public static function tearDownAfterClass()
+	{
+		global $conf,$user,$langs,$db;
 		$db->rollback();
 
 		print __METHOD__."\n";
-    }
+	}
 
 	/**
 	 * Init phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function setUp()
-    {
-    	global $conf,$user,$langs,$db;
+	protected function setUp()
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
@@ -115,87 +114,87 @@ class DiscountTest extends PHPUnit\Framework\TestCase
 
 		print __METHOD__."\n";
 		//print $db->getVersion()."\n";
-    }
+	}
 	/**
 	 * End phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function tearDown()
-    {
-    	print __METHOD__."\n";
-    }
+	protected function tearDown()
+	{
+		print __METHOD__."\n";
+	}
 
-    /**
-     * testDiscountCreate
-     *
-     * @return	int
-     */
-    public function testDiscountCreate()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * testDiscountCreate
+	 *
+	 * @return	int
+	 */
+	public function testDiscountCreate()
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
 		$localobject=new DiscountAbsolute($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$result=$localobject->create($user);
+		$localobject->initAsSpecimen();
+		$result=$localobject->create($user);
 
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." result=".$result."\n";
-    	return $result;
-    }
+		$this->assertLessThan($result, 0);
+		print __METHOD__." result=".$result."\n";
+		return $result;
+	}
 
-    /**
-     * testDiscountFetch
-     *
-     * @param	int	$id		Id of discount
-     * @return	int
-     *
-     * @depends	testDiscountCreate
-     * The depends says test is run only if previous is ok
-     */
-    public function testDiscountFetch($id)
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * testDiscountFetch
+	 *
+	 * @param	int	$id		Id of discount
+	 * @return	int
+	 *
+	 * @depends	testDiscountCreate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testDiscountFetch($id)
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
 		$localobject=new DiscountAbsolute($this->savdb);
-    	$result=$localobject->fetch($id);
+		$result=$localobject->fetch($id);
 
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." id=".$id." result=".$result."\n";
-    	return $id;
-    }
+		$this->assertLessThan($result, 0);
+		print __METHOD__." id=".$id." result=".$result."\n";
+		return $id;
+	}
 
-    /**
-     * testDiscountDelete
-     *
-     * @param	int		$id		Id of discount
-     * @return	int
-     *
-     * @depends	testDiscountFetch
-     * The depends says test is run only if previous is ok
-     */
-    public function testDiscountDelete($id)
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * testDiscountDelete
+	 *
+	 * @param	int		$id		Id of discount
+	 * @return	int
+	 *
+	 * @depends	testDiscountFetch
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testDiscountDelete($id)
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
 		$localobject=new DiscountAbsolute($this->savdb);
-    	$result=$localobject->fetch($id);
+		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
-    	return $result;
-    }
+		$this->assertLessThan($result, 0);
+		return $result;
+	}
 }

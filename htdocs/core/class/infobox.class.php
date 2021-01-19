@@ -111,9 +111,7 @@ class InfoBox
 				$sql .= " AND b.fk_user = 0";
 			}
 			$sql .= " ORDER BY b.box_order";
-		}
-		else // available
-		{
+		} else { // available
 			$sql = "SELECT d.rowid as box_id, d.file, d.note, d.tms";
 			$sql .= " FROM ".MAIN_DB_PREFIX."boxes_def as d";
 			$sql .= " WHERE d.entity IN (0,".$conf->entity.")";
