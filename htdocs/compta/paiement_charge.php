@@ -223,7 +223,7 @@ if ($action == 'create')
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
 	$datepaye = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
-	$datepayment = empty($conf->global->MAIN_AUTOFILL_DATE) ? (GETPOSTISSET("remonth") ? $datepaye : -1) : 0;
+	$datepayment = empty($conf->global->MAIN_AUTOFILL_DATE) ? (GETPOSTISSET("remonth") ? $datepaye : -1) : '';
 	print $form->selectDate($datepayment, '', '', '', 0, "add_payment", 1, 1, 0, '', '', $charge->date_ech, '', 1, $langs->trans("DateOfSocialContribution"));
 	print "</td>";
 	print '</tr>';
@@ -236,7 +236,7 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td>';
-	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid") : $charge->accountid, "accountid", 0, '', 2); // Show opend bank account list
+	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid", 'int') : $charge->accountid, "accountid", 0, '', 2); // Show opend bank account list
 	print '</td></tr>';
 
 	// Number
