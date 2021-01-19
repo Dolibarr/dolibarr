@@ -56,6 +56,11 @@ ALTER TABLE llx_website ADD COLUMN pageviews_month BIGINT UNSIGNED DEFAULT 0;
 ALTER TABLE llx_website ADD COLUMN pageviews_total BIGINT UNSIGNED DEFAULT 0;
 
 
+-- Drop foreign key with bad name or not required
+ALTER TABLE DROP FOREIGN KEY llx_workstation_workstation_fk_user_creat;
+ALTER TABLE DROP FOREIGN KEY llx_propal_fk_warehouse;
+
+
 CREATE TABLE llx_workstation_workstation(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
@@ -99,8 +104,6 @@ CREATE TABLE llx_workstation_workstation_usergroup(
 
 ALTER TABLE llx_product_customer_price ADD COLUMN ref_customer varchar(30);
 ALTER TABLE llx_product_customer_price_log ADD COLUMN ref_customer varchar(30);
-
-ALTER TABLE DROP FOREIGN KEY llx_propal_fk_warehouse;
 
 ALTER TABLE llx_propal ADD COLUMN fk_warehouse integer DEFAULT NULL AFTER fk_shipping_method;
 --ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_warehouse FOREIGN KEY (fk_warehouse) REFERENCES llx_entrepot(rowid);
