@@ -31,12 +31,12 @@ if ($action == 'update' && is_array($arrayofparameters))
 {
 	$db->begin();
 
-	$ok = true;
 	foreach ($arrayofparameters as $key => $val)
 	{
 		// Modify constant only if key was posted (avoid resetting key to the null value)
 		if (GETPOSTISSET($key))
 		{
+			$ok = true;
 			$result = dolibarr_set_const($db, $key, GETPOST($key, 'alpha'), 'chaine', 0, '', $conf->entity);
 			if ($result < 0)
 			{
