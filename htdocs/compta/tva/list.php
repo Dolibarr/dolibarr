@@ -259,6 +259,7 @@ if ($result)
 
 		$tva_static->id = $obj->rowid;
 		$tva_static->ref = $obj->rowid;
+		$tva_static->label = $obj->label;
 
 		// Ref
 		print "<td>".$tva_static->getNomUrl(1)."</td>\n";

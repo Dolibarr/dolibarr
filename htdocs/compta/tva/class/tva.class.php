@@ -739,6 +739,8 @@ class Tva extends CommonObject
 		$label = '<u>'.$langs->trans("ShowVatPayment").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (!empty($this->label))
+			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
 
         $url = DOL_URL_ROOT.'/compta/tva/card.php?id='.$this->id;
 
