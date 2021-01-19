@@ -31,9 +31,9 @@ require_once dirname(__FILE__).'/../../htdocs/core/lib/geturl.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 
 if (empty($user->id)) {
-    echo "Load permissions for admin user nb 1\n";
-    $user->fetch(1);
-    $user->getrights();
+	echo "Load permissions for admin user nb 1\n";
+	$user->fetch(1);
+	$user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 $conf->global->MAIN_UMASK = '0666';
@@ -47,204 +47,204 @@ $conf->global->MAIN_UMASK = '0666';
  */
 class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
 {
-    protected $savconf;
-    protected $savuser;
-    protected $savlangs;
-    protected $savdb;
-    protected $api_url;
-    protected $api_key;
+	protected $savconf;
+	protected $savuser;
+	protected $savlangs;
+	protected $savdb;
+	protected $api_url;
+	protected $api_key;
 
-    /**
-     * Constructor
-     * We save global variables into local variables.
-     *
-     * @return DateLibTest
-     */
-    public function __construct()
-    {
-        parent::__construct();
+	/**
+	 * Constructor
+	 * We save global variables into local variables.
+	 *
+	 * @return DateLibTest
+	 */
+	public function __construct()
+	{
+		parent::__construct();
 
-        //$this->sharedFixture
-        global $conf,$user,$langs,$db;
-        $this->savconf = $conf;
-        $this->savuser = $user;
-        $this->savlangs = $langs;
-        $this->savdb = $db;
+		//$this->sharedFixture
+		global $conf,$user,$langs,$db;
+		$this->savconf = $conf;
+		$this->savuser = $user;
+		$this->savlangs = $langs;
+		$this->savdb = $db;
 
-        echo __METHOD__.' db->type='.$db->type.' user->id='.$user->id;
-        //print " - db ".$db->db;
-        echo "\n";
-    }
+		echo __METHOD__.' db->type='.$db->type.' user->id='.$user->id;
+		//print " - db ".$db->db;
+		echo "\n";
+	}
 
-    /**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
+	/**
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass()
+	{
+		global $conf,$user,$langs,$db;
+		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-        echo __METHOD__."\n";
-    }
+		echo __METHOD__."\n";
+	}
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->rollback();
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
+	public static function tearDownAfterClass()
+	{
+		global $conf,$user,$langs,$db;
+		$db->rollback();
 
-        echo __METHOD__."\n";
-    }
+		echo __METHOD__."\n";
+	}
 
-    /**
-     * Init phpunit tests.
-     * @return void
-     */
-    protected function setUp()
-    {
-        global $conf,$user,$langs,$db;
-        $conf = $this->savconf;
-        $user = $this->savuser;
-        $langs = $this->savlangs;
-        $db = $this->savdb;
+	/**
+	 * Init phpunit tests.
+	 * @return void
+	 */
+	protected function setUp()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-        $this->api_url = DOL_MAIN_URL_ROOT.'/api/index.php';
+		$this->api_url = DOL_MAIN_URL_ROOT.'/api/index.php';
 
-        $login = 'admin';
-        $password = 'admin';
-        $url = $this->api_url.'/login?login='.$login.'&password='.$password;
-        // Call the API login method to save api_key for this test class
-        $result = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
-        echo __METHOD__.' result = '.var_export($result, true)."\n";
-        echo __METHOD__.' curl_error_no: '.$result['curl_error_no']."\n";
-        $this->assertEquals($result['curl_error_no'], '');
-        $object = json_decode($result['content'], true);
-        $this->assertNotNull($object, 'Parsing of json result must no be null');
-        $this->assertEquals('200', $object['success']['code']);
+		$login = 'admin';
+		$password = 'admin';
+		$url = $this->api_url.'/login?login='.$login.'&password='.$password;
+		// Call the API login method to save api_key for this test class
+		$result = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
+		echo __METHOD__.' result = '.var_export($result, true)."\n";
+		echo __METHOD__.' curl_error_no: '.$result['curl_error_no']."\n";
+		$this->assertEquals($result['curl_error_no'], '');
+		$object = json_decode($result['content'], true);
+		$this->assertNotNull($object, 'Parsing of json result must no be null');
+		$this->assertEquals('200', $object['success']['code']);
 
-        $this->api_key = $object['success']['token'];
-        echo __METHOD__." api_key: $this->api_key \n";
+		$this->api_key = $object['success']['token'];
+		echo __METHOD__." api_key: $this->api_key \n";
 
-        echo __METHOD__."\n";
-    }
+		echo __METHOD__."\n";
+	}
 
-    /**
-     * End phpunit tests.
-     * @return void
-     */
-    protected function tearDown()
-    {
-        echo __METHOD__."\n";
-    }
+	/**
+	 * End phpunit tests.
+	 * @return void
+	 */
+	protected function tearDown()
+	{
+		echo __METHOD__."\n";
+	}
 
-    /**
-     * testPushDocument.
-     *
-     * @return int
-     */
-    public function testPushDocument()
-    {
-        global $conf,$user,$langs,$db;
+	/**
+	 * testPushDocument.
+	 *
+	 * @return int
+	 */
+	public function testPushDocument()
+	{
+		global $conf,$user,$langs,$db;
 
-        $url = $this->api_url.'/documents/upload?api_key='.$this->api_key;
+		$url = $this->api_url.'/documents/upload?api_key='.$this->api_key;
 
-        echo __METHOD__.' Request POST url='.$url."\n";
-
-
-        // Send to non existent directory
-
-        dol_delete_dir_recursive(DOL_DATA_ROOT.'/medias/tmpphpunit/tmpphpunit1');
-
-        //$data = '{ "filename": "mynewfile.txt", "modulepart": "medias", "ref": "", "subdir": "mysubdir1/mysubdir2", "filecontent": "content text", "fileencoding": "" }';
-        $data = array(
-            'filename'=>"mynewfile.txt",
-            'modulepart'=>"medias",
-            'subdir'=>"tmpphpunit/tmpphpunit1",
-            'filecontent'=>"content text",
-            'fileencoding'=>"",
-        	'overwriteifexists'=>0,
-        	'createdirifnotexists'=>0
-        );
-
-        $param = '';
-        foreach ($data as $key => $val) {
-        	$param .= '&'.$key.'='.urlencode($val);
-        }
-
-        $result = getURLContent($url, 'POST', $param, 1, array(), array('http', 'https'), 2);
-        echo __METHOD__.' Result for sending document: '.var_export($result, true)."\n";
-        echo __METHOD__.' curl_error_no: '.$result['curl_error_no']."\n";
-        $object = json_decode($result['content'], true);
-        $this->assertNotNull($object, 'Parsing of json result must not be null');
-        $this->assertEquals('401', $result['http_code'], 'Return code is not 401');
-        $this->assertEquals('401', empty($object['error']['code']) ? '' : $object['error']['code'], 'Error code is not 401');
+		echo __METHOD__.' Request POST url='.$url."\n";
 
 
-        // Send to existent directory
+		// Send to non existent directory
 
-        dol_delete_dir_recursive(DOL_DATA_ROOT.'/medias/tmpphpunit/tmpphpunit2');
-        dol_mkdir(DOL_DATA_ROOT.'/medias/tmpphpunit/tmpphpunit2');
+		dol_delete_dir_recursive(DOL_DATA_ROOT.'/medias/tmpphpunit/tmpphpunit1');
 
-        $data = array(
-            'filename'=>"mynewfile.txt",
-            'modulepart'=>"medias",
-            'ref'=>"",
-            'subdir'=>"tmpphpunit/tmpphpunit2",
-            'filecontent'=>"content text",
-            'fileencoding'=>"",
-        	'overwriteifexists'=>0,
-        	'createdirifnotexists'=>0
-        );
+		//$data = '{ "filename": "mynewfile.txt", "modulepart": "medias", "ref": "", "subdir": "mysubdir1/mysubdir2", "filecontent": "content text", "fileencoding": "" }';
+		$data = array(
+			'filename'=>"mynewfile.txt",
+			'modulepart'=>"medias",
+			'subdir'=>"tmpphpunit/tmpphpunit1",
+			'filecontent'=>"content text",
+			'fileencoding'=>"",
+			'overwriteifexists'=>0,
+			'createdirifnotexists'=>0
+		);
 
-        $param = '';
-        foreach ($data as $key => $val) {
-        	$param .= '&'.$key.'='.urlencode($val);
-        }
+		$param = '';
+		foreach ($data as $key => $val) {
+			$param .= '&'.$key.'='.urlencode($val);
+		}
 
-        $result2 = getURLContent($url, 'POST', $param, 1, array(), array('http', 'https'), 2);
-        echo __METHOD__.' Result for sending document: '.var_export($result2, true)."\n";
-        echo __METHOD__.' curl_error_no: '.$result2['curl_error_no']."\n";
-        $object2 = json_decode($result2['content'], true);
-        //$this->assertNotNull($object2, 'Parsing of json result must not be null');
-        $this->assertEquals('200', $result2['http_code'], 'Return code must be 200');
-        $this->assertEquals($result2['curl_error_no'], '');
-        $this->assertEquals($object2, 'mynewfile.txt', 'Must contains basename of file');
+		$result = getURLContent($url, 'POST', $param, 1, array(), array('http', 'https'), 2);
+		echo __METHOD__.' Result for sending document: '.var_export($result, true)."\n";
+		echo __METHOD__.' curl_error_no: '.$result['curl_error_no']."\n";
+		$object = json_decode($result['content'], true);
+		$this->assertNotNull($object, 'Parsing of json result must not be null');
+		$this->assertEquals('401', $result['http_code'], 'Return code is not 401');
+		$this->assertEquals('401', empty($object['error']['code']) ? '' : $object['error']['code'], 'Error code is not 401');
 
 
-        dol_delete_dir_recursive(DOL_DATA_ROOT.'/medias/tmpphpunit/tmpphpunit3');
+		// Send to existent directory
 
-        $data = array(
-        	'filename'=>"mynewfile.txt",
-        	'modulepart'=>"medias",
-        	'ref'=>"",
-        	'subdir'=>"tmpphpunit/tmpphpunit3",
-        	'filecontent'=>"content text",
-        	'fileencoding'=>"",
-        	'overwriteifexists'=>0,
-        	'createdirifnotexists'=>1
-        );
+		dol_delete_dir_recursive(DOL_DATA_ROOT.'/medias/tmpphpunit/tmpphpunit2');
+		dol_mkdir(DOL_DATA_ROOT.'/medias/tmpphpunit/tmpphpunit2');
 
-        $param = '';
-        foreach ($data as $key => $val) {
-        	$param .= '&'.$key.'='.urlencode($val);
-        }
+		$data = array(
+			'filename'=>"mynewfile.txt",
+			'modulepart'=>"medias",
+			'ref'=>"",
+			'subdir'=>"tmpphpunit/tmpphpunit2",
+			'filecontent'=>"content text",
+			'fileencoding'=>"",
+			'overwriteifexists'=>0,
+			'createdirifnotexists'=>0
+		);
 
-        $result3 = getURLContent($url, 'POST', $param, 1, array(), array('http', 'https'), 2);
-        echo __METHOD__.' Result for sending document: '.var_export($result3, true)."\n";
-        echo __METHOD__.' curl_error_no: '.$result3['curl_error_no']."\n";
-        $object3 = json_decode($result3['content'], true);
-        //$this->assertNotNull($object2, 'Parsing of json result must not be null');
-        $this->assertEquals('200', $result3['http_code'], 'Return code must be 200');
-        $this->assertEquals($result3['curl_error_no'], '');
-        $this->assertEquals($object3, 'mynewfile.txt', 'Must contains basename of file');
+		$param = '';
+		foreach ($data as $key => $val) {
+			$param .= '&'.$key.'='.urlencode($val);
+		}
+
+		$result2 = getURLContent($url, 'POST', $param, 1, array(), array('http', 'https'), 2);
+		echo __METHOD__.' Result for sending document: '.var_export($result2, true)."\n";
+		echo __METHOD__.' curl_error_no: '.$result2['curl_error_no']."\n";
+		$object2 = json_decode($result2['content'], true);
+		//$this->assertNotNull($object2, 'Parsing of json result must not be null');
+		$this->assertEquals('200', $result2['http_code'], 'Return code must be 200');
+		$this->assertEquals($result2['curl_error_no'], '');
+		$this->assertEquals($object2, 'mynewfile.txt', 'Must contains basename of file');
 
 
-        dol_delete_dir_recursive(DOL_DATA_ROOT.'/medias/tmpphpunit');
-    }
+		dol_delete_dir_recursive(DOL_DATA_ROOT.'/medias/tmpphpunit/tmpphpunit3');
+
+		$data = array(
+			'filename'=>"mynewfile.txt",
+			'modulepart'=>"medias",
+			'ref'=>"",
+			'subdir'=>"tmpphpunit/tmpphpunit3",
+			'filecontent'=>"content text",
+			'fileencoding'=>"",
+			'overwriteifexists'=>0,
+			'createdirifnotexists'=>1
+		);
+
+		$param = '';
+		foreach ($data as $key => $val) {
+			$param .= '&'.$key.'='.urlencode($val);
+		}
+
+		$result3 = getURLContent($url, 'POST', $param, 1, array(), array('http', 'https'), 2);
+		echo __METHOD__.' Result for sending document: '.var_export($result3, true)."\n";
+		echo __METHOD__.' curl_error_no: '.$result3['curl_error_no']."\n";
+		$object3 = json_decode($result3['content'], true);
+		//$this->assertNotNull($object2, 'Parsing of json result must not be null');
+		$this->assertEquals('200', $result3['http_code'], 'Return code must be 200');
+		$this->assertEquals($result3['curl_error_no'], '');
+		$this->assertEquals($object3, 'mynewfile.txt', 'Must contains basename of file');
+
+
+		dol_delete_dir_recursive(DOL_DATA_ROOT.'/medias/tmpphpunit');
+	}
 }

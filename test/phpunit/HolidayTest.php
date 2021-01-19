@@ -30,11 +30,10 @@ require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/holiday/class/holiday.class.php';
 $langs->load("dict");
 
-if (empty($user->id))
-{
-    print "Load permissions for admin user nb 1\n";
-    $user->fetch(1);
-    $user->getrights();
+if (empty($user->id)) {
+	print "Load permissions for admin user nb 1\n";
+	$user->fetch(1);
+	$user->getrights();
 }
 
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
@@ -49,324 +48,324 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  */
 class HolidayTest extends PHPUnit\Framework\TestCase
 {
-    protected $savconf;
-    protected $savuser;
-    protected $savlangs;
-    protected $savdb;
+	protected $savconf;
+	protected $savuser;
+	protected $savlangs;
+	protected $savdb;
 
-    /**
-     * Constructor
-     * We save global variables into local variables
-     *
-     * @return HolidayTest
-     */
-    public function __construct()
-    {
-        parent::__construct();
+	/**
+	 * Constructor
+	 * We save global variables into local variables
+	 *
+	 * @return HolidayTest
+	 */
+	public function __construct()
+	{
+		parent::__construct();
 
-        //$this->sharedFixture
-        global $conf,$user,$langs,$db;
-        $this->savconf=$conf;
-        $this->savuser=$user;
-        $this->savlangs=$langs;
-        $this->savdb=$db;
+		//$this->sharedFixture
+		global $conf,$user,$langs,$db;
+		$this->savconf=$conf;
+		$this->savuser=$user;
+		$this->savlangs=$langs;
+		$this->savdb=$db;
 
-        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-        //print " - db ".$db->db;
-        print "\n";
-    }
+		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+		//print " - db ".$db->db;
+		print "\n";
+	}
 
-    /**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-        global $conf,$user,$langs,$db;
+	/**
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass()
+	{
+		global $conf,$user,$langs,$db;
 
-        $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
-        print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->rollback();
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
+	public static function tearDownAfterClass()
+	{
+		global $conf,$user,$langs,$db;
+		$db->rollback();
 
-        print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    /**
-     * Init phpunit tests
-     *
-     * @return	void
-     */
-    protected function setUp()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * Init phpunit tests
+	 *
+	 * @return	void
+	 */
+	protected function setUp()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-        print __METHOD__."\n";
-    }
-    /**
-     * End phpunit tests
-     *
-     * @return	void
-     */
-    protected function tearDown()
-    {
-        print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
+	/**
+	 * End phpunit tests
+	 *
+	 * @return	void
+	 */
+	protected function tearDown()
+	{
+		print __METHOD__."\n";
+	}
 
-    /**
-     * testHolidayCreate
-     *
-     * @return	int
-     */
-    public function testHolidayCreate()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testHolidayCreate
+	 *
+	 * @return	int
+	 */
+	public function testHolidayCreate()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-        $localobject=new Holiday($this->savdb);
-        $localobject->initAsSpecimen();
-        $result=$localobject->create($user);
+		$localobject=new Holiday($this->savdb);
+		$localobject->initAsSpecimen();
+		$result=$localobject->create($user);
 
-        print __METHOD__." result=".$result."\n";
-        $this->assertLessThan($result, 0);
+		print __METHOD__." result=".$result."\n";
+		$this->assertLessThan($result, 0);
 
-        return $result;
-    }
+		return $result;
+	}
 
-    /**
-     * testHolidayFetch
-     *
-     * @param	int		$id		Id of Holiday
-     * @return	int
-     * @depends	testHolidayCreate
-     * The depends says test is run only if previous is ok
-     */
-    public function testHolidayFetch($id)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testHolidayFetch
+	 *
+	 * @param	int		$id		Id of Holiday
+	 * @return	int
+	 * @depends	testHolidayCreate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testHolidayFetch($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-        $localobject=new Holiday($this->savdb);
-        $result=$localobject->fetch($id);
+		$localobject=new Holiday($this->savdb);
+		$result=$localobject->fetch($id);
 
-        print __METHOD__." id=".$id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
+		print __METHOD__." id=".$id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
 
-        return $localobject;
-    }
+		return $localobject;
+	}
 
-    /**
-     * testHolidayUpdate
-     *
-     * @param	Holiday		$localobject	Holiday
-     * @return	int
-     *
-     * @depends	testHolidayFetch
-     * The depends says test is run only if previous is ok
-     */
-    public function testHolidayUpdate($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testHolidayUpdate
+	 *
+	 * @param	Holiday		$localobject	Holiday
+	 * @return	int
+	 *
+	 * @depends	testHolidayFetch
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testHolidayUpdate($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-        $localobject->oldcopy = clone $localobject;
+		$localobject->oldcopy = clone $localobject;
 
-        $localobject->note_private='New private note after update';
-        $localobject->note_public='New public note after update';
-        $localobject->lastname='New name';
-        $localobject->firstname='New firstname';
-        $localobject->address='New address';
-        $localobject->zip='New zip';
-        $localobject->town='New town';
-        $localobject->country_id=2;
-        //$localobject->status=0;
-        $localobject->phone_pro='New tel pro';
-        $localobject->phone_perso='New tel perso';
-        $localobject->phone_mobile='New tel mobile';
-        $localobject->fax='New fax';
-        $localobject->email='newemail@newemail.com';
-        $localobject->jabberid='New im id';
-        $localobject->default_lang='es_ES';
+		$localobject->note_private='New private note after update';
+		$localobject->note_public='New public note after update';
+		$localobject->lastname='New name';
+		$localobject->firstname='New firstname';
+		$localobject->address='New address';
+		$localobject->zip='New zip';
+		$localobject->town='New town';
+		$localobject->country_id=2;
+		//$localobject->status=0;
+		$localobject->phone_pro='New tel pro';
+		$localobject->phone_perso='New tel perso';
+		$localobject->phone_mobile='New tel mobile';
+		$localobject->fax='New fax';
+		$localobject->email='newemail@newemail.com';
+		$localobject->jabberid='New im id';
+		$localobject->default_lang='es_ES';
 
-        $result=$localobject->update($localobject->id, $user);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0, 'Holiday::update error');
+		$result=$localobject->update($localobject->id, $user);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0, 'Holiday::update error');
 
-        $result=$localobject->update_note($localobject->note_private, '_private');
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0, 'Holiday::update_note (private) error');
+		$result=$localobject->update_note($localobject->note_private, '_private');
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0, 'Holiday::update_note (private) error');
 
-        $result=$localobject->update_note($localobject->note_public, '_public');
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0, 'Holiday::update_note (public) error');
+		$result=$localobject->update_note($localobject->note_public, '_public');
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0, 'Holiday::update_note (public) error');
 
 
-        $newobject=new Holiday($this->savdb);
-        $result=$newobject->fetch($localobject->id);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0, 'Holiday::fetch error');
+		$newobject=new Holiday($this->savdb);
+		$result=$newobject->fetch($localobject->id);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0, 'Holiday::fetch error');
 
-        print __METHOD__." old=".$localobject->note." new=".$newobject->note."\n";
-        $this->assertEquals($localobject->note, $newobject->note, 'Holiday::update_note error compare note');
-        //print __METHOD__." old=".$localobject->note_public." new=".$newobject->note_public."\n";
-        //$this->assertEquals($localobject->note_public, $newobject->note_public);
+		print __METHOD__." old=".$localobject->note." new=".$newobject->note."\n";
+		$this->assertEquals($localobject->note, $newobject->note, 'Holiday::update_note error compare note');
+		//print __METHOD__." old=".$localobject->note_public." new=".$newobject->note_public."\n";
+		//$this->assertEquals($localobject->note_public, $newobject->note_public);
 
-        return $localobject;
-    }
+		return $localobject;
+	}
 
-    /**
-     * testHolidayOther
-     *
-     * @param	Holiday		$localobject		Holiday
-     * @return	void
-     *
-     * @depends	testHolidayUpdate
-     * The depends says test is run only if previous is ok
-     */
-    public function testHolidayOther($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testHolidayOther
+	 *
+	 * @param	Holiday		$localobject		Holiday
+	 * @return	void
+	 *
+	 * @depends	testHolidayUpdate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testHolidayOther($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-        $result = $localobject->fetchUsers(true, true, '');
-        $this->assertNotEquals($result, -1);
+		$result = $localobject->fetchUsers(true, true, '');
+		$this->assertNotEquals($result, -1);
 
-        $result = $localobject->fetchUsers(true, false, '');
-        $this->assertNotEquals($result, -1);
+		$result = $localobject->fetchUsers(true, false, '');
+		$this->assertNotEquals($result, -1);
 
-        $result = $localobject->fetchUsers(false, true, '');
-        $this->assertNotEquals($result, -1);
+		$result = $localobject->fetchUsers(false, true, '');
+		$this->assertNotEquals($result, -1);
 
-        $result = $localobject->fetchUsers(false, false, '');
-        $this->assertNotEquals($result, -1);
+		$result = $localobject->fetchUsers(false, false, '');
+		$this->assertNotEquals($result, -1);
 
-        return $localobject->id;
-    }
+		return $localobject->id;
+	}
 
-    /**
-     * testHolidayDelete
-     *
-     * @param	int		$id		Id of Holiday
-     * @return	void
-     *
-     * @depends	testHolidayOther
-     * The depends says test is run only if previous is ok
-     */
-    public function testHolidayDelete($id)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testHolidayDelete
+	 *
+	 * @param	int		$id		Id of Holiday
+	 * @return	void
+	 *
+	 * @depends	testHolidayOther
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testHolidayDelete($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-        $localobject=new Holiday($this->savdb);
-        $result=$localobject->fetch($id);
+		$localobject=new Holiday($this->savdb);
+		$result=$localobject->fetch($id);
 
-        $result=$localobject->delete(0);
-        print __METHOD__." id=".$id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
+		$result=$localobject->delete(0);
+		print __METHOD__." id=".$id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
 
-        return $result;
-    }
+		return $result;
+	}
 
-    /**
-     * testVerifDateHolidayCP
-     *
-     * @return void
-     */
-    public function testVerifDateHolidayCP()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testVerifDateHolidayCP
+	 *
+	 * @return void
+	 */
+	public function testVerifDateHolidayCP()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-        // Create a leave request the 1st morning only
-        $localobjecta=new Holiday($this->savdb);
-        $localobjecta->initAsSpecimen();
-        $localobjecta->date_debut = dol_mktime(0, 0, 0, 1, 1, 2020);
-        $localobjecta->date_fin = dol_mktime(0, 0, 0, 1, 1, 2020);
-        $localobjecta->halfday = 1;
-        $result=$localobjecta->create($user);
+		// Create a leave request the 1st morning only
+		$localobjecta=new Holiday($this->savdb);
+		$localobjecta->initAsSpecimen();
+		$localobjecta->date_debut = dol_mktime(0, 0, 0, 1, 1, 2020);
+		$localobjecta->date_fin = dol_mktime(0, 0, 0, 1, 1, 2020);
+		$localobjecta->halfday = 1;
+		$result=$localobjecta->create($user);
 
-        // Create a leave request the 2 afternoon only
-        $localobjectb=new Holiday($this->savdb);
-        $localobjectb->initAsSpecimen();
-        $localobjectb->date_debut = dol_mktime(0, 0, 0, 1, 2, 2020);
-        $localobjectb->date_fin = dol_mktime(0, 0, 0, 1, 2, 2020);
-        $localobjectb->halfday = -1;
-        $result=$localobjectb->create($user);
+		// Create a leave request the 2 afternoon only
+		$localobjectb=new Holiday($this->savdb);
+		$localobjectb->initAsSpecimen();
+		$localobjectb->date_debut = dol_mktime(0, 0, 0, 1, 2, 2020);
+		$localobjectb->date_fin = dol_mktime(0, 0, 0, 1, 2, 2020);
+		$localobjectb->halfday = -1;
+		$result=$localobjectb->create($user);
 
-        $date_debut = dol_mktime(0, 0, 0, 1, 1, 2020);
-        $date_fin = dol_mktime(0, 0, 0, 1, 2, 2020);
+		$date_debut = dol_mktime(0, 0, 0, 1, 1, 2020);
+		$date_fin = dol_mktime(0, 0, 0, 1, 2, 2020);
 
-        $localobjectc=new Holiday($this->savdb);
+		$localobjectc=new Holiday($this->savdb);
 
-        $result=$localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_debut, 0);
-        $this->assertFalse($result, 'result should be false, there is overlapping, full day is not available.');
-        $result=$localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_fin, 0);
-        $this->assertFalse($result, 'result should be false, there is overlapping, full day is not available.');
-        $result=$localobjectc->verifDateHolidayCP($user->id, $date_fin, $date_fin, 0);
-        $this->assertFalse($result, 'result should be false, there is overlapping, full day is not available.');
+		$result=$localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_debut, 0);
+		$this->assertFalse($result, 'result should be false, there is overlapping, full day is not available.');
+		$result=$localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_fin, 0);
+		$this->assertFalse($result, 'result should be false, there is overlapping, full day is not available.');
+		$result=$localobjectc->verifDateHolidayCP($user->id, $date_fin, $date_fin, 0);
+		$this->assertFalse($result, 'result should be false, there is overlapping, full day is not available.');
 
-        $result=$localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_debut, 1);
-        $this->assertFalse($result, 'result should be false, there is overlapping, morning of first day is not available.');
-        $result=$localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_fin, 1);
-        $this->assertFalse($result, 'result should be false, there is overlapping, morning of first day is not available.');
-        $result=$localobjectc->verifDateHolidayCP($user->id, $date_fin, $date_fin, 1);
-        $this->assertTrue($result, 'result should be true, there is no overlapping');
+		$result=$localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_debut, 1);
+		$this->assertFalse($result, 'result should be false, there is overlapping, morning of first day is not available.');
+		$result=$localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_fin, 1);
+		$this->assertFalse($result, 'result should be false, there is overlapping, morning of first day is not available.');
+		$result=$localobjectc->verifDateHolidayCP($user->id, $date_fin, $date_fin, 1);
+		$this->assertTrue($result, 'result should be true, there is no overlapping');
 
-        $result=$localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_debut, -1);
-        $this->assertTrue($result, 'result should be true, there is no overlapping');
-        $result=$localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_fin, -1);
-        $this->assertFalse($result, 'result should be false, there is overlapping, afternoon of second day is not available');
-        $result=$localobjectc->verifDateHolidayCP($user->id, $date_fin, $date_fin, -1);
-        $this->assertFalse($result, 'result should be false, there is overlapping, afternoon of second day is not available');
+		$result=$localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_debut, -1);
+		$this->assertTrue($result, 'result should be true, there is no overlapping');
+		$result=$localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_fin, -1);
+		$this->assertFalse($result, 'result should be false, there is overlapping, afternoon of second day is not available');
+		$result=$localobjectc->verifDateHolidayCP($user->id, $date_fin, $date_fin, -1);
+		$this->assertFalse($result, 'result should be false, there is overlapping, afternoon of second day is not available');
 
-        $result=$localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_fin, 2);	// start afternoon and end morning
-        $this->assertTrue($result, 'result should be true, there is no overlapping');
-    }
+		$result=$localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_fin, 2);	// start afternoon and end morning
+		$this->assertTrue($result, 'result should be true, there is no overlapping');
+	}
 
-    /**
-     * testUpdateBalance
-     *
-     * @return void
-     */
-    public function testUpdateBalance()
-    {
-    	$localobjecta=new Holiday($this->savdb);
+	/**
+	 * testUpdateBalance
+	 *
+	 * @return void
+	 */
+	public function testUpdateBalance()
+	{
+		$localobjecta=new Holiday($this->savdb);
 
-    	$localobjecta->updateConfCP('lastUpdate', '20100101120000');
-    	$result = $localobjecta->updateBalance();
-    	$this->assertEquals($result, 1);
-    }
+		$localobjecta->updateConfCP('lastUpdate', '20100101120000');
+		$result = $localobjecta->updateBalance();
+		$this->assertEquals($result, 1);
+	}
 }
