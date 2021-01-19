@@ -326,6 +326,7 @@ while ($i < min($num, $limit)) {
 
 	$tva_static->id = $obj->rowid;
 	$tva_static->ref = $obj->rowid;
+	$tva_static->label = $obj->label;
 
 	print '<tr class="oddeven">';
 

@@ -43,6 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/paymentvat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
@@ -370,6 +371,7 @@ $donstatic = new Don($db);
 $paymentstatic = new Paiement($db);
 $paymentsupplierstatic = new PaiementFourn($db);
 $paymentscstatic = new PaymentSocialContribution($db);
+$paymentvatstatic = new PaymentVAT($db);
 $paymentsalstatic = new PaymentSalary($db);
 $paymentdonationstatic = new PaymentDonation($db);
 $paymentvariousstatic = new PaymentVarious($db);
@@ -1210,9 +1212,9 @@ if ($resql)
 					print ' '.$paymentscstatic->getNomUrl(2);
 				} elseif ($links[$key]['type'] == 'payment_vat')
 				{
-                    print '<a href="'.DOL_URL_ROOT.'/compta/payment_vat/card.php?id='.$links[$key]['url_id'].'">';
-                    print ' '.img_object($langs->trans('ShowPayment'), 'payment').' ';
-                    print '</a>';
+					$paymentvatstatic->id = $links[$key]['url_id'];
+					$paymentvatstatic->ref = $links[$key]['url_id'];
+					print ' '.$paymentvatstatic->getNomUrl(2);
     	        }
     	        elseif ($links[$key]['type'] == 'payment_salary')
 				{
