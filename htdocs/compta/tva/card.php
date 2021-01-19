@@ -796,7 +796,12 @@ if ($id)
 		}
 
 		// Classify 'paid'
-		if ($object->paye == 0 && round($resteapayer) <= 0 && $user->rights->tax->charges->creer)
+		if ($object->paye == 0
+		&& (
+			(round($resteapayer) <= 0 && $object->amount > 0)
+			|| (round($resteapayer) >= 0 && $object->amount < 0)
+		)
+		&& $user->rights->tax->charges->creer)
 		{
 			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/tva/card.php?id=$object->id&amp;action=paid\">".$langs->trans("ClassifyPaid")."</a></div>";
 		}
