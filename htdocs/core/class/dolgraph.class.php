@@ -189,9 +189,8 @@ class DolGraph
 	 * @param	boolean		$bool	XValues or not
 	 * @return	boolean				true
 	 */
-	public function SetHideXValues($bool)
+	public function setHideXValues($bool)
 	{
-		// phpcs:enable
 		$this->hideXValues = $bool;
 		return true;
 	}
@@ -282,7 +281,7 @@ class DolGraph
 	 * @param 	array	$bordercolor		Border Color array(array(R,G,B),array(R,G,B)...) or array('#FFFFFF','#......'...)
 	 * @return	void
 	 */
-	public function SetBorderColor($bordercolor)
+	public function setBorderColor($bordercolor)
 	{
 		$this->bordercolor = $bordercolor;
 	}
@@ -293,7 +292,7 @@ class DolGraph
 	 * @param 	int     $borderwidth 	Border Width
 	 * @return	void
 	 */
-	public function SetBorderWidth($borderwidth)
+	public function setBorderWidth($borderwidth)
 	{
 		$this->borderwidth = $borderwidth;
 	}
@@ -304,9 +303,8 @@ class DolGraph
 	 * @param 	array	$tooltipsLabels		Tooltips Labels array('...','...'...)
 	 * @return	void
 	 */
-	public function SetTooltipsLabels($tooltipsLabels)
+	public function setTooltipsLabels($tooltipsLabels)
 	{
-		// phpcs:enable
 		$this->tooltipsLabels = $tooltipsLabels;
 	}
 
@@ -316,9 +314,8 @@ class DolGraph
 	 * @param 	array	$tooltipsTitles		Tooltips Titles array('...','...'...)
 	 * @return	void
 	 */
-	public function SetTooltipsTitles($tooltipsTitles)
+	public function setTooltipsTitles($tooltipsTitles)
 	{
-		// phpcs:enable
 		$this->tooltipsTitles = $tooltipsTitles;
 	}
 
@@ -481,7 +478,7 @@ class DolGraph
 	 * @param	boolean 	$mirrorGraphValues	Mirror Values if true and doesn't if false
 	 * @return	void
 	 */
-	public function SetMirrorGraphValues($mirrorGraphValues)
+	public function setMirrorGraphValues($mirrorGraphValues)
 	{
 		$this->mirrorGraphValues = $mirrorGraphValues;
 	}
