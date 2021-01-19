@@ -132,7 +132,7 @@ if ($filtre) {
 if ($typeid) {
     $sql .= " AND t.fk_typepayment=".$typeid;
 }
-$sql .= " GROUP BY t.rowid, t.amount, t.datev, t.label, t.paye";
+$sql .= " GROUP BY t.rowid, t.amount, t.datev, t.label, t.paye, pst.code";
 $sql .= $db->order($sortfield, $sortorder);
 $totalnboflines = 0;
 $result = $db->query($sql);
