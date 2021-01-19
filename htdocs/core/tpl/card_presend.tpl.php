@@ -119,6 +119,7 @@ if ($action == 'presend')
 	// Create form for email
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
+	$formmail->setSubstitFromObject($object, $langs);
 
 	$formmail->param['langsmodels'] = (empty($newlang) ? $langs->defaultlang : $newlang);
 	$formmail->fromtype = (GETPOST('fromtype') ?GETPOST('fromtype') : (!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE) ? $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE : 'user'));
