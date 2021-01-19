@@ -9,6 +9,8 @@
  * Copyright (C) 2017-2019  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -368,7 +370,6 @@ $donstatic = new Don($db);
 $paymentstatic = new Paiement($db);
 $paymentsupplierstatic = new PaiementFourn($db);
 $paymentscstatic = new PaymentSocialContribution($db);
-$paymentvatstatic = new TVA($db);
 $paymentsalstatic = new PaymentSalary($db);
 $paymentdonationstatic = new PaymentDonation($db);
 $paymentvariousstatic = new PaymentVarious($db);
@@ -1209,10 +1210,11 @@ if ($resql)
 					print ' '.$paymentscstatic->getNomUrl(2);
 				} elseif ($links[$key]['type'] == 'payment_vat')
 				{
-					$paymentvatstatic->id = $links[$key]['url_id'];
-					$paymentvatstatic->ref = $links[$key]['url_id'];
-					print ' '.$paymentvatstatic->getNomUrl(2);
-				} elseif ($links[$key]['type'] == 'payment_salary')
+                    print '<a href="'.DOL_URL_ROOT.'/compta/payment_vat/card.php?id='.$links[$key]['url_id'].'">';
+                    print ' '.img_object($langs->trans('ShowPayment'), 'payment').' ';
+                    print '</a>';
+    	        }
+    	        elseif ($links[$key]['type'] == 'payment_salary')
 				{
 					$paymentsalstatic->id = $links[$key]['url_id'];
 					$paymentsalstatic->ref = $links[$key]['url_id'];
@@ -1274,7 +1276,10 @@ if ($resql)
 				{
 				} elseif ($links[$key]['type'] == 'sc')
 				{
-				} else {
+				}
+                elseif ($links[$key]['type'] == 'vat')
+                {
+                } else {
 					// Show link with label $links[$key]['label']
 					if (!empty($objp->label) && !empty($links[$key]['label'])) print ' - ';
 					print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
