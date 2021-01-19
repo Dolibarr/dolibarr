@@ -402,7 +402,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("No_Email")), null, 'errors');
 		}
 
-		if (!empty($conf->mailing->enabled) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS==-1 && GETPOST('contact_no_email', 'int')==-1 && !empty(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL))) {
+		if (!empty($conf->mailing->enabled) && GETPOST("private", 'int') == 1 && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS==-1 && GETPOST('contact_no_email', 'int')==-1 && !empty(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL))) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("No_Email")), null, 'errors');
 		}
