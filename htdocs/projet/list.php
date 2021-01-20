@@ -799,7 +799,6 @@ while ($i < min($num, $limit))
 						$userstatic->statut = $val['statut'];
 						$userstatic->entity = $val['entity'];
 						$userstatic->photo = $val['photo'];
-						$userstatic->photo = $val['photo'];
 						$userstatic->login = $val['login'];
 						$userstatic->phone = $val['phone'];
 						$userstatic->job = $val['job'];
