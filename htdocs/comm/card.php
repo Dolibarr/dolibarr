@@ -531,11 +531,12 @@ if ($object->id > 0)
 		print '<table class="centpercent nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('IntracommReportTransportMode');
 		print '<td>';
-		if (($action != 'edittransportmode') && $user->rights->societe->creer) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edittransportmode&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+		if (($action != 'edittransportmode') && $user->rights->societe->creer) {
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edittransportmode&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+		}
 		print '</tr></table>';
 		print '</td><td>';
-		if ($action == 'edittransportmode')
-		{
+		if ($action == 'edittransportmode') {
 			$form->formSelectTransportMode($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->fk_transport_mode, 'fk_transport_mode', 1);
 		}
 		else {
@@ -562,8 +563,7 @@ if ($object->id > 0)
 	include DOL_DOCUMENT_ROOT.'/societe/tpl/linesalesrepresentative.tpl.php';
 
 	// Module Adherent
-	if (!empty($conf->adherent->enabled))
-	{
+	if (!empty($conf->adherent->enabled)) {
 		$langs->load("members");
 		$langs->load("users");
 
@@ -571,10 +571,9 @@ if ($object->id > 0)
 		print '<td>';
 		$adh = new Adherent($db);
 		$result = $adh->fetch('', '', $object->id);
-		if ($result > 0)
-		{
+		if ($result > 0) {
 			$adh->ref = $adh->getFullName($langs);
-			print $adh->getNomUrl(1);
+			print $adh->getNomUrl(-1);
 		} else {
 			print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
 		}
