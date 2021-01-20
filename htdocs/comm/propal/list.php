@@ -1259,8 +1259,8 @@ if ($resql)
 				$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
 				if ($listsalesrepresentatives < 0) dol_print_error($db);
 				$nbofsalesrepresentative = count($listsalesrepresentatives);
-				if ($nbofsalesrepresentative > 3)   // We print only number
-				{
+				if ($nbofsalesrepresentative > 6) {
+					// We print only number
 					print $nbofsalesrepresentative;
 				} elseif ($nbofsalesrepresentative > 0) {
 					$userstatic = new User($db);
@@ -1278,9 +1278,11 @@ if ($resql)
 						$userstatic->job = $val['job'];
 						$userstatic->gender = $val['gender'];
 						//print '<div class="float">':
-						print $userstatic->getNomUrl(-2);
+						print ($nbofsalesrepresentative < 3) ? $userstatic->getNomUrl(-1, '', 0, 0, 12) : $userstatic->getNomUrl(-2);
 						$j++;
-						if ($j < $nbofsalesrepresentative) print ' ';
+						if ($j < $nbofsalesrepresentative) {
+							print ' ';
+						}
 						//print '</div>';
 					}
 				}

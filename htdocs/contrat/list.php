@@ -716,7 +716,7 @@ while ($i < min($num, $limit))
 			$listsalesrepresentatives = $socstatic->getSalesRepresentatives($user);
 			if ($listsalesrepresentatives < 0) dol_print_error($db);
 			$nbofsalesrepresentative = count($listsalesrepresentatives);
-			if ($nbofsalesrepresentative > 3) {
+			if ($nbofsalesrepresentative > 6) {
 				// We print only number
 				print $nbofsalesrepresentative;
 			} elseif ($nbofsalesrepresentative > 0) {
@@ -736,9 +736,11 @@ while ($i < min($num, $limit))
 					$userstatic->gender = $val['gender'];
 
 					//print '<div class="float">':
-					print $userstatic->getNomUrl(-2);
+					print ($nbofsalesrepresentative < 3) ? $userstatic->getNomUrl(-1, '', 0, 0, 12) : $userstatic->getNomUrl(-2);
 					$j++;
-					if ($j < $nbofsalesrepresentative) print ' ';
+					if ($j < $nbofsalesrepresentative) {
+						print ' ';
+					}
 					//print '</div>';
 				}
 			}
