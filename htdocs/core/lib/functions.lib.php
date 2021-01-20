@@ -4724,24 +4724,26 @@ function price2num($amount, $rounding = '', $option = 0)
 	// Convert value to universal number format (no thousand separator, '.' as decimal separator)
 	if ($option != 1) {	// If not a PHP number or unknown, we change or clean format
 		//print 'PP'.$amount.' - '.$dec.' - '.$thousand.' - '.intval($amount).'<br>';
+		$amountin = $amount;//Save the given amount in order to log
+		$amount = preg_replace('/\s*\(.*\)/', '', $amount); // Remove forgotten code into vatrate or local taxe.
+		$amount = preg_replace('/\s*/', '', $amount);// Remove remaining spaces if any
 		if (!is_numeric($amount)) {
 			$amount = iconv('UTF-8', 'ASCII//IGNORE', $amount);//Eliminate non ascii characters
-			$codepos = strpos($amount, ' (' );//if the string contains " (" it contains a code name, so eliminate the end of string including parenthesis, so 85NPR VAT code will work
-			if ($codepos > 0) {
-				$amount = substr($amount, 0, $codepos);
+			$amount = preg_replace('/[a-df-zA-DF-Z\/\\\*\(\)\<\>\_\!\"\#\$\%\&\:\;\=\@\[\]\`\{\|\}\'\?\+\~\^]/', '', $amount);//Eliminate remaining no numerical characters, keep only 0-9 . , - e E
+			$pos = strpos($amount, ',');//Replace 1st place of a comma by dot
+			if ($pos !== false) {
+				$amount = substr_replace($amount, '.', $pos, 1);
 			}
-			$amount = preg_replace('/[a-zA-Z\/\\\*\(\)\<\>\_\!\"\#\$\%\&\:\;\=\@\[\]\`\{\|\}\'\?]/', '', $amount);//Eliminate alphabetics and special characters, keep only 0-9 . , - + and spaces (eliminated after)
-			$lastpos=strrpos($amount, '+', 0);//+ if exists, must be alone at first place, eliminate others
-			while (($lastpos<>false) and ($lastpos>0))
-			{
-				$amount=substr_replace($amount, '', $lastpos, 1);
-				$lastpos=strrpos($amount, '+', 0);
+			$amount = preg_replace('/,/', '', $amount);//Eliminate all remaining commas
+			$amount = preg_replace('/[eE]/', '%', $amount);//Treat e and E
+			$pos = strpos($amount, '%');
+			if ($pos !== false) {
+				$amount = substr_replace($amount, 'E', $pos, 1);
 			}
-			$lastpos=strrpos($amount, '-', 0);//- if exists, must be alone at first place, eliminate others
-			while (($lastpos<>false) and ($lastpos>0))
-			{
-				$amount=substr_replace($amount, '', $lastpos, 1);
-				$lastpos=strrpos($amount, '-', 0);
+			$amount = preg_replace('/%/', '', $amount);//Keep only the first e or E as E
+			if (!is_numeric($amount)) {
+				dol_syslog("functions.lib::price2num: amount in=".$amountin." No numeric result=".$amount, LOG_ERR);
+				$amount='';//Clear amount, not numeric, nothing possible to do
 			}
 		}
 
