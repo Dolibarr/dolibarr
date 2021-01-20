@@ -4730,21 +4730,21 @@ function price2num($amount, $rounding = '', $option = 0)
 		if (!is_numeric($amount)) {
 			$amount = iconv('UTF-8', 'ASCII//IGNORE', $amount);//Eliminate non ascii characters
 			$amount = preg_replace('/[a-df-zA-DF-Z\/\\\*\(\)\<\>\_\!\"\#\$\%\&\:\;\=\@\[\]\`\{\|\}\'\?\+\~\^]/', '', $amount);//Eliminate remaining no numerical characters, keep only 0-9 . , - e E
-//
+			//
 			$amount = preg_replace('/[\,\.]/', '%', $amount);//Treat , and . (as % to work)
 			$pos = strpos($amount, '%');
 			if ($pos !== false) {
 				$amount = substr_replace($amount, '.', $pos, 1);
 			}
 			$amount = preg_replace('/%/', '', $amount);//Keep only one dot
-//
+			//
 			$amount = preg_replace('/[eE]/', '%', $amount);//Treat e and E (as % to work)
 			$pos = strpos($amount, '%');
 			if ($pos !== false) {
 				$amount = substr_replace($amount, 'E', $pos, 1);
 			}
 			$amount = preg_replace('/%/', '', $amount);//Keep only the first e or E as E
-//
+			//
 			$amount = preg_replace('/[-]/', '%', $amount);//Treat - (as % to work)
 			$pos = strpos($amount, '%');
 			if ($pos !== false) {
@@ -4755,7 +4755,7 @@ function price2num($amount, $rounding = '', $option = 0)
 				$amount = substr_replace($amount, '-', $pos, 1);
 			}
 			$amount = preg_replace('/%/', '', $amount);//Keep at max two -
-//
+			//
 			if (!is_numeric($amount)) {
 				dol_syslog("functions.lib::price2num: amount in=".$amountin." No numeric result=".$amount, LOG_ERR);
 				$amount='';//Clear amount, not numeric, nothing possible to do
