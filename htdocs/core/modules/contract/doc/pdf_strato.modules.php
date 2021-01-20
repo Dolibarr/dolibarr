@@ -343,7 +343,7 @@ class pdf_strato extends ModelePDFContract
 						}
 
 						$txtpredefinedservice = '';
-                        $txtpredefinedservice = $objectligne->product_label;
+                        $txtpredefinedservice = $objectligne->product_ref;
                         if ($objectligne->product_label)
                         {
                         	$txtpredefinedservice .= ' - ';
