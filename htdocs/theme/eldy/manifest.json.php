@@ -63,14 +63,12 @@ if (!empty($conf->global->MAIN_MANIFEST_APPLI_LOGO_URL)){
 	$manifest->icons[] = $icon;
 }
 elseif (!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED)){
-
 	if (!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI)){
 		$iconRelativePath 	= 'logos/thumbs/'.$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI;
 		$iconPath 	= $conf->mycompany->dir_output.'/'.$iconRelativePath;
 		if (is_readable($iconPath)) {
 			$imgSize = getimagesize($iconPath);
 			if ($imgSize){
-
 				$icon = new stdClass();
 				$icon->src = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode($iconRelativePath);
 				$icon->sizes = $imgSize[0]."x".$imgSize[1];
@@ -85,8 +83,7 @@ elseif (!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED)){
 		$iconPath 	= $conf->mycompany->dir_output.'/'.$iconRelativePath;
 		if (is_readable($iconPath)) {
 			$imgSize = getimagesize($iconPath);
-			if($imgSize){
-
+			if ($imgSize){
 				$icon = new stdClass();
 				$icon->src = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode($iconRelativePath);
 				$icon->sizes = $imgSize[0]."x".$imgSize[1];
@@ -101,8 +98,7 @@ elseif (!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED)){
 		$iconPath 	= $conf->mycompany->dir_output.'/'.$iconRelativePath;
 		if (is_readable($iconPath)) {
 			$imgSize = getimagesize($iconPath);
-			if($imgSize){
-
+			if ($imgSize){
 				$icon = new stdClass();
 				$icon->src = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode($iconRelativePath);
 				$icon->sizes = $imgSize[0]."x".$imgSize[1];
@@ -114,7 +110,7 @@ elseif (!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED)){
 }
 
 // Add Dolibarr std icon
-if(empty($manifest->icons)){
+if (empty($manifest->icons)){
 	$icon = new stdClass();
 	$icon->src = DOL_URL_ROOT.'/theme/dolibarr_256x256_color.png';
 	$icon->sizes = "256x256";
