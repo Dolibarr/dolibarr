@@ -7151,7 +7151,7 @@ abstract class CommonObject
 									}
 								});
                 
-                //When we change parent list
+								//When we change parent list
 								$("select[name=\""+parent_list+"\"]").change(function() {
 									showOptions(child_list, parent_list, orig_select[child_list]);
 									//Select the value 0 on child list after a change on the parent list
