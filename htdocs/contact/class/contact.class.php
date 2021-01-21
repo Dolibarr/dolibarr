@@ -1675,7 +1675,7 @@ class Contact extends CommonObject
 	/**
 	 * Updates Roles
 	 *
-	 * @return float|int
+	 * @return int					<0 if KO, >0 if OK, 0 nothing done
 	 * @throws Exception
 	 */
 	public function updateRoles()
@@ -1684,48 +1684,51 @@ class Contact extends CommonObject
 
 		$error = 0;
 
-		$this->db->begin();
+		if ($this->socid > 0 || $this->socid == -1) {
+			$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_contacts WHERE fk_soc=".$this->socid." AND fk_socpeople=".$this->id; ;
+			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "societe_contacts WHERE fk_socpeople=" . $this->id;;
 
-		dol_syslog(__METHOD__, LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if (!$result) {
-			$this->errors[] = $this->db->lasterror().' sql='.$sql;
-			$error++;
-		} else {
-			if (count($this->roles) > 0) {
-				foreach ($this->roles as $keyRoles => $valRoles) {
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_contacts";
-					$sql .= " (entity,";
-					$sql .= "date_creation,";
-					$sql .= "fk_soc,";
-					$sql .= "fk_c_type_contact,";
-					$sql .= "fk_socpeople) ";
-					$sql .= " VALUES (".$conf->entity.",";
-					$sql .= "'".$this->db->idate(dol_now())."',";
-					$sql .= $this->socid.", ";
-					$sql .= $valRoles." , ";
-					$sql .= $this->id;
-					$sql .= ")";
-					dol_syslog(__METHOD__, LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$this->errors[] = $this->db->lasterror() . ' sql=' . $sql;
+				$error++;
+			} else {
+				if ($this->socid > 0 && count($this->roles) > 0) {
+					foreach ($this->roles as $keyRoles => $valRoles) {
+						$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_contacts";
+						$sql .= " (entity,";
+						$sql .= "date_creation,";
+						$sql .= "fk_soc,";
+						$sql .= "fk_c_type_contact,";
+						$sql .= "fk_socpeople) ";
+						$sql .= " VALUES (" . $conf->entity . ",";
+						$sql .= "'" . $this->db->idate(dol_now()) . "',";
+						$sql .= $this->socid . ", ";
+						$sql .= $valRoles . " , ";
+						$sql .= $this->id;
+						$sql .= ")";
+						dol_syslog(__METHOD__, LOG_DEBUG);
 
-					$result = $this->db->query($sql);
-					if (!$result)
-					{
-						$this->errors[] = $this->db->lasterror().' sql='.$sql;
-						$error++;
+						$result = $this->db->query($sql);
+						if (!$result) {
+							$this->errors[] = $this->db->lasterror() . ' sql=' . $sql;
+							$error++;
+						}
 					}
 				}
 			}
+			if (empty($error)) {
+				$this->db->commit();
+				return 1;
+			} else {
+				$this->error = implode(' ', $this->errors);
+				$this->db->rollback();
+				return $error * -1;
+			}
 		}
-		if (empty($error)) {
-			$this->db->commit();
-			return 1;
-		} else {
-			$this->error = implode(' ', $this->errors);
-			$this->db->rollback();
-			return $error * -1;
-		}
+
+		return 0;
 	}
 }
