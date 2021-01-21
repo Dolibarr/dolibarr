@@ -4730,8 +4730,13 @@ function price2num($amount, $rounding = '', $option = 0)
 		if (!is_numeric($amount)) {
 			$amount = iconv('UTF-8', 'ASCII//IGNORE', $amount);//Eliminate non ascii characters
 			$amount = preg_replace('/[a-df-zA-DF-Z\/\\\*\(\)\<\>\_\!\"\#\$\%\&\:\;\=\@\[\]\`\{\|\}\'\?\+\~\^]/', '', $amount);//Eliminate remaining no numerical characters, keep only 0-9 . , - e E
-			//
-			$amount = preg_replace('/[\,\.]/', '%', $amount);//Treat , and . (as % to work)
+			if ($dec == ','){
+				$amount = preg_replace('/\./', '', $amount);//Remove all useless dots
+			}
+			if ($dec == '.'){
+				$amount = preg_replace('/\,/', '', $amount);//Remove all useless commas
+			}
+			$amount = preg_replace('/[\,\.]/', '%', $amount);//Treat , or . (as % to work)
 			$pos = strpos($amount, '%');
 			if ($pos !== false) {
 				$amount = substr_replace($amount, '.', $pos, 1);
