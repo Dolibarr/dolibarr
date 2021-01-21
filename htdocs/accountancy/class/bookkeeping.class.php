@@ -1914,25 +1914,24 @@ class BookKeeping extends CommonObject
 
 	/**
 	 * Return id and description of a root accounting account.
-	 * This function takes the parent of parent to get the root account !
+	 * FIXME: This function takes the parent of parent to get the root account !
 	 *
 	 * @param 	string 	$account	Accounting account
-	 * @return 	string 				Root account
+	 * @return 	array 				Array with root account information (max 2 upper level)
 	 */
 	public function getRootAccount($account = null)
 	{
 		global $conf;
 		$pcgver = $conf->global->CHARTOFACCOUNTS;
 
-		$sql  = "SELECT root.rowid, root.account_number, root.label as label";
+		$sql  = "SELECT root.rowid, root.account_number, root.label as label,";
+		$sql .= " parent.rowid as parent_rowid, parent.account_number as parent_account_number, parent.label as parent_label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
 		$sql .= " AND asy.rowid = ".((int) $pcgver);
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as parent ON aa.account_parent = parent.rowid";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as root ON parent.account_parent = root.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as parent ON aa.account_parent = parent.rowid AND parent.active = 1";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as root ON parent.account_parent = root.rowid AND root.active = 1";
 		$sql .= " WHERE aa.account_number = '".$this->db->escape($account)."'";
-		$sql .= " AND parent.active = 1";
-		$sql .= " AND root.active = 1";
 		$sql .= " AND aa.entity IN (".getEntity('accountancy').")";
 
 		dol_syslog(get_class($this)."::select_account sql=".$sql, LOG_DEBUG);
@@ -1943,7 +1942,8 @@ class BookKeeping extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 			}
 
-			return array('id'=>$obj->rowid, 'account_number'=>$obj->account_number, 'label'=>$obj->label);
+			$result = array('id'=>$obj->rowid, 'account_number'=>$obj->account_number, 'label'=>$obj->label);
+			return $result;
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(__METHOD__." ".$this->error, LOG_ERR);

@@ -409,7 +409,7 @@ if ($ispaymentok)
 						$postactionmessages[] = $errmsg;
 						$ispostactionok = -1;
 					} else {
-						$postactionmessages[] = 'Subscription created';
+						$postactionmessages[] = 'Subscription created (id='.$crowid.')';
 						$ispostactionok = 1;
 					}
 				}
