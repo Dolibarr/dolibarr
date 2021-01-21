@@ -13,14 +13,14 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 
 create table llx_contratdet
 (
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
-  tms                   timestamp,
+  tms                   timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
   fk_contrat            integer       NOT NULL,
   fk_product            integer       NULL,                -- doit pouvoir etre nul pour ligne detail sans produits
@@ -53,7 +53,7 @@ create table llx_contratdet
   total_localtax1       double(24,8)  DEFAULT 0,	   		   -- Total Local tax 1 de la ligne
   total_localtax2       double(24,8)  DEFAULT 0,	   		   -- Total Local tax 2 de la ligne
   total_ttc             double(24,8)  DEFAULT 0,	   		   -- Total TTC de la ligne toute quantite et incluant remise ligne et globale
-  product_type			integer       DEFAULT 1,               -- Product type (1=service by default)
+  product_type			integer       DEFAULT 1,               -- Type of line (1=service by default)
   info_bits		        integer DEFAULT 0, 		               -- TVA NPR ou non
 
   buy_price_ht          double(24,8)  DEFAULT NULL,            -- buying price

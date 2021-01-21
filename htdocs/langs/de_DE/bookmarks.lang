@@ -18,3 +18,4 @@ SetHereATitleForLink=Erfassen Sie hier einen Namen für das Lesezeichen
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Verwenden Sie einen externen / absoluten Link (z.B.: https://URL) oder Links relativ zum Systempfad (z.B.: /DOLIBARR_ROOT/htdocs/...)
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Wählen Sie aus, ob die verlinkte Seite auf der aktuellen Registerkarte oder auf einer neuen Registerkarte geöffnet werden soll.
 BookmarksManagement=Verwalten von Lesezeichen
+BookmarksMenuShortCut=STRG + Umschalt + m

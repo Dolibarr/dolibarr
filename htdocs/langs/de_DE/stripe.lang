@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
-StripeSetup=Karten Moduleeinstellungen
-StripeDesc=Offer customers a Stripe online payment page for payments with credit/cebit cards via <a href="http://www.stripe.com" target="_blank">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
+StripeSetup=Kreditkarten Moduleinstellungen
+StripeDesc=Bietet Kunden die Möglichkeit, eine Online Zahlungsseite mit Kredit/Debit-Kartenzahlungen via <a href="http://www.stripe.com" target="_blank">Stripe</a> anzubieten. Damit können Kunden Sofort-Zahlungen oder auf Module bezogene Zahlungen in Dolibarr (Rechnung, Auftrag, ...)  vornehmen
 StripeOrCBDoPayment=Zahlen mit Kreditkarte oder Stripe
 FollowingUrlAreAvailableToMakePayments=Für Kundenzahlungen stehen Ihnen die folgenden URLs zur Verfügung:
 PaymentForm=Zahlungsformular
@@ -12,16 +12,17 @@ YourEMail=E-Mail-Adresse für die Zahlungsbestätigung
 STRIPE_PAYONLINE_SENDEMAIL=E-Mail-Benachrichtigung nach einem Zahlungsversuch (erfolgreich oder fehlgeschlagen)
 Creditor=Zahlungsempfänger
 PaymentCode=Zahlungscode
-StripeDoPayment=Pay with Stripe
+StripeDoPayment=Zahlen mit Stripe
 YouWillBeRedirectedOnStripe=Zur Eingabe Ihrer Kreditkartendaten werden Sie auf die sichere Bezahlseite von Stripe weitergeleitet.
 Continue=Nächster
 ToOfferALinkForOnlinePayment=URL für %s Zahlung
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
-ToOfferALinkForOnlinePaymentOnInvoice=URL um Ihren Kunden eine %s Online-Bezahlseite für Rechnungen anzubieten
-ToOfferALinkForOnlinePaymentOnContractLine=URL um Ihren Kunden eine %s Online-Bezahlseite für Vertragspositionen anzubieten
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL um Ihren Kunden eine %s Online-Bezahlseite für frei wählbare Beträge anzubieten
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL um Ihren Mitgliedern eine %s Online-Bezahlseite für Mitgliedsbeiträge
-YouCanAddTagOnUrl=Sie können auch den URL-Parameter <b>&tag=<i>value</i></b> an eine beliebige dieser URLs anhängen (erforderlich nur bei der freien Zahlung) um einen eigenen Zahlungskommentar hinzuzufügen.
+ToOfferALinkForOnlinePaymentOnOrder=URL bietet eine %s Online Zahlungsseite für einen Kundenauftrag
+ToOfferALinkForOnlinePaymentOnInvoice=URL bietet eine %s Online Zahlungsseite für eine Kundenrechnung
+ToOfferALinkForOnlinePaymentOnContractLine=URL bietet eine %s  Online Zahlungsseite für einen Vertrag 
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL bietet eine %s Online Zahlungsseite für jeden Betrag ohne existierens Objekt
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL bietet eine %s Online Zahlungsseite für ein Mitgliederabo
+ToOfferALinkForOnlinePaymentOnDonation=URL bietet eine %s Online-Zahlungsseite für die Zahlung einer Spende an
+YouCanAddTagOnUrl=Es können URL-Parameter angegeben werden <b>&tag=<i>value</i></b> für jede dieser URLs (nur erforderlich für Zahlungen, die nicht mit einem Objekt verknüpft sind) kann ein eigener Zahlungskommentar-Tag hinzugefügt werden.<br>Für eine Zahlungs-URL ohne existierendes Objekt, kann der Parameter auch hinzugefügt werden <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (einige Zahlungsmodi beschränken ggf. Zahlungen auf eine je unterschiedlichen Link ohne diesen Parameter)
 SetupStripeToHavePaymentCreatedAutomatically=Richten Sie Stripe mit der URL <b>%s</b> ein, um nach Freigabe durch Stripe eine Zahlung anzulegen.
 AccountParameter=Konto Parameter
 UsageParameter=Einsatzparameter
@@ -31,6 +32,7 @@ VendorName=Name des Lieferanten
 CSSUrlForPaymentForm=CSS-Datei für das Zahlungsmodul
 NewStripePaymentReceived=Neue Stripezahlung erhalten
 NewStripePaymentFailed=Neue Stripezahlung versucht, aber fehlgeschlagen
+FailedToChargeCard=Karte konnte nicht aufgeladen werden
 STRIPE_TEST_SECRET_KEY=Geheimer Testschlüssel
 STRIPE_TEST_PUBLISHABLE_KEY=Öffentlicher Testschlüssel
 STRIPE_TEST_WEBHOOK_KEY=Webhook Testschlüssel
@@ -40,7 +42,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook Produktivschlüssel
 ONLINE_PAYMENT_WAREHOUSE=Lager verwenden um den Bestand bei Onlinezahlungen vermindern<br>(TODO When option to decrease stock is done on an action on invoice and the online payment generate itself the invoice?)
 StripeLiveEnabled=Stripe live aktiviert (Nicht im Test/Sandbox Modus)
 StripeImportPayment=Kartenzahlungen importieren
-ExampleOfTestCreditCard=Example of credit card for test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestCreditCard=Beispiel für eine zu testende Kreditkarte: %s => gültig, %s => Fehler CVC, %s => abgelaufen, %s => Belastung fehlgeschlagen
 StripeGateways=Kartengateways
 OAUTH_STRIPE_TEST_ID=Karten Connect Client ID (ca_...)
 OAUTH_STRIPE_LIVE_ID=Karten Connect Client ID (ca_...)
@@ -61,9 +63,10 @@ ConfirmDeleteCard=Wollen Sie diese Debit- oder Kreditkarte wirklich löschen?
 CreateCustomerOnStripe=Kunde mit Karte erstellen
 CreateCardOnStripe=Karte auf Stripe erstellen
 ShowInStripe=In Karte anzeigen
-StripeUserAccountForActions=User account to use for email notification of some Stripe events (Stripe payouts)
-StripePayoutList=List of Stripe payouts
-ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mode)
-ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
-PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
-ClickHereToTryAgain=<a href="%s">Click here to try again...</a>
+StripeUserAccountForActions=Benutzerkonto zur E-Mail-Benachrichtigung über einige Stripe-Ereignisse (Stripe-Auszahlungen)
+StripePayoutList=Liste der Stripe-Auszahlungen
+ToOfferALinkForTestWebhook=Link zum Einrichten von Stripe WebHook zum Aufruf von IPN (Testmodus)
+ToOfferALinkForLiveWebhook=Link zum Einrichten von Stripe WebHook zum Aufruf von IPN (Livemodus)
+PaymentWillBeRecordedForNextPeriod=Die Zahlung wird für den folgenden Zeitraum erfasst.
+ClickHereToTryAgain=<a href="%s">Hier klicken und nochmal versuchen...</a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Aufgrund strenger Kundenauthentifizierungs-Regeln muss die Erstellung einer Karte im Stripe-Backoffice erfolgen. Sie können hier klicken, um den Stripe-Kundendatensatz einzuschalten: %s

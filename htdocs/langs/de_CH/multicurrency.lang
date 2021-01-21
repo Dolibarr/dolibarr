@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - multicurrency
+MultiCurrency=Multi-Währungen
+ErrorAddRateFail=Fehlerhafter Kurs
+ErrorAddCurrencyFail=Fehlerhafte Währung
+ErrorDeleteCurrencyFail=Löschen fehlgeschlagen
+multicurrency_syncronize_error=Synchronisierungsfehler %s.
+MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE=Beziehe den Wechselkurs auf das Dokumentendatum, statt auf den aktuellen Kurs.
+multicurrency_useOriginTx=Übernehme beim Duplizieren von Objekten dessen Wechselkurs, statt den aktuellsten.
+CurrencyLayerAccount=CurrencyLayer Schnittstelle
+CurrencyLayerAccount_help_to_synchronize=Für diese Funktion solltest du ein Konto auf deren Homepage %s erzeugen.<br>Dann erhälst du deinen <b>API Key</b>.<br>Beim Gratiskonto kannst du die Standardwährung USD nicht ändern.<br>Wenn deine Standardwährung eine andere ist, rechnet die Anwendung das automatisch um.<br><br> Du kannst maximal 1000 Abfragen pro Monat über die Schnittstelle schicken.
+multicurrency_appId=API Key
+multicurrency_appCurrencySource=Kurs Quelle
+multicurrency_alternateCurrencySource=Alternative Kursquelle
+CurrenciesUsed=Benutzte Währungen
+CurrenciesUsed_help_to_add=Füge die verschiedenen Währungen für deine benutzten <b>Offerten</b>,<b>Bestellungen</b> usw hinzu.
+rate=Kurs
+MulticurrencyReceived=Eingang in Orignalwährung
+MulticurrencyRemainderToTake=Restbetrag in Originalwährung
+MulticurrencyPaymentAmount=Zahlungsbetrag, Originalwährung
+AmountToOthercurrency=Entspricht in der Währung des Eingangkontos

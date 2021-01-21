@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -31,11 +31,11 @@ unset($_SESSION['serObjFacturation']);
 
 $hookmanager->initHooks(array('cashdeskTplTicket'));
 
-$parameters=array();
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $obj_facturation);
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $obj_facturation);
 if (empty($reshook))
 {
-    require 'tpl/ticket.tpl.php';
+	require 'tpl/ticket.tpl.php';
 }
 
 

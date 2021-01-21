@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * ATTENTION DE PAS EXECUTER CE SCRIPT SUR UNE INSTALLATION DE PRODUCTION
  */
@@ -24,10 +24,14 @@
  *      \brief      Script example to inject random orders (for load tests)
  */
 
+$sapi_type = php_sapi_name();
+$script_file = basename(__FILE__);
+$path=dirname(__FILE__).'/';
+
 // Test si mode batch
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer mailing-send.php en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
+    echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
     exit;
 }
 
@@ -120,8 +124,7 @@ if ($resql) {
         $row = $db->fetch_row($resql);
         $societesid[$i] = $row[0];
     }
-}
-else { print "err"; }
+} else { print "err"; }
 
 $commandesid = array();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande";
@@ -134,8 +137,7 @@ if ($resql) {
         $row = $db->fetch_row($resql);
         $commandesid[$i] = $row[0];
     }
-}
-else { print "err"; }
+} else { print "err"; }
 
 $prodids = array();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE tosell=1";
@@ -202,16 +204,12 @@ for ($s = 0 ; $s < GEN_NUMBER_COMMANDE ; $s++)
         {
             $db->commit();
             print " OK with ref ".$object->ref."\n";
-        }
-        else
-        {
+        } else {
             print " KO\n";
             $db->rollback();
             dol_print_error($db, $object->error);
         }
-    }
-    else
-    {
+    } else {
         print " KO\n";
         $db->rollback();
         dol_print_error($db, $object->error);

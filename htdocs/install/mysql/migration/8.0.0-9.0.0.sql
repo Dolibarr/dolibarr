@@ -43,7 +43,7 @@ ALTER TABLE llx_facture ADD COLUMN pos_source varchar(32);
 create table llx_facture_rec_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)
 ) ENGINE=innodb;
@@ -182,7 +182,7 @@ CREATE TABLE llx_emailcollector_emailcollector(
         note_public text,
         note_private text,
         date_creation datetime NOT NULL,
-        tms timestamp NOT NULL,
+        tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         fk_user_creat integer NOT NULL,
         fk_user_modif integer,
         import_key varchar(14),
@@ -200,9 +200,9 @@ CREATE TABLE llx_emailcollector_emailcollectorfilter(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	fk_emailcollector INTEGER NOT NULL,
 	type varchar(128) NOT NULL,
-	rulevalue varchar(255) NULL,
+	rulevalue varchar(128) NULL,
 	date_creation datetime NOT NULL,
-	tms timestamp NOT NULL,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_user_creat integer NOT NULL,
 	fk_user_modif integer,
 	import_key varchar(14),
@@ -217,7 +217,7 @@ CREATE TABLE llx_emailcollector_emailcollectoraction(
 	type varchar(128) NOT NULL,
 	actionparam varchar(255) NULL,
 	date_creation datetime NOT NULL,
-	tms timestamp NOT NULL,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_user_creat integer NOT NULL,
 	fk_user_modif integer,
 	position integer DEFAULT 0,
@@ -284,7 +284,6 @@ DELETE from llx_accounting_account where rowid in (select minid from tmp_llx_acc
 --update llx_facturedet        set fk_code_ventilation = maxid WHERE fk_code_ventilation = minid;
 --update llx_facture_fourn_det set fk_code_ventilation = maxid WHERE fk_code_ventilation = minid;
 --update llx_expensereport_det set fk_code_ventilation = maxid WHERE fk_code_ventilation = minid;
-
 
 ALTER TABLE llx_accounting_account DROP INDEX uk_accounting_account;
 ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);

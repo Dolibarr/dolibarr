@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * WARNING, THIS WILL LOAD MASS DATA ON YOUR INSTANCE
  */
@@ -30,7 +30,7 @@ $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path=dirname(__FILE__).'/';
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer mailing-send.php en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
+    echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
     exit;
 }
 
@@ -181,9 +181,7 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
         {
             print " - Error in create result code = ".$ret." - ".$object->errorsToString();
             $errorrecord++;
-        }
-    	else
-    	{
+        } else {
     	    print " - Creation OK with name ".$object->name." - id = ".$ret;
     	}
     }
@@ -212,9 +210,7 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
     	{
     	    print " - Error in create link with sale representative result code = ".$result." - ".$object->errorsToString();
     	    $errorrecord++;
-    	}
-    	else
-    	{
+    	} else {
     	    print " - create link sale representative OK";
     	}
 	}
@@ -243,9 +239,7 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
         {
             print " - Error in create contact result code = ".$ret1." ".$ret2." - ".$object->errorsToString();
             $errorrecord++;
-        }
-    	else
-    	{
+        } else {
     	    print " - create contact OK";
     	}
 	}
@@ -277,9 +271,7 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
         {
             print " - Error in create contact result code = ".$ret1." ".$ret2." - ".$object->errorsToString();
             $errorrecord++;
-        }
-    	else
-    	{
+        } else {
     	    print " - create contact OK";
     	}
 	}
@@ -305,9 +297,7 @@ if ($mode != 'confirmforced' && ($error || $mode != 'confirm'))
 {
     print "Rollback any changes.\n";
     $db->rollback();
-}
-else
-{
+} else {
     print "Commit all changes.\n";
     $db->commit();
 }

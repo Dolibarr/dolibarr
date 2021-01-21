@@ -13,7 +13,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 
@@ -24,4 +24,3 @@ ALTER TABLE llx_element_contact ADD CONSTRAINT fk_element_contact_fk_c_type_cont
 	
 ALTER TABLE llx_element_contact ADD INDEX idx_element_contact_fk_socpeople (fk_socpeople);
 -- Pas de contraite sur fk_socpeople car point sur llx_socpeople mais aussi llx_user
-	

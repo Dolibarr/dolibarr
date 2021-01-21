@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -26,66 +26,65 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 class Login
 {
 
-    /**
-     * Constructor of the class
-     */
-    public function __construct()
-    {
-        global $db;
-        $this->db = $db;
-    }
+	/**
+	 * Constructor of the class
+	 */
+	public function __construct()
+	{
+		global $db;
+		$this->db = $db;
+	}
 
 	/**
 	 * Login
 	 *
 	 * Request the API token for a couple username / password.
 	 * Using method POST is recommanded for security reasons (method GET is often logged by default by web servers with parameters so with login and pass into server log file).
-	 * Both methods are provided for developer conveniance. Best is to not use at all the login API method and enter directly the "DOLAPIKEY" into field at the top right of page. Note: The API key (DOLAPIKEY) can be found/set on the user page.
+	 * Both methods are provided for developer conveniance. Best is to not use at all the login API method and enter directly the "DOLAPIKEY" into field at the top right of page. Note: The API token (DOLAPIKEY) can be found/set on the user page.
 	 *
 	 * @param   string  $login			User login
 	 * @param   string  $password		User password
 	 * @param   string  $entity			Entity (when multicompany module is used). '' means 1=first company.
 	 * @param   int     $reset          Reset token (0=get current token, 1=ask a new token and canceled old token. This means access using current existing API token of user will fails: new token will be required for new access)
-     * @return  array                   Response status and user token
-     *
-	 * @throws 200
-	 * @throws 403
-	 * @throws 500
+	 * @return  array                   Response status and user token
+	 *
+	 * @throws RestException 403 Access denied
+	 * @throws RestException 500 System error
 	 *
 	 * @url GET /
 	 * @url POST /
 	 */
-    public function index($login, $password, $entity = '', $reset = 0)
-    {
+	public function index($login, $password, $entity = '', $reset = 0)
+	{
+		global $conf, $dolibarr_main_authentication, $dolibarr_auto_user;
 
-	    global $conf, $dolibarr_main_authentication, $dolibarr_auto_user;
+		// TODO Remove the API login. The token must be generated from backoffice only.
 
 		// Authentication mode
-		if (empty($dolibarr_main_authentication))
-			$dolibarr_main_authentication = 'http,dolibarr';
-		$dolibarr_main_authentication = preg_replace('/twofactor/', 'dolibarr', $dolibarr_main_authentication);
+		if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication = 'dolibarr';
 
 		// Authentication mode: forceuser
 		if ($dolibarr_main_authentication == 'forceuser')
 		{
-			if (empty($dolibarr_auto_user)) $dolibarr_auto_user='auto';
+			if (empty($dolibarr_auto_user)) $dolibarr_auto_user = 'auto';
 			if ($dolibarr_auto_user != $login)
 			{
 				dol_syslog("Warning: your instance is set to use the automatic forced login '".$dolibarr_auto_user."' that is not the requested login. API usage is forbidden in this mode.");
 				throw new RestException(403, "Your instance is set to use the automatic login '".$dolibarr_auto_user."' that is not the requested login. API usage is forbidden in this mode.");
 			}
 		}
+
 		// Set authmode
 		$authmode = explode(',', $dolibarr_main_authentication);
 
-		if ($entity != '' && ! is_numeric($entity))
+		if ($entity != '' && !is_numeric($entity))
 		{
 			throw new RestException(403, "Bad value for entity, must be the numeric ID of company.");
 		}
-		if ($entity == '') $entity=1;
+		if ($entity == '') $entity = 1;
 
-		include_once DOL_DOCUMENT_ROOT . '/core/lib/security2.lib.php';
-		$login = checkLoginPassEntity($login, $password, $entity, $authmode);
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+		$login = checkLoginPassEntity($login, $password, $entity, $authmode, 'api');
 		if (empty($login))
 		{
 			throw new RestException(403, 'Access denied');
@@ -93,7 +92,7 @@ class Login
 
 		$token = 'failedtogenerateorgettoken';
 
-		$tmpuser=new User($this->db);
+		$tmpuser = new User($this->db);
 		$tmpuser->fetch(0, $login, 0, 0, $entity);
 		if (empty($tmpuser->id))
 		{
@@ -109,24 +108,22 @@ class Login
 				throw new RestException(403, 'User need write permission on itself to reset its API token');
 			}
 
-    		// Generate token for user
-    		$token = dol_hash($login.uniqid().$conf->global->MAIN_API_KEY, 1);
+			// Generate token for user
+			$token = dol_hash($login.uniqid().(empty($conf->global->MAIN_API_KEY)?'':$conf->global->MAIN_API_KEY), 1);
 
-    		// We store API token into database
-    		$sql = "UPDATE ".MAIN_DB_PREFIX."user";
-    		$sql.= " SET api_key = '".$this->db->escape($token)."'";
-    		$sql.= " WHERE login = '".$this->db->escape($login)."'";
+			// We store API token into database
+			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
+			$sql .= " SET api_key = '".$this->db->escape($token)."'";
+			$sql .= " WHERE login = '".$this->db->escape($login)."'";
 
-    		dol_syslog(get_class($this)."::login", LOG_DEBUG);	// No log
-    		$result = $this->db->query($sql);
-    		if (!$result)
-    		{
-    			throw new RestException(500, 'Error when updating api_key for user :'.$this->db->lasterror());
-    		}
-		}
-		else
-		{
-            $token = $tmpuser->api_key;
+			dol_syslog(get_class($this)."::login", LOG_DEBUG); // No log
+			$result = $this->db->query($sql);
+			if (!$result)
+			{
+				throw new RestException(500, 'Error when updating api_key for user :'.$this->db->lasterror());
+			}
+		} else {
+			$token = $tmpuser->api_key;
 		}
 
 		//return token
@@ -134,9 +131,9 @@ class Login
 			'success' => array(
 				'code' => 200,
 				'token' => $token,
-			    'entity' => $tmpuser->entity,
-			    'message' => 'Welcome ' . $login.($reset?' - Token is new':' - This is your token (generated by a previous call). You can use it to make any REST API call, or enter it into the DOLAPIKEY field to use the Dolibarr API explorer.')
+				'entity' => $tmpuser->entity,
+				'message' => 'Welcome '.$login.($reset ? ' - Token is new' : ' - This is your token (recorded for your user). You can use it to make any REST API call, or enter it into the DOLAPIKEY field to use the Dolibarr API explorer.')
 			)
 		);
-    }
+	}
 }

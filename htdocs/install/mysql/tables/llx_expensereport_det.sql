@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 
@@ -43,7 +43,7 @@ CREATE TABLE llx_expensereport_det
    total_ttc double(24,8) DEFAULT 0 NOT NULL,
    date date NOT NULL,
    info_bits					integer DEFAULT 0,				-- TVA NPR ou non
-   special_code					integer DEFAULT 0,			    -- code pour les lignes speciales
+   special_code					integer DEFAULT 0,			    -- code for special lines
    fk_multicurrency             integer,
    multicurrency_code           varchar(255),
    multicurrency_subprice       double(24,8) DEFAULT 0,

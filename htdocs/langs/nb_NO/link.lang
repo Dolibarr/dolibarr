@@ -8,3 +8,4 @@ LinkRemoved=Koblingen til %s ble fjernet
 ErrorFailedToDeleteLink= Klarte ikke å fjerne kobling'<b>%s</b>'
 ErrorFailedToUpdateLink= Klarte ikke å oppdatere koblingen til '<b>%s</b>'
 URLToLink=URL til link
+OverwriteIfExists=Overwrite file if exists

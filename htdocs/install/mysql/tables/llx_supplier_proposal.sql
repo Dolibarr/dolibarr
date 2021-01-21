@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 -- ========================================================================
 
 CREATE TABLE llx_supplier_proposal (
@@ -23,7 +23,7 @@ CREATE TABLE llx_supplier_proposal (
   ref_int varchar(255) DEFAULT NULL,
   fk_soc integer DEFAULT NULL,
   fk_projet integer DEFAULT NULL,
-  tms timestamp,
+  tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datec datetime DEFAULT NULL,
   date_valid datetime DEFAULT NULL,
   date_cloture datetime DEFAULT NULL,

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - commercial
-Commercial=Comercial
-CommercialArea=Área comercial
+Commercial=Commerce
+CommercialArea=Commerce area
 Customer=Cliente
 Customers=Clientes
 Prospect=Cliente Potencial
@@ -59,7 +59,7 @@ ActionAC_FAC=Enviar fatura do cliente por correio
 ActionAC_REL=Enviar fatura do cliente por correio (lembrete)
 ActionAC_CLO=Fechar
 ActionAC_EMAILING=Enviar email em massa
-ActionAC_COM=Enviar encomenda de cliente por email
+ActionAC_COM=Send sales order by mail
 ActionAC_SHIP=Enviar expedição por correio
 ActionAC_SUP_ORD=Enviar encomenda a fornecedor por correio
 ActionAC_SUP_INV=Enviar fatura do fornecedor por correio

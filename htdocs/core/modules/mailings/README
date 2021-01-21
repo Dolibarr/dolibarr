@@ -43,6 +43,9 @@ $target[0]=array('email'=>'email_0','name'=>'name_0','firstname'=>'firstname_0',
 $target[n]=array('email'=>'email_n','name'=>'name_n','firstname'=>'firstname_n', 'other'=>'other_n');
 // ----- Your code end here -----
 
+and call the method 
+
+parent::addTargetsToDatabase($mailing_id, $target);
 
 
 ***** STEP 3 *****

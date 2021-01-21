@@ -16,8 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -26,7 +26,7 @@
  * \brief      Fichier contenant la classe du modele de numerotation de reference de commande Saphir
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/modules/commande/modules_commande.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
 
 
 /**
@@ -35,10 +35,10 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/commande/modules_commande.php';
 class mod_commande_saphir extends ModeleNumRefCommandes
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
-	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
+	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
 	 * @var string Error message
@@ -48,72 +48,72 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	/**
 	 * @var string name
 	 */
-	public $name='Saphir';
+	public $name = 'Saphir';
 
 
-    /**
-     *  Renvoi la description du modele de numerotation
-     *
-     *  @return     string      Texte descripif
-     */
-    public function info()
-    {
-    	global $conf, $langs, $db;
+	/**
+	 *  Returns the description of the numbering model
+	 *
+	 *  @return     string      Texte descripif
+	 */
+	public function info()
+	{
+		global $conf, $langs, $db;
 
 		$langs->load("bills");
 
 		$form = new Form($db);
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
-		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		$texte.= '<input type="hidden" name="action" value="updateMask">';
-		$texte.= '<input type="hidden" name="maskconstorder" value="COMMANDE_SAPHIR_MASK">';
-		$texte.= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$texte .= '<input type="hidden" name="action" value="updateMask">';
+		$texte .= '<input type="hidden" name="maskconstorder" value="COMMANDE_SAPHIR_MASK">';
+		$texte .= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
-		$tooltip.=$langs->trans("GenericMaskCodes2");
-		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
-		$tooltip.=$langs->trans("GenericMaskCodes5");
+		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
+		$tooltip .= $langs->trans("GenericMaskCodes2");
+		$tooltip .= $langs->trans("GenericMaskCodes3");
+		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
+		$tooltip .= $langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
-		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskorder" value="'.$conf->global->COMMANDE_SAPHIR_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskorder" value="'.$conf->global->COMMANDE_SAPHIR_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
-		$texte.= '</tr>';
+		$texte .= '</tr>';
 
-		$texte.= '</table>';
-		$texte.= '</form>';
+		$texte .= '</table>';
+		$texte .= '</form>';
 
 		return $texte;
-    }
+	}
 
-    /**
-     *  Renvoi un exemple de numerotation
-     *
-     *  @return     string      Example
-     */
-    public function getExample()
-    {
-     	global $conf,$langs,$mysoc;
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	public function getExample()
+	{
+	 	global $conf, $langs, $mysoc;
 
-    	$old_code_client=$mysoc->code_client;
-    	$old_code_type=$mysoc->typent_code;
-    	$mysoc->code_client='CCCCCCCCCC';
-    	$mysoc->typent_code='TTTTTTTTTT';
-     	$numExample = $this->getNextValue($mysoc, '');
-		$mysoc->code_client=$old_code_client;
-		$mysoc->typent_code=$old_code_type;
+		$old_code_client = $mysoc->code_client;
+		$old_code_type = $mysoc->typent_code;
+		$mysoc->code_client = 'CCCCCCCCCC';
+		$mysoc->typent_code = 'TTTTTTTTTT';
+	 	$numExample = $this->getNextValue($mysoc, '');
+		$mysoc->code_client = $old_code_client;
+		$mysoc->typent_code = $old_code_type;
 
-		if (! $numExample)
+		if (!$numExample)
 		{
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
-    }
+	}
 
 	/**
 	 * 	Return next free value
@@ -122,40 +122,43 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-    public function getNextValue($objsoc, $object)
-    {
-		global $db,$conf;
+	public function getNextValue($objsoc, $object)
+	{
+		global $db, $conf;
 
-		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask=$conf->global->COMMANDE_SAPHIR_MASK;
+		$mask = $conf->global->COMMANDE_SAPHIR_MASK;
 
-		if (! $mask)
+		if (!$mask)
 		{
-			$this->error='NotConfigured';
+			$this->error = 'NotConfigured';
 			return 0;
 		}
 
+		// Get entities
+		$entity = getEntity('ordernumber', 1, $object);
+
 		$date = ($object->date_commande ? $object->date_commande : $object->date);
 
-		$numFinal=get_next_value($db, $mask, 'commande', 'ref', '', $objsoc, $date);
+		$numFinal = get_next_value($db, $mask, 'commande', 'ref', '', $objsoc, $date, 'next', false, null, $entity);
 
 		return  $numFinal;
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return next free value
 	 *
 	 *  @param	Societe		$objsoc     Object third party
 	 *  @param	string		$objforref	Object for number to search
 	 *  @return string      			Next free value
-     */
-    public function commande_get_num($objsoc, $objforref)
-    {
-        // phpcs:enable
-        return $this->getNextValue($objsoc, $objforref);
-    }
+	 */
+	public function commande_get_num($objsoc, $objforref)
+	{
+		// phpcs:enable
+		return $this->getNextValue($objsoc, $objforref);
+	}
 }

@@ -13,7 +13,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ========================================================================
 -- This table logs all dolibarr security events
@@ -24,9 +24,10 @@
 create table llx_events
 (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
-  tms            timestamp,                   -- date creation/modification
+  tms            timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,                   -- last modification date
   type           varchar(32)  NOT NULL,       -- action type
   entity         integer DEFAULT 1 NOT NULL,	-- multi company id
+  prefix_session varchar(255) NULL,				  -- prefix of session, obtained with dol_getprefix
   dateevent      datetime,                    -- date event
   fk_user        integer,                     -- id user
   description    varchar(250) NOT NULL,       -- full description of action

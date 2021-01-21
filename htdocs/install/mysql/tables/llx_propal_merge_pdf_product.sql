@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 CREATE TABLE llx_propal_merge_pdf_product (
   rowid integer NOT NULL auto_increment PRIMARY KEY,
@@ -22,7 +22,7 @@ CREATE TABLE llx_propal_merge_pdf_product (
   fk_user_author integer DEFAULT NULL,
   fk_user_mod integer NOT NULL,
   datec datetime NOT NULL,
-  tms timestamp NOT NULL,
+  tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   import_key varchar(14) DEFAULT NULL
-) ENGINE=InnoDB;
+) ENGINE=innodb;
 

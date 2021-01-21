@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -36,8 +36,8 @@ $year = GETPOST('year', 'int');
 
 llxHeader();
 
-$WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
-$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
+$WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
+$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 $mesg = '';
 
@@ -53,19 +53,18 @@ $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=expeditionstats&file=expediti
 
 $px = new DolGraph();
 $mesg = $px->isGraphKo();
-if (! $mesg) {
-    $px->SetData($data);
-    $px->SetMaxValue($px->GetCeilMaxValue());
-    $px->SetWidth($WIDTH);
-    $px->SetHeight($HEIGHT);
-    $px->SetYLabel($langs->trans("NbOfSendings"));
-    $px->SetShading(3);
-    $px->SetHorizTickIncrement(1);
-    $px->SetPrecisionY(0);
-    $px->draw($filename, $fileurl);
+if (!$mesg) {
+	$px->SetData($data);
+	$px->SetMaxValue($px->GetCeilMaxValue());
+	$px->SetWidth($WIDTH);
+	$px->SetHeight($HEIGHT);
+	$px->SetYLabel($langs->trans("NbOfSendings"));
+	$px->SetShading(3);
+	$px->SetHorizTickIncrement(1);
+	$px->draw($filename, $fileurl);
 }
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 print '<tr><td class="center">'.$langs->trans("NbOfSendingsByMonth").'</td>';
 print '<td class="center">';
 print $px->show();

@@ -17,7 +17,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public
-along with this program. If not, see <http://www.gnu.org/licenses/>.
+along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 The NuSOAP project home is:
 http://sourceforge.net/projects/nusoap/
@@ -219,7 +219,7 @@ class nusoap_base {
 	*
 	* @access	public
 	*/
-	function nusoap_base() {
+	function __construct() {
 		$this->debugLevel = $GLOBALS['_transient']['static']['nusoap_base']['globalDebugLevel'];
 	}
 

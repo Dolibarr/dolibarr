@@ -1,0 +1,11 @@
+# Dolibarr language file - Source file is en_US - salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Cuenta de contabilidad utilizada para terceros usuarios
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=La cuenta de contabilidad dedicada definida en la tarjeta de usuario se usará solo para la contabilidad de Libro mayor auxiliar. Este se usará para el Libro mayor y como valor predeterminado de la contabilidad del Libro mayor auxiliar si no se define una cuenta de usuario dedicada en el usuario.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Cuenta de contabilidad por defecto para pagos de salarios
+NewSalaryPayment=Nuevo pago de salario
+SalariesPayments=Sueldos pagos
+ShowSalaryPayment=Mostrar pago de sueldo
+THM=Promedio de tarifa por hora
+TJM=Tarifa diaria promedio
+THMDescription=Este valor se puede usar para calcular el costo del tiempo consumido en un proyecto ingresado por los usuarios si se usa el proyecto de módulo
+TJMDescription=Este valor es actualmente solo para información y no se utiliza para ningún cálculo

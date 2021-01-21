@@ -24,14 +24,14 @@ class DolRequestDataCollector extends RequestDataCollector
 
 				if ($var == '_COOKIE')
 				{
-					foreach($arrayofvalues as $key => $val)
+					foreach ($arrayofvalues as $key => $val)
 					{
-						if (preg_match('/^DOLSESSID_/', $key)) $arrayofvalues[$key]='*****hidden*****';
+						if (preg_match('/^DOLSESSID_/', $key)) $arrayofvalues[$key] = '*****hidden*****';
 					}
 					//var_dump($arrayofvalues);
 				}
 
-				$data["$" . $var] = $this->getDataFormatter()->formatVar($arrayofvalues);
+				$data["$".$var] = $this->getDataFormatter()->formatVar($arrayofvalues);
 			}
 		}
 

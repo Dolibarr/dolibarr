@@ -1,0 +1,37 @@
+button.calcbutton {
+    background-color: #008000 !important;
+}
+
+button.calcbutton.poscolorblue {
+    background-color: #0000FF !important;
+}
+
+button.calcbutton2 {
+	background-color: #0000FF !important;
+}
+
+button.calcbutton2.poscolordelete {
+	background-color: #FF0000 !important;
+	color: #FFFFFF !important;
+}
+
+button.actionbutton {
+    background: #FFB100 !important;
+}
+
+tr.selected, tr.selected td {
+	background-color: #0000FF !important;
+	color: #FFFFFF !important;
+}
+
+.header{
+	background: rgb(0,0,0) !important;
+}
+
+.topnav{
+	background: rgb(0,0,0) !important;
+}
+
+.fa-trash {
+	color: #fff !important;
+}

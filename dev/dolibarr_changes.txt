@@ -8,6 +8,7 @@ ALL:
 Check "@CHANGE"
 
 
+
 PrestaShopWebservice:
 ---------------------
 Replace
@@ -47,11 +48,107 @@ By
 * In file nusoap.php, to avoid a warning,
 Replace call to serialize_val with no bugged value
 
+* In all files, replace constructor names into __construct. Replace also parent::constructor_name with parent::__construct
+
+* Line 4222 of file nusoap.php
+
+		$rev = array();
+		preg_match('/\$Revision: ([^ ]+)/', $this->revision, $rev);
+		$this->outgoing_headers[] = "X-SOAP-Server: $this->title/$this->version (".(isset($rev[1]) ? $rev[1] : '').")";
+
 
 
 
 TCPDF:
 ------
+* Replace in tcpdf.php:
+
+            if (isset($this->imagekeys)) {
+                foreach($this->imagekeys as $file) {
+                    unlink($file);
+                }
+            }
+with
+
+            if (isset($this->imagekeys)) {
+                foreach($this->imagekeys as $file) {
+				// DOL CHANGE If we keep this, source image files are physically destroyed
+				// unlink($file);
+                }
+            }
+
+* Replace in tcpdf.php
+
+		$preserve = array(
+			'file_id',
+			'internal_encoding',
+			'state',
+			'bufferlen',
+			'buffer',
+			'cached_files',
+
+with
+
+		$preserve = array(
+			'file_id',
+			'internal_encoding',
+			'state',
+			'bufferlen',
+			'buffer',
+			'cached_files',
+			// @CHANGE DOL
+			'imagekeys',
+
+* Replace in tcpdf.php
+
+			if (!@TCPDF_STATIC::file_exists($file)) {
+				return false;	
+			}
+
+with
+
+			if (!@TCPDF_STATIC::file_exists($file)) {
+				// DOL CHANGE If we keep this, the image is not visible on pages after the first one.
+				//var_dump($file.' '.(!@TCPDF_STATIC::file_exists($file)));
+				//return false;	
+			}
+			
+* Replace in tcpdf.php
+
+		if (($imgsrc[0] === '/') AND !empty($_SERVER['DOCUMENT_ROOT']) AND ($_SERVER['DOCUMENT_ROOT'] != '/')) {
+
+with
+
+		// @CHANGE LDR Add support for src="file://..." links
+		if (strpos($imgsrc, 'file://') === 0) {
+			$imgsrc = str_replace('file://', '/', $imgsrc);
+			$imgsrc = urldecode($imgsrc);
+			$testscrtype = @parse_url($imgsrc);
+			if (empty($testscrtype['query'])) {
+				// convert URL to server path
+				$imgsrc = str_replace(K_PATH_URL, K_PATH_MAIN, $imgsrc);
+			} elseif (preg_match('|^https?://|', $imgsrc) !== 1) {
+				// convert URL to server path
+				$imgsrc = str_replace(K_PATH_MAIN, K_PATH_URL, $imgsrc);
+			}
+		}
+		elseif (($imgsrc[0] === '/') AND !empty($_SERVER['DOCUMENT_ROOT']) AND ($_SERVER['DOCUMENT_ROOT'] != '/')) {
+
+
+* In tecnickcom/tcpdf/include/tcpdf_static.php, in function fopenLocal, replace
+
+		if (strpos($filename, '://') === false) {
+
+with
+
+        if (strpos($filename, '//') === 0) {
+            // Share folder on a (windows) server
+            // e.g.: "//[MyServerName]/[MySharedFolder]/"
+            //
+            // nothing to change
+        }
+        elseif (strpos($filename, '://') === false)
+
 * To avoid to have QRcode changed because generated with a random mask, replace
 define('QR_FIND_FROM_RANDOM', 2);
 with
@@ -67,25 +164,26 @@ define('QR_FIND_FROM_RANDOM', false);
     zapfdingbats.php (for special chars like form checkboxes)
 
 * Optionnaly, made freemono the default monotype font if we removed courier
-In htdocs/includes/tcpdf/tcpdf.php
+In htdocs/includes/tecnickcom/tcpdf/tcpdf.php
 -       protected $default_monospaced_font = 'courier';
 +       protected $default_monospaced_font = 'freemono';
 
 
-		
+
 
 TCPDI:
 ------
-Add fpdf_tpl.php 1.2
-Add tcpdi.php
+Add file fpdf_tpl.php 1.2
 
-Add tcpdi_parser.php and replace:
-require_once(dirname(__FILE__).'/include/tcpdf_filters.php');
+Add file tcpdi.php
+
+Add file tcpdi_parser.php and replace:
+    require_once(dirname(__FILE__).'/include/tcpdf_filters.php');
 with:
-require_once(dirname(__FILE__).'/../tecnickcom/tcpdf/include/tcpdf_filters.php');
+    require_once(dirname(__FILE__).'/../tecnickcom/tcpdf/include/tcpdf_filters.php');
 
 
-* Fix by replacing
+* Fix syntax error by replacing
 	} elseif (($key == '/Index') AND ($v[0] == PDF_TYPE_ARRAY AND count($v[1] >= 2))) {
 with
 	} elseif (($key == '/Index') AND ($v[0] == PDF_TYPE_ARRAY AND count($v[1]) >= 2)) {
@@ -95,25 +193,23 @@ with
 JSGANTT:
 --------
 * Replace in function JSGantt.taskLink
-var OpenWindow=window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth);
+    var OpenWindow=window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth);
 with
-// LDR To open in same window
-//var OpenWindow=window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth);
-window.location.href=pRef
+    // LDR To open in same window
+    //var OpenWindow=window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth);
+    window.location.href=pRef
 
 * Replace
-vTmpDiv=this.newNode(vTmpCell, 'div', null, null, vTaskList[i].getResource());
+    vTmpDiv=this.newNode(vTmpCell, 'div', null, null, vTaskList[i].getResource());
 with                       
-var vTmpNode=this.newNode(vTmpCell, 'div', null, '');
-vTmpNode=this.newNode(vTmpNode, 'a', null, '', vLangs[vLang]['moreinfo']);
-vTmpNode.setAttribute('href',vTaskList[i].getLink());
+    var vTmpNode=this.newNode(vTmpCell, 'div', null, '');
+    vTmpNode=this.newNode(vTmpNode, 'a', null, '', vLangs[vLang]['moreinfo']);
+    vTmpNode.setAttribute('href',vTaskList[i].getLink());
                         
 * Replace '% Comp.' to have a smaller text column header
-'comp':'% Comp.'
+    'comp':'% Comp.'
 with
-'comp':'%'
-
-
+    'comp':'%'
 
 
 
@@ -127,30 +223,9 @@ JQUERYFILETREE:
 * Remove directory htdocs/includes/jquery/plugins/jqueryFileTree/connectors
 
 
-PHPEXCEL:
----------
-* Replace in htdocs/includes/phpoffice/phpexcel/Classes/PHPExcel/Shared/OLE.php
-    continue;
-with:
-    continue 2;
-
-
 RESTLER:
 --------
-
-* Add 2 lines into file AutoLoader.php to complete function     
-	private function alias($className, $currentClass)
-    {
-		...
-to get 
-
-	private function alias($className, $currentClass)
-    {
-        if ($className == 'Luracast\Restler\string') return;
-        if ($className == 'Luracast\Restler\mixed') return;
-		...
-
-Change also content of file htdocs/includes/restler/framework/Luracast/Restler/explorer/index.html
+Change content of file htdocs/includes/restler/framework/Luracast/Restler/explorer/index.html
 
 +With swagger 2:
 
@@ -159,11 +234,21 @@ Change also content of file htdocs/includes/restler/framework/Luracast/Restler/e
     public static function getShortName($className)
     {
     	// @CHANGE LDR
-    	if (! is_string($className)) return;
+    	if (!is_string($className)) return;
     	//var_dump($className);
 
-    	
-    	
+* Add line into Data/Text.php to complete function
+
+    public static function endsWith($haystack, $needle)
+    {
+        $length = strlen($needle);
+        if ($length == 0) {
+            return true;
+        }
+    	// @CHANGE LDR
+        if (!is_string($haystack)) return false;
+
+
 PARSEDOWN
 ---------
 
@@ -197,9 +282,39 @@ PARSEDOWN
 	$shortage = 4 - $len % 4;
 
 
+
+OAUTH
+-----
+Add into Class Google of file OAuth2/Service/Google:
+
+    // LDR CHANGE Add approval_prompt to force the prompt if value is set to 'force' so it force return of a "refresh token" in addition to "standard token"
+    public $approvalPrompt='auto';
+    public function setApprouvalPrompt($prompt)
+    {
+        if (!in_array($prompt, array('auto', 'force'), true)) {
+            // @todo Maybe could we rename this exception
+            throw new InvalidAccessTypeException('Invalid approuvalPrompt, expected either auto or force.');
+        }
+        $this->approvalPrompt = $prompt;
+    }
+    
+
+
 JEDITABLE.JS
 ------------
 
 * <button type="submit" />  =>  <button class="button" type="submit" />
 * <button type="cancel" />  =>  <button class="button" type="cancel" />
+
+
+
+SELECT2
+-------
+
+Edit CSS to restore line removed between 4.0.5 and 4.0.6. It generates this bug: https://github.com/select2/select2/issues/5832
+
+.select2-hidden-accessible {
+  margin: -10000px !important;                /* line to restore */
+}
+
 

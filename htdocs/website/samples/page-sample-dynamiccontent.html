@@ -1,0 +1,98 @@
+<!-- Enter here your HTML content. Add a section with an id tag and tag contenteditable="true" if you want to use the inline editor for the content  -->
+<section id="div1" class="dolcontenteditable" style="text-align: center" contenteditable="true">
+<br>
+__(MyContainerTitle)__
+<br><br>
+</section>
+
+
+<section id="divmycompany" style="text-align: center" contenteditable="true">
+This is example of dynamic content to get the name of your company (see source of page to see code):<br>
+</section>
+<h1 style="text-align: center" >
+<?php echo $mysoc->name; ?>
+<br>
+</h1>
+
+
+<section id="divmetadata" style="text-align: center" contenteditable="true">
+This is another example of dynamic content to get meta data of a container/page (see source of page to see code):<br>
+</section>
+<div style="text-align: center">
+__(Title)__ : <?php echo $websitepage->title; ?><br>
+__(Description)__ : <?php echo $websitepage->description; ?><br>
+__(Keywords)__ : <?php echo $websitepage->keywords; ?><br>
+__(DateCreation)__ : <?php echo dol_print_date($websitepage->date_creation, 'dayhour', $weblangs); ?><br>
+<br>
+</div>
+
+
+<section id="divinclude" style="text-align: center" contenteditable="true">
+__(AnotherContainer)__
+</section>
+<div style="text-align: center">
+<?php includeContainer('alias_of_container_to_include'); ?>
+</div>
+
+
+<section id="div5" style="text-align: center" contenteditable="true">
+<br><br>
+__(YouCanEditHtmlSource)__
+<br><br>
+Page created by __WEBSITE_CREATE_BY__
+<br>
+</section>
+
+
+
+<!-- Blog list -->
+<section id="sectionnews" contenteditable="true" class="main section-50 section-md-50 section-md-bottom-50">
+This is an example of a section to show the list of latest 5 articles (container with type "blogpost"), that contains the keyword "mykeyword"...<br>
+
+	<h2>Latest Blog posts</h2>
+    <div class="center">
+    <?php 
+            $keyword = 'mykeyword';
+            $weblangs->loadLangs(array("main"));
+            $websitepage = new WebsitePage($db);
+            $fuser = new User($db);
+            $arrayofblogs = $websitepage->fetchAll($website->id, 'DESC', 'date_creation', 5, 0, array('type_container'=>'blogpost', 'keywords'=>$keyword));
+            if (is_numeric($arrayofblogs) && $arrayofblogs < 0)
+            {
+                print '<div class="error">'.$weblangs->trans($websitepage->error).'</div>';
+            }
+            elseif (is_array($arrayofblogs) && ! empty($arrayofblogs))
+            {
+                foreach($arrayofblogs as $blog)
+                {
+                    print '<div class="row justify-content-sm-center row-40">';
+                    print '<div class="container blog-box centpercent" style="padding: 20px; transition: .3s all ease;">';
+                                print '<a href="'.$blog->pageurl.'.php">';
+                                print '<div class="post-boxed-img-wrap"><img src="'.($blog->image ? 'viewimage.php?modulepart=medias&file='.$blog->image : 'medias/image/'.$website->ref.'/calendar.svg"').'" alt="" width="120"></div>';
+                                print '<div class="post-boxed-caption">';
+                                print '<div class="post-boxed-title font-weight-bold">'.$blog->title.'</div>';
+                                print '<ul class="list-inline list-inline-dashed text-uppercase">';
+                                print '<li>'.dol_print_date($blog->date_creation, 'daytext', 'tzserver', $weblangs).'</li>';
+                                $fuser->fetch($blog->fk_user_creat);
+                                print '<li><span>by<span> <span class="text-primary">'.($fuser->firstname?$fuser->firstname:$fuser->login).'</span></span></li>';
+                                print '</ul>';
+                                print '</div>';
+                                //includeContainer($blog->pageurl);
+                                print '<span class="nohover">'.$blog->description.'</span>';
+                                print '</a>';
+                    print '</div>';
+                    print '</div>';
+                }
+            }
+            else
+            {
+                    print '<div class="row justify-content-sm-center row-40">';
+                    print '<div class="container blog-box centpercent" style="padding: 20px; transition: .3s all ease;">';
+                    print $weblangs->trans("NoArticlesFoundForTheKeyword", $keyword);
+                    print '</div>';
+                    print '</div>';
+                
+            }
+    ?>
+    </div>
+</section>

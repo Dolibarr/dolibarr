@@ -11,17 +11,8 @@ YourEMail=Nosūtīt saņemt maksājuma apstiprinājumu
 Creditor=Kreditors
 PaymentCode=Maksājuma kods
 PayBoxDoPayment=Maksājiet ar Paybox
-ToPay=Apmaksāt
 YouWillBeRedirectedOnPayBox=Jums tiks novirzīts uz drošu Paybox lapā, lai ievadi kredītkartes informāciju
 Continue=Nākamais
-ToOfferALinkForOnlinePayment=URL %s maksājumu
-ToOfferALinkForOnlinePaymentOnOrder=URL, lai piedāvātu tiešsaistes maksājuma lietotāja interfeisu %s pārdošanas pasūtījumam
-ToOfferALinkForOnlinePaymentOnInvoice=URL piedāvāt %s tiešsaistes maksājumu lietotāja interfeisu klientu rēķina
-ToOfferALinkForOnlinePaymentOnContractLine=URL piedāvāt %s tiešsaistes maksājumu lietotāja interfeisu līguma līnijas
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL piedāvāt %s tiešsaistes maksājumu lietotāja saskarni par brīvu summu
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL piedāvāt %s tiešsaistes maksājumu lietotāja interfeisu locekli abonementu
-ToOfferALinkForOnlinePaymentOnDonation=URL, lai piedāvātu tiešsaistes maksājumu %s, lietotāja interfeisu ziedojuma apmaksai
-YouCanAddTagOnUrl=Jūs varat arī pievienot url parametrs <b>&amp; Tag = <i>vērtība,</i></b> kādu no šiem URL (nepieciešams tikai bezmaksas samaksu), lai pievienotu savu maksājumu komentāru tagu.
 SetupPayBoxToHavePaymentCreatedAutomatically=Izveidojiet savu Paybox ar URL <b> %s </b>, lai maksājums tiktu izveidots automātiski, ja to apstiprina Paybox.
 YourPaymentHasBeenRecorded=Šajā lapā apliecina, ka jūsu maksājums ir reģistrēts. Paldies.
 YourPaymentHasNotBeenRecorded=Jūsu maksājums NAV reģistrēts un darījums ir atcelts. Paldies.

@@ -11,14 +11,15 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 --
 -- Contenu de la table llx_c_ticket_type
 --
 
-INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('COM',     '10', 'Commercial question',           1, 1, NULL);
-INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('ISSUE',   '20', 'Issue or problem'  ,            1, 0, NULL);
+INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('COM',     '10', 'Commercial question',           1, 0, NULL);
+INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('HELP',    '15', 'Request for functionnal help',  1, 0, NULL);
+INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('ISSUE',   '20', 'Issue or problem',              1, 0, NULL);
 INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('REQUEST', '25', 'Change or enhancement request', 1, 0, NULL);
-INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('PROJECT', '30', 'Project', 0, 0, NULL);
-INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('OTHER',   '40', 'Other',   1, 0, NULL);
+INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('PROJECT', '30', 'Project',                       0, 0, NULL);
+INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('OTHER',   '40', 'Other',                         1, 0, NULL);

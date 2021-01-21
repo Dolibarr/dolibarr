@@ -8,3 +8,7 @@ linters:
 
 fixers:
     enable: true
+
+files:
+    ignore:
+        - 'htdocs/includes/*'

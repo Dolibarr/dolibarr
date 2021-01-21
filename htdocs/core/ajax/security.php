@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -21,12 +21,12 @@
  *                   like key to use into URL to protect them.
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
+if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (!defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
 
 require '../../main.inc.php';
 
@@ -40,12 +40,12 @@ top_httphead();
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Registering the location of boxes
-if (isset($_GET['action']) && ! empty($_GET['action']))
+if (isset($_GET['action']) && !empty($_GET['action']))
 {
 	if ($_GET['action'] == 'getrandompassword' && $user->admin)
 	{
-        require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-	    $generic = $_GET['generic'] ? true : false;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+		$generic = $_GET['generic'] ? true : false;
 		echo getRandomPassword($generic);
 	}
 }

@@ -13,7 +13,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 
@@ -44,7 +44,7 @@ CREATE TABLE llx_accounting_bookkeeping_tmp
   fk_user_author        integer NOT NULL,			-- 					| user creating
   fk_user_modif         integer,					-- 					| user making last change
   date_creation         datetime,					-- FEC:EcritureDate	| creation date
-  tms                   timestamp,					--					| date last modification
+  tms                   timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,					--					| last modification date
   fk_user               integer NULL,				-- The id of user that validate the accounting source document
   code_journal          varchar(32) NOT NULL,		-- FEC:JournalCode
   journal_label         varchar(255),				-- FEC:JournalLib

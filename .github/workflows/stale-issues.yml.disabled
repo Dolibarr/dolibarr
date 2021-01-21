@@ -1,0 +1,25 @@
+# See syntax file on https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions
+name: "Close stale issues (bugs and feature requests)"
+
+on:
+  schedule:
+  - cron: "0 20 * * *"
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: Dolibarr/stale@master
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        stale-issue-message: 'This issue is stale because it has been open 1 year with no activity. If this is a bug, please comment to confirm it is still present on latest stable version. if this is a feature request, please comment to notify the request is still relevant and not yet covered by latest stable version. This issue may be closed automatically by stale bot in 15 days (you should still be able to re-open it if required).'
+        stale-issue-label: 'Issue Stale (automatic label)'
+        exempt-issue-label: 'Priority High / Blocking'
+        days-before-stale: 365
+        days-before-close: -1
+        operations-per-run: 100
+        #stale-pr-message: 'This PR is stale because it has been open 1 year with no activity. If this PR is still mergeable (no conflict, nor Continuous Integration errors), please comment to confirm this merge is still expected. Without comment, this issue will be closed automatically by stale bot in 15 days.'
+        stale-pr-label: 'PR Stale (automatic label)'
+        stale-pr-message: 
+        exempt-pr-label: 'Priority Top Strategic'
+        

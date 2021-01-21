@@ -1,0 +1,19 @@
+# Dolibarr language file - en_US - hrm
+# Admin
+HRM_EMAIL_EXTERNAL_SERVICE=Cooreo electrónico do SPA
+Establishments=Establecementos
+Establishment=Establecemento
+NewEstablishment=Novo establecemento
+DeleteEstablishment=Eliminar establecemento
+ConfirmDeleteEstablishment=Está certo de querer eliminar este establecemento?
+OpenEtablishment=Abrir establecemento
+CloseEtablishment=Pechar establecemento
+# Dictionary
+DictionaryPublicHolidays=RRHH - Festivos
+DictionaryDepartment=RRHH - Listaxe Departamentos
+DictionaryFunction=RRHH - Postos de traballo
+# Module
+Employees=Empregados
+Employee=Empregado
+NewEmployee=Novo empregado
+ListOfEmployees=Listaxe de empregados

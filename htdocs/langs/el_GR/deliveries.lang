@@ -2,7 +2,7 @@
 Delivery=Παράδοση
 DeliveryRef=Ref Delivery
 DeliveryCard=Receipt card
-DeliveryOrder=Παράδοση παραγγελίας
+DeliveryOrder=Αποδεικτικό παράδοσης
 DeliveryDate=Ημερ. παράδοσης
 CreateDeliveryOrder=Generate delivery receipt
 DeliveryStateSaved=Αποθηκεύτηκε η κατάσταση παράδοσης
@@ -18,13 +18,14 @@ StatusDeliveryCanceled=Ακυρώθηκε
 StatusDeliveryDraft=Πρόχειρο
 StatusDeliveryValidated=Παραλήφθηκε
 # merou PDF model
-NameAndSignature=Όνομα και υπογραφή :
+NameAndSignature=Όνομα και Υπογραφή:
 ToAndDate=Σε ___________________________________ στις ____/_____/__________
 GoodStatusDeclaration=Παραδόθηκαν τα παραπάνω σε καλή κατάσταση
-Deliverer=Διανομέας :
+Deliverer=Αποστολέας:
 Sender=Αποστολέας
 Recipient=Παραλήπτης
 ErrorStockIsNotEnough=Δεν υπάρχει αρκετό απόθεμα
 Shippable=Για Αποστολή
 NonShippable=Δεν αποστέλλονται
 ShowReceiving=Show delivery receipt
+NonExistentOrder=Ανύπαρκτη σειρά

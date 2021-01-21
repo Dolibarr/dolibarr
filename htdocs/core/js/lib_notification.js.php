@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016	   Sergio Sanchis		<sergiosanchis@hotmail.com>
  * Copyright (C) 2017	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2020	   Destailleur Laurent  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Library javascript to enable Browser notifications
  */
@@ -28,117 +29,131 @@ if (!defined('NOREQUIREHTML')) define('NOREQUIREHTML', 1);
 
 require_once '../../main.inc.php';
 
-if (! ($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/index.php'
-    || preg_match('/getmenu_div\.php/', $_SERVER['HTTP_REFERER'])))
+if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/index.php'
+	|| preg_match('/getmenu_div\.php/', $_SERVER['HTTP_REFERER'])))
 {
-    global $langs, $conf;
+	global $langs, $conf;
 
-    top_httphead('text/javascript; charset=UTF-8');
+	top_httphead('text/javascript; charset=UTF-8');
 
-    $nowtime = time();
-    //$nowtimeprevious = floor($nowtime / 60) * 60;   // auto_check_events_not_before is rounded to previous minute
-
-    // TODO Try to make a solution with only a javascript timer that is easier. Difficulty is to avoid notification twice when.
-    /* session already started into main
-    session_cache_limiter('public');
-    header('Cache-Control: no-cache');
-    session_set_cookie_params(0, '/', null, false, true);   // Add tag httponly on session cookie
-    session_start();*/
-    if (! isset($_SESSION['auto_check_events_not_before']))
-    {
-        print 'console.log("_SESSION[auto_check_events_not_before] is not set");'."\n";
-        // Round to eliminate the seconds
-        $_SESSION['auto_check_events_not_before'] = $nowtime;
-    }
-    print 'var nowtime = ' . $nowtime . ';' . "\n";
-    print 'var login = \'' . $_SESSION['dol_login'] . '\';' . "\n";
-    print 'var auto_check_events_not_before = '.$_SESSION['auto_check_events_not_before']. ';'."\n";
-    print 'var time_js_next_test = Math.max(nowtime, auto_check_events_not_before);'."\n";
-    print 'var time_auto_update = '.$conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY.';'."\n";   // Always defined
-    ?>
+	print 'var login = \''.$_SESSION['dol_login'].'\';'."\n";
+	print 'var nowtime = Date.now();';
+	print 'var time_auto_update = '.$conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY.';'."\n"; // Always defined
+	print 'var time_js_next_test;'."\n";
+	?>
 
 	/* Check if permission ok */
 	if (Notification.permission !== "granted") {
+		console.log("Ask Notification.permission");
         Notification.requestPermission()
     }
 
 	/* Launch timer */
    	// We set a delay before launching first test so next check will arrive after the time_auto_update compared to previous one.
-    var time_first_execution = (time_auto_update - (nowtime - time_js_next_test)) * 1000;	//need milliseconds
+    //var time_first_execution = (time_auto_update + (time_js_next_test - nowtime)) * 1000;	//need milliseconds
+    var time_first_execution = <?php echo max(3, empty($conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION) ? 0 : $conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION); ?>;
     if (login != '') {
-    	console.log("Launch browser notif check: setTimeout is set to launch 'first_execution' function after a wait of time_first_execution="+time_first_execution+". nowtime (time php page generation) = "+nowtime+" auto_check_events_not_before (val in session)= "+auto_check_events_not_before+" time_js_next_test (max now,auto_check_events_not_before) = "+time_js_next_test+" time_auto_update="+time_auto_update);
-    	setTimeout(first_execution, time_first_execution);
+    	setTimeout(first_execution, time_first_execution * 1000);
+        time_js_next_test = nowtime + time_first_execution;
+    	console.log("Launch browser notif check: setTimeout is set to launch 'first_execution' function after a wait of time_first_execution="+time_first_execution+". nowtime (time php page generation) = "+nowtime+" time_js_next_check = "+time_js_next_test);
     } //first run auto check
 
 
     function first_execution() {
-    	console.log("Call first_execution time_auto_update (MAIN_BROWSER_NOTIFICATION_FREQUENCY) = "+time_auto_update);
-        check_events();	//one check before launching timer to launch other checks
-        setInterval(check_events, time_auto_update * 1000); //program time to run next check events
+    	console.log("Call first_execution then set repeat time to time_auto_update = MAIN_BROWSER_NOTIFICATION_FREQUENCY = "+time_auto_update);
+        check_events();	//one check before setting the new time for other checks
+        setInterval(check_events, time_auto_update * 1000); // Set new time to run next check events
     }
 
     function check_events() {
     	if (Notification.permission === "granted")
     	{
-    		console.log("Call check_events time_js_next_test = date we are looking for event after ="+time_js_next_test);
+    	    time_js_next_test += time_auto_update;
+    		console.log("Call ajax to check_events with time_js_next_test = "+time_js_next_test);
+
             $.ajax("<?php print DOL_URL_ROOT.'/core/ajax/check_notifications.php'; ?>", {
                 type: "post",   // Usually post or get
                 async: true,
-                data: {time: time_js_next_test},
+                data: { time_js_next_test: time_js_next_test, forcechecknow: 1, token: 'notrequired' },
+                dataType: "json",
                 success: function (result) {
-                    var arr = JSON.parse(result);
-                    if (arr.length > 0) {
+                	//console.log(result);
+                    var arrayofpastreminders = Object.values(result.pastreminders);
+                    if (arrayofpastreminders && arrayofpastreminders.length > 0) {
+	                    console.log("Retrieved "+arrayofpastreminders.length+" reminders to do.");
                     	var audio = null;
                         <?php
-                        if (! empty($conf->global->AGENDA_REMINDER_BROWSER_SOUND)) {
-                            print 'audio = new Audio(\''.DOL_URL_ROOT.'/theme/common/sound/notification_agenda.wav'.'\');';
-                        }
-                        ?>
+						if (!empty($conf->global->AGENDA_REMINDER_BROWSER_SOUND)) {
+							print 'audio = new Audio(\''.DOL_URL_ROOT.'/theme/common/sound/notification_agenda.wav\');';
+						}
+						?>
+						var listofreminderids = '';
+						var noti = []
 
-                        $.each(arr, function (index, value) {
-                            var url="notdefined";
-                            var title="Not defined";
-                            var body = value['tipo'] + ': ' + value['titulo'];
-                            if (value['type'] == 'agenda' && value['location'] != null && value['location'] != '') {
-                                body += '\n' + value['location'];
+                        $.each(arrayofpastreminders, function (index, value) {
+                        	console.log(value);
+                            var url = "notdefined";
+                            var title = "Not defined";
+                            var body = value.label;
+                            if (value.type == 'agenda' && value.location != null && value.location != '') {
+                                body += '\n' + value.location;
                             }
 
-                            if (value['type'] == 'agenda')
+                            if (value.type == 'agenda' && (value.event_date_start_formated != null || value.event_date_start_formated['event_date_start'] != '')) {
+                                body += '\n' + value.event_date_start_formated;
+                            }
+
+                            if (value.type == 'agenda')
                             {
-                             	url = '<?php echo DOL_URL_ROOT.'/comm/action/card.php?id='; ?>' + value['id'];
-                                title = '<?php print $langs->trans('Agenda') ?>';
+                             	url = '<?php print DOL_URL_ROOT.'/comm/action/card.php?id='; ?>' + value.id_agenda;
+                                title = '<?php print dol_escape_js($langs->trans('EventReminder')) ?>';
                             }
                             var extra = {
                                 icon: '<?php print DOL_URL_ROOT.'/theme/common/bell.png'; ?>',
+                                //image: '<?php print DOL_URL_ROOT.'/theme/common/bell.png'; ?>',
                                 body: body,
-                                tag: value['id']
+                                tag: value.id_agenda,
+                                requireInteraction: true
                             };
 
                             // We release the notify
-                            var noti = new Notification(title, extra);
+                            console.log("Send notification on browser");
+                            noti[index] = new Notification(title, extra);
                             if (index==0 && audio)
                             {
                             	audio.play();
                             }
-                            noti.onclick = function (event) {
-                                console.log("An event to notify on browser was received");
-                                event.preventDefault(); // prevent the browser from focusing the Notification's tab
-                                window.focus();
-                                window.open(url, '_blank');
-                                noti.close();
-                            };
+
+                            if (noti[index]) {
+	                            noti[index].onclick = function (event) {
+	                                console.log("A click on notification on browser has been done");
+	                                event.preventDefault(); // prevent the browser from focusing the Notification's tab
+	                                window.focus();
+	                                window.open(url, '_blank');
+	                                noti[index].close();
+	                            };
+
+	                            listofreminderids = (listofreminderids == '' ? '' : listofreminderids + ',') + value.id_reminder
+	                        }
                         });
+
+                        // Update status of all notifications we sent on browser (listofreminderids)
+                        console.log("Flag notification as done for listofreminderids="+listofreminderids);
+						$.ajax("<?php print DOL_URL_ROOT.'/core/ajax/check_notifications.php?action=stopreminder&listofreminderids='; ?>"+listofreminderids, {
+			                type: "post",   // Usually post or get
+			                async: true,
+			                data: { time_js_next_test: time_js_next_test, token: 'notrequired' }
+			            });
+                    } else {
+                    	console.log("No reminder to do found, next search at "+time_js_next_test);
                     }
                 }
             });
         }
         else
         {
-        	console.log("Cancel check_events. Useless because Notification.permission is "+Notification.permission);
+        	console.log("Cancel check_events. Useless because javascript Notification.permission is "+Notification.permission+" (blocked manualy or web site is not https).");
         }
-
-        time_js_next_test += time_auto_update;
-		console.log('Updated time_js_next_test. New value is '+time_js_next_test);
     }
-<?php
+    <?php
 }

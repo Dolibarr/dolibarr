@@ -2,7 +2,7 @@
 Delivery=تحویل
 DeliveryRef=ش.ارجاع تحویل
 DeliveryCard=کارت رسید
-DeliveryOrder=منظور تحویل
+DeliveryOrder=Delivery receipt
 DeliveryDate=تاریخ تحویل
 CreateDeliveryOrder=تولید رسید تحویل
 DeliveryStateSaved=وضعیت تحویل ذخیره شد

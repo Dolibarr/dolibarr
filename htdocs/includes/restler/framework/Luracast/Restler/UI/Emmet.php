@@ -8,7 +8,7 @@ use Luracast\Restler\Util;
  * Class Emmet
  * @package Luracast\Restler\UI
  *
- * @version 3.0.0rc6
+ * @version 3.1.0
  */
 class Emmet
 {
@@ -356,7 +356,7 @@ class Emmet
             $pos = strpos($string, $f, $start);
             $tokens = array();
             for ($i = $start; $i < $pos; $i++) {
-                $token = $string{$i};
+                $token = $string[$i];
                 if (('#' == $token || '.' == $token) &&
                     (!empty($tokens) || $i == 0)
                 ) {
@@ -368,7 +368,7 @@ class Emmet
             $r[] = $f;
         } while (false != ($f = strtok(static::DELIMITERS)));
         for ($i = $pos; $i < strlen($string); $i++) {
-            $token = $string{$i};
+            $token = $string[$i];
             $r[] = $tokens[] = $token;
         }
         return $r;

@@ -11,8 +11,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandlerInterface.php';
@@ -22,7 +22,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandlerInterface.php';
  */
 class LogHandler
 {
-	protected $ident=0;
+	protected $ident = 0;
 
 
 	/**
@@ -44,7 +44,7 @@ class LogHandler
 	{
 		return '';
 	}
-	
+
 	/**
 	 * Version of the module ('x.y.z' or 'dolibarr' or 'experimental' or 'development')
 	 *
@@ -90,11 +90,11 @@ class LogHandler
 	/**
 	 * Set current ident.
 	 *
-     * @param	int		$ident		1=Increase ident of 1, -1=Decrease ident of 1
+	 * @param	int		$ident		1=Increase ident of 1, -1=Decrease ident of 1
 	 * @return 	void
 	 */
 	public function setIdent($ident)
 	{
-		$this->ident+=$ident;
+		$this->ident += $ident;
 	}
 }

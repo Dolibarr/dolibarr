@@ -150,6 +150,16 @@
     "share"
   ],
   [
+    "expand",
+    null,
+    "expand-alt"
+  ],
+  [
+    "compress",
+    null,
+    "compress-alt"
+  ],
+  [
     "eye",
     "far",
     null
@@ -782,7 +792,7 @@
   [
     "sort-alpha-desc",
     null,
-    "sort-alpha-up"
+    "sort-alpha-down-alt"
   ],
   [
     "sort-amount-asc",
@@ -792,7 +802,7 @@
   [
     "sort-amount-desc",
     null,
-    "sort-amount-up"
+    "sort-amount-down-alt"
   ],
   [
     "sort-numeric-asc",
@@ -802,7 +812,7 @@
   [
     "sort-numeric-desc",
     null,
-    "sort-numeric-up"
+    "sort-numeric-down-alt"
   ],
   [
     "youtube-square",
@@ -1145,14 +1155,14 @@
     "car"
   ],
   [
-    "cab",
-    null,
-    "taxi"
-  ],
-  [
     "envelope-o",
     "far",
     "envelope"
+  ],
+  [
+    "spotify",
+    "fab",
+    null
   ],
   [
     "deviantart",
@@ -2300,8 +2310,8 @@
     null
   ],
   [
-    "spotify",
-    "fab",
-    null
+    "cab",
+    null,
+    "taxi"
   ]
 ]

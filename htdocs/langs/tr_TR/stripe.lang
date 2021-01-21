@@ -16,12 +16,13 @@ StripeDoPayment=Stripe ile Öde
 YouWillBeRedirectedOnStripe=Kredi kartı bilgilerini girmek için güvenli Stripe sayfasında yönlendirileceksiniz
 Continue=Sonraki
 ToOfferALinkForOnlinePayment=%s Ödemesi için URL
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
-ToOfferALinkForOnlinePaymentOnInvoice=Bir müşteri faturası için çevrimiçi %s ödemesi kullanıcı arayüzü sunan URL
-ToOfferALinkForOnlinePaymentOnContractLine=Bir sözleşme satırı için çevrimiçi %s ödemesi kullanıcı arayüzü sunan URL
-ToOfferALinkForOnlinePaymentOnFreeAmount=Bir serbest ödeme için çevrimiçi %s ödemesi kullanıcı arayüzü sunan URL
-ToOfferALinkForOnlinePaymentOnMemberSubscription=Bir müşteri üye aboneliği çevrimiçi %s ödemesi kullanıcı arayüzü sunan URL
-YouCanAddTagOnUrl=Ayrıca; o URL'lerden herhangi birine <b>&tag=<i>value</i></b> url parametresini ekleyerek kendi ödeme açıklamanızın etiketini girebilirsiniz.
+ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment page for a sales order
+ToOfferALinkForOnlinePaymentOnInvoice=URL to offer a %s online payment page for a customer invoice
+ToOfferALinkForOnlinePaymentOnContractLine=URL to offer a %s online payment page for a contract line
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL to offer a %s online payment page of any amount with no existing object
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL to offer a %s online payment page for a member subscription
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment page for payment of a donation
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
 SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
 AccountParameter=Hesap parametreleri
 UsageParameter=Kullanım parametreleri
@@ -31,6 +32,7 @@ VendorName=Satıcının Adı
 CSSUrlForPaymentForm=Ödeme formu için CSS stil sayfası url'si
 NewStripePaymentReceived=Yeni Stripe ödemesi alındı
 NewStripePaymentFailed=Yeni Stripe ödemesi denendi ancak başarısız oldu
+FailedToChargeCard=Failed to charge card
 STRIPE_TEST_SECRET_KEY=Gizli test anahtarı
 STRIPE_TEST_PUBLISHABLE_KEY=Yayımlanabilir test anahtarı
 STRIPE_TEST_WEBHOOK_KEY=Webhook test key
@@ -67,3 +69,4 @@ ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mo
 ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
 PaymentWillBeRecordedForNextPeriod=Ödeme gelecek dönem için kaydedilecektir.
 ClickHereToTryAgain=<a href="%s">Tekrar denemek için burayı tıklayın...</a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s

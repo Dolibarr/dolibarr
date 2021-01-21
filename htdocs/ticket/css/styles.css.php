@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -22,16 +22,16 @@
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled because need to load personalized language
 //if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');	// Not disabled to increase speed. Language code is found on url.
-if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
+if (!defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
 //if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled because need to do translations
-if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
-if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
-if (! defined('NOLOGIN'))         define('NOLOGIN', 1);          // File must be accessed by logon page so without login
+if (!defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
+if (!defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
+if (!defined('NOLOGIN'))         define('NOLOGIN', 1); // File must be accessed by logon page so without login
 //if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);  // We need top menu content
-if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
-if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
+if (!defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
+if (!defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
 
-session_cache_limiter(false);
+session_cache_limiter('public');
 
 require_once '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -50,8 +50,8 @@ html {
 
 html {
 <?php
-if (! empty($conf->global->TICKET_SHOW_MODULE_LOGO)) {
-    print 'background: url("../public/img/bg_ticket.png") no-repeat 95% 90%;';
+if (!empty($conf->global->TICKET_SHOW_MODULE_LOGO)) {
+	print 'background: url("../public/img/bg_ticket.png") no-repeat 95% 90%;';
 }
 ?>
 }
@@ -74,54 +74,11 @@ div.ticketform {
 div.ticketform .index_create, .index_display {
 	display: inline-block;
     width: 200px;
-    height: 58px;
+    height: 45px;
     text-align: center;
     vertical-align: middle;
     margin: 20px;
     text-transform: uppercase;
-}
-
-div.ticketform .orange {
-    color: #fef4e9;
-    border: solid 1px #da7c0c;
-    background: #f78d1d;
-    background: -webkit-gradient(linear, left top, left bottom, from(#faa51a), to(#f47a20));
-    background: -moz-linear-gradient(top, #faa51a, #f47a20);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#faa51a', endColorstr='#f47a20');
-}
-div.ticketform .orange:active {
-    color: #fcd3a5;
-    background: -webkit-gradient(linear, left top, left bottom, from(#f47a20), to(#faa51a));
-    background: -moz-linear-gradient(top, #f47a20, #faa51a);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f47a20', endColorstr='#faa51a');
-}
-
-div.ticketform .orange:hover {
-    background: #f47c20;
-    background: -webkit-gradient(linear, left top, left bottom, from(#f88e11), to(#f06015));
-    background: -moz-linear-gradient(top, #f88e11, #f06015);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f88e11', endColorstr='#f06015');
-}
-
-div.ticketform .blue {
-    color: #d9eef7;
-    border: solid 1px #0076a3;
-    background: #0095cd;
-    background: -webkit-gradient(linear, left top, left bottom, from(#00adee), to(#0078a5));
-    background: -moz-linear-gradient(top, #00adee, #0078a5);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00adee', endColorstr='#0078a5');
-}
-div.ticketform .blue:active {
-    color: #80bed6;
-    background: -webkit-gradient(linear, left top, left bottom, from(#0078a5), to(#00adee));
-    background: -moz-linear-gradient(top, #0078a5, #00adee);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0078a5', endColorstr='#00adee');
-}
-div.ticketform .blue:hover {
-    background: #007ead;
-    background: -webkit-gradient(linear, left top, left bottom, from(#0095cc), to(#00678e));
-    background: -moz-linear-gradient(top, #0095cc, #00678e);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0095cc', endColorstr='#00678e');
 }
 
 #form_create_ticket, #form_view_ticket
@@ -144,11 +101,11 @@ div.ticketform .blue:hover {
     border:solid 1px rgba(168,168,168,.4);
     border-top:solid 1px f8f8f8;
     background-color: #f8f8f8;
-    background-image: -o-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
-    background-image: -moz-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
-    background-image: -webkit-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
-    background-image: -ms-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
-    background-image: linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
 }
-#form_create_ticket input.text,
-#form_create_ticket textarea { width:450px;}
+
+#form_create_ticket input.text, #form_create_ticket textarea { width:450px;}
+
+@media only screen and (max-width: 767px)
+{
+	#form_create_ticket input.text,	#form_create_ticket textarea { width: unset;}
+}

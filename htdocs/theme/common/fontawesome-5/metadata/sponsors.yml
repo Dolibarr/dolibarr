@@ -128,6 +128,11 @@ cuttlefish:
     - cuttlefish
   label: Cuttlefish
   url: 'http://wearecuttlefish.com'
+cymedica:
+  icons:
+    - wave-square
+  label: CyMedica
+  url: 'https://www.cymedicaortho.com'
 darren-wiebe:
   icons:
     - church
@@ -162,6 +167,11 @@ dyalog-apl:
     - dyalog
   label: Dyalog APL
   url: 'http://www.dyalog.com'
+econopublish:
+  icons:
+    - hat-cowboy-side
+  label: EconoPublish
+  url: 'https://www.econopublish.com'
 firstdraft:
   icons:
     - firstdraft
@@ -325,6 +335,8 @@ medapps:
     - clinic-medical
     - comment-medical
     - crutch
+    - disease
+    - hospital-user
     - laptop-medical
     - pager
   label: MedApps
@@ -589,6 +601,7 @@ the-us-sunnah-foundation:
     - globe
     - hand-holding-heart
     - hand-holding-usd
+    - hand-holding-water
     - hands-helping
     - handshake
     - heart

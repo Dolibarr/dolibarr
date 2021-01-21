@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  *
  * $elementype must be defined.
  */
@@ -26,7 +26,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/comment.class.php';
 
-$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $comment = new Comment($db);
 
 /*
@@ -35,7 +35,7 @@ $comment = new Comment($db);
 
 if ($action == 'addcomment')
 {
-	$description = GETPOST('comment_description', 'none');
+	$description = GETPOST('comment_description', 'restricthtml');
 	if (!empty($description))
 	{
 		$comment->description = $description;
@@ -47,13 +47,27 @@ if ($action == 'addcomment')
 		if ($comment->create($user) > 0)
 		{
 			setEventMessages($langs->trans("CommentAdded"), null, 'mesgs');
-			header('Location: '.$varpage.'?id='.$id.($withproject?'&withproject=1':''));
+			header('Location: '.$varpage.'?id='.$id.($withproject ? '&withproject=1' : ''));
 			exit;
-		}
-		else
-		{
+		} else {
 			setEventMessages($comment->error, $comment->errors, 'errors');
-			$action='';
+			$action = '';
+		}
+	}
+}
+if ($action === 'updatecomment')
+{
+	if ($comment->fetch($idcomment) >= 0)
+	{
+		$comment->description = GETPOST('comment_description', 'restricthtml');
+		if ($comment->update($user) > 0)
+		{
+			setEventMessages($langs->trans("CommentAdded"), null, 'mesgs');
+			header('Location: '.$varpage.'?id='.$id.($withproject ? '&withproject=1#comment' : ''));
+			exit;
+		} else {
+			setEventMessages($comment->error, $comment->errors, 'errors');
+			$action = '';
 		}
 	}
 }
@@ -64,13 +78,11 @@ if ($action == 'deletecomment')
 		if ($comment->delete($user) > 0)
 		{
 			setEventMessages($langs->trans("CommentDeleted"), null, 'mesgs');
-			header('Location: '.$varpage.'?id='.$id.($withproject?'&withproject=1':''));
+			header('Location: '.$varpage.'?id='.$id.($withproject ? '&withproject=1' : ''));
 			exit;
-		}
-		else
-		{
+		} else {
 			setEventMessages($comment->error, $comment->errors, 'errors');
-			$action='';
+			$action = '';
 		}
 	}
 }

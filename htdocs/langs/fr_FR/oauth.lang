@@ -12,7 +12,7 @@ TokenDeleted=Jeton effacé
 RequestAccess=Cliquez ici pour demander/renouveler un accès et recevoir un nouveau jeton à sauvegarder
 DeleteAccess=Cliquez ici pour effacer le jeton
 UseTheFollowingUrlAsRedirectURI=Utilisez l'URL suivante comme URI de redirection quand vous créez un crédit avec votre fournisseur OAuth :
-ListOfSupportedOauthProviders=Saisissez ici le crédit fourni par votre fournisseur OAuth2. Seuls les fournisseurs OAuth2 supportés sont visibles ici. Ce paramétrage est potentiellement utilisé par d'autres modules qui nécessitent une authentification OAuth2.
+ListOfSupportedOauthProviders=Saisissez ici les identifiants fournis par votre fournisseur OAuth2. Seuls les fournisseurs OAuth2 supportés sont visibles ici. Ce paramétrage est potentiellement utilisé par d'autres modules qui nécessitent une authentification OAuth2.
 OAuthSetupForLogin=Page pour générer le jeton OAuth
 SeePreviousTab=Voir onglet précédent
 OAuthIDSecret=OAuth ID et secret
@@ -26,5 +26,7 @@ OAUTH_GOOGLE_SECRET=Oauth Google secret
 OAUTH_GOOGLE_DESC=Allez sur <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">cette page</a> puis «Autorisation» pour créer les informations d'identification OAuth
 OAUTH_GITHUB_NAME=Service Oauth GitHub
 OAUTH_GITHUB_ID=Oauth GitHub Id
-OAUTH_GITHUB_SECRET=Oauth GitHub secret
+OAUTH_GITHUB_SECRET=Secret Oauth GitHub
 OAUTH_GITHUB_DESC=Allez sur <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">cette page</a> , puis "Enregistrer une nouvelle application" pour créer les informations d'identification OAuth
+OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
+OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live

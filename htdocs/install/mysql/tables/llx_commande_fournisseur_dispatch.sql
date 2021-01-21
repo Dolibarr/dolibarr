@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- This table is just an history table to track all receiving done for a 
 -- particular supplier order. A movement with same information is also done
@@ -31,10 +31,10 @@ create table llx_commande_fournisseur_dispatch
   fk_entrepot    integer,
   fk_user        integer,
   comment		 varchar(255),		  -- comment on movement
-  batch          varchar(30) DEFAULT NULL,
+  batch          varchar(128) DEFAULT NULL,
   eatby          date DEFAULT NULL,
   sellby         date DEFAULT NULL,
   status         integer,
   datec          datetime,
-  tms            timestamp
+  tms            timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )ENGINE=innodb;

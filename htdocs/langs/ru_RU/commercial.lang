@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - commercial
-Commercial=Управление запасами
-CommercialArea=Раздел коммерции
+Commercial=Commerce
+CommercialArea=Commerce area
 Customer=Клиент
 Customers=Клиенты
 Prospect=Потенциальный клиент

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - commercial
-Commercial=供应商
-CommercialArea=供应商区
+Commercial=Commerce
+CommercialArea=Commerce area
 Customer=客户
 Customers=客户
 Prospect=准客户
@@ -59,7 +59,7 @@ ActionAC_FAC=通过邮件发送客户发票
 ActionAC_REL=通过邮件发送客户发票（提醒）
 ActionAC_CLO=关闭
 ActionAC_EMAILING=发送群发电子邮件
-ActionAC_COM=通过邮件发送客户订单
+ActionAC_COM=Send sales order by mail
 ActionAC_SHIP=发送发货单
 ActionAC_SUP_ORD=通过邮件发送采购订单
 ActionAC_SUP_INV=通过邮件发送供应商发票

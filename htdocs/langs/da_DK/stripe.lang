@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Stripe-modul opsætning
-StripeDesc=Offer customers a Stripe online payment page for payments with credit/cebit cards via <a href="http://www.stripe.com" target="_blank">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
+StripeDesc=Tilbyd kunderne en Stripe online betalingsside for betalinger med kredit- / cebit kort via <a href="http://www.stripe.com" target="_blank">Stripe</a>. Dette kan bruges til at give dine kunder mulighed for at foretage ad-hoc betalinger eller til betalinger relateret til et bestemt Dolibarr objekt (faktura, ordre, ...)
 StripeOrCBDoPayment=Betal med kreditkort eller stripe
 FollowingUrlAreAvailableToMakePayments=Følgende webadresser oprettet som tilbyde en side til en kunde, hvor til der kan foretage indbetalinger på Dolibarr objekter
 PaymentForm=Betalings formular
@@ -9,19 +9,20 @@ ThisScreenAllowsYouToPay=Dette skærmbillede giver dig mulighed for at foretage 
 ThisIsInformationOnPayment=Dette er informationer om betaling for at gøre
 ToComplete=For at fuldføre
 YourEMail=E-mail til bekræftelse af betaling,
-STRIPE_PAYONLINE_SENDEMAIL=Email notification after a payment attempt (success or fail)
+STRIPE_PAYONLINE_SENDEMAIL=E-mail meddelelse efter en betaling forsøg (succes eller fejl)
 Creditor=Kreditor
 PaymentCode=Betalingskode
-StripeDoPayment=Pay with Stripe
+StripeDoPayment=Betal med Stripe
 YouWillBeRedirectedOnStripe=Du bliver omdirigeret på sikret stripeside for at indtaste dig kreditkortoplysninger
 Continue=Næste
 ToOfferALinkForOnlinePayment=URL til %s betaling
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
-ToOfferALinkForOnlinePaymentOnInvoice=URL til at tilbyde en %s online betaling brugergrænseflade til en faktura
-ToOfferALinkForOnlinePaymentOnContractLine=URL til at tilbyde en %s online betaling brugergrænseflade til en kontrakt linje
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL til at tilbyde en %s online betaling brugergrænseflade til et frit beløb
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL til at tilbyde en %s online betaling brugergrænseflade til et medlem abonnement
-YouCanAddTagOnUrl=Du kan også tilføje webadresseparameter <b>& tag= <i>værdi</i></b> til nogen af disse URL (kræves kun for fri betaling) for at tilføje din egen betaling kommentere tag.
+ToOfferALinkForOnlinePaymentOnOrder=URL til at tilbyde en %s online betalingsside for en salgsordre
+ToOfferALinkForOnlinePaymentOnInvoice=URL til at tilbyde en %s online betalingsside for en kundefaktura
+ToOfferALinkForOnlinePaymentOnContractLine=URL til at tilbyde en %s online betalingsside for en kontraktlinje
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL til at tilbyde en %s online betalingsside af ethvert beløb uden noget eksisterende objekt
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL til at tilbyde en %s online betalingsside for et medlemsabonnement
+ToOfferALinkForOnlinePaymentOnDonation=URL til at tilbyde en %s online betalingsside til betaling af en donation
+YouCanAddTagOnUrl=Du kan også tilføje url-parameter <b>& tag =<i> værdi</i></b> til en af disse URL-adresser (kun obligatorisk for betaling, der ikke er knyttet til et objekt) for at tilføje dit eget betalings-kommentar-tag.<br> For URL-adressen til betalinger uden noget eksisterende objekt, kan du også tilføje parameteren <strong>& noidempotency=1</strong>, så det samme link med samme tag kan bruges flere gange (nogle betalingsmetoder begrænser muligvis betalingen til 1 for hvert andet link uden denne parameter)
 SetupStripeToHavePaymentCreatedAutomatically=Indstil din stripe med url <b> %s </ b> for at få betaling oprettet automatisk, når bekræftet af Stripe.
 AccountParameter=Kontoparametre
 UsageParameter=Anvendelsesparametre
@@ -31,6 +32,7 @@ VendorName=Navn på leverandør
 CSSUrlForPaymentForm=CSS stilark url for betalingsformular
 NewStripePaymentReceived=Ny Stripe betaling modtaget
 NewStripePaymentFailed=Ny Stripe betaling forsøgt men mislykkedes
+FailedToChargeCard=Kunne ikke hæve på kortet
 STRIPE_TEST_SECRET_KEY=Hemmelig testnøgle
 STRIPE_TEST_PUBLISHABLE_KEY=Udgivelig testnøgle
 STRIPE_TEST_WEBHOOK_KEY=Webhook testnøgle
@@ -40,7 +42,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook-livenøgle
 ONLINE_PAYMENT_WAREHOUSE=Lager til brug for lagerreduktion, når online betaling er færdig <br> (TODO Når valgmuligheden for at reducere lagerbeholdningen sker på en handling på faktura, og online betaling genererer selve fakturaen?)
 StripeLiveEnabled=Stripe live aktiveret (ellers test / sandbox mode)
 StripeImportPayment=Import Stripe betalinger
-ExampleOfTestCreditCard=Example of credit card for test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestCreditCard=Eksempel på kreditkort til test:%s => gyldigt,%s => fejl CVC,%s => udløbet, %s=> gebyr mislykkes
 StripeGateways=Stripe gateways
 OAUTH_STRIPE_TEST_ID=Stripe Connect Client ID (ca. _...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect Client ID (ca. _...)
@@ -61,9 +63,10 @@ ConfirmDeleteCard=Er du sikker på, at du vil slette dette kredit- eller betalin
 CreateCustomerOnStripe=Opret kunde på Stripe
 CreateCardOnStripe=Opret kort på Stripe
 ShowInStripe=Vis i Stripe
-StripeUserAccountForActions=User account to use for email notification of some Stripe events (Stripe payouts)
-StripePayoutList=List of Stripe payouts
-ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mode)
-ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
-PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
-ClickHereToTryAgain=<a href="%s">Click here to try again...</a>
+StripeUserAccountForActions=Brugerkonto, der skal bruges til e-mail-meddelelse om nogle Stripe begivenheder (Stripe udbetalinger)
+StripePayoutList=Liste over Stripe udbetalinger
+ToOfferALinkForTestWebhook=Link til opsætning Stripe WebHook for at ringe til IPN (test tilstand)
+ToOfferALinkForLiveWebhook=Link til opsætning Stripe WebHook for at ringe til IPN (live tilstand)
+PaymentWillBeRecordedForNextPeriod=Betaling registreres for den næste periode.
+ClickHereToTryAgain=<a href="%s">Klik her for at prøve igen ...</a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=På grund af stærke kunde autentificerings regler skal oprettelse af et kort foretages fra Stripe backoffice. Du kan klikke her for at tænde for Stripe-kundepost:%s

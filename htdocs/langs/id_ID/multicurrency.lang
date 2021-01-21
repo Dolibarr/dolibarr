@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - multicurrency
+MultiCurrency=Multi mata uang
+ErrorAddRateFail=Kesalahan dalam laju tambahan
+ErrorAddCurrencyFail=Kesalahan dalam mata uang yang ditambahkan
+ErrorDeleteCurrencyFail=Penghapusan kesalahan gagal
+multicurrency_syncronize_error=Kesalahan sinkronisasi: %s
+MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE=Gunakan tanggal dokumen untuk menemukan nilai tukar mata uang, alih-alih menggunakan nilai tukar terakhir yang diketahui
+multicurrency_useOriginTx=Ketika suatu objek dibuat dari yang lain, jauhkan kurs asli dari objek sumber (jika tidak gunakan kurs yang diketahui terakhir)
+CurrencyLayerAccount=API CurrencyLayer
+CurrencyLayerAccount_help_to_synchronize=Anda harus membuat akun di situs web %s untuk menggunakan fungsi ini. <br> Dapatkan kunci API </b><b>Anda. <br> Jika Anda menggunakan akun gratis, Anda tidak dapat mengubah mata uang sumber<b></b> (secara default USD). <br> Jika mata uang utama Anda bukan USD, aplikasi akan secara otomatis menghitung ulang. <br> <br> Anda dibatasi hingga 1.000 sinkronisasi per bulan.
+multicurrency_appId=Kunci API
+multicurrency_appCurrencySource=Mata uang sumber
+multicurrency_alternateCurrencySource=Mata uang sumber alternatif
+CurrenciesUsed=Mata uang yang digunakan
+CurrenciesUsed_help_to_add=Tambahkan berbagai mata uang dan nilai tukar yang perlu Anda gunakan pada proposal<b>Anda </b>,<b>pesanan</b>dll.
+rate=menilai
+MulticurrencyReceived=Menerima, mata uang asli
+MulticurrencyRemainderToTake=Jumlah yang tersisa, mata uang asli
+MulticurrencyPaymentAmount=Jumlah pembayaran, mata uang asli
+AmountToOthercurrency=Jumlah Ke (dalam mata uang akun penerima)
+CurrencyRateSyncSucceed=Sinkronisasi nilai tukar mata uang dilakukan dengan sukses
+MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=Gunakan mata uang dokumen untuk pembayaran online

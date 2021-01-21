@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - deliveries
 DeliveryRef=Lieferungsnummer
 DeliveryCard=Lieferschein
-DeliveryOrder=Lieferauftrag
 CreateDeliveryOrder=Erzeuge Lieferschein
 DeliveryStateSaved=Lieferstatus gespeichert
 ValidateDeliveryReceiptConfirm=Bist du sicher, dass du diesen Lieferschein frei geben willst?

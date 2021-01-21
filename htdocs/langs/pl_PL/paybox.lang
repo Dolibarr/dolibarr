@@ -11,17 +11,8 @@ YourEMail=E-mail by otrzymać potwierdzenie zapłaty
 Creditor=Wierzyciel
 PaymentCode=Kod płatności
 PayBoxDoPayment=Pay with Paybox
-ToPay=Wykonaj płatność
 YouWillBeRedirectedOnPayBox=Zostaniesz przekierowany na zabezpieczoną stronę Paybox bys mógł podać informację z karty kredytowej.
 Continue=Dalej
-ToOfferALinkForOnlinePayment=URL %s płatności
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
-ToOfferALinkForOnlinePaymentOnInvoice=URL zaoferowania %s płatności online interfejsu użytkownika za fakture
-ToOfferALinkForOnlinePaymentOnContractLine=URL zaoferowania płatności online %s interfejsu użytkownika do umowy
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL zaoferowania płatności online %s interfejsu użytkownika w celu utworzenia dowolnej kwoty.
-ToOfferALinkForOnlinePaymentOnMemberSubscription=Adres URL do zaoferowania płatności online %s interfejs użytkownika jest członkiem subskrypcji
-ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment, user interface for payment of donation
-YouCanAddTagOnUrl=Możesz również dodać parametr <b>&</b> url <b>= <i>wartość</i> tagu</b> do żadnej z tych adresów URL (wymagany tylko dla bezpłatnych), aby dodać swój komentarz płatności tag.
 SetupPayBoxToHavePaymentCreatedAutomatically=Ustaw swój Paybox z linkiem <b>%s</b> żeby utworzyć płatność automatycznie gdy zatwierdzone przez Paybox 
 YourPaymentHasBeenRecorded=Ta strona potwierdza, że ​​płatność została wprowadzona. Dziękuję.
 YourPaymentHasNotBeenRecorded=Twoja płatność nie została zatwierdzona i transakcja została anulowana. Dziękujemy

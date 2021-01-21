@@ -11,17 +11,8 @@ YourEMail=Email de confirmation du paiement
 Creditor=Bénéficiaire
 PaymentCode=Code de paiement
 PayBoxDoPayment=Payer avec PayBox
-ToPay=Saisir règlement
 YouWillBeRedirectedOnPayBox=Vous serez redirigé vers la page sécurisée Paybox de saisie de votre carte bancaire
 Continue=Continuer
-ToOfferALinkForOnlinePayment=URL de paiement %s
-ToOfferALinkForOnlinePaymentOnOrder=URL offrant une interface de paiement en ligne %s sur la base du montant d'une commande client
-ToOfferALinkForOnlinePaymentOnInvoice=URL offrant une interface de paiement en ligne %s sur la base du montant d'une facture client
-ToOfferALinkForOnlinePaymentOnContractLine=URL offrant une interface de paiement en ligne %s sur la base du montant d'une ligne de contrat
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL offrant une interface de paiement en ligne %s pour un montant libre
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL offrant une interface de paiement en ligne %s sur la base d'une cotisation d'adhérent
-ToOfferALinkForOnlinePaymentOnDonation=URL permettant de proposer une interface utilisateur de paiement en ligne %s pour le paiement de dons
-YouCanAddTagOnUrl=Vous pouvez de plus ajouter le paramètre URL <b>&tag=<i>value</i></b> à n'importe quelles de ces URL (obligatoire pour le paiement libre uniquement) pour ajouter votre propre "code commentaire" du paiement.
 SetupPayBoxToHavePaymentCreatedAutomatically=Configurez votre URL PayBox à <b>%s</b> pour avoir le paiement créé automatiquement si validé par Paybox.
 YourPaymentHasBeenRecorded=Cette page confirme que votre paiement a bien été enregistré. Merci.
 YourPaymentHasNotBeenRecorded=Votre paiement n'a PAS été enregistré et la transaction a été annulée. Merci.

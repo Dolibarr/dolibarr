@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - multicurrency
+MultiCurrency=Đa tiền tệ
+ErrorAddRateFail=Xảy ra lỗi trong thêm tỷ lệ
+ErrorAddCurrencyFail=Xảy ra lỗi trong thêm tiền tệ
+ErrorDeleteCurrencyFail=Lỗi xóa thất bại
+multicurrency_syncronize_error=Lỗi đồng bộ hóa: %s
+MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE=Sử dụng ngày của tài liệu để tìm tỷ giá tiền tệ, thay vì sử dụng tỷ giá mới nhất được biết
+multicurrency_useOriginTx=Khi một đối tượng được tạo từ đối tượng khác, hãy giữ tỷ lệ ban đầu từ đối tượng nguồn (nếu không sử dụng tỷ lệ đã biết mới nhất)
+CurrencyLayerAccount=CurrencyLayer API
+CurrencyLayerAccount_help_to_synchronize=Bạn phải tạo một tài khoản trên trang web %s để sử dụng chức năng này. <br> Nhận <b>khóa API</b> của bạn. <br> Nếu bạn sử dụng tài khoản miễn phí, bạn không thể thay đổi <b>loại tiền tệ</b> (USD theo mặc định). <br> Nếu loại tiền chính của bạn không phải là USD, ứng dụng sẽ tự động tính toán lại. <br><br> Bạn bị giới hạn ở 1000 đồng bộ hóa mỗi tháng.
+multicurrency_appId=Khóa API
+multicurrency_appCurrencySource=Nguồn tiền tệ
+multicurrency_alternateCurrencySource=Nguồn tiền tệ thay thế
+CurrenciesUsed=Tiền tệ được sử dụng
+CurrenciesUsed_help_to_add=Thêm các loại tiền tệ và tỷ lệ khác nhau mà bạn cần sử dụng cho các <b>đề xuất</b> , <b>đơn đặt hàng</b> , v.v.
+rate=tỷ lệ
+MulticurrencyReceived=Đã nhận, nguyên tệ
+MulticurrencyRemainderToTake=Số tiền còn lại, nguyên tệ
+MulticurrencyPaymentAmount=Số tiền thanh toán, nguyên tệ
+AmountToOthercurrency=Số tiền chuyển (bằng tiền tệ tài khoản nhận)
+CurrencyRateSyncSucceed=Tỷ giá được đồng bộ thành công
+MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=Sử dụng tiền tệ cho hồ sơ thanh toán trực tuyến

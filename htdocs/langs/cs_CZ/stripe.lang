@@ -12,16 +12,17 @@ YourEMail=E-mail pro potvrzení platby
 STRIPE_PAYONLINE_SENDEMAIL=E-mailové oznámení po pokusu o platbu (úspěch nebo neúspěch)
 Creditor=Věřitel
 PaymentCode=Platební kód
-StripeDoPayment=Pay with Stripe
+StripeDoPayment=Platba kreditní nebo debetní kartou (Stripe)
 YouWillBeRedirectedOnStripe=Budete přesměrováni na zabezpečené stránce Stripe, abyste mohli zadat informace o kreditní kartě
 Continue=Další
 ToOfferALinkForOnlinePayment=URL pro %s platby
-ToOfferALinkForOnlinePaymentOnOrder=URL nabízí %s on-line platební uživatelské rozhraní pro objednávky zákazníka
-ToOfferALinkForOnlinePaymentOnInvoice=URL nabízí %s on-line platební uživatelské rozhraní pro zákaznické faktury
-ToOfferALinkForOnlinePaymentOnContractLine=URL nabízí %s on-line platební uživatelské rozhraní pro řádky smluv
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL nabízí %s on-line platební uživatelské rozhraní pro volnou částku
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL nabízí %s on-line platební uživatelské rozhraní pro členské předplatné
-YouCanAddTagOnUrl=Můžete také přidat parametr URL <b>&tag = <i>hodnota</i></b> na některou z těchto URL (nutné pouze pro volné platby) a přidat vlastní komentář platby.
+ToOfferALinkForOnlinePaymentOnOrder=URL, která nabízí online platební stránku %s pro prodejní objednávku
+ToOfferALinkForOnlinePaymentOnInvoice=URL, která nabízí online platební stránku %s pro fakturu zákazníka
+ToOfferALinkForOnlinePaymentOnContractLine=URL, která nabízí online platební stránku %s pro smluvní linii
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL, která nabízí online platební stránku %s jakékoli částky bez existujícího objektu
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL, která nabízí online platební stránku %s pro předplatné člena
+ToOfferALinkForOnlinePaymentOnDonation=URL, která nabízí online platební stránku %s pro výplatu daru
+YouCanAddTagOnUrl=Můžete také přidat parametr url <b> & tag = <i> </i> </b> do kterékoli z těchto adres URL (povinné pouze pro platby, které nejsou propojeny s objektem), a přidat vlastní značku platebních komentářů. <br> Pro URL plateb bez existujícího objektu můžete také přidat parametr <strong> & noidempotency = 1 </strong>, takže stejný odkaz se stejnou značkou může být použit několikrát (některý platební režim může omezit platbu na 1 pro každý jiný odkaz bez tohoto parametr)
 SetupStripeToHavePaymentCreatedAutomatically=Nastavte Stripe pomocí url <b> %s </b>, aby se platba automaticky vytvořila při ověření Stripe.
 AccountParameter=Parametry účtu
 UsageParameter=Použité parametry
@@ -31,6 +32,7 @@ VendorName=Název dodavatele
 CSSUrlForPaymentForm=CSS styly url platebního formuláře
 NewStripePaymentReceived=Byla obdržena nová platba Stripe
 NewStripePaymentFailed=Pokus o novou Stripe platbu, ta ale selhala
+FailedToChargeCard=Nepodařilo se nabít kartu
 STRIPE_TEST_SECRET_KEY=Tajný testovací klíč
 STRIPE_TEST_PUBLISHABLE_KEY=Testovatelný klíč pro publikování
 STRIPE_TEST_WEBHOOK_KEY=Testovací klíč Webhook
@@ -65,5 +67,6 @@ StripeUserAccountForActions=Uživatelský účet, který se má používat pro e
 StripePayoutList=Seznam páskových výplat
 ToOfferALinkForTestWebhook=Odkaz na nastavení Stripe WebHook pro volání IPN (testovací režim)
 ToOfferALinkForLiveWebhook=Odkaz na nastavení Stripe WebHook pro volání IPN (provozní režim)
-PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
-ClickHereToTryAgain=<a href="%s">Click here to try again...</a>
+PaymentWillBeRecordedForNextPeriod=Platba bude zaznamenána pro další období.
+ClickHereToTryAgain= <a href="%s"> Klikněte zde a zkuste to znovu ... </a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Vzhledem k přísným pravidlům pro ověřování zákazníků musí být karta vytvořena z backoffice Stripe. Klepnutím sem zapnete záznam zákazníka Stripe: %s

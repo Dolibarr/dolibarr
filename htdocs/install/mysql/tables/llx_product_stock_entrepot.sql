@@ -14,18 +14,18 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 
 create table llx_product_warehouse_properties
 (
   rowid           		integer AUTO_INCREMENT PRIMARY KEY,
-  tms             		timestamp,
+  tms             		timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_product      		integer NOT NULL,
   fk_entrepot     		integer NOT NULL,
-  seuil_stock_alerte    integer DEFAULT '0',
-  desiredstock    		integer DEFAULT '0',
+  seuil_stock_alerte    float DEFAULT '0',
+  desiredstock    		float DEFAULT '0',
   import_key      		varchar(14)               -- Import key
 )ENGINE=innodb;
 

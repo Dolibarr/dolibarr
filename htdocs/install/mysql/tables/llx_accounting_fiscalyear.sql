@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 
@@ -25,7 +25,7 @@ create table llx_accounting_fiscalyear
 	statut			tinyint DEFAULT 0 NOT NULL,
 	entity			integer DEFAULT 1 NOT NULL,	  -- multi company id
 	datec			datetime NOT NULL,
-	tms				timestamp,
+	tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_user_author	integer DEFAULT NULL,
 	fk_user_modif	integer DEFAULT NULL
 )ENGINE=innodb;

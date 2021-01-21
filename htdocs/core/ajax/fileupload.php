@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -21,10 +21,10 @@
  *       \brief      File to return Ajax response on file upload
  */
 
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no menu to show
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
+if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no menu to show
+if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
 
 
 require '../../main.inc.php';
@@ -53,23 +53,23 @@ header('Access-Control-Allow-Headers: X-File-Name, X-File-Type, X-File-Size');
 switch ($_SERVER['REQUEST_METHOD']) {
 	case 'OPTIONS':
 		break;
-    case 'HEAD':
-    case 'GET':
-        $upload_handler->get();
-        break;
-    case 'POST':
-    	if (isset($_REQUEST['_method']) && $_REQUEST['_method'] === 'DELETE') {
-            $upload_handler->delete();
-        } else {
-            $upload_handler->post();
-        }
-        break;
-    case 'DELETE':
-        $upload_handler->delete();
-        break;
-    default:
-        header('HTTP/1.0 405 Method Not Allowed');
-        exit;
+	case 'HEAD':
+	case 'GET':
+		$upload_handler->get();
+		break;
+	case 'POST':
+		if (isset($_REQUEST['_method']) && $_REQUEST['_method'] === 'DELETE') {
+			$upload_handler->delete();
+		} else {
+			$upload_handler->post();
+		}
+		break;
+	case 'DELETE':
+		$upload_handler->delete();
+		break;
+	default:
+		header('HTTP/1.0 405 Method Not Allowed');
+		exit;
 }
 
 $db->close();

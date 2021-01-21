@@ -11,17 +11,8 @@ YourEMail=Sähköposti maksupyyntö vahvistus
 Creditor=Velkoja
 PaymentCode=Maksu-koodi
 PayBoxDoPayment=Pay with Paybox
-ToPay=Ei maksua
 YouWillBeRedirectedOnPayBox=Sinut ohjataan on turvattu Paybox sivu tuloliittimeen voit luottokortin tiedot
 Continue=Seuraava
-ToOfferALinkForOnlinePayment=URL %s maksua
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
-ToOfferALinkForOnlinePaymentOnInvoice=URL tarjota %s online maksu käyttöliittymän lasku
-ToOfferALinkForOnlinePaymentOnContractLine=URL tarjota %s online maksu käyttöliittymän sopimuksen linjan
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL tarjota %s online maksu käyttöliittymän vapaa määrä
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL tarjota %s online maksu käyttöliittymän jäsen tilaus
-ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment, user interface for payment of donation
-YouCanAddTagOnUrl=Voit myös lisätä URL-parametrin <b>& tag= <i>arvo</i></b> mille tahansa niistä URL (vaaditaan ainoastaan ilmaiseksi maksu) lisätään oma maksu kommentoida tag.
 SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Tämä sivu vahvistaa, että maksu on kirjattu. Kiitos.
 YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.

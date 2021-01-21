@@ -7,3 +7,7 @@ StatusOrderCanceled=Cancelado
 StatusOrderDraft=Borrador (necesita ser validado)
 TypeContact_commande_external_BILLING=Contacto factura cliente
 TypeContact_commande_external_SHIPPING=Contacto de envío del cliente
+PDFEinsteinDescription=A complete order model
+StatusSupplierOrderCanceledShort=Cancelado
+StatusSupplierOrderCanceled=Cancelado
+StatusSupplierOrderDraft=Borrador (necesita ser validado)

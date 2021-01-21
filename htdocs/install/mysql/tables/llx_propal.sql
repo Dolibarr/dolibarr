@@ -15,7 +15,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -32,7 +32,7 @@ create table llx_propal
   fk_soc				integer,
   fk_projet				integer     DEFAULT NULL,		-- projet auquel est rattache la propale
 
-  tms					timestamp,
+  tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datec					datetime,						-- date de creation 
   datep					date,							-- date de la propal
   fin_validite			datetime,						-- date de fin de validite
@@ -66,6 +66,7 @@ create table llx_propal
   
   date_livraison		date DEFAULT NULL,				-- delivery date
   fk_shipping_method    integer,                        -- shipping method id
+  fk_warehouse		    integer DEFAULT NULL,           -- warehouse id
   fk_availability		integer NULL,
   fk_input_reason		integer,
   fk_incoterms          integer,										-- for incoterms

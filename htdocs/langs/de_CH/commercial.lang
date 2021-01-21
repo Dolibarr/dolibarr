@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - commercial
 Commercial=Vertrieb
-CommercialArea=Vertriebs - Übersicht
+CommercialArea=Vertriebsumgebung
 DeleteAction=Löschen eines Ereignis
 NewAction=Neue/r Termin/Aufgabe
 ConfirmDeleteAction=Willst du dieses Ereignis wirklich löschen?

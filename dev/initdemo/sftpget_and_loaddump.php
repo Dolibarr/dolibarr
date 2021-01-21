@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  *
  * Get a distant dump file and load it into a mysql database
  */
@@ -95,8 +95,7 @@ if ($connection)
 		dol_syslog("Could not authenticate with username ".$login." . and password ".preg_replace('/./', '*', $password), LOG_ERR);
 		exit(-5);
 	}
-	else
-	{
+	else {
 		//$stream = ssh2_exec($connection, '/usr/bin/php -i');
 		/*
 		print "Generate dump ".$filesys1.'.bz2'."\n";
@@ -125,14 +124,13 @@ if ($connection)
 		$return_var=0;
 		print strftime("%Y%m%d-%H%M%S").' '.$fullcommand."\n";
 		exec($fullcommand, $output, $return_var);
-		foreach($output as $line) print $line."\n";
+		foreach ($output as $line) print $line."\n";
 
 		//ssh2_sftp_unlink($sftp, $fileinstalllock);
 		//print $output;
 	}
 }
-else
-{
+else {
 	print 'Failed to connect to ssh2 to '.$server;
 	exit(-6);
 }

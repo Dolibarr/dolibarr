@@ -16,6 +16,7 @@ MarginDetails=Detalls de marges
 ProductMargins=Marges per producte
 CustomerMargins=Marges per client
 SalesRepresentativeMargins=Marges per agent comercial
+ContactOfInvoice=Contacte de la factura
 UserMargins=Marges per usuari
 ProductService=Producte o servei
 AllProducts=Tots els productes i serveis
@@ -31,14 +32,14 @@ MARGIN_TYPE=Preu de cost suggerit per defecte pel càlcul de marge
 MargeType1=Marge en el millor preu de proveïdor
 MargeType2=Marge en Preu mitjà ponderat (PMP)
 MargeType3=Marge en preu de cost
-MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
+MarginTypeDesc=* Marge en el millor preu de compra = Preu de venda: el preu del millor proveïdor es defineix a la targeta de producte. <br>* Marge en el preu mitjà ponderat (WAP) = preu de venda: el preu mitjà ponderat del producte (WAP) o el millor preu del proveïdor si WAP encara no està definit <br> * Marge sobre el preu de cost = Preu de venda: preu de cost definit a la targeta de producte o WAP si el preu de cost no està definit o el millor preu del proveïdor si WAP encara no està definit
 CostPrice=Preu de compra
 UnitCharges=Càrrega unitària
 Charges=Càrreges
 AgentContactType=Tipus de contacte comissionat
-AgentContactTypeDetails=Indica quin tipus de contacte (enllaçat a les factures) serà l'utilitzat per l'informe de marges per agent comercial
+AgentContactTypeDetails=Definiu quin tipus de contacte (enllaçat en factures) que s’utilitzarà per a l’informe del marge per contacte / adreça. Tingueu en compte que la lectura d’estadístiques d’un contacte no és fiable, ja que en la majoria dels casos es pot no definir explícitament el contacte a les factures.
 rateMustBeNumeric=El marge ha de ser un valor numèric
 markRateShouldBeLesserThan100=El marge té que ser menor que 100
 ShowMarginInfos=Mostrar info de marges
 CheckMargins=Detall de marges
-MarginPerSaleRepresentativeWarning=L'informe de marge per usuari utilitza el vincle entre tercers i representants de vendes per calcular el marge de cada representant de venda. Com que algunes terceres parts no poden tenir cap representant de venda i algunes terceres parts poden estar vinculades a diverses, és possible que no s'incloguin alguns imports en aquest informe (si no hi ha representant de venda) i alguns poden aparèixer en diferents línies (per a cada representant de la venda).
+MarginPerSaleRepresentativeWarning=L'informe de marge per usuari utilitza el vincle entre tercers i representants de vendes per calcular el marge de cada representant de venda. Com que algunes terceres parts no poden tenir cap representant de vendes dedicat i alguns tercers poden estar vinculats a diversos, alguns imports podrien no incloure's en aquest informe (si no hi ha representant de venda) i alguns podrien aparèixer en diferents línies (per a cada representant de venda) .

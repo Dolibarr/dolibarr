@@ -11,17 +11,8 @@ YourEMail=E-post for betalingsbekreftelsen
 Creditor=Kreditor
 PaymentCode=Betalingskode
 PayBoxDoPayment=Betal med Paybox
-ToPay=Utfør betaling
 YouWillBeRedirectedOnPayBox=Du vil bli omdirigert til den sikrede Paybox siden for innlegging av kredittkortinformasjon
 Continue=Neste
-ToOfferALinkForOnlinePayment=URL for %s betaling
-ToOfferALinkForOnlinePaymentOnOrder=URL for å tilby et %s online betalingsgrensesnitt for en salgsordre
-ToOfferALinkForOnlinePaymentOnInvoice=URL for å tilby et %s brukergrensesnitt for online betaling av kundefaktura
-ToOfferALinkForOnlinePaymentOnContractLine=URL for å tilby et %s brukergrensesnitt for online betaling av en kontraktlinje
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL for å tilby et %s brukergrensesnitt for online betaling av et fribeløp beløp
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL for å tilby et %s brukergrensesnitt for online betaling av medlemsabonnement
-ToOfferALinkForOnlinePaymentOnDonation=URL for å tilby en %s online betaling, brukergrensesnitt for betaling av donasjon
-YouCanAddTagOnUrl=Du kan også legge til URL-parameter <b>&tag=<i>verdier</i></b> til noen av disse URLene (kreves kun ved betaling av fribeløp) for å legge til dine egne merknader til betalingen kommentar.
 SetupPayBoxToHavePaymentCreatedAutomatically=Oppsett din Paybox med url <b> %s </b> for å få betaling opprettet automatisk når den er validert av Paybox.
 YourPaymentHasBeenRecorded=Denne siden bekrefter at din betaling er registrert. Takk.
 YourPaymentHasNotBeenRecorded=Betalingen din er IKKE registrert, og transaksjonen er kansellert. Takk skal du ha.

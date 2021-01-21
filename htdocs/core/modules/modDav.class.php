@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -23,7 +23,7 @@
  *  \ingroup    dav
  *  \brief      Description and activation file for module dav
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -38,9 +38,9 @@ class modDav extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-        global $langs,$conf;
+		global $langs, $conf;
 
-        $this->db = $db;
+		$this->db = $db;
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
@@ -70,7 +70,7 @@ class modDav extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto='generic';
+		$this->picto = 'generic';
 
 		// Defined all module parts (triggers, login, substitutions, menus, css, etc...)
 		// for default path (eg: /dav/core/xxxxx) (0=disable, 1=enable)
@@ -80,21 +80,21 @@ class modDav extends DolibarrModules
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/dav/temp","/dav/subdir");
-		$this->dirs = array("/dav/temp","/dav/public","/dav/private");
+		$this->dirs = array("/dav/temp", "/dav/public", "/dav/private");
 
 		// Config pages. Put here list of php page, stored into dav/admin directory, to use to setup module.
 		$this->config_page_url = array("dav.php");
 
 		// Dependencies
-		$this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->hidden = false; // A condition to hide module
+		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->langfiles = array("admin");
-		$this->phpmin = array(5,6);					// Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(7,0);	// Minimum version of Dolibarr required by module
-		$this->warnings_activation = array();                     // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
-		$this->warnings_activation_ext = array();                 // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->need_dolibarr_version = array(7, 0); // Minimum version of Dolibarr required by module
+		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		//$this->automatic_activation = array('FR'=>'davWasAutomaticallyActivatedBecauseOfYourCountryChoice');
 		//$this->always_enabled = true;								// If true, can't be disabled
 
@@ -108,21 +108,21 @@ class modDav extends DolibarrModules
 		);
 
 
-		if (! isset($conf->dav) || ! isset($conf->dav->enabled))
+		if (!isset($conf->dav) || !isset($conf->dav->enabled))
 		{
-			$conf->dav=new stdClass();
-			$conf->dav->enabled=0;
+			$conf->dav = new stdClass();
+			$conf->dav->enabled = 0;
 		}
 
 
 		// Array to add new pages in new tabs
-        $this->tabs = array();
+		$this->tabs = array();
 		// Example:
 		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@dav:$user->rights->dav->read:/dav/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
-        // $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@dav:$user->rights->othermodule->read:/dav/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
-        // $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
-        //
-        // Where objecttype can be
+		// $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@dav:$user->rights->othermodule->read:/dav/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
+		// $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
+		//
+		// Where objecttype can be
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
 		// 'contact'          to add a tab in contact view
 		// 'contract'         to add a tab in contract view
@@ -144,9 +144,9 @@ class modDav extends DolibarrModules
 		// 'user'             to add a tab in user view
 
 
-        // Dictionaries
-		$this->dictionaries=array();
-        /* Example:
+		// Dictionaries
+		$this->dictionaries = array();
+		/* Example:
         $this->dictionaries=array(
             'langs'=>'mylangfile@dav',
             'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
@@ -162,13 +162,13 @@ class modDav extends DolibarrModules
         */
 
 
-        // Boxes/Widgets
+		// Boxes/Widgets
 		// Add here list of php file(s) stored in dav/core/boxes that contains class to show a widget.
-        $this->boxes = array(
-        	//0=>array('file'=>'davwidget1.php@dav','note'=>'Widget provided by dav','enabledbydefaulton'=>'Home'),
-        	//1=>array('file'=>'davwidget2.php@dav','note'=>'Widget provided by dav'),
-        	//2=>array('file'=>'davwidget3.php@dav','note'=>'Widget provided by dav')
-        );
+		$this->boxes = array(
+			//0=>array('file'=>'davwidget1.php@dav','note'=>'Widget provided by dav','enabledbydefaulton'=>'Home'),
+			//1=>array('file'=>'davwidget2.php@dav','note'=>'Widget provided by dav'),
+			//2=>array('file'=>'davwidget3.php@dav','note'=>'Widget provided by dav')
+		);
 
 
 		// Cronjobs (List of cron jobs entries to add when module is enabled)
@@ -182,7 +182,7 @@ class modDav extends DolibarrModules
 
 
 		// Permissions
-		$this->rights = array();		// Permission array used by this module
+		$this->rights = array(); // Permission array used by this module
 
 		/*
 		$r=0;
@@ -208,8 +208,8 @@ class modDav extends DolibarrModules
 		*/
 
 		// Main menu entries
-		$this->menu = array();			// List of menus to add
-		$r=0;
+		$this->menu = array(); // List of menus to add
+		$r = 0;
 
 		// Add here entries to declare new menus
 
@@ -255,28 +255,6 @@ class modDav extends DolibarrModules
 								'target'=>'',
 								'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
 		END MODULEBUILDER LEFTMENU MYOBJECT */
-
-
-		// Exports
-		$r=1;
-
-		/* BEGIN MODULEBUILDER EXPORT MYOBJECT */
-		/*
-		$langs->load("dav@dav");
-		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->export_icon[$r]='myobject@dav';
-		$keyforclass = 'MyObject'; $keyforclassfile='/mymobule/class/myobject.class.php'; $keyforelement='myobject';
-		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-		$keyforselect='myobject'; $keyforaliasextra='extra'; $keyforelement='myobject';
-		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		//$this->export_dependencies_array[$r]=array('mysubobject'=>'ts.rowid', 't.myfield'=>array('t.myfield2','t.myfield3')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
-		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'myobject as t';
-		$this->export_sql_end[$r] .=' WHERE 1 = 1';
-		$this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('myobject').')';
-		$r++; */
-		/* END MODULEBUILDER EXPORT MYOBJECT */
 	}
 
 	/**
@@ -284,7 +262,7 @@ class modDav extends DolibarrModules
 	 *	The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *	It also creates data directories
 	 *
-     *	@param      string	$options    Options when enabling module ('', 'noboxes')
+	 *	@param      string	$options    Options when enabling module ('', 'noboxes')
 	 *	@return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')

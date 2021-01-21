@@ -17,7 +17,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 --
 
@@ -74,13 +74,13 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (150, 'dolresource','internal', 'USERINCHARGE',     'In charge of resource', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (151, 'dolresource','external', 'THIRDINCHARGE',    'In charge of resource', 1);
 
--- All project code must start with 'PROJECT'
+-- All project code can start with 'PROJECT'
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (160, 'project',  'internal', 'PROJECTLEADER', 'Chef de Projet', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (161, 'project',  'internal', 'PROJECTCONTRIBUTOR', 'Intervenant', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (170, 'project',  'external', 'PROJECTLEADER', 'Chef de Projet', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (171, 'project',  'external', 'PROJECTCONTRIBUTOR', 'Intervenant', 1);
 
--- All task code must start with 'TASK'
+-- All task code can start with 'TASK'
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (180, 'project_task',  'internal', 'TASKEXECUTIVE', 'Responsable', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (181, 'project_task',  'internal', 'TASKCONTRIBUTOR', 'Intervenant', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (190, 'project_task',  'external', 'TASKEXECUTIVE', 'Responsable', 1);

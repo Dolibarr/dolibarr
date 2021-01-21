@@ -16,12 +16,13 @@ StripeDoPayment=Maksājiet ar svītru
 YouWillBeRedirectedOnStripe=Jūs tiksiet novirzīts uz drošo lapu, lai ievadītu kredītkartes informāciju
 Continue=Nākamais
 ToOfferALinkForOnlinePayment=maksājumu %s URL
-ToOfferALinkForOnlinePaymentOnOrder=URL, lai piedāvātu tiešsaistes maksājuma lietotāja interfeisu %s pārdošanas pasūtījumam
-ToOfferALinkForOnlinePaymentOnInvoice=URL piedāvāt %s tiešsaistes maksājumu lietotāja interfeisu klientu rēķina
-ToOfferALinkForOnlinePaymentOnContractLine=URL piedāvāt %s tiešsaistes maksājumu lietotāja interfeisu līguma līnijas
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL piedāvāt %s tiešsaistes maksājumu lietotāja saskarni par brīvu summu
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL piedāvāt %s tiešsaistes maksājumu lietotāja interfeisu locekli abonementu
-YouCanAddTagOnUrl=Jūs varat arī pievienot url parametrs <b>&amp; Tag = <i>vērtība,</i></b> kādu no šiem URL (nepieciešams tikai bezmaksas samaksu), lai pievienotu savu maksājumu komentāru tagu.
+ToOfferALinkForOnlinePaymentOnOrder=URL, kas piedāvā %s tiešsaistes maksājuma lapu pārdošanas pasūtījumam
+ToOfferALinkForOnlinePaymentOnInvoice=URL, lai piedāvātu %s tiešsaistes maksājuma lapu klienta rēķinam
+ToOfferALinkForOnlinePaymentOnContractLine=URL, kas piedāvā %s tiešsaistes maksājuma lapu par līguma līniju
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL, lai piedāvātu %s tiešsaistes maksājumu lapu par jebkuru summu, kurai nav esoša objekta
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL, lai piedāvātu %s tiešsaistes maksājuma lapu dalībnieka abonementam
+ToOfferALinkForOnlinePaymentOnDonation=URL, lai piedāvātu tiešsaistes maksājuma lapu %s ziedojuma samaksai
+YouCanAddTagOnUrl=Varat arī pievienot URL parametru <b>&amp; tag = <i>vērtību</i></b> jebkuram no šiem URL (obligāts tikai maksājumam, kas nav saistīts ar objektu), lai pievienotu savu maksājuma komentāra tagu. <br> Maksājumu URL, kuriem nav neviena objekta, varat pievienot arī parametru <strong>&amp; noidempotency = 1,</strong> lai vienu un to pašu saiti ar vienu tagu varētu izmantot vairākas reizes (dažos maksājuma režīmos var būt ierobežots maksājums līdz 1 par katru atšķirīgo saiti bez šī parametra).
 SetupStripeToHavePaymentCreatedAutomatically=Set up your Stripe ar url <b> %s </b>, lai maksājums tiktu izveidots automātiski, ja to apstiprina Stripe.
 AccountParameter=Konta parametri
 UsageParameter=Izmantošanas parametri
@@ -31,6 +32,7 @@ VendorName=Pārdevēja nosaukums
 CSSUrlForPaymentForm=CSS stila lapas url maksājuma formu
 NewStripePaymentReceived=Saņemta jauna josla maksājums
 NewStripePaymentFailed=New Stripe maksājums tika izmēģināts, bet neizdevās
+FailedToChargeCard=Failed to charge card
 STRIPE_TEST_SECRET_KEY=Slepena testa atslēga
 STRIPE_TEST_PUBLISHABLE_KEY=Publicējamais testa taustiņš
 STRIPE_TEST_WEBHOOK_KEY=Webhooka testa atslēga
@@ -67,3 +69,4 @@ ToOfferALinkForTestWebhook=Saite uz iestatījumu Stripe WebHook, lai izsauktu IP
 ToOfferALinkForLiveWebhook=Saite uz iestatījumu Stripe WebHook, lai izsauktu IPN (tiešraides režīms)
 PaymentWillBeRecordedForNextPeriod=Maksājums tiks reģistrēts par nākamo periodu.
 ClickHereToTryAgain=<a href="%s">Noklikšķiniet šeit, lai mēģinātu vēlreiz ...</a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s

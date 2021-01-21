@@ -2,7 +2,7 @@
 Delivery=Isporuka
 DeliveryRef=Ref Delivery
 DeliveryCard=Receipt card
-DeliveryOrder=Narudžbenica isporuke
+DeliveryOrder=Delivery receipt
 DeliveryDate=Datum isporuke
 CreateDeliveryOrder=Generate delivery receipt
 DeliveryStateSaved=Status isporuke sačuvan
@@ -18,13 +18,14 @@ StatusDeliveryCanceled=Poništeno
 StatusDeliveryDraft=Nacrt
 StatusDeliveryValidated=Primljeno
 # merou PDF model
-NameAndSignature=Ime i potpis:
+NameAndSignature=Name and Signature:
 ToAndDate=Za___________________________________ dana ____/_____/__________
 GoodStatusDeclaration=Roba navedena iznad je primljena u dobrom stanju,
-Deliverer=Isporučio:
+Deliverer=Deliverer:
 Sender=Pošiljalac
 Recipient=Primalac
 ErrorStockIsNotEnough=Nema dovoljno zaliha
 Shippable=Isporučivo
 NonShippable=Nije isporučivo
 ShowReceiving=Show delivery receipt
+NonExistentOrder=Nonexistent order

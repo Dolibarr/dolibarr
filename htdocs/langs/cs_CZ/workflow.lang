@@ -1,20 +1,23 @@
 # Dolibarr language file - Source file is en_US - workflow
 WorkflowSetup=Nastavení workflow modulu
-WorkflowDesc=Tento modul je určen k úpravě chování automatických akcí, v aplikaci. Ve výchozím nastavení workflow je otevřen (uděláte něco, co chcete). Můžete aktivovat automatické akce, které jsou zajímavé.
+WorkflowDesc=Tento modul poskytuje několik automatických akcí. Ve výchozím nastavení je pracovní postup otevřený (můžete dělat věci v pořadí, které chcete), ale zde můžete aktivovat některé automatické akce.
 ThereIsNoWorkflowToModify=Workflow zde není nastaven, můžete upravit modul pokud ho chcete aktivovat.
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed (new order will have same amount than proposal)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (new invoice will have same amount than proposal)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatické vytvoření objednávky prodeje po podpisu obchodního návrhu (nová objednávka bude mít stejnou částku jako návrh)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automaticky vytvořit zákaznickou fakturu po podpisu obchodního návrhu (nová faktura bude mít stejnou částku jako návrh)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automaticky vytvoří zákaznickou faktury poté, co smlouva byla ověřena
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a customer order is closed (new invoice will have same amount than order)
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automaticky vytvořit zákaznickou fakturu po uzavření prodejní objednávky (nová faktura bude mít stejnou částku jako objednávka)
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer order is set to billed (and if amount of the order is same than total amount of signed linked proposals)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of signed linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of linked orders)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid (and if amount of the invoice is same than total amount of linked orders)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source customer order to shipped when a shipment is validated (and if quantity shipped by all shipments is the same as in the order to update)
-# Autoclassify supplier order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked orders)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Zařadit návrh propojeného zdroje jako fakturovaný, když je objednávka prodeje nastavena na fakturaci (a pokud je výše objednávky shodná s celkovou částkou podepsaného propojeného návrhu)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Zařadit návrh propojeného zdroje jako fakturovaný při potvrzení faktury zákazníka (a pokud je částka faktury shodná s celkovou částkou podepsaného propojeného návrhu)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Zařadit propojenou prodejní objednávku jako fakturovanou při ověření faktury zákazníka (a pokud je částka faktury shodná s celkovou částkou propojené objednávky)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Zařadit propojenou prodejní objednávku jako fakturovanou, když je zákaznická faktura nastavena jako zaplacená (a pokud je částka faktury shodná s celkovou částkou propojené objednávky)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Klasifikujte propojenou prodejní objednávku dodávanou při ověření zásilky (a pokud je množství odeslané všemi zásilkami stejné jako v aktualizovaném pořadí)
+# Autoclassify purchase order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Označte návrh dodavatele propojeného zdroje jako fakturovaný při validaci dodavatele (a pokud je částka faktury shodná s celkovou částkou propojeného návrhu)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Zařadit propojenou objednávku zdroje jako fakturovanou fakturaci dodavatele (a pokud je částka faktury shodná s celkovou částkou propojené objednávky)
+descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
 AutomaticCreation=Automatická tvorba
 AutomaticClassification=Automatická klasifikace

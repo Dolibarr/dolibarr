@@ -11,7 +11,7 @@ class SegmentException extends Exception
  *
  * @copyright  2008 - Julien Pauli - Cyril PIERRE de GEYER - Anaska (http://www.anaska.com)
  * @copyright  2012 - Stephen Larroque - lrq3000@gmail.com
- * @license    http://www.gnu.org/copyleft/gpl.html  GPL License
+ * @license    https://www.gnu.org/copyleft/gpl.html  GPL License
  * @version 1.4.5 (last update 2013-04-07)
  */
 class Segment implements IteratorAggregate, Countable
@@ -231,14 +231,10 @@ class Segment implements IteratorAggregate, Countable
             //throw new SegmentException("var $key not found in {$this->getName()}");
         }
 
-		$value=$this->odf->htmlToUTFAndPreOdf($value);
+        $tag = $this->odf->getConfig('DELIMITER_LEFT') . $key . $this->odf->getConfig('DELIMITER_RIGHT');
 
-		$value = $encode ? htmlspecialchars($value) : $value;
-		$value = ($charset == 'ISO-8859') ? utf8_encode($value) : $value;
-
-		$value=$this->odf->preOdfToOdf($value);
-
-        $this->vars[$this->odf->getConfig('DELIMITER_LEFT') . $key . $this->odf->getConfig('DELIMITER_RIGHT')] = $value;
+		$this->vars[$tag] = $this->odf->convertVarToOdf($value, $encode, $charset);
+        
         return $this;
     }
     /**

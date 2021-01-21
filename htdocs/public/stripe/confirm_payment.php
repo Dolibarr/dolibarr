@@ -12,15 +12,17 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // TODO Do we really need this page. We alread have a ipn.php page !
 
-define("NOLOGIN", 1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+if (!defined('NOLOGIN'))		define("NOLOGIN", 1); // This means this output page does not require to be logged.
+if (!defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
 
-$entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) define("DOLENTITY", $entity);
 
 require '../../main.inc.php';
@@ -34,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 
-require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php';
+require_once DOL_DOCUMENT_ROOT.'/includes/stripe/stripe-php/init.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
 if (empty($conf->stripe->enabled)) accessforbidden('', 0, 0, 1);
@@ -45,27 +47,22 @@ if (isset($_GET['connect']))
 {
 	if (isset($_GET['test']))
 	{
-		$endpoint_secret =  $conf->global->STRIPE_TEST_WEBHOOK_CONNECT_KEY;
+		$endpoint_secret = $conf->global->STRIPE_TEST_WEBHOOK_CONNECT_KEY;
 		$service = 'StripeTest';
 		$servicestatus = 0;
-	}
-	else
-	{
-		$endpoint_secret =  $conf->global->STRIPE_LIVE_WEBHOOK_CONNECT_KEY;
+	} else {
+		$endpoint_secret = $conf->global->STRIPE_LIVE_WEBHOOK_CONNECT_KEY;
 		$service = 'StripeLive';
-        $servicestatus = 1;
+		$servicestatus = 1;
 	}
-}
-else {
+} else {
 	if (isset($_GET['test']))
 	{
-		$endpoint_secret =  $conf->global->STRIPE_TEST_WEBHOOK_KEY;
+		$endpoint_secret = $conf->global->STRIPE_TEST_WEBHOOK_KEY;
 		$service = 'StripeTest';
 		$servicestatus = 0;
-	}
-	else
-	{
-		$endpoint_secret =  $conf->global->STRIPE_LIVE_WEBHOOK_KEY;
+	} else {
+		$endpoint_secret = $conf->global->STRIPE_LIVE_WEBHOOK_KEY;
 		$service = 'StripeLive';
 		$servicestatus = 1;
 	}
@@ -85,11 +82,11 @@ $user->fetch($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS);
 $user->getrights();
 
 // list of  action
-$stripe=new Stripe($db);
+$stripe = new Stripe($db);
 
 // Subject
 $societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
-if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
+if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
 
 
 dol_syslog("Stripe confirm_payment was called");
@@ -105,57 +102,57 @@ $json_obj = json_decode($json_str);
 
 $intent = null;
 try {
-    if (isset($json_obj->payment_method_id)) {
-        // Create the PaymentIntent
-        $intent = \Stripe\PaymentIntent::create(array(
-            'payment_method' => $json_obj->payment_method_id,
-            'amount' => 1099,
-            'currency' => 'eur',
-            'confirmation_method' => 'manual',
-            'confirm' => true,
-        ));
-    }
-    if (isset($json_obj->payment_intent_id)) {
-        $intent = \Stripe\PaymentIntent::retrieve(
-            $json_obj->payment_intent_id
-            );
-        $intent->confirm();
-    }
-    generatePaymentResponse($intent);
+	if (isset($json_obj->payment_method_id)) {
+		// Create the PaymentIntent
+		$intent = \Stripe\PaymentIntent::create(array(
+			'payment_method' => $json_obj->payment_method_id,
+			'amount' => 1099,
+			'currency' => 'eur',
+			'confirmation_method' => 'manual',
+			'confirm' => true,
+		));
+	}
+	if (isset($json_obj->payment_intent_id)) {
+		$intent = \Stripe\PaymentIntent::retrieve(
+			$json_obj->payment_intent_id
+			);
+		$intent->confirm();
+	}
+	generatePaymentResponse($intent);
 } catch (\Stripe\Error\Base $e) {
-    // Display error on client
-    echo json_encode(array(
-        'error' => $e->getMessage()
-    ));
+	// Display error on client
+	echo json_encode(array(
+		'error' => $e->getMessage()
+	));
 }
 
-/*
- * generate payment response
+/**
+ * Generate payment response
  *
  * @param \Stripe\PaymentIntent $intent PaymentIntent
  * @return void
  */
 function generatePaymentResponse($intent)
 {
-    if ($intent->status == 'requires_source_action' &&
-        $intent->next_action->type == 'use_stripe_sdk') {
-        // Tell the client to handle the action
-        echo json_encode(array(
-            'requires_action' => true,
-            'payment_intent_client_secret' => $intent->client_secret
-        ));
-    } elseif ($intent->status == 'succeeded') {
-        // The payment didn’t need any additional actions and completed!
-        // Handle post-payment fulfillment
+	if ($intent->status == 'requires_source_action' &&
+		$intent->next_action->type == 'use_stripe_sdk') {
+		// Tell the client to handle the action
+		echo json_encode(array(
+			'requires_action' => true,
+			'payment_intent_client_secret' => $intent->client_secret
+		));
+	} elseif ($intent->status == 'succeeded') {
+		// The payment didn’t need any additional actions and completed!
+		// Handle post-payment fulfillment
 
-        // TODO
+		// TODO
 
-        echo json_encode(array(
-            "success" => true
-        ));
-    } else {
-        // Invalid status
-        http_response_code(500);
-        echo json_encode(array('error' => 'Invalid PaymentIntent status'));
-    }
+		echo json_encode(array(
+			"success" => true
+		));
+	} else {
+		// Invalid status
+		http_response_code(500);
+		echo json_encode(array('error' => 'Invalid PaymentIntent status'));
+	}
 }

@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,23 +29,22 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","members","bills"));
+$langs->loadLangs(array("companies", "members", "bills"));
 
-$action=GETPOST('action', 'alpha');
-$id=GETPOST('id', 'int');
+$action = GETPOST('action', 'aZ09');
+$id = GETPOST('id', 'int');
 
 // Security check
-$result=restrictedArea($user, 'adherent', $id);
+$result = restrictedArea($user, 'adherent', $id);
 
 $object = new Adherent($db);
-$result=$object->fetch($id);
-if ($result > 0)
-{
-    $adht = new AdherentType($db);
-    $result=$adht->fetch($object->typeid);
+$result = $object->fetch($id);
+if ($result > 0) {
+	$adht = new AdherentType($db);
+	$result = $adht->fetch($object->typeid);
 }
 
-$permissionnote=$user->rights->adherent->creer;  // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->rights->adherent->creer; // Used by the include of actions_setnotes.inc.php
 
 /*
  * Actions
@@ -58,64 +57,62 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, 
 /*
  * View
  */
-$title=$langs->trans("Member") . " - " . $langs->trans("Note");
-$helpurl="EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros";
+$title = $langs->trans("Member")." - ".$langs->trans("Note");
+$helpurl = "EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros";
 llxHeader("", $title, $helpurl);
 
 $form = new Form($db);
 
-if ($id)
-{
+if ($id) {
 	$head = member_prepare_head($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("Member"), -1, 'user');
+	print dol_get_fiche_head($head, 'note', $langs->trans("Member"), -1, 'user');
 
 	print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'id', $linkback);
 
-    print '<div class="fichecenter">';
+	print '<div class="fichecenter">';
 
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
-    // Login
-    if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
-    {
-        print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
-    }
+	// Login
+	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+		print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+	}
 
-    // Type
-    print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
+	// Type
+	print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
-    // Morphy
-    print '<tr><td class="titlefield">'.$langs->trans("MemberNature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
-    /*print '<td rowspan="'.$rowspan.'" class="center" valign="middle" width="25%">';
+	// Morphy
+	print '<tr><td class="titlefield">'.$langs->trans("MemberNature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
+	/*print '<td rowspan="'.$rowspan.'" class="center" valign="middle" width="25%">';
     print $form->showphoto('memberphoto',$member);
     print '</td>';*/
-    print '</tr>';
+	print '</tr>';
 
-    // Company
-    print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'</td></tr>';
+	// Company
+	print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->company.'</td></tr>';
 
-    // Civility
-    print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
-    print '</tr>';
+	// Civility
+	print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
+	print '</tr>';
 
-    print "</table>";
+	print "</table>";
 
-    print '</div>';
-
-
-    $cssclass='titlefield';
-    $permission = $user->rights->adherent->creer;  // Used by the include of notes.tpl.php
-    include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
+	print '</div>';
 
 
-    dol_fiche_end();
+	$cssclass = 'titlefield';
+	$permission = $user->rights->adherent->creer; // Used by the include of notes.tpl.php
+	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
+
+
+	print dol_get_fiche_end();
 }
 
 // End of page

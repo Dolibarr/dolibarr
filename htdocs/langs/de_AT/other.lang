@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - other
-DateToBirth=Geburtstdatum
 Notify_PROPAL_SENTBYMAIL=Gewerbliche Vorschlag per Post
 Notify_WITHDRAW_TRANSMIT=Transmission Rückzug
 Notify_WITHDRAW_CREDIT=Kreditkarten Rückzug
@@ -8,7 +7,7 @@ Notify_COMPANY_CREATE=Dritter erstellt
 Notify_BILL_CANCEL=Kunden Rechnung storniert
 Notify_BILL_SENTBYMAIL=Kunden Rechnung per Post geschickt
 Notify_CONTRACT_VALIDATE=Contract validiert
-Notify_FICHEINTER_VALIDATE=Intervention validiert
+Notify_FICHINTER_VALIDATE=Intervention validiert
 Notify_SHIPPING_VALIDATE=Liefer-validierte
 Notify_SHIPPING_SENTBYMAIL=Versand per Post
 Notify_MEMBER_VALIDATE=Mitglied validiert

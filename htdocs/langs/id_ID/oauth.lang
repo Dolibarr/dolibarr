@@ -1,30 +1,32 @@
 # Dolibarr language file - Source file is en_US - oauth
-ConfigOAuth=Oauth Configuration
-OAuthServices=OAuth services
-ManualTokenGeneration=Manual token generation
-TokenManager=Token manager
-IsTokenGenerated=Is token generated ?
-NoAccessToken=No access token saved into local database
-HasAccessToken=A token was generated and saved into local database
-NewTokenStored=Token received and saved
-ToCheckDeleteTokenOnProvider=Click here to check/delete authorization saved by %s OAuth provider
-TokenDeleted=Token deleted
-RequestAccess=Click here to request/renew access and receive a new token to save
-DeleteAccess=Click here to delete token
-UseTheFollowingUrlAsRedirectURI=Use the following URL as the Redirect URI when creating your credential on your OAuth provider:
-ListOfSupportedOauthProviders=Enter here credential provided by your OAuth2 provider. Only supported OAuth2 providers are visible here. This setup may be used by other modules that need OAuth2 authentication.
-OAuthSetupForLogin=Page to generate an OAuth token
-SeePreviousTab=See previous tab
-OAuthIDSecret=OAuth ID and Secret
-TOKEN_REFRESH=Token Refresh Present
-TOKEN_EXPIRED=Token expired
-TOKEN_EXPIRE_AT=Token expire at
-TOKEN_DELETE=Delete saved token
-OAUTH_GOOGLE_NAME=Oauth Google service
-OAUTH_GOOGLE_ID=Oauth Google Id
-OAUTH_GOOGLE_SECRET=Oauth Google Secret
-OAUTH_GOOGLE_DESC=Go on <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">this page</a> then "Credentials" to create Oauth credentials
-OAUTH_GITHUB_NAME=Oauth GitHub service
-OAUTH_GITHUB_ID=Oauth GitHub Id
-OAUTH_GITHUB_SECRET=Oauth GitHub Secret
-OAUTH_GITHUB_DESC=Go on <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">this page</a> then "Register a new application" to create Oauth credentials
+ConfigOAuth=Konfigurasi OAuth
+OAuthServices=Layanan OAuth
+ManualTokenGeneration=Pembuatan token manual
+TokenManager=Manajer Token
+IsTokenGenerated=Apakah token dibuat?
+NoAccessToken=Tidak ada token akses yang disimpan ke dalam basis data lokal
+HasAccessToken=Token dibuat dan disimpan ke dalam basis data lokal
+NewTokenStored=Token diterima dan disimpan
+ToCheckDeleteTokenOnProvider=Klik di sini untuk memeriksa / menghapus otorisasi yang disimpan oleh penyedia OAuth %s
+TokenDeleted=Token dihapus
+RequestAccess=Klik di sini untuk meminta / memperbarui akses dan menerima token baru untuk disimpan
+DeleteAccess=Klik di sini untuk menghapus token
+UseTheFollowingUrlAsRedirectURI=Gunakan URL berikut sebagai Redirect URI saat membuat kredensial Anda dengan penyedia OAuth Anda:
+ListOfSupportedOauthProviders=Masukkan kredensial yang disediakan oleh penyedia OAuth2 Anda. Hanya penyedia OAuth2 yang didukung yang terdaftar di sini. Layanan ini dapat digunakan oleh modul lain yang membutuhkan otentikasi OAuth2.
+OAuthSetupForLogin=Halaman untuk menghasilkan token OAuth
+SeePreviousTab=Lihat tab sebelumnya
+OAuthIDSecret=ID dan Rahasia OAuth
+TOKEN_REFRESH=Token Segarkan Sekarang
+TOKEN_EXPIRED=Token kedaluwarsa
+TOKEN_EXPIRE_AT=Token kedaluwarsa pada
+TOKEN_DELETE=Hapus token yang disimpan
+OAUTH_GOOGLE_NAME=Layanan Google OAuth
+OAUTH_GOOGLE_ID=OAuth Google Id
+OAUTH_GOOGLE_SECRET=OAuth Google Secret
+OAUTH_GOOGLE_DESC=Pergi ke <a class="notasortlink" href="https://console.developers.google.com/" target="_blank"> halaman ini </a> lalu "Kredensial" untuk membuat kredensial OAuth
+OAUTH_GITHUB_NAME=Layanan GitHub OAuth
+OAUTH_GITHUB_ID=Id GitHub OAuth
+OAUTH_GITHUB_SECRET=Rahasia GitHub OAuth
+OAUTH_GITHUB_DESC=Pergi ke <a class="notasortlink" href="https://github.com/settings/developers" target="_blank"> halaman ini </a> lalu "Daftarkan aplikasi baru" untuk membuat kredensial OAuth
+OAUTH_STRIPE_TEST_NAME=Tes Strip OAuth
+OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live

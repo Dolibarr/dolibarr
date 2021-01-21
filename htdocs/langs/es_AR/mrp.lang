@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - mrp
+Mrp=Ordenes de Fabricación
+ManufacturingOrder=Orden de Fabricación
+MRPDescription=Módulo para administrar producción y Ordenes de Fabricación (OF).
+MRPArea=Area MRP
+MrpSetupPage=Configuración de módulo MRP
+MenuBOM=Lista de materiales
+LatestBOMModified=Ultimas %s Lista de materiales modificada
+LatestMOModified=Ultimas %s Ordenes de Fabricación modificadas
+Bom=Listas de materiales
+BillOfMaterials=Lista de materiales
+BOMsSetup=Configuración de módulo de BOM
+ListOfBOMs=Lista de Listas de materiales - BOM
+ListOfManufacturingOrders=Lista de Ordenes de Fabricación
+NewBOM=Nueva Lista de materiales
+MenuMRP=Ordenes de Fabricación

@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - projects
+ProjectRef=Chance
 ProjectsArea=Projektbereiche
 PrivateProject=Projekt Kontakte
 AllProjects=Alle Projekte
@@ -15,7 +16,6 @@ MyTimeSpent=Mein Zeitaufwand
 NewTask=Neue Aufgabe
 MyProjectsArea=Mein Projektbereich
 GoToListOfTimeConsumed=Zur Stundenaufwandsliste wechseln
-GoToListOfTasks=Zur Aufgabenliste gehen
 ChildOfProjectTask=Kindelement von Projekt/Aufgabe
 CloseAProject=Projekt schliessen
 ProjectsDedicatedToThisThirdParty=Mit diesem Geschäftspartner verknüpfte Projekte
@@ -26,3 +26,4 @@ CloneTaskFiles=Aufgabe (n) clonen beigetreten Dateien (falls Aufgabe (n) geklont
 ProjectModifiedInDolibarr=Projekt %s bearbeitet
 ProjectReferers=Verknüpfte Objekte
 ResourceNotAssignedToTheTask=Nicht der Aufgabe zugewiesen
+TimeSpentForInvoice=Zeitaufwände

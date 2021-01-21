@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -22,7 +22,7 @@ create table llx_payment_various
   ref                   varchar(30) NULL,           -- payment reference number (currently NULL because there is no numbering manager yet)
   num_payment           varchar(50),				-- num cheque or other
   label                 varchar(255),
-  tms                   timestamp,
+  tms                   timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datec                 datetime,                   -- Create date
   datep                 date,                       -- date de paiement
   datev                 date,                       -- date de valeur (this field should not be here, only into bank tables)

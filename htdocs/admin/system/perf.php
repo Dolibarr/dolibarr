@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -27,9 +27,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("install","other","admin"));
+$langs->loadLangs(array("install", "other", "admin"));
 
-if (! $user->admin)
+if (!$user->admin)
 	accessforbidden();
 
 if (GETPOST('action', 'aZ09') == 'donothing')
@@ -42,106 +42,123 @@ if (GETPOST('action', 'aZ09') == 'donothing')
  * View
  */
 
-$form=new Form($db);
-$nowstring=dol_print_date(dol_now(), 'dayhourlog');
+$form = new Form($db);
+$nowstring = dol_print_date(dol_now(), 'dayhourlog');
 
 llxHeader();
 
 print load_fiche_titre($langs->trans("PerfDolibarr"), '', 'title_setup');
 
-print $langs->trans("YouMayFindPerfAdviceHere", 'https://wiki.dolibarr.org/index.php/FAQ_Increase_Performance').' (<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Reload").'</a>)<br>';
+print '<span class="opacitymedium">'.$langs->trans("YouMayFindPerfAdviceHere", 'https://wiki.dolibarr.org/index.php/FAQ_Increase_Performance').'</span> (<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Reload").'</a>)<br>';
 
 // Recupere la version de PHP
-$phpversion=version_php();
-print "<br>PHP - ".$langs->trans("Version").": ".$phpversion."<br>\n";
+$phpversion = version_php();
+print "<br><strong>PHP</strong> - ".$langs->trans("Version").": ".$phpversion."<br>\n";
 
 // Recupere la version du serveur web
-print "<br>Web server - ".$langs->trans("Version").": ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";
+print "<br><strong>Web server</strong> - ".$langs->trans("Version").": ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";
 
 // XDebug
 print '<br>';
 print '<strong>'.$langs->trans("XDebug").'</strong>: ';
-$test=!function_exists('xdebug_is_enabled');
-if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled");
-else
-{
-	print img_picto('', 'warning').' '.$langs->trans("XDebugInstalled");
-	print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
+$test = !function_exists('xdebug_is_enabled');
+if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotSlowedDownByThis");
+else {
+	print img_picto('', 'warning').' '.$langs->trans("ModuleActivated", $langs->transnoentities("XDebug"));
+	print ' - '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php">XDebug admin page</a>';
+}
+print '<br>';
+
+// Module log
+print '<br>';
+print '<strong>'.$langs->trans("Syslog").'</strong>: ';
+$test = empty($conf->syslog->enabled);
+if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotSlowedDownByThis");
+else {
+	print img_picto('', 'warning').' '.$langs->trans("ModuleActivated", $langs->transnoentities("Syslog"));
+	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
 }
 print '<br>';
 
 // Module debugbar
 print '<br>';
 print '<strong>'.$langs->trans("DebugBar").'</strong>: ';
-$test=empty($conf->debugbar->enabled);
-if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled");
-else
-{
-    print img_picto('', 'warning').' '.$langs->trans("DebugBarModuleActivated");
-    //print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
+$test = empty($conf->debugbar->enabled);
+if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotSlowedDownByThis");
+else {
+	print img_picto('', 'warning').' '.$langs->trans("ModuleActivated", $langs->transnoentities("DebugBar"));
+	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
 }
 print '<br>';
 
 // Applicative cache
 print '<br>';
 print '<strong>'.$langs->trans("ApplicativeCache").'</strong>: ';
-$test=!empty($conf->memcached->enabled);
+$test = !empty($conf->memcached->enabled);
 if ($test)
 {
 	if (!empty($conf->global->MEMCACHED_SERVER))
 	{
 		print img_picto('', 'tick.png').' '.$langs->trans("MemcachedAvailableAndSetup");
 		print ' '.$langs->trans("MoreInformation").' <a href="'.dol_buildpath('/memcached/admin/memcached.php', 1).'">Memcached module admin page</a>';
-	}
-	else
-	{
+	} else {
 		print img_picto('', 'warning').' '.$langs->trans("MemcachedModuleAvailableButNotSetup");
 		print ' <a href="'.dol_buildpath('/memcached/admin/memcached.php', 1).'">Memcached module admin page</a>';
 	}
-}
-else print img_picto('', 'warning').' '.$langs->trans("MemcachedNotAvailable");
+} else print img_picto('', 'warning').' '.$langs->trans("MemcachedNotAvailable");
 print '</br>';
 
 // OPCode cache
 print '<br>';
 print '<strong>'.$langs->trans("OPCodeCache").'</strong>: ';
-$foundcache=0;
-$test=function_exists('xcache_info');
-if (! $foundcache && $test)
+$foundcache = 0;
+$test = function_exists('xcache_info');
+if (!$foundcache && $test)
 {
 	$foundcache++;
-	print img_picto('', 'tick.png').' '.$langs->trans("XCacheInstalled");
-	print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xcache.php'.'">Xcache admin page</a>';
+	print img_picto('', 'tick.png').' '.$langs->trans("PHPModuleLoaded", "XCache");
+	print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xcache.php">Xcache admin page</a>';
 }
-$test=function_exists('eaccelerator_info');
-if (! $foundcache && $test)
+$test = function_exists('eaccelerator_info');
+if (!$foundcache && $test)
 {
 	$foundcache++;
-	print img_picto('', 'tick.png').' '.$langs->trans("EAcceleratorInstalled");
+	print img_picto('', 'tick.png').' '.$langs->trans("PHPModuleLoaded", "Eaccelerator");
 }
-$test=function_exists('opcache_get_status');
-if (! $foundcache && $test)
+$test = function_exists('opcache_get_status');
+if (!$foundcache && $test)
 {
 	$foundcache++;
-	print img_picto('', 'tick.png').' '.$langs->trans("ZendOPCacheInstalled");  // Should be by default starting with PHP 5.5
+	print img_picto('', 'tick.png').' '.$langs->trans("PHPModuleLoaded", "ZendOPCache"); // Should be by default starting with PHP 5.5
 	//$tmp=opcache_get_status();
 	//var_dump($tmp);
 }
-$test=function_exists('apc_cache_info');
-if (! $foundcache && $test)
+$test = function_exists('apc_cache_info');
+if (!$foundcache && $test)
 {
 	//var_dump(apc_cache_info());
 	if (ini_get('apc.enabled'))
 	{
 		$foundcache++;
 		print img_picto('', 'tick.png').' '.$langs->trans("APCInstalled");
-	}
-	else
-	{
+	} else {
 		print img_picto('', 'warning').' '.$langs->trans("APCCacheInstalledButDisabled");
 	}
 }
-if (! $foundcache) print $langs->trans("NoOPCodeCacheFound");
+if (!$foundcache) print $langs->trans("NoOPCodeCacheFound");
+print '<br>';
+
+// Use of preload bootstrap
+if (ini_get('opcache.preload'))
+{
+	print '<br>';
+	print '<strong>'.$langs->trans("PreloadOPCode").'</strong>: ';
+	print ini_get('opcache.preload');
+} else {
+	print '<br>';
+	print '<strong>'.$langs->trans("PreloadOPCode").'</strong>: ';
+	print $langs->trans("No");
+}
 print '<br>';
 
 // HTTPCacheStaticResources
@@ -414,7 +431,6 @@ print '<br>';
 print '<strong>';
 print $form->textwithpicto($langs->trans("CompressionOfResources"), $langs->trans("CompressionOfResourcesDesc"));
 print '</strong>: ';
-//$tmp=getURLContent(DOL_URL_ROOT.'/index.php','GET');var_dump($tmp);
 print '<br>';
 // on PHP
 print '<div id="httpcompphpok">'.img_picto('', 'tick.png').' '.$langs->trans("FilesOfTypeCompressed", 'php (.php)').'</div>';
@@ -437,13 +453,11 @@ print '<strong>'.$langs->trans("DriverType").'</strong>: ';
 print '<br>';
 if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
 {
-	$test=($conf->db->type == 'mysqli');
+	$test = ($conf->db->type == 'mysqli');
 	if ($test)
 	{
 		print img_picto('', 'tick.png').' '.$langs->trans("YouUseBestDriver", $conf->db->type);
-	}
-	else
-	{
+	} else {
 		print img_picto('', 'warning.png').' '.$langs->trans("YouDoNotUseBestDriver", $conf->db->type, 'mysqli');
 	}
 	print '<br>';
@@ -455,28 +469,50 @@ print '<strong>'.$langs->trans("SearchOptim").'</strong>: ';
 print '<br>';
 $tab = array();
 $sql = "SELECT COUNT(*) as nb";
-$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-$resql=$db->query($sql);
+$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+$resql = $db->query($sql);
 if ($resql)
 {
-	$limitforoptim=10000;
-	$num=$db->num_rows($resql);
-	$obj=$db->fetch_object($resql);
-	$nb=$obj->nb;
+	$limitforoptim = 100000;
+	$num = $db->num_rows($resql);
+	$obj = $db->fetch_object($resql);
+	$nb = $obj->nb;
 	if ($nb > $limitforoptim)
 	{
 		if (empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))
 		{
-			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXProductUseSearchOptim", $nb);
+			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"), 'PRODUCT_DONOTSEARCH_ANYWHERE');
+		} else {
+			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"));
 		}
-		else
-		{
-			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXProductAndSearchOptimOn", $nb);
-		}
+	} else {
+		print img_picto('', 'tick.png').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"));
 	}
-	else
+	print '<br>';
+	$db->free($resql);
+}
+
+// Thirdparty search
+$tab = array();
+$sql = "SELECT COUNT(*) as nb";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$resql = $db->query($sql);
+if ($resql)
+{
+	$limitforoptim = 10000;
+	$num = $db->num_rows($resql);
+	$obj = $db->fetch_object($resql);
+	$nb = $obj->nb;
+	if ($nb > $limitforoptim)
 	{
-		print img_picto('', 'tick.png').' '.$langs->trans("NbOfProductIsLowerThanNoPb", $nb);
+		if (empty($conf->global->COMPANY_DONOTSEARCH_ANYWHERE))
+		{
+			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_DONOTSEARCH_ANYWHERE');
+		} else {
+			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ThirdParties"));
+		}
+	} else {
+		print img_picto('', 'tick.png').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("ThirdParties"));
 	}
 	print '<br>';
 	$db->free($resql);
@@ -485,22 +521,13 @@ if ($resql)
 // Browser
 print '<br>';
 print '<strong>'.$langs->trans("Browser").'</strong>:<br>';
-if (! in_array($conf->browser->name, array('chrome','opera','safari','firefox')))
+if (!in_array($conf->browser->name, array('chrome', 'opera', 'safari', 'firefox')))
 {
 	print img_picto('', 'warning.png').' '.$langs->trans("BrowserIsKO", $conf->browser->name);
-}
-else
-{
+} else {
 	print img_picto('', 'tick.png').' '.$langs->trans("BrowserIsOK", $conf->browser->name);
 }
 print '<br>';
-
-// Database statistics update
-/*
-print '<br>';
-print '<strong>'.$langs->trans("DatabaseStatistics").'</strong>: ';
-print '<br>';
-*/
 
 // End of page
 llxFooter();

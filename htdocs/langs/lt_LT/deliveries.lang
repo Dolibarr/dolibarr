@@ -2,7 +2,7 @@
 Delivery=Pristatymas
 DeliveryRef=Ref Delivery
 DeliveryCard=Receipt card
-DeliveryOrder=Pristatymo užsakymas
+DeliveryOrder=Delivery receipt
 DeliveryDate=Pristatymo data
 CreateDeliveryOrder=Generate delivery receipt
 DeliveryStateSaved=Delivery state saved
@@ -18,13 +18,14 @@ StatusDeliveryCanceled=Atšauktas
 StatusDeliveryDraft=Projektas
 StatusDeliveryValidated=Gautas
 # merou PDF model
-NameAndSignature=Vardas, Pavardė ir parašas:
+NameAndSignature=Name and Signature:
 ToAndDate=Kam___________________________________ nuo ____ / _____ / __________
 GoodStatusDeclaration=Prekes, nurodytas aukščiau, gavome geros būklės,
-Deliverer=Pristatė:
+Deliverer=Deliverer:
 Sender=Siuntėjas
 Recipient=Gavėjas
 ErrorStockIsNotEnough=Nėra pakankamai atsargų
 Shippable=Pristatomas
 NonShippable=Nepristatomas
 ShowReceiving=Show delivery receipt
+NonExistentOrder=Nonexistent order

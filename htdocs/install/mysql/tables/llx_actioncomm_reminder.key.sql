@@ -11,15 +11,15 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see http://www.gnu.org/licenses/.
+-- along with this program.  If not, see https://www.gnu.org/licenses/.
 
 
 -- BEGIN MODULEBUILDER INDEXES
-ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_rowid (rowid);
 ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_dateremind (dateremind);
 ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_fk_user (fk_user);
+ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_status (status);
 -- END MODULEBUILDER INDEXES
 
-ALTER TABLE llx_actioncomm_reminder ADD UNIQUE INDEX uk_actioncomm_reminder_unique(fk_user, typeremind, offsetvalue, offsetunit);
+ALTER TABLE llx_actioncomm_reminder ADD UNIQUE INDEX uk_actioncomm_reminder_unique(fk_actioncomm, fk_user, typeremind, offsetvalue, offsetunit);
 
 

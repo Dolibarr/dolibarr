@@ -2,7 +2,7 @@
 Delivery=Envío
 DeliveryRef=Ref. envío
 DeliveryCard=Ficha nota de recepción
-DeliveryOrder=Nota de recepción
+DeliveryOrder=Nota de entrega
 DeliveryDate=Fecha de entrega
 CreateDeliveryOrder=Generar nota de entrega
 DeliveryStateSaved=Estado de entrega guardado
@@ -27,5 +27,6 @@ Recipient=Destinatario
 ErrorStockIsNotEnough=No hay suficiente stock
 Shippable=Enviable
 NonShippable=No enviable
+ShowShippableStatus=Mostrar estado del envío
 ShowReceiving=Mostrar nota de recepción
 NonExistentOrder=Pedido inexistente

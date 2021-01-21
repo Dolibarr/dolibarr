@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -25,7 +25,7 @@
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 require_once '../master.inc.php';
-require_once NUSOAP_PATH.'/nusoap.php';		// Include SOAP
+require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 $langs->load("admin");

@@ -1,0 +1,24 @@
+# Dolibarr language file - Source file is en_US - orders
+Order=Orden
+PdfOrderTitle=Orden
+Orders=Órdenes
+OrderDateShort=Fecha de la Orden
+OrderToProcess=Orden a procesar
+NewOrder=Nueva Orden
+SuppliersOrders=Ordenes de compra
+CustomerOrder=Ordenes de venta
+StatusOrderCanceledShort=Cancelado
+StatusOrderSentShort=En proceso
+StatusOrderSent=Envío en proceso
+StatusOrderToProcessShort=Para procesar
+StatusOrderCanceled=Cancelado
+StatusOrderDraft=Borrador (necesita ser validado)
+ShippingExist=Existe un envío
+StatusSupplierOrderCanceledShort=Cancelado
+StatusSupplierOrderSentShort=En proceso
+StatusSupplierOrderSent=Envío en proceso
+StatusSupplierOrderProcessedShort=Procesado
+StatusSupplierOrderToProcessShort=Para procesar
+StatusSupplierOrderCanceled=Cancelado
+StatusSupplierOrderDraft=Borrador (necesita ser validado)
+StatusSupplierOrderProcessed=Procesado

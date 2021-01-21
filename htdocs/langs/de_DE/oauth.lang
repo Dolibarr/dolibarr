@@ -11,8 +11,8 @@ ToCheckDeleteTokenOnProvider=Klicke hier um prüfen/entfernen Authentifizierung 
 TokenDeleted=Token gelöscht
 RequestAccess=Hier klicken, um Zugang anzufordern/verlängern und neue Token zu speichern
 DeleteAccess=Hier klicken, um das Token zu löschen
-UseTheFollowingUrlAsRedirectURI=Benutzen Sie diese URL zur Weiterleitung, wenn Sie die Anmeldedaten Ihres OAuth Anbieters erstellen.
-ListOfSupportedOauthProviders=Hier Anmeldedaten Ihres OAuth2 Anbieters eintragen. Nur OAuth2 Anbieter werden hier angezeigt. Diese Einstellungen können von anderen Module genutzt werden, die OAuth2 Authentifizierung benötigen.
+UseTheFollowingUrlAsRedirectURI=Verwenden Sie die folgende URL als Umleitungs-URI, wenn Sie Ihre Anmeldeinformationen bei Ihrem OAuth-Anbieter erstellen:
+ListOfSupportedOauthProviders=Geben Sie die Anmeldeinformationen ein, die Sie von Ihrem OAuth2-Anbieter erhalten haben. Hier werden nur unterstützte OAuth2-Anbieter aufgelistet. Diese Dienste können von anderen Modulen verwendet werden, die eine OAuth2-Authentifizierung benötigen.
 OAuthSetupForLogin=Seite um einen OAuth-Token zu erzeugen
 SeePreviousTab=Siehe vorherigen Registerkarte
 OAuthIDSecret=OAuth-ID und Secret
@@ -20,11 +20,13 @@ TOKEN_REFRESH=Aktualisierung des Tokens vorhanden
 TOKEN_EXPIRED=Token abgelaufen
 TOKEN_EXPIRE_AT=Token läuft ab am
 TOKEN_DELETE=Lösche gespeicherten Token
-OAUTH_GOOGLE_NAME=Google API OAuth
-OAUTH_GOOGLE_ID=Google OpenID OAuth
-OAUTH_GOOGLE_SECRET=Google Secret OAuth
-OAUTH_GOOGLE_DESC=Gehen Sie auf <a class="notasortlink" href="https://console.developers.google.com/" target="_blank"> diese Seite </a>  und dann die „Autorisierung“ Google OAuth-Anmeldeinformationen zu erstellen
-OAUTH_GITHUB_NAME=Oauth GitHub Dienst
-OAUTH_GITHUB_ID=Github Client-ID OAuth
-OAUTH_GITHUB_SECRET=Github Client-Secret OAuth
-OAUTH_GITHUB_DESC=Gehen Sie auf <a class="notasortlink" href="https://github.com/settings/developers" target="_blank"> diese Seite </a> dann „eine neue Anwendung registrieren“ Oauth Github Berechtigungsnachweise erstellen
+OAUTH_GOOGLE_NAME=OAuth Google-Dienst
+OAUTH_GOOGLE_ID=OAuth Google-ID
+OAUTH_GOOGLE_SECRET=OAuth Google Secret
+OAUTH_GOOGLE_DESC=Wechseln Sie zu <a class="notasortlink" href="https://console.developers.google.com/" target="_blank"> dieser Seite </a> und dann zu "Anmeldeinformationen", um OAuth-Anmeldeinformationen zu erstellen
+OAUTH_GITHUB_NAME=OAuth GitHub-Dienst
+OAUTH_GITHUB_ID=OAuth GitHub-ID
+OAUTH_GITHUB_SECRET=OAuth GitHub Secret
+OAUTH_GITHUB_DESC=Gehen Sie auf <a class="notasortlink" href="https://github.com/settings/developers" target="_blank"> diese Seite </a>. Anschließend „Eine neue Anwendung registrieren“ um OAuth-Berechtigungsnachweise zu erstellen
+OAUTH_STRIPE_TEST_NAME=OAuth Test Name für Stripe
+OAUTH_STRIPE_LIVE_NAME=OAuth Live Name für Stripe

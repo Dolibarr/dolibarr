@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 body {
@@ -21,6 +21,22 @@ font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;
 background: #f9f9f9;
 /* background-color: #F4F4F4; */
 margin: 5px 5px;
+}
+
+.center {
+	text-align: center;	
+}
+
+.centpercent {
+	width: 100%;	
+}
+
+.valignmiddle {
+	vertical-align: middle;	
+}
+
+inline-block {
+	display: inline-block;	
 }
 
 div.titre {
@@ -147,10 +163,10 @@ padding: 4px 4px 4px 4px;
 
 tr.title
 {
-background: #DDDFDD;
+background: #EEEEEE;
 }
 
-table.login {  border: 1px solid #C0C0C0; background: #FFF; }
+table.login {  border: 1px solid #E0E0E0; background: #FFF; }
 
 .tablesupport {
 	padding: 6px;

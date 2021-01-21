@@ -41,14 +41,13 @@ UMaskExplanation=This parameter allows you to define permissions set by default 
 ListOfDirectories=List of OpenDocument template directories
 ListOfDirectoriesForModelGenODT=List of directories containing template files in OpenDocument format.<br><br>Put here full path of directories.<br>Add a carriage return between each directory.<br>To add a directory of the GED module, add here <b>DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br><br>Files in those directories must end with <b>.odt</b> or <b>.ods</b>.
 FollowingSubstitutionKeysCanBeUsed=<br>To learn how to create your .odt document templates, before storing them in those directories, read wiki documentation:
-Module600Name=Notifications on business event
 Module50200Name=PayPal
 DictionaryAccountancyJournal=Finance journals
 CompanyZip=Postcode
+YouHaveXObjectUseSearchOptim=You have %s %s in the database. You should add the constant %s to 1 in Home-Setup-Other. Limit the search to the beginning of strings which makes it possible for the database to use indexes and you should get an immediate response.
 LDAPFieldZip=Postcode
+ViewProductDescInThirdpartyLanguageAbility=Display products descriptions in forms in the language of the third party (otherwise in the language of the user)
 GenbarcodeLocation=Barcode generation command line tool (used by internal engine for some bar code types). Must be compatible with "genbarcode".<br>For example: /usr/local/bin/genbarcode
-ListOfNotificationsPerUser=List of automatic notifications per user*
-ListOfNotificationsPerUserOrContact=List of possible automatic notifications (on business event) available per user* or per contact**
-ListOfFixedNotifications=List of automatic fixed notifications
 FormatZip=Postcode
-OperationParamDesc=Define values to use for action, or how to extract values. For example:<br>objproperty1=SET:abc<br>objproperty1=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:abc<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey.*[^\\s]+(.*)<br>options_myextrafield=EXTRACT:SUBJECT:([^\\s]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
+OperationParamDesc=Define the values to use for the object of the action, or how to extract values. For example:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing thirdparty in your database. The found (or created) thirdparty will be used for following actions that need it. In the parameter field you can use for example 'EXTRACT:BODY:Name:\\s([^\\s]*)' if you want to extract the name of the thirdparty from a string 'Name: name to find' found into the body.

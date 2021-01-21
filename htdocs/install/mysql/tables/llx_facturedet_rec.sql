@@ -16,7 +16,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -52,7 +52,7 @@ create table llx_facturedet_rec
   buy_price_ht					double(24,8) DEFAULT 0,				-- buying price. Note: this value is saved as an always positive value, even on credit notes (it is price we bought the product before selling it).
   fk_product_fournisseur_price	integer      DEFAULT NULL,			-- reference of supplier price when line was added (may be used to update buy_price_ht current price when future invoice will be created)
   
-  special_code		integer UNSIGNED DEFAULT 0,	-- code pour les lignes speciales
+  special_code		integer UNSIGNED DEFAULT 0,		-- code for special lines
   rang				integer DEFAULT 0,				-- ordre d'affichage
   fk_contract_line  integer NULL,					-- id of contract line when template invoice comes from contract lines
   fk_unit           integer    DEFAULT NULL,

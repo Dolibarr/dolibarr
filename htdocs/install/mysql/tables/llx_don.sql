@@ -15,7 +15,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -25,7 +25,7 @@ create table llx_don
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   ref             varchar(30) DEFAULT NULL,     -- Ref donation (TODO change to NOT NULL)
   entity          integer DEFAULT 1 NOT NULL,	-- multi company id
-  tms             timestamp,
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_statut       smallint NOT NULL DEFAULT 0,  -- Status of donation promise or validate
   datedon         datetime,                     -- Date of the donation/promise
   amount          double(24,8) DEFAULT 0,
@@ -47,6 +47,7 @@ create table llx_don
   fk_projet       integer NULL,                 -- Donation is given for a project ?
   datec           datetime,                     -- Create date
   fk_user_author  integer NOT NULL,
+  fk_user_modif   integer,
   date_valid      datetime,						-- date de validation
   fk_user_valid   integer NULL,
   note_private    text,

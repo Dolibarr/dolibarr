@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -28,18 +28,18 @@
  */
 function mailmanspip_admin_prepare_head()
 {
-    global $langs;
+	global $langs;
 
-    return array(
-        array(
-            DOL_URL_ROOT.'/admin/mailman.php',
-            $langs->trans('Mailman'),
-            'mailman'
-        ),
-        array(
-            DOL_URL_ROOT.'/admin/spip.php',
-            $langs->trans('SPIP'),
-            'spip'
-        )
-    );
+	return array(
+		array(
+			DOL_URL_ROOT.'/admin/mailman.php',
+			$langs->trans('Mailman'),
+			'mailman'
+		),
+		array(
+			DOL_URL_ROOT.'/admin/spip.php',
+			$langs->trans('SPIP'),
+			'spip'
+		)
+	);
 }

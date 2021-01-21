@@ -5,7 +5,7 @@ DeleteResource=Elimina risorsa
 ConfirmDeleteResourceElement=Conferma l'eliminazione della risorsa da questo elemento
 NoResourceInDatabase=Nessuna risorsa nel database
 NoResourceLinked=Nessuna risorsa collegata
-
+ActionsOnResource=Eventi su questa risorsa
 ResourcePageIndex=Elenco delle risorse
 ResourceSingular=Risorsa
 ResourceCard=Scheda risorsa
@@ -34,3 +34,6 @@ IdResource=ID risorsa
 AssetNumber=Numero seriale
 ResourceTypeCode=Codice tipo risorsa
 ImportDataset_resource_1=Risorse
+
+ErrorResourcesAlreadyInUse=Alcune risorse sono in uso
+ErrorResourceUseInEvent=%s utilizzato nell'evento %s

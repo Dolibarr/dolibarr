@@ -13,7 +13,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- Table to declare permanent notifications (per workflow event)
 -- ===================================================================
@@ -21,7 +21,7 @@
 create table llx_notify_def
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  tms             timestamp,
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datec           date,             			-- date de creation
   fk_action       integer NOT NULL,
   fk_soc          integer,

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -39,10 +39,10 @@ function check_user_password_forceuser($usertotest, $passwordtotest, $entitytote
 
 	dol_syslog("functions_forceuser::check_user_password_forceuser");
 
-	$login=$dolibarr_auto_user;
-	if (empty($login)) $login='auto';
+	$login = $dolibarr_auto_user;
+	if (empty($login)) $login = 'auto';
 
-	if ($_SESSION["dol_loginmesg"]) $login='';
+	if ($_SESSION["dol_loginmesg"]) $login = '';
 
 	dol_syslog("functions_forceuser::check_user_password_forceuser ok. forced user = ".$login);
 	return $login;

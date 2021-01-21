@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -110,7 +110,7 @@ print "Working on files into          : ".DOL_DOCUMENT_ROOT."\n";
 print "Include custom in signature    : ".$includecustom."\n";
 print "Include constants in signature : ";
 foreach ($includeconstants as $countrycode => $tmp) {
-    foreach($tmp as $constname => $constvalue) {
+    foreach ($tmp as $constname => $constvalue) {
         print $constname.'='.$constvalue." ";
     }
 }
@@ -125,12 +125,17 @@ $checksumconcat=array();
 
 $outputfile=$outputdir.'/filelist-'.$release.'.xml';
 $fp = fopen($outputfile, 'w');
+if (empty($fp)) {
+	print 'Failed to open file '.$outputfile."\n";
+	exit(-1);
+}
+
 fputs($fp, '<?xml version="1.0" encoding="UTF-8" ?>'."\n");
 fputs($fp, '<checksum_list version="'.$release.'" date="'.dol_print_date(dol_now(), 'dayhourrfc').'" generator="'.$script_file.'">'."\n");
 
 foreach ($includeconstants as $countrycode => $tmp) {
     fputs($fp, '<dolibarr_constants country="'.$countrycode.'">'."\n");
-    foreach($tmp as $constname => $constvalue) {
+    foreach ($tmp as $constname => $constvalue) {
         $valueforchecksum=(empty($constvalue)?'0':$constvalue);
         $checksumconcat[]=$valueforchecksum;
         fputs($fp, '    <constant name="'.$constname.'">'.$valueforchecksum.'</constant>'."\n");
@@ -146,7 +151,7 @@ $iterator1 = new RecursiveIteratorIterator($dir_iterator1);
 $files = new RegexIterator($iterator1, '#^(?:[A-Z]:)?(?:/(?!(?:'.($includecustom?'':'custom\/|').'documents\/|conf\/|install\/))[^/]+)+/[^/]+\.(?:php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$#i');
 */
 $regextoinclude='\.(php|php3|php4|php5|phtml|phps|phar|inc|css|scss|html|xml|js|json|tpl|jpg|jpeg|png|gif|ico|sql|lang|txt|yml|md|mp3|mp4|wav|mkv|z|gz|zip|rar|tar|less|svg|eot|woff|woff2|ttf|manifest)$';
-$regextoexclude='('.($includecustom?'':'custom|').'documents|conf|install|public\/test|Shared\/PCLZip|nusoap\/lib\/Mail|php\/example|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
+$regextoexclude='('.($includecustom?'':'custom|').'documents|conf|install|public\/test|sabre\/sabre\/.*\/tests|Shared\/PCLZip|nusoap\/lib\/Mail|php\/example|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
 $files = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
 $dir='';
 $needtoclose=0;
@@ -164,7 +169,7 @@ foreach ($files as $filetmp) {
     if (filetype($file)=="file") {
         $md5=md5_file($file);
         $checksumconcat[]=$md5;
-        fputs($fp, '    <md5file name="'.basename($file).'">'.$md5.'</md5file>'."\n");
+        fputs($fp, '    <md5file name="'.basename($file).'" size="'.filesize($file).'">'.$md5.'</md5file>'."\n");
     }
 }
 fputs($fp, '  </dir>'."\n");
@@ -207,7 +212,7 @@ foreach ($files as $filetmp) {
     if (filetype($file)=="file") {
         $md5=md5_file($file);
         $checksumconcat[]=$md5;
-        fputs($fp, '    <md5file name="'.basename($file).'">'.$md5.'</md5file>'."\n");
+        fputs($fp, '    <md5file name="'.basename($file).'" size="'.filesize($file).'">'.$md5.'</md5file>'."\n");
     }
 }
 fputs($fp, '  </dir>'."\n");

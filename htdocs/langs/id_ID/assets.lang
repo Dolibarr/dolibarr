@@ -11,55 +11,55 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
 #
-Assets = Assets
-NewAsset = New asset
-AccountancyCodeAsset = Accounting code (asset)
-AccountancyCodeDepreciationAsset = Accounting code (depreciation asset account)
-AccountancyCodeDepreciationExpense = Accounting code (depreciation expense account)
-NewAssetType=New asset type
-AssetsTypeSetup=Asset type setup
-AssetTypeModified=Asset type modified
-AssetType=Asset type
-AssetsLines=Assets
-DeleteType=Delete
-DeleteAnAssetType=Delete an asset type
-ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
-ShowTypeCard=Show type '%s'
+Assets = Aset
+NewAsset = Aset baru
+AccountancyCodeAsset = Kode akuntansi (aset)
+AccountancyCodeDepreciationAsset = Kode akuntansi (akun penyusutan aset)
+AccountancyCodeDepreciationExpense = Kode akuntansi (akun penyusutan pengeluaran)
+NewAssetType=Jenis aset baru
+AssetsTypeSetup=Pengaturan jenis aset
+AssetTypeModified=Jenis aset diubah
+AssetType=Jenis aset
+AssetsLines=Aset
+DeleteType=Hapus
+DeleteAnAssetType=Hapus jenis aset
+ConfirmDeleteAssetType=Anda yakin ingin menghapus jenis aset ini?
+ShowTypeCard=Tampilkan jenis '%s'
 
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Assets
+ModuleAssetsName = Aset
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Assets description
+ModuleAssetsDesc = Deskripsi Aset
 
 #
 # Admin page
 #
-AssetsSetup = Assets setup
-Settings = Settings
-AssetsSetupPage = Assets setup page
-ExtraFieldsAssetsType = Complementary attributes (Asset type)
-AssetsType=Asset type
-AssetsTypeId=Asset type id
-AssetsTypeLabel=Asset type label
-AssetsTypes=Assets types
+AssetsSetup = Pengaturan aset
+Settings = Pengaturan
+AssetsSetupPage = Halaman pengaturan aset
+ExtraFieldsAssetsType = Atribut pelengkap (jenis aset)
+AssetsType=Jenis aset
+AssetsTypeId=Id jenis aset
+AssetsTypeLabel=Label jenis aset
+AssetsTypes=Jenis aset
 
 #
 # Menu
 #
-MenuAssets = Assets
-MenuNewAsset = New asset
-MenuTypeAssets = Type assets
+MenuAssets = Aset
+MenuNewAsset = Aset baru
+MenuTypeAssets = Ketikkan aset
 MenuListAssets = Daftar
-MenuNewTypeAssets = New
+MenuNewTypeAssets = Baru
 MenuListTypeAssets = Daftar
 
 #
 # Module
 #
-NewAssetType=New asset type
-NewAsset=New asset
+NewAssetType=Jenis aset baru
+NewAsset=Aset baru

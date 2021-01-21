@@ -2,7 +2,7 @@
 Delivery=การจัดส่งสินค้า
 DeliveryRef=Ref Delivery
 DeliveryCard=Receipt card
-DeliveryOrder=ใบตราส่ง
+DeliveryOrder=Delivery receipt
 DeliveryDate=วันที่ส่งมอบ
 CreateDeliveryOrder=Generate delivery receipt
 DeliveryStateSaved=Delivery state saved
@@ -18,13 +18,14 @@ StatusDeliveryCanceled=ยกเลิก
 StatusDeliveryDraft=ร่าง
 StatusDeliveryValidated=ที่ได้รับ
 # merou PDF model
-NameAndSignature=ชื่อและลายเซ็น:
+NameAndSignature=Name and Signature:
 ToAndDate=To___________________________________ บน ____ / _____ / __________
 GoodStatusDeclaration=ได้รับสินค้าดังกล่าวข้างต้นอยู่ในสภาพดี
-Deliverer=ช่วยให้พ้น:
+Deliverer=Deliverer:
 Sender=ผู้ส่ง
 Recipient=ผู้รับ
 ErrorStockIsNotEnough=มีไม่มากพอที่หุ้น
 Shippable=shippable
 NonShippable=ไม่ shippable
 ShowReceiving=Show delivery receipt
+NonExistentOrder=Nonexistent order

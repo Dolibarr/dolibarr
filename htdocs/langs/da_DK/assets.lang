@@ -11,7 +11,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -22,13 +22,13 @@ AccountancyCodeAsset = Regnskabskode (aktiv)
 AccountancyCodeDepreciationAsset = Regnskabskode (afskrivning aktiv konto)
 AccountancyCodeDepreciationExpense = Regnskabskode (afskrivningskostnadskonto)
 NewAssetType=Ny aktivtype
-AssetsTypeSetup=Asset type setup
-AssetTypeModified=Asset type modified
-AssetType=Asset type
+AssetsTypeSetup=Aktiv type setup
+AssetTypeModified=Aktiv type redigeret
+AssetType=Aktiv type
 AssetsLines=Aktiver
 DeleteType=Slet
-DeleteAnAssetType=Delete an asset type
-ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
+DeleteAnAssetType=Slet en aktiv type
+ConfirmDeleteAssetType=Er du sikker på du ønsker at slette denne aktiv type
 ShowTypeCard=Vis type ' %s'
 
 # Module label 'ModuleAssetsName'
@@ -42,7 +42,7 @@ ModuleAssetsDesc = Aktiver beskrivelse
 AssetsSetup = Indstillinger for aktiver
 Settings = Indstillinger
 AssetsSetupPage = Indstillingsside for aktiver
-ExtraFieldsAssetsType = Complementary attributes (Asset type)
+ExtraFieldsAssetsType = Komplementære attributter (aktiv type)
 AssetsType=Asset type
 AssetsTypeId=Aktivtype id
 AssetsTypeLabel=Asset type label

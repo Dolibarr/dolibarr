@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 // Following var must be set:
@@ -37,6 +37,40 @@ if ($massaction == 'predelete')
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDeletion"), $langs->trans("ConfirmMassDeletionQuestion", count($toselect)), "delete", null, '', 0, 200, 500, 1);
 }
 
+if ($massaction == 'preaffecttag')
+{
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+	$categ = new Categorie($db);
+	$categ_types=array();
+	$categ_type_array=$categ->getMapList();
+	foreach ($categ_type_array as $categdef) {
+		if (isset($object) && $categdef['obj_table']==$object->table_element) {
+			if (!array_key_exists($categdef['code'], $categ_types)) $categ_types[$categdef['code']] = array('code'=>$categdef['code'],'label'=>$langs->trans($categdef['obj_class']));
+		}
+		if (isset($objecttmp) && $categdef['obj_table']==$objecttmp->table_element) {
+			if (!array_key_exists($categdef['code'], $categ_types)) $categ_types[$categdef['code']] = array('code'=>$categdef['code'],'label'=>$langs->trans($categdef['obj_class']));
+		}
+	}
+
+	$formquestion = array();
+	if (!empty($categ_types)) {
+		foreach ($categ_types as $categ_type) {
+			$cate_arbo = $form->select_all_categories($categ_type['code'], null, 'parent', null, null, 1);
+			$formquestion[]=array('type' => 'other',
+					'name' => 'affecttag_'.$categ_type['code'],
+					'label' => $langs->trans("Tag").' '.$categ_type['label'],
+					'value' => $form->multiselectarray('contcats_'.$categ_type['code'], $cate_arbo, GETPOST('contcats_'.$categ_type['code'], 'array'), null, null, null, null, '60%'));
+		}
+		$formquestion[]=array('type' => 'other',
+				'name' => 'affecttag_type',
+				'label' => '',
+				'value' => '<input type="hidden" name="affecttag_type"  id="affecttag_type" value="'.implode(",", array_keys($categ_types)).'"/>');
+		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmAffectTag"), $langs->trans("ConfirmAffectTagQuestion", count($toselect)), "affecttag", $formquestion, 1, 0, 200, 500, 1);
+	} else {
+		setEventMessage('CategTypeNotFound');
+	}
+}
+
 if ($massaction == 'presend')
 {
 	$langs->load("mails");
@@ -45,10 +79,9 @@ if ($massaction == 'presend')
 	$listofselectedthirdparties = array();
 	$listofselectedref = array();
 
-	if (! GETPOST('cancel', 'alpha'))
+	if (!GETPOST('cancel', 'alpha'))
 	{
-		foreach ($arrayofselected as $toselectid)
-		{
+		foreach ($arrayofselected as $toselectid) {
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0)
 			{
@@ -66,25 +99,25 @@ if ($massaction == 'presend')
 
 	print '<input type="hidden" name="massaction" value="confirm_presend">';
 
-	include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
 
-	dol_fiche_head(null, '', '');
+	print dol_get_fiche_head(null, '', '');
 
 	// Cree l'objet formulaire mail
-	include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
 	$formmail->withform = -1;
-	$formmail->fromtype = (GETPOST('fromtype') ? GETPOST('fromtype') : (! empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE) ? $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE : 'user'));
+	$formmail->fromtype = (GETPOST('fromtype') ? GETPOST('fromtype') : (!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE) ? $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE : 'user'));
 
 	if ($formmail->fromtype === 'user')
 	{
 		$formmail->fromid = $user->id;
 	}
 	$formmail->trackid = $trackid;
-	if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2)) // If bit 2 is set
+	if (!empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2)) // If bit 2 is set
 	{
-		include DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
+		include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		$formmail->frommail = dolAddEmailTrackId($formmail->frommail, $trackid);
 	}
 	$formmail->withfrom = 1;
@@ -98,9 +131,7 @@ if ($massaction == 'presend')
 			$fuser = new User($db);
 			$fuser->fetch($thirdpartyid);
 			$liste['thirdparty'] = $fuser->getFullName($langs)." &lt;".$fuser->email."&gt;";
-		}
-		else
-		{
+		} else {
 			$soc = new Societe($db);
 			$soc->fetch($thirdpartyid);
 			foreach ($soc->thirdparty_and_contact_email_array(1) as $key => $value) {
@@ -112,10 +143,10 @@ if ($massaction == 'presend')
 		$formmail->withtoreadonly = 1;
 	}
 
-	$formmail->withoptiononeemailperrecipient = ((count($listofselectedref) == 1 && count(reset($listofselectedref)) == 1) || empty($liste)) ? 0 : ((GETPOST('oneemailperrecipient')=='on')?1:-1);
+	$formmail->withoptiononeemailperrecipient = ((count($listofselectedref) == 1 && count(reset($listofselectedref)) == 1) || empty($liste)) ? 0 : ((GETPOST('oneemailperrecipient') == 'on') ? 1 : -1);
 
-	$formmail->withto = empty($liste)?(GETPOST('sendto', 'alpha')?GETPOST('sendto', 'alpha'):array()):$liste;
-	$formmail->withtofree = empty($liste)?1:0;
+	$formmail->withto = empty($liste) ? (GETPOST('sendto', 'alpha') ?GETPOST('sendto', 'alpha') : array()) : $liste;
+	$formmail->withtofree = empty($liste) ? 1 : 0;
 	$formmail->withtocc = 1;
 	$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
 	$formmail->withtopic = $langs->transnoentities($topicmail, '__REF__', '__REFCLIENT__');
@@ -134,8 +165,8 @@ if ($massaction == 'presend')
 	$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $object);
 
 	$substitutionarray['__EMAIL__'] = $sendto;
-	$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="' . DOL_MAIN_URL_ROOT . '/public/emailing/mailing-read.php?tag=' . $object->thirdparty->tag . '&securitykey=' . urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY) . '" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
-	$substitutionarray['__PERSONALIZED__'] = '';	// deprecated
+	$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$object->thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
+	$substitutionarray['__PERSONALIZED__'] = ''; // deprecated
 	$substitutionarray['__CONTACTCIVNAME__'] = '';
 
 	$parameters = array(
@@ -152,17 +183,27 @@ if ($massaction == 'presend')
 	$formmail->param['models_id'] = GETPOST('modelmailselected', 'int');
 	$formmail->param['id'] = join(',', $arrayofselected);
 	// $formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-	if (! empty($conf->global->MAILING_LIMIT_SENDBYWEB) && count($listofselectedthirdparties) > $conf->global->MAILING_LIMIT_SENDBYWEB)
+	if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && count($listofselectedthirdparties) > $conf->global->MAILING_LIMIT_SENDBYWEB)
 	{
 		$langs->load("errors");
-		print img_warning() . ' ' . $langs->trans('WarningNumberOfRecipientIsRestrictedInMassAction', $conf->global->MAILING_LIMIT_SENDBYWEB);
-		print ' - <a href="javascript: window.history.go(-1)">' . $langs->trans("GoBack") . '</a>';
+		print img_warning().' '.$langs->trans('WarningNumberOfRecipientIsRestrictedInMassAction', $conf->global->MAILING_LIMIT_SENDBYWEB);
+		print ' - <a href="javascript: window.history.go(-1)">'.$langs->trans("GoBack").'</a>';
 		$arrayofmassactions = array();
-	}
-	else
-	{
+	} else {
 		print $formmail->get_form();
 	}
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
+}
+// Allow Pre-Mass-Action hook (eg for confirmation dialog)
+$parameters = array(
+	'toselect' => $toselect,
+	'uploaddir' => $uploaddir
+);
+
+$reshook = $hookmanager->executeHooks('doPreMassActions', $parameters, $object, $action);
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+} else {
+	print $hookmanager->resPrint;
 }

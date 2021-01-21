@@ -11,17 +11,8 @@ YourEMail=E-paštas mokėjimo patvirtinimo gavimui
 Creditor=Kreditorius
 PaymentCode=Mokėjimo kodas
 PayBoxDoPayment=Pay with Paybox
-ToPay=Atlikti mokėjimą
 YouWillBeRedirectedOnPayBox=Būsite nukreipti į saugų Paybox puslapį kredito kortelės informacijos įvedimui
 Continue=Kitas
-ToOfferALinkForOnlinePayment=URL %s mokėjimui
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
-ToOfferALinkForOnlinePaymentOnInvoice=URL siūlo %s interneto mokėjimui vartotojo sąsają kliento sąskaitai-faktūrai
-ToOfferALinkForOnlinePaymentOnContractLine=URL siūlo %s interneto mokėjimui vartotojo sąsają sutarties eilutei.
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL siūlo %s interneto mokėjimui vartotojo sąsaja nemokamam kiekiui.
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL pasiūlymui %s interneto mokėjimui vartotojo sąsają nario pasirašymui.
-ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment, user interface for payment of donation
-YouCanAddTagOnUrl=Taip pat galite pridėti URL parametrą <b>&tag=<i>value</i></b> į bet kurį URL (reikalingas tik nemokamam mokėjimui) pridėti nuosavo mokėjimo komentaro žymę.
 SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Šis puslapis patvirtina, kad jūsų mokėjimas buvo užregistruotas. Ačiū.
 YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.

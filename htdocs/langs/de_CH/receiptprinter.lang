@@ -8,4 +8,3 @@ ReceiptPrinterProfileDesc=Profil des Belegdruckers
 SetupReceiptTemplate=Vorlagensetup
 PROFILE_SIMPLE=Einfaches Profil
 PROFILE_DEFAULT_HELP=Standard Profil für Epson Drucker
-PROFILE_EPOSTEP_HELP=Hilfe zu Epos Tep Profil

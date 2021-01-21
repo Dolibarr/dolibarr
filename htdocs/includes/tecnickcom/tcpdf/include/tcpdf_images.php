@@ -311,7 +311,7 @@ class TCPDF_IMAGES {
 					if ($n > 0) {
 						$trns = array();
 						for ($i = 0; $i < $n; ++ $i) {
-							$trns[] = ord($t{$i});
+							$trns[] = ord($t[$i]);
 						}
 					}
 				}

@@ -1,30 +1,32 @@
 # Dolibarr language file - Source file is en_US - oauth
-ConfigOAuth=Oauth Configuration
-OAuthServices=OAuth services
-ManualTokenGeneration=Manual token generation
-TokenManager=Token manager
-IsTokenGenerated=Is token generated ?
-NoAccessToken=No access token saved into local database
-HasAccessToken=A token was generated and saved into local database
-NewTokenStored=Token received and saved
-ToCheckDeleteTokenOnProvider=Click here to check/delete authorization saved by %s OAuth provider
-TokenDeleted=Token deleted
-RequestAccess=Click here to request/renew access and receive a new token to save
-DeleteAccess=Click here to delete token
-UseTheFollowingUrlAsRedirectURI=Use the following URL as the Redirect URI when creating your credential on your OAuth provider:
-ListOfSupportedOauthProviders=Enter here credential provided by your OAuth2 provider. Only supported OAuth2 providers are visible here. This setup may be used by other modules that need OAuth2 authentication.
-OAuthSetupForLogin=Page to generate an OAuth token
-SeePreviousTab=See previous tab
-OAuthIDSecret=OAuth ID and Secret
-TOKEN_REFRESH=Token Refresh Present
-TOKEN_EXPIRED=Token expired
-TOKEN_EXPIRE_AT=Token expire at
-TOKEN_DELETE=Delete saved token
-OAUTH_GOOGLE_NAME=Oauth Google service
-OAUTH_GOOGLE_ID=Oauth Google Id
-OAUTH_GOOGLE_SECRET=Oauth Google Secret
-OAUTH_GOOGLE_DESC=Go on <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">this page</a> then "Credentials" to create Oauth credentials
-OAUTH_GITHUB_NAME=Oauth GitHub service
-OAUTH_GITHUB_ID=Oauth GitHub Id
-OAUTH_GITHUB_SECRET=Oauth GitHub Secret
-OAUTH_GITHUB_DESC=Go on <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">this page</a> then "Register a new application" to create Oauth credentials
+ConfigOAuth=Διαμόρφωση OAuth
+OAuthServices=Υπηρεσίες OAuth
+ManualTokenGeneration=Δημιουργία χειροκίνητου διακριτικού
+TokenManager=Διαχειριστής Token
+IsTokenGenerated=Έχει δημιουργηθεί διακριτικό;
+NoAccessToken=Δεν υπάρχει διακριτικό πρόσβασης αποθηκευμένο στην τοπική βάση δεδομένων
+HasAccessToken=Το διακριτικό πρόσβασης δημιουργήθηκε και αποθηκεύτηκε στην τοπική βάση δεδομένων
+NewTokenStored=Το διακριτικό περιελήφθη και αποθηκεύτηκε 
+ToCheckDeleteTokenOnProvider=Πατήστε εδώ για να ελέγξετε/διαγράψετε την εξουσιοδότηση που έχει αποθηκευτεί από %s πάροχο ανοιχτού πρωτοκόλλου εξουσιοδότησης OAuth 
+TokenDeleted=Το διακριτικό έχει διαγραφεί
+RequestAccess=Κάντε κλικ εδώ για να ζητήσετε / ανανεώσετε την πρόσβαση και να λάβετε ένα νέο διακριτικό για αποθήκευση
+DeleteAccess=Κάντε κλικ εδώ για να διαγράψετε το διακριτικό
+UseTheFollowingUrlAsRedirectURI=Χρησιμοποιήστε την ακόλουθη διεύθυνση URL ως URI ανακατεύθυνσης κατά τη δημιουργία των διαπιστευτηρίων σας με τον παροχέα υπηρεσιών OAuth:
+ListOfSupportedOauthProviders=Καταχωρίστε τα διαπιστευτήρια που παρέχει ο πάροχος υπηρεσιών OAuth2. Υποστηρίζονται μόνο υποστηριζόμενοι πάροχοι OAuth2 εδώ. Αυτές οι υπηρεσίες μπορούν να χρησιμοποιηθούν από άλλες μονάδες που χρειάζονται έλεγχο ταυτότητας OAuth2.
+OAuthSetupForLogin=Για να δημιουργήσετε ένα διακριτικό OAuth
+SeePreviousTab=Δείτε την προηγούμενη καρτέλα
+OAuthIDSecret=OAuth ID και μυστικό
+TOKEN_REFRESH=Ανανέωση σημείου Token
+TOKEN_EXPIRED=Το κουπόνι έληξε
+TOKEN_EXPIRE_AT=Το Token λήγει στο
+TOKEN_DELETE=Διαγραφή αποθηκευμένου διακριτικού
+OAUTH_GOOGLE_NAME=OAuth υπηρεσία Google
+OAUTH_GOOGLE_ID=Αναγνωριστικό Google OAuth
+OAUTH_GOOGLE_SECRET=OAuth Google Secret
+OAUTH_GOOGLE_DESC=Μεταβείτε στη <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">σελίδα αυτή, στη</a> συνέχεια &quot;Πιστοποιητικά&quot;, για να δημιουργήσετε διαπιστευτήρια OAuth
+OAUTH_GITHUB_NAME=Υπηρεσία OAuth GitHub
+OAUTH_GITHUB_ID=Αναγνωριστικό OAuth GitHub
+OAUTH_GITHUB_SECRET=OAuth GitHub Secret
+OAUTH_GITHUB_DESC=Μεταβείτε στη <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">σελίδα αυτή, στη</a> συνέχεια &quot;Εγγραφή νέας εφαρμογής&quot; για να δημιουργήσετε διαπιστευτήρια OAuth
+OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
+OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live
