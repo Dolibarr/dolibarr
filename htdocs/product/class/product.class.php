@@ -4334,6 +4334,7 @@ class Product extends CommonObject
 	public function getFather()
 	{
 		$sql = "SELECT p.rowid, p.label as label, p.ref as ref, pa.fk_product_pere as id, p.fk_product_type, pa.qty, pa.incdec, p.entity";
+		$sql .= ", p.tosell as status, p.tobuy as status_buy";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_association as pa,";
 		$sql .= " ".MAIN_DB_PREFIX."product as p";
 		$sql .= " WHERE p.rowid = pa.fk_product_pere";
@@ -4342,8 +4343,7 @@ class Product extends CommonObject
 		$res = $this->db->query($sql);
 		if ($res) {
 			$prods = array();
-			while ($record = $this->db->fetch_array($res))
-			{
+			while ($record = $this->db->fetch_array($res)) {
 				// $record['id'] = $record['rowid'] = id of father
 				$prods[$record['id']]['id'] = $record['rowid'];
 				$prods[$record['id']]['ref'] = $record['ref'];
@@ -4352,6 +4352,8 @@ class Product extends CommonObject
 				$prods[$record['id']]['incdec'] = $record['incdec'];
 				$prods[$record['id']]['fk_product_type'] = $record['fk_product_type'];
 				$prods[$record['id']]['entity'] = $record['entity'];
+				$prods[$record['id']]['status'] = $record['status'];
+				$prods[$record['id']]['status_buy'] = $record['status_buy'];
 			}
 			return $prods;
 		} else {

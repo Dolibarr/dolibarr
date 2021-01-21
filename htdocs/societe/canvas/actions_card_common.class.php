@@ -303,8 +303,7 @@ abstract class ActionsCardCommon
 			if ($nbofsalesrepresentative > 3)   // We print only number
 			{
 				$this->tpl['sales_representatives'] .= $nbofsalesrepresentative;
-			} elseif ($nbofsalesrepresentative > 0)
-			{
+			} elseif ($nbofsalesrepresentative > 0) {
 				$userstatic = new User($this->db);
 				$i = 0;
 				foreach ($listsalesrepresentatives as $val)

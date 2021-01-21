@@ -2753,11 +2753,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 		// Parent company
-		if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY))
-		{
+		if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY)) {
 			print '<tr><td>';
 			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('ParentCompany').'</td>';
-			if ($action != 'editparentcompany' && $user->rights->societe->creer) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editparentcompany&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+			if ($action != 'editparentcompany' && $user->rights->societe->creer) {
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editparentcompany&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+			}
 			print '</tr></table>';
 			print '</td><td>';
 			$html_name = ($action == 'editparentcompany') ? 'parent_id' : 'none';
@@ -2769,17 +2770,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		include DOL_DOCUMENT_ROOT.'/societe/tpl/linesalesrepresentative.tpl.php';
 
 		// Module Adherent
-		if (!empty($conf->adherent->enabled))
-		{
+		if (!empty($conf->adherent->enabled)) {
 			$langs->load("members");
 			print '<tr><td>'.$langs->trans("LinkedToDolibarrMember").'</td>';
 			print '<td>';
 			$adh = new Adherent($db);
 			$result = $adh->fetch('', '', $object->id);
-			if ($result > 0)
-			{
+			if ($result > 0) {
 				$adh->ref = $adh->getFullName($langs);
-				print $adh->getNomUrl(1);
+				print $adh->getNomUrl(-1);
 			} else {
 				print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
 			}
