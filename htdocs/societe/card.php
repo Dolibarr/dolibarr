@@ -2423,8 +2423,29 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		if ($object->client)
 		{
 			print '<tr><td>';
-			print $langs->trans('CustomerCode').'</td><td>';
-			print $object->code_client;
+			print $langs->trans('CustomerCode').'<span class="opacitymedium" style=" float: right" id="clipboardChar" onclick="clipBoardCopy()"><i " class="far fa-clipboard"></i></span></td>';
+			print "<script>
+			function clipBoardCopy() {
+				var code_client = document.getElementById( \"code_client\" );
+				if ( window.getSelection ) {
+					
+					selection = window.getSelection();
+					
+					range = document.createRange();
+					range.selectNodeContents( code_client );
+					
+					selection.removeAllRanges();
+					selection.addRange( range );
+					
+				}
+				
+				document.execCommand( 'copy' );
+				window.getSelection().removeAllRanges();
+				document.getElementById( \"clipboardChar\" ).innerHTML = 'Copied to clipboard!';
+			}
+			</script>";
+			print '<td id="code_client">';
+			print $object->code_client .'</td>';
 			$tmpcheck = $object->check_codeclient();
 			if ($tmpcheck != 0 && $tmpcheck != -5) {
 				print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
