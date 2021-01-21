@@ -2408,7 +2408,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
    		if (!empty($conf->fournisseur->enabled) || !empty($conf->supplier_proposal->enabled))
 		{
 			print '<tr><td>'.$langs->trans('Supplier').'</td><td>';
-			print showValueWithCopyAndPasteButton(yn($object->fournisseur),'supplier',$langs);
+			print showValueWithCopyAndPasteButton(yn($object->fournisseur), 'supplier', $langs);
 			print '</td></tr>';
 		}
 
@@ -2426,7 +2426,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print $langs->trans('CustomerCode');
 			print '</td>';
 			print '<td>';
-			print showValueWithCopyAndPasteButton($object->code_client, 'code_client',$langs); 
+			print showValueWithCopyAndPasteButton($object->code_client, 'code_client', $langs);
 			print '</td>';
 			$tmpcheck = $object->check_codeclient();
 			if ($tmpcheck != 0 && $tmpcheck != -5) {
@@ -2945,7 +2945,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
  * @param Translate $langs the $langs variable
  * @return string the string to print for the button
  */
-function showValueWithCopyAndPasteButton($valuetoprint,$spanid,$langs){
+function showValueWithCopyAndPasteButton($valuetoprint, $spanid, $langs)
+{
 	$stringtoprint= '<span id="'.$spanid.'">';
 	$stringtoprint.= $valuetoprint .'</span>&ensp;';
 	$stringtoprint.= '</span>';
@@ -2978,4 +2979,3 @@ function showValueWithCopyAndPasteButton($valuetoprint,$spanid,$langs){
 // End of page
 llxFooter();
 $db->close();
-
