@@ -2438,10 +2438,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 					selection.addRange( range );
 					
 				}
-				
+
 				document.execCommand( 'copy' );
 				window.getSelection().removeAllRanges();
-				document.getElementById( \"clipboardChar\" ).innerHTML = 'Copied to clipboard!';
+				document.getElementById( \"clipboardChar\" ).innerHTML = '".$langs->trans("CopiedToClipboard")."';
 			}
 			</script>";
 			print '<td id="code_client">';
