@@ -1052,7 +1052,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			if ($conf->browser->layout == 'phone') print '</tr><tr>';
 			print '<td>'.$langs->trans("BarcodeValue").'</td><td>';
 			$tmpcode = GETPOSTISSET('barcode') ? GETPOST('barcode') : $object->barcode;
-			if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) $tmpcode = $modBarCodeProduct->getNextValue($object, $type);
+			if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) $tmpcode = $modBarCodeProduct->getNextValue($object, $fk_barcode_type);
 			print '<input class="maxwidth100" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
 			print '</td></tr>';
 		}
@@ -1512,7 +1512,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				print $formbarcode->selectBarcodeType($fk_barcode_type, 'fk_barcode_type', 1);
 				print '</td><td>'.$langs->trans("BarcodeValue").'</td><td>';
 				$tmpcode = GETPOSTISSET('barcode') ? GETPOST('barcode') : $object->barcode;
-				if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) $tmpcode = $modBarCodeProduct->getNextValue($object, $type);
+				if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) $tmpcode = $modBarCodeProduct->getNextValue($object, $fk_barcode_type);
 				print '<input size="40" class="maxwidthonsmartphone" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
 				print '</td></tr>';
 			}
@@ -1837,11 +1837,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 					require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 					$formbarcode = new FormBarCode($db);
 				}
+
+				$fk_barcode_type='';
 				if ($action == 'editbarcodetype')
 				{
 					print $formbarcode->formBarcodeType($_SERVER['PHP_SELF'].'?id='.$object->id, $object->barcode_type, 'fk_barcode_type');
+					$fk_barcode_type = $object->barcode_type;
 				} else {
 					$object->fetch_barcode();
+					$fk_barcode_type = $object->barcode_type;
 					print $object->barcode_type_label ? $object->barcode_type_label : ($object->barcode ? '<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>' : '');
 				}
 				print '</td></tr>'."\n";
@@ -1857,7 +1861,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				if ($action == 'editbarcode')
 				{
 					$tmpcode = GETPOSTISSET('barcode') ? GETPOST('barcode') : $object->barcode;
-					if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) $tmpcode = $modBarCodeProduct->getNextValue($object, $type);
+					if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) $tmpcode = $modBarCodeProduct->getNextValue($object, $fk_barcode_type);
 
 					print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
 					print '<input type="hidden" name="token" value="'.newToken().'">';
