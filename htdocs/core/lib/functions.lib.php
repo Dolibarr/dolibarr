@@ -4727,7 +4727,7 @@ function price2num($amount, $rounding = '', $option = 0)
 		$amountin = $amount;//Save the given amount in order to log
 		$amount = preg_replace('/\s*\(.*\)/', '', $amount); // Remove forgotten code into vatrate or local taxe.
 		$amount = preg_replace('/\s*/', '', $amount);// Remove remaining spaces if any
-		if (!is_numeric($amount)) {
+		if ((!is_numeric($amount)) and ($amount<>'')) {
 			$amount = iconv('UTF-8', 'ASCII//IGNORE', $amount);//Eliminate non ascii characters
 			$amount = preg_replace('/[a-df-zA-DF-Z\/\\\*\(\)\<\>\_\!\"\#\$\%\&\:\;\=\@\[\]\`\{\|\}\'\?\+\~\^]/', '', $amount);//Eliminate remaining no numerical characters, keep only 0-9 . , - e E
 			if ($dec == ','){
@@ -4763,6 +4763,11 @@ function price2num($amount, $rounding = '', $option = 0)
 			//
 			if (!is_numeric($amount)) {
 				dol_syslog("functions.lib::price2num: amount in=".$amountin." No numeric result=".$amount, LOG_ERR);
+				$message1 = $langs->trans('Typing error =');
+				$message2 = $langs->trans('value set to 0, retype a correct value');
+				echo '<script language="javascript">';
+				echo 'alert("'.$message1.$amountin.'\n'.$message2.'")';
+				echo '</script>';
 				$amount='';//Clear amount, not numeric, nothing possible to do
 			}
 		}
