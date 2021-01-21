@@ -2408,7 +2408,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
    		if (!empty($conf->fournisseur->enabled) || !empty($conf->supplier_proposal->enabled))
 		{
 			print '<tr><td>'.$langs->trans('Supplier').'</td><td>';
-			print yn($object->fournisseur);
+			print showValueWithCopyAndPasteButton(yn($object->fournisseur),'supplier',$langs);
 			print '</td></tr>';
 		}
 
@@ -2423,29 +2423,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		if ($object->client)
 		{
 			print '<tr><td>';
-			print $langs->trans('CustomerCode').'<span class="opacitymedium" style=" float: right" id="clipboardChar" onclick="clipBoardCopy()"><i " class="far fa-clipboard"></i></span></td>';
-			print "<script>
-			function clipBoardCopy() {
-				var code_client = document.getElementById( \"code_client\" );
-				if ( window.getSelection ) {
-					
-					selection = window.getSelection();
-					
-					range = document.createRange();
-					range.selectNodeContents( code_client );
-					
-					selection.removeAllRanges();
-					selection.addRange( range );
-					
-				}
-
-				document.execCommand( 'copy' );
-				window.getSelection().removeAllRanges();
-				document.getElementById( \"clipboardChar\" ).innerHTML = '".$langs->trans("CopiedToClipboard")."';
-			}
-			</script>";
-			print '<td id="code_client">';
-			print $object->code_client .'</td>';
+			print $langs->trans('CustomerCode');
+			print '</td>';
+			print '<td>';
+			print showValueWithCopyAndPasteButton($object->code_client, 'code_client',$langs); 
+			print '</td>';
 			$tmpcheck = $object->check_codeclient();
 			if ($tmpcheck != 0 && $tmpcheck != -5) {
 				print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
@@ -2957,7 +2939,43 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	}
 }
-
+/**
+ * @param string $valuetoprint the value to print
+ * @param string $spanid unique id for a span
+ * @param Translate $langs the $langs variable
+ * @return string the string to print for the button
+ */
+function showValueWithCopyAndPasteButton($valuetoprint,$spanid,$langs){
+	$stringtoprint= '<span id="'.$spanid.'">';
+	$stringtoprint.= $valuetoprint .'</span>&ensp;';
+	$stringtoprint.= '</span>';
+	$stringtoprint.='<span class="opacitymedium"  id="'.dol_escape_json($spanid).'clipboardChar" onclick="'.dol_escape_json($spanid).'clipBoardCopy()"><i " class="far fa-clipboard"></i></span>';
+	$stringtoprint.="<script>
+		function ".dol_escape_json($spanid)."clipBoardCopy() {
+			var copied_text = document.getElementById( \"".dol_escape_json($spanid)."\" );
+			if ( window.getSelection ) {
+				
+				selection = window.getSelection();
+				
+				range = document.createRange();
+				range.selectNodeContents( copied_text );
+				
+				selection.removeAllRanges();
+				selection.addRange( range );
+				
+			}
+			
+			document.execCommand( 'copy' );
+			window.getSelection().removeAllRanges();
+			var span = document.getElementById( \"".dol_escape_json($spanid)."clipboardChar\" );
+			var tmp = span.innerHTML
+			span.innerHTML = '".$langs->trans('CopiedToClipboard')."';
+			setTimeout(() => { span.innerHTML = tmp; }, 1000);
+		}
+	</script>";
+	return $stringtoprint;
+}
 // End of page
 llxFooter();
 $db->close();
+
