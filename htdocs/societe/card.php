@@ -2408,7 +2408,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
    		if (!empty($conf->fournisseur->enabled) || !empty($conf->supplier_proposal->enabled))
 		{
 			print '<tr><td>'.$langs->trans('Supplier').'</td><td>';
-			print showValueWithCopyAndPasteButton(yn($object->fournisseur),'supplier',$langs);
+			print yn($object->fournisseur);
 			print '</td></tr>';
 		}
 
