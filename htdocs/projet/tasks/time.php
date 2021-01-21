@@ -192,7 +192,7 @@ if ($action == 'addtimespent' && $user->rights->projet->lire)
 				{
 					$userid = GETPOST('userid','int');
 
-                    // if conf 1
+
                     // user  assign to task if not
 					if ($conf->global->AUTO_ASSIGN_USER_CONTACT_ON_TASK == 1){
                         // task add contact if needed
@@ -1177,8 +1177,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
                     }
                 }
 
-            // we assign user to task even if he 's not assigned to project
-            }else if ($conf->global->AUTO_ASSIGN_USER_CONTACT_ON_TASK == 2){
+            // we assign user to task even if he 's not assign to project
+            }else {
                 print img_object('', 'user', 'class="hideonsmartphone"');
                 if (in_array($user->id, $contactsofproject)){
                     $userid = $user->id;
