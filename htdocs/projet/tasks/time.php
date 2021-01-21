@@ -190,14 +190,14 @@ if ($action == 'addtimespent' && $user->rights->projet->lire)
 				$result = $object->addTimeSpent($user);
 				if ($result >= 0)
 				{
-					$userid = GETPOST('userid','int');
+					$userid = GETPOST('userid', 'int');
 
 
                     // user  assign to task if not
 					if ($conf->global->AUTO_ASSIGN_USER_CONTACT_ON_TASK == 1){
                         // task add contact if needed
                         $contactsofTask = $object->getListContactId('internal');
-                        if(!empty($userid) && !in_array($userid, $contactsofTask)){
+                        if (!empty($userid) && !in_array($userid, $contactsofTask)){
                             $result = $object->add_contact($userid, $conf->global->AUTO_ASSIGN_TYPE_CONTACT_TO_TASK, 'internal');
                             if ($result <= 0  ){
                                 setEventMessages($langs->trans($object->error) . "task", null, 'errors');
@@ -208,16 +208,13 @@ if ($action == 'addtimespent' && $user->rights->projet->lire)
 
                     // if conf 2
                     if ($conf->global->AUTO_ASSIGN_USER_CONTACT_ON_TASK == 2){
-
                         // project add contact if needed
                         $projectstatic->fetch($object->fk_project);
                         $contactsofproject = $projectstatic->getListContactId('internal');
-                        if(!empty($userid) && !in_array($userid, $contactsofproject)){
-
+                        if (!empty($userid) && !in_array($userid, $contactsofproject)){
                             $result = $projectstatic->add_contact($userid, $conf->global->AUTO_ASSIGN_TYPE_CONTACT_TO_PROJECT, 'internal');
                             if ($result > 0 ){
-
-                            }else{
+                            }else {
                                 setEventMessages($langs->trans($projectstatic->error). "project", null, 'errors');
                                 $error++;
                             }
@@ -225,18 +222,16 @@ if ($action == 'addtimespent' && $user->rights->projet->lire)
 
                         // task add contact if needed
                         $contactsofTask = $object->getListContactId('internal');
-                        if(!empty($userid) && !in_array($userid, $contactsofTask)){
+                        if (!empty($userid) && !in_array($userid, $contactsofTask)){
                             $result = $object->add_contact($userid, $conf->global->AUTO_ASSIGN_TYPE_CONTACT_TO_TASK, 'internal');
                             if ($result <= 0 ){
                                 setEventMessages($langs->trans($object->error) . "task", null, 'errors');
                                 $error++;
                             }
                         }
-
                     }
 
                     setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
-
 				} else {
 					setEventMessages($langs->trans($object->error), null, 'errors');
 					$error++;
@@ -1172,21 +1167,20 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
                     if ($projectstatic->public) $contactsofproject = array();
                     print $form->select_dolusers((GETPOST('userid', 'int') ? GETPOST('userid', 'int') : $userid), 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToProject"), 'maxwidth200');
                 } else {
-                     if ($nboftasks) {
+					if ($nboftasks) {
                         print img_error($langs->trans('FirstAddRessourceToAllocateTime')).' '.$langs->trans('FirstAddRessourceToAllocateTime');
-                    }
+					}
                 }
 
-            // we assign user to task even if he 's not assign to project
+				// we assign user to task even if he 's not assign to project
             }else {
                 print img_object('', 'user', 'class="hideonsmartphone"');
                 if (in_array($user->id, $contactsofproject)){
                     $userid = $user->id;
-                } else{
+                } else {
                     $userid = $contactsofproject[0];
                 }
-                print $form->select_dolusers((GETPOST('userid', 'int') ? GETPOST('userid', 'int') : $userid), 'userid', 0, '', 0, '','', 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToProject"), 'maxwidth200');
-
+                print $form->select_dolusers((GETPOST('userid', 'int') ? GETPOST('userid', 'int') : $userid), 'userid', 0, '', 0, '', '', 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToProject"), 'maxwidth200');
             }
 
 			print '</td>';
