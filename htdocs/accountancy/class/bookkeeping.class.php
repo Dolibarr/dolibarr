@@ -315,6 +315,7 @@ class BookKeeping extends CommonObject
 					$objnum = $this->db->fetch_object($resqlnum);
 					$this->piece_num = $objnum->piece_num;
 				}
+
 				dol_syslog(get_class($this).":: create this->piece_num=".$this->piece_num, LOG_DEBUG);
 				if (empty($this->piece_num)) {
 					$sqlnum = "SELECT MAX(piece_num)+1 as maxpiecenum";
@@ -327,8 +328,8 @@ class BookKeeping extends CommonObject
 						$objnum = $this->db->fetch_object($resqlnum);
 						$this->piece_num = $objnum->maxpiecenum;
 					}
+					dol_syslog(get_class($this).":: create this->piece_num=".$this->piece_num, LOG_DEBUG);
 				}
-				dol_syslog(get_class($this).":: create this->piece_num=".$this->piece_num, LOG_DEBUG);
 				if (empty($this->piece_num)) {
 					$this->piece_num = 1;
 				}
@@ -383,7 +384,6 @@ class BookKeeping extends CommonObject
 				$sql .= ", ".(!isset($this->entity) ? $conf->entity : $this->entity);
 				$sql .= ")";
 
-				dol_syslog(get_class($this).":: create sql=".$sql, LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
@@ -831,7 +831,11 @@ class BookKeeping extends CommonObject
                 } elseif ($key == 't.reconciled_option') {
                     $sqlwhere[] = 't.lettering_code IS NULL';
                 } elseif ($key == 't.code_journal' && !empty($value)) {
-                    $sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
+                	if (is_array($value)) {
+                		$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
+                	} else {
+                    	$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
+                	}
 				} else {
 					$sqlwhere[] = natural_search($key, $value, 0, 1);
 				}

@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - ecm
-ECMNbOfDocs=Nº de documents en el directori
+ECMNbOfDocs=Nombre de documents al directori
 ECMSection=Carpeta
 ECMSectionManual=Carpeta manual
 ECMSectionAuto=Carpeta automàtica
@@ -7,15 +7,15 @@ ECMSectionsManual=Arbre manual
 ECMSectionsAuto=Arbre automàtic
 ECMSections=Carpetes
 ECMRoot=Arrel del ECM
-ECMNewSection=Nova carpeta
-ECMAddSection=Afegir carpeta
+ECMNewSection=Carpeta nova
+ECMAddSection=Afegeix directori
 ECMCreationDate=Data creació
 ECMNbOfFilesInDir=Nombre d'arxius a la carpeta
-ECMNbOfSubDir=nombre de subcarpetes
+ECMNbOfSubDir=Nombre de subcarpetes
 ECMNbOfFilesInSubDir=Nombre d'arxius en les subcarpetes
 ECMCreationUser=Creador
 ECMArea=Àrea SGD/GCE
-ECMAreaDesc=L'àrea SGD / GCE (Sistema de Gestió de Documents / Gestió de Continguts Electrònics) et permet desar, compartir i cercar ràpidament tot tipus de documents a Dolibarr.
+ECMAreaDesc=L’àrea SGD/GED (Sistema de Gestió de Documents / Gestió de Continguts Electrònics) us permet desar, compartir i cercar ràpidament tota mena de documents a Dolibarr.
 ECMAreaDesc2=Podeu crear carpetes manuals i adjuntar els documents<br>Les carpetes automàtiques són emplenades automàticament en l'addició d'un document en una fitxa.
 ECMSectionWasRemoved=La carpeta <b>%s</b> ha estat eliminada
 ECMSectionWasCreated=S'ha creat el directori <b>%s</b>.

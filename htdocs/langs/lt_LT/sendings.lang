@@ -30,6 +30,7 @@ OtherSendingsForSameOrder=Kiti vežimai, skirti šiam užsakymui
 SendingsAndReceivingForSameOrder=Shipments and receipts for this order
 SendingsToValidate=Vežimai patvirtinimui
 StatusSendingCanceled=Atšauktas
+StatusSendingCanceledShort=Atšauktas
 StatusSendingDraft=Projektas
 StatusSendingValidated=Patvirtinta (produktai siuntimui arba jau išsiųsti)
 StatusSendingProcessed=Apdorotas
@@ -65,6 +66,7 @@ ValidateOrderFirstBeforeShipment=You must first validate the order before being 
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Labiau išsamus dokumento modelis pristatymo kvitui (logo. ..)
+DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstanta EXPEDITION_ADDON_NUMBER nėra apibrėžta
 SumOfProductVolumes=Produkcijos apimties suma
 SumOfProductWeights=Produktų svorių suma

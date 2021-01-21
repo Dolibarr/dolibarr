@@ -36,6 +36,7 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 			$mode_search = 0;
 			if (in_array($typ, array('int', 'double', 'real', 'price'))) $mode_search = 1; // Search on a numeric
 			if (in_array($typ, array('sellist', 'link')) && $crit != '0' && $crit != '-1') $mode_search = 2; // Search on a foreign key int
+			if (in_array($typ, array('sellist')) && !is_numeric($crit)) $mode_search = 0;// Search on a foreign key string
 			if (in_array($typ, array('chkbxlst', 'checkbox'))) $mode_search = 4; // Search on a multiselect field with sql type = text
 			if (is_array($crit)) $crit = implode(' ', $crit); // natural_search() expects a string
 			elseif ($typ === 'select' and is_string($crit) and strpos($crit, ' ') === false) {

@@ -1,5 +1,5 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
-Accountancy=会計士
+Accountancy=会計
 Accounting=Accounting
 ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
@@ -18,7 +18,7 @@ DefaultForService=サービスのデフォルト
 DefaultForProduct=製品のデフォルト
 CantSuggest=提案できない
 AccountancySetupDoneFromAccountancyMenu=会計のほとんどの設定はメニュー%sから行われる
-ConfigAccountingExpert=モジュールアカウンティングの構成（複式簿記）
+ConfigAccountingExpert=モジュールアカウンティングの構成(複式簿記)
 Journalization=仕訳帳化
 Journals=仕訳日記帳
 JournalFinancial=財務仕訳帳
@@ -46,8 +46,9 @@ CountriesNotInEEC=EECにない国
 CountriesInEECExceptMe=%sを除くEECの国
 CountriesExceptMe=%sを除くすべての国
 AccountantFiles=ソースドキュメントのエクスポート
-ExportAccountingSourceDocHelp=このツールを使用すると、会計処理の生成に使用されたソースイベント（リストとPDF）をエクスポートできる。仕訳をエクスポートするには、メニューエントリ%s-%sを使用する。
+ExportAccountingSourceDocHelp=このツールを使用すると、会計処理の生成に使用されたソースイベント(リストとPDF)をエクスポートできる。仕訳をエクスポートするには、メニューエントリ%s-%sを使用する。
 VueByAccountAccounting=会計科目順に表示
+VueBySubAccountAccounting=アカウンティングサブアカウントで表示
 
 MainAccountForCustomersNotDefined=設定で定義されていない顧客のメインアカウンティング科目
 MainAccountForSuppliersNotDefined=設定で定義されていないベンダーのメインアカウンティング科目
@@ -58,7 +59,7 @@ MainAccountForSubscriptionPaymentNotDefined=セットアップで定義されて
 AccountancyArea=経理エリア
 AccountancyAreaDescIntro=会計モジュールの使用は、いくつかのステップで行われる。
 AccountancyAreaDescActionOnce=次のアクションは通常、1回だけ、または1年に1回実行される。
-AccountancyAreaDescActionOnceBis=次のステップは、仕訳帳化を行うときに正しいデフォルトの会計科目を提案することにより、将来の時間を節約するために実行する必要がある（仕訳帳および総勘定元帳にレコードを書き込む）
+AccountancyAreaDescActionOnceBis=次のステップは、仕訳帳化を行うときに正しいデフォルトの会計科目を提案することにより、将来の時間を節約するために実行する必要がある(仕訳帳および総勘定元帳にレコードを書き込む)
 AccountancyAreaDescActionFreq=次のアクションは通常、非常に大規模な企業の場合、毎月、毎週、または毎日実行される。
 
 AccountancyAreaDescJournalSetup=ステップ%s：メニュー%sから仕訳帳リストのコンテンツを作成または確認する
@@ -69,7 +70,7 @@ AccountancyAreaDescVat=ステップ%s：各VAT率の会計科目を定義する�
 AccountancyAreaDescDefault=ステップ%s：デフォルトの会計科目を定義する。これには、メニューエントリ%sを使用する。
 AccountancyAreaDescExpenseReport=ステップ%s：経費報告書の種別ごとにデフォルトの会計科目を定義する。これには、メニューエントリ%sを使用する。
 AccountancyAreaDescSal=ステップ%s：給与支払いのデフォルトの会計科目を定義する。これには、メニューエントリ%sを使用する。
-AccountancyAreaDescContrib=ステップ%s：特別経費（雑税）のデフォルトの会計科目を定義する。これには、メニューエントリ%sを使用する。
+AccountancyAreaDescContrib=ステップ%s：特別経費(雑税)のデフォルトの会計科目を定義する。これには、メニューエントリ%sを使用する。
 AccountancyAreaDescDonation=ステップ%s：寄付のデフォルトの会計科目を定義する。これには、メニューエントリ%sを使用する。
 AccountancyAreaDescSubscription=ステップ%s：メンバーサブスクリプションのデフォルトのアカウンティング科目を定義する。これには、メニューエントリ%sを使用する。
 AccountancyAreaDescMisc=ステップ%s：その他のトランザクションの必須のデフォルト科目とデフォルトのアカウンティング科目を定義する。これには、メニューエントリ%sを使用する。
@@ -83,7 +84,7 @@ AccountancyAreaDescAnalyze=ステップ%s：既存のトランザクションを
 
 AccountancyAreaDescClosePeriod=ステップ%s：期間を閉じて、将来変更できないようにする。
 
-TheJournalCodeIsNotDefinedOnSomeBankAccount=セットアップの必須ステップが完了していない（すべての銀行口座に対して会計コード仕訳帳が定義されていない）
+TheJournalCodeIsNotDefinedOnSomeBankAccount=セットアップの必須ステップが完了していない(すべての銀行口座に対して会計コード仕訳帳が定義されていない)
 Selectchartofaccounts=アクティブな勘定科目表を選択する
 ChangeAndLoad=変更してロード
 Addanaccount=勘定科目を追加
@@ -144,18 +145,18 @@ NotVentilatedinAccount=会計科目にバインドされていない
 XLineSuccessfullyBinded=%s製品/サービスがアカウンティング科目に正常にバインドされた
 XLineFailedToBeBinded=%s製品/サービスはどの会計科目にもバインドされていない
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=ページごとに表示される紐付けする要素の数（最大推奨：50）
+ACCOUNTING_LIMIT_LIST_VENTILATION=リストおよびバインドページの最大行数(推奨：50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=「Bindingtodo」ページの最新の要素による並べ替えを開始する
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=「製本完了」ページの最新の要素による並べ替えを開始する
 
-ACCOUNTING_LENGTH_DESCRIPTION=x文字の後のリストの製品とサービスの説明を切り捨てます（ベスト= 50）
-ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=x文字の後のリストの製品とサービスの科目説明フォームを切り捨てます（ベスト= 50）
-ACCOUNTING_LENGTH_GACCOUNT=一般会計科目の長さ（ここで値を6に設定すると、勘定科目「706」は画面に「706000」のように表示される）
-ACCOUNTING_LENGTH_AACCOUNT=取引先のアカウンティング科目の長さ（ここで値を6に設定すると、科目「401」は画面に「401000」のように表示される）
-ACCOUNTING_MANAGE_ZERO=会計科目の最後に異なる数のゼロを管理できるようにする。一部の国（スイスなど）で必要です。オフ（デフォルト）に設定すると、次の2つのパラメーターを設定して、アプリケーションに仮想ゼロを追加するように要求できる。
+ACCOUNTING_LENGTH_DESCRIPTION=x文字の後のリストの製品とサービスの説明を切り捨てます(ベスト= 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=x文字の後のリストの製品とサービスの科目説明フォームを切り捨てます(ベスト= 50)
+ACCOUNTING_LENGTH_GACCOUNT=一般会計科目の長さ(ここで値を6に設定すると、勘定科目「706」は画面に「706000」のように表示される)
+ACCOUNTING_LENGTH_AACCOUNT=取引先のアカウンティング科目の長さ(ここで値を6に設定すると、科目「401」は画面に「401000」のように表示される)
+ACCOUNTING_MANAGE_ZERO=会計科目の最後に異なる数のゼロを管理できるようにする。一部の国(スイスなど)で必要です。オフ(デフォルト)に設定すると、次の2つのパラメーターを設定して、アプリケーションに仮想ゼロを追加するように要求できる。
 BANK_DISABLE_DIRECT_INPUT=銀行口座での取引の直接記録を無効にする
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=仕訳帳で下書きエクスポートを有効にする
-ACCOUNTANCY_COMBO_FOR_AUX=子会社科目のコンボリストを有効にする（取引先が多数ある場合は遅くなる可能性がある）
+ACCOUNTANCY_COMBO_FOR_AUX=子会社科目のコンボリストを有効にする(取引先が多数ある場合は遅くなる可能性がある)
 ACCOUNTING_DATE_START_BINDING=会計で紐付け力と移転を開始する日付を定義する。この日付を下回ると、トランザクションはアカウンティングに転送されない。
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=会計転送では、デフォルトで期間表示を選択する
 
@@ -166,8 +167,8 @@ ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
 ACCOUNTING_SOCIAL_JOURNAL=Social journal
 ACCOUNTING_HAS_NEW_JOURNAL=新規仕訳帳がある
 
-ACCOUNTING_RESULT_PROFIT=結果会計科目（利益）
-ACCOUNTING_RESULT_LOSS=結果会計科目（損失）
+ACCOUNTING_RESULT_PROFIT=結果会計科目(利益)
+ACCOUNTING_RESULT_LOSS=結果会計科目(損失)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=閉鎖の仕訳帳
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=移行銀行振込の会計科目
@@ -179,26 +180,27 @@ ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=サブスクリプションを登録す�
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=顧客預金を登録するためのデフォルトの会計科目
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=購入した製品のデフォルトの会計科目（製品シートで定義されていない場合に使用）
-ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=EEC域内で購入した製品のデフォルト会計科目（製品シートで定義されていない場合に使用）
-ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=購入品で、EEC域外から輸入された製品のデフォルト会計科目（製品シートで定義されていない場合に使用）
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT=販売された製品のデフォルトの会計科目（製品シートで定義されていない場合に使用）
-ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=EECで販売された製品のデフォルトの会計科目（製品シートで定義されていない場合に使用）
-ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=EECから販売およびエクスポートされた製品のデフォルトの会計科目（製品シートで定義されていない場合に使用）
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=購入した製品のデフォルトの会計科目(製品シートで定義されていない場合に使用)
+ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=EEC域内で購入した製品のデフォルト会計科目(製品シートで定義されていない場合に使用)
+ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=購入品で、EEC域外から輸入された製品のデフォルト会計科目(製品シートで定義されていない場合に使用)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=販売された製品のデフォルトの会計科目(製品シートで定義されていない場合に使用)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=EECで販売された製品のデフォルトの会計科目(製品シートで定義されていない場合に使用)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=EECから販売およびエクスポートされた製品のデフォルトの会計科目(製品シートで定義されていない場合に使用)
 
-ACCOUNTING_SERVICE_BUY_ACCOUNT=購入したサービスのデフォルトのアカウンティング科目（サービスシートで定義されていない場合に使用）
-ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=EECで購入したサービスのデフォルトのアカウンティング科目（サービスシートで定義されていない場合に使用）
-ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=購入したサービスおよびEECからインポートされたサービスのデフォルトのアカウンティング科目（サービスシートで定義されていない場合に使用）
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=販売されたサービスのデフォルトのアカウンティング科目（サービスシートで定義されていない場合に使用）
-ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=EECで販売されるサービスのデフォルトのアカウンティング科目（サービスシートで定義されていない場合に使用）
-ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=EECから販売およびエクスポートされたサービスのデフォルトのアカウンティング科目（サービスシートで定義されていない場合に使用）
+ACCOUNTING_SERVICE_BUY_ACCOUNT=購入したサービスのデフォルトのアカウンティング科目(サービスシートで定義されていない場合に使用)
+ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=EECで購入したサービスのデフォルトのアカウンティング科目(サービスシートで定義されていない場合に使用)
+ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=購入したサービスおよびEECからインポートされたサービスのデフォルトのアカウンティング科目(サービスシートで定義されていない場合に使用)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=販売されたサービスのデフォルトのアカウンティング科目(サービスシートで定義されていない場合に使用)
+ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=EECで販売されるサービスのデフォルトのアカウンティング科目(サービスシートで定義されていない場合に使用)
+ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=EECから販売およびエクスポートされたサービスのデフォルトのアカウンティング科目(サービスシートで定義されていない場合に使用)
 
 Doctype=ドキュメントの種別
 Docdate=日付
 Docref=参照
 LabelAccount=ラベル科目
 LabelOperation=ラベル操作
-Sens=Sens
+Sens=方向
+AccountingDirectionHelp=顧客の会計科目の場合、貸方を使用して受け取った支払いを記録する。<br>仕入先の会計科目の場合、借方を使用して支払いを記録する。
 LetteringCode=レタリングコード
 Lettering=レタリング
 Codejournal=仕訳帳
@@ -206,7 +208,8 @@ JournalLabel=仕訳帳ラベル
 NumPiece=個数番号
 TransactionNumShort=数トランザクション
 AccountingCategory=パーソナライズされたグループ
-GroupByAccountAccounting=会計科目によるグループ化
+GroupByAccountAccounting=総勘定元帳勘定によるグループ化
+GroupBySubAccountAccounting=補助元帳アカウントでグループ化
 AccountingAccountGroupsDesc=ここで、会計科目のいくつかのグループを定義できる。それらは、パーソナライズされた会計レポートに使用される。
 ByAccounts=科目別
 ByPredefinedAccountGroups=事前定義されたグループによる
@@ -217,8 +220,8 @@ DeleteMvt=アカウンティングからいくつかの操作行を削除する
 DelMonth=削除する月
 DelYear=削除する年
 DelJournal=削除する仕訳帳
-ConfirmDeleteMvt=これにより、年/月および/または特定の仕訳帳の会計のすべての操作行が削除される（少なくとも1つの基準が必要です）。削除されたレコードを元帳に戻すには、機能「%s」を再利用する必要がある。
-ConfirmDeleteMvtPartial=これにより、トランザクションがアカウンティングから削除される（同じトランザクションに関連するすべての操作ラインが削除される）
+ConfirmDeleteMvt=これにより、年/月および/または特定の仕訳帳の会計のすべての操作行が削除される(少なくとも1つの基準が必要です)。削除されたレコードを元帳に戻すには、機能「%s」を再利用する必要がある。
+ConfirmDeleteMvtPartial=これにより、トランザクションがアカウンティングから削除される(同じトランザクションに関連するすべての操作ラインが削除される)
 FinanceJournal=財務仕訳帳
 ExpenseReportsJournal=経費報告仕訳帳
 DescFinanceJournal=銀行口座による全種別の支払いを含む財務仕訳帳
@@ -248,34 +251,36 @@ PaymentsNotLinkedToProduct=支払いはどの製品/サービスにもリンク�
 OpeningBalance=期首残高
 ShowOpeningBalance=期首残高を表示する
 HideOpeningBalance=期首残高を非表示にする
-ShowSubtotalByGroup=グループごとに小計を表示
+ShowSubtotalByGroup=レベルごとに小計を表示
 
 Pcgtype=勘定科目のグループ
-PcgtypeDesc=科目のグループは、一部のアカウンティングレポートの事前定義された「フィルター」および「グループ化」基準として使用される。たとえば、「INCOME」または「EXPENSE」は、費用/収入レポートを作成するための製品の会計科目のグループとして使用される。
+PcgtypeDesc=科目のグループは、一部のアカウンティングレポートの事前定義された「フィルタ」および「グループ化」基準として使用される。たとえば、「INCOME」または「EXPENSE」は、費用/収入レポートを作成するための製品の会計科目のグループとして使用される。
 
 Reconcilable=調整可能
 
 TotalVente=税引前総売上高
 TotalMarge=売上総利益
 
-DescVentilCustomer=製品会計科目にバインドされている（またはバインドされていない）顧客請求書行のリストをここで参照すること
+DescVentilCustomer=製品会計科目にバインドされている(またはバインドされていない)顧客請求書行のリストをここで参照すること
 DescVentilMore=ほとんどの場合、事前定義された製品またはサービスを使用し、製品/サービスカードに科目番号を設定すると、アプリケーションは、請求書の行と勘定科目表の会計科目の間のすべての紐付をボタン<strong> "%s" </strong>でワンクリックする。製品/サービスカードに科目が設定されていない場合、または科目に紐付けされていない行がまだある場合は、メニュー「<strong>%s</strong>」から手動で紐付けする必要がある。
 DescVentilDoneCustomer=請求書の顧客の行とその製品会計科目のリストをここで参照すること
 DescVentilTodoCustomer=製品会計科目にまだ紐付けされていない請求書行を紐付けする
 ChangeAccount=選択したラインの製品/サービス会計科目を次の会計科目に変更する。
 Vide=-
-DescVentilSupplier=製品会計科目にバインドされている、またはまだバインドされていない仕入先請求書明細のリストをここで参照すること（会計でまだ転送されていないレコードのみが表示される）
+DescVentilSupplier=製品会計科目にバインドされている、またはまだバインドされていない仕入先請求書明細のリストをここで参照すること(会計でまだ転送されていないレコードのみが表示される)
 DescVentilDoneSupplier=ベンダーの請求書の行とその会計科目のリストをここで参照すること
 DescVentilTodoExpenseReport=まだ料金会計科目に紐付けされていない経費レポート行を紐付けする
-DescVentilExpenseReport=手数料会計科目にバインドされている（またはバインドされていない）経費報告行のリストをここで参照すること
+DescVentilExpenseReport=手数料会計科目にバインドされている(またはバインドされていない)経費報告行のリストをここで参照すること
 DescVentilExpenseReportMore=経費報告行の種別で会計科目を設定すると、アプリケーションは、ボタン<strong> "%s" </strong>をワンクリックするだけで、経費報告行と勘定科目表の会計科目の間のすべての紐付けを行うことができる。科目が料金辞書に設定されていない場合、または科目に紐付けされていない行がまだある場合は、メニュー「<strong>%s</strong>」から手動で紐付けする必要がある。
 DescVentilDoneExpenseReport=経費報告書の行とその手数料会計科目のリストをここで参照すること
 
+Closure=年次閉鎖
 DescClosure=検証されていない月ごとの動きの数とすでに開いている会計年度をここで参照すること
-OverviewOfMovementsNotValidated=ステップ1 /検証されていない動きの概要。 （決算期に必要）
+OverviewOfMovementsNotValidated=ステップ1 /検証されていない動きの概要。 (決算期に必要)
+AllMovementsWereRecordedAsValidated=すべての動きは検証済みとして記録された
+NotAllMovementsCouldBeRecordedAsValidated=すべての動きを検証済みとして記録できるわけではない
 ValidateMovements=動きを検証する
 DescValidateMovements=書き込み、レタリング、削除の変更または削除は禁止される。演習のすべてのエントリを検証する必要がある。検証しないと、閉じることができない。
-SelectMonthAndValidate=月を選択し、動きを検証する
 
 ValidateHistory=自動的に紐付け
 AutomaticBindingDone=自動紐付けが行われた
@@ -293,6 +298,7 @@ Accounted=元帳に計上
 NotYetAccounted=元帳にはまだ計上されていない
 ShowTutorial=チュートリアルを表示
 NotReconciled=調整されていない
+WarningRecordWithoutSubledgerAreExcluded=警告、補助元帳アカウントが定義されていないすべての操作はフィルタリングされ、このビューから除外される
 
 ## Admin
 BindingOptions=製本オプション
@@ -315,9 +321,9 @@ ErrorAccountingJournalIsAlreadyUse=この仕訳帳はすでに使用されてい
 AccountingAccountForSalesTaxAreDefinedInto=注：消費税の会計科目は、メニュー<b> %s </b> --<b> %s</b>に定義されている。
 NumberOfAccountancyEntries=エントリー数
 NumberOfAccountancyMovements=楽章の数
-ACCOUNTING_DISABLE_BINDING_ON_SALES=販売の会計における紐付け力と移転を無効にする（顧客の請求書は会計に考慮されない）
-ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=購入時の会計における紐付け力と移転を無効にする（ベンダーの請求書は会計で考慮されない）
-ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=経費報告書の会計における紐付け力と移転を無効にする（経費報告書は会計で考慮されない）
+ACCOUNTING_DISABLE_BINDING_ON_SALES=販売の会計における紐付け力と移転を無効にする(顧客の請求書は会計に考慮されない)
+ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=購入時の会計における紐付け力と移転を無効にする(ベンダーの請求書は会計で考慮されない)
+ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=経費報告書の会計における紐付け力と移転を無効にする(経費報告書は会計で考慮されない)
 
 ## Export
 ExportDraftJournal=下書き仕訳帳のエクスポート
@@ -332,15 +338,16 @@ Modelcsv_quadratus=QuadratusQuadraComptaのエクスポート
 Modelcsv_ebp=EBPのエクスポート
 Modelcsv_cogilog=Cogilogのエクスポート
 Modelcsv_agiris=Agirisのエクスポート
-Modelcsv_LDCompta=LD Compta（v9）のエクスポート（テスト）
-Modelcsv_LDCompta10=LD Compta（v10以降）のエクスポート
-Modelcsv_openconcerto=OpenConcertoのエクスポート（テスト）
+Modelcsv_LDCompta=LD Compta(v9)のエクスポート(テスト)
+Modelcsv_LDCompta10=LD Compta(v10以降)のエクスポート
+Modelcsv_openconcerto=OpenConcertoのエクスポート(テスト)
 Modelcsv_configurable=CSV構成可能のエクスポート
 Modelcsv_FEC=FECのエクスポート
+Modelcsv_FEC2=FECのエクスポート(日付生成の書き込み/ドキュメントの反転あり)
 Modelcsv_Sage50_Swiss=セージ50スイスへのエクスポート
 Modelcsv_winfic=Winficのエクスポート-eWinfic-WinSisCompta
-Modelcsv_Gestinumv3=Export for Gestinum (v3)
-Modelcsv_Gestinumv5Export for Gestinum (v5)
+Modelcsv_Gestinumv3=Gestinum(v3)のエクスポート
+Modelcsv_Gestinumv5Export Gestinum(v5)の場合
 ChartofaccountsId=勘定科目表ID
 
 ## Tools - Init accounting account on product / service
@@ -381,7 +388,7 @@ Formula=式
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=セットアップのいくつかの必須の手順が実行されないでした。それらを完了すること
-ErrorNoAccountingCategoryForThisCountry=国%sで使用できる会計科目グループがない（ ホーム - 設定 - 辞書 を参照）
+ErrorNoAccountingCategoryForThisCountry=国%sで使用できる会計科目グループがない( ホーム - 設定 - 辞書 を参照)
 ErrorInvoiceContainsLinesNotYetBounded=請求書<strong>%s </strong>の一部の行を仕訳しようとしたが、他の一部の行はまだ会計科目にバインドされていない。この請求書のすべての請求書行の仕訳は拒否される。
 ErrorInvoiceContainsLinesNotYetBoundedShort=請求書の一部の行は、会計科目にバインドされていない。
 ExportNotSupported=設定されたエクスポート形式は、このページではサポートされていない

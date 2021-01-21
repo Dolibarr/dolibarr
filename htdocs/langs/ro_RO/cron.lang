@@ -7,13 +7,14 @@ Permission23103 = Şterge Job programat
 Permission23104 = Execută Job programat
 # Admin
 CronSetup=Setare Managementul joburilor programate
-URLToLaunchCronJobs=URL pentru a verifica și a lansa sarcini cron calificate 
-OrToLaunchASpecificJob=Sau pentru a verifica și  a lansa un anumit job
+URLToLaunchCronJobs=Adresă URL pentru a verifica și lansa joburi cron calificate din browser
+OrToLaunchASpecificJob=Sau pentru a verifica și lansa un anumit task dintr-un browser
 KeyForCronAccess=Cheie de securitate pentru URL de lansare a joburilor cron
 FileToLaunchCronJobs=Linie de comanda pentru a verifica și a lansa sarcini cron calificate
 CronExplainHowToRunUnix=Pe mediul Unix veţi  utiliza instrumentul crontab pentru a  rula urmatoarea  linia de comanda la fiecare 5 minute
 CronExplainHowToRunWin=În mediul Microsoft (tm) Windows, puteți utiliza instrumentele programate pentru a executa linia de comandă la fiecare 5 minute
 CronMethodDoesNotExists= Clasa %s nu conține metoda %s
+CronMethodNotAllowed=Metoda %s clasei %seste în lista neagră a metodelor interzise
 CronJobDefDesc=Profilele sarcinilor Cron sunt definite în fișierul descriptor de module. Când modulul este activat, acestea sunt încărcate și disponibile, astfel încât să puteți administra lucrările din meniul instrumentelor de administrare%s.
 CronJobProfiles=Lista profilurilor sarcinilor cron predefinite
 # Menu
@@ -46,6 +47,7 @@ CronNbRun=Numărul de lansări
 CronMaxRun=Număr maxim de lansări
 CronEach=Fiecare
 JobFinished=Job lansat şi terminat
+Scheduled=Programat
 #Page card
 CronAdd= Adaugă joburi
 CronEvery=Executa fiecare job
@@ -56,7 +58,7 @@ CronNote=Comenteaza
 CronFieldMandatory=Câmpurile %s sunt obligatorii
 CronErrEndDateStartDt=Data de sfârşit nu poate fi înaintea datei de început
 StatusAtInstall=Stare la instalarea modulului
-CronStatusActiveBtn=Activare
+CronStatusActiveBtn=Programare
 CronStatusInactiveBtn=Dezactivare
 CronTaskInactive=Acest post este dezactivat
 CronId=Id
@@ -82,3 +84,8 @@ MakeLocalDatabaseDumpShort=Backup local baza de date
 MakeLocalDatabaseDump=Creați o bază de date locală. Parametrii sunt: ​​compresie ("gz" sau "bz" sau "none"), tipul de backup (mysql, pgsql, auto) 1, "auto" sau nume de fișier de construit, număr de fișiere de rezervă de păstrat
 WarningCronDelayed=Atenție, în scopul performanței, indiferent de data următoare a executării activităţilor activate, este posibil ca activităţile dvs. să fie întârziate la maximum %s ore înainte de a rula
 DATAPOLICYJob=Curățător de date și anonimizator
+JobXMustBeEnabled=Jobul %s trebuie să fie activat
+# Cron Boxes
+LastExecutedScheduledJob=Ultima execuţie a jobului programat 
+NextScheduledJobExecute=Următoarea execuţie a jobului programat
+NumberScheduledJobError=Numărul de joburi programate cu eroare

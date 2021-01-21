@@ -333,7 +333,7 @@ if ($action == 'writebookkeeping') {
 				$bookkeeping->debit = ($mt >= 0) ? $mt : 0;
 				$bookkeeping->credit = ($mt < 0) ? -$mt : 0;
 				$bookkeeping->code_journal = $journal;
-				$bookkeeping->journal_label = $journal_label;
+				$bookkeeping->journal_label = $langs->transnoentities($journal_label);
 				$bookkeeping->fk_user_author = $user->id;
 				$bookkeeping->entity = $conf->entity;
 
@@ -383,7 +383,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->debit = ($mt < 0) ? -$mt : 0;
 					$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
 					$bookkeeping->code_journal = $journal;
-					$bookkeeping->journal_label = $journal_label;
+					$bookkeeping->journal_label = $langs->transnoentities($journal_label);
 					$bookkeeping->fk_user_author = $user->id;
 					$bookkeeping->entity = $conf->entity;
 
@@ -443,7 +443,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->debit = ($mt < 0) ? -$mt : 0;
 						$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
 						$bookkeeping->code_journal = $journal;
-						$bookkeeping->journal_label = $journal_label;
+						$bookkeeping->journal_label = $langs->transnoentities($journal_label);
 						$bookkeeping->fk_user_author = $user->id;
 						$bookkeeping->entity = $conf->entity;
 
