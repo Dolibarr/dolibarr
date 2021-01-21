@@ -40,6 +40,7 @@ PageForCreateEditView=Página PHP para crear/editar/ver un registro
 PageForAgendaTab=Página de PHP para la pestaña de eventos
 PageForDocumentTab=Página de PHP para la pestaña de documento
 PageForNoteTab=Página de PHP para la pestaña de notas
+PageForContactTab=Página PHP para la pestaña de contacto
 PathToModulePackage=Ruta al zip del módulo/aplicación
 PathToModuleDocumentation=Ruta a la documentación del módulo/aplicación (%s)
 SpaceOrSpecialCharAreNotAllowed=Espacios o caracteres especiales no son permitidos.
@@ -77,13 +78,13 @@ IsAMeasure=Es una medida
 DirScanned=Directorio analizado
 NoTrigger=No hay trigger
 NoWidget=No hay widget
-GoToApiExplorer=Ir al Explorador de API
+GoToApiExplorer=Explorador de API
 ListOfMenusEntries=Lista de entradas de menú
 ListOfDictionariesEntries=Listado de entradas de diccionarios
 ListOfPermissionsDefined=Listado de permisos definidos
 SeeExamples=Vea ejemplos aquí
 EnabledDesc=Condición para tener este campo activo (Ejemplos: 1 o $conf->global->MYMODULE_MYOPTION)
-VisibleDesc=¿Es visible el campo? (Ejemplos: 0 = Nunca visible, 1 = Visible en la lista y crear / actualizar / ver formularios, 2 = Visible solo en la lista, 3 = Visible solo en el formulario crear / actualizar / ver (no en la lista), 4 = Visible en la lista y solo actualizar / ver formulario (no crear), 5 = Visible solo en el formulario de vista final de la lista (no crear, no actualizar)<br><br>El uso de un valor negativo significa que el campo no se muestra de forma predeterminada en la lista, pero se puede seleccionar para verlo).<br><br>Puede ser una expresión, por ejemplo:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
+VisibleDesc=¿Es visible el campo? (Ejemplos: 0 = Nunca visible, 1 = Visible en la lista y crear/actualizar/ver formularios, 2 = Visible solo en la lista, 3 = Visible solo en el formulario crear/actualizar/ver (no en la lista), 4 = Visible en la lista y solo actualizar/ver formulario (no crear), 5 = Visible solo en el formulario de vista final de la lista (no crear, no actualizar)<br><br>El uso de un valor negativo significa que el campo no se muestra de forma predeterminada en la lista, pero se puede seleccionar para verlo).<br><br>Puede ser una expresión, por ejemplo:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
 DisplayOnPdfDesc=Muestre este campo en documentos PDF compatibles, puede administrar la posición con el campo "Posición". <br/> Actualmente, conocidos modelos compatibles PDF son: eratosthene (pedidos), espadon (notas de envios), sponge (facturas), cyan (presupuesto), cornas (pedido a proveedor) <br/> <br/> <strong> Para documento: </strong> <br/> 0 = No se ven las <br/> 1 = mostrar <br/> 2 = mostrar sólo si no está vacío <br/> <br/> <strong> Para las líneas de documentos: </strong> <br/> 0 = no mostradas <br/> 1 =  se muestran en una columna <br/> 3 = se muestra en la columna de descripción de línea después de la descripción <br/> 4 = se muestra en la columna de descripción después de la descripción solo si no está vacía
 DisplayOnPdf=Mostrar en PDF
 IsAMeasureDesc=¿Se puede acumular el valor del campo para obtener un total en el listado? (Ejemplos: 1 o 0)
@@ -105,7 +106,7 @@ TryToUseTheModuleBuilder=Si tiene conocimientos de SQL y PHP, puede usar el asis
 SeeTopRightMenu=Ver <span class="fa fa-bug"></span> en el menú superior derecho
 AddLanguageFile=Añadir archivo de idioma
 YouCanUseTranslationKey=Aquí puede usar una clave que es la clave de traducción encontrada en el archivo de idioma (ver pestaña "Idiomas")
-DropTableIfEmpty=(Eliminar tabla si está vacía)
+DropTableIfEmpty=(Destruya la tabla si está vacía)
 TableDoesNotExists=La tabla %s no existe
 TableDropped=Tabla %s eliminada
 InitStructureFromExistingTable=Construir la estructura de array de una tabla existente
@@ -126,7 +127,6 @@ UseSpecificEditorURL = Usar un editor específico URL
 UseSpecificFamily = Usar una familia específica
 UseSpecificAuthor = Usar un autor especifico
 UseSpecificVersion = Usar una versión inicial específica
-ModuleMustBeEnabled=El módulo debe ser activado primero
 IncludeRefGeneration=La referencia del objeto debe generarse automáticamente
 IncludeRefGenerationHelp=Marque esto si desea incluir código para gestionar la generación automática de la referencia
 IncludeDocGeneration=Quiero generar algunos documentos del objeto.
@@ -140,3 +140,4 @@ TypeOfFieldsHelp=Tipo de campos: <br> varchar(99), double(24,8), real, text, htm
 AsciiToHtmlConverter=Conversor de ASCII a HTML
 AsciiToPdfConverter=Conversor de ASCII a PDF
 TableNotEmptyDropCanceled=La tabla no está vacía. La eliminación ha sido cancelada.
+ModuleBuilderNotAllowed=El constructor de módulos está disponible pero no permitido para su usuario.

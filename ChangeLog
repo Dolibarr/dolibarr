@@ -7,7 +7,8 @@ English Dolibarr ChangeLog
 
 For users:
 ----------
-NEW: Add module "Credit transfer SEPA" to manage payment of vendors using bank credit transfer SEPA files.
+NEW: Module "Credit transfer SEPA" to manage payment of vendors using bank credit transfer SEPA files.
+NEW: Module Intracomm report
 NEW: Module Reception (for a more accurate management of your receptions) moved from experimental to stable.
 NEW: Module Recruitment to manage Job position and applications.
 NEW: Several security issues after a private bug bounty campaign. 
@@ -22,7 +23,6 @@ NEW: Solve blocking feature. Can increase stock of a Kit without changing subpro
 NEW: add a widget to show the customers with outstanding limits reached
 NEW: add 2 rules for emailcollector: Message send/not sent from Dolibarr
 NEW: add a counter of number of words for pages in website module
-NEW: add alert before changing thirdparty in TakePOS
 NEW: add a page to list Stock at a given date in the past
 NEW: add a start date to begin binding in accountancy
 NEW: add a statistics page to list popularity of products on invoices
@@ -34,12 +34,12 @@ NEW: add column vat rate in page to define accounting account on product/service
 NEW: add costprice in fields of products list
 NEW: add an import profile for CUSTOMER ORDER, PO, PROPOSAL MODULE, SUPPLIER INVOICE
 NEW: add employee link in expense report binding page
-NEW: add EORI No. as ProfID5
+NEW: add EORI No. as ProfID5  #15382
 NEW: add export for various payments
 NEW: add Extrafields labels and values in mail on create ticket
 NEW: add Extrafields support on ECM module
 NEW: add filter rules "is answer" and "is not answer" in email collector
-NEW: add focus when editing on product/stock/product.php Close #14548
+NEW: add focus when editing on product/stock/product.php  -> close #14548
 NEW: add free text on each terminal of cash desk
 NEW: add global search for customer payments and vendor payments
 NEW: add global search for miscellaneous payments
@@ -74,7 +74,6 @@ NEW: Algeria data (VAT and forme_juridique)
 NEW: allow click on all header numbers on commerce area
 NEW: allow to reopen interventions (green button)
 NEW: allow zero quantity on supplier/vendor order line
-NEW: appearance tab in TakePOS with more visual parameters
 NEW: better currency rate editor
 NEW: can build vendor invoice from vendor orders
 NEW: can change a product in lines of a recurring invoice or contract
@@ -97,9 +96,6 @@ NEW: common behavior for monthly leave list view
 NEW: convert all subscription in datetime
 NEW: date shipment from order accepts hours
 NEW: price level compatibility for variant
-NEW: delayed payment in TakePOS
-NEW: display date range if exist in TakePOS
-NEW: display resiliate status in TakePOS for member
 NEW: display stat for BOM on "object referent"/linked Object product tab
 NEW: Email configuration - allow auto signed certificate when smtp ssl activated
 NEW: enable free emails input with select2
@@ -121,29 +117,24 @@ NEW: link on balance to the ledger
 NEW: MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER const in email collector
 NEW: manage errors on update extra fields in ticket card
 NEW: mass-actions for the event list view
-NEW: Module Intracomm report
 NEW: more filter for "View change logs"
-NEW: multicurrency total in TakePOS
 NEW: multiselect type and date to date filter
-NEW: Nature of product is now a dictionay
 NEW: new line template: hidden conf to fill service dates from the last service line
 NEW: PDF model storm for delivery
 NEW: possibilty to group payments by mode and show their subtotal
-NEW: Print payment method and change in TakePOS
 NEW: Priority and transparency from external calendar events
+NEW: Products - Nature of product is now a dictionary   #13287
 NEW: Products Import/Export 'default warehouse' and 'use batch number' fields
 NEW: Purchase price table: added filterable table columns
 NEW: rate editor for multicurrency
 NEW: ref_ext field for Commande lines, order lines, Attributes and Combinations, Invoice lines, payments, order lines
 NEW: remove new lines in mail on add ticket message
-NEW: restrict thirdparty to customer in TakePOS
 NEW: Rule "email to" accept wildcard *
-NEW: Save filter of the project homepage
+NEW: save filter of the project homepage
 NEW: select-able columns on customer and supplier invoice paymnet list
 NEW: select-able columns on miscellaneous payments + more data columns
 NEW: select-able columns on social taxes list
 NEW: send context and remove new lines on create ticket
-NEW: show available stock in TakePOS
 NEW: show category filter on lists only when user have rights to read categories
 NEW: show header number and make it clickable in warehouse area, payment area, shipment area
 NEW: show image of user in the combo select of users
@@ -156,18 +147,27 @@ NEW: show tags and status in search list of website pages
 NEW: show user on external calender events (when found)
 NEW: subject title with company name instead of application title in ticket message
 NEW: Support for Samba4 AD
+NEW: TakePOS appearance tab with more visual parameters
+NEW: TakePOS add alert before changing thirdparty 
 NEW: TakePOS add third order printer
 NEW: TakePOS can change thirdparty with barcode scan
 NEW: TakePOS can create a thirdparty customer from TakePOS frontend
 NEW: TakePOS connector compatibility with RECEIPT PRINTERS module
+NEW: TakePOS add delayed payment
+NEW: TakePOS display date range if exist
+NEW: TakePOS display resiliate status for members
 NEW: TakePOS Gift Receipt
-NEW: TakePOS Multicurrency compatibility
+NEW: TakePOS multicurrency compatibility
+NEW: TakePOS multicurrency total
+NEW: TakePOS print payment method and change 
+NEW: TakePOS restrict thirdparty to customer
+NEW: TakePOS show available stock 
 NEW: TakePOS Weighing Scale compatibility with TakePOS connector #14725
-NEW: Third-Party Import new fields: mother company,outstanding debt limit,bank account,incoterms
+NEW: Thirdparty Import new fields: mother company,outstanding debt limit,bank account,incoterms
 NEW: Thirdparty module : box on customer/supplier tab for invoice outsantding amount late
-NEW: ticket classification on create from email collector
+NEW: Ticket classification on create from email collector
 NEW: Ticket message notifications when edited from public interface
-NEW: translate classification labels in ticket
+NEW: Ticket translate classification labels in ticket
 NEW: VAT rate for Angola #15606
 NEW: VAT and juridical status for Algeria
 NEW: VAT report - Invert constant to show by default zero VAT in reports
@@ -250,6 +250,7 @@ Following changes may create regressions for some external modules, but were nec
 * Function showStripePaymentUrl, getStripePaymentUrl, showPaypalPaymentUrl and getPaypalPaymentUrl has been removed. The generic one showOnlinePaymentUrl and getOnlinePaymentUrl are always used.
 * Context for hook showSocinfoOnPrint has been moved from "showsocinfoonprint" to "main"
 * Library htdocs/includes/phpoffice/phpexcel as been removed (replaced with htdocs/includes/phpoffice/PhpSpreadsheet)
+* Databse transaction in your triggers must be correctly balanced (one close for one open). If not, an error will be returned by the trigger, even if trigger did return error code.
 
 
 ***** ChangeLog for 12.0.4 compared to 12.0.3 *****

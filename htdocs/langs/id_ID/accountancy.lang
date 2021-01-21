@@ -48,6 +48,7 @@ CountriesExceptMe=Semua negara kecuali %s
 AccountantFiles=Export source documents
 ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
 VueByAccountAccounting=View by accounting account
+VueBySubAccountAccounting=View by accounting subaccount
 
 MainAccountForCustomersNotDefined=Akun akuntansi utama untuk pelanggan tidak ditentukan dalam pengaturan
 MainAccountForSuppliersNotDefined=Akun akuntansi utama untuk vendor tidak ditentukan dalam pengaturan
@@ -144,7 +145,7 @@ NotVentilatedinAccount=Tidak terikat pada akun akuntansi
 XLineSuccessfullyBinded=%s produk/layanan berhasil diikat ke akun akuntansi
 XLineFailedToBeBinded=Produk/layanan %s tidak terikat pada akun akuntansi mana pun
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Jumlah elemen yang akan dijilidkan ditunjukkan oleh halaman (maksimum yang disarankan: 50)
+ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Mulailah menyortir halaman "Binding to do" oleh elemen-elemen terbaru
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Mulailah menyortir halaman "Binding done" oleh elemen-elemen terbaru
 
@@ -198,7 +199,8 @@ Docdate=Tanggal
 Docref=Referensi
 LabelAccount=Label Akun
 LabelOperation=Operasi label
-Sens=Sen
+Sens=Direction
+AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you received<br>For an accounting account of a supplier, use Debit to record a payment you make
 LetteringCode=Kode huruf
 Lettering=Tulisan
 Codejournal=Jurnal
@@ -206,7 +208,8 @@ JournalLabel=Label jurnal
 NumPiece=Jumlah potongan
 TransactionNumShort=Tidak. transaksi
 AccountingCategory=Grup yang dipersonalisasi
-GroupByAccountAccounting=Kelompokkan dengan akun akuntansi
+GroupByAccountAccounting=Group by general ledger account
+GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=Anda dapat mendefinisikan di sini beberapa grup akun akuntansi. Mereka akan digunakan untuk laporan akuntansi yang dipersonalisasi.
 ByAccounts=Dengan akun
 ByPredefinedAccountGroups=Oleh kelompok yang telah ditentukan
@@ -248,7 +251,7 @@ PaymentsNotLinkedToProduct=Pembayaran tidak terkait dengan produk / layanan apa 
 OpeningBalance=Saldo awal
 ShowOpeningBalance=Tampilkan saldo awal
 HideOpeningBalance=Sembunyikan saldo awal
-ShowSubtotalByGroup=Tampilkan subtotal menurut grup
+ShowSubtotalByGroup=Show subtotal by level
 
 Pcgtype=Grup akun
 PcgtypeDesc=Grup akun digunakan sebagai kriteria 'filter' dan 'pengelompokan' yang telah ditentukan sebelumnya untuk beberapa laporan akuntansi. Misalnya, 'PENGHASILAN' atau 'BEBAN' digunakan sebagai grup untuk akun akuntansi produk untuk membangun laporan pengeluaran / pendapatan.
@@ -271,11 +274,13 @@ DescVentilExpenseReport=Konsultasikan di sini daftar garis laporan pengeluaran y
 DescVentilExpenseReportMore=Jika Anda mengatur akun akuntansi pada jenis garis laporan pengeluaran, aplikasi akan dapat membuat semua ikatan antara garis laporan pengeluaran Anda dan akun akuntansi dari bagan akun Anda, cukup dengan satu klik dengan tombol<strong>"%s" </strong>. Jika akun tidak ditetapkan pada kamus biaya atau jika Anda masih memiliki beberapa baris yang tidak terikat pada akun apa pun, Anda harus membuat manual yang mengikat dari menu "<strong> %s </strong>".
 DescVentilDoneExpenseReport=Konsultasikan di sini daftar garis laporan pengeluaran dan akun akuntansi biayanya
 
+Closure=Annual closure
 DescClosure=Konsultasikan di sini jumlah gerakan berdasarkan bulan yang tidak divalidasi & tahun fiskal sudah terbuka
 OverviewOfMovementsNotValidated=Langkah 1 / Ikhtisar gerakan yang tidak divalidasi. (Diperlukan untuk menutup tahun fiskal)
+AllMovementsWereRecordedAsValidated=All movements were recorded as validated
+NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated
 ValidateMovements=Validasi gerakan
 DescValidateMovements=Setiap modifikasi atau penghapusan tulisan, huruf dan penghapusan akan dilarang. Semua entri untuk latihan harus divalidasi jika tidak, penutupan tidak akan mungkin
-SelectMonthAndValidate=Pilih bulan dan validasi gerakan
 
 ValidateHistory=Mengikat Secara Otomatis
 AutomaticBindingDone=Pengikatan otomatis dilakukan
@@ -293,6 +298,7 @@ Accounted=Disumbang dalam buku besar
 NotYetAccounted=Belum diperhitungkan dalam buku besar
 ShowTutorial=Perlihatkan Tutorial
 NotReconciled=Tidak didamaikan
+WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
 
 ## Admin
 BindingOptions=Binding options
@@ -337,6 +343,7 @@ Modelcsv_LDCompta10=Ekspor untuk LD Compta (v10 & lebih tinggi)
 Modelcsv_openconcerto=Ekspor untuk OpenConcerto (Uji)
 Modelcsv_configurable=Ekspor CSV Dapat Dikonfigurasi
 Modelcsv_FEC=Ekspor FEC
+Modelcsv_FEC2=Export FEC (With dates generation writing / document reversed)
 Modelcsv_Sage50_Swiss=Ekspor untuk Sage 50 Swiss
 Modelcsv_winfic=Ekspor Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Export for Gestinum (v3)

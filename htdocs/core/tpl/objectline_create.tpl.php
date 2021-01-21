@@ -319,6 +319,14 @@ if ($nolinesbefore) {
 			echo $form->selectyesno('date_end_fill', $line->date_end_fill, 1);
 			echo '</div>';
 		}
+		if (is_object($objectline)) {
+			$temps = $objectline->showOptionals($extrafields, 'create', array(), '', '', 1, 'line');;
+			if (!empty($temps)) {
+				print '<div style="padding-top: 10px" id="extrafield_lines_area_create" name="extrafield_lines_area_create">';
+				print $temps;
+				print '</div>';
+			}
+		}
 		echo '</td>';
 		if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
 		{
@@ -412,10 +420,6 @@ if ($nolinesbefore) {
 </tr>
 
 <?php
-if (is_object($objectline)) {
-	print $objectline->showOptionals($extrafields, 'edit', array('colspan'=>$coldisplay), '', '', 1);
-}
-
 if ((!empty($conf->service->enabled) || ($object->element == 'contrat')) && $dateSelector && GETPOST('type') != '0')	// We show date field if required
 {
 	print '<tr id="trlinefordates" class="oddeven">'."\n";

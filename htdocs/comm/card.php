@@ -97,6 +97,14 @@ if ($object->id > 0) {
 
 $now = dol_now();
 
+if ($id > 0 && empty($object->id))
+{
+	// Load data of third party
+	$res = $object->fetch($id);
+	if ($object->id < 0) dol_print_error($db, $object->error, $object->errors);
+}
+
+
 
 /*
  * Actions
@@ -226,6 +234,12 @@ if (empty($reshook))
 		}
 		if ($error) $action = 'edit_extras';
 	}
+
+	// warehouse
+	if ($action == 'setwarehouse' && $user->rights->societe->creer)
+	{
+		$result = $object->setWarehouse(GETPOST('fk_warehouse', 'int'));
+	}
 }
 
 
@@ -237,13 +251,6 @@ $contactstatic = new Contact($db);
 $userstatic = new User($db);
 $form = new Form($db);
 $formcompany = new FormCompany($db);
-
-if ($id > 0 && empty($object->id))
-{
-	// Load data of third party
-	$res = $object->fetch($id);
-	if ($object->id < 0) dol_print_error($db, $object->error, $object->errors);
-}
 
 $title = $langs->trans("CustomerCard");
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->name;
@@ -480,7 +487,24 @@ if ($object->id > 0)
 		print "</td>";
 		print '</tr>';
 	}
-
+	// Warehouse
+	if (!empty($conf->stock->enabled))
+	{
+		$langs->load('stocks');
+		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+		$formproduct = new FormProduct($db);
+		print '<tr class="nowrap">';
+		print '<td>';
+		print $form->editfieldkey("Warehouse", 'warehouse', '', $object, $user->rights->societe->creer);
+		print '</td><td>';
+		if ($action == 'editwarehouse') {
+			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'fk_warehouse', 1);
+		} else {
+			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'none');
+		}
+		print '</td>';
+		print '</tr>';
+	}
 	// Preferred shipping Method
 	if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD)) {
 		print '<tr><td class="nowrap">';
@@ -1265,6 +1289,12 @@ if ($object->id > 0)
 			dol_print_error($db);
 		}
 	}
+
+	// Allow external modules to add their own shortlist of recent objects
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addMoreRecentObjects', $parameters, $object, $action);
+	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	else print $hookmanager->resPrint;
 
 	print '</div></div></div>';
 	print '<div style="clear:both"></div>';

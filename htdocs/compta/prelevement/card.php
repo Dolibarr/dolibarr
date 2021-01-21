@@ -2,7 +2,7 @@
 /* Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -354,8 +354,8 @@ if ($id > 0 || $ref)
 	{
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
-		if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-		{
+		if (($page * $limit) > $nbtotalofrecords) {
+			// if total resultset is smaller then paging size (filtering), goto and load page 0
 			$page = 0;
 			$offset = 0;
 		}
@@ -445,15 +445,14 @@ if ($id > 0 || $ref)
 			$i++;
 		}
 
-		if ($num > 0)
-		{
+		if ($num > 0) {
 			print '<tr class="liste_total">';
 			print '<td>'.$langs->trans("Total").'</td>';
 			print '<td>&nbsp;</td>';
 			print '<td class="right">';
-			if (empty($offset) && $num <= $limit)	// If we have all record on same page, then the following test/warning can be done
-			{
-				if ($total != $object->amount) print img_warning("TotalAmountOfdirectDebitOrderDiffersFromSumOfLines");
+			if (empty($offset) && $num <= $limit) {
+				// If we have all record on same page, then the following test/warning can be done
+				if ($total != $object->amount) print img_warning($langs->trans("TotalAmountOfdirectDebitOrderDiffersFromSumOfLines"));
 			}
 			print price($total);
 			print "</td>\n";

@@ -31,7 +31,7 @@ AssignDedicatedAccountingAccount=Compte nou per a assignar
 InvoiceLabel=Etiqueta de factura
 OverviewOfAmountOfLinesNotBound=Vista general de la quantitat de línies no comptabilitzades en un compte comptable
 OverviewOfAmountOfLinesBound=Vista general de la quantitat de línies ja comptabilitzades en un compte comptable
-OtherInfo=Altra informació
+OtherInfo=Una altra informació
 DeleteCptCategory=Eliminar el compte comptable del grup
 ConfirmDeleteCptCategory=Estàs segur que vols eliminar aquest compte comptable del grup de comptabilitat?
 JournalizationInLedgerStatus=Estat del diari
@@ -46,8 +46,9 @@ CountriesNotInEEC=Països no integrats a la CEE
 CountriesInEECExceptMe=Països a la CEE excepte %s
 CountriesExceptMe=Tots els països, excepte %s
 AccountantFiles=Exporta documents d'origen
-ExportAccountingSourceDocHelp=Amb aquesta eina, podeu exportar els esdeveniments d'origen (llista i PDF) que es van utilitzar per generar la vostra comptabilitat. Per exportar els vostres diaris, utilitzeu l’entrada de menú %s - %s.
+ExportAccountingSourceDocHelp=Amb aquesta eina, podeu exportar els esdeveniments d'origen (llista i PDF) que es van utilitzar per a generar la vostra comptabilitat. Per a exportar els vostres diaris, utilitzeu l’entrada de menú %s - %s.
 VueByAccountAccounting=Veure per compte comptable
+VueBySubAccountAccounting=Veure-ho per subcomptes comptables
 
 MainAccountForCustomersNotDefined=Compte comptable per a clients no definida en la configuració
 MainAccountForSuppliersNotDefined=Compte comptable principal per a proveïdors no definit a la configuració
@@ -58,12 +59,12 @@ MainAccountForSubscriptionPaymentNotDefined=Compte comptable per a IVA no defini
 AccountancyArea=Àrea de comptabilitat
 AccountancyAreaDescIntro=L'ús del mòdul de comptabilitat es realitza en diverses etapes:
 AccountancyAreaDescActionOnce=Les següents accions s'executen normalment per una sola vegada, o un cop l'any ...
-AccountancyAreaDescActionOnceBis=Els passos següents s'han de fer per a estalviar-vos temps en el futur suggerint-vos el compte comptable per defecte correcte al fer els diaris (escriptura dels registres en els diaris i Llibre Major)
+AccountancyAreaDescActionOnceBis=Cal fer els passos següents per a estalviar-vos temps en el futur, suggerint-vos el compte comptable per defecte correcte quan feu els diaris (escriptura dels registres en els Diaris i Llibre major)
 AccountancyAreaDescActionFreq=Les següents accions s'executen normalment cada mes, setmana o dia per empreses molt grans ...
 
 AccountancyAreaDescJournalSetup=PAS %s: Crea o consulta el contingut dels teus diaris des del menú %s
 AccountancyAreaDescChartModel=PAS %s: Comproveu que existeix un model de pla comptable o creeu-ne un des del menú %s
-AccountancyAreaDescChart=PAS %s: Seleccioneu i/o completeu el vostre pla comptable al menú %s
+AccountancyAreaDescChart=PAS %s: Seleccioneu o completeu el vostre pla comptable al menú %s
 
 AccountancyAreaDescVat=PAS %s: Defineix comptes comptables per cada tipus d'IVA. Per això, utilitzeu l'entrada del menú %s.
 AccountancyAreaDescDefault=PAS %s: Definiu comptes comptables per defecte. Per a això, utilitzeu l'entrada de menú %s.
@@ -144,24 +145,24 @@ NotVentilatedinAccount=No vinculat al compte comptable
 XLineSuccessfullyBinded=%s productes/serveis vinculats amb èxit a un compte comptable
 XLineFailedToBeBinded=%s de productes/serveis no comptabilitzats en cap compte comptable
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Nombre d'elements a vincular mostrats per pàgina (màxim recomanat: 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Comença l'ordenació de la pàgina "Comptabilització per fer" pels elements més recents
+ACCOUNTING_LIMIT_LIST_VENTILATION=Nombre màxim de línies en llistes per pàgina (recomanat: 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Comença l'ordenació de la pàgina "Comptabilització per a fer" pels elements més recents
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Comença l'ordenació de la pàgina "Comptabilització realitzada" pels elements més recents
 
 ACCOUNTING_LENGTH_DESCRIPTION=Truncar descripcions de producte i serveis en llistes de x caràcters (Millor = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Truncar descripcions de comptes de producte i serveis en llistes de x caràcters (Millor = 50)
-ACCOUNTING_LENGTH_GACCOUNT=Longitud dels comptes generals (Si s'estableix el valor a 6 aquí, el compte '706' apareixerà com '706000' a la pantalla)
-ACCOUNTING_LENGTH_AACCOUNT=Longitud dels subcomptes (Si s'estableix el valor a 6 aquí, el compte '401' apareixerà com '401000' a la pantalla)
-ACCOUNTING_MANAGE_ZERO=Gestiona un nombre diferent de zero al final d'un compte comptable. Necessària per alguns països (com Suïssa). Si es manté apagat (per defecte), pot configurar els següents 2 paràmetres per a demanar a l'aplicació afegir un zero virtual.
-BANK_DISABLE_DIRECT_INPUT=Des-habilitar l'enregistrament directe de transaccions al compte bancari 
+ACCOUNTING_LENGTH_GACCOUNT=Longitud dels comptes generals (Si s'estableix el valor a 6 aquí, el compte «706» apareixerà com «706000» a la pantalla)
+ACCOUNTING_LENGTH_AACCOUNT=Longitud dels subcomptes (Si s'estableix el valor a 6 aquí, el compte «401» apareixerà com «401000» a la pantalla)
+ACCOUNTING_MANAGE_ZERO=Gestiona un nombre diferent de zero al final d'un compte comptable. És necessari per a alguns països (com Suïssa). Si es manté apagat (per defecte), podeu configurar els següents dos paràmetres per a demanar a l'aplicació d'afegir zeros virtuals.
+BANK_DISABLE_DIRECT_INPUT=Desactiva el registre directe de transaccions al compte bancari
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Habilita l'exportació d'esborrany en el diari
 ACCOUNTANCY_COMBO_FOR_AUX=Activa la llista de combo per al compte subsidiari (pot ser lent si tens molts tercers)
-ACCOUNTING_DATE_START_BINDING=Definiu una data per començar la vinculació i transferència a la comptabilitat. Per sota d’aquesta data, les transaccions no es transferiran a la comptabilitat.
+ACCOUNTING_DATE_START_BINDING=Definiu una data per a començar la vinculació i transferència a la comptabilitat. Per sota d’aquesta data, les transaccions no es transferiran a la comptabilitat.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=En el cas de transferència de comptabilitat, seleccioneu el període a mostrar per defecte
 
 ACCOUNTING_SELL_JOURNAL=Diari de venda
 ACCOUNTING_PURCHASE_JOURNAL=Diari de compra
-ACCOUNTING_MISCELLANEOUS_JOURNAL=Diari varis
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Diaris varis
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Diari de l'informe de despeses
 ACCOUNTING_SOCIAL_JOURNAL=Diari social
 ACCOUNTING_HAS_NEW_JOURNAL=Té un nou Diari
@@ -177,7 +178,7 @@ ACCOUNTING_ACCOUNT_SUSPENSE=Compte comptable d'espera
 DONATION_ACCOUNTINGACCOUNT=Compte comptable per a registrar les donacions
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Compte comptable per a registrar les donacions
 
-ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Compte comptable per defecte per registrar el dipòsit del client
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Compte comptable per defecte per a registrar el dipòsit del client
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Compte comptable per defecte per als productes comprats (utilitzat si no es defineix en el producte)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Compte de comptabilitat per defecte dels productes comprats a la CEE (utilitzat si no està definit a la taula de productes)
@@ -198,7 +199,8 @@ Docdate=Data
 Docref=Referència
 LabelAccount=Etiqueta de compte
 LabelOperation=Etiqueta de l'operació
-Sens=Significat
+Sens=Direcció
+AccountingDirectionHelp=Per a un compte comptable d'un client, utilitzeu Crèdit per a registrar un pagament que heu rebut <br> Per a un compte comptable d'un proveïdor, utilitzeu Dèbit per a registrar un pagament que feu
 LetteringCode=Codi de retolació
 Lettering=Lletres
 Codejournal=Diari
@@ -206,8 +208,9 @@ JournalLabel=Títol de Diari
 NumPiece=Número de peça
 TransactionNumShort=Número de transacció
 AccountingCategory=Grups personalitzats
-GroupByAccountAccounting=Agrupar per compte comptable
-AccountingAccountGroupsDesc=Pots definir aquí alguns grups de compte comptable. S'utilitzaran per a informes comptables personalitzats.
+GroupByAccountAccounting=Agrupa per compte major
+GroupBySubAccountAccounting=Agrupa per subcompte comptable
+AccountingAccountGroupsDesc=Podeu definir aquí alguns grups de comptes comptables. S'utilitzaran per a informes comptables personalitzats.
 ByAccounts=Per comptes
 ByPredefinedAccountGroups=Per grups predefinits
 ByPersonalizedAccountGroups=Per grups personalitzats
@@ -216,14 +219,14 @@ NotMatch=No definit
 DeleteMvt=Elimina algunes línies d'operació de la comptabilitat
 DelMonth=Mes a eliminar
 DelYear=Any a eliminar
-DelJournal=Diari per esborrar
-ConfirmDeleteMvt=Això suprimirà totes les línies d'operació de la comptabilitat de l'any/mes i/o d'un diari específic (cal un criteri com a mínim). Haureu de tornar a utilitzar la funció '%s' per a que el registre suprimit torni al llibre major.
+DelJournal=Diari per a suprimir
+ConfirmDeleteMvt=Això suprimirà totes les línies d'operació de la comptabilitat de l'any/mes o d'un diari específic (cal un criteri com a mínim). Haureu d'utilitzar la funció «%s» per a tornar a tenir el registre suprimit al llibre major.
 ConfirmDeleteMvtPartial=Això suprimirà la transacció de la comptabilitat (se suprimiran totes les línies d’operació relacionades amb la mateixa transacció)
 FinanceJournal=Diari de finances
 ExpenseReportsJournal=Informe-diari de despeses
-DescFinanceJournal=Finance journal including all the types of payments by bank account
+DescFinanceJournal=Diari financer que inclou tots els tipus de pagaments per compte bancari
 DescJournalOnlyBindedVisible=Aquesta és una vista de registre que està vinculada a un compte comptable i que es pot registrar als diaris i llibres majors.
-VATAccountNotDefined=Comptes comptables de IVA sense definir
+VATAccountNotDefined=Comptes comptables d'IVA sense definir
 ThirdpartyAccountNotDefined=Comptes comptables de tercers (clients o proveïdors) sense definir
 ProductAccountNotDefined=Comptes comptables per al producte sense definir
 FeeAccountNotDefined=Compte per tarifa no definit
@@ -248,10 +251,10 @@ PaymentsNotLinkedToProduct=Pagament no vinculat a cap producte / servei
 OpeningBalance=Saldo d'obertura
 ShowOpeningBalance=Mostra el saldo d'obertura
 HideOpeningBalance=Amagueu el balanç d'obertura
-ShowSubtotalByGroup=Mostrar subtotals per grup
+ShowSubtotalByGroup=Mostra el subtotal per nivell
 
 Pcgtype=Grup de compte
-PcgtypeDesc=S'utilitzen grups de comptes com a criteris predefinits de "filtre" i "agrupació" per a alguns informes de comptabilitat. Per exemple, "Ingressos" o "DESPESES" s'utilitzen com a grups per a comptes de comptabilitat de productes per crear l'informe de despeses / ingressos.
+PcgtypeDesc=S'utilitzen grups de comptes com a criteris predefinits de «filtre» i «agrupació» per a alguns informes de comptabilitat. Per exemple, «INGRESSOS» o «DESPESES» s'utilitzen com a grups per a comptes comptables de productes per a crear l'informe de despeses/ingressos.
 
 Reconcilable=Reconciliable
 
@@ -259,7 +262,7 @@ TotalVente=Total turnover before tax
 TotalMarge=Marge total de vendes
 
 DescVentilCustomer=Consulti aquí la llista de línies de factures de client vinculades (o no) a comptes comptables de producte
-DescVentilMore=En la majoria dels casos, si tu utilitzes productes o serveis predefinits i poses el número de compte a la fitxa de producte/servei, l'aplicació serà capaç de fer tots els vincles entre les línies de factura i els comptes comptables del teu pla comptable, només amb un clic mitjançant el botó <strong>"%s"</strong>. Si el compte no està col·locat  a la fitxa del producte/servei o si encara hi ha alguna línia no vinculada a cap compte, hauràs de fer una vinculació manual a partir del menú "<strong>%s</strong>".
+DescVentilMore=En la majoria dels casos, si utilitzeu productes o serveis predefinits i poses el número de compte a la fitxa de producte/servei, l'aplicació serà capaç de fer tots els vincles entre les línies de factura i els comptes comptables del vostre pla comptable, només amb un clic mitjançant el botó <strong>«%s»</strong>. Si el compte no està col·locat a la fitxa del producte/servei o si encara hi ha alguna línia no vinculada a cap compte, haureu de fer una vinculació manual a partir del menú «<strong>%s</strong>».
 DescVentilDoneCustomer=Consulta aquí la llista de línies de factures a clients i els seus comptes comptables de producte
 DescVentilTodoCustomer=Comptabilitza les línies de factura encara no comptabilitzades amb un compte comptable de producte
 ChangeAccount=Canvia el compte comptable de producte/servei per les línies seleccionades amb el següent compte comptable:
@@ -268,14 +271,16 @@ DescVentilSupplier=Consulteu aquí la llista de les línies de facturació dels 
 DescVentilDoneSupplier=Consulteu aquí la llista de les línies de venedors de factures i el seu compte comptable
 DescVentilTodoExpenseReport=Línies d'informes de despeses comptabilitzades encara no comptabilitzades amb un compte comptable de tarifa
 DescVentilExpenseReport=Consulteu aquí la llista de les línies d'informe de despeses vinculada (o no) a un compte comptable corresponent a tarifa
-DescVentilExpenseReportMore=Si tu poses el compte comptable sobre les línies de l'informe per tipus de despesa, l'aplicació serà capaç de fer tots els vincles entre les línies de l'informe i els comptes comptables del teu pla comptable, només amb un clic amb el botó <strong>"%s"</strong>. Si el compte no estava al diccionari de tarifes o si encara hi ha línies no vinculades a cap compte, hauràs de fer-ho manualment a partir del menú "<strong>%s</strong>".
+DescVentilExpenseReportMore=Si poseu el compte comptable sobre les línies de l'informe per tipus de despesa, l'aplicació serà capaç de fer tots els vincles entre les línies de l'informe i els comptes comptables del vostre pla comptable, només amb un clic amb el botó <strong>«%s»</strong>. Si el compte no estava al diccionari de tarifes o si encara hi ha línies no vinculades a cap compte, haureu de fer-ho manualment a partir del menú «<strong>%s</strong>».
 DescVentilDoneExpenseReport=Consulteu aquí la llista de les línies d'informes de despeses i el seu compte comptable de comissions
 
-DescClosure=Consulteu aquí el nombre de moviments per mes que no són validats i els exercicis ja oberts
+Closure=Tancament anual
+DescClosure=Consulteu aquí el nombre de moviments mensuals que no estan validats i els exercicis fiscals encara oberts
 OverviewOfMovementsNotValidated=Pas 1 / Visió general dels moviments no validats. (Cal tancar un exercici)
+AllMovementsWereRecordedAsValidated=Tots els moviments es van registrar com a validats
+NotAllMovementsCouldBeRecordedAsValidated=No es poden registrar tots els moviments com a validats
 ValidateMovements=Valida moviments
 DescValidateMovements=Queda prohibida qualsevol modificació o supressió de registres. Totes les entrades d’un exercici s’han de validar, en cas contrari, el tancament no serà possible
-SelectMonthAndValidate=Selecciona el mes i valida els moviments
 
 ValidateHistory=Comptabilitza automàticament
 AutomaticBindingDone=Comptabilització automàtica realitzada
@@ -293,6 +298,7 @@ Accounted=Comptabilitzat en el llibre major
 NotYetAccounted=Encara no comptabilitzat en el llibre major
 ShowTutorial=Mostrar Tutorial
 NotReconciled=No conciliat
+WarningRecordWithoutSubledgerAreExcluded=Advertiment: totes les operacions sense subcompte comptable definit es filtren i s'exclouen d'aquesta vista
 
 ## Admin
 BindingOptions=Opcions d'enquadernació
@@ -320,7 +326,7 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Desactiva la vinculació i transferènci
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Desactiva la vinculació i transferència de comptes en els informes de despeses (els informes de despeses no es tindran en compte a la comptabilitat)
 
 ## Export
-ExportDraftJournal=Exportar esborranys del llibre 
+ExportDraftJournal=Exporta els esborranys del llibre
 Modelcsv=Model d'exportació
 Selectmodelcsv=Selecciona un model d'exportació
 Modelcsv_normal=Exportació clàssica
@@ -337,6 +343,7 @@ Modelcsv_LDCompta10=Exportar per LD Compta (v10 i més)
 Modelcsv_openconcerto=Exporta per a OpenConcerto (Test)
 Modelcsv_configurable=Exporta CSV configurable
 Modelcsv_FEC=Exporta FEC
+Modelcsv_FEC2=Exporta FEC (amb escriptura de generació de dates / document invertit)
 Modelcsv_Sage50_Swiss=Exportació per Sage 50 Switzerland
 Modelcsv_winfic=Exportar Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Exporta per a Gestinum (v3)
@@ -345,13 +352,13 @@ ChartofaccountsId=Id pla comptable
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Inicialitza la comptabilitat
-InitAccountancyDesc=Aquesta pàgina es pot utilitzar per inicialitzar un compte de comptabilitat en productes i serveis que no tenen compte comptable definit per a vendes i compres.
-DefaultBindingDesc=Aquesta pàgina es pot utilitzar per establir un compte predeterminat que s'utilitzarà per enllaçar el registre de transaccions sobre el pagament de salaris, donacions, impostos i IVA quan encara no s'hagi establert cap compte comptable específic.
-DefaultClosureDesc=Aquesta pàgina es pot utilitzar per definir els paràmetres usats per als tancaments de comptabilitat.
+InitAccountancyDesc=Aquesta pàgina es pot utilitzar per a inicialitzar un compte comptable de productes i serveis que no tenen un compte comptable definit per a vendes i compres.
+DefaultBindingDesc=Aquesta pàgina es pot utilitzar per a establir un compte predeterminat que s'utilitzarà per a enllaçar el registre de transaccions sobre el pagament de salaris, donacions, impostos i IVA quan encara no s'hagi establert cap compte comptable específic.
+DefaultClosureDesc=Aquesta pàgina es pot utilitzar per a definir els paràmetres utilitzats per als tancaments de comptabilitat.
 Options=Opcions
-OptionModeProductSell=En mode vendes
-OptionModeProductSellIntra=Les vendes de mode exportades a la CEE
-OptionModeProductSellExport=Les vendes de mode exportades a altres països
+OptionModeProductSell=Modalitat de vendes
+OptionModeProductSellIntra=Modalitats de vendes exportades a la CEE
+OptionModeProductSellExport=Modalitats de vendes exportades a altres països
 OptionModeProductBuy=En mode compres
 OptionModeProductBuyIntra=Mode compres importades a la CEE
 OptionModeProductBuyExport=Mode compres importades de fora la CEE
@@ -389,7 +396,7 @@ BookeppingLineAlreayExists=Les línies ja existeixen en la comptabilitat
 NoJournalDefined=Cap diari definit
 Binded=Línies comptabilitzades
 ToBind=Línies a comptabilitzar
-UseMenuToSetBindindManualy=Línies encara no enllaçades, utilitzeu el menú <a href="%s"> %s </a> per fer l'enllaç manualment
+UseMenuToSetBindindManualy=Línies encara no enllaçades, utilitzeu el menú <a href="%s"> %s </a> per a fer l'enllaç manualment
 
 ## Import
 ImportAccountingEntries=Entrades de comptabilitat

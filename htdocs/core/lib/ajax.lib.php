@@ -139,7 +139,8 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 												 type: item.type, qty: item.qty, discount: item.discount,
 												 pricebasetype: item.pricebasetype, price_ht: item.price_ht,
 												 price_ttc: item.price_ttc,
-												 up: item.up, description : item.description}
+												 up: item.up, description : item.description,
+												 ref_customer: item.ref_customer }
 									}));
 								}
 								else console.error("Error: Ajax url '.$url.($urloption ? '?'.$urloption : '').' has returned an empty page. Should be an empty json array.");
@@ -157,6 +158,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 							$("#'.$htmlname.'").attr("data-discount", ui.item.discount);
 							$("#'.$htmlname.'").attr("data-qty", ui.item.qty);
 							$("#'.$htmlname.'").attr("data-description", ui.item.description);
+							$("#'.$htmlname.'").attr("data-ref-customer", ui.item.ref_customer);
 
 							//For customer price
 		';
@@ -251,7 +253,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
  *  This use the jQuery "autocomplete" function.
  *
  *	@param	string	$htmlname           HTML name of input field
- *	@param	string	$fields				Other fields to autocomplete
+ *	@param	array	$fields				Array of key of fields to autocomplete
  *	@param	string	$url                URL for ajax request : /chemin/fichier.php
  *	@param	string	$option				More parameters on URL request
  *	@param	int		$minLength			Minimum number of chars to trigger that Ajax search

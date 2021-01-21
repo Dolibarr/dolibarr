@@ -95,7 +95,7 @@ top_htmlhead($head, '', 0, 0, $arrayofjs, $arrayofcss);
 	 */
 	function Save() {
 		console.log("We click so we call page invoice.php with place=<?php echo $place; ?> tva_tx="+vatRate);
-		$.get( "invoice.php", { action: "<?php echo $action; ?>", place: "<?php echo $place; ?>", desc:$('#desc').val(), number:$('#number').val(), tva_tx: vatRate} );
+		parent.$("#poslines").load("invoice.php?action=freezone&place=<?php echo $place; ?>&number="+$('#number').val()+"&tva_tx="+vatRate, {desc:$('#desc').val()});
 		parent.$.colorbox.close();
 	}
 

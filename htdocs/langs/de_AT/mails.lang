@@ -8,5 +8,3 @@ MailingArea=E-Mail-Kampagnenübersicht
 MailNoChangePossible=Die Empfängerliste einer freigegebenen E-Mail-Kampagne kann nicht mehr geändert werden
 LimitSendingEmailing=Aus Sicherheits- und Zeitüberschreitungsgründen ist der Online-Versadn von E-Mails auf <b>%s</b> Empfänger je Sitzung beschränkt.
 IdRecord=Eintrags ID
-ANotificationsWillBeSent=1 Benachrichtigung wird per E-Mail versandt
-ListOfNotificationsDone=Liste aller versandten E-Mail-Benachrichtigungen
