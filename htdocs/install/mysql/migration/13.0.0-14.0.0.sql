@@ -33,6 +33,8 @@
 ALTER TABLE llx_supplier_proposal_extrafields ADD INDEX idx_supplier_proposal_extrafields (fk_object);
 ALTER TABLE llx_supplier_proposaldet_extrafields ADD INDEX idx_supplier_proposaldet_extrafields (fk_object);
 
+ALTER TABLE llx_asset_extrafields ADD INDEX idx_asset_extrafields (fk_object);
+
 -- For v14
 
 ALTER TABLE llx_c_availability ADD COLUMN position integer NOT NULL DEFAULT 0;
