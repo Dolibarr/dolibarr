@@ -560,17 +560,21 @@ if (empty($reshook)) {
 	// Action to update one extrafield
 	if ($action == "update_extras" && !empty($permissiontoadd)) {
 		$object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha'));
-		$attributekey = GETPOST('attribute', 'alpha');
-		$attributekeylong = 'options_' . $attributekey;
-		$object->array_options['options_' . $attributekey] = GETPOST($attributekeylong, ' alpha');
 
-		$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
-		if ($result > 0) {
-			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-			$action = 'view';
-		} else {
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+		if ($ret < 0) $error++;
+		if (!$error)
+		{
+			$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
+			if ($result < 0) { $error++; }
+		}
+
+		if ($error) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'edit_extras';
+		} else {
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+			$action = 'view';
 		}
 	}
 
