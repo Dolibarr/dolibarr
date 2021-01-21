@@ -57,8 +57,8 @@ ALTER TABLE llx_website ADD COLUMN pageviews_total BIGINT UNSIGNED DEFAULT 0;
 
 
 -- Drop foreign key with bad name or not required
-ALTER TABLE llx_workstation_workstation DROP FOREIGN KEY fk_user_creat;
-ALTER TABLE llx_propal DROP FOREIGN KEY fk_warehouse;
+ALTER TABLE llx_workstation_workstation DROP FOREIGN KEY llx_workstation_workstation_fk_user_creat;
+ALTER TABLE llx_propal DROP FOREIGN KEY llx_propal_fk_warehouse;
 
 
 CREATE TABLE llx_workstation_workstation(
