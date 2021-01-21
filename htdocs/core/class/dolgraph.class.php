@@ -1343,7 +1343,7 @@ class DolGraph
 				}
 				$this->stringtoshow .= 'borderColor: \'' . $bordercolor . '\', ';
 				$this->stringtoshow .= 'backgroundColor: \'' . $color . '\', ';
-				if ($arrayofgroupslegend[$i]) $this->stringtoshow .= 'stack: \'' . $arrayofgroupslegend[$i]['stacknum'] . '\', ';
+				if (!empty($arrayofgroupslegend) && !empty($arrayofgroupslegend[$i])) $this->stringtoshow .= 'stack: \'' . $arrayofgroupslegend[$i]['stacknum'] . '\', ';
 				$this->stringtoshow .= 'data: [';
 
 				$this->stringtoshow .= $this->mirrorGraphValues ? '[' . -$serie[$i] . ',' . $serie[$i] . ']' : $serie[$i];
