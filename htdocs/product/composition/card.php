@@ -138,18 +138,17 @@ if ($action == 'search')
 
 	$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.fk_product_type as type, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
 	$sql .= ' p.fk_product_type, p.tms as datem, p.tobatch';
+	$sql .= ', p.tosell as status, p.tobuy as status_buy';
 	if (!empty($conf->global->MAIN_MULTILANGS)) $sql .= ', pl.label as labelm, pl.description as descriptionm';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON p.rowid = cp.fk_product';
 	if (!empty($conf->global->MAIN_MULTILANGS)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND lang='".($current_lang)."'";
 	$sql .= ' WHERE p.entity IN ('.getEntity('product').')';
-	if ($key != "")
-	{
+	if ($key != "") {
 		// For natural search
 		$params = array('p.ref', 'p.label', 'p.description', 'p.note');
 		// multilang
-		if (!empty($conf->global->MAIN_MULTILANGS))
-		{
+		if (!empty($conf->global->MAIN_MULTILANGS)) {
 			$params[] = 'pl.label';
 			$params[] = 'pl.description';
 			$params[] = 'pl.note';
@@ -159,8 +158,7 @@ if ($action == 'search')
 		}
 		$sql .= natural_search($params, $key);
 	}
-	if (!empty($conf->categorie->enabled) && !empty($parent) && $parent != -1)
-	{
+	if (!empty($conf->categorie->enabled) && !empty($parent) && $parent != -1) {
 		$sql .= " AND cp.fk_categorie ='".$db->escape($parent)."'";
 	}
 	$sql .= " ORDER BY p.ref ASC";
@@ -171,13 +169,11 @@ if ($action == 'search')
 $title = $langs->trans('ProductServiceCard');
 $helpurl = '';
 $shortlabel = dol_trunc($object->label, 16);
-if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
-{
+if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) {
 	$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('AssociatedProducts');
 	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 }
-if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
-{
+if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 	$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('AssociatedProducts');
 	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
@@ -269,16 +265,16 @@ if ($id > 0 || !empty($ref))
 		print '<td>'.$langs->trans('Label').'</td>';
 		print '<td>'.$langs->trans('Qty').'</td>';
 		print '</td>';
-		if (count($prodsfather) > 0)
-		{
-			foreach ($prodsfather as $value)
-			{
+		if (count($prodsfather) > 0) {
+			foreach ($prodsfather as $value) {
 				$idprod = $value["id"];
 				$productstatic->id = $idprod; // $value["id"];
 				$productstatic->type = $value["fk_product_type"];
 				$productstatic->ref = $value['ref'];
 				$productstatic->label = $value['label'];
 				$productstatic->entity = $value['entity'];
+				$productstatic->status = $value['status'];
+				$productstatic->status_buy = $value['status_buy'];
 
 				print '<tr class="oddeven">';
 				print '<td>'.$productstatic->getNomUrl(1, 'composition').'</td>';
@@ -532,24 +528,19 @@ if ($id > 0 || !empty($ref))
 						$prod_arbo = new Product($db);
 						$prod_arbo->id = $objp->rowid;
 						// This type is not supported (not required to have virtual products working).
-						if ($prod_arbo->type == Product::TYPE_ASSEMBLYKIT || $prod_arbo->type == Product::TYPE_STOCKKIT)
-						{
+						if ($prod_arbo->type == Product::TYPE_ASSEMBLYKIT || $prod_arbo->type == Product::TYPE_STOCKKIT) {
 							$is_pere = 0;
 							$prod_arbo->get_sousproduits_arbo();
 							// associations sousproduits
 							$prods_arbo = $prod_arbo->get_arbo_each_prod();
-							if (count($prods_arbo) > 0)
-							{
-								foreach ($prods_arbo as $key => $value)
-								{
-									if ($value[1] == $id)
-									{
+							if (count($prods_arbo) > 0) {
+								foreach ($prods_arbo as $key => $value) {
+									if ($value[1] == $id) {
 										$is_pere = 1;
 									}
 								}
 							}
-							if ($is_pere == 1)
-							{
+							if ($is_pere == 1) {
 								$i++;
 								continue;
 							}
@@ -563,6 +554,8 @@ if ($id > 0 || !empty($ref))
 						$productstatic->label = $objp->label;
 						$productstatic->type = $objp->type;
 						$productstatic->entity = $objp->entity;
+						$productstatic->status = $objp->status;
+						$productstatic->status_buy = $objp->status_buy;
 						$productstatic->status_batch = $objp->tobatch;
 
 						print '<td>'.$productstatic->getNomUrl(1, '', 24).'</td>';
