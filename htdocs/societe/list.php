@@ -831,14 +831,11 @@ if (!empty($arrayfields['typent.code']['checked']))
 	print '</td>';
 }
 // Multiprice level
-if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
+if (!empty($arrayfields['s.price_level']['checked']))
 {
-	if (!empty($arrayfields['s.price_level']['checked']))
-	{
-		print '<td class="liste_titre">';
-		print '<input class="flat searchstring maxwidth50imp" type="text" name="search_prive_level" value="'.dol_escape_htmltag($search_prive_level).'">';
-		print '</td>';
-	}
+	print '<td class="liste_titre">';
+	print '<input class="flat searchstring maxwidth50imp" type="text" name="search_prive_level" value="'.dol_escape_htmltag($search_prive_level).'">';
+	print '</td>';
 }
 // Staff
 if (!empty($arrayfields['staff.code']['checked']))
@@ -1015,6 +1012,7 @@ if (!empty($arrayfields['region.nom']['checked']))       print_liste_field_titre
 if (!empty($arrayfields['country.code_iso']['checked'])) print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "country.code_iso", "", $param, '', $sortfield, $sortorder, 'center ');
 if (!empty($arrayfields['typent.code']['checked']))      print_liste_field_titre($arrayfields['typent.code']['label'], $_SERVER["PHP_SELF"], "typent.code", "", $param, '', $sortfield, $sortorder, 'center ');
 if (!empty($arrayfields['staff.code']['checked']))       print_liste_field_titre($arrayfields['staff.code']['label'], $_SERVER["PHP_SELF"], "staff.code", "", $param, '', $sortfield, $sortorder, 'center ');
+if (!empty($arrayfields['s.price_level']['checked']))    print_liste_field_titre($arrayfields['s.price_level']['label'], $_SERVER["PHP_SELF"], "s.price_level", "", $param, '', $sortfield, $sortorder);
 if (!empty($arrayfields['s.email']['checked']))          print_liste_field_titre($arrayfields['s.email']['label'], $_SERVER["PHP_SELF"], "s.email", "", $param, '', $sortfield, $sortorder);
 if (!empty($arrayfields['s.phone']['checked']))          print_liste_field_titre($arrayfields['s.phone']['label'], $_SERVER["PHP_SELF"], "s.phone", "", $param, '', $sortfield, $sortorder);
 if (!empty($arrayfields['s.fax']['checked']))			 print_liste_field_titre($arrayfields['s.fax']['label'], $_SERVER["PHP_SELF"], "s.fax", "", $param, '', $sortfield, $sortorder);
@@ -1030,11 +1028,6 @@ if (!empty($arrayfields['customerorsupplier']['checked']))        print_liste_fi
 if (!empty($arrayfields['s.fk_prospectlevel']['checked']))        print_liste_field_titre($arrayfields['s.fk_prospectlevel']['label'], $_SERVER["PHP_SELF"], "s.fk_prospectlevel", "", $param, '', $sortfield, $sortorder, 'center ');
 if (!empty($arrayfields['s.fk_stcomm']['checked']))               print_liste_field_titre($arrayfields['s.fk_stcomm']['label'], $_SERVER["PHP_SELF"], "s.fk_stcomm", "", $param, '', $sortfield, $sortorder, 'center ');
 if (!empty($arrayfields['s2.nom']['checked']))           print_liste_field_titre($arrayfields['s2.nom']['label'], $_SERVER["PHP_SELF"], "s2.nom", "", $param, '', $sortfield, $sortorder, 'center ');
-// Multiprice level
-if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
-{
-	if (!empty($arrayfields['s.price_level']['checked']))    print_liste_field_titre($arrayfields['s.price_level']['label'], $_SERVER["PHP_SELF"], "s.price_level", "", $param, '', $sortfield, $sortorder);
-}
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -1191,13 +1184,10 @@ while ($i < min($num, $limit))
 		if (!$i) $totalarray['nbfield']++;
 	}
 	// Multiprice level
-	if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
+	if (!empty($arrayfields['s.price_level']['checked']))
 	{
-		if (!empty($arrayfields['s.price_level']['checked']))
-		{
-			print "<td>".$obj->price_level."</td>\n";
-			if (!$i) $totalarray['nbfield']++;
-		}
+		print "<td>".$obj->price_level."</td>\n";
+		if (!$i) $totalarray['nbfield']++;
 	}
 	// Staff
 	if (!empty($arrayfields['staff.code']['checked']))
