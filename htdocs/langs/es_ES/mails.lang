@@ -175,3 +175,5 @@ Answered=Contestado
 IsNotAnAnswer=No responde (e-mail inicial)
 IsAnAnswer=Es una respuesta de un e-mail inicial.
 RecordCreatedByEmailCollector=Registro creado por el Recopilador de E-Mails %s del e-mail %s
+DefaultBlacklistMailingStatus=Estado de contacto predeterminado para rechazar el envío masivo de correos electrónicos
+DefaultStatusEmptyMandatory=Vacío pero obligatorio

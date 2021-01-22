@@ -149,3 +149,4 @@ InfoRejectMessage=Labdien, <br> <br> banka noraidījusi rēķina %s tiešā debe
 ModeWarning=Iespēja reālā režīmā nav noteikts, mēs pārtraucam pēc šīs simulācijas
 ErrorCompanyHasDuplicateDefaultBAN=Uzņēmumam ar ID %s ir vairāk nekā viens noklusējuma bankas konts. Nevar uzzināt, kuru izmantot.
 ErrorICSmissing=Missing ICS in Bank account %s
+TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=Total amount of direct debit order differs from sum of lines

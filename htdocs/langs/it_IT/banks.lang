@@ -180,3 +180,4 @@ BankColorizeMovementDesc=Se questa funzione è abilitata, è possibile scegliere
 BankColorizeMovementName1=Colore di sfondo per il movimento di debito
 BankColorizeMovementName2=Colore di sfondo per il movimento del credito
 IfYouDontReconcileDisableProperty=If you don't make the bank reconciliations on some bank accounts, disable the property "%s" on them to remove this warning.
+NoBankAccountDefined=No bank account defined

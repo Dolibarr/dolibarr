@@ -149,3 +149,4 @@ InfoRejectMessage=Γεια σας, <br><br> η εντολή πληρωμής ά�
 ModeWarning=Επιλογή για την πραγματική κατάσταση, δεν είχε καθοριστεί, σταματάμε μετά από αυτή την προσομοίωση
 ErrorCompanyHasDuplicateDefaultBAN=Company with id %s has more than one default bank account. No way to know wich one to use.
 ErrorICSmissing=Missing ICS in Bank account %s
+TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=Total amount of direct debit order differs from sum of lines

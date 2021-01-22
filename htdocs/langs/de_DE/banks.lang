@@ -180,3 +180,4 @@ BankColorizeMovementDesc=Wenn diese Funktion aktiviert ist, können Sie eine bes
 BankColorizeMovementName1=Hintergrundfarbe für Debit-Bewegung
 BankColorizeMovementName2=Hintergrundfarbe für Kredit-Bewegung
 IfYouDontReconcileDisableProperty=Wenn Sie auf einigen Bankkonten keine Bankkontenabgleiche vornehmen, deaktivieren Sie die Eigenschaft "%s", um diese Warnung zu entfernen.
+NoBankAccountDefined=Kein Bankkonto definiert
