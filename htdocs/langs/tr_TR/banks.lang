@@ -180,3 +180,4 @@ BankColorizeMovementDesc=Bu işlev etkinleştirilirse, borçlandırma veya kredi
 BankColorizeMovementName1=Borç hareketi için arka plan rengi
 BankColorizeMovementName2=Kredi hareketi için arka plan rengi
 IfYouDontReconcileDisableProperty=If you don't make the bank reconciliations on some bank accounts, disable the property "%s" on them to remove this warning.
+NoBankAccountDefined=No bank account defined

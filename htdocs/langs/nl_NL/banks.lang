@@ -180,3 +180,4 @@ BankColorizeMovementDesc=Als deze functie is ingeschakeld, kunt u een specifieke
 BankColorizeMovementName1=Achtergrondkleur voor debetmutatie
 BankColorizeMovementName2=Achtergrondkleur voor creditmutatie
 IfYouDontReconcileDisableProperty=Als u op sommige bankrekeningen geen bankafstemmingen uitvoert, schakelt u de eigenschap "%s" uit om deze waarschuwing te verwijderen.
+NoBankAccountDefined=No bank account defined

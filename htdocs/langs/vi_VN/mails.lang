@@ -175,3 +175,5 @@ Answered=Đã trả lời
 IsNotAnAnswer=Is not answer (initial email)
 IsAnAnswer=Is an answer of an initial email
 RecordCreatedByEmailCollector=Record created by the Email Collector %s from email %s
+DefaultBlacklistMailingStatus=Default contact status for refuse bulk emailing
+DefaultStatusEmptyMandatory=Empty but mandatory

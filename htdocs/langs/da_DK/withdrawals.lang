@@ -149,3 +149,4 @@ InfoRejectMessage=Hej, <br> <br> Betalingsordre for faktura %s relateret til fir
 ModeWarning=Mulighed for real mode ikke var indstillet, vi stopper efter denne simulation
 ErrorCompanyHasDuplicateDefaultBAN=Virksomhed med id %s har mere end en standard bankkonto. Ingen måde at vide, hvilken man skal bruge.
 ErrorICSmissing=Mangler ICS på bankkonto %s
+TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=Det samlede beløb for direkte debiteringsordre adskiller sig fra summen af linjer

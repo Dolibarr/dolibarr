@@ -62,6 +62,7 @@ EnhancedValueOfWarehouses=Giá trị kho
 UserWarehouseAutoCreate=Tự động tạo người dùng kho khi tạo người dùng
 AllowAddLimitStockByWarehouse=Quản lý đồng thời giá trị cho tồn kho tối thiểu và mong muốn trên mỗi cặp (sản phẩm - kho) ngoài giá trị cho tồn kho tối thiểu và mong muốn trên mỗi sản phẩm
 RuleForWarehouse=Rule for warehouses
+WarehouseAskWarehouseDuringPropal=Set a warehouse on Sale propal
 WarehouseAskWarehouseDuringOrder=Set a warehouse on Sale orders
 UserDefaultWarehouse=Set a warehouse on Users
 MainDefaultWarehouse=Kho mặc định

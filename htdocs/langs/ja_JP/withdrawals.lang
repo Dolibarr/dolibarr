@@ -149,3 +149,4 @@ InfoRejectMessage=こんにちは、<br><br>法人 %s に関連する請求書%s
 ModeWarning=リアルモードのオプションが設定されていない、我々は、このシミュレーションの後に停止
 ErrorCompanyHasDuplicateDefaultBAN=ID %s の法人には、複数のデフォルトの銀行口座がある。どちらを使用するかを知る方法はない。
 ErrorICSmissing=銀行口座%sにICSがない
+TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=口座振替の合計金額が行の合計と異なる
