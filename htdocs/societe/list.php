@@ -1186,7 +1186,7 @@ while ($i < min($num, $limit))
 	// Multiprice level
 	if (!empty($arrayfields['s.price_level']['checked']))
 	{
-		print "<td>".$obj->price_level."</td>\n";
+		print '<td class="center">'.$obj->price_level."</td>\n";
 		if (!$i) $totalarray['nbfield']++;
 	}
 	// Staff
