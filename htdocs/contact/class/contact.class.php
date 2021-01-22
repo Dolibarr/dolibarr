@@ -1682,19 +1682,34 @@ class Contact extends CommonObject
 	{
 		global $conf;
 
-		$error = 0;
-
 		if ($this->socid > 0 || $this->socid == -1) {
-			$this->db->begin();
-
-			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "societe_contacts WHERE fk_socpeople=" . $this->id;;
+			$error = 0;
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
-			$result = $this->db->query($sql);
-			if (!$result) {
-				$this->errors[] = $this->db->lasterror() . ' sql=' . $sql;
-				$error++;
-			} else {
+
+			$this->db->begin();
+
+			if (is_object($this->oldcopy) && $this->oldcopy->socid > 0) {
+				// remove all old contact default links to old company
+				$sqlDeleteOldCopy = "DELETE FROM " . MAIN_DB_PREFIX . "societe_contacts WHERE fk_soc=" . $this->oldcopy->socid . " AND fk_socpeople=" . $this->id . ";";
+				$result = $this->db->query($sqlDeleteOldCopy);
+				if (!$result) {
+					$this->errors[] = $this->db->lasterror() . ' sql=' . $sqlDeleteOldCopy;
+					$error++;
+				}
+			}
+
+			if ($this->socid > 0) {
+				// remove all current contact default links to this company
+				$sqlDelete = "DELETE FROM " . MAIN_DB_PREFIX . "societe_contacts WHERE fk_soc=" . $this->socid . " AND fk_socpeople=" . $this->id;
+				$result = $this->db->query($sqlDelete);
+				if (!$result) {
+					$this->errors[] = $this->db->lasterror() . ' sql=' . $sqlDelete;
+					$error++;
+				}
+			}
+
+			if (!$error) {
 				if ($this->socid > 0 && count($this->roles) > 0) {
 					foreach ($this->roles as $keyRoles => $valRoles) {
 						$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_contacts";
