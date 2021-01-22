@@ -9235,13 +9235,10 @@ function readfileLowMemory($fullpath_original_file_osencoded, $method = -1)
 /**
  * Create a button to copy $valuetoprint in the clipboard
  * @param string $valuetoprint the value to print
- * @param string $spanid unique id for a span
- * @param Translate $langs the $langs variable
  * @return string the string to print for the button
  */
 function showValueWithCopyAndPasteButton($valuetoprint)
 {
 	return '<span class="clipboardCopyPaste"><span>'.dol_escape_js($valuetoprint).'
 			</span>&ensp;<span class ="opacitymedium"><i " class="far fa-clipboard"></i></span></span>';
-
 }
