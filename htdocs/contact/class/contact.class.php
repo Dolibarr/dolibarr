@@ -1631,7 +1631,8 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 * Fetch Roles for a contact
+	 * Fetch roles (default contact of some companies) for the current contact.
+	 * This load the array ->roles.
 	 *
 	 * @return float|int
 	 * @throws Exception
@@ -1642,12 +1643,11 @@ class Contact extends CommonObject
 		$error = 0;
 		$num = 0;
 
-		$sql = "SELECT tc.rowid, tc.element, tc.source, tc.code, tc.libelle, sc.rowid as contactroleid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe_contacts as sc";
-		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."c_type_contact as tc";
-		$sql .= " ON tc.rowid = sc.fk_c_type_contact";
-		$sql .= " AND sc.fk_socpeople = ".$this->id;
+		$sql = "SELECT tc.rowid, tc.element, tc.source, tc.code, tc.libelle as label, sc.rowid as contactroleid, sc.fk_soc as socid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe_contacts as sc, ".MAIN_DB_PREFIX."c_type_contact as tc";
+		$sql .= " WHERE tc.rowid = sc.fk_c_type_contact";
 		$sql .= " AND tc.source = 'external' AND tc.active=1";
+		$sql .= " AND sc.fk_socpeople = ".$this->id;
 		$sql .= " AND sc.entity IN (".getEntity('societe').')';
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -1660,7 +1660,7 @@ class Contact extends CommonObject
 				while ($obj = $this->db->fetch_object($resql)) {
 					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
 					$libelle_element = $langs->trans('ContactDefault_'.$obj->element);
-					$this->roles[$obj->contactroleid] = array('id'=>$obj->rowid, 'element'=>$obj->element, 'source'=>$obj->source, 'code'=>$obj->code, 'label'=>$libelle_element.' - '.($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->libelle));
+					$this->roles[$obj->contactroleid] = array('id'=>$obj->rowid, 'socid'=>$obj->socid, 'element'=>$obj->element, 'source'=>$obj->source, 'code'=>$obj->code, 'label'=>$libelle_element.' - '.($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->label));
 				}
 			}
 		} else {
@@ -1722,7 +1722,8 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 * Updates Roles
+	 * Updates all roles (default contact for companies) according to values inside the ->roles array.
+	 * This is called by update of contact.
 	 *
 	 * @return float|int
 	 * @throws Exception
