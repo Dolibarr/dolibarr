@@ -9243,5 +9243,5 @@ function showValueWithCopyAndPasteButton($valuetoprint)
 {
 	return '<span class="clipboardCopyPaste"><span>'.dol_escape_js($valuetoprint).'
 			</span>&ensp;<span class ="opacitymedium"><i " class="far fa-clipboard"></i></span></span>';
-	 
+
 }
