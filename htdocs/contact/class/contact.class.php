@@ -259,7 +259,7 @@ class Contact extends CommonObject
 	 */
 	public $oldcopy; // To contains a clone of this when we need to save old properties of object
 
-	public $roles = array();
+	public $roles = null;
 
 	public $cacheprospectstatus = array();
 	public $fk_prospectlevel;
@@ -856,7 +856,7 @@ class Contact extends CommonObject
 	 *  @param      User	$user       	Load also alerts of this user (subscribing to alerts) that want alerts about this contact
 	 *  @param      string  $ref_ext    	External reference, not given by Dolibarr
 	 *  @param		string	$email			Email
-	 *  @param		int		$loadalsoroles	Load also roles
+	 *  @param		int		$loadalsoroles	Load also roles. Try to always 0 here and load roles with a separate call of fetchRoles().
 	 *  @return     int     		    	>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
 	 */
 	public function fetch($id, $user = null, $ref_ext = '', $email = '', $loadalsoroles = 0)
@@ -1634,8 +1634,8 @@ class Contact extends CommonObject
 	 * Fetch roles (default contact of some companies) for the current contact.
 	 * This load the array ->roles.
 	 *
-	 * @return float|int
-	 * @throws Exception
+	 * @return 	int			<0 if KO, Nb of roles found if OK
+	 * @see updateRoles()
 	 */
 	public function fetchRoles()
 	{
@@ -1650,11 +1650,10 @@ class Contact extends CommonObject
 		$sql .= " AND sc.fk_socpeople = ".$this->id;
 		$sql .= " AND sc.entity IN (".getEntity('societe').')';
 
-		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		$this->roles = array();
 		$resql = $this->db->query($sql);
 		if ($resql) {
+			$this->roles = array();
+
 			$num = $this->db->num_rows($resql);
 			if ($num > 0) {
 				while ($obj = $this->db->fetch_object($resql)) {
@@ -1726,7 +1725,7 @@ class Contact extends CommonObject
 	 * This is called by update of contact.
 	 *
 	 * @return float|int
-	 * @throws Exception
+	 * @see fetchRoles()
 	 */
 	public function updateRoles()
 	{
@@ -1734,11 +1733,12 @@ class Contact extends CommonObject
 
 		$error = 0;
 
+		if (!isset($this->roles)) return;	// Avoid to loose roles when property not set
+
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_contacts WHERE fk_soc=".$this->socid." AND fk_socpeople=".$this->id; ;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_contacts WHERE fk_socpeople=".$this->id." AND entity IN (".getEntity("societe_contact").")";
 
-		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if (!$result) {
 			$this->errors[] = $this->db->lasterror().' sql='.$sql;
@@ -1746,25 +1746,40 @@ class Contact extends CommonObject
 		} else {
 			if (count($this->roles) > 0) {
 				foreach ($this->roles as $keyRoles => $valRoles) {
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_contacts";
-					$sql .= " (entity,";
-					$sql .= "date_creation,";
-					$sql .= "fk_soc,";
-					$sql .= "fk_c_type_contact,";
-					$sql .= "fk_socpeople) ";
-					$sql .= " VALUES (".$conf->entity.",";
-					$sql .= "'".$this->db->idate(dol_now())."',";
-					$sql .= $this->socid.", ";
-					$sql .= $valRoles." , ";
-					$sql .= $this->id;
-					$sql .= ")";
-					dol_syslog(__METHOD__, LOG_DEBUG);
+					$idrole = 0;
+					if (is_array($idrole)) {
+						$idrole = $valRoles['id'];
+					} else {
+						$idrole = $valRoles;
+					}
 
-					$result = $this->db->query($sql);
-					if (!$result)
-					{
-						$this->errors[] = $this->db->lasterror().' sql='.$sql;
-						$error++;
+					$socid = 0;
+					if (is_array($idrole)) {
+						$socid = $valRoles['socid'];
+					} else {
+						$socid = $this->socid;
+					}
+
+					if ($socid > 0) {
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_contacts";
+						$sql .= " (entity,";
+						$sql .= "date_creation,";
+						$sql .= "fk_soc,";
+						$sql .= "fk_c_type_contact,";
+						$sql .= "fk_socpeople) ";
+						$sql .= " VALUES (".$conf->entity.",";
+						$sql .= "'".$this->db->idate(dol_now())."',";
+						$sql .= $socid.", ";
+						$sql .= $idrole." , ";
+						$sql .= $this->id;
+						$sql .= ")";
+
+						$result = $this->db->query($sql);
+						if (!$result)
+						{
+							$this->errors[] = $this->db->lasterror().' sql='.$sql;
+							$error++;
+						}
 					}
 				}
 			}
