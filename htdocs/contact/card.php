@@ -429,7 +429,7 @@ if (empty($reshook))
 			$object->note_public = (string) GETPOST("note_public", 'restricthtml');
 			$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 
-			if (GETPOSTISSET("roles")) {
+			if (!empty($object->socid)) {
 				$object->roles = GETPOST("roles", 'array');
 			}
 
