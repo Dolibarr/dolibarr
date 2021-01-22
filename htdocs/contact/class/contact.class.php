@@ -1747,14 +1747,14 @@ class Contact extends CommonObject
 			if (count($this->roles) > 0) {
 				foreach ($this->roles as $keyRoles => $valRoles) {
 					$idrole = 0;
-					if (is_array($idrole)) {
+					if (is_array($valRoles)) {
 						$idrole = $valRoles['id'];
 					} else {
 						$idrole = $valRoles;
 					}
 
 					$socid = 0;
-					if (is_array($idrole)) {
+					if (is_array($valRoles)) {
 						$socid = $valRoles['socid'];
 					} else {
 						$socid = $this->socid;

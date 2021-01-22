@@ -400,9 +400,7 @@ if (empty($reshook))
 			$object->note_public = (string) GETPOST("note_public", 'restricthtml');
 			$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 
-			if (GETPOSTISSET("roles")) {
-				$object->roles = GETPOST("roles", 'array');
-			}
+			$object->roles = GETPOST("roles", 'array');		// Note GETPOSTISSET("role") is null when combo is empty
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
