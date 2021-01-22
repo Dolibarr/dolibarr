@@ -16,8 +16,10 @@ descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Klasifikujte propojenou prodejní o
 # Autoclassify purchase order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Označte návrh dodavatele propojeného zdroje jako fakturovaný při validaci dodavatele (a pokud je částka faktury shodná s celkovou částkou propojeného návrhu)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Zařadit propojenou objednávku zdroje jako fakturovanou fakturaci dodavatele (a pokud je částka faktury shodná s celkovou částkou propojené objednávky)
-descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
+descWORKFLOW_BILL_ON_RECEPTION=Po ověření objednávky propojeného dodavatele klasifikujte recepce na „účtované“
 # Autoclose intervention
-descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Když je lístek uzavřen, ukončete všechny zásahy spojené s lístkem
 AutomaticCreation=Automatická tvorba
 AutomaticClassification=Automatická klasifikace
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated

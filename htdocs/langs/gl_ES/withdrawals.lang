@@ -149,3 +149,4 @@ InfoRejectMessage=Bos días:<br><br>a domiciliación da factura %s por conta da 
 ModeWarning=Non estableceuse a opción de modo real, deteremonos despois desta simulación
 ErrorCompanyHasDuplicateDefaultBAN=A empresa co identificador %s ten máis dunha conta bancaria predeterminada. Non hai xeito de saber cal usar.
 ErrorICSmissing=Falta o ICS na conta bancaria% s
+TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=A cantidade total da orde de domiciliación é distinta da suma das liñas

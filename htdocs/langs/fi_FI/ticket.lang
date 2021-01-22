@@ -149,7 +149,7 @@ MessageListViewType=Show as table list
 #
 # Ticket card
 #
-Ticket=Ticket
+Ticket=Tiketti
 TicketCard=Ticket card
 CreateTicket=Create ticket
 EditTicket=Muokkaa tikettiä
@@ -229,7 +229,7 @@ TicketChangeStatus=Vaihda tila
 TicketConfirmChangeStatus=Confirm the status change: %s ?
 TicketLogStatusChanged=Status changed: %s to %s
 TicketNotNotifyTiersAtCreate=Not notify company at create
-Unread=Unread
+Unread=Lukematon
 TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
 ErrorTicketRefRequired=Ticket reference name is required
 

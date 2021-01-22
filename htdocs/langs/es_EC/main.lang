@@ -104,6 +104,7 @@ RemoveLink=Retire enlace
 AddToDraft=Añadir a redactar
 Update=Actualizar
 Close=Cerrado
+CloseAs=Establecer el estado en
 CloseBox=Retire widget desde su panel de control
 ConfirmSendCardByMail=¿Realmente desea enviar el contenido de esta tarjeta por correo a <b>%s</b>?
 Delete=Borrar

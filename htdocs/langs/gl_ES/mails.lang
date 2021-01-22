@@ -175,3 +175,5 @@ Answered=Contestado
 IsNotAnAnswer=É unha resposta (a un coreo electrónico recibido)
 IsAnAnswer=É unha resposta de un coreo electrónico recibido
 RecordCreatedByEmailCollector=Rexistro creado polo receptor de correo electrónico %s a partir do correo electrónico %s
+DefaultBlacklistMailingStatus=Estado do contacto predeterminado para rexeitar correo electrónico masivo
+DefaultStatusEmptyMandatory=Baleiro pero obrigatorio

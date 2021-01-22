@@ -149,3 +149,4 @@ InfoRejectMessage=Bonjour, <br><br> l'ordre de prélèvement de la facture %s li
 ModeWarning=Option mode réel non établi, nous allons arrêter après cette simulation
 ErrorCompanyHasDuplicateDefaultBAN=La société avec l'identifiant %s a plus d'un compte bancaire par défaut. Aucun moyen de savoir lequel utiliser.
 ErrorICSmissing=ICS manquant pour le compte bancaire %s
+TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=Total amount of direct debit order differs from sum of lines

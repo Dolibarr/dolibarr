@@ -149,3 +149,4 @@ InfoRejectMessage=Hei,<br><br>direktedebet betalingsordre av faktura %s tilhøre
 ModeWarning=Opsjon for reell-modus ble ikke satt, så vi stopper etter denne simuleringen
 ErrorCompanyHasDuplicateDefaultBAN=Firma med ID%s har mer enn én standard bankkonto. Ingen måte å vite hvilken du skal bruke.
 ErrorICSmissing=Mangler ICS i bankkonto %s
+TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=Totalt beløp for direktedebet er ulik linjesum

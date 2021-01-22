@@ -149,3 +149,4 @@ InfoRejectMessage=您好，<br> <br>与公司%s相关的发票%s的直接借记�
 ModeWarning=实模式下的选项没有设置，这个模拟后，我们停止
 ErrorCompanyHasDuplicateDefaultBAN=Company with id %s has more than one default bank account. No way to know wich one to use.
 ErrorICSmissing=Missing ICS in Bank account %s
+TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=Total amount of direct debit order differs from sum of lines

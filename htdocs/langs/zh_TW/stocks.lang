@@ -62,6 +62,7 @@ EnhancedValueOfWarehouses=倉庫價值
 UserWarehouseAutoCreate=新增用戶時自動新增用戶倉庫
 AllowAddLimitStockByWarehouse=除了每個產品的最小和期望庫存值之外，還管理每個配對（產品倉庫）的最小和期望庫存值
 RuleForWarehouse=倉庫規則
+WarehouseAskWarehouseDuringPropal=Set a warehouse on Sale propal
 WarehouseAskWarehouseDuringOrder=在銷售訂單上設定一個倉庫
 UserDefaultWarehouse=在用戶上設定一個倉庫
 MainDefaultWarehouse=預設倉庫

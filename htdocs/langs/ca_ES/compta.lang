@@ -166,7 +166,7 @@ RulesCATotalSaleJournal=Inclou totes les línies de crèdit del Diari de venda.
 RulesAmountOnInOutBookkeepingRecord=Inclou un registre al vostre Llibre Major amb comptes comptables que tenen el grup "DESPESA" o "INGRÉS"
 RulesResultBookkeepingPredefined=Inclou un registre al vostre Llibre Major amb comptes comptables que tenen el grup "DESPESA" o "INGRÉS"
 RulesResultBookkeepingPersonalized=Mostra un registre al vostre Llibre Major amb comptes comptables <b> agrupats per grups personalitzats </b>
-SeePageForSetup=Veure el menú <a href="%s"> %s </a> per configurar-lo
+SeePageForSetup=Veure el menú <a href="%s"> %s </a> per a configurar-lo
 DepositsAreNotIncluded=- Les factures de bestreta no estan incloses
 DepositsAreIncluded=- Les factures de bestreta estan incloses
 LT1ReportByMonth=Informe RE per mes

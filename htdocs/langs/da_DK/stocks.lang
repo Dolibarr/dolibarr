@@ -62,6 +62,7 @@ EnhancedValueOfWarehouses=Lager værdi
 UserWarehouseAutoCreate=Opret et brugerlager automatisk, når du opretter en bruger
 AllowAddLimitStockByWarehouse=Administrer også værdi for minimum og ønsket lager pr. Parring (produktlager) ud over værdien for minimum og ønsket lager pr. Produkt
 RuleForWarehouse=Regel for lagre
+WarehouseAskWarehouseDuringPropal=Sæt et lager på salgsproportal
 WarehouseAskWarehouseDuringOrder=Indstil et lager med salgsordrer
 UserDefaultWarehouse=Indstil et lager til brugere
 MainDefaultWarehouse=Standardlager

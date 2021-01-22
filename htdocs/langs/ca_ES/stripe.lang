@@ -26,7 +26,7 @@ YouCanAddTagOnUrl=També podeu afegir el paràmetre URL <b> &tag=<i>valor</i></b
 SetupStripeToHavePaymentCreatedAutomatically=Configureu el vostre Stripe amb l'URL <b>%s</b> per fer que el pagament es creï automàticament quan es valide mitjançant Stripe.
 AccountParameter=Paràmetres del compte
 UsageParameter=Paràmetres d'ús
-InformationToFindParameters=Informació per trobar la seva configuració de compte %s
+InformationToFindParameters=Ajuda per a trobar la vostra informació del compte %s
 STRIPE_CGI_URL_V2=URL CGI del mòdul Stripe per al pagament
 CSSUrlForPaymentForm=Url del full d'estil CSS per al formulari de pagament
 NewStripePaymentReceived=S'ha rebut un pagament nou de Stripe
@@ -38,7 +38,7 @@ STRIPE_TEST_WEBHOOK_KEY=Clau de prova de Webhook
 STRIPE_LIVE_SECRET_KEY=Clau secreta
 STRIPE_LIVE_PUBLISHABLE_KEY=Clau publicable
 STRIPE_LIVE_WEBHOOK_KEY=Webhook clau en directe
-ONLINE_PAYMENT_WAREHOUSE=Les existències per utilitzar per disminuir les existències quan es fa el pagament en línia <br> (Pendent de fer Quan es fa una opció per reduir l'estoc en una acció a la factura i es genera la factura el pagament en línia?)
+ONLINE_PAYMENT_WAREHOUSE=Estoc a utilitzar per a disminuir l'estoc quan es fa el pagament en línia <br>(Pendent de fer quan l'opció per a reduir l'estoc es fa en una acció a la factura i el pagament en línia es genera la seva factura?)
 StripeLiveEnabled=Stripe live activat (en cas contrari, mode de prova/sandbox)
 StripeImportPayment=Importar pagaments per Stripe
 ExampleOfTestCreditCard=Exemple de targeta de crèdit per a la prova: %s => vàlid, %s => error CVC, %s => caducat, %s => falla la càrrega
@@ -62,7 +62,7 @@ ConfirmDeleteCard=Estàs segur que vols eliminar aquesta targeta de crèdit o de
 CreateCustomerOnStripe=Crea un client a Stripe
 CreateCardOnStripe=Crea una targeta a Stripe
 ShowInStripe=Mostra a Stripe
-StripeUserAccountForActions=Compte d'usuari per utilitzar en alguns e-mails de notificació d'esdeveniments Stripe (pagaments Stripe)
+StripeUserAccountForActions=Compte d'usuari que s'utilitzarà per a la notificació per correu electrònic d'alguns esdeveniments de Stripe (pagaments de Stripe)
 StripePayoutList=Llista de pagaments de Stripe
 ToOfferALinkForTestWebhook=Enllaç a la configuració de Stripe WebHook per trucar a l’IPN (mode de prova)
 ToOfferALinkForLiveWebhook=Enllaç a la configuració de Stripe WebHook per trucar a l’IPN (mode en directe)

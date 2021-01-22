@@ -21,3 +21,5 @@ descWORKFLOW_BILL_ON_RECEPTION=Classificare le ricezioni in "fatturate" quando u
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Chiudi tutti gli interventi legati al ticket quando un ticket è chiuso
 AutomaticCreation=Creazione automatica
 AutomaticClassification=Classificazione automatica
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated

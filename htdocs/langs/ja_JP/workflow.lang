@@ -21,3 +21,5 @@ descWORKFLOW_BILL_ON_RECEPTION=リンクされたサプライヤの注文が検�
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=チケットが閉じられたら、チケットにリンクされているすべての介入を閉じる
 AutomaticCreation=自動作成
 AutomaticClassification=自動分類
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=顧客の請求書が検証されたときに、リンクされたソース出荷をクローズとして分類する
