@@ -9239,34 +9239,9 @@ function readfileLowMemory($fullpath_original_file_osencoded, $method = -1)
  * @param Translate $langs the $langs variable
  * @return string the string to print for the button
  */
-function showValueWithCopyAndPasteButton($valuetoprint, $spanid, $langs)
+function showValueWithCopyAndPasteButton($valuetoprint)
 {
-	$stringtoprint= '<span id="'.$spanid.'">';
-	$stringtoprint.= $valuetoprint .'</span>&ensp;';
-	$stringtoprint.= '</span>';
-	$stringtoprint.='<span class="opacitymedium"  id="'.dol_escape_json($spanid).'clipboardChar" onclick="'.dol_escape_json($spanid).'clipBoardCopy()"><i " class="far fa-clipboard"></i></span>';
-	$stringtoprint.="<script>
-		function ".dol_escape_json($spanid)."clipBoardCopy() {
-			var copied_text = document.getElementById( \"".dol_escape_json($spanid)."\" );
-			if ( window.getSelection ) {
-				
-				selection = window.getSelection();
-				
-				range = document.createRange();
-				range.selectNodeContents( copied_text );
-				
-				selection.removeAllRanges();
-				selection.addRange( range );
-				
-			}
-			
-			document.execCommand( 'copy' );
-			window.getSelection().removeAllRanges();
-			var span = document.getElementById( \"".dol_escape_json($spanid)."clipboardChar\" );
-			var tmp = span.innerHTML
-			span.innerHTML = '".dol_escape_js($langs->trans('CopiedToClipboard'))."';
-			setTimeout(() => { span.innerHTML = tmp; }, 1000);
-		}
-	</script>";
-	return $stringtoprint;
+	return '<span class="clipboardCopyPaste"><span>'.dol_escape_js($valuetoprint).'
+			</span>&ensp;<span class ="opacitymedium"><i " class="far fa-clipboard"></i></span></span>';
+	 
 }

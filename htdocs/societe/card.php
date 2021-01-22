@@ -2426,7 +2426,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print $langs->trans('CustomerCode');
 			print '</td>';
 			print '<td>';
-			print showValueWithCopyAndPasteButton($object->code_client, 'code_client', $langs);
+			print showValueWithCopyAndPasteButton($object->code_client);
 			print '</td>';
 			$tmpcheck = $object->check_codeclient();
 			if ($tmpcheck != 0 && $tmpcheck != -5) {
