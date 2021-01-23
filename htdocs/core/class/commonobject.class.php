@@ -5912,8 +5912,7 @@ abstract class CommonObject
 
 		$objectid = $this->id;
 
-		if ($computed)
-		{
+		if ($computed) {
 			if (!preg_match('/^search_/', $keyprefix)) return '<span class="opacitymedium">'.$langs->trans("AutomaticallyCalculated").'</span>';
 			else return '';
 		}
@@ -5922,26 +5921,20 @@ abstract class CommonObject
 		if (empty($morecss) && !empty($val['css'])) {
 			$morecss = $val['css'];
 		} elseif (empty($morecss)) {
-			if ($type == 'date')
-			{
+			if ($type == 'date') {
 				$morecss = 'minwidth100imp';
-			} elseif ($type == 'datetime' || $type == 'link')	// link means an foreign key to another primary id
-			{
+			} elseif ($type == 'datetime' || $type == 'link') {	// link means an foreign key to another primary id
 				$morecss = 'minwidth200imp';
-			} elseif (in_array($type, array('int', 'integer', 'price')) || preg_match('/^double(\([0-9],[0-9]\)){0,1}/', $type))
-			{
+			} elseif (in_array($type, array('int', 'integer', 'price')) || preg_match('/^double(\([0-9],[0-9]\)){0,1}/', $type)) {
 				$morecss = 'maxwidth75';
 			} elseif ($type == 'url') {
 				$morecss = 'minwidth400';
-			} elseif ($type == 'boolean')
-			{
+			} elseif ($type == 'boolean') {
 				$morecss = '';
 			} else {
-				if (round($size) < 12)
-				{
+				if (round($size) < 12) {
 					$morecss = 'minwidth100';
-				} elseif (round($size) <= 48)
-				{
+				} elseif (round($size) <= 48) {
 					$morecss = 'minwidth200';
 				} else {
 					$morecss = 'minwidth400';
@@ -6338,13 +6331,13 @@ abstract class CommonObject
 
 			if (!preg_match('/search_/', $keyprefix)) {
 				if (!empty($param_list_array[2])) {		// If the entry into $fields is set to add a create button
-					if ($this->fields[$key]['picto']) {
+					if (!empty($this->fields[$key]['picto'])) {
 						$morecss .= ' widthcentpercentminusxx';
 					} else {
 						$morecss .= ' widthcentpercentminusx';
 					}
 				} else {
-					if ($this->fields[$key]['picto']) {
+					if (!empty($this->fields[$key]['picto'])) {
 						$morecss .= ' widthcentpercentminusx';
 					}
 				}
