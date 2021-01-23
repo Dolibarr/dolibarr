@@ -770,6 +770,15 @@ textarea.centpercent {
 .nounderline {
     text-decoration: none;
 }
+.nopadding {
+	padding: 0;
+}
+.nopaddingleft {
+	padding-left: 0;
+}
+.nopaddingright {
+	padding-right: 0;
+}
 .paddingleft {
 	padding-<?php print $left; ?>: 4px;
 }
