@@ -325,8 +325,8 @@ if ($result)
 				// TODO Define familyposition
 				$family = $modules[$obj->module]->family_position;
 				$familyposition = 0;
-				$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."rights_def SET module_position = ".$modules[$obj->module]->module_position.",";
-				$sqlupdate .= " family_position = ".$familyposition;
+				$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."rights_def SET module_position = ".((int) $modules[$obj->module]->module_position).",";
+				$sqlupdate .= " family_position = ".((int) $familyposition);
 				$sqlupdate .= " WHERE module_position = 0 AND module = '".$db->escape($obj->module)."'";
 				$db->query($sqlupdate);
 			}
@@ -438,9 +438,16 @@ if ($result)
 			print '<td>&nbsp</td>';
 		}
 
-		// Label
-		$permlabel = ($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id) != ("PermissionAdvanced".$obj->id)) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != ("Permission".$obj->id)) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
-		print '<td class="maxwidthonsmartphone">'.$permlabel.'</td>';
+		// Label of permission
+		$permlabel = (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ($langs->trans("PermissionAdvanced".$obj->id) != ("PermissionAdvanced".$obj->id)) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != ("Permission".$obj->id)) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
+		print '<td class="maxwidthonsmartphone">';
+		print $permlabel;
+		if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+			if (preg_match('/_advance$/', $obj->perms)) {
+				print ' <span class="opacitymedium">('.$langs->trans("AdvancedModeOnly").')</span>';
+			}
+		}
+		print '</td>';
 
 		// Permission id
 		if ($user->admin) print '<td class="right"><span class="opacitymedium">'.$obj->id.'</span></td>';
