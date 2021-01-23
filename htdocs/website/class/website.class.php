@@ -757,7 +757,7 @@ class Website extends CommonObject
 			// Restore id of home page
 			$object->fk_default_home = $newidforhome;
 			$res = $object->update($user);
-			if (!$res > 0)
+			if (!($res > 0))
 			{
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');

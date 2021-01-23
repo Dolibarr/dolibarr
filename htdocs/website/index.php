@@ -1576,7 +1576,7 @@ if ($action == 'setashome')
 
 	$object->fk_default_home = $pageid;
 	$res = $object->update($user);
-	if (!$res > 0)
+	if (! ($res > 0))
 	{
 		$error++;
 		setEventMessages($object->error, $object->errors, 'errors');
