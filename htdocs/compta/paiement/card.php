@@ -298,7 +298,7 @@ if (!empty($conf->banque->enabled))
 	if ($object->fk_account > 0) {
 		print $bankline->getNomUrl(1, 0, 'showconciliatedandaccounted');
 	} else {
-		print $langs->trans("NoRecordFoundIBankcAccount", $langs->transnoentities("Module85Name"));
+		print '<span class="opacitymedium">'.$langs->trans("NoRecordFoundIBankcAccount", $langs->transnoentities("Module85Name")).'</span>';
 	}
 	print '</td>';
 	print '</tr>';
