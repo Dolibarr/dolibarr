@@ -7144,7 +7144,7 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
  *  @param      array		$array      		Array to sort (array of array('key1'=>val1,'key2'=>val2,'key3'...) or array of objects)
  *  @param      string		$index				Key in array to use for sorting criteria
  *  @param      int			$order				Sort order ('asc' or 'desc')
- *  @param      int			$natsort			1=use "natural" sort (natsort), 0=use "standard" sort (asort)
+ *  @param      int			$natsort			1=use "natural" sort (natsort) for a search criteria thats is strings or unknown, 0=use "standard" sort (asort) for numbers
  *  @param      int			$case_sensitive		1=sort is case sensitive, 0=not case sensitive
  *  @param		int			$keepindex			If 0 and index key of array to sort is a numeric, than index will be rewrote. If 1 or index key is not numeric, key for index is kept after sorting.
  *  @return     array							Sorted array
@@ -7170,9 +7170,17 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
 			}
 
 			if (!$natsort) {
-				($order == 'asc') ? asort($temp) : arsort($temp);
+				if ($order == 'asc') {
+					asort($temp);
+				} else {
+					arsort($temp);
+				}
 			} else {
-				($case_sensitive) ? natsort($temp) : natcasesort($temp);
+				if ($case_sensitive) {
+					natsort($temp);
+				} else {
+					natcasesort($temp);	// natecasesort is not sensible to case
+				}
 				if ($order != 'asc') $temp = array_reverse($temp, true);
 			}
 
