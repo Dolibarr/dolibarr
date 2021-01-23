@@ -176,3 +176,4 @@ BankColorizeMovement=Colorize movements
 BankColorizeMovementDesc=If this function is enable, you can choose specific background color for debit or credit movements
 BankColorizeMovementName1=Background color for debit movement
 BankColorizeMovementName2=Background color for credit movement
+NoRecordFoundIBankcAccount=No record found in bank account. Commonly, this occurs when a record has been deleted manually from the list of transaction in the bank account (for example during a reconciliation of the bank account). Another reason is that the payment was recorded when the module "%s" was disabled.
