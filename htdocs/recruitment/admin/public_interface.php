@@ -52,7 +52,7 @@ if ($action == 'update') {
 
 	$res = dolibarr_set_const($db, "RECRUITMENT_ENABLE_PUBLIC_INTERFACE", $public, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
  	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
