@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018-2019 	Thibault FOUCART       <support@ptibogxiv.net>
+/* Copyright (C) 2018-2021 	Thibault FOUCART       <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -409,7 +409,10 @@ class Stripe extends CommonObject
 			// list of payment method types
 			$paymentmethodtypes = array("card");
 			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) $paymentmethodtypes[] = "sepa_debit"; //&& ($object->thirdparty->isInEEC())
-			if (!empty($conf->global->STRIPE_IDEAL)) $paymentmethodtypes[] = "ideal"; //&& ($object->thirdparty->isInEEC())
+			if (!empty($conf->global->STRIPE_BANCONTACT)) $paymentmethodtypes[] = "bancontact"; 
+			if (!empty($conf->global->STRIPE_IDEAL)) $paymentmethodtypes[] = "ideal"; 
+			if (!empty($conf->global->STRIPE_GIROPAY)) $paymentmethodtypes[] = "giropay"; 
+			if (!empty($conf->global->STRIPE_SOFORT)) $paymentmethodtypes[] = "sofort"; 
 
 			$dataforintent = array(
 				"confirm" => $confirmnow, // Do not confirm immediatly during creation of intent
@@ -430,8 +433,9 @@ class Stripe extends CommonObject
 			if ($off_session)
 			{
 				unset($dataforintent['setup_future_usage']);
-				$dataforintent["off_session"] = true;
+				$dataforintent["setup_future_usage"] = "off_session";
 			}
+      if (!empty($conf->global->STRIPE_GIROPAY)) unset($dataforintent['setup_future_usage']);
 			if (!is_null($payment_method))
 			{
 				$dataforintent["payment_method"] = $payment_method;
@@ -578,7 +582,10 @@ class Stripe extends CommonObject
 			// list of payment method types
 			$paymentmethodtypes = array("card");
 			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) $paymentmethodtypes[] = "sepa_debit"; //&& ($object->thirdparty->isInEEC())
-			// iDEAL not supported with setupIntent
+			if (!empty($conf->global->STRIPE_BANCONTACT)) $paymentmethodtypes[] = "bancontact"; 
+			if (!empty($conf->global->STRIPE_IDEAL)) $paymentmethodtypes[] = "ideal"; 
+			// Giropay not possible for setup intent 
+			if (!empty($conf->global->STRIPE_SOFORT)) $paymentmethodtypes[] = "sofort"; 
 
 			$dataforintent = array(
 				"confirm" => $confirmnow, // Do not confirm immediatly during creation of intent
