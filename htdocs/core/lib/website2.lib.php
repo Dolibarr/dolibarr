@@ -102,9 +102,30 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 			@chmod($filealias, octdec($conf->global->MAIN_UMASK));
 		}
 	}
-
 	// Save also alias into all language subdirectories if it is a main language
-	// TODO
+	elseif (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
+		if (empty($conf->global->WEBSITE_DISABLE_MAIN_LANGUAGE_INTO_LANGSUBDIR)) {
+			$dirname = dirname($filealias);
+			$filename = basename($filealias);
+			foreach (explode(',', $object->otherlang) as $sublang) {
+				$filealias = $dirname.'/'.$sublang.'/'.$filename;
+
+				$aliascontent = '<?php'."\n";
+				$aliascontent .= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a wrapper to real page\n";
+				$aliascontent .= 'global $dolibarr_main_data_root;'."\n";
+				$aliascontent .= 'if (empty($dolibarr_main_data_root)) require \'../page'.$objectpage->id.'.tpl.php\'; ';
+				$aliascontent .= 'else require $dolibarr_main_data_root.\'/website/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
+				$aliascontent .= '?>'."\n";
+				$result = file_put_contents($filealias, $aliascontent);
+				if ($result === false) {
+					dol_syslog("Failed to write file ".$filealias, LOG_WARNING);
+				}
+				if (!empty($conf->global->MAIN_UMASK)) {
+					@chmod($filealias, octdec($conf->global->MAIN_UMASK));
+				}
+			}
+		}
+	}
 
 	return ($result ?true:false);
 }
