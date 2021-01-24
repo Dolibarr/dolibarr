@@ -387,6 +387,21 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
 	print '</td></tr>';
 }
 
+// Activate Bancontact
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
+{
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("STRIPE_BANCONTACT").'</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('STRIPE_BANCONTACT');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STRIPE_BANCONTACT", $arrval, $conf->global->STRIPE_BANCONTACT);
+	}
+	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("ExampleOnlyForBECustomers").'</span>';
+	print '</td></tr>';
+}
+
 // Activate iDEAL
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
 {
@@ -399,6 +414,36 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
 		print $form->selectarray("STRIPE_IDEAL", $arrval, $conf->global->STRIPE_SEPA_DIRECT_DEBIT);
 	}
 	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("ExampleOnlyForNLCustomers").'</span>';
+	print '</td></tr>';
+}
+
+// Activate Giropay
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
+{
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("STRIPE_GIROPAY").'</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('STRIPE_GIROPAY');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STRIPE_GIROPAY", $arrval, $conf->global->STRIPE_GIROPAY);
+	}
+	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("ExampleOnlyForDECustomers").'</span>';
+	print '</td></tr>';
+}
+
+// Activate Sofort
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
+{
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("STRIPE_SOFORT").'</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('STRIPE_SOFORT');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STRIPE_SOFORT", $arrval, $conf->global->STRIPE_SOFORT);
+	}
+	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("ExampleOnlyForATBEDEITNLESCustomers").'</span>';
 	print '</td></tr>';
 }
 
