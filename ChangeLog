@@ -194,16 +194,10 @@ NEW: can add event to log into blockedlog module with a constant
 NEW: add property cssview when declaring fields of an object
 NEW: Can use dynamic code into the 'enabled' property of DAO fields
 NEW: allow to edit "demand reason" field though API
-NEW: fetch contact by email with REST API
 NEW: field ref_ext in llx_commandedet
 NEW: fields ref_ext for Attributes and Combinations
-NEW: get state dictionnary by REST API
-NEW: improve Product API for variant products
 NEW: OAuth SCOPE for Admin SDK
-NEW: retrieve discount from invoice from API
 NEW: standardizes API thirdparties by email like other object
-NEW: Thirdparty REST API: endpoint to set price level
-NEW: use new category API for project list view
 NEW: Triggers Attributes and Attributes values
 NEW: added incoterms data into the substitution array
 NEW: add send context for ticket
@@ -219,6 +213,12 @@ NEW: API can update a payment
 NEW: API get member by thirdparty
 NEW: API get thirdparty by barcode
 NEW: API get users by email / login
+NEW: fetch contact by email with REST API
+NEW: get state dictionnary by REST API
+NEW: improve Product API for variant products
+NEW: retrieve discount from invoice from API
+NEW: Thirdparty REST API: endpoint to set price level
+NEW: use new category API for project list view
 
 HOOKs
 NEW: Hook on propal card
