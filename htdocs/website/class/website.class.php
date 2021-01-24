@@ -1316,6 +1316,7 @@ class Website extends CommonObject
 
 		$num = $this->db->num_rows($resql);
 
+		// Loop on each container/page
 		$i = 0;
 		while ($i < $num) {
 			$obj = $this->db->fetch_object($resql);
@@ -1333,7 +1334,7 @@ class Website extends CommonObject
 				$error++;
 			}
 
-			// Regenerate alternative aliases pages
+			// Regenerate aliases pages (pages with a natural name)
 			if (is_array($aliasesarray))
 			{
 				foreach ($aliasesarray as $aliasshortcuttocreate)
