@@ -182,8 +182,7 @@ NEW: add option "If the feature to manage kits of module Stock is used, show det
 
 For developers:
 ---------------
-NEW: add __MEMBER_TYPE__ substitution key
-NEW: add __TYPE__ substitution key
+NEW: add __MEMBER_TYPE__ and __TYPE__ substitution key
 NEW: add function dolButtonToOpenUrlInDialogPopup() to be able to open page into a popup
 NEW: show line number on intervention card (via MAIN_VIEW_LINE_NUMBER)
 NEW: Add some fields to link website page to an other object
@@ -198,7 +197,6 @@ NEW: allow to edit "demand reason" field though API
 NEW: fetch contact by email with REST API
 NEW: field ref_ext in llx_commandedet
 NEW: fields ref_ext for Attributes and Combinations
-NEW: get state by REST API
 NEW: get state dictionnary by REST API
 NEW: improve Product API for variant products
 NEW: OAuth SCOPE for Admin SDK
