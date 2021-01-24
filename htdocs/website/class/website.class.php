@@ -1334,13 +1334,15 @@ class Website extends CommonObject
 				$error++;
 			}
 
-			// Regenerate aliases pages (pages with a natural name)
-			if (is_array($aliasesarray))
-			{
-				foreach ($aliasesarray as $aliasshortcuttocreate)
-				{
-					if (trim($aliasshortcuttocreate))
-					{
+			// Add main alias to list of alternative aliases
+			if (!empty($objectpagestatic->pageurl) && !in_array($objectpagestatic->pageurl, $aliasesarray)) {
+				$aliasesarray[] = $objectpagestatic->pageurl;
+			}
+
+			// Regenerate all aliases pages (pages with a natural name)
+			if (is_array($aliasesarray)) {
+				foreach ($aliasesarray as $aliasshortcuttocreate) {
+					if (trim($aliasshortcuttocreate)) {
 						$filealias = $conf->website->dir_output.'/'.$object->ref.'/'.trim($aliasshortcuttocreate).'.php';
 						$result = dolSavePageAlias($filealias, $object, $objectpagestatic);
 						if (!$result) {
