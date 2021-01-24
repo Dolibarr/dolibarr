@@ -36,6 +36,7 @@ $action = GETPOST('action', 'aZ09');
 
 $form = new Form($db);
 
+
 /*
  * Actions
  */
@@ -65,8 +66,7 @@ if ($action == 'setvalue')
 	if (!($res > 0)) $error++;
 
 
-	if (!$error)
-	{
+	if (!$error) {
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {

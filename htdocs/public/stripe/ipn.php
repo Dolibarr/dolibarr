@@ -361,7 +361,7 @@ if ($event->type == 'payout.created') {
 	}
 } elseif ($event->type == 'payment_method.detached') {
 	$db->begin();
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib WHERE ref = '".$db->escape($event->data->object->id)."' and status = ".$servicestatus;
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib WHERE number = '".$db->escape($event->data->object->id)."' and status = ".$servicestatus;
 	$db->query($sql);
 	$db->commit();
 } elseif ($event->type == 'charge.succeeded') {

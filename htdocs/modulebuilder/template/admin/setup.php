@@ -83,10 +83,9 @@ if ($action == 'updateMask') {
 
 	if ($maskconstorder) {
 		$res = dolibarr_set_const($db, $maskconstorder, $maskorder, 'chaine', 0, '', $conf->entity);
-	}
-
-	if (!($res > 0)) {
-		$error++;
+		if (!($res > 0)) {
+			$error++;
+		}
 	}
 
 	if (!$error) {

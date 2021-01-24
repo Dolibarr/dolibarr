@@ -3,6 +3,24 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 14.0.0 compared to 13.0.0 *****
+
+For users:
+----------
+
+
+For developers:
+---------------
+
+
+
+WARNING:
+
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* The ICS value for direct debit or credit transfer is now store on each bank account instead of into the global setup.
+
+
+
 ***** ChangeLog for 13.0.0 compared to 12.0.0 *****
 
 For users:

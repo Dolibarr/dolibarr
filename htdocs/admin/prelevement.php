@@ -75,7 +75,6 @@ if ($action == "set")
 	} else $error++;
 
 	/* Moved to account
-
 	$res = dolibarr_set_const($db, "PRELEVEMENT_ICS", GETPOST("PRELEVEMENT_ICS"), 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) $error++;
 	*/

@@ -637,6 +637,7 @@ if (empty($reshook)) {
 	if (GETPOSTISSET('actionbis') && $action == 'presend') $action = 'presend_addmessage';
 }
 
+
 /*
  * View
  */

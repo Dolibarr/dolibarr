@@ -117,6 +117,7 @@ if ($action == 'setlistsortdone') {
 	if (!($res > 0)) {
 		$error++;
 	}
+
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -130,6 +131,7 @@ if ($action == 'setmanagezero') {
 	if (!($res > 0)) {
 		$error++;
 	}
+
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -143,6 +145,7 @@ if ($action == 'setdisabledirectinput') {
 	if (!($res > 0)) {
 		$error++;
 	}
+
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -156,6 +159,7 @@ if ($action == 'setenabledraftexport') {
 	if (!($res > 0)) {
 		$error++;
 	}
+
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -169,6 +173,7 @@ if ($action == 'setenablesubsidiarylist') {
 	if (!($res > 0)) {
 		$error++;
 	}
+
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -182,6 +187,7 @@ if ($action == 'setdisablebindingonsales') {
 	if (!($res > 0)) {
 		$error++;
 	}
+
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -195,6 +201,7 @@ if ($action == 'setdisablebindingonpurchases') {
 	if (!($res > 0)) {
 		$error++;
 	}
+
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -208,6 +215,7 @@ if ($action == 'setdisablebindingonexpensereports') {
 	if (!($res > 0)) {
 		$error++;
 	}
+
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -215,9 +223,11 @@ if ($action == 'setdisablebindingonexpensereports') {
 	}
 }
 
+
 /*
  * View
  */
+
 $form = new Form($db);
 
 $title = $langs->trans('ConfigAccountingExpert');
