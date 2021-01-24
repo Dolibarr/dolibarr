@@ -1300,7 +1300,7 @@ class Website extends CommonObject
 		$object = $this;
 		if (empty($object->ref))
 		{
-			$this->error = 'Function importWebSite called on object not loaded (object->ref is empty)';
+			$this->error = 'Function rebuildWebSiteFiles called on object not loaded (object->ref is empty)';
 			return -1;
 		}
 
