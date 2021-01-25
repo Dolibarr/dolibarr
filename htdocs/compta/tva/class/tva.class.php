@@ -470,7 +470,7 @@ class Tva extends CommonObject
         $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
         if ($year)
         {
-            $sql .= " WHERE f.datef >= '".$year."-01-01' AND f.datef <= '".$year."-12-31' ";
+            $sql .= " WHERE f.datef >= '".$this->db->escape($year)."-01-01' AND f.datef <= '".$this->db->escape($year)."-12-31' ";
         }
 
         $result = $this->db->query($sql);
