@@ -37,7 +37,7 @@ class WorkstationResource extends CommonObject
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	 public $fields = array(
+	public $fields = array(
 		'fk_workstation' => array ('type' => 'integer'),
 		'fk_resource' => array ('type' => 'integer')
 	);
@@ -45,12 +45,12 @@ class WorkstationResource extends CommonObject
 	 /**
 	  * @var int ID of workstation
 	  */
-	 public $fk_workstation;
+	public $fk_workstation;
 
 	 /**
 	  * @var int ID of dolresource
 	  */
-	 public $fk_resource;
+	public $fk_resource;
 
 
 	/**
