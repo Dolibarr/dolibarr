@@ -23,9 +23,8 @@
  */
 
 /**
- * Class for WorkstationUserGroup
+ * Class to link User groups and Workstations
  */
-
 class WorkstationUserGroup extends CommonObject
 {
 	/** @var string $table_element Table name in SQL */
@@ -34,17 +33,34 @@ class WorkstationUserGroup extends CommonObject
 	/** @var string $element Name of the element (tip for better integration in Dolibarr: this value should be the reflection of the class name with ucfirst() function) */
 	public $element = 'workstationusergroup';
 
-	public $fields = array(
+	/**
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	 public $fields = array(
 		'fk_workstation' => array ('type' => 'integer'),
 		'fk_usergroup' => array ('type' => 'integer')
 	);
 
 	/**
+	 * @var int ID of workstation
+	 */
+	public $fk_workstation;
+
+	/**
+	 * @var int ID of user group
+	 */
+	public $fk_usergroup;
+
+
+	/**
 	 * WorkstationUserGroup constructor.
+	 *
 	 * @param DoliDB    $db    Database connector
 	 */
 	public function __construct($db)
 	{
+		global $langs;
+
 		$this->db = $db;
 
 		// Unset fields that are disabled
@@ -74,24 +90,28 @@ class WorkstationUserGroup extends CommonObject
 
 	/**
 	 * Function used to get an array with all usergroups linked to a workstation
+	 *
 	 * @param	int		$fk_workstation		id of workstation we need to get linked usergroups
-	 * @return array
+	 * @return 	array						Array of record
 	 */
 	static public function getAllGroupsOfWorkstation($fk_workstation)
 	{
 		global $db;
+
 		$obj = new self($db);
 		return parent::getAllItemsLinkedByObjectID($fk_workstation, 'fk_usergroup', 'fk_workstation', $obj->table_element);
 	}
 
 	/**
 	 * Function used to remove all usergroups linked to a workstation
-	 * @param	int		$fk_workstation		id of workstation we need to remove linked usergroups
-	 * @return int
+	 *
+	 * @param	int		$fk_workstation		Id of workstation we need to remove linked usergroups
+	 * @return 	int							<0 if KO, 0 if nothing done, >0 if OK and something done
 	 */
 	static public function deleteAllGroupsOfWorkstation($fk_workstation)
 	{
 		global $db;
+
 		$obj = new self($db);
 		return parent::deleteAllItemsLinkedByObjectID($fk_workstation, 'fk_workstation', $obj->table_element);
 	}

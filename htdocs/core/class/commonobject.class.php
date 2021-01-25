@@ -3668,7 +3668,7 @@ abstract class CommonObject
 	 * @param	string	$field_select			name of field we need to get a list
 	 * @param	string	$field_where			name of field of object we need to get linked items
 	 * @param	string	$table_element			name of association table
-	 * @return array
+	 * @return 	array							Array of record
 	 */
 	static public function getAllItemsLinkedByObjectID($fk_object_where, $field_select, $field_where, $table_element)
 	{
@@ -3697,7 +3697,7 @@ abstract class CommonObject
 	 * @param	int		$fk_object_where		id of object we need to remove linked items
 	 * @param	string	$field_where			name of field of object we need to delete linked items
 	 * @param	string	$table_element			name of association table
-	 * @return int
+	 * @return 	int								<0 if KO, 0 if nothing done, >0 if OK and something done
 	 */
 	static public function deleteAllItemsLinkedByObjectID($fk_object_where, $field_where, $table_element)
 	{
@@ -7143,7 +7143,7 @@ abstract class CommonObject
 								        $("#"+child_list).show()
 									}
 								});
-                
+
 								//When we change parent list
 								$("select[name=\""+parent_list+"\"]").change(function() {
 									showOptions(child_list, parent_list, orig_select[child_list]);
