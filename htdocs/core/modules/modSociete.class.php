@@ -197,14 +197,24 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'export';
 
-		// 262 : Resteindre l'acces des commerciaux
+		// 262 : Restrict access to sales representative
 		$r++;
 		$this->rights[$r][0] = 262;
-		$this->rights[$r][1] = 'Read all third parties by internal users (otherwise only if commercial contact). Not effective for external users (limited to themselves).';
+		$this->rights[$r][1] = 'Read all third parties (and their objects) by internal users (otherwise only if commercial contact). Not effective for external users (limited to themselves).';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'client';
 		$this->rights[$r][5] = 'voir';
+
+		/*
+		$r++;
+		$this->rights[$r][0] = 263;
+		$this->rights[$r][1] = 'Read all third parties (without their objects) by internal users (otherwise only if commercial contact). Not effective for external users (limited to themselves).';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'client';
+		$this->rights[$r][5] = 'readallthirdparties_advance';
+		*/
 
 		$r++;
 		$this->rights[$r][0] = 281; // id de la permission
