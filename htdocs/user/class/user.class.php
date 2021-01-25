@@ -2430,53 +2430,54 @@ class User extends CommonObject
 		$label .= '<div class="centpercent">';
 		$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("User").'</u>';
 		$label .= ' '.$this->getLibStatut(4);
-		$label .= '<br><b>'.$langs->trans('Name').':</b> '.$this->getFullName($langs, '');
+		$label .= '<br><b>'.$langs->trans('Name').':</b> '.dol_string_nohtmltag($this->getFullName($langs, ''));
 		if (!empty($this->login)) {
-			$label .= '<br><b>'.$langs->trans('Login').':</b> '.$this->login;
+			$label .= '<br><b>'.$langs->trans('Login').':</b> '.dol_string_nohtmltag($this->login);
 		}
 		if (!empty($this->job)) {
-			$label .= '<br><b>'.$langs->trans("Job").':</b> '.$this->job;
+			$label .= '<br><b>'.$langs->trans("Job").':</b> '.dol_string_nohtmltag($this->job);
 		}
-		$label .= '<br><b>'.$langs->trans("Email").':</b> '.$this->email;
+		$label .= '<br><b>'.$langs->trans("Email").':</b> '.dol_string_nohtmltag($this->email);
 		if (!empty($this->phone)) {
-			$label .= '<br><b>'.$langs->trans("Phone").':</b> '.$this->phone;
+			$label .= '<br><b>'.$langs->trans("Phone").':</b> '.dol_string_nohtmltag($this->phone);
 		}
 		if (!empty($this->admin)) {
 			$label .= '<br><b>'.$langs->trans("Administrator").'</b>: '.yn($this->admin);
 		}
+		$company = '';
 		if (!empty($this->socid)) {	// Add thirdparty for external users
 			$thirdpartystatic = new Societe($db);
 			$thirdpartystatic->fetch($this->socid);
 			if (empty($hidethirdpartylogo)) {
 				$companylink = ' '.$thirdpartystatic->getNomUrl(2, (($option == 'nolink') ? 'nolink' : '')); // picto only of company
 			}
-			$company = ' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
+			$company = ' ('.$langs->trans("Company").': '.dol_string_nohtmltag($thirdpartystatic->name).')';
 		}
 		$type = ($this->socid ? $langs->trans("External").$company : $langs->trans("Internal"));
-		$label .= '<br><b>'.$langs->trans("Type").':</b> '.$type;
+		$label .= '<br><b>'.$langs->trans("Type").':</b> '.dol_string_nohtmltag($type);
 		$label .= '</div>';
 		if ($infologin > 0) {
 			$label .= '<br>';
 			$label .= '<br><u>'.$langs->trans("Session").'</u>';
-			$label .= '<br><b>'.$langs->trans("IPAddress").'</b>: '.$_SERVER["REMOTE_ADDR"];
+			$label .= '<br><b>'.$langs->trans("IPAddress").'</b>: '.dol_string_nohtmltag(getUserRemoteIP());
 			if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY)) {
-				$label .= '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (user entity '.$this->entity.')';
+				$label .= '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (User entity '.$this->entity.')';
 			}
-			$label .= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.$_SESSION["dol_authmode"].(empty($dolibarr_main_demo) ? '' : ' (demo)');
+			$label .= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.dol_string_nohtmltag($_SESSION["dol_authmode"].(empty($dolibarr_main_demo) ? '' : ' (demo)'));
 			$label .= '<br><b>'.$langs->trans("ConnectedSince").':</b> '.dol_print_date($this->datelastlogin, "dayhour", 'tzuser');
 			$label .= '<br><b>'.$langs->trans("PreviousConnexion").':</b> '.dol_print_date($this->datepreviouslogin, "dayhour", 'tzuser');
-			$label .= '<br><b>'.$langs->trans("CurrentTheme").':</b> '.$conf->theme;
-			$label .= '<br><b>'.$langs->trans("CurrentMenuManager").':</b> '.$menumanager->name;
+			$label .= '<br><b>'.$langs->trans("CurrentTheme").':</b> '.dol_string_nohtmltag($conf->theme);
+			$label .= '<br><b>'.$langs->trans("CurrentMenuManager").':</b> '.dol_string_nohtmltag($menumanager->name);
 			$s = picto_from_langcode($langs->getDefaultLang());
-			$label .= '<br><b>'.$langs->trans("CurrentUserLanguage").':</b> '.($s ? $s.' ' : '').$langs->getDefaultLang();
-			$label .= '<br><b>'.$langs->trans("Browser").':</b> '.$conf->browser->name.($conf->browser->version ? ' '.$conf->browser->version : '').' ('.$_SERVER['HTTP_USER_AGENT'].')';
-			$label .= '<br><b>'.$langs->trans("Layout").':</b> '.$conf->browser->layout;
-			$label .= '<br><b>'.$langs->trans("Screen").':</b> '.$_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
+			$label .= '<br><b>'.$langs->trans("CurrentUserLanguage").':</b> '.dol_string_nohtmltag(($s ? $s.' ' : '').$langs->getDefaultLang());
+			$label .= '<br><b>'.$langs->trans("Browser").':</b> '.dol_string_nohtmltag($conf->browser->name.($conf->browser->version ? ' '.$conf->browser->version : '').' ('.$_SERVER['HTTP_USER_AGENT'].')');
+			$label .= '<br><b>'.$langs->trans("Layout").':</b> '.dol_string_nohtmltag($conf->browser->layout);
+			$label .= '<br><b>'.$langs->trans("Screen").':</b> '.dol_string_nohtmltag($_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight']);
 			if ($conf->browser->layout == 'phone') {
 				$label .= '<br><b>'.$langs->trans("Phone").':</b> '.$langs->trans("Yes");
 			}
 			if (!empty($_SESSION["disablemodules"])) {
-				$label .= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.join(', ', explode(',', $_SESSION["disablemodules"]));
+				$label .= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.dol_string_nohtmltag(join(', ', explode(',', $_SESSION["disablemodules"])));
 			}
 		}
 		if ($infologin < 0) {
@@ -2540,12 +2541,12 @@ class User extends CommonObject
 		}
 		if ($withpictoimg > -2 && $withpictoimg != 2) {
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-				$result .= '<span class=" nopadding usertext'.((!isset($this->statut) || $this->statut) ? '' : ' strikefordisabled').($morecss ? ' '.$morecss : '').'">';
+				$result .= '<span class="nopadding usertext'.((!isset($this->statut) || $this->statut) ? '' : ' strikefordisabled').($morecss ? ' '.$morecss : '').'">';
 			}
 			if ($mode == 'login') {
-				$result .= dol_trunc($this->login, $maxlen);
+				$result .= dol_string_nohtmltag(dol_trunc($this->login, $maxlen));
 			} else {
-				$result .= $this->getFullName($langs, '', ($mode == 'firstelselast' ? 3 : ($mode == 'firstname' ? 2 : -1)), $maxlen);
+				$result .= dol_string_nohtmltag($this->getFullName($langs, '', ($mode == 'firstelselast' ? 3 : ($mode == 'firstname' ? 2 : -1)), $maxlen));
 			}
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$result .= '</span>';

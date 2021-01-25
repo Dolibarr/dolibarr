@@ -171,7 +171,11 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
     	$_SERVER["PHP_SELF"]='/DIR WITH SPACE/htdocs/admin/index.php?mainmenu=home&leftmenu=setup&username=weservices';
     	$result=testSqlAndScriptInject($_SERVER["PHP_SELF"], 2);
-    	$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject 1a');
+    	$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject expected 0a');
+
+    	$test = 'This is a < inside string with < and > also and tag like <a> before the >';
+    	$result=testSqlAndScriptInject($test, 0);
+    	$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject expected 0b');
 
     	// Should detect XSS
     	$expectedresult=1;
@@ -260,6 +264,10 @@ class SecurityTest extends PHPUnit\Framework\TestCase
     	$test="on<!-- ab\nc -->error=alert(1)";
     	$result=testSqlAndScriptInject($test, 0);
     	$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject jjj');
+
+    	$test="<img src=x one<a>rror=alert(document.location)";
+    	$result=testSqlAndScriptInject($test, 0);
+    	$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject kkk');
     }
 
     /**
@@ -270,106 +278,116 @@ class SecurityTest extends PHPUnit\Framework\TestCase
     public function testGETPOST()
     {
     	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+    	$conf=$this->savconf;
+    	$user=$this->savuser;
+    	$langs=$this->savlangs;
+    	$db=$this->savdb;
 
-        $_COOKIE["id"]=111;
-		$_GET["param1"]="222";
-        $_POST["param1"]="333";
-		$_GET["param2"]='a/b#e(pr)qq-rr\cc';
-        $_GET["param3"]='"&#110;a/b#e(pr)qq-rr\cc';    // Same than param2 + " and &#110;
-        $_GET["param4"]='../dir';
-        $_GET["param5"]="a_1-b";
-        $_POST["param6"]="&quot;&gt;<svg o&#110;load='console.log(&quot;123&quot;)'&gt;";
-        $_GET["param7"]='"c:\this is a path~1\aaa&#110;" abc<bad>def</bad>';
-        $_POST["param8"]="Hacker<svg o&#110;load='console.log(&quot;123&quot;)'";	// html tag is not closed so it is not detected as html tag but is still harmfull
-		$_POST["param9"]='is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : \'objnotdefined\'';
-		$_POST["param10"]='is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : \'<abc>objnotdefined\'';
-		$_POST["param11"]=' Name <email@email.com> ';
+    	$_COOKIE["id"]=111;
+    	$_GET["param1"]="222";
+    	$_POST["param1"]="333";
+    	$_GET["param2"]='a/b#e(pr)qq-rr\cc';
+    	$_GET["param3"]='"&#110;a/b#e(pr)qq-rr\cc';    // Same than param2 + " and &#110;
+    	$_GET["param4"]='../dir';
+    	$_GET["param5"]="a_1-b";
+    	$_POST["param6"]="&quot;&gt;<svg o&#110;load='console.log(&quot;123&quot;)'&gt;";
+    	$_GET["param7"]='"c:\this is a path~1\aaa&#110;" abc<bad>def</bad>';
+    	$_POST["param8a"]="Hacker<svg o&#110;load='console.log(&quot;123&quot;)'";	// html tag is not closed so it is not detected as html tag but is still harmfull
+    	$_POST['param8b']='<img src=x onerror=alert(document.location) t=';		// this is html obfuscated by non closing tag
+    	$_POST['param8c']='< with space after is ok';
+    	$_POST["param9"]='is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : \'objnotdefined\'';
+    	$_POST["param10"]='is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : \'<abc>objnotdefined\'';
+    	$_POST["param11"]=' Name <email@email.com> ';
 
-		$result=GETPOST('id', 'int');              // Must return nothing
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, '');
+    	$result=GETPOST('id', 'int');              // Must return nothing
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals($result, '');
 
-        $result=GETPOST("param1", 'int');
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, 222, 'Test on param1 with no 3rd param');
+    	$result=GETPOST("param1", 'int');
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals($result, 222, 'Test on param1 with no 3rd param');
 
-        $result=GETPOST("param1", 'int', 2);
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, 333, 'Test on param1 with 3rd param = 2');
+    	$result=GETPOST("param1", 'int', 2);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals($result, 333, 'Test on param1 with 3rd param = 2');
 
-        // Test alpha
-        $result=GETPOST("param2", 'alpha');
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, $_GET["param2"], 'Test on param2');
+    	// Test alpha
+    	$result=GETPOST("param2", 'alpha');
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals($result, $_GET["param2"], 'Test on param2');
 
-        $result=GETPOST("param3", 'alpha');  // Must return string sanitized from char "
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, 'na/b#e(pr)qq-rr\cc', 'Test on param3');
+    	$result=GETPOST("param3", 'alpha');  // Must return string sanitized from char "
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals($result, 'na/b#e(pr)qq-rr\cc', 'Test on param3');
 
-        $result=GETPOST("param4", 'alpha');  // Must return string sanitized from ../
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, 'dir');
+    	$result=GETPOST("param4", 'alpha');  // Must return string sanitized from ../
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals($result, 'dir');
 
-        // Test aZ09
-        $result=GETPOST("param1", 'aZ09');
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, $_GET["param1"]);
+    	// Test aZ09
+    	$result=GETPOST("param1", 'aZ09');
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals($result, $_GET["param1"]);
 
-        $result=GETPOST("param2", 'aZ09');  // Must return '' as string contains car not in aZ09 definition
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, '');
+    	$result=GETPOST("param2", 'aZ09');  // Must return '' as string contains car not in aZ09 definition
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals($result, '');
 
-        $result=GETPOST("param3", 'aZ09');  // Must return '' as string contains car not in aZ09 definition
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, '');
+    	$result=GETPOST("param3", 'aZ09');  // Must return '' as string contains car not in aZ09 definition
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals($result, '');
 
-        $result=GETPOST("param4", 'aZ09');  // Must return '' as string contains car not in aZ09 definition
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals('', $result);
+    	$result=GETPOST("param4", 'aZ09');  // Must return '' as string contains car not in aZ09 definition
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('', $result);
 
-        $result=GETPOST("param5", 'aZ09');
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals($_GET["param5"], $result);
+    	$result=GETPOST("param5", 'aZ09');
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals($_GET["param5"], $result);
 
-        $result=GETPOST("param6", 'alpha');
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals('>', $result);
+    	$result=GETPOST("param6", 'alpha');
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('>', $result);
 
-        $result=GETPOST("param6", 'nohtml');
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals('">', $result);
+    	$result=GETPOST("param6", 'nohtml');
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('">', $result);
 
-        // With restricthtml we must remove html open/close tag and content but not htmlentities like &#110;
-        $result=GETPOST("param7", 'restricthtml');
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals('"c:\this is a path~1\aaa&#110;" abcdef', $result);
+    	// With restricthtml we must remove html open/close tag and content but not htmlentities like &#110;
+    	$result=GETPOST("param7", 'restricthtml');
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('"c:\this is a path~1\aaa&#110;" abcdef', $result);
 
-        // With alphanohtml, we must convert the html entities like &#110;
-        $result=GETPOST("param8", 'alphanohtml');
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals("Hacker<svg onload='console.log(123)'", $result);
+    	// With alphanohtml, we must convert the html entities like &#110; and disable all entities
+    	$result=GETPOST("param8a", 'alphanohtml');
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals("Hackersvg onload='console.log(123)'", $result);
 
-        $result=GETPOST("param9", 'alphanohtml');
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals($_POST["param9"], $result);
+    	$result=GETPOST("param8b", 'alphanohtml');
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('img src=x onerror=alert(document.location) t=', $result, 'Test a string with non closing html tag with alphanohtml');
 
-        $result=GETPOST("param10", 'alphanohtml');
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals($_POST["param9"], $result, 'We should get param9 after processing param10');
+    	$result=GETPOST("param8c", 'alphanohtml');
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals($_POST['param8c'], $result, 'Test a string with non closing html tag with alphanohtml');
 
-        $result=GETPOST("param11", 'alphanohtml');
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals("Name", $result, 'Test an email string with alphanohtml');
+    	$result=GETPOST("param9", 'alphanohtml');
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals($_POST["param9"], $result);
 
-        $result=GETPOST("param11", 'alphawithlgt');
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals(trim($_POST["param11"]), $result, 'Test an email string with alphawithlgt');
+    	$result=GETPOST("param10", 'alphanohtml');
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals($_POST["param9"], $result, 'We should get param9 after processing param10');
 
-        return $result;
+    	$result=GETPOST("param11", 'alphanohtml');
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals("Name", $result, 'Test an email string with alphanohtml');
+
+    	$result=GETPOST("param11", 'alphawithlgt');
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals(trim($_POST["param11"]), $result, 'Test an email string with alphawithlgt');
+
+    	return $result;
     }
 
     /**
