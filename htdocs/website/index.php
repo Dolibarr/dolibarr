@@ -2042,7 +2042,8 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 					if (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
 						$dirname = dirname($fileoldalias);
 						$filename = basename($fileoldalias);
-						foreach (explode(',', $object->otherlang) as $sublang) {
+						$sublangs = explode(',', $object->otherlang);
+						foreach ($sublangs as $sublang) {
 							$fileoldaliassub = $dirname.'/'.$sublang.'/'.$filename;
 							dol_delete_file($fileoldaliassub);
 						}
