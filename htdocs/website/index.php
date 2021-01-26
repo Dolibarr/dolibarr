@@ -1752,7 +1752,6 @@ if ($action == 'updatemeta')
 
 		dol_mkdir($pathofwebsite);
 
-
 		// Now generate the master.inc.php page
 		$result = dolSaveMasterFile($filemaster);
 		if (!$result) setEventMessages('Failed to write file '.$filemaster, null, 'errors');
@@ -1762,6 +1761,17 @@ if ($action == 'updatemeta')
 		{
 			dol_syslog("We delete old alias page name=".$fileoldalias." to build a new alias page=".$filealias);
 			dol_delete_file($fileoldalias);
+
+			// Delete also pages into language subdirectories
+			if (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
+				$dirname = dirname($fileoldalias);
+				$filename = basename($fileoldalias);
+				$sublangs = explode(',', $object->otherlang);
+				foreach ($sublangs as $sublang) {
+					$fileoldaliassub = $dirname.'/'.$sublang.'/'.$filename;
+					dol_delete_file($fileoldaliassub);
+				}
+			}
 		}
 		// Now delete the alternative alias.php pages
 		if (!empty($objectpage->old_object->aliasalt))
@@ -1773,11 +1783,22 @@ if ($action == 'updatemeta')
 				{
 					dol_syslog("We delete old alt alias pages name=".trim($tmpaliasalt));
 					dol_delete_file($pathofwebsite.'/'.trim($tmpaliasalt).'.php');
+
+					// Delete also pages into language subdirectories
+					if (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
+						$dirname = dirname($pathofwebsite.'/'.trim($tmpaliasalt).'.php');
+						$filename = basename($pathofwebsite.'/'.trim($tmpaliasalt).'.php');
+						$sublangs = explode(',', $object->otherlang);
+						foreach ($sublangs as $sublang) {
+							$fileoldaliassub = $dirname.'/'.$sublang.'/'.$filename;
+							dol_delete_file($fileoldaliassub);
+						}
+					}
 				}
 			}
 		}
 
-		// Save page alias
+		// Save page main alias
 		$result = dolSavePageAlias($filealias, $object, $objectpage);
 		if (!$result) setEventMessages('Failed to write file '.$filealias, null, 'errors');
 		// Save alt aliases
@@ -2025,15 +2046,13 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 
 				dol_mkdir($pathofwebsite);
 
-
 				// Now generate the master.inc.php page
 				$result = dolSaveMasterFile($filemaster);
 
 				if (!$result) setEventMessages('Failed to write the master file file '.$filemaster, null, 'errors');
 
-
-				// Now generate the alias.php page
-				if (!empty($fileoldalias))
+				// Now delete the old alias.php page if we removed one
+				/*if (!empty($fileoldalias))
 				{
 					dol_syslog("We regenerate alias page new name=".$filealias.", old name=".$fileoldalias);
 					dol_delete_file($fileoldalias);
@@ -2048,8 +2067,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 							dol_delete_file($fileoldaliassub);
 						}
 					}
-
-				}
+				}*/
 
 				// Save page alias
 				$result = dolSavePageAlias($filealias, $object, $objectpage);
