@@ -180,3 +180,4 @@ BankColorizeMovementDesc=Ja šī funkcija ir iespējota, jūs varat izvēlēties
 BankColorizeMovementName1=Debeta kustības fona krāsa
 BankColorizeMovementName2=Kredīta aprites fona krāsa
 IfYouDontReconcileDisableProperty=If you don't make the bank reconciliations on some bank accounts, disable the property "%s" on them to remove this warning.
+NoBankAccountDefined=No bank account defined

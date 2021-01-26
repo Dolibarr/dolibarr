@@ -149,3 +149,4 @@ InfoRejectMessage=Bună ziua, <br> <br> ordinul de plată prin debit direct al f
 ModeWarning=Opţiunea pentru modul real, nu a fost stabilit, ne oprim după această simulare
 ErrorCompanyHasDuplicateDefaultBAN=Compania cu id %s are mai multe conturi bancare implicite. Nu se poate determina cel care se doreşte a fi utilizat.
 ErrorICSmissing=ICS lipsă în contul bancar %s
+TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=Suma totală a ordinului de debitare directă diferă de suma liniilor

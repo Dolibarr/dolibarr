@@ -175,3 +175,5 @@ Answered=Besvaret
 IsNotAnAnswer=Er ikke svar (indledende e-mail)
 IsAnAnswer=Er et svar på en indledende e-mail
 RecordCreatedByEmailCollector=Post oprettet af Email Collector %s fra e-mail %s
+DefaultBlacklistMailingStatus=Standard kontaktstatus for afvisning af masse-e-mail
+DefaultStatusEmptyMandatory=Tom men obligatorisk

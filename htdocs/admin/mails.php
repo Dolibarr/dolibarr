@@ -532,6 +532,7 @@ if ($action == 'edit')
 	print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
 	print "<br>\n";
 
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
@@ -552,10 +553,12 @@ if ($action == 'edit')
 	}
 
 	print '</table>';
+	print '</div>';
 
 	if (empty($conf->global->MAIN_DISABLE_ALL_MAILS)) {
 		print '<br>';
 
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td></td></tr>';
 
@@ -663,6 +666,7 @@ if ($action == 'edit')
 		}
 
 		print '</table>';
+		print '</div>';
 
 		if ($conf->global->MAIN_MAIL_SENDMODE == 'mail' && empty($conf->global->MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP)) {
 			print info_admin($langs->trans("WarningPHPMail").'<br>'.$langs->trans("WarningPHPMailA").'<br>'.$langs->trans("WarningPHPMailB").'<br>'.$langs->trans("WarningPHPMailC").'<br><br>'.$langs->trans("WarningPHPMailD"), 0, 0, 'warning');
@@ -670,13 +674,15 @@ if ($action == 'edit')
 
 		print '<br>';
 
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("OtherOptions").'</td><td></td></tr>';
 
 		// From
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM", ini_get('sendmail_from') ?ini_get('sendmail_from') : $langs->transnoentities("Undefined")).'</td>';
 		print '<td>'.$conf->global->MAIN_MAIL_EMAIL_FROM;
-		if (!empty($conf->global->MAIN_MAIL_EMAIL_FROM) && !isValidEmail($conf->global->MAIN_MAIL_EMAIL_FROM)) print img_warning($langs->trans("ErrorBadEMail"));
+		if (empty($conf->global->MAIN_MAIL_EMAIL_FROM)) print img_warning($langs->trans("Mandatory"));
+		elseif (!isValidEmail($conf->global->MAIN_MAIL_EMAIL_FROM)) print img_warning($langs->trans("ErrorBadEMail"));
 		print '</td></tr>';
 
 		// Default from type
@@ -746,6 +752,7 @@ if ($action == 'edit')
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ENABLED_USER_DEST_SELECT").'</td><td>'.yn($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT).'</td></tr>';
 
 		print '</table>';
+		print '</div>';
 	}
 
 	print dol_get_fiche_end();

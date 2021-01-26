@@ -52,8 +52,8 @@ function dolSaveMasterFile($filemaster)
 }
 
 /**
- * Save content of a page on disk.
- * It can save file into root directory or into language subdirectory.
+ * Save an alias page on disk (A page that include the reference page).
+ * It saves file into the root directory but also into language subdirectory.
  *
  * @param	string		$filealias			Full path of filename to generate
  * @param	Website		$object				Object website
@@ -82,11 +82,11 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 		@chmod($filealias, octdec($conf->global->MAIN_UMASK));
 	}
 
-	// Save also alias into language subdirectory if we have to
+	// Save also alias into language subdirectory if it is not a main language
 	if ($objectpage->lang && in_array($objectpage->lang, explode(',', $object->otherlang))) {
 		$dirname = dirname($filealias);
 		$filename = basename($filealias);
-		$filealias = $dirname.'/'.$objectpage->lang.'/'.$filename;
+		$filealiassub = $dirname.'/'.$objectpage->lang.'/'.$filename;
 
 		$aliascontent = '<?php'."\n";
 		$aliascontent .= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a wrapper to real page\n";
@@ -94,12 +94,36 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 		$aliascontent .= 'if (empty($dolibarr_main_data_root)) require \'../page'.$objectpage->id.'.tpl.php\'; ';
 		$aliascontent .= 'else require $dolibarr_main_data_root.\'/website/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
 		$aliascontent .= '?>'."\n";
-		$result = file_put_contents($filealias, $aliascontent);
+		$result = file_put_contents($filealiassub, $aliascontent);
 		if ($result === false) {
-			dol_syslog("Failed to write file ".$filealias, LOG_WARNING);
+			dol_syslog("Failed to write file ".$filealiassub, LOG_WARNING);
 		}
 		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($filealias, octdec($conf->global->MAIN_UMASK));
+			@chmod($filealiassub, octdec($conf->global->MAIN_UMASK));
+		}
+	}
+	// Save also alias into all language subdirectories if it is a main language
+	elseif (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
+		if (empty($conf->global->WEBSITE_DISABLE_MAIN_LANGUAGE_INTO_LANGSUBDIR)) {
+			$dirname = dirname($filealias);
+			$filename = basename($filealias);
+			foreach (explode(',', $object->otherlang) as $sublang) {
+				$filealiassub = $dirname.'/'.$sublang.'/'.$filename;
+
+				$aliascontent = '<?php'."\n";
+				$aliascontent .= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a wrapper to real page\n";
+				$aliascontent .= 'global $dolibarr_main_data_root;'."\n";
+				$aliascontent .= 'if (empty($dolibarr_main_data_root)) require \'../page'.$objectpage->id.'.tpl.php\'; ';
+				$aliascontent .= 'else require $dolibarr_main_data_root.\'/website/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
+				$aliascontent .= '?>'."\n";
+				$result = file_put_contents($filealiassub, $aliascontent);
+				if ($result === false) {
+					dol_syslog("Failed to write file ".$filealiassub, LOG_WARNING);
+				}
+				if (!empty($conf->global->MAIN_UMASK)) {
+					@chmod($filealiassub, octdec($conf->global->MAIN_UMASK));
+				}
+			}
 		}
 	}
 
@@ -108,8 +132,8 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 
 
 /**
- * Save content of a page on disk.
- * Page contents are always saved into root directory.
+ * Save content of a page on disk (page name is generally ID_of_page.php).
+ * Page contents are always saved into "root" directory. Only aliases pages saved with dolSavePageAlias() can be in root or language subdir.
  *
  * @param	string		$filetpl			Full path of filename to generate
  * @param	Website		$object				Object website
@@ -230,10 +254,11 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 
 	//var_dump($filetpl);exit;
 	$result = file_put_contents($filetpl, $tplcontent);
-	if (!empty($conf->global->MAIN_UMASK))
+	if (!empty($conf->global->MAIN_UMASK)) {
 		@chmod($filetpl, octdec($conf->global->MAIN_UMASK));
+	}
 
-		return $result;
+	return $result;
 }
 
 

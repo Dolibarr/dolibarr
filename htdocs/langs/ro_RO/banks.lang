@@ -180,3 +180,4 @@ BankColorizeMovementDesc=Dacă această funcţie este activată, poţi alege o c
 BankColorizeMovementName1=Culoarea de fundal pentru tranzacţiile de debit
 BankColorizeMovementName2=Culoarea de fundal pentru tranzacţiile de credit
 IfYouDontReconcileDisableProperty= Dacă nu faceți reconcilieri bancare pe unele conturi bancare, dezactivați proprietatea "%s" de pe ele pentru a elimina acest avertisment. 
+NoBankAccountDefined=Nu a fost definit niciun cont bancar

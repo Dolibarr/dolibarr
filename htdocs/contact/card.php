@@ -54,6 +54,8 @@ $mesg = ''; $error = 0; $errors = array();
 $action = (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+
 $id = GETPOST('id', 'int');
 $socid = GETPOST('socid', 'int');
 
@@ -296,9 +298,9 @@ if (empty($reshook))
 		}
 	}
 
-	if ($action == 'update' && !$_POST["cancel"] && $user->rights->societe->contact->creer)
+	if ($action == 'update' && empty($cancel) && $user->rights->societe->contact->creer)
 	{
-		if (empty($_POST["lastname"]))
+		if (!GETPOST("lastname", 'alpha'))
 		{
 			$error++; $errors = array($langs->trans("ErrorFieldRequired", $langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
 			$action = 'edit';
@@ -308,6 +310,7 @@ if (empty($reshook))
 		{
 			$contactid = GETPOST("contactid", 'int');
 			$object->fetch($contactid);
+			$object->fetchRoles($contactid);
 
 			// Photo save
 			$dir = $conf->societe->multidir_output[$object->entity]."/contact/".$object->id."/photos";
@@ -396,7 +399,8 @@ if (empty($reshook))
 			$object->priv = (string) GETPOST("priv", 'int');
 			$object->note_public = (string) GETPOST("note_public", 'restricthtml');
 			$object->note_private = (string) GETPOST("note_private", 'restricthtml');
-			$object->roles = GETPOST("roles", 'array');
+
+			$object->roles = GETPOST("roles", 'array');		// Note GETPOSTISSET("role") is null when combo is empty
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);

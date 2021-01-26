@@ -149,3 +149,4 @@ InfoRejectMessage=Hallo,<br><br> der Lastschrift-Zahlungsauftrag der Rechnung %s
 ModeWarning=Echtzeit-Modus wurde nicht aktiviert, wir stoppen nach der Simulation.
 ErrorCompanyHasDuplicateDefaultBAN=Unternehmen mit der ID %s hat mehr als ein Standardbankkonto. Keine Möglichkeit zu wissen, welches man verwenden soll.
 ErrorICSmissing=Fehlendes ICS auf dem Bankkonto %s
+TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=Total amount of direct debit order differs from sum of lines

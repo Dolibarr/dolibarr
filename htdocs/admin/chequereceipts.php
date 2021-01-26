@@ -55,7 +55,7 @@ if ($action == 'updateMask')
 	$maskchequereceipts = GETPOST('maskchequereceipts', 'alpha');
 	if ($maskconstchequereceipts) $res = dolibarr_set_const($db, $maskconstchequereceipts, $maskchequereceipts, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
 	if (!$error)
 	{
@@ -76,7 +76,7 @@ if ($action == 'set_BANK_CHEQUERECEIPT_FREE_TEXT')
 
 	$res = dolibarr_set_const($db, "BANK_CHEQUERECEIPT_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
  	if (!$error)
 	{

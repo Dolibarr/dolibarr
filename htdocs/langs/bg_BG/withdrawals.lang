@@ -149,3 +149,4 @@ InfoRejectMessage=Здравейте, <br><br> Платежното нарежд
 ModeWarning=Опцията за реален режим не беше зададена, спираме след тази симулация
 ErrorCompanyHasDuplicateDefaultBAN=Company with id %s has more than one default bank account. No way to know wich one to use.
 ErrorICSmissing=Missing ICS in Bank account %s
+TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=Total amount of direct debit order differs from sum of lines
