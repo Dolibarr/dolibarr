@@ -770,6 +770,15 @@ textarea.centpercent {
 .nounderline {
     text-decoration: none;
 }
+.nopadding {
+	padding: 0;
+}
+.nopaddingleft {
+	padding-left: 0;
+}
+.nopaddingright {
+	padding-right: 0;
+}
 .paddingleft {
 	padding-<?php print $left; ?>: 4px;
 }
@@ -2558,6 +2567,9 @@ img.userphotosmall {			/* size for user photo in lists */
 }
 img.userphoto[alt="Gravatar avatar"] {
     background: #fff;
+}
+form[name="addtime"] img.userphoto {
+    border: 1px solid #444;
 }
 .span-icon-user {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png', 1); ?>);

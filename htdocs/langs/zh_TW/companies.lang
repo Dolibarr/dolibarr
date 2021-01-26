@@ -358,7 +358,7 @@ VATIntraCheckableOnEUSite=檢查在歐盟區網站內的區內營業稅
 VATIntraManualCheck=您也可在歐盟網站以人工方式確認<a href="%s" target="_blank">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=無法檢查。無法使用會員國家（%s）進行檢查服務。
 NorProspectNorCustomer=非潛在方或客戶
-JuridicalStatus=Business entity type
+JuridicalStatus=業務實體類型
 Workforce=員工
 Staff=僱員
 ProspectLevelShort=潛在等級

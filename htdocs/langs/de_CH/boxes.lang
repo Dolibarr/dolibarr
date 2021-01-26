@@ -57,7 +57,6 @@ LastXMonthRolling=%s letzte Monate gleitend
 ChooseBoxToAdd=Box zum Dashboard hinzufügen
 BoxAdded=Box zum Dashboard hinzugefügt
 BoxTitleUserBirthdaysOfMonth=Benutzer - Geburtstage dieses Monates
-BoxLastManualEntries=Die neuesten von Hand gebuchten Einträge
 NoRecordedManualEntries=Es gibt keine manuell hinzugefügte Einträge in der Buchhaltung
 BoxSuspenseAccount=Anzahl Buchungen in Wartestellung
 BoxTitleSuspenseAccount=Nicht kontierte Positionen

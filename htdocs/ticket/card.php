@@ -586,16 +586,16 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
-			if ($result > 0) {
-				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-				$action = 'view';
-			} else {
-				$error++;
-				setEventMessages($object->error, $object->errors, 'errors');
-			}
+			if ($result < 0) { $error++; }
 		}
 
-		if ($error) $action = 'edit_extras';
+		if ($error) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'edit_extras';
+		} else {
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+			$action = 'view';
+		}
 	}
 
 	if ($action == "change_property" && GETPOST('btn_update_ticket_prop', 'alpha') && $user->rights->ticket->write) {
@@ -636,6 +636,7 @@ if (empty($reshook)) {
 	// Set $action to correct value for the case we used presend action to add a message
 	if (GETPOSTISSET('actionbis') && $action == 'presend') $action = 'presend_addmessage';
 }
+
 
 /*
  * View

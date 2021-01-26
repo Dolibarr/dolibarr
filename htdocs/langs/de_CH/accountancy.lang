@@ -104,6 +104,7 @@ VentilatedinAccount=Erfolgreich mit dem Buchhaltungskonto verknüpft!
 NotVentilatedinAccount=Nicht mit einem Buchhaltungskonto verknüpft
 XLineSuccessfullyBinded=%s Produkte / Leistungen erfolgreich mit einem Buchhaltungskonto verknüpft.
 XLineFailedToBeBinded=%s Produkte / Leistungen konnten nicht mit einem Buchhaltungskonto verknüpft werden.
+ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Sortiere nach den neuesten zu verknüpfenden Positionen
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Sortiere nach den neuesten zu verknüpften Positionen
 ACCOUNTING_LENGTH_DESCRIPTION=Produkt- und Dienstleistungsbeschreibungen abkürzen (Wir empfehlen nach 50 Zeichen)

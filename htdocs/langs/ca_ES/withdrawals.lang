@@ -149,3 +149,4 @@ InfoRejectMessage=Hola,<br><br>el rebut domiciliat de la factura %s relacionada 
 ModeWarning=No s'ha establert l'opció de treball en real, ens aturarem després d'aquesta simulació
 ErrorCompanyHasDuplicateDefaultBAN=L’empresa amb l’identificador %s té més d’un compte bancari per defecte. No hi ha manera de saber quin utilitzar.
 ErrorICSmissing=Falta ICS al compte bancari %s
+TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=Total amount of direct debit order differs from sum of lines

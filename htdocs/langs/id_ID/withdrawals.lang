@@ -149,3 +149,4 @@ InfoRejectMessage=Halo, <br> <br>, urutan pembayaran debit langsung dari %s yang
 ModeWarning=Opsi untuk mode nyata tidak disetel, kami berhenti setelah simulasi ini
 ErrorCompanyHasDuplicateDefaultBAN=Company with id %s has more than one default bank account. No way to know wich one to use.
 ErrorICSmissing=Missing ICS in Bank account %s
+TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=Total amount of direct debit order differs from sum of lines

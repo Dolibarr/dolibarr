@@ -35,4 +35,4 @@ ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_user_author	FOREIGN KEY (fk_u
 ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_user_valid	FOREIGN KEY (fk_user_valid)  REFERENCES llx_user (rowid);
 ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_user_cloture	FOREIGN KEY (fk_user_cloture) REFERENCES llx_user (rowid);
 ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_projet		FOREIGN KEY (fk_projet) REFERENCES llx_projet (rowid);
-ALTER TABLE llx_propal ADD CONSTRAINT llx_propal_fk_warehouse 	FOREIGN KEY (fk_warehouse) REFERENCES llx_entrepot(rowid);
+--ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_warehouse 	FOREIGN KEY (fk_warehouse) REFERENCES llx_entrepot(rowid);

@@ -1174,7 +1174,9 @@ class FormFile
 			print_liste_field_titre('Size', $url, "size", "", $param, '', $sortfield, $sortorder, 'right ');
 			print_liste_field_titre('Date', $url, "date", "", $param, '', $sortfield, $sortorder, 'center ');
 			if (empty($useinecm) || $useinecm == 4 || $useinecm == 5 || $useinecm == 6) print_liste_field_titre('', $url, "", "", $param, '', $sortfield, $sortorder, 'center '); // Preview
+			// Shared or not - Hash of file
 			print_liste_field_titre('');
+			// Action button
 			print_liste_field_titre('');
 			if (!$disablemove) print_liste_field_titre('');
 			print "</tr>\n";
@@ -1285,12 +1287,10 @@ class FormFile
 						print '</td>';
 					}
 
-					// Hash of file (only if we are in a mode where a scan of dir were done and we have id of file in ECM table)
+					// Shared or not - Hash of file
 					print '<td class="center">';
-					if ($relativedir && $filearray[$key]['rowid'] > 0)
-					{
-						if ($editline)
-						{
+					if ($relativedir && $filearray[$key]['rowid'] > 0) {	// only if we are in a mode where a scan of dir were done and we have id of file in ECM table
+						if ($editline) {
 							print $langs->trans("FileSharedViaALink").' ';
 							print '<input class="inline-block" type="checkbox" name="shareenabled"'.($file['share'] ? ' checked="checked"' : '').' /> ';
 						} else {
@@ -1318,7 +1318,7 @@ class FormFile
 					}
 					print '</td>';
 
-					// Actions buttons
+					// Actions buttons (1 column or 2 if !disablemove)
 					if (!$editline)
 					{
 						// Delete or view link
@@ -1406,6 +1406,7 @@ class FormFile
 				else print $textifempty;
 				print '</td></tr>';
 			}
+
 			print "</table>";
 			print '</div>';
 
@@ -1479,7 +1480,7 @@ class FormFile
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
 			// Action column
-			print '<td class="liste_titre center">';
+			print '<td class="liste_titre right">';
 			$searchpicto = $form->showFilterButtons();
 			print $searchpicto;
 			print '</td>';
@@ -1493,7 +1494,7 @@ class FormFile
 		print_liste_field_titre("Documents2", $url, "name", "", $param, '', $sortfield, $sortorder);
 		print_liste_field_titre("Size", $url, "size", "", $param, '', $sortfield, $sortorder, 'right ');
 		print_liste_field_titre("Date", $url, "date", "", $param, '', $sortfield, $sortorder, 'center ');
-		print_liste_field_titre('', '', '');
+		print_liste_field_titre("Shared", $url, 'share', '', $param, '', $sortfield, $sortorder, 'right ');
 		print '</tr>'."\n";
 
 		// To show ref or specific information according to view to show (defined by $module)
@@ -1582,7 +1583,7 @@ class FormFile
 			//var_dump($sortfield.' - '.$sortorder);
 			if ($sortfield && $sortorder)	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
 			{
-				$filearray = dol_sort_array($filearray, $sortfield, $sortorder);
+				$filearray = dol_sort_array($filearray, $sortfield, $sortorder, 1);
 			}
 		}
 
@@ -1714,7 +1715,7 @@ class FormFile
 					$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
 
 					print img_picto($langs->trans("FileSharedViaALink"), 'globe').' ';
-					print '<input type="text" class="quatrevingtpercent width100" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
+					print '<input type="text" class="quatrevingtpercent width100 nopadding" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
 				}
 				//if (! empty($useinecm) && $useinecm != 6)  print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
 				//if ($forcedownload) print '&attachment=1';
@@ -1722,7 +1723,9 @@ class FormFile
 				//print img_view().'</a> &nbsp; ';
 				//if ($permissiontodelete) print '<a href="'.$url.'?id='.$object->id.'&section='.$_REQUEST["section"].'&action=delete&token='.newToken().'&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
 				//else print '&nbsp;';
-				print "</td></tr>\n";
+				print "</td>";
+
+				print "</tr>\n";
 			}
 		}
 
