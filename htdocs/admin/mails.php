@@ -679,9 +679,10 @@ if ($action == 'edit')
 		print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("OtherOptions").'</td><td></td></tr>';
 
 		// From
-		print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("MAIN_MAIL_EMAIL_FROM", ini_get('sendmail_from') ?ini_get('sendmail_from') : $langs->transnoentities("Undefined")).'</td>';
+		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM", ini_get('sendmail_from') ?ini_get('sendmail_from') : $langs->transnoentities("Undefined")).'</td>';
 		print '<td>'.$conf->global->MAIN_MAIL_EMAIL_FROM;
-		if (!empty($conf->global->MAIN_MAIL_EMAIL_FROM) && !isValidEmail($conf->global->MAIN_MAIL_EMAIL_FROM)) print img_warning($langs->trans("ErrorBadEMail"));
+		if (empty($conf->global->MAIN_MAIL_EMAIL_FROM)) print img_warning($langs->trans("Mandatory"));
+		elseif (!isValidEmail($conf->global->MAIN_MAIL_EMAIL_FROM)) print img_warning($langs->trans("ErrorBadEMail"));
 		print '</td></tr>';
 
 		// Default from type
