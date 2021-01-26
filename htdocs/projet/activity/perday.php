@@ -504,19 +504,19 @@ $moreforfilter .= '<div class="divsearchfield">';
 $moreforfilter .= '<div class="inline-block hideonsmartphone"></div>';
 $includeonly = 'hierarchyme';
 if (empty($user->rights->user->user->lire)) $includeonly = array($user->id);
-$moreforfilter .= img_picto($langs->trans('User'), 'user').$form->select_dolusers($search_usertoprocessid ? $search_usertoprocessid : $usertoprocess->id, 'search_usertoprocessid', $user->rights->user->user->lire ? 0 : 0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200 marginleftonly');
+$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('User'), 'user').$form->select_dolusers($search_usertoprocessid ? $search_usertoprocessid : $usertoprocess->id, 'search_usertoprocessid', $user->rights->user->user->lire ? 0 : 0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200 marginleftonly');
 $moreforfilter .= '</div>';
 
 if (empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT))
 {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= '<div class="inline-block"></div>';
-	$moreforfilter .= img_picto($langs->trans('Project'), 'project').'<input type="text" size="4" name="search_project_ref" class="marginleftonly" value="'.dol_escape_htmltag($search_project_ref).'">';
+	$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('Project'), 'project').'<input type="text" size="4" name="search_project_ref" class="marginleftonly" value="'.dol_escape_htmltag($search_project_ref).'">';
 	$moreforfilter .= '</div>';
 
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= '<div class="inline-block"></div>';
-	$moreforfilter .= img_picto($langs->trans('ThirdParty'), 'company').'<input type="text" size="4" name="search_thirdparty" class="marginleftonly" value="'.dol_escape_htmltag($search_thirdparty).'">';
+	$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('ThirdParty'), 'company').'<input type="text" size="4" name="search_thirdparty" class="marginleftonly" value="'.dol_escape_htmltag($search_thirdparty).'">';
 	$moreforfilter .= '</div>';
 }
 
@@ -594,7 +594,7 @@ if (!empty($arrayfields['t.progress']['checked']))
 if ($usertoprocess->id == $user->id) print '<td class="right maxwidth100">'.$langs->trans("TimeSpentByYou").'</td>';
 else print '<td class="right maxwidth100">'.$langs->trans("TimeSpentByUser").'</td>';*/
 print '<th class="right maxwidth100">'.$langs->trans("TimeSpent").'<br><span class="opacitymedium">'.$langs->trans("Everybody").'</span></th>';
-print '<th class="right maxwidth100">'.$langs->trans("TimeSpent").($usertoprocess->firstname ? '<br><span class="opacitymedium">'.dol_trunc($usertoprocess->firstname, 10).'</span>' : '').'</th>';
+print '<th class="right maxwidth100">'.$langs->trans("TimeSpent").($usertoprocess->firstname ? '<br>'.$usertoprocess->getNomUrl(-2).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span>' : '').'</th>';
 print '<th class="center leftborder">'.$langs->trans("HourStart").'</td>';
 
 // By default, we can edit only tasks we are assigned to
