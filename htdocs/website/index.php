@@ -2037,6 +2037,17 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 				{
 					dol_syslog("We regenerate alias page new name=".$filealias.", old name=".$fileoldalias);
 					dol_delete_file($fileoldalias);
+
+					// Delete also pages into language subdirectories
+					if (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
+						$dirname = dirname($fileoldalias);
+						$filename = basename($fileoldalias);
+						foreach (explode(',', $object->otherlang) as $sublang) {
+							$fileoldaliassub = $dirname.'/'.$sublang.'/'.$filename;
+							dol_delete_file($fileoldaliassub);
+						}
+					}
+
 				}
 
 				// Save page alias
