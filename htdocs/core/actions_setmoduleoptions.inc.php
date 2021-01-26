@@ -73,7 +73,7 @@ if ($action == 'setModuleOptions')
 				if ($param)
 				{
 					$res = dolibarr_set_const($db, $param, $value, 'chaine', 0, '', $conf->entity);
-					if (!$res > 0) $error++;
+					if (!($res > 0)) $error++;
 				}
 			}
 		}

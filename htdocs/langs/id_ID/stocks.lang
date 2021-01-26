@@ -62,6 +62,7 @@ EnhancedValueOfWarehouses=Nilai gudang
 UserWarehouseAutoCreate=Buat gudang pengguna secara otomatis saat membuat pengguna
 AllowAddLimitStockByWarehouse=Kelola juga nilai untuk stok minimum dan yang diinginkan per pasangan (gudang produk) selain nilai untuk stok minimum dan yang diinginkan per produk
 RuleForWarehouse=Aturan untuk gudang
+WarehouseAskWarehouseDuringPropal=Set a warehouse on Sale propal
 WarehouseAskWarehouseDuringOrder=Atur gudang berdasarkan pesanan Penjualan
 UserDefaultWarehouse=Tetapkan gudang pada Pengguna
 MainDefaultWarehouse=Gudang bawaan

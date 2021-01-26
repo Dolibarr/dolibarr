@@ -76,17 +76,18 @@ if ((float) DOL_VERSION >= 6)
 	include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 }
 
-if ($action == 'updateMask')
-{
+if ($action == 'updateMask') {
 	$maskconstorder = GETPOST('maskconstorder', 'alpha');
 	$maskorder = GETPOST('maskorder', 'alpha');
 
-	if ($maskconstorder) $res = dolibarr_set_const($db, $maskconstorder, $maskorder, 'chaine', 0, '', $conf->entity);
+	if ($maskconstorder) {
+		$res = dolibarr_set_const($db, $maskconstorder, $maskorder, 'chaine', 0, '', $conf->entity);
+		if (!($res > 0)) {
+			$error++;
+		}
+	}
 
-	if (!$res > 0) $error++;
-
-	if (!$error)
-	{
+	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');

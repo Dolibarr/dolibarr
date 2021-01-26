@@ -182,8 +182,7 @@ NEW: add option "If the feature to manage kits of module Stock is used, show det
 
 For developers:
 ---------------
-NEW: add __MEMBER_TYPE__ substitution key
-NEW: add __TYPE__ substitution key
+NEW: add __MEMBER_TYPE__ and __TYPE__ substitution key
 NEW: add function dolButtonToOpenUrlInDialogPopup() to be able to open page into a popup
 NEW: show line number on intervention card (via MAIN_VIEW_LINE_NUMBER)
 NEW: Add some fields to link website page to an other object
@@ -195,17 +194,10 @@ NEW: can add event to log into blockedlog module with a constant
 NEW: add property cssview when declaring fields of an object
 NEW: Can use dynamic code into the 'enabled' property of DAO fields
 NEW: allow to edit "demand reason" field though API
-NEW: fetch contact by email with REST API
 NEW: field ref_ext in llx_commandedet
 NEW: fields ref_ext for Attributes and Combinations
-NEW: get state by REST API
-NEW: get state dictionnary by REST API
-NEW: improve Product API for variant products
 NEW: OAuth SCOPE for Admin SDK
-NEW: retrieve discount from invoice from API
 NEW: standardizes API thirdparties by email like other object
-NEW: Thirdparty REST API: endpoint to set price level
-NEW: use new category API for project list view
 NEW: Triggers Attributes and Attributes values
 NEW: added incoterms data into the substitution array
 NEW: add send context for ticket
@@ -221,6 +213,12 @@ NEW: API can update a payment
 NEW: API get member by thirdparty
 NEW: API get thirdparty by barcode
 NEW: API get users by email / login
+NEW: fetch contact by email with REST API
+NEW: get state dictionnary by REST API
+NEW: improve Product API for variant products
+NEW: retrieve discount from invoice from API
+NEW: Thirdparty REST API: endpoint to set price level
+NEW: use new category API for project list view
 
 HOOKs
 NEW: Hook on propal card
@@ -238,7 +236,7 @@ Following changes may create regressions for some external modules, but were nec
 * All properties ->titre have been renamed into ->title
 * Property $paiementid in API 'api_supplier_invoices.php' has been renamed into into $payment_mode_id
 * Property 'num_paiement' has been renamed 'num_payment' everywhere for better code consistency.
-* The deprecated subsitution key __SIGNATURE__ has been removed. Use __USER_SIGNATURE__ if you used the old syntax in your email templates.
+* The deprecated subsitution key __SIGNATURE__ has been removed. Replace it with __USER_SIGNATURE__ if you used the old syntax in your email templates.
 * The hidden option HOLIDAY_MORE_PUBLIC_HOLIDAYS has been removed. Use instead the dictionary table if you need to define custom days of holiday.
 * If you build a class that implement CommonObject to use the incoterm properties or methods (->fk_incoterm, ->label_incoterm, ->location_incoterm),
   you must now also include declaration of the Trait 'CommonIncoterm' in your class. All incoterm functions were moved into this Trait.
@@ -251,6 +249,7 @@ Following changes may create regressions for some external modules, but were nec
 * Context for hook showSocinfoOnPrint has been moved from "showsocinfoonprint" to "main"
 * Library htdocs/includes/phpoffice/phpexcel as been removed (replaced with htdocs/includes/phpoffice/PhpSpreadsheet)
 * Databse transaction in your triggers must be correctly balanced (one close for one open). If not, an error will be returned by the trigger, even if trigger did return error code.
+* Dolibarr v13 is still compatible with any PHP version between 5.6.0 and 7.4.*; Unit tests are OK with PHP 8.0 but some warnings or troubles may appears with PHP 8.0.
 
 
 ***** ChangeLog for 12.0.4 compared to 12.0.3 *****

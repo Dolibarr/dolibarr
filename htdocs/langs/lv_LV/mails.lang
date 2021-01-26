@@ -175,3 +175,5 @@ Answered=Atbildēts
 IsNotAnAnswer=Nav atbildes (sākotnējais e-pasts)
 IsAnAnswer=Vai ir atbilde uz sākotnējo e-pastu
 RecordCreatedByEmailCollector=Ierakstu izveidojis e-pasta savācējs %s no e-pasta %s
+DefaultBlacklistMailingStatus=Default contact status for refuse bulk emailing
+DefaultStatusEmptyMandatory=Empty but mandatory

@@ -149,3 +149,4 @@ InfoRejectMessage=您好，<br><br>銀行拒絕了與公司%s相關的發票%s�
 ModeWarning=未設定實際模式選項，我們將在此模擬後停止
 ErrorCompanyHasDuplicateDefaultBAN=Company with id %s has more than one default bank account. No way to know wich one to use.
 ErrorICSmissing=Missing ICS in Bank account %s
+TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=Total amount of direct debit order differs from sum of lines

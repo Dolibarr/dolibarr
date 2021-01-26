@@ -180,3 +180,4 @@ BankColorizeMovementDesc=Pokud je tato funkce povolena, můžete vybrat konkrét
 BankColorizeMovementName1=Barva pozadí pro debetní pohyb
 BankColorizeMovementName2=Barva pozadí pro pohyb úvěru
 IfYouDontReconcileDisableProperty=If you don't make the bank reconciliations on some bank accounts, disable the property "%s" on them to remove this warning.
+NoBankAccountDefined=No bank account defined

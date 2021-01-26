@@ -175,3 +175,5 @@ Answered=Răspuns
 IsNotAnAnswer=Nu răspunde (e-mail inițial)
 IsAnAnswer= Este un răspuns al unui email inițial
 RecordCreatedByEmailCollector=Înregistrare creată de colectorul de email %sdin adresa %s
+DefaultBlacklistMailingStatus=Stare implicită a contactului care refuză primirea de email-uri bulk
+DefaultStatusEmptyMandatory= Necompletat, dar obligatoriu 

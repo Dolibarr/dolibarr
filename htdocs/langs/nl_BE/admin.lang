@@ -231,7 +231,6 @@ AccountantFileNumber=Code voor boekhouder
 AvailableModules=Beschikbare app / modules
 ParameterActiveForNextInputOnly=De instelling word pas actief voor de volgende invoer
 YouMustEnableOneModule=Je moet minstens 1 module aktiveren
-YouHaveXObjectUseSearchOptim=You have %s %s in the database. You should add the constant %s to 1 in Home-Setup-Other. Limit the search to the beginning of strings which makes it possible for the database to use indexes and you should get an immediate response.
 BillsPDFModules=Factuur documentsjablonen
 LDAPGlobalParameters=Globale instellingen
 LDAPPassword=Beheerderswachtwoord

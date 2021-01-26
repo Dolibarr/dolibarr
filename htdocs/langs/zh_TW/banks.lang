@@ -180,3 +180,4 @@ BankColorizeMovementDesc=如果啟用此功能，則可以為借款方或貸款�
 BankColorizeMovementName1=借款方動作的背景顏色
 BankColorizeMovementName2=貸款方動作的背景顏色
 IfYouDontReconcileDisableProperty=If you don't make the bank reconciliations on some bank accounts, disable the property "%s" on them to remove this warning.
+NoBankAccountDefined=No bank account defined

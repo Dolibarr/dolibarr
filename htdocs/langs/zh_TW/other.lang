@@ -78,7 +78,7 @@ Notify_EXPENSE_REPORT_VALIDATE=費用報告已驗證（需要批准）
 Notify_EXPENSE_REPORT_APPROVE=費用報告已批准
 Notify_HOLIDAY_VALIDATE=休假申請已驗證（需要批准）
 Notify_HOLIDAY_APPROVE=休假申請已批准
-Notify_ACTION_CREATE=Added action to Agenda
+Notify_ACTION_CREATE=已新增活動至應辦事項
 SeeModuleSetup=請參閱模組%s的設定
 NbOfAttachedFiles=所附檔案/文件數
 TotalSizeOfAttachedFiles=附件大小總計
@@ -216,7 +216,7 @@ EMailTextExpenseReportValidated=費用報告%s已通過驗證。
 EMailTextExpenseReportApproved=費用報告%s已批准。
 EMailTextHolidayValidated=休假申請%s已通過驗證。
 EMailTextHolidayApproved=休假申請%s已被批准。
-EMailTextActionAdded=The action %s has been added to the Agenda.
+EMailTextActionAdded=已新增活動%s至應辦事項中。
 ImportedWithSet=匯入資料集
 DolibarrNotification=自動通知
 ResizeDesc=輸入新的寬度<b>或</b> 新的高度。調整大小時將維持長寬比率...
@@ -261,7 +261,7 @@ ContactCreatedByEmailCollector=電子郵件收集器從電子郵件MSGID %s建�
 ProjectCreatedByEmailCollector=電子郵件收集器從電子郵件MSGID %s建立的專案
 TicketCreatedByEmailCollector=電子郵件收集器從電子郵件MSGID %s建立的服務單
 OpeningHoursFormatDesc=使用-分隔營業開始時間和營業結束時間。 <br>使用空格輸入不同的範圍。 <br>範例：8-12 14-18
-PrefixSession=Prefix for session ID
+PrefixSession=程序ID的前綴
 
 ##### Export #####
 ExportsArea=出口地區

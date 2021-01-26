@@ -62,6 +62,7 @@ EnhancedValueOfWarehouses=Hodnota skladů
 UserWarehouseAutoCreate=Vytvoření uživatelského skladu automaticky při vytváření uživatele
 AllowAddLimitStockByWarehouse=Spravujte také hodnotu pro minimální a požadovanou zásobu na párování (produktový sklad) kromě hodnoty pro minimální a požadovanou zásobu na produkt
 RuleForWarehouse=Pravidlo pro sklady
+WarehouseAskWarehouseDuringPropal=Set a warehouse on Sale propal
 WarehouseAskWarehouseDuringOrder=Nastavit sklad na prodejní objednávky
 UserDefaultWarehouse=Nastavit sklad na Uživatelé
 MainDefaultWarehouse=Výchozí sklad

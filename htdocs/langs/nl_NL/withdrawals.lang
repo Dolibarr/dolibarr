@@ -149,3 +149,4 @@ InfoRejectMessage=M,<br><br>de incasso van factuur %s voor bedrijf %s, met een b
 ModeWarning=Optie voor echte modus was niet ingesteld, we stoppen na deze simulatie
 ErrorCompanyHasDuplicateDefaultBAN=Bedrijf met id %s heeft meer dan één standaard bankrekening. Er is geen manier aanwezig om te weten welke u moet gebruiken.
 ErrorICSmissing=ICS ontbreekt op bankrekening %s
+TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=Total amount of direct debit order differs from sum of lines

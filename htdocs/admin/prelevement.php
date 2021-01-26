@@ -55,7 +55,7 @@ if ($action == "set")
 	if ($account->fetch($id) > 0)
 	{
 		$res = dolibarr_set_const($db, "PRELEVEMENT_ID_BANKACCOUNT", $id, 'chaine', 0, '', $conf->entity);
-		if (!$res > 0) $error++;
+		if (!($res > 0)) $error++;
 		/*
         $res = dolibarr_set_const($db, "PRELEVEMENT_CODE_BANQUE", $account->code_banque,'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
@@ -75,7 +75,7 @@ if ($action == "set")
 	} else $error++;
 
 	$res = dolibarr_set_const($db, "PRELEVEMENT_ICS", GETPOST("PRELEVEMENT_ICS"), 'chaine', 0, '', $conf->entity);
-	if (! ($res > 0)) $error++;
+	if (!($res > 0)) $error++;
 
     if (GETPOST("PRELEVEMENT_USER") > 0) {
         $res = dolibarr_set_const($db, "PRELEVEMENT_USER", GETPOST("PRELEVEMENT_USER"), 'chaine', 0, '', $conf->entity);
