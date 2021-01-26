@@ -149,3 +149,4 @@ InfoRejectMessage=Xin chào, <br><br> lệnh thanh toán ghi nợ trực tiếp 
 ModeWarning=Tùy chọn cho chế độ thực không được đặt, chúng tôi dừng lại sau mô phỏng này
 ErrorCompanyHasDuplicateDefaultBAN=Company with id %s has more than one default bank account. No way to know wich one to use.
 ErrorICSmissing=Missing ICS in Bank account %s
+TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=Total amount of direct debit order differs from sum of lines

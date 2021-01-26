@@ -16,7 +16,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
 /**
@@ -307,7 +306,7 @@ if ($action != 'export_csv')
 
 		$accountingaccountstatic->fetch(null, $line->numero_compte, true);
 		if (!empty($accountingaccountstatic->account_number)) {
-			$accounting_account = $accountingaccountstatic->getNomUrl(0, 1);
+			$accounting_account = $accountingaccountstatic->getNomUrl(0, 1, 0, '', 0, -1, 0, 'accountcard');
 		} else {
 			$accounting_account = length_accountg($line->numero_compte);
 		}
@@ -322,10 +321,19 @@ if ($action != 'export_csv')
 		$root_account_description = $tmparrayforrootaccount['label'];
 		$root_account_number = $tmparrayforrootaccount['account_number'];
 
+		//var_dump($tmparrayforrootaccount);
+		//var_dump($accounting_account);
+		//var_dump($accountingaccountstatic);
 		if (empty($accountingaccountstatic->label) && $accountingaccountstatic->id > 0) {
 			$link = '<a class="editfielda reposition" href="' . DOL_URL_ROOT . '/accountancy/admin/card.php?action=update&token=' . newToken() . '&id=' . $accountingaccountstatic->id . '">' . img_edit() . '</a>';
-		} elseif (empty($tmparrayforrootaccount['label'])) {
+		} elseif ($accounting_account == 'NotDefined') {
 			$link = '<a href="' . DOL_URL_ROOT . '/accountancy/admin/card.php?action=create&token=' . newToken() . '&accountingaccount=' . length_accountg($line->numero_compte) . '">' . img_edit_add() . '</a>';
+		} elseif (empty($tmparrayforrootaccount['label'])) {
+			// $tmparrayforrootaccount['label'] not defined = the account has not parent with a parent.
+			// This is useless, we should not create a new account when an account has no parent, we must edit it to fix its parent.
+			// BUG 1: Accounts on level root or level 1 must not have a parent 2 level higher, so shoule not show a link to create another account.
+			// BUG 2: Adding a link to create a new accounting account here is useless because it is not add as parent of the orphelin.
+			//$link = '<a href="' . DOL_URL_ROOT . '/accountancy/admin/card.php?action=create&token=' . newToken() . '&accountingaccount=' . length_accountg($line->numero_compte) . '">' . img_edit_add() . '</a>';
 		}
 
 		if (!empty($show_subgroup))
@@ -363,8 +371,22 @@ if ($action != 'export_csv')
 		print '<tr class="oddeven">';
 		print '<td>'.$accounting_account.'</td>';
 		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) print '<td class="nowraponall right">'.price($opening_balance).'</td>';
-		print '<td class="nowraponall right">'.price($line->debit).'</td>';
-		print '<td class="nowraponall right">'.price($line->credit).'</td>';
+
+		$urlzoom = '';
+		if ($line->numero_compte) {
+			$urlzoom = DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?search_accountancy_code_start='.urlencode($line->numero_compte).'&search_accountancy_code_end='.urlencode($line->numero_compte);
+			if (GETPOSTISSET('date_startmonth')) {
+				$urlzoom .= '&search_date_startmonth='.GETPOST('date_startmonth', 'int').'&search_date_startday='.GETPOST('date_startday', 'int').'&search_date_startyear='.GETPOST('date_startyear', 'int');
+			}
+			if (GETPOSTISSET('date_endmonth')) {
+				$urlzoom .= '&search_date_endmonth='.GETPOST('date_endmonth', 'int').'&search_date_endday='.GETPOST('date_endday', 'int').'&search_date_endyear='.GETPOST('date_endyear', 'int');
+			}
+		}
+		// Debit
+		print '<td class="nowraponall right"><a href="'.$urlzoom.'">'.price($line->debit).'</a></td>';
+		// Credit
+		print '<td class="nowraponall right"><a href="'.$urlzoom.'">'.price($line->credit).'</a></td>';
+
 		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 			print '<td class="nowraponall right">'.price(price2num($opening_balance + $line->debit - $line->credit, 'MT')).'</td>';
 		} else {

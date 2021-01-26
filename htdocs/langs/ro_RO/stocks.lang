@@ -62,6 +62,7 @@ EnhancedValueOfWarehouses=Stoc valoric
 UserWarehouseAutoCreate=Creați automat un depozit utilizator atunci când creați un utilizator
 AllowAddLimitStockByWarehouse=Gestionează, de asemenea, valoarea pentru stocul minim și cel dorit pe perechi (produs-depozit), pe lângă valoarea pentru stocul minim și dorit pe produs
 RuleForWarehouse=Reguli pentru depozite
+WarehouseAskWarehouseDuringPropal=Setează un depozit pe oferta comercială
 WarehouseAskWarehouseDuringOrder=Setează un depozit pe comenzile de vânzare
 UserDefaultWarehouse=Setează un depozit pe utilizatori
 MainDefaultWarehouse=Depozit implicit

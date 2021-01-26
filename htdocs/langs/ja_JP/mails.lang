@@ -175,3 +175,5 @@ Answered=答えた
 IsNotAnAnswer=回答でない(最初のメール)
 IsAnAnswer=最初のメールの回答 
 RecordCreatedByEmailCollector=電子メールコレクター%sによって電子メール%sから作成されたレコード
+DefaultBlacklistMailingStatus=一括メール送信を拒否するためのデフォルトの連絡先ステータス
+DefaultStatusEmptyMandatory=空だが必須

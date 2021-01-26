@@ -180,3 +180,4 @@ BankColorizeMovementDesc=Ако тази функция е активирана 
 BankColorizeMovementName1=Цвят на фона за дебитно движение
 BankColorizeMovementName2=Цвят на фона за кредитно движение
 IfYouDontReconcileDisableProperty=If you don't make the bank reconciliations on some bank accounts, disable the property "%s" on them to remove this warning.
+NoBankAccountDefined=No bank account defined

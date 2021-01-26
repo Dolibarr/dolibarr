@@ -62,6 +62,7 @@ EnhancedValueOfWarehouses=Valor de stocks
 UserWarehouseAutoCreate=Crie um armazém de usuários automaticamente ao criar um usuário
 AllowAddLimitStockByWarehouse=Manage also value for minimum and desired stock per pairing (product-warehouse) in addition to the value for minimum and desired stock per product
 RuleForWarehouse=Rule for warehouses
+WarehouseAskWarehouseDuringPropal=Set a warehouse on Sale propal
 WarehouseAskWarehouseDuringOrder=Set a warehouse on Sale orders
 UserDefaultWarehouse=Set a warehouse on Users
 MainDefaultWarehouse=Armazém predefinido

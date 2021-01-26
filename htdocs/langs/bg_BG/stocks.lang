@@ -62,6 +62,7 @@ EnhancedValueOfWarehouses=Складова стойност
 UserWarehouseAutoCreate=Автоматично създаване на личен потребителски склад при създаване на потребител
 AllowAddLimitStockByWarehouse=Управляване също и на стойност за минимална и желана наличност за двойка (продукт - склад) в допълнение към стойността за минимална и желана наличност за продукт
 RuleForWarehouse=Rule for warehouses
+WarehouseAskWarehouseDuringPropal=Set a warehouse on Sale propal
 WarehouseAskWarehouseDuringOrder=Set a warehouse on Sale orders
 UserDefaultWarehouse=Set a warehouse on Users
 MainDefaultWarehouse=Склад по подразбиране

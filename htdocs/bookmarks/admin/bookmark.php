@@ -38,7 +38,7 @@ if ($action == 'setvalue') {
 	$showmenu = GETPOST('BOOKMARKS_SHOW_IN_MENU', 'alpha');
 	$res = dolibarr_set_const($db, "BOOKMARKS_SHOW_IN_MENU", $showmenu, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 

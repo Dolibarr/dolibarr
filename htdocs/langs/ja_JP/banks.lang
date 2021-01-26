@@ -180,3 +180,4 @@ BankColorizeMovementDesc=この機能が有効になっている場合は、借�
 BankColorizeMovementName1=借方移動の背景色
 BankColorizeMovementName2=クレジット移動の背景色
 IfYouDontReconcileDisableProperty=一部の銀行口座で銀行照合を行わない場合は、それらのプロパティ "%s"を無効にして、この警告を削除すること。
+NoBankAccountDefined=銀行口座が定義されていない

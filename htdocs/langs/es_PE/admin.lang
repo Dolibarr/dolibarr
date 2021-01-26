@@ -2,12 +2,12 @@
 VersionProgram=Versión del programa
 VersionLastInstall=Instalar versión inicial
 Module30Name=Facturas
+Module59000Desc=Module to follow margins
 Permission91=Consultar impuestos e IGV
 Permission92=Crear/modificar impuestos e IGV
 Permission93=Eliminar impuestos e IGV
 DictionaryVAT=Tasa de IGV o tasa de impuesto a las ventas
 UnitPriceOfProduct=Precio unitario sin IGV de un producto
-YouHaveXObjectUseSearchOptim=You have %s %s in the database. You should add the constant %s to 1 in Home-Setup-Other. Limit the search to the beginning of strings which makes it possible for the database to use indexes and you should get an immediate response.
 ViewProductDescInThirdpartyLanguageAbility=Display products descriptions in forms in the language of the third party (otherwise in the language of the user)
 OptionVatMode=IGV adeudado
 MailToSendInvoice=Facturas de Clientes
