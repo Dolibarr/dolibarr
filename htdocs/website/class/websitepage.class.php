@@ -400,7 +400,7 @@ class WebsitePage extends CommonObject
 		$sql .= " t.fk_object";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE t.fk_website = '.$websiteid;
-		// Manage filter
+		// Manage filter (same than into countAll)
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
@@ -501,14 +501,27 @@ class WebsitePage extends CommonObject
 		$sql = 'SELECT COUNT(t.rowid) as nb';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE t.fk_website = '.$websiteid;
-		// Manage filter
+		// Manage filter (same than into fetchAll)
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid' || $key == 't.fk_website') {
-					$sqlwhere[] = $key.'='.$value;
+				if ($key == 't.rowid' || $key == 't.fk_website' || $key == 'status') {
+					$sqlwhere[] = $key.' = '.$value;
+				} elseif ($key == 'type_container') {
+					$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
 				} elseif ($key == 'lang' || $key == 't.lang') {
-					$sqlwhere[] = $key." = '".$this->db->escape(substr($value, 0, 2))."'";
+					$listoflang = array();
+					$foundnull = 0;
+					foreach (explode(',', $value) as $tmpvalue) {
+						if ($tmpvalue == 'null') {
+							$foundnull++;
+							continue;
+						}
+						$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
+					}
+					$stringtouse = $key." IN (".join(',', $listoflang).")";
+					if ($foundnull) $stringtouse = '('.$stringtouse.' OR '.$key.' IS NULL)';
+					$sqlwhere[] = $stringtouse;
 				} else {
 					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
