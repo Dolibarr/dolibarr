@@ -661,7 +661,7 @@ else
             print '</td></tr>';
 
             print '<tr><td><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';
-	        print '<td colspan="3"><input name="poste" id="title" type="text" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOST("poste", 'alpha') ?GETPOST("poste", 'alpha') : $object->poste).'"></td>';
+	        print '<td colspan="3"><input name="poste" id="title" type="text" class="minwidth100" value="'.dol_escape_htmltag(GETPOST("poste", 'alpha') ?GETPOST("poste", 'alpha') : $object->poste).'"></td>';
 
             $colspan = 3;
             if ($conf->use_javascript_ajax && $socid > 0) $colspan = 2;
@@ -1000,7 +1000,7 @@ else
             print '</td></tr>';
 
             print '<tr><td><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';
-	        print '<td colspan="3"><input name="poste" id="title" type="text" class="minwidth100" maxlength="80" value="'.(GETPOSTISSET("poste") ? GETPOST("poste") : $object->poste).'"></td></tr>';
+	        print '<td colspan="3"><input name="poste" id="title" type="text" class="minwidth100" value="'.(GETPOSTISSET("poste") ? GETPOST("poste") : $object->poste).'"></td></tr>';
 
             // Address
             print '<tr><td><label for="address">'.$langs->trans("Address").'</label></td>';
