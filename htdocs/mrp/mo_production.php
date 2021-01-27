@@ -776,7 +776,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '<td></td>';
 					} else {
 						print '<td class="right nowraponall">';
-						print $tmpproduct->pmp;
+						print price($tmpproduct->pmp);
 						print '</td>';
 					}
     	    		print '<td class="right">';
@@ -842,7 +842,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    			$preselected = (GETPOSTISSET('qty-'.$line->id.'-'.$i) ? GETPOST('qty-'.$line->id.'-'.$i) : max(0, $line->qty - $alreadyconsumed));
     	    			if ($action == 'consumeorproduce' && !GETPOSTISSET('qty-'.$line->id.'-'.$i)) $preselected = 0;
     	    			print '<td class="right"><input type="text" class="width50 right" name="qty-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
-						$preselected = (GETPOSTISSET('price-'.$line->id.'-'.$i) ? GETPOST('price-'.$line->id.'-'.$i) : $tmpproduct->pmp);
+						$preselected = (GETPOSTISSET('price-'.$line->id.'-'.$i) ? GETPOST('price-'.$line->id.'-'.$i) : price($tmpproduct->pmp));
     	    			print '<td class="right"><input type="text" class="width50 right" name="price-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
     	    			print '<td></td>';
     	    			print '<td>';
@@ -938,7 +938,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '<td></td>';
 					} else {
 						print '<td class="right nowraponall">';
-						print $tmpproduct->pmp;
+						print price($tmpproduct->pmp);
 						print '</td>';
 					}
     				print '<td class="right nowraponall">';
@@ -1001,7 +1001,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     					$preselected = (GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i) ? GETPOST('qtytoproduce-'.$line->id.'-'.$i) : max(0, $line->qty - $alreadyproduced));
     					if ($action == 'consumeorproduce' && !GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i)) $preselected = 0;
 						print '<td class="right"><input type="text" class="width50 right" id="qtytoproduce-'.$line->id.'-'.$i.'" name="qtytoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
-						$preselected = (GETPOSTISSET('pricetoproduce-'.$line->id.'-'.$i) ? GETPOST('pricetoproduce-'.$line->id.'-'.$i) : $tmpproduct->pmp);
+						$preselected = (GETPOSTISSET('pricetoproduce-'.$line->id.'-'.$i) ? GETPOST('pricetoproduce-'.$line->id.'-'.$i) : price($tmpproduct->pmp));
     	    			print '<td class="right"><input type="text" class="width50 right" name="pricetoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
     					print '<td></td>';
     					print '<td>';
