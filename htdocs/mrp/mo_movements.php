@@ -139,7 +139,7 @@ $arrayfields = array(
 	'm.type_mouvement'=>array('label'=>$langs->trans("TypeMovement"), 'checked'=>1),
 	'origin'=>array('label'=>$langs->trans("Origin"), 'enabled'=>0, 'checked'=>0),
 	'm.value'=>array('label'=>$langs->trans("Qty"), 'checked'=>1),
-	'm.price'=>array('label'=>$langs->trans("UnitPurchaseValue"), 'enabled'=>0, 'checked'=>0),
+	'm.price'=>array('label'=>$langs->trans("UnitPurchaseValue"), 'checked'=>0),
 	//'m.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	//'m.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500)
 );
