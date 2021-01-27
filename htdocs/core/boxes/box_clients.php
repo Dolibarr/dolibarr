@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2021 Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ class box_clients extends ModeleBoxes
 
 		$this->max = $max;
 
-		include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 		$thirdpartystatic = new Client($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedCustomers", $max));
