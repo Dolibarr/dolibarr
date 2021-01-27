@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("bills", "compta", "accountancy", "productbatch"));
+$langs->loadLangs(array("bills", "compta", "accountancy", "productbatch", "products"));
 
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
@@ -339,7 +339,7 @@ if ($result) {
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "f.datef, f.ref, fd.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("ProductRef", $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	//print_liste_field_titre("ProductLabel", $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "fd.description", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("ProductDescription", $_SERVER["PHP_SELF"], "fd.description", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "fd.total_ht", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "fd.tva_tx", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
