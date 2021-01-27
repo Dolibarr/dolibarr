@@ -260,7 +260,13 @@ if (empty($reshook))
 				}
 
 				// Extrafields
-				$extrafields = new ExtraFields($db);
+
+				// Fill array 'array_options' with data from add form
+				$ret = $extrafields->setOptionalsFromPost(null, $object);
+				if ($ret < 0) {
+					$error++;
+					$action = 'create';
+				}
 				$array_options = $extrafields->getOptionalsFromPost($object->table_element);
 
 		        $object->array_options = $array_options;
