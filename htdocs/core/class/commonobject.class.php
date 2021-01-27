@@ -7111,7 +7111,17 @@ abstract class CommonObject
 						{
 							var val = $("select[name=\""+parent_list+"\"]").val();
 							var parentVal = parent_list + ":" + val;
-							if(val > 0) {
+							if(typeof val == "string"){
+				    		    if(val != "") {
+					    			var options = orig_select.find("option[parent=\""+parentVal+"\"]").clone();
+									$("select[name=\""+child_list+"\"] option[parent]").remove();
+									$("select[name=\""+child_list+"\"]").append(options);
+								} else {
+									var options = orig_select.find("option[parent]").clone();
+									$("select[name=\""+child_list+"\"] option[parent]").remove();
+									$("select[name=\""+child_list+"\"]").append(options);
+								}
+				    		} else if(val > 0) {
 								var options = orig_select.find("option[parent=\""+parentVal+"\"]").clone();
 								$("select[name=\""+child_list+"\"] option[parent]").remove();
 								$("select[name=\""+child_list+"\"]").append(options);
