@@ -155,9 +155,9 @@ class Odf
 				'<style:style style:name="subText" style:family="text"><style:text-properties style:text-position="sub 58%" /></style:style>',
 				'<style:style style:name="supText" style:family="text"><style:text-properties style:text-position="super 58%" /></style:style>'
 			);
-	
+
 			$this->vars[$tag] = $this->_replaceHtmlWithOdtTag($this->_getDataFromHtml($value), $customStyles, $fontDeclarations);
-	
+
 			foreach ($customStyles as $key => $val) {
 				array_push($automaticStyles, '<style:style style:name="customStyle' . $key . '" style:family="text">' . $val . '</style:style>');
 			}
@@ -181,7 +181,7 @@ class Odf
 			$this->contentXml = str_replace('</office:font-face-decls>', $fonts . '</office:font-face-decls>', $this->contentXml);
 		}
 		else $this->vars[$tag] = preg_replace('/(\r\n|\r|\n)/i', "<text:line-break/>", $value);
-		
+
 		return $this;
 	}
 
@@ -804,6 +804,7 @@ IMG;
 		// Export to PDF using LibreOffice
 		if ($conf->global->MAIN_ODT_AS_PDF == 'libreoffice')
 		{
+			// Install prerequisites: apt install soffice libreoffice-common libreoffice-writer
 			// using windows libreoffice that must be in path
 			// using linux/mac libreoffice that must be in path
 			// Note PHP Config "fastcgi.impersonate=0" must set to 0 - Default is 1
@@ -840,7 +841,7 @@ IMG;
 		}
 		else
 		{
-			// deprecated old method
+			// deprecated old method using odt2pdf.sh (native, jodconverter, ...)
 			$tmpname=preg_replace('/\.odt/i', '', $name);
 
 			if (!empty($conf->global->MAIN_DOL_SCRIPTS_ROOT))

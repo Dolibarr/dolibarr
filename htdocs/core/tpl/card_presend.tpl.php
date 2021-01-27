@@ -209,7 +209,7 @@ if ($action == 'presend')
 	}
 
 	$formmail->withto = $liste;
-	$formmail->withtofree = (GETPOSTISSET('sendto') ? (GETPOST('sendto') ? GETPOST('sendto') : '1') : '1');
+	$formmail->withtofree = (GETPOSTISSET('sendto') ? (GETPOST('sendto', 'alpha') ? GETPOST('sendto', 'alpha') : '1') : '1');
 	$formmail->withtocc = $liste;
 	$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
 	$formmail->withtopic = $topicmail;

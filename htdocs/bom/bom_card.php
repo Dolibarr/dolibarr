@@ -185,6 +185,8 @@ if (empty($reshook))
     		    unset($_POST['disable_stock_change']);
 
     		    $object->fetchLines();
+
+    		    $object->calculateCosts();
     		}
 		}
 	}
@@ -196,7 +198,7 @@ if (empty($reshook))
 		$error = 0;
 
 		// Set if we used free entry or predefined product
-		$qty = price2num(GETPOST('qty', 'int'));
+		$qty = price2num(GETPOST('qty', 'alpha'));
 		$qty_frozen = GETPOST('qty_frozen', 'int');
 		$disable_stock_change = GETPOST('disable_stock_change', 'int');
 		$efficiency = price2num(GETPOST('efficiency', 'int'));
@@ -227,6 +229,8 @@ if (empty($reshook))
 		    unset($_POST['disable_stock_change']);
 
 		    $object->fetchLines();
+
+		    $object->calculateCosts();
 		}
 	}
 }

@@ -216,6 +216,7 @@ Value=Value
 PersonalValue=Personal value
 NewObject=New %s
 NewValue=New value
+OldValue=Old value %s
 CurrentValue=Current value
 Code=Code
 Type=Type
