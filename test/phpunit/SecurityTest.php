@@ -186,7 +186,11 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$_SERVER["PHP_SELF"]='/DIR WITH SPACE/htdocs/admin/index.php?mainmenu=home&leftmenu=setup&username=weservices';
 		$result=testSqlAndScriptInject($_SERVER["PHP_SELF"], 2);
-		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject 1a');
+		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject expected 0a');
+
+		$test = 'This is a < inside string with < and > also and tag like <a> before the >';
+		$result=testSqlAndScriptInject($test, 0);
+		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject expected 0b');
 
 		// Should detect XSS
 		$expectedresult=1;
@@ -275,6 +279,10 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$test="on<!-- ab\nc -->error=alert(1)";
 		$result=testSqlAndScriptInject($test, 0);
 		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject jjj');
+
+		$test="<img src=x one<a>rror=alert(document.location)";
+		$result=testSqlAndScriptInject($test, 0);
+		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject kkk');
 	}
 
 	/**
@@ -299,7 +307,9 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_GET["param5"]="a_1-b";
 		$_POST["param6"]="&quot;&gt;<svg o&#110;load='console.log(&quot;123&quot;)'&gt;";
 		$_GET["param7"]='"c:\this is a path~1\aaa&#110;" abc<bad>def</bad>';
-		$_POST["param8"]="Hacker<svg o&#110;load='console.log(&quot;123&quot;)'";	// html tag is not closed so it is not detected as html tag but is still harmfull
+		$_POST["param8a"]="Hacker<svg o&#110;load='console.log(&quot;123&quot;)'";	// html tag is not closed so it is not detected as html tag but is still harmfull
+		$_POST['param8b']='<img src=x onerror=alert(document.location) t=';		// this is html obfuscated by non closing tag
+		$_POST['param8c']='< with space after is ok';
 		$_POST["param9"]='is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : \'objnotdefined\'';
 		$_POST["param10"]='is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : \'<abc>objnotdefined\'';
 		$_POST["param11"]=' Name <email@email.com> ';
@@ -363,10 +373,18 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('"c:\this is a path~1\aaa&#110;" abcdef', $result);
 
-		// With alphanohtml, we must convert the html entities like &#110;
-		$result=GETPOST("param8", 'alphanohtml');
+		// With alphanohtml, we must convert the html entities like &#110; and disable all entities
+		$result=GETPOST("param8a", 'alphanohtml');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals("Hacker<svg onload='console.log(123)'", $result);
+		$this->assertEquals("Hackersvg onload='console.log(123)'", $result);
+
+		$result=GETPOST("param8b", 'alphanohtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('img src=x onerror=alert(document.location) t=', $result, 'Test a string with non closing html tag with alphanohtml');
+
+		$result=GETPOST("param8c", 'alphanohtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($_POST['param8c'], $result, 'Test a string with non closing html tag with alphanohtml');
 
 		$result=GETPOST("param9", 'alphanohtml');
 		print __METHOD__." result=".$result."\n";
@@ -574,10 +592,10 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because localtest.me is not an external URL
 
 		/*$url = 'localtest.me';
-		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
-		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that resolves to a local URL');	// Test we receive an error because localtest.me is not an external URL
-		*/
+		 $tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		 print __METHOD__." url=".$url."\n";
+		 $this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that resolves to a local URL');	// Test we receive an error because localtest.me is not an external URL
+		 */
 
 		return 0;
 	}

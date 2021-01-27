@@ -70,7 +70,7 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes')
 	$remid = (GETPOST("remid", 'int') ? GETPOST("remid", 'int') : 0);
 	$discount = new DiscountAbsolute($db);
 	$res = $discount->fetch($remid);
-	if (!$res > 0)
+	if (!($res > 0))
 	{
 		$error++;
 		setEventMessages($langs->trans("ErrorFailedToLoadDiscount"), null, 'errors');

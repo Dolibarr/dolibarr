@@ -3668,7 +3668,7 @@ abstract class CommonObject
 	 * @param	string	$field_select			name of field we need to get a list
 	 * @param	string	$field_where			name of field of object we need to get linked items
 	 * @param	string	$table_element			name of association table
-	 * @return array
+	 * @return 	array							Array of record
 	 */
 	static public function getAllItemsLinkedByObjectID($fk_object_where, $field_select, $field_where, $table_element)
 	{
@@ -3678,7 +3678,7 @@ abstract class CommonObject
 
 		global $db;
 
-		$sql = 'SELECT '.$field_select.' FROM '.MAIN_DB_PREFIX.$table_element.' WHERE '.$field_where.' = '.$fk_object_where;
+		$sql = 'SELECT '.$field_select.' FROM '.MAIN_DB_PREFIX.$table_element.' WHERE '.$field_where.' = '.((int) $fk_object_where);
 		$resql = $db->query($sql);
 
 		$TRes = array();
@@ -3697,7 +3697,7 @@ abstract class CommonObject
 	 * @param	int		$fk_object_where		id of object we need to remove linked items
 	 * @param	string	$field_where			name of field of object we need to delete linked items
 	 * @param	string	$table_element			name of association table
-	 * @return int
+	 * @return 	int								<0 if KO, 0 if nothing done, >0 if OK and something done
 	 */
 	static public function deleteAllItemsLinkedByObjectID($fk_object_where, $field_where, $table_element)
 	{
@@ -6042,8 +6042,7 @@ abstract class CommonObject
 
 		$objectid = $this->id;
 
-		if ($computed)
-		{
+		if ($computed) {
 			if (!preg_match('/^search_/', $keyprefix)) return '<span class="opacitymedium">'.$langs->trans("AutomaticallyCalculated").'</span>';
 			else return '';
 		}
@@ -6052,26 +6051,20 @@ abstract class CommonObject
 		if (empty($morecss) && !empty($val['css'])) {
 			$morecss = $val['css'];
 		} elseif (empty($morecss)) {
-			if ($type == 'date')
-			{
+			if ($type == 'date') {
 				$morecss = 'minwidth100imp';
-			} elseif ($type == 'datetime' || $type == 'link')	// link means an foreign key to another primary id
-			{
+			} elseif ($type == 'datetime' || $type == 'link') {	// link means an foreign key to another primary id
 				$morecss = 'minwidth200imp';
-			} elseif (in_array($type, array('int', 'integer', 'price')) || preg_match('/^double(\([0-9],[0-9]\)){0,1}/', $type))
-			{
+			} elseif (in_array($type, array('int', 'integer', 'price')) || preg_match('/^double(\([0-9],[0-9]\)){0,1}/', $type)) {
 				$morecss = 'maxwidth75';
 			} elseif ($type == 'url') {
 				$morecss = 'minwidth400';
-			} elseif ($type == 'boolean')
-			{
+			} elseif ($type == 'boolean') {
 				$morecss = '';
 			} else {
-				if (round($size) < 12)
-				{
+				if (round($size) < 12) {
 					$morecss = 'minwidth100';
-				} elseif (round($size) <= 48)
-				{
+				} elseif (round($size) <= 48) {
 					$morecss = 'minwidth200';
 				} else {
 					$morecss = 'minwidth400';
@@ -6468,13 +6461,13 @@ abstract class CommonObject
 
 			if (!preg_match('/search_/', $keyprefix)) {
 				if (!empty($param_list_array[2])) {		// If the entry into $fields is set to add a create button
-					if ($this->fields[$key]['picto']) {
+					if (!empty($this->fields[$key]['picto'])) {
 						$morecss .= ' widthcentpercentminusxx';
 					} else {
 						$morecss .= ' widthcentpercentminusx';
 					}
 				} else {
-					if ($this->fields[$key]['picto']) {
+					if (!empty($this->fields[$key]['picto'])) {
 						$morecss .= ' widthcentpercentminusx';
 					}
 				}
@@ -7118,7 +7111,17 @@ abstract class CommonObject
 						{
 							var val = $("select[name=\""+parent_list+"\"]").val();
 							var parentVal = parent_list + ":" + val;
-							if(val > 0) {
+							if(typeof val == "string"){
+				    		    if(val != "") {
+					    			var options = orig_select.find("option[parent=\""+parentVal+"\"]").clone();
+									$("select[name=\""+child_list+"\"] option[parent]").remove();
+									$("select[name=\""+child_list+"\"]").append(options);
+								} else {
+									var options = orig_select.find("option[parent]").clone();
+									$("select[name=\""+child_list+"\"] option[parent]").remove();
+									$("select[name=\""+child_list+"\"]").append(options);
+								}
+				    		} else if(val > 0) {
 								var options = orig_select.find("option[parent=\""+parentVal+"\"]").clone();
 								$("select[name=\""+child_list+"\"] option[parent]").remove();
 								$("select[name=\""+child_list+"\"]").append(options);
@@ -7150,7 +7153,7 @@ abstract class CommonObject
 								        $("#"+child_list).show()
 									}
 								});
-                
+
 								//When we change parent list
 								$("select[name=\""+parent_list+"\"]").change(function() {
 									showOptions(child_list, parent_list, orig_select[child_list]);

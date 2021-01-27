@@ -429,9 +429,7 @@ if (empty($reshook))
 			$object->note_public = (string) GETPOST("note_public", 'restricthtml');
 			$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 
-			if (GETPOSTISSET("roles")) {
-				$object->roles = GETPOST("roles", 'array');
-			}
+			$object->roles = GETPOST("roles", 'array');		// Note GETPOSTISSET("role") is null when combo is empty
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -667,8 +665,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'alpha') : $object->civility_code, 'civility_code');
 			print '</td></tr>';
 
+			// Job position
 			print '<tr><td><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';
-			print '<td colspan="3"><input name="poste" id="title" type="text" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOST("poste", 'alpha') ?GETPOST("poste", 'alpha') : $object->poste).'"></td>';
+			print '<td colspan="3"><input name="poste" id="title" type="text" class="minwidth100" maxlength="255" value="'.dol_escape_htmltag(GETPOSTISSET("poste") ?GETPOST("poste", 'alphanohtml') : $object->poste).'"></td>';
 
 			$colspan = 3;
 			if ($conf->use_javascript_ajax && $socid > 0) $colspan = 2;
@@ -970,8 +969,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", "aZ09") : $object->civility_code, 'civility_code');
 			print '</td></tr>';
 
+			// Job position
 			print '<tr><td><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';
-			print '<td colspan="3"><input name="poste" id="title" type="text" class="minwidth100" maxlength="80" value="'.(GETPOSTISSET("poste") ? GETPOST("poste") : $object->poste).'"></td></tr>';
+			print '<td colspan="3"><input name="poste" id="title" type="text" class="minwidth100" maxlength="255" value="'.dol_escape_htmltag(GETPOSTISSET("poste") ? GETPOST("poste", 'alphanohtml') : $object->poste).'"></td></tr>';
 
 			// Address
 			print '<tr><td><label for="address">'.$langs->trans("Address").'</label></td>';

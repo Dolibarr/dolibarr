@@ -1118,6 +1118,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				$projectstatic->ref = $lines[$i]->projectref;
 				$projectstatic->title = $lines[$i]->projectlabel;
 				$projectstatic->public = $lines[$i]->public;
+				$projectstatic->status = $lines[$i]->projectstatus;
 
 				$taskstatic->id = $lines[$i]->id;
 				$taskstatic->ref = ($lines[$i]->ref ? $lines[$i]->ref : $lines[$i]->id);
@@ -1491,6 +1492,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				$projectstatic->title = $lines[$i]->projectlabel;
 				$projectstatic->public = $lines[$i]->public;
 				$projectstatic->thirdparty_name = $lines[$i]->thirdparty_name;
+				$projectstatic->status = $lines[$i]->projectstatus;
 
 				$taskstatic->id = $lines[$i]->id;
 				$taskstatic->ref = ($lines[$i]->ref ? $lines[$i]->ref : $lines[$i]->id);
