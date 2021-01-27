@@ -352,4 +352,3 @@ INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active)
 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (13,'DPD', 'DPD', NULL, 'https://www.dpd.fr/trace/{TRACKID}', 0);
 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (14,'MAINFREIGHT', 'Mainfreight', NULL, 'https://www.mainfreight.com/track?{TRACKID}', 0);
 
-ALTER TABLE llx_socpeople MODIFY COLUMN poste VARCHAR(255);
