@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016-2020 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2017      Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2021      Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,7 +134,7 @@ class ChargeSociales extends CommonObject
 	{
 		$sql = "SELECT cs.rowid, cs.date_ech";
 		$sql .= ", cs.libelle as label, cs.fk_type, cs.amount, cs.fk_projet as fk_project, cs.paye, cs.periode, cs.import_key";
-		$sql .= ", cs.fk_account, cs.fk_mode_reglement";
+        $sql .= ", cs.fk_account, cs.fk_mode_reglement, cs.fk_user";
 		$sql .= ", c.libelle";
 		$sql .= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
@@ -164,6 +165,7 @@ class ChargeSociales extends CommonObject
 				$this->mode_reglement = $obj->mode_reglement_libelle;
 				$this->amount = $obj->amount;
 				$this->fk_project = $obj->fk_project;
+				$this->fk_user = $obj->fk_user;
 				$this->paye = $obj->paye;
 				$this->periode = $this->db->jdate($obj->periode);
 				$this->import_key = $this->import_key;
@@ -222,7 +224,7 @@ class ChargeSociales extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, fk_account, fk_mode_reglement, libelle, date_ech, periode, amount, fk_projet, entity, fk_user_author, date_creation)";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, fk_account, fk_mode_reglement, libelle, date_ech, periode, amount, fk_projet, entity, fk_user_author, fk_user, date_creation)";
 		$sql .= " VALUES (".$this->type;
 		$sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
 		$sql .= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : "NULL");
@@ -233,6 +235,7 @@ class ChargeSociales extends CommonObject
 		$sql .= ", ".($this->fk_project > 0 ? $this->fk_project : 'NULL');
 		$sql .= ", ".$conf->entity;
 		$sql .= ", ".$user->id;
+		$sql .= ", ".($this->fk_user > 0 ? $this->db->escape($this->fk_user) : 'NULL');
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ")";
 
@@ -346,6 +349,7 @@ class ChargeSociales extends CommonObject
 		$sql .= ", periode='".$this->db->idate($this->periode)."'";
 		$sql .= ", amount='".price2num($this->amount, 'MT')."'";
 		$sql .= ", fk_projet=".($this->fk_project > 0 ? $this->db->escape($this->fk_project) : "NULL");
+		$sql .= ", fk_user=".($this->fk_user > 0 ? $this->db->escape($this->fk_user) : "NULL");
 		$sql .= ", fk_user_modif=".$user->id;
 		$sql .= " WHERE rowid=".$this->id;
 

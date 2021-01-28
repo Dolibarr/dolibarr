@@ -28,6 +28,7 @@ create table llx_chargesociales
   tms               timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   date_creation     datetime,                       -- date de creation 
   date_valid        datetime,                       -- date de validation
+  fk_user integer   DEFAULT NULL,		    -- utilisateur concerné
   fk_user_author    integer,                        -- user making creation
   fk_user_modif     integer,                        -- user making last change
   fk_user_valid     integer,                        -- user validating
