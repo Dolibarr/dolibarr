@@ -9243,11 +9243,13 @@ function readfileLowMemory($fullpath_original_file_osencoded, $method = -1)
 
 /**
  * Create a button to copy $valuetoprint in the clipboard
- * @param string $valuetoprint the value to print
- * @return string the string to print for the button
+ *
+ * @param 	string 	$valuetoprint 		The value to print
+ * @param	int		$showonlyonhover	Show the copypaste button only on hover
+ * @return 	string 						The string to print for the button
  */
-function showValueWithCopyAndPasteButton($valuetoprint)
+function showValueWithCopyAndPasteButton($valuetoprint, $showonlyonhover = 1)
 {
-	$result = '<span class="clipboardCopyPaste"><span class="clipboardCopyPasteValue">'.$valuetoprint.'</span><span class="far fa-clipboard clipboardCopyPasteButton opacitymedium paddingleft paddingright"></span></span>';
+	$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><span class="clipboardCPValue">'.$valuetoprint.'</span><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText opacitymedium"></span></span>';
 	return $result;
 }
