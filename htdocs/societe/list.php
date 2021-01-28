@@ -1259,7 +1259,7 @@ while ($i < min($num, $limit))
 	if (!empty($arrayfields['s.fk_prospectlevel']['checked']))
 	{
 		// Prospect level
-		print '<td class="center">';
+		print '<td class="center tdoverflowmax100">';
 		print $companystatic->getLibProspLevel();
 		print "</td>";
 		if (!$i) $totalarray['nbfield']++;
