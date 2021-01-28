@@ -227,6 +227,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 	foreach ($_POST as $key => $value)
 	{
 		// without batch module enabled
+		$reg = array();
 		if (preg_match('/^product_([0-9]+)_([0-9]+)$/i', $key, $reg))
 		{
 			$pos++;
@@ -276,11 +277,11 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 							if (isset($_POST[$saveprice])) {
 								// TODO Use class
 								$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price";
-								$sql .= " SET unitprice='".price2num(GETPOST($pu),'MT')."'";
-								$sql .= ", price=".price2num(GETPOST($pu),'MT')."*quantity";
+								$sql .= " SET unitprice='".price2num(GETPOST($pu), 'MU')."'";
+								$sql .= ", price=".price2num(GETPOST($pu), 'MU')."*quantity";
 								$sql .= ", remise_percent='".$dto."'";
-								$sql .= " WHERE fk_soc=".$object->socid;
-								$sql .= " AND fk_product=".GETPOST($prod, 'int');
+								$sql .= " WHERE fk_soc=".((int) $object->socid);
+								$sql .= " AND fk_product=".((int) GETPOST($prod, 'int'));
 
 								$resql = $db->query($sql);
 							}
