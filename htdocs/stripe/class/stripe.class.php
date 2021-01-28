@@ -397,6 +397,7 @@ class Stripe extends CommonObject
 
 		if (empty($paymentintent))
 		{
+			// Try to create intent. See https://stripe.com/docs/api/payment_intents/create
 			$ipaddress = getUserRemoteIP();
 			$metadata = array('dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>$ipaddress);
 			if (is_object($object))
