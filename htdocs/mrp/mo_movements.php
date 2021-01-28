@@ -153,9 +153,9 @@ $permissiontodelete = $user->rights->mrp->delete || ($permissiontoadd && isset($
 $upload_dir = $conf->mrp->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 $permissiontoproduce = $permissiontoadd;
-$permissiontodeupdatecost = $user->rights->bom->write; // User who can define cost must have knowledge of pricing
+$permissiontoupdatecost = $user->rights->bom->write; // User who can define cost must have knowledge of pricing
 
-if ($permissiontodeupdatecost) {
+if ($permissiontoupdatecost) {
 	$arrayfields['m.price']['enabled'] = 1;
 }
 
