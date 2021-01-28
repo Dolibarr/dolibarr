@@ -2423,8 +2423,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		if ($object->client)
 		{
 			print '<tr><td>';
-			print $langs->trans('CustomerCode').'</td><td>';
-			print $object->code_client;
+			print $langs->trans('CustomerCode');
+			print '</td>';
+			print '<td>';
+			print showValueWithCopyAndPasteButton($object->code_client);
+			print '</td>';
 			$tmpcheck = $object->check_codeclient();
 			if ($tmpcheck != 0 && $tmpcheck != -5) {
 				print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
@@ -2935,7 +2938,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	}
 }
-
 // End of page
 llxFooter();
 $db->close();

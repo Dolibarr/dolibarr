@@ -210,3 +210,25 @@ print '
 					}
 				});
 			});'."\n";
+
+print "\n/* JS CODE TO ENABLE ClipBoard copy paste*/\n";
+print 'jQuery(\'.clipboardCopyPaste\').click(function() {
+		console.log(this.firstChild.innerText);
+		if ( window.getSelection ) {
+			
+			selection = window.getSelection();
+			
+			range = document.createRange();
+			range.selectNodeContents( this.firstChild );
+			
+			selection.removeAllRanges();
+			selection.addRange( range );
+			
+		}
+		document.execCommand( \'copy\' );
+		window.getSelection().removeAllRanges();
+		var lastchild =  this.lastChild
+		var tmp =lastchild.innerHTML
+		lastchild.innerHTML = \''.dol_escape_js($langs->trans('CopiedToClipboard')).'\';
+		setTimeout(() => { lastchild.innerHTML = tmp; }, 1000);
+	})'."\n";
