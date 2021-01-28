@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2019 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2021 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Cedric Gross         <c.gross@kreiz-it.fr>
  * Copyright (C) 2016      Florian Henry        <florian.henry@atm-consulting.fr>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
@@ -268,12 +268,16 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 					if (!$error && !empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
 						if (empty($conf->multicurrency->enabled) && empty($conf->dynamicprices->enabled)) {
 							$dto = GETPOST("dto_".$reg[1].'_'.$reg[2]);
+							if (empty($dto)) {
+								$dto = 0;
+							}
+
 							//update supplier price
 							if (isset($_POST[$saveprice])) {
 								// TODO Use class
 								$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price";
-								$sql .= " SET unitprice='".GETPOST($pu)."'";
-								$sql .= ", price=".GETPOST($pu)."*quantity";
+								$sql .= " SET unitprice='".price2num(GETPOST($pu),'MT')."'";
+								$sql .= ", price=".price2num(GETPOST($pu),'MT')."*quantity";
 								$sql .= ", remise_percent='".$dto."'";
 								$sql .= " WHERE fk_soc=".$object->socid;
 								$sql .= " AND fk_product=".GETPOST($prod, 'int');
