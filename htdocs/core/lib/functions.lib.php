@@ -9248,7 +9248,7 @@ function readfileLowMemory($fullpath_original_file_osencoded, $method = -1)
  * @param	int		$showonlyonhover	Show the copypaste button only on hover
  * @return 	string 						The string to print for the button
  */
-function showValueWithCopyAndPasteButton($valuetoprint, $showonlyonhover = 1)
+function showValueWithClipboardCPButton($valuetoprint, $showonlyonhover = 1)
 {
 	$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><span class="clipboardCPValue">'.$valuetoprint.'</span><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText opacitymedium"></span></span>';
 	return $result;
