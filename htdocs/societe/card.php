@@ -2415,7 +2415,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		// Prefix
 		if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 		{
-			print '<tr><td>'.$langs->trans('Prefix').'</td><td>'.$object->prefix_comm.'</td>';
+			print '<tr><td>'.$langs->trans('Prefix').'</td><td>'.dol_escape_htmltag($object->prefix_comm).'</td>';
 			print '</tr>';
 		}
 
@@ -2423,8 +2423,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		if ($object->client)
 		{
 			print '<tr><td>';
-			print $langs->trans('CustomerCode').'</td><td>';
-			print $object->code_client;
+			print $langs->trans('CustomerCode');
+			print '</td>';
+			print '<td>';
+			print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
+			print '</td>';
 			$tmpcheck = $object->check_codeclient();
 			if ($tmpcheck != 0 && $tmpcheck != -5) {
 				print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
@@ -2438,7 +2441,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		{
 			print '<tr><td>';
 			print $langs->trans('SupplierCode').'</td><td>';
-			print $object->code_fournisseur;
+			print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
 			$tmpcheck = $object->check_codefournisseur();
 			if ($tmpcheck != 0 && $tmpcheck != -5) {
 				print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
@@ -2451,7 +2454,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		if (!empty($conf->barcode->enabled))
 		{
 			print '<tr><td>';
-			print $langs->trans('Gencod').'</td><td>'.dol_escape_htmltag($object->barcode);
+			print $langs->trans('Gencod').'</td><td>'.showValueWithClipboardCPButton(dol_escape_htmltag($object->barcode));
 			print '</td>';
 			print '</tr>';
 		}
@@ -2467,7 +2470,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				print '<tr>';
 				print '<td>'.$idprof.'</td><td>';
 				$key = 'idprof'.$i;
-				print $object->$key;
+				print showValueWithClipboardCPButton(dol_escape_htmltag($object->$key));
 				if ($object->$key)
 				{
 					if ($object->id_prof_check($i, $object) > 0) print ' &nbsp; '.$object->id_prof_url($i, $object);
@@ -2935,7 +2938,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	}
 }
-
 // End of page
 llxFooter();
 $db->close();

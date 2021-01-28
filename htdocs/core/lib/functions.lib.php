@@ -1984,8 +1984,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 {
 	global $conf, $langs;
 
-	if ($tzoutput == 'auto' && property_exists($conf, 'tzuserinputkey')) {
-		$tzoutput = $conf->tzuserinputkey;
+	if ($tzoutput === 'auto') {
+		$tzoutput = (empty($conf) ? 'tzserver' : $conf->tzuserinputkey);
 	}
 
 	// Clean parameters
@@ -7399,6 +7399,7 @@ function picto_from_langcode($codelang, $moreatt = '')
 		'da_DA' => 'dk',
 		'fr_CA' => 'mq',
 		'sv_SV' => 'se',
+		'sw_SW' => 'unknown',
 		'AQ' => 'unknown',
 		'CW' => 'unknown',
 		'IM' => 'unknown',
@@ -9238,4 +9239,17 @@ function readfileLowMemory($fullpath_original_file_osencoded, $method = -1)
 		fclose($handle1);
 		fclose($handle2);
 	}
+}
+
+/**
+ * Create a button to copy $valuetoprint in the clipboard
+ *
+ * @param 	string 	$valuetoprint 		The value to print
+ * @param	int		$showonlyonhover	Show the copypaste button only on hover
+ * @return 	string 						The string to print for the button
+ */
+function showValueWithClipboardCPButton($valuetoprint, $showonlyonhover = 1)
+{
+	$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><span class="clipboardCPValue">'.$valuetoprint.'</span><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText opacitymedium"></span></span>';
+	return $result;
 }
