@@ -720,7 +720,7 @@ else
 	{
 		if (function_exists('fsockopen') && $port && $server)
 		{
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect#formmailbeforetitle">'.$langs->trans("DoTestServerAvailability").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect&date='.dol_now().'#formmailbeforetitle">'.$langs->trans("DoTestServerAvailability").'</a>';
 		}
 	}
 	else
@@ -796,6 +796,7 @@ else
 	// Run the test to connect
 	if ($action == 'testconnect')
 	{
+		print '<div id="formmailaftertstconnect" name="formmailaftertstconnect"></div>';
 		print load_fiche_titre($langs->trans("DoTestServerAvailability"));
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -811,6 +812,7 @@ else
 			}
 
 			setEventMessages($errormsg, null, 'errors');
+			print $errormsg;
 		}
 		print '<br>';
 	}
