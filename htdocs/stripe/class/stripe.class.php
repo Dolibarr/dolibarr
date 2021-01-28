@@ -431,7 +431,8 @@ class Stripe extends CommonObject
 			if ($off_session)
 			{
 				unset($dataforintent['setup_future_usage']);
-				$dataforintent["setup_future_usage"] = "off_session";
+				//$dataforintent["setup_future_usage"] = "off_session";
+				$dataforintent["off_session"] = true;
 			}
     		if (!is_null($payment_method))
     		{
