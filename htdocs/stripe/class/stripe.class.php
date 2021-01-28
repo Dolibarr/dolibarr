@@ -466,6 +466,9 @@ class Stripe extends CommonObject
 				if (!empty($key)) {				// If the Stripe connect account not set, we use common API usage
 					$arrayofoptions["stripe_account"] = $key;
 				}
+
+				dol_syslog("dataforintent to create paymentintent = ".var_export($dataforintent, true));
+
 				$paymentintent = \Stripe\PaymentIntent::create($dataforintent, $arrayofoptions);
 
 				// Store the payment intent
