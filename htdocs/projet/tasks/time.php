@@ -350,7 +350,7 @@ if (!empty($project_ref) && !empty($withproject))
 	}
 }
 
-// To show all time lines for $conf->global->AUTO_ASSIGN_USER_CONTACT_ON_TASK == 2r project
+// To show all time lines for $conf->global->AUTO_ASSIGN_USER_CONTACT_ON_TASK == 2 (assign on project)
 $projectidforalltimes = 0;
 if (GETPOST('projectid', 'int') > 0)
 {
@@ -1157,9 +1157,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 
 
 			// standard bahavior
-			if ($conf->global->AUTO_ASSIGN_USER_CONTACT_ON_TASK < 2 ){
-                if (count($contactsofproject) > 0)
-                {
+			if ($conf->global->AUTO_ASSIGN_USER_CONTACT_ON_TASK < 2) {
+                if (count($contactsofproject) > 0) {
                     print img_object('', 'user', 'class="hideonsmartphone"');
                     if (in_array($user->id, $contactsofproject)) $userid = $user->id;
                     else $userid = $contactsofproject[0];
@@ -1173,9 +1172,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
                 }
 
 				// we assign user to task even if he 's not assign to project
-            }else {
+            } else {
                 print img_object('', 'user', 'class="hideonsmartphone"');
-                if (in_array($user->id, $contactsofproject)){
+                if (in_array($user->id, $contactsofproject)) {
                     $userid = $user->id;
                 } else {
                     $userid = $contactsofproject[0];
@@ -1193,8 +1192,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			// Duration - Time spent
 			print '<td>';
 			$durationtouse = ($_POST['timespent_duration'] ? $_POST['timespent_duration'] : '');
-			if (GETPOSTISSET('timespent_durationhour') || GETPOSTISSET('timespent_durationmin'))
-			{
+			if (GETPOSTISSET('timespent_durationhour') || GETPOSTISSET('timespent_durationmin')) {
 				$durationtouse = (GETPOST('timespent_durationhour') * 3600 + GETPOST('timespent_durationmin') * 60);
 			}
 			print $form->select_duration('timespent_duration', $durationtouse, 0, 'text');
@@ -1206,8 +1204,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			print '</td>';
 
 			// Invoiced
-			if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT))
-			{
+			if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
 				print '<td>';
 				print '</td>';
 			}
@@ -1230,8 +1227,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 		if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
 		else $moreforfilter = $hookmanager->resPrint;
 
-		if (!empty($moreforfilter))
-		{
+		if (!empty($moreforfilter)) {
 			print '<div class="liste_titre liste_titre_bydiv centpercent">';
 			print $moreforfilter;
 			print '</div>';
