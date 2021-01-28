@@ -108,6 +108,7 @@ $permissiontodelete = $user->rights->mrp->delete || ($permissiontoadd && isset($
 $upload_dir = $conf->mrp->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 $permissiontoproduce = $permissiontoadd;
+$permissiontodeupdatecost = $user->rights->bom->write; // User who can define cost must have knowledge of pricing
 
 
 /*
@@ -198,7 +199,6 @@ if (empty($reshook))
     			$i = 1;
     			while (GETPOSTISSET('qty-'.$line->id.'-'.$i)) {
 					$qtytoprocess = price2num(GETPOST('qty-'.$line->id.'-'.$i));
-					$pricetoprocess = GETPOST('price-'.$line->id.'-'.$i) ? price2num(GETPOST('price-'.$line->id.'-'.$i)) : 0;
 
     				if ($qtytoprocess != 0) {
 						// Check warehouse is set if we should have to
@@ -220,7 +220,7 @@ if (empty($reshook))
 	    					// Record stock movement
 	    					$id_product_batch = 0;
 	    					$stockmove->origin = $object;
-	    					$idstockmove = $stockmove->livraison($user, $line->fk_product, GETPOST('idwarehouse-'.$line->id.'-'.$i), $qtytoprocess, $pricetoprocess, $labelmovement, dol_now(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
+	    					$idstockmove = $stockmove->livraison($user, $line->fk_product, GETPOST('idwarehouse-'.$line->id.'-'.$i), $qtytoprocess, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
 	    					if ($idstockmove < 0) {
 	    						$error++;
 	    						setEventMessages($stockmove->error, $stockmove->errors, 'errors');
@@ -708,7 +708,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	print '<tr class="liste_titre">';
     	print '<td>'.$langs->trans("Product").'</td>';
 		print '<td class="right">'.$langs->trans("Qty").'</td>';
-		print '<td class="right">'.$langs->trans("PMPValue").'</td>';
+		if ($permissiontodeupdatecost) print '<td class="right">'.$langs->trans("PMPValue").'</td>';
     	print '<td class="right">'.$langs->trans("QtyAlreadyConsumed").'</td>';
     	print '<td>';
     	if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) print $langs->trans("Warehouse");
@@ -772,12 +772,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    			print $line->qty;
     	    		}
 					print '</td>';
-					if ($action == 'addconsumeline') {
-						print '<td></td>';
-					} else {
-						print '<td class="right nowraponall">';
-						print price($tmpproduct->pmp);
-						print '</td>';
+					if ($permissiontodeupdatecost) {
+						if ($action == 'addconsumeline') {
+							print '<td></td>';
+						} else {
+							print '<td class="right nowraponall">';
+							print price($tmpproduct->pmp);
+							print '</td>';
+						}
 					}
     	    		print '<td class="right">';
     	    		if ($alreadyconsumed) {
@@ -841,9 +843,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    			print '<td>'.$langs->trans("ToConsume").'</td>';
     	    			$preselected = (GETPOSTISSET('qty-'.$line->id.'-'.$i) ? GETPOST('qty-'.$line->id.'-'.$i) : max(0, $line->qty - $alreadyconsumed));
     	    			if ($action == 'consumeorproduce' && !GETPOSTISSET('qty-'.$line->id.'-'.$i)) $preselected = 0;
-    	    			print '<td class="right"><input type="text" class="width50 right" name="qty-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
-						$preselected = (GETPOSTISSET('price-'.$line->id.'-'.$i) ? GETPOST('price-'.$line->id.'-'.$i) : price($tmpproduct->pmp));
-    	    			print '<td class="right"><input type="text" class="width50 right" name="price-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
+						print '<td class="right"><input type="text" class="width50 right" name="qty-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
+						if ($permissiontodeupdatecost) print '<td></td>';
     	    			print '<td></td>';
     	    			print '<td>';
     	    			if ($tmpproduct->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
@@ -887,7 +888,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	print '<tr class="liste_titre">';
     	print '<td>'.$langs->trans("Product").'</td>';
 		print '<td class="right">'.$langs->trans("Qty").'</td>';
-		print '<td class="right">'.$langs->trans("PMPValue").'</td>';
+		if ($permissiontodeupdatecost) print '<td class="right">'.$langs->trans("PMPValue").'</td>';
     	print '<td class="right">'.$langs->trans("QtyAlreadyProduced").'</td>';
     	print '<td>';
     	if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) print $langs->trans("Warehouse");
@@ -934,12 +935,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     				print '<tr>';
     				print '<td>'.$tmpproduct->getNomUrl(1).'</td>';
 					print '<td class="right">'.$line->qty.'</td>';
-					if ($action == 'addconsumeline') {
-						print '<td></td>';
-					} else {
-						print '<td class="right nowraponall">';
-						print price($tmpproduct->pmp);
-						print '</td>';
+					if ($permissiontodeupdatecost) {
+						if ($action == 'addconsumeline') {
+							print '<td></td>';
+						} else {
+							print '<td class="right nowraponall">';
+							print price($tmpproduct->pmp);
+							print '</td>';
+						}
 					}
     				print '<td class="right nowraponall">';
     				if ($alreadyproduced) {
@@ -1001,8 +1004,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     					$preselected = (GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i) ? GETPOST('qtytoproduce-'.$line->id.'-'.$i) : max(0, $line->qty - $alreadyproduced));
     					if ($action == 'consumeorproduce' && !GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i)) $preselected = 0;
 						print '<td class="right"><input type="text" class="width50 right" id="qtytoproduce-'.$line->id.'-'.$i.'" name="qtytoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
-						$preselected = (GETPOSTISSET('pricetoproduce-'.$line->id.'-'.$i) ? GETPOST('pricetoproduce-'.$line->id.'-'.$i) : price($tmpproduct->pmp));
-    	    			print '<td class="right"><input type="text" class="width50 right" name="pricetoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
+						if ($permissiontodeupdatecost) {
+							$preselected = (GETPOSTISSET('pricetoproduce-'.$line->id.'-'.$i) ? GETPOST('pricetoproduce-'.$line->id.'-'.$i) : price($tmpproduct->pmp));
+							print '<td class="right"><input type="text" class="width50 right" name="pricetoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
+						}
     					print '<td></td>';
     					print '<td>';
     					if ($tmpproduct->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
