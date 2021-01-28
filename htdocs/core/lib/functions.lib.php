@@ -9239,6 +9239,6 @@ function readfileLowMemory($fullpath_original_file_osencoded, $method = -1)
  */
 function showValueWithCopyAndPasteButton($valuetoprint)
 {
-	return '<span class="clipboardCopyPaste"><span>'.dol_escape_js($valuetoprint).'
-			</span>&ensp;<span class ="opacitymedium"><i " class="far fa-clipboard"></i></span></span>';
+	$result = '<span class="clipboardCopyPaste"><span>'.$valuetoprint.'</span>&ensp;<span class="far fa-clipboard opacitymedium"></span></span>';
+	return $result;
 }
