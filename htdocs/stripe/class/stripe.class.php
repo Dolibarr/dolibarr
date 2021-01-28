@@ -321,7 +321,7 @@ class Stripe extends CommonObject
 	 * @param	string	$noidempotency_key					Do not use the idempotency_key when creating the PaymentIntent
 	 * @return 	\Stripe\PaymentIntent|null 			        Stripe PaymentIntent or null if not found and failed to create
 	 */
-	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false, $payment_method = null, $off_session = 0, $noidempotency_key = 0)
+	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false, $payment_method = null, $off_session = 0, $noidempotency_key = 1)
 	{
 		global $conf, $user;
 
@@ -434,8 +434,10 @@ class Stripe extends CommonObject
 			if ($off_session)
 			{
 				unset($dataforintent['setup_future_usage']);
+				// We can't use both "setup_future_usage" = "off_session" and "off_session" = true.
+				// Because $off_session parameter is dedicated to create paymentintent off_line (and not future payment), we need to use "off_session" = true.
 				//$dataforintent["setup_future_usage"] = "off_session";
-				$dataforintent["off_session"] = true;		// Restore value to test if it solve a regression
+				$dataforintent["off_session"] = true;
 			}
 			if (!empty($conf->global->STRIPE_GIROPAY)) unset($dataforintent['setup_future_usage']);
 
