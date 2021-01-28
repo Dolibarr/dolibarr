@@ -99,7 +99,7 @@ if ($action == 'classin' && $user->rights->tax->charges->creer)
 	$object->setProject(GETPOST('projectid'));
 }
 
-if($action == 'setfk_user' && $user->rights->tax->charges->creer) {
+if ($action == 'setfk_user' && $user->rights->tax->charges->creer) {
 	$object->fetch($id);
 	$object->fk_user = $fk_user;
 	$object->update($user);
@@ -463,10 +463,10 @@ if ($id > 0)
 		$morehtmlref .= $form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
 
 		// Employee
-		if($action != 'editfk_user') {
+		if ($action != 'editfk_user') {
 			$morehtmlref .= '<br />' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
 
-			if(!empty($object->fk_user)) {
+			if (!empty($object->fk_user)) {
 				$userstatic = new User($db);
 				$userstatic->fetch($object->fk_user);
 				$morehtmlref .= $userstatic->getNomUrl(1);
