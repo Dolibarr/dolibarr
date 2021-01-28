@@ -62,6 +62,7 @@ EnhancedValueOfWarehouses=Lagerwert
 UserWarehouseAutoCreate=Automatisch ein Lager erstellen wenn ein neuer Benutzer erstellt wird
 AllowAddLimitStockByWarehouse=Verwalten Sie zusätzlich zum Wert für den Mindest- und den gewünschten Bestand pro Paar (Produktlager) auch den Wert für den Mindest- und den gewünschten Bestand pro Produkt
 RuleForWarehouse=Regel für Lager
+WarehouseAskWarehouseDuringPropal=Set a warehouse on Sale propal
 WarehouseAskWarehouseDuringOrder=Legen Sie ein Lager für Verkaufsaufträge fest
 UserDefaultWarehouse=Legen Sie ein Lager für Benutzer fest
 MainDefaultWarehouse=Standardlager

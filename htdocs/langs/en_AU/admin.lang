@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - admin
 OldVATRates=Old GST rate
 NewVATRates=New GST rate
+Module59000Desc=Module to follow margins
 DictionaryVAT=GST Rates or Sales Tax Rates
-YouHaveXObjectUseSearchOptim=You have %s %s in the database. You should add the constant %s to 1 in Home-Setup-Other. Limit the search to the beginning of strings which makes it possible for the database to use indexes and you should get an immediate response.
 ViewProductDescInThirdpartyLanguageAbility=Display products descriptions in forms in the language of the third party (otherwise in the language of the user)
 OptionVatMode=GST due
 LinkColor=Colour of links

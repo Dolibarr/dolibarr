@@ -52,7 +52,7 @@ if ($action == 'updateMask')
 	$masksupplierpayment = GETPOST('masksupplierpayment', 'alpha');
 	if ($maskconstsupplierpayment) $res = dolibarr_set_const($db, $maskconstsupplierpayment, $masksupplierpayment, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
 	if (!$error)
 	{
@@ -136,7 +136,7 @@ elseif ($action == 'setdoc')
 } elseif ($action == 'setparams')
 {
 	   $res = dolibarr_set_const($db, "PAYMENTS_FOURN_REPORT_GROUP_BY_MOD", GETPOST('PAYMENTS_FOURN_REPORT_GROUP_BY_MOD', 'int'), 'chaine', 0, '', $conf->entity);
-	   if (!$res > 0) $error++;
+	   if (!($res > 0)) $error++;
 
 	if ($error)
 	   {

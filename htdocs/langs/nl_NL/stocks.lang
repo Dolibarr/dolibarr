@@ -62,6 +62,7 @@ EnhancedValueOfWarehouses=Voorraadwaardering
 UserWarehouseAutoCreate=Creëer automatisch een gebruikersmagazijn wanneer u een gebruiker aanmaakt
 AllowAddLimitStockByWarehouse=Beheer ook de waarde voor minimale en gewenste voorraad per paar (productmagazijn) naast de waarde voor minimale en gewenste voorraad per product
 RuleForWarehouse=Voorwaarden magazijnen
+WarehouseAskWarehouseDuringPropal=Set a warehouse on Sale propal
 WarehouseAskWarehouseDuringOrder=Stel een magazijn in op Verkooporders
 UserDefaultWarehouse=Stel een magazijn in op gebruikers
 MainDefaultWarehouse=Standaardmagazijn

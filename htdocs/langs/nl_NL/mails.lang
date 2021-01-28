@@ -175,3 +175,5 @@ Answered=Beantwoord
 IsNotAnAnswer=Is geen antwoord (initiële e-mail)
 IsAnAnswer=Is een antwoord van een initiële e-mail
 RecordCreatedByEmailCollector=Record aangemaakt door de E-mail Collector %s van e-mail %s
+DefaultBlacklistMailingStatus=Default contact status for refuse bulk emailing
+DefaultStatusEmptyMandatory=Empty but mandatory

@@ -30,6 +30,11 @@
 
 -- Missing in v13 or lower
 
+ALTER TABLE llx_supplier_proposal_extrafields ADD INDEX idx_supplier_proposal_extrafields (fk_object);
+ALTER TABLE llx_supplier_proposaldet_extrafields ADD INDEX idx_supplier_proposaldet_extrafields (fk_object);
+
+ALTER TABLE llx_asset_extrafields ADD INDEX idx_asset_extrafields (fk_object);
+
 -- For v14
 
 ALTER TABLE llx_c_availability ADD COLUMN position integer NOT NULL DEFAULT 0;
@@ -56,54 +61,65 @@ ALTER TABLE llx_website ADD COLUMN pageviews_month BIGINT UNSIGNED DEFAULT 0;
 ALTER TABLE llx_website ADD COLUMN pageviews_total BIGINT UNSIGNED DEFAULT 0;
 
 
+-- Drop foreign key with bad name or not required
+ALTER TABLE llx_workstation_workstation DROP FOREIGN KEY llx_workstation_workstation_fk_user_creat;
+ALTER TABLE llx_propal DROP FOREIGN KEY llx_propal_fk_warehouse;
+
+
 CREATE TABLE llx_workstation_workstation(
 	-- BEGIN MODULEBUILDER FIELDS
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	ref varchar(128) DEFAULT '(PROV)' NOT NULL,
     label varchar(255),
     type varchar(7),
     note_public text,
 	entity int DEFAULT 1,
-	note_private text, 
-	date_creation datetime NOT NULL, 
-	tms timestamp, 
-	fk_user_creat integer NOT NULL, 
-	fk_user_modif integer, 
-	import_key varchar(14), 
-	status smallint NOT NULL, 
-	nb_operators_required integer, 
-	thm_operator_estimated double, 
+	note_private text,
+	date_creation datetime NOT NULL,
+	tms timestamp,
+	fk_user_creat integer NOT NULL,
+	fk_user_modif integer,
+	import_key varchar(14),
+	status smallint NOT NULL,
+	nb_operators_required integer,
+	thm_operator_estimated double,
 	thm_machine_estimated double
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
 ALTER TABLE llx_workstation_workstation ADD INDEX idx_workstation_workstation_rowid (rowid);
 ALTER TABLE llx_workstation_workstation ADD INDEX idx_workstation_workstation_ref (ref);
-ALTER TABLE llx_workstation_workstation ADD CONSTRAINT llx_workstation_workstation_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
+ALTER TABLE llx_workstation_workstation ADD CONSTRAINT fk_workstation_workstation_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
 ALTER TABLE llx_workstation_workstation ADD INDEX idx_workstation_workstation_status (status);
 
 CREATE TABLE llx_workstation_workstation_resource(
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	tms timestamp, 
-	fk_resource integer, 
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	tms timestamp,
+	fk_resource integer,
 	fk_workstation integer
 ) ENGINE=innodb;
 
 CREATE TABLE llx_workstation_workstation_usergroup(
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	tms timestamp, 
-	fk_usergroup integer, 
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	tms timestamp,
+	fk_usergroup integer,
 	fk_workstation integer
 ) ENGINE=innodb;
 
 
-ALTER TABLE llx_propal ADD COLUMN fk_warehouse integer DEFAULT NULL AFTER fk_shipping_method;
-ALTER TABLE llx_propal ADD CONSTRAINT llx_propal_fk_warehouse FOREIGN KEY (fk_warehouse) REFERENCES llx_entrepot(rowid);
-ALTER TABLE llx_propal ADD INDEX idx_propal_fk_warehouse(fk_warehouse);
-
-
 ALTER TABLE llx_product_customer_price ADD COLUMN ref_customer varchar(30);
 ALTER TABLE llx_product_customer_price_log ADD COLUMN ref_customer varchar(30);
+
+ALTER TABLE llx_propal ADD COLUMN fk_warehouse integer DEFAULT NULL AFTER fk_shipping_method;
+--ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_warehouse FOREIGN KEY (fk_warehouse) REFERENCES llx_entrepot(rowid);
+ALTER TABLE llx_propal ADD INDEX idx_propal_fk_warehouse(fk_warehouse);
+
+ALTER TABLE llx_societe DROP INDEX idx_societe_entrepot;
+ALTER TABLE llx_societe CHANGE fk_entrepot fk_warehouse INTEGER DEFAULT NULL;
+--ALTER TABLE llx_societe ADD CONSTRAINT fk_propal_fk_warehouse FOREIGN KEY (fk_warehouse) REFERENCES llx_entrepot(rowid);
+ALTER TABLE llx_societe ADD INDEX idx_societe_warehouse(fk_warehouse);
+
+ALTER TABLE llx_socpeople MODIFY poste varchar(255);
 
 
 create table llx_paiementtva

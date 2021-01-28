@@ -407,8 +407,6 @@ if ($id)
 	// Form to add a new line
 	if ($tabname[$id])
 	{
-		$alabelisused = 0;
-
 		$fieldlist = explode(',', $tabfield[$id]);
 
 		// Line for title
@@ -437,7 +435,6 @@ if ($id)
 				else print $valuetoshow;
 				print '</td>';
 			}
-			if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') $alabelisused = 1;
 		}
 
 		print '<td>';

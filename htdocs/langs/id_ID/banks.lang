@@ -180,3 +180,4 @@ BankColorizeMovementDesc=Jika fungsi ini diaktifkan, Anda dapat memilih warna la
 BankColorizeMovementName1=Warna latar belakang untuk pergerakan debit
 BankColorizeMovementName2=Warna latar belakang untuk pergerakan kredit
 IfYouDontReconcileDisableProperty=If you don't make the bank reconciliations on some bank accounts, disable the property "%s" on them to remove this warning.
+NoBankAccountDefined=No bank account defined

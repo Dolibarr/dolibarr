@@ -133,4 +133,4 @@ KeysToUseForUpdates=用於<b>更新</b>現有資料的鍵（欄）
 NbInsert=已插入的行數：%s
 NbUpdate=已更新的行數：%s
 MultipleRecordFoundWithTheseFilters=使用過濾器找到了多個記錄：%s
-StocksWithBatch=Stocks and location (warehouse) of products with batch/serial number
+StocksWithBatch=具有批次/序號產品的庫存和位置（倉庫）

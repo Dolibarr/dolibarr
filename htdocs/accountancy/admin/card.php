@@ -76,7 +76,7 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 			$action = 'create';
 		} else {
-			$sql = 'SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $conf->global->CHARTOFACCOUNTS;
+			$sql = 'SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid='.((int) $conf->global->CHARTOFACCOUNTS);
 
 			dol_syslog('accountancy/admin/card.php:: $sql=' . $sql);
 			$result = $db->query($sql);

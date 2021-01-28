@@ -290,7 +290,7 @@ class Utils
 			if (!empty($dolibarr_main_db_pass))
 			{
 				$paramcrypted .= ' -p"'.preg_replace('/./i', '*', $dolibarr_main_db_pass).'"';
-				$paramclear .= ' -p"'.str_replace(array('"', '`'), array('\"', '\`'), $dolibarr_main_db_pass).'"';
+				$paramclear .= ' -p"'.str_replace(array('"', '`', '$'), array('\"', '\`', '\$'), $dolibarr_main_db_pass).'"';
 			}
 
 			$handle = '';
