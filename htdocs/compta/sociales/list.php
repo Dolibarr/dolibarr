@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2020      Pierre Ardoin     	<mapiolca@me.com>
+ * Copyright (C) 2021      Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if (!empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('compta', 'banks', 'bills'));
+$langs->loadLangs(array('compta', 'banks', 'bills', 'hrm'));
 
 $action = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
@@ -56,6 +57,7 @@ $search_month_lim = GETPOST('search_month_lim', 'int');
 $search_year_lim	= GETPOST('search_year_lim', 'int');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_project = GETPOST('search_project', 'alpha');
+$search_users = GETPOST('search_users');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -99,6 +101,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_month_lim = '';
 	$search_project_ref = '';
 	$search_project = '';
+	$search_users = '';
 	$toselect = '';
 	$search_array_options = array();
 }
@@ -116,7 +119,7 @@ if (!empty($conf->projet->enabled)) $projectstatic = new Project($db);
 
 llxHeader('', $langs->trans("SocialContributions"));
 
-$sql = "SELECT cs.rowid as id, cs.fk_type as type, ";
+$sql = "SELECT cs.rowid as id, cs.fk_type as type, cs.fk_user, ";
 $sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode,";
 if (!empty($conf->projet->enabled)) $sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
 $sql .= " c.libelle as type_label,";
@@ -125,12 +128,14 @@ $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
 $sql .= " ".MAIN_DB_PREFIX."chargesociales as cs";
 if (!empty($conf->projet->enabled)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = cs.fk_projet";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = cs.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (cs.fk_user = u.rowid)";
 $sql .= " WHERE cs.fk_type = c.id";
 $sql .= " AND cs.entity = ".$conf->entity;
 // Search criteria
 if ($search_ref)	$sql .= " AND cs.rowid=".$db->escape($search_ref);
 if ($search_label) 	$sql .= natural_search("cs.libelle", $search_label);
 if (!empty($conf->projet->enabled)) if ($search_project_ref != '') $sql .= natural_search("p.ref", $search_project_ref);
+if (!empty($search_users)) $sql .= ' AND cs.fk_user IN('.implode(', ', $search_users).')';
 if ($search_amount) $sql .= natural_search("cs.amount", $search_amount, 1);
 if ($search_status != '' && $search_status >= 0) $sql .= " AND cs.paye = ".$db->escape($search_status);
 $sql .= dolSqlDateFilter("cs.periode", $search_day_lim, $search_month_lim, $search_year_lim);
@@ -177,6 +182,9 @@ if ($resql)
 	if ($search_project_ref >= 0) $param .= "&search_project_ref=".urlencode($search_project_ref);
 	if ($search_amount) $param .= '&search_amount='.urlencode($search_amount);
 	if ($search_typeid) $param .= '&search_typeid='.urlencode($search_typeid);
+	if ($search_users) {
+		foreach ($search_users as $id_user) $param .= '&search_users[]='.urlencode($id_user);
+	}
 	if ($search_status != '' && $search_status != '-1') $param .= '&search_status='.urlencode($search_status);
 	if ($year)          $param .= '&year='.urlencode($year);
 
@@ -224,7 +232,10 @@ if ($resql)
 		print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
 		// Type
 		print '<td class="liste_titre" align="left">';
-	    $formsocialcontrib->select_type_socialcontrib($search_typeid, 'search_typeid', 1, 0, 0, 'maxwidth100onsmartphone');
+		$formsocialcontrib->select_type_socialcontrib($search_typeid, 'search_typeid', 1, 0, 0, 'maxwidth100onsmartphone');
+		// Employee
+		print '<td class="liste_titre" align="left">';
+		print $form->select_dolusers($search_users, 'search_users', 1, null, 0, '', '', '0', '0', 0, '', 0, '', '', 0, 0, true);
 	    print '</td>';
 		// Ref Project
 	   	if (!empty($conf->projet->enabled)) print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_project_ref" value="'.$search_project_ref.'"></td>';
@@ -256,6 +267,7 @@ if ($resql)
 		print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "id", "", $param, "", $sortfield, $sortorder);
 		print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "cs.libelle", "", $param, 'class="left"', $sortfield, $sortorder);
 		print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "type", "", $param, 'class="left"', $sortfield, $sortorder);
+		print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname", "", $param, 'class="left"', $sortfield, $sortorder);
 		if (!empty($conf->projet->enabled)) print_liste_field_titre('ProjectRef', $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 		print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "cs.date_ech", "", $param, 'align="center"', $sortfield, $sortorder);
 		print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "periode", "", $param, 'align="center"', $sortfield, $sortorder);
@@ -265,7 +277,7 @@ if ($resql)
 		print "</tr>\n";
 
 		$i = 0;
-		$totalarray = array();
+		$totalarray = $TLoadedUsers = array();
 		while ($i < min($num, $limit))
 		{
 			$obj = $db->fetch_object($resql);
@@ -292,6 +304,20 @@ if ($resql)
 
 			// Type
 			print "<td>".$obj->type_label."</td>\n";
+			if (!$i) $totalarray['nbfield']++;
+
+			// Employee
+			print "<td>";
+			if(!empty($obj->fk_user)) {
+				if(!empty($TLoadedUsers[$obj->fk_user])) $ustatic = $TLoadedUsers[$obj->fk_user];
+				else {
+					$ustatic = new User($db);
+					$ustatic->fetch($obj->fk_user);
+					$TLoadedUsers[$obj->fk_user] = $ustatic;
+				}
+				print $ustatic->getNomUrl(-1);
+			}
+			print "</td>\n";
 			if (!$i) $totalarray['nbfield']++;
 
 			// Project Ref
