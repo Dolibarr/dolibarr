@@ -7399,6 +7399,7 @@ function picto_from_langcode($codelang, $moreatt = '')
 		'da_DA' => 'dk',
 		'fr_CA' => 'mq',
 		'sv_SV' => 'se',
+		'sw_SW' => 'unknown',
 		'AQ' => 'unknown',
 		'CW' => 'unknown',
 		'IM' => 'unknown',
@@ -9247,6 +9248,6 @@ function readfileLowMemory($fullpath_original_file_osencoded, $method = -1)
  */
 function showValueWithCopyAndPasteButton($valuetoprint)
 {
-	$result = '<span class="clipboardCopyPaste"><span>'.$valuetoprint.'</span>&ensp;<span class="far fa-clipboard opacitymedium"></span></span>';
+	$result = '<span class="clipboardCopyPaste"><span class="clipboardCopyPasteValue">'.$valuetoprint.'</span><span class="far fa-clipboard clipboardCopyPasteButton opacitymedium paddingleft paddingright"></span></span>';
 	return $result;
 }
