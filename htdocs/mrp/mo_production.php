@@ -54,6 +54,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 dol_include_once('/mrp/class/mo.class.php');
+dol_include_once('/bom/class/bom.class.php');
 dol_include_once('/mrp/lib/mrp_mo.lib.php');
 
 // Load translation files required by the page
@@ -693,7 +694,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	{
     	// Show object lines
     	//$result = $object->getLinesArray();
-    	$object->fetchLines();
+		$object->fetchLines();
+
+		// consumtion
 
     	print '<div class="fichecenter">';
     	print '<div class="fichehalfleft">';
@@ -877,6 +880,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	print '</div>';
 
 		print '</div>';
+
+		// production
+
+		$bomcost = 0;
+		if ($object->fk_bom > 0) {
+			$bom = new Bom($db);
+			$res = $bom->fetch($object->fk_bom);
+			if ($res > 0) {
+				$bomcost = $bom->unit_cost;
+			}
+		}
     	print '<div class="fichehalfright">';
     	print '<div class="clearboth"></div>';
 
@@ -888,7 +902,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	print '<tr class="liste_titre">';
     	print '<td>'.$langs->trans("Product").'</td>';
 		print '<td class="right">'.$langs->trans("Qty").'</td>';
-		if ($permissiontoupdatecost) print '<td class="right">'.$langs->trans("PMPValue").'</td>';
+		if ($permissiontoupdatecost) {
+			if (empty($bomcost)) {
+				print '<td class="right">'.$langs->trans("PMPValue").'</td>';
+			} else {
+				print '<td class="right">'.$langs->trans("UnitCost").'</td>';
+			}
+		}
     	print '<td class="right">'.$langs->trans("QtyAlreadyProduced").'</td>';
     	print '<td>';
     	if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) print $langs->trans("Warehouse");
@@ -903,7 +923,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
     	if (!empty($object->lines))
     	{
-    		$nblinetoproduce = 0;
+			$nblinetoproduce = 0;
     		foreach ($object->lines as $line) {
     			if ($line->role == 'toproduce') {
     				$nblinetoproduce++;
@@ -918,7 +938,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     				$nblinetoproducecursor++;
 
     				$tmpproduct = new Product($db);
-    				$tmpproduct->fetch($line->fk_product);
+					$tmpproduct->fetch($line->fk_product);
+
+					if (empty($bomcost)) {
+						$bomcost = $tmpproduct->pmp;
+					}
 
     				$arrayoflines = $object->fetchLinesLinked('produced', $line->id);
     				$alreadyproduced = 0;
@@ -940,7 +964,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							print '<td></td>';
 						} else {
 							print '<td class="right nowraponall">';
-							print price($tmpproduct->pmp);
+							print price($bomcost);
 							print '</td>';
 						}
 					}
@@ -1005,8 +1029,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     					if ($action == 'consumeorproduce' && !GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i)) $preselected = 0;
 						print '<td class="right"><input type="text" class="width50 right" id="qtytoproduce-'.$line->id.'-'.$i.'" name="qtytoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
 						if ($permissiontoupdatecost) {
-							$preselected = (GETPOSTISSET('pricetoproduce-'.$line->id.'-'.$i) ? GETPOST('pricetoproduce-'.$line->id.'-'.$i) : price($tmpproduct->pmp));
+							$preselected = (GETPOSTISSET('pricetoproduce-'.$line->id.'-'.$i) ? GETPOST('pricetoproduce-'.$line->id.'-'.$i) : price($bomcost));
 							print '<td class="right"><input type="text" class="width50 right" name="pricetoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
+						} else {
+							print '<input type="hidden" class="width50 right" name="pricetoproduce-'.$line->id.'-'.$i.'" value="'.$bomcost.'"></td>';
 						}
     					print '<td></td>';
     					print '<td>';
