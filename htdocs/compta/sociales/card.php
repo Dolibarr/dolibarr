@@ -464,7 +464,7 @@ if ($id > 0)
 
 		// Employee
 		if($action != 'editfk_user') {
-			$morehtmlref .= '<br />' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
+			$morehtmlref .= '<br>' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
 
 			if(!empty($object->fk_user)) {
 				$userstatic = new User($db);
