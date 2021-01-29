@@ -1352,7 +1352,7 @@ class Mo extends CommonObject
 	 */
 	public static function replaceThirdparty($db, $origin_id, $dest_id)
 	{
-		$tables = array('mrp_production');
+		$tables = array('mrp_mo');
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
