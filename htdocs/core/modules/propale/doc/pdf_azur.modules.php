@@ -243,7 +243,7 @@ class pdf_azur extends ModelePDFPropales
 					$pdir[0] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product').$objphoto->id."/photos/";
 					$pdir[1] = get_exdir(0, 0, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/';
 				} else {
-					$pdir[0] = get_exdir(0, 0, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/'; // default
+					$pdir[0] = get_exdir(0, 0, 0, 0, $objphoto, 'product'); // default
 					$pdir[1] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product').$objphoto->id."/photos/"; // alternative
 				}
 
@@ -257,7 +257,7 @@ class pdf_azur extends ModelePDFPropales
 						} else {
 							$dir = $conf->product->dir_output.'/'.$midir; //Check repertory of the current product
 						}
-
+$dirphoto=$pdir[1];
 						foreach ($objphoto->liste_photos($dir, 1) as $key => $obj)
 						{
 							if (empty($conf->global->CAT_HIGH_QUALITY_IMAGES))		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
@@ -418,6 +418,7 @@ class pdf_azur extends ModelePDFPropales
 
 				// Affiche notes
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
+				$notetoshow .= '<br/>photo'.$obj['photo'].'-'.$realpath.'-'.$dir.'-'.$filename.'-'.$dirphoto;
 				if (!empty($conf->global->MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE))
 				{
 					// Get first sale rep
