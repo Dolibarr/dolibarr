@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2019 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2021 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Cedric Gross         <c.gross@kreiz-it.fr>
  * Copyright (C) 2016      Florian Henry        <florian.henry@atm-consulting.fr>
  * Copyright (C) 2017-2020 Ferran Marcet        <fmarcet@2byte.es>
@@ -228,6 +228,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 	foreach ($_POST as $key => $value)
 	{
 		// without batch module enabled
+		$reg = array();
 		if (preg_match('/^product_([0-9]+)_([0-9]+)$/i', $key, $reg))
 		{
 			$pos++;
@@ -269,16 +270,20 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 
 					if (!$error && !empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
 						if (empty($conf->multicurrency->enabled) && empty($conf->dynamicprices->enabled)) {
-							$dto = GETPOST("dto_".$reg[1].'_'.$reg[2], 'int');
+							$dto = price2num(GETPOST("dto_".$reg[1].'_'.$reg[2], 'int'), '');
+							if (empty($dto)) {
+								$dto = 0;
+							}
+
 							//update supplier price
 							if (GETPOSTISSET($saveprice)) {
 								// TODO Use class
 								$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price";
-								$sql .= " SET unitprice='".GETPOST($pu)."'";
-								$sql .= ", price=".GETPOST($pu)."*quantity";
-								$sql .= ", remise_percent='".(!empty($dto) ? $dto : 0)."'";
-								$sql .= " WHERE fk_soc=".$object->socid;
-								$sql .= " AND fk_product=".GETPOST($prod, 'int');
+								$sql .= " SET unitprice='".price2num(GETPOST($pu), 'MU')."'";
+								$sql .= ", price=".price2num(GETPOST($pu), 'MU')."*quantity";
+								$sql .= ", remise_percent = ".((float) $dto);
+								$sql .= " WHERE fk_soc=".((int) $object->socid);
+								$sql .= " AND fk_product=".((int) GETPOST($prod, 'int'));
 
 								$resql = $db->query($sql);
 							}
