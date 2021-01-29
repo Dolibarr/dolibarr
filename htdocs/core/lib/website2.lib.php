@@ -86,7 +86,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 	if ($objectpage->lang && in_array($objectpage->lang, explode(',', $object->otherlang))) {
 		$dirname = dirname($filealias);
 		$filename = basename($filealias);
-		$filealias = $dirname.'/'.$objectpage->lang.'/'.$filename;
+		$filealiassub = $dirname.'/'.$objectpage->lang.'/'.$filename;
 
 		$aliascontent = '<?php'."\n";
 		$aliascontent .= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a wrapper to real page\n";
@@ -94,12 +94,12 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 		$aliascontent .= 'if (empty($dolibarr_main_data_root)) require \'../page'.$objectpage->id.'.tpl.php\'; ';
 		$aliascontent .= 'else require $dolibarr_main_data_root.\'/website/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
 		$aliascontent .= '?>'."\n";
-		$result = file_put_contents($filealias, $aliascontent);
+		$result = file_put_contents($filealiassub, $aliascontent);
 		if ($result === false) {
-			dol_syslog("Failed to write file ".$filealias, LOG_WARNING);
+			dol_syslog("Failed to write file ".$filealiassub, LOG_WARNING);
 		}
 		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($filealias, octdec($conf->global->MAIN_UMASK));
+			@chmod($filealiassub, octdec($conf->global->MAIN_UMASK));
 		}
 	}
 	// Save also alias into all language subdirectories if it is a main language
@@ -108,7 +108,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 			$dirname = dirname($filealias);
 			$filename = basename($filealias);
 			foreach (explode(',', $object->otherlang) as $sublang) {
-				$filealias = $dirname.'/'.$sublang.'/'.$filename;
+				$filealiassub = $dirname.'/'.$sublang.'/'.$filename;
 
 				$aliascontent = '<?php'."\n";
 				$aliascontent .= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a wrapper to real page\n";
@@ -116,12 +116,12 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 				$aliascontent .= 'if (empty($dolibarr_main_data_root)) require \'../page'.$objectpage->id.'.tpl.php\'; ';
 				$aliascontent .= 'else require $dolibarr_main_data_root.\'/website/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
 				$aliascontent .= '?>'."\n";
-				$result = file_put_contents($filealias, $aliascontent);
+				$result = file_put_contents($filealiassub, $aliascontent);
 				if ($result === false) {
-					dol_syslog("Failed to write file ".$filealias, LOG_WARNING);
+					dol_syslog("Failed to write file ".$filealiassub, LOG_WARNING);
 				}
 				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($filealias, octdec($conf->global->MAIN_UMASK));
+					@chmod($filealiassub, octdec($conf->global->MAIN_UMASK));
 				}
 			}
 		}

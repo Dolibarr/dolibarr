@@ -210,3 +210,36 @@ print '
 					}
 				});
 			});'."\n";
+
+print "\n/* JS CODE TO ENABLE ClipBoard copy paste*/\n";
+print 'jQuery(\'.clipboardCPShowOnHover\').hover(
+			function() {
+			console.log("We hover a value with a copy paste feature");
+				$(this).children(".clipboardCPButton, .clipboardCPText").show();
+			},
+			function() {
+			console.log("We hover out the value with a copy paste feature");
+				$(this).children(".clipboardCPButton, .clipboardCPText").hide();
+			}
+		);';
+print 'jQuery(\'.clipboardCPButton\').click(function() {
+		/* console.log(this.parentNode); */
+		console.log("We click on a clipboardCPButton tag");
+		if (window.getSelection) {
+			selection = window.getSelection();
+
+			range = document.createRange();
+			range.selectNodeContents(this.parentNode.firstChild);
+
+			selection.removeAllRanges();
+			selection.addRange( range );
+		}
+		document.execCommand( \'copy\' );
+		window.getSelection().removeAllRanges();
+
+		/* Show message */
+		var lastchild = this.parentNode.lastChild;
+		var tmp = lastchild.innerHTML
+		lastchild.innerHTML = \''.dol_escape_js($langs->trans('CopiedToClipboard')).'\';
+		setTimeout(() => { lastchild.innerHTML = tmp; }, 1000);
+	})'."\n";

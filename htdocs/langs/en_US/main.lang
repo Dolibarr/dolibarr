@@ -1120,3 +1120,4 @@ AffectTag=Affect Tag
 ConfirmAffectTag=Bulk Tag Affect
 ConfirmAffectTagQuestion=Are you sure you want to affect tags to the %s selected record(s)?
 CategTypeNotFound=No tag type found for type of records
+CopiedToClipboard=Copied to clipboard

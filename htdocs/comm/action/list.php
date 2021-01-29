@@ -366,7 +366,7 @@ if ($socid > 0) $sql .= " AND s.rowid = ".$socid;
 if ($filtert > 0 || $usergroup > 0) $sql .= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
 if ($type) $sql .= " AND c.id = ".(int) $type;
 if ($search_status == '0') { $sql .= " AND a.percent = 0"; }
-if ($search_status == '-1') { $sql .= " AND a.percent = -1"; }	// Not applicable
+if ($search_status == 'na') { $sql .= " AND a.percent = -1"; }	// Not applicable
 if ($search_status == '50') { $sql .= " AND (a.percent > 0 AND a.percent < 100)"; }	// Running already started
 if ($search_status == '100') { $sql .= " AND a.percent = 100"; }
 if ($search_status == 'done') { $sql .= " AND (a.percent = 100)"; }

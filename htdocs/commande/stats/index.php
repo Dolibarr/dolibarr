@@ -283,7 +283,7 @@ if ($mode == 'customer')
 if ($mode == 'supplier')
 {
 	$cat_type = Categorie::TYPE_SUPPLIER;
-	$cat_label = $langs->trans("Supplier").' '.lcfirst($langs->trans("Customer"));
+    $cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Supplier"));
 }
 print '<tr><td>'.$cat_label.'</td><td>';
 print $formother->select_categories($cat_type, $categ_id, 'categ_id', true);

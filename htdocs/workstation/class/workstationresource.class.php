@@ -42,15 +42,15 @@ class WorkstationResource extends CommonObject
 		'fk_resource' => array ('type' => 'integer')
 	);
 
-	 /**
-	  * @var int ID of workstation
-	  */
-	 public $fk_workstation;
+	/**
+	 * @var int ID of workstation
+	 */
+	public $fk_workstation;
 
-	 /**
-	  * @var int ID of dolresource
-	  */
-	 public $fk_resource;
+	/**
+	 * @var int ID of dolresource
+	 */
+	public $fk_resource;
 
 
 	/**
