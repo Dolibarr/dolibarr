@@ -418,8 +418,8 @@ while ($i < min($num, $limit))
 	if (!empty($arrayfields['cs.fk_user']['checked'])) {
 		// Employee
 		print "<td>";
-		if(!empty($obj->fk_user)) {
-			if(!empty($TLoadedUsers[$obj->fk_user])) $ustatic = $TLoadedUsers[$obj->fk_user];
+		if (!empty($obj->fk_user)) {
+			if (!empty($TLoadedUsers[$obj->fk_user])) $ustatic = $TLoadedUsers[$obj->fk_user];
 			else {
 				$ustatic = new User($db);
 				$ustatic->fetch($obj->fk_user);
