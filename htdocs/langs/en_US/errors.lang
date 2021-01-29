@@ -59,6 +59,7 @@ ErrorDirNotFound=Directory <b>%s</b> not found (Bad path, wrong permissions or a
 ErrorFunctionNotAvailableInPHP=Function <b>%s</b> is required for this feature but is not available in this version/setup of PHP.
 ErrorDirAlreadyExists=A directory with this name already exists.
 ErrorFileAlreadyExists=A file with this name already exists.
+ErrorDestinationAlreadyExists=Another file with the name <b>%s</b> already exists.
 ErrorPartialFile=File not received completely by server.
 ErrorNoTmpDir=Temporary directy %s does not exists.
 ErrorUploadBlockedByAddon=Upload blocked by a PHP/Apache plugin.
