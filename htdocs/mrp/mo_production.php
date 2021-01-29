@@ -171,7 +171,7 @@ if (empty($reshook))
     	$moline->fk_mo = $object->id;
     	$moline->qty = GETPOST('qtytoadd', 'int'); ;
     	$moline->fk_product = GETPOST('productidtoadd', 'int');
-    	$moline->role = 'toconsume';
+    	$moline->role = 'toconsumef'; // free consume line
     	$moline->position = 0;
 
     	$resultline = $moline->create($user, false); // Never use triggers here
@@ -190,14 +190,14 @@ if (empty($reshook))
     	$codemovement  = GETPOST('inventorycode', 'alphanohtml');
 
     	$db->begin();
-
+		$pos = 0;
     	// Process line to consume
     	foreach ($object->lines as $line) {
-    		if ($line->role == 'toconsume') {
+    		if (preg_match('/toconsume/', $line->role)) {
     			$tmpproduct = new Product($db);
     			$tmpproduct->fetch($line->fk_product);
 
-    			$i = 1;
+				$i = 1;
     			while (GETPOSTISSET('qty-'.$line->id.'-'.$i)) {
 					$qtytoprocess = price2num(GETPOST('qty-'.$line->id.'-'.$i));
 
@@ -229,7 +229,6 @@ if (empty($reshook))
 	    				}
 
 	    				if (!$error) {
-	    					$pos = 0;
 	    					// Record consumption
 	    					$moline = new MoLine($db);
 	    					$moline->fk_mo = $object->id;
@@ -258,7 +257,8 @@ if (empty($reshook))
     		}
     	}
 
-    	// Process line to produce
+		// Process line to produce
+		$pos = 0;
     	foreach ($object->lines as $line) {
     		if ($line->role == 'toproduce') {
     			$tmpproduct = new Product($db);
@@ -297,7 +297,6 @@ if (empty($reshook))
 	    				}
 
 	    				if (!$error) {
-	    					$pos = 0;
 							// Record production
 	    					$moline = new MoLine($db);
 	    					$moline->fk_mo = $object->id;
@@ -332,7 +331,7 @@ if (empty($reshook))
 
     		if (GETPOST('autoclose', 'int')) {
 	    		foreach ($object->lines as $line) {
-	    			if ($line->role == 'toconsume') {
+	    			if (preg_match('/toconsume/', $line->role)) {
 	    				$arrayoflines = $object->fetchLinesLinked('consumed', $line->id);
 	    				$alreadyconsumed = 0;
 	    				foreach ($arrayoflines as $line2) {
@@ -696,13 +695,27 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	//$result = $object->getLinesArray();
 		$object->fetchLines();
 
+		$bomcost = 0;
+		if ($object->fk_bom > 0) {
+			$bom = new Bom($db);
+			$res = $bom->fetch($object->fk_bom);
+			if ($res > 0) {
+				$bomcost = $bom->unit_cost;
+			}
+		}
+
 		// consumtion
 
     	print '<div class="fichecenter">';
     	print '<div class="fichehalfleft">';
     	print '<div class="clearboth"></div>';
 
-    	$newlinetext = '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addconsumeline">'.$langs->trans("AddNewConsumeLines").'</a>';
+		if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) {
+			$newlinetext = '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addconsumeline">'.$langs->trans("AddNewConsumeLines").'</a>';
+		} else {
+			$newlinetext = '';
+		}
+
     	print load_fiche_titre($langs->trans('Consumption'), '', '', 0, '', '', $newlinetext);
 
     	print '<div class="div-table-responsive-no-min">';
@@ -729,7 +742,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		print '<td>';
     		print $form->select_produits('', 'productidtoadd', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'maxwidth300');
     		print '</td>';
-    		print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
+			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
+			if ($permissiontoupdatecost) print '<td></td>';
     		print '<td class="right"></td>';
     		print '<td>';
     		print '<input type="submit" class="button buttongen" name="addconsumelinebutton" value="'.$langs->trans("Add").'">';
@@ -744,18 +758,30 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	{
     		$nblinetoconsume = 0;
     		foreach ($object->lines as $line) {
-    			if ($line->role == 'toconsume') {
+    			if (preg_match('/toconsume/', $line->role)) {
     				$nblinetoconsume++;
     			}
     		}
 
     		$nblinetoconsumecursor = 0;
     		foreach ($object->lines as $line) {
-    	    	if ($line->role == 'toconsume') {
+    	    	if (preg_match('/toconsume/', $line->role)) {
     	    		$nblinetoconsumecursor++;
 
     	    		$tmpproduct = new Product($db);
-    	    		$tmpproduct->fetch($line->fk_product);
+					$tmpproduct->fetch($line->fk_product);
+					if (!empty($bomcost) && $line->role == 'toconsumef' && $object->qty > 0) {
+						// add free consume line cost to bomcost
+						require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+						$productFournisseur = new ProductFournisseur($db);
+						$linecost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
+						if (empty($linecost)) {
+							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0){
+								$linecost = $productFournisseur->fourn_unitprice;
+							}
+						}
+						$bomcost += price2num(($line->qty * $linecost) / $object->qty, 'MT');
+					}
 
     	    		$arrayoflines = $object->fetchLinesLinked('consumed', $line->id);
     	    		$alreadyconsumed = 0;
@@ -776,13 +802,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    		}
 					print '</td>';
 					if ($permissiontoupdatecost) {
-						if ($action == 'addconsumeline') {
-							print '<td></td>';
-						} else {
-							print '<td class="right nowraponall">';
-							print price($tmpproduct->pmp);
-							print '</td>';
-						}
+						print '<td class="right nowraponall">';
+						print price($tmpproduct->pmp);
+						print '</td>';
 					}
     	    		print '<td class="right">';
     	    		if ($alreadyconsumed) {
@@ -883,14 +905,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		// production
 
-		$bomcost = 0;
-		if ($object->fk_bom > 0) {
-			$bom = new Bom($db);
-			$res = $bom->fetch($object->fk_bom);
-			if ($res > 0) {
-				$bomcost = $bom->unit_cost;
-			}
-		}
     	print '<div class="fichehalfright">';
     	print '<div class="clearboth"></div>';
 
@@ -960,13 +974,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     				print '<td>'.$tmpproduct->getNomUrl(1).'</td>';
 					print '<td class="right">'.$line->qty.'</td>';
 					if ($permissiontoupdatecost) {
-						if ($action == 'addconsumeline') {
-							print '<td></td>';
-						} else {
-							print '<td class="right nowraponall">';
-							print price($bomcost);
-							print '</td>';
-						}
+						print '<td class="right nowraponall">';
+						print price($bomcost);
+						print '</td>';
 					}
     				print '<td class="right nowraponall">';
     				if ($alreadyproduced) {
