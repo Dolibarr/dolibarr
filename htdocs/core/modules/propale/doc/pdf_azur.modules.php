@@ -257,7 +257,7 @@ class pdf_azur extends ModelePDFPropales
 						} else {
 							$dir = $conf->product->dir_output.'/'.$midir; //Check repertory of the current product
 						}
-$dirphoto=$pdir[1];
+						$dirphoto=$pdir[1];
 						foreach ($objphoto->liste_photos($dir, 1) as $key => $obj)
 						{
 							if (empty($conf->global->CAT_HIGH_QUALITY_IMAGES))		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
