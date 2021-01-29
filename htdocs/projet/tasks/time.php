@@ -177,7 +177,7 @@ if ($action == 'addtimespent' && $user->rights->projet->lire)
 			} else {
 				$object->timespent_note = $_POST["timespent_note"];
 				if (GETPOST('progress', 'int') > 0) $object->progress = GETPOST('progress', 'int'); // If progress is -1 (not defined), we do not change value
-				$object->timespent_duration = $_POST["timespent_durationhour"] * 60 * 60; // We store duration in seconds
+				$object->timespent_duration =  ($_POST["timespent_durationhour"] ? $_POST["timespent_durationhour"] : 0)  * 60 * 60; // We store duration in seconds
 				$object->timespent_duration += ($_POST["timespent_durationmin"] ? $_POST["timespent_durationmin"] : 0) * 60; // We store duration in seconds
 				if (GETPOST("timehour") != '' && GETPOST("timehour") >= 0)	// If hour was entered
 				{
@@ -190,7 +190,48 @@ if ($action == 'addtimespent' && $user->rights->projet->lire)
 				$result = $object->addTimeSpent($user);
 				if ($result >= 0)
 				{
-					setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+					$userid = GETPOST('userid', 'int');
+
+
+                    // user  assign to task if not
+					if ($conf->global->AUTO_ASSIGN_USER_CONTACT_ON_TASK == 1){
+                        // task add contact if needed
+                        $contactsofTask = $object->getListContactId('internal');
+                        if (!empty($userid) && !in_array($userid, $contactsofTask)){
+                            $result = $object->add_contact($userid, $conf->global->AUTO_ASSIGN_TYPE_CONTACT_TO_TASK, 'internal');
+                            if ($result <= 0  ){
+                                setEventMessages($langs->trans($object->error) . "task", null, 'errors');
+                                $error++;
+                            }
+                        }
+                    }
+
+                    // if conf 2
+                    if ($conf->global->AUTO_ASSIGN_USER_CONTACT_ON_TASK == 2){
+                        // project add contact if needed
+                        $projectstatic->fetch($object->fk_project);
+                        $contactsofproject = $projectstatic->getListContactId('internal');
+                        if (!empty($userid) && !in_array($userid, $contactsofproject)){
+                            $result = $projectstatic->add_contact($userid, $conf->global->AUTO_ASSIGN_TYPE_CONTACT_TO_PROJECT, 'internal');
+                            if ($result > 0 ){
+                            }else {
+                                setEventMessages($langs->trans($projectstatic->error). "project", null, 'errors');
+                                $error++;
+                            }
+                        }
+
+                        // task add contact if needed
+                        $contactsofTask = $object->getListContactId('internal');
+                        if (!empty($userid) && !in_array($userid, $contactsofTask)){
+                            $result = $object->add_contact($userid, $conf->global->AUTO_ASSIGN_TYPE_CONTACT_TO_TASK, 'internal');
+                            if ($result <= 0 ){
+                                setEventMessages($langs->trans($object->error) . "task", null, 'errors');
+                                $error++;
+                            }
+                        }
+                    }
+
+                    setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 				} else {
 					setEventMessages($langs->trans($object->error), null, 'errors');
 					$error++;
@@ -309,7 +350,7 @@ if (!empty($project_ref) && !empty($withproject))
 	}
 }
 
-// To show all time lines for project
+// To show all time lines for $conf->global->AUTO_ASSIGN_USER_CONTACT_ON_TASK == 2 (assign on project)
 $projectidforalltimes = 0;
 if (GETPOST('projectid', 'int') > 0)
 {
@@ -1113,19 +1154,34 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			// Contributor
 			print '<td class="maxwidthonsmartphone nowraponall">';
 			$contactsofproject = $projectstatic->getListContactId('internal');
-			if (count($contactsofproject) > 0)
-			{
-				print img_object('', 'user', 'class="hideonsmartphone"');
-				if (in_array($user->id, $contactsofproject)) $userid = $user->id;
-				else $userid = $contactsofproject[0];
 
-				if ($projectstatic->public) $contactsofproject = array();
-				print $form->select_dolusers((GETPOST('userid', 'int') ? GETPOST('userid', 'int') : $userid), 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToProject"), 'maxwidth250');
-			} else {
-				if ($nboftasks) {
-					print img_error($langs->trans('FirstAddRessourceToAllocateTime')).' '.$langs->trans('FirstAddRessourceToAllocateTime');
-				}
-			}
+
+			// standard bahavior
+			if ($conf->global->AUTO_ASSIGN_USER_CONTACT_ON_TASK < 2) {
+                if (count($contactsofproject) > 0) {
+                    print img_object('', 'user', 'class="hideonsmartphone"');
+                    if (in_array($user->id, $contactsofproject)) $userid = $user->id;
+                    else $userid = $contactsofproject[0];
+
+                    if ($projectstatic->public) $contactsofproject = array();
+                    print $form->select_dolusers((GETPOST('userid', 'int') ? GETPOST('userid', 'int') : $userid), 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToProject"), 'maxwidth200');
+                } else {
+					if ($nboftasks) {
+                        print img_error($langs->trans('FirstAddRessourceToAllocateTime')).' '.$langs->trans('FirstAddRessourceToAllocateTime');
+					}
+                }
+
+				// we assign user to task even if he 's not assign to project
+            } else {
+                print img_object('', 'user', 'class="hideonsmartphone"');
+                if (in_array($user->id, $contactsofproject)) {
+                    $userid = $user->id;
+                } else {
+                    $userid = $contactsofproject[0];
+                }
+                print $form->select_dolusers((GETPOST('userid', 'int') ? GETPOST('userid', 'int') : $userid), 'userid', 0, '', 0, '', '', 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToProject"), 'maxwidth200');
+            }
+
 			print '</td>';
 
 			// Note
@@ -1136,8 +1192,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			// Duration - Time spent
 			print '<td>';
 			$durationtouse = ($_POST['timespent_duration'] ? $_POST['timespent_duration'] : '');
-			if (GETPOSTISSET('timespent_durationhour') || GETPOSTISSET('timespent_durationmin'))
-			{
+			if (GETPOSTISSET('timespent_durationhour') || GETPOSTISSET('timespent_durationmin')) {
 				$durationtouse = (GETPOST('timespent_durationhour') * 3600 + GETPOST('timespent_durationmin') * 60);
 			}
 			print $form->select_duration('timespent_duration', $durationtouse, 0, 'text');
@@ -1149,8 +1204,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			print '</td>';
 
 			// Invoiced
-			if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT))
-			{
+			if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
 				print '<td>';
 				print '</td>';
 			}
@@ -1173,8 +1227,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 		if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
 		else $moreforfilter = $hookmanager->resPrint;
 
-		if (!empty($moreforfilter))
-		{
+		if (!empty($moreforfilter)) {
 			print '<div class="liste_titre liste_titre_bydiv centpercent">';
 			print $moreforfilter;
 			print '</div>';
