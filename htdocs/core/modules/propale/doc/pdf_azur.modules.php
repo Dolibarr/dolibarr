@@ -48,6 +48,11 @@ class pdf_azur extends ModelePDFPropales
 	public $db;
 
 	/**
+	 * @var int The environment ID when using a multicompany module
+	 */
+	public $entity;
+
+	/**
 	 * @var string model name
 	 */
 	public $name;
