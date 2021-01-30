@@ -77,7 +77,7 @@ class modReception extends DolibarrModules
 		$this->const[$r][0] = "RECEPTION_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "squille";
-		$this->const[$r][3] = 'Nom du gestionnaire de generation des bons receptions en PDF';
+		$this->const[$r][3] = 'Nom du gestionnaire de generation des bons de receptions en PDF';
 		$this->const[$r][4] = 0;
 		$r++;
 
