@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 dol_include_once('/mrp/class/mo.class.php');
+dol_include_once('/bom/class/bom.class.php');
 dol_include_once('/mrp/lib/mrp_mo.lib.php');
 
 // Load translation files required by the page
@@ -88,6 +89,7 @@ $permissiontodelete = $user->rights->mrp->delete || ($permissiontoadd && isset($
 $upload_dir = $conf->mrp->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 $permissiontoproduce = $permissiontoadd;
+$permissiontoupdatecost = $user->rights->bom->write; // User who can define cost must have knowledge of pricing
 
 
 /*
@@ -149,7 +151,7 @@ if (empty($reshook))
 		$moline->fk_mo = $object->id;
 		$moline->qty = GETPOST('qtytoadd', 'int'); ;
 		$moline->fk_product = GETPOST('productidtoadd', 'int');
-		$moline->role = 'toconsume';
+		$moline->role = 'toconsumef'; // free consume line
 		$moline->position = 0;
 
 		$resultline = $moline->create($user, false); // Never use triggers here
@@ -168,10 +170,10 @@ if (empty($reshook))
 		$codemovement  = GETPOST('inventorycode', 'alphanohtml');
 
 		$db->begin();
-
+		$pos = 0;
 		// Process line to consume
 		foreach ($object->lines as $line) {
-			if ($line->role == 'toconsume') {
+			if (preg_match('/toconsume/', $line->role)) {
 				$tmpproduct = new Product($db);
 				$tmpproduct->fetch($line->fk_product);
 
@@ -207,7 +209,6 @@ if (empty($reshook))
 						}
 
 						if (!$error) {
-							$pos = 0;
 							// Record consumption
 							$moline = new MoLine($db);
 							$moline->fk_mo = $object->id;
@@ -237,6 +238,7 @@ if (empty($reshook))
 		}
 
 		// Process line to produce
+		$pos = 0;
 		foreach ($object->lines as $line) {
 			if ($line->role == 'toproduce') {
 				$tmpproduct = new Product($db);
@@ -245,6 +247,7 @@ if (empty($reshook))
 				$i = 1;
 				while (GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i)) {
 					$qtytoprocess = price2num(GETPOST('qtytoproduce-'.$line->id.'-'.$i));
+					$pricetoprocess = GETPOST('pricetoproduce-'.$line->id.'-'.$i) ? price2num(GETPOST('pricetoproduce-'.$line->id.'-'.$i)) : 0;
 
 					if ($qtytoprocess != 0) {
 						// Check warehouse is set if we should have to
@@ -266,7 +269,7 @@ if (empty($reshook))
 							// Record stock movement
 							$id_product_batch = 0;
 							$stockmove->origin = $object;
-							$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i), $qtytoprocess, 0, $labelmovement, '', '', GETPOST('batchtoproduce-'.$line->id.'-'.$i), dol_now(), $id_product_batch, $codemovement);
+							$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i), $qtytoprocess, $pricetoprocess, $labelmovement, '', '', GETPOST('batchtoproduce-'.$line->id.'-'.$i), dol_now(), $id_product_batch, $codemovement);
 							if ($idstockmove < 0) {
 								$error++;
 								setEventMessages($stockmove->error, $stockmove->errors, 'errors');
@@ -274,7 +277,6 @@ if (empty($reshook))
 						}
 
 						if (!$error) {
-							$pos = 0;
 							// Record production
 							$moline = new MoLine($db);
 							$moline->fk_mo = $object->id;
@@ -309,7 +311,7 @@ if (empty($reshook))
 
 			if (GETPOST('autoclose', 'int')) {
 				foreach ($object->lines as $line) {
-					if ($line->role == 'toconsume') {
+					if (preg_match('/toconsume/', $line->role)) {
 						$arrayoflines = $object->fetchLinesLinked('consumed', $line->id);
 						$alreadyconsumed = 0;
 						foreach ($arrayoflines as $line2) {
@@ -677,12 +679,23 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Show object lines
 		$object->fetchLines();
 
+		$bomcost = 0;
+		if ($object->fk_bom > 0) {
+			$bom = new Bom($db);
+			$res = $bom->fetch($object->fk_bom);
+			if ($res > 0) {
+				$bomcost = $bom->unit_cost;
+			}
+		}
+
+		// consumtion
+
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';
 		print '<div class="clearboth"></div>';
 
 		$newlinetext = '';
-		if ($action != 'consumeorproduce' && $action != 'consumeandproduceall') {
+		if (($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) && $action != 'consumeorproduce' && $action != 'consumeandproduceall') {
 			$newlinetext = '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addconsumeline">'.$langs->trans("AddNewConsumeLines").'</a>';
 		}
 		print load_fiche_titre($langs->trans('Consumption'), '', '', 0, '', '', $newlinetext);
@@ -693,6 +706,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Product").'</td>';
 		print '<td class="right">'.$langs->trans("Qty").'</td>';
+		if ($permissiontoupdatecost) print '<td class="right">'.$langs->trans("PMPValue").'</td>';
 		print '<td class="right">'.$langs->trans("QtyAlreadyConsumed").'</td>';
 		print '<td>';
 		if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) print $langs->trans("Warehouse");
@@ -711,6 +725,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print $form->select_produits('', 'productidtoadd', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'maxwidth300');
 			print '</td>';
 			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
+			if ($permissiontoupdatecost) print '<td></td>';
 			print '<td class="right"></td>';
 			print '<td>';
 			print '<input type="submit" class="button buttongen" name="addconsumelinebutton" value="'.$langs->trans("Add").'">';
@@ -734,11 +749,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			$nblinetoconsumecursor = 0;
 			foreach ($object->lines as $line) {
-				if ($line->role == 'toconsume') {
+				if (preg_match('/toconsume/', $line->role)) {
 					$nblinetoconsumecursor++;
 
 					$tmpproduct = new Product($db);
 					$tmpproduct->fetch($line->fk_product);
+
+					if (!empty($bomcost) && $line->role == 'toconsumef' && $object->qty > 0) {
+						// add free consume line cost to bomcost
+						require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+						$productFournisseur = new ProductFournisseur($db);
+						$linecost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
+						if (empty($linecost)) {
+							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0){
+								$linecost = $productFournisseur->fourn_unitprice;
+							}
+						}
+						$bomcost += price2num(($line->qty * $linecost) / $object->qty, 'MT');
+					}
 
 					$arrayoflines = $object->fetchLinesLinked('consumed', $line->id);
 					$alreadyconsumed = 0;
@@ -760,6 +788,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print $line->qty;
 					}
 					print '</td>';
+					if ($permissiontoupdatecost) {
+						print '<td class="right nowraponall">';
+						print price($tmpproduct->pmp);
+						print '</td>';
+					}
 					print '<td class="right">';
 					if ($alreadyconsumed) {
 						print '<script>';
@@ -799,6 +832,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '</td>';
 						print '<td></td>';
 						print '<td class="right">'.$line2['qty'].'</td>';
+						if ($permissiontoupdatecost) print '<td></td>';
 						print '<td class="tdoverflowmax150">';
 						if ($line2['fk_warehouse'] > 0) {
 							$result = $tmpwarehouse->fetch($line2['fk_warehouse']);
@@ -823,6 +857,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						$preselected = (GETPOSTISSET('qty-'.$line->id.'-'.$i) ? GETPOST('qty-'.$line->id.'-'.$i) : max(0, $line->qty - $alreadyconsumed));
 						if ($action == 'consumeorproduce' && !GETPOSTISSET('qty-'.$line->id.'-'.$i)) $preselected = 0;
 						print '<td class="right"><input type="text" class="width50 right" name="qty-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
+						if ($permissiontoupdatecost) print '<td></td>';
 						print '<td></td>';
 						print '<td>';
 						if ($tmpproduct->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
@@ -868,6 +903,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Product").'</td>';
 		print '<td class="right">'.$langs->trans("Qty").'</td>';
+		if ($permissiontoupdatecost) {
+			if (empty($bomcost)) {
+				print '<td class="right">'.$langs->trans("PMPValue").'</td>';
+			} else {
+				print '<td class="right">'.$langs->trans("UnitCost").'</td>';
+			}
+		}
 		print '<td class="right">'.$langs->trans("QtyAlreadyProduced").'</td>';
 		print '<td>';
 		if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) print $langs->trans("Warehouse");
@@ -899,6 +941,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					$tmpproduct = new Product($db);
 					$tmpproduct->fetch($line->fk_product);
 
+					if (empty($bomcost)) {
+						$bomcost = $tmpproduct->pmp;
+					}
+
 					$arrayoflines = $object->fetchLinesLinked('produced', $line->id);
 					$alreadyproduced = 0;
 					foreach ($arrayoflines as $line2) {
@@ -916,6 +962,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '<br><span class="opacitymedium small">'.$tmpproduct->label.'</span>';
 					print '</td>';
 					print '<td class="right">'.$line->qty.'</td>';
+					if ($permissiontoupdatecost) {
+						print '<td class="right nowraponall">';
+						print price($bomcost);
+						print '</td>';
+					}
 					print '<td class="right nowraponall">';
 					if ($alreadyproduced) {
 						print '<script>';
@@ -952,6 +1003,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '</td>';
 						print '<td></td>';
 						print '<td class="right">'.$line2['qty'].'</td>';
+						if ($permissiontoupdatecost) print '<td></td>';
 						print '<td class="tdoverflowmax150">';
 						if ($line2['fk_warehouse'] > 0) {
 							$result = $tmpwarehouse->fetch($line2['fk_warehouse']);
@@ -977,6 +1029,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						$preselected = (GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i) ? GETPOST('qtytoproduce-'.$line->id.'-'.$i) : max(0, $line->qty - $alreadyproduced));
 						if ($action == 'consumeorproduce' && !GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i)) $preselected = 0;
 						print '<td class="right"><input type="text" class="width50 right" id="qtytoproduce-'.$line->id.'-'.$i.'" name="qtytoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
+						if ($permissiontoupdatecost) {
+							$preselected = (GETPOSTISSET('pricetoproduce-'.$line->id.'-'.$i) ? GETPOST('pricetoproduce-'.$line->id.'-'.$i) : price($bomcost));
+							print '<td class="right"><input type="text" class="width50 right" name="pricetoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
+						} else {
+							print '<input type="hidden" class="width50 right" name="pricetoproduce-'.$line->id.'-'.$i.'" value="'.$bomcost.'"></td>';
+						}
 						print '<td></td>';
 						print '<td>';
 						if ($tmpproduct->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
