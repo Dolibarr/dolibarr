@@ -43,10 +43,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  */
 class pdf_crabe extends ModelePDFFactures
 {
-	 /**
-	  * @var DoliDb Database handler
-	  */
+	/**
+	 * @var DoliDb Database handler
+	 */
 	public $db;
+
+	/**
+	 * @var int The environment ID when using a multicompany module
+	 */
+	public $entity;
 
 	/**
 	 * @var string model name
