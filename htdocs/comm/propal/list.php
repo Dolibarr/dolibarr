@@ -282,7 +282,7 @@ $help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos'
 //llxHeader('',$langs->trans('Proposal'),$help_url);
 
 $sql = 'SELECT';
-if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
+if ($sall || $search_product_category > 0 || $search_user > 0) $sql = 'SELECT DISTINCT';
 $sql .= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
 $sql .= " typent.code as typent_code,";
 $sql .= " ava.rowid as availability,";

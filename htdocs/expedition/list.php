@@ -213,8 +213,9 @@ $helpurl = 'EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Ex
 llxHeader('', $langs->trans('ListOfSendings'), $helpurl);
 
 $sql = 'SELECT';
-if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
-$sql .= " e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.weight, e.weight_units, e.date_delivery as date_livraison, l.date_delivery as date_reception, e.fk_statut, e.billed,";
+if ($sall || $search_product_category > 0 || $search_user > 0) $sql = 'SELECT DISTINCT';
+$sql .= " e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.weight, e.weight_units, e.date_delivery as date_livraison, e.fk_statut, e.billed,";
+$sql .= " l.date_delivery as date_reception,";
 $sql .= " s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ";
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
@@ -244,11 +245,12 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = 
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as ee ON e.rowid = ee.fk_source AND ee.sourcetype = 'shipping' AND ee.targettype = 'delivery'";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.rowid = ee.fk_target";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON e.fk_user_author = u.rowid';
-
+if ($search_user > 0) {		// Get link to order to get the order id in eesource.fk_source
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as eesource ON eesource.fk_target = e.rowid AND eesource.targettype = 'shipping' AND eesource.sourcetype = 'commande'";
+}
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale > 0 || (!$user->rights->societe->client->voir && !$socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-if ($search_user > 0)
-{
+if ($search_user > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
@@ -275,6 +277,11 @@ if ($search_state) $sql .= natural_search("state.nom", $search_state);
 if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
 if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 if ($search_sale > 0)                        $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$search_sale;
+if ($search_user > 0)
+{
+	// The contact on a shipment is also the contact of the order.
+	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = eesource.fk_source AND ec.fk_socpeople = ".$db->escape($search_user);
+}
 if ($search_ref_exp) $sql .= natural_search('e.ref', $search_ref_exp);
 if ($search_ref_liv) $sql .= natural_search('l.ref', $search_ref_liv);
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
