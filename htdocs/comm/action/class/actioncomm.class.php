@@ -1222,14 +1222,21 @@ class ActionComm extends CommonObject
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
 		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
+		if (!$user->rights->agenda->allactions->read) {
+		    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_resources AS ar ON a.id = ar.fk_actioncomm";
+		}
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 		$sql .= " WHERE 1 = 1";
 		if (empty($load_state_board)) $sql .= " AND a.percent >= 0 AND a.percent < 100";
 		$sql .= " AND a.entity IN (".getEntity('agenda').")";
 		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".$user->id.")";
 		if ($user->socid) $sql .= " AND a.fk_soc = ".$user->socid;
-		if (!$user->rights->agenda->allactions->read) $sql .= " AND (a.fk_user_author = ".$user->id." OR a.fk_user_action = ".$user->id." OR a.fk_user_done = ".$user->id.")";
-
+		if (!$user->rights->agenda->allactions->read) {
+		    $sql .= " AND (a.fk_user_author = ".$user->id." OR a.fk_user_action = ".$user->id." OR a.fk_user_done = ".$user->id;
+		    $sql .= " OR ar.fk_element = ".$user->id;
+		    $sql .= ")";
+		}
+		
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
