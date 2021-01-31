@@ -1201,8 +1201,8 @@ class ActionComm extends CommonObject
     	}
     	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
     	if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
-    	if (!$user->rights->agenda->allactions->read) { // If bloack Added by PV
-    	    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_resources AS ar ON a.id = ar.fk_actioncomm";
+    	if (!$user->rights->agenda->allactions->read) {
+    	    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_resources AS ar ON a.id = ar.fk_actioncomm AND ar.element_type ='user' AND ar.fk_element = ".$user->id;
     	}
     	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
     	$sql .= " WHERE 1 = 1";
