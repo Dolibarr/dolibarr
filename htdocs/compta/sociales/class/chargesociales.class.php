@@ -108,6 +108,11 @@ class ChargeSociales extends CommonObject
 	 */
 	public $fk_project;
 
+	/**
+	 * @var int ID
+	 */
+	public $fk_user;
+
 
 	const STATUS_UNPAID = 0;
 	const STATUS_PAID = 1;
@@ -135,7 +140,7 @@ class ChargeSociales extends CommonObject
 		$sql = "SELECT cs.rowid, cs.date_ech";
 		$sql .= ", cs.libelle as label, cs.fk_type, cs.amount, cs.fk_projet as fk_project, cs.paye, cs.periode, cs.import_key";
         $sql .= ", cs.fk_account, cs.fk_mode_reglement, cs.fk_user";
-		$sql .= ", c.libelle";
+		$sql .= ", c.libelle as type_label";
 		$sql .= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_chargesociales as c ON cs.fk_type = c.id";
@@ -158,7 +163,7 @@ class ChargeSociales extends CommonObject
 				$this->lib					= $obj->label;
 				$this->label				= $obj->label;
 				$this->type					= $obj->fk_type;
-				$this->type_label			= $obj->libelle;
+				$this->type_label			= $obj->type_label;
 				$this->fk_account			= $obj->fk_account;
 				$this->mode_reglement_id = $obj->fk_mode_reglement;
 				$this->mode_reglement_code = $obj->mode_reglement_code;
