@@ -646,7 +646,7 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 				$.each(data, function(key, value) {
 					$("#del_" + value).hide();
 					$("#set_" + value).show();
-					$.get( $url, {
+					$.post( $url, {
 						action: "del",
 						name: value,
 						entity: entity,
