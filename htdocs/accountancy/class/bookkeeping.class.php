@@ -370,7 +370,7 @@ class BookKeeping extends CommonObject
 				$sql .= ", ".(!empty($this->subledger_account) ? ("'".$this->db->escape($this->subledger_account)."'") : "NULL");
 				$sql .= ", ".(!empty($this->subledger_label) ? ("'".$this->db->escape($this->subledger_label)."'") : "NULL");
 				$sql .= ", '".$this->db->escape($this->numero_compte)."'";
-				$sql .= ", ".(!empty($this->label_operation) ? ("'".$this->db->escape($this->label_operation)."'") : "NULL");
+				$sql .= ", ".(!empty($this->label_compte) ? ("'".$this->db->escape($this->label_compte)."'") : "NULL");
 				$sql .= ", '".$this->db->escape($this->label_operation)."'";
 				$sql .= ", ".$this->debit;
 				$sql .= ", ".$this->credit;
