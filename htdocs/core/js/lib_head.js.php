@@ -529,6 +529,7 @@ function hideMessage(fieldId,message) {
  * @param   string  token       Token
  */
 function setConstant(url, code, input, entity, strict, forcereload, userid, token) {
+	var $url = url; /* avoid undefined url */
 	$.post( url, {
 		action: "set",
 		name: code,
@@ -573,11 +574,12 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 				$.each(data, function(key, value) {
 					$("#set_" + key).hide();
 					$("#del_" + key).show();
-					$.get( url, {
+					$.post( $url, {
 						action: "set",
 						name: key,
 						value: value,
-						entity: entity
+						entity: entity,
+						token: token
 					});
 				});
 			}
@@ -602,6 +604,7 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
  * @param   string  token       Token
  */
 function delConstant(url, code, input, entity, strict, forcereload, userid, token) {
+	var $url = url; /* avoid undefined url */
 	$.post( url, {
 		action: "del",
 		name: code,
@@ -643,10 +646,11 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 				$.each(data, function(key, value) {
 					$("#del_" + value).hide();
 					$("#set_" + value).show();
-					$.get( url, {
+					$.get( $url, {
 						action: "del",
 						name: value,
-						entity: entity
+						entity: entity,
+						token: token
 					});
 				});
 			}
