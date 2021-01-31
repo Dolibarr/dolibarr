@@ -1236,7 +1236,7 @@ class ActionComm extends CommonObject
 		    $sql .= " OR ar.fk_element = ".$user->id; // Added by PV
 		    $sql .= ")";
 		}
-		
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
