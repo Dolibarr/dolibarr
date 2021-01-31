@@ -5493,6 +5493,7 @@ abstract class CommonObject
 			   		$mandatorypb = false;
 			   		if ($attributeType == 'link' && $this->array_options[$key] == '-1') $mandatorypb = true;
 			   		if ($this->array_options[$key] === '') $mandatorypb = true;
+					if ($attributeType == 'sellist' && $this->array_options[$key] == '0') $mandatorypb = true;
 			   		if ($mandatorypb)
 			   		{
 			   		    dol_syslog("Mandatory extra field ".$key." is empty");
