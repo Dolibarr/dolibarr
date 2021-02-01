@@ -396,7 +396,7 @@ if ($resql)
 	if (!empty($arrayfields['cr.date_sync']['checked']))
 	{
 		print '<td class="liste_titre" align="left">';
-		print $form->selectDate(dol_print_date($search_date_sync, "%Y-%m-%d" ), 'search_date_sync', 0, 0, 1);
+		print $form->selectDate(dol_print_date($search_date_sync, "%Y-%m-%d"), 'search_date_sync', 0, 0, 1);
         print $form->selectDate(dol_print_date($search_date_sync_end, "%Y-%m-%d"), 'search_date_sync_end', 0, 0, 1);
 		print '</td>';
 	}
