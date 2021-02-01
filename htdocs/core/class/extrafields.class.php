@@ -1955,9 +1955,9 @@ class ExtraFields
 					$collapse_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.(!empty($object->id)?'_'.$object->id:'')]) || GETPOST('ignorecollapsesetup', 'int')) ? ($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.(!empty($object->id)?'_'.$object->id:'')] ? true : false) : ($extrafield_collapse_display_value == 2 ? false : true));
 					$extrafields_collapse_num = $this->attributes[$object->table_element]['pos'][$key].(!empty($object->id)?'_'.$object->id:'');
 
-					$out .= '<!-- Add js script to manage the collpase/uncollapse of extrafields separators '.$key.' -->';
-					$out .= '<script type="text/javascript">';
-					$out .= 'jQuery(document).ready(function(){';
+					$out .= '<!-- Add js script to manage the collapse/uncollapse of extrafields separators '.$key.' -->'."\n";
+					$out .= '<script type="text/javascript">'."\n";
+					$out .= 'jQuery(document).ready(function(){'."\n";
 					if ($collapse_display === false) {
 						$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.'").prepend("<span class=\"cursorpointer far fa-plus-square\"></span>&nbsp;");'."\n";
 						$out .= '   jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").hide();'."\n";
@@ -1966,6 +1966,7 @@ class ExtraFields
 						$out .= '   document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
 					}
 					$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'").click(function(){'."\n";
+					$out .= '       console.log("We click on collapse/uncollapse .trextrafields_collapse'.$extrafields_collapse_num.'");'."\n";
 					$out .= '       jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").toggle(300, function(){'."\n";
 					$out .= '           if (jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").is(":hidden")) {'."\n";
 					$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-plus-square").removeClass("fa-minus-square");'."\n";
@@ -1974,10 +1975,10 @@ class ExtraFields
 					$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-minus-square").removeClass("fa-plus-square");'."\n";
 					$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.(!empty($object->id)?'_'.$object->id:'').'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
 					$out .= '           }'."\n";
-					$out .= '       });';
-					$out .= '   });';
-					$out .= '});';
-					$out .= '</script>';
+					$out .= '       });'."\n";
+					$out .= '   });'."\n";
+					$out .= '});'."\n";
+					$out .= '</script>'."\n";
 				}
 			}
 		}
