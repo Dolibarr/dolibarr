@@ -1191,23 +1191,23 @@ class Facture extends CommonInvoice
 			{
 				unset($object->lines[$i]);
 			}
-						// Bloc to update dates of service (month by month only if previously filled at 1d near start or end of month)
+
+			// Bloc to update dates of service (month by month only if previously filled and similare to start and end of month)
 			// If it's a service with start and end dates
-			if (!empty($line->date_start) && !empty($line->date_end)) {
+			if (!empty($conf->global->INVOICE_AUTO_NEXT_MONTH_ON_LINES) && !empty($line->date_start) && !empty($line->date_end)) {
 				// Get the dates
 				$start = dol_getdate($line->date_start);
 				$end = dol_getdate($line->date_end);
 
 				// Get the first and last day of the month
 				$first = dol_get_first_day($start['year'], $start['mon']);
-				$last = dol_get_first_day($end['year'], $end['mon']);
+				$last = dol_get_last_day($end['year'], $end['mon']);
 
-				// Get diff betweend start/end of month and previously filled
-				$diffFirst = num_between_day($first, dol_mktime($start['hours'], $start['minutes'], $start['seconds'], $start['mon'], $start['mday'], $start['year'], 'user'));
-				$diffLast = num_between_day(dol_mktime($end['hours'], $end['minutes'], $end['seconds'], $end['mon'], $end['mday'], $end['year'], 'user'), $last);
-
-				// If there is <= 1d (or 2?) of start/or/end of month
-				if ($diffFirst <= 2 && $diffLast <= 2) {
+				//print dol_print_date(dol_mktime(0, 0, 0, $start['mon'], $start['mday'], $start['year'], 'gmt'), 'dayhour').' '.dol_print_date($first, 'dayhour').'<br>';
+				//print dol_mktime(23, 59, 59, $end['mon'], $end['mday'], $end['year'], 'gmt').' '.$last.'<br>';exit;
+				// If start date is first date of month and end date is last date of month
+				if (dol_mktime(0, 0, 0, $start['mon'], $start['mday'], $start['year'], 'gmt') == $first
+					&& dol_mktime(23, 59, 59, $end['mon'], $end['mday'], $end['year'], 'gmt') == $last) {
 					$nextMonth = dol_get_next_month($end['mon'], $end['year']);
 					$newFirst = dol_get_first_day($nextMonth['year'], $nextMonth['month']);
 					$newLast = dol_get_last_day($nextMonth['year'], $nextMonth['month']);

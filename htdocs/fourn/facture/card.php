@@ -666,7 +666,7 @@ if (empty($reshook))
 				$action = 'create';
 				$_GET['socid'] = $_POST['socid'];
 				$error++;
-			} elseif ($dateinvoice > (dol_now() + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+			} elseif ($dateinvoice > (dol_get_last_hour(dol_now()) + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
 				$error++;
 				setEventMessages($langs->trans("ErrorDateIsInFuture"), null, 'errors');
 				$action = 'create';
@@ -733,7 +733,7 @@ if (empty($reshook))
 				$action = 'create';
 				$_GET['socid'] = $_POST['socid'];
 				$error++;
-			} elseif ($dateinvoice > (dol_now() + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+			} elseif ($dateinvoice > (dol_get_last_hour(dol_now()) + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
 				$error++;
 				setEventMessages($langs->trans("ErrorDateIsInFuture"), null, 'errors');
 				$action = 'create';
@@ -851,7 +851,7 @@ if (empty($reshook))
 				$action = 'create';
 				$_GET['socid'] = $_POST['socid'];
 				$error++;
-			} elseif ($dateinvoice > (dol_now() + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+			} elseif ($dateinvoice > (dol_get_last_hour(dol_now()) + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
 				$error++;
 				setEventMessages($langs->trans("ErrorDateIsInFuture"), null, 'errors');
 				$action = 'create';
@@ -1137,8 +1137,8 @@ if (empty($reshook))
 		$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $object->thirdparty);
 		$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty);
 
-		$remise_percent = GETPOST('remise_percent');
-		$pu_ht_devise = GETPOST('multicurrency_subprice');
+		$remise_percent = price2num(GETPOST('remise_percent'), 2);
+		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), 'CU');
 
 		// Extrafields Lines
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -1150,7 +1150,7 @@ if (empty($reshook))
 			}
 		}
 
-		$result = $object->updateline(GETPOST('lineid'), $label, $up, $tva_tx, $localtax1_tx, $localtax2_tx, GETPOST('qty'), GETPOST('productid'), $price_base_type, $info_bits, $type, $remise_percent, 0, $date_start, $date_end, $array_options, $_POST['units'], $pu_ht_devise, GETPOST('fourn_ref', 'alpha'));
+		$result = $object->updateline(GETPOST('lineid', 'int'), $label, $up, $tva_tx, $localtax1_tx, $localtax2_tx, price2num(GETPOST('qty'), 'MS'), GETPOST('productid', 'int'), $price_base_type, $info_bits, $type, $remise_percent, 0, $date_start, $date_end, $array_options, GETPOST('units'), $pu_ht_devise, GETPOST('fourn_ref', 'alpha'));
 		if ($result >= 0)
 		{
 			unset($_POST['label']);
@@ -1206,7 +1206,7 @@ if (empty($reshook))
 		}
 
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
-		$remise_percent = GETPOST('remise_percent'.$predef);
+		$remise_percent = price2num(GETPOST('remise_percent'.$predef), 2);
 		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU');
 
 		// Extrafields

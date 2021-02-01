@@ -1448,7 +1448,7 @@ class Form
 	 *  @param	string		$htmlid			Html id to use instead of htmlname
 	 *  @param	bool		$multiple		add [] in the name of element and add 'multiple' attribut
 	 *  @param	integer		$disableifempty Set tag 'disabled' on select if there is no choice
-	 *	@return	 int						<0 if KO, Nb of contact in list if OK
+	 *	@return	 int|string					<0 if KO, HTML with select string if OK.
 	 */
 	public function selectcontacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $moreclass = '', $options_only = false, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0)
 	{
@@ -6427,7 +6427,7 @@ class Form
 	 *	@param	string			$htmlname			Name of html select area. Must start with "multi" if this is a multiselect
 	 *	@param	array			$array				Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
 	 *	@param	string|string[]	$id					Preselected key or preselected keys for multiselect
-	 *	@param	int|string		$show_empty			0 no empty value allowed, 1 or string to add an empty value into list (key is -1 and value is '' or '&nbsp;' if 1, key is -1 and value is text if string), <0 to add an empty value with key that is this value.
+	 *	@param	int|string		$show_empty			0 no empty value allowed, 1 or string to add an empty value into list (key is -1 and value is '' or '&nbsp;' if 1, key is -1 and value is the text if it is a placeholder string), <0 to add an empty value with key that is this value.
 	 *	@param	int				$key_in_label		1 to show key into label with format "[key] value"
 	 *	@param	int				$value_as_key		1 to use value as key
 	 *	@param  string			$moreparam			Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container

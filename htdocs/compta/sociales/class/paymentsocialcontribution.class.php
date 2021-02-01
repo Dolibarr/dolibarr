@@ -47,6 +47,11 @@ class PaymentSocialContribution extends CommonObject
 	public $picto = 'payment';
 
 	/**
+	 * @var string	Label
+	 */
+	public $label;
+
+	/**
 	 * @var int ID
 	 */
 	public $fk_charge;
@@ -679,7 +684,7 @@ class PaymentSocialContribution extends CommonObject
 
 		$result = '';
 
-		if (empty($this->ref)) $this->ref = $this->lib;
+		if (empty($this->ref)) $this->ref = $this->label;
 
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans("SocialContributionPayment").'</u>';
 		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;

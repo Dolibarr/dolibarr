@@ -321,7 +321,7 @@ class Stripe extends CommonObject
 	 * @param	string	$noidempotency_key					Do not use the idempotency_key when creating the PaymentIntent
 	 * @return 	\Stripe\PaymentIntent|null 			        Stripe PaymentIntent or null if not found and failed to create
 	 */
-	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false, $payment_method = null, $off_session = 0, $noidempotency_key = 0)
+	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false, $payment_method = null, $off_session = 0, $noidempotency_key = 1)
 	{
 		global $conf, $user;
 
@@ -397,6 +397,7 @@ class Stripe extends CommonObject
 
 		if (empty($paymentintent))
 		{
+			// Try to create intent. See https://stripe.com/docs/api/payment_intents/create
 			$ipaddress = getUserRemoteIP();
 			$metadata = array('dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>$ipaddress);
 			if (is_object($object))
@@ -433,9 +434,13 @@ class Stripe extends CommonObject
 			if ($off_session)
 			{
 				unset($dataforintent['setup_future_usage']);
-				$dataforintent["setup_future_usage"] = "off_session";
+				// We can't use both "setup_future_usage" = "off_session" and "off_session" = true.
+				// Because $off_session parameter is dedicated to create paymentintent off_line (and not future payment), we need to use "off_session" = true.
+				//$dataforintent["setup_future_usage"] = "off_session";
+				$dataforintent["off_session"] = true;
 			}
 			if (!empty($conf->global->STRIPE_GIROPAY)) unset($dataforintent['setup_future_usage']);
+
 			if (!is_null($payment_method))
 			{
 				$dataforintent["payment_method"] = $payment_method;
@@ -464,6 +469,9 @@ class Stripe extends CommonObject
 				if (!empty($key)) {				// If the Stripe connect account not set, we use common API usage
 					$arrayofoptions["stripe_account"] = $key;
 				}
+
+				dol_syslog("dataforintent to create paymentintent = ".var_export($dataforintent, true));
+
 				$paymentintent = \Stripe\PaymentIntent::create($dataforintent, $arrayofoptions);
 
 				// Store the payment intent
