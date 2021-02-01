@@ -5536,7 +5536,7 @@ class Form
 	 *  @param  int         $stepminutes    Specify step for minutes between 1 and 30
 	 *  @param	string		$labeladddateof Label to use for the $adddateof parameter.
 	 *  @param	string 		$placeholder    Placeholder
-	 *  @param	mixed		$gm				'auto', 'gmt' or 'tzserver' or 'tzuserrel'
+	 *  @param	mixed		$gm				'auto' (for backward compatibility, avoid this), 'gmt' or 'tzserver' or 'tzuserrel'
 	 * 	@return string                      Html for selectDate
 	 *  @see    form_date(), select_month(), select_year(), select_dayofweek()
 	 */
@@ -5544,8 +5544,8 @@ class Form
 	{
 		global $conf, $langs;
 
-		if ($gm == 'auto') {
-			$gm = $conf->tzuserinputkey;
+		if ($gm === 'auto') {
+			$gm = (empty($conf) ? 'tzserver' : $conf->tzuserinputkey);
 		}
 
 		$retstring = '';

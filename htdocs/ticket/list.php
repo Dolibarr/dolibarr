@@ -428,7 +428,7 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'classforhorizontalscrolloftabs');
 
 
 if ($socid && !$projectid && !$project_ref && $user->rights->societe->lire) {
@@ -811,6 +811,12 @@ while ($i < min($num, $limit))
 			if ($cssforfield || $val['css']) print '"';
 			print '>';
 			if ($key == 'fk_statut') print $object->getLibStatut(5);
+			elseif ($key == 'subject') {
+				$s = $obj->subject;
+				print '<span title="'.$s.'">';
+				print $s;
+				print '</span>';
+			}
 			elseif ($key == 'type_code') {
 				$s = $langs->getLabelFromKey($db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code);
 				print '<span title="'.$s.'">';
