@@ -112,7 +112,7 @@ $sql = "SELECT t.rowid, t.amount, t.label, t.datev, t.datep, t.paye, t.fk_typepa
 $sql .= " SUM(ptva.amount) as alreadypayed";
 $sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON t.fk_typepayment = pst.id";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementtva as ptva ON ptva.fk_tva = t.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_vat as ptva ON ptva.fk_tva = t.rowid";
 //$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON t.fk_bank = b.rowid";
 //$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
 $sql .= " WHERE t.entity IN (".getEntity('tax').")";

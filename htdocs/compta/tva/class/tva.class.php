@@ -778,7 +778,7 @@ class Tva extends CommonObject
      */
     public function getSommePaiement()
     {
-        $table = 'paiementtva';
+        $table = 'payment_vat';
         $field = 'fk_tva';
 
         $sql = 'SELECT sum(amount) as amount';

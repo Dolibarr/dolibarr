@@ -211,7 +211,7 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans("Amount")."</td><td>".price($tva->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';*/
 
 	$sql = "SELECT sum(p.amount) as total";
-	$sql .= " FROM ".MAIN_DB_PREFIX."paiementtva as p";
+	$sql .= " FROM ".MAIN_DB_PREFIX."payment_vat as p";
 	$sql .= " WHERE p.fk_tva = ".$chid;
 	$resql = $db->query($sql);
 	if ($resql)

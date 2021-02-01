@@ -135,7 +135,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 	$sql .= " ptva.rowid as pid, ptva.datep, ptva.amount as totalpaye, ptva.num_paiement as num_payment,";
 	$sql .= " pct.code as payment_code";
 	$sql .= " FROM ".MAIN_DB_PREFIX."tva as tva,";
-	$sql .= " ".MAIN_DB_PREFIX."paiementtva as ptva";
+	$sql .= " ".MAIN_DB_PREFIX."payment_vat as ptva";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."bank as b ON (b.rowid = ptva.fk_bank)";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."bank_account as bank ON (bank.rowid = b.fk_account)";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON ptva.fk_typepaiement = pct.id";

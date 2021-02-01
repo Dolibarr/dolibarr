@@ -35,12 +35,12 @@ class PaymentVAT extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element = 'paiementtva';
+	public $element = 'payment_vat';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element = 'paiementtva';
+	public $table_element = 'payment_vat';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -159,7 +159,7 @@ class PaymentVAT extends CommonObject
 
 		if ($totalamount != 0)
 		{
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiementtva (fk_tva, datec, datep, amount,";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_vat (fk_tva, datec, datep, amount,";
 			$sql .= " fk_typepaiement, num_paiement, note, fk_user_creat, fk_bank)";
 			$sql .= " VALUES ($this->chid, '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datepaye)."',";
@@ -170,7 +170,7 @@ class PaymentVAT extends CommonObject
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
-				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."paiementtva");
+				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_vat");
 
 				// Insere tableau des montants / factures
 				foreach ($this->amounts as $key => $amount)
@@ -249,7 +249,7 @@ class PaymentVAT extends CommonObject
 		$sql .= " t.fk_user_modif,";
 		$sql .= " pt.code as type_code, pt.libelle as type_label,";
 		$sql .= ' b.fk_account';
-		$sql .= " FROM ".MAIN_DB_PREFIX."paiementtva as t LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepaiement = pt.id";
+		$sql .= " FROM ".MAIN_DB_PREFIX."payment_vat as t LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepaiement = pt.id";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
 		$sql .= " WHERE t.rowid = ".$id;
 		// TODO link on entity of tax;
@@ -326,7 +326,7 @@ class PaymentVAT extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."paiementtva SET";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_vat SET";
 
 		$sql .= " fk_tva=".(isset($this->fk_tva) ? $this->fk_tva : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
@@ -397,7 +397,7 @@ class PaymentVAT extends CommonObject
 
 		if (!$error)
 		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."paiementtva";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_vat";
 			$sql .= " WHERE rowid=".$this->id;
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
@@ -610,7 +610,7 @@ class PaymentVAT extends CommonObject
 	public function update_fk_bank($id_bank)
 	{
         // phpcs:enable
-		$sql = "UPDATE ".MAIN_DB_PREFIX."paiementtva SET fk_bank = ".$id_bank." WHERE rowid = ".$this->id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_vat SET fk_bank = ".$id_bank." WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update_fk_bank", LOG_DEBUG);
 		$result = $this->db->query($sql);
