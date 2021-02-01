@@ -140,18 +140,13 @@ create table llx_payment_vat
 
 )ENGINE=innodb;
 
-ALTER TABLE llx_tva ADD paye smallint default 1 NOT NULL;
-ALTER TABLE llx_tva ADD fk_account integer;
+ALTER TABLE llx_tva ADD COLUMN paye smallint default 1 NOT NULL;
+ALTER TABLE llx_tva ADD COLUMN fk_account integer;
 
-INSERT INTO llx_payment_vat (fk_tva, datec, datep, amount, fk_typepaiement, num_paiement, note, fk_bank, fk_user_creat, fk_user_modif)
-SELECT rowid, NOW(), datep, amount, COALESCE(fk_typepayment, 0), num_payment, '', fk_bank, fk_user_creat, fk_user_modif FROM llx_tva;
+--INSERT INTO llx_payment_vat (fk_tva, datec, datep, amount, fk_typepaiement, num_paiement, note, fk_bank, fk_user_creat, fk_user_modif) SELECT rowid, NOW(), datep, amount, COALESCE(fk_typepayment, 0), num_payment, '', fk_bank, fk_user_creat, fk_user_modif FROM llx_tva;
+--UPDATE llx_bank_url as url INNER JOIN llx_tva tva ON tva.rowid = url.url_id SET url.type = 'vat', url.label = CONCAT('(', tva.label, ')') WHERE type = 'payment_vat';
+--INSERT INTO llx_bank_url (fk_bank, url_id, url, label, type) SELECT b.fk_bank, ptva.rowid, REPLACE(b.url, 'tva/card.php', 'payment_vat/card.php'), '(paiement)', 'payment_vat' FROM llx_bank_url b INNER JOIN llx_tva tva ON (tva.fk_bank = b.fk_bank) INNER JOIN llx_payment_vat ptva on (ptva.fk_bank = b.fk_bank) WHERE type = 'vat';
 
-UPDATE llx_bank_url url INNER JOIN llx_tva tva ON tva.rowid = url.url_id SET type = 'vat', url.label = CONCAT('(', tva.label, ')') WHERE type = 'payment_vat';
+--ALTER TABLE llx_tva DROP COLUMN fk_bank;
 
-INSERT INTO llx_bank_url (fk_bank, url_id, url, label, type)
-SELECT b.fk_bank, ptva.rowid, REPLACE(b.url, 'tva/card.php', 'payment_vat/card.php'), '(paiement)', 'payment_vat'
-FROM llx_bank_url b INNER JOIN llx_tva tva ON (tva.fk_bank = b.fk_bank) INNER JOIN llx_payment_vat ptva on (ptva.fk_bank = b.fk_bank)
-WHERE type = 'vat';
-
-ALTER TABLE llx_tva DROP COLUMN fk_bank;
-ALTER TABLE llx_tva ALTER paye SET DEFAULT 0;
+ALTER TABLE llx_tva ALTER COLUMN paye SET DEFAULT 0;
