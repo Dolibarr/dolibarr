@@ -396,8 +396,8 @@ if ($resql)
 	if (!empty($arrayfields['cr.date_sync']['checked']))
 	{
 		print '<td class="liste_titre" align="left">';
-		print $form->selectDate($search_date_sync, 'search_date_sync', 0, 0, 1);
-        print $form->selectDate($search_date_sync_end, 'search_date_sync_end', 0, 0, 1);
+		print $form->selectDate(dol_print_date($search_date_sync, "%Y-%m-%d" ), 'search_date_sync', 0, 0, 1);
+        print $form->selectDate(dol_print_date($search_date_sync_end, "%Y-%m-%d"), 'search_date_sync_end', 0, 0, 1);
 		print '</td>';
 	}
 	// code
@@ -503,7 +503,7 @@ if ($resql)
             {
                 $selected = 0;
                 if (in_array($obj->rowid, $arrayofselected)) $selected = 1;
-                print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=updateRate&amp;id_rate='.$obj->rowid.'">'.img_picto('edit', 'edit').'</a>';
+                print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=updateRate&amp;id_rate='.$obj->rowid.'&amp;page='.$page.'&amp;sortorder='.$sortorder.'&amp;sortfield='.$sortfield.'&amp;search_code='.$search_code.'&amp;search_rate='.$search_rate.'&amp;search_date_sync='.dol_print_date($search_date_sync, "%Y-%m-%d") .'&amp;search_date_sync_end='.dol_print_date($search_date_sync_end, "%Y-%m-%d") .'&amp;edit_mode='. '1'.  '">'.img_picto('edit', 'edit').'</a>';
                 print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=deleteRate&amp;id_rate='.$obj->rowid.'">'.img_picto('delete', 'delete').'</a>';
                 print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
             }
