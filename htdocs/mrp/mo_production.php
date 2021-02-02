@@ -707,7 +707,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Product").'</td>';
 		print '<td class="right">'.$langs->trans("Qty").'</td>';
-		if ($permissiontoupdatecost) print '<td class="right">'.$langs->trans("PMPValue").'</td>';
+		if ($permissiontoupdatecost) print '<td class="right">'.$langs->trans("UnitCost").'</td>';
 		print '<td class="right">'.$langs->trans("QtyAlreadyConsumed").'</td>';
 		print '<td>';
 		if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) print $langs->trans("Warehouse");
@@ -755,6 +755,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 					$tmpproduct = new Product($db);
 					$tmpproduct->fetch($line->fk_product);
+					$linecost = price2num($tmpproduct->pmp, 'MT');
 
 					if ($line->origin_type == 'free' && $object->qty > 0) {
 						// add free consume line cost to bomcost
@@ -767,6 +768,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							}
 						}
 						$bomcost += price2num(($line->qty * $linecost) / $object->qty, 'MT');
+					} elseif ($line->origin_id > 0 && $line->origin_type == 'bom' && $object->qty > 0) {
+						foreach ($bom->lines as $bomline) {
+							if ($bomline->id == $line->origin_id) {
+								$linecost = price2num(($line->qty * $bomline->unit_cost) / $object->qty, 'MT');
+							}
+						}
 					}
 
 					$arrayoflines = $object->fetchLinesLinked('consumed', $line->id);
@@ -791,7 +798,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '</td>';
 					if ($permissiontoupdatecost) {
 						print '<td class="right nowraponall">';
-						print price($tmpproduct->pmp);
+						print $linecost;
 						print '</td>';
 					}
 					print '<td class="right">';
