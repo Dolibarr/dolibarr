@@ -73,7 +73,7 @@ print load_fiche_titre($title, '', 'title_setup');
 // Version
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Version").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
+print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("Version").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("CurrentVersion").' ('.$langs->trans("Programs").')</td><td>'.DOL_VERSION;
 // If current version differs from last upgrade
 if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE))
@@ -139,7 +139,7 @@ print '<br>';
 // Session
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Session").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>'."\n";
+print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("Session").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("SessionSavePath").'</td><td colspan="2">'.session_save_path().'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("SessionName").'</td><td colspan="2">'.session_name().'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("SessionId").'</td><td colspan="2">'.session_id().'</td></tr>'."\n";
@@ -180,7 +180,7 @@ if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_S
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td class="titlefield">'.$langs->trans("LanguageFilesCachedIntoShmopSharedMemory").'</td>';
+	print '<td class="titlefieldcreate">'.$langs->trans("LanguageFilesCachedIntoShmopSharedMemory").'</td>';
 	print '<td>'.$langs->trans("NbOfEntries").'</td>';
 	print '<td class="right">'.$langs->trans("Address").'</td>';
 	print '</tr>'."\n";
@@ -202,7 +202,7 @@ if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_S
 // Localisation
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td>'.$langs->trans("LocalisationDolibarrParameters").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
+print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("LocalisationDolibarrParameters").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("LanguageBrowserParameter", "HTTP_ACCEPT_LANGUAGE").'</td><td>'.$_SERVER["HTTP_ACCEPT_LANGUAGE"].'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("CurrentUserLanguage").'</td><td>'.$langs->getDefaultLang().'</td></tr>'."\n";
 // Thousands
@@ -342,7 +342,7 @@ $configfileparameters = array(
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td class="titlefield">'.$langs->trans("Parameters").' ';
+print '<td class="titlefieldcreate">'.$langs->trans("Parameters").' ';
 print $langs->trans("ConfigurationFile").' ('.$conffiletoshowshort.')';
 print '</td>';
 print '<td>'.$langs->trans("Parameter").'</td>';
