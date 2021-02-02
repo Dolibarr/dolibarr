@@ -4205,6 +4205,7 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/mailings/kiwi.modules.php',
 		'/core/modules/facture/pdf_crabe.modules.php',
 		'/core/modules/facture/pdf_oursin.modules.php',
+		'/core/modules/export/export_excel.modules.php',
 		'/core/modules/export/export_excel2007new.modules.php',
 
 		'/api/class/api_generic.class.php',
