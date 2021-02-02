@@ -2022,7 +2022,7 @@ class Form
 								return;
 							}
 
-							console.log("After change we get variants");
+							console.log("A change has started. We get variants fields to inject html select");
 
 							jQuery.getJSON("'.DOL_URL_ROOT.'/variants/ajax/getCombinations.php", {
 								id: jQuery(this).val()
@@ -2040,8 +2040,7 @@ class Form
 									span.append(
 										jQuery(document.createElement(\'div\')).text(val.label).css({
 											\'font-weight\': \'bold\',
-											\'display\': \'table-cell\',
-											\'text-align\': \'right\'
+											\'display\': \'table-cell\'
 										})
 									);
 
