@@ -16,8 +16,8 @@
 
 CREATE TABLE llx_mrp_production(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	fk_mo integer NOT NULL, 
-	origin_id integer, 
+	fk_mo integer NOT NULL,
+	origin_id integer,
 	origin_type varchar(10),		-- 'bom' bom production line or 'free' free production line added after Mo creation from bom
 	position integer NOT NULL DEFAULT 0,
 	fk_product integer NOT NULL, 

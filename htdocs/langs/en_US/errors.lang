@@ -59,6 +59,7 @@ ErrorDirNotFound=Directory <b>%s</b> not found (Bad path, wrong permissions or a
 ErrorFunctionNotAvailableInPHP=Function <b>%s</b> is required for this feature but is not available in this version/setup of PHP.
 ErrorDirAlreadyExists=A directory with this name already exists.
 ErrorFileAlreadyExists=A file with this name already exists.
+ErrorDestinationAlreadyExists=Another file with the name <b>%s</b> already exists.
 ErrorPartialFile=File not received completely by server.
 ErrorNoTmpDir=Temporary directy %s does not exists.
 ErrorUploadBlockedByAddon=Upload blocked by a PHP/Apache plugin.
@@ -255,6 +256,7 @@ ErrorPublicInterfaceNotEnabled=Public interface was not enabled
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=The language of new page must be defined if it is set as a translation of another page
 ErrorLanguageMustNotBeSourceLanguageIfPageIsTranslationOfAnother=The language of new page must not be the source language if it is set as a translation of another page
 ErrorAParameterIsRequiredForThisOperation=A parameter is mandatory for this operation
+ErrorDateIsInFuture=Error, the date can't be in the future
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.

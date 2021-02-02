@@ -161,9 +161,17 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 
 		if ($num > 0) {
 			$i = 0;
+			$othernb = 0;
 
-			while ($i < $nbofloop) {
+			while ($i < $num && $i < $conf->liste_limit) {
 				$obj = $db->fetch_object($resql);
+
+				if ($i >= $max) {
+					$othernb += 1;
+					$i++;
+					$total += (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
+					continue;
+				}
 
 				$propalstatic->id = $obj->rowid;
 				$propalstatic->ref = $obj->ref;
@@ -196,6 +204,15 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 				$i++;
 				$total += (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
 			}
+
+			if ($othernb) {
+				print '<tr class="oddeven">';
+				print '<td class="nowrap" colspan="5">';
+				print '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
+				print '</td>';
+				print "</tr>\n";
+			}
+
 		}
 
 		addSummaryTableLine(3, $num, $nbofloop, $total, "NoProposal");
@@ -236,9 +253,17 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 
 		if ($num > 0) {
 			$i = 0;
+			$othernb = 0;
 
-			while ($i < $nbofloop) {
+			while ($i < $num && $i < $conf->liste_limit) {
 				$obj = $db->fetch_object($resql);
+
+				if ($i >= $max) {
+					$othernb += 1;
+					$i++;
+					$total += (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
+					continue;
+				}
 
 				$supplierproposalstatic->id = $obj->rowid;
 				$supplierproposalstatic->ref = $obj->ref;
@@ -270,6 +295,15 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 				$i++;
 				$total += (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
 			}
+
+			if ($othernb) {
+				print '<tr class="oddeven">';
+				print '<td class="nowrap" colspan="5">';
+				print '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
+				print '</td>';
+				print "</tr>\n";
+			}
+
 		}
 
 		addSummaryTableLine(3, $num, $nbofloop, $total, "NoProposal");
@@ -310,9 +344,17 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 
 		if ($num > 0) {
 			$i = 0;
+			$othernb = 0;
 
-			while ($i < $nbofloop) {
+			while ($i < $num && $i < $conf->liste_limit) {
 				$obj = $db->fetch_object($resql);
+
+				if ($i >= $max) {
+					$othernb += 1;
+					$i++;
+					$total += (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
+					continue;
+				}
 
 				$orderstatic->id = $obj->rowid;
 				$orderstatic->ref = $obj->ref;
@@ -345,6 +387,15 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 				$i++;
 				$total += (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
 			}
+
+			if ($othernb) {
+				print '<tr class="oddeven">';
+				print '<td class="nowrap" colspan="5">';
+				print '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
+				print '</td>';
+				print "</tr>\n";
+			}
+
 		}
 
 		addSummaryTableLine(3, $num, $nbofloop, $total, "NoProposal");
@@ -385,9 +436,17 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 
 		if ($num > 0) {
 			$i = 0;
+			$othernb = 0;
 
-			while ($i < $nbofloop) {
+			while ($i < $num && $i < $conf->liste_limit) {
 				$obj = $db->fetch_object($resql);
+
+				if ($i >= $max) {
+					$othernb += 1;
+					$i++;
+					$total += (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
+					continue;
+				}
 
 				$supplierorderstatic->id = $obj->rowid;
 				$supplierorderstatic->ref = $obj->ref;
@@ -420,6 +479,15 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 				$i++;
 				$total += (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
 			}
+
+			if ($othernb) {
+				print '<tr class="oddeven">';
+				print '<td class="nowrap" colspan="5">';
+				print '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
+				print '</td>';
+				print "</tr>\n";
+			}
+
 		}
 
 		addSummaryTableLine(3, $num, $nbofloop, $total, "NoProposal");

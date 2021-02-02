@@ -1448,7 +1448,7 @@ class Form
 	 *  @param	string		$htmlid			Html id to use instead of htmlname
 	 *  @param	bool		$multiple		add [] in the name of element and add 'multiple' attribut
 	 *  @param	integer		$disableifempty Set tag 'disabled' on select if there is no choice
-	 *	@return	 int						<0 if KO, Nb of contact in list if OK
+	 *	@return	 int|string					<0 if KO, HTML with select string if OK.
 	 */
 	public function selectcontacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $moreclass = '', $options_only = false, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0)
 	{
@@ -5611,7 +5611,7 @@ class Form
 	 *  @param  int         $stepminutes    Specify step for minutes between 1 and 30
 	 *  @param	string		$labeladddateof Label to use for the $adddateof parameter.
 	 *  @param	string 		$placeholder    Placeholder
-	 *  @param	mixed		$gm				'auto', 'gmt' or 'tzserver' or 'tzuserrel'
+	 *  @param	mixed		$gm				'auto' (for backward compatibility, avoid this), 'gmt' or 'tzserver' or 'tzuserrel'
 	 * 	@return string                      Html for selectDate
 	 *  @see    form_date(), select_month(), select_year(), select_dayofweek()
 	 */
@@ -5619,8 +5619,8 @@ class Form
 	{
 		global $conf, $langs;
 
-		if ($gm == 'auto') {
-			$gm = $conf->tzuserinputkey;
+		if ($gm === 'auto') {
+			$gm = (empty($conf) ? 'tzserver' : $conf->tzuserinputkey);
 		}
 
 		$retstring = '';

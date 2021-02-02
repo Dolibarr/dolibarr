@@ -263,8 +263,8 @@ if (empty($reshook))
 					$object->cond_reglement_id = GETPOST('cond_reglement_id');
 					$object->mode_reglement_id = GETPOST('mode_reglement_id');
 					$object->fk_account = GETPOST('fk_account', 'int');
-					$object->remise_percent = GETPOST('remise_percent');
-					$object->remise_absolue = GETPOST('remise_absolue');
+					$object->remise_percent = price2num(GETPOST('remise_percent'), 2);
+					$object->remise_absolue = price2num(GETPOST('remise_absolue'), 'MU');
 					$object->socid = GETPOST('socid');
 					$object->fk_project = GETPOST('projectid', 'int');
 					$object->model_pdf = GETPOST('model');
@@ -556,7 +556,7 @@ if (empty($reshook))
 		}
 
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
-		$remise_percent = GETPOST('remise_percent'.$predef);
+		$remise_percent = price2num(GETPOST('remise_percent'.$predef), 2);
 		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU');
 
 		// Extrafields
@@ -929,10 +929,10 @@ if (empty($reshook))
 			$fk_unit = GETPOST('units');
 
 			$result = $object->updateline(
-				GETPOST('lineid'),
+				GETPOST('lineid', 'int'),
 				$ht,
-				GETPOST('qty'),
-				GETPOST('remise_percent'),
+				price2num(GETPOST('qty'), 'MS'),
+				price2num(GETPOST('remise_percent'), 2),
 				$vat_rate,
 				$localtax1_rate,
 				$localtax2_rate,
@@ -940,7 +940,7 @@ if (empty($reshook))
 				$price_base_type,
 				$info_bits,
 				$special_code,
-				GETPOST('fk_parent_line'),
+				GETPOST('fk_parent_line', 'int'),
 				0,
 				$fournprice,
 				$buyingprice,
@@ -1018,9 +1018,9 @@ if (empty($reshook))
 	elseif ($action == 'setconditions' && $usercancreate) {
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
 	} elseif ($action == 'setremisepercent' && $usercancreate) {
-		$result = $object->set_remise_percent($user, GETPOST('remise_percent', 'alpha'));
+		$result = $object->set_remise_percent($user, price2num(GETPOST('remise_percent'), 2));
 	} elseif ($action == 'setremiseabsolue' && $usercancreate) {
-		$result = $object->set_remise_absolue($user, GETPOST('remise_absolue', 'alpha'));
+		$result = $object->set_remise_absolue($user, price2num(GETPOST('remise_absolue'), 'MU'));
 	}
 
 	// Payment mode

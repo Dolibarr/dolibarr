@@ -486,6 +486,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			'MAIN_MODULE_SYSLOG'=>'newboxdefonly',
 			'MAIN_MODULE_SOCIETE'=>'newboxdefonly',
 			'MAIN_MODULE_SERVICE'=>'newboxdefonly',
+			'MAIN_MODULE_TICKET'=>'newboxdefonly',
 			'MAIN_MODULE_TAKEPOS'=>'newboxdefonly',
 			'MAIN_MODULE_USER'=>'newboxdefonly', //This one must be always done and only into last targeted version)
 			'MAIN_MODULE_VARIANTS'=>'newboxdefonly',

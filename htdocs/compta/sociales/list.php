@@ -149,7 +149,7 @@ if (!empty($conf->projet->enabled)) $projectstatic = new Project($db);
 llxHeader('', $langs->trans("SocialContributions"));
 
 $sql = "SELECT cs.rowid, cs.fk_type as type, cs.fk_user, ";
-$sql .= " cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode,";
+$sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode,";
 if (!empty($conf->projet->enabled)) $sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
 $sql .= " c.libelle as type_label,";
 $sql .= " SUM(pc.amount) as alreadypayed";
@@ -381,7 +381,7 @@ while ($i < min($num, $limit))
 
 	$chargesociale_static->id = $obj->rowid;
 	$chargesociale_static->ref = $obj->rowid;
-	$chargesociale_static->label = $obj->libelle;
+	$chargesociale_static->label = $obj->label;
 	$chargesociale_static->type_label = $obj->type_label;
 	if (!empty($conf->projet->enabled)) {
 		$projectstatic->id = $obj->project_id;
@@ -405,7 +405,7 @@ while ($i < min($num, $limit))
 
 	// Label
 	if (!empty($arrayfields['cs.libelle']['checked'])) {
-		print '<td>'.dol_trunc($obj->libelle, 42).'</td>';
+		print '<td>'.dol_trunc($obj->label, 42).'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 
