@@ -222,6 +222,12 @@ abstract class CommonObject
 	public $statut;
 
 	/**
+	 * @var int The object's status
+	 * @see setStatut()
+	 */
+	public $status;
+
+	/**
 	 * @var string
 	 * @see getFullAddress()
 	 */
