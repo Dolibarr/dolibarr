@@ -317,7 +317,7 @@ class Stripe extends CommonObject
 	 * @param	int		$mode		                        automatic=automatic confirmation/payment when conditions are ok, manual=need to call confirm() on intent
 	 * @param   boolean $confirmnow                         false=default, true=try to confirm immediatly after create (if conditions are ok)
 	 * @param   string  $payment_method                     'pm_....' (if known)
-	 * @param   string  $off_session                        If we use an already known payment method to pay off line.
+	 * @param   string  $off_session                        If we use an already known payment method to pay when customer is not available during the checkout flow.
 	 * @param	string	$noidempotency_key					Do not use the idempotency_key when creating the PaymentIntent
 	 * @return 	\Stripe\PaymentIntent|null 			        Stripe PaymentIntent or null if not found and failed to create
 	 */
