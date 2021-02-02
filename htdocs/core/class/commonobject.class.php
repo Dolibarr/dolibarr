@@ -1055,7 +1055,6 @@ abstract class CommonObject
 				{
 					$this->error = $this->db->errno();
 					$this->db->rollback();
-					echo 'err rollback';
 					return -2;
 				} else {
 					$this->error = $this->db->error();
