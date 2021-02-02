@@ -923,7 +923,8 @@ if (empty($reshook))
  *	View
  */
 
-llxHeader('', $langs->trans("RepeatableInvoices"), 'ch-facture.html#s-fac-facture-rec');
+$help_url = '';
+llxHeader('', $langs->trans("RepeatableInvoices"), $help_url);
 
 $form = new Form($db);
 $formother = new FormOther($db);

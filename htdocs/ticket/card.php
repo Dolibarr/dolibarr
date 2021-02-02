@@ -938,14 +938,14 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 
 		// Creation date
 		print '<tr><td>'.$langs->trans("DateCreation").'</td><td>';
-		print dol_print_date($object->datec, 'dayhour');
+		print dol_print_date($object->datec, 'dayhour', 'tzuser');
 		print '<span class="opacitymedium"> - '.$langs->trans("TimeElapsedSince").': <i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->datec, 60)).'</i></span>';
 		print '</td></tr>';
 
 		// Read date
 		print '<tr><td>'.$langs->trans("TicketReadOn").'</td><td>';
 		if (!empty($object->date_read)) {
-			print dol_print_date($object->date_read, 'dayhour');
+			print dol_print_date($object->date_read, 'dayhour', 'tzuser');
 			print '<span class="opacitymedium"> - '.$langs->trans("TicketTimeToRead").': <i>'.convertSecondToTime(roundUpToNextMultiple($object->date_read - $object->datec, 60)).'</i>';
 			print ' - '.$langs->trans("TimeElapsedSince").': <i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->date_read, 60)).'</i></span>';
 		}
@@ -954,7 +954,7 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 		// Close date
 		print '<tr><td>'.$langs->trans("TicketCloseOn").'</td><td>';
 		if (!empty($object->date_close)) {
-			print dol_print_date($object->date_close, 'dayhour');
+			print dol_print_date($object->date_close, 'dayhour', 'tzuser');
 		}
 		print '</td></tr>';
 
