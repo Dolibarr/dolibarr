@@ -122,3 +122,6 @@ ALTER TABLE llx_societe ADD INDEX idx_societe_warehouse(fk_warehouse);
 ALTER TABLE llx_socpeople MODIFY poste varchar(255);
 
 ALTER TABLE llx_chargesociales ADD COLUMN fk_user integer DEFAULT NULL;
+
+ALTER TABLE llx_mrp_production ADD COLUMN origin_id integer AFTER fk_mo;
+ALTER TABLE llx_mrp_production ADD COLUMN origin_type varchar(10) AFTER origin_id;
