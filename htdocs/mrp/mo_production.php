@@ -798,7 +798,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '</td>';
 					if ($permissiontoupdatecost) {
 						print '<td class="right nowraponall">';
-						print $linecost;
+						print price($linecost);
 						print '</td>';
 					}
 					print '<td class="right">';
