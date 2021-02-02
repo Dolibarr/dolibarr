@@ -151,7 +151,8 @@ if (empty($reshook))
 		$moline->fk_mo = $object->id;
 		$moline->qty = GETPOST('qtytoadd', 'int'); ;
 		$moline->fk_product = GETPOST('productidtoadd', 'int');
-		$moline->role = 'toconsumef'; // free consume line
+		$moline->role = 'toconsume';
+		$moline->origin_type = 'free'; // free consume line
 		$moline->position = 0;
 
 		$resultline = $moline->create($user, false); // Never use triggers here
@@ -173,7 +174,7 @@ if (empty($reshook))
 		$pos = 0;
 		// Process line to consume
 		foreach ($object->lines as $line) {
-			if (preg_match('/toconsume/', $line->role)) {
+			if ($line->role == 'toconsume') {
 				$tmpproduct = new Product($db);
 				$tmpproduct->fetch($line->fk_product);
 
@@ -311,7 +312,7 @@ if (empty($reshook))
 
 			if (GETPOST('autoclose', 'int')) {
 				foreach ($object->lines as $line) {
-					if (preg_match('/toconsume/', $line->role)) {
+					if ($line->role == 'toconsume') {
 						$arrayoflines = $object->fetchLinesLinked('consumed', $line->id);
 						$alreadyconsumed = 0;
 						foreach ($arrayoflines as $line2) {
@@ -695,7 +696,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<div class="clearboth"></div>';
 
 		$newlinetext = '';
-		if (($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) && $action != 'consumeorproduce' && $action != 'consumeandproduceall') {
+		if ($object->status != $object::STATUS_PRODUCED && $object->status != $object::STATUS_CANCELED && $action != 'consumeorproduce' && $action != 'consumeandproduceall') {
 			$newlinetext = '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addconsumeline">'.$langs->trans("AddNewConsumeLines").'</a>';
 		}
 		print load_fiche_titre($langs->trans('Consumption'), '', '', 0, '', '', $newlinetext);
@@ -749,13 +750,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			$nblinetoconsumecursor = 0;
 			foreach ($object->lines as $line) {
-				if (preg_match('/toconsume/', $line->role)) {
+				if ($line->role == 'toconsume') {
 					$nblinetoconsumecursor++;
 
 					$tmpproduct = new Product($db);
 					$tmpproduct->fetch($line->fk_product);
 
-					if (!empty($bomcost) && $line->role == 'toconsumef' && $object->qty > 0) {
+					if ($line->origin_type == 'free' && $object->qty > 0) {
 						// add free consume line cost to bomcost
 						require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 						$productFournisseur = new ProductFournisseur($db);
