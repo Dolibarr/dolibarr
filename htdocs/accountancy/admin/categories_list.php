@@ -168,7 +168,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
 		}
 	}
-	if (isset($_POST["code"]))
+	if (GETPOSTISSET("code"))
 	{
 		if ($_POST["code"] == '0')
 		{
@@ -438,8 +438,6 @@ if ($id)
 	// Form to add a new line
 	if ($tabname[$id])
 	{
-		$alabelisused = 0;
-
 		$fieldlist = explode(',', $tabfield[$id]);
 
 		// Line for title
@@ -496,7 +494,6 @@ if ($id)
 				else print $valuetoshow;
 				print '</td>';
 			}
-			if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') $alabelisused = 1;
 		}
 
 		print '<td>';

@@ -524,7 +524,7 @@ class ActionComm extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$this->ref =$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm", "id");
+			$this->ref = $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm", "id");
 
 			// Now insert assigned users
 			if (!$error)
@@ -1222,13 +1222,20 @@ class ActionComm extends CommonObject
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
 		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
+    	if (!$user->rights->agenda->allactions->read) {
+    	    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_resources AS ar ON a.id = ar.fk_actioncomm AND ar.element_type ='user' AND ar.fk_element = ".$user->id;
+    	}
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 		$sql .= " WHERE 1 = 1";
 		if (empty($load_state_board)) $sql .= " AND a.percent >= 0 AND a.percent < 100";
 		$sql .= " AND a.entity IN (".getEntity('agenda').")";
 		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".$user->id.")";
 		if ($user->socid) $sql .= " AND a.fk_soc = ".$user->socid;
-		if (!$user->rights->agenda->allactions->read) $sql .= " AND (a.fk_user_author = ".$user->id." OR a.fk_user_action = ".$user->id." OR a.fk_user_done = ".$user->id.")";
+		if (!$user->rights->agenda->allactions->read) {
+    	    $sql .= " AND (a.fk_user_author = ".$user->id." OR a.fk_user_action = ".$user->id." OR a.fk_user_done = ".$user->id;
+    	    $sql .= " OR ar.fk_element = ".$user->id; // Added by PV
+    	    $sql .= ")";
+		}
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -2054,6 +2061,7 @@ class ActionComm extends CommonObject
 		}
 
 		$now = dol_now();
+		$actionCommReminder = new ActionCommReminder($this->db);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -2068,7 +2076,6 @@ class ActionComm extends CommonObject
 
 		if ($resql) {
 			$formmail = new FormMail($this->db);
-			$actionCommReminder = new ActionCommReminder($this->db);
 
 			while ($obj = $this->db->fetch_object($resql)) {
 				$res = $actionCommReminder->fetch($obj->id);
@@ -2077,15 +2084,13 @@ class ActionComm extends CommonObject
 					$errorsMsg[] = "Failed to load invoice ActionComm Reminder";
 				}
 
-				if (!$error)
-				{
+				if (!$error) {
 					//Select email template
 					$arraymessage = $formmail->getEMailTemplate($this->db, 'actioncomm_send', $user, $langs, (!empty($actionCommReminder->fk_email_template)) ? $actionCommReminder->fk_email_template : -1, 1);
 
 					// Load event
 					$res = $this->fetch($actionCommReminder->fk_actioncomm);
-					if ($res > 0)
-					{
+					if ($res > 0) {
 						// PREPARE EMAIL
 						$errormesg = '';
 
@@ -2170,8 +2175,7 @@ class ActionComm extends CommonObject
 			$error++;
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			// Delete also very old past events (we do not keep more than 1 month record in past)
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
 			$sql .= " WHERE dateremind < '".$this->db->idate($now - (3600 * 24 * 32))."'";
@@ -2188,9 +2192,8 @@ class ActionComm extends CommonObject
 			$this->output = 'Nb of emails sent : '.$nbMailSend;
 			$this->db->commit();
 			return 0;
-		}
-		else {
-			$this->db->commit();	// We commit also on error, to have the error message recorded.
+		} else {
+			$this->db->commit(); // We commit also on error, to have the error message recorded.
 			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? join(', ', $errorsMsg) : $error;
 			return $error;
 		}

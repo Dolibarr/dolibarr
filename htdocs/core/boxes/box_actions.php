@@ -88,9 +88,9 @@ class box_actions extends ModeleBoxes
 			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage";
 			$sql .= ", ta.code";
 			$sql .= ", ta.libelle as type_label";
-			$sql .= ", s.nom as name";
-			$sql .= ", s.rowid as socid";
-			$sql .= ", s.code_client";
+			$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+			$sql .= ", s.code_client, s.code_compta, s.client";
+			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm AS ta, ".MAIN_DB_PREFIX."actioncomm AS a";
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
@@ -116,13 +116,21 @@ class box_actions extends ModeleBoxes
 					$late = '';
 					$objp = $this->db->fetch_object($result);
 					$datelimite = $this->db->jdate($objp->dp);
+
 					$actionstatic->id = $objp->id;
 					$actionstatic->label = $objp->label;
 					$actionstatic->type_label = $objp->type_label;
 					$actionstatic->code = $objp->code;
+
 					$societestatic->id = $objp->socid;
 					$societestatic->name = $objp->name;
+					//$societestatic->name_alias = $objp->name_alias;
 					$societestatic->code_client = $objp->code_client;
+					$societestatic->code_compta = $objp->code_compta;
+					$societestatic->client = $objp->client;
+					$societestatic->logo = $objp->logo;
+					$societestatic->email = $objp->email;
+					$societestatic->entity = $objp->entity;
 
 					if ($objp->percentage >= 0 && $objp->percentage < 100 && $datelimite < ($now - $delay_warning))
 						$late = img_warning($langs->trans("Late"));

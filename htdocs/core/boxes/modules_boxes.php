@@ -56,7 +56,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	/**
 	 * @var boolean Condition to have widget visible (in most cases, permissions)
 	 */
-	public $hidden = 0;
+	public $hidden = false;
 
 	/**
 	 * @var int Box definition database ID
@@ -277,7 +277,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 						for ($j = 0; $j < $nbcolthisline; $j++) {
 							// Define tdparam
 							$tdparam = '';
-							if (isset($contents[$i][$j]['td'])) $tdparam .= ' '.$contents[$i][$j]['td'];
+							if (!empty($contents[$i][$j]['td'])) $tdparam .= ' '.$contents[$i][$j]['td'];
 
 							$text = isset($contents[$i][$j]['text']) ? $contents[$i][$j]['text'] : '';
 							$textwithnotags = preg_replace('/<([^>]+)>/i', '', $text);

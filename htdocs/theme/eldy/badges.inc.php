@@ -59,6 +59,13 @@ a.badge:focus, a.badge:hover {
     color: #fff;
 }
 
+span.badgeneutral {
+    padding: 2px 7px 2px 7px;
+    background-color: #e4e4e4;
+    color: #666;
+    border-radius: 10px;
+}
+
 
 /* PRIMARY */
 .badge-primary{
@@ -181,6 +188,16 @@ a.badge-dark.focus, a.badge-dark:focus {
 a.badge-dark:focus, a.badge-dark:hover {
     color: #fff !important;
     background-color: <?php print colorDarker($badgeDark, 10); ?>;
+}
+
+
+@media only screen and (max-width: 570px)
+{
+	span.badge.badge-status {
+	    overflow: hidden;
+	    max-width: 130px;
+	    text-overflow: ellipsis;
+	}
 }
 
 

@@ -43,10 +43,10 @@ $arrayoftypecolumn = GETPOST('typecolonne', 'array');
 if (isset($_SESSION["nbrecases"])) {
 	for ($i = 0; $i < $_SESSION["nbrecases"]; $i++) {
 		if (isset($arrayofchoices[$i])) {
-			$_SESSION["choix$i"] = $arrayofchoices[$i];
+			$_SESSION["choix".$i] = $arrayofchoices[$i];
 		}
 		if (isset($arrayoftypecolumn[$i])) {
-			$_SESSION["typecolonne$i"] = $arrayoftypecolumn[$i];
+			$_SESSION["typecolonne".$i] = $arrayoftypecolumn[$i];
 		}
 	}
 } else { //nombre de cases par défaut
@@ -96,9 +96,6 @@ if (GETPOSTISSET("confirmecreation"))
 		ajouter_sondage();
 	}
 }
-
-var_dump($_SESSION); exit;
-
 
 /*
  * View

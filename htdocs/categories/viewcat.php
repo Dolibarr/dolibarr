@@ -38,7 +38,6 @@ $langs->load("categories");
 
 $id         = GETPOST('id', 'int');
 $label      = GETPOST('label', 'alpha');
-$type       = GETPOST('type', 'aZ09');
 $removeelem = GETPOST('removeelem', 'int');
 $elemid     = GETPOST('elemid', 'int');
 
@@ -73,15 +72,12 @@ if ($id == "" && $label == "")
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
-$result = $object->fetch($id, $label, $type);
-if ($result <= 0) {
-	dol_print_error($db, $object->error); exit;
-}
-$object->fetch_optionals();
+$result = $object->fetch($id, $label);
 if ($result <= 0) {
 	dol_print_error($db, $object->error); exit;
 }
 
+$type = $object->type;
 if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
 
 $extrafields = new ExtraFields($db);
@@ -90,10 +86,18 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categorycard', 'globalcard'));
 
-
 /*
  *	Actions
  */
+
+if ($confirm == 'no')
+{
+	if ($backtopage) {
+		header("Location: ".$backtopage);
+		exit;
+	}
+}
+
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 // Remove element from category
@@ -154,8 +158,13 @@ if ($user->rights->categorie->supprimer && $action == 'confirm_delete' && $confi
 {
 	if ($object->delete($user) >= 0)
 	{
-		header("Location: ".DOL_URL_ROOT.'/categories/index.php?type='.$type);
-		exit;
+		if ($backtopage) {
+			header("Location: ".$backtopage);
+			exit;
+		} else {
+			header("Location: ".DOL_URL_ROOT.'/categories/index.php?type='.$type);
+			exit;
+		}
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -216,9 +225,8 @@ llxHeader("", $langs->trans("Categories"), $helpurl, '', 0, 0, $arrayofjs, $arra
 $title = Categorie::$MAP_TYPE_TITLE_AREA[$type];
 
 $head = categories_prepare_head($object, $type);
-
-
 print dol_get_fiche_head($head, 'card', $langs->trans($title), -1, 'category');
+
 $backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type);
 $linkback = '<a href="'.$backtolist.'">'.$langs->trans("BackToList").'</a>';
 $object->next_prev_filter = ' type = '.$object->type;
@@ -240,7 +248,11 @@ dol_banner_tab($object, 'label', $linkback, ($user->socid ? 0 : 1), 'label', 'la
 
 if ($action == 'delete')
 {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;type='.$type, $langs->trans('DeleteCategory'), $langs->trans('ConfirmDeleteCategory'), 'confirm_delete', '', '', 1);
+	if ($backtopage) {
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.$type.'&backtopage='.urlencode($backtopage), $langs->trans('DeleteCategory'), $langs->trans('ConfirmDeleteCategory'), 'confirm_delete', '', '', 2);
+	} else {
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.$type, $langs->trans('DeleteCategory'), $langs->trans('ConfirmDeleteCategory'), 'confirm_delete', '', '', 1);
+	}
 }
 
 print '<br>';
@@ -284,7 +296,7 @@ if ($user->rights->categorie->creer)
 
 if ($user->rights->categorie->supprimer)
 {
-    print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'&type='.$type.'">'.$langs->trans("Delete").'</a>';
+	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'&type='.$type.'&backtolist='.urlencode($backtolist).'">'.$langs->trans("Delete").'</a>';
 }
 
 print "</div>";
@@ -366,8 +378,7 @@ if ($cats < 0)
 		$categstatic->type = $type;
 		$desc = dol_htmlcleanlastbr($val['description']);
 
-		$counter = 0;
-
+		$counter = '';
 		if ($conf->global->CATEGORY_SHOW_COUNTS)
 		{
 			// we need only a count of the elements, so it is enough to consume only the id's from the database
@@ -375,22 +386,29 @@ if ($cats < 0)
 				? $categstatic->getObjectsInCateg("account", 1)			// Categorie::TYPE_ACCOUNT is "bank_account" instead of "account"
 				: $categstatic->getObjectsInCateg($type, 1);
 
-			$counter = is_countable($elements) ? count($elements) : 0;
+			$counter = "<td class='left' width='40px;'>".(is_countable($elements) ? count($elements) : '0')."</td>";
 		}
 
-		$color = $categstatic->color ? ' style="background: #'.$categstatic->color.';"' : ' style="background: #aaa"';
+		$color = $categstatic->color ? ' style="background: #'.sprintf("%06s", $categstatic->color).';"' : ' style="background: #bbb"';
+		$li = $categstatic->getNomUrl(1, '', 60, '&backtolist='.urlencode($_SERVER["PHP_SELF"].'?id='.$id.'&type='.$type));
 
 		$entry = '<table class="nobordernopadding centpercent">';
 		$entry .= '<tr>';
 
 		$entry .= '<td>';
-		$entry .= '<span class="noborderoncategories" '.$color.'>'.$categstatic->getNomUrl(1, '', 60).'</span>';
+		$entry .= '<span class="noborderoncategories" '.$color.'>'.$li.'</span>';
 		$entry .= '</td>';
 
-		$entry .= '<td class="left" width="40px;">'.$counter.'</td>';
+		$entry .= $counter;
 
 		$entry .= '<td class="right" width="20px;">';
-		$entry .= '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a>';
+		$entry .= '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'&backtolist='.urlencode($_SERVER["PHP_SELF"].'?id='.$id.'&type='.$type).'">'.img_view().'</a>';
+		$entry .= '</td>';
+		$entry .= '<td class="right" width="20px;">';
+		$entry .= '<a class="editfielda" href="'.DOL_URL_ROOT.'/categories/edit.php?id='.$val['id'].'&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id.'&type='.$type).'">'.img_edit().'</a>';
+		$entry .= '</td>';
+		$entry .= '<td class="right" width="20px;">';
+		$entry .= '<a class="deletefilelink" href="'.DOL_URL_ROOT.'/categories/viewcat.php?action=delete&token='.newToken().'&id='.$val['id'].'&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id.'&type='.$type).'&backtolist='.urlencode($_SERVER["PHP_SELF"].'?id='.$id.'&type='.$type).'">'.img_delete().'</a>';
 		$entry .= '</td>';
 
 		$entry .= '</tr>';
@@ -399,7 +417,8 @@ if ($cats < 0)
 		$data[] = array('rowid' => $val['rowid'], 'fk_menu' => $val['fk_parent'], 'entry' => $entry);
 	}
 
-	if ((count($data) - 1))
+	$nbofentries = (count($data) - 1);
+	if ($nbofentries > 0)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 		print '<tr class="pair">';
@@ -522,6 +541,84 @@ if ($type == Categorie::TYPE_PRODUCT)
 	}
 }
 
+if ($type == Categorie::TYPE_CUSTOMER)
+{
+	$permission = $user->rights->societe->creer;
+
+	$socs = $object->getObjectsInCateg($type, 0, $limit, $offset);
+	if ($socs < 0)
+	{
+		dol_print_error($db, $object->error, $object->errors);
+	} else {
+		// Form to add record into a category
+		$showclassifyform = 1;
+		if ($showclassifyform)
+		{
+			print '<br>';
+			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
+			print '<input type="hidden" name="type" value="'.$typeid.'">';
+			print '<input type="hidden" name="id" value="'.$object->id.'">';
+			print '<input type="hidden" name="action" value="addintocategory">';
+			print '<table class="noborder centpercent">';
+			print '<tr class="liste_titre"><td>';
+			print $langs->trans("AddCustomerIntoCategory").' &nbsp;';
+			print $form->select_company('', 'elemid', 's.client IN (1,3)');
+			print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
+			print '</tr>';
+			print '</table>';
+			print '</form>';
+		}
+
+		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
+		print '<input type="hidden" name="type" value="'.$typeid.'">';
+		print '<input type="hidden" name="id" value="'.$object->id.'">';
+		print '<input type="hidden" name="action" value="list">';
+
+		print '<br>';
+		$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($socs); $nbtotalofrecords = ''; $newcardbutton = '';
+		print_barre_liste($langs->trans("Customers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'companies', 0, $newcardbutton, '', $limit);
+
+		print '<table class="noborder centpercent">'."\n";
+		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Name").'</td></tr>'."\n";
+
+		if (count($socs) > 0)
+		{
+			$i = 0;
+			foreach ($socs as $key => $soc)
+			{
+				$i++;
+				if ($i > $limit) break;
+
+				print "\t".'<tr class="oddeven">'."\n";
+				print '<td class="nowrap" valign="top">';
+				print $soc->getNomUrl(1);
+				print "</td>\n";
+				// Link to delete from category
+				print '<td class="right">';
+				if ($permission)
+				{
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$soc->id."'>";
+					print $langs->trans("DeleteFromCat");
+					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
+					print "</a>";
+				}
+				print '</td>';
+				print "</tr>\n";
+			}
+		} else {
+			print '<tr class="oddeven"><td colspan="2" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
+		}
+		print "</table>\n";
+
+		print '</form>'."\n";
+	}
+}
+
+
 if ($type == Categorie::TYPE_SUPPLIER)
 {
 	$permission = $user->rights->societe->creer;
@@ -589,83 +686,6 @@ if ($type == Categorie::TYPE_SUPPLIER)
 				}
 				print '</td>';
 
-				print "</tr>\n";
-			}
-		} else {
-			print '<tr class="oddeven"><td colspan="2" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
-		}
-		print "</table>\n";
-
-		print '</form>'."\n";
-	}
-}
-
-if ($type == Categorie::TYPE_CUSTOMER)
-{
-	$permission = $user->rights->societe->creer;
-
-	$socs = $object->getObjectsInCateg($type, 0, $limit, $offset);
-	if ($socs < 0)
-	{
-		dol_print_error($db, $object->error, $object->errors);
-	} else {
-		// Form to add record into a category
-		$showclassifyform = 1;
-		if ($showclassifyform)
-		{
-			print '<br>';
-			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
-			print '<input type="hidden" name="type" value="'.$typeid.'">';
-			print '<input type="hidden" name="id" value="'.$object->id.'">';
-			print '<input type="hidden" name="action" value="addintocategory">';
-			print '<table class="noborder centpercent">';
-			print '<tr class="liste_titre"><td>';
-			print $langs->trans("AddCustomerIntoCategory").' &nbsp;';
-			print $form->select_company('', 'elemid', 's.client IN (1,3)');
-			print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
-			print '</tr>';
-			print '</table>';
-			print '</form>';
-		}
-
-		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
-		print '<input type="hidden" name="type" value="'.$typeid.'">';
-		print '<input type="hidden" name="id" value="'.$object->id.'">';
-		print '<input type="hidden" name="action" value="list">';
-
-		print '<br>';
-		$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($socs); $nbtotalofrecords = ''; $newcardbutton = '';
-		print_barre_liste($langs->trans("Customers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'companies', 0, $newcardbutton, '', $limit);
-
-		print '<table class="noborder centpercent">'."\n";
-		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Name").'</td></tr>'."\n";
-
-		if (count($socs) > 0)
-		{
-			$i = 0;
-			foreach ($socs as $key => $soc)
-			{
-				$i++;
-				if ($i > $limit) break;
-
-				print "\t".'<tr class="oddeven">'."\n";
-				print '<td class="nowrap" valign="top">';
-				print $soc->getNomUrl(1);
-				print "</td>\n";
-				// Link to delete from category
-				print '<td class="right">';
-				if ($permission)
-				{
-					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$soc->id."'>";
-					print $langs->trans("DeleteFromCat");
-					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
-					print "</a>";
-				}
-				print '</td>';
 				print "</tr>\n";
 			}
 		} else {

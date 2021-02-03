@@ -136,9 +136,8 @@ class Odf
 		// instead of {aaa} so we should enhance this function.
 		//print $key.'-'.$value.'-'.strpos($this->contentXml, $this->config['DELIMITER_LEFT'] . $key . $this->config['DELIMITER_RIGHT']).'<br>';
 		if (strpos($this->contentXml, $tag) === false && strpos($this->stylesXml, $tag) === false) {
-			//if (strpos($this->contentXml, '">'. $key . '</text;span>') === false) {
-			throw new OdfException("var $key not found in the document");
-			//}
+			// Add the throw only for development. In most cases, it is normal to not having the key into the document (only few keys are presents).
+			//throw new OdfException("var $key not found in the document");
 		}
 
 		$this->vars[$tag] = $this->convertVarToOdf($value, $encode, $charset);
@@ -820,10 +819,17 @@ IMG;
 		// Export to PDF using LibreOffice
 		if ($conf->global->MAIN_ODT_AS_PDF == 'libreoffice')
 		{
+			dol_mkdir($conf->user->dir_temp);	// We must be sure the directory exists and is writable
+
+			// We delete and recreate a subdir because the soffice may have change pemrissions on it
+			dol_delete_dir_recursive($conf->user->dir_temp.'/odtaspdf');
+			dol_mkdir($conf->user->dir_temp.'/odtaspdf');
+
+			// Install prerequisites: apt install soffice libreoffice-common libreoffice-writer
 			// using windows libreoffice that must be in path
 			// using linux/mac libreoffice that must be in path
 			// Note PHP Config "fastcgi.impersonate=0" must set to 0 - Default is 1
-			$command ='soffice --headless -env:UserInstallation=file:"//'.$conf->user->dir_temp.'" --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
+			$command ='soffice --headless -env:UserInstallation=file:\''.$conf->user->dir_temp.'/odtaspdf\' --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
 		}
 		elseif (preg_match('/unoconv/', $conf->global->MAIN_ODT_AS_PDF))
 		{
@@ -856,7 +862,7 @@ IMG;
 		}
 		else
 		{
-			// deprecated old method
+			// deprecated old method using odt2pdf.sh (native, jodconverter, ...)
 			$tmpname=preg_replace('/\.odt/i', '', $name);
 
 			if (!empty($conf->global->MAIN_DOL_SCRIPTS_ROOT))

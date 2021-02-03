@@ -268,9 +268,10 @@ if (empty($reshook)) {
 			if ($value == 'content') continue;
 			if ($value == 'content_lines') continue;
 
+			// Rename some POST variables into a generic name
 			if (GETPOST('actionmodify', 'alpha') && $value == 'topic') $_POST['topic'] = $_POST['topic-'.$rowid];
 
-			if ((!isset($_POST[$value]) || $_POST[$value] == '' || $_POST[$value] == '-1') && $value != 'lang' && $value != 'fk_user' && $value != 'position')
+			if ((!GETPOSTISSET($value) || GETPOST($value) == '' || GETPOST($value) == '-1') && $value != 'lang' && $value != 'fk_user' && $value != 'position')
 			{
 				$ok = 0;
 				$fieldnamekey = $listfield[$f];
@@ -306,6 +307,7 @@ if (empty($reshook)) {
 				if ($value == 'lang') $keycode = 'langcode';
 				if (empty($keycode)) $keycode = $value;
 
+				// Clean input variables
 				if ($value == 'entity') $_POST[$keycode] = $conf->entity;
 				if ($value == 'fk_user' && !($_POST[$keycode] > 0)) $_POST[$keycode] = '';
 				if ($value == 'private' && !is_numeric($_POST[$keycode])) $_POST[$keycode] = '0';
@@ -319,11 +321,11 @@ if (empty($reshook)) {
 					if (!$user->admin) {	// A non admin user can only edit its own template
 						$sql .= " ".((int) $user->id);
 					} else {
-						$sql .= " ".((int) GETPOST($keycode, 'fk_user'));
+						$sql .= " ".((int) GETPOST($keycode, 'int'));
 					}
 				} elseif ($keycode == 'content') {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
-				} elseif (in_array($keycode, array('joinfile', 'private', 'position'))) {
+				} elseif (in_array($keycode, array('joinfiles', 'private', 'position'))) {
 					$sql .= (int) GETPOST($keycode, 'int');
 				} else {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
@@ -362,6 +364,7 @@ if (empty($reshook)) {
 				if ($field == 'lang') $keycode = 'langcode';
 				if (empty($keycode)) $keycode = $field;
 
+				// Rename some POST variables into a generic name
 				if ($field == 'fk_user' && !($_POST['fk_user'] > 0)) $_POST['fk_user'] = '';
 				if ($field == 'topic') $_POST['topic'] = $_POST['topic-'.$rowid];
 				if ($field == 'joinfiles') $_POST['joinfiles'] = $_POST['joinfiles-'.$rowid];
@@ -378,11 +381,11 @@ if (empty($reshook)) {
 					if (!$user->admin) {	// A non admin user can only edit its own template
 						$sql .= " ".((int) $user->id);
 					} else {
-						$sql .= " ".((int) GETPOST($keycode, 'fk_user'));
+						$sql .= " ".((int) GETPOST($keycode, 'int'));
 					}
 				} elseif ($keycode == 'content') {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
-				} elseif (in_array($keycode, array('joinfile', 'private', 'position'))) {
+				} elseif (in_array($keycode, array('joinfiles', 'private', 'position'))) {
 					$sql .= (int) GETPOST($keycode, 'int');
 				} else {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
@@ -393,7 +396,7 @@ if (empty($reshook)) {
 
 			$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
 			if (!$user->admin) {	// A non admin user can only edit its own template
-				$sql .= " AND fk_user  = ".$user->id;
+				$sql .= " AND fk_user  = ".((int) $user->id);
 			}
 			//print $sql;exit;
 			dol_syslog("actionmodify", LOG_DEBUG);
@@ -414,7 +417,7 @@ if (empty($reshook)) {
 
 		$sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol."=".((int) $rowid);
 		if (!$user->admin) {	// A non admin user can only edit its own template
-			$sql .= " AND fk_user  = ".$user->id;
+			$sql .= " AND fk_user  = ".((int) $user->id);
 		}
 		dol_syslog("delete", LOG_DEBUG);
 		$result = $db->query($sql);
@@ -1071,7 +1074,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			print '<td class="center">';
 			if ($context == 'edit' && !empty($obj->{$fieldlist[$field]}) && !in_array($obj->{$fieldlist[$field]}, array_keys($elementList)))
 			{
-				// Current tempalte type is an unknown type, so we must keep it as it is.
+				// Current template type is an unknown type, so we must keep it as it is.
 				print '<input type="hidden" name="type_template" value="'.$obj->{$fieldlist[$field]}.'">';
 				print $obj->{$fieldlist[$field]};
 			} else {

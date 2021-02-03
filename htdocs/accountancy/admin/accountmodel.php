@@ -187,7 +187,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br>';
 	    }*/
 	}
-	if (isset($_POST["country"]) && ($_POST["country"] == '0') && ($id != 2))
+	if (GETPOSTISSET("country") && (GETPOST("country") == '0') && ($id != 2))
 	{
 		$ok = 0;
 		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities("Country")), null, 'errors');
@@ -444,9 +444,6 @@ if ($id)
 	// Form to add a new line
 	if ($tabname[$id])
 	{
-		$alabelisused = 0;
-		$var = false;
-
 		$fieldlist = explode(',', $tabfield[$id]);
 
 		// Line for title
@@ -481,7 +478,6 @@ if ($id)
 				}
 				print '</td>';
 			}
-			if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') $alabelisused = 1;
 		}
 
 		print '<td>';
@@ -612,7 +608,7 @@ if ($id)
 					print '&nbsp;<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
 				} else {
 				  	$tmpaction = 'view';
-					$parameters = array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
 					$reshook = $hookmanager->executeHooks('viewDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 
 					$error = $hookmanager->error; $errors = $hookmanager->errors;

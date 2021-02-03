@@ -798,7 +798,7 @@ class FormCompany extends Form
 		if ($rendermode === 'view') {
 			$toprint = array();
 			foreach ($contact->roles as $key => $val) {
-				$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa;">'.$val['label'].'</li>';
+				$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb;">'.$val['label'].'</li>';
 			}
 			return '<div class="select2-container-multi-dolibarr" style="width: 90%;" id="'.$htmlname.'"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
 		}
@@ -829,7 +829,7 @@ class FormCompany extends Form
 	 *
 	 *    @param	string		$selected				Preselected value
 	 *    @param    string		$htmlname				HTML select name
-	 *    @param    string		$fields					Fields
+	 *    @param    array		$fields					Array with key of fields to refresh after selection
 	 *    @param    int			$fieldsize				Field size
 	 *    @param    int			$disableautocomplete    1 To disable ajax autocomplete features (browser autocomplete may still occurs)
 	 *    @param	string		$moreattrib				Add more attribute on HTML input field
@@ -1007,5 +1007,45 @@ class FormCompany extends Form
 		$out .= ajax_combobox($htmlidname);
 
 		return $out;
+	}
+
+	/**
+	 *  Output html select to select third-party type
+	 *
+	 *  @param	string	$page       	Page
+	 *  @param  string	$selected   	Id preselected
+	 *  @param  string	$htmlname		Name of HTML select
+	 *  @param  string	$filter         optional filters criteras
+	 *  @param  int     $nooutput       No print output. Return it only.
+	 *  @return	void|string
+	 */
+	public function formThirdpartyType($page, $selected = '', $htmlname = 'socid', $filter = '', $nooutput = 0)
+	{
+		// phpcs:enable
+		global $langs;
+
+		$out = '';
+		if ($htmlname != "none")
+		{
+			$out .= '<form method="post" action="'.$page.'">';
+			$out .= '<input type="hidden" name="action" value="set_thirdpartytype">';
+			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
+			$sortparam = (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
+			$out .= $this->selectarray($htmlname, $this->typent_array(0, $filter), $selected, 0, 0, 0, '', 0, 0, 0, $sortparam, '', 1);
+			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
+			$out .= '</form>';
+		} else {
+			if ($selected)
+			{
+				$arr = $this->typent_array(0);
+				$typent = $arr[$selected];
+				$out .= $typent;
+			} else {
+				$out .= "&nbsp;";
+			}
+		}
+
+		if ($nooutput) return $out;
+		else print $out;
 	}
 }

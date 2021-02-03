@@ -161,7 +161,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$this->posxdiscount = 162;
 		$this->postotalht = 174;
 
-		if ($conf->global->PRODUCT_USE_UNITS) {
+		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 			$this->posxtva = 99;
 			$this->posxup = 114;
 			$this->posxqty = 130;
@@ -400,6 +400,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$pageposbefore = $pdf->getPage();
 
 					$showpricebeforepagebreak = 1;
+					$posYAfterImage = 0;
 
 					// Description of product line
 					$curX = $this->posxdesc - 1;
@@ -1208,9 +1209,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$result = $object->fetch_contact($arrayidcontact[0]);
 			}
 
-			//Recipient name
-			// We can use the name of the contact's company
-			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
+			// Recipient name
+			if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $mysoc;

@@ -417,7 +417,7 @@ if ($id > 0 || !empty($ref))
 			print '</td></tr>';
 
 			// Date end
-			print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+			print '<tr><td>'.$langs->trans("Deadline").'</td><td>';
 			print $form->selectDate($object->date_end ? $object->date_end : -1, 'datee', 1, 1, 0, '', 1, 0);
 			print '</td></tr>';
 
@@ -513,7 +513,7 @@ if ($id > 0 || !empty($ref))
 			print '</td></tr>';
 
 			// Date start - Date end
-			print '<tr><td class="titlefield">'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td colspan="3">';
+			print '<tr><td class="titlefield">'.$langs->trans("DateStart").' - '.$langs->trans("Deadline").'</td><td colspan="3">';
 			$start = dol_print_date($object->date_start, 'dayhour');
 			print ($start ? $start : '?');
 			$end = dol_print_date($object->date_end, 'dayhour');

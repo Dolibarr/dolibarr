@@ -73,7 +73,7 @@ $coldisplay = 0;
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
 <tr  id="row-<?php print $line->id?>" class="drag drop oddeven" <?php print $domData; ?> >
 <?php if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
-	<td class="linecolnum center"><?php $coldisplay++; ?><?php print ($i + 1); ?></td>
+	<td class="linecolnum center"><span class="opacitymedium"><?php $coldisplay++; ?><?php print ($i + 1); ?></span></td>
 <?php } ?>
 	<td class="linecoldescription minwidth300imp"><?php $coldisplay++; ?><div id="line_<?php print $line->id; ?>"></div>
 <?php
@@ -119,8 +119,7 @@ if (($line->info_bits & 2) == 2) {
 } else {
 	$format = $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE ? 'dayhour' : 'day';
 
-	if ($line->fk_product > 0)
-	{
+	if ($line->fk_product > 0) {
 		print $form->textwithtooltip($text, $description, 3, '', '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
 	} else {
 		$type = (!empty($line->product_type) ? $line->product_type : $line->fk_product_type);
@@ -157,6 +156,16 @@ if (($line->info_bits & 2) == 2) {
 	if ($line->fk_product > 0 && !empty($conf->global->PRODUIT_DESC_IN_FORM))
 	{
 		print (!empty($line->description) && $line->description != $line->product_label) ? '<br>'.dol_htmlentitiesbr($line->description) : '';
+	}
+	//Line extrafield
+	if (!empty($extrafields))
+	{
+		$temps = $line->showOptionals($extrafields, 'view', array(), '', '', 1, 'line');
+		if (!empty($temps)) {
+			print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
+			print $temps;
+			print '</div>';
+		}
 	}
 }
 
@@ -223,7 +232,7 @@ if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
 } else print '&nbsp;';
 print '</td>';
 
-if ($conf->global->PRODUCT_USE_UNITS)
+if (!empty($conf->global->PRODUCT_USE_UNITS))
 {
 	print '<td class="linecoluseunit nowrap left">';
 	$label = $line->getLabelOfUnit('short');
@@ -360,11 +369,5 @@ if ($action == 'selectlines') { ?>
 <?php }
 
 print "</tr>\n";
-
-//Line extrafield
-if (!empty($extrafields))
-{
-	print $line->showOptionals($extrafields, 'view', array('style'=>'class="drag drop oddeven"', 'colspan'=>$coldisplay), '', '', 1);
-}
 
 print "<!-- END PHP TEMPLATE objectline_view.tpl.php -->\n";

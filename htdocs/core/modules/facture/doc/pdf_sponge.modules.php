@@ -219,8 +219,9 @@ class pdf_sponge extends ModelePDFFactures
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies"));
 
+		global $outputlangsbis;
+		$outputlangsbis = null;
 		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {
-			global $outputlangsbis;
 			$outputlangsbis = new Translate('', $conf);
 			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
 			$outputlangsbis->loadLangs(array("main", "bills", "products", "dict", "companies"));
@@ -260,7 +261,11 @@ class pdf_sponge extends ModelePDFFactures
 				{
 					if (!$arephoto)
 					{
-						$dir = $conf->product->dir_output.'/'.$midir;
+						if ($conf->product->entity != $objphoto->entity) {
+							$dir = $conf->product->multidir_output[$objphoto->entity].'/'.$midir; //Check repertories of current entities
+						} else {
+							$dir = $conf->product->dir_output.'/'.$midir; //Check repertory of the current product
+						}
 
 						foreach ($objphoto->liste_photos($dir, 1) as $key => $obj)
 						{
@@ -304,7 +309,7 @@ class pdf_sponge extends ModelePDFFactures
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->facture->multidir_output[$conf->entity]."/".$objectref;
+				$dir = $conf->facture->multidir_output[$object->entity]."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
 			if (!file_exists($dir))
@@ -443,7 +448,7 @@ class pdf_sponge extends ModelePDFFactures
 					}
 				}
 
-				// Display notes
+				// Displays notes
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
 				if (!empty($conf->global->MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE))
 				{
@@ -608,6 +613,7 @@ class pdf_sponge extends ModelePDFFactures
 
 					$showpricebeforepagebreak = 1;
 					$posYAfterImage = 0;
+					$posYAfterDescription = 0;
 
 					if ($this->getColumnStatus('photo'))
 					{
@@ -645,6 +651,7 @@ class pdf_sponge extends ModelePDFFactures
 						if ($pageposafter > $pageposbefore)	// There is a pagebreak
 						{
 							$pdf->rollbackTransaction(true);
+							$pageposafter = $pageposbefore;
 							$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 
 							$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
@@ -671,9 +678,11 @@ class pdf_sponge extends ModelePDFFactures
 						{
 							$pdf->commitTransaction();
 						}
+						$posYAfterDescription = $pdf->GetY();
 					}
 
-					$nexY = $pdf->GetY();
+					$nexY = max($pdf->GetY(), $posYAfterImage, $posYAfterDescription);
+
 					$pageposafter = $pdf->getPage();
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
@@ -684,7 +693,7 @@ class pdf_sponge extends ModelePDFFactures
 						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 					}
 
-					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
+					$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
 
 					// VAT Rate
 					if ($this->getColumnStatus('vat'))
@@ -807,8 +816,8 @@ class pdf_sponge extends ModelePDFFactures
 						&& (!empty($localtax1_rate) || !empty($localtax2_rate))) // and there is local tax
 					{
 						$localtaxtmp_array = getLocalTaxesFromRate($vatrate, 0, $object->thirdparty, $mysoc);
-						$localtax1_type = $localtaxtmp_array[0];
-						$localtax2_type = $localtaxtmp_array[2];
+						$localtax1_type = isset($localtaxtmp_array[0]) ? $localtaxtmp_array[0] : '';
+						$localtax2_type = isset($localtaxtmp_array[2]) ? $localtaxtmp_array[2] : '';
 					}
 
 					// retrieve global local tax
@@ -1233,7 +1242,7 @@ class pdf_sponge extends ModelePDFFactures
 	/**
 	 *  Show total to pay
 	 *
-	 *  @param	TCPDI		$pdf            Object PDF
+	 *  @param	TCPDF		$pdf            Object PDF
 	 *	@param  Facture		$object         Object invoice
 	 *	@param  int			$deja_regle     Amount already paid (in the currency of invoice)
 	 *	@param	int			$posy			Position depart
@@ -1658,8 +1667,6 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf->MultiCell($largcol2, $tab2_hl, price($sign * $total_ttc, 0, $outputlangs), $useborder, 'R', 1);
 
 
-
-
 				// Retained warranty
 				if ($object->displayRetainedWarranty())
 				{
@@ -1720,7 +1727,7 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf->MultiCell($largcol2, $tab2_hl, price($creditnoteamount, 0, $outputlangs), 0, 'R', 0);
 			}
 
-			// Escompte
+			/*
 			if ($object->close_code == Facture::CLOSECODE_DISCOUNTVAT)
 			{
 				$index++;
@@ -1733,6 +1740,7 @@ class pdf_sponge extends ModelePDFFactures
 
 				$resteapayer = 0;
 			}
+			*/
 
 			$index++;
 			$pdf->SetTextColor(0, 0, 60);
@@ -1847,7 +1855,7 @@ class pdf_sponge extends ModelePDFFactures
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if ($object->statut == Facture::STATUS_DRAFT && (!empty($conf->global->FACTURE_DRAFT_WATERMARK)))
+		if ($object->statut == $object::STATUS_DRAFT && (!empty($conf->global->FACTURE_DRAFT_WATERMARK)))
 		{
 			  pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->FACTURE_DRAFT_WATERMARK);
 		}
@@ -1875,8 +1883,7 @@ class pdf_sponge extends ModelePDFFactures
 				} else {
 					$logo = $logodir.'/logos/'.$this->emetteur->logo;
 				}
-				if (is_readable($logo))
-				{
+				if (is_readable($logo)) {
 					$height = pdf_getHeightForLogo($logo);
 					$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
 				} else {
@@ -1918,7 +1925,7 @@ class pdf_sponge extends ModelePDFFactures
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$textref = $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref);
-		if ($object->statut == Facture::STATUS_DRAFT)
+		if ($object->statut == $object::STATUS_DRAFT)
 		{
 			$pdf->SetTextColor(128, 0, 0);
 			$textref .= ' - '.$outputlangs->transnoentities("NotValidated");
@@ -2000,7 +2007,7 @@ class pdf_sponge extends ModelePDFFactures
 		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && is_object($outputlangsbis)) {
 			$title .= ' - '.$outputlangsbis->transnoentities("DateInvoice");
 		}
-		$pdf->MultiCell($w, 3, $title." : ".dol_print_date($object->date, "day", false, $outputlangs), '', 'R');
+		$pdf->MultiCell($w, 3, $title." : ".dol_print_date($object->date, "day", false, $outputlangs, true), '', 'R');
 
 		if (!empty($conf->global->INVOICE_POINTOFTAX_DATE))
 		{
@@ -2092,7 +2099,7 @@ class pdf_sponge extends ModelePDFFactures
 			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->MultiCell($widthrecbox - 2, 4, $carac_emetteur, 0, 'L');
 
-			// If BILLING contact defined on invoice, we use it
+			// If BILLING contact defined, we use it
 			$usecontact = false;
 			$arrayidcontact = $object->getIdContact('external', 'BILLING');
 			if (count($arrayidcontact) > 0)
@@ -2101,9 +2108,8 @@ class pdf_sponge extends ModelePDFFactures
 				$result = $object->fetch_contact($arrayidcontact[0]);
 			}
 
-			//Recipient name
-			// On peut utiliser le nom de la societe du contact
-			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
+			// Recipient name
+			if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;
@@ -2273,6 +2279,17 @@ class pdf_sponge extends ModelePDFFactures
 			'border-left' => true, // add left line separator
 		);
 
+		// Adapt dynamically the width of subprice, if text is too long.
+		$tmpwidth = 0;
+		$nblines = count($object->lines);
+		for ($i = 0; $i < $nblines; $i++) {
+			$tmpwidth2 = dol_strlen(dol_string_nohtmltag(pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails)));
+			$tmpwidth = max($tmpwidth, $tmpwidth2);
+		}
+		if ($tmpwidth > 10) {
+			$this->cols['subprice']['width'] += (2 * ($tmpwidth - 10));
+		}
+
 		$rank = $rank + 10;
 		$this->cols['qty'] = array(
 			'rank' => $rank,
@@ -2310,7 +2327,7 @@ class pdf_sponge extends ModelePDFFactures
 			),
 			'border-left' => true, // add left line separator
 		);
-		if ($conf->global->PRODUCT_USE_UNITS) {
+		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 			$this->cols['unit']['status'] = true;
 		}
 

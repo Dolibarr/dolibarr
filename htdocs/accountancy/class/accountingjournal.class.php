@@ -37,7 +37,7 @@ class AccountingJournal extends CommonObject
 	public $table_element = 'accounting_journal';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Fieldname with ID of parent key if this field has a parent
 	 */
 	public $fk_element = '';
 
@@ -126,7 +126,7 @@ class AccountingJournal extends CommonObject
 					$this->rowid		= $obj->rowid;
 
 					$this->code			= $obj->code;
-					$this->ref = $obj->code;
+					$this->ref			= $obj->code;
 					$this->label		= $obj->label;
 					$this->nature		= $obj->nature;
 					$this->active		= $obj->active;

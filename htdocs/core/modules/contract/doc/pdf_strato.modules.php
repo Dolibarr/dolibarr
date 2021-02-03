@@ -340,13 +340,12 @@ class pdf_strato extends ModelePDFContract
 							$datere = $langs->trans("Unknown");
 						}
 
-						$txtpredefinedservice = '';
-						$txtpredefinedservice = $objectligne->product_label;
-						if ($objectligne->product_label)
-						{
-							$txtpredefinedservice .= ' - ';
-							$txtpredefinedservice .= $objectligne->product_label;
-						}
+                        $txtpredefinedservice = $objectligne->product_ref;
+                        if ($objectligne->product_label)
+                        {
+                        	$txtpredefinedservice .= ' - ';
+                        	$txtpredefinedservice .= $objectligne->product_label;
+                        }
 
 						$desc = dol_htmlentitiesbr($objectligne->desc, 1); // Desc (not empty for free lines)
 						$txt = '';
@@ -711,9 +710,8 @@ class pdf_strato extends ModelePDFContract
 
 			$this->recipient = $object->thirdparty;
 
-			//Recipient name
-			// You can use the name of the contact company
-			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
+			// Recipient name
+			if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;

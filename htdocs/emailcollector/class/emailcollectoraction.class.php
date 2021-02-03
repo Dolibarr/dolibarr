@@ -118,17 +118,17 @@ class EmailCollectorAction extends CommonObject
 	// If this object has a subtable with lines
 
 	// /**
-	//  * @var int    Name of subtable line
+	//  * @var string    Name of subtable line
 	//  */
 	//public $table_element_line = 'emailcollectoractiondet';
 
 	// /**
-	//  * @var int    Field with ID of parent key if this field has a parent
+	//  * @var string    Field with ID of parent key if this field has a parent
 	//  */
 	//public $fk_element = 'fk_emailcollectoraction';
 
 	// /**
-	//  * @var int    Name of subtable class that manage subtable lines
+	//  * @var string    Name of subtable class that manage subtable lines
 	//  */
 	//public $class_element_line = 'EmailcollectorActionline';
 

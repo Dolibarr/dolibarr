@@ -924,15 +924,15 @@ class ExtraFields
 	 * Return HTML string to put an input field into a page
 	 * Code very similar with showInputField of common object
 	 *
-	 * @param  string  $key            			Key of attribute
-	 * @param  string  $value          			Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
-	 * @param  string  $moreparam      			To add more parametes on html input tag
-	 * @param  string  $keysuffix      			Prefix string to add after name and id of field (can be used to avoid duplicate names)
-	 * @param  string  $keyprefix      			Suffix string to add before name and id of field (can be used to avoid duplicate names)
-	 * @param  string  $morecss        			More css (to defined size of field. Old behaviour: may also be a numeric)
-	 * @param  int     $objectid       			Current object id
-	 * @param  string  $extrafieldsobjectkey	If defined (for example $object->table_element), use the new method to get extrafields data
-	 * @param  string  $mode                    1=Used for search filters
+	 * @param  string        $key            		Key of attribute
+	 * @param  string|array  $value 			    Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value); for dates in filter mode, a range array('start'=><timestamp>, 'end'=><timestamp>) should be provided
+	 * @param  string        $moreparam      		To add more parameters on html input tag
+	 * @param  string        $keysuffix      		Prefix string to add after name and id of field (can be used to avoid duplicate names)
+	 * @param  string        $keyprefix      		Suffix string to add before name and id of field (can be used to avoid duplicate names)
+	 * @param  string        $morecss        		More css (to defined size of field. Old behaviour: may also be a numeric)
+	 * @param  int           $objectid       		Current object id
+	 * @param  string        $extrafieldsobjectkey	If defined (for example $object->table_element), use the new method to get extrafields data
+	 * @param  string        $mode                  1=Used for search filters
 	 * @return string
 	 */
 	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $objectid = 0, $extrafieldsobjectkey = '', $mode = 0)
@@ -991,32 +991,23 @@ class ExtraFields
 			else return '';
 		}
 
-		if (empty($morecss))
-		{
-			if ($type == 'date')
-			{
+		if (empty($morecss)) {
+			if ($type == 'date') {
 				$morecss = 'minwidth100imp';
-			} elseif ($type == 'datetime' || $type == 'link')
-			{
+			} elseif ($type == 'datetime' || $type == 'link') {
 				$morecss = 'minwidth200imp';
-			} elseif (in_array($type, array('int', 'integer', 'double', 'price')))
-			{
+			} elseif (in_array($type, array('int', 'integer', 'double', 'price'))) {
 				$morecss = 'maxwidth75';
-			} elseif ($type == 'password')
-			{
+			} elseif ($type == 'password') {
 				$morecss = 'maxwidth100';
-			} elseif ($type == 'url')
-			{
+			} elseif ($type == 'url') {
 				$morecss = 'minwidth400';
-			} elseif ($type == 'boolean')
-			{
+			} elseif ($type == 'boolean') {
 				$morecss = '';
 			} else {
-				if (round($size) < 12)
-				{
+				if (empty($size) || round($size) < 12) {
 					$morecss = 'minwidth100';
-				} elseif (round($size) <= 48)
-				{
+				} elseif (round($size) <= 48) {
 					$morecss = 'minwidth200';
 				} else {
 					$morecss = 'minwidth400';
@@ -1024,8 +1015,7 @@ class ExtraFields
 			}
 		}
 
-		if (in_array($type, array('date', 'datetime')))
-		{
+		if (in_array($type, array('date', 'datetime'))) {
 			$tmp = explode(',', $size);
 			$newsize = $tmp[0];
 
@@ -1034,8 +1024,21 @@ class ExtraFields
 			// Do not show current date when field not required (see selectDate() method)
 			if (!$required && $value == '') $value = '-1';
 
-			// TODO Must also support $moreparam
-			$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1);
+			if ($mode == 1) {
+				// search filter on a date extrafield shows two inputs to select a date range
+				$prefill = array(
+					'start' => isset($value['start']) ? $value['start'] : '',
+					'end'   => isset($value['end'])   ? $value['end']   : ''
+				);
+				$out = '<div ' . ($moreparam ? $moreparam : '') . '><div class="nowrap">'
+					. $form->selectDate($prefill['start'], $keyprefix.$key.$keysuffix.'_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"))
+					. '</div><div class="nowrap">'
+					. $form->selectDate($prefill['end'], $keyprefix.$key.$keysuffix.'_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"))
+					. '</div></div>';
+			} else {
+				// TODO Must also support $moreparam
+				$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1);
+			}
 		} elseif (in_array($type, array('int', 'integer')))
 		{
 			$tmp = explode(',', $size);
@@ -1107,7 +1110,12 @@ class ExtraFields
 			foreach ($param['options'] as $key => $val)
 			{
 				if ((string) $key == '') continue;
-				list($val, $parent) = explode('|', $val);
+				$valarray = explode('|', $val);
+				$val = $valarray[0];
+				$parent = '';
+				if (!empty($valarray[1])) {
+				    $parent = $valarray[1];
+				}
 				$out .= '<option value="'.$key.'"';
 				$out .= (((string) $value == (string) $key) ? ' selected' : '');
 				$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
@@ -1702,7 +1710,7 @@ class ExtraFields
 					$c->fetch($obj->rowid);
 					$ways = $c->print_all_ways(); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
 					foreach ($ways as $way) {
-						$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"'.($c->color ? ' style="background: #'.$c->color.';"' : ' style="background: #aaa"').'>'.img_object('', 'category').' '.$way.'</li>';
+						$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"'.($c->color ? ' style="background: #'.$c->color.';"' : ' style="background: #bbb"').'>'.img_object('', 'category').' '.$way.'</li>';
 					}
 					$value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
 				}
@@ -1718,7 +1726,7 @@ class ExtraFields
 			if (is_array($value_arr))
 			{
 				foreach ($value_arr as $keyval=>$valueval) {
-					$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.$param['options'][$valueval].'</li>';
+					$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.$param['options'][$valueval].'</li>';
 				}
 			}
 			$value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
@@ -1775,9 +1783,9 @@ class ExtraFields
 										$translabel = $langs->trans($obj->$field_toshow);
 									}
 									if ($translabel != $field_toshow) {
-										$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.dol_trunc($translabel, 18).'</li>';
+										$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.dol_trunc($translabel, 18).'</li>';
 									} else {
-										$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.$obj->$field_toshow.'</li>';
+										$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.$obj->$field_toshow.'</li>';
 									}
 								}
 							} else {
@@ -1786,9 +1794,9 @@ class ExtraFields
 									$translabel = $langs->trans($obj->{$InfoFieldList[1]});
 								}
 								if ($translabel != $obj->{$InfoFieldList[1]}) {
-									$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.dol_trunc($translabel, 18).'</li>';
+									$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.dol_trunc($translabel, 18).'</li>';
 								} else {
-									$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.$obj->{$InfoFieldList[1]}.'</li>';
+									$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.$obj->{$InfoFieldList[1]}.'</li>';
 								}
 							}
 						}
@@ -1803,7 +1811,7 @@ class ExtraFields
 							$c->fetch($obj->rowid);
 							$ways = $c->print_all_ways(); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
 							foreach ($ways as $way) {
-								$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"'.($c->color ? ' style="background: #'.$c->color.';"' : ' style="background: #aaa"').'>'.img_object('', 'category').' '.$way.'</li>';
+								$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"'.($c->color ? ' style="background: #'.$c->color.';"' : ' style="background: #bbb"').'>'.img_object('', 'category').' '.$way.'</li>';
 							}
 						}
 					}
@@ -1912,15 +1920,29 @@ class ExtraFields
 	 * @param   string	$key            Key of attribute
 	 * @param	string	$object			Object
 	 * @param	int		$colspan		Value of colspan to use (it must includes the first column with title)
+	 * @param	string	$display_type	"card" for form display, "line" for document line display (extrafields on propal line, order line, etc...)
 	 * @return 	string					HTML code with line for separator
 	 */
-	public function showSeparator($key, $object, $colspan = 2)
+	public function showSeparator($key, $object, $colspan = 2, $display_type = 'card')
 	{
 		global $langs;
 
-		$out = '<tr id="trextrafieldseparator'.$key.'" class="trextrafieldseparator trextrafieldseparator'.$key.'"><td colspan="'.$colspan.'"><strong>';
+		if ($display_type=='card') {
+			$tagtype='tr';
+			$tagtype_dyn='td';
+		}elseif ($display_type=='line') {
+			$tagtype='div';
+			$tagtype_dyn='span';
+			$colspan=0;
+		}
+
+		$out = '<'.$tagtype.' id="trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'" class="trextrafieldseparator trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'">';
+		$out .= '<'.$tagtype_dyn.' '.(!empty($colspan)?'colspan="' . $colspan . '"':'').'>';
+		$out .='<strong>';
 		$out .= $langs->trans($this->attributes[$object->table_element]['label'][$key]);
-		$out .= '</strong></td></tr>';
+		$out .= '</strong>';
+		$out .= '</'.$tagtype_dyn.'>';
+		$out .= '</'.$tagtype.'>';
 
 		$extrafield_param = $this->attributes[$object->table_element]['param'][$key];
 		if (!empty($extrafield_param) && is_array($extrafield_param)) {
@@ -1930,32 +1952,33 @@ class ExtraFields
 				$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
 				if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
 					// Set the collapse_display status to cookie in priority or if ignorecollapsesetup is 1, if cookie and ignorecollapsesetup not defined, use the setup.
-					$collapse_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOST('ignorecollapsesetup', 'int')) ? ($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key] ? true : false) : ($extrafield_collapse_display_value == 2 ? false : true));
-					$extrafields_collapse_num = $this->attributes[$object->table_element]['pos'][$key];
+					$collapse_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.(!empty($object->id)?'_'.$object->id:'')]) || GETPOST('ignorecollapsesetup', 'int')) ? ($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.(!empty($object->id)?'_'.$object->id:'')] ? true : false) : ($extrafield_collapse_display_value == 2 ? false : true));
+					$extrafields_collapse_num = $this->attributes[$object->table_element]['pos'][$key].(!empty($object->id)?'_'.$object->id:'');
 
-					$out .= '<!-- Add js script to manage the collpase/uncollapse of extrafields separators '.$key.' -->';
-					$out .= '<script type="text/javascript">';
-					$out .= 'jQuery(document).ready(function(){';
+					$out .= '<!-- Add js script to manage the collapse/uncollapse of extrafields separators '.$key.' -->'."\n";
+					$out .= '<script type="text/javascript">'."\n";
+					$out .= 'jQuery(document).ready(function(){'."\n";
 					if ($collapse_display === false) {
-						$out .= '   jQuery("#trextrafieldseparator'.$key.' td").prepend("<span class=\"cursorpointer fa fa-plus-square\"></span>&nbsp;");'."\n";
+						$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.'").prepend("<span class=\"cursorpointer far fa-plus-square\"></span>&nbsp;");'."\n";
 						$out .= '   jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").hide();'."\n";
 					} else {
-						$out .= '   jQuery("#trextrafieldseparator'.$key.' td").prepend("<span class=\"cursorpointer fa fa-minus-square\"></span>&nbsp;");'."\n";
+						$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.'").prepend("<span class=\"cursorpointer far fa-minus-square\"></span>&nbsp;");'."\n";
 						$out .= '   document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
 					}
-					$out .= '   jQuery("#trextrafieldseparator'.$key.'").click(function(){'."\n";
+					$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'").click(function(){'."\n";
+					$out .= '       console.log("We click on collapse/uncollapse .trextrafields_collapse'.$extrafields_collapse_num.'");'."\n";
 					$out .= '       jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").toggle(300, function(){'."\n";
 					$out .= '           if (jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").is(":hidden")) {'."\n";
-					$out .= '               jQuery("#trextrafieldseparator'.$key.' td span").addClass("fa-plus-square").removeClass("fa-minus-square");'."\n";
-					$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=0; path='.$_SERVER["PHP_SELF"].'"'."\n";
+					$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-plus-square").removeClass("fa-minus-square");'."\n";
+					$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.(!empty($object->id)?'_'.$object->id:'').'=0; path='.$_SERVER["PHP_SELF"].'"'."\n";
 					$out .= '           } else {'."\n";
-					$out .= '               jQuery("#trextrafieldseparator'.$key.' td span").addClass("fa-minus-square").removeClass("fa-plus-square");'."\n";
-					$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
+					$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-minus-square").removeClass("fa-plus-square");'."\n";
+					$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.(!empty($object->id)?'_'.$object->id:'').'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
 					$out .= '           }'."\n";
-					$out .= '       });';
-					$out .= '   });';
-					$out .= '});';
-					$out .= '</script>';
+					$out .= '       });'."\n";
+					$out .= '   });'."\n";
+					$out .= '});'."\n";
+					$out .= '</script>'."\n";
 				}
 			}
 		}
@@ -2008,9 +2031,12 @@ class ExtraFields
 
 				if ($this->attributes[$object->table_element]['required'][$key])	// Value is required
 				{
-					// Check if empty without using GETPOST, value can be alpha, int, array, etc...
-					if ((!is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] != 'select' && $_POST["options_".$key] != '0')
-						|| (!is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'select')
+					// Check if functionally empty without using GETPOST (depending on the type of extrafield, a
+					// technically non-empty value may be treated as empty functionally).
+					// value can be alpha, int, array, etc...
+				    if ((!is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] != 'select' && $_POST["options_".$key] != '0')
+				        || (!is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'select')
+				        || (!is_array($_POST["options_".$key]) && isset($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'sellist' && $_POST['options_'.$key] == '0')
 						|| (is_array($_POST["options_".$key]) && empty($_POST["options_".$key])))
 					{
 						//print 'ccc'.$value.'-'.$this->attributes[$object->table_element]['required'][$key];
@@ -2073,7 +2099,7 @@ class ExtraFields
 	{
 		global $_POST;
 
-		if (is_string($extrafieldsobjectkey) && is_array($this->attributes[$extrafieldsobjectkey]['label']))
+		if (is_string($extrafieldsobjectkey) && !empty($this->attributes[$extrafieldsobjectkey]['label']) && is_array($this->attributes[$extrafieldsobjectkey]['label']))
 		{
 			$extralabels = $this->attributes[$extrafieldsobjectkey]['label'];
 		} else {
@@ -2095,9 +2121,28 @@ class ExtraFields
 
 				if (in_array($key_type, array('date', 'datetime')))
 				{
-					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix."year")) continue; // Value was not provided, we should not set it.
-					// Clean parameters
-					$value_key = dol_mktime(GETPOST($keysuffix."options_".$key.$keyprefix."hour", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."min", 'int'), 0, GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'));
+					$dateparamname_start = $keysuffix . 'options_' . $key . $keyprefix . '_start';
+					$dateparamname_end   = $keysuffix . 'options_' . $key . $keyprefix . '_end';
+					if (GETPOSTISSET($dateparamname_start . 'year') && GETPOSTISSET($dateparamname_end . 'year')) {
+						// values provided as a date pair (start date + end date), each date being broken down as year, month, day, etc.
+						$value_key = array(
+							'start' => dol_mktime(
+								0, 0, 0,
+								GETPOST($dateparamname_start . 'month', 'int'),
+								GETPOST($dateparamname_start . 'day', 'int'),
+								GETPOST($dateparamname_start . 'year', 'int')),
+							'end' => dol_mktime(
+								23, 59, 59,
+								GETPOST($dateparamname_end . 'month', 'int'),
+								GETPOST($dateparamname_end . 'day', 'int'),
+								GETPOST($dateparamname_end . 'year', 'int'))
+						);
+					} elseif (GETPOSTISSET($keysuffix."options_".$key.$keyprefix."year")) {
+						// Clean parameters
+						$value_key = dol_mktime(GETPOST($keysuffix."options_".$key.$keyprefix."hour", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."min", 'int'), 0, GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'));
+					} else {
+						continue; // Value was not provided, we should not set it.
+					}
 				} elseif (in_array($key_type, array('checkbox', 'chkbxlst')))
 				{
 					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) continue; // Value was not provided, we should not set it.

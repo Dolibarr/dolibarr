@@ -58,7 +58,7 @@ if ($action == 'updateMask')
 	$maskdelivery = GETPOST('maskdelivery', 'alpha');
 	if ($maskconstdelivery)  $res = dolibarr_set_const($db, $maskconstdelivery, $maskdelivery, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
  	if (!$error)
 	{
@@ -73,7 +73,7 @@ if ($action == 'set_DELIVERY_FREE_TEXT')
 	$free = GETPOST('DELIVERY_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
 	$res = dolibarr_set_const($db, "DELIVERY_FREE_TEXT", $free, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
  	if (!$error)
 	{
@@ -229,7 +229,8 @@ foreach ($dirmodels as $reldir)
 						print '<td class="nowrap">';
 						$tmp = $module->getExample();
 						if (preg_match('/^Error/', $tmp)) {
-							$langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>';
+							$langs->load("errors");
+							print '<div class="error">'.$langs->trans($tmp).'</div>';
 						} elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
 						else print $tmp;
 						print '</td>'."\n";
@@ -397,7 +398,7 @@ foreach ($dirmodels as $reldir)
 							print '<td class="center">';
 							if ($module->type == 'pdf')
 							{
-								print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'sending').'</a>';
+								print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 							} else {
 								print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 							}

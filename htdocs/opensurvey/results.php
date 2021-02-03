@@ -204,7 +204,9 @@ if (isset($_POST["ajoutercolonne"]) && $object->format == "D")
 			}
 		}
 
-		if ($_POST["nouvelleheuredebut"] == "vide" || (isset($_POST["nouvelleheuredebut"]) && isset($_POST["nouvelleheurefin"]) && (($_POST["nouvelleheuredebut"] < $_POST["nouvelleheurefin"]) || (($_POST["nouvelleheuredebut"] == $_POST["nouvelleheurefin"]) && ($_POST["nouvelleminutedebut"] < $_POST["nouvelleminutefin"]))))) {
+		if (GETPOST("nouvelleheuredebut") == "vide" || (GETPOSTISSET("nouvelleheuredebut") && GETPOSTISSET("nouvelleheurefin")
+			&& (GETPOST("nouvelleheuredebut") < GETPOST("nouvelleheurefin") || (GETPOST("nouvelleheuredebut") == GETPOST("nouvelleheurefin")
+				&& (GETPOST("nouvelleminutedebut") < GETPOST("nouvelleminutefin")))))) {
 			$erreur_ajout_date = false;
 		} else {
 			$erreur_ajout_date = "yes";
@@ -907,7 +909,7 @@ while ($compteur < $num)
 	//demande de confirmation pour modification de ligne
 	for ($i = 0; $i < $nblines; $i++)
 	{
-		if (isset($_POST["modifierligne".$i]))
+		if (GETPOSTISSET("modifierligne".$i))
 		{
 			if ($compteur == $i)
 			{
@@ -938,7 +940,7 @@ if (empty($testligneamodifier))
 		if (empty($listofanswers[$i]['format']) || !in_array($listofanswers[$i]['format'], array('yesno', 'foragainst')))
 		{
 			print '<input type="checkbox" name="choix'.$i.'" value="1"';
-			if (isset($_POST['choix'.$i]) && $_POST['choix'.$i] == '1')
+			if (GETPOSTISSET('choix'.$i) && GETPOST('choix'.$i) == '1')
 			{
 				print ' checked';
 			}

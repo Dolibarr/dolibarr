@@ -57,7 +57,7 @@ function categories_prepare_head(Categorie $object, $type)
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/categories/info.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/categories/info.php?id='.$object->id.'&amp;type='.$type;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;

@@ -117,6 +117,8 @@ $usercancreatewithdrarequest = $user->rights->prelevement->bons->creer;
 
 $now = dol_now();
 
+$error = 0;
+
 
 /*
  * Actions
@@ -154,7 +156,7 @@ if (empty($reshook))
 	// Create predefined invoice
 	if ($action == 'add')
 	{
-		if (!GETPOST('titre', 'nohtml'))
+		if (!GETPOST('title', 'alphanohtml'))
 		{
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Title")), null, 'errors');
 			$action = "create";
@@ -287,13 +289,21 @@ if (empty($reshook))
 	elseif ($action == 'setref' && $user->rights->facture->creer)
 	{
 		//var_dump(GETPOST('ref', 'alpha'));exit;
-		$result = $object->setValueFrom('titre', GETPOST('ref', 'alpha'), '', null, 'text', '', $user, 'BILLREC_MODIFY');
+		$result = $object->setValueFrom('title', $ref, '', null, 'text', '', $user, 'BILLREC_MODIFY');
 		if ($result > 0)
 		{
 			$object->titre = GETPOST('ref', 'alpha'); // deprecated
 			$object->title = GETPOST('ref', 'alpha');
 			$object->ref = $object->title;
-		} else dol_print_error($db, $object->error, $object->errors);
+		} else {
+			$error++;
+			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$langs->load("errors");
+				setEventMessages($langs->trans('ErrorRefAlreadyExists', $ref), null, 'errors');
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
 	} // Set bank account
 	elseif ($action == 'setbankaccount' && $user->rights->facture->creer)
 	{
@@ -427,9 +437,9 @@ if (empty($reshook))
 
 		// Set if we used free entry or predefined product
 		$predef = '';
-		$product_desc = (GETPOST('dp_desc') ?GETPOST('dp_desc') : '');
-		$price_ht = GETPOST('price_ht');
-		$price_ht_devise = GETPOST('multicurrency_price_ht');
+		$product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
+		$price_ht = price2num(GETPOST('price_ht'), 'MU');
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU');
 		$prod_entry_mode = GETPOST('prod_entry_mode', 'alpha');
 		if ($prod_entry_mode == 'free')
 		{
@@ -440,8 +450,8 @@ if (empty($reshook))
 			$tva_tx = '';
 		}
 
-		$qty = GETPOST('qty'.$predef);
-		$remise_percent = GETPOST('remise_percent'.$predef);
+		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
+		$remise_percent = price2num(GETPOST('remise_percent'.$predef), 2);
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -791,7 +801,7 @@ if (empty($reshook))
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
 			// Check price is not lower than minimum (check is done only for standard or replacement invoices)
-			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT) && $price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent')) / 100) < price2num($price_min))))
+			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT) && $price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent', 2)) / 100) < price2num($price_min))))
 			{
 				setEventMessages($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), null, 'errors');
 				$error++;
@@ -827,7 +837,7 @@ if (empty($reshook))
 				$localtax1_rate,
 				$localtax1_rate,
 				GETPOST('productid'),
-				GETPOST('remise_percent'),
+				price2num(GETPOST('remise_percent'), 2),
 				'HT',
 				$info_bits,
 				0,
@@ -913,7 +923,8 @@ if (empty($reshook))
  *	View
  */
 
-llxHeader('', $langs->trans("RepeatableInvoices"), 'ch-facture.html#s-fac-facture-rec');
+$help_url = '';
+llxHeader('', $langs->trans("RepeatableInvoices"), $help_url);
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -957,7 +968,7 @@ if ($action == 'create')
 
 		// Title
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Title").'</td><td>';
-		print '<input class="flat quatrevingtpercent" type="text" name="titre" value="'.dol_escape_htmltag(GETPOST("titre", 'alphanohtml')).'">';
+		print '<input class="flat quatrevingtpercent" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("titre", 'alphanohtml')).'">';
 		print '</td></tr>';
 
 		// Third party
@@ -998,7 +1009,7 @@ if ($action == 'create')
 		print $form->textwithpicto($langs->trans('NotePublic'), $htmltext, 1, 'help', '', 0, 2, 'notepublic');
 		print '</td>';
 		print '<td>';
-		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 
 		// Private note
@@ -1009,7 +1020,7 @@ if ($action == 'create')
 			print $form->textwithpicto($langs->trans('NotePrivate'), $htmltext, 1, 'help', '', 0, 2, 'noteprivate');
 			print '</td>';
 			print '<td>';
-			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			// print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'.</textarea>
 			print '</td></tr>';
@@ -1227,13 +1238,13 @@ if ($action == 'create')
 		}
 		$morehtmlref .= '</div>';
 
-		dol_banner_tab($object, 'ref', $linkback, 1, 'titre', 'none', $morehtmlref, '', 0, '', $morehtmlright);
+		dol_banner_tab($object, 'ref', $linkback, 1, 'title', 'none', $morehtmlref, '', 0, '', $morehtmlright);
 
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border centpercent">';
+		print '<table class="border centpercent tableforfield">';
 
 		print '<tr><td class="titlefield">'.$langs->trans("Author").'</td><td>'.$author->getFullName($langs)."</td></tr>";
 
@@ -1262,7 +1273,7 @@ if ($action == 'create')
 
 		// Payment term
 		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('PaymentConditionsShort');
 		print '</td>';
 		if ($action != 'editconditions' && $user->rights->facture->creer)
@@ -1452,7 +1463,7 @@ if ($action == 'create')
 		$title = $langs->trans("Recurrence");
 		//print load_fiche_titre($title, '', 'calendar');
 
-		print '<table class="border centpercent">';
+		print '<table class="border centpercent tableforfield">';
 
 		print '<tr><td colspan="2"><span class="fa fa-calendar"></span> '.$title.'</td></tr>';
 
@@ -1573,7 +1584,7 @@ if ($action == 'create')
 			}
 
 			print '<div class="underbanner clearboth"></div>';
-			print '<table class="border centpercent">';
+			print '<table class="border centpercent tableforfield">';
 
 			// Nb of generation already done
 			print '<tr><td style="width: 50%">'.$langs->trans("NbOfGenerationDone").'</td>';

@@ -29,8 +29,8 @@ $path=dirname(__FILE__).'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-    exit;
+	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+	exit;
 }
 
 // Global variables
@@ -49,7 +49,10 @@ $langs->load("main");				// To load language file for default language
 
 // Load user and its permissions
 $result=$user->fetch('', 'admin');	// Load user for login 'admin'. Comment line to run as anonymous user.
-if (! $result > 0) { dol_print_error('', $user->error); exit; }
+if (! $result > 0) {
+	dol_print_error('', $user->error);
+	exit;
+}
 $user->getrights();
 
 
@@ -69,18 +72,17 @@ $obj->nom   = 'ABCDEF';
 
 // Create user
 $idobject=$obj->create($user);
-if ($idobject > 0)
-{
+if ($idobject > 0) {
 	// Change status to validated
 	$result=$obj->setStatut(1);
-	if ($result > 0) print "OK Object created with id ".$idobject."\n";
-	else {
+	if ($result > 0) {
+		print "OK Object created with id ".$idobject."\n";
+	} else {
 		$error++;
 		dol_print_error($db, $obj->error);
 	}
-} elseif ($obj->error == 'ErrorLoginAlreadyExists')
-{
-     print "User with login ".$obj->login." already exists\n";
+} elseif ($obj->error == 'ErrorLoginAlreadyExists') {
+	 print "User with login ".$obj->login." already exists\n";
 } else {
 	$error++;
 	dol_print_error($db, $obj->error);
@@ -89,8 +91,7 @@ if ($idobject > 0)
 
 // -------------------- END OF YOUR CODE --------------------
 
-if (! $error)
-{
+if (! $error) {
 	$db->commit();
 	print '--- end ok'."\n";
 } else {

@@ -160,7 +160,7 @@ if (empty($reshook))
 		if (empty($ref_fourn_old)) $ref_fourn_old = $ref_fourn;
 		$quantity = price2num(GETPOST("qty", 'nohtml'), 'MS');
 		$remise_percent = price2num(GETPOST('remise_percent', 'alpha'));
-		$npr = preg_match('/\*/', $_POST['tva_tx']) ? 1 : 0;
+		$npr = preg_match('/\*/', GETPOST('tva_tx', 'alpha')) ? 1 : 0;
 		$tva_tx = str_replace('*', '', GETPOST('tva_tx', 'alpha'));
 		$tva_tx = price2num($tva_tx);
 		$price_expression = GETPOST('eid', 'int') ? GETPOST('eid', 'int') : ''; // Discard expression if not in expression mode
@@ -365,7 +365,7 @@ if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
 	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
 
-llxHeader('', $title, $helpurl);
+llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'classforhorizontalscrolloftabs');
 
 $form = new Form($db);
 
@@ -490,9 +490,9 @@ if ($id > 0 || $ref)
 				if ($rowid)
 				{
 					print '<input type="hidden" name="ref_fourn_old" value="'.$object->ref_supplier.'">';
-					print '<input class="flat" name="ref_fourn" size="12" value="'.$object->ref_supplier.'">';
+					print '<input class="flat width150" maxlength="30" name="ref_fourn" value="'.$object->ref_supplier.'">';
 				} else {
-					print '<input class="flat" name="ref_fourn" size="12" value="'.(GETPOST("ref_fourn") ?GETPOST("ref_fourn") : '').'">';
+					print '<input class="flat width150" maxlength="30" name="ref_fourn" value="'.(GETPOST("ref_fourn") ? GETPOST("ref_fourn") : '').'">';
 				}
 				print '</td>';
 				print '</tr>';
@@ -519,7 +519,7 @@ if ($id > 0 || $ref)
 					print '<input class="flat" name="qty" size="5" value="'.$quantity.'">';
 				}
 				// Units
-				if ($conf->global->PRODUCT_USE_UNITS) {
+				if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 					$unit = $object->getLabelOfUnit();
 					if ($unit !== '') {
 						print '&nbsp;&nbsp;'.$langs->trans($unit);
@@ -537,7 +537,7 @@ if ($id > 0 || $ref)
 					print '<input class="flat" name="packaging" size="5" value="'.$packaging.'">';
 
 					// Units
-					if ($conf->global->PRODUCT_USE_UNITS) {
+					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 						$unit = $object->getLabelOfUnit();
 						if ($unit !== '') {
 							print '&nbsp;&nbsp;'.$langs->trans($unit);
@@ -610,17 +610,17 @@ if ($id > 0 || $ref)
 					</script>';
 				}
 
-                if (!empty($conf->multicurrency->enabled)) {
-                    // Currency
-                    print '<tr><td class="fieldrequired">'.$langs->trans("Currency").'</td>';
-                    print '<td>';
-                    $currencycodetouse = GETPOST('multicurrency_code') ?GETPOST('multicurrency_code') : (isset($object->fourn_multicurrency_code) ? $object->fourn_multicurrency_code : '');
-                    if (empty($currencycodetouse) && $object->fourn_multicurrency_tx == 1) $currencycodetouse = $conf->currency;
-                    print $form->selectMultiCurrency($currencycodetouse, "multicurrency_code", 1);
-                    print ' &nbsp; '.$langs->trans("CurrencyRate").' ';
-                    print '<input class="flat" name="multicurrency_tx" size="4" value="'.vatrate(GETPOST('multicurrency_tx') ? GETPOST('multicurrency_tx') : (isset($object->fourn_multicurrency_tx) ? $object->fourn_multicurrency_tx : '')).'">';
-                    print '</td>';
-                    print '</tr>';
+				if (!empty($conf->multicurrency->enabled)) {
+					// Currency
+					print '<tr><td class="fieldrequired">'.$langs->trans("Currency").'</td>';
+					print '<td>';
+					$currencycodetouse = GETPOST('multicurrency_code') ?GETPOST('multicurrency_code') : (isset($object->fourn_multicurrency_code) ? $object->fourn_multicurrency_code : '');
+					if (empty($currencycodetouse) && $object->fourn_multicurrency_tx == 1) $currencycodetouse = $conf->currency;
+					print $form->selectMultiCurrency($currencycodetouse, "multicurrency_code", 1);
+					print ' &nbsp; '.$langs->trans("CurrencyRate").' ';
+					print '<input class="flat" name="multicurrency_tx" size="4" value="'.vatrate(GETPOST('multicurrency_tx') ? GETPOST('multicurrency_tx') : (isset($object->fourn_multicurrency_tx) ? $object->fourn_multicurrency_tx : '')).'">';
+					print '</td>';
+					print '</tr>';
 
 					// Currency price qty min
 					print '<tr><td class="fieldrequired">'.$langs->trans("PriceQtyMinCurrency").'</td>';
@@ -697,14 +697,14 @@ END;
 					print '<tr><td class="fieldrequired">'.$langs->trans("PriceQtyMin").'</td>';
 					print '<td><input class="flat" name="price" size="8" value="'.(GETPOST('price') ? price(GETPOST('price')) : (isset($object->fourn_price) ? price($object->fourn_price) : '')).'">';
 					print '&nbsp;';
-					print $form->selectPriceBaseType((GETPOST('price_base_type') ? GETPOST('price_base_type') : 'HT'), "price_base_type"); // We keep 'HT' here, price_base_type is not yet supported for supplier prices
+					print $form->selectPriceBaseType((GETPOSTISSET('price_base_type') ? GETPOST('price_base_type') : 'HT'), "price_base_type"); // We keep 'HT' here, price_base_type is not yet supported for supplier prices
 					print '</td></tr>';
 				}
 
 
 				// Discount qty min
 				print '<tr><td>'.$langs->trans("DiscountQtyMin").'</td>';
-				print '<td><input class="flat" name="remise_percent" size="4" value="'.(GETPOST('remise_percent') ?vatrate(GETPOST('remise_percent')) : (isset($object->fourn_remise_percent) ?vatrate($object->fourn_remise_percent) : '')).'"> %';
+				print '<td><input class="flat" name="remise_percent" size="4" value="'.(GETPOSTISSET('remise_percent') ? vatrate(price2num(GETPOST('remise_percent'), 2)) : (isset($object->fourn_remise_percent) ?vatrate($object->fourn_remise_percent) : '')).'"> %';
 				print '</td>';
 				print '</tr>';
 
@@ -920,9 +920,9 @@ END;
 				$param = "&id=".$object->id;
 
 				print '<tr class="liste_titre">';
-				if (!empty($arrayfields['pfp.datec']['checked']))					print_liste_field_titre("AppliedPricesFrom", $_SERVER["PHP_SELF"], "pfp.datec", "", $param, "", $sortfield, $sortorder);
-				if (!empty($arrayfields['s.nom']['checked']))						print_liste_field_titre("Suppliers", $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
-				print_liste_field_titre("SupplierRef", $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder);
+				if (!empty($arrayfields['pfp.datec']['checked']))					print_liste_field_titre("AppliedPricesFrom", $_SERVER["PHP_SELF"], "pfp.datec", "", $param, "", $sortfield, $sortorder, '', '', 1);
+				if (!empty($arrayfields['s.nom']['checked']))						print_liste_field_titre("Suppliers", $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder, '', '', 1);
+				print_liste_field_titre("SupplierRef", $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder, '', '', 1);
 				if (!empty($arrayfields['pfp.fk_availability']['checked']))			print_liste_field_titre("Availability", $_SERVER["PHP_SELF"], "pfp.fk_availability", "", $param, "", $sortfield, $sortorder);
 				if (!empty($arrayfields['pfp.quantity']['checked']))				print_liste_field_titre("QtyMin", $_SERVER["PHP_SELF"], "pfp.quantity", "", $param, '', $sortfield, $sortorder, 'right ');
 				print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
@@ -937,7 +937,7 @@ END;
 				if (!empty($arrayfields['pfp.barcode']['checked']))					print_liste_field_titre("BarcodeValue", $_SERVER["PHP_SELF"], "pfp.barcode", "", $param, '', $sortfield, $sortorder, 'center ');
 				if (!empty($arrayfields['pfp.fk_barcode_type']['checked']))			print_liste_field_titre("BarcodeType", $_SERVER["PHP_SELF"], "pfp.fk_barcode_type", "", $param, '', $sortfield, $sortorder, 'center ');
 				if (!empty($arrayfields['pfp.packaging']['checked']))				print_liste_field_titre("PackagingForThisProduct", $_SERVER["PHP_SELF"], "pfp.packaging", "", $param, 'align="center"', $sortfield, $sortorder);
-				if (!empty($arrayfields['pfp.tms']['checked']))						print_liste_field_titre("DateModification", $_SERVER["PHP_SELF"], "pfp.tms", "", $param, '', $sortfield, $sortorder, 'right ');
+				if (!empty($arrayfields['pfp.tms']['checked']))						print_liste_field_titre("DateModification", $_SERVER["PHP_SELF"], "pfp.tms", "", $param, '', $sortfield, $sortorder, 'right ', '', 1);
 
 				// fetch optionals attributes and labels
 				$extrafields->fetch_name_optionals_label("product_fournisseur_price");
@@ -976,12 +976,11 @@ END;
 
 						// Supplier
 						if (!empty($arrayfields['s.nom']['checked'])) {
-							print '<td>'.$productfourn->getSocNomUrl(1, 'supplier').'</td>';
+							print '<td class="tdoverflowmax200">'.$productfourn->getSocNomUrl(1, 'supplier').'</td>';
 						}
 
 						// Supplier ref
-						if ($usercancreate) // change required right here
-						{
+						if ($usercancreate) { // change required right here
 							print '<td class="left">'.$productfourn->getNomUrl().'</td>';
 						} else {
 							print '<td class="left">'.$productfourn->fourn_ref.'</td>';
@@ -1000,7 +999,7 @@ END;
 							print '<td class="right">';
 							print $productfourn->fourn_qty;
 							// Units
-							if ($conf->global->PRODUCT_USE_UNITS) {
+							if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 								$unit = $object->getLabelOfUnit();
 								if ($unit !== '') {
 									print '&nbsp;&nbsp;'.$langs->trans($unit);
@@ -1138,7 +1137,7 @@ END;
 
 						if ($usercancreate)
 						{
-							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=update_price&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_edit()."</a>";
+							print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=update_price&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_edit()."</a>";
 							print ' &nbsp; ';
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=ask_remove_pf&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_picto($langs->trans("Remove"), 'delete').'</a>';
 						}

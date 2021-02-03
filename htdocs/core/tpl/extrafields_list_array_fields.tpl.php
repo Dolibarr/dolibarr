@@ -9,10 +9,10 @@ if (empty($conf) || !is_object($conf))
 	exit;
 }
 
-if (empty($extrafieldsobjectkey) && is_object($object)) $extrafieldsobjectkey=$object->table_element;
+if (empty($extrafieldsobjectkey) && is_object($object)) $extrafieldsobjectkey = $object->table_element;
 
 // Loop to show all columns of extrafields from $obj, $extrafields and $db
-if (! empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_element like 'societe', 'socpeople', ...
+if (!empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_element like 'societe', 'socpeople', ...
 {
 	if (is_array($extrafields->attributes[$extrafieldsobjectkey]['label']) && count($extrafields->attributes[$extrafieldsobjectkey]['label']) > 0) {
 		if (empty($extrafieldsobjectprefix)) $extrafieldsobjectprefix = 'ef.';
@@ -23,7 +23,7 @@ if (! empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_
 					'label'    => $extrafields->attributes[$extrafieldsobjectkey]['label'][$key],
 					'checked'  => (($extrafields->attributes[$extrafieldsobjectkey]['list'][$key] < 0) ? 0 : 1),
 					'position' => $extrafields->attributes[$extrafieldsobjectkey]['pos'][$key],
-					'enabled'  => (abs($extrafields->attributes[$extrafieldsobjectkey]['list'][$key]) != 3 && $extrafields->attributes[$extrafieldsobjectkey]['perms'][$key]),
+					'enabled'  => (abs((int) $extrafields->attributes[$extrafieldsobjectkey]['list'][$key]) != 3 && $extrafields->attributes[$extrafieldsobjectkey]['perms'][$key]),
 					'langfile' => $extrafields->attributes[$extrafieldsobjectkey]['langfile'][$key],
 					'help'     => $extrafields->attributes[$extrafieldsobjectkey]['help'][$key],
 				);

@@ -119,7 +119,7 @@ $arrayfields = array(
 	't.label'=>array('label'=>$langs->trans("LabelTask"), 'checked'=>1, 'position'=>80),
 	't.description'=>array('label'=>$langs->trans("Description"), 'checked'=>0, 'position'=>80),
 	't.dateo'=>array('label'=>$langs->trans("DateStart"), 'checked'=>1, 'position'=>100),
-	't.datee'=>array('label'=>$langs->trans("DateEnd"), 'checked'=>1, 'position'=>101),
+	't.datee'=>array('label'=>$langs->trans("Deadline"), 'checked'=>1, 'position'=>101),
 	'p.ref'=>array('label'=>$langs->trans("ProjectRef"), 'checked'=>1),
 	'p.title'=>array('label'=>$langs->trans("ProjectLabel"), 'checked'=>0),
 	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>0),
@@ -136,14 +136,8 @@ $arrayfields = array(
 	//'t.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -517,7 +511,7 @@ if (!empty($arrayfields['t.label']['checked']))
 	print '<input type="text" class="flat" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'" size="8">';
 	print '</td>';
 }
-//Task Description
+// Task Description
 if (!empty($arrayfields['t.description']['checked']))
 {
 	print '<td class="liste_titre">';
@@ -654,7 +648,7 @@ while ($i < min($num, $limit))
 	$object->description = $obj->description;
 	$object->fk_statut = $obj->fk_statut;
 	$object->progress = $obj->progress;
-	$object->datee = $db->jdate($obj->date_end); // deprecated
+	$object->date_start = $db->jdate($obj->date_start);
 	$object->date_end = $db->jdate($obj->date_end);
 	$object->planned_workload = $obj->planned_workload;
 	$object->duration_effective = $obj->duration_effective;
@@ -734,7 +728,7 @@ while ($i < min($num, $limit))
 		// Project ref
 		if (!empty($arrayfields['p.ref']['checked']))
 		{
-			print '<td class="nowrap">';
+			print '<td class="nowraponall tdoverflowmax150">';
 			print $projectstatic->getNomUrl(1, 'task');
 			if ($projectstatic->hasDelay()) print img_warning("Late");
 			print '</td>';

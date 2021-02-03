@@ -45,14 +45,14 @@ class Task extends CommonObject
 	public $table_element = 'projet_task';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_task';
 
 	/**
-	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 * @var string String with name of icon for myobject.
 	 */
-	public $picto = 'task';
+	public $picto = 'projecttask';
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
@@ -648,7 +648,7 @@ class Task extends CommonObject
 		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
 		$result = '';
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("ShowTask").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Task").'</u>';
 		if (!empty($this->ref))
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (!empty($this->label))
@@ -907,7 +907,13 @@ class Task extends CommonObject
 					$tasks[$i]->projectref		= $obj->ref;
 					$tasks[$i]->projectlabel = $obj->plabel;
 					$tasks[$i]->projectstatus = $obj->projectstatus;
+
+					$tasks[$i]->fk_opp_status = $obj->fk_opp_status;
+					$tasks[$i]->opp_amount = $obj->opp_amount;
+					$tasks[$i]->opp_percent = $obj->opp_percent;
+					$tasks[$i]->budget_amount = $obj->budget_amount;
 					$tasks[$i]->usage_bill_time = $obj->usage_bill_time;
+
 					$tasks[$i]->label = $obj->label;
 					$tasks[$i]->description = $obj->description;
 					$tasks[$i]->fk_parent = $obj->fk_task_parent; // deprecated
@@ -915,8 +921,10 @@ class Task extends CommonObject
 					$tasks[$i]->duration		= $obj->duration_effective;
 					$tasks[$i]->planned_workload = $obj->planned_workload;
 
-					$tasks[$i]->tobill  		= $obj->tobill;
-					$tasks[$i]->billed = $obj->billed;
+					if ($includebilltime) {
+						$tasks[$i]->tobill = $obj->tobill;
+						$tasks[$i]->billed = $obj->billed;
+					}
 
 					$tasks[$i]->progress		= $obj->progress;
 					$tasks[$i]->fk_statut = $obj->status;
@@ -929,13 +937,6 @@ class Task extends CommonObject
 					$tasks[$i]->thirdparty_id = $obj->thirdparty_id;
 					$tasks[$i]->thirdparty_name	= $obj->thirdparty_name;
 					$tasks[$i]->thirdparty_email = $obj->thirdparty_email;
-
-
-					$tasks[$i]->fk_opp_status = $obj->fk_opp_status;
-					$tasks[$i]->opp_amount = $obj->opp_amount;
-					$tasks[$i]->opp_percent = $obj->opp_percent;
-					$tasks[$i]->budget_amount = $obj->budget_amount;
-					$tasks[$i]->usage_bill_time = $obj->usage_bill_time;
 
 					if (!empty($extrafields->attributes['projet']['label']))
 					{
@@ -1895,14 +1896,16 @@ class Task extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
-		$langs->load("projects");
+		$outputlangs->load("projects");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'nodefault';
 
-			if (!empty($this->modelpdf)) {
+			if (!empty($this->model_pdf)) {
+				$modele = $this->model_pdf;
+			} elseif (!empty($this->modelpdf)) {	// deprecated
 				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->PROJECT_TASK_ADDON_PDF)) {
 				$modele = $conf->global->PROJECT_TASK_ADDON_PDF;

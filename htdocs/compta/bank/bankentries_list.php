@@ -155,14 +155,8 @@ $arrayfields = array(
 	'b.conciliated'=>array('label'=>$langs->trans("Conciliated"), 'enabled'=> $object->rappro, 'checked'=>($action == 'reconcile' ? 1 : 0), 'position'=>1020),
 );
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -225,17 +219,16 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 	if ($num_releve)
 	{
 		$bankline = new AccountLine($db);
-		if (isset($_POST['rowid']) && is_array($_POST['rowid']))
-		{
-			foreach ($_POST['rowid'] as $row)
-			{
-				if ($row > 0)
-				{
+
+		$rowids = GETPOST('rowid', 'array');
+
+		if (!empty($rowids) && is_array($rowids)) {
+			foreach ($rowids as $row) {
+				if ($row > 0) {
 					$result = $bankline->fetch($row);
 					$bankline->num_releve = $num_releve; //$_POST["num_releve"];
 					$result = $bankline->update_conciliation($user, GETPOST("cat"), GETPOST('confirm_reconcile', 'alpha') ? 1 : 0); // If we confirm_reconcile, we set flag 'rappro' to 1.
-					if ($result < 0)
-					{
+					if ($result < 0) {
 						setEventMessages($bankline->error, $bankline->errors, 'errors');
 						$error++;
 						break;
@@ -293,8 +286,9 @@ if (GETPOST('save') && !$cancel && $user->rights->banque->modifier)
 	$cat1      = GETPOST("cat1", 'alpha');
 
 	$bankaccountid = $id;
-	if (GETPOST('add_account', 'int') > 0) $bankaccountid = GETPOST('add_account', 'int');
-
+	if (GETPOST('add_account', 'int') > 0) {
+		$bankaccountid = GETPOST('add_account', 'int');
+	}
 	if (!$dateop) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
@@ -311,8 +305,7 @@ if (GETPOST('save') && !$cancel && $user->rights->banque->modifier)
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
 	}
-	if (!$bankaccountid > 0)
-	{
+	if (!$bankaccountid > 0) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
 	}
@@ -322,8 +315,7 @@ if (GETPOST('save') && !$cancel && $user->rights->banque->modifier)
     	$error++;
     }*/
 
-	if (!$error && !empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT))
-	{
+	if (!$error && !empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT)) {
 		$objecttmp = new Account($db);
 		$objecttmp->fetch($bankaccountid);
 		$insertid = $objecttmp->addline($dateop, $operation, $label, $amount, $num_chq, ($cat1 > 0 ? $cat1 : 0), $user, '', '', $search_accountancy_code);
@@ -375,7 +367,7 @@ $donstatic = new Don($db);
 $paymentstatic = new Paiement($db);
 $paymentsupplierstatic = new PaiementFourn($db);
 $paymentscstatic = new PaymentSocialContribution($db);
-$paymentvatstatic = new TVA($db);
+$paymentvatstatic = new Tva($db);
 $paymentsalstatic = new PaymentSalary($db);
 $paymentdonationstatic = new PaymentDonation($db);
 $paymentvariousstatic = new PaymentVarious($db);
@@ -497,7 +489,7 @@ if (dol_strlen($search_dv_end) > 0) $sql .= " AND b.datev <= '".$db->idate($sear
 if ($search_ref) $sql .= natural_search("b.rowid", $search_ref, 1);
 if ($search_req_nb) $sql .= natural_search("b.num_chq", $search_req_nb);
 if ($search_num_releve) $sql .= natural_search("b.num_releve", $search_num_releve);
-if ($search_conciliated != '' && $search_conciliated != '-1') $sql .= " AND b.rappro = ".$search_conciliated;
+if ($search_conciliated != '' && $search_conciliated != '-1') $sql .= " AND b.rappro = ".urlencode($search_conciliated);
 if ($search_thirdparty) $sql .= natural_search("s.nom", $search_thirdparty);
 if ($search_description)
 {
@@ -862,6 +854,10 @@ if ($resql)
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+	// When action is 'reconcile', we force to have the column num_releve always enabled (otherwise we can't make reconciliation).
+	if ($action == 'reconcile') {
+		$arrayfields['b.num_releve']['checked'] = 1;
+	}
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
@@ -994,9 +990,8 @@ if ($resql)
 	while ($i < min($num, $limit))
 	{
 		$objp = $db->fetch_object($resql);
-
 		// If we are in a situation where we need/can show balance, we calculate the start of balance
-		if (!$balancecalculated && (!empty($arrayfields['balancebefore']['checked']) || !empty($arrayfields['balance']['checked'])) && $mode_balance_ok)
+		if (!$balancecalculated && (!empty($arrayfields['balancebefore']['checked']) || !empty($arrayfields['balance']['checked'])) && ($mode_balance_ok || $search_conciliated === '0'))
 		{
 			if (!$search_account)
 			{
@@ -1017,11 +1012,9 @@ if ($resql)
 			$sqlforbalance .= " AND (b.datev < '".$db->idate($db->jdate($objp->dv))."' OR (b.datev = '".$db->idate($db->jdate($objp->dv))."' AND (b.dateo < '".$db->idate($db->jdate($objp->do))."' OR (b.dateo = '".$db->idate($db->jdate($objp->do))."' AND b.rowid < ".$objp->rowid."))))";
 			$resqlforbalance = $db->query($sqlforbalance);
 			//print $sqlforbalance;
-			if ($resqlforbalance)
-			{
+			if ($resqlforbalance) {
 				$objforbalance = $db->fetch_object($resqlforbalance);
-				if ($objforbalance)
-				{
+				if ($objforbalance) {
 					// If sort is desc,desc,desc then total of previous date + amount is the balancebefore of the previous line before the line to show
 					if ($sortfield == 'b.datev,b.dateo,b.rowid' && $sortorder == 'desc,desc,desc')
 					{
@@ -1082,24 +1075,30 @@ if ($resql)
 				if (!empty($arrayfields['balancebefore']['checked']))
 				{
 					print '<td class="right">';
-					print price(price2num($balance, 'MT'), 1, $langs);
+					if ($search_conciliated !== '0') {
+						print price(price2num($balance, 'MT'), 1, $langs);
+					}
 					print '</td>';
 				}
 				if (!empty($arrayfields['balance']['checked']))
 				{
 					print '<td class="right">';
-					print price(price2num($balance, 'MT'), 1, $langs);
+					if ($search_conciliated !== '0') {
+						print price(price2num($balance, 'MT'), 1, $langs);
+					}
 					print '</td>';
 				}
-
-				print '<td class="center">';
-				print '<input type="checkbox" id="selectAll" title="'.dol_escape_htmltag($langs->trans("SelectAll")).'" />';
-				print ' <script type="text/javascript">
-						$("input#selectAll").change(function() {
-							$("input[type=checkbox][name^=rowid]").prop("checked", $(this).is(":checked"));
-						});
-						</script>';
-				print '</td>';
+				if (!empty($arrayfields['b.num_releve']['checked']))
+				{
+					print '<td class="center">';
+					print '<input type="checkbox" id="selectAll" title="'.dol_escape_htmltag($langs->trans("SelectAll")).'" />';
+					print ' <script type="text/javascript">
+							$("input#selectAll").change(function() {
+								$("input[type=checkbox][name^=rowid]").prop("checked", $(this).is(":checked"));
+							});
+							</script>';
+					print '</td>';
+				}
 				print '<td colspan="'.($tmpnbfieldafterbalance + 2).'">';
 				print '&nbsp;';
 				print '</td>';

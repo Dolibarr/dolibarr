@@ -84,8 +84,15 @@ class Subscription extends CommonObject
 	 * @var int ID
 	 */
 	public $fk_type;
+
+	/**
+	 * @var int Member ID
+	 */
 	public $fk_adherent;
 
+	/**
+	 * @var double amount subscription
+	 */
 	public $amount;
 
 	/**
@@ -140,7 +147,9 @@ class Subscription extends CommonObject
 			$this->error = $langs->trans("ErrorBadValueForDate");
 			return -1;
 		}
-		if (empty($this->datec)) $this->datec = $now;
+		if (empty($this->datec)) {
+			$this->datec = $now;
+		}
 
 
 		$this->db->begin();
@@ -177,7 +186,9 @@ class Subscription extends CommonObject
 			$this->context = array('member' => $member);
 			// Call triggers
 			$result = $this->call_trigger('MEMBER_SUBSCRIPTION_CREATE', $user);
-			if ($result < 0) { $error++; }
+			if ($result < 0) {
+				$error++;
+			}
 			// End call triggers
 		}
 
@@ -250,11 +261,16 @@ class Subscription extends CommonObject
 
 		$this->db->begin();
 
+		if (!is_numeric($this->amount)) {
+			$this->error = 'BadValueForParameterAmount';
+			return -1;
+		}
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."subscription SET ";
 		$sql .= " fk_type = ".$this->fk_type.",";
 		$sql .= " fk_adherent = ".$this->fk_adherent.",";
 		$sql .= " note=".($this->note ? "'".$this->db->escape($this->note)."'" : 'null').",";
-		$sql .= " subscription = '".price2num($this->amount)."',";
+		$sql .= " subscription = ".price2num($this->amount).",";
 		$sql .= " dateadh='".$this->db->idate($this->dateh)."',";
 		$sql .= " datef='".$this->db->idate($this->datef)."',";
 		$sql .= " datec='".$this->db->idate($this->datec)."',";
@@ -273,7 +289,9 @@ class Subscription extends CommonObject
 				$this->context = array('member'=>$member);
 				// Call triggers
 				$result = $this->call_trigger('MEMBER_SUBSCRIPTION_MODIFY', $user);
-				if ($result < 0) { $error++; } //Do also here what you must do to rollback action if trigger fail
+				if ($result < 0) {
+					$error++;
+				} //Do also here what you must do to rollback action if trigger fail
 				// End call triggers
 			}
 		} else {
@@ -315,7 +333,9 @@ class Subscription extends CommonObject
 			if (!$notrigger) {
 				// Call triggers
 				$result = $this->call_trigger('MEMBER_SUBSCRIPTION_DELETE', $user);
-				if ($result < 0) { $error++; } // Do also here what you must do to rollback action if trigger fail
+				if ($result < 0) {
+					$error++;
+				} // Do also here what you must do to rollback action if trigger fail
 				// End call triggers
 			}
 		}
@@ -402,16 +422,24 @@ class Subscription extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
 		}
 
 		$linkstart = '<a href="'.$url.'" class="classfortooltip" title="'.dol_escape_htmltag($label, 1).'">';
 		$linkend = '</a>';
 
 		$result .= $linkstart;
-		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-		if ($withpicto != 2) $result .= $this->ref;
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		}
+		if ($withpicto != 2) {
+			$result .= $this->ref;
+		}
 		$result .= $linkend;
 
 		return $result;

@@ -94,31 +94,49 @@ class BOM extends CommonObject
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'notnull'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'autofocusoncreate'=>1),
 		//'bomtype' => array('type'=>'integer', 'label'=>'Type', 'enabled'=>1, 'visible'=>1, 'position'=>10, 'notnull'=>1, 'default'=>'0', 'arrayofkeyval'=>array(0=>'Manufacturing', 1=>'Disassembly')),
 		'bomtype' => array('type'=>'integer', 'label'=>'Type', 'enabled'=>1, 'visible'=>-1, 'position'=>32, 'notnull'=>1, 'default'=>'0', 'arrayofkeyval'=>array(0=>'Manufacturing')),
-		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:1:(finished IS NULL or finished <> 0)', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'help'=>'ProductBOMHelp'),
+		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:1:(finished IS NULL or finished <> 0)', 'label'=>'Product', 'picto'=>'product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'help'=>'ProductBOMHelp', 'css'=>'maxwidth500'),
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'notnull'=>-1,),
 		'qty' => array('type'=>'real', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'default'=>1, 'position'=>55, 'notnull'=>1, 'isameasure'=>'1', 'css'=>'maxwidth75imp'),
 		//'efficiency' => array('type'=>'real', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>-1, 'default'=>1, 'position'=>100, 'notnull'=>0, 'css'=>'maxwidth50imp', 'help'=>'ValueOfMeansLossForProductProduced'),
 		'duration' => array('type'=>'duration', 'label'=>'EstimatedDuration', 'enabled'=>1, 'visible'=>-1, 'position'=>101, 'notnull'=>-1, 'css'=>'maxwidth50imp', 'help'=>'EstimatedDurationDesc'),
-		'fk_warehouse' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label'=>'WarehouseForProduction', 'enabled'=>1, 'visible'=>-1, 'position'=>102),
+		'fk_warehouse' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label'=>'WarehouseForProduction', 'picto'=>'stock', 'enabled'=>1, 'visible'=>-1, 'position'=>102, 'css'=>'maxwidth500'),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>-2, 'position'=>161, 'notnull'=>-1,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>-2, 'position'=>162, 'notnull'=>-1,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>300, 'notnull'=>1,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'position'=>501, 'notnull'=>1,),
 		'date_valid' => array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-2, 'position'=>502, 'notnull'=>0,),
-		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>510, 'notnull'=>1, 'foreignkey'=>'user.rowid',),
-		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'position'=>511, 'notnull'=>-1,),
-		'fk_user_valid' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-2, 'position'=>512, 'notnull'=>0,),
+		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserCreation', 'picto'=>'user', 'enabled'=>1, 'visible'=>-2, 'position'=>510, 'notnull'=>1, 'foreignkey'=>'user.rowid',),
+		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'picto'=>'user', 'enabled'=>1, 'visible'=>-2, 'position'=>511, 'notnull'=>-1,),
+		'fk_user_valid' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'picto'=>'user', 'enabled'=>1, 'visible'=>-2, 'position'=>512, 'notnull'=>0,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>1010),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>2, 'position'=>1000, 'notnull'=>1, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Enabled', 9=>'Disabled')),
 	);
+
+	/**
+	 * @var int rowid
+	 */
 	public $rowid;
+
+	/**
+	 * @var string ref
+	 */
 	public $ref;
+
+	/**
+	 * @var string label
+	 */
 	public $label;
+
+	/**
+	 * @var int bomtype
+	 */
 	public $bomtype;
+
+	/**
+	 * @var string description
+	 */
 	public $description;
-	public $note_public;
-	public $note_private;
 
 	/**
 	 * @var integer|string date_creation
@@ -127,10 +145,30 @@ class BOM extends CommonObject
 
 
 	public $tms;
+
+	/**
+	 * @var int Id User creator
+	 */
 	public $fk_user_creat;
+
+	/**
+	 * @var int Id User modifying
+	 */
 	public $fk_user_modif;
+
+	/**
+	 * @var string import key
+	 */
 	public $import_key;
+
+	/**
+	 * @var int status
+	 */
 	public $status;
+
+	/**
+	 * @var int product Id
+	 */
 	public $fk_product;
 	public $qty;
 	public $efficiency;
@@ -145,19 +183,19 @@ class BOM extends CommonObject
 	public $table_element_line = 'bom_bomline';
 
 	/**
-	 * @var int    Field with ID of parent key if this field has a parent
+	 * @var string    Fieldname with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_bom';
 
 	/**
-	 * @var int    Name of subtable class that manage subtable lines
+	 * @var string    Name of subtable class that manage subtable lines
 	 */
 	public $class_element_line = 'BOMLine';
 
-	/**
-	 * @var array	List of child tables. To test if we can delete object.
-	 */
-	//protected $childtables=array();
+	// /**
+	//  * @var array	List of child tables. To test if we can delete object.
+	//  */
+	// protected $childtables=array();
 
 	/**
 	 * @var array	List of child tables. To know object to delete on cascade.
@@ -1097,15 +1135,43 @@ class BOMLine extends CommonObjectLine
 		'position' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>1, 'visible'=>0, 'default'=>0, 'position'=>200, 'notnull'=>1,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
 	);
+
+	/**
+	 * @var int rowid
+	 */
 	public $rowid;
+
+	/**
+	 * @var int fk_bom
+	 */
 	public $fk_bom;
+
+	/**
+	 * @var int Id of product
+	 */
 	public $fk_product;
+
+	/**
+	 * @var string description
+	 */
 	public $description;
 	public $qty;
+
+	/**
+	 * @var int qty frozen
+	 */
 	public $qty_frozen;
 	public $disable_stock_change;
 	public $efficiency;
+
+	/**
+	 * @var int position of line
+	 */
 	public $position;
+
+	/**
+	 * @var string import key
+	 */
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
 

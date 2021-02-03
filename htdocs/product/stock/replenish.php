@@ -108,7 +108,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
  * Actions
  */
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha') || isset($_POST['valid'])) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha') || GETPOST('valid')) // Both test are required to be compatible with all browsers
 {
 	$search_ref = '';
 	$search_label = '';
@@ -120,7 +120,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 if ($draftorder == 'on') $draftchecked = "checked";
 
 // Create orders
-if ($action == 'order' && isset($_POST['valid']))
+if ($action == 'order' && GETPOST('valid'))
 {
 	$linecount = GETPOST('linecount', 'int');
 	$box = 0;
@@ -538,9 +538,9 @@ print dol_get_fiche_head($head, 'replenish', '', -1, '');
 
 print '<span class="opacitymedium">'.$langs->trans("ReplenishmentStatusDesc").'</span>'."\n";
 if (empty($fk_warhouse) && !empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
-	print '<span class="opacitymedium">'.$langs->trans("ReplenishmentStatusDescPerWarehouse").'</span>'."<br>\n";
+	print '<span class="opacitymedium">'.$langs->trans("ReplenishmentStatusDescPerWarehouse").'</span>'."\n";
 }
-print '<br>';
+print '<br><br>';
 if ($usevirtualstock == 1)
 {
 	print $langs->trans("CurentSelectionMode").': ';

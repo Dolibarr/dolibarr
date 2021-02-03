@@ -241,6 +241,8 @@ if ($action != "updateRate") {
 
 	$form = new Form($db);
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+
 	print '<table><tr>';
 
 	print ' <td>'.$langs->trans('Date').'</td>';
@@ -286,6 +288,8 @@ if ($action == "updateRate") {
 
 		$form = new Form($db);
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formtoupdaterate">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+
 		print '<table><tr>';
 		print ' <td>'.$langs->trans('Date').'</td>';
 		print '<td>';

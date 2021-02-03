@@ -48,6 +48,11 @@ class pdf_eratosthene extends ModelePDFCommandes
 	public $db;
 
 	/**
+	 * @var int The environment ID when using a multicompany module
+	 */
+	public $entity;
+
+	/**
 	 * @var string model name
 	 */
 	public $name;
@@ -208,8 +213,9 @@ class pdf_eratosthene extends ModelePDFCommandes
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries"));
 
+		global $outputlangsbis;
+		$outputlangsbis = null;
 		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {
-			global $outputlangsbis;
 			$outputlangsbis = new Translate('', $conf);
 			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
 			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries"));
@@ -390,7 +396,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 						$pdf->SetFont('', '', $default_font_size - 1);
 						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top - 1, dol_htmlentitiesbr($desc_incoterms), 0, 1);
-						$nexY = $pdf->GetY();
+						$nexY = max($pdf->GetY(), $nexY);
 						$height_incoterms = $nexY - $tab_top;
 
 						// Rect takes a length in 3rd parameter
@@ -541,7 +547,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 				// Use new auto column system
 				$this->prepareArrayColumnField($object, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
-				// tab simulation to know line height
+				// Table simulation to know the height of the title line
 				$pdf->startTransaction();
 				$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
 				$pdf->rollbackTransaction(true);
@@ -568,6 +574,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 					$showpricebeforepagebreak = 1;
 					$posYAfterImage = 0;
+					$posYAfterDescription = 0;
 
 					if ($this->getColumnStatus('photo'))
 					{
@@ -600,8 +607,8 @@ class pdf_eratosthene extends ModelePDFCommandes
 						$pdf->startTransaction();
 
 						$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
-
 						$pageposafter = $pdf->getPage();
+
 						if ($pageposafter > $pageposbefore)	// There is a pagebreak
 						{
 							$pdf->rollbackTransaction(true);
@@ -632,8 +639,8 @@ class pdf_eratosthene extends ModelePDFCommandes
 						{
 							$pdf->commitTransaction();
 						}
+						$posYAfterDescription = $pdf->GetY();
 					}
-
 
 
 					$nexY = max($pdf->GetY(), $posYAfterImage);
@@ -756,8 +763,8 @@ class pdf_eratosthene extends ModelePDFCommandes
 					&& (!empty($localtax1_rate) || !empty($localtax2_rate))) // and there is local tax
 					{
 						$localtaxtmp_array = getLocalTaxesFromRate($vatrate, 0, $object->thirdparty, $mysoc);
-						$localtax1_type = $localtaxtmp_array[0];
-						$localtax2_type = $localtaxtmp_array[2];
+						$localtax1_type = isset($localtaxtmp_array[0]) ? $localtaxtmp_array[0] : '';
+						$localtax2_type = isset($localtaxtmp_array[2]) ? $localtaxtmp_array[2] : '';
 					}
 
 					// retrieve global local tax
@@ -1244,8 +1251,8 @@ class pdf_eratosthene extends ModelePDFCommandes
 							}
 							$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalLT1", $mysoc->country_code) : '');
 							$totalvat .= ' ';
-
 							$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;
+
 							$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 							$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 							$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
@@ -1325,7 +1332,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->SetFillColor(224, 224, 224);
 			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("AlreadyPaid") : ''), $useborder, 'L', 1);
+			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("RemainderToPay") : ''), $useborder, 'L', 1);
 
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($resteapayer, 0, $outputlangs), $useborder, 'R', 1);
@@ -1452,8 +1459,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 				} else {
 					$logo = $logodir.'/logos/'.$this->emetteur->logo;
 				}
-				if (is_readable($logo))
-				{
+				if (is_readable($logo)) {
 					$height = pdf_getHeightForLogo($logo);
 					$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
 				} else {
@@ -1472,17 +1478,28 @@ class pdf_eratosthene extends ModelePDFCommandes
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$title = $outputlangs->transnoentities($titlekey);
-		$pdf->MultiCell($w, 4, $title, '', 'R');
+		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && is_object($outputlangsbis)) {
+			$title .= ' - ';
+			$title .= $outputlangsbis->transnoentities($titlekey);
+		}
+
+		$pdf->MultiCell($w, 3, $title, '', 'R');
 
 		$pdf->SetFont('', 'B', $default_font_size);
 
 		$posy += 5;
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref), '', 'R');
+		$textref = $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref);
+		if ($object->statut == $object::STATUS_DRAFT)
+		{
+			$pdf->SetTextColor(128, 0, 0);
+			$textref .= ' - '.$outputlangs->transnoentities("NotValidated");
+		}
+		$pdf->MultiCell($w, 4, $textref, '', 'R');
 
 		$posy += 1;
-		$pdf->SetFont('', '', $default_font_size - 1);
+		$pdf->SetFont('', '', $default_font_size - 2);
 
 		if ($object->ref_client)
 		{
@@ -1520,7 +1537,11 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell($w, 3, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($object->date, "day", false, $outputlangs, true), '', 'R');
+		$title = $outputlangs->transnoentities("OrderDate");
+		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && is_object($outputlangsbis)) {
+			$title .= ' - '.$outputlangsbis->transnoentities("DateInvoice");
+		}
+		$pdf->MultiCell($w, 3, $title." : ".dol_print_date($object->date, "day", false, $outputlangs, true), '', 'R');
 
 		if (!empty($conf->global->DOC_SHOW_CUSTOMER_CODE) && !empty($object->thirdparty->code_client))
 		{
@@ -1572,10 +1593,14 @@ class pdf_eratosthene extends ModelePDFCommandes
 		 	$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
-			$posy = 42 + $top_shift;
+		 	$posy = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 42;
+		 	$posy += $top_shift;
 			$posx = $this->marge_gauche;
 			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx = $this->page_largeur - $this->marge_droite - 80;
-			$hautcadre = 40;
+
+			$hautcadre = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 38 : 40;
+			$widthrecbox = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 82;
+
 
 			// Show sender frame
 			$pdf->SetTextColor(0, 0, 0);
@@ -1584,20 +1609,19 @@ class pdf_eratosthene extends ModelePDFCommandes
 			$pdf->MultiCell(66, 5, $outputlangs->transnoentities("BillFrom").":", 0, 'L');
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetFillColor(230, 230, 230);
-			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+			$pdf->MultiCell($widthrecbox, $hautcadre, "", 0, 'R', 1);
 			$pdf->SetTextColor(0, 0, 60);
 
 			// Show sender name
 			$pdf->SetXY($posx + 2, $posy + 3);
 			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
+			$pdf->MultiCell($widthrecbox - 2, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
 			$posy = $pdf->getY();
 
 			// Show sender information
 			$pdf->SetXY($posx + 2, $posy);
 			$pdf->SetFont('', '', $default_font_size - 1);
-			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
-
+			$pdf->MultiCell($widthrecbox - 2, 4, $carac_emetteur, 0, 'L');
 
 			// If CUSTOMER contact defined, we use it
 			$usecontact = false;
@@ -1609,8 +1633,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 			}
 
 			//Recipient name
-			// On peut utiliser le nom de la societe du contact
-			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
+			if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;
@@ -1751,11 +1774,10 @@ class pdf_eratosthene extends ModelePDFCommandes
 			'border-left' => false, // remove left line separator
 		);
 
-		if (!empty($conf->global->MAIN_GENERATE_ORDERS_WITH_PICTURE))
+		if (!empty($conf->global->MAIN_GENERATE_ORDERS_WITH_PICTURE) && !empty($this->atleastonephoto))
 		{
 			$this->cols['photo']['status'] = true;
 		}
-
 
 		$rank = $rank + 10;
 		$this->cols['vat'] = array(
@@ -1784,6 +1806,17 @@ class pdf_eratosthene extends ModelePDFCommandes
 			'border-left' => true, // add left line separator
 		);
 
+		// Adapt dynamically the width of subprice, if text is too long.
+		$tmpwidth = 0;
+		$nblines = count($object->lines);
+		for ($i = 0; $i < $nblines; $i++) {
+			$tmpwidth2 = dol_strlen(dol_string_nohtmltag(pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails)));
+			$tmpwidth = max($tmpwidth, $tmpwidth2);
+		}
+		if ($tmpwidth > 10) {
+			$this->cols['subprice']['width'] += (2 * ($tmpwidth - 10));
+		}
+
 		$rank = $rank + 10;
 		$this->cols['qty'] = array(
 			'rank' => $rank,
@@ -1805,7 +1838,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 			),
 			'border-left' => true, // add left line separator
 		);
-		if ($conf->global->PRODUCT_USE_UNITS) {
+		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 			$this->cols['unit']['status'] = true;
 		}
 

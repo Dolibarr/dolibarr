@@ -50,10 +50,9 @@ if ($action == "set")
 
 	$id = GETPOST('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT', 'int');
 	$account = new Account($db);
-	if ($account->fetch($id) > 0)
-	{
+	if ($account->fetch($id) > 0) {
 		$res = dolibarr_set_const($db, "PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT", $id, 'chaine', 0, '', $conf->entity);
-		if (!$res > 0) $error++;
+		if (!($res > 0)) $error++;
 		/*
         $res = dolibarr_set_const($db, "PRELEVEMENT_CODE_BANQUE", $account->code_banque,'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
@@ -70,32 +69,35 @@ if ($action == "set")
         $res = dolibarr_set_const($db, "PRELEVEMENT_RAISON_SOCIALE", $account->proprio,'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
         */
-	} else $error++;
-
+	} else {
+		$error++;
+	}
+	/* Moved to account
 	$res = dolibarr_set_const($db, "PAYMENTBYBANKTRANSFER_ICS", GETPOST("PAYMENTBYBANKTRANSFER_ICS"), 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
+	*/
 
 	if (GETPOST("PAYMENTBYBANKTRANSFER_USER") > 0)
 	{
 		$res = dolibarr_set_const($db, "PAYMENTBYBANKTRANSFER_USER", GETPOST("PAYMENTBYBANKTRANSFER_USER"), 'chaine', 0, '', $conf->entity);
-		if (!$res > 0) $error++;
+		if (!($res > 0)) $error++;
 	}
 	/*
 	if (GETPOST("PAYMENTBYBANKTRANSFER_END_TO_END") || GETPOST("PAYMENTBYBANKTRANSFER_END_TO_END") == "")
 	{
 		$res = dolibarr_set_const($db, "PAYMENTBYBANKTRANSFER_END_TO_END", GETPOST("PAYMENTBYBANKTRANSFER_END_TO_END"), 'chaine', 0, '', $conf->entity);
-		if (!$res > 0) $error++;
+		if (!($res > 0)) $error++;
 	}
 	if (GETPOST("PAYMENTBYBANKTRANSFER_USTRD") || GETPOST("PAYMENTBYBANKTRANSFER_USTRD") == "")
 	{
 		$res = dolibarr_set_const($db, "PAYMENTBYBANKTRANSFER_USTRD", GETPOST("PAYMENTBYBANKTRANSFER_USTRD"), 'chaine', 0, '', $conf->entity);
-		if (!$res > 0) $error++;
+		if (!($res > 0)) $error++;
 	}
 	*/
 	if (GETPOST("PAYMENTBYBANKTRANSFER_ADDDAYS") || GETPOST("PAYMENTBYBANKTRANSFER_ADDDAYS") == "")
 	{
 		$res = dolibarr_set_const($db, "PAYMENTBYBANKTRANSFER_ADDDAYS", GETPOST("PAYMENTBYBANKTRANSFER_ADDDAYS"), 'chaine', 0, '', $conf->entity);
-		if (!$res > 0) $error++;
+		if (!($res > 0)) $error++;
 	} elseif (!$error)
 	{
 		$db->commit();
@@ -156,11 +158,13 @@ print '<td class="left">';
 $form->select_comptes($conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT, 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT', 0, "courant=1", 1);
 print '</td></tr>';
 
+/* Moved to bank account data
 // ICS
 print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("ICS").'</td>';
 print '<td class="left">';
 print '<input type="text" name="PAYMENTBYBANKTRANSFER_ICS" value="'.$conf->global->PAYMENTBYBANKTRANSFER_ICS.'" size="15" ></td>';
 print '</td></tr>';
+*/
 
 //User
 print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("ResponsibleUser").'</td>';
@@ -340,7 +344,7 @@ foreach ($dirmodels as $reldir)
                                 print '<td class="center">';
                                 if ($module->type == 'pdf')
                                 {
-                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'bill').'</a>';
+                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
                                 }
                                 else
                                 {

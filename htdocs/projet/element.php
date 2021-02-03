@@ -79,8 +79,7 @@ $dates = dol_mktime(0, 0, 0, GETPOST('datesmonth'), GETPOST('datesday'), GETPOST
 $datee = dol_mktime(23, 59, 59, GETPOST('dateemonth'), GETPOST('dateeday'), GETPOST('dateeyear'));
 if (empty($dates) && !empty($datesrfc)) $dates = dol_stringtotime($datesrfc);
 if (empty($datee) && !empty($dateerfc)) $datee = dol_stringtotime($dateerfc);
-if (!isset($_POST['datesrfc']) && !isset($_POST['datesday']) && !empty($conf->global->PROJECT_LINKED_ELEMENT_DEFAULT_FILTER_YEAR))
-{
+if (!GETPOSTISSET('datesrfc') && !GETPOSTISSET('datesday') && !empty($conf->global->PROJECT_LINKED_ELEMENT_DEFAULT_FILTER_YEAR)) {
 	$new = dol_now();
 	$tmp = dol_getdate($new);
 	//$datee=$now
@@ -649,9 +648,28 @@ print '<td class="right" width="100">'.$langs->trans("AmountTTC").'</td>';
 print '</tr>';
 
 $total_revenue_ht = 0;
+$balance_ht = 0;
+$balance_ttc = 0;
 
 foreach ($listofreferent as $key => $value)
 {
+	$parameters = array(
+		'total_revenue_ht' =>& $total_revenue_ht,
+		'balance_ht' =>& $balance_ht,
+		'balance_ttc' =>& $balance_ttc,
+		'key' => $key,
+		'value' =>& $value,
+		'dates' => $dates,
+		'datee' => $datee
+	);
+	$reshook = $hookmanager->executeHooks('printOverviewProfit', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	} elseif ($reshook > 0) {
+		print $hookmanager->resPrint;
+		continue;
+	}
+
 	$name = $langs->trans($value['name']);
 	$title = $value['title'];
 	$classname = $value['class'];
@@ -660,20 +678,17 @@ foreach ($listofreferent as $key => $value)
 	$qualified = $value['test'];
 	$margin = $value['margin'];
 	$project_field = $value['project_field'];
-	if ($qualified && isset($margin))		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
-	{
+	if ($qualified && isset($margin)) {		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
 		$element = new $classname($db);
 
 		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, !empty($project_field) ? $project_field : 'fk_projet');
 
-		if (is_array($elementarray) && count($elementarray) > 0)
-		{
+		if (is_array($elementarray) && count($elementarray) > 0) {
 			$total_ht = 0;
 			$total_ttc = 0;
 
 			$num = count($elementarray);
-			for ($i = 0; $i < $num; $i++)
-			{
+			for ($i = 0; $i < $num; $i++) {
 				$tmp = explode('_', $elementarray[$i]);
 				$idofelement = $tmp[0];
 				$idofelementuser = $tmp[1];
@@ -683,13 +698,11 @@ foreach ($listofreferent as $key => $value)
 
 				// Define if record must be used for total or not
 				$qualifiedfortotal = true;
-				if ($key == 'invoice')
-				{
-					if (!empty($element->close_code) && $element->close_code == 'replaced') $qualifiedfortotal = false; // Replacement invoice, do not include into total
-					if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS) && $element->type == Facture::TYPE_DEPOSIT) $qualifiedfortotal = false; // If hidden option to use deposits as payment (deprecated, not recommended to use this), deposits are not included
+				if ($key == 'invoice') {
+				    if (!empty($element->close_code) && $element->close_code == 'replaced') $qualifiedfortotal = false; // Replacement invoice, do not include into total
+				    if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS) && $element->type == Facture::TYPE_DEPOSIT) $qualifiedfortotal = false; // If hidden option to use deposits as payment (deprecated, not recommended to use this), deposits are not included
 				}
-				if ($key == 'propal')
-				{
+				if ($key == 'propal') {
 					if ($element->status != Propal::STATUS_SIGNED && $element->status != Propal::STATUS_BILLED) $qualifiedfortotal = false; // Only signed proposal must not be included in total
 				}
 
@@ -699,10 +712,8 @@ foreach ($listofreferent as $key => $value)
 				if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'payment_salary') $total_ht_by_line = $element->amount;
 				elseif ($tablename == 'fichinter') $total_ht_by_line = $element->getAmount();
 				elseif ($tablename == 'stock_mouvement') $total_ht_by_line = $element->price * abs($element->qty);
-				elseif ($tablename == 'projet_task')
-				{
-					if ($idofelementuser)
-					{
+				elseif ($tablename == 'projet_task') {
+					if ($idofelementuser) {
 						$tmp = $element->getSumOfAmount($elementuser, $dates, $datee);
 						$total_ht_by_line = price2num($tmp['amount'], 'MT');
 					} else {
@@ -738,8 +749,7 @@ foreach ($listofreferent as $key => $value)
 				if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'payment_salary') $total_ttc_by_line = $element->amount;
 				elseif ($tablename == 'fichinter') $total_ttc_by_line = $element->getAmount();
 				elseif ($tablename == 'stock_mouvement') $total_ttc_by_line = $element->price * abs($element->qty);
-				elseif ($tablename == 'projet_task')
-				{
+				elseif ($tablename == 'projet_task') {
 					$defaultvat = get_default_tva($mysoc, $mysoc);
 					$total_ttc_by_line = price2num($total_ht_by_line * (1 + ($defaultvat / 100)), 'MT');
 				} elseif ($key == 'loan') {
@@ -747,18 +757,15 @@ foreach ($listofreferent as $key => $value)
 				} else $total_ttc_by_line = $element->total_ttc;
 
 				// Change sign of $total_ht_by_line and $total_ttc_by_line for some cases
-				if ($tablename == 'payment_various')
-				{
-					if ($element->sens == 1)
-					{
+				if ($tablename == 'payment_various') {
+					if ($element->sens == 1) {
 						$total_ht_by_line = -$total_ht_by_line;
 						$total_ttc_by_line = -$total_ttc_by_line;
 					}
 				}
 
 				// Add total if we have to
-				if ($qualifiedfortotal)
-				{
+				if ($qualifiedfortotal)	{
 					$total_ht = $total_ht + $total_ht_by_line;
 					$total_ttc = $total_ttc + $total_ttc_by_line;
 				}
@@ -771,14 +778,12 @@ foreach ($listofreferent as $key => $value)
 			//var_dump($key.' '.$qualifiedforfinalprofit);
 
 			// Calculate margin
-			if ($qualifiedforfinalprofit)
-			{
+			if ($qualifiedforfinalprofit) {
 				if ($margin == 'add') {
 					$total_revenue_ht += $total_ht;
 				}
 
-				if ($margin != "add")	// Revert sign
-				{
+				if ($margin != "add")	{ // Revert sign
 					$total_ht = -$total_ht;
 					$total_ttc = -$total_ttc;
 				}
@@ -839,6 +844,20 @@ print '<br>';
 // Detail
 foreach ($listofreferent as $key => $value)
 {
+	$parameters = array(
+		'key' => $key,
+		'value' =>& $value,
+		'dates' => $dates,
+		'datee' => $datee
+	);
+	$reshook = $hookmanager->executeHooks('printOverviewDetail', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	} elseif ($reshook > 0) {
+		print $hookmanager->resPrint;
+		continue;
+	}
+
 	$title = $value['title'];
 	$classname = $value['class'];
 	$tablename = $value['table'];
@@ -853,8 +872,7 @@ foreach ($listofreferent as $key => $value)
 	$exclude_select_element = array('payment_various');
 	if (!empty($value['exclude_select_element'])) $exclude_select_element[] = $value['exclude_select_element'];
 
-	if ($qualified)
-	{
+	if ($qualified) {
 		// If we want the project task array to have details of users
 		//if ($key == 'project_task') $key = 'project_task_time';
 
@@ -1343,7 +1361,6 @@ if ($conf->use_javascript_ajax)
 {
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 	$comboenhancement = ajax_combobox('.elementselect');
-	$out .= $comboenhancement;
 
 	print $comboenhancement;
 }

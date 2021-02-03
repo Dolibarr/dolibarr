@@ -49,7 +49,7 @@ class modHRM extends DolibarrModules
 		$this->description = "Management of employees carrier and feelings (department, employment contract)";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'development';
+		$this->version = 'experimental';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.

@@ -476,6 +476,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				$projectstatic->public = $lines[$i]->public;
 				$projectstatic->title = $lines[$i]->projectlabel;
 				$projectstatic->usage_bill_time = $lines[$i]->usage_bill_time;
+				$projectstatic->status = $lines[$i]->projectstatus;
 
 				$taskstatic->id = $lines[$i]->id;
 				$taskstatic->ref = $lines[$i]->ref;
@@ -483,7 +484,9 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				$taskstatic->projectstatus = $lines[$i]->projectstatus;
 				$taskstatic->progress = $lines[$i]->progress;
 				$taskstatic->fk_statut = $lines[$i]->status;
-				$taskstatic->datee = $lines[$i]->date_end;
+				$taskstatic->date_start = $lines[$i]->date_start;
+				$taskstatic->date_end = $lines[$i]->date_end;
+				$taskstatic->datee = $lines[$i]->date_end; // deprecated
 				$taskstatic->planned_workload = $lines[$i]->planned_workload;
 				$taskstatic->duration_effective = $lines[$i]->duration;
 
@@ -879,6 +882,7 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
 			$projectstatic->ref = $lines[$i]->project_ref;
 			$projectstatic->title = $lines[$i]->project_label;
 			$projectstatic->public = $lines[$i]->public;
+			$projectstatic->status = $lines[$i]->project_status;
 
 			$taskstatic->id = $lines[$i]->task_id;
 			$taskstatic->ref = ($lines[$i]->task_ref ? $lines[$i]->task_ref : $lines[$i]->task_id);
@@ -1114,6 +1118,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				$projectstatic->ref = $lines[$i]->projectref;
 				$projectstatic->title = $lines[$i]->projectlabel;
 				$projectstatic->public = $lines[$i]->public;
+				$projectstatic->status = $lines[$i]->projectstatus;
 
 				$taskstatic->id = $lines[$i]->id;
 				$taskstatic->ref = ($lines[$i]->ref ? $lines[$i]->ref : $lines[$i]->id);
@@ -1317,7 +1322,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				global $daytoparse;
 				$tmparray = dol_getdate($daytoparse, true); // detail of current day
 
-				$idw = ($tmparray['wday'] - (empty($conf->global->MAIN_START_WEEK)?0:1));
+				$idw = ($tmparray['wday'] - (empty($conf->global->MAIN_START_WEEK) ? 0 : 1));
 				global $numstartworkingday, $numendworkingday;
 				$cssweekend = '';
 				if ((($idw + 1) < $numstartworkingday) || (($idw + 1) > $numendworkingday))	// This is a day is not inside the setup of working days, so we use a week-end css.
@@ -1487,6 +1492,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				$projectstatic->title = $lines[$i]->projectlabel;
 				$projectstatic->public = $lines[$i]->public;
 				$projectstatic->thirdparty_name = $lines[$i]->thirdparty_name;
+				$projectstatic->status = $lines[$i]->projectstatus;
 
 				$taskstatic->id = $lines[$i]->id;
 				$taskstatic->ref = ($lines[$i]->ref ? $lines[$i]->ref : $lines[$i]->id);
@@ -1841,6 +1847,7 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				$projectstatic->title = $lines[$i]->projectlabel;
 				$projectstatic->public = $lines[$i]->public;
 				$projectstatic->thirdparty_name = $lines[$i]->thirdparty_name;
+				$projectstatic->status = $lines[$i]->projectstatus;
 
 				$taskstatic->id = $lines[$i]->id;
 				$taskstatic->ref = ($lines[$i]->ref ? $lines[$i]->ref : $lines[$i]->id);
@@ -2166,7 +2173,11 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	if (empty($arrayidofprojects)) $arrayidofprojects[0] = -1;
 
 	// Get list of project with calculation on tasks
-	$sql2 = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_soc, s.nom as socname, s.email, s.client, s.fournisseur,";
+	$sql2 = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_soc,";
+	$sql2 .= " s.rowid as socid, s.nom as socname, s.name_alias,";
+	$sql2 .= " s.code_client, s.code_compta, s.client,";
+	$sql2 .= " s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur,";
+	$sql2 .= " s.logo, s.email, s.entity,";
 	$sql2 .= " p.fk_user_creat, p.public, p.fk_statut as status, p.fk_opp_status as opp_status, p.opp_percent, p.opp_amount,";
 	$sql2 .= " p.dateo, p.datee,";
 	$sql2 .= " COUNT(t.rowid) as nb, SUM(t.planned_workload) as planned_workload, SUM(t.planned_workload * t.progress / 100) as declared_progess_workload";
@@ -2174,7 +2185,8 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	$sql2 .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 	$sql2 .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
 	$sql2 .= " WHERE p.rowid IN (".join(',', $arrayidofprojects).")";
-	$sql2 .= " GROUP BY p.rowid, p.ref, p.title, p.fk_soc, s.nom, p.fk_user_creat, p.public, p.fk_statut, p.fk_opp_status, p.opp_percent, p.opp_amount, p.dateo, p.datee";
+	$sql2 .= " GROUP BY p.rowid, p.ref, p.title, p.fk_soc, s.rowid, s.nom, s.name_alias, s.code_client, s.code_compta, s.client, s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur,";
+	$sql2 .= " s.logo, s.email, s.entity, p.fk_user_creat, p.public, p.fk_statut, p.fk_opp_status, p.opp_percent, p.opp_amount, p.dateo, p.datee";
 	$sql2 .= " ORDER BY p.title, p.ref";
 
 	$resql = $db->query($sql2);
@@ -2235,12 +2247,18 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 				print '<td class="nowraponall tdoverflowmax100">';
 				if ($objp->fk_soc > 0)
 				{
-					$thirdpartystatic->id = $objp->fk_soc;
-					$thirdpartystatic->ref = $objp->socname;
+					$thirdpartystatic->id = $objp->socid;
 					$thirdpartystatic->name = $objp->socname;
+					//$thirdpartystatic->name_alias = $objp->name_alias;
+					//$thirdpartystatic->code_client = $objp->code_client;
+					$thirdpartystatic->code_compta = $objp->code_compta;
 					$thirdpartystatic->client = $objp->client;
+					//$thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
+					$thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
 					$thirdpartystatic->fournisseur = $objp->fournisseur;
+					$thirdpartystatic->logo = $objp->logo;
 					$thirdpartystatic->email = $objp->email;
+					$thirdpartystatic->entity = $objp->entity;
 					print $thirdpartystatic->getNomUrl(1);
 				}
 				print '</td>';
@@ -2400,8 +2418,8 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 		// this conf is actually hidden, by default we use 10% for "be carefull or warning"
 		$warningRatio = !empty($conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT) ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.10;
 
-		$diffTitle = '<br/>'.$langs->trans('ProgressDeclared').' : '.$task->progress.($task->progress ? '%' : '');
-		$diffTitle .= '<br/>'.$langs->trans('ProgressCalculated').' : '.$progressCalculated.($progressCalculated ? '%' : '');
+		$diffTitle = '<br>'.$langs->trans('ProgressDeclared').' : '.$task->progress.($task->progress ? '%' : '');
+		$diffTitle .= '<br>'.$langs->trans('ProgressCalculated').' : '.$progressCalculated.($progressCalculated ? '%' : '');
 
 		//var_dump($progressCalculated.' '.$warningRatio.' '.$task->progress.' '.doubleval($task->progress * $warningRatio));
 		if (doubleval($progressCalculated) > doubleval($task->progress * $warningRatio)) {
@@ -2514,13 +2532,15 @@ function getTaskProgressBadge($task, $label = '', $tooltip = '')
 
 			if (doubleval($progressCalculated) > doubleval($task->progress * $warningRatio)) {
 				$badgeClass .= 'badge-danger';
-				if (empty($tooltip)) $tooltip = $task->progress.'% < '.$langs->trans("Expected").' '.$progressCalculated.'%';
+				if (empty($tooltip)) {
+					$tooltip = $task->progress.'% < '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';
+				}
 			} elseif (doubleval($progressCalculated) > doubleval($task->progress)) { // warning if close at 10%
 				$badgeClass .= 'badge-warning';
-				if (empty($tooltip)) $tooltip = $task->progress.'% < '.$langs->trans("Expected").' '.$progressCalculated.'%';
+				if (empty($tooltip)) $tooltip = $task->progress.'% < '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';
 			} else {
 				$badgeClass .= 'badge-success';
-				if (empty($tooltip)) $tooltip = $task->progress.'% >= '.$langs->trans("Expected").' '.$progressCalculated.'%';
+				if (empty($tooltip)) $tooltip = $task->progress.'% >= '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';
 			}
 		}
 	}

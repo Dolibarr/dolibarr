@@ -184,7 +184,7 @@ class Commande extends CommonOrder
 	 * @var int	Date expected for delivery
 	 * @deprecated
 	 */
-	public $date_livraison;	// deprecated; Use delivery_date instead.
+	public $date_livraison; // deprecated; Use delivery_date instead.
 
 	public $delivery_date; // Date expected of shipment (date starting shipment, not the reception that occurs some days after)
 
@@ -199,6 +199,9 @@ class Commande extends CommonOrder
 	public $rang;
 	public $special_code;
 	public $source; // Order mode. How we received order (by phone, by email, ...)
+
+	public $warehouse_id;
+
 	public $extraparams = array();
 
 	public $linked_objects = array();
@@ -229,11 +232,6 @@ class Commande extends CommonOrder
 	public $multicurrency_total_ht;
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
-
-	/**
-	 * @var Commande clone of order object
-	 */
-	public $oldcopy;
 
 	//! key of module source when order generated from a dedicated module ('cashdesk', 'takepos', ...)
 	public $module_source;
@@ -368,8 +366,6 @@ class Commande extends CommonOrder
 
 		$this->remise = 0;
 		$this->remise_percent = 0;
-
-		$this->products = array();
 	}
 
 	/**
@@ -493,26 +489,21 @@ class Commande extends CommonOrder
 			$error++;
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			// If stock is incremented on validate order, we must increment it
-			if ($result >= 0 && !empty($conf->stock->enabled) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
-			{
+			if ($result >= 0 && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 				$langs->load("agenda");
 
 				// Loop on each line
 				$cpt = count($this->lines);
-				for ($i = 0; $i < $cpt; $i++)
-				{
-					if ($this->lines[$i]->fk_product > 0)
-					{
+				for ($i = 0; $i < $cpt; $i++) {
+					if ($this->lines[$i]->fk_product > 0) {
 						$mouvP = new MouvementStock($this->db);
 						$mouvP->origin = &$this;
 						// We decrement stock of product (and sub-products)
 						$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderValidatedInDolibarr", $num));
-						if ($result < 0)
-						{
+						if ($result < 0) {
 							$error++;
 							$this->error = $mouvP->error;
 						}
@@ -522,16 +513,14 @@ class Commande extends CommonOrder
 			}
 		}
 
-		if (!$error && !$notrigger)
-		{
+		if (!$error && !$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('ORDER_VALIDATE', $user);
 			if ($result < 0) $error++;
 			// End call triggers
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$this->oldref = $this->ref;
 
 			// Rename directory if dir was a temporary ref
@@ -632,7 +621,7 @@ class Commande extends CommonOrder
 			}
 
 			// If stock is decremented on validate order, we must reincrement it
-			if (!empty($conf->stock->enabled) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
+			if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
 			{
 				$result = 0;
 
@@ -818,7 +807,7 @@ class Commande extends CommonOrder
 		if ($this->db->query($sql))
 		{
 			// If stock is decremented on validate order, we must reincrement it
-			if (!empty($conf->stock->enabled) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
+			if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
 			{
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 				$langs->load("agenda");
@@ -963,8 +952,8 @@ class Commande extends CommonOrder
 		$sql .= ", ".($this->demand_reason_id > 0 ? $this->demand_reason_id : "null");
 		$sql .= ", ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : "null");
 		$sql .= ", ".($this->fk_delivery_address > 0 ? $this->fk_delivery_address : 'NULL');
-		$sql .= ", ".($this->shipping_method_id > 0 ? $this->shipping_method_id : 'NULL');
-		$sql .= ", ".($this->warehouse_id > 0 ? $this->warehouse_id : 'NULL');
+		$sql .= ", ".(!empty($this->shipping_method_id) && $this->shipping_method_id > 0 ? $this->shipping_method_id : 'NULL');
+		$sql .= ", ".(!empty($this->warehouse_id) && $this->warehouse_id > 0 ? $this->warehouse_id : 'NULL');
 		$sql .= ", ".($this->remise_absolue > 0 ? $this->db->escape($this->remise_absolue) : 'NULL');
 		$sql .= ", ".($this->remise_percent > 0 ? $this->db->escape($this->remise_percent) : 0);
 		$sql .= ", ".(int) $this->fk_incoterms;
@@ -1082,7 +1071,7 @@ class Commande extends CommonOrder
 					}
 
 					// Add object linked
-					if (!$error && $this->id && is_array($this->linked_objects) && !empty($this->linked_objects))
+					if (!$error && $this->id && !empty($this->linked_objects) && is_array($this->linked_objects))
 					{
 						foreach ($this->linked_objects as $origin => $tmp_origin_id)
 						{
@@ -1360,7 +1349,7 @@ class Commande extends CommonOrder
 		$this->fk_account           = $object->fk_account;
 		$this->availability_id      = $object->availability_id;
 		$this->demand_reason_id     = $object->demand_reason_id;
-		$this->date_livraison       = $object->date_livraison;	// deprecated
+		$this->date_livraison       = $object->date_livraison; // deprecated
 		$this->delivery_date        = $object->date_livraison;
 		$this->shipping_method_id   = $object->shipping_method_id;
 		$this->warehouse_id         = $object->warehouse_id;
@@ -1606,8 +1595,8 @@ class Commande extends CommonOrder
 			$this->line->tva_tx = $txtva;
 			$this->line->localtax1_tx = ($total_localtax1 ? $localtaxes_type[1] : 0);
 			$this->line->localtax2_tx = ($total_localtax2 ? $localtaxes_type[3] : 0);
-			$this->line->localtax1_type = $localtaxes_type[0];
-			$this->line->localtax2_type = $localtaxes_type[2];
+			$this->line->localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
+			$this->line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 			$this->line->fk_product = $fk_product;
 			$this->line->product_type = $product_type;
 			$this->line->fk_remise_except = $fk_remise_except;
@@ -1690,7 +1679,6 @@ class Commande extends CommonOrder
 	 * 	@return void
 	 *
 	 *	TODO	Remplacer les appels a cette fonction par generation objet Ligne
-	 *			insere dans tableau $this->products
 	 */
 	public function add_product($idproduct, $qty, $remise_percent = 0.0, $date_start = '', $date_end = '')
 	{
@@ -1752,15 +1740,13 @@ class Commande extends CommonOrder
 			 $prods_arbo = $prod->get_arbo_each_prod();
 			 if(count($prods_arbo) > 0)
 			 {
-			 foreach($prods_arbo as $key => $value)
-			 {
-			 // print "id : ".$value[1].' :qty: '.$value[0].'<br>';
-			 if(! in_array($value[1],$this->products))
-			 $this->add_product($value[1], $value[0]);
-
-			 }
-			 }
-
+				 foreach($prods_arbo as $key => $value)
+				 {
+					 // print "id : ".$value[1].' :qty: '.$value[0].'<br>';
+					 if not in lines {
+					 	$this->add_product($value[1], $value[0]);
+					 }
+				 }
 			 }
 			 **/
 		}
@@ -1835,6 +1821,8 @@ class Commande extends CommonOrder
 				$this->project = null; // Clear if another value was already set by fetch_projet
 
 				$this->statut = $obj->fk_statut;
+				$this->status = $obj->fk_statut;
+
 				$this->user_author_id = $obj->fk_user_author;
 				$this->user_valid = $obj->fk_user_valid;
 				$this->total_ht				= $obj->total_ht;
@@ -1871,7 +1859,7 @@ class Commande extends CommonOrder
 				$this->availability	    	= $obj->availability_label;
 				$this->demand_reason_id		= $obj->fk_input_reason;
 				$this->demand_reason_code = $obj->demand_reason_code;
-				$this->date_livraison = $this->db->jdate($obj->delivery_date);	// deprecated
+				$this->date_livraison = $this->db->jdate($obj->delivery_date); // deprecated
 				$this->delivery_date = $this->db->jdate($obj->delivery_date);
 				$this->shipping_method_id   = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
 				$this->warehouse_id         = ($obj->fk_warehouse > 0) ? $obj->fk_warehouse : null;
@@ -2014,7 +2002,7 @@ class Commande extends CommonOrder
 		$sql .= ' l.total_ht, l.total_ttc, l.total_tva, l.total_localtax1, l.total_localtax2, l.date_start, l.date_end,';
 		$sql .= ' l.fk_unit,';
 		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
-		$sql .= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label, p.tosell as product_tosell, p.tobuy as product_tobuy, p.tobatch as product_tobatch,';
+		$sql .= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label, p.tosell as product_tosell, p.tobuy as product_tobuy, p.tobatch as product_tobatch, p.barcode as product_barcode,';
 		$sql .= ' p.weight, p.weight_units, p.volume, p.volume_units';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
@@ -2073,13 +2061,16 @@ class Commande extends CommonOrder
 				$line->fk_parent_line = $objp->fk_parent_line;
 
 				$line->ref = $objp->product_ref;
-				$line->product_ref = $objp->product_ref;
 				$line->libelle = $objp->product_label;
+
+				$line->product_ref = $objp->product_ref;
 				$line->product_label = $objp->product_label;
 				$line->product_desc     = $objp->product_desc;
 				$line->product_tosell   = $objp->product_tosell;
 				$line->product_tobuy    = $objp->product_tobuy;
 				$line->product_tobatch  = $objp->product_tobatch;
+				$line->product_barcode  = $objp->product_barcode;
+
 				$line->fk_product_type  = $objp->fk_product_type; // Produit ou service
 				$line->fk_unit          = $objp->fk_unit;
 
@@ -2904,18 +2895,19 @@ class Commande extends CommonOrder
 	 * Classify the order as invoiced
 	 *
 	 * @param	User    $user       Object user making the change
-	 * @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 * @return	int                 <0 if KO, >0 if OK
+	 * @param	int		$notrigger	1=Does not execute triggers, 0=execute triggers
+	 * @return	int                 <0 if KO, 0 if already billed,  >0 if OK
 	 */
 	public function classifyBilled(User $user, $notrigger = 0)
 	{
 		$error = 0;
 
-		$this->db->begin();
 		if ($this->billed)
 		{
 			return 0;
 		}
+
+		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET facture = 1';
 		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT;
@@ -3068,7 +3060,9 @@ class Commande extends CommonOrder
 			$pu = price2num($pu);
 			$pa_ht = price2num($pa_ht);
 			$pu_ht_devise = price2num($pu_ht_devise);
-			$txtva = price2num($txtva);
+			if (!preg_match('/\((.*)\)/', $txtva)) {
+				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
+			}
 			$txlocaltax1 = price2num($txlocaltax1);
 			$txlocaltax2 = price2num($txlocaltax2);
 
@@ -3083,6 +3077,7 @@ class Commande extends CommonOrder
 
 			// Clean vat code
 			$vat_src_code = '';
+			$reg = array();
 			if (preg_match('/\((.*)\)/', $txtva, $reg))
 			{
 				$vat_src_code = $reg[1];
@@ -3166,8 +3161,8 @@ class Commande extends CommonOrder
 			$this->line->tva_tx         = $txtva;
 			$this->line->localtax1_tx   = $txlocaltax1;
 			$this->line->localtax2_tx   = $txlocaltax2;
-			$this->line->localtax1_type = $localtaxes_type[0];
-			$this->line->localtax2_type = $localtaxes_type[2];
+			$this->line->localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
+			$this->line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 			$this->line->remise_percent = $remise_percent;
 			$this->line->subprice       = $subprice;
 			$this->line->info_bits      = $info_bits;
@@ -3273,6 +3268,7 @@ class Commande extends CommonOrder
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
 		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? $this->mode_reglement_id : "null").",";
 		$sql .= " fk_account=".($this->fk_account > 0 ? $this->fk_account : "null").",";
+		$sql .= " fk_input_reason=".($this->demand_reason_id > 0 ? $this->demand_reason_id : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->modelpdf) ? "'".$this->db->escape($this->modelpdf)."'" : "null").",";
@@ -3339,106 +3335,95 @@ class Commande extends CommonOrder
 
 		$this->db->begin();
 
-		if (!$error && !$notrigger)
-		{
+		if (!$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('ORDER_DELETE', $user);
-			if ($result < 0) $error++;
+			if ($result < 0) { $error++; }
 			// End call triggers
 		}
 
+		// Test we can delete
 		if ($this->nb_expedition() != 0)
 		{
 			$this->errors[] = $langs->trans('SomeShipmentExists');
 			$error++;
 		}
 
-		if (!$error)
-		{
-			// Delete extrafields of order details
-						$main = MAIN_DB_PREFIX.'commandedet';
-						$ef = $main."_extrafields";
-						$sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_commande = ".$this->id.")";
-			if (!$this->db->query($sql))
-			{
+		// Delete extrafields of lines and lines
+		if (!$error && !empty($this->table_element_line)) {
+			$tabletodelete = $this->table_element_line;
+			$sqlef = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete."_extrafields WHERE fk_object IN (SELECT rowid FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id.")";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id;
+			if (!$this->db->query($sqlef) || !$this->db->query($sql)) {
 				$error++;
-				$this->errors[] = $this->db->lasterror();
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+				dol_syslog(get_class($this)."::delete error ".$this->error, LOG_ERR);
 			}
 		}
 
-		if (!$error)
-		{
-			// Delete order details
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE fk_commande = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$error++;
-				$this->errors[] = $this->db->lasterror();
-			}
-		}
-
-		if (!$error)
-		{
+		if (!$error) {
 			// Delete linked object
 			$res = $this->deleteObjectLinked();
 			if ($res < 0) $error++;
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			// Delete linked contacts
 			$res = $this->delete_linked_contact();
 			if ($res < 0) $error++;
 		}
 
-		if (!$error)
-		{
-			// Remove extrafields
+		// Removed extrafields of object
+		if (!$error) {
 			$result = $this->deleteExtraFields();
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$error++;
-				dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
+				dol_syslog(get_class($this)."::delete error ".$this->error, LOG_ERR);
 			}
 		}
 
-		if (!$error)
-		{
-			// Delete object
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande WHERE rowid = ".$this->id;
-			if (!$this->db->query($sql))
-			{
+		// Delete main record
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE rowid = ".$this->id;
+			$res = $this->db->query($sql);
+			if (!$res) {
 				$error++;
-				$this->errors[] = $this->db->lasterror();
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+				dol_syslog(get_class($this)."::delete error ".$this->error, LOG_ERR);
 			}
 		}
 
-		if (!$error)
-		{
-			// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
-			$this->deleteEcmFiles();
+		// Delete record into ECM index and physically
+		if (!$error) {
+			$res = $this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
+			if (!$res) {
+				$error++;
+			}
+		}
 
-			// Remove directory with files
-			$comref = dol_sanitizeFileName($this->ref);
-			if ($conf->commande->multidir_output[$this->entity] && !empty($this->ref))
-			{
-				$dir = $conf->commande->multidir_output[$this->entity]."/".$comref;
-				$file = $conf->commande->multidir_output[$this->entity]."/".$comref."/".$comref.".pdf";
-				if (file_exists($file))	// We must delete all files before deleting directory
-				{
+		if (!$error) {
+			// We remove directory
+			$ref = dol_sanitizeFileName($this->ref);
+			if ($conf->commande->multidir_output[$this->entity] && !empty($this->ref)) {
+				$dir = $conf->commande->multidir_output[$this->entity]."/".$ref;
+				$file = $dir."/".$ref.".pdf";
+				if (file_exists($file)) {
 					dol_delete_preview($this);
 
-					if (!dol_delete_file($file, 0, 0, 0, $this)) // For triggers
-					{
+					if (!dol_delete_file($file, 0, 0, 0, $this)) {
+						$this->error = 'ErrorFailToDeleteFile';
+						$this->errors[] = $this->error;
 						$this->db->rollback();
 						return 0;
 					}
 				}
-				if (file_exists($dir))
-				{
-					if (!dol_delete_dir_recursive($dir))
-					{
-						$this->error = $langs->trans("ErrorCanNotDeleteDir", $dir);
+				if (file_exists($dir)) {
+					$res = @dol_delete_dir_recursive($dir);
+					if (!$res) {
+						$this->error = 'ErrorFailToDeleteDir';
+						$this->errors[] = $this->error;
 						$this->db->rollback();
 						return 0;
 					}
@@ -3446,17 +3431,13 @@ class Commande extends CommonOrder
 			}
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
+			dol_syslog(get_class($this)."::delete ".$this->id." by ".$user->id, LOG_DEBUG);
 			$this->db->commit();
 			return 1;
 		} else {
-			foreach ($this->errors as $errmsg)
-			{
-				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-			}
 			$this->db->rollback();
-			return -1 * $error;
+			return -1;
 		}
 	}
 
@@ -3938,7 +3919,9 @@ class Commande extends CommonOrder
 		if (!dol_strlen($modele)) {
 			$modele = 'einstein';
 
-			if (!empty($this->modelpdf)) {
+			if (!empty($this->model_pdf)) {
+				$modele = $this->model_pdf;
+			} elseif (!empty($this->modelpdf)) {	// dperecated
 				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->COMMANDE_ADDON_PDF)) {
 				$modele = $conf->global->COMMANDE_ADDON_PDF;
@@ -4033,11 +4016,22 @@ class OrderLine extends CommonOrderLine
 	public $commande_id;
 
 	public $fk_parent_line;
+
+	/**
+	 * @var int Id of invoice
+	 */
 	public $fk_facture;
 
+	/**
+	 * @var string External ref
+	 */
 	public $ref_ext;
 
 	public $fk_remise_except;
+
+	/**
+	 * @var int line rank
+	 */
 	public $rang = 0;
 	public $fk_fournprice;
 

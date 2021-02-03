@@ -283,7 +283,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 	$out = '';
 	$histo = array();
 	$numaction = 0;
-	$now = dol_now('tzuser');
+	$now = dol_now();
 
 	// Open DSI -- Fix order by -- Begin
 	$sortfield_list = explode(',', $sortfield);
@@ -562,16 +562,15 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 		$out .= getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', '', $param, '', $sortfield, $sortorder, '')."\n";
 		//$out.='</td>';
 
-		$out .= '<th class="liste_titre"><strong>'.$langs->trans("Search").' : </strong></th>';
+		$out .= '<th class="liste_titre"><strong class="hideonsmartphone">'.$langs->trans("Search").' : </strong></th>';
 		if ($donetodo) {
 			$out .= '<th class="liste_titre"></th>';
 		}
 		$out .= '<th class="liste_titre">'.$langs->trans("Type").' ';
-		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1, 0, 0, 1);
+		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1, 0, 0, 1, 'minwidth200imp');
 		$out .= '</th>';
 		$out .= '<th class="liste_titre maxwidth100onsmartphone">';
-		$out .= $langs->trans("Label").' ';
-		$out .= '<input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'">';
+		$out .= '<input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'" placeholder="'.$langs->trans("Label").'">';
 		$out .= '</th>';
 
 		$out .= '<th class="liste_titre width50 middle">';
@@ -623,7 +622,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 				$out .= '<!-- timeline time label -->';
 				$out .= '<li class="time-label">';
 				$out .= '<span class="timeline-badge-date">';
-				$out .= dol_print_date($histo[$key]['datestart'], 'daytext', 'tzserver', $langs);
+				$out .= dol_print_date($histo[$key]['datestart'], 'daytext', 'tzuserrel', $langs);
 				$out .= '</span>';
 				$out .= '</li>';
 				$out .= '<!-- /.timeline-label -->';
@@ -661,14 +660,14 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 			$out .= '</span>';
 			// Date
 			$out .= '<span class="time"><i class="fa fa-clock-o"></i> ';
-			$out .= dol_print_date($histo[$key]['datestart'], 'dayhour');
+			$out .= dol_print_date($histo[$key]['datestart'], 'dayhour', 'tzuserrel');
 			if ($histo[$key]['dateend'] && $histo[$key]['dateend'] != $histo[$key]['datestart']) {
 				$tmpa = dol_getdate($histo[$key]['datestart'], true);
 				$tmpb = dol_getdate($histo[$key]['dateend'], true);
 				if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
-					$out .= '-'.dol_print_date($histo[$key]['dateend'], 'hour');
+					$out .= '-'.dol_print_date($histo[$key]['dateend'], 'hour', 'tzuserrel');
 				} else {
-					$out .= '-'.dol_print_date($histo[$key]['dateend'], 'dayhour');
+					$out .= '-'.dol_print_date($histo[$key]['dateend'], 'dayhour', 'tzuserrel');
 				}
 			}
 			$late = 0;
@@ -857,7 +856,7 @@ function getTicketTimelineIcon($actionstatic, &$histo, $key)
 	if ($actionstatic->code == 'AC_TICKET_CREATE') {
 		$iconClass = 'fa fa-ticket';
 	} elseif ($actionstatic->code == 'AC_TICKET_MODIFY') {
-		$iconClass = 'fa fa-pencil';
+		$iconClass = 'fa fa-pencilxxx';
 	} elseif ($actionstatic->code == 'TICKET_MSG') {
 		$iconClass = 'fa fa-comments';
 	} elseif ($actionstatic->code == 'TICKET_MSG_PRIVATE') {

@@ -20,9 +20,8 @@
 if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 {
 	$sql = "SELECT p.fk_opp_status as opp_status, cls.code, COUNT(p.rowid) as nb, SUM(p.opp_amount) as opp_amount, SUM(p.opp_amount * p.opp_percent) as ponderated_opp_amount";
-	$sql .= " FROM ".MAIN_DB_PREFIX."projet as p, ".MAIN_DB_PREFIX."c_lead_status as cls";
+	$sql .= " FROM ".MAIN_DB_PREFIX."projet as p LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls ON p.fk_opp_status = cls.rowid";	// If lead status has been removed, we must show it in stats as unknown
 	$sql .= " WHERE p.entity IN (".getEntity('project').")";
-	$sql .= " AND p.fk_opp_status = cls.rowid";
 	$sql .= " AND p.fk_statut = 1"; // Opend projects only
 	if ($mine || empty($user->rights->projet->all->lire)) $sql .= " AND p.rowid IN (".$projectsListId.")";
 	if ($socid)	$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
@@ -64,16 +63,25 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		$ponderated_opp_amount = $ponderated_opp_amount / 100;
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder nohover centpercent">';
-		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("OpportunitiesStatusForOpenedProjects").'</th></tr>'."\n";
-		$listofstatus = array_keys($listofoppstatus);
-		foreach ($listofstatus as $status)
-		{
-			$labelStatus = '';
+	    print '<table class="noborder nohover centpercent">';
+	    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("OpportunitiesStatusForOpenedProjects").'</th></tr>'."\n";
+
+	    $listofstatus = array_keys($listofoppstatus);
+		// Complete with values found into database and not into the dictionary
+	    foreach ($valsamount as $key => $val) {
+	    	if (!in_array($key, $listofstatus) && $key) {
+	    		$listofstatus[] = $key;
+	    	}
+	    }
+
+	    foreach ($listofstatus as $status)
+	    {
+	    	$labelStatus = '';
 
 			$code = dol_getIdFromCode($db, $status, 'c_lead_status', 'rowid', 'code');
-			if ($code) $labelStatus = $langs->transnoentitiesnoconv("OppStatus".$code);
-			if (empty($labelStatus)) $labelStatus = $listofopplabel[$status];
+	        if ($code) $labelStatus = $langs->transnoentitiesnoconv("OppStatus".$code);
+	        if (empty($labelStatus)) $labelStatus = $listofopplabel[$status];
+	        if (empty($labelStatus)) $labelStatus = $langs->transnoentitiesnoconv('OldValue', $status);	// When id is id of an entry no more in dictionary for example.
 
 			//$labelStatus .= ' ('.$langs->trans("Coeff").': '.price2num($listofoppstatus[$status]).')';
 			//$labelStatus .= ' - '.price2num($listofoppstatus[$status]).'%';

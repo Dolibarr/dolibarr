@@ -85,8 +85,10 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		$s1 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value1" value="'.$conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER.'">', $tooltip, 1, 1);
 		$s2 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value2" value="'.$conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER.'">', $tooltip, 1, 1);
 		$texte .= '<tr><td>';
-		$texte .= $langs->trans("ModuleCompanyCodeCustomer".$this->name, $s2)."<br>\n";
-		$texte .= $langs->trans("ModuleCompanyCodeSupplier".$this->name, $s1)."<br>\n";
+		// trans remove html entities
+		$texte .= $langs->trans("ModuleCompanyCodeCustomer".$this->name, '{s2}')."<br>\n";
+		$texte .= $langs->trans("ModuleCompanyCodeSupplier".$this->name, '{s1}')."<br>\n";
+		$texte = str_replace(array('{s1}', '{s2}'), array($s1, $s2), $texte);
 		$texte .= "<br>\n";
 		if (!isset($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL) || !empty($conf->global->$conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL)) $texte .= $langs->trans('RemoveSpecialChars').' = '.yn(1)."<br>\n";
 		//if (! empty($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA)) $texte.=$langs->trans('COMPANY_AQUARIUM_REMOVE_ALPHA').' = '.yn($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA)."<br>\n";

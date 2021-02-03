@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'languages', 'other', 'companies', 'products', 'members'));
+$langs->loadLangs(array('admin', 'languages', 'other', 'companies', 'products', 'members', 'stocks'));
 
 if (!$user->admin) accessforbidden();
 
@@ -80,6 +80,7 @@ if ($action == 'update')
 	dolibarr_set_const($db, "MAIN_PDF_MAIN_HIDE_THIRD_TAX", GETPOST("MAIN_PDF_MAIN_HIDE_THIRD_TAX"), 'chaine', 0, '', $conf->entity);
 
 	dolibarr_set_const($db, "PDF_USE_ALSO_LANGUAGE_CODE", GETPOST('PDF_USE_ALSO_LANGUAGE_CODE', 'alpha'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "SHOW_SUBPRODUCT_REF_IN_PDF", GETPOST('SHOW_SUBPRODUCT_REF_IN_PDF', 'alpha'), 'chaine', 0, '', $conf->entity);
 
 	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 
@@ -160,7 +161,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table summary="more" class="noborder centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
-$selected = $conf->global->MAIN_PDF_FORMAT;
+$selected = (isset($conf->global->MAIN_PDF_FORMAT) ? $conf->global->MAIN_PDF_FORMAT : '');
 if (empty($selected)) $selected = dol_getDefaultFormat();
 
 // Show pdf format
@@ -319,18 +320,22 @@ print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>'.$langs->trans("ShowDetailsInPDFPageFoot").'</td><td>';
-print $form->selectarray('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', $arraydetailsforpdffoot, $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS);
+print $form->selectarray('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', $arraydetailsforpdffoot, (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS : 0));
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("PDF_USE_ALSO_LANGUAGE_CODE").'</td><td>';
 //if (! empty($conf->global->MAIN_MULTILANGS))
 //{
-print $formadmin->select_language(GETPOSTISSET('PDF_USE_ALSO_LANGUAGE_CODE') ? GETPOST('PDF_USE_ALSO_LANGUAGE_CODE') : $conf->global->PDF_USE_ALSO_LANGUAGE_CODE, 'PDF_USE_ALSO_LANGUAGE_CODE', 0, null, 1);
+print $formadmin->select_language(GETPOSTISSET('PDF_USE_ALSO_LANGUAGE_CODE') ? GETPOST('PDF_USE_ALSO_LANGUAGE_CODE') : (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) ? $conf->global->PDF_USE_ALSO_LANGUAGE_CODE : 0), 'PDF_USE_ALSO_LANGUAGE_CODE', 0, null, 1);
 //} else {
 //	print '<span class="opacitymedium">'.$langs->trans("MultiLangNotEnabled").'</span>';
 //}
 print '</td></tr>';
 
+// SHOW_SUBPRODUCT_REF_IN_PDF - Option to show the detail of product ref for kits.
+print '<tr class="oddeven"><td>'.$langs->trans("SHOW_SUBPRODUCT_REF_IN_PDF", $langs->transnoentitiesnoconv("AssociatedProductsAbility"), $langs->transnoentitiesnoconv("Products")).'</td><td>';
+print $form->selectyesno('SHOW_SUBPRODUCT_REF_IN_PDF', (!empty($conf->global->SHOW_SUBPRODUCT_REF_IN_PDF)) ? $conf->global->SHOW_SUBPRODUCT_REF_IN_PDF : 0, 1);
+print '</td></tr>';
 
 print '</table>';
 print '</div>';

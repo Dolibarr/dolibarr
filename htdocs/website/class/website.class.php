@@ -99,6 +99,10 @@ class Website extends CommonObject
 	 * @var integer
 	 */
 	public $fk_default_home;
+
+	/**
+	 * @var int User Create Id
+	 */
 	public $fk_user_creat;
 
 	/**
@@ -753,7 +757,7 @@ class Website extends CommonObject
 			// Restore id of home page
 			$object->fk_default_home = $newidforhome;
 			$res = $object->update($user);
-			if (!$res > 0)
+			if (!($res > 0))
 			{
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -878,13 +882,13 @@ class Website extends CommonObject
 		global $user;
 
 		$this->id = 0;
-
+		$this->specimen = 1;
 		$this->entity = 1;
 		$this->ref = 'myspecimenwebsite';
 		$this->description = 'A specimen website';
 		$this->lang = 'en';
 		$this->otherlang = 'fr,es';
-		$this->status = '';
+		$this->status = 1;
 		$this->fk_default_home = null;
 		$this->virtualhost = 'http://myvirtualhost';
 		$this->fk_user_creat = $user->id;
@@ -1296,7 +1300,7 @@ class Website extends CommonObject
 		$object = $this;
 		if (empty($object->ref))
 		{
-			$this->error = 'Function importWebSite called on object not loaded (object->ref is empty)';
+			$this->error = 'Function rebuildWebSiteFiles called on object not loaded (object->ref is empty)';
 			return -1;
 		}
 
@@ -1312,6 +1316,7 @@ class Website extends CommonObject
 
 		$num = $this->db->num_rows($resql);
 
+		// Loop on each container/page
 		$i = 0;
 		while ($i < $num) {
 			$obj = $this->db->fetch_object($resql);
@@ -1329,13 +1334,15 @@ class Website extends CommonObject
 				$error++;
 			}
 
-			// Regenerate alternative aliases pages
-			if (is_array($aliasesarray))
-			{
-				foreach ($aliasesarray as $aliasshortcuttocreate)
-				{
-					if (trim($aliasshortcuttocreate))
-					{
+			// Add main alias to list of alternative aliases
+			if (!empty($objectpagestatic->pageurl) && !in_array($objectpagestatic->pageurl, $aliasesarray)) {
+				$aliasesarray[] = $objectpagestatic->pageurl;
+			}
+
+			// Regenerate all aliases pages (pages with a natural name)
+			if (is_array($aliasesarray)) {
+				foreach ($aliasesarray as $aliasshortcuttocreate) {
+					if (trim($aliasshortcuttocreate)) {
 						$filealias = $conf->website->dir_output.'/'.$object->ref.'/'.trim($aliasshortcuttocreate).'.php';
 						$result = dolSavePageAlias($filealias, $object, $objectpagestatic);
 						if (!$result) {
@@ -1349,8 +1356,7 @@ class Website extends CommonObject
 			$i++;
 		}
 
-		if ($error)
-		{
+		if ($error) {
 			return -1;
 		} else {
 			return $num;

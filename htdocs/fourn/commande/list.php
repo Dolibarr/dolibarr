@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-$langs->loadLangs(array("orders", "sendings", 'deliveries', 'companies', 'compta', 'bills', 'projects', 'suppliers'));
+$langs->loadLangs(array("orders", "sendings", 'deliveries', 'companies', 'compta', 'bills', 'projects', 'suppliers', 'products'));
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
@@ -74,7 +74,6 @@ $search_user = GETPOST('search_user', 'int');
 $search_request_author = GETPOST('search_request_author', 'alpha');
 $search_ht = GETPOST('search_ht', 'alpha');
 $search_ttc = GETPOST('search_ttc', 'alpha');
-$search_status = (GETPOST('search_status', 'alpha') != '' ?GETPOST('search_status', 'alpha') : GETPOST('statut', 'alpha')); // alpha and not intbecause it can be '6,7'
 $optioncss = GETPOST('optioncss', 'alpha');
 $socid = GETPOST('socid', 'int');
 $search_sale = GETPOST('search_sale', 'int');
@@ -92,7 +91,11 @@ $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 
-$status = GETPOST('statut', 'alpha');
+if (is_array(GETPOST('search_status', 'intcomma'))) {
+	$search_status = join(',', GETPOST('search_status', 'intcomma'));
+} else {
+	$search_status = (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : GETPOST('statut', 'intcomma'));
+}
 
 // Security check
 $orderid = GETPOST('orderid', 'int');
@@ -127,7 +130,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
 	'cf.ref'=>'Ref',
-	'cf.ref_supplier'=>'RefSupplierOrder',
+	'cf.ref_supplier'=>'RefOrderSupplier',
 	'pd.description'=>'Description',
 	's.nom'=>"ThirdParty",
 	's.name_alias'=>"AliasNameShort",
@@ -165,17 +168,12 @@ $arrayfields = array(
 	'cf.billed'=>array('label'=>$langs->trans("Billed"), 'checked'=>1, 'position'=>1000, 'enabled'=>1)
 );
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
+$error = 0;
 
 
 /*
@@ -246,7 +244,7 @@ if (empty($reshook))
 	$uploaddir = $conf->fournisseur->commande->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	// TODO Move this into mass action include
+	// Mass action to generate vendor bills
 	if ($massaction == 'confirm_createsupplierbills')
 	{
 		$orders = GETPOST('toselect', 'array');
@@ -257,6 +255,8 @@ if (empty($reshook))
 		$TFactThird = array();
 
 		$nb_bills_created = 0;
+		$lastid = 0;
+		$lastref = '';
 
 		$db->begin();
 
@@ -265,8 +265,9 @@ if (empty($reshook))
 			if ($cmd->fetch($id_order) <= 0) continue;
 
 			$objecttmp = new FactureFournisseur($db);
-			if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) $objecttmp = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created order.
-			else {
+			if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) {
+				$objecttmp = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created order.
+			} else {
 				$objecttmp->socid = $cmd->socid;
 				$objecttmp->type = $objecttmp::TYPE_STANDARD;
 				$objecttmp->cond_reglement_id	= $cmd->cond_reglement_id;
@@ -287,7 +288,11 @@ if (empty($reshook))
 
 				$res = $objecttmp->create($user);
 
-				if ($res > 0) $nb_bills_created++;
+				if ($res > 0) {
+					$nb_bills_created++;
+					$lastref = $objecttmp->ref;
+					$lastid = $objecttmp->id;
+				}
 			}
 
 			if ($objecttmp->id > 0)
@@ -444,7 +449,14 @@ if (empty($reshook))
 		if (!$error)
 		{
 			$db->commit();
-			setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
+
+			if ($nb_bills_created == 1) {
+				$texttoshow = $langs->trans('BillXCreated', '{s1}');
+				$texttoshow = str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?id='.urlencode($lastid).'">'.$lastref.'</a>', $texttoshow);
+				setEventMessages($texttoshow, null, 'mesgs');
+			} else {
+				setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
+			}
 
 			// Make a redirect to avoid to bill twice if we make a refresh or back
 			$param = '';
@@ -461,7 +473,7 @@ if (empty($reshook))
 			if ($search_deliveryyear)    		$param .= '&search_deliveryyear='.urlencode($search_deliveryyear);
 			if ($search_ref)      		$param .= '&search_ref='.urlencode($search_ref);
 			if ($search_company)  		$param .= '&search_company='.urlencode($search_company);
-			if ($search_ref_customer)	$param .= '&search_ref_customer='.urlencode($search_ref_customer);
+			//if ($search_ref_customer)	$param .= '&search_ref_customer='.urlencode($search_ref_customer);
 			if ($search_user > 0) 		$param .= '&search_user='.urlencode($search_user);
 			if ($search_sale > 0) 		$param .= '&search_sale='.urlencode($search_sale);
 			if ($search_total_ht != '') $param .= '&search_total_ht='.urlencode($search_total_ht);
@@ -500,19 +512,22 @@ $formorder = new FormOrder($db);
 $formother = new FormOther($db);
 $formcompany = new FormCompany($db);
 
-$title = $langs->trans("SuppliersOrders");
+$title = $langs->trans("ListOfSupplierOrders");
 if ($socid > 0)
 {
 	$fourn = new Fournisseur($db);
 	$fourn->fetch($socid);
 	$title .= ' - '.$fourn->name;
 }
-if ($status)
+
+/*if ($search_status)
 {
-	if ($status == '1,2,3') $title .= ' - '.$langs->trans("StatusOrderToProcessShort");
-	if ($status == '6,7') $title .= ' - '.$langs->trans("StatusOrderCanceled");
-	else $title .= ' - '.$commandestatic->LibStatut($status);
-}
+	if ($search_status == '1,2') $title .= ' - '.$langs->trans("SuppliersOrdersToProcess");
+	elseif ($search_status == '3,4') $title .= ' - '.$langs->trans("SuppliersOrdersAwaitingReception");
+	elseif ($search_status == '1,2,3') $title .= ' - '.$langs->trans("StatusOrderToProcessShort");
+	elseif ($search_status == '6,7') $title .= ' - '.$langs->trans("StatusOrderCanceled");
+	elseif (is_numeric($search_status) && $search_status >= 0) $title .= ' - '.$commandestatic->LibStatut($search_status);
+}*/
 if ($search_billed > 0) $title .= ' - '.$langs->trans("Billed");
 
 //$help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
@@ -520,7 +535,7 @@ $help_url = '';
 // llxHeader('',$title,$help_url);
 
 $sql = 'SELECT';
-if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
+if ($sall || $search_product_category > 0 || $search_user > 0) $sql = 'SELECT DISTINCT';
 $sql .= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, s.email,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
@@ -571,8 +586,8 @@ if ($search_billed != '' && $search_billed >= 0) $sql .= " AND cf.billed = ".$db
 if ($search_product_category > 0) $sql .= " AND cp.fk_categorie = ".$search_product_category;
 //Required triple check because statut=0 means draft filter
 if (GETPOST('statut', 'intcomma') !== '')
-	$sql .= " AND cf.fk_statut IN (".$db->sanitize($db->escape(GETPOST('statut', 'intcomma'))).")";
-if ($search_status != '' && $search_status >= 0)
+	$sql .= " AND cf.fk_statut IN (".$db->sanitize($db->escape($db->escape(GETPOST('statut', 'intcomma')))).")";
+if ($search_status != '' && $search_status != '-1')
 	$sql .= " AND cf.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
 $sql .= dolSqlDateFilter("cf.date_commande", $search_orderday, $search_ordermonth, $search_orderyear);
 $sql .= dolSqlDateFilter("cf.date_livraison", $search_deliveryday, $search_deliverymonth, $search_deliveryyear);
@@ -621,15 +636,6 @@ $sql .= $db->plimit($limit + 1, $offset);
 $resql = $db->query($sql);
 if ($resql)
 {
-	if ($socid > 0)
-	{
-		$soc = new Societe($db);
-		$soc->fetch($socid);
-		$title = $langs->trans('ListOfSupplierOrders').' - '.$soc->name;
-	} else {
-		$title = $langs->trans('ListOfSupplierOrders');
-	}
-
 	$num = $db->num_rows($resql);
 
 	$arrayofselected = is_array($toselect) ? $toselect : array();
@@ -669,7 +675,7 @@ if ($resql)
 	if ($search_multicurrency_montant_vat != '')  $param .= '&search_multicurrency_montant_vat='.urlencode($search_multicurrency_montant_vat);
 	if ($search_multicurrency_montant_ttc != '') $param .= '&search_multicurrency_montant_ttc='.urlencode($search_multicurrency_montant_ttc);
 	if ($search_refsupp) 		$param .= "&search_refsupp=".urlencode($search_refsupp);
-	if ($search_status >= 0)  	$param .= "&search_status=".urlencode($search_status);
+	if ($search_status != '' && $search_status != '-1') $param .= "&search_status=".urlencode($search_status);
 	if ($search_project_ref >= 0) $param .= "&search_project_ref=".urlencode($search_project_ref);
 	if ($search_billed != '')   $param .= "&search_billed=".urlencode($search_billed);
 	if ($show_files)            $param .= '&show_files='.urlencode($show_files);
@@ -969,7 +975,7 @@ if ($resql)
 	if (!empty($arrayfields['cf.fk_statut']['checked']))
 	{
 		print '<td class="liste_titre right">';
-		$formorder->selectSupplierOrderStatus((strstr($search_status, ',') ?-1 : $search_status), 1, 'search_status');
+		$formorder->selectSupplierOrderStatus($search_status, 1, 'search_status');
 		print '</td>';
 	}
 	// Status billed

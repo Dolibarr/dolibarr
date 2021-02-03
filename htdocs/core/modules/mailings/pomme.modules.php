@@ -172,10 +172,10 @@ class mailing_pomme extends MailingTargets
 		$sql .= " WHERE u.email <> ''"; // u.email IS NOT NULL est implicite dans ce test
 		$sql .= " AND u.entity IN (0,".$conf->entity.")";
 		$sql .= " AND u.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
-		if (isset($_POST["filter"]) && $_POST["filter"] == '1') $sql .= " AND u.statut=1";
-		if (isset($_POST["filter"]) && $_POST["filter"] == '0') $sql .= " AND u.statut=0";
-		if (isset($_POST["filteremployee"]) && $_POST["filteremployee"] == '1') $sql .= " AND u.employee=1";
-		if (isset($_POST["filteremployee"]) && $_POST["filteremployee"] == '0') $sql .= " AND u.employee=0";
+		if (GETPOSTISSET("filter") && GETPOST("filter") == '1') $sql .= " AND u.statut=1";
+		if (GETPOSTISSET("filter") && GETPOST("filter") == '0') $sql .= " AND u.statut=0";
+		if (GETPOSTISSET("filteremployee") && GETPOSt("filteremployee") == '1') $sql .= " AND u.employee=1";
+		if (GETPOSTISSET("filteremployee") && GETPOST("filteremployee") == '0') $sql .= " AND u.employee=0";
 		$sql .= " ORDER BY u.email";
 
 		// Stocke destinataires dans cibles

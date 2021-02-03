@@ -47,6 +47,11 @@ class PaymentSocialContribution extends CommonObject
 	public $picto = 'payment';
 
 	/**
+	 * @var string	Label
+	 */
+	public $label;
+
+	/**
 	 * @var int ID
 	 */
 	public $fk_charge;
@@ -679,7 +684,7 @@ class PaymentSocialContribution extends CommonObject
 
 		$result = '';
 
-		if (empty($this->ref)) $this->ref = $this->lib;
+		if (empty($this->ref)) $this->ref = $this->label;
 
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans("SocialContributionPayment").'</u>';
 		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
@@ -694,7 +699,7 @@ class PaymentSocialContribution extends CommonObject
 			}
 			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$labeltoshow;
 		}
-		if ($this->date) $label .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->date, 'day');
+		if ($this->datep) $label .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datep, 'day');
 
 		if (!empty($this->id)) {
 			$link = '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
@@ -706,5 +711,38 @@ class PaymentSocialContribution extends CommonObject
 		}
 
 		return $result;
+	}
+
+
+	/**
+	 *	Return if object was dispatched into bookkeeping
+	 *
+	 *	@return     int         <0 if KO, 0=no, 1=yes
+	 */
+	public function getVentilExportCompta()
+	{
+		$alreadydispatched = 0;
+
+		$type = 'bank';
+
+		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".$this->bank_line;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			if ($obj)
+			{
+				$alreadydispatched = $obj->nb;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		if ($alreadydispatched)
+		{
+			return 1;
+		}
+		return 0;
 	}
 }

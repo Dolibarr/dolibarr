@@ -5,7 +5,7 @@
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2019  Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,6 +54,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT');
 $donation_date = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
+$public_donation = (int) GETPOST("public", 'int');
 
 $object = new Don($db);
 $extrafields = new ExtraFields($db);
@@ -151,8 +152,8 @@ if ($action == 'update')
 		$object->country_id = (int) GETPOST('country_id', 'int');
 		$object->email = (string) GETPOST("email", 'alpha');
 		$object->date = $donation_date;
-		$object->public = (string) GETPOST("public", 'alpha');
-		$object->fk_project = GETPOST("fk_project", 'alpha');
+		$object->public = $public_donation;
+		$object->fk_project = (int) GETPOST("fk_project", 'int');
 		$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 		$object->note_public = (string) GETPOST("note_public", 'restricthtml');
 		$object->modepaymentid = (int) GETPOST('modepayment', 'int');
@@ -207,8 +208,8 @@ if ($action == 'add')
 		$object->date = $donation_date;
 		$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 		$object->note_public = (string) GETPOST("note_public", 'restricthtml');
-		$object->public = (string) GETPOST("public", 'alpha');
-		$object->fk_project = (string) GETPOST("fk_project", 'alpha');
+		$object->public = $public_donation;
+		$object->fk_project = (int) GETPOST("fk_project", 'int');
 		$object->modepaymentid = (int) GETPOST('modepayment', 'int');
 
 		// Fill array 'array_options' with data from add form
@@ -224,8 +225,7 @@ if ($action == 'add')
 		}
 	}
 }
-if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights->don->supprimer)
-{
+if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights->don->supprimer) {
 	$object->fetch($id);
 	$result = $object->delete($user);
 	if ($result > 0) {
@@ -236,42 +236,31 @@ if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights-
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
-if ($action == 'valid_promesse')
-{
+if ($action == 'valid_promesse') {
 	$object->fetch($id);
-	if ($object->valid_promesse($id, $user->id) >= 0)
-	{
+	if ($object->valid_promesse($id, $user->id) >= 0) {
 		setEventMessages($langs->trans("DonationValidated", $object->ref), null);
-
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
-		exit;
+		$action = '';
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
-if ($action == 'set_cancel')
-{
+if ($action == 'set_cancel') {
 	$object->fetch($id);
-	if ($object->set_cancel($id) >= 0)
-	{
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
-		exit;
+	if ($object->set_cancel($id) >= 0) {
+		$action = '';
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
-if ($action == 'set_paid')
-{
+if ($action == 'set_paid') {
 	$object->fetch($id);
-	if ($object->set_paid($id, $modepayment) >= 0)
-	{
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
-		exit;
+	if ($object->set_paid($id, $modepayment) >= 0) {
+		$action = '';
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-} elseif ($action == 'classin' && $user->rights->don->creer)
-{
+} elseif ($action == 'classin' && $user->rights->don->creer) {
 	$object->fetch($id);
 	$object->setProject($projectid);
 }
@@ -416,7 +405,7 @@ if ($action == 'create')
 
 	// Public donation
 	print '<tr><td class="fieldrequired">'.$langs->trans("PublicDonation")."</td><td>";
-	print $form->selectyesno("public", isset($_POST["public"]) ? $_POST["public"] : 1, 1);
+	print $form->selectyesno("public", $public_donation, 1);
 	print "</td></tr>\n";
 
 	if (empty($conf->societe->enabled) || empty($conf->global->DONATION_USE_THIRDPARTIES))
@@ -429,9 +418,9 @@ if ($action == 'create')
 
 		// Zip / Town
 		print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
-		print $formcompany->select_ziptown((isset($_POST["zipcode"]) ? $_POST["zipcode"] : $object->zip), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
+		print $formcompany->select_ziptown((GETPOSTISSET("zipcode") ? GETPOST("zipcode") : $object->zip), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
 		print ' ';
-		print $formcompany->select_ziptown((isset($_POST["town"]) ? $_POST["town"] : $object->town), 'town', array('zipcode', 'selectcountry_id', 'state_id'));
+		print $formcompany->select_ziptown((GETPOSTISSET("town") ? GETPOST("town") : $object->town), 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 		print '</tr>';
 
 		// Country
@@ -454,7 +443,7 @@ if ($action == 'create')
 	print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
 
-	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
@@ -464,7 +453,7 @@ if ($action == 'create')
 		print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
 		print '<td>';
 
-		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 	}
@@ -552,7 +541,7 @@ if (!empty($id) && $action == 'edit')
 	}
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PublicDonation")."</td><td>";
-	print $form->selectyesno("public", 1, 1);
+	print $form->selectyesno("public", $object->public, 1);
 	print "</td>";
 	print "</tr>\n";
 
@@ -571,9 +560,9 @@ if (!empty($id) && $action == 'edit')
 
 		// Zip / Town
 		print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
-		print $formcompany->select_ziptown((isset($_POST["zipcode"]) ? $_POST["zipcode"] : $object->zip), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
+		print $formcompany->select_ziptown((GETPOSTISSET("zipcode") ? GETPOSTISSET("zipcode") : $object->zip), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
 		print ' ';
-		print $formcompany->select_ziptown((isset($_POST["town"]) ? $_POST["town"] : $object->town), 'town', array('zipcode', 'selectcountry_id', 'state_id'));
+		print $formcompany->select_ziptown((GETPOSTISSET("town") ? GETPOST("town") : $object->town), 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 		print '</tr>';
 
 		// Country
@@ -597,8 +586,7 @@ if (!empty($id) && $action == 'edit')
 	print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
 	// Project
-	if (!empty($conf->projet->enabled))
-	{
+	if (!empty($conf->projet->enabled)) {
 		$formproject = new FormProjets($db);
 
 		$langs->load('projects');

@@ -103,9 +103,13 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		$seller = $mysoc; // If sell is done to a customer, $seller is not provided, we use $mysoc
 		//var_dump($seller->country_id);exit;
 	}
-	if (empty($localtaxes_array) || !is_array($localtaxes_array))
-	{
-		dol_syslog("Price.lib::calcul_price_total Warning: function is called with parameter localtaxes_array that is missing", LOG_WARNING);
+	if (empty($localtaxes_array) || !is_array($localtaxes_array)) {
+		dol_syslog("Price.lib::calcul_price_total Warning: function is called with parameter localtaxes_array that is missing or empty", LOG_WARNING);
+	}
+	if (!is_numeric($txtva)) {
+		dol_syslog("Price.lib::calcul_price_total Warning: function was called with a parameter vat rate that is not a real numeric value. There is surely a bug.", LOG_ERR);
+	} elseif ($txtva >= 1000) {
+		dol_syslog("Price.lib::calcul_price_total Warning: function was called with a bad value for vat rate (should be often < 100, always < 1000). There is surely a bug.", LOG_ERR);
 	}
 	// Too verbose. Enable for debug only
 	//dol_syslog("Price.lib::calcul_price_total qty=".$qty." pu=".$pu." remiserpercent_ligne=".$remise_percent_ligne." txtva=".$txtva." uselocaltax1_rate=".$uselocaltax1_rate." uselocaltax2_rate=".$uselocaltax2_rate.' remise_percent_global='.$remise_percent_global.' price_base_type='.$ice_base_type.' type='.$type.' progress='.$progress);
@@ -125,14 +129,14 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	$localtax1_type = 0;
 	$localtax2_type = 0;
 
-	if (is_array($localtaxes_array))
-	{
+	if (is_array($localtaxes_array) && count($localtaxes_array)) {
 		$localtax1_type = $localtaxes_array[0];
 		$localtax1_rate = $localtaxes_array[1];
 		$localtax2_type = $localtaxes_array[2];
 		$localtax2_rate = $localtaxes_array[3];
-	} else // deprecated method. values and type for localtaxes must be provided by caller and loaded with getLocalTaxesFromRate using the full vat rate (including text code)
-	{
+	} else {
+		// deprecated method. values and type for localtaxes must be provided by caller and loaded with getLocalTaxesFromRate using the full vat rate (including text code)
+		// also, with this method, we may get several possible values (for example with localtax2 in spain), so we take the first one.
 		dol_syslog("Price.lib::calcul_price_total search vat information using old deprecated method", LOG_WARNING);
 
 		$sql = "SELECT taux, localtax1, localtax2, localtax1_type, localtax2_type";
@@ -145,11 +149,11 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 			$obj = $db->fetch_object($resql);
 			if ($obj)
 			{
-				$localtax1_rate = $obj->localtax1;
-				$localtax2_rate = $obj->localtax2;
+				$localtax1_rate = (float) $obj->localtax1;		// Use float to force to get first numeric value when value is x:y:z
+				$localtax2_rate = (float) $obj->localtax2;		// Use float to force to get first numeric value when value is -19:-15:-9
 				$localtax1_type = $obj->localtax1_type;
 				$localtax2_type = $obj->localtax2_type;
-				//var_dump($localtax1_rate.' '.$localtax2_rate.' '.$localtax1_type.' '.$localtax2_type);exit;
+				//var_dump($localtax1_rate.' '.$localtax2_rate.' '.$localtax1_type.' '.$localtax2_type);
 			}
 		} else dol_print_error($db);
 	}
@@ -413,7 +417,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	// initialize result array
 	//for ($i=0; $i <= 18; $i++) $result[$i] = (float) $result[$i];
 
-	dol_syslog('Price.lib::calcul_price_total MAIN_ROUNDING_RULE_TOT='.$conf->global->MAIN_ROUNDING_RULE_TOT.' pu='.$pu.' qty='.$qty.' price_base_type='.$price_base_type.' total_ht='.$result[0].'-total_vat='.$result[1].'-total_ttc='.$result[2]);
+	dol_syslog('Price.lib::calcul_price_total MAIN_ROUNDING_RULE_TOT='.(empty($conf->global->MAIN_ROUNDING_RULE_TOT)?'':$conf->global->MAIN_ROUNDING_RULE_TOT).' pu='.$pu.' qty='.$qty.' price_base_type='.$price_base_type.' total_ht='.$result[0].'-total_vat='.$result[1].'-total_ttc='.$result[2]);
 
 	return $result;
 }

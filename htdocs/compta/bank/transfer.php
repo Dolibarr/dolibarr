@@ -40,11 +40,14 @@ if (!$user->rights->banque->transfer)
 $action = GETPOST('action', 'aZ09');
 $error = 0;
 
+$hookmanager->initHooks(array('banktransfer'));
 
 /*
  * Actions
  */
-
+$parameters = array('socid' => $socid);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 if ($action == 'add')
 {
 	$langs->load("errors");
@@ -125,7 +128,9 @@ if ($action == 'add')
 
 			if (!$error)
 			{
-				$mesgs = $langs->trans("TransferFromToDone", '<a href="bankentries_list.php?id='.$accountfrom->id.'&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc">'.$accountfrom->label."</a>", '<a href="bankentries_list.php?id='.$accountto->id.'">'.$accountto->label."</a>", $amount, $langs->transnoentities("Currency".$conf->currency));
+				$mesgs = $langs->trans("TransferFromToDone", '{s1}', '{s2}', $amount, $langs->transnoentitiesnoconv("Currency".$conf->currency));
+				$mesgs = str_replace('{s1}', '<a href="bankentries_list.php?id='.$accountfrom->id.'&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc">'.$accountfrom->label.'</a>', $mesgs);
+				$mesgs = str_replace('{s2}', '<a href="bankentries_list.php?id='.$accountto->id.'">'.$accountto->label.'</a>', $mesgs);
 				setEventMessages($mesgs, null, 'mesgs');
 				$db->commit();
 			} else {

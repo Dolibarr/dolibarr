@@ -1180,7 +1180,7 @@ function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $pos
 	//if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line) ) )
 	if (is_object($hookmanager))   // Old code is commented on preceding line. Reproduct this test in the pdf_xxx function if you don't want your hook to run
 	{
-		$special_code = $object->lines[$i]->special_code;
+		$special_code = empty($object->lines[$i]->special_code) ? '' : $object->lines[$i]->special_code;
 		if (!empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
 		$parameters = array('pdf'=>$pdf, 'i'=>$i, 'outputlangs'=>$outputlangs, 'w'=>$w, 'h'=>$h, 'posx'=>$posx, 'posy'=>$posy, 'hideref'=>$hideref, 'hidedesc'=>$hidedesc, 'issupplierline'=>$issupplierline, 'special_code'=>$special_code);
 		$action = '';
@@ -1236,6 +1236,10 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	} else {
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$prodser = new Product($db);
+
+		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+		    include_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
+		}
 	}
 
 	if ($idprod)
@@ -1253,7 +1257,9 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			// If we want another language, and if label is same than default language (we did force it to a specific value), we can use translation.
 			//var_dump($outputlangs->defaultlang.' - '.$langs->defaultlang.' - '.$label.' - '.$prodser->label);exit;
 			$textwasmodified = ($label == $prodser->label);
-			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["label"]) && ($textwasmodified || $translatealsoifmodified))     $label = $prodser->multilangs[$outputlangs->defaultlang]["label"];
+			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["label"]) && ($textwasmodified || $translatealsoifmodified)) {
+				$label = $prodser->multilangs[$outputlangs->defaultlang]["label"];
+			}
 
 			// Set desc
 			// Manage HTML entities description test because $prodser->description is store with htmlentities but $desc no
@@ -1279,6 +1285,17 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	$libelleproduitservice = $label;
 	if (!empty($libelleproduitservice) && !empty($conf->global->PDF_BOLD_PRODUCT_LABEL)) {
 		$libelleproduitservice = '<b>'.$libelleproduitservice.'</b>';
+	}
+
+	// Add ref of subproducts
+	if (!empty($conf->global->SHOW_SUBPRODUCT_REF_IN_PDF)) {
+		$prodser->get_sousproduits_arbo();
+		if (!empty($prodser->sousprods) && is_array($prodser->sousprods) && count($prodser->sousprods)) {
+			$tmparrayofsubproducts = reset($prodser->sousprods);
+			foreach ($tmparrayofsubproducts as $subprodval) {
+				$libelleproduitservice .= "\n * ".$subprodval[5].(($subprodval[5] && $subprodval[3]) ? ' - ' : '').$subprodval[3].' ('.$subprodval[1].')';
+			}
+		}
 	}
 
 	// Description long of product line
@@ -1314,12 +1331,16 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			$discount->fetch($object->lines[$i]->fk_remise_except);
 			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromExcessPaid", $discount->ref_invoice_supplier_source);
 		} else {
-			if ($idprod)
-			{
-				if (empty($hidedesc))
-				{
-					if (!empty($conf->global->MAIN_DOCUMENTS_DESCRIPTION_FIRST))
-					{
+			if ($idprod) {
+				// Check if description must be output
+				if (!empty($object->element)) {
+					$tmpkey = 'MAIN_DOCUMENTS_HIDE_DESCRIPTION_FOR_'.strtoupper($object->element);
+					if (!empty($conf->global->$tmpkey)) {
+						$hidedesc = 1;
+					}
+				}
+				if (empty($hidedesc)) {
+					if (!empty($conf->global->MAIN_DOCUMENTS_DESCRIPTION_FIRST)) {
 						$libelleproduitservice = $desc."\n".$libelleproduitservice;
 					} else {
 						if (!empty($conf->global->HIDE_LABEL_VARIANT_PDF) && $prodser->isVariant()) {
@@ -1338,31 +1359,52 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	// We add ref of product (and supplier ref if defined)
 	$prefix_prodserv = "";
 	$ref_prodserv = "";
-	if (!empty($conf->global->PRODUCT_ADD_TYPE_IN_DOCUMENTS))   // In standard mode, we do not show this
-	{
-		if ($prodser->isService())
-		{
+	if (!empty($conf->global->PRODUCT_ADD_TYPE_IN_DOCUMENTS)) {   // In standard mode, we do not show this
+		if ($prodser->isService()) {
 			$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Service")." ";
 		} else {
 			$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Product")." ";
 		}
 	}
 
-	if (empty($hideref))
-	{
-		if ($issupplierline)
-		{
-			if ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 1)
-				$ref_prodserv = $ref_supplier;
-			elseif ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 2)
-				$ref_prodserv = $ref_supplier.' ('.$outputlangs->transnoentitiesnoconv("InternalRef").' '.$prodser->ref.')';
-			else // Common case
-			{
+	if (empty($hideref)) {
+		if ($issupplierline) {
+			if (empty($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES)) {  // Common case
 				$ref_prodserv = $prodser->ref; // Show local ref
 				if ($ref_supplier) $ref_prodserv .= ($prodser->ref ? ' (' : '').$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.($prodser->ref ? ')' : '');
+			} elseif ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 1) {
+				$ref_prodserv = $ref_supplier;
+			} elseif ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 2) {
+				$ref_prodserv = $ref_supplier.' ('.$outputlangs->transnoentitiesnoconv("InternalRef").' '.$prodser->ref.')';
 			}
 		} else {
 			$ref_prodserv = $prodser->ref; // Show local ref only
+
+			if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+                $productCustomerPriceStatic = new Productcustomerprice($db);
+			    $filter = array('fk_product' => $idprod, 'fk_soc' => $object->socid);
+
+			    $nbCustomerPrices = $productCustomerPriceStatic->fetch_all('', '', 1, 0, $filter);
+
+			    if ($nbCustomerPrices > 0) {
+			        $productCustomerPrice = $productCustomerPriceStatic->lines[0];
+
+			        if (! empty($productCustomerPrice->ref_customer)) {
+			            switch ($conf->global->PRODUIT_CUSTOMER_PRICES_PDF_REF_MODE) {
+			                case 1:
+			                    $ref_prodserv = $productCustomerPrice->ref_customer;
+			                    break;
+
+			                case 2:
+			                    $ref_prodserv = $productCustomerPrice->ref_customer . ' (' . $outputlangs->transnoentitiesnoconv('InternalRef') . ' ' . $ref_prodserv . ')';
+			                    break;
+
+			                default:
+			                    $ref_prodserv = $ref_prodserv . ' (' . $outputlangs->transnoentitiesnoconv('RefCustomer') . ' ' . $productCustomerPrice->ref_customer . ')';
+			            }
+			        }
+			    }
+			}
 		}
 
 		if (!empty($libelleproduitservice) && !empty($ref_prodserv)) $ref_prodserv .= " - ";
@@ -1966,7 +2008,7 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
 		elseif (empty($hidedetails) || $hidedetails > 1)
 		{
 			$total_ht = (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ht : $object->lines[$i]->total_ht);
-			if ($object->lines[$i]->situation_percent > 0)
+			if (!empty($object->lines[$i]->situation_percent) && $object->lines[$i]->situation_percent > 0)
 			{
 				// TODO Remove this. The total should be saved correctly in database instead of being modified here.
 				$prev_progress = 0;

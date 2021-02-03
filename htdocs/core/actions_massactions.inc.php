@@ -590,7 +590,8 @@ if (!$error && $massaction == 'confirm_presend')
 	}
 }
 
-if ($massaction == 'confirm_createbills')   // Create bills from orders
+// TODO Move this action into commande/list.php if called only by this page.
+if ($massaction == 'confirm_createbills')   // Create bills from orders.
 {
 	$orders = GETPOST('toselect', 'array');
 	$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
@@ -600,6 +601,8 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 	$TFactThird = array();
 
 	$nb_bills_created = 0;
+	$lastid= 0;
+	$lastref = '';
 
 	$db->begin();
 
@@ -609,8 +612,9 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 		if ($cmd->fetch($id_order) <= 0) continue;
 
 		$objecttmp = new Facture($db);
-		if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) $objecttmp = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created order.
-		else {
+		if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) {
+			$objecttmp = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created order.
+		} else {
 			// Load extrafields of order
 			$cmd->fetch_optionals();
 
@@ -636,7 +640,11 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 
 			$res = $objecttmp->create($user);
 
-			if ($res > 0) $nb_bills_created++;
+			if ($res > 0) {
+				$nb_bills_created++;
+				$lastref = $objecttmp->ref;
+				$lastid = $objecttmp->id;
+			}
 		}
 
 		if ($objecttmp->id > 0)
@@ -818,7 +826,14 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 	if (!$error)
 	{
 		$db->commit();
-		setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
+
+		if ($nb_bills_created == 1) {
+			$texttoshow = $langs->trans('BillXCreated', '{s1}');
+			$texttoshow = str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?id='.urlencode($lastid).'">'.$lastref.'</a>', $texttoshow);
+			setEventMessages($texttoshow, null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
+		}
 
 		// Make a redirect to avoid to bill twice if we make a refresh or back
 		$param = '';
@@ -1286,6 +1301,64 @@ if (!$error && $massaction == 'generate_doc' && $permissiontoread)
 		if ($nbok > 1) setEventMessages($langs->trans("RecordsGenerated", $nbok), null, 'mesgs');
 		else setEventMessages($langs->trans("RecordGenerated", $nbok), null, 'mesgs');
 		$db->commit();
+	} else {
+		$db->rollback();
+	}
+}
+
+if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd) {
+	$db->begin();
+
+	$affecttag_type=GETPOST('affecttag_type', 'alpha');
+	if (!empty($affecttag_type)) {
+		$affecttag_type_array=explode(',', $affecttag_type);
+	} else {
+		setEventMessage('CategTypeNotFound', 'errors');
+	}
+	if (!empty($affecttag_type_array)) {
+		//check if tag type submited exists into Tag Map categorie class
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		$categ = new Categorie($db);
+		$to_affecttag_type_array=array();
+		$categ_type_array=$categ->getMapList();
+		foreach ($categ_type_array as $categdef) {
+			if (in_array($categdef['code'],  $affecttag_type_array)) {
+				$to_affecttag_type_array[] = $categdef['code'];
+			}
+		}
+
+		//For each valid categ type set common categ
+		$nbok = 0;
+		if (!empty($to_affecttag_type_array)) {
+			foreach ($to_affecttag_type_array as $categ_type) {
+				$contcats = GETPOST('contcats_' . $categ_type, 'array');
+				//var_dump($toselect);exit;
+				foreach ($toselect as $toselectid) {
+					$result = $object->fetch($toselectid);
+					//var_dump($contcats);exit;
+					if ($result > 0) {
+						$result = $object->setCategoriesCommon($contcats, $categ_type, false);
+						if ($result > 0) {
+							$nbok++;
+						} else {
+							setEventMessages($object->error, $object->errors, 'errors');
+						}
+					} else {
+						setEventMessages($object->error, $object->errors, 'errors');
+						$error++;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	if (!$error)
+	{
+		if ($nbok > 1) setEventMessages($langs->trans("RecordsModified", $nbok), null);
+		else setEventMessages($langs->trans("RecordsModified", $nbok), null);
+		$db->commit();
+		$toselect=array();
 	} else {
 		$db->rollback();
 	}

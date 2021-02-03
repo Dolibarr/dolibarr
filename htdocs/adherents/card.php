@@ -382,14 +382,12 @@ if (empty($reshook)) {
 	if ($action == 'add' && $user->rights->adherent->creer) {
 		if ($canvas) $object->canvas = $canvas;
 		$birthdate = '';
-		if (isset($_POST["birthday"]) && $_POST["birthday"]
-				&& isset($_POST["birthmonth"]) && $_POST["birthmonth"]
-				&& isset($_POST["birthyear"]) && $_POST["birthyear"]) {
-			$birthdate = dol_mktime(12, 0, 0, $_POST["birthmonth"], $_POST["birthday"], $_POST["birthyear"]);
+		if (GETPOSTISSET("birthday") && GETPOST("birthday") && GETPOSTISSET("birthmonth") && GETPOST("birthmonth") && GETPOSTISSET("birthyear") && GETPOST("birthyear")) {
+			$birthdate = dol_mktime(12, 0, 0, GETPOST("birthmonth", 'int'), GETPOST("birthday", 'int'), GETPOST("birthyear", 'int'));
 		}
 		$datesubscription = '';
-		if (isset($_POST["reday"]) && isset($_POST["remonth"]) && isset($_POST["reyear"])) {
-			$datesubscription = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+		if (GETPOSTISSET("reday") && GETPOSTISSET("remonth") && GETPOSTISSET("reyear")) {
+			$datesubscription = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", "int"), GETPOST("reyear", "int"));
 		}
 
 		$typeid = GETPOST("typeid", 'int');
@@ -962,7 +960,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
 			print '<tr><td>'.$form->editfieldkey("Categories", 'memcats', '', $object, 0).'</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_MEMBER, null, 'parent', null, null, 1);
-			print $form->multiselectarray('memcats', $cate_arbo, GETPOST('memcats', 'array'), null, null, null, null, '100%');
+			print img_picto('', 'category').$form->multiselectarray('memcats', $cate_arbo, GETPOST('memcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 			print "</td></tr>";
 		}
 
@@ -1066,7 +1064,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<table class="border centpercent">';
 
 		// Ref
-		print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td class="valeur">'.$object->id.'</td></tr>';
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td class="valeur">'.$object->ref.'</td></tr>';
 
 		// Login
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
@@ -1075,7 +1073,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Password
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-			print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td><td><input type="password" name="pass" class="minwidth300" maxlength="50" value="'.(isset($_POST["pass"]) ?GETPOST("pass", '', 2) : $object->pass).'"></td></tr>';
+			print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td><td><input type="password" name="pass" class="minwidth300" maxlength="50" value="'.(GETPOSTISSET("pass") ? GETPOST("pass", '', 2) : $object->pass).'"></td></tr>';
 		}
 		// Morphy
 		$morphys["phy"] = $langs->trans("Physical");
@@ -1134,7 +1132,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// EMail
 		print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED ? '<span class="fieldrequired">' : '').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED ? '</span>' : '').'</td>';
-		print '<td>'.img_picto('', 'object_email').' <input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(isset($_POST["member_email"]) ?GETPOST("member_email", '', 2) : $object->email).'"></td></tr>';
+		print '<td>'.img_picto('', 'object_email').' <input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(GETPOSTISSET("member_email") ? GETPOST("member_email", '', 2) : $object->email).'"></td></tr>';
 
 		// Address
 		print '<tr><td>'.$langs->trans("Address").'</td><td>';
@@ -1151,14 +1149,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Country
 		//$object->country_id=$object->country_id?$object->country_id:$mysoc->country_id;    // In edit mode we don't force to company country if not defined
 		print '<tr><td>'.$langs->trans('Country').'</td><td>';
-		print $form->select_country(isset($_POST["country_id"]) ? $_POST["country_id"] : $object->country_id, 'country_id');
+		print $form->select_country(GETPOSTISSET("country_id") ? GETPOST("country_id", "alpha") : $object->country_id, 'country_id');
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		print '</td></tr>';
 
 		// State
 		if (empty($conf->global->MEMBER_DISABLE_STATE)) {
 			print '<tr><td>'.$langs->trans('State').'</td><td>';
-			print $formcompany->select_state($object->state_id, isset($_POST["country_id"]) ?GETPOST("country_id") : $object->country_id);
+			print $formcompany->select_state($object->state_id, GETPOSTISSET("country_id") ? GETPOST("country_id", "alpha") : $object->country_id);
 			print '</td></tr>';
 		}
 
@@ -1763,7 +1761,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			 if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
 			 */
 
-			// Shon online payment link
+			// Show online payment link
 			$useonlinepayment = (!empty($conf->paypal->enabled) || !empty($conf->stripe->enabled) || !empty($conf->paybox->enabled));
 
 			if ($useonlinepayment) {

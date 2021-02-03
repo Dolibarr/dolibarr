@@ -85,7 +85,7 @@ if ($action == 'set')
 	$db->begin();
 
 	$newActiveModules = array();
-	$selectedModules = (isset($_POST['SYSLOG_HANDLERS']) ? $_POST['SYSLOG_HANDLERS'] : array());
+	$selectedModules = (GETPOSTISSET('SYSLOG_HANDLERS') ? GETPOST('SYSLOG_HANDLERS') : array());
 
 	// Save options of handler
 	foreach ($syslogModules as $syslogHandler)
@@ -97,11 +97,10 @@ if ($action == 'set')
 			if (in_array($syslogHandler, $selectedModules)) $newActiveModules[] = $syslogHandler;
 			foreach ($module->configure() as $option)
 			{
-				if (isset($_POST[$option['constant']]))
+				if (GETPOSTISSET($option['constant']))
 				{
-					$_POST[$option['constant']] = trim($_POST[$option['constant']]);
 					dolibarr_del_const($db, $option['constant'], -1);
-					dolibarr_set_const($db, $option['constant'], $_POST[$option['constant']], 'chaine', 0, '', 0);
+					dolibarr_set_const($db, $option['constant'], trim(GETPOST($option['constant'])), 'chaine', 0, '', 0);
 				}
 			}
 		}
@@ -139,7 +138,7 @@ if ($action == 'setlevel')
 	$res = dolibarr_set_const($db, "SYSLOG_LEVEL", $level, 'chaine', 0, '', 0);
 	dol_syslog("admin/syslog: level ".$level);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
 	if (!$error)
 	{
@@ -147,7 +146,7 @@ if ($action == 'setlevel')
 		$res = dolibarr_set_const($db, "SYSLOG_FILE_SAVES", $file_saves, 'chaine', 0, '', 0);
 		dol_syslog("admin/syslog: file saves  ".$file_saves);
 
-		if (!$res > 0) $error++;
+		if (!($res > 0)) $error++;
 	}
 
 	if (!$error)
@@ -229,7 +228,7 @@ foreach ($syslogModules as $moduleName)
 			$tmpoption = $option['constant'];
 			if (!empty($tmpoption))
 			{
-				if (isset($_POST[$tmpoption])) $value = $_POST[$tmpoption];
+				if (GETPOSTISSET($tmpoption)) $value = GETPOST($tmpoption);
 				elseif (!empty($conf->global->$tmpoption)) $value = $conf->global->$tmpoption;
 			} else $value = (isset($option['default']) ? $option['default'] : '');
 
@@ -240,7 +239,7 @@ foreach ($syslogModules as $moduleName)
 			{
 				$filelogparam = ' (<a href="'.DOL_URL_ROOT.'/document.php?modulepart=logs&file='.basename($value).'">';
 				$filelogparam .= $langs->trans('Download');
-				$filelogparam .= $filelog.'</a>)';
+				$filelogparam .= ' '.basename($value).'</a>)';
 				print $filelogparam;
 			}
 		}

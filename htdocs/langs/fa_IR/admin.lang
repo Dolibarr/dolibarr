@@ -56,6 +56,8 @@ GUISetup=نمایش
 SetupArea=برپاسازی
 UploadNewTemplate=بارگذاری قالب‌(های) جدید
 FormToTestFileUploadForm=برگه آزمایش بارگذاری فایل (با توجه به برپاسازی)
+ModuleMustBeEnabled=The module/application <b>%s</b> must be enabled
+ModuleIsEnabled=The module/application <b>%s</b> has been enabled
 IfModuleEnabled=توجه: «بله» تنها در صورتی مؤثر است که واحد <b>%s</b> فعال باشد
 RemoveLock=فایل <b>%s</b> را در صورت موجود بودن تغییر دهید تا امکان استفاده از ابزار نصب/روزآمدسازی وجود داشته باشد.
 RestoreLock=فایل <b>%s</b> را با مجوز فقط خواندنی بازیابی کنید تا امکان استفاده از ابزار نصب/روزآمدسازی را غیرفعال کنید.
@@ -85,7 +87,6 @@ ShowPreview=نمایش پیش‌نمایش
 ShowHideDetails=Show-Hide details
 PreviewNotAvailable=پیش‌نمایش در دسترس نیست
 ThemeCurrentlyActive=محیطی که اکنون فعال است
-CurrentTimeZone=منطقه زمانی PHP (سرور)
 MySQLTimeZone=منطقه زمانی MySql (پایگاه داده)
 TZHasNoEffect=در صورتی که تاریخ‌ها به‌عنوان رشتۀ ارسال شده حفظ شوند، توسط سرویس‌دهندۀ بانک‌داده ذخیره شده و ارائه می‌شود. ناحیه‌های زمانی تنها در صورتی مؤثرند که از تابع UNIX_TIMESTAMP استفاده شده باشد ( در Dolibarr نباید استفاده شود، بنابراین ناحیۀ زمانی بانک داده نباید تاثیر داشته باشد، حتی اگر بعد از درج داده تغییر داده شود).
 Space=فضا
@@ -153,8 +154,8 @@ SystemToolsAreaDesc=این واحد دربردارندۀ عوامل مربوط �
 Purge=پاک‌کردن
 PurgeAreaDesc=این صفحه به شما امکان حذف همۀ فایل‌های تولید شده و ذخیره شده با Dolibarr  را می‌دهد (فایل‌های موقت یا همۀ فایلهای داخل پوشۀ <b>%s</b>). استفاده از این قابلیت در شرایط عادی ضرورتی ندارد. این قابلیت برای کاربرانی ایجاد شده است که میزبانی وبگاه آن‌ها امکان حذف فایل‌هائی که توسط سرویس‌دهندۀ وب ایجاد شده‌اند را نداده است. 
 PurgeDeleteLogFile=حذف فایل‌های گزارش‌کار، شامل تعریف <b>%s</b> برای واحد گزارش‌کار سامانه Syslog (خطری برای از دست دادن داده‌ها نیست)
-PurgeDeleteTemporaryFiles=حذف همۀ فایل‌های موقت (خطری برای از دست دادن داده نیست). توجه: حذف تها در صورتی انجام خواهد شد که پوشۀ موقتی حداقل 24 ساعت قبل ساخته شده باشد.
-PurgeDeleteTemporaryFilesShort=حذف فایل‌های موقتی
+PurgeDeleteTemporaryFiles=Delete all log and temporary files (no risk of losing data). Note: Deletion of temporary files is done only if the temp directory was created more than 24 hours ago.
+PurgeDeleteTemporaryFilesShort=Delete log and temporary files
 PurgeDeleteAllFilesInDocumentsDir=حذف همۀ فایل‌های موجود در پوشۀ: <b>%s</b>. <br> این باعث حذف همۀ مستنداتی که به عناصر مربوطند ( اشخاص سوم، صورت‌حساب و غیره ...)، فایل‌هائی که به واحد ECM ارسال شده‌اند، نسخه‌برداری‌های پشتیبان بانک‌داده و فایل‌های موقت خواهد شد.
 PurgeRunNow=شروع پاک‌سازی
 PurgeNothingToDelete=هیچ فایل یا پوشه‌ای برای حذف وجود ندارد.
@@ -256,6 +257,7 @@ ReferencedPreferredPartners=هم‌کاران پیش‌نهادی
 OtherResources=سایر منابع
 ExternalResources=منابع بیرونی
 SocialNetworks=شبکه‌های اجتماعی
+SocialNetworkId=Social Network ID
 ForDocumentationSeeWiki=مستندات مربوط به کاربر یا برنامه‌نویس (مستندات، سوال و جواب و غیره)، <br> نگاهی به ویکی Dolibarr داشته باشید: <br><b><a href="%s" target="_blank">%s</a></b>
 ForAnswersSeeForum=در صورتی که سوال دارید یا به کمک نیاز دارید می‌توانید از تالارهای گفتمان Dolibarr  استفاده نمائید: <br><b><a href="%s" target="_blank">%s</a></b>
 HelpCenterDesc1=در این‌جا منابعی برای دریافت کمک و پشتیبانی در خصوص Dolibarr می‌یابید:
@@ -375,7 +377,7 @@ ExamplesWithCurrentSetup=مثال‌هائی با پیکربندی کنونی
 ListOfDirectories=فهرست پوشه‌های قالب‌های OpenDocument
 ListOfDirectoriesForModelGenODT=فهرست پوشه‌هائی که دربردارندۀ قالب‌های به شکل OpenDocument هستند. <br><br>مسیر کامل پوشه‌ها را قرار دهید.<br>بین هر پوشه یک ارجاع به اول سطر قرار دهید.<br>برای افزودن پوشۀ واحد GED، اینجا قرار دهید <b>DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br><br>فایل‌های موجود در آن پوشه باشید با <b>.odt</b> یا <b>.ods</b> خاتمه یابند.
 NumberOfModelFilesFound=تعداد فایل‌های قالب ODT/ODS پیدا شده در این پوشه‌ها
-ExampleOfDirectoriesForModelGen=نمونه‌های روش نوشتاری:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
+ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\myapp\\mydocumentdir\\mysubdir<br>/home/myapp/mydocumentdir/mysubdir<br>DOL_DATA_ROOT/ecm/ecmdir
 FollowingSubstitutionKeysCanBeUsed=<br> برای اطلاع از طرز ساخت مستندات قالب ODT دلخواه، قبل از این‌که آن‌ها را در این پوشه‌ها ذخیره کنید، مستندات راهنمای ویکی را بخوانید:
 FullListOnOnlineDocumentation=http://wiki.dolibarr.org/index.php/Create_an_ODT_document_template
 FirstnameNamePosition=مکان نام/نام‌خانوادگی
@@ -406,7 +408,7 @@ UrlGenerationParameters=مقادیر امن‌سازی نشانی‌های ای�
 SecurityTokenIsUnique=استفاده از یک مقدار securekey منحصربه‌فرد برای هر نشانی اینترنتی
 EnterRefToBuildUrl=مرجع را برای شیء %s وارد کنید
 GetSecuredUrl=نشانی اینترنتی محاسبه شده را دریافت کنید
-ButtonHideUnauthorized=پنهان کردن کلیدهای مربوط به فعالیت‌های غیرمجاز برای کاربران غیرمدیر به جای نمایش کلیدهای خاکستری غیرفعال
+ButtonHideUnauthorized=Hide unauthorized action buttons also for internal users (just greyed otherwise)
 OldVATRates=نرخ قدیمی مالیات‌بر‌ارزش‌افزوده
 NewVATRates=نرخ جدید قدیمی مالیات‌بر‌ارزش‌افزوده
 PriceBaseTypeToChange=تغییر قیمت‌ها بر پایۀ مقدار مرجع تعریف شده در
@@ -668,7 +670,7 @@ Module54000Desc=چاپ مستقیم (بدون باز کردن مستندات) ب
 Module55000Name=رای‌گیری و نظرسنجی
 Module55000Desc=ساخت نظرسنجی و رای‌گیری برخط (همانند Doodle، Studs, RDVz و غیره).
 Module59000Name=حاشیه‌ها
-Module59000Desc=واحد مدیریت حاشیه‌ها
+Module59000Desc=Module to follow margins
 Module60000Name=کمیسیون
 Module60000Desc=واحد مدیریت کمیسیون‌ها
 Module62000Name=Incoterms
@@ -1306,7 +1308,7 @@ YouUseBestDriver=شما از راه‌انداز %s استفاده می‌کنی
 YouDoNotUseBestDriver=شما از راه‌انداز %s استفاده می‌کنید اما پیشنهاد ما استفادهاز %s است.
 NbOfObjectIsLowerThanNoPb=شما در پایگاه داده فقط %s%s دارید. این الزاما نیازمند بهینه سازی نیست.
 SearchOptim=بهینه‌سازی جستجو
-YouHaveXObjectUseSearchOptim=شما در پایگاه‌داده %s%s دارید. شما باید مقدار ثابت %s را به 1 در خانه-برپاسازی-سایر اضافه کنید. جستجو را محدود به ابتدا نمائید تا به پایگاه‌داده امکان دهید از شاخص‌ها استفاده کند تا بتوانید واکنش فوری داشته باشید.
+YouHaveXObjectUseSearchOptim=You have %s %s in the database. You can add the constant %s to 1 in Home-Setup-Other. Limit the search to the beginning of strings which makes it possible for the database to use indexes and you should get an immediate response.
 YouHaveXObjectAndSearchOptimOn=شما در پایگاه داده %s دارید و مقدار ثابت %s %sدر خانه-برپاسازی-سایر به 1 تنظیم شده است.
 BrowserIsOK=شما از مرورگر وب %s استفاده می‌نمائید. این مرورگر برای کارائی و امنیت مناسب است.
 BrowserIsKO=شما از مرورگر وب %s استفاده می‌نمائید. این مرورگر به‌عنوان یک انتخاب بد به نسبت امنیت، کارائی و اعتمادپذیری شناخته شده است. ما به شما پیشنهاد می‌کنیم از Firefox، Chrome، Opera و Safari استفاده نمائید.
@@ -1314,6 +1316,7 @@ PHPModuleLoaded=بخش %s در PHP بارگذاری شده است
 PreloadOPCode=OPCode از پیش بارگذاری شده مورد استفاده است
 AddRefInList=نمایش فهرست اطلاعات مرجع -ref. فروشنده/مشتری (فهرست انتخابی یا ترکیبی) و اکثر ابَرپیوند. <br> نام طرف‌های سوم به شکل  " CC12345 - SC45678 - شرکت بزرگ سازمانی " به جای "شرکت بزرگ سازمانی" نمایش داده خواهد شد.
 AddAdressInList=نمایش فهرست اطلاعات نشانی‌های فروشنده/مشتری (فهرست انتخابی یا ترکیبی) <br>شخص سوم‌ها به شکل "شرکت بزرگ سازمانی - شمارۀ 21 خیابان 123456 شهر بزرگ ایران" به جای "شرکت بزرگ سازمانی" نمایش داده خواهند شد.
+AddEmailPhoneTownInContactList=Display Contact email (or phones if not defined) and town info list (select list or combobox)<br>Contacts will appear with a name format of "Dupond Durand - dupond.durand@email.com - Paris" or "Dupond Durand - 06 07 59 65 66 - Paris" instead of "Dupond Durand".
 AskForPreferredShippingMethod=پرسش برای روش ارسال ترجیحی برای اشخاص سوم
 FieldEdition=ویرایش بخش %s
 FillThisOnlyIfRequired=مثال: +2 (تنها در صورتی که با مشکل ناحیۀ زمانی مواجه شوید)
@@ -1420,6 +1423,7 @@ AdherentMailRequired=برای ساخت یک عضو یک رایانامه لاز�
 MemberSendInformationByMailByDefault=کادرتائید برای ارسال تصدیق رایانامه برای اعضا (اعتباردهی یا عضویت جدید) به شکل پیش‌فرض فعال است
 VisitorCanChooseItsPaymentMode=کاربر می‌تواند از انواع روش پرداخت موجود استفاده نماید
 MEMBER_REMINDER_EMAIL=فعال‌کردن یادآور خودکار <b>توسط رایانامه</b> برای عضویت‌های منقضی‌شده. توجه: واحد <strong>%s</strong> برای ارسال صحیح یادآورها نیازمند فعال‌سازی و پیکربندی صحیح است.
+MembersDocModules=Document templates for documents generated from member record
 ##### LDAP setup #####
 LDAPSetup=برپاسازی LDAP
 LDAPGlobalParameters=مقادیر سراسری
@@ -1594,8 +1598,13 @@ ServiceSetup=برپاسازی واحد خدمات
 ProductServiceSetup=برپاسازی واحد محصولات و خدمات
 NumberOfProductShowInSelect=حداکثر تعداد قابل نمایش در فهرست ترکیبی انتخاب‌گر (0=بدون محدودیت)
 ViewProductDescInFormAbility=نمایش توضیحات محصول در برگه‌ها (در غیر این‌صورت طی یک‌نکتۀ در کادر کوچک توضیح نمایش داده خواهد شد)
+DoNotAddProductDescAtAddLines=Do not add product description (from product card) on submit add lines on forms
+OnProductSelectAddProductDesc=How to use the description of the products when adding a product as a line of a document
+AutoFillFormFieldBeforeSubmit=Auto fill the description input field with the description of product
+DoNotAutofillButAutoConcat=Do not autofill the input field with description of product. Description of the product will be concatenated to the entered description automatically.
+DoNotUseDescriptionOfProdut=Description of the product will never be included into the description of lines of documents
 MergePropalProductCard=فعال‌سازی یک گزینه در محصول/خدمات زبانۀ فایل‌های پیوست برای ترکیب یک سند PDF به سند پیشنهاد در صورتی‌که محصول/خدمات در پیشنهاد وجود داشته باشد
-ViewProductDescInThirdpartyLanguageAbility=نمایش توضیحات محصولات با زبان شخص‌سوم
+ViewProductDescInThirdpartyLanguageAbility=Display products descriptions in forms in the language of the third party (otherwise in the language of the user)
 UseSearchToSelectProductTooltip=در صورتی که شما تعداد بسیار زیادی محصول داشته باشید (>100000)، شما می‌توانید با استنفاده از تنظیم مقدار ثابت PRODUCT_DONOTSEARCH_ANYWHERE  به مقدار 1 در برپاسازی->سایر سرعت را افزایش دهید. جستجو در این حالت از شروع عبارت انجام خواهد شد.
 UseSearchToSelectProduct=قبل از این‌که شما کلیدی بفشارید محتوای محصول در فهرست ترکیبی بارگذاری نخواهد شد (در صورتی که شما تعداد زیادی محصول داشته باشید، این باعث افزایش کارآمدی خواهد شد، اما از راحتی کم‌تری برخوردار است)
 SetDefaultBarcodeTypeProducts=نوع بارکد پیش‌فرض برای استفادۀ محصولات
@@ -1670,7 +1679,7 @@ AdvancedEditor=ویرایشگر پیشرفته
 ActivateFCKeditor=فعال کردن ویرایشگر پیشرفته برای:
 FCKeditorForCompany=ساخت/ویرایش عناصر توضیح و یادآوری به شکل WYSIWIG (باستثناء محصولات/خدمات)
 FCKeditorForProduct=ساخت/ویرایش عناصر توضیح و یادآوری به شکل WYSIWIG
-FCKeditorForProductDetails=ساخت/ویرایش سطور جزئیات برای همۀ موجودیت‌های محصولات (پیشنهادها، سفارش‌ها، صورت‌حساب‌ها و غیره) با WYSIWIG. <font class="warning">هشدار: استفده از این گزینه برای این مورد اساسا توصیه نمی‌شود زیرا ممکن است در هنگام ساخت فایل‌های PDF در خصوص نویسه‌های خاص در هنگام شکل‌دهی صفحه مشکل ایجاد نماید.</font>
+FCKeditorForProductDetails=WYSIWIG creation/edition of products details lines for all entities (proposals, orders, invoices, etc...). <span class="warning">Warning: Using this option for this case is seriously not recommended as it can create problems with special characters and page formatting when building PDF files.</span>
 FCKeditorForMailing= ساخت/ویرایش WYSIWIG برای ارسال رایانامۀ انبوه (ابزار->ارسال رایانامه)
 FCKeditorForUserSignature=ساخت/ویرایش امضای کاربر توسط WYSIWIG
 FCKeditorForMail=ساخت/ویرایش همۀ رایانامه‌ها با WYSIWIG (منهای ابزار->ارسال رایانامه)
@@ -1687,7 +1696,7 @@ NotTopTreeMenuPersonalized=فهرست‌های شخصی که به یکی از ق
 NewMenu=فهرست جدید
 MenuHandler=اداره‌کنندۀ فهرست
 MenuModule=واحد منبع
-HideUnauthorizedMenu= پنهان کردن فهرست‌های غیرمجاز (خاکستری)
+HideUnauthorizedMenu=Hide unauthorized menus also for internal users (just greyed otherwise)
 DetailId=فهرست شناسه
 DetailMenuHandler=اداره کنندۀ فهرست برای تعیین مکان نمایش فهرست جدید
 DetailMenuModule=نام واحد در صورتی که یک قسمت از فهرست از یک واحد می‌آید
@@ -1736,9 +1745,10 @@ AGENDA_USE_EVENT_TYPE_DEFAULT=ثبت خودکار این مقدار پیش‌ف�
 AGENDA_DEFAULT_FILTER_TYPE=ثبت خودکار این نوع از رخداد در صافی جستجوی نمای جلسات
 AGENDA_DEFAULT_FILTER_STATUS=ثبت خودکار این وضعیت جلسه در صافی جستجوی نمای جلسات
 AGENDA_DEFAULT_VIEW=Which view do you want to open by default when selecting menu Agenda
-AGENDA_REMINDER_EMAIL=فعال‌کردن یادآوری رخدادها <b>توسط رایانامه</b> (توجه داشته بشید در خصوص هر رخداد گزینه‌ها/تاخیر قابل تعریف هستند). نکته:  برای ارسال با بسامد صحیح رایانامه‌های یادآوری واحد <strong>%s</strong> باید فعال بوده و به‌‌درستی پیکربندی شده باشد.
-AGENDA_REMINDER_BROWSER=فعال‌کردن یادآوری رخداد <b>روی مرورگر کاربر</b> (در هنگامی که رخداد سررسید، هر کاربر می‌تواند این کار را از طریق سوال تائید مرورگر نفی کند)
+AGENDA_REMINDER_BROWSER=Enable event reminder <b>on user's browser</b> (When remind date is reached, a popup is shown by the browser. Each user can disable such notifications from its browser notification setup).
 AGENDA_REMINDER_BROWSER_SOUND=فعال‌کردن آگاهی‌رسانی صوتی
+AGENDA_REMINDER_EMAIL=Enable event reminder <b>by emails</b> (remind option/delay can be defined on each event).
+AGENDA_REMINDER_EMAIL_NOTE=Note: The frequency of the task %s must be enough to be sure that the remind are sent at the correct moment.
 AGENDA_SHOW_LINKED_OBJECT=نمایش شیء پیوند شده به نمای جلسه
 ##### Clicktodial #####
 ClickToDialSetup=برپاسازی واحد کلیک برای شماره‌گیری
@@ -1980,11 +1990,12 @@ EMailHost=میزبان سرور IMAP رایانامه
 MailboxSourceDirectory=پوشۀ منبع صندوق‌پستی
 MailboxTargetDirectory=پوشۀ مقصد صندوق‌پستی
 EmailcollectorOperations=عملیات قابل انجام جمع‌کننده
+EmailcollectorOperationsDesc=Operations are executed from top to bottom order
 MaxEmailCollectPerCollect=حداکثر تعداد رایانامه‌های جمع‌آوری شده در یک جمع‌آوری
 CollectNow=الآن جمع‌آوری شود
 ConfirmCloneEmailCollector=آیا مطمئن هستید می‌خواهد جمع‌آورندۀ رایانامۀ %s را نسخه‌برداری کنید؟
-DateLastCollectResult=آخرین تاریخ تلاش برای جمع‌‌آوری
-DateLastcollectResultOk=آخرین تلاش جمع‌آوری موفق
+DateLastCollectResult=Date of latest collect try
+DateLastcollectResultOk=Date of latest collect success
 LastResult=آخرین نتیجه
 EmailCollectorConfirmCollectTitle=تائید جمع‌آوری رایانامه
 EmailCollectorConfirmCollect=آیا می‌خواهید عملیات جمع‌آوری این جمع‌آورنده را حالا اجرا کنید؟
@@ -2002,7 +2013,7 @@ WithDolTrackingID=Message from a conversation initiated by a first email sent fr
 WithoutDolTrackingID=Message from a conversation initiated by a first email NOT sent from Dolibarr
 WithDolTrackingIDInMsgId=Message sent from Dolibarr
 WithoutDolTrackingIDInMsgId=Message NOT sent from Dolibarr
-CreateCandidature=Create candidature
+CreateCandidature=Create job application
 FormatZip=کدپستی
 MainMenuCode=کد ورودی فهرست (فهرست اصلی)
 ECMAutoTree=نمایش ساختاردرختی خودکار ECM
@@ -2080,3 +2091,7 @@ CountryIfSpecificToOneCountry=Country (if specific to a given country)
 YouMayFindSecurityAdviceHere=You may find security advisory here
 ModuleActivatedMayExposeInformation=This module may expose sensitive data. If you don't need it, disable it.
 ModuleActivatedDoNotUseInProduction=A module designed for the development has been enabled. Do not enable it on a production environment.
+CombinationsSeparator=Separator character for product combinations
+SeeLinkToOnlineDocumentation=See link to online documention on top menu for examples
+SHOW_SUBPRODUCT_REF_IN_PDF=If the feature "%s" of module <b>%s</b> is used, show details of subproducts of a kit on PDF.
+AskThisIDToYourBank=Contact your bank to get this ID

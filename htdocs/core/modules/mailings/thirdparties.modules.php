@@ -81,9 +81,8 @@ class mailing_thirdparties extends MailingTargets
 			$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
 		} else {
 			$addFilter = "";
-			if (isset($_POST["filter_client"]) && $_POST["filter_client"] <> '-1')
-			{
-				$addFilter .= " AND s.client=".$_POST["filter_client"];
+			if (GETPOSTISSET("filter_client") && GETPOST("filter_client") <> '-1') {
+				$addFilter .= " AND s.client=".((int) GETPOST("filter_client", 'int'));
 				$addDescription = $langs->trans('ProspectCustomer')."=";
 				if ($_POST["filter_client"] == 0)
 				{
@@ -98,18 +97,15 @@ class mailing_thirdparties extends MailingTargets
 				{
 					$addDescription .= $langs->trans('ProspectCustomer');
 				} else {
-					$addDescription .= "Unknown status ".$_POST["filter_client"];
+					$addDescription .= "Unknown status ".GETPOST("filter_client");
 				}
 			}
-			if (isset($_POST["filter_status"]))
-			{
-				if (strlen($addDescription) > 0)
-				{
+			if (GETPOSTISSET("filter_status")) {
+				if (strlen($addDescription) > 0) {
 					$addDescription .= ";";
 				}
 				$addDescription .= $langs->trans("Status")."=";
-				if ($_POST["filter_status"] == '1')
-				{
+				if (GETPOST("filter_status") == '1') {
 					$addFilter .= " AND s.status=1";
 					$addDescription .= $langs->trans("Enabled");
 				} else {
@@ -124,7 +120,7 @@ class mailing_thirdparties extends MailingTargets
 			$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
 			$sql .= " AND cs.fk_soc = s.rowid";
 			$sql .= " AND c.rowid = cs.fk_categorie";
-			$sql .= " AND c.rowid='".$this->db->escape($_POST['filter'])."'";
+			$sql .= " AND c.rowid=".((int) GETPOST('filter', 'int'));
 			$sql .= $addFilter;
 			$sql .= " UNION ";
 			$sql .= "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, c.label as label";
@@ -134,7 +130,7 @@ class mailing_thirdparties extends MailingTargets
 			$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
 			$sql .= " AND cs.fk_soc = s.rowid";
 			$sql .= " AND c.rowid = cs.fk_categorie";
-			$sql .= " AND c.rowid='".$this->db->escape($_POST['filter'])."'";
+			$sql .= " AND c.rowid=".((int) GETPOST('filter', 'int'));
 			$sql .= $addFilter;
 		}
 		$sql .= " ORDER BY email";

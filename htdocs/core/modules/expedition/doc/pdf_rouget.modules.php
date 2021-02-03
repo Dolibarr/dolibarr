@@ -142,8 +142,8 @@ class pdf_rouget extends ModelePdfExpedition
 
 		// Define position of columns
 		$this->posxdesc = $this->marge_gauche + 1;
-		$this->posxweightvol = $this->page_largeur - $this->marge_droite - 78;
-		$this->posxqtyordered = $this->page_largeur - $this->marge_droite - 56;
+		$this->posxweightvol = $this->page_largeur - $this->marge_droite - 82;
+		$this->posxqtyordered = $this->page_largeur - $this->marge_droite - 60;
 		$this->posxqtytoship = $this->page_largeur - $this->marge_droite - 28;
 		$this->posxpuht = $this->page_largeur - $this->marge_droite;
 
@@ -365,14 +365,15 @@ class pdf_rouget extends ModelePdfExpedition
 					$tab_top_alt = $tab_top;
 
 					$pdf->SetFont('', 'B', $default_font_size - 2);
-					$pdf->writeHTMLCell(60, 4, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("TrackingNumber")." : ".$object->tracking_number, 0, 1, false, true, 'L');
 
-					$tab_top_alt = $pdf->GetY();
 					//$tab_top_alt += 1;
 
 					// Tracking number
 					if (!empty($object->tracking_number))
 					{
+						$pdf->writeHTMLCell(60, 4, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("TrackingNumber")." : ".$object->tracking_number, 0, 1, false, true, 'L');
+						$tab_top_alt = $pdf->GetY();
+
 						$object->getUrlTrackingStatus($object->tracking_number);
 						if (!empty($object->tracking_url))
 						{
@@ -526,12 +527,12 @@ class pdf_rouget extends ModelePdfExpedition
 
 					$pdf->SetXY($this->posxweightvol, $curY);
 					$weighttxt = '';
-					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->weight)
+					if (empty($object->lines[$i]->fk_product_type) && $object->lines[$i]->weight)
 					{
 						$weighttxt = round($object->lines[$i]->weight * $object->lines[$i]->qty_shipped, 5).' '.measuringUnitString(0, "weight", $object->lines[$i]->weight_units, 1);
 					}
 					$voltxt = '';
-					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->volume)
+					if (empty($object->lines[$i]->fk_product_type) && $object->lines[$i]->volume)
 					{
 						$voltxt = round($object->lines[$i]->volume * $object->lines[$i]->qty_shipped, 5).' '.measuringUnitString(0, "volume", $object->lines[$i]->volume_units ? $object->lines[$i]->volume_units : 0, 1);
 					}
@@ -712,8 +713,8 @@ class pdf_rouget extends ModelePdfExpedition
 
 		if ($totalWeight != '') $totalWeighttoshow = showDimensionInBestUnit($totalWeight, 0, "weight", $outputlangs);
 		if ($totalVolume != '') $totalVolumetoshow = showDimensionInBestUnit($totalVolume, 0, "volume", $outputlangs);
-		if ($object->trueWeight) $totalWeighttoshow = showDimensionInBestUnit($object->trueWeight, $object->weight_units, "weight", $outputlangs);
-		if ($object->trueVolume) $totalVolumetoshow = showDimensionInBestUnit($object->trueVolume, $object->volume_units, "volume", $outputlangs);
+		if (!empty($object->trueWeight)) $totalWeighttoshow = showDimensionInBestUnit($object->trueWeight, $object->weight_units, "weight", $outputlangs);
+		if (!empty($object->trueVolume)) $totalVolumetoshow = showDimensionInBestUnit($object->trueVolume, $object->volume_units, "volume", $outputlangs);
 
 		$pdf->SetFillColor(255, 255, 255);
 		$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
@@ -1054,9 +1055,8 @@ class pdf_rouget extends ModelePdfExpedition
 				$result = $object->fetch_contact($arrayidcontact[0]);
 			}
 
-			//Recipient name
-			// On peut utiliser le nom de la societe du contact
-			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
+			// Recipient name
+			if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;

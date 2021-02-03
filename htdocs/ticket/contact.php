@@ -71,7 +71,8 @@ if ($action == 'addcontact' && $user->rights->ticket->write) {
 
 	if ($result > 0 && ($id > 0 || (!empty($track_id)))) {
 		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
-		$result = $object->add_contact($contactid, $type, $source);
+		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 	}
 
 	if ($result >= 0) {

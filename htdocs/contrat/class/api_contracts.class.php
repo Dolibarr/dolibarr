@@ -301,7 +301,7 @@ class Contracts extends DolibarrApi
 	 *
 	 * @url	PUT {id}/lines/{lineid}
 	 *
-	 * @return array|bool
+	 * @return Object|bool
 	 */
 	public function putLine($id, $lineid, $request_data = null)
 	{
@@ -361,7 +361,7 @@ class Contracts extends DolibarrApi
 	 *
 	 * @url	PUT {id}/lines/{lineid}/activate
 	 *
-	 * @return array|bool
+	 * @return Object|bool
 	 */
 	public function activateLine($id, $lineid, $datestart, $dateend = null, $comment = null)
 	{
@@ -399,7 +399,7 @@ class Contracts extends DolibarrApi
 	 *
 	 * @url	PUT {id}/lines/{lineid}/unactivate
 	 *
-	 * @return array|bool
+	 * @return Object|bool
 	 */
 	public function unactivateLine($id, $lineid, $datestart, $comment = null)
 	{

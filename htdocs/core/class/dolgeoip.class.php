@@ -98,7 +98,7 @@ class DolGeoIP
 			//print 'function_exists(geoip_country_code_by_name))='.function_exists('geoip_country_code_by_name');
 			//print geoip_database_info();
 		} else {
-		    $this->gi = ''; // For avoid error
+			$this->gi = ''; // For avoid error
 		}
 	}
 

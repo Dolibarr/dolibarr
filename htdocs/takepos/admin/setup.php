@@ -85,7 +85,7 @@ if ($action == 'set')
 
 	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
  	if (!$error)
 	{
@@ -97,7 +97,7 @@ if ($action == 'set')
 	$maskconst = GETPOST('maskconst', 'alpha');
 	$maskvalue = GETPOST('maskvalue', 'alpha');
 	if ($maskconst) $res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 } elseif ($action == 'setrefmod') {
@@ -179,8 +179,10 @@ foreach ($dirmodels as $reldir)
 						// Show example of numbering module
 						print '<td class="nowrap">';
 						$tmp = $module->getExample();
-						if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
-						elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
+						if (preg_match('/^Error/', $tmp)) {
+							$langs->load("errors");
+							print '<div class="error">'.$langs->trans($tmp).'</div>';
+						} elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
 						else print $tmp;
 						print '</td>'."\n";
 
@@ -230,6 +232,8 @@ foreach ($dirmodels as $reldir)
 }
 print "</table><br>\n";
 
+print '<br>';
+
 // Mode
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -239,7 +243,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print '<td class="titlefield">'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
+print '<td class="notitlefield">'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 // Terminals
@@ -299,11 +303,12 @@ print $form->selectarray('TAKEPOS_NUMPAD', $array, (empty($conf->global->TAKEPOS
 print "</td></tr>\n";
 
 // Numpad use payment icons
-print '<tr class="oddeven"><td>';
+/*print '<tr class="oddeven"><td>';
 print $langs->trans('TakeposNumpadUsePaymentIcon');
 print '<td colspan="2">';
 print ajax_constantonoff("TAKEPOS_NUMPAD_USE_PAYMENT_ICON", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
+*/
 
 // Direct Payment
 print '<tr class="oddeven"><td>';

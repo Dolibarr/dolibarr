@@ -61,12 +61,12 @@ class SupplierProposal extends CommonObject
 	public $table_element = 'supplier_proposal';
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = 'supplier_proposaldet';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_supplier_proposal';
 
@@ -171,9 +171,7 @@ class SupplierProposal extends CommonObject
 	public $remise_percent = 0;
 	public $remise_absolue = 0;
 
-	public $products = array();
 	public $extraparams = array();
-
 	public $lines = array();
 	public $line;
 
@@ -237,15 +235,12 @@ class SupplierProposal extends CommonObject
 
 		$this->socid = $socid;
 		$this->id = $supplier_proposalid;
-
-		$this->products = array();
 	}
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 	Add line into array products
-	 *  $this->client doit etre charge
+	 * 	Add line into array ->lines
 	 *
 	 * 	@param  int		$idproduct       	Product Id to add
 	 * 	@param  int		$qty             	Quantity
@@ -253,7 +248,6 @@ class SupplierProposal extends CommonObject
 	 *  @return	int							<0 if KO, >0 if OK
 	 *
 	 *	TODO	Remplacer les appels a cette fonction par generation objet Ligne
-	 *			insere dans tableau $this->products
 	 */
 	public function add_product($idproduct, $qty, $remise_percent = 0)
 	{
@@ -422,10 +416,12 @@ class SupplierProposal extends CommonObject
 		$qty = price2num($qty);
 		$pu_ht = price2num($pu_ht);
 		$pu_ttc = price2num($pu_ttc);
-		$txtva = price2num($txtva);
+		if (!preg_match('/\((.*)\)/', $txtva)) {
+			$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
+		}
 		$txlocaltax1 = price2num($txlocaltax1);
 		$txlocaltax2 = price2num($txlocaltax2);
-			$pa_ht = price2num($pa_ht);
+		$pa_ht = price2num($pa_ht);
 		if ($price_base_type == 'HT')
 		{
 			$pu = $pu_ht;
@@ -505,7 +501,15 @@ class SupplierProposal extends CommonObject
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
 			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
-			$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
+
+			// Clean vat code
+			$reg = array();
+			$vat_src_code = '';
+			if (preg_match('/\((.*)\)/', $txtva, $reg))
+			{
+				$vat_src_code = $reg[1];
+				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
+			}
 
 			if (!empty($conf->multicurrency->enabled) && $pu_ht_devise > 0) {
 				$pu = 0;
@@ -550,11 +554,13 @@ class SupplierProposal extends CommonObject
 			$this->line->label = $label;
 			$this->line->desc = $desc;
 			$this->line->qty = $qty;
+
+			$this->line->vat_src_code = $vat_src_code;
 			$this->line->tva_tx = $txtva;
 			$this->line->localtax1_tx = ($total_localtax1 ? $localtaxes_type[1] : 0);
 			$this->line->localtax2_tx = ($total_localtax2 ? $localtaxes_type[3] : 0);
-			$this->line->localtax1_type = $localtaxes_type[0];
-			$this->line->localtax2_type = $localtaxes_type[2];
+			$this->line->localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
+			$this->line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 			$this->line->fk_product = $fk_product;
 			$this->line->remise_percent = $remise_percent;
 			$this->line->subprice = $pu_ht;
@@ -599,8 +605,8 @@ class SupplierProposal extends CommonObject
 			// Mise en option de la ligne
 			if (empty($qty) && empty($special_code)) $this->line->special_code = 3;
 
-			if (is_array($array_option) && count($array_option) > 0) {
-				$this->line->array_options = $array_option;
+			if (is_array($array_options) && count($array_options) > 0) {
+				$this->line->array_options = $array_options;
 			}
 
 			$result = $this->line->insert();
@@ -669,7 +675,9 @@ class SupplierProposal extends CommonObject
 		$remise_percent = price2num($remise_percent);
 		$qty = price2num($qty);
 		$pu = price2num($pu);
-		$txtva = price2num($txtva);
+		if (!preg_match('/\((.*)\)/', $txtva)) {
+			$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
+		}
 		$txlocaltax1 = price2num($txlocaltax1);
 		$txlocaltax2 = price2num($txlocaltax2);
 		$pa_ht = price2num($pa_ht);
@@ -742,8 +750,8 @@ class SupplierProposal extends CommonObject
 			$this->line->tva_tx = $txtva;
 			$this->line->localtax1_tx		= $txlocaltax1;
 			$this->line->localtax2_tx		= $txlocaltax2;
-			$this->line->localtax1_type		= $localtaxes_type[0];
-			$this->line->localtax2_type		= $localtaxes_type[2];
+			$this->line->localtax1_type		= empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
+			$this->line->localtax2_type		= empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 			$this->line->remise_percent		= $remise_percent;
 			$this->line->subprice			= $pu;
 			$this->line->info_bits			= $info_bits;
@@ -960,7 +968,7 @@ class SupplierProposal extends CommonObject
 				}
 
 				// Add object linked
-				if (!$error && $this->id && is_array($this->linked_objects) && !empty($this->linked_objects))
+				if (!$error && $this->id && !empty($this->linked_objects) && is_array($this->linked_objects))
 				{
 					foreach ($this->linked_objects as $origin => $tmp_origin_id)
 					{
@@ -1012,7 +1020,7 @@ class SupplierProposal extends CommonObject
 							$fk_parent_line,
 							$this->lines[$i]->fk_fournprice,
 							$this->lines[$i]->pa_ht,
-							$this->lines[$i]->label,
+							empty($this->lines[$i]->label) ? '' : $this->lines[$i]->label,		// deprecated
 							$this->lines[$i]->array_options,
 							$this->lines[$i]->ref_fourn,
 							$this->lines[$i]->fk_unit,
@@ -1083,23 +1091,6 @@ class SupplierProposal extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Insert into DB a supplier_proposal object completely defined by its data members (ex, results from copy).
-	 *
-	 *	@param 		User	$user	User that create
-	 *	@return    	int				Id of the new object if ok, <0 if ko
-	 *	@see       	create()
-	 */
-	public function create_from($user)
-	{
-		// phpcs:enable
-		$this->products = $this->lines;
-
-		return $this->create($user);
 	}
 
 	/**
@@ -1263,7 +1254,7 @@ class SupplierProposal extends CommonObject
 				$this->datev                = $this->db->jdate($obj->datev); // TODO deprecated
 				$this->date_creation = $this->db->jdate($obj->datec); //Creation date
 				$this->date_validation = $this->db->jdate($obj->datev); //Validation date
-				$this->date_livraison       = $this->db->jdate($obj->delivery_date);	// deprecated
+				$this->date_livraison       = $this->db->jdate($obj->delivery_date); // deprecated
 				$this->delivery_date        = $this->db->jdate($obj->delivery_date);
 				$this->shipping_method_id   = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
 
@@ -2192,16 +2183,16 @@ class SupplierProposal extends CommonObject
 		{
 			global $langs;
 			$langs->load("supplier_proposal");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans("SupplierProposalStatusDraft");
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans("SupplierProposalStatusValidated");
-			$this->labelStatus[self::STATUS_SIGNED] = $langs->trans("SupplierProposalStatusSigned");
-			$this->labelStatus[self::STATUS_NOTSIGNED] = $langs->trans("SupplierProposalStatusNotSigned");
-			$this->labelStatus[self::STATUS_CLOSE] = $langs->trans("SupplierProposalStatusClosed");
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans("SupplierProposalStatusDraftShort");
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans("Opened");
-			$this->labelStatusShort[self::STATUS_SIGNED] = $langs->trans("SupplierProposalStatusSignedShort");
-			$this->labelStatusShort[self::STATUS_NOTSIGNED] = $langs->trans("SupplierProposalStatusNotSignedShort");
-			$this->labelStatusShort[self::STATUS_CLOSE] = $langs->trans("SupplierProposalStatusClosedShort");
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv("SupplierProposalStatusDraft");
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv("SupplierProposalStatusValidated");
+			$this->labelStatus[self::STATUS_SIGNED] = $langs->transnoentitiesnoconv("SupplierProposalStatusSigned");
+			$this->labelStatus[self::STATUS_NOTSIGNED] = $langs->transnoentitiesnoconv("SupplierProposalStatusNotSigned");
+			$this->labelStatus[self::STATUS_CLOSE] = $langs->transnoentitiesnoconv("SupplierProposalStatusClosed");
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv("SupplierProposalStatusDraftShort");
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv("Opened");
+			$this->labelStatusShort[self::STATUS_SIGNED] = $langs->transnoentitiesnoconv("SupplierProposalStatusSignedShort");
+			$this->labelStatusShort[self::STATUS_NOTSIGNED] = $langs->transnoentitiesnoconv("SupplierProposalStatusNotSignedShort");
+			$this->labelStatusShort[self::STATUS_CLOSE] = $langs->transnoentitiesnoconv("SupplierProposalStatusClosedShort");
 		}
 
 		$statusnew = '';
@@ -2759,6 +2750,8 @@ class SupplierProposalLine extends CommonObjectLine
 
 	public $qty;
 	public $tva_tx;
+	public $vat_src_code;
+
 	public $subprice;
 	public $remise_percent;
 

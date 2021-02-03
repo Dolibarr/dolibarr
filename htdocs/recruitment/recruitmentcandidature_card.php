@@ -247,7 +247,7 @@ if (empty($reshook))
 			$nuser->personal_mobile = $object->phone;
 			$nuser->birth = $object->date_birth;
 			$nuser->salary = $object->remuneration_proposed;
-			$nuser->fk_user = $jobposition->fk_user_supervisor;	// Supervisor
+			$nuser->fk_user = $jobposition->fk_user_supervisor; // Supervisor
 
 			$result = $nuser->create($user);
 
@@ -423,7 +423,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		//Form to close proposal (signed or not)
 		$formquestion = array(
-			array('type' => 'select', 'name' => 'status', 'label' => '<span class="fieldrequired">'.$langs->trans("CloseAs").'</span>', 'values' => array($object::STATUS_CONTRACT_SIGNED => $object->LibStatut($object::STATUS_CONTRACT_PROPOSED), $object::STATUS_CONTRACT_REFUSED => $object->LibStatut($object::STATUS_CONTRACT_REFUSED))),
+			array('type' => 'select', 'name' => 'status', 'label' => '<span class="fieldrequired">'.$langs->trans("CloseAs").'</span>', 'values' => array($object::STATUS_CONTRACT_SIGNED => $object->LibStatut($object::STATUS_CONTRACT_SIGNED), $object::STATUS_CONTRACT_REFUSED => $object->LibStatut($object::STATUS_CONTRACT_REFUSED))),
 			array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"), 'value' => '')				// Field to complete private note (not replace)
 		);
 
@@ -446,15 +446,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formquestion = array(
 			array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login)
 		);
-		/*
-		if (!empty($conf->societe->enabled) && $object->socid > 0) {
-			$object->fetch_thirdparty();
-			$formquestion[] = array('label' => $langs->trans("UserWillBe"), 'type' => 'radio', 'name' => 'internalorexternal', 'default'=>'external', 'values' => array('external'=>$langs->trans("External").' - '.$langs->trans("LinkedToDolibarrThirdParty").' '.$object->thirdparty->getNomUrl(1, '', 0, 1), 'internal'=>$langs->trans("Internal")));
-		}
-		$text = '';
-		if (!empty($conf->societe->enabled) && $object->socid <= 0) {
-			$text .= $langs->trans("UserWillBeInternalUser").'<br>';
-		} */
 		$text .= $langs->trans("ConfirmCreateLogin");
 		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("CreateDolibarrLogin"), $text, "confirm_create_user", $formquestion, 'yes');
 	}

@@ -58,11 +58,15 @@ if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'banque', $fieldvalue, 'bank_account', '', '', $fieldtype);
 if (!$user->rights->banque->lire && !$user->rights->banque->consolidate) accessforbidden();
 
+$hookmanager->initHooks(array('bankline'));
+
 
 /*
  * Actions
  */
-
+$parameters = array('socid' => $socid);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 if ($cancel)
 {
 	if ($backtopage)
@@ -139,17 +143,17 @@ if ($user->rights->banque->modifier && $action == "update")
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
 		$sql .= " SET ";
 		// Always opened
-		if (isset($_POST['value']))      $sql .= " fk_type='".$db->escape(GETPOST('value'))."',";
-		if (isset($_POST['num_chq']))    $sql .= " num_chq='".$db->escape(GETPOST("num_chq"))."',";
-		if (isset($_POST['banque']))     $sql .= " banque='".$db->escape(GETPOST("banque"))."',";
-		if (isset($_POST['emetteur']))   $sql .= " emetteur='".$db->escape(GETPOST("emetteur"))."',";
+		if (GETPOSTISSET('value'))      $sql .= " fk_type='".$db->escape(GETPOST('value'))."',";
+		if (GETPOSTISSET('num_chq'))    $sql .= " num_chq='".$db->escape(GETPOST("num_chq"))."',";
+		if (GETPOSTISSET('banque'))     $sql .= " banque='".$db->escape(GETPOST("banque"))."',";
+		if (GETPOSTISSET('emetteur'))   $sql .= " emetteur='".$db->escape(GETPOST("emetteur"))."',";
 		// Blocked when conciliated
 		if (!$acline->rappro)
 		{
-			if (isset($_POST['label']))      $sql .= " label = '".$db->escape(GETPOST("label"))."',";
-			if (isset($_POST['amount']))     $sql .= " amount= '".$db->escape($amount)."',";
-			if (isset($_POST['dateomonth'])) $sql .= " dateo = '".$db->idate($dateop)."',";
-			if (isset($_POST['datevmonth'])) $sql .= " datev = '".$db->idate($dateval)."',";
+			if (GETPOSTISSET('label'))      $sql .= " label = '".$db->escape(GETPOST("label"))."',";
+			if (GETPOSTISSET('amount'))     $sql .= " amount= '".$db->escape($amount)."',";
+			if (GETPOSTISSET('dateomonth')) $sql .= " dateo = '".$db->idate($dateop)."',";
+			if (GETPOSTISSET('datevmonth')) $sql .= " datev = '".$db->idate($dateval)."',";
 		}
 		$sql .= " fk_account = ".$actarget->id;
 		$sql .= " WHERE rowid = ".$acline->id;
@@ -613,7 +617,7 @@ if ($result)
 			if ($user->rights->banque->consolidate)
 			{
 				print '<td>';
-				print '<input type="checkbox" name="reconciled" class="flat" '.(isset($_POST["reconciled"]) ? ($_POST["reconciled"] ? ' checked="checked"' : '') : ($objp->rappro ? ' checked="checked"' : '')).'">';
+				print '<input type="checkbox" name="reconciled" class="flat" '.(GETPOSTISSET("reconciled") ? (GETPOST("reconciled") ? ' checked="checked"' : '') : ($objp->rappro ? ' checked="checked"' : '')).'">';
 				print '</td>';
 			} else {
 				print '<td>'.yn($objp->rappro).'</td>';

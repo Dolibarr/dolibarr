@@ -228,8 +228,8 @@ if (empty($reshook) && $action == 'add')
 	$percentage = in_array(GETPOST('status'), array(-1, 100)) ?GETPOST('status') : (in_array(GETPOST('complete'), array(-1, 100)) ?GETPOST('complete') : GETPOST("percentage")); // If status is -1 or 100, percentage is not defined and we must use status
 
 	// Clean parameters
-	$datep = dol_mktime($fulldayevent ? '00' : GETPOST("aphour", 'int'), $fulldayevent ? '00' : GETPOST("apmin", 'int'), $fulldayevent ? '00' : GETPOST("apsec", 'int'), GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'));
-	$datef = dol_mktime($fulldayevent ? '23' : GETPOST("p2hour", 'int'), $fulldayevent ? '59' : GETPOST("p2min", 'int'), $fulldayevent ? '59' : GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'));
+	$datep = dol_mktime($fulldayevent ? '00' : GETPOST("aphour", 'int'), $fulldayevent ? '00' : GETPOST("apmin", 'int'), $fulldayevent ? '00' : GETPOST("apsec", 'int'), GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), 'tzuser');
+	$datef = dol_mktime($fulldayevent ? '23' : GETPOST("p2hour", 'int'), $fulldayevent ? '59' : GETPOST("p2min", 'int'), $fulldayevent ? '59' : GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuser');
 
 	// Check parameters
 	if (!$datef && $percentage == 100)
@@ -280,7 +280,7 @@ if (empty($reshook) && $action == 'add')
 				}
 			}
 		}
-		$object->fk_project = isset($_POST["projectid"]) ? $_POST["projectid"] : 0;
+		$object->fk_project = GETPOSTISSET("projectid") ? GETPOST("projectid", 'int') : 0;
 
 		$taskid = GETPOST('taskid', 'int');
 		if (!empty($taskid)) {
@@ -324,7 +324,7 @@ if (empty($reshook) && $action == 'add')
 
 	$object->note_private = trim(GETPOST("note", "restricthtml"));
 
-	if (isset($_POST["contactid"])) $object->contact = $contact;
+	if (GETPOSTISSET("contactid")) $object->contact = $contact;
 
 	if (GETPOST('socid', 'int') > 0)
 	{
@@ -462,10 +462,10 @@ if (empty($reshook) && $action == 'update')
 	if (empty($cancel))
 	{
 		$fulldayevent = GETPOST('fullday');
-		$aphour = GETPOST('aphour');
-		$apmin = GETPOST('apmin');
-		$p2hour = GETPOST('p2hour');
-		$p2min = GETPOST('p2min');
+		$aphour = GETPOST('aphour', 'int');
+		$apmin = GETPOST('apmin', 'int');
+		$p2hour = GETPOST('p2hour', 'int');
+		$p2min = GETPOST('p2min', 'int');
 		$percentage = in_array(GETPOST('status'), array(-1, 100)) ?GETPOST('status') : (in_array(GETPOST('complete'), array(-1, 100)) ?GETPOST('complete') : GETPOST("percentage")); // If status is -1 or 100, percentage is not defined and we must use status
 
 		// Clean parameters
@@ -479,8 +479,8 @@ if (empty($reshook) && $action == 'update')
 		$object->fetch_userassigned();
 		$object->oldcopy = clone $object;
 
-		$datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
-		$datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
+		$datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), 'tzuser');
+		$datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuser');
 
 		$object->type_id     = dol_getIdFromCode($db, GETPOST("actioncode", 'aZ09'), 'c_actioncomm');
 		$object->label       = GETPOST("label", "alphanohtml");
@@ -953,7 +953,7 @@ if ($action == 'create')
 	// Full day
 	print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday') ? ' checked' : '').'></td></tr>';
 
-	$datep = ($datep ? $datep : $object->datep);
+	$datep = ($datep ? $datep : (is_null($object->datep) ? '' : $object->datep));
 	if (GETPOST('datep', 'int', 1)) $datep = dol_stringtotime(GETPOST('datep', 'int', 1), 0);
 	$datef = ($datef ? $datef : $object->datef);
 	if (GETPOST('datef', 'int', 1)) $datef = dol_stringtotime(GETPOST('datef', 'int', 1), 0);
@@ -1051,8 +1051,8 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
 	print '<td>';
 	$percent = -1;
-	if (isset($_GET['status']) || isset($_POST['status'])) $percent = GETPOST('status');
-	elseif (isset($_GET['percentage']) || isset($_POST['percentage'])) $percent = GETPOST('percentage');
+	if (GETPOSTISSET('status')) $percent = GETPOST('status');
+	elseif (GETPOSTISSET('percentage')) $percent = GETPOST('percentage');
 	else {
 		if (GETPOST('complete') == '0' || GETPOST("afaire") == 1) $percent = '0';
 		elseif (GETPOST('complete') == 100 || GETPOST("afaire") == 2) $percent = 100;
@@ -1104,7 +1104,7 @@ if ($action == 'create')
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 1);
-		print $form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'minwidth300 quatrevingtpercent', 0, 0);
+		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'minwidth300 quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print "</td></tr>";
 	}
 
@@ -1246,17 +1246,18 @@ if ($action == 'create')
 
 		//Reminder
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
-		print '<input class="width50" type="number" name="offsetvalue" value="'.(GETPOSTISSET('offsetvalue') ? GETPOST('offsetvalue', 'int') : '15').'"> '.$form->selectTypeDuration('offsetunit', 'i');
+		print '<input class="width50" type="number" name="offsetvalue" value="'.(GETPOSTISSET('offsetvalue') ? GETPOST('offsetvalue', 'int') : '15').'"> ';
+		print $form->selectTypeDuration('offsetunit', 'i', array('y', 'm'));
 		print '</td></tr>';
 
 		//Reminder Type
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderType").'</td><td colspan="3">';
-		print $form->selectarray('selectremindertype', $TRemindTypes);
+		print $form->selectarray('selectremindertype', $TRemindTypes, '', 0, 0, 0, '', 0, 0, 0, '', 'mimnwidth200', 1);
 		print '</td></tr>';
 
 		//Mail Model
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
-		print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1);
+		print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1, 1);
 		print '</td></tr>';
 
 
@@ -1323,8 +1324,8 @@ if ($id > 0)
 	{
 		$percentage = in_array(GETPOST('status'), array(-1, 100)) ?GETPOST('status') : (in_array(GETPOST('complete'), array(-1, 100)) ?GETPOST('complete') : GETPOST("percentage")); // If status is -1 or 100, percentage is not defined and we must use status
 
-		$datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
-		$datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
+		$datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), 'tzuser');
+		$datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuser');
 
 		$object->type_id     = dol_getIdFromCode($db, GETPOST("actioncode", 'aZ09'), 'c_actioncomm');
 		$object->label       = GETPOST("label", "alphanohtml");
@@ -1429,23 +1430,23 @@ if ($id > 0)
 
 		// Full day event
 		print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent ? ' checked' : '').'></td></tr>';
-
-		// Date start
+		print dol_print_date($object->datep, 'dayhour', 'gmt');
+		// Date start - end
 		print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").' - '.$langs->trans("DateActionEnd").'</span></td><td colspan="3">';
 		if (GETPOST("afaire") == 1) {
-			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 0, "action", 1, 1, 0, 'fulldaystart');
+			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 0, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuser');
 		} elseif (GETPOST("afaire") == 2) {
-			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart');
+			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuser');
 		} else {
-			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart');
+			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuser');
 		}
 		print ' - ';
 		if (GETPOST("afaire") == 1) {
-			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
+			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuser');
 		} elseif (GETPOST("afaire") == 2) {
-			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
+			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuser');
 		} else {
-			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
+			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuser');
 		}
 		print '</td></tr>';
 
@@ -1578,7 +1579,7 @@ if ($id > 0)
 			foreach ($cats as $cat) {
 				$arrayselected[] = $cat->id;
 			}
-			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 			print "</td></tr>";
 		}
 
@@ -1719,21 +1720,23 @@ if ($id > 0)
 				$actionCommReminder->typeremind = 'email';
 			}
 
-			print '<tr><td>'.$langs->trans("AddReminder").'</td><td colspan="3"><input type="checkbox" id="addreminder" name="addreminder" '.$checked.'></td></tr>';
+			print '<label for="addreminder">'.$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder" '.$checked.'><br>';
 
 			print '<div class="reminderparameters" '.(empty($checked) ? 'style="display: none;"' : '').'>';
+
+			print '<br>';
 
 			print '<table class="border centpercent">';
 
 			// Reminder
 			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
-			print '<input type="number" name="offsetvalue" class="width50" value="'.$actionCommReminder->offsetvalue.'"> '.$form->selectTypeDuration('offsetunit', $actionCommReminder->offsetunit);
+			print '<input type="number" name="offsetvalue" class="width50" value="'.$actionCommReminder->offsetvalue.'"> ';
+			print $form->selectTypeDuration('offsetunit', $actionCommReminder->offsetunit, array('y', 'm'));
 			print '</td></tr>';
 
 			// Reminder Type
-			$TRemindTypes = array();
 			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderType").'</td><td colspan="3">';
-			print $form->selectarray('selectremindertype', $TRemindTypes, $actionCommReminder->typeremind);
+			print $form->selectarray('selectremindertype', $TRemindTypes, $actionCommReminder->typeremind, 0, 0, 0, '', 0, 0, 0, '', 'minwidth200', 1);
 			print '</td></tr>';
 
 			$hide = '';
@@ -1741,7 +1744,7 @@ if ($id > 0)
 
 			// Mail Model
 			print '<tr '.$hide.'><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
-			print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1);
+			print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1, 1);
 			print '</td></tr>';
 
 			print '</table>';
@@ -1767,6 +1770,8 @@ if ($id > 0)
 
                    })';
 			print '</script>'."\n";
+
+			print '</div>';		// End of div for reminderparameters
 		}
 
 		print dol_get_fiche_end();
@@ -1879,16 +1884,16 @@ if ($id > 0)
 
 		// Date start
 		print '<tr><td>'.$langs->trans("DateActionStart").'</td><td>';
-		if (!$object->fulldayevent) print dol_print_date($object->datep, 'dayhour');
-		else print dol_print_date($object->datep, 'day');
+		if (!$object->fulldayevent) print dol_print_date($object->datep, 'dayhour', 'tzuser');
+		else print dol_print_date($object->datep, 'day', 'tzuser');
 		if ($object->percentage == 0 && $object->datep && $object->datep < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
 		print '</td>';
 		print '</tr>';
 
 		// Date end
 		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td>';
-		if (!$object->fulldayevent) print dol_print_date($object->datef, 'dayhour');
-		else print dol_print_date($object->datef, 'day');
+		if (!$object->fulldayevent) print dol_print_date($object->datef, 'dayhour', 'tzuser');
+		else print dol_print_date($object->datef, 'day', 'tzuser');
 		if ($object->percentage > 0 && $object->percentage < 100 && $object->datef && $object->datef < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
 		print '</td></tr>';
 

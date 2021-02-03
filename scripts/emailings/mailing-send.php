@@ -61,12 +61,22 @@ require_once DOL_DOCUMENT_ROOT."/comm/mailing/class/mailing.class.php";
 $version = DOL_VERSION;
 $error = 0;
 
+if (empty($conf->global->MAILING_LIMIT_SENDBYCLI))
+{
+	$conf->global->MAILING_LIMIT_SENDBYCLI = 0;
+}
+
+
 /*
  * Main
  */
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
+
+if (!empty($conf->global->MAILING_DELAY)) {
+	print 'A delay of '.((float) $conf->global->MAILING_DELAY * 1000000).' millisecond has been set between each email'."\n";
+}
 
 if ($conf->global->MAILING_LIMIT_SENDBYCLI == '-1') {}
 
@@ -326,7 +336,7 @@ if ($resql) {
 								}
 
 								if (!empty($conf->global->MAILING_DELAY)) {
-									sleep($conf->global->MAILING_DELAY);
+									usleep((float) $conf->global->MAILING_DELAY * 1000000);
 								}
 							}
 						} else {

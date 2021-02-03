@@ -420,7 +420,7 @@ if ($mode == 'template' && $user->admin) {
 				print '<td></td>';
 			} else {
 				print '<td>'.$printer->listprinterstemplates[$line]['name'].'</td>';
-				print '<td>'.nl2br(htmlentities($printer->listprinterstemplates[$line]['template'])).'</td>';
+				print '<td>'.dol_htmlentitiesbr($printer->listprinterstemplates[$line]['template']).'</td>';
 				// edit icon
 				print '<td><a class="editfielda paddingleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=template&amp;action=edittemplate&amp;templateid='.$printer->listprinterstemplates[$line]['rowid'].'">';
 				print img_picto($langs->trans("Edit"), 'edit');
@@ -443,7 +443,6 @@ if ($mode == 'template' && $user->admin) {
 		print '<td><input size="50" type="text" name="templatename" value="'.$printer->listprinterstemplates[$line]['name'].'"></td>';
 		print '<td>';
 		print '<textarea name="template" wrap="soft" cols="120" rows="12">';
-		print GETPOSTISSET('template') ? GETPOST('template', 'alpha') : $printer->listprinterstemplates[$line]['template'];
 		print '</textarea>';
 		print '</td>';
 		print '<td></td>';

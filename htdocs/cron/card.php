@@ -623,12 +623,12 @@ if (($action == "create") || ($action == "edit"))
 
 	print '<tr><td>';
 	print $langs->trans('CronDtStart')."</td><td>";
-	if (!empty($object->datestart)) {print dol_print_date($object->datestart, 'dayhoursec'); }
+	if (!empty($object->datestart)) {print $form->textwithpicto(dol_print_date($object->datestart, 'dayhoursec'), $langs->trans("CurrentTimeZone")); }
 	print "</td></tr>";
 
 	print "<tr><td>";
 	print $langs->trans('CronDtEnd')."</td><td>";
-	if (!empty($object->dateend)) {print dol_print_date($object->dateend, 'dayhoursec'); }
+	if (!empty($object->dateend)) {print $form->textwithpicto(dol_print_date($object->dateend, 'dayhoursec'), $langs->trans("CurrentTimeZone")); }
 	print "</td></tr>";
 
 	print "<tr><td>";
@@ -653,7 +653,7 @@ if (($action == "create") || ($action == "edit"))
 	print ' ('.$langs->trans('CronFrom').')';
 	print "</td><td>";
 	if (!$object->status) print $langs->trans("Disabled");
-	elseif (!empty($object->datenextrun)) { print img_picto('', 'object_calendarday').' '.dol_print_date($object->datenextrun, 'dayhoursec'); } else { print $langs->trans('CronNone'); }
+	elseif (!empty($object->datenextrun)) { print img_picto('', 'object_calendarday').' '.$form->textwithpicto(dol_print_date($object->datenextrun, 'dayhoursec'), $langs->trans("CurrentTimeZone")); } else { print $langs->trans('CronNone'); }
 	if ($object->status == Cronjob::STATUS_ENABLED)
 	{
 		if ($object->maxrun && $object->nbrun >= $object->maxrun) print img_warning($langs->trans("MaxRunReached"));
@@ -672,12 +672,12 @@ if (($action == "create") || ($action == "edit"))
 
 	print '<tr><td class="titlefield">';
 	print $langs->trans('CronDtLastLaunch')."</td><td>";
-	if (!empty($object->datelastrun)) {print dol_print_date($object->datelastrun, 'dayhoursec'); } else {print $langs->trans('CronNone'); }
+	if (!empty($object->datelastrun)) {print $form->textwithpicto(dol_print_date($object->datelastrun, 'dayhoursec'), $langs->trans("CurrentTimeZone")); } else {print $langs->trans('CronNone'); }
 	print "</td></tr>";
 
 	print '<tr><td>';
 	print $langs->trans('CronDtLastResult')."</td><td>";
-	if (!empty($object->datelastresult)) {print dol_print_date($object->datelastresult, 'dayhoursec'); } else {print $langs->trans('CronNone'); }
+	if (!empty($object->datelastresult)) {print $form->textwithpicto(dol_print_date($object->datelastresult, 'dayhoursec'), $langs->trans("CurrentTimeZone")); } else {print $langs->trans('CronNone'); }
 	print "</td></tr>";
 
 	print '<tr><td>';

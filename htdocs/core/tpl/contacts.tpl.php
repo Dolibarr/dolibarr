@@ -140,7 +140,8 @@ if ($permission)
 		</div>
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
 			<?php
-			$nbofcontacts = $form->select_contacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 1, 'minwidth100imp');
+			print $form->selectcontacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 1, 'minwidth100imp');
+			$nbofcontacts = $form->num;
 
 			$newcardbutton = '';
 			if (!empty($object->socid) && $object->socid > 1 && $user->rights->societe->creer)
@@ -154,7 +155,7 @@ if ($permission)
 			<?php
 			$tmpobject = $object;
 			if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) $tmpobject = $objectsrc;
-			$formcompany->selectTypeContact($tmpobject, $preselectedtypeofcontact, 'type', 'external', 'position', 0, 'minwidth100imp');
+			$formcompany->selectTypeContact($tmpobject, $preselectedtypeofcontact, 'typecontact', 'external', 'position', 0, 'minwidth100imp');
 			?>
 		</div>
 		<div class="tagtd noborderbottom">&nbsp;</div>
@@ -238,8 +239,8 @@ foreach (array('internal', 'external') as $source)
 }
 
 
-$sortfield = GETPOST("sortfield", "alpha");
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST("sortfield", "aZ09comma");
+$sortorder = GETPOST("sortorder", 'aZ09comma');
 
 if (!$sortfield) $sortfield = "nature";
 if (!$sortorder) $sortorder = "asc";
@@ -281,7 +282,7 @@ print_liste_field_titre($arrayfields['thirdparty']['label'], $_SERVER["PHP_SELF"
 print_liste_field_titre($arrayfields['contact']['label'], $_SERVER["PHP_SELF"], "contact_name", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], "type", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($arrayfields['status']['label'], $_SERVER["PHP_SELF"], "statut", "", $param, "", $sortfield, $sortorder, 'center ');
-print_liste_field_titre($arrayfields['link']['label'], $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder, 'center maxwidthsearch ');
+print_liste_field_titre('', $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>";
 
 foreach ($list as $entry)

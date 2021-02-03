@@ -178,7 +178,7 @@ if ($action != 'create_updater' && $action != 'edit_updater')
 			print '<td>'.$entry->code.'</td>';
 			print '<td>'.$entry->description.'</td>';
 			print '<td>'.price($entry->value).'</td>';
-			print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit_variable&token='.newToken().'&selection='.$entry->id.'">'.img_edit().'</a> &nbsp;';
+			print '<td class="right"><a class="editfielda paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=edit_variable&token='.newToken().'&selection='.$entry->id.'">'.img_edit().'</a> &nbsp;';
 			print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_variable&token='.newToken().'&selection='.$entry->id.'">'.img_delete().'</a></td>';
 			print '</tr>';
 		}
@@ -269,7 +269,7 @@ if ($action != 'create_variable' && $action != 'edit_variable')
 			print '<td style="max-width: 250px; word-wrap: break-word; white-space: pre-wrap;">'.$entry->parameters.'</td>';
 			print '<td>'.$entry->update_interval.'</td>';
 			print '<td>'.$entry->getLastUpdated().'</td>';
-			print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit_updater&selection='.$entry->id.'">'.img_edit().'</a> &nbsp;';
+			print '<td class="right"><a class="editfielda paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=edit_updater&selection='.$entry->id.'">'.img_edit().'</a> &nbsp;';
 			print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_updater&token='.newToken().'&selection='.$entry->id.'">'.img_delete().'</a></td>';
 			print '</tr>';
 		}

@@ -769,6 +769,7 @@ class Categories extends DolibarrApi
 
 		$objects = $result;
 		$cleaned_objects = array();
+		$objects_api = null;
 		if ($type == 'member') {
 			$objects_api = new Members();
 		} elseif ($type == 'customer' || $type == 'supplier') {

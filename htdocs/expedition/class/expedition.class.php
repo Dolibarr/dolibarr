@@ -55,7 +55,7 @@ class Expedition extends CommonObject
 	public $element = "shipping";
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = "fk_expedition";
 
@@ -65,7 +65,7 @@ class Expedition extends CommonObject
 	public $table_element = "expedition";
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = "expeditiondet";
 
@@ -106,7 +106,6 @@ class Expedition extends CommonObject
 	 * @var int warehouse id
 	 */
 	public $entrepot_id;
-	public $lines = array();
 
 	/**
 	 * @var string Tracking number
@@ -171,6 +170,9 @@ class Expedition extends CommonObject
 	public $meths;
 	public $listmeths; // List of carriers
 
+	public $lines = array();
+
+
 	/**
 	 * Draft status
 	 */
@@ -202,8 +204,6 @@ class Expedition extends CommonObject
 		global $conf;
 
 		$this->db = $db;
-		$this->lines = array();
-		$this->products = array();
 
 		// List of long language codes for status
 		$this->statuts = array();
@@ -499,8 +499,8 @@ class Expedition extends CommonObject
 		// create shipment lines
 		foreach ($stockLocationQty as $stockLocation => $qty)
 		{
-			if (($line_id = $this->create_line($stockLocation, $line_ext->origin_line_id, $qty, $line_ext->rang, $array_options)) < 0)
-			{
+			$line_id = $this->create_line($stockLocation, $line_ext->origin_line_id, $qty, $line_ext->rang, $array_options);
+			if ($line_id < 0) {
 				$error++;
 			} else {
 				// create shipment batch lines for stockLocation
@@ -620,7 +620,7 @@ class Expedition extends CommonObject
 				$this->getUrlTrackingStatus($obj->tracking_number);
 
 				// Thirdparty
-				$result = $this->fetch_thirdparty();	// TODO Remove this
+				$result = $this->fetch_thirdparty(); // TODO Remove this
 
 				// Retrieve extrafields
 				$this->fetch_optionals();
@@ -629,7 +629,7 @@ class Expedition extends CommonObject
 				if (!empty($conf->multicurrency->enabled))
 				{
 					if (!empty($this->multicurrency_code)) $this->multicurrency_code = $this->thirdparty->multicurrency_code;
-					if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx))	$this->multicurrency_tx = $this->thirdparty->multicurrency_tx;
+					if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($this->thirdparty->multicurrency_tx))	$this->multicurrency_tx = $this->thirdparty->multicurrency_tx;
 				}
 
 				/*
@@ -671,7 +671,7 @@ class Expedition extends CommonObject
 		// Protection
 		if ($this->statut)
 		{
-			dol_syslog(get_class($this)."::valid no draft status", LOG_WARNING);
+			dol_syslog(get_class($this)."::valid not in draft status", LOG_WARNING);
 			return 0;
 		}
 
@@ -757,7 +757,7 @@ class Expedition extends CommonObject
 
 					//var_dump($this->lines[$i]);
 					$mouvS = new MouvementStock($this->db);
-					$mouvS->origin = &$this;
+					$mouvS->origin = dol_clone($this, 1);
 
 					if (empty($obj->edbrowid))
 					{
@@ -765,6 +765,7 @@ class Expedition extends CommonObject
 
 						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record.
 						$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr", $numref));
+
 						if ($result < 0) {
 							$error++;
 							$this->error = $mouvS->error;
@@ -794,7 +795,6 @@ class Expedition extends CommonObject
 
 		// Change status of order to "shipment in process"
 		$ret = $this->setStatut(Commande::STATUS_SHIPMENTONPROCESS, $this->origin_id, $this->origin);
-
 		if (!$ret)
 		{
 			$error++;
@@ -1081,8 +1081,8 @@ class Expedition extends CommonObject
 		if (isset($this->size_units)) $this->size_units = trim($this->size_units);
 		if (isset($this->weight_units)) $this->weight_units = trim($this->weight_units);
 		if (isset($this->trueWeight)) $this->weight = trim($this->trueWeight);
-		if (isset($this->note_private)) $this->note = trim($this->note_private);
-		if (isset($this->note_public)) $this->note = trim($this->note_public);
+		if (isset($this->note_private)) $this->note_private = trim($this->note_private);
+		if (isset($this->note_public)) $this->note_public = trim($this->note_public);
 		if (isset($this->model_pdf)) $this->model_pdf = trim($this->model_pdf);
 
 
@@ -1093,7 +1093,6 @@ class Expedition extends CommonObject
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET";
 
-		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
 		$sql .= " ref_customer=".(isset($this->ref_customer) ? "'".$this->db->escape($this->ref_customer)."'" : "null").",";
@@ -1868,6 +1867,7 @@ class Expedition extends CommonObject
 		$statusType = 'status'.$status;
 		if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
 		if ($status == self::STATUS_CLOSED) $statusType = 'status6';
+		if ($status == self::STATUS_CANCELED) $statusType = 'status9';
 
 		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
 	}
@@ -2482,15 +2482,16 @@ class Expedition extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $langs;
+		global $conf;
 
-		$langs->load("sendings");
 		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'rouget';
 
-			if (!empty($this->modelpdf)) {
+			if (!empty($this->model_pdf)) {
+				$modele = $this->model_pdf;
+			} elseif (!empty($this->modelpdf)) {	// deprecated
 				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->EXPEDITION_ADDON_PDF)) {
 				$modele = $conf->global->EXPEDITION_ADDON_PDF;
@@ -2749,7 +2750,7 @@ class ExpeditionLigne extends CommonObjectLine
 		$ranktouse = $this->rang;
 		if ($ranktouse == -1)
 		{
-			$rangmax = $this->line_max($fk_expedition);
+			$rangmax = $this->line_max($this->fk_expedition);
 			$ranktouse = $rangmax + 1;
 		}
 

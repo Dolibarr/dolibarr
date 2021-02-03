@@ -16,3 +16,4 @@ DictionaryFunction=HRM - Munkahelyek
 Employees=Alkalmazottak
 Employee=Foglalkoztató
 NewEmployee=Új alkalmazott
+ListOfEmployees=List of employees

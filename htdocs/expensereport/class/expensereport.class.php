@@ -44,7 +44,14 @@ class ExpenseReport extends CommonObject
 	 */
 	public $table_element = 'expensereport';
 
+	/**
+	 * @var string table element line name
+	 */
 	public $table_element_line = 'expensereport_det';
+
+	/**
+	 * @var string Fieldname with ID of parent key if this field has a parent
+	 */
 	public $fk_element = 'fk_expensereport';
 
 	/**
@@ -73,11 +80,15 @@ class ExpenseReport extends CommonObject
 	 */
 	public $fk_statut;
 
+	public $vat_src_code;
+
 	public $fk_c_paiement;
 	public $paid;
 
 	public $user_author_infos;
 	public $user_validator_infos;
+
+	public $rule_warning_message;
 
 	// ACTIONS
 
@@ -532,7 +543,7 @@ class ExpenseReport extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT d.rowid, d.ref, d.note_public, d.note_private,"; // DEFAULT
+		$sql = "SELECT d.rowid, d.entity, d.ref, d.note_public, d.note_private,"; // DEFAULT
 		$sql .= " d.detail_refuse, d.detail_cancel, d.fk_user_refuse, d.fk_user_cancel,"; // ACTIONS
 		$sql .= " d.date_refuse, d.date_cancel,"; // ACTIONS
 		$sql .= " d.total_ht, d.total_ttc, d.total_tva,"; // TOTAUX (int)
@@ -554,6 +565,9 @@ class ExpenseReport extends CommonObject
 			{
 				$this->id           = $obj->rowid;
 				$this->ref          = $obj->ref;
+
+				$this->entity       = $obj->entity;
+
 				$this->total_ht     = $obj->total_ht;
 				$this->total_tva    = $obj->total_tva;
 				$this->total_ttc    = $obj->total_ttc;
@@ -795,6 +809,7 @@ class ExpenseReport extends CommonObject
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
+		$this->entity = 1;
 		$this->date_create = $now;
 		$this->date_debut = $now;
 		$this->date_fin = $now;
@@ -1074,58 +1089,117 @@ class ExpenseReport extends CommonObject
 
 
 	/**
-	 * delete
+	 * Delete object in database
 	 *
-	 * @param   User    $fuser      User that delete
+	 * @param   User    $user       User that delete
+	 * @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
 	 * @return  int                 <0 if KO, >0 if OK
 	 */
-	public function delete(User $fuser = null)
+	public function delete(User $user = null, $notrigger = false)
 	{
-		global $user, $langs, $conf;
-
-		$rowid = $this->id;
+		global $conf;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error = 0;
 
-		// Delete lines
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element_line.' WHERE '.$this->fk_element.' = '.$rowid;
-		if (!$error && !$this->db->query($sql))
-		{
-			$this->error = $this->db->error()." sql=".$sql;
-			dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
-			$error++;
+		$this->db->begin();
+
+		if (!$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('EXPENSEREPORT_DELETE', $user);
+			if ($result < 0) { $error++; }
+			// End call triggers
 		}
 
-		// Delete llx_ecm_files
-		if (!$error) {
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."ecm_files WHERE src_object_type = '".$this->db->escape($this->table_element.(empty($this->module) ? '' : '@'.$this->module))."' AND src_object_id = ".$this->id;
-			$resql = $this->db->query($sql);
-			if (!$resql)
-			{
+		// Delete extrafields of lines and lines
+		if (!$error && !empty($this->table_element_line)) {
+			$tabletodelete = $this->table_element_line;
+			//$sqlef = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete."_extrafields WHERE fk_object IN (SELECT rowid FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id.")";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id;
+			if (!$this->db->query($sql)) {
+				$error++;
 				$this->error = $this->db->lasterror();
 				$this->errors[] = $this->error;
+				dol_syslog(get_class($this)."::delete error ".$this->error, LOG_ERR);
+			}
+		}
+
+		if (!$error) {
+			// Delete linked object
+			$res = $this->deleteObjectLinked();
+			if ($res < 0) $error++;
+		}
+
+		if (!$error) {
+			// Delete linked contacts
+			$res = $this->delete_linked_contact();
+			if ($res < 0) $error++;
+		}
+
+		// Removed extrafields of object
+		if (!$error) {
+			$result = $this->deleteExtraFields();
+			if ($result < 0) {
 				$error++;
+				dol_syslog(get_class($this)."::delete error ".$this->error, LOG_ERR);
 			}
 		}
 
 		// Delete main record
 		if (!$error) {
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE rowid = '.$rowid;
-			$resql = $this->db->query($sql);
-			if (!$resql)
-			{
-				$this->error = $this->db->error()." sql=".$sql;
-				dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE rowid = ".$this->id;
+			$res = $this->db->query($sql);
+			if (!$res) {
+				$error++;
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+				dol_syslog(get_class($this)."::delete error ".$this->error, LOG_ERR);
 			}
 		}
 
-		// Commit or rollback
-		if ($error) {
-			$this->db->rollback();
-			return -1;
-		} else {
+		// Delete record into ECM index and physically
+		if (!$error) {
+			$res = $this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
+			if (!$res) {
+				$error++;
+			}
+		}
+
+		if (!$error) {
+			// We remove directory
+			$ref = dol_sanitizeFileName($this->ref);
+			if ($conf->expensereport->multidir_output[$this->entity] && !empty($this->ref)) {
+				$dir = $conf->expensereport->multidir_output[$this->entity]."/".$ref;
+				$file = $dir."/".$ref.".pdf";
+				if (file_exists($file)) {
+					dol_delete_preview($this);
+
+					if (!dol_delete_file($file, 0, 0, 0, $this)) {
+						$this->error = 'ErrorFailToDeleteFile';
+						$this->errors[] = $this->error;
+						$this->db->rollback();
+						return 0;
+					}
+				}
+				if (file_exists($dir)) {
+					$res = @dol_delete_dir_recursive($dir);
+					if (!$res) {
+						$this->error = 'ErrorFailToDeleteDir';
+						$this->errors[] = $this->error;
+						$this->db->rollback();
+						return 0;
+					}
+				}
+			}
+		}
+
+		if (!$error) {
+			dol_syslog(get_class($this)."::delete ".$this->id." by ".$user->id, LOG_DEBUG);
 			$this->db->commit();
 			return 1;
+		} else {
+			$this->db->rollback();
+			return -1;
 		}
 	}
 
@@ -1746,6 +1820,7 @@ class ExpenseReport extends CommonObject
 			$localtaxes_type = getLocalTaxesFromRate($vatrate, 0, $mysoc, $this->thirdparty);
 
 			$vat_src_code = '';
+			$reg = array();
 			if (preg_match('/\s*\((.*)\)/', $vatrate, $reg))
 			{
 				$vat_src_code = $reg[1];
@@ -1979,6 +2054,7 @@ class ExpenseReport extends CommonObject
 			$localtaxes_type = getLocalTaxesFromRate($vatrate, 0, $buyer, $seller);
 
 			// Clean vat code
+			$reg = array();
 			$vat_src_code = '';
 			if (preg_match('/\((.*)\)/', $vatrate, $reg))
 			{
@@ -1994,10 +2070,6 @@ class ExpenseReport extends CommonObject
 
 			$tx_tva = $vatrate / 100;
 			$tx_tva = $tx_tva + 1;
-			$total_ht = price2num($total_ttc / $tx_tva, 'MT');
-
-			$total_tva = price2num($total_ttc - $total_ht, 'MT');
-			// fin calculs
 
 			$this->line = new ExpenseReportLine($this->db);
 			$this->line->comments        = $comments;
@@ -2202,12 +2274,14 @@ class ExpenseReport extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $langs;
+		global $conf;
 
-		$langs->load("trips");
+		$outputlangs->load("trips");
 
 		if (!dol_strlen($modele)) {
-			if (!empty($this->modelpdf)) {
+			if (!empty($this->model_pdf)) {
+				$modele = $this->model_pdf;
+			} elseif (!empty($this->modelpdf)) {	// deprecated
 				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->EXPENSEREPORT_ADDON_PDF)) {
 				$modele = $conf->global->EXPENSEREPORT_ADDON_PDF;
@@ -2245,7 +2319,7 @@ class ExpenseReport extends CommonObject
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($result);
-				$ret[$obj->code] = (($langs->trans($obj->code) != $obj->code) ? $langs->trans($obj->code) : $obj->label);
+				$ret[$obj->code] = (($langs->transnoentitiesnoconv($obj->code) != $obj->code) ? $langs->transnoentitiesnoconv($obj->code) : $obj->label);
 				$i++;
 			}
 		} else {
@@ -2387,7 +2461,7 @@ class ExpenseReport extends CommonObject
 	}
 
 	/**
-	 *	Return if an expensereport was dispatched into bookkeeping
+	 *	Return if object was dispatched into bookkeeping
 	 *
 	 *	@return     int         <0 if KO, 0=no, 1=yes
 	 */
@@ -2438,7 +2512,7 @@ class ExpenseReport extends CommonObject
 		{
 			$obj = $this->db->fetch_object($resql);
 			$this->db->free($resql);
-			return $obj->amount;
+			return (empty($obj->amount) ? 0 : $obj->amount);
 		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
@@ -2573,7 +2647,7 @@ class ExpenseReportLine
 	}
 
 	/**
-	 * insert
+	 * Insert a line of expense report
 	 *
 	 * @param   int     $notrigger      1=No trigger
 	 * @param   bool    $fromaddline    false=keep default behavior, true=exclude the update_price() of parent object
@@ -2585,11 +2659,11 @@ class ExpenseReportLine
 
 		$error = 0;
 
-		dol_syslog("ExpenseReportLine::Insert rang=".$this->rang, LOG_DEBUG);
+		dol_syslog("ExpenseReportLine::Insert", LOG_DEBUG);
 
 		// Clean parameters
 		$this->comments = trim($this->comments);
-		if (!$this->value_unit_HT) $this->value_unit_HT = 0;
+		if (empty($this->value_unit)) $this->value_unit = 0;
 		$this->qty = price2num($this->qty);
 		$this->vatrate = price2num($this->vatrate);
 		if (empty($this->fk_c_exp_tax_cat)) $this->fk_c_exp_tax_cat = 0;
@@ -2601,9 +2675,9 @@ class ExpenseReportLine
 		$sql .= ' tva_tx, vat_src_code, comments, qty, value_unit, total_ht, total_tva, total_ttc, date, rule_warning_message, fk_c_exp_tax_cat, fk_ecm_files)';
 		$sql .= " VALUES (".$this->db->escape($this->fk_expensereport).",";
 		$sql .= " ".$this->db->escape($this->fk_c_type_fees).",";
-		$sql .= " ".$this->db->escape($this->fk_project > 0 ? $this->fk_project : ($this->fk_projet > 0 ? $this->fk_projet : 'null')).",";
+		$sql .= " ".$this->db->escape((!empty($this->fk_project) && $this->fk_project > 0) ? $this->fk_project : ((!empty($this->fk_projet) && $this->fk_projet > 0) ? $this->fk_projet : 'null')).",";
 		$sql .= " ".$this->db->escape($this->vatrate).",";
-		$sql .= " '".$this->db->escape($this->vat_src_code)."',";
+		$sql .= " '".$this->db->escape(empty($this->vat_src_code) ? '' : $this->vat_src_code)."',";
 		$sql .= " '".$this->db->escape($this->comments)."',";
 		$sql .= " ".$this->db->escape($this->qty).",";
 		$sql .= " ".$this->db->escape($this->value_unit).",";
@@ -2611,7 +2685,7 @@ class ExpenseReportLine
 		$sql .= " ".$this->db->escape($this->total_tva).",";
 		$sql .= " ".$this->db->escape($this->total_ttc).",";
 		$sql .= " '".$this->db->idate($this->date)."',";
-		$sql .= " '".$this->db->escape($this->rule_warning_message)."',";
+		$sql .= " ".(empty($this->rule_warning_message) ? 'null' : "'".$this->db->escape($this->rule_warning_message)."'").",";
 		$sql .= " ".$this->db->escape($this->fk_c_exp_tax_cat).",";
 		$sql .= " ".($this->fk_ecm_files > 0 ? $this->fk_ecm_files : 'null');
 		$sql .= ")";

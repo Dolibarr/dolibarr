@@ -156,7 +156,8 @@ $conf->dol_hide_topmenu = 1;
 $conf->dol_hide_leftmenu = 1;
 
 if (!$conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE) {
-	print '<div class="error">'.$langs->trans('PublicInterfaceForbidden').'</div>';
+	$langs->load("errors");
+	print '<div class="error">'.$langs->trans('ErrorPublicInterfaceNotEnabled').'</div>';
 	$db->close();
 	exit();
 }
