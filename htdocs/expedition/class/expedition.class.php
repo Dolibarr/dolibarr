@@ -2400,7 +2400,7 @@ class Expedition extends CommonObject
 					$order->valid($user);
 				}
 			}
-			
+
 			$this->statut = self::STATUS_VALIDATED;
 			$this->billed = 0;
 
