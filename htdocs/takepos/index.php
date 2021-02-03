@@ -729,10 +729,10 @@ $( document ).ready(function() {
 		if ($conf->global->TAKEPOS_NUM_TERMINALS == "1") $_SESSION["takeposterminal"] = 1;
 		else print "TerminalsDialog();";
 	}
-	if ($conf->global->TAKEPOS_CONTROL_CASH_OPENING)
-    $sql = "SELECT rowid, status FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
-    $sql .= " entity = ".$conf->entity." AND ";
-    $sql .= " date(date_creation) = CURDATE()";
+	if ($conf->global->TAKEPOS_CONTROL_CASH_OPENING) {
+	    $sql = "SELECT rowid, status FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
+	    $sql .= " entity = ".$conf->entity." AND ";
+	    $sql .= " date(date_creation) = CURDATE()";
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
