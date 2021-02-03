@@ -105,8 +105,8 @@ if (empty($includecustom)) {
     }
 }
 
-print "Release                        : ".$release."\n";
 print "Working on files into          : ".DOL_DOCUMENT_ROOT."\n";
+print "Release                        : ".$release."\n";
 print "Include custom in signature    : ".$includecustom."\n";
 print "Include constants in signature : ";
 foreach ($includeconstants as $countrycode => $tmp) {

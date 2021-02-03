@@ -514,9 +514,9 @@ function dol_get_last_day($year, $month = 12, $gm = false)
 }
 
 /**
- *  Return GMT time for last hour of a given GMT date (it removes hours, min and second part)
+ *  Return GMT time for last hour of a given GMT date (it replaces hours, min and second part to 23:59:59)
  *
- *	@param		int			$date		Date
+ *	@param		int			$date		Date GMT
  *  @return		int						Date for last hour of a given date
  */
 function dol_get_last_hour($date)

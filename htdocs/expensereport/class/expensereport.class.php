@@ -2319,7 +2319,7 @@ class ExpenseReport extends CommonObject
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($result);
-				$ret[$obj->code] = (($langs->trans($obj->code) != $obj->code) ? $langs->trans($obj->code) : $obj->label);
+				$ret[$obj->code] = (($langs->transnoentitiesnoconv($obj->code) != $obj->code) ? $langs->transnoentitiesnoconv($obj->code) : $obj->label);
 				$i++;
 			}
 		} else {

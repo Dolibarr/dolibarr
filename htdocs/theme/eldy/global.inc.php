@@ -3066,6 +3066,9 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 .smallpaddingimp {
     padding: 4px !important;
 }
+input.button.smallpaddingimp {
+    font-size: 0.8em;
+}
 .nopaddingleft {
 	padding-<?php print $left; ?>: 0px;
 }
@@ -5662,6 +5665,8 @@ a span.select2-chosen
 }
 span#select2-boxbookmark-container, span#select2-boxcombo-container {
     text-align: <?php echo $left; ?>;
+}
+span#select2-boxbookmark-container {
     opacity: 0.4;
 }
 .select2-container .select2-selection--single .select2-selection__rendered {
