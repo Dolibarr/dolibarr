@@ -272,97 +272,97 @@ if (empty($reshook))
 }
 
 if ($action == 'validate') {
-		if (GETPOST('confirm') == 'yes') {
-			$tmpproposal = new Propal($db);
-			$db->begin();
-			$error = 0;
-			foreach ($toselect as $checked) {
-				if ($tmpproposal->fetch($checked)) {
-					if ($tmpproposal->statut == 0) {
-						if ($tmpproposal->valid($user)) {
-							setEventMessage($tmpproposal->ref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
-						} else {
-							setEventMessage($langs->trans('CantBeValidated'), 'errors');
-							$error++;
-						}
+	if (GETPOST('confirm') == 'yes') {
+		$tmpproposal = new Propal($db);
+		$db->begin();
+		$error = 0;
+		foreach ($toselect as $checked) {
+			if ($tmpproposal->fetch($checked)) {
+				if ($tmpproposal->statut == 0) {
+					if ($tmpproposal->valid($user)) {
+						setEventMessage($tmpproposal->ref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
 					} else {
-						setEventMessage($tmpproposal->ref." ".$langs->trans('IsNotADraft'), 'errors');
+						setEventMessage($langs->trans('CantBeValidated'), 'errors');
 						$error++;
 					}
+				} else {
+					setEventMessage($tmpproposal->ref." ".$langs->trans('IsNotADraft'), 'errors');
+					$error++;
 				}
+			}
+			dol_print_error($db);
+			$error++;
+		}
+		if ($error) {
+			$db->rollback();
+		} else {
+			$db->commit();
+		}
+	}
+}
+
+if ($action == "sign") {
+	if (GETPOST('confirm') == 'yes') {
+		$tmpproposal = new Propal($db);
+		$db->begin();
+		$error = 0;
+		foreach ($toselect as $checked) {
+			if ($tmpproposal->fetch($checked)) {
+				if ($tmpproposal->statut == 1) {
+					$tmpproposal->statut = 2;
+					if ($tmpproposal->update($user)) {
+						setEventMessage($tmpproposal->ref." ".$langs->trans('Signed'), 'mesgs');
+					} else {
+						dol_print_error($db);
+						$error++;
+					}
+				} else {
+					setEventMessage($tmpproposal->ref." ".$langs->trans('CantBeSign'), 'errors');
+					$error++;
+				}
+			} else {
 				dol_print_error($db);
 				$error++;
 			}
-			if ($error) {
-				$db->rollback();
-			} else {
-				$db->commit();
-			}
+		}
+		if ($error) {
+			$db->rollback();
+		} else {
+			$db->commit();
 		}
 	}
-
-	if ($action == "sign") {
-		if (GETPOST('confirm') == 'yes') {
-			$tmpproposal = new Propal($db);
-			$db->begin();
-			$error = 0;
-			foreach ($toselect as $checked) {
-				if ($tmpproposal->fetch($checked)) {
-					if ($tmpproposal->statut == 1) {
-						$tmpproposal->statut = 2;
-						if ($tmpproposal->update($user)) {
-							setEventMessage($tmpproposal->ref." ".$langs->trans('Signed'), 'mesgs');
-						} else {
-							dol_print_error($db);
-							$error++;
-						}
+}
+if ($action == "nosign") {
+	if (GETPOST('confirm') == 'yes') {
+		$tmpproposal = new Propal($db);
+		$db->begin();
+		$error = 0;
+		foreach ($toselect as $checked) {
+			if ($tmpproposal->fetch($checked)) {
+				if ($tmpproposal->statut == 1) {
+					$tmpproposal->statut = 3;
+					if ($tmpproposal->update($user)) {
+						setEventMessage($tmpproposal->ref." ".$langs->trans('NoSigned'), 'mesgs');
 					} else {
-						setEventMessage($tmpproposal->ref." ".$langs->trans('CantBeSign'), 'errors');
+						dol_print_error($db);
 						$error++;
 					}
 				} else {
-					dol_print_error($db);
+					setEventMessage($tmpproposal->ref." ".$langs->trans('CantBeSign'), 'errors');
 					$error++;
 				}
-			}
-			if ($error) {
-				$db->rollback();
 			} else {
-				$db->commit();
+				dol_print_error($db);
+				$error++;
 			}
 		}
-	}
-	if ($action == "nosign") {
-		if (GETPOST('confirm') == 'yes') {
-			$tmpproposal = new Propal($db);
-			$db->begin();
-			$error = 0;
-			foreach ($toselect as $checked) {
-				if ($tmpproposal->fetch($checked)) {
-					if ($tmpproposal->statut == 1) {
-						$tmpproposal->statut = 3;
-						if ($tmpproposal->update($user)) {
-							setEventMessage($tmpproposal->ref." ".$langs->trans('NoSigned'), 'mesgs');
-						} else {
-							dol_print_error($db);
-							$error++;
-						}
-					} else {
-						setEventMessage($tmpproposal->ref." ".$langs->trans('CantBeSign'), 'errors');
-						$error++;
-					}
-				} else {
-					dol_print_error($db);
-					$error++;
-				}
-			}
-			if ($error) {
-				$db->rollback();
-			} else {
-				$db->commit();
-			}
+		if ($error) {
+			$db->rollback();
+		} else {
+			$db->commit();
 		}
 	}
+}
 
 
 /*
