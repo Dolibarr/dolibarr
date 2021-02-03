@@ -93,7 +93,7 @@ $help_url = '';
 $title = $langs->trans('Loans');
 
 $sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend, l.paid,";
-$sql .= " SUM(pl.amount_capital) as alreadypayed";
+$sql .= " SUM(pl.amount_capital) as alreadypaid";
 $sql .= " FROM ".MAIN_DB_PREFIX."loan as l LEFT JOIN ".MAIN_DB_PREFIX."payment_loan AS pl";
 $sql .= " ON l.rowid = pl.fk_loan";
 $sql .= " WHERE l.entity = ".$conf->entity;
@@ -229,7 +229,7 @@ if ($resql)
 		print '<td class="center width100">'.dol_print_date($db->jdate($obj->dateend), 'day').'</td>';
 
 		print '<td class="right nowrap">';
-		print $loan_static->LibStatut($obj->paid, 5, $obj->alreadypayed);
+		print $loan_static->LibStatut($obj->paid, 5, $obj->alreadypaid);
 		print '</td>';
 
 		print '<td></td>';

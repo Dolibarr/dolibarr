@@ -1090,7 +1090,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 }
 
 /*
- * Unpayed supplier invoices
+ * Unpaid supplier invoices
  */
 if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->facture->lire)
 {

@@ -1855,7 +1855,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 			{
 				$noidempotency_key = (GETPOSTISSET('noidempotency') ? GETPOST('noidempotency', 'int') : 0); // By default noidempotency is unset, so we must use a different tag/ref for each payment. If set, we can pay several times the same tag/ref.
 				$paymentintent = $stripe->getPaymentIntent($amount, $currency, $tag, 'Stripe payment: '.$fulltag.(is_object($object) ? ' ref='.$object->ref : ''), $object, $stripecu, $stripeacc, $servicestatus, 0, 'automatic', false, null, 0, $noidempotency_key);
-				// The paymentintnent has status 'requires_payment_method' (even if paymentintent was already payed)
+				// The paymentintnent has status 'requires_payment_method' (even if paymentintent was already paid)
 				//var_dump($paymentintent);
 				if ($stripe->error) setEventMessages($stripe->error, null, 'errors');
 			}

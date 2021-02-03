@@ -1248,7 +1248,7 @@ class FactureFournisseur extends CommonInvoice
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Tag invoice as a payed invoice
+	 *  Tag invoice as a paid invoice
 	 *
 	 *	@param  User	$user       Object user
 	 *	@param  string	$close_code	Code indicates whether the class has paid in full while payment is incomplete. Not implementd yet.

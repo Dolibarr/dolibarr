@@ -229,7 +229,7 @@ class PaiementFourn extends Paiement
 							$invoice = new FactureFournisseur($this->db);
 							$invoice->fetch($facid);
 
-							// If we want to closed payed invoices
+							// If we want to closed paid invoices
 							if ($closepaidinvoices)
 							{
 								$paiement = $invoice->getSommePaiement();

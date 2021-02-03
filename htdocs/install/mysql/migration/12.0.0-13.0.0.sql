@@ -563,3 +563,6 @@ INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging varchar(64);
 
 ALTER TABLE llx_projet ADD COLUMN fk_opp_status_end integer DEFAULT NULL;
+
+
+UPDATE llx_c_action_trigger SET code = 'EXPENSE_REPORT_PAID' where code = 'EXPENSE_REPORT_PAYED';
