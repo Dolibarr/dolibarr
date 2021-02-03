@@ -123,6 +123,7 @@ CREATE TABLE llx_c_transport_mode (
   label     varchar(255) NOT NULL,
   active    tinyint DEFAULT 1  NOT NULL
 ) ENGINE=innodb;
+ALTER TABLE llx_c_transport_mode ADD UNIQUE INDEX uk_c_transport_mode (code, entity);
 
 INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('MAR', 'Transport maritime (y compris camions ou wagons sur bateau)', 1);
 INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('TRA', 'Transport par chemin de fer (y compris camions sur wagon)', 1);

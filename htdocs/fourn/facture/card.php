@@ -2095,7 +2095,7 @@ if ($action == 'create')
 	{
 		$langs->loadLangs(array("intracommreport"));
 		print '<tr><td>'.$langs->trans('IntracommReportTransportMode').'</td><td>';
-		$form->selectModeTransport(isset($_POST['transport_mode_id']) ? $_POST['transport_mode_id'] : $transport_mode_id, 'transport_mode_id');
+		$form->selectTransportMode(isset($_POST['transport_mode_id']) ? $_POST['transport_mode_id'] : $transport_mode_id, 'transport_mode_id');
 		print '</td></tr>';
 	}
 
