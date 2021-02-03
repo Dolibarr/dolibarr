@@ -288,7 +288,7 @@ function getResultColumn($name, array $activated, array $loaded, array $function
 			$html .= ' '.$langs->trans("PHPSupport", $name);
 		}
 	} else {
-		if (strtolower($name) == 'xdebug') $html .= yn(0);
+		if (strtolower($name) == 'xdebug') $html .= yn(0).' - ';
 		else $html .= img_warning($langs->trans("ModuleActivated", "xdebug"));
 		if (in_array(strtolower($name), $loaded)) {
 			$html .= ' '.$langs->trans("Loaded").' - ';
