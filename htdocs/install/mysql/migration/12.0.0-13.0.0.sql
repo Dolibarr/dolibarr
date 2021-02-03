@@ -122,6 +122,7 @@ CREATE TABLE llx_c_transport_mode (
   label     varchar(255) NOT NULL,
   active    tinyint DEFAULT 1  NOT NULL
 ) ENGINE=innodb;
+ALTER TABLE llx_c_transport_mode ADD UNIQUE INDEX uk_c_transport_mode (code, entity);
 
 INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('MAR', 'Transport maritime (y compris camions ou wagons sur bateau)', 1);
 INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('TRA', 'Transport par chemin de fer (y compris camions sur wagon)', 1);
@@ -567,3 +568,6 @@ INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging varchar(64);
 
 ALTER TABLE llx_projet ADD COLUMN fk_opp_status_end integer DEFAULT NULL;
+
+
+UPDATE llx_c_action_trigger SET code = 'EXPENSE_REPORT_PAID' where code = 'EXPENSE_REPORT_PAYED';

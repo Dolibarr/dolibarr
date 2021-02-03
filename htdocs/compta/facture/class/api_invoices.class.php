@@ -1051,7 +1051,7 @@ class Invoices extends DolibarrApi
 		}
 
 		if ($this->invoice->paye) {
-			throw new RestException(500, 'Alreay payed');
+			throw new RestException(500, 'Alreay paid');
 		}
 
 		$this->invoice->fetch($id);

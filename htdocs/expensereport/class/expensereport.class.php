@@ -66,14 +66,14 @@ class ExpenseReport extends CommonObject
 	public $date_fin;
 
 	/**
-	 * 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=payed, 99=denied
+	 * 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=paid, 99=denied
 	 *
 	 * @var int		Status
 	 */
 	public $status;
 
 	/**
-	 * 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=payed, 99=denied
+	 * 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=paid, 99=denied
 	 *
 	 * @var int		Status
 	 * @deprecated

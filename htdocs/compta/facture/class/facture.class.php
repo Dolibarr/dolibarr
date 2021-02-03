@@ -1165,6 +1165,7 @@ class Facture extends CommonInvoice
 
 		$object->id = 0;
 		$object->statut = self::STATUS_DRAFT;
+		$object->status = self::STATUS_DRAFT;
 
 		// Clear fields
 		$object->date               = (empty($this->date) ? dol_now() : $this->date);

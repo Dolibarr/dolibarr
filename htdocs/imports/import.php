@@ -1518,6 +1518,14 @@ if ($step == 5 && $datatoimport)
 		}
 		print '</div>';
 	} else {
+		$max_execution_time_for_importexport = (empty($conf->global->IMPORT_MAX_EXECUTION_TIME) ? 300 : $conf->global->IMPORT_MAX_EXECUTION_TIME); // 5mn if not defined
+		$max_time = @ini_get("max_execution_time");
+		if ($max_time && $max_time < $max_execution_time_for_importexport)
+		{
+			dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_importexport=".$max_execution_time_for_importexport.". We try to increase it dynamically.");
+			@ini_set("max_execution_time", $max_execution_time_for_importexport); // This work only if safe mode is off. also web servers has timeout of 300
+		}
+
 		// Launch import
 		$arrayoferrors = array();
 		$arrayofwarnings = array();
