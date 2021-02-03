@@ -325,7 +325,7 @@ class Stripe extends CommonObject
 	{
 		global $conf, $user;
 
-		dol_syslog("getPaymentIntent", LOG_INFO, 1);
+		dol_syslog(get_class($this)."::getPaymentIntent", LOG_INFO, 1);
 
 		$error = 0;
 
@@ -534,10 +534,9 @@ class Stripe extends CommonObject
 			}
 		}
 
-		dol_syslog("getPaymentIntent return error=".$error." this->error=".$this->error, LOG_INFO, -1);
+		dol_syslog(get_class($this)."::getPaymentIntent return error=".$error." this->error=".$this->error, LOG_INFO, -1);
 
-		if (!$error)
-		{
+		if (!$error) {
 			return $paymentintent;
 		} else {
 			return null;
