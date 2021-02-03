@@ -2374,6 +2374,7 @@ class Expedition extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
+			//Reopen liked order 
 			if ($this->origin == 'commande' && $this->origin_id > 0)
 			{
 				$order = new Commande($this->db);
