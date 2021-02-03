@@ -779,7 +779,7 @@ $( document ).ready(function() {
 	if ($conf->global->TAKEPOS_CONTROL_CASH_OPENING) {
 	    $sql = "SELECT rowid, status FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
 	    $sql .= " entity = ".$conf->entity." AND ";
-	    $sql .= " date(date_creation) = CURDATE()";
+	    $sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
@@ -1027,7 +1027,7 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
 
 $sql = "SELECT rowid, status, entity FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
 $sql .= " entity = ".$conf->entity." AND ";
-$sql .= " date(date_creation) = CURDATE()";
+$sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
 $resql = $db->query($sql);
 if ($resql)
 {
