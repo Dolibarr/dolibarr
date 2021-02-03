@@ -2374,6 +2374,33 @@ class Expedition extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
+			if ($this->origin == 'commande' && $this->origin_id > 0)
+			{
+				$order = new Commande($this->db);
+				$order->fetch($this->origin_id);
+
+				$order->loadExpeditions(self::STATUS_VALIDATED); // Fill $order->expeditions = array(orderlineid => qty)
+
+				$shipments_match_order = 1;
+				foreach ($order->lines as $line)
+				{
+					$lineid = $line->id;
+					$qty = $line->qty;
+					if (($line->product_type == 0 || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) && $order->expeditions[$lineid] != $qty)
+					{
+						$shipments_match_order = 0;
+						$text = 'Qty for order line id '.$lineid.' is '.$qty.'. However in the shipments with status Expedition::STATUS_VALIDATED='.self::STATUS_VALIDATED.' we have qty = '.$order->expeditions[$lineid].', so we can t close order';
+						dol_syslog($text);
+						break;
+					}
+				}
+				if ($shipments_match_order)
+				{
+					dol_syslog("Qty for the ".count($order->lines)." lines of order have same value for shipments with status Expedition::STATUS_VALIDATED=".self::STATUS_VALIDATED.', so we close order');
+					$order->valid($user);
+				}
+			}
+			
 			$this->statut = self::STATUS_VALIDATED;
 			$this->billed = 0;
 
