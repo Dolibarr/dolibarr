@@ -348,7 +348,7 @@ if ($action == "nosign") {
 						$error++;
 					}
 				} else {
-					setEventMessage($tmpproposal->ref." ".$langs->trans('CantBeSign'), 'errors');
+					setEventMessage($tmpproposal->ref." ".$langs->trans('CantBeClosed'), 'errors');
 					$error++;
 				}
 			} else {
